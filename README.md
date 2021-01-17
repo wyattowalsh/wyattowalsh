@@ -4,7 +4,7 @@ I grew up in the [***Eastern Sierras***  in California](https://goo.gl/maps/LGFQ
 
 I usually like to work with data science, machine learning, optimization/mathematical-programming, or similar fields, however I am *agnostically curious* when it comes to computers, mathematics, and computer science and am happy to collaborate on projects across any of those disciplines. 
 
-When not behind the keyboard, you can catch me out mountainbiking, playing a disc sport (Ultimate Frisbee or Disc Golf 🥏), messing around with music (production 🎼, DJing 🎧, playing piano 🎹), or spending some sort of time with friends and loved ones. 
+When not behind the keyboard, you can catch me out mountain biking, playing a disc sport (Ultimate Frisbee or Disc Golf 🥏), messing around with music (production 🎼, DJing 🎧, playing piano 🎹), or spending some sort of time with friends and loved ones. 
 
  > Reach out, it would be great to hear from you and maybe we could even develop some good personal or professional ties. 😊
 
@@ -42,13 +42,16 @@ AQAuW45c6C9ffpJDcvIfMVWbNj8knl3vFQH10ssz7iqQtTbXy2Fk0cA-CUbucqGozpwHhItz1OAq_4Al
 
 refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68MrStfmhupOUe4z4iCAHrqT5yBROO04qopoa73VgsSljMelzQfrf0IIDNcQRFo
 [![Wyatt Walsh Medium](https://github-readme-medium.vercel.app/?username=wyattowalsh&limit=3)](https://medium.com/@omidnikrah)
+
+
+
 -->
-<center>
- 
 |![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.svg)|![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.additional.svg)|
 |---|---|
 
-</center>
+
+
+
 ---
 
 ### Here are my most current ***Medium*** posts:
@@ -58,8 +61,7 @@ refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68Mr
  - Wed Jan 13 2021 4:21 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-57bbdce90a8c?source=rss-4b12137885d8------2)<!-- BLOG-POST-LIST:END -->
 
 ---
-<center>
- 
+
 | [![spotify-github-profile](https://spotify-github-profile.vercel.app/api/view?uid=122096382&cover_image=true&theme=default)](https://github.com/kittinan/spotify-github-profile)| <h4 align='center'>Technologies</h4> <br> <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/><img alt="Java" src="https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white"/><img alt="R" src="https://img.shields.io/badge/r-%23276DC3.svg?&style=for-the-badge&logo=r&logoColor=white"/> <br> <img alt="Pandas" src="https://img.shields.io/badge/pandas%20-%23150458.svg?&style=for-the-badge&logo=pandas&logoColor=white" /><img alt="NumPy" src="https://img.shields.io/badge/numpy%20-%23013243.svg?&style=for-the-badge&logo=numpy&logoColor=white" /><img alt="Keras" src="https://img.shields.io/badge/Keras%20-%23D00000.svg?&style=for-the-badge&logo=Keras&logoColor=white"/> <br> <img alt="Markdown" src="https://img.shields.io/badge/markdown-%23000000.svg?&style=for-the-badge&logo=markdown&logoColor=white"/><img alt="LaTeX" src="https://img.shields.io/badge/latex%20-%23008080.svg?&style=for-the-badge&logo=latex&logoColor=white"/><img alt="Shell Script" src="https://img.shields.io/badge/shell_script%20-%23121011.svg?&style=for-the-badge&logo=gnu-bash&logoColor=white"/> <br> <img alt="Jupyter" src="https://img.shields.io/badge/Jupyter%20-%23F37626.svg?&style=for-the-badge&logo=Jupyter&logoColor=white" /><img alt="Docker" src="https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white"/><img alt="Kubernetes" src="https://img.shields.io/badge/kubernetes%20-%23326ce5.svg?&style=for-the-badge&logo=kubernetes&logoColor=white"/> <br> <img alt="Git" src="https://img.shields.io/badge/git%20-%23F05033.svg?&style=for-the-badge&logo=git&logoColor=white"/><img alt="GitHub" src="https://img.shields.io/badge/github%20-%23121011.svg?&style=for-the-badge&logo=github&logoColor=white"/><img alt="GitLab" src="https://img.shields.io/badge/gitlab%20-%23181717.svg?&style=for-the-badge&logo=gitlab&logoColor=white"/> <br> <img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/><img alt="CSS3" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/><img alt="Ruby" src="https://img.shields.io/badge/ruby-%23CC342D.svg?&style=for-the-badge&logo=ruby&logoColor=white"/> <br> <img alt="GitHub Actions" src="https://img.shields.io/badge/github%20actions%20-%232671E5.svg?&style=for-the-badge&logo=github%20actions&logoColor=white"/><img alt="TravisCI" src="https://img.shields.io/badge/travisci%20-%232B2F33.svg?&style=for-the-badge&logo=travis&logoColor=white"/> <br> <img alt="Raspberry Pi" src="https://img.shields.io/badge/-Raspberry%20Pi-C51A4A?style=for-the-badge&logo=Raspberry-Pi"/><img alt="Arduino" src="https://img.shields.io/badge/-Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white"/>|
 |---|---|
-</center
+
