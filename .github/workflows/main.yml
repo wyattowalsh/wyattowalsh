@@ -75,7 +75,6 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: ${{ secrets.SPOTIFY_TOKENS }}
           plugin_music_limit: 5
-          plugin_habits: yes
           plugin_topics: yes
           plugin_topics_sort: stars
           plugin_topics_limit: 15
