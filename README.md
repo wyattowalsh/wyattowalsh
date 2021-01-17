@@ -46,4 +46,7 @@ refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68Mr
 
 ### Here are my most current ***Medium*** posts:
 <!-- BLOG-POST-LIST:START -->
+- [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-dcf5aa662ab9?source=rss-4b12137885d8------2)
+- [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-44572e79a1b5?source=rss-4b12137885d8------2)
+- [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-57bbdce90a8c?source=rss-4b12137885d8------2)
 <!-- BLOG-POST-LIST:END -->
