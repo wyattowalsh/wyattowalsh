@@ -29,6 +29,7 @@ Here are some ideas to get you started:
 <!--
 [![Wyatt's GitHub stats](https://github-readme-stats.vercel.app/api?username=wyattowalsh&count_private=true&show_icons=true&theme=radical&hide_rank=false)](https://github.com/anuraghazra/github-readme-stats) 
 
+[![forthebadge](https://forthebadge.com/images/badges/designed-in-etch-a-sketch.svg)](https://forthebadge.com)
 
 ![Wyatts's github stats](https://github-readme-stats.vercel.app/api?username=wyattowalsh&count_private=true&show_icons=true&?theme=solarized-dark&hide=prs,issues,contribs&show_icons=true)
 
@@ -46,8 +47,14 @@ refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68Mr
 |![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.svg)|![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.additional.svg)|
 |---|---|
 
+---
+
 ### Here are my most current ***Medium*** posts:
 <!-- BLOG-POST-LIST:START -->
  - Fri Jan 15 2021 1:27 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-dcf5aa662ab9?source=rss-4b12137885d8------2)
  - Thu Jan 14 2021 1:22 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-44572e79a1b5?source=rss-4b12137885d8------2)
  - Wed Jan 13 2021 4:21 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-57bbdce90a8c?source=rss-4b12137885d8------2)<!-- BLOG-POST-LIST:END -->
+
+---
+
+[![spotify-github-profile](https://spotify-github-profile.vercel.app/api/view?uid=122096382&cover_image=true&theme=default)](https://github.com/kittinan/spotify-github-profile)
