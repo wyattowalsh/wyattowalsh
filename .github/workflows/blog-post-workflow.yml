@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v2
       - uses: gautamkrishnar/blog-post-workflow@master
         with:
+          template: [$date][$Title][$Description]($url)
           feed_list: "https://medium.com/feed/@wyattowalsh"
-#           template: [$date][$Title][$Description]($url)
