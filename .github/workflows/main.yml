@@ -46,6 +46,15 @@ jobs:
           plugin_lines: yes
           plugin_isocalendar: yes
           plugin_traffic: yes
+          plugin_languages: yes
+          plugin_languages_ignored: jupyter%20notebook
+          plugin_languages_skipped: ''
+          plugin_habits: yes
+          plugin_habits_from: 200
+          plugin_habits_days: 14 
+          plugin_habits_facts: yes
+          plugin_habits_charts: yes
+          plugin_gists: yes
           config_timezone: America/Los_Angeles
 #           config_order: base.header, isocalendar, base.repositories
           config_padding: 10%
@@ -57,34 +66,26 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ""
-          plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14 
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_languages: yes
-          plugin_languages_ignored: jupyter%20notebook
-          plugin_languages_skipped: 
           plugin_stargazers: yes
           plugin_stars: yes
           plugin_stars_limit: 3
           config_timezone: America/Los_Angeles
 #           config_order: languages, pagespeed, habits, stargazers, stars
           config_padding: 10%
-#           plugin_music: yes
-#           plugin_music_provider: spotify
-#           plugin_music_mode: recent
-#           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
-#           plugin_music_limit: 5
+          plugin_music: yes
+          plugin_music_provider: spotify
+          plugin_music_mode: recent
+          plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
+          plugin_music_limit: 5
           plugin_topics: yes
           plugin_topics_sort: stars
           plugin_topics_limit: 15
-          plugin_tweets_user: "wyattowalsh"
+          plugin_tweets: yes
+          plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
-          plugin_gists: yes
- 
+      
 #       # Note the job below use a bot token with "public_repo" scope
 #       - name: Personal projects
 #         uses: lowlighter/metrics@latest
