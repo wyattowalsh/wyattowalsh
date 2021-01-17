@@ -1,4 +1,4 @@
-### Hi there 👋
+### Hey there, I'm ***Wyatt***👋
 
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
@@ -28,10 +28,9 @@ redirect https://localhost
 AQAuW45c6C9ffpJDcvIfMVWbNj8knl3vFQH10ssz7iqQtTbXy2Fk0cA-CUbucqGozpwHhItz1OAq_4AlbMGWzJIWCXi5xBK-uacf65sUL278rhawm2ysflptzT9IehrvWzJmZ9b1S6EOm8ncxTBMcAHaS8xQ1HVixxwdYteIZX1OeJT5PdXTr51943Jsdkto
 
 refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68MrStfmhupOUe4z4iCAHrqT5yBROO04qopoa73VgsSljMelzQfrf0IIDNcQRFo
-
+[![Wyatt Walsh Medium](https://github-readme-medium.vercel.app/?username=wyattowalsh&limit=3)](https://medium.com/@omidnikrah)
 -->
 
 |![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.svg)|![](https://github.com/wyattowalsh/wyattowalsh/blob/main/metrics.additional.svg)|
 |---|---|
 
-[![Wyatt Walsh Medium](https://github-readme-medium.vercel.app/?username=wyattowalsh&limit=3)](https://medium.com/@omidnikrah)
