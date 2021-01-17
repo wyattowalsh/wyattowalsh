@@ -79,7 +79,7 @@ jobs:
           plugin_topics_sort: stars
           plugin_topics_limit: 15
           plugin_traffic: yes
-          plugin_tweets_user:: wyattowalsh
+          plugin_tweets_user: wyattowalsh
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
