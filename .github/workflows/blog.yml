@@ -1,10 +1,8 @@
-name: Latest Blog Post Workflow
+name: Latest blog post workflow
 on:
-  schedule:
-    # Runs every hour
-    - cron: '0 * * * *'
-  workflow_dispatch:
-
+  schedule: # Run workflow automatically
+    - cron: '0 * * * *' # Runs every hour, on the hour
+  workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the Github Actions Workflow page directly
 jobs:
   update-readme-with-blog:
     name: Update this repo's README with latest blog posts
@@ -13,6 +11,5 @@ jobs:
       - uses: actions/checkout@v2
       - uses: gautamkrishnar/blog-post-workflow@master
         with:
-          max_post_count: "3"
           template: [$date][$title][$description]($url)
           feed_list: "https://medium.com/feed/@wyattowalsh"
