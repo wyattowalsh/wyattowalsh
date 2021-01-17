@@ -1,4 +1,10 @@
-### Hey there, I'm ***Wyatt***👋
+### Hey there, I'm ***Wyatt*** 👋
+
+I grew up in the [***Eastern Sierras***  in California](https://goo.gl/maps/LGFQESQJ6krn6SzM6), spent a few years in Connecticut at boarding school (Go Bearcats!), then came back to the West Coast for my undergraduate work in ***Industrial Engineering and Operations Research*** at the University of California, Berkeley, where I recently graduated (Go Bears! 🐻).
+
+I usually like to work with data science, machine learning, optimization/mathematical-programming, or similar fields, however I am *agnostically curious* when it comes to computers, mathematics, and computer science and am happy to collaborate on projects across any of those disciplines. 
+
+Reach out, it would be great to hear from you and maybe we could even develop some good personal, professional, or other synergies. 😊
 
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
