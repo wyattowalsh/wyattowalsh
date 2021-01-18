@@ -4,7 +4,7 @@ I grew up in the [***Eastern Sierras***  in California](https://goo.gl/maps/LGFQ
 
 I usually like to work with data science, machine learning, optimization/mathematical-programming, or similar fields, however I am *agnostically curious* when it comes to computers, mathematics, and computer science and am happy to collaborate on projects across any of those disciplines. 
 
-When not behind the keyboard, you can catch me out mountain biking, playing a disc sport (Ultimate Frisbee or Disc Golf 🥏), messing around with music (production 🎼, DJing 🎧, playing piano 🎹), or spending some sort of time with friends and loved ones. 
+When not behind the keyboard, you can catch me out mountain biking, playing a disc sport (Ultimate Frisbee or Disc Golf 🥏), messing around with music (production 🎼, DJing 🎧,or playing piano 🎹), or spending some sort of time with friends and loved ones. 
 
  > Reach out, it would be great to hear from you and maybe we could even develop some good personal or professional ties. 😊
 
