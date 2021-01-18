@@ -55,6 +55,12 @@ jobs:
           plugin_habits_facts: yes
           plugin_habits_charts: yes
           plugin_gists: yes
+          plugin_topics: yes
+          plugin_topics_sort: stars
+          plugin_topics_limit: 15
+          plugin_stargazers: yes
+          plugin_stars: yes
+          plugin_stars_limit: 3
           config_timezone: America/Los_Angeles
 #           config_order: base.header, isocalendar, base.repositories
           config_padding: 10%
@@ -66,9 +72,6 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ""
-          plugin_stargazers: yes
-          plugin_stars: yes
-          plugin_stars_limit: 3
           config_timezone: America/Los_Angeles
 #           config_order: languages, pagespeed, habits, stargazers, stars
           config_padding: 10%
@@ -77,9 +80,6 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
           plugin_music_limit: 5
-          plugin_topics: yes
-          plugin_topics_sort: stars
-          plugin_topics_limit: 15
           plugin_tweets: yes
           plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
           plugin_activity: yes
