@@ -58,9 +58,6 @@ jobs:
           plugin_topics: yes
           plugin_topics_sort: stars
           plugin_topics_limit: 15
-          plugin_stargazers: yes
-          plugin_stars: yes
-          plugin_stars_limit: 3
           config_timezone: America/Los_Angeles
 #           config_order: base.header, isocalendar, base.repositories
           config_padding: 10%
@@ -85,6 +82,9 @@ jobs:
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
+          plugin_stargazers: yes
+          plugin_stars: yes
+          plugin_stars_limit: 3
       
 #       # Note the job below use a bot token with "public_repo" scope
 #       - name: Personal projects
