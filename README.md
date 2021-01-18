@@ -51,15 +51,20 @@ refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68Mr
 
 
 
-
 ---
 
 ### Here are my most current ***Medium*** posts:
+|<a target="_blank" href="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/0"><img src="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/0" alt="Recent Article 0">|
+|---|
+|<a target="_blank" href="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/1"><img src="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/1" alt="Recent Article 1">|
+|<a target="_blank" href="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/2"><img src="https://github-readme-medium-recent-article.vercel.app/medium/@wyattowalsh/2" alt="Recent Article 2">|
+
+<!--
 <!-- BLOG-POST-LIST:START -->
  - Fri Jan 15 2021 1:27 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-dcf5aa662ab9?source=rss-4b12137885d8------2)
  - Thu Jan 14 2021 1:22 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-44572e79a1b5?source=rss-4b12137885d8------2)
  - Wed Jan 13 2021 4:21 PM - [Regularized Linear Regression Models](https://towardsdatascience.com/regularized-linear-regression-models-57bbdce90a8c?source=rss-4b12137885d8------2)<!-- BLOG-POST-LIST:END -->
-
+-->
 ---
 <img align='right' src='https://spotify-github-profile.vercel.app/api/view?uid=122096382&cover_image=true&theme=default'/>
 
