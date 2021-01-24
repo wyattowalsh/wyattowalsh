@@ -2,7 +2,7 @@
 
 I grew up in the [***Eastern Sierras***  in California](https://goo.gl/maps/LGFQESQJ6krn6SzM6), spent a few years in Connecticut at boarding school (Go Bearcats!), then came back to the West Coast for my undergraduate work in ***Industrial Engineering and Operations Research*** at the **University of California, Berkeley**, where I recently graduated (Go Bears! 🐻).
 
-I usually like to work with data science, machine learning, optimization/mathematical-programming, or similar fields, however I am *agnostically curious* when it comes to computers, mathematics, and computer science and am happy to collaborate on projects across any of those disciplines. 
+I usually like to work with data science, machine learning, optimization/mathematical-programming, or similar fields, however I am *boundless in my curiousity* when it comes to computers, mathematics, and computer science and am happy to collaborate on projects across any of those disciplines. 
 
 When not behind the keyboard, you can catch me out mountain biking, playing a disc sport (Ultimate Frisbee or Disc Golf 🥏), messing around with music (production 🎼, DJing 🎧,or playing piano 🎹), or spending some sort of time with friends and loved ones. 
 
