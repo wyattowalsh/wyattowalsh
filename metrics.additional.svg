@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1616" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1336" class="">
 
   <defs><style/></defs>
   <style>/* SVG global context */
@@ -729,7 +729,7 @@
                   
                   <div class="name">
                     <span>trekhleb/homemade-machine-learning</span>
-                    <span>starred 20 hours ago</span>
+                    <span>starred 21 hours ago</span>
                   </div>
                 </div>
                 <div class="field description">
@@ -1100,6 +1100,39 @@
               <section class="activity">
                 
                 
+                
+                
+                
+                
+                
+                
+                
+                  <div class="field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
+                    Pushed 1 commit in <div class="repo">wyattowalsh/wyattowalsh.github.io</div>
+                  </div>
+                  <div class="details">
+                    
+                      <div>on branch <div class="code">gh-pages</div></div>
+                    
+                    
+                      <div class="commit">
+                        <div class="sha">#7c6cedd</div>
+                        <div class="message">Deploy wyattowalsh/wyattowalsh.github.io to github.com/wyattowalsh/wyattowalsh.github.io.git:gh-pages</div>
+                      </div>
+                    
+                  </div>
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
                   <div class="field">
                     
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"/></svg>
@@ -1238,128 +1271,6 @@ Added info to sentence tokenization, Stemming and Lemmatization</div>
                 
                 
                 
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                  <div class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-                    Pushed 18 commits in <div class="repo">pratik-99/data-science-notes</div>
-                  </div>
-                  <div class="details">
-                    
-                      <div>on branch <div class="code">master</div></div>
-                    
-                    
-                      <div class="commit">
-                        <div class="sha">#e7a9afa</div>
-                        <div class="message">Merge pull request #64 from pratik-99/master
-
-Added info to NLP / Basics / Word Tokenizer section</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#832ce00</div>
-                        <div class="message">renaming and moving sections</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#cad004a</div>
-                        <div class="message">Merge branch 'master' of https://github.com/wyattowalsh/data-science-notes</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#77fbd7d</div>
-                        <div class="message">fixing ols links</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#064247b</div>
-                        <div class="message">fixing problem with last merge and missing content
-
-#64 content seems to have disappeared when sections were renamed...added back now</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#317537f</div>
-                        <div class="message">Delete CNAME</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#aab2b3a</div>
-                        <div class="message">Delete CNAME</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#a3d8591</div>
-                        <div class="message">Create CNAME</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#45c053d</div>
-                        <div class="message">restructuring sections and adding sections</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#ec57324</div>
-                        <div class="message">Merge branch 'master' of https://github.com/wyattowalsh/data-science-notes</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#d56c02e</div>
-                        <div class="message">Create PROJECT_INDEX.md</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#3cdac00</div>
-                        <div class="message">Update README.md</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#ebe93b0</div>
-                        <div class="message">adding gallery notebooks</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#5336140</div>
-                        <div class="message">Merge branch 'master' of https://github.com/wyattowalsh/data-science-notes</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#b5278fb</div>
-                        <div class="message">Create index.md</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#d80a261</div>
-                        <div class="message">Create basics.md</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#df2f361</div>
-                        <div class="message">Update _toc.yml</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#ae5c98b</div>
-                        <div class="message">Merge branch 'master' into master</div>
-                      </div>
-                    
-                  </div>
                 
                 
                 
