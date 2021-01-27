@@ -729,7 +729,7 @@
                   
                   <div class="name">
                     <span>harshkumarkhatri/harshkumarkhatri</span>
-                    <span>starred 22 hours ago</span>
+                    <span>starred 23 hours ago</span>
                   </div>
                 </div>
                 <div class="field description">
@@ -1090,6 +1090,36 @@
               <section class="activity">
                 
                 
+                  <div class="field">
+                    
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"/></svg>
+                    
+                    Commented on <div class="issue">#67 Complete Landing Pages</div>
+                  </div>
+                    <div class="details">
+                    <div>opened by wyattowalsh in <div class="repo">wyattowalsh/data-science-notes</div></div>
+                    <div class="comment">Hey @Kaustubh01! Welcome to ***Data Science Notes*** 😊
+
+I'm in the process of adding additional information to the issues, but happy to help out with whatever; just let me know how I may be of assistance!</div>
+                  </div>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
                 
                 
                 
@@ -1211,57 +1241,6 @@
                       </div>
                     
                   </div>
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                  <div class="field">
-                    
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"/></svg>
-                    
-                    Commented on <div class="issue">#68 Complete Basics Pages</div>
-                  </div>
-                    <div class="details">
-                    <div>opened by wyattowalsh in <div class="repo">wyattowalsh/data-science-notes</div></div>
-                    <div class="comment">Hey there @jtboing! Thanks for your comment, nice to see you here! 😊
-
-These are great questions! 
-
-So far, I've been trying to build out the structure of the book and add guidelines for contributing, so these questions are right along the lines I've been considering (do lookout for when I update the issue with complete contribution guidelines).
-
-In short:
-
-1. In general there are landing pages and basics pages so far (with more specific pages to come as folks add them, such as [OLS and Regularized Forms](https://makeuseofdata.com/machine_learning_and_data_mining/regression/ols_plus_regularization.html)).
-    - Along these lines, I think Landing Pages [ #67 ] are more of a general overview and introduction to a certain topic, which may require a different structure depending on the topic. Thus, they would be a good place for images, visualizations, and objects to attract readers and inspire them to read the section to follow. 
-
-    - Further, Basics pages I think should be less introductory and more technical; they should inform the reader of what specifics exist for a topic, how these specifics fit together/what use cases they are for, and brief information on basic usage. Similarly, these pages may require different structures to accomplish this goal, depending on the topic. 
-  
-    - This way, readers are given a place to get excited about the material of a certain topic (landing pages) and get a technical overview of that topic (basics pages). After they have been given the proper context and introduction, they can then browse specific pages as interested. 
-
-
-2. Currently, I am the only maintainer of the project, but admittedly am not an expert across all topics. I am happy to edit to the best of my capabilities but was hoping that content would be improved through readers raising issues as well as self-editing and listings sources/citations. Another way is through the pull request template by having contributors ensure if they have listed their sources or if not to put their LinkedIn Profile for qualification confirmation. If you have any ideas on this or would like to help edit, let me know!
-
-3. Yes, most definitely! There are actually a few ways of going about this:
-     - So far I've been listing sources at the bottom of the page in an itemized list, but I would definitely like to improve on this format
-     - The best format seems to be using local bibliographies and the `cite` command as described on the Jupyter Book page [**here**](https://jupyterbook.org/content/citations.html)
-       - In this format, a .bib file would be created for each page and then cited accordingly for the page using the commands as described at the link.
-
-Let me know your thoughts! Any ideas or perspective could prove helpful! I'm quite open-minded and just trying to make the most out of the project!</div>
-                  </div>
-                
-                
-                
-                
-                
-                
-                
                 
                 
                 
