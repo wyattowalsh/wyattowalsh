@@ -597,7 +597,7 @@
         </div>
         <div class="field">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/></svg>
-          Followed by 7 users
+          Followed by 8 users
         </div>
         
           <div class="field hire">
@@ -611,7 +611,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 11" width="210" height="16">
             <g>
               
-                <rect class="day" x="0" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
+                <rect class="day" x="0" y="0" width="11" height="11" fill="#30a14e" rx="2" ry="2"/>
               
                 <rect class="day" x="15" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
               
@@ -660,7 +660,7 @@
       </h2>
       <div class="field">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-        704 Commits
+        709 Commits
       </div>
       <div class="field">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.5 1.75a.25.25 0 01.25-.25h8.5a.25.25 0 01.25.25v7.736a.75.75 0 101.5 0V1.75A1.75 1.75 0 0011.25 0h-8.5A1.75 1.75 0 001 1.75v11.5c0 .966.784 1.75 1.75 1.75h3.17a.75.75 0 000-1.5H2.75a.25.25 0 01-.25-.25V1.75zM4.75 4a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5zM4 7.75A.75.75 0 014.75 7h2a.75.75 0 010 1.5h-2A.75.75 0 014 7.75zm11.774 3.537a.75.75 0 00-1.048-1.074L10.7 14.145 9.281 12.72a.75.75 0 00-1.062 1.058l1.943 1.95a.75.75 0 001.055.008l4.557-4.45z"/></svg>
@@ -672,11 +672,11 @@
       </div>
       <div class="field">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm9 3a1 1 0 11-2 0 1 1 0 012 0zm-.25-6.25a.75.75 0 00-1.5 0v3.5a.75.75 0 001.5 0v-3.5z"/></svg>
-        55 Issues opened
+        75 Issues opened
       </div>
       <div class="field">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.75 2.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h2a.75.75 0 01.75.75v2.19l2.72-2.72a.75.75 0 01.53-.22h4.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25H2.75zM1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v7.5A1.75 1.75 0 0113.25 12H9.06l-2.573 2.573A1.457 1.457 0 014 13.543V12H2.75A1.75 1.75 0 011 10.25v-7.5z"/></svg>
-        29 issue comments
+        28 issue comments
       </div>
     </section>
   
@@ -739,7 +739,7 @@
             <div class="field ">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"/></svg>
               
-                3.35k views in last two weeks
+                3.44k views in last two weeks
               
             </div>
         
@@ -760,21 +760,21 @@
         </mask>
         <rect mask="url(#languages-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
         
-          <rect mask="url(#languages-bar)" x="0" y="0" width="410.42217085226844" height="8" fill="#3572A5"/>
+          <rect mask="url(#languages-bar)" x="0" y="0" width="415.33436390795254" height="8" fill="#3572A5"/>
         
-          <rect mask="url(#languages-bar)" x="410.42217085226844" y="0" width="31.74574658358882" height="8" fill="#f1e05a"/>
+          <rect mask="url(#languages-bar)" x="415.33436390795254" y="0" width="32.1256998292714" height="8" fill="#f1e05a"/>
         
-          <rect mask="url(#languages-bar)" x="442.1679174358572" y="0" width="12.127615381861176" height="8" fill="#e34c26"/>
+          <rect mask="url(#languages-bar)" x="447.46006373722395" y="0" width="6.764087070495549" height="8" fill="#e34c26"/>
         
-          <rect mask="url(#languages-bar)" x="454.29553281771837" y="0" width="3.2445005717083846" height="8" fill="#b07219"/>
+          <rect mask="url(#languages-bar)" x="454.2241508077195" y="0" width="3.28333281399299" height="8" fill="#b07219"/>
         
-          <rect mask="url(#languages-bar)" x="457.54003338942675" y="0" width="1.3560294293924575" height="8" fill="#555555"/>
+          <rect mask="url(#languages-bar)" x="457.50748362171254" y="0" width="1.3722592503412938" height="8" fill="#555555"/>
         
-          <rect mask="url(#languages-bar)" x="458.8960628188192" y="0" width="0.7758967300681746" height="8" fill="#563d7c"/>
+          <rect mask="url(#languages-bar)" x="458.87974287205384" y="0" width="0.7851831546330424" height="8" fill="#563d7c"/>
         
-          <rect mask="url(#languages-bar)" x="459.67195954888734" y="0" width="0.152938420375328" height="8" fill="#198CE7"/>
+          <rect mask="url(#languages-bar)" x="459.6649260266868" y="0" width="0.15476888446783776" height="8" fill="#198CE7"/>
         
-          <rect mask="url(#languages-bar)" x="459.8248979692627" y="0" width="0.05140341094659479" height="8" fill="#e16737"/>
+          <rect mask="url(#languages-bar)" x="459.81969491115467" y="0" width="0.052018639597050005" height="8" fill="#e16737"/>
         
       </svg>
       <div class="field center horizontal-wrap fill-width">
@@ -905,20 +905,20 @@
             </div>
           
             <div class="entry">
+              <span class="value"></span>
+              <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+              02
+            </div>
+          
+            <div class="entry">
               <span class="value">2</span>
               <div class="bar" style="height: 7.142857142857142px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-              02
+              03
             </div>
           
             <div class="entry">
               <span class="value">4</span>
               <div class="bar" style="height: 14.285714285714285px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
-              03
-            </div>
-          
-            <div class="entry">
-              <span class="value">2</span>
-              <div class="bar" style="height: 7.142857142857142px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
               04
             </div>
           
@@ -947,8 +947,8 @@
             </div>
           
             <div class="entry">
-              <span class="value">6</span>
-              <div class="bar" style="height: 21.428571428571427px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+              <span class="value"></span>
+              <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
               09
             </div>
           
@@ -1001,14 +1001,14 @@
             </div>
           
             <div class="entry">
-              <span class="value">14</span>
-              <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+              <span class="value"></span>
+              <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
               18
             </div>
           
             <div class="entry">
-              <span class="value">6</span>
-              <div class="bar" style="height: 21.428571428571427px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+              <span class="value">4</span>
+              <div class="bar" style="height: 14.285714285714285px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
               19
             </div>
           
@@ -1025,8 +1025,8 @@
             </div>
           
             <div class="entry">
-              <span class="value">6</span>
-              <div class="bar" style="height: 21.428571428571427px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+              <span class="value">4</span>
+              <div class="bar" style="height: 14.285714285714285px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
               22
             </div>
           
@@ -1053,14 +1053,14 @@
               </div>
             
               <div class="entry">
-                <span class="value">22</span>
-                <div class="bar" style="height: 36.666666666666664px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                <span class="value"></span>
+                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                 Mon
               </div>
             
               <div class="entry">
-                <span class="value">14</span>
-                <div class="bar" style="height: 23.333333333333332px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                <span class="value">2</span>
+                <div class="bar" style="height: 3.3333333333333335px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                 Tue
               </div>
             
@@ -1071,8 +1071,8 @@
               </div>
             
               <div class="entry">
-                <span class="value"></span>
-                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                <span class="value">8</span>
+                <div class="bar" style="height: 13.333333333333334px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                 Thu
               </div>
             
@@ -1098,26 +1098,8 @@
             
               <div class="entry">
                 <span class="name">HTML</span>
-                <div class="bar" style="width: 72.392%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
-                <span class="value">90%</span>
-              </div>
-            
-              <div class="entry">
-                <span class="name">JavaScript</span>
-                <div class="bar" style="width: 5.04%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                <span class="value">6%</span>
-              </div>
-            
-              <div class="entry">
-                <span class="name">CSS</span>
-                <div class="bar" style="width: 2.112%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                <span class="value">3%</span>
-              </div>
-            
-              <div class="entry">
-                <span class="name">Jupyter</span>
-                <div class="bar" style="width: 0.46399999999999997%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                <span class="value">1%</span>
+                <div class="bar" style="width: 80%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                <span class="value">100%</span>
               </div>
             
           </div>
@@ -1169,7 +1151,7 @@
                   
                     <div class="label" title="Data structures are a way of organizing and storing data.">data structures</div>
                   
-                    <div class="label" title="API, Awesome Lists, Database, PHP, SQL, MySQL, Django, Arduino, Data visualization, Raspberry Pi, GitHub API, Azure, Tensorflow, Bitcoin, Chrome, R, iOS, Bash, Unity, Terminal, MATLAB, Kubernetes, Chrome extension, Jupyter Notebook, 3D, Ubuntu, Code quality, macOS, Swift, Bot, MongoDB, Code review, Security, Flask, Command line interface, Unreal Engine, Windows, Markdown, scikit-learn, Ruby, Natural language processing, LaTeX, Cryptocurrency, Mobile, Shell, Minecraft, Operating system, Ethereum, Continuous integration, Homebrew, Documentation, NoSQL, Material design, Deployment, Twitter, Serverless, Project management, Rails, Emulator, Scala, Font, P2P, Jekyll, Package manager, Parsing, Publishing, Data Science, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 78 more...</div>
+                    <div class="label" title="API, Awesome Lists, Database, PHP, SQL, MySQL, Django, Arduino, Data visualization, Raspberry Pi, GitHub API, Azure, Tensorflow, Bitcoin, Chrome, R, iOS, Bash, Unity, Terminal, MATLAB, Kubernetes, Chrome extension, Jupyter Notebook, 3D, Ubuntu, Code quality, macOS, Swift, Bot, MongoDB, Code review, Security, Flask, Command line interface, Unreal Engine, Windows, Markdown, scikit-learn, Natural language processing, Ruby, LaTeX, Cryptocurrency, Mobile, Shell, Minecraft, Operating system, Ethereum, Continuous integration, Homebrew, Documentation, NoSQL, Material design, Deployment, Twitter, Serverless, Project management, Rails, Emulator, Scala, Font, P2P, Jekyll, Package manager, Parsing, Publishing, Data Science, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 78 more...</div>
                   
                 
               </div>
@@ -1199,11 +1181,11 @@
         <section>
           <div class="field">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M7.998 14.5c2.832 0 5-1.98 5-4.5 0-1.463-.68-2.19-1.879-3.383l-.036-.037c-1.013-1.008-2.3-2.29-2.834-4.434-.322.256-.63.579-.864.953-.432.696-.621 1.58-.046 2.73.473.947.67 2.284-.278 3.232-.61.61-1.545.84-2.403.633a2.788 2.788 0 01-1.436-.874A3.21 3.21 0 003 10c0 2.53 2.164 4.5 4.998 4.5zM9.533.753C9.496.34 9.16.009 8.77.146 7.035.75 4.34 3.187 5.997 6.5c.344.689.285 1.218.003 1.5-.419.419-1.54.487-2.04-.832-.173-.454-.659-.762-1.035-.454C2.036 7.44 1.5 8.702 1.5 10c0 3.512 2.998 6 6.498 6s6.5-2.5 6.5-6c0-2.137-1.128-3.26-2.312-4.438-1.19-1.184-2.436-2.425-2.653-4.81z"/></svg>
-            Current streak 0 days
+            Current streak 10 days
           </div>
           <div class="field">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M1.5 1.75a.75.75 0 00-1.5 0v12.5c0 .414.336.75.75.75h14.5a.75.75 0 000-1.5H1.5V1.75zm14.28 2.53a.75.75 0 00-1.06-1.06L10 7.94 7.53 5.47a.75.75 0 00-1.06 0L3.22 8.72a.75.75 0 001.06 1.06L7 7.06l2.47 2.47a.75.75 0 001.06 0l5.25-5.25z"/></svg>
-            ~3.50 commits per day
+            ~3.65 commits per day
           </div>
         </section>
       
@@ -2118,15 +2100,15 @@
                       <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,4.571428571428571 0,3.571428571428571 z"/>
                       <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,3.571428571428571 1.7,4.571428571428571 z"/>
                     </g>
-                    <g transform="translate(-6.8, 4)">
+                    <g transform="translate(-6.8, 4.263736263736264)">
                       <path fill="#216e39" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
-                      <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,8 0,7 z"/>
-                      <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,7 1.7,8 z"/>
+                      <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,7.736263736263736 0,6.736263736263736 z"/>
+                      <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,6.736263736263736 1.7,7.736263736263736 z"/>
                     </g>
-                    <g transform="translate(-8.5, 8.956043956043956)">
+                    <g transform="translate(-8.5, 9.021978021978022)">
                       <path fill="#216e39" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
-                      <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,4.043956043956044 0,3.043956043956044 z"/>
-                      <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,3.043956043956044 1.7,4.043956043956044 z"/>
+                      <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,3.978021978021978 0,2.978021978021978 z"/>
+                      <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,2.978021978021978 1.7,3.978021978021978 z"/>
                     </g>
                     <g transform="translate(-10.2, 9.692307692307693)">
                       <path fill="#216e39" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
@@ -2148,15 +2130,15 @@
                       <path fill="#30a14e" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,3.4505494505494507 0,2.4505494505494507 z"/>
                       <path fill="#30a14e" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,2.4505494505494507 1.7,3.4505494505494507 z"/>
                     </g>
-                    <g transform="translate(-5.1, 7.8791208791208796)">
-                      <path fill="#40c463" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
-                      <path fill="#40c463" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,3.120879120879121 0,2.120879120879121 z"/>
-                      <path fill="#40c463" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,2.120879120879121 1.7,3.120879120879121 z"/>
+                    <g transform="translate(-5.1, 5.835164835164835)">
+                      <path fill="#216e39" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
+                      <path fill="#216e39" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,5.164835164835165 0,4.164835164835165 z"/>
+                      <path fill="#216e39" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,4.164835164835165 1.7,5.164835164835165 z"/>
                     </g>
-                    <g transform="translate(-6.8, 10)">
-                      <path fill="#ebedf0" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
-                      <path fill="#ebedf0" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,2 0,1 z"/>
-                      <path fill="#ebedf0" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,1 1.7,2 z"/>
+                    <g transform="translate(-6.8, 9.868131868131869)">
+                      <path fill="#9be9a8" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
+                      <path fill="#9be9a8" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,2.131868131868132 0,1.1318681318681318 z"/>
+                      <path fill="#9be9a8" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,1.1318681318681318 1.7,2.131868131868132 z"/>
                     </g></g></g></svg>
     
   </section>
