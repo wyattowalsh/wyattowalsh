@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="916" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="899" class="">
 
   <defs><style/></defs>
   <style>/* SVG global context */
@@ -1074,7 +1074,7 @@
                   
                   <div class="name">
                     <span>alexdlaird/pyngrok</span>
-                    <span>starred 7 hours ago</span>
+                    <span>starred 8 hours ago</span>
                   </div>
                 </div>
                 <div class="field description">
@@ -1168,7 +1168,7 @@
                   
                   <div class="name">
                     <span>shawwn/colab-tricks</span>
-                    <span>starred 6 days ago</span>
+                    <span>starred 7 days ago</span>
                   </div>
                 </div>
                 <div class="field description">
@@ -1467,149 +1467,144 @@
                     
                     
                       <div class="commit">
+                        <div class="sha">#bd837cb</div>
+                        <div class="message">removing dask</div>
+                      </div>
+                    
+                  </div>
+                
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                  <div class="field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
+                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
+                  </div>
+                  <div class="details">
+                    
+                      <div>on branch <div class="code">main</div></div>
+                    
+                    
+                      <div class="commit">
+                        <div class="sha">#1f4e0ef</div>
+                        <div class="message">adding updated nb for kaggle</div>
+                      </div>
+                    
+                  </div>
+                
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                  <div class="field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
+                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
+                  </div>
+                  <div class="details">
+                    
+                      <div>on branch <div class="code">main</div></div>
+                    
+                    
+                      <div class="commit">
+                        <div class="sha">#2cdde81</div>
+                        <div class="message">finishing nb up to common player info</div>
+                      </div>
+                    
+                  </div>
+                
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                  <div class="field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
+                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
+                  </div>
+                  <div class="details">
+                    
+                      <div>on branch <div class="code">main</div></div>
+                    
+                    
+                      <div class="commit">
+                        <div class="sha">#58f25ab</div>
+                        <div class="message">finishing nb up to common player info</div>
+                      </div>
+                    
+                  </div>
+                
+                
+                
+                
+                
+              </section>
+            </div>
+          
+            <div class="row fill-width">
+              <section class="activity">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                  <div class="field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
+                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
+                  </div>
+                  <div class="details">
+                    
+                      <div>on branch <div class="code">main</div></div>
+                    
+                    
+                      <div class="commit">
                         <div class="sha">#1c041b1</div>
                         <div class="message">Created using Colaboratory</div>
-                      </div>
-                    
-                  </div>
-                
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                  <div class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-                    Pushed 2 commits in <div class="repo">wyattowalsh/sports-analytics</div>
-                  </div>
-                  <div class="details">
-                    
-                      <div>on branch <div class="code">main</div></div>
-                    
-                    
-                      <div class="commit">
-                        <div class="sha">#ae1cfc1</div>
-                        <div class="message">dependencies</div>
-                      </div>
-                    
-                      <div class="commit">
-                        <div class="sha">#b583497</div>
-                        <div class="message">Merge branch 'main' of https://github.com/wyattowalsh/sports-analytics into main</div>
-                      </div>
-                    
-                  </div>
-                
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                  <div class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
-                  </div>
-                  <div class="details">
-                    
-                      <div>on branch <div class="code">main</div></div>
-                    
-                    
-                      <div class="commit">
-                        <div class="sha">#b88151c</div>
-                        <div class="message">Created using Colaboratory</div>
-                      </div>
-                    
-                  </div>
-                
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                  <div class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
-                  </div>
-                  <div class="details">
-                    
-                      <div>on branch <div class="code">main</div></div>
-                    
-                    
-                      <div class="commit">
-                        <div class="sha">#9cd8ec3</div>
-                        <div class="message">dependencies</div>
-                      </div>
-                    
-                  </div>
-                
-                
-                
-                
-                
-              </section>
-            </div>
-          
-            <div class="row fill-width">
-              <section class="activity">
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                  <div class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/></svg>
-                    Pushed 1 commit in <div class="repo">wyattowalsh/sports-analytics</div>
-                  </div>
-                  <div class="details">
-                    
-                      <div>on branch <div class="code">main</div></div>
-                    
-                    
-                      <div class="commit">
-                        <div class="sha">#3fb504c</div>
-                        <div class="message">dependencies</div>
                       </div>
                     
                   </div>
