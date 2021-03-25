@@ -20,7 +20,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
  <a href="https://github.com/wyattowalsh/data-science-notes"><img src="https://gh-card.dev/repos/wyattowalsh/data-science-notes.svg"></a>
  </p>
 
-<p align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </P
+<h4 align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </h4> 
 
 ---
 
