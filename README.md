@@ -14,13 +14,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 ## Current Projects
 
- | [![wyattowalsh/sports-analytics - GitHub](https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg)](https://github.com/wyattowalsh/sports-analytics) | [![wyattowalsh/generative-art - GitHub](https://gh-card.dev/repos/wyattowalsh/generative-art.svg)](https://github.com/wyattowalsh/generative-art) |
- |---|---|
- 
- |[![wyattowalsh/data-science-notes - GitHub](https://gh-card.dev/repos/wyattowalsh/data-science-notes.svg)](https://github.com/wyattowalsh/data-science-notes)|
- |---|
+ <p align='center'>
+ <a href="https://github.com/wyattowalsh/sports-analytics"><img src="https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg"></a>
+ <a href="https://github.com/wyattowalsh/generative-art"><img src="https://gh-card.dev/repos/wyattowalsh/generative-art.svg"></a> <br>
+ <a href="https://github.com/wyattowalsh/data-science-notes"><img src="https://gh-card.dev/repos/wyattowalsh/data-science-notes.svg"></a>
+ </p>
 
-Please see the pinned repositories at the bottom of the page for my past projects
+<p align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </P
 
 ---
 
