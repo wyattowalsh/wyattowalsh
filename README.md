@@ -14,7 +14,8 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 ## Current Projects
 
-[![wyattowalsh/sports-analytics - GitHub](https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg)](https://github.com/wyattowalsh/sports-analytics) [![wyattowalsh/generative-art - GitHub](https://gh-card.dev/repos/wyattowalsh/generative-art.svg)](https://github.com/wyattowalsh/generative-art)
+ | [![wyattowalsh/sports-analytics - GitHub](https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg)](https://github.com/wyattowalsh/sports-analytics) | [![wyattowalsh/generative-art - GitHub](https://gh-card.dev/repos/wyattowalsh/generative-art.svg)](https://github.com/wyattowalsh/generative-art) |
+ |---|---|
 
 ---
 
