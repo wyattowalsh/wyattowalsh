@@ -11,6 +11,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
  <p><a href="https://twitter.com/wyattowalsh" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/twitter-%231DA1F2.svg?&style=for-the-badge&logo=twitter&logoColor=white" /></a><a href="https://www.linkedin.com/in/wyattowalsh" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/linkedin-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white" /></a><a href="https://medium.com/@wyattowalsh" target="_blank"><img alt="Medium" src="https://img.shields.io/badge/medium-%2312100E.svg?&style=for-the-badge&logo=medium&logoColor=white" /></a>
 </p>
 
+
+## Current Projects
+
+[![wyattowalsh/sports-analytics - GitHub](https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg)](https://github.com/wyattowalsh/sports-analytics) [![wyattowalsh/generative-art - GitHub](https://gh-card.dev/repos/wyattowalsh/generative-art.svg)](https://github.com/wyattowalsh/generative-art)
+
+---
+
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 ### Hey there, I'm ***Wyatt*** 👋
