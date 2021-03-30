@@ -1310,8 +1310,8 @@
             </div>
           
             <div class="entry">
-              <span class="value">7</span>
-              <div class="bar" style="height: 15.217391304347828px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+              <span class="value"></span>
+              <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
               02
             </div>
           
@@ -1464,8 +1464,8 @@
               </div>
             
               <div class="entry">
-                <span class="value">11</span>
-                <div class="bar" style="height: 18.96551724137931px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                <span class="value">4</span>
+                <div class="bar" style="height: 6.896551724137931px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                 Tue
               </div>
             
@@ -1503,7 +1503,7 @@
             
               <div class="entry">
                 <span class="name">Jupyter Notebook</span>
-                <div class="bar" style="width: 78.288%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                <div class="bar" style="width: 78.312%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                 <span class="value">98%</span>
               </div>
             
@@ -1515,7 +1515,7 @@
             
               <div class="entry">
                 <span class="name">Shell</span>
-                <div class="bar" style="width: 0.04%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                <div class="bar" style="width: 0.016%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                 <span class="value">0%</span>
               </div>
             
