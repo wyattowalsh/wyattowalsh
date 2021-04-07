@@ -8,18 +8,18 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
  > Reach out, it would be great to hear from you and maybe we could even develop some good personal or professional ties. 😊
 
- <p><a href="https://twitter.com/wyattowalsh" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/twitter-%231DA1F2.svg?&style=for-the-badge&logo=twitter&logoColor=white" /></a><a href="https://www.linkedin.com/in/wyattowalsh" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/linkedin-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white" /></a><a href="https://medium.com/@wyattowalsh" target="_blank"><img alt="Medium" src="https://img.shields.io/badge/medium-%2312100E.svg?&style=for-the-badge&logo=medium&logoColor=white" /></a>
+<p><a href="https://twitter.com/wyattowalsh" target="_blank"><img alt="Twitter" src="https://img.shields.io/badge/twitter-%231DA1F2.svg?&style=for-the-badge&logo=twitter&logoColor=white" /></a> <a href="https://www.linkedin.com/in/wyattowalsh" target="_blank"><img alt="LinkedIn" src="https://img.shields.io/badge/linkedin-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white" /></a> <a href="https://medium.com/@wyattowalsh" target="_blank"><img alt="Medium" src="https://img.shields.io/badge/medium-%2312100E.svg?&style=for-the-badge&logo=medium&logoColor=white" /></a> <a href="https://www.kaggle.com/wyattowalsh" target="_blank"><img alt="Kaggle" src="https://img.shields.io/badge/kaggle-%2320BEFF.svg?&style=for-the-badge&logo=kaggle&logoColor=white" /></a>
 </p>
 
 ---
 
 ## Current Projects
 
- <p align='center'>
- <a href="https://github.com/wyattowalsh/sports-analytics"><img src="https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg" style="width: 45%"></a>
- <a href="https://github.com/wyattowalsh/generative-art"><img src="https://gh-card.dev/repos/wyattowalsh/generative-art.svg" style="width: 45%"></a> <br>
- <a href="https://github.com/wyattowalsh/data-science-notes"><img src="https://gh-card.dev/repos/wyattowalsh/data-science-notes.svg" style="width: 65%"></a>
- </p>
+<p align='center'>
+<a href="https://github.com/wyattowalsh/sports-analytics"><img src="https://gh-card.dev/repos/wyattowalsh/sports-analytics.svg"></a>
+<a href="https://github.com/wyattowalsh/generative-art"><img src="https://gh-card.dev/repos/wyattowalsh/generative-art.svg"></a>
+<a href="https://github.com/wyattowalsh/data-science-notes"><img src="https://gh-card.dev/repos/wyattowalsh/data-science-notes.svg"></a>
+</p>
 
 <h4 align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </h4> 
 
