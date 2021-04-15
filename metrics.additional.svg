@@ -1105,6 +1105,19 @@
                         <div class="tweet">
                             RT
                             <span class="mention">
+                                @newsycombinator
+                            </span>
+                            : A collection of open source, experimental, tiny tools
+                            <span class="link">
+                                tinytools.directory
+                            </span>
+                            <div class="date">
+                                14:38 on 15/04/2021
+                            </div>
+                        </div>
+                        <div class="tweet">
+                            RT
+                            <span class="mention">
                                 @andi_staub
                             </span>
                             : 18 Cognitive Bias Examples Show Why Mental Mistakes Get Made
@@ -1130,19 +1143,6 @@
                                 02:08 on 13/04/2021
                             </div>
                         </div>
-                        <div class="tweet">
-                            RT
-                            <span class="mention">
-                                @alvinfoo
-                            </span>
-                            : This is how enemy aircrafts were detected before the invention of RADAR
-                            <span class="link">
-                                pic.twitter.com/0awj8L76d3
-                            </span>
-                            <div class="date">
-                                02:01 on 13/04/2021
-                            </div>
-                        </div>
                     </section>
                 </div>
             </section>
@@ -1166,7 +1166,7 @@
                                             arc298/instagram-scraper
                                         </span>
                                         <span>
-                                            starred 22 hours ago
+                                            starred 23 hours ago
                                         </span>
                                     </div>
                                 </div>
