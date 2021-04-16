@@ -97,8 +97,32 @@
     margin: 0 6px;
   }
 
-  .avatar.organization {
+  .organization.avatar {
     border-radius: 15%;
+  }
+
+  .organization.name {
+    white-space: nowrap;
+  }
+
+  .organization.contributions {
+    margin: 0 8px;
+    flex-wrap: wrap;
+  }
+
+  .contribution.organization {
+    display: flex;
+    border: 1px solid #959da5;
+    border-radius: 6px;
+    padding: 2px 6px;
+    padding-left: 0;
+    margin: 2px;
+    font-size: 12px;
+    background-color: #959da520;
+  }
+
+  .contribution.organization .avatar {
+    margin: 0 4px;
   }
 
 /* Commit calendar */
@@ -937,6 +961,12 @@
     stroke: rgba(127, 127, 127, 0.4) !important;
   }
 
+/* Autosize */
+  .autosize {
+    width: auto;
+    height: auto;
+  }
+
 /* Fade animation */
   .af {
     opacity: 0;
@@ -1108,9 +1138,9 @@
                                 @elonmusk
                             </span>
                             : It’s inevitable
-                            <span class="link">
+                            <a href="https://t.co/eBKnQm6QyF" class="link">
                                 pic.twitter.com/eBKnQm6QyF
-                            </span>
+                            </a>
                             <div class="date">
                                 12:01 on 16/04/2021
                             </div>
@@ -1121,9 +1151,9 @@
                                 @newsycombinator
                             </span>
                             : A collection of open source, experimental, tiny tools
-                            <span class="link">
+                            <a href="https://t.co/hjOQ1LCG69" class="link">
                                 tinytools.directory
-                            </span>
+                            </a>
                             <div class="date">
                                 14:38 on 15/04/2021
                             </div>
