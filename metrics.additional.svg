@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1363" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1312" class="">
     <defs>
         <style/>
     </defs>
@@ -1105,6 +1105,19 @@
                         <div class="tweet">
                             RT
                             <span class="mention">
+                                @elonmusk
+                            </span>
+                            : It’s inevitable
+                            <span class="link">
+                                pic.twitter.com/eBKnQm6QyF
+                            </span>
+                            <div class="date">
+                                12:01 on 16/04/2021
+                            </div>
+                        </div>
+                        <div class="tweet">
+                            RT
+                            <span class="mention">
                                 @newsycombinator
                             </span>
                             : A collection of open source, experimental, tiny tools
@@ -1113,34 +1126,6 @@
                             </span>
                             <div class="date">
                                 14:38 on 15/04/2021
-                            </div>
-                        </div>
-                        <div class="tweet">
-                            RT
-                            <span class="mention">
-                                @andi_staub
-                            </span>
-                            : 18 Cognitive Bias Examples Show Why Mental Mistakes Get Made
-                            <br />
-                            <br />
-                            <span class="hashtag">
-                                #BehavioralEconomics
-                            </span>
-                            <span class="hashtag">
-                                #AI
-                            </span>
-                            <span class="hashtag">
-                                #fintech
-                            </span>
-                            <span class="hashtag">
-                                #Insurtech
-                            </span>
-                            <span class="mention">
-                                @pierrepinna
-                            </span>
-                            @s…
-                            <div class="date">
-                                02:08 on 13/04/2021
                             </div>
                         </div>
                     </section>
