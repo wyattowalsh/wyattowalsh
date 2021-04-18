@@ -1349,8 +1349,10 @@
                 </h3>
                 <div class="chart-bars">
                     <div class="entry">
-                        <span class="value"></span>
-                        <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                        <span class="value">
+                            4
+                        </span>
+                        <div class="bar" style="height: 14.285714285714285px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                         00
                     </div>
                     <div class="entry">
@@ -1486,9 +1488,9 @@
                     <div class="chart-bars">
                         <div class="entry">
                             <span class="value">
-                                2
+                                6
                             </span>
-                            <div class="bar" style="height: 14.285714285714285px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                            <div class="bar" style="height: 42.857142857142854px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             Sun
                         </div>
                         <div class="entry">
@@ -1544,9 +1546,18 @@
                             <span class="name">
                                 HTML
                             </span>
-                            <div class="bar" style="width: 80%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                            <div class="bar" style="width: 55.144000000000005%; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                             <span class="value">
-                                100%
+                                69%
+                            </span>
+                        </div>
+                        <div class="entry">
+                            <span class="name">
+                                Python
+                            </span>
+                            <div class="bar" style="width: 24.855999999999998%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                            <span class="value">
+                                31%
                             </span>
                         </div>
                     </div>
