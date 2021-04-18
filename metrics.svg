@@ -1465,8 +1465,10 @@
                         17
                     </div>
                     <div class="entry">
-                        <span class="value"></span>
-                        <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                        <span class="value">
+                            1
+                        </span>
+                        <div class="bar" style="height: 3.571428571428571px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                         18
                     </div>
                     <div class="entry">
@@ -1508,7 +1510,7 @@
                     <div class="chart-bars">
                         <div class="entry">
                             <span class="value">
-                                41
+                                42
                             </span>
                             <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             Sun
@@ -1517,42 +1519,42 @@
                             <span class="value">
                                 2
                             </span>
-                            <div class="bar" style="height: 2.4390243902439024px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 2.380952380952381px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Mon
                         </div>
                         <div class="entry">
                             <span class="value">
                                 3
                             </span>
-                            <div class="bar" style="height: 3.6585365853658534px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 3.571428571428571px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Tue
                         </div>
                         <div class="entry">
                             <span class="value">
                                 7
                             </span>
-                            <div class="bar" style="height: 8.536585365853659px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 8.333333333333332px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Wed
                         </div>
                         <div class="entry">
                             <span class="value">
                                 2
                             </span>
-                            <div class="bar" style="height: 2.4390243902439024px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 2.380952380952381px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Thu
                         </div>
                         <div class="entry">
                             <span class="value">
                                 2
                             </span>
-                            <div class="bar" style="height: 2.4390243902439024px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 2.380952380952381px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Fri
                         </div>
                         <div class="entry">
                             <span class="value">
                                 2
                             </span>
-                            <div class="bar" style="height: 2.4390243902439024px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 2.380952380952381px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             Sat
                         </div>
                     </div>
@@ -1566,18 +1568,18 @@
                             <span class="name">
                                 Python
                             </span>
-                            <div class="bar" style="width: 59.87200000000001%; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                            <div class="bar" style="width: 60.424%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             <span class="value">
-                                75%
+                                76%
                             </span>
                         </div>
                         <div class="entry">
                             <span class="name">
                                 HTML
                             </span>
-                            <div class="bar" style="width: 20.128%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                            <div class="bar" style="width: 19.576%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">
-                                25%
+                                24%
                             </span>
                         </div>
                     </div>
@@ -1638,7 +1640,7 @@
                             <div class="label" title="Data structures are a way of organizing and storing data.">
                                 data structures
                             </div>
-                            <div class="label" title="Google, Awesome Lists, Database, PHP, SQL, MySQL, Arduino, Django, Data visualization, Bitcoin, Raspberry Pi, GitHub API, Azure, Chrome, Tensorflow, R, iOS, Bash, Unity, Terminal, MATLAB, Kubernetes, Chrome extension, 3D, Jupyter Notebook, Code quality, Ubuntu, macOS, Bot, Swift, MongoDB, Code review, Security, Flask, Command line interface, Unreal Engine, Windows, Markdown, scikit-learn, Natural language processing, Ruby, Cryptocurrency, Shell, LaTeX, Ethereum, Mobile, Minecraft, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Material design, Twitter, Deployment, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">
+                            <div class="label" title="Google, Awesome Lists, Database, PHP, SQL, MySQL, Arduino, Django, Data visualization, Bitcoin, Raspberry Pi, GitHub API, Azure, Chrome, Tensorflow, R, iOS, Bash, Unity, Terminal, MATLAB, Kubernetes, Chrome extension, 3D, Jupyter Notebook, Code quality, Ubuntu, macOS, Bot, Swift, MongoDB, Code review, Security, Flask, Command line interface, Unreal Engine, Windows, Markdown, scikit-learn, Natural language processing, Ruby, Cryptocurrency, Shell, LaTeX, Ethereum, Mobile, Minecraft, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Twitter, Material design, Deployment, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">
                                 and 78 more...
                             </div>
                         </div>
