@@ -1572,7 +1572,7 @@
                             <span class="name">
                                 Python
                             </span>
-                            <div class="bar" style="width: 62.272%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                            <div class="bar" style="width: 62%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             <span class="value">
                                 78%
                             </span>
@@ -1581,9 +1581,9 @@
                             <span class="name">
                                 HTML
                             </span>
-                            <div class="bar" style="width: 17.727999999999998%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 18%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">
-                                22%
+                                23%
                             </span>
                         </div>
                     </div>
