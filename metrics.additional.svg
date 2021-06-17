@@ -1241,7 +1241,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>openblockchains/crypto-books</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -1283,7 +1283,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bandprotocol/chain</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 13 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -1366,15 +1366,9 @@
                             <div class="entry">
                 <span class="value">54</span>
                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                3
+                4
                 
                   <div class="bottom">June</div>
-                
-              </div>
-                            <div class="entry">
-                <span class="value"></span>
-                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                4
                 
               </div>
                             <div class="entry">
@@ -1449,6 +1443,12 @@
                 16
                 
               </div>
+                            <div class="entry">
+                <span class="value"></span>
+                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                17
+                
+              </div>
                         </div>
                     </section>
                     <section class="column chart">
@@ -1457,15 +1457,9 @@
                             <div class="entry">
                 <span class="value"></span>
                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                3
+                4
                 
                 <div class="bottom">June</div>
-                
-              </div>
-                            <div class="entry">
-                <span class="value"></span>
-                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                4
                 
               </div>
                             <div class="entry">
@@ -1538,6 +1532,12 @@
                 <span class="value"></span>
                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                 16
+                
+              </div>
+                            <div class="entry">
+                <span class="value"></span>
+                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                17
                 
               </div>
                         </div>
