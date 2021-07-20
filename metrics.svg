@@ -1288,7 +1288,7 @@
                                 <div class="field ">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"/></svg>
                   
-                    277 views in last two weeks
+                    276 views in last two weeks
                   
                 </div>
                             </section>
@@ -1391,7 +1391,7 @@
                 <div class="row">
                     <ul class="habits">
                         <li>Uses spaces for indentation</li>
-                        <li>Has approximately 44.3 characters per line of code written</li>
+                        <li>Has approximately 45.6 characters per line of code written</li>
                         <li>Mostly pushes code around 20:00</li>
                         <li>Mostly active on Friday</li>
                     </ul>
@@ -1461,8 +1461,8 @@
               11
             </div>
                     <div class="entry">
-              <span class="value">2</span>
-              <div class="bar" style="height: 10px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+              <span class="value">1</span>
+              <div class="bar" style="height: 5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
               12
             </div>
                     <div class="entry">
@@ -1537,8 +1537,8 @@
                 Mon
               </div>
                         <div class="entry">
-                <span class="value">4</span>
-                <div class="bar" style="height: 7.142857142857142px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                <span class="value">3</span>
+                <div class="bar" style="height: 5.357142857142857px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                 Tue
               </div>
                         <div class="entry">
@@ -1568,37 +1568,37 @@
                     <div class="chart-bars horizontal">
                         <div class="entry">
                             <span class="name">JavaScript</span>
-                            <div class="bar" style="width: 51.048%; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
-                            <span class="value">64%</span>
+                            <div class="bar" style="width: 53.992%; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                            <span class="value">67%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Python</span>
-                            <div class="bar" style="width: 17.904%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">22%</span>
+                            <div class="bar" style="width: 14.92%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">19%</span>
                         </div>
                         <div class="entry">
                             <span class="name">TypeScript</span>
-                            <div class="bar" style="width: 6.784%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">8%</span>
+                            <div class="bar" style="width: 7.176%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">9%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Batchfile</span>
-                            <div class="bar" style="width: 2.72%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">3%</span>
+                            <div class="bar" style="width: 2.872%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">4%</span>
                         </div>
                         <div class="entry">
                             <span class="name">HTML</span>
-                            <div class="bar" style="width: 0.7679999999999999%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">1%</span>
-                        </div>
-                        <div class="entry">
-                            <span class="name">Shell</span>
-                            <div class="bar" style="width: 0.584%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 0.8160000000000001%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">1%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Solidity</span>
-                            <div class="bar" style="width: 0.2%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 0.21600000000000003%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">0%</span>
+                        </div>
+                        <div class="entry">
+                            <span class="name">Shell</span>
+                            <div class="bar" style="width: 0.016%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">0%</span>
                         </div>
                     </div>
@@ -1627,7 +1627,7 @@
                             <div class="label" title="Amazon Web Services provides on-demand cloud computing platforms on a subscription basis.">amazon web services</div>
                             <div class="label" title="An API (Application Programming Interface) is a collection of protocols and subroutines for building software.">api</div>
                             <div class="label" title="A database is a structured set of data held in a computer, usually a server.">database</div>
-                            <div class="label" title="Data structures, Google, Awesome Lists, PHP, SQL, MySQL, Arduino, Django, Data visualization, Bitcoin, Raspberry Pi, Azure, GitHub API, Chrome, R, Tensorflow, Bash, iOS, Unity, Terminal, MATLAB, Chrome extension, Kubernetes, Bot, 3D, Code quality, Jupyter Notebook, Ubuntu, macOS, Command line interface, Swift, Code review, MongoDB, Security, Flask, Unreal Engine, Windows, PostgreSQL, Markdown, Cryptocurrency, scikit-learn, Natural language processing, Ethereum, Ruby, Shell, LaTeX, Minecraft, Mobile, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Twitter, Deployment, Material design, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 79 more...</div>
+                            <div class="label" title="Data structures, Google, Awesome Lists, PHP, SQL, MySQL, Arduino, Django, Data visualization, Bitcoin, Raspberry Pi, Azure, GitHub API, Chrome, R, Tensorflow, Bash, iOS, Unity, Terminal, Chrome extension, MATLAB, Kubernetes, Bot, 3D, Code quality, Jupyter Notebook, Ubuntu, macOS, Command line interface, Swift, Code review, MongoDB, Security, Flask, Unreal Engine, Windows, PostgreSQL, Markdown, Cryptocurrency, scikit-learn, Natural language processing, Ethereum, Ruby, Shell, LaTeX, Minecraft, Mobile, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Twitter, Deployment, Material design, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 79 more...</div>
                         </div>
                     </section>
                 </div>
