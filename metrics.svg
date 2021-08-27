@@ -1371,7 +1371,7 @@
                                 <div class="field ">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/></svg>
                   
-                    89.6m added, 45.7m removed
+                    0 added, 0 removed
                   
                 </div>
                             </section>
@@ -1717,7 +1717,7 @@
                             <div class="label" title="Amazon Web Services provides on-demand cloud computing platforms on a subscription basis.">amazon web services</div>
                             <div class="label" title="An API (Application Programming Interface) is a collection of protocols and subroutines for building software.">api</div>
                             <div class="label" title="A database is a structured set of data held in a computer, usually a server.">database</div>
-                            <div class="label" title="Data structures, Google, Awesome Lists, PHP, SQL, Arduino, MySQL, Django, Data visualization, Bitcoin, Azure, Raspberry Pi, GitHub API, Chrome, R, Tensorflow, Bash, iOS, Unity, Terminal, Chrome extension, Bot, MATLAB, 3D, Kubernetes, Code quality, Jupyter Notebook, Ubuntu, Command line interface, macOS, Code review, Swift, MongoDB, Security, Flask, Unreal Engine, Windows, PostgreSQL, Markdown, Cryptocurrency, scikit-learn, Ethereum, Natural language processing, Ruby, Shell, LaTeX, Minecraft, Mobile, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Twitter, Deployment, Material design, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 79 more...</div>
+                            <div class="label" title="Data structures, Google, Awesome Lists, PHP, SQL, Arduino, MySQL, Django, Data visualization, Bitcoin, Azure, Raspberry Pi, GitHub API, Chrome, R, Bash, Tensorflow, iOS, Unity, Terminal, Chrome extension, Bot, MATLAB, 3D, Kubernetes, Code quality, Jupyter Notebook, Ubuntu, Command line interface, macOS, Code review, Swift, MongoDB, Security, Flask, Unreal Engine, Windows, PostgreSQL, Markdown, Cryptocurrency, scikit-learn, Ethereum, Natural language processing, Ruby, Shell, LaTeX, Minecraft, Mobile, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Twitter, Deployment, Material design, Serverless, Project management, Rails, Emulator, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, statistics, data-analysis, jekyll-theme, simulation, modeling, classification, linear-algebra, probability, regression, calculus">and 79 more...</div>
                         </div>
                     </section>
                 </div>
