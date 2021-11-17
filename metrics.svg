@@ -1810,47 +1810,47 @@
                     <div class="chart-bars horizontal">
                         <div class="entry">
                             <span class="name">HTML</span>
-                            <div class="bar" style="width: 27.108069987294108%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                            <div class="bar" style="width: 27.584039923295517%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                             <span class="value">34%</span>
                         </div>
                         <div class="entry">
                             <span class="name">SCSS</span>
-                            <div class="bar" style="width: 17.38724981640575%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 17.230783448467065%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">22%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Python</span>
-                            <div class="bar" style="width: 13.272873512303729%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">17%</span>
+                            <div class="bar" style="width: 13.153432063396714%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">16%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Jupyter Notebook</span>
-                            <div class="bar" style="width: 10.536794619231351%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 10.441974909317747%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">13%</span>
                         </div>
                         <div class="entry">
                             <span class="name">JavaScript</span>
-                            <div class="bar" style="width: 8.197978714723677%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 8.124205808285009%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">10%</span>
                         </div>
                         <div class="entry">
                             <span class="name">TeX</span>
-                            <div class="bar" style="width: 1.7625048084208563%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 1.7466441790079246%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">2%</span>
                         </div>
                         <div class="entry">
                             <span class="name">CSS</span>
-                            <div class="bar" style="width: 1.575063820858638%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 1.5608899567959709%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">2%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Starlark</span>
-                            <div class="bar" style="width: 0.11377015165467962%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 0.11274634383014115%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">0%</span>
                         </div>
                         <div class="entry">
                             <span class="name">Apex</span>
-                            <div class="bar" style="width: 0.045694569107207386%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="width: 0.045283367603909164%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             <span class="value">0%</span>
                         </div>
                     </div>
@@ -1879,7 +1879,7 @@
                             <div class="label" title="An API (Application Programming Interface) is a collection of protocols and subroutines for building software.">api</div>
                             <div class="label" title="Deep Learning is an artificial neural network composed of many layers.">deep learning</div>
                             <div class="label" title="A database is a structured set of data held in a computer, usually a server.">database</div>
-                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, PHP, Arduino, MySQL, Django, Data visualization, Bitcoin, Azure, Raspberry Pi, GitHub API, Chrome, Bash, R, Unity, iOS, Tensorflow, Bot, Terminal, Chrome extension, 3D, Code quality, MATLAB, Kubernetes, Command line interface, Jupyter Notebook, Ubuntu, macOS, Code review, MongoDB, Swift, Security, Flask, Unreal Engine, Windows, PostgreSQL, Cryptocurrency, Markdown, Ethereum, scikit-learn, Natural language processing, Ruby, Shell, Minecraft, LaTeX, Mobile, Operating system, Continuous integration, Documentation, Homebrew, NoSQL, Deployment, Twitter, Material design, Serverless, Project management, Emulator, Rails, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, Statistics, data-analysis, jekyll-theme, simulation, obsidian-plugin, modeling, classification, linear-algebra, probability, regression, calculus">and 80 more...</div>
+                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, PHP, Arduino, MySQL, Django, Data visualization, Bitcoin, Azure, Raspberry Pi, GitHub API, Chrome, Bash, R, Unity, iOS, Tensorflow, Bot, Terminal, Chrome extension, 3D, Code quality, MATLAB, Kubernetes, Command line interface, Jupyter Notebook, Ubuntu, macOS, Code review, MongoDB, Swift, Security, Flask, Unreal Engine, Windows, PostgreSQL, Cryptocurrency, Markdown, Ethereum, scikit-learn, Natural language processing, Ruby, Shell, Minecraft, LaTeX, Mobile, Operating system, Continuous integration, Documentation, NoSQL, Homebrew, Deployment, Twitter, Material design, Serverless, Project management, Emulator, Rails, Font, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, Statistics, data-analysis, jekyll-theme, simulation, obsidian-plugin, modeling, classification, linear-algebra, probability, regression, calculus">and 80 more...</div>
                         </div>
                     </section>
                 </div>
