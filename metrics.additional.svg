@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1239" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1206" class="">
     <defs>
         <style/>
     </defs>
@@ -46,14 +46,13 @@
                             wyattowalsh
                         </div>
                         <div class="tweet">
+                            <a href="https://t.co/3sbCKSiwoQ" class="link">gizmodo.com/wwf-non-fungib…</a>
+                            <div class="date">08:22:30 on 4 Feb 2022</div>
+                        </div>
+                        <div class="tweet">
                             <span class="mention">@coingecko</span>
                             Alright Matt Damon...
                             <div class="date">12:41:44 on 3 Feb 2022</div>
-                        </div>
-                        <div class="tweet">
-                            <span class="mention">@Route2FI</span>
-                            It seems with this approach, one is able to maximize investment in vehicles that act as competitive industry health proxies (since a token's health is associated with the network's health that that token belongs to)
-                            <div class="date">12:39:03 on 3 Feb 2022</div>
                         </div>
                     </section>
                 </div>
@@ -75,7 +74,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>yoursamlan/pubsidian</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An Obsidian-Publish alternative but it's FREE</div>
@@ -128,7 +127,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>johackim/gatsby-remark-obsidian</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Gatsby plugin to support Obsidian markdown syntax</div>
@@ -181,7 +180,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>obsidianmd/obsidian-releases</span>
-                                        <span>starred 12 hours ago</span>
+                                        <span>starred 13 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Community plugins list, theme list, and releases of Obsidian.</div>
