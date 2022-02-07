@@ -94,7 +94,7 @@
                                 <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                 <path fill-rule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/>
                             </svg>
-                            3 Issues opened
+                            1 Issue opened
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -545,7 +545,7 @@
                             <div class="label" title="An API (Application Programming Interface) is a collection of protocols and subroutines for building software.">api</div>
                             <div class="label" title="Deep Learning is an artificial neural network composed of many layers.">deep learning</div>
                             <div class="label" title="A database is a structured set of data held in a computer, usually a server.">database</div>
-                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, Arduino, MySQL, PHP, Django, Data visualization, Bitcoin, Azure, Chrome, Raspberry Pi, GitHub API, Bash, Bot, R, iOS, Unity, Chrome extension, Terminal, Tensorflow, 3D, Command line interface, Code quality, Kubernetes, MATLAB, Jupyter Notebook, Ubuntu, Code review, macOS, Security, MongoDB, Swift, Unreal Engine, Flask, Windows, PostgreSQL, Cryptocurrency, Ethereum, Markdown, scikit-learn, Natural language processing, Ruby, Shell, Minecraft, LaTeX, Operating system, Mobile, Continuous integration, Documentation, NoSQL, Homebrew, Deployment, Twitter, Material design, Serverless, Project management, Emulator, Font, Rails, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, Statistics, data-analysis, jekyll-theme, simulation, obsidian-plugin, modeling, linear-algebra, classification, probability, regression, calculus">and 80 more...</div>
+                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, Arduino, MySQL, PHP, Django, Data visualization, Bitcoin, Azure, Chrome, Raspberry Pi, GitHub API, Bash, Bot, R, iOS, Unity, Chrome extension, Terminal, Tensorflow, 3D, Command line interface, Code quality, Kubernetes, MATLAB, Jupyter Notebook, Ubuntu, Code review, macOS, MongoDB, Security, Swift, Unreal Engine, Flask, Windows, PostgreSQL, Cryptocurrency, Ethereum, Markdown, scikit-learn, Natural language processing, Ruby, Shell, Minecraft, LaTeX, Operating system, Mobile, Continuous integration, Documentation, NoSQL, Homebrew, Deployment, Twitter, Material design, Serverless, Project management, Emulator, Font, Rails, Scala, P2P, Package manager, Parsing, Jekyll, Data Science, Publishing, awesome-list, Statistics, data-analysis, jekyll-theme, simulation, obsidian-plugin, modeling, linear-algebra, classification, probability, regression, calculus">and 80 more...</div>
                         </div>
                     </section>
                 </div>
