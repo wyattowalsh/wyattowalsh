@@ -77,13 +77,13 @@
                             wyattowalsh
                         </div>
                         <div class="tweet">
-                            <a href="https://t.co/tlZIZO5hp9" class="link">nature.com/articles/s4156…</a>
-                            <div class="date">08:45:06 on 22 Feb 2022</div>
+                            <a href="https://t.co/23f9M88efJ" class="link">technologyreview.com/2022/02/22/104…</a>
+                            <div class="date">15:45:42 on 22 Feb 2022</div>
                         </div>
                         <div class="tweet">
-                            'Solo' GP No More: A New VC Business Model Emerges
-                            <a href="https://t.co/l16tKWuyGA" class="link">angellist.com/blog/solo-gps-…</a>
-                            <div class="date">00:16:14 on 19 Feb 2022</div>
+                            First scotch, now carbon capture? What will Peat do next??
+                            <a href="https://t.co/dI7YKx3baH" class="link">nytimes.com/interactive/20…</a>
+                            <div class="date">15:45:09 on 22 Feb 2022</div>
                         </div>
                     </section>
                 </div>
@@ -105,7 +105,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>trekhleb/javascript-algorithms</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">📝 Algorithms and data structures implemented in JavaScript with explanations and links to further readings</div>
@@ -158,7 +158,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>paulo-al-castro/mt5se</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">package mt5se - Python framework for bulding automated traders for Stock Exchange through Metatrader</div>
@@ -211,7 +211,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>saeedmarzban/waveCorr</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">waveCorr policy gradient model for portfolio management</div>
@@ -267,13 +267,8 @@
                             <div class="entry">
                                 <span class="value">92</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                                9
-                                <div class="bottom">Feb.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 10
+                                <div class="bottom">Feb.</div>
                             </div>
                             <div class="entry">
                                 <span class="value">93</span>
@@ -335,6 +330,11 @@
                                 <div class="bar" style="height: 49.99999999999999px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 22
                             </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 49.99999999999999px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                23
+                            </div>
                         </div>
                     </section>
                     <section class="column chart chartist">
@@ -343,13 +343,8 @@
                             <div class="entry">
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                                9
-                                <div class="bottom">Feb.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 10
+                                <div class="bottom">Feb.</div>
                             </div>
                             <div class="entry">
                                 <span class="value">+1</span>
@@ -410,6 +405,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 22
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                23
                             </div>
                         </div>
                     </section>
