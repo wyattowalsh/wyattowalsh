@@ -77,6 +77,11 @@
                             wyattowalsh
                         </div>
                         <div class="tweet">
+                            The AI promise: Put IT on autopilot
+                            <a href="https://t.co/BkgAAm2LBx" class="link">technologyreview.com/2022/02/28/104…</a>
+                            <div class="date">20:27:14 on 28 Feb 2022</div>
+                        </div>
+                        <div class="tweet">
                             An awesome new
                             <span class="hashtag">#BobsBurgers</span>
                             -themed
@@ -96,10 +101,6 @@
                             ; great job!!
                             <a href="https://t.co/7qYpQoaFUb" class="link">pic.twitter.com/7qYpQoaFUb</a>
                             <div class="date">07:59:19 on 28 Feb 2022</div>
-                        </div>
-                        <div class="tweet">
-                            <a href="https://t.co/5dtKeVHV6p" class="link">phys.org/news/2022-02-e…</a>
-                            <div class="date">07:41:38 on 28 Feb 2022</div>
                         </div>
                     </section>
                 </div>
@@ -121,7 +122,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>zachspiel/bobsburgers-api</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The Bob's Burgers API</div>
@@ -168,7 +169,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>google/mediapipe</span>
-                                        <span>starred 14 hours ago</span>
+                                        <span>starred 15 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Cross-platform, customizable ML solutions for live and streaming media.</div>
