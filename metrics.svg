@@ -484,13 +484,13 @@
                     <div class="chart-bars horizontal">
                         <div class="entry">
                             <span class="name">JavaScript</span>
-                            <div class="bar" style="width: 68.37311068078364%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
-                            <span class="value">85%</span>
+                            <div class="bar" style="width: 68.58666403337695%; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                            <span class="value">86%</span>
                         </div>
                         <div class="entry">
                             <span class="name">SCSS</span>
-                            <div class="bar" style="width: 11.626889319216357%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                            <span class="value">15%</span>
+                            <div class="bar" style="width: 11.413335966623052%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <span class="value">14%</span>
                         </div>
                     </div>
                 </section>
