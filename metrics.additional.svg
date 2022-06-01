@@ -102,7 +102,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>quantiacs/toolbox</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">This is the current Quantiacs toolbox which includes the backtester for developing and testing trading algorithms.</div>
@@ -155,7 +155,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>LongOnly/Quantitative-Notebooks</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Educational notebooks on quantitative finance, algorithmic trading, financial modelling and investment strategy</div>
@@ -208,7 +208,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>EliteQuant/EliteQuant</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A list of online resources for quantitative modeling, trading, portfolio management</div>
@@ -431,7 +431,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">Rich-Harris/degit</span>
+                                        <span class="repo">quantiacs/toolbox</span>
                                     </div>
                                 </div>
                             </section>
@@ -444,7 +444,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">storybookjs/design-system</span>
+                                        <span class="repo">LongOnly/Quantitative-Notebooks</span>
                                     </div>
                                 </div>
                             </section>
@@ -457,7 +457,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">slatedocs/slate</span>
+                                        <span class="repo">EliteQuant/EliteQuant</span>
                                     </div>
                                 </div>
                             </section>
@@ -470,7 +470,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">jsdoc/jsdoc</span>
+                                        <span class="repo">CryptoSignal/Crypto-Signal</span>
                                     </div>
                                 </div>
                             </section>
@@ -483,7 +483,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">nicolay-zlobin/jesse-indicators</span>
+                                        <span class="repo">fremantle-industries/tai</span>
                                     </div>
                                 </div>
                             </section>
