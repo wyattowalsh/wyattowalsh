@@ -69,7 +69,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            1372 Commits
+                            1375 Commits
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -331,7 +331,7 @@
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="A database is a structured set of data held in a computer, usually a server.">database</div>
                             <div class="label" title="Deep Learning is an artificial neural network composed of many layers.">deep learning</div>
-                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, Arduino, MySQL, Bitcoin, PHP, Data visualization, Django, Azure, Chrome, GitHub API, Raspberry Pi, Bot, Bash, Chrome extension, Command line interface, 3D, R, Terminal, Unity, iOS, Code quality, Tensorflow, Kubernetes, MATLAB, Code review, Ubuntu, Jupyter Notebook, macOS, Security, MongoDB, Swift, Windows, Unreal Engine, Flask, PostgreSQL, Ethereum, Cryptocurrency, Markdown, scikit-learn, Natural language processing, Shell, Ruby, Minecraft, Continuous integration, Operating system, LaTeX, Mobile, Documentation, Twitter, NoSQL, Deployment, Homebrew, Material design, Serverless, Project management, Emulator, Font, Rails, P2P, Scala, Package manager, Parsing, Jekyll, Publishing, Data Science, awesome-list, Statistics, data-analysis, jekyll-theme, gatsby, simulation, obsidian-plugin, modeling, classification, linear-algebra, probability, regression, data-pipelines, calculus, docusaurus, project-structure, bio-links, nextra, docz">and 87 more...</div>
+                            <div class="label" title="Data structures, Awesome Lists, Google, SQL, Arduino, MySQL, Bitcoin, PHP, Data visualization, Django, Azure, Chrome, GitHub API, Raspberry Pi, Bot, Bash, Chrome extension, Command line interface, 3D, Terminal, R, Unity, iOS, Code quality, Tensorflow, Kubernetes, MATLAB, Code review, Ubuntu, Jupyter Notebook, macOS, Security, MongoDB, Swift, Windows, Unreal Engine, Flask, PostgreSQL, Ethereum, Cryptocurrency, Markdown, scikit-learn, Natural language processing, Shell, Ruby, Minecraft, Continuous integration, Operating system, LaTeX, Mobile, Documentation, Twitter, NoSQL, Deployment, Homebrew, Material design, Serverless, Project management, Emulator, Font, Rails, P2P, Scala, Package manager, Parsing, Jekyll, Publishing, Data Science, awesome-list, Statistics, data-analysis, jekyll-theme, gatsby, simulation, obsidian-plugin, modeling, classification, linear-algebra, probability, regression, data-pipelines, calculus, docusaurus, project-structure, bio-links, nextra, docz">and 87 more...</div>
                         </div>
                     </section>
                 </div>
