@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="964" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="915" class="">
     <defs>
         <style/>
     </defs>
@@ -49,20 +49,16 @@
                             wyattowalsh
                         </div>
                         <div class="tweet">
-                            umm okay this is kinda cool
-                            <br />
-                            ---------
-                            <br />
-                            Lamotrigine protects against cognitive deficits, synapse and nerve cell damage, and hallmark neuropathologies in a mouse model of Alzheimer’s disease
-                            <span class="mention">@DSDimensions</span>
-                            <a href="https://t.co/EjTdz8KbIq" class="link">app.dimensions.ai/details/public…</a>
-                            <div class="date">17:11:30 on 15 Aug 2022</div>
-                        </div>
-                        <div class="tweet">
                             The Curing Coma Campaign International Survey on Coma Epidemiology, Evaluation, and Therapy (COME TOGETHER)
                             <span class="mention">@DSDimensions</span>
                             <a href="https://t.co/FvXixwWyyH" class="link">app.dimensions.ai/details/public…</a>
                             <div class="date">17:09:44 on 15 Aug 2022</div>
+                        </div>
+                        <div class="tweet">
+                            The Combination of N60 with Mismatch Negativity Improves the Prediction of Awakening from Coma
+                            <span class="mention">@DSDimensions</span>
+                            <a href="https://t.co/cqPQeTCRnA" class="link">app.dimensions.ai/details/public…</a>
+                            <div class="date">17:09:18 on 15 Aug 2022</div>
                         </div>
                     </section>
                 </div>
@@ -84,7 +80,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>miled/cssviewer</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 13 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">CSSViewer. A Google Chrome Extension for fellow Web Developers, Web Designers, and Hobbyists.</div>
@@ -137,7 +133,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>callumlocke/json-formatter</span>
-                                        <span>starred 12 hours ago</span>
+                                        <span>starred 13 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Makes JSON/JSONP easy to read.</div>
@@ -184,7 +180,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>liamcain/obsidian-periodic-notes</span>
-                                        <span>starred 12 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Create/manage your daily, weekly, and monthly notes in Obsidian</div>
