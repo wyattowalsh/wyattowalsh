@@ -46,6 +46,11 @@
                             w4wdev
                         </div>
                         <div class="tweet">
+                            <span class="mention">@hardmaru</span>
+                            👋
+                            <div class="date">17:58:23 on 23 Aug 2022</div>
+                        </div>
+                        <div class="tweet">
                             RT
                             <span class="mention">@alvinfoo</span>
                             :
@@ -53,11 +58,6 @@
                             makes dream works
                             <a href="https://t.co/Y2HfytBTuN" class="link">pic.twitter.com/Y2HfytBTuN</a>
                             <div class="date">17:55:47 on 21 Aug 2022</div>
-                        </div>
-                        <div class="tweet">
-                            <span class="mention">@muratpak</span>
-                            diffusing stable-y? 😅
-                            <div class="date">17:54:50 on 21 Aug 2022</div>
                         </div>
                     </section>
                 </div>
@@ -241,13 +241,8 @@
                             <div class="entry">
                                 <span class="value">115</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                                10
-                                <div class="bottom">Aug.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 11
+                                <div class="bottom">Aug.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -309,6 +304,11 @@
                                 <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 23
                             </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                24
+                            </div>
                         </div>
                     </section>
                     <section class="column chart chartist">
@@ -317,13 +317,8 @@
                             <div class="entry">
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                                10
-                                <div class="bottom">Aug.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 11
+                                <div class="bottom">Aug.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -384,6 +379,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 23
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                24
                             </div>
                         </div>
                     </section>
