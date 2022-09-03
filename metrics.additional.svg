@@ -46,16 +46,18 @@
                             w4wdev
                         </div>
                         <div class="tweet">
-                            Okay so they’re complaining and I need help please
-                            <div class="date">13:18:42 on 3 Sept 2022</div>
-                        </div>
-                        <div class="tweet">
                             RT
                             <span class="mention">@hardmaru</span>
                             : The compute cost required to train
                             <span class="hashtag">#StableDiffusion</span>
                             is &lt; $600K, much less than the tens of millions of VC funding raised by o…
                             <div class="date">15:20:19 on 28 Aug 2022</div>
+                        </div>
+                        <div class="tweet">
+                            RT
+                            <span class="mention">@hardmaru</span>
+                            : See also:
+                            <div class="date">15:20:17 on 28 Aug 2022</div>
                         </div>
                     </section>
                 </div>
