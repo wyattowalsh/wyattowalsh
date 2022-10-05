@@ -12,7 +12,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 </p>
 
 ---
-
+<!--
 ## Current Projects
 
 <p align='center'>
@@ -24,6 +24,8 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <h4 align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </h4> 
 
 ---
+
+-->
 
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
