@@ -19,7 +19,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
     <a href="https://github.com/wyattowalsh/basketball-db"><img src="https://gh-card.dev/repos/wyattowalsh/basketball-db.svg"></a>
 </p>
 
-<h4 align='center'> ↓ Please see the pinned repositories at the bottom of the page for my past projects ↓ </h4> 
+<h4 align='center'> ↓ Please see <a href="#past-projects">the pinned repositories</a> at the bottom of the page for my past projects ↓ </h4> 
 
 ---
 
