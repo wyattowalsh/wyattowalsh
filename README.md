@@ -28,8 +28,6 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 ---
 
 <!--START_SECTION:waka-->
-
-
 <!--END_SECTION:waka-->
 
 ---
