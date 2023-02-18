@@ -16,3 +16,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PUSH_BRANCH_NAME: "main"
           SECTION_NAME: "My Recent Coding Stats"
+          IGNORED_REPOS: "explorations-in-envy-free-allocations"
