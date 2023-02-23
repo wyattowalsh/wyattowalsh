@@ -39,7 +39,7 @@ jobs:
       - name: Personal metrics
         uses: lowlighter/metrics@latest
         with:
-          filename: metrics.svg
+          filename: assets/metrics.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: "header, activity, repositories"
@@ -65,7 +65,7 @@ jobs:
       - name: Personal metrics (additional)
         uses: lowlighter/metrics@latest
         with:
-          filename: metrics.additional.svg
+          filename: assets/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ""
