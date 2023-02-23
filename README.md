@@ -117,6 +117,14 @@ MATLAB                   1 repo              █░░░░░░░░░░�
 
 ---
 
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/wyattowalsh/wyattowalsh.svg)](https://starchart.cc/wyattowalsh/wyattowalsh)
+
+---
+
+
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 ### Hey there, I'm ***Wyatt*** 👋
