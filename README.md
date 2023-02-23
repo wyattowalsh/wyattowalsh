@@ -1,6 +1,6 @@
 <img alt="Header" src="cover.gif">
 
-[![WakaTime Stats in README](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/waka.yml/badge.svg?branch=main)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/waka.yml) &nbsp; &nbsp; &nbsp; [![GitHub metrics](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/main.yml) &nbsp; &nbsp; &nbsp; [![update awesome-stars](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/awesome-stars.yml/badge.svg)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/awesome-stars.yml)
+[![WakaTime Stats in README](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/waka.yml/badge.svg?branch=main)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/waka.yml) &nbsp; &nbsp; [![GitHub metrics](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/main.yml) &nbsp; &nbsp; [![update awesome-stars](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/awesome-stars.yml/badge.svg)](https://github.com/wyattowalsh/wyattowalsh/actions/workflows/awesome-stars.yml) &nbsp; &nbsp; <a href="https://visitor-badge.laobi.icu/badge?page_id=wyattowalsh.visitor-badge&title=Visits"><img src="https://visitor-badge.laobi.icu/badge?page_id=wyattowalsh.visitor-badge&title=Visits" alt="Visits"></a>
 
 ---
 
