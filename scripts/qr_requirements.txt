@@ -1,0 +1,2 @@
+segno
+qrcode-artistic

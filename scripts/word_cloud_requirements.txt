@@ -1,0 +1,4 @@
+wordcloud
+markdown
+fontTools
+bs4
