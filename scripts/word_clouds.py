@@ -4,7 +4,7 @@ from wordcloud import WordCloud
 
 
 def get_topics_word_cloud():
-    with open("wyattowalsh/topics.md", "r", encoding="utf-8") as input_file:
+    with open("./topics.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
     html = markdown.markdown(text)
     soup = BeautifulSoup(html, 'html.parser')
@@ -16,10 +16,10 @@ def get_topics_word_cloud():
                 contour_color="white")
     # generate word cloud
     wc.generate_from_frequencies(data)
-    wc.to_file("assets/wordcloud_by_topic.png")
+    wc.to_file("./assets/wordcloud_by_topic.png")
 
 def get_languages_word_cloud():
-    with open("wyattowalsh/languages.md", "r", encoding="utf-8") as input_file:
+    with open("./languages.md", "r", encoding="utf-8") as input_file:
         text = input_file.read()
     html = markdown.markdown(text)
     soup = BeautifulSoup(html, 'html.parser')
@@ -30,7 +30,7 @@ def get_languages_word_cloud():
                 scale=4, mode="RGBA", relative_scaling=0, colormap="jet",
                 contour_color="white")
     wc.generate_from_frequencies(data)
-    wc.to_file("assets/wordcloud_by_language.png")
+    wc.to_file("./assets/wordcloud_by_language.png")
 
 if __name__ == "__main__":
     get_topics_word_cloud()
