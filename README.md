@@ -111,6 +111,12 @@ MATLAB                   1 repo              █░░░░░░░░░░�
 
 ---
 
+<div align='center'>
+ <img src="https://cr-skills-chart-widget.azurewebsites.net/api/api?username=wyattowalsh&branding=false&sort-by-score=true&width=800&bg=%236a9fb5&padding=25"/>
+</div>
+
+---
+
 <!--
 **wyattowalsh/wyattowalsh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 ### Hey there, I'm ***Wyatt*** 👋
