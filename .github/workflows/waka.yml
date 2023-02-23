@@ -15,7 +15,7 @@ jobs:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           PUSH_BRANCH_NAME: "main"
-          IGNORED_REPOS: "explorations-in-envy-free-allocations, ieor-180-project"
+          IGNORED_REPOS: "explorations-in-envy-free-allocations, ieor-180-project, SacHacks2018"
           SHOW_UPDATED_DATE: "True"
           SHOW_LINES_OF_CODE: "True"
           SHOW_TOTAL_CODE_TIME: "True"
