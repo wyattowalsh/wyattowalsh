@@ -829,7 +829,6 @@
 - [nashory/gans-awesome-applications](https://github.com/nashory/gans-awesome-applications) - Curated list of awesome GAN applications and demo
 - [ddbeck/readme-checklist](https://github.com/ddbeck/readme-checklist) - A checklist for writing READMEs
 - [chaconnewu/free-data-science-books](https://github.com/chaconnewu/free-data-science-books) - Free resources for learning data science
-- [ckz8780/market-toolkit](https://github.com/ckz8780/market-toolkit) - A collection of stock market resources and tools
 - [eugeneyan/applied-ml](https://github.com/eugeneyan/applied-ml) - 📚 Papers & tech blogs by companies sharing their work on data science & machine learning in production.
 - [newTendermint/awesome-bigdata](https://github.com/newTendermint/awesome-bigdata) - A curated list of awesome big data frameworks, ressources and other awesomeness.
 - [dive-into-machine-learning/dive-into-machine-learning](https://github.com/dive-into-machine-learning/dive-into-machine-learning) - Free ways to dive into machine learning with Python and Jupyter Notebook. Notebooks, courses, and other links. (First posted in 2016.)
