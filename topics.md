@@ -2953,7 +2953,6 @@
 - [magenta/magenta](https://github.com/magenta/magenta) - Magenta: Music and Art Generation with Machine Intelligence
 - [chaconnewu/free-data-science-books](https://github.com/chaconnewu/free-data-science-books) - Free resources for learning data science
 - [azu/github-issue-widget](https://github.com/azu/github-issue-widget) - Showcase your Github(repository)'s issue list via iframe.
-- [ckz8780/market-toolkit](https://github.com/ckz8780/market-toolkit) - A collection of stock market resources and tools
 - [dive-into-machine-learning/dive-into-machine-learning](https://github.com/dive-into-machine-learning/dive-into-machine-learning) - Free ways to dive into machine learning with Python and Jupyter Notebook. Notebooks, courses, and other links. (First posted in 2016.)
 - [hyperopt/hyperopt-sklearn](https://github.com/hyperopt/hyperopt-sklearn) - Hyper-parameter optimization for sklearn
 - [ashishpatel26/14-days-Beginner-Practical-Guide-of-Machine-Learning](https://github.com/ashishpatel26/14-days-Beginner-Practical-Guide-of-Machine-Learning) - 14 days Beginner Practical Guide of Machine Learning
