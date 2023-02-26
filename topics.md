@@ -2318,7 +2318,7 @@
 
 ## nlp 
 
-- [microsoft/LMOps](https://github.com/microsoft/LMOps) - General technology for enabling AI capabilities w/ LLMs and Generative AI models
+- [microsoft/LMOps](https://github.com/microsoft/LMOps) - General technology for enabling AI capabilities w/ LLMs and MLLMs
 - [MaartenGr/BERTopic](https://github.com/MaartenGr/BERTopic) - Leveraging BERT and c-TF-IDF to create easily interpretable topics.
 - [salesforce/CodeT5](https://github.com/salesforce/CodeT5) - Code for CodeT5: a new code-aware pre-trained encoder-decoder model.
 - [flairNLP/flair](https://github.com/flairNLP/flair) - A very simple framework for state-of-the-art Natural Language Processing (NLP)
