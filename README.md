@@ -37,13 +37,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <!--START_SECTION:waka-->
 ![Code Time](http://img.shields.io/badge/Code%20Time-795%20hrs%2014%20mins-blue)
 
-![Profile Views](http://img.shields.io/badge/Profile%20Views-389-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-394-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-14.6%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 3.7 MB Used in GitHub's Storage 
+> 📦 3.8 MB Used in GitHub's Storage 
  > 
 > 🏆 197 Contributions in the Year 2023
  > 
@@ -78,14 +78,14 @@ Sunday                   117 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-TypeScript               12 hrs 50 mins      █████████████░░░░░░░░░░░░   52.50 % 
-SCSS                     3 hrs 47 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.49 % 
-Python                   3 hrs 34 mins       ████░░░░░░░░░░░░░░░░░░░░░   14.64 % 
-JavaScript               1 hr 42 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   06.97 % 
-MDX                      1 hr 24 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   05.78 % 
+TypeScript               11 hrs 8 mins       █████████████░░░░░░░░░░░░   50.63 % 
+Python                   3 hrs 34 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.27 % 
+SCSS                     3 hrs 4 mins        ███░░░░░░░░░░░░░░░░░░░░░░   13.99 % 
+JavaScript               1 hr 42 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   07.75 % 
+MDX                      1 hr 24 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   06.43 % 
 
 💻 Operating System: 
-Mac                      24 hrs 26 mins      █████████████████████████   100.00 % 
+Mac                      21 hrs 59 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -105,7 +105,7 @@ HTML                     1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 25/02/2023 18:39:27 UTC
+ Last Updated on 26/02/2023 18:39:03 UTC
 <!--END_SECTION:waka-->
 
 ---
