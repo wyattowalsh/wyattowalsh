@@ -286,6 +286,7 @@
 
 ## JavaScript 
 
+- [temando/remark-mermaid](https://github.com/temando/remark-mermaid) - A remark plugin for Markdown that replaces mermaid graphs with rendered SVGs.
 - [plamere/3dExplorer](https://github.com/plamere/3dExplorer) - A 3D Music Maze
 - [schwamic/klangspektrum](https://github.com/schwamic/klangspektrum) - An insight into the musical tastes of Spotify users 🎶
 - [obiwankenoobi/chart.xkcd-react](https://github.com/obiwankenoobi/chart.xkcd-react) - React wrapper around chart.xkcd
@@ -919,6 +920,17 @@
 
 ## Python 
 
+- [Delgan/loguru](https://github.com/Delgan/loguru) - Python logging made (stupidly) simple
+- [samuelcolvin/python-devtools](https://github.com/samuelcolvin/python-devtools) - Dev tools for python
+- [Qix-/better-exceptions](https://github.com/Qix-/better-exceptions) - Pretty and useful exceptions in Python, automatically.
+- [borntyping/python-colorlog](https://github.com/borntyping/python-colorlog) - A colored formatter for the python logging module
+- [computationalmodelling/nbval](https://github.com/computationalmodelling/nbval) - A py.test plugin to validate Jupyter notebooks
+- [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Guarantee flawless API functionality with thorough, high-quality test scenarios generated from your API specification.
+- [pytest-dev/pytest-timeout](https://github.com/pytest-dev/pytest-timeout) - 
+- [pytest-dev/pytest-instafail](https://github.com/pytest-dev/pytest-instafail) - py.test plugin to show failures instantly
+- [hackebrot/pytest-emoji](https://github.com/hackebrot/pytest-emoji) - A pytest plugin that adds emojis to your test result report 😍
+- [tcmetzger/sphinx-favicon](https://github.com/tcmetzger/sphinx-favicon) - Sphinx extension to add custom favicons
+- [python-poetry/poetry-plugin-export](https://github.com/python-poetry/poetry-plugin-export) - Poetry plugin to export the dependencies to various formats
 - [nbedos/termtosvg](https://github.com/nbedos/termtosvg) - Record terminal sessions as SVG animations
 - [amueller/word_cloud](https://github.com/amueller/word_cloud) - A little word cloud generator in Python
 - [maguowei/starred](https://github.com/maguowei/starred) - creating your own Awesome List by GitHub stars!
@@ -1479,6 +1491,7 @@
 
 ## TypeScript 
 
+- [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
 - [schwamic/klangspektrum2](https://github.com/schwamic/klangspektrum2) - An insight into the musical tastes of Spotify users :notes:
 - [Effect-TS/effect](https://github.com/Effect-TS/effect) - A Fully-fledged functional effect system for typescript with a rich standard library
 - [kevinzunigacuellar/remark-code-title](https://github.com/kevinzunigacuellar/remark-code-title) - 🔌 remark plugin to add titles to code blocks
