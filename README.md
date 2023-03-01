@@ -35,9 +35,9 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 ---
 
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-799%20hrs%2048%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-819%20hrs%2011%20mins-blue)
 
-![Profile Views](http://img.shields.io/badge/Profile%20Views-365-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-372-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-14.7%20million%20lines%20of%20code-blue)
 
@@ -78,14 +78,14 @@ Sunday                   117 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-TypeScript               18 hrs 51 mins      ███████████░░░░░░░░░░░░░░   45.29 % 
-Python                   6 hrs 43 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.15 % 
-Markdown                 4 hrs               ██░░░░░░░░░░░░░░░░░░░░░░░   09.62 % 
-SCSS                     3 hrs 59 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   09.60 % 
-CSS                      1 hr 48 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   04.34 % 
+TypeScript               17 hrs 40 mins      ████████████░░░░░░░░░░░░░   47.55 % 
+Python                   4 hrs 6 mins        ███░░░░░░░░░░░░░░░░░░░░░░   11.05 % 
+Markdown                 4 hrs               ███░░░░░░░░░░░░░░░░░░░░░░   10.77 % 
+SCSS                     3 hrs 22 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   09.10 % 
+CSS                      1 hr 48 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   04.85 % 
 
 💻 Operating System: 
-Mac                      41 hrs 37 mins      █████████████████████████   100.00 % 
+Mac                      37 hrs 10 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -105,7 +105,7 @@ HTML                     1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 01/03/2023 08:08:53 UTC
+ Last Updated on 01/03/2023 18:42:01 UTC
 <!--END_SECTION:waka-->
 
 ---
