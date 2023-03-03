@@ -195,6 +195,7 @@
 - [virtual-reality](#virtual-reality)
 - [visual-studio-code](#visual-studio-code)
 - [vue](#vue)
+- [vuejs](#vuejs)
 - [web](#web)
 - [web-components](#web-components)
 - [webapp](#webapp)
@@ -288,6 +289,7 @@
 - [jsdoc/jsdoc](https://github.com/jsdoc/jsdoc) - An API documentation generator for JavaScript.
 - [roclark/sportsipy](https://github.com/roclark/sportsipy) - A free sports API written for python
 - [zachspiel/bobs-burgers-api](https://github.com/zachspiel/bobs-burgers-api) - The Bob's Burgers API  🍔
+- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities
 - [tiangolo/fastapi](https://github.com/tiangolo/fastapi) - FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [OpenAPITools/openapi-generator](https://github.com/OpenAPITools/openapi-generator) - OpenAPI Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec (v2, v3)
@@ -2677,7 +2679,6 @@
 - [krakenfx/kraken-wsclient-py](https://github.com/krakenfx/kraken-wsclient-py) - Kraken WebSockets Client in Python
 - [Marigold/universal-portfolios](https://github.com/Marigold/universal-portfolios) - Collection of algorithms for online portfolio selection
 - [federicomariamassari/financial-engineering](https://github.com/federicomariamassari/financial-engineering) - Applications of Monte Carlo methods to financial engineering projects, in Python.
-- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities
 - [AminHP/gym-mtsim](https://github.com/AminHP/gym-mtsim) - A general-purpose, flexible, and easy-to-use simulator alongside an OpenAI Gym trading environment for MetaTrader 5 trading platform (Approved by OpenAI Gym)
 - [jonnynabors/docusaurus2-dotenv](https://github.com/jonnynabors/docusaurus2-dotenv) - 
 - [paulo-al-castro/mt5se](https://github.com/paulo-al-castro/mt5se) - package mt5se - Python framework for bulding automated traders for Stock Exchange through Metatrader
@@ -4030,6 +4031,14 @@
 - [docsifyjs/docsify](https://github.com/docsifyjs/docsify) - 🃏 A magical documentation site generator.
 - [hoppscotch/hoppscotch](https://github.com/hoppscotch/hoppscotch) - 👽 Open source API development ecosystem - https://hoppscotch.io
 - [marktext/marktext](https://github.com/marktext/marktext) - 📝A simple and elegant markdown editor, available for Linux, macOS and Windows.
+
+## vuejs 
+
+- [GetPublii/Publii](https://github.com/GetPublii/Publii) - Publii is a desktop-based CMS for Windows, Mac and Linux that makes creating static websites fast and hassle-free, even for beginners.
+- [freqtrade/frequi](https://github.com/freqtrade/frequi) - Freqtrade UI - Frontend for Freqtrade
+- [dockeron/dockeron](https://github.com/dockeron/dockeron) - 🤖🤖🤖 Electron + Vue.js for Docker
+- [LeCoupa/awesome-cheatsheets](https://github.com/LeCoupa/awesome-cheatsheets) - 👩‍💻👨‍💻 Awesome cheatsheets for popular programming languages, frameworks and development tools. They include everything you should know in one single file.
+- [hoppscotch/hoppscotch](https://github.com/hoppscotch/hoppscotch) - 👽 Open source API development ecosystem - https://hoppscotch.io
 
 ## web 
 
