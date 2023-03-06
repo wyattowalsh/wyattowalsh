@@ -289,6 +289,11 @@
 
 ## JavaScript 
 
+- [react-syntax-highlighter/react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) - syntax highlighting component for react with prismjs or highlightjs ast using inline styles
+- [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
+- [remcohaszing/remark-mdx-code-meta](https://github.com/remcohaszing/remark-mdx-code-meta) - A remark MDX plugin for using markdown code block metadata
+- [mapbox/rehype-prism](https://github.com/mapbox/rehype-prism) - rehype plugin to highlight code blocks in HTML with Prism (via refractor)
+- [PrismJS/prism](https://github.com/PrismJS/prism) - Lightweight, robust, elegant syntax highlighting.
 - [typescript-cheatsheets/react](https://github.com/typescript-cheatsheets/react) - Cheatsheets for experienced React developers getting started with TypeScript
 - [honzaap/GithubCity](https://github.com/honzaap/GithubCity) - Create a 3D city from your GitHub contributions 🏙
 - [temando/remark-mermaid](https://github.com/temando/remark-mermaid) - A remark plugin for Markdown that replaces mermaid graphs with rendered SVGs.
@@ -926,6 +931,11 @@
 
 ## Python 
 
+- [omnilib/sphinx-mdinclude](https://github.com/omnilib/sphinx-mdinclude) - Markdown extension for Sphinx
+- [xdanaux/fontawesome-latex](https://github.com/xdanaux/fontawesome-latex) - LaTeX mappings for Font Awesome, the icons font
+- [bndr/pipreqs](https://github.com/bndr/pipreqs) - pipreqs - Generate pip requirements.txt file based on imports of any project. Looking for maintainers to move this project forward.
+- [PyCQA/isort](https://github.com/PyCQA/isort) - A Python utility / library to sort imports.
+- [adamerose/PandasGUI](https://github.com/adamerose/PandasGUI) - A GUI for Pandas DataFrames
 - [google/latexify_py](https://github.com/google/latexify_py) - A library to generate LaTeX expression from Python code.
 - [Delgan/loguru](https://github.com/Delgan/loguru) - Python logging made (stupidly) simple
 - [samuelcolvin/python-devtools](https://github.com/samuelcolvin/python-devtools) - Dev tools for python
@@ -1610,7 +1620,7 @@
 - [textileio/storage-js](https://github.com/textileio/storage-js) - Javascript/Typescript SDK for Textile's blockchain ↔ Filecoin bridge system
 - [ceramicstudio/js-3id](https://github.com/ceramicstudio/js-3id) - Authentication system for Ceramic apps that works with blockchain wallets.
 - [Redocly/redoc](https://github.com/Redocly/redoc) - 📘  OpenAPI/Swagger-generated API Reference Documentation
-- [gregberge/xstyled](https://github.com/gregberge/xstyled) - A utility-first CSS-in-JS framework built for React. 💅👩‍🎤⚡️
+- [styled-components/xstyled](https://github.com/styled-components/xstyled) - A utility-first CSS-in-JS framework built for React. 💅👩‍🎤⚡️
 - [learn-anything/learn-anything](https://github.com/learn-anything/learn-anything) - Organize world's knowledge, explore connections and curate learning paths
 - [FlorianWoelki/obsidian-icon-folder](https://github.com/FlorianWoelki/obsidian-icon-folder) - Simply add icons to your folders or files in Obsidian.
 - [visini/obsidian-icons-plugin](https://github.com/visini/obsidian-icons-plugin) - Add icons to your Obsidian notes – Experimental Obsidian Plugin
