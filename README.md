@@ -35,11 +35,11 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-829%20hrs%2016%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-836%20hrs%2048%20mins-blue)
 
-![Profile Views](http://img.shields.io/badge/Profile%20Views-43-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-41-blue)
 
-![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-14.6%20million%20lines%20of%20code-blue)
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.2%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
@@ -78,14 +78,14 @@ Sunday                   152 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Markdown                 5 hrs 5 mins        ███████░░░░░░░░░░░░░░░░░░   28.86 % 
-CSS                      3 hrs 32 mins       █████░░░░░░░░░░░░░░░░░░░░   20.12 % 
-Python                   3 hrs 11 mins       █████░░░░░░░░░░░░░░░░░░░░   18.09 % 
-MDX                      1 hr 28 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   08.42 % 
-TOML                     1 hr 6 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   06.25 % 
+Markdown                 5 hrs 43 mins       ██████░░░░░░░░░░░░░░░░░░░   22.11 % 
+CSS                      5 hrs 13 mins       █████░░░░░░░░░░░░░░░░░░░░   20.18 % 
+Python                   3 hrs 55 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.13 % 
+TypeScript               2 hrs 42 mins       ███░░░░░░░░░░░░░░░░░░░░░░   10.43 % 
+SCSS                     2 hrs 31 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   09.77 % 
 
 💻 Operating System: 
-Mac                      17 hrs 37 mins      █████████████████████████   100.00 % 
+Mac                      25 hrs 53 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -105,7 +105,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 10/03/2023 18:39:11 UTC
+ Last Updated on 11/03/2023 18:38:03 UTC
 <!--END_SECTION:waka-->
 
     
