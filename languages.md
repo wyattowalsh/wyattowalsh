@@ -566,7 +566,6 @@
 - [FAIRplus/the-fair-cookbook](https://github.com/FAIRplus/the-fair-cookbook) - The FAIR cookbook, containing recipes to make your data more FAIR. Find the rendered version on:
 - [BoostIO/BoostNote-Legacy](https://github.com/BoostIO/BoostNote-Legacy) - This repository is outdated and new Boost Note app is available! We've launched a new Boost Note app which supports real-time collaborative writing. https://github.com/BoostIO/BoostNote-App
 - [swashapp/swash](https://github.com/swashapp/swash) - Source code of Swash extension
-- [ccxt/ccxt](https://github.com/ccxt/ccxt) - A JavaScript / Python / PHP cryptocurrency trading API with support for more than 100 bitcoin/altcoin exchanges
 - [kurtextrem/Layoutify-for-Instagram](https://github.com/kurtextrem/Layoutify-for-Instagram) - A Google Chrome Extension which improves the Instagram.com Layout.
 - [google/docsy](https://github.com/google/docsy) - A set of Hugo doc templates for launching open source content.
 - [chaozh/awesome-blockchain-cn](https://github.com/chaozh/awesome-blockchain-cn) - 收集所有区块链(BlockChain)技术开发相关资料，包括Fabric和Ethereum开发资料
@@ -610,6 +609,7 @@
 
 ## Jupyter Notebook 
 
+- [Lux-AI-Challenge/Lux-Design-S2](https://github.com/Lux-AI-Challenge/Lux-Design-S2) - Repository for the Lux AI Challenge, season 2
 - [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your pandas dataframe into a Tableau-style User Interface for visual analysis
 - [nickderobertis/sensitivity](https://github.com/nickderobertis/sensitivity) - Sensitivity Analysis in Python - Gradient DataFrames and Hex-Bin Plots
 - [dexplo/dataframe_image](https://github.com/dexplo/dataframe_image) - A python package for embedding pandas DataFrames as images into pdf and markdown documents
@@ -1716,6 +1716,7 @@
 - [sqlectron/sqlectron-gui](https://github.com/sqlectron/sqlectron-gui) - A simple and lightweight SQL client desktop with cross database and platform support.
 - [oceanprotocol/market](https://github.com/oceanprotocol/market) - 🧜‍♀️ THE Data Market
 - [jupyter-lsp/jupyterlab-lsp](https://github.com/jupyter-lsp/jupyterlab-lsp) - Coding assistance for JupyterLab (code navigation + hover suggestions + linters + autocompletion + rename) using Language Server Protocol
+- [ccxt/ccxt](https://github.com/ccxt/ccxt) - A JavaScript / Python / PHP cryptocurrency trading API with support for more than 100 bitcoin/altcoin exchanges
 - [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw) - Virtual whiteboard for sketching hand-drawn like diagrams
 - [nwtgck/gh-card](https://github.com/nwtgck/gh-card) - :octocat: GitHub Repository Card for Any Web Site
 - [nteract/nteract](https://github.com/nteract/nteract) - 📘 The interactive computing suite for you!  ✨
