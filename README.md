@@ -35,9 +35,9 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-845%20hrs%205%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-849%20hrs%207%20mins-blue)
 
-![Profile Views](http://img.shields.io/badge/Profile%20Views-41-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-31-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.3%20million%20lines%20of%20code-blue)
 
@@ -78,14 +78,14 @@ Sunday                   596 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-CSS                      4 hrs 45 mins       ██████░░░░░░░░░░░░░░░░░░░   23.98 % 
-Markdown                 4 hrs 36 mins       ██████░░░░░░░░░░░░░░░░░░░   23.23 % 
-SCSS                     2 hrs 24 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.08 % 
-TypeScript               1 hr 57 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   09.89 % 
-Python                   1 hr 19 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   06.64 % 
+CSS                      4 hrs 45 mins       ██████░░░░░░░░░░░░░░░░░░░   22.10 % 
+Markdown                 4 hrs 39 mins       █████░░░░░░░░░░░░░░░░░░░░   21.59 % 
+TypeScript               2 hrs 25 mins       ███░░░░░░░░░░░░░░░░░░░░░░   11.26 % 
+SCSS                     2 hrs 24 mins       ███░░░░░░░░░░░░░░░░░░░░░░   11.19 % 
+Python                   1 hr 19 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   06.12 % 
 
 💻 Operating System: 
-Mac                      19 hrs 51 mins      █████████████████████████   100.00 % 
+Mac                      21 hrs 33 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -105,7 +105,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 13/03/2023 18:41:02 UTC
+ Last Updated on 14/03/2023 18:51:41 UTC
 <!--END_SECTION:waka-->
 
     
