@@ -1214,7 +1214,6 @@
 - [mansenfranzen/autodoc_pydantic](https://github.com/mansenfranzen/autodoc_pydantic) - Seamlessly integrate pydantic models in your Sphinx documentation.
 - [readthedocs/sphinx-hoverxref](https://github.com/readthedocs/sphinx-hoverxref) - Sphinx extension to show tooltips with content embedded when hover a reference.
 - [sphinx-gallery/sphinx-gallery](https://github.com/sphinx-gallery/sphinx-gallery) - Sphinx extension for automatic generation of an example gallery
-- [mintlify/mint](https://github.com/mintlify/mint) - Build blazing fast, beautiful, and easy to maintain documentation with MDX
 - [yoloseem/awesome-sphinxdoc](https://github.com/yoloseem/awesome-sphinxdoc) - A curated list of awesome tools for Sphinx Python Documentation Generator
 - [sphinx-doc/sphinx](https://github.com/sphinx-doc/sphinx) - The Sphinx documentation generator
 - [reactjs/reactjs.org](https://github.com/reactjs/reactjs.org) - The React documentation website
@@ -4030,7 +4029,6 @@
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
 - [Effect-TS/effect](https://github.com/Effect-TS/effect) - A Fully-fledged functional effect system for typescript with a rich standard library
 - [EasyChris/obsidian-to-notion](https://github.com/EasyChris/obsidian-to-notion) - Share obsidian markdown file to notion and generate notion share link    同步obsdian文件到notion，并生成notion分享链接，可以方便的分享obsidian的文件。
-- [mintlify/mint](https://github.com/mintlify/mint) - Build blazing fast, beautiful, and easy to maintain documentation with MDX
 - [dvanoni/notero](https://github.com/dvanoni/notero) - A Zotero plugin for syncing items into Notion
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
 - [segmentio/analytics-next](https://github.com/segmentio/analytics-next) - Segment Analytics.js 2.0
@@ -4139,7 +4137,6 @@
 
 ## website 
 
-- [mintlify/mint](https://github.com/mintlify/mint) - Build blazing fast, beautiful, and easy to maintain documentation with MDX
 - [reactjs/reactjs.org](https://github.com/reactjs/reactjs.org) - The React documentation website
 - [getgrav/grav](https://github.com/getgrav/grav) - Modern, Crazy Fast, Ridiculously Easy and Amazingly Powerful Flat-File CMS powered by PHP, Markdown, Twig, and Symfony
 - [Asabeneh/30-Days-Of-React](https://github.com/Asabeneh/30-Days-Of-React) - 30 Days of  React challenge is a step by step guide to learn React in 30 days. It requires HTML, CSS, and JavaScript knowledge. You should be comfortable with JavaScript before you start to React.  If
