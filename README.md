@@ -157,8 +157,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 <details>
 <summary>Stargazers Over Time 🔭</summary>
 <br>
-
-![Stargazers over time](https://starchart.cc/wyattowalsh/wyattowalsh.svg)](https://starchart.cc/wyattowalsh/wyattowalsh)
+<a href="https://starchart.cc/wyattowalsh/wyattowals"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg"/></a>
 
 </details>
 
