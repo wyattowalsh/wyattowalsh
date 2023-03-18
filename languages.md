@@ -46,6 +46,7 @@
 - [Scheme](#scheme)
 - [Shell](#shell)
 - [Solidity](#solidity)
+- [Svelte](#svelte)
 - [Swift](#swift)
 - [TeX](#tex)
 - [TypeScript](#typescript)
@@ -84,6 +85,7 @@
 
 ## C++ 
 
+- [exaloop/codon](https://github.com/exaloop/codon) - A high-performance, zero-overhead, extensible Python compiler using LLVM
 - [NVIDIA/nvvl](https://github.com/NVIDIA/nvvl) - A library that uses hardware acceleration to load sequences of video frames to facilitate machine learning training
 - [wkhtmltopdf/wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) - Convert HTML to PDF using Webkit (QtWebKit)
 - [ctubio/Krypto-trading-bot](https://github.com/ctubio/Krypto-trading-bot) - Self-hosted crypto trading bot (automated high frequency market making) written in C++
@@ -177,7 +179,7 @@
 - [Tenderly/tenderly-cli](https://github.com/Tenderly/tenderly-cli) - CLI tool for Smart Contract error tracking, monitoring and alerting.
 - [trustwallet/assets](https://github.com/trustwallet/assets) - A comprehensive, up-to-date collection of information about several thousands (!) of crypto tokens.
 - [kubeflow/kfctl](https://github.com/kubeflow/kfctl) - kfctl is a CLI for deploying and managing Kubeflow
-- [kataras/iris](https://github.com/kataras/iris) - The fastest HTTP/2 Go Web Framework. New, modern, easy to learn. Fast development with Code you control. Unbeatable cost-performance ratio :leaves: :rocket: | 谢谢 | #golang
+- [kataras/iris](https://github.com/kataras/iris) - The fastest HTTP/2 Go Web Framework. New, modern and easy to learn. Fast development with Code you control. Unbeatable cost-performance ratio :leaves: :rocket: | 谢谢 | #Go
 - [GoesToEleven/GolangTraining](https://github.com/GoesToEleven/GolangTraining) - Training for Golang (go language)
 - [hyperledger/burrow](https://github.com/hyperledger/burrow) - https://wiki.hyperledger.org/display/burrow
 - [hyperledger/fabric](https://github.com/hyperledger/fabric) - Hyperledger Fabric is an enterprise-grade permissioned distributed ledger framework for developing solutions and applications. Its modular and versatile design satisfies a broad range of industry use 
@@ -265,6 +267,7 @@
 
 ## Java 
 
+- [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
 - [datahub-project/datahub](https://github.com/datahub-project/datahub) - The Metadata Platform for the Modern Data Stack
 - [pentaho/mondrian](https://github.com/pentaho/mondrian) - Mondrian is an Online Analytical Processing (OLAP) server that enables business users to analyze large quantities of data in real-time.
@@ -291,7 +294,6 @@
 - [kristerkari/react-native-sass-transformer](https://github.com/kristerkari/react-native-sass-transformer) - Use Sass to style your React Native apps.
 - [FortAwesome/react-native-fontawesome](https://github.com/FortAwesome/react-native-fontawesome) - Official React Native component for Font Awesome 5
 - [jondot/awesome-react-native](https://github.com/jondot/awesome-react-native) - Awesome React Native components, news, tools, and learning material!
-- [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [11ty/eleventy](https://github.com/11ty/eleventy) - A simpler static site generator. An alternative to Jekyll. Transforms a directory of templates (of varying types) into HTML.
 - [nikitavoloboev/knowledge](https://github.com/nikitavoloboev/knowledge) - Everything I know
 - [react-syntax-highlighter/react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) - syntax highlighting component for react with prismjs or highlightjs ast using inline styles
@@ -912,6 +914,7 @@
 
 ## PHP 
 
+- [antonkomarev/github-profile-views-counter](https://github.com/antonkomarev/github-profile-views-counter) - It counts how many times your GitHub profile has been viewed. Free cloud micro-service.
 - [DenverCoder1/readme-typing-svg](https://github.com/DenverCoder1/readme-typing-svg) - ⚡ Dynamically generated, customizable SVG that gives the appearance of typing and deleting text. Typing SVGs can be used as a bio on your GitHub profile readme or repository.
 - [yannickglt/alfred-devdocs](https://github.com/yannickglt/alfred-devdocs) - Alfred workflow for devdocs.io
 - [zqzten/alfred-web-search-suggest](https://github.com/zqzten/alfred-web-search-suggest) - Alfred search suggest workflow for various popular websites.
@@ -945,6 +948,9 @@
 
 ## Python 
 
+- [openai/evals](https://github.com/openai/evals) - Evals is a framework for evaluating OpenAI models and an open-source registry of benchmarks.
+- [google/BIG-bench](https://github.com/google/BIG-bench) - Beyond the Imitation Game collaborative benchmark for measuring and extrapolating the capabilities of language models
+- [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 The modern replacement for Airflow. Build, run, and manage data pipelines for integrating and transforming data.
 - [likedan/Awesome-CoreML-Models](https://github.com/likedan/Awesome-CoreML-Models) - Largest list of models for Core ML (for iOS 11+)
 - [xinntao/ESRGAN](https://github.com/xinntao/ESRGAN) - ECCV18 Workshops - Enhanced SRGAN. Champion PIRM Challenge on Perceptual Super-Resolution. The training codes are in BasicSR.
 - [openai/spinningup](https://github.com/openai/spinningup) - An educational resource to help anyone learn deep reinforcement learning.
@@ -1509,6 +1515,10 @@
 ## Solidity 
 
 - [tokenspice/tokenspice](https://github.com/tokenspice/tokenspice) - EVM agent-based token simulator 🐟🌪️
+
+## Svelte 
+
+- [catchspider2002/svelte-svg-patterns](https://github.com/catchspider2002/svelte-svg-patterns) - Create seamless patterns in SVG to use as website backgrounds, header images, stationery design and package design
 
 ## Swift 
 
