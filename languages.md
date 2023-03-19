@@ -351,7 +351,6 @@
 - [frontarm/mdx-util](https://github.com/frontarm/mdx-util) - Utilities for working with MDX
 - [blocks/blocks](https://github.com/blocks/blocks) - A JSX-based page builder for creating beautiful websites without writing code
 - [pomber/code-surfer](https://github.com/pomber/code-surfer) - Rad code slides &lt;🏄/&gt;
-- [reactjs/reactjs.org](https://github.com/reactjs/reactjs.org) - The React documentation website
 - [gaearon/overreacted.io](https://github.com/gaearon/overreacted.io) - Personal blog by Dan Abramov.
 - [taniarascia/taniarascia.com](https://github.com/taniarascia/taniarascia.com) - 💾 ‎  Personal website running on Gatsby, React, and Node.js.
 - [segmentio/analytics.js](https://github.com/segmentio/analytics.js) - The hassle-free way to integrate analytics into any web application.
@@ -619,6 +618,7 @@
 
 ## Jupyter Notebook 
 
+- [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide) - :octopus: Guides, papers, lecture, and resources for prompt engineering
 - [IsaiahPressman/Kaggle_Lux_AI_2021](https://github.com/IsaiahPressman/Kaggle_Lux_AI_2021) - 
 - [pytorch/botorch](https://github.com/pytorch/botorch) - Bayesian optimization in PyTorch
 - [Lux-AI-Challenge/Lux-Design-S2](https://github.com/Lux-AI-Challenge/Lux-Design-S2) - Repository for the Lux AI Challenge, season 2
@@ -1585,6 +1585,7 @@
 - [OliverBalfour/obsidian-pandoc](https://github.com/OliverBalfour/obsidian-pandoc) - Pandoc document export plugin for Obsidian (https://obsidian.md)
 - [chetachiezikeuzor/Highlightr-Plugin](https://github.com/chetachiezikeuzor/Highlightr-Plugin) - A minimal and aesthetically pleasing highlighting menu that makes color-coded highlighting much easier 🎨.
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
+- [reactjs/react.dev](https://github.com/reactjs/react.dev) - The React documentation website
 - [segmentio/analytics-next](https://github.com/segmentio/analytics-next) - Segment Analytics.js 2.0
 - [JedWatson/react-select](https://github.com/JedWatson/react-select) - The Select Component for React.js
 - [react-component/select](https://github.com/react-component/select) - React Select
