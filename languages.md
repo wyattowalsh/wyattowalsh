@@ -89,7 +89,7 @@
 - [NVIDIA/nvvl](https://github.com/NVIDIA/nvvl) - A library that uses hardware acceleration to load sequences of video frames to facilitate machine learning training
 - [wkhtmltopdf/wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) - Convert HTML to PDF using Webkit (QtWebKit)
 - [ctubio/Krypto-trading-bot](https://github.com/ctubio/Krypto-trading-bot) - Self-hosted crypto trading bot (automated high frequency market making) written in C++
-- [AaronFeng753/Waifu2x-Extension-GUI](https://github.com/AaronFeng753/Waifu2x-Extension-GUI) - Video, Image and GIF upscale/enlarge(Super-Resolution) and Video frame interpolation. Achieved with Waifu2x,  Real-ESRGAN, Real-CUGAN, RTX Super Resolution, SRMD, RealSR, Anime4K, RIFE, IFRNet, CAIN, 
+- [AaronFeng753/Waifu2x-Extension-GUI](https://github.com/AaronFeng753/Waifu2x-Extension-GUI) - Video, Image and GIF upscale/enlarge(Super-Resolution) and Video frame interpolation. Achieved with Waifu2x,  Real-ESRGAN, Real-CUGAN, RTX Video Super Resolution VSR, SRMD, RealSR, Anime4K, RIFE, IFRN
 - [sunwj/CAR](https://github.com/sunwj/CAR) - Content adaptive resampler for image downscaling
 - [bulletphysics/bullet3](https://github.com/bulletphysics/bullet3) - Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc.
 - [google/mediapipe](https://github.com/google/mediapipe) - Cross-platform, customizable ML solutions for live and streaming media.
@@ -356,7 +356,7 @@
 - [segmentio/analytics.js](https://github.com/segmentio/analytics.js) - The hassle-free way to integrate analytics into any web application.
 - [nfl/react-metrics](https://github.com/nfl/react-metrics) - An analytics module for React
 - [nfl/react-helmet](https://github.com/nfl/react-helmet) - A document head manager for React
-- [facebook/react](https://github.com/facebook/react) - A declarative, efficient, and flexible JavaScript library for building user interfaces.
+- [facebook/react](https://github.com/facebook/react) - The library for web and native user interfaces
 - [reactjs/react-transition-group](https://github.com/reactjs/react-transition-group) - An easy way to perform animations when a React component enters or leaves the DOM
 - [plaid/tiny-quickstart](https://github.com/plaid/tiny-quickstart) - A minimal quickstart demonstrating Plaid Link, Balances, and OAuth
 - [passabilities/crypto-exchange](https://github.com/passabilities/crypto-exchange) - Pulls together list of crypto exchanges to interact with their API's in a uniform fashion.
