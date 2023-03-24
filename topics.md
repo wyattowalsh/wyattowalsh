@@ -602,7 +602,7 @@
 - [protofire/eth-cli](https://github.com/protofire/eth-cli) - CLI swiss army knife for Ethereum developers
 - [OffcierCia/DeFi-Developer-Road-Map](https://github.com/OffcierCia/DeFi-Developer-Road-Map) - DeFi Developer roadmap is a curated Developer handbook which includes a list of the best tools for DApps development, resources and references!
 - [hyperledger-labs/blockchain-explorer](https://github.com/hyperledger-labs/blockchain-explorer) - 
-- [hyperledger/burrow](https://github.com/hyperledger/burrow) - https://wiki.hyperledger.org/display/burrow
+- [hyperledger-archives/burrow](https://github.com/hyperledger-archives/burrow) - https://wiki.hyperledger.org/display/burrow
 - [hyperledger/cello](https://github.com/hyperledger/cello) - Operating System for Enterprise Blockchain
 - [hyperledger/iroha](https://github.com/hyperledger/iroha) - Iroha - A simple, enterprise-grade decentralized ledger
 - [hyperledger/fabric](https://github.com/hyperledger/fabric) - Hyperledger Fabric is an enterprise-grade permissioned distributed ledger framework for developing solutions and applications. Its modular and versatile design satisfies a broad range of industry use 
@@ -1311,7 +1311,7 @@
 - [blockchain-etl/ethereum-etl-airflow](https://github.com/blockchain-etl/ethereum-etl-airflow) - Airflow DAGs for exporting, loading, and parsing the Ethereum blockchain data. How to get any Ethereum smart contract into BigQuery https://towardsdatascience.com/how-to-get-any-ethereum-smart-contrac
 - [blockchain-etl/ethereum-etl-neo4j](https://github.com/blockchain-etl/ethereum-etl-neo4j) - ETL for moving Ethereum data to Neo4j database
 - [blockchain-etl/data-studio-connectors](https://github.com/blockchain-etl/data-studio-connectors) - Connect Google BigQuery crypto public datasets to Google Data Studio
-- [hyperledger/burrow](https://github.com/hyperledger/burrow) - https://wiki.hyperledger.org/display/burrow
+- [hyperledger-archives/burrow](https://github.com/hyperledger-archives/burrow) - https://wiki.hyperledger.org/display/burrow
 - [grandsmarquis/awesome-ethereum-analytics](https://github.com/grandsmarquis/awesome-ethereum-analytics) - A curated list of projects around Ethereum analytics.
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [jpantunes/awesome-cryptoeconomics](https://github.com/jpantunes/awesome-cryptoeconomics) - An awesome curated list of Cryptoeconomic research and learning materials
