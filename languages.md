@@ -264,6 +264,7 @@
 - [Netflix/netflix.github.com](https://github.com/Netflix/netflix.github.com) - 
 - [GSA/data](https://github.com/GSA/data) - Assorted data from the General Services Administration.
 - [nathancy/jekyll-embed-video](https://github.com/nathancy/jekyll-embed-video) - Embed videos in Jekyll webpages without a plugin (Youtube, Vimeo, Twitch, Facebook, Instagram, Twitter, TikTok, Streamable, Google Drive clips + more)
+- [paulrosen/abcjs](https://github.com/paulrosen/abcjs) - javascript for rendering abc music notation
 
 ## Java 
 
@@ -608,7 +609,6 @@
 - [ipython-contrib/jupyter_contrib_nbextensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions) - A collection of various notebook extensions for Jupyter
 - [marktext/marktext](https://github.com/marktext/marktext) - 📝A simple and elegant markdown editor, available for Linux, macOS and Windows.
 - [KaTeX/KaTeX](https://github.com/KaTeX/KaTeX) - Fast math typesetting for the web.
-- [paulrosen/abcjs](https://github.com/paulrosen/abcjs) - javascript for rendering abc music notation
 - [mermaidjs/mermaid-live-editor](https://github.com/mermaidjs/mermaid-live-editor) - Location has moved to https://github.com/mermaid-js/mermaid-live-editor
 
 ## Jinja 
