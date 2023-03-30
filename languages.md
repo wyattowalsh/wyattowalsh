@@ -346,7 +346,6 @@
 - [wyattowalsh/data-science-notes](https://github.com/wyattowalsh/data-science-notes) - Open-source project hosted at https://makeuseofdata.com to crowdsource a robust collection of notes related to data science (math, visualization, modeling, etc)
 - [atulmy/oauth](https://github.com/atulmy/oauth) - 🔗  OAuth 2.0 implementation for various providers in one place.
 - [jxnblk/palx](https://github.com/jxnblk/palx) - :rainbow: Automatic UI Color Palette Generator
-- [FormidableLabs/react-live](https://github.com/FormidableLabs/react-live) - A flexible playground for live editing React components
 - [oliver-gomes/csswand](https://github.com/oliver-gomes/csswand) - 🎨✨ Hover your wand and use your magic spell to copy beautiful css
 - [joshwcomeau/waveforms](https://github.com/joshwcomeau/waveforms) - An interactive, explorable explanation about the peculiar magic of sound waves.
 - [roman01la/html-to-react-components](https://github.com/roman01la/html-to-react-components) - Converts HTML pages into React components
@@ -1001,7 +1000,7 @@
 - [klen/pylama](https://github.com/klen/pylama) - Code audit tool for python.
 - [PyCQA/bandit](https://github.com/PyCQA/bandit) - Bandit is a tool designed to find common security issues in Python code.
 - [PyCQA/autoflake](https://github.com/PyCQA/autoflake) - Removes unused imports and unused variables as reported by pyflakes
-- [PyCQA/pylint](https://github.com/PyCQA/pylint) - It's not just a linter that annoys you!
+- [pylint-dev/pylint](https://github.com/pylint-dev/pylint) - It's not just a linter that annoys you!
 - [HypothesisWorks/hypothesis](https://github.com/HypothesisWorks/hypothesis) - Hypothesis is a powerful, flexible, and easy to use library for property-based testing.
 - [pytest-dev/pytest](https://github.com/pytest-dev/pytest) - The pytest framework makes it easy to write small tests, yet scales to support complex functional testing
 - [jdillard/sphinx-sitemap](https://github.com/jdillard/sphinx-sitemap) - Sphinx extension to generate a multi-lingual, multi-version sitemap for HTML builds
@@ -1590,6 +1589,7 @@
 - [phibr0/obsidian-charts](https://github.com/phibr0/obsidian-charts) - Charts - Obsidian Plugin | Create editable, interactive and animated Charts in Obsidian via Chart.js
 - [OliverBalfour/obsidian-pandoc](https://github.com/OliverBalfour/obsidian-pandoc) - Pandoc document export plugin for Obsidian (https://obsidian.md)
 - [chetachiezikeuzor/Highlightr-Plugin](https://github.com/chetachiezikeuzor/Highlightr-Plugin) - A minimal and aesthetically pleasing highlighting menu that makes color-coded highlighting much easier 🎨.
+- [FormidableLabs/react-live](https://github.com/FormidableLabs/react-live) - A flexible playground for live editing React components
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
 - [reactjs/react.dev](https://github.com/reactjs/react.dev) - The React documentation website
 - [segmentio/analytics-next](https://github.com/segmentio/analytics-next) - Segment Analytics.js 2.0
