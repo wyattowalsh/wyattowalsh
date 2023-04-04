@@ -1220,7 +1220,6 @@
 - [mljar/mljar-supervised](https://github.com/mljar/mljar-supervised) - Python package for AutoML on Tabular Data with Feature Engineering, Hyper-Parameters Tuning, Explanations and Automatic Documentation
 - [giswqs/geemap](https://github.com/giswqs/geemap) - A Python package for interactive mapping with Google Earth Engine, ipyleaflet, and ipywidgets.
 - [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evaluate and monitor ML models from validation to production. Join our Discord: https://discord.com/invite/xZjKRaNp8b
-- [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
 - [wooey/Wooey](https://github.com/wooey/Wooey) - A Django app that creates automatic web UIs for Python scripts.
 - [CamDavidsonPilon/lifelines](https://github.com/CamDavidsonPilon/lifelines) - Survival analysis in Python
 - [fbdesignpro/sweetviz](https://github.com/fbdesignpro/sweetviz) - Visualize and compare datasets, target values and associations, with one line of code.
@@ -1677,6 +1676,7 @@
 - [react-icons/react-icons](https://github.com/react-icons/react-icons) - svg react icons of popular icon packs
 - [sjwall/mdx-mermaid](https://github.com/sjwall/mdx-mermaid) - Plug and play Mermaid in MDX
 - [sevazhidkov/prompts-ai](https://github.com/sevazhidkov/prompts-ai) - Advanced playground for GPT-3
+- [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
 - [javascriptdata/danfojs](https://github.com/javascriptdata/danfojs) - Danfo.js is an open source, JavaScript library providing high performance, intuitive, and easy to use data structures for manipulating and processing structured data.
 - [antonycourtney/tad](https://github.com/antonycourtney/tad) - A desktop application for viewing and analyzing tabular data
 - [sct/overseerr](https://github.com/sct/overseerr) - Request management and media discovery tool for the Plex ecosystem
