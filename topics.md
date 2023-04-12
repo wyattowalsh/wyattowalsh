@@ -2572,7 +2572,7 @@
 - [jupyterlab/jupyterlab_pygments](https://github.com/jupyterlab/jupyterlab_pygments) - Pygments theme making use of JupyterLab CSS variables
 - [xaos-project/XaoSjs](https://github.com/xaos-project/XaoSjs) - XaoS.js - Realtime fractal zoomer in JavaScript
 - [sphinx-extensions2/sphinx-autodoc2](https://github.com/sphinx-extensions2/sphinx-autodoc2) - A Sphinx extension that automatically generates API documentation for your Python packages.
-- [openai/evals](https://github.com/openai/evals) - Evals is a framework for evaluating OpenAI models and an open-source registry of benchmarks.
+- [openai/evals](https://github.com/openai/evals) - Evals is a framework for evaluating LLMs and LLM systems, and an open-source registry of benchmarks.
 - [google/BIG-bench](https://github.com/google/BIG-bench) - Beyond the Imitation Game collaborative benchmark for measuring and extrapolating the capabilities of language models
 - [xinntao/ESRGAN](https://github.com/xinntao/ESRGAN) - ECCV18 Workshops - Enhanced SRGAN. Champion PIRM Challenge on Perceptual Super-Resolution. The training codes are in BasicSR.
 - [FortAwesome/react-native-fontawesome](https://github.com/FortAwesome/react-native-fontawesome) - Official React Native component for Font Awesome 5
