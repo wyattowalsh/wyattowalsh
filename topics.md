@@ -217,7 +217,7 @@
 
 ## ai 
 
-- [Torantulino/Auto-GPT](https://github.com/Torantulino/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
+- [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
 - [Lux-AI-Challenge/Lux-Design-S2](https://github.com/Lux-AI-Challenge/Lux-Design-S2) - Repository for the Lux AI Challenge, season 2. Hosted on @kaggle
 - [nhaouari/obsidian-textgenerator-plugin](https://github.com/nhaouari/obsidian-textgenerator-plugin) - Text generator is a handy plugin for Obsidian that helps you generate text content using GPT-3 (OpenAI).
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life data science projects with ease!
@@ -231,7 +231,7 @@
 - [tradytics/eiten](https://github.com/tradytics/eiten) - Statistical and Algorithmic Investing Strategies for Everyone
 - [microsoft/0xDeCA10B](https://github.com/microsoft/0xDeCA10B) - Sharing Updatable Models (SUM) on Blockchain
 - [drivendata/cookiecutter-data-science](https://github.com/drivendata/cookiecutter-data-science) - A logical, reasonably standardized, but flexible project structure for doing and sharing data science work.
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [explosion/spaCy](https://github.com/explosion/spaCy) - 💫 Industrial-strength Natural Language Processing (NLP) in Python
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 
@@ -670,6 +670,7 @@
 
 - [f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) - This repo includes ChatGPT prompt curation to use ChatGPT better.
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide) - 🐙 Guides, papers, lecture, notebooks and resources for prompt engineering
+- [nhaouari/obsidian-textgenerator-plugin](https://github.com/nhaouari/obsidian-textgenerator-plugin) - Text generator is a handy plugin for Obsidian that helps you generate text content using GPT-3 (OpenAI).
 - [Drakkar-Software/OctoBot](https://github.com/Drakkar-Software/OctoBot) - Cryptocurrency trading bot using technical analysis based strategy with an advanced web interface
 - [ml-tooling/best-of-ml-python](https://github.com/ml-tooling/best-of-ml-python) - 🏆 A ranked list of awesome machine learning Python libraries. Updated weekly.
 
@@ -989,7 +990,7 @@
 - [firmai/industry-machine-learning](https://github.com/firmai/industry-machine-learning) - A curated list of applied machine learning and data science notebooks and libraries across different industries (by @firmai)
 - [eugeneyan/applied-ml](https://github.com/eugeneyan/applied-ml) - 📚 Papers & tech blogs by companies sharing their work on data science & machine learning in production.
 - [rasbt/python-machine-learning-book-2nd-edition](https://github.com/rasbt/python-machine-learning-book-2nd-edition) - The "Python Machine Learning (2nd edition)" book code repository and info resource
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [microsoft/computervision-recipes](https://github.com/microsoft/computervision-recipes) - Best Practices, code samples, and documentation for Computer Vision.
 - [fastai/numerical-linear-algebra](https://github.com/fastai/numerical-linear-algebra) - Free online textbook of Jupyter notebooks for fast.ai Computational Linear Algebra course
 - [mwaskom/seaborn](https://github.com/mwaskom/seaborn) - Statistical data visualization in Python
@@ -1486,7 +1487,7 @@
 - [cli/cli](https://github.com/cli/cli) - GitHub’s official command line tool
 - [openblockchains/awesome-blockchains](https://github.com/openblockchains/awesome-blockchains) - A collection about awesome blockchains - open distributed public databases w/ crypto hashes incl. git ;-).  Blockchains are the new tulips :tulip::tulip::tulip:. Distributed is the new centralized.
 - [dolthub/dolt](https://github.com/dolthub/dolt) - Dolt – Git for Data
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [bregman-arie/devops-exercises](https://github.com/bregman-arie/devops-exercises) - Linux, Jenkins, AWS, SRE, Prometheus, Docker, Python, Ansible, Git, Kubernetes, Terraform, OpenStack, SQL, NoSQL, Azure, GCP, DNS, Elastic, Network, Virtualization. DevOps Interview Questions
 - [tiimgreen/github-cheat-sheet](https://github.com/tiimgreen/github-cheat-sheet) - A list of cool features of Git and GitHub.
 - [jupyter/nbdime](https://github.com/jupyter/nbdime) - Tools for diffing and merging of Jupyter notebooks.
@@ -1696,7 +1697,7 @@
 - [qri-io/qri](https://github.com/qri-io/qri) - you're invited to a data party!
 - [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw) - Virtual whiteboard for sketching hand-drawn like diagrams
 - [apache/airflow](https://github.com/apache/airflow) - Apache Airflow - A platform to programmatically author, schedule, and monitor workflows
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [ipython/ipython](https://github.com/ipython/ipython) - Official repository for IPython itself. Other repos in the IPython organization contain things like the website, documentation builds, etc.
 - [academic/awesome-datascience](https://github.com/academic/awesome-datascience) - :memo: An awesome Data Science repository to learn and apply for real world problems.
 - [sButtons/sbuttons](https://github.com/sButtons/sbuttons) - :bulb: Simple buttons you can use easily for your next project.
@@ -2199,7 +2200,7 @@
 - [firmai/industry-machine-learning](https://github.com/firmai/industry-machine-learning) - A curated list of applied machine learning and data science notebooks and libraries across different industries (by @firmai)
 - [eugeneyan/applied-ml](https://github.com/eugeneyan/applied-ml) - 📚 Papers & tech blogs by companies sharing their work on data science & machine learning in production.
 - [rasbt/python-machine-learning-book-2nd-edition](https://github.com/rasbt/python-machine-learning-book-2nd-edition) - The "Python Machine Learning (2nd edition)" book code repository and info resource
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [microsoft/computervision-recipes](https://github.com/microsoft/computervision-recipes) - Best Practices, code samples, and documentation for Computer Vision.
 - [fastai/numerical-linear-algebra](https://github.com/fastai/numerical-linear-algebra) - Free online textbook of Jupyter notebooks for fast.ai Computational Linear Algebra course
 - [microsoft/recommenders](https://github.com/microsoft/recommenders) - Best Practices on Recommendation Systems
@@ -3276,7 +3277,7 @@
 
 ## python 
 
-- [Torantulino/Auto-GPT](https://github.com/Torantulino/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
+- [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
 - [nnaisense/evotorch](https://github.com/nnaisense/evotorch) - Advanced evolutionary computation library built directly on top of PyTorch, created at NNAISENSE.
 - [gboeing/pynamical](https://github.com/gboeing/pynamical) - Pynamical is a Python package for modeling and visualizing discrete nonlinear dynamical systems, chaos, and fractals.
 - [exaloop/codon](https://github.com/exaloop/codon) - A high-performance, zero-overhead, extensible Python compiler using LLVM
@@ -3458,7 +3459,7 @@
 - [h2oai/h2o-3](https://github.com/h2oai/h2o-3) - H2O is an Open Source, Distributed, Fast & Scalable Machine Learning Platform: Deep Learning, Gradient Boosting (GBM) & XGBoost, Random Forest, Generalized Linear Modeling (GLM with Elastic Net), K-Me
 - [firmai/industry-machine-learning](https://github.com/firmai/industry-machine-learning) - A curated list of applied machine learning and data science notebooks and libraries across different industries (by @firmai)
 - [rasbt/python-machine-learning-book-2nd-edition](https://github.com/rasbt/python-machine-learning-book-2nd-edition) - The "Python Machine Learning (2nd edition)" book code repository and info resource
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉Data Version Control | Git for Data & Models | ML Experiments Management
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Version Control | Git for Data & Models | ML Experiments Management
 - [microsoft/computervision-recipes](https://github.com/microsoft/computervision-recipes) - Best Practices, code samples, and documentation for Computer Vision.
 - [fastai/numerical-linear-algebra](https://github.com/fastai/numerical-linear-algebra) - Free online textbook of Jupyter notebooks for fast.ai Computational Linear Algebra course
 - [mwaskom/seaborn](https://github.com/mwaskom/seaborn) - Statistical data visualization in Python
