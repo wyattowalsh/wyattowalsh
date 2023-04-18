@@ -300,7 +300,7 @@
 - [kristerkari/react-native-sass-transformer](https://github.com/kristerkari/react-native-sass-transformer) - Use Sass to style your React Native apps.
 - [FortAwesome/react-native-fontawesome](https://github.com/FortAwesome/react-native-fontawesome) - Official React Native component for Font Awesome 5
 - [jondot/awesome-react-native](https://github.com/jondot/awesome-react-native) - Awesome React Native components, news, tools, and learning material!
-- [11ty/eleventy](https://github.com/11ty/eleventy) - A simpler static site generator. An alternative to Jekyll. Transforms a directory of templates (of varying types) into HTML.
+- [11ty/eleventy](https://github.com/11ty/eleventy) - A simpler site generator. Transforms a directory of templates (of varying types) into HTML.
 - [nikitavoloboev/knowledge](https://github.com/nikitavoloboev/knowledge) - Everything I know
 - [react-syntax-highlighter/react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) - syntax highlighting component for react with prismjs or highlightjs ast using inline styles
 - [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
@@ -1130,7 +1130,7 @@
 - [jesse-ai/jesse](https://github.com/jesse-ai/jesse) - An advanced crypto trading bot written in Python
 - [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
 - [kernc/backtesting.py](https://github.com/kernc/backtesting.py) - :mag_right: :chart_with_upwards_trend: :snake: :moneybag:  Backtest trading strategies in Python.
-- [bqth29/simulated-bifurcation-algorithm](https://github.com/bqth29/simulated-bifurcation-algorithm) - Python implementation of a Simulated Bifurcation algorithm in order to approximize the optimal asset allocations for a portfolio.
+- [bqth29/simulated-bifurcation-algorithm](https://github.com/bqth29/simulated-bifurcation-algorithm) - Python implementation of a Simulated Bifurcation (SB) algorithm in order to solve optimal asset allocations for a portfolio or other Ising problems.
 - [rlworkgroup/garage](https://github.com/rlworkgroup/garage) - A toolkit for reproducible reinforcement learning research.
 - [notadamking/RLTrader](https://github.com/notadamking/RLTrader) - A cryptocurrency trading environment using deep reinforcement learning and OpenAI's gym
 - [rll/rllab](https://github.com/rll/rllab) - rllab is a framework for developing and evaluating reinforcement learning algorithms, fully compatible with OpenAI Gym.
@@ -1210,7 +1210,7 @@
 - [pmorissette/ffn](https://github.com/pmorissette/ffn) - ffn - a financial function library for Python
 - [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
 - [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
-- [streamlit/streamlit](https://github.com/streamlit/streamlit) - Streamlit — The fastest way to build data apps in Python
+- [streamlit/streamlit](https://github.com/streamlit/streamlit) - Streamlit — A faster way to build and share data apps.
 - [Anaconda-Platform/nb_conda](https://github.com/Anaconda-Platform/nb_conda) - Conda environment and package access extension from within Jupyter
 - [microsoft/LoRA](https://github.com/microsoft/LoRA) - Code for loralib, an implementation of "LoRA: Low-Rank Adaptation of Large Language Models"
 - [vicgalle/gpt-j-api](https://github.com/vicgalle/gpt-j-api) - API for the GPT-J language model 🦜. Including a FastAPI backend and a streamlit frontend
