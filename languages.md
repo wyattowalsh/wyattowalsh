@@ -404,7 +404,7 @@
 - [remarkjs/remark-rehype](https://github.com/remarkjs/remark-rehype) - plugin that turns markdown into HTML to support rehype
 - [sergioramos/remark-hint](https://github.com/sergioramos/remark-hint) - Sprinkle hints/tips/warnings on your documents
 - [signcl/docusaurus-prince-pdf](https://github.com/signcl/docusaurus-prince-pdf) - Docusaurus PDF generator using Prince XML
-- [graphql-markdown/graphql-markdown](https://github.com/graphql-markdown/graphql-markdown) - Flexible GraphQL Documentation Generator (Markdown)
+- [graphql-markdown/graphql-markdown](https://github.com/graphql-markdown/graphql-markdown) - Flexible GraphQL Documentation Generator (Markdown).
 - [sindresorhus/slugify](https://github.com/sindresorhus/slugify) - Slugify a string
 - [JS-DevTools/rehype-toc](https://github.com/JS-DevTools/rehype-toc) - A rehype plugin that adds a table of contents (TOC) to the page
 - [rehypejs/rehype-meta](https://github.com/rehypejs/rehype-meta) - plugin to add metadata to the head of a document
@@ -935,7 +935,7 @@
 
 ## PLpgSQL 
 
-- [zombodb/zombodb](https://github.com/zombodb/zombodb) - Making Postgres and Elasticsearch work together like it's 2022
+- [zombodb/zombodb](https://github.com/zombodb/zombodb) - Making Postgres and Elasticsearch work together like it's 2023
 - [adjust/pg-telemetry](https://github.com/adjust/pg-telemetry) - Useful monitoring views for PostgreSQL, packaged as an extension
 
 ## Perl 
@@ -1454,7 +1454,7 @@
 - [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa is a shared cryptography library
 - [zoni/obsidian-export](https://github.com/zoni/obsidian-export) - Rust library and CLI to export an Obsidian vault to regular Markdown
 - [mdzk-rs/mdzk](https://github.com/mdzk-rs/mdzk) - General-purpose interface to connected notes
-- [maidsafe/safe_network](https://github.com/maidsafe/safe_network) - The Safe Network Core. API message definitions, routing and nodes, client core api.
+- [maidsafe/safe_network](https://github.com/maidsafe/safe_network) - The Safe Network. A libp2p backed data and transfer network
 - [tauri-apps/tauri](https://github.com/tauri-apps/tauri) - Build smaller, faster, and more secure desktop applications with a web frontend.
 - [vectordotdev/vector](https://github.com/vectordotdev/vector) - A high-performance observability data pipeline.
 
