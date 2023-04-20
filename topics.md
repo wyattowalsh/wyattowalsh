@@ -3031,7 +3031,7 @@
 - [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [vyperhub-io/vyper-smart-contracts](https://github.com/vyperhub-io/vyper-smart-contracts) - All smart contracts listed at vyperhub.io
-- [maidsafe/safe_network](https://github.com/maidsafe/safe_network) - The Safe Network. A libp2p backed data and transfer network
+- [maidsafe/temp_safe_network](https://github.com/maidsafe/temp_safe_network) - The Safe Network. A libp2p backed data and transfer network
 - [oceanprotocol-archive/OEPs](https://github.com/oceanprotocol-archive/OEPs) - 🐙 Ocean Protocol Enhancement Proposals
 - [oceanprotocol/papers](https://github.com/oceanprotocol/papers) - 🌊 Ocean Protocol whitepapers
 - [limedocs/limedocs-wiki-converter](https://github.com/limedocs/limedocs-wiki-converter) - Generate HTML & PDF documentation from you Github wiki or any other markdown-based wiki
