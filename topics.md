@@ -2759,7 +2759,7 @@
 - [gaearon/react-hot-loader](https://github.com/gaearon/react-hot-loader) - Tweak React components in real time. (Deprecated: use Fast Refresh instead.)
 - [ArianaKhit/text-snippets-obsidian](https://github.com/ArianaKhit/text-snippets-obsidian) - Snippets plugin for obsidian
 - [deathau/obsidian-snippets](https://github.com/deathau/obsidian-snippets) - 
-- [kyletscheer/academic-disciplines](https://github.com/kyletscheer/academic-disciplines) - 
+- [kyletscheer/academic-disciplines](https://github.com/kyletscheer/academic-disciplines) - A series of .md files with a list of academic disciplines froṁ https://en.wikipedia.org/wiki/Outline_of_academic_disciplines. For import to Obsidian.md.
 - [gitobsidiantutorial/assorted-css-snippets](https://github.com/gitobsidiantutorial/assorted-css-snippets) - snippets that don't require very expansive documentation
 - [nhaouari/obsidian-search-on-internet](https://github.com/nhaouari/obsidian-search-on-internet) - Add context menu items in Obsidian to search the internet.
 - [noatpad/obsidian-banners](https://github.com/noatpad/obsidian-banners) - An Obsidian plugin that adds banners to your notes
