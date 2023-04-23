@@ -296,6 +296,10 @@
 
 ## JavaScript 
 
+- [processing/p5.js](https://github.com/processing/p5.js) - p5.js is a client-side JS platform that empowers artists, designers, students, and anyone to learn to code and express themselves creatively on the web. It is based on the core principles of Processin
+- [WenheLI/p5.gif](https://github.com/WenheLI/p5.gif) - P5.js gif helper
+- [spite/ccapture.js](https://github.com/spite/ccapture.js) - A library to capture canvas-based animations at a fixed framerate
+- [Jupyter-contrib/jupyter_nbextensions_configurator](https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator) - A jupyter notebook serverextension providing config interfaces for nbextensions.
 - [xaos-project/XaoSjs](https://github.com/xaos-project/XaoSjs) - XaoS.js - Realtime fractal zoomer in JavaScript
 - [Dozed12/p5.voronoi](https://github.com/Dozed12/p5.voronoi) - A Voronoi library for p5.js
 - [kristerkari/react-native-sass-transformer](https://github.com/kristerkari/react-native-sass-transformer) - Use Sass to style your React Native apps.
@@ -952,6 +956,8 @@
 
 ## Python 
 
+- [numba/numba](https://github.com/numba/numba) - NumPy aware dynamic Python compiler using LLVM
+- [tartley/colorama](https://github.com/tartley/colorama) - Simple cross-platform colored terminal text in Python
 - [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
 - [nnaisense/evotorch](https://github.com/nnaisense/evotorch) - Advanced evolutionary computation library built directly on top of PyTorch, created at NNAISENSE.
 - [jupyterlab/jupyterlab_pygments](https://github.com/jupyterlab/jupyterlab_pygments) - Pygments theme making use of JupyterLab CSS variables
@@ -1555,6 +1561,7 @@
 
 ## TypeScript 
 
+- [tapioca24/p5.capture](https://github.com/tapioca24/p5.capture) - 🎬 super easy recording for p5.js animations
 - [react-native-elements/react-native-elements](https://github.com/react-native-elements/react-native-elements) - Cross-Platform React Native UI Toolkit
 - [umijs/umi](https://github.com/umijs/umi) - A framework in react community ✨
 - [streamich/react-use](https://github.com/streamich/react-use) - React Hooks — 👍
