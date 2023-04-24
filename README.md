@@ -35,13 +35,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-881%20hrs%2013%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-886%20hrs%2057%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.4%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 3.8 MB Used in GitHub's Storage 
+> 📦 3.9 MB Used in GitHub's Storage 
  > 
 > 🏆 381 Contributions in the Year 2023
  > 
@@ -76,14 +76,14 @@ Sunday                   596 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   9 hrs 14 mins       ███████████████████████░░   92.43 % 
-TOML                     21 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   03.65 % 
-Markdown                 9 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.64 % 
-Bash                     6 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.14 % 
-Other                    5 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.89 % 
+Python                   7 hrs 39 mins       ███████████████████████░░   91.02 % 
+TOML                     21 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   04.33 % 
+Markdown                 9 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.95 % 
+Bash                     6 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.36 % 
+Other                    5 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.06 % 
 
 💻 Operating System: 
-Mac                      9 hrs 59 mins       █████████████████████████   100.00 % 
+Mac                      8 hrs 25 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -103,7 +103,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 23/04/2023 18:38:27 UTC
+ Last Updated on 24/04/2023 18:40:28 UTC
 <!--END_SECTION:waka-->
 
     
