@@ -1095,7 +1095,7 @@
 - [ApeWorX/ape-solidity](https://github.com/ApeWorX/ape-solidity) - 
 - [ApeWorX/ape-hardhat](https://github.com/ApeWorX/ape-hardhat) - Hardhat network provider for Ape
 - [salesforce/CodeT5](https://github.com/salesforce/CodeT5) - Code for CodeT5: a new code-aware pre-trained encoder-decoder model.
-- [open-mmlab/mmediting](https://github.com/open-mmlab/mmediting) - OpenMMLab Image and Video Restoration, Editing and Generation Toolbox
+- [open-mmlab/mmagic](https://github.com/open-mmlab/mmagic) - OpenMMLab Multimodal Advanced, Generative, and Intelligent Creation Toolbox
 - [XPixelGroup/BasicSR](https://github.com/XPixelGroup/BasicSR) - Open Source Image and Video Restoration Toolbox for Super-resolution, Denoise, Deblurring, etc. Currently, it includes EDSR, RCAN, SRResNet, SRGAN, ESRGAN, EDVR, BasicVSR, SwinIR, ECBSR, etc. Also sup
 - [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) - Real-ESRGAN aims at developing Practical Algorithms for General Image/Video Restoration.
 - [idealo/image-super-resolution](https://github.com/idealo/image-super-resolution) - 🔎 Super-scale your images and run experiments with Residual Dense and Adversarial Networks.
