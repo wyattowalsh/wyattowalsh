@@ -1,15 +1,6 @@
 name: Generate starred projects wordclouds
 on:
   workflow_dispatch:
-    inputs:
-      token:
-        description: 'GitHub Personal Access Token'
-        required: true
-        default: ${{ secrets.GITHUB_TOKEN }}
-      COMMIT_MESSAGE:
-        required: false
-        description: "Git commit message"
-        default: "Updated with wordclouds action"
     schedule:
     - cron: 35 0 * * *
 jobs:
