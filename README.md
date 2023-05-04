@@ -30,8 +30,10 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 ---
 
+## My Wakatime Stats 👨‍💻 🗓️
+
 <details>
-<summary>My Wakatime Stats 👨‍💻 🗓️</summary>
+<summary>➳ Click here to expand</summary>
 <br>
     
 <!--START_SECTION:waka-->
@@ -117,8 +119,10 @@ Makefile                 1 repo              █░░░░░░░░░░�
 
 ---
 
+## My GitHub Stats :octocat: 📈 
+
 <details>
-<summary>My GitHub Stats :octocat: 📈</summary>
+<summary>➳ Click here to expand</summary>
 <br>
 
 | ![](./assets/metrics.svg) | ![](./assets/metrics.additional.svg) |
@@ -128,8 +132,10 @@ Makefile                 1 repo              █░░░░░░░░░░�
 
 ---
 
+## My Starred Repos ✨ and Associated Word Clouds ☁️
+
 <details>
-<summary>My Starred Repos ✨ and Associated Word Clouds ☁️</summary>
+<summary>➳ Click here to expand</summary>
 <br>
     
 ### ➔ Check out projects I've starred [by language](languages.md) or [by topic](topics.md) ✨
@@ -152,8 +158,10 @@ Makefile                 1 repo              █░░░░░░░░░░�
 
 ---
 
+## Stargazers Over Time ✨🔭
+
 <details>
-<summary>Stargazers Over Time 🔭</summary>
+<summary>➳ Click here to expand</summary>
 <br>
 <a href="https://starchart.cc/wyattowalsh/wyattowals"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg"/></a>
 
