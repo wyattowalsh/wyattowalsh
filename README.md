@@ -221,13 +221,17 @@ Makefile                 1 repo              █░░░░░░░░░░�
 #### By Language
 
 <div align='center'>
-    <img src="./assets/wordcloud_by_language.png" width="65%"/>
+    <a href="languages.md" target="_blank" rel="noopener noreferrer">
+        <img src="./assets/wordcloud_by_language.png" width="65%"/>
+    </a>
 </div>
 
 #### By Topic
 
 <div align='center'>
-    <img src="./assets/wordcloud_by_topic.png" width="65%"/>
+    <a href="topics.md" target="_blank" rel="noopener noreferrer">
+        <img src="./assets/wordcloud_by_topic.png" width="65%"/>
+    </a>
 </div>
 
 </details>
@@ -239,7 +243,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 <details>
 <summary>Click here to expand ↩️</summary>
 <br>
-<a href="https://starchart.cc/wyattowalsh/wyattowalsh"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg"/></a>
+<a href="https://starchart.cc/wyattowalsh/wyattowalsh"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg" width="65%"/></a>
 
 </details>
 
