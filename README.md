@@ -19,7 +19,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 ---
 
-## Projects
+## Projects 📝 📊 
 
 <p align='center'>
     <a href="https://github.com/wyattowalsh/personal-website"><img src="https://gh-card.dev/repos/wyattowalsh/personal-website.svg"></a>
@@ -30,11 +30,11 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 ---
 
-## Technologies
+## Technologies 👨‍💻 💾
 
 
 <details>
-    <summary>➳ Click here to expand</summary>
+    <summary>Click here to expand ↩️</summary>
     <br>
 
 ### Programming Languages
@@ -109,7 +109,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 ## My Wakatime Stats 👨‍💻 🗓️
 
 <details>
-<summary>➳ Click here to expand</summary>
+<summary>Click here to expand ↩️</summary>
 <br>
     
 <!--START_SECTION:waka-->
@@ -198,7 +198,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ## My GitHub Stats :octocat: 📈 
 
 <details>
-<summary>➳ Click here to expand</summary>
+<summary>Click here to expand ↩️</summary>
 <br>
 
 | ![](./assets/metrics.svg) | ![](./assets/metrics.additional.svg) |
@@ -211,7 +211,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ## My Starred Repos ✨ and Associated Word Clouds ☁️
 
 <details>
-<summary>➳ Click here to expand</summary>
+<summary>Click here to expand ↩️</summary>
 <br>
     
 ### ➔ Check out projects I've starred [by language](languages.md) or [by topic](topics.md) ✨
@@ -234,12 +234,12 @@ Makefile                 1 repo              █░░░░░░░░░░�
 
 ---
 
-## Stargazers Over Time ✨🔭
+## Stargazers Over Time ✨ 🔭
 
 <details>
-<summary>➳ Click here to expand</summary>
+<summary>Click here to expand ↩️</summary>
 <br>
-<a href="https://starchart.cc/wyattowalsh/wyattowals"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg"/></a>
+<a href="https://starchart.cc/wyattowalsh/wyattowalsh"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg"/></a>
 
 </details>
 
