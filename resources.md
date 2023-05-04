@@ -28,3 +28,42 @@
 - [Image Color Picker](https://imagecolorpicker.com/) &mdash; Use the online image color picker above to select a color and get the HTML Color Code of this pixel. Also you get the HEX color code value, RGB value and HSV value. 
 - [Color-Hex](https://www.color-hex.com/) &mdash; Color-hex gives information about colors including color models (RGB,HSL,HSV and CMYK), Triadic colors, monochromatic colors and analogous colors calculated in color page. 
 - [Sessions College Color Calculator](https://www.sessions.edu/color-calculator/) &mdash; Use the free Color Calculator to explore creative color options for your design project. Simply pick your base color(s), choose a color harmony, tweak/explore as needed, and see results. You’ll get a report of the hex, RGB, and CMYK color values for your project and see your colors applied to design samples. Share or print, rinse and repeat.
+
+---
+
+## `README.md` File Components
+
+### GitHub Stats
+
+```markdown
+[![Wyatt's GitHub stats](https://github-readme-stats.vercel.app/api?username=wyattowalsh&count_private=true&show_icons=true&theme=radical&hide_rank=false)](https://github.com/anuraghazra/github-readme-stats)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=wyattowalsh&hide=jupyter%20notebook&langs_count=5&layout=compact,html)](https://github.com/anuraghazra/github-readme-stats)
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=wyattowalsh)](https://github.com/anuraghazra/github-readme-stats)
+```
+
+### Designed in Etch-a-Sketch
+
+```markdown
+[![forthebadge](https://forthebadge.com/images/badges/designed-in-etch-a-sketch.svg)](https://forthebadge.com)
+```
+
+### Display Medium Blog Articles
+
+```markdown
+[![Wyatt Walsh Medium](https://github-readme-medium.vercel.app/?username=wyattowalsh&limit=3)](https://medium.com/@omidnikrah)
+```
+
+### Spotify Profile Player
+
+<!-- 
+spotify
+client id 48033ba31dd9409aa021b081717f87fc
+redirect https://localhost
+AQAuW45c6C9ffpJDcvIfMVWbNj8knl3vFQH10ssz7iqQtTbXy2Fk0cA-CUbucqGozpwHhItz1OAq_4AlbMGWzJIWCXi5xBK-uacf65sUL278rhawm2ysflptzT9IehrvWzJmZ9b1S6EOm8ncxTBMcAHaS8xQ1HVixxwdYteIZX1OeJT5PdXTr51943Jsdkto
+
+refresh AQB-GhXNHgk9EqV7DfyiG2-Tb5aWbLhf2UUsI34s1Lv9JRcKFIPowF09GtsMOd45bJId68MrStfmhupOUe4z4iCAHrqT5yBROO04qopoa73VgsSljMelzQfrf0IIDNcQRFo
+ -->
+
+```markdown
+<img align='right' src='https://spotify-github-profile.vercel.app/api/view?uid=122096382&cover_image=true&theme=default'/>
+``` 
