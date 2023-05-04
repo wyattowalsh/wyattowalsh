@@ -243,8 +243,9 @@ Makefile                 1 repo              █░░░░░░░░░░�
 <details>
 <summary>Click here to expand ↩️</summary>
 <br>
-<a href="https://starchart.cc/wyattowalsh/wyattowalsh"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg" width="65%"/></a>
-
+    <div align='center'>
+        <a href="https://starchart.cc/wyattowalsh/wyattowalsh"><img alt="Stargazers over time" src="https://starchart.cc/wyattowalsh/wyattowalsh.svg" width="65%"/></a>
+    </div>
 </details>
 
 ---
