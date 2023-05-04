@@ -213,21 +213,21 @@ Makefile                 1 repo              █░░░░░░░░░░�
 <details>
 <summary>Click here to expand ↩️</summary>
 <br>
-    
-### ➔ Check out projects I've starred [by language](languages.md) or [by topic](topics.md) ✨
+
+<h3>➔ Check out projects I've starred <a href="languages.md" target="_blank" rel="noopener noreferrer">by language</a> or <a href="topics.md" target="_blank" rel="noopener noreferrer">by topic</a> ✨
 
 ### Starred Projects Word Clouds
 
 #### By Language
 
 <div align='center'>
-    <img src="./assets/wordcloud_by_language.png"/>
+    <img src="./assets/wordcloud_by_language.png" width="65%"/>
 </div>
 
 #### By Topic
 
 <div align='center'>
-    <img src="./assets/wordcloud_by_topic.png"/>
+    <img src="./assets/wordcloud_by_topic.png" width="65%"/>
 </div>
 
 </details>
