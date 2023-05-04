@@ -32,5 +32,5 @@ jobs:
       run: python3 scripts/word_clouds.py
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: ${{ github.event.inputs.COMMIT_MESSAGE }}
+        commit_message: Updated with wordclouds action
 
