@@ -132,6 +132,7 @@
 - [nlp](#nlp)
 - [node](#node)
 - [nodejs](#nodejs)
+- [nosql](#nosql)
 - [npm](#npm)
 - [numpy](#numpy)
 - [objective-c](#objective-c)
@@ -868,7 +869,7 @@
 ## data-analysis 
 
 - [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your pandas dataframe into a Tableau-style User Interface for visual analysis
-- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool written in Python.
+- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool.
 - [LongOnly/Quantitative-Notebooks](https://github.com/LongOnly/Quantitative-Notebooks) - Educational notebooks on quantitative finance, algorithmic trading, financial modelling and investment strategy
 - [grandsmarquis/awesome-ethereum-analytics](https://github.com/grandsmarquis/awesome-ethereum-analytics) - A curated list of projects around Ethereum analytics.
 - [analyseether/ether_sql](https://github.com/analyseether/ether_sql) - A python library to push ethereum blockchain data into an sql database.
@@ -902,7 +903,7 @@
 - [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 The modern replacement for Airflow. Build, run, and manage data pipelines for integrating and transforming data.
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life data science projects with ease!
 - [wyattowalsh/data-science-notes](https://github.com/wyattowalsh/data-science-notes) - Open-source project hosted at https://makeuseofdata.com to crowdsource a robust collection of notes related to data science (math, visualization, modeling, etc)
-- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool written in Python.
+- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool.
 - [mattpodolak/pmaw](https://github.com/mattpodolak/pmaw) - A multithread Pushshift.io API Wrapper for reddit.com comment and submission searches.
 - [quantiacs/toolbox](https://github.com/quantiacs/toolbox) - This is the current Quantiacs toolbox which includes the backtester for developing and testing trading algorithms.
 - [LongOnly/Quantitative-Notebooks](https://github.com/LongOnly/Quantitative-Notebooks) - Educational notebooks on quantitative finance, algorithmic trading, financial modelling and investment strategy
@@ -1067,6 +1068,7 @@
 
 ## database 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
 - [pentaho/mondrian](https://github.com/pentaho/mondrian) - Mondrian is an Online Analytical Processing (OLAP) server that enables business users to analyze large quantities of data in real-time.
 - [antonycourtney/tad](https://github.com/antonycourtney/tad) - A desktop application for viewing and analyzing tabular data
@@ -1832,6 +1834,7 @@
 
 ## java 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [schemacrawler/SchemaCrawler](https://github.com/schemacrawler/SchemaCrawler) - Free database schema discovery and comprehension tool
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Framework to build admin panels, internal tools, and dashboards. Integrates with 15+ databases and any API.
 - [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
@@ -1988,7 +1991,7 @@
 
 ## json 
 
-- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool written in Python.
+- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool.
 - [gaojiuli/toapi](https://github.com/gaojiuli/toapi) - Every web site provides APIs.
 - [tiangolo/full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql) - Full stack, modern web application generator. Using FastAPI, PostgreSQL as database, Docker, automatic HTTPS and more.
 - [tiangolo/fastapi](https://github.com/tiangolo/fastapi) - FastAPI framework, high performance, easy to learn, fast to code, ready for production
@@ -2259,6 +2262,8 @@
 
 ## macos 
 
+- [Clipy/Clipy](https://github.com/Clipy/Clipy) - Clipboard extension app for macOS.
+- [samuelmeuli/glance](https://github.com/samuelmeuli/glance) - 🔎 All-in-one Quick Look plugin
 - [sindresorhus/Plash](https://github.com/sindresorhus/Plash) - 💦 Make any website your Mac desktop wallpaper
 - [mczachurski/wallpapper](https://github.com/mczachurski/wallpapper) - :computer: Console application for creating dynamic wallpapers for macOS Mojave and newer
 - [godly-devotion/MochiDiffusion](https://github.com/godly-devotion/MochiDiffusion) - Run Stable Diffusion on Mac natively
@@ -2398,6 +2403,7 @@
 
 ## mysql 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
 - [knex/knex](https://github.com/knex/knex) - A query builder for PostgreSQL, MySQL, CockroachDB, SQL Server, SQLite3 and Oracle, designed to be flexible, portable, and fun to use.
 - [sequelize/sequelize](https://github.com/sequelize/sequelize) - Feature-rich ORM for modern Node.js and TypeScript, it supports PostgreSQL (with JSON and JSONB support), MySQL, MariaDB, SQLite, MS SQL Server, Snowflake, Oracle DB (v6), DB2 and DB2 for IBM i.
@@ -2522,6 +2528,10 @@
 - [LeCoupa/awesome-cheatsheets](https://github.com/LeCoupa/awesome-cheatsheets) - 👩‍💻👨‍💻 Awesome cheatsheets for popular programming languages, frameworks and development tools. They include everything you should know in one single file.
 - [30-seconds/30-seconds-of-code](https://github.com/30-seconds/30-seconds-of-code) - Short JavaScript code snippets for all your development needs
 
+## nosql 
+
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
+
 ## npm 
 
 - [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
@@ -2584,6 +2594,11 @@
 
 ## others 
 
+- [p2/quicklook-csv](https://github.com/p2/quicklook-csv) - A QuickLook plugin for CSV files
+- [emin/WebPQuickLook](https://github.com/emin/WebPQuickLook) - Mac OS X QuickLook plugin for WebP image files
+- [sbarex/QLMarkdown](https://github.com/sbarex/QLMarkdown) - macOS Quick Look extension for Markdown files.
+- [wise-coders/dbschema](https://github.com/wise-coders/dbschema) - DbSchema Database Designer
+- [apache/arrow](https://github.com/apache/arrow) - Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing
 - [WenheLI/p5.gif](https://github.com/WenheLI/p5.gif) - P5.js gif helper
 - [tartley/colorama](https://github.com/tartley/colorama) - Simple cross-platform colored terminal text in Python
 - [ai-forever/Kandinsky-2](https://github.com/ai-forever/Kandinsky-2) - Kandinsky 2 — multilingual text2image latent diffusion model
@@ -2828,7 +2843,7 @@
 - [GoesToEleven/GolangTraining](https://github.com/GoesToEleven/GolangTraining) - Training for Golang (go language)
 - [scottdraves/flam3](https://github.com/scottdraves/flam3) - the original fractal flame renderer and genetic language
 - [scottdraves/electricsheep](https://github.com/scottdraves/electricsheep) - infinite evolving crowdsourced artwork
-- [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa is a shared cryptography library
+- [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa (a shared cryptographic library) has moved to end-of-life status, with the components of Ursa still in use moved to their relevant Hyperledger projects (AnonCreds, Indy, Aries and Iro
 - [attentionneuron/attentionneuron.github.io](https://github.com/attentionneuron/attentionneuron.github.io) - 
 - [CompVis/taming-transformers](https://github.com/CompVis/taming-transformers) - Taming Transformers for High-Resolution Image Synthesis
 - [grommet/grommet-icons](https://github.com/grommet/grommet-icons) - Iconography for Grommet and React.js
@@ -3248,6 +3263,7 @@
 
 ## postgresql 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
 - [supabase/supabase](https://github.com/supabase/supabase) - The open source Firebase alternative. Follow to stay updated about our public Beta.
 - [knex/knex](https://github.com/knex/knex) - A query builder for PostgreSQL, MySQL, CockroachDB, SQL Server, SQLite3 and Oracle, designed to be flexible, portable, and fun to use.
@@ -3298,6 +3314,7 @@
 
 ## python 
 
+- [coin-or/pulp](https://github.com/coin-or/pulp) - A python Linear Programming API
 - [numba/numba](https://github.com/numba/numba) - NumPy aware dynamic Python compiler using LLVM
 - [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
 - [nnaisense/evotorch](https://github.com/nnaisense/evotorch) - Advanced evolutionary computation library built directly on top of PyTorch, created at NNAISENSE.
@@ -3343,7 +3360,7 @@
 - [sivel/speedtest-cli](https://github.com/sivel/speedtest-cli) - Command line interface for testing internet bandwidth using speedtest.net
 - [sphinx-doc/sphinx](https://github.com/sphinx-doc/sphinx) - The Sphinx documentation generator
 - [tillahoffmann/obsidian-jupyter](https://github.com/tillahoffmann/obsidian-jupyter) - 
-- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool written in Python.
+- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool.
 - [aliparlakci/bulk-downloader-for-reddit](https://github.com/aliparlakci/bulk-downloader-for-reddit) - Downloads and archives content from reddit
 - [praw-dev/praw](https://github.com/praw-dev/praw) - PRAW, an acronym for "Python Reddit API Wrapper", is a python package that allows for simple access to Reddit's API.
 - [gaojiuli/toapi](https://github.com/gaojiuli/toapi) - Every web site provides APIs.
@@ -3926,6 +3943,7 @@
 
 ## sql 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 The modern replacement for Airflow. Build, run, and manage data pipelines for integrating and transforming data.
 - [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
 - [modin-project/modin](https://github.com/modin-project/modin) - Modin: Scale your Pandas workflows by changing a single line of code
@@ -3999,6 +4017,7 @@
 
 ## swift 
 
+- [Clipy/Clipy](https://github.com/Clipy/Clipy) - Clipboard extension app for macOS.
 - [hollance/CoreMLHelpers](https://github.com/hollance/CoreMLHelpers) - Types and functions that make it a little easier to work with Core ML in Swift.
 - [john-rocky/CoreML-Models](https://github.com/john-rocky/CoreML-Models) - Converted CoreML Model Zoo.
 - [sindresorhus/Plash](https://github.com/sindresorhus/Plash) - 💦 Make any website your Mac desktop wallpaper
@@ -4236,6 +4255,7 @@
 
 ## xcode 
 
+- [Clipy/Clipy](https://github.com/Clipy/Clipy) - Clipboard extension app for macOS.
 - [themerdev/themer](https://github.com/themerdev/themer) - 🎨 themer takes a set of colors and generates themes for your apps (editors, terminals, wallpapers, and more).
 - [LeCoupa/awesome-cheatsheets](https://github.com/LeCoupa/awesome-cheatsheets) - 👩‍💻👨‍💻 Awesome cheatsheets for popular programming languages, frameworks and development tools. They include everything you should know in one single file.
 
