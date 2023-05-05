@@ -62,6 +62,7 @@
 
 ## C 
 
+- [emin/WebPQuickLook](https://github.com/emin/WebPQuickLook) - Mac OS X QuickLook plugin for WebP image files
 - [adobe-type-tools/afdko](https://github.com/adobe-type-tools/afdko) - Adobe Font Development Kit for OpenType
 - [viabtc/viabtc_exchange_server](https://github.com/viabtc/viabtc_exchange_server) - A trading engine with high-speed performance and real-time notification
 - [nihui/realsr-ncnn-vulkan](https://github.com/nihui/realsr-ncnn-vulkan) - RealSR super resolution implemented with ncnn library
@@ -85,6 +86,8 @@
 
 ## C++ 
 
+- [sbarex/QLMarkdown](https://github.com/sbarex/QLMarkdown) - macOS Quick Look extension for Markdown files.
+- [apache/arrow](https://github.com/apache/arrow) - Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing
 - [mimecorg/fraqtive](https://github.com/mimecorg/fraqtive) - Generator of the Mandelbrot family fractals.
 - [xaos-project/XaoS](https://github.com/xaos-project/XaoS) - Real-time interactive fractal zoomer
 - [exaloop/codon](https://github.com/exaloop/codon) - A high-performance, zero-overhead, extensible Python compiler using LLVM
@@ -271,6 +274,7 @@
 
 ## Java 
 
+- [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [schemacrawler/SchemaCrawler](https://github.com/schemacrawler/SchemaCrawler) - Free database schema discovery and comprehension tool
 - [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
@@ -736,10 +740,12 @@
 
 ## Objective-C 
 
+- [p2/quicklook-csv](https://github.com/p2/quicklook-csv) - A QuickLook plugin for CSV files
 - [sprang/Inkpad](https://github.com/sprang/Inkpad) - Vector illustration app for the iPad.
 
 ## Others 
 
+- [wise-coders/dbschema](https://github.com/wise-coders/dbschema) - DbSchema Database Designer
 - [john-rocky/CoreML-Models](https://github.com/john-rocky/CoreML-Models) - Converted CoreML Model Zoo.
 - [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) - A curated list of awesome Docusaurus resources
 - [CollabCodeTech/backend-challenges](https://github.com/CollabCodeTech/backend-challenges) - A public list of open-source challenges from jobs around the world
@@ -956,6 +962,7 @@
 
 ## Python 
 
+- [coin-or/pulp](https://github.com/coin-or/pulp) - A python Linear Programming API
 - [numba/numba](https://github.com/numba/numba) - NumPy aware dynamic Python compiler using LLVM
 - [tartley/colorama](https://github.com/tartley/colorama) - Simple cross-platform colored terminal text in Python
 - [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
@@ -1054,7 +1061,7 @@
 - [memgraph/reddit-network-explorer](https://github.com/memgraph/reddit-network-explorer) - A graph-powered Reddit explorer that can perform real-time graph visualizations and sentiment analysis.
 - [MalloyDelacroix/DownloaderForReddit](https://github.com/MalloyDelacroix/DownloaderForReddit) - The Downloader for Reddit is a GUI application with some advanced features to extract and download submitted content from reddit.
 - [Deimos/SubredditSimulator](https://github.com/Deimos/SubredditSimulator) - An automated subreddit with posts created using markov chains
-- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool written in Python.
+- [JosephLai241/URS](https://github.com/JosephLai241/URS) - Universal Reddit Scraper - A comprehensive Reddit scraping command-line tool.
 - [Dobiasd/programming-language-subreddits-and-their-choice-of-words](https://github.com/Dobiasd/programming-language-subreddits-and-their-choice-of-words) - How do the different communities talk?
 - [aliparlakci/bulk-downloader-for-reddit](https://github.com/aliparlakci/bulk-downloader-for-reddit) - Downloads and archives content from reddit
 - [mattpodolak/pmaw](https://github.com/mattpodolak/pmaw) - A multithread Pushshift.io API Wrapper for reddit.com comment and submission searches.
@@ -1458,7 +1465,7 @@
 
 - [electric-capital/crypto-ecosystems](https://github.com/electric-capital/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
 - [a16z/crypto-ecosystems](https://github.com/a16z/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
-- [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa is a shared cryptography library
+- [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa (a shared cryptographic library) has moved to end-of-life status, with the components of Ursa still in use moved to their relevant Hyperledger projects (AnonCreds, Indy, Aries and Iro
 - [zoni/obsidian-export](https://github.com/zoni/obsidian-export) - Rust library and CLI to export an Obsidian vault to regular Markdown
 - [mdzk-rs/mdzk](https://github.com/mdzk-rs/mdzk) - General-purpose interface to connected notes
 - [maidsafe/temp_safe_network](https://github.com/maidsafe/temp_safe_network) - The Safe Network. A libp2p backed data and transfer network
@@ -1539,6 +1546,8 @@
 
 ## Swift 
 
+- [Clipy/Clipy](https://github.com/Clipy/Clipy) - Clipboard extension app for macOS.
+- [samuelmeuli/glance](https://github.com/samuelmeuli/glance) - 🔎 All-in-one Quick Look plugin
 - [hollance/CoreMLHelpers](https://github.com/hollance/CoreMLHelpers) - Types and functions that make it a little easier to work with Core ML in Swift.
 - [sindresorhus/Plash](https://github.com/sindresorhus/Plash) - 💦 Make any website your Mac desktop wallpaper
 - [mczachurski/wallpapper](https://github.com/mczachurski/wallpapper) - :computer: Console application for creating dynamic wallpapers for macOS Mojave and newer
