@@ -117,6 +117,7 @@
 - [davisking/dlib](https://github.com/davisking/dlib) - A toolkit for making real world machine learning and data analysis applications in C++
 - [shogun-toolbox/shogun](https://github.com/shogun-toolbox/shogun) - Shōgun
 - [tensorflow/tensorflow](https://github.com/tensorflow/tensorflow) - An Open Source Machine Learning Framework for Everyone
+- [MTG/essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings
 
 ## CSS 
 
@@ -428,7 +429,6 @@
 - [timlrx/rehype-citation](https://github.com/timlrx/rehype-citation) - Rehype plugin to add citation and bibliography from bibtex files
 - [imcuttle/remark-heading-id](https://github.com/imcuttle/remark-heading-id) - The remark plugin for supporting custom heading id
 - [trekhleb/javascript-algorithms](https://github.com/trekhleb/javascript-algorithms) - 📝 Algorithms and data structures implemented in JavaScript with explanations and links to further readings
-- [obsidian-html/obsidian-html](https://github.com/obsidian-html/obsidian-html) - Python code to convert Obsidian notes to proper markdown and optionally to create an html site too.
 - [johackim/gatsby-remark-obsidian](https://github.com/johackim/gatsby-remark-obsidian) - Gatsby plugin to support Obsidian markdown syntax
 - [obsidianmd/obsidian-releases](https://github.com/obsidianmd/obsidian-releases) - Community plugins list, theme list, and releases of Obsidian.
 - [flexanalytics/plugin-image-zoom](https://github.com/flexanalytics/plugin-image-zoom) - 
@@ -702,7 +702,6 @@
 - [fengdu78/Data-Science-Notes](https://github.com/fengdu78/Data-Science-Notes) - 数据科学的笔记以及资料搜集
 - [amitkaps/hackermath](https://github.com/amitkaps/hackermath) - Introduction to Statistics and Basics of Mathematics for Data Science - The Hacker's Way
 - [khuyentran1401/Data-science](https://github.com/khuyentran1401/Data-science) - Collection of useful data science topics along with articles, videos, and code
-- [MTG/essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings
 - [wyattowalsh/higher-education-simulation](https://github.com/wyattowalsh/higher-education-simulation) - Full Python implementation of an agent-based simulation model of generalized higher education institutions. Thousands of experiments are conducted and model feature significance is found through regre
 - [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - Formulation in AMPL and evaluation in CPLEX of mixed-integer linear programs for several fair division problems under envy-freeness. Visualization in Python of resultant model and solver data
 - [wyattowalsh/regularized-linear-regression-deep-dive](https://github.com/wyattowalsh/regularized-linear-regression-deep-dive) - Explanations and Python implementations of Ordinary Least Squares regression, Ridge regression, Lasso regression (solved via Coordinate Descent), and Elastic Net regression (also solved via Coordinate
@@ -1164,6 +1163,7 @@
 - [theskumar/python-dotenv](https://github.com/theskumar/python-dotenv) - Reads key-value pairs from a .env file and can set them as environment variables. It helps in developing applications following the 12-factor principles.
 - [eracle/linkedin](https://github.com/eracle/linkedin) - Linkedin Scraper using Selenium Web Driver, Chromium headless, Docker and Scrapy
 - [p5py/p5](https://github.com/p5py/p5) - p5 is a Python package based on the core ideas of Processing.
+- [obsidian-html/obsidian-html](https://github.com/obsidian-html/obsidian-html) - Python code to convert Obsidian notes to proper markdown and optionally to create an html site too.
 - [upwork/python-upwork-oauth2](https://github.com/upwork/python-upwork-oauth2) - Python bindings for Upwork API (OAuth2)
 - [Buuntu/fastapi-react](https://github.com/Buuntu/fastapi-react) - 🚀   Cookiecutter Template for FastAPI + React Projects.  Using PostgreSQL, SQLAlchemy, and Docker
 - [tiangolo/full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql) - Full stack, modern web application generator. Using FastAPI, PostgreSQL as database, Docker, automatic HTTPS and more.
