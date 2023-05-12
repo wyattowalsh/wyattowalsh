@@ -961,6 +961,8 @@
 
 ## Python 
 
+- [Significant-Gravitas/Auto-GPT-Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins) - Plugins for Auto-GPT
+- [yoheinakajima/babyagi](https://github.com/yoheinakajima/babyagi) - 
 - [coin-or/pulp](https://github.com/coin-or/pulp) - A python Linear Programming API
 - [numba/numba](https://github.com/numba/numba) - NumPy aware dynamic Python compiler using LLVM
 - [tartley/colorama](https://github.com/tartley/colorama) - Simple cross-platform colored terminal text in Python
@@ -1512,6 +1514,7 @@
 
 ## Shell 
 
+- [monicahq/docker](https://github.com/monicahq/docker) - docker image of Monica
 - [ralsina/rst-cheatsheet](https://github.com/ralsina/rst-cheatsheet) - A two-page cheatsheet for restructured text
 - [unixorn/awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins) - A collection of ZSH frameworks, plugins, themes and tutorials.
 - [powerline/fonts](https://github.com/powerline/fonts) - Patched fonts for Powerline users.
