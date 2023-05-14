@@ -2602,7 +2602,6 @@
 
 - [Significant-Gravitas/Auto-GPT-Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins) - Plugins for Auto-GPT
 - [yoheinakajima/babyagi](https://github.com/yoheinakajima/babyagi) - 
-- [mitsuhiko/rye](https://github.com/mitsuhiko/rye) - an experimental alternative to poetry/pip/pipenv/pyenv/venv/virtualenv/pdm/hatch/…
 - [p2/quicklook-csv](https://github.com/p2/quicklook-csv) - A QuickLook plugin for CSV files
 - [emin/WebPQuickLook](https://github.com/emin/WebPQuickLook) - Mac OS X QuickLook plugin for WebP image files
 - [sbarex/QLMarkdown](https://github.com/sbarex/QLMarkdown) - macOS Quick Look extension for Markdown files.
@@ -3244,6 +3243,7 @@
 
 ## package-manager 
 
+- [mitsuhiko/rye](https://github.com/mitsuhiko/rye) - an experimental alternative to poetry/pip/pipenv/pyenv/venv/virtualenv/pdm/hatch/…
 - [python-poetry/poetry](https://github.com/python-poetry/poetry) - Python packaging and dependency management made easy
 - [Homebrew/brew](https://github.com/Homebrew/brew) - 🍺 The missing package manager for macOS (or Linux)
 
@@ -3321,6 +3321,7 @@
 
 ## python 
 
+- [mitsuhiko/rye](https://github.com/mitsuhiko/rye) - an experimental alternative to poetry/pip/pipenv/pyenv/venv/virtualenv/pdm/hatch/…
 - [coin-or/pulp](https://github.com/coin-or/pulp) - A python Linear Programming API
 - [numba/numba](https://github.com/numba/numba) - NumPy aware dynamic Python compiler using LLVM
 - [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
