@@ -5,6 +5,7 @@
 
 ## Contents
 
+- [Astro](#astro)
 - [Batchfile](#batchfile)
 - [C](#c)
 - [C#](#c#)
@@ -50,6 +51,10 @@
 - [TeX](#tex)
 - [TypeScript](#typescript)
 - [Vue](#vue)
+
+## Astro 
+
+- [kamranahmedse/developer-roadmap](https://github.com/kamranahmedse/developer-roadmap) - Interactive roadmaps, guides and other educational content to help developers grow in their careers.
 
 ## Batchfile 
 
@@ -387,6 +392,7 @@
 - [nathancarter/group-explorer](https://github.com/nathancarter/group-explorer) - Group theory visualization software in the browser
 - [rehypejs/rehype-highlight](https://github.com/rehypejs/rehype-highlight) - plugin to highlight code blocks
 - [austintgriffith/dapparatus](https://github.com/austintgriffith/dapparatus) - 📦📃Dapparatus: reusable dapp components in react: contract loader, metamask, gas, transaction ui, event parers, etc
+- [OffcierCia/DeFi-Developer-Road-Map](https://github.com/OffcierCia/DeFi-Developer-Road-Map) - DeFi Developer roadmap is a curated Developer handbook which includes a list of the best tools for DApps development, resources and references!
 - [lfades/next-plugin-graphql](https://github.com/lfades/next-plugin-graphql) - Next plugin for .graphql and .gql files using graphql-tag
 - [motdotla/dotenv](https://github.com/motdotla/dotenv) - Loads environment variables from .env for nodejs projects.
 - [brandonweiss/charge](https://github.com/brandonweiss/charge) - ⚡️ An opinionated, zero-config static site generator.
@@ -511,7 +517,7 @@
 - [konstantinmuenster/gatsby-starter-portfolio-minimal](https://github.com/konstantinmuenster/gatsby-starter-portfolio-minimal) - A Gatsby Starter to create a clean one-page portfolio with Markdown content.
 - [mdx-js/mdx](https://github.com/mdx-js/mdx) - Markdown for the component era
 - [plouc/mozaik](https://github.com/plouc/mozaik) - Mozaïk is a tool based on nodejs / react / redux / nivo / d3 to easily craft beautiful dashboards
-- [app-generator/react-berry-dashboard](https://github.com/app-generator/react-berry-dashboard) - React Berry Dashboard - Full-Stack Product | AppSeed
+- [app-generator/react-berry-dashboard-old](https://github.com/app-generator/react-berry-dashboard-old) - React Berry Dashboard - Full-Stack Product | AppSeed
 - [creativetimofficial/material-tailwind-dashboard-react](https://github.com/creativetimofficial/material-tailwind-dashboard-react) - Free and Open Source Admin for Tailwind CSS and React based on Google's Material Design.
 - [creativetimofficial/purity-ui-dashboard](https://github.com/creativetimofficial/purity-ui-dashboard) - Purity UI Dashboard - Free and Open Source Chakra UI Dashboard
 - [Popmotion/popmotion](https://github.com/Popmotion/popmotion) - Simple animation libraries for delightful user interfaces
@@ -777,7 +783,6 @@
 - [npostulart/SCSS-Snippets](https://github.com/npostulart/SCSS-Snippets) - Snippets for use with SCSS
 - [gweicz/defi-toolkit](https://github.com/gweicz/defi-toolkit) - Curated list of best tools for user of Ethereum (DeFi) ecosystem
 - [defi-defense-dao/defi-risk-tools-list](https://github.com/defi-defense-dao/defi-risk-tools-list) - A guide to available tools and projects for analyzing and managing risk within DeFi.
-- [OffcierCia/DeFi-Developer-Road-Map](https://github.com/OffcierCia/DeFi-Developer-Road-Map) - DeFi Developer roadmap is a curated Developer handbook which includes a list of the best tools for DApps development, resources and references!
 - [dzharii/awesome-typescript](https://github.com/dzharii/awesome-typescript) - A collection of awesome TypeScript resources for client-side and server-side development. Write your awesome JavaScript in TypeScript
 - [sindresorhus/awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) - :zap: Delightful Node.js packages and resources
 - [JingwenTian/awesome-frontend](https://github.com/JingwenTian/awesome-frontend) - A curated list of amazingly awesome frontend libraries, resources and shiny things.
@@ -1095,7 +1100,7 @@
 - [ApeWorX/ape-vyper](https://github.com/ApeWorX/ape-vyper) - Vyper compiler plugin for Ape, using VVM
 - [ApeWorX/ape-solidity](https://github.com/ApeWorX/ape-solidity) - 
 - [ApeWorX/ape-hardhat](https://github.com/ApeWorX/ape-hardhat) - Hardhat network provider for Ape
-- [salesforce/CodeT5](https://github.com/salesforce/CodeT5) - Code for CodeT5: a new code-aware pre-trained encoder-decoder model.
+- [salesforce/CodeT5](https://github.com/salesforce/CodeT5) - Home of CodeT5: Open Code LLMs for Code Understanding and Generation
 - [open-mmlab/mmagic](https://github.com/open-mmlab/mmagic) - OpenMMLab Multimodal Advanced, Generative, and Intelligent Creation Toolbox. Unlock the magic 🪄: Generative-AI (AIGC), easy-to-use APIs, awsome model zoo, diffusion models, image/video restoration/enh
 - [XPixelGroup/BasicSR](https://github.com/XPixelGroup/BasicSR) - Open Source Image and Video Restoration Toolbox for Super-resolution, Denoise, Deblurring, etc. Currently, it includes EDSR, RCAN, SRResNet, SRGAN, ESRGAN, EDVR, BasicVSR, SwinIR, ECBSR, etc. Also sup
 - [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) - Real-ESRGAN aims at developing Practical Algorithms for General Image/Video Restoration.
@@ -1458,7 +1463,7 @@
 
 ## Rust 
 
-- [mitsuhiko/rye](https://github.com/mitsuhiko/rye) - an experimental alternative to poetry/pip/pipenv/pyenv/venv/virtualenv/pdm/hatch/…
+- [mitsuhiko/rye](https://github.com/mitsuhiko/rye) - An Experimental Package Management Solution for Python
 - [electric-capital/crypto-ecosystems](https://github.com/electric-capital/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
 - [a16z/crypto-ecosystems](https://github.com/a16z/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
 - [hyperledger/ursa](https://github.com/hyperledger/ursa) - Hyperledger Ursa (a shared cryptographic library) has moved to end-of-life status, with the components of Ursa still in use moved to their relevant Hyperledger projects (AnonCreds, Indy, Aries and Iro
@@ -1761,7 +1766,6 @@
 - [jupyterlab/jupyterlab-desktop](https://github.com/jupyterlab/jupyterlab-desktop) - JupyterLab desktop application, based on Electron.
 - [coder/code-server](https://github.com/coder/code-server) - VS Code in the browser
 - [yangshun/tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook) - 💯 Curated coding interview preparation materials for busy software engineers
-- [kamranahmedse/developer-roadmap](https://github.com/kamranahmedse/developer-roadmap) - Interactive roadmaps, guides and other educational content to help developers grow in their careers.
 - [trufflesuite/truffle](https://github.com/trufflesuite/truffle) - A tool for developing smart contracts. Crafted with the finest cacaos.
 - [styleguidist/react-styleguidist](https://github.com/styleguidist/react-styleguidist) - Isolated React component development environment with a living style guide
 - [hoppscotch/hoppscotch](https://github.com/hoppscotch/hoppscotch) - 👽 Open source API development ecosystem - https://hoppscotch.io
