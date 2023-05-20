@@ -154,10 +154,10 @@ Sunday                   603 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   27 mins             █████████████████████████   100.00 % 
+Python                   23 mins             █████████████████████████   100.00 % 
 
 💻 Operating System: 
-Mac                      27 mins             █████████████████████████   100.00 % 
+Mac                      23 mins             █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -177,7 +177,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 19/05/2023 18:38:35 UTC
+ Last Updated on 20/05/2023 18:38:29 UTC
 <!--END_SECTION:waka-->
 
     
