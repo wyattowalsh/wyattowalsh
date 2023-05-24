@@ -1104,7 +1104,7 @@
 - [HypoX64/DeepMosaics](https://github.com/HypoX64/DeepMosaics) - Automatically remove the mosaics in images and videos, or add mosaics to them.
 - [huseinzol05/Stock-Prediction-Models](https://github.com/huseinzol05/Stock-Prediction-Models) - Gathers machine learning and deep learning models for Stock forecasting including trading bots and simulations
 - [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Automated Machine Learning [AutoML] with Python, scikit-learn, Keras, XGBoost, LightGBM, and CatBoost
-- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from explo
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [geek-ai/MAgent](https://github.com/geek-ai/MAgent) - A Platform for Many-agent Reinforcement Learning
 - [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
@@ -1390,7 +1390,7 @@
 - [vnpy/vnpy](https://github.com/vnpy/vnpy) - 基于Python的开源量化交易平台开发框架
 - [bashtage/arch](https://github.com/bashtage/arch) - ARCH models in Python
 - [rsvp/fecon235](https://github.com/rsvp/fecon235) - Notebooks for financial economics. Keywords:  Jupyter notebook pandas Federal Reserve FRED Ferbus GDP CPI PCE inflation unemployment wage income debt Case-Shiller housing asset portfolio equities SPX 
-- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from explo
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [AI4Finance-Foundation/FinRL](https://github.com/AI4Finance-Foundation/FinRL) - FinRL:  Financial Reinforcement Learning. 🔥
 - [kernc/backtesting.py](https://github.com/kernc/backtesting.py) - :mag_right: :chart_with_upwards_trend: :snake: :moneybag:  Backtest trading strategies in Python.
@@ -2154,7 +2154,7 @@
 - [visenger/awesome-mlops](https://github.com/visenger/awesome-mlops) - A curated list of references for MLOps
 - [krishnakumarsekar/awesome-quantum-machine-learning](https://github.com/krishnakumarsekar/awesome-quantum-machine-learning) - Here you can get all the Quantum Machine learning Basics, Algorithms ,Study Materials ,Projects and the descriptions of the projects around the web
 - [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Automated Machine Learning [AutoML] with Python, scikit-learn, Keras, XGBoost, LightGBM, and CatBoost
-- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from explo
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [kelvins/awesome-mlops](https://github.com/kelvins/awesome-mlops) - :sunglasses: A curated list of awesome MLOps tools
 - [mohdabdin/crypto-trading-RL-environment](https://github.com/mohdabdin/crypto-trading-RL-environment) - A Crypto-trading reinforcement learning that explores the potential of using RL agents on a trading environment with multiple markets.
@@ -2900,7 +2900,7 @@
 - [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
 - [s0/remark-code-frontmatter](https://github.com/s0/remark-code-frontmatter) - Extract frontmatter from markdown code blocks using remark, and do interesting things!
 - [elviswolcott/remark-admonitions](https://github.com/elviswolcott/remark-admonitions) - Add admonitions support to Remarkable
-- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website 🧑‍🔧
+- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website. 👩🏻‍🔧
 - [kodymoodley/defeasibleinferenceplatform](https://github.com/kodymoodley/defeasibleinferenceplatform) - Protégé Desktop plugin for defeasible reasoning in OWL ontologies using the style of Kraus, Lehmann and Magidor
 - [dbpedia/gstore](https://github.com/dbpedia/gstore) - Git repo / triple store hybrid graph storage
 - [dbpedia/fact-extractor](https://github.com/dbpedia/fact-extractor) - Fact Extraction from Wikipedia Text
@@ -3407,7 +3407,7 @@
 - [Drakkar-Software/OctoBot-Tentacles](https://github.com/Drakkar-Software/OctoBot-Tentacles) - This repository contains public tentacles (packages) for the OctoBot project
 - [Drakkar-Software/OctoBot](https://github.com/Drakkar-Software/OctoBot) - Cryptocurrency trading bot using technical analysis based strategy with an advanced web interface
 - [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Automated Machine Learning [AutoML] with Python, scikit-learn, Keras, XGBoost, LightGBM, and CatBoost
-- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from explo
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [blankly-finance/blankly](https://github.com/blankly-finance/blankly) - 🚀 💸  Easily build, backtest and deploy your algo in just a few lines of code. Trade stocks, cryptos, and forex across exchanges w/ one package.
 - [mohdabdin/crypto-trading-RL-environment](https://github.com/mohdabdin/crypto-trading-RL-environment) - A Crypto-trading reinforcement learning that explores the potential of using RL agents on a trading environment with multiple markets.
 - [jesse-ai/jesse](https://github.com/jesse-ai/jesse) - An advanced crypto trading bot written in Python
