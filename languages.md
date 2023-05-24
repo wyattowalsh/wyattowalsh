@@ -1123,7 +1123,7 @@
 - [Drakkar-Software/OctoBot-Tentacles](https://github.com/Drakkar-Software/OctoBot-Tentacles) - This repository contains public tentacles (packages) for the OctoBot project
 - [Drakkar-Software/OctoBot](https://github.com/Drakkar-Software/OctoBot) - Cryptocurrency trading bot using technical analysis based strategy with an advanced web interface
 - [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Automated Machine Learning [AutoML] with Python, scikit-learn, Keras, XGBoost, LightGBM, and CatBoost
-- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an open-source, AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from explo
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [blankly-finance/blankly](https://github.com/blankly-finance/blankly) - 🚀 💸  Easily build, backtest and deploy your algo in just a few lines of code. Trade stocks, cryptos, and forex across exchanges w/ one package.
 - [federicomariamassari/financial-engineering](https://github.com/federicomariamassari/financial-engineering) - Applications of Monte Carlo methods to financial engineering projects, in Python.
@@ -1674,7 +1674,7 @@
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [DTStack/molecule](https://github.com/DTStack/molecule) - :rocket: A lightweight Web IDE UI framework.
 - [s0/remark-code-frontmatter](https://github.com/s0/remark-code-frontmatter) - Extract frontmatter from markdown code blocks using remark, and do interesting things!
-- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website 🧑‍🔧
+- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website. 👩🏻‍🔧
 - [l2beat/l2beat](https://github.com/l2beat/l2beat) - L2BEAT is an analytics and research website about Ethereum layer two (L2) scaling solutions.
 - [spheronFdn/argo-react](https://github.com/spheronFdn/argo-react) - :point_up: One-click deployment service on the top of Arweave.
 - [arconnectio/ArConnect](https://github.com/arconnectio/ArConnect) - 🦔 Secure wallet management for Arweave
