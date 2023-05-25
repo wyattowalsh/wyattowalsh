@@ -172,6 +172,7 @@
 - [scala](#scala)
 - [scikit-learn](#scikit-learn)
 - [security](#security)
+- [self-hosted](#self-hosted)
 - [serverless](#serverless)
 - [shell](#shell)
 - [sketch](#sketch)
@@ -3907,6 +3908,13 @@
 - [trimstray/the-book-of-secret-knowledge](https://github.com/trimstray/the-book-of-secret-knowledge) - A collection of inspiring lists, manuals, cheatsheets, blogs, hacks, one-liners, cli/web tools and more.
 - [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) - A collection of various awesome lists for hackers, pentesters and security researchers
 - [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses) - List of Computer Science courses with video lectures.
+
+## self-hosted 
+
+- [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Framework to build admin panels, internal tools, and dashboards. Integrates with 15+ databases and any API.
+- [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
+- [zadam/trilium](https://github.com/zadam/trilium) - Build your personal knowledge base with Trilium Notes
+- [awesome-selfhosted/awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) - A list of Free Software network services and web applications which can be hosted on your own servers
 
 ## serverless 
 
