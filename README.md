@@ -113,13 +113,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-921%20hrs%2038%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-924%20hrs%2026%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.7%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 3.9 MB Used in GitHub's Storage 
+> 📦 4.0 MB Used in GitHub's Storage 
  > 
 > 🏆 638 Contributions in the Year 2023
  > 
@@ -154,11 +154,11 @@ Sunday                   605 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   6 hrs 34 mins       █████████████████████████   99.98 % 
+Python                   5 hrs 53 mins       █████████████████████████   99.98 % 
 Git                      0 secs              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.02 % 
 
 💻 Operating System: 
-Mac                      6 hrs 34 mins       █████████████████████████   100.00 % 
+Mac                      5 hrs 53 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -178,7 +178,7 @@ Makefile                 1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 29/05/2023 18:39:22 UTC
+ Last Updated on 30/05/2023 18:40:03 UTC
 <!--END_SECTION:waka-->
 
     
