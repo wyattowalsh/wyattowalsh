@@ -43,7 +43,7 @@
                                     <rect class="day" x="150" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
                                     <rect class="day" x="165" y="0" width="11" height="11" fill="#40c463" rx="2" ry="2"/>
                                     <rect class="day" x="180" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="195" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
+                                    <rect class="day" x="195" y="0" width="11" height="11" fill="#40c463" rx="2" ry="2"/>
                                 </g>
                             </svg>
                         </div>
@@ -69,7 +69,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            2078 Commits
+                            2080 Commits
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -138,7 +138,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    92.4m added, 46.2m removed
+                                    2.62m added, 1.99m removed
                                 </div>
                             </section>
                             <section>
@@ -152,7 +152,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
                                     </svg>
-                                    183 Stargazers
+                                    184 Stargazers
                                 </div>
                                 <div class="field">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -192,14 +192,14 @@
                         <rect x="0" y="0" width="460" height="8" fill="white" rx="5"/>
                     </mask>
                     <rect mask="url(#languages-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                    <rect mask="url(#languages-bar)" x="0" y="0" width="417.8413072131872" height="8" fill="#f1e05a"/>
-                    <rect mask="url(#languages-bar)" x="417.8413072131872" y="0" width="29.11873206403899" height="8" fill="#3572A5"/>
-                    <rect mask="url(#languages-bar)" x="446.9600392772262" y="0" width="3.744695064569989" height="8" fill="#3178c6"/>
-                    <rect mask="url(#languages-bar)" x="450.70473434179615" y="0" width="2.904210292437842" height="8" fill="#563d7c"/>
-                    <rect mask="url(#languages-bar)" x="453.60894463423404" y="0" width="2.2924437725030185" height="8" fill="#e34c26"/>
-                    <rect mask="url(#languages-bar)" x="455.90138840673706" y="0" width="1.8804586268517367" height="8" fill="#198CE7"/>
-                    <rect mask="url(#languages-bar)" x="457.78184703358875" y="0" width="1.5861208888802283" height="8" fill="#c6538c"/>
-                    <rect mask="url(#languages-bar)" x="459.367967922469" y="0" width="0.6320320775310079" height="8" fill="#e16737"/>
+                    <rect mask="url(#languages-bar)" x="0" y="0" width="417.66305353473376" height="8" fill="#f1e05a"/>
+                    <rect mask="url(#languages-bar)" x="417.66305353473376" y="0" width="29.302548670153193" height="8" fill="#3572A5"/>
+                    <rect mask="url(#languages-bar)" x="446.965602204887" y="0" width="3.743097554562188" height="8" fill="#3178c6"/>
+                    <rect mask="url(#languages-bar)" x="450.70869975944913" y="0" width="2.9029713384170392" height="8" fill="#563d7c"/>
+                    <rect mask="url(#languages-bar)" x="453.6116710978662" y="0" width="2.291465801852339" height="8" fill="#e34c26"/>
+                    <rect mask="url(#languages-bar)" x="455.9031368997185" y="0" width="1.8796564116048735" height="8" fill="#198CE7"/>
+                    <rect mask="url(#languages-bar)" x="457.7827933113234" y="0" width="1.5854442399275426" height="8" fill="#c6538c"/>
+                    <rect mask="url(#languages-bar)" x="459.3682375512509" y="0" width="0.6317624487490383" height="8" fill="#e16737"/>
                 </svg>
                 <div class="field center horizontal-wrap fill-width">
                     <div class="field center no-wrap language">
@@ -511,7 +511,7 @@
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, MySQL, Azure, Chrome, Data visualization, Django, Bot, PHP, GitHub API, 3D, Command line interface, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Tensorflow, Ubuntu, Jupyter Notebook, MATLAB, Windows, macOS, Security, MongoDB, Unreal Engine, PostgreSQL, Ethereum, Swift, Cryptocurrency, Flask, Markdown, Continuous integration, Shell, scikit-learn, Natural language processing, Documentation, Minecraft, Operating system, Mobile, Ruby, LaTeX, Deployment, Twitter, NoSQL, Sass, Homebrew, Project management, Emulator, Serverless, Material Design, Font, P2P, Rails, Scala, Package manager, Parsing, Jekyll, Publishing, Data Science, awesome-list, Data analysis, Statistics, jekyll-theme, Zsh, Crawler, obsidian-plugin, gatsby, simulation, jupyter, SVG, react-components, scss, scraping, profile-readme, modeling, crm, scrapy, reddit, classification, linear-algebra, github-profile, MDX, data-pipelines, regression, probability, calculus, toolchain, quicklook-extension, pytest-plugin, docusaurus, fractal, reddit-api, project-structure, sphinx, poetry-plugin, bio-links, sass-mixins, sass-library, nextra, sass-functions, docz">and 112 more...</div>
+                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, MySQL, Azure, Chrome, Data visualization, Django, Bot, PHP, GitHub API, 3D, Command line interface, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Tensorflow, Ubuntu, Jupyter Notebook, MATLAB, Windows, macOS, Security, MongoDB, Unreal Engine, PostgreSQL, Ethereum, Swift, Cryptocurrency, Flask, Markdown, Continuous integration, Shell, scikit-learn, Natural language processing, Documentation, Minecraft, Operating system, Mobile, Ruby, LaTeX, Deployment, Twitter, NoSQL, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Scala, Package manager, Parsing, Jekyll, Publishing, Data Science, awesome-list, Data analysis, Statistics, jekyll-theme, Zsh, Crawler, obsidian-plugin, gatsby, simulation, jupyter, SVG, react-components, scss, scraping, profile-readme, modeling, crm, scrapy, reddit, classification, linear-algebra, github-profile, MDX, data-pipelines, regression, probability, calculus, toolchain, quicklook-extension, pytest-plugin, docusaurus, fractal, reddit-api, project-structure, sphinx, poetry-plugin, bio-links, sass-mixins, sass-library, nextra, sass-functions, docz">and 112 more...</div>
                         </div>
                     </section>
                 </div>
