@@ -2899,7 +2899,7 @@
 - [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
 - [s0/remark-code-frontmatter](https://github.com/s0/remark-code-frontmatter) - Extract frontmatter from markdown code blocks using remark, and do interesting things!
 - [elviswolcott/remark-admonitions](https://github.com/elviswolcott/remark-admonitions) - Add admonitions support to Remarkable
-- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website. 👩🏻‍🔧
+- [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website.
 - [kodymoodley/defeasibleinferenceplatform](https://github.com/kodymoodley/defeasibleinferenceplatform) - Protégé Desktop plugin for defeasible reasoning in OWL ontologies using the style of Kraus, Lehmann and Magidor
 - [dbpedia/gstore](https://github.com/dbpedia/gstore) - Git repo / triple store hybrid graph storage
 - [dbpedia/fact-extractor](https://github.com/dbpedia/fact-extractor) - Fact Extraction from Wikipedia Text
