@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-932%20hrs%2029%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-936%20hrs%2022%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.7%20million%20lines%20of%20code-blue)
 
@@ -181,7 +181,7 @@ Makefile                 2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 11/06/2023 18:39:24 UTC
+ Last Updated on 12/06/2023 18:40:41 UTC
 <!--END_SECTION:waka-->
 
     
