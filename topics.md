@@ -2350,7 +2350,7 @@
 - [hiroppy/fusuma](https://github.com/hiroppy/fusuma) - ✍️Fusuma makes slides with Markdown easily.
 - [notable/notable](https://github.com/notable/notable) - The Markdown-based note-taking app that doesn't suck.
 - [prettier/prettier](https://github.com/prettier/prettier) - Prettier is an opinionated code formatter.
-- [zuisong/docsify-kroki](https://github.com/zuisong/docsify-kroki) - 
+- [zuisong/docsify-kroki](https://github.com/zuisong/docsify-kroki) - A docsify plugin to render graph like plantuml, mermaid, ..etc
 - [HerbertHe/docsify-codeblock-iframe](https://github.com/HerbertHe/docsify-codeblock-iframe) - 一个通过markdown扩展语法为docsify提供更加安全插入iframe的插件
 - [docsifyjs/docsify](https://github.com/docsifyjs/docsify) - 🃏 A magical documentation site generator.
 - [Witiko/markdown](https://github.com/Witiko/markdown) - :notebook_with_decorative_cover: A package for converting and rendering markdown documents in TeX
