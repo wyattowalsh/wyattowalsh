@@ -1128,7 +1128,7 @@
 - [blankly-finance/blankly](https://github.com/blankly-finance/blankly) - 🚀 💸  Easily build, backtest and deploy your algo in just a few lines of code. Trade stocks, cryptos, and forex across exchanges w/ one package.
 - [federicomariamassari/financial-engineering](https://github.com/federicomariamassari/financial-engineering) - Applications of Monte Carlo methods to financial engineering projects, in Python.
 - [geek-ai/MAgent](https://github.com/geek-ai/MAgent) - A Platform for Many-agent Reinforcement Learning
-- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities
+- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - An API standard for multi-agent reinforcement learning environments, with popular reference environments and related utilities
 - [AminHP/gym-mtsim](https://github.com/AminHP/gym-mtsim) - A general-purpose, flexible, and easy-to-use simulator alongside an OpenAI Gym trading environment for MetaTrader 5 trading platform (Approved by OpenAI Gym)
 - [kelvins/awesome-mlops](https://github.com/kelvins/awesome-mlops) - :sunglasses: A curated list of awesome MLOps tools
 - [saeedmarzban/waveCorr](https://github.com/saeedmarzban/waveCorr) - waveCorr policy gradient model for portfolio management
