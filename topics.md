@@ -301,7 +301,7 @@
 - [jsdoc/jsdoc](https://github.com/jsdoc/jsdoc) - An API documentation generator for JavaScript.
 - [roclark/sportsipy](https://github.com/roclark/sportsipy) - A free sports API written for python
 - [zachspiel/bobs-burgers-api](https://github.com/zachspiel/bobs-burgers-api) - The Bob's Burgers API  🍔
-- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities
+- [Farama-Foundation/PettingZoo](https://github.com/Farama-Foundation/PettingZoo) - An API standard for multi-agent reinforcement learning environments, with popular reference environments and related utilities
 - [tiangolo/fastapi](https://github.com/tiangolo/fastapi) - FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [OpenAPITools/openapi-generator](https://github.com/OpenAPITools/openapi-generator) - OpenAPI Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec (v2, v3)
