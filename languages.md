@@ -219,7 +219,7 @@
 - [GetPublii/Publii](https://github.com/GetPublii/Publii) - The most intuitive Static Site CMS designed for SEO-optimized and privacy-focused websites.
 - [remcohaszing/remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs) - A remark plugin to render mermaid diagrams using puppeteer
 - [krishnakumarsekar/awesome-quantum-machine-learning](https://github.com/krishnakumarsekar/awesome-quantum-machine-learning) - Here you can get all the Quantum Machine learning Basics, Algorithms ,Study Materials ,Projects and the descriptions of the projects around the web
-- [h-enk/doks](https://github.com/h-enk/doks) - Build a custom, production-ready documentation website in no time.
+- [h-enk/doks](https://github.com/h-enk/doks) - Build beautiful, high-performance documentation websites with Doks
 - [yoursamlan/pubsidian](https://github.com/yoursamlan/pubsidian) - An Obsidian-Publish alternative but it's FREE
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [ethhub-io/ethhub](https://github.com/ethhub-io/ethhub) - The essential Ethereum information hub.
