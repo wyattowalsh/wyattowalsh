@@ -1047,7 +1047,7 @@
 - [pydata/pydata-sphinx-theme](https://github.com/pydata/pydata-sphinx-theme) - A clean, three-column Sphinx theme with Bootstrap for the PyData community
 - [ml-tooling/best-of-python-dev](https://github.com/ml-tooling/best-of-python-dev) - 🏆 A ranked list of awesome python developer tools and libraries. Updated weekly.
 - [yoloseem/awesome-sphinxdoc](https://github.com/yoloseem/awesome-sphinxdoc) - A curated list of awesome tools for Sphinx Python Documentation Generator
-- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - sphinx builder that outputs markdown files.
+- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - DISCONTINUED: sphinx builder that outputs markdown files. The active version of this project is now being maintained at liran-funaro/sphinx-markdown-builder.
 - [OddBloke/sphinx-git](https://github.com/OddBloke/sphinx-git) - git Changelog for Sphinx
 - [python-telegram-bot/python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) - We have made you a wrapper you can't refuse
 - [luissen/ESRT](https://github.com/luissen/ESRT) - 
