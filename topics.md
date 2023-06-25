@@ -722,7 +722,7 @@
 ## code 
 
 - [KrishMunot/awesome-startup](https://github.com/KrishMunot/awesome-startup) - :sunglasses: All the required resources to build your own startup
-- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - sphinx builder that outputs markdown files.
+- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - DISCONTINUED: sphinx builder that outputs markdown files. The active version of this project is now being maintained at liran-funaro/sphinx-markdown-builder.
 - [pomber/code-surfer](https://github.com/pomber/code-surfer) - Rad code slides &lt;🏄/&gt;
 - [psf/black](https://github.com/psf/black) - The uncompromising Python code formatter
 
@@ -2297,7 +2297,7 @@
 - [markdoc/markdoc](https://github.com/markdoc/markdoc) - A powerful, flexible, Markdown-based authoring framework.
 - [remcohaszing/remark-prettier](https://github.com/remcohaszing/remark-prettier) - Check and format markdown or MDX using Prettier as a remark plugin
 - [remarkjs/remark-lint](https://github.com/remarkjs/remark-lint) - plugins to check (lint) markdown code style
-- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - sphinx builder that outputs markdown files.
+- [clayrisser/sphinx-markdown-builder](https://github.com/clayrisser/sphinx-markdown-builder) - DISCONTINUED: sphinx builder that outputs markdown files. The active version of this project is now being maintained at liran-funaro/sphinx-markdown-builder.
 - [sphinx-doc/sphinx](https://github.com/sphinx-doc/sphinx) - The Sphinx documentation generator
 - [mdx-js/awesome](https://github.com/mdx-js/awesome) - A curated list of awesome MDX resources
 - [frontarm/mdx-util](https://github.com/frontarm/mdx-util) - Utilities for working with MDX
