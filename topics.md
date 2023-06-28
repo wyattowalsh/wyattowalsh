@@ -3085,7 +3085,7 @@
 - [martignoni/hugo-notice](https://github.com/martignoni/hugo-notice) - A Hugo theme component to display nice notices
 - [msfjarvis/hugo-social-metadata](https://github.com/msfjarvis/hugo-social-metadata) - Hugo theme component to add social metadata to your Hugo site with minimal configuration
 - [loup-brun/hugo-cite](https://github.com/loup-brun/hugo-cite) - 📝 Easily manage your bibliography and in-text citations with Hugo, the popular static-site generator.
-- [ConsenSys/eth-lightwallet](https://github.com/ConsenSys/eth-lightwallet) - Lightweight JS Wallet for Node and the browser
+- [Consensys/eth-lightwallet](https://github.com/Consensys/eth-lightwallet) - Lightweight JS Wallet for Node and the browser
 - [cubedro/eth-net-intelligence-api](https://github.com/cubedro/eth-net-intelligence-api) - Ethereum Network Intelligence API
 - [cubedro/eth-netstats](https://github.com/cubedro/eth-netstats) - Ethereum Network Stats
 - [DataWallet/pls](https://github.com/DataWallet/pls) - The most polite way to access your users' data.
@@ -3104,7 +3104,7 @@
 - [microsoft/vscode-postgresql](https://github.com/microsoft/vscode-postgresql) - PostgreSQL extension for VSCODE
 - [timescale/timescaledb-parallel-copy](https://github.com/timescale/timescaledb-parallel-copy) - A binary for parallel copying of CSV data into a TimescaleDB hypertable
 - [adjust/pg-telemetry](https://github.com/adjust/pg-telemetry) - Useful monitoring views for PostgreSQL, packaged as an extension
-- [ConsenSys/ethereum-developer-tools-list](https://github.com/ConsenSys/ethereum-developer-tools-list) - A guide to available tools and platforms for developing on Ethereum.
+- [Consensys/ethereum-developer-tools-list](https://github.com/Consensys/ethereum-developer-tools-list) - A guide to available tools and platforms for developing on Ethereum.
 - [swashapp/swash](https://github.com/swashapp/swash) - Source code of Swash extension
 - [bandprotocol/chain](https://github.com/bandprotocol/chain) - BandChain blockchain reference implementation
 - [SirMore/Awesome-Operations-Research](https://github.com/SirMore/Awesome-Operations-Research) - A curated list of awesome operations research  frameworks, libraries and software (by language). Inspired by `awesome-php`.
