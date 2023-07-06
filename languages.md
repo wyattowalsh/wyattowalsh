@@ -987,7 +987,6 @@
 - [PyCQA/isort](https://github.com/PyCQA/isort) - A Python utility / library to sort imports.
 - [adamerose/PandasGUI](https://github.com/adamerose/PandasGUI) - A GUI for Pandas DataFrames
 - [google/latexify_py](https://github.com/google/latexify_py) - A library to generate LaTeX expression from Python code.
-- [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your pandas dataframe into a Tableau-style User Interface for visual analysis
 - [Delgan/loguru](https://github.com/Delgan/loguru) - Python logging made (stupidly) simple
 - [samuelcolvin/python-devtools](https://github.com/samuelcolvin/python-devtools) - Dev tools for python
 - [Qix-/better-exceptions](https://github.com/Qix-/better-exceptions) - Pretty and useful exceptions in Python, automatically.
@@ -1579,6 +1578,7 @@
 - [umijs/umi](https://github.com/umijs/umi) - A framework in react community ✨
 - [streamich/react-use](https://github.com/streamich/react-use) - React Hooks — 👍
 - [yuvalsuede/ai-component-generator](https://github.com/yuvalsuede/ai-component-generator) - 
+- [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your pandas dataframe into a Tableau-style User Interface for visual analysis
 - [iamvishnusankar/next-sitemap](https://github.com/iamvishnusankar/next-sitemap) - Sitemap generator for next.js. Generate sitemap(s) and robots.txt for all static/pre-rendered/dynamic/server-side pages.
 - [jaredpalmer/react-fns](https://github.com/jaredpalmer/react-fns) - Browser API's turned into declarative React components and HoC's
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Framework to build admin panels, internal tools, and dashboards. Integrates with 15+ databases and any API.
