@@ -224,7 +224,7 @@
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [ethhub-io/ethhub](https://github.com/ethhub-io/ethhub) - The essential Ethereum information hub.
 - [ceramicnetwork/docs](https://github.com/ceramicnetwork/docs) - Ceramic developer documentation site https://developers.ceramic.network
-- [CaiJimmy/hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) - [NOT ACTIVELY MAINTAINED] Card-style Hugo theme designed for bloggers
+- [CaiJimmy/hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) - Card-style Hugo theme designed for bloggers
 - [gohugoio/hugoDocs](https://github.com/gohugoio/hugoDocs) - The source for https://gohugo.io/
 - [organization-supply/organization.supply](https://github.com/organization-supply/organization.supply) - A Django application that provides a inventory system for small businesses
 - [jeroenjanssens/data-science-at-the-command-line](https://github.com/jeroenjanssens/data-science-at-the-command-line) - Data Science at the Command Line
