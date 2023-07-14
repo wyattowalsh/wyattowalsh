@@ -119,7 +119,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 **🐱 My GitHub Data** 
 
-> 📦 4.0 MB Used in GitHub's Storage 
+> 📦 4.1 MB Used in GitHub's Storage 
  > 
 > 🏆 661 Contributions in the Year 2023
  > 
@@ -154,11 +154,10 @@ Sunday                   606 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   12 mins             ████████████████████████░   95.04 % 
-Markdown                 0 secs              █░░░░░░░░░░░░░░░░░░░░░░░░   04.96 % 
+No Activity Tracked This Week
 
 💻 Operating System: 
-Mac                      12 mins             █████████████████████████   100.00 % 
+No Activity Tracked This Week
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -178,7 +177,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 13/07/2023 18:42:47 UTC
+ Last Updated on 14/07/2023 18:42:20 UTC
 <!--END_SECTION:waka-->
 
     
