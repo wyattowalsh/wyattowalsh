@@ -154,10 +154,14 @@ Sunday                   608 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-No Activity Tracked This Week
+Python                   1 hr 20 mins        ██████████████████░░░░░░░   72.57 % 
+TOML                     16 mins             ████░░░░░░░░░░░░░░░░░░░░░   14.58 % 
+Markdown                 10 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   09.45 % 
+Other                    2 mins              █░░░░░░░░░░░░░░░░░░░░░░░░   02.60 % 
+Makefile                 0 secs              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.80 % 
 
 💻 Operating System: 
-No Activity Tracked This Week
+Mac                      1 hr 50 mins        █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -177,7 +181,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 17/07/2023 18:41:52 UTC
+ Last Updated on 18/07/2023 18:43:06 UTC
 <!--END_SECTION:waka-->
 
     
