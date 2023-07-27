@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-958%20hrs%2012%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-964%20hrs%2059%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.7%20million%20lines%20of%20code-blue)
 
@@ -181,7 +181,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 26/07/2023 18:38:56 UTC
+ Last Updated on 27/07/2023 18:38:48 UTC
 <!--END_SECTION:waka-->
 
     
