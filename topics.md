@@ -2609,6 +2609,7 @@
 
 ## others 
 
+- [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - highly-constrained non-convex optimization and uncertainty quantification
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
 - [aws-deepracer-community/deepracer-analysis](https://github.com/aws-deepracer-community/deepracer-analysis) - A set of Jupyter notebooks to analyze the performance of a DeepRacer model.
 - [githubocto/repo-visualizer](https://github.com/githubocto/repo-visualizer) - 
