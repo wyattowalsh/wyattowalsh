@@ -961,6 +961,7 @@
 
 ## Python 
 
+- [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - highly-constrained non-convex optimization and uncertainty quantification
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
 - [Significant-Gravitas/Auto-GPT-Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins) - Plugins for Auto-GPT
 - [yoheinakajima/babyagi](https://github.com/yoheinakajima/babyagi) - 
