@@ -2753,7 +2753,7 @@
 - [thrasher-/gocryptotrader](https://github.com/thrasher-/gocryptotrader) - A cryptocurrency trading bot and framework supporting multiple exchanges written in Golang.
 - [viabtc/viabtc_exchange_server](https://github.com/viabtc/viabtc_exchange_server) - A trading engine with high-speed performance and real-time notification
 - [knowm/XChange](https://github.com/knowm/XChange) - XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges providing a consistent interface for trading and accessing market data.
-- [peatio/peatio](https://github.com/peatio/peatio) - An open-source assets exchange.
+- [hpyhacking/peatio](https://github.com/hpyhacking/peatio) - An open-source assets exchange.
 - [donfanning/cryptrade](https://github.com/donfanning/cryptrade) - Node.js Bitcoin bot for MtGox/Bitstamp/BTC-E/CEX.IO
 - [jjakimoto/DQN](https://github.com/jjakimoto/DQN) - Reinforcement Learning for finance
 - [ZhengyaoJiang/PGPortfolio](https://github.com/ZhengyaoJiang/PGPortfolio) - PGPortfolio: Policy Gradient Portfolio, the source code of "A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem"(https://arxiv.org/pdf/1706.10059.pdf).
