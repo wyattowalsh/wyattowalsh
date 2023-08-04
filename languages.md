@@ -775,6 +775,7 @@
 - [jmquintana79/python_virtual_environments](https://github.com/jmquintana79/python_virtual_environments) - This is a set of predefined Anaconda "environment.yml" files for different tasks focused on Data Science field.
 - [kriasoft/Folder-Structure-Conventions](https://github.com/kriasoft/Folder-Structure-Conventions) - Folder / directory structure options and naming conventions for software projects
 - [EliteQuant/EliteQuant](https://github.com/EliteQuant/EliteQuant) - A list of online resources for quantitative modeling, trading, portfolio management
+- [hpyhacking/peatio](https://github.com/hpyhacking/peatio) - An open-source assets exchange.
 - [donfanning/cryptrade](https://github.com/donfanning/cryptrade) - Node.js Bitcoin bot for MtGox/Bitstamp/BTC-E/CEX.IO
 - [grananqvist/Awesome-Quant-Machine-Learning-Trading](https://github.com/grananqvist/Awesome-Quant-Machine-Learning-Trading) - Quant/Algorithm trading resources with an emphasis on Machine Learning
 - [joelparkerhenderson/monorepo-vs-polyrepo](https://github.com/joelparkerhenderson/monorepo-vs-polyrepo) - Monorepo vs. polyrepo: architecture for source code management (SCM) version control systems (VCS)
@@ -1436,7 +1437,6 @@
 ## Ruby 
 
 - [willianjusten/awesome-svg](https://github.com/willianjusten/awesome-svg) - A curated list of SVG.
-- [peatio/peatio](https://github.com/peatio/peatio) - An open-source assets exchange.
 - [thoughtbot/bourbon](https://github.com/thoughtbot/bourbon) - A Lightweight Sass Tool Set
 - [hashicorp/vagrant](https://github.com/hashicorp/vagrant) - Vagrant is a tool for building and distributing development environments.
 - [citation-style-language/styles](https://github.com/citation-style-language/styles) - Official repository for Citation Style Language (CSL) citation styles.
