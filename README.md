@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-965%20hrs%2018%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-965%20hrs%2026%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-16.7%20million%20lines%20of%20code-blue)
 
@@ -154,11 +154,11 @@ Sunday                   608 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   22 mins             ██████████████████████░░░   87.12 % 
-Other                    3 mins              ███░░░░░░░░░░░░░░░░░░░░░░   12.88 % 
+Python                   10 mins             ████████████████████████░   95.84 % 
+Other                    0 secs              █░░░░░░░░░░░░░░░░░░░░░░░░   04.16 % 
 
 💻 Operating System: 
-Mac                      26 mins             █████████████████████████   100.00 % 
+Mac                      10 mins             █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -178,7 +178,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 07/08/2023 18:41:23 UTC
+ Last Updated on 08/08/2023 18:41:01 UTC
 <!--END_SECTION:waka-->
 
     
