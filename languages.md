@@ -411,7 +411,6 @@
 - [remarkjs/remark-rehype](https://github.com/remarkjs/remark-rehype) - plugin that turns markdown into HTML to support rehype
 - [sergioramos/remark-hint](https://github.com/sergioramos/remark-hint) - Sprinkle hints/tips/warnings on your documents
 - [signcl/docusaurus-prince-pdf](https://github.com/signcl/docusaurus-prince-pdf) - Docusaurus PDF generator using Prince XML
-- [graphql-markdown/graphql-markdown](https://github.com/graphql-markdown/graphql-markdown) - Flexible GraphQL Documentation Generator (Markdown).
 - [sindresorhus/slugify](https://github.com/sindresorhus/slugify) - Slugify a string
 - [JS-DevTools/rehype-toc](https://github.com/JS-DevTools/rehype-toc) - A rehype plugin that adds a table of contents (TOC) to the page
 - [rehypejs/rehype-meta](https://github.com/rehypejs/rehype-meta) - plugin to add metadata to the head of a document
@@ -1663,6 +1662,7 @@
 - [nhaouari/obsidian-search-on-internet](https://github.com/nhaouari/obsidian-search-on-internet) - Add context menu items in Obsidian to search the internet.
 - [noatpad/obsidian-banners](https://github.com/noatpad/obsidian-banners) - An Obsidian plugin that adds banners to your notes
 - [rohit-gohri/redocusaurus](https://github.com/rohit-gohri/redocusaurus) - OpenAPI for Docusaurus v2 with Redoc
+- [graphql-markdown/graphql-markdown](https://github.com/graphql-markdown/graphql-markdown) - Flexible GraphQL Documentation Generator (Markdown).
 - [someok/docusaurus-plugin-relative-paths](https://github.com/someok/docusaurus-plugin-relative-paths) - Docusaurus plugin to convert absolute paths to relative paths. Make the build files accessible from anywhere without a server.
 - [jaywcjlove/rehype-attr](https://github.com/jaywcjlove/rehype-attr) - New syntax to add attributes to Markdown.
 - [inokawa/remark-pdf](https://github.com/inokawa/remark-pdf) - remark plugin to compile markdown to pdf.
