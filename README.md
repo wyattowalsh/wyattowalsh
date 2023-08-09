@@ -154,8 +154,7 @@ Sunday                   608 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   10 mins             ████████████████████████░   95.84 % 
-Other                    0 secs              █░░░░░░░░░░░░░░░░░░░░░░░░   04.16 % 
+Python                   10 mins             █████████████████████████   100.00 % 
 
 💻 Operating System: 
 Mac                      10 mins             █████████████████████████   100.00 % 
@@ -178,7 +177,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 08/08/2023 18:41:01 UTC
+ Last Updated on 09/08/2023 18:41:12 UTC
 <!--END_SECTION:waka-->
 
     
