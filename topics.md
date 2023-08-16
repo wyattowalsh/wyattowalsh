@@ -76,6 +76,7 @@
 - [frontend](#frontend)
 - [game](#game)
 - [game-development](#game-development)
+- [gis](#gis)
 - [git](#git)
 - [github](#github)
 - [github-api](#github-api)
@@ -1493,6 +1494,12 @@
 ## game-development 
 
 - [bulletphysics/bullet3](https://github.com/bulletphysics/bullet3) - Bullet Physics SDK: real-time collision detection and multi-physics simulation for VR, games, visual effects, robotics, machine learning etc.
+
+## gis 
+
+- [neo4j-contrib/spatial](https://github.com/neo4j-contrib/spatial) - Neo4j Spatial is a library of utilities for Neo4j that faciliates the enabling of spatial operations on data. In particular you can add spatial indexes to already located data, and perform spatial ope
+- [gee-community/geemap](https://github.com/gee-community/geemap) - A Python package for interactive mapping with Google Earth Engine, ipyleaflet, and ipywidgets.
+- [koordinates/kart](https://github.com/koordinates/kart) - Distributed version-control for geospatial and tabular data
 
 ## git 
 
