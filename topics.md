@@ -2538,7 +2538,6 @@
 - [joemccann/dillinger](https://github.com/joemccann/dillinger) - The last Markdown editor, ever.
 - [requarks/wiki](https://github.com/requarks/wiki) - Wiki.js | A modern and powerful wiki app built on Node.js
 - [googleapis/nodejs-bigquery](https://github.com/googleapis/nodejs-bigquery) - Node.js client for Google Cloud BigQuery: A fast, economical and fully-managed enterprise data warehouse for large-scale data analytics.
-- [app-generator/react-berry-dashboard-old](https://github.com/app-generator/react-berry-dashboard-old) - React Berry Dashboard - Full-Stack Product | AppSeed
 - [app-generator/react-datta-able](https://github.com/app-generator/react-datta-able) - React Node JS - Datta Able (Free Product) | AppSeed
 - [primer/octicons](https://github.com/primer/octicons) - A scalable set of icons handcrafted with &lt;3 by GitHub
 - [BrainJS/brain.js](https://github.com/BrainJS/brain.js) - 🤖 GPU accelerated Neural networks in JavaScript for Browsers and Node.js
@@ -3754,7 +3753,6 @@
 - [gatsbyjs/gatsby](https://github.com/gatsbyjs/gatsby) - The fastest frontend for the headless web. Build modern websites with React.
 - [mdx-js/mdx](https://github.com/mdx-js/mdx) - Markdown for the component era
 - [plouc/mozaik](https://github.com/plouc/mozaik) - Mozaïk is a tool based on nodejs / react / redux / nivo / d3 to easily craft beautiful dashboards
-- [app-generator/react-berry-dashboard-old](https://github.com/app-generator/react-berry-dashboard-old) - React Berry Dashboard - Full-Stack Product | AppSeed
 - [app-generator/react-datta-able](https://github.com/app-generator/react-datta-able) - React Node JS - Datta Able (Free Product) | AppSeed
 - [creativetimofficial/material-tailwind-dashboard-react](https://github.com/creativetimofficial/material-tailwind-dashboard-react) - Free and Open Source Admin for Tailwind CSS and React based on Google's Material Design.
 - [creativetimofficial/purity-ui-dashboard](https://github.com/creativetimofficial/purity-ui-dashboard) - Purity UI Dashboard - Free and Open Source Chakra UI Dashboard
