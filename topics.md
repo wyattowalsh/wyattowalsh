@@ -1727,7 +1727,7 @@
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX.
 - [up-for-grabs/up-for-grabs.net](https://github.com/up-for-grabs/up-for-grabs.net) - This is a list of projects which have curated tasks specifically for new contributors. These issues are a great way to get started with a project, or to help share the load of working on open source p
 - [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
-- [openaddresses/openaddresses](https://github.com/openaddresses/openaddresses) - A repository of global open address data.
+- [openaddresses/openaddresses](https://github.com/openaddresses/openaddresses) - A global repository of open address data.
 - [optuna/optuna](https://github.com/optuna/optuna) - A hyperparameter optimization framework
 - [serhii-londar/open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps) - 🚀 Awesome list of open source applications for macOS. https://t.me/s/opensourcemacosapps
 - [rishavanand/github-profilinator](https://github.com/rishavanand/github-profilinator) - 🚀  This tool contains mini GUI components that you can hook together to automatically generate markdown code for a perfect readme.
@@ -1955,7 +1955,7 @@
 - [ConsenSysMesh/rimble-ui](https://github.com/ConsenSysMesh/rimble-ui) - React components that implement Rimble's Design System.
 - [chartjs/Chart.js](https://github.com/chartjs/Chart.js) - Simple HTML5 Charts using the &lt;canvas&gt; tag
 - [Milkdown/milkdown](https://github.com/Milkdown/milkdown) - 🍼 Plugin driven WYSIWYG  markdown editor framework.
-- [feathericons/feather](https://github.com/feathericons/feather) - Simply beautiful open source icons
+- [feathericons/feather](https://github.com/feathericons/feather) - Simply beautiful open-source icons
 - [sqlectron/sqlectron-gui](https://github.com/sqlectron/sqlectron-gui) - A simple and lightweight SQL client desktop with cross database and platform support.
 - [microsoft/Web-Dev-For-Beginners](https://github.com/microsoft/Web-Dev-For-Beginners) - 24 Lessons, 12 Weeks, Get Started as a Web Developer
 - [softchris/react-book](https://github.com/softchris/react-book) - Free book on React. Beginner to intermediate.
@@ -2703,7 +2703,6 @@
 - [jtpio/jupyterlab-system-monitor](https://github.com/jtpio/jupyterlab-system-monitor) - JupyterLab extension to display system metrics
 - [monosans/proxy-scraper-checker](https://github.com/monosans/proxy-scraper-checker) - HTTP, SOCKS4, SOCKS5 proxies scraper and checker with rich functionality.
 - [constverum/ProxyBroker](https://github.com/constverum/ProxyBroker) - Proxy [Finder | Checker | Server]. HTTP(S) & SOCKS :performing_arts:
-- [saschazesiger/Free-Proxies](https://github.com/saschazesiger/Free-Proxies) - A frequently updated list of all available proxies from over 50 sources
 - [all-contributors/all-contributors](https://github.com/all-contributors/all-contributors) - ✨ Recognize all contributors, not just the ones who push code ✨
 - [executablebooks/sphinx-autobuild](https://github.com/executablebooks/sphinx-autobuild) - Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a livereload enabled web server.
 - [CarterLi/iina](https://github.com/CarterLi/iina) - The modern video player for macOS with additional features and bug fixes.
