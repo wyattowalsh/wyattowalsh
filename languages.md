@@ -1482,9 +1482,7 @@
 - [slatedocs/slate](https://github.com/slatedocs/slate) - Beautiful static documentation for your API
 - [bitcoin-resources/bitcoin-resources.github.io](https://github.com/bitcoin-resources/bitcoin-resources.github.io) - A curated collection of articles, books, podcasts, podcast episodes, and more!
 - [defiprime/defiprime](https://github.com/defiprime/defiprime) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
-- [jackyzha0/jackyzha0.github.io](https://github.com/jackyzha0/jackyzha0.github.io) - :sparkles: website v3
 - [rstacruz/cheatsheets](https://github.com/rstacruz/cheatsheets) - My cheatsheets
-- [jackyzha0/quartz](https://github.com/jackyzha0/quartz) - 🌱 host your own second brain and digital garden for free
 - [rcaferati/react-awesome-button](https://github.com/rcaferati/react-awesome-button) - React button component. Awesome button is a 3D UI, progress, social and share enabled, animated at 60fps, light weight, performant, production ready react UI button component. 🖥️ 📱
 - [app-generator/react-datta-able](https://github.com/app-generator/react-datta-able) - React Node JS - Datta Able (Free Product) | AppSeed
 - [twitter/opensource-website](https://github.com/twitter/opensource-website) - Twitter's open source website, identifying projects we've released, organizations we support, and the work we do to support open source.
@@ -1692,6 +1690,7 @@
 - [obsidian-tools/obsidian-tools](https://github.com/obsidian-tools/obsidian-tools) - An unofficial collection of tools that helps you build plugins for obsidian.md
 - [jplattel/obsidian-query-language](https://github.com/jplattel/obsidian-query-language) - An Obsidian plugin allowing you to query your notes
 - [chhoumann/MetaEdit](https://github.com/chhoumann/MetaEdit) - MetaEdit for Obsidian
+- [jackyzha0/jackyzha0.github.io](https://github.com/jackyzha0/jackyzha0.github.io) - :sparkles: website v3
 - [obsidian-userland/publish](https://github.com/obsidian-userland/publish) - Open source Obsidian Publish alternative
 - [trashhalo/obsidian-webhooks](https://github.com/trashhalo/obsidian-webhooks) - Connect obsidian to the internet of things via webhooks
 - [react-icons/react-icons](https://github.com/react-icons/react-icons) - svg react icons of popular icon packs
@@ -1705,6 +1704,7 @@
 - [HoangNguyen17193/vscode-simple-git-stats](https://github.com/HoangNguyen17193/vscode-simple-git-stats) - Simple and efficient way to view statistics in git repository directly within Visual Studio Code.
 - [foambubble/foam](https://github.com/foambubble/foam) - A personal knowledge management and sharing system for VSCode
 - [belay-labs/gpt-explorer](https://github.com/belay-labs/gpt-explorer) - GPT-3 Explorer
+- [jackyzha0/quartz](https://github.com/jackyzha0/quartz) - 🌱 host your own second brain and digital garden for free
 - [tgrosinger/ledger-obsidian](https://github.com/tgrosinger/ledger-obsidian) - Plain text accounting in Obsidian.md
 - [Dmytro-Shulha/obsidian-plotly](https://github.com/Dmytro-Shulha/obsidian-plotly) - Obsidian plugin to embed Plotly charts into markdown notes.
 - [pyrochlore/obsidian-tracker](https://github.com/pyrochlore/obsidian-tracker) - A plugin tracks occurrences and numbers in your notes
