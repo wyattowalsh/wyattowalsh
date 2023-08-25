@@ -2614,6 +2614,7 @@
 
 ## others 
 
+- [facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft) - Audiocraft is a library for audio processing and generation with deep learning. It features the state-of-the-art EnCodec audio compressor / tokenizer, along with MusicGen, a simple and controllable mu
 - [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - highly-constrained non-convex optimization and uncertainty quantification
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
 - [aws-deepracer-community/deepracer-analysis](https://github.com/aws-deepracer-community/deepracer-analysis) - A set of Jupyter notebooks to analyze the performance of a DeepRacer model.
