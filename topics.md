@@ -1713,6 +1713,7 @@
 - [trufflesuite/truffle](https://github.com/trufflesuite/truffle) - A tool for developing smart contracts. Crafted with the finest cacaos.
 - [trufflesuite/drizzle](https://github.com/trufflesuite/drizzle) - Reactive Ethereum dapp UI suite
 - [styleguidist/react-styleguidist](https://github.com/styleguidist/react-styleguidist) - Isolated React component development environment with a living style guide
+- [hoppscotch/hoppscotch](https://github.com/hoppscotch/hoppscotch) - 👽 Open source API development ecosystem - https://hoppscotch.io
 - [ydataai/ydata-profiling](https://github.com/ydataai/ydata-profiling) - 1 Line of code data quality profiling & exploratory data analysis for Pandas and Spark DataFrames.
 - [chartjs/Chart.js](https://github.com/chartjs/Chart.js) - Simple HTML5 Charts using the &lt;canvas&gt; tag
 - [citation-js/citation-js](https://github.com/citation-js/citation-js) - Core functionality of Citation.js, as well as the original plugins (CSL, BibTeX, RIS, DOI, Wikidata, and BibJSON)
@@ -2257,7 +2258,7 @@
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 - [Yorko/mlcourse.ai](https://github.com/Yorko/mlcourse.ai) - Open Machine Learning Course
 - [ChristosChristofidis/awesome-deep-learning](https://github.com/ChristosChristofidis/awesome-deep-learning) - A curated list of awesome Deep Learning tutorials, projects and communities.
-- [deepmind/pysc2](https://github.com/deepmind/pysc2) - StarCraft II Learning Environment
+- [google-deepmind/pysc2](https://github.com/google-deepmind/pysc2) - StarCraft II Learning Environment
 - [davisking/dlib](https://github.com/davisking/dlib) - A toolkit for making real world machine learning and data analysis applications in C++
 - [shogun-toolbox/shogun](https://github.com/shogun-toolbox/shogun) - Shōgun
 - [tensorflow/tensorflow](https://github.com/tensorflow/tensorflow) - An Open Source Machine Learning Framework for Everyone
@@ -2801,7 +2802,7 @@
 - [jackfletch/remark-numbered-footnote-labels](https://github.com/jackfletch/remark-numbered-footnote-labels) - remark plugin to label footnotes with numbers
 - [Kaggle/jupyterlab](https://github.com/Kaggle/jupyterlab) - Kaggle extension for JupyterLab
 - [Kaggle/kaggle-environments](https://github.com/Kaggle/kaggle-environments) - 
-- [deepmind/acme](https://github.com/deepmind/acme) - A library of reinforcement learning components and agents
+- [google-deepmind/acme](https://github.com/google-deepmind/acme) - A library of reinforcement learning components and agents
 - [gweicz/defi-toolkit](https://github.com/gweicz/defi-toolkit) - Curated list of best tools for user of Ethereum (DeFi) ecosystem
 - [defi-defense-dao/defi-risk-tools-list](https://github.com/defi-defense-dao/defi-risk-tools-list) - A guide to available tools and projects for analyzing and managing risk within DeFi.
 - [austintgriffith/dapparatus](https://github.com/austintgriffith/dapparatus) - 📦📃Dapparatus: reusable dapp components in react: contract loader, metamask, gas, transaction ui, event parers, etc
