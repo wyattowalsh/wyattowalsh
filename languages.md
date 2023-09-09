@@ -87,7 +87,6 @@
 - [mimecorg/fraqtive](https://github.com/mimecorg/fraqtive) - Generator of the Mandelbrot family fractals.
 - [xaos-project/XaoS](https://github.com/xaos-project/XaoS) - Real-time interactive fractal zoomer
 - [exaloop/codon](https://github.com/exaloop/codon) - A high-performance, zero-overhead, extensible Python compiler using LLVM
-- [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [NVIDIA/nvvl](https://github.com/NVIDIA/nvvl) - A library that uses hardware acceleration to load sequences of video frames to facilitate machine learning training
 - [wkhtmltopdf/wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) - Convert HTML to PDF using Webkit (QtWebKit)
 - [ctubio/Krypto-trading-bot](https://github.com/ctubio/Krypto-trading-bot) - Self-hosted crypto trading bot (automated high frequency market making) written in C++
@@ -273,6 +272,7 @@
 
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [schemacrawler/SchemaCrawler](https://github.com/schemacrawler/SchemaCrawler) - Free database schema discovery and comprehension tool
+- [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
 - [datahub-project/datahub](https://github.com/datahub-project/datahub) - The Metadata Platform for the Modern Data Stack
 - [pentaho/mondrian](https://github.com/pentaho/mondrian) - Mondrian is an Online Analytical Processing (OLAP) server that enables business users to analyze large quantities of data in real-time.
