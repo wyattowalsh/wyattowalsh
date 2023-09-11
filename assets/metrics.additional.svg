@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1121" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1138" class="">
     <defs>
         <style/>
     </defs>
@@ -152,7 +152,7 @@
                                         <span>starred Jul 26 2023</span>
                                     </div>
                                 </div>
-                                <div class="field description">highly-constrained non-convex optimization and uncertainty quantification</div>
+                                <div class="field description">constrained nonlinear optimization for scientific machine learning, UQ, and AI</div>
                                 <div class="field infos">
                                     <div class="language">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
