@@ -961,7 +961,7 @@
 ## Python 
 
 - [facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft) - Audiocraft is a library for audio processing and generation with deep learning. It features the state-of-the-art EnCodec audio compressor / tokenizer, along with MusicGen, a simple and controllable mu
-- [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - highly-constrained non-convex optimization and uncertainty quantification
+- [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - constrained nonlinear optimization for scientific machine learning, UQ, and AI
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
 - [Significant-Gravitas/Auto-GPT-Plugins](https://github.com/Significant-Gravitas/Auto-GPT-Plugins) - Plugins for Auto-GPT
 - [yoheinakajima/babyagi](https://github.com/yoheinakajima/babyagi) - 
