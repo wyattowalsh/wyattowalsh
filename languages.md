@@ -281,7 +281,7 @@
 - [neo4j-labs/neosemantics](https://github.com/neo4j-labs/neosemantics) - Graph+Semantics: Import/Export RDF from Neo4j. SHACL Validation, Model mapping and more.... If you like it, please ★ ⇧
 - [neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures) - Awesome Procedures On Cypher for Neo4j - codenamed "apoc"                     If you like it, please ★ above ⇧
 - [jexp/neo4j-rdbms-import](https://github.com/jexp/neo4j-rdbms-import) - Massively parallel RDBMS to Neo4j Importer
-- [asf-transfer/drools](https://github.com/asf-transfer/drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
+- [apache/incubator-kie-drools](https://github.com/apache/incubator-kie-drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
 - [kodymoodley/defeasibleinferenceplatform](https://github.com/kodymoodley/defeasibleinferenceplatform) - Protégé Desktop plugin for defeasible reasoning in OWL ontologies using the style of Kraus, Lehmann and Magidor
 - [protegeproject/protege](https://github.com/protegeproject/protege) - Protege Desktop
 - [OpenAPITools/openapi-generator](https://github.com/OpenAPITools/openapi-generator) - OpenAPI Generator allows generation of API client libraries (SDK generation), server stubs, documentation and configuration automatically given an OpenAPI Spec (v2, v3)
@@ -959,6 +959,7 @@
 
 ## Python 
 
+- [facebookresearch/nougat](https://github.com/facebookresearch/nougat) - Implementation of Nougat Neural Optical Understanding for Academic Documents
 - [facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft) - Audiocraft is a library for audio processing and generation with deep learning. It features the state-of-the-art EnCodec audio compressor / tokenizer, along with MusicGen, a simple and controllable mu
 - [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - constrained nonlinear optimization for scientific machine learning, UQ, and AI
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
@@ -1572,6 +1573,7 @@
 
 ## TypeScript 
 
+- [mgmeyers/obsidian-style-settings](https://github.com/mgmeyers/obsidian-style-settings) - A dynamic user interface for adjusting theme, plugin, and snippet CSS variables within Obsidian
 - [tapioca24/p5.capture](https://github.com/tapioca24/p5.capture) - 🎬 super easy recording for p5.js animations
 - [umijs/umi](https://github.com/umijs/umi) - A framework in react community ✨
 - [streamich/react-use](https://github.com/streamich/react-use) - React Hooks — 👍
