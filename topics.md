@@ -1670,7 +1670,7 @@
 - [neo4j-contrib/neo4j-apoc-procedures](https://github.com/neo4j-contrib/neo4j-apoc-procedures) - Awesome Procedures On Cypher for Neo4j - codenamed "apoc"                     If you like it, please ★ above ⇧
 - [neo4j-contrib/spatial](https://github.com/neo4j-contrib/spatial) - Neo4j Spatial is a library of utilities for Neo4j that faciliates the enabling of spatial operations on data. In particular you can add spatial indexes to already located data, and perform spatial ope
 - [kevin940726/remark-codesandbox](https://github.com/kevin940726/remark-codesandbox) - 🎩  Create CodeSandbox directly from code blocks
-- [asf-transfer/drools](https://github.com/asf-transfer/drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
+- [apache/incubator-kie-drools](https://github.com/apache/incubator-kie-drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
 - [getredash/redash](https://github.com/getredash/redash) - Make Your Company Data Driven. Connect to any data source, easily visualize, dashboard and share your data.
 - [spheronFdn/argo-react](https://github.com/spheronFdn/argo-react) - :point_up: One-click deployment service on the top of Arweave.
 - [0xTracker/0x-tracker-api](https://github.com/0xTracker/0x-tracker-api) - NodeJS API built for 0x Tracker which exposes 0x protocol data and metrics for consumption by the 0x Tracker Client application.
@@ -1856,7 +1856,7 @@
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Platform to build admin panels, internal tools, and dashboards. Integrates with 15+ databases and any API.
 - [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
 - [pentaho/mondrian](https://github.com/pentaho/mondrian) - Mondrian is an Online Analytical Processing (OLAP) server that enables business users to analyze large quantities of data in real-time.
-- [asf-transfer/drools](https://github.com/asf-transfer/drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
+- [apache/incubator-kie-drools](https://github.com/apache/incubator-kie-drools) - Drools is a rule engine, DMN engine and complex event processing (CEP) engine for Java.
 - [protegeproject/protege](https://github.com/protegeproject/protege) - Protege Desktop
 - [jtablesaw/tablesaw](https://github.com/jtablesaw/tablesaw) - Java dataframe and visualization library
 - [OpenRefine/OpenRefine](https://github.com/OpenRefine/OpenRefine) - OpenRefine is a free, open source power tool for working with messy data and improving it
@@ -2615,6 +2615,8 @@
 
 ## others 
 
+- [mgmeyers/obsidian-style-settings](https://github.com/mgmeyers/obsidian-style-settings) - A dynamic user interface for adjusting theme, plugin, and snippet CSS variables within Obsidian
+- [facebookresearch/nougat](https://github.com/facebookresearch/nougat) - Implementation of Nougat Neural Optical Understanding for Academic Documents
 - [facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft) - Audiocraft is a library for audio processing and generation with deep learning. It features the state-of-the-art EnCodec audio compressor / tokenizer, along with MusicGen, a simple and controllable mu
 - [uqfoundation/mystic](https://github.com/uqfoundation/mystic) - constrained nonlinear optimization for scientific machine learning, UQ, and AI
 - [thieu1995/mealpy](https://github.com/thieu1995/mealpy) - A Collection Of The State-of-the-art Metaheuristic Algorithms In Python (Metaheuristic/Optimizer/Nature-inspired/Biology)
