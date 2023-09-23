@@ -113,13 +113,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-979%20hrs-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-979%20hrs%2018%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 4.1 MB Used in GitHub's Storage 
+> 📦 4.2 MB Used in GitHub's Storage 
  > 
 > 🏆 686 Contributions in the Year 2023
  > 
@@ -181,7 +181,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 22/09/2023 18:39:47 UTC
+ Last Updated on 23/09/2023 18:39:00 UTC
 <!--END_SECTION:waka-->
 
     
