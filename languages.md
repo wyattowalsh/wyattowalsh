@@ -301,7 +301,7 @@
 - [WenheLI/p5.gif](https://github.com/WenheLI/p5.gif) - P5.js gif helper
 - [spite/ccapture.js](https://github.com/spite/ccapture.js) - A library to capture canvas-based animations at a fixed framerate
 - [Jupyter-contrib/jupyter_nbextensions_configurator](https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator) - A jupyter notebook serverextension providing config interfaces for nbextensions.
-- [Significant-Gravitas/Auto-GPT](https://github.com/Significant-Gravitas/Auto-GPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
+- [Significant-Gravitas/AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - An experimental open-source attempt to make GPT-4 fully autonomous.
 - [xaos-project/XaoSjs](https://github.com/xaos-project/XaoSjs) - XaoS.js - Realtime fractal zoomer in JavaScript
 - [Dozed12/p5.voronoi](https://github.com/Dozed12/p5.voronoi) - A Voronoi library for p5.js
 - [kristerkari/react-native-sass-transformer](https://github.com/kristerkari/react-native-sass-transformer) - Use Sass to style your React Native apps.
@@ -859,7 +859,6 @@
 - [RokoMijic/awesome-bigquery-views](https://github.com/RokoMijic/awesome-bigquery-views) - Google BigQuery views for analysing cryptocurrencies
 - [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google
 - [Consensys/ethereum-developer-tools-list](https://github.com/Consensys/ethereum-developer-tools-list) - A guide to available tools and platforms for developing on Ethereum.
-- [Xel/Blockchain-stuff](https://github.com/Xel/Blockchain-stuff) - Blockchain and Crytocurrency Resources
 - [SirMore/Awesome-Operations-Research](https://github.com/SirMore/Awesome-Operations-Research) - A curated list of awesome operations research  frameworks, libraries and software (by language). Inspired by `awesome-php`.
 - [blockchain-etl/awesome-bigquery-views](https://github.com/blockchain-etl/awesome-bigquery-views) - Useful SQL queries for Blockchain ETL datasets in BigQuery.
 - [awesome-selfhosted/awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted) - A list of Free Software network services and web applications which can be hosted on your own servers
