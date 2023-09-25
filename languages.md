@@ -1112,7 +1112,7 @@
 - [modin-project/modin](https://github.com/modin-project/modin) - Modin: Scale your Pandas workflows by changing a single line of code
 - [jmcarpenter2/swifter](https://github.com/jmcarpenter2/swifter) - A package which efficiently applies any function to a pandas dataframe or series in the fastest available manner
 - [facebookresearch/metaseq](https://github.com/facebookresearch/metaseq) - Repo for external large-scale work
-- [k4yt3x/video2x](https://github.com/k4yt3x/video2x) - A lossless video/GIF/image upscaler achieved with waifu2x, Anime4K, SRMD and RealSR. Started in Hack the Valley 2, 2018.
+- [k4yt3x/video2x](https://github.com/k4yt3x/video2x) - A lossless video/GIF/image upscaler achieved with waifu2x, Anime4K, SRMD and RealSR. Started in Hack the Valley II, 2018.
 - [google-deepmind/acme](https://github.com/google-deepmind/acme) - A library of reinforcement learning components and agents
 - [tensorlayer/TensorLayer](https://github.com/tensorlayer/TensorLayer) - Deep Learning and Reinforcement Learning Library for Scientists and Engineers
 - [keras-rl/keras-rl](https://github.com/keras-rl/keras-rl) - Deep Reinforcement Learning for Keras.
