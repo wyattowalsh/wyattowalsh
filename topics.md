@@ -1667,6 +1667,7 @@
 - [supabase-community/supabase-py](https://github.com/supabase-community/supabase-py) - Python Client for Supabase
 - [cloudflare/cloudflare-docs](https://github.com/cloudflare/cloudflare-docs) - Cloudflare’s documentation
 - [codeceptjs/CodeceptJS](https://github.com/codeceptjs/CodeceptJS) - Supercharged End 2 End Testing Framework for NodeJS
+- [nightwatchjs/nightwatch](https://github.com/nightwatchjs/nightwatch) - Integrated end-to-end testing framework written in Node.js and using W3C Webdriver API. Developed at @browserstack
 - [rohit-gohri/redocusaurus](https://github.com/rohit-gohri/redocusaurus) - OpenAPI for Docusaurus v2 with Redoc
 - [hashicorp/vagrant](https://github.com/hashicorp/vagrant) - Vagrant is a tool for building and distributing development environments.
 - [citation-style-language/styles](https://github.com/citation-style-language/styles) - Official repository for Citation Style Language (CSL) citation styles.
@@ -3161,7 +3162,7 @@
 - [tkarras/progressive_growing_of_gans](https://github.com/tkarras/progressive_growing_of_gans) - Progressive Growing of GANs for Improved Quality, Stability, and Variation
 - [hardmaru/cppn-gan-vae-tensorflow](https://github.com/hardmaru/cppn-gan-vae-tensorflow) - Train CPPNs as a Generative Model, using Generative Adversarial Networks and Variational Autoencoder techniques to produce high resolution images.
 - [joshsanchez98/CreativeProgrammingAndElectronics](https://github.com/joshsanchez98/CreativeProgrammingAndElectronics) - Portfolio of all projects created in my creative programming and electronics course. Made in Processing (Version 3.5.4)
-- [processing/processing4](https://github.com/processing/processing4) - Processing 4.x releases for Java 17
+- [benfry/processing4](https://github.com/benfry/processing4) - Processing 4.x releases for Java 17
 - [facebookresearch/vissl](https://github.com/facebookresearch/vissl) - VISSL is FAIR's library of extensible, modular and scalable components for SOTA Self-Supervised Learning with images.
 - [prasmussen/gdrive](https://github.com/prasmussen/gdrive) - Google Drive CLI Client
 - [Kaggle/kaggle-api](https://github.com/Kaggle/kaggle-api) - Official Kaggle API
