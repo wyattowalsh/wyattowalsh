@@ -961,6 +961,7 @@
 
 ## Python 
 
+- [AI4Finance-Foundation/FinRL-Meta](https://github.com/AI4Finance-Foundation/FinRL-Meta) - FinRL­-Meta: Dynamic datasets and market environments for FinRL.
 - [Jules-WinnfieldX/CyberDropDownloader](https://github.com/Jules-WinnfieldX/CyberDropDownloader) - Bulk Gallery Downloader for Cyberdrop.me and Other Sites
 - [Farama-Foundation/Gymnasium](https://github.com/Farama-Foundation/Gymnasium) - An API standard for single-agent reinforcement learning environments, with popular reference environments and related utilities (formerly Gym)
 - [facebookresearch/nougat](https://github.com/facebookresearch/nougat) - Implementation of Nougat Neural Optical Understanding for Academic Documents
