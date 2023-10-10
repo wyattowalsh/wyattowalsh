@@ -450,7 +450,6 @@
 - [remuslazar/node-xmlsplit](https://github.com/remuslazar/node-xmlsplit) - Split large XML files into smaller chunks, uses Node.js Stream API
 - [xizon/poemkit](https://github.com/xizon/poemkit) - React toolkit for building a full website that also is a Micro-Frontend Architecture.
 - [aragon/dao-templates](https://github.com/aragon/dao-templates) - (Aragon 1) Monorepo for all Aragon made organization templates
-- [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
 - [remarkjs/remark-usage](https://github.com/remarkjs/remark-usage) - plugin to add a usage example to your readme
 - [Mavrin/remark-typograf](https://github.com/Mavrin/remark-typograf) - Plugin to make your typography better with https://github.com/typograf
 - [freesewing/freesewing](https://github.com/freesewing/freesewing) - Freesewing's monorepo holding all our NPM packages, including our core library
@@ -1686,6 +1685,7 @@
 - [benrbray/remark-cite](https://github.com/benrbray/remark-cite) - Adds support for pandoc-style citations to the Markdown syntax for the remark and micromark parsers.
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [DTStack/molecule](https://github.com/DTStack/molecule) - :rocket: A lightweight Web IDE UI framework.
+- [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
 - [s0/remark-code-frontmatter](https://github.com/s0/remark-code-frontmatter) - Extract frontmatter from markdown code blocks using remark, and do interesting things!
 - [kohheepeace/mr-pdf](https://github.com/kohheepeace/mr-pdf) - Generate PDF for document website.
 - [l2beat/l2beat](https://github.com/l2beat/l2beat) - L2BEAT is an analytics and research website about Ethereum layer two (L2) scaling solutions.
