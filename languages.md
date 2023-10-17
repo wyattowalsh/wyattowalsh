@@ -437,7 +437,6 @@
 - [hyperledger-labs/blockchain-explorer](https://github.com/hyperledger-labs/blockchain-explorer) - 
 - [attentionneuron/attentionneuron.github.io](https://github.com/attentionneuron/attentionneuron.github.io) - 
 - [grommet/grommet-icons](https://github.com/grommet/grommet-icons) - Iconography for Grommet and React.js
-- [wmde/wikibase-release-pipeline](https://github.com/wmde/wikibase-release-pipeline) - 
 - [remarkjs/remark-math](https://github.com/remarkjs/remark-math) - remark and rehype plugins to support math
 - [remarkjs/remark](https://github.com/remarkjs/remark) - markdown processor powered by plugins part of the @unifiedjs collective
 - [rdilweb/docusaurus-plugin-remote-content](https://github.com/rdilweb/docusaurus-plugin-remote-content) - A Docusaurus v2 plugin to download content from remote sources when it is needed.
@@ -960,6 +959,7 @@
 
 ## Python 
 
+- [geekan/MetaGPT](https://github.com/geekan/MetaGPT) - 🌟 The Multi-Agent Framework: Given one line Requirement, return PRD, Design, Tasks, Repo
 - [AI4Finance-Foundation/FinRL-Meta](https://github.com/AI4Finance-Foundation/FinRL-Meta) - FinRL­-Meta: Dynamic datasets and market environments for FinRL.
 - [Jules-WinnfieldX/CyberDropDownloader](https://github.com/Jules-WinnfieldX/CyberDropDownloader) - Bulk Gallery Downloader for Cyberdrop.me and Other Sites
 - [Farama-Foundation/Gymnasium](https://github.com/Farama-Foundation/Gymnasium) - An API standard for single-agent reinforcement learning environments, with popular reference environments and related utilities (formerly Gym)
@@ -999,7 +999,7 @@
 - [Qix-/better-exceptions](https://github.com/Qix-/better-exceptions) - Pretty and useful exceptions in Python, automatically.
 - [borntyping/python-colorlog](https://github.com/borntyping/python-colorlog) - A colored formatter for the python logging module
 - [computationalmodelling/nbval](https://github.com/computationalmodelling/nbval) - A py.test plugin to validate Jupyter notebooks
-- [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Guarantee flawless API functionality with thorough, high-quality test scenarios generated from your API specification.
+- [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Automate your API Testing: catch crashes, validate specs, and save time
 - [pytest-dev/pytest-timeout](https://github.com/pytest-dev/pytest-timeout) - 
 - [pytest-dev/pytest-instafail](https://github.com/pytest-dev/pytest-instafail) - py.test plugin to show failures instantly
 - [hackebrot/pytest-emoji](https://github.com/hackebrot/pytest-emoji) - A pytest plugin that adds emojis to your test result report 😍
@@ -1681,6 +1681,7 @@
 - [tensorflow/tensorboard](https://github.com/tensorflow/tensorboard) - TensorFlow's Visualization Toolkit
 - [saucelabs/docusaurus-theme-github-codeblock](https://github.com/saucelabs/docusaurus-theme-github-codeblock) - A Docusaurus v2 plugin that supports referencing code examples from public GitHub repositories.
 - [hyperledger/cacti](https://github.com/hyperledger/cacti) - Hyperledger Cacti is a new approach to the blockchain interoperability problem
+- [wmde/wikibase-release-pipeline](https://github.com/wmde/wikibase-release-pipeline) - 
 - [benrbray/remark-cite](https://github.com/benrbray/remark-cite) - Adds support for pandoc-style citations to the Markdown syntax for the remark and micromark parsers.
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [DTStack/molecule](https://github.com/DTStack/molecule) - :rocket: A lightweight Web IDE UI framework.
