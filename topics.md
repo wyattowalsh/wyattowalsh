@@ -1736,6 +1736,7 @@
 - [academic/awesome-datascience](https://github.com/academic/awesome-datascience) - :memo: An awesome Data Science repository to learn and apply for real world problems.
 - [sButtons/sbuttons](https://github.com/sButtons/sbuttons) - :bulb: Simple buttons you can use easily for your next project.
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX.
+- [vercel/next.js](https://github.com/vercel/next.js) - The React Framework
 - [up-for-grabs/up-for-grabs.net](https://github.com/up-for-grabs/up-for-grabs.net) - This is a list of projects which have curated tasks specifically for new contributors. These issues are a great way to get started with a project, or to help share the load of working on open source p
 - [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
 - [openaddresses/openaddresses](https://github.com/openaddresses/openaddresses) - A global repository of open address data.
@@ -3100,7 +3101,6 @@
 - [microsoft/qio-samples](https://github.com/microsoft/qio-samples) - Samples for using optimization solvers through Azure Quantum.
 - [googleworkspace/apps-script-samples](https://github.com/googleworkspace/apps-script-samples) - Apps Script samples for Google Workspace products.
 - [blockchain-etl/band-etl](https://github.com/blockchain-etl/band-etl) - ETL (extract, transform and load) tools for ingesting Band Protocol blockchain data to Google BigQuery and Pub/Sub
-- [EYBlockchain/nightfall](https://github.com/EYBlockchain/nightfall) - Nightfall protocols for private transactions on the Ethereum blockchain using zk-snarks
 - [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [vyperhub-io/vyper-smart-contracts](https://github.com/vyperhub-io/vyper-smart-contracts) - All smart contracts listed at vyperhub.io
