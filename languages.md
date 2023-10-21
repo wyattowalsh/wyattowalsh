@@ -139,6 +139,7 @@
 - [animate-css/animate.css](https://github.com/animate-css/animate.css) - 🍿 A cross-browser library of CSS animations. As easy to use as an easy thing.
 - [boopathikumar018/docsify-darklight-theme](https://github.com/boopathikumar018/docsify-darklight-theme) - A Dark and Light theme with switch for your docsify site
 - [tachyons-css/tachyons](https://github.com/tachyons-css/tachyons) - Functional css for humans
+- [you-dont-need/You-Dont-Need-JavaScript](https://github.com/you-dont-need/You-Dont-Need-JavaScript) - CSS is powerful, you can do a lot of things without JS.
 - [Plugin-contrib/docsify-plugin](https://github.com/Plugin-contrib/docsify-plugin) - This is a docsify plugin to render changelog from given path
 - [scaffold-eth/scaffold-eth](https://github.com/scaffold-eth/scaffold-eth) - 🏗 forkable Ethereum dev stack focused on fast product iterations
 - [rdwatters/hugo-starter](https://github.com/rdwatters/hugo-starter) - Hugo Starter with Gulp Asset Pipeline, SVG Icons, partials for global components, metadata, and social.
@@ -236,7 +237,6 @@
 - [bansal/pattern.css](https://github.com/bansal/pattern.css) - CSS only library to fill empty background with beautiful patterns.
 - [ciar4n/imagehover.css](https://github.com/ciar4n/imagehover.css) - Pure CSS Image Hover Effect Library
 - [hunzaboy/CSS-Checkbox-Library](https://github.com/hunzaboy/CSS-Checkbox-Library) - A huge library of Pure CSS Checkboxes for every taste.
-- [you-dont-need/You-Dont-Need-JavaScript](https://github.com/you-dont-need/You-Dont-Need-JavaScript) - CSS is powerful, you can do a lot of things without JS.
 - [tabler/tabler](https://github.com/tabler/tabler) - Tabler is free and open-source HTML Dashboard UI Kit built on Bootstrap
 - [tomjoht/documentation-theme-jekyll](https://github.com/tomjoht/documentation-theme-jekyll) - A Jekyll-based theme designed for documentation and help systems. See the link for detailed instructions on setting up and configuring everything.
 - [markodenic/web-development-resources](https://github.com/markodenic/web-development-resources) - Awesome Web Development Resources.
@@ -553,7 +553,6 @@
 - [googleworkspace/apps-script-samples](https://github.com/googleworkspace/apps-script-samples) - Apps Script samples for Google Workspace products.
 - [plotly/react-plotly.js](https://github.com/plotly/react-plotly.js) - A plotly.js React component from Plotly 📈
 - [adrianmcli/truffle-next](https://github.com/adrianmcli/truffle-next) - 🛰️ A boilerplate Truffle Box project with Next.js for rapid Ethereum Dapp development
-- [EYBlockchain/nightfall](https://github.com/EYBlockchain/nightfall) - Nightfall protocols for private transactions on the Ethereum blockchain using zk-snarks
 - [trufflesuite/drizzle](https://github.com/trufflesuite/drizzle) - Reactive Ethereum dapp UI suite
 - [ConsenSysMesh/rimble-ui](https://github.com/ConsenSysMesh/rimble-ui) - React components that implement Rimble's Design System.
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
