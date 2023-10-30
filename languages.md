@@ -13,6 +13,7 @@
 - [Clojure](#clojure)
 - [Cython](#cython)
 - [Dart](#dart)
+- [Dockerfile](#dockerfile)
 - [Elixir](#elixir)
 - [Go](#go)
 - [HTML](#html)
@@ -165,6 +166,10 @@
 ## Dart 
 
 - [flutter/flutter](https://github.com/flutter/flutter) - Flutter makes it easy and fast to build beautiful apps for mobile and beyond
+
+## Dockerfile 
+
+- [monicahq/docker](https://github.com/monicahq/docker) - docker image of Monica
 
 ## Elixir 
 
@@ -1514,7 +1519,6 @@
 ## Shell 
 
 - [sobolevn/wakatime-zsh-plugin](https://github.com/sobolevn/wakatime-zsh-plugin) - 🕒Track how much time you have spent in your terminal!
-- [monicahq/docker](https://github.com/monicahq/docker) - docker image of Monica
 - [ralsina/rst-cheatsheet](https://github.com/ralsina/rst-cheatsheet) - A two-page cheatsheet for restructured text
 - [unixorn/awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins) - A collection of ZSH frameworks, plugins, themes and tutorials.
 - [powerline/fonts](https://github.com/powerline/fonts) - Patched fonts for Powerline users.
