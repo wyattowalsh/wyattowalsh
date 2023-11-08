@@ -3141,6 +3141,7 @@
 - [microsoft/qio-samples](https://github.com/microsoft/qio-samples) - Samples for using optimization solvers through Azure Quantum.
 - [googleworkspace/apps-script-samples](https://github.com/googleworkspace/apps-script-samples) - Apps Script samples for Google Workspace products.
 - [blockchain-etl/band-etl](https://github.com/blockchain-etl/band-etl) - ETL (extract, transform and load) tools for ingesting Band Protocol blockchain data to Google BigQuery and Pub/Sub
+- [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [vyperhub-io/vyper-smart-contracts](https://github.com/vyperhub-io/vyper-smart-contracts) - All smart contracts listed at vyperhub.io
 - [maidsafe/temp_safe_network](https://github.com/maidsafe/temp_safe_network) - The Safe Network. A libp2p backed data and transfer network
