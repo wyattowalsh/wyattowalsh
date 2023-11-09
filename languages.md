@@ -496,7 +496,6 @@
 - [Asabeneh/30-Days-Of-React](https://github.com/Asabeneh/30-Days-Of-React) - 30 Days of  React challenge is a step by step guide to learn React in 30 days.  These videos may help too: https://www.youtube.com/channel/UC7PNRuno1rzYPb1xLa4yktw
 - [zadam/trilium](https://github.com/zadam/trilium) - Build your personal knowledge base with Trilium Notes
 - [sagar-barapatre/React-to-Google-Spreadsheets](https://github.com/sagar-barapatre/React-to-Google-Spreadsheets) - A React application which POST form data from React to Google Sheets like REST APIs.
-- [odoo/odoo](https://github.com/odoo/odoo) - Odoo. Open Source Apps To Grow Your Business.
 - [amdecker/obsidian-argdown-plugin](https://github.com/amdecker/obsidian-argdown-plugin) - 
 - [airflow-plugins/airflow-dag-creation-manager-plugin](https://github.com/airflow-plugins/airflow-dag-creation-manager-plugin) - A plugin for Airflow that create and manage your DAG with web UI.
 - [meld-cp/obsidian-calc](https://github.com/meld-cp/obsidian-calc) - 
@@ -1272,6 +1271,7 @@
 - [thunlp/TensorFlow-TransX](https://github.com/thunlp/TensorFlow-TransX) - An implementation of TransE and its extended models for Knowledge Representation Learning on TensorFlow
 - [googleapis/google-api-python-client](https://github.com/googleapis/google-api-python-client) - 🐍 The official Python client library for Google's discovery based APIs.
 - [frappe/erpnext](https://github.com/frappe/erpnext) - Free and Open Source Enterprise Resource Planning (ERP)
+- [odoo/odoo](https://github.com/odoo/odoo) - Odoo. Open Source Apps To Grow Your Business.
 - [airflow-plugins/airflow-zip-operator-plugin](https://github.com/airflow-plugins/airflow-zip-operator-plugin) - A plugin to Apache Airflow to allow you to run Zip and UnZip commands as an Operator
 - [airflow-plugins/bigquery_plugin](https://github.com/airflow-plugins/bigquery_plugin) - Some extensions to the default BigQuery hook and operator.
 - [airflow-plugins/rate_limit_plugin](https://github.com/airflow-plugins/rate_limit_plugin) - Check whether a service has reached a specified rate limit threshold before continuing on with DAG.
