@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C033%20hrs%2047%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C034%20hrs%2050%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
@@ -121,11 +121,9 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 > 📦 4.2 MB Used in GitHub's Storage 
  > 
-> 🏆 712 Contributions in the Year 2023
- > 
 > 💼 Opted to Hire
  > 
-> 📜 28 Public Repositories 
+> 📜 29 Public Repositories 
  > 
 > 🔑 19 Private Repositories 
  > 
@@ -154,14 +152,14 @@ Sunday                   621 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   2 hrs 35 mins       ███████░░░░░░░░░░░░░░░░░░   29.63 % 
-Swift                    1 hr 24 mins        ████░░░░░░░░░░░░░░░░░░░░░   16.01 % 
-sh                       1 hr 6 mins         ███░░░░░░░░░░░░░░░░░░░░░░   12.59 % 
-Markdown                 1 hr 3 mins         ███░░░░░░░░░░░░░░░░░░░░░░   12.01 % 
-TypeScript               48 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   09.28 % 
+Python                   2 hrs 59 mins       ████████████░░░░░░░░░░░░░   49.36 % 
+Swift                    52 mins             ████░░░░░░░░░░░░░░░░░░░░░   14.40 % 
+sh                       49 mins             ███░░░░░░░░░░░░░░░░░░░░░░   13.53 % 
+TypeScript               47 mins             ███░░░░░░░░░░░░░░░░░░░░░░   13.16 % 
+XML                      15 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   04.28 % 
 
 💻 Operating System: 
-Mac                      8 hrs 45 mins       █████████████████████████   100.00 % 
+Mac                      6 hrs 3 mins        █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +179,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 13/11/2023 18:39:40 UTC
+ Last Updated on 14/11/2023 18:38:34 UTC
 <!--END_SECTION:waka-->
 
     
