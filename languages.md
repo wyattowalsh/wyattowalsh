@@ -298,7 +298,7 @@
 - [benfry/processing4](https://github.com/benfry/processing4) - Processing 4.x releases for Java 17
 - [haifengl/smile](https://github.com/haifengl/smile) - Statistical Machine Intelligence & Learning Engine
 - [vikramchandran/Berkeley-Google-Maps](https://github.com/vikramchandran/Berkeley-Google-Maps) - A web mapping application similar to Google maps that implements an A * search algorithm to provide navigation for users.
-- [vikramchandran/Pacman](https://github.com/vikramchandran/Pacman) - A fun twist on the original Pacman game.
+- [vikramchandran/Pacman](https://github.com/vikramchandran/Pacman) - Java-based Pacman game
 - [apache/hadoop](https://github.com/apache/hadoop) - Apache Hadoop
 
 ## JavaScript 
@@ -968,6 +968,7 @@
 
 ## Python 
 
+- [mitmproxy/pdoc](https://github.com/mitmproxy/pdoc) - API Documentation for Python Projects
 - [facebookresearch/codellama](https://github.com/facebookresearch/codellama) - Inference code for CodeLlama models
 - [myscale/ChatData](https://github.com/myscale/ChatData) - ChatData 🔍 📖 brings RAG to real applications with FREE✨ knowledge bases. Now enjoy your chat with 6 million wikipedia pages and 2 million arxiv papers.
 - [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion web UI
@@ -1396,7 +1397,7 @@
 - [bregman-arie/devops-exercises](https://github.com/bregman-arie/devops-exercises) - Linux, Jenkins, AWS, SRE, Prometheus, Docker, Python, Ansible, Git, Kubernetes, Terraform, OpenStack, SQL, NoSQL, Azure, GCP, DNS, Elastic, Network, Virtualization. DevOps Interview Questions
 - [leon-thomm/Ryven](https://github.com/leon-thomm/Ryven) - Flow-based visual scripting for Python
 - [vikramchandran/Data-Lake-Application](https://github.com/vikramchandran/Data-Lake-Application) - Enables developers to utilize AWS technologies such as Athena, Glue, and Firehose to slice/dice data directly from S3 and transform data from json to Parquet.
-- [vikramchandran/CLI-Project](https://github.com/vikramchandran/CLI-Project) - A Command Line Interface tool built with Python that interacts with AWS's S3 buckets.
+- [vikramchandran/CLI-Project](https://github.com/vikramchandran/CLI-Project) - Python-based Command Line Interface tool that interacts with AWS's S3 buckets.
 - [jiaaro/pydub](https://github.com/jiaaro/pydub) - Manipulate audio with a simple and easy high level interface
 - [ddangelov/Top2Vec](https://github.com/ddangelov/Top2Vec) - Top2Vec learns jointly embedded topic, document and word vectors.
 - [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
