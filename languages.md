@@ -447,7 +447,6 @@
 - [grommet/grommet-icons](https://github.com/grommet/grommet-icons) - Iconography for Grommet and React.js
 - [remarkjs/remark-math](https://github.com/remarkjs/remark-math) - remark and rehype plugins to support math
 - [remarkjs/remark](https://github.com/remarkjs/remark) - markdown processor powered by plugins part of the @unifiedjs collective
-- [rdilweb/docusaurus-plugin-remote-content](https://github.com/rdilweb/docusaurus-plugin-remote-content) - A Docusaurus v2 plugin to download content from remote sources when it is needed.
 - [rlamana/docusaurus-plugin-sass](https://github.com/rlamana/docusaurus-plugin-sass) - Provides support for SASS/SCSS to Docusaurus v2
 - [ethereumbook/ethereumbook](https://github.com/ethereumbook/ethereumbook) - Mastering Ethereum, by Andreas M. Antonopoulos, Gavin Wood
 - [metafizzy/flickity](https://github.com/metafizzy/flickity) - :leaves: Touch, responsive, flickable carousels
@@ -1706,6 +1705,7 @@
 - [hyperledger/cacti](https://github.com/hyperledger/cacti) - Hyperledger Cacti is a new approach to the blockchain interoperability problem
 - [wmde/wikibase-release-pipeline](https://github.com/wmde/wikibase-release-pipeline) - 
 - [benrbray/remark-cite](https://github.com/benrbray/remark-cite) - Adds support for pandoc-style citations to the Markdown syntax for the remark and micromark parsers.
+- [rdilweb/docusaurus-plugin-remote-content](https://github.com/rdilweb/docusaurus-plugin-remote-content) - A Docusaurus v2 plugin to download content from remote sources when it is needed.
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [DTStack/molecule](https://github.com/DTStack/molecule) - :rocket: A lightweight Web IDE UI framework.
 - [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
