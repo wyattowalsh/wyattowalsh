@@ -1738,7 +1738,6 @@
 - [dar5hak/generator-awesome-list](https://github.com/dar5hak/generator-awesome-list) - :sunglasses: Yeoman generator for GitHub awesome lists
 - [requarks/wiki](https://github.com/requarks/wiki) - Wiki.js | A modern and powerful wiki app built on Node.js
 - [monicahq/monica](https://github.com/monicahq/monica) - Personal CRM. Remember everything about your friends, family and business relationships.
-- [jackyzha0/quartz](https://github.com/jackyzha0/quartz) - 🌱 a fast, batteries-included static-site generator that transforms Markdown content into fully functional websites
 - [frappe/erpnext](https://github.com/frappe/erpnext) - Free and Open Source Enterprise Resource Planning (ERP)
 - [kiwicom/orbit](https://github.com/kiwicom/orbit) - React components of open-source Orbit design system by Kiwi.com
 - [carbon-design-system/carbon](https://github.com/carbon-design-system/carbon) - A design system built by IBM
@@ -3057,6 +3056,7 @@
 - [googleapis/google-api-python-client](https://github.com/googleapis/google-api-python-client) - 🐍 The official Python client library for Google's discovery based APIs.
 - [belay-labs/gpt-explorer](https://github.com/belay-labs/gpt-explorer) - GPT-3 Explorer
 - [mikhail-bot/awesome-gpt3](https://github.com/mikhail-bot/awesome-gpt3) - Curating the best GPT3 tools and resources
+- [jackyzha0/quartz](https://github.com/jackyzha0/quartz) - 🌱 a fast, batteries-included static-site generator that transforms Markdown content into fully functional websites
 - [sagar-barapatre/React-to-Google-Spreadsheets](https://github.com/sagar-barapatre/React-to-Google-Spreadsheets) - A React application which POST form data from React to Google Sheets like REST APIs.
 - [tgrosinger/ledger-obsidian](https://github.com/tgrosinger/ledger-obsidian) - Plain text accounting in Obsidian.md
 - [Dmytro-Shulha/obsidian-plotly](https://github.com/Dmytro-Shulha/obsidian-plotly) - Obsidian plugin to embed Plotly charts into markdown notes.
