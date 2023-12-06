@@ -1667,7 +1667,7 @@
 - [AugurProject/augur](https://github.com/AugurProject/augur) - Augur v2 - Prediction Market Protocol and Client
 - [JoinColony/colonySDK](https://github.com/JoinColony/colonySDK) - :rocket: Get started with Colony quickly
 - [JoinColony/colonyDapp](https://github.com/JoinColony/colonyDapp) - Colony dApp client
-- [Uniswap/interface](https://github.com/Uniswap/interface) - 🦄 An open source interface for the Uniswap protocol
+- [Uniswap/interface](https://github.com/Uniswap/interface) - 🦄 Open source interfaces for the Uniswap protocol
 - [LimeChain/demo-subgraph](https://github.com/LimeChain/demo-subgraph) - Demo Subgraph (The Graph) showcasing unit testing with Matchstick!
 - [lens-protocol/core](https://github.com/lens-protocol/core) - The Lens Protocol
 - [lens-protocol/api-examples](https://github.com/lens-protocol/api-examples) - Code examples of how to speak to the Lens API
