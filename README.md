@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C062%20hrs%209%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C062%20hrs%2052%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
@@ -154,14 +154,10 @@ Sunday                   621 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Python                   1 hr 49 mins        ██████████████████░░░░░░░   73.27 % 
-Text                     19 mins             ███░░░░░░░░░░░░░░░░░░░░░░   13.30 % 
-sh                       15 mins             ███░░░░░░░░░░░░░░░░░░░░░░   10.41 % 
-Other                    2 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.71 % 
-TOML                     1 min               ░░░░░░░░░░░░░░░░░░░░░░░░░   00.70 % 
+Python                   1 hr 26 mins        █████████████████████████   100.00 % 
 
 💻 Operating System: 
-Mac                      2 hrs 29 mins       █████████████████████████   100.00 % 
+Mac                      1 hr 26 mins        █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +177,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 13/12/2023 18:43:59 UTC
+ Last Updated on 14/12/2023 18:40:26 UTC
 <!--END_SECTION:waka-->
 
     
