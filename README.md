@@ -113,21 +113,21 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C062%20hrs%2052%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C063%20hrs%208%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 4.3 MB Used in GitHub's Storage 
+> 📦 4.4 MB Used in GitHub's Storage 
  > 
-> 🏆 724 Contributions in the Year 2023
+> 🏆 725 Contributions in the Year 2023
  > 
 > 💼 Opted to Hire
  > 
 > 📜 29 Public Repositories 
  > 
-> 🔑 21 Private Repositories 
+> 🔑 22 Private Repositories 
  > 
 **I'm a Night 🦉** 
 
@@ -163,11 +163,11 @@ Mac                      1 hr 26 mins        ███████████�
 **I Mostly Code in Jupyter Notebook** 
 
 ```text
-Jupyter Notebook         13 repos            ███████████░░░░░░░░░░░░░░   44.83 % 
-Python                   5 repos             ████░░░░░░░░░░░░░░░░░░░░░   17.24 % 
-Makefile                 3 repos             ███░░░░░░░░░░░░░░░░░░░░░░   10.34 % 
-JavaScript               3 repos             ███░░░░░░░░░░░░░░░░░░░░░░   10.34 % 
-TypeScript               2 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   06.90 % 
+Jupyter Notebook         13 repos            ███████████░░░░░░░░░░░░░░   43.33 % 
+Python                   5 repos             ████░░░░░░░░░░░░░░░░░░░░░   16.67 % 
+Makefile                 3 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   10.00 % 
+TypeScript               2 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   06.67 % 
+Swift                    1 repo              █░░░░░░░░░░░░░░░░░░░░░░░░   03.33 % 
 ```
 
 
@@ -177,7 +177,7 @@ TypeScript               2 repos             ██░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 14/12/2023 18:40:26 UTC
+ Last Updated on 15/12/2023 18:40:14 UTC
 <!--END_SECTION:waka-->
 
     
