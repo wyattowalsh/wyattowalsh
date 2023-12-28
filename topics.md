@@ -227,6 +227,7 @@
 
 ## ai 
 
+- [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
 - [microsoft/promptflow](https://github.com/microsoft/promptflow) - Build high-quality LLM apps - from prototyping, testing to production deployment and monitoring.
 - [devisasari/awesome-chatgpt-store](https://github.com/devisasari/awesome-chatgpt-store) - A curated list of awesome custom GPTs
@@ -380,7 +381,7 @@
 - [devisasari/awesome-chatgpt-store](https://github.com/devisasari/awesome-chatgpt-store) - A curated list of awesome custom GPTs
 - [likedan/Awesome-CoreML-Models](https://github.com/likedan/Awesome-CoreML-Models) - Largest list of models for Core ML (for iOS 11+)
 - [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) - A curated list of awesome Docusaurus resources.
-- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2023
+- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2024
 - [maguowei/starred](https://github.com/maguowei/starred) - creating your own Awesome List by GitHub stars!
 - [rehypejs/awesome-rehype](https://github.com/rehypejs/awesome-rehype) - Curated list of awesome rehype resources
 - [anmol098/waka-readme-stats](https://github.com/anmol098/waka-readme-stats) - This GitHub action helps to add cool dev metrics to your github profile Readme
@@ -475,7 +476,7 @@
 - [likedan/Awesome-CoreML-Models](https://github.com/likedan/Awesome-CoreML-Models) - Largest list of models for Core ML (for iOS 11+)
 - [jondot/awesome-react-native](https://github.com/jondot/awesome-react-native) - Awesome React Native components, news, tools, and learning material!
 - [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) - A curated list of awesome Docusaurus resources.
-- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2023
+- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2024
 - [maguowei/starred](https://github.com/maguowei/starred) - creating your own Awesome List by GitHub stars!
 - [rehypejs/awesome-rehype](https://github.com/rehypejs/awesome-rehype) - Curated list of awesome rehype resources
 - [willianjusten/awesome-svg](https://github.com/willianjusten/awesome-svg) - A curated list of SVG.
@@ -790,6 +791,7 @@
 
 ## computer-vision 
 
+- [songweige/rich-text-to-image](https://github.com/songweige/rich-text-to-image) - Rich-Text-to-Image Generation
 - [aiff22/DPED](https://github.com/aiff22/DPED) - Software and pre-trained models for automatic photo quality enhancement using Deep Convolutional Networks
 - [open-mmlab/mmagic](https://github.com/open-mmlab/mmagic) - OpenMMLab Multimodal Advanced, Generative, and Intelligent Creation Toolbox. Unlock the magic 🪄: Generative-AI (AIGC), easy-to-use APIs, awsome model zoo, diffusion models, for text-to-image generatio
 - [idealo/image-super-resolution](https://github.com/idealo/image-super-resolution) - 🔎 Super-scale your images and run experiments with Residual Dense and Adversarial Networks.
@@ -854,7 +856,7 @@
 - [selfishprimate/gerillass](https://github.com/selfishprimate/gerillass) - Gerillass is a Sass mixin library containing a set of Sass mixins and functions to help front-end developers generate scalable CSS outputs.
 - [kjbrum/juice](https://github.com/kjbrum/juice) - Mixins for Life
 - [W3cplus/SassMagic](https://github.com/W3cplus/SassMagic) - Collection best of Sass mixins and function
-- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2023
+- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2024
 - [kazzkiq/balloon.css](https://github.com/kazzkiq/balloon.css) - Simple tooltips made of pure CSS
 - [brandonmcconnell/typed.css](https://github.com/brandonmcconnell/typed.css) - A fully functional and flexible typewriter mixin for SCSS, with Less and Stylus support coming soon! Typed.css supports multiple strings, multi-line strings, variable speeds, per-string styling, anima
 - [webkul/coolhue](https://github.com/webkul/coolhue) - Coolest Gradient Hues and Swatches
@@ -1144,6 +1146,7 @@
 
 ## deep-learning 
 
+- [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion web UI
 - [zihangdai/xlnet](https://github.com/zihangdai/xlnet) - XLNet: Generalized Autoregressive Pretraining for Language Understanding
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide) - 🐙 Guides, papers, lecture, notebooks and resources for prompt engineering
@@ -1502,7 +1505,7 @@
 
 ## framework 
 
-- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2023
+- [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2024
 - [Effect-TS/effect](https://github.com/Effect-TS/effect) - A fully-fledged functional effect system for TypeScript with a rich standard library
 - [python-telegram-bot/python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) - We have made you a wrapper you can't refuse
 - [gocolly/colly](https://github.com/gocolly/colly) - Elegant Scraper and Crawler Framework for Golang
@@ -2701,6 +2704,11 @@
 
 ## others 
 
+- [comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI) - The most powerful and modular stable diffusion GUI, api and backend with a graph/nodes interface.
+- [camenduru/stable-video-diffusion-colab](https://github.com/camenduru/stable-video-diffusion-colab) - 
+- [Stability-AI/generative-models](https://github.com/Stability-AI/generative-models) - Generative Models by Stability AI
+- [Coyote-A/ultimate-upscale-for-automatic1111](https://github.com/Coyote-A/ultimate-upscale-for-automatic1111) - 
+- [pkuliyi2015/multidiffusion-upscaler-for-automatic1111](https://github.com/pkuliyi2015/multidiffusion-upscaler-for-automatic1111) - Tiled Diffusion and VAE optimize, licensed under CC BY-NC-SA 4.0
 - [cameronmaske/pytest-vscode](https://github.com/cameronmaske/pytest-vscode) - A VS Code extensions that adds IntelliSense support for pytest fixtures.
 - [microsoft/vscode-python](https://github.com/microsoft/vscode-python) - Python extension for Visual Studio Code
 - [prompt-toolkit/python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) - Library for building powerful interactive command line applications in Python
@@ -3711,6 +3719,8 @@
 
 ## pytorch 
 
+- [songweige/rich-text-to-image](https://github.com/songweige/rich-text-to-image) - Rich-Text-to-Image Generation
+- [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
 - [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion web UI
 - [nnaisense/evotorch](https://github.com/nnaisense/evotorch) - Advanced evolutionary computation library built directly on top of PyTorch, created at NNAISENSE.
