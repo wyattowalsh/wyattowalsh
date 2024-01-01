@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C068%20hrs%2056%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C070%20hrs%2024%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
@@ -121,7 +121,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 > 📦 4.4 MB Used in GitHub's Storage 
  > 
-> 🏆 728 Contributions in the Year 2023
+> 🏆 0 Contributions in the Year 2024
  > 
 > 💼 Opted to Hire
  > 
@@ -154,14 +154,14 @@ Sunday                   621 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-sh                       2 hrs 25 mins       ███████████████░░░░░░░░░░   58.12 % 
-Python                   1 hr 15 mins        ████████░░░░░░░░░░░░░░░░░   30.30 % 
-Bash                     14 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   05.97 % 
-JSON                     11 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   04.46 % 
-Other                    1 min               ░░░░░░░░░░░░░░░░░░░░░░░░░   00.52 % 
+Python                   5 hrs 49 mins       █████████████████░░░░░░░░   66.59 % 
+sh                       2 hrs 26 mins       ███████░░░░░░░░░░░░░░░░░░   27.90 % 
+Bash                     14 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   02.84 % 
+JSON                     11 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   02.12 % 
+Other                    1 min               ░░░░░░░░░░░░░░░░░░░░░░░░░   00.25 % 
 
 💻 Operating System: 
-Mac                      4 hrs 9 mins        █████████████████████████   100.00 % 
+Mac                      8 hrs 44 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +181,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 31/12/2023 18:38:55 UTC
+ Last Updated on 01/01/2024 18:39:13 UTC
 <!--END_SECTION:waka-->
 
     
