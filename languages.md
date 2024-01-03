@@ -34,6 +34,7 @@
 - [PLpgSQL](#plpgsql)
 - [Perl](#perl)
 - [Processing](#processing)
+- [Pug](#pug)
 - [Python](#python)
 - [Q#](#q#)
 - [R](#r)
@@ -968,6 +969,10 @@
 ## Processing 
 
 - [joshsanchez98/CreativeProgrammingAndElectronics](https://github.com/joshsanchez98/CreativeProgrammingAndElectronics) - Portfolio of all projects created in my creative programming and electronics course. Made in Processing (Version 3.5.4)
+
+## Pug 
+
+- [StartBootstrap/startbootstrap-resume](https://github.com/StartBootstrap/startbootstrap-resume) - A Bootstrap 4 resume/CV theme created by Start Bootstrap
 
 ## Python 
 
