@@ -419,7 +419,6 @@
 - [documentationjs/documentation](https://github.com/documentationjs/documentation) - :book: documentation for modern JavaScript
 - [humaan/Modaal](https://github.com/humaan/Modaal) - An accessible dialog window library for all humans.
 - [uber/react-vis](https://github.com/uber/react-vis) - Data Visualization Components
-- [FormidableLabs/victory](https://github.com/FormidableLabs/victory) - A collection of composable React components for building interactive data visualizations
 - [gaearon/react-hot-loader](https://github.com/gaearon/react-hot-loader) - Tweak React components in real time. (Deprecated: use Fast Refresh instead.)
 - [baldurbjarnason/rehype-annotate](https://github.com/baldurbjarnason/rehype-annotate) - 
 - [remarkjs/remark-toc](https://github.com/remarkjs/remark-toc) - plugin to generate a table of contents (TOC)
@@ -1137,7 +1136,7 @@
 - [hummingbot/hummingbot](https://github.com/hummingbot/hummingbot) - Open source software that helps you create and deploy high-frequency crypto trading bots
 - [nick-dolan/jesse-indicators](https://github.com/nick-dolan/jesse-indicators) - Custom indicators for Jesse's trading framework.
 - [jesse-ai/example-strategies](https://github.com/jesse-ai/example-strategies) - Example trading strategies to get you started with Jesse
-- [supabase-community/supabase-py](https://github.com/supabase-community/supabase-py) - Python Client for Supabase
+- [supabase-community/supabase-py](https://github.com/supabase-community/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
 - [ApeWorX/walletconnect-py](https://github.com/ApeWorX/walletconnect-py) - WalletConnect implementation in Python
 - [ApeWorX/ape-polygon](https://github.com/ApeWorX/ape-polygon) - Polygon ecosystem plugin for the Ape Framework
 - [ApeWorX/project-template](https://github.com/ApeWorX/project-template) - Plugin project template for the Ape Framework
@@ -1704,6 +1703,7 @@
 - [sindresorhus/pageres](https://github.com/sindresorhus/pageres) - Capture website screenshots
 - [graphql/graphql-playground](https://github.com/graphql/graphql-playground) - 🎮  GraphQL IDE for better development workflows (GraphQL Subscriptions, interactive docs & collaboration)
 - [recharts/recharts](https://github.com/recharts/recharts) - Redefined chart library built with React and D3
+- [FormidableLabs/victory](https://github.com/FormidableLabs/victory) - A collection of composable React components for building interactive data visualizations
 - [microsoft/ReSub](https://github.com/microsoft/ReSub) - A library for writing React components that automatically manage subscriptions to data sources simply by accessing them
 - [teambit/bit](https://github.com/teambit/bit) - A build system for development of composable software.
 - [Raathigesh/majestic](https://github.com/Raathigesh/majestic) - ⚡ Zero config GUI for Jest
