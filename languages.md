@@ -306,6 +306,8 @@
 
 ## JavaScript 
 
+- [stav/wgrep](https://github.com/stav/wgrep) - Web grep: search all rendered resources used by a URI
+- [notionblog/NotionThemes](https://github.com/notionblog/NotionThemes) - Make your Notion pretty with custom themes
 - [alyssaxuu/slashy](https://github.com/alyssaxuu/slashy) - Supercharge Notion with custom commands to record, draw, and more ✍️
 - [notion-enhancer/notion-enhancer](https://github.com/notion-enhancer/notion-enhancer) - an enhancer/customiser for the all-in-one productivity workspace notion.so
 - [webtorrent/webtorrent](https://github.com/webtorrent/webtorrent) - ⚡️ Streaming torrent client for the web
@@ -980,6 +982,8 @@
 
 ## Python 
 
+- [thomashirtz/notion-scholar](https://github.com/thomashirtz/notion-scholar) - Reference management solution using Python and Notion.
+- [stevedsun/notion-graph-view](https://github.com/stevedsun/notion-graph-view) - Generate a roam research like network graph view from your Notion pages.
 - [jamalex/notion-py](https://github.com/jamalex/notion-py) - Unofficial Python API client for Notion.so
 - [Cobertos/md2notion](https://github.com/Cobertos/md2notion) - A better Notion.so Markdown importer
 - [kevinjalbert/notion-toolbox](https://github.com/kevinjalbert/notion-toolbox) - This is a collection of Notion tools that work in tandem together.
@@ -1623,6 +1627,8 @@
 
 ## TypeScript 
 
+- [tryfabric/martian](https://github.com/tryfabric/martian) - Markdown to Notion: Convert Markdown and GitHub Flavoured Markdown to Notion API Blocks and RichText 🔀📝
+- [mayooear/notion-chat-langchain](https://github.com/mayooear/notion-chat-langchain) - A notion chatbot for your knowledge base built with langchain, typescript/javascript and pinecone.
 - [Mayandev/notion-avatar](https://github.com/Mayandev/notion-avatar) - 🪄 An online tool for making notion-style avatars.
 - [cameronmaske/pytest-vscode](https://github.com/cameronmaske/pytest-vscode) - A VS Code extensions that adds IntelliSense support for pytest fixtures.
 - [microsoft/vscode-python](https://github.com/microsoft/vscode-python) - Python extension for Visual Studio Code
