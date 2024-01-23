@@ -997,6 +997,7 @@
 
 ## Python 
 
+- [google-deepmind/graphcast](https://github.com/google-deepmind/graphcast) - 
 - [thomashirtz/notion-scholar](https://github.com/thomashirtz/notion-scholar) - Reference management solution using Python and Notion.
 - [stevedsun/notion-graph-view](https://github.com/stevedsun/notion-graph-view) - Generate a roam research like network graph view from your Notion pages.
 - [jamalex/notion-py](https://github.com/jamalex/notion-py) - Unofficial Python API client for Notion.so
