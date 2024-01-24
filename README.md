@@ -121,8 +121,6 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 > 📦 4.5 MB Used in GitHub's Storage 
  > 
-> 🏆 23 Contributions in the Year 2024
- > 
 > 💼 Opted to Hire
  > 
 > 📜 32 Public Repositories 
@@ -181,7 +179,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 23/01/2024 18:44:39 UTC
+ Last Updated on 24/01/2024 18:39:53 UTC
 <!--END_SECTION:waka-->
 
     
