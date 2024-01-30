@@ -1648,6 +1648,7 @@
 
 ## TypeScript 
 
+- [markmap/markmap-vscode](https://github.com/markmap/markmap-vscode) - Integrate markmap into VSCode
 - [vincaslt/vscode-highlight-matching-tag](https://github.com/vincaslt/vscode-highlight-matching-tag) - Highlights matching opening or closing tag in  VSCode
 - [oderwat/vscode-indent-rainbow](https://github.com/oderwat/vscode-indent-rainbow) - Extension which shows indentation with a faint rainbow colored background to make them more readable
 - [Tyriar/vscode-sort-lines](https://github.com/Tyriar/vscode-sort-lines) - Visual Studio Code extension to sort lines of text
