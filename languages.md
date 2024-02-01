@@ -33,6 +33,7 @@
 - [PHP](#php)
 - [PLpgSQL](#plpgsql)
 - [Perl](#perl)
+- [PostScript](#postscript)
 - [PowerShell](#powershell)
 - [Processing](#processing)
 - [Pug](#pug)
@@ -218,6 +219,9 @@
 
 ## HTML 
 
+- [wipo-analytics/wipo-analytics.github.io](https://github.com/wipo-analytics/wipo-analytics.github.io) - The WIPO Manual on Open Source Patent Analytics
+- [wipo-analytics/handbook](https://github.com/wipo-analytics/handbook) - The WIPO Patent Analytics Handbook (Work in Progress)
+- [observablehq/plot](https://github.com/observablehq/plot) - Observable Plot: a concise API for exploratory data visualization
 - [ShoroukAziz/notion_widgets](https://github.com/ShoroukAziz/notion_widgets) - A set of HTML widgets that could be embedded into  Notion.so  https://www.notion.so/ pages. For more see https://blog.shorouk.dev/notion-widgets-gallery/
 - [f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) - This repo includes ChatGPT prompt curation to use ChatGPT better.
 - [StefanAleksik/musicScape](https://github.com/StefanAleksik/musicScape) - 
@@ -308,6 +312,8 @@
 
 ## JavaScript 
 
+- [tangly1024/NotionNext](https://github.com/tangly1024/NotionNext) - 使用 NextJS + Notion API 实现的，支持多种部署方案的静态博客，无需服务器、零门槛搭建网站，为Notion和所有创作者设计。 (A static blog built with NextJS and Notion API, supporting multiple deployment options. No server required, zero threshold to s
+- [nextapps-de/flexsearch](https://github.com/nextapps-de/flexsearch) - Next-Generation full text search library for Browser and Node.js
 - [viatsko/awesome-vscode](https://github.com/viatsko/awesome-vscode) - 🎨 A curated list of delightful VS Code packages and resources.
 - [enyancc/vscode-ext-color-highlight](https://github.com/enyancc/vscode-ext-color-highlight) - Extension adds colored border around css/web colors in the editor
 - [IBM-Cloud/vscode-log-output-colorizer](https://github.com/IBM-Cloud/vscode-log-output-colorizer) - Language extension for VSCode that adds syntax colorization for both the output/debug/extensions panel and *.log files.
@@ -643,6 +649,8 @@
 
 ## Jupyter Notebook 
 
+- [d3blocks/d3blocks](https://github.com/d3blocks/d3blocks) - The Python library to create stand-alone and interactive d3 charts.
+- [alexandre01/deepsvg](https://github.com/alexandre01/deepsvg) - [NeurIPS 2020] Official code for the paper "DeepSVG: A Hierarchical Generative Network for Vector Graphics Animation". Includes a PyTorch library for deep learning with SVG data.
 - [camenduru/stable-video-diffusion-colab](https://github.com/camenduru/stable-video-diffusion-colab) - 
 - [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [imxieyi/waifu2x-ios-model-converter](https://github.com/imxieyi/waifu2x-ios-model-converter) - 
@@ -682,6 +690,7 @@
 - [BlockScience/uniswap](https://github.com/BlockScience/uniswap) - Uniswap cadCAD models and data analyses
 - [metagov/govbase](https://github.com/metagov/govbase) - Govbase is an open, crowdsourced database of projects and tools in online governance. Data hosted at https://airtable.com/shrgnUrj0dqzZDsOd
 - [google/brain-tokyo-workshop](https://github.com/google/brain-tokyo-workshop) - 🧠🗼
+- [Boulder-Investment-Technologies/lppls](https://github.com/Boulder-Investment-Technologies/lppls) - Library for fitting the LPPLS model to data.
 - [goldmansachs/gs-quant](https://github.com/goldmansachs/gs-quant) - Python toolkit for quantitative finance
 - [domokane/FinancePy](https://github.com/domokane/FinancePy) - A Python Finance Library that focuses on the pricing and risk-management of Financial Derivatives, including fixed-income, equity, FX and credit derivatives.
 - [ynouri/pysabr](https://github.com/ynouri/pysabr) - SABR model Python implementation
@@ -983,6 +992,10 @@
 
 - [sqitchers/sqitch](https://github.com/sqitchers/sqitch) - Sensible database change management
 
+## PostScript 
+
+- [cristoper/wav2vec](https://github.com/cristoper/wav2vec) - Python package and cli tool to convert wave files (WAV or AIFF) to vector graphics (SVG, PostScript, CVS)
+
 ## PowerShell 
 
 - [MicrosoftDocs/intellicode](https://github.com/MicrosoftDocs/intellicode) - Visual Studio IntelliCode - AI-enhanced development tools. 👋Want to submit an issue to MicrosoftDocs/intellicode?  If you have a bug or an idea, read the contributing guidelines before opening an issu
@@ -997,6 +1010,13 @@
 
 ## Python 
 
+- [pqaidevteam/pqai](https://github.com/pqaidevteam/pqai) - PQAI Search Server
+- [bryanveloso/geopatterns](https://github.com/bryanveloso/geopatterns) - A Python-port of @jasonlong's lovely SVG generation library.
+- [orsinium-labs/svg.py](https://github.com/orsinium-labs/svg.py) - 🎨 Type-safe and powerful Python library to generate SVG files
+- [deeplook/svglib](https://github.com/deeplook/svglib) - Read SVG files and convert them to other formats.
+- [Kozea/CairoSVG](https://github.com/Kozea/CairoSVG) - Convert your vector images
+- [Kozea/pygal](https://github.com/Kozea/pygal) - PYthon svg GrAph plotting Library
+- [PostHog/posthog](https://github.com/PostHog/posthog) - 🦔 PostHog provides open-source product analytics, session recording, feature flagging and A/B testing that you can self-host.
 - [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) - 
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [mwclient/mwclient](https://github.com/mwclient/mwclient) - Python client library to interface with the MediaWiki API
@@ -1291,7 +1311,6 @@
 - [deanishe/alfred-workflow](https://github.com/deanishe/alfred-workflow) - Full-featured library for writing Alfred 3 & 4 workflows
 - [djsudduth/keep-it-markdown](https://github.com/djsudduth/keep-it-markdown) - Convert Google Keep notes dynamically to markdown for Obsidian, Logseq, Joplin and Notion using the unofficial Keep API. Also, import simple markdown notes back into Google Keep.
 - [WassimBenzarti/colab-ssh](https://github.com/WassimBenzarti/colab-ssh) - Connect to Google Colab using SSH
-- [Boulder-Investment-Technologies/lppls](https://github.com/Boulder-Investment-Technologies/lppls) - Library for fitting the LPPLS model to data.
 - [peerchemist/finta](https://github.com/peerchemist/finta) - Common financial technical indicators implemented in Pandas.
 - [femtotrader/pandas_talib](https://github.com/femtotrader/pandas_talib) - A Python Pandas implementation of technical analysis indicators
 - [dbrojas/optlib](https://github.com/dbrojas/optlib) - A library for financial options pricing written in Python.
@@ -1510,6 +1529,7 @@
 
 ## Ruby 
 
+- [jasonlong/geo_pattern](https://github.com/jasonlong/geo_pattern) - Create beautiful generative geometric background images from a string.
 - [thoughtbot/bourbon](https://github.com/thoughtbot/bourbon) - A Lightweight Sass Tool Set
 - [hashicorp/vagrant](https://github.com/hashicorp/vagrant) - Vagrant is a tool for building and distributing development environments.
 - [citation-style-language/styles](https://github.com/citation-style-language/styles) - Official repository for Citation Style Language (CSL) citation styles.
@@ -1649,6 +1669,12 @@
 
 ## TypeScript 
 
+- [morethanmin/morethan-log](https://github.com/morethanmin/morethan-log) - 😎 A static blog using notion database
+- [splitbee/react-notion](https://github.com/splitbee/react-notion) - A fast React renderer for Notion pages
+- [NotionX/react-notion-x](https://github.com/NotionX/react-notion-x) - Fast and accurate React renderer for Notion. TS batteries included. ⚡️
+- [toeverything/AFFiNE](https://github.com/toeverything/AFFiNE) - There can be more than Notion and Miro. AFFiNE(pronounced [ə‘fain]) is a next-gen knowledge base that brings planning, sorting and creating all together. Privacy first, open-source, customizable and r
+- [transitive-bullshit/nextjs-notion-starter-kit](https://github.com/transitive-bullshit/nextjs-notion-starter-kit) - Deploy your own Notion-powered website in minutes with Next.js and Vercel.
+- [ijjk/notion-blog](https://github.com/ijjk/notion-blog) - A Next.js site using new SSG support with a Notion backed blog
 - [markmap/markmap-vscode](https://github.com/markmap/markmap-vscode) - Integrate markmap into VSCode
 - [vincaslt/vscode-highlight-matching-tag](https://github.com/vincaslt/vscode-highlight-matching-tag) - Highlights matching opening or closing tag in  VSCode
 - [oderwat/vscode-indent-rainbow](https://github.com/oderwat/vscode-indent-rainbow) - Extension which shows indentation with a faint rainbow colored background to make them more readable
