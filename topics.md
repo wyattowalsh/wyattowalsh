@@ -232,6 +232,7 @@
 
 ## ai 
 
+- [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel) - Integrate cutting-edge LLM technology quickly and easily into your apps
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
@@ -313,6 +314,7 @@
 
 ## api 
 
+- [zealdocs/zeal](https://github.com/zealdocs/zeal) - Offline documentation browser inspired by Dash
 - [microsoft/kiota](https://github.com/microsoft/kiota) - OpenAPI based HTTP Client code generator
 - [mitmproxy/pdoc](https://github.com/mitmproxy/pdoc) - API Documentation for Python Projects
 - [tomquirk/linkedin-api](https://github.com/tomquirk/linkedin-api) - 👨‍💼Linkedin API for Python
@@ -342,6 +344,7 @@
 
 ## artificial-intelligence 
 
+- [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel) - Integrate cutting-edge LLM technology quickly and easily into your apps
 - [Significant-Gravitas/AutoGPT](https://github.com/Significant-Gravitas/AutoGPT) - AutoGPT is the vision of accessible AI for everyone, to use and to build on. Our mission is to provide the tools, so that you can focus on what matters.
 - [nnaisense/evotorch](https://github.com/nnaisense/evotorch) - Advanced evolutionary computation library built directly on top of PyTorch, created at NNAISENSE.
 - [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 The modern replacement for Airflow. Build, run, and manage data pipelines for integrating and transforming data.
@@ -386,6 +389,7 @@
 
 ## awesome 
 
+- [kuchin/awesome-cto](https://github.com/kuchin/awesome-cto) - A curated and opinionated list of resources for Chief Technology Officers, with the emphasis on startups
 - [viatsko/awesome-vscode](https://github.com/viatsko/awesome-vscode) - 🎨 A curated list of delightful VS Code packages and resources.
 - [cloudcommunity/Free-Certifications](https://github.com/cloudcommunity/Free-Certifications) - A curated list of free courses & certifications.
 - [devisasari/awesome-gpt-store](https://github.com/devisasari/awesome-gpt-store) - A curated list of awesome GPTs in the GPT Store
@@ -481,6 +485,7 @@
 
 ## awesome-list 
 
+- [kuchin/awesome-cto](https://github.com/kuchin/awesome-cto) - A curated and opinionated list of resources for Chief Technology Officers, with the emphasis on startups
 - [viatsko/awesome-vscode](https://github.com/viatsko/awesome-vscode) - 🎨 A curated list of delightful VS Code packages and resources.
 - [spencerpauly/awesome-notion](https://github.com/spencerpauly/awesome-notion) - A curated list of awesome Notion related things.
 - [cloudcommunity/Free-Certifications](https://github.com/cloudcommunity/Free-Certifications) - A curated list of free courses & certifications.
@@ -922,6 +927,7 @@
 
 ## data 
 
+- [run-llama/llama_index](https://github.com/run-llama/llama_index) - LlamaIndex (formerly GPT Index) is a data framework for your LLM applications
 - [PrefectHQ/prefect](https://github.com/PrefectHQ/prefect) - Prefect is a workflow orchestration tool empowering developers to build, observe, and react to data pipelines
 - [metabase/metabase](https://github.com/metabase/metabase) - The simplest, fastest way to get business intelligence and analytics to everyone in your company :yum:
 - [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 The modern replacement for Airflow. Build, run, and manage data pipelines for integrating and transforming data.
@@ -1173,6 +1179,7 @@
 
 ## deep-learning 
 
+- [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) - Open source libraries and APIs to build custom preprocessing pipelines for labeling, training, or production machine learning pipelines.
 - [alexandre01/deepsvg](https://github.com/alexandre01/deepsvg) - [NeurIPS 2020] Official code for the paper "DeepSVG: A Hierarchical Generative Network for Vector Graphics Animation". Includes a PyTorch library for deep learning with SVG data.
 - [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
 - [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion web UI
@@ -1330,6 +1337,7 @@
 
 ## documentation 
 
+- [zealdocs/zeal](https://github.com/zealdocs/zeal) - Offline documentation browser inspired by Dash
 - [mitmproxy/pdoc](https://github.com/mitmproxy/pdoc) - API Documentation for Python Projects
 - [schemacrawler/SchemaCrawler](https://github.com/schemacrawler/SchemaCrawler) - Free database schema discovery and comprehension tool
 - [omnilib/sphinx-mdinclude](https://github.com/omnilib/sphinx-mdinclude) - Markdown extension for Sphinx
@@ -1542,6 +1550,7 @@
 
 ## framework 
 
+- [run-llama/llama_index](https://github.com/run-llama/llama_index) - LlamaIndex (formerly GPT Index) is a data framework for your LLM applications
 - [troxler/awesome-css-frameworks](https://github.com/troxler/awesome-css-frameworks) - List of awesome CSS frameworks in 2024
 - [Effect-TS/effect](https://github.com/Effect-TS/effect) - A fully-fledged functional effect system for TypeScript with a rich standard library
 - [python-telegram-bot/python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) - We have made you a wrapper you can't refuse
@@ -2267,6 +2276,7 @@
 
 ## machine-learning 
 
+- [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) - Open source libraries and APIs to build custom preprocessing pipelines for labeling, training, or production machine learning pipelines.
 - [alexandre01/deepsvg](https://github.com/alexandre01/deepsvg) - [NeurIPS 2020] Official code for the paper "DeepSVG: A Hierarchical Generative Network for Vector Graphics Animation". Includes a PyTorch library for deep learning with SVG data.
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
@@ -2642,6 +2652,7 @@
 
 ## nlp 
 
+- [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) - Open source libraries and APIs to build custom preprocessing pipelines for labeling, training, or production machine learning pipelines.
 - [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
 - [zihangdai/xlnet](https://github.com/zihangdai/xlnet) - XLNet: Generalized Autoregressive Pretraining for Language Understanding
 - [microsoft/LMOps](https://github.com/microsoft/LMOps) - General technology for enabling AI capabilities w/ LLMs and MLLMs
@@ -2790,6 +2801,10 @@
 
 ## others 
 
+- [run-llama/sec-insights](https://github.com/run-llama/sec-insights) - A real world full-stack application using LlamaIndex
+- [pgvector/pgvector](https://github.com/pgvector/pgvector) - Open-source vector similarity search for Postgres
+- [run-llama/llama-hub](https://github.com/run-llama/llama-hub) - A library of data loaders for LLMs made by the community -- to be used with LlamaIndex and/or LangChain
+- [run-llama/llama-lab](https://github.com/run-llama/llama-lab) - 
 - [pqaidevteam/pqai](https://github.com/pqaidevteam/pqai) - PQAI Search Server
 - [wipo-analytics/wipo-analytics.github.io](https://github.com/wipo-analytics/wipo-analytics.github.io) - The WIPO Manual on Open Source Patent Analytics
 - [wipo-analytics/handbook](https://github.com/wipo-analytics/handbook) - The WIPO Patent Analytics Handbook (Work in Progress)
