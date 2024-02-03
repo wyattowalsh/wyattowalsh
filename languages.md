@@ -1015,6 +1015,7 @@
 
 ## Python 
 
+- [reorx/awesome-chatgpt-api](https://github.com/reorx/awesome-chatgpt-api) - Curated list of apps and tools that not only use the new ChatGPT API, but also allow users to configure their own API keys, enabling free and on-demand usage of their own quota.
 - [run-llama/llama_index](https://github.com/run-llama/llama_index) - LlamaIndex (formerly GPT Index) is a data framework for your LLM applications
 - [run-llama/llama-lab](https://github.com/run-llama/llama-lab) - 
 - [pqaidevteam/pqai](https://github.com/pqaidevteam/pqai) - PQAI Search Server
@@ -1028,7 +1029,7 @@
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [mwclient/mwclient](https://github.com/mwclient/mwclient) - Python client library to interface with the MediaWiki API
 - [openai/tiktoken](https://github.com/openai/tiktoken) - tiktoken is a fast BPE tokeniser for use with OpenAI's models.
-- [langchain-ai/langchain](https://github.com/langchain-ai/langchain) - ⚡ Building applications with LLMs through composability ⚡
+- [langchain-ai/langchain](https://github.com/langchain-ai/langchain) - 🦜🔗 Build context-aware reasoning applications
 - [hwchase17/notion-qa](https://github.com/hwchase17/notion-qa) - 
 - [google-deepmind/graphcast](https://github.com/google-deepmind/graphcast) - 
 - [thomashirtz/notion-scholar](https://github.com/thomashirtz/notion-scholar) - Reference management solution using Python and Notion.
@@ -1677,6 +1678,7 @@
 
 ## TypeScript 
 
+- [Bin-Huang/chatbox](https://github.com/Bin-Huang/chatbox) - Chatbox is a desktop client for ChatGPT, Claude and other LLMs, available on Windows, Mac, Linux
 - [run-llama/sec-insights](https://github.com/run-llama/sec-insights) - A real world full-stack application using LlamaIndex
 - [morethanmin/morethan-log](https://github.com/morethanmin/morethan-log) - 😎 A static blog using notion database
 - [splitbee/react-notion](https://github.com/splitbee/react-notion) - A fast React renderer for Notion pages
@@ -1816,7 +1818,7 @@
 - [hyperledger/cacti](https://github.com/hyperledger/cacti) - Hyperledger Cacti is a new approach to the blockchain interoperability problem
 - [wmde/wikibase-release-pipeline](https://github.com/wmde/wikibase-release-pipeline) - 
 - [benrbray/remark-cite](https://github.com/benrbray/remark-cite) - Adds support for pandoc-style citations to the Markdown syntax for the remark and micromark parsers.
-- [rdilweb/docusaurus-plugin-remote-content](https://github.com/rdilweb/docusaurus-plugin-remote-content) - A Docusaurus v2 plugin to download content from remote sources when it is needed.
+- [rdilweb/docusaurus-plugin-remote-content](https://github.com/rdilweb/docusaurus-plugin-remote-content) - A Docusaurus plugin to download content from remote sources when it is needed.
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [DTStack/molecule](https://github.com/DTStack/molecule) - :rocket: A lightweight Web IDE UI framework.
 - [landakram/remark-wiki-link](https://github.com/landakram/remark-wiki-link) - Parse and render wiki links.
