@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C144%20hrs%2055%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C147%20hrs%2011%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
@@ -154,14 +154,14 @@ Sunday                   622 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-TypeScript               3 hrs 42 mins       ██████████░░░░░░░░░░░░░░░   40.53 % 
-SCSS                     2 hrs 17 mins       ██████░░░░░░░░░░░░░░░░░░░   25.09 % 
-sh                       1 hr 23 mins        ████░░░░░░░░░░░░░░░░░░░░░   15.21 % 
-Python                   52 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   09.60 % 
-GraphQL                  17 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   03.20 % 
+TypeScript               3 hrs 42 mins       ██████████░░░░░░░░░░░░░░░   40.04 % 
+SCSS                     2 hrs 17 mins       ██████░░░░░░░░░░░░░░░░░░░   24.78 % 
+sh                       1 hr 30 mins        ████░░░░░░░░░░░░░░░░░░░░░   16.24 % 
+Python                   52 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   09.49 % 
+GraphQL                  17 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   03.16 % 
 
 💻 Operating System: 
-Mac                      9 hrs 7 mins        █████████████████████████   100.00 % 
+Mac                      9 hrs 14 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +181,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 03/02/2024 18:39:07 UTC
+ Last Updated on 04/02/2024 18:41:13 UTC
 <!--END_SECTION:waka-->
 
     
