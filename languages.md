@@ -480,7 +480,7 @@
 - [grommet/grommet-icons](https://github.com/grommet/grommet-icons) - Iconography for Grommet and React.js
 - [remarkjs/remark-math](https://github.com/remarkjs/remark-math) - remark and rehype plugins to support math
 - [remarkjs/remark](https://github.com/remarkjs/remark) - markdown processor powered by plugins part of the @unifiedjs collective
-- [rlamana/docusaurus-plugin-sass](https://github.com/rlamana/docusaurus-plugin-sass) - Provides support for SASS/SCSS to Docusaurus v2
+- [rlamana/docusaurus-plugin-sass](https://github.com/rlamana/docusaurus-plugin-sass) - Provides support for SASS/SCSS to Docusaurus v2 and v3
 - [ethereumbook/ethereumbook](https://github.com/ethereumbook/ethereumbook) - Mastering Ethereum, by Andreas M. Antonopoulos, Gavin Wood
 - [metafizzy/flickity](https://github.com/metafizzy/flickity) - :leaves: Touch, responsive, flickable carousels
 - [lambdamusic/Ontospy](https://github.com/lambdamusic/Ontospy) - Python library and command-line interface for inspecting and visualizing RDF models aka ontologies.
@@ -1024,6 +1024,8 @@
 
 ## Python 
 
+- [google/yapf](https://github.com/google/yapf) - A formatter for Python files
+- [hhatto/autopep8](https://github.com/hhatto/autopep8) - A tool that automatically formats Python code to conform to the PEP 8 style guide.
 - [run-llama/rags](https://github.com/run-llama/rags) - Build ChatGPT over your data, all with natural language
 - [MIDORIBIN/langchain-gpt4free](https://github.com/MIDORIBIN/langchain-gpt4free) - LangChain x gpt4free
 - [xtekky/gpt4free](https://github.com/xtekky/gpt4free) - The official gpt4free repository | various collection of powerful language models
