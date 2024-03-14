@@ -754,6 +754,7 @@
 
 ## chatgpt 
 
+- [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [OpenMindClub/awesome-chatgpt](https://github.com/OpenMindClub/awesome-chatgpt) - ⚡ Everything about ChatGPT
 - [microsoft/promptbench](https://github.com/microsoft/promptbench) - A unified evaluation framework for large language models
 - [snwfdhmp/awesome-gpt-prompt-engineering](https://github.com/snwfdhmp/awesome-gpt-prompt-engineering) - A curated list of awesome resources, tools, and other shiny things for GPT prompt engineering.
@@ -789,6 +790,7 @@
 
 ## chatgpt-api 
 
+- [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [OpenMindClub/awesome-chatgpt](https://github.com/OpenMindClub/awesome-chatgpt) - ⚡ Everything about ChatGPT
 - [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) - Semantic cache for LLMs. Fully integrated with LangChain and llama_index.
 - [EwingYangs/awesome-open-gpt](https://github.com/EwingYangs/awesome-open-gpt) - Collection of Open Source Projects Related to GPT，GPT相关开源项目合集🚀、精选🔥🔥
@@ -1253,6 +1255,7 @@
 
 ## deep-learning 
 
+- [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [huggingface/text-generation-inference](https://github.com/huggingface/text-generation-inference) - Large Language Model Text Generation Inference
@@ -2378,6 +2381,7 @@
 
 ## machine-learning 
 
+- [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [whylabs/whylogs](https://github.com/whylabs/whylogs) - An open-source data logging library for machine learning models and data pipelines. 📚 Provides visibility into data quality & model performance over time. 🛡️ Supports privacy-preserving data collectio
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [pathwaycom/llm-app](https://github.com/pathwaycom/llm-app) - LLM App templates for RAG, knowledge mining, and stream analytics. Ready to run with Docker,⚡in sync with your data sources.
@@ -2939,6 +2943,8 @@
 
 ## others 
 
+- [google-deepmind/opro](https://github.com/google-deepmind/opro) - official code for "Large Language Models as Optimizers"
+- [stanfordnlp/dspy](https://github.com/stanfordnlp/dspy) - DSPy: The framework for programming—not prompting—foundation models
 - [Hannibal046/Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM) - Awesome-LLM: a curated list of Large Language Model
 - [Giskard-AI/giskard](https://github.com/Giskard-AI/giskard) - 🐢 Evaluation, testing & monitoring framework for LLMs and ML models
 - [stjordanis/betterprompt](https://github.com/stjordanis/betterprompt) - Test suite for LLM prompts
@@ -3009,7 +3015,7 @@
 - [anvaka/vs](https://github.com/anvaka/vs) - Visualization of Google's autocomplete
 - [bbycroft/llm-viz](https://github.com/bbycroft/llm-viz) - 3D Visualization of an GPT-style LLM
 - [imxieyi/waifu2x-ios-model-converter](https://github.com/imxieyi/waifu2x-ios-model-converter) - 
-- [facebookresearch/codellama](https://github.com/facebookresearch/codellama) - Inference code for CodeLlama models
+- [meta-llama/codellama](https://github.com/meta-llama/codellama) - Inference code for CodeLlama models
 - [koulanurag/ma-gym](https://github.com/koulanurag/ma-gym) - A collection of multi agent environments based on OpenAI gym.
 - [cjhutto/vaderSentiment](https://github.com/cjhutto/vaderSentiment) - VADER Sentiment Analysis. VADER (Valence Aware Dictionary and sEntiment Reasoner) is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social med
 - [react-native-cameraroll/react-native-cameraroll](https://github.com/react-native-cameraroll/react-native-cameraroll) - CameraRoll is a react-native native module that provides access to the local camera roll or photo library.
