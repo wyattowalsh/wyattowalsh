@@ -113,7 +113,7 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C201%20hrs%2039%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C202%20hrs%2030%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
@@ -121,13 +121,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 
 > 📦 4.5 MB Used in GitHub's Storage 
  > 
-> 🏆 41 Contributions in the Year 2024
+> 🏆 42 Contributions in the Year 2024
  > 
 > 💼 Opted to Hire
  > 
 > 📜 33 Public Repositories 
  > 
-> 🔑 30 Private Repositories 
+> 🔑 31 Private Repositories 
  > 
 **I'm a Night 🦉** 
 
@@ -154,14 +154,14 @@ Sunday                   624 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-TypeScript               5 hrs 3 mins        ██████████░░░░░░░░░░░░░░░   39.74 % 
-SCSS                     3 hrs 35 mins       ███████░░░░░░░░░░░░░░░░░░   28.26 % 
-Python                   1 hr 17 mins        ███░░░░░░░░░░░░░░░░░░░░░░   10.19 % 
-Text                     1 hr 17 mins        ███░░░░░░░░░░░░░░░░░░░░░░   10.18 % 
-sh                       45 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   05.98 % 
+Python                   2 hrs 9 mins        ██████░░░░░░░░░░░░░░░░░░░   25.37 % 
+Text                     1 hr 57 mins        ██████░░░░░░░░░░░░░░░░░░░   23.04 % 
+YAML                     1 hr 48 mins        █████░░░░░░░░░░░░░░░░░░░░   21.25 % 
+Markdown                 1 hr 7 mins         ███░░░░░░░░░░░░░░░░░░░░░░   13.28 % 
+sh                       43 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   08.58 % 
 
 💻 Operating System: 
-Mac                      12 hrs 43 mins      █████████████████████████   100.00 % 
+Mac                      8 hrs 29 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +181,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 16/03/2024 18:37:02 UTC
+ Last Updated on 17/03/2024 18:36:16 UTC
 <!--END_SECTION:waka-->
 
     
