@@ -321,6 +321,7 @@
 
 ## JavaScript 
 
+- [thakkarparth007/copilot-explorer](https://github.com/thakkarparth007/copilot-explorer) - Hacky repo to see what the Copilot extension sends to the server
 - [mondeja/simple-icons-drawio](https://github.com/mondeja/simple-icons-drawio) - Drawio library for simple-icons
 - [webketje/drawio-font-awesome](https://github.com/webketje/drawio-font-awesome) - A Draw.io/ diagrams.net (and desktop) library port of the free Font Awesome icons
 - [inukshuk/sqleton](https://github.com/inukshuk/sqleton) - Visualize your SQLite database schema
@@ -1049,6 +1050,7 @@
 
 ## Python 
 
+- [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [pytest-dev/pytest-mock](https://github.com/pytest-dev/pytest-mock) - Thin-wrapper around the mock package for easier use with pytest
 - [coleifer/sqlite-web](https://github.com/coleifer/sqlite-web) - Web-based SQLite database browser written in Python
 - [tiangolo/pydantic-sqlalchemy](https://github.com/tiangolo/pydantic-sqlalchemy) - Tools to convert SQLAlchemy models to Pydantic models
