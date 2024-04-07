@@ -2997,7 +2997,7 @@
 - [google-deepmind/opro](https://github.com/google-deepmind/opro) - official code for "Large Language Models as Optimizers"
 - [stanfordnlp/dspy](https://github.com/stanfordnlp/dspy) - DSPy: The framework for programming—not prompting—foundation models
 - [Hannibal046/Awesome-LLM](https://github.com/Hannibal046/Awesome-LLM) - Awesome-LLM: a curated list of Large Language Model
-- [Giskard-AI/giskard](https://github.com/Giskard-AI/giskard) - 🐢 Evaluation & Testing framework for LLMs and ML models
+- [Giskard-AI/giskard](https://github.com/Giskard-AI/giskard) - 🐢 Open-Source Evaluation & Testing framework for LLMs and ML models
 - [stjordanis/betterprompt](https://github.com/stjordanis/betterprompt) - Test suite for LLM prompts
 - [BerriAI/litellm](https://github.com/BerriAI/litellm) - Call all LLM APIs using the OpenAI format. Use Bedrock, Azure, OpenAI, Cohere, Anthropic, Ollama, Sagemaker, HuggingFace, Replicate (100+ LLMs)
 - [comet-ml/comet-llm](https://github.com/comet-ml/comet-llm) - Log, Track, and Visualize your LLM Prompts and Chains
