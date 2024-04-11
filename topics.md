@@ -319,7 +319,7 @@
 - [google/mediapipe](https://github.com/google/mediapipe) - Cross-platform, customizable ML solutions for live and streaming media.
 - [anu0012/awesome-computer-science-opportunities](https://github.com/anu0012/awesome-computer-science-opportunities) - An awesome list of events and fellowship opportunities for Computer Science students
 - [Templarian/MaterialDesign](https://github.com/Templarian/MaterialDesign) - ✒7000+ Material Design Icons from the Community
-- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google
+- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google (Material Symbols)
 - [flutter/flutter](https://github.com/flutter/flutter) - Flutter makes it easy and fast to build beautiful apps for mobile and beyond
 - [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) - A collection of various awesome lists for hackers, pentesters and security researchers
 
@@ -621,7 +621,7 @@
 
 ## aws 
 
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source engine that automates AI infrastructure provisioning on any cloud  for development, training and deployment. Discord: https://discord.gg/u8SmfwPpMd
+- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source orchestration engine for cost-effectively running AI workloads in the cloud as well as on-premises. Discord: https://discord.gg/u8SmfwPpMd
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [idealo/image-super-resolution](https://github.com/idealo/image-super-resolution) - 🔎 Super-scale your images and run experiments with Residual Dense and Adversarial Networks.
 - [blockchain-etl/ethereum-etl](https://github.com/blockchain-etl/ethereum-etl) - Python scripts for ETL (extract, transform and load) jobs for Ethereum blocks, transactions, ERC20 / ERC721 tokens, transfers, receipts, logs, contracts, internal transactions. Data is available in Go
@@ -632,7 +632,7 @@
 
 ## azure 
 
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source engine that automates AI infrastructure provisioning on any cloud  for development, training and deployment. Discord: https://discord.gg/u8SmfwPpMd
+- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source orchestration engine for cost-effectively running AI workloads in the cloud as well as on-premises. Discord: https://discord.gg/u8SmfwPpMd
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [atulmy/oauth](https://github.com/atulmy/oauth) - 🔗  OAuth 2.0 implementation for various providers in one place.
 - [Azure/MachineLearningNotebooks](https://github.com/Azure/MachineLearningNotebooks) - Python notebooks with ML and deep learning examples with Azure Machine Learning Python SDK | Microsoft
@@ -2070,7 +2070,7 @@
 - [facebook/react-native](https://github.com/facebook/react-native) - A framework for building native applications using React
 - [john-rocky/CoreML-Models](https://github.com/john-rocky/CoreML-Models) - Converted CoreML Model Zoo.
 - [tinovyatkin/pass-js](https://github.com/tinovyatkin/pass-js) - Apple Wallet Passes generating library for Node.JS
-- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google
+- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google (Material Symbols)
 - [flutter/flutter](https://github.com/flutter/flutter) - Flutter makes it easy and fast to build beautiful apps for mobile and beyond
 - [ultralytics/yolov5](https://github.com/ultralytics/yolov5) - YOLOv5 🚀 in PyTorch &gt; ONNX &gt; CoreML &gt; TFLite
 - [twitter/TwitterTextEditor](https://github.com/twitter/TwitterTextEditor) - A standalone, flexible API that provides a full-featured rich text editor for iOS applications.
@@ -2419,7 +2419,7 @@
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [pathwaycom/llm-app](https://github.com/pathwaycom/llm-app) - LLM App templates for RAG, knowledge mining, and stream analytics. Ready to run with Docker,⚡in sync with your data sources.
 - [whylabs/langkit](https://github.com/whylabs/langkit) - 🔍 LangKit: An open-source toolkit for monitoring Large Language Models (LLMs). 📚 Extracts signals from prompts & responses, ensuring safety & security. 🛡️ Features include text quality, relevance metr
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source engine that automates AI infrastructure provisioning on any cloud  for development, training and deployment. Discord: https://discord.gg/u8SmfwPpMd
+- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source orchestration engine for cost-effectively running AI workloads in the cloud as well as on-premises. Discord: https://discord.gg/u8SmfwPpMd
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [bigscience-workshop/promptsource](https://github.com/bigscience-workshop/promptsource) - Toolkit for creating, sharing and using natural language prompts.
@@ -2686,7 +2686,7 @@
 
 - [mui/material-ui](https://github.com/mui/material-ui) - Material UI: Ready-to-use foundational React components, free forever. It includes Material UI, which implements Google's Material Design.
 - [Templarian/MaterialDesign](https://github.com/Templarian/MaterialDesign) - ✒7000+ Material Design Icons from the Community
-- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google
+- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google (Material Symbols)
 - [flutter/flutter](https://github.com/flutter/flutter) - Flutter makes it easy and fast to build beautiful apps for mobile and beyond
 
 ## microsoft 
@@ -3823,7 +3823,7 @@
 - [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [pezzolabs/pezzo](https://github.com/pezzolabs/pezzo) - 🕹️ Open-source, developer-first LLMOps platform designed to streamline prompt design, version management, instant delivery, collaboration, troubleshooting, observability and more.
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source engine that automates AI infrastructure provisioning on any cloud  for development, training and deployment. Discord: https://discord.gg/u8SmfwPpMd
+- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source orchestration engine for cost-effectively running AI workloads in the cloud as well as on-premises. Discord: https://discord.gg/u8SmfwPpMd
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [stoyan-stoyanov/llmflows](https://github.com/stoyan-stoyanov/llmflows) - LLMFlows - Simple, Explicit and Transparent LLM Apps
 - [EwingYangs/awesome-open-gpt](https://github.com/EwingYangs/awesome-open-gpt) - Collection of Open Source Projects Related to GPT，GPT相关开源项目合集🚀、精选🔥🔥
@@ -4873,7 +4873,7 @@
 - [BrainJS/brain.js](https://github.com/BrainJS/brain.js) - 🤖 GPU accelerated Neural networks in JavaScript for Browsers and Node.js
 - [tsparticles/tsparticles](https://github.com/tsparticles/tsparticles) - tsParticles - Easily create highly customizable JavaScript particles effects, confetti explosions and fireworks animations and use them as animated backgrounds for your website. Ready to use component
 - [projectstorm/react-diagrams](https://github.com/projectstorm/react-diagrams) - a super simple, no-nonsense diagramming library written in react that just works
-- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google
+- [google/material-design-icons](https://github.com/google/material-design-icons) - Material Design icons by Google (Material Symbols)
 - [flutter/flutter](https://github.com/flutter/flutter) - Flutter makes it easy and fast to build beautiful apps for mobile and beyond
 
 ## web-components 
