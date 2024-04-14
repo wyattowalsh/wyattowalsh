@@ -195,6 +195,7 @@
 - [sql](#sql)
 - [sql-server](#sql-server)
 - [sqlite](#sqlite)
+- [stable-diffusion](#stable-diffusion)
 - [statistics](#statistics)
 - [storybook](#storybook)
 - [sublime-text](#sublime-text)
@@ -3067,7 +3068,6 @@
 - [camenduru/stable-video-diffusion-colab](https://github.com/camenduru/stable-video-diffusion-colab) - 
 - [Stability-AI/generative-models](https://github.com/Stability-AI/generative-models) - Generative Models by Stability AI
 - [Coyote-A/ultimate-upscale-for-automatic1111](https://github.com/Coyote-A/ultimate-upscale-for-automatic1111) - 
-- [pkuliyi2015/multidiffusion-upscaler-for-automatic1111](https://github.com/pkuliyi2015/multidiffusion-upscaler-for-automatic1111) - Tiled Diffusion and VAE optimize, licensed under CC BY-NC-SA 4.0
 - [cameronmaske/pytest-vscode](https://github.com/cameronmaske/pytest-vscode) - A VS Code extensions that adds IntelliSense support for pytest fixtures.
 - [microsoft/vscode-python](https://github.com/microsoft/vscode-python) - Python extension for Visual Studio Code
 - [prompt-toolkit/python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) - Library for building powerful interactive command line applications in Python
@@ -3172,7 +3172,7 @@
 - [jtpio/jupyterlab-system-monitor](https://github.com/jtpio/jupyterlab-system-monitor) - JupyterLab extension to display system metrics
 - [monosans/proxy-scraper-checker](https://github.com/monosans/proxy-scraper-checker) - HTTP, SOCKS4, SOCKS5 proxies scraper and checker with rich functionality.
 - [all-contributors/all-contributors](https://github.com/all-contributors/all-contributors) - ✨ Recognize all contributors, not just the ones who push code ✨
-- [sphinx-doc/sphinx-autobuild](https://github.com/sphinx-doc/sphinx-autobuild) - Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a livereload enabled web server.
+- [sphinx-doc/sphinx-autobuild](https://github.com/sphinx-doc/sphinx-autobuild) - Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a hot-reload web server.
 - [CarterLi/iina](https://github.com/CarterLi/iina) - The modern video player for macOS with additional features and bug fixes.
 - [readthedocs/sphinx_rtd_theme](https://github.com/readthedocs/sphinx_rtd_theme) - Sphinx theme for readthedocs.org
 - [OddBloke/sphinx-git](https://github.com/OddBloke/sphinx-git) - git Changelog for Sphinx
@@ -4597,6 +4597,16 @@
 - [sequelize/sequelize](https://github.com/sequelize/sequelize) - Feature-rich ORM for modern Node.js and TypeScript, it supports PostgreSQL (with JSON and JSONB support), MySQL, MariaDB, SQLite, MS SQL Server, Snowflake, Oracle DB (v6), DB2 and DB2 for IBM i.
 - [sqitchers/sqitch](https://github.com/sqitchers/sqitch) - Sensible database change management
 - [beekeeper-studio/beekeeper-studio](https://github.com/beekeeper-studio/beekeeper-studio) - Modern and easy to use SQL client for MySQL, Postgres, SQLite, SQL Server, and more. Linux, MacOS, and Windows.
+
+## stable-diffusion 
+
+- [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
+- [divamgupta/diffusionbee-stable-diffusion-ui](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui) - Diffusion Bee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
+- [comfyanonymous/ComfyUI](https://github.com/comfyanonymous/ComfyUI) - The most powerful and modular stable diffusion GUI, api and backend with a graph/nodes interface.
+- [camenduru/stable-diffusion-webui-colab](https://github.com/camenduru/stable-diffusion-webui-colab) - stable diffusion webui colab
+- [pkuliyi2015/multidiffusion-upscaler-for-automatic1111](https://github.com/pkuliyi2015/multidiffusion-upscaler-for-automatic1111) - Tiled Diffusion and VAE optimize, licensed under CC BY-NC-SA 4.0
+- [AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui) - Stable Diffusion web UI
+- [MochiDiffusion/MochiDiffusion](https://github.com/MochiDiffusion/MochiDiffusion) - Run Stable Diffusion on Mac natively
 
 ## statistics 
 
