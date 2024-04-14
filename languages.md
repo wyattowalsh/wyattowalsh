@@ -1232,7 +1232,7 @@
 - [constverum/ProxyBroker](https://github.com/constverum/ProxyBroker) - Proxy [Finder | Checker | Server]. HTTP(S) & SOCKS :performing_arts:
 - [JaredLGillespie/proxyscrape](https://github.com/JaredLGillespie/proxyscrape) - Python library for retrieving free proxies (HTTP, HTTPS, SOCKS4, SOCKS5).
 - [ishepard/pydriller](https://github.com/ishepard/pydriller) - Python Framework to analyse Git repositories
-- [sphinx-doc/sphinx-autobuild](https://github.com/sphinx-doc/sphinx-autobuild) - Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a livereload enabled web server.
+- [sphinx-doc/sphinx-autobuild](https://github.com/sphinx-doc/sphinx-autobuild) - Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a hot-reload web server.
 - [pydata/pydata-sphinx-theme](https://github.com/pydata/pydata-sphinx-theme) - A clean, three-column Sphinx theme with Bootstrap for the PyData community
 - [ml-tooling/best-of-python-dev](https://github.com/ml-tooling/best-of-python-dev) - 🏆 A ranked list of awesome python developer tools and libraries. Updated weekly.
 - [yoloseem/awesome-sphinxdoc](https://github.com/yoloseem/awesome-sphinxdoc) - A curated list of awesome tools for Sphinx Python Documentation Generator
