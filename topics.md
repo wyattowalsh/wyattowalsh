@@ -3129,7 +3129,6 @@
 - [schwamic/klangspektrum2](https://github.com/schwamic/klangspektrum2) - An insight into the musical tastes of Spotify users :notes:
 - [schwamic/klangspektrum](https://github.com/schwamic/klangspektrum) - An insight into the musical tastes of Spotify users 🎶
 - [StefanAleksik/musicScape](https://github.com/StefanAleksik/musicScape) - 
-- [obiwankenoobi/chart.xkcd-react](https://github.com/obiwankenoobi/chart.xkcd-react) - React wrapper around chart.xkcd
 - [amueller/word_cloud](https://github.com/amueller/word_cloud) - A little word cloud generator in Python
 - [riccardoscalco/textures](https://github.com/riccardoscalco/textures) - Textures.js is a JavaScript library for creating SVG patterns
 - [rough-stuff/rough](https://github.com/rough-stuff/rough) - Create graphics with a hand-drawn, sketchy, appearance
