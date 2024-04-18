@@ -3357,7 +3357,7 @@
 - [ProjectOpenSea/embeddable-nfts](https://github.com/ProjectOpenSea/embeddable-nfts) - Easily embed OpenSea listings in your website!
 - [ouhenio/StyleGAN3-CLIP-notebooks](https://github.com/ouhenio/StyleGAN3-CLIP-notebooks) - A collection of Jupyter notebooks to play with NVIDIA's StyleGAN3 and OpenAI's CLIP for a text-based guided image generation.
 - [NVlabs/stylegan3](https://github.com/NVlabs/stylegan3) - Official PyTorch implementation of StyleGAN3
-- [Anaconda-Platform/nb_conda_kernels](https://github.com/Anaconda-Platform/nb_conda_kernels) - Package for managing conda environment-based kernels inside of Jupyter
+- [anaconda/nb_conda_kernels](https://github.com/anaconda/nb_conda_kernels) - Package for managing conda environment-based kernels inside of Jupyter
 - [eriklindernoren/PyTorch-GAN](https://github.com/eriklindernoren/PyTorch-GAN) - PyTorch implementations of Generative Adversarial Networks.
 - [tensorflow/gan](https://github.com/tensorflow/gan) - Tooling for GANs in TensorFlow
 - [yfeng95/GAN](https://github.com/yfeng95/GAN) - Resources and Implementations of  Generative Adversarial Nets: GAN, DCGAN, WGAN, CGAN, InfoGAN
@@ -3422,7 +3422,7 @@
 - [compatibl/QuantLibAdjoint](https://github.com/compatibl/QuantLibAdjoint) - QuantLib with adjoint algorithmic differentiation (AAD)
 - [sjwall/mdx-mermaid](https://github.com/sjwall/mdx-mermaid) - Plug and play Mermaid in MDX
 - [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
-- [Anaconda-Platform/nb_conda](https://github.com/Anaconda-Platform/nb_conda) - Conda environment and package access extension from within Jupyter
+- [anaconda/nb_conda](https://github.com/anaconda/nb_conda) - Conda environment and package access extension from within Jupyter
 - [conda-forge/miniforge](https://github.com/conda-forge/miniforge) - A conda-forge distribution.
 - [tonyzhaozh/few-shot-learning](https://github.com/tonyzhaozh/few-shot-learning) - Few-shot Learning of GPT-3
 - [elyase/awesome-gpt3](https://github.com/elyase/awesome-gpt3) - 
