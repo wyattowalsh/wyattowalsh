@@ -293,6 +293,7 @@
 
 ## Java 
 
+- [protegeproject/webprotege](https://github.com/protegeproject/webprotege) - The webprotege code base
 - [conductor-oss/conductor](https://github.com/conductor-oss/conductor) - Conductor is an event driven orchestration platform
 - [react-native-cameraroll/react-native-cameraroll](https://github.com/react-native-cameraroll/react-native-cameraroll) - CameraRoll is a react-native native module that provides access to the local camera roll or photo library.
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
@@ -1047,6 +1048,7 @@
 
 ## Python 
 
+- [KRR-Oxford/DeepOnto](https://github.com/KRR-Oxford/DeepOnto) - A package for ontology engineering with deep learning and language models.
 - [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [pytest-dev/pytest-mock](https://github.com/pytest-dev/pytest-mock) - Thin-wrapper around the mock package for easier use with pytest
 - [coleifer/sqlite-web](https://github.com/coleifer/sqlite-web) - Web-based SQLite database browser written in Python
@@ -1312,7 +1314,7 @@
 - [bashtage/arch](https://github.com/bashtage/arch) - ARCH models in Python
 - [Drakkar-Software/OctoBot-Tentacles](https://github.com/Drakkar-Software/OctoBot-Tentacles) - This repository contains public tentacles (packages) for the OctoBot project
 - [Drakkar-Software/OctoBot](https://github.com/Drakkar-Software/OctoBot) - Open source crypto trading bot
-- [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Automated Machine Learning [AutoML] with Python, scikit-learn, Keras, XGBoost, LightGBM, and CatBoost
+- [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Python AutoML for Trading Systems and Sports Betting
 - [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [blankly-finance/blankly](https://github.com/blankly-finance/blankly) - 🚀 💸  Easily build, backtest and deploy your algo in just a few lines of code. Trade stocks, cryptos, and forex across exchanges w/ one package.
@@ -1443,7 +1445,7 @@
 - [anyoptimization/pymoo](https://github.com/anyoptimization/pymoo) - NSGA2, NSGA3, R-NSGA3, MOEAD, Genetic Algorithms (GA), Differential Evolution (DE), CMAES, PSO
 - [gitpitch/gitpitch](https://github.com/gitpitch/gitpitch) - Markdown Presentations for Tech Conferences, Training, Developer Advocates, and Educators.
 - [burnash/gspread](https://github.com/burnash/gspread) - Google Sheets Python API
-- [twitterdev/twitter-python-ads-sdk](https://github.com/twitterdev/twitter-python-ads-sdk) - A Twitter supported and maintained Ads API SDK for Python.
+- [xdevplatform/twitter-python-ads-sdk](https://github.com/xdevplatform/twitter-python-ads-sdk) - A Twitter supported and maintained Ads API SDK for Python.
 - [facebookresearch/Ad-Library-API-Script-Repository](https://github.com/facebookresearch/Ad-Library-API-Script-Repository) - GitHub repository of commonly used python scripts that allows everyone to pull data via the Ad Library API
 - [plotly/dash](https://github.com/plotly/dash) - Data Apps & Dashboards for Python. No JavaScript Required.
 - [numpy/numpy](https://github.com/numpy/numpy) - The fundamental package for scientific computing with Python.
