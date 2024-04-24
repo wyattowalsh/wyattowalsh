@@ -1413,7 +1413,7 @@
 - [microsoft/LoRA](https://github.com/microsoft/LoRA) - Code for loralib, an implementation of "LoRA: Low-Rank Adaptation of Large Language Models"
 - [vicgalle/gpt-j-api](https://github.com/vicgalle/gpt-j-api) - API for the GPT-J language model 🦜. Including a FastAPI backend and a streamlit frontend
 - [tonyzhaozh/few-shot-learning](https://github.com/tonyzhaozh/few-shot-learning) - Few-shot Learning of GPT-3
-- [autogluon/autogluon](https://github.com/autogluon/autogluon) - AutoGluon: Fast and Accurate ML in 3 Lines of Code
+- [autogluon/autogluon](https://github.com/autogluon/autogluon) - Fast and Accurate ML in 3 Lines of Code
 - [py-why/dowhy](https://github.com/py-why/dowhy) - DoWhy is a Python library for causal inference that supports explicit modeling and testing of causal assumptions. DoWhy is based on a unified language for causal inference, combining causal graphical 
 - [databricks/koalas](https://github.com/databricks/koalas) - Koalas: pandas API on Apache Spark
 - [lux-org/lux](https://github.com/lux-org/lux) - Automatically visualize your pandas dataframe via a single print! 📊 💡
