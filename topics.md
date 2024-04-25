@@ -2993,6 +2993,7 @@
 
 ## others 
 
+- [nat/openplayground](https://github.com/nat/openplayground) - An LLM playground you can run on your laptop
 - [thakkarparth007/copilot-explorer](https://github.com/thakkarparth007/copilot-explorer) - Hacky repo to see what the Copilot extension sends to the server
 - [mondeja/simple-icons-drawio](https://github.com/mondeja/simple-icons-drawio) - Drawio library for simple-icons
 - [jgraph/drawio-libs](https://github.com/jgraph/drawio-libs) - Libraries for draw.io
