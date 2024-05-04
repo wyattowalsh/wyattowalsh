@@ -1139,7 +1139,7 @@
 - [bfortuner/ml-glossary](https://github.com/bfortuner/ml-glossary) - Machine learning glossary
 - [jphall663/awesome-machine-learning-interpretability](https://github.com/jphall663/awesome-machine-learning-interpretability) - A curated list of awesome responsible machine learning resources.
 - [alandefreitas/matplotplusplus](https://github.com/alandefreitas/matplotplusplus) - Matplot++: A C++ Graphics Library for Data Visualization 📊🗾
-- [feast-dev/feast](https://github.com/feast-dev/feast) - Feature Store for Machine Learning
+- [feast-dev/feast](https://github.com/feast-dev/feast) - The Open Source Feature Store for Machine Learning
 - [anu0012/awesome-computer-science-opportunities](https://github.com/anu0012/awesome-computer-science-opportunities) - An awesome list of events and fellowship opportunities for Computer Science students
 - [TeamHG-Memex/eli5](https://github.com/TeamHG-Memex/eli5) - A library for debugging/inspecting machine learning classifiers and explaining their predictions
 - [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) - matplotlib: plotting with Python
@@ -2505,7 +2505,7 @@
 - [yunabe/lgo](https://github.com/yunabe/lgo) - Interactive Go programming with Jupyter
 - [bfortuner/ml-glossary](https://github.com/bfortuner/ml-glossary) - Machine learning glossary
 - [jphall663/awesome-machine-learning-interpretability](https://github.com/jphall663/awesome-machine-learning-interpretability) - A curated list of awesome responsible machine learning resources.
-- [feast-dev/feast](https://github.com/feast-dev/feast) - Feature Store for Machine Learning
+- [feast-dev/feast](https://github.com/feast-dev/feast) - The Open Source Feature Store for Machine Learning
 - [TeamHG-Memex/eli5](https://github.com/TeamHG-Memex/eli5) - A library for debugging/inspecting machine learning classifiers and explaining their predictions
 - [GokuMohandas/Made-With-ML](https://github.com/GokuMohandas/Made-With-ML) - Learn how to design, develop, deploy and iterate on production-grade ML applications.
 - [KarelDO/awesome-codex](https://github.com/KarelDO/awesome-codex) - A list dedicated to products, demos and articles related to 🤖 OpenAI's Codex.
@@ -3999,7 +3999,7 @@
 - [TDAmeritrade/stumpy](https://github.com/TDAmeritrade/stumpy) - STUMPY is a powerful and scalable Python library for modern time series analysis
 - [stellargraph/stellargraph](https://github.com/stellargraph/stellargraph) - StellarGraph - Machine Learning on Graphs
 - [jphall663/awesome-machine-learning-interpretability](https://github.com/jphall663/awesome-machine-learning-interpretability) - A curated list of awesome responsible machine learning resources.
-- [feast-dev/feast](https://github.com/feast-dev/feast) - Feature Store for Machine Learning
+- [feast-dev/feast](https://github.com/feast-dev/feast) - The Open Source Feature Store for Machine Learning
 - [TeamHG-Memex/eli5](https://github.com/TeamHG-Memex/eli5) - A library for debugging/inspecting machine learning classifiers and explaining their predictions
 - [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) - matplotlib: plotting with Python
 - [GokuMohandas/Made-With-ML](https://github.com/GokuMohandas/Made-With-ML) - Learn how to design, develop, deploy and iterate on production-grade ML applications.
