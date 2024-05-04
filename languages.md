@@ -1435,7 +1435,7 @@
 - [TDAmeritrade/stumpy](https://github.com/TDAmeritrade/stumpy) - STUMPY is a powerful and scalable Python library for modern time series analysis
 - [stellargraph/stellargraph](https://github.com/stellargraph/stellargraph) - StellarGraph - Machine Learning on Graphs
 - [bfortuner/ml-glossary](https://github.com/bfortuner/ml-glossary) - Machine learning glossary
-- [feast-dev/feast](https://github.com/feast-dev/feast) - Feature Store for Machine Learning
+- [feast-dev/feast](https://github.com/feast-dev/feast) - The Open Source Feature Store for Machine Learning
 - [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) - matplotlib: plotting with Python
 - [pyload/pyload](https://github.com/pyload/pyload) - The free and open-source Download Manager written in pure Python
 - [googleads/google-ads-python](https://github.com/googleads/google-ads-python) - Google Ads API Client Library for Python
