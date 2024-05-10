@@ -35,8 +35,8 @@
                                     <rect class="day" x="30" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="45" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="60" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="75" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="90" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
+                                    <rect class="day" x="75" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
+                                    <rect class="day" x="90" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="105" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="120" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="135" y="0" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
@@ -138,7 +138,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/>
                             </svg>
-                            Following 106 users
+                            Following 107 users
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    90m added, 43.9m removed
+                                    90.9m added, 44.6m removed
                                 </div>
                             </section>
                             <section>
@@ -232,7 +232,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"/>
                                     </svg>
-                                    1.06k views in last two weeks
+                                    1.05k views in last two weeks
                                 </div>
                             </section>
                         </div>
@@ -978,7 +978,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path d="M10.896 2H8.75V.75a.75.75 0 00-1.5 0V2H5.104a.25.25 0 00-.177.427l2.896 2.896a.25.25 0 00.354 0l2.896-2.896A.25.25 0 0010.896 2zM8.75 15.25a.75.75 0 01-1.5 0V14H5.104a.25.25 0 01-.177-.427l2.896-2.896a.25.25 0 01.354 0l2.896 2.896a.25.25 0 01-.177.427H8.75v1.25zm-6.5-6.5a.75.75 0 000-1.5h-.5a.75.75 0 000 1.5h.5zM6 8a.75.75 0 01-.75.75h-.5a.75.75 0 010-1.5h.5A.75.75 0 016 8zm2.25.75a.75.75 0 000-1.5h-.5a.75.75 0 000 1.5h.5zM12 8a.75.75 0 01-.75.75h-.5a.75.75 0 010-1.5h.5A.75.75 0 0112 8zm2.25.75a.75.75 0 000-1.5h-.5a.75.75 0 000 1.5h.5z"/>
                             </svg>
-                            Average per day at ~0.57
+                            Average per day at ~0.56
                         </div>
                     </section>
                 </div>
@@ -2943,6 +2943,11 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <path fill="#ebedf0" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,2 0,1 z"/>
                                 <path fill="#ebedf0" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,1 1.7,2 z"/>
                             </g>
+                            <g transform="translate(-6.8, 10)">
+                                <path fill="#ebedf0" d="M1.7,2 0,1 1.7,0 3.4,1 z"/>
+                                <path fill="#ebedf0" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,2 0,1 z"/>
+                                <path fill="#ebedf0" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,1 1.7,2 z"/>
+                            </g>
                         </g>
                     </g>
                 </svg>
@@ -3116,7 +3121,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <rect class="day" x="0" y="19" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="34" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="49" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
-                                    <rect class="day" x="0" y="64" width="11" height="11" fill="#40c463" rx="2" ry="2"/>
+                                    <rect class="day" x="0" y="64" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="79" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="94" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                 </g>
@@ -3125,6 +3130,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <rect class="day" x="0" y="19" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="34" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                     <rect class="day" x="0" y="49" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
+                                    <rect class="day" x="0" y="64" width="11" height="11" fill="#ebedf0" rx="2" ry="2"/>
                                 </g>
                             </g>
                         </svg>
@@ -3498,10 +3504,11 @@ JPMorgan Chase &amp; Co. (JPMC)
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                         <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/>
                     </svg>
-                    106 followed
+                    107 followed
                 </h2>
                 <div class="row">
                     <section class="people">
+                        <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAIAAAD9b0jDAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAuUlEQVR4nO2UMQqEMBBFc2RFQdE5wDRRTBViWlnjAfQyVpMmYpc9gNssu1UEQbu8aqoH85n57HgAFqXPZrpt2ziOr4sYY/Z9D0oBIMuyruumaUqShIhsACJK09QY0zRNnudFUQSlnHNEVEo556SU5zsOw7CuqxCibVtEjNIf7D/GTHk8KYwf5W4sFACo67rv+2VZyrL03r8DeO+rqprnWUoJAGfVR0Raa3URrbW1Nii9C3abKUqPb6YfHi1GEG5czMEAAAAASUVORK5CYII=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAABwUGAQMI/8QALxAAAgIBAgUCAQ0AAAAAAAAAAQMCBAUAERITITFxBlIUBxUiIzIzQVFhgZHB8P/EABcBAQEBAQAAAAAAAAAAAAAAAAIDAAH/xAAeEQABAwUBAQAAAAAAAAAAAAAAAQIRAxMhMTISQf/aAAwDAQACEQMRAD8Af8x6mx2HyFepkZsVz48cXcO6++2xI7alOY2QElrXKB6xkGdCPz7aK/XToWKdRbIMdOTOUsR7g7bg+Oh0b/KJk72MXiq0GsdBddi47y24TuCCPHXUkqNV3j6RvOnR0VnPUFDA14MyjQtjPu0r+nOfgakqtqD6qH78qLYRYIsA4gCN+ugt5ky3j71wus8cFJB78s9AP20iG70Ak3oBsPGi2qjuTXlnJQc405LGNrpszrPI+rcs9YnRThMGxFJpvyZzDdNcSa3jBIA6Q3/Xf/DVr+Ld7tR73gWJwchFiCbELaouhxCDo78Mx/Y+yfxB02dYCqQhj0LiLNH1FlHus2VU02JrFaTTPj2O4HgDbz/Okr52Hu0e07LuQJmZM2GU5SPcnW/4lvu0dHYk/9k=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAIAAAD9b0jDAAAACXBIWXMAAAsTAAALEwEAmpwYAAACJ0lEQVR4nGPguvuD6ohh1FAuEoOM8853EsKUbc56tr75bNNWsE1cDBFhNLVmX3+EOSKZ8+p7iAiTdwiTszf75pMg0299ZfIMYlRWZ63qxG3ojFVsHTPZJi5i65kLNdTIgsnMhsnRE9lQ5uBYjkM3oa6+9YXZMwifS9lX7WcOimEOT2SbuwFqhLUT+6r9DCwsEEM573xnKW9jyathKWog1lDOO99Bjp2yHB5q7Au2gMhF2zhvfYGKrD7A2jyZ88JLqJbb39iX7RpNp1y4wpTj4E3WpknIYcQ2ex2InL8JOTJZa7o59l6FcFk7Z7E2TWKbvhJ37M9ex5ycz2Rux3H8PjT27d1ApHsA1NZdF5kcPNiX7GDJq4bbAUrLm07gM5RRXZtRz4Tz+keooXaunHe+M7n6Qh0+dyNLeSvI9OMP4LrgVuIwdNFW1p55TJ5BnNc+QH1X389k784cnw1NQFffM3kEMrn4smSUIgwNSxxNUlx0LflZ26aDkmFtL/uGo9BIcPJksnVFToZMnkHMnoHsK/dBizENXSYbF7Z5G3EbWtnBvng7a14N+8q9sPLUhm3qcubwJLgaRjNblrQizivvoHbYOIOShKUDbkPbZ7AUNzF7BrFvPws1wtCMydmbbS7CIYxWjmy98zhOPoJydY3ZJixk8g7BXfRd/8ha18s2YREim05ZxnHqMfuSHQiRvgWsVZ0cuy5C3VHVydo6jfPiK/pGFNeIMxQAQDZGfi3yN5UAAAAASUVORK5CYII=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,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" width="28" height="28" alt="" />
@@ -3525,7 +3532,6 @@ JPMorgan Chase &amp; Co. (JPMC)
                         <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAABwgEBQYB/8QAKRAAAQMCBQQCAgMAAAAAAAAAAQIDBAURAAYSITETQVFhIjIUUjNxcv/EABUBAQEAAAAAAAAAAAAAAAAAAAMC/8QAHhEAAgICAgMAAAAAAAAAAAAAAQMAAgQSERMhMkH/2gAMAwEAAhEDEQA/AMxGZ/LlxIyCjrvOBtJc+iPZ/rBKp2SKK+y2FsVFer7SnXg2T5PTtt65vgb5eMhvMlOMcN9UPfHVwTY2wXX5dQS5LCHYICU3Z1K7bc7e/eIa0r9Y2NjB/O3yDjOGU2qK0H4E9c2OJBjOhxnprac5APm43uNsdixm2I7bY7Dn9veNLnkyJRpbJdbcYe0LdDZvdxGsc7fvvt4xFprSFxyVDUdR3th6sN6CBZXVciD6pTmKTrdlFAdWLssJ3WTyD6Hs4N+X6ll3NlKgVUdNL60guttq/iXb5AC+xBPbthPA4rUFX3xZ0fMlVy3Kcco8tTF/sggKSv8A0k7HAMrsIqbaGMZnas0trNrEN9Qioajp6AdFgpNzvfzfbfxiSmGXUJchqSlhQum3f3hdajXKjX5qJtVkqfkrSE6iAAlPgAbAYuYeZqtBYSxFmLQ0OEgDFUBAkM8nmf/Z" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABm0lEQVR4nO2WS0vDQBSF86+q4EpcCiooKoIb1y50IeJGcKEbl67c+gcU3LRSH7VFF9a3KKJUqJo0CWlr87B5HZkBW6Y0zaNmZQ8cQjIXvsydO3eGg4c028V9xaR+qppw8TfivAb23nUkkjx1f4pHybDjBe4WtQawL8lD6AEDivMa6KX0/6TUdoGbch2XStMa+RgH0HKB1dtKI454+FjsmI3IQDKJtTsWNnIioqh1Tn0koOMC6w9VBjZ+KuJT91/n0EAC22iBTWalwEXFhQHabWY2k5MgfzuBYKGAvGFj85GFzZ7JUOrBYaGAK9dlBjZ3LqNqhoMFBrZzijcQRVxU4NBhCW+qFS9wNCMy79M5CTUrhjVMJHks5hXaspZb1nLpqky3SixVSqRaLqayEgPdfqkhqLgonaagWhhMC8wl66gUrIi4KECitGBQ0G8M+YHXmn8RdXVabD1/MamdyEq+e7Pr42n+QmGgC3mFtsDQwP0PnaaMeOBAgOTRL0lrG8uIjVjinYIaHmg6LuS6QxuzX7/U7WYseWpk6h7AH8gYbwlbeundAAAAAElFTkSuQmCC" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAABAUDBggH/8QAKhAAAgEDAQcCBwAAAAAAAAAAAQMCAAQFEQYSITFBUYEHkRMUMjNxobH/xAAXAQEBAQEAAAAAAAAAAAAAAAADAQAC/8QAGxEAAwADAQEAAAAAAAAAAAAAAAECAxEiMSH/2gAMAwEAAhEDEQA/AM1wlrXc9k/TLFZLY1VxcTy68o5O+IrVCauIJB5akea4WkEnhWkfSLa9NpsPAZZqlttltgoyZpOS1DXgOpAOniiyzdLkbDUJ9mfMrj7jGXzLS8VNT16ExnzAIBH6IoAmmOQlcXd0+4exjmskZyYyW/MnuT1pZLnST4FXvwktPr071b7vJSGzWKtUkwAi0yI6mbDqPYD3qmW0j8WFMVyJAjrwjyqp6OWtkxkBpHvSaZ3ZyHY0c2R+YX5/lA3H3p/msU//2Q==" width="28" height="28" alt="" />
-                        <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAABgcCBAUB/8QAKhAAAgIBAwMEAQQDAAAAAAAAAQIDBBEFEiEABjETQVFxkQcVImEygqH/xAAZAQABBQAAAAAAAAAAAAAAAAADAQIEBQb/xAAeEQACAwACAwEAAAAAAAAAAAABAgADEQQhEhMxMv/aAAwDAQACEQMRAD8AhR7k1prCyR2HkIbdJ63+Hk8BfcYI+MH8dWbXdWoRyYmvFWbwoRUUA/BxwPsk/fQN3BrL0qMFSozJNJku6+VXPt7588/Gfsa036a2rdWS9p1hXTg7ZpkVlPpq28sxwVzuBHBGM/WfFO9scElLZyLh+sE2tTu2tYrxia4Z4kJZV42n72+f+46nod27plaSKrBW2PIXKvKU2kgDAAYDHA5/s9B0ul3e3KsdwWqZcOonrw20lBDFhjCnyCAD58/Y6Jq1iOxXjmQfxdd3IHHQrVev52IxrruMdbvZy72kdL79pPahabT5FcVpBH6oVhk4dRycAnOMHGT7EBiaV2ZodOkS1kX5EUYsKEzX2u0i7AMlcMeODxgeOrfcLenpFqUKpkhRpI2IzsYA4I/vpWJKZ6s0UyrIYrSosjjL7Tv4J/0H5Pz0T2FhLK4LQ3gPh7hD31Q039htUe3pZLuralIjP6k6lQWlQnbgYzlVyFwAF9sAdEWkdpaXptCKtLEtl1AzJKQCePYZ4HQHrkrzWIpWOHEoQbeMAA4x+OmB2des3tJY2ZWd4pDGGOMsAAefk89DZ9XDE4ltdthVl3J//9k=" width="28" height="28" alt="" />
                     </section>
                 </div>
             </section>
@@ -4143,7 +4149,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 198k out of 204m repositories</span>
+                                    <span class="gh">ranked 198k out of 203m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 64 times</div>
                             </div>
@@ -4158,7 +4164,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </defs>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="gauge info">
                                         <circle class="gauge-base" r="25" cx="28" cy="28"/>
-                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="81.78391959798994 155"/>
+                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="82.56281407035175 155"/>
                                     </svg>
                                     <svg xmlns="http://www.w3.org/2000/svg" mask="url(#mask)">
                                         <g fill="none" fill-rule="evenodd">
@@ -4176,7 +4182,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <span class="prefix"></span>
                                     Follower
                                 </div>
-                                <div class="text">Following 106 users</div>
+                                <div class="text">Following 107 users</div>
                             </div>
                         </div>
                         <div class="achievement c largeable-width-half">
@@ -4264,7 +4270,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 352k out of 204m repositories</span>
+                                    <span class="gh">ranked 352k out of 203m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 101 stars</div>
                             </div>
@@ -4543,7 +4549,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 9 May 2024, 19:02:00 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 9 May 2024, 20:01:53 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
