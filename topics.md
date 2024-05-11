@@ -170,6 +170,7 @@
 - [python3](#python3)
 - [pytorch](#pytorch)
 - [qt](#qt)
+- [quantitative-finance](#quantitative-finance)
 - [r](#r)
 - [rails](#rails)
 - [raspberry-pi](#raspberry-pi)
@@ -682,6 +683,7 @@
 - [manu354/cryptocurrency-arbitrage](https://github.com/manu354/cryptocurrency-arbitrage) - A cryptocurrency arbitrage opportunity calculator. Over 800 currencies and 50 markets.
 - [askmike/gekko](https://github.com/askmike/gekko) - A bitcoin trading bot written in node - https://gekko.wizb.it/
 - [ctubio/Krypto-trading-bot](https://github.com/ctubio/Krypto-trading-bot) - Self-hosted crypto trading bot (automated high frequency market making) written in C++
+- [knowm/XChange](https://github.com/knowm/XChange) - XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges providing a consistent interface for trading and accessing market data.
 - [bitrinjani/r2](https://github.com/bitrinjani/r2) - R2 Bitcoin Arbitrager is an automatic arbitrage trading system powered by Node.js + TypeScript.
 - [bmoscon/cryptofeed](https://github.com/bmoscon/cryptofeed) - Cryptocurrency Exchange Websocket Data Feed Handler
 - [michaelgrosner/tribeca](https://github.com/michaelgrosner/tribeca) - A high frequency, market making cryptocurrency trading platform in node.js
@@ -1075,7 +1077,7 @@
 
 ## data-science 
 
-- [microsoft/graspologic](https://github.com/microsoft/graspologic) - Python package for graph statistics
+- [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
 - [great-expectations/great_expectations](https://github.com/great-expectations/great_expectations) - Always know what to expect from your data.
 - [whylabs/whylogs](https://github.com/whylabs/whylogs) - An open-source data logging library for machine learning models and data pipelines. 📚 Provides visibility into data quality & model performance over time. 🛡️ Supports privacy-preserving data collectio
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
@@ -1743,6 +1745,8 @@
 
 ## github 
 
+- [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://star-history.com
 - [antonkomarev/github-profile-views-counter](https://github.com/antonkomarev/github-profile-views-counter) - It counts how many times your GitHub profile has been viewed. Free cloud micro-service.
 - [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
@@ -1774,12 +1778,14 @@
 
 ## github-api 
 
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [rzashakeri/beautify-github-profile](https://github.com/rzashakeri/beautify-github-profile) - This repository will assist you in creating a more beautiful and appealing github profile, and you will have access to a comprehensive range of tools and tutorials for beautifying your github profile.
 - [PyGithub/PyGithub](https://github.com/PyGithub/PyGithub) - Typed interactions with the GitHub API v3
 - [lowlighter/metrics](https://github.com/lowlighter/metrics) - 📊 An infographics generator with 30+ plugins and 300+ options to display stats about your GitHub account and render them as SVG, Markdown, PDF or JSON!
 
 ## go 
 
+- [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
 - [EinStack/glide](https://github.com/EinStack/glide) - 🐦 A open blazing-fast simple model gateway for rapid development of production GenAI apps
 - [gocolly/colly](https://github.com/gocolly/colly) - Elegant Scraper and Crawler Framework for Golang
 - [kataras/iris](https://github.com/kataras/iris) - The fastest HTTP/2 Go Web Framework. New, modern and easy to learn. Fast development with Code you control. Unbeatable cost-performance ratio :rocket:
@@ -1829,6 +1835,9 @@
 
 ## graphql 
 
+- [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
+- [Novvum/graphql-birdseye](https://github.com/Novvum/graphql-birdseye) - View any GraphQL schema as a dynamic and interactive graph. 🦅
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [Kong/insomnia](https://github.com/Kong/insomnia) - The open-source, cross-platform API client for GraphQL, REST, WebSockets, SSE and gRPC. With Cloud, Local and Git storage.
 - [glideapps/quicktype](https://github.com/glideapps/quicktype) - Generate types and converters from JSON, Schema, and GraphQL
 - [graphql/graphql-js](https://github.com/graphql/graphql-js) - A reference implementation of GraphQL for JavaScript
@@ -2471,7 +2480,7 @@
 
 ## machine-learning 
 
-- [microsoft/graspologic](https://github.com/microsoft/graspologic) - Python package for graph statistics
+- [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
 - [mindsdb/mindsdb](https://github.com/mindsdb/mindsdb) - The platform for customizing AI from enterprise data
 - [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [whylabs/whylogs](https://github.com/whylabs/whylogs) - An open-source data logging library for machine learning models and data pipelines. 📚 Provides visibility into data quality & model performance over time. 🛡️ Supports privacy-preserving data collectio
@@ -3281,7 +3290,6 @@
 - [bevry-trading/automated-trading](https://github.com/bevry-trading/automated-trading) - Automated Trading: Trading View Strategies =&gt; Bitfinex, itBit, DriveWealth
 - [thrasher-/gocryptotrader](https://github.com/thrasher-/gocryptotrader) - A cryptocurrency trading bot and framework supporting multiple exchanges written in Golang.
 - [viabtc/viabtc_exchange_server](https://github.com/viabtc/viabtc_exchange_server) - A trading engine with high-speed performance and real-time notification
-- [knowm/XChange](https://github.com/knowm/XChange) - XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges providing a consistent interface for trading and accessing market data.
 - [hpyhacking/peatio](https://github.com/hpyhacking/peatio) - An open-source assets exchange.
 - [donfanning/cryptrade](https://github.com/donfanning/cryptrade) - Node.js Bitcoin bot for MtGox/Bitstamp/BTC-E/CEX.IO
 - [jjakimoto/DQN](https://github.com/jjakimoto/DQN) - Reinforcement Learning for finance
@@ -3289,7 +3297,6 @@
 - [gbeced/pyalgotrade](https://github.com/gbeced/pyalgotrade) - Python Algorithmic Trading Library
 - [deependersingla/deep_trader](https://github.com/deependersingla/deep_trader) - This project uses reinforcement learning on stock market and agent tries to learn trading. The goal is to check if the agent can learn to read tape. The project is dedicated to hero in life great Jess
 - [je-suis-tm/web-scraping](https://github.com/je-suis-tm/web-scraping) - Detailed web scraping tutorials for dummies with financial data crawlers on Reddit WallStreetBets, CME (both options and futures), US Treasury, CFTC, LME, MacroTrends, SHFE and alternative data crawle
-- [je-suis-tm/quant-trading](https://github.com/je-suis-tm/quant-trading) - Python quantitative trading strategies including VIX Calculator, Pattern Recognition, Commodity Trading Advisor, Monte Carlo, Options Straddle, Shooting Star, London Breakout, Heikin-Ashi, Pair Tradin
 - [Rich-Harris/degit](https://github.com/Rich-Harris/degit) - Straightforward project scaffolding
 - [storybookjs/design-system](https://github.com/storybookjs/design-system) - 🗃 Storybook Design System
 - [nick-dolan/jesse-indicators](https://github.com/nick-dolan/jesse-indicators) - Custom indicators for Jesse's trading framework.
@@ -3478,7 +3485,6 @@
 - [pmorissette/ffn](https://github.com/pmorissette/ffn) - ffn - a financial function library for Python
 - [compatibl/QuantLibAdjoint](https://github.com/compatibl/QuantLibAdjoint) - QuantLib with adjoint algorithmic differentiation (AAD)
 - [sjwall/mdx-mermaid](https://github.com/sjwall/mdx-mermaid) - Plug and play Mermaid in MDX
-- [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
 - [anaconda/nb_conda](https://github.com/anaconda/nb_conda) - Conda environment and package access extension from within Jupyter
 - [conda-forge/miniforge](https://github.com/conda-forge/miniforge) - A conda-forge distribution.
 - [tonyzhaozh/few-shot-learning](https://github.com/tonyzhaozh/few-shot-learning) - Few-shot Learning of GPT-3
@@ -3660,7 +3666,6 @@
 - [OthersideAI/chronology](https://github.com/OthersideAI/chronology) - 
 - [shawwn/colab-tricks](https://github.com/shawwn/colab-tricks) - Tricks for Colab power users
 - [enthought/pyql](https://github.com/enthought/pyql) - Cython QuantLib wrappers
-- [lballabio/QuantLib](https://github.com/lballabio/QuantLib) - The QuantLib C++ library
 - [opencobra/optlang](https://github.com/opencobra/optlang) - optlang - sympy based mathematical programming language
 - [Commonists/CommonsDownloader](https://github.com/Commonists/CommonsDownloader) - Tool to download thumbnails of files from Wikimedia Commons
 - [tkarras/progressive_growing_of_gans](https://github.com/tkarras/progressive_growing_of_gans) - Progressive Growing of GANs for Improved Quality, Stability, and Variation
@@ -3871,7 +3876,7 @@
 
 ## python 
 
-- [microsoft/graspologic](https://github.com/microsoft/graspologic) - Python package for graph statistics
+- [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
 - [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [multiprocessio/datastation](https://github.com/multiprocessio/datastation) - App to easily query, script, and visualize data from every database, file, and API.
 - [coleifer/sqlite-web](https://github.com/coleifer/sqlite-web) - Web-based SQLite database browser written in Python
@@ -4221,6 +4226,23 @@
 - [mimecorg/fraqtive](https://github.com/mimecorg/fraqtive) - Generator of the Mandelbrot family fractals.
 - [xaos-project/XaoS](https://github.com/xaos-project/XaoS) - Real-time interactive fractal zoomer
 - [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) - matplotlib: plotting with Python
+
+## quantitative-finance 
+
+- [LongOnly/Quantitative-Notebooks](https://github.com/LongOnly/Quantitative-Notebooks) - Educational notebooks on quantitative finance, algorithmic trading, financial modelling and investment strategy
+- [EliteQuant/EliteQuant](https://github.com/EliteQuant/EliteQuant) - A list of online resources for quantitative modeling, trading, portfolio management
+- [fremantle-industries/tai](https://github.com/fremantle-industries/tai) - A composable, real time, market data and trade execution toolkit. Built with Elixir, runs on the Erlang virtual machine
+- [achillesrasquinha/bulbea](https://github.com/achillesrasquinha/bulbea) - :boar: :bear: Deep Learning based Python Library for Stock Market Prediction and Modelling
+- [je-suis-tm/quant-trading](https://github.com/je-suis-tm/quant-trading) - Python quantitative trading strategies including VIX Calculator, Pattern Recognition, Commodity Trading Advisor, Monte Carlo, Options Straddle, Shooting Star, London Breakout, Heikin-Ashi, Pair Tradin
+- [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
+- [georgezouq/awesome-ai-in-finance](https://github.com/georgezouq/awesome-ai-in-finance) - 🔬 A curated list of awesome LLMs & deep learning strategies & tools in financial market.
+- [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
+- [robertmartin8/PyPortfolioOpt](https://github.com/robertmartin8/PyPortfolioOpt) - Financial portfolio optimisation in python, including classical efficient frontier, Black-Litterman, Hierarchical Risk Parity
+- [lballabio/QuantLib](https://github.com/lballabio/QuantLib) - The QuantLib C++ library
+- [wilsonfreitas/awesome-quant](https://github.com/wilsonfreitas/awesome-quant) - A curated list of insanely awesome libraries, packages and resources for Quants (Quantitative Finance)
+- [google/tf-quant-finance](https://github.com/google/tf-quant-finance) - High-performance TensorFlow library for quantitative finance.
 
 ## r 
 
