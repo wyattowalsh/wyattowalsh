@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    93.1m added, 46.5m removed
+                                    91.8m added, 45.7m removed
                                 </div>
                             </section>
                             <section>
@@ -909,7 +909,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, Command line interface, GitHub API, PHP, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Jupyter Notebook, Ubuntu, Tensorflow, Windows, MATLAB, macOS, Security, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Continuous integration, Markdown, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Ruby, LaTeX, Deployment, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, Statistics, zsh, trading-bot, obsidian-plugin, Crawler, simulation, gatsby, proxy, jupyter, prompt-engineering, notion, SVG, scraping, react-components, scss, profile-readme, crm, modeling, scrapy, Reddit, github-profile, linear-algebra, classification, llmops, llm-agent, proxy-list, MDX, data-pipelines, free-proxy, probability, regression, calculus, asynchronous, oh-my-zsh-plugin, agent-based-framework, toolchain, quicklook-extension, project-structure, reddit-api, pytest-plugin, sphinx, ontology-engineering, fractal, docusaurus, poetry-plugin, bio-links, sass-mixins, sass-library, Nextra, sass-functions, docz, awesome-nextjs">and 126 more...</div>
+                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, GitHub API, Command line interface, PHP, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Jupyter Notebook, Ubuntu, Tensorflow, Windows, MATLAB, macOS, Security, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Continuous integration, Markdown, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Ruby, LaTeX, Deployment, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, Statistics, zsh, trading-bot, obsidian-plugin, Crawler, simulation, gatsby, proxy, jupyter, prompt-engineering, notion, SVG, scraping, react-components, scss, profile-readme, crm, modeling, scrapy, Reddit, github-profile, linear-algebra, classification, llmops, llm-agent, proxy-list, MDX, data-pipelines, free-proxy, probability, regression, calculus, asynchronous, oh-my-zsh-plugin, agent-based-framework, toolchain, quicklook-extension, project-structure, reddit-api, pytest-plugin, sphinx, ontology-engineering, fractal, docusaurus, poetry-plugin, bio-links, sass-mixins, sass-library, Nextra, sass-functions, docz, awesome-nextjs">and 126 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3176,7 +3176,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>graphaware/neo4j-nlp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">NLP Capabilities in Neo4j</div>
@@ -3223,7 +3223,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>shurcooL/githubv4</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).</div>
@@ -3276,7 +3276,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>Novvum/graphql-birdseye</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">View any GraphQL schema as a dynamic and interactive graph. 🦅</div>
@@ -3329,7 +3329,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>evoluteur/meet-the-fans</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).</div>
@@ -4137,7 +4137,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 198k out of 203m repositories</span>
+                                    <span class="gh">ranked 198k out of 206m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 64 times</div>
                             </div>
@@ -4258,7 +4258,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 352k out of 203m repositories</span>
+                                    <span class="gh">ranked 352k out of 206m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 101 stars</div>
                             </div>
@@ -4537,7 +4537,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 11 May 2024, 10:01:27 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 11 May 2024, 11:01:36 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
