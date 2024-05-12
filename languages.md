@@ -189,6 +189,7 @@
 
 ## Go 
 
+- [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
 - [deepset-ai/prompthub](https://github.com/deepset-ai/prompthub) - 
 - [EinStack/glide](https://github.com/EinStack/glide) - 🐦 A open blazing-fast simple model gateway for rapid development of production GenAI apps
 - [spencerkimball/stargazers](https://github.com/spencerkimball/stargazers) - Analyze GitHub stars
@@ -293,6 +294,7 @@
 
 ## Java 
 
+- [graphaware/neo4j-nlp](https://github.com/graphaware/neo4j-nlp) - NLP Capabilities in Neo4j
 - [protegeproject/webprotege](https://github.com/protegeproject/webprotege) - The webprotege code base
 - [conductor-oss/conductor](https://github.com/conductor-oss/conductor) - Conductor is an event driven orchestration platform
 - [react-native-cameraroll/react-native-cameraroll](https://github.com/react-native-cameraroll/react-native-cameraroll) - CameraRoll is a react-native native module that provides access to the local camera roll or photo library.
@@ -322,6 +324,7 @@
 
 ## JavaScript 
 
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [neo4j-labs/cypher-workbench](https://github.com/neo4j-labs/cypher-workbench) - Tools for Neo4j data modeling and more
 - [neo4j-labs/arrows.app](https://github.com/neo4j-labs/arrows.app) - A graph drawing application
 - [thakkarparth007/copilot-explorer](https://github.com/thakkarparth007/copilot-explorer) - Hacky repo to see what the Copilot extension sends to the server
@@ -1055,7 +1058,7 @@
 
 ## Python 
 
-- [microsoft/graspologic](https://github.com/microsoft/graspologic) - Python package for graph statistics
+- [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
 - [KRR-Oxford/DeepOnto](https://github.com/KRR-Oxford/DeepOnto) - A package for ontology engineering with deep learning and language models.
 - [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [pytest-dev/pytest-mock](https://github.com/pytest-dev/pytest-mock) - Thin-wrapper around the mock package for easier use with pytest
@@ -1771,6 +1774,7 @@
 
 ## TypeScript 
 
+- [Novvum/graphql-birdseye](https://github.com/Novvum/graphql-birdseye) - View any GraphQL schema as a dynamic and interactive graph. 🦅
 - [jmilldotdev/obsidian-wikipedia](https://github.com/jmilldotdev/obsidian-wikipedia) - Grabs information from Wikipedia for a topic and brings it into Obsidian notes
 - [neo4j-labs/neodash](https://github.com/neo4j-labs/neodash) - NeoDash - a Dashboard Builder for Neo4j
 - [nat/openplayground](https://github.com/nat/openplayground) - An LLM playground you can run on your laptop
