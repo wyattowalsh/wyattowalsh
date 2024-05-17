@@ -2454,6 +2454,7 @@
 - [microsoft/semantic-kernel](https://github.com/microsoft/semantic-kernel) - Integrate cutting-edge LLM technology quickly and easily into your apps
 - [run-llama/llama_index](https://github.com/run-llama/llama_index) - LlamaIndex is a data framework for your LLM applications
 - [Unstructured-IO/unstructured](https://github.com/Unstructured-IO/unstructured) - Open source libraries and APIs to build custom preprocessing pipelines for labeling, training, or production machine learning pipelines.
+- [deepset-ai/haystack](https://github.com/deepset-ai/haystack) - :mag: LLM orchestration framework to build customizable, production-ready LLM applications. Connect components (models, vector DBs, file converters) to pipelines or agents that can interact with your 
 - [microsoft/promptflow](https://github.com/microsoft/promptflow) - Build high-quality LLM apps - from prototyping, testing to production deployment and monitoring.
 - [microsoft/TaskWeaver](https://github.com/microsoft/TaskWeaver) - A code-first agent framework for seamlessly planning and executing data analytics tasks.
 - [myscale/ChatData](https://github.com/myscale/ChatData) - ChatData 🔍 📖 brings RAG to real applications with FREE✨ knowledge bases. Now enjoy your chat with 6 million wikipedia pages and 2 million arxiv papers.
@@ -3106,7 +3107,7 @@
 - [wipo-analytics/handbook](https://github.com/wipo-analytics/handbook) - The WIPO Patent Analytics Handbook (Work in Progress)
 - [bryanveloso/geopatterns](https://github.com/bryanveloso/geopatterns) - A Python-port of @jasonlong's lovely SVG generation library.
 - [Kozea/pygal](https://github.com/Kozea/pygal) - PYthon svg GrAph plotting Library
-- [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) - 
+- [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) - Build resilient language agents as graphs.
 - [markmap/markmap-vscode](https://github.com/markmap/markmap-vscode) - Integrate markmap into VSCode
 - [mwclient/mwclient](https://github.com/mwclient/mwclient) - Python client library to interface with the MediaWiki API
 - [openai/tiktoken](https://github.com/openai/tiktoken) - tiktoken is a fast BPE tokeniser for use with OpenAI's models.
