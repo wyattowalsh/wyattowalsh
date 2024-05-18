@@ -1252,7 +1252,7 @@
 - [krzjoa/awesome-python-data-science](https://github.com/krzjoa/awesome-python-data-science) - Probably the best curated list of data science software in Python.
 - [khuyentran1401/Data-science](https://github.com/khuyentran1401/Data-science) - Collection of useful data science topics along with articles, videos, and code
 - [ml-tooling/best-of-ml-python](https://github.com/ml-tooling/best-of-ml-python) - 🏆 A ranked list of awesome machine learning Python libraries. Updated weekly.
-- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - Formulation in AMPL and evaluation in CPLEX of mixed-integer linear programs for several fair division problems under envy-freeness. Visualization in Python of resultant model and solver data
+- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - A small project to using the AMPL modeling language to formulate, CPLEX to solve, and Python to visualize mixed-integer linear programs for several envy-free fair division problems. Includes a full re
 - [wyattowalsh/NBA-attendance-prediction](https://github.com/wyattowalsh/NBA-attendance-prediction) - Attendance prediction tool for NBA games using machine learning. Full pipeline implemented in Python from data ingestion to prediction.  Attained mean absolute error of around 800 people (about 5% cap
 - [ml-tooling/ml-workspace](https://github.com/ml-tooling/ml-workspace) - 🛠 All-in-one web-based IDE specialized for machine learning and data science.
 - [markusschanta/awesome-jupyter](https://github.com/markusschanta/awesome-jupyter) - A curated list of awesome Jupyter projects, libraries and resources
@@ -2325,7 +2325,7 @@
 - [recommenders-team/recommenders](https://github.com/recommenders-team/recommenders) - Best Practices on Recommendation Systems
 - [CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers](https://github.com/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers) - aka "Bayesian Methods for Hackers": An introduction to Bayesian methods + probabilistic programming with a computation/understanding-first, mathematics-second point of view. All in pure Python ;)
 - [trekhleb/homemade-machine-learning](https://github.com/trekhleb/homemade-machine-learning) - 🤖 Python examples of popular machine learning algorithms with interactive Jupyter demos and math being explained
-- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - Formulation in AMPL and evaluation in CPLEX of mixed-integer linear programs for several fair division problems under envy-freeness. Visualization in Python of resultant model and solver data
+- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - A small project to using the AMPL modeling language to formulate, CPLEX to solve, and Python to visualize mixed-integer linear programs for several envy-free fair division problems. Includes a full re
 - [wyattowalsh/regularized-linear-regression-deep-dive](https://github.com/wyattowalsh/regularized-linear-regression-deep-dive) - Explanations and Python implementations of Ordinary Least Squares regression, Ridge regression, Lasso regression (solved via Coordinate Descent), and Elastic Net regression (also solved via Coordinate
 - [wyattowalsh/NBA-attendance-prediction](https://github.com/wyattowalsh/NBA-attendance-prediction) - Attendance prediction tool for NBA games using machine learning. Full pipeline implemented in Python from data ingestion to prediction.  Attained mean absolute error of around 800 people (about 5% cap
 - [jupyter/nbdime](https://github.com/jupyter/nbdime) - Tools for diffing and merging of Jupyter notebooks.
@@ -4149,7 +4149,7 @@
 - [belangeo/pyo](https://github.com/belangeo/pyo) - Python DSP module
 - [MTG/essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings
 - [librosa/librosa](https://github.com/librosa/librosa) - Python library for audio and music analysis
-- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - Formulation in AMPL and evaluation in CPLEX of mixed-integer linear programs for several fair division problems under envy-freeness. Visualization in Python of resultant model and solver data
+- [wyattowalsh/explorations-in-envy-free-allocations](https://github.com/wyattowalsh/explorations-in-envy-free-allocations) - A small project to using the AMPL modeling language to formulate, CPLEX to solve, and Python to visualize mixed-integer linear programs for several envy-free fair division problems. Includes a full re
 - [wyattowalsh/regularized-linear-regression-deep-dive](https://github.com/wyattowalsh/regularized-linear-regression-deep-dive) - Explanations and Python implementations of Ordinary Least Squares regression, Ridge regression, Lasso regression (solved via Coordinate Descent), and Elastic Net regression (also solved via Coordinate
 - [wyattowalsh/NBA-attendance-prediction](https://github.com/wyattowalsh/NBA-attendance-prediction) - Attendance prediction tool for NBA games using machine learning. Full pipeline implemented in Python from data ingestion to prediction.  Attained mean absolute error of around 800 people (about 5% cap
 - [ml-tooling/ml-workspace](https://github.com/ml-tooling/ml-workspace) - 🛠 All-in-one web-based IDE specialized for machine learning and data science.
@@ -4868,6 +4868,7 @@
 - [basarat/typescript-book](https://github.com/basarat/typescript-book) - :books: The definitive guide to TypeScript and possibly the best TypeScript book :book:. Free and Open Source 🌹
 - [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
+- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools to build robust applications in TypeScript.
 - [EasyChris/obsidian-to-notion](https://github.com/EasyChris/obsidian-to-notion) - Share obsidian markdown file to notion and generate notion share link    同步obsdian文件到notion，并生成notion分享链接，可以方便的分享obsidian的文件。
 - [dvanoni/notero](https://github.com/dvanoni/notero) - A Zotero plugin for syncing items and notes into Notion
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
