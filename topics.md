@@ -3304,7 +3304,7 @@
 - [je-suis-tm/web-scraping](https://github.com/je-suis-tm/web-scraping) - Detailed web scraping tutorials for dummies with financial data crawlers on Reddit WallStreetBets, CME (both options and futures), US Treasury, CFTC, LME, MacroTrends, SHFE and alternative data crawle
 - [Rich-Harris/degit](https://github.com/Rich-Harris/degit) - Straightforward project scaffolding
 - [storybookjs/design-system](https://github.com/storybookjs/design-system) - 🗃 Storybook Design System
-- [nick-dolan/jesse-indicators](https://github.com/nick-dolan/jesse-indicators) - Custom indicators for Jesse's trading framework.
+- [nick-dolan/jesse-examples](https://github.com/nick-dolan/jesse-examples) - Examples for Jesse's trading framework.
 - [jesse-ai/example-strategies](https://github.com/jesse-ai/example-strategies) - Example trading strategies to get you started with Jesse
 - [GuiBibeau/use-supabase](https://github.com/GuiBibeau/use-supabase) - This is a simple zero dependencies package that gives you access to your Supabase client using a React hook!
 - [joelparkerhenderson/monorepo-vs-polyrepo](https://github.com/joelparkerhenderson/monorepo-vs-polyrepo) - Monorepo vs. polyrepo: architecture for source code management (SCM) version control systems (VCS)
