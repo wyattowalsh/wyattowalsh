@@ -1291,7 +1291,7 @@
 - [je-suis-tm/quant-trading](https://github.com/je-suis-tm/quant-trading) - Python quantitative trading strategies including VIX Calculator, Pattern Recognition, Commodity Trading Advisor, Monte Carlo, Options Straddle, Shooting Star, London Breakout, Heikin-Ashi, Pair Tradin
 - [quantopian/zipline](https://github.com/quantopian/zipline) - Zipline, a Pythonic Algorithmic Trading Library
 - [hummingbot/hummingbot](https://github.com/hummingbot/hummingbot) - Open source software that helps you create and deploy high-frequency crypto trading bots
-- [nick-dolan/jesse-indicators](https://github.com/nick-dolan/jesse-indicators) - Custom indicators for Jesse's trading framework.
+- [nick-dolan/jesse-examples](https://github.com/nick-dolan/jesse-examples) - Examples for Jesse's trading framework.
 - [jesse-ai/example-strategies](https://github.com/jesse-ai/example-strategies) - Example trading strategies to get you started with Jesse
 - [supabase-community/supabase-py](https://github.com/supabase-community/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
 - [ApeWorX/walletconnect-py](https://github.com/ApeWorX/walletconnect-py) - WalletConnect implementation in Python
