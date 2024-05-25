@@ -1060,6 +1060,7 @@
 
 ## Python 
 
+- [strawberry-graphql/strawberry](https://github.com/strawberry-graphql/strawberry) - A GraphQL library for Python that leverages type annotations 🍓
 - [openai/simple-evals](https://github.com/openai/simple-evals) - 
 - [graphql-python/gql](https://github.com/graphql-python/gql) - A GraphQL client in Python
 - [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
