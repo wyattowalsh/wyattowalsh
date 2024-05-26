@@ -135,7 +135,7 @@
 - [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) - Iconic font aggregator, collection, & patcher. 3,600+ icons, 50+ patched fonts: Hack, Source Code Pro, more. Glyph collections: Font Awesome, Material Design Icons, Octicons, & more
 - [cloudflare/cloudflare-docs](https://github.com/cloudflare/cloudflare-docs) - Cloudflare’s documentation
 - [colindresj/saffron](https://github.com/colindresj/saffron) - A simple Sass mixin library for animations and transitions
-- [Lisandra-dev/Obsidian-Snippet-collection](https://github.com/Lisandra-dev/Obsidian-Snippet-collection) - A collection of snippet to customize obsidian
+- [Mara-Li/Obsidian-Snippet-collection](https://github.com/Mara-Li/Obsidian-Snippet-collection) - A collection of snippet to customize obsidian
 - [chetachiezikeuzor/Obsidian-Snippets](https://github.com/chetachiezikeuzor/Obsidian-Snippets) - A repo full of my snippets for Obsidian.md. Use them to customize your workspace and/or add to a theme! 🪄
 - [deathau/obsidian-snippets](https://github.com/deathau/obsidian-snippets) - 
 - [gitobsidiantutorial/assorted-css-snippets](https://github.com/gitobsidiantutorial/assorted-css-snippets) - snippets that don't require very expansive documentation
