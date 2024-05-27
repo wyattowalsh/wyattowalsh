@@ -326,6 +326,7 @@
 
 ## JavaScript 
 
+- [Victory-ET/Strapi-Forumapp](https://github.com/Victory-ET/Strapi-Forumapp) - Built a forum application with NextJs and Strapi
 - [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [neo4j-labs/cypher-workbench](https://github.com/neo4j-labs/cypher-workbench) - Tools for Neo4j data modeling and more
 - [neo4j-labs/arrows.app](https://github.com/neo4j-labs/arrows.app) - A graph drawing application
@@ -811,6 +812,7 @@
 
 ## Others 
 
+- [shlomi-noach/awesome-mysql](https://github.com/shlomi-noach/awesome-mysql) - A curated list of awesome MySQL software, libraries, tools and resources
 - [semantalytics/awesome-semantic-web](https://github.com/semantalytics/awesome-semantic-web) - A curated list of various semantic web and linked data resources.
 - [RManLuo/Awesome-LLM-KG](https://github.com/RManLuo/Awesome-LLM-KG) - Awesome papers about unifying LLMs and KGs
 - [jgraph/drawio-libs](https://github.com/jgraph/drawio-libs) - Libraries for draw.io
