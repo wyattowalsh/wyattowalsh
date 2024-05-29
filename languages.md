@@ -1061,6 +1061,7 @@
 
 ## Python 
 
+- [koxudaxi/fastapi-code-generator](https://github.com/koxudaxi/fastapi-code-generator) - This code generator creates FastAPI app from an openapi file.
 - [strawberry-graphql/strawberry](https://github.com/strawberry-graphql/strawberry) - A GraphQL library for Python that leverages type annotations 🍓
 - [openai/simple-evals](https://github.com/openai/simple-evals) - 
 - [graphql-python/gql](https://github.com/graphql-python/gql) - A GraphQL client in Python
@@ -2041,7 +2042,7 @@
 - [devias-io/material-kit-react](https://github.com/devias-io/material-kit-react) - React Dashboard made with Material UI’s components. Our pro template contains features like TypeScript version, authentication system with Firebase and Auth0 plus many other
 - [projectstorm/react-diagrams](https://github.com/projectstorm/react-diagrams) - a super simple, no-nonsense diagramming library written in react that just works
 - [plouc/nivo](https://github.com/plouc/nivo) - nivo provides a rich set of dataviz components, built on top of the awesome d3 and React libraries
-- [quilljs/quill](https://github.com/quilljs/quill) - Quill is a modern WYSIWYG editor built for compatibility and extensibility.
+- [slab/quill](https://github.com/slab/quill) - Quill is a modern WYSIWYG editor built for compatibility and extensibility
 - [GoogleChromeLabs/squoosh](https://github.com/GoogleChromeLabs/squoosh) - Make images smaller using best-in-class codecs, right in the browser.
 - [zuisong/docsify-kroki](https://github.com/zuisong/docsify-kroki) - A docsify plugin to render graph like plantuml, mermaid, ..etc
 - [coroo/docsify-share](https://github.com/coroo/docsify-share) - A simple sharing button for Docsify. Within this plugin, we hope you can have your own sharing social media button easily e.g facebook, twitter and many more.
