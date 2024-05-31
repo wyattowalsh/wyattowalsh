@@ -1476,7 +1476,7 @@
 - [psf/black](https://github.com/psf/black) - The uncompromising Python code formatter
 - [mkdocs/mkdocs](https://github.com/mkdocs/mkdocs) - Project documentation with Markdown.
 - [dmarx/psaw](https://github.com/dmarx/psaw) - Python Pushshift.io API Wrapper (for comment/submission search)
-- [albumentations-team/albumentations](https://github.com/albumentations-team/albumentations) - Fast image augmentation library and an easy-to-use wrapper around other libraries. Documentation:  https://albumentations.ai/docs/ Paper about the library: https://www.mdpi.com/2078-2489/11/2/125
+- [albumentations-team/albumentations](https://github.com/albumentations-team/albumentations) - Fast and flexible image augmentation library. Paper about the library: https://www.mdpi.com/2078-2489/11/2/125
 - [gstaff/flask-ngrok](https://github.com/gstaff/flask-ngrok) - A simple way to demo Flask apps from your machine.
 - [tqdm/tqdm](https://github.com/tqdm/tqdm) - :zap: A Fast, Extensible Progress Bar for Python and CLI
 - [pushshift/api](https://github.com/pushshift/api) - Pushshift API
