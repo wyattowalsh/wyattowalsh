@@ -816,6 +816,7 @@
 
 ## Others 
 
+- [korfuri/awesome-monorepo](https://github.com/korfuri/awesome-monorepo) - A curated list of awesome Monorepo tools, software and architectures.
 - [shlomi-noach/awesome-mysql](https://github.com/shlomi-noach/awesome-mysql) - A curated list of awesome MySQL software, libraries, tools and resources
 - [semantalytics/awesome-semantic-web](https://github.com/semantalytics/awesome-semantic-web) - A curated list of various semantic web and linked data resources.
 - [jgraph/drawio-libs](https://github.com/jgraph/drawio-libs) - Libraries for draw.io
@@ -1066,6 +1067,12 @@
 
 ## Python 
 
+- [audreyfeldroy/sphinx-gui](https://github.com/audreyfeldroy/sphinx-gui) - Desktop GUI for editing Sphinx docs. Pre-alpha.
+- [pre-commit/pre-commit](https://github.com/pre-commit/pre-commit) - A framework for managing and maintaining multi-language pre-commit hooks.
+- [pre-commit/pre-commit-hooks](https://github.com/pre-commit/pre-commit-hooks) - Some out-of-the-box hooks for pre-commit
+- [landscapeio/prospector](https://github.com/landscapeio/prospector) - Inspects Python source files and provides information about type and location of classes, methods etc
+- [scottrogowski/code2flow](https://github.com/scottrogowski/code2flow) - Pretty good call graphs for dynamic languages
+- [cdgriffith/Box](https://github.com/cdgriffith/Box) - Python dictionaries with advanced dot notation access
 - [mgaitan/sphinxcontrib-mermaid](https://github.com/mgaitan/sphinxcontrib-mermaid) - Mermaid diagrams in yours sphinx powered docs
 - [koxudaxi/fastapi-code-generator](https://github.com/koxudaxi/fastapi-code-generator) - This code generator creates FastAPI app from an openapi file.
 - [strawberry-graphql/strawberry](https://github.com/strawberry-graphql/strawberry) - A GraphQL library for Python that leverages type annotations 🍓
