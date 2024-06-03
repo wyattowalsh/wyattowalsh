@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    89.7m added, 45.4m removed
+                                    91.7m added, 45.5m removed
                                 </div>
                             </section>
                             <section>
@@ -342,14 +342,14 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <rect x="0" y="0" width="220" height="8" fill="white" rx="5"/>
                             </mask>
                             <rect mask="url(#pr-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                            <rect mask="url(#issues-bar)" x="0" y="0" width="33.84615384615385" height="8" fill="#238636"/>
-                            <rect mask="url(#issues-bar)" x="33.84615384615385" y="0" width="91.86813186813187" height="8" fill="#56d364"/>
+                            <rect mask="url(#issues-bar)" x="0" y="0" width="4.835164835164836" height="8" fill="#238636"/>
+                            <rect mask="url(#issues-bar)" x="4.835164835164836" y="0" width="120.87912087912089" height="8" fill="#56d364"/>
                             <rect mask="url(#issues-bar)" x="125.71428571428572" y="0" width="0" height="8" fill="#8B949E"/>
                             <rect mask="url(#issues-bar)" x="125.71428571428572" y="0" width="0" height="8" fill="#c9d1d9"/>
-                            <rect mask="url(#issues-bar)" x="125.71428571428572" y="0" width="24.175824175824175" height="8" fill="#da3633"/>
-                            <rect mask="url(#issues-bar)" x="149.8901098901099" y="0" width="48.35164835164835" height="8" fill="#ff7b72"/>
-                            <rect mask="url(#issues-bar)" x="198.24175824175825" y="0" width="4.835164835164836" height="8" fill="#8957e5"/>
-                            <rect mask="url(#issues-bar)" x="203.0769230769231" y="0" width="16.923076923076923" height="8" fill="#d2a8ff"/>
+                            <rect mask="url(#issues-bar)" x="125.71428571428572" y="0" width="2.417582417582418" height="8" fill="#da3633"/>
+                            <rect mask="url(#issues-bar)" x="128.13186813186815" y="0" width="70.1098901098901" height="8" fill="#ff7b72"/>
+                            <rect mask="url(#issues-bar)" x="198.24175824175825" y="0" width="2.417582417582418" height="8" fill="#8957e5"/>
+                            <rect mask="url(#issues-bar)" x="200.65934065934067" y="0" width="19.340659340659343" height="8" fill="#d2a8ff"/>
                         </svg>
                         <div class="field blue fill-width">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -395,13 +395,13 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                     <path fill="#56d364" fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
                                 </svg>
-                                <span class="no-wrap">38 <small>open</small></span>
+                                <span class="no-wrap">50 <small>open</small></span>
                             </div>
                             <div class="field">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                     <path fill="#d2a8ff" fill-rule="evenodd" d="M5 3.254V3.25v.005a.75.75 0 110-.005v.004zm.45 1.9a2.25 2.25 0 10-1.95.218v5.256a2.25 2.25 0 101.5 0V7.123A5.735 5.735 0 009.25 9h1.378a2.251 2.251 0 100-1.5H9.25a4.25 4.25 0 01-3.8-2.346zM12.75 9a.75.75 0 100-1.5.75.75 0 000 1.5zm-8.5 4.5a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
                                 </svg>
-                                <span class="no-wrap">7 <small>merged</small></span>
+                                <span class="no-wrap">8 <small>merged</small></span>
                             </div>
                             <div class="field">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -414,7 +414,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                     <path fill="#ff7b72" fill-rule="evenodd" d="M10.72 1.227a.75.75 0 011.06 0l.97.97.97-.97a.75.75 0 111.06 1.061l-.97.97.97.97a.75.75 0 01-1.06 1.06l-.97-.97-.97.97a.75.75 0 11-1.06-1.06l.97-.97-.97-.97a.75.75 0 010-1.06zM12.75 6.5a.75.75 0 00-.75.75v3.378a2.251 2.251 0 101.5 0V7.25a.75.75 0 00-.75-.75zm0 5.5a.75.75 0 100 1.5.75.75 0 000-1.5zM2.5 3.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.25 1a2.25 2.25 0 00-.75 4.372v5.256a2.251 2.251 0 101.5 0V5.372A2.25 2.25 0 003.25 1zm0 11a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
                                 </svg>
-                                <span class="no-wrap">20 <small>closed</small></span>
+                                <span class="no-wrap">29 <small>closed</small></span>
                             </div>
                         </div>
                     </section>
@@ -892,7 +892,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, Command line interface, GitHub API, PHP, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Jupyter Notebook, Ubuntu, windows, Tensorflow, MATLAB, Security, macOS, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Continuous integration, Markdown, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Ruby, LaTeX, Deployment, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, Statistics, zsh, trading-bot, obsidian-plugin, Crawler, Simulation, gatsby, proxy, jupyter, prompt-engineering, Notion, SVG, scraping, react-components, scss, profile-readme, crm, modeling, scrapy, Reddit, github-profile, linear-algebra, classification, llmops, llm-agent, proxy-list, MDX, data-pipelines, free-proxy, probability, regression, calculus, asynchronous, oh-my-zsh-plugin, agent-based-framework, toolchain, quicklook-extension, project-structure, reddit-api, pytest-plugin, sphinx, ontology-engineering, fractal, docusaurus, poetry-plugin, bio-links, sass-mixins, sass-library, Nextra, sass-functions, docz, awesome-nextjs">and 126 more...</div>
+                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Google, Bitcoin, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, Command line interface, GitHub API, PHP, Chrome extension, Code quality, Bash, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Ubuntu, Jupyter Notebook, windows, Tensorflow, MATLAB, Security, macOS, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Continuous integration, Markdown, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Ruby, LaTeX, Deployment, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, Statistics, zsh, trading-bot, obsidian-plugin, Crawler, Simulation, gatsby, proxy, jupyter, prompt-engineering, Notion, SVG, scraping, react-components, scss, profile-readme, crm, modeling, scrapy, Reddit, github-profile, linear-algebra, classification, llmops, llm-agent, proxy-list, MDX, data-pipelines, free-proxy, probability, regression, calculus, asynchronous, oh-my-zsh-plugin, agent-based-framework, toolchain, quicklook-extension, project-structure, reddit-api, pytest-plugin, sphinx, ontology-engineering, fractal, docusaurus, poetry-plugin, bio-links, sass-mixins, sass-library, Nextra, sass-functions, docz, awesome-nextjs">and 126 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3317,7 +3317,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                             <path fill-rule="evenodd" d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878zm3.75 7.378a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm3-8.75a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
                                         </svg>
-                                        767
+                                        766
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -4158,7 +4158,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 199k out of 202m repositories</span>
+                                    <span class="gh">ranked 199k out of 207m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 64 times</div>
                             </div>
@@ -4279,7 +4279,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 355k out of 202m repositories</span>
+                                    <span class="gh">ranked 355k out of 207m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 101 stars</div>
                             </div>
@@ -4558,7 +4558,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 3 Jun 2024, 08:01:51 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 3 Jun 2024, 09:04:16 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
