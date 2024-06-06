@@ -3116,6 +3116,11 @@
 
 ## others 
 
+- [readthedocs/sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi) - A new approach to API documentation in Sphinx.
+- [tox-dev/sphinx-autodoc-typehints](https://github.com/tox-dev/sphinx-autodoc-typehints) - Type hints support for the Sphinx autodoc extension
+- [sidmishraw/topper](https://github.com/sidmishraw/topper) - Topper Visual Studio Code extension
+- [zhaopengme/vscode-fileheader](https://github.com/zhaopengme/vscode-fileheader) - vscode-fileheader
+- [pytest-dev/pytest-subtests](https://github.com/pytest-dev/pytest-subtests) - unittest subTest() support and subtests fixture
 - [stateful/awesome-vscode-extension-utils](https://github.com/stateful/awesome-vscode-extension-utils) - 🎨   A curated list of delightful VSCode utilities to build awesome VSCode extensions and resources.
 - [arjun-g/vs-swagger-viewer](https://github.com/arjun-g/vs-swagger-viewer) - Swagger Viewer lets you preview and validate Swagger 2.0 and OpenAPI files as you type in Visual Studio Code.
 - [pAIrprogio/vscode-ui-sketcher](https://github.com/pAIrprogio/vscode-ui-sketcher) - Draw your projects to life
