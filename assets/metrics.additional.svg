@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>holarissun/PanelGPT</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">We introduce new zero-shot prompting magic words that improves the reasoning ability of language models: panel discussion!</div>
@@ -112,7 +112,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>tiangolo/sqlmodel</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">SQL databases in Python, designed for simplicity, compatibility, and robustness.</div>
@@ -165,7 +165,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>assafelovic/gpt-researcher</span>
-                                        <span>starred 10 hours ago</span>
+                                        <span>starred 11 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">GPT based autonomous agent that does online comprehensive research on any given topic</div>
@@ -283,16 +283,16 @@
                             </div>
                             <div class="entry">
                                 <span class="value">220</span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 26.25px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 10
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 26.25px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 11
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">221</span>
                                 <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 12
                             </div>
@@ -369,8 +369,8 @@
                                 11
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 12
                             </div>
                         </div>
