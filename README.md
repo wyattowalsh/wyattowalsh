@@ -113,13 +113,15 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C315%20hrs-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C315%20hrs%2035%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.1%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 4.6 MB Used in GitHub's Storage 
+ > 
+> 🏆 125 Contributions in the Year 2024
  > 
 > 💼 Opted to Hire
  > 
@@ -152,14 +154,14 @@ Sunday                   640 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-sh                       2 hrs               █████░░░░░░░░░░░░░░░░░░░░   18.83 % 
-Markdown                 1 hr 51 mins        ████░░░░░░░░░░░░░░░░░░░░░   17.44 % 
-Python                   1 hr 50 mins        ████░░░░░░░░░░░░░░░░░░░░░   17.23 % 
-TypeScript               1 hr 12 mins        ███░░░░░░░░░░░░░░░░░░░░░░   11.33 % 
-JSON                     1 hr 3 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   09.86 % 
+sh                       2 hrs 16 mins       █████░░░░░░░░░░░░░░░░░░░░   18.95 % 
+TypeScript               1 hr 59 mins        ████░░░░░░░░░░░░░░░░░░░░░   16.51 % 
+Markdown                 1 hr 54 mins        ████░░░░░░░░░░░░░░░░░░░░░   15.84 % 
+Python                   1 hr 50 mins        ████░░░░░░░░░░░░░░░░░░░░░   15.30 % 
+JSON                     1 hr 3 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   08.76 % 
 
 💻 Operating System: 
-Mac                      10 hrs 40 mins      █████████████████████████   100.00 % 
+Mac                      12 hrs 1 min        █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -179,7 +181,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 12/06/2024 18:38:42 UTC
+ Last Updated on 13/06/2024 18:39:03 UTC
 <!--END_SECTION:waka-->
 
     
