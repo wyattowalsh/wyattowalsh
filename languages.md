@@ -331,6 +331,7 @@
 
 ## JavaScript 
 
+- [akebifiky/remark-simple-plantuml](https://github.com/akebifiky/remark-simple-plantuml) - A simple plugin for remarkjs that converts PlantUML code written in Markdown to img tags.
 - [zhaopengme/vscode-fileheader](https://github.com/zhaopengme/vscode-fileheader) - vscode-fileheader
 - [mdx-js/mdx-analyzer](https://github.com/mdx-js/mdx-analyzer) - MDX extension for Visual Studio Code
 - [goessner/mdmath](https://github.com/goessner/mdmath) - LaTeX Math for Markdown inside of Visual Studio Code.
@@ -606,7 +607,6 @@
 - [njleonzhang/docsify-edit-on-github](https://github.com/njleonzhang/docsify-edit-on-github) - 
 - [LeCoupa/awesome-cheatsheets](https://github.com/LeCoupa/awesome-cheatsheets) - 👩‍💻👨‍💻 Awesome cheatsheets for popular programming languages, frameworks and development tools. They include everything you should know in one single file.
 - [Chalarangelo/30-seconds-of-code](https://github.com/Chalarangelo/30-seconds-of-code) - Short code snippets for all your development needs
-- [markedjs/marked](https://github.com/markedjs/marked) - A markdown parser and compiler. Built for speed.
 - [googleworkspace/apps-script-samples](https://github.com/googleworkspace/apps-script-samples) - Apps Script samples for Google Workspace products.
 - [plotly/react-plotly.js](https://github.com/plotly/react-plotly.js) - A plotly.js React component from Plotly 📈
 - [adrianmcli/truffle-next](https://github.com/adrianmcli/truffle-next) - 🛰️ A boilerplate Truffle Box project with Next.js for rapid Ethereum Dapp development
@@ -821,6 +821,7 @@
 
 ## Others 
 
+- [remarkjs/awesome-remark](https://github.com/remarkjs/awesome-remark) - Curated list of awesome remark resources
 - [billyjov/awesome-nx](https://github.com/billyjov/awesome-nx) - An awesome list that curates the best Nrwl Nx tools, tutorials, articles and more.
 - [stateful/awesome-vscode-extension-utils](https://github.com/stateful/awesome-vscode-extension-utils) - 🎨   A curated list of delightful VSCode utilities to build awesome VSCode extensions and resources.
 - [cmstead/js-refactor](https://github.com/cmstead/js-refactor) - JS Refactoring tool for Visual Studio Code
@@ -1077,6 +1078,8 @@
 
 ## Python 
 
+- [holarissun/PanelGPT](https://github.com/holarissun/PanelGPT) - We introduce new zero-shot prompting magic words that improves the reasoning ability of language models: panel discussion!
+- [tiangolo/sqlmodel](https://github.com/tiangolo/sqlmodel) - SQL databases in Python, designed for simplicity, compatibility, and robustness.
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - GPT based autonomous agent that does online comprehensive research on any given topic
 - [readthedocs/sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi) - A new approach to API documentation in Sphinx.
 - [tox-dev/sphinx-autodoc-typehints](https://github.com/tox-dev/sphinx-autodoc-typehints) - Type hints support for the Sphinx autodoc extension
@@ -1811,6 +1814,10 @@
 
 ## TypeScript 
 
+- [rhysd/remark-emoji](https://github.com/rhysd/remark-emoji) - Remark markdown transformer to replace :emoji: in text
+- [wataru-chocola/remark-extended-table](https://github.com/wataru-chocola/remark-extended-table) - remark plugin to support table syntax allowing colspan / rowspan
+- [kevin940726/remark-code-import](https://github.com/kevin940726/remark-code-import) - 📝 Populate code blocks from files
+- [remark-embedder/core](https://github.com/remark-embedder/core) - 🔗 Remark plugin to convert URLs to embed code in markdown.
 - [lucasvieirasilva/nx-plugins](https://github.com/lucasvieirasilva/nx-plugins) - NX Plugins
 - [sidmishraw/topper](https://github.com/sidmishraw/topper) - Topper Visual Studio Code extension
 - [Phillip9587/nx-stylelint](https://github.com/Phillip9587/nx-stylelint) - Nx plugin to use Stylelint in your Nx workspace.
@@ -2121,6 +2128,7 @@
 - [coder/code-server](https://github.com/coder/code-server) - VS Code in the browser
 - [yangshun/tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook) - 💯 Curated coding interview preparation materials for busy software engineers
 - [kamranahmedse/developer-roadmap](https://github.com/kamranahmedse/developer-roadmap) - Interactive roadmaps, guides and other educational content to help developers grow in their careers.
+- [markedjs/marked](https://github.com/markedjs/marked) - A markdown parser and compiler. Built for speed.
 - [trufflesuite/truffle](https://github.com/trufflesuite/truffle) - :warning: The Truffle Suite is being sunset. For information on ongoing support, migration options and FAQs, visit the Consensys blog. Thank you for all the support over the years.
 - [styleguidist/react-styleguidist](https://github.com/styleguidist/react-styleguidist) - Isolated React component development environment with a living style guide
 - [hoppscotch/hoppscotch](https://github.com/hoppscotch/hoppscotch) - Open source API development ecosystem - https://hoppscotch.io (open-source alternative to Postman, Insomnia)
