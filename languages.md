@@ -821,6 +821,7 @@
 
 ## Others 
 
+- [zhanymkanov/fastapi-best-practices](https://github.com/zhanymkanov/fastapi-best-practices) - FastAPI Best Practices and Conventions we used at our startup
 - [remarkjs/awesome-remark](https://github.com/remarkjs/awesome-remark) - Curated list of awesome remark resources
 - [billyjov/awesome-nx](https://github.com/billyjov/awesome-nx) - An awesome list that curates the best Nrwl Nx tools, tutorials, articles and more.
 - [stateful/awesome-vscode-extension-utils](https://github.com/stateful/awesome-vscode-extension-utils) - 🎨   A curated list of delightful VSCode utilities to build awesome VSCode extensions and resources.
