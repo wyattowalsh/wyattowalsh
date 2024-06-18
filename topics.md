@@ -3124,6 +3124,7 @@
 
 ## others 
 
+- [zhanymkanov/fastapi-best-practices](https://github.com/zhanymkanov/fastapi-best-practices) - FastAPI Best Practices and Conventions we used at our startup
 - [akebifiky/remark-simple-plantuml](https://github.com/akebifiky/remark-simple-plantuml) - A simple plugin for remarkjs that converts PlantUML code written in Markdown to img tags.
 - [wataru-chocola/remark-extended-table](https://github.com/wataru-chocola/remark-extended-table) - remark plugin to support table syntax allowing colspan / rowspan
 - [kevin940726/remark-code-import](https://github.com/kevin940726/remark-code-import) - 📝 Populate code blocks from files
