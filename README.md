@@ -113,15 +113,13 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C327%20hrs%2036%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C331%20hrs%2032%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.2%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 4.6 MB Used in GitHub's Storage 
- > 
-> 🏆 129 Contributions in the Year 2024
  > 
 > 💼 Opted to Hire
  > 
@@ -154,14 +152,14 @@ Sunday                   641 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-MDX                      5 hrs 45 mins       ████████░░░░░░░░░░░░░░░░░   33.06 % 
-TypeScript               2 hrs 35 mins       ████░░░░░░░░░░░░░░░░░░░░░   14.88 % 
-Markdown                 2 hrs 17 mins       ███░░░░░░░░░░░░░░░░░░░░░░   13.11 % 
-sh                       1 hr 34 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   09.07 % 
-SCSS                     1 hr 9 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   06.63 % 
+MDX                      7 hrs 30 mins       █████████░░░░░░░░░░░░░░░░   36.94 % 
+Markdown                 3 hrs 25 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.86 % 
+TypeScript               2 hrs 26 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.03 % 
+sh                       1 hr 29 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   07.39 % 
+Other                    1 hr 19 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   06.53 % 
 
 💻 Operating System: 
-Mac                      17 hrs 26 mins      █████████████████████████   100.00 % 
+Mac                      20 hrs 18 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -181,7 +179,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 17/06/2024 18:38:35 UTC
+ Last Updated on 18/06/2024 18:39:01 UTC
 <!--END_SECTION:waka-->
 
     
