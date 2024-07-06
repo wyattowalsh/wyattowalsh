@@ -1085,6 +1085,7 @@
 
 ## Python 
 
+- [siyuyuan/evoagent](https://github.com/siyuyuan/evoagent) - Resources for our paper: "EvoAgent: Towards Automatic Multi-Agent Generation via Evolutionary Algorithms"
 - [AI4WA/Docs2KG](https://github.com/AI4WA/Docs2KG) - Docs2KG: Unified Knowledge Graph Construction from Heterogeneous Documents Assisted by Large Language Models
 - [microsoft/graphrag](https://github.com/microsoft/graphrag) - A modular graph-based Retrieval-Augmented Generation (RAG) system
 - [Azure-Samples/graphrag-accelerator](https://github.com/Azure-Samples/graphrag-accelerator) - One-click deploy of a Knowledge Graph powered RAG (GraphRAG) in Azure
