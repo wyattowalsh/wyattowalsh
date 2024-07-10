@@ -331,6 +331,7 @@
 
 ## JavaScript 
 
+- [langchain-ai/langserve](https://github.com/langchain-ai/langserve) - LangServe 🦜️🏓
 - [akebifiky/remark-simple-plantuml](https://github.com/akebifiky/remark-simple-plantuml) - A simple plugin for remarkjs that converts PlantUML code written in Markdown to img tags.
 - [zhaopengme/vscode-fileheader](https://github.com/zhaopengme/vscode-fileheader) - vscode-fileheader
 - [mdx-js/mdx-analyzer](https://github.com/mdx-js/mdx-analyzer) - MDX extension for Visual Studio Code
@@ -380,7 +381,6 @@
 - [FortAwesome/react-native-fontawesome](https://github.com/FortAwesome/react-native-fontawesome) - Official React Native component for Font Awesome 5
 - [jondot/awesome-react-native](https://github.com/jondot/awesome-react-native) - Awesome React Native components, news, tools, and learning material!
 - [11ty/eleventy](https://github.com/11ty/eleventy) - A simpler site generator. Transforms a directory of templates (of varying types) into HTML.
-- [nikitavoloboev/knowledge](https://github.com/nikitavoloboev/knowledge) - Everything I know
 - [react-syntax-highlighter/react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) - syntax highlighting component for react with prismjs or highlightjs ast using inline styles
 - [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
 - [remcohaszing/remark-mdx-code-meta](https://github.com/remcohaszing/remark-mdx-code-meta) - A remark MDX plugin for using markdown code block metadata
@@ -685,7 +685,7 @@
 - [amazon-science/auto-cot](https://github.com/amazon-science/auto-cot) - Official implementation for "Automatic Chain of Thought Prompting in Large Language Models" (stay tuned & more will be updated)
 - [dylanhogg/llmgraph](https://github.com/dylanhogg/llmgraph) - Create knowledge graphs with LLMs
 - [King-s-Knowledge-Graph-Lab/OntoChat](https://github.com/King-s-Knowledge-Graph-Lab/OntoChat) - A LLM-assisted system for conversational ontology engineering
-- [neo4j-labs/llm-graph-builder](https://github.com/neo4j-labs/llm-graph-builder) - Neo4j graph construction from unstructured data
+- [neo4j-labs/llm-graph-builder](https://github.com/neo4j-labs/llm-graph-builder) - Neo4j graph construction from unstructured data using LLMs
 - [whylabs/whylogs](https://github.com/whylabs/whylogs) - An open-source data logging library for machine learning models and data pipelines. 📚 Provides visibility into data quality & model performance over time. 🛡️ Supports privacy-preserving data collectio
 - [whylabs/langkit](https://github.com/whylabs/langkit) - 🔍 LangKit: An open-source toolkit for monitoring Large Language Models (LLMs). 📚 Extracts signals from prompts & responses, ensuring safety & security. 🛡️ Features include text quality, relevance metr
 - [Arize-ai/phoenix](https://github.com/Arize-ai/phoenix) - AI Observability & Evaluation
@@ -863,6 +863,7 @@
 - [john-rocky/CoreML-Models](https://github.com/john-rocky/CoreML-Models) - Converted CoreML Model Zoo.
 - [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) - A curated list of awesome Docusaurus resources.
 - [CollabCodeTech/backend-challenges](https://github.com/CollabCodeTech/backend-challenges) - A public list of open-source challenges from jobs around the world
+- [nikitavoloboev/wiki](https://github.com/nikitavoloboev/wiki) - Everything I know
 - [sorrycc/awesome-javascript](https://github.com/sorrycc/awesome-javascript) - 🐢 A collection of awesome browser-side  JavaScript libraries, resources and shiny things.
 - [rehypejs/awesome-rehype](https://github.com/rehypejs/awesome-rehype) - Curated list of awesome rehype resources
 - [joshbuchea/HEAD](https://github.com/joshbuchea/HEAD) - A simple guide to HTML &lt;head&gt; elements
@@ -1085,6 +1086,7 @@
 
 ## Python 
 
+- [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) - 🔥🕷️ Crawl4AI: Open-source LLM Friendly Web Crawler & Scrapper
 - [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
 - [siyuyuan/evoagent](https://github.com/siyuyuan/evoagent) - Resources for our paper: "EvoAgent: Towards Automatic Multi-Agent Generation via Evolutionary Algorithms"
 - [AI4WA/Docs2KG](https://github.com/AI4WA/Docs2KG) - Docs2KG: Unified Knowledge Graph Construction from Heterogeneous Documents Assisted by Large Language Models
