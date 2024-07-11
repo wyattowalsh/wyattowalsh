@@ -72,6 +72,7 @@
 - [emoji](#emoji)
 - [es6](#es6)
 - [ethereum](#ethereum)
+- [express](#express)
 - [finance](#finance)
 - [firebase](#firebase)
 - [firefox](#firefox)
@@ -242,6 +243,7 @@
 
 ## ai 
 
+- [rafalzawadzki/spellbook-forge](https://github.com/rafalzawadzki/spellbook-forge) - ✨ Make your LLM prompts executable and version controlled. ✨
 - [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
 - [guardrails-ai/guardrails](https://github.com/guardrails-ai/guardrails) - Adding guardrails to large language models.
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - GPT based autonomous agent that does online comprehensive research on any given topic
@@ -378,6 +380,8 @@
 
 ## api 
 
+- [msoedov/langcorn](https://github.com/msoedov/langcorn) - ⛓️ Serving LangChain LLM apps and agents automagically with FastApi. LLMops
+- [ShishirPatil/gorilla](https://github.com/ShishirPatil/gorilla) - Gorilla: An API store for LLMs
 - [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [QuivrHQ/quivr](https://github.com/QuivrHQ/quivr) - Open-source RAG Framework for building GenAI Second Brains 🧠  Build productivity assistant (RAG) ⚡️🤖 Chat with your docs (PDF, CSV, ...)  & apps using Langchain, GPT 3.5 / 4 turbo, Private, Anthropic,
@@ -822,6 +826,9 @@
 
 ## chatgpt 
 
+- [mme/langforge](https://github.com/mme/langforge) - A Toolkit for Creating and Deploying LangChain Apps
+- [rafalzawadzki/spellbook-forge](https://github.com/rafalzawadzki/spellbook-forge) - ✨ Make your LLM prompts executable and version controlled. ✨
+- [ShishirPatil/gorilla](https://github.com/ShishirPatil/gorilla) - Gorilla: An API store for LLMs
 - [dylanhogg/llmgraph](https://github.com/dylanhogg/llmgraph) - Create knowledge graphs with LLMs
 - [RManLuo/Awesome-LLM-KG](https://github.com/RManLuo/Awesome-LLM-KG) - Awesome papers about unifying LLMs and KGs
 - [homanp/langchain-ui](https://github.com/homanp/langchain-ui) - 🧬 The open source chat-ai toolkit
@@ -863,6 +870,7 @@
 
 ## chatgpt-api 
 
+- [rafalzawadzki/spellbook-forge](https://github.com/rafalzawadzki/spellbook-forge) - ✨ Make your LLM prompts executable and version controlled. ✨
 - [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [OpenMindClub/awesome-chatgpt](https://github.com/OpenMindClub/awesome-chatgpt) - ⚡ Everything about ChatGPT
 - [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) - Semantic cache for LLMs. Fully integrated with LangChain and llama_index.
@@ -1454,6 +1462,7 @@
 
 ## deployment 
 
+- [mme/langforge](https://github.com/mme/langforge) - A Toolkit for Creating and Deploying LangChain Apps
 - [langchain-ai/langserve](https://github.com/langchain-ai/langserve) - LangServe 🦜️🏓
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [spheronFdn/argo-react](https://github.com/spheronFdn/argo-react) - :point_up: One-click deployment service on the top of Arweave.
@@ -1676,6 +1685,10 @@
 - [blockchain-etl/ethereum-etl](https://github.com/blockchain-etl/ethereum-etl) - Python scripts for ETL (extract, transform and load) jobs for Ethereum blocks, transactions, ERC20 / ERC721 tokens, transfers, receipts, logs, contracts, internal transactions. Data is available in Go
 - [openblockchains/awesome-blockchains](https://github.com/openblockchains/awesome-blockchains) - A collection about awesome blockchains - open distributed public databases w/ crypto hashes incl. git ;-).  Blockchains are the new tulips :tulip::tulip::tulip:. Distributed is the new centralized.
 
+## express 
+
+- [rafalzawadzki/spellbook-forge](https://github.com/rafalzawadzki/spellbook-forge) - ✨ Make your LLM prompts executable and version controlled. ✨
+
 ## finance 
 
 - [AI4Finance-Foundation/FinRL-Meta](https://github.com/AI4Finance-Foundation/FinRL-Meta) - FinRL­-Meta: Dynamic datasets and market environments for FinRL.
@@ -1830,7 +1843,7 @@
 - [github/vscode-github-actions](https://github.com/github/vscode-github-actions) - GitHub Actions extension for VS Code
 - [lostintangent/gistpad](https://github.com/lostintangent/gistpad) - VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists
 - [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
-- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://star-history.com
 - [antonkomarev/github-profile-views-counter](https://github.com/antonkomarev/github-profile-views-counter) - It counts how many times your GitHub profile has been viewed. Free cloud micro-service.
 - [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
@@ -1862,7 +1875,7 @@
 
 ## github-api 
 
-- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [rzashakeri/beautify-github-profile](https://github.com/rzashakeri/beautify-github-profile) - This repository will assist you in creating a more beautiful and appealing github profile, and you will have access to a comprehensive range of tools and tutorials for beautifying your github profile.
 - [PyGithub/PyGithub](https://github.com/PyGithub/PyGithub) - Typed interactions with the GitHub API v3
 - [lowlighter/metrics](https://github.com/lowlighter/metrics) - 📊 An infographics generator with 30+ plugins and 300+ options to display stats about your GitHub account and render them as SVG, Markdown, PDF or JSON!
@@ -1923,7 +1936,7 @@
 - [graphql-python/gql](https://github.com/graphql-python/gql) - A GraphQL client in Python
 - [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
 - [Novvum/graphql-birdseye](https://github.com/Novvum/graphql-birdseye) - View any GraphQL schema as a dynamic and interactive graph. 🦅
-- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and Visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
+- [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and visualize the network graph of your GitHub repositories, followers, stargazers, and forks (using GraphQL and D3).
 - [Kong/insomnia](https://github.com/Kong/insomnia) - The open-source, cross-platform API client for GraphQL, REST, WebSockets, SSE and gRPC. With Cloud, Local and Git storage.
 - [glideapps/quicktype](https://github.com/glideapps/quicktype) - Generate types and converters from JSON, Schema, and GraphQL
 - [graphql/graphql-js](https://github.com/graphql/graphql-js) - A reference implementation of GraphQL for JavaScript
@@ -2480,6 +2493,7 @@
 
 ## learning 
 
+- [KnowledgeCanvas/knowledge](https://github.com/KnowledgeCanvas/knowledge) - Knowledge is a tool for saving, searching, accessing, exploring and chatting with all of your favorite websites, documents and files.
 - [cloudcommunity/Free-Certifications](https://github.com/cloudcommunity/Free-Certifications) - A curated list of free courses & certifications.
 - [processing/p5.js](https://github.com/processing/p5.js) - p5.js is a client-side JS platform that empowers artists, designers, students, and anyone to learn to code and express themselves creatively on the web. It is based on the core principles of Processin
 - [Bogdan-Lyashenko/js-code-to-svg-flowchart](https://github.com/Bogdan-Lyashenko/js-code-to-svg-flowchart) - js2flowchart - a visualization library to convert any JavaScript code into beautiful SVG flowchart. Learn other’s code. Design your code. Refactor code. Document code. Explain code.
@@ -2518,6 +2532,10 @@
 
 ## llm 
 
+- [KnowledgeCanvas/knowledge](https://github.com/KnowledgeCanvas/knowledge) - Knowledge is a tool for saving, searching, accessing, exploring and chatting with all of your favorite websites, documents and files.
+- [ju-bezdek/langchain-decorators](https://github.com/ju-bezdek/langchain-decorators) - syntactic sugar 🍭 for langchain
+- [msoedov/langcorn](https://github.com/msoedov/langcorn) - ⛓️ Serving LangChain LLM apps and agents automagically with FastApi. LLMops
+- [ShishirPatil/gorilla](https://github.com/ShishirPatil/gorilla) - Gorilla: An API store for LLMs
 - [langchain-ai/langserve](https://github.com/langchain-ai/langserve) - LangServe 🦜️🏓
 - [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
 - [protectai/rebuff](https://github.com/protectai/rebuff) - LLM Prompt Injection Detector
@@ -3180,6 +3198,12 @@
 
 ## others 
 
+- [BuilderIO/gpt-crawler](https://github.com/BuilderIO/gpt-crawler) - Crawl a site to generate knowledge files to create your own custom GPT from a URL
+- [nilooy/flowgpt](https://github.com/nilooy/flowgpt) - Generate diagram with AI
+- [mmz-001/knowledge_gpt](https://github.com/mmz-001/knowledge_gpt) - Accurate answers and instant citations for your documents.
+- [jina-ai/thinkgpt](https://github.com/jina-ai/thinkgpt) - Agent techniques to augment your LLM and push it beyong its limits
+- [freddyaboulton/gradio-tools](https://github.com/freddyaboulton/gradio-tools) - 
+- [amosjyng/langchain-visualizer](https://github.com/amosjyng/langchain-visualizer) - Visualization and debugging tool for LangChain workflows
 - [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) - 🔥🕷️ Crawl4AI: Open-source LLM Friendly Web Crawler & Scrapper
 - [Dhravya/markdowner](https://github.com/Dhravya/markdowner) - A fast tool to convert any website into LLM-ready markdown data. Built by https://supermemory.ai
 - [act-org/docusaurus-plugin-panzoom](https://github.com/act-org/docusaurus-plugin-panzoom) - 
@@ -4340,6 +4364,7 @@
 
 ## python3 
 
+- [ajndkr/lanarky](https://github.com/ajndkr/lanarky) - The web framework for building LLM microservices
 - [cdgriffith/Box](https://github.com/cdgriffith/Box) - Python dictionaries with advanced dot notation access
 - [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [openapi-generators/openapi-python-client](https://github.com/openapi-generators/openapi-python-client) - Generate modern Python clients from OpenAPI
@@ -4648,6 +4673,7 @@
 
 ## rest-api 
 
+- [msoedov/langcorn](https://github.com/msoedov/langcorn) - ⛓️ Serving LangChain LLM apps and agents automagically with FastApi. LLMops
 - [openapi-generators/openapi-python-client](https://github.com/openapi-generators/openapi-python-client) - Generate modern Python clients from OpenAPI
 - [Kong/insomnia](https://github.com/Kong/insomnia) - The open-source, cross-platform API client for GraphQL, REST, WebSockets, SSE and gRPC. With Cloud, Local and Git storage.
 - [zachspiel/bobs-burgers-api](https://github.com/zachspiel/bobs-burgers-api) - The Bob's Burgers API  🍔
@@ -5174,6 +5200,7 @@
 
 ## web 
 
+- [ajndkr/lanarky](https://github.com/ajndkr/lanarky) - The web framework for building LLM microservices
 - [lovasoa/SQLpage](https://github.com/lovasoa/SQLpage) - SQL-only webapp builder, empowering data analysts to build websites and applications quickly
 - [nextapps-de/flexsearch](https://github.com/nextapps-de/flexsearch) - Next-Generation full text search library for Browser and Node.js
 - [stav/wgrep](https://github.com/stav/wgrep) - Web grep: search all rendered resources used by a URI
