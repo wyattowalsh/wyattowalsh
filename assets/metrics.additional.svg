@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>BuilderIO/gpt-crawler</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Crawl a site to generate knowledge files to create your own custom GPT from a URL</div>
@@ -231,7 +231,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">223</span>
+                                <span class="value">222</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 28
                                 <div class="bottom">June</div>
