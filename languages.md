@@ -1149,7 +1149,7 @@
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [bigscience-workshop/promptsource](https://github.com/bigscience-workshop/promptsource) - Toolkit for creating, sharing and using natural language prompts.
 - [Agenta-AI/agenta](https://github.com/Agenta-AI/agenta) - The all-in-one LLM developer platform: prompt management, evaluation, human feedback, and deployment all in one place.
-- [joaomdmoura/crewAI](https://github.com/joaomdmoura/crewAI) - Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.
+- [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) - Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.
 - [lastmile-ai/aiconfig](https://github.com/lastmile-ai/aiconfig) - AIConfig is a config-based framework to build generative AI applications.
 - [stoyan-stoyanov/llmflows](https://github.com/stoyan-stoyanov/llmflows) - LLMFlows - Simple, Explicit and Transparent LLM Apps
 - [mozman/svgwrite](https://github.com/mozman/svgwrite) - Python Package to write SVG files (UNMAINTAINED)
