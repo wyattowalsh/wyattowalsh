@@ -780,7 +780,7 @@
 - [ethereumbook/ethereumbook](https://github.com/ethereumbook/ethereumbook) - Mastering Ethereum, by Andreas M. Antonopoulos, Gavin Wood
 - [sardinois/eth_graph](https://github.com/sardinois/eth_graph) - Sync ethereum blockchain to Neo4J
 - [smartcontractkit/full-blockchain-solidity-course-py](https://github.com/smartcontractkit/full-blockchain-solidity-course-py) - Ultimate Solidity, Blockchain, and Smart Contract - Beginner to Expert Full Course | Python Edition
-- [defiprime/defiprime](https://github.com/defiprime/defiprime) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
+- [defiprime/defiprime1](https://github.com/defiprime/defiprime1) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
 - [ceramicstudio/js-3id](https://github.com/ceramicstudio/js-3id) - Authentication system for Ceramic apps that works with blockchain wallets.
 - [machinomy/awesome-non-financial-blockchain](https://github.com/machinomy/awesome-non-financial-blockchain) - Curated list of projects that build non-financial applications of blockchain
 - [blockchain-etl/public-datasets](https://github.com/blockchain-etl/public-datasets) - The list of public blockchain datasets in BigQuery
@@ -1194,7 +1194,7 @@
 - [RubixML/ML](https://github.com/RubixML/ML) - A high-level machine learning and deep learning library for the PHP language.
 - [gee-community/geemap](https://github.com/gee-community/geemap) - A Python package for interactive geospatial analysis and visualization with Google Earth Engine.
 - [kantord/just-dashboard](https://github.com/kantord/just-dashboard) - :bar_chart: :clipboard: Dashboards using YAML or JSON files
-- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evaluate and monitor ML models from validation to production. Join our Discord: https://discord.com/invite/xZjKRaNp8b
+- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evidently is ​​an open-source ML and LLM observability framework. Evaluate, test, and monitor any AI-powered system or data pipeline. From tabular data to Gen AI. 100+ metrics.
 - [microsoft/FLAML](https://github.com/microsoft/FLAML) - A fast library for AutoML and tuning. Join our Discord: https://discord.gg/Cppx2vSPVP.
 - [tirthajyoti/Papers-Literature-ML-DL-RL-AI](https://github.com/tirthajyoti/Papers-Literature-ML-DL-RL-AI) - Highly cited and useful papers related to machine learning, deep learning, AI, game theory, reinforcement learning
 - [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
@@ -1666,7 +1666,7 @@
 - [sardinois/eth_graph](https://github.com/sardinois/eth_graph) - Sync ethereum blockchain to Neo4J
 - [smartcontractkit/full-blockchain-solidity-course-py](https://github.com/smartcontractkit/full-blockchain-solidity-course-py) - Ultimate Solidity, Blockchain, and Smart Contract - Beginner to Expert Full Course | Python Edition
 - [gitcoinco/web](https://github.com/gitcoinco/web) - Grow Open Source
-- [defiprime/defiprime](https://github.com/defiprime/defiprime) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
+- [defiprime/defiprime1](https://github.com/defiprime/defiprime1) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
 - [l2beat/l2beat](https://github.com/l2beat/l2beat) - L2BEAT is an analytics and research website about Ethereum layer two (L2) scaling solutions.
 - [0xTracker/0x-tracker-api](https://github.com/0xTracker/0x-tracker-api) - NodeJS API built for 0x Tracker which exposes 0x protocol data and metrics for consumption by the 0x Tracker Client application.
 - [blockchain-etl/public-datasets](https://github.com/blockchain-etl/public-datasets) - The list of public blockchain datasets in BigQuery
@@ -1703,7 +1703,7 @@
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [AI4Finance-Foundation/FinRL](https://github.com/AI4Finance-Foundation/FinRL) - FinRL:  Financial Reinforcement Learning. 🔥
 - [kernc/backtesting.py](https://github.com/kernc/backtesting.py) - :mag_right: :chart_with_upwards_trend: :snake: :moneybag:  Backtest trading strategies in Python.
-- [defiprime/defiprime](https://github.com/defiprime/defiprime) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
+- [defiprime/defiprime1](https://github.com/defiprime/defiprime1) - All things #DeFi - trustless and transparent financial products built on top of the blockchain.
 - [Boulder-Investment-Technologies/lppls](https://github.com/Boulder-Investment-Technologies/lppls) - Library for fitting the LPPLS model to data.
 - [dbrojas/optlib](https://github.com/dbrojas/optlib) - A library for financial options pricing written in Python.
 - [domokane/FinancePy](https://github.com/domokane/FinancePy) - A Python Finance Library that focuses on the pricing and risk-management of Financial Derivatives, including fixed-income, equity, FX and credit derivatives.
@@ -2048,7 +2048,7 @@
 - [open-source-ideas/ideas](https://github.com/open-source-ideas/ideas) - 💡 Looking for inspiration for your next open source project? Or perhaps you've got a brilliant idea you can't wait to share with others? Open Source Ideas is a community built specifically for this! 👋
 - [react-icons/react-icons](https://github.com/react-icons/react-icons) - svg react icons of popular icon packs
 - [rahuldkjain/github-profile-readme-generator](https://github.com/rahuldkjain/github-profile-readme-generator) - 🚀 Generate GitHub profile README easily with the latest add-ons like visitors count, GitHub stats, etc using minimal UI.
-- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evaluate and monitor ML models from validation to production. Join our Discord: https://discord.com/invite/xZjKRaNp8b
+- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evidently is ​​an open-source ML and LLM observability framework. Evaluate, test, and monitor any AI-powered system or data pipeline. From tabular data to Gen AI. 100+ metrics.
 - [matplotlib/matplotlib](https://github.com/matplotlib/matplotlib) - matplotlib: plotting with Python
 - [dar5hak/generator-awesome-list](https://github.com/dar5hak/generator-awesome-list) - :sunglasses: Yeoman generator for GitHub awesome lists
 - [monicahq/monica](https://github.com/monicahq/monica) - Personal CRM. Remember everything about your friends, family and business relationships.
@@ -2425,7 +2425,7 @@
 - [microsoft/tensorwatch](https://github.com/microsoft/tensorwatch) - Debugging, monitoring and visualization for Python Machine Learning and Data Science
 - [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes) - The Go kernel for Jupyter notebooks and nteract.
 - [gee-community/geemap](https://github.com/gee-community/geemap) - A Python package for interactive geospatial analysis and visualization with Google Earth Engine.
-- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evaluate and monitor ML models from validation to production. Join our Discord: https://discord.com/invite/xZjKRaNp8b
+- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evidently is ​​an open-source ML and LLM observability framework. Evaluate, test, and monitor any AI-powered system or data pipeline. From tabular data to Gen AI. 100+ metrics.
 - [microsoft/FLAML](https://github.com/microsoft/FLAML) - A fast library for AutoML and tuning. Join our Discord: https://discord.gg/Cppx2vSPVP.
 - [yunabe/lgo](https://github.com/yunabe/lgo) - Interactive Go programming with Jupyter
 - [jupyterlab/jupyterlab-desktop](https://github.com/jupyterlab/jupyterlab-desktop) - JupyterLab desktop application, based on Electron.
@@ -2587,6 +2587,7 @@
 - [geekan/MetaGPT](https://github.com/geekan/MetaGPT) - 🌟 The Multi-Agent Framework: First AI Software Company, Towards Natural Language Programming
 - [microsoft/LMOps](https://github.com/microsoft/LMOps) - General technology for enabling AI capabilities w/ LLMs and MLLMs
 - [nhaouari/obsidian-textgenerator-plugin](https://github.com/nhaouari/obsidian-textgenerator-plugin) - Text Generator is a versatile plugin for Obsidian that allows you to generate text content using various AI providers, including OpenAI, Anthropic, Google and local models.
+- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evidently is ​​an open-source ML and LLM observability framework. Evaluate, test, and monitor any AI-powered system or data pipeline. From tabular data to Gen AI. 100+ metrics.
 - [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [haifengl/smile](https://github.com/haifengl/smile) - Statistical Machine Intelligence & Learning Engine
 
@@ -2679,7 +2680,7 @@
 - [makcedward/nlpaug](https://github.com/makcedward/nlpaug) - Data augmentation for NLP
 - [mljar/mljar-supervised](https://github.com/mljar/mljar-supervised) - Python package for AutoML on Tabular Data with Feature Engineering, Hyper-Parameters Tuning, Explanations and Automatic Documentation
 - [RubixML/ML](https://github.com/RubixML/ML) - A high-level machine learning and deep learning library for the PHP language.
-- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evaluate and monitor ML models from validation to production. Join our Discord: https://discord.com/invite/xZjKRaNp8b
+- [evidentlyai/evidently](https://github.com/evidentlyai/evidently) - Evidently is ​​an open-source ML and LLM observability framework. Evaluate, test, and monitor any AI-powered system or data pipeline. From tabular data to Gen AI. 100+ metrics.
 - [microsoft/FLAML](https://github.com/microsoft/FLAML) - A fast library for AutoML and tuning. Join our Discord: https://discord.gg/Cppx2vSPVP.
 - [tirthajyoti/Papers-Literature-ML-DL-RL-AI](https://github.com/tirthajyoti/Papers-Literature-ML-DL-RL-AI) - Highly cited and useful papers related to machine learning, deep learning, AI, game theory, reinforcement learning
 - [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
