@@ -102,6 +102,7 @@
 - [hacktoberfest](#hacktoberfest)
 - [homebrew](#homebrew)
 - [html](#html)
+- [html-css-javascript](#html-css-javascript)
 - [html5](#html5)
 - [http](#http)
 - [icon-font](#icon-font)
@@ -2149,6 +2150,11 @@
 - [ml-tooling/best-of-web-python](https://github.com/ml-tooling/best-of-web-python) - 🏆  A ranked list of awesome python libraries for web development. Updated weekly.
 - [jeffreytse/jekyll-spaceship](https://github.com/jeffreytse/jekyll-spaceship) - 🚀 A Jekyll plugin to provide powerful supports for table, mathjax, plantuml, mermaid, emoji, video, audio, youtube, vimeo, dailymotion, soundcloud, spotify, etc.
 
+## html-css-javascript 
+
+- [ShoroukAziz/notion_widgets](https://github.com/ShoroukAziz/notion_widgets) - A set of HTML widgets that could be embedded into  Notion.so  https://www.notion.so/ pages. For more see https://blog.shorouk.dev/notion-widgets-gallery/
+- [obsidian-html/obsidian-html](https://github.com/obsidian-html/obsidian-html) - Python code to convert Obsidian notes to proper markdown and optionally to create an html site too.
+
 ## html5 
 
 - [timqian/chart.xkcd](https://github.com/timqian/chart.xkcd) - xkcd styled chart lib
@@ -3330,7 +3336,6 @@
 - [notionblog/NotionThemes](https://github.com/notionblog/NotionThemes) - Make your Notion pretty with custom themes
 - [mayooear/notion-chat-langchain](https://github.com/mayooear/notion-chat-langchain) - A notion chatbot for your knowledge base built with langchain, typescript/javascript and pinecone.
 - [stevedsun/notion-graph-view](https://github.com/stevedsun/notion-graph-view) - Generate a roam research like network graph view from your Notion pages.
-- [ShoroukAziz/notion_widgets](https://github.com/ShoroukAziz/notion_widgets) - A set of HTML widgets that could be embedded into  Notion.so  https://www.notion.so/ pages. For more see https://blog.shorouk.dev/notion-widgets-gallery/
 - [jamalex/notion-py](https://github.com/jamalex/notion-py) - Unofficial Python API client for Notion.so
 - [camenduru/stable-video-diffusion-colab](https://github.com/camenduru/stable-video-diffusion-colab) - 
 - [Stability-AI/generative-models](https://github.com/Stability-AI/generative-models) - Generative Models by Stability AI
@@ -3486,7 +3491,7 @@
 - [reactjs/react-transition-group](https://github.com/reactjs/react-transition-group) - An easy way to perform animations when a React component enters or leaves the DOM
 - [plaid/plaid-python](https://github.com/plaid/plaid-python) - Python bindings for Plaid
 - [plaid/pattern](https://github.com/plaid/pattern) - An example end-to-end Plaid integration to create items and fetch transaction data
-- [plaid/tiny-quickstart](https://github.com/plaid/tiny-quickstart) - A minimal quickstart demonstrating Plaid Link, Balances, and OAuth
+- [plaid/tiny-quickstart](https://github.com/plaid/tiny-quickstart) - A minimal quickstart demonstrating Plaid Link, Balance, and OAuth. This quickstart supports JavaScript, Typescript, Next.js, React, and React Native
 - [blinktrade/bitex](https://github.com/blinktrade/bitex) - BlinkTrade - Open Source Bitcoin Exchange
 - [thrasher-/gocryptotrader](https://github.com/thrasher-/gocryptotrader) - A cryptocurrency trading bot and framework supporting multiple exchanges written in Golang.
 - [viabtc/viabtc_exchange_server](https://github.com/viabtc/viabtc_exchange_server) - A trading engine with high-speed performance and real-time notification
