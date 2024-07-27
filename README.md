@@ -113,13 +113,15 @@ When not behind the keyboard, you can catch me out mountain biking, playing a di
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-1%2C413%20hrs%206%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-1%2C415%20hrs%2019%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-17.2%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 4.6 MB Used in GitHub's Storage 
+ > 
+> 🏆 0 Contributions in the Year 2024
  > 
 > 💼 Opted to Hire
  > 
@@ -152,14 +154,14 @@ Sunday                   647 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-sh                       5 hrs 17 mins       █████████░░░░░░░░░░░░░░░░   34.87 % 
-TypeScript               3 hrs 25 mins       ██████░░░░░░░░░░░░░░░░░░░   22.54 % 
-Python                   1 hr 34 mins        ███░░░░░░░░░░░░░░░░░░░░░░   10.41 % 
-Markdown                 57 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   06.35 % 
-JSON                     45 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   05.01 % 
+sh                       3 hrs 52 mins       ████████░░░░░░░░░░░░░░░░░   31.98 % 
+TypeScript               3 hrs 25 mins       ███████░░░░░░░░░░░░░░░░░░   28.22 % 
+Markdown                 56 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   07.79 % 
+JSON                     39 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   05.37 % 
+YAML                     33 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   04.60 % 
 
 💻 Operating System: 
-Mac                      15 hrs 10 mins      █████████████████████████   100.00 % 
+Mac                      12 hrs 6 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -179,7 +181,7 @@ Swift                    1 repo              █░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 26/07/2024 18:38:01 UTC
+ Last Updated on 27/07/2024 18:38:37 UTC
 <!--END_SECTION:waka-->
 
     
