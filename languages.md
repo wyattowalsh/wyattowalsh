@@ -1354,7 +1354,7 @@
 - [hummingbot/hummingbot](https://github.com/hummingbot/hummingbot) - Open source software that helps you create and deploy high-frequency crypto trading bots
 - [nick-dolan/jesse-examples](https://github.com/nick-dolan/jesse-examples) - Examples for Jesse's trading framework.
 - [jesse-ai/example-strategies](https://github.com/jesse-ai/example-strategies) - Example trading strategies to get you started with Jesse
-- [supabase-community/supabase-py](https://github.com/supabase-community/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
+- [supabase/supabase-py](https://github.com/supabase/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
 - [ApeWorX/walletconnect-py](https://github.com/ApeWorX/walletconnect-py) - WalletConnect implementation in Python
 - [ApeWorX/ape-polygon](https://github.com/ApeWorX/ape-polygon) - Polygon ecosystem plugin for the Ape Framework
 - [ApeWorX/project-template](https://github.com/ApeWorX/project-template) - Plugin project template for the Ape Framework
