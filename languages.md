@@ -901,7 +901,7 @@
 - [gianni-dalerta/awesome-nft](https://github.com/gianni-dalerta/awesome-nft) - A curated list of awesome Non Fungible Token (NFT, ERC721) frameworks, libraries and software
 - [rich-97/scss-snippets](https://github.com/rich-97/scss-snippets) - Snippets of scss for atom the text editor.
 - [npostulart/SCSS-Snippets](https://github.com/npostulart/SCSS-Snippets) - Snippets for use with SCSS
-- [gweicz/defi-toolkit](https://github.com/gweicz/defi-toolkit) - Curated list of best tools for user of Ethereum (DeFi) ecosystem
+- [gweicz/defi-toolkit](https://github.com/gweicz/defi-toolkit) - [DEPRECATED] Curated list of best tools for user of Ethereum (DeFi) ecosystem
 - [defi-defense-dao/defi-risk-tools-list](https://github.com/defi-defense-dao/defi-risk-tools-list) - A guide to available tools and projects for analyzing and managing risk within DeFi.
 - [dzharii/awesome-typescript](https://github.com/dzharii/awesome-typescript) - A collection of awesome TypeScript resources for client-side and server-side development. Write your awesome JavaScript in TypeScript
 - [sindresorhus/awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) - :zap: Delightful Node.js packages and resources
@@ -1146,7 +1146,7 @@
 - [stjordanis/betterprompt](https://github.com/stjordanis/betterprompt) - Test suite for LLM prompts
 - [BerriAI/litellm](https://github.com/BerriAI/litellm) - Call all LLM APIs using the OpenAI format. Use Bedrock, Azure, OpenAI, Cohere, Anthropic, Ollama, Sagemaker, HuggingFace, Replicate, Groq (100+ LLMs)
 - [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) - Semantic cache for LLMs. Fully integrated with LangChain and llama_index.
-- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an easy-to-use and flexible container orchestrator for running AI workloads in any cloud or data center.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A container orchestration engine that simplifies developing, training, and deploying AI models, as well as managing clusters on any cloud or data center.
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [comet-ml/comet-llm](https://github.com/comet-ml/comet-llm) - Log, Track, and Visualize your LLM Prompts and Chains
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
