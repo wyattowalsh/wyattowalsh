@@ -708,7 +708,7 @@
 
 - [adamiBs/vscode-terraform-live-graph](https://github.com/adamiBs/vscode-terraform-live-graph) - The Terraform Live Graph Extension for Visual Studio Code is a plugin that allows you to generate a live Terraform graph as you code.
 - [aws/aws-toolkit-vscode](https://github.com/aws/aws-toolkit-vscode) - Amazon Q, CodeCatalyst, Local Lambda debug, SAM/CFN syntax, ECS Terminal, AWS resources
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source orchestration engine for managing clusters and running containers in cloud and on-prem, built for AI engineers.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A lightweight alternative to Kubernetes for AI, simplifying container orchestration on any cloud or on-premises and accelerating AI development, training, and deployment.
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [idealo/image-super-resolution](https://github.com/idealo/image-super-resolution) - 🔎 Super-scale your images and run experiments with Residual Dense and Adversarial Networks.
 - [blockchain-etl/ethereum-etl](https://github.com/blockchain-etl/ethereum-etl) - Python scripts for ETL (extract, transform and load) jobs for Ethereum blocks, transactions, ERC20 / ERC721 tokens, transfers, receipts, logs, contracts, internal transactions. Data is available in Go
@@ -721,7 +721,7 @@
 
 - [adamiBs/vscode-terraform-live-graph](https://github.com/adamiBs/vscode-terraform-live-graph) - The Terraform Live Graph Extension for Visual Studio Code is a plugin that allows you to generate a live Terraform graph as you code.
 - [mtxr/vscode-sqltools](https://github.com/mtxr/vscode-sqltools) - Database management for VSCode
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source orchestration engine for managing clusters and running containers in cloud and on-prem, built for AI engineers.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A lightweight alternative to Kubernetes for AI, simplifying container orchestration on any cloud or on-premises and accelerating AI development, training, and deployment.
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [atulmy/oauth](https://github.com/atulmy/oauth) - 🔗  OAuth 2.0 implementation for various providers in one place.
 - [Azure/MachineLearningNotebooks](https://github.com/Azure/MachineLearningNotebooks) - Python notebooks with ML and deep learning examples with Azure Machine Learning Python SDK | Microsoft
@@ -2502,7 +2502,7 @@
 
 ## kubernetes 
 
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source orchestration engine for managing clusters and running containers in cloud and on-prem, built for AI engineers.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A lightweight alternative to Kubernetes for AI, simplifying container orchestration on any cloud or on-premises and accelerating AI development, training, and deployment.
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [pachyderm/pachyderm](https://github.com/pachyderm/pachyderm) - Data-Centric Pipelines and Data Versioning
 - [neo4j-contrib/neo4j-helm](https://github.com/neo4j-contrib/neo4j-helm) - Helm Charts for running Neo4j on Kubernetes [DEPRECATED]
@@ -2696,7 +2696,7 @@
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [pathwaycom/llm-app](https://github.com/pathwaycom/llm-app) - Dynamic RAG for enterprise. Ready to run with Docker,⚡in sync with Sharepoint, Google Drive, S3, Kafka, PostgreSQL, real-time data APIs, and more.
 - [whylabs/langkit](https://github.com/whylabs/langkit) - 🔍 LangKit: An open-source toolkit for monitoring Large Language Models (LLMs). 📚 Extracts signals from prompts & responses, ensuring safety & security. 🛡️ Features include text quality, relevance metr
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source orchestration engine for managing clusters and running containers in cloud and on-prem, built for AI engineers.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A lightweight alternative to Kubernetes for AI, simplifying container orchestration on any cloud or on-premises and accelerating AI development, training, and deployment.
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [bigscience-workshop/promptsource](https://github.com/bigscience-workshop/promptsource) - Toolkit for creating, sharing and using natural language prompts.
@@ -4238,7 +4238,7 @@
 - [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [pezzolabs/pezzo](https://github.com/pezzolabs/pezzo) - 🕹️ Open-source, developer-first LLMOps platform designed to streamline prompt design, version management, instant delivery, collaboration, troubleshooting, observability and more.
-- [dstackai/dstack](https://github.com/dstackai/dstack) - An open-source orchestration engine for managing clusters and running containers in cloud and on-prem, built for AI engineers.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - A lightweight alternative to Kubernetes for AI, simplifying container orchestration on any cloud or on-premises and accelerating AI development, training, and deployment.
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
 - [stoyan-stoyanov/llmflows](https://github.com/stoyan-stoyanov/llmflows) - LLMFlows - Simple, Explicit and Transparent LLM Apps
 - [KxSystems/pyq](https://github.com/KxSystems/pyq) - PyQ — Python for kdb+
