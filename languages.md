@@ -230,6 +230,7 @@
 
 ## HTML 
 
+- [LouisShark/chatgpt_system_prompt](https://github.com/LouisShark/chatgpt_system_prompt) - A collection of GPT system prompts and various prompt injection/leaking knowledge.
 - [kuafuai/DevOpsGPT](https://github.com/kuafuai/DevOpsGPT) - Multi agent system for AI-driven software development. Combine LLM with DevOps tools to convert natural language requirements into working software. Supports any development language and extends the e
 - [frutik/awesome-search](https://github.com/frutik/awesome-search) - Awesome Search - this is all about the (e-commerce, but not only) search and its awesomeness
 - [mark-when/markwhen](https://github.com/mark-when/markwhen) - Make a cascading timeline from markdown-like text. Supports simple American/European date styles, ISO8601, images, links, locations, and more.
@@ -688,6 +689,7 @@
 
 ## Jupyter Notebook 
 
+- [mshumer/gpt-prompt-engineer](https://github.com/mshumer/gpt-prompt-engineer) - 
 - [kvfrans/clipdraw](https://github.com/kvfrans/clipdraw) - code for CLIPDraw
 - [wispcarey/AutoKG](https://github.com/wispcarey/AutoKG) - Efficient Automated Knowledge Graph Generation for Large Language Models
 - [guidance-ai/guidance](https://github.com/guidance-ai/guidance) - A guidance language for controlling large language models.
@@ -835,6 +837,8 @@
 
 ## Others 
 
+- [0xeb/gpt-analyst](https://github.com/0xeb/gpt-analyst) - GPT-Analyst: A GPT for GPT analysis and reverse engineering
+- [ai-boost/awesome-prompts](https://github.com/ai-boost/awesome-prompts) - Curated list of chatgpt prompts from the top-rated GPTs in the GPTs Store. Prompt Engineering, prompt attack & prompt protect. Advanced Prompt Engineering papers.
 - [githubnext/copilot-workspace-user-manual](https://github.com/githubnext/copilot-workspace-user-manual) - 📖 The user manual for GitHub Copilot Workspace
 - [wds-seu/Knowledge-Graph-Publications](https://github.com/wds-seu/Knowledge-Graph-Publications) - Top-level Conference Publications on Knowledge Graph
 - [MobileLLM/Personal_LLM_Agents_Survey](https://github.com/MobileLLM/Personal_LLM_Agents_Survey) - Paper list for Personal LLM Agents
@@ -1116,6 +1120,7 @@
 
 ## Python 
 
+- [character-ai/prompt-poet](https://github.com/character-ai/prompt-poet) - Streamlines and simplifies prompt design for both developers and non-technical users with a low code approach.
 - [searxng/searxng](https://github.com/searxng/searxng) - SearXNG is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
 - [BachiLi/diffvg](https://github.com/BachiLi/diffvg) - Differentiable Vector Graphics Rasterization
 - [ximinng/PyTorch-SVGRender](https://github.com/ximinng/PyTorch-SVGRender) - SVG Differentiable Rendering: Generating vector graphics using neural networks. Support: text-to-SVG, Image-to-SVG, SVG Editing.
