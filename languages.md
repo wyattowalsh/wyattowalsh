@@ -336,6 +336,9 @@
 
 ## JavaScript 
 
+- [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
+- [Electric-Hydrogen/GPTBot](https://github.com/Electric-Hydrogen/GPTBot) - A fully serverless (AWS Lambda, API Gateway, DynamoDB) Slack bot with GPT-4 support and full conversation mode
+- [giosilvi/GPT-Prompter](https://github.com/giosilvi/GPT-Prompter) - Browser extension to get a fast prompt (of the selected text) for OpenAI`s GPT-3, GPT-4 & ChatGPT API . Available in the Chrome web store and Firefox browser add-ons
 - [felixhayashi/TW5-TiddlyMap](https://github.com/felixhayashi/TW5-TiddlyMap) - Map drawing and topic visualization for your wiki
 - [satellitecomponent/Neurite](https://github.com/satellitecomponent/Neurite) - Fractal Graph-of-Thought. Experimental Mind-Mapping for Ai-Agents, Web-Links, Notes, and Code.
 - [varunshenoy/GraphGPT](https://github.com/varunshenoy/GraphGPT) - Extrapolating knowledge graphs from unstructured text using GPT-3 🕵️‍♂️
@@ -689,6 +692,8 @@
 
 ## Jupyter Notebook 
 
+- [promptslab/Promptify](https://github.com/promptslab/Promptify) - Prompt Engineering | Prompt Versioning | Use GPT or other prompt based models to get structured output. Join our discord for Prompt-Engineering, LLMs and other latest research
+- [jmpaz/promptlib](https://github.com/jmpaz/promptlib) - A collection of prompts for use with GPT-4 via ChatGPT, OpenAI API w/ Gradio frontend & notebook
 - [mshumer/gpt-prompt-engineer](https://github.com/mshumer/gpt-prompt-engineer) - 
 - [kvfrans/clipdraw](https://github.com/kvfrans/clipdraw) - code for CLIPDraw
 - [wispcarey/AutoKG](https://github.com/wispcarey/AutoKG) - Efficient Automated Knowledge Graph Generation for Large Language Models
@@ -837,6 +842,8 @@
 
 ## Others 
 
+- [0xk1h0/ChatGPT_DAN](https://github.com/0xk1h0/ChatGPT_DAN) - ChatGPT DAN, Jailbreaks prompt
+- [radi-cho/awesome-gpt4](https://github.com/radi-cho/awesome-gpt4) - A curated list of prompts, tools, and resources regarding the GPT-4 language model.
 - [0xeb/gpt-analyst](https://github.com/0xeb/gpt-analyst) - GPT-Analyst: A GPT for GPT analysis and reverse engineering
 - [ai-boost/awesome-prompts](https://github.com/ai-boost/awesome-prompts) - Curated list of chatgpt prompts from the top-rated GPTs in the GPTs Store. Prompt Engineering, prompt attack & prompt protect. Advanced Prompt Engineering papers.
 - [githubnext/copilot-workspace-user-manual](https://github.com/githubnext/copilot-workspace-user-manual) - 📖 The user manual for GitHub Copilot Workspace
@@ -1120,6 +1127,18 @@
 
 ## Python 
 
+- [DataBassGit/AgentForge](https://github.com/DataBassGit/AgentForge) - Extensible AGI Framework
+- [LyzrCore/lyzr](https://github.com/LyzrCore/lyzr) - Lyzr SDKs help you to build all your favorite GenAI SaaS products as enterprise applications in minutes.
+- [YassKhazzan/openperplex_backend_os](https://github.com/YassKhazzan/openperplex_backend_os) - openperplex is an opensource AI search engine
+- [InternLM/lagent](https://github.com/InternLM/lagent) - A lightweight framework for building LLM-based agents
+- [MasterYip/ChatPaper2Xmind](https://github.com/MasterYip/ChatPaper2Xmind) - 论文XMind笔记生成工具，将论文pdf通过ChatGPT转换为带有图片和公式的简要XMind笔记，提高论文阅读效率。
+- [thunlp/UltraChat](https://github.com/thunlp/UltraChat) - Large-scale, Informative, and Diverse Multi-round Chat Data (and Models)
+- [kyegomez/tree-of-thoughts](https://github.com/kyegomez/tree-of-thoughts) - Plug in and Play Implementation of Tree of Thoughts: Deliberate Problem Solving with Large Language Models that Elevates Model Reasoning by atleast 70%
+- [mpoon/gpt-repository-loader](https://github.com/mpoon/gpt-repository-loader) - Convert code repos into an LLM prompt-friendly format. Mostly built by GPT-4.
+- [AbanteAI/mentat](https://github.com/AbanteAI/mentat) - Mentat - The AI Coding Assistant
+- [Eladlev/AutoPrompt](https://github.com/Eladlev/AutoPrompt) - A framework for prompt tuning using Intent-based Prompt Calibration
+- [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
+- [mem0ai/mem0](https://github.com/mem0ai/mem0) - The memory layer for Personalized AI
 - [character-ai/prompt-poet](https://github.com/character-ai/prompt-poet) - Streamlines and simplifies prompt design for both developers and non-technical users with a low code approach.
 - [searxng/searxng](https://github.com/searxng/searxng) - SearXNG is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
 - [BachiLi/diffvg](https://github.com/BachiLi/diffvg) - Differentiable Vector Graphics Rasterization
@@ -1197,7 +1216,7 @@
 - [graphql-python/gql](https://github.com/graphql-python/gql) - A GraphQL client in Python
 - [graspologic-org/graspologic](https://github.com/graspologic-org/graspologic) - Python package for graph statistics
 - [KRR-Oxford/DeepOnto](https://github.com/KRR-Oxford/DeepOnto) - A package for ontology engineering with deep learning and language models.
-- [tiangolo/typer](https://github.com/tiangolo/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
+- [fastapi/typer](https://github.com/fastapi/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [pytest-dev/pytest-mock](https://github.com/pytest-dev/pytest-mock) - Thin-wrapper around the mock package for easier use with pytest
 - [coleifer/sqlite-web](https://github.com/coleifer/sqlite-web) - Web-based SQLite database browser written in Python
 - [tiangolo/pydantic-sqlalchemy](https://github.com/tiangolo/pydantic-sqlalchemy) - Tools to convert SQLAlchemy models to Pydantic models
@@ -1902,6 +1921,7 @@
 
 ## TeX 
 
+- [CCCBora/auto-draft](https://github.com/CCCBora/auto-draft) - 基于GPT4的文献总结工具.
 - [aaronwangy/Data-Science-Cheatsheet](https://github.com/aaronwangy/Data-Science-Cheatsheet) - A helpful 5-page machine learning cheatsheet to assist with exam reviews, interview prep, and anything in-between.
 - [thunlp/KRLPapers](https://github.com/thunlp/KRLPapers) - Must-read papers on knowledge representation learning (KRL) / knowledge embedding (KE)
 - [Witiko/markdown](https://github.com/Witiko/markdown) - :notebook_with_decorative_cover: A package for converting and rendering markdown documents in TeX
@@ -1914,6 +1934,14 @@
 
 ## TypeScript 
 
+- [memfreeme/memfree](https://github.com/memfreeme/memfree) - MemFree - Hybrid AI Search Engine
+- [supermemoryai/opensearch-ai](https://github.com/supermemoryai/opensearch-ai) - SearchGPT / Perplexity clone, but personalised for you.
+- [udecode/plate](https://github.com/udecode/plate) - The rich-text editor for React.
+- [ueberdosis/tiptap](https://github.com/ueberdosis/tiptap) - The headless rich text editor framework for web artisans.
+- [redpangilinan/credenza](https://github.com/redpangilinan/credenza) - Ready-made responsive modal component for shadcn/ui.
+- [Kanaries/GWalkR](https://github.com/Kanaries/GWalkR) - Turn your data frame into a tableau style drag and drop UI interface to build visualization in R.
+- [siyuan-note/siyuan](https://github.com/siyuan-note/siyuan) - A privacy-first, self-hosted, fully open source personal knowledge management software, written in typescript and golang.
+- [prompt-engineering/click-prompt](https://github.com/prompt-engineering/click-prompt) - ClickPrompt - Streamline your prompt design, with ClickPrompt, you can easily view, share, and run these prompts with just one click.  ClickPrompt 用于一键轻松查看、分享和执行您的 Prompt。
 - [strapi/nextjs-corporate-starter](https://github.com/strapi/nextjs-corporate-starter) - Strapi Demo application for Corporate Websites using Next.js
 - [Seedsa/echo-editor](https://github.com/Seedsa/echo-editor) - A modern WYSIWYG rich-text editor base on tiptap and shadcn-ui
 - [magicuidesign/magicui](https://github.com/magicuidesign/magicui) - UI Library for Design Engineers. Animated components and effects you can copy and paste into your apps. Free. Open Source.
@@ -2287,6 +2315,7 @@
 
 ## Vue 
 
+- [YassKhazzan/openperplex_front](https://github.com/YassKhazzan/openperplex_front) - openperplex is an opensource AI search engine
 - [inciteful-xyz/inciteful-web](https://github.com/inciteful-xyz/inciteful-web) - The frontend for Inciteful.xyz.
 - [freqtrade/frequi](https://github.com/freqtrade/frequi) - Freqtrade UI - Frontend for Freqtrade
 - [requarks/wiki](https://github.com/requarks/wiki) - Wiki.js | A modern and powerful wiki app built on Node.js
