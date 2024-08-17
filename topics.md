@@ -245,6 +245,7 @@
 
 ## ai 
 
+- [mendableai/firecrawl-py](https://github.com/mendableai/firecrawl-py) - Crawl and convert any website into clean markdown
 - [DataBassGit/AgentForge](https://github.com/DataBassGit/AgentForge) - Extensible AGI Framework
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
@@ -1629,7 +1630,7 @@
 - [documentationjs/documentation](https://github.com/documentationjs/documentation) - :book: documentation for modern JavaScript
 - [rohit-gohri/redocusaurus](https://github.com/rohit-gohri/redocusaurus) - OpenAPI for Docusaurus with Redoc
 - [graphql-markdown/graphql-markdown](https://github.com/graphql-markdown/graphql-markdown) - Flexible GraphQL Documentation Generator (Markdown)
-- [gethyas/doks](https://github.com/gethyas/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
+- [thuliteio/doks](https://github.com/thuliteio/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
 - [lambdamusic/Ontospy](https://github.com/lambdamusic/Ontospy) - Python library and command-line interface for inspecting and visualizing RDF models aka ontologies.
 - [ceramicnetwork/docs](https://github.com/ceramicnetwork/docs) - Ceramic developer documentation site https://developers.ceramic.network
 - [lwz7512/next-smooth-doc](https://github.com/lwz7512/next-smooth-doc) - smooth-doc in Nextjs implementation
@@ -1689,7 +1690,6 @@
 ## ember 
 
 - [discourse/discourse](https://github.com/discourse/discourse) - A platform for community discussion. Free, open, simple.
-- [storybookjs/storybook](https://github.com/storybookjs/storybook) - Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 
 ## emoji 
 
@@ -2637,6 +2637,8 @@
 
 ## llm 
 
+- [mendableai/firecrawl-py](https://github.com/mendableai/firecrawl-py) - Crawl and convert any website into clean markdown
+- [ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai) - Python scraper based on AI
 - [SqueezeAILab/LLMCompiler](https://github.com/SqueezeAILab/LLMCompiler) - [ICML 2024] LLMCompiler: An LLM Compiler for Parallel Function Calling
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [InternLM/lagent](https://github.com/InternLM/lagent) - A lightweight framework for building LLM-based agents
@@ -2740,6 +2742,7 @@
 
 ## machine-learning 
 
+- [ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai) - Python scraper based on AI
 - [promptslab/Promptify](https://github.com/promptslab/Promptify) - Prompt Engineering | Prompt Versioning | Use GPT or other prompt based models to get structured output. Join our discord for Prompt-Engineering, LLMs and other latest research
 - [ItzCrazyKns/Perplexica](https://github.com/ItzCrazyKns/Perplexica) - Perplexica is an AI-powered search engine. It is an Open source alternative to Perplexity AI
 - [GerevAI/gerev](https://github.com/GerevAI/gerev) - 🧠 AI-powered enterprise search engine 🔎
@@ -3291,7 +3294,7 @@
 ## npm 
 
 - [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
-- [gethyas/doks](https://github.com/gethyas/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
+- [thuliteio/doks](https://github.com/thuliteio/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
 - [freesewing/freesewing](https://github.com/freesewing/freesewing) - Freesewing's monorepo holding all our NPM packages, including our core library
 - [tsparticles/tsparticles](https://github.com/tsparticles/tsparticles) - tsParticles - Easily create highly customizable JavaScript particles effects, confetti explosions and fireworks animations and use them as animated backgrounds for your website. Ready to use component
 - [feross/awesome-mad-science](https://github.com/feross/awesome-mad-science) - Delightful npm packages that make you say "wow, didn't know that was possible!"
@@ -3363,6 +3366,8 @@
 
 ## others 
 
+- [FloridSleeves/LLMDebugger](https://github.com/FloridSleeves/LLMDebugger) - LDB: A Large Language Model Debugger via Verifying Runtime Execution Step by Step
+- [huangd1999/AgentCoder](https://github.com/huangd1999/AgentCoder) - This Repo is the official implementation of AgentCoder and AgentCoder+.
 - [rotemweiss57/gpt-newspaper](https://github.com/rotemweiss57/gpt-newspaper) - GPT based autonomous agent designed to create personalized newspapers tailored to user preferences.
 - [supermemoryai/opensearch-ai](https://github.com/supermemoryai/opensearch-ai) - SearchGPT / Perplexity clone, but personalised for you.
 - [YassKhazzan/openperplex_front](https://github.com/YassKhazzan/openperplex_front) - openperplex is an opensource AI search engine
@@ -4293,6 +4298,7 @@
 
 ## python 
 
+- [mendableai/firecrawl-py](https://github.com/mendableai/firecrawl-py) - Crawl and convert any website into clean markdown
 - [DataBassGit/AgentForge](https://github.com/DataBassGit/AgentForge) - Extensible AGI Framework
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - The memory layer for Personalized AI
 - [searxng/searxng](https://github.com/searxng/searxng) - SearXNG is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
