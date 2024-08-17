@@ -155,7 +155,6 @@
 - [Plugin-contrib/docsify-plugin](https://github.com/Plugin-contrib/docsify-plugin) - This is a docsify plugin to render changelog from given path
 - [scaffold-eth/scaffold-eth](https://github.com/scaffold-eth/scaffold-eth) - 🏗 forkable Ethereum dev stack focused on fast product iterations
 - [rdwatters/hugo-starter](https://github.com/rdwatters/hugo-starter) - Hugo Starter with Gulp Asset Pipeline, SVG Icons, partials for global components, metadata, and social.
-- [sharu725/online-cv](https://github.com/sharu725/online-cv) - A minimal Jekyll Theme to host your resume (CV) on GitHub with a few clicks.
 - [AmphibiaWeb/SpeciesLookup](https://github.com/AmphibiaWeb/SpeciesLookup) - Looks up species based on intersecting coordinates and range polygons
 - [poole/poole](https://github.com/poole/poole) - The Jekyll Butler. A no frills responsive Jekyll blog theme.
 - [alibaba/alibaba.github.com](https://github.com/alibaba/alibaba.github.com) - The alibaba github homepage.
@@ -252,7 +251,7 @@
 - [GetPublii/Publii](https://github.com/GetPublii/Publii) - The most intuitive Static Site CMS designed for SEO-optimized and privacy-focused websites.
 - [remcohaszing/remark-mermaidjs](https://github.com/remcohaszing/remark-mermaidjs) - A remark plugin to render mermaid diagrams using playwright
 - [krishnakumarsekar/awesome-quantum-machine-learning](https://github.com/krishnakumarsekar/awesome-quantum-machine-learning) - Here you can get all the Quantum Machine learning Basics, Algorithms ,Study Materials ,Projects and the descriptions of the projects around the web
-- [gethyas/doks](https://github.com/gethyas/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
+- [thuliteio/doks](https://github.com/thuliteio/doks) - Everything you need to build a stellar documentation website. Fast, accessible, and easy to use.
 - [yoursamlan/pubsidian](https://github.com/yoursamlan/pubsidian) - An Obsidian-Publish alternative but it's FREE
 - [cyber-drop/ethereum_analytical_db](https://github.com/cyber-drop/ethereum_analytical_db) - Ethereum Analytical Database - Ethereum data access solution that can be used for analytics and application development. The solution works on a fast DB - Clickhouse.
 - [ethhub-io/ethhub](https://github.com/ethhub-io/ethhub) - The essential Ethereum information hub.
@@ -501,6 +500,7 @@
 - [timlrx/rehype-citation](https://github.com/timlrx/rehype-citation) - Rehype plugin to add citation and bibliography from bibtex files
 - [imcuttle/remark-heading-id](https://github.com/imcuttle/remark-heading-id) - The remark plugin for supporting custom heading id
 - [trekhleb/javascript-algorithms](https://github.com/trekhleb/javascript-algorithms) - 📝 Algorithms and data structures implemented in JavaScript with explanations and links to further readings
+- [jesse-ai/jesse](https://github.com/jesse-ai/jesse) - An advanced crypto trading bot written in Python
 - [johackim/gatsby-remark-obsidian](https://github.com/johackim/gatsby-remark-obsidian) - Gatsby plugin to support Obsidian markdown syntax
 - [flexanalytics/plugin-image-zoom](https://github.com/flexanalytics/plugin-image-zoom) - 
 - [blockchain-etl/data-studio-connectors](https://github.com/blockchain-etl/data-studio-connectors) - Connect Google BigQuery crypto public datasets to Google Data Studio
@@ -648,6 +648,7 @@
 - [swashapp/swash](https://github.com/swashapp/swash) - Source code of Swash extension
 - [kurtextrem/Layoutify-for-Instagram](https://github.com/kurtextrem/Layoutify-for-Instagram) - A Google Chrome Extension which improves the Instagram.com Layout.
 - [chaozh/awesome-blockchain-cn](https://github.com/chaozh/awesome-blockchain-cn) - 收集所有区块链(BlockChain)技术开发相关资料，包括Fabric和Ethereum开发资料
+- [sharu725/online-cv](https://github.com/sharu725/online-cv) - A minimal Jekyll Theme to host your resume (CV) on GitHub with a few clicks.
 - [jagracey/Awesome-Unicode](https://github.com/jagracey/Awesome-Unicode) - :joy: :ok_hand: A curated list of delightful Unicode tidbits, packages and resources.
 - [microsoft/Web-Dev-For-Beginners](https://github.com/microsoft/Web-Dev-For-Beginners) - 24 Lessons, 12 Weeks, Get Started as a Web Developer
 - [azu/github-issue-widget](https://github.com/azu/github-issue-widget) - Showcase your Github(repository)'s issue list via iframe.
@@ -1127,6 +1128,10 @@
 
 ## Python 
 
+- [FloridSleeves/LLMDebugger](https://github.com/FloridSleeves/LLMDebugger) - LDB: A Large Language Model Debugger via Verifying Runtime Execution Step by Step
+- [huangd1999/AgentCoder](https://github.com/huangd1999/AgentCoder) - This Repo is the official implementation of AgentCoder and AgentCoder+.
+- [mendableai/firecrawl-py](https://github.com/mendableai/firecrawl-py) - Crawl and convert any website into clean markdown
+- [ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai) - Python scraper based on AI
 - [SqueezeAILab/LLMCompiler](https://github.com/SqueezeAILab/LLMCompiler) - [ICML 2024] LLMCompiler: An LLM Compiler for Parallel Function Calling
 - [rotemweiss57/gpt-newspaper](https://github.com/rotemweiss57/gpt-newspaper) - GPT based autonomous agent designed to create personalized newspapers tailored to user preferences.
 - [DataBassGit/AgentForge](https://github.com/DataBassGit/AgentForge) - Extensible AGI Framework
@@ -1495,7 +1500,6 @@
 - [saeedmarzban/waveCorr](https://github.com/saeedmarzban/waveCorr) - waveCorr policy gradient model for portfolio management
 - [hubbs5/or-gym](https://github.com/hubbs5/or-gym) - Environments for OR and RL Research
 - [mohdabdin/crypto-trading-RL-environment](https://github.com/mohdabdin/crypto-trading-RL-environment) - A Crypto-trading reinforcement learning that explores the potential of using RL agents on a trading environment with multiple markets.
-- [jesse-ai/jesse](https://github.com/jesse-ai/jesse) - An advanced crypto trading bot written in Python
 - [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
 - [kernc/backtesting.py](https://github.com/kernc/backtesting.py) - :mag_right: :chart_with_upwards_trend: :snake: :moneybag:  Backtest trading strategies in Python.
 - [bqth29/simulated-bifurcation-algorithm](https://github.com/bqth29/simulated-bifurcation-algorithm) - Python CPU/GPU implementation of the Simulated Bifurcation (SB) algorithm to solve quadratic optimization problems (QUBO, Ising, TSP, optimal asset allocations for a portfolio, etc.).
