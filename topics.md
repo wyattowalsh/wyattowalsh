@@ -129,6 +129,7 @@
 - [library](#library)
 - [linux](#linux)
 - [llm](#llm)
+- [login](#login)
 - [low-code](#low-code)
 - [lua](#lua)
 - [mac](#mac)
@@ -213,6 +214,7 @@
 - [swift](#swift)
 - [swiftui](#swiftui)
 - [symfony](#symfony)
+- [tailwindcss](#tailwindcss)
 - [telegram](#telegram)
 - [tensorflow](#tensorflow)
 - [terminal](#terminal)
@@ -246,6 +248,7 @@
 ## ai 
 
 - [mendableai/firecrawl-py](https://github.com/mendableai/firecrawl-py) - Crawl and convert any website into clean markdown
+- [ScrapeGraphAI/Scrapegraph-ai](https://github.com/ScrapeGraphAI/Scrapegraph-ai) - Python scraper based on AI
 - [DataBassGit/AgentForge](https://github.com/DataBassGit/AgentForge) - Extensible AGI Framework
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
@@ -2727,6 +2730,10 @@
 - [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [haifengl/smile](https://github.com/haifengl/smile) - Statistical Machine Intelligence & Learning Engine
 
+## login 
+
+- [atulmy/oauth](https://github.com/atulmy/oauth) - 🔗  OAuth 2.0 implementation for various providers in one place.
+
 ## low-code 
 
 - [StreetLamb/tribe](https://github.com/StreetLamb/tribe) - Low code tool to rapidly build and coordinate multi-agent teams
@@ -4031,7 +4038,6 @@
 - [microsoft/qio-samples](https://github.com/microsoft/qio-samples) - Samples for using optimization solvers through Azure Quantum.
 - [googleworkspace/apps-script-samples](https://github.com/googleworkspace/apps-script-samples) - Apps Script samples for Google Workspace products.
 - [blockchain-etl/band-etl](https://github.com/blockchain-etl/band-etl) - ETL (extract, transform and load) tools for ingesting Band Protocol blockchain data to Google BigQuery and Pub/Sub
-- [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [vyperhub-io/vyper-smart-contracts](https://github.com/vyperhub-io/vyper-smart-contracts) - All smart contracts listed at vyperhub.io
 - [maidsafe/temp_safe_network](https://github.com/maidsafe/temp_safe_network) - The Safe Network. A libp2p backed data and transfer network
@@ -4041,7 +4047,6 @@
 - [yakivmospan/github-wikito-converter](https://github.com/yakivmospan/github-wikito-converter) - Generate HTML & PDF documentation from Github wiki or any other markdown-based wiki.
 - [hackmdio/vscode-hackmd](https://github.com/hackmdio/vscode-hackmd) - The official HackMD VScode extension!
 - [rdwatters/hugo-starter](https://github.com/rdwatters/hugo-starter) - Hugo Starter with Gulp Asset Pipeline, SVG Icons, partials for global components, metadata, and social.
-- [budparr/hugopipes-tailwindcss](https://github.com/budparr/hugopipes-tailwindcss) - Hugo's Pipes functionality using TailwindCSS and PurgeCSS
 - [peaceiris/actions-hugo](https://github.com/peaceiris/actions-hugo) - GitHub Actions for Hugo ⚡️ Setup Hugo quickly and build your site fast. Hugo extended, Hugo Modules, Linux (Ubuntu), macOS, and Windows are supported.
 - [lowply/build-hugo](https://github.com/lowply/build-hugo) - A GitHub Action to build Hugo site.
 - [shen-yu/hugo-chart](https://github.com/shen-yu/hugo-chart) - a Chart.js component for Hugo. :chart_with_upwards_trend:
@@ -5251,6 +5256,20 @@
 ## symfony 
 
 - [getgrav/grav](https://github.com/getgrav/grav) - Modern, Crazy Fast, Ridiculously Easy and Amazingly Powerful Flat-File CMS powered by PHP, Markdown, Twig, and Symfony
+
+## tailwindcss 
+
+- [magicuidesign/magicui](https://github.com/magicuidesign/magicui) - UI Library for Design Engineers. Animated components and effects you can copy and paste into your apps. Free. Open Source.
+- [miurla/morphic](https://github.com/miurla/morphic) - An AI-powered search engine with a generative UI
+- [morethanmin/morethan-log](https://github.com/morethanmin/morethan-log) - 😎 A static blog using notion database
+- [tangly1024/NotionNext](https://github.com/tangly1024/NotionNext) - 使用 NextJS + Notion API 实现的，支持多种部署方案的静态博客，无需服务器、零门槛搭建网站，为Notion和所有创作者设计。 (A static blog built with NextJS and Notion API, supporting multiple deployment options. No server required, zero threshold to s
+- [jkytoela/next-startd](https://github.com/jkytoela/next-startd) - ⚡ Free Next.js landing page template for SaaS products, online services and more.
+- [naufaldi/next-landing-vpn](https://github.com/naufaldi/next-landing-vpn) - An Open Source Landingpage For VPN or Apps. Build using NextJS 12 and Tailwind v3.0
+- [styled-components/xstyled](https://github.com/styled-components/xstyled) - A utility-first CSS-in-JS framework built for React. 💅👩‍🎤⚡️
+- [creativetimofficial/material-tailwind-dashboard-react](https://github.com/creativetimofficial/material-tailwind-dashboard-react) - Free and Open Source Admin for Tailwind CSS and React based on Google's Material Design.
+- [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
+- [budparr/hugopipes-tailwindcss](https://github.com/budparr/hugopipes-tailwindcss) - Hugo's Pipes functionality using TailwindCSS and PurgeCSS
+- [ttntm/hugo-tailwind-boilerplate](https://github.com/ttntm/hugo-tailwind-boilerplate) - A boilerplate for Hugo sites based on Tailwind CSS.
 
 ## telegram 
 
