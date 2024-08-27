@@ -1003,7 +1003,7 @@
 - [machinomy/awesome-non-financial-blockchain](https://github.com/machinomy/awesome-non-financial-blockchain) - Curated list of projects that build non-financial applications of blockchain
 - [mbeaudru/modern-js-cheatsheet](https://github.com/mbeaudru/modern-js-cheatsheet) - Cheatsheet for the JavaScript knowledge you will frequently encounter in modern projects.
 - [awesomedata/awesome-public-datasets](https://github.com/awesomedata/awesome-public-datasets) - A topic-centric list of HQ open datasets.
-- [ossu/computer-science](https://github.com/ossu/computer-science) - :mortar_board: Path to a free self-taught education in Computer Science!
+- [ossu/computer-science](https://github.com/ossu/computer-science) - 🎓 Path to a free self-taught education in Computer Science!
 - [wtsxDev/reverse-engineering](https://github.com/wtsxDev/reverse-engineering) - List of awesome reverse engineering resources
 - [enochtangg/quick-SQL-cheatsheet](https://github.com/enochtangg/quick-SQL-cheatsheet) - A quick reminder of all SQL queries and examples on how to use them.
 - [dhamaniasad/awesome-postgres](https://github.com/dhamaniasad/awesome-postgres) - A curated list of awesome PostgreSQL software, libraries, tools and resources, inspired by awesome-mysql
@@ -1154,6 +1154,7 @@
 
 ## Python 
 
+- [martin-majlis/Wikipedia-API](https://github.com/martin-majlis/Wikipedia-API) - Python wrapper for Wikipedia
 - [adbar/trafilatura](https://github.com/adbar/trafilatura) - Python & Command-line tool to gather text and metadata on the Web: Crawling, scraping, extraction, output as CSV, JSON, HTML, MD, TXT, XML
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
 - [jamesturk/scrapeghost](https://github.com/jamesturk/scrapeghost) - 👻 Experimental library for scraping websites using OpenAI's GPT API.
@@ -1235,7 +1236,7 @@
 - [nus-apr/auto-code-rover](https://github.com/nus-apr/auto-code-rover) - A project structure aware autonomous software engineer aiming for autonomous program improvement. Resolved 30.67% tasks (pass@1) in SWE-bench lite and 38.40% tasks (pass@1) in SWE-bench verified with 
 - [Alir3z4/html2text](https://github.com/Alir3z4/html2text) - Convert HTML to Markdown-formatted text.
 - [matthewwithanm/python-markdownify](https://github.com/matthewwithanm/python-markdownify) - Convert HTML to Markdown
-- [SciPhi-AI/R2R](https://github.com/SciPhi-AI/R2R) - The Supabase for RAG - R2R lets you build, scale, and manage user-facing Retrieval-Augmented Generation applications in production.
+- [SciPhi-AI/R2R](https://github.com/SciPhi-AI/R2R) - The Elasticsearch for RAG - R2R lets you build, scale, and manage user-facing Retrieval-Augmented Generation applications in production.
 - [mmz-001/knowledge_gpt](https://github.com/mmz-001/knowledge_gpt) - Accurate answers and instant citations for your documents.
 - [jina-ai/thinkgpt](https://github.com/jina-ai/thinkgpt) - Agent techniques to augment your LLM and push it beyong its limits
 - [ju-bezdek/langchain-decorators](https://github.com/ju-bezdek/langchain-decorators) - syntactic sugar 🍭 for langchain
@@ -1355,7 +1356,7 @@
 - [koulanurag/ma-gym](https://github.com/koulanurag/ma-gym) - A collection of multi agent environments based on OpenAI gym.
 - [PrefectHQ/prefect](https://github.com/PrefectHQ/prefect) - Prefect is a workflow orchestration framework for building resilient data pipelines in Python.
 - [joke2k/faker](https://github.com/joke2k/faker) - Faker is a Python package that generates fake data for you.
-- [tomquirk/linkedin-api](https://github.com/tomquirk/linkedin-api) - 👨‍💼 LinkedIn API for Python (2024)
+- [tomquirk/linkedin-api](https://github.com/tomquirk/linkedin-api) - 👨‍💼 LinkedIn API for Python
 - [gaogaotiantian/viztracer](https://github.com/gaogaotiantian/viztracer) - VizTracer is a low-overhead logging/debugging/profiling tool that can trace and visualize your python code execution.
 - [cjhutto/vaderSentiment](https://github.com/cjhutto/vaderSentiment) - VADER Sentiment Analysis. VADER (Valence Aware Dictionary and sEntiment Reasoner) is a lexicon and rule-based sentiment analysis tool that is specifically attuned to sentiments expressed in social med
 - [zihangdai/xlnet](https://github.com/zihangdai/xlnet) - XLNet: Generalized Autoregressive Pretraining for Language Understanding
