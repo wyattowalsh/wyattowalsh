@@ -1042,7 +1042,7 @@
 - [PyCQA/isort](https://github.com/PyCQA/isort) - A Python utility / library to sort imports.
 - [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Supercharge your API testing, catch bugs, and ensure compliance
 - [nbedos/termtosvg](https://github.com/nbedos/termtosvg) - Record terminal sessions as SVG animations
-- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools to build robust applications in TypeScript.
+- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools for building production-grade applications in TypeScript.
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,300+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [conventional-changelog/standard-version](https://github.com/conventional-changelog/standard-version) - :trophy: Automate versioning and CHANGELOG generation, with semver.org and conventionalcommits.org
 - [Tenderly/tenderly-cli](https://github.com/Tenderly/tenderly-cli) - CLI tool for Smart Contract error tracking, monitoring and alerting.
@@ -1209,7 +1209,7 @@
 - [prettier/prettier](https://github.com/prettier/prettier) - Prettier is an opinionated code formatter.
 - [AllThingsSmitty/css-protips](https://github.com/AllThingsSmitty/css-protips) - ⚡️ A collection of tips to help take your CSS skills pro 🦾
 - [Chalarangelo/30-seconds-of-code](https://github.com/Chalarangelo/30-seconds-of-code) - Short code snippets for all your development needs
-- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5400 free MIT-licensed high-quality SVG icons for you to use in your web projects.
+- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5500 free MIT-licensed high-quality SVG icons for you to use in your web projects.
 - [FortAwesome/Font-Awesome](https://github.com/FortAwesome/Font-Awesome) - The iconic SVG, font, and CSS toolkit
 - [StartBootstrap/startbootstrap-resume](https://github.com/StartBootstrap/startbootstrap-resume) - A Bootstrap 4 resume/CV theme created by Start Bootstrap
 - [microsoft/Web-Dev-For-Beginners](https://github.com/microsoft/Web-Dev-For-Beginners) - 24 Lessons, 12 Weeks, Get Started as a Web Developer
@@ -1311,7 +1311,7 @@
 - [visenger/awesome-mlops](https://github.com/visenger/awesome-mlops) - A curated list of references for MLOps
 - [ScottfreeLLC/AlphaPy](https://github.com/ScottfreeLLC/AlphaPy) - Python AutoML for Trading Systems and Sports Betting
 - [kelvins/awesome-mlops](https://github.com/kelvins/awesome-mlops) - :sunglasses: A curated list of awesome MLOps tools
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [blockchain-etl/data-studio-connectors](https://github.com/blockchain-etl/data-studio-connectors) - Connect Google BigQuery crypto public datasets to Google Data Studio
 - [siznax/wptools](https://github.com/siznax/wptools) - Wikipedia tools (for Humans): easily extract data from Wikipedia, Wikidata, and other MediaWikis
 - [grandsmarquis/awesome-ethereum-analytics](https://github.com/grandsmarquis/awesome-ethereum-analytics) - A curated list of projects around Ethereum analytics.
@@ -1540,7 +1540,7 @@
 - [microsoft/qlib](https://github.com/microsoft/qlib) - Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [geek-ai/MAgent](https://github.com/geek-ai/MAgent) - A Platform for Many-Agent Reinforcement Learning
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [georgezouq/awesome-ai-in-finance](https://github.com/georgezouq/awesome-ai-in-finance) - 🔬 A curated list of awesome LLMs & deep learning strategies & tools in financial market.
 - [openai/CLIP](https://github.com/openai/CLIP) - CLIP (Contrastive Language-Image Pretraining),  Predict the most relevant text snippet given an image
 - [avinashpaliwal/Super-SloMo](https://github.com/avinashpaliwal/Super-SloMo) - PyTorch implementation of Super SloMo by Jiang et al.
@@ -2453,7 +2453,7 @@
 - [Bogdan-Lyashenko/js-code-to-svg-flowchart](https://github.com/Bogdan-Lyashenko/js-code-to-svg-flowchart) - js2flowchart - a visualization library to convert any JavaScript code into beautiful SVG flowchart. Learn other’s code. Design your code. Refactor code. Document code. Explain code.
 - [shutterstock/rickshaw](https://github.com/shutterstock/rickshaw) - JavaScript toolkit for creating interactive real-time graphs
 - [Mokkapps/mokkapps](https://github.com/Mokkapps/mokkapps) - My GitHub profile README which is automatically updated. Please ⭐️ if you like it
-- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools to build robust applications in TypeScript.
+- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools for building production-grade applications in TypeScript.
 - [rehypejs/rehype](https://github.com/rehypejs/rehype) - HTML processor powered by plugins part of the @unifiedjs collective
 - [responsively-org/responsively-app](https://github.com/responsively-org/responsively-app) - A modified web browser that helps in responsive web development. A web developer's must have dev-tool.
 - [webkul/coolhue](https://github.com/webkul/coolhue) - Coolest Gradient Hues and Swatches
@@ -2897,7 +2897,7 @@
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
 - [kelvins/awesome-mlops](https://github.com/kelvins/awesome-mlops) - :sunglasses: A curated list of awesome MLOps tools
 - [mohdabdin/crypto-trading-RL-environment](https://github.com/mohdabdin/crypto-trading-RL-environment) - A Crypto-trading reinforcement learning that explores the potential of using RL agents on a trading environment with multiple markets.
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3) - PyTorch version of Stable Baselines, reliable implementations of reinforcement learning algorithms.
 - [openai/CLIP](https://github.com/openai/CLIP) - CLIP (Contrastive Language-Image Pretraining),  Predict the most relevant text snippet given an image
 - [ourownstory/neural_prophet](https://github.com/ourownstory/neural_prophet) - NeuralProphet: A simple forecasting package
@@ -3478,6 +3478,7 @@
 
 ## others 
 
+- [jorgearango/llmapper](https://github.com/jorgearango/llmapper) - Use LLMs to draw concept maps from web pages.
 - [mundimark/awesome-markdown](https://github.com/mundimark/awesome-markdown) - A collection of awesome markdown goodies (libraries, services, editors, tools, cheatsheets, etc.)
 - [jamesturk/scrapeghost](https://github.com/jamesturk/scrapeghost) - 👻 Experimental library for scraping websites using OpenAI's GPT API.
 - [romansky/dom-to-semantic-markdown](https://github.com/romansky/dom-to-semantic-markdown) - DOM to Semantic-Markdown for use in LLMs
@@ -4781,7 +4782,7 @@
 - [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN) - Real-ESRGAN aims at developing Practical Algorithms for General Image/Video Restoration.
 - [HypoX64/DeepMosaics](https://github.com/HypoX64/DeepMosaics) - Automatically remove the mosaics in images and videos, or add mosaics to them.
 - [jankrepl/deepdow](https://github.com/jankrepl/deepdow) - Portfolio optimization with deep learning.
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [bqth29/simulated-bifurcation-algorithm](https://github.com/bqth29/simulated-bifurcation-algorithm) - Python CPU/GPU implementation of the Simulated Bifurcation (SB) algorithm to solve quadratic optimization problems (QUBO, Ising, TSP, optimal asset allocations for a portfolio, etc.).
 - [rlworkgroup/garage](https://github.com/rlworkgroup/garage) - A toolkit for reproducible reinforcement learning research.
 - [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3) - PyTorch version of Stable Baselines, reliable implementations of reinforcement learning algorithms.
@@ -5004,7 +5005,7 @@
 - [ConsenSysMesh/rimble-ui](https://github.com/ConsenSysMesh/rimble-ui) - React components that implement Rimble's Design System.
 - [styleguidist/react-styleguidist](https://github.com/styleguidist/react-styleguidist) - Isolated React component development environment with a living style guide
 - [facebook/create-react-app](https://github.com/facebook/create-react-app) - Set up a modern web app by running one command.
-- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5400 free MIT-licensed high-quality SVG icons for you to use in your web projects.
+- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5500 free MIT-licensed high-quality SVG icons for you to use in your web projects.
 - [microsoft/0xDeCA10B](https://github.com/microsoft/0xDeCA10B) - Sharing Updatable Models (SUM) on Blockchain
 - [sqlectron/sqlectron-gui](https://github.com/sqlectron/sqlectron-gui) - A simple and lightweight SQL client desktop with cross database and platform support.
 - [oceanprotocol/market](https://github.com/oceanprotocol/market) - 🧜‍♀️ THE Data Market
@@ -5080,7 +5081,7 @@
 - [AminHP/gym-mtsim](https://github.com/AminHP/gym-mtsim) - A general-purpose, flexible, and easy-to-use simulator alongside an OpenAI Gym trading environment for MetaTrader 5 trading platform (Approved by OpenAI Gym)
 - [hubbs5/or-gym](https://github.com/hubbs5/or-gym) - Environments for OR and RL Research
 - [mohdabdin/crypto-trading-RL-environment](https://github.com/mohdabdin/crypto-trading-RL-environment) - A Crypto-trading reinforcement learning that explores the potential of using RL agents on a trading environment with multiple markets.
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [georgezouq/awesome-ai-in-finance](https://github.com/georgezouq/awesome-ai-in-finance) - 🔬 A curated list of awesome LLMs & deep learning strategies & tools in financial market.
 - [DLR-RM/stable-baselines3](https://github.com/DLR-RM/stable-baselines3) - PyTorch version of Stable Baselines, reliable implementations of reinforcement learning algorithms.
 - [araffin/rl-baselines-zoo](https://github.com/araffin/rl-baselines-zoo) - A collection of 100+ pre-trained RL agents using Stable Baselines, training and hyperparameter optimization included.
@@ -5391,7 +5392,7 @@
 - [catchspider2002/svelte-svg-patterns](https://github.com/catchspider2002/svelte-svg-patterns) - Create seamless patterns in SVG to use as website backgrounds, header images, stationery design and package design
 - [storybookjs/storybook](https://github.com/storybookjs/storybook) - Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - [tsparticles/tsparticles](https://github.com/tsparticles/tsparticles) - tsParticles - Easily create highly customizable JavaScript particles effects, confetti explosions and fireworks animations and use them as animated backgrounds for your website. Ready to use component
-- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5400 free MIT-licensed high-quality SVG icons for you to use in your web projects.
+- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5500 free MIT-licensed high-quality SVG icons for you to use in your web projects.
 
 ## swift 
 
@@ -5448,7 +5449,7 @@
 - [tensorlayer/TensorLayer](https://github.com/tensorlayer/TensorLayer) - Deep Learning and Reinforcement Learning Library for Scientists and Engineers
 - [keras-rl/keras-rl](https://github.com/keras-rl/keras-rl) - Deep Reinforcement Learning for Keras.
 - [krishnakumarsekar/awesome-quantum-machine-learning](https://github.com/krishnakumarsekar/awesome-quantum-machine-learning) - Here you can get all the Quantum Machine learning Basics, Algorithms ,Study Materials ,Projects and the descriptions of the projects around the web
-- [wandb/wandb](https://github.com/wandb/wandb) - 🔥 A tool for visualizing and tracking your machine learning experiments. This repo contains the CLI and Python API.
+- [wandb/wandb](https://github.com/wandb/wandb) - The AI developer platform. Use Weights & Biases to train and fine-tune models, and manage models from experimentation to production.
 - [rlworkgroup/garage](https://github.com/rlworkgroup/garage) - A toolkit for reproducible reinforcement learning research.
 - [diegoalejogm/gans](https://github.com/diegoalejogm/gans) - Generative Adversarial Networks implemented in PyTorch and Tensorflow
 - [javascriptdata/danfojs](https://github.com/javascriptdata/danfojs) - Danfo.js is an open source, JavaScript library providing high performance, intuitive, and easy to use data structures for manipulating and processing structured data.
@@ -5559,7 +5560,7 @@
 - [basarat/typescript-book](https://github.com/basarat/typescript-book) - :books: The definitive guide to TypeScript and possibly the best TypeScript book :book:. Free and Open Source 🌹
 - [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
-- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools to build robust applications in TypeScript.
+- [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools for building production-grade applications in TypeScript.
 - [EasyChris/obsidian-to-notion](https://github.com/EasyChris/obsidian-to-notion) - Share obsidian markdown file to notion and generate notion share link    同步obsdian文件到notion，并生成notion分享链接，可以方便的分享obsidian的文件。
 - [dvanoni/notero](https://github.com/dvanoni/notero) - A Zotero plugin for syncing items and notes into Notion
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
