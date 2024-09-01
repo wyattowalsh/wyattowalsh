@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>NVlabs/EAGLE</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">EAGLE: Exploring The Design Space for Multimodal LLMs with Mixture of Encoders</div>
@@ -99,7 +99,7 @@
                                             <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                             <path fill-rule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/>
                                         </svg>
-                                        5
+                                        6
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -118,7 +118,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>kohler/gifsicle</span>
-                                        <span>starred 9 hours ago</span>
+                                        <span>starred 10 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Create, manipulate, and optimize GIF images and animations</div>
@@ -171,7 +171,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>davisonio/awesome-gif</span>
-                                        <span>starred 9 hours ago</span>
+                                        <span>starred 10 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A curated list of awesome GIF resources.</div>
@@ -225,7 +225,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">225</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 19
                                 <div class="bottom">Aug.</div>
