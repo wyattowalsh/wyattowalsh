@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2676" class="columns">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2729" class="columns">
     <defs>
         <style/>
     </defs>
@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    6.51m added, 2.86m removed
+                                    7.26m added, 3.46m removed
                                 </div>
                             </section>
                             <section>
@@ -3340,7 +3340,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>NVlabs/EAGLE</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">EAGLE: Exploring The Design Space for Multimodal LLMs with Mixture of Encoders</div>
@@ -3361,7 +3361,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                             <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
                                         </svg>
-                                        165
+                                        166
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -3393,7 +3393,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>kohler/gifsicle</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Create, manipulate, and optimize GIF images and animations</div>
@@ -3446,7 +3446,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>davisonio/awesome-gif</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A curated list of awesome GIF resources.</div>
@@ -3514,7 +3514,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                             <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
                                         </svg>
-                                        9.83k
+                                        9.84k
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -3527,7 +3527,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                             <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                             <path fill-rule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/>
                                         </svg>
-                                        140
+                                        141
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -4322,7 +4322,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 196k out of 208m repositories</span>
+                                    <span class="gh">ranked 196k out of 217m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 66 times</div>
                             </div>
@@ -4443,7 +4443,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 360k out of 208m repositories</span>
+                                    <span class="gh">ranked 360k out of 217m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 103 stars</div>
                             </div>
@@ -4681,10 +4681,10 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
                             <span class="code">22f533e9</span>
-                            <span class="code">personal-website/styles/base/_typography.scss</span>
+                            <span class="code">personal-website/styles/abstracts/_variables.scss</span>
                             <span class="code">
                                 <span class="snippet additions">++0</span>
-                                <span class="snippet deletions">--4</span>
+                                <span class="snippet deletions">--7</span>
                             </span>
                         </div>
                     </section>
@@ -4692,7 +4692,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -1,4 +0,0 @@</span><br /><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">// Path: styles/base/_typography.scss<br /></span><span class="token prefix deleted">-</span><span class="token line">@import "@fontsource/fira-code";<br /></span><span class="token prefix deleted">-</span><span class="token line">// === Variables ===<br /></span><span class="token prefix deleted">-</span><span class="token line">$font-family: 'Fira Code';</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -1,7 +0,0 @@</span><br /><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">// styles/abstracts/_variables.scss<br /></span><span class="token prefix deleted">-</span><span class="token line"><br /></span><span class="token prefix deleted">-</span><span class="token line">$myBlue: #6a9fb5;<br /></span><span class="token prefix deleted">-</span><span class="token line">$myBrown: #b5826a;<br /></span><span class="token prefix deleted">-</span><span class="token line">$myGold: #b5a76a;<br /></span><span class="token prefix deleted">-</span><span class="token line">$myPurple: #9b6ab5;<br /></span><span class="token prefix deleted">-</span><span class="token line">$myGray: #939597;<br /></span></span>\No newline at end of file</code>
                         </div>
                     </section>
                 </div>
@@ -4759,7 +4759,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 31 Aug 2024, 21:28:57 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 31 Aug 2024, 22:26:48 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
