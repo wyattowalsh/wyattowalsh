@@ -215,7 +215,6 @@
 - [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes) - The Go kernel for Jupyter notebooks and nteract.
 - [yunabe/lgo](https://github.com/yunabe/lgo) - Interactive Go programming with Jupyter
 - [weaveworks/scope](https://github.com/weaveworks/scope) - Monitoring, visualisation & management for Docker & Kubernetes
-- [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [ethersphere/swarm](https://github.com/ethersphere/swarm) - Swarm: Censorship resistant storage and communication infrastructure for a truly sovereign digital society
 - [gohugoio/hugo](https://github.com/gohugoio/hugo) - The world’s fastest framework for building websites.
 - [shen-yu/hugo-chart](https://github.com/shen-yu/hugo-chart) - a Chart.js component for Hugo. :chart_with_upwards_trend:
@@ -1236,7 +1235,6 @@
 - [OpenBMB/RepoAgent](https://github.com/OpenBMB/RepoAgent) - An LLM-powered repository agent designed to assist developers and teams in generating documentation and understanding repositories quickly.
 - [AgentOps-AI/agentops](https://github.com/AgentOps-AI/agentops) - Python SDK for agent monitoring, LLM cost tracking, benchmarking, and more. Integrates with most LLMs and agent frameworks like CrewAI, Langchain, and Autogen
 - [cpacker/MemGPT](https://github.com/cpacker/MemGPT) - Create LLM agents with long-term memory and custom tools 📚🦙
-- [weaviate/Verba](https://github.com/weaviate/Verba) - Retrieval Augmented Generation (RAG) chatbot powered by Weaviate
 - [crewAIInc/crewAI-tools](https://github.com/crewAIInc/crewAI-tools) - 
 - [awesome-panel/transformers-agent-ui](https://github.com/awesome-panel/transformers-agent-ui) - This repository provides a UI for the Hugging Face Transformers Agent. 🤗🕵️
 - [jbexta/AgentPilot](https://github.com/jbexta/AgentPilot) - Universal GUI for seamless interaction and management of AI workflows
@@ -1713,6 +1711,7 @@
 - [kotartemiy/newscatcher](https://github.com/kotartemiy/newscatcher) - Programmatically collect normalized news from (almost) any website.
 - [DEAP/deap](https://github.com/DEAP/deap) - Distributed Evolutionary Algorithms in Python
 - [keras-team/keras-tuner](https://github.com/keras-team/keras-tuner) - A Hyperparameter Tuning Library for Keras
+- [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [microsoft/qio-samples](https://github.com/microsoft/qio-samples) - Samples for using optimization solvers through Azure Quantum.
 - [tradytics/eiten](https://github.com/tradytics/eiten) - Statistical and Algorithmic Investing Strategies for Everyone
 - [freqtrade/freqtrade](https://github.com/freqtrade/freqtrade) - Free, open source crypto trading bot
@@ -2039,6 +2038,7 @@
 - [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - A framework for building custom AI Copilots 🤖 in-app AI chatbots, in-app AI Agents, & AI-powered Textareas.
 - [eylonmiz/react-agent](https://github.com/eylonmiz/react-agent) - The open-source React.js Autonomous LLM Agent
 - [botpress/botpress](https://github.com/botpress/botpress) - The open-source hub to build & deploy GPT/LLM Agents ⚡️
+- [weaviate/Verba](https://github.com/weaviate/Verba) - Retrieval Augmented Generation (RAG) chatbot powered by Weaviate
 - [Ironclad/rivet-example](https://github.com/Ironclad/rivet-example) - 
 - [run-llama/chat-llamaindex](https://github.com/run-llama/chat-llamaindex) - 
 - [mckaywrigley/chatbot-ui](https://github.com/mckaywrigley/chatbot-ui) - AI chat for every model.
