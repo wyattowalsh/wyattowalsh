@@ -253,6 +253,7 @@
 
 ## ai 
 
+- [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app.
 - [Mintplex-Labs/vector-admin](https://github.com/Mintplex-Labs/vector-admin) - The universal tool suite for vector database management. Manage Pinecone, Chroma, Qdrant, Weaviate and more vector databases with ease.
 - [Canner/vulcan-sql](https://github.com/Canner/vulcan-sql) - Data API Framework for AI Agents and Data Apps
 - [DAGWorks-Inc/burr](https://github.com/DAGWorks-Inc/burr) - Build applications that make decisions (chatbots, agents, simulations, etc...). Monitor, trace, persist, and execute on your own infrastructure.
@@ -478,7 +479,7 @@
 - [mitmproxy/pdoc](https://github.com/mitmproxy/pdoc) - API Documentation for Python Projects
 - [tomquirk/linkedin-api](https://github.com/tomquirk/linkedin-api) - 👨‍💼 LinkedIn API for Python
 - [Farama-Foundation/Gymnasium](https://github.com/Farama-Foundation/Gymnasium) - An API standard for single-agent reinforcement learning environments, with popular reference environments and related utilities (formerly Gym)
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [mattpodolak/pmaw](https://github.com/mattpodolak/pmaw) - A multithread Pushshift.io API Wrapper for reddit.com comment and submission searches.
 - [praw-dev/praw](https://github.com/praw-dev/praw) - PRAW, an acronym for "Python Reddit API Wrapper", is a python package that allows for simple access to Reddit's API.
 - [elliotgao2/toapi](https://github.com/elliotgao2/toapi) - Every web site provides APIs.
@@ -1172,6 +1173,8 @@
 
 ## cli 
 
+- [raphaelmansuy/code2prompt](https://github.com/raphaelmansuy/code2prompt) - Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your 
+- [pypa/pipx](https://github.com/pypa/pipx) - Install and Run Python Applications in Isolated Environments
 - [mufeedvh/code2prompt](https://github.com/mufeedvh/code2prompt) - A CLI tool to convert your codebase into a single LLM prompt with source tree, prompt templating, and token counting.
 - [fastapi/typer](https://github.com/fastapi/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [cristoper/wav2vec](https://github.com/cristoper/wav2vec) - Python package and cli tool to convert wave files (WAV or AIFF) to vector graphics (SVG, PostScript, CVS)
@@ -1180,7 +1183,7 @@
 - [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Supercharge your API testing, catch bugs, and ensure compliance
 - [nbedos/termtosvg](https://github.com/nbedos/termtosvg) - Record terminal sessions as SVG animations
 - [Effect-TS/effect](https://github.com/Effect-TS/effect) - An ecosystem of tools for building production-grade applications in TypeScript.
-- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,300+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
+- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [conventional-changelog/standard-version](https://github.com/conventional-changelog/standard-version) - :trophy: Automate versioning and CHANGELOG generation, with semver.org and conventionalcommits.org
 - [Tenderly/tenderly-cli](https://github.com/Tenderly/tenderly-cli) - CLI tool for Smart Contract error tracking, monitoring and alerting.
 - [protofire/eth-cli](https://github.com/protofire/eth-cli) - CLI swiss army knife for Ethereum developers
@@ -1592,7 +1595,7 @@
 - [observablehq/plot](https://github.com/observablehq/plot) - A concise API for exploratory data visualization implementing a layered grammar of graphics
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [metabase/metabase](https://github.com/metabase/metabase) - The simplest, fastest way to get business intelligence and analytics to everyone in your company :yum:
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
 - [uber/react-vis](https://github.com/uber/react-vis) - Data Visualization Components
 - [FormidableLabs/victory](https://github.com/FormidableLabs/victory) - A collection of composable React components for building interactive data visualizations
@@ -1645,7 +1648,7 @@
 - [wise-coders/dbschema](https://github.com/wise-coders/dbschema) - DbSchema Database Designer
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [schemacrawler/SchemaCrawler](https://github.com/schemacrawler/SchemaCrawler) - Free database schema discovery and comprehension tool
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [pentaho/mondrian](https://github.com/pentaho/mondrian) - Mondrian is an Online Analytical Processing (OLAP) server that enables business users to analyze large quantities of data in real-time.
 - [supabase/supabase](https://github.com/supabase/supabase) - The open source Firebase alternative. Supabase gives you a dedicated Postgres database to build your web, mobile, and AI applications.
 - [antonycourtney/tad](https://github.com/antonycourtney/tad) - A desktop application for viewing and analyzing tabular data
@@ -2018,6 +2021,7 @@
 
 ## finance 
 
+- [midday-ai/midday](https://github.com/midday-ai/midday) - Run your business smarter 🪄
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB) - Investment Research for Everyone, Everywhere.
 - [AI4Finance-Foundation/FinRL-Meta](https://github.com/AI4Finance-Foundation/FinRL-Meta) - FinRL­-Meta: Dynamic datasets and market environments for FinRL.
 - [achillesrasquinha/bulbea](https://github.com/achillesrasquinha/bulbea) - :boar: :bear: Deep Learning based Python Library for Stock Market Prediction and Modelling
@@ -2113,6 +2117,7 @@
 
 ## frontend 
 
+- [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [QuivrHQ/quivr](https://github.com/QuivrHQ/quivr) - Open-source RAG Framework for building GenAI Second Brains 🧠  Build productivity assistant (RAG) ⚡️🤖 Chat with your docs (PDF, CSV, ...)  & apps using Langchain, GPT 3.5 / 4 turbo, Private, Anthropic,
 - [moklick/frontend-stuff](https://github.com/moklick/frontend-stuff) - 📝 A continuously expanded list of frameworks, libraries and tools I used/want to use for building things on the web. Mostly JavaScript.
 - [thedaviddias/Front-End-Checklist](https://github.com/thedaviddias/Front-End-Checklist) - 🗂 The perfect Front-End Checklist for modern websites and meticulous developers
@@ -2278,7 +2283,7 @@
 - [glideapps/quicktype](https://github.com/glideapps/quicktype) - Generate types and converters from JSON, Schema, and GraphQL
 - [graphql/graphql-js](https://github.com/graphql/graphql-js) - A reference implementation of GraphQL for JavaScript
 - [kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit) - The web's most popular Jamstack front-end template (boilerplate) for building web applications with React
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [schemathesis/schemathesis](https://github.com/schemathesis/schemathesis) - Supercharge your API testing, catch bugs, and ensure compliance
 - [graphql-kit/graphql-voyager](https://github.com/graphql-kit/graphql-voyager) - 🛰️ Represent any GraphQL API as an interactive graph
 - [redwoodjs/redwood](https://github.com/redwoodjs/redwood) - The App Framework for Startups
@@ -2357,7 +2362,7 @@
 - [pylint-dev/pylint](https://github.com/pylint-dev/pylint) - It's not just a linter that annoys you!
 - [unixorn/awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins) - A collection of ZSH frameworks, plugins, themes and tutorials.
 - [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) - Iconic font aggregator, collection, & patcher. 3,600+ icons, 50+ patched fonts: Hack, Source Code Pro, more. Glyph collections: Font Awesome, Material Design Icons, Octicons, & more
-- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,300+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
+- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [pytest-dev/pytest](https://github.com/pytest-dev/pytest) - The pytest framework makes it easy to write small tests, yet scales to support complex functional testing
 - [augustogoulart/awesome-pytest](https://github.com/augustogoulart/awesome-pytest) - A curated list of awesome pytest resources
 - [pytest-dev/pytest-xdist](https://github.com/pytest-dev/pytest-xdist) - pytest plugin for distributed testing and loop-on-failures testing modes.
@@ -2608,6 +2613,7 @@
 
 ## javascript 
 
+- [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [antvis/X6](https://github.com/antvis/X6) - 🚀 JavaScript diagramming library that uses SVG and HTML for rendering.
 - [xyflow/xyflow](https://github.com/xyflow/xyflow) - React Flow | Svelte Flow - Powerful open source libraries for building node-based UIs with React (https://reactflow.dev) or Svelte (https://svelteflow.dev). Ready out-of-the-box and infinitely customi
 - [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid) - Generation of diagrams like flowcharts or sequence diagrams from text in a similar manner as markdown
@@ -2642,7 +2648,7 @@
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Platform to build admin panels, internal tools, and dashboards. Integrates with 25+ databases and any API.
 - [kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit) - The web's most popular Jamstack front-end template (boilerplate) for building web applications with React
 - [react-bootstrap/react-bootstrap](https://github.com/react-bootstrap/react-bootstrap) - Bootstrap components built with React
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [microsoft/TypeScript](https://github.com/microsoft/TypeScript) - TypeScript is a superset of JavaScript that compiles to clean JavaScript output.
 - [tsparticles/react](https://github.com/tsparticles/react) - React tsParticles official component
 - [svgdotjs/svg.js](https://github.com/svgdotjs/svg.js) - The lightweight library for manipulating and animating SVG
@@ -2781,6 +2787,7 @@
 
 ## json 
 
+- [accordproject/concerto](https://github.com/accordproject/concerto) - Business schema language and runtime
 - [fastapi/sqlmodel](https://github.com/fastapi/sqlmodel) - SQL databases in Python, designed for simplicity, compatibility, and robustness.
 - [afterschoolstudio/Depot](https://github.com/afterschoolstudio/Depot) - Structured data editor built inside VS Code
 - [dottxt-ai/outlines](https://github.com/dottxt-ai/outlines) - Structured Text Generation
@@ -2795,6 +2802,7 @@
 
 ## julia 
 
+- [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
 - [multiprocessio/datastation](https://github.com/multiprocessio/datastation) - App to easily query, script, and visualize data from every database, file, and API.
 - [semuconsulting/PyMandel](https://github.com/semuconsulting/PyMandel) - Mandelbrot and Julia Set GUI application written in Python & Tkinter
 
@@ -2922,6 +2930,7 @@
 
 ## llm 
 
+- [raphaelmansuy/code2prompt](https://github.com/raphaelmansuy/code2prompt) - Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your 
 - [datadreamer-dev/DataDreamer](https://github.com/datadreamer-dev/DataDreamer) - DataDreamer: Prompt. Generate Synthetic Data. Train & Align Models.    🤖💤
 - [BaranziniLab/KG_RAG](https://github.com/BaranziniLab/KG_RAG) - Empower Large Language Models (LLM) using Knowledge Graph based Retrieval-Augmented Generation (KG-RAG) for knowledge intensive tasks
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly WebUI for LLMs (Formerly Ollama WebUI)
@@ -3327,6 +3336,7 @@
 
 ## markdown 
 
+- [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app.
 - [mixmark-io/turndown](https://github.com/mixmark-io/turndown) - 🛏 An HTML to Markdown converter written in JavaScript
 - [mendableai/firecrawl](https://github.com/mendableai/firecrawl) - 🔥 Turn entire websites into LLM-ready markdown or structured data. Scrape, crawl and extract with a single API.
 - [Anmol-Baranwal/Cool-GIFs-For-GitHub](https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub) - 🤝 Awesome List of GIFs & avatars to use in GitHub.
@@ -3491,7 +3501,7 @@
 - [mindsdb/mindsdb](https://github.com/mindsdb/mindsdb) - The platform for building AI from enterprise data
 - [metabase/metabase](https://github.com/metabase/metabase) - The simplest, fastest way to get business intelligence and analytics to everyone in your company :yum:
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [knex/knex](https://github.com/knex/knex) - A query builder for PostgreSQL, MySQL, CockroachDB, SQL Server, SQLite3 and Oracle, designed to be flexible, portable, and fun to use.
 - [sequelize/sequelize](https://github.com/sequelize/sequelize) - Feature-rich ORM for modern Node.js and TypeScript, it supports PostgreSQL (with JSON and JSONB support), MySQL, MariaDB, SQLite, MS SQL Server, Snowflake, Oracle DB (v6), DB2 and DB2 for IBM i.
 - [getredash/redash](https://github.com/getredash/redash) - Make Your Company Data Driven. Connect to any data source, easily visualize, dashboard and share your data.
@@ -3563,6 +3573,7 @@
 
 ## nextjs 
 
+- [midday-ai/midday](https://github.com/midday-ai/midday) - Run your business smarter 🪄
 - [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
 - [Canner/WrenAI](https://github.com/Canner/WrenAI) - 🚀 Open-source SQL AI Agent for Text-to-SQL. Make Text2SQL Easy! 🙌
 - [rashadphz/farfalle](https://github.com/rashadphz/farfalle) - 🔍 AI search engine - self-host with local or cloud LLMs
@@ -3667,7 +3678,7 @@
 
 - [mixmark-io/turndown](https://github.com/mixmark-io/turndown) - 🛏 An HTML to Markdown converter written in JavaScript
 - [stav/wgrep](https://github.com/stav/wgrep) - Web grep: search all rendered resources used by a URI
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [motdotla/dotenv](https://github.com/motdotla/dotenv) - Loads environment variables from .env for nodejs projects.
 - [mochajs/mocha](https://github.com/mochajs/mocha) - ☕️ simple, flexible, fun javascript test framework for node.js & the browser
 - [sindresorhus/awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) - :zap: Delightful Node.js packages and resources
@@ -3809,6 +3820,8 @@
 
 ## others 
 
+- [diego-vicente/som-tsp](https://github.com/diego-vicente/som-tsp) - Solving the Traveling Salesman Problem using Self-Organizing Maps
+- [AuvaLab/itext2kg](https://github.com/AuvaLab/itext2kg) - Incremental Knowledge Graphs Constructor Using Large Language Models
 - [getzep/graphiti](https://github.com/getzep/graphiti) - Build and query dynamic, temporally-aware Knowledge Graphs
 - [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) - Drop in a screenshot and convert it to clean code (HTML/Tailwind/React/Vue)
 - [kyegomez/awesome-multi-agent-papers](https://github.com/kyegomez/awesome-multi-agent-papers) - A compilation of the best multi-agent papers
@@ -4741,7 +4754,7 @@
 - [QuivrHQ/quivr](https://github.com/QuivrHQ/quivr) - Open-source RAG Framework for building GenAI Second Brains 🧠  Build productivity assistant (RAG) ⚡️🤖 Chat with your docs (PDF, CSV, ...)  & apps using Langchain, GPT 3.5 / 4 turbo, Private, Anthropic,
 - [metabase/metabase](https://github.com/metabase/metabase) - The simplest, fastest way to get business intelligence and analytics to everyone in your company :yum:
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [supabase/supabase](https://github.com/supabase/supabase) - The open source Firebase alternative. Supabase gives you a dedicated Postgres database to build your web, mobile, and AI applications.
 - [supabase/supabase-py](https://github.com/supabase/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
 - [knex/knex](https://github.com/knex/knex) - A query builder for PostgreSQL, MySQL, CockroachDB, SQL Server, SQLite3 and Oracle, designed to be flexible, portable, and fun to use.
@@ -4791,6 +4804,7 @@
 
 ## publishing 
 
+- [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
 - [elgohr/Github-Release-Action](https://github.com/elgohr/Github-Release-Action) - Publish Github releases in an action
 
 ## pwa 
@@ -4800,6 +4814,8 @@
 
 ## python 
 
+- [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
+- [pypa/pipx](https://github.com/pypa/pipx) - Install and Run Python Applications in Isolated Environments
 - [fleet-ai/context](https://github.com/fleet-ai/context) - A CLI tool & API over the top 1221 Python libraries.
 - [CloudOrc/SolidUI](https://github.com/CloudOrc/SolidUI) - one sentence generates any graph
 - [datadreamer-dev/DataDreamer](https://github.com/datadreamer-dev/DataDreamer) - DataDreamer: Prompt. Generate Synthetic Data. Train & Align Models.    🤖💤
@@ -5138,6 +5154,7 @@
 
 ## python3 
 
+- [raphaelmansuy/code2prompt](https://github.com/raphaelmansuy/code2prompt) - Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your 
 - [feder-cr/linkedIn_auto_jobs_applier_with_AI](https://github.com/feder-cr/linkedIn_auto_jobs_applier_with_AI) - LinkedIn_AIHawk is a tool that automates  the jobs application process on LinkedIn. Utilizing artificial intelligence, it enables users to apply for multiple job offers in an automated and personalize
 - [martin-majlis/Wikipedia-API](https://github.com/martin-majlis/Wikipedia-API) - Python wrapper for Wikipedia
 - [tim-gromeyer/html2md](https://github.com/tim-gromeyer/html2md) - Transform your HTML into clean, easy-to-read markdown with html2md.
@@ -5239,6 +5256,7 @@
 
 ## r 
 
+- [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
 - [Kanaries/GWalkR](https://github.com/Kanaries/GWalkR) - Turn your data frame into a tableau style drag and drop UI interface to build visualization in R.
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
 - [facebook/prophet](https://github.com/facebook/prophet) - Tool for producing high quality forecasts for time series data that has multiple seasonality with linear or non-linear growth.
@@ -5585,6 +5603,7 @@
 
 ## scala 
 
+- [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
 - [blockchain-unica/blockapi](https://github.com/blockchain-unica/blockapi) - A general framework for blockchain analytics
 - [combust/mleap](https://github.com/combust/mleap) - MLeap: Deploy ML Pipelines to Production
 - [apache/spark](https://github.com/apache/spark) - Apache Spark - A unified analytics engine for large-scale data processing
@@ -5655,7 +5674,7 @@
 - [sobolevn/wakatime-zsh-plugin](https://github.com/sobolevn/wakatime-zsh-plugin) - 🕒Track how much time you have spent in your terminal!
 - [nbedos/termtosvg](https://github.com/nbedos/termtosvg) - Record terminal sessions as SVG animations
 - [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts) - Iconic font aggregator, collection, & patcher. 3,600+ icons, 50+ patched fonts: Hack, Source Code Pro, more. Glyph collections: Font Awesome, Material Design Icons, Octicons, & more
-- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,300+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
+- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [zsh-users/zsh-completions](https://github.com/zsh-users/zsh-completions) - Additional completion definitions for Zsh.
 - [pyenv/pyenv](https://github.com/pyenv/pyenv) - Simple Python version management
 - [arzzen/git-quick-stats](https://github.com/arzzen/git-quick-stats) - ▁▅▆▃▅ Git quick statistics is a simple and efficient way to access various statistics in git repository.
@@ -5714,7 +5733,7 @@
 - [planetopendata/awesome-sqlite](https://github.com/planetopendata/awesome-sqlite) - A collection of awesome sqlite tools, scripts, books, etc
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
 - [mage-ai/mage-ai](https://github.com/mage-ai/mage-ai) - 🧙 Build, run, and manage data pipelines for integrating and transforming data.
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [modin-project/modin](https://github.com/modin-project/modin) - Modin: Scale your Pandas workflows by changing a single line of code
 - [knex/knex](https://github.com/knex/knex) - A query builder for PostgreSQL, MySQL, CockroachDB, SQL Server, SQLite3 and Oracle, designed to be flexible, portable, and fun to use.
 - [sequelize/sequelize](https://github.com/sequelize/sequelize) - Feature-rich ORM for modern Node.js and TypeScript, it supports PostgreSQL (with JSON and JSONB support), MySQL, MariaDB, SQLite, MS SQL Server, Snowflake, Oracle DB (v6), DB2 and DB2 for IBM i.
@@ -5753,7 +5772,7 @@
 - [coleifer/sqlite-web](https://github.com/coleifer/sqlite-web) - Web-based SQLite database browser written in Python
 - [planetopendata/awesome-sqlite](https://github.com/planetopendata/awesome-sqlite) - A collection of awesome sqlite tools, scripts, books, etc
 - [dbeaver/dbeaver](https://github.com/dbeaver/dbeaver) - Free universal database tool and SQL client
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [sequelize/sequelize](https://github.com/sequelize/sequelize) - Feature-rich ORM for modern Node.js and TypeScript, it supports PostgreSQL (with JSON and JSONB support), MySQL, MariaDB, SQLite, MS SQL Server, Snowflake, Oracle DB (v6), DB2 and DB2 for IBM i.
 - [sqitchers/sqitch](https://github.com/sqitchers/sqitch) - Sensible database change management
 - [beekeeper-studio/beekeeper-studio](https://github.com/beekeeper-studio/beekeeper-studio) - Modern and easy to use SQL client for MySQL, Postgres, SQLite, SQL Server, and more. Linux, MacOS, and Windows.
@@ -5906,7 +5925,7 @@
 
 - [fastapi/typer](https://github.com/fastapi/typer) - Typer, build great CLIs. Easy to code. Based on Python type hints.
 - [nbedos/termtosvg](https://github.com/nbedos/termtosvg) - Record terminal sessions as SVG animations
-- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,300+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
+- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [jeroenjanssens/data-science-at-the-command-line](https://github.com/jeroenjanssens/data-science-at-the-command-line) - Data Science at the Command Line
 - [themerdev/themer](https://github.com/themerdev/themer) - 🎨 themer takes a set of colors and generates themes for your apps (editors, terminals, wallpapers, and more).
 - [tqdm/tqdm](https://github.com/tqdm/tqdm) - :zap: A Fast, Extensible Progress Bar for Python and CLI
@@ -5951,6 +5970,9 @@
 
 ## typescript 
 
+- [midday-ai/midday](https://github.com/midday-ai/midday) - Run your business smarter 🪄
+- [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
+- [accordproject/concerto](https://github.com/accordproject/concerto) - Business schema language and runtime
 - [Canner/vulcan-sql](https://github.com/Canner/vulcan-sql) - Data API Framework for AI Agents and Data Apps
 - [antvis/X6](https://github.com/antvis/X6) - 🚀 JavaScript diagramming library that uses SVG and HTML for rendering.
 - [xyflow/xyflow](https://github.com/xyflow/xyflow) - React Flow | Svelte Flow - Powerful open source libraries for building node-based UIs with React (https://reactflow.dev) or Svelte (https://svelteflow.dev). Ready out-of-the-box and infinitely customi
@@ -5998,7 +6020,7 @@
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Platform to build admin panels, internal tools, and dashboards. Integrates with 25+ databases and any API.
 - [kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit) - The web's most popular Jamstack front-end template (boilerplate) for building web applications with React
 - [react-bootstrap/react-bootstrap](https://github.com/react-bootstrap/react-bootstrap) - Bootstrap components built with React
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [microsoft/TypeScript](https://github.com/microsoft/TypeScript) - TypeScript is a superset of JavaScript that compiles to clean JavaScript output.
 - [microsoft/vscode](https://github.com/microsoft/vscode) - Visual Studio Code
 - [basarat/typescript-book](https://github.com/basarat/typescript-book) - :books: The definitive guide to TypeScript and possibly the best TypeScript book :book:. Free and Open Source 🌹
@@ -6079,7 +6101,7 @@
 - [openreplay/openreplay](https://github.com/openreplay/openreplay) - Session replay and analytics tool you can self-host. Ideal for reproducing issues, co-browsing with users and optimizing your product.
 - [yoavbls/pretty-ts-errors](https://github.com/yoavbls/pretty-ts-errors) - 🔵 Make TypeScript errors prettier and human-readable in VSCode 🎀
 - [lokalise/i18n-ally](https://github.com/lokalise/i18n-ally) - 🌍 All in one i18n extension for VS Code
-- [directus/directus](https://github.com/directus/directus) - The Modern Data Stack 🐰 — Directus is an instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
+- [directus/directus](https://github.com/directus/directus) - The flexible backend for all your projects 🐰 Turn your DB into a headless CMS, admin panels, or apps with a custom UI, instant APIs, auth & more.
 - [rehypejs/rehype-react](https://github.com/rehypejs/rehype-react) - plugin to transform to preact, react, vue, etc
 - [wevm/wagmi](https://github.com/wevm/wagmi) - Reactive primitives for Ethereum apps
 - [GetPublii/Publii](https://github.com/GetPublii/Publii) - The most intuitive Static Site CMS designed for SEO-optimized and privacy-focused websites.
@@ -6096,6 +6118,7 @@
 
 ## vuejs 
 
+- [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [GetPublii/Publii](https://github.com/GetPublii/Publii) - The most intuitive Static Site CMS designed for SEO-optimized and privacy-focused websites.
 - [freqtrade/frequi](https://github.com/freqtrade/frequi) - Freqtrade UI - Frontend for Freqtrade
 - [dockeron/dockeron](https://github.com/dockeron/dockeron) - 🤖🤖🤖 Electron + Vue.js for Docker
@@ -6104,7 +6127,7 @@
 
 ## web 
 
-- [emcf/thepipe](https://github.com/emcf/thepipe) - Extract markdown and images from PDFs, URLs, docs, slides, and more, ready for multimodal LLMs. ⚡
+- [emcf/thepipe](https://github.com/emcf/thepipe) - Extract clean markdown from PDFs, URLs, Word docs, slides, videos, and more, ready for any LLM. ⚡
 - [ajndkr/lanarky](https://github.com/ajndkr/lanarky) - The web framework for building LLM microservices
 - [lovasoa/SQLpage](https://github.com/lovasoa/SQLpage) - Fast SQL-only data application builder. Automatically build a UI on top of SQL queries.
 - [nextapps-de/flexsearch](https://github.com/nextapps-de/flexsearch) - Next-Generation full text search library for Browser and Node.js
@@ -6150,6 +6173,7 @@
 
 ## website 
 
+- [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [reactjs/react.dev](https://github.com/reactjs/react.dev) - The React documentation website
 - [getgrav/grav](https://github.com/getgrav/grav) - Modern, Crazy Fast, Ridiculously Easy and Amazingly Powerful Flat-File CMS powered by PHP, Markdown, Twig, and Symfony
 - [Asabeneh/30-Days-Of-React](https://github.com/Asabeneh/30-Days-Of-React) - 30 Days of  React challenge is a step by step guide to learn React in 30 days.  These videos may help too: https://www.youtube.com/channel/UC7PNRuno1rzYPb1xLa4yktw
