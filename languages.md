@@ -990,7 +990,6 @@
 - [john-rocky/CoreML-Models](https://github.com/john-rocky/CoreML-Models) - Converted CoreML Model Zoo.
 - [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) - A curated list of awesome Docusaurus resources.
 - [CollabCodeTech/backend-challenges](https://github.com/CollabCodeTech/backend-challenges) - A public list of open-source challenges from jobs around the world
-- [nikitavoloboev/wiki](https://github.com/nikitavoloboev/wiki) - Everything I know
 - [sorrycc/awesome-javascript](https://github.com/sorrycc/awesome-javascript) - 🐢 A collection of awesome browser-side  JavaScript libraries, resources and shiny things.
 - [rehypejs/awesome-rehype](https://github.com/rehypejs/awesome-rehype) - Curated list of awesome rehype resources
 - [joshbuchea/HEAD](https://github.com/joshbuchea/HEAD) - A simple guide to HTML &lt;head&gt; elements
@@ -2558,6 +2557,7 @@
 - [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [YassKhazzan/openperplex_front](https://github.com/YassKhazzan/openperplex_front) - openperplex is an opensource AI search engine
 - [inciteful-xyz/inciteful-web](https://github.com/inciteful-xyz/inciteful-web) - The frontend for Inciteful.xyz.
+- [nikitavoloboev/data](https://github.com/nikitavoloboev/data) - All kinds of things
 - [freqtrade/frequi](https://github.com/freqtrade/frequi) - Freqtrade UI - Frontend for Freqtrade
 - [requarks/wiki](https://github.com/requarks/wiki) - Wiki.js | A modern and powerful wiki app built on Node.js
 - [dockeron/dockeron](https://github.com/dockeron/dockeron) - 🤖🤖🤖 Electron + Vue.js for Docker
