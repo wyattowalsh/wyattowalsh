@@ -904,7 +904,7 @@
 - [jxzhangjhu/Awesome-LLM-RAG](https://github.com/jxzhangjhu/Awesome-LLM-RAG) - Awesome-LLM-RAG: a curated list of advanced retrieval augmented generation (RAG) in Large Language Models
 - [corca-ai/awesome-llm-security](https://github.com/corca-ai/awesome-llm-security) - A curation of awesome tools, documents and projects about LLM Security.
 - [quqxui/Awesome-LLM4IE-Papers](https://github.com/quqxui/Awesome-LLM4IE-Papers) - Awesome papers about generative Information Extraction (IE) using Large Language Models (LLMs)
-- [atfortes/Awesome-LLM-Reasoning](https://github.com/atfortes/Awesome-LLM-Reasoning) - Reasoning in Large Language Models: Papers and Resources, including Chain-of-Thought, Instruction-Tuning and Multimodality.
+- [atfortes/Awesome-LLM-Reasoning](https://github.com/atfortes/Awesome-LLM-Reasoning) - Reasoning in Large Language Models: Papers and Resources, including Chain-of-Thought and OpenAI Strawberry o1.
 - [nancheng58/Awesome-LLM4RS-Papers](https://github.com/nancheng58/Awesome-LLM4RS-Papers) - Large Language Model-enhanced Recommender System Papers
 - [imaurer/awesome-llm-json](https://github.com/imaurer/awesome-llm-json) - Resource list for generating JSON using LLMs via function calling, tools, CFG. Libraries, Models, Notebooks, etc.
 - [WangRongsheng/awesome-LLM-resourses](https://github.com/WangRongsheng/awesome-LLM-resourses) - 🧑‍🚀 全世界最好的LLM资料总结 | Summary of the world's best LLM resources.
@@ -1215,6 +1215,7 @@
 
 ## Python 
 
+- [PromtEngineer/localGPT](https://github.com/PromtEngineer/localGPT) - Chat with your documents on your local device using GPT models. No data leaves your device and 100% private.
 - [diego-vicente/som-tsp](https://github.com/diego-vicente/som-tsp) - Solving the Traveling Salesman Problem using Self-Organizing Maps
 - [raphaelmansuy/code2prompt](https://github.com/raphaelmansuy/code2prompt) - Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your 
 - [nteract/papermill](https://github.com/nteract/papermill) - 📚 Parameterize, execute, and analyze notebooks
@@ -2110,6 +2111,7 @@
 
 ## Swift 
 
+- [TelegramMessenger/Telegram-iOS](https://github.com/TelegramMessenger/Telegram-iOS) - Telegram-iOS
 - [TuringSoftware/CrystalFetch](https://github.com/TuringSoftware/CrystalFetch) - macOS UI for creating Windows installer ISO from UUPDump
 - [imxieyi/waifu2x-mac](https://github.com/imxieyi/waifu2x-mac) - Waifu2x-ios port to macOS, still in Core ML and Metal
 - [Clipy/Clipy](https://github.com/Clipy/Clipy) - Clipboard extension app for macOS.
@@ -2194,7 +2196,7 @@
 - [weaviate/Verba](https://github.com/weaviate/Verba) - Retrieval Augmented Generation (RAG) chatbot powered by Weaviate
 - [Ironclad/rivet-example](https://github.com/Ironclad/rivet-example) - 
 - [run-llama/chat-llamaindex](https://github.com/run-llama/chat-llamaindex) - 
-- [mckaywrigley/chatbot-ui](https://github.com/mckaywrigley/chatbot-ui) - AI chat for every model.
+- [mckaywrigley/chatbot-ui](https://github.com/mckaywrigley/chatbot-ui) - Come join the best place on the internet to learn AI skills. Use code "chatbotui" for an extra 20% off.
 - [ItzCrazyKns/Perplexica](https://github.com/ItzCrazyKns/Perplexica) - Perplexica is an AI-powered search engine. It is an Open source alternative to Perplexity AI
 - [StreetLamb/tribe](https://github.com/StreetLamb/tribe) - Low code tool to rapidly build and coordinate multi-agent teams
 - [llm-ui-kit/llm-ui](https://github.com/llm-ui-kit/llm-ui) - The React library for LLMs
@@ -2202,7 +2204,7 @@
 - [whoiskatrin/chart-gpt](https://github.com/whoiskatrin/chart-gpt) - AI tool to build charts based on text input
 - [interstellard/chatgpt-advanced](https://github.com/interstellard/chatgpt-advanced) - WebChatGPT: A browser extension that augments your ChatGPT prompts with web results.
 - [Ironclad/rivet](https://github.com/Ironclad/rivet) - The open-source visual AI programming environment and TypeScript library
-- [openreplay/openreplay](https://github.com/openreplay/openreplay) - Session replay and analytics tool you can self-host. Ideal for reproducing issues, co-browsing with users and optimizing your product.
+- [openreplay/openreplay](https://github.com/openreplay/openreplay) - Session replay and product analytics you can self-host. Ideal for reproducing issues, co-browsing with users and optimizing your product.
 - [BuilderIO/gpt-crawler](https://github.com/BuilderIO/gpt-crawler) - Crawl a site to generate knowledge files to create your own custom GPT from a URL
 - [nilooy/flowgpt](https://github.com/nilooy/flowgpt) - Generate diagram with AI
 - [KnowledgeCanvas/knowledge](https://github.com/KnowledgeCanvas/knowledge) - Knowledge is a tool for saving, searching, accessing, exploring and chatting with all of your favorite websites, documents and files.
@@ -2285,7 +2287,7 @@
 - [Make-md/makemd](https://github.com/Make-md/makemd) - 
 - [gatzjames/insomnia-plugin-graphql-codegen-import](https://github.com/gatzjames/insomnia-plugin-graphql-codegen-import) - Insomnia plugin that generates GraphQL operations in your workspace
 - [ChatGPTNextWeb/ChatGPT-Next-Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web) - A cross-platform ChatGPT/Gemini UI (Web / PWA / Linux / Win / MacOS). 一键拥有你自己的跨平台 ChatGPT/Gemini 应用。
-- [mckaywrigley/paul-graham-gpt](https://github.com/mckaywrigley/paul-graham-gpt) - AI search & chat for all of Paul Graham’s essays.
+- [mckaywrigley/paul-graham-gpt](https://github.com/mckaywrigley/paul-graham-gpt) - Come join the best place on the internet to learn AI skills. Use code "paulgrahamgpt" for an extra 20% off.
 - [Bin-Huang/chatbox](https://github.com/Bin-Huang/chatbox) - User-friendly Desktop Client App for AI Models/LLMs (GPT, Claude, Gemini, Ollama...)
 - [run-llama/sec-insights](https://github.com/run-llama/sec-insights) - A real world full-stack application using LlamaIndex
 - [morethanmin/morethan-log](https://github.com/morethanmin/morethan-log) - 😎 A static blog using notion database
