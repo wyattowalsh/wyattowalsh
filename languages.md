@@ -360,7 +360,7 @@
 - [cocacola-lab/CollabKG](https://github.com/cocacola-lab/CollabKG) - official repository for CollabKG [Accepted by COLING2024]
 - [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) - The all-in-one Desktop & Docker AI application with built-in RAG, AI agents, and more.
 - [deathau/markdownload](https://github.com/deathau/markdownload) - A Firefox and Google Chrome extension to clip websites and download them into a readable markdown file.
-- [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb) - Free, simple, and intuitive online database design tool and SQL generator.
+- [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb) - Free, simple, and intuitive online database diagram editor and SQL generator.
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [Electric-Hydrogen/GPTBot](https://github.com/Electric-Hydrogen/GPTBot) - A fully serverless (AWS Lambda, API Gateway, DynamoDB) Slack bot with GPT-4 support and full conversation mode
 - [giosilvi/GPT-Prompter](https://github.com/giosilvi/GPT-Prompter) - Browser extension to get a fast prompt (of the selected text) for OpenAI`s GPT-3, GPT-4 & ChatGPT API . Available in the Chrome web store and Firefox browser add-ons
@@ -1216,6 +1216,7 @@
 
 ## Python 
 
+- [AgriculturalSemantics/agro](https://github.com/AgriculturalSemantics/agro) - AgrO describes agronomic practices, techniques, and variables used in agronomic experiments.
 - [PromtEngineer/localGPT](https://github.com/PromtEngineer/localGPT) - Chat with your documents on your local device using GPT models. No data leaves your device and 100% private.
 - [diego-vicente/som-tsp](https://github.com/diego-vicente/som-tsp) - Solving the Traveling Salesman Problem using Self-Organizing Maps
 - [raphaelmansuy/code2prompt](https://github.com/raphaelmansuy/code2prompt) - Code2Prompt is a powerful command-line tool that simplifies the process of providing context to Large Language Models (LLMs) by generating a comprehensive Markdown file containing the content of your 
@@ -1248,6 +1249,7 @@
 - [Sinaptik-AI/pandas-ai](https://github.com/Sinaptik-AI/pandas-ai) - Chat with your database (SQL, CSV, pandas, polars, mongodb, noSQL, etc). PandasAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG.
 - [eseckel/ai-for-grant-writing](https://github.com/eseckel/ai-for-grant-writing) - A curated list of resources for using LLMs to develop more competitive grant applications.
 - [msoedov/langcorn](https://github.com/msoedov/langcorn) - ⛓️ Serving LangChain LLM apps and agents automagically with FastApi. LLMops
+- [Chainlit/chainlit](https://github.com/Chainlit/chainlit) - Build Conversational AI in minutes ⚡️
 - [raznem/parsera](https://github.com/raznem/parsera) - Lightweight library for scraping web-sites with LLMs
 - [pathwaycom/pathway](https://github.com/pathwaycom/pathway) - Python ETL framework for stream processing, real-time analytics, LLM pipelines, and RAG.
 - [itsOwen/CyberScraper-2077](https://github.com/itsOwen/CyberScraper-2077) - A Powerful web scraper powered by LLM | OpenAI, Gemini & Ollama
@@ -1431,7 +1433,7 @@
 - [dottxt-ai/outlines](https://github.com/dottxt-ai/outlines) - Structured Text Generation
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [stjordanis/betterprompt](https://github.com/stjordanis/betterprompt) - Test suite for LLM prompts
-- [BerriAI/litellm](https://github.com/BerriAI/litellm) - Python SDK, Proxy Server to call 100+ LLM APIs using the OpenAI format - [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropic, Sagemaker, HuggingFace, Replicate, Groq]
+- [BerriAI/litellm](https://github.com/BerriAI/litellm) - Python SDK, Proxy Server (LLM Gateway) to call 100+ LLM APIs in OpenAI format - [Bedrock, Azure, OpenAI, VertexAI, Cohere, Anthropic, Sagemaker, HuggingFace, Replicate, Groq]
 - [langflow-ai/langflow](https://github.com/langflow-ai/langflow) - Langflow is a low-code app builder for RAG and multi-agent AI applications. It’s Python-based and agnostic to any model, API, or database.
 - [zilliztech/GPTCache](https://github.com/zilliztech/GPTCache) - Semantic cache for LLMs. Fully integrated with LangChain and llama_index.
 - [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source alternative to Kubernetes, designed to simplify development, training, and deployment of AI across any cloud or on-prem. It supports NVIDIA, AMD, and TPU.
@@ -1584,7 +1586,7 @@
 - [cjolowicz/cookiecutter-hypermodern-python](https://github.com/cjolowicz/cookiecutter-hypermodern-python) - Hypermodern Python Cookiecutter
 - [pytest-dev/pytest-html](https://github.com/pytest-dev/pytest-html) - Plugin for generating HTML reports for pytest results
 - [Teemu/pytest-sugar](https://github.com/Teemu/pytest-sugar) - a plugin for py.test that changes the default look and feel of py.test (e.g. progressbar, show tests that fail instantly)
-- [Netflix/metaflow](https://github.com/Netflix/metaflow) - :rocket: Build and manage real-life ML, AI, and data science projects with ease!
+- [Netflix/metaflow](https://github.com/Netflix/metaflow) - Open Source Platform for developing, scaling and deploying serious ML, AI, and data science systems
 - [spotify/luigi](https://github.com/spotify/luigi) - Luigi is a Python module that helps you build complex pipelines of batch jobs. It handles dependency resolution, workflow management, visualization etc. It also comes with Hadoop support built in.
 - [eliasdabbas/advertools](https://github.com/eliasdabbas/advertools) - advertools - online marketing productivity and analysis tools
 - [sphinx-gallery/sphinx-gallery](https://github.com/sphinx-gallery/sphinx-gallery) - Sphinx extension for automatic generation of an example gallery
@@ -2159,7 +2161,6 @@
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [TrafficGuard/sophia](https://github.com/TrafficGuard/sophia) - TypeScript AI agent platform with Autonomous agents, Software developer agents, AI code review agents and more
 - [romansky/dom-to-semantic-markdown](https://github.com/romansky/dom-to-semantic-markdown) - DOM to Semantic-Markdown for use with LLMs
-- [Chainlit/chainlit](https://github.com/Chainlit/chainlit) - Build Conversational AI in minutes ⚡️
 - [context-labs/autodoc](https://github.com/context-labs/autodoc) - Experimental toolkit for auto-generating codebase documentation using LLMs
 - [rashadphz/farfalle](https://github.com/rashadphz/farfalle) - 🔍 AI search engine - self-host with local or cloud LLMs
 - [BuilderIO/gpt-assistant](https://github.com/BuilderIO/gpt-assistant) - An experiment to give an autonomous GPT agent access to a browser and have it accomplish tasks
@@ -2176,7 +2177,7 @@
 - [electric-sql/pglite](https://github.com/electric-sql/pglite) - Lightweight WASM Postgres with real-time, reactive bindings.
 - [memfreeme/memfree](https://github.com/memfreeme/memfree) - MemFree - Hybrid AI Search Engine
 - [supermemoryai/opensearch-ai](https://github.com/supermemoryai/opensearch-ai) - SearchGPT / Perplexity clone, but personalised for you.
-- [udecode/plate](https://github.com/udecode/plate) - Rich-text editor with shadcn
+- [udecode/plate](https://github.com/udecode/plate) - Rich-text editor with shadcn/ui
 - [ueberdosis/tiptap](https://github.com/ueberdosis/tiptap) - The headless rich text editor framework for web artisans.
 - [redpangilinan/credenza](https://github.com/redpangilinan/credenza) - Ready-made responsive modal component for shadcn/ui.
 - [Kanaries/GWalkR](https://github.com/Kanaries/GWalkR) - Turn your data frame into a tableau style drag and drop UI interface to build visualization in R.
