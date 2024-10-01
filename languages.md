@@ -1411,7 +1411,7 @@
 - [amosjyng/langchain-visualizer](https://github.com/amosjyng/langchain-visualizer) - Visualization and debugging tool for LangChain workflows
 - [ShishirPatil/gorilla](https://github.com/ShishirPatil/gorilla) - Gorilla: Training and Evaluating LLMs for Function Calls (Tool Calls)
 - [unclecode/crawl4ai](https://github.com/unclecode/crawl4ai) - 🔥🕷️ Crawl4AI: Open-source LLM Friendly Web Crawler & Scrapper
-- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
+- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into AI / LLM-ready markdown.md files
 - [siyuyuan/evoagent](https://github.com/siyuyuan/evoagent) - Resources for our paper: "EvoAgent: Towards Automatic Multi-Agent Generation via Evolutionary Algorithms"
 - [AI4WA/Docs2KG](https://github.com/AI4WA/Docs2KG) - Docs2KG: Unified Knowledge Graph Construction from Heterogeneous Documents Assisted by Large Language Models
 - [microsoft/graphrag](https://github.com/microsoft/graphrag) - A modular graph-based Retrieval-Augmented Generation (RAG) system
