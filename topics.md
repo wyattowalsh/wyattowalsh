@@ -309,7 +309,7 @@
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - The Memory layer for your AI apps
-- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3). Self-host locally or use our clou
+- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain, open and self-hostable. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3).
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization. OpenAI or MistralAI API key required
 - [PrefectHQ/ControlFlow](https://github.com/PrefectHQ/ControlFlow) - 🦾 Take control of your AI agents
 - [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio equip's your AI agents & LLMs with 100+ high-quality integrations via function calling
@@ -329,7 +329,7 @@
 - [e2b-dev/awesome-ai-agents](https://github.com/e2b-dev/awesome-ai-agents) - A list of AI autonomous agents
 - [BuilderIO/gpt-crawler](https://github.com/BuilderIO/gpt-crawler) - Crawl a site to generate knowledge files to create your own custom GPT from a URL
 - [rafalzawadzki/spellbook-forge](https://github.com/rafalzawadzki/spellbook-forge) - ✨ Make your LLM prompts executable and version controlled. ✨
-- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
+- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into AI / LLM-ready markdown.md files
 - [guardrails-ai/guardrails](https://github.com/guardrails-ai/guardrails) - Adding guardrails to large language models.
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that does online comprehensive research on any given topic
 - [langgenius/dify](https://github.com/langgenius/dify) - Dify is an open-source LLM app development platform. Dify's intuitive interface combines AI workflow, RAG pipeline, agent capabilities, model management, observability features and more, letting you q
@@ -562,7 +562,7 @@
 
 - [microsoft/RD-Agent](https://github.com/microsoft/RD-Agent) - Research and development (R&D) is crucial for the enhancement of industrial productivity, especially in the AI era, where the core aspects of R&D are mainly focused on data and models. We are committe
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
-- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate development gruntwork like code reviews, patching and documentation with LLM workflows.
+- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate code reviews, patching and documentation with self-hosted LLM workflows.
 - [feder-cr/Auto_Jobs_Applier_AIHawk](https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk) - Auto_Jobs_Applier_AIHawk is a tool that automates  the jobs application process. Utilizing artificial intelligence, it enables users to apply for multiple job offers in an automated and personalized w
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that does online comprehensive research on any given topic
@@ -1091,7 +1091,7 @@
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - The Memory layer for your AI apps
 - [ai-boost/awesome-prompts](https://github.com/ai-boost/awesome-prompts) - Curated list of chatgpt prompts from the top-rated GPTs in the GPTs Store. Prompt Engineering, prompt attack & prompt protect. Advanced Prompt Engineering papers.
 - [steven-tey/novel](https://github.com/steven-tey/novel) - Notion-style WYSIWYG editor with AI-powered autocompletion.
-- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3). Self-host locally or use our clou
+- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain, open and self-hostable. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3).
 - [Undertone0809/promptulate](https://github.com/Undertone0809/promptulate) - 🚀Lightweight Large language model automation and Autonomous Language Agents development framework. Build your LLM Agent Application in a pythonic way!
 - [OpenBMB/RepoAgent](https://github.com/OpenBMB/RepoAgent) - An LLM-powered repository agent designed to assist developers and teams in generating documentation and understanding repositories quickly.
 - [botpress/botpress](https://github.com/botpress/botpress) - The open-source hub to build & deploy GPT/LLM Agents ⚡️
@@ -1387,6 +1387,7 @@
 
 ## data 
 
+- [ucbepic/docetl](https://github.com/ucbepic/docetl) - A system for complex LLM-powered document processing
 - [Sinaptik-AI/pandas-ai](https://github.com/Sinaptik-AI/pandas-ai) - Chat with your database (SQL, CSV, pandas, polars, mongodb, noSQL, etc). PandasAI makes data analysis conversational using LLMs (GPT 3.5 / 4, Anthropic, VertexAI) and RAG.
 - [DeepInsight-AI/DeepBI](https://github.com/DeepInsight-AI/DeepBI) - LLM based data scientist, AI native data application.  AI-driven infinite thinking redefines BI.
 - [mendableai/firecrawl](https://github.com/mendableai/firecrawl) - 🔥 Turn entire websites into LLM-ready markdown or structured data. Scrape, crawl and extract with a single API.
@@ -1825,7 +1826,7 @@
 
 ## devops 
 
-- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate development gruntwork like code reviews, patching and documentation with LLM workflows.
+- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate code reviews, patching and documentation with self-hosted LLM workflows.
 - [stateful/vscode-runme](https://github.com/stateful/vscode-runme) - DevOps Notebooks Built with Markdown - VS Code extension
 - [adamiBs/vscode-terraform-live-graph](https://github.com/adamiBs/vscode-terraform-live-graph) - The Terraform Live Graph Extension for Visual Studio Code is a plugin that allows you to generate a live Terraform graph as you code.
 - [visenger/awesome-mlops](https://github.com/visenger/awesome-mlops) - A curated list of references for MLOps
@@ -1954,7 +1955,7 @@
 
 ## emacs 
 
-- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3). Self-host locally or use our clou
+- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain, open and self-hostable. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3).
 
 ## ember 
 
@@ -2200,7 +2201,7 @@
 
 ## github 
 
-- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
+- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into AI / LLM-ready markdown.md files
 - [github/vscode-github-actions](https://github.com/github/vscode-github-actions) - GitHub Actions extension for VS Code
 - [lostintangent/gistpad](https://github.com/lostintangent/gistpad) - VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists
 - [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
@@ -2349,7 +2350,7 @@
 - [accordproject/concerto](https://github.com/accordproject/concerto) - Business schema language and runtime
 - [georgia-tech-db/evadb](https://github.com/georgia-tech-db/evadb) - Database system for AI-powered apps
 - [microsoft/lida](https://github.com/microsoft/lida) - Automatic Generation of Visualizations and Infographics using Large Language Models
-- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate development gruntwork like code reviews, patching and documentation with LLM workflows.
+- [patched-codes/patchwork](https://github.com/patched-codes/patchwork) - Automate code reviews, patching and documentation with self-hosted LLM workflows.
 - [NirDiamant/GenAI_Agents](https://github.com/NirDiamant/GenAI_Agents) - This repository provides tutorials and implementations for various Generative AI Agent techniques, from basic to advanced. It serves as a comprehensive guide for building intelligent, interactive AI s
 - [NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques) - This repository showcases various advanced techniques for Retrieval-Augmented Generation (RAG) systems. RAG systems combine information retrieval with generative models to provide accurate and context
 - [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) - Tesseract Open Source OCR Engine (main repository)
@@ -2357,6 +2358,8 @@
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB) - Investment Research for Everyone, Everywhere.
 - [LinkStackOrg/LinkStack](https://github.com/LinkStackOrg/LinkStack) - LinkStack - the ultimate solution for creating a personalized & professional profile page. Showcase all your important links in one place, forget the limitation of one link on social media. Set up you
 - [searxng/searxng](https://github.com/searxng/searxng) - SearXNG is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
+- [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio equip's your AI agents & LLMs with 100+ high-quality integrations via function calling
+- [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - A framework for building custom AI Copilots 🤖 in-app AI chatbots, in-app AI Agents, & AI-powered Textareas.
 - [xlang-ai/OpenAgents](https://github.com/xlang-ai/OpenAgents) - [COLM 2024] OpenAgents: An Open Platform for Language Agents in the Wild
 - [TransformerOptimus/SuperAGI](https://github.com/TransformerOptimus/SuperAGI) - &lt;⚡️&gt; SuperAGI - A dev-first open source autonomous AI agent framework. Enabling developers to build, manage & run useful autonomous agents quickly and reliably.
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that does online comprehensive research on any given topic
@@ -2370,6 +2373,7 @@
 - [mindsdb/mindsdb](https://github.com/mindsdb/mindsdb) - The platform for building AI from enterprise data
 - [pezzolabs/pezzo](https://github.com/pezzolabs/pezzo) - 🕹️ Open-source, developer-first LLMOps platform designed to streamline prompt design, version management, instant delivery, collaboration, troubleshooting, observability and more.
 - [lunary-ai/lunary](https://github.com/lunary-ai/lunary) - The production toolkit for LLMs. Observability, prompt management and evaluations.
+- [dstackai/dstack](https://github.com/dstackai/dstack) - dstack is an open-source alternative to Kubernetes, designed to simplify development, training, and deployment of AI across any cloud or on-prem. It supports NVIDIA, AMD, and TPU.
 - [twibiral/obsidian-execute-code](https://github.com/twibiral/obsidian-execute-code) - Obsidian Plugin to execute code in a note.
 - [stylelint/vscode-stylelint](https://github.com/stylelint/vscode-stylelint) - The official Visual Studio Code extension for Stylelint
 - [microsoft/kiota](https://github.com/microsoft/kiota) - OpenAPI based HTTP Client code generator
@@ -2441,6 +2445,7 @@
 - [freeCodeCamp/devdocs](https://github.com/freeCodeCamp/devdocs) - API Documentation Browser
 - [themerdev/themer](https://github.com/themerdev/themer) - 🎨 themer takes a set of colors and generates themes for your apps (editors, terminals, wallpapers, and more).
 - [BrainJS/brain.js](https://github.com/BrainJS/brain.js) - 🤖 GPU accelerated Neural networks in JavaScript for Browsers and Node.js
+- [antvis/G6](https://github.com/antvis/G6) - ♾ A Graph Visualization Framework in JavaScript.
 - [tsparticles/tsparticles](https://github.com/tsparticles/tsparticles) - tsParticles - Easily create highly customizable JavaScript particles effects, confetti explosions and fireworks animations and use them as animated backgrounds for your website. Ready to use component
 - [you-dont-need/You-Dont-Need-JavaScript](https://github.com/you-dont-need/You-Dont-Need-JavaScript) - CSS is powerful, you can do a lot of things without JS.
 - [kedro-org/kedro-viz](https://github.com/kedro-org/kedro-viz) - Visualise your Kedro data and machine-learning pipelines and track your experiments.
@@ -2963,6 +2968,7 @@
 
 ## llm 
 
+- [ucbepic/docetl](https://github.com/ucbepic/docetl) - A system for complex LLM-powered document processing
 - [microsoft/RD-Agent](https://github.com/microsoft/RD-Agent) - Research and development (R&D) is crucial for the enhancement of industrial productivity, especially in the AI era, where the core aspects of R&D are mainly focused on data and models. We are committe
 - [arc53/DocsGPT](https://github.com/arc53/DocsGPT) - GPT-powered chat for documentation, chat with your documents
 - [eugeneyan/obsidian-copilot](https://github.com/eugeneyan/obsidian-copilot) - 🤖 A prototype assistant for writing and thinking
@@ -3058,7 +3064,7 @@
 - [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - The Memory layer for your AI apps
 - [character-ai/prompt-poet](https://github.com/character-ai/prompt-poet) - Streamlines and simplifies prompt design for both developers and non-technical users with a low code approach.
-- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3). Self-host locally or use our clou
+- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain, open and self-hostable. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3).
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization. OpenAI or MistralAI API key required
 - [PrefectHQ/ControlFlow](https://github.com/PrefectHQ/ControlFlow) - 🦾 Take control of your AI agents
 - [Undertone0809/promptulate](https://github.com/Undertone0809/promptulate) - 🚀Lightweight Large language model automation and Autonomous Language Agents development framework. Build your LLM Agent Application in a pythonic way!
@@ -3087,7 +3093,7 @@
 - [ju-bezdek/langchain-decorators](https://github.com/ju-bezdek/langchain-decorators) - syntactic sugar 🍭 for langchain
 - [ShishirPatil/gorilla](https://github.com/ShishirPatil/gorilla) - Gorilla: Training and Evaluating LLMs for Function Calls (Tool Calls)
 - [langchain-ai/langserve](https://github.com/langchain-ai/langserve) - LangServe 🦜️🏓
-- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
+- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into AI / LLM-ready markdown.md files
 - [protectai/rebuff](https://github.com/protectai/rebuff) - LLM Prompt Injection Detector
 - [zjukg/KG-LLM-Papers](https://github.com/zjukg/KG-LLM-Papers) - [Paper List] Papers integrating knowledge graphs (KGs) and large language models (LLMs)
 - [microsoft/graphrag](https://github.com/microsoft/graphrag) - A modular graph-based Retrieval-Augmented Generation (RAG) system
@@ -4999,6 +5005,7 @@
 
 ## python 
 
+- [ucbepic/docetl](https://github.com/ucbepic/docetl) - A system for complex LLM-powered document processing
 - [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) - Collection of awesome LLM apps with RAG using OpenAI, Anthropic, Gemini and opensource models.
 - [arc53/DocsGPT](https://github.com/arc53/DocsGPT) - GPT-powered chat for documentation, chat with your documents
 - [devidw/obsidian-to-hugo](https://github.com/devidw/obsidian-to-hugo) - Process Obsidian notes to publish them with Hugo. Supports transformation of Obsidian wiki links into Hugo shortcodes for internal linking.
@@ -5051,7 +5058,7 @@
 - [reworkd/tarsier](https://github.com/reworkd/tarsier) - Vision utilities for web interaction agents 👀
 - [Alir3z4/html2text](https://github.com/Alir3z4/html2text) - Convert HTML to Markdown-formatted text.
 - [SciPhi-AI/R2R](https://github.com/SciPhi-AI/R2R) - The all-in-one solution for RAG. Build, scale, and deploy state of the art Retrieval-Augmented Generation applications
-- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into LLM-ready markdown.md files
+- [tegridydev/auto-md](https://github.com/tegridydev/auto-md) - convert files / GitHub repos into AI / LLM-ready markdown.md files
 - [fastapi/sqlmodel](https://github.com/fastapi/sqlmodel) - SQL databases in Python, designed for simplicity, compatibility, and robustness.
 - [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that does online comprehensive research on any given topic
 - [lucasvieirasilva/nx-plugins](https://github.com/lucasvieirasilva/nx-plugins) - NX Plugins
@@ -5838,7 +5845,7 @@
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly WebUI for AI (Formerly Ollama WebUI)
 - [siyuan-note/siyuan](https://github.com/siyuan-note/siyuan) - A privacy-first, self-hosted, fully open source personal knowledge management software, written in typescript and golang.
 - [LinkStackOrg/LinkStack](https://github.com/LinkStackOrg/LinkStack) - LinkStack - the ultimate solution for creating a personalized & professional profile page. Showcase all your important links in one place, forget the limitation of one link on social media. Set up you
-- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3). Self-host locally or use our clou
+- [khoj-ai/khoj](https://github.com/khoj-ai/khoj) - Your AI second brain, open and self-hostable. Get answers to your questions, whether they be online or in your own notes. Use online AI models (e.g gpt4) or private, local LLMs (e.g llama3).
 - [lunary-ai/lunary](https://github.com/lunary-ai/lunary) - The production toolkit for LLMs. Observability, prompt management and evaluations.
 - [appsmithorg/appsmith](https://github.com/appsmithorg/appsmith) - Platform to build admin panels, internal tools, and dashboards. Integrates with 25+ databases and any API.
 - [orchest/orchest](https://github.com/orchest/orchest) - Build data pipelines, the easy way 🛠️
