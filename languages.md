@@ -600,7 +600,6 @@
 - [airflow-plugins/airflow-dag-creation-manager-plugin](https://github.com/airflow-plugins/airflow-dag-creation-manager-plugin) - A plugin for Airflow that create and manage your DAG with web UI.
 - [HashLips/hashlips_art_engine](https://github.com/HashLips/hashlips_art_engine) - HashLips Art Engine is a tool used to create multiple different instances of artworks based on provided layers.
 - [argenos/zotero-mdnotes](https://github.com/argenos/zotero-mdnotes) - A Zotero plugin to export item metadata and notes as markdown files
-- [carbon-design-system/carbon](https://github.com/carbon-design-system/carbon) - A design system built by IBM
 - [keske/react-parallax-component](https://github.com/keske/react-parallax-component) - Easiest way to add scroll parallax effect on the component
 - [ctxhou/react-tabtab](https://github.com/ctxhou/react-tabtab) - 💃 Make your react tab dance🕺
 - [reactjs/react-tabs](https://github.com/reactjs/react-tabs) - An accessible and easy tab component for ReactJS.
@@ -2568,6 +2567,7 @@
 - [kiwicom/orbit](https://github.com/kiwicom/orbit) - React components of open-source Orbit design system by Kiwi.com
 - [microsoft/fluentui](https://github.com/microsoft/fluentui) - Fluent UI web represents a collection of utilities, React components, and web components for building web applications.
 - [pinterest/gestalt](https://github.com/pinterest/gestalt) - A set of React UI components that supports Pinterest’s design language
+- [carbon-design-system/carbon](https://github.com/carbon-design-system/carbon) - A design system built by IBM
 - [uber/baseweb](https://github.com/uber/baseweb) - A React Component library implementing the Base design language
 - [geist-org/geist-ui](https://github.com/geist-org/geist-ui) - A design system for building modern websites and applications.
 - [mkosir/react-parallax-tilt](https://github.com/mkosir/react-parallax-tilt) - 👀  Easily apply tilt hover effect on React components - lightweight/zero dependencies (3kB)
