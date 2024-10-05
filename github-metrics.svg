@@ -23,7 +23,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/>
                             </svg>
-                            Followed by 95 users
+                            Followed by 96 users
                         </div>
                     </section>
                     <section>
@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    5.78m added, 2.53m removed
+                                    90.8m added, 44.4m removed
                                 </div>
                             </section>
                             <section>
@@ -3350,7 +3350,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>Skyvern-AI/skyvern</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Automate browser-based workflows with LLMs and Computer Vision</div>
@@ -3403,7 +3403,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>EZ-hwh/AutoScraper</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Official implement of paper "AutoCrawler: A Progressive Understanding Web Agent for Web Crawler Generation"</div>
@@ -3456,7 +3456,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>extractus/article-extractor</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">To extract main article from given URL with Node.js</div>
@@ -3509,7 +3509,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>Quorafind/Obsidian-Canvas-Block-Reference</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A plugin allows you to refer card or group in canvas, and then click to jump.</div>
@@ -3658,10 +3658,11 @@ JPMorgan Chase &amp; Co. (JPMC)
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                         <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/>
                     </svg>
-                    95 followers
+                    96 followers
                 </h2>
                 <div class="row">
                     <section class="people">
+                        <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAABwAGBAj/xAAqEAAABQMBCAEFAAAAAAAAAAABAgMEBQAGEQcSExQhIjFBgVE1dJGhsv/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwD1E7cEbNVnCud2kQVDY+ADNGyGtdsOEiKt204qkfmU5I5QQH3SBcP0CT+2V/gaCtOtS3tuWDa0cpaMq5IuHDNHCaiYFcqCIiAFz7/FAv2beMddpXRo1B+kDYSgbi2xkc5zjGe/atNWDgbzmZOYbNHlkzMcgoIgZ0uZMU0+kRyOB9e63lBxSyJ3UU9QSxvVUVEy5+RAQChe4NNp15pbZkFwLN67inG8dtVXIppqEwflthz8h2p1qoCDS+3LgtSVFBC0IeJi3ZgF4qhJquD9IDsYBQR8j+6X6qqD/9k=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAIAAAD9b0jDAAAACXBIWXMAAAsTAAALEwEAmpwYAAADZElEQVR4nK2UWUwTURSGixEXxCiCW2wk+IIan0xMxMSFBGOMicbERKN1ecAE9QHhQTCAQWFYBHcEOxVRcanRKHGhFtsyXVi6ALbYKbK0w6KIhBZcioCTY6YznU43waX5c3vnnzNfzrnnzPDCMdt/F++/UBariL+FKroC+nMxWzHh+ENorXVW2p2QJXtCwrdPj0uemVo+p+Y9NyDPZicBBO8GAkMLCQdmd3KdsCdNIQt28nhbKIXE05tpMfvpu7ENPS8Hv4Pr9xPgas/wMg3hC12n69tl7Oc6oTuzGRxXM7aGPdTSAcs13Uq7EwAqPnyJVE6t/NDtGUyaHE1bcWCOvJON4WsIlcM5b+pnGlZZvzF2d5kgKTnh4KG4fWWCpNM7joQKinzCVjf0/FmjUhLTSg8njpXlfL9+9k7iMWnKydmXXv3bnNZa0aIiZXrqx4uZA5ezFKdS2nLTN79omBI0IsjtCEXniDD/06Use3GavTjt44UMQBHk8bMpQaM13cEiTlRJQYiQ4lKy+gGgSG2lKFLR8RsiYrMz0E2GD8GCIhUdptslIMwFIfIDzY+vZoZpqZo4ZPYMPKszXUMMtMDmiHJPmb+2VTcCigCKSO6Vs+YuY//XCXKJmghc/prG3s9jP3Os9mDQBIkWRHkgypPcv8X1ubPpBT1sHugZnQAAEqCkd3ittneR+5OzUtV+TtcsaalvVz2noDfzRx6V1rTUZeuaV6naJ2kUX0MQzvHjbYOsuxDrKjHox3E54DIwSeH2eRpKrY3PwCwbM8uvGPRRWODvFo/+y+waYmvhKzt1RjXQRAu1kpIKuHcR7haTVTfA9Jo2wSLXGdV8ZWdQ6Hp9n3tgrXVGDfUMTWxTUCtNoR3WdF3WGTURmDUwlO9u4mWD3vf5YHJzK5u0c725PG4f99a3krgMzC4oW34wIps+Lr9m0IdzuDx2F6du+2Zm49yZ+nM5LE8wLsvXN/lCY5Qd3a2Yh2VhN95cn8PlbnBZurbFA52PWeveuprj3QRfrr/v3TcSlx9tNDHQDWqLb5kBuf5EvyK0RjUDjZHho/VPqTPyb8Vv5J+H+c0RdTMDFYnFcKuANLyYJNnJiORzVCQWU9BomeUH6nr/KgpJbVWgquWUAh4xcymHVin5tAxQZAzNi5bhvwBct/TFGu9u/QAAAABJRU5ErkJggg==" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAACAMGBwT/xAAsEAABAwQABAQGAwAAAAAAAAABAgMEAAUGEQcTITEIEhUiFEFRcYGRMkKC/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgH/xAAaEQACAwEBAAAAAAAAAAAAAAABAgADERIh/9oADAMBAAIRAxEAPwBCfBMlsunQQgbJ+lB/MMvveSZTdZMSbNbhOOq5bLbywA1vSAQDrtqnfACXWShYBChog/OhnjWNP2m43FyQGw5HkLbU1/M+wkFH32KjHBstdfZybt4fsifyPBA1cnHHbhb3THdcdV51qHdBJ+x1/mtHUyN1VOGNgZtESfOZKB6m4l7lpGggAaH571ctU0HQ2Fl4cicIubFugPzJSw3HYbLrij/VIGyf1Ryt3EfGr1krl4vJbghx3mutcpRB127b2daqTxF5FdIce1WmJKWxDmtLVIDfQuDQ9pP069qPraR1qtWG8hrsK+xr8Jc0t+U265+mlYYhyy00lQ0eUQCg/k+f9VfueKD3By7zrTn1oECQ403JkJafbCj5HUkHoofPW+lMdbywrQNJRyMgdyx2f//Z" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/jpg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAcABwDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAgEBgcF/8QAKRAAAQMDAgQGAwAAAAAAAAAAAQIDBAAFEQYHEhMxQRQhUWFxgRUikf/EABYBAQEBAAAAAAAAAAAAAAAAAAEAAv/EABsRAAIDAAMAAAAAAAAAAAAAAAARAQISEyFB/9oADAMBAAIRAxEAPwBVakSI78bg5zSkcaQtPEMZBGQR9Grtoba+/avaU9B8Mw15YL7mCr4HWpeqdsdW2W62+2XpCjFV+rEjjLjKB1IHp8UMH2jNs0ZpjJuwz1/gJlWe9wzKbaCBGVDEdB+wT3J6+3YVhOorBctO3iRbLtFWxMYOFoIz9g9xSTg1va3XlqtC7cmdNRHKFDmcQIAGKsO8u71nu6LN+Df8XyHFLdHCU47A+Y+aWyisccD6xsdA7nadjvxETLuw2AjmOOOnHn6Vy93txtGXXU7D8ZTFxSIqUKeS3kZ4lnHT3H9pY80ZqrTJm1dSz//Z" width="28" height="28" alt="" />
@@ -3685,7 +3686,6 @@ JPMorgan Chase &amp; Co. (JPMC)
                         <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAIAAAD9b0jDAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFcklEQVR4nH2UC1MTVxTH9wNUhZDd7GZ3k0BCAia8TXhYFFIQRUCkhKKoQFGCBA0gKhh5vwMkBEVeDjKIUWEkPCIWFBsEtIrttKXWOp2pUikhMUm/QgdJyhISZs7cOTt793f/53/OXcBoXDF9WjGZVszmVbNZbzavWtYSYui35HpCbH40ra2AyaS3fAZZLE5jnbieWDdvezCwDWsj1ok26BaB9kUAnz8zbMeyybQ9EkXZSbYeAzgmEtzYKJywbsatGUiUDNighu1l2jlIfEs4wOrAtuVvFuukRQ4sBhwI3DIJTuyzs3IjAQgyHehd22pfuzP0xqmAsxZZR5Kg1NHYOzDUbIMarDKJhf+f26w06JfmpzW91ZlLi4+JXLvWm+2HnzCPdpIXF57W5h9PigxMFgZWi2OW3zxxNBXb3qhN7basah/05R07JI0XZAt5SXzWyX2c2a4TH98+21q42aGndrj1aCorGGy8Oq0sm6iWDBVndmXHqTKDhuuPGlc/rG82r682NwBnXbLSLatmk/5mwxVdj2pGVTnZWDxeXzxaXfBh9u6kItmof792ETb+CdavnPxQCFCTaUVzvf5JR9NIhWRKUfFIUTNWX7y08NDwZsLhtbYQlS69f/f9Y83bn2c3zYNl9Q/dyONuxWjl6dKEPSMloq4zcVVJIb+MdZj++sGZIMBiMRhXPw7fv5UaLzz4ZVB+2lfvXmnXiFZbDYsP1S8GuudayrWlec87mttOi6QHgl71y5Z/01kshn8/7/xkWDab9CbjPybjsvnTCqCbfnCvv6FOnKw8l5kRsz9VGFIrTVl4/mhsfODuYOfsswmdpm+ht14jSZi6mjXXWjtSUThZV/b3/P2ROyXzM6PTU3cmRtv7u5U9tRfmNe3d7ZLO6xIgt/Cb4vIsddOlqdYqjbxS13Cxp+zs7f6W5uvlVY0FN/sa+3obp6pONST69mXHFEfzJGHebQkBv49UK1X5TcrLckWhtq9urEWmzEl+PqS6kJ9wPNUPuKVKV9/I/q67YrK1Risvne2Q69Q9M6Nt4/eqxtTlmnvyS5fEXbmxw2XfTlcWDEjSzkf6dKTz1Yq8CyVFtbXF1bJTmmuyoYtHeyXRf2prREf9E494AwtjuT9ppS+GpM0ZEbLkiOn2+tca9cNBlfTcidT0k/zoZF82q1H89bWcI03ph2rSYi4mhNyUBO/jeQaw2MH+gSnxh9qu5jalht8uivnxWnppTpQ0iw8svJxfePlibn4uXRSbHMwZby3PLakLihbxQqMZDE82m7vPjzvcUJQVHVCbur9cFFKTFsjFyBwU58AUNk7zortHhu6RFaQ1X04cbMlZnH06p9MBU4Ml6s6i2Pg4L2+/MEHI4ZRMTnAUg+3D4vhhKJ2GuzNptInmgjslojMRnif3srMOCMCdOz0QzB0k0ykwk4ry/bhXelUBB8ME/iz55ZQZeS4gFsdyw/ihRYU+Scd4wUKuINKDzWN4+tLoLCpCoyI4DaP7MGny0zHd2cKzQh7iRiLv2IFTYDoIYiCEgpAng1ElO+cf7OvDZclLRVplIxDO54efF0cpWli+Au6ecK4gEsU96O4chEpHYAyGURyj02kMlAIjZBAikdx27YJcXFGIgoEQ4kamkNwQCElLjM7LiOftZhblHXh95TAwcKMnp76BG5tEZ3pzBRFegXtxOgtBcIRKh8gwhUJFEBxFUIyKU2Gqm4sL2cUVAUEqREFBCuhKglxJEBnazfGSZCQxcDhmv/evUwVAYVEp0y8Ud+cgKN0nLMqDJ6Ax2BQIgWGM7AZBIIwgNBRzR6k4DFJcd+6igCDNk4nRcASESF/sAF1cIBIZg9HOSjEDg/LOpj8Zv/EfIwtFxMle0MAAAAAASUVORK5CYII=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAIAAAD9b0jDAAAACXBIWXMAAAsTAAALEwEAmpwYAAADwklEQVR4nJXWTUgqWwAH8DlmYdEXYZIxIEavRRjdi6tQI5ju5WkIQQtrUVLrAgsjkMgLQRgERbUR3EVglgrhQoLouxatooKUyhoHgyCdaPwcT75X0625fnX772b4+/Mcz3jOIKncoSgqGo3C3wmFQhDC1F8EyXoXx/GRkZHKykoMw4aGhlZWVkiShBAmk8nn52fmO76AxmIxk8lUUVEBXoMgCABArVafnp7SNJ1KpSCEJEkmk8k8LsK+uL6+lslkyGsAAIWFhZ2dnRaLhSAINhEKhdbW1hYXF4PB4CcoQRBisZgREQQpLy+fnZ1NJpO5huP3+zUazc7ODoSQoqgsaCKRkMvlzHwFAkFra+vW1lbqs0Sj0Z6enuXl5UAgkEgk0tHt7e26ujqJRNLe3k4QRDgcTv1dIpEIhmHT09M+ny8dnZ+fHxwc7O7ujsViqS8mEAg0NTWZzeZoNPqBxuNxh8PR0dFxe3ubuaYQwvX19V+/jDqdzmAw2FZWMufhdDo1Go3JZGJ+hBc0GAy63e65ublMcWNj4+fPH8if4fP5TqczrdnW1qZSqTwezxtKUdTe3t7V1VVaz+VyITlSzONdXFywy2azWS6Xj4+P0zT9Nv2Hh4enp6c0FMOwXCiCIB0qFbvs8/kkEolarcZx/AUlSZL9QLxHKpXmQauqqtjlWCyGoiiGYW/o+6qlZWBgIA8qlUrZZZqmxWKxTCZ7QWOvicfjmahOp8uDKpX/sssQQpFI1NjYeHl5+TJSZqfIjMFgyIM2NPzDLpMkyefzy8rKTk5O3tCsu5nRaMyDSiQSdnl/f18gENTU1Hg8nheU2TX8fv+XRqrVatNGUFtbi6JoOBx+QyGEBEGkoY+Pj9+/f8sqajQadj8cDotEIhRF+/r6Pv77EEK32x2JRNLc4eHhrOj5+Tm7NjU1VVJSUlpaenBw8Md+urCw4HK50h6v3d3dTBFFUXZnc3OTx+MBALq6upiF+UApihodHfV6vff39+83bTZb1pHa7XamcHZ2JhQKEQSprq6+ublhbn6gEEK9Xm80GhUKhdfrPTw87O3t5XA4WVEul9vf37+6uioUCgEAHA7HZrNlP6NwHG9oaEBRtKioiDmmOLnD6ACAgoKCmZkZtoOwL2iaxnFcqVRyuVymXZg7HA4HAFBcXLy0tPT5uY/juNVqbWlpyT9SAEB9ff3R0VGmkP1lgqIou92u1WoVCkXFa5jXgPc0NzdbLJZcZ092lMnd3d3x8bHD4ZicnBwbG9Pr9RMTE1arFcfxPJ/6H/0PJ+oAbvC89sIAAAAASUVORK5CYII=" width="28" height="28" alt="" />
                         <img class="avatar" src="data:image/png;base64,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" width="28" height="28" alt="" />
-                        <img class="avatar" src="data:image/png;base64,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" width="28" height="28" alt="" />
                     </section>
                 </div>
             </section>
@@ -4191,7 +4191,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix">Super</span>
                                     developer
-                                    <span class="gh">ranked 664k out of 145m users</span>
+                                    <span class="gh">ranked 664k out of 144m users</span>
                                 </div>
                                 <div class="text">Published 53 public repositories</div>
                             </div>
@@ -4311,7 +4311,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 194k out of 214m repositories</span>
+                                    <span class="gh">ranked 194k out of 217m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 67 times</div>
                             </div>
@@ -4357,7 +4357,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </defs>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="gauge info">
                                         <circle class="gauge-base" r="25" cx="28" cy="28"/>
-                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="73.21608040201005 155"/>
+                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="73.99497487437186 155"/>
                                     </svg>
                                     <svg xmlns="http://www.w3.org/2000/svg" mask="url(#mask)">
                                         <g transform="translate(4 4)" stroke-width="2" fill="none" fill-rule="evenodd">
@@ -4394,9 +4394,9 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Influencer
-                                    <span class="gh">ranked 126k out of 145m users</span>
+                                    <span class="gh">ranked 124k out of 144m users</span>
                                 </div>
-                                <div class="text">Followed by 95 users</div>
+                                <div class="text">Followed by 96 users</div>
                             </div>
                         </div>
                         <div class="achievement c largeable-width-half">
@@ -4432,7 +4432,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 214m repositories</span>
+                                    <span class="gh">ranked 346k out of 217m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 110 stars</div>
                             </div>
@@ -4711,7 +4711,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 4 Oct 2024, 21:28:15 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 4 Oct 2024, 22:23:12 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
