@@ -93,6 +93,7 @@
 
 ## C++ 
 
+- [infiniflow/infinity](https://github.com/infiniflow/infinity) - The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text
 - [qpdf/qpdf](https://github.com/qpdf/qpdf) - qpdf: A content-preserving PDF document transformer
 - [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) - Tesseract Open Source OCR Engine (main repository)
 - [Distributive-Network/PythonMonkey](https://github.com/Distributive-Network/PythonMonkey) - A Mozilla SpiderMonkey JavaScript engine embedded into the Python VM, using the Python engine to provide the JS host environment.
@@ -202,6 +203,7 @@
 
 ## Go 
 
+- [bytebase/bytebase](https://github.com/bytebase/bytebase) - The GitHub/GitLab for database DevOps. World's most advanced database DevOps and CI/CD for Developer, DBA and Platform Engineering teams.
 - [ollama/ollama](https://github.com/ollama/ollama) - Get up and running with Llama 3.2, Mistral, Gemma 2, and other large language models.
 - [nilsherzig/LLocalSearch](https://github.com/nilsherzig/LLocalSearch) - LLocalSearch is a completely locally running search aggregator using LLM Agents. The user can ask a question and the system will use a chain of LLMs to find the answer. The user can see the progress o
 - [JohannesKaufmann/html-to-markdown](https://github.com/JohannesKaufmann/html-to-markdown) - ⚙️ Convert HTML to Markdown. Even works with entire websites and can be extended through rules.
@@ -324,7 +326,8 @@
 
 ## Java 
 
-- [kestra-io/kestra](https://github.com/kestra-io/kestra) - :zap: Open-source workflow automation platform. Orchestrate any language using YAML, hundreds of integrations. Alternative to Airflow, Zapier, RunDeck, Camunda, ...
+- [CodePhiliaX/Chat2DB](https://github.com/CodePhiliaX/Chat2DB) - 🔥🔥🔥AI-driven database tool and SQL client, The hottest GUI client, supporting MySQL, Oracle, PostgreSQL, DB2, SQL Server, DB2, SQLite, H2, ClickHouse, and more.
+- [kestra-io/kestra](https://github.com/kestra-io/kestra) - :zap: Open-source workflow automation platform. Orchestrate any language using YAML, hundreds of integrations. Alternative to Airflow, n8n, RunDeck, Camunda, Jenkins...
 - [tencentmusic/supersonic](https://github.com/tencentmusic/supersonic) - SuperSonic is the next-generation BI+AI platform that unifies Chat BI (powered by LLM) and Headless BI (powered by semantic layer) paradigms.
 - [torakiki/pdfsam](https://github.com/torakiki/pdfsam) - PDFsam, a desktop application to split, merge, mix, rotate PDF files and extract pages
 - [graphaware/neo4j-nlp](https://github.com/graphaware/neo4j-nlp) - NLP Capabilities in Neo4j
@@ -1233,13 +1236,16 @@
 
 ## Python 
 
+- [airbytehq/airbyte](https://github.com/airbytehq/airbyte) - The leading data integration platform for ETL / ELT data pipelines from APIs, databases & files to data warehouses, data lakes & data lakehouses. Both self-hosted and Cloud-hosted.
+- [getsentry/sentry](https://github.com/getsentry/sentry) - Developer-first error tracking and performance monitoring
+- [Pythagora-io/gpt-pilot](https://github.com/Pythagora-io/gpt-pilot) - The first real AI developer
 - [Skyvern-AI/skyvern](https://github.com/Skyvern-AI/skyvern) - Automate browser-based workflows with LLMs and Computer Vision
 - [EZ-hwh/AutoScraper](https://github.com/EZ-hwh/AutoScraper) - Official implement of paper "AutoCrawler: A Progressive Understanding Web Agent for Web Crawler Generation"
 - [yzhao062/pyod](https://github.com/yzhao062/pyod) - A Python Library for Outlier and Anomaly Detection, Integrating Classical and Deep Learning Techniques
 - [3b1b/manim](https://github.com/3b1b/manim) - Animation engine for explanatory math videos
 - [roboflow/supervision](https://github.com/roboflow/supervision) - We write your reusable computer vision tools. 💜
 - [reflex-dev/reflex](https://github.com/reflex-dev/reflex) - 🕸️ Web apps in pure Python 🐍
-- [ucbepic/docetl](https://github.com/ucbepic/docetl) - A system for agentic LLM-powered data processing
+- [ucbepic/docetl](https://github.com/ucbepic/docetl) - A system for agentic LLM-powered data processing and ETL
 - [microsoft/RD-Agent](https://github.com/microsoft/RD-Agent) - Research and development (R&D) is crucial for the enhancement of industrial productivity, especially in the AI era, where the core aspects of R&D are mainly focused on data and models. We are committe
 - [severian42/GraphRAG-Local-UI](https://github.com/severian42/GraphRAG-Local-UI) - GraphRAG using Local LLMs - Features robust API and multiple apps for Indexing/Prompt Tuning/Query/Chat/Visualizing/Etc. This is meant to be the ultimate GraphRAG/KG local LLM app.
 - [Shubhamsaboo/awesome-llm-apps](https://github.com/Shubhamsaboo/awesome-llm-apps) - Collection of awesome LLM apps with RAG using OpenAI, Anthropic, Gemini and opensource models.
@@ -1692,7 +1698,7 @@
 - [modin-project/modin](https://github.com/modin-project/modin) - Modin: Scale your Pandas workflows by changing a single line of code
 - [jmcarpenter2/swifter](https://github.com/jmcarpenter2/swifter) - A package which efficiently applies any function to a pandas dataframe or series in the fastest available manner
 - [facebookresearch/metaseq](https://github.com/facebookresearch/metaseq) - Repo for external large-scale work
-- [k4yt3x/video2x](https://github.com/k4yt3x/video2x) - A lossless video upscaling framework. Est. Hack the Valley II, 2018.
+- [k4yt3x/video2x](https://github.com/k4yt3x/video2x) - A lossless video super resolution framework. Est. Hack the Valley II, 2018.
 - [google-deepmind/acme](https://github.com/google-deepmind/acme) - A library of reinforcement learning components and agents
 - [tensorlayer/TensorLayer](https://github.com/tensorlayer/TensorLayer) - Deep Learning and Reinforcement Learning Library for Scientists and Engineers
 - [keras-rl/keras-rl](https://github.com/keras-rl/keras-rl) - Deep Reinforcement Learning for Keras.
@@ -2177,6 +2183,11 @@
 
 ## TypeScript 
 
+- [grafana/grafana](https://github.com/grafana/grafana) - The open and composable observability and data visualization platform. Visualize metrics, logs, and traces from multiple sources like Prometheus, Loki, Elasticsearch, InfluxDB, Postgres and many more.
+- [stevenpetryk/mafs](https://github.com/stevenpetryk/mafs) - React components for interactive math
+- [Stability-AI/StableStudio](https://github.com/Stability-AI/StableStudio) - Community interface for generative AI
+- [dubinc/dub](https://github.com/dubinc/dub) - Open-source link management infrastructure. Loved by modern marketing teams like Vercel, Raycast, and Perplexity.
+- [memgraph/odin](https://github.com/memgraph/odin) - 
 - [Quorafind/Obsidian-Canvas-Block-Reference](https://github.com/Quorafind/Obsidian-Canvas-Block-Reference) - A plugin allows you to refer card or group in canvas, and then click to jump.
 - [SecureAI-Tools/SecureAI-Tools](https://github.com/SecureAI-Tools/SecureAI-Tools) - Private and secure AI tools for everyone's productivity.
 - [RSSNext/Follow](https://github.com/RSSNext/Follow) - 🧡 Next generation information browser.
@@ -2270,7 +2281,7 @@
 - [L3-N0X/obsidian-marker](https://github.com/L3-N0X/obsidian-marker) - Configure a marker api endpoint and use it to convert your pdfs into markdowns with best ocr, embedded tables, images and every other benefit of marker!
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization. OpenAI or MistralAI API key required
 - [labring/FastGPT](https://github.com/labring/FastGPT) - FastGPT is a knowledge-based platform built on the LLMs, offers a comprehensive suite of out-of-the-box capabilities such as data processing, RAG retrieval, and visual AI workflow orchestration, letti
-- [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - react UI + infrastructure for AI Copilots, in-app AI agents, AI chatbots, and AI-powered Textareas 🪁
+- [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - React UI + elegant infrastructure for AI Copilots, in-app AI agents, AI chatbots, and AI-powered Textareas 🪁
 - [eylonmiz/react-agent](https://github.com/eylonmiz/react-agent) - The open-source React.js Autonomous LLM Agent
 - [botpress/botpress](https://github.com/botpress/botpress) - The open-source hub to build & deploy GPT/LLM Agents ⚡️
 - [weaviate/Verba](https://github.com/weaviate/Verba) - Retrieval Augmented Generation (RAG) chatbot powered by Weaviate
