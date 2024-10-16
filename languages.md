@@ -1243,6 +1243,7 @@
 
 ## Python 
 
+- [microsoft/playwright-python](https://github.com/microsoft/playwright-python) - Python version of the Playwright testing and automation library.
 - [mwouts/jupytext](https://github.com/mwouts/jupytext) - Jupyter Notebooks as Markdown Documents, Julia, Python or R scripts
 - [TaskingAI/TaskingAI](https://github.com/TaskingAI/TaskingAI) - The open source platform for AI-native application development.
 - [openai/swarm](https://github.com/openai/swarm) - Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team.
@@ -1291,7 +1292,7 @@
 - [PaddlePaddle/PaddleNLP](https://github.com/PaddlePaddle/PaddleNLP) - 👑 Easy-to-use and powerful NLP and LLM library with 🤗 Awesome model zoo, supporting wide-range of NLP tasks from research to industrial applications, including 🗂Text Classification,  🔍 Neural Search, 
 - [BradyFU/Woodpecker](https://github.com/BradyFU/Woodpecker) - ✨✨Woodpecker: Hallucination Correction for Multimodal Large Language Models. The first work to correct hallucinations in MLLMs.
 - [h2oai/h2ogpt](https://github.com/h2oai/h2ogpt) - Private chat with local GPT with document, images, video, etc. 100% private, Apache 2.0. Supports oLLaMa, Mixtral, llama.cpp, and more. Demo: https://gpt.h2o.ai/ https://gpt-docs.h2o.ai/
-- [iterative/datachain](https://github.com/iterative/datachain) - AI-dataframe to enrich, transform and analyze data from cloud storages for ML training and LLM apps
+- [iterative/datachain](https://github.com/iterative/datachain) - AI-data warehouse to enrich, transform and analyze data from cloud storages
 - [eosphoros-ai/DB-GPT-Hub](https://github.com/eosphoros-ai/DB-GPT-Hub) - A repository that contains models, datasets, and fine-tuning techniques for DB-GPT, with the purpose of enhancing model performance  in Text-to-SQL
 - [PrefectHQ/marvin](https://github.com/PrefectHQ/marvin) - ✨ Build AI interfaces that spark joy
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
@@ -1331,7 +1332,7 @@
 - [plncmm/llmner](https://github.com/plncmm/llmner) - 
 - [explosion/spacy-llm](https://github.com/explosion/spacy-llm) - 🦙 Integrating LLMs into structured NLP pipelines
 - [ray-project/llmperf](https://github.com/ray-project/llmperf) - LLMPerf is a library for validating and benchmarking LLMs
-- [explodinggradients/ragas](https://github.com/explodinggradients/ragas) - Evaluation library for your LLM Applications
+- [explodinggradients/ragas](https://github.com/explodinggradients/ragas) - Supercharge Your LLM Application Evaluations 🚀
 - [gusye1234/nano-graphrag](https://github.com/gusye1234/nano-graphrag) - A simple, easy-to-hack GraphRAG implementation
 - [katanaml/sparrow](https://github.com/katanaml/sparrow) - Data processing with ML and LLM
 - [protectai/llm-guard](https://github.com/protectai/llm-guard) - The Security Toolkit for LLM Interactions
@@ -1922,7 +1923,6 @@
 - [pymc-devs/pymc](https://github.com/pymc-devs/pymc) - Bayesian Modeling and Probabilistic Programming in Python
 - [crflynn/stochastic](https://github.com/crflynn/stochastic) - Generate realizations of stochastic processes in python.
 - [pytorch/pytorch](https://github.com/pytorch/pytorch) - Tensors and Dynamic neural networks in Python with strong GPU acceleration
-- [chilam27/Boston_Housing_Prices](https://github.com/chilam27/Boston_Housing_Prices) - Analyze and predict Boston housing prices through Trulia data using regression machine learning models.
 - [public-apis/public-apis](https://github.com/public-apis/public-apis) - A collective list of free APIs
 - [joalla/discogs_client](https://github.com/joalla/discogs_client) - Continuation of the "Official Python Client for the Discogs API"
 - [spotipy-dev/spotipy](https://github.com/spotipy-dev/spotipy) - A light weight Python library for the Spotify Web API
@@ -1955,7 +1955,7 @@
 - [magenta/magenta](https://github.com/magenta/magenta) - Magenta: Music and Art Generation with Machine Intelligence
 - [airbnb/knowledge-repo](https://github.com/airbnb/knowledge-repo) - A next-generation curated knowledge sharing platform for data scientists and other technical professions.
 - [rushter/data-science-blogs](https://github.com/rushter/data-science-blogs) - A curated list of data science blogs
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 ML Experiments and Data Management with Git
+- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Versioning and ML Experiments
 - [mwaskom/seaborn](https://github.com/mwaskom/seaborn) - Statistical data visualization in Python
 - [recommenders-team/recommenders](https://github.com/recommenders-team/recommenders) - Best Practices on Recommendation Systems
 - [ipython/ipython](https://github.com/ipython/ipython) - Official repository for IPython itself. Other repos in the IPython organization contain things like the website, documentation builds, etc.
