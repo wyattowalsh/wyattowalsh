@@ -617,7 +617,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        Unexpected error
+                        API error: 500
                     </div>
                 </section>
             </div>
@@ -3313,7 +3313,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>jpjacobpadilla/Google-Colab-Selenium</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The best way to use Selenium in Google Colab Notebooks!</div>
@@ -3366,7 +3366,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>elie222/inbox-zero</span>
-                                        <span>starred 14 hours ago</span>
+                                        <span>starred 15 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open source email app to reach inbox zero fast.</div>
@@ -4283,7 +4283,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 339k out of 216m repositories</span>
+                                    <span class="gh">ranked 339k out of 197m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 114 stars</div>
                             </div>
@@ -4562,7 +4562,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 24 Oct 2024, 04:01:31 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 24 Oct 2024, 05:01:39 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
