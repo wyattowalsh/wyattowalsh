@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>mgeier/sphinx-last-updated-by-git</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -152,7 +152,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>vscode-restructuredtext/vscode-restructuredtext</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">reStructuredText Language Support in Visual Studio Code</div>
@@ -205,7 +205,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jdillard/sphinx-gitstamp</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Sphinx extension that makes the git timestamp available to templates in the HTML context.</div>
@@ -432,7 +432,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">agronholm/sphinx-autodoc-typehints</span>
+                                        <span class="repo">mgeier/sphinx-last-updated-by-git</span>
                                     </div>
                                 </div>
                             </section>
@@ -445,7 +445,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">nicolashainaux/sphinx-autodoc-annotation</span>
+                                        <span class="repo">vscode-restructuredtext/vscode-restructuredtext</span>
                                     </div>
                                 </div>
                             </section>
@@ -458,7 +458,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">bitprophet/releases</span>
+                                        <span class="repo">jdillard/sphinx-gitstamp</span>
                                     </div>
                                 </div>
                             </section>
@@ -471,7 +471,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">numpy/numpydoc</span>
+                                        <span class="repo">sphinx-contrib/httpdomain</span>
                                     </div>
                                 </div>
                             </section>
@@ -484,7 +484,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">humitos/sphinx-version-warning</span>
+                                        <span class="repo">felix-hilden/sphinx-codeautolink</span>
                                     </div>
                                 </div>
                             </section>
