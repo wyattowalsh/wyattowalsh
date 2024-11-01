@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AnacletoLAB/grape</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🍇 GRAPE is a Rust/Python Graph Representation Learning library for Predictions and Evaluations</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>pykeen/pykeen</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🤖 A Python library for learning and evaluating knowledge graph embeddings</div>
@@ -202,7 +202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ownthink/KnowledgeGraph</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">史上最大规模1.4亿知识图谱数据免费下载，知识图谱，通用知识图谱，融合了两千五百多万的实体，拥有亿级别的实体属性关系。</div>
@@ -256,7 +256,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">239</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 19
                                 <div class="bottom">Oct.</div>
@@ -292,38 +292,38 @@
                                 25
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">240</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 26
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 27
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 28
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 29
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 30
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 31
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 1
                                 <div class="bottom">Nov.</div>
                             </div>
@@ -369,8 +369,8 @@
                                 25
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 26
                             </div>
                             <div class="entry">
@@ -425,7 +425,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">dhishku/AgriBot</span>
+                                        <span class="repo">janhq/jan</span>
                                     </div>
                                 </div>
                             </section>
@@ -438,7 +438,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">myhhub/KnowledgeGraph</span>
+                                        <span class="repo">chatchat-space/Langchain-Chatchat</span>
                                     </div>
                                 </div>
                             </section>
@@ -451,7 +451,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">ims-tcl/DeRE</span>
+                                        <span class="repo">All-Hands-AI/OpenHands</span>
                                     </div>
                                 </div>
                             </section>
@@ -464,7 +464,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">nicolay-r/AREkit</span>
+                                        <span class="repo">langfuse/langfuse</span>
                                     </div>
                                 </div>
                             </section>
@@ -477,7 +477,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">vu3jej/scrapy-corenlp</span>
+                                        <span class="repo">HKUDS/LightRAG</span>
                                     </div>
                                 </div>
                             </section>
