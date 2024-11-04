@@ -104,7 +104,7 @@
 - [nomic-ai/gpt4all](https://github.com/nomic-ai/gpt4all) - GPT4All: Run Local LLMs on Any Device. Open-source and available for commercial use.
 - [zealdocs/zeal](https://github.com/zealdocs/zeal) - Offline documentation browser inspired by Dash
 - [sbarex/QLMarkdown](https://github.com/sbarex/QLMarkdown) - macOS Quick Look extension for Markdown files.
-- [apache/arrow](https://github.com/apache/arrow) - Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing
+- [apache/arrow](https://github.com/apache/arrow) - Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - [mimecorg/fraqtive](https://github.com/mimecorg/fraqtive) - Generator of the Mandelbrot family fractals.
 - [xaos-project/XaoS](https://github.com/xaos-project/XaoS) - Real-time interactive fractal zoomer
 - [exaloop/codon](https://github.com/exaloop/codon) - A high-performance, zero-overhead, extensible Python compiler using LLVM
@@ -139,6 +139,7 @@
 
 ## CSS 
 
+- [code-flower/chrome](https://github.com/code-flower/chrome) - chrome extension
 - [catppuccin/obsidian](https://github.com/catppuccin/obsidian) - 💎 Soothing pastel theme for Obsidian
 - [CyanVoxel/Obsidian-Colored-Sidebar](https://github.com/CyanVoxel/Obsidian-Colored-Sidebar) - A Colored Sidebar CSS Snippet for Obsidian.
 - [obsidian-community/obsidian-hub](https://github.com/obsidian-community/obsidian-hub) - Resource hub for Obsidian resources.
@@ -206,6 +207,8 @@
 
 ## Go 
 
+- [casibase/casibase](https://github.com/casibase/casibase) - AI Cloud: ⚡️Open-source AI LangChain-like RAG (Retrieval-Augmented Generation) knowledge database with web UI and Enterprise SSO⚡️, supports OpenAI, Azure, LLaMA, Google Gemini, HuggingFace, Claude, G
+- [williamfzc/chat-gpt-ppt](https://github.com/williamfzc/chat-gpt-ppt) - Use ChatGPT (or other backends) to generate PPT automatically, all in one single file.
 - [bytebase/bytebase](https://github.com/bytebase/bytebase) - The GitHub/GitLab for database DevSecOps. World's most advanced database DevSecOps solution for Developer, Security, DBA and Platform Engineering teams.
 - [ollama/ollama](https://github.com/ollama/ollama) - Get up and running with Llama 3.2, Mistral, Gemma 2, and other large language models.
 - [nilsherzig/LLocalSearch](https://github.com/nilsherzig/LLocalSearch) - LLocalSearch is a completely locally running search aggregator using LLM Agents. The user can ask a question and the system will use a chain of LLMs to find the answer. The user can see the progress o
@@ -329,9 +332,11 @@
 
 ## Java 
 
+- [dhishku/AgriBot](https://github.com/dhishku/AgriBot) - AI based agriculture chat bot
+- [stanfordnlp/CoreNLP](https://github.com/stanfordnlp/CoreNLP) - CoreNLP: A Java suite of core NLP tools for tokenization, sentence segmentation, NER, parsing, coreference, sentiment analysis, etc.
 - [CodePhiliaX/Chat2DB](https://github.com/CodePhiliaX/Chat2DB) - 🔥🔥🔥AI-driven database tool and SQL client, The hottest GUI client, supporting MySQL, Oracle, PostgreSQL, DB2, SQL Server, DB2, SQLite, H2, ClickHouse, and more.
 - [kestra-io/kestra](https://github.com/kestra-io/kestra) - :zap: Workflow Automation Platform. Orchestrate & Schedule code in any language, run anywhere, 500+ plugins. Alternative to Zapier, Rundeck, Camunda, Airflow...
-- [tencentmusic/supersonic](https://github.com/tencentmusic/supersonic) - SuperSonic is the next-generation BI+AI platform that unifies Chat BI (powered by LLM) and Headless BI (powered by semantic layer) paradigms.
+- [tencentmusic/supersonic](https://github.com/tencentmusic/supersonic) - SuperSonic is the next-generation AI+BI platform that unifies Chat BI (powered by LLM) and Headless BI (powered by semantic layer) paradigms.
 - [torakiki/pdfsam](https://github.com/torakiki/pdfsam) - PDFsam, a desktop application to split, merge, mix, rotate PDF files and extract pages
 - [graphaware/neo4j-nlp](https://github.com/graphaware/neo4j-nlp) - NLP Capabilities in Neo4j
 - [protegeproject/webprotege](https://github.com/protegeproject/webprotege) - The webprotege code base
@@ -364,6 +369,36 @@
 
 ## JavaScript 
 
+- [grapheco/InteractiveGraph](https://github.com/grapheco/InteractiveGraph) - InteractiveGraph provides a web-based interactive visualization and analysis framework for large graph data, which may come from a GSON file, or an online Neo4j graph database. InteractiveGraph also p
+- [0hq/WebGPT](https://github.com/0hq/WebGPT) - Run GPT model on the browser with WebGPU. An implementation of GPT inference in less than ~1500 lines of vanilla Javascript.
+- [cesarhuret/docGPT](https://github.com/cesarhuret/docGPT) - ChatGPT directly within Google Docs as an Editor Add-on 📑
+- [socioboard/Socioboard-5.0](https://github.com/socioboard/Socioboard-5.0) - Socioboard is world's first and open source Social Technology Enabler. Socioboard Core is our flagship product.
+- [appbaseio/dejavu](https://github.com/appbaseio/dejavu) - A Web UI for Elasticsearch and OpenSearch: Import, browse and edit data with rich filters and query views, create reference search UIs.
+- [alyssaxuu/omni](https://github.com/alyssaxuu/omni) - The all-in-one tool to supercharge your productivity ⌨️
+- [floccusaddon/floccus](https://github.com/floccusaddon/floccus) - :cloud: Sync your bookmarks privately across browsers and devices
+- [manojVivek/medium-unlimited](https://github.com/manojVivek/medium-unlimited) - A browser extension to read medium.com articles for free without membership.
+- [QasimWani/LeetHub](https://github.com/QasimWani/LeetHub) - Automatically sync your leetcode solutions to your github account - top 5 trending GitHub repository
+- [BrainMaestro/packagehub](https://github.com/BrainMaestro/packagehub) - An extension for displaying dependencies of projects on GitHub
+- [nschloe/xhub](https://github.com/nschloe/xhub) - Extend GitHub pages with math, graphs etc.
+- [IndexStorm/git-rec-ext](https://github.com/IndexStorm/git-rec-ext) - Frontend code for GitHub Recommendation Extension
+- [katranci/github-npm-stats](https://github.com/katranci/github-npm-stats) - Chrome extension that displays npm download stats on GitHub
+- [stefanbuck/awesome-browser-extensions-for-github](https://github.com/stefanbuck/awesome-browser-extensions-for-github) - A collection of awesome browser extensions for GitHub.
+- [softvar/enhanced-github](https://github.com/softvar/enhanced-github) - :rocket: Browser extension to display size of each file, download link and copy file contents directly to the clipboard
+- [dudor/BookmarkHub](https://github.com/dudor/BookmarkHub) - BookmarkHub , sync bookmarks across different browsers
+- [simov/markdown-viewer](https://github.com/simov/markdown-viewer) - Markdown Viewer / Browser Extension
+- [visualpython/visualpython](https://github.com/visualpython/visualpython) - GUI-based Python code generator for data science, extension to Jupyter Lab, Jupyter Notebook and Google Colab.
+- [dessant/search-by-image](https://github.com/dessant/search-by-image) - Browser extension for reverse image search, available for Chrome, Edge and Safari
+- [chinchang/web-maker](https://github.com/chinchang/web-maker) - A blazing fast & offline frontend playground
+- [kamranahmedse/githunt](https://github.com/kamranahmedse/githunt) - Hunt the most starred projects on any date on GitHub
+- [dessant/buster](https://github.com/dessant/buster) - Captcha solver extension for humans, available for Chrome, Edge and Firefox
+- [liady/ChatGPT-pdf](https://github.com/liady/ChatGPT-pdf) - A Chrome extension for downloading your ChatGPT history to PNG, PDF or a sharable link
+- [gragland/chatgpt-chrome-extension](https://github.com/gragland/chatgpt-chrome-extension) - A ChatGPT Chrome extension. Integrates ChatGPT into every text box on the internet.
+- [josStorer/chatGPTBox](https://github.com/josStorer/chatGPTBox) - Integrating ChatGPT into your browser deeply, everything you need is here
+- [pashpashpash/vault-ai](https://github.com/pashpashpash/vault-ai) - OP Vault ChatGPT: Give ChatGPT long-term memory using the OP Stack (OpenAI + Pinecone Vector Database). Upload your own custom knowledge base files (PDF, txt, epub, etc) using a simple React frontend.
+- [lifan0127/ai-research-assistant](https://github.com/lifan0127/ai-research-assistant) - Aria is Your AI Research Assistant Powered by GPT Large Language Models
+- [shaoxiongji/knowledge-graphs](https://github.com/shaoxiongji/knowledge-graphs) - A collection of research on knowledge graphs
+- [iAmmarTahir/KnowledgeGraphGPT](https://github.com/iAmmarTahir/KnowledgeGraphGPT) - Transform plain text into a visually stunning Knowledge Graph with GPT-4 (latest preview)! It converts text into RDF tuples, and highlights the most frequent connections with a vibrant color-coding sy
+- [OpenKnowledgeMaps/Headstart](https://github.com/OpenKnowledgeMaps/Headstart) - A framework for creating web-based knowledge maps
 - [nextacular/nextacular](https://github.com/nextacular/nextacular) - An open-source starter kit that will help you build full-stack multi-tenant SaaS platforms efficiently and help you focus on developing your core SaaS features. Built on top of popular and modern tech
 - [metaskills/experts](https://github.com/metaskills/experts) - Experts.js is the easiest way to create and deploy OpenAI's Assistants and link them together as Tools to create advanced Multi AI Agent Systems with expanded memory and attention to detail.
 - [NUKnightLab/TimelineJS3](https://github.com/NUKnightLab/TimelineJS3) - TimelineJS v3: A Storytelling Timeline built in JavaScript.  http://timeline.knightlab.com
@@ -384,6 +419,7 @@
 - [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) - The all-in-one Desktop & Docker AI application with built-in RAG, AI agents, and more.
 - [deathau/markdownload](https://github.com/deathau/markdownload) - A Firefox and Google Chrome extension to clip websites and download them into a readable markdown file.
 - [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb) - Free, simple, and intuitive online database diagram editor and SQL generator.
+- [opendatalab/MinerU](https://github.com/opendatalab/MinerU) - A one-stop, open-source, high-quality data extraction tool, supports PDF/webpage/e-book extraction.一站式开源高质量数据提取工具，支持PDF/网页/多格式电子书提取。
 - [OpenBMB/AgentVerse](https://github.com/OpenBMB/AgentVerse) - 🤖 AgentVerse 🪐 is designed to facilitate the deployment of multiple LLM-based agents in various applications, which primarily provides two frameworks: task-solving and simulation
 - [Electric-Hydrogen/GPTBot](https://github.com/Electric-Hydrogen/GPTBot) - A fully serverless (AWS Lambda, API Gateway, DynamoDB) Slack bot with GPT-4 support and full conversation mode
 - [giosilvi/GPT-Prompter](https://github.com/giosilvi/GPT-Prompter) - Browser extension to get a fast prompt (of the selected text) for OpenAI`s GPT-3, GPT-4 & ChatGPT API . Available in the Chrome web store and Firefox browser add-ons
@@ -675,7 +711,7 @@
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [facebook/create-react-app](https://github.com/facebook/create-react-app) - Set up a modern web app by running one command.
 - [limedocs/limedocs-wiki-converter](https://github.com/limedocs/limedocs-wiki-converter) - Generate HTML & PDF documentation from you Github wiki or any other markdown-based wiki
-- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5500 free MIT-licensed high-quality SVG icons for you to use in your web projects.
+- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5700 free MIT-licensed high-quality SVG icons for you to use in your web projects.
 - [FortAwesome/Font-Awesome](https://github.com/FortAwesome/Font-Awesome) - The iconic SVG, font, and CSS toolkit
 - [budparr/hugopipes-tailwindcss](https://github.com/budparr/hugopipes-tailwindcss) - Hugo's Pipes functionality using TailwindCSS and PurgeCSS
 - [ttntm/hugo-tailwind-boilerplate](https://github.com/ttntm/hugo-tailwind-boilerplate) - A boilerplate for Hugo sites based on Tailwind CSS.
@@ -742,6 +778,10 @@
 
 ## Jupyter Notebook 
 
+- [AnacletoLAB/grape](https://github.com/AnacletoLAB/grape) - 🍇 GRAPE is a Rust/Python Graph Representation Learning library for Predictions and Evaluations
+- [AI4Finance-Foundation/FinGPT](https://github.com/AI4Finance-Foundation/FinGPT) - FinGPT: Open-Source Financial Large Language Models!  Revolutionize 🔥    We release the trained model on HuggingFace.
+- [mlc-ai/web-stable-diffusion](https://github.com/mlc-ai/web-stable-diffusion) - Bringing stable diffusion models to web browsers. Everything runs inside the browser with no server support.
+- [tomasonjo/blogs](https://github.com/tomasonjo/blogs) - Jupyter notebooks that support my graph data science blog posts at https://bratanic-tomaz.medium.com/
 - [weaviate/recipes](https://github.com/weaviate/recipes) - This repository shares end-to-end notebooks on how to use various Weaviate features and integrations!
 - [SeldonIO/alibi-detect](https://github.com/SeldonIO/alibi-detect) - Algorithms for outlier, adversarial and drift detection
 - [pycaret/pycaret](https://github.com/pycaret/pycaret) - An open-source, low-code machine learning library in Python
@@ -870,6 +910,7 @@
 
 ## Lua 
 
+- [nagadomi/waifu2x](https://github.com/nagadomi/waifu2x) - Image Super-Resolution for Anime-Style Art
 - [junyanz/CycleGAN](https://github.com/junyanz/CycleGAN) - Software that can generate photos from paintings,  turn horses into zebras,  perform style transfer, and more.
 
 ## MATLAB 
@@ -907,6 +948,12 @@
 
 ## Others 
 
+- [izuna385/Entity-Linking-Recent-Trends](https://github.com/izuna385/Entity-Linking-Recent-Trends) - Recent trends of Entity Linking, Disambiguation, and Representation.
+- [BrambleXu/knowledge-graph-learning](https://github.com/BrambleXu/knowledge-graph-learning) - A curated list of awesome knowledge graph tutorials, projects and communities.
+- [flypythoncom/python](https://github.com/flypythoncom/python) - python is all you need !
+- [heathersherry/Knowledge-Graph-Tutorials-and-Papers](https://github.com/heathersherry/Knowledge-Graph-Tutorials-and-Papers) - Insightful Tutorials and Papers about Knowledge Graphs
+- [humitos/sphinx-extensions](https://github.com/humitos/sphinx-extensions) - Curated and opinionated list of Sphinx extensions that I found useful
+- [JShollaj/awesome-llm-web-ui](https://github.com/JShollaj/awesome-llm-web-ui) - A curated list of awesome Large Language Model (LLM) Web User Interfaces.
 - [smirnov-am/awesome-saas-boilerplates](https://github.com/smirnov-am/awesome-saas-boilerplates) - 
 - [hijkzzz/Awesome-LLM-Strawberry](https://github.com/hijkzzz/Awesome-LLM-Strawberry) - A collection of LLM papers, blogs, and projects, with a focus on OpenAI o1 and reasoning techniques.
 - [marekbrze/categorized-obsidian-plugins](https://github.com/marekbrze/categorized-obsidian-plugins) - Easily find Obsidian plugins!🚀
@@ -1221,7 +1268,6 @@
 
 ## PLpgSQL 
 
-- [timescale/pgai](https://github.com/timescale/pgai) - Bring AI models closer to your PostgreSQL data
 - [zombodb/zombodb](https://github.com/zombodb/zombodb) - Making Postgres and Elasticsearch work together like it's 2023
 - [powa-team/pg_qualstats](https://github.com/powa-team/pg_qualstats) - A PostgreSQL extension for collecting statistics about predicates, helping find what indices are missing
 - [adjust/pg-telemetry](https://github.com/adjust/pg-telemetry) - Useful monitoring views for PostgreSQL, packaged as an extension
@@ -1249,6 +1295,63 @@
 
 ## Python 
 
+- [enoch3712/ExtractThinker](https://github.com/enoch3712/ExtractThinker) - ExtractThinker is a Document Intelligence library for LLMs, offering ORM-style interaction for flexible and powerful document workflows.
+- [chaiNNer-org/chaiNNer](https://github.com/chaiNNer-org/chaiNNer) - A node-based image processing GUI aimed at making chaining image processing tasks easy and customizable. Born as an AI upscaling application, chaiNNer has grown into an extremely flexible and powerful
+- [pykeen/pykeen](https://github.com/pykeen/pykeen) - 🤖 A Python library for learning and evaluating knowledge graph embeddings
+- [ownthink/KnowledgeGraph](https://github.com/ownthink/KnowledgeGraph) - 史上最大规模1.4亿知识图谱数据免费下载，知识图谱，通用知识图谱，融合了两千五百多万的实体，拥有亿级别的实体属性关系。
+- [cnschema/cnSchema](https://github.com/cnschema/cnSchema) - 开放中文知识图谱的schema
+- [hankcs/HanLP](https://github.com/hankcs/HanLP) - 中文分词 词性标注 命名实体识别 依存句法分析 成分句法分析 语义依存分析 语义角色标注 指代消解 风格转换 语义相似度 新词发现 关键词短语提取 自动摘要 文本分类聚类 拼音简繁转换 自然语言处理
+- [thunlp/OpenNRE](https://github.com/thunlp/OpenNRE) - An Open-Source Package for Neural Relation Extraction (NRE)
+- [doccano/doccano](https://github.com/doccano/doccano) - Open source annotation tool for machine learning practitioners.
+- [rmusser01/tldw](https://github.com/rmusser01/tldw) - tl/dw (Too Long, Didn't Watch): Your Personal Research Multi-Tool - a naive attempt at 'A Young Lady's Illustrated Primer'
+- [szczyglis-dev/py-gpt](https://github.com/szczyglis-dev/py-gpt) - Desktop AI Assistant powered by o1, GPT-4, GPT-4 Vision, Gemini, Claude, Llama 3, Bielik, DALL-E, Langchain, Llama-index, chat, vision, voice control, image generation and analysis, agents, command ex
+- [ricklamers/gpt-code-ui](https://github.com/ricklamers/gpt-code-ui) - An open source implementation of OpenAI's ChatGPT Code interpreter
+- [chapyter/chapyter](https://github.com/chapyter/chapyter) - Chapyter: ChatGPT Code Interpreter in Jupyter Notebooks
+- [Nick-Gottschlich/Social-Amnesia](https://github.com/Nick-Gottschlich/Social-Amnesia) - Forget the past. Social Amnesia makes sure your social media accounts only show your posts from recent history, not from "that phase" 5 years ago.
+- [anfederico/stocktalk](https://github.com/anfederico/stocktalk) - Data collection tool for social media analytics
+- [iamadhee/llm-influencer](https://github.com/iamadhee/llm-influencer) - 🎙 AI-driven social media content generation
+- [bhaskatripathi/pdfGPT](https://github.com/bhaskatripathi/pdfGPT) - PDF GPT allows you to chat with the contents of your PDF file by using GPT capabilities. The most effective open source solution to turn your pdf files in a chatbot!
+- [mukulpatnaik/researchgpt](https://github.com/mukulpatnaik/researchgpt) - A LLM based research assistant that allows you to have a conversation with a research paper
+- [1Panel-dev/MaxKB](https://github.com/1Panel-dev/MaxKB) - 🚀 MaxKB 是一款基于大语言模型和 RAG 的开源知识库问答系统，广泛应用于智能客服、企业内部知识库、学术研究与教育等场景。
+- [pseudotensor/open-strawberry](https://github.com/pseudotensor/open-strawberry) - Building open version of OpenAI o1 via reasoning traces (Groq, ollama, Anthropic, Gemini, OpenAI, Azure supported)  Demo: https://huggingface.co/spaces/pseudotensor/open-strawberry
+- [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) - 🙌 OpenHands: Code Less, Make More
+- [HKUDS/LightRAG](https://github.com/HKUDS/LightRAG) - "LightRAG: Simple and Fast Retrieval-Augmented Generation"
+- [sukeesh/Jarvis](https://github.com/sukeesh/Jarvis) - Personal Assistant for Linux and macOS
+- [LAION-AI/Open-Assistant](https://github.com/LAION-AI/Open-Assistant) - OpenAssistant is a chat-based assistant that understands tasks, can interact with third-party systems, and retrieve information dynamically to do so.
+- [mlc-ai/mlc-llm](https://github.com/mlc-ai/mlc-llm) - Universal LLM Deployment Engine with ML Compilation
+- [tatsu-lab/stanford_alpaca](https://github.com/tatsu-lab/stanford_alpaca) - Code and documentation to train Stanford's Alpaca models, and generate the data.
+- [myhhub/KnowledgeGraph](https://github.com/myhhub/KnowledgeGraph) - knowledge graph知识图谱,从零开始构建知识图谱
+- [ims-tcl/DeRE](https://github.com/ims-tcl/DeRE) - A Task and Domain-Independent Slot Filling Framework for Declarative Relation Extraction
+- [nicolay-r/AREkit](https://github.com/nicolay-r/AREkit) - Document level Attitude and Relation Extraction toolkit (AREkit) for sampling and processing large  text collections with ML and for ML
+- [vu3jej/scrapy-corenlp](https://github.com/vu3jej/scrapy-corenlp) - 
+- [dat/pyner](https://github.com/dat/pyner) - Python interface to the Stanford Named Entity Recognizer
+- [ProKil/FewRel](https://github.com/ProKil/FewRel) - A Large-Scale Few-Shot Relation Extraction Dataset
+- [nadgeri14/KGPool](https://github.com/nadgeri14/KGPool) - [ACL 2021] KGPool: Dynamic Knowledge Graph Context Selection for Relation Extraction
+- [SapienzaNLP/relik](https://github.com/SapienzaNLP/relik) - Retrieve, Read and LinK: Fast and Accurate Entity Linking and Relation Extraction on an Academic Budget (ACL 2024)
+- [Python3WebSpider/ProxyPool](https://github.com/Python3WebSpider/ProxyPool) - An Efficient ProxyPool with Getter, Tester and Server
+- [jhao104/proxy_pool](https://github.com/jhao104/proxy_pool) - Python ProxyPool for web spider
+- [mgeier/sphinx-last-updated-by-git](https://github.com/mgeier/sphinx-last-updated-by-git) - :watch: Get the "last updated" time for each Sphinx page from Git
+- [jdillard/sphinx-gitstamp](https://github.com/jdillard/sphinx-gitstamp) - Sphinx extension that makes the git timestamp available to templates in the HTML context.
+- [sphinx-contrib/httpdomain](https://github.com/sphinx-contrib/httpdomain) - Documenting RESTful HTTP APIs
+- [felix-hilden/sphinx-codeautolink](https://github.com/felix-hilden/sphinx-codeautolink) - Automatic links from code examples to reference documentation
+- [sphinx-toolbox/sphinx-toolbox](https://github.com/sphinx-toolbox/sphinx-toolbox) - Box of handy tools for Sphinx 🧰 📔
+- [wpilibsuite/sphinxext-opengraph](https://github.com/wpilibsuite/sphinxext-opengraph) - Sphinx extension to generate unique OpenGraph metadata
+- [executablebooks/sphinx-panels](https://github.com/executablebooks/sphinx-panels) - A sphinx extension for creating panels in a grid layout
+- [sphinx-contrib/openapi](https://github.com/sphinx-contrib/openapi) - OpenAPI (fka Swagger) spec renderer for Sphinx.
+- [sphinx-contrib/plantuml](https://github.com/sphinx-contrib/plantuml) - 
+- [executablebooks/sphinx-proof](https://github.com/executablebooks/sphinx-proof) - A Sphinx extension for producing proof, theorem, lemma, definition, remark, conjecture, corollary and algorithm directives.
+- [agronholm/sphinx-autodoc-typehints](https://github.com/agronholm/sphinx-autodoc-typehints) - Type hints support for the Sphinx autodoc extension
+- [nicolashainaux/sphinx-autodoc-annotation](https://github.com/nicolashainaux/sphinx-autodoc-annotation) - Use Python 3 annotations in sphinx-enabled docstrings
+- [bitprophet/releases](https://github.com/bitprophet/releases) - A powerful Sphinx changelog-generating extension.
+- [numpy/numpydoc](https://github.com/numpy/numpydoc) - Numpy's Sphinx extensions
+- [humitos/sphinx-version-warning](https://github.com/humitos/sphinx-version-warning) - Sphinx extension that adds a highgly customizable version warning banner
+- [spatialaudio/nbsphinx](https://github.com/spatialaudio/nbsphinx) - :ledger: Sphinx source parser for Jupyter notebooks
+- [sphinx-contrib/emojicodes](https://github.com/sphinx-contrib/emojicodes) - An extension to use emoji codes in your Sphinx documentation! 😍
+- [sbrunner/sphinx-prompt](https://github.com/sbrunner/sphinx-prompt) - Sphinx directive to add unselectable prompt
+- [jpjacobpadilla/Google-Colab-Selenium](https://github.com/jpjacobpadilla/Google-Colab-Selenium) - The best way to use Selenium in Google Colab Notebooks!
+- [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui) - A Gradio web UI for Large Language Models.
+- [wyl-willing/MindMap](https://github.com/wyl-willing/MindMap) - MindMap: Knowledge Graph Prompting Sparks Graph of Thoughts in Large Language Models
+- [jwzhanggy/Graph_Toolformer](https://github.com/jwzhanggy/Graph_Toolformer) - 
 - [spotify/basic-pitch](https://github.com/spotify/basic-pitch) - A lightweight yet powerful audio-to-MIDI converter with pitch bend detection
 - [Rainbow-Dreamer/musicpy](https://github.com/Rainbow-Dreamer/musicpy) - Musicpy is a music programming language in Python designed to write music in very handy syntax through music theory and algorithms.
 - [zappa/Zappa](https://github.com/zappa/Zappa) - Serverless Python
@@ -1306,6 +1409,7 @@
 - [eosphoros-ai/DB-GPT-Hub](https://github.com/eosphoros-ai/DB-GPT-Hub) - A repository that contains models, datasets, and fine-tuning techniques for DB-GPT, with the purpose of enhancing model performance  in Text-to-SQL
 - [PrefectHQ/marvin](https://github.com/PrefectHQ/marvin) - ✨ Build AI interfaces that spark joy
 - [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Database for AI. Store Vectors, Images, Texts, Videos, etc. Use with LLMs/LangChain. Store, query, version, & visualize any AI data. Stream data in real-time to PyTorch/TensorFlow. https://activeloop.
+- [timescale/pgai](https://github.com/timescale/pgai) - A suite of tools to develop RAG, semantic search, and other AI applications more easily with PostgreSQL
 - [emcf/thepipe](https://github.com/emcf/thepipe) - Extract clean data from anywhere, powered by vision-language models ⚡
 - [alipay/agentUniverse](https://github.com/alipay/agentUniverse) - agentUniverse is a LLM multi-agent framework that allows developers to easily build multi-agent applications.
 - [Zipstack/unstract](https://github.com/Zipstack/unstract) - No-code LLM Platform to launch APIs and ETL Pipelines to structure unstructured documents
@@ -1355,12 +1459,11 @@
 - [kvesteri/sqlalchemy-utils](https://github.com/kvesteri/sqlalchemy-utils) - Various utility functions and datatypes for SQLAlchemy.
 - [unit8co/darts](https://github.com/unit8co/darts) - A python library for user-friendly forecasting and anomaly detection on time series.
 - [NVlabs/EAGLE](https://github.com/NVlabs/EAGLE) - EAGLE: Exploring The Design Space for Multimodal LLMs with Mixture of Encoders
-- [feder-cr/Auto_Jobs_Applier_AIHawk](https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk) - Auto_Jobs_Applier_AIHawk is a tool that automates  the jobs application process. Utilizing artificial intelligence, it enables users to apply for multiple job offers in an automated and personalized w
+- [AIHawk-app/Auto_Jobs_Applier](https://github.com/AIHawk-app/Auto_Jobs_Applier) - Auto_Jobs_Applier_AIHawk is a tool that automates  the jobs application process. Utilizing artificial intelligence, it enables users to apply for multiple jobs in an automated and personalized way.
 - [Cinnamon/kotaemon](https://github.com/Cinnamon/kotaemon) - An open-source RAG-based tool for chatting with your documents.
 - [sebastianruder/NLP-progress](https://github.com/sebastianruder/NLP-progress) - Repository to track the progress in Natural Language Processing (NLP), including the datasets and the current state-of-the-art for the most common NLP tasks.
 - [zjunlp/DeepKE](https://github.com/zjunlp/DeepKE) - [EMNLP 2022] An Open Toolkit for Knowledge Graph Extraction and Construction
 - [qq547276542/Agriculture_KnowledgeGraph](https://github.com/qq547276542/Agriculture_KnowledgeGraph) - 农业知识图谱(AgriKG)：农业领域的信息检索，命名实体识别，关系抽取，智能问答，辅助决策
-- [thunlp/OpenNRE](https://github.com/thunlp/OpenNRE) - An Open-Source Package for Neural Relation Extraction (NRE)
 - [lazyFrogLOL/llmdocparser](https://github.com/lazyFrogLOL/llmdocparser) - A package for parsing PDFs and analyzing their content using LLMs.
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow) - RAGFlow is an open-source RAG (Retrieval-Augmented Generation) engine based on deep document understanding.
 - [adithya-s-k/marker-api](https://github.com/adithya-s-k/marker-api) - Easily deployable 🚀 API to convert PDF to markdown quickly with high accuracy.
@@ -1369,7 +1472,6 @@
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
 - [jamesturk/scrapeghost](https://github.com/jamesturk/scrapeghost) - 👻 Experimental library for scraping websites using OpenAI's GPT API.
 - [lorey/mlscraper](https://github.com/lorey/mlscraper) - 🤖 Scrape data from HTML websites automatically by just providing examples
-- [opendatalab/MinerU](https://github.com/opendatalab/MinerU) - A one-stop, open-source, high-quality data extraction tool, supports PDF/webpage/e-book extraction.一站式开源高质量数据提取工具，支持PDF/网页/多格式电子书提取。
 - [ostris/ai-toolkit](https://github.com/ostris/ai-toolkit) - Various AI scripts. Mostly Stable Diffusion stuff.
 - [openvinotoolkit/anomalib](https://github.com/openvinotoolkit/anomalib) - An anomaly detection library comprising state-of-the-art algorithms and features such as experiment management, hyper-parameter optimization, and edge inference.
 - [python/mypy](https://github.com/python/mypy) - Optional static typing for Python
@@ -1441,7 +1543,7 @@
 - [Yifan-Song793/RestGPT](https://github.com/Yifan-Song793/RestGPT) - An LLM-based autonomous agent controlling real-world applications via RESTful APIs
 - [clear-nus/edc](https://github.com/clear-nus/edc) - 
 - [zjunlp/AutoKG](https://github.com/zjunlp/AutoKG) - LLMs for Knowledge Graph Construction and Reasoning: Recent Capabilities and Future Opportunities
-- [princeton-nlp/SWE-agent](https://github.com/princeton-nlp/SWE-agent) - SWE-agent takes a GitHub issue and tries to automatically fix it, using GPT-4, or your LM of choice. It can also be employed for offensive cybersecurity or competitive coding challenges. [NeurIPS 2024
+- [princeton-nlp/SWE-agent](https://github.com/princeton-nlp/SWE-agent) - [NeurIPS 2024] SWE-agent takes a GitHub issue and tries to automatically fix it, using GPT-4, or your LM of choice. It can also be employed for offensive cybersecurity or competitive coding challenges
 - [nus-apr/auto-code-rover](https://github.com/nus-apr/auto-code-rover) - A project structure aware autonomous software engineer aiming for autonomous program improvement. Resolved 30.67% tasks (pass@1) in SWE-bench lite and 38.40% tasks (pass@1) in SWE-bench verified with 
 - [Alir3z4/html2text](https://github.com/Alir3z4/html2text) - Convert HTML to Markdown-formatted text.
 - [matthewwithanm/python-markdownify](https://github.com/matthewwithanm/python-markdownify) - Convert HTML to Markdown
@@ -1463,7 +1565,7 @@
 - [EmergenceAI/Agent-E](https://github.com/EmergenceAI/Agent-E) - Agent driven automation starting with the web. Discord: https://discord.gg/wgNfmFuqJF
 - [holarissun/PanelGPT](https://github.com/holarissun/PanelGPT) - We introduce new zero-shot prompting magic words that improves the reasoning ability of language models: panel discussion!
 - [fastapi/sqlmodel](https://github.com/fastapi/sqlmodel) - SQL databases in Python, designed for simplicity, compatibility, and robustness.
-- [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that conducts in-depth web research on any given topic
+- [assafelovic/gpt-researcher](https://github.com/assafelovic/gpt-researcher) - LLM based autonomous agent that conducts local and web research on any topic and generates a comprehensive report with citations.
 - [readthedocs/sphinx-autoapi](https://github.com/readthedocs/sphinx-autoapi) - A new approach to API documentation in Sphinx.
 - [tox-dev/sphinx-autodoc-typehints](https://github.com/tox-dev/sphinx-autodoc-typehints) - Type hints support for the Sphinx autodoc extension
 - [pytest-dev/pytest-subtests](https://github.com/pytest-dev/pytest-subtests) - unittest subTest() support and subtests fixture
@@ -1491,10 +1593,10 @@
 - [promptslab/Awesome-Prompt-Engineering](https://github.com/promptslab/Awesome-Prompt-Engineering) - This repository contains a hand-curated resources for Prompt Engineering with a focus on Generative Pre-trained Transformer (GPT), ChatGPT, PaLM etc
 - [google-deepmind/opro](https://github.com/google-deepmind/opro) - official code for "Large Language Models as Optimizers"
 - [stanfordnlp/dspy](https://github.com/stanfordnlp/dspy) - DSPy: The framework for programming—not prompting—foundation models
-- [Giskard-AI/giskard](https://github.com/Giskard-AI/giskard) - 🐢 Open-Source Evaluation & Testing for ML models & LLMs
+- [Giskard-AI/giskard](https://github.com/Giskard-AI/giskard) - 🐢 Open-Source Evaluation & Testing for ML & LLM systems
 - [great-expectations/great_expectations](https://github.com/great-expectations/great_expectations) - Always know what to expect from your data.
 - [microsoft/promptbench](https://github.com/microsoft/promptbench) - A unified evaluation framework for large language models
-- [snwfdhmp/awesome-gpt-prompt-engineering](https://github.com/snwfdhmp/awesome-gpt-prompt-engineering) - A curated list of awesome resources, tools, and other shiny things for GPT prompt engineering.
+- [snwfdhmp/awesome-gpt-prompt-engineering](https://github.com/snwfdhmp/awesome-gpt-prompt-engineering) - A curated list of awesome resources, tools, and other shiny things for LLM prompt engineering.
 - [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
 - [dottxt-ai/outlines](https://github.com/dottxt-ai/outlines) - Structured Text Generation
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
@@ -1630,7 +1732,7 @@
 - [heuer/segno](https://github.com/heuer/segno) - Python QR Code and Micro QR Code encoder
 - [lincolnloop/python-qrcode](https://github.com/lincolnloop/python-qrcode) - Python QR Code image generator
 - [plasma-umass/scalene](https://github.com/plasma-umass/scalene) - Scalene: a high-performance, high-precision CPU, GPU, and memory profiler for Python with AI-powered optimization proposals
-- [ionelmc/pytest-benchmark](https://github.com/ionelmc/pytest-benchmark) - py.test fixture for benchmarking code
+- [ionelmc/pytest-benchmark](https://github.com/ionelmc/pytest-benchmark) - pytest fixture for benchmarking code
 - [hjwp/pytest-icdiff](https://github.com/hjwp/pytest-icdiff) - better error messages for assert equals in pytest
 - [klen/pylama](https://github.com/klen/pylama) - Code audit tool for python.
 - [PyCQA/bandit](https://github.com/PyCQA/bandit) - Bandit is a tool designed to find common security issues in Python code.
@@ -1923,7 +2025,7 @@
 - [home-assistant/core](https://github.com/home-assistant/core) - :house_with_garden: Open source home automation that puts local control and privacy first.
 - [allenai/allennlp](https://github.com/allenai/allennlp) - An open-source NLP research library, built on PyTorch.
 - [dagster-io/dagster](https://github.com/dagster-io/dagster) - An orchestration platform for the development, production, and observation of data assets.
-- [jina-ai/jina](https://github.com/jina-ai/jina) - ☁️ Build multimodal AI applications with cloud-native stack
+- [jina-ai/serve](https://github.com/jina-ai/serve) - ☁️ Build multimodal AI applications with cloud-native stack
 - [martindbp/ipvc](https://github.com/martindbp/ipvc) - Inter-Planetary Version Control (System)
 - [pandas-dev/pandas](https://github.com/pandas-dev/pandas) - Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more
 - [nalepae/pandarallel](https://github.com/nalepae/pandarallel) - A simple and efficient tool to parallelize Pandas operations on all available CPUs
@@ -2089,7 +2191,7 @@
 - [electric-capital/crypto-ecosystems](https://github.com/electric-capital/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
 - [a16z/crypto-ecosystems](https://github.com/a16z/crypto-ecosystems) - A taxonomy for open source cryptocurrency, blockchain, and decentralized ecosystems
 - [hyperledger-archives/ursa](https://github.com/hyperledger-archives/ursa) - Hyperledger Ursa (a shared cryptographic library) has moved to end-of-life status, with the components of Ursa still in use moved to their relevant Hyperledger projects (AnonCreds, Indy, Aries and Iro
-- [hyperledger/iroha](https://github.com/hyperledger/iroha) - Iroha - A simple, enterprise-grade decentralized ledger
+- [hyperledger-iroha/iroha](https://github.com/hyperledger-iroha/iroha) - Iroha - A simple, enterprise-grade decentralized ledger
 - [zoni/obsidian-export](https://github.com/zoni/obsidian-export) - Rust library and CLI to export an Obsidian vault to regular Markdown
 - [mdzk-rs/mdzk](https://github.com/mdzk-rs/mdzk) - General-purpose interface to connected notes
 - [maidsafe/temp_safe_network](https://github.com/maidsafe/temp_safe_network) - The Safe Network. A libp2p backed data and transfer network
@@ -2132,6 +2234,7 @@
 
 ## Shell 
 
+- [HazyResearch/deepdive](https://github.com/HazyResearch/deepdive) - DeepDive
 - [sickcodes/Docker-OSX](https://github.com/sickcodes/Docker-OSX) - Run macOS VM in a Docker! Run near native OSX-KVM in Docker! X11 Forwarding! CI/CD for OS X Security Research! Docker mac Containers.
 - [jorgearango/llmapper](https://github.com/jorgearango/llmapper) - Use LLMs to draw concept maps from web pages.
 - [foxundermoon/vs-shell-format](https://github.com/foxundermoon/vs-shell-format) - the shellscript、Dockerfile、properties ...... format extension
@@ -2145,7 +2248,7 @@
 - [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) - A Zsh theme
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
 - [zsh-users/zsh-completions](https://github.com/zsh-users/zsh-completions) - Additional completion definitions for Zsh.
-- [arzzen/git-quick-stats](https://github.com/arzzen/git-quick-stats) - ▁▅▆▃▅ Git quick statistics is a simple and efficient way to access various statistics in git repository.
+- [git-quick-stats/git-quick-stats](https://github.com/git-quick-stats/git-quick-stats) - ▁▅▆▃▅ Git quick statistics is a simple and efficient way to access various statistics in git repository.
 - [gatsbyjs/gatsby-docker](https://github.com/gatsbyjs/gatsby-docker) - Docker image that builds and hosts a Gatsby site
 - [nvm-sh/nvm](https://github.com/nvm-sh/nvm) - Node Version Manager - POSIX-compliant bash script to manage multiple active node.js versions
 - [blockchain-etl/ethereum-etl-neo4j](https://github.com/blockchain-etl/ethereum-etl-neo4j) - ETL for moving Ethereum data to Neo4j database
@@ -2173,6 +2276,7 @@
 
 ## Svelte 
 
+- [npmhub/npmhub](https://github.com/npmhub/npmhub) - 🔎 A browser extension to explore npm dependencies on GitHub repos
 - [your-papa/obsidian-Smart2Brain](https://github.com/your-papa/obsidian-Smart2Brain) - An Obsidian plugin to interact with your privacy focused AI-Assistant making your second brain even smarter!
 - [marcusolsson/obsidian-projects](https://github.com/marcusolsson/obsidian-projects) - Plain text project planning in Obsidian
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
@@ -2199,6 +2303,7 @@
 
 ## TeX 
 
+- [thunlp/NREPapers](https://github.com/thunlp/NREPapers) - Must-read papers on neural relation extraction (NRE)
 - [ysymyth/awesome-language-agents](https://github.com/ysymyth/awesome-language-agents) - List of language agents based on paper "Cognitive Architectures for Language Agents"
 - [CCCBora/auto-draft](https://github.com/CCCBora/auto-draft) - 基于GPT4的文献总结工具.
 - [aaronwangy/Data-Science-Cheatsheet](https://github.com/aaronwangy/Data-Science-Cheatsheet) - A helpful 5-page machine learning cheatsheet to assist with exam reviews, interview prep, and anything in-between.
@@ -2213,6 +2318,34 @@
 
 ## TypeScript 
 
+- [Mintplex-Labs/openai-assistant-swarm](https://github.com/Mintplex-Labs/openai-assistant-swarm) - Introducing the Assistant Swarm. An extension to the OpenAI Node SDK to automatically delegate work to any assistant you create in OpenAi through one united interface and manager. Now you can delegate
+- [withcatai/catai](https://github.com/withcatai/catai) - Run AI ✨ assistant locally! with simple API for Node.js 🚀
+- [MuiseDestiny/zotero-gpt](https://github.com/MuiseDestiny/zotero-gpt) - GPT Meet Zotero.
+- [ahk-d/ChatGPT-Google-Colab](https://github.com/ahk-d/ChatGPT-Google-Colab) - A ChatGPT-based tool to decode Jupyter notebooks and the similar python notebook environments like Google Colab, etc.
+- [hunkimForks/chatgpt-arxiv-extension](https://github.com/hunkimForks/chatgpt-arxiv-extension) - A browser extension that enhance search engines with ChatGPT
+- [webclipper/web-clipper](https://github.com/webclipper/web-clipper) - For Notion,OneNote,Bear,Yuque,Joplin。Clip anything to anywhere
+- [DIYgod/RSSHub-Radar](https://github.com/DIYgod/RSSHub-Radar) - 🧡 Browser extension that simplifies finding and subscribing RSS and RSSHub
+- [domeccleston/sharegpt](https://github.com/domeccleston/sharegpt) - Easily share permanent links to ChatGPT conversations with your friends
+- [n4ze3m/page-assist](https://github.com/n4ze3m/page-assist) - Use your locally running AI models to assist you in your web browsing
+- [andrewnguonly/Lumos](https://github.com/andrewnguonly/Lumos) - A RAG LLM co-pilot for browsing the web, powered by local LLMs
+- [rossmoody/svg-gobbler](https://github.com/rossmoody/svg-gobbler) - Open source browser extension for finding, editing, exporting, optimizing, and managing SVG content.
+- [felixfbecker/svg-screenshots](https://github.com/felixfbecker/svg-screenshots) - 📸🧩 Browser extension to take scalable, semantic, accessible screenshots of websites in SVG format.
+- [igdownloader/InstagramDownloader](https://github.com/igdownloader/InstagramDownloader) - Firefox and Chrome Extention which creates an download button for instagram images and videos and videos
+- [refined-github/refined-github](https://github.com/refined-github/refined-github) - :octocat: Browser extension that simplifies the GitHub interface and adds useful features
+- [EnixCoda/Gitako](https://github.com/EnixCoda/Gitako) - 🐙 File tree extension for GitHub on Chrome & Firefox & Edge
+- [kevmo314/magic-copy](https://github.com/kevmo314/magic-copy) - Magic Copy is a Chrome extension that uses Meta's Segment Anything Model to extract a foreground object from an image and copy it to the clipboard.
+- [BuilderIO/figma-html](https://github.com/BuilderIO/figma-html) - Builder.io for Figma: AI generation, export to code, import from web
+- [WorldBrain/Memex](https://github.com/WorldBrain/Memex) - Browser extension to curate, annotate, and discuss the most valuable content and ideas on the web. As individuals, teams and communities.
+- [yaroslav-n/tweetGPT](https://github.com/yaroslav-n/tweetGPT) - Chrome extension that generates tweets and replies using chatGPT
+- [wong2/chatgpt-google-extension](https://github.com/wong2/chatgpt-google-extension) - This project is deprecated. Check my new project ChatHub:
+- [TaxyAI/browser-extension](https://github.com/TaxyAI/browser-extension) - Automate your browser with GPT-4
+- [janhq/jan](https://github.com/janhq/jan) - Jan is an open source alternative to ChatGPT that runs 100% offline on your computer. Multiple engine support (llama.cpp, TensorRT-LLM)
+- [chatchat-space/Langchain-Chatchat](https://github.com/chatchat-space/Langchain-Chatchat) - Langchain-Chatchat（原Langchain-ChatGLM）基于 Langchain 与 ChatGLM, Qwen 与 Llama 等语言模型的 RAG 与 Agent 应用 | Langchain-Chatchat (formerly langchain-ChatGLM), local knowledge based LLM (like ChatGLM, Qwen and Ll
+- [langfuse/langfuse](https://github.com/langfuse/langfuse) - 🪢 Open source LLM engineering platform: LLM Observability, metrics, evals, prompt management, playground, datasets. Integrates with LlamaIndex, Langchain, OpenAI SDK, LiteLLM, and more. 🍊YC W23
+- [leon-ai/leon](https://github.com/leon-ai/leon) - 🧠 Leon is your open-source personal assistant.
+- [getmaxun/maxun](https://github.com/getmaxun/maxun) - Free, open-source no-code web data extraction platform. Build custom robots to automate data scraping [In Beta]
+- [vscode-restructuredtext/vscode-restructuredtext](https://github.com/vscode-restructuredtext/vscode-restructuredtext) - reStructuredText Language Support in Visual Studio Code
+- [elie222/inbox-zero](https://github.com/elie222/inbox-zero) - Open source email app to reach inbox zero fast.
 - [upscayl/upscayl](https://github.com/upscayl/upscayl) - 🆙 Upscayl - #1 Free and Open Source AI Image Upscaler for Linux, MacOS and Windows.
 - [imbhargav5/nextbase-nextjs-supabase-starter](https://github.com/imbhargav5/nextbase-nextjs-supabase-starter) - 🚀⚡️ Free Boilerplate and Starter kit for Next.js 14+, Supabase, Tailwind CSS 3.2 and TypeScript. 🚀 Next.js 🔥 Supabase 💻 TypeScript 💚 ESLint 🎨 Prettier 🐶 Husky 🧹 Lint-Staged 🧪 Jest 🧪 Testing Library 🕹️
 - [juicycleff/ultimate-backend](https://github.com/juicycleff/ultimate-backend) - Multi tenant SaaS starter kit with cqrs graphql microservice architecture, apollo federation, event source and authentication
@@ -2277,7 +2410,7 @@
 - [artisticat1/obsidian-latex-suite](https://github.com/artisticat1/obsidian-latex-suite) - Make typesetting LaTeX as fast as handwriting through snippets, text expansion, and editor enhancements
 - [obsidian-tasks-group/obsidian-tasks](https://github.com/obsidian-tasks-group/obsidian-tasks) - Task management for the Obsidian knowledge base.
 - [midday-ai/midday](https://github.com/midday-ai/midday) - Run your business smarter 🪄
-- [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app.
+- [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app for high entropy thinkers.
 - [Mintplex-Labs/vector-admin](https://github.com/Mintplex-Labs/vector-admin) - The universal tool suite for vector database management. Manage Pinecone, Chroma, Qdrant, Weaviate and more vector databases with ease.
 - [Canner/vulcan-sql](https://github.com/Canner/vulcan-sql) - Data API Framework for AI Agents and Data Apps
 - [CloudOrc/SolidUI](https://github.com/CloudOrc/SolidUI) - one sentence generates any graph
@@ -2290,8 +2423,8 @@
 - [jaemil/agentsflow](https://github.com/jaemil/agentsflow) - Drag & drop UI to build and run a flow of autogen AI agents
 - [nakamurau1/code-to-clipboard](https://github.com/nakamurau1/code-to-clipboard) - 
 - [Yonom/assistant-ui](https://github.com/Yonom/assistant-ui) - React Components for AI Chat 💬 🚀
-- [yamadashy/repopack](https://github.com/yamadashy/repopack) - 📦 Repopack is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like 
-- [Canner/WrenAI](https://github.com/Canner/WrenAI) - 🚀 Open-source SQL AI Agent for Text-to-SQL. Supporting PostgreSQL, DuckDB, MySQL, MS SQL, ClickHouse, Trino, JSON, CSV, Parquet data sources, and more! 🚀
+- [yamadashy/repomix](https://github.com/yamadashy/repomix) - 📦 Repomix (formerly Repopack) is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or o
+- [Canner/WrenAI](https://github.com/Canner/WrenAI) - 🚀 Open-source SQL AI Agent. Text2SQL Made Easy! 🤘
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [TrafficGuard/sophia](https://github.com/TrafficGuard/sophia) - TypeScript AI agent platform with Autonomous agents, Software developer agents, AI code review agents and more
 - [romansky/dom-to-semantic-markdown](https://github.com/romansky/dom-to-semantic-markdown) - DOM to Semantic-Markdown for use with LLMs
@@ -2309,9 +2442,9 @@
 - [mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) - High-performance In-browser LLM Inference Engine
 - [teableio/teable](https://github.com/teableio/teable) - ✨ The Next Gen Airtable Alternative: No-Code Postgres
 - [electric-sql/pglite](https://github.com/electric-sql/pglite) - Lightweight WASM Postgres with real-time, reactive bindings.
-- [memfreeme/memfree](https://github.com/memfreeme/memfree) - MemFree - Hybrid AI Search Engine & AI UI Generator
+- [memfreeme/memfree](https://github.com/memfreeme/memfree) - MemFree - Hybrid AI Search Engine & AI Page Generator
 - [supermemoryai/opensearch-ai](https://github.com/supermemoryai/opensearch-ai) - SearchGPT / Perplexity clone, but personalised for you.
-- [udecode/plate](https://github.com/udecode/plate) - Rich-text editor with shadcn/ui
+- [udecode/plate](https://github.com/udecode/plate) - A rich-text editor powered by AI
 - [ueberdosis/tiptap](https://github.com/ueberdosis/tiptap) - The headless rich text editor framework for web artisans.
 - [redpangilinan/credenza](https://github.com/redpangilinan/credenza) - Ready-made responsive modal component for shadcn/ui.
 - [Kanaries/GWalkR](https://github.com/Kanaries/GWalkR) - Turn your data frame into a tableau style drag and drop UI interface to build visualization in R.
@@ -2456,7 +2589,7 @@
 - [AykutSarac/jsoncrack.com](https://github.com/AykutSarac/jsoncrack.com) - ✨ Innovative and open-source visualization application that transforms various data formats, such as JSON, YAML, XML, CSV and more, into interactive graphs.
 - [GeekyAnts/NativeBase](https://github.com/GeekyAnts/NativeBase) - Mobile-first, accessible components for React Native & Web to build consistent UI across Android, iOS and Web.
 - [mgmeyers/obsidian-zotero-integration](https://github.com/mgmeyers/obsidian-zotero-integration) - Insert and import citations, bibliographies, notes, and PDF annotations from Zotero into Obsidian.
-- [ganesshkumar/obsidian-plugins-stats-ui](https://github.com/ganesshkumar/obsidian-plugins-stats-ui) - A tool to get plugin statistics of Obsidian plugin ecosystem.
+- [ganesshkumar/obsidian-plugins-stats-ui](https://github.com/ganesshkumar/obsidian-plugins-stats-ui) - 📊 This tool helps you explore and track Obsidian plugin ecosystem.
 - [mgmeyers/obsidian-style-settings](https://github.com/mgmeyers/obsidian-style-settings) - A dynamic user interface for adjusting theme, plugin, and snippet CSS variables within Obsidian
 - [tapioca24/p5.capture](https://github.com/tapioca24/p5.capture) - 🎬 super easy recording for p5.js animations
 - [umijs/umi](https://github.com/umijs/umi) - A framework in react community ✨
@@ -2690,6 +2823,8 @@
 
 ## Vue 
 
+- [webpilot-ai/Webpilot](https://github.com/webpilot-ai/Webpilot) - 
+- [inovector/mixpost](https://github.com/inovector/mixpost) - Mixpost - Self-hosted social media management software (Buffer alternative)
 - [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [YassKhazzan/openperplex_front](https://github.com/YassKhazzan/openperplex_front) - openperplex is an opensource AI search engine
 - [inciteful-xyz/inciteful-web](https://github.com/inciteful-xyz/inciteful-web) - The frontend for Inciteful.xyz.
