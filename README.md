@@ -2,9 +2,6 @@
     <h3 style="font-size: 2em; color: #333;">
         <span style="font-size: 2.5em;">👋</span> Hey there GitHub <span style="color: #4078c0;">:octocat:</span>
     </h2>
-    <p style="font-size: 1.25em; color: #555; margin-top: 10px;">
-        → Reach out and let's build something cool. ←
-    </p>
 </div>
 
 ---
@@ -335,6 +332,14 @@ HTML                     2 repos             █░░░░░░░░░░�
     </tr>
 </table>
 
+
+---
+
+<div align='center'>
+    <p style="font-size: 1.25em; color: #555; margin-top: 10px;">
+        → Reach out and let's build something cool. ←
+    </p>
+</div>
 
 ---
  
