@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>swyxio/ai-notes</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">notes for software engineers getting up to speed on new AI developments. Serves as datastore for https://latent.space writing, and product brainstorming, but has cleaned up canonical references under the /Resources folder.</div>
@@ -118,7 +118,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>space-nuko/ComfyUI-Disco-Diffusion</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -172,7 +172,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>BlenderNeko/ComfyUI_Noise</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">6 nodes for ComfyUI that allows for more control and flexibility over noise to do e.g. variations or "un-sampling"</div>
@@ -401,7 +401,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">repollo/llm_data_parser</span>
+                                        <span class="repo">tesseract-ocr/tessdoc</span>
                                     </div>
                                 </div>
                             </section>
@@ -414,7 +414,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">oobabooga/text-generation-webui-extensions</span>
+                                        <span class="repo">pymupdf/PyMuPDF</span>
                                     </div>
                                 </div>
                             </section>
@@ -427,7 +427,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">hollobit/GenAI_LLM_timeline</span>
+                                        <span class="repo">pdfminer/pdfminer.six</span>
                                     </div>
                                 </div>
                             </section>
@@ -440,7 +440,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">copilot-extensions/user-feedback</span>
+                                        <span class="repo">py-pdf/pypdf</span>
                                     </div>
                                 </div>
                             </section>
@@ -453,7 +453,7 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">copilot-extensions/gh-debug-cli</span>
+                                        <span class="repo">camelot-dev/excalibur</span>
                                     </div>
                                 </div>
                             </section>
