@@ -200,7 +200,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    1.70m added, 945k removed
+                                    86.2m added, 43.2m removed
                                 </div>
                             </section>
                             <section>
@@ -232,7 +232,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"/>
                                     </svg>
-                                    512 views in last two weeks
+                                    511 views in last two weeks
                                 </div>
                             </section>
                         </div>
@@ -257,12 +257,12 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <rect x="0" y="0" width="220" height="8" fill="white" rx="5"/>
                             </mask>
                             <rect mask="url(#issues-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                            <rect mask="url(#issues-bar)" x="0" y="0" width="125.71428571428571" height="8" fill="#238636"/>
-                            <rect mask="url(#issues-bar)" x="125.71428571428571" y="0" width="28.285714285714285" height="8" fill="#56d364"/>
+                            <rect mask="url(#issues-bar)" x="0" y="0" width="132" height="8" fill="#238636"/>
+                            <rect mask="url(#issues-bar)" x="132" y="0" width="22" height="8" fill="#56d364"/>
                             <rect mask="url(#issues-bar)" x="154" y="0" width="0" height="8" fill="#8B949E"/>
                             <rect mask="url(#issues-bar)" x="154" y="0" width="0" height="8" fill="#c9d1d9"/>
-                            <rect mask="url(#issues-bar)" x="154" y="0" width="59.71428571428571" height="8" fill="#8957e5"/>
-                            <rect mask="url(#issues-bar)" x="213.71428571428572" y="0" width="6.285714285714286" height="8" fill="#d2a8ff"/>
+                            <rect mask="url(#issues-bar)" x="154" y="0" width="61.285714285714285" height="8" fill="#8957e5"/>
+                            <rect mask="url(#issues-bar)" x="215.28571428571428" y="0" width="4.714285714285714" height="8" fill="#d2a8ff"/>
                             <rect mask="url(#issues-bar)" x="220" y="0" width="0" height="8" fill="#8B949E"/>
                             <rect mask="url(#issues-bar)" x="220" y="0" width="0" height="8" fill="#c9d1d9"/>
                         </svg>
@@ -312,14 +312,14 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     <path fill="#56d364" d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                     <path fill="#56d364" fill-rule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/>
                                 </svg>
-                                <span class="no-wrap">18 <small>open</small></span>
+                                <span class="no-wrap">14 <small>open</small></span>
                             </div>
                             <div class="field">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                     <path fill="#d2a8ff" d="M11.28 6.78a.75.75 0 00-1.06-1.06L7.25 8.69 5.78 7.22a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l3.5-3.5z"/>
                                     <path fill="#d2a8ff" fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zm-1.5 0a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/>
                                 </svg>
-                                <span class="no-wrap">4 <small>closed</small></span>
+                                <span class="no-wrap">3 <small>closed</small></span>
                             </div>
                             <div class="field">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -907,7 +907,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Bitcoin, Google, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, Command-line interface, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Ubuntu, Jupyter Notebook, Tensorflow, MATLAB, Security, windows, macOS, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Markdown, Continuous integration, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, llm, Statistics, stable-diffusion, zsh, obsidian-plugin, Crawler, trading-bot, Animation, search-engine, gpt, large-language-models, proxy, Simulation, prompt-engineering, vscode-extension, knowledge-graph, gatsby, jupyter, Notion, rag, ocr, icons, SVG, scraping, agent, blog, react-components, anomaly-detection, profile-readme, scss, retrieval-augmented-generation, ai-agents, crm, MIDI, flowchart, rich-text-editor, modeling, llms, Reddit, saas-boilerplate, scrapy, named-entity-recognition, github-profile, music-generation, url-shortener, linear-algebra, ai-music, llmops, llm-agent, personal-assistant, relation-extraction, classification, proxy-list, copilot, MDX, ai-assistant, text-detection, data-pipelines, research-paper, multimodal, assistant, etl-pipeline, graph-editor, document-layout-analysis, entity-linking, text-recognition, free-proxy, probability, regression, document-ai, calculus, asynchronous, table-recognition, pdf-converter, agent-based-framework, oh-my-zsh-plugin, document-understanding, toolchain, text2sql, quicklook-extension, pdf-to-text, remark-plugin, reddit-api, project-structure, document-parser, sphinx-extension, document-analysis, pytest-plugin, ontology-engineering, sphinx, docusaurus, document-intelligence, fractal, layout-analysis, key-information-extraction, python-libraries, ai-agent, pdf-to-json, pdf-extractor, rehype-plugin, pdf-document-processor, poetry-plugin, bio-links, semantic-scholar, shorten-urls, automated-scraper, graph-rag, document-recognition, yourls, tinyurl, urlshortener, document-image-analysis, document-image-processing, llm-ui, knowledge-curation, sass-mixins, shorturl, shortener, bitly-alternative, outlier, sass-library, short-url, layoutlm, document-parsing, end-to-end-ocr, gui-agents, yourls-client, layoutxlm, llm-platform, report-generation, llm-powered-agents, llm-os, text-to-svg, sass-functions, Nextra, docz, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, automated-post, abc-music-notation, aiagents, awesome-nextjs">and 222 more...</div>
+                            <div class="label" title="Data structures, Deep learning, Awesome Lists, Arduino, SQL, Bitcoin, Google, Chrome, Azure, MySQL, Data visualization, Bot, Django, 3D, Command-line interface, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, R, Unity, Kubernetes, Ubuntu, Jupyter Notebook, Tensorflow, MATLAB, Security, macOS, windows, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, Markdown, Continuous integration, Shell, Documentation, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, Twitter, Sass, Homebrew, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Data analysis, llm, Statistics, stable-diffusion, zsh, obsidian-plugin, Crawler, trading-bot, Animation, search-engine, gpt, large-language-models, proxy, Simulation, prompt-engineering, vscode-extension, knowledge-graph, gatsby, jupyter, Notion, rag, ocr, icons, SVG, scraping, agent, blog, react-components, anomaly-detection, profile-readme, scss, retrieval-augmented-generation, ai-agents, crm, MIDI, flowchart, rich-text-editor, modeling, llms, Reddit, saas-boilerplate, scrapy, named-entity-recognition, github-profile, music-generation, url-shortener, linear-algebra, ai-music, llmops, llm-agent, personal-assistant, relation-extraction, classification, proxy-list, copilot, MDX, ai-assistant, text-detection, data-pipelines, research-paper, multimodal, assistant, etl-pipeline, graph-editor, document-layout-analysis, entity-linking, text-recognition, free-proxy, probability, regression, document-ai, calculus, asynchronous, table-recognition, pdf-converter, agent-based-framework, oh-my-zsh-plugin, document-understanding, toolchain, text2sql, quicklook-extension, pdf-to-text, remark-plugin, reddit-api, project-structure, document-parser, sphinx-extension, document-analysis, pytest-plugin, ontology-engineering, sphinx, docusaurus, document-intelligence, fractal, layout-analysis, key-information-extraction, python-libraries, ai-agent, pdf-to-json, pdf-extractor, rehype-plugin, pdf-document-processor, poetry-plugin, bio-links, semantic-scholar, shorten-urls, automated-scraper, graph-rag, document-recognition, yourls, tinyurl, urlshortener, document-image-analysis, document-image-processing, llm-ui, knowledge-curation, sass-mixins, shorturl, shortener, bitly-alternative, outlier, sass-library, short-url, layoutlm, document-parsing, end-to-end-ocr, gui-agents, yourls-client, layoutxlm, llm-platform, report-generation, llm-powered-agents, llm-os, text-to-svg, sass-functions, Nextra, docz, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, automated-post, abc-music-notation, aiagents, awesome-nextjs">and 222 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3396,7 +3396,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>kananinirav/AWS-Certified-Cloud-Practitioner-Notes</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">AWS Certified Cloud Practitioner Short Notes And Practice Exams (CLF-C02)</div>
@@ -3502,7 +3502,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>farmOS/farmOS-aggregator</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A microservice application for aggregating data from multiple farmOS instances.</div>
@@ -3555,7 +3555,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="name">
                                         <span>farmOS/farmOS</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">farmOS: A web-based farm record keeping application.</div>
@@ -3794,66 +3794,66 @@ JPMorgan Chase &amp; Co. (JPMC)
                                     </svg>
                                     <div class="content">
                                         Starred
+                                        <span class="repo">CharlesPikachu/freeproxy</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">6 Nov 2024, 17:39:44</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
+                                        <span class="repo">fabiobatalha/crossrefapi</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">6 Nov 2024, 17:38:11</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
+                                        <span class="repo">scholarly-python-package/scholarly</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">6 Nov 2024, 17:32:37</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
+                                        <span class="repo">sckott/habanero</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">6 Nov 2024, 17:27:20</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
                                         <span class="repo">swirlai/swirl-search</span>
                                     </div>
                                 </div>
                                 <div class="timestamp">6 Nov 2024, 16:22:23</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">modelscope/modelscope-studio</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">6 Nov 2024, 16:14:50</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">modelscope/DiffSynth-Studio</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">6 Nov 2024, 16:13:12</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">THUDM/GLM-4</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">6 Nov 2024, 16:10:46</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">chengyou-jia/AgentStore</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">6 Nov 2024, 16:09:21</div>
                             </section>
                         </div>
                     </section>
@@ -4387,7 +4387,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 193k out of 213m repositories</span>
+                                    <span class="gh">ranked 193k out of 210m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 68 times</div>
                             </div>
@@ -4477,7 +4477,7 @@ JPMorgan Chase &amp; Co. (JPMC)
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 340k out of 213m repositories</span>
+                                    <span class="gh">ranked 340k out of 210m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 114 stars</div>
                             </div>
@@ -4756,7 +4756,7 @@ JPMorgan Chase &amp; Co. (JPMC)
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 6 Nov 2024, 21:23:33 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 6 Nov 2024, 22:05:58 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
