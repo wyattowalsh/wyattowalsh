@@ -60,6 +60,7 @@
 <p align='center'>
     <a href="https://github.com/wyattowalsh/personal-website"><img src="https://gh-card.dev/repos/wyattowalsh/personal-website.svg"></a>
     <a href="https://github.com/wyattowalsh/nba-db"><img src="https://gh-card.dev/repos/wyattowalsh/nba-db.svg"></a>
+    <a href="https://github.com/wyattowalsh/macaron"><img src="https://gh-card.dev/repos/wyattowalsh/macaron.svg"></a>
 </p>
 
 <h4 align='center'> ↓ Please see <a href="#past-projects">the pinned repositories</a> at the bottom of the page for my past projects ↓ </h4>
