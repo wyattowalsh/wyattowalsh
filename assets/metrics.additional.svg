@@ -82,7 +82,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bhavnicksm/chonkie</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🦛 CHONK your texts with Chonkie ✨ - The no-nonsense RAG chunking library</div>
@@ -244,7 +244,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">242</span>
+                                <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 12
                                 <div class="bottom">Nov.</div>
