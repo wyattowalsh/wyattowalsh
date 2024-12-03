@@ -1,7 +1,5 @@
-<div align='center'; font-family: 'Arial', sans-serif; padding: 20px; background-color: #f4f4f4; border-radius: 15px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); max-width: 600px; margin: auto;">
-    <h3 style="font-size: 2em; color: #333;">
-        <span style="font-size: 2.5em;">👋</span> Hey there GitHub <span style="color: #4078c0;">:octocat:</span>
-    </h2>
+<div align='center'>
+    <img src="./assets/banner.svg"
 </div>
 
 ---
