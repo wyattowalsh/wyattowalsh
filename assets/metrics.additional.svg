@@ -87,7 +87,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>TrixSec/Proxy-Checker</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Fast Proxy Checker</div>
@@ -140,7 +140,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>truefoundry/cognita</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">RAG (Retrieval Augmented Generation) Framework for building modular, open source applications for production by TrueFoundry</div>
@@ -193,7 +193,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>traceloop/openllmetry</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open-source observability for your LLM application, based on OpenTelemetry</div>
@@ -253,7 +253,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">242</span>
+                                <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 20
                                 <div class="bottom">Nov.</div>
@@ -294,34 +294,34 @@
                                 27
                             </div>
                             <div class="entry">
-                                <span class="value">243</span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 28
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 29
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 30
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 1
                                 <div class="bottom">Dec.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 2
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 3
                             </div>
                         </div>
@@ -371,8 +371,8 @@
                                 27
                             </div>
                             <div class="entry">
-                                <span class="value">+1</span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 28
                             </div>
                             <div class="entry">
@@ -428,8 +428,8 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#9f0f0b6</div>
-                                        <div class="message">Refactor webpack plugin configuration to use options and enhance path aliasing</div>
+                                        <div class="sha">#fde8f17</div>
+                                        <div class="message">Update path mapping in tsconfig.json to reference docs/src directory</div>
                                     </div>
                                 </div>
                             </section>
@@ -448,8 +448,8 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#bdb4902</div>
-                                        <div class="message">Rename webpack plugin reference in docusaurus.config.ts and remove obsolete package.json</div>
+                                        <div class="sha">#7cdd9c7</div>
+                                        <div class="message">Add path mapping for src/lib in tsconfig.json</div>
                                     </div>
                                 </div>
                             </section>
@@ -468,8 +468,8 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#c717681</div>
-                                        <div class="message">Add webpack plugin to configure path alias for easier module resolution</div>
+                                        <div class="sha">#8f9d0cc</div>
+                                        <div class="message">Update path mapping in tsconfig.json to point to src directory</div>
                                     </div>
                                 </div>
                             </section>
@@ -488,8 +488,8 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#102d2a7</div>
-                                        <div class="message">Add path alias configuration in docusaurus.config.ts for easier imports</div>
+                                        <div class="sha">#993e816</div>
+                                        <div class="message">Update import paths in UI components to use absolute paths</div>
                                     </div>
                                 </div>
                             </section>
@@ -508,8 +508,8 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#24de6fa</div>
-                                        <div class="message">Update path alias in tsconfig.json to maintain relative paths</div>
+                                        <div class="sha">#5eff45b</div>
+                                        <div class="message">msg</div>
                                     </div>
                                 </div>
                             </section>
