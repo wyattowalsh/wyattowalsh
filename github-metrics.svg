@@ -3398,7 +3398,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>rohitg00/manim-video-generator</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">This application allows you to generate mathematical animations using natural language descriptions. It uses OpenAI's GPT model to convert your descriptions into Manim code, which is then used to create beautiful mathematical animations.</div>
@@ -3451,7 +3451,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Enveloppe/obsidian-enveloppe</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Enveloppe helps you to publish your notes on a GitHub repository from your Obsidian Vault, for free!</div>
@@ -3504,7 +3504,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>zapthedingbat/drawio-obsidian</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Draw.io plugin for obsidian.md</div>
@@ -3557,7 +3557,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>PKM-er/Obsidian-Surfing</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An Obsidian plugin that lets you browse the web within Obsidian.</div>
@@ -4396,7 +4396,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 344k out of 219m repositories</span>
+                                    <span class="gh">ranked 344k out of 223m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 114 stars</div>
                             </div>
@@ -4617,7 +4617,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.557-1.392L8.5 7.742V4.75z"/>
                             </svg>
-                            On 3 Dec 2024, 06:25:24
+                            On 4 Dec 2024, 09:28:26
                         </div>
                     </section>
                 </div>
@@ -4627,16 +4627,22 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            Update import paths in UI components to use alias paths
+                            Refactor module resolution paths and update component imports
+
+- Updated alias paths in components.json to include new references for "ui", "lib", and "hooks", and set "iconLibrary" to "lucide".
+- Simplified tsconfig.json by adjusting the base path for module resolution.
+- Refactored import statements in multiple UI component files to use the updated "@/src/lib/utils" path, enhancing clarity and consistency across the project.
+
+These changes improve module resolution and align with the recent updates to the directory structure.
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
-                            <span class="code">3b6b8750</span>
-                            <span class="code">{{cookiecutter.project_slug}}/docs/src/components/ui/input.tsx</span>
+                            <span class="code">52341ae8</span>
+                            <span class="code">docs/src/components/ui/card.tsx</span>
                             <span class="code">
-                                <span class="snippet additions">++2</span>
+                                <span class="snippet additions">++1</span>
                                 <span class="snippet deletions">--1</span>
                             </span>
                         </div>
@@ -4645,7 +4651,7 @@
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -1,6 +1,7 @@</span><br /><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line">import * as React from "react"<br /></span><span class="token prefix unchanged">·</span><span class="token line"><br /></span></span><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">import { cn } from "src/lib/utils"<br /></span></span><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import { cn } from "@/lib/utils"  // Updated import path<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span></span><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line"><br /></span><span class="token prefix unchanged">·</span><span class="token line">const Input = React.forwardRef&lt;HTMLInputElement, React.ComponentProps&lt;"input"&gt;&gt;(<br /></span><span class="token prefix unchanged">·</span><span class="token line"> ({ className, type, ...props }, ref) =&gt; {</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -1,6 +1,6 @@</span><br /><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line">import * as React from "react";<br /></span><span class="token prefix unchanged">·</span><span class="token line"><br /></span></span><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">import { cn } from "@/lib/utils";<br /></span></span><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import { cn } from "@/src/lib/utils";<br /></span></span><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line"><br /></span><span class="token prefix unchanged">·</span><span class="token line"> // Updated import path<br /></span><span class="token prefix unchanged">·</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -4712,7 +4718,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 4 Dec 2024, 20:29:02 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 4 Dec 2024, 21:28:53 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
