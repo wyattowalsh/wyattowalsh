@@ -3399,7 +3399,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>mahshidaln/AI-for-music</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Resources on AI applications in the music domain</div>
@@ -3446,7 +3446,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Malith-Rukshan/Suno-API</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">SunoAI Unofficial Python API Library and REST API for Suno.ai — Create Music with Generative AI ! ✨</div>
@@ -3499,7 +3499,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>gitmylo/audio-webui</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A webui for different audio related Neural Networks</div>
@@ -3552,7 +3552,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>asigalov61/tegridy-tools</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Symbolic Music NLP Artificial Intelligence Toolkit</div>
@@ -4361,7 +4361,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 344k out of 215m repositories</span>
+                                    <span class="gh">ranked 344k out of 210m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 114 stars</div>
                             </div>
@@ -4582,7 +4582,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.557-1.392L8.5 7.742V4.75z"/>
                             </svg>
-                            On 4 Dec 2024, 09:33:32
+                            On 3 Dec 2024, 22:33:48
                         </div>
                     </section>
                 </div>
@@ -4592,17 +4592,18 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            Refactor import paths in UI components to align with updated directory structure
+                            Update project URL references in configuration files
 
-- Updated import statements in multiple UI component files to use the new path "/vercel/path1/lib/utils" instead of the previous "@/src/lib/utils".
-- This change enhances clarity and consistency in module resolution across the project, reflecting recent updates to the directory structure.
+- Changed the field name from "project_documentation" to "project_url" in cookiecutter.json to better reflect its purpose.
+- Updated references in post_gen_project.py and pre_gen_project.py to use the new "project_url" field for documentation links.
+- These changes enhance clarity and ensure consistent usage of project metadata across the configuration files.
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
-                            <span class="code">338ddea8</span>
-                            <span class="code">docs/src/components/ui/input.tsx</span>
+                            <span class="code">e658c395</span>
+                            <span class="code">cookiecutter.json</span>
                             <span class="code">
                                 <span class="snippet additions">++1</span>
                                 <span class="snippet deletions">--1</span>
@@ -4613,7 +4614,7 @@
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -1,6 +1,6 @@</span><br /><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line">import * as React from "react";<br /></span><span class="token prefix unchanged">·</span><span class="token line"><br /></span></span><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">import { cn } from "@/src/lib/utils";<br /></span></span><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import { cn } from "/vercel/path1/lib/utils";<br /></span></span><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line"><br /></span><span class="token prefix unchanged">·</span><span class="token line"> // Updated import path<br /></span><span class="token prefix unchanged">·</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -8,7 +8,7 @@</span><br /><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line">"project_version": "1.0.0",<br /></span><span class="token prefix unchanged">·</span><span class="token line">"project_description": "A cookiecutter bundle of the best Python project resources.",<br /></span><span class="token prefix unchanged">·</span><span class="token line">"project_repository": "https://github.com/{{ cookiecutter.author_github_username }}/{{ cookiecutter.project_slug }}",<br /></span></span><span class="token deleted-sign deleted"><span class="token prefix deleted">-</span><span class="token line">"project_documentation": "https://macaron.w4w.dev",<br /></span></span><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">"project_url": "https://macaron.w4w.dev",<br /></span></span><span class="token unchanged"><span class="token prefix unchanged">·</span><span class="token line">"project_changelog": "https://github.com/{{ cookiecutter.author_github_username }}/{{ cookiecutter.project_slug }}/blob/main/CHANGELOG.md",<br /></span><span class="token prefix unchanged">·</span><span class="token line">"python_version": "3.11",<br /></span><span class="token prefix unchanged">·</span><span class="token line">"entry_point": "{{ cookiecutter.project_slug }}/main.py",</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -4680,7 +4681,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 6 Dec 2024, 09:01:37 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 6 Dec 2024, 10:01:42 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
