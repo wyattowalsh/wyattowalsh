@@ -153,6 +153,7 @@
 
 ## CSS 
 
+- [replete/obsidian-minimal-theme-css-snippets](https://github.com/replete/obsidian-minimal-theme-css-snippets) - Obsidian CSS snippets to tweak UI and harmonize various plugins with the Minimal Theme - for fellow hackers.
 - [SaraVieira/prism-theme-night-owl](https://github.com/SaraVieira/prism-theme-night-owl) - A port of the popular VSCode theme Night Owl by Sarah Drasner to prism.
 - [PrismJS/prism-themes](https://github.com/PrismJS/prism-themes) - A wider selection of Prism themes
 - [sneg55/curatedseotools](https://github.com/sneg55/curatedseotools) - Best SEO Tools Stash
@@ -289,6 +290,7 @@
 
 ## HTML 
 
+- [u8views/go-u8views](https://github.com/u8views/go-u8views) - GitHub-profile views tracker: displaying monthly view statistics
 - [openai/requests-for-research](https://github.com/openai/requests-for-research) - A living collection of deep learning problems
 - [drshahizan/obsidian](https://github.com/drshahizan/obsidian) - Obsidian.md stands out as an exceptional note-taking application tailored specifically for academic writing. This repository is part of the activities for the Systematic Literature Review using AI wor
 - [khalby786/REHeader](https://github.com/khalby786/REHeader) - Generate beautiful header images for your GitHub profile READMEs.
@@ -436,6 +438,12 @@
 
 ## JavaScript 
 
+- [pandao/editor.md](https://github.com/pandao/editor.md) - The open source embeddable online markdown editor (component).
+- [hackjutsu/Lepton](https://github.com/hackjutsu/Lepton) - 💻     Democratizing Snippet Management (macOS/Win/Linux)
+- [s-blu/obsidian_dataview_example_vault](https://github.com/s-blu/obsidian_dataview_example_vault) - A example vault to collect and showcase various dataview queries. Created on behalf of AB1908
+- [SoRobby/ObsidianStarterVault](https://github.com/SoRobby/ObsidianStarterVault) - Organize your Universe: An Obsidian starter vault for everyone, bridging the gap between ideas and actions
+- [erazlogo/obsidian-history-vault](https://github.com/erazlogo/obsidian-history-vault) - A starter vault for historical research with Zotero and Obsidian.
+- [Pamela-Wang/Obsidian-Starter-Vaults](https://github.com/Pamela-Wang/Obsidian-Starter-Vaults) - This repo contains the templates used in my automated obsidian weekly review video and also an accompanying vault with the folder structure expected and plugins (periodic note settings etc)
 - [microsoft/playwright-cli](https://github.com/microsoft/playwright-cli) - CLI for common Playwright actions. Record and generate Playwright code, inspect selectors and take screenshots.
 - [IonicaBizau/scrape-it](https://github.com/IonicaBizau/scrape-it) - 🔮 A Node.js scraper for humans.
 - [yujiosaka/headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) - Distributed crawler powered by Headless Chrome
@@ -964,11 +972,11 @@
 - [stared/keras-sequential-ascii](https://github.com/stared/keras-sequential-ascii) - ASCII summary for simple sequential models in Keras
 - [AI4Finance-Foundation/FinRobot](https://github.com/AI4Finance-Foundation/FinRobot) - FinRobot: An Open-Source AI Agent Platform for Financial Analysis using LLMs 🚀 🚀 🚀
 - [01-ai/Yi](https://github.com/01-ai/Yi) - A series of large language models trained from scratch by developers @01-ai
+- [FoundationVision/VAR](https://github.com/FoundationVision/VAR) - [NeurIPS 2024 Oral][GPT beats diffusion🔥] [scaling laws in visual generation📈] Official impl. of "Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction". An *ultra-simple
 - [ysymyth/ReAct](https://github.com/ysymyth/ReAct) - [ICLR 2023] ReAct: Synergizing Reasoning and Acting in Language Models
 - [zjunlp/EasyEdit](https://github.com/zjunlp/EasyEdit) - [ACL 2024] An Easy-to-use Knowledge Editing Framework for LLMs.
 - [HandsOnLLM/Hands-On-Large-Language-Models](https://github.com/HandsOnLLM/Hands-On-Large-Language-Models) - Official code repo for the O'Reilly Book - "Hands-On Large Language Models"
 - [OSU-NLP-Group/Mind2Web](https://github.com/OSU-NLP-Group/Mind2Web) - [NeurIPS'23 Spotlight] "Mind2Web: Towards a Generalist Agent for the Web"
-- [open-mmlab/Amphion](https://github.com/open-mmlab/Amphion) - Amphion (/æmˈfaɪən/) is a toolkit for Audio, Music, and Speech Generation. Its purpose is to support reproducible research and help junior researchers and engineers get started in the field of audio, 
 - [fredi-python/Text2VideoColabUI](https://github.com/fredi-python/Text2VideoColabUI) - An easy-to-use Video generation colab notebook
 - [camenduru/text-to-video-synthesis-colab](https://github.com/camenduru/text-to-video-synthesis-colab) - Text To Video Synthesis Colab
 - [aws-samples/aws-openalex-knowledge-graph](https://github.com/aws-samples/aws-openalex-knowledge-graph) - 
@@ -1025,7 +1033,6 @@
 - [neo4j-labs/llm-graph-builder](https://github.com/neo4j-labs/llm-graph-builder) - Neo4j graph construction from unstructured data using LLMs
 - [whylabs/whylogs](https://github.com/whylabs/whylogs) - An open-source data logging library for machine learning models and data pipelines. 📚 Provides visibility into data quality & model performance over time. 🛡️ Supports privacy-preserving data collectio
 - [Arize-ai/phoenix](https://github.com/Arize-ai/phoenix) - AI Observability & Evaluation
-- [microsoft/autogen](https://github.com/microsoft/autogen) - A programming framework for agentic AI 🤖 PyPi: autogen-agentchat Discord: https://aka.ms/autogen-discord Office Hour: https://aka.ms/autogen-officehour
 - [DanielWarfield1/MLWritingAndResearch](https://github.com/DanielWarfield1/MLWritingAndResearch) - Notebook Examples used in machine learning writing and research
 - [run-llama/llama-hub](https://github.com/run-llama/llama-hub) - A library of data loaders for LLMs made by the community -- to be used with LlamaIndex and/or LangChain
 - [d3blocks/d3blocks](https://github.com/d3blocks/d3blocks) - The Python library to create stand-alone and interactive d3 charts.
@@ -1172,6 +1179,8 @@
 
 ## Others 
 
+- [kazunori279/my-sessions-and-bio](https://github.com/kazunori279/my-sessions-and-bio) - My bio and the list of session agendas
+- [kepano/kepano-obsidian](https://github.com/kepano/kepano-obsidian) - My personal Obsidian vault template. A bottom-up approach to note-taking and organizing things I am interested in.
 - [mxschmitt/awesome-playwright](https://github.com/mxschmitt/awesome-playwright) - A curated list of awesome tools, utils and projects using Playwright
 - [bmpi-dev/awesome-seo](https://github.com/bmpi-dev/awesome-seo) - Google SEO Research and Web Traffic Monetization
 - [mahshidaln/AI-for-music](https://github.com/mahshidaln/AI-for-music) - Resources on AI applications in the music domain
@@ -1532,6 +1541,7 @@
 
 ## PHP 
 
+- [erusev/parsedown](https://github.com/erusev/parsedown) - Better Markdown Parser in PHP
 - [theodo-group/LLPhant](https://github.com/theodo-group/LLPhant) - LLPhant - A comprehensive PHP Generative AI Framework using OpenAI GPT 4. Inspired by Langchain
 - [wallabag/wallabag](https://github.com/wallabag/wallabag) - wallabag is a self hostable application for saving web pages: Save and classify articles. Read them later. Freely.
 - [guanguans/ai-commit](https://github.com/guanguans/ai-commit) - Automagically generate conventional git commit messages with AI. - 使用 AI 自动生成约定式 git 提交信息。
@@ -1633,6 +1643,12 @@
 
 ## Python 
 
+- [AmberSahdev/Open-Interface](https://github.com/AmberSahdev/Open-Interface) - Control Any Computer Using LLMs
+- [browser-use/browser-use](https://github.com/browser-use/browser-use) - Make websites accessible for AI agents
+- [Upsonic/Tiger](https://github.com/Upsonic/Tiger) - Neuralink for your AI Agents - LangChain - Autogen - CrewAI
+- [AgentOps-AI/AgentStack](https://github.com/AgentOps-AI/AgentStack) - The fastest way to build robust AI agents
+- [PySpur-Dev/PySpur](https://github.com/PySpur-Dev/PySpur) - Graph-Based Editor for LLM Workflows
+- [OpenAutoCoder/Agentless](https://github.com/OpenAutoCoder/Agentless) - Agentless🐱:  an agentless approach to automatically solve software development problems
 - [microsoft/markitdown](https://github.com/microsoft/markitdown) - Python tool for converting files and office documents to Markdown.
 - [QuivrHQ/MegaParse](https://github.com/QuivrHQ/MegaParse) - File Parser optimised for LLM Ingestion with no loss 🧠 Parse PDFs, Docx, PPTx in a format that is ideal for LLMs.
 - [trypromptly/LLMStack](https://github.com/trypromptly/LLMStack) - No-code multi-agent framework to build LLM Agents, workflows and applications with your data
@@ -1717,7 +1733,6 @@
 - [princeton-nlp/tree-of-thought-llm](https://github.com/princeton-nlp/tree-of-thought-llm) - [NeurIPS 2023] Tree of Thoughts: Deliberate Problem Solving with Large Language Models
 - [marqo-ai/marqo](https://github.com/marqo-ai/marqo) - Unified embedding generation and search engine. Also available on cloud - cloud.marqo.ai
 - [AutoGPTQ/AutoGPTQ](https://github.com/AutoGPTQ/AutoGPTQ) - An easy-to-use LLMs quantization package with user-friendly apis, based on GPTQ algorithm.
-- [FoundationVision/VAR](https://github.com/FoundationVision/VAR) - [NeurIPS 2024 Oral][GPT beats diffusion🔥] [scaling laws in visual generation📈] Official impl. of "Visual Autoregressive Modeling: Scalable Image Generation via Next-Scale Prediction". An *ultra-simple
 - [baichuan-inc/Baichuan2](https://github.com/baichuan-inc/Baichuan2) - A series of large language models developed by Baichuan Intelligent Technology
 - [InternLM/xtuner](https://github.com/InternLM/xtuner) - An efficient, flexible and full-featured toolkit for fine-tuning LLM (InternLM2, Llama3, Phi3, Qwen, Mistral, ...)
 - [NExT-GPT/NExT-GPT](https://github.com/NExT-GPT/NExT-GPT) - Code and models for NExT-GPT: Any-to-Any Multimodal Large Language Model
@@ -1779,6 +1794,7 @@
 - [OpenInterpreter/open-interpreter](https://github.com/OpenInterpreter/open-interpreter) - A natural language interface for computers
 - [agiresearch/AIOS](https://github.com/agiresearch/AIOS) - AIOS: AI Agent Operating System
 - [salu133445/musegan](https://github.com/salu133445/musegan) - An AI for Music Generation
+- [open-mmlab/Amphion](https://github.com/open-mmlab/Amphion) - Amphion (/æmˈfaɪən/) is a toolkit for Audio, Music, and Speech Generation. Its purpose is to support reproducible research and help junior researchers and engineers get started in the field of audio, 
 - [microsoft/NeuralSpeech](https://github.com/microsoft/NeuralSpeech) - 
 - [ivcylc/OpenMusic](https://github.com/ivcylc/OpenMusic) - OpenMusic: SOTA Text-to-music (TTM) Generation
 - [tuneflow/tuneflow-py](https://github.com/tuneflow/tuneflow-py) - 🧠+🎧 Build your music algorithms and AI models with the next-gen DAW 🔥
@@ -2184,6 +2200,7 @@
 - [lastmile-ai/aiconfig](https://github.com/lastmile-ai/aiconfig) - AIConfig is a config-based framework to build generative AI applications.
 - [stoyan-stoyanov/llmflows](https://github.com/stoyan-stoyanov/llmflows) - LLMFlows - Simple, Explicit and Transparent LLM Apps
 - [mozman/svgwrite](https://github.com/mozman/svgwrite) - Python Package to write SVG files (UNMAINTAINED)
+- [microsoft/autogen](https://github.com/microsoft/autogen) - A programming framework for agentic AI 🤖 PyPi: autogen-agentchat Discord: https://aka.ms/autogen-discord Office Hour: https://aka.ms/autogen-officehour
 - [langroid/langroid](https://github.com/langroid/langroid) - Harness LLMs with Multi-Agent Programming
 - [Significant-Gravitas/Auto-GPT-Plugin-Template](https://github.com/Significant-Gravitas/Auto-GPT-Plugin-Template) - A starting point for developing your own plug-in for Auto-GPT
 - [EwingYangs/awesome-open-gpt](https://github.com/EwingYangs/awesome-open-gpt) - Collection of Open Source Projects Related to GPT，GPT相关开源项目合集🚀、精选🔥🔥
@@ -2756,6 +2773,7 @@
 
 ## Rust 
 
+- [trashhalo/obsidian-extract-url](https://github.com/trashhalo/obsidian-extract-url) - Plugin to extract markdown out of urls
 - [zurawiki/gptcommit](https://github.com/zurawiki/gptcommit) - A git prepare-commit-msg hook for authoring commit messages with GPT-3.
 - [LemmyNet/lemmy](https://github.com/LemmyNet/lemmy) - 🐀 A link aggregator and forum for the fediverse
 - [tw93/Pake](https://github.com/tw93/Pake) - 🤱🏻 Turn any webpage into a desktop app with Rust.  🤱🏻 利用 Rust 轻松构建轻量级多端桌面应用
@@ -2917,6 +2935,26 @@
 
 ## TypeScript 
 
+- [raineorshine/npm-check-updates](https://github.com/raineorshine/npm-check-updates) - Find newer versions of package dependencies than what your package.json allows
+- [different-ai/file-organizer-2000](https://github.com/different-ai/file-organizer-2000) - AI-powered organization and chat assistant for Obsidian
+- [tadashi-aikawa/obsidian-various-complements-plugin](https://github.com/tadashi-aikawa/obsidian-various-complements-plugin) - This plugin for Obsidian enables you complete words like the auto-completion of IDE.
+- [danielo515/obsidian-modal-form](https://github.com/danielo515/obsidian-modal-form) - Define forms for filling data that you will be able to open from anywhere you can run JS
+- [MetaCorp/obsidian-augmented-canvas](https://github.com/MetaCorp/obsidian-augmented-canvas) - Supercharge your Obsidian canvas experience with AI features.
+- [zhouhua/obsidian-export-image](https://github.com/zhouhua/obsidian-export-image) - Easily convert your article to image.
+- [l1xnan/obsidian-better-export-pdf](https://github.com/l1xnan/obsidian-better-export-pdf) - Obsidian PDF export enhancement plugin
+- [coddingtonbear/obsidian-csv-table](https://github.com/coddingtonbear/obsidian-csv-table) - Have a CSV file you want to render some or all of the data from?  This plugin allows you to display that data in your obsidian preview.
+- [charliecm/obsidian-tidy-footnotes](https://github.com/charliecm/obsidian-tidy-footnotes) - Tidy your footnotes seamlessly in Obsidian.
+- [nekoshita/obsidian-auto-card-link](https://github.com/nekoshita/obsidian-auto-card-link) - 
+- [trganda/obsidian-attachment-management](https://github.com/trganda/obsidian-attachment-management) - Attachment Management of Obsidian
+- [Sergei-Korneev/obsidian-local-images-plus](https://github.com/Sergei-Korneev/obsidian-local-images-plus) - This repo is a reincarnation of obsidian-local-images plugin which main aim was downloading images in md notes to local storage.
+- [eth-p/obsidian-callout-manager](https://github.com/eth-p/obsidian-callout-manager) - An Obsidian.md plugin that makes creating and configuring callouts easy.
+- [andrewmcgivery/obsidian-beautitab](https://github.com/andrewmcgivery/obsidian-beautitab) - A plugin for Obsidian.MD that creates a customizable new tab view with beautiful backgrounds, quotes, search, and more.
+- [ofalvai/obsidian-llm-workspace](https://github.com/ofalvai/obsidian-llm-workspace) - 
+- [felipetappata/obsidian-link-preview](https://github.com/felipetappata/obsidian-link-preview) - Obsidian plugin that previews external links on hover.
+- [LostPaul/obsidian-folder-notes](https://github.com/LostPaul/obsidian-folder-notes) - Create notes within folders that can be accessed without collapsing the folder, similar to the functionality offered in Notion.
+- [IdreesInc/Waypoint](https://github.com/IdreesInc/Waypoint) - Obsidian plugin that gives you the power to generate dynamic MOCs in your folder notes. Enables folders to show up in the graph view and removes the need for messy tags!
+- [purocean/yn](https://github.com/purocean/yn) - A highly extensible Markdown editor. Version control, AI Copilot, mind map, documents encryption, code snippet running, integrated terminal, chart embedding, HTML applets, Reveal.js, plug-in, and macr
+- [AmKreta/svgEditor](https://github.com/AmKreta/svgEditor) - app to create svg images
 - [ChatAnyTeam/ChatAny](https://github.com/ChatAnyTeam/ChatAny) - 🌻 一键拥有你自己的 ChatGPT+众多AI 网页服务 | One click access to your own ChatGPT+Many AI web services
 - [civitai/civitai](https://github.com/civitai/civitai) - A repository of models, textual inversions, and more
 - [cheeriojs/cheerio](https://github.com/cheeriojs/cheerio) - The fast, flexible, and elegant library for parsing and manipulating HTML and XML.
@@ -3166,7 +3204,7 @@
 - [BuilderIO/gpt-assistant](https://github.com/BuilderIO/gpt-assistant) - An experiment to give an autonomous GPT agent access to a browser and have it accomplish tasks
 - [ragapp/ragapp](https://github.com/ragapp/ragapp) - The easiest way to use Agentic RAG in any enterprise
 - [sqlchat/sqlchat](https://github.com/sqlchat/sqlchat) - Chat-based SQL Client and Editor for the next decade
-- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - Generative AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, cod
+- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, code highlight
 - [dillionverma/llm.report](https://github.com/dillionverma/llm.report) - 📊 llm.report is an open-source logging and analytics platform for OpenAI: Log your ChatGPT API requests, analyze costs, and improve your prompts.
 - [transitive-bullshit/agentic](https://github.com/transitive-bullshit/agentic) - AI agent stdlib that works with any LLM and TypeScript AI SDK.
 - [jina-ai/reader](https://github.com/jina-ai/reader) - Convert any URL to an LLM-friendly input with a simple prefix https://r.jina.ai/
@@ -3552,6 +3590,7 @@
 
 ## Vue 
 
+- [doocs/md](https://github.com/doocs/md) - ✍ WeChat Markdown Editor | 一款高度简洁的微信 Markdown 编辑器：支持 Markdown 语法、色盘取色、多图上传、一键下载文档、自定义 CSS 样式、一键重置等特性
 - [Magic-Push/MagicPush](https://github.com/Magic-Push/MagicPush) - MagicPush is the open-source push notification service for developers
 - [ourresearch/gtr-webapp](https://github.com/ourresearch/gtr-webapp) - A search engine built on the Unpaywall database
 - [ccbikai/Sink](https://github.com/ccbikai/Sink) - ⚡ A Simple / Speedy / Secure Link Shortener with Analytics, 100% run on Cloudflare.
