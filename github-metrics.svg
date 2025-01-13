@@ -3148,7 +3148,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>astral-sh/uv</span>
-                                        <span>starred 2 days ago</span>
+                                        <span>starred 3 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An extremely fast Python package and project manager, written in Rust.</div>
@@ -3976,7 +3976,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 343k out of 224m repositories</span>
+                                    <span class="gh">ranked 343k out of 215m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 116 stars</div>
                             </div>
@@ -4255,7 +4255,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 13 Jan 2025, 00:01:47 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 13 Jan 2025, 01:01:35 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
