@@ -112,6 +112,7 @@
 
 ## C++ 
 
+- [jurplel/qView](https://github.com/jurplel/qView) - Practical and minimal image viewer
 - [justinfrankel/reaper-sdk](https://github.com/justinfrankel/reaper-sdk) - REAPER C/C++ extension SDK
 - [openvinotoolkit/openvino](https://github.com/openvinotoolkit/openvino) - OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference
 - [daijro/camoufox](https://github.com/daijro/camoufox) - 🦊 Anti-detect browser
@@ -284,7 +285,6 @@
 - [gopherdata/gophernotes](https://github.com/gopherdata/gophernotes) - The Go kernel for Jupyter notebooks and nteract.
 - [yunabe/lgo](https://github.com/yunabe/lgo) - Interactive Go programming with Jupyter
 - [weaveworks/scope](https://github.com/weaveworks/scope) - Monitoring, visualisation & management for Docker & Kubernetes
-- [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [ethersphere/swarm](https://github.com/ethersphere/swarm) - Swarm: Censorship resistant storage and communication infrastructure for a truly sovereign digital society
 - [gohugoio/hugo](https://github.com/gohugoio/hugo) - The world’s fastest framework for building websites.
 - [shen-yu/hugo-chart](https://github.com/shen-yu/hugo-chart) - a Chart.js component for Hugo. :chart_with_upwards_trend:
@@ -453,6 +453,7 @@
 
 ## JavaScript 
 
+- [openseadragon/openseadragon](https://github.com/openseadragon/openseadragon) - An open-source, web-based viewer for zoomable images, implemented in pure JavaScript.
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) - Model Context Protocol Servers
 - [zenozeng/p5.js-svg](https://github.com/zenozeng/p5.js-svg) - SVG runtime for p5.js.
 - [Kiran1689/Awesome-Dev-Portfolios](https://github.com/Kiran1689/Awesome-Dev-Portfolios) - This repository aims to collect portfolios and their repositories from developers around the world.
@@ -1689,7 +1690,7 @@
 - [facebookresearch/Kats](https://github.com/facebookresearch/Kats) - Kats, a kit to analyze time series data, a lightweight, easy-to-use, generalizable, and extendable framework to perform time series analysis, from understanding the key statistics and characteristics,
 - [chaos-genius/chaos_genius](https://github.com/chaos-genius/chaos_genius) - ML powered analytics engine for outlier detection and root cause analysis.
 - [arundo/adtk](https://github.com/arundo/adtk) - A Python toolkit for rule-based/unsupervised anomaly detection in time series
-- [sintel-dev/Orion](https://github.com/sintel-dev/Orion) - Library for detecting anomalies in signals
+- [sintel-dev/Orion](https://github.com/sintel-dev/Orion) - Unsupervised time series anomaly detection library
 - [zillow/luminaire](https://github.com/zillow/luminaire) - Luminaire is a python package that provides ML driven solutions for monitoring time series data.
 - [cuebook/CueObserve](https://github.com/cuebook/CueObserve) - Timeseries Anomaly detection and Root Cause Analysis on data in SQL data warehouses and databases
 - [thuml/Anomaly-Transformer](https://github.com/thuml/Anomaly-Transformer) - About Code release for "Anomaly Transformer: Time Series Anomaly Detection with Association Discrepancy" (ICLR 2022 Spotlight), https://openreview.net/forum?id=LzQQ89U1qm_
@@ -2122,7 +2123,7 @@
 - [DS4SD/docling](https://github.com/DS4SD/docling) - Get your documents ready for gen AI
 - [kvesteri/sqlalchemy-utils](https://github.com/kvesteri/sqlalchemy-utils) - Various utility functions and datatypes for SQLAlchemy.
 - [unit8co/darts](https://github.com/unit8co/darts) - A python library for user-friendly forecasting and anomaly detection on time series.
-- [NVlabs/EAGLE](https://github.com/NVlabs/EAGLE) - Eagle Family: Exploring Model Designs, Data Recipes and Training Strategies for Frontier-Class Multimodal LLMs
+- [NVlabs/EAGLE](https://github.com/NVlabs/EAGLE) - [ICLR'25] Eagle: Frontier Vision-Language Models with Vision-Centric Designs
 - [feder-cr/Jobs_Applier_AI_Agent](https://github.com/feder-cr/Jobs_Applier_AI_Agent) - Jobs_Applier_AI_Agent aims to easy job hunt process by automating the job application process. Utilizing artificial intelligence, it enables users to apply for multiple jobs in a tailored way.
 - [Cinnamon/kotaemon](https://github.com/Cinnamon/kotaemon) - An open-source RAG-based tool for chatting with your documents.
 - [sebastianruder/NLP-progress](https://github.com/sebastianruder/NLP-progress) - Repository to track the progress in Natural Language Processing (NLP), including the datasets and the current state-of-the-art for the most common NLP tasks.
@@ -2144,7 +2145,7 @@
 - [sqlfluff/sqlfluff](https://github.com/sqlfluff/sqlfluff) - A modular SQL linter and auto-formatter with support for multiple dialects and templated code.
 - [openai/whisper](https://github.com/openai/whisper) - Robust Speech Recognition via Large-Scale Weak Supervision
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB) - Investment Research for Everyone, Everywhere.
-- [u-hubar/SchemaGPT](https://github.com/u-hubar/SchemaGPT) - Python library for RDF Schemas generation from prompts using GPT-3 magic 🪄🪄🪄
+- [0xbraindevd/SchemaGPT](https://github.com/0xbraindevd/SchemaGPT) - Python library for RDF Schemas generation from prompts using GPT-3 magic 🪄🪄🪄
 - [Jakob-98/openai-functools](https://github.com/Jakob-98/openai-functools) - openai-functools: Simplified Generation of OpenAI Functions JSON Metadata for OpenAI Function Calling
 - [geeks-of-data/knowledge-gpt](https://github.com/geeks-of-data/knowledge-gpt) - Extract knowledge from all information sources using gpt and other language models. Index and make Q&A session with information sources.
 - [friuns2/Leaked-GPTs](https://github.com/friuns2/Leaked-GPTs) - Leaked GPTs Prompts Bypass the 25 message limit or to try out GPTs without a Plus subscription.
@@ -2207,9 +2208,9 @@
 - [OpenBMB/XAgent](https://github.com/OpenBMB/XAgent) - An Autonomous LLM Agent for Complex Task Solving
 - [Yifan-Song793/RestGPT](https://github.com/Yifan-Song793/RestGPT) - An LLM-based autonomous agent controlling real-world applications via RESTful APIs
 - [clear-nus/edc](https://github.com/clear-nus/edc) - 
-- [zjunlp/AutoKG](https://github.com/zjunlp/AutoKG) - LLMs for Knowledge Graph Construction and Reasoning: Recent Capabilities and Future Opportunities
+- [zjunlp/AutoKG](https://github.com/zjunlp/AutoKG) - [WWWJ 2024] LLMs for Knowledge Graph Construction and Reasoning: Recent Capabilities and Future Opportunities
 - [SWE-agent/SWE-agent](https://github.com/SWE-agent/SWE-agent) - SWE-agent takes a GitHub issue and tries to automatically fix it, using GPT-4, or your LM of choice. It can also be employed for offensive cybersecurity or competitive coding challenges. [NeurIPS 2024
-- [nus-apr/auto-code-rover](https://github.com/nus-apr/auto-code-rover) - A project structure aware autonomous software engineer aiming for autonomous program improvement. Resolved 37.3% tasks (pass@1) in SWE-bench lite and 46.2% tasks (pass@1) in SWE-bench verified with ea
+- [AutoCodeRoverSG/auto-code-rover](https://github.com/AutoCodeRoverSG/auto-code-rover) - A project structure aware autonomous software engineer aiming for autonomous program improvement. Resolved 37.3% tasks (pass@1) in SWE-bench lite and 46.2% tasks (pass@1) in SWE-bench verified with ea
 - [Alir3z4/html2text](https://github.com/Alir3z4/html2text) - Convert HTML to Markdown-formatted text.
 - [matthewwithanm/python-markdownify](https://github.com/matthewwithanm/python-markdownify) - Convert HTML to Markdown
 - [SciPhi-AI/R2R](https://github.com/SciPhi-AI/R2R) - The most advanced AI retrieval system. Containerized, Retrieval-Augmented Generation (RAG) with a RESTful API.
@@ -2663,6 +2664,7 @@
 - [kotartemiy/newscatcher](https://github.com/kotartemiy/newscatcher) - Programmatically collect normalized news from (almost) any website.
 - [DEAP/deap](https://github.com/DEAP/deap) - Distributed Evolutionary Algorithms in Python
 - [keras-team/keras-tuner](https://github.com/keras-team/keras-tuner) - A Hyperparameter Tuning Library for Keras
+- [kubeflow/katib](https://github.com/kubeflow/katib) - Automated Machine Learning on Kubernetes
 - [microsoft/qio-samples](https://github.com/microsoft/qio-samples) - Samples for using optimization solvers through Azure Quantum.
 - [tradytics/eiten](https://github.com/tradytics/eiten) - Statistical and Algorithmic Investing Strategies for Everyone
 - [freqtrade/freqtrade](https://github.com/freqtrade/freqtrade) - Free, open source crypto trading bot
