@@ -196,7 +196,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M2.75 1.5a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V4.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H2.75zM1 1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V1.75zm7 1.5a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0V7h-1.5a.75.75 0 010-1.5h1.5V4A.75.75 0 018 3.25zm-3 8a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75z"/>
                                     </svg>
-                                    509k added, 67.3k removed
+                                    86.9m added, 43.7m removed
                                 </div>
                             </section>
                             <section>
@@ -228,7 +228,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75zm8.755 3a2.25 2.25 0 012.25-2.25H14.5v9h-3.757c-.71 0-1.4.201-1.992.572l.004-7.322zm-1.504 7.324l.004-5.073-.002-2.253A2.25 2.25 0 005.003 2.5H1.5v9h3.757a3.75 3.75 0 011.994.574z"/>
                                     </svg>
-                                    483 views in last two weeks
+                                    484 views in last two weeks
                                 </div>
                             </section>
                         </div>
@@ -471,20 +471,20 @@
             </section>
             <section class="column">
                 <h3 class="field">Most used languages</h3>
-                <small>estimation from 271mb of code in 58047 edited files across 1178 commits</small>
+                <small>estimation from 293mb of code in 58425 edited files across 1292 commits</small>
                 <svg class="bar" xmlns="http://www.w3.org/2000/svg" width="460" height="8">
                     <mask id="languages-bar">
                         <rect x="0" y="0" width="460" height="8" fill="white" rx="5"/>
                     </mask>
                     <rect mask="url(#languages-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                    <rect mask="url(#languages-bar)" x="0" y="0" width="199.65872078946143" height="8" fill="#DA5B0B"/>
-                    <rect mask="url(#languages-bar)" x="199.65872078946143" y="0" width="178.41501680730528" height="8" fill="#f1e05a"/>
-                    <rect mask="url(#languages-bar)" x="378.0737375967667" y="0" width="60.76341711031672" height="8" fill="#e34c26"/>
-                    <rect mask="url(#languages-bar)" x="438.8371547070834" y="0" width="6.498796200819838" height="8" fill="#ededed"/>
-                    <rect mask="url(#languages-bar)" x="445.3359509079033" y="0" width="5.851205014472897" height="8" fill="#663399"/>
-                    <rect mask="url(#languages-bar)" x="451.1871559223762" y="0" width="3.8638237320318853" height="8" fill="#3572A5"/>
-                    <rect mask="url(#languages-bar)" x="455.0509796544081" y="0" width="2.828935008168154" height="8" fill="#3178c6"/>
-                    <rect mask="url(#languages-bar)" x="457.8799146625762" y="0" width="2.120085337423811" height="8" fill="#c6538c"/>
+                    <rect mask="url(#languages-bar)" x="0" y="0" width="274.0249763277625" height="8" fill="#DA5B0B"/>
+                    <rect mask="url(#languages-bar)" x="274.0249763277625" y="0" width="127.05887454447601" height="8" fill="#f1e05a"/>
+                    <rect mask="url(#languages-bar)" x="401.08385087223843" y="0" width="43.27652849109519" height="8" fill="#e34c26"/>
+                    <rect mask="url(#languages-bar)" x="444.36037936333366" y="0" width="4.628140309859138" height="8" fill="#ededed"/>
+                    <rect mask="url(#languages-bar)" x="448.9885196731928" y="0" width="4.170493998202468" height="8" fill="#663399"/>
+                    <rect mask="url(#languages-bar)" x="453.15901367139526" y="0" width="3.316524282409543" height="8" fill="#3572A5"/>
+                    <rect mask="url(#languages-bar)" x="456.47553795380486" y="0" width="2.014635901895654" height="8" fill="#3178c6"/>
+                    <rect mask="url(#languages-bar)" x="458.4901738557005" y="0" width="1.509826144299561" height="8" fill="#c6538c"/>
                 </svg>
                 <div class="field center horizontal-wrap fill-width">
                     <div class="field center no-wrap language">
@@ -908,7 +908,7 @@
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Google, Chrome, Azure, MySQL, Data visualization, Bot, Django, Command-line interface, 3D, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, MATLAB, Security, macOS, windows, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, Twitter, Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, music, llm, Data analysis, Statistics, stable-diffusion, Privacy, zsh, obsidian-plugin, Crawler, trading-bot, Animation, portfolio-website, search-engine, large-language-models, RSS, gpt, prompt-engineering, proxy, Simulation, vscode-extension, rag, knowledge-graph, gatsby, jupyter, Notion, ocr, agent, scraper, icons, ai-agents, SVG, scraping, blog, retrieval-augmented-generation, react-components, anomaly-detection, profile-readme, scss, flowchart, crm, docs, llms, MIDI, Playwright, webscraping, Reddit, rich-text-editor, modeling, saas-boilerplate, scrapy, github-profile, named-entity-recognition, marketing-automation, music-generation, url-shortener, llm-agent, email-marketing, llmops, linear-algebra, ai-music, web-scraper, personal-assistant, markdown-editor, relation-extraction, pkm, music-composition, classification, proxy-list, ai-assistant, copilot, http-proxy, assistant, MDX, api-documentation, multimodal, data-pipelines, text-detection, research-paper, push-notifications, socks, etl-pipeline, document-layout-analysis, graph-editor, image-viewer, free-proxy, probability, react-component, entity-linking, formatter, text-recognition, email-template, newsletter, regression, marketing-tools, component, document-ai, calculus, asynchronous, agent-based-framework, pdf-converter, table-recognition, oh-my-zsh-plugin, document-understanding, computer-music, text2sql, toolchain, quicklook-extension, emails, pdf-to-text, remark-plugin, reddit-api, music-ai, email-boilerplate, project-structure, document-parser, music-programming, comment-system, ai-agent, responsive-email, document-analysis, sphinx-extension, ontology-engineering, pytest-plugin, docset, document-intelligence, fractal, sphinx, docusaurus, badge, link-aggregator, layout-analysis, key-information-extraction, python-libraries, pdf-document-processor, ai-music-generator, pdf-to-json, automated-scraper, pdf-extractor, rehype-plugin, bio-links, text-to-audio, document-image-processing, knowledge-curation, poetry-plugin, newsletter-management, semantic-scholar, shorten-urls, llm-ui, graph-rag, gui-agents, document-recognition, yourls, tinyurl, shortener, urlshortener, document-image-analysis, sass-mixins, assistant-computer-control, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, document-parsing, end-to-end-ocr, aiagents, email-marketing-software, yourls-client, layoutxlm, llm-platform, automated-post, report-generation, llm-powered-agents, llm-os, text-to-svg, sass-functions, docz, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, website-to-api, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 273 more...</div>
+                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Google, Chrome, Azure, MySQL, Data visualization, Bot, Django, Command-line interface, 3D, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, MATLAB, Security, macOS, windows, MongoDB, PostgreSQL, Unreal Engine, Ethereum, Cryptocurrency, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, Twitter, Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, music, llm, Data analysis, Statistics, stable-diffusion, Privacy, zsh, obsidian-plugin, Crawler, trading-bot, Animation, portfolio-website, search-engine, large-language-models, RSS, gpt, prompt-engineering, proxy, Simulation, vscode-extension, rag, knowledge-graph, gatsby, jupyter, Notion, agent, ocr, scraper, icons, ai-agents, SVG, scraping, blog, retrieval-augmented-generation, react-components, anomaly-detection, profile-readme, scss, flowchart, crm, docs, llms, MIDI, Playwright, webscraping, Reddit, rich-text-editor, modeling, saas-boilerplate, scrapy, github-profile, named-entity-recognition, marketing-automation, music-generation, url-shortener, llm-agent, email-marketing, llmops, linear-algebra, ai-music, web-scraper, personal-assistant, markdown-editor, relation-extraction, pkm, music-composition, classification, proxy-list, ai-assistant, copilot, http-proxy, assistant, MDX, api-documentation, multimodal, data-pipelines, text-detection, research-paper, push-notifications, socks, etl-pipeline, document-layout-analysis, graph-editor, image-viewer, free-proxy, probability, react-component, entity-linking, formatter, text-recognition, email-template, newsletter, regression, marketing-tools, component, document-ai, calculus, asynchronous, agent-based-framework, pdf-converter, table-recognition, oh-my-zsh-plugin, document-understanding, computer-music, text2sql, toolchain, quicklook-extension, emails, pdf-to-text, remark-plugin, reddit-api, music-ai, email-boilerplate, project-structure, document-parser, music-programming, comment-system, ai-agent, responsive-email, document-analysis, sphinx-extension, ontology-engineering, pytest-plugin, docset, document-intelligence, fractal, sphinx, docusaurus, badge, link-aggregator, layout-analysis, key-information-extraction, python-libraries, pdf-document-processor, ai-music-generator, pdf-to-json, automated-scraper, pdf-extractor, rehype-plugin, bio-links, text-to-audio, document-image-processing, knowledge-curation, poetry-plugin, newsletter-management, semantic-scholar, shorten-urls, llm-ui, graph-rag, gui-agents, document-recognition, yourls, tinyurl, shortener, urlshortener, document-image-analysis, sass-mixins, assistant-computer-control, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, document-parsing, end-to-end-ocr, aiagents, email-marketing-software, yourls-client, layoutxlm, llm-platform, automated-post, report-generation, llm-powered-agents, llm-os, text-to-svg, sass-functions, docz, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, website-to-api, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 273 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3041,7 +3041,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jojoee/jojoee</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">:)</div>
@@ -3088,7 +3088,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jamesgeorge007/github-activity-readme</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Updates README with the recent GitHub activity of a user</div>
@@ -3141,7 +3141,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>umutphp/github-action-dynamic-profile-page</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">GitHub Action to push updates to your special profile repository.</div>
@@ -3194,7 +3194,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>maddhruv/github-readme-npm-downloads</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3680,7 +3680,7 @@
                                     </defs>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="gauge info">
                                         <circle class="gauge-base" r="25" cx="28" cy="28"/>
-                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="2504.4900000000002 155"/>
+                                        <circle class="gauge-arc" transform="rotate(-90 28 28)" r="25" cx="28" cy="28" stroke-dasharray="2504.6966666666667 155"/>
                                     </svg>
                                     <svg xmlns="http://www.w3.org/2000/svg" mask="url(#mask)">
                                         <g stroke-width="2" fill="none" fill-rule="evenodd">
@@ -3702,7 +3702,7 @@
                                     <span class="prefix">Master</span>
                                     deployer
                                 </div>
-                                <div class="text">Repositories have been deployed 25237 times</div>
+                                <div class="text">Repositories have been deployed 25239 times</div>
                             </div>
                         </div>
                         <div class="achievement s largeable-width-half">
@@ -4024,7 +4024,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Inspirer
-                                    <span class="gh">ranked 202k out of 228m repositories</span>
+                                    <span class="gh">ranked 202k out of 234m repositories</span>
                                 </div>
                                 <div class="text">Maintaining or created a repository which has been forked 66 times</div>
                             </div>
@@ -4114,7 +4114,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 228m repositories</span>
+                                    <span class="gh">ranked 345k out of 234m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 116 stars</div>
                             </div>
@@ -4393,7 +4393,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 1 Feb 2025, 05:01:37 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 1 Feb 2025, 06:01:28 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
