@@ -3035,7 +3035,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>executeautomation/mcp-playwright</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Repository contains Playwright Model Context Protocol to automate Browser and APIs</div>
@@ -3082,7 +3082,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>kleneway/awesome-cursor-mpc-server</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Example of an MCP server with custom tools that can be called directly from cursor</div>
@@ -3135,7 +3135,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>punkpeye/awesome-mcp-clients</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A collection of MCP clients.</div>
@@ -3182,7 +3182,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ztjhz/BetterChatGPT</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An amazing UI for OpenAI's ChatGPT (Website + Windows + MacOS + Linux)</div>
@@ -3421,6 +3421,20 @@
                                     </svg>
                                     <div class="content">
                                         Starred
+                                        <span class="repo">dzhng/deep-research</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">10 Feb 2025, 11:34:26</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
                                         <span class="repo">xroche/httrack</span>
                                     </div>
                                 </div>
@@ -3474,20 +3488,6 @@
                                     </div>
                                 </div>
                                 <div class="timestamp">9 Feb 2025, 13:40:21</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">drwpow/awesome-terminal-backgrounds</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">9 Feb 2025, 03:07:42</div>
                             </section>
                         </div>
                     </section>
@@ -3998,7 +3998,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 223m repositories</span>
+                                    <span class="gh">ranked 346k out of 230m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 116 stars</div>
                             </div>
@@ -4277,7 +4277,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 10 Feb 2025, 15:01:41 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 10 Feb 2025, 16:01:52 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
