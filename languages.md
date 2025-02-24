@@ -501,6 +501,7 @@
 
 ## JavaScript 
 
+- [maoxiaoke/mcp-media-processor](https://github.com/maoxiaoke/mcp-media-processor) - A Node.js server implementing Model Context Protocol (MCP) for media processing operations, providing powerful video and image manipulation capabilities.
 - [hasit/vscode-gi](https://github.com/hasit/vscode-gi) - Visual Studio Code extension for generating .gitignore files easily.
 - [Momo707577045/m3u8-downloader](https://github.com/Momo707577045/m3u8-downloader) - m3u8 视频在线提取工具
 - [tedconf/node-m3u8](https://github.com/tedconf/node-m3u8) - Streaming parser for m3u8 files in node
@@ -1025,7 +1026,7 @@
 - [chartjs/Chart.js](https://github.com/chartjs/Chart.js) - Simple HTML5 Charts using the &lt;canvas&gt; tag
 - [citation-js/citation-js](https://github.com/citation-js/citation-js) - Core functionality of Citation.js, as well as the original plugins (CSL, BibTeX, RIS, DOI, Wikidata, and BibJSON)
 - [jbrodriguez/hugulp](https://github.com/jbrodriguez/hugulp) - Hugo + Gulp starter project
-- [gautamdhameja/medium-2-md](https://github.com/gautamdhameja/medium-2-md) - A CLI tool that converts exported Medium posts (html) to Jekyll/Hugo compatible markdown with front matter.
+- [web3gautam/medium-2-md](https://github.com/web3gautam/medium-2-md) - A CLI tool that converts exported Medium posts (html) to Jekyll/Hugo compatible markdown with front matter.
 - [Consensys/eth-lightwallet](https://github.com/Consensys/eth-lightwallet) - Lightweight JS Wallet for Node and the browser
 - [cubedro/eth-net-intelligence-api](https://github.com/cubedro/eth-net-intelligence-api) - Ethereum Network Intelligence API
 - [cubedro/eth-netstats](https://github.com/cubedro/eth-netstats) - Ethereum Network Stats
@@ -1839,6 +1840,12 @@
 
 ## Python 
 
+- [sony/talkhier](https://github.com/sony/talkhier) - Official Repo for The Paper "Talk Structurally, Act Hierarchically: A Collaborative Framework for LLM Multi-Agent Systems"
+- [sqlalchemy/alembic](https://github.com/sqlalchemy/alembic) - A database migrations tool for SQLAlchemy.
+- [drjforrest/mcp-things3](https://github.com/drjforrest/mcp-things3) - A Model Context Protocol for reading todos and writing todos and projects in the macOS app Things3 using a combination of Applescript and x-call URLs.
+- [alexander-zuev/supabase-mcp-server](https://github.com/alexander-zuev/supabase-mcp-server) - Supabase MCP Server to enable Cursor & Windsurf to interact with Supabase directly
+- [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) - A Model Context Protocol server for Excel file manipulation
+- [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) - The awesome document factory
 - [thunlp/OpenPrompt](https://github.com/thunlp/OpenPrompt) - An Open-Source Framework for Prompt-Learning.
 - [alexta69/metube](https://github.com/alexta69/metube) - Self-hosted YouTube downloader (web UI for youtube-dl / yt-dlp)
 - [MrS0m30n3/youtube-dl-gui](https://github.com/MrS0m30n3/youtube-dl-gui) - A cross platform front-end GUI of the popular youtube-dl written in wxPython.
@@ -2708,7 +2715,7 @@
 - [cjolowicz/cookiecutter-hypermodern-python](https://github.com/cjolowicz/cookiecutter-hypermodern-python) - Hypermodern Python Cookiecutter
 - [pytest-dev/pytest-html](https://github.com/pytest-dev/pytest-html) - Plugin for generating HTML reports for pytest results
 - [Teemu/pytest-sugar](https://github.com/Teemu/pytest-sugar) - a plugin for py.test that changes the default look and feel of py.test (e.g. progressbar, show tests that fail instantly)
-- [Netflix/metaflow](https://github.com/Netflix/metaflow) - Open Source AI/ML Platform
+- [Netflix/metaflow](https://github.com/Netflix/metaflow) - Build, Deploy and Manage AI/ML Systems
 - [spotify/luigi](https://github.com/spotify/luigi) - Luigi is a Python module that helps you build complex pipelines of batch jobs. It handles dependency resolution, workflow management, visualization etc. It also comes with Hadoop support built in.
 - [eliasdabbas/advertools](https://github.com/eliasdabbas/advertools) - advertools - online marketing productivity and analysis tools
 - [sphinx-gallery/sphinx-gallery](https://github.com/sphinx-gallery/sphinx-gallery) - Sphinx extension for automatic generation of an example gallery
@@ -3299,7 +3306,7 @@
 - [MonitorControl/MonitorControl](https://github.com/MonitorControl/MonitorControl) - 🖥 Control your display's brightness & volume on your Mac as if it was a native Apple Display. Use Apple Keyboard keys or custom shortcuts. Shows the native macOS OSDs.
 - [StanfordBDHG/HealthGPT](https://github.com/StanfordBDHG/HealthGPT) - Query your Apple Health data with natural language 💬 🩺
 - [dteoh/devdocs-macos](https://github.com/dteoh/devdocs-macos) - An unofficial DevDocs API Documentation viewer for macOS.
-- [yyyoungman/PocketGPT](https://github.com/yyyoungman/PocketGPT) - GPT4 running on a mobile phone
+- [tonyc-ship/PocketGPT](https://github.com/tonyc-ship/PocketGPT) - GPT4 running on a mobile phone
 - [intitni/CopilotForXcode](https://github.com/intitni/CopilotForXcode) - The first GitHub Copilot, Codeium and ChatGPT Xcode Source Editor Extension
 - [ynagatomo/ImgGenSD2](https://github.com/ynagatomo/ImgGenSD2) - An iOS app that generates images using Stable Diffusion v2.
 - [imxieyi/waifu2x-ios](https://github.com/imxieyi/waifu2x-ios) - iOS Core ML implementation of waifu2x
@@ -3337,6 +3344,8 @@
 
 ## TypeScript 
 
+- [cablate/mcp-google-calendar](https://github.com/cablate/mcp-google-calendar) - MCP server that provides doc forge capabilities
+- [Ozamatash/deep-research-mcp](https://github.com/Ozamatash/deep-research-mcp) - 
 - [mkloubert/vscode-deploy-reloaded](https://github.com/mkloubert/vscode-deploy-reloaded) - Recoded version of Visual Studio Code extension 'vs-deploy', which provides commands to deploy files to one or more destinations.
 - [dracula/draculatheme.com](https://github.com/dracula/draculatheme.com) - 🧛🏻‍♂️ Dark website for a dark theme
 - [docker/labs-ai-tools-vscode](https://github.com/docker/labs-ai-tools-vscode) - Run & debug workflows for AI agents running Dockerized tools in VSCode
@@ -3446,7 +3455,7 @@
 - [IdreesInc/Waypoint](https://github.com/IdreesInc/Waypoint) - Obsidian plugin that gives you the power to generate dynamic MOCs in your folder notes. Enables folders to show up in the graph view and removes the need for messy tags!
 - [purocean/yn](https://github.com/purocean/yn) - A highly extensible Markdown editor. Version control, AI Copilot, mind map, documents encryption, code snippet running, integrated terminal, chart embedding, HTML applets, Reveal.js, plug-in, and macr
 - [AmKreta/svgEditor](https://github.com/AmKreta/svgEditor) - app to create svg images
-- [PySpur-Dev/pyspur](https://github.com/PySpur-Dev/pyspur) - Graph UI for visualizing AI agent trajectories in Python
+- [PySpur-Dev/pyspur](https://github.com/PySpur-Dev/pyspur) - AI Agent Builder in Python
 - [ChatAnyTeam/ChatAny](https://github.com/ChatAnyTeam/ChatAny) - 🌻 一键拥有你自己的 ChatGPT+众多AI 网页服务 | One click access to your own ChatGPT+Many AI web services
 - [civitai/civitai](https://github.com/civitai/civitai) - A repository of models, textual inversions, and more
 - [cheeriojs/cheerio](https://github.com/cheeriojs/cheerio) - The fast, flexible, and elegant library for parsing and manipulating HTML and XML.
@@ -3517,7 +3526,7 @@
 - [giscus/giscus-component](https://github.com/giscus/giscus-component) - Component library for giscus, a comment system powered by GitHub Discussions.
 - [utterance/utterances](https://github.com/utterance/utterances) - :crystal_ball: A lightweight comments widget built on GitHub issues
 - [giscus/giscus](https://github.com/giscus/giscus) - A comment system powered by GitHub Discussions. :octocat: :speech_balloon: :gem:
-- [inventaire/inventaire](https://github.com/inventaire/inventaire) - a libre collaborative resource mapper powered by open-knowledge, starting with books! :books:
+- [inventaire/inventaire](https://github.com/inventaire/inventaire) - a libre collaborative book mapper, powered by open-knowledge :books:
 - [aeharding/voyager](https://github.com/aeharding/voyager) - Voyager — a beautiful app for Lemmy
 - [jakelazaroff/activitypub-starter-kit](https://github.com/jakelazaroff/activitypub-starter-kit) - A tiny, single user, Mastodon-compatible ActivityPub server.
 - [hashicorp/next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) - Load MDX content from anywhere
@@ -3812,7 +3821,7 @@
 - [lencx/GPTHub](https://github.com/lencx/GPTHub) - 🔍 Discover the Best in Custom GPT at OpenAI's GPT Store – Your Adventure Begins Here!
 - [twibiral/obsidian-execute-code](https://github.com/twibiral/obsidian-execute-code) - Obsidian Plugin to execute code in a note.
 - [logancyang/obsidian-copilot](https://github.com/logancyang/obsidian-copilot) - THE Copilot in Obsidian
-- [decaf-dev/obsidian-dataloom](https://github.com/decaf-dev/obsidian-dataloom) - Weave together data from diverse sources
+- [decaf-dev/obsidian-dataloom](https://github.com/decaf-dev/obsidian-dataloom) - Better Obsidian Tables Without The Hassle
 - [Make-md/makemd](https://github.com/Make-md/makemd) - 
 - [gatzjames/insomnia-plugin-graphql-codegen-import](https://github.com/gatzjames/insomnia-plugin-graphql-codegen-import) - Insomnia plugin that generates GraphQL operations in your workspace
 - [ChatGPTNextWeb/NextChat](https://github.com/ChatGPTNextWeb/NextChat) - ✨ Light and Fast AI Assistant. Support: Web | iOS | MacOS | Android |  Linux | Windows
