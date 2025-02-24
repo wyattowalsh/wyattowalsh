@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>sony/talkhier</span>
-                                        <span>starred 14 hours ago</span>
+                                        <span>starred 15 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Official Repo for The Paper "Talk Structurally, Act Hierarchically: A Collaborative Framework for LLM Multi-Agent Systems"</div>
@@ -118,7 +118,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>sqlalchemy/alembic</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A database migrations tool for SQLAlchemy.</div>
@@ -225,7 +225,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">247</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 11
                                 <div class="bottom">Feb.</div>
@@ -241,58 +241,58 @@
                                 13
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">248</span>
+                                <div class="bar" style="height: 10.416666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 14
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 10.416666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 15
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 10.416666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 16
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 10.416666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 17
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">250</span>
+                                <div class="bar" style="height: 26.249999999999996px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 18
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">251</span>
+                                <div class="bar" style="height: 34.166666666666664px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 19
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 34.166666666666664px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 20
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 34.166666666666664px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 21
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">252</span>
+                                <div class="bar" style="height: 42.083333333333336px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 22
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">253</span>
+                                <div class="bar" style="height: 49.99999999999999px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 23
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 49.99999999999999px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 24
                             </div>
                         </div>
@@ -317,8 +317,8 @@
                                 13
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 14
                             </div>
                             <div class="entry">
@@ -337,13 +337,13 @@
                                 17
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+2</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 18
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 19
                             </div>
                             <div class="entry">
@@ -357,13 +357,13 @@
                                 21
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 22
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 23
                             </div>
                             <div class="entry">
@@ -388,52 +388,12 @@
                             <section class="activity">
                                 <div class="field">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Pushed 1 commit in
-                                        <span class="repo">wyattowalsh/resources</span>
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <div>on branch <span class="code">main</span></div>
-                                    <div class="commit">
-                                        <div class="sha">#02553b9</div>
-                                        <div class="message">Add new components and update configuration for resource management</div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Pushed 2 commits in
-                                        <span class="repo">wyattowalsh/resources</span>
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <div>on branch <span class="code">main</span></div>
-                                    <div class="commit">
-                                        <div class="sha">#cec3904</div>
-                                        <div class="message">Merge branch 'main' of https://github.com/wyattowalsh/resources</div>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836A2.492 2.492 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5zM3.5 3.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0z"/>
                                     </svg>
                                     <div class="content">
                                         Deleted
                       branch
-                                        <span class="code">add-network-graph</span>
+                                        <span class="code">improve-network-graphs</span>
                                         in
                                         <span class="repo">wyattowalsh/resources</span>
                                     </div>
@@ -454,24 +414,41 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
-                                        <div class="sha">#cb4e230</div>
-                                        <div class="message">Merge pull request #2 from wyattowalsh/add-network-graph
-
-Add network graph for resource relationships</div>
+                                        <div class="sha">#b56acfb</div>
+                                        <div class="message">Merge pull request #3 from wyattowalsh/improve-network-graphs</div>
                                     </div>
                                     <div class="commit">
-                                        <div class="sha">#8c3432d</div>
-                                        <div class="message">Add network graph for resource relationships
+                                        <div class="sha">#eba535e</div>
+                                        <div class="message">Improve network graphs with additional features
 
-Add a beautiful, interactive network graph for both the global graph of resource relationships and the local graph when a particular resource is selected.
+Improve the `NetworkGraph` component and related files to enhance visualization and interactivity.
 
-* **NetworkGraph Component**: Add `components/NetworkGraph.js` to visualize the network graph using D3.js with interactivity features such as zoom and pan.
-* **Page Component**: Modify `app/page.tsx` to include the `NetworkGraph` component for displaying the global and local graphs. Add filter options and performance optimizations.
-* **Resource Data**: Update `data/resources.json` to include relationships between resources.
-* **Documentation**: Update `app/docs.mdx` and `pages/docs.mdx` to include information about the network graph feature.
-* **Filter Options**: Modify `components/FilterOptions.js` to include sorting options.
-* **Resource Card**: Enhance `components/ResourceCard.js` to include rating, reviews, bookmarking, and recommendations.
-* **Performance Optimizations**: Modify `components/PerformanceOptimizations.js` to implement code splitting and caching strategies.
+* **NetworkGraph Component Enhancements**
+  - Add tooltips to nodes and links to display additional information on hover.
+  - Add dynamic styling based on node and link attributes for visual differentiation.
+  - Add a legend explaining the color coding and symbols used in the graph.
+  - Add support for filtering nodes and links based on user-defined criteria.
+  - Remove edge weight logic from the `NetworkGraph` component.
+
+* **Resource Data and Schema Updates**
+  - Add additional metadata fields for each node, such as creation date, last updated date, and a brief description in `data/resources.json`.
+  - Update `data/resources-schema.json` to align with the new metadata fields and remove edge weight schema.
+
+* **Page Component Updates**
+  - Add `"use client"` directive at the top of `app/page.tsx`.
+  - Update `NetworkGraph` component usage to include new features like tooltips, dynamic styling, filtering, and animations.
+  - Add additional metadata for each node and categorize nodes into different types or groups.
+
+* **Resource Form Enhancements**
+  - Add additional metadata fields for each node in `components/ResourceForm.tsx`.
+  - Categorize nodes into different types or groups using different colors or shapes.
+
+* **Filter Options Component**
+  - Add support for filtering nodes and links based on user-defined criteria in `components/FilterOptions.tsx`.
+
+* **Dependency Updates**
+  - Replace `react-chartjs-2` with `chart.js` in `components/GitHubStarGraph.tsx`.
+  - Update `package-lock.json` to resolve module not found errors and include new dependencies.
 
 ---
 
@@ -488,12 +465,82 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                     </svg>
                                     <div class="content">
                                         Merged
-                                        <span class="issue">#2 Add network graph for resource relationships</span>
+                                        <span class="issue">#3 Improve network graphs with additional features</span>
                                     </div>
                                 </div>
                                 <div class="details">
                                     <div> in <span class="repo">wyattowalsh/resources</span></div>
-                                    <div>8 files changed <span class="code">++242 --5</span></div>
+                                    <div>12 files changed <span class="code">++1019 --310</span></div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Opened
+                                        <span class="issue">#3 Improve network graphs with additional features</span>
+                                    </div>
+                                </div>
+                                <div class="details">
+                                    <div> in <span class="repo">wyattowalsh/resources</span></div>
+                                    <div>12 files changed <span class="code">++1019 --310</span></div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Pushed 1 commit in
+                                        <span class="repo">wyattowalsh/resources</span>
+                                    </div>
+                                </div>
+                                <div class="details">
+                                    <div>on branch <span class="code">improve-network-graphs</span></div>
+                                    <div class="commit">
+                                        <div class="sha">#eba535e</div>
+                                        <div class="message">Improve network graphs with additional features
+
+Improve the `NetworkGraph` component and related files to enhance visualization and interactivity.
+
+* **NetworkGraph Component Enhancements**
+  - Add tooltips to nodes and links to display additional information on hover.
+  - Add dynamic styling based on node and link attributes for visual differentiation.
+  - Add a legend explaining the color coding and symbols used in the graph.
+  - Add support for filtering nodes and links based on user-defined criteria.
+  - Remove edge weight logic from the `NetworkGraph` component.
+
+* **Resource Data and Schema Updates**
+  - Add additional metadata fields for each node, such as creation date, last updated date, and a brief description in `data/resources.json`.
+  - Update `data/resources-schema.json` to align with the new metadata fields and remove edge weight schema.
+
+* **Page Component Updates**
+  - Add `"use client"` directive at the top of `app/page.tsx`.
+  - Update `NetworkGraph` component usage to include new features like tooltips, dynamic styling, filtering, and animations.
+  - Add additional metadata for each node and categorize nodes into different types or groups.
+
+* **Resource Form Enhancements**
+  - Add additional metadata fields for each node in `components/ResourceForm.tsx`.
+  - Categorize nodes into different types or groups using different colors or shapes.
+
+* **Filter Options Component**
+  - Add support for filtering nodes and links based on user-defined criteria in `components/FilterOptions.tsx`.
+
+* **Dependency Updates**
+  - Replace `react-chartjs-2` with `chart.js` in `components/GitHubStarGraph.tsx`.
+  - Update `package-lock.json` to resolve module not found errors and include new dependencies.
+
+---
+
+For more details, open the [Copilot Workspace session](https://copilot-workspace.githubnext.com/wyattowalsh/resources?shareId=XXXX-XXXX-XXXX-XXXX).</div>
+                                    </div>
                                 </div>
                             </section>
                         </div>
