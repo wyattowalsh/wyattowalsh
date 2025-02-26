@@ -617,7 +617,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        Unexpected error
+                        API error: 429 ((consider using "plugin_pagespeed_token"))
                     </div>
                 </section>
             </div>
@@ -4010,7 +4010,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 235m repositories</span>
+                                    <span class="gh">ranked 346k out of 237m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 117 stars</div>
                             </div>
@@ -4255,9 +4255,9 @@
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
                             <span class="code">a72e1a0c</span>
-                            <span class="code">postcss.config.mjs</span>
+                            <span class="code">.eslintrc.json</span>
                             <span class="code">
-                                <span class="snippet additions">++8</span>
+                                <span class="snippet additions">++3</span>
                                 <span class="snippet deletions">--0</span>
                             </span>
                         </div>
@@ -4266,7 +4266,7 @@
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,8 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">/** @type {import('postcss-load-config').Config} */<br /></span><span class="token prefix inserted">+</span><span class="token line">const config = {<br /></span><span class="token prefix inserted">+</span><span class="token line"> plugins: {<br /></span><span class="token prefix inserted">+</span><span class="token line">   tailwindcss: {},<br /></span><span class="token prefix inserted">+</span><span class="token line"> },<br /></span><span class="token prefix inserted">+</span><span class="token line">};<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span><span class="token line">export default config;</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,3 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">{<br /></span><span class="token prefix inserted">+</span><span class="token line">"extends": ["next/core-web-vitals", "next/typescript"]<br /></span><span class="token prefix inserted">+</span><span class="token line">}</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -4333,7 +4333,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 26 Feb 2025, 05:02:09 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 26 Feb 2025, 06:01:55 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
