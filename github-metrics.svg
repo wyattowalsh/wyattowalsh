@@ -3109,7 +3109,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>nvdv/vprof</span>
-                                        <span>starred 9 days ago</span>
+                                        <span>starred 10 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Visual profiler for Python</div>
@@ -3162,7 +3162,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>gotcha/ipdb</span>
-                                        <span>starred 9 days ago</span>
+                                        <span>starred 10 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Integration of IPython pdb</div>
@@ -3215,7 +3215,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>golang/go</span>
-                                        <span>starred 9 days ago</span>
+                                        <span>starred 10 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The Go programming language</div>
@@ -4055,7 +4055,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 347k out of 231m repositories</span>
+                                    <span class="gh">ranked 347k out of 238m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 117 stars</div>
                             </div>
@@ -4334,7 +4334,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 6 Mar 2025, 08:06:55 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 6 Mar 2025, 09:01:51 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
