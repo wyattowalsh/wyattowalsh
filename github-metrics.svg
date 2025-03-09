@@ -633,7 +633,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        Unexpected error
+                        API error: 429 ((consider using "plugin_pagespeed_token"))
                     </div>
                 </section>
             </div>
@@ -3083,7 +3083,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>oramasearch/orama</span>
-                                        <span>starred 19 hours ago</span>
+                                        <span>starred 20 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🌌  A complete search engine and RAG pipeline in your browser, server or edge network with support for full-text, vector, and hybrid search in less than 2kb.</div>
@@ -3136,7 +3136,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>daldridge/docusaurus-plugin-lunr</span>
-                                        <span>starred 21 hours ago</span>
+                                        <span>starred 22 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Docusaurus v2 plugin to create a local search index for use with Lunr.js</div>
@@ -3189,7 +3189,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>webbertakken/docusaurus-plugin-content-gists</span>
-                                        <span>starred 21 hours ago</span>
+                                        <span>starred 22 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Display your gists inside docusaurus.</div>
@@ -3242,7 +3242,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Rileran/docusaurus-tailwindcss</span>
-                                        <span>starred 21 hours ago</span>
+                                        <span>starred 22 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Simple docusaurus 2 plugin to enable tailwindcss</div>
@@ -4099,7 +4099,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 236m repositories</span>
+                                    <span class="gh">ranked 345k out of 228m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4378,7 +4378,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 9 Mar 2025, 12:01:43 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 9 Mar 2025, 13:02:05 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
