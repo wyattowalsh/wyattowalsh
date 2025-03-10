@@ -3087,7 +3087,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>daldridge/docusaurus-plugin-lunr</span>
-                                        <span>starred 1 day ago</span>
+                                        <span>starred 2 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Docusaurus v2 plugin to create a local search index for use with Lunr.js</div>
@@ -3140,7 +3140,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>webbertakken/docusaurus-plugin-content-gists</span>
-                                        <span>starred 1 day ago</span>
+                                        <span>starred 2 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Display your gists inside docusaurus.</div>
@@ -3193,7 +3193,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Rileran/docusaurus-tailwindcss</span>
-                                        <span>starred 1 day ago</span>
+                                        <span>starred 2 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Simple docusaurus 2 plugin to enable tailwindcss</div>
@@ -4053,7 +4053,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 242m repositories</span>
+                                    <span class="gh">ranked 345k out of 220m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4332,7 +4332,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 10 Mar 2025, 15:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 10 Mar 2025, 16:01:41 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
