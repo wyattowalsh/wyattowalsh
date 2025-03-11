@@ -617,7 +617,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        Unexpected error
+                        API error: 429 ((consider using "plugin_pagespeed_token"))
                     </div>
                 </section>
             </div>
@@ -3040,7 +3040,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AmruthPillai/Reactive-Resume</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source and free forever. Try it out today!</div>
@@ -3093,7 +3093,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>cullenwatson/StaffSpy</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Staff scraper library for LinkedIn - obtain experiences, schools, skills &amp; contact info</div>
@@ -3146,7 +3146,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>joshuatz/linkedin-to-jsonresume</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Browser extension to turn a LinkedIn profile page into a JSON Resume export.</div>
@@ -3199,7 +3199,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>xitanggg/open-resume</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">OpenResume is a powerful open-source resume builder and resume parser. https://open-resume.com/</div>
@@ -4012,7 +4012,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 231m repositories</span>
+                                    <span class="gh">ranked 345k out of 229m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4291,7 +4291,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 11 Mar 2025, 10:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 11 Mar 2025, 11:01:56 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
