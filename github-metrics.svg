@@ -625,7 +625,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        Unexpected error
+                        API error: 429 ((consider using "plugin_pagespeed_token"))
                     </div>
                 </section>
             </div>
@@ -3048,7 +3048,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>themodernmonk7/Indago-Job-Tracking-web-app</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Indago is a web-based job tracking application that allows job seekers to easily keep track of their job search progress.</div>
@@ -3101,7 +3101,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Ben-J-Orr/CoverLetter-Generator</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A simple cover letter generator that utilises the ChatGPT API to obtain bespoke cover letters for multiple job adverts.</div>
@@ -3148,7 +3148,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>qqqstuv/Cover-Letter-Generator</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Generate Cover Letter based on your information! Automate date, names and reuse paragraphs</div>
@@ -3201,7 +3201,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Jac21/SkillSet</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">✨ Intuitive job-candidate skill visualization, taking advantage of D3.js and JSONResume.</div>
@@ -4014,7 +4014,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 237m repositories</span>
+                                    <span class="gh">ranked 345k out of 232m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4293,7 +4293,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 11 Mar 2025, 16:01:50 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 11 Mar 2025, 17:01:33 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
