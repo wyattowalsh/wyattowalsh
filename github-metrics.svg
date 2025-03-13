@@ -625,7 +625,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                             <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                         </svg>
-                        API error: 429 ((consider using "plugin_pagespeed_token"))
+                        Unexpected error
                     </div>
                 </section>
             </div>
@@ -885,7 +885,7 @@
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, Django, 3D, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, MATLAB, macOS, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, llm, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Crawler, Animation, trading-bot, portfolio-website, search-engine, large-language-models, rag, RSS, gpt, prompt-engineering, proxy, Simulation, vscode-extension, knowledge-graph, agent, gatsby, Notion, ai-agents, jupyter, ocr, scraper, icons, SVG, scraping, observability, blog, retrieval-augmented-generation, react-components, anomaly-detection, crm, profile-readme, flowchart, llms, scss, docs, MIDI, webscraping, Playwright, rich-text-editor, Reddit, modeling, saas-boilerplate, transformers, scrapy, resume, github-profile, named-entity-recognition, marketing-automation, music-generation, url-shortener, llm-agent, llmops, email-marketing, linear-algebra, ai-music, web-scraper, personal-assistant, markdown-editor, pkm, relation-extraction, google-colab, music-composition, classification, data-warehouse, ai-assistant, copilot, http-proxy, proxy-list, assistant, multimodal, data-pipelines, api-documentation, MDX, text-detection, research-paper, push-notifications, socks, etl-pipeline, document-layout-analysis, graph-editor, linkedin, image-viewer, free-proxy, probability, formatter, react-component, text-recognition, entity-linking, email-template, newsletter, regression, marketing-tools, component, cleaner, document-ai, pdf-converter, calculus, model-context-protocol, asynchronous, agent-based-framework, open-webui, table-recognition, oh-my-zsh-plugin, document-understanding, toolchain, tabular-data, computer-music, text2sql, google-colab-notebook, spicetify-themes, llm-webui, ai-agent, emails, remark-plugin, quicklook-extension, pdf-to-text, reddit-api, music-ai, email-boilerplate, document-parser, project-structure, music-programming, comment-system, document-analysis, relational-database, responsive-email, data-generation, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, docset, layout-analysis, document-intelligence, fractal, sphinx, starred, ollama-webui, topic-models, badge, link-aggregator, key-information-extraction, python-libraries, awesome-stars, topic, pdf-to-json, pdf-document-processor, jsonresume, topic-modelling, ai-music-generator, automated-scraper, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, assistant-api, text-to-audio, semantic-scholar, shorten-urls, document-image-processing, knowledge-curation, newsletter-management, gui-agents, llm-ui, graph-rag, aiagents, linkedin-profile, chainer, wakatime, document-recognition, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, assistant-computer-control, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, report-generation, llm-powered-agents, llm-os, scrapes-linkedin, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, llm-platform, automated-post, text-to-svg, sass-functions, docz, free-deep-research, deepresearch, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 305 more...</div>
+                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, Django, 3D, GitHub API, PHP, Chrome extension, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, MATLAB, macOS, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, llm, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Crawler, Animation, trading-bot, portfolio-website, search-engine, large-language-models, rag, RSS, gpt, prompt-engineering, proxy, Simulation, vscode-extension, knowledge-graph, agent, gatsby, Notion, ai-agents, jupyter, ocr, scraper, icons, SVG, scraping, observability, blog, retrieval-augmented-generation, react-components, anomaly-detection, crm, profile-readme, flowchart, llms, scss, docs, MIDI, webscraping, Playwright, rich-text-editor, Reddit, modeling, saas-boilerplate, transformers, scrapy, resume, github-profile, named-entity-recognition, marketing-automation, music-generation, url-shortener, llmops, llm-agent, email-marketing, linear-algebra, ai-music, web-scraper, personal-assistant, markdown-editor, pkm, relation-extraction, google-colab, music-composition, classification, data-warehouse, ai-assistant, copilot, http-proxy, proxy-list, assistant, multimodal, data-pipelines, api-documentation, MDX, text-detection, research-paper, push-notifications, socks, etl-pipeline, document-layout-analysis, graph-editor, linkedin, image-viewer, free-proxy, probability, formatter, react-component, text-recognition, entity-linking, email-template, newsletter, regression, marketing-tools, component, cleaner, document-ai, pdf-converter, calculus, model-context-protocol, asynchronous, agent-based-framework, open-webui, table-recognition, oh-my-zsh-plugin, document-understanding, toolchain, tabular-data, computer-music, text2sql, google-colab-notebook, spicetify-themes, llm-webui, ai-agent, emails, remark-plugin, quicklook-extension, pdf-to-text, reddit-api, music-ai, email-boilerplate, document-parser, project-structure, music-programming, comment-system, document-analysis, relational-database, responsive-email, data-generation, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, docset, layout-analysis, document-intelligence, fractal, sphinx, starred, ollama-webui, topic-models, badge, link-aggregator, key-information-extraction, python-libraries, awesome-stars, topic, pdf-to-json, pdf-document-processor, jsonresume, topic-modelling, ai-music-generator, automated-scraper, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, assistant-api, text-to-audio, semantic-scholar, shorten-urls, document-image-processing, knowledge-curation, newsletter-management, gui-agents, llm-ui, graph-rag, aiagents, linkedin-profile, chainer, wakatime, document-recognition, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, assistant-computer-control, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, report-generation, llm-powered-agents, llm-os, scrapes-linkedin, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, llm-platform, automated-post, text-to-svg, sass-functions, docz, free-deep-research, deepresearch, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 305 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3066,7 +3066,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jsonresume/jsonresume.org</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The mono repo that builds the homepage, utils, ui components, registry and anything else</div>
@@ -3113,7 +3113,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jsonresume/jsonresume-theme-boilerplate</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Boilerplate theme for JSON Resume.</div>
@@ -4111,7 +4111,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 345k out of 243m repositories</span>
+                                    <span class="gh">ranked 345k out of 234m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4332,7 +4332,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.557-1.392L8.5 7.742V4.75z"/>
                             </svg>
-                            On 11 Mar 2025, 14:46:42
+                            On 11 Mar 2025, 14:46:25
                         </div>
                     </section>
                 </div>
@@ -4378,9 +4378,9 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
                             <span class="code">dd761a1d</span>
-                            <span class="code">styles/globals.css</span>
+                            <span class="code">pages/_app.tsx</span>
                             <span class="code">
-                                <span class="snippet additions">++3</span>
+                                <span class="snippet additions">++8</span>
                                 <span class="snippet deletions">--0</span>
                             </span>
                         </div>
@@ -4389,7 +4389,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,3 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">@tailwind base;<br /></span><span class="token prefix inserted">+</span><span class="token line">@tailwind components;<br /></span><span class="token prefix inserted">+</span><span class="token line">@tailwind utilities;</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,8 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import '../styles/globals.css';<br /></span><span class="token prefix inserted">+</span><span class="token line">import type { AppProps } from 'next/app';<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span><span class="token line">function MyApp({ Component, pageProps }: AppProps) {<br /></span><span class="token prefix inserted">+</span><span class="token line"> return &lt;Component {...pageProps} /&gt;;<br /></span><span class="token prefix inserted">+</span><span class="token line">}<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span><span class="token line">export default MyApp;</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -4456,7 +4456,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 13 Mar 2025, 15:01:54 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 13 Mar 2025, 16:01:41 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
