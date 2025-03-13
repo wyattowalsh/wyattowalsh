@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jsonresume/jsonresume.org</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The mono repo that builds the homepage, utils, ui components, registry and anything else</div>
@@ -112,7 +112,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jsonresume/jsonresume-theme-boilerplate</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Boilerplate theme for JSON Resume.</div>
@@ -159,7 +159,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jsonresume/resume-schema</span>
-                                        <span>starred 8 hours ago</span>
+                                        <span>starred 9 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">JSON-Schema is used here to define and validate our proposed resume json</div>
