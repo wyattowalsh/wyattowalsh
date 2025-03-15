@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>adityak74/mcp-scholarly</span>
-                                        <span>starred 10 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A MCP server to search for accurate academic articles.</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>tolik-unicornrider/mcp_scraper</span>
-                                        <span>starred 10 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -197,7 +197,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>aindreyway/mcp-codex-keeper</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest documentation and best practices across the software development landscape</div>
@@ -259,13 +259,8 @@
                             <div class="entry">
                                 <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                                1
-                                <div class="bottom">Mar.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 2
+                                <div class="bottom">Mar.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -326,6 +321,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 14
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                15
                             </div>
                         </div>
                     </section>
@@ -335,13 +335,8 @@
                             <div class="entry">
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                                1
-                                <div class="bottom">Mar.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 2
+                                <div class="bottom">Mar.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -402,6 +397,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 14
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                15
                             </div>
                         </div>
                     </section>
