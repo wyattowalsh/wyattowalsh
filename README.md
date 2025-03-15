@@ -161,13 +161,15 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-2%2C192%20hrs%2030%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-2%2C203%20hrs%2046%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-19.0%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 4.8 MB Used in GitHub's Storage 
+ > 
+> 🏆 120 Contributions in the Year 2025
  > 
 > 💼 Opted to Hire
  > 
@@ -200,14 +202,14 @@ Sunday                   843 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    24 hrs 27 mins      ██████████████░░░░░░░░░░░   55.59 % 
-sh                       5 hrs 41 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.92 % 
-JSON                     4 hrs 49 mins       ███░░░░░░░░░░░░░░░░░░░░░░   10.96 % 
-Markdown                 4 hrs 12 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   09.55 % 
-JavaScript               1 hr 43 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.93 % 
+Other                    26 hrs 56 mins      █████████████░░░░░░░░░░░░   53.17 % 
+JSON                     7 hrs 43 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.26 % 
+sh                       6 hrs 35 mins       ███░░░░░░░░░░░░░░░░░░░░░░   13.01 % 
+Markdown                 4 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   08.58 % 
+JavaScript               1 hr 43 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.41 % 
 
 💻 Operating System: 
-Mac                      44 hrs              █████████████████████████   100.00 % 
+Mac                      50 hrs 39 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -227,7 +229,7 @@ MDX                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 14/03/2025 18:43:46 UTC
+ Last Updated on 15/03/2025 18:42:15 UTC
 <!--END_SECTION:waka-->
 
     
