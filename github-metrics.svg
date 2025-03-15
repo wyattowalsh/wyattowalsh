@@ -3078,7 +3078,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>adityak74/mcp-scholarly</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A MCP server to search for accurate academic articles.</div>
@@ -3131,7 +3131,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>tolik-unicornrider/mcp_scraper</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3179,7 +3179,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>aindreyway/mcp-codex-keeper</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest documentation and best practices across the software development landscape</div>
@@ -3232,7 +3232,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ccnn2509/app-seo-ai</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Application for SEO automation and AI-powered optimization</div>
@@ -3612,7 +3612,7 @@
                 </h2>
                 <div class="row fill-width">
                     <section>
-                        <div class="field error">API error: 404</div>
+                        <div class="field error">API error: 504</div>
                     </section>
                 </div>
             </section>
@@ -4042,7 +4042,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 232m repositories</span>
+                                    <span class="gh">ranked 346k out of 230m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4321,7 +4321,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 15 Mar 2025, 08:01:41 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 15 Mar 2025, 09:04:42 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
