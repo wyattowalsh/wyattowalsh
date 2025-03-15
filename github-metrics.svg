@@ -3078,7 +3078,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>flexpa/mcp-fhir</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A Model Context Protocol implementation for FHIR</div>
@@ -4048,7 +4048,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 236m repositories</span>
+                                    <span class="gh">ranked 346k out of 238m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4327,7 +4327,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 15 Mar 2025, 13:01:40 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 15 Mar 2025, 14:01:37 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
