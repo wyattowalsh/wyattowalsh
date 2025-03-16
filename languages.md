@@ -267,6 +267,10 @@
 
 ## Go 
 
+- [negokaz/excel-mcp-server](https://github.com/negokaz/excel-mcp-server) - An MCP server that reads and writes spreadsheet data to MS Excel file
+- [nguyenvanduocit/research-kit](https://github.com/nguyenvanduocit/research-kit) - Model Context Protocol for Research tasks
+- [nguyenvanduocit/dev-kit](https://github.com/nguyenvanduocit/dev-kit) - [Model Context Protocol] Dev Kit - anything a developer need for him day to day works
+- [nguyenvanduocit/rag-kit](https://github.com/nguyenvanduocit/rag-kit) - 
 - [golang/go](https://github.com/golang/go) - The Go programming language
 - [charmbracelet/gum](https://github.com/charmbracelet/gum) - A tool for glamorous shell scripts 🎀
 - [hasit/licensethis](https://github.com/hasit/licensethis) - Choose an OSS license for your project with ease.
@@ -392,7 +396,6 @@
 - [wipo-analytics/handbook](https://github.com/wipo-analytics/handbook) - The WIPO Patent Analytics Handbook (Work in Progress)
 - [observablehq/plot](https://github.com/observablehq/plot) - A concise API for exploratory data visualization implementing a layered grammar of graphics
 - [ShoroukAziz/notion_widgets](https://github.com/ShoroukAziz/notion_widgets) - A set of HTML widgets that could be embedded into  Notion.so  https://www.notion.so/ pages. For more see https://blog.shorouk.dev/notion-widgets-gallery/
-- [f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) - This repo includes ChatGPT prompt curation to use ChatGPT and other LLM tools better.
 - [StefanAleksik/musicScape](https://github.com/StefanAleksik/musicScape) - 
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
 - [rough-stuff/rough](https://github.com/rough-stuff/rough) - Create graphics with a hand-drawn, sketchy, appearance
@@ -507,6 +510,26 @@
 
 ## JavaScript 
 
+- [flexpa/mcp-fhir](https://github.com/flexpa/mcp-fhir) - A Model Context Protocol implementation for FHIR
+- [tolik-unicornrider/mcp_scraper](https://github.com/tolik-unicornrider/mcp_scraper) - 
+- [ccnn2509/app-seo-ai](https://github.com/ccnn2509/app-seo-ai) - Application for SEO automation and AI-powered optimization
+- [ryanjoachim/mcp-rtfm](https://github.com/ryanjoachim/mcp-rtfm) - Ever been told to RTFM only to find there is no FM to R? MCP-RTFM helps you CREATE the F*ing Manual that people keep telling everyone to read! Transform your non-existent or unreadable docs into an in
+- [ryanjoachim/mcp-batchit](https://github.com/ryanjoachim/mcp-batchit) - 🚀 MCP aggregator for batching multiple tool calls into a single request. Reduces overhead, saves tokens, and simplifies complex operations in AI agent workflows.
+- [ppl-ai/modelcontextprotocol](https://github.com/ppl-ai/modelcontextprotocol) - A Model Context Protocol Server connector for Perplexity API, to enable web search without leaving the MCP ecosystem.
+- [NightTrek/Ollama-mcp](https://github.com/NightTrek/Ollama-mcp) - 
+- [davidorex/project-handoffs](https://github.com/davidorex/project-handoffs) - An MCP tool for aiding persistence over ai-coding-agent sessions.
+- [itseasy21/mcp-knowledge-graph](https://github.com/itseasy21/mcp-knowledge-graph) - MCP server enabling persistent memory for Claude through a local knowledge graph - fork focused on local development
+- [0xshellming/mcp-summarizer](https://github.com/0xshellming/mcp-summarizer) - MCP Server for AI Summarization
+- [NightTrek/moondream-mcp](https://github.com/NightTrek/moondream-mcp) - 
+- [stat-guy/retrieval-augmented-thinking](https://github.com/stat-guy/retrieval-augmented-thinking) - MCP server for retrieval augmented thinking and problem solving
+- [mgsrevolver/consolespy](https://github.com/mgsrevolver/consolespy) - This tool captures browser console logs and makes them available to Cursor IDE through the Model Context Protocol (MCP).
+- [sammyl720/image-generator-mcp-server](https://github.com/sammyl720/image-generator-mcp-server) - A Model Context Protocol Server To Generate Images
+- [luoshui-coder/image-generator-mcp-server](https://github.com/luoshui-coder/image-generator-mcp-server) - A Model Context Protocol Server To Generate Images
+- [haltakov/meme-mcp](https://github.com/haltakov/meme-mcp) - A simple Model Context Protocol (MCP) server for generating memes using the ImgFlip API
+- [nbiish/mcp-calc-tools](https://github.com/nbiish/mcp-calc-tools) - 
+- [Text2Go/ai-humanizer-mcp-server](https://github.com/Text2Go/ai-humanizer-mcp-server) - A powerful Model Context Protocol (MCP) server that helps refine AI-generated content to sound more natural and human-like. Built with advanced AI detection and text enhancement capabilities.
+- [thedaviddias/mcp-llms-txt-explorer](https://github.com/thedaviddias/mcp-llms-txt-explorer) - MCP to explore websites with llms.txt files
+- [peng-shawn/mermaid-mcp-server](https://github.com/peng-shawn/mermaid-mcp-server) - A Model Context Protocol (MCP) server that converts Mermaid diagrams to PNG images
 - [jsonresume/jsonresume.org](https://github.com/jsonresume/jsonresume.org) - The mono repo that builds the homepage, utils, ui components, registry and anything else
 - [jsonresume/resume-schema](https://github.com/jsonresume/resume-schema) - JSON-Schema is used here to define and validate our proposed resume json
 - [themodernmonk7/Indago-Job-Tracking-web-app](https://github.com/themodernmonk7/Indago-Job-Tracking-web-app) - Indago is a web-based job tracking application that allows job seekers to easily keep track of their job search progress.
@@ -792,6 +815,7 @@
 - [WenheLI/p5.gif](https://github.com/WenheLI/p5.gif) - P5.js gif helper
 - [spite/ccapture.js](https://github.com/spite/ccapture.js) - A library to capture canvas-based animations at a fixed framerate
 - [Jupyter-contrib/jupyter_nbextensions_configurator](https://github.com/Jupyter-contrib/jupyter_nbextensions_configurator) - A jupyter notebook serverextension providing config interfaces for nbextensions.
+- [f/awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts) - This repo includes ChatGPT prompt curation to use ChatGPT and other LLM tools better.
 - [xaos-project/XaoSjs](https://github.com/xaos-project/XaoSjs) - XaoS.js - Realtime fractal zoomer in JavaScript
 - [Dozed12/p5.voronoi](https://github.com/Dozed12/p5.voronoi) - A Voronoi library for p5.js
 - [kristerkari/react-native-sass-transformer](https://github.com/kristerkari/react-native-sass-transformer) - Use Sass to style your React Native apps.
@@ -1858,6 +1882,23 @@
 
 ## Python 
 
+- [adityak74/mcp-scholarly](https://github.com/adityak74/mcp-scholarly) - A MCP server to search for accurate academic articles.
+- [a1j9o94/swiss](https://github.com/a1j9o94/swiss) - An MCP tool that gets things done for you
+- [Jacck/mcp-ortools](https://github.com/Jacck/mcp-ortools) - Model Context Protocol (MCP) server implementation using Google OR-Tools for constraint solving
+- [weaviate/mcp-server-weaviate](https://github.com/weaviate/mcp-server-weaviate) - MCP (Model Context Protocol) server for Weaviate
+- [sshtunnelvision/MCP-LOGO-GEN](https://github.com/sshtunnelvision/MCP-LOGO-GEN) - 
+- [jkawamoto/mcp-youtube-transcript](https://github.com/jkawamoto/mcp-youtube-transcript) - MCP server retrieving transcripts of YouTube videos
+- [getfounded/mcp-tool-kit](https://github.com/getfounded/mcp-tool-kit) - Agentic abstraction layer for building high precision vertical AI agents written in python. Middleware for Model Context Protocol.
+- [mario-andreschak/mcp-image-recognition](https://github.com/mario-andreschak/mcp-image-recognition) - An MCP server that provides image recognition 👀 capabilities using Anthropic and OpenAI vision APIs
+- [alinaqi/mcp-linkedin-server](https://github.com/alinaqi/mcp-linkedin-server) - LinkedIn MCP Server for local automation
+- [saiprashanths/code-analysis-mcp](https://github.com/saiprashanths/code-analysis-mcp) - 
+- [danilop/MCP2Lambda](https://github.com/danilop/MCP2Lambda) - Run any AWS Lambda function as a Large Language Model (LLM) tool without code changes using Anthropic's Model Control Protocol (MCP).
+- [lnehc/mcp-sequential-thinking](https://github.com/lnehc/mcp-sequential-thinking) - 
+- [Geeksfino/kb-mcp-server](https://github.com/Geeksfino/kb-mcp-server) - Build a knowledge base into a tar.gz and give it to this MCP server, and it is ready to serve.
+- [rebots-online/mcp-chat-analysis-server](https://github.com/rebots-online/mcp-chat-analysis-server) - 
+- [jamiew/spotify-mcp](https://github.com/jamiew/spotify-mcp) - MCP to connect Claude with Spotify.
+- [cyclotruc/gitingest](https://github.com/cyclotruc/gitingest) - Replace 'hub' with 'ingest' in any github url to get a prompt-friendly extract of a codebase
+- [puravparab/Gitingest-MCP](https://github.com/puravparab/Gitingest-MCP) - mcp server for gitingest
 - [Ben-J-Orr/CoverLetter-Generator](https://github.com/Ben-J-Orr/CoverLetter-Generator) - A simple cover letter generator that utilises the ChatGPT API to obtain bespoke cover letters for multiple job adverts.
 - [qqqstuv/Cover-Letter-Generator](https://github.com/qqqstuv/Cover-Letter-Generator) - Generate Cover Letter based on your information! Automate date, names and reuse paragraphs
 - [cullenwatson/StaffSpy](https://github.com/cullenwatson/StaffSpy) - Staff scraper library for LinkedIn - obtain experiences, schools, skills & contact info
@@ -1873,7 +1914,7 @@
 - [sony/talkhier](https://github.com/sony/talkhier) - Official Repo for The Paper "Talk Structurally, Act Hierarchically: A Collaborative Framework for LLM Multi-Agent Systems"
 - [sqlalchemy/alembic](https://github.com/sqlalchemy/alembic) - A database migrations tool for SQLAlchemy.
 - [drjforrest/mcp-things3](https://github.com/drjforrest/mcp-things3) - A Model Context Protocol for reading todos and writing todos and projects in the macOS app Things3 using a combination of Applescript and x-call URLs.
-- [alexander-zuev/supabase-mcp-server](https://github.com/alexander-zuev/supabase-mcp-server) - Supabase MCP Server enabling Cursor & Windsurf to use any method from Management API and query your database
+- [alexander-zuev/supabase-mcp-server](https://github.com/alexander-zuev/supabase-mcp-server) - Query MCP (previously Supabase MCP Server) enabling Cursor & Windsurf to use any method from Management API and query your database
 - [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) - A Model Context Protocol server for Excel file manipulation
 - [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) - The awesome document factory
 - [thunlp/OpenPrompt](https://github.com/thunlp/OpenPrompt) - An Open-Source Framework for Prompt-Learning.
@@ -3172,6 +3213,7 @@
 
 ## Rust 
 
+- [BoundaryML/baml](https://github.com/BoundaryML/baml) - The AI framework that adds the engineering to prompt engineering (Python/TS/Ruby/Java/C#/Rust/Go compatible)
 - [apache/datafusion](https://github.com/apache/datafusion) - Apache DataFusion SQL Query Engine
 - [solana-labs/solana](https://github.com/solana-labs/solana) - Web-Scale Blockchain for fast, secure, scalable, decentralized apps and marketplaces.
 - [influxdata/influxdb](https://github.com/influxdata/influxdb) - Scalable datastore for metrics, events, and real-time analytics
@@ -3256,7 +3298,7 @@
 - [WaterPistolAI/ollama-toolkit](https://github.com/WaterPistolAI/ollama-toolkit) - The Ollama Toolkit is a collection of powerful tools designed to enhance your experience with the Ollama project, an open-source framework for deploying and scaling machine learning models. Think of i
 - [umutphp/github-action-dynamic-profile-page](https://github.com/umutphp/github-action-dynamic-profile-page) - GitHub Action to push updates to your special profile repository.
 - [aviaryan/awesome-no-login-web-apps](https://github.com/aviaryan/awesome-no-login-web-apps) - 🚀 Awesome (free) web apps that work without login
-- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.50.0) wants to be a free online digital audio workstation following the new WebAudio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
+- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.51.0) wants to be a free online digital audio workstation following the new WebAudio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
 - [korosuke613/gh-user-stars](https://github.com/korosuke613/gh-user-stars) - Displays an interactive and searchable list of your GitHub starred repositories
 - [mattermost/openops](https://github.com/mattermost/openops) - Open source stack for applying AI to workflows in secure environments
 - [howl-anderson/unlocking-the-power-of-llms](https://github.com/howl-anderson/unlocking-the-power-of-llms) - 使用 Prompts 和 Chains 让 ChatGPT 成为神奇的生产力工具！Unlocking the power of LLMs.
@@ -3370,6 +3412,30 @@
 
 ## TypeScript 
 
+- [aindreyway/mcp-codex-keeper](https://github.com/aindreyway/mcp-codex-keeper) - An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest documentation and best practices across the software development 
+- [PolarVista/Xcode-mcp-server](https://github.com/PolarVista/Xcode-mcp-server) - 
+- [Tom-Semple/mcp-apple-notes-fixed](https://github.com/Tom-Semple/mcp-apple-notes-fixed) - 
+- [MissionSquad/mcp-helper-tools](https://github.com/MissionSquad/mcp-helper-tools) - 
+- [launchthatbrand/mcp-graphql](https://github.com/launchthatbrand/mcp-graphql) - Model Context Protocol server for GraphQL
+- [m-siles/branch-thinking](https://github.com/m-siles/branch-thinking) - MCP tool to allow multiple chains of thought
+- [nicholmikey/chrome-tools-MCP](https://github.com/nicholmikey/chrome-tools-MCP) - 
+- [tokenizin-agency/mcp-npx-fetch](https://github.com/tokenizin-agency/mcp-npx-fetch) - A powerful MCP server for fetching and transforming web content into various formats (HTML, JSON, Markdown, Plain Text) with ease.
+- [mahawi1992/mcp-documentation-server](https://github.com/mahawi1992/mcp-documentation-server) - MCP Documentation Server with AI Learning Capabilities
+- [movibe/memory-bank-mcp](https://github.com/movibe/memory-bank-mcp) - MCP Server para gerenciar o Memory Bank
+- [UjjwalBudha/DreamAnalyzer](https://github.com/UjjwalBudha/DreamAnalyzer) - 
+- [waldzellai/waldzell-mcp](https://github.com/waldzellai/waldzell-mcp) - Waldzell AI's monorepo of MCP servers. Use in Claude Desktop, Cline, Roo Code, and more!
+- [aindreyway/mcp-neurolora](https://github.com/aindreyway/mcp-neurolora) - An intelligent MCP server that provides tools for collecting and documenting code from directories
+- [RafalWilinski/aws-mcp](https://github.com/RafalWilinski/aws-mcp) - Talk with your AWS using Claude. Model Context Protocol (MCP) server for AWS. Better Amazon Q alternative.
+- [boorich/mcp-human-loop](https://github.com/boorich/mcp-human-loop) - Evaluate if a task requires human intervention
+- [jango-blockchained/advanced-homeassistant-mcp](https://github.com/jango-blockchained/advanced-homeassistant-mcp) - An advanced MCP server for Home Assistant. 🔋 Batteries included.
+- [Braffolk/mcp-summarization-functions](https://github.com/Braffolk/mcp-summarization-functions) - Provides summarised output from various actions that could otherwise eat up tokens and cause crashes for AI agents
+- [parmarjh/mcp-reasoner](https://github.com/parmarjh/mcp-reasoner) - 
+- [cyanheads/atlas-mcp-server](https://github.com/cyanheads/atlas-mcp-server) - A Model Context Protocol server built in TypeScript that leverages Neo4j’s graph database, delivers intelligent project and task management while empowering LLM agents with seamless collaboration and 
+- [Buga-luga/cursor-mcp](https://github.com/Buga-luga/cursor-mcp) - 
+- [johnneerdael/multiplatform-cursor-mcp](https://github.com/johnneerdael/multiplatform-cursor-mcp) - 
+- [spences10/mcp-sequentialthinking-tools](https://github.com/spences10/mcp-sequentialthinking-tools) - 🧠 An adaptation of the MCP Sequential Thinking Server to guide tool usage. This server provides recommendations for which MCP tools would be most effective at each stage.
+- [jacksteamdev/obsidian-mcp-tools](https://github.com/jacksteamdev/obsidian-mcp-tools) - Add Obsidian integrations like semantic search and custom Templater prompts to Claude or any MCP client.
+- [MushroomFleet/DeepLucid3D-MCP](https://github.com/MushroomFleet/DeepLucid3D-MCP) - Unified Cognitive Processing Framework - MCP server for Cline and more
 - [jsonresume/mcp](https://github.com/jsonresume/mcp) - The registry mcp server updates your resume while you code
 - [AmruthPillai/Reactive-Resume](https://github.com/AmruthPillai/Reactive-Resume) - A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source and free forever. Try it out today!
 - [xitanggg/open-resume](https://github.com/xitanggg/open-resume) - OpenResume is a powerful open-source resume builder and resume parser. https://open-resume.com/
@@ -3399,7 +3465,6 @@
 - [3rd/promptpack](https://github.com/3rd/promptpack) - CLI tool for packing files into a prompt for LLM usage.
 - [crazyrabbitLTC/mcp-twitter-server](https://github.com/crazyrabbitLTC/mcp-twitter-server) - Model Context Protocol Server for Accessing twitter
 - [rockbenben/ChatGPT-Shortcut](https://github.com/rockbenben/ChatGPT-Shortcut) - 🚀💪Maximize your efficiency and productivity, support for English,中文,Español,العربية. 让生产力加倍的AI快捷指令。更有效地定制、保存和分享自己的提示词。在提示词分享社区中，轻松找到适用于不同场景的指令。
-- [BoundaryML/baml](https://github.com/BoundaryML/baml) - The AI framework that adds the engineering to prompt engineering (Python/TS/Ruby/Java/C#/Rust/Go compatible)
 - [executeautomation/mcp-playwright](https://github.com/executeautomation/mcp-playwright) - Repository contains Playwright Model Context Protocol to automate Browser and APIs
 - [kleneway/awesome-cursor-mpc-server](https://github.com/kleneway/awesome-cursor-mpc-server) - Example of an MCP server with custom tools that can be called directly from cursor
 - [ztjhz/BetterChatGPT](https://github.com/ztjhz/BetterChatGPT) - An amazing UI for OpenAI's ChatGPT (Website + Windows + MacOS + Linux)
@@ -3411,7 +3476,7 @@
 - [rowyio/rowy](https://github.com/rowyio/rowy) - Low-code backend platform. Manage database on spreadsheet-like UI and build cloud functions workflows in JS/TS, all in your browser.
 - [nocobase/nocobase](https://github.com/nocobase/nocobase) - NocoBase is an extensibility-first, open-source no-code/low-code platform for building business applications and enterprise solutions.
 - [prisma/prisma](https://github.com/prisma/prisma) - Next-generation ORM for Node.js & TypeScript | PostgreSQL, MySQL, MariaDB, SQL Server, SQLite, MongoDB and CockroachDB
-- [refly-ai/refly](https://github.com/refly-ai/refly) - 🎨 Refly is an open-source AI-native creation engine. Its intuitive free-form canvas interface combines multi-threaded dialogues, artifact,  AI knowledge base integration, chrome extension clip & save,
+- [refly-ai/refly](https://github.com/refly-ai/refly) - 🎨 Refly is an open-source AI-native creation engine. Its intuitive free-form canvas interface combines multi-threaded dialogues, artifacts,  AI knowledge base integration, chrome extension clip & save
 - [onlook-dev/onlook](https://github.com/onlook-dev/onlook) - The open source Cursor for Designers. Design directly in your live React app and publish your changes to code.
 - [lmstudio-ai/lms](https://github.com/lmstudio-ai/lms) - LM Studio CLI
 - [actualbudget/actual](https://github.com/actualbudget/actual) - A local-first personal finance app
@@ -3495,7 +3560,7 @@
 - [IdreesInc/Waypoint](https://github.com/IdreesInc/Waypoint) - Obsidian plugin that gives you the power to generate dynamic MOCs in your folder notes. Enables folders to show up in the graph view and removes the need for messy tags!
 - [purocean/yn](https://github.com/purocean/yn) - A highly extensible Markdown editor. Version control, AI Copilot, mind map, documents encryption, code snippet running, integrated terminal, chart embedding, HTML applets, Reveal.js, plug-in, and macr
 - [AmKreta/svgEditor](https://github.com/AmKreta/svgEditor) - app to create svg images
-- [PySpur-Dev/pyspur](https://github.com/PySpur-Dev/pyspur) - AI Agent Builder in Python
+- [PySpur-Dev/pyspur](https://github.com/PySpur-Dev/pyspur) - Iterate over your agents 10x faster
 - [ChatAnyTeam/ChatAny](https://github.com/ChatAnyTeam/ChatAny) - 🌻 一键拥有你自己的 ChatGPT+众多AI 网页服务 | One click access to your own ChatGPT+Many AI web services
 - [civitai/civitai](https://github.com/civitai/civitai) - A repository of models, textual inversions, and more
 - [cheeriojs/cheerio](https://github.com/cheeriojs/cheerio) - The fast, flexible, and elegant library for parsing and manipulating HTML and XML.
@@ -3734,7 +3799,7 @@
 - [nakamurau1/code-to-clipboard](https://github.com/nakamurau1/code-to-clipboard) - 
 - [assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui) - Typescript/React Library for AI Chat💬🚀
 - [yamadashy/repomix](https://github.com/yamadashy/repomix) - 📦 Repomix (formerly Repopack) is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or o
-- [Canner/WrenAI](https://github.com/Canner/WrenAI) - 🤖 Open-source GenBI AI Agent that empowers data-driven teams to chat with their data to generate Text-to-SQL, charts, spreadsheets, reports, and BI. 📈📊📋🧑‍💻
+- [Canner/WrenAI](https://github.com/Canner/WrenAI) - 🤖 Open-source GenBI AI Agent that empowers data-driven teams to chat with their data to generate Text-to-SQL, charts, spreadsheets, reports, dashboards and BI. 📈📊📋🧑‍💻
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [TrafficGuard/typedai](https://github.com/TrafficGuard/typedai) - TypeScript AI platform with AI chat, Autonomous agents, Software developer agents, chatbots and more
 - [romansky/dom-to-semantic-markdown](https://github.com/romansky/dom-to-semantic-markdown) - DOM to Semantic-Markdown for use with LLMs
