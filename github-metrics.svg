@@ -3070,7 +3070,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>flexpa/mcp-fhir</span>
-                                        <span>starred 20 hours ago</span>
+                                        <span>starred 21 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A Model Context Protocol implementation for FHIR</div>
@@ -3224,7 +3224,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>aindreyway/mcp-codex-keeper</span>
-                                        <span>starred 1 day ago</span>
+                                        <span>starred 2 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest documentation and best practices across the software development landscape</div>
@@ -4047,7 +4047,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 232m repositories</span>
+                                    <span class="gh">ranked 346k out of 236m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4326,7 +4326,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 16 Mar 2025, 08:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 16 Mar 2025, 09:04:52 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
