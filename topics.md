@@ -5705,7 +5705,6 @@
 - [NightTrek/Ollama-mcp](https://github.com/NightTrek/Ollama-mcp) - 
 - [mahawi1992/mcp-documentation-server](https://github.com/mahawi1992/mcp-documentation-server) - MCP Documentation Server with AI Learning Capabilities
 - [davidorex/project-handoffs](https://github.com/davidorex/project-handoffs) - An MCP tool for aiding persistence over ai-coding-agent sessions.
-- [mario-andreschak/mcp-image-recognition](https://github.com/mario-andreschak/mcp-image-recognition) - An MCP server that provides image recognition 👀 capabilities using Anthropic and OpenAI vision APIs
 - [nguyenvanduocit/research-kit](https://github.com/nguyenvanduocit/research-kit) - Model Context Protocol for Research tasks
 - [nguyenvanduocit/dev-kit](https://github.com/nguyenvanduocit/dev-kit) - [Model Context Protocol] Dev Kit - anything a developer need for him day to day works
 - [nguyenvanduocit/rag-kit](https://github.com/nguyenvanduocit/rag-kit) - 
@@ -6476,7 +6475,7 @@
 - [openai/whisper](https://github.com/openai/whisper) - Robust Speech Recognition via Large-Scale Weak Supervision
 - [xuhangc/ChatGPT-Academic-Prompt](https://github.com/xuhangc/ChatGPT-Academic-Prompt) - Use ChatGPT for academic writing
 - [brexhq/prompt-engineering](https://github.com/brexhq/prompt-engineering) - Tips and tricks for working with Large Language Models like OpenAI's GPT-4.
-- [br41nl3t/SchemaGPT](https://github.com/br41nl3t/SchemaGPT) - Python library for RDF Schemas generation from prompts using GPT-3 magic 🪄🪄🪄
+- [br41nlet/SchemaGPT](https://github.com/br41nlet/SchemaGPT) - Python library for RDF Schemas generation from prompts using GPT-3 magic 🪄🪄🪄
 - [Jakob-98/openai-functools](https://github.com/Jakob-98/openai-functools) - openai-functools: Simplified Generation of OpenAI Functions JSON Metadata for OpenAI Function Calling
 - [VikParuchuri/pdftext](https://github.com/VikParuchuri/pdftext) - Extract structured text from pdfs quickly
 - [VikParuchuri/surya](https://github.com/VikParuchuri/surya) - OCR, layout analysis, reading order, table recognition in 90+ languages
