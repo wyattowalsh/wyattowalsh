@@ -3055,7 +3055,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>zundertj/uv-bump</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Bump pyproject.toml dependency minimum versions to latest feasible version</div>
@@ -3108,7 +3108,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Mozilla-Ocho/llamafile</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Distribute and run LLMs with a single file.</div>
@@ -3161,7 +3161,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Sunwood-ai-labs/source-sage-mcp-server</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3215,7 +3215,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>PhialsBasement/Pagespeed-MCP-Server</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Pull pagespeed data using this MCP server.</div>
@@ -3829,7 +3829,7 @@
                                 <div class="title">
                                     <span class="prefix">Super</span>
                                     developer
-                                    <span class="gh">ranked 310k out of 159m users</span>
+                                    <span class="gh">ranked 311k out of 159m users</span>
                                 </div>
                                 <div class="text">Published 82 public repositories</div>
                             </div>
@@ -4024,7 +4024,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 236m repositories</span>
+                                    <span class="gh">ranked 346k out of 230m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4303,7 +4303,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 18 Mar 2025, 13:02:04 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 18 Mar 2025, 14:01:52 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
