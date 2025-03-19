@@ -3061,7 +3061,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>zundertj/uv-bump</span>
-                                        <span>starred 20 hours ago</span>
+                                        <span>starred 21 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Bump pyproject.toml dependency minimum versions to latest feasible version</div>
@@ -3114,7 +3114,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Mozilla-Ocho/llamafile</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Distribute and run LLMs with a single file.</div>
@@ -4037,7 +4037,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 346k out of 237m repositories</span>
+                                    <span class="gh">ranked 346k out of 231m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 118 stars</div>
                             </div>
@@ -4316,7 +4316,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 19 Mar 2025, 07:01:36 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 19 Mar 2025, 08:01:41 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
