@@ -3035,7 +3035,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>docling-project/docling-mcp</span>
-                                        <span>starred 2 days ago</span>
+                                        <span>starred 3 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Making docling agentic through MCP</div>
@@ -4025,7 +4025,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 343k out of 235m repositories</span>
+                                    <span class="gh">ranked 343k out of 226m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 120 stars</div>
                             </div>
@@ -4304,7 +4304,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 28 Mar 2025, 21:28:43 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 28 Mar 2025, 22:26:49 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
