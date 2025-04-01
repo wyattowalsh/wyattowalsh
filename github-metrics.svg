@@ -3026,7 +3026,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>undb-io/undb</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🚀 Private first self-hosted no code database &amp; BaaS.</div>
@@ -3060,7 +3060,7 @@
                                             <path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
                                             <path fill-rule="evenodd" d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0z"/>
                                         </svg>
-                                        465
+                                        466
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -3079,7 +3079,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>gorango/rehype-extract-meta</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Extract meta data from an HTML document</div>
@@ -3132,7 +3132,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>changesets/changesets</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🦋       A way to manage your versioning and changelogs with a focus on monorepos</div>
@@ -3993,7 +3993,7 @@
                                 <div class="title">
                                     <span class="prefix"></span>
                                     Maintainer
-                                    <span class="gh">ranked 341k out of 230m repositories</span>
+                                    <span class="gh">ranked 341k out of 227m repositories</span>
                                 </div>
                                 <div class="text">Maintaining a repository with 121 stars</div>
                             </div>
@@ -4272,7 +4272,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 1 Apr 2025, 09:09:03 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 1 Apr 2025, 10:01:44 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
