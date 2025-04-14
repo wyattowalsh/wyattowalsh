@@ -830,7 +830,7 @@
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, PHP, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, llm, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Crawler, Animation, portfolio-website, trading-bot, rag, search-engine, large-language-models, prompt-engineering, RSS, gpt, agent, proxy, vscode-extension, Simulation, knowledge-graph, ai-agents, Notion, gatsby, jupyter, roadmap, ocr, scraper, icons, SVG, scraping, observability, retrieval-augmented-generation, blog, react-components, anomaly-detection, llms, crm, profile-readme, flowchart, docs, scss, MIDI, webscraping, Playwright, rich-text-editor, Reddit, mcp, modeling, transformers, saas-boilerplate, scrapy, github-profile, resume, safari-extension, named-entity-recognition, marketing-automation, music-generation, llmops, url-shortener, llm-agent, calendar, linear-algebra, player, email-marketing, ai-music, web-scraper, personal-assistant, markdown-editor, pkm, proxy-list, relation-extraction, google-colab, music-composition, classification, data-warehouse, copilot, ai-assistant, backend-as-a-service, assistant, http-proxy, multimodal, data-pipelines, api-documentation, MDX, text-detection, research-paper, push-notifications, socks, etl-pipeline, model-context-protocol, image-viewer, document-layout-analysis, graph-editor, probability, linkedin, formatter, free-proxy, react-component, timeline, text-recognition, entity-linking, email-template, newsletter, regression, marketing-tools, component, cleaner, document-ai, pdf-converter, calculus, open-webui, asynchronous, agent-based-framework, table-recognition, ai-agent, oh-my-zsh-plugin, task, document-understanding, text2sql, toolchain, schedule, tabular-data, spicetify-themes, computer-music, remark-plugin, google-colab-notebook, llm-webui, project-planning, emails, pdf-to-text, quicklook-extension, music-ai, reddit-api, email-boilerplate, document-parser, project-structure, music-programming, relational-database, comment-system, document-analysis, responsive-email, data-generation, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, ollama-webui, docset, layout-analysis, document-intelligence, fractal, sphinx, topic-models, badge, link-aggregator, key-information-extraction, pdf-to-json, python-libraries, awesome-stars, starred, topic-modelling, topic, pdf-document-processor, jsonresume, assistant-api, ai-music-generator, automated-scraper, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, text-to-audio, gui-agents, semantic-scholar, shorten-urls, document-image-processing, llm-ui, knowledge-curation, graph-rag, aiagents, assistant-computer-control, newsletter-management, document-recognition, linkedin-profile, chainer, wakatime, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-platform, report-generation, llm-powered-agents, llm-os, scrapes-linkedin, deepresearch, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, free-deep-research, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 316 more...</div>
+                            <div class="label" title="Deep learning, Data structures, Awesome Lists, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, PHP, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Unity, R, Kubernetes, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Swift, Flask, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, llm, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Crawler, Animation, portfolio-website, trading-bot, rag, search-engine, large-language-models, prompt-engineering, RSS, gpt, agent, proxy, vscode-extension, Simulation, knowledge-graph, ai-agents, Notion, gatsby, jupyter, roadmap, ocr, scraper, icons, SVG, scraping, observability, retrieval-augmented-generation, blog, react-components, anomaly-detection, llms, crm, profile-readme, flowchart, docs, scss, MIDI, webscraping, Playwright, rich-text-editor, Reddit, mcp, modeling, transformers, saas-boilerplate, scrapy, github-profile, resume, safari-extension, named-entity-recognition, marketing-automation, music-generation, llmops, url-shortener, llm-agent, calendar, linear-algebra, player, email-marketing, ai-music, web-scraper, personal-assistant, markdown-editor, pkm, proxy-list, relation-extraction, google-colab, music-composition, classification, copilot, data-warehouse, ai-assistant, backend-as-a-service, assistant, http-proxy, multimodal, data-pipelines, api-documentation, MDX, text-detection, research-paper, push-notifications, socks, etl-pipeline, model-context-protocol, image-viewer, document-layout-analysis, graph-editor, probability, linkedin, formatter, free-proxy, react-component, timeline, text-recognition, entity-linking, email-template, newsletter, regression, marketing-tools, component, cleaner, document-ai, pdf-converter, calculus, open-webui, asynchronous, agent-based-framework, table-recognition, ai-agent, oh-my-zsh-plugin, task, document-understanding, text2sql, toolchain, schedule, tabular-data, spicetify-themes, computer-music, remark-plugin, google-colab-notebook, llm-webui, project-planning, emails, pdf-to-text, quicklook-extension, music-ai, reddit-api, email-boilerplate, document-parser, project-structure, music-programming, relational-database, comment-system, document-analysis, responsive-email, data-generation, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, ollama-webui, docset, layout-analysis, document-intelligence, fractal, sphinx, topic-models, badge, link-aggregator, key-information-extraction, pdf-to-json, python-libraries, awesome-stars, starred, topic-modelling, topic, pdf-document-processor, jsonresume, assistant-api, ai-music-generator, automated-scraper, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, text-to-audio, gui-agents, semantic-scholar, shorten-urls, document-image-processing, llm-ui, knowledge-curation, graph-rag, aiagents, assistant-computer-control, newsletter-management, document-recognition, linkedin-profile, chainer, wakatime, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, sass-library, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-platform, report-generation, llm-powered-agents, llm-os, scrapes-linkedin, deepresearch, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, free-deep-research, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 316 more...</div>
                         </div>
                     </section>
                 </div>
@@ -3038,7 +3038,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>microsoft/data-formulator</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">🪄 Create rich visualizations with AI</div>
@@ -3091,7 +3091,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>SakanaAI/AI-Scientist-v2</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The AI Scientist-v2: Workshop-Level Automated Scientific Discovery via Agentic Tree Search</div>
@@ -3112,7 +3112,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                             <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
                                         </svg>
-                                        478
+                                        484
                                     </div>
                                     <div>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -3144,7 +3144,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>newville/pyshortcuts</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">create desktop shortcuts to python scripts on Windows, Mac, or Linux</div>
@@ -3197,7 +3197,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bilibili/ijkplayer</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Android/iOS video player based on FFmpeg n3.4, with MediaCodec, VideoToolbox support.</div>
@@ -3436,6 +3436,20 @@
                                     </svg>
                                     <div class="content">
                                         Starred
+                                        <span class="repo">microsoft/data-formulator</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">14 Apr 2025, 01:21:33</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
                                         <span class="repo">SakanaAI/AI-Scientist-v2</span>
                                     </div>
                                 </div>
@@ -3486,20 +3500,6 @@
                                     </div>
                                 </div>
                                 <div class="timestamp">13 Apr 2025, 15:27:04</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Starred
-                                        <span class="repo">bilibili/ijkplayer</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">13 Apr 2025, 15:03:35</div>
                             </section>
                         </div>
                     </section>
@@ -3768,7 +3768,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 14 Apr 2025, 04:01:45 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 14 Apr 2025, 05:01:55 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
