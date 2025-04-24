@@ -188,6 +188,7 @@
 
 ## CSS 
 
+- [iina/iina-plugin-definition](https://github.com/iina/iina-plugin-definition) - Type definitions for IINA plugin API (WIP).
 - [orta/Essence](https://github.com/orta/Essence) - A VSCode UI.
 - [JulienMaille/dribbblish-dynamic-theme](https://github.com/JulienMaille/dribbblish-dynamic-theme) - A mod of Dribbblish theme for Spicetify with support for light/dark modes and album art based colors.
 - [nimsandu/spicetify-bloom](https://github.com/nimsandu/spicetify-bloom) - Spicetify theme inspired by Microsoft's Fluent Design, Always up-to-date!, A Powerful Theme to Calm your Eyes While Listening to Your Favorite Beats
@@ -479,7 +480,7 @@
 - [kludge-works/mcp-server-rdf](https://github.com/kludge-works/mcp-server-rdf) - MCP server to query RDF datastores
 - [opendatadiscovery/odd-platform](https://github.com/opendatadiscovery/odd-platform) - First open-source data discovery and observability platform. We make a life for data practitioners easy so you can focus on your business.
 - [neo4j/neo4j](https://github.com/neo4j/neo4j) - Graphs for Everyone
-- [Smartproxy/Smartproxy](https://github.com/Smartproxy/Smartproxy) - HTTP(S)/SOCKS5 rotating residential proxies - code examples & general information.
+- [Decodo/Decodo](https://github.com/Decodo/Decodo) - HTTP(S)/SOCKS5 rotating residential proxies - code examples & general information.
 - [MaxiHuHe04/iTunes-Backup-Explorer](https://github.com/MaxiHuHe04/iTunes-Backup-Explorer) - A graphical tool that can extract and replace files from encrypted and non-encrypted iOS backups
 - [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) - Java version of LangChain
 - [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) - #1 Locally hosted web application that allows you to perform various operations on PDF files
@@ -1188,7 +1189,6 @@
 - [AnswerDotAI/llms-txt](https://github.com/AnswerDotAI/llms-txt) - The /llms.txt file, helping language models use your website
 - [FareedKhan-dev/all-rag-techniques](https://github.com/FareedKhan-dev/all-rag-techniques) - Implementation of all RAG techniques in a simpler way
 - [QwenLM/Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL) - Qwen2.5-VL is the multimodal large language model series developed by Qwen team, Alibaba Cloud.
-- [langchain-ai/open_deep_research](https://github.com/langchain-ai/open_deep_research) - 
 - [angelosalatino/ieee-taxonomy-thesaurus-rdf](https://github.com/angelosalatino/ieee-taxonomy-thesaurus-rdf) - IEEE Taxonomy in RDF (with Python tool for converting it from txt to rdf)
 - [firmai/awesome-google-colab](https://github.com/firmai/awesome-google-colab) - Google Colaboratory Notebooks and Repositories (by @firmai)
 - [bagushikano/youtube_channel_video_downloader](https://github.com/bagushikano/youtube_channel_video_downloader) - A simple colab notebook for downloading all videos on a Youtube channel using youtube-dl to Google Drive
@@ -1361,6 +1361,7 @@
 - [EpistasisLab/tpot](https://github.com/EpistasisLab/tpot) - A Python Automated Machine Learning tool that optimizes machine learning pipelines using genetic programming.
 - [ydataai/ydata-synthetic](https://github.com/ydataai/ydata-synthetic) - Synthetic data generators for tabular and time-series data
 - [trekhleb/homemade-machine-learning](https://github.com/trekhleb/homemade-machine-learning) - 🤖 Python examples of popular machine learning algorithms with interactive Jupyter demos and math being explained
+- [apache/superset](https://github.com/apache/superset) - Apache Superset is a Data Visualization and Data Exploration Platform
 - [QuantEcon/lecture-python](https://github.com/QuantEcon/lecture-python) - Source files for https://python.quantecon.org
 - [Chenyu-Shi/night-thoughts](https://github.com/Chenyu-Shi/night-thoughts) - 
 - [pkmital/tensorflow_tutorials](https://github.com/pkmital/tensorflow_tutorials) - From the basics to slightly more interesting applications of Tensorflow
@@ -1526,7 +1527,7 @@
 - [steven2358/awesome-generative-ai](https://github.com/steven2358/awesome-generative-ai) - A curated list of modern Generative Artificial Intelligence projects and services
 - [opendilab/awesome-RLHF](https://github.com/opendilab/awesome-RLHF) - A curated list of reinforcement learning with human feedback resources (continually updated)
 - [billmei/every-chatgpt-gui](https://github.com/billmei/every-chatgpt-gui) - Every front-end GUI client for ChatGPT, Claude, and other LLMs
-- [alan-ai/alan-sdk-web](https://github.com/alan-ai/alan-sdk-web) - Generative AI SDK for Web to create AI Agents for apps built with JavaScript, React, Angular, Vue, Ember, Electron
+- [alan-ai/alan-sdk-web](https://github.com/alan-ai/alan-sdk-web) - The Self-Coding System for Your App — Alan AI SDK for Web
 - [meta-llama/llama-stack-apps](https://github.com/meta-llama/llama-stack-apps) - Agentic components of the Llama Stack APIs
 - [opendilab/awesome-ui-agents](https://github.com/opendilab/awesome-ui-agents) - A curated list of of awesome UI agents resources, encompassing Web, App, OS, and beyond (continually updated)
 - [chenzixuan99/Awesome-LLM-based-Web-Agent-and-Tools](https://github.com/chenzixuan99/Awesome-LLM-based-Web-Agent-and-Tools) - A collection of some awesome public projects about LLM-based Web Agents and Tools.
@@ -2041,6 +2042,7 @@
 - [deepseek-ai/DeepSeek-Coder](https://github.com/deepseek-ai/DeepSeek-Coder) - DeepSeek Coder: Let the Code Write Itself
 - [exo-explore/exo](https://github.com/exo-explore/exo) - Run your own AI cluster at home with everyday devices 📱💻 🖥️⌚
 - [FujiwaraChoki/MoneyPrinterV2](https://github.com/FujiwaraChoki/MoneyPrinterV2) - Automate the process of making money online.
+- [langchain-ai/open_deep_research](https://github.com/langchain-ai/open_deep_research) - 
 - [sony/talkhier](https://github.com/sony/talkhier) - Official Repo for The Paper "Talk Structurally, Act Hierarchically: A Collaborative Framework for LLM Multi-Agent Systems"
 - [sqlalchemy/alembic](https://github.com/sqlalchemy/alembic) - A database migrations tool for SQLAlchemy.
 - [drjforrest/mcp-things3](https://github.com/drjforrest/mcp-things3) - A Model Context Protocol for reading todos and writing todos and projects in the macOS app Things3 using a combination of Applescript and x-call URLs.
@@ -2236,7 +2238,7 @@
 - [JustAnotherArchivist/snscrape](https://github.com/JustAnotherArchivist/snscrape) - A social networking service scraper in Python
 - [chris-greening/instascrape](https://github.com/chris-greening/instascrape) - Powerful and flexible Instagram scraping library for Python, providing easy-to-use and expressive tools for accessing data programmatically
 - [uhh-lt/Taxonomy_Refinement_Embeddings](https://github.com/uhh-lt/Taxonomy_Refinement_Embeddings) - Taxonomy refinement method to improve domain-specific taxonomy systems.
-- [oneal2000/DRAGIN](https://github.com/oneal2000/DRAGIN) - Source code of DRAGIN, ACL 2024 main conference Long Paper
+- [oneal2000/DRAGIN](https://github.com/oneal2000/DRAGIN) - Source code of DRAGIN, ACL 2024 main conference Long Paper (Oral)
 - [pydantic/pydantic-ai](https://github.com/pydantic/pydantic-ai) - Agent Framework / shim to use Pydantic with LLMs
 - [Malith-Rukshan/Suno-API](https://github.com/Malith-Rukshan/Suno-API) - SunoAI Unofficial Python API Library and REST API for Suno.ai — Create Music with Generative AI ! ✨
 - [gitmylo/audio-webui](https://github.com/gitmylo/audio-webui) - A webui for different audio related Neural Networks
@@ -2311,7 +2313,7 @@
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [dvlab-research/LongLoRA](https://github.com/dvlab-research/LongLoRA) - Code and documents of LongLoRA and LongAlpaca (ICLR 2024 Oral)
 - [ictnlp/LLaMA-Omni](https://github.com/ictnlp/LLaMA-Omni) - LLaMA-Omni is a low-latency and high-quality end-to-end speech interaction model built upon Llama-3.1-8B-Instruct, aiming to achieve speech capabilities at the GPT-4o level.
-- [OpenRLHF/OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) - An Easy-to-use, Scalable and High-performance RLHF Framework (70B+ PPO Full Tuning & Iterative DPO & LoRA & RingAttention & RFT)
+- [OpenRLHF/OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) - An Easy-to-use, Scalable and High-performance RLHF Framework based on Ray (PPO & GRPO & REINFORCE++ & LoRA & vLLM & RFT)
 - [young-geng/EasyLM](https://github.com/young-geng/EasyLM) - Large language models (LLMs) made easy, EasyLM is a one stop solution for pre-training, finetuning, evaluating and serving LLMs in JAX/Flax.
 - [NVIDIA/GenerativeAIExamples](https://github.com/NVIDIA/GenerativeAIExamples) - Generative AI reference workflows optimized for accelerated infrastructure and microservice architecture.
 - [LLMBook-zh/LLMBook-zh.github.io](https://github.com/LLMBook-zh/LLMBook-zh.github.io) - 《大语言模型》作者：赵鑫，李军毅，周昆，唐天一，文继荣
@@ -2337,7 +2339,7 @@
 - [CoderEren/EmailScraper](https://github.com/CoderEren/EmailScraper) - A Python script that automatically scrapes email addresses found on websites that are on the Google search results for a specific query.
 - [caronc/apprise](https://github.com/caronc/apprise) - Apprise - Push Notifications that work with just about every platform!
 - [ioqy/ntfy-client-python](https://github.com/ioqy/ntfy-client-python) - 
-- [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling) - 🕷️ An undetectable, powerful, flexible, high-performance Python library that makes Web Scraping simple and easy again!
+- [D4Vinci/Scrapling](https://github.com/D4Vinci/Scrapling) - 🕷️ An undetectable, powerful, flexible, high-performance Python library to make Web Scraping Easy and Effortless as it should be!
 - [db0/pythorhead](https://github.com/db0/pythorhead) - A python library for interacting with Lemmy
 - [lepture/mistune](https://github.com/lepture/mistune) - A fast yet powerful Python Markdown parser with renderers and plugins.
 - [trentm/python-markdown2](https://github.com/trentm/python-markdown2) - markdown2: A fast and complete implementation of Markdown in Python
@@ -2586,7 +2588,7 @@
 - [AgentOps-AI/tokencost](https://github.com/AgentOps-AI/tokencost) - Easy token price estimates for 400+ LLMs. TokenOps.
 - [Audio-AGI/WavJourney](https://github.com/Audio-AGI/WavJourney) - WavJourney: Compositional Audio Creation with LLMs
 - [DeepInsight-AI/DeepBI](https://github.com/DeepInsight-AI/DeepBI) - LLM based data scientist, AI native data application.  AI-driven infinite thinking redefines BI.
-- [neuml/txtai](https://github.com/neuml/txtai) - 💡 All-in-one open-source embeddings database for semantic search, LLM orchestration and language model workflows
+- [neuml/txtai](https://github.com/neuml/txtai) - 💡 All-in-one open-source AI framework for semantic search, LLM orchestration and language model workflows
 - [stanford-oval/storm](https://github.com/stanford-oval/storm) - An LLM-powered knowledge curation system that researches a topic and generates a full-length report with citations.
 - [vanna-ai/vanna-chainlit](https://github.com/vanna-ai/vanna-chainlit) - A chainlit app that you can use to chat with your SQL database
 - [vanna-ai/vanna](https://github.com/vanna-ai/vanna) - 🤖 Chat with your SQL database 📊. Accurate Text-to-SQL Generation via LLMs using RAG 🔄.
@@ -3379,6 +3381,7 @@
 
 ## SCSS 
 
+- [iina/iina-website](https://github.com/iina/iina-website) - The source code of IINA's new website at iina.io.
 - [amaroteam/react-credit-cards](https://github.com/amaroteam/react-credit-cards) - Beautiful credit cards for your payment forms
 - [Flynntes/Sleeky](https://github.com/Flynntes/Sleeky) - 🎨 A sleek and simple frontend & backend theme for YOURLS
 - [KittyGiraudel/sass-boilerplate](https://github.com/KittyGiraudel/sass-boilerplate) - A boilerplate for Sass projects using the 7-1 architecture pattern from Sass Guidelines.
@@ -3471,7 +3474,7 @@
 
 ## Smarty 
 
-- [opsre/awesome-ops](https://github.com/opsre/awesome-ops) - 🧰 记录每一个与运维相关的优秀项目，⚗️ 项目内表格通过 GitHub Action 自动生成，📥 当前收录项目 634 个。
+- [opsre/awesome-ops](https://github.com/opsre/awesome-ops) - 🧰 记录每一个与运维相关的优秀项目，⚗️ 项目内表格通过 GitHub Action 自动生成，📥 当前收录项目 635 个。
 
 ## Solidity 
 
@@ -3492,6 +3495,7 @@
 
 ## Swift 
 
+- [iina/iina](https://github.com/iina/iina) - The modern video player for macOS.
 - [macsplit/tomarkdown](https://github.com/macsplit/tomarkdown) - iOS Safari Extension to convert web pages to Markdown text
 - [Swift-open-source/UltraTabSaver](https://github.com/Swift-open-source/UltraTabSaver) - The open source Tab Manager Extension for Safari.
 - [Gofake1/Nightlight](https://github.com/Gofake1/Nightlight) - Browse the internet more comfortably at night
@@ -3568,7 +3572,7 @@
 - [mshk/mcp-rss-crawler](https://github.com/mshk/mcp-rss-crawler) - RSS Crawler MCP Server
 - [buhe/mcp_rss](https://github.com/buhe/mcp_rss) - MCP RSS is a Model Context Protocol (MCP) server for interacting with RSS feeds.
 - [VikashLoomba/copilot-mcp](https://github.com/VikashLoomba/copilot-mcp) - A powerful VSCode extension that enables MCP server usage in Copilot, giving it access to MCP tools, resources, and more.
-- [ThinkInAIXYZ/deepchat](https://github.com/ThinkInAIXYZ/deepchat) - 🐬DeepChat - 连接强大AI与个人世界的智能助手 | DeepChat - A smart assistant that connects powerful AI to your personal world
+- [ThinkInAIXYZ/deepchat](https://github.com/ThinkInAIXYZ/deepchat) - 🐬DeepChat - A smart assistant that connects powerful AI to your personal world
 - [mario-andreschak/FLUJO](https://github.com/mario-andreschak/FLUJO) - MCP-Hub and -Inspector, Multi-Model Workflow and Chat Interface
 - [nick1udwig/kibitz](https://github.com/nick1udwig/kibitz) - The coding agent for professionals
 - [CherryHQ/cherry-studio](https://github.com/CherryHQ/cherry-studio) - 🍒 Cherry Studio is a desktop client that supports for multiple LLM providers.
@@ -3951,7 +3955,7 @@
 - [daeh/zotero-markdb-connect](https://github.com/daeh/zotero-markdb-connect) - Zotero plugin that links your Markdown database to Zotero. Jump directly from Zotero Items to connected Markdown files. Automatically tags Zotero Items so you can easily see which papers you've made n
 - [coddingtonbear/obsidian-local-rest-api](https://github.com/coddingtonbear/obsidian-local-rest-api) - Unlock your automation needs by interacting with your notes in Obsidian over a secure REST API.
 - [esm7/obsidian-map-view](https://github.com/esm7/obsidian-map-view) - Interactive map view for Obsidian.md
-- [PKM-er/media-extended](https://github.com/PKM-er/media-extended) - enhanced media(video/audio) playback for obsidian.md
+- [aidenlx/media-extended](https://github.com/aidenlx/media-extended) - enhanced media(video/audio) playback for obsidian.md
 - [Richardsl/heatmap-calendar-obsidian](https://github.com/Richardsl/heatmap-calendar-obsidian) - An Obsidian plugin for displaying data in a calendar similar to the github activity calendar
 - [PKM-er/obsidian-zotlit](https://github.com/PKM-er/obsidian-zotlit) - A third-party project that aims to facilitate the integration between Obsidian.md and Zotero, by providing a set of community plugins for both Obsidian and Zotero.
 - [different-ai/obsidian-ava](https://github.com/different-ai/obsidian-ava) - Quickly format your notes with ChatGPT in Obsidian
@@ -4013,7 +4017,7 @@
 - [Seedsa/echo-editor](https://github.com/Seedsa/echo-editor) - A modern AI-powered WYSIWYG rich-text editor for Vue, based on Tiptap and shadcn-vue
 - [Aslam97/shadcn-minimal-tiptap](https://github.com/Aslam97/shadcn-minimal-tiptap) - Minimal Tiptap Editor
 - [steven-tey/novel](https://github.com/steven-tey/novel) - Notion-style WYSIWYG editor with AI-powered autocompletion.
-- [L3-N0X/obsidian-marker](https://github.com/L3-N0X/obsidian-marker) - Configure a marker api endpoint and use it to convert your pdfs into markdowns with best ocr, embedded tables, images and every other benefit of marker!
+- [L3-N0X/obsidian-marker](https://github.com/L3-N0X/obsidian-marker) - Make use of different AI models to convert your pdfs into markdown with perfect ocr, latex formulas, tables, images and more! Supports Mistral AI OCR (free) and self hosted variants!
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization.
 - [labring/FastGPT](https://github.com/labring/FastGPT) - FastGPT is a knowledge-based platform built on the LLMs, offers a comprehensive suite of out-of-the-box capabilities such as data processing, RAG retrieval, and visual AI workflow orchestration, letti
 - [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - React UI + elegant infrastructure for AI Copilots, AI chatbots, and in-app AI agents. The Agentic last-mile 🪁
@@ -4370,7 +4374,6 @@
 - [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw) - Virtual whiteboard for sketching hand-drawn like diagrams
 - [nwtgck/gh-card](https://github.com/nwtgck/gh-card) - :octocat: GitHub Repository Card for Any Web Site
 - [nteract/nteract](https://github.com/nteract/nteract) - 📘 The interactive computing suite for you!  ✨
-- [apache/superset](https://github.com/apache/superset) - Apache Superset is a Data Visualization and Data Exploration Platform
 - [bxcodec/github-readme-medium-recent-article](https://github.com/bxcodec/github-readme-medium-recent-article) - Add Your Recently Published Medium Articles to Your GitHub Readme
 - [rishavanand/github-profilinator](https://github.com/rishavanand/github-profilinator) - 🚀  This tool contains mini GUI components that you can hook together to automatically generate markdown code for a perfect readme.
 - [forthebadge/for-the-badge](https://github.com/forthebadge/for-the-badge) - It all started because of an obsession with two words: “build passing”. It all ended with this: badges, for badges’ sake.
