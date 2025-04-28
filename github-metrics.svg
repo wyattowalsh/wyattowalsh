@@ -3045,7 +3045,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>xinntao/Real-ESRGAN-ncnn-vulkan</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">NCNN implementation of Real-ESRGAN. Real-ESRGAN aims at developing Practical Algorithms for General Image Restoration.</div>
@@ -3098,7 +3098,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ReAPI-com/mcp-openapi</span>
-                                        <span>starred 23 hours ago</span>
+                                        <span>starred 24 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">OpenAPI specification MCP server.</div>
@@ -3151,7 +3151,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>admica/FileScopeMCP</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Analyzes your codebase identifying important files based on dependency relationships. Generates diagrams and importance scores per file, helping AI assistants understand the codebase. Automatically parses popular programming languages such as Python, C, C++, Rust, Zig, Lua.</div>
@@ -3204,7 +3204,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>andredezzy/deep-directory-tree-mcp</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Powerful Model Context Protocol (MCP) implementation for visualizing directory structures with real-time updates, configurable depth, and smart exclusions for efficient project navigation</div>
@@ -3778,7 +3778,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 28 Apr 2025, 01:01:50 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 28 Apr 2025, 02:02:53 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
