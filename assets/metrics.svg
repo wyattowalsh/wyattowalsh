@@ -234,12 +234,12 @@
                         <path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 01-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 00-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 01-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75zM5.75 12a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"/>
                     </svg>
                     Recent coding habits
-                    <small class="h-details">(computed from last 8 commits)</small>
+                    <small class="h-details">(computed from last 2 commits)</small>
                 </h2>
                 <div class="row">
                     <ul class="facts">
                         <li>Mostly pushes code around 11:00</li>
-                        <li>Mostly active on Thursday</li>
+                        <li>Mostly active on Wednesday</li>
                     </ul>
                 </div>
             </section>
@@ -303,7 +303,7 @@
                             10
                         </div>
                         <div class="entry">
-                            <span class="value">8</span>
+                            <span class="value">2</span>
                             <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             11
                         </div>
@@ -374,38 +374,38 @@
                         <h3>Commit activity per day of week</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 Sun
                             </div>
                             <div class="entry">
-                                <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 Mon
                             </div>
                             <div class="entry">
-                                <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 Tue
                             </div>
                             <div class="entry">
                                 <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 Wed
                             </div>
                             <div class="entry">
-                                <span class="value">2</span>
+                                <span class="value">1</span>
                                 <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 Thu
                             </div>
                             <div class="entry">
-                                <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 Fri
                             </div>
                             <div class="entry">
-                                <span class="value">1</span>
-                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 Sat
                             </div>
                         </div>
@@ -437,7 +437,7 @@
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
                             <div class="label" title="Machine learning is a way of modeling and interpreting data that allows a piece of software to respond intelligently.">machine learning</div>
-                            <div class="label" title="Deep learning, Awesome Lists, Data structures, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, PHP, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Kubernetes, unity, R, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Flask, Swift, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Large Language Model, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Obsidian, Crawler, obsidian, portfolio-website, Animation, trading-bot, rag, search-engine, large-language-models, prompt-engineering, RSS, gpt, agent, proxy, ai-agents, downloader, vscode-extension, Simulation, knowledge-graph, Notion, jupyter, gatsby, super-resolution, ocr, roadmap, scraper, icons, SVG, observability, scraping, retrieval-augmented-generation, forensics, blog, mcp, llms, react-components, anomaly-detection, crm, flowchart, profile-readme, download, docs, scss, OpenAPI Specification, MIDI, webscraping, Playwright, Reddit, rich-text-editor, youtube-dl, modeling, transformers, saas-boilerplate, resume, github-profile, scrapy, safari-extension, named-entity-recognition, marketing-automation, llmops, music-generation, proxy-list, url-shortener, llm-agent, calendar, linear-algebra, player, email-marketing, ai-music, web-scraper, personal-assistant, markdown-editor, download-manager, pkm, copilot, google-colab, music-composition, relation-extraction, classification, yt-dlp, dfir, readme, data-warehouse, ai-assistant, backend-as-a-service, prompts, menubar, assistant, http-proxy, multimodal, data-pipelines, api-documentation, MDX, model-context-protocol, research-paper, text-detection, push-notifications, socks, etl-pipeline, image-viewer, document-layout-analysis, graph-editor, prompt-toolkit, linkedin, formatter, free-proxy, probability, react-component, timeline, entity-linking, text-recognition, email-template, marketing-tools, newsletter, component, regression, ai-agent, cleaner, document-ai, github-copilot, pdf-converter, open-webui, calculus, stats, asynchronous, agent-based-framework, table-recognition, oh-my-zsh-plugin, prompting, task, text2sql, tabular-data, document-understanding, toolchain, schedule, remark-plugin, google-colab-notebook, spicetify-themes, llm-webui, computer-music, project-planning, emails, pdf-to-text, quicklook-extension, music-ai, document-parser, reddit-api, relational-database, email-boilerplate, project-structure, music-programming, comment-system, document-analysis, markov-chain, mcp-client, responsive-email, toml, ollama-webui, data-generation, document-intelligence, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, spicetify-apps, docset, layout-analysis, fractal, sphinx, topic-models, topic, badge, link-aggregator, key-information-extraction, pdf-to-json, python-libraries, jsonresume, assistant-api, awesome-stars, starred, topic-modelling, automated-scraper, pdf-document-processor, ai-music-generator, gui-agents, llm-ui, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, text-to-audio, semantic-scholar, shorten-urls, document-image-processing, knowledge-curation, graph-rag, aiagents, cursor-ai, assistant-computer-control, newsletter-management, document-recognition, ai-prompts, saas-starter, linkedin-profile, chainer, wakatime, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, sass-library, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-platform, report-generation, llm-powered-agents, llm-os, tdl-extension, scrapes-linkedin, deepresearch, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, markwhen, free-deep-research, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 343 more...</div>
+                            <div class="label" title="Deep learning, Awesome Lists, Data structures, Arduino, SQL, Bitcoin, Chrome, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, PHP, Bash, Code quality, Raspberry Pi, Code review, Terminal, iOS, Kubernetes, unity, R, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, windows, MongoDB, PostgreSQL, unreal-engine, Cryptocurrency, Ethereum, Flask, Swift, GraphQL, Markdown, Continuous integration, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Homebrew, Sass, Project management, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Large Language Model, music, Data analysis, Statistics, stable-diffusion, Privacy, No-code, obsidian-plugin, zsh, Obsidian, Crawler, obsidian, portfolio-website, Animation, trading-bot, rag, search-engine, large-language-models, prompt-engineering, RSS, gpt, agent, proxy, ai-agents, downloader, vscode-extension, Simulation, knowledge-graph, Notion, jupyter, gatsby, super-resolution, ocr, roadmap, scraper, icons, SVG, observability, scraping, retrieval-augmented-generation, forensics, blog, mcp, llms, react-components, anomaly-detection, crm, flowchart, profile-readme, download, docs, scss, OpenAPI Specification, MIDI, webscraping, Playwright, email, Reddit, rich-text-editor, youtube-dl, modeling, transformers, saas-boilerplate, resume, github-profile, scrapy, safari-extension, named-entity-recognition, marketing-automation, llmops, music-generation, proxy-list, url-shortener, llm-agent, calendar, linear-algebra, player, email-marketing, ai-music, web-scraper, personal-assistant, markdown-editor, download-manager, pkm, copilot, google-colab, music-composition, relation-extraction, classification, clipboard-manager, yt-dlp, dfir, readme, data-warehouse, ai-assistant, backend-as-a-service, prompts, menubar, assistant, http-proxy, multimodal, data-pipelines, api-documentation, MDX, model-context-protocol, research-paper, text-detection, push-notifications, socks, etl-pipeline, image-viewer, document-layout-analysis, graph-editor, prompt-toolkit, linkedin, formatter, free-proxy, probability, react-component, timeline, entity-linking, text-recognition, email-template, marketing-tools, newsletter, component, regression, ai-agent, cleaner, document-ai, github-copilot, pdf-converter, open-webui, calculus, stats, asynchronous, agent-based-framework, table-recognition, oh-my-zsh-plugin, prompting, task, text2sql, tabular-data, document-understanding, toolchain, schedule, remark-plugin, google-colab-notebook, spicetify-themes, llm-webui, computer-music, project-planning, emails, pdf-to-text, quicklook-extension, music-ai, document-parser, reddit-api, relational-database, email-boilerplate, project-structure, music-programming, comment-system, document-analysis, markov-chain, mcp-client, responsive-email, toml, ollama-webui, data-generation, document-intelligence, sphinx-extension, ontology-engineering, pytest-plugin, docusaurus, spicetify-apps, docset, layout-analysis, fractal, sphinx, topic-models, topic, badge, link-aggregator, key-information-extraction, pdf-to-json, python-libraries, jsonresume, assistant-api, awesome-stars, starred, topic-modelling, automated-scraper, pdf-document-processor, ai-music-generator, gui-agents, llm-ui, pdf-extractor, rehype-plugin, poetry-plugin, bio-links, text-to-audio, semantic-scholar, shorten-urls, document-image-processing, knowledge-curation, graph-rag, aiagents, cursor-ai, assistant-computer-control, newsletter-management, document-recognition, ai-prompts, saas-starter, linkedin-profile, chainer, wakatime, yourls, tinyurl, shortener, urlshortener, document-image-analysis, document-parsing, sass-mixins, sass-library, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, Nextra, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-platform, report-generation, llm-powered-agents, llm-os, tdl-extension, scrapes-linkedin, deepresearch, wakatime-api, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, markwhen, free-deep-research, ai-web-scraper, text-to-music-transformer, ai-music-generation, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 345 more...</div>
                         </div>
                     </section>
                 </div>
