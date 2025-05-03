@@ -3090,7 +3090,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jeb5/YouTube-Subscriptions-RSS</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Generate an OPML file of RSS feeds for your YouTube subscriptions</div>
@@ -3137,7 +3137,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>azu/opml-to-markdown</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">[node.js]Convert OPML(Outline) to Markdown</div>
@@ -3190,7 +3190,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>imdj/opml-editor</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Online OPML editor and tools to view and manage feed lists easily</div>
@@ -3243,7 +3243,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>tj/git-extras</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">GIT utilities -- repo summary, repl, changelog population, author commit percentages and more</div>
@@ -3810,7 +3810,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 3 May 2025, 16:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 3 May 2025, 17:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
