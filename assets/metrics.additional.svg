@@ -75,7 +75,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>TensorBlock/awesome-mcp-servers</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A comprehensive collection of Model Context Protocol (MCP) servers</div>
@@ -122,7 +122,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>graphlit/graphlit-mcp-server</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Model Context Protocol (MCP) Server for Graphlit Platform</div>
@@ -175,7 +175,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>isaacphi/mcp-language-server</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Model Context Protocol (MCP) server that runs a Language Server</div>
@@ -235,7 +235,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">258</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 20
                                 <div class="bottom">Apr.</div>
