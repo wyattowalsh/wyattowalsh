@@ -3092,7 +3092,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>hanayik/CAM</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">macOS camera recording using ffmpeg</div>
@@ -3145,7 +3145,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ronantakizawa/gis-dataconversion-mcp</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An MCP server for converting GIS filetypes (100+ Downloads)</div>
@@ -3198,7 +3198,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>dhrbtjr0331/nba-stats-predictor-mcp</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP server of NBA stats predictor app that generates player performance forecasts using real-time data analysis and advanced statistical modeling</div>
@@ -3245,7 +3245,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bhj/KaraokeEternal</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open karaoke party system</div>
@@ -3480,32 +3480,14 @@
                             <section class="activity">
                                 <div class="field">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V5.372a2.25 2.25 0 111.5 0v1.836A2.492 2.492 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5zM3.5 3.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0z"/>
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
                                     </svg>
                                     <div class="content">
-                                        Created new
-                      branch
-                                        <span class="code">main</span>
-                                        in
-                                        <span class="repo">wyattowalsh/kickbench</span>
+                                        Starred
+                                        <span class="repo">AudioKit/AudioKitSynthOne</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 15:46:58</div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Created new
-                      repository
-                                        <span class="repo">wyattowalsh/kickbench</span>
-                                    </div>
-                                </div>
-                                <div class="timestamp">6 May 2025, 15:46:58</div>
+                                <div class="timestamp">6 May 2025, 16:38:53</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3516,10 +3498,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">abbysoft-team/Soompler</span>
+                                        <span class="repo">helio-fm/helio-sequencer</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 15:46:54</div>
+                                <div class="timestamp">6 May 2025, 16:38:43</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3530,10 +3512,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">getdunne/JUCE-AKSampler</span>
+                                        <span class="repo">stargatedaw/stargate</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 15:46:51</div>
+                                <div class="timestamp">6 May 2025, 16:38:36</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3544,10 +3526,24 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">NiklasWan/CTAG-JUCE-Sampler</span>
+                                        <span class="repo">izzyreal/vmpc-juce</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 15:46:47</div>
+                                <div class="timestamp">6 May 2025, 16:25:23</div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
+                                        <span class="repo">danigb/smplr</span>
+                                    </div>
+                                </div>
+                                <div class="timestamp">6 May 2025, 16:23:17</div>
                             </section>
                         </div>
                     </section>
@@ -3816,7 +3812,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 7 May 2025, 02:01:39 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 7 May 2025, 03:01:37 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
