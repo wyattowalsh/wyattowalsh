@@ -3084,7 +3084,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>hanayik/CAM</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">macOS camera recording using ffmpeg</div>
@@ -3137,7 +3137,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ronantakizawa/gis-dataconversion-mcp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An MCP server for converting GIS filetypes (100+ Downloads)</div>
@@ -3190,7 +3190,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>dhrbtjr0331/nba-stats-predictor-mcp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP server of NBA stats predictor app that generates player performance forecasts using real-time data analysis and advanced statistical modeling</div>
@@ -3237,7 +3237,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bhj/KaraokeEternal</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open karaoke party system</div>
@@ -3476,10 +3476,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">LadybirdBrowser/ladybird</span>
+                                        <span class="repo">tidalcycles/strudel</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 17:50:48</div>
+                                <div class="timestamp">6 May 2025, 22:17:38</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3490,10 +3490,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">GoogleCloudPlatform/kubectl-ai</span>
+                                        <span class="repo">Theodeus/tuna</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 17:50:37</div>
+                                <div class="timestamp">6 May 2025, 22:15:09</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3504,10 +3504,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">brodev3/antidetect</span>
+                                        <span class="repo">freeman-jiang/beatsync</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 17:48:16</div>
+                                <div class="timestamp">6 May 2025, 22:14:44</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3518,10 +3518,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">TheGP/untidetect-tools</span>
+                                        <span class="repo">jatinchowdhury18/KlonCentaur</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 17:48:11</div>
+                                <div class="timestamp">6 May 2025, 22:14:21</div>
                             </section>
                         </div>
                         <div class="row fill-width">
@@ -3532,10 +3532,10 @@
                                     </svg>
                                     <div class="content">
                                         Starred
-                                        <span class="repo">benkuper/Chataigne</span>
+                                        <span class="repo">Torsion-Audio/Scyclone</span>
                                     </div>
                                 </div>
-                                <div class="timestamp">6 May 2025, 17:27:19</div>
+                                <div class="timestamp">6 May 2025, 22:12:26</div>
                             </section>
                         </div>
                     </section>
@@ -3804,7 +3804,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 7 May 2025, 06:01:47 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 7 May 2025, 07:02:05 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
