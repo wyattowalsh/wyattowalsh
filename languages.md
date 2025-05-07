@@ -11,6 +11,7 @@
 - [C](#c)
 - [C#](#c#)
 - [C++](#c++)
+- [CMake](#cmake)
 - [CSS](#css)
 - [Clojure](#clojure)
 - [Crystal](#crystal)
@@ -90,6 +91,11 @@
 
 ## C 
 
+- [izzyreal/vmpc-juce](https://github.com/izzyreal/vmpc-juce) - JUCE implementation of VMPC2000XL
+- [mpv-player/mpv](https://github.com/mpv-player/mpv) - 🎥 Command line media player
+- [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg) - Mirror of https://git.ffmpeg.org/ffmpeg.git
+- [getdunne/JUCE-AKSampler](https://github.com/getdunne/JUCE-AKSampler) - AudioKit AKSampler wrapped as a JUCE app/plug-in
+- [iPlug2/iPlug2](https://github.com/iPlug2/iPlug2) - C++ Audio Plug-in Framework for desktop, mobile and web
 - [htop-dev/htop](https://github.com/htop-dev/htop) - htop - an interactive process viewer
 - [libfuse/sshfs](https://github.com/libfuse/sshfs) - A network filesystem client to connect to SSH servers
 - [folkertvanheusden/HTTPing](https://github.com/folkertvanheusden/HTTPing) - Ping an HTTP server
@@ -152,6 +158,20 @@
 
 ## C++ 
 
+- [LadybirdBrowser/ladybird](https://github.com/LadybirdBrowser/ladybird) - Truly independent web browser
+- [benkuper/Chataigne](https://github.com/benkuper/Chataigne) - Artist-friendly Modular Machine for Art and Technology
+- [monocasual/giada](https://github.com/monocasual/giada) - Your Hardcore Loop Machine.
+- [zrythm/zrythm](https://github.com/zrythm/zrythm) - a highly automated and intuitive digital audio workstation - official mirror
+- [spotify/pedalboard](https://github.com/spotify/pedalboard) - 🎛 🔊 A Python library for audio.
+- [helio-fm/helio-sequencer](https://github.com/helio-fm/helio-sequencer) - Libre music sequencer for desktop and mobile platforms
+- [sudara/melatonin_inspector](https://github.com/sudara/melatonin_inspector) - A JUCE module that gives you the ability to inspect and visually edit (non-destructively) components in your UI.
+- [jerryuhoo/Fire](https://github.com/jerryuhoo/Fire) - This is a mutiband distortion plugin.
+- [DBraun/DawDreamer](https://github.com/DBraun/DawDreamer) - Digital Audio Workstation with Python; VST instruments/effects, parameter automation, FAUST, JAX, Warp Markers, and JUCE processors
+- [DamRsn/NeuralNote](https://github.com/DamRsn/NeuralNote) - Audio Plugin for Audio to MIDI transcription using deep learning.
+- [BOBONA/Just-a-Sample](https://github.com/BOBONA/Just-a-Sample) - Just a Sample is a modern, open-source audio sampler
+- [abbysoft-team/Soompler](https://github.com/abbysoft-team/Soompler) - Soompler is JUCE based sampler VST and Standalone plugin for Linux, MacOS and Windows.
+- [NiklasWan/CTAG-JUCE-Sampler](https://github.com/NiklasWan/CTAG-JUCE-Sampler) - 
+- [juce-framework/JUCE](https://github.com/juce-framework/JUCE) - JUCE is an open-source cross-platform C++ application framework for desktop and mobile applications, including VST, VST3, AU, AUv3, LV2 and AAX audio plug-ins.
 - [transmission/transmission](https://github.com/transmission/transmission) - Official Transmission BitTorrent client repository
 - [kyleneideck/BackgroundMusic](https://github.com/kyleneideck/BackgroundMusic) - Background Music, a macOS audio utility: automatically pause your music, set individual apps' volumes and record system audio.
 - [Slackadays/Clipboard](https://github.com/Slackadays/Clipboard) - 😎🏖️🐬 Your new, 𝙧𝙞𝙙𝙤𝙣𝙠𝙪𝙡𝙞𝙘𝙞𝙤𝙪𝙨𝙡𝙮 smart clipboard manager
@@ -222,6 +242,10 @@
 - [shogun-toolbox/shogun](https://github.com/shogun-toolbox/shogun) - Shōgun
 - [tensorflow/tensorflow](https://github.com/tensorflow/tensorflow) - An Open Source Machine Learning Framework for Everyone
 - [MTG/essentia](https://github.com/MTG/essentia) - C++ library for audio and music analysis, description and synthesis, including Python bindings
+
+## CMake 
+
+- [McMartin/FRUT](https://github.com/McMartin/FRUT) - Building JUCE projects using CMake made easy
 
 ## CSS 
 
@@ -301,6 +325,7 @@
 
 ## Dart 
 
+- [jhgaylor/me_mcp_server](https://github.com/jhgaylor/me_mcp_server) - 
 - [GopeedLab/gopeed](https://github.com/GopeedLab/gopeed) - A modern download manager that supports all platforms.  Built with Golang and Flutter.
 - [KRTirtho/spotube](https://github.com/KRTirtho/spotube) - 🎧 Open source music client! Available for both desktop & mobile!
 - [AppFlowy-IO/AppFlowy](https://github.com/AppFlowy-IO/AppFlowy) - Bring projects, wikis, and teams together with AI. AppFlowy is the AI collaborative workspace where you achieve more without losing control of your data. The leading open source Notion alternative.
@@ -328,6 +353,8 @@
 
 ## Go 
 
+- [GoogleCloudPlatform/kubectl-ai](https://github.com/GoogleCloudPlatform/kubectl-ai) - AI powered Kubernetes Assistant
+- [cploutarchou/mcp-servers](https://github.com/cploutarchou/mcp-servers) - Production-ready Model Context Protocol (MCP) servers in Python, Go, and Rust for VS Code integration. Enables AI systems to interact with tools via standardized interfaces.
 - [bslatkin/tweeps2opml](https://github.com/bslatkin/tweeps2opml) - Get the RSS feeds of all of my Twitter friends
 - [jojomi/github-opml](https://github.com/jojomi/github-opml) - Create an opml file with references to all repositories starred by a GitHub user
 - [nishanths/license](https://github.com/nishanths/license) - Command line license text generator.
@@ -425,6 +452,7 @@
 
 ## HTML 
 
+- [Shakil-Shahadat/awesome-piracy](https://github.com/Shakil-Shahadat/awesome-piracy) - A curated list of awesome warez and piracy links.
 - [docker/labs-ai-tools-for-devs](https://github.com/docker/labs-ai-tools-for-devs) - Your trusted home for discovering MCP tools – seamlessly integrated into Docker
 - [Igglybuff/awesome-piracy](https://github.com/Igglybuff/awesome-piracy) - A curated list of awesome warez and piracy links
 - [whatwg/html](https://github.com/whatwg/html) - HTML Standard
@@ -598,6 +626,17 @@
 
 ## JavaScript 
 
+- [brodev3/antidetect](https://github.com/brodev3/antidetect) - A console application with a simple user interface for managing and working with browser profiles with anti-detection protection.
+- [serversideup/amplitudejs](https://github.com/serversideup/amplitudejs) - AmplitudeJS: Open Source HTML5 Web Audio Library. Design your web audio player, the way you want. No dependencies required.
+- [goldfire/howler.js](https://github.com/goldfire/howler.js) - Javascript audio library for the modern web.
+- [hvianna/audioMotion.js](https://github.com/hvianna/audioMotion.js) - Media player and real-time audio spectrum analyzer written in JavaScript.
+- [hvianna/audioMotion-analyzer](https://github.com/hvianna/audioMotion-analyzer) - High-resolution real-time graphic audio spectrum analyzer JavaScript module with no dependencies.
+- [fofr/waveformer](https://github.com/fofr/waveformer) - Text to waveform video using MusicGen
+- [liuchongchong1995/nodejs](https://github.com/liuchongchong1995/nodejs) - 
+- [priyankark/a11y-mcp](https://github.com/priyankark/a11y-mcp) - An MCP (Model Context Protocol) server for performing accessibility audits on webpages using axe-core. Use the results in an agentic loop with your favorite AI assistants (Cline/Cursor/GH Copilot) and
+- [aui/font-spider](https://github.com/aui/font-spider) - Smart webfont compression and format conversion tool
+- [openbnb-org/mcp-server-airbnb](https://github.com/openbnb-org/mcp-server-airbnb) - 
+- [matthewdcage/cursor-mcp-installer](https://github.com/matthewdcage/cursor-mcp-installer) - Installs MCPs in cursor for you, give it a git URL and let it rip
 - [RikGmee/google-map-mcp](https://github.com/RikGmee/google-map-mcp) - 
 - [merklefruit/Stargazer](https://github.com/merklefruit/Stargazer) - A Simple CLI tool to monitor GitHub stars, watchers and forks of any repository
 - [AgentDeskAI/browser-tools-mcp](https://github.com/AgentDeskAI/browser-tools-mcp) - Monitor browser logs directly from Cursor and other MCP compatible IDEs.
@@ -1336,6 +1375,8 @@
 
 ## Jupyter Notebook 
 
+- [Zilch123/deepsvg-colab](https://github.com/Zilch123/deepsvg-colab) - This is a clone repo Deep-svg is made Colab compatible.
+- [magenta/magenta-demos](https://github.com/magenta/magenta-demos) - Demonstrations of Magenta Models
 - [DataExpert-io/data-engineer-handbook](https://github.com/DataExpert-io/data-engineer-handbook) - This is a repo with links to everything you'd ever want to learn about data engineering
 - [bloc97/Anime4K](https://github.com/bloc97/Anime4K) - A High-Quality Real Time Upscaler for Anime Video
 - [AnswerDotAI/llms-txt](https://github.com/AnswerDotAI/llms-txt) - The /llms.txt file, helping language models use your website
@@ -1598,6 +1639,7 @@
 
 ## Objective-C 
 
+- [keycastr/keycastr](https://github.com/keycastr/keycastr) - KeyCastr, an open-source keystroke visualizer
 - [sozercan/OpenInCode](https://github.com/sozercan/OpenInCode) - :open_file_folder: macOS Finder toolbar app to open current folder in Visual Studio Code
 - [sequelpro/sequelpro](https://github.com/sequelpro/sequelpro) - MySQL/MariaDB database management for macOS
 - [gnachman/iTerm2](https://github.com/gnachman/iTerm2) - iTerm2 is a terminal emulator for Mac OS X that does amazing things.
@@ -1612,6 +1654,12 @@
 
 ## Others 
 
+- [TheGP/untidetect-tools](https://github.com/TheGP/untidetect-tools) - List of anti-detect and humanizing tools and browsers, including captcha solvers and sms-activation.
+- [JupiteRSoStrong/MCP-Manager-GUI](https://github.com/JupiteRSoStrong/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.
+- [BjornMelin/unified-knowledge-system](https://github.com/BjornMelin/unified-knowledge-system) - A comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities
+- [gabrielbacha/MCP-Manager-GUI](https://github.com/gabrielbacha/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.
+- [legendyxu/AwesomeCursorPrompt](https://github.com/legendyxu/AwesomeCursorPrompt) - A curated collection of specialized prompts inside Cursor Composer to supercharge your Cursor AI development experience \
+- [kleosr/cursorkleosr](https://github.com/kleosr/cursorkleosr) - Cursor IDE: Unleash Lightning-Fast Automation
 - [tbridge/macadminblogs-opml](https://github.com/tbridge/macadminblogs-opml) - An OPML File Full of Mac Blogs
 - [sturobson/myRSS](https://github.com/sturobson/myRSS) - a copy of my RSS feeds in a handy .opml file
 - [phretor/infosec-opml](https://github.com/phretor/infosec-opml) - My very personal and opinionatedly organized infosec/cybersec sources in one OPML file
@@ -2153,6 +2201,32 @@
 
 ## Python 
 
+- [stargatedaw/stargate](https://github.com/stargatedaw/stargate) - Innovation-first digital audio workstation (DAW), instrument and effect plugins, wave editor
+- [Escorza07/whatsapp-mcp](https://github.com/Escorza07/whatsapp-mcp) - 
+- [leshchenko1979/tg_mcp](https://github.com/leshchenko1979/tg_mcp) - Telegram MCP Server - now you can talk to your Telegram from Cursor
+- [kousunh/alertmcp](https://github.com/kousunh/alertmcp) - 
+- [sudhakarmlal/ERAV3-GMAILMCP](https://github.com/sudhakarmlal/ERAV3-GMAILMCP) - 
+- [Anjok07/ultimatevocalremovergui](https://github.com/Anjok07/ultimatevocalremovergui) - GUI for a Vocal Remover that uses Deep Neural Networks.
+- [jordanperr/mcp-experiments](https://github.com/jordanperr/mcp-experiments) - This project provides an MCP (Model Context Protocol) server that allows LLMs to perform actions to control a Mac desktop computer using bash and AppleScript.
+- [angrysky56/ast-mcp-server](https://github.com/angrysky56/ast-mcp-server) - AST/ASG Code Analysis MCP Server
+- [tumf/fastmcp-gsuite](https://github.com/tumf/fastmcp-gsuite) - 
+- [sanxxit/AWS-cost-explorer-with-MCP-server](https://github.com/sanxxit/AWS-cost-explorer-with-MCP-server) - 
+- [sanxxit/my-aws-cost-explorer](https://github.com/sanxxit/my-aws-cost-explorer) - 
+- [hipposys-ltd/airflow-mcp](https://github.com/hipposys-ltd/airflow-mcp) - 
+- [oddlyspaced/ultimate-android-mcp](https://github.com/oddlyspaced/ultimate-android-mcp) - Feature rich Model Context Protocol (MCP) Server to let LLMs automate connected Android devices/emulators.
+- [nolleh/kickstart-mcp](https://github.com/nolleh/kickstart-mcp) - 🚀 Kickstart-mcp is tutorial for using mcp, making your own mcp server/client. We'll guide you through every step of your MCP journey
+- [shivdeepak/mcp-sniffer](https://github.com/shivdeepak/mcp-sniffer) - MCP Sniffer captures network traffic between MCP clients and servers and displays it in a web UI.
+- [mcp-use/mcp-use](https://github.com/mcp-use/mcp-use) - mcp-use is the easiest way to interact with mcp servers with custom agents
+- [rodolphebarbanneau/appdog](https://github.com/rodolphebarbanneau/appdog) - Compose and generate effortlessly MCP servers from any OpenAPI specifications
+- [joanrod/star-vector](https://github.com/joanrod/star-vector) - StarVector is a foundation model for SVG generation that transforms vectorization into a code generation task. Using a vision-language modeling architecture, StarVector processes both visual and textu
+- [ximinng/SVGDreamer](https://github.com/ximinng/SVGDreamer) - [CVPR 2024] Official implementation for "SVGDreamer: Text Guided SVG Generation with Diffusion Model" https://arxiv.org/abs/2312.16476
+- [kingnobro/IconShop](https://github.com/kingnobro/IconShop) - (Siggraph Asia 2023) Code of "IconShop: Text-Guided Vector Icon Synthesis with Autoregressive Transformers"
+- [ximinng/LLM4SVG](https://github.com/ximinng/LLM4SVG) - [CVPR 2025] Official implementation for "Empowering LLMs to Understand and Generate Complex Vector Graphics" https://arxiv.org/abs/2412.11102
+- [OmniSVG/OmniSVG](https://github.com/OmniSVG/OmniSVG) - OmniSVG is the first family of end-to-end multimodal SVG generators that leverage pre-trained Vision-Language Models (VLMs), capable of generating complex and detailed SVGs, from simple icons to intri
+- [TheWebScrapingClub/AI-Cursor-Scraping-Assistant](https://github.com/TheWebScrapingClub/AI-Cursor-Scraping-Assistant) - A powerful tool that leverages Cursor AI and MCP (Model Context Protocol) to easily generate web scrapers for various types of websites.
+- [Dror-Bengal/CursorFocus](https://github.com/Dror-Bengal/CursorFocus) - A lightweight tool that maintains a focused view of your project structure and environment. CursorFocus automatically tracks your project files, functions, and environment variables, updating every 60
+- [sanjeed5/awesome-cursor-rules-mdc](https://github.com/sanjeed5/awesome-cursor-rules-mdc) - Curated list of awesome Cursor Rules .mdc files
+- [sparesparrow/mcp-project-orchestrator](https://github.com/sparesparrow/mcp-project-orchestrator) - Analyze user input to identify suitable design patterns and project templates. Orchestrate the project, creating initial files from templates.
 - [Kaggle/kagglehub](https://github.com/Kaggle/kagglehub) - Python library to access Kaggle resources
 - [leonhardholz/mcp-openweathermap](https://github.com/leonhardholz/mcp-openweathermap) - 
 - [ChandekarDhruvin/claude-openweather-mcp](https://github.com/ChandekarDhruvin/claude-openweather-mcp) - 
@@ -2656,7 +2730,7 @@
 - [OS-Copilot/OS-Atlas](https://github.com/OS-Copilot/OS-Atlas) - OS-ATLAS: A Foundation Action Model For Generalist GUI Agents
 - [OSU-NLP-Group/GUI-Agents-Paper-List](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List) - Building a comprehensive and handy list of papers for GUI agents
 - [OSU-NLP-Group/SeeAct](https://github.com/OSU-NLP-Group/SeeAct) - [ICML'24] SeeAct is a system for generalist web agents that autonomously carry out tasks on any given website, with a focus on large multimodal models (LMMs) such as GPT-4V(ision).
-- [stableagents/stableagents](https://github.com/stableagents/stableagents) - A framework for LLM's that works as a GPS to reduce hallucinations in production [WIP] - The Linux Kernel for Agents
+- [stableagents/stableagents](https://github.com/stableagents/stableagents) - Text-to-Agent SDK. Build any agent using Natural Language
 - [simular-ai/OpenACI](https://github.com/simular-ai/OpenACI) - Open Agent Computer Interface
 - [simular-ai/Agent-S](https://github.com/simular-ai/Agent-S) - Agent S: an open agentic framework that uses computers like a human
 - [OpenInterpreter/open-interpreter](https://github.com/OpenInterpreter/open-interpreter) - A natural language interface for computers
@@ -3611,6 +3685,7 @@
 
 ## Ruby 
 
+- [sudara/awesome-juce](https://github.com/sudara/awesome-juce) - A curated list of JUCE modules, templates, plugins, oh my!
 - [hartator/wayback-machine-downloader](https://github.com/hartator/wayback-machine-downloader) - Download an entire website from the Wayback Machine.
 - [huginn/huginn_agent](https://github.com/huginn/huginn_agent) - Base for creating new Huginn Agents as Gems
 - [huginn/huginn](https://github.com/huginn/huginn) - Create agents that monitor and act on your behalf.  Your agents are standing by!
@@ -3643,6 +3718,9 @@
 
 ## Rust 
 
+- [robbert-vdh/nih-plug](https://github.com/robbert-vdh/nih-plug) - Rust VST3 and CLAP plugin framework and plugins - because everything is better when you do it yourself
+- [chaosprint/dattorro-vst-rs](https://github.com/chaosprint/dattorro-vst-rs) - Dattorro reverb VST plugin written in Rust with egui and glicol_synth
+- [chaosprint/glicol](https://github.com/chaosprint/glicol) - Graph-oriented live coding language and music/audio DSP library written in Rust
 - [hamflx/imagen3-mcp](https://github.com/hamflx/imagen3-mcp) - 
 - [ClementTsang/bottom](https://github.com/ClementTsang/bottom) - Yet another cross-platform graphical process/system monitor.
 - [orf/gping](https://github.com/orf/gping) - Ping, but with a graph
@@ -3814,6 +3892,9 @@
 
 ## Swift 
 
+- [AudioKit/AudioKitSynthOne](https://github.com/AudioKit/AudioKitSynthOne) - AudioKit Synth One: Open-Source iOS Synthesizer App
+- [leits/MeetingBar](https://github.com/leits/MeetingBar) - 🇺🇦 Your meetings at your fingertips in the macOS menu bar
+- [rxhanson/Rectangle](https://github.com/rxhanson/Rectangle) - Move and resize windows on macOS with keyboard shortcuts and snap areas
 - [Ranchero-Software/NetNewsWire](https://github.com/Ranchero-Software/NetNewsWire) - RSS reader for macOS and iOS.
 - [keith/reminders-cli](https://github.com/keith/reminders-cli) - A simple CLI for interacting with macOS reminders
 - [utmapp/UTM](https://github.com/utmapp/UTM) - Virtual machines for iOS and macOS
@@ -3889,6 +3970,36 @@
 
 ## TypeScript 
 
+- [danigb/smplr](https://github.com/danigb/smplr) - A web audio sampler instrument
+- [TheGP/Imposter](https://github.com/TheGP/Imposter) - The most powerful helper class to make human-like actions with Puppeteer
+- [katspaugh/wavesurfer.js](https://github.com/katspaugh/wavesurfer.js) - Audio waveform player
+- [operation-hp/WA-MCP](https://github.com/operation-hp/WA-MCP) - MCP client for Whatsapp
+- [theo-nash/twitter-mcp-server](https://github.com/theo-nash/twitter-mcp-server) - Model Context Protocol implementation for twitter interactions
+- [Tonejs/Tone.js](https://github.com/Tonejs/Tone.js) - A Web Audio framework for making interactive music in the browser.
+- [davidleathers113/typescript-analyzer-mcp](https://github.com/davidleathers113/typescript-analyzer-mcp) - Analyze and fix any types in TypeScript with an intelligent MCP server – fast, extensible, and React-aware.
+- [bocchiczennie/aws-monthly-cost-report-mcp-server](https://github.com/bocchiczennie/aws-monthly-cost-report-mcp-server) - 
+- [supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp) - Connect Supabase to your AI assistants
+- [yoda-digital/horologic-mcp](https://github.com/yoda-digital/horologic-mcp) - 
+- [trevhud/vibe-mcp](https://github.com/trevhud/vibe-mcp) - 
+- [cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) - A Model Context Protocol (MCP) server that provides Xcode-related tools for integration with AI assistants and other MCP clients.
+- [supabase/supabase-js](https://github.com/supabase/supabase-js) - An isomorphic Javascript client for Supabase. Query your Supabase database, subscribe to realtime events, upload and download files, browse typescript examples, invoke postgres functions via rpc, invo
+- [mikechao/artic-mcp](https://github.com/mikechao/artic-mcp) - A Model Context Protocol (MCP) server that provides access to the Art Institute of Chicago Collection through natural language interactions. This server allows AI models to search the Art Institute of
+- [zxypro1/openapi-to-mcp-converter](https://github.com/zxypro1/openapi-to-mcp-converter) - A tool for automatically converting OpenAPI specifications into Model Context Protocol (MCP) Server instance
+- [Go-To-Sea/mcp-directory](https://github.com/Go-To-Sea/mcp-directory) - discover MCP Servers and Clients for Claude Integration
+- [felipfr/linkedin-mcpserver](https://github.com/felipfr/linkedin-mcpserver) - A powerful Model Context Protocol server for LinkedIn API integration
+- [mjherich/memory-visualizer](https://github.com/mjherich/memory-visualizer) - Interactive visualizer for Anthropic's Memory MCP knowledge graphs. Instantly explore, debug, and analyze entities, relations, and observations from memory.json files in the Model Context Protocol.
+- [nbonamy/witsy](https://github.com/nbonamy/witsy) - Witsy: desktop AI assistant / universal MCP client
+- [sotayamashita/openapi-mcp-server](https://github.com/sotayamashita/openapi-mcp-server) - Powerful bridge between OpenAPI specifications and AI assistants using the Model Context Protocol (MCP). Automatically converts any OpenAPI/Swagger API specification into MCP tools that can be used by
+- [dandeliongold/mcp-config-editor](https://github.com/dandeliongold/mcp-config-editor) - MCP (Model Context Protocol) Configuration Editor
+- [gabrimatic/mcp-web-search-tool](https://github.com/gabrimatic/mcp-web-search-tool) - A MCP server providing real-time web search capabilities to any AI model.
+- [kadykov/mcp-openapi-schema-explorer](https://github.com/kadykov/mcp-openapi-schema-explorer) - MCP server providing token-efficient access to OpenAPI/Swagger specs via MCP Resources for client-side exploration.
+- [vilasone455/vscode-context-mcp](https://github.com/vilasone455/vscode-context-mcp) - MCP Server to Connect with VS Code IDE
+- [shuakami/mcp-ssh](https://github.com/shuakami/mcp-ssh) - 🔐 SSH MCP Tool - AI-powered SSH management through MCP protocol | 基于MCP协议的SSH工具，为AI提供SSH远程操作能力
+- [ryoppippi/curxy](https://github.com/ryoppippi/curxy) - Simple proxy worker for using ollama in cursor
+- [hamidra/yamcp](https://github.com/hamidra/yamcp) - Organize your MCP servers in local workspaces, share them as Yet-Another-MCP through a single command
+- [marcusschiesser/mcp-config](https://github.com/marcusschiesser/mcp-config) - A CLI tool for easy installation of MCP servers and managing their configuration
+- [aloshy-ai/smithery-registry-mcp](https://github.com/aloshy-ai/smithery-registry-mcp) - MCP server for interacting with the Smithery Registry API
+- [adrianomelo/cursor-project-rules](https://github.com/adrianomelo/cursor-project-rules) - 
 - [seladb/StarTrack-js](https://github.com/seladb/StarTrack-js) - GitHub star history and stats - based on JavaScript only!
 - [Shopify/dev-mcp](https://github.com/Shopify/dev-mcp) - Shopify.dev MCP server
 - [enomoto11/aws-cost-notifier-mcp-server](https://github.com/enomoto11/aws-cost-notifier-mcp-server) - AWS Cost Notifier MCP Server - Daily AWS cost monitoring and reporting tool
