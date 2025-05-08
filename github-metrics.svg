@@ -43,7 +43,7 @@
                                     <rect class="day" x="150" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
                                     <rect class="day" x="165" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
                                     <rect class="day" x="180" y="0" width="11" height="11" fill="#9be9a8" rx="2" ry="2"/>
-                                    <rect class="day" x="195" y="0" width="11" height="11" fill="#30a14e" rx="2" ry="2"/>
+                                    <rect class="day" x="195" y="0" width="11" height="11" fill="#216e39" rx="2" ry="2"/>
                                 </g>
                             </svg>
                         </div>
@@ -3063,7 +3063,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>qingsongedu/awesome-AI-for-time-series-papers</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A professional list of Papers, Tutorials, and Surveys on AI for Time Series in top AI conferences and journals.</div>
@@ -3216,7 +3216,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Textualize/rich</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Rich is a Python library for rich text and beautiful formatting in the terminal.</div>
@@ -3786,7 +3786,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 8 May 2025, 14:01:45 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 8 May 2025, 14:51:30 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
