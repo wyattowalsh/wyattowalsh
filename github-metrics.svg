@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2212" class="columns">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="2265" class="columns">
     <defs>
         <style/>
     </defs>
@@ -3840,7 +3840,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                                 <path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>
                             </svg>
                             From
-                            <span class="blue space">wyattowalsh/context</span>
+                            <span class="blue space">wyattowalsh/sketchlab</span>
                         </div>
                     </section>
                     <section class="largeable-column-fields">
@@ -3848,7 +3848,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.557-1.392L8.5 7.742V4.75z"/>
                             </svg>
-                            On 8 May 2025, 22:25:39
+                            On 8 May 2025, 07:22:38
                         </div>
                     </section>
                 </div>
@@ -3858,16 +3858,22 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
                             </svg>
-                            Initialize project structure with essential files including .gitignore, Python version specification, Makefile, pyproject.toml, and README. Add context modules and various UI components for documentation. Include test files for API, CLI, context, enums, models, server, and utilities.
+                            Update docs to follow Fumadocs standards
+
+
+
+---
+
+For more details, open the [Copilot Workspace session](https://copilot-workspace.githubnext.com/wyattowalsh/sketchlab?shareId=XXXX-XXXX-XXXX-XXXX).
                         </div>
                         <div class="field">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
-                            <span class="code">4e76796f</span>
-                            <span class="code">docs/content/docs/examples/api.mdx</span>
+                            <span class="code">22b81f77</span>
+                            <span class="code">docs/app/api/search/route.ts</span>
                             <span class="code">
-                                <span class="snippet additions">++7</span>
+                                <span class="snippet additions">++11</span>
                                 <span class="snippet deletions">--0</span>
                             </span>
                         </div>
@@ -3876,7 +3882,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,7 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">---<br /></span><span class="token prefix inserted">+</span><span class="token line">title: API<br /></span><span class="token prefix inserted">+</span><span class="token line">description: examples of using context via the API<br /></span><span class="token prefix inserted">+</span><span class="token line">icon: SiFastapi<br /></span><span class="token prefix inserted">+</span><span class="token line">---<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span></span></code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,11 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import { source } from '@/lib/source';<br /></span><span class="token prefix inserted">+</span><span class="token line">import { createFromSource } from 'fumadocs-core/search/server';<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span><span class="token line">export const { GET } = createFromSource(source, {<br /></span><span class="token prefix inserted">+</span><span class="token line"> // Enhance search functionality for accurate and relevant results<br /></span><span class="token prefix inserted">+</span><span class="token line"> searchOptions: {<br /></span><span class="token prefix inserted">+</span><span class="token line">   highlight: true,<br /></span><span class="token prefix inserted">+</span><span class="token line">   snippetLength: 100,<br /></span><span class="token prefix inserted">+</span><span class="token line">   maxResults: 20,<br /></span><span class="token prefix inserted">+</span><span class="token line"> },<br /></span><span class="token prefix inserted">+</span><span class="token line">});</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -3943,7 +3949,7 @@ For more details, open the [Copilot Workspace session](https://copilot-workspace
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 10 May 2025, 10:01:34 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 10 May 2025, 11:01:39 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
