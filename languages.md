@@ -91,6 +91,17 @@
 
 ## C 
 
+- [SafeExamBrowser/seb-mac](https://github.com/SafeExamBrowser/seb-mac) - Safe Exam Browser for macOS and iOS
+- [GNOME/gimp](https://github.com/GNOME/gimp) - Read-only mirror of https://gitlab.gnome.org/GNOME/gimp
+- [surge-synthesizer/shortcircuit-xt](https://github.com/surge-synthesizer/shortcircuit-xt) - Will be a sampler when its done!
+- [FigBug/Voc](https://github.com/FigBug/Voc) - 
+- [surge-synthesizer/surge](https://github.com/surge-synthesizer/surge) - Synthesizer plug-in (previously released as Vember Audio Surge)
+- [adamski/stk_wrapper](https://github.com/adamski/stk_wrapper) - JUCE wrapper module for the Synthesis ToolKit (STK) C++ project
+- [hollance/mda-plugins-juce](https://github.com/hollance/mda-plugins-juce) - JUCE implementations of the classic MDA audio plug-ins
+- [ArdenButterfield/Maim](https://github.com/ArdenButterfield/Maim) - Audio plugin for custom MP3 distortion and digital glitches
+- [Archie3d/juce_litehtml](https://github.com/Archie3d/juce_litehtml) - Litehtml HTML/CSS rendering engine with JUCE backend.
+- [plugdata-team/plugdata](https://github.com/plugdata-team/plugdata) - Pure Data as a plugin, with a new GUI
+- [SquarePine/squarepine_core](https://github.com/SquarePine/squarepine_core) - Exceptional JUCE/C++ modules that accelerate app and plugin development.
 - [izzyreal/vmpc-juce](https://github.com/izzyreal/vmpc-juce) - JUCE implementation of VMPC2000XL
 - [mpv-player/mpv](https://github.com/mpv-player/mpv) - 🎥 Command line media player
 - [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg) - Mirror of https://git.ffmpeg.org/ffmpeg.git
@@ -107,7 +118,7 @@
 - [karlstav/cava](https://github.com/karlstav/cava) - Cross-platform Audio Visualizer
 - [bilibili/ijkplayer](https://github.com/bilibili/ijkplayer) - Android/iOS video player based on FFmpeg n3.4, with MediaCodec, VideoToolbox support.
 - [xroche/httrack](https://github.com/xroche/httrack) - HTTrack Website Copier, copy websites to your computer (Official repository)
-- [redis/redis](https://github.com/redis/redis) - Redis is an in-memory database that persists on disk. The data model is key-value, but many different kind of values are supported: Strings, Lists, Sets, Sorted Sets, Hashes, Streams, HyperLogLogs, Bi
+- [redis/redis](https://github.com/redis/redis) - For developers, who are building real-time data-driven applications, Redis is the preferred, fastest, and most feature-rich cache, data structure server, and document and vector query engine.
 - [henrypp/memreduct](https://github.com/henrypp/memreduct) - Lightweight real-time memory management application to monitor and clean system memory on your computer.
 - [3proxy/3proxy](https://github.com/3proxy/3proxy) - 3proxy - tiny free proxy server
 - [haiwen/seafile](https://github.com/haiwen/seafile) - High performance file syncing and sharing, with also Markdown WYSIWYG editing, Wiki, file label and other knowledge management features.
@@ -137,7 +148,6 @@
 - [Bluegrams/Vividl](https://github.com/Bluegrams/Vividl) - Modern Windows GUI for youtube-dl/ yt-dlp
 - [shaked6540/YoutubePlaylistDownloader](https://github.com/shaked6540/YoutubePlaylistDownloader) - A tool to download whole playlists, channels or single videos from youtube and also optionally convert them to almost any format you would like
 - [Tyrrrz/YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) - Abstraction layer over YouTube's internal API
-- [subhra74/xdm](https://github.com/subhra74/xdm) - Powerfull download accelerator and video downloader
 - [libgenapps/LibgenDesktop](https://github.com/libgenapps/LibgenDesktop) - 
 - [Tyrrrz/YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader) - Downloads videos and playlists from YouTube
 - [microsoft/Document-Knowledge-Mining-Solution-Accelerator](https://github.com/microsoft/Document-Knowledge-Mining-Solution-Accelerator) - Solution accelerator built on Azure OpenAI Service and Azure AI Document Intelligence to process and extract summaries, entities, and metadata from unstructured, multi-modal documents and enable searc
@@ -158,6 +168,109 @@
 
 ## C++ 
 
+- [telegramdesktop/tdesktop](https://github.com/telegramdesktop/tdesktop) - Telegram Desktop messaging app
+- [sqlitebrowser/sqlitebrowser](https://github.com/sqlitebrowser/sqlitebrowser) - Official home of the DB Browser for SQLite (DB4S) project. Previously known as "SQLite Database Browser" and "Database Browser for SQLite". Website at:
+- [RedisInsight/RedisDesktopManager](https://github.com/RedisInsight/RedisDesktopManager) - 
+- [Studio3T/robomongo](https://github.com/Studio3T/robomongo) - Native cross-platform MongoDB management tool
+- [hydrogen-music/hydrogen](https://github.com/hydrogen-music/hydrogen) - The advanced drum machine for Linux, macOS, and Windows
+- [DanielRudrich/BeatAligningGuitarLooper](https://github.com/DanielRudrich/BeatAligningGuitarLooper) - A guitar looper which detects the tempo and plays along a rudimentary drumbeat. It also aligns start and stop of the loop to the nearest beats.
+- [w-frank/juce-string-model](https://github.com/w-frank/juce-string-model) - Realistic string instrument model using physical modelling. Includes a delay line to create echo patterns in the stereo sound field.
+- [jsvaldezv/duck-synth](https://github.com/jsvaldezv/duck-synth) - A JUCE-based C++ synthesizer plugin implementing basic additive synthesis with two oscillators, ADSR envelope, waveform selection (sine, square, triangle), reverb effect, and output volume control.
+- [mohragk/VermeerMonosynth-1](https://github.com/mohragk/VermeerMonosynth-1) - A mono VST synthesizer, made with the Juce framework.
+- [mariusz96/blue-synthesiser](https://github.com/mariusz96/blue-synthesiser) - My bachelor's thesis "Sound synthesis based on audio samples as an VST3 instrument" in C++ and JUCE
+- [SilvinWillemsen/BowedStringJUCE](https://github.com/SilvinWillemsen/BowedStringJUCE) - 
+- [w-frank/juce-synth](https://github.com/w-frank/juce-synth) - A MIDI controlled subtractive synthesiser built using the JUCE audio application framework and Maximillian audio synthesis and signal processing library.
+- [Emmet-Hayes/BatSynth](https://github.com/Emmet-Hayes/BatSynth) - A polyphonic synthesizer with two oscillators implemented in C++ (with JUCE)
+- [FigBug/RP2A03](https://github.com/FigBug/RP2A03) - RP2A03 vst synth
+- [getdunne/SARAH](https://github.com/getdunne/SARAH) - Harmonic-analysis based synthesizer built with JUCE 5.1
+- [jpcima/Hera](https://github.com/jpcima/Hera) - Juno 60 emulation synthesizer
+- [FigBug/SN76489](https://github.com/FigBug/SN76489) - Sega Master System Sound Chip VST / AU emulation
+- [FigBug/SID](https://github.com/FigBug/SID) - 
+- [khrykin/BlackBird](https://github.com/khrykin/BlackBird) - AU/VST3 Synth built with JUCE
+- [Archie3d/aeolus_plugin](https://github.com/Archie3d/aeolus_plugin) - Pipe organ synthesizer (VST plugin)
+- [reales/OB-Xd](https://github.com/reales/OB-Xd) - Virtual Analog Oberheim based synthesizer.
+- [gregrecco67/AudiblePlanets](https://github.com/gregrecco67/AudiblePlanets) - An expressive, quasi-Ptolemaic semi-modular synthesizer.
+- [FigBug/Wavetable](https://github.com/FigBug/Wavetable) - Wavetable synth
+- [Chowdhury-DSP/ChowKick](https://github.com/Chowdhury-DSP/ChowKick) - Kick synthesizer based on old-school drum machine circuits
+- [Birch-san/juicysfplugin](https://github.com/Birch-san/juicysfplugin) - Audio plugin (e.g. VST, AU) to play soundfonts on macOS, Windows, Linux
+- [paynebc/tunefish](https://github.com/paynebc/tunefish) - Tunefish virtual analog synthesizer
+- [tiagolr/ripplerx](https://github.com/tiagolr/ripplerx) - A physically modeled synth
+- [yokemura/Magical8bitPlug2](https://github.com/yokemura/Magical8bitPlug2) - 
+- [surge-synthesizer/monique-monosynth](https://github.com/surge-synthesizer/monique-monosynth) - Monique monosynth
+- [jpcima/ADLplug](https://github.com/jpcima/ADLplug) - FM Chip Synthesizer — OPL & OPN — VST/LV2/Standalone
+- [jameshball/osci-render](https://github.com/jameshball/osci-render) - 〰📺🔊 Synthesiser audio plugin for making music by drawing objects on an oscilloscope using audio.
+- [TheWaveWarden/odin2](https://github.com/TheWaveWarden/odin2) - Odin 2 Synthesizer Plugin
+- [mtytel/vital](https://github.com/mtytel/vital) - Spectral warping wavetable synth
+- [mtytel/helm](https://github.com/mtytel/helm) - Helm - a free polyphonic synth with lots of modulation
+- [asb2m10/dexed](https://github.com/asb2m10/dexed) - DX7 FM multi plaform/multi format plugin
+- [BespokeSynth/BespokeSynth](https://github.com/BespokeSynth/BespokeSynth) - Software modular synth
+- [nberr/juce-template](https://github.com/nberr/juce-template) - Template for JUCE plugins
+- [ellapollack/juce-plugin-ci](https://github.com/ellapollack/juce-plugin-ci) - DEPRECATED: Cross-platform CI for JUCE audio plugins with Github Actions
+- [tomoyanonymous/juce_cmake_vscode_example](https://github.com/tomoyanonymous/juce_cmake_vscode_example) - A boilerplate for developing audio plugins with JUCE & CMake & VSCode
+- [ncblair/NTHN_TEMPLATE_PLUGIN](https://github.com/ncblair/NTHN_TEMPLATE_PLUGIN) - a starting point for real-time safe JUCE plugins
+- [Torsion-Audio/nn-inference-template](https://github.com/Torsion-Audio/nn-inference-template) - Neural network inference template for real-time cricital audio environments - presented at ADC23
+- [ImJimmi/JUMP](https://github.com/ImJimmi/JUMP) - A JUCE-module-formatted c++ library containing a variety of useful classes and APIs for building audio plugins and other applications with JUCE.
+- [spensbot/stm-juce-modules](https://github.com/spensbot/stm-juce-modules) - My Personal Collection of Modules for use with the Juce Audio Application Framework.
+- [ElandaSunshine/Jaut](https://github.com/ElandaSunshine/Jaut) - A simple and powerful JUCE module-bundle that adds several new packages for different day-to-day things.
+- [kushview/kv-juce](https://github.com/kushview/kv-juce) - KV Modules
+- [christofmuc/juce-utils](https://github.com/christofmuc/juce-utils) - C++ classes with functionality I subjectively would have liked to find in JUCE - maybe it can help you?
+- [DanielRudrich/ABComparisonPlugin](https://github.com/DanielRudrich/ABComparisonPlugin) - An audio-plugin for multi-channel AB-comparison of several input signals.
+- [FigBug/mverb](https://github.com/FigBug/mverb) - VST Reverb In C++
+- [m1m0zzz/utility-clone](https://github.com/m1m0zzz/utility-clone) - VST plugin like a Ableton Utility.
+- [ZL-Audio/ZLEComp](https://github.com/ZL-Audio/ZLEComp) - compressor plugin
+- [greyboxaudio/SG-323](https://github.com/greyboxaudio/SG-323) - Ursa Major Stargate 323
+- [unplugred/vsts](https://github.com/unplugred/vsts) - a collection of VST plugins i made in JUCE
+- [Mrugalla/NEL-19](https://github.com/Mrugalla/NEL-19) - An open-source vibrato plugin with an extensive modulation system.
+- [FigBug/slPlugins](https://github.com/FigBug/slPlugins) - Various VST/AU Plugins from SocaLabs.com
+- [szkkng/simple-reverb](https://github.com/szkkng/simple-reverb) - A simple reverb made with the JUCE DSP module
+- [cvde/RoomReverb](https://github.com/cvde/RoomReverb) - Room Reverb is a mono/stereo to stereo algorithmic reverb audio plugin with many presets that lets you add reverberation to your recordings in your DAW.
+- [ZL-Audio/ZLEqualizer](https://github.com/ZL-Audio/ZLEqualizer) - equalizer plugin
+- [Chowdhury-DSP/BYOD](https://github.com/Chowdhury-DSP/BYOD) - Build-your-own guitar distortion!
+- [jerryuhoo/Fire](https://github.com/jerryuhoo/Fire) - This is a mutiband distortion plugin.
+- [SoundDevelopment/sound_meter](https://github.com/SoundDevelopment/sound_meter) - Fully resizing juce peak meter module with optional fader overlay.
+- [asimilon/html_entity_decoder](https://github.com/asimilon/html_entity_decoder) - HTML Entity decoder for JUCE Strings
+- [SoundDevelopment/bbcode-editor](https://github.com/SoundDevelopment/bbcode-editor) - juce TextEditor descendant that accepts BBCode.
+- [Kiberchaika/juce_murka](https://github.com/Kiberchaika/juce_murka) - 
+- [ZioGuido/JuceHtmlTextEditor](https://github.com/ZioGuido/JuceHtmlTextEditor) - 
+- [hogliux/RtfFileLoader](https://github.com/hogliux/RtfFileLoader) - A tool to convert rtf files to an open-source xml format which can then be used to create a JUCE AttributedString
+- [getdunne/juce-draggableListBox](https://github.com/getdunne/juce-draggableListBox) - JUCE ListBox whose items can be reordered by drag-and-drop
+- [christofmuc/juce-widgets](https://github.com/christofmuc/juce-widgets) - An unsorted bunch of useful widgets build for the JUCE cross-platform library
+- [MNSignalProcessing/BarelyML](https://github.com/MNSignalProcessing/BarelyML) - Markup display for JUCE - Barely a Markup Language
+- [HackAudio/hack_audio_gui](https://github.com/HackAudio/hack_audio_gui) - HackAudio's Custom GUI Module
+- [JanosGit/Resvg4JUCE](https://github.com/JanosGit/Resvg4JUCE) - A JUCE module that wraps the resvg SVG rendering library in a JUCE compatible interface
+- [bgporter/animator](https://github.com/bgporter/animator) - Flexible animation controller for JUCE applications
+- [sudara/melatonin_blur](https://github.com/sudara/melatonin_blur) - Fast cross-platform CPU blurs and shadows for JUCE
+- [ImJimmi/JIVE](https://github.com/ImJimmi/JIVE) - The ultimate JUCE extension for building GUIs
+- [fefanto/fontaudio](https://github.com/fefanto/fontaudio) - icon toolkit for audio developers
+- [ffAudio/foleys_gui_magic](https://github.com/ffAudio/foleys_gui_magic) - A GUI builder module for JUCE - with examples
+- [AndrewJJ/DSP-Testbench](https://github.com/AndrewJJ/DSP-Testbench) - A DSP Testbench for users of the JUCE framework
+- [soundspear/formula](https://github.com/soundspear/formula) - 
+- [sudara/melatonin_audio_sparklines](https://github.com/sudara/melatonin_audio_sparklines) - Sparklines For JUCE AudioBlocks
+- [Tracktion/pluginval](https://github.com/Tracktion/pluginval) - Cross platform plugin testing and validation tool
+- [asb2m10/plugincollider](https://github.com/asb2m10/plugincollider) - SuperCollider as a VST3 plugin
+- [rorywalsh/cabbage](https://github.com/rorywalsh/cabbage) - Framework for developing audio plugins with the Csound programming language.
+- [pierreguillot/Camomile](https://github.com/pierreguillot/Camomile) - An audio plugin with Pure Data embedded that allows to load and to control patches
+- [christophhart/HISE](https://github.com/christophhart/HISE) - The open source framework for sample based instruments
+- [grame-cncm/guidolib](https://github.com/grame-cncm/guidolib) - Guido project - music score layout engine - music description language
+- [Krasjet/imgui_juce](https://github.com/Krasjet/imgui_juce) - JUCE backend for Dear ImGui
+- [franshej/CustomMatPlot](https://github.com/franshej/CustomMatPlot) - Plot library for the JUCE Framework
+- [kunitoki/straw](https://github.com/kunitoki/straw) - Straw is a juce automation framework for integration testing
+- [sudara/melatonin_test_helpers](https://github.com/sudara/melatonin_test_helpers) - Catch2 Matchers and test helpers for JUCE AudioBlocks
+- [sudara/melatonin_parameters](https://github.com/sudara/melatonin_parameters) - Parameter behavior and formatting for JUCE
+- [FocusriteGroup/juce-end-to-end](https://github.com/FocusriteGroup/juce-end-to-end) - Library to assist with end-to-end testing of JUCE desktop applications
+- [hollance/synth-plugin-book](https://github.com/hollance/synth-plugin-book) - Source code for the book Code Your Own Synth Plug-Ins With C++ and JUCE
+- [kushview/element](https://github.com/kushview/element) - Element Audio Plugin Host
+- [Tracktion/tracktion_engine](https://github.com/Tracktion/tracktion_engine) - Tracktion Engine module
+- [fedden/RenderMan](https://github.com/fedden/RenderMan) - Command line C++ and Python VSTi Host library with MFCC, FFT, RMS and audio extraction and .wav writing.
+- [CrushedPixel/Plugalyzer](https://github.com/CrushedPixel/Plugalyzer) - Command-line VST3, AU and LADSPA plugin host for easier debugging of audio plugins
+- [Cyril-Meyer/TensorFlowVST](https://github.com/Cyril-Meyer/TensorFlowVST) - TensorFlow model as a VST effect
+- [jatinchowdhury18/KlonCentaur](https://github.com/jatinchowdhury18/KlonCentaur) - Digital emulation of the Klon Centaur guitar pedal using RNNs, Wave Digital Filters, and more
+- [Torsion-Audio/Scyclone](https://github.com/Torsion-Audio/Scyclone) - Real-time Neural Timbre Transfer
+- [magenta/ddsp-vst](https://github.com/magenta/ddsp-vst) - Realtime DDSP Neural Synthesizer and Effect
+- [sonic-pi-net/sonic-pi](https://github.com/sonic-pi-net/sonic-pi) - Code. Music. Live.
+- [sudara/pamplejuce](https://github.com/sudara/pamplejuce) - A JUCE audio plugin template. JUCE 8, Catch2, Pluginval, macOS notarization, Azure Trusted Signing, Github Actions
+- [FigBug/Gin](https://github.com/FigBug/Gin) - A few extras for juce
+- [electron/electron](https://github.com/electron/electron) - :electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS
 - [LadybirdBrowser/ladybird](https://github.com/LadybirdBrowser/ladybird) - Truly independent web browser
 - [benkuper/Chataigne](https://github.com/benkuper/Chataigne) - Artist-friendly Modular Machine for Art and Technology
 - [monocasual/giada](https://github.com/monocasual/giada) - Your Hardcore Loop Machine.
@@ -165,7 +278,6 @@
 - [spotify/pedalboard](https://github.com/spotify/pedalboard) - 🎛 🔊 A Python library for audio.
 - [helio-fm/helio-sequencer](https://github.com/helio-fm/helio-sequencer) - Libre music sequencer for desktop and mobile platforms
 - [sudara/melatonin_inspector](https://github.com/sudara/melatonin_inspector) - A JUCE module that gives you the ability to inspect and visually edit (non-destructively) components in your UI.
-- [jerryuhoo/Fire](https://github.com/jerryuhoo/Fire) - This is a mutiband distortion plugin.
 - [DBraun/DawDreamer](https://github.com/DBraun/DawDreamer) - Digital Audio Workstation with Python; VST instruments/effects, parameter automation, FAUST, JAX, Warp Markers, and JUCE processors
 - [DamRsn/NeuralNote](https://github.com/DamRsn/NeuralNote) - Audio Plugin for Audio to MIDI transcription using deep learning.
 - [BOBONA/Just-a-Sample](https://github.com/BOBONA/Just-a-Sample) - Just a Sample is a modern, open-source audio sampler
@@ -245,7 +357,10 @@
 
 ## CMake 
 
-- [McMartin/FRUT](https://github.com/McMartin/FRUT) - Building JUCE projects using CMake made easy
+- [eyalamirmusic/JUCE-ConsoleApp](https://github.com/eyalamirmusic/JUCE-ConsoleApp) - A JUCE example using a console app along with the message thread
+- [anthonyalfimov/JUCE-CMake-Plugin-Template](https://github.com/anthonyalfimov/JUCE-CMake-Plugin-Template) - Audio Plugin template using JUCE 6/7 and CMake
+- [JanWilczek/audio-plugin-template](https://github.com/JanWilczek/audio-plugin-template) - A template repository that you can use for creating audio plugins with the JUCE C++ framework. It is based on CMake, uses CPM package manager, the JUCE C++ framework (obviously), and the GoogleTest fr
+- [eyalamirmusic/JUCECmakeRepoPrototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype) - A prototype to model a way to create an entire repo using JUCE6 and CMake.
 
 ## CSS 
 
@@ -353,6 +468,8 @@
 
 ## Go 
 
+- [johnste/finicky](https://github.com/johnste/finicky) - A macOS app for customizing which browser to start
+- [miniflux/v2](https://github.com/miniflux/v2) - Minimalist and opinionated feed reader
 - [GoogleCloudPlatform/kubectl-ai](https://github.com/GoogleCloudPlatform/kubectl-ai) - AI powered Kubernetes Assistant
 - [cploutarchou/mcp-servers](https://github.com/cploutarchou/mcp-servers) - Production-ready Model Context Protocol (MCP) servers in Python, Go, and Rust for VS Code integration. Enables AI systems to interact with tools via standardized interfaces.
 - [bslatkin/tweeps2opml](https://github.com/bslatkin/tweeps2opml) - Get the RSS feeds of all of my Twitter friends
@@ -364,7 +481,6 @@
 - [txthinking/brook](https://github.com/txthinking/brook) - A cross-platform programmable network tool
 - [mmpx12/twitter-media-downloader](https://github.com/mmpx12/twitter-media-downloader) - twmd: CLI/GUI Apiless twitter downlaoder. Download medias from single tweet or a whole profile.
 - [iyear/tdl](https://github.com/iyear/tdl) - 📥 A Telegram toolkit written in Golang
-- [glanceapp/glance](https://github.com/glanceapp/glance) - A self-hosted dashboard that puts all your feeds in one place
 - [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - The API traffic analyzer for Kubernetes providing real-time K8s protocol-level visibility, capturing and monitoring all traffic and payloads going in, out and across containers, pods, nodes and cluste
 - [lharries/whatsapp-mcp](https://github.com/lharries/whatsapp-mcp) - WhatsApp MCP server
 - [github/github-mcp-server](https://github.com/github/github-mcp-server) - GitHub's official MCP Server
@@ -452,6 +568,7 @@
 
 ## HTML 
 
+- [jcredland/juce-toys](https://github.com/jcredland/juce-toys) - Debugging utilities in a JUCE Module, plus NatVis and LLDB customizations
 - [Shakil-Shahadat/awesome-piracy](https://github.com/Shakil-Shahadat/awesome-piracy) - A curated list of awesome warez and piracy links.
 - [docker/labs-ai-tools-for-devs](https://github.com/docker/labs-ai-tools-for-devs) - Your trusted home for discovering MCP tools – seamlessly integrated into Docker
 - [Igglybuff/awesome-piracy](https://github.com/Igglybuff/awesome-piracy) - A curated list of awesome warez and piracy links
@@ -572,10 +689,13 @@
 
 ## Haskell 
 
+- [lettier/gifcurry](https://github.com/lettier/gifcurry) - 😎 The open-source, Haskell-built video editor for GIF makers.
+- [tidalcycles/Tidal](https://github.com/tidalcycles/Tidal) - Pattern language
 - [PostgREST/postgrest](https://github.com/PostgREST/postgrest) - REST API for any Postgres database
 
 ## Java 
 
+- [DropSnorz/OwlPlug](https://github.com/DropSnorz/OwlPlug) - Audio plugin manager. Small tool to manage VST / AU / LV2 plugins on Windows, MacOS and Linux.
 - [RipMeApp/ripme](https://github.com/RipMeApp/ripme) - Downloads albums from the web in bulk for archive purposes
 - [lingochamp/okdownload](https://github.com/lingochamp/okdownload) - A Reliable, Flexible, Fast and Powerful download engine.
 - [LodLive/LodView](https://github.com/LodLive/LodView) - IRI dereferencer, RDF to HTML
@@ -626,6 +746,23 @@
 
 ## JavaScript 
 
+- [Microflash/rehype-figure](https://github.com/Microflash/rehype-figure) - rehype plugin to transform an image with alt text to a figure with caption
+- [gabrielbull/react-desktop](https://github.com/gabrielbull/react-desktop) - React UI Components for macOS High Sierra and Windows 10
+- [atom/atom](https://github.com/atom/atom) - :atom: The hackable text editor
+- [chiunhau/p5-manager](https://github.com/chiunhau/p5-manager) - A p5js template builder & sketches manager. Built for p5js enthusiasts.
+- [hanayik/CAM](https://github.com/hanayik/CAM) - macOS camera recording using ffmpeg
+- [ronantakizawa/gis-dataconversion-mcp](https://github.com/ronantakizawa/gis-dataconversion-mcp) - An MCP server for converting GIS filetypes (100+ Downloads)
+- [luin/medis](https://github.com/luin/medis) - 💻 Medis is a beautiful, easy-to-use Mac database management application for Redis.
+- [Paxa/postbird](https://github.com/Paxa/postbird) - Open source PostgreSQL GUI client for macOS, Linux and Windows
+- [RafalWilinski/s3-uploader](https://github.com/RafalWilinski/s3-uploader) - 🍎 macOS Electron+React App for uploading files to S3 directly from Status Bar
+- [720kb/ndm](https://github.com/720kb/ndm) - :computer: npm desktop manager https://720kb.github.io/ndm
+- [wellsjo/JSON-Splora](https://github.com/wellsjo/JSON-Splora) - GUI app for editing, visualizing, and manipulating JSON data
+- [AdguardTeam/AdGuardForSafari](https://github.com/AdguardTeam/AdGuardForSafari) - AdGuard for Safari app extension
+- [brackets-cont/brackets](https://github.com/brackets-cont/brackets) - An open source code editor for the web, written in JavaScript, HTML and CSS.
+- [bluegill/katana](https://github.com/bluegill/katana) - 🚀 a powerful, open-source screenshot utility for macOS
+- [tidalcycles/strudel](https://github.com/tidalcycles/strudel) - Web-based environment for live coding algorithmic patterns, incorporating a faithful port of TidalCycles to JavaScript
+- [Theodeus/tuna](https://github.com/Theodeus/tuna) - An audio effects library for the Web Audio API.
+- [nexus-js/ui](https://github.com/nexus-js/ui) - NexusUI: Web Audio Interfaces
 - [brodev3/antidetect](https://github.com/brodev3/antidetect) - A console application with a simple user interface for managing and working with browser profiles with anti-detection protection.
 - [serversideup/amplitudejs](https://github.com/serversideup/amplitudejs) - AmplitudeJS: Open Source HTML5 Web Audio Library. Design your web audio player, the way you want. No dependencies required.
 - [goldfire/howler.js](https://github.com/goldfire/howler.js) - Javascript audio library for the modern web.
@@ -649,7 +786,7 @@
 - [GetStream/Winds](https://github.com/GetStream/Winds) - A Beautiful Open Source RSS & Podcast App Powered by Getstream.io
 - [mafintosh/peerflix](https://github.com/mafintosh/peerflix) - Streaming torrent client for node.js
 - [misterGF/echo](https://github.com/misterGF/echo) - Echo converts HTML tables into JSON/CSV objects. Use it to make html data easy to transport.
-- [kdr/mcp-draw](https://github.com/kdr/mcp-draw) - 
+- [kdr/mcp-draw](https://github.com/kdr/mcp-draw) - Fun MCP server that draws / generates images and saves the output locally
 - [tjh19971228/mcp_video_analysis](https://github.com/tjh19971228/mcp_video_analysis) - 
 - [furey/mongodb-lens](https://github.com/furey/mongodb-lens) - 🍃🔎 MongoDB Lens: Full Featured MCP Server for MongoDB Databases
 - [ravitemer/mcp-hub](https://github.com/ravitemer/mcp-hub) - A centralized manager for Model Context Protocol (MCP) servers with dynamic server management and monitoring
@@ -1597,6 +1734,7 @@
 
 ## MDX 
 
+- [processing/p5.js-website](https://github.com/processing/p5.js-website) - New p5.js website!
 - [modelcontextprotocol/docs](https://github.com/modelcontextprotocol/docs) - Documentation for the Model Context Protocol (MCP)
 - [trigaten/Learn_Prompting](https://github.com/trigaten/Learn_Prompting) - Prompt Engineering, Generative AI, and LLM Guide by Learn Prompting | Join our discord for the largest Prompt Engineering learning community
 - [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
@@ -1612,6 +1750,7 @@
 
 ## Makefile 
 
+- [PostgresApp/PostgresApp](https://github.com/PostgresApp/PostgresApp) - The easiest way to get started with PostgreSQL on the Mac
 - [Naereen/badges](https://github.com/Naereen/badges) - :pencil: Markdown code for lots of small badges :ribbon: :pushpin: (shields.io, forthebadge.com etc) :sunglasses:. Contributions are welcome! Please add yours!
 - [lorien/awesome-web-scraping](https://github.com/lorien/awesome-web-scraping) - List of libraries, tools and APIs for web scraping and data processing.
 
@@ -1627,6 +1766,7 @@
 
 ## Max 
 
+- [acids-ircam/nn_tilde](https://github.com/acids-ircam/nn_tilde) - 
 - [hugofloresgarcia/vampnet](https://github.com/hugofloresgarcia/vampnet) - music generation with masked transformers!
 
 ## Mustache 
@@ -1639,6 +1779,13 @@
 
 ## Objective-C 
 
+- [jeromelebel/MongoHub-Mac](https://github.com/jeromelebel/MongoHub-Mac) - Mac Native Mongodb Client
+- [jpadilla/redisapp](https://github.com/jpadilla/redisapp) - The easiest way to get started with Redis on the Mac
+- [Sequel-Ace/Sequel-Ace](https://github.com/Sequel-Ace/Sequel-Ace) - MySQL/MariaDB database management for macOS
+- [gcollazo/mongodbapp](https://github.com/gcollazo/mongodbapp) - The easiest way to get started with MongoDB on the Mac
+- [relikd/baRSS](https://github.com/relikd/baRSS) - Menu Bar RSS reader for macOS
+- [ViennaRSS/vienna-rss](https://github.com/ViennaRSS/vienna-rss) - Vienna is a free and open-source RSS/Atom newsreader for macOS.
+- [samuelclay/NewsBlur](https://github.com/samuelclay/NewsBlur) - NewsBlur is a personal news reader that brings people together to talk about the world. A new sound of an old instrument.
 - [keycastr/keycastr](https://github.com/keycastr/keycastr) - KeyCastr, an open-source keystroke visualizer
 - [sozercan/OpenInCode](https://github.com/sozercan/OpenInCode) - :open_file_folder: macOS Finder toolbar app to open current folder in Visual Studio Code
 - [sequelpro/sequelpro](https://github.com/sequelpro/sequelpro) - MySQL/MariaDB database management for macOS
@@ -1654,6 +1801,12 @@
 
 ## Others 
 
+- [qingsongedu/awesome-AI-for-time-series-papers](https://github.com/qingsongedu/awesome-AI-for-time-series-papers) - A professional list of Papers, Tutorials, and Surveys on AI for Time Series in top AI conferences and journals.
+- [sindresorhus/awesome-electron](https://github.com/sindresorhus/awesome-electron) - Useful resources for creating apps with Electron
+- [qingsongedu/time-series-transformers-review](https://github.com/qingsongedu/time-series-transformers-review) - A professionally curated list of awesome resources (paper, code, data, etc.) on transformers in time series.
+- [afshinea/stanford-cme-295-transformers-large-language-models](https://github.com/afshinea/stanford-cme-295-transformers-large-language-models) - VIP cheatsheet for Stanford's CME 295 Transformers and Large Language Models
+- [weekend-project-space/top-rss-list](https://github.com/weekend-project-space/top-rss-list) - 订阅人数最多的rss源，中文优质rss源
+- [BillyDM/awesome-audio-dsp](https://github.com/BillyDM/awesome-audio-dsp) - My curated list of audio DSP and plugin development resources
 - [TheGP/untidetect-tools](https://github.com/TheGP/untidetect-tools) - List of anti-detect and humanizing tools and browsers, including captcha solvers and sms-activation.
 - [JupiteRSoStrong/MCP-Manager-GUI](https://github.com/JupiteRSoStrong/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.
 - [BjornMelin/unified-knowledge-system](https://github.com/BjornMelin/unified-knowledge-system) - A comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities
@@ -1839,7 +1992,7 @@
 - [atfortes/Awesome-LLM-Reasoning](https://github.com/atfortes/Awesome-LLM-Reasoning) - Reasoning in LLMs: Papers and Resources, including Chain-of-Thought, OpenAI o1, and DeepSeek-R1 🍓
 - [nancheng58/Awesome-LLM4RS-Papers](https://github.com/nancheng58/Awesome-LLM4RS-Papers) - Large Language Model-enhanced Recommender System Papers
 - [imaurer/awesome-llm-json](https://github.com/imaurer/awesome-llm-json) - Resource list for generating JSON using LLMs via function calling, tools, CFG. Libraries, Models, Notebooks, etc.
-- [WangRongsheng/awesome-LLM-resourses](https://github.com/WangRongsheng/awesome-LLM-resourses) - 🧑‍🚀 全世界最好的LLM资料总结（Agent框架、辅助编程、数据处理、模型训练、模型推理、o1 模型、MCP、小语言模型、视觉语言模型） | Summary of the world's best LLM resources.
+- [WangRongsheng/awesome-LLM-resources](https://github.com/WangRongsheng/awesome-LLM-resources) - 🧑‍🚀 全世界最好的LLM资料总结（Agent框架、辅助编程、数据处理、模型训练、模型推理、o1 模型、MCP、小语言模型、视觉语言模型） | Summary of the world's best LLM resources.
 - [XiaoxinHe/Awesome-Graph-LLM](https://github.com/XiaoxinHe/Awesome-Graph-LLM) - A collection of AWESOME things about Graph-Related LLMs.
 - [davisonio/awesome-gif](https://github.com/davisonio/awesome-gif) - A curated list of awesome GIF resources.
 - [roomylee/awesome-relation-extraction](https://github.com/roomylee/awesome-relation-extraction) - 📖 A curated list of awesome resources dedicated to Relation Extraction, one of the most important tasks in Natural Language Processing (NLP).
@@ -2094,6 +2247,8 @@
 
 ## PHP 
 
+- [FreshRSS/FreshRSS](https://github.com/FreshRSS/FreshRSS) - A free, self-hostable news aggregator…
+- [RSS-Bridge/rss-bridge](https://github.com/RSS-Bridge/rss-bridge) - The RSS feed for websites missing it
 - [IngestAI/embedditor](https://github.com/IngestAI/embedditor) - ⚡ GUI for editing LLM vector embeddings. No more blind chunking. Upload content in any file extension, join and split chunks, edit metadata and embedding tokens +  remove stop-words and punctuation wi
 - [Rudloff/alltube](https://github.com/Rudloff/alltube) - Web GUI for youtube-dl
 - [astralapp/astral](https://github.com/astralapp/astral) - Organize Your GitHub Stars With Ease
@@ -2201,9 +2356,17 @@
 
 ## Python 
 
+- [Textualize/rich](https://github.com/Textualize/rich) - Rich is a Python library for rich text and beautiful formatting in the terminal.
+- [pytest-dev/pluggy](https://github.com/pytest-dev/pluggy) - A minimalist production ready plugin system
+- [dhrbtjr0331/nba-stats-predictor-mcp](https://github.com/dhrbtjr0331/nba-stats-predictor-mcp) - MCP server of NBA stats predictor app that generates player performance forecasts using real-time data analysis and advanced statistical modeling
+- [alichtman/shallow-backup](https://github.com/alichtman/shallow-backup) - Git-integrated backup tool for macOS and Linux devs.
+- [arsenetar/dupeguru](https://github.com/arsenetar/dupeguru) - Find duplicate files
+- [kornelski/ImageAlpha](https://github.com/kornelski/ImageAlpha) - Mac GUI for pngquant, pngnq and posterizer
+- [kurtmckee/feedparser](https://github.com/kurtmckee/feedparser) - Parse feeds in Python
+- [csteinmetz1/micro-tcn](https://github.com/csteinmetz1/micro-tcn) - Efficient neural networks for analog audio effect modeling
 - [stargatedaw/stargate](https://github.com/stargatedaw/stargate) - Innovation-first digital audio workstation (DAW), instrument and effect plugins, wave editor
 - [Escorza07/whatsapp-mcp](https://github.com/Escorza07/whatsapp-mcp) - 
-- [leshchenko1979/tg_mcp](https://github.com/leshchenko1979/tg_mcp) - Telegram MCP Server - now you can talk to your Telegram from Cursor
+- [leshchenko1979/tg_mcp](https://github.com/leshchenko1979/tg_mcp) - Telegram MCP Server. Talk to your Telegram from Cursor and Claude
 - [kousunh/alertmcp](https://github.com/kousunh/alertmcp) - 
 - [sudhakarmlal/ERAV3-GMAILMCP](https://github.com/sudhakarmlal/ERAV3-GMAILMCP) - 
 - [Anjok07/ultimatevocalremovergui](https://github.com/Anjok07/ultimatevocalremovergui) - GUI for a Vocal Remover that uses Deep Neural Networks.
@@ -2977,7 +3140,7 @@
 - [ray-project/llmperf](https://github.com/ray-project/llmperf) - LLMPerf is a library for validating and benchmarking LLMs
 - [explodinggradients/ragas](https://github.com/explodinggradients/ragas) - Supercharge Your LLM Application Evaluations 🚀
 - [gusye1234/nano-graphrag](https://github.com/gusye1234/nano-graphrag) - A simple, easy-to-hack GraphRAG implementation
-- [katanaml/sparrow](https://github.com/katanaml/sparrow) - Data processing with ML, LLM and Vision LLM
+- [katanaml/sparrow](https://github.com/katanaml/sparrow) - Data processing and instruction calling with ML, LLM and Vision LLM
 - [protectai/llm-guard](https://github.com/protectai/llm-guard) - The Security Toolkit for LLM Interactions
 - [confident-ai/deepeval](https://github.com/confident-ai/deepeval) - The LLM Evaluation Framework
 - [agiresearch/OpenAGI](https://github.com/agiresearch/OpenAGI) - OpenAGI: When LLM Meets Domain Experts
@@ -3138,6 +3301,7 @@
 - [comet-ml/opik](https://github.com/comet-ml/opik) - Debug, evaluate, and monitor your LLM applications, RAG systems, and agentic workflows with comprehensive tracing, automated evaluations, and production-ready dashboards.
 - [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
 - [bigscience-workshop/promptsource](https://github.com/bigscience-workshop/promptsource) - Toolkit for creating, sharing and using natural language prompts.
+- [Agenta-AI/agenta](https://github.com/Agenta-AI/agenta) - The open-source LLMOps platform: prompt playground, prompt management, LLM evaluation, and LLM observability all in one place.
 - [crewAIInc/crewAI](https://github.com/crewAIInc/crewAI) - Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.
 - [lastmile-ai/aiconfig](https://github.com/lastmile-ai/aiconfig) - AIConfig is a config-based framework to build generative AI applications.
 - [stoyan-stoyanov/llmflows](https://github.com/stoyan-stoyanov/llmflows) - LLMFlows - Simple, Explicit and Transparent LLM Apps
@@ -3234,7 +3398,7 @@
 - [PyCQA/isort](https://github.com/PyCQA/isort) - A Python utility / library to sort imports.
 - [adamerose/PandasGUI](https://github.com/adamerose/PandasGUI) - A GUI for Pandas DataFrames
 - [google/latexify_py](https://github.com/google/latexify_py) - A library to generate LaTeX expression from Python code.
-- [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your pandas dataframe into an interactive UI for visual analysis
+- [Kanaries/pygwalker](https://github.com/Kanaries/pygwalker) - PyGWalker: Turn your dataframe into an interactive UI for visual analysis
 - [Delgan/loguru](https://github.com/Delgan/loguru) - Python logging made (stupidly) simple
 - [samuelcolvin/python-devtools](https://github.com/samuelcolvin/python-devtools) - Dev tools for python
 - [Qix-/better-exceptions](https://github.com/Qix-/better-exceptions) - Pretty and useful exceptions in Python, automatically.
@@ -3677,6 +3841,7 @@
 
 ## Rich Text Format 
 
+- [MacDownApp/macdown](https://github.com/MacDownApp/macdown) - Open source Markdown editor for macOS.
 - [langchain-ai/langchain-extract](https://github.com/langchain-ai/langchain-extract) - 🦜⛏️ Did you say you like data?
 
 ## Roff 
@@ -3685,6 +3850,7 @@
 
 ## Ruby 
 
+- [stringer-rss/stringer](https://github.com/stringer-rss/stringer) - A self-hosted, anti-social RSS reader.
 - [sudara/awesome-juce](https://github.com/sudara/awesome-juce) - A curated list of JUCE modules, templates, plugins, oh my!
 - [hartator/wayback-machine-downloader](https://github.com/hartator/wayback-machine-downloader) - Download an entire website from the Wayback Machine.
 - [huginn/huginn_agent](https://github.com/huginn/huginn_agent) - Base for creating new Huginn Agents as Gems
@@ -3718,6 +3884,7 @@
 
 ## Rust 
 
+- [kofigumbs/typebeat](https://github.com/kofigumbs/typebeat) - Keyboard-controlled music sequencer, sampler, and synth
 - [robbert-vdh/nih-plug](https://github.com/robbert-vdh/nih-plug) - Rust VST3 and CLAP plugin framework and plugins - because everything is better when you do it yourself
 - [chaosprint/dattorro-vst-rs](https://github.com/chaosprint/dattorro-vst-rs) - Dattorro reverb VST plugin written in Rust with egui and glicol_synth
 - [chaosprint/glicol](https://github.com/chaosprint/glicol) - Graph-oriented live coding language and music/audio DSP library written in Rust
@@ -3770,6 +3937,7 @@
 
 ## SCSS 
 
+- [AboutRSS/ALL-about-RSS](https://github.com/AboutRSS/ALL-about-RSS) - A list of RSS related stuff: tools, services, communities and tutorials, etc.
 - [bluedrift/Spicetify-Throwback](https://github.com/bluedrift/Spicetify-Throwback) - Nostalgic theme for Spotify Desktop
 - [iina/iina-website](https://github.com/iina/iina-website) - The source code of IINA's new website at iina.io.
 - [amaroteam/react-credit-cards](https://github.com/amaroteam/react-credit-cards) - Beautiful credit cards for your payment forms
@@ -3869,7 +4037,7 @@
 
 ## Smarty 
 
-- [opsre/awesome-ops](https://github.com/opsre/awesome-ops) - 🧰 记录每一个与运维相关的优秀项目，⚗️ 项目内表格通过 GitHub Action 自动生成，📥 当前收录项目 638 个。
+- [opsre/awesome-ops](https://github.com/opsre/awesome-ops) - 🧰 记录每一个与运维相关的优秀项目，⚗️ 项目内表格通过 GitHub Action 自动生成，📥 当前收录项目 643 个。
 
 ## Solidity 
 
@@ -3878,6 +4046,7 @@
 
 ## Svelte 
 
+- [dbgate/dbgate](https://github.com/dbgate/dbgate) - Database manager for MySQL, PostgreSQL, SQL Server, MongoDB, SQLite and others. Runs under Windows, Linux, Mac or as web application
 - [imdj/opml-editor](https://github.com/imdj/opml-editor) - Online OPML editor and tools to view and manage feed lists easily
 - [yanick/jsonschematic](https://github.com/yanick/jsonschematic) - json schema viewer
 - [imputnet/cobalt](https://github.com/imputnet/cobalt) - best way to save what you love
@@ -3892,6 +4061,41 @@
 
 ## Swift 
 
+- [kmikiy/SpotMenu](https://github.com/kmikiy/SpotMenu) - Spotify and iTunes in your menu bar
+- [jcm93/jmc](https://github.com/jcm93/jmc) - jmc - a new macOS media organizer
+- [zenangst/Syncalicious](https://github.com/zenangst/Syncalicious) - 🍫 Syncalicious
+- [glaurent/MessagesHistoryBrowser](https://github.com/glaurent/MessagesHistoryBrowser) - a macOS/OSX app to comfortably browse and search through your Messages.app history.
+- [neilalexander/seaglass](https://github.com/neilalexander/seaglass) - A truly native Matrix client for macOS - written in Swift/Cocoa, with E2E encryption support
+- [overtake/TelegramSwift](https://github.com/overtake/TelegramSwift) - Source code of Telegram for macos on Swift 5.0
+- [cmushroom/redis-pro](https://github.com/cmushroom/redis-pro) - redis-pro redis 桌面管理工具
+- [remirobert/Github-contributions](https://github.com/remirobert/Github-contributions) - :cat: GitHub contributions app, for iOS, WatchOS, and OSX
+- [maoyama/Tempo](https://github.com/maoyama/Tempo) - An open-source Git client with a clear UI and AI assistance.
+- [Uncommon/Xit](https://github.com/Uncommon/Xit) - Mac OS X Git GUI
+- [chanonly123/Json-Model-Generator](https://github.com/chanonly123/Json-Model-Generator) - MacOS app for Generating JSON classes (Template based)
+- [Ahmed-Ali/JSONExport](https://github.com/Ahmed-Ali/JSONExport) - JSONExport is a desktop application for Mac OS X which enables you to export JSON objects as model classes with their associated constructors, utility methods, setters and getters in your favorite lan
+- [RoyalIcing/Lantern](https://github.com/RoyalIcing/Lantern) - Mac app for website auditing and crawling
+- [kuyawa/AppIcons](https://github.com/kuyawa/AppIcons) - AppIcon generator for macOS and iOS
+- [yep/app-downloader](https://github.com/yep/app-downloader) - Easily search for macOS apps from the `homebrew cask` app catalog.
+- [Kevin-De-Koninck/Get-It](https://github.com/Kevin-De-Koninck/Get-It) - A macOS GUI for youtube-dl
+- [Pjirlip/Pillager](https://github.com/Pjirlip/Pillager) - macOs Video Downloader written in Swift and Obj.-C
+- [MarkEdit-app/MarkEdit](https://github.com/MarkEdit-app/MarkEdit) - Just like TextEdit on Mac but dedicated to Markdown.
+- [lukakerr/Pine](https://github.com/lukakerr/Pine) - A modern, native macOS markdown editor
+- [Capevace/BetterPiP](https://github.com/Capevace/BetterPiP) - A macOS application that enables the use of native picture-in-picture with browsers such as Google Chrome for HTML5 videos.
+- [ffittschen/IsItPrivate](https://github.com/ffittschen/IsItPrivate) - A Safari Extension to identify if Private Browsing is enabled in the current Safari window
+- [fphilipe/PageExtender.app](https://github.com/fphilipe/PageExtender.app) - Safari extension that injects custom CSS and JS files based on page host.
+- [AlexPerathoner/Sessions](https://github.com/AlexPerathoner/Sessions) - Safari extension to save your working sessions
+- [Mortennn/FiScript](https://github.com/Mortennn/FiScript) - Execute custom scripts from the MacOS context menu (CTRL+click) in Finder.
+- [onmyway133/FinderGo](https://github.com/onmyway133/FinderGo) - 🐢 Open terminal quickly from Finder
+- [Ji4n1ng/OpenInTerminal](https://github.com/Ji4n1ng/OpenInTerminal) - ✨ Finder Toolbar app for macOS to open the current directory in Terminal, iTerm, Hyper or Alacritty.
+- [sindresorhus/Gifski](https://github.com/sindresorhus/Gifski) - 🌈 Convert videos to high-quality GIFs on your Mac
+- [liamrosenfeld/Iconology](https://github.com/liamrosenfeld/Iconology) - Easily import, modify, and export icons (for Xcode and more)
+- [gergelysanta/PhotoMiner](https://github.com/gergelysanta/PhotoMiner) - Photo finder application for macOS
+- [crilleengvall/Screenbar](https://github.com/crilleengvall/Screenbar) - A MacOS menubar app for automating screenshots
+- [dwarvesf/hidden](https://github.com/dwarvesf/hidden) - An ultra-light MacOS utility that helps hide menu bar icons
+- [tidiemme/monitorbar](https://github.com/tidiemme/monitorbar) - System resource monitor for macOS menubar
+- [insidegui/NoiseBuddy](https://github.com/insidegui/NoiseBuddy) - Control the listening mode on your AirPods Pro in the Touch Bar or Menu Bar.
+- [superhighfives/pika](https://github.com/superhighfives/pika) - An open-source colour picker app for macOS
+- [iglance/iGlance](https://github.com/iglance/iGlance) - Free system monitor for OSX and macOS. See all system information at a glance in the menu bar.
 - [AudioKit/AudioKitSynthOne](https://github.com/AudioKit/AudioKitSynthOne) - AudioKit Synth One: Open-Source iOS Synthesizer App
 - [leits/MeetingBar](https://github.com/leits/MeetingBar) - 🇺🇦 Your meetings at your fingertips in the macOS menu bar
 - [rxhanson/Rectangle](https://github.com/rxhanson/Rectangle) - Move and resize windows on macOS with keyboard shortcuts and snap areas
@@ -3970,6 +4174,19 @@
 
 ## TypeScript 
 
+- [Robot-Inventor/rehype-image-caption](https://github.com/Robot-Inventor/rehype-image-caption) - rehype plugin to set captions for images in addition to alt text.
+- [anthropics/anthropic-sdk-typescript](https://github.com/anthropics/anthropic-sdk-typescript) - Access to Anthropic's safety-first language model APIs
+- [nativefier/nativefier](https://github.com/nativefier/nativefier) - Make any web page a desktop application
+- [bhj/KaraokeEternal](https://github.com/bhj/KaraokeEternal) - Open karaoke party system
+- [pixelsock/directus-mcp](https://github.com/pixelsock/directus-mcp) - MCP server for Directus API integration
+- [mifi/lossless-cut](https://github.com/mifi/lossless-cut) - The swiss army knife of lossless video/audio editing
+- [will-stone/SpotSpot](https://github.com/will-stone/SpotSpot) - A Spotify mini-player for macOS
+- [bdash-app/bdash](https://github.com/bdash-app/bdash) - Simple SQL Client for lightweight data analysis.
+- [httptoolkit/httptoolkit-desktop](https://github.com/httptoolkit/httptoolkit-desktop) - Electron wrapper to build and distribute HTTP Toolkit for the desktop
+- [Zettlr/Zettlr](https://github.com/Zettlr/Zettlr) - Your One-Stop Publication Workbench
+- [b3z/reventlou](https://github.com/b3z/reventlou) - Personal db information management system.
+- [yang991178/fluent-reader](https://github.com/yang991178/fluent-reader) - Modern desktop RSS reader built with Electron, React, and Fluent UI
+- [freeman-jiang/beatsync](https://github.com/freeman-jiang/beatsync) - 🔊 High-precision web player for multi-device audio playback and spatial audio.
 - [danigb/smplr](https://github.com/danigb/smplr) - A web audio sampler instrument
 - [TheGP/Imposter](https://github.com/TheGP/Imposter) - The most powerful helper class to make human-like actions with Puppeteer
 - [katspaugh/wavesurfer.js](https://github.com/katspaugh/wavesurfer.js) - Audio waveform player
@@ -3980,7 +4197,7 @@
 - [bocchiczennie/aws-monthly-cost-report-mcp-server](https://github.com/bocchiczennie/aws-monthly-cost-report-mcp-server) - 
 - [supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp) - Connect Supabase to your AI assistants
 - [yoda-digital/horologic-mcp](https://github.com/yoda-digital/horologic-mcp) - 
-- [trevhud/vibe-mcp](https://github.com/trevhud/vibe-mcp) - 
+- [trevhud/vibe-mcp](https://github.com/trevhud/vibe-mcp) - Vibe MCp generates and plays music based on the code you're working with
 - [cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) - A Model Context Protocol (MCP) server that provides Xcode-related tools for integration with AI assistants and other MCP clients.
 - [supabase/supabase-js](https://github.com/supabase/supabase-js) - An isomorphic Javascript client for Supabase. Query your Supabase database, subscribe to realtime events, upload and download files, browse typescript examples, invoke postgres functions via rpc, invo
 - [mikechao/artic-mcp](https://github.com/mikechao/artic-mcp) - A Model Context Protocol (MCP) server that provides access to the Art Institute of Chicago Collection through natural language interactions. This server allows AI models to search the Art Institute of
@@ -4051,7 +4268,7 @@
 - [dougwithseismic/cursor-tools](https://github.com/dougwithseismic/cursor-tools) - building tools with cursor to make cursor faster so I can ubuild tools to be faster at making cursor fast
 - [HamedMP/CursorLens](https://github.com/HamedMP/CursorLens) - An open-source dashboard for Cursor.sh IDE. Log AI code generations, track usage, and control AI models (including local ones). Run locally or use upcoming hosted version.
 - [eastlondoner/cursor-tools](https://github.com/eastlondoner/cursor-tools) - Give Cursor Agent an AI Team and Advanced Skills
-- [NeuclaiLabs/centroid](https://github.com/NeuclaiLabs/centroid) - A platform for managing your local MCP servers
+- [NeuclaiLabs/centroid](https://github.com/NeuclaiLabs/centroid) - A GUI platform for managing your MCP servers locally
 - [Dwtexe/cursor-stats](https://github.com/Dwtexe/cursor-stats) - A Cursor extension that displays your Cursor Subscription usage statistics in the status bar.
 - [prompt-engineering/chat-visual-novel](https://github.com/prompt-engineering/chat-visual-novel) - ChatVisualNovel - a fully customizable visual novel engine powered by ChatGPT. ChatVisualNovel —— 基于ChatGPT的定制化视觉小说引擎。
 - [prompt-engineering/chat-flow](https://github.com/prompt-engineering/chat-flow) - ChatFlow  - AI-based chat flow framework, personalize your ChatGPT workflows and build the road to automation。ChatFlow —— 打造个性化 ChatGPT 流程，构建自动化之路
@@ -4447,7 +4664,7 @@
 - [chatchat-space/Langchain-Chatchat](https://github.com/chatchat-space/Langchain-Chatchat) - Langchain-Chatchat（原Langchain-ChatGLM）基于 Langchain 与 ChatGLM, Qwen 与 Llama 等语言模型的 RAG 与 Agent 应用 | Langchain-Chatchat (formerly langchain-ChatGLM), local knowledge based LLM (like ChatGLM, Qwen and Ll
 - [langfuse/langfuse](https://github.com/langfuse/langfuse) - 🪢 Open source LLM engineering platform: LLM Observability, metrics, evals, prompt management, playground, datasets. Integrates with OpenTelemetry, Langchain, OpenAI SDK, LiteLLM, and more. 🍊YC W23
 - [leon-ai/leon](https://github.com/leon-ai/leon) - 🧠 Leon is your open-source personal assistant.
-- [getmaxun/maxun](https://github.com/getmaxun/maxun) - 🔥 Open Source No Code Web Data Extraction Platform. Turn Websites To APIs & Spreadsheets With No-Code Robots In Minutes 🔥
+- [getmaxun/maxun](https://github.com/getmaxun/maxun) - 🔥 Open Source No Code Web Data Extraction Platform • Turn Websites To APIs & Spreadsheets With No-Code Robots In Minutes 🔥
 - [vscode-restructuredtext/vscode-restructuredtext](https://github.com/vscode-restructuredtext/vscode-restructuredtext) - reStructuredText Language Support in Visual Studio Code
 - [elie222/inbox-zero](https://github.com/elie222/inbox-zero) - AI personal assistant for email. Open source app to help you reach inbox zero fast.
 - [upscayl/upscayl](https://github.com/upscayl/upscayl) - 🆙 Upscayl - #1 Free and Open Source AI Image Upscaler for Linux, MacOS and Windows.
@@ -4646,7 +4863,6 @@
 - [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) - Test your prompts, agents, and RAGs. Red teaming, pentesting, and vulnerability scanning for LLMs. Compare performance of GPT, Claude, Gemini, Llama, and more. Simple declarative configs with command 
 - [pezzolabs/pezzo](https://github.com/pezzolabs/pezzo) - 🕹️ Open-source, developer-first LLMOps platform designed to streamline prompt design, version management, instant delivery, collaboration, troubleshooting, observability and more.
 - [lunary-ai/lunary](https://github.com/lunary-ai/lunary) - The production toolkit for LLMs. Observability, prompt management and evaluations.
-- [Agenta-AI/agenta](https://github.com/Agenta-AI/agenta) - The open-source LLMOps platform: prompt playground, prompt management, LLM evaluation, and LLM observability all in one place.
 - [microsoft/prompt-engine](https://github.com/microsoft/prompt-engine) - A library for helping developers craft prompts for Large Language Models
 - [mantinedev/mantine](https://github.com/mantinedev/mantine) - A fully featured React components library
 - [retorquere/zotero-better-bibtex](https://github.com/retorquere/zotero-better-bibtex) - Make Zotero effective for us LaTeX holdouts
