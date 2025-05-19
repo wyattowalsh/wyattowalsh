@@ -161,7 +161,7 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-2%2C635%20hrs%205%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-2%2C637%20hrs%209%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-19.6%20million%20lines%20of%20code-blue)
 
@@ -169,11 +169,11 @@
 
 > 📦 4.9 MB Used in GitHub's Storage 
  > 
-> 🏆 205 Contributions in the Year 2025
+> 🏆 206 Contributions in the Year 2025
  > 
 > 💼 Opted to Hire
  > 
-> 📜 106 Public Repositories 
+> 📜 107 Public Repositories 
  > 
 > 🔑 76 Private Repositories 
  > 
@@ -202,14 +202,14 @@ Sunday                   922 commits         ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    16 hrs 51 mins      ██████████░░░░░░░░░░░░░░░   41.79 % 
-MDX                      5 hrs 37 mins       ███░░░░░░░░░░░░░░░░░░░░░░   13.95 % 
-TypeScript               4 hrs 44 mins       ███░░░░░░░░░░░░░░░░░░░░░░   11.75 % 
-Markdown                 3 hrs 11 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   07.93 % 
-JSON                     2 hrs 16 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   05.66 % 
+Other                    16 hrs 1 min        ███████████░░░░░░░░░░░░░░   43.08 % 
+MDX                      4 hrs 50 mins       ███░░░░░░░░░░░░░░░░░░░░░░   13.02 % 
+TypeScript               4 hrs 29 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.07 % 
+Markdown                 3 hrs 3 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   08.23 % 
+JSON                     2 hrs 3 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   05.53 % 
 
 💻 Operating System: 
-Mac                      40 hrs 20 mins      █████████████████████████   100.00 % 
+Mac                      37 hrs 12 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Jupyter Notebook** 
@@ -229,7 +229,7 @@ MDX                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 18/05/2025 18:51:35 UTC
+ Last Updated on 19/05/2025 18:55:05 UTC
 <!--END_SECTION:waka-->
 
     
