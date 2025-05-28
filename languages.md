@@ -569,6 +569,8 @@
 
 ## HTML 
 
+- [sxin0/docsify-termynal](https://github.com/sxin0/docsify-termynal) - docsify 动画终端插件
+- [tenelabs/docsify-sitemap](https://github.com/tenelabs/docsify-sitemap) - Generate a sitemap for docsify project.
 - [jcredland/juce-toys](https://github.com/jcredland/juce-toys) - Debugging utilities in a JUCE Module, plus NatVis and LLDB customizations
 - [Shakil-Shahadat/awesome-piracy](https://github.com/Shakil-Shahadat/awesome-piracy) - A curated list of awesome warez and piracy links.
 - [docker/labs-ai-tools-for-devs](https://github.com/docker/labs-ai-tools-for-devs) - Your trusted home for discovering MCP tools – seamlessly integrated into Docker
@@ -748,6 +750,17 @@
 
 ## JavaScript 
 
+- [erectbranch/docsify-dashboard](https://github.com/erectbranch/docsify-dashboard) - A plugin for Docsify that creates a dashboard from a JSON file.
+- [Robert-Du0001/docsify-footnote](https://github.com/Robert-Du0001/docsify-footnote) - 
+- [rakutentech/esquisite](https://github.com/rakutentech/esquisite) - A library of exquisite helpers and utilities for ES apps.
+- [corentinleberre/create-docsify-plugin](https://github.com/corentinleberre/create-docsify-plugin) - Template for creating your own Docsify plugin
+- [rcqed/docsify-markmap.js](https://github.com/rcqed/docsify-markmap.js) - 🪄🪄🪄Create a new Markmap instance and render the code content on your Docsify
+- [h-hg/docsify-image-caption](https://github.com/h-hg/docsify-image-caption) - a plugin to show image catpion in docsify.
+- [pfeak/docsify-updated](https://github.com/pfeak/docsify-updated) - Add update time for each of your docsify markdown
+- [isaozler/docsify-accordion](https://github.com/isaozler/docsify-accordion) - Accordion plugin for docsify
+- [corentinleberre/docsify-mermaid-zoom](https://github.com/corentinleberre/docsify-mermaid-zoom) - A simple Docsify plugin enabling zoom in mermaid diagrams
+- [erickjx/docsify-footer-enh](https://github.com/erickjx/docsify-footer-enh) - Docsify Footer Enhacement Plugin
+- [stijn-dejongh/docsify-glossary](https://github.com/stijn-dejongh/docsify-glossary) - Simple Glossary for Docsify that replaces occurrences of words in text with links to the glossary definitions.
 - [marissamarym/imessage-mcp-server](https://github.com/marissamarym/imessage-mcp-server) - An MCP server that uses AppleScript to send iMessages and manage contacts.
 - [pjeby/hot-reload](https://github.com/pjeby/hot-reload) - Automatically reload Obsidian plugins in development when their files are changed
 - [typicode/husky](https://github.com/typicode/husky) - Git hooks made easy 🐶 woof!
@@ -1507,7 +1520,7 @@
 
 ## Jinja 
 
-- [INCATools/ontology-development-kit](https://github.com/INCATools/ontology-development-kit) - Bootstrap an OBO Library ontology
+- [INCATools/ontology-development-kit](https://github.com/INCATools/ontology-development-kit) - Ontology lifecycle management
 - [forem/selfhost](https://github.com/forem/selfhost) - Selfhost your Forem Community on your own infrastructure 🎉
 
 ## Julia 
@@ -1804,6 +1817,7 @@
 
 ## Others 
 
+- [markbattistella/docsify-sidebar-footer](https://github.com/markbattistella/docsify-sidebar-footer) - Add some info at the bottom of your sidebar. Link to your personal website, a Privacy Policy, Terms of Service
 - [qingsongedu/awesome-AI-for-time-series-papers](https://github.com/qingsongedu/awesome-AI-for-time-series-papers) - A professional list of Papers, Tutorials, and Surveys on AI for Time Series in top AI conferences and journals.
 - [sindresorhus/awesome-electron](https://github.com/sindresorhus/awesome-electron) - Useful resources for creating apps with Electron
 - [qingsongedu/time-series-transformers-review](https://github.com/qingsongedu/time-series-transformers-review) - A professionally curated list of awesome resources (paper, code, data, etc.) on transformers in time series.
@@ -2573,7 +2587,6 @@
 - [Ben-J-Orr/CoverLetter-Generator](https://github.com/Ben-J-Orr/CoverLetter-Generator) - A simple cover letter generator that utilises the ChatGPT API to obtain bespoke cover letters for multiple job adverts.
 - [qqqstuv/Cover-Letter-Generator](https://github.com/qqqstuv/Cover-Letter-Generator) - Generate Cover Letter based on your information! Automate date, names and reuse paragraphs
 - [cullenwatson/StaffSpy](https://github.com/cullenwatson/StaffSpy) - Staff fetcher library for LinkedIn - obtain experiences, schools, skills & contact info
-- [srbhr/Resume-Matcher](https://github.com/srbhr/Resume-Matcher) - Resume Matcher is an open source, free tool to improve your resume. It works by using AI, Reader LLMs, to compare and rank resumes with job descriptions.
 - [IvanIsCoding/ResuLLMe](https://github.com/IvanIsCoding/ResuLLMe) - Enhance your résumé with Large Language Models
 - [nateemma/strategies](https://github.com/nateemma/strategies) - Custom trading strategies using the freqtrade framework
 - [nvdv/vprof](https://github.com/nvdv/vprof) - Visual profiler for Python
@@ -2640,7 +2653,7 @@
 - [Veason-silverbullet/ViTLP](https://github.com/Veason-silverbullet/ViTLP) - [NAACL 2024] Visually Guided Generative Text-Layout Pre-training for Document Intelligence
 - [wakatime/wakadump](https://github.com/wakatime/wakadump) - Command line tool for converting WakaTime data dump files into various formats.
 - [yihong0618/GitHubPoster](https://github.com/yihong0618/GitHubPoster) - Make everything a GitHub svg poster and Skyline!
-- [YUZongmin/sqlite-literature-management-fastmcp-mcp-server](https://github.com/YUZongmin/sqlite-literature-management-fastmcp-mcp-server) - A flexible system for managing various types of sources (papers, books, webpages, etc.) and integrating them with knowledge graphs.
+- [zongmin-yu/sqlite-literature-management-fastmcp-mcp-server](https://github.com/zongmin-yu/sqlite-literature-management-fastmcp-mcp-server) - A flexible system for managing various types of sources (papers, books, webpages, etc.) and integrating them with knowledge graphs.
 - [kvas-it/mcp-server-fs](https://github.com/kvas-it/mcp-server-fs) - MCP server providing basic file system operations. Supports navigation, reading, writing, and analyzing files.
 - [punkpeye/mcp-filesystem-python](https://github.com/punkpeye/mcp-filesystem-python) - A MCP Filesystem implementation for Claude, written mostly by Claude
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Gen-AI Chat for Teams - Think ChatGPT if it had access to your team's unique knowledge.
@@ -2693,7 +2706,7 @@
 - [karaketir16/openwebui-langfuse](https://github.com/karaketir16/openwebui-langfuse) - This repository provides resources and guidelines to facilitate the integration of Open-WebUI and Langfuse, enabling seamless monitoring and management of AI model usage statistics.
 - [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [open-webui/pipelines](https://github.com/open-webui/pipelines) - Pipelines: Versatile, UI-Agnostic OpenAI-Compatible Plugin Framework
-- [Alibaba-NLP/WebWalker](https://github.com/Alibaba-NLP/WebWalker) - 🌐 WebWalker: Benchmarking LLMs in Web Traversal [ACL2025]
+- [Alibaba-NLP/WebAgent](https://github.com/Alibaba-NLP/WebAgent) - 🌐 WebWalker [ACL2025] & WebDancer [Preprint]
 - [hitsz-ids/synthetic-data-generator](https://github.com/hitsz-ids/synthetic-data-generator) - SDG is a specialized framework designed to generate high-quality structured tabular data.
 - [vanderschaarlab/synthcity](https://github.com/vanderschaarlab/synthcity) - A library for generating and evaluating synthetic tabular data for privacy, fairness and data augmentation.
 - [sdv-dev/SDV](https://github.com/sdv-dev/SDV) - Synthetic data generation for tabular data
@@ -2899,7 +2912,7 @@
 - [OS-Copilot/OS-Atlas](https://github.com/OS-Copilot/OS-Atlas) - OS-ATLAS: A Foundation Action Model For Generalist GUI Agents
 - [OSU-NLP-Group/GUI-Agents-Paper-List](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List) - Building a comprehensive and handy list of papers for GUI agents
 - [OSU-NLP-Group/SeeAct](https://github.com/OSU-NLP-Group/SeeAct) - [ICML'24] SeeAct is a system for generalist web agents that autonomously carry out tasks on any given website, with a focus on large multimodal models (LMMs) such as GPT-4V(ision).
-- [stableagents/stableagents](https://github.com/stableagents/stableagents) - Standardized gateway, debugging and multi-authentication client for MCP
+- [stableagents/stableagents](https://github.com/stableagents/stableagents) - Agentic SDK (WIP ⚠️)
 - [simular-ai/OpenACI](https://github.com/simular-ai/OpenACI) - Open Agent Computer Interface
 - [simular-ai/Agent-S](https://github.com/simular-ai/Agent-S) - Agent S: an open agentic framework that uses computers like a human
 - [OpenInterpreter/open-interpreter](https://github.com/OpenInterpreter/open-interpreter) - A natural language interface for computers
@@ -3944,6 +3957,7 @@
 
 ## SCSS 
 
+- [jhildenbiddle/docsify-themeable](https://github.com/jhildenbiddle/docsify-themeable) - A delightfully simple theme system for docsify.js. Features multiple themes with rich customization options, an improved desktop and mobile experience, and legacy browser support (IE11+).
 - [AboutRSS/ALL-about-RSS](https://github.com/AboutRSS/ALL-about-RSS) - A list of RSS related stuff: tools, services, communities and tutorials, etc.
 - [bluedrift/Spicetify-Throwback](https://github.com/bluedrift/Spicetify-Throwback) - Nostalgic theme for Spotify Desktop
 - [iina/iina-website](https://github.com/iina/iina-website) - The source code of IINA's new website at iina.io.
@@ -4182,6 +4196,7 @@
 
 ## TypeScript 
 
+- [dolanmiu/docsify-terminal-block](https://github.com/dolanmiu/docsify-terminal-block) - 
 - [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) - 🧡 Everything is RSSible
 - [clairefro/obsidian-plugin-chronos](https://github.com/clairefro/obsidian-plugin-chronos) - Render interactive timelines in your Obsidian notes from simple Markdown.
 - [mark-when/obsidian-plugin](https://github.com/mark-when/obsidian-plugin) - Markwhen obsidian plugin
@@ -4240,7 +4255,7 @@
 - [graphlit/graphlit-mcp-server](https://github.com/graphlit/graphlit-mcp-server) - Model Context Protocol (MCP) Server for Graphlit Platform
 - [dvcrn/mcp-server-siri-shortcuts](https://github.com/dvcrn/mcp-server-siri-shortcuts) - MCP for calling Siri Shorcuts from LLMs
 - [boguan/create-mcp-app](https://github.com/boguan/create-mcp-app) - A CLI tool for quickly scaffolding Model Context Protocol (MCP) server applications with TypeScript support and modern development tooling
-- [cyanheads/git-mcp-server](https://github.com/cyanheads/git-mcp-server) - Robust Model Context Protocol server for Git tools. STDIO & Streamable HTTP
+- [cyanheads/git-mcp-server](https://github.com/cyanheads/git-mcp-server) - An MCP (Model Context Protocol) server enabling LLMs and AI agents to interact with Git repositories. Provides tools for comprehensive Git operations including clone, commit, branch, diff, log, status
 - [spences10/mcp-omnisearch](https://github.com/spences10/mcp-omnisearch) - 🔍 A Model Context Protocol (MCP) server providing unified access to multiple search engines (Tavily, Brave, Kagi), AI tools (Perplexity, FastGPT), and content processing services (Jina AI, Kagi). Comb
 - [aaronsb/google-workspace-mcp](https://github.com/aaronsb/google-workspace-mcp) - A Model Context Protocol (MCP) server that provides authenticated access to Google Workspace APIs, offering integrated Authentication, Gmail, Calendar, and Drive functionality
 - [cyproxio/mcp-for-security](https://github.com/cyproxio/mcp-for-security) - MCP for Security: A collection of Model Context Protocol servers for popular security tools like SQLMap, FFUF, NMAP, Masscan and more. Integrate security testing and penetration testing into AI workfl
@@ -4400,6 +4415,7 @@
 - [jsonresume/mcp](https://github.com/jsonresume/mcp) - The registry mcp server updates your resume while you code
 - [AmruthPillai/Reactive-Resume](https://github.com/AmruthPillai/Reactive-Resume) - A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source and free forever. Try it out today!
 - [xitanggg/open-resume](https://github.com/xitanggg/open-resume) - OpenResume is a powerful open-source resume builder and resume parser. https://open-resume.com/
+- [srbhr/Resume-Matcher](https://github.com/srbhr/Resume-Matcher) - Resume Matcher is an open source, free tool to improve your resume. It works by using AI, Reader LLMs, to compare and rank resumes with job descriptions.
 - [oramasearch/orama](https://github.com/oramasearch/orama) - 🌌  A complete search engine and RAG pipeline in your browser, server or edge network with support for full-text, vector, and hybrid search in less than 2kb.
 - [daldridge/docusaurus-plugin-lunr](https://github.com/daldridge/docusaurus-plugin-lunr) - Docusaurus v2 plugin to create a local search index for use with Lunr.js
 - [webbertakken/docusaurus-plugin-content-gists](https://github.com/webbertakken/docusaurus-plugin-content-gists) - Display your gists inside docusaurus.
@@ -4495,7 +4511,7 @@
 - [zaidmukaddam/scira](https://github.com/zaidmukaddam/scira) - Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you find information on the internet and cites it too. Powered by Vercel AI SDK! Search with models like xAI's Grok 3.
 - [ahmedkhaleel2004/gitdiagram](https://github.com/ahmedkhaleel2004/gitdiagram) - Free, simple, fast interactive diagrams for any GitHub repository
 - [arifszn/gitprofile](https://github.com/arifszn/gitprofile) - 🚀 Create and publish a dynamic portfolio by just providing your GitHub username.
-- [appwrite/appwrite](https://github.com/appwrite/appwrite) - The open-source Vercel alternative
+- [appwrite/appwrite](https://github.com/appwrite/appwrite) - Build like a team of hundreds_
 - [April-Gras/obsidian-auto-timelines](https://github.com/April-Gras/obsidian-auto-timelines) - Simple timeline generator plugin for story tellers using obsidian
 - [mendableai/firegraph](https://github.com/mendableai/firegraph) - 📈 Create beautiful graphs in seconds. Plot github stars or your own csvs. Think ray.so for graphs. Built by the Firecrawl team.
 - [wei/socialify](https://github.com/wei/socialify) - 💞 Socialify your project. 🌐 Share with the world!
@@ -4551,7 +4567,7 @@
 - [expo/expo](https://github.com/expo/expo) - An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - [vitejs/vite](https://github.com/vitejs/vite) - Next generation frontend tooling. It's fast!
 - [n8n-io/n8n](https://github.com/n8n-io/n8n) - Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.
-- [lobehub/lobe-chat](https://github.com/lobehub/lobe-chat) - 🤯 Lobe Chat - an open-source, modern-design AI chat framework. Supports Multi AI Providers( OpenAI / Claude 3 / Gemini / Ollama / DeepSeek / Qwen), Knowledge Base (file upload / knowledge management /
+- [lobehub/lobe-chat](https://github.com/lobehub/lobe-chat) - 🤯 Lobe Chat - an open-source, modern-design AI chat framework. Supports Multi AI Providers( OpenAI / Claude 4 / Gemini / Ollama / DeepSeek / Qwen), Knowledge Base (file upload / knowledge management /
 - [pingcap/autoflow](https://github.com/pingcap/autoflow) - pingcap/autoflow is a Graph RAG based and conversational knowledge base tool built with TiDB Serverless Vector Storage. Demo: https://tidb.ai
 - [renovatebot/renovate](https://github.com/renovatebot/renovate) - Home of the Renovate CLI: Cross-platform Dependency Automation by Mend.io
 - [aidenybai/react-scan](https://github.com/aidenybai/react-scan) - Scan for React performance issues and eliminate slow renders in your app
@@ -4679,7 +4695,7 @@
 - [chatchat-space/Langchain-Chatchat](https://github.com/chatchat-space/Langchain-Chatchat) - Langchain-Chatchat（原Langchain-ChatGLM）基于 Langchain 与 ChatGLM, Qwen 与 Llama 等语言模型的 RAG 与 Agent 应用 | Langchain-Chatchat (formerly langchain-ChatGLM), local knowledge based LLM (like ChatGLM, Qwen and Ll
 - [langfuse/langfuse](https://github.com/langfuse/langfuse) - 🪢 Open source LLM engineering platform: LLM Observability, metrics, evals, prompt management, playground, datasets. Integrates with OpenTelemetry, Langchain, OpenAI SDK, LiteLLM, and more. 🍊YC W23
 - [leon-ai/leon](https://github.com/leon-ai/leon) - 🧠 Leon is your open-source personal assistant.
-- [getmaxun/maxun](https://github.com/getmaxun/maxun) - 🔥 Open Source No Code Web Data Extraction Platform • Turn Websites To APIs & Spreadsheets With No-Code Robots In Minutes 🔥
+- [getmaxun/maxun](https://github.com/getmaxun/maxun) - ⚡️ Open Source No Code Web Data Extraction Platform • Turn Websites To APIs & Spreadsheets In Minutes ⚡️
 - [vscode-restructuredtext/vscode-restructuredtext](https://github.com/vscode-restructuredtext/vscode-restructuredtext) - reStructuredText Language Support in Visual Studio Code
 - [elie222/inbox-zero](https://github.com/elie222/inbox-zero) - The world's best AI personal assistant for email. Open source app to help you reach inbox zero fast.
 - [upscayl/upscayl](https://github.com/upscayl/upscayl) - 🆙 Upscayl - #1 Free and Open Source AI Image Upscaler for Linux, MacOS and Windows.
