@@ -1,0 +1,17 @@
+---
+description: 
+globs: Makefile,pyproject.toml
+alwaysApply: false
+---
+
+# Local Development Workflow
+
+Local development and task execution are primarily managed via the `[Makefile](mdc:Makefile)` which utilizes `uv` for Python environment and package management. Project Python version is 3.13.
+
+**Common `Makefile` Targets:**
+*   `make install`: Syncs dependencies
+*   `make format`: Formats code using `black`, `isort`, `autoflake`
+*   `make lint`: Lints code with `ruff`, `pylint`, `mypy`
+*   `make test`: Runs the test suite using `pytest`
+*   `make generate`: Generates all assets by invoking `[scripts/cli.py](mdc:scripts/cli.py)`
+*   `make clean`: Removes caches, logs, generated assets, and the virtual environment

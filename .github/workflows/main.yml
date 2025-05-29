@@ -34,12 +34,17 @@ jobs:
 # You can reuse these steps if you want to have a profile page similar to mine.
   github-metrics-personal:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # To commit the generated SVG metrics files
     steps:
+      # Checkout is often needed for the committer_token to work correctly and for path context
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Personal metrics
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@v3.38.0 # Pin to a specific stable version
         with:
-          filename: assets/metrics.svg
+          filename: ./.github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: "header, activity, repositories"
@@ -63,9 +68,9 @@ jobs:
           config_padding: 10%
           
       - name: Personal metrics (additional)
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@v3.38.0 # Pin to a specific stable version
         with:
-          filename: assets/metrics.additional.svg
+          filename: ./.github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ""

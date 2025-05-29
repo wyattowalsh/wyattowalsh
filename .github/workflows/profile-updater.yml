@@ -1,0 +1,219 @@
+name: Unified Profile Updater
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *" # Run once a day at 1 AM UTC
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  update-starred-lists:
+    name: Update Starred Repository Lists (MD Files)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # To commit languages.md and topics.md
+    outputs:
+      starred_lists_changed: ${{ steps.commit_starred_lists.outputs.changes_detected }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13 and uv
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'uv'
+
+      - name: Install script-tools dependencies
+        run: uv pip install .[script-tools]
+
+      - name: Get repository name
+        id: get_repo_name
+        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_OUTPUT
+
+      - name: Update repo category by language
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
+          USERNAME: ${{ github.repository_owner }}
+        run: |
+          starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} \
+            --message 'chore(data): update awesome-stars languages.md' \
+            --filename ./.github/assets/languages.md
+
+      - name: Update repo category by topic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
+          USERNAME: ${{ github.repository_owner }}
+        run: |
+          starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} \
+            --message 'chore(data): update awesome-stars topics.md' \
+            --topic --topic_limit 500 \
+            --filename ./.github/assets/topics.md
+      
+      - name: Commit updated starred lists
+        id: commit_starred_lists
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): update awesome-stars lists (languages.md, topics.md)"
+          file_pattern: ".github/assets/languages.md .github/assets/topics.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+  generate-assets:
+    name: Generate Profile Assets (QR, WordClouds, Banner)
+    runs-on: ubuntu-latest
+    needs: update-starred-lists # Depends on the md files being up-to-date
+    permissions:
+      contents: write # To commit generated image assets
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with: # Ensure we fetch the commit made by update-starred-lists if it ran
+          ref: ${{ github.head_ref || github.ref }}
+
+      - name: Set up Python 3.13 and uv
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'uv'
+      
+      - name: Install asset generation dependencies
+        run: uv pip install .[qr,word-clouds,banner] # Install all needed groups
+
+      - name: Generate QR Code
+        run: python scripts/cli.py generate qr_code --config-path config.yaml
+        # CLI will use output paths from config.yaml by default
+
+      - name: Generate Word Cloud by Topic
+        run: |
+          python scripts/cli.py generate word_cloud \
+            --config-path config.yaml \
+            --techs-path .github/assets/topics.md \
+            --output-path .github/assets/img/wordcloud_by_topic.png \
+            # Prompt can be further customized in config.yaml or via --prompt if needed
+            # Forcing output path here, can also be set in config.yaml
+
+      - name: Generate Word Cloud by Language
+        run: |
+          python scripts/cli.py generate word_cloud \
+            --config-path config.yaml \
+            --techs-path .github/assets/languages.md \
+            --output-path .github/assets/img/wordcloud_by_language.png
+
+      - name: Generate Banner
+        run: python scripts/cli.py generate banner --config-path config.yaml
+        # CLI will use output path from config.yaml by default
+        
+      - name: Commit generated assets
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(assets): update generated profile assets"
+          file_pattern: ".github/assets/img/qr*.png .github/assets/img/wordcloud_*.png .github/assets/img/banner.svg"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+  update-readme-wakatime:
+    name: Update README - WakaTime Stats
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: WakaTime Readme Stats
+        uses: anmol098/waka-readme-stats@v4
+        with:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # GITHUB_TOKEN is usually sufficient if action is in same repo
+          PUSH_BRANCH_NAME: ${{ github.ref_name }} # Push to current branch
+          # ... other params from your waka.yml ...
+          SHOW_LINES_OF_CODE: "True"
+          SHOW_TOTAL_CODE_TIME: "True"
+          SHOW_COMMIT: "True"
+          SHOW_DAYS_OF_WEEK: "True"
+          SHOW_LANGUAGE: "True"
+          SHOW_OS: "True"
+          SHOW_EDITORS: "True"
+          SHOW_LANGUAGE_PER_REPO: "True"
+          SHOW_SHORT_INFO: "True"
+          SHOW_LOC_CHART: "True"
+
+  update-readme-blog:
+    name: Update README - Latest Blog Posts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Blog Post Workflow
+        uses: gautamkrishnar/blog-post-workflow@v1
+        with:
+          feed_list: "https://medium.com/feed/@wyattowalsh"
+          # ... other params from your blog-post-workflow.yml ...
+          template: "$newline - $date - [$title]($url)"
+          commit_message: "chore(readme): update blog posts section" # Example of specific commit message
+
+  generate-profile-metrics:
+    name: Generate Profile Metrics SVGs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Personal metrics
+        uses: lowlighter/metrics@v3.38.0
+        with:
+          filename: ./.github/assets/img/metrics.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          # ... other params from your main.yml ...
+          base: "header, activity, repositories"
+          plugin_lines: yes
+          plugin_isocalendar: yes
+          plugin_traffic: yes
+          plugin_languages: yes
+          plugin_languages_ignored: jupyter%20notebook
+          plugin_habits: yes
+          plugin_habits_from: 200
+          plugin_habits_days: 14
+          plugin_habits_facts: yes
+          plugin_habits_charts: yes
+          plugin_gists: yes
+          plugin_topics: yes
+          plugin_topics_sort: stars
+          plugin_topics_limit: 15
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+
+      - name: Personal metrics (additional)
+        uses: lowlighter/metrics@v3.38.0
+        with:
+          filename: ./.github/assets/img/metrics.additional.svg
+          token: ${{ secrets.METRICS_TOKEN }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          # ... other params from your main.yml ...
+          base: ""
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+          plugin_music: yes
+          plugin_music_provider: spotify
+          plugin_music_mode: recent
+          plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
+          plugin_music_limit: 5
+          plugin_tweets: yes
+          plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
+          plugin_activity: yes
+          plugin_activity_limit: 5
+          plugin_activity_days: 14
+          plugin_stargazers: yes
+          plugin_stars: yes
+          plugin_stars_limit: 3 
