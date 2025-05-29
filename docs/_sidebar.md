@@ -14,7 +14,7 @@
   - [<i class="fas fa-palette fa-fw"></i>&nbsp;Themes](themes.md "Using and customizing themes")
   - [<i class="fas fa-plug fa-fw"></i>&nbsp;List of Plugins](plugins.md "Explore available Docsify plugins")
   - [<i class="fas fa-code fa-fw"></i>&nbsp;Write a Plugin](write-a-plugin.md "Develop your own Docsify plugins")
-  - [<i class="fas fa-file-code fa-fw"></i>&nbsp;Markdown config](markdown.md "Customize Markdown parsing")
+  - [<i class="fas fa-file-code fa-fw"></i>&nbsp;Markdown configuration](markdown.md "Customize Markdown parsing")
   - [<i class="fas fa-highlighter fa-fw"></i>&nbsp;Language highlighting](language-highlight.md "Syntax highlighting for code blocks")
   - [<i class="fas fa-smile fa-fw"></i>&nbsp;Emoji](emoji.md "Using emojis in your documentation")
 
@@ -26,6 +26,3 @@
   - [<i class="fas fa-power-off fa-fw"></i>&nbsp;Offline Mode (PWA)](pwa.md "Enable offline access with PWA")
   - [<i class="fas fa-paperclip fa-fw"></i>&nbsp;Embed Files](embed-files.md "Embedding files into your documentation")
   - [<i class="fas fa-puzzle-piece fa-fw"></i>&nbsp;UI Kit](ui-kit.md "Docsify UI Kit elements")
-
-- [<i class="fas fa-star fa-fw"></i>&nbsp;Awesome docsify](awesome.md "A curated list of awesome Docsify resources")
-- [<i class="fas fa-history fa-fw"></i>&nbsp;Changelog](changelog.md "Project version history and changes")
