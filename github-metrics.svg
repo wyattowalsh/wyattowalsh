@@ -3100,7 +3100,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jbeno/cursor-notebook-mcp</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Model Context Protocol (MCP) server designed to allow AI agents within Cursor to interact with Jupyter Notebook (.ipynb) files</div>
@@ -3153,7 +3153,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AnotiaWang/deep-research-web-ui</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">(Supports DeepSeek R1) An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.</div>
@@ -3200,7 +3200,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>btahir/open-deep-research</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open source alternative to Gemini Deep Research. Generate reports with AI based on search results.</div>
@@ -3253,7 +3253,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>neoneye/PlanExe</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">AI planner similar to OpenAI's deep research</div>
@@ -3827,7 +3827,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 4 Jun 2025, 04:13:16 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 4 Jun 2025, 05:10:18 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
