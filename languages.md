@@ -146,7 +146,7 @@
 ## C# # 
 
 - [grparry/SwaggerToMCP](https://github.com/grparry/SwaggerToMCP) - 🔁 Convert Swagger/OpenAPI specs into Model Context Protocol (MCP) tool definitions for agentic AI compatibility.
-- [Bluegrams/Vividl](https://github.com/Bluegrams/Vividl) - Modern Windows GUI for youtube-dl/ yt-dlp
+- [Bluegrams/Vividl](https://github.com/Bluegrams/Vividl) - Modern Windows GUI for youtube-dl/ yt-dlp. Download videos from hundreds of websites.
 - [shaked6540/YoutubePlaylistDownloader](https://github.com/shaked6540/YoutubePlaylistDownloader) - A tool to download whole playlists, channels or single videos from youtube and also optionally convert them to almost any format you would like
 - [Tyrrrz/YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) - Abstraction layer over YouTube's internal API
 - [libgenapps/LibgenDesktop](https://github.com/libgenapps/LibgenDesktop) - 
@@ -580,6 +580,7 @@
 - [Igglybuff/awesome-piracy](https://github.com/Igglybuff/awesome-piracy) - A curated list of awesome warez and piracy links
 - [whatwg/html](https://github.com/whatwg/html) - HTML Standard
 - [tc39/ecma402](https://github.com/tc39/ecma402) - Status, process, and documents for ECMA 402
+- [admica/FileScopeMCP](https://github.com/admica/FileScopeMCP) - Analyzes your codebase identifying important files based on dependency relationships. Generates diagrams and importance scores per file, helping AI assistants understand the codebase. Automatically pa
 - [nicohaenggi/SafariBooks-Downloader](https://github.com/nicohaenggi/SafariBooks-Downloader) - a SafariBooksOnline downloader that generates respective .epub books for offline and kindle reading
 - [jonasstrehle/supercookie](https://github.com/jonasstrehle/supercookie) - ⚠️ Browser fingerprinting via favicon!
 - [alexwohletz/language-server-mcp](https://github.com/alexwohletz/language-server-mcp) - 
@@ -1301,7 +1302,6 @@
 - [frontarm/mdx-util](https://github.com/frontarm/mdx-util) - Utilities for working with MDX
 - [blocks/blocks](https://github.com/blocks/blocks) - A JSX-based page builder for creating beautiful websites without writing code
 - [pomber/code-surfer](https://github.com/pomber/code-surfer) - Rad code slides &lt;🏄/&gt;
-- [gaearon/overreacted.io](https://github.com/gaearon/overreacted.io) - Personal blog by Dan Abramov.
 - [taniarascia/taniarascia.com](https://github.com/taniarascia/taniarascia.com) - 💾 ‎  Personal website running on Gatsby, React, and Node.js.
 - [segmentio/analytics.js](https://github.com/segmentio/analytics.js) - The hassle-free way to integrate analytics into any web application.
 - [nfl/react-metrics](https://github.com/nfl/react-metrics) - An analytics module for React
@@ -1843,6 +1843,7 @@
 
 ## Others 
 
+- [jaw9c/awesome-remote-mcp-servers](https://github.com/jaw9c/awesome-remote-mcp-servers) - Remote MCP Servers
 - [aclap-dev/video-downloadhelper](https://github.com/aclap-dev/video-downloadhelper) - Download Helper
 - [electron-forge/electron-forge-docs](https://github.com/electron-forge/electron-forge-docs) - :electron: Mirror for Electron Forge's GitBook documentation
 - [mrpotatoes/docsify-toc](https://github.com/mrpotatoes/docsify-toc) - docsify-toc
@@ -2398,6 +2399,7 @@
 
 ## Python 
 
+- [langchain-ai/langconnect](https://github.com/langchain-ai/langconnect) - A managed RAG API server.
 - [m-bain/whisperX](https://github.com/m-bain/whisperX) - WhisperX:  Automatic Speech Recognition with Word-level Timestamps (& Diarization)
 - [openai/openai-python](https://github.com/openai/openai-python) - The official Python library for the OpenAI API
 - [open-webui/mcpo](https://github.com/open-webui/mcpo) - A simple, secure MCP-to-OpenAPI proxy server
@@ -2500,7 +2502,7 @@
 - [stephentth/chatty-mcp](https://github.com/stephentth/chatty-mcp) - a MCP server enable your AI code editor (e.g., Cursor, Cline) with voice capabilities and voice response summaries
 - [Solihatun1/AI-Cursor-Scraping-Assistant](https://github.com/Solihatun1/AI-Cursor-Scraping-Assistant) - A powerful tool that leverages Cursor AI and MCP (Model Context Protocol) to easily generate web scrapers for various types of websites.
 - [joouha/euporie](https://github.com/joouha/euporie) - Jupyter notebooks in the terminal
-- [abilzerian/LLM-Prompt-Library](https://github.com/abilzerian/LLM-Prompt-Library) - A playground of highly experimental prompts, tools & scripts for machine intelligence models from Apple, DeepSeek, OpenAI, Anthropic, Meta, Mistral, Google, xAI & others. Created & maintained by Alex 
+- [abilzerian/LLM-Prompt-Library](https://github.com/abilzerian/LLM-Prompt-Library) - A playground of highly experimental prompts, tools & scripts for machine intelligence models from Apple, DeepSeek, OpenAI, Anthropic, Meta, Mistral, Google, xAI & others. Created Alex Bilzerian, maint
 - [madaan/self-refine](https://github.com/madaan/self-refine) - LLMs can generate feedback on their work, use it to improve the output, and repeat this process iteratively.
 - [ServiceNow/AgentLab](https://github.com/ServiceNow/AgentLab) - AgentLab: An open-source framework for developing, testing, and benchmarking web agents on diverse tasks, designed for scalability and reproducibility.
 - [google/dotprompt](https://github.com/google/dotprompt) - Executable GenAI prompt templates
@@ -2741,7 +2743,6 @@
 - [donnemartin/dev-setup](https://github.com/donnemartin/dev-setup) - macOS development environment setup:  Easy-to-understand instructions with automated setup scripts for developer tools like Vim, Sublime Text, Bash, iTerm, Python data analysis, Spark, Hadoop MapReduc
 - [win4r/GraphRAG4OpenWebUI](https://github.com/win4r/GraphRAG4OpenWebUI) - GraphRAG4OpenWebUI integrates Microsoft's GraphRAG technology into Open WebUI, providing a versatile information retrieval API. It combines local, global, and web searches for advanced Q&A systems and
 - [karaketir16/openwebui-langfuse](https://github.com/karaketir16/openwebui-langfuse) - This repository provides resources and guidelines to facilitate the integration of Open-WebUI and Langfuse, enabling seamless monitoring and management of AI model usage statistics.
-- [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [open-webui/pipelines](https://github.com/open-webui/pipelines) - Pipelines: Versatile, UI-Agnostic OpenAI-Compatible Plugin Framework
 - [Alibaba-NLP/WebAgent](https://github.com/Alibaba-NLP/WebAgent) - 🌐 WebWalker [ACL2025] & WebDancer [Preprint]
 - [hitsz-ids/synthetic-data-generator](https://github.com/hitsz-ids/synthetic-data-generator) - SDG is a specialized framework designed to generate high-quality structured tabular data.
@@ -3146,7 +3147,6 @@
 - [AuvaLab/itext2kg](https://github.com/AuvaLab/itext2kg) - Incremental Knowledge Graphs Constructor Using Large Language Models
 - [pypa/pipx](https://github.com/pypa/pipx) - Install and Run Python Applications in Isolated Environments
 - [getzep/graphiti](https://github.com/getzep/graphiti) - Build Real-Time Knowledge Graphs for AI Agents
-- [fleet-ai/context](https://github.com/fleet-ai/context) - A CLI tool & API over the top 1221 Python libraries.
 - [datadreamer-dev/DataDreamer](https://github.com/datadreamer-dev/DataDreamer) - DataDreamer: Prompt. Generate Synthetic Data. Train & Align Models.    🤖💤
 - [abi/screenshot-to-code](https://github.com/abi/screenshot-to-code) - Drop in a screenshot and convert it to clean code (HTML/Tailwind/React/Vue)
 - [apache/burr](https://github.com/apache/burr) - Build applications that make decisions (chatbots, agents, simulations, etc...). Monitor, trace, persist, and execute on your own infrastructure.
@@ -3943,7 +3943,6 @@
 ## Rust 
 
 - [pkolaczk/fclones](https://github.com/pkolaczk/fclones) - Efficient Duplicate File Finder
-- [Hakanbaban53/rclone-manager](https://github.com/Hakanbaban53/rclone-manager) - Rclone Manager is a cross-platform GUI application designed to help users manage Rclone remotes efficiently.
 - [vercel/turborepo](https://github.com/vercel/turborepo) - Build system optimized for JavaScript and TypeScript, written in Rust
 - [kofigumbs/typebeat](https://github.com/kofigumbs/typebeat) - Keyboard-controlled music sequencer, sampler, and synth
 - [robbert-vdh/nih-plug](https://github.com/robbert-vdh/nih-plug) - Rust VST3 and CLAP plugin framework and plugins - because everything is better when you do it yourself
@@ -3976,7 +3975,7 @@
 - [astral-sh/uv](https://github.com/astral-sh/uv) - An extremely fast Python package and project manager, written in Rust.
 - [dtolnay/star-history](https://github.com/dtolnay/star-history) - Graph history of GitHub stars of a user or repo over time
 - [trashhalo/obsidian-extract-url](https://github.com/trashhalo/obsidian-extract-url) - Plugin to extract markdown out of urls
-- [zurawiki/gptcommit](https://github.com/zurawiki/gptcommit) - A git prepare-commit-msg hook for authoring commit messages with GPT-3.
+- [zurawiki/gptcommit](https://github.com/zurawiki/gptcommit) - A git prepare-commit-msg hook for authoring commit messages with LLMs.
 - [LemmyNet/lemmy](https://github.com/LemmyNet/lemmy) - 🐀 A link aggregator and forum for the fediverse
 - [tw93/Pake](https://github.com/tw93/Pake) - 🤱🏻 Turn any webpage into a desktop app with Rust.  🤱🏻 利用 Rust 轻松构建轻量级多端桌面应用
 - [chroma-core/chroma](https://github.com/chroma-core/chroma) - the AI-native open-source embedding database
@@ -4239,6 +4238,7 @@
 
 ## TypeScript 
 
+- [Hakanbaban53/rclone-manager](https://github.com/Hakanbaban53/rclone-manager) - Rclone Manager is a cross-platform GUI application designed to help users manage Rclone remotes efficiently.
 - [egoist/fetch-mcp](https://github.com/egoist/fetch-mcp) - An MCP server for fetching URLs / Youtube video transcript.
 - [ZubeidHendricks/youtube-mcp-server](https://github.com/ZubeidHendricks/youtube-mcp-server) - MCP Server for YouTube API, enabling video management, Shorts creation, and advanced analytics
 - [taylor-lindores-reeves/mcp-github-projects](https://github.com/taylor-lindores-reeves/mcp-github-projects) - 
@@ -4393,7 +4393,6 @@
 - [markmap/markmap](https://github.com/markmap/markmap) - Build mindmaps with plain text
 - [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) - Playwright MCP server
 - [ReAPI-com/mcp-openapi](https://github.com/ReAPI-com/mcp-openapi) - OpenAPI specification MCP server.
-- [admica/FileScopeMCP](https://github.com/admica/FileScopeMCP) - Analyzes your codebase identifying important files based on dependency relationships. Generates diagrams and importance scores per file, helping AI assistants understand the codebase. Automatically pa
 - [andredezzy/deep-directory-tree-mcp](https://github.com/andredezzy/deep-directory-tree-mcp) - Powerful Model Context Protocol (MCP) implementation for visualizing directory structures with real-time updates, configurable depth, and smart exclusions for efficient project navigation
 - [mclenhard/mcp-evals](https://github.com/mclenhard/mcp-evals) - A Node.js package and GitHub Action for evaluating MCP (Model Context Protocol) tool implementations using LLM-based scoring. This helps ensure your MCP server's tools are working correctly and perfor
 - [GLips/Figma-Context-MCP](https://github.com/GLips/Figma-Context-MCP) - MCP server to provide Figma layout information to AI coding agents like Cursor
@@ -4552,6 +4551,7 @@
 - [Konsl/spicetify-visualizer](https://github.com/Konsl/spicetify-visualizer) - Audio Visualizer for Spicetify
 - [spicetify/marketplace](https://github.com/spicetify/marketplace) - Download extensions and themes directly from Spicetify
 - [sanoojes/Spicetify-Lucid](https://github.com/sanoojes/Spicetify-Lucid) - A Dynamic, Highly Customizable Spicetify theme inspired by Bloom and Microsoft Fluent Design.
+- [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [RamiAwar/dataline](https://github.com/RamiAwar/dataline) - Chat with your data - AI data analysis and visualization on CSV, Postgres, MySQL, Snowflake, SQLite...
 - [sourcegraph/cody](https://github.com/sourcegraph/cody) - Type less, code more: Cody is an AI code assistant that uses advanced search and codebase context to help you write and fix code.
 - [benkeen/generatedata](https://github.com/benkeen/generatedata) - A powerful, feature-rich, random test data generator.
@@ -5040,6 +5040,7 @@
 - [FormidableLabs/react-live](https://github.com/FormidableLabs/react-live) - A flexible playground for live editing React components
 - [juliencrn/usehooks-ts](https://github.com/juliencrn/usehooks-ts) - React hook library, ready to use, written in Typescript.
 - [reactjs/react.dev](https://github.com/reactjs/react.dev) - The React documentation website
+- [gaearon/overreacted.io](https://github.com/gaearon/overreacted.io) - Personal blog by Dan Abramov.
 - [segmentio/analytics-next](https://github.com/segmentio/analytics-next) - Segment Analytics for Javascript
 - [JedWatson/react-select](https://github.com/JedWatson/react-select) - The Select Component for React.js
 - [react-component/select](https://github.com/react-component/select) - React Select
@@ -5119,7 +5120,7 @@
 - [ceramicstudio/js-3id](https://github.com/ceramicstudio/js-3id) - Authentication system for Ceramic apps that works with blockchain wallets.
 - [m1guelpf/mirror-next](https://github.com/m1guelpf/mirror-next) - A Next.js-powered frontend for your Mirror publication
 - [Redocly/redoc](https://github.com/Redocly/redoc) - 📘  OpenAPI/Swagger-generated API Reference Documentation
-- [learn-anything/learn-anything](https://github.com/learn-anything/learn-anything) - Make interlinked notes in private (E2E encryption), share parts of it to global network of topics with deep AI integration
+- [learn-anything/learn-anything](https://github.com/learn-anything/learn-anything) - Make interlinked notes in private (E2E encrypted), share parts of it to global network of topics with deep AI integration
 - [FlorianWoelki/obsidian-iconize](https://github.com/FlorianWoelki/obsidian-iconize) - Simply add icons to anything you want in Obsidian.
 - [visini/obsidian-icons-plugin](https://github.com/visini/obsidian-icons-plugin) - Add icons to your Obsidian notes – Experimental Obsidian Plugin
 - [obsidian-tools/obsidian-tools](https://github.com/obsidian-tools/obsidian-tools) - An unofficial collection of tools that helps you build plugins for obsidian.md
