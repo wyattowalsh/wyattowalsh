@@ -2008,6 +2008,7 @@
 - [marekbrze/categorized-obsidian-plugins](https://github.com/marekbrze/categorized-obsidian-plugins) - Easily find Obsidian plugins!🚀
 - [r-u-s-h-i-k-e-s-h/Obsidian-CSS-Snippets](https://github.com/r-u-s-h-i-k-e-s-h/Obsidian-CSS-Snippets) - Welcome to the ObsidianMD CSS Snippets repository, a collection of CSS code snippets to enhance the user interface elements of ObsidianMD
 - [MarkMindCkm/obsidian-markmind](https://github.com/MarkMindCkm/obsidian-markmind) - A mind map, outline for obsidian,It support mobile and desktop
+- [flowershow/flowershow](https://github.com/flowershow/flowershow) - 💐 Create beautiful books, wikis, websites and PKMs from markdown.
 - [obsidianmd/obsidian-releases](https://github.com/obsidianmd/obsidian-releases) - Community plugins list, theme list, and releases of Obsidian.
 - [SamurAIGPT/Best-AI-Agents](https://github.com/SamurAIGPT/Best-AI-Agents) - A list of top AI agents
 - [yzfly/Awesome-AGI-Agents](https://github.com/yzfly/Awesome-AGI-Agents) - 🤖 Awesome list of AGI Agents. Agents 精选资源合集.
@@ -2399,6 +2400,7 @@
 
 ## Python 
 
+- [bytedance/Dolphin](https://github.com/bytedance/Dolphin) - The official repo for “Dolphin: Document Image Parsing via Heterogeneous Anchor Prompting”, ACL, 2025.
 - [langchain-ai/langconnect](https://github.com/langchain-ai/langconnect) - A managed RAG API server.
 - [m-bain/whisperX](https://github.com/m-bain/whisperX) - WhisperX:  Automatic Speech Recognition with Word-level Timestamps (& Diarization)
 - [openai/openai-python](https://github.com/openai/openai-python) - The official Python library for the OpenAI API
@@ -2859,7 +2861,7 @@
 - [TrixSec/Proxy-Checker](https://github.com/TrixSec/Proxy-Checker) - Fast Proxy Checker
 - [truefoundry/cognita](https://github.com/truefoundry/cognita) - RAG (Retrieval Augmented Generation) Framework for building modular, open source applications for production by TrueFoundry
 - [traceloop/openllmetry](https://github.com/traceloop/openllmetry) - Open-source observability for your LLM application, based on OpenTelemetry
-- [julep-ai/julep](https://github.com/julep-ai/julep) - Serverless AI Workflows for Data & ML Teams
+- [julep-ai/julep](https://github.com/julep-ai/julep) - Deploy serverless AI workflows at scale. Firebase for AI agents
 - [llmware-ai/llmware](https://github.com/llmware-ai/llmware) - Unified framework for building enterprise RAG pipelines with small, specialized models
 - [Avaiga/taipy](https://github.com/Avaiga/taipy) - Turns Data and AI algorithms into production-ready web applications in no time.
 - [dgtlmoon/changedetection.io](https://github.com/dgtlmoon/changedetection.io) - The best and simplest free open source web page change detection, website watcher,  restock monitor and notification service. Restock Monitor, change detection. Designed for simplicity - Simply monito
@@ -2904,7 +2906,7 @@
 - [hegelai/prompttools](https://github.com/hegelai/prompttools) - Open-source tools for prompt testing and experimentation, with support for both LLMs (e.g. OpenAI, LLaMA) and vector databases (e.g. Chroma, Weaviate, LanceDB).
 - [dvlab-research/LongLoRA](https://github.com/dvlab-research/LongLoRA) - Code and documents of LongLoRA and LongAlpaca (ICLR 2024 Oral)
 - [ictnlp/LLaMA-Omni](https://github.com/ictnlp/LLaMA-Omni) - LLaMA-Omni is a low-latency and high-quality end-to-end speech interaction model built upon Llama-3.1-8B-Instruct, aiming to achieve speech capabilities at the GPT-4o level.
-- [OpenRLHF/OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) - An Easy-to-use, Scalable and High-performance RLHF Framework based on Ray (PPO & GRPO & REINFORCE++ & vLLM & RFT & Dynamic Sampling & Async Agent RL)
+- [OpenRLHF/OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) - An Easy-to-use, Scalable and High-performance RLHF Framework based on Ray (PPO & GRPO & REINFORCE++ & vLLM & Ray & Dynamic Sampling & Async Agent RL)
 - [young-geng/EasyLM](https://github.com/young-geng/EasyLM) - Large language models (LLMs) made easy, EasyLM is a one stop solution for pre-training, finetuning, evaluating and serving LLMs in JAX/Flax.
 - [LLMBook-zh/LLMBook-zh.github.io](https://github.com/LLMBook-zh/LLMBook-zh.github.io) - 《大语言模型》作者：赵鑫，李军毅，周昆，唐天一，文继荣
 - [intel/neural-compressor](https://github.com/intel/neural-compressor) - SOTA low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime
@@ -2950,7 +2952,7 @@
 - [OS-Copilot/OS-Atlas](https://github.com/OS-Copilot/OS-Atlas) - OS-ATLAS: A Foundation Action Model For Generalist GUI Agents
 - [OSU-NLP-Group/GUI-Agents-Paper-List](https://github.com/OSU-NLP-Group/GUI-Agents-Paper-List) - Building a comprehensive and handy list of papers for GUI agents
 - [OSU-NLP-Group/SeeAct](https://github.com/OSU-NLP-Group/SeeAct) - [ICML'24] SeeAct is a system for generalist web agents that autonomously carry out tasks on any given website, with a focus on large multimodal models (LMMs) such as GPT-4V(ision).
-- [stableagents/stableagents](https://github.com/stableagents/stableagents) - The Linux Kernel for Agents
+- [stableagents/stableagents](https://github.com/stableagents/stableagents) - 
 - [simular-ai/OpenACI](https://github.com/simular-ai/OpenACI) - Open Agent Computer Interface
 - [simular-ai/Agent-S](https://github.com/simular-ai/Agent-S) - Agent S: an open agentic framework that uses computers like a human
 - [OpenInterpreter/open-interpreter](https://github.com/OpenInterpreter/open-interpreter) - A natural language interface for computers
@@ -3105,7 +3107,7 @@
 - [sphinx-contrib/emojicodes](https://github.com/sphinx-contrib/emojicodes) - An extension to use emoji codes in your Sphinx documentation! 😍
 - [sbrunner/sphinx-prompt](https://github.com/sbrunner/sphinx-prompt) - Sphinx directive to add unselectable prompt
 - [jpjacobpadilla/Google-Colab-Selenium](https://github.com/jpjacobpadilla/Google-Colab-Selenium) - The best way to use Selenium in Google Colab Notebooks!
-- [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui) - A Gradio web UI for Large Language Models with support for multiple inference backends.
+- [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui) - LLM UI with advanced features, easy setup, and multiple backend support.
 - [wyl-willing/MindMap](https://github.com/wyl-willing/MindMap) - MindMap: Knowledge Graph Prompting Sparks Graph of Thoughts in Large Language Models
 - [jwzhanggy/Graph_Toolformer](https://github.com/jwzhanggy/Graph_Toolformer) - 
 - [spotify/basic-pitch](https://github.com/spotify/basic-pitch) - A lightweight yet powerful audio-to-MIDI converter with pitch bend detection
@@ -3256,7 +3258,7 @@
 - [AbanteAI/archive-old-cli-mentat](https://github.com/AbanteAI/archive-old-cli-mentat) - 
 - [Eladlev/AutoPrompt](https://github.com/Eladlev/AutoPrompt) - A framework for prompt tuning using Intent-based Prompt Calibration
 - [jackmpcollins/magentic](https://github.com/jackmpcollins/magentic) - Seamlessly integrate LLMs as Python functions
-- [mem0ai/mem0](https://github.com/mem0ai/mem0) - Memory for AI Agents; SOTA in AI Agent Memory; Announcing OpenMemory MCP - local and secure memory management.
+- [mem0ai/mem0](https://github.com/mem0ai/mem0) - Memory for AI Agents; Announcing OpenMemory MCP - local and secure memory management.
 - [character-ai/prompt-poet](https://github.com/character-ai/prompt-poet) - Streamlines and simplifies prompt design for both developers and non-technical users with a low code approach.
 - [searxng/searxng](https://github.com/searxng/searxng) - SearXNG is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
 - [BachiLi/diffvg](https://github.com/BachiLi/diffvg) - Differentiable Vector Graphics Rasterization
@@ -3266,7 +3268,7 @@
 - [agential-ai/agential](https://github.com/agential-ai/agential) - 🔔🧠 Easily experiment with popular language agents across diverse reasoning/decision-making benchmarks!
 - [PrefectHQ/ControlFlow](https://github.com/PrefectHQ/ControlFlow) - 🦾 Take control of your AI agents
 - [Undertone0809/promptulate](https://github.com/Undertone0809/promptulate) - 🚀Lightweight Large language model automation and Autonomous Language Agents development framework. Build your LLM Agent Application in a pythonic way!
-- [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio equip's your AI agents & LLMs with 100+ high-quality integrations via function calling
+- [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio equips your AI agents & LLMs with 100+ high-quality integrations via function calling
 - [eosphoros-ai/DB-GPT](https://github.com/eosphoros-ai/DB-GPT) - AI Native Data App Development framework with AWEL(Agentic Workflow Expression Language) and Agents
 - [AGI-Edgerunners/LLM-Agents-Papers](https://github.com/AGI-Edgerunners/LLM-Agents-Papers) - A repo lists papers related to LLM based agent
 - [WooooDyy/AgentGym](https://github.com/WooooDyy/AgentGym) - Code and implementations for the paper "AgentGym: Evolving Large Language Model-based Agents across Diverse Environments" by Zhiheng Xi et al.
@@ -3830,7 +3832,7 @@
 - [keras-team/keras](https://github.com/keras-team/keras) - Deep Learning for humans
 - [AdamGold/Dryvo](https://github.com/AdamGold/Dryvo) - Driving lessons made simpler. Custom scheduling API built with Python.
 - [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) - Awesome multilingual OCR and Document Parsing toolkits based on PaddlePaddle (practical ultra lightweight OCR system, support 80+ languages recognition, provide data annotation and synthesis tools, su
-- [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX.
+- [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
 - [bregman-arie/devops-exercises](https://github.com/bregman-arie/devops-exercises) - Linux, Jenkins, AWS, SRE, Prometheus, Docker, Python, Ansible, Git, Kubernetes, Terraform, OpenStack, SQL, NoSQL, Azure, GCP, DNS, Elastic, Network, Virtualization. DevOps Interview Questions
 - [leon-thomm/Ryven](https://github.com/leon-thomm/Ryven) - Flow-based visual scripting for Python
 - [tensorflow/models](https://github.com/tensorflow/models) - Models and examples built with TensorFlow
@@ -4384,7 +4386,7 @@
 - [syt2/zotero-addons](https://github.com/syt2/zotero-addons) - Zotero Add-on Market  | Zotero插件市场 | Browsing, installing, and reviewing plugins within Zotero
 - [windingwind/zotero-better-notes](https://github.com/windingwind/zotero-better-notes) - Everything about note management. All in Zotero.
 - [scitedotai/scite-zotero-plugin](https://github.com/scitedotai/scite-zotero-plugin) - scite zotero plugin
-- [cyanheads/obsidian-mcp-server](https://github.com/cyanheads/obsidian-mcp-server) - Model Context Protocol (MCP) server designed for LLMs to interact with Obsidian vaults. Provides secure, token-aware tools for seamless knowledge base management through a standardized interface.
+- [cyanheads/obsidian-mcp-server](https://github.com/cyanheads/obsidian-mcp-server) - Obsidian Knowledge-Management MCP (Model Context Protocol) server that enables AI agents and development tools to interact with an Obsidian vault. It provides a comprehensive suite of tools for readin
 - [mason-bryant/Obsidian-Tagvis](https://github.com/mason-bryant/Obsidian-Tagvis) - 
 - [mark-when/vscode](https://github.com/mark-when/vscode) - VS code extension
 - [mark-when/view-client](https://github.com/mark-when/view-client) - Utility for a markwhen view to communicate with hosting app
@@ -4414,7 +4416,7 @@
 - [Karthikathangarasu/pentest-mcp](https://github.com/Karthikathangarasu/pentest-mcp) - NOT for educational purposes: An MCP server for professional penetration testers including nmap, go/dirbuster, nikto, JtR, wordlist building, and more.
 - [mshk/mcp-rss-crawler](https://github.com/mshk/mcp-rss-crawler) - RSS Crawler MCP Server
 - [buhe/mcp_rss](https://github.com/buhe/mcp_rss) - MCP RSS is a Model Context Protocol (MCP) server for interacting with RSS feeds.
-- [VikashLoomba/copilot-mcp](https://github.com/VikashLoomba/copilot-mcp) - A powerful VSCode extension that enables MCP server usage in Copilot, giving it access to MCP tools, resources, and more.
+- [VikashLoomba/copilot-mcp](https://github.com/VikashLoomba/copilot-mcp) - A powerful VSCode extension that lets you find and install MCP servers to use with GitHub Copilot..
 - [ThinkInAIXYZ/deepchat](https://github.com/ThinkInAIXYZ/deepchat) - 🐬DeepChat - A smart assistant that connects powerful AI to your personal world
 - [mario-andreschak/FLUJO](https://github.com/mario-andreschak/FLUJO) - MCP-Hub and -Inspector, Multi-Model Workflow and Chat Interface
 - [nick1udwig/kibitz](https://github.com/nick1udwig/kibitz) - The coding agent for professionals
@@ -4720,7 +4722,7 @@
 - [CIMSTA/obsidiosaurus](https://github.com/CIMSTA/obsidiosaurus) - Obsidian -&gt; Docusaurus Converter
 - [kuizuo/blog](https://github.com/kuizuo/blog) - A Blog on Customizing Docusaurus
 - [facebook/react-native-website](https://github.com/facebook/react-native-website) - The React Native website and docs
-- [aircodelabs/documate](https://github.com/aircodelabs/documate) - Embed AI chat dialog into your doc site to answer user questions based on your own content.
+- [grasplabs/documate](https://github.com/grasplabs/documate) - Embed AI chat dialog into your doc site to answer user questions based on your own content.
 - [easyops-cn/docusaurus-search-local](https://github.com/easyops-cn/docusaurus-search-local) - Offline/local search for Docusaurus v2/v3
 - [PaloAltoNetworks/docusaurus-openapi-docs](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs) - 🦝 OpenAPI plugin for generating API reference docs in Docusaurus v3.
 - [cloud-annotations/docusaurus-openapi](https://github.com/cloud-annotations/docusaurus-openapi) - 🦕 OpenAPI plugin for generating API reference docs in Docusaurus.
@@ -4811,7 +4813,6 @@
 - [obsidianmd/obsidian-importer](https://github.com/obsidianmd/obsidian-importer) - Obsidian Importer lets you import notes from other apps and file formats into your Obsidian vault.
 - [KosmosisDire/obsidian-webpage-export](https://github.com/KosmosisDire/obsidian-webpage-export) - Export html from single files, canvas pages, or whole vaults. Direct access to the exported HTML files allows you to publish your digital garden anywhere. Focuses on flexibility, features, and style p
 - [hinterdupfinger/obsidian-ollama](https://github.com/hinterdupfinger/obsidian-ollama) - 
-- [flowershow/flowershow](https://github.com/flowershow/flowershow) - 💐 Create beautiful books, wikis, websites and PKMs from markdown.
 - [bramses/chatgpt-md](https://github.com/bramses/chatgpt-md) - A (nearly) seamless integration of ChatGPT into Obsidian.
 - [MSzturc/obsidian-advanced-slides](https://github.com/MSzturc/obsidian-advanced-slides) - Create markdown-based reveal.js presentations in Obsidian
 - [hans/obsidian-citation-plugin](https://github.com/hans/obsidian-citation-plugin) - Obsidian plugin which integrates your academic reference manager with the Obsidian editor. Search your references from within Obsidian and automatically create and reference literature notes for paper
@@ -4924,7 +4925,7 @@
 - [aws/aws-toolkit-vscode](https://github.com/aws/aws-toolkit-vscode) - Amazon Q, CodeCatalyst, Local Lambda debug, SAM/CFN syntax, ECS Terminal, AWS resources
 - [mtxr/vscode-sqltools](https://github.com/mtxr/vscode-sqltools) - Database management for VSCode
 - [r5n-labs/vscode-react-javascript-snippets](https://github.com/r5n-labs/vscode-react-javascript-snippets) - Extension for React/Javascript snippets with search supporting ES7+ and babel features
-- [flydelabs/flyde](https://github.com/flydelabs/flyde) - 🌟 Open-source, visual programming for developers. Includes a VS Code extension, integrates with existing TypeScript code, browser and Node.js.
+- [flydelabs/flyde](https://github.com/flydelabs/flyde) - Open-source Visual programming for backend logic that integrates with existing codebases. Flyde bridges the gap between technical and non-technical team members. Product managers, designers, and backe
 - [tonybaloney/vscode-pets](https://github.com/tonybaloney/vscode-pets) - Adds playful pets 🦀🐱🐶 in your VS Code window
 - [cweijan/vscode-database-client](https://github.com/cweijan/vscode-database-client) - Database Client For Visual Studio Code
 - [lokalise/i18n-ally](https://github.com/lokalise/i18n-ally) - 🌍 All in one i18n extension for VS Code
@@ -4934,7 +4935,7 @@
 - [hediet/vscode-drawio](https://github.com/hediet/vscode-drawio) - This unofficial extension integrates Draw.io (also known as diagrams.net) into VS Code.
 - [ryu1kn/vscode-partial-diff](https://github.com/ryu1kn/vscode-partial-diff) - Visual Studio Code Extension. Take a diff of 2 parts of text(s)
 - [conventional-changelog/conventional-changelog](https://github.com/conventional-changelog/conventional-changelog) - Generate changelogs and release notes from a project's commit messages and metadata.
-- [langgenius/dify](https://github.com/langgenius/dify) - Dify is an open-source LLM app development platform. Dify's intuitive interface combines AI workflow, RAG pipeline, agent capabilities, model management, observability features and more, letting you q
+- [langgenius/dify](https://github.com/langgenius/dify) - Production-ready platform for agentic workflow development.
 - [waseemhnyc/instagraph-nextjs-fastapi](https://github.com/waseemhnyc/instagraph-nextjs-fastapi) - Generate knowledge graphs. Inspired by @yoheinakajima instagraph.ai
 - [oleeskild/obsidian-digital-garden](https://github.com/oleeskild/obsidian-digital-garden) - 
 - [Novvum/graphql-birdseye](https://github.com/Novvum/graphql-birdseye) - View any GraphQL schema as a dynamic and interactive graph. 🦅
