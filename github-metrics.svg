@@ -3899,9 +3899,9 @@ This commit introduces a new serverless function in `api/ssr.ts` to handle serve
                                 <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/>
                             </svg>
                             <span class="code">636f5c77</span>
-                            <span class="code">docs/public/img/favicon/site.webmanifest</span>
+                            <span class="code">docs/app/(home)/layout.tsx</span>
                             <span class="code">
-                                <span class="snippet additions">++1</span>
+                                <span class="snippet additions">++7</span>
                                 <span class="snippet deletions">--0</span>
                             </span>
                         </div>
@@ -3910,7 +3910,7 @@ This commit introduces a new serverless function in `api/ssr.ts` to handle serve
                 <div class="row">
                     <section class="snippet">
                         <div class="body markdown">
-                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">{"name":"spicetify-viz","short_name":"spicetify-viz","icons":[{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#ffffff","background_color":"#ffffff","display":"standalone"}<br /></span></span>\No newline at end of file</code>
+                            <code class="language-diff" xml:space="preserve"><span class="token coord">@@ -0,0 +1,7 @@</span><br /><span class="token inserted-sign inserted"><span class="token prefix inserted">+</span><span class="token line">import type { ReactNode } from 'react';<br /></span><span class="token prefix inserted">+</span><span class="token line">import { HomeLayout } from 'fumadocs-ui/layouts/home';<br /></span><span class="token prefix inserted">+</span><span class="token line">import { baseOptions } from '@/app/layout.config';<br /></span><span class="token prefix inserted">+</span><span class="token line"><br /></span><span class="token prefix inserted">+</span><span class="token line">export default function Layout({ children }: { children: ReactNode }) {<br /></span><span class="token prefix inserted">+</span><span class="token line"> return &lt;HomeLayout {...baseOptions}&gt;{children}&lt;/HomeLayout&gt;;<br /></span><span class="token prefix inserted">+</span><span class="token line">}</span></span></code>
                         </div>
                     </section>
                 </div>
@@ -3977,7 +3977,7 @@ This commit introduces a new serverless function in `api/ssr.ts` to handle serve
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 30 Jun 2025, 15:01:43 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 30 Jun 2025, 16:01:43 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
