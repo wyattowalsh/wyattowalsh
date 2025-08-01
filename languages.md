@@ -1808,7 +1808,7 @@
 - [modelcontextprotocol/docs](https://github.com/modelcontextprotocol/docs) - Documentation for the Model Context Protocol (MCP)
 - [PatrickJS/awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules) - 📄  Configuration files that enhance Cursor AI editor experience with custom rules and behaviors
 - [trigaten/Learn_Prompting](https://github.com/trigaten/Learn_Prompting) - Prompt Engineering, Generative AI, and LLM Guide by Learn Prompting | Join our discord for the largest Prompt Engineering learning community
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [mufeedvh/code2prompt](https://github.com/mufeedvh/code2prompt) - A CLI tool to convert your codebase into a single LLM prompt with source tree, prompt templating, and token counting.
 - [magicuidesign/magicui](https://github.com/magicuidesign/magicui) - UI Library for Design Engineers. Animated components and effects you can copy and paste into your apps. Free. Open Source.
 - [dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide) - 🐙 Guides, papers, lecture, notebooks and resources for prompt engineering
@@ -2682,6 +2682,7 @@
 - [Ben-J-Orr/CoverLetter-Generator](https://github.com/Ben-J-Orr/CoverLetter-Generator) - A simple cover letter generator that utilises the ChatGPT API to obtain bespoke cover letters for multiple job adverts.
 - [qqqstuv/Cover-Letter-Generator](https://github.com/qqqstuv/Cover-Letter-Generator) - Generate Cover Letter based on your information! Automate date, names and reuse paragraphs
 - [cullenwatson/StaffSpy](https://github.com/cullenwatson/StaffSpy) - Staff fetcher library for LinkedIn - obtain experiences, schools, skills & contact info
+- [srbhr/Resume-Matcher](https://github.com/srbhr/Resume-Matcher) - Improve your resumes with Resume Matcher. Get insights, keyword suggestions and tune your resumes to job descriptions.
 - [IvanIsCoding/ResuLLMe](https://github.com/IvanIsCoding/ResuLLMe) - Enhance your résumé with Large Language Models
 - [nateemma/strategies](https://github.com/nateemma/strategies) - Custom trading strategies using the freqtrade framework
 - [nvdv/vprof](https://github.com/nvdv/vprof) - Visual profiler for Python
@@ -3890,7 +3891,7 @@
 - [vikramchandran/CLI-Project](https://github.com/vikramchandran/CLI-Project) - Python-based Command Line Interface tool that interacts with AWS's S3 buckets.
 - [jiaaro/pydub](https://github.com/jiaaro/pydub) - Manipulate audio with a simple and easy high level interface
 - [ddangelov/Top2Vec](https://github.com/ddangelov/Top2Vec) - Top2Vec learns jointly embedded topic, document and word vectors.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [OpenExoplanetCatalogue/open_exoplanet_catalogue](https://github.com/OpenExoplanetCatalogue/open_exoplanet_catalogue) - The main data repository for the Open Exoplanet Catalogue
 - [unitedstates/congress-legislators](https://github.com/unitedstates/congress-legislators) - Members of the United States Congress, 1789-Present, in YAML/JSON/CSV, as well as committees, presidents, and vice presidents.
 - [Yorko/mlcourse.ai](https://github.com/Yorko/mlcourse.ai) - Open Machine Learning Course
@@ -4543,7 +4544,6 @@
 - [jsonresume/mcp](https://github.com/jsonresume/mcp) - The registry mcp server updates your resume while you code
 - [AmruthPillai/Reactive-Resume](https://github.com/AmruthPillai/Reactive-Resume) - A one-of-a-kind resume builder that keeps your privacy in mind. Completely secure, customizable, portable, open-source and free forever. Try it out today!
 - [xitanggg/open-resume](https://github.com/xitanggg/open-resume) - OpenResume is a powerful open-source resume builder and resume parser. https://open-resume.com/
-- [srbhr/Resume-Matcher](https://github.com/srbhr/Resume-Matcher) - Improve your resumes with Resume Matcher. Get insights, keyword suggestions and tune your resumes to job descriptions.
 - [oramasearch/orama](https://github.com/oramasearch/orama) - 🌌  A complete search engine and RAG pipeline in your browser, server or edge network with support for full-text, vector, and hybrid search in less than 2kb.
 - [daldridge/docusaurus-plugin-lunr](https://github.com/daldridge/docusaurus-plugin-lunr) - Docusaurus v2 plugin to create a local search index for use with Lunr.js
 - [webbertakken/docusaurus-plugin-content-gists](https://github.com/webbertakken/docusaurus-plugin-content-gists) - Display your gists inside docusaurus.
