@@ -288,6 +288,7 @@
 - [xcode](#xcode)
 - [xml](#xml)
 - [zig](#zig)
+- [zsh](#zsh)
 
 ## 3d 
 
@@ -514,7 +515,7 @@
 - [apache/burr](https://github.com/apache/burr) - Build applications that make decisions (chatbots, agents, simulations, etc...). Monitor, trace, persist, and execute on your own infrastructure.
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [agi-inc/agent-protocol](https://github.com/agi-inc/agent-protocol) - Common interface for interacting with AI agents. The protocol is tech stack agnostic - you can use it with any framework for building agents.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [SamurAIGPT/Best-AI-Agents](https://github.com/SamurAIGPT/Best-AI-Agents) - A list of top AI agents
 - [yzfly/Awesome-AGI-Agents](https://github.com/yzfly/Awesome-AGI-Agents) - 🤖 Awesome list of AGI Agents. Agents 精选资源合集.
 - [tmgthb/Autonomous-Agents](https://github.com/tmgthb/Autonomous-Agents) - Autonomous Agents (LLMs) research papers. Updated Daily.
@@ -642,6 +643,7 @@
 - [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Versioning and ML Experiments
 - [recommenders-team/recommenders](https://github.com/recommenders-team/recommenders) - Best Practices on Recommendation Systems
 - [explosion/spaCy](https://github.com/explosion/spaCy) - 💫 Industrial-strength Natural Language Processing (NLP) in Python
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 
 ## algorithm 
@@ -917,6 +919,7 @@
 - [explosion/spaCy](https://github.com/explosion/spaCy) - 💫 Industrial-strength Natural Language Processing (NLP) in Python
 - [tirthajyoti/Data-science-best-resources](https://github.com/tirthajyoti/Data-science-best-resources) - Carefully curated resource links for data science in one place
 - [r0f1/datascience](https://github.com/r0f1/datascience) - Curated list of Python resources for data science.
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 - [shogun-toolbox/shogun](https://github.com/shogun-toolbox/shogun) - Shōgun
 - [CodeCutTech/Data-science](https://github.com/CodeCutTech/Data-science) - Collection of useful data science topics along with articles, videos, and code
@@ -2113,7 +2116,7 @@
 - [eugeneyan/applied-ml](https://github.com/eugeneyan/applied-ml) - 📚 Papers & tech blogs by companies sharing their work on data science & machine learning in production.
 - [microsoft/computervision-recipes](https://github.com/microsoft/computervision-recipes) - Best Practices, code samples, and documentation for Computer Vision.
 - [bharathgs/Awesome-pytorch-list](https://github.com/bharathgs/Awesome-pytorch-list) - A comprehensive list of pytorch related content on github,such as different models,implementations,helper libraries,tutorials etc.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [davisking/dlib](https://github.com/davisking/dlib) - A toolkit for making real world machine learning and data analysis applications in C++
 - [Developer-Y/cs-video-courses](https://github.com/Developer-Y/cs-video-courses) - List of Computer Science courses with video lectures.
 
@@ -2852,7 +2855,7 @@
 - [flashlight/wav2letter](https://github.com/flashlight/wav2letter) - Facebook AI Research's Automatic Speech Recognition Toolkit
 - [tirthajyoti/Data-science-best-resources](https://github.com/tirthajyoti/Data-science-best-resources) - Carefully curated resource links for data science in one place
 - [r0f1/datascience](https://github.com/r0f1/datascience) - Curated list of Python resources for data science.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 - [ChristosChristofidis/awesome-deep-learning](https://github.com/ChristosChristofidis/awesome-deep-learning) - A curated list of awesome Deep Learning tutorials, projects and communities.
 - [davisking/dlib](https://github.com/davisking/dlib) - A toolkit for making real world machine learning and data analysis applications in C++
@@ -2964,7 +2967,7 @@
 - [kadykov/mcp-openapi-schema-explorer](https://github.com/kadykov/mcp-openapi-schema-explorer) - MCP server providing token-efficient access to OpenAPI/Swagger specs via MCP Resources for client-side exploration.
 - [n8n-io/n8n](https://github.com/n8n-io/n8n) - Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.
 - [microsoft/RD-Agent](https://github.com/microsoft/RD-Agent) - Research and development (R&D) is crucial for the enhancement of industrial productivity, especially in the AI era, where the core aspects of R&D are mainly focused on data and models. We are committe
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [stateful/awesome-vscode-extension-utils](https://github.com/stateful/awesome-vscode-extension-utils) - 🎨   A curated list of delightful VSCode utilities to build awesome VSCode extensions and resources.
 - [jmquintana79/python_virtual_environments](https://github.com/jmquintana79/python_virtual_environments) - This is a set of predefined Anaconda "environment.yml" files for different tasks focused on Data Science field.
 - [public-apis/public-apis](https://github.com/public-apis/public-apis) - A collective list of free APIs
@@ -4070,7 +4073,6 @@
 - [academic/awesome-datascience](https://github.com/academic/awesome-datascience) - :memo: An awesome Data Science repository to learn and apply for real world problems.
 - [sButtons/sbuttons](https://github.com/sButtons/sbuttons) - :bulb: Simple buttons you can use easily for your next project.
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
 - [openaddresses/openaddresses](https://github.com/openaddresses/openaddresses) - A global repository of open address, building, and parcel data.
 - [serhii-londar/open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps) - 🚀 Awesome list of open source applications for macOS. https://t.me/s/opensourcemacosapps
 - [rishavanand/github-profilinator](https://github.com/rishavanand/github-profilinator) - 🚀  This tool contains mini GUI components that you can hook together to automatically generate markdown code for a perfect readme.
@@ -4459,7 +4461,7 @@
 - [xyflow/xyflow](https://github.com/xyflow/xyflow) - React Flow | Svelte Flow - Powerful open source libraries for building node-based UIs with React (https://reactflow.dev) or Svelte (https://svelteflow.dev). Ready out-of-the-box and infinitely customi
 - [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid) - Generation of diagrams like flowcharts or sequence diagrams from text in a similar manner as markdown
 - [agi-inc/agent-protocol](https://github.com/agi-inc/agent-protocol) - Common interface for interacting with AI agents. The protocol is tech stack agnostic - you can use it with any framework for building agents.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [yamadashy/repomix](https://github.com/yamadashy/repomix) - 📦 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like C
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [Distributive-Network/PythonMonkey](https://github.com/Distributive-Network/PythonMonkey) - A Mozilla SpiderMonkey JavaScript engine embedded into the Python VM, using the Python engine to provide the JS host environment.
@@ -5076,7 +5078,7 @@
 - [BaranziniLab/KG_RAG](https://github.com/BaranziniLab/KG_RAG) - Empower Large Language Models (LLM) using Knowledge Graph based Retrieval-Augmented Generation (KG-RAG) for knowledge intensive tasks
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [ollama/ollama](https://github.com/ollama/ollama) - Get up and running with Llama 3.3, DeepSeek-R1, Phi-4, Gemma 3, Mistral Small 3.1 and other large language models.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [SamurAIGPT/Best-AI-Agents](https://github.com/SamurAIGPT/Best-AI-Agents) - A list of top AI agents
 - [yzfly/Awesome-AGI-Agents](https://github.com/yzfly/Awesome-AGI-Agents) - 🤖 Awesome list of AGI Agents. Agents 精选资源合集.
 - [tmgthb/Autonomous-Agents](https://github.com/tmgthb/Autonomous-Agents) - Autonomous Agents (LLMs) research papers. Updated Daily.
@@ -5242,6 +5244,7 @@
 - [ray-project/ray](https://github.com/ray-project/ray) - Ray is an AI compute engine. Ray consists of a core distributed runtime and a set of AI Libraries for accelerating ML workloads.
 - [haifengl/smile](https://github.com/haifengl/smile) - Statistical Machine Intelligence & Learning Engine
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 
 ## localization 
 
@@ -5553,7 +5556,7 @@
 - [tirthajyoti/Data-science-best-resources](https://github.com/tirthajyoti/Data-science-best-resources) - Carefully curated resource links for data science in one place
 - [siboehm/awesome-learn-datascience](https://github.com/siboehm/awesome-learn-datascience) - :chart_with_upwards_trend: Curated list of resources to help you get started with Data Science
 - [r0f1/datascience](https://github.com/r0f1/datascience) - Curated list of Python resources for data science.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [AMAI-GmbH/AI-Expert-Roadmap](https://github.com/AMAI-GmbH/AI-Expert-Roadmap) - Roadmap to becoming an Artificial Intelligence Expert in 2022
 - [Yorko/mlcourse.ai](https://github.com/Yorko/mlcourse.ai) - Open Machine Learning Course
 - [ChristosChristofidis/awesome-deep-learning](https://github.com/ChristosChristofidis/awesome-deep-learning) - A curated list of awesome Deep Learning tutorials, projects and communities.
@@ -6123,7 +6126,7 @@
 - [bharathgs/Awesome-pytorch-list](https://github.com/bharathgs/Awesome-pytorch-list) - A comprehensive list of pytorch related content on github,such as different models,implementations,helper libraries,tutorials etc.
 - [explosion/spaCy](https://github.com/explosion/spaCy) - 💫 Industrial-strength Natural Language Processing (NLP) in Python
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [keon/awesome-nlp](https://github.com/keon/awesome-nlp) - :book: A curated list of resources dedicated to Natural Language Processing (NLP)
 - [CodeCutTech/Data-science](https://github.com/CodeCutTech/Data-science) - Collection of useful data science topics along with articles, videos, and code
 
@@ -6212,7 +6215,7 @@
 - [dubinc/dub](https://github.com/dubinc/dub) - The modern link attribution platform. Loved by world-class marketing teams like Twilio, Buffer, Framer, Perplexity, Vercel, and more.
 - [flowershow/flowershow](https://github.com/flowershow/flowershow) - 💐 Create beautiful books, wikis, websites and PKMs from markdown.
 - [midday-ai/midday](https://github.com/midday-ai/midday) - Invoicing, Time tracking, File reconciliation, Storage, Financial Overview & your own Assistant made for Freelancers
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [rashadphz/farfalle](https://github.com/rashadphz/farfalle) - 🔍 AI search engine - self-host with local or cloud LLMs
 - [dillionverma/llm.report](https://github.com/dillionverma/llm.report) - 📊 llm.report is an open-source logging and analytics platform for OpenAI: Log your ChatGPT API requests, analyze costs, and improve your prompts.
 - [redpangilinan/credenza](https://github.com/redpangilinan/credenza) - Ready-made responsive modal component for shadcn/ui.
@@ -6337,7 +6340,7 @@
 - [bharathgs/Awesome-pytorch-list](https://github.com/bharathgs/Awesome-pytorch-list) - A comprehensive list of pytorch related content on github,such as different models,implementations,helper libraries,tutorials etc.
 - [explosion/spaCy](https://github.com/explosion/spaCy) - 💫 Industrial-strength Natural Language Processing (NLP) in Python
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [keon/awesome-nlp](https://github.com/keon/awesome-nlp) - :book: A curated list of resources dedicated to Natural Language Processing (NLP)
 - [lukasmasuch/best-of-ml-python](https://github.com/lukasmasuch/best-of-ml-python) - 🏆 A ranked list of awesome machine learning Python libraries. Updated weekly.
 - [ml-tooling/ml-workspace](https://github.com/ml-tooling/ml-workspace) - 🛠 All-in-one web-based IDE specialized for machine learning and data science.
@@ -6523,7 +6526,7 @@
 - [pytorch/pytorch](https://github.com/pytorch/pytorch) - Tensors and Dynamic neural networks in Python with strong GPU acceleration
 - [fastai/numerical-linear-algebra](https://github.com/fastai/numerical-linear-algebra) - Free online textbook of Jupyter notebooks for fast.ai Computational Linear Algebra course
 - [donnemartin/data-science-ipython-notebooks](https://github.com/donnemartin/data-science-ipython-notebooks) - Data science Python notebooks: Deep learning (TensorFlow, Theano, Caffe, Keras), scikit-learn, Kaggle, big data (Spark, Hadoop MapReduce, HDFS), matplotlib, pandas, NumPy, SciPy, Python essentials, AW
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [Yorko/mlcourse.ai](https://github.com/Yorko/mlcourse.ai) - Open Machine Learning Course
 
 ## objective-c 
@@ -6783,7 +6786,7 @@
 - [ray-project/llm-applications](https://github.com/ray-project/llm-applications) - A comprehensive guide to building RAG-based LLM applications for production.
 - [Portkey-AI/gateway](https://github.com/Portkey-AI/gateway) - A blazing fast AI Gateway with integrated guardrails. Route to 200+ LLMs, 50+ AI Guardrails with 1 fast & friendly API.
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [SamurAIGPT/Best-AI-Agents](https://github.com/SamurAIGPT/Best-AI-Agents) - A list of top AI agents
 - [e2b-dev/awesome-ai-sdks](https://github.com/e2b-dev/awesome-ai-sdks) - A database of SDKs, frameworks, libraries, and tools for creating, monitoring, debugging and deploying autonomous AI agents
 - [yamadashy/repomix](https://github.com/yamadashy/repomix) - 📦 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like C
@@ -8482,7 +8485,6 @@
 - [adobe-type-tools/afdko](https://github.com/adobe-type-tools/afdko) - Adobe Font Development Kit for OpenType
 - [adobe-fonts/source-code-pro](https://github.com/adobe-fonts/source-code-pro) - Monospaced font family for user interface and coding environments
 - [powerline/fonts](https://github.com/powerline/fonts) - Patched fonts for Powerline users.
-- [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) - A Zsh theme
 - [executablebooks/sphinx-togglebutton](https://github.com/executablebooks/sphinx-togglebutton) - Show and hide content with a button in Sphinx
 - [jdillard/sphinx-sitemap](https://github.com/jdillard/sphinx-sitemap) - Sphinx extension to generate a multi-lingual, multi-version sitemap for HTML builds
 - [executablebooks/sphinx-design](https://github.com/executablebooks/sphinx-design) - A sphinx extension for designing beautiful, screen-size responsive web components.
@@ -9440,7 +9442,7 @@
 - [CloudOrc/SolidUI](https://github.com/CloudOrc/SolidUI) - one sentence generates any graph
 - [datadreamer-dev/DataDreamer](https://github.com/datadreamer-dev/DataDreamer) - DataDreamer: Prompt. Generate Synthetic Data. Train & Align Models.    🤖💤
 - [agi-inc/agent-protocol](https://github.com/agi-inc/agent-protocol) - Common interface for interacting with AI agents. The protocol is tech stack agnostic - you can use it with any framework for building agents.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [apirrone/Memento](https://github.com/apirrone/Memento) - Memento is a Python app that records everything you do on your computer and lets you go back in time, search, and chat with a LLM (Large Language Model) to find back information about what you did.
 - [cheshire-cat-ai/core](https://github.com/cheshire-cat-ai/core) - AI agent microservice
 - [PrefectHQ/marvin](https://github.com/PrefectHQ/marvin) - an ambient intelligence library
@@ -9890,7 +9892,7 @@
 - [keras-team/keras](https://github.com/keras-team/keras) - Deep Learning for humans
 - [ydataai/ydata-synthetic](https://github.com/ydataai/ydata-synthetic) - Synthetic data generators for tabular and time-series data
 - [huggingface/transformers](https://github.com/huggingface/transformers) - 🤗 Transformers: the model-definition framework for state-of-the-art machine learning models in text, vision, audio, and multimodal models, for both inference and training.
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [lukasmasuch/best-of-ml-python](https://github.com/lukasmasuch/best-of-ml-python) - 🏆 A ranked list of awesome machine learning Python libraries. Updated weekly.
 - [ml-tooling/ml-workspace](https://github.com/ml-tooling/ml-workspace) - 🛠 All-in-one web-based IDE specialized for machine learning and data science.
 - [openai/jukebox](https://github.com/openai/jukebox) - Code for the paper "Jukebox: A Generative Model for Music"
@@ -10086,7 +10088,7 @@
 - [RafaelGB/obsidian-db-folder](https://github.com/RafaelGB/obsidian-db-folder) - Obsidian Plugin to Allow Notion like database based on folders
 - [CloudOrc/SolidUI](https://github.com/CloudOrc/SolidUI) - one sentence generates any graph
 - [xyflow/xyflow](https://github.com/xyflow/xyflow) - React Flow | Svelte Flow - Powerful open source libraries for building node-based UIs with React (https://reactflow.dev) or Svelte (https://svelteflow.dev). Ready out-of-the-box and infinitely customi
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [rashadphz/farfalle](https://github.com/rashadphz/farfalle) - 🔍 AI search engine - self-host with local or cloud LLMs
 - [dillionverma/llm.report](https://github.com/dillionverma/llm.report) - 📊 llm.report is an open-source logging and analytics platform for OpenAI: Log your ChatGPT API requests, analyze costs, and improve your prompts.
 - [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb) - Free, simple, and intuitive online database diagram editor and SQL generator.
@@ -10618,7 +10620,6 @@
 - [apptension/saas-boilerplate](https://github.com/apptension/saas-boilerplate) - SaaS Boilerplate - Open Source and free SaaS stack that lets you build SaaS products faster in React, Django and AWS. Focus on essential business logic instead of coding repeatable features!
 - [aws/aws-toolkit-vscode](https://github.com/aws/aws-toolkit-vscode) - Amazon Q, CodeCatalyst, Local Lambda debug, SAM/CFN syntax, ECS Terminal, AWS resources
 - [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) - Fast SQL-only data application builder. Automatically build a UI on top of SQL queries.
-- [kriasoft/react-starter-kit](https://github.com/kriasoft/react-starter-kit) - Modern React starter kit with Bun, TypeScript, Tailwind CSS, tRPC, and Cloudflare Workers. Production-ready monorepo for building fast web apps.
 - [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats) - :zap: Dynamically generated stats for your github readmes
 - [ml-tooling/best-of-web-python](https://github.com/ml-tooling/best-of-web-python) - 🏆  A ranked list of awesome python libraries for web development. Updated weekly.
 
@@ -10658,7 +10659,7 @@
 ## software 
 
 - [awesome-foss/awesome-sysadmin](https://github.com/awesome-foss/awesome-sysadmin) - A curated list of amazingly awesome open-source sysadmin resources.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [public-apis/public-apis](https://github.com/public-apis/public-apis) - A collective list of free APIs
 - [jaywcjlove/awesome-mac](https://github.com/jaywcjlove/awesome-mac) -  Now we have become very big, Different from the original idea. Collect premium software in various categories.
 
@@ -11075,7 +11076,7 @@
 - [donnemartin/data-science-ipython-notebooks](https://github.com/donnemartin/data-science-ipython-notebooks) - Data science Python notebooks: Deep learning (TensorFlow, Theano, Caffe, Keras), scikit-learn, Kaggle, big data (Spark, Hadoop MapReduce, HDFS), matplotlib, pandas, NumPy, SciPy, Python essentials, AW
 - [keras-team/autokeras](https://github.com/keras-team/autokeras) - AutoML library for deep learning
 - [keras-team/keras](https://github.com/keras-team/keras) - Deep Learning for humans
-- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for ML models with fast, easy-to-use and efficient data manipulation tools
+- [huggingface/datasets](https://github.com/huggingface/datasets) - 🤗 The largest hub of ready-to-use datasets for AI models with fast, easy-to-use and efficient data manipulation tools
 - [tensorflow/tensorflow](https://github.com/tensorflow/tensorflow) - An Open Source Machine Learning Framework for Everyone
 - [google/tf-quant-finance](https://github.com/google/tf-quant-finance) - High-performance TensorFlow library for quantitative finance.
 - [lukasmasuch/best-of-ml-python](https://github.com/lukasmasuch/best-of-ml-python) - 🏆 A ranked list of awesome machine learning Python libraries. Updated weekly.
@@ -11333,7 +11334,7 @@
 - [xyflow/xyflow](https://github.com/xyflow/xyflow) - React Flow | Svelte Flow - Powerful open source libraries for building node-based UIs with React (https://reactflow.dev) or Svelte (https://svelteflow.dev). Ready out-of-the-box and infinitely customi
 - [mermaid-js/mermaid](https://github.com/mermaid-js/mermaid) - Generation of diagrams like flowcharts or sequence diagrams from text in a similar manner as markdown
 - [agi-inc/agent-protocol](https://github.com/agi-inc/agent-protocol) - Common interface for interacting with AI agents. The protocol is tech stack agnostic - you can use it with any framework for building agents.
-- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Secure open source cloud runtime for AI apps & AI agents
+- [e2b-dev/E2B](https://github.com/e2b-dev/E2B) - Open-source, secure environment with real-world tools for enterprise-grade agents.
 - [yamadashy/repomix](https://github.com/yamadashy/repomix) - 📦 Repomix is a powerful tool that packs your entire repository into a single, AI-friendly file. Perfect for when you need to feed your codebase to Large Language Models (LLMs) or other AI tools like C
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [TrafficGuard/typedai](https://github.com/TrafficGuard/typedai) - TypeScript AI platform with AI chat, Autonomous agents, Software developer agents, chatbots and more
@@ -11738,6 +11739,20 @@
 
 - [lightpanda-io/browser](https://github.com/lightpanda-io/browser) - Lightpanda: the headless browser designed for AI and automation
 - [orhun/linuxwave](https://github.com/orhun/linuxwave) - Generate music from the entropy of Linux 🐧🎵
+
+## zsh 
+
+- [zdharma-continuum/zinit](https://github.com/zdharma-continuum/zinit) - 🌻 Flexible and fast ZSH plugin manager
+- [liquidprompt/liquidprompt](https://github.com/liquidprompt/liquidprompt) - A full-featured & carefully designed adaptive prompt for Bash & Zsh
+- [withfig/autocomplete](https://github.com/withfig/autocomplete) - IDE-style autocomplete for your existing terminal & shell
+- [warpdotdev/Warp](https://github.com/warpdotdev/Warp) - Warp is the agentic development environment, built for coding with multiple AI agents.
+- [sobolevn/wakatime-zsh-plugin](https://github.com/sobolevn/wakatime-zsh-plugin) - 🕒Track how much time you have spent in your terminal!
+- [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) - A Zsh theme
+- [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh) - 🙃   A delightful community-driven (with 2,400+ contributors) framework for managing your zsh configuration. Includes 300+ optional plugins (rails, git, macOS, hub, docker, homebrew, node, php, python,
+- [zsh-users/zsh-completions](https://github.com/zsh-users/zsh-completions) - Additional completion definitions for Zsh.
+- [nvm-sh/nvm](https://github.com/nvm-sh/nvm) - Node Version Manager - POSIX-compliant bash script to manage multiple active node.js versions
+- [jeroenjanssens/data-science-at-the-command-line](https://github.com/jeroenjanssens/data-science-at-the-command-line) - Data Science at the Command Line
+- [alebcay/awesome-shell](https://github.com/alebcay/awesome-shell) - A curated list of awesome command-line frameworks, toolkits, guides and gizmos. Inspired by awesome-php.
 
 
 ## License
