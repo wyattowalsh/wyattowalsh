@@ -3243,7 +3243,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>microsoft/mcp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Catalog of official Microsoft MCP (Model Context Protocol) server implementations for AI-powered data access and tool integration</div>
@@ -3290,7 +3290,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>langchain-ai/langchain-mcp-adapters</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">LangChain 🔌 MCP</div>
@@ -3343,7 +3343,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>czlonkowski/n8n-mcp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflows for you</div>
@@ -3396,7 +3396,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>nerding-io/n8n-nodes-mcp</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">n8n custom node for MCP</div>
@@ -3984,7 +3984,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 15 Aug 2025, 10:01:44 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 15 Aug 2025, 11:02:00 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
