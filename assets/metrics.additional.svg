@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="923" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="884" class="">
     <defs>
         <style/>
     </defs>
@@ -50,13 +50,6 @@
                                     <div class="artist">Zach Seabaugh</div>
                                 </div>
                             </div>
-                            <div class="track">
-                                <img src="data:image/jpg;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABi0dx13MMgPHor+Y7/AMvfQAdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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" width="32" height="32" alt="" />
-                                <div class="infos">
-                                    <div class="name">Heartbreak Hits Different</div>
-                                    <div class="artist">Zach Seabaugh</div>
-                                </div>
-                            </div>
                         </div>
                     </section>
                 </div>
@@ -96,7 +89,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>microsoft/mcp</span>
-                                        <span>starred 20 hours ago</span>
+                                        <span>starred 21 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Catalog of official Microsoft MCP (Model Context Protocol) server implementations for AI-powered data access and tool integration</div>
@@ -143,7 +136,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>langchain-ai/langchain-mcp-adapters</span>
-                                        <span>starred 20 hours ago</span>
+                                        <span>starred 21 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">LangChain 🔌 MCP</div>
@@ -196,7 +189,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>czlonkowski/n8n-mcp</span>
-                                        <span>starred 20 hours ago</span>
+                                        <span>starred 21 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflows for you</div>
@@ -256,7 +249,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">270</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 3
                                 <div class="bottom">Aug.</div>
@@ -287,43 +280,43 @@
                                 8
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <span class="value">271</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 9
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 10
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 11
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 12
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 13
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 14
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 15
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 16
                             </div>
                         </div>
@@ -332,8 +325,8 @@
                         <h3>New stargazers per day</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 3
                                 <div class="bottom">Aug.</div>
                             </div>
@@ -363,8 +356,8 @@
                                 8
                             </div>
                             <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                <span class="value">+1</span>
+                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 9
                             </div>
                             <div class="entry">
