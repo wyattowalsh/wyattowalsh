@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>google-gemini/gemini-cli</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An open-source AI agent that brings the power of Gemini directly into your terminal.</div>
@@ -202,7 +202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>RayBytes/ChatMock</span>
-                                        <span>starred 3 days ago</span>
+                                        <span>starred 4 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Access OpenAI models programmatically through your ChatGPT subscription.</div>
@@ -262,7 +262,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">271</span>
+                                <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 11
                                 <div class="bottom">Aug.</div>
