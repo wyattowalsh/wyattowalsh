@@ -3231,7 +3231,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>wezterm/wezterm</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A GPU-accelerated cross-platform terminal emulator and multiplexer written by @wez and implemented in Rust</div>
@@ -3284,7 +3284,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ghostty-org/ghostty</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.</div>
@@ -3337,7 +3337,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>alacritty/alacritty</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A cross-platform, OpenGL terminal emulator.</div>
@@ -3390,7 +3390,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>vercel/hyper</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 8 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A terminal built on web technologies</div>
@@ -3963,7 +3963,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 27 Aug 2025, 07:01:55 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 27 Aug 2025, 08:01:50 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
