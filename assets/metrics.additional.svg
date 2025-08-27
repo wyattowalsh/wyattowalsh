@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>wezterm/wezterm</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A GPU-accelerated cross-platform terminal emulator and multiplexer written by @wez and implemented in Rust</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ghostty-org/ghostty</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.</div>
@@ -202,7 +202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>alacritty/alacritty</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A cross-platform, OpenGL terminal emulator.</div>
@@ -262,7 +262,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">271</span>
+                                <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 14
                                 <div class="bottom">Aug.</div>
