@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="1072" class="">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="989" class="">
     <defs>
         <style/>
     </defs>
@@ -421,6 +421,26 @@
                                 <div class="details">
                                     <div>on branch <span class="code">main</span></div>
                                     <div class="commit">
+                                        <div class="sha">#243f497</div>
+                                        <div class="message">Updated with Dev Metrics</div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Pushed 1 commit in
+                                        <span class="repo">wyattowalsh/wyattowalsh</span>
+                                    </div>
+                                </div>
+                                <div class="details">
+                                    <div>on branch <span class="code">main</span></div>
+                                    <div class="commit">
                                         <div class="sha">#dcbfb9b</div>
                                         <div class="message">Updated with Dev Metrics</div>
                                     </div>
@@ -473,56 +493,6 @@
                                         <span class="code">copilot/fix-694a43da-167d-4549-bde3-3c80bd99455e</span>
                                         in
                                         <span class="repo">wyattowalsh/proxywhirl</span>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M10.5 7.75a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm1.43.75a4.002 4.002 0 01-7.86 0H.75a.75.75 0 110-1.5h3.32a4.001 4.001 0 017.86 0h3.32a.75.75 0 110 1.5h-3.32z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Pushed 6 commits in
-                                        <span class="repo">wyattowalsh/proxywhirl</span>
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <div>on branch <span class="code">dev</span></div>
-                                    <div class="commit">
-                                        <div class="sha">#272c9ab</div>
-                                        <div class="message">Merge pull request #3 from wyattowalsh/copilot/fix-694a43da-167d-4549-bde3-3c80bd99455e
-
-Sync Fumadocs documentation with codebase - comprehensive API reference, usage guides, and architecture updates</div>
-                                    </div>
-                                    <div class="commit">
-                                        <div class="sha">#8ea76f7</div>
-                                        <div class="message">Fix documentation build issues and finalize comprehensive sync
-
-Co-authored-by: wyattowalsh &lt;10056003+wyattowalsh@users.noreply.github.com&gt;</div>
-                                    </div>
-                                    <div class="commit">
-                                        <div class="sha">#db33e91</div>
-                                        <div class="message">Complete documentation sync with comprehensive exports and configuration guides
-
-Co-authored-by: wyattowalsh &lt;10056003+wyattowalsh@users.noreply.github.com&gt;</div>
-                                    </div>
-                                    <div class="commit">
-                                        <div class="sha">#060429d</div>
-                                        <div class="message">Add comprehensive loaders and cache documentation with updated architecture
-
-Co-authored-by: wyattowalsh &lt;10056003+wyattowalsh@users.noreply.github.com&gt;</div>
-                                    </div>
-                                    <div class="commit">
-                                        <div class="sha">#46d6ae7</div>
-                                        <div class="message">Update API reference and usage guide with comprehensive documentation
-
-Co-authored-by: wyattowalsh &lt;10056003+wyattowalsh@users.noreply.github.com&gt;</div>
-                                    </div>
-                                    <div class="commit">
-                                        <div class="sha">#127196a</div>
-                                        <div class="message">Initial plan</div>
                                     </div>
                                 </div>
                             </section>
