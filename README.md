@@ -161,15 +161,13 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-3%2C147%20hrs%2052%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C156%20hrs%204%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-26.8%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 5.2 MB Used in GitHub's Storage 
- > 
-> 🏆 550 Contributions in the Year 2025
  > 
 > 💼 Opted to Hire
  > 
@@ -202,14 +200,14 @@ Sunday                   1052 commits        ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    16 hrs 54 mins      ████████████░░░░░░░░░░░░░   47.36 % 
-Python                   10 hrs 19 mins      ███████░░░░░░░░░░░░░░░░░░   28.91 % 
-Markdown                 3 hrs 45 mins       ███░░░░░░░░░░░░░░░░░░░░░░   10.54 % 
-MDX                      2 hrs 5 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   05.86 % 
-TypeScript               1 hr 10 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.31 % 
+Other                    13 hrs 7 mins       ████████████░░░░░░░░░░░░░   48.33 % 
+Python                   6 hrs 59 mins       ██████░░░░░░░░░░░░░░░░░░░   25.74 % 
+Markdown                 3 hrs 56 mins       ████░░░░░░░░░░░░░░░░░░░░░   14.48 % 
+JSON                     1 hr 2 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   03.85 % 
+TypeScript               59 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   03.64 % 
 
 💻 Operating System: 
-Mac                      35 hrs 43 mins      █████████████████████████   100.00 % 
+Mac                      27 hrs 10 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in TypeScript** 
@@ -229,7 +227,7 @@ MDX                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 31/08/2025 18:45:27 UTC
+ Last Updated on 01/09/2025 18:45:38 UTC
 <!--END_SECTION:waka-->
 
     
