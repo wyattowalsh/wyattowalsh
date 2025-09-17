@@ -161,11 +161,15 @@
 <br>
     
 <!--START_SECTION:waka-->
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C187%20hrs%2046%20mins-blue)
+
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-26.8%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 5.2 MB Used in GitHub's Storage 
+ > 
+> 🏆 553 Contributions in the Year 2025
  > 
 > 💼 Opted to Hire
  > 
@@ -190,7 +194,7 @@ MDX                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 16/09/2025 18:46:44 UTC
+ Last Updated on 17/09/2025 18:55:51 UTC
 <!--END_SECTION:waka-->
 
     
