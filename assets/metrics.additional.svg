@@ -65,7 +65,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>upscayl/upscayl-ncnn</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The Upscayl backend powered by the NCNN framework and Real-ESRGAN architecture.</div>
@@ -118,7 +118,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>erezinman/loguru-config</span>
-                                        <span>starred 16 hours ago</span>
+                                        <span>starred 17 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A configuration-loading class for loguru (but not only).</div>
@@ -386,6 +386,19 @@
                                     </svg>
                                     <div class="content">
                                         Starred
+                                        <span class="repo">upscayl/upscayl-ncnn</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="row fill-width">
+                            <section class="activity">
+                                <div class="field">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                                        <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                                    </svg>
+                                    <div class="content">
+                                        Starred
                                         <span class="repo">erezinman/loguru-config</span>
                                     </div>
                                 </div>
@@ -440,19 +453,6 @@
                                     <div class="content">
                                         Added wyattowalsh as collaborator in
                                         <span class="repo">PropsBot-AI/propsbot_etl_dagster</span>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                        <div class="row fill-width">
-                            <section class="activity">
-                                <div class="field">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                                        <path fill-rule="evenodd" d="M10.5 5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zm.061 3.073a4 4 0 10-5.123 0 6.004 6.004 0 00-3.431 5.142.75.75 0 001.498.07 4.5 4.5 0 018.99 0 .75.75 0 101.498-.07 6.005 6.005 0 00-3.432-5.142z"/>
-                                    </svg>
-                                    <div class="content">
-                                        Added wyattowalsh as collaborator in
-                                        <span class="repo">PropsBot-AI/propsbot_mlops_databricks</span>
                                     </div>
                                 </div>
                             </section>
