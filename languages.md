@@ -489,6 +489,7 @@
 - [kgretzky/evilginx2](https://github.com/kgretzky/evilginx2) - Standalone man-in-the-middle attack framework used for phishing login credentials along with session cookies, allowing for the bypass of 2-factor authentication
 - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) - A powerful little TUI framework 🏗
 - [modelcontextprotocol/registry](https://github.com/modelcontextprotocol/registry) - A community driven registry service for Model Context Protocol (MCP) servers.
+- [kagent-dev/kagent](https://github.com/kagent-dev/kagent) - Cloud Native Agentic AI | Discord: https://bit.ly/kagentdiscord
 - [glidea/zenfeed](https://github.com/glidea/zenfeed) - Make RSS 📰 great again with AI 🧠✨!!
 - [googleapis/genai-toolbox](https://github.com/googleapis/genai-toolbox) - MCP Toolbox for Databases is an open source MCP server for databases.
 - [0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui) - Yet another WebUI for Nginx
@@ -666,7 +667,7 @@
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
 - [rough-stuff/rough](https://github.com/rough-stuff/rough) - Create graphics with a hand-drawn, sketchy, appearance
 - [sergioramos/remark-prism](https://github.com/sergioramos/remark-prism) - Syntax highlighter for markdown code blocks using Prism
-- [all-contributors/all-contributors.github.io](https://github.com/all-contributors/all-contributors.github.io) - ✨ Recognize all contributors, not just the ones who push code ✨
+- [all-contributors/all-contributors.github.io](https://github.com/all-contributors/all-contributors.github.io) - ✨ The all-contributors bot website and documentation. Recognize all contributors, not just the ones who push code ✨
 - [jxnblk/colorable](https://github.com/jxnblk/colorable) - Color combination contrast tester
 - [github/personal-website](https://github.com/github/personal-website) - Code that'll help you kickstart a personal website that showcases your work as a software developer.
 - [DeviaVir/zenbot](https://github.com/DeviaVir/zenbot) - Zenbot is a command-line cryptocurrency trading bot using Node.js and MongoDB.
@@ -716,6 +717,7 @@
 - [google/google.github.io](https://github.com/google/google.github.io) - 
 - [godaddy/godaddy.github.io](https://github.com/godaddy/godaddy.github.io) - Deprecated version of GoDaddy blog.  See https://github.com/godaddy/engineering.
 - [microsoft/microsoft.github.io](https://github.com/microsoft/microsoft.github.io) - Microsoft on GitHub
+- [RedHatOfficial/RedHatOfficial.github.io](https://github.com/RedHatOfficial/RedHatOfficial.github.io) - The official Red Hat project page.
 - [Netflix/netflix.github.com](https://github.com/Netflix/netflix.github.com) - 
 - [GSA/data](https://github.com/GSA/data) - Assorted data from the General Services Administration.
 - [nathancy/jekyll-embed-video](https://github.com/nathancy/jekyll-embed-video) - Embed videos in Jekyll webpages without a plugin (Youtube, Vimeo, Twitch, Facebook, Instagram, Twitter, TikTok, Streamable, Google Drive clips + more)
@@ -1087,7 +1089,6 @@
 - [e2b-dev/mcp-server](https://github.com/e2b-dev/mcp-server) - Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
 - [spicetify/docs](https://github.com/spicetify/docs) - Documentation website for spicetify
 - [Daksh777/SpotifyNoPremium](https://github.com/Daksh777/SpotifyNoPremium) - A cross-platform Spicetify theme which declutters Spotify stock UI and removes all ads.
-- [sanoojes/spicetify-lucid](https://github.com/sanoojes/spicetify-lucid) - A Dynamic, Highly Customizable Spicetify theme inspired by Bloom and Microsoft Fluent Design.
 - [Tetrax-10/Nord-Spotify](https://github.com/Tetrax-10/Nord-Spotify) - Nord Themed Spotify
 - [Comfy-Themes/Spicetify](https://github.com/Comfy-Themes/Spicetify) - Stay comfy while listening to music
 - [spicetify/cli](https://github.com/spicetify/cli) - Command-line tool to customize Spotify client. Supports Windows, MacOS, and Linux.
@@ -1178,7 +1179,6 @@
 - [HurricaneJames/react-immutable-proptypes](https://github.com/HurricaneJames/react-immutable-proptypes) - PropType validators that work with Immutable.js.
 - [atomiks/tippyjs-react](https://github.com/atomiks/tippyjs-react) - React component for Tippy.js (official)
 - [MehmetKaplan/matrix-card](https://github.com/MehmetKaplan/matrix-card) - React library to generate matrix style simple cards.
-- [geosigno/simpleParallax.js](https://github.com/geosigno/simpleParallax.js) - Easy Parallax Effect for React & JavaScript
 - [gilbox/react-track](https://github.com/gilbox/react-track) - Track the position of DOM elements. Create cool animations.
 - [maisano/react-router-transition](https://github.com/maisano/react-router-transition) - painless transitions built for react-router, powered by react-motion
 - [moarwick/react-mt-svg-lines](https://github.com/moarwick/react-mt-svg-lines) - A React.js wrapper component to animate the line stroke in SVGs
@@ -2515,6 +2515,7 @@
 
 ## PowerShell 
 
+- [anthropics/claude-code](https://github.com/anthropics/claude-code) - Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows 
 - [Lin-jun-xiang/awesome-vscode-extensions](https://github.com/Lin-jun-xiang/awesome-vscode-extensions) - :gem:Tops of VSCode Extensions
 
 ## Processing 
@@ -2597,7 +2598,7 @@
 - [pokepress/aero](https://github.com/pokepress/aero) - Modified version of the PyTorch implementation of "Audio Super Resolution in the Spectral Domain" (ICASSP 2023)
 - [jitinchekka/github-repo-analyzer](https://github.com/jitinchekka/github-repo-analyzer) - 
 - [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) - A Model Context Protocol (MCP) Gateway & Registry. Serves as a central management point for tools, resources, and prompts that can be accessed by MCP-compatible LLM applications. Converts REST API end
-- [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) - Klavis AI (YC X25):  Open Source MCP integration for AI applications
+- [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) - Klavis AI (YC X25):  MCP integration layers that let AI agents use thousands of tools reliably.
 - [aipotheosis-labs/aci-mcp](https://github.com/aipotheosis-labs/aci-mcp) - MCP server(s) for Aipolabs ACI.dev
 - [aipotheosis-labs/aci](https://github.com/aipotheosis-labs/aci) - ACI.dev is the open source tool-calling platform that hooks up 600+ tools into any agentic IDE or custom AI agent through direct function calling or a unified MCP server. The birthplace of VibeOps.
 - [erithwik/mcp-hn](https://github.com/erithwik/mcp-hn) - MCP Server for Hackernews
@@ -2659,7 +2660,7 @@
 - [ximinng/SVGDreamer](https://github.com/ximinng/SVGDreamer) - [CVPR 2024] Official implementation for "SVGDreamer: Text Guided SVG Generation with Diffusion Model" https://arxiv.org/abs/2312.16476
 - [kingnobro/IconShop](https://github.com/kingnobro/IconShop) - (Siggraph Asia 2023) Code of "IconShop: Text-Guided Vector Icon Synthesis with Autoregressive Transformers"
 - [ximinng/LLM4SVG](https://github.com/ximinng/LLM4SVG) - [CVPR 2025] Official implementation for "Empowering LLMs to Understand and Generate Complex Vector Graphics" https://arxiv.org/abs/2412.11102
-- [OmniSVG/OmniSVG](https://github.com/OmniSVG/OmniSVG) - OmniSVG is the first family of end-to-end multimodal SVG generators that leverage pre-trained Vision-Language Models (VLMs), capable of generating complex and detailed SVGs, from simple icons to intri
+- [OmniSVG/OmniSVG](https://github.com/OmniSVG/OmniSVG) - [NeurIPS 2025] OmniSVG is the first family of end-to-end multimodal SVG generators that leverage pre-trained Vision-Language Models (VLMs), capable of generating complex and detailed SVGs, from simple
 - [TheWebScrapingClub/AI-Cursor-Scraping-Assistant](https://github.com/TheWebScrapingClub/AI-Cursor-Scraping-Assistant) - A powerful tool that leverages Cursor AI and MCP (Model Context Protocol) to easily generate web scrapers for various types of websites.
 - [Dror-Bengal/CursorFocus](https://github.com/Dror-Bengal/CursorFocus) - A lightweight tool that maintains a focused view of your project structure and environment. CursorFocus automatically tracks your project files, functions, and environment variables, updating every 60
 - [sanjeed5/awesome-cursor-rules-mdc](https://github.com/sanjeed5/awesome-cursor-rules-mdc) - Curated list of awesome Cursor Rules .mdc files
@@ -2953,7 +2954,7 @@
 - [win4r/GraphRAG4OpenWebUI](https://github.com/win4r/GraphRAG4OpenWebUI) - GraphRAG4OpenWebUI integrates Microsoft's GraphRAG technology into Open WebUI, providing a versatile information retrieval API. It combines local, global, and web searches for advanced Q&A systems and
 - [karaketir16/openwebui-langfuse](https://github.com/karaketir16/openwebui-langfuse) - This repository provides resources and guidelines to facilitate the integration of Open-WebUI and Langfuse, enabling seamless monitoring and management of AI model usage statistics.
 - [open-webui/pipelines](https://github.com/open-webui/pipelines) - Pipelines: Versatile, UI-Agnostic OpenAI-Compatible Plugin Framework
-- [Alibaba-NLP/DeepResearch](https://github.com/Alibaba-NLP/DeepResearch) - Tongyi DeepResearch, the Leading Open-source DeepResearch Agent
+- [Alibaba-NLP/DeepResearch](https://github.com/Alibaba-NLP/DeepResearch) - Tongyi Deep Research, the Leading Open-source Deep Research Agent
 - [hitsz-ids/synthetic-data-generator](https://github.com/hitsz-ids/synthetic-data-generator) - SDG is a specialized framework designed to generate high-quality structured tabular data.
 - [vanderschaarlab/synthcity](https://github.com/vanderschaarlab/synthcity) - A library for generating and evaluating synthetic tabular data for privacy, fairness and data augmentation.
 - [sdv-dev/SDV](https://github.com/sdv-dev/SDV) - Synthetic data generation for tabular data
@@ -3066,7 +3067,7 @@
 - [shubhamagarwal92/LitLLM](https://github.com/shubhamagarwal92/LitLLM) - LitLLM: A Toolkit for Scientific Literature Review
 - [TrixSec/Proxy-Checker](https://github.com/TrixSec/Proxy-Checker) - Fast Proxy Checker
 - [truefoundry/cognita](https://github.com/truefoundry/cognita) - RAG (Retrieval Augmented Generation) Framework for building modular, open source applications for production by TrueFoundry
-- [traceloop/openllmetry](https://github.com/traceloop/openllmetry) - Open-source observability for your LLM application, based on OpenTelemetry
+- [traceloop/openllmetry](https://github.com/traceloop/openllmetry) - Open-source observability for your GenAI or LLM application, based on OpenTelemetry
 - [llmware-ai/llmware](https://github.com/llmware-ai/llmware) - Unified framework for building enterprise RAG pipelines with small, specialized models
 - [Avaiga/taipy](https://github.com/Avaiga/taipy) - Turns Data and AI algorithms into production-ready web applications in no time.
 - [dgtlmoon/changedetection.io](https://github.com/dgtlmoon/changedetection.io) - Best and simplest tool for website change detection, web page monitoring, and website change alerts. Perfect for tracking content changes, price drops, restock alerts, and website defacement monitorin
@@ -4234,7 +4235,6 @@
 - [rcaferati/react-awesome-button](https://github.com/rcaferati/react-awesome-button) - React button component. Awesome button is a 3D UI, progress, social and share enabled, animated at 60fps, light weight, performant, production ready react UI button component. 🖥️ 📱
 - [app-generator/react-datta-able-nodejs](https://github.com/app-generator/react-datta-able-nodejs) - React Datta Able NodeJS - Open-Source Full-Stack Template | App-Generator.dev
 - [twitter/opensource-website](https://github.com/twitter/opensource-website) - Twitter's open source website, identifying projects we've released, organizations we support, and the work we do to support open source.
-- [RedHatOfficial/RedHatOfficial.github.io](https://github.com/RedHatOfficial/RedHatOfficial.github.io) - The official Red Hat project page.
 - [Ileriayo/markdown-badges](https://github.com/Ileriayo/markdown-badges) - Badges for your personal developer branding, profile, and projects.
 
 ## SVG 
@@ -4489,7 +4489,6 @@
 - [MotiaDev/motia](https://github.com/MotiaDev/motia) - Modern Backend Framework that unifies APIs, background jobs, workflows, and AI Agents into a single core primitive with built-in observability and state management.
 - [AIDC-AI/ComfyUI-Copilot](https://github.com/AIDC-AI/ComfyUI-Copilot) - An AI-powered custom node for ComfyUI designed to enhance workflow automation and provide intelligent assistance
 - [Dokploy/dokploy](https://github.com/Dokploy/dokploy) - Open Source Alternative to Vercel, Netlify and Heroku.
-- [anthropics/claude-code](https://github.com/anthropics/claude-code) - Claude Code is an agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster by executing routine tasks, explaining complex code, and handling git workflows 
 - [sst/opencode](https://github.com/sst/opencode) - AI coding agent, built for the terminal.
 - [dyad-sh/dyad](https://github.com/dyad-sh/dyad) - Free, local, open-source AI app builder ✨ v0 / lovable / Bolt alternative 🌟 Star if you like it!
 - [browserbase/stagehand](https://github.com/browserbase/stagehand) - The AI Browser Automation Framework
@@ -4530,7 +4529,6 @@
 - [UziTech/marked-html-renderer](https://github.com/UziTech/marked-html-renderer) - 
 - [kunwarVivek/mcp-github-project-manager](https://github.com/kunwarVivek/mcp-github-project-manager) - a mcp server to manage github project's functionality
 - [spicetify/spicetify-creator](https://github.com/spicetify/spicetify-creator) - Easily make Spicetify extensions and custom apps.
-- [kagent-dev/kagent](https://github.com/kagent-dev/kagent) - Cloud Native Agentic AI | Discord: https://bit.ly/kagentdiscord
 - [kleneway/pastemax](https://github.com/kleneway/pastemax) - A simple tool to select files from a repository to copy/paste into an LLM
 - [srbhptl39/MCP-SuperAssistant](https://github.com/srbhptl39/MCP-SuperAssistant) - Brings MCP to ChatGPT, DeepSeek, Perplexity, Grok, Gemini, Google AI Studio, OpenRouter, DeepSeek, T3 Chat and more...
 - [antvis/mcp-server-chart](https://github.com/antvis/mcp-server-chart) - 🤖 A visualization mcp contains 25+ visual charts using @antvis. Using for chart generation and data analysis.
@@ -4854,6 +4852,7 @@
 - [harbassan/spicetify-apps](https://github.com/harbassan/spicetify-apps) - A collection of spicetify custom apps to improve your spotify experience.
 - [Konsl/spicetify-visualizer](https://github.com/Konsl/spicetify-visualizer) - Audio Visualizer for Spicetify
 - [spicetify/marketplace](https://github.com/spicetify/marketplace) - Download extensions and themes directly from Spicetify
+- [sanoojes/spicetify-lucid](https://github.com/sanoojes/spicetify-lucid) - A Dynamic, Highly Customizable Spicetify theme inspired by Bloom and Microsoft Fluent Design.
 - [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [RamiAwar/dataline](https://github.com/RamiAwar/dataline) - Chat with your data - AI data analysis and visualization on CSV, Postgres, MySQL, Snowflake, SQLite...
 - [sourcegraph/cody-public-snapshot](https://github.com/sourcegraph/cody-public-snapshot) - Type less, code more: Cody is an AI code assistant that uses advanced search and codebase context to help you write and fix code.
@@ -4872,7 +4871,7 @@
 - [pontusab/directories](https://github.com/pontusab/directories) - The Cursor & Windsurf community, find rules and MCPs
 - [punkpeye/fastmcp](https://github.com/punkpeye/fastmcp) - A TypeScript framework for building MCP servers.
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) - Model Context Protocol Servers
-- [zaidmukaddam/scira](https://github.com/zaidmukaddam/scira) - Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you find information on the internet and cites it too. Powered by Vercel AI SDK! Search with models like xAI's Grok 3.
+- [zaidmukaddam/scira](https://github.com/zaidmukaddam/scira) - Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you find information on the internet and cites it too. Powered by Vercel AI SDK! Search with models like xAI's Grok 4.
 - [ahmedkhaleel2004/gitdiagram](https://github.com/ahmedkhaleel2004/gitdiagram) - Free, simple, fast interactive diagrams for any GitHub repository
 - [arifszn/gitprofile](https://github.com/arifszn/gitprofile) - 🚀 Create and publish a dynamic portfolio by just providing your GitHub username.
 - [appwrite/appwrite](https://github.com/appwrite/appwrite) - Build like a team of hundreds_
@@ -4991,6 +4990,7 @@
 - [nukeop/react-ui-cards](https://github.com/nukeop/react-ui-cards) - Ready to use card components for React (rewritten in Typescript)
 - [microsoft/playwright](https://github.com/microsoft/playwright) - Playwright is a framework for Web Testing and Automation. It allows testing Chromium, Firefox and WebKit with a single API.
 - [yocontra/react-responsive](https://github.com/yocontra/react-responsive) - CSS media queries in react - for responsive design, and more.
+- [geosigno/simpleParallax.js](https://github.com/geosigno/simpleParallax.js) - Easy Parallax Effect for React & JavaScript
 - [gerardmarquinarubio/ReactTypewriter](https://github.com/gerardmarquinarubio/ReactTypewriter) - Easy to use typewriter component written with Typescript and React 18+ in mind
 - [pmndrs/react-spring](https://github.com/pmndrs/react-spring) - ✌️ A spring physics based React animation library
 - [plus1tv/react-anime](https://github.com/plus1tv/react-anime) - ✨ (ﾉ´ヮ´)ﾉ*:･ﾟ✧ A super easy animation library for React!
