@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>subframe7536/vscode-custom-ui-style</span>
-                                        <span>starred 14 hours ago</span>
+                                        <span>starred 15 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">VSCode extension that modify CSS and JS code in both editor and webview, unify global font family, setup background image and Electron BrowserWindow options, add your custom CSS or JS code, and even patch files in other VSCode extensions.</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>pnpm/pnpm</span>
-                                        <span>starred 18 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Fast, disk space efficient package manager</div>
@@ -202,7 +202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>gorhill/uBlock</span>
-                                        <span>starred 21 hours ago</span>
+                                        <span>starred 22 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">uBlock Origin - An efficient blocker for Chromium and Firefox. Fast and lean.</div>
@@ -262,7 +262,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">273</span>
+                                <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 15
                                 <div class="bottom">Sep.</div>
@@ -338,8 +338,8 @@
                         <h3>New stargazers per day</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value">+1</span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 15
                                 <div class="bottom">Sep.</div>
                             </div>
