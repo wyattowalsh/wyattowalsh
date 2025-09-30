@@ -3287,7 +3287,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>squidfunk/mkdocs-material</span>
-                                        <span>starred 7 hours ago</span>
+                                        <span>starred 9 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Documentation that simply works</div>
@@ -3340,7 +3340,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>pyTooling/sphinx-reports</span>
-                                        <span>starred 8 hours ago</span>
+                                        <span>starred 9 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Integrate reports (code coverage, doc. coverage, pytest, mypy, ...) into Sphinx documentation as appendix pages.</div>
@@ -3393,7 +3393,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>sphinx-extensions2/sphinx-timeline</span>
-                                        <span>starred 8 hours ago</span>
+                                        <span>starred 9 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A sphinx extension to create timelines</div>
@@ -3446,7 +3446,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>aio-libs/sphinxcontrib-asyncio</span>
-                                        <span>starred 8 hours ago</span>
+                                        <span>starred 9 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Sphinx extension to add asyncio-specific markups</div>
@@ -4021,7 +4021,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 30 Sept 2025, 08:02:06 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 30 Sept 2025, 09:10:01 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
