@@ -132,7 +132,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                         <path xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" d="M2.5 3.5c0-.133.058-.318.282-.55.227-.237.592-.484 1.1-.708C4.899 1.795 6.354 1.5 8 1.5c1.647 0 3.102.295 4.117.742.51.224.874.47 1.101.707.224.233.282.418.282.551 0 .133-.058.318-.282.55-.227.237-.592.484-1.1.708C11.101 5.205 9.646 5.5 8 5.5c-1.647 0-3.102-.295-4.117-.742-.51-.224-.874-.47-1.101-.707-.224-.233-.282-.418-.282-.551zM1 3.5c0-.626.292-1.165.7-1.59.406-.422.956-.767 1.579-1.041C4.525.32 6.195 0 8 0c1.805 0 3.475.32 4.722.869.622.274 1.172.62 1.578 1.04.408.426.7.965.7 1.591v9c0 .626-.292 1.165-.7 1.59-.406.422-.956.767-1.579 1.041C11.476 15.68 9.806 16 8 16c-1.805 0-3.475-.32-4.721-.869-.623-.274-1.173-.62-1.579-1.04-.408-.426-.7-.965-.7-1.591v-9zM2.5 8V5.724c.241.15.503.286.779.407C4.525 6.68 6.195 7 8 7c1.805 0 3.475-.32 4.722-.869.275-.121.537-.257.778-.407V8c0 .133-.058.318-.282.55-.227.237-.592.484-1.1.708C11.101 9.705 9.646 10 8 10c-1.647 0-3.102-.295-4.117-.742-.51-.224-.874-.47-1.101-.707C2.558 8.318 2.5 8.133 2.5 8zm0 2.225V12.5c0 .133.058.318.282.55.227.237.592.484 1.1.708 1.016.447 2.471.742 4.118.742 1.647 0 3.102-.295 4.117-.742.51-.224.874-.47 1.101-.707.224-.233.282-.418.282-.551v-2.275c-.241.15-.503.285-.778.406-1.247.549-2.917.869-4.722.869-1.805 0-3.475-.32-4.721-.869a6.236 6.236 0 01-.779-.406z"/>
                                     </svg>
-                                    6.15 GB used
+                                    6.14 GB used
                                 </div>
                                 <div class="field ">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
@@ -234,7 +234,7 @@
                         <path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 01-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 00-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 01-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75zM5.75 12a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"/>
                     </svg>
                     Recent coding habits
-                    <small class="h-details">(computed from last 15 commits)</small>
+                    <small class="h-details">(computed from last 16 commits)</small>
                 </h2>
                 <div class="row">
                     <ul class="facts">
@@ -296,16 +296,16 @@
                         </div>
                         <div class="entry">
                             <span class="value">1</span>
-                            <div class="bar" style="height: 4.166666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 3.8461538461538463px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             09
                         </div>
                         <div class="entry">
                             <span class="value">1</span>
-                            <div class="bar" style="height: 4.166666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 3.8461538461538463px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             10
                         </div>
                         <div class="entry">
-                            <span class="value">12</span>
+                            <span class="value">13</span>
                             <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                             11
                         </div>
@@ -331,7 +331,7 @@
                         </div>
                         <div class="entry">
                             <span class="value">1</span>
-                            <div class="bar" style="height: 4.166666666666666px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                            <div class="bar" style="height: 3.8461538461538463px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                             16
                         </div>
                         <div class="entry">
@@ -377,37 +377,37 @@
                         <div class="chart-bars">
                             <div class="entry">
                                 <span class="value">2</span>
-                                <div class="bar" style="height: 33.33333333333333px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 Sun
                             </div>
                             <div class="entry">
                                 <span class="value">2</span>
-                                <div class="bar" style="height: 33.33333333333333px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 Mon
                             </div>
                             <div class="entry">
                                 <span class="value">1</span>
-                                <div class="bar" style="height: 16.666666666666664px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <div class="bar" style="height: 12.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 Tue
                             </div>
                             <div class="entry">
-                                <span class="value">3</span>
+                                <span class="value">4</span>
                                 <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
                                 Wed
                             </div>
                             <div class="entry">
                                 <span class="value">2</span>
-                                <div class="bar" style="height: 33.33333333333333px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 Thu
                             </div>
                             <div class="entry">
                                 <span class="value">2</span>
-                                <div class="bar" style="height: 33.33333333333333px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
+                                <div class="bar" style="height: 25px; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 Fri
                             </div>
                             <div class="entry">
                                 <span class="value">3</span>
-                                <div class="bar" style="height: 50px; background-color: var(--color-calendar-graph-day-L4-bg)"></div>
+                                <div class="bar" style="height: 37.5px; background-color: var(--color-calendar-graph-day-L3-bg)"></div>
                                 Sat
                             </div>
                         </div>
@@ -417,22 +417,22 @@
                         <div class="chart-bars horizontal">
                             <div class="entry">
                                 <span class="name">Python</span>
-                                <div class="bar" style="width: 37.00551755890719%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
+                                <div class="bar" style="width: 36.75725913823435%; background-color: var(--color-calendar-graph-day-L2-bg)"></div>
                                 <span class="value">46%</span>
                             </div>
                             <div class="entry">
                                 <span class="name">Shell</span>
-                                <div class="bar" style="width: 12.814697648168362%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="width: 12.728727857461617%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 <span class="value">16%</span>
                             </div>
                             <div class="entry">
                                 <span class="name">Jupyter Notebook</span>
-                                <div class="bar" style="width: 3.6500545815046674%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="width: 3.6255675091557524%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 <span class="value">5%</span>
                             </div>
                             <div class="entry">
                                 <span class="name">Makefile</span>
-                                <div class="bar" style="width: 3.523217561134998%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                <div class="bar" style="width: 3.4995813986081044%; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 <span class="value">4%</span>
                             </div>
                         </div>
@@ -464,7 +464,7 @@
                             <div class="label" title="An awesome list is a list of awesome things curated by the community.">awesome lists</div>
                             <div class="label" title="Git is the most widely used version control system.">git</div>
                             <div class="label" title="Docker is a platform built for developers to build and run applications.">docker</div>
-                            <div class="label" title="Machine learning, Deep learning, Data structures, Chrome, Arduino, SQL, Bitcoin, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, Code quality, PHP, Bash, Raspberry Pi, Code review, Terminal, iOS, Kubernetes, R, Unity, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, Windows, MongoDB, PostgreSQL, Cryptocurrency, Ethereum, Unreal Engine, Swift, Flask, GraphQL, Markdown, Continuous integration, Electron, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Project management, Homebrew, Sass, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Artificial Intelligence, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Large Language Model, music, Data analysis, Statistics, stable-diffusion, Privacy, c-plus-plus, No-code, obsidian-plugin, Obsidian, Crawler, obsidian, Zsh, ai-agents, portfolio-website, rag, agent, prompt-engineering, Animation, trading-bot, large-language-models, mcp, search-engine, audio, RSS, gpt, downloader, proxy, VS Code Extension, knowledge-graph, Simulation, Notion, ocr, super-resolution, roadmap, jupyter, gatsby, scraper, icons, Boilerplate, machine, SVG, observability, retrieval-augmented-generation, scraping, llms, forensics, blog, crm, terminal-emulators, download, anomaly-detection, react-components, flowchart, profile-readme, docs, Playwright, OpenAPI Specification, webscraping, MIDI, email, scss, Reddit, transformers, saas-boilerplate, rich-text-editor, youtube-dl, github-profile, modeling, resume, llmops, safari-extension, scrapy, monorepo, llm-agent, marketing-automation, named-entity-recognition, music-generation, proxy-list, url-shortener, calendar, copilot, web-scraper, linear-algebra, build-tool, player, ai-assistant, personal-assistant, yt-dlp, pkm, email-marketing, prompts, markdown-editor, download-manager, ai-music, readme, model-context-protocol, assistant, google-colab, music-composition, data-warehouse, clipboard-manager, dfir, relation-extraction, classification, backend-as-a-service, multimodal, menubar, cursor, data-pipelines, juce, ai-agent, http-proxy, prompt-toolkit, api-documentation, MDX, image-viewer, research-paper, push-notifications, text-detection, socks, etl-pipeline, deep-research, web-audio, free-proxy, linkedin, formatter, graph-editor, document-layout-analysis, build-system, probability, perplexity, audio-plugin, timeline, marketing-tools, react-component, github-copilot, email-template, text-recognition, entity-linking, component, mcp-client, newsletter, system-prompts, document-ai, regression, mcp-servers, open-webui, pdf-converter, text2sql, build-tools, audio-effect, dj, cleaner, Repl.it, calculus, prompting, task, tabular-data, stats, table-recognition, asynchronous, agent-based-framework, oh-my-zsh-plugin, llm-webui, computer-music, document-understanding, thunderbird, remark-plugin, toolchain, schedule, pdf-to-text, document-parser, quicklook-extension, spicetify-themes, google-colab-notebook, relational-database, music-ai, digital-audio-workstation, project-planning, emails, reddit-api, project-structure, docsify, drum-machine, ai-prompts, music-programming, document-analysis, saas-template, cursor-ai, email-boilerplate, aiagents, deepresearch, comment-system, sphinx-extension, docusaurus, juce-framework, ollama-webui, ontology-engineering, sphinx, markov-chain, data-generation, responsive-email, document-intelligence, transcribe, music-creation, audio-programming, spicetify-apps, toml, layout-analysis, document-parsing, fractal, pytest-plugin, docset, badge, pdf-to-json, starred, topic-models, topic, link-aggregator, key-information-extraction, llm-ui, automated-scraper, python-libraries, graph-rag, rehype-plugin, jsonresume, assistant-api, awesome-stars, topic-modelling, pdf-document-processor, poetry-plugin, motrix, antidetect, ai-music-generator, gui-agents, semantic-scholar, document-image-analysis, document-image-processing, knowledge-curation, pdf-extractor, bio-links, spec-driven-development, text-to-audio, shorten-urls, discogs, github-projects, json-resume, wakatime, assistant-computer-control, newsletter-management, document-recognition, cursorai, mcp-servers-directory, mosaic, saas-starter, linkedin-profile, chainer, yourls, tinyurl, shortener, urlshortener, llm-platform, report-generation, sass-mixins, sass-library, Nextra, drum, social-media-scheduling-tool, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, llm-powered-agents, monorepos, iina-plugin, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-os, tdl-extension, scrapes-linkedin, wakatime-api, ai-music-generation, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, docusaurus-plugin, marked-js, openapi-to-mcp, audio-sampler, markwhen, free-deep-research, ai-web-scraper, text-to-music-transformer, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 393 more...</div>
+                            <div class="label" title="Machine learning, Deep learning, Data structures, Chrome, Arduino, SQL, Bitcoin, Google, Azure, MySQL, Data visualization, Bot, Command-line interface, 3D, Django, GitHub API, Chrome extension, Code quality, PHP, Bash, Raspberry Pi, Code review, Terminal, iOS, Kubernetes, R, Unity, Ubuntu, Jupyter Notebook, HTTP, Tensorflow, Security, macOS, MATLAB, Windows, MongoDB, PostgreSQL, Cryptocurrency, Ethereum, Unreal Engine, Swift, Flask, GraphQL, Markdown, Continuous integration, Electron, Documentation, Shell, Natural language processing, scikit-learn, Operating system, Minecraft, Mobile, Deployment, LaTeX, Ruby, NoSQL, X (Twitter), Project management, Homebrew, Sass, Emulator, Serverless, Font, Material Design, P2P, Rails, Package manager, Scala, Parsing, Jekyll, Artificial Intelligence, Publishing, ChatGPT, Data Science, awesome-list, jekyll-theme, Large Language Model, music, Data analysis, Statistics, stable-diffusion, Privacy, c-plus-plus, No-code, obsidian-plugin, Obsidian, Crawler, obsidian, Zsh, ai-agents, portfolio-website, agent, rag, prompt-engineering, Animation, trading-bot, large-language-models, mcp, search-engine, audio, RSS, gpt, downloader, proxy, VS Code Extension, knowledge-graph, Simulation, Notion, ocr, super-resolution, roadmap, jupyter, gatsby, scraper, icons, Boilerplate, machine, SVG, observability, retrieval-augmented-generation, scraping, llms, forensics, blog, crm, terminal-emulators, download, anomaly-detection, react-components, flowchart, profile-readme, docs, Playwright, OpenAPI Specification, webscraping, MIDI, email, scss, Reddit, transformers, saas-boilerplate, rich-text-editor, youtube-dl, github-profile, modeling, resume, llmops, safari-extension, scrapy, monorepo, llm-agent, marketing-automation, named-entity-recognition, music-generation, proxy-list, url-shortener, calendar, copilot, web-scraper, linear-algebra, build-tool, yt-dlp, player, ai-assistant, personal-assistant, pkm, email-marketing, prompts, markdown-editor, download-manager, ai-music, readme, model-context-protocol, assistant, google-colab, music-composition, data-warehouse, clipboard-manager, dfir, relation-extraction, classification, backend-as-a-service, multimodal, menubar, cursor, data-pipelines, juce, ai-agent, http-proxy, prompt-toolkit, api-documentation, MDX, image-viewer, research-paper, push-notifications, text-detection, socks, etl-pipeline, deep-research, web-audio, free-proxy, linkedin, formatter, graph-editor, document-layout-analysis, build-system, probability, perplexity, audio-plugin, timeline, marketing-tools, react-component, github-copilot, email-template, text-recognition, entity-linking, component, mcp-client, newsletter, system-prompts, document-ai, regression, mcp-servers, open-webui, pdf-converter, text2sql, build-tools, audio-effect, dj, cleaner, Repl.it, calculus, prompting, task, tabular-data, stats, table-recognition, asynchronous, agent-based-framework, oh-my-zsh-plugin, llm-webui, computer-music, document-understanding, thunderbird, remark-plugin, toolchain, schedule, pdf-to-text, document-parser, quicklook-extension, spicetify-themes, google-colab-notebook, relational-database, music-ai, digital-audio-workstation, project-planning, emails, reddit-api, project-structure, docsify, drum-machine, ai-prompts, music-programming, document-analysis, saas-template, cursor-ai, email-boilerplate, aiagents, deepresearch, comment-system, sphinx-extension, docusaurus, juce-framework, ollama-webui, ontology-engineering, sphinx, markov-chain, data-generation, responsive-email, document-intelligence, transcribe, music-creation, audio-programming, spicetify-apps, toml, layout-analysis, document-parsing, fractal, pytest-plugin, docset, badge, pdf-to-json, starred, topic-models, topic, link-aggregator, key-information-extraction, llm-ui, automated-scraper, python-libraries, graph-rag, rehype-plugin, jsonresume, assistant-api, awesome-stars, topic-modelling, pdf-document-processor, poetry-plugin, motrix, antidetect, ai-music-generator, gui-agents, semantic-scholar, document-image-analysis, document-image-processing, knowledge-curation, pdf-extractor, bio-links, spec-driven-development, text-to-audio, shorten-urls, discogs, github-projects, json-resume, wakatime, assistant-computer-control, newsletter-management, document-recognition, cursorai, mcp-servers-directory, mosaic, saas-starter, linkedin-profile, chainer, yourls, tinyurl, shortener, urlshortener, llm-platform, report-generation, sass-mixins, sass-library, Nextra, drum, social-media-scheduling-tool, zero-shot-prompts, comments-widget, shorturl, bitly-alternative, outlier, llm-powered-agents, monorepos, iina-plugin, email-marketing-automation, short-url, layoutlm, end-to-end-ocr, llm-os, tdl-extension, scrapes-linkedin, wakatime-api, ai-music-generation, website-to-api, email-marketing-software, yourls-client, layoutxlm, automated-post, text-to-svg, sass-functions, docz, docusaurus-plugin, marked-js, openapi-to-mcp, audio-sampler, markwhen, free-deep-research, ai-web-scraper, text-to-music-transformer, website-to-database, website-to-spreadsheet, no-code-web-scraper, newsletter-software, agent-computer-interface, documentai, yourls-api, yourls-extension, yourls-plugin, url-shorteners, docusaurus-documentation, buffer-alternative, abc-music-notation, awesome-nextjs">and 393 more...</div>
                         </div>
                     </section>
                 </div>
