@@ -296,6 +296,7 @@
 - [wordpress](#wordpress)
 - [xcode](#xcode)
 - [xml](#xml)
+- [youtube](#youtube)
 - [zig](#zig)
 - [zsh](#zsh)
 
@@ -1909,7 +1910,6 @@
 - [LangbaseInc/langui](https://github.com/LangbaseInc/langui) - UI for your AI. Open Source Tailwind components tailored for your GPT, generative AI, and LLM projects.
 - [Chainlit/chainlit](https://github.com/Chainlit/chainlit) - Build Conversational AI in minutes ⚡️
 - [sqlchat/sqlchat](https://github.com/sqlchat/sqlchat) - Chat-based SQL Client and Editor for the next decade
-- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, code highlight
 - [atfortes/Awesome-LLM-Reasoning](https://github.com/atfortes/Awesome-LLM-Reasoning) - From Chain-of-Thought prompting to OpenAI o1 and DeepSeek-R1 🍓
 - [protectai/llm-guard](https://github.com/protectai/llm-guard) - The Security Toolkit for LLM Interactions
 - [BeastByteAI/scikit-llm](https://github.com/BeastByteAI/scikit-llm) - Seamlessly integrate LLMs into scikit-learn.
@@ -4316,6 +4316,7 @@
 - [confident-ai/deepeval](https://github.com/confident-ai/deepeval) - The LLM Evaluation Framework
 - [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) - Tesseract Open Source OCR Engine (main repository)
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
+- [drawdb-io/drawdb](https://github.com/drawdb-io/drawdb) - Free, simple, and intuitive online database diagram editor and SQL generator.
 - [sqlfluff/sqlfluff](https://github.com/sqlfluff/sqlfluff) - A modular SQL linter and auto-formatter with support for multiple dialects and templated code.
 - [memfreeme/memfree](https://github.com/memfreeme/memfree) - MemFree - Hybrid AI Search Engine & AI Page Generator
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - Universal memory layer for AI Agents; Announcing OpenMemory MCP - local and secure memory management.
@@ -6448,7 +6449,7 @@
 - [WilliamSchack/Spotify-Downloader](https://github.com/WilliamSchack/Spotify-Downloader) - Downloads spotify playlists and songs along with metadata through an easy to use GUI (Downloads from YouTube)
 - [NickvisionApps/Parabolic](https://github.com/NickvisionApps/Parabolic) - Download web video and audio
 - [imputnet/cobalt](https://github.com/imputnet/cobalt) - best way to save what you love
-- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.55.0) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
+- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.56.0) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
 - [mahshidaln/AI-for-music](https://github.com/mahshidaln/AI-for-music) - Resources on AI applications in the music domain
 - [gitmylo/audio-webui](https://github.com/gitmylo/audio-webui) - A webui for different audio related Neural Networks
 - [asigalov61/tegridy-tools](https://github.com/asigalov61/tegridy-tools) - Symbolic Music NLP Artificial Intelligence Toolkit
@@ -7511,7 +7512,6 @@
 - [567-labs/instructor](https://github.com/567-labs/instructor) - structured outputs for llms
 - [griptape-ai/griptape](https://github.com/griptape-ai/griptape) - Modular Python framework for AI agents and workflows with chain-of-thought reasoning, tools, and memory.
 - [sqlchat/sqlchat](https://github.com/sqlchat/sqlchat) - Chat-based SQL Client and Editor for the next decade
-- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, code highlight
 - [refuel-ai/autolabel](https://github.com/refuel-ai/autolabel) - Label, clean and enrich text datasets with LLMs.
 - [dillionverma/llm.report](https://github.com/dillionverma/llm.report) - 📊 llm.report is an open-source logging and analytics platform for OpenAI: Log your ChatGPT API requests, analyze costs, and improve your prompts.
 - [explosion/spacy-llm](https://github.com/explosion/spacy-llm) - 🦙 Integrating LLMs into structured NLP pipelines
@@ -7622,7 +7622,7 @@
 - [pantsbuild/pantsbuild.org](https://github.com/pantsbuild/pantsbuild.org) - The Pants website
 - [bazelbuild/bazel](https://github.com/bazelbuild/bazel) - a fast, scalable, multi-language and extensible build system
 - [langgptai/awesome-system-prompts](https://github.com/langgptai/awesome-system-prompts) - system prompts of LLMs, AI Tools, AI Products, DeepSeek,ChatGPT, Gemini, Grok, Qwen
-- [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) - High quality Spec-Driven Development for Claude Code, Cursor, Gemini CLI and Qwen Code. High quality commands that enforce structured requirements→design→tasks workflow and steering, transforming how 
+- [gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) - High quality Spec-Driven Development for Claude Code, Codex, Cursor, Github Copilot, Gemini CLI and Qwen Code. High quality commands that enforce structured requirements→design→tasks workflow and stee
 - [formulahendry/mcp-server-mcp-registry](https://github.com/formulahendry/mcp-server-mcp-registry) - MCP Server for MCP Registry
 - [formulahendry/mcp-server-spec-driven-development](https://github.com/formulahendry/mcp-server-spec-driven-development) - Spec-Driven Development MCP Server, not just Vibe Coding
 - [Pimzino/spec-workflow-mcp](https://github.com/Pimzino/spec-workflow-mcp) - A Model Context Protocol (MCP) server that provides structured spec-driven development workflow tools for AI-assisted software development, featuring a real-time web dashboard and VSCode extension for
@@ -8078,7 +8078,6 @@
 - [SkyworkAI/Mureka-mcp](https://github.com/SkyworkAI/Mureka-mcp) - generate lyrics, song and background music(instrumental). Model Context Protocol (MCP) server.
 - [hamflx/imagen3-mcp](https://github.com/hamflx/imagen3-mcp) - 
 - [tbridge/macadminblogs-opml](https://github.com/tbridge/macadminblogs-opml) - An OPML File Full of Mac Blogs
-- [jeb5/YouTube-Subscriptions-RSS](https://github.com/jeb5/YouTube-Subscriptions-RSS) - Generate an OPML file of RSS feeds for your YouTube subscriptions
 - [azu/opml-to-markdown](https://github.com/azu/opml-to-markdown) - [node.js]Convert OPML(Outline) to Markdown
 - [vchatterji/opml2json](https://github.com/vchatterji/opml2json) - A simple tool to convert opml files exported by Mindnode to JSON consumable by D3 Javascript library
 - [sturobson/myRSS](https://github.com/sturobson/myRSS) - a copy of my RSS feeds in a handy .opml file
@@ -8143,7 +8142,6 @@
 - [brianmichel/Juice](https://github.com/brianmichel/Juice) - Make your battery information a bit more interesting.
 - [hluk/CopyQ](https://github.com/hluk/CopyQ) - Clipboard manager with advanced features
 - [YouTubeDownload/YouTubeDownload](https://github.com/YouTubeDownload/YouTubeDownload) - GUI and CLI for downloading YouTube video/audio.
-- [shaked6540/YoutubePlaylistDownloader](https://github.com/shaked6540/YoutubePlaylistDownloader) - A tool to download whole playlists, channels or single videos from youtube and also optionally convert them to almost any format you would like
 - [ethanwillis/zotero-scihub](https://github.com/ethanwillis/zotero-scihub) - A plugin that will automatically download PDFs of zotero items from sci-hub
 - [jiji262/douyin-downloader](https://github.com/jiji262/douyin-downloader) - 抖音批量下载工具，去水印，支持视频、图集、合集、音乐(原声)。免费！免费！免费！
 - [0xHJK/music-dl](https://github.com/0xHJK/music-dl) - search and download music 从网易云音乐、QQ音乐、酷狗音乐、百度音乐、虾米音乐、咪咕音乐等搜索和下载歌曲
@@ -8152,10 +8150,8 @@
 - [hartator/wayback-machine-downloader](https://github.com/hartator/wayback-machine-downloader) - Download an entire website from the Wayback Machine.
 - [jae-jae/Camtd](https://github.com/jae-jae/Camtd) - Chrome multi-threaded download manager extension,based on Aria2 and AriaNg.  Chrome多线程下载扩展。
 - [acgotaku/YAAW-for-Chrome](https://github.com/acgotaku/YAAW-for-Chrome) - Yet Another Aria2 Web Frontend in pure HTML/CSS/Javascirpt Powered by Chrome
-- [LaurenceRawlings/savify](https://github.com/LaurenceRawlings/savify) - Download Spotify songs to mp3 with full metadata and cover art!
 - [DangJin/awesome-social-media-downloader](https://github.com/DangJin/awesome-social-media-downloader) - 👿 收录了一些能够免费下载油管、B 站、抖音等平台视频的下载工具。Some download tools that can freely download videos from platforms such as YouTube, Bilibili, Douyin, etc. have been included.
 - [ingbyr/vdm](https://github.com/ingbyr/vdm) - GUI for command-line video downloader (youtube-dl annie)
-- [meeb/tubesync](https://github.com/meeb/tubesync) - Syncs YouTube channels and playlists to a locally hosted media server
 - [brunoruviaro/A_Gentle_Introduction_To_SuperCollider](https://github.com/brunoruviaro/A_Gentle_Introduction_To_SuperCollider) - A step-by-step tutorial for total beginners. PDF here:
 - [libgenapps/LibgenDesktop](https://github.com/libgenapps/LibgenDesktop) - 
 - [DATAHOARDERS/dynamic-rules](https://github.com/DATAHOARDERS/dynamic-rules) - 
@@ -8163,12 +8159,9 @@
 - [impressivewebs/frontend-feeds](https://github.com/impressivewebs/frontend-feeds) - An up to date list of RSS feeds for front-end developers.
 - [chamburr/glance](https://github.com/chamburr/glance) - 🔎 All-in-one Quick Look plugin
 - [NSchrading/redditDataExtractor](https://github.com/NSchrading/redditDataExtractor) - The reddit Data Extractor is a cross-platform GUI tool for downloading almost any content posted to reddit. Downloads from specific users, specific subreddits, users by subreddit, and with filters on 
-- [jmbannon/ytdl-sub](https://github.com/jmbannon/ytdl-sub) - Lightweight tool to automate downloading and metadata generation with yt-dlp
 - [matrix-org/matrix.to](https://github.com/matrix-org/matrix.to) - A simple stateless privacy-protecting URL redirecting service for Matrix
 - [yausername/dvd](https://github.com/yausername/dvd) - Download videos from anywhere
 - [ziahamza/webui-aria2](https://github.com/ziahamza/webui-aria2) - The aim for this project is to create the worlds best and hottest interface to interact with aria2. Very simple to use, just download and open index.html in any web browser.
-- [Tzahi12345/YoutubeDL-Material](https://github.com/Tzahi12345/YoutubeDL-Material) - Self-hosted YouTube downloader built on Material Design
-- [kieraneglin/pinchflat](https://github.com/kieraneglin/pinchflat) - Your next YouTube media manager
 - [itsmeow/Spicetify-Canvas](https://github.com/itsmeow/Spicetify-Canvas) - Spotify Canvas, on Spicetify for Desktop!
 - [microsoft/prompty](https://github.com/microsoft/prompty) - Prompty makes it easy to create, manage, debug, and evaluate LLM prompts for your AI applications.  Prompty is an asset class and format for LLM prompts designed to enhance observability, understandab
 - [KingLeoJr/prompts](https://github.com/KingLeoJr/prompts) - builder prompts which can be sent to builders like cursor, bolt.diy, bolt.new, trae, project idx, lovable.dev, llmacoder, geminicoder, windsurf, deepseek-artifact, cline, aider etc
@@ -9067,6 +9060,7 @@
 - [VRSEN/agency-swarm](https://github.com/VRSEN/agency-swarm) - Reliable Multi-Agent Orchestration Framework (Extension of Agents SDK)
 - [daveshap/OpenAI_Agent_Swarm](https://github.com/daveshap/OpenAI_Agent_Swarm) - HAAS = Hierarchical Autonomous Agent Swarm - "Resistance is futile!"
 - [BuilderIO/gpt-assistant](https://github.com/BuilderIO/gpt-assistant) - An experiment to give an autonomous GPT agent access to a browser and have it accomplish tasks
+- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. Includes AI personas, AGI functions, world-class Beam multi-model chats, text-to-image, voice, response streaming, 
 - [microsoft/vscode-ai-toolkit](https://github.com/microsoft/vscode-ai-toolkit) - 
 - [lizhe2004/Awesome-LLM-RAG-Application](https://github.com/lizhe2004/Awesome-LLM-RAG-Application) - the resources about the application based on LLM with RAG pattern
 - [Doriandarko/RepoToTextForLLMs](https://github.com/Doriandarko/RepoToTextForLLMs) - Automate the analysis of GitHub repositories for LLMs with RepoToTextForLLMs. Fetch READMEs, structure, and non-binary files efficiently. Outputs include analysis prompts to aid in comprehensive repo 
@@ -11394,6 +11388,7 @@
 - [qarmin/czkawka](https://github.com/qarmin/czkawka) - Multi functional app to find duplicates, empty folders, similar images etc.
 - [sxyazi/yazi](https://github.com/sxyazi/yazi) - 💥 Blazing fast terminal file manager written in Rust, based on async I/O.
 - [valeriansaliou/sonic](https://github.com/valeriansaliou/sonic) - 🦔 Fast, lightweight & schema-less search backend. An alternative to Elasticsearch that runs on a few MBs of RAM.
+- [CapSoftware/Cap](https://github.com/CapSoftware/Cap) - Open source Loom alternative. Beautiful, shareable screen recordings.
 - [zurawiki/gptcommit](https://github.com/zurawiki/gptcommit) - A git prepare-commit-msg hook for authoring commit messages with LLMs.
 - [LemmyNet/lemmy](https://github.com/LemmyNet/lemmy) - 🐀 A link aggregator and forum for the fediverse
 - [tw93/Pake](https://github.com/tw93/Pake) - 🤱🏻 Turn any webpage into a desktop app with one command. 一键打包网页生成轻量桌面应用
@@ -11799,7 +11794,6 @@
 - [CloudOrc/SolidUI](https://github.com/CloudOrc/SolidUI) - one sentence generates any graph
 - [filipecalegario/awesome-generative-ai](https://github.com/filipecalegario/awesome-generative-ai) - A curated list of Generative AI tools, works, models, and references
 - [jina-ai/agentchain](https://github.com/jina-ai/agentchain) - Chain together LLMs for reasoning & orchestrate multiple large models for accomplishing complex tasks
-- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, code highlight
 - [yuvraj108c/4k-video-upscaler-colab](https://github.com/yuvraj108c/4k-video-upscaler-colab) - Upscale your videos up to 4k on free google colab using Real-ESRGAN
 - [YiVal/YiVal](https://github.com/YiVal/YiVal) - Your Automatic Prompt Engineering Assistant for GenAI Applications
 - [divamgupta/diffusionbee-stable-diffusion-ui](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui) - Diffusion Bee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
@@ -12461,7 +12455,6 @@
 - [shadcn-ui/ui](https://github.com/shadcn-ui/ui) - A set of beautifully-designed, accessible components and a code distribution platform. Works with your favorite frameworks. Open Source. Open Code.
 - [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [Chainlit/chainlit](https://github.com/Chainlit/chainlit) - Build Conversational AI in minutes ⚡️
-- [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. It features AI personas, AGI functions, multi-model chats, text-to-image, voice, response streaming, code highlight
 - [xlang-ai/OpenAgents](https://github.com/xlang-ai/OpenAgents) - [COLM 2024] OpenAgents: An Open Platform for Language Agents in the Wild
 - [react-native-elements/react-native-elements](https://github.com/react-native-elements/react-native-elements) - Cross-Platform React Native UI Toolkit
 - [system-ui/theme-ui](https://github.com/system-ui/theme-ui) - Build consistent, themeable React apps based on constraint-based design principles
@@ -12821,6 +12814,54 @@
 - [sajari/docconv](https://github.com/sajari/docconv) - Converts PDF, DOC, DOCX, XML, HTML, RTF, etc to plain text
 - [koodo-reader/koodo-reader](https://github.com/koodo-reader/koodo-reader) - A modern ebook manager and reader with sync and backup capacities for Windows, macOS, Linux, Android, iOS and Web
 - [dsward2/macSVG](https://github.com/dsward2/macSVG) - macSVG - An open-source macOS app for designing HTML5 SVG (Scalable Vector Graphics) art and animation with a WebKit web view ➤➤➤
+
+## youtube 
+
+- [turnoffthelights/Turn-Off-the-Lights-Chrome-extension](https://github.com/turnoffthelights/Turn-Off-the-Lights-Chrome-extension) - Chrome extension
+- [DIYgod/RSSHub](https://github.com/DIYgod/RSSHub) - 🧡 Everything is RSSible
+- [jeb5/YouTube-Subscriptions-RSS](https://github.com/jeb5/YouTube-Subscriptions-RSS) - Generate an OPML file of RSS feeds for your YouTube subscriptions
+- [blukglug/Youtube-MCP](https://github.com/blukglug/Youtube-MCP) - YouTube MCP Server is an AI-powered solution designed to revolutionize your YouTube experience. It empowers users to search for YouTube videos, retrieve detailed transcripts, and perform semantic sear
+- [iv-org/invidious](https://github.com/iv-org/invidious) - Invidious is an alternative front-end to YouTube
+- [Bluegrams/Vividl](https://github.com/Bluegrams/Vividl) - Modern Windows GUI for youtube-dl/ yt-dlp. Download videos from hundreds of websites.
+- [shaked6540/YoutubePlaylistDownloader](https://github.com/shaked6540/YoutubePlaylistDownloader) - A tool to download whole playlists, channels or single videos from youtube and also optionally convert them to almost any format you would like
+- [Tyrrrz/YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) - Abstraction layer over YouTube's internal API
+- [Siriusmart/youtube-tui](https://github.com/Siriusmart/youtube-tui) - An aesthetically pleasing YouTube TUI written in Rust
+- [DenBeke/YouTube-Downloader-for-macOS](https://github.com/DenBeke/YouTube-Downloader-for-macOS) - Simple menu bar app to download YouTube movies on your Mac
+- [trakBan/spongebob-cli](https://github.com/trakBan/spongebob-cli) - Watch classic spongebob from the terminal! 🎥🧽
+- [blackjack4494/youtube-dlc](https://github.com/blackjack4494/youtube-dlc) - Command-line program to download various media from YouTube.com and other sites
+- [LaurenceRawlings/savify](https://github.com/LaurenceRawlings/savify) - Download Spotify songs to mp3 with full metadata and cover art!
+- [m1guelpf/yt-whisper](https://github.com/m1guelpf/yt-whisper) - Using OpenAI's Whisper to automatically generate YouTube subtitles
+- [artyshko/smd](https://github.com/artyshko/smd) - Spotify Music Downloader
+- [meeb/tubesync](https://github.com/meeb/tubesync) - Syncs YouTube channels and playlists to a locally hosted media server
+- [KRTirtho/spotube](https://github.com/KRTirtho/spotube) - 🎧 Open source music client! Available for both desktop & mobile!
+- [AAndyProgram/SCrawler](https://github.com/AAndyProgram/SCrawler) - 🏳️‍🌈 Media downloader from any sites, including Twitter, Reddit, Instagram, BlueSky, TikTok, Threads, Facebook, OnlyFans, YouTube, Pinterest, PornHub, XHamster, XVIDEOS, ThisVid etc.
+- [ScriptSmith/socialreaper](https://github.com/ScriptSmith/socialreaper) - Social media scraping / data collection library for Facebook, Twitter, Reddit, YouTube, Pinterest, and Tumblr APIs
+- [WilliamSchack/Spotify-Downloader](https://github.com/WilliamSchack/Spotify-Downloader) - Downloads spotify playlists and songs along with metadata through an easy to use GUI (Downloads from YouTube)
+- [abhiTronix/vidgear](https://github.com/abhiTronix/vidgear) - A High-performance cross-platform Video Processing Python framework powerpacked with unique trailblazing features :fire:
+- [jmbannon/ytdl-sub](https://github.com/jmbannon/ytdl-sub) - Lightweight tool to automate downloading and metadata generation with yt-dlp
+- [NickvisionApps/Parabolic](https://github.com/NickvisionApps/Parabolic) - Download web video and audio
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop App for downloading Videos and Audios from hundreds of sites
+- [fent/node-ytdl-core](https://github.com/fent/node-ytdl-core) - YouTube video downloader in javascript.
+- [Tzahi12345/YoutubeDL-Material](https://github.com/Tzahi12345/YoutubeDL-Material) - Self-hosted YouTube downloader built on Material Design
+- [kieraneglin/pinchflat](https://github.com/kieraneglin/pinchflat) - Your next YouTube media manager
+- [Rudloff/alltube](https://github.com/Rudloff/alltube) - Web GUI for youtube-dl
+- [amarcu5/PiPer](https://github.com/amarcu5/PiPer) - Browser extension that adds Picture in Picture support to YouTube, Netflix, Amazon Video, Twitch, Plex, and more!
+- [jkawamoto/mcp-youtube-transcript](https://github.com/jkawamoto/mcp-youtube-transcript) - MCP server retrieving transcripts of YouTube videos
+- [FujiwaraChoki/MoneyPrinterV2](https://github.com/FujiwaraChoki/MoneyPrinterV2) - Automate the process of making money online.
+- [alexta69/metube](https://github.com/alexta69/metube) - Self-hosted YouTube downloader (web UI for youtube-dl / yt-dlp)
+- [MrS0m30n3/youtube-dl-gui](https://github.com/MrS0m30n3/youtube-dl-gui) - A cross platform front-end GUI of the popular youtube-dl written in wxPython.
+- [Tyrrrz/YoutubeDownloader](https://github.com/Tyrrrz/YoutubeDownloader) - Downloads videos and playlists from YouTube
+- [pytube/pytube](https://github.com/pytube/pytube) - A lightweight, dependency-free Python library (and command-line utility) for downloading YouTube Videos.
+- [KurtBestor/Hitomi-Downloader](https://github.com/KurtBestor/Hitomi-Downloader) - :cake: Desktop utility to download images/videos/music/text from various websites, and more.
+- [imputnet/cobalt](https://github.com/imputnet/cobalt) - best way to save what you love
+- [sampotts/plyr](https://github.com/sampotts/plyr) - A simple HTML5, YouTube and Vimeo player
+- [yihong0618/GitHubPoster](https://github.com/yihong0618/GitHubPoster) - Make everything a GitHub svg poster and Skyline!
+- [iawia002/lux](https://github.com/iawia002/lux) - 👾 Fast and simple video download library and CLI tool written in Go
+- [tw93/Pake](https://github.com/tw93/Pake) - 🤱🏻 Turn any webpage into a desktop app with one command. 一键打包网页生成轻量桌面应用
+- [eliasdabbas/advertools](https://github.com/eliasdabbas/advertools) - advertools - online marketing productivity and analysis tools
+- [divrhino/hugotails](https://github.com/divrhino/hugotails) - Add TailwindCSS to Your Hugo Site. Video tutorial available on the Div Rhino YouTube channel.
+- [gautamkrishnar/blog-post-workflow](https://github.com/gautamkrishnar/blog-post-workflow) - Show your latest blog posts from any sources or StackOverflow activity or Youtube Videos on your GitHub profile/project readme automatically using the RSS feed
+- [nathancy/jekyll-embed-video](https://github.com/nathancy/jekyll-embed-video) - Embed videos in Jekyll webpages without a plugin (Youtube, Vimeo, Twitch, Facebook, Instagram, Twitter, TikTok, Streamable, Google Drive clips + more)
 
 ## zig 
 
