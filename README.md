@@ -161,13 +161,13 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-3%2C395%20hrs%204%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C404%20hrs%2010%20mins-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-28.1%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
-> 📦 5.2 MB Used in GitHub's Storage 
+> 📦 5.3 MB Used in GitHub's Storage 
  > 
 > 🏆 701 Contributions in the Year 2025
  > 
@@ -202,15 +202,14 @@ Sunday                   1053 commits        ████░░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    24 hrs 31 mins      █████████████░░░░░░░░░░░░   52.06 % 
-Markdown                 7 hrs 18 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.53 % 
-Python                   4 hrs 55 mins       ███░░░░░░░░░░░░░░░░░░░░░░   10.47 % 
-TypeScript               1 hr 56 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   04.12 % 
-JSON                     1 hr 47 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.80 % 
+Other                    23 hrs 24 mins      █████████████░░░░░░░░░░░░   52.67 % 
+Markdown                 9 hrs 47 mins       ██████░░░░░░░░░░░░░░░░░░░   22.02 % 
+Python                   2 hrs 33 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   05.76 % 
+TypeScript               2 hrs 9 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   04.84 % 
+JSON                     1 hr 23 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.12 % 
 
 💻 Operating System: 
-Mac                      47 hrs 5 mins       █████████████████████████   99.98 % 
-Linux                    0 secs              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.02 % 
+Mac                      44 hrs 25 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in TypeScript** 
@@ -230,7 +229,7 @@ Rust                     1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 22/10/2025 18:57:58 UTC
+ Last Updated on 23/10/2025 18:56:47 UTC
 <!--END_SECTION:waka-->
 
     
