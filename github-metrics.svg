@@ -3133,7 +3133,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>agentgateway/website</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Official website for agentproxy</div>
@@ -3186,7 +3186,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>mcp-router/mcp-router</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A Unified MCP Server Management App (MCP Manager).</div>
@@ -3239,7 +3239,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AkariAsai/OpenScholar</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">This repository includes the official implementation of OpenScholar: Synthesizing Scientific Literature with Retrieval-augmented LMs.</div>
@@ -3795,7 +3795,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 3 Nov 2025, 15:02:10 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 3 Nov 2025, 16:02:00 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
