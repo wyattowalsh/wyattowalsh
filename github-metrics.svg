@@ -3136,7 +3136,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>googleanalytics/ga-dev-tools</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A showcase of demos and tools built with the various Google Analytics APIs and Libraries.</div>
@@ -3189,7 +3189,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>googleanalytics/google-analytics-mcp</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3243,7 +3243,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>taylorwilsdon/google_workspace_mcp</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Control Gmail, Google Calendar, Docs, Sheets, Slides, Chat, Forms, Tasks, Search &amp; Drive with AI - Comprehensive Google Workspace / G Suite MCP Server</div>
@@ -3296,7 +3296,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Garoth/wolframalpha-llm-mcp</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 18 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An MCP Server for WolframAlpha's LLM API, able to return structured knowledge &amp; solve math</div>
@@ -3793,7 +3793,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 10 Nov 2025, 17:02:28 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 10 Nov 2025, 18:02:10 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
