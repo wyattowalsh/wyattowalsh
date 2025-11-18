@@ -3145,7 +3145,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>korotovsky/slack-mcp-server</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The most powerful MCP Slack Server with no permission requirements, Apps support, multiple transports Stdio and SSE, DMs, Group DMs and smart history fetch logic.</div>
@@ -3198,7 +3198,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>hustcc/mcp-mermaid</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">❤️ Generate mermaid diagram and chart with AI MCP dynamically.</div>
@@ -3251,7 +3251,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>pydantic/mcp-run-python</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP server to run Python code in a sandbox.</div>
@@ -3304,7 +3304,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>sammcj/mcp-devtools</span>
-                                        <span>starred 19 hours ago</span>
+                                        <span>starred 20 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A modular MCP server that provides commonly used developer tools for AI coding agents</div>
@@ -3807,7 +3807,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 18 Nov 2025, 14:02:14 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 18 Nov 2025, 15:02:13 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
