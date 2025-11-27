@@ -3182,7 +3182,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>adrienverge/yamllint</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A linter for YAML files.</div>
@@ -3235,7 +3235,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>google/yamlfmt</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An extensible command line tool or library to format yaml files.</div>
@@ -3288,7 +3288,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>rhysd/actionlint</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3344,7 +3344,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>shellcheck-py/shellcheck-py</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">python3/pip3 wrapper for installing shellcheck</div>
@@ -3847,7 +3847,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 27 Nov 2025, 00:01:49 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 27 Nov 2025, 01:15:39 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
