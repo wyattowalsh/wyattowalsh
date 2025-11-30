@@ -454,7 +454,7 @@
 
 ## Clojure 
 
-- [logseq/logseq](https://github.com/logseq/logseq) - A privacy-first, open-source platform for knowledge management and collaboration. Download link:  http://github.com/logseq/logseq/releases. roadmap: http://trello.com/b/8txSM12G/roadmap
+- [logseq/logseq](https://github.com/logseq/logseq) - A privacy-first, open-source platform for knowledge management and collaboration. Download link:  http://github.com/logseq/logseq/releases. roadmap: https://discuss.logseq.com/t/logseq-product-roadmap
 - [docker/labs-ai-tools-for-devs](https://github.com/docker/labs-ai-tools-for-devs) - Your trusted home for discovering MCP tools – seamlessly integrated into Docker
 - [tonsky/FiraCode](https://github.com/tonsky/FiraCode) - Free monospaced font with programming ligatures
 - [metabase/metabase](https://github.com/metabase/metabase) - The easy-to-use open source Business Intelligence and Embedded Analytics tool that lets everyone work with data :bar_chart:
@@ -506,6 +506,8 @@
 
 ## Go 
 
+- [google/yamlfmt](https://github.com/google/yamlfmt) - An extensible command line tool or library to format yaml files.
+- [rhysd/actionlint](https://github.com/rhysd/actionlint) - :octocat: Static checker for GitHub Actions workflow files
 - [korotovsky/slack-mcp-server](https://github.com/korotovsky/slack-mcp-server) - The most powerful MCP Slack Server with no permission requirements, Apps support, multiple transports Stdio and SSE, DMs, Group DMs and smart history fetch logic.
 - [sammcj/mcp-devtools](https://github.com/sammcj/mcp-devtools) - A modular MCP server that provides commonly used developer tools for AI coding agents
 - [charmbracelet/crush](https://github.com/charmbracelet/crush) - The glamourous AI coding agent for your favourite terminal 💘
@@ -861,7 +863,6 @@
 - [DavidAnson/markdownlint](https://github.com/DavidAnson/markdownlint) - A Node.js style checker and lint tool for Markdown/CommonMark files.
 - [chrisvoncsefalvay/claude-d3js-skill](https://github.com/chrisvoncsefalvay/claude-d3js-skill) - A Claude skill for d3.js.
 - [lackeyjb/playwright-skill](https://github.com/lackeyjb/playwright-skill) - Claude Code Skill for browser automation with Playwright. Model-invoked - Claude autonomously writes and executes custom automation for testing and validation.
-- [obra/superpowers](https://github.com/obra/superpowers) - Claude Code superpowers: core skills library
 - [bavovanachte/sphinx-wavedrom](https://github.com/bavovanachte/sphinx-wavedrom) - A sphinx extension that allows including wavedrom diagrams by using its text-based representation
 - [meteor/meteor](https://github.com/meteor/meteor) - Meteor, the JavaScript App Platform
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) - Community-contributed instructions, prompts, and configurations to help you make the most of GitHub Copilot.
@@ -870,7 +871,6 @@
 - [dotWee/iina-plugins](https://github.com/dotWee/iina-plugins) - Collection of plugins developed for the IINA (https://iina.io/) media player.
 - [Robpol86/iina-file-name-search](https://github.com/Robpol86/iina-file-name-search) - IINA plugin that lets you search the currently playing file's name on a website.
 - [xjbeta/iina-plugin-danmaku](https://github.com/xjbeta/iina-plugin-danmaku) - 
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
 - [din0s/docusaurus-plugin-llms-txt](https://github.com/din0s/docusaurus-plugin-llms-txt) - A Docusaurus plugin that generates a concatenated markdown file from your documentation under /llms.txt
 - [pnpm/pnpm.io](https://github.com/pnpm/pnpm.io) - pnpm's website
 - [jasny/marked-more-lists](https://github.com/jasny/marked-more-lists) - Marked extension for alphabetic and numeral lists
@@ -1061,7 +1061,6 @@
 - [dundalek/markmap](https://github.com/dundalek/markmap) - Visualize markdown documents as mindmaps
 - [obsidianmd/jsoncanvas](https://github.com/obsidianmd/jsoncanvas) - An open file format for infinite canvas data.
 - [devabdultech/hn-mcp](https://github.com/devabdultech/hn-mcp) - Hacker News MCP Server
-- [upstash/context7](https://github.com/upstash/context7) - Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors
 - [chrisboustead/videojs-hls-quality-selector](https://github.com/chrisboustead/videojs-hls-quality-selector) - Adds a quality selector menu for HLS sources played in videojs.  Requires `videojs-contrib-quality-levels` plugin.
 - [eyaltoledano/claude-task-master](https://github.com/eyaltoledano/claude-task-master) - An AI-powered task-management system you can drop into Cursor, Lovable, Windsurf, Roo, and others.
 - [react95-io/Website](https://github.com/react95-io/Website) - 
@@ -1118,7 +1117,6 @@
 - [itseasy21/mcp-knowledge-graph](https://github.com/itseasy21/mcp-knowledge-graph) - MCP server enabling persistent memory for Claude through a local knowledge graph - fork focused on local development
 - [0xshellming/mcp-summarizer](https://github.com/0xshellming/mcp-summarizer) - MCP Server for AI Summarization
 - [NightTrek/moondream-mcp](https://github.com/NightTrek/moondream-mcp) - 
-- [jango-blockchained/advanced-homeassistant-mcp](https://github.com/jango-blockchained/advanced-homeassistant-mcp) - An advanced MCP server for Home Assistant. 🔋 Batteries included.
 - [stat-guy/retrieval-augmented-thinking](https://github.com/stat-guy/retrieval-augmented-thinking) - MCP server for retrieval augmented thinking and problem solving
 - [mgsrevolver/consolespy](https://github.com/mgsrevolver/consolespy) - This tool captures browser console logs and makes them available to Cursor IDE through the Model Context Protocol (MCP).
 - [sammyl720/image-generator-mcp-server](https://github.com/sammyl720/image-generator-mcp-server) - A Model Context Protocol Server To Generate Images
@@ -1174,7 +1172,6 @@
 - [Tetrax-10/Nord-Spotify](https://github.com/Tetrax-10/Nord-Spotify) - Nord Themed Spotify
 - [Comfy-Themes/Spicetify](https://github.com/Comfy-Themes/Spicetify) - Stay comfy while listening to music
 - [spicetify/cli](https://github.com/spicetify/cli) - Command-line tool to customize Spotify client. Supports Windows, macOS, and Linux.
-- [jely2002/youtube-dl-gui](https://github.com/jely2002/youtube-dl-gui) - A cross-platform GUI for youtube-dl made in Electron and node.js
 - [agalwood/Motrix](https://github.com/agalwood/Motrix) - A full-featured download manager.
 - [danielcranney/profileme-dev](https://github.com/danielcranney/profileme-dev) - Create an awesome GitHub profile in minutes
 - [AINativeLab/top-500-best-gpts](https://github.com/AINativeLab/top-500-best-gpts) - The daily top 500 best GPTs ranked by conversations
@@ -1347,7 +1344,6 @@
 - [bramses/bramses-highly-opinionated-vault-2023](https://github.com/bramses/bramses-highly-opinionated-vault-2023) - A highly opinionated, fully featured Obsidian vault that can get you from Zero to Zettelkasten lickety split!
 - [accordproject/concerto](https://github.com/accordproject/concerto) - Business schema language and runtime
 - [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app for high entropy people.
-- [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [SamurAIGPT/GPT-Agent](https://github.com/SamurAIGPT/GPT-Agent) - 🚀 Introducing 🐪 CAMEL: a game-changing role-playing approach for LLMs and auto-agents like BabyAGI & AutoGPT! Watch two agents 🤝 collaborate and solve tasks together, unlocking endless possibilities i
 - [Pythagora-io/pythagora](https://github.com/Pythagora-io/pythagora) - Generate automated tests for your Node.js app via LLMs without developers having to write a single line of code.
 - [saeedezzati/superpower-chatgpt](https://github.com/saeedezzati/superpower-chatgpt) - ChatGPT with superpowers! Search chat history, create folders, export all chats, pin messages, access thousands of community prompts, incognito mode, language and tone selection, and many more feature
@@ -1530,7 +1526,6 @@
 - [remarkjs/remark-math](https://github.com/remarkjs/remark-math) - remark and rehype plugins to support math
 - [remarkjs/remark](https://github.com/remarkjs/remark) - markdown processor powered by plugins part of the @unifiedjs collective
 - [rlamana/docusaurus-plugin-sass](https://github.com/rlamana/docusaurus-plugin-sass) - Provides support for SASS/SCSS to Docusaurus v2 and v3
-- [ethereumbook/ethereumbook](https://github.com/ethereumbook/ethereumbook) - Mastering Ethereum, by Andreas M. Antonopoulos, Gavin Wood
 - [metafizzy/flickity](https://github.com/metafizzy/flickity) - :leaves: Touch, responsive, flickable carousels
 - [lambdamusic/Ontospy](https://github.com/lambdamusic/Ontospy) - Python library and command-line interface for inspecting and visualizing RDF models aka ontologies.
 - [VisualDataWeb/WebVOWL](https://github.com/VisualDataWeb/WebVOWL) - Visualizing ontologies on the Web
@@ -2320,7 +2315,6 @@
 - [ahmetbersoz/chatgpt-prompts-for-academic-writing](https://github.com/ahmetbersoz/chatgpt-prompts-for-academic-writing) - This list of writing prompts covers a range of topics and tasks, including brainstorming research ideas, improving language and style, conducting literature reviews, and developing research plans.
 - [langgptai/wonderful-prompts](https://github.com/langgptai/wonderful-prompts) - 🔥中文 prompt 精选🔥，ChatGPT 使用指南，提升 ChatGPT 可玩性和可用性！🚀
 - [brexhq/prompt-engineering](https://github.com/brexhq/prompt-engineering) - Tips and tricks for working with Large Language Models like OpenAI's GPT-4.
-- [ambr0sial/unleashedgpt](https://github.com/ambr0sial/unleashedgpt) - UnleashedGPT: Yet Another ChatGPT Jailbreak
 - [hollobit/ResearchChatGPT](https://github.com/hollobit/ResearchChatGPT) - 50 use cases of ChatGPT for research work
 - [EmbraceAGI/Awesome-AI-GPTs](https://github.com/EmbraceAGI/Awesome-AI-GPTs) - Awesome AI GPTs, OpenAI GPTs, GPT-4, ChatGPT, GPTs, Prompts, plugins, Prompts leaking
 - [saharmor/awesome-chatgpt](https://github.com/saharmor/awesome-chatgpt) - Selected ChatGPT demos, tools, articles, and more ✨
@@ -2437,6 +2431,7 @@
 - [Uniswap/retroactive-query](https://github.com/Uniswap/retroactive-query) - 👀⬅️ Queries for surfacing information about past users of Uniswap
 - [grandsmarquis/awesome-ethereum-analytics](https://github.com/grandsmarquis/awesome-ethereum-analytics) - A curated list of projects around Ethereum analytics.
 - [jpantunes/awesome-cryptoeconomics](https://github.com/jpantunes/awesome-cryptoeconomics) - An awesome curated list of Cryptoeconomic research and learning materials
+- [ethereumbook/ethereumbook](https://github.com/ethereumbook/ethereumbook) - Mastering Ethereum: 2nd Edition, by Andreas M. Antonopoulos, Gavin Wood, Carlo Parisi, Alessandro Mazza, Niccolò Pozzolini
 - [smartcontractkit/full-blockchain-solidity-course-py](https://github.com/smartcontractkit/full-blockchain-solidity-course-py) - Ultimate Solidity, Blockchain, and Smart Contract - Beginner to Expert Full Course | Python Edition
 - [ozekik/awesome-ontology](https://github.com/ozekik/awesome-ontology) - A curated list of ontology things
 - [Medium/medium-api-docs](https://github.com/Medium/medium-api-docs) - Documentation for Medium's OAuth2 API
@@ -2675,6 +2670,19 @@
 
 ## Python 
 
+- [adrienverge/yamllint](https://github.com/adrienverge/yamllint) - A linter for YAML files.
+- [shellcheck-py/shellcheck-py](https://github.com/shellcheck-py/shellcheck-py) - python3/pip3 wrapper for installing shellcheck
+- [PyCQA/flake8](https://github.com/PyCQA/flake8) - flake8 is a python tool that glues together pycodestyle, pyflakes, mccabe, and third-party plugins to check the style and quality of some python code.
+- [astral-sh/ruff-pre-commit](https://github.com/astral-sh/ruff-pre-commit) - A pre-commit hook for Ruff.
+- [asottile/pyupgrade](https://github.com/asottile/pyupgrade) - A tool (and pre-commit hook) to automatically upgrade syntax for newer versions of the language.
+- [pre-commit/mirrors-mypy](https://github.com/pre-commit/mirrors-mypy) - Mirror of mypy for pre-commit
+- [pre-commit/sync-pre-commit-deps](https://github.com/pre-commit/sync-pre-commit-deps) - Sync pre-commit hook dependencies based on other installed hooks
+- [nbQA-dev/nbQA](https://github.com/nbQA-dev/nbQA) - Run ruff, isort, pyupgrade, mypy, pylint, flake8, and more on Jupyter Notebooks
+- [pre-commit/pygrep-hooks](https://github.com/pre-commit/pygrep-hooks) - A collection of fast, cheap, regex based pre-commit hooks.
+- [athaapa/clamp](https://github.com/athaapa/clamp) - Git-like version control for RAG vector databases
+- [adamtheturtle/sphinx-notionbuilder](https://github.com/adamtheturtle/sphinx-notionbuilder) - Sphinx builder for Notion
+- [volcengine/verl](https://github.com/volcengine/verl) - verl: Volcano Engine Reinforcement Learning for LLMs
+- [karpathy/llm-council](https://github.com/karpathy/llm-council) - LLM Council works together to answer your hardest questions
 - [Zie619/n8n-workflows](https://github.com/Zie619/n8n-workflows) - all of the workflows of n8n i could find (also from the site itself)
 - [googlefonts/googlesans-code](https://github.com/googlefonts/googlesans-code) - The Google Sans Code font family
 - [topoteretes/cognee](https://github.com/topoteretes/cognee) - Memory for AI Agents in 6 lines of code
@@ -2694,14 +2702,14 @@
 - [gensyn-ai/codeassist](https://github.com/gensyn-ai/codeassist) - A completely private and local AI coding assistant, developed by Gensyn. It helps you practice programming problems and train a novel assistant to help you code.
 - [DrewThomasson/ebook2audiobook](https://github.com/DrewThomasson/ebook2audiobook) - Generate audiobooks from e-books, voice cloning & 1107+ languages!
 - [fishaudio/fish-speech](https://github.com/fishaudio/fish-speech) - SOTA Open Source TTS
-- [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar) - 🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监控35个平台（抖音、知乎、B站、华尔街见闻、财联社等），智能筛选+自动推送+AI对话分析（用自然语言深度挖掘新闻：趋势追踪、情感分析、相似检索等13种工具）。支持企业微信/个人微信/飞书/钉钉/Telegram/邮件/ntfy推送，30秒网页部署，1分钟手机通知，无需编程。支持Do
+- [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar) - 🎯 告别信息过载，AI 助你看懂新闻资讯热点，简单的舆情监控分析 - 多平台热点聚合+基于 MCP 的AI分析工具。监控35个平台（抖音、知乎、B站、华尔街见闻、财联社等），智能筛选+自动推送+AI对话分析（用自然语言深度挖掘新闻：趋势追踪、情感分析、相似检索等13种工具）。支持企业微信/个人微信/飞书/钉钉/Telegram/邮件/ntfy/bark/slack 推送，30秒网页部署，1分钟手机
 - [GeeeekExplorer/nano-vllm](https://github.com/GeeeekExplorer/nano-vllm) - Nano vLLM
 - [suitenumerique/docs](https://github.com/suitenumerique/docs) - A collaborative note taking, wiki and documentation platform that scales. Built with Django and React.
 - [FradSer/mcp-server-mas-sequential-thinking](https://github.com/FradSer/mcp-server-mas-sequential-thinking) - An advanced sequential thinking process using a Multi-Agent System (MAS) built with the Agno framework and served via MCP.
 - [angrysky56/openended-philosophy-mcp](https://github.com/angrysky56/openended-philosophy-mcp) - AI Reasoning system that combines OpenEnded Philosophy with Non-Axiomatic Reasoning System (NARS) for enhanced epistemic analysis, truth maintenance, and multi-perspective synthesis.
 - [turambar928/MCP_based_KG_construction](https://github.com/turambar928/MCP_based_KG_construction) - Auto-construction of KG using MCP
 - [memovai/memov](https://github.com/memovai/memov) - Traceable memory for coding agents — MemoV = Prompt+Context+CodeDiff. We built open Aardvark: OpenAI’s agentic security researcher on it. https://openai.com/index/introducing-aardvark/
-- [tarkaai/autolearn](https://github.com/tarkaai/autolearn) - prototype for an mcp server that crystalizes memory
+- [autolearnai/autolearn](https://github.com/autolearnai/autolearn) - prototype for an mcp server that crystalizes memory
 - [Yuchen20/Memory-Plus](https://github.com/Yuchen20/Memory-Plus) - 🧠 𝑴𝒆𝒎𝒐𝒓𝒚-𝑷𝒍𝒖𝒔 is a lightweight, local RAG memory store for MCP agents. Easily record, retrieve, update, delete, and visualize persistent "memories" across sessions—perfect for developers working with 
 - [MarkusPfundstein/mcp-gsuite](https://github.com/MarkusPfundstein/mcp-gsuite) - MCP Server to interact with Google Gsuite prodcuts
 - [xing5/mcp-google-sheets](https://github.com/xing5/mcp-google-sheets) - This MCP server integrates with your Google Drive and Google Sheets, to enable creating and modifying spreadsheets.
@@ -3207,7 +3215,7 @@
 - [punkpeye/mcp-filesystem-python](https://github.com/punkpeye/mcp-filesystem-python) - A MCP Filesystem implementation for Claude, written mostly by Claude
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Open Source AI Platform - AI Chat with advanced features that works with every LLM
 - [NVlabs/VILA](https://github.com/NVlabs/VILA) - VILA is a family of state-of-the-art vision language models (VLMs) for diverse multimodal AI tasks across the edge, data center, and cloud.
-- [thunlp/LLaVA-UHD](https://github.com/thunlp/LLaVA-UHD) - LLaVA-UHD v2: an MLLM Integrating High-Resolution Semantic Pyramid via Hierarchical Window Transformer
+- [thunlp/LLaVA-UHD](https://github.com/thunlp/LLaVA-UHD) - LLaVA-UHD v3: Progressive Visual Compression for Efficient Native-Resolution Encoding in MLLMs
 - [PaddlePaddle/PaddleNLP](https://github.com/PaddlePaddle/PaddleNLP) - Easy-to-use and powerful LLM and SLM library with awesome model zoo.
 - [loujie0822/DeepIE](https://github.com/loujie0822/DeepIE) - DeepIE: Deep Learning for Information Extraction
 - [liuhuanyong/EventTriplesExtraction](https://github.com/liuhuanyong/EventTriplesExtraction) - An experiment and demo-level tool for text information extraction (event-triples extraction),  which can be a route to the event chain and topic graph, 基于依存句法与语义角色标注的事件三元组抽取，可用于文本理解如文档主题链，事件线等应用。
@@ -3442,7 +3450,7 @@
 - [executablebooks/markdown-it-py](https://github.com/executablebooks/markdown-it-py) - Markdown parser, done right. 100% CommonMark support, extensions, syntax plugins & high speed. Now in Python!
 - [pymupdf/pymupdf4llm](https://github.com/pymupdf/pymupdf4llm) - PyMuPDF4LLM
 - [farmOS/farmOS-aggregator](https://github.com/farmOS/farmOS-aggregator) - A microservice application for aggregating data from multiple farmOS instances.
-- [CharlesPikachu/freeproxy](https://github.com/CharlesPikachu/freeproxy) - FreeProxy: Collecting free proxies from internet. (海量全球免费代理，10+代理源，爬虫与数据分析必备。)
+- [CharlesPikachu/freeproxy](https://github.com/CharlesPikachu/freeproxy) - FreeProxy: Collecting free proxies from internet. (海量全球免费代理，20+代理源，爬虫与数据分析必备。)
 - [fabiobatalha/crossrefapi](https://github.com/fabiobatalha/crossrefapi) - A python library that implements the Crossref API.
 - [scholarly-python-package/scholarly](https://github.com/scholarly-python-package/scholarly) - Retrieve author and publication information from Google Scholar in a friendly, Pythonic way without having to worry about CAPTCHAs!
 - [sckott/habanero](https://github.com/sckott/habanero) - client for Crossref search API
@@ -3626,7 +3634,7 @@
 - [strnad/CrewAI-Studio](https://github.com/strnad/CrewAI-Studio) - A user-friendly, multi-platform GUI for managing and running CrewAI agents and tasks. Supports Conda and virtual environments, no coding needed.
 - [TencentQQGYLab/AppAgent](https://github.com/TencentQQGYLab/AppAgent) - AppAgent: Multimodal Agents as Smartphone Users, an LLM-based multimodal agent framework designed to operate smartphone apps.
 - [sachin-sankar/swiftshadow](https://github.com/sachin-sankar/swiftshadow) - Free IP Proxy rotator library for python
-- [yzhao062/anomaly-detection-resources](https://github.com/yzhao062/anomaly-detection-resources) - Anomaly detection related books, papers, videos, and toolboxes
+- [yzhao062/anomaly-detection-resources](https://github.com/yzhao062/anomaly-detection-resources) - Anomaly detection related books, papers, videos, and toolboxes. Last update late 2025 for LLM and VLM works!
 - [vc1492a/PyNomaly](https://github.com/vc1492a/PyNomaly) - Anomaly detection using LoOP: Local Outlier Probabilities, a local density based outlier detection method providing an outlier score in the range of [0,1].
 - [jimmc414/onefilellm](https://github.com/jimmc414/onefilellm) - Specify a github or local repo, github pull request,  arXiv or Sci-Hub paper, Youtube transcript or documentation URL on the web and scrape into a text file and clipboard  for easier LLM ingestion
 - [airbytehq/airbyte](https://github.com/airbytehq/airbyte) - The leading data integration platform for ETL / ELT data pipelines from APIs, databases & files to data warehouses, data lakes & data lakehouses. Both self-hosted and Cloud-hosted.
@@ -3703,7 +3711,7 @@
 - [plncmm/llmner](https://github.com/plncmm/llmner) - 
 - [explosion/spacy-llm](https://github.com/explosion/spacy-llm) - 🦙 Integrating LLMs into structured NLP pipelines
 - [ray-project/llmperf](https://github.com/ray-project/llmperf) - LLMPerf is a library for validating and benchmarking LLMs
-- [explodinggradients/ragas](https://github.com/explodinggradients/ragas) - Supercharge Your LLM Application Evaluations 🚀
+- [vibrantlabsai/ragas](https://github.com/vibrantlabsai/ragas) - Supercharge Your LLM Application Evaluations 🚀
 - [gusye1234/nano-graphrag](https://github.com/gusye1234/nano-graphrag) - A simple, easy-to-hack GraphRAG implementation
 - [katanaml/sparrow](https://github.com/katanaml/sparrow) - Structured data extraction and instruction calling with ML, LLM and Vision LLM
 - [protectai/llm-guard](https://github.com/protectai/llm-guard) - The Security Toolkit for LLM Interactions
@@ -3894,7 +3902,7 @@
 - [deeplook/svglib](https://github.com/deeplook/svglib) - Read SVG files and convert them to other formats.
 - [Kozea/CairoSVG](https://github.com/Kozea/CairoSVG) - Convert your vector images
 - [Kozea/pygal](https://github.com/Kozea/pygal) - PYthon svg GrAph plotting Library
-- [PostHog/posthog](https://github.com/PostHog/posthog) - 🦔 PostHog provides open-source web & product analytics, session recording, feature flagging and A/B testing that you can self-host. Get started - free.
+- [PostHog/posthog](https://github.com/PostHog/posthog) - 🦔 PostHog is an all-in-one developer platform for building successful products. We offer product analytics, web analytics, session replay, error tracking, feature flags, experimentation, surveys, data
 - [langchain-ai/langgraph](https://github.com/langchain-ai/langgraph) - Build resilient language agents as graphs.
 - [aimhubio/aim](https://github.com/aimhubio/aim) - Aim 💫 — An easy-to-use & supercharged open-source experiment tracker.
 - [mwclient/mwclient](https://github.com/mwclient/mwclient) - Python client library to interface with the MediaWiki API
@@ -3916,7 +3924,7 @@
 - [microsoft/pylance-release](https://github.com/microsoft/pylance-release) - Documentation and issues for Pylance
 - [prompt-toolkit/python-prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) - Library for building powerful interactive command line applications in Python
 - [microsoft/promptflow](https://github.com/microsoft/promptflow) - Build high-quality LLM apps - from prototyping, testing to production deployment and monitoring.
-- [microsoft/TaskWeaver](https://github.com/microsoft/TaskWeaver) - A code-first agent framework for seamlessly planning and executing data analytics tasks.
+- [microsoft/TaskWeaver](https://github.com/microsoft/TaskWeaver) - The first "code-first" agent framework for seamlessly planning and executing data analytics tasks.
 - [sherlock-project/sherlock](https://github.com/sherlock-project/sherlock) - Hunt down social media accounts by username across social networks
 - [mitmproxy/pdoc](https://github.com/mitmproxy/pdoc) - API Documentation for Python Projects
 - [meta-llama/codellama](https://github.com/meta-llama/codellama) - Inference code for CodeLlama models
@@ -4323,7 +4331,7 @@
 - [magenta/magenta](https://github.com/magenta/magenta) - Magenta: Music and Art Generation with Machine Intelligence
 - [airbnb/knowledge-repo](https://github.com/airbnb/knowledge-repo) - A next-generation curated knowledge sharing platform for data scientists and other technical professions.
 - [rushter/data-science-blogs](https://github.com/rushter/data-science-blogs) - A curated list of data science blogs
-- [iterative/dvc](https://github.com/iterative/dvc) - 🦉 Data Versioning and ML Experiments
+- [treeverse/dvc](https://github.com/treeverse/dvc) - 🦉 Data Versioning and ML Experiments
 - [mwaskom/seaborn](https://github.com/mwaskom/seaborn) - Statistical data visualization in Python
 - [recommenders-team/recommenders](https://github.com/recommenders-team/recommenders) - Best Practices on Recommendation Systems
 - [ipython/ipython](https://github.com/ipython/ipython) - Official repository for IPython itself. Other repos in the IPython organization contain things like the website, documentation builds, etc.
@@ -4409,6 +4417,7 @@
 
 ## Roff 
 
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
 - [pyenv/pyenv](https://github.com/pyenv/pyenv) - Simple Python version management
 
 ## Ruby 
@@ -4454,6 +4463,7 @@
 
 ## Rust 
 
+- [j178/prek](https://github.com/j178/prek) - ⚡ Better `pre-commit`, re-engineered in Rust
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - [librespot-org/librespot](https://github.com/librespot-org/librespot) - Open Source Spotify client library
 - [facebook/pyrefly](https://github.com/facebook/pyrefly) - A fast type checker and language server for Python
@@ -4464,7 +4474,7 @@
 - [ast-grep/ast-grep](https://github.com/ast-grep/ast-grep) - ⚡A CLI tool for code structural search, lint and rewriting. Written in Rust
 - [supabase/etl](https://github.com/supabase/etl) - Stream your Postgres data anywhere in real-time. Simple Rust building blocks for change data capture (CDC) pipelines.
 - [Schniz/fnm](https://github.com/Schniz/fnm) - 🚀 Fast and simple Node.js version manager, built in Rust
-- [Eventual-Inc/Daft](https://github.com/Eventual-Inc/Daft) - Distributed query engine providing simple and reliable data processing for any modality and scale
+- [Eventual-Inc/Daft](https://github.com/Eventual-Inc/Daft) - High-performance data engine for AI and multimodal workloads. Process images, audio, video, and structured data at any scale
 - [SeaQL/sea-orm](https://github.com/SeaQL/sea-orm) - 🐚 An async & dynamic ORM for Rust
 - [tauri-apps/create-tauri-app](https://github.com/tauri-apps/create-tauri-app) - Rapidly scaffold out a new tauri app project.
 - [tursodatabase/agentfs](https://github.com/tursodatabase/agentfs) - The filesystem for agents.
@@ -4528,7 +4538,7 @@
 - [redlib-org/redlib](https://github.com/redlib-org/redlib) - Private front-end for Reddit
 - [libreddit/libreddit](https://github.com/libreddit/libreddit) - Private front-end for Reddit
 - [Siriusmart/youtube-tui](https://github.com/Siriusmart/youtube-tui) - An aesthetically pleasing YouTube TUI written in Rust
-- [x89/Solana-Arbitrage-Bot](https://github.com/x89/Solana-Arbitrage-Bot) - Solana Arbitrage Bot with grpc, shred stream, zeroslot, offline signing,
+- [x89/Solana-Arbitrage-Bot](https://github.com/x89/Solana-Arbitrage-Bot) - Solana Arbitrage Bot
 - [pola-rs/polars](https://github.com/pola-rs/polars) - Extremely fast Query Engine for DataFrames, written in Rust
 - [helix-editor/helix](https://github.com/helix-editor/helix) - A post-modern modal text editor.
 - [BoundaryML/baml](https://github.com/BoundaryML/baml) - The AI framework that adds the engineering to prompt engineering (Python/TS/Ruby/Java/C#/Rust/Go compatible)
@@ -4616,9 +4626,11 @@
 
 ## Shell 
 
+- [aitemr/awesome-git-hooks](https://github.com/aitemr/awesome-git-hooks) - 😎 A collection of awesome Git Hooks
 - [gemini-cli-extensions/flutter](https://github.com/gemini-cli-extensions/flutter) - 
 - [zxkane/aws-skills](https://github.com/zxkane/aws-skills) - Claude Agent Skills for AWS
 - [michalparkola/tapestry-skills-for-claude-code](https://github.com/michalparkola/tapestry-skills-for-claude-code) - Claude Code skills to download sources (articles, PDFs, YouTube video transcripts)
+- [obra/superpowers](https://github.com/obra/superpowers) - Claude Code superpowers: core skills library
 - [obra/superpowers-lab](https://github.com/obra/superpowers-lab) - Experimental skills for Claude Code Superpowers - new techniques and tools
 - [HyDE-Project/HyDE](https://github.com/HyDE-Project/HyDE) - HyDE, your Development Environment 🖥️💻
 - [adi1090x/dynamic-wallpaper](https://github.com/adi1090x/dynamic-wallpaper) - A simple bash script to set wallpapers according to current time, using cron job scheduler.
@@ -4708,11 +4720,13 @@
 - [npmhub/npmhub](https://github.com/npmhub/npmhub) - 🔎 A browser extension to explore npm dependencies on GitHub repos
 - [your-papa/obsidian-Smart2Brain](https://github.com/your-papa/obsidian-Smart2Brain) - An Obsidian plugin to interact with your privacy focused AI-Assistant making your second brain even smarter!
 - [obsmd-projects/obsidian-projects](https://github.com/obsmd-projects/obsidian-projects) - Plain text project planning in Obsidian
+- [open-webui/open-webui](https://github.com/open-webui/open-webui) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
 - [afterschoolstudio/Depot](https://github.com/afterschoolstudio/Depot) - Structured data editor built inside VS Code
 - [catchspider2002/svelte-svg-patterns](https://github.com/catchspider2002/svelte-svg-patterns) - Create seamless patterns in SVG to use as website backgrounds, header images, stationery design and package design
 
 ## Swift 
 
+- [netdcy/FlowVision](https://github.com/netdcy/FlowVision) - Waterfall-style image viewer for macOS, offering a smooth and immersive browsing experience.
 - [okooo5km/memory-mcp-server](https://github.com/okooo5km/memory-mcp-server) - A Model Context Protocol server that provides knowledge graph management capabilities.
 - [ZachNagengast/similarity-search-kit](https://github.com/ZachNagengast/similarity-search-kit) - 🔎 SimilaritySearchKit is a Swift package providing on-device text embeddings and semantic search functionality for iOS and macOS applications.
 - [gonzalezreal/swift-markdown-ui](https://github.com/gonzalezreal/swift-markdown-ui) - Display and customize Markdown text in SwiftUI
@@ -4896,7 +4910,7 @@
 - [evershopcommerce/evershop](https://github.com/evershopcommerce/evershop) - 🛍️ Typescript E-commerce Platform
 - [nitrojs/nitro](https://github.com/nitrojs/nitro) - Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - [gemini-cli-extensions/nanobanana](https://github.com/gemini-cli-extensions/nanobanana) - 
-- [CaviraOSS/OpenMemory](https://github.com/CaviraOSS/OpenMemory) - Add long-term memory to any AI in minutes. Self-hosted, open, and framework-free.
+- [CaviraOSS/OpenMemory](https://github.com/CaviraOSS/OpenMemory) - Add long-term memory to any AI in one line. Self-hosted, open, and framework-free.
 - [aidenybai/react-grab](https://github.com/aidenybai/react-grab) - Grab any element on in your app and give it to Cursor, Claude Code, etc
 - [deta/surf](https://github.com/deta/surf) - Personal AI Notebooks. Organize files & webpages and generate notes from them. Open source, local & open data, open model choice (incl. local).
 - [anoncam/linear-mcp](https://github.com/anoncam/linear-mcp) - A Linear MCP implementation that handles all Linear resource types.
@@ -4976,7 +4990,7 @@
 - [omgwtfwow/mcp-crawl4ai-ts](https://github.com/omgwtfwow/mcp-crawl4ai-ts) - TypeScript implementation of an MCP server for Crawl4AI. Provides tools for web crawling, content extraction, and browser automation.
 - [BjornMelin/crawl4ai-mcp-server](https://github.com/BjornMelin/crawl4ai-mcp-server) - 🚀 High-performance MCP Server for Crawl4AI - Enable AI assistants to access web scraping, crawling, and deep research via Model Context Protocol. Faster and more efficient than FireCrawl!
 - [jinzcdev/markmap-mcp-server](https://github.com/jinzcdev/markmap-mcp-server) - An MCP server for converting Markdown to interactive mind maps with export support (PNG/JPG/SVG).
-- [arabold/docs-mcp-server](https://github.com/arabold/docs-mcp-server) - Docs MCP Server: Enhance Your AI Coding Assistant
+- [arabold/docs-mcp-server](https://github.com/arabold/docs-mcp-server) - Grounded Docs MCP Server: Enhance Your AI Coding Assistant
 - [docfork/docfork-mcp](https://github.com/docfork/docfork-mcp) - Up-to-date documentation for devs and AI agents.
 - [Blazity/next-enterprise](https://github.com/Blazity/next-enterprise) - 💼 An enterprise-grade Next.js boilerplate for high-performance, maintainable apps. Packed with features like Tailwind CSS, TypeScript, ESLint, Prettier, testing tools, and more to accelerate your deve
 - [ixartz/Next-js-Boilerplate](https://github.com/ixartz/Next-js-Boilerplate) - 🚀🎉📚 Boilerplate and Starter for Next.js 16 with App Router and Page Router support, Tailwind CSS 4 and TypeScript ⚡️ Made with developer experience first: Next.js + TypeScript + ESLint + Prettier + Dr
@@ -5138,7 +5152,7 @@
 - [alchaincyf/cursor-rules-huasheng](https://github.com/alchaincyf/cursor-rules-huasheng) - 
 - [microsoft/vscode-copilot-vision](https://github.com/microsoft/vscode-copilot-vision) - Exploration into leveraging vision capabilities of an LLM
 - [dolanmiu/docx](https://github.com/dolanmiu/docx) - Easily generate and modify .docx files with JS/TS with a nice declarative API. Works for Node and on the Browser.
-- [Bergbok/Spicetify-Creations](https://github.com/Bergbok/Spicetify-Creations) - 
+- [Bergbok/Spicetify-Creations](https://github.com/Bergbok/Spicetify-Creations) - Apps and extensions for the official Spotify client
 - [atlassian-labs/json-schema-viewer](https://github.com/atlassian-labs/json-schema-viewer) - A JSON Schema Viewer for any JSON Schema on earth.
 - [stoplightio/json-schema-viewer](https://github.com/stoplightio/json-schema-viewer) - A JSON Schema viewer React component
 - [rjsf-team/react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) - A React component for building Web forms from JSON Schema.
@@ -5166,6 +5180,7 @@
 - [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) - Playwright MCP server
 - [ReAPI-com/mcp-openapi](https://github.com/ReAPI-com/mcp-openapi) - OpenAPI specification MCP server.
 - [andredezzy/deep-directory-tree-mcp](https://github.com/andredezzy/deep-directory-tree-mcp) - Powerful Model Context Protocol (MCP) implementation for visualizing directory structures with real-time updates, configurable depth, and smart exclusions for efficient project navigation
+- [upstash/context7](https://github.com/upstash/context7) - Context7 MCP Server -- Up-to-date code documentation for LLMs and AI code editors
 - [mclenhard/mcp-evals](https://github.com/mclenhard/mcp-evals) - A Node.js package and GitHub Action for evaluating MCP (Model Context Protocol) tool implementations using LLM-based scoring. This helps ensure your MCP server's tools are working correctly and perfor
 - [GLips/Figma-Context-MCP](https://github.com/GLips/Figma-Context-MCP) - MCP server to provide Figma layout information to AI coding agents like Cursor
 - [modelcontextprotocol/inspector](https://github.com/modelcontextprotocol/inspector) - Visual testing tool for MCP servers
@@ -5232,6 +5247,7 @@
 - [aindreyway/mcp-neurolora](https://github.com/aindreyway/mcp-neurolora) - An intelligent MCP server that provides tools for collecting and documenting code from directories
 - [RafalWilinski/aws-mcp](https://github.com/RafalWilinski/aws-mcp) - Talk with your AWS using Claude. Model Context Protocol (MCP) server for AWS. Better Amazon Q alternative.
 - [boorich/mcp-human-loop](https://github.com/boorich/mcp-human-loop) - Evaluate if a task requires human intervention
+- [jango-blockchained/advanced-homeassistant-mcp](https://github.com/jango-blockchained/advanced-homeassistant-mcp) - An advanced MCP server for Home Assistant. 🔋 Batteries included.
 - [Braffolk/mcp-summarization-functions](https://github.com/Braffolk/mcp-summarization-functions) - Provides summarised output from various actions that could otherwise eat up tokens and cause crashes for AI agents
 - [parmarjh/mcp-reasoner](https://github.com/parmarjh/mcp-reasoner) - 
 - [cyanheads/atlas-mcp-server](https://github.com/cyanheads/atlas-mcp-server) - A Model Context Protocol (MCP) server for ATLAS, a Neo4j-powered task management system for LLM Agents - implementing a three-tier architecture (Projects, Tasks, Knowledge) to manage complex workflows
@@ -5347,7 +5363,7 @@
 - [wei/socialify](https://github.com/wei/socialify) - 💞 Socialify your project. 🌐 Share with the world!
 - [Tarikul-Islam-Anik/Animated-Fluent-Emojis](https://github.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis) - All the Microsoft animated fluent emojis are available in one place and ready to use in your next project or README file.
 - [raineorshine/npm-check-updates](https://github.com/raineorshine/npm-check-updates) - Find newer versions of package dependencies than what your package.json allows
-- [different-ai/note-companion](https://github.com/different-ai/note-companion) - Note Companion: AI assistant for Obsidian that goes beyond just a chat. (prev File Organizer 2000)
+- [Nexus-JPF/note-companion](https://github.com/Nexus-JPF/note-companion) - Note Companion: AI assistant for Obsidian that goes beyond just a chat. (prev File Organizer 2000)
 - [tadashi-aikawa/obsidian-various-complements-plugin](https://github.com/tadashi-aikawa/obsidian-various-complements-plugin) - This plugin for Obsidian enables you complete words like the auto-completion of IDE.
 - [danielo515/obsidian-modal-form](https://github.com/danielo515/obsidian-modal-form) - Define forms for filling data that you will be able to open from anywhere you can run JS
 - [MetaCorp/obsidian-augmented-canvas](https://github.com/MetaCorp/obsidian-augmented-canvas) - Supercharge your Obsidian canvas experience with AI features.
@@ -5720,7 +5736,6 @@
 - [ianarawjo/ChainForge](https://github.com/ianarawjo/ChainForge) - An open-source visual programming environment for battle-testing prompts to LLMs.
 - [promptfoo/promptfoo](https://github.com/promptfoo/promptfoo) - Test your prompts, agents, and RAGs. AI Red teaming, pentesting, and vulnerability scanning for LLMs. Compare performance of GPT, Claude, Gemini, Llama, and more. Simple declarative configs with comma
 - [pezzolabs/pezzo](https://github.com/pezzolabs/pezzo) - 🕹️ Open-source, developer-first LLMOps platform designed to streamline prompt design, version management, instant delivery, collaboration, troubleshooting, observability and more.
-- [lunary-ai/lunary](https://github.com/lunary-ai/lunary) - The production toolkit for LLMs. Observability, prompt management and evaluations.
 - [microsoft/prompt-engine](https://github.com/microsoft/prompt-engine) - A library for helping developers craft prompts for Large Language Models
 - [mantinedev/mantine](https://github.com/mantinedev/mantine) - A fully featured React components library
 - [retorquere/zotero-better-bibtex](https://github.com/retorquere/zotero-better-bibtex) - Make Zotero effective for us LaTeX holdouts
@@ -5734,7 +5749,7 @@
 - [Kong/insomnia](https://github.com/Kong/insomnia) - The open-source, cross-platform API client for GraphQL, REST, WebSockets, SSE and gRPC. With Cloud, Local and Git storage.
 - [ChatGPTNextWeb/NextChat](https://github.com/ChatGPTNextWeb/NextChat) - ✨ Light and Fast AI Assistant. Support: Web | iOS | MacOS | Android |  Linux | Windows
 - [mckaywrigley/paul-graham-gpt](https://github.com/mckaywrigley/paul-graham-gpt) - RAG on Paul Graham's essays.
-- [chatboxai/chatbox](https://github.com/chatboxai/chatbox) - User-friendly Desktop Client App for AI Models/LLMs (GPT, Claude, Gemini, Ollama...)
+- [chatboxai/chatbox](https://github.com/chatboxai/chatbox) - Powerful AI Client
 - [run-llama/sec-insights](https://github.com/run-llama/sec-insights) - A real world full-stack application using LlamaIndex
 - [morethanmin/morethan-log](https://github.com/morethanmin/morethan-log) - 😎 A static blog using notion database
 - [splitbee/react-notion](https://github.com/splitbee/react-notion) - A fast React renderer for Notion pages
@@ -6012,6 +6027,7 @@
 - [mark-when/resume](https://github.com/mark-when/resume) - Resume view for markwhen
 - [mark-when/timeline](https://github.com/mark-when/timeline) - Markwhen timeline view
 - [mark-when/docs](https://github.com/mark-when/docs) - Markwhen documentation
+- [jely2002/youtube-dl-gui](https://github.com/jely2002/youtube-dl-gui) - A cross-platform GUI for youtube-dl made in Electron and node.js
 - [cfour-hi/gitstars](https://github.com/cfour-hi/gitstars) - Github Starred Repositories Manager
 - [thelittlewonder/gitstalk](https://github.com/thelittlewonder/gitstalk) - Discover who's upto what on Github
 - [KeziahMoselle/export-github-stars](https://github.com/KeziahMoselle/export-github-stars) - View / Sort / Export your Starred repositories.
