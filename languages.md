@@ -480,7 +480,7 @@
 
 - [jhgaylor/me_mcp_server](https://github.com/jhgaylor/me_mcp_server) - 
 - [GopeedLab/gopeed](https://github.com/GopeedLab/gopeed) - A modern download manager that supports all platforms.  Built with Golang and Flutter.
-- [KRTirtho/spotube](https://github.com/KRTirtho/spotube) - 🎧 Open source music client! Available for both desktop & mobile!
+- [KRTirtho/spotube](https://github.com/KRTirtho/spotube) - 🎧 Open source music streaming app! Available for both desktop & mobile!
 - [AppFlowy-IO/AppFlowy](https://github.com/AppFlowy-IO/AppFlowy) - Bring projects, wikis, and teams together with AI. AppFlowy is the AI collaborative workspace where you achieve more without losing control of your data. The leading open source Notion alternative.
 - [daodao97/chatmcp](https://github.com/daodao97/chatmcp) - ChatMCP is an AI chat client implementing the Model Context Protocol (MCP).
 - [mylxsw/aidea](https://github.com/mylxsw/aidea) - AIdea 是一款支持 GPT  以及国产大语言模型通义千问、文心一言等，支持 Stable Diffusion 文生图、图生图、 SDXL1.0、超分辨率、图片上色的全能型 APP。
@@ -2670,6 +2670,7 @@
 
 ## Python 
 
+- [VectorSpaceLab/general-agentic-memory](https://github.com/VectorSpaceLab/general-agentic-memory) - A general memory system for agents, powered by deep-research
 - [adrienverge/yamllint](https://github.com/adrienverge/yamllint) - A linter for YAML files.
 - [shellcheck-py/shellcheck-py](https://github.com/shellcheck-py/shellcheck-py) - python3/pip3 wrapper for installing shellcheck
 - [PyCQA/flake8](https://github.com/PyCQA/flake8) - flake8 is a python tool that glues together pycodestyle, pyflakes, mccabe, and third-party plugins to check the style and quality of some python code.
@@ -2708,7 +2709,7 @@
 - [FradSer/mcp-server-mas-sequential-thinking](https://github.com/FradSer/mcp-server-mas-sequential-thinking) - An advanced sequential thinking process using a Multi-Agent System (MAS) built with the Agno framework and served via MCP.
 - [angrysky56/openended-philosophy-mcp](https://github.com/angrysky56/openended-philosophy-mcp) - AI Reasoning system that combines OpenEnded Philosophy with Non-Axiomatic Reasoning System (NARS) for enhanced epistemic analysis, truth maintenance, and multi-perspective synthesis.
 - [turambar928/MCP_based_KG_construction](https://github.com/turambar928/MCP_based_KG_construction) - Auto-construction of KG using MCP
-- [memovai/memov](https://github.com/memovai/memov) - Traceable memory for coding agents — MemoV = Prompt+Context+CodeDiff. We built open Aardvark: OpenAI’s agentic security researcher on it. https://openai.com/index/introducing-aardvark/
+- [memovai/memov](https://github.com/memovai/memov) - Traceable memory for coding agents — MemoV = Prompt+Context+CodeDiff.
 - [autolearnai/autolearn](https://github.com/autolearnai/autolearn) - prototype for an mcp server that crystalizes memory
 - [Yuchen20/Memory-Plus](https://github.com/Yuchen20/Memory-Plus) - 🧠 𝑴𝒆𝒎𝒐𝒓𝒚-𝑷𝒍𝒖𝒔 is a lightweight, local RAG memory store for MCP agents. Easily record, retrieve, update, delete, and visualize persistent "memories" across sessions—perfect for developers working with 
 - [MarkusPfundstein/mcp-gsuite](https://github.com/MarkusPfundstein/mcp-gsuite) - MCP Server to interact with Google Gsuite prodcuts
@@ -4849,6 +4850,7 @@
 
 ## TypeScript 
 
+- [coleam00/remote-agentic-coding-system](https://github.com/coleam00/remote-agentic-coding-system) - Remote Coding Agent for the Dynamous Agentic Coding Course and special Black Friday livestream. Connect Claude Code or Codex to Slack, Telegram, GitHub, etc.
 - [vercel/vercel](https://github.com/vercel/vercel) - Develop. Preview. Ship.
 - [angular/angular](https://github.com/angular/angular) - Deliver web apps with confidence 🚀
 - [nuxt/nuxt](https://github.com/nuxt/nuxt) - The Progressive Web Framework.
@@ -4910,7 +4912,7 @@
 - [evershopcommerce/evershop](https://github.com/evershopcommerce/evershop) - 🛍️ Typescript E-commerce Platform
 - [nitrojs/nitro](https://github.com/nitrojs/nitro) - Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - [gemini-cli-extensions/nanobanana](https://github.com/gemini-cli-extensions/nanobanana) - 
-- [CaviraOSS/OpenMemory](https://github.com/CaviraOSS/OpenMemory) - Add long-term memory to any AI in one line. Self-hosted, open, and framework-free.
+- [CaviraOSS/OpenMemory](https://github.com/CaviraOSS/OpenMemory) - OpenMemory gives AI agents real long-term memory. Not vector search. Not RAG. Actual memory.
 - [aidenybai/react-grab](https://github.com/aidenybai/react-grab) - Grab any element on in your app and give it to Cursor, Claude Code, etc
 - [deta/surf](https://github.com/deta/surf) - Personal AI Notebooks. Organize files & webpages and generate notes from them. Open source, local & open data, open model choice (incl. local).
 - [anoncam/linear-mcp](https://github.com/anoncam/linear-mcp) - A Linear MCP implementation that handles all Linear resource types.
