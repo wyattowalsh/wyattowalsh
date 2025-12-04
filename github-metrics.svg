@@ -3155,7 +3155,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>vercel/next-devtools-mcp</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Next.js Development for Coding Agent</div>
@@ -3202,7 +3202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>taazkareem/clickup-mcp-server</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">ClickUp MCP Server - Integrate ClickUp project management with AI through Model Context Protocol</div>
@@ -3255,7 +3255,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>subnetmarco/pgmcp</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An MCP server to query any Postgres database in natural language.</div>
@@ -3308,7 +3308,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>NicholasGoh/fastapi-mcp-langgraph-template</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A modern template for agentic orchestration — built for rapid iteration and scalable deployment using highly customizable, community-supported tools like MCP, LangGraph, and more.</div>
@@ -3811,7 +3811,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 4 Dec 2025, 05:01:56 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 4 Dec 2025, 06:02:02 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
