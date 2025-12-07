@@ -3205,7 +3205,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>peakmojo/applescript-mcp</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP server that execute applescript giving you full control of your Mac</div>
@@ -3258,7 +3258,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>jonigl/mcp-client-for-ollama</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A text-based user interface (TUI) client for interacting with MCP servers using Ollama. Features include agent mode, multi-server, dynamic model switching, streaming responses, tool management, human-in-the-loop, thinking mode, model parameters configuration, custom system prompt and saved preferences. Built for developers working with local LLMs.</div>
@@ -3311,7 +3311,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AmeNetwork/aser</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Aser is a lightweight, self-assembling AI Agent frame.</div>
@@ -3867,7 +3867,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 7 Dec 2025, 14:01:48 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 7 Dec 2025, 15:02:00 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
