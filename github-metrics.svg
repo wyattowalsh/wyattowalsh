@@ -3158,7 +3158,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>opentripplanner/OpenTripPlanner</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An open source multi-modal trip planner</div>
@@ -3211,7 +3211,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>open-policy-agent/opa</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Open Policy Agent (OPA) is an open source, general-purpose policy engine.</div>
@@ -3264,7 +3264,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>bernatsampera/event-deep-research</span>
-                                        <span>starred 17 hours ago</span>
+                                        <span>starred 19 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">AI Agent that researches the lives of historical figures and extracts events into structured JSON timelines using LangGraph multi-agent orchestration.</div>
@@ -3820,7 +3820,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 10 Dec 2025, 01:02:11 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 10 Dec 2025, 02:03:35 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
