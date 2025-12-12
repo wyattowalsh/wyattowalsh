@@ -3186,7 +3186,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>parruda/swarm</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Ruby gems for general-purpose AI agent systems: automation, research, data processing, customer support, content creation. SwarmSDK provides single-process orchestration, persistent memory with semantic   search, node workflows, and hooks. SwarmMemory/SwarmCLI included. Claude Swarm v1 for dev teams.</div>
@@ -3239,7 +3239,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>grahama1970/claude-task-runner</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3287,7 +3287,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>rsmdt/the-startup</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">The Agentic Startup - A collection of Claude Code commands, agents, etc</div>
@@ -3340,7 +3340,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>dtormoen/tsk</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Task manager and sandbox for coding agents</div>
@@ -3843,7 +3843,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 12 Dec 2025, 08:13:17 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 12 Dec 2025, 09:02:15 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
