@@ -3187,7 +3187,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Kamalnrf/claude-plugins</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Lightweight registry to discover, install, and manage all public plugins and skills for Claude and Claude Code.</div>
@@ -3234,7 +3234,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>ahmedasmar/devops-claude-skills</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A Claude Code Skills Marketplace for DevOps workflows</div>
@@ -3281,7 +3281,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>raintree-technology/claude-starter</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Platform-agnostic, production-ready Claude Code configurations with hooks, commands, skills, examples, and more.</div>
@@ -3334,7 +3334,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>czlonkowski/n8n-skills</span>
-                                        <span>starred 6 hours ago</span>
+                                        <span>starred 7 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">n8n skillset for Claude Code to build flawless n8n workflows</div>
@@ -3831,7 +3831,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 18 Dec 2025, 14:03:31 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 18 Dec 2025, 15:01:59 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
