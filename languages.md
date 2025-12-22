@@ -116,7 +116,7 @@
 - [mpv-player/mpv](https://github.com/mpv-player/mpv) - 🎥 Command line media player
 - [FFmpeg/FFmpeg](https://github.com/FFmpeg/FFmpeg) - Mirror of https://git.ffmpeg.org/ffmpeg.git
 - [getdunne/JUCE-AKSampler](https://github.com/getdunne/JUCE-AKSampler) - AudioKit AKSampler wrapped as a JUCE app/plug-in
-- [iPlug2/iPlug2](https://github.com/iPlug2/iPlug2) - C++ Audio Plug-in Framework for desktop, mobile and web
+- [iPlug2/iPlug2](https://github.com/iPlug2/iPlug2) - C++ Audio Plug-in Framework for desktop, mobile, xr and web
 - [htop-dev/htop](https://github.com/htop-dev/htop) - htop - an interactive process viewer
 - [libfuse/sshfs](https://github.com/libfuse/sshfs) - A network filesystem client to connect to SSH servers
 - [folkertvanheusden/HTTPing](https://github.com/folkertvanheusden/HTTPing) - Ping an HTTP server
@@ -2752,10 +2752,10 @@
 - [wshobson/agents](https://github.com/wshobson/agents) - Intelligent automation and multi-agent orchestration for Claude Code
 - [universal-tool-calling-protocol/code-mode](https://github.com/universal-tool-calling-protocol/code-mode) - 🔌 Plug-and-play library to enable agents to call MCP and UTCP tools via code execution.
 - [statespace-tech/toolfront](https://github.com/statespace-tech/toolfront) - Turn your data into shareable RAG apps in minutes. All in pure Markdown. Zero boilerplate.
-- [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The Semantic Infrastructure for AI Apps
+- [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The Semantic Operating System for AI Apps
 - [derisk-ai/OpenDerisk](https://github.com/derisk-ai/OpenDerisk) - AI-Native Risk Intelligence Systems, OpenDeRisk——Your application system risk intelligent manager provides 7* 24-hour comprehensive and in-depth protection.
 - [OTA-Tech-AI/web-agent-protocol](https://github.com/OTA-Tech-AI/web-agent-protocol) - 🌐Web Agent Protocol (WAP) - Record and replay user interactions in the browser with MCP support
-- [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) - Claude Code Plugins Hub — browse and install 243 plugins (175 with Agent Skills v1.2.0). First 100% compliant with Anthropic 2025 Skills schema.
+- [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) - Hundreds of Claude Code plugins with embedded AI skills. Learn via interactive Jupyter tutorials.
 - [Bessouat40/RAGLight](https://github.com/Bessouat40/RAGLight) - RAGLight is a modular framework for Retrieval-Augmented Generation (RAG). It makes it easy to plug in different LLMs, embeddings, and vector stores, and now includes seamless MCP integration to connec
 - [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) - This MCP server allows Claude and other AI assistants to access your LinkedIn. Scrape LinkedIn profiles and companies, get your recommended jobs, and perform job searches.
 - [universal-tool-calling-protocol/python-utcp](https://github.com/universal-tool-calling-protocol/python-utcp) - Official python implementation of UTCP. UTCP is an open standard that lets AI agents call any API directly, without extra middleware.
@@ -2827,7 +2827,7 @@
 - [caspianmoon/memoripy](https://github.com/caspianmoon/memoripy) - An AI memory layer with short- and long-term storage, semantic clustering, and optional memory decay for context-aware applications.
 - [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
 - [angrysky56/memvid_mcp_server](https://github.com/angrysky56/memvid_mcp_server) - 
-- [memvid/memvid](https://github.com/memvid/memvid) - Video-based AI memory library. Store millions of text chunks in MP4 files with lightning-fast semantic search. No database needed.
+- [memvid/memvid](https://github.com/memvid/memvid) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, single-file memory layer. Give your agents instant retrieval and long-term memory.
 - [giampaolo/psutil](https://github.com/giampaolo/psutil) - Cross-platform lib for process and system monitoring in Python
 - [bloomberg/memray](https://github.com/bloomberg/memray) - Memray is a memory profiler for Python
 - [sockeye44/better-memory-mcp](https://github.com/sockeye44/better-memory-mcp) - Enhanced MCP server for enabling memory for Claude through a knowledge graph with temporal tracking, confidence scores, and entity management
@@ -5510,6 +5510,7 @@
 - [harbassan/spicetify-apps](https://github.com/harbassan/spicetify-apps) - A collection of spicetify custom apps to improve your spotify experience.
 - [Konsl/spicetify-visualizer](https://github.com/Konsl/spicetify-visualizer) - Audio Visualizer for Spicetify
 - [spicetify/marketplace](https://github.com/spicetify/marketplace) - Download extensions and themes directly from Spicetify
+- [jely2002/youtube-dl-gui](https://github.com/jely2002/youtube-dl-gui) - Open Video Downloader - A cross-platform GUI for youtube-dl made in Rust with Tauri and Vue + Typescript.
 - [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [RamiAwar/dataline](https://github.com/RamiAwar/dataline) - Chat with your data - AI data analysis and visualization on CSV, Postgres, MySQL, Snowflake, SQLite...
 - [sourcegraph/cody-public-snapshot](https://github.com/sourcegraph/cody-public-snapshot) - Type less, code more: Cody is an AI code assistant that uses advanced search and codebase context to help you write and fix code.
@@ -6086,7 +6087,7 @@
 - [ceramicstudio/js-3id](https://github.com/ceramicstudio/js-3id) - Authentication system for Ceramic apps that works with blockchain wallets.
 - [m1guelpf/mirror-next](https://github.com/m1guelpf/mirror-next) - A Next.js-powered frontend for your Mirror publication
 - [Redocly/redoc](https://github.com/Redocly/redoc) - 📘  OpenAPI/Swagger-generated API Reference Documentation
-- [linsa-io/linsa](https://github.com/linsa-io/linsa) - Save anything privately. Share it.
+- [linsa-io/linsa](https://github.com/linsa-io/linsa) - Save anything privately. Share.
 - [FlorianWoelki/obsidian-iconize](https://github.com/FlorianWoelki/obsidian-iconize) - Simply add icons to anything you want in Obsidian.
 - [visini/obsidian-icons-plugin](https://github.com/visini/obsidian-icons-plugin) - Add icons to your Obsidian notes – Experimental Obsidian Plugin
 - [obsidian-tools/obsidian-tools](https://github.com/obsidian-tools/obsidian-tools) - An unofficial collection of tools that helps you build plugins for obsidian.md
@@ -6211,7 +6212,6 @@
 - [mark-when/resume](https://github.com/mark-when/resume) - Resume view for markwhen
 - [mark-when/timeline](https://github.com/mark-when/timeline) - Markwhen timeline view
 - [mark-when/docs](https://github.com/mark-when/docs) - Markwhen documentation
-- [jely2002/youtube-dl-gui](https://github.com/jely2002/youtube-dl-gui) - Open Video Downloader - A cross-platform GUI for youtube-dl made in Rust with Tauri and Vue + Typescript.
 - [cfour-hi/gitstars](https://github.com/cfour-hi/gitstars) - Github Starred Repositories Manager
 - [thelittlewonder/gitstalk](https://github.com/thelittlewonder/gitstalk) - Discover who's upto what on Github
 - [KeziahMoselle/export-github-stars](https://github.com/KeziahMoselle/export-github-stars) - View / Sort / Export your Starred repositories.
