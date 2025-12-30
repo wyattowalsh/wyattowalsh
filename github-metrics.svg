@@ -689,7 +689,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                             </svg>
-                            API error: 401
+                            API error: 403
                         </div>
                     </section>
                 </div>
@@ -3195,7 +3195,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>xkiranj/markitdown-mcp-npx</span>
-                                        <span>starred 9 hours ago</span>
+                                        <span>starred 10 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">NPX wrapper for Microsoft's MarkItDown MCP server - run without Docker</div>
@@ -3248,7 +3248,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>fvanevski/trafilatura_mcp</span>
-                                        <span>starred 9 hours ago</span>
+                                        <span>starred 10 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Trafilatura MCP Server</div>
@@ -3301,7 +3301,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>recallnet/sequential-thinking-recall</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">An MCP server that enables dynamic, reflective problem-solving by structuring thought processes and automatically logging each session to Recall.</div>
@@ -3348,7 +3348,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>linxule/lotus-wisdom-mcp</span>
-                                        <span>starred 11 hours ago</span>
+                                        <span>starred 12 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP server for structured problem-solving using the Lotus Sutra's wisdom framework. Beautiful visualizations, multiple thinking approaches, compatible with various MCP clients (e.g., Claude Desktop, Cursor, Cherry Studio).</div>
@@ -3851,7 +3851,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 30 Dec 2025, 17:01:46 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 30 Dec 2025, 18:01:55 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
