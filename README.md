@@ -161,15 +161,15 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-3%2C721%20hrs%2010%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C738%20hrs%2049%20mins-blue)
 
-![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-39.4%20million%20lines%20of%20code-blue)
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-39.44%20million%20lines%20of%20code-blue)
 
 **🐱 My GitHub Data** 
 
 > 📦 5.4 MB Used in GitHub's Storage 
  > 
-> 🏆 1,182 Contributions in the Year 2025
+> 🏆 0 Contributions in the Year 2026
  > 
 > 💼 Opted to Hire
  > 
@@ -202,14 +202,14 @@ Sunday                   1738 commits        █████░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    23 hrs 58 mins      ██████████████████░░░░░░░   71.10 % 
-Markdown                 6 hrs 38 mins       █████░░░░░░░░░░░░░░░░░░░░   19.71 % 
-JSON                     2 hrs 21 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   07.00 % 
-Bash                     28 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   01.41 % 
-TOML                     7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.37 % 
+Other                    34 hrs 8 mins       ████████████████████░░░░░   78.31 % 
+Markdown                 7 hrs 18 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.77 % 
+JSON                     1 hr 24 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   03.24 % 
+Bash                     28 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   01.09 % 
+TOML                     7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   00.28 % 
 
 💻 Operating System: 
-Mac                      33 hrs 43 mins      █████████████████████████   100.00 % 
+Mac                      43 hrs 36 mins      █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in TypeScript** 
@@ -229,7 +229,7 @@ C++                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 31/12/2025 18:56:17 UTC
+ Last Updated on 01/01/2026 18:54:35 UTC
 <!--END_SECTION:waka-->
 
     
