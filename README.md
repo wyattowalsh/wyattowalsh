@@ -161,9 +161,9 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-3%2C758%20hrs%2033%20mins-blue)
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C762%20hrs%2043%20mins-blue?style=flat)
 
-![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-39.44%20million%20lines%20of%20code-blue)
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-39.44%20million%20lines%20of%20code-blue?style=flat)
 
 **🐱 My GitHub Data** 
 
@@ -229,7 +229,7 @@ C++                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 04/01/2026 18:53:32 UTC
+ Last Updated on 05/01/2026 18:56:36 UTC
 <!--END_SECTION:waka-->
 
     
