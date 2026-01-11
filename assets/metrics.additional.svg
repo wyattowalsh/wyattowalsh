@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>orchestralAI/orchestral-ai</span>
-                                        <span>starred 3 hours ago</span>
+                                        <span>starred 4 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -138,7 +138,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>kamui/retriable</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Retriable is an simple DSL to retry failed code blocks with randomized exponential backoff.</div>
@@ -191,7 +191,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>vcr/vcr</span>
-                                        <span>starred 24 hours ago</span>
+                                        <span>starred 1 day ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Record your test suite's HTTP interactions and replay them during future test runs for fast, deterministic, accurate tests.</div>
