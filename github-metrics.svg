@@ -2720,7 +2720,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>KyleAMathews/claude-code-ui</span>
-                                        <span>starred 14 hours ago</span>
+                                        <span>starred 15 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Claude Code session tracker UI with real-time updates via Durable Streams</div>
@@ -2767,7 +2767,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>github/copilot-cli</span>
-                                        <span>starred 21 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">GitHub Copilot CLI brings the power of Copilot coding agent directly to your terminal.</div>
@@ -2856,7 +2856,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>kamui/retriable</span>
-                                        <span>starred 1 day ago</span>
+                                        <span>starred 2 days ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Retriable is an simple DSL to retry failed code blocks with randomized exponential backoff.</div>
@@ -3359,7 +3359,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 12 Jan 2026, 19:02:10 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 12 Jan 2026, 20:29:42 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
