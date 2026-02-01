@@ -508,6 +508,7 @@
 
 ## Go 
 
+- [homeport/termshot](https://github.com/homeport/termshot) - Creates screenshots based on terminal command output
 - [AlexanderGrooff/mermaid-ascii](https://github.com/AlexanderGrooff/mermaid-ascii) - Render Mermaid graphs inside your terminal
 - [charmbracelet/vhs](https://github.com/charmbracelet/vhs) - Your CLI home video recorder 📼
 - [ramonvermeulen/whosthere](https://github.com/ramonvermeulen/whosthere) - Local Area Network discovery tool with a modern Terminal User Interface (TUI) written in Go.  Discover, explore, and understand your LAN in an intuitive way. Knock Knock.. who's there? 🚪
@@ -1327,7 +1328,6 @@
 - [sakhnyuk/rc-scrollbars](https://github.com/sakhnyuk/rc-scrollbars) - React scrollbars component
 - [chenglou/react-treeview](https://github.com/chenglou/react-treeview) - Easy, light, flexible tree view made with React.
 - [chenqingspring/react-lottie](https://github.com/chenqingspring/react-lottie) - Render After Effects animations on React based on lottie-web
-- [xiaolin/react-image-gallery](https://github.com/xiaolin/react-image-gallery) - React carousel image gallery component with thumbnail support  🖼
 - [casesandberg/react-color](https://github.com/casesandberg/react-color) - :art: Color Pickers from Sketch, Photoshop, Chrome, Github, Twitter & more
 - [negomi/react-burger-menu](https://github.com/negomi/react-burger-menu) - :hamburger: An off-canvas sidebar component with a collection of effects and styles using CSS transitions and SVG path animations
 - [Yizack/gists-readme](https://github.com/Yizack/gists-readme) - Display a card wtih your Gists on your GitHub README.md. Made with Node.js on Vercel.
@@ -2067,6 +2067,8 @@
 
 ## Others 
 
+- [dnnyngyen/kimi-k2.5-prompts-tools](https://github.com/dnnyngyen/kimi-k2.5-prompts-tools) - Extracted artifacts from Kimi K2.5's inference-time behavior, tool schemas, and context/memory mechanisms. For AI alignment research, prompt engineering education, and studies in agentic architecture.
+- [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) - The awesome collection of OpenClaw Skills. Formerly known as Moltbot, originally Clawdbot.
 - [AvdLee/SwiftUI-Agent-Skill](https://github.com/AvdLee/SwiftUI-Agent-Skill) - Add expert SwiftUI Best Practices guidance to your AI coding tool (Agent Skills open format).
 - [oracleot/spec-flow](https://github.com/oracleot/spec-flow) - 🔄 Structured workflow toolkit for building software with AI assistants. It extends Spec Kit with prompts, checklists, and practical guidance
 - [vercel-labs/next-skills](https://github.com/vercel-labs/next-skills) - 
@@ -2725,6 +2727,9 @@
 
 ## Python 
 
+- [microsoft/agent-lightning](https://github.com/microsoft/agent-lightning) - The absolute trainer to light up AI agents.
+- [astronomer/agents](https://github.com/astronomer/agents) - AI agent tooling for data engineering workflows.
+- [DarioFT/ComfyUI-Qwen3-TTS](https://github.com/DarioFT/ComfyUI-Qwen3-TTS) - A ComfyUI custom node suite for Qwen3-TTS, supporting 1.7B and 0.6B models, Custom Voice, Voice Design, Voice Cloning and Fine-Tuning.
 - [filliptm/ComfyUI-FL-Qwen3TTS](https://github.com/filliptm/ComfyUI-FL-Qwen3TTS) - Qwen3-TTS text-to-speech nodes for ComfyUI with voice cloning, voice design, and fine-tuning UI
 - [WhiskeyCoder/Qwen3-Audiobook-Converter](https://github.com/WhiskeyCoder/Qwen3-Audiobook-Converter) - Convert PDFs, EPUBs, DOCX, DOC, and TXT files into high-quality audiobooks using **Qwen3 TTS Voice Model** - an open-source voice synthesis system that excels at natural speech generation and voice cl
 - [QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR) - Qwen3-ASR is an open-source series of ASR models developed by the Qwen team at Alibaba Cloud, supporting stable multilingual speech/music/song recognition, language detection and timestamp prediction.
@@ -2785,7 +2790,7 @@
 - [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The Context Graph Engine for AI. Build, manage, and deploy AI-optimized Context Graphs.
 - [derisk-ai/OpenDerisk](https://github.com/derisk-ai/OpenDerisk) - AI-Native Risk Intelligence Systems, OpenDeRisk——Your application system risk intelligent manager provides 7* 24-hour comprehensive and in-depth protection.
 - [OTA-Tech-AI/web-agent-protocol](https://github.com/OTA-Tech-AI/web-agent-protocol) - 🌐Web Agent Protocol (WAP) - Record and replay user interactions in the browser with MCP support
-- [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) - Hundreds of Claude Code plugins with embedded AI skills. Learn via interactive Jupyter tutorials.
+- [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) - 270+ Claude Code plugins with 739 agent skills. Production orchestration patterns, interactive tutorials (11 Jupyter notebooks), and CCPI package manager. 4.13.0
 - [Bessouat40/RAGLight](https://github.com/Bessouat40/RAGLight) - RAGLight is a modular framework for Retrieval-Augmented Generation (RAG). It makes it easy to plug in different LLMs, embeddings, and vector stores, and now includes seamless MCP integration to connec
 - [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) - This MCP server allows Claude and other AI assistants to access your LinkedIn. Scrape LinkedIn profiles, companies and jobs, and perform job searches.
 - [universal-tool-calling-protocol/python-utcp](https://github.com/universal-tool-calling-protocol/python-utcp) - Official python implementation of UTCP. UTCP is an open standard that lets AI agents call any API directly, without extra middleware.
@@ -2816,7 +2821,7 @@
 - [Zie619/n8n-workflows](https://github.com/Zie619/n8n-workflows) - all of the workflows of n8n i could find (also from the site itself)
 - [googlefonts/googlesans-code](https://github.com/googlefonts/googlesans-code) - The Google Sans Code font family
 - [topoteretes/cognee](https://github.com/topoteretes/cognee) - Memory for AI Agents in 6 lines of code
-- [usestrix/strix](https://github.com/usestrix/strix) - Open-source AI agents for penetration testing
+- [usestrix/strix](https://github.com/usestrix/strix) - Open-source AI hackers to find and fix your app’s vulnerabilities.
 - [volcengine/MineContext](https://github.com/volcengine/MineContext) - MineContext is your proactive context-aware AI partner（Context-Engineering+ChatGPT Pulse）
 - [droidrun/droidrun](https://github.com/droidrun/droidrun) - Automate your mobile devices with natural language commands - an LLM agnostic mobile Agent 🤖
 - [pydantic/mcp-run-python](https://github.com/pydantic/mcp-run-python) - MCP server to run Python code in a sandbox.
@@ -5005,7 +5010,7 @@
 ## TypeScript 
 
 - [lukilabs/beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) - 
-- [voicetreelab/voicetree](https://github.com/voicetreelab/voicetree) - The spatial IDE for recursive multi-agent orchestration.
+- [voicetreelab/voicetree](https://github.com/voicetreelab/voicetree) - The spatial IDE for recursive multi-agent orchestration. It's like an Obsidian graph-view that you work directly inside of.
 - [vadimdemedes/ink](https://github.com/vadimdemedes/ink) - 🌈 React for interactive command-line apps
 - [letta-ai/claude-subconscious](https://github.com/letta-ai/claude-subconscious) - Give Claude Code a subconscious
 - [openclaw/openclaw](https://github.com/openclaw/openclaw) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞
@@ -5474,7 +5479,6 @@
 - [tokenizin-agency/mcp-npx-fetch](https://github.com/tokenizin-agency/mcp-npx-fetch) - A powerful MCP server for fetching and transforming web content into various formats (HTML, JSON, Markdown, Plain Text) with ease.
 - [mahawi1992/mcp-documentation-server](https://github.com/mahawi1992/mcp-documentation-server) - MCP Documentation Server with AI Learning Capabilities
 - [movibe/memory-bank-mcp](https://github.com/movibe/memory-bank-mcp) - MCP Server para gerenciar o Memory Bank
-- [UjjwalBudha/DreamAnalyzer](https://github.com/UjjwalBudha/DreamAnalyzer) - 
 - [aindreyway/mcp-neurolora](https://github.com/aindreyway/mcp-neurolora) - An intelligent MCP server that provides tools for collecting and documenting code from directories
 - [RafalWilinski/aws-mcp](https://github.com/RafalWilinski/aws-mcp) - Talk with your AWS using Claude. Model Context Protocol (MCP) server for AWS. Better Amazon Q alternative.
 - [boorich/mcp-human-loop](https://github.com/boorich/mcp-human-loop) - Evaluate if a task requires human intervention
@@ -5718,6 +5722,7 @@
 - [lukasbach/react-complex-tree](https://github.com/lukasbach/react-complex-tree) - Unopinionated Accessible Tree Component with Multi-Select and Drag-And-Drop
 - [brimdata/react-arborist](https://github.com/brimdata/react-arborist) - The complete tree view component for React
 - [elizabetdev/react-kawaii](https://github.com/elizabetdev/react-kawaii) - Cute SVG React Components
+- [xiaolin/react-image-gallery](https://github.com/xiaolin/react-image-gallery) - React carousel image gallery component with thumbnail support  🖼
 - [unlayer/react-email-editor](https://github.com/unlayer/react-email-editor) - Drag-n-Drop Email Editor Component for React.js
 - [fkhadra/react-toastify](https://github.com/fkhadra/react-toastify) - React notification made easy 🚀 !
 - [nygardk/react-share](https://github.com/nygardk/react-share) - Social media share buttons and share counts for React
