@@ -407,7 +407,7 @@
 - [Nayshins/mcp-server-ccxt](https://github.com/Nayshins/mcp-server-ccxt) - Cryptocurrency Market Data MCP Server
 - [pinkpixel-dev/mem0-mcp](https://github.com/pinkpixel-dev/mem0-mcp) - ✨ mem0 MCP Server: A memory system using mem0 for AI applications with model context protocl (MCP) integration. Enables long-term memory for AI agents as a drop-in MCP server.
 - [dzhng/deep-research](https://github.com/dzhng/deep-research) - An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.  The goal of this repo is to provide the simp
-- [refly-ai/refly](https://github.com/refly-ai/refly) - Not just a repo — an open-source agent skills builder.
+- [refly-ai/refly](https://github.com/refly-ai/refly) - The first open-source agent skills builder. 🦞
 - [zongmin-yu/sqlite-literature-management-fastmcp-mcp-server](https://github.com/zongmin-yu/sqlite-literature-management-fastmcp-mcp-server) - A flexible system for managing various types of sources (papers, books, webpages, etc.) and integrating them with knowledge graphs.
 - [meilisearch/meilisearch-mcp](https://github.com/meilisearch/meilisearch-mcp) - A Model Context Protocol (MCP) server for interacting with Meilisearch through LLM interfaces.
 - [Alibaba-NLP/DeepResearch](https://github.com/Alibaba-NLP/DeepResearch) - Tongyi Deep Research, the Leading Open-source Deep Research Agent
@@ -566,7 +566,7 @@
 - [tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp](https://github.com/tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp) - This guide provides complete instructions for implementing an **Agentic Semantic Memory System** that enables Claude agents to:
 - [getzep/zep](https://github.com/getzep/zep) - Zep | Examples, Integrations, & More
 - [hashintel/hash](https://github.com/hashintel/hash) - 🚀  The open-source, multi-tenant, self-building knowledge graph
-- [motherduckdb/mcp-server-motherduck](https://github.com/motherduckdb/mcp-server-motherduck) - MCP server for DuckDB and MotherDuck
+- [motherduckdb/mcp-server-motherduck](https://github.com/motherduckdb/mcp-server-motherduck) - Local MCP server for DuckDB and MotherDuck
 - [microsoft/mcp-gateway](https://github.com/microsoft/mcp-gateway) - MCP Gateway is a reverse proxy and management layer for MCP servers, enabling scalable, session-aware stateful routing and lifecycle management of MCP servers in Kubernetes environments.
 - [google-research/google-research](https://github.com/google-research/google-research) - Google Research
 - [cube-js/cube](https://github.com/cube-js/cube) - 📊 Cube Core is open-source semantic layer for AI, BI and embedded analytics
@@ -731,7 +731,7 @@
 - [dzhng/deep-research](https://github.com/dzhng/deep-research) - An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.  The goal of this repo is to provide the simp
 - [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) - ClickHouse® is a real-time analytics database management system
 - [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) - A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
-- [refly-ai/refly](https://github.com/refly-ai/refly) - Not just a repo — an open-source agent skills builder.
+- [refly-ai/refly](https://github.com/refly-ai/refly) - The first open-source agent skills builder. 🦞
 - [onlook-dev/onlook](https://github.com/onlook-dev/onlook) - The Cursor for Designers • An Open-Source AI-First Design tool • Visually build, style, and edit your React App with AI
 - [Toolbase-AI/toolbase](https://github.com/Toolbase-AI/toolbase) - A desktop application that adds powerful tools to Claude and AI platforms
 - [SecretiveShell/MCP-Bridge](https://github.com/SecretiveShell/MCP-Bridge) - A middleware to provide an openAI compatible endpoint that can call MCP tools
@@ -1100,7 +1100,7 @@
 - [hugocen/freqtrade-gym](https://github.com/hugocen/freqtrade-gym) - A customized gym environment for developing and comparing reinforcement learning algorithms in crypto trading.
 - [peerchemist/finta](https://github.com/peerchemist/finta) - Common financial technical indicators implemented in Pandas.
 - [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
 - [PyPortfolio/PyPortfolioOpt](https://github.com/PyPortfolio/PyPortfolioOpt) - Financial portfolio optimisation in python, including classical efficient frontier, Black-Litterman, Hierarchical Risk Parity
 - [tradytics/eiten](https://github.com/tradytics/eiten) - Statistical and Algorithmic Investing Strategies for Everyone
@@ -2992,7 +2992,7 @@
 - [hugocen/freqtrade-gym](https://github.com/hugocen/freqtrade-gym) - A customized gym environment for developing and comparing reinforcement learning algorithms in crypto trading.
 - [freqtrade/freqtrade-strategies](https://github.com/freqtrade/freqtrade-strategies) - Free trading strategies for Freqtrade bot
 - [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [cryptofinance-ai/cryptofinance-google-sheets-add-on](https://github.com/cryptofinance-ai/cryptofinance-google-sheets-add-on) - CRYPTOFINANCE() — The easiest way to get cryptocurrencies prices and more in Google Sheets.
 - [blockchain-etl/public-datasets](https://github.com/blockchain-etl/public-datasets) - The list of public blockchain datasets in BigQuery
 - [spothq/cryptocurrency-icons](https://github.com/spothq/cryptocurrency-icons) - A set of icons for all the main cryptocurrencies and altcoins, in a range of styles and sizes.
@@ -3305,7 +3305,7 @@
 - [grandsmarquis/awesome-ethereum-analytics](https://github.com/grandsmarquis/awesome-ethereum-analytics) - A curated list of projects around Ethereum analytics.
 - [pachyderm/pachyderm](https://github.com/pachyderm/pachyderm) - Data-Centric Pipelines and Data Versioning
 - [mfarragher/obsidiantools](https://github.com/mfarragher/obsidiantools) - Obsidian tools - a Python package for analysing an Obsidian.md vault
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [streamlit/streamlit](https://github.com/streamlit/streamlit) - Streamlit — A faster way to build and share data apps.
 - [autogluon/autogluon](https://github.com/autogluon/autogluon) - Fast and Accurate ML in 3 Lines of Code
 - [py-why/dowhy](https://github.com/py-why/dowhy) - DoWhy is a Python library for causal inference that supports explicit modeling and testing of causal assumptions. DoWhy is based on a unified language for causal inference, combining causal graphical 
@@ -3452,7 +3452,7 @@
 - [NorthwoodsSoftware/GoJS](https://github.com/NorthwoodsSoftware/GoJS) - JavaScript diagramming library for interactive flowcharts, org charts, design tools, planning tools, visual languages.
 - [uber/react-vis](https://github.com/uber/react-vis) - Data Visualization Components
 - [FormidableLabs/victory](https://github.com/FormidableLabs/victory) - A collection of composable React components for building interactive data visualizations
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [streamlit/streamlit](https://github.com/streamlit/streamlit) - Streamlit — A faster way to build and share data apps.
 - [jtablesaw/tablesaw](https://github.com/jtablesaw/tablesaw) - Java dataframe and visualization library
 - [kantord/just-dashboard](https://github.com/kantord/just-dashboard) - :bar_chart: :clipboard: Dashboards using YAML or JSON files
@@ -4339,7 +4339,7 @@
 - [dbrojas/optlib](https://github.com/dbrojas/optlib) - A library for financial options pricing written in Python.
 - [domokane/FinancePy](https://github.com/domokane/FinancePy) - A Python Finance Library that focuses on the pricing and risk-management of Financial Derivatives, including fixed-income, equity, FX and credit derivatives.
 - [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [akaunting/akaunting](https://github.com/akaunting/akaunting) - Online Accounting Software
 - [MarcSkovMadsen/awesome-streamlit](https://github.com/MarcSkovMadsen/awesome-streamlit) - The purpose of this project is to share knowledge on how awesome Streamlit is and can be
 - [plotly/dash](https://github.com/plotly/dash) - Data Apps & Dashboards for Python. No JavaScript Required.
@@ -6698,7 +6698,7 @@
 - [automatisch/automatisch](https://github.com/automatisch/automatisch) - The open source Zapier alternative. Build workflow automation without spending time and money.
 - [rowyio/rowy](https://github.com/rowyio/rowy) - Low-code backend platform. Manage database on spreadsheet-like UI and build cloud functions workflows in JS/TS, all in your browser.
 - [nocobase/nocobase](https://github.com/nocobase/nocobase) - NocoBase is the most extensible AI-powered no-code/low-code platform for building business applications and enterprise solutions.
-- [refly-ai/refly](https://github.com/refly-ai/refly) - Not just a repo — an open-source agent skills builder.
+- [refly-ai/refly](https://github.com/refly-ai/refly) - The first open-source agent skills builder. 🦞
 - [onlook-dev/onlook](https://github.com/onlook-dev/onlook) - The Cursor for Designers • An Open-Source AI-First Design tool • Visually build, style, and edit your React App with AI
 - [Budibase/budibase](https://github.com/Budibase/budibase) - Create business apps and automate workflows in minutes. Supports PostgreSQL, MySQL, MariaDB, MSSQL, MongoDB, Rest API, Docker, K8s, and more 🚀 No code / Low code platform..
 - [n8n-io/n8n](https://github.com/n8n-io/n8n) - Fair-code workflow automation platform with native AI capabilities. Combine visual building with custom code, self-host or cloud, 400+ integrations.
@@ -6930,7 +6930,7 @@
 - [hindupuravinash/the-gan-zoo](https://github.com/hindupuravinash/the-gan-zoo) - A list of all named GANs!
 - [microsoft/LightGBM](https://github.com/microsoft/LightGBM) - A fast, distributed, high performance gradient boosting (GBT, GBDT, GBRT, GBM or MART) framework based on decision tree algorithms, used for ranking, classification and many other machine learning tas
 - [flairNLP/flair](https://github.com/flairNLP/flair) - A very simple framework for state-of-the-art Natural Language Processing (NLP)
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [streamlit/streamlit](https://github.com/streamlit/streamlit) - Streamlit — A faster way to build and share data apps.
 - [autogluon/autogluon](https://github.com/autogluon/autogluon) - Fast and Accurate ML in 3 Lines of Code
 - [py-why/dowhy](https://github.com/py-why/dowhy) - DoWhy is a Python library for causal inference that supports explicit modeling and testing of causal assumptions. DoWhy is based on a unified language for causal inference, combining causal graphical 
@@ -7725,7 +7725,7 @@
 - [punkpeye/awesome-mcp-clients](https://github.com/punkpeye/awesome-mcp-clients) - A collection of MCP clients.
 - [danny-avila/LibreChat](https://github.com/danny-avila/LibreChat) - Enhanced ChatGPT Clone: Features Agents, MCP, DeepSeek, Anthropic, AWS, OpenAI, Responses API, Azure, Groq, o1, GPT-5, Mistral, OpenRouter, Vertex AI, Gemini, Artifacts, AI model switching, message se
 - [activepieces/activepieces](https://github.com/activepieces/activepieces) - AI Agents & MCPs & AI Workflow Automation • (~400 MCP servers for AI agents) • AI Automation / AI Agent with MCPs • AI Workflows & AI Agents • MCPs for AI Agents
-- [refly-ai/refly](https://github.com/refly-ai/refly) - Not just a repo — an open-source agent skills builder.
+- [refly-ai/refly](https://github.com/refly-ai/refly) - The first open-source agent skills builder. 🦞
 - [MCP-Club/mcpm](https://github.com/MCP-Club/mcpm) - A command-line tool for managing MCP servers in Claude App. Also can run a MCP Server to help you manage all your MCP Servers
 - [Toolbase-AI/toolbase](https://github.com/Toolbase-AI/toolbase) - A desktop application that adds powerful tools to Claude and AI platforms
 - [zueai/mcp-manager](https://github.com/zueai/mcp-manager) - simple web ui to manage mcp (model context protocol) servers in the claude app
@@ -9158,7 +9158,8 @@
 
 ## others 
 
-- [YougLin-dev/Aha-Loop](https://github.com/YougLin-dev/Aha-Loop) - Aha Loop is a fully autonomous AI development system, extended from the core ideas of Ralph. It's not just an execution engine, but a complete AI development framework with planning capabilities, rese
+- [jamesrochabrun/AgentHub](https://github.com/jamesrochabrun/AgentHub) - Manage all sessions in Claude Code. Easily create new worktrees, run multiple terminals in parallel, preview edits before accepting them, make inline changes directly from diffs, and more.
+- [YougLin-dev/Aha-Loop](https://github.com/YougLin-dev/Aha-Loop) - [MVP] Aha Loop is a fully autonomous AI development system, extended from the core ideas of Ralph. It's not just an execution engine, but a complete AI development framework with planning capabilities
 - [pierceboggan/primer](https://github.com/pierceboggan/primer) - Get your repo ready for AI.
 - [dnnyngyen/kimi-k2.5-prompts-tools](https://github.com/dnnyngyen/kimi-k2.5-prompts-tools) - Extracted artifacts from Kimi K2.5's inference-time behavior, tool schemas, and context/memory mechanisms. For AI alignment research, prompt engineering education, and studies in agentic architecture.
 - [AlexanderGrooff/mermaid-ascii](https://github.com/AlexanderGrooff/mermaid-ascii) - Render Mermaid graphs inside your terminal
@@ -9169,7 +9170,7 @@
 - [QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR) - Qwen3-ASR is an open-source series of ASR models developed by the Qwen team at Alibaba Cloud, supporting stable multilingual speech/music/song recognition, language detection and timestamp prediction.
 - [lycheeverse/lychee](https://github.com/lycheeverse/lychee) - ⚡ Fast, async, stream-based link checker written in Rust. Finds broken URLs and mail addresses inside Markdown, HTML, reStructuredText, websites and more!
 - [AvdLee/SwiftUI-Agent-Skill](https://github.com/AvdLee/SwiftUI-Agent-Skill) - Add expert SwiftUI Best Practices guidance to your AI coding tool (Agent Skills open format).
-- [hashicorp/agent-skills](https://github.com/hashicorp/agent-skills) - 
+- [hashicorp/agent-skills](https://github.com/hashicorp/agent-skills) - A collection of Agent skills and Claude Code plugins for HashiCorp products.
 - [GongRzhe/Gmail-MCP-Server](https://github.com/GongRzhe/Gmail-MCP-Server) - A Model Context Protocol (MCP) server for Gmail integration in Claude Desktop with auto authentication support. This server enables AI assistants to manage Gmail through natural language interactions.
 - [letta-ai/claude-subconscious](https://github.com/letta-ai/claude-subconscious) - Give Claude Code a subconscious
 - [agentskills/agentskills](https://github.com/agentskills/agentskills) - Specification and documentation for Agent Skills
@@ -12673,7 +12674,7 @@
 - [jesse-ai/jesse](https://github.com/jesse-ai/jesse) - An advanced crypto trading bot written in Python
 - [georgezouq/awesome-ai-in-finance](https://github.com/georgezouq/awesome-ai-in-finance) - 🔬 A curated list of awesome LLMs & deep learning strategies & tools in financial market.
 - [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [ranaroussi/qtpylib](https://github.com/ranaroussi/qtpylib) - QTPyLib, Pythonic Algorithmic Trading
 - [PyPortfolio/PyPortfolioOpt](https://github.com/PyPortfolio/PyPortfolioOpt) - Financial portfolio optimisation in python, including classical efficient frontier, Black-Litterman, Hierarchical Risk Parity
 - [lballabio/QuantLib](https://github.com/lballabio/QuantLib) - The QuantLib C++ library
@@ -12750,7 +12751,7 @@
 - [CodeAlive-AI/codealive-mcp](https://github.com/CodeAlive-AI/codealive-mcp) - The most accurate and comprehensive Context Engine as a service, optimized for large codebases, powered by advanced GraphRAG and accessible via MCP. It enriches the context for AI agents like Codex, C
 - [firebase/genkit](https://github.com/firebase/genkit) - Open-source framework for building AI-powered apps in JavaScript, Go, and Python, built and used in production by Google
 - [m92vyas/llm-reader](https://github.com/m92vyas/llm-reader) - Turn Webpage to LLM friendly input text. Similar to Firecrawl and Jina Reader API. Makes RAG, AI web scraping, image & webpage links extraction easy.
-- [refly-ai/refly](https://github.com/refly-ai/refly) - Not just a repo — an open-source agent skills builder.
+- [refly-ai/refly](https://github.com/refly-ai/refly) - The first open-source agent skills builder. 🦞
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Open Source AI Platform - AI Chat with advanced features that works with every LLM
 - [tianlan-ltd/Magic-Insight](https://github.com/tianlan-ltd/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
 - [sirmews/mcp-pinecone](https://github.com/sirmews/mcp-pinecone) - Model Context Protocol server to allow for reading and writing from Pinecone. Rudimentary RAG
@@ -14320,7 +14321,7 @@
 - [freqtrade/freqtrade-strategies](https://github.com/freqtrade/freqtrade-strategies) - Free trading strategies for Freqtrade bot
 - [peerchemist/finta](https://github.com/peerchemist/finta) - Common financial technical indicators implemented in Pandas.
 - [StockSharp/StockSharp](https://github.com/StockSharp/StockSharp) - Algorithmic trading and quantitative trading open source platform to develop trading robots (stock markets, forex, crypto, bitcoins, and options).
-- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - VectorBT: Find your trading edge, using the fastest engine for backtesting, algorithmic trading, and research.
+- [polakowo/vectorbt](https://github.com/polakowo/vectorbt) - ⚡️ Lightning-fast backtesting engine to find your trading edge
 - [MarcSkovMadsen/awesome-streamlit](https://github.com/MarcSkovMadsen/awesome-streamlit) - The purpose of this project is to share knowledge on how awesome Streamlit is and can be
 - [mementum/backtrader](https://github.com/mementum/backtrader) - Python Backtesting library for trading strategies
 - [maxbbraun/trump2cash](https://github.com/maxbbraun/trump2cash) - A stock trading bot powered by Trump tweets
