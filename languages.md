@@ -377,7 +377,7 @@
 ## CMake 
 
 - [eyalamirmusic/JUCE-ConsoleApp](https://github.com/eyalamirmusic/JUCE-ConsoleApp) - A JUCE example using a console app along with the message thread
-- [anthonyalfimov/JUCE-CMake-Plugin-Template](https://github.com/anthonyalfimov/JUCE-CMake-Plugin-Template) - Audio Plugin template using JUCE 6/7 and CMake
+- [anthonyalfimov/JUCE-CMake-Plugin-Template](https://github.com/anthonyalfimov/JUCE-CMake-Plugin-Template) - Audio Plug-in template using JUCE 7/8 and CMake
 - [JanWilczek/audio-plugin-template](https://github.com/JanWilczek/audio-plugin-template) - A template repository that you can use for creating audio plugins with the JUCE C++ framework. It is based on CMake, uses CPM package manager, the JUCE C++ framework (obviously), and the GoogleTest fr
 - [eyalamirmusic/JUCECmakeRepoPrototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype) - A prototype to model a way to create an entire repo using JUCE and CMake.
 
@@ -900,7 +900,7 @@
 - [siteboon/claudecodeui](https://github.com/siteboon/claudecodeui) - Use Claude Code, Cursor CLI or Codex on mobile and web with CloudCLI (aka Claude Code UI). CloudCLI is a free open source webui/GUI that helps you manage your Claude Code session and projects remotely
 - [GoogleCloudPlatform/cloud-run-mcp](https://github.com/GoogleCloudPlatform/cloud-run-mcp) - MCP server to deploy apps to Cloud Run
 - [steipete/claude-code-mcp](https://github.com/steipete/claude-code-mcp) - Claude Code as one-shot MCP server to have an agent in your agent.
-- [heshengtao/super-agent-party](https://github.com/heshengtao/super-agent-party) - ⭐ All-in-one AI companion! Desktop girlfriend + virtual streamer + instant messaging robot + browser control + smart home control + computer control + virtual reality, and everything else you can imag
+- [heshengtao/super-agent-party](https://github.com/heshengtao/super-agent-party) - ⭐ All-in-one AI companion! Desktop girlfriend + virtual streamer + IM bot + browser control + smart home control + computer control + virtual reality, and everything else you can imagine!⭐全能型AI伴侣！桌面女友
 - [papersgpt/papersgpt-for-zotero](https://github.com/papersgpt/papersgpt-for-zotero) - A powerful Zotero AI and MCP plugin with ChatGPT, Gemini 3, Claude, Grok, DeepSeek, OpenRouter, Kimi 2.5, GLM 4.7, SiliconFlow, GPT-oss, Gemma 3, Qwen 3
 - [qeeqbox/social-analyzer](https://github.com/qeeqbox/social-analyzer) - API, CLI, and Web App for analyzing and finding a person's profile in 1000 social media \ websites
 - [aquarius-wing/actor-critic-thinking-mcp](https://github.com/aquarius-wing/actor-critic-thinking-mcp) - A dual-perspective thinking analysis server based on Model Context Protocol (MCP), providing comprehensive performance evaluation through Actor-Critic methodology.
@@ -1260,6 +1260,7 @@
 - [SoRobby/ObsidianStarterVault](https://github.com/SoRobby/ObsidianStarterVault) - Organize your Universe: An Obsidian starter vault for everyone, bridging the gap between ideas and actions
 - [erazlogo/obsidian-history-vault](https://github.com/erazlogo/obsidian-history-vault) - A starter vault for historical research with Zotero and Obsidian.
 - [Pamela-Wang/Obsidian-Starter-Vaults](https://github.com/Pamela-Wang/Obsidian-Starter-Vaults) - This repo contains the templates used in my automated obsidian weekly review video and also an accompanying vault with the folder structure expected and plugins (periodic note settings etc)
+- [microsoft/playwright-cli](https://github.com/microsoft/playwright-cli) - CLI for common Playwright actions. Record and generate Playwright code, inspect selectors and take screenshots.
 - [IonicaBizau/scrape-it](https://github.com/IonicaBizau/scrape-it) - 🔮 A Node.js scraper for humans.
 - [yujiosaka/headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) - Distributed crawler powered by Headless Chrome
 - [NaiboWang/EasySpider](https://github.com/NaiboWang/EasySpider) - A visual no-code/code-free web crawler/spider易采集：一个可视化浏览器自动化测试/数据采集/爬虫软件，可以无代码图形化的设计和执行爬虫任务。别名：ServiceWrapper面向Web应用的智能化服务封装系统。
@@ -2070,7 +2071,6 @@
 
 ## Others 
 
-- [dnnyngyen/kimi-k2.5-prompts-tools](https://github.com/dnnyngyen/kimi-k2.5-prompts-tools) - Extracted artifacts from Kimi K2.5's inference-time behavior, tool schemas, and context/memory mechanisms. For AI alignment research, prompt engineering education, and studies in agentic architecture.
 - [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) - The awesome collection of OpenClaw Skills. Formerly known as Moltbot, originally Clawdbot.
 - [AvdLee/SwiftUI-Agent-Skill](https://github.com/AvdLee/SwiftUI-Agent-Skill) - Add expert SwiftUI Best Practices guidance to your AI coding tool (Agent Skills open format).
 - [oracleot/spec-flow](https://github.com/oracleot/spec-flow) - 🔄 Structured workflow toolkit for building software with AI assistants. It extends Spec Kit with prompts, checklists, and practical guidance
@@ -2269,7 +2269,6 @@
 - [kazunori279/my-sessions-and-bio](https://github.com/kazunori279/my-sessions-and-bio) - My bio and the list of session agendas
 - [kepano/kepano-obsidian](https://github.com/kepano/kepano-obsidian) - My personal Obsidian vault template. A bottom-up approach to note-taking and organizing things I am interested in.
 - [mxschmitt/awesome-playwright](https://github.com/mxschmitt/awesome-playwright) - A curated list of awesome tools, utils and projects using Playwright
-- [microsoft/playwright-cli](https://github.com/microsoft/playwright-cli) - CLI for common Playwright actions. Record and generate Playwright code, inspect selectors and take screenshots.
 - [bmpi-dev/awesome-seo](https://github.com/bmpi-dev/awesome-seo) - Google SEO Research and Web Traffic Monetization
 - [mahshidaln/AI-for-music](https://github.com/mahshidaln/AI-for-music) - Resources on AI applications in the music domain
 - [Curated-Awesome-Lists/awesome-ai-music-generation](https://github.com/Curated-Awesome-Lists/awesome-ai-music-generation) - A curated compilation of AI-driven generative music resources and projects. Explore the blend of machine learning algorithms and musical creativity.
@@ -2731,18 +2730,19 @@
 
 ## Python 
 
+- [gradio-app/daggr](https://github.com/gradio-app/daggr) - Chain apps and models to build robust AI workflows 🤗
 - [microsoft/agent-lightning](https://github.com/microsoft/agent-lightning) - The absolute trainer to light up AI agents.
 - [astronomer/agents](https://github.com/astronomer/agents) - AI agent tooling for data engineering workflows.
 - [DarioFT/ComfyUI-Qwen3-TTS](https://github.com/DarioFT/ComfyUI-Qwen3-TTS) - A ComfyUI custom node suite for Qwen3-TTS, supporting 1.7B and 0.6B models, Custom Voice, Voice Design, Voice Cloning and Fine-Tuning.
+- [dnnyngyen/kimi-k2.5-system-analysis](https://github.com/dnnyngyen/kimi-k2.5-system-analysis) - Extracted artifacts from Kimi OK-Computer (and other agents) system for AI studies in agentic architecture. Analyzed with help from Claude Code.
 - [filliptm/ComfyUI-FL-Qwen3TTS](https://github.com/filliptm/ComfyUI-FL-Qwen3TTS) - Qwen3-TTS text-to-speech nodes for ComfyUI with voice cloning, voice design, and fine-tuning UI
 - [WhiskeyCoder/Qwen3-Audiobook-Converter](https://github.com/WhiskeyCoder/Qwen3-Audiobook-Converter) - Convert PDFs, EPUBs, DOCX, DOC, and TXT files into high-quality audiobooks using **Qwen3 TTS Voice Model** - an open-source voice synthesis system that excels at natural speech generation and voice cl
 - [QwenLM/Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR) - Qwen3-ASR is an open-source series of ASR models developed by the Qwen team at Alibaba Cloud, supporting stable multilingual speech/music/song recognition, language detection and timestamp prediction.
-- [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension) - This extension transforms the Gemini CLI into "Pickle Rick," a hyper-intelligent, arrogant, yet extremely competent  engineering persona. It enforces a rigid, iterative software development lifecycle 
 - [adenhq/hive](https://github.com/adenhq/hive) - Outcome driven agent development framework that evolves
 - [agentskills/agentskills](https://github.com/agentskills/agentskills) - Specification and documentation for Agent Skills
 - [MiaoXiong2320/llm-uncertainty](https://github.com/MiaoXiong2320/llm-uncertainty) - code repo for ICLR 2024 paper "Can LLMs Express Their Uncertainty? An Empirical Evaluation of Confidence Elicitation in LLMs"
 - [QwenLM/Qwen3-VL-Embedding](https://github.com/QwenLM/Qwen3-VL-Embedding) - 
-- [leonvanzyl/autocoder](https://github.com/leonvanzyl/autocoder) - 
+- [AutoForgeAI/autoforge](https://github.com/AutoForgeAI/autoforge) - 
 - [pchalasani/claude-code-tools](https://github.com/pchalasani/claude-code-tools) - Practical productivity tools for Claude Code, Codex-CLI, and similar CLI coding agents.
 - [the-momentum/open-wearables](https://github.com/the-momentum/open-wearables) - Self-hosted platform to unify wearable health data through one AI-ready API.
 - [nsandman/linkedin-api](https://github.com/nsandman/linkedin-api) - LinkedIn Voyager API
@@ -3371,7 +3371,7 @@
 - [fanshu6hao/Double-Checker](https://github.com/fanshu6hao/Double-Checker) - The code for EMNLP24 paper "Double-Checker: Large Language Model as a Checker for Few-shot Named Entity Recognition"
 - [fusion-jena/automatic-KG-creation-with-LLM](https://github.com/fusion-jena/automatic-KG-creation-with-LLM) - Automatic Ontology and Knowledge Graph construction with LLM
 - [hitz-zentroa/GoLLIE](https://github.com/hitz-zentroa/GoLLIE) - Guideline following Large Language Model for Information Extraction
-- [OpenBMB/MiniCPM-V](https://github.com/OpenBMB/MiniCPM-V) - MiniCPM-V 4.5: A GPT-4o Level MLLM for Single Image, Multi Image and High-FPS Video Understanding on Your Phone
+- [OpenBMB/MiniCPM-o](https://github.com/OpenBMB/MiniCPM-o) - MiniCPM-o 4.5: A Gemini 2.5 Flash Level MLLM for Vision, Speech, and Full-Duplex Mulitmodal Live Streaming on Your Phone
 - [tianlan-ltd/Magic-Insight](https://github.com/tianlan-ltd/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
 - [THU-KEG/ADELIE](https://github.com/THU-KEG/ADELIE) - [EMNLP2024] Aligning Large Language Models on Information Extraction
 - [embeddings-benchmark/mteb](https://github.com/embeddings-benchmark/mteb) - MTEB: Massive Text Embedding Benchmark
@@ -5020,6 +5020,7 @@
 - [pierceboggan/primer](https://github.com/pierceboggan/primer) - Get your repo ready for AI.
 - [lukilabs/beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid) - 
 - [voicetreelab/voicetree](https://github.com/voicetreelab/voicetree) - The spatial IDE for recursive multi-agent orchestration. It's like an Obsidian graph-view that you work directly inside of.
+- [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension) - This extension transforms the Gemini CLI into "Pickle Rick," a hyper-intelligent, arrogant, yet extremely competent  engineering persona. It enforces a rigid, iterative software development lifecycle 
 - [vadimdemedes/ink](https://github.com/vadimdemedes/ink) - 🌈 React for interactive command-line apps
 - [letta-ai/claude-subconscious](https://github.com/letta-ai/claude-subconscious) - Give Claude Code a subconscious
 - [openclaw/openclaw](https://github.com/openclaw/openclaw) - Your own personal AI assistant. Any OS. Any Platform. The lobster way. 🦞
@@ -5034,7 +5035,7 @@
 - [FormidableLabs/spectacle](https://github.com/FormidableLabs/spectacle) - A React-based library for creating sleek presentations using JSX syntax that gives you the ability to live demo your code.
 - [dvdsgl/claude-canvas](https://github.com/dvdsgl/claude-canvas) - Give Claude Code an external monitor
 - [josephlimtech/linkedin-profile-scraper-api](https://github.com/josephlimtech/linkedin-profile-scraper-api) - 🕵️‍♂️  LinkedIn profile scraper returning structured profile data in JSON.
-- [YouMind-OpenLab/awesome-nano-banana-pro-prompts](https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts) - 🍌 6000+ selected Nano Banana Pro prompts with images, multilingual support, and instant gallery preview. Open-source prompt engineering library
+- [YouMind-OpenLab/awesome-nano-banana-pro-prompts](https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts) - 🍌 8000+ selected Nano Banana Pro prompts with images, multilingual support, and instant gallery preview. Open-source prompt engineering library
 - [blinkospace/blinko](https://github.com/blinkospace/blinko) - An open-source, self-hosted personal AI note tool prioritizing privacy, built using TypeScript .
 - [daytonaio/daytona](https://github.com/daytonaio/daytona) - Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [wotschofsky/domain-digger](https://github.com/wotschofsky/domain-digger) - Full Toolkit for Next-Level Domain Analysis
@@ -5100,7 +5101,7 @@
 - [hustcc/mcp-mermaid](https://github.com/hustcc/mcp-mermaid) - ❤️ Generate mermaid diagram and chart with AI MCP dynamically.
 - [toon-format/toon](https://github.com/toon-format/toon) - 🎒 Token-Oriented Object Notation (TOON) – Compact, human-readable, schema-aware JSON for LLM prompts. Spec, benchmarks, TypeScript SDK.
 - [Haleclipse/Claudix](https://github.com/Haleclipse/Claudix) - Gorgeous Claude Code Extend for VS Code.
-- [Piebald-AI/tweakcc](https://github.com/Piebald-AI/tweakcc) - Customize Claude Code's system prompts, create custom toolsets, add custom input pattern highlighters, custom themes/thinking verbs/spinner, input box style, user message display, sign-in ASCII art, f
+- [Piebald-AI/tweakcc](https://github.com/Piebald-AI/tweakcc) - Customize Claude Code's system prompts, create custom toolsets, input pattern highlighters, themes/thinking verbs/spinners, customize input box & user message styling, support AGENTS.md, unlock privat
 - [googleanalytics/ga-dev-tools](https://github.com/googleanalytics/ga-dev-tools) - A showcase of demos and tools built with the various Google Analytics APIs and Libraries.
 - [Garoth/wolframalpha-llm-mcp](https://github.com/Garoth/wolframalpha-llm-mcp) - An MCP Server for WolframAlpha's LLM API, able to return structured knowledge & solve math
 - [anomalyco/opentui](https://github.com/anomalyco/opentui) - OpenTUI is a library for building terminal user interfaces (TUIs)
@@ -5317,7 +5318,7 @@
 - [supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp) - Connect Supabase to your AI assistants
 - [yoda-digital/horologic-mcp](https://github.com/yoda-digital/horologic-mcp) - 
 - [trevhud/vibe-mcp](https://github.com/trevhud/vibe-mcp) - Vibe MCp generates and plays music based on the code you're working with
-- [cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) - A Model Context Protocol (MCP) server that provides Xcode-related tools for integration with AI assistants and other MCP clients.
+- [cameroncooke/XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP) - A Model Context Protocol (MCP) server and CLI that provides tools for agent use when working on iOS and macOS projects.
 - [supabase/supabase-js](https://github.com/supabase/supabase-js) - An isomorphic Javascript client for Supabase. Query your Supabase database, subscribe to realtime events, upload and download files, browse typescript examples, invoke postgres functions via rpc, invo
 - [mikechao/artic-mcp](https://github.com/mikechao/artic-mcp) - A Model Context Protocol (MCP) server that provides access to the Art Institute of Chicago Collection through natural language interactions. This server allows AI models to search the Art Institute of
 - [zxypro1/openapi-to-mcp-converter](https://github.com/zxypro1/openapi-to-mcp-converter) - A tool for automatically converting OpenAPI into Model Context Protocol (MCP) Server instance
@@ -5594,7 +5595,7 @@
 - [actions-js/profile-readme](https://github.com/actions-js/profile-readme) - 🗣 Display profile activity and other cool widgets in your profile README.md
 - [teoxoy/profile-readme-stats](https://github.com/teoxoy/profile-readme-stats) - Showcase your github stats on your profile README.md
 - [ryo-ma/github-profile-trophy](https://github.com/ryo-ma/github-profile-trophy) - 🏆 Add dynamically generated GitHub Stat Trophies  on your readme
-- [pontusab/directories](https://github.com/pontusab/directories) - The Cursor & Windsurf community, find rules and MCPs
+- [leerob/directories](https://github.com/leerob/directories) - The Cursor & Windsurf community, find rules and MCPs
 - [punkpeye/fastmcp](https://github.com/punkpeye/fastmcp) - A TypeScript framework for building MCP servers.
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) - Model Context Protocol Servers
 - [zaidmukaddam/scira](https://github.com/zaidmukaddam/scira) - Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you find information on the internet and cites it too. Powered by Vercel AI SDK!
