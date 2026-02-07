@@ -161,13 +161,13 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-3%2C872%20hrs%2036%20mins-blue?style=flat)
+![Code Time](http://img.shields.io/badge/Code%20Time-3%2C873%20hrs%2044%20mins-blue?style=flat)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-44.64%20million%20lines%20of%20code-blue?style=flat)
 
 **🐱 My GitHub Data** 
 
-> 📦 5.8 MB Used in GitHub's Storage 
+> 📦 5.9 MB Used in GitHub's Storage 
  > 
 > 🏆 227 Contributions in the Year 2026
  > 
@@ -202,11 +202,11 @@ Sunday                   1889 commits        █████░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    2 hrs 53 mins       █████████████░░░░░░░░░░░░   53.44 % 
-Markdown                 2 hrs 31 mins       ████████████░░░░░░░░░░░░░   46.56 % 
+Markdown                 2 hrs 18 mins       █████████████░░░░░░░░░░░░   50.89 % 
+Other                    2 hrs 13 mins       ████████████░░░░░░░░░░░░░   49.11 % 
 
 💻 Operating System: 
-Mac                      5 hrs 24 mins       █████████████████████████   100.00 % 
+Mac                      4 hrs 32 mins       █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Python** 
@@ -226,7 +226,7 @@ C++                      1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 06/02/2026 18:57:01 UTC
+ Last Updated on 07/02/2026 18:54:39 UTC
 <!--END_SECTION:waka-->
 
     
