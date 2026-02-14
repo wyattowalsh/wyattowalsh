@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>AndrewWalsh/demystify</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Automated documentation for APIs</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>SplittyDev/spacebadgers</span>
-                                        <span>starred 15 hours ago</span>
+                                        <span>starred 16 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Fast and clean SVG badges</div>
@@ -262,7 +262,7 @@
                         <h3>Total stargazers</h3>
                         <div class="chart-bars">
                             <div class="entry">
-                                <span class="value"></span>
+                                <span class="value">282</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 1
                                 <div class="bottom">Feb.</div>
