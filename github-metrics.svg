@@ -2787,7 +2787,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>affaan-m/everything-claude-code</span>
-                                        <span>starred 2 hours ago</span>
+                                        <span>starred 3 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Complete Claude Code configuration collection - agents, skills, hooks, commands, rules, MCPs. Battle-tested configs from an Anthropic hackathon winner.</div>
@@ -3450,7 +3450,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 17 Feb 2026, 04:14:25 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 17 Feb 2026, 05:13:51 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
