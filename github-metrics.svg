@@ -2774,7 +2774,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>mrkrsl/web-search-mcp</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A simple, locally hosted Web Search MCP server for use with Local LLMs</div>
@@ -2827,7 +2827,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>DasDigitaleMomentum/searxNcrawl</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP Server and CLI Tools for searxing and fetching websites</div>
@@ -2880,7 +2880,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>tisDDM/searxng-mcp</span>
-                                        <span>starred 22 hours ago</span>
+                                        <span>starred 23 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A Model Context Protocol (MCP) server that enables AI assistants to perform web searches using SearXNG, a privacy-respecting metasearch engine.</div>
@@ -3435,7 +3435,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 23 Feb 2026, 12:21:18 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 23 Feb 2026, 13:17:00 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
