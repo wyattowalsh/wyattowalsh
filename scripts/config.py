@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import yaml  # type: ignore
-from pydantic import BaseModel, Field, HttpUrl, ValidationError
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Logging within this module is removed. Functions will raise exceptions.
@@ -12,7 +12,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Global application settings, loaded from environment variables."""
 
-    app_name: str = "WyattOWalshDevCLI"
+    app_name: str = "ReadmeCLI"
     log_level: str = Field("INFO", validation_alias="LOG_LEVEL")
     debug_mode: bool = Field(False, validation_alias="DEBUG_MODE")
 
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
 
 class BannerSettings(BaseModel):
-    title: str = "Wyatt O. Walsh"
+    title: str = "Wyatt Walsh"
     subtitle: str = "Software Engineer & AI Enthusiast"
     output_path: str = ".github/assets/img/banner.svg"
     width: int = 1200
@@ -39,26 +39,38 @@ class BannerSettings(BaseModel):
     optimize_with_svgo: bool = True
 
 
+class TypedUrl(BaseModel):
+    url: HttpUrl
+    label: str = "Website"  # Default label if not provided
+
+
 class VCardDataModel(BaseModel):
-    displayname: str = "Wyatt O. Walsh"
-    # Example vcard fields based on typical usage in cli.py
+    displayname: str = "Wyatt Walsh"
     n_givenname: str = "Wyatt"
     n_familyname: str = "Walsh"
-    fn: str = "Wyatt O. Walsh"
-    org: str = "Walsh Org"
-    title: str = "Developer"
-    tel_work_voice: str = "+1234567890"
-    email_internet: str = "wyatt@example.com"
-    # Allow url_work to be a single URL string, a list of URL strings, or None.
-    # Pydantic will validate these as HttpUrl.
-    url_work: Union[List[HttpUrl], HttpUrl, None] = Field(
-        default="https://wyattowalsh.com",
-        description="Work-related URL(s)."
+    fn: str = "Wyatt Walsh"
+    org: str = "Personal Portfolio Project"
+    title: str = "Developer & Tech Enthusiast"
+    tel_work_voice: str = "2096022545"
+    email_internet: str = "wyattowalsh@gmail.com"
+    url_work: Optional[List[TypedUrl]] = Field(
+        default=[
+            TypedUrl(url=HttpUrl("https://www.w4w.dev/"), label="Website"),
+            TypedUrl(
+                url=HttpUrl("https://www.linkedin.com/in/wyattowalsh"),
+                label="LinkedIn"
+            ),
+            TypedUrl(
+                url=HttpUrl("https://www.github.com/wyattowalsh"),
+                label="GitHub"
+            ),
+        ],
+        description="Work-related URLs with labels."
     )
 
 
 class QRCodeSettings(BaseModel):
-    output_filename: str = "qr_code_vcard.png"
+    output_filename: str = "qr.png"
     output_dir: str = ".github/assets/img"
     default_background_path: Optional[str] = ".github/assets/img/icon.svg"
     default_scale: int = 25
@@ -69,11 +81,105 @@ class WordCloudSettingsModel(BaseModel):
     output_dir: str = ".github/assets/img"
     output_filename: str = "word_cloud.png"
     prompt: Optional[str] = Field(
-        default="My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React"
+        default="My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React",
+        description="Default prompt for word cloud generation."
     )
     stopwords: Optional[List[str]] = Field(
-        default_factory=list, description="List of stopwords for word clouds."
+        default_factory=list,  # type: ignore
+        description="List of stopwords for word clouds."
     )
+
+
+class SkillEntry(BaseModel):
+    """A single technology/skill badge."""
+
+    name: str = Field(..., description="Display name for the badge")
+    slug: Optional[str] = Field(
+        None, description="Simple Icons slug for logo"
+    )
+    logo_path: Optional[str] = Field(
+        None,
+        description="Path to local SVG for custom logo (base64-encoded into badge URL)",
+    )
+    color: str = Field(
+        "555555", description="Hex color without # prefix"
+    )
+    logo_color: Optional[str] = Field(
+        None,
+        description=(
+            "Override logoColor per skill. Only applies when using "
+            "slug (Simple Icons); ignored when logo_path is set."
+        ),
+    )
+    url: Optional[str] = Field(
+        None, description="Click-through link URL"
+    )
+
+    @field_validator("logo_path")
+    @classmethod
+    def validate_logo_path(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if not v:
+            raise ValueError("logo_path must not be empty")
+        if ".." in Path(v).parts:
+            raise ValueError(
+                f"logo_path must not contain '..': {v}"
+            )
+        return v
+
+    @field_validator("url")
+    @classmethod
+    def validate_url_scheme(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if not v.lower().startswith(("http://", "https://")):
+            raise ValueError(
+                f"url must use http:// or https:// scheme: {v}"
+            )
+        return v
+
+
+class SkillSubcategory(BaseModel):
+    """A subcategory containing skills."""
+
+    name: str = Field(..., description="Subcategory display name")
+    skills: List[SkillEntry] = Field(default_factory=list)
+
+
+class SkillCategory(BaseModel):
+    """A top-level category with skills and optional subcategories."""
+
+    name: str = Field(..., description="Category display name")
+    skills: List[SkillEntry] = Field(default_factory=list)
+    subcategories: List[SkillSubcategory] = Field(default_factory=list)
+
+
+class SkillsSettings(BaseModel):
+    """Configuration for skills/tech stack badge generation."""
+
+    style: str = Field(
+        "for-the-badge", description="shields.io badge style"
+    )
+    logo_color: str = Field(
+        "white", description="Default logoColor for all badges"
+    )
+    readme_path: str = Field(
+        "README.md", description="Path to README for injection"
+    )
+    section_title: str = Field(
+        "Tech Stack",
+        description=(
+            "Section heading used only when collapsible=True "
+            "(rendered as <summary> text). For collapsible=False "
+            "(the default), add the heading manually in README.md "
+            "outside the <!-- SKILLS:START/END --> markers."
+        ),
+    )
+    collapsible: bool = Field(
+        False, description="Wrap in <details> tag"
+    )
+    categories: List[SkillCategory] = Field(default_factory=list)
 
 
 class ProjectConfig(BaseSettings):
@@ -152,6 +258,25 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
                 ) from e_create
         # Non-default config file does not exist
         raise FileNotFoundError(f"Config file not found: {path}")
+
+
+DEFAULT_SKILLS_PATH = Path("./skills.yaml")
+
+
+def load_skills(path: Path = DEFAULT_SKILLS_PATH) -> SkillsSettings:
+    """Loads skills config from a YAML file."""
+    if not path.exists():
+        raise FileNotFoundError(f"Skills file not found: {path}")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        if data is None:
+            raise ValueError(f"Skills YAML file is empty: {path}")
+        return SkillsSettings(**data)
+    except yaml.YAMLError as e:
+        raise ValueError(f"Invalid YAML in {path}: {e}") from e
+    except ValidationError as e:
+        raise ValueError(f"Invalid skills data in {path}:\n{e}") from e
 
 
 def save_config(

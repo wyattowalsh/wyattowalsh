@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440.0" height="960.0">
+<style>@font-face{font-family:'Montserrat';font-weight:bold;font-style:normal;src:url("data:application/font-woff;charset=utf-8;base64,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")format("woff");}</style>
+<style>text{font-family:'Montserrat';font-weight:bold;font-style:normal;}</style>
+<rect width="100%" height="100%" style="fill:rgba(255, 255, 255, 0)"></rect>
+<text transform="translate(162.0,806.0)" font-size="326.4" style="fill:#3279b2">others</text>
+<text transform="translate(223.2,264.0)" font-size="210.0" style="fill:#27606a">python</text>
+<text transform="translate(379.2,509.0)" font-size="169.2" style="fill:#2c7673">llm</text>
+<text transform="translate(824.4,426.8)" font-size="159.6" style="fill:#2f66ac">ai</text>
+<text transform="translate(50.4,928.0)" font-size="146.4" style="fill:#2a8f6d">machine-learning</text>
+<text transform="translate(979.1999999999999,526.5999999999999)" font-size="145.2" style="fill:#1a556c">react</text>
+<text transform="translate(20.4,102.2)" font-size="134.4" style="fill:#266e45">hacktoberfest</text>
+<text transform="translate(117.2,831.8) rotate(-90)" font-size="128.4" style="fill:#316f90">javascript</text>
+<text transform="translate(799.1999999999999,600.0)" font-size="120.0" style="fill:#3a81b2">awesome</text>
+<text transform="translate(150.0,380.2)" font-size="91.2" style="fill:#1699a7">data-science</text>
+<text transform="translate(966.0,400.59999999999997)" font-size="62.4" style="fill:#40ac94">deep-learning</text>
+<text transform="translate(991.1999999999999,314.2)" font-size="62.4" style="fill:#229769">awesome-list</text>
+<text transform="translate(1053.6,229.6)" font-size="62.4" style="fill:#157653">chatgpt</text>
+<text transform="translate(1048.8,50.2)" font-size="62.4" style="fill:#287277">typescript</text>
+<text transform="translate(349.2,555.2)" font-size="60.0" style="fill:#1d8f72">markdown</text>
+<text transform="translate(1086.0,122.39999999999999)" font-size="60.0" style="fill:#2f89ac">openai</text>
+<text transform="translate(206.4,612.4)" font-size="46.8" style="fill:#36908e">nlp</text>
+<text transform="translate(580.8,318.0)" font-size="45.6" style="fill:#1a824c">nextjs</text>
+<text transform="translate(22.8,139.39999999999998)" font-size="43.199999999999996" style="fill:#2b8aa6">artificial-intelligence</text>
+<text transform="translate(329.4,539.0) rotate(-90)" font-size="42.0" style="fill:#224f67">nodejs</text>
+<text transform="translate(1240.8,176.2)" font-size="42.0" style="fill:#0c5a67">pytorch</text>
+<text transform="translate(1279.2,736.1999999999999)" font-size="42.0" style="fill:#225e66">github</text>
+<text transform="translate(584.4,412.8)" font-size="40.8" style="fill:#178e50">html</text>
+<text transform="translate(806.4,320.8)" font-size="39.6" style="fill:#29596b">css</text>
+<text transform="translate(880.8,842.4)" font-size="39.6" style="fill:#156a38">database</text>
+<text transform="translate(165.4,714.0) rotate(-90)" font-size="38.4" style="fill:#3869a7">documentation</text>
+<text transform="translate(733.1999999999999,143.2)" font-size="38.4" style="fill:#2a4b76">ethereum</text>
+<text transform="translate(660.0,455.4)" font-size="38.4" style="fill:#1d8b4a">open-source</text>
+<text transform="translate(1122.0,268.2)" font-size="38.4" style="fill:#2e7178">macos</text>
+<text transform="translate(968.4,343.0)" font-size="30.0" style="fill:#28998d">natural-language-processing</text>
+<text transform="translate(849.6,953.8)" font-size="30.0" style="fill:#119075">chrome-extension</text>
+<text transform="translate(1280.3999999999999,665.8)" font-size="30.0" style="fill:#327f55">api</text>
+<text transform="translate(788.4,480.2)" font-size="30.0" style="fill:#1bae79">chatbot</text>
+<text transform="translate(762.0,506.59999999999997)" font-size="30.0" style="fill:#0e793e">postgresql</text>
+<text transform="translate(1167.6,428.59999999999997)" font-size="30.0" style="fill:#0f836c">sql</text>
+<text transform="translate(82.8,955.0)" font-size="30.0" style="fill:#266485">stable-diffusion</text>
+<text transform="translate(388.8,583.6)" font-size="28.799999999999997" style="fill:#1a5796">docker</text>
+<text transform="translate(612.0,815.0)" font-size="28.799999999999997" style="fill:#1db1ae">cli</text>
+<text transform="translate(396.0,953.0)" font-size="28.799999999999997" style="fill:#2fa6ad">data-visualization</text>
+<text transform="translate(1228.8,829.4)" font-size="28.799999999999997" style="fill:#277a5a">data-analysis</text>
+<text transform="translate(204.0,842.6)" font-size="28.799999999999997" style="fill:#255484">automation</text>
+<text transform="translate(636.0,611.0)" font-size="28.799999999999997" style="fill:#288267">analytics</text>
+<text transform="translate(1252.8,623.1999999999999)" font-size="28.799999999999997" style="fill:#175c9b">python3</text>
+<text transform="translate(1142.3999999999999,75.8)" font-size="28.799999999999997" style="fill:#328c59">reactjs</text>
+<text transform="translate(206.4,486.4)" font-size="27.599999999999998" style="fill:#166f7c">music</text>
+<text transform="translate(572.4,840.6)" font-size="27.599999999999998" style="fill:#2678a0">tensorflow</text>
+<text transform="translate(203.4,636.4) rotate(-90)" font-size="27.599999999999998" style="fill:#21a5a6">framework</text>
+<text transform="translate(801.6,295.59999999999997)" font-size="27.599999999999998" style="fill:#15706a">tailwindcss</text>
+<text transform="translate(32.0,670.2) rotate(-90)" font-size="26.4" style="fill:#147a6c">reinforcement-learning</text>
+<text transform="translate(300.0,327.2)" font-size="26.4" style="fill:#164d7a">blockchain</text>
+<text transform="translate(973.1999999999999,428.2)" font-size="26.4" style="fill:#1a714c">data</text>
+<text transform="translate(1302.0,693.1999999999999)" font-size="26.4" style="fill:#1f7047">trading</text>
+<text transform="translate(1005.5999999999999,159.2)" font-size="26.4" style="fill:#1b7e5f">computer-vision</text>
+<text transform="translate(963.5999999999999,618.1999999999999)" font-size="26.4" style="fill:#0f6d46">cryptocurrency</text>
+<text transform="translate(1327.2,801.1999999999999)" font-size="26.4" style="fill:#238d88">finance</text>
+<text transform="translate(462.0,289.0)" font-size="26.4" style="fill:#176767">self-hosted</text>
+<text transform="translate(213.4,539.6)" font-size="26.4" style="fill:#2f945a">vue</text>
+<text transform="translate(180.0,434.2)" font-size="26.4" style="fill:#1d9f85">chrome</text>
+<text transform="translate(1336.8,662.0)" font-size="26.4" style="fill:#329570">ios</text>
+<text transform="translate(58.199999999999996,20.2)" font-size="24.0" style="fill:#288a95">jupyter-notebook</text>
+<text transform="translate(1352.3999999999999,128.39999999999998)" font-size="24.0" style="fill:#20707a">mysql</text>
+<text transform="translate(332.2,602.4)" font-size="24.0" style="fill:#25747e">web</text>
+<text transform="translate(273.59999999999997,576.4)" font-size="22.8" style="fill:#147d4f">golang</text>
+<text transform="translate(1046.3999999999999,267.79999999999995)" font-size="22.8" style="fill:#3a94aa">linux</text>
+<text transform="translate(506.4,619.1999999999999)" font-size="22.8" style="fill:#1eaa89">go</text>
+<text transform="translate(120.0,234.4)" font-size="22.8" style="fill:#275f86">graphql</text>
+<text transform="translate(753.6,529.6)" font-size="22.8" style="fill:#107c4c">neural-network</text>
+<text transform="translate(1287.6,260.6)" font-size="22.8" style="fill:#3974a0">bitcoin</text>
+<text transform="translate(8.4,287.0)" font-size="22.8" style="fill:#27896a">git</text>
+<text transform="translate(145.2,201.79999999999998)" font-size="22.8" style="fill:#257a96">testing</text>
+<text transform="translate(1215.6,949.5999999999999)" font-size="22.8" style="fill:#1f9099">electron</text>
+<text transform="translate(703.1999999999999,559.6)" font-size="22.8" style="fill:#2a8280">php</text>
+<text transform="translate(528.0,638.4)" font-size="22.8" style="fill:#3ca7a7">r</text>
+<text transform="translate(936.0,129.8)" font-size="22.8" style="fill:#33608c">statistics</text>
+<text transform="translate(751.4,864.1999999999999) rotate(-90)" font-size="22.8" style="fill:#38a1a0">algorithmic-trading</text>
+<text transform="translate(638.4,583.4)" font-size="22.8" style="fill:#11498a">scikit-learn</text>
+<text transform="translate(1323.6,211.4)" font-size="22.8" style="fill:#287b4d">swift</text>
+<text transform="translate(1319.8,763.4)" font-size="22.8" style="fill:#194986">windows</text>
+<text transform="translate(1050.0,80.39999999999999)" font-size="22.8" style="fill:#178246">aws</text>
+<text transform="translate(408.0,24.2)" font-size="22.8" style="fill:#389a95">frontend</text>
+<text transform="translate(1367.3999999999999,75.8)" font-size="22.8" style="fill:#14716c">java</text>
+<text transform="translate(1059.6,747.0)" font-size="22.8" style="fill:#327890">rust</text>
+<text transform="translate(971.0,789.6) rotate(-90)" font-size="22.8" style="fill:#198b84">chatgpt-api</text>
+<text transform="translate(616.1999999999999,752.6)" font-size="22.8" style="fill:#0d6a47">json</text>
+<text transform="translate(753.6,947.1999999999999)" font-size="22.8" style="fill:#2e83a6">ruby</text>
+<text transform="translate(244.79999999999998,722.8)" font-size="22.8" style="fill:#24a6ad">shell</text>
+<text transform="translate(1354.2,102.2)" font-size="22.8" style="fill:#1b8850">jekyll</text>
+<text transform="translate(133.2,397.59999999999997)" font-size="22.8" style="fill:#1fae6c">kubernetes</text>
+<text transform="translate(663.6,492.2)" font-size="22.8" style="fill:#2f9a71">sqlite</text>
+<text transform="translate(190.79999999999998,259.6)" font-size="21.599999999999998" style="fill:#1e9ead">bot</text>
+<text transform="translate(728.4,421.4)" font-size="21.599999999999998" style="fill:#115886">firefox</text>
+<text transform="translate(237.6,559.6)" font-size="21.599999999999998" style="fill:#1fa05d">latex</text>
+<text transform="translate(1183.2,618.4)" font-size="21.599999999999998" style="fill:#2a7552">node</text>
+<text transform="translate(495.59999999999997,411.8)" font-size="21.599999999999998" style="fill:#204f73">twitter</text>
+<text transform="translate(19.4,258.2) rotate(-90)" font-size="21.599999999999998" style="fill:#11a26f">visual-studio-code</text>
+<text transform="translate(795.6,618.1999999999999)" font-size="21.599999999999998" style="fill:#3b9369">monitoring</text>
+<text transform="translate(588.0,19.4)" font-size="21.599999999999998" style="fill:#25887d">react-native</text>
+<text transform="translate(1068.0,437.0)" font-size="21.599999999999998" style="fill:#1b9a92">security</text>
+<text transform="translate(1222.8,427.59999999999997)" font-size="21.599999999999998" style="fill:#2d63a5">serverless</text>
+<text transform="translate(1242.0,145.6)" font-size="20.4" style="fill:#204d86">android</text>
+<text transform="translate(1432.0,610.8) rotate(-90)" font-size="20.4" style="fill:#145769">image-processing</text>
+<text transform="translate(1134.0,179.4)" font-size="20.4" style="fill:#1f925d">low-code</text>
+<text transform="translate(824.4,22.799999999999997)" font-size="14.399999999999999" style="fill:#118479">quantitative-finance</text>
+<text transform="translate(703.1999999999999,286.8)" font-size="14.399999999999999" style="fill:#3596a9">rest-api</text>
+<text transform="translate(182.4,821.0)" font-size="14.399999999999999" style="fill:#27a065">svelte</text>
+<text transform="translate(772.8,369.8)" font-size="14.399999999999999" style="fill:#16829c">devops</text>
+<text transform="translate(295.2,288.8)" font-size="14.399999999999999" style="fill:#2d6fa2">mac</text>
+<text transform="translate(1344.0,776.6)" font-size="14.399999999999999" style="fill:#166668">no-code</text>
+<text transform="translate(195.6,299.59999999999997)" font-size="14.399999999999999" style="fill:#249591">npm</text>
+<text transform="translate(1371.6,231.6)" font-size="14.399999999999999" style="fill:#125d88">privacy</text>
+<text transform="translate(116.39999999999999,310.8)" font-size="14.399999999999999" style="fill:#25676e">library</text>
+<text transform="translate(1212.0,441.8)" font-size="14.399999999999999" style="fill:#3a649a">google</text>
+<text transform="translate(25.2,844.4)" font-size="14.399999999999999" style="fill:#1965a4">sass</text>
+<text transform="translate(657.6,127.19999999999999)" font-size="14.399999999999999" style="fill:#2e806f">terminal</text>
+<text transform="translate(316.8,23.0)" font-size="14.399999999999999" style="fill:#279b7b">angular</text>
+<text transform="translate(921.5999999999999,637.4)" font-size="14.399999999999999" style="fill:#126ba7">code</text>
+<text transform="translate(687.6,948.0)" font-size="14.399999999999999" style="fill:#217663">django</text>
+<text transform="translate(1054.8,135.8)" font-size="14.399999999999999" style="fill:#1fa69c">html5</text>
+<text transform="translate(150.0,165.2)" font-size="14.399999999999999" style="fill:#149f7b">azure</text>
+<text transform="translate(334.8,801.8)" font-size="14.399999999999999" style="fill:#36618d">backend</text>
+<text transform="translate(163.2,835.4)" font-size="14.399999999999999" style="fill:#2fa2a5">bash</text>
+<text transform="translate(1263.6,841.4)" font-size="14.399999999999999" style="fill:#378f5a">bootstrap</text>
+<text transform="translate(782.0,571.1999999999999)" font-size="14.399999999999999" style="fill:#268e87">js</text>
+<text transform="translate(1234.8,361.4)" font-size="14.399999999999999" style="fill:#178a7b">mongodb</text>
+<text transform="translate(704.4,512.0)" font-size="14.399999999999999" style="fill:#1a6770">numpy</text>
+<text transform="translate(345.59999999999997,622.8)" font-size="14.399999999999999" style="fill:#2d8e72">solidity</text>
+</svg>

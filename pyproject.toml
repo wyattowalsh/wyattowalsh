@@ -1,5 +1,5 @@
 [project]
-name = "wyattowalsh"
+name = "readme"
 version = "0.1.0"
 description = "github profile repo"
 readme = "README.md"
@@ -38,6 +38,7 @@ lint = [
     "ruff>=0.11.11",
 ]
 qr = [
+    "cairosvg>=2.7.0",
     "qrcode-artistic>=3.0.2",
     "segno>=1.6.6",
 ]
@@ -54,6 +55,7 @@ test = [
     "pytest-sugar>=1.0.0",
     "pytest-timeout>=2.4.0",
     "pytest-xdist>=3.7.0",
+    "readme[qr]",
 ]
 word-clouds = [
     "beautifulsoup4>=4.13.4",
@@ -105,3 +107,8 @@ packages = ["scripts"]
 
 [tool.uv]
 package = true
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+disallow_untyped_defs = true

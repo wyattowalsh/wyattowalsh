@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.13"
 
 [[package]]
@@ -161,6 +161,34 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e3/ee/adda3d46d4a9120772fae6de454c8495603c37c4c3b9c60f25b1ab6401fe/black-25.1.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:030b9759066a4ee5e5aca28c3c77f9c64789cdd4de8ac1df642c40b708be6171", size = 1782926, upload-time = "2025-01-29T04:18:58.564Z" },
     { url = "https://files.pythonhosted.org/packages/cc/64/94eb5f45dcb997d2082f097a3944cfc7fe87e071907f677e80788a2d7b7a/black-25.1.0-cp313-cp313-win_amd64.whl", hash = "sha256:a22f402b410566e2d1c950708c77ebf5ebd5d0d88a6a2e87c86d9fb48afa0d18", size = 1442613, upload-time = "2025-01-29T04:19:27.63Z" },
     { url = "https://files.pythonhosted.org/packages/09/71/54e999902aed72baf26bca0d50781b01838251a462612966e9fc4891eadd/black-25.1.0-py3-none-any.whl", hash = "sha256:95e8176dae143ba9097f351d174fdaf0ccd29efb414b362ae3fd72bf0f710717", size = 207646, upload-time = "2025-01-29T04:15:38.082Z" },
+]
+
+[[package]]
+name = "cairocffi"
+version = "1.7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cffi" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/70/c5/1a4dc131459e68a173cbdab5fad6b524f53f9c1ef7861b7698e998b837cc/cairocffi-1.7.1.tar.gz", hash = "sha256:2e48ee864884ec4a3a34bfa8c9ab9999f688286eb714a15a43ec9d068c36557b", size = 88096, upload-time = "2024-06-18T10:56:06.741Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/d8/ba13451aa6b745c49536e87b6bf8f629b950e84bd0e8308f7dc6883b67e2/cairocffi-1.7.1-py3-none-any.whl", hash = "sha256:9803a0e11f6c962f3b0ae2ec8ba6ae45e957a146a004697a1ac1bbf16b073b3f", size = 75611, upload-time = "2024-06-18T10:55:59.489Z" },
+]
+
+[[package]]
+name = "cairosvg"
+version = "2.8.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cairocffi" },
+    { name = "cssselect2" },
+    { name = "defusedxml" },
+    { name = "pillow" },
+    { name = "tinycss2" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ab/b9/5106168bd43d7cd8b7cc2a2ee465b385f14b63f4c092bb89eee2d48c8e67/cairosvg-2.8.2.tar.gz", hash = "sha256:07cbf4e86317b27a92318a4cac2a4bb37a5e9c1b8a27355d06874b22f85bef9f", size = 8398590, upload-time = "2025-05-15T06:56:32.653Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/48/816bd4aaae93dbf9e408c58598bc32f4a8c65f4b86ab560864cb3ee60adb/cairosvg-2.8.2-py3-none-any.whl", hash = "sha256:eab46dad4674f33267a671dce39b64be245911c901c70d65d2b7b0821e852bf5", size = 45773, upload-time = "2025-05-15T06:56:28.552Z" },
 ]
 
 [[package]]
@@ -335,12 +363,34 @@ wheels = [
 ]
 
 [[package]]
+name = "cssselect2"
+version = "0.8.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tinycss2" },
+    { name = "webencodings" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9f/86/fd7f58fc498b3166f3a7e8e0cddb6e620fe1da35b02248b1bd59e95dbaaa/cssselect2-0.8.0.tar.gz", hash = "sha256:7674ffb954a3b46162392aee2a3a0aedb2e14ecf99fcc28644900f4e6e3e9d3a", size = 35716, upload-time = "2025-03-05T14:46:07.988Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/e7/aa315e6a749d9b96c2504a1ba0ba031ba2d0517e972ce22682e3fccecb09/cssselect2-0.8.0-py3-none-any.whl", hash = "sha256:46fc70ebc41ced7a32cd42d58b1884d72ade23d21e5a4eaaf022401c13f0e76e", size = 15454, upload-time = "2025-03-05T14:46:06.463Z" },
+]
+
+[[package]]
 name = "cycler"
 version = "0.12.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a9/95/a3dbbb5028f35eafb79008e7522a75244477d2838f38cbb722248dabc2a8/cycler-0.12.1.tar.gz", hash = "sha256:88bb128f02ba341da8ef447245a9e138fae777f6a23943da4540077d3601eb1c", size = 7615, upload-time = "2023-10-07T05:32:18.335Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl", hash = "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30", size = 8321, upload-time = "2023-10-07T05:32:16.783Z" },
+]
+
+[[package]]
+name = "defusedxml"
+version = "0.7.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/d5/c66da9b79e5bdb124974bfe172b4daf3c984ebd9c2a06e2b8a4dc7331c72/defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69", size = 75520, upload-time = "2021-03-08T10:59:26.269Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61", size = 25604, upload-time = "2021-03-08T10:59:24.45Z" },
 ]
 
 [[package]]
@@ -1262,6 +1312,118 @@ wheels = [
 ]
 
 [[package]]
+name = "readme"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "email-validator" },
+    { name = "loguru" },
+    { name = "matplotlib" },
+    { name = "noise" },
+    { name = "numpy" },
+    { name = "pillow" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pyyaml" },
+    { name = "rich" },
+    { name = "svgwrite" },
+    { name = "typer" },
+]
+
+[package.optional-dependencies]
+banner = [
+    { name = "svgwrite" },
+]
+format = [
+    { name = "autoflake" },
+    { name = "autopep8" },
+    { name = "black" },
+    { name = "isort" },
+]
+lint = [
+    { name = "mypy" },
+    { name = "pylint" },
+    { name = "ruff" },
+]
+qr = [
+    { name = "cairosvg" },
+    { name = "qrcode-artistic" },
+    { name = "segno" },
+]
+script-tools = [
+    { name = "starred" },
+]
+test = [
+    { name = "cairosvg" },
+    { name = "hypothesis" },
+    { name = "pytest" },
+    { name = "pytest-benchmark" },
+    { name = "pytest-cov" },
+    { name = "pytest-emoji" },
+    { name = "pytest-html" },
+    { name = "pytest-icdiff" },
+    { name = "pytest-instafail" },
+    { name = "pytest-mock" },
+    { name = "pytest-sugar" },
+    { name = "pytest-timeout" },
+    { name = "pytest-xdist" },
+    { name = "qrcode-artistic" },
+    { name = "segno" },
+]
+word-clouds = [
+    { name = "beautifulsoup4" },
+    { name = "fonttools" },
+    { name = "markdown" },
+    { name = "wordcloud" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "autoflake", marker = "extra == 'format'", specifier = ">=2.3.1" },
+    { name = "autopep8", marker = "extra == 'format'", specifier = ">=2.3.2" },
+    { name = "beautifulsoup4", marker = "extra == 'word-clouds'", specifier = ">=4.13.4" },
+    { name = "black", marker = "extra == 'format'", specifier = ">=25.1.0" },
+    { name = "cairosvg", marker = "extra == 'qr'", specifier = ">=2.7.0" },
+    { name = "email-validator", specifier = ">=2.2.0" },
+    { name = "fonttools", marker = "extra == 'word-clouds'", specifier = ">=4.58.1" },
+    { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.131.30" },
+    { name = "isort", marker = "extra == 'format'", specifier = ">=6.0.1" },
+    { name = "loguru", specifier = ">=0.7.3" },
+    { name = "markdown", marker = "extra == 'word-clouds'", specifier = ">=3.8" },
+    { name = "matplotlib", specifier = ">=3.10.3" },
+    { name = "mypy", marker = "extra == 'lint'", specifier = ">=1.15.0" },
+    { name = "noise", specifier = ">=1.2.2" },
+    { name = "numpy", specifier = ">=2.2.6" },
+    { name = "pillow", specifier = ">=11.2.1" },
+    { name = "pydantic", specifier = ">=2.11.5" },
+    { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pylint", marker = "extra == 'lint'", specifier = ">=3.3.7" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3.5" },
+    { name = "pytest-benchmark", marker = "extra == 'test'", specifier = ">=5.1.0" },
+    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=6.1.1" },
+    { name = "pytest-emoji", marker = "extra == 'test'", specifier = ">=0.2.0" },
+    { name = "pytest-html", marker = "extra == 'test'", specifier = ">=4.1.1" },
+    { name = "pytest-icdiff", marker = "extra == 'test'", specifier = ">=0.9" },
+    { name = "pytest-instafail", marker = "extra == 'test'", specifier = ">=0.5.0" },
+    { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.14.1" },
+    { name = "pytest-sugar", marker = "extra == 'test'", specifier = ">=1.0.0" },
+    { name = "pytest-timeout", marker = "extra == 'test'", specifier = ">=2.4.0" },
+    { name = "pytest-xdist", marker = "extra == 'test'", specifier = ">=3.7.0" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "qrcode-artistic", marker = "extra == 'qr'", specifier = ">=3.0.2" },
+    { name = "readme", extras = ["qr"], marker = "extra == 'test'" },
+    { name = "rich", specifier = ">=14.0.0" },
+    { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.11.11" },
+    { name = "segno", marker = "extra == 'qr'", specifier = ">=1.6.6" },
+    { name = "starred", marker = "extra == 'script-tools'", specifier = ">=1.5.1" },
+    { name = "svgwrite", specifier = ">=1.4.3" },
+    { name = "svgwrite", marker = "extra == 'banner'", specifier = ">=1.4.3" },
+    { name = "typer", specifier = ">=0.16.0" },
+    { name = "wordcloud", marker = "extra == 'word-clouds'", specifier = ">=1.9.4" },
+]
+provides-extras = ["banner", "format", "lint", "qr", "test", "word-clouds", "script-tools"]
+
+[[package]]
 name = "requests"
 version = "2.32.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1403,6 +1565,18 @@ wheels = [
 ]
 
 [[package]]
+name = "tinycss2"
+version = "1.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "webencodings" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7a/fd/7a5ee21fd08ff70d3d33a5781c255cbe779659bd03278feb98b19ee550f4/tinycss2-1.4.0.tar.gz", hash = "sha256:10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7", size = 87085, upload-time = "2024-10-24T14:58:29.895Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e6/34/ebdc18bae6aa14fbee1a08b63c015c72b64868ff7dae68808ab500c492e2/tinycss2-1.4.0-py3-none-any.whl", hash = "sha256:3a49cf47b7675da0b15d0c6e1df8df4ebd96e9394bb905a5775adb0d884c5289", size = 26610, upload-time = "2024-10-24T14:58:28.029Z" },
+]
+
+[[package]]
 name = "tomlkit"
 version = "0.13.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1466,6 +1640,15 @@ wheels = [
 ]
 
 [[package]]
+name = "webencodings"
+version = "0.5.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923", size = 9721, upload-time = "2017-04-05T20:21:34.189Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/24/2a3e3df732393fed8b3ebf2ec078f05546de641fe1b667ee316ec1dcf3b7/webencodings-0.5.1-py2.py3-none-any.whl", hash = "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78", size = 11774, upload-time = "2017-04-05T20:21:32.581Z" },
+]
+
+[[package]]
 name = "win32-setctime"
 version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1494,112 +1677,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1d/d8/bdaf902471c3f0cc3538c8183cdd0ac61624c9552e5414d8d78ddedb6ce8/wordcloud-1.9.4-cp313-cp313-win32.whl", hash = "sha256:22357990a01d87579dbd38a06c2a5c7b601179c4e17517b1b8f73d25faa6a5ed", size = 290877, upload-time = "2024-11-10T14:35:44.945Z" },
     { url = "https://files.pythonhosted.org/packages/84/47/d482f7d2decc6e59e69e105b12c53d6d2967f0d703e664484c5f2f87fca8/wordcloud-1.9.4-cp313-cp313-win_amd64.whl", hash = "sha256:8c9a5af2fbcf029a19e827adbee58e86efe7536dca7a42380a8601113a86069b", size = 300987, upload-time = "2024-11-10T14:35:46.616Z" },
 ]
-
-[[package]]
-name = "wyattowalsh"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "email-validator" },
-    { name = "loguru" },
-    { name = "matplotlib" },
-    { name = "noise" },
-    { name = "numpy" },
-    { name = "pillow" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pyyaml" },
-    { name = "rich" },
-    { name = "svgwrite" },
-    { name = "typer" },
-]
-
-[package.optional-dependencies]
-banner = [
-    { name = "svgwrite" },
-]
-format = [
-    { name = "autoflake" },
-    { name = "autopep8" },
-    { name = "black" },
-    { name = "isort" },
-]
-lint = [
-    { name = "mypy" },
-    { name = "pylint" },
-    { name = "ruff" },
-]
-qr = [
-    { name = "qrcode-artistic" },
-    { name = "segno" },
-]
-script-tools = [
-    { name = "starred" },
-]
-test = [
-    { name = "hypothesis" },
-    { name = "pytest" },
-    { name = "pytest-benchmark" },
-    { name = "pytest-cov" },
-    { name = "pytest-emoji" },
-    { name = "pytest-html" },
-    { name = "pytest-icdiff" },
-    { name = "pytest-instafail" },
-    { name = "pytest-mock" },
-    { name = "pytest-sugar" },
-    { name = "pytest-timeout" },
-    { name = "pytest-xdist" },
-]
-word-clouds = [
-    { name = "beautifulsoup4" },
-    { name = "fonttools" },
-    { name = "markdown" },
-    { name = "wordcloud" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "autoflake", marker = "extra == 'format'", specifier = ">=2.3.1" },
-    { name = "autopep8", marker = "extra == 'format'", specifier = ">=2.3.2" },
-    { name = "beautifulsoup4", marker = "extra == 'word-clouds'", specifier = ">=4.13.4" },
-    { name = "black", marker = "extra == 'format'", specifier = ">=25.1.0" },
-    { name = "email-validator", specifier = ">=2.2.0" },
-    { name = "fonttools", marker = "extra == 'word-clouds'", specifier = ">=4.58.1" },
-    { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.131.30" },
-    { name = "isort", marker = "extra == 'format'", specifier = ">=6.0.1" },
-    { name = "loguru", specifier = ">=0.7.3" },
-    { name = "markdown", marker = "extra == 'word-clouds'", specifier = ">=3.8" },
-    { name = "matplotlib", specifier = ">=3.10.3" },
-    { name = "mypy", marker = "extra == 'lint'", specifier = ">=1.15.0" },
-    { name = "noise", specifier = ">=1.2.2" },
-    { name = "numpy", specifier = ">=2.2.6" },
-    { name = "pillow", specifier = ">=11.2.1" },
-    { name = "pydantic", specifier = ">=2.11.5" },
-    { name = "pydantic-settings", specifier = ">=2.9.1" },
-    { name = "pylint", marker = "extra == 'lint'", specifier = ">=3.3.7" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3.5" },
-    { name = "pytest-benchmark", marker = "extra == 'test'", specifier = ">=5.1.0" },
-    { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=6.1.1" },
-    { name = "pytest-emoji", marker = "extra == 'test'", specifier = ">=0.2.0" },
-    { name = "pytest-html", marker = "extra == 'test'", specifier = ">=4.1.1" },
-    { name = "pytest-icdiff", marker = "extra == 'test'", specifier = ">=0.9" },
-    { name = "pytest-instafail", marker = "extra == 'test'", specifier = ">=0.5.0" },
-    { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.14.1" },
-    { name = "pytest-sugar", marker = "extra == 'test'", specifier = ">=1.0.0" },
-    { name = "pytest-timeout", marker = "extra == 'test'", specifier = ">=2.4.0" },
-    { name = "pytest-xdist", marker = "extra == 'test'", specifier = ">=3.7.0" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "qrcode-artistic", marker = "extra == 'qr'", specifier = ">=3.0.2" },
-    { name = "rich", specifier = ">=14.0.0" },
-    { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.11.11" },
-    { name = "segno", marker = "extra == 'qr'", specifier = ">=1.6.6" },
-    { name = "starred", marker = "extra == 'script-tools'", specifier = ">=1.5.1" },
-    { name = "svgwrite", specifier = ">=1.4.3" },
-    { name = "svgwrite", marker = "extra == 'banner'", specifier = ">=1.4.3" },
-    { name = "typer", specifier = ">=0.16.0" },
-    { name = "wordcloud", marker = "extra == 'word-clouds'", specifier = ">=1.9.4" },
-]
-provides-extras = ["banner", "format", "lint", "qr", "test", "word-clouds", "script-tools"]
 
 [[package]]
 name = "yarl"

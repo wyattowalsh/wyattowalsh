@@ -13,8 +13,8 @@ CLI_SCRIPT = scripts/cli.py
 OUTPUT_DIR = .github/assets/img
 BANNER_OUTPUT = $(OUTPUT_DIR)/banner.svg
 QR_OUTPUT = $(OUTPUT_DIR)/qr.png
-WORDCLOUD_TOPIC_OUTPUT = $(OUTPUT_DIR)/wordcloud_by_topic.png
-WORDCLOUD_LANG_OUTPUT = $(OUTPUT_DIR)/wordcloud_by_language.png
+WORDCLOUD_TOPIC_OUTPUT = $(OUTPUT_DIR)/wordcloud_by_topic.svg
+WORDCLOUD_LANG_OUTPUT = $(OUTPUT_DIR)/wordcloud_by_language.svg
 PYPROJECT = pyproject.toml
 LOCKFILE = uv.lock
 VENV_DIR = .venv
@@ -54,6 +54,8 @@ lint: install ## Lint code using ruff, pylint, and mypy
 
 .PHONY: test
 test: install ## Run tests using pytest
+	@echo "Ensuring test dependencies are installed..."
+	$(UV) pip install -e ".[test]" --quiet # Ensure test extras are explicitly available
 	@echo "Running tests..."
 	$(UV) run --quiet -- python -m pytest
 
@@ -63,39 +65,54 @@ test: install ## Run tests using pytest
 .PHONY: generate-banner
 generate-banner: install ## Generate the SVG banner
 	@echo "Generating banner..."
-	$(UV) run --quiet -- $(PYTHON) $(CLI_SCRIPT) generate banner
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate banner
 
 .PHONY: generate-qr
 generate-qr: install ## Generate the QR code PNG
+	@echo "Ensuring QR dependencies are installed..."
+	$(UV) pip install -e ".[qr]" --quiet
 	@echo "Generating QR code..."
-	$(UV) run --quiet -- $(PYTHON) $(CLI_SCRIPT) generate qr_code
+	export DYLD_LIBRARY_PATH=$(shell brew --prefix cairo)/lib:$$DYLD_LIBRARY_PATH && $(UV) run --quiet -- $(PYTHON) -m scripts.cli generate qr_code
 
 .PHONY: generate-word-clouds
 generate-word-clouds:
-	@echo "Syncing environment with uv.lock..."
+	@echo "Syncing environment with uv.lock (all groups)..."
 	$(UV) sync --all-groups --quiet
+	@echo "Ensuring local package is installed in editable mode (with word-clouds extras)..."
+	$(UV) pip install -e ".[word-clouds]" --quiet
 	@echo "Generating profile word clouds (topics and languages)..."
-	PYTHONPATH=. $(UV) run --quiet -- python3.13 -m scripts.cli generate word_cloud \
-				--techs-path .github/assets/topics.md \
-				--output-path .github/assets/img/wordcloud_by_topic.png \
-				--prompt "Repository Topics"
-	PYTHONPATH=. $(UV) run --quiet -- python3.13 -m scripts.cli generate word_cloud \
-				--techs-path .github/assets/languages.md \
-				--output-path .github/assets/img/wordcloud_by_language.png \
-				--prompt "Programming Languages"
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate word_cloud --from-topics-md
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate word_cloud --from-languages-md
 	@echo "Profile word clouds generated."
+
+.PHONY: generate-generative
+generate-generative: install ## Generate event-driven generative artwork
+	@echo "Generating event-driven artwork..."
+	$(UV) run --quiet -- $(PYTHON) -m scripts.fetch_metrics --owner wyattowalsh --repo wyattowalsh --output /tmp/metrics.json
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate generative --output-path /tmp/metrics.json
+	@echo "Generative artwork generated."
+
+.PHONY: generate-animated
+generate-animated: install ## Generate animated historical artwork SVGs
+	@echo "Fetching historical data..."
+	$(UV) run --quiet -- $(PYTHON) -m scripts.fetch_history --owner wyattowalsh --repo wyattowalsh --output /tmp/history.json
+	@echo "Generating animated artwork..."
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate animated --history-path /tmp/history.json
+	@echo "Animated artwork generated."
+
+.PHONY: generate-skills
+generate-skills: install ## Generate technology/skills badges
+	@echo "Generating skills badges..."
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate skills
 
 .PHONY: generate-tech-word-cloud
 generate-tech-word-cloud: install ## Generate the generic technology word cloud (from techs.md)
 	@echo "Generating technology word cloud (from techs.md)..."
-	# This uses the default behavior of the CLI for word clouds if --profile-asset is not specified,
-	# which typically sources from techs.md and config.json.
-	# Output path for this can be controlled via config.json or --output-path CLI option.
-	$(UV) run --quiet -- $(PYTHON) $(CLI_SCRIPT) generate word_cloud --output-path logs/wordcloud_examples/techs_cli_generated.png
+	$(UV) run --quiet -- $(PYTHON) -m scripts.cli generate word_cloud --output-path logs/wordcloud_examples/techs_cli_generated.png
 	@echo "Technology word cloud generated in logs/wordcloud_examples/techs_cli_generated.png"
 
 .PHONY: generate
-generate: generate-banner generate-qr generate-word-clouds ## Generate all profile assets (banner, QR, profile word clouds)
+generate: generate-banner generate-qr generate-word-clouds generate-skills generate-generative generate-animated ## Generate all profile assets
 
 # ------------------------------------------------------------------------------
 # Maintenance Targets
@@ -136,4 +153,4 @@ help: ## Show this help message
 docs:
 	docsify serve ./docs
 # Declare targets that are not files
-.PHONY: all install format lint test generate-banner generate-qr generate-word-clouds generate-tech-word-cloud generate clean clean-venv venv update-deps help docs
+.PHONY: all install format lint test generate-banner generate-qr generate-word-clouds generate-skills generate-generative generate-animated generate-tech-word-cloud generate clean clean-venv venv update-deps help docs

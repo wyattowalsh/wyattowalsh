@@ -19,10 +19,10 @@ jobs:
       starred_lists_changed: ${{ steps.commit_starred_lists.outputs.changes_detected }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
       - name: Set up Python 3.13 and uv
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.13'
           cache: 'uv'
@@ -40,7 +40,7 @@ jobs:
           REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
           USERNAME: ${{ github.repository_owner }}
         run: |
-          starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} \
+          starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
             --message 'chore(data): update awesome-stars languages.md' \
             --filename ./.github/assets/languages.md
 
@@ -50,14 +50,14 @@ jobs:
           REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
           USERNAME: ${{ github.repository_owner }}
         run: |
-          starred --username ${USERNAME} --repository ${REPOSITORY} --sort --token ${GITHUB_TOKEN} \
+          starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
             --message 'chore(data): update awesome-stars topics.md' \
             --topic --topic_limit 500 \
             --filename ./.github/assets/topics.md
       
       - name: Commit updated starred lists
         id: commit_starred_lists
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(data): update awesome-stars lists (languages.md, topics.md)"
           file_pattern: ".github/assets/languages.md .github/assets/topics.md"
@@ -73,12 +73,12 @@ jobs:
       contents: write # To commit generated image assets
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with: # Ensure we fetch the commit made by update-starred-lists if it ran
           ref: ${{ github.head_ref || github.ref }}
 
       - name: Set up Python 3.13 and uv
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.13'
           cache: 'uv'
@@ -87,34 +87,33 @@ jobs:
         run: uv pip install .[qr,word-clouds,banner] # Install all needed groups
 
       - name: Generate QR Code
-        run: python scripts/cli.py generate qr_code --config-path config.yaml
-        # CLI will use output paths from config.yaml by default
+        run: uv run python -m scripts.cli generate qr_code --config-path config.yaml
 
       - name: Generate Word Cloud by Topic
         run: |
-          python scripts/cli.py generate word_cloud \
+          uv run python -m scripts.cli generate word_cloud \
             --config-path config.yaml \
             --techs-path .github/assets/topics.md \
-            --output-path .github/assets/img/wordcloud_by_topic.png \
-            # Prompt can be further customized in config.yaml or via --prompt if needed
-            # Forcing output path here, can also be set in config.yaml
+            --output-path .github/assets/img/wordcloud_by_topic.svg
 
       - name: Generate Word Cloud by Language
         run: |
-          python scripts/cli.py generate word_cloud \
+          uv run python -m scripts.cli generate word_cloud \
             --config-path config.yaml \
             --techs-path .github/assets/languages.md \
-            --output-path .github/assets/img/wordcloud_by_language.png
+            --output-path .github/assets/img/wordcloud_by_language.svg
 
       - name: Generate Banner
-        run: python scripts/cli.py generate banner --config-path config.yaml
-        # CLI will use output path from config.yaml by default
-        
+        run: uv run python -m scripts.cli generate banner --config-path config.yaml
+
+      - name: Generate Skills Badges
+        run: uv run python -m scripts.cli generate skills --skills-path skills.yaml
+
       - name: Commit generated assets
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(assets): update generated profile assets"
-          file_pattern: ".github/assets/img/qr*.png .github/assets/img/wordcloud_*.png .github/assets/img/banner.svg"
+          file_pattern: ".github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg .github/assets/img/banner*.svg"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
@@ -126,16 +125,15 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: WakaTime Readme Stats
-        uses: anmol098/waka-readme-stats@v4
+        uses: anmol098/waka-readme-stats@2c04c57e0ee35e9e40aef7fbc7d866d063dcf7cd # v4
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }} # GITHUB_TOKEN is usually sufficient if action is in same repo
-          PUSH_BRANCH_NAME: ${{ github.ref_name }} # Push to current branch
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # PUSH_BRANCH_NAME: ${{ github.ref_name }} # Removed invalid input
           # ... other params from your waka.yml ...
           SHOW_LINES_OF_CODE: "True"
-          SHOW_TOTAL_CODE_TIME: "True"
           SHOW_COMMIT: "True"
           SHOW_DAYS_OF_WEEK: "True"
           SHOW_LANGUAGE: "True"
@@ -152,11 +150,11 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Blog Post Workflow
-        uses: gautamkrishnar/blog-post-workflow@v1
+        uses: gautamkrishnar/blog-post-workflow@71dc71018921efdf8a81745f431f32c989f699a7 # v1
         with:
-          feed_list: "https://medium.com/feed/@wyattowalsh"
+          feed_list: "https://w4w.dev/feed.xml"
           # ... other params from your blog-post-workflow.yml ...
           template: "$newline - $date - [$title]($url)"
           commit_message: "chore(readme): update blog posts section" # Example of specific commit message
@@ -168,9 +166,9 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Personal metrics
-        uses: lowlighter/metrics@v3.38.0
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           filename: ./.github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -195,7 +193,7 @@ jobs:
           config_padding: 10%
 
       - name: Personal metrics (additional)
-        uses: lowlighter/metrics@v3.38.0
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           filename: ./.github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -216,4 +214,123 @@ jobs:
           plugin_activity_days: 14
           plugin_stargazers: yes
           plugin_stars: yes
-          plugin_stars_limit: 3 
+          plugin_stars_limit: 3
+
+  generate-snake:
+    name: Generate Snake Contribution Animation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Generate snake animation
+        uses: Platane/snk@e2cedf76a2c05b25d09a6428ded69727b497a700 # v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            .github/assets/img/snake-light.svg?palette=github
+            .github/assets/img/snake-dark.svg?palette=github-dark
+
+      - name: Commit snake animation
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          commit_message: "chore(assets): update snake contribution animation"
+          file_pattern: ".github/assets/img/snake-*.svg"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+  generate-event-art:
+    name: Generate Event-Driven Artwork
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Fetch metrics and generate artwork
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          uv run python -m scripts.fetch_metrics \
+            --owner "$OWNER" \
+            --repo "$REPO_NAME" \
+            --output "$RUNNER_TEMP/metrics.json"
+          uv run python -m scripts.cli generate generative \
+            --metrics-path "$RUNNER_TEMP/metrics.json"
+
+      - name: Fetch historical data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          uv run python -m scripts.fetch_history \
+            --owner "$OWNER" \
+            --repo "$REPO_NAME" \
+            --output "$RUNNER_TEMP/history.json"
+
+      - name: Generate animated artwork
+        run: |
+          uv run python -m scripts.cli generate animated \
+            --history-path "$RUNNER_TEMP/history.json"
+
+      - name: Commit generative artwork
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          commit_message: "art: regenerate event-driven and animated artwork"
+          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+  update-skills:
+    name: Update README Skills Badges
+    runs-on: ubuntu-latest
+    needs: [generate-assets, update-readme-wakatime, update-readme-blog]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+
+      - name: Set up Python 3.13 and uv
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Generate Skills Badges
+        run: uv run python -m scripts.cli generate skills --skills-path skills.yaml
+
+      - name: Commit skills badges
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          commit_message: "chore(readme): update skills badges"
+          file_pattern: "README.md"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

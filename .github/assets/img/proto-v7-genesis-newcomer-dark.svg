@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+<defs>
+  <filter id="bloom" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="b1"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b2"/>
+    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b3"/>
+    <feColorMatrix in="b3" type="matrix" result="bright"
+      values="1.8 0 0 0 0.12  0 1.8 0 0 0.12  0 0 1.8 0 0.12  0 0 0 0.5 0"/>
+    <feMerge><feMergeNode in="bright"/><feMergeNode in="b2"/>
+      <feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="6"/>
+    <feColorMatrix type="matrix" values="1.4 0 0 0 0.08  0 1.4 0 0 0.08  0 0 1.4 0 0.08  0 0 0 0.5 0"/>
+  </filter>
+  <filter id="nebula" x="0%" y="0%" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.003 0.004" numOctaves="3" seed="314" result="t"/>
+    <feColorMatrix in="t" type="matrix" result="tint"
+      values="0.06 0 0 0 0.01  0 0.03 0 0 0.01  0 0 0.12 0 0.04  0 0 0 0.30 0"/>
+  </filter>
+  <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+    <stop offset="0%" stop-color="#030310"/><stop offset="100%" stop-color="#010108"/>
+  </radialGradient>
+  <radialGradient id="vig" cx="50%" cy="50%" r="55%">
+    <stop offset="35%" stop-color="black" stop-opacity="0"/>
+    <stop offset="100%" stop-color="black" stop-opacity="0.6"/>
+  </radialGradient>
+</defs>
+<style>
+  @keyframes orbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: var(--op); } }
+  @keyframes pulse { 0%,100% { opacity: var(--op); r: var(--r); } 50% { opacity: calc(var(--op)*1.4); r: calc(var(--r)*1.2); } }
+  @keyframes meteor { 0% { opacity:0.8; stroke-dashoffset: var(--len); } 100% { opacity:0; stroke-dashoffset:0; } }
+  @keyframes photon { from { stroke-dashoffset: var(--len); opacity:0; } to { stroke-dashoffset:0; opacity: var(--op); } }
+  @keyframes watchfire { 0%,100% { opacity:0.15; } 50% { opacity:0.4; } }
+  @keyframes auroraShimmer { 0%,100% { opacity: var(--op); } 50% { opacity: calc(var(--op)*1.5); } }
+  .body { animation: fadeIn 1s ease-out forwards; opacity:0; }
+  .corona { animation: pulse 5s ease-in-out infinite; }
+  .photon { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: photon var(--dur) ease-out forwards; }
+  .meteor-path { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: meteor 2s ease-out infinite; }
+  .watchfire { animation: watchfire 4s ease-in-out infinite; }
+  .aurora { animation: auroraShimmer 8s ease-in-out infinite; }
+  .myc { animation: fadeIn 2s ease-out forwards; opacity:0; }
+  .issue { animation: orbit var(--dur) linear infinite; transform-origin: var(--ox) var(--oy); }
+</style>
+<rect width="800" height="800" fill="url(#bg)"/>
+<rect width="800" height="800" filter="url(#nebula)" opacity="0.5"/>
+<circle cx="400.0" cy="400.0" r="30" fill="none" stroke="#000e16" stroke-width="0.4" opacity="0.06"/>
+<circle cx="400" cy="312" r="35" fill="#001a2c" opacity="0.025"/>
+<circle cx="524" cy="328" r="58" fill="#00224f" opacity="0.062"/>
+<circle cx="541" cy="481" r="65" fill="#00235b" opacity="0.075"/>
+<circle cx="400" cy="600" r="80" fill="#002571" opacity="0.100"/>
+<circle cx="243" cy="491" r="72" fill="#002467" opacity="0.088"/>
+<circle cx="227" cy="300" r="80" fill="#002571" opacity="0.100"/>
+<g filter="url(#bloom)" opacity="0.6">
+</g>
+<ellipse cx="400.0" cy="400.0" rx="350" ry="308" fill="none" stroke="#000e12" stroke-width="0.3" opacity="0.04" transform="rotate(53,400.0,400.0)"/>
+<ellipse cx="400.0" cy="400.0" rx="234" ry="206" fill="none" stroke="#150702" stroke-width="0.3" opacity="0.04" transform="rotate(53,400.0,400.0)"/>
+<ellipse cx="400.0" cy="400.0" rx="156" ry="138" fill="none" stroke="#150604" stroke-width="0.3" opacity="0.04" transform="rotate(53,400.0,400.0)"/>
+<g filter="url(#bloom)">
+<path d="M615.6,644.6 Q617.0,645.9 618.3,647.1 Q619.6,648.4 621.0,649.6 Q622.4,650.8 623.7,652.1 Q625.1,653.3 626.5,654.5 Q628.0,655.7 629.4,656.9 Q630.9,658.1 632.4,659.3 Q634.0,660.5 635.6,661.8 Q637.2,663.0 638.9,664.2 Q640.6,665.3 642.3,666.5 Q644.1,667.7 645.9,668.9 Q647.7,670.1 649.5,671.2 Q651.3,672.4 653.1,673.5 Q654.9,674.6 656.7,675.8 Q658.4,676.9 660.1,678.0 Q661.9,679.1 663.5,680.2 Q665.2,681.3 666.8,682.4 Q668.3,683.5 669.8,684.6 Q671.3,685.6 672.8,686.7 Q674.2,687.7 675.6,688.7 Q677.0,689.7 678.3,690.7" fill="none" stroke="#007488" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:78;--op:0.20;--dur:3.9s;animation-delay:0.0s"/>
+<path d="M172.0,364.2 Q169.9,363.8 167.7,363.4 Q165.5,363.1 163.3,362.7 Q161.0,362.3 158.7,362.0 Q156.4,361.6 154.1,361.3 Q151.8,361.0 149.5,360.6 Q147.2,360.3 144.9,360.0 Q142.7,359.6 140.5,359.3 Q138.3,358.9 136.1,358.5 Q134.0,358.1 131.9,357.7 Q129.8,357.3 127.8,356.9 Q125.8,356.4 123.9,355.9 Q122.0,355.3 120.1,354.8 Q118.2,354.2 116.3,353.5 Q114.4,352.8 112.6,352.1 Q110.7,351.4 108.9,350.6 Q107.0,349.8 105.1,349.0 Q103.3,348.1 101.4,347.2 Q99.5,346.3 97.6,345.4 Q95.7,344.4 93.7,343.5 Q91.8,342.4 89.8,341.4" fill="none" stroke="#974a16" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:86;--op:0.20;--dur:3.8s;animation-delay:4.2s"/>
+<path d="M528.2,322.2 Q529.8,320.8 531.5,319.4 Q533.1,317.9 534.8,316.3 Q536.4,314.8 538.0,313.3 Q539.7,311.7 541.3,310.2 Q542.9,308.6 544.6,307.1 Q546.3,305.6 547.9,304.1 Q549.6,302.6 551.3,301.1 Q553.0,299.6 554.7,298.2 Q556.5,296.7 558.2,295.3 Q560.0,293.9 561.7,292.4 Q563.4,291.0 565.2,289.7 Q566.9,288.3 568.6,286.9 Q570.3,285.5 572.0,284.2 Q573.6,282.8 575.2,281.5 Q576.8,280.2 578.4,278.9 Q580.0,277.6 581.5,276.3 Q583.1,275.0 584.6,273.7 Q586.1,272.4 587.6,271.2 Q589.1,269.9 590.7,268.6 Q592.2,267.3 593.7,266.1" fill="none" stroke="#9b4437" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:86;--op:0.20;--dur:2.4s;animation-delay:8.4s"/>
+<path d="M608.2,641.0 Q609.5,642.3 610.8,643.6 Q612.1,644.9 613.4,646.1 Q614.7,647.4 616.0,648.6 Q617.3,649.9 618.7,651.1 Q620.0,652.3 621.3,653.5 Q622.7,654.7 624.1,655.9 Q625.5,657.1 626.9,658.3 Q628.3,659.5 629.8,660.7 Q631.3,661.9 632.9,663.1 Q634.5,664.3 636.1,665.4 Q637.8,666.6 639.5,667.8 Q641.3,669.0 643.0,670.1 Q644.8,671.3 646.6,672.5 Q648.4,673.6 650.2,674.8 Q652.0,675.9 653.8,677.0 Q655.6,678.2 657.4,679.3 Q659.1,680.4 660.8,681.5 Q662.5,682.7 664.1,683.8 Q665.7,684.9 667.3,686.0 Q668.8,687.0 670.3,688.1" fill="none" stroke="#007488" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:78;--op:0.20;--dur:3.0s;animation-delay:12.6s"/>
+<path d="M174.5,366.0 Q172.5,365.7 170.4,365.3 Q168.2,364.9 166.0,364.6 Q163.8,364.2 161.6,363.9 Q159.3,363.6 157.0,363.3 Q154.7,363.0 152.3,362.7 Q150.0,362.4 147.7,362.1 Q145.4,361.8 143.1,361.5 Q140.9,361.2 138.7,360.9 Q136.5,360.6 134.3,360.3 Q132.2,360.0 130.1,359.6 Q128.1,359.2 126.1,358.8 Q124.1,358.4 122.1,357.9 Q120.2,357.4 118.3,356.9 Q116.4,356.4 114.5,355.8 Q112.6,355.1 110.8,354.5 Q108.9,353.8 107.0,353.1 Q105.2,352.3 103.3,351.6 Q101.4,350.8 99.5,350.0 Q97.7,349.1 95.8,348.2 Q93.9,347.3 92.0,346.4" fill="none" stroke="#974a16" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:85;--op:0.20;--dur:4.1s;animation-delay:16.8s"/>
+</g>
+<g filter="url(#bloom)">
+<circle cx="611.8" cy="645.4" r="6.9" fill="#008798" class="corona" filter="url(#glow)" style="--op:0.086;--r:7;animation-delay:0.0s"/>
+<circle cx="611.8" cy="645.4" r="5.3" fill="#0082a2" class="body" style="animation-delay:0.00s;--op:0.730"/>
+<circle cx="170.1" cy="363.6" r="16.0" fill="#c6825b" class="corona" filter="url(#glow)" style="--op:0.135;--r:16;animation-delay:5.0s"/>
+<circle cx="170.1" cy="363.6" r="10.0" fill="#ea6300" class="body" style="animation-delay:5.00s;--op:0.860"/>
+<circle cx="531.9" cy="326.3" r="4.0" fill="#870e04" class="body" style="animation-delay:10.00s;--op:0.600"/>
+<circle cx="540.9" cy="326.3" r="1.2" fill="#8f0026" opacity="0.5" class="issue" style="--dur:6s;--ox:532px;--oy:326px"/>
+</g>
+<circle cx="770" cy="400" r="1.5" fill="#703407" class="watchfire" style="animation-delay:2.1s;--op:0.15"/>
+<circle cx="137" cy="641" r="1.5" fill="#703407" class="watchfire" style="animation-delay:3.8s;--op:0.15"/>
+<g filter="url(#bloom)">
+<line x1="49" y1="415" x2="298" y2="411" stroke="#edc4a8" stroke-width="0.8" stroke-linecap="round" class="meteor-path" style="--len:250;animation-delay:4.3s;animation-duration:3.1s"/>
+<line x1="15" y1="411" x2="171" y2="414" stroke="#edc4a8" stroke-width="0.8" stroke-linecap="round" class="meteor-path" style="--len:155;animation-delay:8.5s;animation-duration:1.8s"/>
+<line x1="214" y1="101" x2="304" y2="240" stroke="#edc4a8" stroke-width="0.8" stroke-linecap="round" class="meteor-path" style="--len:166;animation-delay:17.2s;animation-duration:1.8s"/>
+</g>
+<g filter="url(#bloom)">
+<path d="M549.6,313.6 L571.2,498.8 L400.0,570.7 L240.4,492.2 L258.0,318.0" fill="none" stroke="#006b38" stroke-width="3" stroke-linecap="round" opacity="0.08" class="aurora" style="--op:0.08;animation-delay:1.8s"/>
+</g>
+<g filter="url(#bloom)" opacity="0.4">
+<path d="M549.8,431.4 Q552.7,432.1 555.6,432.9 Q558.5,433.7 561.3,434.5 Q564.1,435.3 566.9,436.1 Q569.7,436.9 572.4,437.7 Q575.1,438.5 577.8,439.4 Q580.5,440.2 583.2,441.0 Q585.9,441.8 588.6,442.6 Q591.3,443.4 594.0,444.2 Q596.7,445.0 599.3,445.8 Q602.0,446.6 604.7,447.3 Q607.3,448.0 610.0,448.8 Q612.6,449.5 615.3,450.2 Q617.9,450.9 620.5,451.6 Q623.2,452.3 625.8,453.0" fill="none" stroke="#00473c" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:82;--op:0.12;--dur:4s;animation-delay:0.0s"/>
+<path d="M287.6,502.9 Q286.0,504.6 284.3,506.4 Q282.7,508.1 281.0,509.9 Q279.4,511.6 277.7,513.3 Q276.0,515.1 274.2,516.9 Q272.5,518.6 270.8,520.4 Q269.1,522.2 267.4,524.1 Q265.7,525.9 264.0,527.8 Q262.3,529.7 260.7,531.6 Q259.1,533.5 257.4,535.4 Q255.8,537.3 254.2,539.3 Q252.7,541.2 251.1,543.1 Q249.5,545.0 247.9,546.9 Q246.3,548.8 244.7,550.6 Q243.1,552.4 241.4,554.2" fill="none" stroke="#00464a" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:71;--op:0.12;--dur:4s;animation-delay:3.0s"/>
+<path d="M376.8,249.5 Q376.3,247.2 375.8,244.9 Q375.3,242.6 374.8,240.3 Q374.3,238.0 373.8,235.7 Q373.3,233.4 372.7,231.1 Q372.2,228.8 371.6,226.5 Q371.0,224.2 370.4,221.9 Q369.7,219.6 369.1,217.3 Q368.4,215.0 367.7,212.7 Q367.0,210.4 366.3,208.0 Q365.6,205.7 364.9,203.3 Q364.2,200.9 363.5,198.5 Q362.7,196.1 362.0,193.6 Q361.3,191.2 360.5,188.7 Q359.8,186.2 359.0,183.6" fill="none" stroke="#004357" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:71;--op:0.12;--dur:4s;animation-delay:6.0s"/>
+<path d="M505.6,510.1 Q507.3,511.9 509.0,513.7 Q510.7,515.6 512.3,517.4 Q513.9,519.3 515.6,521.1 Q517.1,522.9 518.7,524.8 Q520.2,526.5 521.7,528.3 Q523.2,530.1 524.7,531.8 Q526.1,533.6 527.6,535.3 Q529.0,537.0 530.4,538.8 Q531.8,540.5 533.2,542.2 Q534.6,543.9 536.0,545.6 Q537.4,547.3 538.9,549.1 Q540.3,550.8 541.8,552.5 Q543.2,554.3 544.7,556.1 Q546.2,557.9 547.7,559.6" fill="none" stroke="#003e5f" stroke-width="0.5" stroke-linecap="round" class="photon" style="--len:67;--op:0.12;--dur:4s;animation-delay:9.0s"/>
+</g>
+<rect width="800" height="800" fill="url(#vig)"/>
+</svg>

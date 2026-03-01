@@ -8,10 +8,15 @@ Provides helper `get_logger(**extra)` and `create_progress()` utilities.
 
 from __future__ import annotations
 
+import sys  # noqa: F401 -- ensures `sys` is available for `logger.add(..., format=...)`
 from pathlib import Path
 from typing import Any, Optional
 
-from loguru import logger
+# Import Loguru's internal Logger type for type hinting if necessary
+# This is often more stable than relying on `loguru.logger` directly for type hints
+# if it's reassigned or if strict type checking is needed.
+from loguru import logger as loguru_logger
+from loguru._logger import Logger as LoguruLoggerType
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
@@ -22,77 +27,89 @@ try:
 
     # Explicitly provide default values during instantiation if linter requires
     # or ensure defaults in Settings model are sufficient for pydantic-settings
-    app_settings: Optional[AppSettings] = AppSettings(
-        log_level="INFO",  # Default from Settings model
-        debug_mode=False,  # Default from Settings model
-    )
+    app_settings: Optional[AppSettings] = AppSettings()
 except ImportError:
     app_settings = None
-    logger.warning(
+    loguru_logger.warning(  # Use the imported loguru_logger
         "`scripts.config.Settings` not found or failed to import. "
         "Logging to files might be disabled or use defaults."
     )
 
 # 1. Prepare console + remove default Loguru sink
 console = Console()
-logger.remove()  # drop Loguru's default stderr sink
+loguru_logger.remove()  # drop Loguru's default stderr sink, use imported logger
 
 # 2. Console sink with Rich prettiness
-LOG_LEVEL = "INFO"
+LOG_LEVEL_STR = "INFO"  # Changed variable name to avoid conflict
 if app_settings and hasattr(app_settings, "log_level"):
-    LOG_LEVEL = app_settings.log_level
+    # Ensure log_level attribute is correctly accessed and is a string
+    level_from_settings = getattr(app_settings, "log_level", "INFO")
+    if isinstance(level_from_settings, str):
+        LOG_LEVEL_STR = level_from_settings
+    else:
+        loguru_logger.warning(
+            f"Invalid log_level type in settings: {type(level_from_settings)}. "
+            "Defaulting to INFO."
+        )
+        LOG_LEVEL_STR = "INFO"
 
-logger.add(
+
+loguru_logger.add(  # Use the imported loguru_logger
     RichHandler(
         console=console,
         markup=True,
         rich_tracebacks=True,
-        show_path=False,
+        show_path=False,  # Default: False, set True to show module path
     ),
-    level=LOG_LEVEL,
+    level=LOG_LEVEL_STR,
     format=(
-        "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | " "{level.icon} {level:<8} | {message}"
+        "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | "
+        "{level.icon} {level:<8} | {message}"
     ),
-    enqueue=True,
+    enqueue=True,  # For thread-safe logging
 )
 
 # 3. Rotating text & JSON sinks
 if app_settings and hasattr(app_settings, "log_level"):
+    # Use getattr for safer access to potentially missing attributes
     log_text_dir = getattr(app_settings, "log_text_dir", Path("logs/text"))
     log_json_dir = getattr(app_settings, "log_json_dir", Path("logs/json"))
     log_rotation = getattr(app_settings, "log_rotation", "10 MB")
     log_retention = getattr(app_settings, "log_retention", "10 days")
     log_compression = getattr(app_settings, "log_compression", "zip")
 
-    log_text_dir.mkdir(parents=True, exist_ok=True)
-    log_json_dir.mkdir(parents=True, exist_ok=True)
+    # Ensure directories exist
+    if isinstance(log_text_dir, Path):
+        log_text_dir.mkdir(parents=True, exist_ok=True)
+    if isinstance(log_json_dir, Path):
+        log_json_dir.mkdir(parents=True, exist_ok=True)
 
     text_log_format = (
         "{time:YYYY-MM-DD HH:mm:ss.SSS}|{level}|{name}:{function}:{line}|"
         "{extra}|{message}"
     )
 
-    logger.add(
+    loguru_logger.add(  # Use the imported loguru_logger
         sink=log_text_dir / "{time:YYYY-MM-DD}.log",
         rotation=log_rotation,
         retention=log_retention,
         compression=log_compression,
-        level=LOG_LEVEL,
+        level=LOG_LEVEL_STR,
         format=text_log_format,
         enqueue=True,
     )
 
-    logger.add(
+    loguru_logger.add(  # Use the imported loguru_logger
         sink=log_json_dir / "{time:YYYY-MM-DD}.json",
         rotation=log_rotation,
         retention=log_retention,
         compression=log_compression,
-        serialize=True,
-        level=LOG_LEVEL,
+        serialize=True,  # Enable JSON structuring
+        level=LOG_LEVEL_STR,
         enqueue=True,
     )
 else:
-    logger.info(
+    loguru_logger.info(  # Use the imported loguru_logger
         "File logging (text/JSON) is disabled because "
         "`scripts.config.Settings` was not found, failed to import, "
         "or lacks `log_level`."
@@ -100,13 +117,13 @@ else:
 
 
 # 4. Helpers
-def get_logger(**extra: Any):
+def get_logger(**extra: Any) -> LoguruLoggerType:  # Use the correct type
     """
     Return a contextualised logger:
         `log = get_logger(service='worker', request_id=uuid4())`
     Extra fields are visible in *all* sinks via `{extra}`.
     """
-    return logger.bind(**extra)
+    return loguru_logger.bind(**extra)  # Use the imported loguru_logger
 
 
 def create_progress(description: str = "Working…") -> Progress:
@@ -125,25 +142,29 @@ def create_progress(description: str = "Working…") -> Progress:
         "[progress.percentage]{task.percentage:>3.0f}%",
         TimeRemainingColumn(),
         console=console,
-        transient=True,
+        transient=True,  # Progress bar disappears after completion
     )
 
 
 # 5. Example usage when executed directly
 if __name__ == "__main__":  # pragma: no cover
-    log = get_logger(module="__main__")
+    # Get a logger instance specifically for this example context
+    log = get_logger(module="__main__")  # This now uses the corrected get_logger
     log.info(
         "Console logging ready. File logging status determined by "
         "AppSettings availability."
     )
     if app_settings:
         with create_progress("Demo") as progress:
-            task = progress.add_task("demo-task", total=5)
-            for _ in range(5):
-                progress.advance(task)
-                log.debug("Tick…")
+            task_id = progress.add_task("demo-task", total=5)
+            for _i in range(5):  # Use _i to denote unused loop variable
+                progress.advance(task_id)
+                log.debug("Tick…")  # Example debug message
     else:
-        log.warning("Skipping progress bar demo as AppSettings are not available.")
+        log.warning(
+            "Skipping progress bar demo as AppSettings are not available."
+        )
+
 
 def get_project_root() -> Path:
     """Returns the project root directory."""

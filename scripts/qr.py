@@ -24,25 +24,16 @@ Key improvements:
 """
 
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional
 
-import segno
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
-from segno import helpers
+import segno  # type: ignore
 
 # Import VCardDataModel from config.py
-from scripts.config import VCardDataModel
-
-# Import the logger from utils.py
-from scripts.utils import get_logger
+from .config import VCardDataModel
+from .utils import get_logger
 
 logger = get_logger(module=__name__)
 
-# Part 1: Utility Logic and Data Models
-
-# Remove the local VCardData model, as we'll use the one from config.py
-# class VCardData(BaseModel):
-# ... (removed local VCardData definition) ...
 
 class QRCodeGenerator:
     """
@@ -73,14 +64,18 @@ class QRCodeGenerator:
         self.default_scale = default_scale
 
         if not self.default_background_path.is_file():
-            msg = f"Default background SVG not found: {self.default_background_path}"
+            msg = (
+                f"Default background SVG not found: "
+                f"{self.default_background_path}"
+            )
             logger.error(msg)
             raise FileNotFoundError(msg)
         try:
             self.default_output_dir.mkdir(parents=True, exist_ok=True)
         except OSError as e:
             msg = (
-                f"Could not create output directory {self.default_output_dir}: {e}"
+                f"Could not create output directory "
+                f"{self.default_output_dir}: {e}"
             )
             logger.error(msg)
             raise
@@ -131,31 +126,49 @@ class QRCodeGenerator:
             )
 
         try:
-            # Pass arguments directly to make_vcard_data
-            # segno handles None values by omitting those vCard fields.
-            # Explicitly convert Pydantic HttpUrl to str for `segno`
-            urls_as_str: Union[List[str], str, None] = None
-            if isinstance(vcard_details.url_work, list):
-                urls_as_str = [str(u) for u in vcard_details.url_work]
-            elif vcard_details.url_work:
-                urls_as_str = str(vcard_details.url_work)
+            # Manually construct vCard 3.0 string
+            vcard_lines = [
+                "BEGIN:VCARD",
+                "VERSION:3.0",
+                f"N:{vcard_details.n_familyname};"
+                f"{vcard_details.n_givenname};;;",
+                f"FN:{vcard_details.fn}",
+                f"DISPLAYNAME:{vcard_details.displayname}",
+            ]
+            if vcard_details.org:
+                vcard_lines.append(f"ORG:{vcard_details.org}")
+            if vcard_details.title:
+                vcard_lines.append(f"TITLE:{vcard_details.title}")
+            if vcard_details.email_internet:
+                vcard_lines.append(
+                    f"EMAIL;TYPE=INTERNET,PREF:{vcard_details.email_internet}"
+                )
+            if vcard_details.tel_work_voice:
+                vcard_lines.append(
+                    f"TEL;TYPE=WORK,VOICE:{vcard_details.tel_work_voice}"
+                )
 
-            card_payload = helpers.make_vcard_data(
-                name=f"{vcard_details.n_familyname},{vcard_details.n_givenname}",
-                displayname=vcard_details.displayname,
-                email=vcard_details.email_internet,
-                phone=vcard_details.tel_work_voice,
-                url=urls_as_str,
-                org=vcard_details.org,
-                title=vcard_details.title,
+            if vcard_details.url_work:
+                for i, typed_url_item in enumerate(vcard_details.url_work):
+                    # For Apple compatibility and general labeling,
+                    # use itemX.URL and itemX.X-ABLabel
+                    vcard_lines.append(f"item{i+1}.URL:{typed_url_item.url}")
+                    vcard_lines.append(
+                        f"item{i+1}.X-ABLabel:{typed_url_item.label}"
+                    )
+            
+            # Add other fields as necessary, e.g., PHOTO, ADR
+
+            vcard_lines.append("END:VCARD")
+            card_payload = "\n".join(vcard_lines)
+
+            qrcode = segno.make(
+                card_payload, error=error_correction, micro=False
             )
 
-            qrcode = segno.make(card_payload, error=error_correction, micro=False)
-
             logger.info(
-                "Generating artistic QR code to %s with background %s",
-                output_path,
-                bg_path,
+                f"Generating artistic QR code to {output_path} "
+                f"with background {bg_path}"
             )
             # Ensure .to_artistic is callable or handle appropriately
             if hasattr(qrcode, "to_artistic") and callable(qrcode.to_artistic):
@@ -164,31 +177,36 @@ class QRCodeGenerator:
                     target=str(output_path),
                     scale=current_scale,
                     # Additional artistic parameters can be specified here
-                    # E.g., kind='png' (default), border, dark module color, etc.
+                    # E.g., kind='png' (default), border, dark module color,
+                    # etc.
                 )
             else:
-                # Fallback or error if .to_artistic is not available as expected
+                # Fallback or error if .to_artistic is not available
+                # as expected
                 logger.error(
-                    "qrcode object does not have a callable 'to_artistic' method."
+                    "qrcode object does not have a callable 'to_artistic' "
+                    "method."
                 )
                 # As a simple fallback, save as standard PNG, though this loses
                 # artistry:
-                # qrcode.save(str(output_path), scale=current_scale, kind='png')
+                # qrcode.save(str(output_path), scale=current_scale,
+                #             kind='png')
                 # Or, raise an error if artistic rendering is critical:
                 raise AttributeError("Artistic QR rendering not available.")
 
-            logger.info("Successfully generated QR code: %s", output_path)
+            logger.info(f"Successfully generated QR code: {output_path}")
             return output_path
         except FileNotFoundError:  # Should be caught by earlier check
-            logger.error("File operation failed: Background or target path issue.")
+            logger.error(
+                "File operation failed: Background or target path issue."
+            )
             raise
-        except ValueError as ve:  # For invalid error_correction or segno issues
-            logger.error("Value error during QR generation: %s", ve)
+        except ValueError as ve:  # For invalid error_correction/segno issues
+            logger.error(f"Value error during QR generation: {ve}")
             raise
         except Exception as e:
             logger.error(
-                "An unexpected error during QR code generation: %s",
-                e,
+                f"An unexpected error during QR code generation: {e}",
                 exc_info=True,  # exc_info=True logs the full traceback
             )
             raise
@@ -196,32 +214,21 @@ class QRCodeGenerator:
 
 # Part 2: Specific Logic and Instantiation
 
-# Define the specific vCard data for Wyatt Walsh using the VCardDataModel
-# Ensure HttpUrl is used for URL strings for Pydantic validation and type
-# safety
-wyatt_vcard_info = VCardDataModel(
-    n_familyname="Walsh",
-    n_givenname="Wyatt",
-    fn="Wyatt O. Walsh",
-    displayname="Wyatt Walsh",
-    email_internet="wyattowalsh@gmail.com",
-    tel_work_voice="2096022545",
-    url_work=[
-        "https://www.w4w.dev/",
-        "https://www.linkedin.com/in/wyattowalsh",
-        "https://www.github.com/wyattowalsh",
-    ],
-    org="Personal Portfolio Project",
-    title="Developer & Tech Enthusiast"
-)
+# The specific vCard data for Wyatt Walsh will now be loaded from config
+# (handled by the CLI/config loading mechanism)
+# wyatt_vcard_info = VCardDataModel(...)
 
 if __name__ == "__main__":
     # Define paths relative to the project root for portability
     # Assumes this script is in 'scripts/' directory relative to project root.
     try:
         project_root = Path(__file__).resolve().parent.parent
-        default_bg_svg_path = project_root / ".github" / "assets" / "img" / "icon.svg"
-        default_output_directory = project_root / ".github" / "assets" / "img"
+        default_bg_svg_path = (
+            project_root / ".github" / "assets" / "img" / "icon.svg"
+        )
+        default_output_directory = (
+            project_root / ".github" / "assets" / "img"
+        )
 
         # Initialize the QR code generator
         qr_gen = QRCodeGenerator(
@@ -230,26 +237,17 @@ if __name__ == "__main__":
             default_scale=25,  # Default scale for the artistic QR code
         )
 
-        # Generate the QR code for Wyatt Walsh
-        generated_file_path = qr_gen.generate_artistic_vcard_qr(
-            vcard_details=wyatt_vcard_info,
-            output_filename="qr.png",
-            # Specific overrides can be passed here:
-            # background_path=Path("custom/path/to/bg.svg"),
-            # scale=30,
-            # error_correction='M'
+        logger.info(
+            "Skipping direct QR generation in __main__ block of qr.py. "
+            "Use CLI."
         )
-        logger.info("Script finished. QR code available at: %s", generated_file_path)
 
     except FileNotFoundError as fnf_error:
-        logger.error("Setup or file error: %s", fnf_error)
+        logger.error(f"Setup or file error: {fnf_error}")
     except ValueError as val_error:
-        logger.error("Data validation or configuration error: %s", val_error)
+        logger.error(f"Data validation or configuration error: {val_error}")
     except Exception as e_main:
         logger.error(
-            "An unexpected error occurred in the main execution block: %s",
-            e_main,
+            f"An unexpected error occurred in the main execution block: {e_main}",
             exc_info=True,
         )
-        # exc_info=True in logger.error will include traceback
-        # exc_info=True in logger.error will include traceback

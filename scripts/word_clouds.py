@@ -49,25 +49,31 @@ documentation, README files, presentations, data visualization dashboards, or
 any context where visual representation of text data is beneficial.
 """
 
-# Standard Library Imports
-import random
-from collections import Counter
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from __future__ import annotations
 
-import markdown  # type: ignore # Added for Markdown parsing
+import random
+import re  # Add re for parsing list items
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+import functools # Added for functools.partial
 
 # Third-Party Imports
 import matplotlib.colors as mcolors
 import numpy as np
-from bs4 import BeautifulSoup, Tag  # Added for HTML parsing, and Tag for type hint
 from PIL import Image
-from pydantic import FilePath  # FilePath ensures the path is a file
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    FilePath,
+    field_validator,
+    model_validator,
+)
 from wordcloud import STOPWORDS, WordCloud  # type: ignore
 
 # Local Application/Library Specific Imports
-from scripts.utils import get_logger
+from .utils import get_logger
 
 # Initialize a dedicated logger for this module.
 logger = get_logger(module=__name__)
@@ -78,15 +84,23 @@ logger = get_logger(module=__name__)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ASSETS_DIR = PROJECT_ROOT / ".github" / "assets"
 DEFAULT_FONTS_DIR = DEFAULT_ASSETS_DIR / "fonts"
-DEFAULT_IMG_DIR = DEFAULT_ASSETS_DIR / "img"  # Used for storing various images
+DEFAULT_IMG_DIR = DEFAULT_ASSETS_DIR / "img"  # Used for various images
 DEFAULT_MASKS_DIR = DEFAULT_ASSETS_DIR / "img"  # Default mask location
 
 DEFAULT_FONT_PATH_STR = str(DEFAULT_FONTS_DIR / "Montserrat-ExtraBold.ttf")
-DEFAULT_FONT_PATH: Optional[Path] = Path(DEFAULT_FONT_PATH_STR) if Path(DEFAULT_FONT_PATH_STR).exists() else None
+DEFAULT_FONT_PATH: Optional[Path] = (
+    Path(DEFAULT_FONT_PATH_STR)
+    if Path(DEFAULT_FONT_PATH_STR).exists()
+    else None
+)
 
 # icon.svg assumed as mask; PNGs are generally more robust.
 DEFAULT_MASK_PATH_STR = str(DEFAULT_MASKS_DIR / "icon.svg")
-DEFAULT_MASK_PATH: Optional[Path] = Path(DEFAULT_MASK_PATH_STR) if Path(DEFAULT_MASK_PATH_STR).exists() else None
+DEFAULT_MASK_PATH: Optional[Path] = (
+    Path(DEFAULT_MASK_PATH_STR)
+    if Path(DEFAULT_MASK_PATH_STR).exists()
+    else None
+)
 DEFAULT_OUTPUT_DIR = DEFAULT_IMG_DIR / "wordclouds"  # Output sub-dir
 
 # Specific paths for profile assets
@@ -105,7 +119,7 @@ class WordCloudSettings(BaseModel):
 
     This model defines all configurable parameters with type validation,
     sensible defaults, and detailed descriptions. It enforces strict schema
-    adherence (`extra='forbid'`) and re-validates on assignment
+    adherence (`extra='forbid') and re-validates on assignment
     (`validate_assignment=True`).
     """
 
@@ -248,11 +262,15 @@ class WordCloudSettings(BaseModel):
         ),
     )
     output_filename: str = Field(
-        default="word_cloud.png",
+        default="word_cloud.svg",
         description=(
-            "Filename for the output image (e.g., 'my_cloud.png'). "
-            "Auto-appends '.png' if no valid extension."
+            "Filename for the output image (e.g., 'my_cloud.svg'). "
+            "Auto-appends extension based on 'output_format' if needed."
         ),
+    )
+    output_format: Literal["png", "svg"] = Field(
+        default="svg",
+        description="Output format for the word cloud: 'png' or 'svg'."
     )
     prompt: Optional[str] = Field(
         default=None,
@@ -293,18 +311,37 @@ class WordCloudSettings(BaseModel):
 
     @model_validator(mode="after")
     def _validate_output_filename_ext(self) -> "WordCloudSettings":
-        """Ensures output_filename has a valid image extension,
-        defaulting to .png."""
-        valid_extensions = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff")
+        """Ensures output_filename has a valid image extension matching
+        output_format, defaulting to .png or .svg respectively."""
         filename_lower = self.output_filename.lower()
-        if not any(filename_lower.endswith(ext) for ext in valid_extensions):
-            original_name = self.output_filename
-            self.output_filename += ".png"
-            logger.warning(
-                f"Output filename '{original_name}' lacked a valid image "
-                f"extension. Appended '.png', resulting in "
-                f"'{self.output_filename}'."
-            )
+        target_extension = f".{self.output_format}"
+
+        # Check if it already has the correct extension
+        if filename_lower.endswith(target_extension):
+            return self
+
+        # Check if it has any other known image/vector extension
+        known_extensions = (
+            ".png", ".jpg", ".jpeg", ".gif",
+            ".bmp", ".tiff", ".svg"
+        )
+        current_ext_found = ""
+        for ext in known_extensions:
+            if filename_lower.endswith(ext):
+                current_ext_found = ext
+                break
+
+        original_name_stem = self.output_filename
+        if current_ext_found:
+            # Strip the incorrect extension
+            original_name_stem = self.output_filename[:-len(current_ext_found)]
+
+        self.output_filename = original_name_stem + target_extension
+        logger.warning(
+            f"Output filename '{self.output_filename}' was adjusted to "
+            f"'{self.output_filename}' to match output_format "
+            f"'{self.output_format}'."
+        )
         return self
 
     def get_full_output_path(self) -> Path:
@@ -312,7 +349,7 @@ class WordCloudSettings(BaseModel):
         Constructs the full absolute path for the output image,
         ensuring directory exists.
         """
-        output_dir_path = self.output_dir
+        output_dir_path = Path(self.output_dir)
         if not output_dir_path.is_absolute():
             output_dir_path = (PROJECT_ROOT / output_dir_path).resolve()
 
@@ -487,117 +524,111 @@ CUSTOM_COLOR_FUNCTIONS: Dict[str, Callable[..., str]] = {
 # ------------------------------------------------------------------------------
 
 
-def parse_markdown_for_word_cloud_frequencies(md_file_path: Path) -> Dict[str, float]:
+def parse_markdown_for_word_cloud_frequencies(
+    md_file_path: Path,
+) -> Dict[str, float]:
     """
     Parses a Markdown file to extract terms and their frequencies for a
     word cloud.
 
-    The expected Markdown structure (based on `awesome-stars.yml` output):
-    - Terms are category names, typically found in `<h2>` tags.
-    - Frequencies are derived from the number of `<li>` items in the `<ul>`
-      element that immediately follows each `<h2>` tag.
+    Terms are extracted from list items (e.g., '- TermName' or
+    '- [Term Name](link)'). Frequencies are the count of each unique term.
 
     Args:
         md_file_path: Path to the Markdown file (e.g., topics.md,
                       languages.md).
 
     Returns:
-        A dictionary of {term: frequency}. Returns empty if parsing fails or
-        file is not found.
+        A dictionary mapping terms (str) to their frequencies (float).
+
+    Raises:
+        FileNotFoundError: If the specified Markdown file does not exist.
+        IOError: If there's an error reading the file.
+
+    Example Markdown structure:
+        ## Some Category
+        - Python
+        - [JavaScript](some_url) - description
+        - Python
+
+    Example output:
+        {"Python": 2.0, "JavaScript": 1.0}
     """
     if not md_file_path.exists():
-        logger.error(
-            f"Markdown file for frequency parsing not found: {md_file_path}"
-        )
-        return {}
+        raise FileNotFoundError(f"Markdown file not found: {md_file_path}")
 
-    logger.info(f"Parsing Markdown file for frequencies: {md_file_path.name}")
+    logger.info(f"Parsing {md_file_path.name} for word cloud frequencies")
+
+    term_frequencies: Dict[str, float] = defaultdict(float)  # Use defaultdict
+
     try:
         with open(md_file_path, "r", encoding="utf-8") as f:
-            md_content = f.read()
+            content = f.read()
+    except IOError as e:
+        logger.error(f"Error reading file {md_file_path}: {e}")
+        raise
 
-        html_content = markdown.markdown(md_content, extensions=['toc']) # 'toc' might help structure
-        soup = BeautifulSoup(html_content, "html.parser")
-
-        frequencies_data: Dict[str, float] = {}
-        
-        # Find all H2 tags, assuming these are the category titles (terms)
-        h2_tags = soup.find_all("h2")
-
-        if not h2_tags:
-            logger.warning(
-                f"No <h2> elements found in {md_file_path.name}. "
-                "Cannot extract terms/frequencies using H2-based parsing."
-            )
-            return {}
-
-        for h2 in h2_tags:
-            term = h2.get_text(strip=True)
-            if not term or term.lower() == "contents": # Skip 'Contents' section itself
-                continue
-
-            # Find the next <ul> element that immediately follows the <h2>
-            # This <ul> should contain the list of repositories for the category
-            # Iterate through next siblings to find the UL, stop if another heading is found
-            next_element = h2.next_sibling
-            associated_ul: Optional[Tag] = None
-            while next_element:
-                if isinstance(next_element, Tag):
-                    if next_element.name == "ul":
-                        associated_ul = next_element
-                        break
-                    if next_element.name in ["h1", "h2", "h3", "h4", "h5", "h6"]:
-                        # Found another heading before finding a UL for the current H2
-                        break
-                next_element = next_element.next_sibling
-            
-            if associated_ul: # Changed from next_ul to associated_ul
-                list_items = associated_ul.find_all("li")
-                frequency = float(len(list_items))
-                if frequency > 0:
-                    # Clean up term if it has an ID from TOC (e.g., "Term [term-id]")
-                    # BeautifulSoup's get_text() usually handles this well, but explicit check:
-                    cleaned_term = term.split('[')[0].strip() # Basic cleaning for "Term [id]"
-                    # Further cleaning if an <a> tag is inside h2 (e.g. from a link in header)
-                    a_tag_in_h2 = h2.find("a")
-                    if a_tag_in_h2 and a_tag_in_h2.get_text(strip=True):
-                        cleaned_term = a_tag_in_h2.get_text(strip=True)
-                    
-                    if cleaned_term: # Ensure term is not empty after cleaning
-                        frequencies_data[cleaned_term] = frequency
-                        logger.debug(f"Found term '{cleaned_term}' with frequency {frequency} in {md_file_path.name}")
-                    else:
-                        logger.debug(f"Skipped empty term derived from H2: '{h2.get_text(strip=True)}'")
-                else:
-                    logger.debug(
-                        f"Term '{term}' from H2 in {md_file_path.name} has zero "
-                        "associated list items in the following <ul>, skipping."
-                    )
-            else:
-                logger.debug(
-                    f"No <ul> list found associated with H2: '{term}' in "
-                    f"{md_file_path.name}, skipping frequency count for this term."
-                )
-
-        if not frequencies_data:
-            logger.warning(
-                f"No frequencies extracted from {md_file_path.name} using H2-based parsing. "
-                "The word cloud might be empty or use fallback text."
-            )
-        else:
-            logger.info(
-                f"Successfully parsed {len(frequencies_data)} terms with "
-                f"frequencies from {md_file_path.name} using H2-based parsing.\n"
-                f"Sample: {dict(list(frequencies_data.items())[:3])}"
-            )
-        return frequencies_data
-
-    except Exception as e:
-        logger.error(
-            f"Error parsing Markdown file {md_file_path.name} with H2-based logic: {e}",
-            exc_info=True
+    lines = content.split('\n')
+    # Regex to capture the term from lines like:
+    # - Term
+    # - [Term Name](...)
+    # - [Term Name]
+    # It will try to capture the content inside brackets if present,
+    # otherwise, the text after '- '.
+    term_pattern = re.compile(r"""
+        ^\s*-\s+                # Starts with '- ' (with optional leading whitespace)
+        (?:
+            \[([^\]]+)\]        # Alt 1: Capture content in brackets (e.g., [Term])
+            .*                  # Consume URL, description, anything after brackets
+            |                   # OR
+            ([^\s].+?)          # Alt 2: Capture plain text (non-greedy)
+            (?:\s+-\s+.*)?      # Optionally ignore ' - description'
         )
-        return {}
+        $                       # End of line
+    """, re.VERBOSE)
+
+    for line in lines:
+        line = line.strip()
+        match = term_pattern.match(line)
+        if match:
+            # Prefer content in brackets (group 1), else plain term (group 2)
+            term = match.group(1) or match.group(2)
+            if term:
+                cleaned_term = term.strip()
+                # Basic filtering for very short/non-descriptive terms
+                if len(cleaned_term) > 1 and cleaned_term.lower() not in [
+                    "readme", "license", "docs", "blog", "site", "test",
+                    "demo", "example", "examples", "template", "templates",
+                    "script", "scripts", "tool", "tools", "util", "utils",
+                    "lib", "libs", "framework", "app", "cli", "api", "sdk",
+                    "plugin", "theme", "config", "core", "main", "data",
+                    "model", "models", "package",
+                ]:
+                    term_frequencies[cleaned_term] += 1.0
+                    logger.debug(
+                        f"Found term: '{cleaned_term}', "
+                        f"new count: {term_frequencies[cleaned_term]}"
+                    )
+        elif (
+            line.startswith("## ") 
+            and line[3:].strip().lower() == "contents"
+        ):
+            logger.debug("Skipping 'Contents' section.")
+
+    # Log summary statistics
+    if term_frequencies:
+        total_unique_terms = len(term_frequencies)
+        total_occurrences = sum(term_frequencies.values())
+        logger.info(
+            f"Parsed {total_unique_terms} unique terms with a total of "
+            f"{total_occurrences:.0f} occurrences from {md_file_path.name}."
+        )
+    else:
+        logger.warning(f"No terms found in {md_file_path.name}")
+
+    return dict(
+        term_frequencies
+    )  # Convert back to dict, good practice
 
 
 # ------------------------------------------------------------------------------
@@ -614,7 +645,9 @@ class WordCloudGenerator:
     cloud images. It is designed to be highly configurable and reusable.
     """
 
-    def __init__(self, base_settings: Optional[WordCloudSettings] = None) -> None:
+    def __init__(
+        self, base_settings: Optional[WordCloudSettings] = None
+    ) -> None:  # Corrected comment spacing
         """
         Initializes the WordCloudGenerator.
 
@@ -623,12 +656,39 @@ class WordCloudGenerator:
                            If None, default settings will be used.
         """
         self.settings = base_settings if base_settings else WordCloudSettings()
-        # Access resolved Pydantic model instance attributes
-        m_path_instance = self.settings.mask_path
-        f_path_instance = self.settings.font_path
 
-        mask_name = m_path_instance.name if m_path_instance else "None"
-        font_name = f_path_instance.name if f_path_instance else "Default"
+        mask_name = "None"
+        font_name = "Default"
+
+        current_mask_path = self.settings.mask_path
+        if isinstance(current_mask_path, Path):
+            if current_mask_path.is_file():
+                mask_name = current_mask_path.name
+            else:
+                # Path object exists but is not a file (e.g., a directory)
+                logger.warning(
+                    f"Configured mask_path '{current_mask_path}' exists but is not a file. Masking may fail or be disabled."
+                )
+                # mask_name remains "None" or could be set to indicate an issue
+        elif current_mask_path is not None:
+            # This case should ideally be caught by Pydantic's FilePath validation
+            # if the input was a non-None, non-Path value.
+            logger.warning(
+                f"Configured mask_path '{current_mask_path}' is not a valid Path object after settings initialization. Type: {type(current_mask_path)}. Masking disabled."
+            )
+
+        current_font_path = self.settings.font_path
+        if isinstance(current_font_path, Path):
+            if current_font_path.is_file():
+                font_name = current_font_path.name
+            else:
+                logger.warning(
+                    f"Configured font_path '{current_font_path}' exists but is not a file. Default font may be used."
+                )
+        elif current_font_path is not None:
+            logger.warning(
+                f"Configured font_path '{current_font_path}' is not a valid Path object after settings initialization. Type: {type(current_font_path)}. Default font may be used."
+            )
 
         logger.info(
             "WordCloudGenerator initialized. Base settings:\n"
@@ -713,68 +773,81 @@ class WordCloudGenerator:
             if ".svg" in mask_path.name.lower():
                 logger.warning(
                     "SVG mask processing failed. Ensure a suitable backend "
-                    "(librsvg/CairoSVG) is installed and accessible by Pillow, "
-                    "or use a PNG mask instead."
+                    "(librsvg/CairoSVG) is installed and accessible by "
+                    "Pillow, or use a PNG mask instead."
                 )
             return None
 
     def _get_active_color_logic(
         self, settings: WordCloudSettings
-    ) -> Tuple[Optional[Callable[..., str]], Optional[str], Dict[str, Any]]:
+    ) -> Tuple[Optional[Callable[..., str]], Optional[str]]:
         """
-        Determines color function, colormap, and extra kwargs for WordCloud.
+        Determines the active color function and colormap based on settings.
 
-        Prioritizes:
-        1. Custom color function if `custom_color_func_name` is set.
-           - If `color_palette_override` is also set, it's added to
-             `extra_wc_kwargs` for the color function to use.
-        2. Matplotlib colormap if `colormap` is set and no custom function.
-        3. WordCloud default if neither is set.
-
-        Args:
-            settings: The `WordCloudSettings` to evaluate.
+        Priority:
+        1. `custom_color_func_name` (with optional `color_palette_override`).
+        2. `colormap` (if no custom function).
+        3. WordCloud default if neither is specified.
 
         Returns:
-            A tuple: (selected_color_func, selected_colormap, extra_wc_kwargs).
+            A tuple: (color_function, colormap_string).
+            - `color_function`: The callable for coloring (or None).
+                                This could be a functools.partial object.
+            - `colormap_string`: The name of the colormap (or None).
         """
-        color_func: Optional[Callable[..., str]] = None
-        active_colormap: Optional[str] = settings.colormap
-        extra_wc_kwargs: Dict[str, Any] = {}
+        active_color_func: Optional[Callable[..., str]] = None
+        active_colormap: Optional[str] = None
 
         if settings.custom_color_func_name:
             func = CUSTOM_COLOR_FUNCTIONS.get(settings.custom_color_func_name)
             if func:
-                color_func = func
-                active_colormap = None  # Custom function overrides colormap
-                logger.info(
-                    f"Using custom color function: "
-                    f"'{settings.custom_color_func_name}'. "
-                    "'colormap' will be ignored."
-                )
-                if settings.color_palette_override:
-                    # Pass palette to WordCloud, for color_func
-                    extra_wc_kwargs["color_palette"] = (
+                # Prepare kwargs for the custom color function
+                custom_func_kwargs: Dict[str, Any] = {}
+                if (
+                    settings.color_palette_override
+                    and settings.custom_color_func_name == "primary_color_func"
+                ):
+                    custom_func_kwargs["color_palette"] = (
                         settings.color_palette_override
                     )
-                    logger.info(
-                        "Applying 'color_palette_override' with "
-                        "custom color function."
+                # Add other potential kwargs needed by custom color funcs from settings
+                # For example, if analogous_color_func needs base_hue from settings:
+                # if settings.custom_color_func_name == "analogous_color_func":
+                #     if settings.base_hue_for_analogous is not None: # Assuming a new setting
+                #         custom_func_kwargs["base_hue"] = settings.base_hue_for_analogous
+
+                if custom_func_kwargs:
+                    active_color_func = functools.partial(func, **custom_func_kwargs)
+                    logger.debug(
+                        f"Using custom color func (partial): "
+                        f"{settings.custom_color_func_name} "
+                        f"with bound kwargs: {custom_func_kwargs}"
+                    )
+                else:
+                    active_color_func = func
+                    logger.debug(
+                        f"Using custom color func (direct): "
+                        f"{settings.custom_color_func_name}"
                     )
             else:
                 logger.warning(
                     f"Custom color function "
-                    f"'{settings.custom_color_func_name}' not found. "
-                    f"Falling back to colormap ('{settings.colormap}') or "
-                    "WordCloud default."
+                    f"'{settings.custom_color_func_name}' "
+                    "not found. Falling back."
                 )
-        elif settings.color_palette_override:
-            logger.warning(
-                "'color_palette_override' is set, but no specific "
-                "'custom_color_func_name' is selected to explicitly use it. "
-                "Ensure the active color method (default or colormap) is "
-                "compatible, or select 'primary_color_func'."
+
+        if not active_color_func and settings.colormap:
+            active_colormap = settings.colormap
+            logger.debug(f"Using colormap: {active_colormap}")
+        elif not active_color_func and not settings.colormap:
+            logger.debug(
+                "No custom color function or colormap specified. "
+                "WordCloud will use its default."
             )
-        return color_func, active_colormap, extra_wc_kwargs
+            # WordCloud library uses 'viridis' if color_func and colormap are None.
+            # No need to set active_colormap = None explicitly if that's the desired default.
+
+        return active_color_func, active_colormap
 
     def generate(
         self,
@@ -799,7 +872,9 @@ class WordCloudGenerator:
         """
         active_settings = self.settings
         if override_settings_dict:
-            logger.debug(f"Applying override settings: {override_settings_dict}")
+            logger.debug(
+                f"Applying override settings: {override_settings_dict}"
+            )
             try:
                 updated_data = self.settings.model_dump()
                 updated_data.update(override_settings_dict)
@@ -822,64 +897,69 @@ class WordCloudGenerator:
             return None
 
         mask_array: Optional[np.ndarray] = None
-        if active_settings.mask_path: # This is an Optional[Path]
-            mask_array = self._load_mask(active_settings.mask_path)
-            # active_settings.mask_path is already the instance value (Path or None)
-            m_path_name_for_log = (
-                active_settings.mask_path.name
-                if active_settings.mask_path # Check it's not None before .name
-                else "UnknownMask"
-            )
-            if mask_array is None:
-                logger.warning(
-                    f"Mask loading failed for '{m_path_name_for_log}'. "
-                    f"Rectangular cloud."
-                )
+        mask_path_for_log: str = "None (Rectangular)" # Default if no valid mask
 
-        font_path_str: Optional[str] = (
-            str(active_settings.font_path) # Path or None
-            if active_settings.font_path
-            else None
-        )
-        # This block seems redundant now due to DEFAULT_FONT_PATH logic,
-        # but kept for safety if font_path is directly manipulated.
-        if font_path_str is None and active_settings.font_path:
-            # This implies active_settings.font_path was Path but str() failed, unlikely.
-            f_path_name_for_log = (
-                active_settings.font_path.name
-                if active_settings.font_path # Redundant check, already true
-                else "UnknownFont"
-            )
-            logger.error(
-                f"Could not convert {f_path_name_for_log} to string. "
-                "Default font."
-            )
-        elif active_settings.font_path is None:
+        current_mask_path = active_settings.mask_path
+        if isinstance(current_mask_path, Path):
+            if current_mask_path.is_file():
+                mask_array = self._load_mask(current_mask_path)
+                mask_path_for_log = current_mask_path.name
+                if mask_array is None:
+                    logger.warning(
+                        f"Mask loading failed for '{mask_path_for_log}'. "
+                        "Generating rectangular cloud."
+                    )
+                    mask_path_for_log = f"{current_mask_path.name} (Failed Load)"
+            else:
+                logger.warning(
+                    f"Configured mask_path '{current_mask_path}' exists but is not a file. Generating rectangular cloud."
+                )
+                mask_path_for_log = f"{current_mask_path.name} (Not a File)"
+        elif current_mask_path is not None: # Should be caught by Pydantic
             logger.warning(
-                "No font path. WordCloud will use its default font."
+                f"Configured mask_path '{current_mask_path}' is invalid type: {type(current_mask_path)}. Rectangular cloud."
             )
+            mask_path_for_log = f"Invalid Path ({type(current_mask_path)})"
+
+
+        font_path_str: Optional[str] = None
+        font_path_for_log: str = "Default (WordCloud)"
+
+        current_font_path = active_settings.font_path
+        if isinstance(current_font_path, Path):
+            if current_font_path.is_file():
+                font_path_str = str(current_font_path)
+                font_path_for_log = current_font_path.name
+            else:
+                logger.warning(
+                    f"Configured font_path '{current_font_path}' exists but is not a file. Using WordCloud default font."
+                )
+                font_path_for_log = f"{current_font_path.name} (Not a File)"
+        elif current_font_path is not None: # Should be caught by Pydantic
+            logger.warning(
+                f"Configured font_path '{current_font_path}' is invalid type: {type(current_font_path)}. Using WordCloud default font."
+            )
+            font_path_for_log = f"Invalid Path ({type(current_font_path)})"
+
 
         all_stopwords = STOPWORDS.copy()
         if active_settings.stopwords:
-            all_stopwords.update(
-                s.lower() for s in active_settings.stopwords
-            )
+            all_stopwords.update(s.lower() for s in active_settings.stopwords)
         logger.debug(
             f"Using {len(all_stopwords)} stopwords (defaults + custom)."
         )
 
-        color_func, active_colormap, extra_wc_kwargs = (
+        # Get the actual color function and colormap string
+        resolved_color_func, resolved_colormap_str = (
             self._get_active_color_logic(active_settings)
         )
 
-        # Access Pydantic model's field value, which is already a string
-        bg_color_val = active_settings.background_color
+        bg_color_val = str(active_settings.background_color)
         bg_color_lower = bg_color_val.lower()
 
         is_transparent = "rgba(" in bg_color_lower and \
                          bg_color_lower.strip().endswith(",0)")
         wc_mode = "RGBA" if is_transparent else "RGB"
-        # Use the direct value from the settings
         actual_background_color = active_settings.background_color
         if is_transparent:
             logger.debug(
@@ -909,10 +989,10 @@ class WordCloudGenerator:
                 "prefer_horizontal": active_settings.prefer_horizontal,
                 "scale": active_settings.scale,
                 "relative_scaling": active_settings.relative_scaling,
-                "color_func": color_func,
-                "colormap": active_colormap,
+                "color_func": resolved_color_func, # Use the resolved function
+                "colormap": resolved_colormap_str, # Use the resolved colormap name
                 "mode": wc_mode,
-                **extra_wc_kwargs,
+                # **extra_wc_kwargs, # Removed: No longer passing unknown kwargs
             }
             logger.debug(f"WordCloud parameters: {wc_params}")
 
@@ -920,24 +1000,42 @@ class WordCloudGenerator:
 
             if frequencies:
                 logger.info(
-                    f"Generating from {len(frequencies)} pre-computed frequencies."
+                    f"Generating from {len(frequencies)} pre-computed "
+                    f"frequencies."
                 )
                 wc.generate_from_frequencies(frequencies)
-            elif final_text_data:  # Must be str if frequencies is None
+            elif final_text_data:
                 text_snippet = final_text_data[:100].replace("\n", " ") + (
                     "..." if len(final_text_data) > 100 else ""
                 )
                 logger.info(f'Generating from text: "{text_snippet}"')
-                wc.generate(str(final_text_data))  # Ensure it's a string
+                wc.generate(str(final_text_data))
+            else:
+                logger.error(
+                    "WordCloud generate() called without frequencies or text."
+                )
+                return None
 
             output_path = active_settings.get_full_output_path()
-            logger.info(
-                f"Attempting to save word cloud to: {output_path}"
-            )
-            wc.to_file(str(output_path))
-            logger.info(
-                f"Word cloud successfully generated and saved: {output_path}"
-            )
+            logger.info(f"Attempting to save word cloud to: {output_path}")
+
+            if active_settings.output_format == "svg":
+                svg_output = wc.to_svg(
+                    embed_font=True,
+                    optimize_embedded_font=True
+                )
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(svg_output)
+                logger.info(
+                    "SVG word cloud successfully generated and saved: "
+                    f"{output_path}"
+                )
+            else:  # Default to PNG
+                wc.to_file(str(output_path))
+                logger.info(
+                    "PNG word cloud successfully generated and saved: "
+                    f"{output_path}"
+                )
             return output_path
 
         except Exception as e:
@@ -946,22 +1044,15 @@ class WordCloudGenerator:
             )
             if font_path_str and "font" in str(e).lower():
                 logger.error(
-                    f"Font issue with '{font_path_str}'. Check validity."
+                    f"Font issue with '{font_path_for_log}'. Check validity."
                 )
             if (
                 mask_array is not None
-                and active_settings.mask_path # Path or None
                 and "mask" in str(e).lower()
             ):
-                # active_settings.mask_path is already instance value
-                m_path_name_for_error_log = (
-                    active_settings.mask_path.name
-                    if active_settings.mask_path # Check not None
-                    else "UnknownMask"
-                )
                 logger.error(
-                    f"Mask issue with '{m_path_name_for_error_log}'. "
-                    "Check validity."
+                    f"Mask issue with '{mask_path_for_log}'. "
+                    f"Check validity."
                 )
             return None
 
@@ -1010,9 +1101,7 @@ class WordCloudGenerator:
             )
         else:
             item_counts = Counter(items)
-            freq = {
-                item: float(count) for item, count in item_counts.items()
-            }
+            freq = {item: float(count) for item, count in item_counts.items()}
             logger.info(
                 f"Calculated frequencies for {len(freq)} unique items."
             )
@@ -1035,73 +1124,26 @@ class WordCloudGenerator:
 def generate_example_tech_word_cloud(
     output_dir_override: Optional[Path] = None,
     output_filename_override: str = "example_tech_word_cloud.png",
-    # tech_file_path_override: Optional[Path] = None, # Stub
 ) -> Optional[Path]:
     """
     Generates an example technology-themed word cloud.
 
-    This demonstration uses a predefined list of tech terms if `scripts.techs`
-    (currently a stub) cannot be used to load data.
+    This demonstration uses a predefined list of tech terms.
     """
     logger.info(
         "Attempting to generate an example technology-themed word cloud..."
     )
 
-    # Fallback tech data as scripts.techs is a stub
     tech_items: List[str] = [
-        "Python",
-        "JavaScript",
-        "TypeScript",
-        "Java",
-        "Go",
-        "Rust",
-        "Scala",
-        "React",
-        "Angular",
-        "Vue.js",
-        "Svelte",
-        "Node.js",
-        "Express.js",
-        "FastAPI",
-        "Django",
-        "Flask",
-        "Spring Boot",
-        "Docker",
-        "Kubernetes",
-        "Terraform",
-        "Ansible",
-        "AWS",
-        "Azure",
-        "GCP",
-        "PostgreSQL",
-        "MySQL",
-        "MongoDB",
-        "Redis",
-        "Cassandra",
-        "Kafka",
-        "RabbitMQ",
-        "Spark",
-        "Hadoop",
-        "Airflow",
-        "Machine Learning",
-        "Deep Learning",
-        "NLP",
-        "Computer Vision",
-        "PyTorch",
-        "TensorFlow",
-        "scikit-learn",
-        "CI/CD",
-        "Git",
-        "Jenkins",
-        "GitLab CI",
-        "GitHub Actions",
-        "Agile",
-        "Scrum",
-        "DevOps",
-        "Microservices",
-        "Serverless",
-        "GraphQL",
-        "REST",
+        "Python", "JavaScript", "TypeScript", "Java", "Go", "Rust", "Scala",
+        "React", "Angular", "Vue.js", "Svelte", "Node.js", "Express.js",
+        "FastAPI", "Django", "Flask", "Spring Boot", "Docker", "Kubernetes",
+        "Terraform", "Ansible", "AWS", "Azure", "GCP", "PostgreSQL", "MySQL",
+        "MongoDB", "Redis", "Cassandra", "Kafka", "RabbitMQ", "Spark",
+        "Hadoop", "Airflow", "Machine Learning", "Deep Learning", "NLP",
+        "Computer Vision", "PyTorch", "TensorFlow", "scikit-learn", "CI/CD",
+        "Git", "Jenkins", "GitLab CI", "GitHub Actions", "Agile", "Scrum",
+        "DevOps", "Microservices", "Serverless", "GraphQL", "REST",
     ]
     # Simple weighting: more common/foundational terms get higher weights
     tech_weights: Dict[str, float] = {
@@ -1113,9 +1155,10 @@ def generate_example_tech_word_cloud(
         )
         for item in tech_items
     }
+    # Add some repetitions for frequency effect
     tech_items.extend(
         ["Python"] * 5 + ["JavaScript"] * 3 + ["Docker"] * 2
-    )  # Add some repetitions for frequency effect
+    )
 
     tech_cloud_overrides: Dict[str, Any] = {
         "output_dir": output_dir_override or DEFAULT_OUTPUT_DIR,
@@ -1126,27 +1169,22 @@ def generate_example_tech_word_cloud(
         "min_font_size": 10,
         "scale": 1.1,
         "prefer_horizontal": 0.9,
-        "custom_color_func_name": "analogous_color_func", # Use analogous
-        # For analogous_color_func, base_hue can be specified here if desired
-        # "base_hue": 0.6, # Example: for a more bluish analogous set
-        "background_color": "rgba(20, 20, 30, 0.9)",  # Dark, slightly opaque
-        "font_path": DEFAULT_FONT_PATH if DEFAULT_FONT_PATH.exists() else None,
-        "mask_path": DEFAULT_MASK_PATH if DEFAULT_MASK_PATH.exists() else None,
+        "custom_color_func_name": "analogous_color_func",
+        "background_color": "rgba(20, 20, 30, 0.9)",
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
+        "mask_path": (
+            DEFAULT_MASK_PATH
+            if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+            else None
+        ),
         "stopwords": [
-            "Programming",
-            "Language",
-            "Framework",
-            "Library",
-            "Tool",
-            "Database",
-            "Service",
-            "System",
-            "Platform",
-            "Development",
-            "Management",
-            "API",
-            "Data",
-            "Learning",
+            "Programming", "Language", "Framework", "Library", "Tool",
+            "Database", "Service", "System", "Platform", "Development",
+            "Management", "API", "Data", "Learning",
         ],
         "max_words": 150,
         "width": 1600,
@@ -1178,21 +1216,20 @@ if __name__ == "__main__":
     # 1. Topics Word Cloud
     logger.info("Attempting to generate Topics word cloud for profile...")
     if TOPICS_MD_PATH.exists():
-        topic_frequencies = parse_markdown_for_word_cloud_frequencies(TOPICS_MD_PATH)
+        topic_frequencies = parse_markdown_for_word_cloud_frequencies(
+            TOPICS_MD_PATH
+        )
         if topic_frequencies:
             topic_overrides = {
                 "output_dir": PROFILE_IMG_OUTPUT_DIR,
-                "output_filename": "wordcloud_by_topic.png",
-                "background_color": "rgba(255, 255, 255, 0)",  # Transparent
-                "colormap": "viridis",  # Default or 'cividis'
+                "output_filename": "wordcloud_by_topic.svg",
+                "output_format": "svg",
+                "background_color": "rgba(255, 255, 255, 0)",
+                "colormap": "viridis",
                 "custom_color_func_name": "analogous_color_func",
-                "base_hue": 0.55,  # Teal-ish base for analogous
                 "font_path": (
-                    DEFAULT_FONT_PATH if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
-                    else None
-                ),
-                "mask_path": (
-                    DEFAULT_MASK_PATH if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+                    DEFAULT_FONT_PATH
+                    if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
                     else None
                 ),
                 "width": 1200,
@@ -1201,13 +1238,8 @@ if __name__ == "__main__":
                 "contour_width": 0.5,
                 "contour_color": "#DDDDDD",
                 "stopwords": [
-                    "project",
-                    "projects",
-                    "list",
-                    "awesome",
-                    "using",
-                    "application",
-                    "platform",
+                    "project", "projects", "list", "awesome", "using",
+                    "application", "platform",
                 ],
             }
             path_topic_wc = main_generator.generate(
@@ -1216,19 +1248,22 @@ if __name__ == "__main__":
             )
             if path_topic_wc:
                 logger.info(
-                    f"Profile Topics Word Cloud generated: {path_topic_wc.name}"
+                    "Profile Topics Word Cloud generated: "
+                    f"{path_topic_wc.name}"
                 )
             else:
-                logger.error("Failed to generate Profile Topics Word Cloud.")
+                logger.error(
+                    "Failed to generate Profile Topics Word Cloud."
+                )
         else:
             logger.warning(
                 f"No frequencies parsed from {TOPICS_MD_PATH.name}, "
-                f"skipping topics word cloud."
+                "skipping topics word cloud."
             )
     else:
         logger.error(
             f"Topics Markdown file not found: {TOPICS_MD_PATH}. "
-            f"Cannot generate topics word cloud."
+            "Cannot generate topics word cloud."
         )
 
     # 2. Languages Word Cloud
@@ -1240,20 +1275,17 @@ if __name__ == "__main__":
         if language_frequencies:
             language_overrides = {
                 "output_dir": PROFILE_IMG_OUTPUT_DIR,
-                "output_filename": "wordcloud_by_language.png",
-                "background_color": "rgba(255, 255, 255, 0)",  # Transparent
+                "output_filename": "wordcloud_by_language.svg",
+                "output_format": "svg",
+                "background_color": "rgba(255, 255, 255, 0)",
                 "custom_color_func_name": "primary_color_func",
-                # Example direct palette for languages
                 "color_palette_override": [
                     "#4B8BBE", "#306998", "#FFE873", "#FFD43B",
                     "#646464", "#F1502F", "#00A0B0",
                 ],
                 "font_path": (
-                    DEFAULT_FONT_PATH if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
-                    else None
-                ),
-                "mask_path": (
-                    DEFAULT_MASK_PATH if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+                    DEFAULT_FONT_PATH
+                    if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
                     else None
                 ),
                 "width": 1200,
@@ -1262,12 +1294,8 @@ if __name__ == "__main__":
                 "contour_width": 0.5,
                 "contour_color": "#AAAAAA",
                 "stopwords": [
-                    "language",
-                    "languages",
-                    "code",
-                    "script",
-                    "file",
-                    "files",
+                    "language", "languages", "code", "script",
+                    "file", "files",
                 ],
             }
             path_lang_wc = main_generator.generate(
@@ -1276,43 +1304,54 @@ if __name__ == "__main__":
             )
             if path_lang_wc:
                 logger.info(
-                    f"Profile Languages Word Cloud generated: {path_lang_wc.name}"
+                    "Profile Languages Word Cloud generated: "
+                    f"{path_lang_wc.name}"
                 )
             else:
-                logger.error("Failed to generate Profile Languages Word Cloud.")
+                logger.error(
+                    "Failed to generate Profile Languages Word Cloud."
+                )
         else:
             logger.warning(
                 f"No frequencies parsed from {LANGUAGES_MD_PATH.name}, "
-                f"skipping languages word cloud."
+                "skipping languages word cloud."
             )
     else:
         logger.error(
             f"Languages Markdown file not found: {LANGUAGES_MD_PATH}. "
-            f"Cannot generate languages word cloud."
+            "Cannot generate languages word cloud."
         )
 
     # --- Generate Example Word Clouds for Demonstration ---
-    logger.info("\\n--- Generating Example Word Clouds for Demonstration ---")
+    logger.info("\n--- Generating Example Word Clouds for Demonstration ---")
     example_output_dir = PROJECT_ROOT / "logs" / "wordcloud_examples"
     example_output_dir.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Example word cloud outputs will be saved to: {example_output_dir}")
+    logger.info(
+        f"Example word cloud outputs will be saved to: {example_output_dir}"
+    )
 
-    # Example 1: Simple text-based, rectangular, using colormap
-    logger.info("Running Example 1: Simple text cloud with colormap.")
+    # Example 1: Simple text-based, rectangular, using colormap (PNG)
+    logger.info("Running Example 1: Simple text cloud with colormap (PNG).")
     simple_text = (
-        "Python Pydantic FastAPI Loguru Rich Typer JavaScript TypeScript React "
-        "Node.js Next.js AWS Docker Kubernetes SQL CI/CD Agile Scrum DevOps "
-        "MachineLearning AI DataScience NumPy Pandas Matplotlib SoftwareDesign "
-        "ProblemSolving Collaboration Communication Teamwork Innovation Cloud"
+        "Python Pydantic FastAPI Loguru Rich Typer JavaScript TypeScript "
+        "React Node.js Next.js AWS Docker Kubernetes SQL CI/CD Agile Scrum "
+        "DevOps MachineLearning AI DataScience NumPy Pandas Matplotlib "
+        "SoftwareDesign ProblemSolving Collaboration Communication Teamwork "
+        "Innovation Cloud"
     )
     ex1_overrides = {
         "text": simple_text,
         "output_dir": example_output_dir,
         "output_filename": "example_1_simple_text_colormap.png",
+        "output_format": "png",
         "background_color": "rgba(10, 20, 30, 0.95)",
         "colormap": "Pastel1",
-        "mask_path": None,  # Rectangular
-        "font_path": DEFAULT_FONT_PATH if DEFAULT_FONT_PATH.exists() else None,
+        "mask_path": None,
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
         "contour_width": 0,
         "custom_color_func_name": None,
         "max_words": 75,
@@ -1321,38 +1360,121 @@ if __name__ == "__main__":
     }
     path_ex1 = main_generator.generate(override_settings_dict=ex1_overrides)
     if path_ex1:
-        logger.info(f"Example 1 generated: {path_ex1.name}")
+        logger.info(f"Example 1 (PNG) generated: {path_ex1.name}")
     else:
-        logger.error("Example 1 failed.")
+        logger.error("Example 1 (PNG) failed.")
 
-    # Example 2: Tech word cloud (uses helper function with predefined data)
-    logger.info("Running Example 2: Technology-themed cloud (predefined data).")
-    path_ex2 = generate_example_tech_word_cloud(
-        output_dir_override=example_output_dir,
-        output_filename_override="example_2_tech_cloud_analogous.png",
+    # Example 1.1: Simple text-based, rectangular, using colormap (SVG)
+    logger.info("Running Example 1.1: Simple text cloud with colormap (SVG).")
+    ex1_svg_overrides = ex1_overrides.copy()
+    ex1_svg_overrides["output_filename"] = "example_word_cloud_1_text.svg"
+    ex1_svg_overrides["output_format"] = "svg"
+
+    path_ex1_svg = main_generator.generate(
+        override_settings_dict=ex1_svg_overrides  # Shortened
     )
-    if path_ex2:
-        logger.info(f"Example 2 generated: {path_ex2.name}")
+    if path_ex1_svg:
+        logger.info(f"Example 1.1 (SVG) generated: {path_ex1_svg.name}")
     else:
-        logger.warning("Example 2 failed (check logs).")
+        logger.error("Example 1.1 (SVG) failed.")
 
-    # Example 3: Creative cloud with primary_color_func & color_palette_override
+    # Example 2: Tech word cloud (helper func, predefined data) - SVG
     logger.info(
-        "Running Example 3: Creative cloud with primary_color_func and palette override."
+        "Running Example 2: Tech-themed cloud (predefined data) - SVG."
+    )
+    # Modify generate_example_tech_word_cloud to accept output_format
+    # For now, we'll create a specific SVG version here.
+    tech_items: List[str] = [
+        "Python", "JavaScript", "TypeScript", "Java", "Go", "Rust", "Scala",
+        "React", "Angular", "Vue.js", "Svelte", "Node.js", "Express.js",
+        "FastAPI", "Django", "Flask", "Spring Boot", "Docker", "Kubernetes",
+        "Terraform", "Ansible", "AWS", "Azure", "GCP", "PostgreSQL", "MySQL",
+        "MongoDB", "Redis", "Cassandra", "Kafka", "RabbitMQ", "Spark",
+        "Hadoop", "Airflow", "Machine Learning", "Deep Learning", "NLP",
+        "Computer Vision", "PyTorch", "TensorFlow", "scikit-learn", "CI/CD",
+        "Git", "Jenkins", "GitLab CI", "GitHub Actions", "Agile", "Scrum",
+        "DevOps", "Microservices", "Serverless", "GraphQL", "REST",
+    ]
+    tech_weights: Dict[str, float] = {
+        item: random.uniform(1.0, 3.0)
+        + (
+            5.0
+            if item in ["Python", "JavaScript", "Docker", "Kubernetes", "AWS"]
+            else 0
+        )
+        for item in tech_items
+    }
+    tech_items.extend(
+        ["Python"] * 5 + ["JavaScript"] * 3 + ["Docker"] * 2
+    )
+
+    tech_cloud_svg_overrides: Dict[str, Any] = {
+        "output_dir": example_output_dir,
+        "output_filename": "example_2_tech_cloud_analogous.svg",
+        "output_format": "svg",
+        "colormap": "plasma",
+        "contour_width": 1.0,
+        "contour_color": "#FFFFFF",
+        "min_font_size": 10,
+        "scale": 1.1,
+        "prefer_horizontal": 0.9,
+        "custom_color_func_name": "analogous_color_func",
+        "background_color": "rgba(20, 20, 30, 0.9)",
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
+        "mask_path": (
+            DEFAULT_MASK_PATH
+            if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+            else None
+        ),
+        "stopwords": [
+            "Programming", "Language", "Framework", "Library", "Tool",
+            "Database", "Service", "System", "Platform", "Development",
+            "Management", "API", "Data", "Learning",
+        ],
+        "max_words": 150,
+        "width": 1600,
+        "height": 1000,
+    }
+    path_ex2_svg = main_generator.generate_from_list(
+        items=tech_items,
+        weights=tech_weights,
+        override_settings_dict=tech_cloud_svg_overrides,
+    )
+    if path_ex2_svg:
+        logger.info(f"Example 2 (SVG) generated: {path_ex2_svg.name}")
+    else:
+        logger.warning("Example 2 (SVG) failed (check logs).")
+
+    # Example 3: Creative cloud (primary_color_func & palette override, SVG)
+    logger.info(
+        "Running Example 3: Creative cloud (SVG)."
     )
     creative_text = (
         "DesignThinking UserExperience UI UX Figma Sketch AdobeXD Prototyping "
         "Wireframing UserResearch Accessibility GraphicDesign Typography "
-        "ColorTheory Branding Innovation VisualDesign InteractionDesign Empathy "
-        "Creativity Storytelling JourneyMapping PersonaDevelopment"
+        "ColorTheory Branding Innovation VisualDesign InteractionDesign "
+        "Empathy Creativity Storytelling JourneyMapping PersonaDevelopment"
     )
     custom_palette = ["#FF6B6B", "#FFD166", "#06D6A0", "#118AB2", "#073B4C"]
     ex3_overrides = {
         "text": creative_text,
         "output_dir": example_output_dir,
-        "output_filename": "example_3_creative_primary_palette.png",
-        "mask_path": DEFAULT_MASK_PATH if DEFAULT_MASK_PATH.exists() else None,
-        "font_path": DEFAULT_FONT_PATH if DEFAULT_FONT_PATH.exists() else None,
+        "output_filename": "example_3_creative_primary_palette.svg",
+        "output_format": "svg",
+        "mask_path": (
+            DEFAULT_MASK_PATH
+            if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+            else None
+        ),
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
         "custom_color_func_name": "primary_color_func",
         "color_palette_override": custom_palette,
         "contour_width": 1.0,
@@ -1365,53 +1487,57 @@ if __name__ == "__main__":
         "max_words": 100,
     }
     if ex3_overrides["mask_path"] is None:
-        logger.warning("Example 3: Default mask not found, will be rectangular.")
+        logger.warning(
+            "Example 3 (SVG): Default mask not found, will be rectangular."
+        )
     if ex3_overrides["font_path"] is None:
-        logger.warning("Example 3: Default font not found, using WordCloud default.")
+        logger.warning(
+            "Example 3 (SVG): Default font not found, using WordCloud default."
+        )
 
     path_ex3 = main_generator.generate(override_settings_dict=ex3_overrides)
     if path_ex3:
-        logger.info(f"Example 3 generated: {path_ex3.name}")
+        logger.info(f"Example 3 (SVG) generated: {path_ex3.name}")
     else:
-        logger.error("Example 3 failed.")
+        logger.error("Example 3 (SVG) failed.")
 
-    # Example 4: List with weights, using complementary_color_func
-    logger.info("Running Example 4: List with weights, complementary colors.")
+    # Example 4: List with weights, using complementary_color_func (SVG)
+    logger.info(
+        "Running Example 4: List with weights, complementary colors (SVG)."
+    )
     list_items = [
-        "Python",
-        "JS",
-        "Java",
-        "C++",
-        "Go",
-        "Rust",
-        "Swift",
-        "Kotlin",
-        "PHP",
-        "Ruby",
+        "Python", "JS", "Java", "C++", "Go", "Rust", "Swift", "Kotlin",
+        "PHP", "Ruby",
     ]
     list_weights = {lang: 10 - i * 0.75 for i, lang in enumerate(list_items)}
     ex4_overrides = {
         "output_dir": example_output_dir,
-        "output_filename": "example_4_list_complementary.png",
+        "output_filename": "example_4_list_complementary.svg",
+        "output_format": "svg",
         "custom_color_func_name": "complementary_color_func",
         "background_color": "rgba(30,30,30,1)",
         "mask_path": None,
         "width": 900,
         "height": 600,
-        "font_path": DEFAULT_FONT_PATH if DEFAULT_FONT_PATH.exists() else None,
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
         "contour_width": 0.5,
         "contour_color": "#CCC",
     }
     path_ex4 = main_generator.generate_from_list(
-        items=list_items, weights=list_weights, override_settings_dict=ex4_overrides
+        items=list_items, weights=list_weights,
+        override_settings_dict=ex4_overrides
     )
     if path_ex4:
-        logger.info(f"Example 4 generated: {path_ex4.name}")
+        logger.info(f"Example 4 (SVG) generated: {path_ex4.name}")
     else:
-        logger.error("Example 4 failed.")
+        logger.error("Example 4 (SVG) failed.")
 
-    # Example 5: Triadic colors with different base hue
-    logger.info("Running Example 5: Triadic colors, different base hue.")
+    # Example 5: Triadic colors with different base hue (SVG)
+    logger.info("Running Example 5: Triadic colors, different base hue (SVG).")
     ex5_text = (
         "Synergy Blockchain Web3 Metaverse Decentralization DAO NFT "
         "SmartContracts Ethereum Solana Polygon Polkadot FinTech RegTech"
@@ -1419,25 +1545,35 @@ if __name__ == "__main__":
     ex5_overrides = {
         "text": ex5_text,
         "output_dir": example_output_dir,
-        "output_filename": "example_5_triadic_blockchain.png",
+        "output_filename": "example_5_triadic_blockchain.svg",
+        "output_format": "svg",
         "custom_color_func_name": "triadic_color_func",
-        "base_hue": 0.85, # Slightly different hue for this example
         "background_color": "white",
-        "mask_path": DEFAULT_MASK_PATH if DEFAULT_MASK_PATH.exists() else None,
-        "font_path": DEFAULT_FONT_PATH if DEFAULT_FONT_PATH.exists() else None,
+        "mask_path": (
+            DEFAULT_MASK_PATH
+            if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+            else None
+        ),
+        "font_path": (
+            DEFAULT_FONT_PATH
+            if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
+            else None
+        ),
         "width": 1200,
         "height": 700,
         "max_words": 50,
         "scale": 1.3,
     }
     if ex5_overrides["mask_path"] is None:
-        logger.warning("Example 5: Default mask not found, will be rectangular.")
+        logger.warning(
+            "Example 5 (SVG): Default mask not found, will be rectangular."
+        )
 
     path_ex5 = main_generator.generate(override_settings_dict=ex5_overrides)
     if path_ex5:
-        logger.info(f"Example 5 generated: {path_ex5.name}")
+        logger.info(f"Example 5 (SVG) generated: {path_ex5.name}")
     else:
-        logger.error("Example 5 failed.")
+        logger.error("Example 5 (SVG) failed.")
 
     logger.info(
         f"WordCloudGenerator script demonstration finished. Outputs in "

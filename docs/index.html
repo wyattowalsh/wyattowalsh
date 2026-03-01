@@ -2,272 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GitHub Profile Page README</title>
+  <title>Document</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <link rel="icon" href="_media/icon-min.png" type="image/png">
-  <link rel="icon" href="_media/icon.png" type="image/png">
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="./styles/theme.css">
-  <link rel="stylesheet" href="./styles/sidebar.css">
-  <link rel="stylesheet" href="./styles/404.css">
-  <link rel="stylesheet" href="./styles/home.css">
-  <link rel="stylesheet" href="./styles/stack.css">
-  <!-- CDN files for docsify-katex -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <!-- docsify-sidebar-collapse -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar.min.css" />
-  <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/sidebar-folder.min.css" /> // folder style -->
-  <!-- docsify-material-icons -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp" rel="stylesheet"/>
-  <!--- docsify table of contents -->
-  <!--- <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css"> -->
+  {{/*  mermaid  */}}
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.css">
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body>
-  <div id="app">Please wait ... <i class="fa-solid fa-spinner fa-spin"></i></div>
+  <div id="app"></div>
   <script>
+    var num = 0;
+    mermaid.initialize({ startOnLoad: false });
+
     window.$docsify = {
-      name: 'GitHub Profile Page README',
+      name: 'wyattowalsh',
       repo: 'wyattowalsh/wyattowalsh',
-      logo: '/_media/icon-min.png',
-      auto2top: true,
-      themeColor: '#b4637a',
-      notFoundPage: '404.md',
+      logo: '/_media/logo.webp',
       loadSidebar: true,
-      alias: {
-        '/.*/_sidebar.md': '/_sidebar.md',
-      },
-      subMaxLevel: 3,
-      search: {
-        // Cache search index for one day (in ms)
-        maxAge: 86400000,
-    
-        // Auto-detect all sidebar paths
-        paths: 'auto',
-    
-        // Placeholder shown in the search box
-        placeholder: 'Type to search',
-    
-        // Message shown when no results are found
-        noData: 'No Results!',
-    
-        // Headline depth (levels 1–6) to include in the index
-        depth: 2,
-    
-        // Don't hide other sidebar content when searching
-        hideOtherSidebarContent: false,
-    
-        // Namespace to avoid index collisions (default example)
-        namespace: 'profile-readme',
-    
-        // No additional path namespaces by default
-        pathNamespaces: []
-      },
-      gtag: 'G-1RQEFN6FBW',
-      copyCode: {
-        buttonText: 'Copy to clipboard',
-        errorText: 'Error',
-        successText: 'Copied',
-      },
-      pagination: {
-        // Default labels
-        previousText: 'PREVIOUS',
-        nextText: 'NEXT',
-    
-        // Don't cross chapter boundaries
-        crossChapter: false,
-        crossChapterText: false
-      },
-      'flexible-alerts': {
-        // Global style: "callout" or "flat"
-        style: 'callout',
-
-        // Built-in types with explicit English defaults
-        note: {
-          label: 'Note',            // default heading for NOTE
-          iconVisibility: 'visible'
-        },
-        tip: {
-          label: 'Tip',             // default heading for TIP
-          iconVisibility: 'visible'
-        },
-        warning: {
-          label: 'Warning',         // default heading for WARNING
-          iconVisibility: 'visible'
-        },
-        attention: {
-          label: 'Attention',       // default heading for ATTENTION
-          iconVisibility: 'visible'
-        },
-
-        // Custom "bookmark" type
-        bookmark: {
-          label: 'Bookmark',
-          icon: 'fas fa-bookmark',
-          className: 'bookmark',
-          labelVisibility: 'visible',
-          iconVisibility: 'visible'
+      subMaxLevel: 2,
+      auto2top: true,
+      autoHeader: true,
+      formatUpdated: '{MMMM} {DD}, {YYYY} {HH}:{mm}',
+      hideSidebar: true,
+      loadNavbar: true,
+      mergeNavbar: true,
+      name: "<h1 align='center'>Profile <code>README.md</code> Docs</h1>",
+      nativeEmoji: true,
+      notFoundPage: true,
+      markdown: {
+        smartypants: true,
+        renderer: {
+          code: function(code, lang) {
+            if (lang === "mermaid") {
+              return (
+                '<div class="mermaid">' + mermaid.render('mermaid-svg-' + num++, code) + "</div>"
+              );
+            }
+            return this.origin.code.apply(this, arguments);
+          }
         }
-      },
-      footer: {
-        copy: '<span>GitHub Profile Page README &copy; 2025</span>',
-        auth: 'by Wyatt Walsh',
-        pre: '<hr/>',
-        style: 'text-align: right;',
-        class: 'className',
-      },
-      mermaidConfig: {
-        querySelector: ".mermaid",
-      },
-      mermaidZoom: {
-        minimumScale: 1,
-        maximumScale: 5,
-        zoomPannel: true,
-      },
-      sidebarDisplayLevel: 0,
-      progress: {
-          position: "top",
-          color: "var(--theme-color,#ea9d34)",
-          height: "3px",
-      },
-      /*  timeUpdater: {
-        text: "---\n>last updated: {docsify-updated}",
-        formatUpdated: "{YYYY}/{MM}/{DD}",
-        whereToPlace: "top",  // "top" or "bottom", default to "bottom"
-      }  */
-      latex: {
-        inlineMath   : [['$', '$'], ['\\(', '\\)']], // default
-        displayMath  : [['$$', '$$']],               // default
-        customOptions: {
-          renderA11yString: true,
-          copyTex: true,
-          throwOnError: true,
-          errorColor: 'red'
-        }                            // default
-      },
-      // coverpage: true,
-      // onlyCover: false,
-      /*  toc: {
-        scope: '.markdown-section',
-        headings: 'h1, h2, h3, h4, h5, h6',
-        title: 'Contents',
-      },  */
-      plantuml: {
-        skin: 'default',
-        renderSvgAsObject: true
-      },
+      }
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <!-- Docsify Plugins -->
-  <!-- Search -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-  <script src="//polyfill.io/v3/polyfill.min.js?features=String.prototype.normalize"></script>
-  <!-- Google Analytics -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/ga.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify@5/dist/plugins/gtag.min.js"></script>
-  <!-- External Script -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
-  <!-- Copy to Clipboard https://github.com/jperasmus/docsify-copy-code/blob/master/README.md -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  <!-- Pagination https://github.com/imyelo/docsify-pagination#readme -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
-  <!-- Katex https://github.com/upupming/docsify-katex -->
-  <script src="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/marked@4"></script>
-  <!-- CDN files for docsify-katex -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-katex@latest/dist/docsify-katex.js"></script>
-  <!-- or <script src="//cdn.jsdelivr.net/gh/upupming/docsify-katex@latest/dist/docsify-katex.js"></script> -->
-  <!-- PDF Embed https://github.com/lazypanda10117/docsify-pdf-embed -->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
-  <script src="//unpkg.com/docsify-pdf-embed-plugin/src/docsify-pdf-embed.js"></script>
-  <!-- Flexible Alerts https://github.com/fzankl/docsify-plugin-flexible-alerts -->
-  <script src="https://unpkg.com/docsify-plugin-flexible-alerts"></script>
-  <!-- docsify-fontawesome https://github.com/erickjx/docsify-fontawesome -->
-  <script src="//unpkg.com/docsify-fontawesome/dist/docsify-fontawesome.min.js"></script>
-  <!-- docsify-footer https://github.com/erickjx/docsify-footer -->
-  <script src="//unpkg.com/docsify-footer-enh/dist/docsify-footer-enh.min.js"></script>
-  <!-- mermaid-docsify https://github.com/Leward/mermaid-docsify -->
-  <script type="module">
-    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-    mermaid.initialize({ startOnLoad: true });
-    window.mermaid = mermaid;
-  </script>
-  <script src="//unpkg.com/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
-  <!-- docsify-mermaid-zoom https://github.com/corentinleberre/docsify-mermaid-zoom -->
-  <script src="//cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="//unpkg.com/docsify-mermaid-zoom/dist/docsify-mermaid-zoom.js"></script>
-  <!-- docsify-sidebar-collapse https://github.com/iPeng6/docsify-sidebar-collapse -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
-  <!-- docsify-material-icons https://github.com/erickjx/docsify-material-icons -->
-  <script src="//unpkg.com/docsify-material-icons/dist/docsify-material-icons.min.js"></script>
-  <!-- docsify-progress https://github.com/HerbertHe/docsify-progress -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
-  <!-- docsify-updated https://github.com/pfeak/docsify-updated -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/docsify-updated/src/time-updater.js"></script> -->
-  <!-- docsify-image-caption https://github.com/h-hg/docsify-image-caption -->
-  <script src="https://unpkg.com/@h-hg/docsify-image-caption/dist/docsify-image-caption.min.js"></script>
-  <!-- docsify-terminal-block https://github.com/dolanmiu/docsify-terminal-block -->
-  <script src="https://cdn.jsdelivr.net/npm/docsify-terminal-block@1.0.3"></script>
-  <!-- docsify-markmap.js https://github.com/rcqed/docsify-markmap.js -->
-  <script src="https://cdn.jsdelivr.net/npm/markmap-autoloader@0.15.2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-markmap.js@1.0.0/docsify-markmap.min.js"></script>
-  <!-- docsify-latex https://github.com/scruel/docsify-latex -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-latex@0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/copy-tex.min.js" integrity="sha384-HORx6nWi8j5/mYA+y57/9/CZc5z8HnEw4WUZWy5yOn9ToKBv1l58vJaufFAn9Zzi" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
-    onload="renderMathInElement(document.body);"></script>
-  <!-- docsify-footnote https://github.com/Robert-Du0001/docsify-footnote -->
-  <script src="//cdn.jsdelivr.net/npm/docsify-footnote/dist/docsify-footnote.min.js"></script>
-  <!-- docsify table of contents https://github.com/mrpotatoes/docsify-toc -->
-  <!-- <script src="https://unpkg.com/docsify-toc@1.0.0/dist/toc.js"></script> -->
-  <!-- docsify-plantuml https://github.com/imyelo/docsify-plantuml -->
-  <script src="//unpkg.com/docsify-plantuml/dist/docsify-plantuml.min.js"></script>
-  <!-- prism langs -->
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-markdown.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-toml.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-latex.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-html.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-css.min.js"></script>
-
-  <!-- Fix for scrolling issues -->
-  <script>
-    // Wait for Docsify to finish loading
-    window.$docsify.plugins = [].concat(function(hook, vm) {
-      hook.ready(function() {
-        // Fix scrolling on main container elements
-        document.body.style.overflow = 'auto';
-        document.documentElement.style.overflow = 'auto';
-        
-        // If the #app element is created dynamically by Docsify
-        let appElement = document.getElementById('app');
-        if (appElement) {
-          appElement.style.overflow = 'auto';
-        }
-        
-        // Content area (created by Docsify)
-        setTimeout(function() {
-          let contentElements = document.querySelectorAll('.content');
-          if (contentElements.length > 0) {
-            contentElements.forEach(function(el) {
-              el.style.overflow = 'auto';
-            });
-          }
-        }, 1000); // Delay to ensure Docsify has created elements
-      });
-    }, window.$docsify.plugins || []);
-  </script>
 </body>
 </html>

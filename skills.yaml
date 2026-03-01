@@ -1,0 +1,528 @@
+style: for-the-badge
+logo_color: white
+readme_path: README.md
+section_title: Tech Stack
+collapsible: false
+categories:
+- name: Programming Languages
+  skills:
+  - name: Python
+    slug: python
+    color: 3776AB
+  - name: Structured Query Language (SQL)
+    logo_path: .github/assets/skill-icons/sql.svg
+    color: 4479A1
+  - name: JavaScript
+    slug: javascript
+    color: F7DF1E
+  - name: TypeScript
+    slug: typescript
+    color: 3178C6
+  - name: HTML5
+    slug: html5
+    color: E34F26
+  - name: CSS3
+    slug: css3
+    color: 1572B6
+  - name: R
+    slug: r
+    color: 276DC3
+  - name: Java
+    slug: openjdk
+    color: '000000'
+  - name: Matlab
+    logo_path: .github/assets/skill-icons/matlab.svg
+    color: 0076A8
+  - name: Ruby
+    slug: ruby
+    color: CC342D
+  - name: C++
+    slug: c++
+    color: 00599C
+  - name: Go
+    slug: go
+    color: 00ADD8
+  - name: Sass
+    slug: sass
+    color: CC6699
+  - name: MDX
+    slug: mdx
+    color: 1B1F24
+  - name: PowerShell
+    slug: powershell
+    logo_path: .github/assets/skill-icons/powershell.svg
+    color: 5391FE
+- name: AI & LLMs
+  skills:
+  - name: OpenAI
+    slug: openai
+    color: '412991'
+  - name: LangChain
+    slug: langchain
+    color: 1C3C3C
+  - name: LangGraph
+    slug: langchain
+    color: 1C3C3C
+  - name: LlamaIndex
+    logo_path: .github/assets/skill-icons/llamaindex.svg
+    color: 5A29E4
+  - name: Anthropic
+    slug: anthropic
+    color: '191919'
+  - name: Hugging Face
+    slug: huggingface
+    color: FFD21E
+    logo_color: black
+  - name: Weights & Biases
+    slug: weights&biases
+    color: FFBE00
+    logo_color: black
+  - name: spaCy
+    slug: spacy
+    color: 09A3D5
+- name: Data
+  subcategories:
+  - name: Collection
+    skills:
+    - name: Web Scraping
+      logo_path: .github/assets/skill-icons/web-scraping.svg
+      color: 43853D
+    - name: Scrapy
+      slug: scrapy
+      color: 60A839
+    - name: APIs
+      logo_path: .github/assets/skill-icons/apis.svg
+      color: 009688
+    - name: ETL
+      logo_path: .github/assets/skill-icons/etl.svg
+      color: 4A90D9
+    - name: ELT
+      logo_path: .github/assets/skill-icons/elt.svg
+      color: 7B68EE
+  - name: Storage
+    skills:
+    - name: Neo4j
+      slug: neo4j
+      color: 4581C3
+    - name: SQLite
+      slug: sqlite
+      color: 003B57
+    - name: MySQL
+      slug: mysql
+      color: 4479A1
+    - name: PostgreSQL
+      slug: postgresql
+      color: 4169E1
+    - name: Redis
+      slug: redis
+      color: FF4438
+    - name: DuckDB
+      slug: duckdb
+      color: FFF000
+      logo_color: black
+    - name: InfluxDB
+      slug: influxdb
+      color: 22ADF6
+  - name: Visualization
+    skills:
+    - name: Matplotlib
+      logo_path: .github/assets/skill-icons/matplotlib.svg
+      color: 11557C
+    - name: Plotly
+      slug: plotly
+      color: 3F4F75
+    - name: D3.js
+      slug: d3
+      color: F9A03C
+    - name: Tableau
+      slug: tableau
+      logo_path: .github/assets/skill-icons/tableau.svg
+      color: 1F457E
+  - name: Processing
+    skills:
+    - name: Apache Spark
+      slug: apachespark
+      color: E25A1C
+    - name: Apache Airflow
+      slug: apacheairflow
+      color: 017CEE
+    - name: Multiprocessing
+      logo_path: .github/assets/skill-icons/multiprocessing.svg
+      color: 3776AB
+    - name: Pandas
+      slug: pandas
+      color: '150458'
+    - name: NumPy
+      slug: numpy
+      color: '013243'
+    - name: Apache Arrow
+      logo_path: .github/assets/skill-icons/apache-arrow.svg
+      color: D22128
+    - name: Apache Kafka
+      slug: apachekafka
+      color: 231F20
+    - name: Dask
+      slug: dask
+      color: FC6E6B
+    - name: SQLAlchemy
+      slug: sqlalchemy
+      color: D71F00
+  - name: Modeling
+    skills:
+    - name: scikit-learn
+      slug: scikit-learn
+      color: F7931E
+    - name: PyCaret
+      logo_path: .github/assets/skill-icons/pycaret.svg
+      color: 2496ED
+    - name: Keras
+      slug: keras
+      color: D00000
+    - name: Tensorflow
+      slug: tensorflow
+      color: FF6F00
+    - name: PyTorch
+      slug: pytorch
+      color: EE4C2C
+    - name: SciPy
+      slug: scipy
+      color: 8CAAE6
+    - name: OpenCV
+      slug: opencv
+      color: 5C3EE8
+    - name: OpenAI Gym
+      slug: openaigym
+      color: 0081A5
+  - name: Deployment
+    skills:
+    - name: Kedro
+      slug: kedro
+      color: FFC900
+    - name: dagster
+      logo_path: .github/assets/skill-icons/dagster.svg
+      color: 4F43DD
+    - name: Flask
+      slug: flask
+      color: '000000'
+    - name: FastAPI
+      slug: fastapi
+      color: '009688'
+    - name: Express
+      slug: express
+      color: '000000'
+    - name: Prefect
+      slug: prefect
+      color: 070E10
+- name: Cloud Technologies
+  skills:
+  - name: Amazon AWS
+    slug: amazonwebservices
+    color: 232F3E
+  - name: Google Cloud
+    slug: googlecloud
+    color: 4285F4
+  - name: Microsoft Azure
+    slug: microsoftazure
+    logo_path: .github/assets/skill-icons/azure.svg
+    color: 0078D4
+  - name: Supabase
+    slug: supabase
+    color: 3FCF8E
+  - name: Terraform
+    slug: terraform
+    color: 844FBA
+- name: CI/CD Platforms
+  skills:
+  - name: GitHub Actions
+    slug: githubactions
+    color: 2088FF
+  - name: Travis CI
+    slug: travisci
+    color: 3EAAAF
+- name: Version Control Platforms
+  skills:
+  - name: GitHub
+    slug: github
+    color: '181717'
+  - name: GitLab
+    slug: gitlab
+    color: FC6D26
+  - name: DagsHub
+    logo_path: .github/assets/skill-icons/dagshub.svg
+    color: 6B57FF
+- name: Workflow Tools
+  skills:
+  - name: Git
+    slug: git
+    color: F05032
+  - name: Linux
+    slug: linux
+    color: FCC624
+  - name: Shell Script
+    slug: gnubash
+    color: 4EAA25
+  - name: Bash
+    slug: gnubash
+    color: 4EAA25
+  - name: Zsh
+    slug: zsh
+    color: F15A24
+  - name: Anaconda
+    slug: anaconda
+    color: 44A833
+  - name: Poetry
+    slug: poetry
+    color: 60A5FA
+  - name: Jupyter
+    slug: jupyter
+    color: F37626
+  - name: Docker
+    slug: docker
+    color: 2496ED
+  - name: Kubernetes
+    slug: kubernetes
+    color: 326CE5
+  - name: Pytest
+    slug: pytest
+    color: 0A9EDC
+  - name: Python Hypothesis
+    logo_path: .github/assets/skill-icons/python-hypothesis.svg
+    color: BD1C2B
+  - name: PyEnv
+    logo_path: .github/assets/skill-icons/pyenv.svg
+    color: '306998'
+  - name: Visual Studio Code
+    slug: visualstudiocode
+    logo_path: .github/assets/skill-icons/vscode.svg
+    color: 007ACC
+  - name: Sublime Text
+    slug: sublimetext
+    color: FF9800
+  - name: GNU Make
+    slug: make
+    color: 6D00CC
+  - name: uv
+    slug: uv
+    color: DE5FE9
+  - name: pnpm
+    slug: pnpm
+    color: F69220
+  - name: CMake
+    slug: cmake
+    color: 064F8C
+  - name: Pre-commit
+    slug: pre-commit
+    color: FAB040
+    logo_color: black
+  - name: Ruff
+    slug: ruff
+    color: D7FF64
+    logo_color: black
+  - name: Prettier
+    slug: prettier
+    color: F7B93E
+    logo_color: black
+- name: Optimization Tools
+  skills:
+  - name: AMPL
+    logo_path: .github/assets/skill-icons/ampl.svg
+    color: E95420
+  - name: IBM CPLEX
+    logo_path: .github/assets/skill-icons/ibm-cplex.svg
+    color: 052FAD
+  - name: Gurobi
+    slug: gurobi
+    color: EE3524
+  - name: PuLP
+    logo_path: .github/assets/skill-icons/pulp.svg
+    color: FFA500
+  - name: Metaheuristics
+    logo_path: .github/assets/skill-icons/metaheuristics.svg
+    color: 8B5CF6
+  - name: Reinforcement Learning
+    logo_path: .github/assets/skill-icons/reinforcement-learning.svg
+    color: FF6F00
+- name: Web Development
+  skills:
+  - name: React
+    slug: react
+    color: 61DAFB
+  - name: Next.js
+    slug: nextdotjs
+    color: '000000'
+  - name: Gatsby
+    slug: gatsby
+    color: '663399'
+  - name: Tailwind CSS
+    slug: tailwindcss
+    color: 06B6D4
+  - name: Material User Interface (MUI)
+    slug: mui
+    color: 007FFF
+  - name: Chakra UI
+    slug: chakraui
+    color: '319795'
+  - name: GraphQL
+    slug: graphql
+    color: E10098
+  - name: ESLint
+    slug: eslint
+    color: 4B32C3
+  - name: npm
+    slug: npm
+    color: CB3837
+  - name: Yarn
+    slug: yarn
+    color: 2C8EBB
+  - name: Jest
+    slug: jest
+    color: C21325
+  - name: Cypress
+    slug: cypress
+    color: 69D3A7
+  - name: Storybook
+    slug: storybook
+    color: FF4785
+  - name: Vercel
+    slug: vercel
+    color: '000000'
+  - name: Google Search Console
+    slug: googlesearchconsole
+    color: 458CF5
+  - name: Google Analytics
+    slug: googleanalytics
+    color: E37400
+  - name: Vite
+    slug: vite
+    color: 646CFF
+  - name: Vitest
+    slug: vitest
+    color: 6E9F18
+  - name: Playwright
+    slug: playwright
+    logo_path: .github/assets/skill-icons/playwright.svg
+    color: 2EAD33
+  - name: shadcn/ui
+    slug: shadcn/ui
+    color: '000000'
+  - name: Radix UI
+    slug: radixui
+    color: '161618'
+  - name: Three.js
+    slug: threedotjs
+    color: '000000'
+  - name: Electron
+    slug: electron
+    color: 47848F
+  - name: Zod
+    slug: zod
+    color: 3E67B1
+  - name: Framer Motion
+    slug: framer
+    color: 0055FF
+  - name: Pydantic
+    slug: pydantic
+    color: E92063
+  - name: Puppeteer
+    slug: puppeteer
+    color: 40B5A4
+- name: Miscellaneous
+  skills:
+  - name: Jira
+    slug: jira
+    color: 0052CC
+  - name: Confluence
+    slug: confluence
+    color: 172B4D
+  - name: Sphinx Docs
+    slug: sphinx
+    color: 0A507A
+  - name: Figma
+    slug: figma
+    color: F24E1E
+  - name: Canva
+    slug: canva
+    color: 00C4CC
+  - name: Notion
+    slug: notion
+    color: '000000'
+  - name: Asana
+    slug: asana
+    color: F06A6A
+  - name: Obsidian
+    slug: obsidian
+    color: 7C3AED
+  - name: Microsoft Office
+    slug: microsoftoffice
+    logo_path: .github/assets/skill-icons/ms-office.svg
+    color: D83B01
+  - name: Microsoft Excel
+    slug: microsoftexcel
+    logo_path: .github/assets/skill-icons/ms-excel.svg
+    color: '217346'
+  - name: Mermaid.js
+    slug: mermaid
+    color: FF3670
+  - name: Google Colab
+    slug: googlecolab
+    color: F9AB00
+  - name: Replit
+    slug: replit
+    color: F26207
+  - name: Markdown
+    slug: markdown
+    color: '000000'
+  - name: LaTeX
+    slug: latex
+    color: 008080
+  - name: Overleaf
+    slug: overleaf
+    color: 47A141
+  - name: Raspberry Pi
+    slug: raspberrypi
+    color: A22846
+  - name: Arduino
+    slug: arduino
+    color: 00878F
+  - name: Autodesk
+    slug: autodesk
+    color: '000000'
+  - name: Boxy SVG
+    slug: boxysvg
+    color: 3584E3
+  - name: isort
+    logo_path: .github/assets/skill-icons/isort.svg
+    color: EF8336
+  - name: black
+    logo_path: .github/assets/skill-icons/black.svg
+    color: 1C1C1C
+  - name: Pylint
+    logo_path: .github/assets/skill-icons/pylint.svg
+    color: 2A6DB2
+  - name: autoflake
+    logo_path: .github/assets/skill-icons/autoflake.svg
+    color: 1C1C1C
+  - name: Pylama
+    logo_path: .github/assets/skill-icons/pylama.svg
+    color: 009485
+  - name: Homebrew
+    slug: homebrew
+    color: FBB040
+  - name: Prometheus
+    slug: prometheus
+    color: E6522C
+  - name: Grafana
+    slug: grafana
+    color: F46800
+  - name: Sentry
+    slug: sentry
+    color: 362D59
+  - name: OpenTelemetry
+    slug: opentelemetry
+    color: '000000'
+  - name: Kaggle
+    slug: kaggle
+    color: 20BEFF
+  - name: Spotify
+    slug: spotify
+    color: 1ED760

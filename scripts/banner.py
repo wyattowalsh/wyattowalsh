@@ -46,7 +46,7 @@ from svgwrite import filters, gradients, path, shapes  # type: ignore
 from svgwrite.container import Group  # type: ignore
 from svgwrite.drawing import Drawing  # type: ignore # Specific import
 
-from scripts.utils import get_logger
+from .utils import get_logger
 
 # Initialize logger for the module
 logger = get_logger(module=__name__)
@@ -82,7 +82,7 @@ class PatternType(enum.Enum):
     MICRO = "micro"
     AIZAWA = "aizawa"
     REACTION = "reaction"  # Note: REACTION is defined but not used
-    CLIFFORD = "clifford"  # Note: CLIFFORD is defined but not used
+    CLIFFORD = "clifford"
     FLAME = "flame"  # Note: FLAME is defined but not used
     PDJ = "pdj"  # Note: PDJ is defined but not used
     IKEDA = "ikeda"  # Note: IKEDA is defined but not used
@@ -590,6 +590,22 @@ class BannerConfig(BaseModel):
     make_responsive: bool = True  # Changed to True
     optimize_with_svgo: bool = True
     output_path: str = "./assets/img/banner.svg"
+    dark_mode: bool = False
+
+    def apply_dark_mode(self) -> None:
+        """Override color palette and typography for dark mode."""
+        if not self.dark_mode:
+            return
+        dm = self.colors.dark_mode_palette
+        self.colors.primary = dm.get("primary", "#3a4b52")
+        self.colors.secondary = ["#2a3b42", "#354850"]
+        self.colors.accent = ["#2e4550", "#3a5560"]
+        self.colors.neutral = [dm.get("background", "#14181a"), dm.get("surface", "#1e2427")]
+        self.colors.extra_accents = ["#4a2040", "#3a2820"]
+        self.colors.gradient_stops = ["#3a4b52", "#2a3b42", "#1e2427", "#14181a", "#0a0c0d"]
+        self.typography.text_shadow_color = "rgba(255,255,255,0.08)"
+        self.typography.text_outline_color = "rgba(255,255,255,0.15)"
+        self.typography.glow_color = "rgba(255,255,255,0.15)"
 
 
 # ------------------------------------------------------------------------------
@@ -1184,6 +1200,137 @@ def draw_aizawa(dwg: Drawing, cfg: BannerConfig, group: Group) -> None:
 
 
 # ------------------------------------------------------------------------------
+# Generative Art: Clifford Strange Attractor
+# ------------------------------------------------------------------------------
+def draw_clifford(
+    dwg: Drawing,
+    group: Group,
+    width: int,
+    height: int,
+    a: float = 1.7,
+    b: float = 1.7,
+    c: float = 0.6,
+    d: float = 1.2,
+    iterations: int = 2_000_000,
+    hue_shift: float = 0.0,
+    dark_mode: bool = False,
+    grid_size: int = 150,
+    return_first_hit: bool = False,
+) -> Optional[np.ndarray]:
+    """
+    Draw a Clifford Strange Attractor as a density-mapped SVG raster.
+
+    The Clifford attractor is defined by the iterative system:
+        x_{n+1} = sin(a * y_n) + c * cos(a * x_n)
+        y_{n+1} = sin(b * x_n) + d * cos(b * y_n)
+
+    Points are accumulated into a density grid, log-normalised, and rendered
+    as coloured ``<rect>`` elements in the SVG.
+
+    Args:
+        dwg: The SVG drawing object.
+        group: The SVG group to add the attractor to.
+        width: Pixel width of the output area.
+        height: Pixel height of the output area.
+        a, b, c, d: Clifford attractor parameters.
+        iterations: Number of iterations to compute.
+        hue_shift: Shift (0.0-1.0) applied to the colour palette.
+        dark_mode: If ``True``, assumes a dark background and adjusts alpha.
+        grid_size: Resolution of the density grid (grid_size x grid_size).
+        return_first_hit: If ``True``, return an array recording the iteration
+            index when each grid cell was first populated (``-1`` for cells
+            never hit).  When ``False`` (default), the function returns
+            ``None`` and behaves exactly as before.
+
+    Returns:
+        When *return_first_hit* is ``True``, a ``np.ndarray`` of shape
+        ``(grid_size, grid_size)`` with dtype ``int64``.  Otherwise ``None``.
+    """
+    # 1. Iterate the attractor
+    x, y = 0.1, 0.1
+    density = np.zeros((grid_size, grid_size), dtype=np.float64)
+    first_hit = (
+        np.full((grid_size, grid_size), -1, dtype=np.int64)
+        if return_first_hit
+        else None
+    )
+
+    # Attractor coordinate range (empirical bounds for typical parameters)
+    coord_min, coord_max = -3.0, 3.0
+    coord_range = coord_max - coord_min
+
+    for i in range(iterations):
+        x_new = math.sin(a * y) + c * math.cos(a * x)
+        y_new = math.sin(b * x) + d * math.cos(b * y)
+        x, y = x_new, y_new
+
+        # Map to grid indices
+        gx = int((x - coord_min) / coord_range * (grid_size - 1))
+        gy = int((y - coord_min) / coord_range * (grid_size - 1))
+
+        if 0 <= gx < grid_size and 0 <= gy < grid_size:
+            if first_hit is not None and density[gy, gx] == 0:
+                first_hit[gy, gx] = i
+            density[gy, gx] += 1.0
+
+    # 2. Log-scale normalisation
+    max_val = density.max()
+    if max_val > 0:
+        norm = np.log1p(density) / np.log1p(max_val)
+    else:
+        logger.warning("Clifford attractor produced an empty density grid")
+        return None
+
+    # 3. Pixel sizing (rounded to reduce SVG file size)
+    pixel_w = round(width / grid_size, 2)
+    pixel_h = round(height / grid_size, 2)
+
+    # 4. Render density cells as <rect> elements
+    for row in range(grid_size):
+        for col in range(grid_size):
+            val = float(norm[row, col])
+            if val < 0.02:
+                continue  # skip near-zero cells to reduce SVG size
+
+            # Colour mapping with hue_shift
+            if val < 0.3:
+                # Low density  ->  dark blue / purple
+                t = val / 0.3
+                base_hue = (0.7 + hue_shift) % 1.0  # blue-purple region
+                sat = 0.8 + 0.2 * t
+                lit = 0.15 + 0.15 * t
+            elif val < 0.6:
+                # Medium density  ->  orange / warm
+                t = (val - 0.3) / 0.3
+                base_hue = (0.08 + hue_shift) % 1.0  # orange region
+                sat = 0.9
+                lit = 0.3 + 0.25 * t
+            else:
+                # High density  ->  white / bright
+                t = (val - 0.6) / 0.4
+                base_hue = (0.08 + hue_shift) % 1.0
+                sat = 0.9 * (1 - t * 0.8)
+                lit = 0.55 + 0.40 * t
+
+            r, g, b_ch = colorsys.hls_to_rgb(base_hue, lit, sat)
+            hex_color = "#{:02x}{:02x}{:02x}".format(
+                int(r * 255), int(g * 255), int(b_ch * 255)
+            )
+
+            alpha = val * (0.95 if dark_mode else 0.85)
+
+            rect = dwg.rect(
+                insert=(round(col * pixel_w, 2), round(row * pixel_h, 2)),
+                size=(round(pixel_w + 0.5, 2), round(pixel_h + 0.5, 2)),
+                fill=hex_color,
+                opacity=alpha,
+            )
+            group.add(rect)
+
+    return first_hit
+
+
+# ------------------------------------------------------------------------------
 # Generative Art: Neural Network
 # ------------------------------------------------------------------------------
 def generate_neural_network(
@@ -1618,6 +1765,7 @@ def generate_banner(cfg: BannerConfig) -> None:
     Args:
         cfg: The main banner configuration object.
     """
+    cfg.apply_dark_mode()
     dwg = svgwrite.Drawing(
         filename=cfg.output_path,
         size=(f"{cfg.width}px", f"{cfg.height}px"),
