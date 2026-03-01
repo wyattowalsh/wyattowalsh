@@ -2820,7 +2820,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>modelcontextprotocol/ext-apps</span>
-                                        <span>starred 4 hours ago</span>
+                                        <span>starred 5 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Official repo for spec &amp; SDK of MCP Apps protocol - standard for UIs embedded AI chatbots, served by MCP servers</div>
@@ -2873,7 +2873,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>axcore/tartube</span>
-                                        <span>starred 5 hours ago</span>
+                                        <span>starred 6 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">A GUI front-end for youtube-dl, partly based on youtube-dl-gui and written in Python 3 / Gtk 3</div>
@@ -3481,7 +3481,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 1 Mar 2026, 08:14:53 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 1 Mar 2026, 09:03:19 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
