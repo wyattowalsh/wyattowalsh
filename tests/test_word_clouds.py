@@ -2,7 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from scripts.word_clouds import parse_markdown_for_word_cloud_frequencies
+from scripts.word_clouds import (
+    parse_markdown_for_word_cloud_frequencies,
+    resolve_preferred_wordcloud_font_path,
+)
 
 
 def test_parse_markdown_skips_generic_others_bucket(tmp_path: Path) -> None:
@@ -56,3 +59,46 @@ def test_parse_markdown_missing_file_raises(tmp_path: Path) -> None:
 
     with pytest.raises(FileNotFoundError):
         parse_markdown_for_word_cloud_frequencies(missing_file)
+
+
+def test_resolve_preferred_wordcloud_font_path_prefers_monaspace(
+    tmp_path: Path,
+) -> None:
+    fonts_dir = tmp_path / "fonts"
+    fonts_dir.mkdir()
+    monaspace_font = fonts_dir / "MonaspaceNeon-Bold.ttf"
+    monaspace_font.write_bytes(b"font-data")
+    (fonts_dir / "Montserrat-ExtraBold.ttf").write_bytes(b"fallback-data")
+
+    resolved = resolve_preferred_wordcloud_font_path(
+        fonts_dir=fonts_dir,
+        monaspace_variants=["MonaspaceNeon-Bold.ttf"],
+        fallback_font="Montserrat-ExtraBold.ttf",
+    )
+
+    assert resolved == monaspace_font.resolve()
+
+
+def test_resolve_preferred_wordcloud_font_path_fallback_chain(
+    tmp_path: Path,
+) -> None:
+    fonts_dir = tmp_path / "fonts"
+    fonts_dir.mkdir()
+    montserrat_font = fonts_dir / "Montserrat-ExtraBold.ttf"
+    montserrat_font.write_bytes(b"fallback-data")
+
+    resolved = resolve_preferred_wordcloud_font_path(
+        fonts_dir=fonts_dir,
+        monaspace_variants=["MonaspaceArgon-Bold.ttf"],
+        fallback_font="Montserrat-ExtraBold.ttf",
+    )
+
+    assert resolved == montserrat_font.resolve()
+
+    empty_fonts_dir = tmp_path / "empty-fonts"
+    empty_fonts_dir.mkdir()
+    assert resolve_preferred_wordcloud_font_path(
+        fonts_dir=empty_fonts_dir,
+        monaspace_variants=["MonaspaceArgon-Bold.ttf"],
+        fallback_font="Montserrat-ExtraBold.ttf",
+    ) is None

@@ -95,6 +95,7 @@ class RepoMetadata:
     homepage: Optional[str]
     topics: list[str]
     updated_at: Optional[str]
+    open_graph_image_url: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -138,6 +139,7 @@ class GitHubRepoClient:
             homepage=payload.get("homepage") or None,
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
+            open_graph_image_url=payload.get("open_graph_image_url") or None,
         )
 
     def _headers(self) -> dict[str, str]:
@@ -415,13 +417,25 @@ class ReadmeSectionGenerator:
     def _render_top_badges(self) -> str:
         svg_cards: list[SvgCard] = []
         for link in self.settings.social_links:
-            meta = [link.url]
+            parsed = urlparse(link.url)
+            host = parsed.netloc.replace("www.", "")
+            handle = parsed.path.strip("/").split("/")[-1] if parsed.path else ""
+            line_one = host or parsed.scheme or link.url
+            line_two = (
+                f"Handle @{handle}"
+                if handle and handle != host
+                else "Open profile"
+            )
             svg_cards.append(
                 SvgCard(
                     title=link.label,
-                    lines=(link.url,),
-                    meta=tuple(meta),
+                    kicker=self._social_kicker(link.url),
+                    lines=(line_one, line_two),
+                    meta=(link.url,),
                     url=link.url,
+                    icon=self._social_icon(link.label),
+                    badge=self._social_personality_badge(link.url),
+                    accent=link.color,
                 )
             )
         columns = min(4, max(1, len(svg_cards))) if svg_cards else 1
@@ -438,23 +452,43 @@ class ReadmeSectionGenerator:
             renderer=renderer,
             alt_text="Connect and contact cards",
         )
-        gif_html = (
-            '<p align="center">'
-            '<img src=".github/assets/img/gh.gif" '
-            'alt="Animated GitHub contributions garden" '
-            'width="260" loading="lazy"/>'
-            "</p>"
-        )
         social_links = " · ".join(
             f"[{escape(link.label)}]({escape(link.url)})"
             for link in self.settings.social_links
         )
-        lines = [gif_html]
+        lines: list[str] = []
         if svg_embed:
             lines.append(f'<p align="center">{svg_embed}</p>')
         if social_links:
             lines.append(social_links)
         return "\n".join(lines)
+
+    def _social_icon(self, label: str) -> str:
+        cleaned = "".join(ch for ch in label.upper() if ch.isalnum())
+        if len(cleaned) >= 2:
+            return cleaned[:2]
+        return (cleaned or "•").ljust(2, "•")
+
+    def _social_personality_badge(self, url: str) -> str:
+        parsed = urlparse(url)
+        host = parsed.netloc.replace("www.", "").lower()
+        if parsed.scheme == "mailto":
+            return "Email"
+        if "github.com" in host:
+            return "Builder"
+        if "linkedin.com" in host:
+            return "Network"
+        if "kaggle.com" in host:
+            return "Data"
+        if "x.com" in host or "twitter.com" in host:
+            return "Broadcast"
+        return "Link"
+
+    def _social_kicker(self, url: str) -> str:
+        parsed = urlparse(url)
+        if parsed.scheme == "mailto":
+            return "Direct Contact"
+        return parsed.netloc.replace("www.", "") or "Profile"
 
     def _render_featured_projects(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -502,8 +536,8 @@ class ReadmeSectionGenerator:
             alt_text="Featured projects cards",
         )
         caption = (
-            '<p align="center"><sub>GitHub metadata + star history, '
-            "updated on every README refresh.</sub></p>"
+            '<p align="center"><sub>Snapshot includes stars, freshness, '
+            "topic signals, and trendline momentum.</sub></p>"
         )
         lines = [
             "\n".join(fallback_lines),
@@ -523,30 +557,40 @@ class ReadmeSectionGenerator:
             repo_name = repo_full_name.split("/")[-1]
             return SvgCard(
                 title=repo_name,
+                kicker=repo_full_name,
                 lines=("Unable to fetch repository metadata.",),
                 meta=("GitHub",),
                 url=repo_url,
+                badge="Featured",
+                icon=repo_name[:2].upper(),
             )
 
         description = metadata.description or "No description provided."
         lines: list[str] = [description]
         if metadata.topics:
-            topics = ", ".join(metadata.topics[:3])
-            lines.append(f"Topics: {topics}")
+            topics = " · ".join(metadata.topics[:3])
+            lines.append(f"Topics {topics}")
         if metadata.homepage:
-            lines.append(metadata.homepage)
+            homepage_host = urlparse(metadata.homepage).netloc.replace("www.", "")
+            if homepage_host:
+                lines.append(f"Site {homepage_host}")
         info_bits = [f"★ {metadata.stars:,}"]
         updated = self._format_timestamp(metadata.updated_at)
         if updated:
             info_bits.append(f"Updated {updated}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
+        accent = self._repo_accent_color(metadata)
         return SvgCard(
             title=metadata.name,
+            kicker=repo_full_name,
             lines=tuple(lines),
             meta=tuple(info_bits),
             url=metadata.html_url,
-            background_image=self._repo_background_image(repo_full_name),
+            background_image=self._repo_background_image(repo_full_name, metadata),
             sparkline=sparkline,
+            icon=metadata.name[:2].upper(),
+            badge="Featured Project",
+            accent=accent,
         )
 
     def _render_blog_posts(self) -> str:
@@ -602,13 +646,18 @@ class ReadmeSectionGenerator:
                 card_meta.append(host)
             if published:
                 card_meta.append(f"Published {published[:10]}")
+            accent = "06B6D4" if "w4w.dev" in (host or "") else "60A5FA"
             svg_cards.append(
                 SvgCard(
                     title=post.title,
-                    lines=(host or "blog", summary),
+                    kicker=f"{host or 'blog'} update",
+                    lines=(summary,),
                     meta=tuple(card_meta),
                     url=post.url,
                     background_image=metadata.get("hero_image"),
+                    icon=(host or "BL")[:2].upper(),
+                    badge="Blog Post",
+                    accent=accent,
                 )
             )
             meta_bits = [bit for bit in card_meta if bit]
@@ -820,8 +869,67 @@ class ReadmeSectionGenerator:
             return timestamp
         return timestamp.split("T", maxsplit=1)[0]
 
-    def _repo_background_image(self, repo_full_name: str) -> str:
-        return f"https://opengraph.githubassets.com/1/{repo_full_name}"
+    def _repo_background_image(
+        self,
+        repo_full_name: str,
+        metadata: Optional[RepoMetadata],
+    ) -> Optional[str]:
+        candidates: list[str] = []
+        if metadata and metadata.open_graph_image_url:
+            candidates.append(metadata.open_graph_image_url)
+        candidates.append(f"https://opengraph.githubassets.com/1/{repo_full_name}")
+        for image_url in candidates:
+            data_uri = self._fetch_remote_image_data_uri(
+                image_url,
+                context=f"repo preview for {repo_full_name}",
+            )
+            if data_uri:
+                return data_uri
+        return None
+
+    def _fetch_remote_image_data_uri(
+        self,
+        url: str,
+        context: str,
+    ) -> Optional[str]:
+        request = _build_remote_get_request(
+            url=url,
+            headers={"User-Agent": "readme-section-generator"},
+            context=context,
+        )
+        if request is None:
+            return None
+        try:
+            with urlopen(request, timeout=10.0) as response:
+                image_bytes = response.read()
+                content_type = (
+                    response.headers.get("Content-Type", "")
+                    .split(";", maxsplit=1)[0]
+                    .strip()
+                    .lower()
+                )
+        except Exception as exc:  # pragma: no cover - network path
+            logger.warning(f"Failed to fetch image for {context}: {exc}")
+            return None
+
+        if not image_bytes:
+            return None
+        if not content_type.startswith("image/"):
+            content_type = "image/png"
+        return (
+            f"data:{content_type};base64,"
+            f"{base64.b64encode(image_bytes).decode('ascii')}"
+        )
+
+    def _repo_accent_color(self, metadata: RepoMetadata) -> str:
+        joined_topics = " ".join(topic.lower() for topic in metadata.topics)
+        if "python" in joined_topics:
+            return "3776AB"
+        if "typescript" in joined_topics or "javascript" in joined_topics:
+            return "3178C6"
+        if "ai" in joined_topics or "ml" in joined_topics:
+            return "8B5CF6"
+        return "60A5FA"
 
     def _build_star_history_points(
         self,

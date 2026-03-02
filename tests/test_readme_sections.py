@@ -102,8 +102,11 @@ class TestRendering:
         assert "❈" not in html
         assert "https://w4w.dev" in html
         assert "https://linkedin.com/in/wyattowalsh" in html
-        assert ".github/assets/img/gh.gif" in html
+        assert ".github/assets/img/gh.gif" not in html
         assert (tmp_path / "svg" / "top-contact.svg").exists()
+        svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
+        assert 'class="card-icon"' in svg
+        assert 'class="card-badge"' in svg
 
     def test_badge_logo_url_is_embedded_as_data_uri(self, monkeypatch) -> None:
         settings = ReadmeSectionsSettings()
@@ -159,7 +162,28 @@ class TestRendering:
         assert "logo=http%3A%2F%2Flocalhost%2Ffavicon.ico" in badge_url
         assert not called
 
-    def test_featured_projects_render_svg_cards_with_sparkline(self, tmp_path: Path) -> None:
+    def test_featured_projects_render_svg_cards_with_sparkline(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        class FakeResponse:
+            def __init__(self, payload: bytes) -> None:
+                self._payload = payload
+                self.headers = {"Content-Type": "image/png"}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return None
+
+            def read(self) -> bytes:
+                return self._payload
+
+        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
+            return FakeResponse(b"mock-image-bytes")
+
+        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
                 enabled=True,
@@ -196,7 +220,11 @@ class TestRendering:
         assert "Composable scaffolding framework" in html
         assert "★ 42" in html
         assert "riso" in html
-        assert (tmp_path / "svg" / "featured-projects.svg").exists()
+        svg_path = tmp_path / "svg" / "featured-projects.svg"
+        assert svg_path.exists()
+        svg = svg_path.read_text(encoding="utf-8")
+        assert "data:image/png;base64," in svg
+        assert "opengraph.githubassets.com" not in svg
 
     def test_blog_posts_render_svg_cards_with_metadata(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -210,7 +238,10 @@ class TestRendering:
         generator = ReadmeSectionGenerator(
             settings=settings,
             blog_client=StubBlogClient(
-                [BlogPost(title="First Post", url="https://w4w.dev/blog/first")]
+                [
+                    BlogPost(title="First Post", url="https://w4w.dev/blog/first"),
+                    BlogPost(title="Second Post", url="https://w4w.dev/blog/second"),
+                ]
             ),
             blog_metadata_client=StubBlogMetadataClient(
                 {
@@ -218,6 +249,12 @@ class TestRendering:
                         "hero_image": "https://w4w.dev/img/first.png",
                         "summary": "A deep dive into data art.",
                         "published": "2026-02-20",
+                        "host": "w4w.dev",
+                    },
+                    "https://w4w.dev/blog/second": {
+                        "hero_image": "https://w4w.dev/img/second.png",
+                        "summary": "Another deep dive.",
+                        "published": "2026-02-19",
                         "host": "w4w.dev",
                     }
                 }
@@ -230,10 +267,14 @@ class TestRendering:
             html, (tmp_path / "svg" / "blog-posts.svg").as_posix()
         )
         assert "First Post" in html
+        assert "Second Post" in html
         assert "w4w.dev" in html
         assert "Auto-updated from" in html
         assert "https://w4w.dev/feed.xml" in html
-        assert (tmp_path / "svg" / "blog-posts.svg").exists()
+        svg_path = tmp_path / "svg" / "blog-posts.svg"
+        assert svg_path.exists()
+        svg = svg_path.read_text(encoding="utf-8")
+        assert svg.count('class="card"') == 2
 
 
 class TestRemoteFetchSafety:
@@ -371,6 +412,7 @@ class TestReadmeInjection:
         assert "top-contact.svg" in content
         assert "featured-projects.svg" in content
         assert "blog-posts.svg" in content
+        assert ".github/assets/img/gh.gif" not in content
         assert "[GitHub](https://github.com/wyattowalsh)" in content
         assert "[riso](https://github.com/wyattowalsh/riso)" in content
         assert "First Post" in content

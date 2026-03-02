@@ -6,7 +6,6 @@
 </p>
 
 <!-- README:TOP_BADGES:START -->
-<p align="center"><img src=".github/assets/img/gh.gif" alt="Animated GitHub contributions garden" width="260" loading="lazy"/></p>
 <p align="center"><img src=".github/assets/img/readme/top-contact.svg" alt="Connect and contact cards" width="1100" loading="lazy"/></p>
 [w4w.dev](https://w4w.dev) · [LinkedIn](https://linkedin.com/in/wyattowalsh) · [Kaggle](https://www.kaggle.com/wyattowalsh) · [X.com](https://x.com/wyattowalsh)
 <!-- README:TOP_BADGES:END -->
@@ -23,7 +22,7 @@
 - [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
 - [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
 - [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
-<p align="center"><sub>GitHub metadata + star history, updated on every README refresh.</sub></p>
+<p align="center"><sub>Snapshot includes stars, freshness, topic signals, and trendline momentum.</sub></p>
 <!-- README:FEATURED_PROJECTS:END -->
 
 
@@ -417,7 +416,9 @@ MDX                      1 repo              ░░░░░░░░░░░�
 </details>
 
 <p align="center">
+  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation left" width="170" loading="lazy"/>
   <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200"/>
+  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation right" width="170" loading="lazy"/>
 </p>
 
 ---

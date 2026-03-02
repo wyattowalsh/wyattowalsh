@@ -87,12 +87,58 @@ DEFAULT_FONTS_DIR = DEFAULT_ASSETS_DIR / "fonts"
 DEFAULT_IMG_DIR = DEFAULT_ASSETS_DIR / "img"  # Used for various images
 DEFAULT_MASKS_DIR = DEFAULT_ASSETS_DIR / "img"  # Default mask location
 
-DEFAULT_FONT_PATH_STR = str(DEFAULT_FONTS_DIR / "Montserrat-ExtraBold.ttf")
-DEFAULT_FONT_PATH: Optional[Path] = (
-    Path(DEFAULT_FONT_PATH_STR)
-    if Path(DEFAULT_FONT_PATH_STR).exists()
-    else None
-)
+DEFAULT_MONASPACE_FONT_VARIANTS: List[str] = [
+    "MonaspaceNeon-Bold.ttf",
+    "MonaspaceArgon-Bold.ttf",
+    "MonaspaceKrypton-Bold.ttf",
+    "MonaspaceRadon-Bold.ttf",
+    "MonaspaceXenon-Bold.ttf",
+    "MonaspaceNeon-ExtraBold.ttf",
+]
+DEFAULT_MONTSERRAT_FALLBACK_FONT = "Montserrat-ExtraBold.ttf"
+
+
+def resolve_preferred_wordcloud_font_path(
+    fonts_dir: Path = DEFAULT_FONTS_DIR,
+    monaspace_variants: Optional[List[str]] = None,
+    fallback_font: str = DEFAULT_MONTSERRAT_FALLBACK_FONT,
+) -> Optional[Path]:
+    """Resolves Monaspace-first word cloud font fallback chain.
+
+    Priority:
+    1. Known Monaspace variants (or caller-provided variants)
+    2. Any other Monaspace .ttf/.otf file in `fonts_dir`
+    3. Montserrat fallback
+    4. WordCloud default (None)
+    """
+    preferred_variants = (
+        monaspace_variants
+        if monaspace_variants is not None
+        else DEFAULT_MONASPACE_FONT_VARIANTS
+    )
+
+    for font_name in preferred_variants:
+        candidate_path = (fonts_dir / font_name).resolve()
+        if candidate_path.is_file():
+            return candidate_path
+
+    if monaspace_variants is None and fonts_dir.is_dir():
+        generic_monaspace_paths = sorted(fonts_dir.glob("Monaspace*.ttf")) + sorted(
+            fonts_dir.glob("Monaspace*.otf")
+        )
+        for candidate_path in generic_monaspace_paths:
+            resolved_candidate = candidate_path.resolve()
+            if resolved_candidate.is_file():
+                return resolved_candidate
+
+    fallback_path = (fonts_dir / fallback_font).resolve()
+    if fallback_path.is_file():
+        return fallback_path
+
+    return None
+
+
+DEFAULT_FONT_PATH: Optional[Path] = resolve_preferred_wordcloud_font_path()
 
 # icon.svg assumed as mask; PNGs are generally more robust.
 DEFAULT_MASK_PATH_STR = str(DEFAULT_MASKS_DIR / "icon.svg")
@@ -161,8 +207,9 @@ class WordCloudSettings(BaseModel):
     font_path: Optional[FilePath] = Field(
         default=DEFAULT_FONT_PATH,
         description=(
-            "Path to a .ttf or .otf font file. If None, WordCloud's default "
-            "font is used."
+            "Path to a .ttf or .otf font file. Defaults to Monaspace-first "
+            "resolution with Montserrat fallback. If None, WordCloud's "
+            "default font is used."
         ),
     )
     colormap: Optional[str] = Field(
@@ -1281,18 +1328,31 @@ if __name__ == "__main__":
                 "output_filename": "wordcloud_by_topic.svg",
                 "output_format": "svg",
                 "background_color": "rgba(255, 255, 255, 0)",
-                "colormap": "viridis",
-                "custom_color_func_name": "analogous_color_func",
+                "custom_color_func_name": "primary_color_func",
+                "color_palette_override": [
+                    "#4C51BF", "#2563EB", "#0EA5E9", "#14B8A6",
+                    "#22C55E", "#F59E0B", "#EC4899",
+                ],
                 "font_path": (
                     DEFAULT_FONT_PATH
                     if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
                     else None
                 ),
+                "mask_path": (
+                    DEFAULT_MASK_PATH
+                    if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+                    else None
+                ),
                 "width": 1200,
                 "height": 800,
                 "max_words": 100,
-                "contour_width": 0.5,
-                "contour_color": "#DDDDDD",
+                "contour_width": 0.9,
+                "contour_color": "#D1D5DB",
+                "padding": 4,
+                "scale": 1.3,
+                "relative_scaling": 0.55,
+                "prefer_horizontal": 0.96,
+                "min_font_size": 12,
                 "stopwords": [
                     "project", "projects", "list", "awesome", "using",
                     "application", "platform", "other", "others",
@@ -1336,19 +1396,29 @@ if __name__ == "__main__":
                 "background_color": "rgba(255, 255, 255, 0)",
                 "custom_color_func_name": "primary_color_func",
                 "color_palette_override": [
-                    "#4B8BBE", "#306998", "#FFE873", "#FFD43B",
-                    "#646464", "#F1502F", "#00A0B0",
+                    "#4B8BBE", "#306998", "#61DAFB", "#3178C6",
+                    "#A855F7", "#F97316", "#14B8A6", "#0F766E",
                 ],
                 "font_path": (
                     DEFAULT_FONT_PATH
                     if DEFAULT_FONT_PATH and DEFAULT_FONT_PATH.exists()
                     else None
                 ),
+                "mask_path": (
+                    DEFAULT_MASK_PATH
+                    if DEFAULT_MASK_PATH and DEFAULT_MASK_PATH.exists()
+                    else None
+                ),
                 "width": 1200,
                 "height": 800,
-                "max_words": 75,
-                "contour_width": 0.5,
-                "contour_color": "#AAAAAA",
+                "max_words": 80,
+                "contour_width": 0.8,
+                "contour_color": "#9CA3AF",
+                "padding": 4,
+                "scale": 1.25,
+                "relative_scaling": 0.6,
+                "prefer_horizontal": 0.97,
+                "min_font_size": 12,
                 "stopwords": [
                     "language", "languages", "code", "script",
                     "file", "files", "other", "others",

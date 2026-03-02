@@ -23,6 +23,8 @@ class TestSvgBlockRenderer:
                     lines=("https://github.com/wyattowalsh",),
                     meta=("badge #181717",),
                     url="https://github.com/wyattowalsh",
+                    icon="GH",
+                    badge="builder",
                 ),
                 SvgCard(
                     title="LinkedIn",
@@ -39,6 +41,9 @@ class TestSvgBlockRenderer:
         assert "Connect" in svg
         assert "GitHub" in svg
         assert "https://github.com/wyattowalsh" in svg
+        assert 'class="card-icon"' in svg
+        assert 'class="card-badge"' in svg
+        assert "builder" in svg
 
     def test_render_includes_background_and_sparkline(self) -> None:
         renderer = SvgBlockRenderer(width=480, card_height=160, padding=18)
@@ -90,6 +95,21 @@ class TestSvgBlockRenderer:
         assert first_ids == ["clip-0", "clip-1"]
         assert first_ids == second_ids
         assert len(set(first_ids)) == len(first_ids)
+
+    def test_render_outputs_individual_card_groups(self) -> None:
+        renderer = SvgBlockRenderer(width=640, card_height=160, padding=16)
+        block = SvgBlock(
+            title="Latest Blog Posts",
+            cards=(
+                SvgCard(title="Post One", lines=("w4w.dev",)),
+                SvgCard(title="Post Two", lines=("w4w.dev",)),
+            ),
+            columns=1,
+        )
+
+        svg = renderer.render(block)
+
+        assert svg.count('class="card"') == 2
 
 class TestSvgAssetWriter:
     def test_write_sanitizes_filename(self, tmp_path: Path) -> None:

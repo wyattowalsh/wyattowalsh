@@ -17,11 +17,15 @@ class SvgCard:
     """Content for a single card in a generated SVG block."""
 
     title: str
+    kicker: str | None = None
     lines: tuple[str, ...] = ()
     meta: tuple[str, ...] = ()
     url: str | None = None
     background_image: str | None = None
     sparkline: tuple[float, ...] | None = None
+    icon: str | None = None
+    badge: str | None = None
+    accent: str | None = None
 
 
 @dataclass(frozen=True)
@@ -67,15 +71,18 @@ class SvgBlockRenderer:
             "<defs>",
             "<style>",
             ".title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }",
-            ".card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }",
-            ".card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }",
-            ".card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }",
-            ".sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }",
+            ".card-kicker { fill: #8FA1B8; font: 700 11px ui-sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }",
+            ".card-title { fill: #FFFFFF; font: 700 21px ui-sans-serif; }",
+            ".card-line { fill: #D9E2EE; font: 500 15px ui-sans-serif; }",
+            ".card-meta { fill: #AAB5C4; font: 500 13px ui-sans-serif; }",
+            ".card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }",
+            ".card-badge { fill: #EEF5FF; font: 700 12px ui-sans-serif; }",
+            ".sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }",
             "</style>",
             (
                 "<linearGradient id=\"cardGradient\" x1=\"0%\" y1=\"0%\" "
                 "x2=\"0%\" y2=\"100%\">"
-                "<stop offset=\"0%\" stop-color=\"#0B111A\" stop-opacity=\"0.05\"/>"
+                "<stop offset=\"0%\" stop-color=\"#0B111A\" stop-opacity=\"0.12\"/>"
                 "<stop offset=\"100%\" stop-color=\"#0B111A\" stop-opacity=\"0.95\"/>"
                 "</linearGradient>"
             ),
@@ -105,7 +112,8 @@ class SvgBlockRenderer:
         width: int,
         card_index: int,
     ) -> list[str]:
-        lines = [f'<g transform="translate({x},{y})">']
+        accent = self._normalize_hex_color(card.accent)
+        lines = [f'<g class="card" transform="translate({x},{y})">']
         if card.url:
             lines.append(
                 "<a href=\""
@@ -120,7 +128,9 @@ class SvgBlockRenderer:
                     f"{width}"
                     "\" height=\""
                     f"{self.card_height}"
-                    "\" rx=\"16\" fill=\"#121A25\" stroke=\"#1F2C3D\" />"
+                    "\" rx=\"16\" fill=\"#121A25\" stroke=\""
+                    f"{accent}"
+                    "\" stroke-opacity=\"0.45\" />"
                 )
             ]
         )
@@ -138,7 +148,7 @@ class SvgBlockRenderer:
                 f"{self._esc(card.background_image)}"
                 f'" width="{width}" height="{self.card_height}" '
                 'preserveAspectRatio="xMidYMid slice" '
-                f'clip-path="url(#{clip_id})" opacity="0.5" />'
+                f'clip-path="url(#{clip_id})" opacity="0.52" />'
             )
             lines.append(
                 (
@@ -150,19 +160,77 @@ class SvgBlockRenderer:
                 )
             )
 
+        title_x = 18
+        title_y = 44
+        if card.icon:
+            lines.append(
+                '<circle cx="36" cy="36" r="18" fill="'
+                f"{accent}"
+                '" fill-opacity="0.30" />'
+            )
+            lines.append(
+                '<text class="card-icon" x="36" y="41" text-anchor="middle">'
+                f"{self._esc(self._truncate(card.icon.upper(), 3))}"
+                "</text>"
+            )
+            title_x = 62
+
+        if card.kicker:
+            lines.append(
+                (
+                    '<text class="card-kicker" x="'
+                    f"{title_x}"
+                    '" y="22">'
+                    f"{self._esc(self._truncate(card.kicker, 56))}"
+                    "</text>"
+                )
+            )
+            title_y = 48
+
+        if card.badge:
+            badge_text = self._truncate(card.badge, 20)
+            badge_width = max(90, min(220, len(badge_text) * 8 + 26))
+            badge_x = max(16, width - badge_width - 16)
+            lines.append(
+                (
+                    '<rect x="'
+                    f"{badge_x}"
+                    '" y="16" width="'
+                    f"{badge_width}"
+                    '" height="24" rx="12" fill="'
+                    f"{accent}"
+                    '" fill-opacity="0.32" />'
+                )
+            )
+            lines.append(
+                (
+                    '<text class="card-badge" x="'
+                    f"{badge_x + (badge_width / 2):.1f}"
+                    '" y="32" text-anchor="middle">'
+                    f"{self._esc(badge_text)}"
+                    "</text>"
+                )
+            )
+
         lines.append(
             (
-                '<text class="card-title" x="18" y="36">'
+                '<text class="card-title" x="'
+                f"{title_x}"
+                '" y="'
+                f"{title_y}"
+                '">'
                 f"{self._esc(self._truncate(card.title, 52))}"
                 "</text>"
             )
         )
 
-        text_y = 62
-        for line in card.lines[:4]:
+        text_y = title_y + 26
+        for line in card.lines[:3]:
             lines.append(
                 (
-                    '<text class="card-line" x="18" y="'
+                    '<text class="card-line" x="'
+                    f"{title_x}"
+                    '" y="'
                     f"{text_y}"
                     '">'
                     f"{self._esc(self._truncate(line, 72))}"
@@ -231,6 +299,14 @@ class SvgBlockRenderer:
         for x_pos, y_pos in coords[1:]:
             path_segments.append(f"L{x_pos:.2f},{y_pos:.2f}")
         return " ".join(path_segments)
+
+    def _normalize_hex_color(self, value: str | None) -> str:
+        if not value:
+            return "#60A5FA"
+        cleaned = value.strip()
+        if re.fullmatch(r"#?[0-9A-Fa-f]{6}", cleaned):
+            return f"#{cleaned.lstrip('#')}"
+        return "#60A5FA"
 
 
 class SvgAssetWriter:

@@ -168,6 +168,28 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - name: Preflight metrics auth gates
+        id: metrics_auth
+        env:
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Secret setup guidance:
+          # - METRICS_TOKEN: GitHub PAT (classic) with at least read:user, public_repo (add read:org for org/collab visibility).
+          # - TWITTER_TOKEN: X/Twitter bearer token used only by plugin_tweets.
+          has_metrics_token=false
+          has_twitter_token=false
+          [ -n "${METRICS_TOKEN:-}" ] && has_metrics_token=true
+          [ -n "${TWITTER_TOKEN:-}" ] && has_twitter_token=true
+          echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
+          echo "has_twitter_token=${has_twitter_token}" >> "$GITHUB_OUTPUT"
+          if [ "${has_metrics_token}" != "true" ]; then
+            echo "::warning::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
+          fi
+          if [ "${has_twitter_token}" != "true" ]; then
+            echo "::notice::TWITTER_TOKEN is missing; X/Twitter metrics are disabled."
+          fi
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
@@ -177,10 +199,10 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           # ... other params from your main.yml ...
-          base: ${{ secrets.METRICS_TOKEN != '' && 'header, activity, repositories' || 'header, activity' }}
+          base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, repositories' || 'header, activity' }}
           plugin_lines: yes
           plugin_isocalendar: yes
-          plugin_traffic: yes
+          plugin_traffic: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_languages: yes
           plugin_languages_ignored: jupyter%20notebook
           plugin_habits: yes
@@ -199,9 +221,10 @@ jobs:
         id: check_personal_metrics
         if: ${{ always() }}
         run: |
+          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
           if [ ! -f ./.github/assets/img/metrics.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)" ./.github/assets/img/metrics.svg; then
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "${AUTH_ERROR_PATTERN}" ./.github/assets/img/metrics.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -249,22 +272,23 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
           plugin_music_limit: 5
-          plugin_tweets: ${{ secrets.TWITTER_TOKEN != '' && 'yes' || 'no' }}
-          plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
+          plugin_tweets: ${{ steps.metrics_auth.outputs.has_twitter_token == 'true' && 'yes' || 'no' }}
+          plugin_tweets_token: ${{ steps.metrics_auth.outputs.has_twitter_token == 'true' && secrets.TWITTER_TOKEN || '' }}
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
-          plugin_stargazers: yes
-          plugin_stars: yes
-          plugin_stars_limit: 3
+          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
 
       - name: Check additional metrics output
         id: check_additional_metrics
         if: ${{ always() }}
         run: |
+          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)"
           if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "API error:[[:space:]]*(401|403)|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)" ./.github/assets/img/metrics.additional.svg; then
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "${AUTH_ERROR_PATTERN}" ./.github/assets/img/metrics.additional.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -289,17 +313,18 @@ jobs:
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
-          plugin_stargazers: yes
-          plugin_stars: yes
-          plugin_stars_limit: 3
+          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
 
       - name: Sanitize final metrics SVG outputs
         if: ${{ always() }}
         run: |
           set -euo pipefail
+          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)"
           sanitize_svg() {
             local file="$1"
-            if [ ! -s "$file" ] || ! grep -Eiq "<svg[^>]*>" "$file" || ! grep -Eiq "</svg>" "$file" || grep -Eiq "Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)" "$file"; then
+            if [ ! -s "$file" ] || ! grep -Eiq "<svg[^>]*>" "$file" || ! grep -Eiq "</svg>" "$file" || grep -Eiq "${AUTH_ERROR_PATTERN}" "$file"; then
               cat > "$file" <<'SVG'
           <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" role="img" aria-label="Metrics unavailable">
             <rect width="100%" height="100%" fill="#0d1117"/>
