@@ -407,14 +407,11 @@ MDX                      1 repo              ░░░░░░░░░░░�
 
 <!-- README:BLOG_POSTS:START -->
 <!-- BLOG-POST-LIST:START -->
-<p align="center"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts cards" width="1100" loading="lazy"/></p>
-- [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl) — w4w.dev · Published 2026-02-13
-- [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6) — w4w.dev · Published 2024-12-01
-- [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3) — w4w.dev · Published 2021-01-15
-- [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2) — w4w.dev · Published 2021-01-14
-- [Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1) — w4w.dev · Published 2021-01-13
-<p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
-<!-- BLOG-POST-LIST:END -->
+ - Fri Feb 13 2026 12:00 AM - [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl)
+ - Sun Dec 01 2024 12:00 AM - [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6)
+ - Fri Jan 15 2021 12:00 AM - [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3)
+ - Thu Jan 14 2021 12:00 AM - [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2)
+ - Wed Jan 13 2021 12:00 AM - [Basics of Linear Regression Modeling and Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1)<!-- BLOG-POST-LIST:END -->
 <!-- README:BLOG_POSTS:END -->
 
 </details>
