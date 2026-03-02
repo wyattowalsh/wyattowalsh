@@ -96,7 +96,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>proroklab/VectorizedMultiAgentSimulator</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">VMAS is a vectorized differentiable simulator designed for efficient Multi-Agent Reinforcement Learning benchmarking. It is comprised of a vectorized 2D physics engine written in PyTorch and a set of challenging multi-robot scenarios. Additional scenarios can be implemented through a simple and modular interface.</div>
@@ -149,7 +149,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>Farama-Foundation/chatarena</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">ChatArena (or Chat Arena) is a Multi-Agent Language Game Environments for LLMs. The goal is to develop communication and collaboration capabilities of AIs.</div>
@@ -202,7 +202,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>NiaOrg/NiaPy</span>
-                                        <span>starred 1 hour ago</span>
+                                        <span>starred 2 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Python microframework for building nature-inspired algorithms. Official docs: https://niapy.org</div>
