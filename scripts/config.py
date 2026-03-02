@@ -211,6 +211,27 @@ class ReadmeFeaturedRepo(BaseModel):
     )
 
 
+class ReadmeSvgSettings(BaseModel):
+    """Settings for optional SVG assets used by README dynamic sections."""
+
+    enabled: bool = Field(
+        False, description="Enable generation of SVG section assets."
+    )
+    output_dir: str = Field(
+        ".github/assets/img/readme",
+        description="Directory where README SVG assets are written.",
+    )
+    top_contact: bool = Field(
+        True, description="Generate SVG asset for the top contact block."
+    )
+    featured_projects: bool = Field(
+        True, description="Generate SVG asset for featured project cards."
+    )
+    blog_posts: bool = Field(
+        True, description="Generate SVG asset for blog post cards."
+    )
+
+
 class ReadmeSectionsSettings(BaseModel):
     """Configuration for dynamic README sections."""
 
@@ -266,6 +287,7 @@ class ReadmeSectionsSettings(BaseModel):
     blog_post_limit: int = Field(
         5, ge=1, le=10, description="Number of latest blog posts to render"
     )
+    svg: ReadmeSvgSettings = Field(default_factory=ReadmeSvgSettings)
 
 
 class ProjectConfig(BaseSettings):

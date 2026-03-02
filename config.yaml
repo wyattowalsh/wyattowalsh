@@ -65,3 +65,9 @@ readme_sections_settings:
     - full_name: wyattowalsh/iina-plugin-bookmarks
   blog_feed_url: https://w4w.dev/feed.xml
   blog_post_limit: 5
+  svg:
+    enabled: true
+    output_dir: .github/assets/img/readme
+    top_contact: true
+    featured_projects: true
+    blog_posts: true

@@ -5,7 +5,7 @@ import pytest
 from scripts.word_clouds import parse_markdown_for_word_cloud_frequencies
 
 
-def test_parse_markdown_expands_generic_others_bucket(tmp_path: Path) -> None:
+def test_parse_markdown_skips_generic_others_bucket(tmp_path: Path) -> None:
     markdown_file = tmp_path / "topics.md"
     markdown_file.write_text(
         """
@@ -27,8 +27,8 @@ def test_parse_markdown_expands_generic_others_bucket(tmp_path: Path) -> None:
     frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
 
     assert frequencies["python"] == 2.0
-    assert frequencies["mcp"] == 1.0
-    assert frequencies["video"] == 1.0
+    assert "mcp" not in frequencies
+    assert "video" not in frequencies
     assert "other" not in frequencies
     assert "others" not in frequencies
     assert frequencies == parse_markdown_for_word_cloud_frequencies(markdown_file)

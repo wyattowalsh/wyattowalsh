@@ -6,28 +6,175 @@
 </p>
 
 <!-- README:TOP_BADGES:START -->
-<p align="center"><span aria-hidden="true">❈ ┈┈ ✦ ┈┈ ❈</span></p>
-<p align="center">
-  <a href="https://w4w.dev"><img src="https://img.shields.io/badge/w4w.dev-000000?style=for-the-badge&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc%2BPGltYWdlIGhyZWY9J2RhdGE6aW1hZ2Uvdm5kLm1pY3Jvc29mdC5pY29uO2Jhc2U2NCxBQUFCQUFJQUVCQUFBQUVBSUFCb0JBQUFKZ0FBQUNBZ0FBQUJBQ0FBcUJBQUFJNEVBQUFvQUFBQUVBQUFBQ0FBQUFBQkFDQUFBQUFBQUFBRUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCL2YzOEVBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFxWlVoeWdXZWJ5WXhtcGhRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQXNaRWh1S0dSRy9vOW9xZitTYWF6WmptbWxJZ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBclpVaHFLV1ZHL2pWM1IvK3VOTWYvdENyUC81YVV3b29BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFxWkVobUtXUkcva0tWUWY5bzJ6bi9xVWV6LzR2RHZmOTUvN0ZPQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQXNaRWhqTFcxRy9WVzRQZjlxNERiL1h1QXAvM2JtanY5Ni83SDhlUEMwRVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBcVpVaGdONEZFL1dMUk92OWU0U24vVHVRVC8xamJNditGNWJmL2UvK3l5d0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFyYWtsZVNhSkEvRjdmSy85TzVCVC9TT2NNLzBubkRQK0J3NHovZ3V1Mi8zbjlzWTBBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQStpa1JlVU1Ndy9FL2xGUDlKNXd2L1N1Z00vMHJvRGY5WTNERC9tclRFLzREeHMvOTUvTEpNQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCTHJsRlNUZHdwL0VubUQvOUk1d3YvU09jTC8wbm9DLzlLNXczL2dNU0svNXUweFA5OStMUDdkKzZxRHdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFST0JsRnVXZ2Y5cXRGNy9iTEZLLzI2dU52OXZyU0wvYzd3bC81cTB3LytidE1UL2UvNnl5UUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFFY2FjNTF6VzJML3F4N2UvNnN4a2YrclJVSC9yRjhKLzdqTkVQK2Z1cWovbUxuRC8zcjlzSW9BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQmxhRUZXYUhZMzdwZ3p3Zit0R3ZuL21EZmgvMk9waC8rdjNoMy9yTXRoLzVXL3dmOTYvTEZMQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUcxNVBSV0JVSDZjZjE3SCswZThqZjlFd29uL1ZjVjIvNnpaTFArVHhicjdmLysyRGdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUU2ZGlRMUR2SWxCUThDTGVVVEFpckZYeEhib2s4cUR5UUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFHYTdpQThBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVAvdkFBRC94d0FBLzRNQUFQOERBQUQrQXdBQS9BTUFBUGdIQUFEd0J3QUE0QWNBQU1BSEFBREFEd0FBd0E4QUFNQVBBQURnRHdBQStCOEFBUC9mQUFBb0FBQUFJQUFBQUVBQUFBQUJBQ0FBQUFBQUFBQVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFjR0IvRUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFDMWtTR1p5Wm96dWoyU2pRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBd1pVbGxLR1JIL1h4bWx2K1NaNnYza1dlb1R3QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBTG1OSVh5bGxSLzBvWkViL2gyZWgvNU5wcmYrU2FLejhqMmFvYVFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQ3hrUzF3cFpFZjhLV1ZHL3lka1J2K1FhS24vazJtdS81TnByZitTYUt6L2ttaXBoZi8vL3dFQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQXVaRXBaS1dWSC9DbGxSdjhwWlViL0xXUk0vNU5vcmYrY1diZi9wRWkrLzZ3M3h2K3FSTXIvanFTN0xRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUwySkhWaXBsUnZvcFpVYi9LV1ZHL3l0cFJmOVJxVVAvd1E3Vy84a0E1UC9IQWVIL3VDalovNEhodWZWdDI3WUhBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUM5bFNGRXFaVWI2S0dSRy95ZGtSZjh6ZWtQL1lNdzcvMm5mT2YrbVRLYi94Z0hnLzdVejEvK0E2cmYvZXY2eXZBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUF0WkVwUEtXUkgrU2xsUnY4cFpVYi9SSnBBLzJuY092OXI0amYvYXVBNC80aVJjLyt5UDlYL2YvQzIvM3Ivc2Y5NS9iRjhBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFMR1pMU3lsa1Iva3BaVWIvTFc1RS8xYTdQZjlyNERqL2ErSTIvMnZnTnY5bzN6Zi9hTkpOLzMzMXRmOTcvN0gvZWYreC8zdjdzendBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFDNWpSMGdwWkViM0tXVkcvem1FUXY5azFEdi9hK0k0LzJ2aE52OW8zalQvV3VBbC8wdmlFLzk0MFlUL2V2K3gvM3Yvc1A5NS83TDBmOVNxQmdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBc1pFWkZLV05HOXlsbVJ2OUxwVC8vYXQ4NS8ydmhPUDlvM3piL1d0OGwvMHZrRVA5SjV3ei9WTnd1LzVISXZmOTYvN0gvZS8reC8zcitzN2dBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBTEdSS1JTbGtSL2N3ZFVUL1hNVTgvMnZoT1A5bzREZi9XK0FtLzB2a0VQOUk1Z3YvU2VnTC8wbmxEZjk3eFlML2pzMjkvM3Yvc2Y5Ni83RC9lZjIxZUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQ3RrVFVJcFpFajFQNUJCLzJmWk92OXA0RGYvVytFbS8wemtFdjlJNXd6L1NPZ0svMGpvQ3Y5SzZBei9VOTBxLzVxMXdmK00wN3ovZS8reC8zbi9zUDk1OXJZN0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQXJaRTFDTEd0SDlGR3lQdjlvM3pqL1hPQW8vMHprRWY5STVndi9TZWNMLzBubkRmOUk1d3YvU2VnTC8wbmxEZjk4eG9ML203VEUvNG5hdXY5Ni83RC9ldit4ODMvVXFnWUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUsyUkpRalovUmZWZXpEdi9YT0FwLzB6bEV2OUo1d3YvU3VnTS8wcm9EZjlLNkEzL1N1Z08vMHJvRHY5TDV3Ny9VdDRvLzVxMXd2K2FzOFQvaCtDMy8zci9zUDk3L3JLM0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUN0bVIwRkhua0gxVzl3ci8wN2tGUDlKNkF2L1NlZ0svMGpvQ3Y5SjV3di9TZWdMLzBub0MvOUo2QTMvU3VrTC8wbm1Edjk0eG56L203VEYvNXUweFArRTVyYi9ldit3LzNyOXRIY0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJFazBSQVRjSXU5RS9rRnY5SzV3Ny9TT2dMLzBqb0N2OUk2QXIvU09nSy8wZm5DdjlJNkFyL1NlZ0wvMG5vRFA5SzZBei9VZDRtLzVtMndQK2J0TVgvbXJQRS80SHR0Zjk1LzdEL2UvcXpOZ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFTVEdHRlV6Q1VmRk00VG4vUytRbi8wbmtGdjlINWd6L1NPY00vMGpuRFA5STV3di9TT2NMLzBqb0N2OUo2QXYvU3VnTi8wbm1Edjk1eUh6L203VEYvNXkxeGYrYXM4VC9mL08wLzNyL3N2Ri92NzhFQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJGRlpFbFFpWi8vMUhJaFA5UzJvUC9VZHFCLzFEYWV2OVAybXIvVHR4Wi8wemRTZjlNM3pqL1N1RW8vMGpqRi85SjVnNy9VZDhrLzVtMndQK2J0TVgvbkxYRi81cXp4UDk5K3JML2V2Nnp0QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUVFTGlDOUFBSC8vU2pkNC8zMS9oLytDamtQL2hJNDYvNGVHTXYrTGh6SC9qWUFyLzVGK0t2K1RlaWIvbG5VaC81UjNIditkczBYL203VEUvNXUweGYrY3RjWC9tYlhELzNyL3NQOTYvN0Z6QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVJCS05PRUFDZnY5ZlhVWC9remF5LzZvYTZmK3BMS0wvcVVCVC82eFREZitzVlFML3JGVUIvNjFWQXYrc1ZRUC9zcGdOLzdyZEZQK2Z1Sy8vbXJURi81eTF4ZitYdXNIL2VmK3cvM3Y2c1RRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQkRDSVk5VWpaZC8yaDJOLzl6WTFuL3F4cjAvNjBaK2YrdEdmbi9xaG50LzZrcnAvK3FQMWovcWxJVC82K0FDLys3M3hIL3UrQVAvNnJJYXYrYXRNVC9tN1RGLzVUQndQOTYvckh4VmFxcUF3QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBRlV5YmpOb2NUcjZhSFkzLzJkMU52K1ZOYmovckJyNC82NFordit1R2ZyL3JSbjMvNnNaOC85L1djUC9oTXBKLzd2aEVmKzg0US8vdHRrbC81dTB3dithdE1UL2tjaSsvM3Yrc3JVQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFIQjJQaWxvZFRlNlozWTIvM1ZoWHYrckd2WC9yUnI1LzYwYTkvK2tKTzMvWllhdS8wVEJpdjlFd0lqL2l0TkMvN3ppRVArNjRCRC9wTUNPLzVxMHhQK096cjMvZXYyemRRQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQm5jemRVWjNRMjRaY3p2ZityR3ZUL2tqL2IvMCtybVA5RXdvci9STUtJLzBUQ2lmOUR3SWIvaWRORC83dmhFZit3MFVmL21yVEQvNHZVdS85NCtyYzFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCMGRFWUxnMHFEaG5saHdmRkZ2WXovUk1LSy8wVENpZjlFd29yL1JNS0svMFRDaWY5RHdJYi9pdE5ELzdyZUZQK2V1Sy8vaXRlODdsWC9xZ01BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVZhcXFBMGVvaUM5Q3VvZGtRcjJMbmtPK2k5VkR3SXIrUk1LSy8wUENpZjlEdjRiL2lkSkQvNnJJYS8rTDBMMnlBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBRWVxbkJKQnQ0eEhRN3lNZmtLK2lyVkV2WW51aGN4WS80N0Z2SE1BQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUC8vL3dGSnNKSXFuTlIvRWdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUC8vLy8vLy8vMy8vLy80Ly8vLzhILy8vK0EvLy8vQUQvLy9nQS8vL3dBUC8vNEFILy84QUIvLytBQWYvL0FBSC8vZ0FELy93QUEvLzRBQVAvOEFBRC8rQUFCLy9BQUFmL2dBQUgvd0FBQi84QUFBLy9BQUFQL3dBQUQvOEFBQS8vQUFBZi80QUFILy9nQUIvLzhBQWYvL3dBUC8vLzRELy8vLzQvLy8vLy8vJyB3aWR0aD0nNjQnIGhlaWdodD0nNjQnLz48L3N2Zz4%3D&amp;logoColor=white" alt="w4w.dev"/></a>
-  <span aria-hidden="true">&nbsp;✦&nbsp;</span>
-  <a href="https://linkedin.com/in/wyattowalsh"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&amp;logo=linkedin&amp;logoColor=white" alt="LinkedIn"/></a>
-  <span aria-hidden="true">&nbsp;✦&nbsp;</span>
-  <a href="https://www.kaggle.com/wyattowalsh"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&amp;logo=kaggle&amp;logoColor=white" alt="Kaggle"/></a>
-  <span aria-hidden="true">&nbsp;✦&nbsp;</span>
-  <a href="https://x.com/wyattowalsh"><img src="https://img.shields.io/badge/X.com-000000?style=for-the-badge&amp;logo=x&amp;logoColor=white" alt="X.com"/></a>
-</p>
-<p align="center"><span aria-hidden="true">❈ ┈┈ ✦ ┈┈ ❈</span></p>
+<p align="center"><img src=".github/assets/img/gh.gif" alt="Animated GitHub contributions garden" width="260" loading="lazy"/></p>
+<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1100" height="276" viewBox="0 0 1100 276" role="img">
+<defs>
+<style>
+.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
+.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
+.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
+.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
+.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
+</style>
+<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
+</defs>
+<rect width="100%" height="100%" rx="24" fill="#0B111A" />
+<text class="title" x="24" y="54">Connect &amp; Contact</text>
+<g transform="translate(24,88)">
+<a href="https://w4w.dev" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">w4w.dev</text>
+<text class="card-line" x="18" y="62">https://w4w.dev</text>
+<text class="card-meta" x="18" y="122">https://w4w.dev</text>
+</a>
+</g>
+<g transform="translate(293,88)">
+<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">LinkedIn</text>
+<text class="card-line" x="18" y="62">https://linkedin.com/in/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://linkedin.com/in/wya…</text>
+</a>
+</g>
+<g transform="translate(562,88)">
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">Kaggle</text>
+<text class="card-line" x="18" y="62">https://www.kaggle.com/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://www.kaggle.com/wyat…</text>
+</a>
+</g>
+<g transform="translate(831,88)">
+<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">X.com</text>
+<text class="card-line" x="18" y="62">https://x.com/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://x.com/wyattowalsh</text>
+</a>
+</g>
+</svg></div>
 <!-- README:TOP_BADGES:END -->
 
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
-<table role="presentation">
-<tr><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/listentropy">listentropy</a></h3><p>No description provided.</p><p><sub>★ 0 · Updated 2026-02-26</sub></p><p><a href="https://github.com/wyattowalsh/listentropy">Repository</a> · <a href="https://github.com/wyattowalsh/listentropy/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/listentropy/issues">Issues</a> · <a href="https://listentropy.vercel.app">Live</a></p><p></p></td><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/mdxpad">mdxpad</a></h3><p>No description provided.</p><p><sub>★ 0 · Updated 2026-01-19</sub></p><p><a href="https://github.com/wyattowalsh/mdxpad">Repository</a> · <a href="https://github.com/wyattowalsh/mdxpad/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/mdxpad/issues">Issues</a></p><p></p></td></tr>
-<tr><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/proxywhirl">proxywhirl</a></h3><p>rotating proxy system</p><p><sub>★ 0 · Updated 2026-03-02</sub></p><p><a href="https://github.com/wyattowalsh/proxywhirl">Repository</a> · <a href="https://github.com/wyattowalsh/proxywhirl/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/proxywhirl/issues">Issues</a> · <a href="https://proxywhirl.com">Live</a></p><p><code>data</code> <code>data-extraction</code> <code>dataextraction</code> <code>proxy</code></p></td><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/nbadb">nbadb</a></h3><p>Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball)</p><p><sub>★ 57 · Updated 2025-10-30</sub></p><p><a href="https://github.com/wyattowalsh/nbadb">Repository</a> · <a href="https://github.com/wyattowalsh/nbadb/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/nbadb/issues">Issues</a> · <a href="https://nba-db.readthedocs.io/">Live</a></p><p><code>database</code> <code>kaggle</code> <code>kaggle-dataset</code> <code>nba</code></p></td></tr>
-<tr><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/agents">agents</a></h3><p>AI agent artifacts, configs, skills, tools, and more</p><p><sub>★ 0 · Updated 2026-03-01</sub></p><p><a href="https://github.com/wyattowalsh/agents">Repository</a> · <a href="https://github.com/wyattowalsh/agents/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/agents/issues">Issues</a> · <a href="https://agents.w4w.dev">Live</a></p><p></p></td><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/personal-website">personal-website</a></h3><p>Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻</p><p><sub>★ 3 · Updated 2026-02-17</sub></p><p><a href="https://github.com/wyattowalsh/personal-website">Repository</a> · <a href="https://github.com/wyattowalsh/personal-website/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/personal-website/issues">Issues</a> · <a href="https://w4w.dev">Live</a></p><p><code>blog</code> <code>latex</code> <code>link-shortener</code> <code>mdx</code></p></td></tr>
-<tr><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/riso">riso</a></h3><p>Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling</p><p><sub>★ 0 · Updated 2026-01-19</sub></p><p><a href="https://github.com/wyattowalsh/riso">Repository</a> · <a href="https://github.com/wyattowalsh/riso/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/riso/issues">Issues</a></p><p><code>cli</code> <code>copier</code> <code>developer-tools</code> <code>fastapi</code></p></td><td width="50%" valign="top"><h3><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks">iina-plugin-bookmarks</a></h3><p>media bookmark manager plugin for the iina video player</p><p><sub>★ 5 · Updated 2026-03-01</sub></p><p><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks">Repository</a> · <a href="https://github.com/wyattowalsh/iina-plugin-bookmarks/stargazers">Stars</a> · <a href="https://github.com/wyattowalsh/iina-plugin-bookmarks/issues">Issues</a> · <a href="https://iina-plugin-bookmarks.w4w.dev">Live</a></p><p><code>fumadocs</code> <code>iina</code> <code>iina-plugin</code> <code>react</code></p></td></tr>
-</table>
+<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1108" viewBox="0 0 1200 1108" role="img">
+<defs>
+<style>
+.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
+.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
+.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
+.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
+.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
+</style>
+<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
+</defs>
+<rect width="100%" height="100%" rx="24" fill="#0B111A" />
+<text class="title" x="28" y="54">Featured Projects</text>
+<g transform="translate(28,88)">
+<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-0"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/listentropy" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">listentropy</text>
+<text class="card-line" x="18" y="62">No description provided.</text>
+<text class="card-line" x="18" y="84">https://listentropy.vercel.app</text>
+<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
+</a>
+</g>
+<g transform="translate(614,88)">
+<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-1"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/mdxpad" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">mdxpad</text>
+<text class="card-line" x="18" y="62">No description provided.</text>
+<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-01-19</text>
+</a>
+</g>
+<g transform="translate(28,336)">
+<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-2"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/proxywhirl" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">proxywhirl</text>
+<text class="card-line" x="18" y="62">rotating proxy system</text>
+<text class="card-line" x="18" y="84">Topics: data, data-extraction, dataextraction</text>
+<text class="card-line" x="18" y="106">https://proxywhirl.com</text>
+<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
+</a>
+</g>
+<g transform="translate(614,336)">
+<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-3"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/nbadb" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">nbadb</text>
+<text class="card-line" x="18" y="62">Data Extraction (from https://stats.nba.com) and Processing Scripts to …</text>
+<text class="card-line" x="18" y="84">Topics: database, kaggle, kaggle-dataset</text>
+<text class="card-line" x="18" y="106">https://nba-db.readthedocs.io/</text>
+<path class="sparkline" d="M0.00,36.00 L22.17,34.69 L44.35,32.73 L66.52,31.42 L88.70,29.45 L110.87,28.15 L133.04,26.84 L155.22,24.87 L177.39,23.56 L199.57,22.25 L221.74,20.29 L243.91,18.98 L266.09,17.67 L288.26,15.71 L310.43,14.40 L332.61,12.44 L354.78,11.13 L376.96,9.82 L399.13,7.85 L421.30,6.55 L443.48,4.58 L465.65,3.27 L487.83,1.96 L510.00,0.00" transform="translate(18,156)" />
+<text class="card-meta" x="18" y="202">★ 57 · Updated 2025-10-30</text>
+</a>
+</g>
+<g transform="translate(28,584)">
+<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-4"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/agents" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">agents</text>
+<text class="card-line" x="18" y="62">AI agent artifacts, configs, skills, tools, and more</text>
+<text class="card-line" x="18" y="84">https://agents.w4w.dev</text>
+<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
+</a>
+</g>
+<g transform="translate(614,584)">
+<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-5"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/personal-website" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-5)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">personal-website</text>
+<text class="card-line" x="18" y="62">Files for my personal web app, w4w.dev. Built using Vercel, Typescript,…</text>
+<text class="card-line" x="18" y="84">Topics: blog, latex, link-shortener</text>
+<text class="card-line" x="18" y="106">https://w4w.dev</text>
+<path class="sparkline" d="M0.00,36.00 L510.00,0.00" transform="translate(18,156)" />
+<text class="card-meta" x="18" y="202">★ 3 · Updated 2026-02-17</text>
+</a>
+</g>
+<g transform="translate(28,832)">
+<a href="https://github.com/wyattowalsh/riso" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-6"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/riso" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-6)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">riso</text>
+<text class="card-line" x="18" y="62">Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fasti…</text>
+<text class="card-line" x="18" y="84">Topics: cli, copier, developer-tools</text>
+<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-01-19</text>
+</a>
+</g>
+<g transform="translate(614,832)">
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer">
+<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-7"><rect width="558" height="220" rx="16" /></clipPath></defs>
+<image href="https://opengraph.githubassets.com/1/wyattowalsh/iina-plugin-bookmarks" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-7)" opacity="0.5" />
+<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">iina-plugin-bookmarks</text>
+<text class="card-line" x="18" y="62">media bookmark manager plugin for the iina video player</text>
+<text class="card-line" x="18" y="84">Topics: fumadocs, iina, iina-plugin</text>
+<text class="card-line" x="18" y="106">https://iina-plugin-bookmarks.w4w.dev</text>
+<path class="sparkline" d="M0.00,36.00 L127.50,27.00 L255.00,18.00 L382.50,9.00 L510.00,0.00" transform="translate(18,156)" />
+<text class="card-meta" x="18" y="202">★ 5 · Updated 2026-03-01</text>
+</a>
+</g>
+</svg></div>
+<p align="center"><sub>GitHub metadata + star history, updated on every README refresh.</sub></p>
 <!-- README:FEATURED_PROJECTS:END -->
 
 
@@ -47,6 +194,18 @@
   <sub><b>Topography</b> — terrain contours, rivers, and cartographic chrome emerge with activity</sub>
 </td>
 </tr></table>
+
+### Living Art Data Mapping
+
+| Visual | Data inputs | Visual mapping in code |
+|---|---|---|
+| `inkgarden-growth-animated.svg` | `repos[]` (`name`, `language`, `stars`, `age_months`) | Each repo becomes one plant; language sets hue (and can influence species class), age drives plant size/branch depth, stars drive bloom size + petal/layer counts, and repo names become botanical labels. |
+| Ink Garden ecosystem details | `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars` | Forks scale root/mycorrhizal networks; watchers/contributions/orgs/stars add insects/seeds; network adds webs; open issues add mushrooms; following adds tendrils; monthly contributions drive stipple density. |
+| `topo-growth-animated.svg` | `repos[]` (`stars`, `age_months`, `language`, `name`) | Repos become hills/landmarks; stars set relative peak height + marker size, age sets hill width and age markers, language controls per-hill terrain texture and marker color, names/stars are labeled on-map. |
+| Topography terrain/chrome | `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars` | Commits increase base terrain noise detail; monthly contributions build ridge intensity + month label opacity; forks set river count; followers set contour density; contributions/stars appear in survey scale/title annotations. |
+| Growth timing (both) | `compute_maturity(metrics)` | Animation ramps maturity from `0.02` to target over ~30s; maturity is computed from commits, stars, contributions, followers, repo count/age, forks, and network size. |
+
+> Note: the header banner (`banner.svg`) is config-driven (`config.yaml`), not mapped to GitHub activity metrics.
 
 ## Tech Stack
 
@@ -317,6 +476,8 @@
   <img src=".github/assets/img/wordcloud_by_language.svg" alt="Word cloud of programming languages used across repositories" width="49%"/>
 </p>
 
+<sub>Data source mapping: in Markdown-source mode (<code>--from-topics-md</code> / <code>--from-languages-md</code>), these clouds are generated from <code>.github/assets/topics.md</code> and <code>.github/assets/languages.md</code>, with term size based on parsed Markdown frequencies.</sub>
+
 <details>
 <summary><strong>WakaTime Stats</strong></summary>
 
@@ -397,14 +558,81 @@ MDX                      1 repo              ░░░░░░░░░░░�
 
 <!-- README:BLOG_POSTS:START -->
 <!-- BLOG-POST-LIST:START -->
-<table role="presentation">
-<tr><td>📝</td><td><a href="https://w4w.dev/blog/posts/proxywhirl"><strong>ProxyWhirl</strong></a><br/><sub>w4w.dev</sub></td></tr>
-<tr><td>📝</td><td><a href="https://w4w.dev/blog/posts/w4w-v6"><strong>Personal Web App v6</strong></a><br/><sub>w4w.dev</sub></td></tr>
-<tr><td>📝</td><td><a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3"><strong>Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy</strong></a><br/><sub>w4w.dev</sub></td></tr>
-<tr><td>📝</td><td><a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2"><strong>Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)</strong></a><br/><sub>w4w.dev</sub></td></tr>
-<tr><td>📝</td><td><a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1"><strong>Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)</strong></a><br/><sub>w4w.dev</sub></td></tr>
-</table>
-<p><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
+<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1356" viewBox="0 0 1100 1356" role="img">
+<defs>
+<style>
+.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
+.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
+.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
+.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
+.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
+</style>
+<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
+</defs>
+<rect width="100%" height="100%" rx="24" fill="#0B111A" />
+<text class="title" x="28" y="54">Latest Blog Posts</text>
+<g transform="translate(28,88)">
+<a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-0"><rect width="1044" height="220" rx="16" /></clipPath></defs>
+<image href="https://w4w.dev/proxywhirl-hero.svg" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.5" />
+<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">ProxyWhirl</text>
+<text class="card-line" x="18" y="62">w4w.dev</text>
+<text class="card-line" x="18" y="84">Production-ready Python proxy rotation with auto-fetching from 114+ sou…</text>
+<text class="card-meta" x="18" y="202">w4w.dev · Published 2026-02-13</text>
+</a>
+</g>
+<g transform="translate(28,336)">
+<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-1"><rect width="1044" height="220" rx="16" /></clipPath></defs>
+<image href="https://w4w.dev/old.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.5" />
+<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">Personal Web App v6</text>
+<text class="card-line" x="18" y="62">w4w.dev</text>
+<text class="card-line" x="18" y="84">A deep dive into building my personal website v6 with Next.js 15, featu…</text>
+<text class="card-meta" x="18" y="202">w4w.dev · Published 2024-12-01</text>
+</a>
+</g>
+<g transform="translate(28,584)">
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-2"><rect width="1044" height="220" rx="16" /></clipPath></defs>
+<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.5" />
+<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">Implementing Pathwise Coordinate Descent For The La…</text>
+<text class="card-line" x="18" y="62">w4w.dev</text>
+<text class="card-line" x="18" y="84">Explanations for Solving Some of the Most Popular Supervised Learning A…</text>
+<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-15</text>
+</a>
+</g>
+<g transform="translate(28,832)">
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-3"><rect width="1044" height="220" rx="16" /></clipPath></defs>
+<image href="https://w4w.dev/ridge.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.5" />
+<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">Using Ridge Regression to Overcome Drawbacks of Ord…</text>
+<text class="card-line" x="18" y="62">w4w.dev</text>
+<text class="card-line" x="18" y="84">Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, an…</text>
+<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-14</text>
+</a>
+</g>
+<g transform="translate(28,1080)">
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<defs><clipPath id="clip-4"><rect width="1044" height="220" rx="16" /></clipPath></defs>
+<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.5" />
+<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
+<text class="card-title" x="18" y="36">Basics of Linear Regression Modeling and Ordinary L…</text>
+<text class="card-line" x="18" y="62">w4w.dev</text>
+<text class="card-line" x="18" y="84">Context of Linear Regression, Optimization to Obtain the OLS Model Esti…</text>
+<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-13</text>
+</a>
+</g>
+</svg></div>
+<p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- BLOG-POST-LIST:END -->
 <!-- README:BLOG_POSTS:END -->
 

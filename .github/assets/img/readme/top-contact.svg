@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="276" viewBox="0 0 1100 276" role="img">
+<defs>
+<style>
+.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
+.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
+.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
+.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
+.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
+</style>
+<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
+</defs>
+<rect width="100%" height="100%" rx="24" fill="#0B111A" />
+<text class="title" x="24" y="54">Connect &amp; Contact</text>
+<g transform="translate(24,88)">
+<a href="https://w4w.dev" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">w4w.dev</text>
+<text class="card-line" x="18" y="62">https://w4w.dev</text>
+<text class="card-meta" x="18" y="122">https://w4w.dev</text>
+</a>
+</g>
+<g transform="translate(293,88)">
+<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">LinkedIn</text>
+<text class="card-line" x="18" y="62">https://linkedin.com/in/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://linkedin.com/in/wya…</text>
+</a>
+</g>
+<g transform="translate(562,88)">
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">Kaggle</text>
+<text class="card-line" x="18" y="62">https://www.kaggle.com/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://www.kaggle.com/wyat…</text>
+</a>
+</g>
+<g transform="translate(831,88)">
+<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
+<text class="card-title" x="18" y="36">X.com</text>
+<text class="card-line" x="18" y="62">https://x.com/wyattowalsh</text>
+<text class="card-meta" x="18" y="122">https://x.com/wyattowalsh</text>
+</a>
+</g>
+</svg>

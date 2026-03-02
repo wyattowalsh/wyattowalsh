@@ -520,15 +520,6 @@ CUSTOM_COLOR_FUNCTIONS: Dict[str, Callable[..., str]] = {
 }
 
 GENERIC_BUCKET_LABELS = {"other", "others"}
-GENERIC_BUCKET_TOKEN_STOPWORDS = {
-    "awesome",
-    "list",
-    "lists",
-    "project",
-    "projects",
-    "repo",
-    "repos",
-}
 MARKDOWN_TERM_EXCLUSIONS = {
     "readme", "license", "docs", "blog", "site", "test",
     "demo", "example", "examples", "template", "templates",
@@ -548,22 +539,6 @@ def _is_generic_bucket_label(label: str) -> bool:
     """Returns True when `label` is a generic aggregation bucket."""
     return _normalize_bucket_label(label) in GENERIC_BUCKET_LABELS
 
-
-def _expand_generic_bucket_term(term: str) -> List[str]:
-    """Expands a generic bucket entry into granular tokens."""
-    candidate_term = term.strip()
-    if "/" in candidate_term:
-        candidate_term = candidate_term.rsplit("/", 1)[-1]
-
-    raw_tokens = re.split(r"[^A-Za-z0-9#+]+", candidate_term)
-    cleaned_tokens = [
-        token.casefold()
-        for token in raw_tokens
-        if len(token) > 1
-        and not _is_generic_bucket_label(token)
-        and token.casefold() not in GENERIC_BUCKET_TOKEN_STOPWORDS
-    ]
-    return list(dict.fromkeys(cleaned_tokens))
 
 # ------------------------------------------------------------------------------
 # Markdown Parsing for Word Cloud Frequencies
@@ -666,12 +641,9 @@ def parse_markdown_for_word_cloud_frequencies(
                 continue
 
             if _is_generic_bucket_label(current_section):
-                for expanded_term in _expand_generic_bucket_term(term):
-                    term_frequencies[expanded_term] += 1.0
-                    logger.debug(
-                        f"Expanded bucket term: '{expanded_term}', "
-                        f"new count: {term_frequencies[expanded_term]}"
-                    )
+                logger.debug(
+                    f"Skipping generic bucket section: '{current_section}'"
+                )
             else:
                 normalized_section = current_section.strip().casefold()
                 if normalized_section and not _is_generic_bucket_label(

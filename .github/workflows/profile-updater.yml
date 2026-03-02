@@ -177,7 +177,7 @@ jobs:
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           # ... other params from your main.yml ...
-          base: "header, activity, repositories"
+          base: ${{ secrets.METRICS_TOKEN != '' && 'header, activity, repositories' || 'header, activity' }}
           plugin_lines: yes
           plugin_isocalendar: yes
           plugin_traffic: yes
@@ -199,7 +199,9 @@ jobs:
         id: check_personal_metrics
         if: ${{ always() }}
         run: |
-          if [ ! -f ./.github/assets/img/metrics.svg ] || grep -q "Insufficient token scopes" ./.github/assets/img/metrics.svg; then
+          if [ ! -f ./.github/assets/img/metrics.svg ]; then
+            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)" ./.github/assets/img/metrics.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -262,7 +264,7 @@ jobs:
         run: |
           if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif grep -q "Latest tweets" ./.github/assets/img/metrics.additional.svg && grep -Eiq "API error: (401|403)" ./.github/assets/img/metrics.additional.svg; then
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "API error:[[:space:]]*(401|403)|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)" ./.github/assets/img/metrics.additional.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -290,6 +292,24 @@ jobs:
           plugin_stargazers: yes
           plugin_stars: yes
           plugin_stars_limit: 3
+
+      - name: Sanitize final metrics SVG outputs
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          sanitize_svg() {
+            local file="$1"
+            if [ ! -s "$file" ] || ! grep -Eiq "<svg[^>]*>" "$file" || ! grep -Eiq "</svg>" "$file" || grep -Eiq "Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)" "$file"; then
+              cat > "$file" <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" role="img" aria-label="Metrics unavailable">
+            <rect width="100%" height="100%" fill="#0d1117"/>
+            <text x="50%" y="50%" fill="#c9d1d9" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22">Metrics temporarily unavailable</text>
+          </svg>
+          SVG
+            fi
+          }
+          sanitize_svg ./.github/assets/img/metrics.svg
+          sanitize_svg ./.github/assets/img/metrics.additional.svg
 
   generate-event-art:
     name: Generate Event-Driven Artwork
