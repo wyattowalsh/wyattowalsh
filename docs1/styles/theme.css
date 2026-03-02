@@ -1,0 +1,362 @@
+/* =============================================================================
+   docsify-themeable — Custom "Rosé Pine Dawn" Light Theme
+   =============================================================================
+   This stylesheet includes all default docsify-themeable CSS custom properties
+   followed by a set of overrides implementing a soft "Rosé Pine Dawn" light theme.
+   Place this file after the core theme in your index.html:
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+     <link rel="stylesheet" href="theme-rose-pine-dawn.css">
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   App — Color, Typography, Utilities
+   ----------------------------------------------------------------------------- */
+   :root {
+    /* Monochrome Hue & Saturation */
+    --mono-hue        : 113;
+    --mono-saturation : 0%;
+
+    /* Monochrome shades & tints */
+    --mono-shade3     : hsl(var(--mono-hue), var(--mono-saturation), 20%);
+    --mono-shade2     : hsl(var(--mono-hue), var(--mono-saturation), 30%);
+    --mono-shade1     : hsl(var(--mono-hue), var(--mono-saturation), 40%);
+    --mono-base       : hsl(var(--mono-hue), var(--mono-saturation), 50%);
+    --mono-tint1      : hsl(var(--mono-hue), var(--mono-saturation), 70%);
+    --mono-tint2      : hsl(var(--mono-hue), var(--mono-saturation), 89%);
+    --mono-tint3      : hsl(var(--mono-hue), var(--mono-saturation), 97%);
+
+    /* Theme Color (will be overridden below) */
+    --theme-hue       : 204;
+    --theme-saturation: 90%;
+    --theme-lightness : 45%;
+    --theme-color     : hsl(var(--theme-hue), var(--theme-saturation), var(--theme-lightness));
+    --theme-color-dark: hsl(var(--theme-hue), var(--theme-saturation), 35%);
+    --theme-color-light: hsl(var(--theme-hue), var(--theme-saturation), 65%);
+    --theme-color-secondary: hsl(var(--theme-hue) + 180, var(--theme-saturation), var(--theme-lightness));
+
+    /* Typography—Modular Scale */
+    --modular-scale   : 1.333;
+    --modular-scale--2: calc(var(--modular-scale--1) / var(--modular-scale));
+    --modular-scale--1: calc(var(--modular-scale-1) / var(--modular-scale));
+    --modular-scale-1 : 1rem;
+    --modular-scale-2 : calc(var(--modular-scale-1) * var(--modular-scale));
+    --modular-scale-3 : calc(var(--modular-scale-2) * var(--modular-scale));
+    --modular-scale-4 : calc(var(--modular-scale-3) * var(--modular-scale));
+    --modular-scale-5 : calc(var(--modular-scale-4) * var(--modular-scale));
+
+    /* Font sizes */
+    --font-size-xxxl  : var(--modular-scale-5);
+    --font-size-xxl   : var(--modular-scale-4);
+    --font-size-xl    : var(--modular-scale-3);
+    --font-size-l     : var(--modular-scale-2);
+    --font-size-m     : var(--modular-scale-1);
+    --font-size-s     : var(--modular-scale--1);
+    --font-size-xs    : var(--modular-scale--2);
+
+    /* Utility */
+    --border-radius-s : 4px;
+    --border-radius-m : 8px;
+    --border-radius-l : 12px;
+    --duration-slow   : 1s;
+    --duration-medium : 0.5s;
+    --duration-fast   : 0.25s;
+    --spinner-size               : 60px;
+    --spinner-track-width        : 4px;
+    --spinner-track-color        : rgba(0, 0, 0, 0.15);
+    --spinner-transition-duration: var(--duration-medium);
+}
+
+/* -----------------------------------------------------------------------------
+   Base — Background, Text, Code, Selection
+   ----------------------------------------------------------------------------- */
+:root {
+    --base-background-color: #fff;
+    --base-color           : var(--mono-shade2);
+    --base-font-family     : -apple-system, BlinkMacSystemFont, "Segoe UI",
+                            Helvetica, Arial, sans-serif, "Apple Color Emoji",
+                            "Segoe UI Emoji", "Segoe UI Symbol";
+    --base-font-size       : 16px;
+    --base-font-weight     : normal;
+    --base-letter-spacing  : normal;
+    --base-line-height     : 1.7;
+    --emoji-size           : calc(var(--base-line-height) * 1em);
+    --hr-border            : 1px solid var(--mono-tint2);
+    --mark-background      : #ffecb3;
+    --mark-color           : var(--mono-base);
+    --pre-font-family      : Inconsolata, Consolas, Menlo, Monaco, "Courier New",
+                            Courier, monospace;
+    --pre-font-size        : calc(var(--font-size-m) * 0.95);
+    --pre-font-weight      : normal;
+    --pre-line-height      : var(--base-line-height);
+    --selection-color      : #b4d5fe;
+    --small-font-size      : var(--font-size-s);
+    --strong-color         : var(--mono-shade3);
+    --strong-font-weight   : 600;
+    --subsup-font-size     : var(--font-size-s);
+}
+
+/* -----------------------------------------------------------------------------
+   Content — Blockquotes, Code Blocks, Headings, Links, Tables, Notices
+   ----------------------------------------------------------------------------- */
+:root {
+    --content-max-width                 : 55em;
+
+    /* Blockquote */
+    --blockquote-background             : var(--mono-tint3);
+    --blockquote-border-color           : var(--mono-tint2);
+    --blockquote-border-style           : solid;
+    --blockquote-border-width           : 2px;
+    --blockquote-border-radius          : var(--border-radius-m);
+    --blockquote-color                  : var(--mono-shade2);
+    --blockquote-font-family            : var(--base-font-family);
+    --blockquote-font-size              : var(--font-size-m);
+    --blockquote-font-style             : italic;
+    --blockquote-font-weight            : normal;
+    --blockquote-quotes-open            : "\201C";
+    --blockquote-quotes-close           : "\201D";
+    --blockquote-quotes-color           : var(--mono-tint1);
+    --blockquote-padding                : 1.5em;
+
+    /* Code */
+    --code-font-family                  : var(--pre-font-family);
+    --code-font-size                    : var(--pre-font-size);
+    --code-font-weight                  : normal;
+    --code-tab-size                     : 4;
+    --code-block-border-radius          : var(--border-radius-m);
+    --code-block-line-height            : var(--base-line-height);
+    --code-block-margin                 : 1em 0;
+    --code-block-padding                : 1.75em 1.5em 1.5em 1.5em;
+    --code-inline-background            : var(--mono-tint3);
+    --code-inline-border-radius         : var(--border-radius-s);
+    --code-inline-color                 : var(--mono-shade3);
+    --code-inline-margin                : 0 0.15em;
+    --code-inline-padding               : 0.125em 0.4em;
+
+    /* Headings */
+    --heading-color                     : var(--mono-shade3);
+    --heading-font-family               : var(--base-font-family);
+    --heading-font-weight               : 600;
+    --heading-margin                    : 2.5rem 0 0;
+    --heading-h1-font-size              : var(--font-size-xxl);
+    --heading-h2-font-size              : var(--font-size-xl);
+    --heading-h3-font-size              : var(--font-size-l);
+    --heading-h4-font-size              : var(--font-size-m);
+    --heading-h5-font-size              : var(--font-size-s);
+    --heading-h6-font-size              : var(--font-size-xs);
+
+    /* Links */
+    --link-color                        : var(--theme-color);
+    --link-color--hover                 : var(--mono-shade1);
+    --link-text-decoration              : underline;
+    --link-text-decoration--hover       : none;
+
+    /* Tables */
+    --table-body-border-color           : var(--mono-tint2);
+    --table-body-border-width           : 1px;
+    --table-cell-border-color           : var(--mono-tint2);
+    --table-cell-border-width           : 1px;
+    --table-cell-padding                : 0.75em 0.5em;
+    --table-head-background             : var(--mono-tint3);
+    --table-head-border-color           : var(--mono-tint2);
+    --table-head-font-weight            : 600;
+    --table-row-even-background         : var(--mono-tint3);
+
+    /* Notices */
+    --notice-background                 : var(--mono-tint3);
+    --notice-border-color               : var(--mono-tint2);
+    --notice-border-style               : solid;
+    --notice-border-width               : 2px;
+    --notice-color                      : var(--mono-shade3);
+    --notice-font-weight                : normal;
+    --notice-padding                    : 1em 1.5em;
+}
+
+/* -----------------------------------------------------------------------------
+   Coverpage — Hero Section
+   ----------------------------------------------------------------------------- */
+:root {
+    --cover-background-color            : var(--base-background-color);
+    --cover-background-mask-color       : var(--base-background-color);
+    --cover-background-mask-opacity     : 0.8;
+    --cover-text-align                  : center;
+    --cover-max-width                   : 40em;
+    --cover-heading-color               : var(--theme-color);
+    --cover-heading-font-size           : var(--font-size-xxl);
+    --cover-blockquote-font-size        : var(--font-size-l);
+    --cover-button-background           : transparent;
+    --cover-button-border               : 1px solid var(--theme-color);
+    --cover-button-color                : var(--theme-color);
+    --cover-button-primary-background   : var(--theme-color);
+    --cover-button-primary-color        : #fff;
+    --cover-button-padding              : 0.5em 2rem;
+    --cover-button-transition           : all var(--duration-fast) ease-in-out;
+}
+
+/* -----------------------------------------------------------------------------
+   Navbar — Top Navigation
+   ----------------------------------------------------------------------------- */
+:root {
+    --navbar-root-background            : var(--base-background-color);
+    --navbar-root-color                 : var(--mono-shade3);
+    --navbar-root-color--active         : var(--theme-color);
+    --navbar-root-margin                : 0 0 0 1.5em;
+    --navbar-root-transition            : all var(--duration-fast);
+    --navbar-menu-background            : var(--base-background-color);
+    --navbar-menu-border-radius         : var(--border-radius-m);
+    --navbar-menu-padding               : 0.5em;
+}
+
+/* -----------------------------------------------------------------------------
+   Sidebar — Left Navigation
+   ----------------------------------------------------------------------------- */
+/*
+:root {
+    --sidebar-background                : var(--base-background-color);
+    --sidebar-width                     : 17rem;
+    --sidebar-padding                   : 0 25px;
+    --sidebar-name-font-size            : var(--font-size-l);
+    --sidebar-nav-link-color            : var(--mono-shade2);
+    --sidebar-nav-link-color--active    : var(--theme-color);
+    --sidebar-nav-link-text-decoration--active: underline;
+    --sidebar-toggle-icon-color         : var(--mono-shade2);
+}
+*/
+
+/* -----------------------------------------------------------------------------
+   Custom Overrides — "Rosé Pine Dawn" Light Theme
+   ----------------------------------------------------------------------------- */
+:root {
+    /* Base & Background */
+    --base-background-color: #FDF1F4;     /* Soft dawn rose */
+    --base-color           : hsl(140, 20%, 35%); /* Muted pine green */
+
+    /* Monochrome (slightly warm) */
+    --mono-hue        : 10;
+    --mono-saturation : 5%;
+
+    /* Theme Accent Color */
+    --theme-hue       : 340;   /* Rosé pink hue */
+    --theme-saturation: 40%;
+    --theme-lightness : 88%;
+    --theme-color     : hsl(var(--theme-hue), var(--theme-saturation), var(--theme-lightness));
+    /* Complementary Color */
+    --complement-lightness : 50%;
+    --complement-hue        : 160; /* (340 + 180) mod 360 */
+    --complement-color      : hsl(var(--complement-hue), var(--theme-saturation), var(--complement-lightness));
+
+    /* Split‐Complementary Colors */
+    --split-complement1-hue : 130; /* 160 - 30 */
+    --split-complement2-hue : 190; /* 160 + 30 */
+    --split-complement1-color: hsl(var(--split-complement1-hue), var(--theme-saturation), var(--complement-lightness));
+    --split-complement2-color: hsl(var(--split-complement2-hue), var(--theme-saturation), var(--complement-lightness));
+
+    /* Analogous Colors */
+    --analogous1-hue        : 310; /* 340 - 30 */
+    --analogous2-hue        : 10;  /* 340 + 30 */
+    --analogous1-color      : hsl(var(--analogous1-hue), var(--theme-saturation), var(--complement-lightness));
+    --analogous2-color      : hsl(var(--analogous2-hue), var(--theme-saturation), var(--complement-lightness));
+
+    /* Triadic Colors */
+    --triadic1-hue          : 100; /* (340 + 120) mod 360 */
+    --triadic2-hue          : 220; /* (340 + 240) mod 360 */
+    --triadic1-color        : hsl(var(--triadic1-hue), var(--theme-saturation), var(--complement-lightness));
+    --triadic2-color        : hsl(var(--triadic2-hue), var(--theme-saturation), var(--complement-lightness));
+
+
+    /* Heading Emphasis */
+    --heading-color   : hsl(340, 30%, 35%); /* Slightly deeper rose */
+
+    /* Link Styling */
+    --link-color      : var(--theme-color);
+    --link-color--hover: hsl(340, 50%, 75%);
+
+    /* Button & Interactive */
+    --cover-button-border                : 1px solid var(--theme-color);
+    --navbar-root-color--active         : var(--theme-color);
+    /* --sidebar-nav-link-color--active    : var(--theme-color); */
+}
+
+/*
+.sidebar-title {
+  font-size: var(--font-size-h2, 1.15em);
+  font-weight: 600;
+  color: var(--theme-color, #42b983);
+  padding-left: 10px;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-bottom: 1px solid var(--theme-color, #42b983);
+}
+
+.sidebar-title span {
+  display: inline-block;
+  background-color: #fff0e6; 
+  color: #c2410c; 
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.8em; 
+  padding: 0.25em 0.25em;
+  border-radius: 6px;
+  border: 1px solid #ffd8bf; 
+  font-weight: 600; 
+  text-shadow: none; 
+  position: relative; 
+  top: -0.05em; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sidebar-link-title {
+  font-size: var(--font-size-h3, 1.15em);
+  font-weight: 500;
+  color: var(--theme-color, #42b983);
+}
+
+.sidebar-link-subtitle {
+  font-size: var(--font-size-h4, 1.35em);
+  border-left: 1px solid var(--theme-color, #42b983);
+  padding-left: 10px;
+}
+*/
+
+/* Essential fix for Docsify scrolling */
+#app {
+  overflow-y: auto !important;
+}
+
+/* All styles from this point to the end of the file, which constitute the .404 page styles, will be removed. */
+/* Custom Task List Checkboxes */
+.markdown-section ul > li.task-list-item > input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.3em;
+  vertical-align: middle;
+  outline: none;
+  font-size: 1.1em; /* Adjust size as needed */
+}
+
+.markdown-section ul > li.task-list-item > input[type='checkbox']::before {
+  font-family: 'Font Awesome 5 Free'; /* Ensure you load Font Awesome */
+  font-weight: 900; /* For Solid icons */
+  content: '\f0c8'; /* Unicode for far fa-square */
+  display: inline-block;
+  text-align: center;
+  color: var(--theme-color, #b4637a); /* Use theme color or a default */
+  border-radius: 3px;
+  line-height: 1.15em;
+}
+
+.markdown-section ul > li.task-list-item > input[type='checkbox']:checked::before {
+  content: '\f14a'; /* Unicode for fas fa-check-square */
+  color: var(--theme-color, #b4637a); /* Use theme color or a default */
+}
+
+/* Optional: Adjust spacing if text is too close to the new icon */
+.markdown-section ul > li.task-list-item {
+  margin-left: -1.5em; /* May need adjustment based on your overall list styling */
+  list-style-type: none; /* Hide original list bullet */
+}
+
+.markdown-section ul > li.task-list-item > input[type='checkbox'] + * {
+  vertical-align: middle;
+} 

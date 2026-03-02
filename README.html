@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner.svg">
+    <img src=".github/assets/img/banner.svg" alt="Banner" width="100%"/>
+  </picture>
+</p>
+<p align="center">
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=false&width=600&height=60&lines=buildin'+cheer+since+'14" alt="Typing SVG" />
+  </a>
+</p>
+<p align="center">
+  <a href="https://w4w.dev"><img src="https://img.shields.io/badge/w4w.dev-000?style=for-the-badge&logo=safari&logoColor=white" alt="Blog"/></a>
+  <a href="https://linkedin.com/in/wyattowalsh"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
+  <a href="https://github.com/wyattowalsh"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
+  <a href="mailto:wyattowalsh@gmail.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/></a>
+</p>
+<h2 id="about-me">About Me</h2>
+<pre class="hljs"><code><div><span class="hljs-attr">name:</span> <span class="hljs-string">Wyatt</span> <span class="hljs-string">Walsh</span>
+<span class="hljs-attr">location:</span> <span class="hljs-string">California</span>
+<span class="hljs-attr">interests:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">building</span> <span class="hljs-string">developer</span> <span class="hljs-string">tools</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">generative</span> <span class="hljs-string">art</span> <span class="hljs-string">&amp;</span> <span class="hljs-string">creative</span> <span class="hljs-string">coding</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">machine</span> <span class="hljs-string">learning</span> <span class="hljs-string">&amp;</span> <span class="hljs-string">optimization</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">open</span> <span class="hljs-string">source</span> <span class="hljs-string">everything</span>
+<span class="hljs-attr">currently:</span>
+  <span class="hljs-attr">building:</span> <span class="hljs-string">developer</span> <span class="hljs-string">tools</span> <span class="hljs-string">&amp;</span> <span class="hljs-string">AI</span> <span class="hljs-string">applications</span>
+  <span class="hljs-attr">learning:</span> <span class="hljs-string">always</span> <span class="hljs-string">something</span> <span class="hljs-string">new</span>
+  <span class="hljs-attr">fun_fact:</span> <span class="hljs-string">"this profile's artwork literally changes when you star it"</span>
+</div></code></pre>
+<blockquote>
+<p>[!TIP]
+Star this repo to reshape the generative artwork below — every interaction produces a unique Clifford attractor pattern.</p>
+</blockquote>
+<h2 id="github-stats">GitHub Stats</h2>
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=wyattowalsh&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000" alt="GitHub Stats" height="165"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com?user=wyattowalsh&theme=tokyonight&hide_border=true&background=00000000" alt="Streak Stats" height="165"/>
+</p>
+<p align="center">
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=wyattowalsh&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000&langs_count=10" alt="Top Languages" height="165"/>
+</p>
+<p align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=wyattowalsh&theme=tokyonight&no-frame=true&no-bg=true&column=7" alt="Trophies"/>
+</p>
+<h2 id="contributions">Contributions</h2>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/snake-dark.svg">
+    <img src=".github/assets/img/snake-light.svg" alt="Snake animation" width="100%"/>
+  </picture>
+</p>
+<h2 id="metrics">Metrics</h2>
+<p align="center">
+  <img src=".github/assets/img/metrics.svg" alt="GitHub Metrics" width="49%"/>
+  <img src=".github/assets/img/metrics.additional.svg" alt="Additional Metrics" width="49%"/>
+</p>
+<h2 id="word-clouds">Word Clouds</h2>
+<p align="center">
+  <img src=".github/assets/img/wordcloud_by_topic.svg" alt="Word Cloud by Topic" width="49%"/>
+  <img src=".github/assets/img/wordcloud_by_language.svg" alt="Word Cloud by Language" width="49%"/>
+</p>
+<h2 id="animated-history">Animated History</h2>
+<blockquote>
+<p>Watch this profile's journey unfold — from the first commit to today, in 30 seconds.</p>
+</blockquote>
+<table><tr>
+<td width="50%" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.svg">
+    <img src=".github/assets/img/animated-community.svg" width="100%" alt="Cosmic Genesis — community growth animation"/>
+  </picture>
+  <br/>
+  <sub><b>Cosmic Genesis</b> — Clifford attractor revealing as stars and forks accumulate over time</sub>
+</td>
+<td width="50%" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.svg">
+    <img src=".github/assets/img/animated-activity.svg" width="100%" alt="Unfurling Spiral — activity growth animation"/>
+  </picture>
+  <br/>
+  <sub><b>Unfurling Spiral</b> — each dot appears at its repo's creation date, flow field emerges with contributions</sub>
+</td>
+</tr></table>
+<details>
+<summary><h3>WakaTime Stats</h3></summary>
+<!--START_SECTION:waka-->
+<!--END_SECTION:waka-->
+</details>
+<details>
+<summary><h3>Latest Blog Posts</h3></summary>
+<!-- BLOG-POST-LIST:START -->
+<!-- BLOG-POST-LIST:END -->
+</details>
+<h2 id="connect">Connect</h2>
+<p align="center">
+  <a href="https://w4w.dev"><img src="https://img.shields.io/badge/Blog-w4w.dev-6366F1?style=flat-square&logo=safari&logoColor=white" alt="Blog"/></a>
+  <a href="https://linkedin.com/in/wyattowalsh"><img src="https://img.shields.io/badge/LinkedIn-wyattowalsh-0A66C2?style=flat-square&logo=linkedin" alt="LinkedIn"/></a>
+  <a href="mailto:wyattowalsh@gmail.com"><img src="https://img.shields.io/badge/Email-wyattowalsh-EA4335?style=flat-square&logo=gmail&logoColor=white" alt="Email"/></a>
+</p>
+<p align="center">
+  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200"/>
+</p>
+<h2 id="living-art">Living Art</h2>
+<blockquote>
+<p>Every star, fork, and watch reshapes these artworks. They are deterministic — same data produces the same pattern — but sensitive: one new interaction creates an entirely different image.</p>
+</blockquote>
+<table><tr>
+<td width="50%" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/generative-community-dark.svg">
+    <img src=".github/assets/img/generative-community.svg" width="100%" alt="Community art — shaped by stars, forks, and watches"/>
+  </picture>
+  <br/>
+  <sub><b>Community Art</b> — Clifford strange attractor seeded by your stars, forks, and watches</sub>
+</td>
+<td width="50%" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/generative-activity-dark.svg">
+    <img src=".github/assets/img/generative-activity.svg" width="100%" alt="Activity art — shaped by repos, commits, and contributions"/>
+  </picture>
+  <br/>
+  <sub><b>Activity Art</b> — Golden-angle phyllotaxis spiral, one dot per repo</sub>
+</td>
+</tr></table>
+<p align="center">
+  <sub>
+    $x_{n+1} = \sin(ay_n) + c\cos(ax_n)$ · $y_{n+1} = \sin(bx_n) + d\cos(by_n)$
+    &nbsp;·&nbsp; deterministic chaos, seeded by real data
+  </sub>
+</p>
+<hr>
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=flat-square&label=Profile+Views" alt="Profile Views"/>
+  <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
+    <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
+  </a>
+</p>
+
+</body>
+</html>

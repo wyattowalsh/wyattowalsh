@@ -1,0 +1,465 @@
+/* =============================================================================
+   Custom 404 Page Style - "Cosmic Drift" (Super Awesome Enhanced)
+   ============================================================================= */
+
+.custom-404-page {
+  display: flex; /* Establishes a flex container */
+  flex-direction: column; /* Stacks children vertically */
+  align-items: center; /* Horizontally centers children */
+  justify-content: center; /* Vertically centers the .main-404-content-wrapper */
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #191724;
+  color: #e0def4;
+  font-family: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  text-align: center;
+  padding: 1rem; /* Basic padding around the edges */
+  box-sizing: border-box;
+  overflow: hidden;
+  position: fixed; /* Changed from relative for absolute children context */
+  top: 0;
+  left: 0;
+  z-index: 9999; /* Ensure this is on top of other site content, but backgrounds are behind it */
+  perspective: 1200px;
+  transition: transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+/* Wrapper for main interactive content (H1, text, buttons) */
+.main-404-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Keeps it in the flow, z-index stacking context for its children */
+  z-index: 1; /* Ensure this content is above background layers */
+  padding: 2rem; /* Padding inside the main content block */
+}
+
+/* Starry background layers using pseudo-elements of the main page container */
+.custom-404-page::before, .custom-404-page::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: -3; /* Furthest back for base stars */
+}
+
+.custom-404-page::before { /* Layer 1 - Slower, larger stars */
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, #ebbcba, rgba(235, 188, 186, 0)),
+    radial-gradient(1px 1px at 40% 70%, #c4a7e7, rgba(196, 167, 231, 0)),
+    radial-gradient(2px 2px at 75% 50%, #f6c177, rgba(246, 193, 119, 0)),
+    radial-gradient(1.5px 1.5px at 90% 80%, #e0def4, rgba(224, 222, 244, 0)),
+    radial-gradient(1px 1px at 10% 10%, #ea9a97, rgba(234, 154, 151, 0)),
+    radial-gradient(2.5px 2.5px at 55% 85%, #9ccfd8, rgba(156, 207, 216, 0));
+  background-size: 300px 300px;
+  animation: starry-drift-slow 180s linear infinite;
+}
+
+.custom-404-page::after { /* Layer 2 - Faster, smaller stars */
+  background-image:
+    radial-gradient(0.5px 0.5px at 10% 60%, #e0def4, rgba(224, 222, 244, 0)),
+    radial-gradient(1px 1px at 30% 10%, #ebbcba, rgba(235, 188, 186, 0)),
+    radial-gradient(0.75px 0.75px at 80% 90%, #c4a7e7, rgba(196, 167, 231, 0)),
+    radial-gradient(1px 1px at 60% 40%, #f6c177, rgba(246, 193, 119, 0));
+  background-size: 150px 150px;
+  animation: starry-drift-fast 90s linear infinite;
+}
+
+/* Nebula and Shooting Stars are direct children of .custom-404-page */
+.nebula-layer {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  z-index: -2; /* Behind base stars, in front of ::before/::after */
+  pointer-events: none;
+}
+
+.shooting-stars-container {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  z-index: -1; /* In front of nebula, behind main content */
+  pointer-events: none;
+}
+
+/* Nebula cloud styles */
+.nebula-cloud {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08; /* Very subtle */
+  filter: blur(50px); /* Soft edges */
+  animation: drift-nebula 200s linear infinite alternate;
+}
+
+.nebula-cloud.cloud1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #c4a7e7 0%, transparent 70%); /* Iris */
+  top: 10%; left: 5%;
+  animation-duration: 220s;
+}
+
+.nebula-cloud.cloud2 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, #ebbcba 0%, transparent 70%); /* Rose */
+  top: 40%; left: 50%;
+  transform: translateX(-50%);
+  animation-duration: 180s;
+  animation-delay: -50s;
+}
+
+.nebula-cloud.cloud3 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #9ccfd8 0%, transparent 70%); /* Pine */
+  bottom: 5%; right: 10%;
+  animation-duration: 200s;
+  animation-delay: -100s;
+}
+
+@keyframes drift-nebula {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  100% { transform: translate(100px, 50px) rotate(15deg) scale(1.2); }
+}
+
+/* Shooting star styles */
+.shooting-star {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(-45deg, #e0def4, rgba(224, 222, 244, 0));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px #e0def4);
+  animation: shooting-star-fall linear infinite;
+}
+
+/* Multiple shooting stars with varied delays and positions */
+.shooting-star:nth-child(1) {
+  top: 10%; left: -50%; width: 100px;
+  animation-duration: 3s; animation-delay: 0s;
+}
+.shooting-star:nth-child(2) {
+  top: 30%; left: -50%; width: 150px;
+  animation-duration: 2.5s; animation-delay: 1.2s;
+}
+.shooting-star:nth-child(3) {
+  top: 60%; left: -50%; width: 80px;
+  animation-duration: 3.5s; animation-delay: 2.7s;
+}
+.shooting-star:nth-child(4) {
+  top: 5%; left: -50%; width: 120px;
+  animation-duration: 2.8s; animation-delay: 4.5s;
+  opacity: 0.7;
+}
+.shooting-star:nth-child(5) {
+  top: 80%; left: -50%; width: 90px;
+  animation-duration: 3.2s; animation-delay: 6s;
+}
+
+@keyframes shooting-star-fall {
+  0% {
+    transform: translateX(0vw) translateY(0vh) rotate(-45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150vw) translateY(150vh) rotate(-45deg); /* Fall across the screen */
+    opacity: 0;
+  }
+}
+
+@keyframes starry-drift-slow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: -500% -500%; }
+}
+
+@keyframes starry-drift-fast {
+  0% { background-position: 0% 0%; }
+  100% { background-position: -700% -700%; }
+}
+
+.custom-404-page h1 {
+  font-size: clamp(5rem, 22vw, 18rem);
+  color: #ebbcba;
+  text-shadow:
+    0 0 5px rgba(235, 188, 186, 0.5),
+    0 0 15px rgba(235, 188, 186, 0.7),
+    0 0 30px rgba(235, 188, 186, 0.5),
+    0 0 50px rgba(235, 188, 186, 0.3);
+  margin-bottom: 0.25rem;
+  animation: float-pulse-glow 5s ease-in-out infinite;
+  position: relative;
+  letter-spacing: -0.02em;
+  cursor: default; /* Indicate it's not standard text selection */
+  transition: transform 0.2s ease-out; /* For hover effect */
+}
+
+/* Glitch effect for H1 */
+.custom-404-page h1:hover {
+  animation: float-pulse-glow 5s ease-in-out infinite, glitch-effect 0.5s linear infinite alternate;
+  transform: scale(1.02); /* Slight pop on hover */
+}
+
+@keyframes glitch-effect {
+  0% {
+    text-shadow:
+      1px 0 0 #f6c177, -1px 0 0 #9ccfd8,
+      0 0 5px rgba(235, 188, 186, 0.5),
+      0 0 15px rgba(235, 188, 186, 0.7);
+    clip-path: inset(10% 0 80% 0);
+  }
+  20% {
+    clip-path: inset(40% 0 30% 0);
+  }
+  40% {
+    text-shadow:
+      -1px 0 0 #c4a7e7, 1px 0 0 #ea9a97,
+      0 0 5px rgba(235, 188, 186, 0.5),
+      0 0 15px rgba(235, 188, 186, 0.7);
+    clip-path: inset(70% 0 10% 0);
+  }
+  60% {
+    clip-path: inset(20% 0 65% 0);
+  }
+  80% {
+    text-shadow:
+      1px 0 0 #f6c177, -1px 0 0 #9ccfd8,
+      0 0 5px rgba(235, 188, 186, 0.5),
+      0 0 15px rgba(235, 188, 186, 0.7);
+    clip-path: inset(50% 0 40% 0);
+  }
+  100% {
+    clip-path: inset(30% 0 55% 0);
+  }
+}
+
+@keyframes float-pulse-glow {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    filter: brightness(100%);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.08);
+    filter: brightness(120%);
+    opacity: 1;
+  }
+}
+
+.custom-404-page p {
+  font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+  color: #c4a7e7;
+  margin-bottom: 1rem;
+  animation: fadeInElement 1.5s ease-out 0.5s forwards;
+  opacity: 0;
+  text-shadow: 0 0 6px rgba(196, 167, 231, 0.4);
+}
+
+.custom-404-page .lost-in-space-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: #908caa;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  height: 1.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: .15em solid #f6c177;
+  animation:
+    typing 2.5s steps(30, end) 1s forwards,
+    blink-caret .75s step-end infinite 1s,
+    fadeInElement 1s ease-out 1s forwards;
+  opacity: 0;
+  width: 0; /* Start with 0 width for typing effect */
+  text-shadow: none;
+}
+
+@keyframes typing {
+  from { width: 0; opacity: 1; }
+  to { width: 12em; opacity: 1; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #f6c177; }
+}
+
+.custom-404-page hr {
+  width: 50%;
+  max-width: 250px;
+  height: 1px;
+  border: none;
+  background: linear-gradient(to right, transparent, rgba(246, 193, 119, 0.7), transparent);
+  animation: expandHr 1.2s ease-out 1.5s forwards, fadeInElement 0.8s ease-out 1.5s forwards;
+  opacity: 0;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+@keyframes expandHr {
+  0% { width: 0%; }
+  100% { width: 50%; }
+}
+
+.custom-404-page .home-link {
+  font-size: clamp(0.9rem, 2.8vw, 1.4rem);
+  color: #9ccfd8;
+  text-decoration: none;
+  border: 1px solid #9ccfd8;
+  padding: 0.7em 1.4em;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  animation: fadeInElement 1s ease-out 1.8s forwards;
+  opacity: 0;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 0px rgba(156, 207, 216, 0);
+}
+
+.custom-404-page .home-link::before { /* Shimmer effect */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 30%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 70%, rgba(255,255,255,0) 100%);
+  transition: left 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.custom-404-page .home-link:hover::before {
+  left: 100%;
+}
+
+.custom-404-page .home-link:hover {
+  background-color: rgba(156, 207, 216, 0.15); /* Lighter bg on hover */
+  color: #a7e3f1; /* Brighter text */
+  transform: scale(1.07) translateY(-4px);
+  border-color: #a7e3f1;
+  box-shadow: 0 8px 25px rgba(156, 207, 216, 0.4), 0 0 10px rgba(156, 207, 216, 0.3) inset;
+}
+
+.custom-404-page .docsify-target {
+  margin-top: 1.5rem; /* Add margin to space it from the element above */
+  padding: 0.5em 1em;
+  font-size: 0.85rem;
+  color: #6e6a86;
+  text-decoration: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease opacity 0.3s ease;
+  animation: fadeInElement 1s ease-out 2.0s forwards;
+  opacity: 0;
+  z-index: 1; /* Was 2, can be 1 as it's in the normal flow now */
+}
+
+.custom-404-page .docsify-target:hover {
+  color: #908caa;
+  text-shadow: 0 0 8px rgba(144, 140, 170, 0.6);
+  transform: scale(1.05); /* Removed translateX(-50%) from hover transform */
+}
+
+/* General Fade-in Animation for elements */
+@keyframes fadeInElement {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Make sure elements within .main-404-content-wrapper have their animations and styles correctly applied */
+.main-404-content-wrapper h1,
+.main-404-content-wrapper p,
+.main-404-content-wrapper hr,
+.main-404-content-wrapper .home-link {
+    position: relative; /* Ensures they sit correctly in the stacking context */
+    z-index: 1; /* Above their parent's pseudo-elements if any, but this might not be needed here */
+}
+
+@media (max-width: 768px) {
+  .custom-404-page {
+    padding: 1rem 0.5rem; /* Ensure padding is sensible */
+  }
+  .main-404-content-wrapper {
+    padding: 1.5rem; /* Adjust padding for smaller screens */
+  }
+  .custom-404-page .docsify-target {
+    bottom: 15px; /* Adjust for smaller screens */
+    font-size: 0.8rem;
+  }
+  .custom-404-page h1 {
+    letter-spacing: -0.01em;
+    text-shadow:
+      0 0 4px rgba(235, 188, 186, 0.5),
+      0 0 12px rgba(235, 188, 186, 0.7),
+      0 0 25px rgba(235, 188, 186, 0.5),
+      0 0 40px rgba(235, 188, 186, 0.3);
+  }
+  .custom-404-page h1:hover {
+    animation: float-pulse-glow 5s ease-in-out infinite; /* Disable glitch on mobile if too busy */
+  }
+  .custom-404-page p {
+    text-shadow: 0 0 5px rgba(196, 167, 231, 0.4);
+  }
+  .custom-404-page hr {
+     width: 70%;
+  }
+  .custom-404-page .home-link {
+    padding: 0.65em 1.3em;
+  }
+  .custom-404-page .lost-in-space-subtitle {
+    animation: typing 3.5s steps(30, end) 1s forwards, blink-caret .75s step-end infinite 1s, fadeInElement 1.5s ease-out 1s forwards;
+  }
+  .shooting-star {
+    filter: drop-shadow(0 0 4px #e0def4);
+  }
+  .nebula-cloud {
+    filter: blur(40px); /* Less blur on mobile if performance is an issue */
+    opacity: 0.06;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-404-content-wrapper {
+    padding: 1rem 0.5rem;
+  }
+  .custom-404-page .docsify-target {
+    bottom: 10px;
+    padding: 0.4em 0.8em;
+  }
+  .custom-404-page {
+    padding: 1rem 0.5rem; /* Adjust padding */
+    perspective: none;
+  }
+  .custom-404-page h1 {
+    font-size: clamp(4rem, 20vw, 12rem);
+  }
+  .custom-404-page p {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+  }
+  .custom-404-page .lost-in-space-subtitle {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    animation: typing-small 2.5s steps(30, end) 1s forwards, blink-caret .75s step-end infinite 1s, fadeInElement 1s ease-out 1s forwards;
+  }
+  @keyframes typing-small {
+    from { width: 0; opacity: 1;}
+    to { width: 11em; opacity: 1;}
+  }
+  .custom-404-page .home-link {
+    padding: 0.6em 1.1em;
+  }
+  .shooting-star:nth-child(n+4) { /* Reduce shooting stars on small screens */
+    display: none;
+  }
+  .nebula-cloud.cloud2, .nebula-cloud.cloud3 { /* Reduce nebula clouds */
+      display:none;
+  }
+}
+
+/* HTML elements to add in 404.md if not already there, inside .custom-404-page div:
+<div class="nebula-layer">
+  <div class="nebula-cloud cloud1"></div>
+  <div class="nebula-cloud cloud2"></div>
+  <div class="nebula-cloud cloud3"></div>
+</div>
+<div class="shooting-stars-container">
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+  <div class="shooting-star"></div>
+</div>
+*/
