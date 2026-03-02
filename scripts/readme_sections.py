@@ -431,11 +431,12 @@ class ReadmeSectionGenerator:
             columns=columns,
         )
         renderer = SvgBlockRenderer(width=1100, card_height=140, padding=24)
-        svg_markup = self._render_svg_inline(
+        svg_embed = self._render_svg_embed(
             section_flag="top_contact",
             asset_name="top-contact",
             block=block,
             renderer=renderer,
+            alt_text="Connect and contact cards",
         )
         gif_html = (
             '<p align="center">'
@@ -444,13 +445,29 @@ class ReadmeSectionGenerator:
             'width="260" loading="lazy"/>'
             "</p>"
         )
-        return f"{gif_html}\n<div align=\"center\">{svg_markup}</div>"
+        social_links = " · ".join(
+            f"[{escape(link.label)}]({escape(link.url)})"
+            for link in self.settings.social_links
+        )
+        lines = [gif_html]
+        if svg_embed:
+            lines.append(f'<p align="center">{svg_embed}</p>')
+        if social_links:
+            lines.append(social_links)
+        return "\n".join(lines)
 
     def _render_featured_projects(self) -> str:
         svg_cards: list[SvgCard] = []
+        fallback_lines: list[str] = []
         for repo in self.settings.featured_repos:
             metadata = self.repo_client.fetch_repo_metadata(repo.full_name)
             svg_cards.append(self._build_project_svg_card(repo.full_name, metadata))
+            fallback_lines.append(
+                self._build_featured_repo_fallback_line(
+                    repo_full_name=repo.full_name,
+                    metadata=metadata,
+                )
+            )
 
         if not svg_cards:
             block = SvgBlock(
@@ -459,13 +476,17 @@ class ReadmeSectionGenerator:
                 columns=1,
             )
             renderer = SvgBlockRenderer(width=1100, card_height=200, padding=28)
-            svg_markup = self._render_svg_inline(
+            svg_embed = self._render_svg_embed(
                 section_flag="featured_projects",
                 asset_name="featured-projects",
                 block=block,
                 renderer=renderer,
+                alt_text="Featured projects cards",
             )
-            return f"<div align=\"center\">{svg_markup}</div>"
+            lines = ["- No featured repositories configured."]
+            if svg_embed:
+                lines.insert(0, f'<p align="center">{svg_embed}</p>')
+            return "\n".join(lines)
 
         block = SvgBlock(
             title="Featured Projects",
@@ -473,17 +494,24 @@ class ReadmeSectionGenerator:
             columns=2,
         )
         renderer = SvgBlockRenderer(width=1200, card_height=220, padding=28)
-        svg_markup = self._render_svg_inline(
+        svg_embed = self._render_svg_embed(
             section_flag="featured_projects",
             asset_name="featured-projects",
             block=block,
             renderer=renderer,
+            alt_text="Featured projects cards",
         )
         caption = (
             '<p align="center"><sub>GitHub metadata + star history, '
             "updated on every README refresh.</sub></p>"
         )
-        return f'<div align="center">{svg_markup}</div>\n{caption}'
+        lines = [
+            "\n".join(fallback_lines),
+            caption,
+        ]
+        if svg_embed:
+            lines.insert(0, f'<p align="center">{svg_embed}</p>')
+        return "\n".join(lines)
 
     def _build_project_svg_card(
         self,
@@ -527,7 +555,9 @@ class ReadmeSectionGenerator:
             self.settings.blog_post_limit,
         )
         feed_url = escape(self.settings.blog_feed_url)
+        feed_url_raw = self.settings.blog_feed_url
         svg_cards: list[SvgCard] = []
+        fallback_lines: list[str] = []
         if not posts:
             block = SvgBlock(
                 title="Latest Blog Posts",
@@ -542,16 +572,22 @@ class ReadmeSectionGenerator:
                 columns=1,
             )
             renderer = SvgBlockRenderer(width=1000, card_height=200, padding=28)
-            svg_markup = self._render_svg_inline(
+            svg_embed = self._render_svg_embed(
                 section_flag="blog_posts",
                 asset_name="blog-posts",
                 block=block,
                 renderer=renderer,
+                alt_text="Latest blog posts cards",
+            )
+            fallback_lines.append(
+                f"- No recent posts available. [RSS feed]({feed_url_raw})"
             )
             lines = [
-                f'<div align="center">{svg_markup}</div>',
+                *fallback_lines,
                 f'<p align="center"><sub>📡 Source: <a href="{feed_url}">RSS feed</a></sub></p>',
             ]
+            if svg_embed:
+                lines.insert(0, f'<p align="center">{svg_embed}</p>')
             return self._wrap_blog_post_list_markers(lines)
 
         for post in posts:
@@ -575,26 +611,82 @@ class ReadmeSectionGenerator:
                     background_image=metadata.get("hero_image"),
                 )
             )
+            meta_bits = [bit for bit in card_meta if bit]
+            line = f"- [{escape(post.title)}]({escape(post.url)})"
+            if meta_bits:
+                line += f" — {escape(' · '.join(meta_bits))}"
+            fallback_lines.append(line)
         block = SvgBlock(
             title="Latest Blog Posts",
             cards=tuple(svg_cards),
             columns=1,
         )
         renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
-        svg_markup = self._render_svg_inline(
+        svg_embed = self._render_svg_embed(
             section_flag="blog_posts",
             asset_name="blog-posts",
             block=block,
             renderer=renderer,
+            alt_text="Latest blog posts cards",
         )
         lines = [
-            f'<div align="center">{svg_markup}</div>',
+            *fallback_lines,
             (
                 f'<p align="center"><sub>📡 Auto-updated from '
                 f'<a href="{feed_url}">RSS feed</a></sub></p>'
             ),
         ]
+        if svg_embed:
+            lines.insert(0, f'<p align="center">{svg_embed}</p>')
         return self._wrap_blog_post_list_markers(lines)
+
+    def _render_svg_embed(
+        self,
+        section_flag: str,
+        asset_name: str,
+        block: SvgBlock,
+        renderer: SvgBlockRenderer,
+        alt_text: str,
+    ) -> str:
+        if not self._svg_section_enabled(section_flag):
+            return ""
+        self._render_svg_inline(
+            section_flag=section_flag,
+            asset_name=asset_name,
+            block=block,
+            renderer=renderer,
+        )
+        src = escape(self._svg_asset_src(asset_name))
+        alt = escape(alt_text)
+        return (
+            f'<img src="{src}" alt="{alt}" '
+            f'width="{renderer.width}" loading="lazy"/>'
+        )
+
+    def _svg_asset_src(self, asset_name: str) -> str:
+        filename = re.sub(r"[^a-zA-Z0-9_-]+", "-", asset_name).strip("-_")
+        normalized = filename or "section"
+        return (
+            Path(self.settings.svg.output_dir) / f"{normalized}.svg"
+        ).as_posix()
+
+    def _build_featured_repo_fallback_line(
+        self,
+        repo_full_name: str,
+        metadata: Optional[RepoMetadata],
+    ) -> str:
+        if metadata is None:
+            repo_name = repo_full_name.split("/")[-1]
+            repo_url = f"https://github.com/{repo_full_name}"
+            return (
+                f"- [{escape(repo_name)}]({escape(repo_url)}) "
+                "— Unable to fetch repository metadata."
+            )
+        description = metadata.description or "No description provided."
+        return (
+            f"- [{escape(metadata.name)}]({escape(metadata.html_url)}) "
+            f"— {escape(description)} (★ {metadata.stars:,})"
+        )
 
     def _svg_section_enabled(self, section: str) -> bool:
         if self.svg_builder is None:

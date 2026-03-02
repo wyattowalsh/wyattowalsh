@@ -56,6 +56,14 @@ class StubBlogMetadataClient:
         }
 
 
+def assert_sanitizer_safe_section_embed(markup: str, expected_src: str) -> None:
+    assert "<img" in markup
+    assert f'src="{expected_src}"' in markup
+    assert "<svg" not in markup
+    assert "&lt;svg" not in markup
+    assert "&lt;style&gt;" not in markup
+
+
 class TestRendering:
     def test_top_badges_render_svg_contact_block(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -88,7 +96,9 @@ class TestRendering:
 
         html = generator._render_top_badges()
 
-        assert "<svg" in html
+        assert_sanitizer_safe_section_embed(
+            html, (tmp_path / "svg" / "top-contact.svg").as_posix()
+        )
         assert "❈" not in html
         assert "https://w4w.dev" in html
         assert "https://linkedin.com/in/wyattowalsh" in html
@@ -180,10 +190,12 @@ class TestRendering:
 
         html = generator._render_featured_projects()
 
-        assert "<svg" in html
+        assert_sanitizer_safe_section_embed(
+            html, (tmp_path / "svg" / "featured-projects.svg").as_posix()
+        )
         assert "Composable scaffolding framework" in html
         assert "★ 42" in html
-        assert "sparkline" in html
+        assert "riso" in html
         assert (tmp_path / "svg" / "featured-projects.svg").exists()
 
     def test_blog_posts_render_svg_cards_with_metadata(self, tmp_path: Path) -> None:
@@ -214,7 +226,9 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        assert "<svg" in html
+        assert_sanitizer_safe_section_embed(
+            html, (tmp_path / "svg" / "blog-posts.svg").as_posix()
+        )
         assert "First Post" in html
         assert "w4w.dev" in html
         assert "Auto-updated from" in html
@@ -297,6 +311,10 @@ class TestReadmeInjection:
 
         settings = ReadmeSectionsSettings(
             readme_path=str(readme_path),
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
             social_links=[
                 ReadmeSocialLink(
                     label="GitHub",
@@ -341,10 +359,24 @@ class TestReadmeInjection:
         assert "old top" not in content
         assert "old projects" not in content
         assert "old posts" not in content
-        assert "<svg" in content
+        assert "<svg" not in content
+        assert "&lt;svg" not in content
+        assert "&lt;style&gt;" not in content
+        assert "<!-- README:TOP_BADGES:START -->" in content
+        assert "<!-- README:TOP_BADGES:END -->" in content
+        assert "<!-- README:FEATURED_PROJECTS:START -->" in content
+        assert "<!-- README:FEATURED_PROJECTS:END -->" in content
+        assert "<!-- README:BLOG_POSTS:START -->" in content
+        assert "<!-- README:BLOG_POSTS:END -->" in content
+        assert "top-contact.svg" in content
+        assert "featured-projects.svg" in content
+        assert "blog-posts.svg" in content
+        assert "[GitHub](https://github.com/wyattowalsh)" in content
+        assert "[riso](https://github.com/wyattowalsh/riso)" in content
         assert "First Post" in content
-        assert 'href="https://w4w.dev/blog/first"' in content
+        assert "[First Post](https://w4w.dev/blog/first)" in content
         assert "Auto-updated from" in content
+        assert '<a href="https://example.com/feed.xml">RSS feed</a>' in content
         assert "<!-- BLOG-POST-LIST:START -->" in content
         assert "<!-- BLOG-POST-LIST:END -->" in content
         assert "before" in content
@@ -418,6 +450,12 @@ class TestReadmeInjection:
 
         generator.generate()
 
+        content = readme_path.read_text(encoding="utf-8")
         assert not (svg_dir / "top-contact.svg").exists()
         assert (svg_dir / "featured-projects.svg").exists()
         assert not (svg_dir / "blog-posts.svg").exists()
+        assert "top-contact.svg" not in content
+        assert "blog-posts.svg" not in content
+        assert "featured-projects.svg" in content
+        assert "[GitHub](https://github.com/wyattowalsh)" in content
+        assert "[First Post](https://w4w.dev/blog/first)" in content

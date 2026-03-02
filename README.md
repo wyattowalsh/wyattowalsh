@@ -1,179 +1,28 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner-dark.svg">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner.svg">
     <img src=".github/assets/img/banner.svg" alt="Banner" width="100%"/>
   </picture>
 </p>
 
 <!-- README:TOP_BADGES:START -->
 <p align="center"><img src=".github/assets/img/gh.gif" alt="Animated GitHub contributions garden" width="260" loading="lazy"/></p>
-<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1100" height="276" viewBox="0 0 1100 276" role="img">
-<defs>
-<style>
-.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
-.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
-.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
-.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
-.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
-</style>
-<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
-</defs>
-<rect width="100%" height="100%" rx="24" fill="#0B111A" />
-<text class="title" x="24" y="54">Connect &amp; Contact</text>
-<g transform="translate(24,88)">
-<a href="https://w4w.dev" target="_blank" rel="noopener noreferrer">
-<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<text class="card-title" x="18" y="36">w4w.dev</text>
-<text class="card-line" x="18" y="62">https://w4w.dev</text>
-<text class="card-meta" x="18" y="122">https://w4w.dev</text>
-</a>
-</g>
-<g transform="translate(293,88)">
-<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<text class="card-title" x="18" y="36">LinkedIn</text>
-<text class="card-line" x="18" y="62">https://linkedin.com/in/wyattowalsh</text>
-<text class="card-meta" x="18" y="122">https://linkedin.com/in/wya…</text>
-</a>
-</g>
-<g transform="translate(562,88)">
-<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<text class="card-title" x="18" y="36">Kaggle</text>
-<text class="card-line" x="18" y="62">https://www.kaggle.com/wyattowalsh</text>
-<text class="card-meta" x="18" y="122">https://www.kaggle.com/wyat…</text>
-</a>
-</g>
-<g transform="translate(831,88)">
-<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="245" height="140" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<text class="card-title" x="18" y="36">X.com</text>
-<text class="card-line" x="18" y="62">https://x.com/wyattowalsh</text>
-<text class="card-meta" x="18" y="122">https://x.com/wyattowalsh</text>
-</a>
-</g>
-</svg></div>
+<p align="center"><img src=".github/assets/img/readme/top-contact.svg" alt="Connect and contact cards" width="1100" loading="lazy"/></p>
+[w4w.dev](https://w4w.dev) · [LinkedIn](https://linkedin.com/in/wyattowalsh) · [Kaggle](https://www.kaggle.com/wyattowalsh) · [X.com](https://x.com/wyattowalsh)
 <!-- README:TOP_BADGES:END -->
 
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
-<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1108" viewBox="0 0 1200 1108" role="img">
-<defs>
-<style>
-.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
-.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
-.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
-.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
-.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
-</style>
-<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
-</defs>
-<rect width="100%" height="100%" rx="24" fill="#0B111A" />
-<text class="title" x="28" y="54">Featured Projects</text>
-<g transform="translate(28,88)">
-<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-0"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/listentropy" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">listentropy</text>
-<text class="card-line" x="18" y="62">No description provided.</text>
-<text class="card-line" x="18" y="84">https://listentropy.vercel.app</text>
-<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
-</a>
-</g>
-<g transform="translate(614,88)">
-<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-1"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/mdxpad" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">mdxpad</text>
-<text class="card-line" x="18" y="62">No description provided.</text>
-<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-01-19</text>
-</a>
-</g>
-<g transform="translate(28,336)">
-<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-2"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/proxywhirl" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">proxywhirl</text>
-<text class="card-line" x="18" y="62">rotating proxy system</text>
-<text class="card-line" x="18" y="84">Topics: data, data-extraction, dataextraction</text>
-<text class="card-line" x="18" y="106">https://proxywhirl.com</text>
-<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
-</a>
-</g>
-<g transform="translate(614,336)">
-<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-3"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/nbadb" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">nbadb</text>
-<text class="card-line" x="18" y="62">Data Extraction (from https://stats.nba.com) and Processing Scripts to …</text>
-<text class="card-line" x="18" y="84">Topics: database, kaggle, kaggle-dataset</text>
-<text class="card-line" x="18" y="106">https://nba-db.readthedocs.io/</text>
-<path class="sparkline" d="M0.00,36.00 L22.17,34.69 L44.35,32.73 L66.52,31.42 L88.70,29.45 L110.87,28.15 L133.04,26.84 L155.22,24.87 L177.39,23.56 L199.57,22.25 L221.74,20.29 L243.91,18.98 L266.09,17.67 L288.26,15.71 L310.43,14.40 L332.61,12.44 L354.78,11.13 L376.96,9.82 L399.13,7.85 L421.30,6.55 L443.48,4.58 L465.65,3.27 L487.83,1.96 L510.00,0.00" transform="translate(18,156)" />
-<text class="card-meta" x="18" y="202">★ 57 · Updated 2025-10-30</text>
-</a>
-</g>
-<g transform="translate(28,584)">
-<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-4"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/agents" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">agents</text>
-<text class="card-line" x="18" y="62">AI agent artifacts, configs, skills, tools, and more</text>
-<text class="card-line" x="18" y="84">https://agents.w4w.dev</text>
-<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-03-02</text>
-</a>
-</g>
-<g transform="translate(614,584)">
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-5"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/personal-website" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-5)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">personal-website</text>
-<text class="card-line" x="18" y="62">Files for my personal web app, w4w.dev. Built using Vercel, Typescript,…</text>
-<text class="card-line" x="18" y="84">Topics: blog, latex, link-shortener</text>
-<text class="card-line" x="18" y="106">https://w4w.dev</text>
-<path class="sparkline" d="M0.00,36.00 L510.00,0.00" transform="translate(18,156)" />
-<text class="card-meta" x="18" y="202">★ 3 · Updated 2026-02-17</text>
-</a>
-</g>
-<g transform="translate(28,832)">
-<a href="https://github.com/wyattowalsh/riso" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-6"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/riso" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-6)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">riso</text>
-<text class="card-line" x="18" y="62">Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fasti…</text>
-<text class="card-line" x="18" y="84">Topics: cli, copier, developer-tools</text>
-<text class="card-meta" x="18" y="202">★ 0 · Updated 2026-01-19</text>
-</a>
-</g>
-<g transform="translate(614,832)">
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer">
-<rect width="558" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-7"><rect width="558" height="220" rx="16" /></clipPath></defs>
-<image href="https://opengraph.githubassets.com/1/wyattowalsh/iina-plugin-bookmarks" width="558" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-7)" opacity="0.5" />
-<rect width="558" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">iina-plugin-bookmarks</text>
-<text class="card-line" x="18" y="62">media bookmark manager plugin for the iina video player</text>
-<text class="card-line" x="18" y="84">Topics: fumadocs, iina, iina-plugin</text>
-<text class="card-line" x="18" y="106">https://iina-plugin-bookmarks.w4w.dev</text>
-<path class="sparkline" d="M0.00,36.00 L127.50,27.00 L255.00,18.00 L382.50,9.00 L510.00,0.00" transform="translate(18,156)" />
-<text class="card-meta" x="18" y="202">★ 5 · Updated 2026-03-01</text>
-</a>
-</g>
-</svg></div>
+<p align="center"><img src=".github/assets/img/readme/featured-projects.svg" alt="Featured projects cards" width="1200" loading="lazy"/></p>
+- [listentropy](https://github.com/wyattowalsh/listentropy) — No description provided. (★ 0)
+- [mdxpad](https://github.com/wyattowalsh/mdxpad) — No description provided. (★ 0)
+- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — rotating proxy system (★ 0)
+- [nbadb](https://github.com/wyattowalsh/nbadb) — Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball) (★ 57)
+- [agents](https://github.com/wyattowalsh/agents) — AI agent artifacts, configs, skills, tools, and more (★ 0)
+- [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
+- [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
+- [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
 <p align="center"><sub>GitHub metadata + star history, updated on every README refresh.</sub></p>
 <!-- README:FEATURED_PROJECTS:END -->
 
@@ -558,80 +407,12 @@ MDX                      1 repo              ░░░░░░░░░░░�
 
 <!-- README:BLOG_POSTS:START -->
 <!-- BLOG-POST-LIST:START -->
-<div align="center"><svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1356" viewBox="0 0 1100 1356" role="img">
-<defs>
-<style>
-.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
-.card-title { fill: #FFFFFF; font: 700 22px ui-sans-serif; }
-.card-line { fill: #D8DEE9; font: 400 16px ui-sans-serif; }
-.card-meta { fill: #AAB5C4; font: 400 14px ui-sans-serif; }
-.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.85; }
-</style>
-<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.05"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.95"/></linearGradient>
-</defs>
-<rect width="100%" height="100%" rx="24" fill="#0B111A" />
-<text class="title" x="28" y="54">Latest Blog Posts</text>
-<g transform="translate(28,88)">
-<a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-0"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/proxywhirl-hero.svg" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.5" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">ProxyWhirl</text>
-<text class="card-line" x="18" y="62">w4w.dev</text>
-<text class="card-line" x="18" y="84">Production-ready Python proxy rotation with auto-fetching from 114+ sou…</text>
-<text class="card-meta" x="18" y="202">w4w.dev · Published 2026-02-13</text>
-</a>
-</g>
-<g transform="translate(28,336)">
-<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-1"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/old.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.5" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">Personal Web App v6</text>
-<text class="card-line" x="18" y="62">w4w.dev</text>
-<text class="card-line" x="18" y="84">A deep dive into building my personal website v6 with Next.js 15, featu…</text>
-<text class="card-meta" x="18" y="202">w4w.dev · Published 2024-12-01</text>
-</a>
-</g>
-<g transform="translate(28,584)">
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-2"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.5" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">Implementing Pathwise Coordinate Descent For The La…</text>
-<text class="card-line" x="18" y="62">w4w.dev</text>
-<text class="card-line" x="18" y="84">Explanations for Solving Some of the Most Popular Supervised Learning A…</text>
-<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-15</text>
-</a>
-</g>
-<g transform="translate(28,832)">
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-3"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/ridge.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.5" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">Using Ridge Regression to Overcome Drawbacks of Ord…</text>
-<text class="card-line" x="18" y="62">w4w.dev</text>
-<text class="card-line" x="18" y="84">Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, an…</text>
-<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-14</text>
-</a>
-</g>
-<g transform="translate(28,1080)">
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#1F2C3D" />
-<defs><clipPath id="clip-4"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.5" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<text class="card-title" x="18" y="36">Basics of Linear Regression Modeling and Ordinary L…</text>
-<text class="card-line" x="18" y="62">w4w.dev</text>
-<text class="card-line" x="18" y="84">Context of Linear Regression, Optimization to Obtain the OLS Model Esti…</text>
-<text class="card-meta" x="18" y="202">w4w.dev · Published 2021-01-13</text>
-</a>
-</g>
-</svg></div>
+<p align="center"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts cards" width="1100" loading="lazy"/></p>
+- [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl) — w4w.dev · Published 2026-02-13
+- [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6) — w4w.dev · Published 2024-12-01
+- [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3) — w4w.dev · Published 2021-01-15
+- [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2) — w4w.dev · Published 2021-01-14
+- [Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1) — w4w.dev · Published 2021-01-13
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- BLOG-POST-LIST:END -->
 <!-- README:BLOG_POSTS:END -->
