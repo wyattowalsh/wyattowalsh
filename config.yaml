@@ -34,3 +34,34 @@ word_cloud_settings:
   output_dir: .github/assets/img
   output_filename: word_cloud.png
   prompt: 'My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React'
+readme_sections_settings:
+  readme_path: README.md
+  badge_style: for-the-badge
+  social_links:
+    - label: w4w.dev
+      url: https://w4w.dev
+      color: '000000'
+      logo: https://w4w.dev/favicon.ico
+    - label: LinkedIn
+      url: https://linkedin.com/in/wyattowalsh
+      color: 0A66C2
+      logo: linkedin
+    - label: Kaggle
+      url: https://www.kaggle.com/wyattowalsh
+      color: 20BEFF
+      logo: kaggle
+    - label: X.com
+      url: https://x.com/wyattowalsh
+      color: '000000'
+      logo: x
+  featured_repos:
+    - full_name: wyattowalsh/listentropy
+    - full_name: wyattowalsh/mdxpad
+    - full_name: wyattowalsh/proxywhirl
+    - full_name: wyattowalsh/nbadb
+    - full_name: wyattowalsh/agents
+    - full_name: wyattowalsh/personal-website
+    - full_name: wyattowalsh/riso
+    - full_name: wyattowalsh/iina-plugin-bookmarks
+  blog_feed_url: https://w4w.dev/feed.xml
+  blog_post_limit: 5

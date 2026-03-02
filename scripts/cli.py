@@ -664,7 +664,7 @@ def generate(  # NOSONAR
                         "contour_color": "#DDDDDD",
                         "stopwords": [
                             "project", "projects", "list", "awesome", "using",
-                            "application", "platform",
+                            "application", "platform", "other", "others",
                         ] + stopwords_list,  # Combine with global
                     }
                     logger.debug(
@@ -744,6 +744,7 @@ def generate(  # NOSONAR
                                 "tool", "tools", "utility", "utilities",
                                 "helper", "helpers", "language", "languages",
                                 "code", "script", "file", "files",
+                                "other", "others",
                             ] + stopwords_list,  # Combine with global
                         )),
                     }
@@ -943,9 +944,22 @@ def generate(  # NOSONAR
         )
 
     elif entity_type == EntityType.README:
-        logger.info("README generation requested (Not implemented yet).")
+        from .config import ReadmeSectionsSettings
+        from .readme_sections import ReadmeSectionGenerator
+
+        readme_settings = (
+            proj_config.readme_sections_settings
+            or ReadmeSectionsSettings()
+        )
+        if output_path_cli:
+            readme_settings = readme_settings.model_copy(
+                update={"readme_path": str(output_path_cli)}
+            )
+
+        generator = ReadmeSectionGenerator(settings=readme_settings)
+        result_path = generator.generate()
         util_console.print(
-            "[yellow]README generation is not yet implemented.[/yellow]"
+            f"[bold green]README sections updated in {result_path}[/]"
         )
     else:
         logger.error(
@@ -1001,4 +1015,3 @@ def cli_main() -> None:
 
 if __name__ == "__main__":
     cli_main()
-

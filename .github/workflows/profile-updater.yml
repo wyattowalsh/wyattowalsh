@@ -169,10 +169,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Personal metrics
+        id: personal_metrics
+        continue-on-error: true
         uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           filename: ./.github/assets/img/metrics.svg
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           # ... other params from your main.yml ...
           base: "header, activity, repositories"
@@ -193,11 +195,48 @@ jobs:
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
+      - name: Check personal metrics output
+        id: check_personal_metrics
+        if: ${{ always() }}
+        run: |
+          if [ ! -f ./.github/assets/img/metrics.svg ] || grep -q "Insufficient token scopes" ./.github/assets/img/metrics.svg; then
+            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Personal metrics (fallback without repositories)
+        if: ${{ steps.personal_metrics.outcome != 'success' || steps.check_personal_metrics.outputs.needs_fallback == 'true' }}
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        with:
+          filename: ./.github/assets/img/metrics.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          base: "header, activity"
+          plugin_lines: yes
+          plugin_isocalendar: yes
+          plugin_traffic: no
+          plugin_languages: yes
+          plugin_languages_ignored: jupyter%20notebook
+          plugin_habits: yes
+          plugin_habits_from: 200
+          plugin_habits_days: 14
+          plugin_habits_facts: yes
+          plugin_habits_charts: yes
+          plugin_gists: yes
+          plugin_topics: yes
+          plugin_topics_sort: stars
+          plugin_topics_limit: 15
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+
       - name: Personal metrics (additional)
+        id: personal_metrics_additional
+        continue-on-error: true
         uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           filename: ./.github/assets/img/metrics.additional.svg
-          token: ${{ secrets.METRICS_TOKEN }}
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           # ... other params from your main.yml ...
           base: ""
@@ -208,8 +247,43 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
           plugin_music_limit: 5
-          plugin_tweets: yes
+          plugin_tweets: ${{ secrets.TWITTER_TOKEN != '' && 'yes' || 'no' }}
           plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
+          plugin_activity: yes
+          plugin_activity_limit: 5
+          plugin_activity_days: 14
+          plugin_stargazers: yes
+          plugin_stars: yes
+          plugin_stars_limit: 3
+
+      - name: Check additional metrics output
+        id: check_additional_metrics
+        if: ${{ always() }}
+        run: |
+          if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
+            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
+          elif grep -q "Latest tweets" ./.github/assets/img/metrics.additional.svg && grep -Eiq "API error: (401|403)" ./.github/assets/img/metrics.additional.svg; then
+            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Personal metrics (additional fallback without tweets)
+        if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.check_additional_metrics.outputs.needs_fallback == 'true' }}
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        with:
+          filename: ./.github/assets/img/metrics.additional.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          base: ""
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+          plugin_music: yes
+          plugin_music_provider: spotify
+          plugin_music_mode: recent
+          plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
+          plugin_music_limit: 5
+          plugin_tweets: no
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
@@ -276,7 +350,7 @@ jobs:
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
   update-skills:
-    name: Update README Skills Badges
+    name: Finalize README Sections
     runs-on: ubuntu-latest
     needs: [generate-assets, update-readme-wakatime, update-readme-blog]
     permissions:
@@ -298,13 +372,16 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Generate README Sections
+        run: uv run python -m scripts.cli generate readme --config-path config.yaml
+
       - name: Generate Skills Badges
         run: uv run python -m scripts.cli generate skills --skills-path skills.yaml
 
-      - name: Commit skills badges
+      - name: Commit README updates
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
-          commit_message: "chore(readme): update skills badges"
+          commit_message: "chore(readme): update dynamic sections and skills badges"
           file_pattern: "README.md"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"

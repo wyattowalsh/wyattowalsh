@@ -22,7 +22,7 @@ categories:
     slug: html5
     color: E34F26
   - name: CSS3
-    slug: css3
+    logo_path: .github/assets/skill-icons/css3.svg
     color: 1572B6
   - name: R
     slug: r
@@ -37,7 +37,7 @@ categories:
     slug: ruby
     color: CC342D
   - name: C++
-    slug: c++
+    slug: cplusplus
     color: 00599C
   - name: Go
     slug: go
@@ -55,7 +55,7 @@ categories:
 - name: AI & LLMs
   skills:
   - name: OpenAI
-    slug: openai
+    logo_path: .github/assets/skill-icons/openai.svg
     color: '412991'
   - name: LangChain
     slug: langchain
@@ -74,7 +74,7 @@ categories:
     color: FFD21E
     logo_color: black
   - name: Weights & Biases
-    slug: weights&biases
+    logo_path: .github/assets/skill-icons/weights-and-biases.svg
     color: FFBE00
     logo_color: black
   - name: spaCy
@@ -170,7 +170,7 @@ categories:
   - name: Modeling
     skills:
     - name: scikit-learn
-      slug: scikit-learn
+      slug: scikitlearn
       color: F7931E
     - name: PyCaret
       logo_path: .github/assets/skill-icons/pycaret.svg
@@ -311,7 +311,7 @@ categories:
     slug: cmake
     color: 064F8C
   - name: Pre-commit
-    slug: pre-commit
+    slug: precommit
     color: FAB040
     logo_color: black
   - name: Ruff
@@ -403,7 +403,7 @@ categories:
     logo_path: .github/assets/skill-icons/playwright.svg
     color: 2EAD33
   - name: shadcn/ui
-    slug: shadcn/ui
+    slug: shadcnui
     color: '000000'
   - name: Radix UI
     slug: radixui

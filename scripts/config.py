@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -182,6 +182,92 @@ class SkillsSettings(BaseModel):
     categories: List[SkillCategory] = Field(default_factory=list)
 
 
+class ReadmeSocialLink(BaseModel):
+    """Config for a social badge link in README."""
+
+    label: str = Field(..., description="Badge label text")
+    url: str = Field(..., description="Destination URL")
+    color: str = Field("555555", description="Badge color hex (without #)")
+    logo: Optional[str] = Field(
+        None, description="Simple Icons slug for shields.io logo"
+    )
+    logo_color: str = Field("white", description="Badge logo color")
+
+    @field_validator("url")
+    @classmethod
+    def validate_url_scheme(cls, v: str) -> str:
+        if not v.lower().startswith(("http://", "https://", "mailto:")):
+            raise ValueError(
+                f"url must use http://, https://, or mailto: scheme: {v}"
+            )
+        return v
+
+
+class ReadmeFeaturedRepo(BaseModel):
+    """Repository to feature in README card section."""
+
+    full_name: str = Field(
+        ..., description="GitHub repository full name (owner/repo)"
+    )
+
+
+class ReadmeSectionsSettings(BaseModel):
+    """Configuration for dynamic README sections."""
+
+    readme_path: str = Field(
+        "README.md", description="Path to README for section injection"
+    )
+    badge_style: str = Field(
+        "for-the-badge", description="shields.io style for social badges"
+    )
+    social_links: List[ReadmeSocialLink] = Field(
+        default_factory=lambda: [
+            ReadmeSocialLink(
+                label="w4w.dev",
+                url="https://w4w.dev",
+                color="000000",
+                logo="safari",
+            ),
+            ReadmeSocialLink(
+                label="LinkedIn",
+                url="https://linkedin.com/in/wyattowalsh",
+                color="0A66C2",
+                logo="linkedin",
+            ),
+            ReadmeSocialLink(
+                label="GitHub",
+                url="https://github.com/wyattowalsh",
+                color="181717",
+                logo="github",
+            ),
+            ReadmeSocialLink(
+                label="Email",
+                url="mailto:wyattowalsh@gmail.com",
+                color="EA4335",
+                logo="gmail",
+            ),
+        ]
+    )
+    featured_repos: List[ReadmeFeaturedRepo] = Field(
+        default_factory=lambda: [
+            ReadmeFeaturedRepo(full_name="wyattowalsh/listentropy"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/mdxpad"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/proxywhirl"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/nbadb"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/agents"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/personal-website"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/riso"),
+            ReadmeFeaturedRepo(full_name="wyattowalsh/iina-plugin-bookmarks"),
+        ]
+    )
+    blog_feed_url: str = Field(
+        "https://w4w.dev/feed.xml", description="RSS/Atom feed URL for blog posts"
+    )
+    blog_post_limit: int = Field(
+        5, ge=1, le=10, description="Number of latest blog posts to render"
+    )
+
+
 class ProjectConfig(BaseSettings):
     """Project-specific configuration, loaded from a YAML file."""
 
@@ -200,6 +286,9 @@ class ProjectConfig(BaseSettings):
     )
     word_cloud_settings: Optional[WordCloudSettingsModel] = Field(
         default_factory=WordCloudSettingsModel
+    )
+    readme_sections_settings: Optional[ReadmeSectionsSettings] = Field(
+        default_factory=ReadmeSectionsSettings
     )
 
     # ProjectConfig is intended to be loaded from a file,

@@ -519,6 +519,52 @@ CUSTOM_COLOR_FUNCTIONS: Dict[str, Callable[..., str]] = {
     "triadic_color_func": triadic_color_func,
 }
 
+GENERIC_BUCKET_LABELS = {"other", "others"}
+GENERIC_BUCKET_TOKEN_STOPWORDS = {
+    "awesome",
+    "list",
+    "lists",
+    "project",
+    "projects",
+    "repo",
+    "repos",
+}
+MARKDOWN_TERM_EXCLUSIONS = {
+    "readme", "license", "docs", "blog", "site", "test",
+    "demo", "example", "examples", "template", "templates",
+    "script", "scripts", "tool", "tools", "util", "utils",
+    "lib", "libs", "framework", "app", "cli", "api", "sdk",
+    "plugin", "theme", "config", "core", "main", "data",
+    "model", "models", "package", "other", "others",
+}
+
+
+def _normalize_bucket_label(label: str) -> str:
+    """Normalizes a potential bucket label for comparison."""
+    return re.sub(r"[^a-z0-9]+", "", label.casefold())
+
+
+def _is_generic_bucket_label(label: str) -> bool:
+    """Returns True when `label` is a generic aggregation bucket."""
+    return _normalize_bucket_label(label) in GENERIC_BUCKET_LABELS
+
+
+def _expand_generic_bucket_term(term: str) -> List[str]:
+    """Expands a generic bucket entry into granular tokens."""
+    candidate_term = term.strip()
+    if "/" in candidate_term:
+        candidate_term = candidate_term.rsplit("/", 1)[-1]
+
+    raw_tokens = re.split(r"[^A-Za-z0-9#+]+", candidate_term)
+    cleaned_tokens = [
+        token.casefold()
+        for token in raw_tokens
+        if len(token) > 1
+        and not _is_generic_bucket_label(token)
+        and token.casefold() not in GENERIC_BUCKET_TOKEN_STOPWORDS
+    ]
+    return list(dict.fromkeys(cleaned_tokens))
+
 # ------------------------------------------------------------------------------
 # Markdown Parsing for Word Cloud Frequencies
 # ------------------------------------------------------------------------------
@@ -559,7 +605,8 @@ def parse_markdown_for_word_cloud_frequencies(
 
     logger.info(f"Parsing {md_file_path.name} for word cloud frequencies")
 
-    term_frequencies: Dict[str, float] = defaultdict(float)  # Use defaultdict
+    term_frequencies: Dict[str, float] = defaultdict(float)
+    fallback_term_frequencies: Dict[str, float] = defaultdict(float)
 
     try:
         with open(md_file_path, "r", encoding="utf-8") as f:
@@ -569,6 +616,8 @@ def parse_markdown_for_word_cloud_frequencies(
         raise
 
     lines = content.split('\n')
+    section_heading_pattern = re.compile(r"^##\s+(.+?)\s*$")
+
     # Regex to capture the term from lines like:
     # - Term
     # - [Term Name](...)
@@ -587,33 +636,68 @@ def parse_markdown_for_word_cloud_frequencies(
         $                       # End of line
     """, re.VERBOSE)
 
-    for line in lines:
-        line = line.strip()
+    has_structured_sections = False
+    current_section: Optional[str] = None
+    in_contents_section = False
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            continue
+
+        section_match = section_heading_pattern.match(line)
+        if section_match:
+            current_section = section_match.group(1).strip()
+            in_contents_section = current_section.casefold() == "contents"
+            if not in_contents_section:
+                has_structured_sections = True
+            continue
+
         match = term_pattern.match(line)
-        if match:
-            # Prefer content in brackets (group 1), else plain term (group 2)
-            term = match.group(1) or match.group(2)
-            if term:
-                cleaned_term = term.strip()
-                # Basic filtering for very short/non-descriptive terms
-                if len(cleaned_term) > 1 and cleaned_term.lower() not in [
-                    "readme", "license", "docs", "blog", "site", "test",
-                    "demo", "example", "examples", "template", "templates",
-                    "script", "scripts", "tool", "tools", "util", "utils",
-                    "lib", "libs", "framework", "app", "cli", "api", "sdk",
-                    "plugin", "theme", "config", "core", "main", "data",
-                    "model", "models", "package",
-                ]:
-                    term_frequencies[cleaned_term] += 1.0
+        if not match:
+            continue
+
+        term = (match.group(1) or match.group(2) or "").strip()
+        if not term:
+            continue
+
+        if has_structured_sections and current_section:
+            if in_contents_section:
+                continue
+
+            if _is_generic_bucket_label(current_section):
+                for expanded_term in _expand_generic_bucket_term(term):
+                    term_frequencies[expanded_term] += 1.0
                     logger.debug(
-                        f"Found term: '{cleaned_term}', "
-                        f"new count: {term_frequencies[cleaned_term]}"
+                        f"Expanded bucket term: '{expanded_term}', "
+                        f"new count: {term_frequencies[expanded_term]}"
                     )
-        elif (
-            line.startswith("## ") 
-            and line[3:].strip().lower() == "contents"
+            else:
+                normalized_section = current_section.strip().casefold()
+                if normalized_section and not _is_generic_bucket_label(
+                    normalized_section
+                ):
+                    term_frequencies[normalized_section] += 1.0
+                    logger.debug(
+                        f"Counted section term: '{normalized_section}', "
+                        f"new count: {term_frequencies[normalized_section]}"
+                    )
+            continue
+
+        normalized_term = term.casefold()
+        if (
+            len(term) > 1
+            and normalized_term not in MARKDOWN_TERM_EXCLUSIONS
+            and not _is_generic_bucket_label(term)
         ):
-            logger.debug("Skipping 'Contents' section.")
+            fallback_term_frequencies[term] += 1.0
+            logger.debug(
+                f"Found term: '{term}', "
+                f"new count: {fallback_term_frequencies[term]}"
+            )
+
+    if not term_frequencies and fallback_term_frequencies:
+        term_frequencies = fallback_term_frequencies
 
     # Log summary statistics
     if term_frequencies:
@@ -1239,7 +1323,7 @@ if __name__ == "__main__":
                 "contour_color": "#DDDDDD",
                 "stopwords": [
                     "project", "projects", "list", "awesome", "using",
-                    "application", "platform",
+                    "application", "platform", "other", "others",
                 ],
             }
             path_topic_wc = main_generator.generate(
@@ -1295,7 +1379,7 @@ if __name__ == "__main__":
                 "contour_color": "#AAAAAA",
                 "stopwords": [
                     "language", "languages", "code", "script",
-                    "file", "files",
+                    "file", "files", "other", "others",
                 ],
             }
             path_lang_wc = main_generator.generate(
