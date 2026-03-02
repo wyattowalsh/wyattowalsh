@@ -8,6 +8,7 @@ on:
     branches:
       - master
       - main
+      - dev
 
 jobs:
   update-starred-lists:
@@ -215,32 +216,6 @@ jobs:
           plugin_stargazers: yes
           plugin_stars: yes
           plugin_stars_limit: 3
-
-  generate-snake:
-    name: Generate Snake Contribution Animation
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-
-      - name: Generate snake animation
-        uses: Platane/snk@e2cedf76a2c05b25d09a6428ded69727b497a700 # v3
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            .github/assets/img/snake-light.svg?palette=github
-            .github/assets/img/snake-dark.svg?palette=github-dark
-
-      - name: Commit snake animation
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
-        with:
-          commit_message: "chore(assets): update snake contribution animation"
-          file_pattern: ".github/assets/img/snake-*.svg"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "github-actions[bot]@users.noreply.github.com"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
   generate-event-art:
     name: Generate Event-Driven Artwork

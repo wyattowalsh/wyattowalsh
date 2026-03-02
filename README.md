@@ -6,65 +6,10 @@
 </p>
 
 <p align="center">
-  <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&repeat=false&width=600&height=60&lines=buildin'+cheer+since+'14" alt="Typing SVG" />
-  </a>
-</p>
-
-<p align="center">
   <a href="https://w4w.dev"><img src="https://img.shields.io/badge/w4w.dev-000?style=for-the-badge&logo=safari&logoColor=white" alt="Blog"/></a>
   <a href="https://linkedin.com/in/wyattowalsh"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
   <a href="https://github.com/wyattowalsh"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
   <a href="mailto:wyattowalsh@gmail.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/></a>
-</p>
-
-## About Me
-
-```yaml
-name: Wyatt Walsh
-location: California
-interests:
-  - building developer tools
-  - generative art & creative coding
-  - machine learning & optimization
-  - open source everything
-currently:
-  building: developer tools & AI applications
-  learning: always something new
-  fun_fact: "this profile's artwork literally changes when you star it"
-```
-
-## Living Art
-
-> [!TIP]
-> Star this repo to reshape the artwork below — every interaction creates an entirely different pattern.
-
-> Every star, fork, and watch reshapes these artworks. They are deterministic — same data produces the same pattern — but sensitive: one new interaction creates an entirely different image.
-
-<table role="presentation"><tr>
-<td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/generative-community-dark.svg">
-    <img src=".github/assets/img/generative-community.svg" width="100%" alt="Community art — Clifford attractor shaped by stars, forks, and watches"/>
-  </picture>
-  <br/>
-  <sub><b>Community Art</b> — Clifford strange attractor seeded by your stars, forks, and watches</sub>
-</td>
-<td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/generative-activity-dark.svg">
-    <img src=".github/assets/img/generative-activity.svg" width="100%" alt="Activity art — phyllotaxis spiral shaped by repos, commits, and contributions"/>
-  </picture>
-  <br/>
-  <sub><b>Activity Art</b> — Golden-angle phyllotaxis spiral, one dot per repo</sub>
-</td>
-</tr></table>
-
-<p align="center">
-  <sub>
-    $x_{n+1} = \sin(ay_n) + c\cos(ax_n)$ · $y_{n+1} = \sin(bx_n) + d\cos(by_n)$
-    &nbsp;·&nbsp; deterministic chaos, seeded by real data
-  </sub>
 </p>
 
 ## Featured Projects
@@ -104,41 +49,8 @@ currently:
 </tr>
 </table>
 
-## GitHub Stats
 
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=wyattowalsh&show_icons=true&theme=tokyonight&hide_border=true&bg_color=00000000" alt="GitHub stats showing contributions, stars, and activity" height="165"/>
-  <img src="https://streak-stats.demolab.com?user=wyattowalsh&theme=tokyonight&hide_border=true&background=00000000" alt="GitHub contribution streak statistics" height="165"/>
-</p>
-
-<p align="center">
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=wyattowalsh&layout=compact&theme=tokyonight&hide_border=true&bg_color=00000000&langs_count=10" alt="Most used programming languages by repository" height="165"/>
-</p>
-
-## Animated History
-
-> Watch this profile's journey unfold — from the first commit to today, in 30 seconds.
-
-<table role="presentation"><tr>
-<td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.svg">
-    <img src=".github/assets/img/animated-community.svg" width="100%" alt="Cosmic Genesis — community growth animation driven by stars and forks"/>
-  </picture>
-  <br/>
-  <sub><b>Cosmic Genesis</b> — Clifford attractor revealing as stars and forks accumulate over time</sub>
-</td>
-<td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.svg">
-    <img src=".github/assets/img/animated-activity.svg" width="100%" alt="Unfurling Spiral — activity growth animation showing repo creation over time"/>
-  </picture>
-  <br/>
-  <sub><b>Unfurling Spiral</b> — each dot appears at its repo's creation date, flow field emerges with contributions</sub>
-</td>
-</tr></table>
-
-## Generative Garden & Map
+## Living Art
 
 > Living artwork driven by this profile's GitHub data — watch it grow from bare soil to full bloom over 30 seconds.
 
@@ -410,15 +322,6 @@ currently:
 
 </details>
 
-## Contributions
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/snake-dark.svg">
-    <img src=".github/assets/img/snake-light.svg" alt="Snake animation of GitHub contribution graph" width="100%"/>
-  </picture>
-</p>
-
 ## Metrics
 
 <p align="center">
@@ -437,6 +340,73 @@ currently:
 <summary><strong>WakaTime Stats</strong></summary>
 
 <!--START_SECTION:waka-->
+![Code Time](http://img.shields.io/badge/Code%20Time-2%2C438%20hrs%2025%20mins-blue)
+
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-19.1%20million%20lines%20of%20code-blue)
+
+**🐱 My GitHub Data**
+
+> 📦 4.9 MB Used in GitHub's Storage
+ >
+> 💼 Opted to Hire
+ >
+> 📜 94 Public Repositories
+ >
+> 🔑 73 Private Repositories
+ >
+**I'm a Night 🦉**
+
+```text
+🌞 Morning                611 commits         ███░░░░░░░░░░░░░░░░░░░░░░   11.30 %
+🌆 Daytime                970 commits         ████░░░░░░░░░░░░░░░░░░░░░   17.94 %
+🌃 Evening                2214 commits        ██████████░░░░░░░░░░░░░░░   40.95 %
+🌙 Night                  1611 commits        ███████░░░░░░░░░░░░░░░░░░   29.80 %
+```
+📅 **I'm Most Productive on Tuesday**
+
+```text
+Monday                   515 commits         ██░░░░░░░░░░░░░░░░░░░░░░░   09.53 %
+Tuesday                  1303 commits        ██████░░░░░░░░░░░░░░░░░░░   24.10 %
+Wednesday                744 commits         ███░░░░░░░░░░░░░░░░░░░░░░   13.76 %
+Thursday                 897 commits         ████░░░░░░░░░░░░░░░░░░░░░   16.59 %
+Friday                   585 commits         ███░░░░░░░░░░░░░░░░░░░░░░   10.82 %
+Saturday                 440 commits         ██░░░░░░░░░░░░░░░░░░░░░░░   08.14 %
+Sunday                   922 commits         ████░░░░░░░░░░░░░░░░░░░░░   17.06 %
+```
+
+
+📊 **This Week I Spent My Time On**
+
+```text
+💬 Programming Languages:
+Other                    20 hrs 52 mins      ██████████████░░░░░░░░░░░   57.73 %
+JSON                     7 hrs 9 mins        █████░░░░░░░░░░░░░░░░░░░░   19.81 %
+sh                       2 hrs 21 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   06.51 %
+TypeScript               2 hrs 16 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   06.30 %
+Git Config               1 hr 6 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   03.07 %
+
+💻 Operating System:
+Mac                      36 hrs 10 mins      █████████████████████████   100.00 %
+```
+
+**I Mostly Code in Jupyter Notebook**
+
+```text
+Python                   11 repos            █████░░░░░░░░░░░░░░░░░░░░   20.37 %
+TypeScript               11 repos            █████░░░░░░░░░░░░░░░░░░░░   20.37 %
+Handlebars               1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.85 %
+Rust                     1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.85 %
+MDX                      1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.85 %
+```
+
+
+
+**Timeline**
+
+![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
+
+
+ Last Updated on 27/04/2025 18:43:21 UTC
 <!--END_SECTION:waka-->
 
 </details>
