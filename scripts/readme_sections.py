@@ -1124,14 +1124,11 @@ class ReadmeSectionGenerator:
         fallback list for non-HTML consumers.
         """
         inner = "\n".join(lines)
-        details = (
+        return (
             "<details>\n"
             "<summary><strong>Latest posts (auto-updated)</strong></summary>\n\n"
-            f"{inner}\n\n"
-            "</details>\n"
-        )
-        return (
             "<!-- BLOG-POST-LIST:START -->\n"
-            f"{details}"
-            "<!-- BLOG-POST-LIST:END -->"
+            f"{inner}\n"
+            "<!-- BLOG-POST-LIST:END -->\n\n"
+            "</details>"
         )

@@ -22,13 +22,10 @@
 <defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev</text>
 <rect x="139" y="16" width="90" height="24" rx="12" fill="#000000" fill-opacity="0.36" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <text class="card-badge" x="184.0" y="32" text-anchor="middle">Link</text>
-<text class="card-title" x="62" y="48">w4w.dev</text>
-<text class="card-line" x="62" y="74">w4w.dev</text>
-<text class="card-line" x="62" y="96">Open profile</text>
-<text class="card-meta" x="62" y="122">w4w.dev</text>
+<text class="card-title" x="62" y="44">w4w.dev</text>
+<text class="card-meta" x="62" y="122">Link</text>
 </a>
 </g>
 <g class="card" transform="translate(293,88)">
@@ -39,13 +36,10 @@
 <defs><clipPath id="icon-clip-1"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwQTY2QzInLz48Y2lyY2xlIGN4PScyMS41JyBjeT0nMTkuNScgcj0nNC41JyBmaWxsPScjRkZGRkZGJy8+PHJlY3QgeD0nMTcnIHk9JzI3JyB3aWR0aD0nOScgaGVpZ2h0PScyMCcgcng9JzInIGZpbGw9JyNGRkZGRkYnLz48cGF0aCBkPSdNMzQgMjdoOHYzLjJjMS41LTIuMiAzLjktMy44IDcuNC0zLjggNy4zIDAgOC42IDQuOCA4LjYgMTEuMlY0N2gtOXYtNi42YzAtMy40LS42LTUuOC0zLjQtNS44LTIuOSAwLTQuMSAyLjEtNC4xIDUuOFY0N2gtOC41eicgZmlsbD0nI0ZGRkZGRicvPjwvc3ZnPg==" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-1)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">linkedin.com</text>
 <rect x="139" y="16" width="90" height="24" rx="12" fill="#0A66C2" fill-opacity="0.36" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <text class="card-badge" x="184.0" y="32" text-anchor="middle">Network</text>
-<text class="card-title" x="62" y="48">LinkedIn</text>
-<text class="card-line" x="62" y="74">linkedin.com</text>
-<text class="card-line" x="62" y="96">Handle @wyattowalsh</text>
-<text class="card-meta" x="62" y="122">linkedin.com</text>
+<text class="card-title" x="62" y="44">LinkedIn</text>
+<text class="card-meta" x="62" y="122">Network</text>
 </a>
 </g>
 <g class="card" transform="translate(562,88)">
@@ -56,13 +50,10 @@
 <defs><clipPath id="icon-clip-2"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMyMEJFRkYnLz48cGF0aCBkPSdNMjAgMTVoN3YxNS40TDM4LjIgMTVoOS4yTDM0IDMxLjQgNDcuNiA0OWgtOS4zTDI3IDM0LjJWNDloLTd6JyBmaWxsPScjMDYyRjQwJy8+PC9zdmc+" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-2)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">kaggle.com</text>
 <rect x="139" y="16" width="90" height="24" rx="12" fill="#20BEFF" fill-opacity="0.36" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <text class="card-badge" x="184.0" y="32" text-anchor="middle">Data</text>
-<text class="card-title" x="62" y="48">Kaggle</text>
-<text class="card-line" x="62" y="74">kaggle.com</text>
-<text class="card-line" x="62" y="96">Handle @wyattowalsh</text>
-<text class="card-meta" x="62" y="122">kaggle.com</text>
+<text class="card-title" x="62" y="44">Kaggle</text>
+<text class="card-meta" x="62" y="122">Data</text>
 </a>
 </g>
 <g class="card" transform="translate(831,88)">
@@ -73,13 +64,10 @@
 <defs><clipPath id="icon-clip-3"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwMDAwMDAnLz48cGF0aCBkPSdNMTUgMTVoMTAuNWw4LjYgMTEuN0w0My4zIDE1SDUzTDM4LjkgMzIuMiA1My4yIDQ5SDQyLjdsLTkuNC0xMi4xTDIzLjYgNDlIMTRsMTQuNC0xNy42eicgZmlsbD0nI0ZGRkZGRicvPjwvc3ZnPg==" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-3)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">x.com</text>
 <rect x="131" y="16" width="98" height="24" rx="12" fill="#000000" fill-opacity="0.36" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <text class="card-badge" x="180.0" y="32" text-anchor="middle">Broadcast</text>
-<text class="card-title" x="62" y="48">X.com</text>
-<text class="card-line" x="62" y="74">x.com</text>
-<text class="card-line" x="62" y="96">Handle @wyattowalsh</text>
-<text class="card-meta" x="62" y="122">x.com</text>
+<text class="card-title" x="62" y="44">X.com</text>
+<text class="card-meta" x="62" y="122">Broadcast</text>
 </a>
 </g>
 </svg>

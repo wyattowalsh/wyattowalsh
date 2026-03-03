@@ -836,17 +836,23 @@ class TestReadmeInjection:
             ),
         )
 
-        captured: dict[str, object] = {}
+        captured: dict[str, tuple[object, str]] = {}
 
         def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
-            captured[asset_name] = block
+            rendered_svg = (
+                svg_markup
+                if isinstance(svg_markup, str)
+                else renderer.render(block)
+            )
+            captured[asset_name] = (block, rendered_svg)
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_featured_projects()
 
-        block = captured.get("featured-projects")
-        assert block is not None
+        captured_payload = captured.get("featured-projects")
+        assert captured_payload is not None
+        block, svg = captured_payload
         card = block.cards[0]
 
         # Expect richer metadata fields exposed on the card model
@@ -855,9 +861,6 @@ class TestReadmeInjection:
         assert getattr(card, "updated_at", None) is not None
 
         # The rendered SVG should not include the generic footer copy 'GitHub repository'
-        svg_path = tmp_path / "svg" / "featured-projects.svg"
-        assert svg_path.exists()
-        svg = svg_path.read_text(encoding="utf-8")
         assert "GitHub repository" not in svg
 
     def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(self, tmp_path: Path, monkeypatch) -> None:

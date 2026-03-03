@@ -14,14 +14,14 @@
 
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center"><img src=".github/assets/img/readme/featured-projects.svg" alt="Featured projects cards" width="1200" loading="lazy"/></p>
-- [listentropy](https://github.com/wyattowalsh/listentropy) — Live stats are temporarily unavailable; open repository for details.
-- [mdxpad](https://github.com/wyattowalsh/mdxpad) — Live stats are temporarily unavailable; open repository for details.
-- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — Live stats are temporarily unavailable; open repository for details.
-- [nbadb](https://github.com/wyattowalsh/nbadb) — Live stats are temporarily unavailable; open repository for details.
-- [agents](https://github.com/wyattowalsh/agents) — Live stats are temporarily unavailable; open repository for details.
-- [personal-website](https://github.com/wyattowalsh/personal-website) — Live stats are temporarily unavailable; open repository for details.
-- [riso](https://github.com/wyattowalsh/riso) — Live stats are temporarily unavailable; open repository for details.
-- [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — Live stats are temporarily unavailable; open repository for details.
+- [listentropy](https://github.com/wyattowalsh/listentropy) — No description provided. (★ 0)
+- [mdxpad](https://github.com/wyattowalsh/mdxpad) — No description provided. (★ 0)
+- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — rotating proxy system (★ 0)
+- [nbadb](https://github.com/wyattowalsh/nbadb) — Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball) (★ 57)
+- [agents](https://github.com/wyattowalsh/agents) — AI agent artifacts, configs, skills, tools, and more (★ 0)
+- [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
+- [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
+- [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
 <p align="center"><sub>Snapshot includes stars, freshness, topic signals, and trendline momentum.</sub></p>
 <!-- README:FEATURED_PROJECTS:END -->
 
@@ -43,15 +43,29 @@
 </td>
 </tr></table>
 
-### Living Art Data Mapping
+> [!NOTE] Living-art visualizations and mappings are conservatively authored for GitHub rendering and include a footnote reference[^1].
 
-| Visual | Data inputs | Visual mapping in code |
-|---|---|---|
-| `inkgarden-growth-animated.svg` | `repos[]` (`name`, `language`, `stars`, `age_months`) | Each repo becomes one plant; language sets hue (and can influence species class), age drives plant size/branch depth, stars drive bloom size + petal/layer counts, and repo names become botanical labels. |
-| Ink Garden ecosystem details | `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars` | Forks scale root/mycorrhizal networks; watchers/contributions/orgs/stars add insects/seeds; network adds webs; open issues add mushrooms; following adds tendrils; monthly contributions drive stipple density. |
-| `topo-growth-animated.svg` | `repos[]` (`stars`, `age_months`, `language`, `name`) | Repos become hills/landmarks; stars set relative peak height + marker size, age sets hill width and age markers, language controls per-hill terrain texture and marker color, names/stars are labeled on-map. |
-| Topography terrain/chrome | `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars` | Commits increase base terrain noise detail; monthly contributions build ridge intensity + month label opacity; forks set river count; followers set contour density; contributions/stars appear in survey scale/title annotations. |
-| Growth timing (both) | `compute_maturity(metrics)` | Animation ramps maturity from `0.02` to target over ~30s; maturity is computed from commits, stars, contributions, followers, repo count/age, forks, and network size. |
+<!-- BEGIN MANAGED MARKER -->
+<details>
+<summary><strong>Living Art data mapping (click to expand)</strong></summary>
+
+- living-art: Ink Garden & Topography
+  - Visual: `inkgarden-growth-animated.svg`
+    - Data inputs: `repos[]` (`name`, `language`, `stars`, `age_months`)
+    - Mapping: Each repo → one plant; language sets hue/species; age → plant size/branch depth; stars → bloom size/petal counts; repo names → botanical labels.
+  - Ecosystem details: `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars`
+    - Mapping notes: forks → root networks; watchers/contributions/orgs/stars add insects/seeds; network → webs; open issues → mushrooms; following → tendrils; monthly contributions → stipple density.
+- Visual: `topo-growth-animated.svg`
+  - Data inputs: `repos[]` (`stars`, `age_months`, `language`, `name`)
+  - Mapping: Repos → hills/landmarks; stars → peak height & marker size; age → hill width & age markers; language → terrain texture & color; names/stars → map labels.
+- Terrain/chrome: `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars`
+  - Mapping: commits → base noise detail; monthly contributions → ridge intensity + month label opacity; forks → river count; followers → contour density; contributions/stars → survey/title annotations.
+- Growth timing (both): `compute_maturity(metrics)` → animation ramps maturity from `0.02` to target over ~30s; maturity computed from commits, stars, contributions, followers, repo_count/age, forks, network_size.
+
+</details>
+<!-- END MANAGED MARKER -->
+
+[^1]: Visual mappings use conservative SVG/HTML features to remain GitHub-render safe (no scripting).
 
 > Note: the header banner (`banner.svg`) is config-driven (`config.yaml`), not mapped to GitHub activity metrics.
 
@@ -406,12 +420,18 @@ MDX                      1 repo              ░░░░░░░░░░░�
 
 <!-- README:BLOG_POSTS:START -->
 <p align="center"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts cards" width="1100" loading="lazy"/></p>
+<details>
+<summary><strong>Latest posts (auto-updated)</strong></summary>
+
 <!-- BLOG-POST-LIST:START -->
- - Fri Feb 13 2026 12:00 AM - [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl)
- - Sun Dec 01 2024 12:00 AM - [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6)
- - Fri Jan 15 2021 12:00 AM - [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3)
- - Thu Jan 14 2021 12:00 AM - [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2)
- - Wed Jan 13 2021 12:00 AM - [Basics of Linear Regression Modeling and Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1)<!-- BLOG-POST-LIST:END -->
+- [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl) — w4w.dev
+- [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6) — w4w.dev
+- [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3) — w4w.dev
+- [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2) — w4w.dev
+- [Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1) — w4w.dev
+<!-- BLOG-POST-LIST:END -->
+
+</details>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
