@@ -431,3 +431,7 @@ MDX                      1 repo              ░░░░░░░░░░░�
     <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
   </a>
 </p>
+
+## GIF with PNG fallback
+
+This project prefers GIF with PNG fallback for living-art embeds.
