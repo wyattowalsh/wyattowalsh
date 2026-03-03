@@ -7,7 +7,7 @@
 .card-line { fill: #E3ECF7; font: 500 15px ui-sans-serif; }
 .card-meta { fill: #B7C3D4; font: 500 13px ui-sans-serif; }
 .card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }
-.card-badge { fill: #FFFFFF; font: 700 12px ui-sans-serif; letter-spacing: 0.01em; }
+
 .sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }
 </style>
 <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
@@ -16,102 +16,72 @@
 <text class="title" x="28" y="54">Latest Blog Posts</text>
 <g class="card" transform="translate(28,88)">
 <a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#06B6D4" stroke-opacity="0.45" />
-<defs><clipPath id="clip-0"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/proxywhirl-hero.svg" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.16" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#F59E0B" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev update</text>
-<rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
-<text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
-<text class="card-title" x="62" y="48">ProxyWhirl</text>
-<text class="card-line" x="62" y="74">Production-ready Python proxy rotation with auto-fetching from 114+ sou…</text>
-<text class="card-meta" x="62" y="202">w4w.dev · Published 2026-02-13</text>
+<text class="card-kicker" x="62" y="22">w4w.dev</text>
+<text class="card-title" x="62" y="48"><tspan x="62">ProxyWhirl</tspan></text>
+<text class="card-line" x="62" y="74">Explore articles about software development, web technologies, and technical insights</text>
+<text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>
 <g class="card" transform="translate(28,336)">
 <a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#06B6D4" stroke-opacity="0.45" />
-<defs><clipPath id="clip-1"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/old.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.16" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#F59E0B" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-1"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-1)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev update</text>
-<rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
-<text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
-<text class="card-title" x="62" y="48">Personal Web App v6</text>
-<text class="card-line" x="62" y="74">A deep dive into building my personal website v6 with Next.js 15, featu…</text>
-<text class="card-meta" x="62" y="202">w4w.dev · Published 2024-12-01</text>
+<text class="card-kicker" x="62" y="22">w4w.dev</text>
+<text class="card-title" x="62" y="48"><tspan x="62">Personal Web App v6</tspan></text>
+<text class="card-line" x="62" y="74">Explore articles about software development, web technologies, and technical insights</text>
+<text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>
 <g class="card" transform="translate(28,584)">
 <a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#06B6D4" stroke-opacity="0.45" />
-<defs><clipPath id="clip-2"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.16" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#F59E0B" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-2"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-2)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev update</text>
-<rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
-<text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
-<text class="card-title" x="62" y="48">Implementing Pathwise Coordinate Descent For The La…</text>
-<text class="card-line" x="62" y="74">Explanations for Solving Some of the Most Popular Supervised Learning A…</text>
-<text class="card-meta" x="62" y="202">w4w.dev · Published 2021-01-15</text>
+<text class="card-kicker" x="62" y="22">w4w.dev</text>
+<text class="card-title" x="62" y="48"><tspan x="62">Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy</tspan></text>
+<text class="card-line" x="62" y="74">Explore articles about software development, web technologies, and technical insights</text>
+<text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>
 <g class="card" transform="translate(28,832)">
 <a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#06B6D4" stroke-opacity="0.45" />
-<defs><clipPath id="clip-3"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/ridge.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.16" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#F59E0B" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-3"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-3)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev update</text>
-<rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
-<text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
-<text class="card-title" x="62" y="48">Using Ridge Regression to Overcome Drawbacks of Ord…</text>
-<text class="card-line" x="62" y="74">Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, an…</text>
-<text class="card-meta" x="62" y="202">w4w.dev · Published 2021-01-14</text>
+<text class="card-kicker" x="62" y="22">w4w.dev</text>
+<text class="card-title" x="62" y="48"><tspan x="62">Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)</tspan></text>
+<text class="card-line" x="62" y="74">Explore articles about software development, web technologies, and technical insights</text>
+<text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>
 <g class="card" transform="translate(28,1080)">
 <a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#06B6D4" stroke-opacity="0.45" />
-<defs><clipPath id="clip-4"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.16" />
-<rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
-<rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="1044" height="220" rx="16" fill="#121A25" stroke="#F59E0B" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-4"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-4)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
-<text class="card-kicker" x="62" y="22">w4w.dev update</text>
-<rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
-<text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
-<text class="card-title" x="62" y="48">Basics of Linear Regression Modeling and Ordinary L…</text>
-<text class="card-line" x="62" y="74">Context of Linear Regression, Optimization to Obtain the OLS Model Esti…</text>
-<text class="card-meta" x="62" y="202">w4w.dev · Published 2021-01-13</text>
+<text class="card-kicker" x="62" y="22">w4w.dev</text>
+<text class="card-title" x="62" y="48"><tspan x="62">Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)</tspan></text>
+<text class="card-line" x="62" y="74">Explore articles about software development, web technologies, and technical insights</text>
+<text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>
 </svg>

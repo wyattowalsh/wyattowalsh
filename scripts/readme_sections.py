@@ -95,6 +95,10 @@ class RepoMetadata:
     homepage: Optional[str]
     topics: list[str]
     updated_at: Optional[str]
+    # additional metadata exposed for featured cards
+    created_at: Optional[str] = None
+    size_kb: Optional[int] = None
+    forks: Optional[int] = None
     open_graph_image_url: Optional[str] = None
 
 
@@ -139,6 +143,9 @@ class GitHubRepoClient:
             homepage=payload.get("homepage") or None,
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
+            created_at=payload.get("created_at") or None,
+            size_kb=int(payload.get("size", 0)) if payload.get("size") is not None else None,
+            forks=int(payload.get("forks_count", 0)) if payload.get("forks_count") is not None else None,
             open_graph_image_url=payload.get("open_graph_image_url") or None,
         )
 
@@ -420,23 +427,20 @@ class ReadmeSectionGenerator:
             parsed = urlparse(link.url)
             host = parsed.netloc.replace("www.", "")
             handle = parsed.path.strip("/").split("/")[-1] if parsed.path else ""
-            line_one = host or parsed.scheme or link.url
-            line_two = (
-                f"Handle @{handle}"
-                if handle and handle != host
-                else "Open profile"
-            )
-            meta_line = host or (f"@{handle}" if handle else parsed.scheme or "profile")
+            # For connect cards we avoid exposing raw profile handles/URLs in the visible lines.
+            # Keep kicker minimal and expose a small personality meta/badge instead.
+            meta_line = self._social_personality_badge(link.url)
             card = SvgCard(
                 title=link.label,
-                kicker=self._social_kicker(link.url),
-                lines=(line_one, line_two),
+                kicker=None,
+                lines=(),
                 meta=(meta_line,),
                 url=link.url,
                 icon=self._social_icon(link.label),
                 badge=self._social_personality_badge(link.url),
                 accent=link.color,
             )
+            # populate icon payloads (brand glyph or data-uri)
             self._set_card_icon_data_uri(
                 card,
                 url=link.url,
@@ -589,6 +593,13 @@ class ReadmeSectionGenerator:
                 f"<path d='M19 32h26M32 19.5c4.2 4.4 4.2 20.6 0 25M32 19.5c-4.2 4.4-4.2 20.6 0 25' stroke='#{foreground}' stroke-width='2.4' stroke-linecap='round' fill='none'/>"
             )
         if not glyph or not background or not foreground:
+            # Fallback — try fetching a friendly favicon (w4w.dev) before giving up.
+            try_fallback = self._fetch_remote_image_data_uri(
+                "https://w4w.dev/favicon.ico",
+                context="brand favicon fallback",
+            )
+            if try_fallback:
+                return try_fallback
             return None
 
         icon_svg = (
@@ -674,7 +685,7 @@ class ReadmeSectionGenerator:
                     "Live stats are temporarily unavailable.",
                     "Open the repository for full details.",
                 ),
-                meta=("GitHub repository",),
+                meta=(),
                 url=repo_url,
                 badge="Featured",
                 icon=repo_name[:2].upper(),
@@ -691,16 +702,28 @@ class ReadmeSectionGenerator:
         if metadata.topics:
             topics = " · ".join(metadata.topics[:3])
             lines.append(f"Topics {topics}")
+        # avoid duplicative host clutter in the visible lines; surface homepage in card attributes instead
         if metadata.homepage:
             homepage_host = urlparse(metadata.homepage).netloc.replace("www.", "")
             if homepage_host:
-                lines.append(f"Site {homepage_host}")
-        info_bits = [f"★ {metadata.stars:,}"]
+                # keep homepage as an attribute for the renderer to expose if desired
+                pass
+        # richer metadata for featured projects
+        info_bits: list[str] = []
+        info_bits.append(f"★ {metadata.stars:,}")
+        if metadata.forks:
+            info_bits.append(f"Forks {metadata.forks:,}")
+        if metadata.size_kb:
+            info_bits.append(f"Size {metadata.size_kb:,} KB")
         updated = self._format_timestamp(metadata.updated_at)
         if updated:
             info_bits.append(f"Updated {updated}")
+        created = self._format_timestamp(metadata.created_at)
+        if created:
+            info_bits.append(f"Created {created}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
-        accent = self._repo_accent_color(metadata)
+        # distinct colorful treatment for featured projects
+        accent = self._repo_accent_color(metadata) or "8B5CF6"
         card = SvgCard(
             title=metadata.name,
             kicker=repo_full_name,
@@ -710,9 +733,17 @@ class ReadmeSectionGenerator:
             background_image=self._repo_background_image(repo_full_name, metadata),
             sparkline=sparkline,
             icon=metadata.name[:2].upper(),
-            badge="Featured Project",
+            badge="Showcase",
             accent=accent,
         )
+        # expose rich attributes on the presentation card for downstream assertions
+        object.__setattr__(card, "homepage", metadata.homepage)
+        object.__setattr__(card, "topics", tuple(metadata.topics))
+        object.__setattr__(card, "updated_at", metadata.updated_at)
+        object.__setattr__(card, "created_at", metadata.created_at)
+        object.__setattr__(card, "forks", metadata.forks)
+        object.__setattr__(card, "size_kb", metadata.size_kb)
+
         self._set_card_icon_data_uri(
             card,
             url=metadata.html_url,
@@ -774,16 +805,17 @@ class ReadmeSectionGenerator:
                 card_meta.append(host)
             if published:
                 card_meta.append(f"Published {published[:10]}")
-            accent = "06B6D4" if "w4w.dev" in (host or "") else "60A5FA"
+            # blog cards get a warmer accent and do not render a badge/pill
+            accent = "F59E0B" if "w4w.dev" in (host or "") else "F97316"
             card = SvgCard(
                 title=post.title,
-                kicker=f"{host or 'blog'} update",
+                kicker=f"{host or 'blog'}",
                 lines=(summary,),
                 meta=tuple(card_meta),
                 url=post.url,
                 background_image=metadata.get("hero_image"),
                 icon=(host or "BL")[:2].upper(),
-                badge="Blog Post",
+                badge=None,
                 accent=accent,
             )
             self._set_card_icon_data_uri(
@@ -1085,8 +1117,18 @@ class ReadmeSectionGenerator:
         return None
 
     def _wrap_blog_post_list_markers(self, lines: Sequence[str]) -> str:
+        """Wrap blog post list in manager markers and a GFM <details> disclosure.
+
+        This preserves the HTML comment markers used by the injection engine
+        while also providing a GitHub-friendly collapsible UX and a safe
+        fallback list for non-HTML consumers.
+        """
+        inner = "\n".join(lines)
         return (
+            "<details>\n"
+            "<summary><strong>Latest posts (auto-updated)</strong></summary>\n\n"
             "<!-- BLOG-POST-LIST:START -->\n"
-            + "\n".join(lines)
-            + "\n<!-- BLOG-POST-LIST:END -->"
+            f"{inner}\n"
+            "<!-- BLOG-POST-LIST:END -->\n\n"
+            "</details>"
         )
