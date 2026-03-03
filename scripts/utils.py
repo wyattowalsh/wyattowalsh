@@ -12,14 +12,56 @@ import sys  # noqa: F401 -- ensures `sys` is available for `logger.add(..., form
 from pathlib import Path
 from typing import Any, Optional
 
-# Import Loguru's internal Logger type for type hinting if necessary
-# This is often more stable than relying on `loguru.logger` directly for type hints
-# if it's reassigned or if strict type checking is needed.
-from loguru import logger as loguru_logger
-from loguru._logger import Logger as LoguruLoggerType
-from rich.console import Console
-from rich.logging import RichHandler
-from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
+# Prefer optional imports for loguru/rich so tests can run in minimal env
+try:
+    from loguru import logger as loguru_logger
+    from loguru._logger import Logger as LoguruLoggerType
+except Exception:  # pragma: no cover - fallback for test environments
+    class _FallbackLogger:
+        def bind(self, **extra):
+            return self
+
+        def info(self, *a, **k):
+            print("INFO:", *a)
+
+        def warning(self, *a, **k):
+            print("WARN:", *a)
+
+        def debug(self, *a, **k):
+            print("DEBUG:", *a)
+
+        def add(self, *a, **k):
+            return None
+
+    loguru_logger = _FallbackLogger()
+    LoguruLoggerType = _FallbackLogger  # type: ignore
+
+try:
+    from rich.console import Console
+    from rich.logging import RichHandler
+    from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
+except Exception:  # pragma: no cover - fallback minimal console/progress
+    class Console:  # very small fallback
+        def __init__(self, *a, **k):
+            pass
+
+    class RichHandler:
+        def __init__(self, *a, **k):
+            pass
+
+    class BarColumn:
+        pass
+
+    class Progress:
+        def __init__(self, *a, **k):
+            pass
+
+    class TextColumn:
+        def __init__(self, *a, **k):
+            pass
+
+    class TimeRemainingColumn:
+        pass
 
 # Attempt to import settings, gracefully handle if not found
 try:

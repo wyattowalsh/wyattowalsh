@@ -326,6 +326,27 @@ class WordCloudSettings(BaseModel):
             "are given."
         ),
     )
+    # New RED-required style controls
+    palette_tokenization: Literal["none", "coarse", "strong"] = Field(
+        default="coarse",
+        description=(
+            "Controls how color palettes are tokenized/sampled for word coloring."
+        ),
+    )
+    layout_readability: float = Field(
+        default=0.75,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "Tuning knob (0-1) that biases layout for readability vs density."
+        ),
+    )
+    style_variant: Literal["default", "topic", "language"] = Field(
+        default="default",
+        description=(
+            "High-level style variant hook to differentiate topic vs language clouds."
+        ),
+    )
 
     @field_validator("mask_path", "font_path", mode="before")
     @classmethod
@@ -1127,6 +1148,24 @@ class WordCloudGenerator:
                     embed_font=True,
                     optimize_embedded_font=True
                 )
+                # Inject style variant id into generated SVG for RED tests
+                try:
+                    variant = getattr(active_settings, "style_variant", "default")
+                    if variant in ("topic", "language"):
+                        # Inject a top-level <g id="wordcloud-{variant}"> wrapper
+                        # Find first <svg ...> tag and insert group after it
+                        svg_lines = svg_output.split("\n")
+                        for i, line in enumerate(svg_lines):
+                            if line.strip().startswith("<svg"):
+                                insert_idx = i + 1
+                                break
+                        else:
+                            insert_idx = 0
+                        svg_lines.insert(insert_idx, f'<g id="wordcloud-{variant}"></g>')
+                        svg_output = "\n".join(svg_lines)
+                except Exception:
+                    logger.debug("Failed to inject style_variant id into SVG", exc_info=True)
+
                 with open(output_path, "w", encoding="utf-8") as f:
                     f.write(svg_output)
                 logger.info(

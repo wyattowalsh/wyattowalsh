@@ -63,6 +63,10 @@ class SvgBlockRenderer:
             + (rows * (self.card_height + self.padding))
         )
 
+        # family/variant inference: keep renderer-level variant support without
+        # changing existing SvgBlock signature — infer from the block title.
+        family = (block.title or "").lower()
+
         svg_lines = [
             (
                 f'<svg xmlns="http://www.w3.org/2000/svg" '
@@ -101,7 +105,7 @@ class SvgBlockRenderer:
             row = idx // columns
             x = self.padding + (column * (card_width + self.padding))
             y = header_height + (row * (self.card_height + self.padding))
-            svg_lines.extend(self._render_card(card, x, y, card_width, idx))
+            svg_lines.extend(self._render_card(card, x, y, card_width, idx, family))
 
         svg_lines.append("</svg>")
         return "\n".join(svg_lines)
@@ -113,6 +117,7 @@ class SvgBlockRenderer:
         y: int,
         width: int,
         card_index: int,
+        family: str = "",
     ) -> list[str]:
         accent = self._normalize_hex_color(card.accent)
         lines = [f'<g class="card" transform="translate({x},{y})">']
@@ -222,7 +227,8 @@ class SvgBlockRenderer:
             )
             title_y = 48
 
-        if card.badge:
+        # render badge unless family-specific variants suppress it (e.g., blog)
+        if card.badge and "blog" not in family:
             badge_text = self._truncate(card.badge, 20)
             badge_width = max(90, min(220, len(badge_text) * 8 + 26))
             badge_x = max(16, width - badge_width - 16)
@@ -253,31 +259,75 @@ class SvgBlockRenderer:
                 )
             )
 
-        lines.append(
-            (
-                '<text class="card-title" x="'
-                f"{title_x}"
-                '" y="'
-                f"{title_y}"
-                '">'
-                f"{self._esc(self._truncate(card.title, 52))}"
-                "</text>"
-            )
-        )
-
-        text_y = title_y + 26
-        for line in card.lines[:3]:
+        # title rendering: allow family-specific variants (blog uses tspan and no truncation)
+        if "blog" in family:
+            # use a tspan to enable wrapping in consumers; avoid truncation
             lines.append(
                 (
-                    '<text class="card-line" x="'
+                    '<text class="card-title" x="'
                     f"{title_x}"
                     '" y="'
-                    f"{text_y}"
+                    f"{title_y}"
                     '">'
-                    f"{self._esc(self._truncate(line, 72))}"
+                    f"<tspan x=\"{title_x}\">{self._esc(card.title)}</tspan>"
                     "</text>"
                 )
             )
+        else:
+            lines.append(
+                (
+                    '<text class="card-title" x="'
+                    f"{title_x}"
+                    '" y="'
+                    f"{title_y}"
+                    '">'
+                    f"{self._esc(self._truncate(card.title, 52))}"
+                    "</text>"
+                )
+            )
+
+        # lines: apply family-specific filtering/enrichment
+        text_y = title_y + 26
+        # Prepare visible lines; allow featured family to expose homepage/topics
+        visible_lines = list(card.lines or ())
+        if "connect" in family:
+            # remove social handles from visible lines; keep URL clickable via card.url
+            visible_lines = [l for l in visible_lines if not l.strip().startswith("@")] 
+        if "featured" in family:
+            # include richer metadata when attached dynamically
+            if hasattr(card, "homepage") and getattr(card, "homepage"):
+                visible_lines.append(getattr(card, "homepage"))
+            if hasattr(card, "topics") and getattr(card, "topics"):
+                # topics may be list-like
+                for t in getattr(card, "topics"):
+                    visible_lines.append(str(t))
+
+        for line in visible_lines[:3]:
+            if "blog" in family:
+                # avoid truncation for blog lines
+                lines.append(
+                    (
+                        '<text class="card-line" x="'
+                        f"{title_x}"
+                        '" y="'
+                        f"{text_y}"
+                        '">'
+                        f"{self._esc(line)}"
+                        "</text>"
+                    )
+                )
+            else:
+                lines.append(
+                    (
+                        '<text class="card-line" x="'
+                        f"{title_x}"
+                        '" y="'
+                        f"{text_y}"
+                        '">'
+                        f"{self._esc(self._truncate(line, 72))}"
+                        "</text>"
+                    )
+                )
             text_y += 22
 
         if card.sparkline and len(card.sparkline) >= 2:

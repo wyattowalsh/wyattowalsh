@@ -785,3 +785,145 @@ class TestReadmeInjection:
         assert "featured-projects.svg" in content
         assert "[GitHub](https://github.com/wyattowalsh)" in content
         assert "[First Post](https://w4w.dev/blog/first)" in content
+
+    def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            social_links=[
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                )
+            ],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+
+        html = generator._render_top_badges()
+        svg_path = tmp_path / "svg" / "top-contact.svg"
+        assert svg_path.exists()
+        svg = svg_path.read_text(encoding="utf-8")
+
+        # Expect no handle clutter or open-profile URL fragments
+        assert "@wyattowalsh" not in svg
+        assert "open-profile" not in svg
+        # Expect no upper-right pill element on connect cards
+        assert 'class="card-pill"' not in svg
+        # But the card should still be clickable (link present)
+        assert 'href="https://github.com/wyattowalsh"' in svg
+
+    def test_featured_cards_include_richer_metadata_and_exclude_footer_copy(self, tmp_path: Path, monkeypatch) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
+        )
+
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+            captured[asset_name] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_featured_projects()
+
+        block = captured.get("featured-projects")
+        assert block is not None
+        card = block.cards[0]
+
+        # Expect richer metadata fields exposed on the card model
+        assert getattr(card, "homepage", None) is not None
+        assert getattr(card, "topics", None) is not None
+        assert getattr(card, "updated_at", None) is not None
+
+        # The rendered SVG should not include the generic footer copy 'GitHub repository'
+        svg_path = tmp_path / "svg" / "featured-projects.svg"
+        assert svg_path.exists()
+        svg = svg_path.read_text(encoding="utf-8")
+        assert "GitHub repository" not in svg
+
+    def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(self, tmp_path: Path, monkeypatch) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient([BlogPost(title="A Very Long Blog Post Title That Would Normally Be Truncated ... update", url="https://w4w.dev/blog/long")]),
+            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/long": {"hero_image": None, "summary": "Long post", "published": "2026-03-01", "host": "w4w.dev"}}),
+        )
+
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+            captured[asset_name] = (block, svg_markup)
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_blog_posts()
+
+        block, svg_markup = captured.get("blog-posts")
+        assert block is not None
+
+        card = block.cards[0]
+        # Expect no badge on blog cards
+        assert getattr(card, "badge", None) is None
+        # Expect no '... update' kicker in meta
+        assert not any("update" in (m or "") for m in getattr(card, "meta", ()))
+
+        # Expect the SVG markup to avoid ellipsis truncation and allow wrapping (multiple <tspan> for title)
+        assert svg_markup is not None
+        assert "..." not in svg_markup
+        assert "<tspan" in svg_markup
+
+    def test_card_generators_are_bespoke_per_family(self, tmp_path: Path, monkeypatch) -> None:
+        settings = ReadmeSectionsSettings(svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")), featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")], blog_feed_url="https://w4w.dev/feed.xml", blog_post_limit=1)
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient({"wyattowalsh/riso": RepoMetadata(full_name="wyattowalsh/riso", name="riso", html_url="https://github.com/wyattowalsh/riso", description="Composable scaffolding framework", stars=42, homepage=None, topics=["python"], updated_at="2026-02-01T00:00:00Z")} ),
+            blog_client=StubBlogClient([BlogPost(title="Post", url="https://w4w.dev/blog/post")]),
+            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/post": {"hero_image": None, "summary": "x", "published": "2026-03-01", "host": "w4w.dev"}}),
+        )
+
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+            captured[asset_name] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_top_badges()
+        generator._render_featured_projects()
+        generator._render_blog_posts()
+
+        top_block = captured.get("top-contact")
+        featured_block = captured.get("featured-projects")
+        blog_block = captured.get("blog-posts")
+
+        assert top_block is not None and featured_block is not None and blog_block is not None
+
+        top_fields = set(dir(top_block.cards[0]))
+        featured_fields = set(dir(featured_block.cards[0]))
+        blog_fields = set(dir(blog_block.cards[0]))
+
+        # Expect the card models for each family to differ in their exposed attributes (i.e., bespoke generators)
+        assert top_fields != featured_fields or featured_fields != blog_fields

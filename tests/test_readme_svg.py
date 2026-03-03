@@ -230,3 +230,62 @@ class TestReadmeSvgAssetBuilder:
 
         assert output_path == tmp_path / "inline.svg"
         assert output_path.read_text(encoding="utf-8") == svg_markup
+
+    def test_connect_card_pill_removed_but_clickable(self) -> None:
+        renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
+        card = SvgCard(
+            title="Connect",
+            lines=("@wyattowalsh",),
+            url="https://github.com/wyattowalsh",
+            icon="GH",
+            accent="181717",
+            badge="open-profile",
+        )
+        # ensure icon_data_uri is supported
+        object.__setattr__(card, "icon_data_uri", "data:image/svg+xml;base64,PHN2Zy8+")
+        block = SvgBlock(title="Connect", cards=(card,), columns=1)
+
+        svg = renderer.render(block)
+
+        # Expect no upper-right pill element in the rendered card
+        assert 'class="card-pill"' not in svg
+        # Expect handles removed from visible lines
+        assert "@wyattowalsh" not in svg
+        # But link still present
+        assert 'href="https://github.com/wyattowalsh"' in svg
+
+    def test_featured_card_exposes_richer_metadata_model(self) -> None:
+        renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
+        card = SvgCard(
+            title="riso",
+            lines=("Composable scaffolding framework",),
+            url="https://github.com/wyattowalsh/riso",
+            meta=("★ 42",),
+        )
+        # attach richer metadata dynamically
+        object.__setattr__(card, "homepage", "https://riso.dev")
+        object.__setattr__(card, "topics", ["python", "templates"])
+        object.__setattr__(card, "updated_at", "2026-02-01T00:00:00Z")
+
+        block = SvgBlock(title="Featured", cards=(card,), columns=1)
+        svg = renderer.render(block)
+
+        # Expect homepage and topics to be included in rendered text
+        assert "https://riso.dev" in svg
+        assert "python" in svg
+        # And avoid generic footer copy
+        assert "GitHub repository" not in svg
+
+    def test_blog_card_no_badge_and_wrapping(self) -> None:
+        renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
+        title = "A Very Long Blog Post Title That Would Normally Be Truncated ... update"
+        card = SvgCard(title=title, lines=("w4w.dev",), url="https://w4w.dev/blog/long")
+        block = SvgBlock(title="Blog", cards=(card,), columns=1)
+        svg = renderer.render(block)
+
+        # Expect no badge or update kicker
+        assert "badge" not in svg
+        assert "update" not in svg
+        # Expect no ellipsis truncation and presence of wrapping tspan
+        assert "..." not in svg
+        assert "<tspan" in svg
