@@ -33,6 +33,16 @@ except Exception:  # pragma: no cover - fallback for test environments
         def add(self, *a, **k):
             return None
 
+        def remove(self, *a, **k):
+            return None
+
+        def __getattr__(self, name):
+            # return a no-op callable for any logging method used
+            def _noop(*a, **k):
+                return None
+
+            return _noop
+
     loguru_logger = _FallbackLogger()
     LoguruLoggerType = _FallbackLogger  # type: ignore
 

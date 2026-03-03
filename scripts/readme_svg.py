@@ -81,7 +81,11 @@ class SvgBlockRenderer:
             ".card-line { fill: #E3ECF7; font: 500 15px ui-sans-serif; }",
             ".card-meta { fill: #B7C3D4; font: 500 13px ui-sans-serif; }",
             ".card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }",
-            ".card-badge { fill: #FFFFFF; font: 700 12px ui-sans-serif; letter-spacing: 0.01em; }",
+            (
+                ".card-badge { fill: #FFFFFF; font: 700 12px ui-sans-serif; letter-spacing: 0.01em; }"
+                if any(c.badge for c in cards) and "blog" not in family
+                else ""
+            ),
             ".sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }",
             "</style>",
             (
@@ -262,6 +266,9 @@ class SvgBlockRenderer:
         # title rendering: allow family-specific variants (blog uses tspan and no truncation)
         if "blog" in family:
             # use a tspan to enable wrapping in consumers; avoid truncation
+            # sanitize common update suffixes and ellipses for cleaner blog titles
+            sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
+            sanitized_title = re.sub(r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE).strip()
             lines.append(
                 (
                     '<text class="card-title" x="'
@@ -269,7 +276,7 @@ class SvgBlockRenderer:
                     '" y="'
                     f"{title_y}"
                     '">'
-                    f"<tspan x=\"{title_x}\">{self._esc(card.title)}</tspan>"
+                    f"<tspan x=\"{title_x}\">{self._esc(sanitized_title)}</tspan>"
                     "</text>"
                 )
             )
