@@ -426,12 +426,13 @@ class ReadmeSectionGenerator:
                 if handle and handle != host
                 else "Open profile"
             )
+            meta_line = host or (f"@{handle}" if handle else parsed.scheme or "profile")
             svg_cards.append(
                 SvgCard(
                     title=link.label,
                     kicker=self._social_kicker(link.url),
                     lines=(line_one, line_two),
-                    meta=(link.url,),
+                    meta=(meta_line,),
                     url=link.url,
                     icon=self._social_icon(link.label),
                     badge=self._social_personality_badge(link.url),
@@ -627,12 +628,12 @@ class ReadmeSectionGenerator:
                 f"- No recent posts available. [RSS feed]({feed_url_raw})"
             )
             lines = [
-                *fallback_lines,
+                self._wrap_blog_post_list_markers(fallback_lines),
                 f'<p align="center"><sub>📡 Source: <a href="{feed_url}">RSS feed</a></sub></p>',
             ]
             if svg_embed:
                 lines.insert(0, f'<p align="center">{svg_embed}</p>')
-            return self._wrap_blog_post_list_markers(lines)
+            return "\n".join(lines)
 
         for post in posts:
             metadata = self.blog_metadata_client.fetch_metadata(post.url)
@@ -679,7 +680,7 @@ class ReadmeSectionGenerator:
             alt_text="Latest blog posts cards",
         )
         lines = [
-            *fallback_lines,
+            self._wrap_blog_post_list_markers(fallback_lines),
             (
                 f'<p align="center"><sub>📡 Auto-updated from '
                 f'<a href="{feed_url}">RSS feed</a></sub></p>'
@@ -687,7 +688,7 @@ class ReadmeSectionGenerator:
         ]
         if svg_embed:
             lines.insert(0, f'<p align="center">{svg_embed}</p>')
-        return self._wrap_blog_post_list_markers(lines)
+        return "\n".join(lines)
 
     def _render_svg_embed(
         self,

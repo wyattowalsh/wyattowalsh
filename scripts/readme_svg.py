@@ -73,17 +73,18 @@ class SvgBlockRenderer:
             ".title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }",
             ".card-kicker { fill: #8FA1B8; font: 700 11px ui-sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }",
             ".card-title { fill: #FFFFFF; font: 700 21px ui-sans-serif; }",
-            ".card-line { fill: #D9E2EE; font: 500 15px ui-sans-serif; }",
-            ".card-meta { fill: #AAB5C4; font: 500 13px ui-sans-serif; }",
+            ".card-line { fill: #E3ECF7; font: 500 15px ui-sans-serif; }",
+            ".card-meta { fill: #B7C3D4; font: 500 13px ui-sans-serif; }",
             ".card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }",
-            ".card-badge { fill: #EEF5FF; font: 700 12px ui-sans-serif; }",
+            ".card-badge { fill: #FFFFFF; font: 700 12px ui-sans-serif; letter-spacing: 0.01em; }",
             ".sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }",
             "</style>",
             (
                 "<linearGradient id=\"cardGradient\" x1=\"0%\" y1=\"0%\" "
                 "x2=\"0%\" y2=\"100%\">"
-                "<stop offset=\"0%\" stop-color=\"#0B111A\" stop-opacity=\"0.12\"/>"
-                "<stop offset=\"100%\" stop-color=\"#0B111A\" stop-opacity=\"0.95\"/>"
+                "<stop offset=\"0%\" stop-color=\"#0B111A\" stop-opacity=\"0.26\"/>"
+                "<stop offset=\"56%\" stop-color=\"#0B111A\" stop-opacity=\"0.72\"/>"
+                "<stop offset=\"100%\" stop-color=\"#0B111A\" stop-opacity=\"0.97\"/>"
                 "</linearGradient>"
             ),
             "</defs>",
@@ -148,7 +149,7 @@ class SvgBlockRenderer:
                 f"{self._esc(card.background_image)}"
                 f'" width="{width}" height="{self.card_height}" '
                 'preserveAspectRatio="xMidYMid slice" '
-                f'clip-path="url(#{clip_id})" opacity="0.52" />'
+                f'clip-path="url(#{clip_id})" opacity="0.16" />'
             )
             lines.append(
                 (
@@ -158,6 +159,11 @@ class SvgBlockRenderer:
                     f"{self.card_height}"
                     "\" rx=\"16\" fill=\"url(#cardGradient)\" />"
                 )
+            )
+            lines.append(
+                '<rect x="12" y="12" width="'
+                f'{width - 24}'
+                '" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />'
             )
 
         title_x = 18
@@ -191,6 +197,11 @@ class SvgBlockRenderer:
             badge_text = self._truncate(card.badge, 20)
             badge_width = max(90, min(220, len(badge_text) * 8 + 26))
             badge_x = max(16, width - badge_width - 16)
+            badge_on_image = card.background_image is not None
+            badge_fill = "#0B111A" if badge_on_image else accent
+            badge_fill_opacity = "0.68" if badge_on_image else "0.36"
+            badge_stroke = accent if badge_on_image else "#FFFFFF"
+            badge_stroke_opacity = "0.86" if badge_on_image else "0.18"
             lines.append(
                 (
                     '<rect x="'
@@ -198,8 +209,9 @@ class SvgBlockRenderer:
                     '" y="16" width="'
                     f"{badge_width}"
                     '" height="24" rx="12" fill="'
-                    f"{accent}"
-                    '" fill-opacity="0.32" />'
+                    f"{badge_fill}"
+                    f'" fill-opacity="{badge_fill_opacity}" stroke="{badge_stroke}" '
+                    f'stroke-opacity="{badge_stroke_opacity}" stroke-width="1" />'
                 )
             )
             lines.append(
@@ -257,7 +269,9 @@ class SvgBlockRenderer:
             meta = " · ".join(self._truncate(item, 28) for item in card.meta[:3])
             lines.append(
                 (
-                    '<text class="card-meta" x="18" y="'
+                    '<text class="card-meta" x="'
+                    f"{title_x}"
+                    '" y="'
                     f"{self.card_height - 18}"
                     '">'
                     f"{self._esc(meta)}"

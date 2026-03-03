@@ -1,5 +1,6 @@
 """Tests for README dynamic section generation."""
 
+import re
 from typing import Optional
 from pathlib import Path
 
@@ -107,6 +108,39 @@ class TestRendering:
         svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
         assert 'class="card-icon"' in svg
         assert 'class="card-badge"' in svg
+
+    def test_top_contact_svg_meta_avoids_full_profile_urls(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            social_links=[
+                ReadmeSocialLink(
+                    label="LinkedIn",
+                    url="https://linkedin.com/in/wyattowalsh",
+                    color="0A66C2",
+                    logo="linkedin",
+                ),
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                ),
+            ],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+
+        generator._render_top_badges()
+
+        svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
+        meta_lines = re.findall(r'<text class="card-meta"[^>]*>([^<]+)</text>', svg)
+
+        assert meta_lines
+        assert all("://" not in value for value in meta_lines)
 
     def test_badge_logo_url_is_embedded_as_data_uri(self, monkeypatch) -> None:
         settings = ReadmeSectionsSettings()
@@ -423,6 +457,68 @@ class TestReadmeInjection:
         assert "<!-- BLOG-POST-LIST:END -->" in content
         assert "before" in content
         assert "after" in content
+
+    def test_blog_svg_embed_survives_blog_list_refresh(self, tmp_path: Path) -> None:
+        readme_path = tmp_path / "README.md"
+        readme_path.write_text(
+            "before\n"
+            "<!-- README:TOP_BADGES:START -->\n"
+            "old top\n"
+            "<!-- README:TOP_BADGES:END -->\n"
+            "<!-- README:FEATURED_PROJECTS:START -->\n"
+            "old projects\n"
+            "<!-- README:FEATURED_PROJECTS:END -->\n"
+            "<!-- README:BLOG_POSTS:START -->\n"
+            "old posts\n"
+            "<!-- README:BLOG_POSTS:END -->\n"
+            "after\n",
+            encoding="utf-8",
+        )
+        settings = ReadmeSectionsSettings(
+            readme_path=str(readme_path),
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+                top_contact=False,
+                featured_projects=False,
+                blog_posts=True,
+            ),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(
+                [BlogPost(title="First Post", url="https://w4w.dev/blog/first")]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/first": {
+                        "hero_image": "https://w4w.dev/img/first.png",
+                        "summary": "A deep dive into data art.",
+                        "published": "2026-02-20",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
+        )
+
+        generator.generate()
+
+        generated = readme_path.read_text(encoding="utf-8")
+        refreshed = re.sub(
+            r"<!-- BLOG-POST-LIST:START -->.*?<!-- BLOG-POST-LIST:END -->",
+            (
+                "<!-- BLOG-POST-LIST:START -->\n"
+                "- [Fresh Post](https://w4w.dev/blog/fresh)\n"
+                "<!-- BLOG-POST-LIST:END -->"
+            ),
+            generated,
+            flags=re.DOTALL,
+        )
+
+        assert "blog-posts.svg" in generated
+        assert "blog-posts.svg" in refreshed
 
     def test_generate_respects_svg_feature_toggles(
         self, tmp_path: Path

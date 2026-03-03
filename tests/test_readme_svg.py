@@ -66,6 +66,45 @@ class TestSvgBlockRenderer:
         assert 'href="https://example.com/opengraph.png"' in svg
         assert 'class="sparkline"' in svg
 
+    def test_render_uses_stronger_readability_defaults_for_image_cards(self) -> None:
+        renderer = SvgBlockRenderer(width=480, card_height=160, padding=18)
+        block = SvgBlock(
+            title="Visuals",
+            cards=(
+                SvgCard(
+                    title="Repo",
+                    lines=("Background preview",),
+                    meta=("★ 42",),
+                    background_image="https://example.com/opengraph.png",
+                    badge="Featured Project",
+                ),
+            ),
+            columns=1,
+        )
+
+        svg = renderer.render(block)
+        image_opacity_match = re.search(
+            r'<image[^>]+opacity="([0-9.]+)"', svg
+        )
+        top_gradient_match = re.search(
+            r'<stop offset="0%" stop-color="#0B111A" stop-opacity="([0-9.]+)"',
+            svg,
+        )
+        badge_opacity_match = re.search(
+            r'height="24" rx="12" fill="[^"]+" fill-opacity="([0-9.]+)"',
+            svg,
+        )
+        badge_fill_match = re.search(r"\.card-badge \{ fill: ([^;]+);", svg)
+
+        assert image_opacity_match is not None
+        assert top_gradient_match is not None
+        assert badge_opacity_match is not None
+        assert badge_fill_match is not None
+        assert float(image_opacity_match.group(1)) < 0.52
+        assert float(top_gradient_match.group(1)) > 0.12
+        assert float(badge_opacity_match.group(1)) > 0.32
+        assert badge_fill_match.group(1).strip() == "#FFFFFF"
+
     def test_render_uses_stable_unique_clip_ids(self) -> None:
         renderer = SvgBlockRenderer(width=640, card_height=160, padding=16)
         block = SvgBlock(
