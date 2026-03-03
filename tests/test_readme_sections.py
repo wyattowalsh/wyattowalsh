@@ -106,7 +106,7 @@ class TestRendering:
         assert ".github/assets/img/gh.gif" not in html
         assert (tmp_path / "svg" / "top-contact.svg").exists()
         svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
-        assert 'class="card-icon"' in svg
+        assert svg.count('class="card-icon-image"') == 3
         assert 'class="card-badge"' in svg
 
     def test_top_contact_svg_meta_avoids_full_profile_urls(
@@ -141,6 +141,66 @@ class TestRendering:
 
         assert meta_lines
         assert all("://" not in value for value in meta_lines)
+
+    def test_top_contact_cards_include_brand_icon_payloads_for_known_networks(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            social_links=[
+                ReadmeSocialLink(
+                    label="LinkedIn",
+                    url="https://linkedin.com/in/wyattowalsh",
+                    color="0A66C2",
+                    logo="linkedin",
+                ),
+                ReadmeSocialLink(
+                    label="Kaggle",
+                    url="https://kaggle.com/wyattowalsh",
+                    color="20BEFF",
+                    logo="kaggle",
+                ),
+                ReadmeSocialLink(
+                    label="X",
+                    url="https://x.com/wyattowalsh",
+                    color="000000",
+                    logo="x",
+                ),
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                ),
+            ],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_top_badges()
+
+        assert captured.get("asset_name") == "top-contact"
+        block = captured["block"]
+        cards_by_title = {card.title: card for card in block.cards}
+        for label in ("LinkedIn", "Kaggle", "X", "GitHub"):
+            assert (
+                getattr(cards_by_title[label], "icon_data_uri", None) is not None
+            ), f"{label} should provide icon_data_uri in top contact cards"
 
     def test_badge_logo_url_is_embedded_as_data_uri(self, monkeypatch) -> None:
         settings = ReadmeSectionsSettings()
@@ -260,6 +320,31 @@ class TestRendering:
         assert "data:image/png;base64," in svg
         assert "opengraph.githubassets.com" not in svg
 
+    def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient({}),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        html = generator._render_featured_projects()
+
+        assert "Unable to fetch repository metadata." not in html
+        assert "Live stats are temporarily unavailable" in html
+        assert "open repository for details" in html
+        svg = (tmp_path / "svg" / "featured-projects.svg").read_text(
+            encoding="utf-8"
+        )
+        assert "Unable to fetch repository metadata." not in svg
+        assert "Live stats are temporarily unavailable." in svg
+
     def test_blog_posts_render_svg_cards_with_metadata(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
@@ -309,6 +394,109 @@ class TestRendering:
         assert svg_path.exists()
         svg = svg_path.read_text(encoding="utf-8")
         assert svg.count('class="card"') == 2
+        assert svg.count('class="card-icon-image"') == 2
+
+    def test_featured_project_card_composition_sets_icon_data_uri_when_available(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
+            star_history_client=StubStarHistoryClient(
+                {"wyattowalsh/riso": [0, 1, 3, 5, 8]}
+            ),
+        )
+        monkeypatch.setattr(
+            generator,
+            "_repo_background_image",
+            lambda repo_full_name, metadata: None,
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_featured_projects()
+
+        assert captured.get("asset_name") == "featured-projects"
+        block = captured["block"]
+        assert getattr(block.cards[0], "icon_data_uri", None) is not None
+
+    def test_blog_card_composition_sets_icon_data_uri_when_available(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(
+                [BlogPost(title="GitHub Changelog", url="https://github.com/blog/post")]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://github.com/blog/post": {
+                        "hero_image": None,
+                        "summary": "Platform update",
+                        "published": "2026-03-01",
+                        "host": "github.com",
+                    }
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_blog_posts()
+
+        assert captured.get("asset_name") == "blog-posts"
+        block = captured["block"]
+        assert getattr(block.cards[0], "icon_data_uri", None) is not None
 
 
 class TestRemoteFetchSafety:

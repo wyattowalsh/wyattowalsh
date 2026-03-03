@@ -427,18 +427,24 @@ class ReadmeSectionGenerator:
                 else "Open profile"
             )
             meta_line = host or (f"@{handle}" if handle else parsed.scheme or "profile")
-            svg_cards.append(
-                SvgCard(
-                    title=link.label,
-                    kicker=self._social_kicker(link.url),
-                    lines=(line_one, line_two),
-                    meta=(meta_line,),
-                    url=link.url,
-                    icon=self._social_icon(link.label),
-                    badge=self._social_personality_badge(link.url),
-                    accent=link.color,
-                )
+            card = SvgCard(
+                title=link.label,
+                kicker=self._social_kicker(link.url),
+                lines=(line_one, line_two),
+                meta=(meta_line,),
+                url=link.url,
+                icon=self._social_icon(link.label),
+                badge=self._social_personality_badge(link.url),
+                accent=link.color,
             )
+            self._set_card_icon_data_uri(
+                card,
+                url=link.url,
+                host=host,
+                label=link.label,
+                accent=link.color,
+            )
+            svg_cards.append(card)
         columns = min(4, max(1, len(svg_cards))) if svg_cards else 1
         block = SvgBlock(
             title="Connect & Contact",
@@ -490,6 +496,111 @@ class ReadmeSectionGenerator:
         if parsed.scheme == "mailto":
             return "Direct Contact"
         return parsed.netloc.replace("www.", "") or "Profile"
+
+    def _set_card_icon_data_uri(
+        self,
+        card: SvgCard,
+        *,
+        url: Optional[str] = None,
+        host: Optional[str] = None,
+        label: Optional[str] = None,
+        accent: Optional[str] = None,
+    ) -> None:
+        icon_data_uri = self._brand_icon_data_uri(
+            url=url,
+            host=host,
+            label=label,
+            accent=accent,
+        )
+        if icon_data_uri:
+            object.__setattr__(card, "icon_data_uri", icon_data_uri)
+
+    def _brand_icon_data_uri(
+        self,
+        *,
+        url: Optional[str] = None,
+        host: Optional[str] = None,
+        label: Optional[str] = None,
+        accent: Optional[str] = None,
+    ) -> Optional[str]:
+        normalized_host = (host or "").strip().replace("www.", "").lower()
+        if not normalized_host and url:
+            normalized_host = (
+                urlparse(url).netloc.strip().replace("www.", "").lower()
+            )
+
+        accent_hex = (
+            accent.lstrip("#")
+            if accent and re.fullmatch(r"[0-9a-fA-F]{6}", accent.lstrip("#"))
+            else None
+        )
+
+        glyph: Optional[str] = None
+        background: Optional[str] = None
+        foreground: Optional[str] = None
+        if normalized_host.endswith("linkedin.com"):
+            background, foreground = ("0A66C2", "FFFFFF")
+            glyph = (
+                f"<circle cx='21.5' cy='19.5' r='4.5' fill='#{foreground}'/>"
+                f"<rect x='17' y='27' width='9' height='20' rx='2' fill='#{foreground}'/>"
+                f"<path d='M34 27h8v3.2c1.5-2.2 3.9-3.8 7.4-3.8 7.3 0 8.6 4.8 8.6 11.2V47h-9v-6.6c0-3.4-.6-5.8-3.4-5.8-2.9 0-4.1 2.1-4.1 5.8V47h-8.5z' fill='#{foreground}'/>"
+            )
+        elif normalized_host.endswith("kaggle.com"):
+            background, foreground = ("20BEFF", "062F40")
+            glyph = (
+                f"<path d='M20 15h7v15.4L38.2 15h9.2L34 31.4 47.6 49h-9.3L27 34.2V49h-7z' fill='#{foreground}'/>"
+            )
+        elif normalized_host.endswith("x.com") or normalized_host.endswith(
+            "twitter.com"
+        ):
+            background, foreground = ("000000", "FFFFFF")
+            glyph = (
+                f"<path d='M15 15h10.5l8.6 11.7L43.3 15H53L38.9 32.2 53.2 49H42.7l-9.4-12.1L23.6 49H14l14.4-17.6z' fill='#{foreground}'/>"
+            )
+        elif normalized_host.endswith("github.com"):
+            background, foreground = ("181717", "FFFFFF")
+            glyph = (
+                f"<path d='M22.5 24 18 16m23.5 8L46 16' stroke='#{foreground}' stroke-width='3.8' stroke-linecap='round' fill='none'/>"
+                f"<circle cx='32' cy='34' r='13' fill='#{foreground}'/>"
+                f"<circle cx='27.2' cy='33' r='1.7' fill='#{background}'/>"
+                f"<circle cx='36.8' cy='33' r='1.7' fill='#{background}'/>"
+                f"<path d='M27.8 39.3c1.2 1.2 7.2 1.2 8.4 0' stroke='#{background}' stroke-width='2.1' stroke-linecap='round' fill='none'/>"
+            )
+        elif normalized_host.endswith("w4w.dev"):
+            background, foreground = ("0F172A", "22D3EE")
+            glyph = (
+                f"<path d='M11 44 19 20 27 44 35 20 43 44 51 20' stroke='#{foreground}' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/>"
+                f"<circle cx='19' cy='20' r='2.6' fill='#{foreground}'/>"
+                f"<circle cx='35' cy='20' r='2.6' fill='#{foreground}'/>"
+                f"<circle cx='51' cy='20' r='2.6' fill='#{foreground}'/>"
+            )
+        elif (url and urlparse(url).scheme == "mailto") or (
+            label and "email" in label.lower()
+        ):
+            background, foreground = (accent_hex or "EA4335", "FFFFFF")
+            glyph = (
+                f"<rect x='12' y='20' width='40' height='24' rx='4' fill='none' stroke='#{foreground}' stroke-width='3'/>"
+                f"<path d='M14 23.5 32 35l18-11.5' fill='none' stroke='#{foreground}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/>"
+            )
+        elif normalized_host or label:
+            background, foreground = (accent_hex or "334155", "E2E8F0")
+            glyph = (
+                f"<circle cx='32' cy='32' r='13' fill='none' stroke='#{foreground}' stroke-width='3'/>"
+                f"<path d='M19 32h26M32 19.5c4.2 4.4 4.2 20.6 0 25M32 19.5c-4.2 4.4-4.2 20.6 0 25' stroke='#{foreground}' stroke-width='2.4' stroke-linecap='round' fill='none'/>"
+            )
+        if not glyph or not background or not foreground:
+            return None
+
+        icon_svg = (
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+            f"<rect width='64' height='64' rx='14' fill='#{background}'/>"
+            f"{glyph}"
+            "</svg>"
+        )
+        return (
+            "data:image/svg+xml;base64,"
+            + base64.b64encode(icon_svg.encode("utf-8")).decode("ascii")
+        )
 
     def _render_featured_projects(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -556,15 +667,24 @@ class ReadmeSectionGenerator:
         if metadata is None:
             repo_url = f"https://github.com/{repo_full_name}"
             repo_name = repo_full_name.split("/")[-1]
-            return SvgCard(
+            card = SvgCard(
                 title=repo_name,
                 kicker=repo_full_name,
-                lines=("Unable to fetch repository metadata.",),
-                meta=("GitHub",),
+                lines=(
+                    "Live stats are temporarily unavailable.",
+                    "Open the repository for full details.",
+                ),
+                meta=("GitHub repository",),
                 url=repo_url,
                 badge="Featured",
                 icon=repo_name[:2].upper(),
             )
+            self._set_card_icon_data_uri(
+                card,
+                url=repo_url,
+                label=repo_name,
+            )
+            return card
 
         description = metadata.description or "No description provided."
         lines: list[str] = [description]
@@ -581,7 +701,7 @@ class ReadmeSectionGenerator:
             info_bits.append(f"Updated {updated}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
         accent = self._repo_accent_color(metadata)
-        return SvgCard(
+        card = SvgCard(
             title=metadata.name,
             kicker=repo_full_name,
             lines=tuple(lines),
@@ -593,6 +713,13 @@ class ReadmeSectionGenerator:
             badge="Featured Project",
             accent=accent,
         )
+        self._set_card_icon_data_uri(
+            card,
+            url=metadata.html_url,
+            label=metadata.name,
+            accent=accent,
+        )
+        return card
 
     def _render_blog_posts(self) -> str:
         posts = self.blog_client.fetch_latest_posts(
@@ -648,19 +775,25 @@ class ReadmeSectionGenerator:
             if published:
                 card_meta.append(f"Published {published[:10]}")
             accent = "06B6D4" if "w4w.dev" in (host or "") else "60A5FA"
-            svg_cards.append(
-                SvgCard(
-                    title=post.title,
-                    kicker=f"{host or 'blog'} update",
-                    lines=(summary,),
-                    meta=tuple(card_meta),
-                    url=post.url,
-                    background_image=metadata.get("hero_image"),
-                    icon=(host or "BL")[:2].upper(),
-                    badge="Blog Post",
-                    accent=accent,
-                )
+            card = SvgCard(
+                title=post.title,
+                kicker=f"{host or 'blog'} update",
+                lines=(summary,),
+                meta=tuple(card_meta),
+                url=post.url,
+                background_image=metadata.get("hero_image"),
+                icon=(host or "BL")[:2].upper(),
+                badge="Blog Post",
+                accent=accent,
             )
+            self._set_card_icon_data_uri(
+                card,
+                url=post.url,
+                host=host,
+                label=post.title,
+                accent=accent,
+            )
+            svg_cards.append(card)
             meta_bits = [bit for bit in card_meta if bit]
             line = f"- [{escape(post.title)}]({escape(post.url)})"
             if meta_bits:
@@ -730,7 +863,7 @@ class ReadmeSectionGenerator:
             repo_url = f"https://github.com/{repo_full_name}"
             return (
                 f"- [{escape(repo_name)}]({escape(repo_url)}) "
-                "— Unable to fetch repository metadata."
+                "— Live stats are temporarily unavailable; open repository for details."
             )
         description = metadata.description or "No description provided."
         return (

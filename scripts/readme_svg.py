@@ -24,6 +24,7 @@ class SvgCard:
     background_image: str | None = None
     sparkline: tuple[float, ...] | None = None
     icon: str | None = None
+    icon_data_uri: str | None = None
     badge: str | None = None
     accent: str | None = None
 
@@ -168,17 +169,45 @@ class SvgBlockRenderer:
 
         title_x = 18
         title_y = 44
-        if card.icon:
+        monogram = self._truncate((card.icon or "").upper(), 3)
+        icon_data_uri = self._sanitize_icon_data_uri(card.icon_data_uri)
+        if icon_data_uri or monogram:
             lines.append(
                 '<circle cx="36" cy="36" r="18" fill="'
                 f"{accent}"
-                '" fill-opacity="0.30" />'
+                '" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" '
+                'stroke-width="1" />'
             )
             lines.append(
-                '<text class="card-icon" x="36" y="41" text-anchor="middle">'
-                f"{self._esc(self._truncate(card.icon.upper(), 3))}"
-                "</text>"
+                '<circle cx="36" cy="36" r="13.5" fill="#0B111A" '
+                'fill-opacity="0.64" />'
             )
+            if icon_data_uri:
+                icon_clip_id = f"icon-clip-{card_index}"
+                lines.append(
+                    "<defs>"
+                    f'<clipPath id="{icon_clip_id}">'
+                    '<circle cx="36" cy="36" r="13.5" />'
+                    "</clipPath>"
+                    "</defs>"
+                )
+                lines.append(
+                    '<image class="card-icon-image" href="'
+                    f"{self._esc(icon_data_uri)}"
+                    '" x="22.5" y="22.5" width="27" height="27" '
+                    'preserveAspectRatio="xMidYMid meet" '
+                    f'clip-path="url(#{icon_clip_id})" />'
+                )
+                lines.append(
+                    '<circle cx="36" cy="36" r="13.5" fill="none" '
+                    'stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />'
+                )
+            elif monogram:
+                lines.append(
+                    '<text class="card-icon" x="36" y="41" text-anchor="middle">'
+                    f"{self._esc(monogram)}"
+                    "</text>"
+                )
             title_x = 62
 
         if card.kicker:
@@ -321,6 +350,19 @@ class SvgBlockRenderer:
         if re.fullmatch(r"#?[0-9A-Fa-f]{6}", cleaned):
             return f"#{cleaned.lstrip('#')}"
         return "#60A5FA"
+
+    def _sanitize_icon_data_uri(self, value: str | None) -> str | None:
+        if not value:
+            return None
+        cleaned = value.strip()
+        if len(cleaned) > 32768:
+            return None
+        if re.fullmatch(
+            r"data:image/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+",
+            cleaned,
+        ):
+            return cleaned
+        return None
 
 
 class SvgAssetWriter:

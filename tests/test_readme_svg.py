@@ -13,6 +13,41 @@ from scripts.readme_svg import (
 
 
 class TestSvgBlockRenderer:
+    def test_svg_card_declares_icon_data_uri_payload_field(self) -> None:
+        assert "icon_data_uri" in SvgCard.__dataclass_fields__
+
+    def test_render_supports_image_icon_chip_with_monogram_fallback(self) -> None:
+        renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
+        with_image = SvgCard(
+            title="GitHub",
+            lines=("https://github.com/wyattowalsh",),
+            url="https://github.com/wyattowalsh",
+            icon="GH",
+            accent="181717",
+        )
+        object.__setattr__(
+            with_image,
+            "icon_data_uri",
+            "data:image/svg+xml;base64,PHN2Zy8+",
+        )
+        fallback_only = SvgCard(
+            title="Kaggle",
+            lines=("https://kaggle.com/wyattowalsh",),
+            icon="KG",
+            accent="20BEFF",
+        )
+        block = SvgBlock(
+            title="Connect",
+            cards=(with_image, fallback_only),
+            columns=2,
+        )
+
+        svg = renderer.render(block)
+
+        assert 'class="card-icon-image"' in svg
+        assert 'href="data:image/svg+xml;base64,PHN2Zy8+"' in svg
+        assert ">KG</text>" in svg
+
     def test_render_outputs_svg_markup(self) -> None:
         renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
         block = SvgBlock(

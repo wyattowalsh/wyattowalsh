@@ -21,8 +21,11 @@
 <image href="https://w4w.dev/proxywhirl-hero.svg" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.16" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" />
-<text class="card-icon" x="36" y="41" text-anchor="middle">W4</text>
+<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 <text class="card-kicker" x="62" y="22">w4w.dev update</text>
 <rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
 <text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
@@ -38,8 +41,11 @@
 <image href="https://w4w.dev/old.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-1)" opacity="0.16" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" />
-<text class="card-icon" x="36" y="41" text-anchor="middle">W4</text>
+<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-1"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-1)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 <text class="card-kicker" x="62" y="22">w4w.dev update</text>
 <rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
 <text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
@@ -55,8 +61,11 @@
 <image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-2)" opacity="0.16" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" />
-<text class="card-icon" x="36" y="41" text-anchor="middle">W4</text>
+<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-2"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-2)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 <text class="card-kicker" x="62" y="22">w4w.dev update</text>
 <rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
 <text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
@@ -72,8 +81,11 @@
 <image href="https://w4w.dev/ridge.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-3)" opacity="0.16" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" />
-<text class="card-icon" x="36" y="41" text-anchor="middle">W4</text>
+<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-3"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-3)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 <text class="card-kicker" x="62" y="22">w4w.dev update</text>
 <rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
 <text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
@@ -89,8 +101,11 @@
 <image href="https://w4w.dev/lasso.webp" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-4)" opacity="0.16" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />
-<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" />
-<text class="card-icon" x="36" y="41" text-anchor="middle">W4</text>
+<circle cx="36" cy="36" r="18" fill="#06B6D4" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-4"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-4)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 <text class="card-kicker" x="62" y="22">w4w.dev update</text>
 <rect x="930" y="16" width="98" height="24" rx="12" fill="#0B111A" fill-opacity="0.68" stroke="#06B6D4" stroke-opacity="0.86" stroke-width="1" />
 <text class="card-badge" x="979.0" y="32" text-anchor="middle">Blog Post</text>
