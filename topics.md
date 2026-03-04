@@ -97,6 +97,7 @@
 - [ethereum](#ethereum)
 - [express](#express)
 - [facebook](#facebook)
+- [fastapi](#fastapi)
 - [finance](#finance)
 - [firebase](#firebase)
 - [firefox](#firefox)
@@ -995,7 +996,7 @@
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Cowork, and beyond.
 - [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code. Claude Code is powerful. Pilot Shell makes it reliable. Start a task, grab a coffee, come back to production-grade code. Tests enforced. Conte
 - [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
-- [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) - A lightweight alternative to OpenClaw that runs in containers for security. Connects to WhatsApp, Telegram, Slack and other messaging apps,, has memory, scheduled jobs, and runs directly on Anthropic'
+- [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) - A lightweight alternative to OpenClaw that runs in containers for security. Connects to WhatsApp, Telegram, Slack, Discord, Gmail and other messaging apps,, has memory, scheduled jobs, and runs direct
 - [cafferychen777/gmail-mcp](https://github.com/cafferychen777/gmail-mcp) - Gmail automation via a Chrome extension + Model Context Protocol (MCP). Control Gmail from Claude Desktop. No API keys. Free.
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
 - [Yeachan-Heo/oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) - Teams-first Multi-agent orchestration for Claude Code
@@ -4383,6 +4384,41 @@
 - [atulmy/oauth](https://github.com/atulmy/oauth) - 🔗  OAuth 2.0 implementation for various providers in one place.
 - [bharathgs/Awesome-pytorch-list](https://github.com/bharathgs/Awesome-pytorch-list) - A comprehensive list of pytorch related content on github,such as different models,implementations,helper libraries,tutorials etc.
 - [nathancy/jekyll-embed-video](https://github.com/nathancy/jekyll-embed-video) - Embed videos in Jekyll webpages without a plugin (Youtube, Vimeo, Twitch, Facebook, Instagram, Twitter, TikTok, Streamable, Google Drive clips + more)
+
+## fastapi 
+
+- [sahibzada-allahyar/YC-Killer](https://github.com/sahibzada-allahyar/YC-Killer) - A library of enterprise-grade AI agents designed to democratize artificial intelligence and provide free, open-source alternatives to overvalued Y Combinator startups. If you are excited about democra
+- [Onelevenvy/flock](https://github.com/Onelevenvy/flock) - Flock is a workflow-based low-code platform for rapidly building chatbots, RAG, and coordinating multi-agent teams, powered by LangGraph, Langchain, FastAPI, and NextJS.（Flock 是一个基于workflow工作流的低代码平台，用
+- [NicholasGoh/fastapi-mcp-langgraph-template](https://github.com/NicholasGoh/fastapi-mcp-langgraph-template) - A modern template for agentic orchestration — built for rapid iteration and scalable deployment using highly customizable, community-supported tools like MCP, LangGraph, and more.
+- [MODSetter/SurfSense](https://github.com/MODSetter/SurfSense) - Open source alternative to NotebookLM for teams. Join our Discord: https://discord.gg/ejRNvftDp9
+- [Nirikshan95/VettIQ](https://github.com/Nirikshan95/VettIQ) - VettIQ is an AI-powered startup idea validation tool that leverages LangGraph workflows, FastAPI, and Streamlit to deliver actionable insights for entrepreneurs
+- [ScrapeGraphAI/scrapecraft](https://github.com/ScrapeGraphAI/scrapecraft) - 🤖 AI-powered web scraping editor with visual workflow builder. Build, test & deploy web scrapers using natural language. Powered by ScrapeGraphAI & LangGraph.
+- [mjhea0/awesome-fastapi](https://github.com/mjhea0/awesome-fastapi) - A curated list of awesome things related to FastAPI
+- [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) - An AI Gateway, registry, and proxy that sits in front of any MCP, A2A, or REST/gRPC APIs, exposing a unified endpoint with centralized discovery, guardrails and management. Optimizes Agent & Tool call
+- [cploutarchou/mcp-servers](https://github.com/cploutarchou/mcp-servers) - Production-ready Model Context Protocol (MCP) servers in Python, Go, and Rust for VS Code integration. Enables AI systems to interact with tools via standardized interfaces.
+- [tadata-org/fastapi_mcp](https://github.com/tadata-org/fastapi_mcp) - Expose your FastAPI endpoints as Model Context Protocol (MCP) tools, with Auth!
+- [polarsource/polar](https://github.com/polarsource/polar) - Turn your software into a business.
+- [Malith-Rukshan/Suno-API](https://github.com/Malith-Rukshan/Suno-API) - SunoAI Unofficial Python API Library and REST API for Suno.ai — Create Music with Generative AI ! ✨
+- [langchain-ai/langchain-extract](https://github.com/langchain-ai/langchain-extract) - 🦜⛏️ Did you say you like data?
+- [msoedov/langcorn](https://github.com/msoedov/langcorn) - ⛓️ Serving LangChain LLM apps and agents automagically with FastApi. LLMops
+- [rashadphz/farfalle](https://github.com/rashadphz/farfalle) - 🔍 AI search engine - self-host with local or cloud LLMs
+- [adithya-s-k/marker-api](https://github.com/adithya-s-k/marker-api) - Easily deployable 🚀 API to convert PDF to markdown quickly with high accuracy.
+- [ajndkr/lanarky](https://github.com/ajndkr/lanarky) - The web framework for building LLM microservices [deprecated]
+- [langchain-ai/langserve](https://github.com/langchain-ai/langserve) - LangServe 🦜️🏓
+- [zhanymkanov/fastapi-best-practices](https://github.com/zhanymkanov/fastapi-best-practices) - FastAPI Best Practices and Conventions we used at our startup
+- [fastapi/sqlmodel](https://github.com/fastapi/sqlmodel) - SQL databases in Python, designed for simplicity, compatibility, and robustness.
+- [koxudaxi/fastapi-code-generator](https://github.com/koxudaxi/fastapi-code-generator) - This code generator creates FastAPI app from an openapi file.
+- [strawberry-graphql/strawberry](https://github.com/strawberry-graphql/strawberry) - A GraphQL library for Python that leverages type annotations 🍓
+- [waseemhnyc/instagraph-nextjs-fastapi](https://github.com/waseemhnyc/instagraph-nextjs-fastapi) - Generate knowledge graphs. Inspired by @yoheinakajima instagraph.ai
+- [openapi-generators/openapi-python-client](https://github.com/openapi-generators/openapi-python-client) - Generate modern Python clients from OpenAPI
+- [ebhy/budgetml](https://github.com/ebhy/budgetml) - Deploy a ML inference service on a budget in less than 10 lines of code.
+- [supabase/supabase-py](https://github.com/supabase/supabase-py) - Python Client for Supabase. Query Postgres from Flask, Django, FastAPI. Python user authentication, security policies, edge functions, file storage, and realtime data streaming. Good first issue.
+- [Buuntu/fastapi-react](https://github.com/Buuntu/fastapi-react) - 🚀   Cookiecutter Template for FastAPI + React Projects.  Using PostgreSQL, SQLAlchemy, and Docker
+- [fastapi/full-stack-fastapi-template](https://github.com/fastapi/full-stack-fastapi-template) - Full stack, modern web application template. Using FastAPI, React, SQLModel, PostgreSQL, Docker, GitHub Actions, automatic HTTPS and more.
+- [fastapi/fastapi](https://github.com/fastapi/fastapi) - FastAPI framework, high performance, easy to learn, fast to code, ready for production
+- [vicgalle/gpt-j-api](https://github.com/vicgalle/gpt-j-api) - API for the GPT-J language model 🦜. Including a FastAPI backend and a streamlit frontend
+- [jina-ai/serve](https://github.com/jina-ai/serve) - ☁️ Build multimodal AI applications with cloud-native stack
+- [ml-tooling/best-of-web-python](https://github.com/ml-tooling/best-of-web-python) - 🏆  A ranked list of awesome python libraries for web development. Updated weekly.
 
 ## finance 
 
@@ -9297,6 +9333,9 @@
 
 ## others 
 
+- [agentmail-to/agentmail-toolkit](https://github.com/agentmail-to/agentmail-toolkit) - 
+- [agentmail-to/agentmail-python](https://github.com/agentmail-to/agentmail-python) - 
+- [agentmail-to/agentmail-mcp](https://github.com/agentmail-to/agentmail-mcp) - 
 - [AgentWorkforce/relay](https://github.com/AgentWorkforce/relay) - Real-time agent to agent communication
 - [Sonico98/yazi-prompt.sh](https://github.com/Sonico98/yazi-prompt.sh) - Instructions to add an indicator when running a yazi subshell
 - [Shallow-Seek/modif.yazi](https://github.com/Shallow-Seek/modif.yazi) - 
@@ -11067,7 +11106,6 @@
 - [Azure-Samples/graphrag-accelerator](https://github.com/Azure-Samples/graphrag-accelerator) - One-click deploy of a Knowledge Graph powered RAG (GraphRAG) in Azure
 - [EmergenceAI/Agent-E](https://github.com/EmergenceAI/Agent-E) - Agent driven automation starting with the web. Try it: https://www.emergence.ai/web-automation-api
 - [TuringSoftware/CrystalFetch](https://github.com/TuringSoftware/CrystalFetch) - macOS UI for creating Windows installer ISO from UUPDump
-- [zhanymkanov/fastapi-best-practices](https://github.com/zhanymkanov/fastapi-best-practices) - FastAPI Best Practices and Conventions we used at our startup
 - [akebifiky/remark-simple-plantuml](https://github.com/akebifiky/remark-simple-plantuml) - A simple plugin for remarkjs that converts PlantUML code written in Markdown to img tags.
 - [wataru-chocola/remark-extended-table](https://github.com/wataru-chocola/remark-extended-table) - remark plugin to support table syntax allowing colspan / rowspan
 - [kevin940726/remark-code-import](https://github.com/kevin940726/remark-code-import) - 📝 Populate code blocks from files
@@ -13002,7 +13040,7 @@
 - [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) - Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - [m92vyas/llm-reader](https://github.com/m92vyas/llm-reader) - Turn Webpage to LLM friendly input text. Similar to Firecrawl and Jina Reader API. Makes RAG, AI web scraping, image & webpage links extraction easy.
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Open Source AI Platform - AI Chat with advanced features that works with every LLM
-- [tianlan-ltd/Magic-Insight](https://github.com/tianlan-ltd/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
+- [luguanglong/Magic-Insight](https://github.com/luguanglong/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
 - [sirmews/mcp-pinecone](https://github.com/sirmews/mcp-pinecone) - Model Context Protocol server to allow for reading and writing from Pinecone. Rudimentary RAG
 - [meilisearch/meilisearch-mcp](https://github.com/meilisearch/meilisearch-mcp) - A Model Context Protocol (MCP) server for interacting with Meilisearch through LLM interfaces.
 - [win4r/GraphRAG4OpenWebUI](https://github.com/win4r/GraphRAG4OpenWebUI) - GraphRAG4OpenWebUI integrates Microsoft's GraphRAG technology into Open WebUI, providing a versatile information retrieval API. It combines local, global, and web searches for advanced Q&A systems and
