@@ -8,6 +8,8 @@ from scripts.config import (
     ReadmeFeaturedRepo,
     ReadmeSectionsSettings,
     ReadmeSocialLink,
+    ReadmeSvgCardStyleSettings,
+    ReadmeSvgFamilyCardStyles,
     ReadmeSvgSettings,
 )
 from scripts.readme_sections import (
@@ -68,6 +70,14 @@ def assert_sanitizer_safe_section_embed(markup: str, expected_src: str) -> None:
     assert "&lt;style&gt;" not in markup
 
 
+def test_readme_svg_settings_default_card_styles_are_transparent_gh_card() -> None:
+    settings = ReadmeSvgSettings()
+
+    assert settings.card_styles.default.variant == "gh-card"
+    assert settings.card_styles.default.transparent_canvas is True
+    assert settings.card_styles.default.show_title is False
+
+
 class TestRendering:
     def test_top_badges_render_svg_contact_block(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -115,6 +125,42 @@ class TestRendering:
         assert all('class="card-kicker"' in svg for svg in svg_payloads)
         assert all('class="title"' not in svg for svg in svg_payloads)
         assert all('<rect width="100%" height="100%"' not in svg for svg in svg_payloads)
+
+    def test_top_badges_honor_configured_connect_card_style_switches(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+                card_styles=ReadmeSvgFamilyCardStyles(
+                    connect=ReadmeSvgCardStyleSettings(
+                        variant="legacy",
+                        transparent_canvas=False,
+                        show_title=True,
+                    )
+                ),
+            ),
+            social_links=[
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                ),
+            ],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+
+        generator._render_top_badges()
+
+        card_svgs = sorted((tmp_path / "svg").glob("top-contact-card-*.svg"))
+        assert len(card_svgs) == 1
+        svg = card_svgs[0].read_text(encoding="utf-8")
+
+        assert '<text class="title"' in svg
+        assert '<rect width="100%" height="100%"' in svg
+        assert 'data-card-variant="legacy"' in svg
 
     def test_top_contact_svg_meta_avoids_full_profile_urls(
         self, tmp_path: Path
@@ -365,6 +411,9 @@ class TestRendering:
         svg = card_svgs[0].read_text(encoding="utf-8")
         assert "Unable to fetch repository metadata." not in svg
         assert "Live stats are temporarily unavailable." in svg
+        assert 'class="card-chip"' in svg
+        assert svg.count('class="card-meta-row"') >= 2
+        assert "API metadata missing" in svg
 
     def test_blog_posts_render_svg_cards_with_metadata(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(

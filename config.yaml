@@ -71,3 +71,10 @@ readme_sections_settings:
     top_contact: true
     featured_projects: true
     blog_posts: true
+    # Optional per-family README card rendering overrides.
+    # variant: gh-card (default) | legacy
+    # card_styles:
+    #   default: {variant: gh-card, transparent_canvas: true, show_title: false}
+    #   connect: {}
+    #   featured: {}
+    #   blog: {}

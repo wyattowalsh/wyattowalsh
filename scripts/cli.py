@@ -49,6 +49,11 @@ class OutputFormat(str, Enum):
     YAML = "yaml"
 
 
+class ReadmeCardVariant(str, Enum):
+    GH_CARD = "gh-card"
+    LEGACY = "legacy"
+
+
 def _display_config(
     config_data: Union[ProjectConfig, AppSettings],
     output_format: OutputFormat = OutputFormat.JSON,
@@ -248,6 +253,94 @@ def generate(  # NOSONAR
     qr_background_path_cli: Annotated[
         Optional[Path],
         typer.Option("--qr-background-path", help="QR background SVG path."),
+    ] = None,
+    readme_default_card_variant_cli: Annotated[
+        Optional[ReadmeCardVariant],
+        typer.Option(
+            "--readme-default-card-variant",
+            help="Default README per-card SVG variant.",
+            case_sensitive=False,
+        ),
+    ] = None,
+    readme_default_card_transparent_canvas_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-default-card-transparent-canvas/--no-readme-default-card-transparent-canvas",
+            help="Default README per-card SVG canvas transparency.",
+        ),
+    ] = None,
+    readme_default_card_show_title_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-default-card-show-title/--no-readme-default-card-show-title",
+            help="Default README per-card SVG title visibility.",
+        ),
+    ] = None,
+    readme_connect_card_variant_cli: Annotated[
+        Optional[ReadmeCardVariant],
+        typer.Option(
+            "--readme-connect-card-variant",
+            help="Connect README per-card SVG variant.",
+            case_sensitive=False,
+        ),
+    ] = None,
+    readme_connect_card_transparent_canvas_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-connect-card-transparent-canvas/--no-readme-connect-card-transparent-canvas",
+            help="Connect README per-card SVG canvas transparency.",
+        ),
+    ] = None,
+    readme_connect_card_show_title_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-connect-card-show-title/--no-readme-connect-card-show-title",
+            help="Connect README per-card SVG title visibility.",
+        ),
+    ] = None,
+    readme_featured_card_variant_cli: Annotated[
+        Optional[ReadmeCardVariant],
+        typer.Option(
+            "--readme-featured-card-variant",
+            help="Featured README per-card SVG variant.",
+            case_sensitive=False,
+        ),
+    ] = None,
+    readme_featured_card_transparent_canvas_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-featured-card-transparent-canvas/--no-readme-featured-card-transparent-canvas",
+            help="Featured README per-card SVG canvas transparency.",
+        ),
+    ] = None,
+    readme_featured_card_show_title_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-featured-card-show-title/--no-readme-featured-card-show-title",
+            help="Featured README per-card SVG title visibility.",
+        ),
+    ] = None,
+    readme_blog_card_variant_cli: Annotated[
+        Optional[ReadmeCardVariant],
+        typer.Option(
+            "--readme-blog-card-variant",
+            help="Blog README per-card SVG variant.",
+            case_sensitive=False,
+        ),
+    ] = None,
+    readme_blog_card_transparent_canvas_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-blog-card-transparent-canvas/--no-readme-blog-card-transparent-canvas",
+            help="Blog README per-card SVG canvas transparency.",
+        ),
+    ] = None,
+    readme_blog_card_show_title_cli: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--readme-blog-card-show-title/--no-readme-blog-card-show-title",
+            help="Blog README per-card SVG title visibility.",
+        ),
     ] = None,
     # New flags for word cloud generation from specific markdown files
     from_topics_md_cli: Annotated[
@@ -871,7 +964,7 @@ def generate(  # NOSONAR
 
         for art_type in ["community", "activity"]:
             for dark in [False, True]:
-                suffix = f"-dark" if dark else ""
+                suffix = "-dark" if dark else ""
                 out = output_dir / f"generative-{art_type}{suffix}.svg"
                 if art_type == "community":
                     generate_community_art(metrics, dark_mode=dark, output_path=out)
@@ -947,13 +1040,78 @@ def generate(  # NOSONAR
         from .config import ReadmeSectionsSettings
         from .readme_sections import ReadmeSectionGenerator
 
+        readme_settings_raw = proj_config.readme_sections_settings
         readme_settings = (
-            proj_config.readme_sections_settings
-            or ReadmeSectionsSettings()
+            readme_settings_raw
+            if isinstance(readme_settings_raw, ReadmeSectionsSettings)
+            else ReadmeSectionsSettings.model_validate(readme_settings_raw or {})
         )
         if output_path_cli:
             readme_settings = readme_settings.model_copy(
                 update={"readme_path": str(output_path_cli)}
+            )
+
+        card_style_updates: dict[str, dict[str, Any]] = {}
+
+        def _collect_card_style_update(
+            family: str,
+            variant: Optional[ReadmeCardVariant],
+            transparent_canvas: Optional[bool],
+            show_title: Optional[bool],
+        ) -> None:
+            update: dict[str, Any] = {}
+            if variant is not None:
+                update["variant"] = variant.value
+            if transparent_canvas is not None:
+                update["transparent_canvas"] = transparent_canvas
+            if show_title is not None:
+                update["show_title"] = show_title
+            if update:
+                card_style_updates[family] = update
+
+        _collect_card_style_update(
+            "default",
+            readme_default_card_variant_cli,
+            readme_default_card_transparent_canvas_cli,
+            readme_default_card_show_title_cli,
+        )
+        _collect_card_style_update(
+            "connect",
+            readme_connect_card_variant_cli,
+            readme_connect_card_transparent_canvas_cli,
+            readme_connect_card_show_title_cli,
+        )
+        _collect_card_style_update(
+            "featured",
+            readme_featured_card_variant_cli,
+            readme_featured_card_transparent_canvas_cli,
+            readme_featured_card_show_title_cli,
+        )
+        _collect_card_style_update(
+            "blog",
+            readme_blog_card_variant_cli,
+            readme_blog_card_transparent_canvas_cli,
+            readme_blog_card_show_title_cli,
+        )
+
+        if card_style_updates:
+            current_styles = readme_settings.svg.card_styles
+            style_update_payload: dict[str, Any] = {}
+            for family, update in card_style_updates.items():
+                current_style = getattr(current_styles, family)
+                style_update_payload[family] = current_style.model_copy(
+                    update=update
+                )
+            readme_settings = readme_settings.model_copy(
+                update={
+                    "svg": readme_settings.svg.model_copy(
+                        update={
+                            "card_styles": current_styles.model_copy(
+                                update=style_update_payload
+                            )
+                        }
+                    )
+                }
             )
 
         generator = ReadmeSectionGenerator(settings=readme_settings)

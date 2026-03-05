@@ -19,17 +19,17 @@
 <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
 </defs>
 <g class="card" data-card-family="connect" data-card-variant="gh-card" data-connect-variant="gh-card" transform="translate(28,28)">
-<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect class="connect-card-shell" width="1044" height="140" rx="16" fill="#0F172A" fill-opacity="0.78" stroke="#0A66C2" stroke-opacity="0.58" />
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect class="connect-card-shell" width="1044" height="140" rx="16" fill="#0F172A" fill-opacity="0.78" stroke="#20BEFF" stroke-opacity="0.58" />
 <g class="connect-brand-lockup">
-<circle cx="36" cy="36" r="18.0" fill="#0A66C2" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="18.0" fill="#20BEFF" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
-<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwQTY2QzInLz48Y2lyY2xlIGN4PScyMS41JyBjeT0nMTkuNScgcj0nNC41JyBmaWxsPScjRkZGRkZGJy8+PHJlY3QgeD0nMTcnIHk9JzI3JyB3aWR0aD0nOScgaGVpZ2h0PScyMCcgcng9JzInIGZpbGw9JyNGRkZGRkYnLz48cGF0aCBkPSdNMzQgMjdoOHYzLjJjMS41LTIuMiAzLjktMy44IDcuNC0zLjggNy4zIDAgOC42IDQuOCA4LjYgMTEuMlY0N2gtOXYtNi42YzAtMy40LS42LTUuOC0zLjQtNS44LTIuOSAwLTQuMSAyLjEtNC4xIDUuOFY0N2gtOC41eicgZmlsbD0nI0ZGRkZGRicvPjwvc3ZnPg==" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMyMEJFRkYnLz48cGF0aCBkPSdNMjAgMTVoN3YxNS40TDM4LjIgMTVoOS4yTDM0IDMxLjQgNDcuNiA0OWgtOS4zTDI3IDM0LjJWNDloLTd6JyBmaWxsPScjMDYyRjQwJy8+PC9zdmc+" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 </g>
-<text class="card-kicker" x="62" y="22">Network</text>
-<text class="card-title" x="62" y="48">LinkedIn</text>
+<text class="card-kicker" x="62" y="22">Data</text>
+<text class="card-title" x="62" y="48">Kaggle</text>
 </a>
 </g>
 </svg>

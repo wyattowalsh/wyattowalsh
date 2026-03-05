@@ -19,7 +19,7 @@
 <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
 </defs>
 <g class="card" data-card-family="blog" data-card-variant="gh-card" transform="translate(28,28)">
-<a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">
 <rect width="1044" height="220" rx="16" fill="#0F172A" fill-opacity="0.22" stroke="#F59E0B" stroke-opacity="0.40" />
 <g class="card-brand-lockup">
 <circle cx="36" cy="36" r="18.0" fill="#F59E0B" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
@@ -28,9 +28,9 @@
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 </g>
-<text class="card-title" x="62" y="44"><tspan x="62">ProxyWhirl</tspan></text>
-<text class="card-line" x="62" y="70"><tspan x="62">Explore articles about software development, web technologies, and</tspan></text>
-<text class="card-line" x="62" y="92"><tspan x="62">technical insights</tspan></text>
+<text class="card-title" x="62" y="44"><tspan x="62">Using Ridge Regression to Overcome Drawbacks of</tspan><tspan x="62" dy="20">Ordinary Least Squares (OLS)</tspan></text>
+<text class="card-line" x="62" y="90"><tspan x="62">Explore articles about software development, web technologies, and</tspan></text>
+<text class="card-line" x="62" y="112"><tspan x="62">technical insights</tspan></text>
 <text class="card-meta" x="62" y="202">w4w.dev</text>
 </a>
 </g>

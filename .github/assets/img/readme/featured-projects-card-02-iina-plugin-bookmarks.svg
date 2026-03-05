@@ -19,10 +19,10 @@
 <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
 </defs>
 <g class="card" data-card-family="featured" data-card-variant="gh-card" transform="translate(28,28)">
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer">
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer">
 <rect width="1044" height="220" rx="16" fill="#0F172A" fill-opacity="0.33" stroke="#60A5FA" stroke-opacity="0.46" />
 <defs><clipPath id="clip-0"><rect width="1044" height="220" rx="16" /></clipPath></defs>
-<image class="card-hero-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMjAwIDIyMCc+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSdiZycgeDE9JzAlJyB5MT0nMCUnIHgyPScxMDAlJyB5Mj0nMTAwJSc+PHN0b3Agb2Zmc2V0PScwJScgc3RvcC1jb2xvcj0nIzBCMTExQScvPjxzdG9wIG9mZnNldD0nMTAwJScgc3RvcC1jb2xvcj0nIzYwQTVGQScgc3RvcC1vcGFjaXR5PScwLjM2Jy8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9J2dsb3cnIGN4PSc4MiUnIGN5PScyMCUnIHI9JzYwJSc+PHN0b3Agb2Zmc2V0PScwJScgc3RvcC1jb2xvcj0nIzYwQTVGQScgc3RvcC1vcGFjaXR5PScwLjM4Jy8+PHN0b3Agb2Zmc2V0PScxMDAlJyBzdG9wLWNvbG9yPScjMEIxMTFBJyBzdG9wLW9wYWNpdHk9JzAnLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nMTIwMCcgaGVpZ2h0PScyMjAnIGZpbGw9J3VybCgjYmcpJy8+PHJlY3Qgd2lkdGg9JzEyMDAnIGhlaWdodD0nMjIwJyBmaWxsPSd1cmwoI2dsb3cpJy8+PHRleHQgeD0nMjgnIHk9JzQwJyBmaWxsPScjNjBBNUZBJyBvcGFjaXR5PScwLjMyJyBmb250LXNpemU9JzIwJyBmb250LWZhbWlseT0ndWktc2Fucy1zZXJpZicgZm9udC13ZWlnaHQ9JzcwMCc+cGVyc29uYWwtd2Vic2l0ZTwvdGV4dD48L3N2Zz4=" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.40" />
+<image class="card-hero-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMjAwIDIyMCc+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSdiZycgeDE9JzAlJyB5MT0nMCUnIHgyPScxMDAlJyB5Mj0nMTAwJSc+PHN0b3Agb2Zmc2V0PScwJScgc3RvcC1jb2xvcj0nIzBCMTExQScvPjxzdG9wIG9mZnNldD0nMTAwJScgc3RvcC1jb2xvcj0nIzYwQTVGQScgc3RvcC1vcGFjaXR5PScwLjM2Jy8+PC9saW5lYXJHcmFkaWVudD48cmFkaWFsR3JhZGllbnQgaWQ9J2dsb3cnIGN4PSc4MiUnIGN5PScyMCUnIHI9JzYwJSc+PHN0b3Agb2Zmc2V0PScwJScgc3RvcC1jb2xvcj0nIzYwQTVGQScgc3RvcC1vcGFjaXR5PScwLjM4Jy8+PHN0b3Agb2Zmc2V0PScxMDAlJyBzdG9wLWNvbG9yPScjMEIxMTFBJyBzdG9wLW9wYWNpdHk9JzAnLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nMTIwMCcgaGVpZ2h0PScyMjAnIGZpbGw9J3VybCgjYmcpJy8+PHJlY3Qgd2lkdGg9JzEyMDAnIGhlaWdodD0nMjIwJyBmaWxsPSd1cmwoI2dsb3cpJy8+PHRleHQgeD0nMjgnIHk9JzQwJyBmaWxsPScjNjBBNUZBJyBvcGFjaXR5PScwLjMyJyBmb250LXNpemU9JzIwJyBmb250LWZhbWlseT0ndWktc2Fucy1zZXJpZicgZm9udC13ZWlnaHQ9JzcwMCc+aWluYS1wbHVnaW4tYm9va21hcmtzPC90ZXh0Pjwvc3ZnPg==" width="1044" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip-0)" opacity="0.40" />
 <rect width="1044" height="220" rx="16" fill="url(#cardGradient)" />
 <rect x="12" y="12" width="1020" height="88" rx="12" fill="#0B111A" fill-opacity="0.44" />
 <g class="card-brand-lockup">
@@ -32,8 +32,8 @@
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMxODE3MTcnLz48cGF0aCBkPSdNMjIuNSAyNCAxOCAxNm0yMy41IDhMNDYgMTYnIHN0cm9rZT0nI0ZGRkZGRicgc3Ryb2tlLXdpZHRoPSczLjgnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgZmlsbD0nbm9uZScvPjxjaXJjbGUgY3g9JzMyJyBjeT0nMzQnIHI9JzEzJyBmaWxsPScjRkZGRkZGJy8+PGNpcmNsZSBjeD0nMjcuMicgY3k9JzMzJyByPScxLjcnIGZpbGw9JyMxODE3MTcnLz48Y2lyY2xlIGN4PSczNi44JyBjeT0nMzMnIHI9JzEuNycgZmlsbD0nIzE4MTcxNycvPjxwYXRoIGQ9J00yNy44IDM5LjNjMS4yIDEuMiA3LjIgMS4yIDguNCAwJyBzdHJva2U9JyMxODE3MTcnIHN0cm9rZS13aWR0aD0nMi4xJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIGZpbGw9J25vbmUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
 <circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
 </g>
-<text class="card-kicker" x="62" y="22">wyattowalsh/personal-website</text>
-<text class="card-title" x="62" y="48">personal-website</text>
+<text class="card-kicker" x="62" y="22">wyattowalsh/iina-plugin-bookmarks</text>
+<text class="card-title" x="62" y="48">iina-plugin-bookmarks</text>
 <text class="card-line" x="62" y="74">Live stats are temporarily unavailable.</text>
 <text class="card-line" x="62" y="96">Open the repository for full details.</text>
 <rect class="card-chip" x="62" y="131" width="132" height="22" rx="12" />
