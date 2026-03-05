@@ -57,6 +57,8 @@ class SvgTextPolicy:
     line_limit: int | None
     max_lines: int = 3
     wrap_title_with_tspan: bool = False
+    title_wrap_chars: int = 52
+    title_max_lines: int = 1
     wrap_lines_with_tspan: bool = False
     line_wrap_chars: int = 72
     strip_update_suffix: bool = False
@@ -70,6 +72,7 @@ class SvgFamilyRenderPolicy:
     show_badge: bool = True
     hide_handle_lines: bool = False
     include_featured_details: bool = False
+    meta_item_limit: int = 28
 
 
 _FAMILY_RENDER_POLICIES: dict[SvgCardFamily, SvgFamilyRenderPolicy] = {
@@ -84,14 +87,18 @@ _FAMILY_RENDER_POLICIES: dict[SvgCardFamily, SvgFamilyRenderPolicy] = {
     SvgCardFamily.FEATURED: SvgFamilyRenderPolicy(
         text=SvgTextPolicy(title_limit=52, line_limit=72),
         include_featured_details=True,
+        meta_item_limit=38,
     ),
     SvgCardFamily.BLOG: SvgFamilyRenderPolicy(
         text=SvgTextPolicy(
             title_limit=None,
             line_limit=None,
             wrap_title_with_tspan=True,
+            title_wrap_chars=48,
+            title_max_lines=2,
             wrap_lines_with_tspan=True,
-            line_wrap_chars=64,
+            line_wrap_chars=72,
+            max_lines=5,
             strip_update_suffix=True,
         ),
         show_badge=False,
@@ -349,6 +356,19 @@ class SvgBlockRenderer:
 
         title = self._format_title(card.title, family_policy.text)
         if family_policy.text.wrap_title_with_tspan:
+            wrapped_title = self._wrap_text(
+                title,
+                max_chars=family_policy.text.title_wrap_chars,
+                max_lines=family_policy.text.title_max_lines,
+            )
+            title_tspans = "".join(
+                (
+                    f'<tspan x="{title_x}">{self._esc(segment)}</tspan>'
+                    if idx == 0
+                    else f'<tspan x="{title_x}" dy="20">{self._esc(segment)}</tspan>'
+                )
+                for idx, segment in enumerate(wrapped_title)
+            )
             lines.append(
                 (
                     '<text class="card-title" x="'
@@ -356,10 +376,11 @@ class SvgBlockRenderer:
                     '" y="'
                     f"{title_y}"
                     '">'
-                    f'<tspan x="{title_x}">{self._esc(title)}</tspan>'
+                    f"{title_tspans}"
                     "</text>"
                 )
             )
+            title_visual_lines = max(1, len(wrapped_title))
         else:
             lines.append(
                 (
@@ -372,15 +393,20 @@ class SvgBlockRenderer:
                     "</text>"
                 )
             )
+            title_visual_lines = 1
 
-        text_y = title_y + 26
+        text_y = title_y + 26 + max(0, title_visual_lines - 1) * 20
         visible_lines = self._visible_lines(card, family_policy)
-        for line in visible_lines[: family_policy.text.max_lines]:
+        remaining_line_slots = max(0, family_policy.text.max_lines)
+        for line in visible_lines:
+            if remaining_line_slots <= 0:
+                break
             line_copy = self._apply_limit(line, family_policy.text.line_limit)
             if family_policy.text.wrap_lines_with_tspan:
                 wrapped_lines = self._wrap_text(
                     line_copy,
                     max_chars=family_policy.text.line_wrap_chars,
+                    max_lines=remaining_line_slots,
                 )
                 tspans = "".join(
                     (
@@ -402,6 +428,7 @@ class SvgBlockRenderer:
                     )
                 )
                 text_y += 22 + max(0, len(wrapped_lines) - 1) * 18
+                remaining_line_slots -= len(wrapped_lines)
             else:
                 lines.append(
                     (
@@ -415,6 +442,7 @@ class SvgBlockRenderer:
                     )
                 )
                 text_y += 22
+                remaining_line_slots -= 1
 
         if card.sparkline and len(card.sparkline) >= 2:
             sparkline_path = self._sparkline_path(
@@ -431,7 +459,9 @@ class SvgBlockRenderer:
             )
 
         if card.meta:
-            meta = " · ".join(self._truncate(item, 28) for item in card.meta[:3])
+            meta = " · ".join(
+                self._truncate(item, family_policy.meta_item_limit) for item in card.meta[:3]
+            )
             lines.append(
                 (
                     '<text class="card-meta" x="'
@@ -535,21 +565,43 @@ class SvgBlockRenderer:
             return value
         return self._truncate(value, limit)
 
-    def _wrap_text(self, value: str, max_chars: int) -> tuple[str, ...]:
+    def _wrap_text(
+        self,
+        value: str,
+        max_chars: int,
+        max_lines: int | None = None,
+    ) -> tuple[str, ...]:
         words = value.split()
         if not words:
             return ("",)
+        normalized_words: list[str] = []
+        for word in words:
+            if len(word) <= max_chars:
+                normalized_words.append(word)
+                continue
+            normalized_words.extend(
+                word[idx : idx + max_chars] for idx in range(0, len(word), max_chars)
+            )
         wrapped: list[str] = []
-        current = words[0]
-        for word in words[1:]:
+        current = normalized_words[0]
+        for word in normalized_words[1:]:
             candidate = f"{current} {word}"
             if len(candidate) <= max_chars:
                 current = candidate
             else:
                 wrapped.append(current)
+                if max_lines is not None and len(wrapped) >= max_lines:
+                    return tuple(wrapped[:max_lines])
                 current = word
         wrapped.append(current)
-        return tuple(wrapped)
+        if len(wrapped) > 1 and len(wrapped[-1]) <= 3:
+            prev = wrapped[-2]
+            if len(prev) + len(wrapped[-1]) + 1 <= max_chars:
+                wrapped[-2] = f"{prev} {wrapped[-1]}"
+                wrapped.pop()
+        if max_lines is None:
+            return tuple(wrapped)
+        return tuple(wrapped[:max_lines])
 
     def _truncate(self, value: str, limit: int) -> str:
         return value if len(value) <= limit else f"{value[: limit - 1]}…"

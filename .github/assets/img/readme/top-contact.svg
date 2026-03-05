@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="300" viewBox="0 0 1100 300" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="284" viewBox="0 0 1100 284" role="img">
 <defs>
 <style>
 .title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
@@ -16,8 +16,8 @@
 <text class="title" x="28" y="54">Connect &amp; Contact</text>
 <g class="card" transform="translate(28,88)">
 <a href="https://w4w.dev" target="_blank" rel="noopener noreferrer">
-<rect width="240" height="156" rx="16" fill="#121A25" stroke="#000000" stroke-opacity="0.45" />
-<circle cx="36" cy="36" r="18" fill="#000000" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="240" height="140" rx="16" fill="#121A25" stroke="#0EA5E9" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#0EA5E9" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwRjE3MkEnLz48cGF0aCBkPSdNMTEgNDQgMTkgMjAgMjcgNDQgMzUgMjAgNDMgNDQgNTEgMjAnIHN0cm9rZT0nIzIyRDNFRScgc3Ryb2tlLXdpZHRoPSc0JyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS1saW5lam9pbj0ncm91bmQnIGZpbGw9J25vbmUnLz48Y2lyY2xlIGN4PScxOScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSczNScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48Y2lyY2xlIGN4PSc1MScgY3k9JzIwJyByPScyLjYnIGZpbGw9JyMyMkQzRUUnLz48L3N2Zz4=" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
@@ -28,7 +28,7 @@
 </g>
 <g class="card" transform="translate(296,88)">
 <a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="240" height="156" rx="16" fill="#121A25" stroke="#0A66C2" stroke-opacity="0.45" />
+<rect width="240" height="140" rx="16" fill="#121A25" stroke="#0A66C2" stroke-opacity="0.45" />
 <circle cx="36" cy="36" r="18" fill="#0A66C2" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-1"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
@@ -40,7 +40,7 @@
 </g>
 <g class="card" transform="translate(564,88)">
 <a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="240" height="156" rx="16" fill="#121A25" stroke="#20BEFF" stroke-opacity="0.45" />
+<rect width="240" height="140" rx="16" fill="#121A25" stroke="#20BEFF" stroke-opacity="0.45" />
 <circle cx="36" cy="36" r="18" fill="#20BEFF" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-2"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
@@ -52,8 +52,8 @@
 </g>
 <g class="card" transform="translate(832,88)">
 <a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="240" height="156" rx="16" fill="#121A25" stroke="#000000" stroke-opacity="0.45" />
-<circle cx="36" cy="36" r="18" fill="#000000" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<rect width="240" height="140" rx="16" fill="#121A25" stroke="#334155" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#334155" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-3"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
 <image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwMDAwMDAnLz48cGF0aCBkPSdNMTUgMTVoMTAuNWw4LjYgMTEuN0w0My4zIDE1SDUzTDM4LjkgMzIuMiA1My4yIDQ5SDQyLjdsLTkuNC0xMi4xTDIzLjYgNDlIMTRsMTQuNC0xNy42eicgZmlsbD0nI0ZGRkZGRicvPjwvc3ZnPg==" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-3)" />

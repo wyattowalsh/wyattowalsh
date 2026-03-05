@@ -303,3 +303,30 @@ class TestReadmeSvgAssetBuilder:
         # Expect no ellipsis truncation and presence of wrapping tspan
         assert "..." not in svg
         assert "<tspan" in svg
+
+    def test_blog_title_wrap_uses_multiple_tspans_for_long_titles(self) -> None:
+        renderer = SvgBlockRenderer(width=520, card_height=180, padding=14)
+        card = SvgCard(
+            title=(
+                "A deeply detailed post title that should break into multiple title rows "
+                "for readability"
+            ),
+            lines=("Summary line one for readability.",),
+            url="https://w4w.dev/blog/readability",
+        )
+        svg = renderer.render(
+            SvgBlock(title="Latest Blog Posts", cards=(card,), columns=1, family=SvgCardFamily.BLOG)
+        )
+
+        assert svg.count('<text class="card-title"') == 1
+        assert svg.count("<tspan") >= 2
+
+    def test_wrap_text_avoids_single_word_orphan_when_possible(self) -> None:
+        renderer = SvgBlockRenderer(width=520, card_height=180, padding=14)
+        wrapped = renderer._wrap_text(
+            "Explore articles about software development and",
+            max_chars=48,
+        )
+
+        assert wrapped
+        assert len(wrapped[-1].split()) > 1

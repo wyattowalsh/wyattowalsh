@@ -5,6 +5,7 @@ import ipaddress
 import json
 import os
 import re
+from io import BytesIO
 from dataclasses import dataclass
 from datetime import datetime
 from html import escape
@@ -25,6 +26,22 @@ from .readme_svg import (
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
+
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - optional dependency in some envs
+    Image = None  # type: ignore[assignment]
+
+_MAX_REMOTE_IMAGE_BYTES = 2_000_000
+_MAX_EMBED_IMAGE_BYTES = 163_840
+_ALLOWED_REMOTE_IMAGE_TYPES = {
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+    "image/x-icon",
+}
 
 
 def _is_public_remote_host(host: str) -> bool:
@@ -433,6 +450,7 @@ class ReadmeSectionGenerator:
         for link in self.settings.social_links:
             parsed = urlparse(link.url)
             host = parsed.netloc.replace("www.", "")
+            accent = self._social_accent_color(link.url, link.color)
             connect_cue = self._social_personality_badge(link.url)
             card = SvgCard(
                 title=link.label,
@@ -442,7 +460,7 @@ class ReadmeSectionGenerator:
                 url=link.url,
                 icon=self._social_icon(link.label),
                 badge=None,
-                accent=link.color,
+                accent=accent,
             )
             # populate icon payloads (brand glyph or data-uri)
             self._set_card_icon_data_uri(
@@ -450,7 +468,7 @@ class ReadmeSectionGenerator:
                 url=link.url,
                 host=host,
                 label=link.label,
-                accent=link.color,
+                accent=accent,
             )
             svg_cards.append(card)
         columns = min(4, max(1, len(svg_cards))) if svg_cards else 1
@@ -460,7 +478,7 @@ class ReadmeSectionGenerator:
             columns=columns,
             family=SvgCardFamily.CONNECT,
         )
-        renderer = SvgBlockRenderer(width=1100, card_height=156, padding=28)
+        renderer = SvgBlockRenderer(width=1100, card_height=140, padding=28)
         svg_embed = self._render_svg_embed(
             section_flag="top_contact",
             asset_name="top-contact",
@@ -499,6 +517,21 @@ class ReadmeSectionGenerator:
         if "x.com" in host or "twitter.com" in host:
             return "Broadcast"
         return "Link"
+
+    def _social_accent_color(self, url: str, color: str) -> str:
+        normalized = color.lstrip("#").strip()
+        host = urlparse(url).netloc.replace("www.", "").lower()
+        default_map = {
+            "x.com": "334155",
+            "twitter.com": "334155",
+            "github.com": "475569",
+            "w4w.dev": "0EA5E9",
+        }
+        if not re.fullmatch(r"[0-9A-Fa-f]{6}", normalized):
+            return default_map.get(host, "60A5FA")
+        if normalized.lower() == "000000":
+            return default_map.get(host, "334155")
+        return normalized
 
     def _social_kicker(self, url: str) -> str:
         parsed = urlparse(url)
@@ -650,7 +683,7 @@ class ReadmeSectionGenerator:
             columns=2,
             family=SvgCardFamily.FEATURED,
         )
-        renderer = SvgBlockRenderer(width=1200, card_height=220, padding=28)
+        renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
         svg_embed = self._render_svg_embed(
             section_flag="featured_projects",
             asset_name="featured-projects",
@@ -787,19 +820,14 @@ class ReadmeSectionGenerator:
             summary = metadata.get("summary") or "Tap to read the full story."
             published = metadata.get("published")
             title_copy = self._normalize_blog_primary_copy(post.title)
-            title_lines = self._wrap_copy_lines(
-                title_copy,
-                line_width=56,
-                max_lines=2,
-            )
-            title = title_lines[0] if title_lines else (title_copy or "Untitled post")
+            title = title_copy or "Untitled post"
             summary_copy = self._normalize_blog_primary_copy(summary)
             summary_lines = self._wrap_copy_lines(
                 summary_copy,
                 line_width=72,
                 max_lines=2,
             )
-            body_lines = tuple(title_lines[1:] + summary_lines)
+            body_lines = tuple(summary_lines)
             if not body_lines:
                 body_lines = ("Tap to read the full story.",)
             card_meta: list[str] = []
@@ -1053,6 +1081,8 @@ class ReadmeSectionGenerator:
             candidate = f"https:{candidate}"
         elif candidate.startswith("/"):
             candidate = urljoin(post_url, candidate)
+        elif not urlparse(candidate).scheme:
+            candidate = urljoin(post_url, candidate)
         if _is_safe_remote_url(candidate):
             return candidate
         return None
@@ -1074,9 +1104,18 @@ class ReadmeSectionGenerator:
         words = value.split()
         if not words:
             return []
+        normalized_words: list[str] = []
+        for word in words:
+            if len(word) <= line_width:
+                normalized_words.append(word)
+                continue
+            normalized_words.extend(
+                word[idx : idx + line_width]
+                for idx in range(0, len(word), line_width)
+            )
         lines: list[str] = []
         current = ""
-        for word in words:
+        for word in normalized_words:
             candidate = word if not current else f"{current} {word}"
             if len(candidate) <= line_width or not current:
                 current = candidate
@@ -1087,7 +1126,14 @@ class ReadmeSectionGenerator:
             current = word
         if len(lines) < max_lines and current:
             lines.append(current)
-        return lines[:max_lines]
+        wrapped = lines[:max_lines]
+        if len(wrapped) > 1 and len(wrapped[-1].split()) == 1:
+            previous = wrapped[-2]
+            orphan = wrapped[-1]
+            if len(previous) + len(orphan) + 1 <= line_width:
+                wrapped[-2] = f"{previous} {orphan}"
+                wrapped.pop()
+        return wrapped
 
     def _build_featured_metadata_chips(
         self,
@@ -1269,6 +1315,13 @@ class ReadmeSectionGenerator:
             return None
         try:
             with urlopen(request, timeout=10.0) as response:
+                content_length = response.headers.get("Content-Length")
+                if content_length and content_length.isdigit():
+                    if int(content_length) > _MAX_REMOTE_IMAGE_BYTES:
+                        logger.warning(
+                            f"Skipped oversized image for {context}: {content_length} bytes"
+                        )
+                        return None
                 image_bytes = response.read()
                 content_type = (
                     response.headers.get("Content-Type", "")
@@ -1282,12 +1335,58 @@ class ReadmeSectionGenerator:
 
         if not image_bytes:
             return None
+        if len(image_bytes) > _MAX_REMOTE_IMAGE_BYTES:
+            logger.warning(
+                f"Skipped oversized image payload for {context}: {len(image_bytes)} bytes"
+            )
+            return None
         if not content_type.startswith("image/"):
-            content_type = "image/png"
+            return None
+        if content_type not in _ALLOWED_REMOTE_IMAGE_TYPES:
+            logger.warning(f"Skipped unsupported image type for {context}: {content_type}")
+            return None
+        image_bytes, content_type = self._optimize_remote_image_payload(
+            image_bytes=image_bytes,
+            content_type=content_type,
+            context=context,
+        )
+        if len(image_bytes) > _MAX_EMBED_IMAGE_BYTES:
+            logger.warning(
+                f"Skipped image for {context} after optimization: {len(image_bytes)} bytes"
+            )
+            return None
         return (
             f"data:{content_type};base64,"
             f"{base64.b64encode(image_bytes).decode('ascii')}"
         )
+
+    def _optimize_remote_image_payload(
+        self,
+        *,
+        image_bytes: bytes,
+        content_type: str,
+        context: str,
+    ) -> tuple[bytes, str]:
+        if Image is None or content_type in {"image/svg+xml", "image/gif"}:
+            return image_bytes, content_type
+        try:
+            with Image.open(BytesIO(image_bytes)) as image:
+                resampling = (
+                    Image.Resampling.LANCZOS
+                    if hasattr(Image, "Resampling")
+                    else Image.LANCZOS
+                )
+                optimized = image.convert("RGB")
+                optimized.thumbnail((960, 540), resampling)
+                buffer = BytesIO()
+                optimized.save(buffer, format="WEBP", quality=72, method=6)
+                optimized_bytes = buffer.getvalue()
+        except OSError as exc:
+            logger.warning(f"Image optimization skipped for {context}: {exc}")
+            return image_bytes, content_type
+        if not optimized_bytes or len(optimized_bytes) >= len(image_bytes):
+            return image_bytes, content_type
+        return optimized_bytes, "image/webp"
 
     def _repo_accent_color(self, metadata: RepoMetadata) -> str:
         joined_topics = " ".join(topic.lower() for topic in metadata.topics)

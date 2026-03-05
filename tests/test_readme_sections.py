@@ -515,6 +515,51 @@ class TestRendering:
         assert card.background_image is None
         assert card.url == post_url
 
+    def test_blog_cards_resolve_relative_hero_images(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        post_url = "https://w4w.dev/blog/security"
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient([BlogPost(title="Security Post", url=post_url)]),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    post_url: {
+                        "hero_image": "img/hero.png",
+                        "summary": "Relative hero path should resolve against the post URL.",
+                        "published": "2026-03-02",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_blog_posts()
+
+        assert captured.get("asset_name") == "blog-posts"
+        block = captured["block"]
+        card = block.cards[0]
+        assert card.background_image == "https://w4w.dev/blog/img/hero.png"
+        assert card.url == post_url
+
     def test_featured_project_card_composition_sets_icon_data_uri_when_available(
         self, tmp_path: Path, monkeypatch
     ) -> None:
@@ -617,6 +662,73 @@ class TestRendering:
             raise OSError("preview unavailable")
 
         monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen_failure)
+
+        generator._render_featured_projects()
+
+        block = captured["featured-projects"]
+        card = block.cards[0]
+        background_image = getattr(card, "background_image", "")
+        assert isinstance(background_image, str)
+        assert background_image.startswith("data:image/svg+xml;base64,")
+
+    def test_featured_background_fetch_skips_oversized_images(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        class FakeResponse:
+            def __init__(self) -> None:
+                self.headers = {
+                    "Content-Type": "image/png",
+                    "Content-Length": str(400_000),
+                }
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return None
+
+            def read(self) -> bytes:
+                return b"x" * 400_000
+
+        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
+            return FakeResponse()
+
+        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        created_at="2023-01-01T00:00:00Z",
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured[asset_name] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_featured_projects()
 
