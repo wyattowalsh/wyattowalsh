@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from enum import Enum
 from html import escape
 from pathlib import Path
 
@@ -36,6 +37,84 @@ class SvgBlock:
     title: str
     cards: tuple[SvgCard, ...]
     columns: int = 1
+    family: SvgCardFamily | str | None = None
+
+
+class SvgCardFamily(str, Enum):
+    """Supported card families with dedicated render policies."""
+
+    DEFAULT = "default"
+    CONNECT = "connect"
+    FEATURED = "featured"
+    BLOG = "blog"
+
+
+@dataclass(frozen=True)
+class SvgTextPolicy:
+    """Text rendering policy knobs for card families."""
+
+    title_limit: int | None
+    line_limit: int | None
+    max_lines: int = 3
+    wrap_title_with_tspan: bool = False
+    wrap_lines_with_tspan: bool = False
+    line_wrap_chars: int = 72
+    strip_update_suffix: bool = False
+
+
+@dataclass(frozen=True)
+class SvgFamilyRenderPolicy:
+    """Family-specific rendering policy for cards."""
+
+    text: SvgTextPolicy
+    show_badge: bool = True
+    hide_handle_lines: bool = False
+    include_featured_details: bool = False
+
+
+_FAMILY_RENDER_POLICIES: dict[SvgCardFamily, SvgFamilyRenderPolicy] = {
+    SvgCardFamily.DEFAULT: SvgFamilyRenderPolicy(
+        text=SvgTextPolicy(title_limit=52, line_limit=72),
+    ),
+    SvgCardFamily.CONNECT: SvgFamilyRenderPolicy(
+        text=SvgTextPolicy(title_limit=52, line_limit=72),
+        show_badge=False,
+        hide_handle_lines=True,
+    ),
+    SvgCardFamily.FEATURED: SvgFamilyRenderPolicy(
+        text=SvgTextPolicy(title_limit=52, line_limit=72),
+        include_featured_details=True,
+    ),
+    SvgCardFamily.BLOG: SvgFamilyRenderPolicy(
+        text=SvgTextPolicy(
+            title_limit=None,
+            line_limit=None,
+            wrap_title_with_tspan=True,
+            wrap_lines_with_tspan=True,
+            line_wrap_chars=64,
+            strip_update_suffix=True,
+        ),
+        show_badge=False,
+    ),
+}
+
+_FAMILY_ALIASES: dict[str, SvgCardFamily] = {
+    "default": SvgCardFamily.DEFAULT,
+    "general": SvgCardFamily.DEFAULT,
+    "connect": SvgCardFamily.CONNECT,
+    "contact": SvgCardFamily.CONNECT,
+    "featured": SvgCardFamily.FEATURED,
+    "project": SvgCardFamily.FEATURED,
+    "projects": SvgCardFamily.FEATURED,
+    "blog": SvgCardFamily.BLOG,
+    "posts": SvgCardFamily.BLOG,
+}
+
+_FAMILY_TITLE_HINTS: tuple[tuple[SvgCardFamily, tuple[str, ...]], ...] = (
+    (SvgCardFamily.CONNECT, ("connect", "contact", "social")),
+    (SvgCardFamily.FEATURED, ("featured", "project", "showcase")),
+    (SvgCardFamily.BLOG, ("blog", "post", "dispatch")),
+)
 
 
 class SvgBlockRenderer:
@@ -58,14 +137,11 @@ class SvgBlockRenderer:
         card_width = int((self.width - (self.padding * (columns + 1))) / columns)
         header_height = 88
         height = (
-            header_height
-            + self.padding
-            + (rows * (self.card_height + self.padding))
+            header_height + self.padding + (rows * (self.card_height + self.padding))
         )
 
-        # family/variant inference: keep renderer-level variant support without
-        # changing existing SvgBlock signature — infer from the block title.
-        family = (block.title or "").lower()
+        family = self._resolve_family(block, cards)
+        family_policy = _FAMILY_RENDER_POLICIES[family]
 
         svg_lines = [
             (
@@ -83,17 +159,17 @@ class SvgBlockRenderer:
             ".card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }",
             (
                 ".card-badge { fill: #FFFFFF; font: 700 12px ui-sans-serif; letter-spacing: 0.01em; }"
-                if any(c.badge for c in cards) and "blog" not in family
+                if any(c.badge for c in cards) and family_policy.show_badge
                 else ""
             ),
             ".sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }",
             "</style>",
             (
-                "<linearGradient id=\"cardGradient\" x1=\"0%\" y1=\"0%\" "
-                "x2=\"0%\" y2=\"100%\">"
-                "<stop offset=\"0%\" stop-color=\"#0B111A\" stop-opacity=\"0.26\"/>"
-                "<stop offset=\"56%\" stop-color=\"#0B111A\" stop-opacity=\"0.72\"/>"
-                "<stop offset=\"100%\" stop-color=\"#0B111A\" stop-opacity=\"0.97\"/>"
+                '<linearGradient id="cardGradient" x1="0%" y1="0%" '
+                'x2="0%" y2="100%">'
+                '<stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/>'
+                '<stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/>'
+                '<stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/>'
                 "</linearGradient>"
             ),
             "</defs>",
@@ -109,7 +185,16 @@ class SvgBlockRenderer:
             row = idx // columns
             x = self.padding + (column * (card_width + self.padding))
             y = header_height + (row * (self.card_height + self.padding))
-            svg_lines.extend(self._render_card(card, x, y, card_width, idx, family))
+            svg_lines.extend(
+                self._render_card(
+                    card=card,
+                    x=x,
+                    y=y,
+                    width=card_width,
+                    card_index=idx,
+                    family_policy=family_policy,
+                )
+            )
 
         svg_lines.append("</svg>")
         return "\n".join(svg_lines)
@@ -121,27 +206,27 @@ class SvgBlockRenderer:
         y: int,
         width: int,
         card_index: int,
-        family: str = "",
+        family_policy: SvgFamilyRenderPolicy,
     ) -> list[str]:
         accent = self._normalize_hex_color(card.accent)
         lines = [f'<g class="card" transform="translate({x},{y})">']
         if card.url:
             lines.append(
-                "<a href=\""
+                '<a href="'
                 f"{self._esc(card.url)}"
-                "\" target=\"_blank\" rel=\"noopener noreferrer\">"
+                '" target="_blank" rel="noopener noreferrer">'
             )
 
         lines.extend(
             [
                 (
-                    "<rect width=\""
+                    '<rect width="'
                     f"{width}"
-                    "\" height=\""
+                    '" height="'
                     f"{self.card_height}"
-                    "\" rx=\"16\" fill=\"#121A25\" stroke=\""
+                    '" rx="16" fill="#121A25" stroke="'
                     f"{accent}"
-                    "\" stroke-opacity=\"0.45\" />"
+                    '" stroke-opacity="0.45" />'
                 )
             ]
         )
@@ -163,16 +248,16 @@ class SvgBlockRenderer:
             )
             lines.append(
                 (
-                    "<rect width=\""
+                    '<rect width="'
                     f"{width}"
-                    "\" height=\""
+                    '" height="'
                     f"{self.card_height}"
-                    "\" rx=\"16\" fill=\"url(#cardGradient)\" />"
+                    '" rx="16" fill="url(#cardGradient)" />'
                 )
             )
             lines.append(
                 '<rect x="12" y="12" width="'
-                f'{width - 24}'
+                f"{width - 24}"
                 '" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />'
             )
 
@@ -231,8 +316,7 @@ class SvgBlockRenderer:
             )
             title_y = 48
 
-        # render badge unless family-specific variants suppress it (e.g., blog)
-        if card.badge and "blog" not in family:
+        if card.badge and family_policy.show_badge:
             badge_text = self._truncate(card.badge, 20)
             badge_width = max(90, min(220, len(badge_text) * 8 + 26))
             badge_x = max(16, width - badge_width - 16)
@@ -263,12 +347,8 @@ class SvgBlockRenderer:
                 )
             )
 
-        # title rendering: allow family-specific variants (blog uses tspan and no truncation)
-        if "blog" in family:
-            # use a tspan to enable wrapping in consumers; avoid truncation
-            # sanitize common update suffixes and ellipses for cleaner blog titles
-            sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
-            sanitized_title = re.sub(r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE).strip()
+        title = self._format_title(card.title, family_policy.text)
+        if family_policy.text.wrap_title_with_tspan:
             lines.append(
                 (
                     '<text class="card-title" x="'
@@ -276,7 +356,7 @@ class SvgBlockRenderer:
                     '" y="'
                     f"{title_y}"
                     '">'
-                    f"<tspan x=\"{title_x}\">{self._esc(sanitized_title)}</tspan>"
+                    f'<tspan x="{title_x}">{self._esc(title)}</tspan>'
                     "</text>"
                 )
             )
@@ -288,30 +368,28 @@ class SvgBlockRenderer:
                     '" y="'
                     f"{title_y}"
                     '">'
-                    f"{self._esc(self._truncate(card.title, 52))}"
+                    f"{self._esc(title)}"
                     "</text>"
                 )
             )
 
-        # lines: apply family-specific filtering/enrichment
         text_y = title_y + 26
-        # Prepare visible lines; allow featured family to expose homepage/topics
-        visible_lines = list(card.lines or ())
-        if "connect" in family:
-            # remove social handles from visible lines; keep URL clickable via card.url
-            visible_lines = [l for l in visible_lines if not l.strip().startswith("@")] 
-        if "featured" in family:
-            # include richer metadata when attached dynamically
-            if hasattr(card, "homepage") and getattr(card, "homepage"):
-                visible_lines.append(getattr(card, "homepage"))
-            if hasattr(card, "topics") and getattr(card, "topics"):
-                # topics may be list-like
-                for t in getattr(card, "topics"):
-                    visible_lines.append(str(t))
-
-        for line in visible_lines[:3]:
-            if "blog" in family:
-                # avoid truncation for blog lines
+        visible_lines = self._visible_lines(card, family_policy)
+        for line in visible_lines[: family_policy.text.max_lines]:
+            line_copy = self._apply_limit(line, family_policy.text.line_limit)
+            if family_policy.text.wrap_lines_with_tspan:
+                wrapped_lines = self._wrap_text(
+                    line_copy,
+                    max_chars=family_policy.text.line_wrap_chars,
+                )
+                tspans = "".join(
+                    (
+                        f'<tspan x="{title_x}">{self._esc(segment)}</tspan>'
+                        if idx == 0
+                        else f'<tspan x="{title_x}" dy="18">{self._esc(segment)}</tspan>'
+                    )
+                    for idx, segment in enumerate(wrapped_lines)
+                )
                 lines.append(
                     (
                         '<text class="card-line" x="'
@@ -319,10 +397,11 @@ class SvgBlockRenderer:
                         '" y="'
                         f"{text_y}"
                         '">'
-                        f"{self._esc(line)}"
+                        f"{tspans}"
                         "</text>"
                     )
                 )
+                text_y += 22 + max(0, len(wrapped_lines) - 1) * 18
             else:
                 lines.append(
                     (
@@ -331,11 +410,11 @@ class SvgBlockRenderer:
                         '" y="'
                         f"{text_y}"
                         '">'
-                        f"{self._esc(self._truncate(line, 72))}"
+                        f"{self._esc(line_copy)}"
                         "</text>"
                     )
                 )
-            text_y += 22
+                text_y += 22
 
         if card.sparkline and len(card.sparkline) >= 2:
             sparkline_path = self._sparkline_path(
@@ -369,6 +448,108 @@ class SvgBlockRenderer:
             lines.append("</a>")
         lines.append("</g>")
         return lines
+
+    def _resolve_family(
+        self,
+        block: SvgBlock,
+        cards: tuple[SvgCard, ...],
+    ) -> SvgCardFamily:
+        explicit = self._parse_family(block.family)
+        if explicit is not None:
+            return explicit
+        inferred = self._infer_family_from_cards(cards)
+        if inferred is not None:
+            return inferred
+        return self._infer_family_from_title(block.title)
+
+    def _parse_family(self, family: SvgCardFamily | str | None) -> SvgCardFamily | None:
+        if family is None:
+            return None
+        if isinstance(family, SvgCardFamily):
+            return family
+        normalized = family.strip().lower().replace("_", "-")
+        return _FAMILY_ALIASES.get(normalized)
+
+    def _infer_family_from_cards(
+        self,
+        cards: tuple[SvgCard, ...],
+    ) -> SvgCardFamily | None:
+        if any("/blog/" in (card.url or "").lower() for card in cards):
+            return SvgCardFamily.BLOG
+        if any(
+            bool(getattr(card, "homepage", None)) or bool(getattr(card, "topics", ()))
+            for card in cards
+        ):
+            return SvgCardFamily.FEATURED
+        if any(
+            any(line.strip().startswith("@") for line in (card.lines or ()))
+            for card in cards
+        ):
+            return SvgCardFamily.CONNECT
+        return None
+
+    def _infer_family_from_title(self, title: str) -> SvgCardFamily:
+        title_copy = (title or "").lower()
+        for family, hints in _FAMILY_TITLE_HINTS:
+            if any(hint in title_copy for hint in hints):
+                return family
+        return SvgCardFamily.DEFAULT
+
+    def _visible_lines(
+        self,
+        card: SvgCard,
+        family_policy: SvgFamilyRenderPolicy,
+    ) -> list[str]:
+        visible_lines = list(card.lines or ())
+        if family_policy.hide_handle_lines:
+            visible_lines = [
+                line
+                for line in visible_lines
+                if not line.strip().startswith("@")
+                and "://" not in line
+                and "open-profile" not in line.lower()
+            ]
+        if family_policy.include_featured_details:
+            homepage = getattr(card, "homepage", None)
+            if homepage:
+                visible_lines.append(str(homepage))
+            topics = getattr(card, "topics", ())
+            for topic in topics:
+                visible_lines.append(str(topic))
+        return visible_lines
+
+    def _format_title(self, title: str, text_policy: SvgTextPolicy) -> str:
+        title_copy = title
+        if text_policy.strip_update_suffix:
+            title_copy = re.sub(r"\.{2,}|[…]", "", title_copy)
+            title_copy = re.sub(
+                r"\bupdate\b",
+                "",
+                title_copy,
+                flags=re.IGNORECASE,
+            ).strip()
+        return self._apply_limit(title_copy, text_policy.title_limit)
+
+    def _apply_limit(self, value: str, limit: int | None) -> str:
+        if limit is None:
+            return value
+        return self._truncate(value, limit)
+
+    def _wrap_text(self, value: str, max_chars: int) -> tuple[str, ...]:
+        words = value.split()
+        if not words:
+            return ("",)
+        wrapped: list[str] = []
+        current = words[0]
+        for word in words[1:]:
+            candidate = f"{current} {word}"
+            if len(candidate) <= max_chars:
+                current = candidate
+            else:
+                wrapped.append(current)
+                current = word
+        wrapped.append(current)
+        return tuple(wrapped)
 
     def _truncate(self, value: str, limit: int) -> str:
         return value if len(value) <= limit else f"{value[: limit - 1]}…"

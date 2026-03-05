@@ -17,6 +17,7 @@ from scripts.readme_sections import (
     ReadmeSectionGenerator,
     RepoMetadata,
 )
+from scripts.readme_svg import SvgCardFamily
 
 
 class StubRepoClient:
@@ -39,7 +40,9 @@ class StubStarHistoryClient:
     def __init__(self, series: dict[str, list[int]]) -> None:
         self.series = series
 
-    def fetch_star_history(self, full_name: str, sample: int = 24) -> Optional[list[int]]:
+    def fetch_star_history(
+        self, full_name: str, sample: int = 24
+    ) -> Optional[list[int]]:
         return self.series.get(full_name)
 
 
@@ -91,7 +94,7 @@ class TestRendering:
                     color="181717",
                     logo="github",
                 ),
-            ]
+            ],
         )
         generator = ReadmeSectionGenerator(settings=settings)
 
@@ -107,7 +110,8 @@ class TestRendering:
         assert (tmp_path / "svg" / "top-contact.svg").exists()
         svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
         assert svg.count('class="card-icon-image"') == 3
-        assert 'class="card-badge"' in svg
+        assert 'class="card-badge"' not in svg
+        assert 'class="card-kicker"' in svg
 
     def test_top_contact_svg_meta_avoids_full_profile_urls(
         self, tmp_path: Path
@@ -137,10 +141,14 @@ class TestRendering:
         generator._render_top_badges()
 
         svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
-        meta_lines = re.findall(r'<text class="card-meta"[^>]*>([^<]+)</text>', svg)
+        visible_text = re.findall(
+            r'<text class="card-(?:line|meta|kicker)"[^>]*>([^<]+)</text>',
+            svg,
+        )
 
-        assert meta_lines
-        assert all("://" not in value for value in meta_lines)
+        assert visible_text
+        assert all("://" not in value for value in visible_text)
+        assert all("open-profile" not in value.lower() for value in visible_text)
 
     def test_top_contact_cards_include_brand_icon_payloads_for_known_networks(
         self, tmp_path: Path, monkeypatch
@@ -196,11 +204,13 @@ class TestRendering:
 
         assert captured.get("asset_name") == "top-contact"
         block = captured["block"]
+        assert block.family == SvgCardFamily.CONNECT
         cards_by_title = {card.title: card for card in block.cards}
         for label in ("LinkedIn", "Kaggle", "X", "GitHub"):
             assert (
                 getattr(cards_by_title[label], "icon_data_uri", None) is not None
             ), f"{label} should provide icon_data_uri in top contact cards"
+            assert getattr(cards_by_title[label], "badge", None) is None
 
     def test_badge_logo_url_is_embedded_as_data_uri(self, monkeypatch) -> None:
         settings = ReadmeSectionsSettings()
@@ -339,9 +349,7 @@ class TestRendering:
         assert "Unable to fetch repository metadata." not in html
         assert "Live stats are temporarily unavailable" in html
         assert "open repository for details" in html
-        svg = (tmp_path / "svg" / "featured-projects.svg").read_text(
-            encoding="utf-8"
-        )
+        svg = (tmp_path / "svg" / "featured-projects.svg").read_text(encoding="utf-8")
         assert "Unable to fetch repository metadata." not in svg
         assert "Live stats are temporarily unavailable." in svg
 
@@ -375,7 +383,7 @@ class TestRendering:
                         "summary": "Another deep dive.",
                         "published": "2026-02-19",
                         "host": "w4w.dev",
-                    }
+                    },
                 }
             ),
         )
@@ -395,6 +403,117 @@ class TestRendering:
         svg = svg_path.read_text(encoding="utf-8")
         assert svg.count('class="card"') == 2
         assert svg.count('class="card-icon-image"') == 2
+
+    def test_blog_cards_use_explicit_family_and_wrapped_primary_copy(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        post_url = "https://w4w.dev/blog/hero-first"
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title=(
+                            "A Very Long Blog Post Title That Would Normally Be Truncated ... update "
+                            "When We Keep Crude Single-Line Rendering"
+                        ),
+                        url=post_url,
+                    )
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    post_url: {
+                        "hero_image": "https://w4w.dev/img/hero.png",
+                        "summary": (
+                            "This intentionally long summary should wrap into readable chunks "
+                            "instead of becoming one clipped wall of text."
+                        ),
+                        "published": "2026-03-01",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        html = generator._render_blog_posts()
+
+        assert captured.get("asset_name") == "blog-posts"
+        block = captured["block"]
+        assert block.family == SvgCardFamily.BLOG
+        card = block.cards[0]
+        assert card.badge is None
+        assert card.kicker is None
+        assert card.url == post_url
+        assert len(card.lines) >= 2
+        assert "..." not in " ".join(card.lines)
+        assert "…" not in " ".join(card.lines)
+        assert "update" not in " ".join(card.lines).lower()
+        assert "<!-- BLOG-POST-LIST:START -->" in html
+        assert "<!-- BLOG-POST-LIST:END -->" in html
+
+    def test_blog_cards_skip_unsafe_hero_images_but_keep_clickthrough(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        post_url = "https://w4w.dev/blog/security"
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient([BlogPost(title="Security Post", url=post_url)]),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    post_url: {
+                        "hero_image": "http://127.0.0.1/secret.png",
+                        "summary": "Unsafe hero should be dropped.",
+                        "published": "2026-03-02",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured["asset_name"] = asset_name
+            captured["block"] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_blog_posts()
+
+        assert captured.get("asset_name") == "blog-posts"
+        block = captured["block"]
+        card = block.cards[0]
+        assert card.background_image is None
+        assert card.url == post_url
 
     def test_featured_project_card_composition_sets_icon_data_uri_when_available(
         self, tmp_path: Path, monkeypatch
@@ -450,6 +569,62 @@ class TestRendering:
         assert captured.get("asset_name") == "featured-projects"
         block = captured["block"]
         assert getattr(block.cards[0], "icon_data_uri", None) is not None
+
+    def test_featured_project_background_uses_data_uri_fallback_when_social_preview_fails(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        created_at="2023-01-01T00:00:00Z",
+                        updated_at="2026-02-01T00:00:00Z",
+                        forks=7,
+                        size_kb=128,
+                    )
+                }
+            ),
+        )
+        captured: dict[str, object] = {}
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured[asset_name] = block
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        def fake_urlopen_failure(request, timeout=10.0):  # noqa: ARG001
+            raise OSError("preview unavailable")
+
+        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen_failure)
+
+        generator._render_featured_projects()
+
+        block = captured["featured-projects"]
+        card = block.cards[0]
+        background_image = getattr(card, "background_image", "")
+        assert isinstance(background_image, str)
+        assert background_image.startswith("data:image/svg+xml;base64,")
 
     def test_blog_card_composition_sets_icon_data_uri_when_available(
         self, tmp_path: Path, monkeypatch
@@ -708,9 +883,7 @@ class TestReadmeInjection:
         assert "blog-posts.svg" in generated
         assert "blog-posts.svg" in refreshed
 
-    def test_generate_respects_svg_feature_toggles(
-        self, tmp_path: Path
-    ) -> None:
+    def test_generate_respects_svg_feature_toggles(self, tmp_path: Path) -> None:
         readme_path = tmp_path / "README.md"
         readme_path.write_text(
             "before\n"
@@ -786,7 +959,9 @@ class TestReadmeInjection:
         assert "[GitHub](https://github.com/wyattowalsh)" in content
         assert "[First Post](https://w4w.dev/blog/first)" in content
 
-    def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:
+    def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(
+        self, tmp_path: Path
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             social_links=[
@@ -810,10 +985,13 @@ class TestReadmeInjection:
         assert "open-profile" not in svg
         # Expect no upper-right pill element on connect cards
         assert 'class="card-pill"' not in svg
+        assert 'class="card-badge"' not in svg
         # But the card should still be clickable (link present)
         assert 'href="https://github.com/wyattowalsh"' in svg
 
-    def test_featured_cards_include_richer_metadata_and_exclude_footer_copy(self, tmp_path: Path, monkeypatch) -> None:
+    def test_featured_cards_include_richer_metadata_and_exclude_footer_copy(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
@@ -838,11 +1016,11 @@ class TestReadmeInjection:
 
         captured: dict[str, tuple[object, str]] = {}
 
-        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+        def capture_write_svg_asset(
+            *, asset_name: str, block, svg_markup=None, renderer=None
+        ) -> None:
             rendered_svg = (
-                svg_markup
-                if isinstance(svg_markup, str)
-                else renderer.render(block)
+                svg_markup if isinstance(svg_markup, str) else renderer.render(block)
             )
             captured[asset_name] = (block, rendered_svg)
 
@@ -856,14 +1034,20 @@ class TestReadmeInjection:
         card = block.cards[0]
 
         # Expect richer metadata fields exposed on the card model
+        assert block.family == SvgCardFamily.FEATURED
+        assert getattr(card, "family", None) == SvgCardFamily.FEATURED.value
         assert getattr(card, "homepage", None) is not None
         assert getattr(card, "topics", None) is not None
         assert getattr(card, "updated_at", None) is not None
+        assert getattr(card, "metadata_chips", ())
+        assert getattr(card, "metadata_rows", ())
 
         # The rendered SVG should not include the generic footer copy 'GitHub repository'
         assert "GitHub repository" not in svg
 
-    def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(self, tmp_path: Path, monkeypatch) -> None:
+    def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             blog_feed_url="https://w4w.dev/feed.xml",
@@ -871,13 +1055,31 @@ class TestReadmeInjection:
         )
         generator = ReadmeSectionGenerator(
             settings=settings,
-            blog_client=StubBlogClient([BlogPost(title="A Very Long Blog Post Title That Would Normally Be Truncated ... update", url="https://w4w.dev/blog/long")]),
-            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/long": {"hero_image": None, "summary": "Long post", "published": "2026-03-01", "host": "w4w.dev"}}),
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title="A Very Long Blog Post Title That Would Normally Be Truncated ... update",
+                        url="https://w4w.dev/blog/long",
+                    )
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/long": {
+                        "hero_image": None,
+                        "summary": "Long post",
+                        "published": "2026-03-01",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
         )
 
         captured: dict[str, object] = {}
 
-        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+        def capture_write_svg_asset(
+            *, asset_name: str, block, svg_markup=None, renderer=None
+        ) -> None:
             captured[asset_name] = (block, svg_markup)
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
@@ -898,18 +1100,51 @@ class TestReadmeInjection:
         assert "..." not in svg_markup
         assert "<tspan" in svg_markup
 
-    def test_card_generators_are_bespoke_per_family(self, tmp_path: Path, monkeypatch) -> None:
-        settings = ReadmeSectionsSettings(svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")), featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")], blog_feed_url="https://w4w.dev/feed.xml", blog_post_limit=1)
+    def test_card_generators_are_bespoke_per_family(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
         generator = ReadmeSectionGenerator(
             settings=settings,
-            repo_client=StubRepoClient({"wyattowalsh/riso": RepoMetadata(full_name="wyattowalsh/riso", name="riso", html_url="https://github.com/wyattowalsh/riso", description="Composable scaffolding framework", stars=42, homepage=None, topics=["python"], updated_at="2026-02-01T00:00:00Z")} ),
-            blog_client=StubBlogClient([BlogPost(title="Post", url="https://w4w.dev/blog/post")]),
-            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/post": {"hero_image": None, "summary": "x", "published": "2026-03-01", "host": "w4w.dev"}}),
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage=None,
+                        topics=["python"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
+            blog_client=StubBlogClient(
+                [BlogPost(title="Post", url="https://w4w.dev/blog/post")]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/post": {
+                        "hero_image": None,
+                        "summary": "x",
+                        "published": "2026-03-01",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
         )
 
         captured: dict[str, object] = {}
 
-        def capture_write_svg_asset(*, asset_name: str, block, svg_markup=None, renderer=None) -> None:
+        def capture_write_svg_asset(
+            *, asset_name: str, block, svg_markup=None, renderer=None
+        ) -> None:
             captured[asset_name] = block
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
@@ -922,7 +1157,14 @@ class TestReadmeInjection:
         featured_block = captured.get("featured-projects")
         blog_block = captured.get("blog-posts")
 
-        assert top_block is not None and featured_block is not None and blog_block is not None
+        assert (
+            top_block is not None
+            and featured_block is not None
+            and blog_block is not None
+        )
+        assert top_block.family == SvgCardFamily.CONNECT
+        assert featured_block.family == SvgCardFamily.FEATURED
+        assert blog_block.family == SvgCardFamily.BLOG
 
         top_fields = set(dir(top_block.cards[0]))
         featured_fields = set(dir(featured_block.cards[0]))

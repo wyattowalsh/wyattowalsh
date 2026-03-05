@@ -9,6 +9,7 @@ from scripts.readme_svg import (
     SvgBlock,
     SvgBlockRenderer,
     SvgCard,
+    SvgCardFamily,
 )
 
 
@@ -51,7 +52,7 @@ class TestSvgBlockRenderer:
     def test_render_outputs_svg_markup(self) -> None:
         renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
         block = SvgBlock(
-            title="Connect",
+            title="Profiles",
             cards=(
                 SvgCard(
                     title="GitHub",
@@ -68,12 +69,13 @@ class TestSvgBlockRenderer:
                 ),
             ),
             columns=2,
+            family=SvgCardFamily.DEFAULT,
         )
 
         svg = renderer.render(block)
 
         assert svg.startswith("<svg")
-        assert "Connect" in svg
+        assert "Profiles" in svg
         assert "GitHub" in svg
         assert "https://github.com/wyattowalsh" in svg
         assert 'class="card-icon"' in svg
@@ -235,7 +237,11 @@ class TestReadmeSvgAssetBuilder:
         renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
         card = SvgCard(
             title="Connect",
-            lines=("@wyattowalsh",),
+            lines=(
+                "@wyattowalsh",
+                "https://github.com/wyattowalsh",
+                "open-profile",
+            ),
             url="https://github.com/wyattowalsh",
             icon="GH",
             accent="181717",
@@ -243,14 +249,22 @@ class TestReadmeSvgAssetBuilder:
         )
         # ensure icon_data_uri is supported
         object.__setattr__(card, "icon_data_uri", "data:image/svg+xml;base64,PHN2Zy8+")
-        block = SvgBlock(title="Connect", cards=(card,), columns=1)
+        block = SvgBlock(
+            title="Connect",
+            cards=(card,),
+            columns=1,
+            family=SvgCardFamily.CONNECT,
+        )
 
         svg = renderer.render(block)
+        line_values = re.findall(r'<text class="card-line"[^>]*>([^<]+)</text>', svg)
 
         # Expect no upper-right pill element in the rendered card
         assert 'class="card-pill"' not in svg
-        # Expect handles removed from visible lines
-        assert "@wyattowalsh" not in svg
+        assert 'class="card-badge"' not in svg
+        # Expect handles/URL/open-profile noise removed from visible lines
+        assert all("@" not in value and "://" not in value for value in line_values)
+        assert all("open-profile" not in value.lower() for value in line_values)
         # But link still present
         assert 'href="https://github.com/wyattowalsh"' in svg
 
