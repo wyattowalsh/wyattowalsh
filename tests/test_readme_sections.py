@@ -100,18 +100,19 @@ class TestRendering:
 
         html = generator._render_top_badges()
 
-        assert_sanitizer_safe_section_embed(
-            html, (tmp_path / "svg" / "top-contact.svg").as_posix()
-        )
+        card_svgs = sorted((tmp_path / "svg").glob("top-contact-card-*.svg"))
+        assert len(card_svgs) == len(settings.social_links)
+        for svg_path in card_svgs:
+            assert_sanitizer_safe_section_embed(html, svg_path.as_posix())
+        assert "top-contact.svg" not in html
         assert "❈" not in html
         assert "https://w4w.dev" in html
         assert "https://linkedin.com/in/wyattowalsh" in html
         assert ".github/assets/img/gh.gif" not in html
-        assert (tmp_path / "svg" / "top-contact.svg").exists()
-        svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
-        assert svg.count('class="card-icon-image"') == 3
-        assert 'class="card-badge"' not in svg
-        assert 'class="card-kicker"' in svg
+        svg_payloads = [path.read_text(encoding="utf-8") for path in card_svgs]
+        assert sum(svg.count('class="card-icon-image"') for svg in svg_payloads) == 3
+        assert all('class="card-badge"' not in svg for svg in svg_payloads)
+        assert all('class="card-kicker"' in svg for svg in svg_payloads)
 
     def test_top_contact_svg_meta_avoids_full_profile_urls(
         self, tmp_path: Path
@@ -140,11 +141,17 @@ class TestRendering:
 
         generator._render_top_badges()
 
-        svg = (tmp_path / "svg" / "top-contact.svg").read_text(encoding="utf-8")
-        visible_text = re.findall(
-            r'<text class="card-(?:line|meta|kicker)"[^>]*>([^<]+)</text>',
-            svg,
-        )
+        card_svgs = sorted((tmp_path / "svg").glob("top-contact-card-*.svg"))
+        assert len(card_svgs) == len(settings.social_links)
+        visible_text: list[str] = []
+        for svg_path in card_svgs:
+            svg = svg_path.read_text(encoding="utf-8")
+            visible_text.extend(
+                re.findall(
+                    r'<text class="card-(?:line|meta|kicker)"[^>]*>([^<]+)</text>',
+                    svg,
+                )
+            )
 
         assert visible_text
         assert all("://" not in value for value in visible_text)
@@ -186,7 +193,7 @@ class TestRendering:
             ],
         )
         generator = ReadmeSectionGenerator(settings=settings)
-        captured: dict[str, object] = {}
+        captured: list[tuple[str, object]] = []
 
         def capture_write_svg_asset(
             *,
@@ -195,17 +202,19 @@ class TestRendering:
             svg_markup=None,
             renderer=None,
         ) -> None:
-            captured["asset_name"] = asset_name
-            captured["block"] = block
+            captured.append((asset_name, block))
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_top_badges()
 
-        assert captured.get("asset_name") == "top-contact"
-        block = captured["block"]
-        assert block.family == SvgCardFamily.CONNECT
-        cards_by_title = {card.title: card for card in block.cards}
+        assert len(captured) == len(settings.social_links)
+        assert all(
+            asset_name.startswith("top-contact-card-")
+            for asset_name, _ in captured
+        )
+        assert all(block.family == SvgCardFamily.CONNECT for _, block in captured)
+        cards_by_title = {block.cards[0].title: block.cards[0] for _, block in captured}
         for label in ("LinkedIn", "Kaggle", "X", "GitHub"):
             assert (
                 getattr(cards_by_title[label], "icon_data_uri", None) is not None
@@ -318,14 +327,14 @@ class TestRendering:
 
         html = generator._render_featured_projects()
 
-        assert_sanitizer_safe_section_embed(
-            html, (tmp_path / "svg" / "featured-projects.svg").as_posix()
-        )
+        card_svgs = sorted((tmp_path / "svg").glob("featured-projects-card-*.svg"))
+        assert len(card_svgs) == len(settings.featured_repos)
+        for svg_path in card_svgs:
+            assert_sanitizer_safe_section_embed(html, svg_path.as_posix())
         assert "Composable scaffolding framework" in html
         assert "★ 42" in html
         assert "riso" in html
-        svg_path = tmp_path / "svg" / "featured-projects.svg"
-        assert svg_path.exists()
+        svg_path = card_svgs[0]
         svg = svg_path.read_text(encoding="utf-8")
         assert "data:image/png;base64," in svg
         assert "opengraph.githubassets.com" not in svg
@@ -349,7 +358,9 @@ class TestRendering:
         assert "Unable to fetch repository metadata." not in html
         assert "Live stats are temporarily unavailable" in html
         assert "open repository for details" in html
-        svg = (tmp_path / "svg" / "featured-projects.svg").read_text(encoding="utf-8")
+        card_svgs = sorted((tmp_path / "svg").glob("featured-projects-card-*.svg"))
+        assert len(card_svgs) == 1
+        svg = card_svgs[0].read_text(encoding="utf-8")
         assert "Unable to fetch repository metadata." not in svg
         assert "Live stats are temporarily unavailable." in svg
 
@@ -390,19 +401,24 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        assert_sanitizer_safe_section_embed(
-            html, (tmp_path / "svg" / "blog-posts.svg").as_posix()
-        )
+        card_svgs = sorted((tmp_path / "svg").glob("blog-posts-card-*.svg"))
+        assert len(card_svgs) == settings.blog_post_limit
+        for svg_path in card_svgs:
+            assert_sanitizer_safe_section_embed(html, svg_path.as_posix())
         assert "First Post" in html
         assert "Second Post" in html
         assert "w4w.dev" in html
         assert "Auto-updated from" in html
         assert "https://w4w.dev/feed.xml" in html
-        svg_path = tmp_path / "svg" / "blog-posts.svg"
-        assert svg_path.exists()
-        svg = svg_path.read_text(encoding="utf-8")
-        assert svg.count('class="card"') == 2
-        assert svg.count('class="card-icon-image"') == 2
+        assert "blog-posts.svg" not in html
+        card_embeds = re.findall(r'<a href="([^"]+)">\s*<img src="([^"]+)"', html)
+        assert {href for href, _ in card_embeds} == {
+            "https://w4w.dev/blog/first",
+            "https://w4w.dev/blog/second",
+        }
+        svg_payloads = [path.read_text(encoding="utf-8") for path in card_svgs]
+        assert all(svg.count('class="card"') == 1 for svg in svg_payloads)
+        assert sum(svg.count('class="card-icon-image"') for svg in svg_payloads) == 2
 
     def test_blog_cards_use_explicit_family_and_wrapped_primary_copy(
         self, tmp_path: Path, monkeypatch
@@ -449,15 +465,15 @@ class TestRendering:
             svg_markup=None,
             renderer=None,
         ) -> None:
-            captured["asset_name"] = asset_name
-            captured["block"] = block
+            captured[asset_name] = block
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         html = generator._render_blog_posts()
 
-        assert captured.get("asset_name") == "blog-posts"
-        block = captured["block"]
+        assert len(captured) == 1
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"blog-posts-card-01-[a-z0-9-]+", asset_name)
         assert block.family == SvgCardFamily.BLOG
         card = block.cards[0]
         assert card.badge is None
@@ -502,15 +518,15 @@ class TestRendering:
             svg_markup=None,
             renderer=None,
         ) -> None:
-            captured["asset_name"] = asset_name
-            captured["block"] = block
+            captured[asset_name] = block
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_blog_posts()
 
-        assert captured.get("asset_name") == "blog-posts"
-        block = captured["block"]
+        assert len(captured) == 1
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"blog-posts-card-01-[a-z0-9-]+", asset_name)
         card = block.cards[0]
         assert card.background_image is None
         assert card.url == post_url
@@ -547,15 +563,15 @@ class TestRendering:
             svg_markup=None,
             renderer=None,
         ) -> None:
-            captured["asset_name"] = asset_name
-            captured["block"] = block
+            captured[asset_name] = block
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_blog_posts()
 
-        assert captured.get("asset_name") == "blog-posts"
-        block = captured["block"]
+        assert len(captured) == 1
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"blog-posts-card-01-[a-z0-9-]+", asset_name)
         card = block.cards[0]
         assert card.background_image == "https://w4w.dev/blog/img/hero.png"
         assert card.url == post_url
@@ -611,7 +627,9 @@ class TestRendering:
 
         generator._render_featured_projects()
 
-        assert captured.get("asset_name") == "featured-projects"
+        assert re.fullmatch(
+            r"featured-projects-card-01-[a-z0-9-]+", str(captured.get("asset_name"))
+        )
         block = captured["block"]
         assert getattr(block.cards[0], "icon_data_uri", None) is not None
 
@@ -665,7 +683,8 @@ class TestRendering:
 
         generator._render_featured_projects()
 
-        block = captured["featured-projects"]
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"featured-projects-card-01-[a-z0-9-]+", asset_name)
         card = block.cards[0]
         background_image = getattr(card, "background_image", "")
         assert isinstance(background_image, str)
@@ -732,7 +751,8 @@ class TestRendering:
 
         generator._render_featured_projects()
 
-        block = captured["featured-projects"]
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"featured-projects-card-01-[a-z0-9-]+", asset_name)
         card = block.cards[0]
         background_image = getattr(card, "background_image", "")
         assert isinstance(background_image, str)
@@ -774,16 +794,275 @@ class TestRendering:
             svg_markup=None,
             renderer=None,
         ) -> None:
-            captured["asset_name"] = asset_name
-            captured["block"] = block
+            captured[asset_name] = block
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_blog_posts()
 
-        assert captured.get("asset_name") == "blog-posts"
-        block = captured["block"]
+        assert len(captured) == 1
+        asset_name, block = next(iter(captured.items()))
+        assert re.fullmatch(r"blog-posts-card-01-[a-z0-9-]+", asset_name)
         assert getattr(block.cards[0], "icon_data_uri", None) is not None
+
+    def test_top_section_renders_link_wrapped_per_card_images(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            social_links=[
+                ReadmeSocialLink(
+                    label="Website",
+                    url="https://w4w.dev",
+                    color="000000",
+                    logo="safari",
+                ),
+                ReadmeSocialLink(
+                    label="LinkedIn",
+                    url="https://linkedin.com/in/wyattowalsh",
+                    color="0A66C2",
+                    logo="linkedin",
+                ),
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                ),
+            ],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+
+        html = generator._render_top_badges()
+        card_embeds = re.findall(r'<a href="([^"]+)">\s*<img src="([^"]+)"', html)
+        expected_urls = {link.url for link in settings.social_links}
+
+        assert len(card_embeds) == len(settings.social_links)
+        assert {href for href, _ in card_embeds} == expected_urls
+        assert len({src for _, src in card_embeds}) == len(settings.social_links)
+        assert "top-contact.svg" not in html
+        assert all(
+            re.search(r"/top-contact-card-\d{2}-[a-z0-9-]+\.svg$", src)
+            for _, src in card_embeds
+        )
+
+    def test_featured_section_renders_one_link_wrapped_image_per_repo_card(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[
+                ReadmeFeaturedRepo(full_name="wyattowalsh/riso"),
+                ReadmeFeaturedRepo(full_name="wyattowalsh/vislib"),
+            ],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "wyattowalsh/vislib": RepoMetadata(
+                        full_name="wyattowalsh/vislib",
+                        name="vislib",
+                        html_url="https://github.com/wyattowalsh/vislib",
+                        description="Visualization toolkit",
+                        stars=11,
+                        homepage=None,
+                        topics=["visualization"],
+                        updated_at="2026-02-03T00:00:00Z",
+                    ),
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+        monkeypatch.setattr(
+            generator,
+            "_repo_background_image",
+            lambda repo_full_name, metadata: None,
+        )
+
+        html = generator._render_featured_projects()
+        card_embeds = re.findall(r'<a href="([^"]+)">\s*<img src="([^"]+)"', html)
+        expected_urls = {
+            "https://github.com/wyattowalsh/riso",
+            "https://github.com/wyattowalsh/vislib",
+        }
+
+        assert len(card_embeds) == len(settings.featured_repos)
+        assert {href for href, _ in card_embeds} == expected_urls
+        assert all(
+            re.search(r"/featured-projects-card-\d{2}-[a-z0-9-]+\.svg$", src)
+            for _, src in card_embeds
+        )
+
+    def test_blog_section_renders_one_link_wrapped_image_per_post_and_keeps_fallback_list(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=2,
+        )
+        posts = [
+            BlogPost(title="First Post", url="https://w4w.dev/blog/first"),
+            BlogPost(title="Second Post", url="https://w4w.dev/blog/second"),
+        ]
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(posts),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/first": {
+                        "hero_image": "https://w4w.dev/img/first.png",
+                        "summary": "A deep dive into data art.",
+                        "published": "2026-02-20",
+                        "host": "w4w.dev",
+                    },
+                    "https://w4w.dev/blog/second": {
+                        "hero_image": "https://w4w.dev/img/second.png",
+                        "summary": "Another deep dive.",
+                        "published": "2026-02-19",
+                        "host": "w4w.dev",
+                    },
+                }
+            ),
+        )
+
+        html = generator._render_blog_posts()
+        card_embeds = re.findall(r'<a href="([^"]+)">\s*<img src="([^"]+)"', html)
+        expected_urls = {post.url for post in posts}
+
+        assert "<!-- BLOG-POST-LIST:START -->" in html
+        assert "<!-- BLOG-POST-LIST:END -->" in html
+        assert "- [First Post](https://w4w.dev/blog/first)" in html
+        assert "- [Second Post](https://w4w.dev/blog/second)" in html
+        assert len(card_embeds) == len(posts)
+        assert {href for href, _ in card_embeds} == expected_urls
+        assert all(
+            re.search(r"/blog-posts-card-\d{2}-[a-z0-9-]+\.svg$", src)
+            for _, src in card_embeds
+        )
+
+    def test_card_svg_assets_follow_deterministic_per_card_naming_pattern(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            social_links=[
+                ReadmeSocialLink(
+                    label="Website",
+                    url="https://w4w.dev",
+                    color="000000",
+                    logo="safari",
+                ),
+                ReadmeSocialLink(
+                    label="GitHub",
+                    url="https://github.com/wyattowalsh",
+                    color="181717",
+                    logo="github",
+                ),
+            ],
+            featured_repos=[
+                ReadmeFeaturedRepo(full_name="wyattowalsh/riso"),
+                ReadmeFeaturedRepo(full_name="wyattowalsh/vislib"),
+            ],
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=2,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage="https://riso.dev",
+                        topics=["python", "templates"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "wyattowalsh/vislib": RepoMetadata(
+                        full_name="wyattowalsh/vislib",
+                        name="vislib",
+                        html_url="https://github.com/wyattowalsh/vislib",
+                        description="Visualization toolkit",
+                        stars=11,
+                        homepage=None,
+                        topics=["visualization"],
+                        updated_at="2026-02-03T00:00:00Z",
+                    ),
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(title="First Post", url="https://w4w.dev/blog/first"),
+                    BlogPost(title="Second Post", url="https://w4w.dev/blog/second"),
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/first": {
+                        "hero_image": None,
+                        "summary": "One",
+                        "published": "2026-02-20",
+                        "host": "w4w.dev",
+                    },
+                    "https://w4w.dev/blog/second": {
+                        "hero_image": None,
+                        "summary": "Two",
+                        "published": "2026-02-19",
+                        "host": "w4w.dev",
+                    },
+                }
+            ),
+        )
+        monkeypatch.setattr(
+            generator,
+            "_repo_background_image",
+            lambda repo_full_name, metadata: None,
+        )
+
+        captured_asset_names: list[str] = []
+
+        def capture_write_svg_asset(
+            *,
+            asset_name: str,
+            block,
+            svg_markup=None,
+            renderer=None,
+        ) -> None:
+            captured_asset_names.append(asset_name)
+
+        monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
+
+        generator._render_top_badges()
+        generator._render_featured_projects()
+        generator._render_blog_posts()
+
+        expected_count = (
+            len(settings.social_links)
+            + len(settings.featured_repos)
+            + settings.blog_post_limit
+        )
+        pattern = re.compile(
+            r"^(top-contact|featured-projects|blog-posts)-card-\d{2}-[a-z0-9-]+$"
+        )
+
+        assert len(captured_asset_names) == expected_count
+        assert len(set(captured_asset_names)) == len(captured_asset_names)
+        assert all(pattern.fullmatch(asset_name) for asset_name in captured_asset_names)
 
 
 class TestRemoteFetchSafety:
@@ -918,9 +1197,9 @@ class TestReadmeInjection:
         assert "<!-- README:FEATURED_PROJECTS:END -->" in content
         assert "<!-- README:BLOG_POSTS:START -->" in content
         assert "<!-- README:BLOG_POSTS:END -->" in content
-        assert "top-contact.svg" in content
-        assert "featured-projects.svg" in content
-        assert "blog-posts.svg" in content
+        assert re.search(r"top-contact-card-\d{2}-[a-z0-9-]+\.svg", content)
+        assert re.search(r"featured-projects-card-\d{2}-[a-z0-9-]+\.svg", content)
+        assert re.search(r"blog-posts-card-\d{2}-[a-z0-9-]+\.svg", content)
         assert ".github/assets/img/gh.gif" not in content
         assert "[GitHub](https://github.com/wyattowalsh)" in content
         assert "[riso](https://github.com/wyattowalsh/riso)" in content
@@ -992,8 +1271,15 @@ class TestReadmeInjection:
             flags=re.DOTALL,
         )
 
-        assert "blog-posts.svg" in generated
-        assert "blog-posts.svg" in refreshed
+        generated_assets = set(
+            re.findall(r"blog-posts-card-\d{2}-[a-z0-9-]+\.svg", generated)
+        )
+        refreshed_assets = set(
+            re.findall(r"blog-posts-card-\d{2}-[a-z0-9-]+\.svg", refreshed)
+        )
+
+        assert generated_assets
+        assert refreshed_assets == generated_assets
 
     def test_generate_respects_svg_feature_toggles(self, tmp_path: Path) -> None:
         readme_path = tmp_path / "README.md"
@@ -1062,12 +1348,12 @@ class TestReadmeInjection:
         generator.generate()
 
         content = readme_path.read_text(encoding="utf-8")
-        assert not (svg_dir / "top-contact.svg").exists()
-        assert (svg_dir / "featured-projects.svg").exists()
-        assert not (svg_dir / "blog-posts.svg").exists()
-        assert "top-contact.svg" not in content
-        assert "blog-posts.svg" not in content
-        assert "featured-projects.svg" in content
+        assert not list(svg_dir.glob("top-contact-card-*.svg"))
+        assert list(svg_dir.glob("featured-projects-card-*.svg"))
+        assert not list(svg_dir.glob("blog-posts-card-*.svg"))
+        assert "top-contact-card-" not in content
+        assert "blog-posts-card-" not in content
+        assert "featured-projects-card-" in content
         assert "[GitHub](https://github.com/wyattowalsh)" in content
         assert "[First Post](https://w4w.dev/blog/first)" in content
 
@@ -1088,9 +1374,9 @@ class TestReadmeInjection:
         generator = ReadmeSectionGenerator(settings=settings)
 
         html = generator._render_top_badges()
-        svg_path = tmp_path / "svg" / "top-contact.svg"
-        assert svg_path.exists()
-        svg = svg_path.read_text(encoding="utf-8")
+        card_svgs = sorted((tmp_path / "svg").glob("top-contact-card-*.svg"))
+        assert len(card_svgs) == 1
+        svg = card_svgs[0].read_text(encoding="utf-8")
 
         # Expect no handle clutter or open-profile URL fragments
         assert "@wyattowalsh" not in svg
@@ -1140,8 +1426,13 @@ class TestReadmeInjection:
 
         generator._render_featured_projects()
 
-        captured_payload = captured.get("featured-projects")
-        assert captured_payload is not None
+        matching = [
+            (asset_name, payload)
+            for asset_name, payload in captured.items()
+            if re.fullmatch(r"featured-projects-card-01-[a-z0-9-]+", asset_name)
+        ]
+        assert len(matching) == 1
+        _, captured_payload = matching[0]
         block, svg = captured_payload
         card = block.cards[0]
 
@@ -1192,13 +1483,22 @@ class TestReadmeInjection:
         def capture_write_svg_asset(
             *, asset_name: str, block, svg_markup=None, renderer=None
         ) -> None:
-            captured[asset_name] = (block, svg_markup)
+            rendered_svg = (
+                svg_markup if isinstance(svg_markup, str) else renderer.render(block)
+            )
+            captured[asset_name] = (block, rendered_svg)
 
         monkeypatch.setattr(generator, "_write_svg_asset", capture_write_svg_asset)
 
         generator._render_blog_posts()
 
-        block, svg_markup = captured.get("blog-posts")
+        blog_assets = {
+            asset_name: payload
+            for asset_name, payload in captured.items()
+            if asset_name.startswith("blog-posts-card-")
+        }
+        assert len(blog_assets) == 1
+        block, svg_markup = next(iter(blog_assets.values()))
         assert block is not None
 
         card = block.cards[0]
@@ -1265,9 +1565,30 @@ class TestReadmeInjection:
         generator._render_featured_projects()
         generator._render_blog_posts()
 
-        top_block = captured.get("top-contact")
-        featured_block = captured.get("featured-projects")
-        blog_block = captured.get("blog-posts")
+        top_block = next(
+            (
+                block
+                for asset_name, block in captured.items()
+                if asset_name.startswith("top-contact-card-")
+            ),
+            None,
+        )
+        featured_block = next(
+            (
+                block
+                for asset_name, block in captured.items()
+                if asset_name.startswith("featured-projects-card-")
+            ),
+            None,
+        )
+        blog_block = next(
+            (
+                block
+                for asset_name, block in captured.items()
+                if asset_name.startswith("blog-posts-card-")
+            ),
+            None,
+        )
 
         assert (
             top_block is not None

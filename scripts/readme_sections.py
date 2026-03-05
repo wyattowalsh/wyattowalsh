@@ -471,28 +471,40 @@ class ReadmeSectionGenerator:
                 accent=accent,
             )
             svg_cards.append(card)
-        columns = min(4, max(1, len(svg_cards))) if svg_cards else 1
-        block = SvgBlock(
-            title="Connect & Contact",
-            cards=tuple(svg_cards) or (SvgCard(title="No social links configured."),),
-            columns=columns,
-            family=SvgCardFamily.CONNECT,
-        )
         renderer = SvgBlockRenderer(width=1100, card_height=140, padding=28)
-        svg_embed = self._render_svg_embed(
-            section_flag="top_contact",
-            asset_name="top-contact",
-            block=block,
-            renderer=renderer,
-            alt_text="Connect and contact cards",
-        )
+        svg_embeds: list[str] = []
+        if svg_cards:
+            svg_embeds = self._render_per_card_svg_embeds(
+                section_flag="top_contact",
+                asset_name="top-contact",
+                block_title="Connect & Contact",
+                cards=tuple(svg_cards),
+                renderer=renderer,
+                alt_prefix="Connect and contact card",
+                family=SvgCardFamily.CONNECT,
+            )
+        else:
+            block = SvgBlock(
+                title="Connect & Contact",
+                cards=(SvgCard(title="No social links configured."),),
+                columns=1,
+                family=SvgCardFamily.CONNECT,
+            )
+            svg_embed = self._render_svg_embed(
+                section_flag="top_contact",
+                asset_name="top-contact",
+                block=block,
+                renderer=renderer,
+                alt_text="Connect and contact cards",
+            )
+            if svg_embed:
+                svg_embeds.append(svg_embed)
         social_links = " · ".join(
             f"[{escape(link.label)}]({escape(link.url)})"
             for link in self.settings.social_links
         )
         lines: list[str] = []
-        if svg_embed:
-            lines.append(f'<p align="center">{svg_embed}</p>')
+        lines.extend(f'<p align="center">{svg_embed}</p>' for svg_embed in svg_embeds)
         if social_links:
             lines.append(social_links)
         return "\n".join(lines)
@@ -684,16 +696,18 @@ class ReadmeSectionGenerator:
             family=SvgCardFamily.FEATURED,
         )
         renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
-        svg_embed = self._render_svg_embed(
+        card_embeds = self._render_per_card_svg_embeds(
             section_flag="featured_projects",
             asset_name="featured-projects",
-            block=block,
+            block_title=block.title,
+            cards=block.cards,
             renderer=renderer,
-            alt_text="Featured projects cards",
+            alt_prefix="Featured project card",
+            family=SvgCardFamily.FEATURED,
         )
         lines = ["\n".join(fallback_lines)]
-        if svg_embed:
-            lines.insert(0, f'<p align="center">{svg_embed}</p>')
+        if card_embeds:
+            lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
         return "\n".join(lines)
 
     def _build_project_svg_card(
@@ -872,12 +886,14 @@ class ReadmeSectionGenerator:
             family=SvgCardFamily.BLOG,
         )
         renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
-        svg_embed = self._render_svg_embed(
+        card_embeds = self._render_per_card_svg_embeds(
             section_flag="blog_posts",
             asset_name="blog-posts",
-            block=block,
+            block_title=block.title,
+            cards=block.cards,
             renderer=renderer,
-            alt_text="Latest blog posts cards",
+            alt_prefix="Latest blog post card",
+            family=SvgCardFamily.BLOG,
         )
         lines = [
             self._wrap_blog_post_list_markers(fallback_lines),
@@ -886,8 +902,8 @@ class ReadmeSectionGenerator:
                 f'<a href="{feed_url}">RSS feed</a></sub></p>'
             ),
         ]
-        if svg_embed:
-            lines.insert(0, f'<p align="center">{svg_embed}</p>')
+        if card_embeds:
+            lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
         return "\n".join(lines)
 
     def _render_svg_embed(
@@ -913,9 +929,104 @@ class ReadmeSectionGenerator:
             f'width="{renderer.width}" loading="lazy"/>'
         )
 
-    def _svg_asset_src(self, asset_name: str) -> str:
+    def _render_per_card_svg_embeds(
+        self,
+        *,
+        section_flag: str,
+        asset_name: str,
+        block_title: str,
+        cards: Sequence[SvgCard],
+        renderer: SvgBlockRenderer,
+        alt_prefix: str,
+        family: SvgCardFamily | str | None = None,
+        markdown: bool = False,
+    ) -> list[str]:
+        if not self._svg_section_enabled(section_flag):
+            return []
+        snippets: list[str] = []
+        for idx, card in enumerate(cards):
+            card_asset_name = self._per_card_svg_asset_name(
+                section_asset_name=asset_name,
+                card_index=idx,
+                card=card,
+            )
+            card_block = SvgBlock(
+                title=block_title,
+                cards=(card,),
+                columns=1,
+                family=family,
+            )
+            self._write_svg_asset(
+                asset_name=card_asset_name,
+                block=card_block,
+                renderer=renderer,
+            )
+            card_alt = re.sub(r"\s+", " ", (card.title or "").strip())
+            alt_text = f"{alt_prefix}: {card_alt}" if card_alt else alt_prefix
+            snippets.append(
+                self._render_link_wrapped_image_snippet(
+                    src=self._svg_asset_src(card_asset_name),
+                    href=card.url,
+                    alt_text=alt_text,
+                    width=renderer.width,
+                    markdown=markdown,
+                )
+            )
+        return snippets
+
+    def _render_link_wrapped_image_snippet(
+        self,
+        *,
+        src: str,
+        href: str | None,
+        alt_text: str,
+        width: int,
+        markdown: bool = False,
+    ) -> str:
+        sanitized_src = escape(src)
+        sanitized_alt = escape(alt_text)
+        sanitized_href = escape(href) if href else None
+        if markdown:
+            if sanitized_href:
+                return f"[![{sanitized_alt}]({sanitized_src})]({sanitized_href})"
+            return f"![{sanitized_alt}]({sanitized_src})"
+        img = (
+            f'<img src="{sanitized_src}" alt="{sanitized_alt}" '
+            f'width="{width}" loading="lazy"/>'
+        )
+        if sanitized_href:
+            return f'<a href="{sanitized_href}">{img}</a>'
+        return img
+
+    def _normalize_svg_asset_name(self, asset_name: str) -> str:
         filename = re.sub(r"[^a-zA-Z0-9_-]+", "-", asset_name).strip("-_")
-        normalized = filename or "section"
+        return filename or "section"
+
+    def _per_card_svg_asset_name(
+        self,
+        *,
+        section_asset_name: str,
+        card_index: int,
+        card: SvgCard,
+    ) -> str:
+        section_name = self._normalize_svg_asset_name(section_asset_name)
+        slug = self._per_card_svg_slug(card)
+        return f"{section_name}-card-{card_index + 1:02d}-{slug}"
+
+    def _per_card_svg_slug(self, card: SvgCard) -> str:
+        seed = (card.title or "").strip()
+        if not seed and card.kicker:
+            seed = card.kicker.strip()
+        if not seed and card.url:
+            parsed = urlparse(card.url)
+            seed = Path(parsed.path).name or parsed.netloc
+        normalized = re.sub(r"[^a-z0-9]+", "-", seed.lower()).strip("-")
+        if not normalized:
+            return "item"
+        return normalized[:48].strip("-") or "item"
+
+    def _svg_asset_src(self, asset_name: str) -> str:
+        normalized = self._normalize_svg_asset_name(asset_name)
         return (Path(self.settings.svg.output_dir) / f"{normalized}.svg").as_posix()
 
     def _build_featured_repo_fallback_line(

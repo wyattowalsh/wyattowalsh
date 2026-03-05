@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="284" viewBox="0 0 1100 284" role="img">
+<defs>
+<style>
+.title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
+.card-kicker { fill: #8FA1B8; font: 700 11px ui-sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-title { fill: #FFFFFF; font: 700 21px ui-sans-serif; }
+.card-line { fill: #E3ECF7; font: 500 15px ui-sans-serif; }
+.card-meta { fill: #B7C3D4; font: 500 13px ui-sans-serif; }
+.card-icon { fill: #F8FAFC; font: 700 13px ui-sans-serif; }
+
+.sparkline { fill: none; stroke: #7DD3FC; stroke-width: 2; opacity: 0.88; }
+</style>
+<linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
+</defs>
+<rect width="100%" height="100%" rx="24" fill="#0B111A" />
+<text class="title" x="28" y="54">Connect &amp; Contact</text>
+<g class="card" transform="translate(28,88)">
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="1044" height="140" rx="16" fill="#121A25" stroke="#20BEFF" stroke-opacity="0.45" />
+<circle cx="36" cy="36" r="18" fill="#20BEFF" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
+<circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
+<defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>
+<image class="card-icon-image" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMyMEJFRkYnLz48cGF0aCBkPSdNMjAgMTVoN3YxNS40TDM4LjIgMTVoOS4yTDM0IDMxLjQgNDcuNiA0OWgtOS4zTDI3IDM0LjJWNDloLTd6JyBmaWxsPScjMDYyRjQwJy8+PC9zdmc+" x="22.5" y="22.5" width="27" height="27" preserveAspectRatio="xMidYMid meet" clip-path="url(#icon-clip-0)" />
+<circle cx="36" cy="36" r="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="1" />
+<text class="card-kicker" x="62" y="22">Data</text>
+<text class="card-title" x="62" y="48">Kaggle</text>
+</a>
+</g>
+</svg>

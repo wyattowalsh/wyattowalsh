@@ -83,7 +83,10 @@ def test_featured_cards_expose_structured_metadata_chip_row_contract(
 
     generator._render_featured_projects()
 
-    block = captured["featured-projects"]
+    featured_asset_name = next(
+        key for key in captured if key.startswith("featured-projects-card-")
+    )
+    block = captured[featured_asset_name]
     card = block.cards[0]
     chips = getattr(card, "metadata_chips", None)
 
