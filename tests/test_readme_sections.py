@@ -113,6 +113,8 @@ class TestRendering:
         assert sum(svg.count('class="card-icon-image"') for svg in svg_payloads) == 3
         assert all('class="card-badge"' not in svg for svg in svg_payloads)
         assert all('class="card-kicker"' in svg for svg in svg_payloads)
+        assert all('class="title"' not in svg for svg in svg_payloads)
+        assert all('<rect width="100%" height="100%"' not in svg for svg in svg_payloads)
 
     def test_top_contact_svg_meta_avoids_full_profile_urls(
         self, tmp_path: Path
@@ -903,6 +905,10 @@ class TestRendering:
             re.search(r"/featured-projects-card-\d{2}-[a-z0-9-]+\.svg$", src)
             for _, src in card_embeds
         )
+        for _, src in card_embeds:
+            svg = Path(src).read_text(encoding="utf-8")
+            assert 'class="title"' not in svg
+            assert '<rect width="100%" height="100%"' not in svg
 
     def test_blog_section_renders_one_link_wrapped_image_per_post_and_keeps_fallback_list(
         self, tmp_path: Path
@@ -951,6 +957,10 @@ class TestRendering:
             re.search(r"/blog-posts-card-\d{2}-[a-z0-9-]+\.svg$", src)
             for _, src in card_embeds
         )
+        for _, src in card_embeds:
+            svg = Path(src).read_text(encoding="utf-8")
+            assert 'class="title"' not in svg
+            assert '<rect width="100%" height="100%"' not in svg
 
     def test_card_svg_assets_follow_deterministic_per_card_naming_pattern(
         self, tmp_path: Path, monkeypatch

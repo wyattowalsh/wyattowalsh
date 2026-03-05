@@ -955,6 +955,8 @@ class ReadmeSectionGenerator:
                 cards=(card,),
                 columns=1,
                 family=family,
+                show_title=False,
+                transparent_canvas=True,
             )
             self._write_svg_asset(
                 asset_name=card_asset_name,

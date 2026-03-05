@@ -38,6 +38,8 @@ class SvgBlock:
     cards: tuple[SvgCard, ...]
     columns: int = 1
     family: SvgCardFamily | str | None = None
+    show_title: bool = True
+    transparent_canvas: bool = False
 
 
 class SvgCardFamily(str, Enum):
@@ -142,10 +144,10 @@ class SvgBlockRenderer:
         columns = max(1, block.columns)
         rows = (len(cards) + columns - 1) // columns
         card_width = int((self.width - (self.padding * (columns + 1))) / columns)
-        header_height = 88
-        height = (
-            header_height + self.padding + (rows * (self.card_height + self.padding))
-        )
+        show_title = bool(block.show_title and block.title.strip())
+        header_height = 88 if show_title else 0
+        top_offset = header_height + self.padding
+        height = top_offset + (rows * (self.card_height + self.padding))
 
         family = self._resolve_family(block, cards)
         family_policy = _FAMILY_RENDER_POLICIES[family]
@@ -180,18 +182,21 @@ class SvgBlockRenderer:
                 "</linearGradient>"
             ),
             "</defs>",
-            '<rect width="100%" height="100%" rx="24" fill="#0B111A" />',
-            (
-                f'<text class="title" x="{self.padding}" y="54">'
-                f"{self._esc(block.title)}</text>"
-            ),
         ]
+        if not block.transparent_canvas:
+            svg_lines.append(
+                '<rect width="100%" height="100%" rx="24" fill="#0B111A" fill-opacity="0.38" />'
+            )
+        if show_title:
+            svg_lines.append(
+                f'<text class="title" x="{self.padding}" y="54">{self._esc(block.title)}</text>'
+            )
 
         for idx, card in enumerate(cards):
             column = idx % columns
             row = idx // columns
             x = self.padding + (column * (card_width + self.padding))
-            y = header_height + (row * (self.card_height + self.padding))
+            y = top_offset + (row * (self.card_height + self.padding))
             svg_lines.extend(
                 self._render_card(
                     card=card,
@@ -231,9 +236,9 @@ class SvgBlockRenderer:
                     f"{width}"
                     '" height="'
                     f"{self.card_height}"
-                    '" rx="16" fill="#121A25" stroke="'
+                    '" rx="16" fill="#0F172A" fill-opacity="0.78" stroke="'
                     f"{accent}"
-                    '" stroke-opacity="0.45" />'
+                    '" stroke-opacity="0.58" />'
                 )
             ]
         )
@@ -251,7 +256,7 @@ class SvgBlockRenderer:
                 f"{self._esc(card.background_image)}"
                 f'" width="{width}" height="{self.card_height}" '
                 'preserveAspectRatio="xMidYMid slice" '
-                f'clip-path="url(#{clip_id})" opacity="0.16" />'
+                f'clip-path="url(#{clip_id})" opacity="0.20" />'
             )
             lines.append(
                 (
@@ -265,7 +270,7 @@ class SvgBlockRenderer:
             lines.append(
                 '<rect x="12" y="12" width="'
                 f"{width - 24}"
-                '" height="88" rx="12" fill="#0B111A" fill-opacity="0.64" />'
+                '" height="88" rx="12" fill="#0B111A" fill-opacity="0.54" />'
             )
 
         title_x = 18

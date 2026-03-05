@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="284" viewBox="0 0 1100 284" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="196" viewBox="0 0 1100 196" role="img">
 <defs>
 <style>
 .title { fill: #F5F5F5; font: 700 32px ui-sans-serif; }
@@ -12,11 +12,9 @@
 </style>
 <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0B111A" stop-opacity="0.26"/><stop offset="56%" stop-color="#0B111A" stop-opacity="0.72"/><stop offset="100%" stop-color="#0B111A" stop-opacity="0.97"/></linearGradient>
 </defs>
-<rect width="100%" height="100%" rx="24" fill="#0B111A" />
-<text class="title" x="28" y="54">Connect &amp; Contact</text>
-<g class="card" transform="translate(28,88)">
+<g class="card" transform="translate(28,28)">
 <a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
-<rect width="1044" height="140" rx="16" fill="#121A25" stroke="#334155" stroke-opacity="0.45" />
+<rect width="1044" height="140" rx="16" fill="#0F172A" fill-opacity="0.78" stroke="#334155" stroke-opacity="0.58" />
 <circle cx="36" cy="36" r="18" fill="#334155" fill-opacity="0.30" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="1" />
 <circle cx="36" cy="36" r="13.5" fill="#0B111A" fill-opacity="0.64" />
 <defs><clipPath id="icon-clip-0"><circle cx="36" cy="36" r="13.5" /></clipPath></defs>

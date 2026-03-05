@@ -82,6 +82,29 @@ class TestSvgBlockRenderer:
         assert 'class="card-badge"' in svg
         assert "builder" in svg
 
+    def test_render_supports_headerless_transparent_card_blocks(self) -> None:
+        renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
+        block = SvgBlock(
+            title="Connect & Contact",
+            cards=(
+                SvgCard(
+                    title="w4w.dev",
+                    url="https://w4w.dev",
+                    icon="WW",
+                ),
+            ),
+            columns=1,
+            family=SvgCardFamily.CONNECT,
+            show_title=False,
+            transparent_canvas=True,
+        )
+
+        svg = renderer.render(block)
+
+        assert '<text class="title"' not in svg
+        assert "Connect &amp; Contact" not in svg
+        assert '<rect width="100%" height="100%"' not in svg
+
     def test_render_includes_background_and_sparkline(self) -> None:
         renderer = SvgBlockRenderer(width=480, card_height=160, padding=18)
         block = SvgBlock(
