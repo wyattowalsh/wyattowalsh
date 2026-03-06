@@ -681,7 +681,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                                 <path fill-rule="evenodd" d="M2.343 13.657A8 8 0 1113.657 2.343 8 8 0 012.343 13.657zM6.03 4.97a.75.75 0 00-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 101.06 1.06L8 9.06l1.97 1.97a.75.75 0 101.06-1.06L9.06 8l1.97-1.97a.75.75 0 10-1.06-1.06L8 6.94 6.03 4.97z"/>
                             </svg>
-                            API error: 401
+                            API error: 403
                         </div>
                     </section>
                 </div>
@@ -2823,7 +2823,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>transloadit/node-sdk</span>
-                                        <span>starred 13 hours ago</span>
+                                        <span>starred 14 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">Transloadit's official Node.js SDK</div>
@@ -2876,7 +2876,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>karl-andres/music-generation-app</span>
-                                        <span>starred 16 hours ago</span>
+                                        <span>starred 17 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">AI Music Generation SaaS: A web app that generates original music and cover art from text prompts.</div>
@@ -2923,7 +2923,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>karl-andres/fl-studio-mcp</span>
-                                        <span>starred 16 hours ago</span>
+                                        <span>starred 17 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">MCP Server for FL Studio</div>
@@ -2976,7 +2976,7 @@
                                     </svg>
                                     <div class="name">
                                         <span>veenastudio/flstudio-mcp</span>
-                                        <span>starred 16 hours ago</span>
+                                        <span>starred 17 hours ago</span>
                                     </div>
                                 </div>
                                 <div class="field description">
@@ -3473,7 +3473,7 @@
             </section>
             <footer>
                 <span>These metrics include private contributions</span>
-                <span>Last updated 6 Mar 2026, 09:09:51 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
+                <span>Last updated 6 Mar 2026, 10:09:17 (timezone America/New_York) with lowlighter/metrics@3.34.0</span>
             </footer>
         </div>
         <div xmlns="http://www.w3.org/1999/xhtml" id="metrics-end"></div>
