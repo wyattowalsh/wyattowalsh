@@ -363,7 +363,6 @@
 - [metorial/metorial](https://github.com/metorial/metorial) - Connect any AI model to 600+ integrations; powered by MCP 📡 🚀
 - [wonderwhy-er/DesktopCommanderMCP](https://github.com/wonderwhy-er/DesktopCommanderMCP) - This is MCP server for Claude that gives it terminal control, file system search and diff file editing capabilities
 - [volcengine/MineContext](https://github.com/volcengine/MineContext) - MineContext is your proactive context-aware AI partner（Context-Engineering+ChatGPT Pulse）
-- [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) - 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - [memovai/memov](https://github.com/memovai/memov) - Give git-like & traceable memory to OpenClaw and any coding agents. By https://memov.ai/ aka Entire CLI for every coding agents by MCP.
 - [Yuchen20/Memory-Plus](https://github.com/Yuchen20/Memory-Plus) - 🧠 𝑴𝒆𝒎𝒐𝒓𝒚-𝑷𝒍𝒖𝒔 is a lightweight, local RAG memory store for MCP agents. Easily record, retrieve, update, delete, and visualize persistent "memories" across sessions—perfect for developers working with 
 - [datascienceworld-kan/vinagent](https://github.com/datascienceworld-kan/vinagent) - Vinagent is a comprehensive Agentic AI library that helps integrate tools, memory, workflows, and observability.
@@ -499,7 +498,7 @@
 - [vercel-labs/ai-facts](https://github.com/vercel-labs/ai-facts) - Real-time fact checking on spoken statements with the AI SDK, Perplexity and DeepGram
 - [op7418/CodePilot](https://github.com/op7418/CodePilot) - A desktop GUI for Claude Code — chat, code, and manage projects visually. Built with Electron + Next.js.
 - [onnx/onnx](https://github.com/onnx/onnx) - Open standard for machine learning interoperability
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [astronomer/agents](https://github.com/astronomer/agents) - AI agent tooling for data engineering workflows.
 - [DarioFT/ComfyUI-Qwen3-TTS](https://github.com/DarioFT/ComfyUI-Qwen3-TTS) - A ComfyUI custom node suite for Qwen3-TTS, supporting 1.7B and 0.6B models, Custom Voice, Voice Design, Voice Cloning and Fine-Tuning.
 - [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension) - This extension transforms the Gemini CLI into "Pickle Rick," a hyper-intelligent, arrogant, yet extremely competent  engineering persona. It enforces a rigid, iterative software development lifecycle 
@@ -628,8 +627,8 @@
 - [vercel/streamdown](https://github.com/vercel/streamdown) - A drop-in replacement for react-markdown, designed for AI-powered streaming.
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Build, deploy, and orchestrate AI agents. Sim is the central intelligence layer for your AI workforce.
 - [humanlayer/12-factor-agents](https://github.com/humanlayer/12-factor-agents) - What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?
-- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens processed
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 coding agent on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens proce
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [AIDC-AI/ComfyUI-Copilot](https://github.com/AIDC-AI/ComfyUI-Copilot) - An AI-powered custom node for ComfyUI designed to enhance workflow automation and provide intelligent assistance
 - [SillyTavern/SillyTavern](https://github.com/SillyTavern/SillyTavern) - LLM Frontend for Power Users.
 - [snap-stanford/Biomni](https://github.com/snap-stanford/Biomni) - Biomni: a general-purpose biomedical AI agent
@@ -999,7 +998,7 @@
 - [sadiuysal/crawl4ai-mcp-server](https://github.com/sadiuysal/crawl4ai-mcp-server) - 🕷️ A lightweight Model Context Protocol (MCP) server that exposes Crawl4AI web scraping and crawling capabilities as tools for AI agents.  Similar to Firecrawl's API but self-hosted and free. Perfect 
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
 - [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code. Claude Code is powerful. Pilot Shell makes it reliable. Start a task, grab a coffee, come back to production-grade code. Tests enforced. Conte
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) - A lightweight alternative to OpenClaw that runs in containers for security. Connects to WhatsApp, Telegram, Slack, Discord, Gmail and other messaging apps,, has memory, scheduled jobs, and runs direct
 - [cafferychen777/gmail-mcp](https://github.com/cafferychen777/gmail-mcp) - Gmail automation via a Chrome extension + Model Context Protocol (MCP). Control Gmail from Claude Desktop. No API keys. Free.
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
@@ -1030,6 +1029,7 @@
 - [topoteretes/cognee](https://github.com/topoteretes/cognee) - Knowledge Engine for AI Agent Memory in 6 lines of code
 - [droidrun/droidrun](https://github.com/droidrun/droidrun) - Automate your mobile devices with natural language commands - an LLM agnostic mobile Agent 🤖
 - [cocoindex-io/cocoindex](https://github.com/cocoindex-io/cocoindex) - Data transformation framework for AI. Ultra performant, with incremental processing.  🌟 Star if you like it!
+- [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) - 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - [eiondb/eion](https://github.com/eiondb/eion) - Shared Memory Storage for Multi-Agent Systems
 - [agentset-ai/agentset](https://github.com/agentset-ai/agentset) - The open-source RAG platform: built-in citations, deep research, 22+ file formats, partitions, MCP server, and more.
 - [emcie-co/parlant](https://github.com/emcie-co/parlant) - The conversational control layer for customer-facing AI agents - Parlant is a context-engineering framework optimized for controlling customer interactions.
@@ -1278,7 +1278,7 @@
 - [microsoft/rushstack](https://github.com/microsoft/rushstack) - Monorepo for tools developed by the Rush Stack community
 - [fern-api/fern](https://github.com/fern-api/fern) - Input OpenAPI. Output SDKs and Docs.
 - [TonnyL/Awesome_APIs](https://github.com/TonnyL/Awesome_APIs) - :octocat: A collection of APIs
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) - Klavis AI (YC X25):  MCP integration platforms that let AI agents use tools reliably at any scale
 - [aipotheosis-labs/aci](https://github.com/aipotheosis-labs/aci) - ACI.dev is the open source tool-calling platform that hooks up 600+ tools into any agentic IDE or custom AI agent through direct function calling or a unified MCP server. The birthplace of VibeOps.
 - [julien040/anyquery](https://github.com/julien040/anyquery) - Query anything (GitHub, Notion, +40 more) with SQL and let LLMs (ChatGPT, Claude) connect to using MCP
@@ -2084,7 +2084,7 @@
 ## backend 
 
 - [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The context backend for AI agents. Durable agent memory you can trust. Build, version, and retrieve grounded context from a context graph.
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [Dokploy/dokploy](https://github.com/Dokploy/dokploy) - Open Source Alternative to Vercel, Netlify and Heroku.
 - [undb-io/undb](https://github.com/undb-io/undb) - 🚀 Private first self-hosted no code database & BaaS.
 - [rowyio/rowy](https://github.com/rowyio/rowy) - Low-code backend platform. Manage database on spreadsheet-like UI and build cloud functions workflows in JS/TS, all in your browser.
@@ -2357,7 +2357,7 @@
 
 - [Farama-Foundation/chatarena](https://github.com/Farama-Foundation/chatarena) - ChatArena (or Chat Arena) is a Multi-Agent Language Game Environments for LLMs. The goal is to develop communication and collaboration capabilities of AIs.
 - [vercel/chatbot](https://github.com/vercel/chatbot) - A full-featured, hackable Next.js AI chatbot built by Vercel
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [MCPJam/inspector](https://github.com/MCPJam/inspector) - Test & Debug MCP servers, ChatGPT apps, and MCP Apps (ext-apps)
 - [SmythOS/sre](https://github.com/SmythOS/sre) - The SmythOS Runtime Environment (SRE) is an open-source, cloud-native runtime for agentic AI. Secure, modular, and production-ready, it lets developers build, run, and manage intelligent agents across
 - [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) - This MCP server allows Claude and other AI assistants to access your LinkedIn. Scrape LinkedIn profiles, companies and jobs, and perform job searches.
@@ -2374,7 +2374,7 @@
 - [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) - Implement a ChatGPT-like LLM in PyTorch from scratch, step by step
 - [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
 - [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - Access OpenAI models programmatically through your ChatGPT subscription.
-- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens processed
+- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 coding agent on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens proce
 - [openai/openai-cookbook](https://github.com/openai/openai-cookbook) - Examples and guides for using the OpenAI API
 - [Blazity/next-enterprise](https://github.com/Blazity/next-enterprise) - 💼 An enterprise-grade Next.js boilerplate for high-performance, maintainable apps. Packed with features like Tailwind CSS, TypeScript, ESLint, Prettier, testing tools, and more to accelerate your deve
 - [srbhptl39/MCP-SuperAssistant](https://github.com/srbhptl39/MCP-SuperAssistant) - Brings MCP to ChatGPT, DeepSeek, Perplexity, Grok, Gemini, Google AI Studio, OpenRouter, DeepSeek, T3 Chat and more...
@@ -2725,7 +2725,7 @@
 - [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps) - 🖥 📊 🕹 🛠 A curated list of command line apps
 - [gitleaks/gitleaks](https://github.com/gitleaks/gitleaks) - Find secrets with Gitleaks 🔑
 - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) - A powerful little TUI framework 🏗
-- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens processed
+- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 coding agent on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens proce
 - [pathintegral-institute/mcpm.sh](https://github.com/pathintegral-institute/mcpm.sh) - CLI MCP package manager & registry for all platforms and all clients. Search & configure MCP servers. Advanced Router & Profile features.
 - [rbardini/resumed](https://github.com/rbardini/resumed) - 👔 Lightweight JSON Resume builder, no-frills alternative to resume-cli
 - [chalk/chalk](https://github.com/chalk/chalk) - 🖍 Terminal string styling done right
@@ -3865,7 +3865,9 @@
 - [sindresorhus/Pasteboard-Viewer](https://github.com/sindresorhus/Pasteboard-Viewer) - 📋 Inspect the system pasteboards on macOS
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
 - [daytonaio/daytona](https://github.com/daytonaio/daytona) - Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
+- [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy - advanced process monitor for Mac
 - [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 47 Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
+- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 169 production-ready skills & plugins for Claude Code, OpenAI Codex, and OpenClaw — engineering, marketing, product, compliance, C-level advisory, and more. Install via /plugin marketplace.
 - [raintree-technology/claude-starter](https://github.com/raintree-technology/claude-starter) - Advanced Claude Code framework: 40+ skills, meta-commands, TOON format (30-60% token savings), workflow automation & skill orchestration. npx create-claude-starter@latest
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
 - [0PandaDEV/ziit-vscode](https://github.com/0PandaDEV/ziit-vscode) - The VS Code extension for the time tracking software Ziit.
@@ -3888,7 +3890,7 @@
 - [lsendel/spec-kit-mcp](https://github.com/lsendel/spec-kit-mcp) - MCP server enabling AI assistants to use GitHub's spec-kit methodology
 - [mhattingpete/claude-skills-marketplace](https://github.com/mhattingpete/claude-skills-marketplace) - Claude Code Skills for software engineering workflows - Git automation, testing, and code review
 - [lackeyjb/playwright-skill](https://github.com/lackeyjb/playwright-skill) - Claude Code Skill for browser automation with Playwright. Model-invoked - Claude autonomously writes and executes custom automation for testing and validation.
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) - Klavis AI (YC X25):  MCP integration platforms that let AI agents use tools reliably at any scale
 - [aipotheosis-labs/aci](https://github.com/aipotheosis-labs/aci) - ACI.dev is the open source tool-calling platform that hooks up 600+ tools into any agentic IDE or custom AI agent through direct function calling or a unified MCP server. The birthplace of VibeOps.
 - [httptoolkit/httptoolkit-desktop](https://github.com/httptoolkit/httptoolkit-desktop) - Electron wrapper to build and distribute HTTP Toolkit for the desktop
@@ -3974,7 +3976,7 @@
 - [kagent-dev/kagent](https://github.com/kagent-dev/kagent) - Cloud Native Agentic AI | Discord: https://bit.ly/kagentdiscord
 - [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) - An AI Gateway, registry, and proxy that sits in front of any MCP, A2A, or REST/gRPC APIs, exposing a unified endpoint with centralized discovery, guardrails and management. Optimizes Agent & Tool call
 - [shuakami/mcp-ssh](https://github.com/shuakami/mcp-ssh) - 🔐 SSH MCP Tool - AI-powered SSH management through MCP protocol | 基于MCP协议的SSH工具，为AI提供SSH远程操作能力
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [bmd1905/ChatOpsLLM](https://github.com/bmd1905/ChatOpsLLM) - To simplify and streamline LLM operations, empowering developers and organizations to harness the full potential of large language models with ease.
 - [kitops-ml/kitops](https://github.com/kitops-ml/kitops) - An open source DevOps tool from the CNCF for packaging and versioning AI/ML models, datasets, code, and configuration into an OCI Artifact.
 - [errbotio/errbot](https://github.com/errbotio/errbot) - Errbot is a chatbot, a daemon that connects to your favorite chat service and bring your tools and some fun into the conversation.
@@ -4042,7 +4044,7 @@
 - [0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui) - Yet another WebUI for Nginx
 - [lipp/login-with](https://github.com/lipp/login-with) - Stateless login-with microservice for OAuth
 - [libreddit/libreddit](https://github.com/libreddit/libreddit) - Private front-end for Reddit
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [makeplane/plane](https://github.com/makeplane/plane) - 🔥🔥🔥 Open-source Jira, Linear, Monday, and ClickUp alternative. Plane is a modern project management platform to manage tasks, sprints, docs, and triage.
 - [NitroRCr/AIaW](https://github.com/NitroRCr/AIaW) - AI as Workspace - An elegant AI chat client. Full-featured, lightweight. Support multiple workspaces, plugin system, cross-platform, local first + real-time cloud sync, Artifacts, MCP | 更好的 AI 客户端
 - [undb-io/undb](https://github.com/undb-io/undb) - 🚀 Private first self-hosted no code database & BaaS.
@@ -4560,7 +4562,7 @@
 - [postcss/postcss](https://github.com/postcss/postcss) - Transforming styles with JS plugins
 - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) - A powerful little TUI framework 🏗
 - [humanlayer/12-factor-agents](https://github.com/humanlayer/12-factor-agents) - What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [Tracktion/tracktion_engine](https://github.com/Tracktion/tracktion_engine) - Tracktion Engine module
 - [juce-framework/JUCE](https://github.com/juce-framework/JUCE) - JUCE is an open-source cross-platform C++ application framework for desktop and mobile applications, including VST, VST3, AU, AUv3, LV2 and AAX audio plug-ins.
 - [robbert-vdh/nih-plug](https://github.com/robbert-vdh/nih-plug) - Rust VST3 and CLAP plugin framework and plugins - because everything is better when you do it yourself
@@ -4846,7 +4848,7 @@
 - [lostintangent/gistpad](https://github.com/lostintangent/gistpad) - 📘 VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists
 - [shurcooL/githubv4](https://github.com/shurcooL/githubv4) - Package githubv4 is a client library for accessing GitHub GraphQL API v4 (https://docs.github.com/en/graphql).
 - [evoluteur/meet-the-fans](https://github.com/evoluteur/meet-the-fans) - Query and visualize the network graph of your GitHub repositories, forks, followers, and stargazers (using GraphQL and D3).
-- [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://star-history.com
+- [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://www.star-history.com
 - [antonkomarev/github-profile-views-counter](https://github.com/antonkomarev/github-profile-views-counter) - It counts how many times your GitHub profile has been viewed. Free cloud micro-service.
 - [tleunen/react-gist](https://github.com/tleunen/react-gist) - Github Gist React component
 - [honzaap/GithubCity](https://github.com/honzaap/GithubCity) - Create a 3D city from your GitHub contributions 🏙
@@ -4912,7 +4914,6 @@
 - [onmyway133/FinderGo](https://github.com/onmyway133/FinderGo) - 🐢 Open terminal quickly from Finder
 - [miniflux/v2](https://github.com/miniflux/v2) - Minimalist and opinionated feed reader
 - [mmpx12/twitter-media-downloader](https://github.com/mmpx12/twitter-media-downloader) - twmd: CLI/GUI Apiless twitter downlaoder. Download medias from single tweet or a whole profile.
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
 - [golang/go](https://github.com/golang/go) - The Go programming language
 - [goclone-dev/goclone](https://github.com/goclone-dev/goclone) - Website Cloner - Utilizes powerful Go routines to clone websites to your computer within seconds.
 - [cockroachdb/cockroach](https://github.com/cockroachdb/cockroach) - CockroachDB — the cloud native, distributed SQL database designed for high availability, effortless scale, and control over data placement.
@@ -4962,7 +4963,7 @@
 - [cploutarchou/mcp-servers](https://github.com/cploutarchou/mcp-servers) - Production-ready Model Context Protocol (MCP) servers in Python, Go, and Rust for VS Code integration. Enables AI systems to interact with tools via standardized interfaces.
 - [GopeedLab/gopeed](https://github.com/GopeedLab/gopeed) - A modern download manager that supports all platforms.  Built with Golang and Flutter.
 - [mmpx12/twitter-media-downloader](https://github.com/mmpx12/twitter-media-downloader) - twmd: CLI/GUI Apiless twitter downlaoder. Download medias from single tweet or a whole profile.
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [JordanKnott/taskcafe](https://github.com/JordanKnott/taskcafe) - An open source project management tool with Kanban boards
 - [golang/go](https://github.com/golang/go) - The Go programming language
 - [goclone-dev/goclone](https://github.com/goclone-dev/goclone) - Website Cloner - Utilizes powerful Go routines to clone websites to your computer within seconds.
@@ -5741,6 +5742,7 @@
 
 ## javascript 
 
+- [transloadit/node-sdk](https://github.com/transloadit/node-sdk) - Transloadit's official Node.js SDK
 - [grz0zrg/fsynth](https://github.com/grz0zrg/fsynth) - Web-based and pixels-based collaborative synthesizer
 - [Anil-matcha/Open-Higgsfield-AI](https://github.com/Anil-matcha/Open-Higgsfield-AI) - Open-source alternative to Higgsfield AI — Free AI image generation & cinema studio with 20+ models (Flux, SDXL, Midjourney, Ideogram). Self-hosted, customizable, MIT licensed.
 - [SeleniumHQ/selenium](https://github.com/SeleniumHQ/selenium) - A browser automation framework and ecosystem.
@@ -5777,7 +5779,7 @@
 - [gorhill/uBlock](https://github.com/gorhill/uBlock) - uBlock Origin - An efficient blocker for Chromium and Firefox. Fast and lean.
 - [vercel/hyper](https://github.com/vercel/hyper) - A terminal built on web technologies
 - [outline/outline](https://github.com/outline/outline) - The fastest knowledge base for growing teams. Beautiful, realtime collaborative, feature packed, and markdown compatible.
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [alyssaxuu/screenity](https://github.com/alyssaxuu/screenity) - The free and privacy-friendly screen recorder with no limits 🎥
 - [OpenSignLabs/OpenSign](https://github.com/OpenSignLabs/OpenSign) - 🔥 The free & Open Source DocuSign alternative
 - [frappe/hrms](https://github.com/frappe/hrms) - Open Source HR and Payroll Software
@@ -6178,7 +6180,7 @@
 - [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) - An AI Gateway, registry, and proxy that sits in front of any MCP, A2A, or REST/gRPC APIs, exposing a unified endpoint with centralized discovery, guardrails and management. Optimizes Agent & Tool call
 - [alibaba/nacos](https://github.com/alibaba/nacos) - an easy-to-use dynamic service discovery, configuration and service management platform for building AI cloud native applications.
 - [GoogleCloudPlatform/kubectl-ai](https://github.com/GoogleCloudPlatform/kubectl-ai) - AI powered Kubernetes Assistant
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [kitops-ml/kitops](https://github.com/kitops-ml/kitops) - An open source DevOps tool from the CNCF for packaging and versioning AI/ML models, datasets, code, and configuration into an OCI Artifact.
 - [YOURLS/charts](https://github.com/YOURLS/charts) - ☸️ Helm Charts for YOURLS
 - [opsre/awesome-ops](https://github.com/opsre/awesome-ops) - 🧰 记录每一个与运维相关的优秀项目，⚗️ 项目内表格通过 GitHub Action 自动生成，📥 当前收录项目 651 个。
@@ -7198,7 +7200,7 @@
 - [mikekazakov/nimble-commander](https://github.com/mikekazakov/nimble-commander) - Nimble Commander - dual-pane file manager for Mac
 - [EcoPasteHub/EcoPaste](https://github.com/EcoPasteHub/EcoPaste) - 🎉跨平台的剪贴板管理工具 | Cross-platform clipboard management tool
 - [sindresorhus/Pasteboard-Viewer](https://github.com/sindresorhus/Pasteboard-Viewer) - 📋 Inspect the system pasteboards on macOS
-- [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy
+- [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy - advanced process monitor for Mac
 - [patrickfreyer/apple-mail-mcp](https://github.com/patrickfreyer/apple-mail-mcp) - MCP server giving AI assistants full access to Apple Mail - read, search, compose, organize & analyze emails via natural language
 - [super-productivity/super-productivity](https://github.com/super-productivity/super-productivity) - Super Productivity is an advanced todo list app with integrated Timeboxing and time tracking capabilities. It also comes with integrations for Jira, GitLab, GitHub and Open Project.
 - [apparition47/MailTrackerBlockerApp](https://github.com/apparition47/MailTrackerBlockerApp) - Email tracker, read receipt and spy pixel blocking macOS Mail extension
@@ -7849,6 +7851,7 @@
 - [CodeAlive-AI/codealive-mcp](https://github.com/CodeAlive-AI/codealive-mcp) - The most accurate and comprehensive Context Engine as a service, optimized for large codebases, powered by advanced GraphRAG and accessible via MCP. It enriches the context for AI agents like Codex, C
 - [54yyyu/zotero-mcp](https://github.com/54yyyu/zotero-mcp) - Zotero MCP: Connects your Zotero research library with Claude and other AI assistants via the Model Context Protocol to discuss papers, get summaries, analyze citations, and more.
 - [cyanheads/obsidian-mcp-server](https://github.com/cyanheads/obsidian-mcp-server) - Obsidian Knowledge-Management MCP (Model Context Protocol) server that enables AI agents and development tools to interact with an Obsidian vault. It provides a comprehensive suite of tools for readin
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [microsoft/playwright-mcp](https://github.com/microsoft/playwright-mcp) - Playwright MCP server
 - [andredezzy/deep-directory-tree-mcp](https://github.com/andredezzy/deep-directory-tree-mcp) - Powerful Model Context Protocol (MCP) implementation for visualizing directory structures with real-time updates, configurable depth, and smart exclusions for efficient project navigation
 - [tadata-org/fastapi_mcp](https://github.com/tadata-org/fastapi_mcp) - Expose your FastAPI endpoints as Model Context Protocol (MCP) tools, with Auth!
@@ -7972,7 +7975,6 @@
 - [Kong/kong](https://github.com/Kong/kong) - 🦍 The API and AI Gateway
 - [backstage/backstage](https://github.com/backstage/backstage) - Backstage is an open framework for building developer portals
 - [alibaba/nacos](https://github.com/alibaba/nacos) - an easy-to-use dynamic service discovery, configuration and service management platform for building AI cloud native applications.
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
 - [nestjs/nest](https://github.com/nestjs/nest) - A progressive Node.js framework for building efficient, scalable, and enterprise-grade server-side applications with TypeScript/JavaScript 🚀
 - [juicycleff/ultimate-backend](https://github.com/juicycleff/ultimate-backend) - Multi tenant SaaS starter kit with cqrs graphql microservice architecture, apollo federation, event source and authentication
 - [ajndkr/lanarky](https://github.com/ajndkr/lanarky) - The web framework for building LLM microservices [deprecated]
@@ -9127,7 +9129,7 @@
 
 - [51bitquant/ai-hedge-fund-crypto](https://github.com/51bitquant/ai-hedge-fund-crypto) - AI-Hedge-Fund for Crypto 🚀  AI-powered hedge fund for cryptocurrency trading, leveraging LLM agents for intelligent decision-making.
 - [OpenBMB/UltraRAG](https://github.com/OpenBMB/UltraRAG) - A Low-Code MCP Framework for Building Complex and Innovative RAG Pipelines
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [aden-hive/hive](https://github.com/aden-hive/hive) - Outcome driven agent development framework that evolves
 - [blinkospace/blinko](https://github.com/blinkospace/blinko) - An open-source, self-hosted personal AI note tool prioritizing privacy, built using TypeScript .
 - [poly-mcp/PolyMCP](https://github.com/poly-mcp/PolyMCP) - Polymcp provides a simple and efficient way to interact with MCP servers using custom agents
@@ -9502,7 +9504,6 @@
 - [recallnet/sequential-thinking-recall](https://github.com/recallnet/sequential-thinking-recall) - An MCP server that enables dynamic, reflective problem-solving by structuring thought processes and automatically logging each session to Recall.
 - [drewdotpro/cascade-thinking-mcp](https://github.com/drewdotpro/cascade-thinking-mcp) - A Structured Reasoning Framework for AI Agents featuring cascade thinking and structured problem solving
 - [dvcrn/markright](https://github.com/dvcrn/markright) - ➡ Tauri powered markdown editor with live preview
-- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - A Collection of Skills for Claude Code and Claude AI for real-world Usage. Including Claude Code Subagents, Claude Code Commnads
 - [Kamalnrf/claude-plugins](https://github.com/Kamalnrf/claude-plugins) - Lightweight registry to discover, install, and manage all public Claude plugins and agent skills for your favourite AI coding agent.
 - [ahmedasmar/devops-claude-skills](https://github.com/ahmedasmar/devops-claude-skills) - A Claude Code Skills Marketplace for DevOps workflows
 - [gershonavi/AlwaysActiveTab](https://github.com/gershonavi/AlwaysActiveTab) - AlwaysActiveTab prevents websites from detecting when you switch to another tab or window. Keep videos playing, prevent timeouts, and avoid "inactive" status on websites even when you're multitasking.
@@ -12023,6 +12024,7 @@
 - [super-productivity/super-productivity](https://github.com/super-productivity/super-productivity) - Super Productivity is an advanced todo list app with integrated Timeboxing and time tracking capabilities. It also comes with integrations for Jira, GitLab, GitHub and Open Project.
 - [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) - 270+ Claude Code plugins with 739 agent skills. Production orchestration patterns, interactive tutorials (11 Jupyter notebooks), and CCPI package manager. 4.13.0
 - [aws/amazon-q-developer-cli](https://github.com/aws/amazon-q-developer-cli) - ✨ Agentic chat experience in your terminal. Build applications using natural language.
+- [mhattingpete/claude-skills-marketplace](https://github.com/mhattingpete/claude-skills-marketplace) - Claude Code Skills for software engineering workflows - Git automation, testing, and code review
 - [deta/surf](https://github.com/deta/surf) - Personal AI Notebooks. Organize files & webpages and generate notes from them. Open source, local & open data, open model choice (incl. local).
 - [plait-board/drawnix](https://github.com/plait-board/drawnix) - 开源白板工具（SaaS），一体化白板，包含思维导图、流程图、自由画等。All in one open-source whiteboard tool with mind, flowchart, freehand and etc.
 - [alyssaxuu/screenity](https://github.com/alyssaxuu/screenity) - The free and privacy-friendly screen recorder with no limits 🎥
@@ -12102,6 +12104,7 @@
 
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
 - [YouMind-OpenLab/awesome-nano-banana-pro-prompts](https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts) - 🍌 World's largest Nano Banana Pro prompt library — 10,000+ curated prompts with preview images, 16 languages. Google Gemini AI image generation. Free & open source.
+- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 169 production-ready skills & plugins for Claude Code, OpenAI Codex, and OpenClaw — engineering, marketing, product, compliance, C-level advisory, and more. Install via /plugin marketplace.
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) - Community-contributed instructions, prompts, and configurations to help you make the most of GitHub Copilot.
 - [danielrosehill/AI-Agent-Ideation-Chatbot-System-Prompt](https://github.com/danielrosehill/AI-Agent-Ideation-Chatbot-System-Prompt) - System prompt (03/25) for a conversational AI agent and assistant idea generator
 - [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
@@ -12274,7 +12277,7 @@
 - [langchain-ai/langchain-mcp-adapters](https://github.com/langchain-ai/langchain-mcp-adapters) - LangChain 🔌 MCP
 - [timofurrer/awesome-asyncio](https://github.com/timofurrer/awesome-asyncio) - A curated list of awesome Python asyncio frameworks, libraries, software and resources
 - [RunaCapital/awesome-oss-alternatives](https://github.com/RunaCapital/awesome-oss-alternatives) - Awesome list of open-source startup alternatives to well-known SaaS products 🚀
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [frappe/hrms](https://github.com/frappe/hrms) - Open Source HR and Payroll Software
 - [microsoft/mcp-for-beginners](https://github.com/microsoft/mcp-for-beginners) - This open-source curriculum introduces the fundamentals of Model Context Protocol (MCP) through real-world, cross-language examples in .NET, Java, TypeScript, JavaScript, Rust and Python. Designed for
 - [ernestofgonzalez/djangorocket](https://github.com/ernestofgonzalez/djangorocket) - A Django SaaS boilerplate
@@ -12749,7 +12752,7 @@
 - [aiguofer/gspread-pandas](https://github.com/aiguofer/gspread-pandas) - A package to easily open an instance of a Google spreadsheet and interact with worksheets through Pandas DataFrames.
 - [litl/backoff](https://github.com/litl/backoff) - Python library providing function decorators for configurable backoff and retry
 - [tomasbasham/ratelimit](https://github.com/tomasbasham/ratelimit) - API Rate Limit Decorator
-- [googleapis/google-cloud-python](https://github.com/googleapis/google-cloud-python) - Google Cloud Client Library for Python
+- [googleapis/google-cloud-python](https://github.com/googleapis/google-cloud-python) - Google Cloud Client Libraries for Python
 - [splitgraph/sgr](https://github.com/splitgraph/sgr) - sgr (command line client for Splitgraph) and the splitgraph Python library
 - [djrobstep/migra](https://github.com/djrobstep/migra) - DEPRECATED: Like diff but for PostgreSQL schemas
 - [perseas/Pyrseas](https://github.com/perseas/Pyrseas) - Provides utilities for Postgres database schema versioning.
@@ -13072,7 +13075,7 @@
 - [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) - Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - [m92vyas/llm-reader](https://github.com/m92vyas/llm-reader) - Turn Webpage to LLM friendly input text. Similar to Firecrawl and Jina Reader API. Makes RAG, AI web scraping, image & webpage links extraction easy.
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Open Source AI Platform - AI Chat with advanced features that works with every LLM
-- [tianlan-ltd/Magic-Insight](https://github.com/tianlan-ltd/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
+- [luguanglong/Magic-Insight](https://github.com/luguanglong/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
 - [sirmews/mcp-pinecone](https://github.com/sirmews/mcp-pinecone) - Model Context Protocol server to allow for reading and writing from Pinecone. Rudimentary RAG
 - [meilisearch/meilisearch-mcp](https://github.com/meilisearch/meilisearch-mcp) - A Model Context Protocol (MCP) server for interacting with Meilisearch through LLM interfaces.
 - [win4r/GraphRAG4OpenWebUI](https://github.com/win4r/GraphRAG4OpenWebUI) - GraphRAG4OpenWebUI integrates Microsoft's GraphRAG technology into Open WebUI, providing a versatile information retrieval API. It combines local, global, and web searches for advanced Q&A systems and
@@ -14677,7 +14680,7 @@
 - [pirafrank/what-size.yazi](https://github.com/pirafrank/what-size.yazi) - A plugin for yazi to calculate the size of current selection or current working directory
 - [yorukot/superfile](https://github.com/yorukot/superfile) - Pretty fancy and modern terminal file manager
 - [freqtrade/ftui](https://github.com/freqtrade/ftui) - FTUI - a terminal-based Freqtrade UI client
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [ramonvermeulen/whosthere](https://github.com/ramonvermeulen/whosthere) - Local Area Network discovery tool with an interactive Terminal User Interface (TUI) written in Go.  Discover, explore, and understand your LAN in an intuitive way. Knock Knock.. who's there? 🚪
 - [ratatui/ratatui](https://github.com/ratatui/ratatui) - A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - [Textualize/textual](https://github.com/Textualize/textual) - The lean application framework for Python.  Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and a web browser.
@@ -14728,7 +14731,7 @@
 - [VideoRoll/VideoRoll](https://github.com/VideoRoll/VideoRoll) - 📺All-in-One browser extension to enhance your video watching experience.
 - [vercel-labs/knowledge-agent-template](https://github.com/vercel-labs/knowledge-agent-template) - Open source file-system and knowledge based agent template. Build AI agents that stay up to date with your knowledge base
 - [SixHq/Overture](https://github.com/SixHq/Overture) - Overture is an open-source, locally running web interface delivered as an MCP (Model Context Protocol) server that visually maps out the execution plan of any AI coding agent as an interactive flowcha
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [blitz-js/blitz](https://github.com/blitz-js/blitz) - ⚡️ The Missing Fullstack Toolkit for Next.js
 - [poly-mcp/PolyMCP](https://github.com/poly-mcp/PolyMCP) - Polymcp provides a simple and efficient way to interact with MCP servers using custom agents
 - [nikkoxgonzales/crash-mcp](https://github.com/nikkoxgonzales/crash-mcp) - MCP server for structured and efficient reasoning with step validation, branching, and revisions.
@@ -14764,7 +14767,7 @@
 - [TanStack/router](https://github.com/TanStack/router) - 🤖 A client-first, server-capable, fully type-safe router and full-stack framework for the web (React and more).
 - [ScrapeGraphAI/scrapecraft](https://github.com/ScrapeGraphAI/scrapecraft) - 🤖 AI-powered web scraping editor with visual workflow builder. Build, test & deploy web scrapers using natural language. Powered by ScrapeGraphAI & LangGraph.
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Build, deploy, and orchestrate AI agents. Sim is the central intelligence layer for your AI workforce.
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [dyad-sh/dyad](https://github.com/dyad-sh/dyad) - Local, open-source AI app builder for power users ✨ v0 / Lovable / Replit / Bolt alternative 🌟 Star if you like it!
 - [microsoft/mcp-for-beginners](https://github.com/microsoft/mcp-for-beginners) - This open-source curriculum introduces the fundamentals of Model Context Protocol (MCP) through real-world, cross-language examples in .NET, Java, TypeScript, JavaScript, Rust and Python. Designed for
 - [Blazity/next-enterprise](https://github.com/Blazity/next-enterprise) - 💼 An enterprise-grade Next.js boilerplate for high-performance, maintainable apps. Packed with features like Tailwind CSS, TypeScript, ESLint, Prettier, testing tools, and more to accelerate your deve
