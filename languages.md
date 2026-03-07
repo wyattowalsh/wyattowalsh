@@ -597,7 +597,7 @@
 - [txthinking/brook](https://github.com/txthinking/brook) - A cross-platform programmable network tool
 - [mmpx12/twitter-media-downloader](https://github.com/mmpx12/twitter-media-downloader) - twmd: CLI/GUI Apiless twitter downlaoder. Download medias from single tweet or a whole profile.
 - [iyear/tdl](https://github.com/iyear/tdl) - 📥 A Telegram toolkit written in Golang
-- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - AI-ready API traffic analyzer for Kubernetes, providing deep packet inspection with complete API and Kubernetes contexts, retaining cluster-wide L4 traffic (PCAP), and using minimal production compute
+- [kubeshark/kubeshark](https://github.com/kubeshark/kubeshark) - Cluster-wide network observability for Kubernetes. Captures L4 packets, L7 API calls, and decrypted TLS traffic using eBPF, with full Kubernetes context. Available to AI agents via MCP and human opera
 - [lharries/whatsapp-mcp](https://github.com/lharries/whatsapp-mcp) - WhatsApp MCP server
 - [github/github-mcp-server](https://github.com/github/github-mcp-server) - GitHub's official MCP Server
 - [specstoryai/getspecstory](https://github.com/specstoryai/getspecstory) - Install our local first extensions for your favorite AI IDE or Terminal Agent. Sync your conversations to the cloud. File issues and requests.
@@ -919,7 +919,7 @@
 - [GongRzhe/Gmail-MCP-Server](https://github.com/GongRzhe/Gmail-MCP-Server) - A Model Context Protocol (MCP) server for Gmail integration in Claude Desktop with auto authentication support. This server enables AI assistants to manage Gmail through natural language interactions.
 - [cafferychen777/gmail-mcp](https://github.com/cafferychen777/gmail-mcp) - Gmail automation via a Chrome extension + Model Context Protocol (MCP). Control Gmail from Claude Desktop. No API keys. Free.
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) - Vercel's official collection of agent skills
-- [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy
+- [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy - advanced process monitor for Mac
 - [omar-haris/smart-coding-mcp](https://github.com/omar-haris/smart-coding-mcp) - An extensible Model Context Protocol (MCP-Local-MRL-RAG-AST) server that provides intelligent semantic code search for AI assistants. Built with local AI models, inspired by Cursor's semantic search.
 - [xkiranj/markitdown-mcp-npx](https://github.com/xkiranj/markitdown-mcp-npx) - NPX wrapper for Microsoft's MarkItDown MCP server - run without Docker
 - [linxule/lotus-wisdom-mcp](https://github.com/linxule/lotus-wisdom-mcp) - MCP server for structured problem-solving using the Lotus Sutra's wisdom framework. Beautiful visualizations, multiple thinking approaches, compatible with various MCP clients (e.g., Claude Desktop, C
@@ -2870,7 +2870,7 @@
 - [fvanevski/trafilatura_mcp](https://github.com/fvanevski/trafilatura_mcp) - Trafilatura MCP Server
 - [patrickfreyer/apple-mail-mcp](https://github.com/patrickfreyer/apple-mail-mcp) - MCP server giving AI assistants full access to Apple Mail - read, search, compose, organize & analyze emails via natural language
 - [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 47 Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
-- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - A Collection of Skills for Claude Code and Claude AI for real-world Usage. Including Claude Code Subagents, Claude Code Commnads
+- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 169 production-ready skills & plugins for Claude Code, OpenAI Codex, and OpenClaw — engineering, marketing, product, compliance, C-level advisory, and more. Install via /plugin marketplace.
 - [ahmedasmar/devops-claude-skills](https://github.com/ahmedasmar/devops-claude-skills) - A Claude Code Skills Marketplace for DevOps workflows
 - [conorluddy/ios-simulator-skill](https://github.com/conorluddy/ios-simulator-skill) - An IOS Simulator Skill for ClaudeCode. Use it to optimise Claude's ability to build, run and interact with your apps, without using up any of the available token/context budget.
 - [gabrielchua/open-notebooklm](https://github.com/gabrielchua/open-notebooklm) - Convert any PDF into a podcast episode!
@@ -3488,7 +3488,7 @@
 - [fusion-jena/automatic-KG-creation-with-LLM](https://github.com/fusion-jena/automatic-KG-creation-with-LLM) - Automatic Ontology and Knowledge Graph construction with LLM
 - [hitz-zentroa/GoLLIE](https://github.com/hitz-zentroa/GoLLIE) - Guideline following Large Language Model for Information Extraction
 - [OpenBMB/MiniCPM-o](https://github.com/OpenBMB/MiniCPM-o) - A Gemini 2.5 Flash Level MLLM for Vision, Speech, and Full-Duplex Multimodal Live Streaming on Your Phone
-- [tianlan-ltd/Magic-Insight](https://github.com/tianlan-ltd/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
+- [luguanglong/Magic-Insight](https://github.com/luguanglong/Magic-Insight) - One-stop data intelligence agent, providing insights from all mainstream data formats in a single dialogue box, including documents, databases, business systems, and images.一站式数据智能体，一个对话框提供所有主流格式数据的见解
 - [THU-KEG/ADELIE](https://github.com/THU-KEG/ADELIE) - [EMNLP2024] Aligning Large Language Models on Information Extraction
 - [embeddings-benchmark/mteb](https://github.com/embeddings-benchmark/mteb) - MTEB: Massive Text Embedding Benchmark
 - [open-webui/bot](https://github.com/open-webui/bot) - beep boop 🤖 (experimental)
@@ -4534,7 +4534,7 @@
 - [sucitw/python-script-in-NiFi](https://github.com/sucitw/python-script-in-NiFi) - python script examples in NiFi
 - [litl/backoff](https://github.com/litl/backoff) - Python library providing function decorators for configurable backoff and retry
 - [tomasbasham/ratelimit](https://github.com/tomasbasham/ratelimit) - API Rate Limit Decorator
-- [googleapis/google-cloud-python](https://github.com/googleapis/google-cloud-python) - Google Cloud Client Library for Python
+- [googleapis/google-cloud-python](https://github.com/googleapis/google-cloud-python) - Google Cloud Client Libraries for Python
 - [koordinates/kart](https://github.com/koordinates/kart) - Distributed version-control for geospatial and tabular data
 - [splitgraph/sgr](https://github.com/splitgraph/sgr) - sgr (command line client for Splitgraph) and the splitgraph Python library
 - [djrobstep/migra](https://github.com/djrobstep/migra) - DEPRECATED: Like diff but for PostgreSQL schemas
@@ -5149,6 +5149,7 @@
 
 ## TypeScript 
 
+- [transloadit/node-sdk](https://github.com/transloadit/node-sdk) - Transloadit's official Node.js SDK
 - [paperclipai/paperclip](https://github.com/paperclipai/paperclip) - Open-source orchestration for zero-human companies
 - [agentmail-to/agentmail-toolkit](https://github.com/agentmail-to/agentmail-toolkit) - 
 - [AgentWorkforce/relay](https://github.com/AgentWorkforce/relay) - Real-time agent to agent communication
@@ -5193,7 +5194,7 @@
 - [op7418/CodePilot](https://github.com/op7418/CodePilot) - A desktop GUI for Claude Code — chat, code, and manage projects visually. Built with Electron + Next.js.
 - [different-ai/openwork](https://github.com/different-ai/openwork) - An open-source alternative to Claude Cowork built for teams, powered by opencode
 - [NoeFabris/opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth) - Enable Opencode to authenticate against Antigravity (Google's IDE) via OAuth so you can use Antigravity rate limits and access models like gemini-3-pro and claude-opus-4-5-thinking with your Google cr
-- [code-yeongyu/oh-my-opencode](https://github.com/code-yeongyu/oh-my-opencode) - the best agent harness
+- [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
 - [remotion-dev/remotion](https://github.com/remotion-dev/remotion) - 🎥      Make videos programmatically with React
 - [virattt/dexter](https://github.com/virattt/dexter) - An autonomous agent for deep financial research
 - [KeygraphHQ/shannon](https://github.com/KeygraphHQ/shannon) - Shannon Lite is a fully autonomous AI pentester for web apps and APIs. 96.15% (100/104 exploits) on a hint-free, source-aware variant of the XBOW benchmark.
@@ -5395,9 +5396,9 @@
 - [Prat011/free-cluely](https://github.com/Prat011/free-cluely) - Cluely - The invisible desktop assistant that provides real-time insights, answers, and support during meetings, interviews, presentations, and professional conversations.
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Build, deploy, and orchestrate AI agents. Sim is the central intelligence layer for your AI workforce.
 - [humanlayer/12-factor-agents](https://github.com/humanlayer/12-factor-agents) - What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?
-- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens processed
+- [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 coding agent on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens proce
 - [outline/outline](https://github.com/outline/outline) - The fastest knowledge base for growing teams. Beautiful, realtime collaborative, feature packed, and markdown compatible.
-- [MotiaDev/motia](https://github.com/MotiaDev/motia) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
+- [iii-hq/iii](https://github.com/iii-hq/iii) - iii (pronounced “three eye”) unifies your existing backend stack with a single engine and two primitives: Function and Trigger.
 - [AIDC-AI/ComfyUI-Copilot](https://github.com/AIDC-AI/ComfyUI-Copilot) - An AI-powered custom node for ComfyUI designed to enhance workflow automation and provide intelligent assistance
 - [Dokploy/dokploy](https://github.com/Dokploy/dokploy) - Open Source Alternative to Vercel, Netlify and Heroku.
 - [anomalyco/opencode](https://github.com/anomalyco/opencode) - The open source coding agent.
@@ -6169,7 +6170,7 @@
 - [neo4j-labs/neodash](https://github.com/neo4j-labs/neodash) - NeoDash - a Dashboard Builder for Neo4j
 - [nat/openplayground](https://github.com/nat/openplayground) - An LLM playground you can run on your laptop
 - [multiprocessio/datastation](https://github.com/multiprocessio/datastation) - App to easily query, script, and visualize data from every database, file, and API.
-- [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://star-history.com
+- [star-history/star-history](https://github.com/star-history/star-history) - The missing star history graph of GitHub repos - https://www.star-history.com
 - [superagent-ai/superagent](https://github.com/superagent-ai/superagent) - Superagent protects your AI applications against prompt injections, data leaks, and harmful outputs. Embed safety directly into your app and prove compliance to your customers.
 - [paralleldrive/sudolang](https://github.com/paralleldrive/sudolang) - SudoLang LLM Support for VSCode
 - [FlowiseAI/Flowise](https://github.com/FlowiseAI/Flowise) - Build AI Agents, Visually
