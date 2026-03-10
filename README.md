@@ -333,12 +333,26 @@
 
 </details>
 
-## Metrics
+## GitHub Metrics
 
-<p align="center">
-  <img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, activity, languages, and habits" width="49%"/>
-  <img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: music, activity, and stargazers" width="49%"/>
-</p>
+<table width="100%">
+  <tr>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/metrics.svg"/>
+        <source media="(prefers-color-scheme: light)" srcset=".github/assets/img/metrics.svg"/>
+        <img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, activity, community, languages, habits, and notable contributions" width="100%"/>
+      </picture>
+    </td>
+    <td width="50%" align="center">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/metrics.additional.svg"/>
+        <source media="(prefers-color-scheme: light)" srcset=".github/assets/img/metrics.additional.svg"/>
+        <img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: music, activity, stargazers, featured repositories, and stars" width="100%"/>
+      </picture>
+    </td>
+  </tr>
+</table>
 
 ## Word Clouds
 
