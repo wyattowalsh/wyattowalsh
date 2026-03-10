@@ -337,7 +337,7 @@ class SvgWordCloudEngine(ABC):
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
-            elem = ET.SubElement(root, "text", **attrs)
+            elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
         ET.indent(root)
@@ -966,7 +966,7 @@ class ShapedRenderer(SvgWordCloudEngine):
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
-            elem = ET.SubElement(root, "text", **attrs)
+            elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
         ET.indent(root)
