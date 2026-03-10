@@ -20,7 +20,7 @@ import numpy as np
 
 from .shared import (
     WIDTH, HEIGHT, CX, CY, LANG_HUES,
-    seed_hash, hex_frac, oklch, Noise2D,
+    seed_hash, oklch, Noise2D,
     compute_maturity,
     make_radial_gradient, make_linear_gradient,
 )
@@ -965,7 +965,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vignette)"/>')
 
     # ── Underground strata ────────────────────────────────────────
-    account_age = max((r.get("age_months", 6) for r in repos), default=12)
+    max((r.get("age_months", 6) for r in repos), default=12)
     n_strata = 1 + int(mat * 3)
     ground_pts = [(gx_i, ground_y_at(gx_i)) for gx_i in range(0, WIDTH + 5, 5)]
     ground_path = f"M{ground_pts[0][0]},{ground_pts[0][1]:.1f}" + "".join(
@@ -993,7 +993,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'stroke="#4a3a20" stroke-width="0.2" opacity="0.06"/>')
         else:
             # Earthworm segment — small curved pink-brown
-            wsa = rng.uniform(-0.5, 0.5)
+            rng.uniform(-0.5, 0.5)
             P.append(f'<path d="M{scx:.0f},{scy:.0f} Q{scx + 6:.0f},{scy + 3:.0f} {scx + 12:.0f},{scy + 1:.0f}" '
                      f'fill="none" stroke="#b0887a" stroke-width="1" opacity="0.06" stroke-linecap="round"/>')
     # Worm trails — sinuous paths between strata
@@ -1163,7 +1163,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             wf_h = rng.uniform(4, 9)
             wf_hue = rng.choice([0, 45, 270, 320, 55])
             wf_c = oklch(0.62, 0.22, wf_hue)
-            wf_sc = oklch(0.50, 0.16, wf_hue)
+            oklch(0.50, 0.16, wf_hue)
             # Stem
             P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy - wf_h:.1f}" '
                      f'stroke="#6a8a4a" stroke-width="0.3" opacity="0.2"/>')
@@ -1465,7 +1465,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                          f'fill="#7aaa5a" opacity="0.25"/>')
 
     # PASS 4: Leaves with species-specific shapes (capped)
-    budget_ok = lambda: len(P) - elem_count < MAX_ELEMENTS
+    def budget_ok():
+        return len(P) - elem_count < MAX_ELEMENTS
     for leaf_tuple in leaves[:MAX_LEAVES]:
         if not budget_ok():
             break
@@ -1762,7 +1763,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                  f'stroke="{seed_c}" stroke-width="0.15" opacity="0.15"/>')
 
     # ── Labels (botanical plate annotation with halos) ────────────
-    P.append(f'<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
+    P.append('<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
     for li, (lx, ly, text, ax, ay) in enumerate(labels):
         # Dashed leader line with small arrowhead
         P.append(f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
@@ -1997,7 +1998,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 species_shown.add(sp)
                 legend_items.append(sp)
         if legend_items:
-            P.append(f'<g font-family="Georgia,serif" font-size="5" fill="#8a7a6a" opacity="0.35">')
+            P.append('<g font-family="Georgia,serif" font-size="5" fill="#8a7a6a" opacity="0.35">')
             for li_l, sp_name in enumerate(legend_items):
                 liy = leg_y + li_l * 8
                 if sp_name in ("oak", "birch"):

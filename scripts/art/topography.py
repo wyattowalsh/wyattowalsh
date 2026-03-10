@@ -14,10 +14,10 @@ import math
 import numpy as np
 
 from .shared import (
-    WIDTH, HEIGHT, CX, CY, LANG_HUES,
+    WIDTH, HEIGHT, LANG_HUES,
     seed_hash, hex_frac, oklch, Noise2D,
     compute_maturity,
-    make_radial_gradient, make_linear_gradient,
+    make_radial_gradient,
 )
 
 # Map margins
@@ -187,7 +187,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     contributions = metrics.get("contributions_last_year", 200)
     forks = metrics.get("forks", 0)
     stars = metrics.get("stars", 0)
-    network = metrics.get("network_count", 0)
+    metrics.get("network_count", 0)
 
     grid = 180
     elevation = np.zeros((grid, grid))
@@ -222,10 +222,10 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
         # Organic position: hash-seeded with repulsion to avoid overlap
         a_idx = (ri * 4) % 56
-        b_idx = (ri * 4 + 4) % 56
+        (ri * 4 + 4) % 56
         hx = hex_frac(h, a_idx, min(a_idx + 4, 64))
         c_idx = (ri * 4 + 2) % 56
-        d_idx = (ri * 4 + 6) % 56
+        (ri * 4 + 6) % 56
         hy = hex_frac(h, c_idx, min(c_idx + 4, 64))
         rcx = 0.15 + hx * 0.7
         rcy = 0.15 + hy * 0.7

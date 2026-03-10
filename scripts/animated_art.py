@@ -204,9 +204,9 @@ def _milestone_indices(events: list) -> list[tuple[int, float]]:
 # Color utilities
 # ---------------------------------------------------------------------------
 
-def _hsl_to_hex(h: float, s: float, l: float) -> str:
+def _hsl_to_hex(h: float, s: float, lightness: float) -> str:
     """Convert HSL (all 0..1) to hex colour string."""
-    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    r, g, b = colorsys.hls_to_rgb(h, lightness, s)
     return "#{:02x}{:02x}{:02x}".format(int(r * 255), int(g * 255), int(b * 255))
 
 
@@ -543,7 +543,7 @@ def generate_animated_community_art(
     )
 
     # Year tick marks on timeline
-    repos = history.get("repos", [])
+    history.get("repos", [])
     account_created = history.get("account_created")
     all_dates = [e.get("date", "") for e in all_events]
     all_dates = [d for d in all_dates if d]

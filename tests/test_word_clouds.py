@@ -5,7 +5,7 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 
 import pytest
-from word_cloud_renderers import (
+from scripts.word_cloud_renderers import (
     BBox,
     ClusteredRenderer,
     PlacedWord,
@@ -125,12 +125,12 @@ class TestPointInPolygon:
         assert not _point_in_polygon(2.0, 2.0, square)
 
     def test_inside_hexagon(self) -> None:
-        from word_cloud_renderers import _SHAPE_POLYGONS
+        from scripts.word_cloud_renderers import _SHAPE_POLYGONS
         hexagon = _SHAPE_POLYGONS["hexagon"]
         assert _point_in_polygon(0.5, 0.5, hexagon)
 
     def test_outside_hexagon(self) -> None:
-        from word_cloud_renderers import _SHAPE_POLYGONS
+        from scripts.word_cloud_renderers import _SHAPE_POLYGONS
         hexagon = _SHAPE_POLYGONS["hexagon"]
         assert not _point_in_polygon(0.0, 0.0, hexagon)
 

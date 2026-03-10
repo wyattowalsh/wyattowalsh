@@ -25,7 +25,6 @@ import math
 from pathlib import Path
 from typing import Optional
 
-import numpy as np
 import svgwrite
 
 from .art.shared import phyllotaxis_points, flow_field_lines

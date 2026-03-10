@@ -50,8 +50,8 @@ PROFILES = {
         "contributions_last_year": 3800, "total_commits": 42000,
         "open_issues_count": 120, "network_count": 2400,
         "repos": [
-            {"name": f"p-{i}", "language": l, "stars": s, "age_months": a}
-            for i, (l, s, a) in enumerate([
+            {"name": f"p-{i}", "language": lang, "stars": s, "age_months": a}
+            for i, (lang, s, a) in enumerate([
                 ("Python", 1200, 84), ("JavaScript", 800, 96), ("TypeScript", 600, 48),
                 ("Go", 400, 60), ("Rust", 350, 36), ("C++", 280, 108),
                 ("Python", 200, 72), ("Shell", 150, 120), ("Ruby", 120, 90),
