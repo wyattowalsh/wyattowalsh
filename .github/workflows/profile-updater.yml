@@ -172,23 +172,15 @@ jobs:
         id: metrics_auth
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
-          TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
         run: |
           set -euo pipefail
           # Secret setup guidance:
           # - METRICS_TOKEN: GitHub PAT (classic) with at least read:user, public_repo (add read:org for org/collab visibility).
-          # - TWITTER_TOKEN: X/Twitter bearer token used only by plugin_tweets.
           has_metrics_token=false
-          has_twitter_token=false
           [ -n "${METRICS_TOKEN:-}" ] && has_metrics_token=true
-          [ -n "${TWITTER_TOKEN:-}" ] && has_twitter_token=true
           echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
-          echo "has_twitter_token=${has_twitter_token}" >> "$GITHUB_OUTPUT"
           if [ "${has_metrics_token}" != "true" ]; then
             echo "::warning::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
-          fi
-          if [ "${has_twitter_token}" != "true" ]; then
-            echo "::notice::TWITTER_TOKEN is missing; X/Twitter metrics are disabled."
           fi
       - name: Personal metrics
         id: personal_metrics
@@ -198,18 +190,21 @@ jobs:
           filename: ./.github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          # ... other params from your main.yml ...
-          base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, repositories' || 'header, activity' }}
+          base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, community, repositories, metadata' || 'header, activity, community, metadata' }}
           plugin_lines: yes
           plugin_isocalendar: yes
           plugin_traffic: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_languages: yes
-          plugin_languages_ignored: jupyter%20notebook
+          plugin_languages_ignored: "jupyter%20notebook"
+          plugin_languages_details: "bytes-size, percentage"
+          plugin_languages_threshold: "2%"
           plugin_habits: yes
           plugin_habits_from: 200
           plugin_habits_days: 14
           plugin_habits_facts: yes
           plugin_habits_charts: yes
+          plugin_notable: yes
+          plugin_notable_repositories: yes
           plugin_gists: yes
           plugin_topics: yes
           plugin_topics_sort: stars
@@ -237,17 +232,20 @@ jobs:
           filename: ./.github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          base: "header, activity"
+          base: "header, activity, community, metadata"
           plugin_lines: yes
           plugin_isocalendar: yes
           plugin_traffic: no
           plugin_languages: yes
-          plugin_languages_ignored: jupyter%20notebook
+          plugin_languages_ignored: "jupyter%20notebook"
+          plugin_languages_details: "bytes-size, percentage"
+          plugin_languages_threshold: "2%"
           plugin_habits: yes
           plugin_habits_from: 200
           plugin_habits_days: 14
           plugin_habits_facts: yes
           plugin_habits_charts: yes
+          plugin_notable: yes
           plugin_gists: yes
           plugin_topics: yes
           plugin_topics_sort: stars
@@ -263,7 +261,6 @@ jobs:
           filename: ./.github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          # ... other params from your main.yml ...
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
@@ -272,20 +269,21 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
           plugin_music_limit: 5
-          plugin_tweets: ${{ steps.metrics_auth.outputs.has_twitter_token == 'true' && 'yes' || 'no' }}
-          plugin_tweets_token: ${{ steps.metrics_auth.outputs.has_twitter_token == 'true' && secrets.TWITTER_TOKEN || '' }}
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
+          plugin_repositories: yes
+          plugin_repositories_featured: "wyattowalsh/listentropy, wyattowalsh/mdxpad, wyattowalsh/proxywhirl, wyattowalsh/nbadb, wyattowalsh/agents, wyattowalsh/personal-website, wyattowalsh/riso, wyattowalsh/iina-plugin-bookmarks"
 
       - name: Check additional metrics output
         id: check_additional_metrics
         if: ${{ always() }}
         run: |
-          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)"
+          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
           if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "${AUTH_ERROR_PATTERN}" ./.github/assets/img/metrics.additional.svg; then
@@ -294,7 +292,7 @@ jobs:
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Personal metrics (additional fallback without tweets)
+      - name: Personal metrics (additional fallback)
         if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.check_additional_metrics.outputs.needs_fallback == 'true' }}
         uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
@@ -309,32 +307,61 @@ jobs:
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
           plugin_music_limit: 5
-          plugin_tweets: no
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_days: 14
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
+          plugin_repositories: yes
+          plugin_repositories_featured: "wyattowalsh/listentropy, wyattowalsh/mdxpad, wyattowalsh/proxywhirl, wyattowalsh/nbadb, wyattowalsh/agents, wyattowalsh/personal-website, wyattowalsh/riso, wyattowalsh/iina-plugin-bookmarks"
 
       - name: Sanitize final metrics SVG outputs
         if: ${{ always() }}
         run: |
           set -euo pipefail
-          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|tweets?.*(error|forbidden|unauthorized)|twitter.*(error|forbidden|unauthorized)"
+          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
+
           sanitize_svg() {
             local file="$1"
-            if [ ! -s "$file" ] || ! grep -Eiq "<svg[^>]*>" "$file" || ! grep -Eiq "</svg>" "$file" || grep -Eiq "${AUTH_ERROR_PATTERN}" "$file"; then
-              cat > "$file" <<'SVG'
+            local label="${2:-$(basename "$file")}"
+            local reason=""
+
+            if [ ! -e "$file" ]; then
+              reason="file does not exist"
+            elif [ ! -s "$file" ]; then
+              reason="file is empty (0 bytes)"
+            elif ! grep -Eiq "<svg[^>]*>" "$file"; then
+              reason="missing <svg> opening tag"
+            elif ! grep -Eiq "</svg>" "$file"; then
+              reason="missing </svg> closing tag"
+            elif grep -Eiq "${AUTH_ERROR_PATTERN}" "$file"; then
+              reason="SVG contains auth/error message: $(grep -Eio "${AUTH_ERROR_PATTERN}" "$file" | head -1)"
+            fi
+
+            if [ -n "$reason" ]; then
+              echo "::warning::Sanitizing ${label}: ${reason}. Replacing with placeholder SVG."
+              cat > "$file" <<'SVGEOF'
+          <?xml version="1.0" encoding="UTF-8"?>
           <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" role="img" aria-label="Metrics unavailable">
-            <rect width="100%" height="100%" fill="#0d1117"/>
-            <text x="50%" y="50%" fill="#c9d1d9" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22">Metrics temporarily unavailable</text>
+            <rect width="100%" height="100%" rx="8" fill="#0d1117"/>
+            <text x="50%" y="45%" fill="#c9d1d9" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22">Metrics temporarily unavailable</text>
+            <text x="50%" y="65%" fill="#8b949e" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14">Check workflow logs for details</text>
           </svg>
-          SVG
+          SVGEOF
+              # Verify the placeholder is well-formed
+              if ! grep -q '</svg>' "$file"; then
+                echo "::error::Failed to write valid placeholder SVG to ${label}"
+                return 1
+              fi
+            else
+              echo "::notice::${label} passed SVG validation."
             fi
           }
-          sanitize_svg ./.github/assets/img/metrics.svg
-          sanitize_svg ./.github/assets/img/metrics.additional.svg
+
+          sanitize_svg ./.github/assets/img/metrics.svg "metrics.svg"
+          sanitize_svg ./.github/assets/img/metrics.additional.svg "metrics.additional.svg"
 
   generate-event-art:
     name: Generate Event-Driven Artwork
