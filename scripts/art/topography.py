@@ -44,6 +44,25 @@ LANG_TERRAIN: dict[str | None, tuple[float, float]] = {
     None: (10.0, 0.05),
 }
 
+# Language → biome type: (vegetation_pattern, biome_color_tint)
+# Maps programming languages to cartographic biome metaphors
+LANG_BIOME: dict[str | None, tuple[str, str]] = {
+    "Python": ("forest", "#2a6a2e"),        # dense forest / green
+    "Jupyter Notebook": ("forest", "#3a7a3e"),
+    "JavaScript": ("grassland", "#8a9a3a"),  # open grassland / yellow-green
+    "TypeScript": ("grassland", "#7a8a4a"),
+    "HTML": ("savanna", "#b0a050"),          # savanna / warm
+    "CSS": ("savanna", "#a09848"),
+    "Rust": ("rocky", "#8a7060"),            # rocky peaks / brown
+    "Go": ("alpine", "#6a8a7a"),             # alpine meadow / blue-green
+    "C": ("rocky", "#7a6a5a"),
+    "C++": ("rocky", "#8a7a6a"),
+    "Shell": ("scrubland", "#7a8a5a"),       # dry scrubland
+    "Ruby": ("tropical", "#4a8a3a"),         # tropical / vivid green
+    "Java": ("woodland", "#5a7a4a"),         # deciduous woodland
+    None: ("mixed", "#6a7a5a"),
+}
+
 
 def _grid_to_map(gx: float, gy: float, cell_w: float, cell_h: float):
     return MAP_L + gx * cell_w, MAP_T + gy * cell_h
@@ -416,6 +435,43 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     <path d="M7,7 L8,5 L9,7Z" fill="none" stroke="#8a7a6a" stroke-width="0.3" opacity="0.12"/>
     <circle cx="5" cy="8" r="0.4" fill="#8a7a6a" opacity="0.10"/>
   </pattern>''')
+    # Biome-specific vegetation patterns (language → cartographic vegetation type)
+    # Forest biome — dense deciduous canopy with stippling (Python, Ruby, etc.)
+    P.append('''<pattern id="biome_forest" width="16" height="14" patternUnits="userSpaceOnUse">
+    <circle cx="4" cy="5" r="3.5" fill="none" stroke="#2a6a2e" stroke-width="0.5" opacity="0.16"/>
+    <circle cx="12" cy="4" r="2.8" fill="none" stroke="#3a7a3e" stroke-width="0.45" opacity="0.14"/>
+    <circle cx="8" cy="10" r="2.5" fill="none" stroke="#2a6a2e" stroke-width="0.4" opacity="0.12"/>
+    <circle cx="4" cy="5" r="1.2" fill="#2a6a2e" opacity="0.06"/>
+    <circle cx="12" cy="4" r="0.9" fill="#3a7a3e" opacity="0.05"/>
+  </pattern>''')
+    # Grassland biome — open tufts and stipples (JavaScript, TypeScript)
+    P.append('''<pattern id="biome_grassland" width="12" height="10" patternUnits="userSpaceOnUse">
+    <line x1="3" y1="8" x2="3" y2="4" stroke="#8a9a3a" stroke-width="0.3" opacity="0.14"/>
+    <line x1="2" y1="5" x2="4" y2="4" stroke="#8a9a3a" stroke-width="0.25" opacity="0.10"/>
+    <line x1="9" y1="7" x2="9" y2="3.5" stroke="#7a8a4a" stroke-width="0.3" opacity="0.12"/>
+    <line x1="8" y1="4.5" x2="10" y2="3.5" stroke="#7a8a4a" stroke-width="0.25" opacity="0.10"/>
+    <circle cx="6" cy="6" r="0.3" fill="#8a9a3a" opacity="0.10"/>
+  </pattern>''')
+    # Alpine biome — sparse dots and tiny flower marks (Go)
+    P.append('''<pattern id="biome_alpine" width="14" height="12" patternUnits="userSpaceOnUse">
+    <circle cx="3" cy="4" r="0.5" fill="#6a8a7a" opacity="0.12"/>
+    <circle cx="10" cy="3" r="0.4" fill="#6a8a7a" opacity="0.10"/>
+    <circle cx="7" cy="8" r="0.6" fill="#7a9a8a" opacity="0.10"/>
+    <circle cx="12" cy="10" r="0.3" fill="#6a8a7a" opacity="0.08"/>
+    <path d="M5,9 L5.5,7.5 L6,9" fill="none" stroke="#6a8a7a" stroke-width="0.2" opacity="0.10"/>
+  </pattern>''')
+    # Rocky biome — cross-hatching for bare rock (Rust, C, C++)
+    P.append('''<pattern id="biome_rocky" width="10" height="10" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="0" x2="10" y2="10" stroke="#8a7060" stroke-width="0.2" opacity="0.10"/>
+    <line x1="10" y1="0" x2="0" y2="10" stroke="#7a6a5a" stroke-width="0.2" opacity="0.08"/>
+    <path d="M3,2 L4,0.5 L5,2Z" fill="none" stroke="#8a7a6a" stroke-width="0.25" opacity="0.10"/>
+  </pattern>''')
+    # Scrubland biome — sparse low vegetation (Shell)
+    P.append('''<pattern id="biome_scrubland" width="16" height="12" patternUnits="userSpaceOnUse">
+    <circle cx="4" cy="7" r="1.8" fill="none" stroke="#7a8a5a" stroke-width="0.35" opacity="0.12"/>
+    <circle cx="12" cy="5" r="1.4" fill="none" stroke="#7a8a5a" stroke-width="0.3" opacity="0.10"/>
+    <circle cx="8" cy="10" r="0.5" fill="#7a8a5a" opacity="0.08"/>
+  </pattern>''')
     # Vignette — dark edge framing
     P.append(make_radial_gradient('vigTopo', '50%', '48%', '65%',
         [('0%', '#000000', 0.0), ('55%', '#000000', 0.0),
@@ -446,6 +502,15 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'fill="#{r_c:02x}{g_c:02x}{b_c:02x}" opacity="{elev_op:.2f}"/>')
 
     # ── Water + vegetation overlays ───────────────────────────────
+    # Biome type → SVG pattern id mapping
+    _BIOME_PATTERN: dict[str, str] = {
+        "forest": "biome_forest", "grassland": "biome_grassland",
+        "alpine": "biome_alpine", "rocky": "biome_rocky",
+        "scrubland": "biome_scrubland", "savanna": "biome_grassland",
+        "tropical": "biome_forest", "woodland": "biome_forest",
+        "mixed": "trees",
+    }
+
     for gy in range(0, grid, 3):
         for gx in range(0, grid, 3):
             e = elevation[min(gy, grid - 1), min(gx, grid - 1)]
@@ -457,10 +522,27 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             e = elevation[min(gy, grid - 1), min(gx, grid - 1)]
             mx, my = _grid_to_map(gx, gy, cell_w, cell_h)
             sw, sh = cell_w * 6, cell_h * 6
+            fx_norm, fy_norm = gx / grid, gy / grid
+
             if 0.20 < e < 0.50:
+                # Find nearest repo peak to determine biome-specific vegetation
+                nearest_biome = "mixed"
+                nearest_dist = float("inf")
+                for rpx, rpy, rrepo in repo_positions:
+                    d = math.sqrt((fx_norm - rpx) ** 2 + (fy_norm - rpy) ** 2)
+                    if d < nearest_dist:
+                        nearest_dist = d
+                        lang = rrepo.get("language")
+                        nearest_biome = LANG_BIOME.get(lang, LANG_BIOME[None])[0]
+
+                # Use biome-specific pattern if close to a repo peak, generic trees otherwise
+                pattern_id = _BIOME_PATTERN.get(nearest_biome, "trees") if nearest_dist < 0.25 else "trees"
                 tree_op = 0.5 * _fade(0.05, 0.25)
+                # Proximity boost: closer to repo = denser vegetation
+                if nearest_dist < 0.15:
+                    tree_op *= 1.0 + 0.4 * (1.0 - nearest_dist / 0.15)
                 if tree_op > 0:
-                    P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#trees)" opacity="{tree_op:.2f}"/>')
+                    P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#{pattern_id})" opacity="{min(0.6, tree_op):.2f}"/>')
             elif 0.10 < e < 0.20:
                 marsh_op = 0.4 * _fade(0.10, 0.30)
                 if marsh_op > 0:
@@ -500,16 +582,18 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                          f'transform="rotate({la:.0f},{lk_x:.0f},{lk_y:.0f})"/>')
 
     # ── Rivers (widening downstream, fade in gradually) ───────────
+    # Data mapping: activity (contributions) -> river flow volume
+    activity_flow = min(2.0, 1.0 + contributions / 1500.0)
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
     for rvi, rpts in enumerate(river_paths if river_fade > 0 else []):
         if len(rpts) < 3:
             continue
-        # Draw river in segments with increasing width
+        # Draw river in segments with increasing width, scaled by activity
         n_seg = len(rpts) - 1
         for j in range(0, n_seg - 1, 2):
             frac = j / max(1, n_seg)
-            sw_r = (0.4 + mat * 0.4) + frac * (1.5 + mat * 1.5)
+            sw_r = ((0.4 + mat * 0.4) + frac * (1.5 + mat * 1.5)) * activity_flow
             op_r = (0.35 + frac * 0.25) * river_fade
             x1r = MAP_L + rpts[j][0] * MAP_W
             y1r = MAP_T + rpts[j][1] * MAP_H
@@ -643,18 +727,33 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'fill="none" stroke="#d0ccc0" stroke-width="{rng.uniform(0.2, 0.4):.2f}" '
                      f'opacity="{rng.uniform(0.04, 0.07):.2f}" stroke-linecap="round"/>')
 
-    # ── Spot heights ──────────────────────────────────────────────
+    # ── Spot heights (stars -> peak prominence with summit markers) ─
+    # Data mapping: more stars = more prominent peaks shown
+    star_prominence = min(2.5, 1.0 + stars / 100.0)
     spots = []
     for gy in range(3, grid - 3, 8):
         for gx in range(3, grid - 3, 8):
             e = elevation[gy, gx]
             if e > 0.5 and all(elevation[gy + dy, gx + dx] <= e for dy in range(-2, 3) for dx in range(-2, 3) if (dy, dx) != (0, 0)):
                 spots.append((*_grid_to_map(gx, gy, cell_w, cell_h), e))
-    n_spots = max(0, round(mat * 18))
-    for sx, sy, se in spots[:n_spots]:
-        P.append(f'<polygon points="{sx:.0f},{sy-3:.0f} {sx-3:.0f},{sy+3:.0f} {sx+3:.0f},{sy+3:.0f}" '
-                 f'fill="none" stroke="#5a4a3a" stroke-width="0.5" opacity="0.4"/>')
-        P.append(f'<text x="{sx+5:.0f}" y="{sy+2:.0f}" font-family="monospace" font-size="5" fill="#5a4a3a" opacity="0.4">{int(se*1000)}</text>')
+    n_spots = max(0, round(mat * 18 * star_prominence))
+    spots_sorted = sorted(spots, key=lambda s: s[2], reverse=True)
+    for si_spot, (sx, sy, se) in enumerate(spots_sorted[:n_spots]):
+        # Top 3 peaks get larger summit markers when stars are high
+        if si_spot < 3 and stars > 20:
+            # Summit cross marker
+            cross_sz = 3.5 + star_prominence
+            P.append(f'<line x1="{sx:.0f}" y1="{sy - cross_sz:.0f}" x2="{sx:.0f}" y2="{sy + cross_sz:.0f}" '
+                     f'stroke="#5a4a3a" stroke-width="0.8" opacity="0.45"/>')
+            P.append(f'<line x1="{sx - cross_sz:.0f}" y1="{sy:.0f}" x2="{sx + cross_sz:.0f}" y2="{sy:.0f}" '
+                     f'stroke="#5a4a3a" stroke-width="0.8" opacity="0.45"/>')
+            # Bold summit label
+            P.append(f'<text x="{sx + 6:.0f}" y="{sy + 2:.0f}" font-family="monospace" font-size="5.5" '
+                     f'fill="#3a2a1a" opacity="0.5" font-weight="bold">{int(se * 1000)}</text>')
+        else:
+            P.append(f'<polygon points="{sx:.0f},{sy-3:.0f} {sx-3:.0f},{sy+3:.0f} {sx+3:.0f},{sy+3:.0f}" '
+                     f'fill="none" stroke="#5a4a3a" stroke-width="0.5" opacity="0.4"/>')
+            P.append(f'<text x="{sx+5:.0f}" y="{sy+2:.0f}" font-family="monospace" font-size="5" fill="#5a4a3a" opacity="0.4">{int(se*1000)}</text>')
 
     # ── Survey benchmarks at secondary peaks ──────────────────────
     bm_fade = _fade(0.25, 0.50)
@@ -834,16 +933,34 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 P.append(f'<polygon points="{ccx},{ccy} {ccx-px*ic_w},{ccy-py*ic_w} {tip_x},{tip_y}" '
                          f'fill="#f0eeea" opacity="0.3" stroke="#2c2c2c" stroke-width="0.2"/>')
         if chrome_mat > 0.75:
-            P.append(f'<circle cx="{ccx}" cy="{ccy}" r="{cr-1}" fill="none" stroke="#2c2c2c" stroke-width="0.4" opacity="0.25"/>')
-            for deg in range(0, 360, 30):
-                rad = math.radians(deg)
-                is_cardinal = deg % 90 == 0
-                r_in = cr - 1 if is_cardinal else cr
-                r_out = cr + 2
-                sw_t = 0.6 if is_cardinal else 0.3
+            # Decorative double-ring border for 16-point compass
+            P.append(f'<circle cx="{ccx}" cy="{ccy}" r="{cr + 4}" fill="none" stroke="#2c2c2c" stroke-width="0.3" opacity="0.2"/>')
+            P.append(f'<circle cx="{ccx}" cy="{ccy}" r="{cr - 1}" fill="none" stroke="#2c2c2c" stroke-width="0.4" opacity="0.25"/>')
+            # 16-point tick marks (every 22.5 degrees)
+            sixteen_labels = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                              "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+            for ti, deg in enumerate(range(0, 360, 22)):
+                # Approximate: 0, 22.5, 45, 67.5, ... (use 22 to step through 16)
+                actual_deg = ti * 22.5
+                rad = math.radians(actual_deg)
+                is_cardinal = ti % 4 == 0
+                is_intercardinal = ti % 2 == 0 and not is_cardinal
+                if is_cardinal:
+                    r_in, r_out, sw_t = cr - 2, cr + 3, 0.6
+                elif is_intercardinal:
+                    r_in, r_out, sw_t = cr - 1, cr + 2, 0.4
+                else:
+                    r_in, r_out, sw_t = cr, cr + 1.5, 0.25
                 P.append(f'<line x1="{ccx + r_in * math.sin(rad):.1f}" y1="{ccy - r_in * math.cos(rad):.1f}" '
                          f'x2="{ccx + r_out * math.sin(rad):.1f}" y2="{ccy - r_out * math.cos(rad):.1f}" '
                          f'stroke="#2c2c2c" stroke-width="{sw_t}" opacity="0.3"/>')
+                # Secondary direction labels (NE, SE, etc.) in smaller text
+                if is_intercardinal and ti < 16:
+                    lbl_r = cr + 6
+                    lbl = sixteen_labels[ti]
+                    P.append(f'<text x="{ccx + lbl_r * math.sin(rad):.0f}" y="{ccy - lbl_r * math.cos(rad):.0f}" '
+                             f'text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif" '
+                             f'font-size="3.5" fill="#5a4a3a" opacity="0.3">{lbl}</text>')
             decl = 3 + int(hex_frac(h, 48, 50) * 12)
             P.append(f'<text x="{ccx:.0f}" y="{ccy + cr + 14:.0f}" text-anchor="middle" '
                      f'font-family="Georgia,serif" font-size="3.5" fill="#5a4a3a" opacity="0.3" '
