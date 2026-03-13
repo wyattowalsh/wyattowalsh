@@ -541,7 +541,7 @@
 - [Brads3290/cclogviewer](https://github.com/Brads3290/cclogviewer) - Review Claude Code .jsonl files with a nice HTML UI
 - [open-policy-agent/opa](https://github.com/open-policy-agent/opa) - Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - [53AI/53AIHub](https://github.com/53AI/53AIHub) - 53AI Hub is an open-source AI portal, which enables you to quickly build a operational-level AI portal to launch and operate AI agents, prompts, and AI tools. It supports seamless integration with dev
-- [smtg-ai/claude-squad](https://github.com/smtg-ai/claude-squad) - Manage multiple AI terminal agents like Claude Code, Aider, Codex, OpenCode, and Amp.
+- [smtg-ai/claude-squad](https://github.com/smtg-ai/claude-squad) - Manage multiple AI terminal agents like Claude Code, Codex, OpenCode, and Amp.
 - [steveyegge/beads](https://github.com/steveyegge/beads) - Beads - A memory upgrade for your coding agent
 - [context-space/context-space](https://github.com/context-space/context-space) - Ultimate Context Engineering Infrastructure, starting from MCPs and Integrations
 - [mcpjungle/MCPJungle](https://github.com/mcpjungle/MCPJungle) - Self-hosted MCP Gateway for AI agents
@@ -681,7 +681,6 @@
 - [qri-io/qri](https://github.com/qri-io/qri) - you're invited to a data party!
 - [smartcontractkit/chainlink](https://github.com/smartcontractkit/chainlink) - node of the decentralized oracle network, bridging on and off-chain computation
 - [bandprotocol/chain](https://github.com/bandprotocol/chain) - BandChain blockchain reference implementation
-- [ccxt/ccxt](https://github.com/ccxt/ccxt) - A cryptocurrency trading API with more than 100 exchanges in JavaScript / TypeScript / Python / C# / PHP / Go
 - [russross/blackfriday](https://github.com/russross/blackfriday) - Blackfriday: a markdown processor for Go
 - [dolthub/dolt](https://github.com/dolthub/dolt) - Dolt – Git for Data
 - [prasmussen/gdrive](https://github.com/prasmussen/gdrive) - Google Drive CLI Client
@@ -958,7 +957,6 @@
 - [lackeyjb/playwright-skill](https://github.com/lackeyjb/playwright-skill) - Claude Code Skill for browser automation with Playwright. Model-invoked - Claude autonomously writes and executes custom automation for testing and validation.
 - [bavovanachte/sphinx-wavedrom](https://github.com/bavovanachte/sphinx-wavedrom) - A sphinx extension that allows including wavedrom diagrams by using its text-based representation
 - [meteor/meteor](https://github.com/meteor/meteor) - Meteor, the JavaScript App Platform
-- [twentyhq/twenty](https://github.com/twentyhq/twenty) - Building a modern alternative to Salesforce, powered by the community.
 - [dataease/SQLBot](https://github.com/dataease/SQLBot) - 🔥 基于大模型和 RAG 的智能问数系统，对话式数据分析神器。Text-to-SQL Generation via LLMs using RAG.
 - [facebook/react](https://github.com/facebook/react) - The library for web and native user interfaces.
 - [gorhill/uBlock](https://github.com/gorhill/uBlock) - uBlock Origin - An efficient blocker for Chromium and Firefox. Fast and lean.
@@ -1797,7 +1795,6 @@
 - [awslabs/amazon-bedrock-agentcore-samples](https://github.com/awslabs/amazon-bedrock-agentcore-samples) - Amazon Bedrock Agentcore accelerates AI agents into production with the scale, reliability, and security, critical to real-world deployment.
 - [patchy631/ai-engineering-hub](https://github.com/patchy631/ai-engineering-hub) - In-depth tutorials on LLMs, RAGs and real-world AI agent applications.
 - [anthropics/prompt-eng-interactive-tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial) - Anthropic's Interactive Prompt Engineering Tutorial
-- [datascienceworld-kan/vinagent](https://github.com/datascienceworld-kan/vinagent) - Vinagent is a comprehensive Agentic AI library that helps integrate tools, memory, workflows, and observability.
 - [kingjulio8238/Memary](https://github.com/kingjulio8238/Memary) - The Open Source Memory Layer For Autonomous Agents
 - [google-research/google-research](https://github.com/google-research/google-research) - Google Research
 - [NVIDIA/Isaac-GR00T](https://github.com/NVIDIA/Isaac-GR00T) - NVIDIA Isaac GR00T N1.6 -  A Foundation Model for Generalist Robots.
@@ -2962,7 +2959,7 @@
 - [gensyn-ai/codeassist](https://github.com/gensyn-ai/codeassist) - A completely private and local AI coding assistant, developed by Gensyn. It helps you practice programming problems and train a novel assistant to help you code.
 - [DrewThomasson/ebook2audiobook](https://github.com/DrewThomasson/ebook2audiobook) - Generate audiobooks from e-books, voice cloning & 1158+ languages!
 - [fishaudio/fish-speech](https://github.com/fishaudio/fish-speech) - SOTA Open Source TTS
-- [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热点筛选工具！聚合多平台热点 +  RSS 订阅，支持关键词精准筛选。AI 翻译 +  AI 分析简报直推手机，也支持接入 MCP 架构，赋能 AI 自然语言对话
+- [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热点筛选工具！聚合多平台热点 +  RSS 订阅，支持关键词精准筛选。AI 智能筛选新闻 + AI 翻译 +  AI 分析简报直推手机，也支持接入 MCP 架构，
 - [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) - 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - [GeeeekExplorer/nano-vllm](https://github.com/GeeeekExplorer/nano-vllm) - Nano vLLM
 - [suitenumerique/docs](https://github.com/suitenumerique/docs) - A collaborative note taking, wiki and documentation platform that scales. Built with Django and React.
@@ -2974,6 +2971,7 @@
 - [Yuchen20/Memory-Plus](https://github.com/Yuchen20/Memory-Plus) - 🧠 𝑴𝒆𝒎𝒐𝒓𝒚-𝑷𝒍𝒖𝒔 is a lightweight, local RAG memory store for MCP agents. Easily record, retrieve, update, delete, and visualize persistent "memories" across sessions—perfect for developers working with 
 - [MarkusPfundstein/mcp-gsuite](https://github.com/MarkusPfundstein/mcp-gsuite) - MCP Server to interact with Google Gsuite prodcuts
 - [xing5/mcp-google-sheets](https://github.com/xing5/mcp-google-sheets) - This MCP server integrates with your Google Drive and Google Sheets, to enable creating and modifying spreadsheets.
+- [datascienceworld-kan/vinagent](https://github.com/datascienceworld-kan/vinagent) - Vinagent is a comprehensive Agentic AI library that helps integrate tools, memory, workflows, and observability.
 - [ipospelov/mcp-memory-bank](https://github.com/ipospelov/mcp-memory-bank) - MCP server that helps build Memory Bank - structured documentation system for context preservation
 - [agiresearch/A-mem](https://github.com/agiresearch/A-mem) - A-MEM: Agentic Memory for LLM Agents
 - [awslabs/graphrag-toolkit](https://github.com/awslabs/graphrag-toolkit) - Python toolkit for building graph-enhanced GenAI applications
@@ -3611,7 +3609,7 @@
 - [gitmylo/audio-webui](https://github.com/gitmylo/audio-webui) - A webui for different audio related Neural Networks
 - [salu133445/lakh-pianoroll-dataset](https://github.com/salu133445/lakh-pianoroll-dataset) - A collection of 174,154 multi-track piano-rolls
 - [salu133445/pypianoroll](https://github.com/salu133445/pypianoroll) - A toolkit for working with piano rolls
-- [POZAlabs/ComMU-code](https://github.com/POZAlabs/ComMU-code) - [NeurIPS'22] Official code of "ComMU: Dataset for Combinatorial Music Generation"
+- [pozalabs/ComMU-code](https://github.com/pozalabs/ComMU-code) - [NeurIPS'22] Official code of "ComMU: Dataset for Combinatorial Music Generation"
 - [1aienthusiast/audiocraft-infinity-webui](https://github.com/1aienthusiast/audiocraft-infinity-webui) - 
 - [mostafaelaraby/wavegan-pytorch](https://github.com/mostafaelaraby/wavegan-pytorch) - Pytorch Implementation of wavegan model to generate audio
 - [carlosholivan/musicaiz](https://github.com/carlosholivan/musicaiz) - A python framework for symbolic music generation, evaluation and analysis
@@ -4553,6 +4551,7 @@
 - [pandas-dev/pandas](https://github.com/pandas-dev/pandas) - Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more
 - [nalepae/pandarallel](https://github.com/nalepae/pandarallel) - A simple and efficient tool to parallelize Pandas operations on all available CPUs
 - [drivendataorg/cookiecutter-data-science](https://github.com/drivendataorg/cookiecutter-data-science) - A logical, reasonably standardized, but flexible project structure for doing and sharing data science work.
+- [ccxt/ccxt](https://github.com/ccxt/ccxt) - A cryptocurrency trading API with more than 100 exchanges in JavaScript / TypeScript / Python / C# / PHP / Go
 - [blockchain-etl/ethereum-etl](https://github.com/blockchain-etl/ethereum-etl) - Python scripts for ETL (extract, transform and load) jobs for Ethereum blocks, transactions, ERC20 / ERC721 tokens, transfers, receipts, logs, contracts, internal transactions. Data is available in Go
 - [pymc-devs/pymc](https://github.com/pymc-devs/pymc) - Bayesian Modeling and Probabilistic Programming in Python
 - [crflynn/stochastic](https://github.com/crflynn/stochastic) - Generate realizations of stochastic processes in python.
@@ -4751,7 +4750,7 @@
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - [librespot-org/librespot](https://github.com/librespot-org/librespot) - Open Source Spotify client library
 - [facebook/pyrefly](https://github.com/facebook/pyrefly) - A fast type checker and language server for Python
-- [atuinsh/atuin](https://github.com/atuinsh/atuin) - ✨ Magical shell history
+- [atuinsh/atuin](https://github.com/atuinsh/atuin) - ✨ Making your shell magical
 - [cocoindex-io/cocoindex](https://github.com/cocoindex-io/cocoindex) - Data transformation framework for AI. Ultra performant, with incremental processing.  🌟 Star if you like it!
 - [rust-lang/mdBook](https://github.com/rust-lang/mdBook) - Create book from markdown files. Like Gitbook but implemented in Rust
 - [ratatui/ratatui](https://github.com/ratatui/ratatui) - A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
@@ -5028,7 +5027,7 @@
 - [finnvoor/fx-upscale](https://github.com/finnvoor/fx-upscale) - Metal-powered video upscaling
 - [mobile-next/PriceyApp](https://github.com/mobile-next/PriceyApp) - MacOS Status bar app that tracks, monitors your Claude Code AI usage costs in real-time and compares them to human developer costs
 - [steipete/Peekaboo](https://github.com/steipete/Peekaboo) - Peekaboo is a macOS CLI & optional MCP server that enables AI agents to capture screenshots of applications, or the entire system, with optional visual question answering through local or remote AI mo
-- [osaurus-ai/osaurus](https://github.com/osaurus-ai/osaurus) - AI edge infrastructure for macOS. Run local or cloud models, share tools across apps via MCP, and power AI workflows with a native, always-on runtime.
+- [osaurus-ai/osaurus](https://github.com/osaurus-ai/osaurus) - Own your AI. The native macOS harness for AI agents -- any model, persistent memory, autonomous execution, cryptographic identity. Built in Swift. Fully offline. Open source.
 - [netdcy/FlowVision](https://github.com/netdcy/FlowVision) - Waterfall-style image viewer for macOS, offering a smooth and immersive browsing experience.
 - [okooo5km/memory-mcp-server](https://github.com/okooo5km/memory-mcp-server) - A Model Context Protocol server that provides knowledge graph management capabilities.
 - [ZachNagengast/similarity-search-kit](https://github.com/ZachNagengast/similarity-search-kit) - 🔎 SimilaritySearchKit is a Swift package providing on-device text embeddings and semantic search functionality for iOS and macOS applications.
@@ -5194,7 +5193,7 @@
 - [vercel-labs/ai-sdk-preview-internal-knowledge-base](https://github.com/vercel-labs/ai-sdk-preview-internal-knowledge-base) - 
 - [vercel-labs/markdown-sanitizers](https://github.com/vercel-labs/markdown-sanitizers) - 
 - [joventuraz/skillpack](https://github.com/joventuraz/skillpack) - A skills.sh dependency manager
-- [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code. Claude Code is powerful. Pilot Shell makes it reliable. Start a task, grab a coffee, come back to production-grade code. Tests enforced. Conte
+- [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code. Tests enforced, context preserved, quality automated.
 - [Yeachan-Heo/oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) - OmX - Oh My codeX: Your codex is not alone. Add hooks, agent teams, HUDs, and so much more.
 - [AndrewWalsh/demystify](https://github.com/AndrewWalsh/demystify) - Automated documentation for APIs
 - [op7418/CodePilot](https://github.com/op7418/CodePilot) - A desktop GUI for Claude Code — chat, code, and manage projects visually. Built with Electron + Next.js.
@@ -5357,6 +5356,7 @@
 - [openai/codex-action](https://github.com/openai/codex-action) - 
 - [microsoft/rushstack](https://github.com/microsoft/rushstack) - Monorepo for tools developed by the Rush Stack community
 - [mattermost/mattermost](https://github.com/mattermost/mattermost) - Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
+- [twentyhq/twenty](https://github.com/twentyhq/twenty) - Building a modern alternative to Salesforce, powered by the community.
 - [lerna/lerna](https://github.com/lerna/lerna) - Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository.
 - [nrwl/nx](https://github.com/nrwl/nx) - The Monorepo Platform that amplifies both developers and AI agents. Nx optimizes your builds, scales your CI, and fixes failed PRs automatically. Ship in half the time.
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) - Community-contributed instructions, agents, skills, and configurations to help you make the most of GitHub Copilot.
@@ -6098,7 +6098,7 @@
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization.
 - [labring/FastGPT](https://github.com/labring/FastGPT) - FastGPT is a knowledge-based platform built on the LLMs, offers a comprehensive suite of out-of-the-box capabilities such as data processing, RAG retrieval, and visual AI workflow orchestration, letti
 - [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio powers 1000+ toolkits, tool search, context management, authentication, and a sandboxed workbench to help you build AI agents that turn intent into action.
-- [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - The Frontend for Agents & Generative UI. React + Angular
+- [CopilotKit/CopilotKit](https://github.com/CopilotKit/CopilotKit) - The Frontend Stack for Agents & Generative UI. React + Angular.  Makers of the AG-UI Protocol
 - [eylonmiz/react-agent](https://github.com/eylonmiz/react-agent) - The open-source React.js Autonomous LLM Agent
 - [botpress/botpress](https://github.com/botpress/botpress) - The open-source hub to build & deploy GPT/LLM Agents ⚡️
 - [Ironclad/rivet-example](https://github.com/Ironclad/rivet-example) - 
