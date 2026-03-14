@@ -161,7 +161,7 @@
 <br>
     
 <!--START_SECTION:waka-->
-![Code Time](http://img.shields.io/badge/Code%20Time-4%2C045%20hrs%2049%20mins-blue?style=flat)
+![Code Time](http://img.shields.io/badge/Code%20Time-4%2C046%20hrs%202%20mins-blue?style=flat)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-57.67%20million%20lines%20of%20code-blue?style=flat)
 
@@ -202,13 +202,13 @@ Sunday                   3053 commits        █████░░░░░░�
 
 ```text
 💬 Programming Languages: 
-Other                    5 hrs 28 mins       ████████████████████░░░░░   80.28 % 
-Markdown                 45 mins             ███░░░░░░░░░░░░░░░░░░░░░░   11.14 % 
-Bash                     28 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   07.04 % 
-JSON                     6 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.53 % 
+Other                    4 hrs 55 mins       ████████████████████░░░░░   81.19 % 
+Markdown                 33 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   09.18 % 
+Bash                     28 mins             ██░░░░░░░░░░░░░░░░░░░░░░░   07.91 % 
+JSON                     6 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   01.72 % 
 
 💻 Operating System: 
-Mac                      6 hrs 49 mins       █████████████████████████   100.00 % 
+Mac                      6 hrs 4 mins        █████████████████████████   100.00 % 
 ```
 
 **I Mostly Code in Python** 
@@ -228,7 +228,7 @@ Jinja                    1 repo              ░░░░░░░░░░░�
 ![Lines of Code chart](https://raw.githubusercontent.com/wyattowalsh/wyattowalsh/main/assets/bar_graph.png)
 
 
- Last Updated on 13/03/2026 18:58:22 UTC
+ Last Updated on 14/03/2026 18:56:19 UTC
 <!--END_SECTION:waka-->
 
     
