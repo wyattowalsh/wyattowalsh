@@ -10,7 +10,6 @@
 <a href="https://linkedin.com/in/wyattowalsh"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" loading="lazy"/></a>
 <a href="https://www.kaggle.com/wyattowalsh"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" loading="lazy"/></a>
 <a href="https://x.com/wyattowalsh"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
-[w4w.dev](https://w4w.dev) · [LinkedIn](https://linkedin.com/in/wyattowalsh) · [Kaggle](https://www.kaggle.com/wyattowalsh) · [X.com](https://x.com/wyattowalsh)
 <!-- README:TOP_BADGES:END -->
 
 ## Featured Projects
@@ -35,12 +34,12 @@
 </tr>
 </tbody></table>
 - [listentropy](https://github.com/wyattowalsh/listentropy) — No description provided. (★ 0)
-- [mdxpad](https://github.com/wyattowalsh/mdxpad) — Live stats are temporarily unavailable; open repository for details.
-- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — Live stats are temporarily unavailable; open repository for details.
+- [mdxpad](https://github.com/wyattowalsh/mdxpad) — No description provided. (★ 0)
+- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — rotating proxy system (★ 1)
 - [nbadb](https://github.com/wyattowalsh/nbadb) — Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball) (★ 57)
 - [agents](https://github.com/wyattowalsh/agents) — AI agent artifacts, configs, skills, tools, and more (★ 0)
-- [personal-website](https://github.com/wyattowalsh/personal-website) — Live stats are temporarily unavailable; open repository for details.
-- [riso](https://github.com/wyattowalsh/riso) — Live stats are temporarily unavailable; open repository for details.
+- [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
+- [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
 - [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
 <!-- README:FEATURED_PROJECTS:END -->
 

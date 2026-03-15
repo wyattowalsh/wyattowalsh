@@ -578,7 +578,7 @@ class TestReadmeInjection:
         assert "featured-card-riso.svg" in content
         assert "blog-first-post.svg" in content
         assert ".github/assets/img/gh.gif" not in content
-        assert "[GitHub](https://github.com/wyattowalsh)" in content
+        assert "github.com/wyattowalsh" in content
         assert "[riso](https://github.com/wyattowalsh/riso)" in content
         assert "First Post" in content
         assert "[First Post](https://w4w.dev/blog/first)" in content
@@ -726,7 +726,7 @@ class TestReadmeInjection:
         assert "top-contact.svg" not in content
         assert "blog-posts.svg" not in content
         assert "featured-card-riso.svg" in content
-        assert "[GitHub](https://github.com/wyattowalsh)" in content
+        assert "github.com/wyattowalsh" in content
         assert "[First Post](https://w4w.dev/blog/first)" in content
 
     def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:

@@ -119,6 +119,7 @@ class BlogPost:
 
     title: str
     url: str
+    image_url: Optional[str] = None
 
 
 class GitHubRepoClient:
@@ -233,8 +234,18 @@ class BlogFeedClient:
         for item in root.findall(".//item"):
             title = (item.findtext("title") or "").strip()
             link = (item.findtext("link") or "").strip()
-            if title and link:
-                posts.append(BlogPost(title=title, url=link))
+            if not (title and link):
+                continue
+            image_url: Optional[str] = None
+            enc = item.find("enclosure")
+            if enc is not None:
+                enc_url = (enc.get("url") or "").strip()
+                enc_type = (enc.get("type") or "").strip().lower()
+                if enc_url and enc_type.startswith("image/"):
+                    image_url = enc_url
+            posts.append(BlogPost(
+                title=title, url=link, image_url=image_url,
+            ))
         return posts
 
     def _parse_atom_entries(self, root: Element) -> list[BlogPost]:
@@ -572,11 +583,6 @@ class ReadmeSectionGenerator:
                 accent=link.color,
             )
             svg_cards.append(card)
-        social_links = " · ".join(
-            f"[{escape(link.label)}]({escape(link.url)})"
-            for link in self.settings.social_links
-        )
-
         # Render per-card SVGs
         card_renderer = SvgConnectCardRenderer(width=140, height=130)
         card_embeds: list[tuple[str, str]] = []
@@ -612,8 +618,6 @@ class ReadmeSectionGenerator:
             result.append(
                 '<p align="center">' + "\n".join(imgs) + "</p>"
             )
-        if social_links:
-            result.append(social_links)
         return "\n".join(result)
 
     def _social_icon(self, label: str) -> str:
@@ -751,11 +755,17 @@ class ReadmeSectionGenerator:
     # -- w4w.dev favicon fetcher -----------------------------------------
 
     def _fetch_w4w_favicon_data_uri(self) -> Optional[str]:
-        """Fetch the real favicon from w4w.dev and return as data URI."""
-        return self._fetch_remote_image_data_uri(
+        """Fetch the real logo from w4w.dev and return as data URI."""
+        for candidate in (
+            "https://w4w.dev/logo.webp",
             "https://w4w.dev/favicon.ico",
-            context="w4w.dev favicon",
-        )
+        ):
+            result = self._fetch_remote_image_data_uri(
+                candidate, context="w4w.dev favicon",
+            )
+            if result:
+                return result
+        return None
 
     # -- Brand icon resolution -------------------------------------------
 
@@ -1144,7 +1154,8 @@ class ReadmeSectionGenerator:
             # fetch as a base64 data URI so GitHub's SVG sanitizer can render
             # the embedded image.
             hero_data_uri: Optional[str] = None
-            hero_url = metadata.get("hero_image")
+            # Try RSS enclosure first, then og:image from HTML
+            hero_url = post.image_url or metadata.get("hero_image")
             if hero_url:
                 absolute_hero = urljoin(post.url, hero_url)
                 hero_data_uri = self._fetch_remote_image_data_uri(
@@ -1325,17 +1336,71 @@ class ReadmeSectionGenerator:
         repo_full_name: str,
         metadata: Optional[RepoMetadata],
     ) -> Optional[str]:
-        candidates: list[str] = []
-        if metadata and metadata.open_graph_image_url:
-            candidates.append(metadata.open_graph_image_url)
-        candidates.append(f"https://opengraph.githubassets.com/1/{repo_full_name}")
-        for image_url in candidates:
+        # Try to get the custom social preview from the repo HTML page
+        og_url = self._scrape_repo_og_image(repo_full_name)
+        if og_url:
             data_uri = self._fetch_remote_image_data_uri(
-                image_url,
-                context=f"repo preview for {repo_full_name}",
+                og_url,
+                context=f"repo social preview for {repo_full_name}",
             )
             if data_uri:
                 return data_uri
+        # Fall back to the auto-generated GitHub OG image
+        fallback = f"https://opengraph.githubassets.com/1/{repo_full_name}"
+        return self._fetch_remote_image_data_uri(
+            fallback,
+            context=f"repo preview for {repo_full_name}",
+        )
+
+    def _scrape_repo_og_image(
+        self, repo_full_name: str,
+    ) -> Optional[str]:
+        """Scrape og:image / twitter:image from a GitHub repo page."""
+        page_url = f"https://github.com/{repo_full_name}"
+        request = _build_remote_get_request(
+            url=page_url,
+            headers={"User-Agent": "readme-section-generator"},
+            context=f"repo page for {repo_full_name}",
+        )
+        if request is None:
+            return None
+        try:
+            with urlopen(request, timeout=10.0) as response:
+                html = response.read().decode("utf-8", errors="ignore")
+        except Exception as exc:
+            logger.warning(
+                "Failed to fetch repo page for %s: %s",
+                repo_full_name, exc,
+            )
+            return None
+        # Parse og:image or twitter:image meta tags
+        for attr, value in (
+            ("property", "og:image"),
+            ("name", "twitter:image"),
+            ("name", "twitter:image:src"),
+        ):
+            for pattern in (
+                re.compile(
+                    rf'<meta[^>]+{attr}\s*=\s*["\']'
+                    rf'{value}["\'][^>]*content\s*=\s*["\']'
+                    rf'([^"\']+)["\']',
+                    flags=re.IGNORECASE,
+                ),
+                re.compile(
+                    rf'<meta[^>]+content\s*=\s*["\']([^"\']+)["\']'
+                    rf'[^>]*{attr}\s*=\s*["\']'
+                    rf'{value}["\']',
+                    flags=re.IGNORECASE,
+                ),
+            ):
+                match = pattern.search(html)
+                if match:
+                    url = match.group(1).strip()
+                    # Skip the generic opengraph.githubassets.com URL
+                    if "opengraph.githubassets.com" in url:
+                        continue
+                    if url.startswith("http"):
+                        return url
         return None
 
     def _fetch_remote_image_data_uri(
