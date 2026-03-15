@@ -5,24 +5,51 @@ import ipaddress
 import json
 import os
 import re
+from io import BytesIO
 from dataclasses import dataclass
+from datetime import datetime
 from html import escape
 from pathlib import Path
 from typing import Optional, Sequence
-from urllib.parse import quote, urlparse
+from urllib.parse import quote, urljoin, urlparse
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree
 
-from .config import ReadmeSectionsSettings
+from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
+from .readme_card_types import featured_to_svg
+from .readme_cards.blog import BlogCardBuilder, BlogCardPost, metadata_from_mapping
+from .readme_cards.connect import ConnectCardBuildInput, build_connect_card
+from .readme_cards.featured import (
+    FeaturedCardBuilder,
+    FeaturedCardHints,
+    FeaturedRepoSnapshot,
+)
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgBlock,
     SvgBlockRenderer,
     SvgCard,
+    SvgCardFamily,
 )
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
+
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - optional dependency in some envs
+    Image = None  # type: ignore[assignment]
+
+_MAX_REMOTE_IMAGE_BYTES = 2_000_000
+_MAX_EMBED_IMAGE_BYTES = 163_840
+_ALLOWED_REMOTE_IMAGE_TYPES = {
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+    "image/x-icon",
+}
 
 
 def _is_public_remote_host(host: str) -> bool:
@@ -99,6 +126,7 @@ class RepoMetadata:
     created_at: Optional[str] = None
     size_kb: Optional[int] = None
     forks: Optional[int] = None
+    language: Optional[str] = None
     open_graph_image_url: Optional[str] = None
 
 
@@ -129,9 +157,7 @@ class GitHubRepoClient:
             with urlopen(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
-            logger.warning(
-                f"Failed to fetch repo metadata for {full_name}: {exc}"
-            )
+            logger.warning(f"Failed to fetch repo metadata for {full_name}: {exc}")
             return None
 
         return RepoMetadata(
@@ -144,8 +170,15 @@ class GitHubRepoClient:
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
             created_at=payload.get("created_at") or None,
-            size_kb=int(payload.get("size", 0)) if payload.get("size") is not None else None,
-            forks=int(payload.get("forks_count", 0)) if payload.get("forks_count") is not None else None,
+            size_kb=(
+                int(payload.get("size", 0)) if payload.get("size") is not None else None
+            ),
+            forks=(
+                int(payload.get("forks_count", 0))
+                if payload.get("forks_count") is not None
+                else None
+            ),
+            language=payload.get("language") or None,
             open_graph_image_url=payload.get("open_graph_image_url") or None,
         )
 
@@ -242,9 +275,7 @@ class StarHistoryClient:
             with urlopen(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
-            logger.warning(
-                "Failed to fetch star history for %s: %s", full_name, exc
-            )
+            logger.warning("Failed to fetch star history for %s: %s", full_name, exc)
             return None
 
         if not isinstance(payload, list) or not payload:
@@ -343,6 +374,7 @@ class BlogMetadataClient:
                 return match.group(1).strip()
         return None
 
+
 class ReadmeSectionGenerator:
     """Renders and injects dynamic README sections between markers."""
 
@@ -366,6 +398,8 @@ class ReadmeSectionGenerator:
         self.blog_client = blog_client or BlogFeedClient()
         self.star_history_client = star_history_client or StarHistoryClient()
         self.blog_metadata_client = blog_metadata_client or BlogMetadataClient()
+        self.featured_card_builder = FeaturedCardBuilder()
+        self.blog_card_builder = BlogCardBuilder()
         self.svg_builder: Optional[ReadmeSvgAssetBuilder] = None
         if self.settings.svg.enabled:
             self.svg_builder = ReadmeSvgAssetBuilder(
@@ -426,19 +460,22 @@ class ReadmeSectionGenerator:
         for link in self.settings.social_links:
             parsed = urlparse(link.url)
             host = parsed.netloc.replace("www.", "")
-            handle = parsed.path.strip("/").split("/")[-1] if parsed.path else ""
-            # For connect cards we avoid exposing raw profile handles/URLs in the visible lines.
-            # Keep kicker minimal and expose a small personality meta/badge instead.
-            meta_line = self._social_personality_badge(link.url)
-            card = SvgCard(
-                title=link.label,
-                kicker=None,
-                lines=(),
-                meta=(meta_line,),
-                url=link.url,
-                icon=self._social_icon(link.label),
-                badge=self._social_personality_badge(link.url),
-                accent=link.color,
+            accent = self._social_accent_color(link.url, link.color)
+            connect_cue = self._social_personality_badge(link.url)
+            card = build_connect_card(
+                ConnectCardBuildInput(
+                    title=link.label,
+                    kicker=connect_cue,
+                    lines=(),
+                    meta=(),
+                    url=link.url,
+                    icon=self._social_icon(link.label),
+                    badge=None,
+                    accent=accent,
+                    host=host,
+                    brand_host=host,
+                    brand_icon_name=link.logo or link.label,
+                )
             )
             # populate icon payloads (brand glyph or data-uri)
             self._set_card_icon_data_uri(
@@ -446,30 +483,37 @@ class ReadmeSectionGenerator:
                 url=link.url,
                 host=host,
                 label=link.label,
-                accent=link.color,
+                accent=accent,
             )
             svg_cards.append(card)
-        columns = min(4, max(1, len(svg_cards))) if svg_cards else 1
-        block = SvgBlock(
-            title="Connect & Contact",
-            cards=tuple(svg_cards) or (SvgCard(title="No social links configured."),),
-            columns=columns,
-        )
-        renderer = SvgBlockRenderer(width=1100, card_height=140, padding=24)
-        svg_embed = self._render_svg_embed(
-            section_flag="top_contact",
-            asset_name="top-contact",
-            block=block,
-            renderer=renderer,
-            alt_text="Connect and contact cards",
-        )
+        renderer = SvgBlockRenderer(width=1100, card_height=140, padding=28)
+        svg_embeds: list[str] = []
+        if svg_cards:
+            svg_embeds = self._render_per_card_svg_embeds(
+                section_flag="top_contact",
+                asset_name="top-contact",
+                block_title="Connect & Contact",
+                cards=tuple(svg_cards),
+                renderer=renderer,
+                alt_prefix="Connect and contact card",
+                family=SvgCardFamily.CONNECT,
+            )
+        else:
+            svg_embeds = self._render_per_card_svg_embeds(
+                section_flag="top_contact",
+                asset_name="top-contact",
+                block_title="Connect & Contact",
+                cards=(SvgCard(title="No social links configured."),),
+                renderer=renderer,
+                alt_prefix="Connect and contact card",
+                family=SvgCardFamily.CONNECT,
+            )
         social_links = " · ".join(
             f"[{escape(link.label)}]({escape(link.url)})"
             for link in self.settings.social_links
         )
         lines: list[str] = []
-        if svg_embed:
-            lines.append(f'<p align="center">{svg_embed}</p>')
+        lines.extend(f'<p align="center">{svg_embed}</p>' for svg_embed in svg_embeds)
         if social_links:
             lines.append(social_links)
         return "\n".join(lines)
@@ -494,6 +538,21 @@ class ReadmeSectionGenerator:
         if "x.com" in host or "twitter.com" in host:
             return "Broadcast"
         return "Link"
+
+    def _social_accent_color(self, url: str, color: str) -> str:
+        normalized = color.lstrip("#").strip()
+        host = urlparse(url).netloc.replace("www.", "").lower()
+        default_map = {
+            "x.com": "334155",
+            "twitter.com": "334155",
+            "github.com": "475569",
+            "w4w.dev": "0EA5E9",
+        }
+        if not re.fullmatch(r"[0-9A-Fa-f]{6}", normalized):
+            return default_map.get(host, "60A5FA")
+        if normalized.lower() == "000000":
+            return default_map.get(host, "334155")
+        return normalized
 
     def _social_kicker(self, url: str) -> str:
         parsed = urlparse(url)
@@ -529,9 +588,7 @@ class ReadmeSectionGenerator:
     ) -> Optional[str]:
         normalized_host = (host or "").strip().replace("www.", "").lower()
         if not normalized_host and url:
-            normalized_host = (
-                urlparse(url).netloc.strip().replace("www.", "").lower()
-            )
+            normalized_host = urlparse(url).netloc.strip().replace("www.", "").lower()
 
         accent_hex = (
             accent.lstrip("#")
@@ -551,16 +608,12 @@ class ReadmeSectionGenerator:
             )
         elif normalized_host.endswith("kaggle.com"):
             background, foreground = ("20BEFF", "062F40")
-            glyph = (
-                f"<path d='M20 15h7v15.4L38.2 15h9.2L34 31.4 47.6 49h-9.3L27 34.2V49h-7z' fill='#{foreground}'/>"
-            )
+            glyph = f"<path d='M20 15h7v15.4L38.2 15h9.2L34 31.4 47.6 49h-9.3L27 34.2V49h-7z' fill='#{foreground}'/>"
         elif normalized_host.endswith("x.com") or normalized_host.endswith(
             "twitter.com"
         ):
             background, foreground = ("000000", "FFFFFF")
-            glyph = (
-                f"<path d='M15 15h10.5l8.6 11.7L43.3 15H53L38.9 32.2 53.2 49H42.7l-9.4-12.1L23.6 49H14l14.4-17.6z' fill='#{foreground}'/>"
-            )
+            glyph = f"<path d='M15 15h10.5l8.6 11.7L43.3 15H53L38.9 32.2 53.2 49H42.7l-9.4-12.1L23.6 49H14l14.4-17.6z' fill='#{foreground}'/>"
         elif normalized_host.endswith("github.com"):
             background, foreground = ("181717", "FFFFFF")
             glyph = (
@@ -608,10 +661,9 @@ class ReadmeSectionGenerator:
             f"{glyph}"
             "</svg>"
         )
-        return (
-            "data:image/svg+xml;base64,"
-            + base64.b64encode(icon_svg.encode("utf-8")).decode("ascii")
-        )
+        return "data:image/svg+xml;base64," + base64.b64encode(
+            icon_svg.encode("utf-8")
+        ).decode("ascii")
 
     def _render_featured_projects(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -627,47 +679,40 @@ class ReadmeSectionGenerator:
             )
 
         if not svg_cards:
-            block = SvgBlock(
-                title="Featured Projects",
-                cards=(SvgCard(title="No featured repositories configured."),),
-                columns=1,
-            )
             renderer = SvgBlockRenderer(width=1100, card_height=200, padding=28)
-            svg_embed = self._render_svg_embed(
+            card_embeds = self._render_per_card_svg_embeds(
                 section_flag="featured_projects",
                 asset_name="featured-projects",
-                block=block,
+                block_title="Featured Projects",
+                cards=(SvgCard(title="No featured repositories configured."),),
                 renderer=renderer,
-                alt_text="Featured projects cards",
+                alt_prefix="Featured project card",
+                family=SvgCardFamily.FEATURED,
             )
             lines = ["- No featured repositories configured."]
-            if svg_embed:
-                lines.insert(0, f'<p align="center">{svg_embed}</p>')
+            if card_embeds:
+                lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
             return "\n".join(lines)
 
         block = SvgBlock(
             title="Featured Projects",
             cards=tuple(svg_cards),
             columns=2,
+            family=SvgCardFamily.FEATURED,
         )
-        renderer = SvgBlockRenderer(width=1200, card_height=220, padding=28)
-        svg_embed = self._render_svg_embed(
+        renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
+        card_embeds = self._render_per_card_svg_embeds(
             section_flag="featured_projects",
             asset_name="featured-projects",
-            block=block,
+            block_title=block.title,
+            cards=block.cards,
             renderer=renderer,
-            alt_text="Featured projects cards",
+            alt_prefix="Featured project card",
+            family=SvgCardFamily.FEATURED,
         )
-        caption = (
-            '<p align="center"><sub>Snapshot includes stars, freshness, '
-            "topic signals, and trendline momentum.</sub></p>"
-        )
-        lines = [
-            "\n".join(fallback_lines),
-            caption,
-        ]
-        if svg_embed:
-            lines.insert(0, f'<p align="center">{svg_embed}</p>')
+        lines = ["\n".join(fallback_lines)]
+        if card_embeds:
+            lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
         return "\n".join(lines)
 
     def _build_project_svg_card(
@@ -675,80 +720,44 @@ class ReadmeSectionGenerator:
         repo_full_name: str,
         metadata: Optional[RepoMetadata],
     ) -> SvgCard:
-        if metadata is None:
-            repo_url = f"https://github.com/{repo_full_name}"
-            repo_name = repo_full_name.split("/")[-1]
-            card = SvgCard(
-                title=repo_name,
-                kicker=repo_full_name,
-                lines=(
-                    "Live stats are temporarily unavailable.",
-                    "Open the repository for full details.",
-                ),
-                meta=(),
-                url=repo_url,
-                badge="Featured",
-                icon=repo_name[:2].upper(),
+        repo_url = metadata.html_url if metadata else f"https://github.com/{repo_full_name}"
+        repo_name = metadata.name if metadata else repo_full_name.split("/")[-1]
+        featured_snapshot: Optional[FeaturedRepoSnapshot] = None
+        hints = FeaturedCardHints()
+        if metadata is not None:
+            featured_snapshot = FeaturedRepoSnapshot(
+                full_name=metadata.full_name,
+                name=metadata.name,
+                html_url=metadata.html_url,
+                description=metadata.description,
+                stars=metadata.stars,
+                homepage=metadata.homepage,
+                topics=tuple(metadata.topics),
+                updated_at=metadata.updated_at,
+                created_at=metadata.created_at,
+                forks=metadata.forks,
+                language=metadata.language,
+                size_kb=metadata.size_kb,
+                open_graph_image_url=metadata.open_graph_image_url,
             )
-            self._set_card_icon_data_uri(
-                card,
-                url=repo_url,
-                label=repo_name,
+            hints = FeaturedCardHints(
+                hero_image=self._repo_background_image(repo_full_name, metadata),
+                social_image_hint=metadata.open_graph_image_url,
+                sparkline=self._build_star_history_points(repo_full_name, metadata),
+                accent=self._repo_accent_color(metadata),
             )
-            return card
-
-        description = metadata.description or "No description provided."
-        lines: list[str] = [description]
-        if metadata.topics:
-            topics = " · ".join(metadata.topics[:3])
-            lines.append(f"Topics {topics}")
-        # avoid duplicative host clutter in the visible lines; surface homepage in card attributes instead
-        if metadata.homepage:
-            homepage_host = urlparse(metadata.homepage).netloc.replace("www.", "")
-            if homepage_host:
-                # keep homepage as an attribute for the renderer to expose if desired
-                pass
-        # richer metadata for featured projects
-        info_bits: list[str] = []
-        info_bits.append(f"★ {metadata.stars:,}")
-        if metadata.forks:
-            info_bits.append(f"Forks {metadata.forks:,}")
-        if metadata.size_kb:
-            info_bits.append(f"Size {metadata.size_kb:,} KB")
-        updated = self._format_timestamp(metadata.updated_at)
-        if updated:
-            info_bits.append(f"Updated {updated}")
-        created = self._format_timestamp(metadata.created_at)
-        if created:
-            info_bits.append(f"Created {created}")
-        sparkline = self._build_star_history_points(repo_full_name, metadata)
-        # distinct colorful treatment for featured projects
-        accent = self._repo_accent_color(metadata) or "8B5CF6"
-        card = SvgCard(
-            title=metadata.name,
-            kicker=repo_full_name,
-            lines=tuple(lines),
-            meta=tuple(info_bits),
-            url=metadata.html_url,
-            background_image=self._repo_background_image(repo_full_name, metadata),
-            sparkline=sparkline,
-            icon=metadata.name[:2].upper(),
-            badge="Showcase",
-            accent=accent,
+        card = featured_to_svg(
+            self.featured_card_builder.build(
+                repo_full_name=repo_full_name,
+                metadata=featured_snapshot,
+                hints=hints,
+            )
         )
-        # expose rich attributes on the presentation card for downstream assertions
-        object.__setattr__(card, "homepage", metadata.homepage)
-        object.__setattr__(card, "topics", tuple(metadata.topics))
-        object.__setattr__(card, "updated_at", metadata.updated_at)
-        object.__setattr__(card, "created_at", metadata.created_at)
-        object.__setattr__(card, "forks", metadata.forks)
-        object.__setattr__(card, "size_kb", metadata.size_kb)
-
         self._set_card_icon_data_uri(
             card,
-            url=metadata.html_url,
-            label=metadata.name,
-            accent=accent,
+            url=repo_url,
+            label=repo_name,
+            accent=card.accent,
         )
         return card
 
@@ -762,8 +771,11 @@ class ReadmeSectionGenerator:
         svg_cards: list[SvgCard] = []
         fallback_lines: list[str] = []
         if not posts:
-            block = SvgBlock(
-                title="Latest Blog Posts",
+            renderer = SvgBlockRenderer(width=1000, card_height=200, padding=28)
+            card_embeds = self._render_per_card_svg_embeds(
+                section_flag="blog_posts",
+                asset_name="blog-posts",
+                block_title="Latest Blog Posts",
                 cards=(
                     SvgCard(
                         title="No recent posts available.",
@@ -772,15 +784,9 @@ class ReadmeSectionGenerator:
                         url=self.settings.blog_feed_url,
                     ),
                 ),
-                columns=1,
-            )
-            renderer = SvgBlockRenderer(width=1000, card_height=200, padding=28)
-            svg_embed = self._render_svg_embed(
-                section_flag="blog_posts",
-                asset_name="blog-posts",
-                block=block,
                 renderer=renderer,
-                alt_text="Latest blog posts cards",
+                alt_prefix="Latest blog post card",
+                family=SvgCardFamily.BLOG,
             )
             fallback_lines.append(
                 f"- No recent posts available. [RSS feed]({feed_url_raw})"
@@ -789,44 +795,27 @@ class ReadmeSectionGenerator:
                 self._wrap_blog_post_list_markers(fallback_lines),
                 f'<p align="center"><sub>📡 Source: <a href="{feed_url}">RSS feed</a></sub></p>',
             ]
-            if svg_embed:
-                lines.insert(0, f'<p align="center">{svg_embed}</p>')
+            if card_embeds:
+                lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
             return "\n".join(lines)
 
         for post in posts:
-            metadata = self.blog_metadata_client.fetch_metadata(post.url)
-            host = metadata.get("host") or urlparse(post.url).netloc.replace(
-                "www.", ""
+            metadata = metadata_from_mapping(
+                self.blog_metadata_client.fetch_metadata(post.url)
             )
-            summary = metadata.get("summary") or "Tap to read the full story."
-            published = metadata.get("published")
-            card_meta: list[str] = []
-            if host:
-                card_meta.append(host)
-            if published:
-                card_meta.append(f"Published {published[:10]}")
-            # blog cards get a warmer accent and do not render a badge/pill
-            accent = "F59E0B" if "w4w.dev" in (host or "") else "F97316"
-            card = SvgCard(
-                title=post.title,
-                kicker=f"{host or 'blog'}",
-                lines=(summary,),
-                meta=tuple(card_meta),
-                url=post.url,
-                background_image=metadata.get("hero_image"),
-                icon=(host or "BL")[:2].upper(),
-                badge=None,
-                accent=accent,
+            card = self.blog_card_builder.build_svg_card(
+                post=BlogCardPost(title=post.title, url=post.url),
+                metadata=metadata,
             )
             self._set_card_icon_data_uri(
                 card,
                 url=post.url,
-                host=host,
+                host=getattr(card, "host", None),
                 label=post.title,
-                accent=accent,
+                accent=card.accent,
             )
             svg_cards.append(card)
-            meta_bits = [bit for bit in card_meta if bit]
+            meta_bits = [bit for bit in card.meta if bit]
             line = f"- [{escape(post.title)}]({escape(post.url)})"
             if meta_bits:
                 line += f" — {escape(' · '.join(meta_bits))}"
@@ -835,14 +824,17 @@ class ReadmeSectionGenerator:
             title="Latest Blog Posts",
             cards=tuple(svg_cards),
             columns=1,
+            family=SvgCardFamily.BLOG,
         )
         renderer = SvgBlockRenderer(width=1100, card_height=220, padding=28)
-        svg_embed = self._render_svg_embed(
+        card_embeds = self._render_per_card_svg_embeds(
             section_flag="blog_posts",
             asset_name="blog-posts",
-            block=block,
+            block_title=block.title,
+            cards=block.cards,
             renderer=renderer,
-            alt_text="Latest blog posts cards",
+            alt_prefix="Latest blog post card",
+            family=SvgCardFamily.BLOG,
         )
         lines = [
             self._wrap_blog_post_list_markers(fallback_lines),
@@ -851,8 +843,8 @@ class ReadmeSectionGenerator:
                 f'<a href="{feed_url}">RSS feed</a></sub></p>'
             ),
         ]
-        if svg_embed:
-            lines.insert(0, f'<p align="center">{svg_embed}</p>')
+        if card_embeds:
+            lines[:0] = [f'<p align="center">{embed}</p>' for embed in card_embeds]
         return "\n".join(lines)
 
     def _render_svg_embed(
@@ -873,17 +865,179 @@ class ReadmeSectionGenerator:
         )
         src = escape(self._svg_asset_src(asset_name))
         alt = escape(alt_text)
-        return (
-            f'<img src="{src}" alt="{alt}" '
-            f'width="{renderer.width}" loading="lazy"/>'
+        return f'<img src="{src}" alt="{alt}" width="{renderer.width}" loading="lazy"/>'
+
+    def _render_per_card_svg_embeds(
+        self,
+        *,
+        section_flag: str,
+        asset_name: str,
+        block_title: str,
+        cards: Sequence[SvgCard],
+        renderer: SvgBlockRenderer,
+        alt_prefix: str,
+        family: SvgCardFamily | str | None = None,
+        markdown: bool = False,
+    ) -> list[str]:
+        if not self._svg_section_enabled(section_flag):
+            return []
+        card_style = self._svg_card_style_for_family(family)
+        ordered_cards = sorted(
+            cards,
+            key=lambda card: self._per_card_sort_key(
+                card=card,
+                section_asset_name=asset_name,
+            ),
         )
+        snippets: list[str] = []
+        for idx, card in enumerate(ordered_cards):
+            card_asset_name = self._per_card_svg_asset_name(
+                section_asset_name=asset_name,
+                card_index=idx,
+                card=card,
+            )
+            card_block = SvgBlock(
+                title=block_title,
+                cards=(card,),
+                columns=1,
+                family=family,
+                show_title=card_style.show_title,
+                transparent_canvas=card_style.transparent_canvas,
+                variant=card_style.variant,
+            )
+            self._write_svg_asset(
+                asset_name=card_asset_name,
+                block=card_block,
+                renderer=renderer,
+            )
+            card_alt = re.sub(r"\s+", " ", (card.title or "").strip())
+            alt_text = f"{alt_prefix}: {card_alt}" if card_alt else alt_prefix
+            snippets.append(
+                self._render_link_wrapped_image_snippet(
+                    src=self._svg_asset_src(card_asset_name),
+                    href=card.url,
+                    alt_text=alt_text,
+                    width=renderer.width,
+                    markdown=markdown,
+                )
+            )
+        return snippets
+
+    def _svg_card_style_for_family(
+        self, family: SvgCardFamily | str | None
+    ) -> ReadmeSvgCardStyleSettings:
+        card_styles = self.settings.svg.card_styles
+        if family == SvgCardFamily.CONNECT:
+            return card_styles.connect
+        if family == SvgCardFamily.FEATURED:
+            return card_styles.featured
+        if family == SvgCardFamily.BLOG:
+            return card_styles.blog
+        if isinstance(family, str):
+            normalized = family.strip().lower().replace("_", "-")
+            if normalized in {"connect", "contact"}:
+                return card_styles.connect
+            if normalized in {"featured", "project", "projects"}:
+                return card_styles.featured
+            if normalized in {"blog", "posts"}:
+                return card_styles.blog
+        return card_styles.default
+
+    def _render_link_wrapped_image_snippet(
+        self,
+        *,
+        src: str,
+        href: str | None,
+        alt_text: str,
+        width: int,
+        markdown: bool = False,
+    ) -> str:
+        sanitized_src = escape(src)
+        sanitized_alt = escape(alt_text)
+        sanitized_href = escape(href) if href else None
+        link_target = sanitized_href or sanitized_src
+        if markdown:
+            return f"[![{sanitized_alt}]({sanitized_src})]({link_target})"
+        img = (
+            f'<img src="{sanitized_src}" alt="{sanitized_alt}" '
+            f'width="{width}" loading="lazy"/>'
+        )
+        return f'<a href="{link_target}">{img}</a>'
+
+    def _normalize_svg_asset_name(self, asset_name: str) -> str:
+        filename = re.sub(r"[^a-zA-Z0-9_-]+", "-", asset_name).strip("-_")
+        return filename or "section"
+
+    def _per_card_svg_asset_name(
+        self,
+        *,
+        section_asset_name: str,
+        card_index: int,
+        card: SvgCard,
+    ) -> str:
+        section_name = self._normalize_svg_asset_name(section_asset_name)
+        slug = self._per_card_svg_slug(card, section_asset_name=section_name)
+        return f"{section_name}-card-{card_index + 1:02d}-{slug}"
+
+    def _per_card_svg_slug(
+        self,
+        card: SvgCard,
+        *,
+        section_asset_name: str | None = None,
+    ) -> str:
+        seed = ""
+        section_name = self._normalize_svg_asset_name(section_asset_name or "")
+        parsed = urlparse(card.url) if card.url else None
+        path_name = Path(parsed.path).name if parsed and parsed.path else ""
+        host_name = parsed.netloc.replace("www.", "") if parsed else ""
+
+        if section_name.startswith("top-contact"):
+            seed = (
+                getattr(card, "brand_host", None)
+                or getattr(card, "host", None)
+                or host_name
+            )
+            if seed:
+                seed = seed.split(".", maxsplit=1)[0]
+        elif section_name.startswith("featured-projects"):
+            seed = getattr(card, "repo_full_name", None) or path_name
+            if "/" in seed:
+                seed = seed.split("/")[-1]
+            title_tokens = re.findall(r"[a-z0-9]+", (card.title or "").lower())
+            if (
+                title_tokens
+                and len(title_tokens) > 1
+                and seed
+                and title_tokens[0] == seed.lower()
+                and title_tokens[1] in {"toolkit"}
+            ):
+                seed = f"{seed}-{title_tokens[1]}"
+        elif section_name.startswith("blog-posts"):
+            seed = path_name or host_name
+        else:
+            seed = path_name or host_name
+
+        if not seed and card.kicker:
+            seed = card.kicker.strip()
+        if not seed:
+            seed = (card.title or "").strip()
+        normalized = re.sub(r"[^a-z0-9]+", "-", seed.lower()).strip("-")
+        if not normalized:
+            return "item"
+        return normalized[:48].strip("-") or "item"
+
+    def _per_card_sort_key(
+        self,
+        *,
+        card: SvgCard,
+        section_asset_name: str,
+    ) -> tuple[str, str, str]:
+        slug = self._per_card_svg_slug(card, section_asset_name=section_asset_name)
+        return (slug, (card.url or "").lower(), (card.title or "").lower())
 
     def _svg_asset_src(self, asset_name: str) -> str:
-        filename = re.sub(r"[^a-zA-Z0-9_-]+", "-", asset_name).strip("-_")
-        normalized = filename or "section"
-        return (
-            Path(self.settings.svg.output_dir) / f"{normalized}.svg"
-        ).as_posix()
+        normalized = self._normalize_svg_asset_name(asset_name)
+        return (Path(self.settings.svg.output_dir) / f"{normalized}.svg").as_posix()
 
     def _build_featured_repo_fallback_line(
         self,
@@ -1009,24 +1163,21 @@ class ReadmeSectionGenerator:
                 content_type = "application/octet-stream"
 
         if content_type == "image/svg+xml":
-            return (
-                "data:image/svg+xml;base64,"
-                + base64.b64encode(logo_bytes).decode("ascii")
+            return "data:image/svg+xml;base64," + base64.b64encode(logo_bytes).decode(
+                "ascii"
             )
 
         raw_logo_data_uri = (
-            f"data:{content_type};base64,"
-            f"{base64.b64encode(logo_bytes).decode('ascii')}"
+            f"data:{content_type};base64,{base64.b64encode(logo_bytes).decode('ascii')}"
         )
         wrapped_svg = (
             "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
             f"<image href='{raw_logo_data_uri}' width='64' height='64'/>"
             "</svg>"
         )
-        return (
-            "data:image/svg+xml;base64,"
-            + base64.b64encode(wrapped_svg.encode("utf-8")).decode("ascii")
-        )
+        return "data:image/svg+xml;base64," + base64.b64encode(
+            wrapped_svg.encode("utf-8")
+        ).decode("ascii")
 
     def _format_timestamp(self, timestamp: Optional[str]) -> Optional[str]:
         if not timestamp:
@@ -1034,6 +1185,183 @@ class ReadmeSectionGenerator:
         if "T" not in timestamp:
             return timestamp
         return timestamp.split("T", maxsplit=1)[0]
+
+    def _resolve_blog_hero_image(
+        self,
+        *,
+        post_url: str,
+        hero_image: Optional[str],
+    ) -> Optional[str]:
+        if not hero_image:
+            return None
+        candidate = hero_image.strip()
+        if not candidate:
+            return None
+        if candidate.startswith("//"):
+            candidate = f"https:{candidate}"
+        elif candidate.startswith("/"):
+            candidate = urljoin(post_url, candidate)
+        elif not urlparse(candidate).scheme:
+            candidate = urljoin(post_url, candidate)
+        if _is_safe_remote_url(candidate):
+            return candidate
+        return None
+
+    def _normalize_blog_primary_copy(self, value: str) -> str:
+        cleaned = re.sub(r"\.{2,}|[…]", "", value or "")
+        cleaned = re.sub(r"\bupdate\b", "", cleaned, flags=re.IGNORECASE)
+        return re.sub(r"\s+", " ", cleaned).strip()
+
+    def _wrap_copy_lines(
+        self,
+        value: str,
+        *,
+        line_width: int,
+        max_lines: int,
+    ) -> list[str]:
+        if not value:
+            return []
+        words = value.split()
+        if not words:
+            return []
+        normalized_words: list[str] = []
+        for word in words:
+            if len(word) <= line_width:
+                normalized_words.append(word)
+                continue
+            normalized_words.extend(
+                word[idx : idx + line_width] for idx in range(0, len(word), line_width)
+            )
+        lines: list[str] = []
+        current = ""
+        for word in normalized_words:
+            candidate = word if not current else f"{current} {word}"
+            if len(candidate) <= line_width or not current:
+                current = candidate
+                continue
+            lines.append(current)
+            if len(lines) >= max_lines:
+                break
+            current = word
+        if len(lines) < max_lines and current:
+            lines.append(current)
+        wrapped = lines[:max_lines]
+        if len(wrapped) > 1 and len(wrapped[-1].split()) == 1:
+            previous = wrapped[-2]
+            orphan = wrapped[-1]
+            if len(previous) + len(orphan) + 1 <= line_width:
+                wrapped[-2] = f"{previous} {orphan}"
+                wrapped.pop()
+        return wrapped
+
+    def _build_featured_metadata_chips(
+        self,
+        metadata: RepoMetadata,
+    ) -> tuple[dict[str, str], ...]:
+        language = metadata.language or (
+            metadata.topics[0].title() if metadata.topics else None
+        )
+        chips: list[dict[str, str]] = [
+            {"label": "Stars", "value": f"{metadata.stars:,}"}
+        ]
+        if metadata.forks is not None:
+            chips.append({"label": "Forks", "value": f"{metadata.forks:,}"})
+        if language:
+            chips.append({"label": "Language", "value": language})
+        size_label = self._format_repo_size(metadata.size_kb)
+        if size_label:
+            chips.append({"label": "Size", "value": size_label})
+        lifespan_label = self._format_repo_lifespan(
+            metadata.created_at,
+            metadata.updated_at,
+        )
+        if lifespan_label:
+            chips.append({"label": "Lifespan", "value": lifespan_label})
+        return tuple(chips)
+
+    def _build_featured_metadata_rows(
+        self,
+        chips: Sequence[dict[str, str]],
+    ) -> tuple[str, ...]:
+        display_tokens: list[str] = []
+        for chip in chips:
+            label = chip.get("label", "").strip().lower()
+            value = chip.get("value", "").strip()
+            if not value:
+                continue
+            if label == "stars":
+                display_tokens.append(f"★ {value}")
+            elif label == "forks":
+                display_tokens.append(f"Forks {value}")
+            elif label == "language":
+                display_tokens.append(value)
+            elif label == "size":
+                display_tokens.append(value)
+            elif label == "lifespan":
+                display_tokens.append(f"Life {value}")
+            else:
+                display_tokens.append(
+                    f"{chip.get('label', '').strip()} {value}".strip()
+                )
+        if not display_tokens:
+            return ()
+        primary = " · ".join(display_tokens[:3])
+        secondary = " · ".join(display_tokens[3:6]) if len(display_tokens) > 3 else ""
+        return tuple(bit for bit in (primary, secondary) if bit)
+
+    def _format_repo_size(self, size_kb: Optional[int]) -> Optional[str]:
+        if size_kb is None or size_kb <= 0:
+            return None
+        if size_kb >= 1024 * 1024:
+            return f"{size_kb / (1024 * 1024):.1f} GB"
+        if size_kb >= 1024:
+            return f"{size_kb / 1024:.1f} MB"
+        return f"{size_kb:,} KB"
+
+    def _format_repo_lifespan(
+        self,
+        created_at: Optional[str],
+        updated_at: Optional[str],
+    ) -> Optional[str]:
+        created_dt = self._parse_timestamp(created_at)
+        updated_dt = self._parse_timestamp(updated_at)
+        if created_dt is None:
+            return None
+        if updated_dt is None:
+            updated_dt = created_dt
+        delta_days = (updated_dt.date() - created_dt.date()).days
+        if delta_days < 0:
+            return None
+        if delta_days == 0:
+            return "1d"
+        years, remainder = divmod(delta_days, 365)
+        months = remainder // 30
+        if years and months:
+            return f"{years}y {months}m"
+        if years:
+            return f"{years}y"
+        if months:
+            return f"{months}m"
+        weeks = delta_days // 7
+        if weeks:
+            return f"{weeks}w"
+        return f"{delta_days}d"
+
+    def _parse_timestamp(self, timestamp: Optional[str]) -> Optional[datetime]:
+        if not timestamp:
+            return None
+        normalized = timestamp.strip()
+        if normalized.endswith("Z"):
+            normalized = f"{normalized[:-1]}+00:00"
+        candidates = [normalized]
+        if "T" in normalized:
+            candidates.append(normalized.split("T", maxsplit=1)[0])
+        for candidate in candidates:
+            try:
+                return datetime.fromisoformat(candidate)
+            except ValueError:
+                continue
+        return None
 
     def _repo_background_image(
         self,
@@ -1051,7 +1379,46 @@ class ReadmeSectionGenerator:
             )
             if data_uri:
                 return data_uri
-        return None
+        fallback_accent = self._repo_accent_color(metadata) if metadata else "60A5FA"
+        return self._featured_background_fallback_data_uri(
+            repo_full_name=repo_full_name,
+            accent=fallback_accent,
+        )
+
+    def _featured_background_fallback_data_uri(
+        self,
+        repo_full_name: str,
+        accent: str,
+    ) -> str:
+        normalized_accent = (
+            accent.lstrip("#")
+            if re.fullmatch(r"#?[0-9A-Fa-f]{6}", accent.strip())
+            else "60A5FA"
+        )
+        repo_label = escape(repo_full_name.split("/")[-1][:24], quote=True)
+        svg_markup = (
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 220'>"
+            "<defs>"
+            "<linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'>"
+            "<stop offset='0%' stop-color='#0B111A'/>"
+            f"<stop offset='100%' stop-color='#{normalized_accent}' stop-opacity='0.36'/>"
+            "</linearGradient>"
+            "<radialGradient id='glow' cx='82%' cy='20%' r='60%'>"
+            f"<stop offset='0%' stop-color='#{normalized_accent}' stop-opacity='0.38'/>"
+            "<stop offset='100%' stop-color='#0B111A' stop-opacity='0'/>"
+            "</radialGradient>"
+            "</defs>"
+            "<rect width='1200' height='220' fill='url(#bg)'/>"
+            "<rect width='1200' height='220' fill='url(#glow)'/>"
+            f"<text x='28' y='40' fill='#{normalized_accent}' opacity='0.32' "
+            "font-size='20' font-family='ui-sans-serif' font-weight='700'>"
+            f"{repo_label}"
+            "</text>"
+            "</svg>"
+        )
+        return "data:image/svg+xml;base64," + base64.b64encode(
+            svg_markup.encode("utf-8")
+        ).decode("ascii")
 
     def _fetch_remote_image_data_uri(
         self,
@@ -1067,6 +1434,13 @@ class ReadmeSectionGenerator:
             return None
         try:
             with urlopen(request, timeout=10.0) as response:
+                content_length = response.headers.get("Content-Length")
+                if content_length and content_length.isdigit():
+                    if int(content_length) > _MAX_REMOTE_IMAGE_BYTES:
+                        logger.warning(
+                            f"Skipped oversized image for {context}: {content_length} bytes"
+                        )
+                        return None
                 image_bytes = response.read()
                 content_type = (
                     response.headers.get("Content-Type", "")
@@ -1080,12 +1454,60 @@ class ReadmeSectionGenerator:
 
         if not image_bytes:
             return None
+        if len(image_bytes) > _MAX_REMOTE_IMAGE_BYTES:
+            logger.warning(
+                f"Skipped oversized image payload for {context}: {len(image_bytes)} bytes"
+            )
+            return None
         if not content_type.startswith("image/"):
-            content_type = "image/png"
+            return None
+        if content_type not in _ALLOWED_REMOTE_IMAGE_TYPES:
+            logger.warning(
+                f"Skipped unsupported image type for {context}: {content_type}"
+            )
+            return None
+        image_bytes, content_type = self._optimize_remote_image_payload(
+            image_bytes=image_bytes,
+            content_type=content_type,
+            context=context,
+        )
+        if len(image_bytes) > _MAX_EMBED_IMAGE_BYTES:
+            logger.warning(
+                f"Skipped image for {context} after optimization: {len(image_bytes)} bytes"
+            )
+            return None
         return (
             f"data:{content_type};base64,"
             f"{base64.b64encode(image_bytes).decode('ascii')}"
         )
+
+    def _optimize_remote_image_payload(
+        self,
+        *,
+        image_bytes: bytes,
+        content_type: str,
+        context: str,
+    ) -> tuple[bytes, str]:
+        if Image is None or content_type in {"image/svg+xml", "image/gif"}:
+            return image_bytes, content_type
+        try:
+            with Image.open(BytesIO(image_bytes)) as image:
+                resampling = (
+                    Image.Resampling.LANCZOS
+                    if hasattr(Image, "Resampling")
+                    else Image.LANCZOS
+                )
+                optimized = image.convert("RGB")
+                optimized.thumbnail((960, 540), resampling)
+                buffer = BytesIO()
+                optimized.save(buffer, format="WEBP", quality=72, method=6)
+                optimized_bytes = buffer.getvalue()
+        except OSError as exc:
+            logger.warning(f"Image optimization skipped for {context}: {exc}")
+            return image_bytes, content_type
+        if not optimized_bytes or len(optimized_bytes) >= len(image_bytes):
+            return image_bytes, content_type
+        return optimized_bytes, "image/webp"
 
     def _repo_accent_color(self, metadata: RepoMetadata) -> str:
         joined_topics = " ".join(topic.lower() for topic in metadata.topics)

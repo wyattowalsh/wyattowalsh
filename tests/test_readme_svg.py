@@ -77,6 +77,25 @@ class TestSvgBlockRenderer:
         assert "GitHub" in svg
         assert "https://github.com/wyattowalsh" in svg
         assert 'class="card-icon"' in svg
+        # Connect family policy suppresses badges — verify badge is hidden
+        assert 'class="card-badge"' not in svg
+
+    def test_render_outputs_svg_markup_with_badge_on_default_family(self) -> None:
+        renderer = SvgBlockRenderer(width=640, card_height=140, padding=16)
+        block = SvgBlock(
+            title="General",
+            cards=(
+                SvgCard(
+                    title="Something",
+                    lines=("A description",),
+                    badge="builder",
+                ),
+            ),
+            columns=1,
+        )
+
+        svg = renderer.render(block)
+
         assert 'class="card-badge"' in svg
         assert "builder" in svg
 
@@ -283,8 +302,8 @@ class TestReadmeSvgAssetBuilder:
         block = SvgBlock(title="Blog", cards=(card,), columns=1)
         svg = renderer.render(block)
 
-        # Expect no badge or update kicker
-        assert "badge" not in svg
+        # Expect no rendered badge element or update text in card content
+        assert 'class="card-badge"' not in svg
         assert "update" not in svg
         # Expect no ellipsis truncation and presence of wrapping tspan
         assert "..." not in svg

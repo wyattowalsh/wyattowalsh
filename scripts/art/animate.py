@@ -59,6 +59,50 @@ def ease_in_out(t: float) -> float:
     return 1 - (-2 * t + 2) ** 3 / 2
 
 
+def narrative_timing(t: float) -> float:
+    """Three-act narrative timing curve for 30s growth loop.
+
+    Maps normalized time t in [0,1] to normalized progress:
+      - Act 1 (0-17%  / 0-5s):  slow emergence — roots, base terrain
+      - Act 2 (17-67% / 5-20s): accelerating growth — branches, vegetation
+      - Act 3 (67-100% / 20-30s): dramatic finish — blooms, snow, chrome
+    Uses smoothstep blending between piecewise segments for continuity.
+    """
+    if t < 0.0:
+        return 0.0
+    if t > 1.0:
+        return 1.0
+    if t < 0.167:
+        # Act 1: gentle quadratic ease-in (slow start)
+        s = t / 0.167
+        return 0.10 * s * s
+    if t < 0.667:
+        # Act 2: accelerating cubic (the main growth phase)
+        s = (t - 0.167) / 0.5
+        return 0.10 + 0.55 * (3 * s * s - 2 * s * s * s)
+    # Act 3: dramatic ease-out (flourishing, details emerge)
+    s = (t - 0.667) / 0.333
+    return 0.65 + 0.35 * (1 - (1 - s) * (1 - s))
+
+
+# CSS cubic-bezier strings for each narrative act
+_ACT_EASING = {
+    1: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",    # gentle ease-out (roots)
+    2: "cubic-bezier(0.42, 0.0, 0.58, 1.0)",     # ease-in-out (growth)
+    3: "cubic-bezier(0.0, 0.0, 0.2, 1.0)",       # ease-out (dramatic)
+}
+
+
+def _frame_act(delay: float, total: float) -> int:
+    """Determine which narrative act a frame belongs to based on its delay."""
+    frac = delay / max(0.001, total)
+    if frac < 0.167:
+        return 1
+    if frac < 0.667:
+        return 2
+    return 3
+
+
 def _extract_svg_parts(svg: str) -> tuple[str, str, str]:
     """Split an SVG string into (svg_attrs, defs_block, body_content)."""
     m = _SVG_OPEN_RE.search(svg)
@@ -81,8 +125,11 @@ def _build_stacked_svg(
 ) -> str:
     """Stack N SVG frames into a single animated SVG.
 
-    Each frame overlays the previous via CSS opacity animation,
-    so the artwork genuinely evolves (not just reveals).
+    Each frame overlays the previous via CSS opacity animation with
+    narrative timing: act-specific cubic-bezier easing so early frames
+    emerge gently and later frames arrive with dramatic impact.
+
+    Pure CSS @keyframes only -- no JS, no SMIL.
     """
     n = len(frame_svgs)
     parts = [_extract_svg_parts(svg) for svg in frame_svgs]
@@ -91,16 +138,30 @@ def _build_stacked_svg(
     svg_attrs = parts[0][0]
     defs = parts[-1][1]
 
-    # CSS: first frame always visible, later frames fade in on schedule
+    # Per-act @keyframes with tailored opacity curves
     css_lines = [
+        "/* Narrative growth animation: 3-act timing */",
         ".f{opacity:0}",
         ".f0{opacity:1}",
+        # Act 1 keyframes: gentle fade-in (roots/terrain emerge slowly)
+        "@keyframes emerge{0%{opacity:0}40%{opacity:0.3}100%{opacity:1}}",
+        # Act 2 keyframes: confident build (standard opacity ramp)
+        "@keyframes grow{from{opacity:0}to{opacity:1}}",
+        # Act 3 keyframes: dramatic reveal with slight overshoot
+        "@keyframes bloom{0%{opacity:0}70%{opacity:1}85%{opacity:0.95}100%{opacity:1}}",
     ]
+
     for i in range(1, n):
+        act = _frame_act(delays[i], total_duration)
+        easing = _ACT_EASING[act]
+        # Act 1 gets longer transitions for gentle emergence
+        # Act 3 gets slightly longer for dramatic impact
+        act_dur = {1: transition * 1.5, 2: transition, 3: transition * 1.3}[act]
+        kf_name = {1: "emerge", 2: "grow", 3: "bloom"}[act]
         css_lines.append(
-            f".f{i}{{animation:grow {transition:.1f}s {delays[i]:.1f}s ease-in-out both}}"
+            f".f{i}{{animation:{kf_name} {act_dur:.1f}s {delays[i]:.1f}s {easing} both}}"
         )
-    css_lines.append("@keyframes grow{from{opacity:0}to{opacity:1}}")
+
     css = "\n".join(css_lines)
 
     out = [f"<svg {svg_attrs}>", defs, f"<style>\n{css}\n</style>"]
@@ -172,13 +233,18 @@ def main() -> None:
 
             for fi in range(svg_frames):
                 raw_t = fi / max(1, svg_frames - 1)
-                t = ease_in_out(raw_t)
+                # Use narrative timing for maturity progression:
+                # slow start (roots), accelerating middle, dramatic finish
+                t = narrative_timing(raw_t)
                 mat = 0.02 + (target_mat - 0.02) * t
-                # Spread delays evenly, last frame gets extra linger time
-                delay = raw_t * total_dur * 0.85
+                # Delays follow the narrative curve too — early frames linger,
+                # middle frames arrive faster, final frames have breathing room
+                delay = narrative_timing(raw_t) * total_dur * 0.85 if fi > 0 else 0.0
+                # First frame at t=0 always starts immediately
                 logger.info(
-                    "  {} frame {:2d}/{}  mat={:.3f}  delay={:.1f}s",
+                    "  {} frame {:2d}/{}  mat={:.3f}  delay={:.1f}s  act={}",
                     slug, fi + 1, svg_frames, mat, delay,
+                    _frame_act(delay, total_dur),
                 )
 
                 kw: dict[str, object] = {"seed": fixed_seed, "maturity": mat}
@@ -204,8 +270,8 @@ def main() -> None:
 
     for fi in range(n_frames):
         raw_t = fi / max(1, n_frames - 1)
-        t = ease_in_out(raw_t)
-        # Interpolate maturity from near-zero to target
+        t = narrative_timing(raw_t)
+        # Interpolate maturity from near-zero to target using narrative curve
         mat = 0.02 + (target_mat - 0.02) * t
         logger.info("Frame {:2d}/{}  t={:.3f}  mat={:.3f}", fi + 1, n_frames, t, mat)
 
@@ -234,9 +300,18 @@ def main() -> None:
             for img in imgs
         ]
 
-        # Frame durations: 300ms each, last frame 2000ms
-        durations = [300] * len(pal_imgs)
-        durations[-1] = 2000
+        # Narrative-paced frame durations: slow start, faster middle, dramatic hold
+        n_pal = len(pal_imgs)
+        durations = []
+        for fi_d in range(n_pal):
+            frac = fi_d / max(1, n_pal - 1)
+            if frac < 0.167:
+                durations.append(450)    # Act 1: linger on emergence
+            elif frac < 0.667:
+                durations.append(250)    # Act 2: faster growth
+            else:
+                durations.append(350)    # Act 3: dramatic but not rushed
+        durations[-1] = 2000  # Hold final frame
 
         out_path = out_dir / f"{slug}.gif"
         pal_imgs[0].save(

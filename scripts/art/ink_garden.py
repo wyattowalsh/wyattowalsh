@@ -20,7 +20,7 @@ import numpy as np
 
 from .shared import (
     WIDTH, HEIGHT, CX, CY, LANG_HUES,
-    seed_hash, hex_frac, oklch, Noise2D,
+    seed_hash, oklch, Noise2D,
     compute_maturity,
     make_radial_gradient, make_linear_gradient,
 )
@@ -428,7 +428,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         return GROUND_Y + noise.noise(x * 0.008, 0) * 25 + noise.noise(x * 0.02, 5) * 8
 
     # Collect all visual elements
-    all_segs = []   # (x1,y1,x2,y2,sw,hue,depth,is_main)
+    all_segs = []   # (x1,y1,x2,y2,sw,hue,depth,is_main,bark_mat)
     roots = []       # (x1,y1,x2,y2,sw)
     leaves = []      # (x,y,angle,size,hue,has_vein,leaf_shape)
     blooms = []      # (x,y,size,hue,n_petals,layers,bloom_type)
@@ -479,10 +479,16 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         gy = ground_y_at(base_x)
 
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
-        # Scale growth by tree_t: seedlings are short/thin, mature trees are full
-        main_length = (50 + min(250, age * 3.0)) * tree_t
+        # Data mapping: commits -> trunk height, total_commits scales globally
+        commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
+        main_length = (50 + min(250, age * 3.0)) * tree_t * commit_factor
         max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
-        stem_sw = (2.5 + min(3.0, age * 0.05)) * (0.3 + 0.7 * tree_t)
+        # Data mapping: commits -> trunk thickness
+        stem_sw = (2.5 + min(3.0, age * 0.05) + min(1.5, total_commits / 5000.0)) * (0.3 + 0.7 * tree_t)
+        # Data mapping: age -> bark maturity factor (drives bark texture density)
+        bark_maturity = min(1.0, age / 60.0)
+        # Data mapping: stars -> bloom density multiplier
+        bloom_boost = min(2.0, 1.0 + stars_total / 200.0)
 
         if main_length >= 5:
             labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy))
@@ -505,7 +511,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
                     sw = max(0.3, stem_sw * 0.5 * (1 - t * 0.7))
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, f_hue, 1, si < 3))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, f_hue, 1, si < 3, bark_maturity))
 
                     # Pinnate leaflets along both sides (alternating, shrinking)
                     if si > 1 and si < n_spine - 1:
@@ -528,7 +534,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     sl = 3 * (1 - t * 0.5)
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
-                    all_segs.append((cx_, cy_, nx_, ny_, 0.3, f_hue, 2, False))
+                    all_segs.append((cx_, cy_, nx_, ny_, 0.3, f_hue, 2, False, bark_maturity))
                     cx_, cy_ = nx_, ny_
 
             n_fronds = max(2, min(5, 2 + age // 12))
@@ -554,11 +560,11 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     sway = noise.noise(bx * 0.01 + ji * 0.5, by * 0.01) * 2
                     nx_ = cx_ + sway
                     ny_ = cy_ - joint_spacing
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, b_hue, 0, True))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, b_hue, 0, True, bark_maturity))
 
                     # Visible joint (short horizontal widening)
                     jw = sw * 1.8
-                    all_segs.append((nx_ - jw, ny_, nx_ + jw, ny_, sw * 0.6, b_hue, 1, False))
+                    all_segs.append((nx_ - jw, ny_, nx_ + jw, ny_, sw * 0.6, b_hue, 1, False, bark_maturity))
 
                     # Narrow leaf clusters at alternating joints
                     if ji % 2 == 0 and ji > 0:
@@ -616,7 +622,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity))
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
@@ -651,8 +657,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         decay_lo, decay_hi = style_d["length_decay"]
                         _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d)
 
-                # Blooms at tips
-                if depth >= max_d - 1 and rng.random() < 0.6:
+                # Blooms at tips — bloom probability boosted by total stars
+                if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = 5 + min(18, repo_stars * 0.8)
                     petal_layers = 1 + min(3, repo_stars // 5)
@@ -694,7 +700,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity))
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
@@ -737,7 +743,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d, 0)
 
                 # Blooms at tips (fern and bamboo have no blooms — handled above)
-                if depth >= max_d - 1 and rng.random() < 0.6:
+                # bloom probability boosted by total stars
+                if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = 5 + min(18, repo_stars * 0.8)
                     petal_layers = 1 + min(3, repo_stars // 5)
@@ -755,14 +762,16 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
             _grow(base_x, gy, base_angle, 0, main_length, stem_sw)
 
-        # ── Root system (scales with tree growth) ────────────────
+        # ── Root system (scales with tree growth; forks -> root spread) ─
+        # Data mapping: forks -> wider root spread angle and more root count
+        fork_spread = min(1.2, 0.5 + forks / 20.0)
         root_depth = (40 + min(100, age * 1.2)) * tree_t
-        n_roots = max(1, round(max(2, min(5, 2 + forks // 8)) * tree_t)) if root_depth >= 1 else 0
+        n_roots = max(1, round(max(2, min(7, 2 + forks // 5)) * tree_t)) if root_depth >= 1 else 0
         for rootn in range(n_roots):
             if len(roots) >= MAX_ROOTS:
                 break
-            ra = math.pi / 2 + rng.uniform(-0.8, 0.8)
-            rx, ry = base_x + rng.uniform(-8, 8), gy
+            ra = math.pi / 2 + rng.uniform(-fork_spread, fork_spread)
+            rx, ry = base_x + rng.uniform(-8 * fork_spread, 8 * fork_spread), gy
             r_len = root_depth * rng.uniform(0.5, 1.0)
             r_segs = max(3, int(r_len / 10))
             r_sw = stem_sw * 0.5
@@ -851,6 +860,11 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
     # ── defs ──────────────────────────────────────────────────────
     P.append('<defs>')
+    # Canvas/paper texture overlay — subtle woven linen feel via feTurbulence + feDisplacementMap
+    P.append('''<filter id="canvas" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="turbulence" baseFrequency="0.35 0.25" numOctaves="3" seed="19" result="weave"/>
+    <feDisplacementMap in="SourceGraphic" in2="weave" scale="0.8" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>''')
     # Ink displacement — subtle organic wobble
     P.append('''<filter id="ink" x="-3%" y="-3%" width="106%" height="106%">
     <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="42" result="n"/>
@@ -923,8 +937,10 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     P.append('</defs>')
 
 
-    # ── Background (aged parchment) ──────────────────────────────
+    # ── Background (aged parchment with canvas texture) ──────────
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f5f0e6" filter="url(#paper)"/>')
+    # Canvas texture overlay — subtle woven linen feel
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#ede8dc" filter="url(#canvas)" opacity="0.12"/>')
     # Sky gradient — pale blue wash at top
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#skyGrad)"/>')
     # Atmospheric light wash from upper-left
@@ -949,7 +965,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vignette)"/>')
 
     # ── Underground strata ────────────────────────────────────────
-    account_age = max((r.get("age_months", 6) for r in repos), default=12)
+    max((r.get("age_months", 6) for r in repos), default=12)
     n_strata = 1 + int(mat * 3)
     ground_pts = [(gx_i, ground_y_at(gx_i)) for gx_i in range(0, WIDTH + 5, 5)]
     ground_path = f"M{ground_pts[0][0]},{ground_pts[0][1]:.1f}" + "".join(
@@ -977,7 +993,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'stroke="#4a3a20" stroke-width="0.2" opacity="0.06"/>')
         else:
             # Earthworm segment — small curved pink-brown
-            wsa = rng.uniform(-0.5, 0.5)
+            rng.uniform(-0.5, 0.5)
             P.append(f'<path d="M{scx:.0f},{scy:.0f} Q{scx + 6:.0f},{scy + 3:.0f} {scx + 12:.0f},{scy + 1:.0f}" '
                      f'fill="none" stroke="#b0887a" stroke-width="1" opacity="0.06" stroke-linecap="round"/>')
     # Worm trails — sinuous paths between strata
@@ -1147,7 +1163,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             wf_h = rng.uniform(4, 9)
             wf_hue = rng.choice([0, 45, 270, 320, 55])
             wf_c = oklch(0.62, 0.22, wf_hue)
-            wf_sc = oklch(0.50, 0.16, wf_hue)
+            oklch(0.50, 0.16, wf_hue)
             # Stem
             P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy - wf_h:.1f}" '
                      f'stroke="#6a8a4a" stroke-width="0.3" opacity="0.2"/>')
@@ -1335,7 +1351,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'fill="#c8bfa8" opacity="{0.06+intensity*0.12:.2f}"/>')
 
     # PASS 1: Main stems with rich bark texture
-    for x1, y1, x2, y2, sw, hue, depth, is_main in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, bark_mat in all_segs:
         if not is_main:
             continue
         # Main stroke — warm dark brown
@@ -1361,31 +1377,42 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'Q{mx + hoff * math.cos(perp):.1f},{my + hoff * math.sin(perp):.1f} '
                      f'{x2 + hoff * math.cos(perp):.1f},{y2 + hoff * math.sin(perp):.1f}" '
                      f'fill="none" stroke="{color_light}" stroke-width="0.3" opacity="0.25"/>')
-        # Bark texture — longitudinal grain lines
-        if sw > 3.5 and mat > 0.3 and len(P) - elem_count < MAX_ELEMENTS:
+        # Bark texture — longitudinal grain lines, density driven by bark_mat
+        # bark_mat: 0.0 = young (smooth bark) → 1.0 = old (deeply furrowed)
+        bark_thresh = max(2.5, 3.5 - bark_mat * 1.0)  # young trees need thicker stems for bark
+        if sw > bark_thresh and mat > 0.3 and len(P) - elem_count < MAX_ELEMENTS:
             seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if seg_len > 8:
                 perp = math.atan2(y2 - y1, x2 - x1) + math.pi / 2
-                bark_c = oklch(0.32, 0.04, hue)
-                for bi in range(min(4, int(sw))):
-                    off = (bi - sw / 2) * 0.7
-                    jx1, jy1 = rng.uniform(-0.6, 0.6), rng.uniform(-0.6, 0.6)
-                    jx2, jy2 = rng.uniform(-0.6, 0.6), rng.uniform(-0.6, 0.6)
+                bark_c = oklch(0.32 - bark_mat * 0.04, 0.04 + bark_mat * 0.02, hue)
+                n_grain = min(6, max(1, int(sw * (0.5 + bark_mat * 0.5))))
+                grain_opacity = 0.10 + bark_mat * 0.08
+                for bi in range(n_grain):
+                    off = (bi - n_grain / 2) * 0.7
+                    jitter = 0.6 + bark_mat * 0.4  # older = more irregular
+                    jx1, jy1 = rng.uniform(-jitter, jitter), rng.uniform(-jitter, jitter)
+                    jx2, jy2 = rng.uniform(-jitter, jitter), rng.uniform(-jitter, jitter)
+                    line_w = 0.15 + rng.uniform(0, 0.15) + bark_mat * 0.08
                     P.append(f'<line x1="{x1 + off * math.cos(perp) + jx1:.1f}" '
                              f'y1="{y1 + off * math.sin(perp) + jy1:.1f}" '
                              f'x2="{x2 + off * math.cos(perp) + jx2:.1f}" '
                              f'y2="{y2 + off * math.sin(perp) + jy2:.1f}" '
-                             f'stroke="{bark_c}" stroke-width="{0.15 + rng.uniform(0, 0.15):.2f}" opacity="0.14"/>')
-                # Occasional knot mark
-                if seg_len > 15 and rng.random() < 0.08 and mat > 0.5:
+                             f'stroke="{bark_c}" stroke-width="{line_w:.2f}" opacity="{grain_opacity:.2f}"/>')
+                # Occasional knot mark — probability increases with bark maturity
+                knot_prob = 0.04 + bark_mat * 0.08
+                if seg_len > 15 and rng.random() < knot_prob and mat > 0.4:
                     kx = (x1 + x2) / 2 + rng.uniform(-2, 2)
                     ky = (y1 + y2) / 2 + rng.uniform(-2, 2)
-                    kr = sw * rng.uniform(0.15, 0.3)
+                    kr = sw * rng.uniform(0.15, 0.3) * (0.8 + bark_mat * 0.4)
                     P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr:.1f}" fill="none" '
-                             f'stroke="{bark_c}" stroke-width="0.3" opacity="0.12"/>')
+                             f'stroke="{bark_c}" stroke-width="{0.25 + bark_mat * 0.15:.2f}" opacity="{0.10 + bark_mat * 0.06:.2f}"/>')
+                    # Mature bark: add concentric ring inside knot
+                    if bark_mat > 0.6 and kr > 1:
+                        P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr * 0.55:.1f}" fill="none" '
+                                 f'stroke="{bark_c}" stroke-width="0.15" opacity="{0.06 + bark_mat * 0.04:.2f}"/>')
 
     # Water droplet trails on thick stems
-    for x1, y1, x2, y2, sw, hue, depth, is_main in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat in all_segs:
         if is_main and sw > 3.5 and rng.random() < 0.04 and mat > 0.4 and len(P) - elem_count < MAX_ELEMENTS:
             seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if seg_len > 12:
@@ -1402,7 +1429,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                                  f'r="{dr_t:.1f}" fill="url(#dewGrad)" opacity="0.3"/>')
 
     # PASS 2: Secondary branches
-    for x1, y1, x2, y2, sw, hue, depth, is_main in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat in all_segs:
         if is_main:
             continue
         d_frac = depth / 6
@@ -1438,7 +1465,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                          f'fill="#7aaa5a" opacity="0.25"/>')
 
     # PASS 4: Leaves with species-specific shapes (capped)
-    budget_ok = lambda: len(P) - elem_count < MAX_ELEMENTS
+    def budget_ok():
+        return len(P) - elem_count < MAX_ELEMENTS
     for leaf_tuple in leaves[:MAX_LEAVES]:
         if not budget_ok():
             break
@@ -1532,6 +1560,17 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     # ── Insects (detailed, naturalist style) ──────────────────────
     for ix, iy, itype, isz, ihue in insects:
         if itype == "butterfly":
+            # Flight path — natural cubic Bezier arc showing trajectory
+            cp1x = ix + rng.uniform(-30, -10)
+            cp1y = iy + rng.uniform(-20, -5)
+            cp2x = ix + rng.uniform(10, 30)
+            cp2y = iy + rng.uniform(-15, 5)
+            trail_end_x = ix + rng.uniform(15, 40)
+            trail_end_y = iy + rng.uniform(-25, -5)
+            P.append(f'<path d="M{ix - rng.uniform(15, 35):.0f},{iy + rng.uniform(5, 20):.0f} '
+                     f'C{cp1x:.0f},{cp1y:.0f} {cp2x:.0f},{cp2y:.0f} {trail_end_x:.0f},{trail_end_y:.0f}" '
+                     f'fill="none" stroke="#c8c0a8" stroke-width="0.2" opacity="0.06" '
+                     f'stroke-dasharray="1.5 2" stroke-linecap="round"/>')
             # Body
             P.append(f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="1" ry="{isz * 0.3:.1f}" '
                      f'fill="#3a3020" opacity="0.6"/>')
@@ -1539,21 +1578,35 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             wc2 = oklch(0.55, 0.18, (ihue + 30) % 360)
             wc_vein = oklch(0.40, 0.10, ihue)
             for side in [-1, 1]:
-                # Upper wings
+                # Upper wings — natural Bezier outline
                 uwx = ix + side * isz * 0.5
                 uwy = iy - isz * 0.2
-                P.append(f'<ellipse cx="{uwx:.0f}" cy="{uwy:.0f}" rx="{isz * 0.4:.1f}" ry="{isz * 0.3:.1f}" '
-                         f'fill="{wc1}" opacity="0.45" stroke="{wc_vein}" stroke-width="0.3" '
-                         f'transform="rotate({side * 15},{uwx:.0f},{uwy:.0f})"/>')
+                # Wing shape as cubic Bezier path for more natural silhouette
+                w_tip_x = ix + side * isz * 0.65
+                w_tip_y = iy - isz * 0.45
+                w_cp1x = ix + side * isz * 0.15
+                w_cp1y = iy - isz * 0.5
+                w_cp2x = ix + side * isz * 0.7
+                w_cp2y = iy - isz * 0.35
+                w_cp3x = ix + side * isz * 0.55
+                w_cp3y = iy + isz * 0.05
+                w_cp4x = ix + side * isz * 0.1
+                w_cp4y = iy + isz * 0.02
+                P.append(f'<path d="M{ix:.0f},{iy:.0f} '
+                         f'C{w_cp1x:.0f},{w_cp1y:.0f} {w_cp2x:.0f},{w_cp2y:.0f} {w_tip_x:.0f},{w_tip_y:.0f} '
+                         f'C{w_cp3x:.0f},{w_cp3y:.0f} {w_cp4x:.0f},{w_cp4y:.0f} {ix:.0f},{iy:.0f}" '
+                         f'fill="{wc1}" opacity="0.45" stroke="{wc_vein}" stroke-width="0.3"/>')
                 # Wing spot
                 P.append(f'<circle cx="{uwx:.0f}" cy="{uwy:.0f}" r="{isz * 0.08:.1f}" fill="#fff" opacity="0.3"/>')
-                # Wing venation — 3 veins per wing
+                # Wing venation — 3 veins per wing using curved paths
                 for vi in range(3):
                     va = (vi - 1) * 0.4 + side * 0.2
                     vex = uwx + isz * 0.35 * math.cos(va + side * 1.2)
                     vey = uwy + isz * 0.25 * math.sin(va - 0.5)
-                    P.append(f'<line x1="{ix:.0f}" y1="{iy:.0f}" x2="{vex:.0f}" y2="{vey:.0f}" '
-                             f'stroke="{wc_vein}" stroke-width="0.2" opacity="0.15"/>')
+                    vmx = (ix + vex) / 2 + side * isz * 0.05
+                    vmy = (iy + vey) / 2 - isz * 0.08
+                    P.append(f'<path d="M{ix:.0f},{iy:.0f} Q{vmx:.0f},{vmy:.0f} {vex:.0f},{vey:.0f}" '
+                             f'fill="none" stroke="{wc_vein}" stroke-width="0.2" opacity="0.15"/>')
                 # Lower wings
                 lwx = ix + side * isz * 0.35
                 lwy = iy + isz * 0.15
@@ -1710,7 +1763,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                  f'stroke="{seed_c}" stroke-width="0.15" opacity="0.15"/>')
 
     # ── Labels (botanical plate annotation with halos) ────────────
-    P.append(f'<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
+    P.append('<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
     for li, (lx, ly, text, ax, ay) in enumerate(labels):
         # Dashed leader line with small arrowhead
         P.append(f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
@@ -1945,7 +1998,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 species_shown.add(sp)
                 legend_items.append(sp)
         if legend_items:
-            P.append(f'<g font-family="Georgia,serif" font-size="5" fill="#8a7a6a" opacity="0.35">')
+            P.append('<g font-family="Georgia,serif" font-size="5" fill="#8a7a6a" opacity="0.35">')
             for li_l, sp_name in enumerate(legend_items):
                 liy = leg_y + li_l * 8
                 if sp_name in ("oak", "birch"):
