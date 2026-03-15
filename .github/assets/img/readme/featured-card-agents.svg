@@ -42,17 +42,7 @@
 <svg x="262" y="21" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" /></svg>
 <text class="rc-desc" x="20" y="54">AI agent artifacts, configs, skills, tools,</text>
 <text class="rc-desc" x="20" y="70">and more</text>
-<clipPath id="lang-bar-clip"><rect x="20" y="145" width="260" height="4" rx="2" /></clipPath>
-<g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="145" width="202.2" height="4" fill="#3572A5" />
-<rect x="222.2" y="145" width="55.9" height="4" fill="#e34c26" />
-<rect x="278.0" y="145" width="1.2" height="4" fill="#89e051" />
-<rect x="279.3" y="145" width="1.0" height="4" fill="#8b949e" />
-</g>
-<circle class="rc-lang-dot" cx="24" cy="157" r="4" fill="#3572A5" />
-<text class="rc-meta" x="32" y="161">Python 78%</text>
-<circle class="rc-lang-dot" cx="111" cy="157" r="4" fill="#e34c26" />
-<text class="rc-meta" x="119" y="161">HTML 21%</text>
-<circle class="rc-lang-dot" cx="185" cy="157" r="4" fill="#89e051" />
-<text class="rc-meta" x="193" y="161">Shell 0%</text>
+<rect x="20" y="145" width="260" height="3" rx="1.5" fill="#3572A5" fill-opacity="0.5" />
+<circle class="rc-lang-dot" cx="25" cy="157" r="5" fill="#3572A5" />
+<text class="rc-lang-label" x="35" y="161">Python</text>
 </svg>

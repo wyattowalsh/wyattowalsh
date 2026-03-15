@@ -35,12 +35,12 @@
 </tr>
 </tbody></table>
 - [listentropy](https://github.com/wyattowalsh/listentropy) — No description provided. (★ 0)
-- [mdxpad](https://github.com/wyattowalsh/mdxpad) — No description provided. (★ 0)
-- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — rotating proxy system (★ 1)
+- [mdxpad](https://github.com/wyattowalsh/mdxpad) — Live stats are temporarily unavailable; open repository for details.
+- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — Live stats are temporarily unavailable; open repository for details.
 - [nbadb](https://github.com/wyattowalsh/nbadb) — Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball) (★ 57)
 - [agents](https://github.com/wyattowalsh/agents) — AI agent artifacts, configs, skills, tools, and more (★ 0)
-- [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
-- [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
+- [personal-website](https://github.com/wyattowalsh/personal-website) — Live stats are temporarily unavailable; open repository for details.
+- [riso](https://github.com/wyattowalsh/riso) — Live stats are temporarily unavailable; open repository for details.
 - [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
 <!-- README:FEATURED_PROJECTS:END -->
 
@@ -447,11 +447,12 @@ MDX                      1 repo              ░░░░░░░░░░░�
 <summary><strong>Latest posts (auto-updated)</strong></summary>
 
 <!-- BLOG-POST-LIST:START -->
- - Fri Feb 13 2026 12:00 AM - [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl)
- - Sun Dec 01 2024 12:00 AM - [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6)
- - Fri Jan 15 2021 12:00 AM - [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3)
- - Thu Jan 14 2021 12:00 AM - [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2)
- - Wed Jan 13 2021 12:00 AM - [Basics of Linear Regression Modeling and Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1)<!-- BLOG-POST-LIST:END -->
+- [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl) — w4w.dev
+- [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6) — w4w.dev
+- [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3) — w4w.dev
+- [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2) — w4w.dev
+- [Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1) — w4w.dev
+<!-- BLOG-POST-LIST:END -->
 
 </details>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>

@@ -5,12 +5,15 @@ import ipaddress
 import json
 import os
 import re
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 from typing import Optional, Sequence
-from urllib.parse import urlparse
+from urllib.error import HTTPError
+from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 import defusedxml.ElementTree as DefusedET
 from xml.etree.ElementTree import Element
@@ -252,7 +255,20 @@ class BlogFeedClient:
 
 
 class StarHistoryClient:
-    """Fetch stargazer timestamps for sparkline generation."""
+    """Fetch stargazer timestamps via GitHub GraphQL API for sparkline generation."""
+
+    _GRAPHQL_URL = "https://api.github.com/graphql"
+    _QUERY = (
+        "query($owner:String!, $name:String!, $after:String) {"
+        "  repository(owner:$owner, name:$name) {"
+        "    stargazers(first:100, after:$after, orderBy:{field:STARRED_AT, direction:ASC}) {"
+        "      totalCount"
+        "      edges { starredAt cursor }"
+        "      pageInfo { hasNextPage endCursor }"
+        "    }"
+        "  }"
+        "}"
+    )
 
     def __init__(self, timeout: float = 10.0) -> None:
         self.timeout = timeout
@@ -262,42 +278,110 @@ class StarHistoryClient:
         full_name: str,
         sample: int = 24,
     ) -> Optional[list[int]]:
-        """Return cumulative star counts sampled to the requested length."""
-        request = _build_remote_get_request(
-            url=f"https://api.github.com/repos/{full_name}/stargazers?per_page=100",
-            headers=self._headers(),
-            context=f"star history for {full_name}",
-        )
-        if request is None:
+        """Return cumulative star counts sampled to *sample* time bins."""
+        parts = full_name.split("/", 1)
+        if len(parts) != 2:
+            logger.warning("Invalid repo full_name: %s", full_name)
             return None
-        try:
-            with urlopen(request, timeout=self.timeout) as response:
-                payload = json.loads(response.read().decode("utf-8"))
-        except Exception as exc:  # pragma: no cover - network path
-            logger.warning(
-                "Failed to fetch star history for %s: %s", full_name, exc
+
+        owner, name = parts
+        timestamps: list[datetime] = []
+        cursor: Optional[str] = None
+
+        while True:
+            variables: dict[str, object] = {"owner": owner, "name": name}
+            if cursor is not None:
+                variables["after"] = cursor
+
+            body = json.dumps({"query": self._QUERY, "variables": variables}).encode("utf-8")
+            request = Request(
+                url=self._GRAPHQL_URL,
+                data=body,
+                headers=self._headers(),
+                method="POST",
             )
+
+            try:
+                with urlopen(request, timeout=self.timeout) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
+            except Exception as exc:  # pragma: no cover - network path
+                logger.warning(
+                    "Failed to fetch star history for %s: %s", full_name, exc
+                )
+                return None
+
+            errors = payload.get("errors")
+            if errors:
+                logger.warning(
+                    "GraphQL errors fetching star history for %s: %s",
+                    full_name,
+                    errors,
+                )
+                return None
+
+            repo_data = (payload.get("data") or {}).get("repository")
+            if repo_data is None:
+                logger.warning(
+                    "Repository not found in GraphQL response for %s", full_name
+                )
+                return None
+
+            stargazers = repo_data["stargazers"]
+            for edge in stargazers.get("edges", []):
+                starred_at = edge.get("starredAt", "")
+                try:
+                    ts = datetime.fromisoformat(starred_at.replace("Z", "+00:00"))
+                    timestamps.append(ts)
+                except (ValueError, AttributeError):
+                    continue
+
+            page_info = stargazers.get("pageInfo", {})
+            if page_info.get("hasNextPage"):
+                cursor = page_info.get("endCursor")
+            else:
+                break
+
+        if not timestamps:
             return None
 
-        if not isinstance(payload, list) or not payload:
-            return None
+        # Bucket into *sample* evenly-spaced time bins from first star to now
+        timestamps.sort()
+        t_start = timestamps[0]
+        t_end = datetime.now(timezone.utc)
+        if t_end <= t_start:
+            t_end = timestamps[-1]
 
-        counts = list(range(1, len(payload) + 1))
-        if len(counts) <= sample:
-            return counts
-        step = len(counts) / sample
+        total_seconds = (t_end - t_start).total_seconds() or 1.0
+        bin_width = total_seconds / sample
+
+        # Build cumulative counts at each bin boundary
         sampled: list[int] = []
-        for idx in range(sample):
-            pos = min(int(round(idx * step)), len(counts) - 1)
-            sampled.append(counts[pos])
+        ts_idx = 0
+        for b in range(sample):
+            bin_end = t_start.timestamp() + (b + 1) * bin_width
+            while ts_idx < len(timestamps) and timestamps[ts_idx].timestamp() <= bin_end:
+                ts_idx += 1
+            sampled.append(ts_idx)
+
         return sampled
 
     def _headers(self) -> dict[str, str]:
         headers = {
-            "Accept": "application/vnd.github.star+json",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
             "User-Agent": "readme-section-generator",
         }
         token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
+        if not token:
+            try:
+                import subprocess
+                token = subprocess.check_output(
+                    ["gh", "auth", "token"],
+                    stderr=subprocess.DEVNULL,
+                    timeout=5,
+                ).decode().strip() or None
+            except Exception:
+                pass
         if token:
             headers["Authorization"] = f"Bearer {token}"
         return headers
@@ -583,6 +667,98 @@ class ReadmeSectionGenerator:
         if icon_data_uri:
             object.__setattr__(card, "icon_data_uri", icon_data_uri)
 
+    # -- Simple Icons CDN integration ------------------------------------
+
+    # Map normalized host suffixes to (slug, bg_color) for Simple Icons.
+    _SIMPLE_ICON_MAP: dict[str, tuple[str, str]] = {
+        "linkedin.com": ("linkedin", "0A66C2"),
+        "github.com": ("github", "181717"),
+        "kaggle.com": ("kaggle", "20BEFF"),
+        "x.com": ("x", "000000"),
+        "twitter.com": ("x", "000000"),
+    }
+
+    def _fetch_simple_icon_data_uri(
+        self,
+        slug: str,
+        bg_color: str,
+        fg_color: str = "white",
+    ) -> Optional[str]:
+        """Fetch an icon from the Simple Icons CDN and wrap it in a 64x64 SVG.
+
+        Returns a ``data:image/svg+xml;base64,...`` URI on success, or *None*
+        if the network request fails so the caller can fall back to a
+        hardcoded glyph.
+        """
+        cdn_url = (
+            f"https://cdn.jsdelivr.net/npm/simple-icons@v11"
+            f"/icons/{slug}.svg"
+        )
+        request = _build_remote_get_request(
+            url=cdn_url,
+            headers={"User-Agent": "readme-section-generator"},
+            context=f"simple-icon/{slug}",
+        )
+        if request is None:
+            return None
+        try:
+            with urlopen(request, timeout=10.0) as response:
+                svg_bytes = response.read()
+        except Exception as exc:  # pragma: no cover - network path
+            logger.warning("Failed to fetch Simple Icon %s: %s", slug, exc)
+            return None
+
+        if not svg_bytes:
+            return None
+
+        # Extract inner SVG content (paths/shapes) from the returned SVG.
+        svg_text = svg_bytes.decode("utf-8", errors="replace")
+        try:
+            root = DefusedET.fromstring(svg_text)
+        except Exception:  # pragma: no cover - malformed SVG
+            logger.warning("Failed to parse Simple Icon SVG for %s", slug)
+            return None
+
+        # Serialize child elements (the icon paths) as raw XML.
+        inner_parts: list[str] = []
+        for child in root:
+            from xml.etree.ElementTree import tostring as _et_tostring
+
+            child_str = _et_tostring(child, encoding="unicode")
+            # Strip any namespace prefixes injected by ElementTree.
+            child_str = re.sub(
+                r'\s*xmlns(?::[a-z]+)?="[^"]*"', "", child_str,
+            )
+            inner_parts.append(child_str)
+        icon_paths = "".join(inner_parts)
+
+        bg_hex = bg_color.lstrip("#")
+        fg_hex = fg_color.lstrip("#") if fg_color != "white" else "FFFFFF"
+        wrapper_svg = (
+            "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+            f"<rect width='64' height='64' rx='14' fill='#{bg_hex}'/>"
+            f"<svg x='12' y='12' width='40' height='40'"
+            f" viewBox='0 0 24 24' fill='#{fg_hex}'>"
+            f"{icon_paths}"
+            f"</svg>"
+            "</svg>"
+        )
+        return (
+            "data:image/svg+xml;base64,"
+            + base64.b64encode(wrapper_svg.encode("utf-8")).decode("ascii")
+        )
+
+    # -- w4w.dev favicon fetcher -----------------------------------------
+
+    def _fetch_w4w_favicon_data_uri(self) -> Optional[str]:
+        """Fetch the real favicon from w4w.dev and return as data URI."""
+        return self._fetch_remote_image_data_uri(
+            "https://w4w.dev/favicon.ico",
+            context="w4w.dev favicon",
+        )
+
+    # -- Brand icon resolution -------------------------------------------
+
     def _brand_icon_data_uri(
         self,
         *,
@@ -603,6 +779,23 @@ class ReadmeSectionGenerator:
             else None
         )
 
+        # --- Try Simple Icons CDN first for known platforms ---------------
+        for suffix, (slug, bg_color) in self._SIMPLE_ICON_MAP.items():
+            if normalized_host.endswith(suffix):
+                si_uri = self._fetch_simple_icon_data_uri(
+                    slug=slug, bg_color=bg_color, fg_color="white",
+                )
+                if si_uri:
+                    return si_uri
+                break  # fall through to hardcoded glyph
+
+        # --- Try w4w.dev favicon before the hardcoded zigzag glyph --------
+        if normalized_host.endswith("w4w.dev"):
+            favicon_uri = self._fetch_w4w_favicon_data_uri()
+            if favicon_uri:
+                return favicon_uri
+
+        # --- Hardcoded glyph fallbacks ------------------------------------
         glyph: Optional[str] = None
         background: Optional[str] = None
         foreground: Optional[str] = None
@@ -657,13 +850,6 @@ class ReadmeSectionGenerator:
                 f"<path d='M19 32h26M32 19.5c4.2 4.4 4.2 20.6 0 25M32 19.5c-4.2 4.4-4.2 20.6 0 25' stroke='#{foreground}' stroke-width='2.4' stroke-linecap='round' fill='none'/>"
             )
         if not glyph or not background or not foreground:
-            # Fallback — try fetching a friendly favicon (w4w.dev) before giving up.
-            try_fallback = self._fetch_remote_image_data_uri(
-                "https://w4w.dev/favicon.ico",
-                context="brand favicon fallback",
-            )
-            if try_fallback:
-                return try_fallback
             return None
 
         icon_svg = (
@@ -954,13 +1140,23 @@ class ReadmeSectionGenerator:
                 card_meta.append(host)
             # Simplified accent — single muted tone for all blog cards
             accent = "94A3B8"
+            # Resolve hero image: convert relative URLs to absolute, then
+            # fetch as a base64 data URI so GitHub's SVG sanitizer can render
+            # the embedded image.
+            hero_data_uri: Optional[str] = None
+            hero_url = metadata.get("hero_image")
+            if hero_url:
+                absolute_hero = urljoin(post.url, hero_url)
+                hero_data_uri = self._fetch_remote_image_data_uri(
+                    absolute_hero, context="blog hero",
+                )
             card = SvgCard(
                 title=clean_title,
                 kicker=f"{host or 'blog'}",
                 lines=(summary,),
                 meta=tuple(card_meta),
                 url=post.url,
-                background_image=metadata.get("hero_image"),
+                background_image=hero_data_uri,
                 icon=(host or "BL")[:2].upper(),
                 badge=None,
                 accent=accent,
@@ -1154,18 +1350,34 @@ class ReadmeSectionGenerator:
         )
         if request is None:
             return None
-        try:
-            with urlopen(request, timeout=10.0) as response:
-                image_bytes = response.read()
-                content_type = (
-                    response.headers.get("Content-Type", "")
-                    .split(";", maxsplit=1)[0]
-                    .strip()
-                    .lower()
-                )
-        except Exception as exc:  # pragma: no cover - network path
-            logger.warning(f"Failed to fetch image for {context}: {exc}")
-            return None
+        max_retries = 3
+        backoff_delays = (1, 2, 4)
+        for attempt in range(max_retries + 1):
+            try:
+                with urlopen(request, timeout=10.0) as response:
+                    image_bytes = response.read()
+                    content_type = (
+                        response.headers.get("Content-Type", "")
+                        .split(";", maxsplit=1)[0]
+                        .strip()
+                        .lower()
+                    )
+                break
+            except HTTPError as exc:
+                if exc.code == 429 and attempt < max_retries:
+                    delay = backoff_delays[attempt]
+                    logger.info(
+                        "Rate-limited (429) fetching image for %s, "
+                        "retrying in %ds (attempt %d/%d)",
+                        context, delay, attempt + 1, max_retries,
+                    )
+                    time.sleep(delay)
+                    continue
+                logger.warning(f"Failed to fetch image for {context}: {exc}")
+                return None
+            except Exception as exc:  # pragma: no cover - network path
+                logger.warning(f"Failed to fetch image for {context}: {exc}")
+                return None
 
         if not image_bytes:
             return None

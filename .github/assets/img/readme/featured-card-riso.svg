@@ -8,7 +8,7 @@
   --text-color: #656d76;
   --meta-color: #656d76;
   --stat-color: #24292e;
-  --spark-stroke: #8b949e;
+  --spark-stroke: #0969da;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -33,28 +33,6 @@
 <rect x="0.5" y="0.5" width="479" height="174" rx="10" fill="none" stroke="var(--card-border)" stroke-width="1" />
 <svg x="20" y="18" width="18" height="18" viewBox="0 0 16 16" fill="var(--meta-color)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" /></svg>
 <text class="rc-title" x="44" y="33">riso</text>
-<text class="rc-meta" x="453" y="33">0</text>
-<svg x="435" y="21" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" /></svg>
-<text class="rc-desc" x="20" y="54">Production-ready project scaffolding: mix-and-match CLI,</text>
-<text class="rc-desc" x="20" y="70">FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with</text>
-<text class="rc-desc" x="20" y="86">batteries-included quality tooling Topics cli · copier ·…</text>
-<clipPath id="lang-bar-clip"><rect x="20" y="145" width="260" height="4" rx="2" /></clipPath>
-<g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="145" width="133.2" height="4" fill="#8b949e" />
-<rect x="153.2" y="145" width="46.9" height="4" fill="#3572A5" />
-<rect x="200.1" y="145" width="45.0" height="4" fill="#e34c26" />
-<rect x="245.1" y="145" width="14.2" height="4" fill="#89e051" />
-<rect x="259.3" y="145" width="13.4" height="4" fill="#3178c6" />
-<rect x="272.7" y="145" width="5.3" height="4" fill="#8b949e" />
-<rect x="278.0" y="145" width="1.2" height="4" fill="#8b949e" />
-<rect x="279.2" y="145" width="1.0" height="4" fill="#563d7c" />
-<rect x="280.2" y="145" width="1.0" height="4" fill="#f1e05a" />
-<rect x="281.2" y="145" width="1.0" height="4" fill="#8b949e" />
-</g>
-<circle class="rc-lang-dot" cx="24" cy="157" r="4" fill="#8b949e" />
-<text class="rc-meta" x="32" y="161">Jinja 51%</text>
-<circle class="rc-lang-dot" cx="104" cy="157" r="4" fill="#3572A5" />
-<text class="rc-meta" x="112" y="161">Python 18%</text>
-<circle class="rc-lang-dot" cx="191" cy="157" r="4" fill="#e34c26" />
-<text class="rc-meta" x="199" y="161">HTML 17%</text>
+<text class="rc-desc" x="20" y="54">Live stats are temporarily unavailable. Open the repository for</text>
+<text class="rc-desc" x="20" y="70">full details.</text>
 </svg>

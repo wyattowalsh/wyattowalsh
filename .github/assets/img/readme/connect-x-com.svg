@@ -19,7 +19,7 @@
 <clipPath id="ico-clip"><rect x="46" y="18" width="48" height="48" rx="12" /></clipPath>
 </defs>
 <rect x="0.5" y="0.5" width="139" height="129" rx="12" fill="none" stroke="var(--card-border)" stroke-width="1" />
-<image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwMDAwMDAnLz48cGF0aCBkPSdNMTUgMTVoMTAuNWw4LjYgMTEuN0w0My4zIDE1SDUzTDM4LjkgMzIuMiA1My4yIDQ5SDQyLjdsLTkuNC0xMi4xTDIzLjYgNDlIMTRsMTQuNC0xNy42eicgZmlsbD0nI0ZGRkZGRicvPjwvc3ZnPg==" x="46" y="18" width="48" height="48" preserveAspectRatio="xMidYMid meet" clip-path="url(#ico-clip)" />
+<image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwMDAwMDAnLz48c3ZnIHg9JzEyJyB5PScxMicgd2lkdGg9JzQwJyBoZWlnaHQ9JzQwJyB2aWV3Qm94PScwIDAgMjQgMjQnIGZpbGw9JyNGRkZGRkYnPjxuczA6dGl0bGUgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+WDwvbnMwOnRpdGxlPjxuczA6cGF0aCB4bWxuczpuczA9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBkPSJNMTguOTAxIDEuMTUzaDMuNjhsLTguMDQgOS4xOUwyNCAyMi44NDZoLTcuNDA2bC01LjgtNy41ODQtNi42MzggNy41ODRILjQ3NGw4LjYtOS44M0wwIDEuMTU0aDcuNTk0bDUuMjQzIDYuOTMyWk0xNy42MSAyMC42NDRoMi4wMzlMNi40ODYgMy4yNEg0LjI5OFoiIC8+PC9zdmc+PC9zdmc+" x="46" y="18" width="48" height="48" preserveAspectRatio="xMidYMid meet" clip-path="url(#ico-clip)" />
 <text class="con-title" x="70" y="84" text-anchor="middle">X.com</text>
 <text class="con-sub" x="70" y="100" text-anchor="middle">SOCIAL</text>
 </svg>
