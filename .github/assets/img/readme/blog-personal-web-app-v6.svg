@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480" height="135" viewBox="0 0 480 135" role="img" aria-label="Personal Web App v6">
+<defs><style>
+:root {
+  --card-border: #d0d7de;
+  --title-color: #0969da;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --card-border: #30363d;
+  --title-color: #58a6ff;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+}}
+.blog-title { fill: var(--title-color); font: 600 16px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.blog-desc { fill: var(--text-color); font: 400 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.blog-meta { fill: var(--meta-color); font: 400 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+</style>
+</defs>
+<rect x="0.5" y="0.5" width="479" height="134" rx="10" fill="none" stroke="var(--card-border)" stroke-width="1" />
+<text class="blog-title" x="20" y="34">Personal Web App v6</text>
+<text class="blog-desc" x="20" y="54">Explore articles about software development, web technologies,</text>
+<text class="blog-desc" x="20" y="70">and technical insights</text>
+<rect x="20" y="105" width="60" height="2" rx="1" fill="var(--accent)" fill-opacity="0.3" />
+<text class="blog-meta" x="20" y="121">w4w.dev</text>
+</svg>
