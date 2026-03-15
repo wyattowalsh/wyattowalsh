@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -211,6 +211,43 @@ class ReadmeFeaturedRepo(BaseModel):
     )
 
 
+class ReadmeSvgCardStyleSettings(BaseModel):
+    """Visual style controls for per-card README SVG rendering."""
+
+    variant: Literal["gh-card", "legacy"] = Field(
+        "gh-card",
+        description=(
+            "Per-card rendering variant. Use 'gh-card' for the modern "
+            "transparent card treatment or 'legacy' for fallback styling."
+        ),
+    )
+    transparent_canvas: bool = Field(
+        True,
+        description="Render each per-card SVG without an outer background canvas.",
+    )
+    show_title: bool = Field(
+        False,
+        description="Render section title text above each per-card SVG.",
+    )
+
+
+class ReadmeSvgFamilyCardStyles(BaseModel):
+    """Family-specific style controls for README per-card SVG assets."""
+
+    default: ReadmeSvgCardStyleSettings = Field(
+        default_factory=ReadmeSvgCardStyleSettings
+    )
+    connect: ReadmeSvgCardStyleSettings = Field(
+        default_factory=ReadmeSvgCardStyleSettings
+    )
+    featured: ReadmeSvgCardStyleSettings = Field(
+        default_factory=ReadmeSvgCardStyleSettings
+    )
+    blog: ReadmeSvgCardStyleSettings = Field(
+        default_factory=ReadmeSvgCardStyleSettings
+    )
+
+
 class ReadmeSvgSettings(BaseModel):
     """Settings for optional SVG assets used by README dynamic sections."""
 
@@ -229,6 +266,13 @@ class ReadmeSvgSettings(BaseModel):
     )
     blog_posts: bool = Field(
         True, description="Generate SVG asset for blog post cards."
+    )
+    card_styles: ReadmeSvgFamilyCardStyles = Field(
+        default_factory=ReadmeSvgFamilyCardStyles,
+        description=(
+            "Family-specific per-card style switches used by README SVG "
+            "rendering."
+        ),
     )
 
 

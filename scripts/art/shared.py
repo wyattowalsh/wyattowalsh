@@ -1,6 +1,7 @@
 """
 Shared utilities for generative art prototypes.
-Noise, color science, hash utilities, profiles, constants.
+Noise, color science, hash utilities, profiles, constants,
+and common math helpers used by generative/animated art.
 """
 from __future__ import annotations
 
@@ -49,8 +50,8 @@ PROFILES = {
         "contributions_last_year": 3800, "total_commits": 42000,
         "open_issues_count": 120, "network_count": 2400,
         "repos": [
-            {"name": f"p-{i}", "language": l, "stars": s, "age_months": a}
-            for i, (l, s, a) in enumerate([
+            {"name": f"p-{i}", "language": lang, "stars": s, "age_months": a}
+            for i, (lang, s, a) in enumerate([
                 ("Python", 1200, 84), ("JavaScript", 800, 96), ("TypeScript", 600, 48),
                 ("Go", 400, 60), ("Rust", 350, 36), ("C++", 280, 108),
                 ("Python", 200, 72), ("Shell", 150, 120), ("Ruby", 120, 90),
@@ -80,9 +81,19 @@ PROFILES = {
 # Ecosystem maturity score
 # ---------------------------------------------------------------------------
 
+def _smoothstep(t: float) -> float:
+    """Hermite ease-in-out: slow start, accelerate in middle, slow finish."""
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
 def compute_maturity(m: dict) -> float:
-    """0.0 = brand new account, 1.0 = massively prolific."""
-    def _log(val, lo, hi):
+    """0.0 = brand new account, 1.0 = massively prolific.
+
+    Uses a smoothstep (Hermite ease-in-out) curve so that newcomers see
+    visible growth quickly and prolific accounts asymptote gracefully.
+    """
+    def _log(val: float, lo: float, hi: float) -> float:
         val = max(lo, min(hi, val))
         return math.log(val / lo) / math.log(hi / lo)
 
@@ -98,7 +109,7 @@ def compute_maturity(m: dict) -> float:
         + 0.10 * _log(m.get("forks", 1), 1, 1000)
         + 0.08 * _log(m.get("network_count", 1), 1, 3000)
     )
-    return max(0.0, min(1.0, raw ** 1.5))
+    return _smoothstep(raw)
 
 
 # ---------------------------------------------------------------------------
@@ -236,4 +247,70 @@ class Noise2D:
             amp *= 0.5
             freq *= 2
         return val / total
+
+
+# ---------------------------------------------------------------------------
+# Generative-art math helpers (shared by generative.py + animated_art.py)
+# ---------------------------------------------------------------------------
+
+def phyllotaxis_points(
+    n: int,
+    center_x: float,
+    center_y: float,
+    scale: float = 12.0,
+) -> list[tuple[float, float]]:
+    """Compute *n* points on a golden-angle phyllotaxis spiral.
+
+    angle_n = n * 137.508 degrees
+    radius_n = sqrt(n) * scale
+    """
+    golden_angle = 137.508 * (math.pi / 180.0)
+    pts: list[tuple[float, float]] = []
+    for i in range(1, n + 1):
+        r = math.sqrt(i) * scale
+        theta = i * golden_angle
+        x = center_x + r * math.cos(theta)
+        y = center_y + r * math.sin(theta)
+        pts.append((x, y))
+    return pts
+
+
+def flow_field_lines(
+    width: int,
+    height: int,
+    num_lines: int,
+    steps: int = 30,
+    step_size: float = 4.0,
+    freq: float = 0.005,
+    octaves: int = 3,
+    seed: int = 42,
+) -> list[list[tuple[float, float]]]:
+    """Generate flow-field particle traces using trigonometric noise.
+
+    Uses a trig-based noise approximation so no external noise library
+    is required.
+    """
+    rng = np.random.default_rng(seed)
+    lines: list[list[tuple[float, float]]] = []
+    for _ in range(num_lines):
+        x = float(rng.uniform(0, width))
+        y = float(rng.uniform(0, height))
+        trail: list[tuple[float, float]] = [(x, y)]
+        for _ in range(steps):
+            angle = 0.0
+            amp = 1.0
+            f = freq
+            for _o in range(octaves):
+                angle += amp * math.sin(x * f) * math.cos(y * f * 0.7)
+                amp *= 0.5
+                f *= 2.0
+            angle *= math.pi * 2
+            x += math.cos(angle) * step_size
+            y += math.sin(angle) * step_size
+            if x < 0 or x > width or y < 0 or y > height:
+                break
+            trail.append((x, y))
+        if len(trail) > 2:
+            lines.append(trail)
+    return lines
 
