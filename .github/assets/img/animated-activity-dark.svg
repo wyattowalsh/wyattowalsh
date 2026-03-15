@@ -1,0 +1,425 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+<defs>
+<filter id="spiralGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+<radialGradient id="bgRad" cx="50%" cy="50%" r="0%">
+  <stop offset="0%" stop-color="#1a1540" stop-opacity="0.35"/>
+  <stop offset="100%" stop-color="#0a0d14" stop-opacity="0"/>
+  <animate attributeName="r" from="0%" to="75%" dur="30.0s" fill="freeze"/>
+</radialGradient>
+</defs>
+<style>
+  @keyframes dotAppear{
+    0%{r:0;opacity:0;fill:white}
+    8%{opacity:1;fill:white}
+    25%{opacity:.9}
+    50%{opacity:.88}
+    100%{opacity:.85}
+  }
+  @keyframes pulse{
+    0%,100%{opacity:.7;r:6.0}
+    50%{opacity:1;r:8.0}
+  }
+  @keyframes ripple{
+    0%{r:0;opacity:.55;stroke-width:1.8}
+    100%{r:35;opacity:0;stroke-width:.3}
+  }
+  @keyframes flowDraw{
+    0%{stroke-dashoffset:var(--len,500)}
+    100%{stroke-dashoffset:0}
+  }
+  @keyframes glowIn{
+    0%{opacity:0}
+    100%{opacity:1}
+  }
+  @keyframes arcFill{
+    0%{stroke-dashoffset:1099.6}
+    100%{stroke-dashoffset:0}
+  }
+  @keyframes bgRadial{
+    0%{r:0%;opacity:0}
+    100%{r:70%;opacity:.25}
+  }
+  .fd{fill:none;animation:flowDraw var(--dur,4s) ease-in-out var(--del,0s) both}
+</style>
+<rect width="800" height="800" fill="#0a0d14"/>
+<rect width="800" height="800" fill="url(#bgRad)"/>
+<g id="flowField" opacity="0.22">
+<path class="fd" d="M661.4,455.0 L665.0,457.9 L667.1,462.0 L668.2,466.5 L668.7,471.0 L669.1,475.6 L669.7,480.2 L670.6,484.7 L672.2,489.0 L674.3,493.1 L677.1,496.7 L680.5,499.8 L684.4,502.4 L688.5,504.4 L692.7,506.2 L697.0,507.8 L701.4,509.4 L705.7,510.9 L710.1,512.2 L714.6,513.2 L719.2,513.6 L723.7,512.9 L727.9,510.9 L731.1,507.6 L733.3,503.6 L734.8,499.2 L735.8,494.7 L736.6,490.2 L737.3,485.7 L738.0,481.1 L738.6,476.6" stroke="rgb(94,147,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:10.5s;--del:0.0s"/>
+<path class="fd" d="M353.3,390.9 L355.3,395.1 L356.1,399.6 L355.7,404.2 L354.6,408.6 L353.0,413.0 L351.2,417.2 L349.2,421.3 L347.0,425.4 L344.8,429.4 L342.5,433.4 L340.4,437.5 L338.5,441.7 L336.9,446.0 L335.8,450.5 L334.9,455.0 L334.4,459.5 L334.0,464.1 L333.9,468.7 L333.8,473.3 L334.0,477.9 L334.2,482.5 L334.6,487.1 L335.1,491.7 L335.9,496.2 L336.8,500.7 L337.9,505.2 L339.3,509.6 L341.0,513.9 L342.8,518.1 L344.8,522.2" stroke="rgb(94,143,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:11.0s;--del:1.29s"/>
+<path class="fd" d="M422.7,422.7 L427.2,423.6 L431.8,424.4 L436.3,425.1 L440.8,426.1 L445.2,427.5 L449.5,429.2 L453.6,431.2 L457.7,433.3 L462.0,435.1 L466.3,436.5 L470.8,437.5 L475.4,438.1 L480.0,438.3 L484.6,438.3 L489.2,438.0 L493.8,437.6 L498.3,436.8 L502.7,435.5 L506.8,433.4 L510.2,430.3 L512.5,426.3 L513.3,421.8 L512.7,417.2 L511.0,412.9 L508.9,408.9 L506.6,404.9 L504.4,400.8 L502.7,396.6 L501.4,392.1 L500.5,387.6" stroke="rgb(94,138,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:11.5s;--del:2.57s"/>
+<path class="fd" d="M599.6,347.9 L597.8,343.7 L596.4,339.3 L595.0,334.9 L593.3,330.7 L591.1,326.6 L588.4,322.9 L585.0,319.8 L581.3,317.0 L577.5,314.5 L573.6,312.1 L569.9,309.4 L566.5,306.2 L563.8,302.5 L561.9,298.3 L560.8,293.8 L560.5,289.3 L560.5,284.7 L560.7,280.1 L560.7,275.5 L560.4,270.9 L559.6,266.3 L558.4,261.9 L556.6,257.7 L554.2,253.7 L551.3,250.1 L548.1,246.9 L544.6,243.9 L541.0,241.0 L537.4,238.2 L533.8,235.3" stroke="rgb(94,134,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:12.0s;--del:3.86s"/>
+<path class="fd" d="M16.6,480.8 L17.3,485.3 L18.7,489.7 L20.9,493.8 L23.7,497.4 L27.2,500.4 L31.1,502.8 L35.2,504.8 L39.5,506.6 L43.8,508.2 L48.1,509.8 L52.5,511.2 L56.9,512.5 L61.4,513.4 L66.0,513.5 L70.5,512.4 L74.4,510.0 L77.4,506.5 L79.3,502.3 L80.6,497.9 L81.6,493.4 L82.3,488.9 L83.0,484.3 L83.7,479.8 L84.3,475.2 L85.0,470.7 L85.6,466.1 L86.0,461.5 L86.3,456.9 L86.4,452.3 L86.2,447.7" stroke="rgb(94,129,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:12.5s;--del:5.14s"/>
+<path class="fd" d="M787.7,248.8 L784.8,252.4 L782.2,256.2 L779.8,260.1 L777.7,264.2 L775.7,268.3 L774.0,272.6 L772.6,277.0 L771.4,281.4 L770.3,285.9 L769.2,290.3 L768.0,294.8 L766.5,299.1 L764.6,303.3 L762.3,307.3 L759.5,310.9 L756.1,314.1 L752.3,316.7 L748.3,318.9 L744.1,320.7 L739.8,322.5 L735.6,324.4 L731.6,326.6 L727.9,329.3 L724.6,332.6 L722.0,336.4 L720.0,340.5 L718.4,344.8 L717.0,349.2 L715.5,353.5 L713.6,357.7" stroke="rgb(94,124,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:10.5s;--del:6.43s"/>
+<path class="fd" d="M703.2,461.3 L706.5,464.5 L710.6,466.6 L715.2,467.2 L719.7,466.2 L723.7,463.9 L727.1,460.8 L730.0,457.3 L732.4,453.4 L734.4,449.2 L735.8,444.8 L736.8,440.3 L737.2,435.8 L737.3,431.2 L737.0,426.6 L736.5,422.0 L736.0,417.4 L735.4,412.9 L734.7,408.3 L733.9,403.8 L733.0,399.3 L731.8,394.8 L730.3,390.5 L728.3,386.3 L725.7,382.6 L722.3,379.4 L718.4,377.1 L714.0,375.6 L709.5,374.6 L705.0,373.8 L700.5,372.9" stroke="rgb(94,120,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:11.0s;--del:7.71s"/>
+<path class="fd" d="M171.8,611.1 L167.9,613.5 L163.7,615.5 L159.3,616.8 L154.8,617.4 L150.2,617.4 L145.6,616.9 L141.0,616.3 L136.5,615.5 L132.0,614.7 L127.5,613.9 L122.9,613.0 L118.4,612.2 L113.9,611.2 L109.4,610.1 L105.0,608.9 L100.6,607.6 L96.2,606.3 L91.7,605.2 L87.1,604.7 L82.6,605.2 L78.3,606.8 L74.4,609.4 L70.9,612.3 L67.5,615.4 L63.8,618.1 L59.7,620.3 L55.4,621.9 L50.9,622.8 L46.3,623.4 L41.7,623.5" stroke="rgb(94,115,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:11.5s;--del:9.0s"/>
+<path class="fd" d="M10.6,574.2 L14.7,572.0 L18.0,568.8 L20.4,564.9 L22.0,560.6 L22.8,556.1 L23.3,551.5 L23.5,546.9 L23.7,542.3 L23.9,537.7 L24.5,533.1 L25.4,528.7 L27.1,524.4 L29.6,520.5 L33.0,517.4 L37.1,515.4 L41.6,514.5 L46.2,514.5 L50.8,515.1 L55.3,515.8 L59.9,516.4 L64.5,516.5 L69.0,515.6 L73.1,513.5 L76.3,510.2 L78.6,506.2 L80.1,501.9 L81.1,497.4 L81.9,492.8 L82.5,488.3 L83.2,483.7" stroke="rgb(94,111,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:12.0s;--del:10.29s"/>
+<path class="fd" d="M536.2,408.8 L532.6,405.9 L528.6,403.5 L524.5,401.6 L520.2,400.0 L515.9,398.3 L511.8,396.3 L508.0,393.5 L505.0,390.1 L502.8,386.0 L501.4,381.7 L500.5,377.2 L499.9,372.6 L499.5,368.0 L499.1,363.4 L498.6,358.9 L497.9,354.3 L496.9,349.8 L495.6,345.4 L493.7,341.2 L491.2,337.3 L488.3,333.8 L485.1,330.5 L481.5,327.6 L477.9,324.7 L474.2,322.0 L470.4,319.4 L466.5,317.0 L462.3,315.0 L457.9,313.8 L453.3,313.6" stroke="rgb(94,106,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:12.5s;--del:11.57s"/>
+<path class="fd" d="M471.3,619.3 L467.2,617.4 L463.1,615.3 L459.1,613.0 L455.2,610.6 L451.6,607.6 L448.7,604.1 L446.8,599.9 L446.6,595.3 L448.2,591.0 L450.8,587.2 L454.0,583.9 L457.3,580.6 L460.5,577.4 L463.8,574.2 L467.1,570.9 L470.5,567.8 L474.0,564.9 L477.6,562.0 L481.3,559.3 L484.9,556.4 L488.3,553.4 L491.4,549.9 L494.0,546.1 L495.9,541.9 L497.3,537.6 L498.3,533.1 L499.2,528.6 L500.1,524.1 L501.1,519.6 L502.3,515.1" stroke="rgb(94,101,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:10.5s;--del:12.86s"/>
+<path class="fd" d="M194.7,763.8 L190.2,764.7 L186.1,766.8 L182.4,769.5 L178.8,772.4 L175.0,775.0 L170.9,777.1 L166.5,778.5 L161.9,779.0 L157.3,778.8 L152.8,778.0 L148.3,777.0 L143.8,775.9 L139.3,775.2 L134.7,775.1 L130.2,775.9 L125.9,777.6 L121.9,779.8 L117.9,782.2 L114.0,784.6 L109.9,786.7 L105.7,788.6 L101.5,790.4 L97.3,792.3 L93.2,794.3 L89.2,796.6 L85.5,799.4" stroke="rgb(94,97,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="120.0" style="--len:120.0;--dur:11.0s;--del:14.14s"/>
+<path class="fd" d="M90.4,309.0 L87.6,312.6 L84.1,315.6 L80.4,318.3 L76.5,320.8 L72.8,323.5 L69.3,326.4 L66.2,329.9 L63.8,333.8 L61.9,338.0 L60.4,342.3 L59.2,346.8 L57.9,351.2 L56.2,355.5 L53.9,359.4 L50.6,362.7 L46.6,364.8 L42.0,365.5 L37.5,364.7 L33.5,362.4 L30.4,359.0 L28.3,354.9 L26.9,350.5 L25.9,346.0 L25.0,341.5 L24.1,337.0 L23.1,332.5 L22.0,328.1 L20.7,323.6 L19.3,319.3 L17.9,314.9" stroke="rgb(95,94,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:11.5s;--del:15.43s"/>
+<path class="fd" d="M82.9,128.1 L79.0,130.6 L77.5,135.0 L77.8,139.5 L79.0,144.0 L80.7,148.3 L83.0,152.3 L85.8,155.9 L89.2,159.0 L93.1,161.3 L97.4,163.0 L101.9,164.3 L106.3,165.6 L110.6,167.1 L114.8,169.1 L118.7,171.5 L122.4,174.2 L125.8,177.3 L129.1,180.5 L132.4,183.7 L135.8,186.8 L139.3,189.8 L142.9,192.6 L146.7,195.3 L150.5,197.8 L154.3,200.4 L158.0,203.2 L161.3,206.4 L164.2,210.0 L166.4,214.0 L168.0,218.3" stroke="rgb(100,94,186)" stroke-width="0.8" opacity="0.35" stroke-dasharray="138.0" style="--len:138.0;--dur:12.0s;--del:16.71s"/>
+</g>
+<g id="ripples">
+<circle cx="381.7" cy="416.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 0.00s both"/>
+<circle cx="403.1" cy="365.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 1.19s both"/>
+<circle cx="426.1" cy="434.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 1.68s both"/>
+<circle cx="351.2" cy="391.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 2.06s both"/>
+<circle cx="446.7" cy="370.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 2.38s both"/>
+<circle cx="384.3" cy="458.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 2.66s both"/>
+<circle cx="369.8" cy="341.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 2.91s both"/>
+<circle cx="465.8" cy="424.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 3.15s both"/>
+<circle cx="331.3" cy="428.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 3.36s both"/>
+<circle cx="433.2" cy="329.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 3.57s both"/>
+<circle cx="424.6" cy="478.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 3.76s both"/>
+<circle cx="325.8" cy="357.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 3.94s both"/>
+<circle cx="487.2" cy="380.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.12s both"/>
+<circle cx="346.7" cy="475.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.29s both"/>
+<circle cx="387.7" cy="304.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.45s both"/>
+<circle cx="475.7" cy="463.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.61s both"/>
+<circle cx="298.0" cy="404.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.76s both"/>
+<circle cx="474.5" cy="325.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 4.90s both"/>
+<circle cx="395.0" cy="507.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.04s both"/>
+<circle cx="329.1" cy="315.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.19s both"/>
+<circle cx="512.5" cy="415.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.33s both"/>
+<circle cx="304.7" cy="466.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.47s both"/>
+<circle cx="426.1" cy="284.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.62s both"/>
+<circle cx="460.3" cy="505.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.76s both"/>
+<circle cx="282.0" cy="362.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 5.90s both"/>
+<circle cx="514.6" cy="347.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.05s both"/>
+<circle cx="350.3" cy="518.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.19s both"/>
+<circle cx="355.7" cy="276.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.33s both"/>
+<circle cx="518.0" cy="462.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.48s both"/>
+<circle cx="268.8" cy="434.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.62s both"/>
+<circle cx="474.6" cy="284.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.76s both"/>
+<circle cx="423.7" cy="538.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 6.91s both"/>
+<circle cx="287.5" cy="312.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.05s both"/>
+<circle cx="543.9" cy="388.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.19s both"/>
+<circle cx="300.5" cy="507.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.33s both"/>
+<circle cx="400.7" cy="251.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.48s both"/>
+<circle cx="501.2" cy="511.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.62s both"/>
+<circle cx="248.0" cy="385.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.76s both"/>
+<circle cx="523.2" cy="306.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 7.91s both"/>
+<circle cx="371.9" cy="554.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.05s both"/>
+<circle cx="315.6" cy="265.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.19s both"/>
+<circle cx="554.8" cy="442.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.34s both"/>
+<circle cx="255.5" cy="474.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.48s both"/>
+<circle cx="457.1" cy="246.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.62s both"/>
+<circle cx="462.6" cy="553.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.77s both"/>
+<circle cx="248.2" cy="328.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 8.91s both"/>
+<circle cx="562.2" cy="350.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.05s both"/>
+<circle cx="313.2" cy="548.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.19s both"/>
+<circle cx="363.6" cy="230.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.34s both"/>
+<circle cx="542.7" cy="501.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.48s both"/>
+<circle cx="224.5" cy="421.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.62s both"/>
+<circle cx="515.8" cy="264.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.77s both"/>
+<circle cx="406.5" cy="580.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 9.91s both"/>
+<circle cx="272.3" cy="270.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.05s both"/>
+<circle cx="583.4" cy="409.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.20s both"/>
+<circle cx="257.1" cy="518.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.34s both"/>
+<circle cx="425.9" cy="214.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.48s both"/>
+<circle cx="506.9" cy="555.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.62s both"/>
+<circle cx="214.7" cy="357.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.77s both"/>
+<circle cx="566.9" cy="305.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 10.91s both"/>
+<circle cx="340.3" cy="583.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.05s both"/>
+<circle cx="319.1" cy="222.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.20s both"/>
+<circle cx="580.9" cy="476.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.34s both"/>
+<circle cx="213.3" cy="466.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.48s both"/>
+<circle cx="493.8" cy="223.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.63s both"/>
+<circle cx="450.3" cy="594.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.77s both"/>
+<circle cx="230.1" cy="289.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 11.91s both"/>
+<circle cx="601.4" cy="366.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.06s both"/>
+<circle cx="273.2" cy="562.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.20s both"/>
+<circle cx="384.0" cy="193.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.34s both"/>
+<circle cx="552.4" cy="542.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.48s both"/>
+<circle cx="189.9" cy="397.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.63s both"/>
+<circle cx="557.4" cy="258.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.77s both"/>
+<circle cx="379.2" cy="612.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 12.91s both"/>
+<circle cx="271.2" cy="228.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.06s both"/>
+<circle cx="612.2" cy="439.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.20s both"/>
+<circle cx="215.5" cy="514.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.34s both"/>
+<circle cx="458.9" cy="189.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.49s both"/>
+<circle cx="499.5" cy="596.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.63s both"/>
+<circle cx="192.7" cy="321.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.77s both"/>
+<circle cx="606.8" cy="317.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 13.92s both"/>
+<circle cx="302.9" cy="602.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.06s both"/>
+<circle cx="334.7" cy="184.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.20s both"/>
+<circle cx="595.2" cy="515.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.35s both"/>
+<circle cx="176.5" cy="446.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.49s both"/>
+<circle cx="534.0" cy="213.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.63s both"/>
+<circle cx="427.4" cy="629.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.77s both"/>
+<circle cx="223.9" cy="248.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 14.92s both"/>
+<circle cx="633.5" cy="392.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.06s both"/>
+<circle cx="231.8" cy="564.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.20s both"/>
+<circle cx="413.3" cy="164.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.35s both"/>
+<circle cx="550.3" cy="583.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.49s both"/>
+<circle cx="163.7" cy="365.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.63s both"/>
+<circle cx="598.5" cy="264.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.78s both"/>
+<circle cx="344.6" cy="634.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 15.92s both"/>
+<circle cx="281.5" cy="188.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.06s both"/>
+<circle cx="631.6" cy="476.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.20s both"/>
+<circle cx="176.4" cy="500.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.35s both"/>
+<circle cx="497.4" cy="173.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.49s both"/>
+<circle cx="481.4" cy="633.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.63s both"/>
+<circle cx="180.9" cy="282.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.78s both"/>
+<circle cx="642.5" cy="338.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 16.92s both"/>
+<circle cx="261.9" cy="610.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.06s both"/>
+<circle cx="359.8" cy="150.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.21s both"/>
+<circle cx="599.0" cy="557.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.35s both"/>
+<circle cx="145.7" cy="418.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.49s both"/>
+<circle cx="575.9" cy="213.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.64s both"/>
+<circle cx="396.1" cy="657.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.78s both"/>
+<circle cx="228.3" cy="206.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 17.92s both"/>
+<circle cx="658.3" cy="426.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.07s both"/>
+<circle cx="190.6" cy="555.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.21s both"/>
+<circle cx="449.5" cy="142.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.35s both"/>
+<circle cx="537.9" cy="624.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.49s both"/>
+<circle cx="145.7" cy="327.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.64s both"/>
+<circle cx="637.5" cy="281.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.78s both"/>
+<circle cx="304.7" cy="649.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 18.92s both"/>
+<circle cx="301.6" cy="150.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 19.07s both"/>
+<circle cx="641.9" cy="517.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 19.39s both"/>
+<circle cx="141.1" cy="476.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 19.76s both"/>
+<circle cx="539.5" cy="167.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 20.12s both"/>
+<circle cx="454.5" cy="666.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 20.48s both"/>
+<circle cx="178.7" cy="239.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 20.82s both"/>
+<circle cx="672.9" cy="368.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 21.16s both"/>
+<circle cx="219.1" cy="608.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 21.49s both"/>
+<circle cx="392.8" cy="123.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 21.81s both"/>
+<circle cx="593.1" cy="600.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 22.12s both"/>
+<circle cx="121.5" cy="382.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 22.43s both"/>
+<circle cx="617.8" cy="223.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 22.73s both"/>
+<circle cx="358.3" cy="678.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 23.02s both"/>
+<circle cx="242.3" cy="165.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 23.31s both"/>
+<circle cx="675.5" cy="466.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 23.59s both"/>
+<circle cx="151.0" cy="537.7" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 23.85s both"/>
+<circle cx="490.9" cy="129.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 24.12s both"/>
+<circle cx="516.3" cy="662.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 24.37s both"/>
+<circle cx="136.3" cy="284.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 24.62s both"/>
+<circle cx="673.2" cy="306.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 24.86s both"/>
+<circle cx="261.3" cy="654.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 25.09s both"/>
+<circle cx="330.1" cy="117.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 25.31s both"/>
+<circle cx="643.1" cy="561.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 25.53s both"/>
+<circle cx="110.5" cy="445.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 25.73s both"/>
+<circle cx="583.6" cy="170.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 25.94s both"/>
+<circle cx="419.9" cy="694.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.13s both"/>
+<circle cx="185.7" cy="195.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.32s both"/>
+<circle cx="697.1" cy="406.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.49s both"/>
+<circle cx="176.1" cy="597.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.66s both"/>
+<circle cx="432.1" cy="102.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.83s both"/>
+<circle cx="577.8" cy="641.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 26.98s both"/>
+<circle cx="104.5" cy="341.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.13s both"/>
+<circle cx="658.2" cy="242.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.27s both"/>
+<circle cx="315.4" cy="691.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.40s both"/>
+<circle cx="265.2" cy="127.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.53s both"/>
+<circle cx="684.6" cy="510.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.65s both"/>
+<circle cx="114.6" cy="511.1" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.76s both"/>
+<circle cx="535.8" cy="124.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.86s both"/>
+<circle cx="486.3" cy="696.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 27.95s both"/>
+<circle cx="135.6" cy="239.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.04s both"/>
+<circle cx="704.3" cy="339.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.12s both"/>
+<circle cx="215.9" cy="651.0" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.19s both"/>
+<circle cx="366.1" cy="89.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.26s both"/>
+<circle cx="635.4" cy="606.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.31s both"/>
+<circle cx="85.9" cy="406.6" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.36s both"/>
+<circle cx="627.8" cy="182.2" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.41s both"/>
+<circle cx="379.0" cy="715.4" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.44s both"/>
+<circle cx="201.8" cy="152.5" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.47s both"/>
+<circle cx="714.3" cy="448.8" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.48s both"/>
+<circle cx="134.5" cy="576.9" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.50s both"/>
+<circle cx="476.5" cy="89.3" r="0" fill="none" stroke="rgba(180,160,255,0.5)" stroke-width="1.8" opacity="0" style="animation:ripple 1.5s ease-out 28.50s both"/>
+</g>
+<g id="spiral">
+<circle cx="381.7" cy="416.7" r="5.0" fill="rgb(228,219,103)" opacity="0" style="animation:dotAppear 1.5s ease-out 0.00s both"/>
+<circle cx="403.1" cy="365.1" r="5.35" fill="rgb(103,200,228)" opacity="0" style="animation:dotAppear 1.5s ease-out 1.19s both"/>
+<circle cx="426.1" cy="434.0" r="5.55" fill="rgb(228,103,163)" opacity="0" style="animation:dotAppear 1.49s ease-out 1.68s both"/>
+<circle cx="351.2" cy="391.4" r="5.69" fill="rgb(127,228,103)" opacity="0" style="animation:dotAppear 1.49s ease-out 2.06s both"/>
+<circle cx="446.7" cy="370.3" r="5.8" fill="rgb(115,103,228)" opacity="0" style="animation:dotAppear 1.49s ease-out 2.38s both"/>
+<circle cx="384.3" cy="458.6" r="5.9" fill="rgb(228,152,103)" opacity="0" style="animation:dotAppear 1.49s ease-out 2.66s both"/>
+<circle cx="369.8" cy="341.9" r="5.97" fill="rgb(103,228,188)" opacity="0" style="animation:dotAppear 1.48s ease-out 2.91s both"/>
+<circle cx="465.8" cy="424.0" r="6.04" fill="rgb(225,103,228)" opacity="0" style="animation:dotAppear 1.48s ease-out 3.15s both"/>
+<circle cx="331.3" cy="428.3" r="6.1" fill="rgb(194,228,103)" opacity="0" style="animation:dotAppear 1.48s ease-out 3.36s both"/>
+<circle cx="433.2" cy="329.1" r="6.15" fill="rgb(103,158,228)" opacity="0" style="animation:dotAppear 1.47s ease-out 3.57s both"/>
+<circle cx="424.6" cy="478.4" r="6.2" fill="rgb(228,103,121)" opacity="0" style="animation:dotAppear 1.47s ease-out 3.76s both"/>
+<circle cx="325.8" cy="357.0" r="6.24" fill="rgb(103,228,121)" opacity="0" style="animation:dotAppear 1.47s ease-out 3.94s both"/>
+<circle cx="487.2" cy="380.8" r="6.28" fill="rgb(157,103,228)" opacity="0" style="animation:dotAppear 1.46s ease-out 4.12s both"/>
+<circle cx="346.7" cy="475.8" r="6.32" fill="rgb(228,194,103)" opacity="0" style="animation:dotAppear 1.46s ease-out 4.29s both"/>
+<circle cx="387.7" cy="304.9" r="6.35" fill="rgb(103,225,228)" opacity="0" style="animation:dotAppear 1.46s ease-out 4.45s both"/>
+<circle cx="475.7" cy="463.8" r="6.39" fill="rgb(228,103,189)" opacity="0" style="animation:dotAppear 1.46s ease-out 4.61s both"/>
+<circle cx="298.0" cy="404.2" r="6.42" fill="rgb(152,228,103)" opacity="0" style="animation:dotAppear 1.45s ease-out 4.76s both"/>
+<circle cx="474.5" cy="325.9" r="6.45" fill="rgb(103,116,228)" opacity="0" style="animation:dotAppear 1.45s ease-out 4.90s both"/>
+<circle cx="395.0" cy="507.8" r="6.47" fill="rgb(228,126,103)" opacity="0" style="animation:dotAppear 1.45s ease-out 5.04s both"/>
+<circle cx="329.1" cy="315.0" r="6.5" fill="rgb(103,228,162)" opacity="0" style="animation:dotAppear 1.44s ease-out 5.19s both"/>
+<circle cx="512.5" cy="415.1" r="6.52" fill="rgb(199,103,228)" opacity="0" style="animation:dotAppear 1.44s ease-out 5.33s both"/>
+<circle cx="304.7" cy="466.3" r="6.55" fill="rgb(220,228,103)" opacity="0" style="animation:dotAppear 1.44s ease-out 5.47s both"/>
+<circle cx="426.1" cy="284.1" r="6.57" fill="rgb(103,184,228)" opacity="0" style="animation:dotAppear 1.43s ease-out 5.62s both"/>
+<circle cx="460.3" cy="505.3" r="6.59" fill="rgb(228,103,147)" opacity="0" style="animation:dotAppear 1.43s ease-out 5.76s both"/>
+<circle cx="282.0" cy="362.4" r="6.61" fill="rgb(111,228,103)" opacity="0" style="animation:dotAppear 1.43s ease-out 5.90s both"/>
+<circle cx="514.6" cy="347.1" r="6.63" fill="rgb(131,103,228)" opacity="0" style="animation:dotAppear 1.43s ease-out 6.05s both"/>
+<circle cx="350.3" cy="518.7" r="6.65" fill="rgb(228,168,103)" opacity="0" style="animation:dotAppear 1.42s ease-out 6.19s both"/>
+<circle cx="355.7" cy="276.7" r="6.67" fill="rgb(103,228,204)" opacity="0" style="animation:dotAppear 1.42s ease-out 6.33s both"/>
+<circle cx="518.0" cy="462.1" r="6.68" fill="rgb(228,103,215)" opacity="0" style="animation:dotAppear 1.42s ease-out 6.48s both"/>
+<circle cx="268.8" cy="434.6" r="6.7" fill="rgb(178,228,103)" opacity="0" style="animation:dotAppear 1.41s ease-out 6.62s both"/>
+<circle cx="474.6" cy="284.0" r="6.72" fill="rgb(103,142,228)" opacity="0" style="animation:dotAppear 1.41s ease-out 6.76s both"/>
+<circle cx="423.7" cy="538.1" r="6.73" fill="rgb(228,103,105)" opacity="0" style="animation:dotAppear 1.41s ease-out 6.91s both"/>
+<circle cx="287.5" cy="312.9" r="6.75" fill="rgb(103,228,137)" opacity="0" style="animation:dotAppear 1.4s ease-out 7.05s both"/>
+<circle cx="543.9" cy="388.1" r="6.76" fill="rgb(173,103,228)" opacity="0" style="animation:dotAppear 1.4s ease-out 7.19s both"/>
+<circle cx="300.5" cy="507.5" r="6.78" fill="rgb(228,210,103)" opacity="0" style="animation:dotAppear 1.4s ease-out 7.33s both"/>
+<circle cx="400.7" cy="251.4" r="6.79" fill="rgb(103,209,228)" opacity="0" style="animation:dotAppear 1.4s ease-out 7.48s both"/>
+<circle cx="501.2" cy="511.6" r="6.81" fill="rgb(228,103,173)" opacity="0" style="animation:dotAppear 1.39s ease-out 7.62s both"/>
+<circle cx="248.0" cy="385.9" r="6.82" fill="rgb(137,228,103)" opacity="0" style="animation:dotAppear 1.39s ease-out 7.76s both"/>
+<circle cx="523.2" cy="306.5" r="6.83" fill="rgb(105,103,228)" opacity="0" style="animation:dotAppear 1.39s ease-out 7.91s both"/>
+<circle cx="371.9" cy="554.1" r="6.84" fill="rgb(228,142,103)" opacity="0" style="animation:dotAppear 1.38s ease-out 8.05s both"/>
+<circle cx="315.6" cy="265.8" r="6.86" fill="rgb(103,228,178)" opacity="0" style="animation:dotAppear 1.38s ease-out 8.19s both"/>
+<circle cx="554.8" cy="442.4" r="6.87" fill="rgb(215,103,228)" opacity="0" style="animation:dotAppear 1.38s ease-out 8.34s both"/>
+<circle cx="255.5" cy="474.1" r="6.88" fill="rgb(204,228,103)" opacity="0" style="animation:dotAppear 1.37s ease-out 8.48s both"/>
+<circle cx="457.1" cy="246.0" r="6.89" fill="rgb(103,168,228)" opacity="0" style="animation:dotAppear 1.37s ease-out 8.62s both"/>
+<circle cx="462.6" cy="553.9" r="6.9" fill="rgb(228,103,131)" opacity="0" style="animation:dotAppear 1.37s ease-out 8.77s both"/>
+<circle cx="248.2" cy="328.0" r="6.91" fill="rgb(103,228,111)" opacity="0" style="animation:dotAppear 1.36s ease-out 8.91s both"/>
+<circle cx="562.2" cy="350.0" r="6.93" fill="rgb(147,103,228)" opacity="0" style="animation:dotAppear 1.36s ease-out 9.05s both"/>
+<circle cx="313.2" cy="548.0" r="6.94" fill="rgb(228,184,103)" opacity="0" style="animation:dotAppear 1.36s ease-out 9.19s both"/>
+<circle cx="363.6" cy="230.5" r="6.95" fill="rgb(103,228,220)" opacity="0" style="animation:dotAppear 1.36s ease-out 9.34s both"/>
+<circle cx="542.7" cy="501.4" r="6.96" fill="rgb(228,103,199)" opacity="0" style="animation:dotAppear 1.35s ease-out 9.48s both"/>
+<circle cx="224.5" cy="421.8" r="6.97" fill="rgb(162,228,103)" opacity="0" style="animation:dotAppear 1.35s ease-out 9.62s both"/>
+<circle cx="515.8" cy="264.0" r="6.98" fill="rgb(103,126,228)" opacity="0" style="animation:dotAppear 1.35s ease-out 9.77s both"/>
+<circle cx="406.5" cy="580.2" r="6.99" fill="rgb(228,116,103)" opacity="0" style="animation:dotAppear 1.34s ease-out 9.91s both"/>
+<circle cx="272.3" cy="270.4" r="6.99" fill="rgb(103,228,153)" opacity="0" style="animation:dotAppear 1.34s ease-out 10.05s both"/>
+<circle cx="583.4" cy="409.4" r="7.0" fill="rgb(189,103,228)" opacity="0" style="animation:dotAppear 1.34s ease-out 10.20s both"/>
+<circle cx="257.1" cy="518.0" r="7.01" fill="rgb(228,226,103)" opacity="0" style="animation:dotAppear 1.33s ease-out 10.34s both"/>
+<circle cx="425.9" cy="214.8" r="7.02" fill="rgb(103,193,228)" opacity="0" style="animation:dotAppear 1.33s ease-out 10.48s both"/>
+<circle cx="506.9" cy="555.4" r="7.03" fill="rgb(228,103,157)" opacity="0" style="animation:dotAppear 1.33s ease-out 10.62s both"/>
+<circle cx="214.7" cy="357.3" r="7.04" fill="rgb(121,228,103)" opacity="0" style="animation:dotAppear 1.33s ease-out 10.77s both"/>
+<circle cx="566.9" cy="305.5" r="7.05" fill="rgb(121,103,228)" opacity="0" style="animation:dotAppear 1.32s ease-out 10.91s both"/>
+<circle cx="340.3" cy="583.9" r="7.06" fill="rgb(228,158,103)" opacity="0" style="animation:dotAppear 1.32s ease-out 11.05s both"/>
+<circle cx="319.1" cy="222.6" r="7.06" fill="rgb(103,228,194)" opacity="0" style="animation:dotAppear 1.32s ease-out 11.20s both"/>
+<circle cx="580.9" cy="476.8" r="7.07" fill="rgb(228,103,225)" opacity="0" style="animation:dotAppear 1.31s ease-out 11.34s both"/>
+<circle cx="213.3" cy="466.1" r="7.08" fill="rgb(188,228,103)" opacity="0" style="animation:dotAppear 1.31s ease-out 11.48s both"/>
+<circle cx="493.8" cy="223.8" r="7.09" fill="rgb(103,152,228)" opacity="0" style="animation:dotAppear 1.31s ease-out 11.63s both"/>
+<circle cx="450.3" cy="594.8" r="7.09" fill="rgb(228,103,115)" opacity="0" style="animation:dotAppear 1.3s ease-out 11.77s both"/>
+<circle cx="230.1" cy="289.5" r="7.1" fill="rgb(103,228,127)" opacity="0" style="animation:dotAppear 1.3s ease-out 11.91s both"/>
+<circle cx="601.4" cy="366.5" r="7.11" fill="rgb(163,103,228)" opacity="0" style="animation:dotAppear 1.3s ease-out 12.06s both"/>
+<circle cx="273.2" cy="562.0" r="7.12" fill="rgb(228,200,103)" opacity="0" style="animation:dotAppear 1.3s ease-out 12.20s both"/>
+<circle cx="384.0" cy="193.4" r="7.12" fill="rgb(103,219,228)" opacity="0" style="animation:dotAppear 1.29s ease-out 12.34s both"/>
+<circle cx="552.4" cy="542.5" r="7.13" fill="rgb(228,103,183)" opacity="0" style="animation:dotAppear 1.29s ease-out 12.48s both"/>
+<circle cx="189.9" cy="397.9" r="7.14" fill="rgb(146,228,103)" opacity="0" style="animation:dotAppear 1.29s ease-out 12.63s both"/>
+<circle cx="557.4" cy="258.7" r="7.15" fill="rgb(103,110,228)" opacity="0" style="animation:dotAppear 1.28s ease-out 12.77s both"/>
+<circle cx="379.2" cy="612.0" r="7.15" fill="rgb(228,132,103)" opacity="0" style="animation:dotAppear 1.28s ease-out 12.91s both"/>
+<circle cx="271.2" cy="228.5" r="7.16" fill="rgb(103,228,169)" opacity="0" style="animation:dotAppear 1.28s ease-out 13.06s both"/>
+<circle cx="612.2" cy="439.7" r="7.17" fill="rgb(205,103,228)" opacity="0" style="animation:dotAppear 1.27s ease-out 13.20s both"/>
+<circle cx="215.5" cy="514.8" r="7.17" fill="rgb(214,228,103)" opacity="0" style="animation:dotAppear 1.27s ease-out 13.34s both"/>
+<circle cx="458.9" cy="189.4" r="7.18" fill="rgb(103,178,228)" opacity="0" style="animation:dotAppear 1.27s ease-out 13.49s both"/>
+<circle cx="499.5" cy="596.3" r="7.18" fill="rgb(228,103,141)" opacity="0" style="animation:dotAppear 1.27s ease-out 13.63s both"/>
+<circle cx="192.7" cy="321.9" r="7.19" fill="rgb(105,228,103)" opacity="0" style="animation:dotAppear 1.26s ease-out 13.77s both"/>
+<circle cx="606.8" cy="317.0" r="7.2" fill="rgb(137,103,228)" opacity="0" style="animation:dotAppear 1.26s ease-out 13.92s both"/>
+<circle cx="302.9" cy="602.1" r="7.2" fill="rgb(228,174,103)" opacity="0" style="animation:dotAppear 1.26s ease-out 14.06s both"/>
+<circle cx="334.7" cy="184.1" r="7.21" fill="rgb(103,228,210)" opacity="0" style="animation:dotAppear 1.25s ease-out 14.20s both"/>
+<circle cx="595.2" cy="515.8" r="7.22" fill="rgb(228,103,209)" opacity="0" style="animation:dotAppear 1.25s ease-out 14.35s both"/>
+<circle cx="176.5" cy="446.8" r="7.22" fill="rgb(172,228,103)" opacity="0" style="animation:dotAppear 1.25s ease-out 14.49s both"/>
+<circle cx="534.0" cy="213.5" r="7.23" fill="rgb(103,136,228)" opacity="0" style="animation:dotAppear 1.25s ease-out 14.63s both"/>
+<circle cx="427.4" cy="629.3" r="7.23" fill="rgb(228,106,103)" opacity="0" style="animation:dotAppear 1.24s ease-out 14.77s both"/>
+<circle cx="223.9" cy="248.5" r="7.24" fill="rgb(103,228,143)" opacity="0" style="animation:dotAppear 1.24s ease-out 14.92s both"/>
+<circle cx="633.5" cy="392.7" r="7.24" fill="rgb(179,103,228)" opacity="0" style="animation:dotAppear 1.24s ease-out 15.06s both"/>
+<circle cx="231.8" cy="564.0" r="7.25" fill="rgb(228,216,103)" opacity="0" style="animation:dotAppear 1.23s ease-out 15.20s both"/>
+<circle cx="413.3" cy="164.2" r="7.26" fill="rgb(103,203,228)" opacity="0" style="animation:dotAppear 1.23s ease-out 15.35s both"/>
+<circle cx="550.3" cy="583.9" r="7.26" fill="rgb(228,103,167)" opacity="0" style="animation:dotAppear 1.23s ease-out 15.49s both"/>
+<circle cx="163.7" cy="365.8" r="7.27" fill="rgb(130,228,103)" opacity="0" style="animation:dotAppear 1.22s ease-out 15.63s both"/>
+<circle cx="598.5" cy="264.9" r="7.27" fill="rgb(112,103,228)" opacity="0" style="animation:dotAppear 1.22s ease-out 15.78s both"/>
+<circle cx="344.6" cy="634.9" r="7.28" fill="rgb(228,148,103)" opacity="0" style="animation:dotAppear 1.22s ease-out 15.92s both"/>
+<circle cx="281.5" cy="188.3" r="7.28" fill="rgb(103,228,185)" opacity="0" style="animation:dotAppear 1.21s ease-out 16.06s both"/>
+<circle cx="631.6" cy="476.5" r="7.29" fill="rgb(221,103,228)" opacity="0" style="animation:dotAppear 1.21s ease-out 16.20s both"/>
+<circle cx="176.4" cy="500.5" r="7.29" fill="rgb(198,228,103)" opacity="0" style="animation:dotAppear 1.21s ease-out 16.35s both"/>
+<circle cx="497.4" cy="173.7" r="7.3" fill="rgb(103,162,228)" opacity="0" style="animation:dotAppear 1.21s ease-out 16.49s both"/>
+<circle cx="481.4" cy="633.8" r="7.3" fill="rgb(228,103,125)" opacity="0" style="animation:dotAppear 1.2s ease-out 16.63s both"/>
+<circle cx="180.9" cy="282.0" r="7.31" fill="rgb(103,228,117)" opacity="0" style="animation:dotAppear 1.2s ease-out 16.78s both"/>
+<circle cx="642.5" cy="338.7" r="7.31" fill="rgb(153,103,228)" opacity="0" style="animation:dotAppear 1.2s ease-out 16.92s both"/>
+<circle cx="261.9" cy="610.0" r="7.32" fill="rgb(228,190,103)" opacity="0" style="animation:dotAppear 1.19s ease-out 17.06s both"/>
+<circle cx="359.8" cy="150.7" r="7.32" fill="rgb(103,228,226)" opacity="0" style="animation:dotAppear 1.19s ease-out 17.21s both"/>
+<circle cx="599.0" cy="557.4" r="7.33" fill="rgb(228,103,193)" opacity="0" style="animation:dotAppear 1.19s ease-out 17.35s both"/>
+<circle cx="145.7" cy="418.5" r="7.33" fill="rgb(156,228,103)" opacity="0" style="animation:dotAppear 1.19s ease-out 17.49s both"/>
+<circle cx="575.9" cy="213.8" r="7.34" fill="rgb(103,120,228)" opacity="0" style="animation:dotAppear 1.18s ease-out 17.64s both"/>
+<circle cx="396.1" cy="657.3" r="7.34" fill="rgb(228,122,103)" opacity="0" style="animation:dotAppear 1.18s ease-out 17.78s both"/>
+</g>
+<g id="spiralGlow" filter="url(#spiralGlow)">
+<circle cx="228.3" cy="206.8" r="7.35" fill="rgb(103,228,159)" opacity="0" style="animation:dotAppear 1.18s ease-out 17.92s both"/>
+<circle cx="658.3" cy="426.6" r="7.35" fill="rgb(195,103,228)" opacity="0" style="animation:dotAppear 1.17s ease-out 18.07s both"/>
+<circle cx="190.6" cy="555.6" r="7.35" fill="rgb(224,228,103)" opacity="0" style="animation:dotAppear 1.17s ease-out 18.21s both"/>
+<circle cx="449.5" cy="142.7" r="7.36" fill="rgb(103,187,228)" opacity="0" style="animation:dotAppear 1.17s ease-out 18.35s both"/>
+<circle cx="537.9" cy="624.2" r="7.36" fill="rgb(228,103,151)" opacity="0" style="animation:dotAppear 1.16s ease-out 18.49s both"/>
+<circle cx="145.7" cy="327.5" r="7.37" fill="rgb(114,228,103)" opacity="0" style="animation:dotAppear 1.16s ease-out 18.64s both"/>
+<circle cx="637.5" cy="281.2" r="7.37" fill="rgb(128,103,228)" opacity="0" style="animation:dotAppear 1.16s ease-out 18.78s both"/>
+<circle cx="304.7" cy="649.1" r="7.38" fill="rgb(228,164,103)" opacity="0" style="animation:dotAppear 1.16s ease-out 18.92s both"/>
+<circle cx="301.6" cy="150.9" r="7.38" fill="rgb(103,228,201)" opacity="0" style="animation:dotAppear 1.15s ease-out 19.07s both"/>
+<circle cx="641.9" cy="517.7" r="7.39" fill="rgb(228,103,218)" opacity="0" style="animation:dotAppear 1.15s ease-out 19.39s both"/>
+<circle cx="141.1" cy="476.9" r="7.39" fill="rgb(182,228,103)" opacity="0" style="animation:dotAppear 1.15s ease-out 19.76s both"/>
+<circle cx="539.5" cy="167.4" r="7.39" fill="rgb(103,146,228)" opacity="0" style="animation:dotAppear 1.14s ease-out 20.12s both"/>
+<circle cx="454.5" cy="666.9" r="7.4" fill="rgb(228,103,109)" opacity="0" style="animation:dotAppear 1.14s ease-out 20.48s both"/>
+<circle cx="178.7" cy="239.3" r="7.4" fill="rgb(103,228,133)" opacity="0" style="animation:dotAppear 1.14s ease-out 20.82s both"/>
+<circle cx="672.9" cy="368.8" r="7.41" fill="rgb(169,103,228)" opacity="0" style="animation:dotAppear 1.13s ease-out 21.16s both"/>
+<circle cx="219.1" cy="608.1" r="7.41" fill="rgb(228,206,103)" opacity="0" style="animation:dotAppear 1.13s ease-out 21.49s both"/>
+<circle cx="392.8" cy="123.2" r="7.41" fill="rgb(103,213,228)" opacity="0" style="animation:dotAppear 1.13s ease-out 21.81s both"/>
+<circle cx="593.1" cy="600.0" r="7.42" fill="rgb(228,103,177)" opacity="0" style="animation:dotAppear 1.12s ease-out 22.12s both"/>
+<circle cx="121.5" cy="382.9" r="7.42" fill="rgb(140,228,103)" opacity="0" style="animation:dotAppear 1.12s ease-out 22.43s both"/>
+<circle cx="617.8" cy="223.8" r="7.43" fill="rgb(103,104,228)" opacity="0" style="animation:dotAppear 1.12s ease-out 22.73s both"/>
+<circle cx="358.3" cy="678.1" r="7.43" fill="rgb(228,138,103)" opacity="0" style="animation:dotAppear 1.12s ease-out 23.02s both"/>
+<circle cx="242.3" cy="165.8" r="7.43" fill="rgb(103,228,175)" opacity="0" style="animation:dotAppear 1.11s ease-out 23.31s both"/>
+<circle cx="675.5" cy="466.4" r="7.44" fill="rgb(211,103,228)" opacity="0" style="animation:dotAppear 1.11s ease-out 23.59s both"/>
+<circle cx="151.0" cy="537.7" r="7.44" fill="rgb(208,228,103)" opacity="0" style="animation:dotAppear 1.11s ease-out 23.85s both"/>
+<circle cx="490.9" cy="129.3" r="7.45" fill="rgb(103,171,228)" opacity="0" style="animation:dotAppear 1.1s ease-out 24.12s both"/>
+<circle cx="516.3" cy="662.0" r="7.45" fill="rgb(228,103,135)" opacity="0" style="animation:dotAppear 1.1s ease-out 24.37s both"/>
+<circle cx="136.3" cy="284.9" r="7.45" fill="rgb(103,228,107)" opacity="0" style="animation:dotAppear 1.1s ease-out 24.62s both"/>
+<circle cx="673.2" cy="306.4" r="7.46" fill="rgb(144,103,228)" opacity="0" style="animation:dotAppear 1.09s ease-out 24.86s both"/>
+<circle cx="261.3" cy="654.5" r="7.46" fill="rgb(228,180,103)" opacity="0" style="animation:dotAppear 1.09s ease-out 25.09s both"/>
+<circle cx="330.1" cy="117.6" r="7.46" fill="rgb(103,228,216)" opacity="0" style="animation:dotAppear 1.09s ease-out 25.31s both"/>
+<circle cx="643.1" cy="561.6" r="7.47" fill="rgb(228,103,203)" opacity="0" style="animation:dotAppear 1.09s ease-out 25.53s both"/>
+<circle cx="110.5" cy="445.2" r="7.47" fill="rgb(166,228,103)" opacity="0" style="animation:dotAppear 1.08s ease-out 25.73s both"/>
+<circle cx="583.6" cy="170.3" r="7.47" fill="rgb(103,130,228)" opacity="0" style="animation:dotAppear 1.08s ease-out 25.94s both"/>
+<circle cx="419.9" cy="694.4" r="7.48" fill="rgb(228,112,103)" opacity="0" style="animation:dotAppear 1.08s ease-out 26.13s both"/>
+<circle cx="185.7" cy="195.6" r="7.48" fill="rgb(103,228,149)" opacity="0" style="animation:dotAppear 1.07s ease-out 26.32s both"/>
+<circle cx="697.1" cy="406.0" r="7.48" fill="rgb(185,103,228)" opacity="0" style="animation:dotAppear 1.07s ease-out 26.49s both"/>
+<circle cx="176.1" cy="597.0" r="7.49" fill="rgb(228,222,103)" opacity="0" style="animation:dotAppear 1.07s ease-out 26.66s both"/>
+<circle cx="432.1" cy="102.5" r="7.49" fill="rgb(103,197,228)" opacity="0" style="animation:dotAppear 1.06s ease-out 26.83s both"/>
+<circle cx="577.8" cy="641.9" r="7.5" fill="rgb(228,103,161)" opacity="0" style="animation:dotAppear 1.06s ease-out 26.98s both"/>
+<circle cx="104.5" cy="341.6" r="7.5" fill="rgb(124,228,103)" opacity="0" style="animation:dotAppear 1.06s ease-out 27.13s both"/>
+<circle cx="658.2" cy="242.9" r="7.5" fill="rgb(118,103,228)" opacity="0" style="animation:dotAppear 1.06s ease-out 27.27s both"/>
+<circle cx="315.4" cy="691.2" r="7.51" fill="rgb(228,154,103)" opacity="0" style="animation:dotAppear 1.05s ease-out 27.40s both"/>
+<circle cx="265.2" cy="127.2" r="7.51" fill="rgb(103,228,191)" opacity="0" style="animation:dotAppear 1.05s ease-out 27.53s both"/>
+<circle cx="684.6" cy="510.5" r="7.51" fill="rgb(227,103,228)" opacity="0" style="animation:dotAppear 1.05s ease-out 27.65s both"/>
+<circle cx="114.6" cy="511.1" r="7.52" fill="rgb(192,228,103)" opacity="0" style="animation:dotAppear 1.04s ease-out 27.76s both"/>
+<circle cx="535.8" cy="124.4" r="7.52" fill="rgb(103,155,228)" opacity="0" style="animation:dotAppear 1.04s ease-out 27.86s both"/>
+<circle cx="486.3" cy="696.0" r="7.52" fill="rgb(228,103,119)" opacity="0" style="animation:dotAppear 1.04s ease-out 27.95s both"/>
+<circle cx="135.6" cy="239.6" r="7.52" fill="rgb(103,228,123)" opacity="0" style="animation:dotAppear 1.03s ease-out 28.04s both"/>
+<circle cx="704.3" cy="339.5" r="7.53" fill="rgb(160,103,228)" opacity="0" style="animation:dotAppear 1.03s ease-out 28.12s both"/>
+<circle cx="215.9" cy="651.0" r="7.53" fill="rgb(228,196,103)" opacity="0" style="animation:dotAppear 1.03s ease-out 28.19s both"/>
+<circle cx="366.1" cy="89.6" r="7.53" fill="rgb(103,223,228)" opacity="0" style="animation:dotAppear 1.03s ease-out 28.26s both"/>
+<circle cx="635.4" cy="606.6" r="7.54" fill="rgb(228,103,187)" opacity="0" style="animation:dotAppear 1.02s ease-out 28.31s both"/>
+<circle cx="85.9" cy="406.6" r="7.54" fill="rgb(150,228,103)" opacity="0" style="animation:dotAppear 1.02s ease-out 28.36s both"/>
+<circle cx="627.8" cy="182.2" r="7.54" fill="rgb(103,114,228)" opacity="0" style="animation:dotAppear 1.02s ease-out 28.41s both"/>
+<circle cx="379.0" cy="715.4" r="7.55" fill="rgb(228,128,103)" opacity="0" style="animation:dotAppear 1.01s ease-out 28.44s both"/>
+<circle cx="201.8" cy="152.5" r="7.55" fill="rgb(103,228,165)" opacity="0" style="animation:dotAppear 1.01s ease-out 28.47s both"/>
+<circle cx="714.3" cy="448.8" r="7.55" fill="rgb(201,103,228)" opacity="0" style="animation:dotAppear 1.01s ease-out 28.48s both"/>
+<circle cx="134.5" cy="576.9" r="7.56" fill="rgb(218,228,103)" opacity="0" style="animation:dotAppear 1.0s ease-out 28.50s both"/>
+<circle cx="476.5" cy="89.3" r="7.56" fill="rgb(103,181,228)" opacity="0" style="animation:dotAppear 1.0s ease-out 28.50s both"/>
+</g>
+<circle cx="381.7" cy="416.7" r="6.0" fill="rgb(71,197,234)" opacity="0" style="animation:dotAppear 1.5s ease-out 0.00s both, pulse 2.5s ease-in-out 1.5s infinite"/>
+<path d="M50,770 A350,350 0 0 1 750,770" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
+<path d="M50,770 A350,350 0 0 1 750,770" fill="none" stroke="#7c6ef0" stroke-width="3" stroke-dasharray="1099.6" stroke-dashoffset="1099.6" opacity="0.7">
+  <animate attributeName="stroke-dashoffset" from="1099.6" to="0" dur="30.0s" fill="freeze"/>
+</path>
+<circle cx="50.0" cy="770.0" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="50.0" y="782.0" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2018</text>
+<circle cx="76.6" cy="636.1" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="76.6" y="648.1" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2019</text>
+<circle cx="152.5" cy="522.5" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="152.5" y="534.5" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2020</text>
+<circle cx="266.1" cy="446.6" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="266.1" y="458.6" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2021</text>
+<circle cx="400.0" cy="420.0" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="400.0" y="432.0" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2022</text>
+<circle cx="533.9" cy="446.6" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="533.9" y="458.6" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2023</text>
+<circle cx="647.5" cy="522.5" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="647.5" y="534.5" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2024</text>
+<circle cx="723.4" cy="636.1" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="723.4" y="648.1" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2025</text>
+<circle cx="750.0" cy="770.0" r="2" fill="#7c6ef0" opacity="0.5"/>
+<text x="750.0" y="782.0" text-anchor="middle" font-size="7" font-family="monospace" fill="rgba(255,255,255,0.4)">2026</text>
+</svg>
