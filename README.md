@@ -50,12 +50,12 @@
 
 <table role="presentation"><tr>
 <td width="50%" align="center">
-  <img src=".github/assets/img/inkgarden-growth-animated.svg" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
+  <img src=".github/assets/img/inkgarden-growth.gif" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
   <br/>
   <sub><b>Ink Garden</b> — each tree is a repository, blooms appear as stars accumulate</sub>
 </td>
 <td width="50%" align="center">
-  <img src=".github/assets/img/topo-growth-animated.svg" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
+  <img src=".github/assets/img/topo-growth.gif" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
   <br/>
   <sub><b>Topography</b> — terrain contours, rivers, and cartographic chrome emerge with activity</sub>
 </td>
@@ -68,12 +68,12 @@
 <summary><strong>Living Art data mapping (click to expand)</strong></summary>
 
 - living-art: Ink Garden & Topography
-  - Visual: `inkgarden-growth-animated.svg`
+  - Visual: `inkgarden-growth.gif`
     - Data inputs: `repos[]` (`name`, `language`, `stars`, `age_months`)
     - Mapping: Each repo → one plant; language sets hue/species; age → plant size/branch depth; stars → bloom size/petal counts; repo names → botanical labels.
   - Ecosystem details: `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars`
     - Mapping notes: forks → root networks; watchers/contributions/orgs/stars add insects/seeds; network → webs; open issues → mushrooms; following → tendrils; monthly contributions → stipple density.
-- Visual: `topo-growth-animated.svg`
+- Visual: `topo-growth.gif`
   - Data inputs: `repos[]` (`stars`, `age_months`, `language`, `name`)
   - Mapping: Repos → hills/landmarks; stars → peak height & marker size; age → hill width & age markers; language → terrain texture & color; names/stars → map labels.
 - Terrain/chrome: `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars`
@@ -83,7 +83,7 @@
 </details>
 <!-- END MANAGED MARKER -->
 
-[^1]: Visual mappings use conservative SVG/HTML features to remain GitHub-render safe (no scripting).
+[^1]: Visual mappings use GIF animations with PNG fallback to remain GitHub-render safe (no scripting).
 
 > Note: the header banner (`banner.svg`) is config-driven (`config.yaml`), not mapped to GitHub activity metrics.
 

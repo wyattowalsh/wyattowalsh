@@ -5,6 +5,12 @@ Four canonical SOTA approaches for generating word clouds as pure SVG:
   - ClusteredRenderer: semantic clustering + per-cluster Wordle placement
   - TypographicRenderer: editorial baseline-grid typography
   - ShapedRenderer: words packed inside a shape boundary
+
+Visual enhancements:
+  - OKLCH perceptually uniform color palettes (gradient, neon, sunset)
+  - Power-law font sizing for better visual contrast
+  - Subtle glow filter on largest words for depth
+  - Varied rotation angles for organic placement
 """
 
 from __future__ import annotations
@@ -80,6 +86,36 @@ def _hsl_to_css(h: float, s: float, lightness: float) -> str:
     return f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
 
 
+def _linear_to_srgb(c: float) -> float:
+    """Linear RGB to sRGB gamma transfer function."""
+    return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+
+
+def _oklch_to_hex(L: float, C: float, H: float) -> str:
+    """Convert OKLCH to hex string. L in [0,1], C ~[0,0.4], H in degrees.
+
+    Perceptually uniform color space -- equal steps in H produce visually
+    equal hue shifts, unlike HSL.
+    """
+    a = C * math.cos(math.radians(H))
+    b = C * math.sin(math.radians(H))
+    lc = L + 0.3963377774 * a + 0.2158037573 * b
+    mc = L - 0.1055613458 * a - 0.0638541728 * b
+    sc = L - 0.0894841775 * a - 1.2914855480 * b
+    l_ = lc ** 3
+    m_ = mc ** 3
+    s_ = sc ** 3
+    rv = max(0, 4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_)
+    gv = max(0, -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_)
+    bv = max(0, -0.0041960863 * l_ - 0.7034186147 * m_ + 1.7076147010 * s_)
+    rv = max(0.0, min(1.0, _linear_to_srgb(rv)))
+    gv = max(0.0, min(1.0, _linear_to_srgb(gv)))
+    bv = max(0.0, min(1.0, _linear_to_srgb(bv)))
+    return f"#{int(rv * 255):02x}{int(gv * 255):02x}{int(bv * 255):02x}"
+
+
+# -- Original (legacy) color functions --------------------------------------
+
 def primary_color_func(index: int, total: int) -> str:
     lightness = 0.35 + 0.3 * (index / max(total - 1, 1))
     return _hsl_to_css(_DEFAULT_HUE, 0.85, lightness)
@@ -102,11 +138,80 @@ def triadic_color_func(index: int, total: int) -> str:
     return _hsl_to_css(hue, 0.75, lightness)
 
 
+# -- New vibrant OKLCH-based color functions --------------------------------
+
+def gradient_color_func(index: int, total: int) -> str:
+    """Smooth multi-hue gradient: purple -> blue -> cyan -> green.
+
+    Uses OKLCH for perceptually uniform spacing across the spectrum.
+    """
+    t = index / max(total - 1, 1)
+    # Sweep hue from 300 (purple) through 240 (blue), 200 (cyan), to 145 (green)
+    hue = 300 - t * 155  # 300 -> 145
+    # Vary lightness subtly: brighter in the middle, deeper at the ends
+    lightness = 0.62 + 0.12 * math.sin(t * math.pi)
+    chroma = 0.18 + 0.06 * math.sin(t * math.pi * 2)
+    return _oklch_to_hex(lightness, chroma, hue)
+
+
+def neon_on_dark_func(index: int, total: int) -> str:
+    """Vivid neon colors cycling through electric blue, hot pink, cyber green, amber.
+
+    Designed for dark backgrounds -- high chroma, high lightness.
+    """
+    # Four neon anchor hues with high chroma
+    neon_hues = [
+        (250, 0.22, 0.72),   # electric blue
+        (330, 0.24, 0.70),   # hot pink
+        (155, 0.22, 0.78),   # cyber green
+        (80, 0.20, 0.80),    # amber/lime
+    ]
+    t = index / max(total - 1, 1)
+    # Smoothly interpolate around the neon palette
+    pos = t * (len(neon_hues) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(neon_hues) - 1)
+    frac = pos - lo
+    h = neon_hues[lo][0] + frac * (neon_hues[hi][0] - neon_hues[lo][0])
+    c = neon_hues[lo][1] + frac * (neon_hues[hi][1] - neon_hues[lo][1])
+    lv = neon_hues[lo][2] + frac * (neon_hues[hi][2] - neon_hues[lo][2])
+    return _oklch_to_hex(lv, c, h)
+
+
+def sunset_color_func(index: int, total: int) -> str:
+    """Warm sunset gradient: deep purple -> magenta -> coral -> gold.
+
+    Rich, warm palette inspired by golden-hour sky colors.
+    """
+    t = index / max(total - 1, 1)
+    # Hue sweep: 310 (deep purple) -> 350 (magenta) -> 25 (coral) -> 60 (gold)
+    # Use piecewise interpolation for smooth wrap-around
+    if t < 0.33:
+        local_t = t / 0.33
+        hue = 310 + local_t * 40  # 310 -> 350
+        chroma = 0.18 + local_t * 0.04
+    elif t < 0.66:
+        local_t = (t - 0.33) / 0.33
+        hue = 350 + local_t * 35  # 350 -> 385 (== 25)
+        if hue >= 360:
+            hue -= 360
+        chroma = 0.22 - local_t * 0.02
+    else:
+        local_t = (t - 0.66) / 0.34
+        hue = 25 + local_t * 35  # 25 -> 60
+        chroma = 0.20 - local_t * 0.04
+    lightness = 0.55 + 0.20 * t  # darker at purple end, lighter at gold end
+    return _oklch_to_hex(lightness, chroma, hue)
+
+
 COLOR_FUNCS = {
     "primary": primary_color_func,
     "analogous": analogous_color_func,
     "complementary": complementary_color_func,
     "triadic": triadic_color_func,
+    "gradient": gradient_color_func,
+    "neon": neon_on_dark_func,
+    "sunset": sunset_color_func,
 }
 
 # Curated palette for the typographic renderer
@@ -225,11 +330,11 @@ class SvgWordCloudEngine(ABC):
         width: int = 800,
         height: int = 500,
         font_family: str = "sans-serif",
-        color_func_name: str = "primary",
+        color_func_name: str = "gradient",
         seed: int | None = 42,
         padding: float = 4.0,
-        min_font_size: float = 10.0,
-        max_font_size: float = 80.0,
+        min_font_size: float = 12.0,
+        max_font_size: float = 72.0,
     ) -> None:
         self.width = width
         self.height = height
@@ -250,11 +355,18 @@ class SvgWordCloudEngine(ABC):
         min_freq: float,
         max_freq: float,
     ) -> float:
-        """Map a frequency value to a font size."""
+        """Map a frequency value to a font size using power-law scaling.
+
+        Uses exponent 0.6 so that high-frequency words are visually prominent
+        while low-frequency words remain readable.  The power-law curve gives
+        much better visual contrast than a linear mapping.
+        """
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
-        return self.min_font_size + t * (self.max_font_size - self.min_font_size)
+        # Power-law: exponent < 1 boosts mid-range, giving more visual weight
+        t_scaled = t ** 0.6
+        return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     # -- BBox estimation ----------------------------------------------------
 
@@ -276,11 +388,20 @@ class SvgWordCloudEngine(ABC):
         y: float,
         rotation: float = 0,
     ) -> BBox:
-        """Compute the AABB for placed text, accounting for rotation."""
+        """Compute the AABB for placed text, accounting for rotation.
+
+        Handles arbitrary rotation angles by computing the rotated bounding
+        box envelope, not just axis-aligned 90-degree swaps.
+        """
         w = self._estimate_text_width(text, font_size)
         h = self._estimate_text_height(font_size)
-        if abs(rotation) in (90, 270):
-            w, h = h, w
+        if rotation != 0:
+            rad = math.radians(abs(rotation))
+            cos_a = abs(math.cos(rad))
+            sin_a = abs(math.sin(rad))
+            rw = w * cos_a + h * sin_a
+            rh = w * sin_a + h * cos_a
+            w, h = rw, rh
         return BBox(x - w / 2, y - h / 2, w + self.padding, h + self.padding)
 
     # -- Collision detection ------------------------------------------------
@@ -304,8 +425,38 @@ class SvgWordCloudEngine(ABC):
 
     # -- SVG rendering ------------------------------------------------------
 
+    @staticmethod
+    def _add_glow_filter(root: ET.Element) -> None:
+        """Add a subtle glow/depth SVG filter definition to the root element.
+
+        The filter creates a soft shadow behind text for a sense of depth.
+        Applied only to the top 20% largest words to avoid visual noise.
+        """
+        defs = ET.SubElement(root, "defs")
+        filt = ET.SubElement(
+            defs, "filter",
+            id="wc-glow",
+            x="-20%", y="-20%",
+            width="140%", height="140%",
+        )
+        ET.SubElement(
+            filt, "feGaussianBlur",
+            attrib={"in": "SourceGraphic", "stdDeviation": "0.8", "result": "blur"},
+        )
+        merge = ET.SubElement(filt, "feMerge")
+        ET.SubElement(merge, "feMergeNode", attrib={"in": "blur"})
+        ET.SubElement(merge, "feMergeNode", attrib={"in": "SourceGraphic"})
+
+    def _glow_size_threshold(self, placed_words: list[PlacedWord]) -> float:
+        """Return the font size threshold above which glow is applied (top 20%)."""
+        if not placed_words:
+            return float("inf")
+        sizes = sorted((pw.font_size for pw in placed_words), reverse=True)
+        cutoff_idx = max(1, int(len(sizes) * 0.2))
+        return sizes[min(cutoff_idx, len(sizes) - 1)]
+
     def render_svg(self, placed_words: list[PlacedWord]) -> str:
-        """Render placed words into an SVG string."""
+        """Render placed words into an SVG string with optional glow on large words."""
         root = ET.Element(
             "svg",
             xmlns="http://www.w3.org/2000/svg",
@@ -322,6 +473,10 @@ class SvgWordCloudEngine(ABC):
             fill="none",
         )
 
+        # Add glow filter definition
+        self._add_glow_filter(root)
+        glow_threshold = self._glow_size_threshold(placed_words)
+
         for pw in placed_words:
             attrs: dict[str, str] = {
                 "x": f"{pw.x:.1f}",
@@ -337,6 +492,9 @@ class SvgWordCloudEngine(ABC):
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
+            # Apply glow to the top 20% largest words
+            if pw.font_size >= glow_threshold:
+                attrs["filter"] = "url(#wc-glow)"
             elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
@@ -368,17 +526,29 @@ class WordleRenderer(SvgWordCloudEngine):
 
     Words are placed largest-first, spiraling outward from the center until
     a collision-free position is found.
+
+    Enhanced with:
+    - Slight random rotation angles (-15 to +15 degrees) for organic variety
+    - Tighter spiral step for denser packing
+    - Power-law font sizing (inherited from base)
     """
 
     def __init__(
         self,
         *,
         rotation_choices: list[float] | None = None,
-        spiral_tightness: float = 1.0,
+        spiral_tightness: float = 0.7,
+        allow_angled: bool = True,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.rotation_choices = rotation_choices if rotation_choices is not None else [0, 90]
+        # Default rotation now includes slight angles for visual variety
+        if rotation_choices is not None:
+            self.rotation_choices = rotation_choices
+        elif allow_angled:
+            self.rotation_choices = [0, 0, 0, 90, -12, 10, -8, 15, -15]
+        else:
+            self.rotation_choices = [0, 90]
         self.spiral_tightness = spiral_tightness
 
     def _spiral_positions(
@@ -386,13 +556,16 @@ class WordleRenderer(SvgWordCloudEngine):
         cx: float,
         cy: float,
         step_size: float,
-        max_steps: int = 2000,
+        max_steps: int = 2500,
     ):
-        """Yield (x, y) along an Archimedean spiral."""
+        """Yield (x, y) along an Archimedean spiral.
+
+        Uses a tighter angular step (0.075 vs 0.1) for better packing density.
+        """
         a = 0.0
         b = step_size * self.spiral_tightness
         for i in range(max_steps):
-            theta = i * 0.1
+            theta = i * 0.075  # tighter spiral than the original 0.1
             r = a + b * theta
             x = cx + r * math.cos(theta)
             y = cy + r * math.sin(theta)
@@ -419,7 +592,7 @@ class WordleRenderer(SvgWordCloudEngine):
             rotation = self._rng.choice(self.rotation_choices)
             color = self.color_func(idx, total)
 
-            step = max(1.0, font_size * 0.15)
+            step = max(1.0, font_size * 0.12)
             found = False
             for x, y in self._spiral_positions(cx, cy, step):
                 bbox = self._estimate_bbox(word, font_size, x, y, rotation)
@@ -445,7 +618,7 @@ class WordleRenderer(SvgWordCloudEngine):
                     reduced = font_size * scale
                     if reduced < self.min_font_size:
                         break
-                    for x, y in self._spiral_positions(cx, cy, max(1.0, reduced * 0.15)):
+                    for x, y in self._spiral_positions(cx, cy, max(1.0, reduced * 0.12)):
                         bbox = self._estimate_bbox(word, reduced, x, y, rotation)
                         if self._in_bounds(bbox) and not self._check_collision(bbox, placed_bboxes):
                             placed.append(
@@ -924,7 +1097,7 @@ class ShapedRenderer(SvgWordCloudEngine):
         return placed
 
     def render_svg(self, placed_words: list[PlacedWord]) -> str:
-        """Override to optionally include the shape outline."""
+        """Override to optionally include the shape outline and glow filter."""
         if not self.show_shape_outline:
             return super().render_svg(placed_words)
 
@@ -940,6 +1113,10 @@ class ShapedRenderer(SvgWordCloudEngine):
             root, "rect",
             width=str(self.width), height=str(self.height), fill="none",
         )
+
+        # Add glow filter
+        self._add_glow_filter(root)
+        glow_threshold = self._glow_size_threshold(placed_words)
 
         # Shape outline polygon
         points_str = " ".join(f"{x:.1f},{y:.1f}" for x, y in self._polygon)
@@ -966,6 +1143,8 @@ class ShapedRenderer(SvgWordCloudEngine):
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
+            if pw.font_size >= glow_threshold:
+                attrs["filter"] = "url(#wc-glow)"
             elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
