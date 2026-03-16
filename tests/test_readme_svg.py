@@ -403,7 +403,7 @@ class TestReadmeSvgAssetBuilder:
 
 class TestSvgRepoCardRenderer:
     def test_render_produces_valid_svg(self) -> None:
-        renderer = SvgRepoCardRenderer(width=480, height=175)
+        renderer = SvgRepoCardRenderer(width=500, height=185)
         card = SvgCard(
             title="nbadb",
             kicker="wyattowalsh/nbadb",
@@ -413,8 +413,8 @@ class TestSvgRepoCardRenderer:
         svg = renderer.render_card(card)
 
         assert svg.startswith("<svg")
-        assert 'width="480"' in svg
-        assert 'height="175"' in svg
+        assert 'width="500"' in svg
+        assert 'height="185"' in svg
 
     def test_light_dark_mode_css_vars(self) -> None:
         renderer = SvgRepoCardRenderer()

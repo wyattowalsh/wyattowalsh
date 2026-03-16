@@ -1,46 +1,78 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-  <rect width="800" height="500" fill="none" />
   <defs>
     <filter id="wc-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.0" result="blur" />
       <feMerge>
         <feMergeNode in="blur" />
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
+    <radialGradient id="wc-bg-grad" cx="50%" cy="50%" r="70%">
+      <stop stop-color="#ffffff" stop-opacity="0.06" offset="0%" />
+      <stop stop-color="#000000" stop-opacity="0.03" offset="100%" />
+    </radialGradient>
   </defs>
-  <text x="400.0" y="250.0" font-size="72.0" fill="#9866e0" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">Python</text>
-  <text x="391.5" y="168.0" font-size="57.2" fill="#9668e8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">TypeScript</text>
-  <text x="433.8" y="358.0" font-size="51.0" fill="#946aef" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,433.8,358.0)" filter="url(#wc-glow)">JavaScript</text>
-  <text x="251.8" y="312.5" font-size="41.0" fill="#926cf7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,251.8,312.5)" filter="url(#wc-glow)">Others</text>
-  <text x="202.7" y="298.2" font-size="30.9" fill="#8f6ffe" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,202.7,298.2)" filter="url(#wc-glow)">Jupyter Notebook</text>
-  <text x="362.0" y="112.4" font-size="25.3" fill="#8c71ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">HTML</text>
-  <text x="260.9" y="222.8" font-size="23.3" fill="#8874ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">Go</text>
-  <text x="417.0" y="111.6" font-size="22.4" fill="#8377ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,417.0,111.6)">PHP</text>
-  <text x="543.9" y="227.3" font-size="21.3" fill="#7e7aff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">C++</text>
-  <text x="542.4" y="259.8" font-size="20.8" fill="#797dff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,542.4,259.8)">CSS</text>
-  <text x="471.6" y="110.1" font-size="20.1" fill="#7281ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Shell</text>
-  <text x="290.2" y="117.9" font-size="19.6" fill="#6b84ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Java</text>
-  <text x="347.3" y="80.4" font-size="19.0" fill="#6388ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Swift</text>
-  <text x="389.1" y="66.9" font-size="18.5" fill="#5a8cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,389.1,66.9)">Rust</text>
-  <text x="566.8" y="188.1" font-size="17.8" fill="#4f90ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,566.8,188.1)">Ruby</text>
-  <text x="415.7" y="77.0" font-size="17.5" fill="#4394ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,415.7,77.0)">C</text>
-  <text x="449.6" y="73.6" font-size="16.7" fill="#3398ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Vue</text>
-  <text x="526.5" y="111.7" font-size="16.2" fill="#1c9cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,526.5,111.7)">SCSS</text>
-  <text x="577.2" y="232.8" font-size="16.1" fill="#00a0ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,577.2,232.8)">C#</text>
-  <text x="582.4" y="262.8" font-size="15.7" fill="#00a4ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,582.4,262.8)">TeX</text>
-  <text x="323.5" y="107.6" font-size="15.6" fill="#00a7ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,323.5,107.6)">R</text>
-  <text x="439.1" y="434.4" font-size="15.4" fill="#00abff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,439.1,434.4)">MDX</text>
-  <text x="393.8" y="439.3" font-size="14.8" fill="#00aeff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,393.8,439.3)">Svelte</text>
-  <text x="501.8" y="74.1" font-size="14.4" fill="#00b1ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,501.8,74.1)">Markdown</text>
-  <text x="314.8" y="430.3" font-size="14.4" fill="#00b4ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Objective-C</text>
-  <text x="290.0" y="89.3" font-size="13.8" fill="#00b7ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Scala</text>
-  <text x="469.8" y="431.6" font-size="13.6" fill="#00b9ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,469.8,431.6)">Dart</text>
-  <text x="345.9" y="51.9" font-size="13.6" fill="#00bbff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,345.9,51.9)">PLpgSQL</text>
-  <text x="570.5" y="155.9" font-size="13.2" fill="#00beff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Sass</text>
-  <text x="589.7" y="297.6" font-size="13.2" fill="#00c0fe" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,589.7,297.6)">Zig</text>
-  <text x="425.1" y="50.4" font-size="12.8" fill="#00c1f2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Jinja</text>
-  <text x="269.6" y="399.6" font-size="12.8" fill="#00c1ec" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Less</text>
-  <text x="249.7" y="117.9" font-size="12.8" fill="#00c1e6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,249.7,117.9)">Lua</text>
-  <text x="233.8" y="225.6" font-size="12.0" fill="#21b49c" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,233.8,225.6)">Max</text>
+  <rect width="800" height="500" fill="url(#wc-bg-grad)" />
+  <text x="400.0" y="250.0" font-size="90.0" fill="#00a1ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,400.0,250.0)" filter="url(#wc-glow)" letter-spacing="0.5">Python</text>
+  <text x="425.8" y="438.4" font-size="70.2" fill="#009cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">TypeScript</text>
+  <text x="327.0" y="66.0" font-size="62.1" fill="#0097ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">JavaScript</text>
+  <text x="175.2" y="289.3" font-size="48.6" fill="#2f92ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,175.2,289.3)" filter="url(#wc-glow)" letter-spacing="0.5">Others</text>
+  <text x="567.5" y="227.8" font-size="35.2" fill="#4d8cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,567.5,227.8)" filter="url(#wc-glow)" letter-spacing="0.5">Jupyter Notebook</text>
+  <text x="215.7" y="184.1" font-size="27.7" fill="#6287ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">HTML</text>
+  <text x="232.0" y="148.5" font-size="25.1" fill="#7381ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Go</text>
+  <text x="520.9" y="69.2" font-size="23.9" fill="#827cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">PHP</text>
+  <text x="613.7" y="199.6" font-size="22.4" fill="#8f76ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,613.7,199.6)" filter="url(#wc-glow)">C++</text>
+  <text x="620.0" y="243.1" font-size="21.7" fill="#9b70ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">CSS</text>
+  <text x="633.5" y="293.8" font-size="20.8" fill="#a66bff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,633.5,293.8)" filter="url(#wc-glow)">Shell</text>
+  <text x="616.0" y="350.5" font-size="20.1" fill="#b065ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,616.0,350.5)" filter="url(#wc-glow)">Java</text>
+  <text x="199.5" y="389.0" font-size="19.3" fill="#ba60ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,199.5,389.0)" filter="url(#wc-glow)">Swift</text>
+  <text x="231.4" y="119.1" font-size="18.7" fill="#c35aff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Rust</text>
+  <text x="616.0" y="154.9" font-size="17.7" fill="#cc54ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,616.0,154.9)">Ruby</text>
+  <text x="195.7" y="144.4" font-size="17.4" fill="#d54fff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,195.7,144.4)">C</text>
+  <text x="161.1" y="190.6" font-size="16.3" fill="#dd49ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Vue</text>
+  <text x="401.4" y="17.1" font-size="15.6" fill="#e442ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">SCSS</text>
+  <text x="167.9" y="166.9" font-size="15.4" fill="#eb3cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">C#</text>
+  <text x="320.0" y="14.3" font-size="15.0" fill="#f234ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">TeX</text>
+  <text x="597.5" y="300.8" font-size="14.8" fill="#f92cf7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">R</text>
+  <text x="479.6" y="12.3" font-size="14.5" fill="#f235ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,479.6,12.3)">MDX</text>
+  <text x="525.5" y="32.4" font-size="13.7" fill="#e344ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,525.5,32.4)">Svelte</text>
+  <text x="622.0" y="129.3" font-size="13.1" fill="#d352ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Markdown</text>
+  <text x="144.7" y="133.7" font-size="13.1" fill="#c05fff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,144.7,133.7)">Objective-C</text>
+  <text x="420.6" y="490.2" font-size="12.5" fill="#aa6bff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Scala</text>
+  <text x="207.5" y="425.5" font-size="12.1" fill="#9178ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,207.5,425.5)">Dart</text>
+  <text x="617.4" y="91.1" font-size="12.1" fill="#7185ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,617.4,91.1)">PLpgSQL</text>
+  <text x="663.2" y="188.1" font-size="11.6" fill="#4292ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,663.2,188.1)">Clojure</text>
+  <text x="282.1" y="12.1" font-size="11.6" fill="#009eff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,282.1,12.1)">Sass</text>
+  <text x="566.6" y="61.2" font-size="11.6" fill="#00abff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,566.6,61.2)">Zig</text>
+  <text x="492.7" y="490.0" font-size="11.1" fill="#00b6ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Dockerfile</text>
+  <text x="669.9" y="228.1" font-size="11.1" fill="#00c1ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,669.9,228.1)">Jinja</text>
+  <text x="654.0" y="250.6" font-size="11.1" fill="#00cbff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,654.0,250.6)">Less</text>
+  <text x="238.1" y="383.5" font-size="11.1" fill="#00d3ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,238.1,383.5)">Lua</text>
+  <text x="372.4" y="490.1" font-size="11.1" fill="#00dbff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Makefile</text>
+  <text x="525.1" y="92.9" font-size="11.1" fill="#00e0e9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Perl</text>
+  <text x="574.3" y="23.9" font-size="11.1" fill="#00e4cf" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,574.3,23.9)">Solidity</text>
+  <text x="658.1" y="335.3" font-size="10.0" fill="#00e7b3" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,658.1,335.3)">Astro</text>
+  <text x="648.8" y="397.7" font-size="10.0" fill="#00e896" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-20.0,648.8,397.7)">Batchfile</text>
+  <text x="221.9" y="462.2" font-size="10.0" fill="#00e775" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,221.9,462.2)">Cython</text>
+  <text x="303.5" y="490.7" font-size="10.0" fill="#00e556" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Elixir</text>
+  <text x="366.7" y="19.9" font-size="10.0" fill="#00e442" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Haml</text>
+  <text x="687.1" y="274.7" font-size="10.0" fill="#00e226" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-20.0,687.1,274.7)">Haskell</text>
+  <text x="230.5" y="490.0" font-size="10.0" fill="#00e000" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">JetBrains MPS</text>
+  <text x="436.3" y="19.6" font-size="10.0" fill="#38de00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Julia</text>
+  <text x="127.2" y="186.9" font-size="10.0" fill="#5adb00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,127.2,186.9)">Kotlin</text>
+  <text x="514.1" y="7.6" font-size="10.0" fill="#71d800" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">MATLAB</text>
+  <text x="650.6" y="149.6" font-size="10.0" fill="#85d500" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-20.0,650.6,149.6)">Max</text>
+  <text x="166.5" y="429.6" font-size="10.0" fill="#96d200" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-20.0,166.5,429.6)">Mustache</text>
+  <text x="667.7" y="358.7" font-size="10.0" fill="#a5cf00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,667.7,358.7)">Nunjucks</text>
+  <text x="611.5" y="33.4" font-size="10.0" fill="#b2cb00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,611.5,33.4)">OpenEdge ABL</text>
+  <text x="185.8" y="451.9" font-size="10.0" fill="#bfc700" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">PostScript</text>
+  <text x="667.8" y="74.4" font-size="10.0" fill="#cbc300" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,667.8,74.4)">PowerShell</text>
+  <text x="135.0" y="379.9" font-size="10.0" fill="#d6bf00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,135.0,379.9)">Processing</text>
+  <text x="242.3" y="16.1" font-size="10.0" fill="#e0bb00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,242.3,16.1)">Pug</text>
+  <text x="195.1" y="111.7" font-size="10.0" fill="#e9b700" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Q#</text>
+  <text x="715.6" y="129.9" font-size="10.0" fill="#f2b200" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,715.6,129.9)">Rich Text Format</text>
+  <text x="591.0" y="60.7" font-size="10.0" fill="#fbae00" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">Roff</text>
+  <text x="683.4" y="303.3" font-size="10.0" fill="#ffa900" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,683.4,303.3)">SVG</text>
+  <text x="694.9" y="175.5" font-size="10.0" fill="#ffa500" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,694.9,175.5)">Scheme</text>
+  <text x="704.4" y="235.6" font-size="10.0" fill="#ffa000" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,704.4,235.6)">Smarty</text>
 </svg>

@@ -807,6 +807,23 @@ class ReadmeSectionGenerator:
             else None
         )
 
+        # --- X/Twitter: use Unicode 𝕏 glyph instead of CDN fetch ---------
+        if normalized_host.endswith("x.com") or normalized_host.endswith(
+            "twitter.com"
+        ):
+            x_svg = (
+                "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
+                "<rect width='64' height='64' rx='14' fill='#000'/>"
+                "<text x='32' y='46' text-anchor='middle' fill='#fff' "
+                "font-family='serif' font-size='40' font-weight='700'>"
+                "\U0001d54f</text>"
+                "</svg>"
+            )
+            return (
+                "data:image/svg+xml;base64,"
+                + base64.b64encode(x_svg.encode("utf-8")).decode("ascii")
+            )
+
         # --- Try Simple Icons CDN first for known platforms ---------------
         for suffix, (slug, bg_color) in self._SIMPLE_ICON_MAP.items():
             if normalized_host.endswith(suffix):
@@ -959,7 +976,7 @@ class ReadmeSectionGenerator:
             return "\n".join(lines)
 
         # Render individual per-card SVGs
-        card_renderer = SvgRepoCardRenderer(width=480, height=175)
+        card_renderer = SvgRepoCardRenderer(width=500, height=185)
         card_embeds: list[tuple[str, str]] = []  # (html_url, img_src)
 
         if self._svg_section_enabled("featured_projects"):
@@ -991,7 +1008,7 @@ class ReadmeSectionGenerator:
                         table_lines.append(
                             f'<td><a href="{escape(url)}"'
                             f' target="_blank">'
-                            f'<img src="{escape(src)}" width="480"'
+                            f'<img src="{escape(src)}" width="500"'
                             f' alt="{escape(svg_cards[idx].title)}"'
                             f' loading="lazy"/></a></td>'
                         )
@@ -1204,7 +1221,7 @@ class ReadmeSectionGenerator:
                 line += f" — {escape(' · '.join(meta_bits))}"
             fallback_lines.append(line)
         # Render per-card blog SVGs
-        blog_renderer = SvgBlogCardRenderer(width=480, height=135)
+        blog_renderer = SvgBlogCardRenderer(width=480, height=150)
         card_embeds: list[tuple[str, str]] = []
 
         if self._svg_section_enabled("blog_posts"):
@@ -1232,7 +1249,7 @@ class ReadmeSectionGenerator:
             for url, src in card_embeds:
                 imgs.append(
                     f'<a href="{escape(url)}" target="_blank">'
-                    f'<img src="{escape(src)}" width="480"'
+                    f'<img src="{escape(src)}" width="500"'
                     f' loading="lazy"/></a>'
                 )
             result.append(

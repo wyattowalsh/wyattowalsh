@@ -16,11 +16,14 @@ Visual enhancements:
 from __future__ import annotations
 
 import colorsys
+import logging
 import math
 import random
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -159,12 +162,12 @@ def neon_on_dark_func(index: int, total: int) -> str:
 
     Designed for dark backgrounds -- high chroma, high lightness.
     """
-    # Four neon anchor hues with high chroma
+    # Four neon anchor hues with ultra-high chroma for maximum vibrancy
     neon_hues = [
-        (250, 0.22, 0.72),   # electric blue
-        (330, 0.24, 0.70),   # hot pink
-        (155, 0.22, 0.78),   # cyber green
-        (80, 0.20, 0.80),    # amber/lime
+        (250, 0.28, 0.72),   # electric blue
+        (330, 0.30, 0.70),   # hot pink
+        (155, 0.28, 0.78),   # cyber green
+        (80, 0.26, 0.80),    # amber/lime
     ]
     t = index / max(total - 1, 1)
     # Smoothly interpolate around the neon palette
@@ -332,9 +335,9 @@ class SvgWordCloudEngine(ABC):
         font_family: str = "sans-serif",
         color_func_name: str = "gradient",
         seed: int | None = 42,
-        padding: float = 4.0,
-        min_font_size: float = 12.0,
-        max_font_size: float = 72.0,
+        padding: float = 2.0,
+        min_font_size: float = 10.0,
+        max_font_size: float = 90.0,
     ) -> None:
         self.width = width
         self.height = height
@@ -426,11 +429,13 @@ class SvgWordCloudEngine(ABC):
     # -- SVG rendering ------------------------------------------------------
 
     @staticmethod
-    def _add_glow_filter(root: ET.Element) -> None:
+    def _add_glow_filter(root: ET.Element) -> ET.Element:
         """Add a subtle glow/depth SVG filter definition to the root element.
 
         The filter creates a soft shadow behind text for a sense of depth.
         Applied only to the top 20% largest words to avoid visual noise.
+
+        Returns the <defs> element so callers can append additional definitions.
         """
         defs = ET.SubElement(root, "defs")
         filt = ET.SubElement(
@@ -441,11 +446,12 @@ class SvgWordCloudEngine(ABC):
         )
         ET.SubElement(
             filt, "feGaussianBlur",
-            attrib={"in": "SourceGraphic", "stdDeviation": "0.8", "result": "blur"},
+            attrib={"in": "SourceGraphic", "stdDeviation": "1.0", "result": "blur"},
         )
         merge = ET.SubElement(filt, "feMerge")
         ET.SubElement(merge, "feMergeNode", attrib={"in": "blur"})
         ET.SubElement(merge, "feMergeNode", attrib={"in": "SourceGraphic"})
+        return defs
 
     def _glow_size_threshold(self, placed_words: list[PlacedWord]) -> float:
         """Return the font size threshold above which glow is applied (top 20%)."""
@@ -464,18 +470,40 @@ class SvgWordCloudEngine(ABC):
             height=str(self.height),
             viewBox=f"0 0 {self.width} {self.height}",
         )
-        # transparent background
+
+        # Add glow filter and background gradient definitions
+        defs = self._add_glow_filter(root)
+
+        # Subtle radial background gradient for depth
+        radial = ET.SubElement(
+            defs, "radialGradient",
+            id="wc-bg-grad",
+            cx="50%", cy="50%", r="70%",
+        )
+        ET.SubElement(radial, "stop", offset="0%", attrib={
+            "stop-color": "#ffffff", "stop-opacity": "0.06",
+        })
+        ET.SubElement(radial, "stop", offset="100%", attrib={
+            "stop-color": "#000000", "stop-opacity": "0.03",
+        })
+
+        # Background rect with subtle radial gradient
         ET.SubElement(
             root,
             "rect",
             width=str(self.width),
             height=str(self.height),
-            fill="none",
+            fill="url(#wc-bg-grad)",
         )
 
-        # Add glow filter definition
-        self._add_glow_filter(root)
         glow_threshold = self._glow_size_threshold(placed_words)
+
+        # Determine large-word threshold for letter-spacing (top ~10%)
+        large_threshold = float("inf")
+        if placed_words:
+            sizes = sorted((pw.font_size for pw in placed_words), reverse=True)
+            large_idx = max(1, int(len(sizes) * 0.1))
+            large_threshold = sizes[min(large_idx, len(sizes) - 1)]
 
         for pw in placed_words:
             attrs: dict[str, str] = {
@@ -495,6 +523,9 @@ class SvgWordCloudEngine(ABC):
             # Apply glow to the top 20% largest words
             if pw.font_size >= glow_threshold:
                 attrs["filter"] = "url(#wc-glow)"
+            # Slight letter-spacing on the largest words for breathing room
+            if pw.font_size >= large_threshold:
+                attrs["letter-spacing"] = "0.5"
             elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
@@ -537,16 +568,16 @@ class WordleRenderer(SvgWordCloudEngine):
         self,
         *,
         rotation_choices: list[float] | None = None,
-        spiral_tightness: float = 0.7,
+        spiral_tightness: float = 0.5,
         allow_angled: bool = True,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        # Default rotation now includes slight angles for visual variety
+        # Rotation biased toward horizontal but with occasional dramatic angles
         if rotation_choices is not None:
             self.rotation_choices = rotation_choices
         elif allow_angled:
-            self.rotation_choices = [0, 0, 0, 90, -12, 10, -8, 15, -15]
+            self.rotation_choices = [0, 0, 0, 0, 90, -20, 15, -10, 20, -15, 45, -45]
         else:
             self.rotation_choices = [0, 90]
         self.spiral_tightness = spiral_tightness
@@ -556,17 +587,23 @@ class WordleRenderer(SvgWordCloudEngine):
         cx: float,
         cy: float,
         step_size: float,
-        max_steps: int = 2500,
+        max_steps: int = 3500,
     ):
         """Yield (x, y) along an Archimedean spiral.
 
-        Uses a tighter angular step (0.075 vs 0.1) for better packing density.
+        ``spiral_tightness`` controls the angular step: smaller values sample
+        more densely (more candidate positions per revolution) for tighter
+        packing.  The radial expansion ``b`` is scaled so the spiral always
+        reaches the canvas diagonal within *max_steps*.
         """
-        a = 0.0
-        b = step_size * self.spiral_tightness
+        angular_step = self.spiral_tightness * 0.1  # 0.5*0.1 = 0.05
+        # Ensure the spiral can reach every corner of the canvas
+        max_theta = max_steps * angular_step
+        canvas_diag = math.hypot(self.width, self.height) / 2
+        b = max(step_size * 0.3, canvas_diag / max(max_theta, 1.0))
         for i in range(max_steps):
-            theta = i * 0.075  # tighter spiral than the original 0.1
-            r = a + b * theta
+            theta = i * angular_step
+            r = b * theta
             x = cx + r * math.cos(theta)
             y = cy + r * math.sin(theta)
             yield x, y
@@ -592,7 +629,7 @@ class WordleRenderer(SvgWordCloudEngine):
             rotation = self._rng.choice(self.rotation_choices)
             color = self.color_func(idx, total)
 
-            step = max(1.0, font_size * 0.12)
+            step = max(0.8, font_size * 0.08)
             found = False
             for x, y in self._spiral_positions(cx, cy, step):
                 bbox = self._estimate_bbox(word, font_size, x, y, rotation)
@@ -613,12 +650,12 @@ class WordleRenderer(SvgWordCloudEngine):
                     break
 
             if not found:
-                # Try with reduced font size as fallback
-                for scale in (0.7, 0.5, 0.35):
+                # Try with progressively reduced font size as fallback
+                for scale in (0.7, 0.5, 0.35, 0.25):
                     reduced = font_size * scale
                     if reduced < self.min_font_size:
                         break
-                    for x, y in self._spiral_positions(cx, cy, max(1.0, reduced * 0.12)):
+                    for x, y in self._spiral_positions(cx, cy, max(0.8, reduced * 0.08)):
                         bbox = self._estimate_bbox(word, reduced, x, y, rotation)
                         if self._in_bounds(bbox) and not self._check_collision(bbox, placed_bboxes):
                             placed.append(
@@ -637,6 +674,16 @@ class WordleRenderer(SvgWordCloudEngine):
                             break
                     if found:
                         break
+
+        # Warn if canvas fill is low (many words failed to place)
+        if total > 0:
+            fill_ratio = len(placed) / total
+            if fill_ratio < 0.80:
+                logger.warning(
+                    "WordleRenderer: only placed %d/%d words (%.0f%%). "
+                    "Consider increasing canvas size or reducing word count.",
+                    len(placed), total, fill_ratio * 100,
+                )
 
         return placed
 

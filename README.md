@@ -17,20 +17,20 @@
 <!-- README:FEATURED_PROJECTS:START -->
 <table><tbody>
 <tr>
-<td><a href="https://github.com/wyattowalsh/listentropy" target="_blank"><img src=".github/assets/img/readme/featured-card-listentropy.svg" width="480" alt="listentropy" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/mdxpad" target="_blank"><img src=".github/assets/img/readme/featured-card-mdxpad.svg" width="480" alt="mdxpad" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/listentropy" target="_blank"><img src=".github/assets/img/readme/featured-card-listentropy.svg" width="500" alt="listentropy" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/mdxpad" target="_blank"><img src=".github/assets/img/readme/featured-card-mdxpad.svg" width="500" alt="mdxpad" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank"><img src=".github/assets/img/readme/featured-card-proxywhirl.svg" width="480" alt="proxywhirl" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/nbadb" target="_blank"><img src=".github/assets/img/readme/featured-card-nbadb.svg" width="480" alt="nbadb" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank"><img src=".github/assets/img/readme/featured-card-proxywhirl.svg" width="500" alt="proxywhirl" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/nbadb" target="_blank"><img src=".github/assets/img/readme/featured-card-nbadb.svg" width="500" alt="nbadb" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/agents" target="_blank"><img src=".github/assets/img/readme/featured-card-agents.svg" width="480" alt="agents" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/personal-website" target="_blank"><img src=".github/assets/img/readme/featured-card-personal-website.svg" width="480" alt="personal-website" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/agents" target="_blank"><img src=".github/assets/img/readme/featured-card-agents.svg" width="500" alt="agents" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/personal-website" target="_blank"><img src=".github/assets/img/readme/featured-card-personal-website.svg" width="500" alt="personal-website" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/riso" target="_blank"><img src=".github/assets/img/readme/featured-card-riso.svg" width="480" alt="riso" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank"><img src=".github/assets/img/readme/featured-card-iina-plugin-bookmarks.svg" width="480" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/riso" target="_blank"><img src=".github/assets/img/readme/featured-card-riso.svg" width="500" alt="riso" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank"><img src=".github/assets/img/readme/featured-card-iina-plugin-bookmarks.svg" width="500" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
 </tr>
 </tbody></table>
 <!-- README:FEATURED_PROJECTS:END -->
@@ -42,12 +42,12 @@
 
 <table role="presentation"><tr>
 <td width="50%" align="center">
-  <video src=".github/assets/img/inkgarden-growth.mp4" width="100%" autoplay loop muted playsinline alt="Ink Garden — botanical growth animation where each tree is a repository"></video>
+  <img src=".github/assets/img/inkgarden-growth.gif" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
   <br/>
   <sub><b>Ink Garden</b> — each tree is a repository, blooms appear as stars accumulate</sub>
 </td>
 <td width="50%" align="center">
-  <video src=".github/assets/img/topo-growth.mp4" width="100%" autoplay loop muted playsinline alt="Topography — cartographic map animation where terrain emerges with activity"></video>
+  <img src=".github/assets/img/topo-growth.gif" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
   <br/>
   <sub><b>Topography</b> — terrain contours, rivers, and cartographic chrome emerge with activity</sub>
 </td>
@@ -429,11 +429,11 @@ MDX                      1 repo              ░░░░░░░░░░░�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="480" loading="lazy"/></a></p>
+<p align="center"><a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="500" loading="lazy"/></a></p>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 

@@ -570,8 +570,8 @@ class SvgRepoCardRenderer:
 
     def __init__(
         self,
-        width: int = 480,
-        height: int = 175,
+        width: int = 500,
+        height: int = 185,
     ) -> None:
         self.width = width
         self.height = height
@@ -582,7 +582,7 @@ class SvgRepoCardRenderer:
         esc = escape
         lang_name, lang_color = self._extract_language(card.meta)
         has_thumb = bool(card.background_image)
-        thumb_w, thumb_h = (120, 68) if has_thumb else (0, 0)
+        thumb_w, thumb_h = (130, 75) if has_thumb else (0, 0)
         px = 20  # left padding
 
         # Available width for text (pixels)
@@ -602,6 +602,9 @@ class SvgRepoCardRenderer:
             "</style>",
             f'<clipPath id="card-clip">'
             f'<rect width="{w}" height="{h}" rx="10" /></clipPath>',
+            '<filter id="shadow">'
+            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
+            ' flood-opacity="0.08"/></filter>',
         ]
         if has_thumb:
             thumb_x = w - thumb_w - 18
@@ -627,12 +630,19 @@ class SvgRepoCardRenderer:
         # ── Card shell ──
         lines.append(
             f'<rect width="{w}" height="{h}" rx="10"'
-            ' fill="var(--card-bg)" />'
+            ' fill="var(--card-bg)" filter="url(#shadow)" />'
         )
         lines.append(
             f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
             ' rx="10" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
+        )
+
+        # ── Top accent bar (3px in primary language color) ──
+        accent_color = lang_color or "var(--spark-stroke)"
+        lines.append(
+            f'<rect width="{w}" height="3" rx="0"'
+            f' fill="{accent_color}" clip-path="url(#card-clip)" />'
         )
 
         # ── OG thumbnail (right column) ──
@@ -713,7 +723,7 @@ class SvgRepoCardRenderer:
 
         # ── Language distribution bar ──
         bar_y = h - 30
-        bar_w = min(w - 40, 260)
+        bar_w = min(w - 40, 340)
         if card.languages and sum(card.languages.values()) > 0:
             self._render_lang_bar(
                 lines, card.languages, px, bar_y, bar_w,
@@ -989,7 +999,7 @@ class SvgBlogCardRenderer:
     and date/host footer with a subtle accent line.
     """
 
-    def __init__(self, width: int = 480, height: int = 135) -> None:
+    def __init__(self, width: int = 480, height: int = 150) -> None:
         self.width = width
         self.height = height
 
@@ -1009,6 +1019,11 @@ class SvgBlogCardRenderer:
             self._css(),
             "</style>",
         ]
+        # Clip for top accent bar (full card outline)
+        lines.append(
+            f'<clipPath id="bar-clip">'
+            f'<rect width="{w}" height="{h}" rx="10"/></clipPath>'
+        )
         if has_hero:
             hx = w - hero_w - 18
             lines.append(
@@ -1023,6 +1038,13 @@ class SvgBlogCardRenderer:
             f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
             ' rx="10" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
+        )
+
+        # Top accent bar
+        lines.append(
+            f'<rect x="0" y="0" width="{w}" height="3"'
+            ' fill="var(--accent)"'
+            ' clip-path="url(#bar-clip)"/>'
         )
 
         # Hero thumbnail
@@ -1041,26 +1063,32 @@ class SvgBlogCardRenderer:
                 ' stroke-width="1" />'
             )
 
-        # Title
+        # Title (word-wrapped, up to 2 lines)
         text_w = (w - hero_w - 56) if has_hero else (w - 40)
         char_lim = int(text_w / 6.8)
-        title = esc(
-            SvgRepoCardRenderer._truncate(card.title, char_lim),
-            quote=True,
+        title_lines = SvgRepoCardRenderer._word_wrap(
+            card.title, char_lim, max_lines=2,
         )
-        lines.append(
-            f'<text class="blog-title" x="{px}" y="34">{title}</text>'
-        )
+        ty = 32
+        for tl in title_lines:
+            lines.append(
+                f'<text class="blog-title" x="{px}" y="{ty}">'
+                f"{esc(tl, quote=True)}</text>"
+            )
+            ty += 18
 
-        # Summary (word-wrapped, up to 3 lines)
+        # Summary (word-wrapped; reduce to 2 lines when title uses 2 lines)
+        n_title_lines = len(title_lines)
+        summary_y = 52 if n_title_lines <= 1 else 68
+        max_summary_lines = 2 if n_title_lines >= 2 else 3
         raw = " ".join(
             ln.strip() for ln in (card.lines or ()) if ln.strip()
         )
         desc_cpl = int(text_w / 6.8)
         wrapped = SvgRepoCardRenderer._word_wrap(
-            raw, desc_cpl, max_lines=3,
+            raw, desc_cpl, max_lines=max_summary_lines,
         )
-        dy = 54
+        dy = summary_y
         for line_text in wrapped:
             lines.append(
                 f'<text class="blog-desc" x="{px}" y="{dy}">'
@@ -1129,11 +1157,34 @@ class SvgConnectCardRenderer:
         self.width = width
         self.height = height
 
+    # Brand-color map for accent bar detection by card title.
+    _BRAND_COLORS: dict[str, str] = {
+        "linkedin": "#0A66C2",
+        "github": "#24292e",
+        "x": "#000000",
+        "x.com": "#000000",
+        "kaggle": "#20BEFF",
+        "w4w.dev": "#0EA5E9",
+        "website": "#0EA5E9",
+        "email": "#EA4335",
+    }
+
+    def _accent_color(self, card: SvgCard) -> str | None:
+        """Resolve brand accent color from card.accent or title."""
+        if card.accent:
+            raw = card.accent.strip()
+            if not raw.startswith("#"):
+                raw = f"#{raw}"
+            return raw
+        title_lower = card.title.strip().lower()
+        return self._BRAND_COLORS.get(title_lower)
+
     def render_card(self, card: SvgCard) -> str:
         w, h = self.width, self.height
         esc = escape
         icon_uri = card.icon_data_uri
         cx = w // 2  # center x
+        accent = self._accent_color(card)
 
         lines: list[str] = [
             f'<svg xmlns="http://www.w3.org/2000/svg" '
@@ -1143,6 +1194,11 @@ class SvgConnectCardRenderer:
             self._css(),
             "</style>",
         ]
+        # Clip for accent bar (full card outline)
+        lines.append(
+            f'<clipPath id="bar-clip">'
+            f'<rect width="{w}" height="{h}" rx="12"/></clipPath>'
+        )
         if icon_uri:
             lines.append(
                 f'<clipPath id="ico-clip">'
@@ -1157,6 +1213,14 @@ class SvgConnectCardRenderer:
             ' rx="12" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
         )
+
+        # Brand-colored accent bar at the top
+        if accent:
+            lines.append(
+                f'<rect x="0" y="0" width="{w}" height="3"'
+                f' fill="{esc(accent, quote=True)}"'
+                ' clip-path="url(#bar-clip)"/>'
+            )
 
         # Brand icon — large, centered, rounded-square clip
         if icon_uri:

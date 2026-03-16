@@ -133,14 +133,29 @@ def _generate_svg(
 # High-level generators
 # ---------------------------------------------------------------------------
 
+# Default color palettes per source type
+_SOURCE_COLOR_DEFAULTS: dict[str, str] = {
+    "topics": "sunset",
+    "languages": "neon",
+}
+
+
 def generate_word_cloud(
     source: Literal["topics", "languages"],
     renderer: str = DEFAULT_RENDERER,
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
     output_dir: str | Path | None = None,
+    color_func_name: str | None = None,
 ) -> Path:
     """Generate a word cloud for the given source and renderer.
+
+    Parameters
+    ----------
+    color_func_name:
+        Name of the OKLCH color palette to use (e.g. "sunset", "neon",
+        "gradient").  When *None*, a sensible default is chosen based on
+        *source*: ``"sunset"`` for topics, ``"neon"`` for languages.
 
     Returns the path to the generated file.
     """
@@ -148,6 +163,10 @@ def generate_word_cloud(
         output_dir = _ASSETS_DIR
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Pick source-appropriate palette when caller doesn't specify
+    if color_func_name is None:
+        color_func_name = _SOURCE_COLOR_DEFAULTS.get(source, "gradient")
 
     # Resolve input file
     md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
@@ -162,7 +181,11 @@ def generate_word_cloud(
     else:
         ext = ".svg"
         out = output_dir / f"wordcloud_{renderer}_by_{source}{ext}"
-        _generate_svg(renderer, frequencies, out, width=width, height=height)
+        _generate_svg(
+            renderer, frequencies, out,
+            width=width, height=height,
+            color_func_name=color_func_name,
+        )
 
     return out
 
