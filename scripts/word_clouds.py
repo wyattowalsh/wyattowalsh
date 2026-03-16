@@ -26,6 +26,21 @@ from bs4 import BeautifulSoup
 
 RendererName = Literal["classic", "wordle", "clustered", "typographic", "shaped"]
 
+# Default paths used by CLI (restored for backwards compat)
+DEFAULT_FONT_PATH: Path | None = None
+for _candidate in (
+    Path("/System/Library/Fonts/Helvetica.ttc"),
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/usr/share/fonts/TTF/DejaVuSans.ttf"),
+):
+    if _candidate.exists():
+        DEFAULT_FONT_PATH = _candidate
+        break
+
+LANGUAGES_MD_PATH = Path(".github/assets/languages.md")
+TOPICS_MD_PATH = Path(".github/assets/topics.md")
+PROFILE_IMG_OUTPUT_DIR = Path(".github/assets/img")
+
 RENDERER_CHOICES: list[str] = [
     "classic", "wordle", "clustered", "typographic", "shaped", "all",
 ]
@@ -102,7 +117,7 @@ def _generate_svg(
     **renderer_kwargs,
 ) -> None:
     """Generate an SVG word cloud using one of the SVG-native renderers."""
-    from word_cloud_renderers import get_renderer
+    from .word_cloud_renderers import get_renderer
 
     renderer = get_renderer(
         renderer_name,
@@ -135,7 +150,9 @@ def generate_word_cloud(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Resolve input file
-    md_file = _PROJECT_ROOT / f"{source}.md"
+    md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
+    if not md_file.exists():
+        md_file = _PROJECT_ROOT / f"{source}.md"
     frequencies = parse_frequencies_from_md(md_file)
 
     if renderer == "classic":
@@ -199,6 +216,49 @@ def get_languages_word_cloud() -> None:
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# CLI compatibility shims (consumed by scripts/cli.py)
+# ---------------------------------------------------------------------------
+
+# Alias for the CLI's expected import name
+parse_markdown_for_word_cloud_frequencies = parse_frequencies_from_md
+
+
+class WordCloudSettings:
+    """Minimal settings object expected by the CLI."""
+
+    def __init__(self, **kwargs):
+        self.renderer = kwargs.get("renderer", DEFAULT_RENDERER)
+        self.width = kwargs.get("width", DEFAULT_WIDTH)
+        self.height = kwargs.get("height", DEFAULT_HEIGHT)
+        self.max_words = kwargs.get("max_words", DEFAULT_MAX_WORDS)
+        self.output_dir = kwargs.get("output_dir", str(PROFILE_IMG_OUTPUT_DIR))
+
+
+class WordCloudGenerator:
+    """Minimal generator class expected by the CLI."""
+
+    def __init__(self, **kwargs):
+        self.settings = kwargs.get("settings") or kwargs.get(
+            "base_settings"
+        ) or WordCloudSettings()
+
+    def generate(
+        self,
+        frequencies: dict[str, int],
+        output_path: str | Path | None = None,
+        **kwargs,
+    ) -> None:
+        renderer = kwargs.get("renderer", DEFAULT_RENDERER)
+        out = Path(output_path) if output_path else PROFILE_IMG_OUTPUT_DIR
+        out.parent.mkdir(parents=True, exist_ok=True)
+        generate_word_cloud(
+            source="topics",
+            renderer=renderer,
+            output_dir=str(out.parent) if out.is_file() else str(out),
+        )
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate word clouds")

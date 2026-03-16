@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="none" />
+  <defs>
+    <filter id="wc-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <text x="400.0" y="250.0" font-size="72.0" fill="#9866e0" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">others</text>
+  <text x="370.4" y="177.3" font-size="40.3" fill="#9767e2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">python</text>
+  <text x="411.3" y="322.9" font-size="33.1" fill="#9767e4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,411.3,322.9)" filter="url(#wc-glow)">llm</text>
+  <text x="354.3" y="326.5" font-size="31.6" fill="#9767e5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,354.3,326.5)" filter="url(#wc-glow)">ai</text>
+  <text x="543.8" y="217.3" font-size="31.2" fill="#9668e7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,543.8,217.3)" filter="url(#wc-glow)">machine-learning</text>
+  <text x="369.5" y="128.0" font-size="30.9" fill="#9668e9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">react</text>
+  <text x="410.9" y="375.9" font-size="29.1" fill="#9569eb" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">hacktoberfest</text>
+  <text x="356.0" y="66.7" font-size="28.1" fill="#9569ec" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,356.0,66.7)" filter="url(#wc-glow)">javascript</text>
+  <text x="276.6" y="329.7" font-size="26.7" fill="#956aee" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">awesome</text>
+  <text x="455.2" y="427.1" font-size="26.6" fill="#946af0" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,455.2,427.1)" filter="url(#wc-glow)">data-science</text>
+  <text x="260.1" y="413.9" font-size="26.6" fill="#946bf2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">deep-learning</text>
+  <text x="206.6" y="186.2" font-size="26.5" fill="#936bf3" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">awesome-list</text>
+  <text x="225.9" y="265.7" font-size="26.5" fill="#926cf5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">chatgpt</text>
+  <text x="461.5" y="127.0" font-size="26.5" fill="#926cf7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,461.5,127.0)">typescript</text>
+  <text x="504.2" y="144.8" font-size="25.8" fill="#916df8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,504.2,144.8)">markdown</text>
+  <text x="238.0" y="134.7" font-size="25.8" fill="#916dfa" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,238.0,134.7)">openai</text>
+  <text x="469.0" y="312.3" font-size="21.7" fill="#906efc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">nlp</text>
+  <text x="606.4" y="190.5" font-size="21.5" fill="#8f6efd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,606.4,190.5)">nextjs</text>
+  <text x="600.5" y="356.0" font-size="21.4" fill="#8e6fff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,600.5,356.0)">artificial-intelligence</text>
+  <text x="250.5" y="371.1" font-size="21.0" fill="#8e70ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,250.5,371.1)">nodejs</text>
+  <text x="219.4" y="226.9" font-size="20.9" fill="#8d70ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,219.4,226.9)">pytorch</text>
+  <text x="566.7" y="393.7" font-size="20.7" fill="#8c71ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,566.7,393.7)">github</text>
+  <text x="327.2" y="455.5" font-size="20.3" fill="#8b71ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,327.2,455.5)">html</text>
+  <text x="201.9" y="305.3" font-size="20.0" fill="#8a72ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,201.9,305.3)">css</text>
+  <text x="437.4" y="471.2" font-size="20.0" fill="#8a73ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">database</text>
+  <text x="384.0" y="13.1" font-size="19.8" fill="#8973ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">documentation</text>
+  <text x="536.2" y="54.1" font-size="19.8" fill="#8874ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,536.2,54.1)">ethereum</text>
+  <text x="630.0" y="130.4" font-size="19.7" fill="#8775ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,630.0,130.4)">open-source</text>
+  <text x="241.5" y="77.3" font-size="19.6" fill="#8675ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,241.5,77.3)">macos</text>
+  <text x="630.0" y="305.5" font-size="19.5" fill="#8477ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,630.0,305.5)">chrome-extension</text>
+  <text x="277.7" y="453.6" font-size="19.3" fill="#8377ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,277.7,453.6)">api</text>
+  <text x="501.7" y="20.0" font-size="19.2" fill="#8178ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">chatbot</text>
+  <text x="151.1" y="349.2" font-size="19.2" fill="#8079ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">postgresql</text>
+  <text x="161.8" y="314.2" font-size="19.1" fill="#7f7aff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,161.8,314.2)">sql</text>
+  <text x="131.0" y="266.9" font-size="18.6" fill="#7d7bff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,131.0,266.9)">docker</text>
+  <text x="188.2" y="378.8" font-size="18.5" fill="#7b7cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,188.2,378.8)">cli</text>
+  <text x="198.8" y="44.5" font-size="18.4" fill="#797dff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">data-analysis</text>
+  <text x="140.8" y="133.9" font-size="18.2" fill="#767fff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,140.8,133.9)">analytics</text>
+  <text x="602.3" y="89.4" font-size="18.2" fill="#7480ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">python3</text>
+  <text x="529.0" y="476.9" font-size="18.2" fill="#7380ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,529.0,476.9)">reactjs</text>
+  <text x="484.8" y="340.6" font-size="17.9" fill="#7181ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">music</text>
+  <text x="659.2" y="274.9" font-size="17.6" fill="#6a85ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,659.2,274.9)">reinforcement-learning</text>
+  <text x="255.8" y="298.2" font-size="17.5" fill="#6786ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">data</text>
+  <text x="574.6" y="250.7" font-size="12.3" fill="#6587ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,574.6,250.7)">trading</text>
+  <text x="575.2" y="311.5" font-size="12.1" fill="#5f8aff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,575.2,311.5)">finance</text>
+  <text x="302.9" y="133.2" font-size="17.3" fill="#5b8cff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-8.0,302.9,133.2)">vue</text>
+  <text x="142.7" y="223.1" font-size="17.2" fill="#588dff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,142.7,223.1)">chrome</text>
+  <text x="224.9" y="450.9" font-size="17.2" fill="#568eff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,224.9,450.9)">ios</text>
+  <text x="277.7" y="12.0" font-size="17.1" fill="#518fff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">mysql</text>
+  <text x="371.7" y="476.1" font-size="17.1" fill="#4e90ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,371.7,476.1)">web</text>
+  <text x="427.9" y="131.4" font-size="16.7" fill="#4693ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,427.9,131.4)">go</text>
+  <text x="538.4" y="373.4" font-size="16.6" fill="#3897ff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,538.4,373.4)">git</text>
+  <text x="505.6" y="312.6" font-size="16.5" fill="#269aff" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-12.0,505.6,312.6)">r</text>
+  <text x="450.4" y="340.1" font-size="13.8" fill="#00c1de" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">c</text>
+</svg>

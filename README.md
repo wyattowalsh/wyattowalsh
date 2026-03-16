@@ -42,12 +42,12 @@
 
 <table role="presentation"><tr>
 <td width="50%" align="center">
-  <img src=".github/assets/img/inkgarden-growth.gif" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
+  <video src=".github/assets/img/inkgarden-growth.mp4" width="100%" autoplay loop muted playsinline alt="Ink Garden — botanical growth animation where each tree is a repository"></video>
   <br/>
   <sub><b>Ink Garden</b> — each tree is a repository, blooms appear as stars accumulate</sub>
 </td>
 <td width="50%" align="center">
-  <img src=".github/assets/img/topo-growth.gif" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
+  <video src=".github/assets/img/topo-growth.mp4" width="100%" autoplay loop muted playsinline alt="Topography — cartographic map animation where terrain emerges with activity"></video>
   <br/>
   <sub><b>Topography</b> — terrain contours, rivers, and cartographic chrome emerge with activity</sub>
 </td>
@@ -60,12 +60,12 @@
 <summary><strong>Living Art data mapping (click to expand)</strong></summary>
 
 - living-art: Ink Garden & Topography
-  - Visual: `inkgarden-growth.gif`
+  - Visual: `inkgarden-growth.mp4`
     - Data inputs: `repos[]` (`name`, `language`, `stars`, `age_months`)
     - Mapping: Each repo → one plant; language sets hue/species; age → plant size/branch depth; stars → bloom size/petal counts; repo names → botanical labels.
   - Ecosystem details: `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars`
     - Mapping notes: forks → root networks; watchers/contributions/orgs/stars add insects/seeds; network → webs; open issues → mushrooms; following → tendrils; monthly contributions → stipple density.
-- Visual: `topo-growth.gif`
+- Visual: `topo-growth.mp4`
   - Data inputs: `repos[]` (`stars`, `age_months`, `language`, `name`)
   - Mapping: Repos → hills/landmarks; stars → peak height & marker size; age → hill width & age markers; language → terrain texture & color; names/stars → map labels.
 - Terrain/chrome: `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars`
@@ -344,8 +344,8 @@
 ## Word Clouds
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_by_topic.svg" alt="Word cloud of project topics, larger words indicate more frequently used topics" width="49%"/>
-  <img src=".github/assets/img/wordcloud_by_language.svg" alt="Word cloud of programming languages used across repositories" width="49%"/>
+  <img src=".github/assets/img/wordcloud_wordle_by_topics.svg" alt="Word cloud of project topics, larger words indicate more frequently used topics" width="49%"/>
+  <img src=".github/assets/img/wordcloud_wordle_by_languages.svg" alt="Word cloud of programming languages used across repositories" width="49%"/>
 </p>
 
 <sub>Data source mapping: in Markdown-source mode (<code>--from-topics-md</code> / <code>--from-languages-md</code>), these clouds are generated from <code>.github/assets/topics.md</code> and <code>.github/assets/languages.md</code>, with term size based on parsed Markdown frequencies.</sub>
