@@ -6,10 +6,10 @@
 </p>
 
 <!-- README:TOP_BADGES:START -->
-<p align="center"><a href="https://w4w.dev"><img src=".github/assets/img/readme/connect-w4w-dev.svg" width="140" loading="lazy"/></a>
-<a href="https://linkedin.com/in/wyattowalsh"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" loading="lazy"/></a>
-<a href="https://www.kaggle.com/wyattowalsh"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" loading="lazy"/></a>
-<a href="https://x.com/wyattowalsh"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
+<p align="center"><a href="https://w4w.dev" target="_blank"><img src=".github/assets/img/readme/connect-w4w-dev.svg" width="140" loading="lazy"/></a>
+<a href="https://linkedin.com/in/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" loading="lazy"/></a>
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" loading="lazy"/></a>
+<a href="https://x.com/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
 ## Featured Projects
@@ -17,30 +17,22 @@
 <!-- README:FEATURED_PROJECTS:START -->
 <table><tbody>
 <tr>
-<td><a href="https://github.com/wyattowalsh/listentropy"><img src=".github/assets/img/readme/featured-card-listentropy.svg" width="480" alt="listentropy" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/mdxpad"><img src=".github/assets/img/readme/featured-card-mdxpad.svg" width="480" alt="mdxpad" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/listentropy" target="_blank"><img src=".github/assets/img/readme/featured-card-listentropy.svg" width="480" alt="listentropy" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/mdxpad" target="_blank"><img src=".github/assets/img/readme/featured-card-mdxpad.svg" width="480" alt="mdxpad" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/proxywhirl"><img src=".github/assets/img/readme/featured-card-proxywhirl.svg" width="480" alt="proxywhirl" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/nbadb"><img src=".github/assets/img/readme/featured-card-nbadb.svg" width="480" alt="nbadb" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank"><img src=".github/assets/img/readme/featured-card-proxywhirl.svg" width="480" alt="proxywhirl" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/nbadb" target="_blank"><img src=".github/assets/img/readme/featured-card-nbadb.svg" width="480" alt="nbadb" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/agents"><img src=".github/assets/img/readme/featured-card-agents.svg" width="480" alt="agents" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/personal-website"><img src=".github/assets/img/readme/featured-card-personal-website.svg" width="480" alt="personal-website" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/agents" target="_blank"><img src=".github/assets/img/readme/featured-card-agents.svg" width="480" alt="agents" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/personal-website" target="_blank"><img src=".github/assets/img/readme/featured-card-personal-website.svg" width="480" alt="personal-website" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td><a href="https://github.com/wyattowalsh/riso"><img src=".github/assets/img/readme/featured-card-riso.svg" width="480" alt="riso" loading="lazy"/></a></td>
-<td><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks"><img src=".github/assets/img/readme/featured-card-iina-plugin-bookmarks.svg" width="480" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/riso" target="_blank"><img src=".github/assets/img/readme/featured-card-riso.svg" width="480" alt="riso" loading="lazy"/></a></td>
+<td><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank"><img src=".github/assets/img/readme/featured-card-iina-plugin-bookmarks.svg" width="480" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
 </tr>
 </tbody></table>
-- [listentropy](https://github.com/wyattowalsh/listentropy) — No description provided. (★ 0)
-- [mdxpad](https://github.com/wyattowalsh/mdxpad) — No description provided. (★ 0)
-- [proxywhirl](https://github.com/wyattowalsh/proxywhirl) — rotating proxy system (★ 1)
-- [nbadb](https://github.com/wyattowalsh/nbadb) — Data Extraction (from https://stats.nba.com) and Processing Scripts to Produce the NBA Database on Kaggle (https://kaggle.com/wyattowalsh/basketball) (★ 57)
-- [agents](https://github.com/wyattowalsh/agents) — AI agent artifacts, configs, skills, tools, and more (★ 0)
-- [personal-website](https://github.com/wyattowalsh/personal-website) — Files for my personal web app, w4w.dev. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻 (★ 3)
-- [riso](https://github.com/wyattowalsh/riso) — Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling (★ 0)
-- [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) — media bookmark manager plugin for the iina video player (★ 5)
 <!-- README:FEATURED_PROJECTS:END -->
 
 
@@ -437,22 +429,11 @@ MDX                      1 repo              ░░░░░░░░░░░�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://w4w.dev/blog/posts/proxywhirl"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/w4w-v6"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="480" loading="lazy"/></a>
-<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="480" loading="lazy"/></a></p>
-<details>
-<summary><strong>Latest posts (auto-updated)</strong></summary>
-
-<!-- BLOG-POST-LIST:START -->
- - Fri Feb 13 2026 12:00 AM - [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl)
- - Sun Dec 01 2024 12:00 AM - [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6)
- - Fri Jan 15 2021 12:00 AM - [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3)
- - Thu Jan 14 2021 12:00 AM - [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2)
- - Wed Jan 13 2021 12:00 AM - [Basics of Linear Regression Modeling and Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1)<!-- BLOG-POST-LIST:END -->
-
-</details>
+<p align="center"><a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="480" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="480" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="480" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="480" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="480" loading="lazy"/></a></p>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 

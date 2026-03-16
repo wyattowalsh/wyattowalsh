@@ -285,8 +285,7 @@ class TestRendering:
         # HTML uses table layout with per-card img tags
         assert "<table>" in html
         assert "featured-card-riso.svg" in html
-        assert "Composable scaffolding framework" in html
-        assert "★ 42" in html
+        assert "Composable scaffolding framework" in svg
 
     def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -305,8 +304,6 @@ class TestRendering:
         html = generator._render_featured_projects()
 
         assert "Unable to fetch repository metadata." not in html
-        assert "Live stats are temporarily unavailable" in html
-        assert "open repository for details" in html
         # Per-card SVG should exist with fallback content
         card_svg_path = tmp_path / "svg" / "featured-card-riso.svg"
         assert card_svg_path.exists()
@@ -358,9 +355,6 @@ class TestRendering:
         assert "blog-first-post.svg" in html
         assert "blog-second-post.svg" in html
         assert "<svg" not in html
-        assert "First Post" in html
-        assert "Second Post" in html
-        assert "w4w.dev" in html
         assert "Auto-updated from" in html
         assert "https://w4w.dev/feed.xml" in html
 
@@ -579,13 +573,8 @@ class TestReadmeInjection:
         assert "blog-first-post.svg" in content
         assert ".github/assets/img/gh.gif" not in content
         assert "github.com/wyattowalsh" in content
-        assert "[riso](https://github.com/wyattowalsh/riso)" in content
-        assert "First Post" in content
-        assert "[First Post](https://w4w.dev/blog/first)" in content
         assert "Auto-updated from" in content
         assert '<a href="https://example.com/feed.xml">RSS feed</a>' in content
-        assert "<!-- BLOG-POST-LIST:START -->" in content
-        assert "<!-- BLOG-POST-LIST:END -->" in content
         assert "before" in content
         assert "after" in content
 
@@ -727,7 +716,6 @@ class TestReadmeInjection:
         assert "blog-posts.svg" not in content
         assert "featured-card-riso.svg" in content
         assert "github.com/wyattowalsh" in content
-        assert "[First Post](https://w4w.dev/blog/first)" in content
 
     def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -956,8 +944,6 @@ class TestBlogTitleSanitization:
 
         html = generator._render_blog_posts()
 
-        # The fallback markdown line should have the stripped title
-        assert "My Cool Post" in html
         # The per-card SVG file name should reflect the stripped title
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
         assert len(svg_files) == 1
@@ -983,7 +969,6 @@ class TestBlogTitleSanitization:
         html = generator._render_blog_posts()
 
         # "update" in the middle should NOT be stripped
-        assert "How to update your system" in html
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
         assert len(svg_files) == 1
         svg = svg_files[0].read_text(encoding="utf-8")

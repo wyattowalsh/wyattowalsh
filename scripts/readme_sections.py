@@ -611,7 +611,7 @@ class ReadmeSectionGenerator:
             imgs = []
             for url, src in card_embeds:
                 imgs.append(
-                    f'<a href="{escape(url)}">'
+                    f'<a href="{escape(url)}" target="_blank">'
                     f'<img src="{escape(src)}" width="140"'
                     f' loading="lazy"/></a>'
                 )
@@ -755,7 +755,25 @@ class ReadmeSectionGenerator:
     # -- w4w.dev favicon fetcher -----------------------------------------
 
     def _fetch_w4w_favicon_data_uri(self) -> Optional[str]:
-        """Fetch the real logo from w4w.dev and return as data URI."""
+        """Fetch w4w.dev logo, convert to PNG, return as data URI."""
+        # Try local optimized ICO first (checked into repo assets)
+        local_ico = Path(".github/assets/img/favicon.ico")
+        if local_ico.exists():
+            ico_bytes = local_ico.read_bytes()
+            try:
+                from PIL import Image as _Img
+                from io import BytesIO as _BIO
+                with _Img.open(_BIO(ico_bytes)) as img:
+                    img = img.resize((64, 64), _Img.Resampling.LANCZOS)
+                    buf = _BIO()
+                    img.save(buf, format="PNG")
+                    png_b64 = base64.b64encode(
+                        buf.getvalue()
+                    ).decode("ascii")
+                    return f"data:image/png;base64,{png_b64}"
+            except Exception:
+                pass
+        # Fall back to remote fetch
         for candidate in (
             "https://w4w.dev/logo.webp",
             "https://w4w.dev/favicon.ico",
@@ -971,7 +989,8 @@ class ReadmeSectionGenerator:
                     if idx < len(card_embeds):
                         url, src = card_embeds[idx]
                         table_lines.append(
-                            f'<td><a href="{escape(url)}">'
+                            f'<td><a href="{escape(url)}"'
+                            f' target="_blank">'
                             f'<img src="{escape(src)}" width="480"'
                             f' alt="{escape(svg_cards[idx].title)}"'
                             f' loading="lazy"/></a></td>'
@@ -984,7 +1003,6 @@ class ReadmeSectionGenerator:
         result_lines: list[str] = []
         if table_lines:
             result_lines.append("\n".join(table_lines))
-        result_lines.append("\n".join(fallback_lines))
         return "\n".join(result_lines)
 
     def _build_project_svg_card(
@@ -1213,14 +1231,13 @@ class ReadmeSectionGenerator:
             imgs = []
             for url, src in card_embeds:
                 imgs.append(
-                    f'<a href="{escape(url)}">'
+                    f'<a href="{escape(url)}" target="_blank">'
                     f'<img src="{escape(src)}" width="480"'
                     f' loading="lazy"/></a>'
                 )
             result.append(
                 '<p align="center">' + "\n".join(imgs) + "</p>"
             )
-        result.append(self._wrap_blog_post_list_markers(fallback_lines))
         result.append(
             f'<p align="center"><sub>📡 Auto-updated from '
             f'<a href="{feed_url}">RSS feed</a></sub></p>'
@@ -1448,6 +1465,20 @@ class ReadmeSectionGenerator:
             return None
         if not content_type.startswith("image/"):
             content_type = "image/png"
+        # Optimize large images: resize to thumbnail + compress as WEBP
+        if len(image_bytes) > 50_000:
+            try:
+                from PIL import Image as _Img
+                from io import BytesIO as _BIO
+                with _Img.open(_BIO(image_bytes)) as img:
+                    img = img.convert("RGB")
+                    img.thumbnail((480, 270), _Img.Resampling.LANCZOS)
+                    buf = _BIO()
+                    img.save(buf, format="WEBP", quality=72, method=4)
+                    image_bytes = buf.getvalue()
+                    content_type = "image/webp"
+            except Exception:
+                pass  # fall through with original bytes
         return (
             f"data:{content_type};base64,"
             f"{base64.b64encode(image_bytes).decode('ascii')}"
