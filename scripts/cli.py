@@ -4,17 +4,12 @@ from pathlib import Path
 from typing import Annotated, Any, Dict, List, Optional, Union
 
 import typer
-from pydantic import ValidationError
-from rich.syntax import Syntax
 
 # Core config imports
 from .config import DEFAULT_CONFIG_PATH
 
-from .config import BannerSettings as ConfigBannerSettings
 from .config import ProjectConfig, load_config, save_config
-from .config import QRCodeSettings as ConfigQRCodeSettings
 from .config import Settings as AppSettings
-from .config import WordCloudSettingsModel as ConfigWordCloudSettingsModel
 from .utils import console as util_console
 from .utils import get_logger
 
@@ -65,6 +60,7 @@ def _display_config(
     config_data: Union[ProjectConfig, AppSettings],
     output_format: OutputFormat = OutputFormat.JSON,
 ) -> None:
+    from rich.syntax import Syntax  # lazy import
     if output_format == OutputFormat.JSON:
         config_str = config_data.model_dump_json(indent=2)
         syntax = Syntax(config_str, "json", theme="monokai", line_numbers=True)
@@ -406,6 +402,7 @@ def generate(  # NOSONAR
         raise typer.Exit(code=1)
 
     if entity_type == EntityType.BANNER:
+        from .config import BannerSettings as ConfigBannerSettings  # lazy import
         try:
             from .banner import BannerConfig, generate_banner
         except ImportError:
@@ -480,6 +477,7 @@ def generate(  # NOSONAR
             raise typer.Exit(code=1)
 
     elif entity_type == EntityType.QR_CODE:
+        from .config import QRCodeSettings as ConfigQRCodeSettings  # lazy import
         try:
             from .qr import QRCodeGenerator
         except ImportError:
@@ -604,6 +602,7 @@ def generate(  # NOSONAR
             raise typer.Exit(code=1)
 
     elif entity_type == EntityType.WORD_CLOUD:
+        from .config import WordCloudSettingsModel as ConfigWordCloudSettingsModel  # lazy import
         try:
             logger.debug("Attempting to import .techs...")
             from .techs import Technology, load_technologies
@@ -1149,6 +1148,7 @@ def show_settings(
     ] = OutputFormat.JSON,
 ) -> None:
     """Displays current application settings after loading from all sources."""
+    from pydantic import ValidationError  # lazy import
     try:
         current_app_settings = Settings()
         util_console.print("[bold]Current Application Settings:[/bold]")

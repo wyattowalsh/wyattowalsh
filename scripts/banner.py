@@ -32,7 +32,6 @@ and the main banner orchestration logic.
 
 import base64
 import colorsys
-import enum
 import math
 import os
 import random
@@ -70,23 +69,9 @@ ColorStop: TypeAlias = Tuple[str, float]
 # ------------------------------------------------------------------------------
 # Enumerations
 # ------------------------------------------------------------------------------
-class PatternType(enum.Enum):
-    """
-    Enumeration for the different types of generative art patterns
-    that can be included in the banner.
-    """
-
-    LORENZ = "lorenz"
-    NEURAL = "neural"
-    FLOW = "flow"
-    MICRO = "micro"
-    AIZAWA = "aizawa"
-    # Dead variants — no draw function implemented; CLI dispatch will skip these
-    REACTION = "reaction"  # Note: REACTION is defined but not used
-    CLIFFORD = "clifford"
-    FLAME = "flame"  # Note: FLAME is defined but not used
-    PDJ = "pdj"  # Note: PDJ is defined but not used
-    IKEDA = "ikeda"  # Note: IKEDA is defined but not used
+# PatternType lives in its own lightweight module so callers that don't need
+# svgwrite/numpy can import it without heavy dependencies.
+from .banner_patterns import PatternType  # noqa: E402  (re-exported for back-compat)
 
 
 # ------------------------------------------------------------------------------

@@ -6,6 +6,8 @@ Tests are safe to run in parallel with -n auto: no shared mutable state.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 # Skip the entire module if numpy is absent — ink_garden imports it at the top
@@ -250,3 +252,62 @@ class TestGenerate:
             result = generate(MINIMAL_METRICS, seed=seed)
             assert result.lstrip().startswith("<svg")
             assert result.rstrip().endswith("</svg>")
+
+
+# ---------------------------------------------------------------------------
+# TestGoldenFiles
+# ---------------------------------------------------------------------------
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures" / "ink_garden"
+
+
+@pytest.mark.skipif(not (Path(__file__).parent / "fixtures" / "ink_garden").exists(),
+                    reason="Golden fixtures not generated yet — run generate_fixtures script")
+class TestGoldenFiles:
+    """Regression tests: compare generate() output against stored golden SVGs.
+
+    To regenerate golden files after an intentional output change:
+        python -m pytest tests/test_ink_garden.py --regenerate-golden
+    Or run: uv run python -m scripts.art.ink_garden --regenerate-fixtures
+    """
+
+    def _load_golden(self, name: str) -> str:
+        path = FIXTURES_DIR / name
+        if not path.exists():
+            pytest.skip(f"Golden file {name} not found — run fixture generator first")
+        return path.read_text()
+
+    def test_minimal_full_maturity_matches_golden(self) -> None:
+        """Minimal metrics at full maturity produce identical SVG to stored golden."""
+        expected = self._load_golden("minimal_full.svg")
+        hex_seed = seed_hash(MINIMAL_METRICS)
+        actual = generate(MINIMAL_METRICS, seed=hex_seed, maturity=1.0)
+        assert actual == expected, (
+            "SVG output changed — if intentional, delete tests/fixtures/ink_garden/ "
+            "and re-run to regenerate golden files."
+        )
+
+    def test_rich_full_maturity_matches_golden(self) -> None:
+        """Rich metrics at full maturity produce identical SVG to stored golden."""
+        expected = self._load_golden("rich_full.svg")
+        hex_seed = seed_hash(RICH_METRICS)
+        actual = generate(RICH_METRICS, seed=hex_seed, maturity=1.0)
+        assert actual == expected, (
+            "SVG output changed — if intentional, regenerate golden files."
+        )
+
+    def test_rich_mid_maturity_matches_golden(self) -> None:
+        """Rich metrics at mid maturity produce identical SVG to stored golden."""
+        expected = self._load_golden("rich_mid.svg")
+        hex_seed = seed_hash(RICH_METRICS)
+        actual = generate(RICH_METRICS, seed=hex_seed, maturity=0.5)
+        assert actual == expected, (
+            "SVG output changed — if intentional, regenerate golden files."
+        )
+
+    def test_golden_files_are_valid_svg(self) -> None:
+        """All stored golden files are valid SVG (start with <svg, end with </svg>)."""
+        for name in ("minimal_full.svg", "rich_full.svg", "rich_mid.svg"):
+            content = self._load_golden(name)
+            assert content.lstrip().startswith("<svg"), f"{name} does not start with <svg"
+            assert content.rstrip().endswith("</svg>"), f"{name} does not end with </svg>"
