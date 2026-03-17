@@ -447,7 +447,7 @@ def save_config(
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             yaml.dump(
-                config.model_dump(mode="python"),
+                config.model_dump(mode="json"),
                 f,
                 sort_keys=False,
                 indent=2,

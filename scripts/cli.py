@@ -20,6 +20,13 @@ from .utils import get_logger
 
 logger = get_logger(module=__name__)
 
+# Module-level aliases so tests can patch scripts.cli.Settings and scripts.cli.yaml
+Settings = AppSettings
+try:
+    import yaml  # type: ignore
+except ImportError:
+    yaml = None  # type: ignore
+
 app = typer.Typer(
     name="readme",
     help="CLI for readme project utilities, generation, and management.",
@@ -63,24 +70,24 @@ def _display_config(
         syntax = Syntax(config_str, "json", theme="monokai", line_numbers=True)
         util_console.print(syntax)
     elif output_format == OutputFormat.YAML:
-        try:
-            import yaml  # type: ignore
-
-            config_dict = config_data.model_dump(mode="python")
-            yaml_str = yaml.dump(config_dict, indent=2, sort_keys=False)
-            syntax = Syntax(
-                yaml_str, "yaml", theme="monokai", line_numbers=True
-            )
-            util_console.print(syntax)
-        except ImportError:
+        if yaml is None:
             logger.error(
                 "PyYAML is not installed. Cannot display config as YAML. "
-                "Falling back to JSON. Install with: uv pip install PyYAML"
+                "Falling back to JSON. Install with: uv add PyYAML"
             )
+            util_console.print("PyYAML is not installed. Falling back to JSON.")
             _display_config(config_data, OutputFormat.JSON)
-        except Exception as e:
-            logger.error("Error converting config to YAML: {e}", e=e)
-            _display_config(config_data, OutputFormat.JSON)
+        else:
+            try:
+                config_dict = config_data.model_dump(mode="python")
+                yaml_str = yaml.dump(config_dict, indent=2, sort_keys=False)
+                syntax = Syntax(
+                    yaml_str, "yaml", theme="monokai", line_numbers=True
+                )
+                util_console.print(syntax)
+            except Exception as e:
+                logger.error("Error converting config to YAML: {e}", e=e)
+                _display_config(config_data, OutputFormat.JSON)
 
 
 @app.command(
@@ -1143,7 +1150,8 @@ def show_settings(
 ) -> None:
     """Displays current application settings after loading from all sources."""
     try:
-        current_app_settings = AppSettings()
+        current_app_settings = Settings()
+        util_console.print("[bold]Current Application Settings:[/bold]")
         _display_config(current_app_settings, output_format)
     except ValidationError as e:
         logger.error("Settings validation error: {e}", e=e)
