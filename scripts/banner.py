@@ -81,6 +81,7 @@ class PatternType(enum.Enum):
     FLOW = "flow"
     MICRO = "micro"
     AIZAWA = "aizawa"
+    # Dead variants — no draw function implemented; CLI dispatch will skip these
     REACTION = "reaction"  # Note: REACTION is defined but not used
     CLIFFORD = "clifford"
     FLAME = "flame"  # Note: FLAME is defined but not used
@@ -252,9 +253,9 @@ def optimize_with_svgo(svg_path: str) -> None:
     """
     try:
         subprocess.run(["svgo", svg_path], check=True, capture_output=True, text=True)
-        logger.info(f"SVG optimized with SVGO: {svg_path}")
+        logger.info("SVG optimized with SVGO: {svg_path}", svg_path=svg_path)
     except subprocess.CalledProcessError as e:
-        logger.warning(f"SVGO optimization failed with error: {e.stderr}")
+        logger.warning("SVGO optimization failed with error: {stderr}", stderr=e.stderr)
     except FileNotFoundError:
         logger.warning("SVGO command not found. Skipping SVG optimization.")
 
@@ -283,7 +284,7 @@ def parse_rgba_color(rgba: str) -> tuple[str, float]:
                 hex_color = f"#{r:02x}{g:02x}{b:02x}"
                 return hex_color, a
             except ValueError:
-                logger.warning(f"Invalid RGBA string format: {rgba}")
+                logger.warning("Invalid RGBA string format: {rgba}", rgba=rgba)
     return rgba, 1.0
 
 
@@ -299,7 +300,7 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
         A new hex color string with the adjusted hue.
     """
     if not hex_color.startswith("#") or len(hex_color) not in (4, 7):
-        logger.warning(f"Invalid hex color format for hue adjustment: {hex_color}")
+        logger.warning("Invalid hex color format for hue adjustment: {hex_color}", hex_color=hex_color)
         return hex_color
 
     h = hex_color.lstrip("#")
@@ -309,7 +310,7 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
     try:
         r, g, b = (int(h[i : i + 2], 16) for i in (0, 2, 4))
     except ValueError:
-        logger.warning(f"Cannot parse RGB components from hex: {hex_color}")
+        logger.warning("Cannot parse RGB components from hex: {hex_color}", hex_color=hex_color)
         return hex_color
 
     h_val, s_val, v_val = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
@@ -338,7 +339,7 @@ def get_luminance(hex_color: str) -> float:
     try:
         r, g, b = (int(h[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
     except ValueError:
-        logger.warning(f"Cannot parse RGB components from hex: {hex_color}")
+        logger.warning("Cannot parse RGB components from hex: {hex_color}", hex_color=hex_color)
         return 0.5  # Middle luminance as fallback
 
     # Convert to linear RGB
@@ -396,7 +397,7 @@ def create_linear_gradient(
     if opacities is None:
         opacities = [1.0] * len(colors)
     elif len(opacities) != len(colors):
-        logger.warning(f"Mismatch between colors and opacities in gradient {id_name}")
+        logger.warning("Mismatch between colors and opacities in gradient {id_name}", id_name=id_name)
         # Extend opacities or truncate to match colors length
         if len(opacities) < len(colors):
             opacities.extend([1.0] * (len(colors) - len(opacities)))
@@ -1613,7 +1614,7 @@ def add_octocat(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> None:
     """
     octo_svg_path = "./assets/img/octocat.svg"
     if not os.path.isfile(octo_svg_path):
-        logger.warning(f"Octocat SVG not found at {octo_svg_path}, skipping.")
+        logger.warning("Octocat SVG not found at {octo_svg_path}, skipping.", octo_svg_path=octo_svg_path)
         return
 
     with open(octo_svg_path, encoding="utf-8") as f:
@@ -1840,9 +1841,9 @@ def generate_banner(cfg: BannerConfig) -> None:
     # Save the SVG file
     try:
         dwg.save(pretty=False)  # pretty=False for smaller file size
-        logger.info(f"Banner successfully saved to {cfg.output_path}")
+        logger.info("Banner successfully saved to {output_path}", output_path=cfg.output_path)
     except Exception as e:
-        logger.error(f"Error saving SVG file: {e}")
+        logger.error("Error saving SVG file: {e}", e=e)
         return  # Exit if saving failed
 
     # Optimize with SVGO if enabled

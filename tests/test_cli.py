@@ -5,21 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from typer.testing import CliRunner
 
-# Assuming ProjectConfig and Settings can be imported for type hinting
-# and potentially for creating default expected outputs.
-# If they are complex or have many dependencies, we might need to mock them
-# or simplify their usage in tests.
-try:
-    from config import ProjectConfig, Settings
-    from scripts.cli import DEFAULT_CONFIG_PATH, app
-except ImportError:
-    # This allows tests to be found by pytest even if config models are complex
-    # and might fail to import in some test environments initially.
-    # Actual tests using these might need to be skipped or use more mocks.
-    ProjectConfig = None
-    Settings = None
-    app = None  # type: ignore
-    DEFAULT_CONFIG_PATH = Path.home() / ".w4w-config.json"
+from scripts.config import ProjectConfig
+from scripts.cli import DEFAULT_CONFIG_PATH, app
 
 
 # Fixture for CliRunner
@@ -255,7 +242,7 @@ def test_generate_banner_cli_overrides(
 
 
 @pytest.mark.skipif(
-    app is None or Settings is None, reason="CLI app or Settings model failed to import"
+    app is None, reason="CLI app failed to import"
 )
 @patch("scripts.cli.Settings")  # Mock the Settings class
 def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -> None:
@@ -279,7 +266,7 @@ def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -
 
 
 @pytest.mark.skipif(
-    app is None or Settings is None, reason="CLI app or Settings model failed to import"
+    app is None, reason="CLI app failed to import"
 )
 @patch("scripts.cli.Settings")
 @patch("scripts.cli.yaml.dump")  # Mock yaml.dump
@@ -314,7 +301,7 @@ def test_show_settings_yaml(
 
 
 @pytest.mark.skipif(
-    app is None or Settings is None, reason="CLI app or Settings model failed to import"
+    app is None, reason="CLI app failed to import"
 )
 @patch("scripts.cli.Settings")
 @patch("scripts.cli.yaml", None)  # Simulate PyYAML not being installed

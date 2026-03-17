@@ -5,8 +5,11 @@ import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Logging within this module is removed. Functions will raise exceptions.
+from .utils import get_logger
+
 # Lines broken for length where necessary.
+
+logger = get_logger(module=__name__)
 
 
 class Settings(BaseSettings):
@@ -377,9 +380,10 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
             if data is None:  # File is empty or only comments/whitespace
                 if path == DEFAULT_CONFIG_PATH:
                     # Empty default config file, so create and save defaults
-                    print(
-                        f"Default config file '{path}' is empty. "
-                        "Populating with default values."
+                    logger.info(
+                        "Default config file {path!r} is empty. "
+                        "Populating with defaults.",
+                        path=path,
                     )
                     default_cfg = ProjectConfig()
                     save_config(default_cfg, path)
@@ -399,9 +403,10 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
         if path == DEFAULT_CONFIG_PATH:
             # Default config file does not exist, so create and save defaults
             try:
-                print(
-                    f"Default config file '{path}' not found. "
-                    "Creating with default values."
+                logger.info(
+                    "Default config file {path!r} not found. "
+                    "Creating with defaults.",
+                    path=path,
                 )
                 default_cfg = ProjectConfig()
                 save_config(default_cfg, path)
@@ -452,6 +457,7 @@ def save_config(
         raise IOError(f"Failed to save config to {path}: {e}") from e
 
 
+# NOTE: dev/test scaffolding — consider moving to a standalone script
 if __name__ == "__main__":
     print(f"--- Testing ProjectConfig ({DEFAULT_CONFIG_PATH}) ---")
     initial_cfg: Optional[ProjectConfig] = None

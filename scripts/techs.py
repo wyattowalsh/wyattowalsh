@@ -126,7 +126,7 @@ def parse_technology_line(
             )
             return None
         except ValidationError as e:
-            logger.warning(f"Validation error for '{name}': {e}. Skipping.")
+            logger.warning("Validation error for {name!r}: {e}. Skipping.", name=name, e=e)
             return None
     return None
 
@@ -145,7 +145,7 @@ def load_technologies(md_file_path: Path) -> List[Technology]:
         A list of Technology objects.
     """
     if not md_file_path.exists():
-        logger.error(f"Technologies file not found: {md_file_path}")
+        logger.error("Technologies file not found: {md_file_path}", md_file_path=md_file_path)
         return []
 
     technologies = []
@@ -180,10 +180,10 @@ def load_technologies(md_file_path: Path) -> List[Technology]:
                     if tech:
                         technologies.append(tech)
     except FileNotFoundError:
-        logger.error(f"File not found: {md_file_path}")
+        logger.error("File not found: {md_file_path}", md_file_path=md_file_path)
         return []
     except Exception as e:
-        logger.error(f"Error reading or parsing {md_file_path}: {e}", exc_info=True)
+        logger.error("Error reading or parsing {md_file_path}: {e}", md_file_path=md_file_path, e=e, exc_info=True)
         return []
 
     logger.info(
@@ -261,7 +261,7 @@ if __name__ == "__main__":
     # Define the path to your technologies.md file
     # Assumes the script is in a 'scripts' directory, and 'techs.md' is one level up.
     tech_file_path = Path(__file__).parent.parent / "techs.md"
-    logger.info(f"Attempting to load technologies from: {tech_file_path}")
+    logger.info("Attempting to load technologies from: {tech_file_path}", tech_file_path=tech_file_path)
 
     if not tech_file_path.exists():
         logger.error(

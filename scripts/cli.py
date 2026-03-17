@@ -79,7 +79,7 @@ def _display_config(
             )
             _display_config(config_data, OutputFormat.JSON)
         except Exception as e:
-            logger.error(f"Error converting config to YAML: {e}")
+            logger.error("Error converting config to YAML: {e}", e=e)
             _display_config(config_data, OutputFormat.JSON)
 
 
@@ -103,7 +103,7 @@ def config_main(
     ] = OutputFormat.JSON,
 ) -> None:
     effective_path = path or DEFAULT_CONFIG_PATH
-    logger.info(f"Configuration action: {action} for path: {effective_path}")
+    logger.info("Configuration action: {action} for path: {effective_path}", action=action, effective_path=effective_path)
 
     if action == "view":
         try:
@@ -188,7 +188,7 @@ def config_main(
             )
             raise typer.Exit(code=1)
     else:
-        logger.warning(f"Invalid configuration action: {action}")
+        logger.warning("Invalid configuration action: {action}", action=action)
         util_console.print(
             f"[bold red]Invalid action:[/bold red] '{action}'. "
             "Choose from 'view', 'save', 'generate-default'."
@@ -466,7 +466,7 @@ def generate(  # NOSONAR
                     "[yellow]Dark banner generation failed — light banner was saved.[/]"
                 )
         except Exception as e:
-            logger.error(f"Banner generation failed: {e}", exc_info=True)
+            logger.error("Banner generation failed: {e}", e=e, exc_info=True)
             util_console.print(
                 f"[bold red]Error:[/bold red] Banner generation failed: {e}"
             )
@@ -561,7 +561,7 @@ def generate(  # NOSONAR
                 f"{qr_scale_cli or qr_settings_data.get('default_scale', 25)}, "
                 f"error_correction={error_correction}"
             )
-            logger.debug(f"  VCard Details: {cfg_vcard_data}")
+            logger.debug("VCard Details: {cfg_vcard_data}", cfg_vcard_data=cfg_vcard_data)
 
             generated_qr_path = qr_gen.generate_artistic_vcard_qr(
                 vcard_details=cfg_vcard_data,
@@ -590,7 +590,7 @@ def generate(  # NOSONAR
             )
             raise typer.Exit(code=1)
         except Exception as e:
-            logger.error(f"QR generation failed: {e}", exc_info=True)
+            logger.error("QR generation failed: {e}", e=e, exc_info=True)
             util_console.print(
                 f"[bold red]Error:[/bold red] QR generation failed: {e}"
             )
@@ -1024,7 +1024,7 @@ def generate(  # NOSONAR
         try:
             skills_settings = load_skills(skills_path)
         except (FileNotFoundError, ValueError) as e:
-            logger.error(f"Failed to load skills config: {e}")
+            logger.error("Failed to load skills config: {e}", e=e)
             util_console.print(
                 f"[bold red]Error:[/bold red] {e}"
             )
@@ -1146,11 +1146,11 @@ def show_settings(
         current_app_settings = AppSettings()
         _display_config(current_app_settings, output_format)
     except ValidationError as e:
-        logger.error(f"Settings validation error: {e}")
+        logger.error("Settings validation error: {e}", e=e)
         # logger.error(e.errors())
         raise typer.Exit(code=1)
     except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}")
+        logger.error("An unexpected error occurred: {e}", e=e)
         logger.exception("Traceback:")
         raise typer.Exit(code=1)
 

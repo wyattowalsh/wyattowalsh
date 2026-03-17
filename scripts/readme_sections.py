@@ -87,7 +87,7 @@ def _build_remote_get_request(
     context: str,
 ) -> Optional[Request]:
     if not _is_safe_remote_url(url):
-        logger.warning(f"Blocked unsafe URL for {context}: {url}")
+        logger.warning("Blocked unsafe URL for {context}: {url}", context=context, url=url)
         return None
     return Request(url=url, headers=headers, method="GET")
 
@@ -215,13 +215,13 @@ class BlogFeedClient:
             with urlopen(request, timeout=self.timeout) as response:
                 body = response.read()
         except Exception as exc:  # pragma: no cover - network path
-            logger.warning(f"Failed to fetch blog feed {feed_url}: {exc}")
+            logger.warning("Failed to fetch blog feed {feed_url}: {exc}", feed_url=feed_url, exc=exc)
             return []
 
         try:
             root = DefusedET.fromstring(body)
         except DefusedET.ParseError as exc:
-            logger.warning(f"Invalid blog feed XML from {feed_url}: {exc}")
+            logger.warning("Invalid blog feed XML from {feed_url}: {exc}", feed_url=feed_url, exc=exc)
             return []
 
         posts = self._parse_rss_items(root)
@@ -511,7 +511,7 @@ class ReadmeSectionGenerator:
         """Render dynamic sections and inject them into README."""
         readme_path = Path(self.settings.readme_path)
         if not readme_path.exists():
-            logger.warning(f"README not found at {readme_path}, skipping injection")
+            logger.warning("README not found at {readme_path}, skipping injection", readme_path=readme_path)
             return readme_path
 
         content = readme_path.read_text(encoding="utf-8")
@@ -1356,7 +1356,7 @@ class ReadmeSectionGenerator:
             rendered = render_from.render(block)
             self.svg_builder.write_raw(asset_name=asset_name, svg_content=rendered)
         except OSError as exc:
-            logger.warning(f"Failed to write README SVG asset {asset_name}: {exc}")
+            logger.warning("Failed to write README SVG asset {asset_name}: {exc}", asset_name=asset_name, exc=exc)
 
     def _format_timestamp(self, timestamp: Optional[str]) -> Optional[str]:
         if not timestamp:
@@ -1472,10 +1472,10 @@ class ReadmeSectionGenerator:
                     )
                     time.sleep(delay)
                     continue
-                logger.warning(f"Failed to fetch image for {context}: {exc}")
+                logger.warning("Failed to fetch image for {context}: {exc}", context=context, exc=exc)
                 return None
             except Exception as exc:  # pragma: no cover - network path
-                logger.warning(f"Failed to fetch image for {context}: {exc}")
+                logger.warning("Failed to fetch image for {context}: {exc}", context=context, exc=exc)
                 return None
 
         if not image_bytes:

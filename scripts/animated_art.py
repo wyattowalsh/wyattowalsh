@@ -40,7 +40,7 @@ from typing import Optional
 
 import numpy as np
 
-from .art.shared import phyllotaxis_points, flow_field_lines
+from .art.shared import phyllotaxis_points, flow_field_lines, _seed_hash, _hex_slice
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -50,20 +50,6 @@ logger = get_logger(module=__name__)
 # ---------------------------------------------------------------------------
 _WIDTH = 800
 _HEIGHT = 800
-
-# ---------------------------------------------------------------------------
-# Shared seed helpers (mirrors scripts/generative.py)
-# ---------------------------------------------------------------------------
-
-def _seed_hash(seed_str: str) -> str:
-    """SHA-256 hex digest of a seed string."""
-    return hashlib.sha256(seed_str.encode()).hexdigest()
-
-
-def _hex_slice(h: str, start: int, end: int) -> float:
-    """Extract a normalised float [0, 1) from hex digest slice."""
-    return int(h[start:end], 16) / (16 ** (end - start))
-
 
 # ---------------------------------------------------------------------------
 # Clifford attractor math (inlined to avoid coupling with banner rendering)

@@ -194,7 +194,7 @@ class QRCodeGenerator:
                 # Or, raise an error if artistic rendering is critical:
                 raise AttributeError("Artistic QR rendering not available.")
 
-            logger.info(f"Successfully generated QR code: {output_path}")
+            logger.info("Successfully generated QR code: {output_path}", output_path=output_path)
             return output_path
         except FileNotFoundError:  # Should be caught by earlier check
             logger.error(
@@ -202,7 +202,7 @@ class QRCodeGenerator:
             )
             raise
         except ValueError as ve:  # For invalid error_correction/segno issues
-            logger.error(f"Value error during QR generation: {ve}")
+            logger.error("Value error during QR generation: {ve}", ve=ve)
             raise
         except Exception as e:
             logger.error(
@@ -243,9 +243,9 @@ if __name__ == "__main__":
         )
 
     except FileNotFoundError as fnf_error:
-        logger.error(f"Setup or file error: {fnf_error}")
+        logger.error("Setup or file error: {fnf_error}", fnf_error=fnf_error)
     except ValueError as val_error:
-        logger.error(f"Data validation or configuration error: {val_error}")
+        logger.error("Data validation or configuration error: {val_error}", val_error=val_error)
     except Exception as e_main:
         logger.error(
             f"An unexpected error occurred in the main execution block: {e_main}",

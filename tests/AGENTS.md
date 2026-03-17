@@ -58,6 +58,7 @@ Key `addopts` flags decoded:
 | `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
 | `scripts/techs.py` | 315 | `test_techs.py` | ❌ Empty — zero coverage |
 | `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ❌ Empty — zero coverage |
+| `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ⚠️ Smoke only |
 
 **`tests/temp.py` is a stray empty file — delete it, do not add content to it.**
 

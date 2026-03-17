@@ -16,14 +16,15 @@ Visual enhancements:
 from __future__ import annotations
 
 import colorsys
-import logging
 import math
 import random
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-logger = logging.getLogger(__name__)
+from .utils import get_logger
+
+logger = get_logger(module=__name__)
 
 # ---------------------------------------------------------------------------
 # Data classes

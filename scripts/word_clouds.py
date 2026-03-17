@@ -20,6 +20,10 @@ from typing import Literal
 import markdown
 from bs4 import BeautifulSoup
 
+from .utils import get_logger
+
+logger = get_logger(module=__name__)
+
 # ---------------------------------------------------------------------------
 # Settings
 # ---------------------------------------------------------------------------
@@ -217,7 +221,7 @@ def generate_all(
                 height=height,
                 output_dir=output_dir,
             )
-            print(f"  Generated: {out}")
+            logger.info("Generated: {out}", out=out)
             outputs.append(out)
     return outputs
 
@@ -323,7 +327,7 @@ def main() -> None:
         )
         outputs = [out]
 
-    print(f"\nDone. {len(outputs)} file(s) generated.")
+    logger.info("Done. {count} file(s) generated.", count=len(outputs))
 
 
 if __name__ == "__main__":

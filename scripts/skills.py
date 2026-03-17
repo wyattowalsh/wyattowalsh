@@ -40,7 +40,7 @@ class SkillsBadgeGenerator:
         html = self._render_all()
         readme_path = Path(self.settings.readme_path)
         self._inject_readme(html, readme_path)
-        logger.info(f"Skills badges injected into {readme_path}")
+        logger.info("Skills badges injected into {readme_path}", readme_path=readme_path)
         return readme_path
 
     def _build_badge_url(self, skill: SkillEntry) -> str:
@@ -132,7 +132,7 @@ class SkillsBadgeGenerator:
     def _inject_readme(self, html: str, readme_path: Path) -> None:
         """Replace content between SKILLS markers in README."""
         if not readme_path.exists():
-            logger.warning(f"README not found at {readme_path}, skipping injection")
+            logger.warning("README not found at {readme_path}, skipping injection", readme_path=readme_path)
             return
 
         content = readme_path.read_text(encoding="utf-8")

@@ -23,7 +23,8 @@ import cairosvg
 from PIL import Image
 
 from . import ink_garden, topography
-from .shared import PROFILES, compute_maturity, parse_cli_args, seed_hash
+from ._dev_profiles import PROFILES
+from .shared import compute_maturity, parse_cli_args, seed_hash
 from ..utils import get_logger
 
 logger = get_logger(module=__name__)
