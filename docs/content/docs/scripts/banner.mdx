@@ -1,0 +1,69 @@
+---
+title: Banner Generator
+description: Procedural SVG banner with chaos-attractor backgrounds, SVGO optimization, and automatic dark-mode derivation.
+---
+
+## Module
+
+`scripts/banner.py` — ~1878 lines. Heavy dependency on `svgwrite` and `numpy`.
+
+`scripts/banner_patterns.py` — `PatternType` enum extracted for zero-dep import.
+
+## Entry point
+
+```python
+from scripts.banner import generate_banner, BannerConfig
+
+cfg = BannerConfig(
+    title="Wyatt Walsh",
+    subtitle="Software Engineer & AI Enthusiast",
+    output_path=Path(".github/assets/img/banner.svg"),
+    width=1200,
+    height=630,
+    optimize_with_svgo=True,
+    dark_mode=False,
+)
+generate_banner(cfg=cfg)
+```
+
+`generate_banner` is called **twice** by the CLI: once for `dark_mode=False` (light), once for `dark_mode=True` (dark). The dark output path is derived automatically by inserting `-dark` before the extension.
+
+## BannerConfig fields
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `title` | `str` | `"Wyatt Walsh"` | Main heading |
+| `subtitle` | `str` | `"Software Engineer & AI Enthusiast"` | |
+| `output_path` | `Path` | `.github/assets/img/banner.svg` | |
+| `width` | `int` | `1200` | Canvas width (px) |
+| `height` | `int` | `630` | Canvas height (px) |
+| `optimize_with_svgo` | `bool` | `True` | Run SVGO after writing |
+| `dark_mode` | `bool` | `False` | Toggle dark palette |
+| `pattern_density` | `float` | `2.0` | Background pattern density |
+| `layer_count` | `int` | `4` | Attractor layer count |
+| `make_responsive` | `bool` | `True` | Add CSS viewBox responsiveness |
+
+## PatternType
+
+Defined in `scripts/banner_patterns.py`. Live variants:
+
+| Value | Description |
+|---|---|
+| `LORENZ` | Lorenz strange attractor |
+| `NEURAL` | Neural-network node graph |
+| `FLOW` | Perlin flow field |
+| `MICRO` | Micro-geometry lattice |
+| `AIZAWA` | Aizawa attractor |
+
+Dead variants (draw functions not yet implemented): `REACTION`, `CLIFFORD`, `FLAME`, `PDJ`, `IKEDA`.
+
+## SVGO optimization
+
+If `optimize_with_svgo=True` and `svgo` is on `PATH`, the generated SVG is piped through SVGO to reduce file size. Falls back silently if SVGO is unavailable.
+
+## Output files
+
+| File | Description |
+|---|---|
+| `banner.svg` | Light-mode banner |
+| `banner-dark.svg` | Dark-mode banner (auto-derived path) |

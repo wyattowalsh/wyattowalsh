@@ -1,0 +1,43 @@
+---
+title: CLI Overview
+description: The readme CLI is the single entry point for every generation command.
+---
+
+## Invocation
+
+```bash
+uv run python -m scripts.cli [COMMAND] [OPTIONS]
+```
+
+Or if installed as a script entry point:
+
+```bash
+readme [COMMAND] [OPTIONS]
+```
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| [`config`](/docs/cli/config) | View, save, or generate a default `config.yaml` |
+| [`generate`](/docs/cli/generate) | Generate any asset type (banner, QR, word cloud, art…) |
+| [`show-settings`](/docs/cli/show-settings) | Print current app settings from environment |
+
+## Global flags
+
+```
+--help     Show help message and exit.
+--version  Show the version.
+```
+
+## Entity types (for `generate`)
+
+| Entity | Description |
+|---|---|
+| `banner` | SVG banner (light + dark variants) |
+| `qr_code` | QR code PNG with embedded background |
+| `word_cloud` | OKLCH word cloud SVG |
+| `generative` | Lorenz / neural / flow-field generative art SVGs |
+| `animated` | CSS-animated SVGs seeded from commit history |
+| `skills` | shields.io skills badges section |
+| `readme` | Assemble and update README sections |

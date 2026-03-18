@@ -1,0 +1,63 @@
+---
+title: Fetch History
+description: Paginates the full GitHub commit history into a time-series JSON file for animated art generation.
+---
+
+## Module
+
+`scripts/fetch_history.py`
+
+Shared HTTP helpers live in `scripts/_github_http.py`.
+
+## What it fetches
+
+A paginated list of commits across the default branch, returning each commit's:
+
+- `sha` — commit hash
+- `date` — ISO 8601 timestamp
+- `message` — first line of commit message
+- `additions` / `deletions` — line change counts
+
+Pagination uses a local `_get(url, token)` that returns `(data, next_url)` tuples and follows GitHub's `Link: <...>; rel="next"` headers until exhausted.
+
+## CLI
+
+```bash
+uv run python -m scripts.fetch_history \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/history.json
+```
+
+## Authentication
+
+Same as `fetch_metrics` — `GITHUB_TOKEN` env var:
+
+```bash
+export GITHUB_TOKEN=ghp_...
+```
+
+## Output shape
+
+```json
+[
+  {
+    "sha": "abc123",
+    "date": "2026-03-17T12:00:00Z",
+    "message": "feat: add ink garden",
+    "additions": 200,
+    "deletions": 10
+  }
+]
+```
+
+## Usage in animated art
+
+The history JSON is passed directly to `animated_art.py`:
+
+```bash
+uv run python -m scripts.cli generate animated \
+  --history-path /tmp/history.json
+```
+
+The commit timestamps are used to compute daily activity density, which seeds the CSS animation parameters.

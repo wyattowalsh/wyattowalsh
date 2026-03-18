@@ -1,0 +1,71 @@
+---
+title: Installation
+description: Clone the repo, install dependencies with uv, and run your first generation.
+---
+
+## Requirements
+
+| Requirement | Version |
+|---|---|
+| Python | 3.13+ |
+| [uv](https://docs.astral.sh/uv/) | latest |
+| GitHub Token | PAT with `read:user`, `public_repo` |
+
+## Clone
+
+```bash
+git clone https://github.com/wyattowalsh/wyattowalsh.git
+cd wyattowalsh
+```
+
+## Install
+
+The project uses **optional dependency groups** — install only what you need:
+
+```bash
+# Core only (config, CLI skeleton)
+uv sync
+
+# All extras (everything needed for local generation)
+uv sync --all-extras
+
+# Targeted extras
+uv pip install .[banner]       # SVG banner (svgwrite, numpy)
+uv pip install .[qr]           # QR code (qrcode, pillow)
+uv pip install .[word-clouds]  # Word clouds (wordcloud, matplotlib)
+uv pip install .[script-tools] # Starred-list fetcher
+```
+
+## First run
+
+Generate a default config, then run the full pipeline:
+
+```bash
+# 1. Create config.yaml with all defaults
+uv run python -m scripts.cli config generate-default --path config.yaml
+
+# 2. Preview the config
+uv run python -m scripts.cli config view --path config.yaml
+
+# 3. Generate the SVG banner
+uv run python -m scripts.cli generate banner --config-path config.yaml
+
+# 4. Generate a QR code
+uv run python -m scripts.cli generate qr_code --config-path config.yaml
+
+# 5. Generate word clouds (requires .github/assets/topics.md)
+uv run python -m scripts.cli generate word_cloud \
+  --config-path config.yaml \
+  --techs-path .github/assets/topics.md \
+  --output-path .github/assets/img/wordcloud.svg
+```
+
+## Environment variables
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `GITHUB_TOKEN` | For metrics/art | GitHub API authentication |
+| `LOG_LEVEL` | No | Loguru log level (default `INFO`) |
+| `DEBUG_MODE` | No | Enable verbose debug logging |
+
+Set them in your shell or a `.env` file (python-dotenv is not included — export manually or use `direnv`).

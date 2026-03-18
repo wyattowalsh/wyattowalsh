@@ -1,0 +1,67 @@
+---
+title: README Sections
+description: Assembles all dynamic README sections using marker blocks and SVG card generators.
+---
+
+## Module
+
+`scripts/readme_sections.py` — ~1548 lines.
+
+`ReadmeSectionGenerator` is the main class. It reads `config.yaml`, fetches data, and writes sections back into `README.md` between HTML comment markers.
+
+## Marker block system
+
+Sections are injected between paired HTML comments:
+
+```html
+<!-- section-name:start -->
+...generated content...
+<!-- section-name:end -->
+```
+
+The generator reads the existing README, replaces content between markers, and writes it back. Sections not present in the README are ignored.
+
+## SVG card types
+
+`ReadmeSvgSettings` controls the SVG card style used for featured repos, connect links, and blog cards:
+
+```yaml
+readme_settings:
+  enabled: true
+  variant: gh-card         # gh-card | legacy
+  transparent_canvas: false
+  show_title: true
+```
+
+| Variant | Description |
+|---|---|
+| `gh-card` | GitHub-style card via gh-readme-stats |
+| `legacy` | Custom SVG card renderer |
+
+## Social links
+
+`ReadmeSocialLink` models define the social badges in the header:
+
+```yaml
+social_links:
+  - label: "w4w.dev"
+    url: https://w4w.dev
+    color: "6a9fb5"
+    logo: globe
+```
+
+## CLI
+
+```bash
+uv run python -m scripts.cli generate readme --config-path config.yaml
+```
+
+## Featured repos
+
+`ReadmeFeaturedRepo` entries define which repos appear in the featured section:
+
+```yaml
+featured_repos:
+  - full_name: wyattowalsh/wyattowalsh
+  - full_name: wyattowalsh/listentropy
+```

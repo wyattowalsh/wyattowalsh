@@ -1,0 +1,52 @@
+---
+title: config command
+description: Manage the project configuration file (view, save, generate-default).
+---
+
+## Synopsis
+
+```bash
+uv run python -m scripts.cli config [ACTION] [OPTIONS]
+```
+
+## Actions
+
+### `view`
+
+Print the current config as JSON or YAML.
+
+```bash
+uv run python -m scripts.cli config view --path config.yaml
+uv run python -m scripts.cli config view --path config.yaml --output-format yaml
+```
+
+| Option | Default | Notes |
+|---|---|---|
+| `--path` | `~/.w4w-config.yaml` | Path to config file |
+| `--output-format` | `json` | `json` or `yaml` |
+
+Exits with a human-readable error if the file does not exist.
+
+### `save`
+
+Load an existing config, validate it, and write it back. If the file doesn't exist, creates a new default.
+
+```bash
+uv run python -m scripts.cli config save --path config.yaml
+```
+
+Useful after manually editing `config.yaml` — catches validation errors before the next CI run.
+
+### `generate-default`
+
+Write a fresh `ProjectConfig()` with all Pydantic defaults to disk. Prompts before overwriting an existing file.
+
+```bash
+uv run python -m scripts.cli config generate-default --path config.yaml
+```
+
+## Notes
+
+- Config files are always written as **YAML** (via `PyYAML`).
+- The config is serialized with `mode="json"` to produce clean, safe-loadable YAML (avoids Python-object tags).
+- `load_config()` validates the file on load — a malformed config fails fast.

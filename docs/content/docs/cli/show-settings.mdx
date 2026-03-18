@@ -1,0 +1,45 @@
+---
+title: show-settings command
+description: Print current application settings read from the environment.
+---
+
+## Synopsis
+
+```bash
+uv run python -m scripts.cli show-settings [--output-format FORMAT]
+```
+
+## Options
+
+| Option | Default | Notes |
+|---|---|---|
+| `--output-format` | `json` | `json` or `yaml` |
+
+## Examples
+
+```bash
+# JSON output (default)
+uv run python -m scripts.cli show-settings
+
+# YAML output
+uv run python -m scripts.cli show-settings --output-format yaml
+```
+
+## What it prints
+
+`show-settings` instantiates `Settings` (a `pydantic-settings` `BaseSettings` model) and prints all fields. Settings are read from environment variables — no config file involved.
+
+```json
+{
+  "app_name": "ReadmeCLI",
+  "log_level": "INFO",
+  "debug_mode": false,
+  "log_text_dir": "logs/text",
+  "log_json_dir": "logs/json",
+  "log_rotation": "10 MB",
+  "log_retention": "10 days",
+  "log_compression": "zip"
+}
+```
+
+If PyYAML is not installed, YAML output falls back to JSON with a warning.

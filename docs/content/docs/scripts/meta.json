@@ -1,0 +1,13 @@
+{
+  "title": "Scripts",
+  "pages": [
+    "banner",
+    "qr-code",
+    "word-clouds",
+    "technologies",
+    "skills",
+    "generative-art",
+    "animated-art",
+    "readme-sections"
+  ]
+}

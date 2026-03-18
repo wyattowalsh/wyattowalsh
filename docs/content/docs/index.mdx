@@ -1,0 +1,34 @@
+---
+title: Overview
+description: Developer documentation for the wyattowalsh GitHub profile README generator.
+---
+
+# wyattowalsh / wyattowalsh
+
+This repo auto-generates a fully dynamic GitHub profile `README.md` — SVG banners, generative art, word clouds, QR codes, GitHub metrics, skills badges, and more — via a Python CLI that runs daily on GitHub Actions.
+
+## What lives here
+
+| Layer | What it does |
+|---|---|
+| **CLI** (`scripts/cli.py`) | Typer-based entry point for every generation command |
+| **Config** (`scripts/config.py`) | Pydantic models that drive all settings via `config.yaml` |
+| **Banner** (`scripts/banner.py`) | Procedural SVG banner with chaos-attractor backgrounds |
+| **QR Code** (`scripts/qr.py`) | Styled QR codes with embedded SVG backgrounds |
+| **Word Clouds** (`scripts/word_clouds.py`) | OKLCH-palettized word clouds from starred-repo data |
+| **Technologies** (`scripts/techs.py`) | Parses `techs.md` into shields.io badge rows |
+| **Skills** (`scripts/skills.py`) | Renders `skills.yaml` into shields.io badge sections |
+| **Generative Art** (`scripts/generative.py`) | Lorenz/neural/flow-field SVG art seeded from GitHub metrics |
+| **Animated Art** (`scripts/animated_art.py`) | CSS-animated SVGs seeded from commit history |
+| **Ink Garden** (`scripts/art/ink_garden.py`) | Procedural garden that grows with your activity |
+| **Metrics** (`scripts/fetch_metrics.py`) | GitHub GraphQL API → structured metrics JSON |
+| **History** (`scripts/fetch_history.py`) | Paginated commit history → time-series JSON |
+| **README Sections** (`scripts/readme_sections.py`) | Assembles final README from all generated fragments |
+
+## Quick navigation
+
+- [Getting Started](/docs/getting-started) — installation, first run
+- [CLI Reference](/docs/cli) — all commands and flags
+- [Scripts](/docs/scripts/banner) — per-module deep dives
+- [Workflows](/docs/workflows) — the GitHub Actions pipeline
+- [Development](/docs/development/testing) — testing, architecture

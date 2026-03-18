@@ -1,0 +1,54 @@
+---
+title: Animated Art
+description: CSS-animated SVGs seeded from paginated commit history.
+---
+
+## Modules
+
+- `scripts/animated_art.py` — top-level orchestrator
+- `scripts/art/animate.py` — animation primitives and CSS keyframe generation
+- `scripts/art/shared.py` — shared seed utilities
+
+## How it works
+
+1. `fetch_history` paginates the GitHub commit history → `history.json` (time-series)
+2. The commit cadence is used as the entropy source for `seed_hash()`
+3. CSS keyframe animations are generated inline — no JavaScript required
+4. Light and dark variants are written separately
+
+## CLI
+
+```bash
+# Fetch history first
+uv run python -m scripts.fetch_history \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/history.json
+
+# Generate animated SVGs
+uv run python -m scripts.cli generate animated \
+  --history-path /tmp/history.json
+```
+
+## Output files
+
+| File | Description |
+|---|---|
+| `.github/assets/img/animated-activity.svg` | Animated activity art (light) |
+| `.github/assets/img/animated-activity-dark.svg` | Animated activity art (dark) |
+| `.github/assets/img/animated-community.svg` | Animated community art (light) |
+| `.github/assets/img/animated-community-dark.svg` | Animated community art (dark) |
+
+## Animation approach
+
+All animations use CSS `@keyframes` with `animation` properties embedded directly in the SVG `<style>` block. This ensures the animation runs in any SVG-capable renderer (GitHub README, browser img tag) without a JavaScript runtime.
+
+## Dev profiles
+
+`scripts/art/_dev_profiles.py` contains a `PROFILES` dict of mock metrics used for local testing without a live GitHub token. Import it directly:
+
+```python
+from scripts.art._dev_profiles import PROFILES
+
+mock_metrics = PROFILES["high_activity"]
+```

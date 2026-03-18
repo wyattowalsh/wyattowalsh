@@ -1,0 +1,82 @@
+---
+title: Configuration
+description: ProjectConfig drives every generator. All settings live in config.yaml.
+---
+
+## Overview
+
+All generators are driven by a single `config.yaml` file loaded via `load_config()` from `scripts/config.py`. The root type is `ProjectConfig` — a Pydantic v2 model that validates every field at load time.
+
+```bash
+# Generate defaults
+uv run python -m scripts.cli config generate-default --path config.yaml
+
+# View current config as YAML
+uv run python -m scripts.cli config view --path config.yaml --output-format yaml
+
+# Re-save (validate + round-trip)
+uv run python -m scripts.cli config save --path config.yaml
+```
+
+## ProjectConfig
+
+```yaml
+banner_settings:      # BannerSettings
+qr_code_settings:     # QRCodeSettings
+v_card_data:          # VCardDataModel
+word_cloud_settings:  # WordCloudSettingsModel
+skills_settings:      # SkillsSettings
+readme_settings:      # ReadmeSvgSettings
+```
+
+## BannerSettings
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `title` | `str` | `"Wyatt Walsh"` | Main heading in the banner |
+| `subtitle` | `str` | `"Software Engineer & AI Enthusiast"` | Subheading |
+| `output_path` | `str` | `.github/assets/img/banner.svg` | Where the light-mode SVG is written |
+| `width` | `int` | `1200` | Canvas width in pixels |
+| `height` | `int` | `630` | Canvas height in pixels |
+| `optimize_with_svgo` | `bool` | `True` | Run SVGO optimizer after generation |
+
+## QRCodeSettings
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `output_filename` | `str` | `"qr.png"` | Output filename |
+| `output_dir` | `str` | `.github/assets/img` | Output directory |
+| `default_background_path` | `str\|null` | `".github/assets/img/icon.svg"` | SVG embedded behind QR |
+| `default_scale` | `int` | `25` | Module size in pixels |
+| `error_correction` | `str` | `"H"` | L / M / Q / H |
+
+## WordCloudSettingsModel
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `output_dir` | `str` | `.github/assets/img` | Output directory |
+| `output_filename` | `str` | `"word_cloud.png"` | Default filename |
+| `prompt` | `str\|null` | `null` | LLM prompt for curating keywords |
+| `stopwords` | `list[str]\|null` | `null` | Additional stopwords |
+
+## VCardDataModel
+
+Contact card data embedded in the QR code. Fields map directly to vCard 3.0 properties:
+
+| Field | Default |
+|---|---|
+| `displayname` | `"Wyatt Walsh"` |
+| `email_internet` | `"wyattowalsh@gmail.com"` |
+| `url_work` | list of `TypedUrl` objects |
+| `org`, `title`, `fn`, `tel_work_voice` | Personal details |
+
+## AppSettings (env-driven)
+
+`Settings` in `scripts/config.py` is a `pydantic-settings` `BaseSettings` — values are read from environment variables:
+
+| Env Var | Default | Purpose |
+|---|---|---|
+| `LOG_LEVEL` | `"INFO"` | Loguru sink level |
+| `DEBUG_MODE` | `False` | Extra verbose logging |
+| `LOG_ROTATION` | `"10 MB"` | Log file rotation policy |
+| `LOG_RETENTION` | `"10 days"` | Log retention period |

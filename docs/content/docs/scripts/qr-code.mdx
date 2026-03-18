@@ -1,0 +1,66 @@
+---
+title: QR Code Generator
+description: Generates a styled QR code PNG with an embedded SVG background, vCard data, and configurable error correction.
+---
+
+## Module
+
+`scripts/qr.py` — uses `qrcode`, `Pillow`, and `cairosvg` for SVG rasterization.
+
+## What it generates
+
+A PNG file containing:
+1. A QR code encoding your **vCard** contact data (`VCardDataModel` from config)
+2. An optional **SVG background** (typically your profile icon) composited behind the QR modules
+3. Configurable **error correction level** (H = 30% recovery)
+
+## Configuration
+
+Set in `config.yaml` under `qr_code_settings`:
+
+```yaml
+qr_code_settings:
+  output_filename: qr.png
+  output_dir: .github/assets/img
+  default_background_path: .github/assets/img/icon.svg
+  default_scale: 25
+  error_correction: H   # L | M | Q | H
+```
+
+## CLI
+
+```bash
+uv run python -m scripts.cli generate qr_code \
+  --config-path config.yaml \
+  --output-path .github/assets/img/qr.png \
+  --qr-scale 25 \
+  --qr-background-path .github/assets/img/icon.svg
+```
+
+## vCard encoding
+
+The QR encodes a vCard 3.0 string built from `VCardDataModel`:
+
+```
+BEGIN:VCARD
+VERSION:3.0
+FN:Wyatt Walsh
+N:Walsh;Wyatt;;;
+ORG:Personal Portfolio Project
+TITLE:Developer & Tech Enthusiast
+TEL;TYPE=WORK,VOICE:2096022545
+EMAIL;TYPE=INTERNET:wyattowalsh@gmail.com
+URL;TYPE=WORK:https://w4w.dev
+END:VCARD
+```
+
+## Error correction levels
+
+| Level | Recovery capacity | File size |
+|---|---|---|
+| `L` | ~7% | Smallest |
+| `M` | ~15% | Small |
+| `Q` | ~25% | Medium |
+| `H` | ~30% | Largest (default) |
+
+Use `H` when embedding a background image — the image covers some modules.

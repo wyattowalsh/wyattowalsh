@@ -1,0 +1,95 @@
+---
+title: GitHub Actions Workflows
+description: The Unified Profile Updater workflow runs every generator job on a daily schedule.
+---
+
+## Workflow file
+
+`.github/workflows/profile-updater.yml`
+
+**Triggers:** `push` to `main`/`master`/`dev`, daily at 01:00 UTC, `workflow_dispatch`.
+
+## Job graph
+
+```
+update-starred-lists
+        │
+        ▼
+generate-assets ──────────────────────────────┐
+        │                                     │
+update-readme-wakatime                        │
+        │                                     │
+update-readme-blog                            │
+        │                                     │
+        ▼                                     │
+update-skills (needs all three above)         │
+                                              │
+generate-profile-metrics (independent)        │
+generate-event-art (independent) ─────────────┘
+```
+
+## Job details
+
+### `update-starred-lists`
+
+Uses the `starred` CLI to rebuild `.github/assets/topics.md` and `.github/assets/languages.md` from your GitHub stars.
+
+```bash
+starred --username wyattowalsh --sort --filename .github/assets/topics.md
+starred --username wyattowalsh --sort --topic --topic_limit 500 \
+  --filename .github/assets/topics.md
+```
+
+Commits both files with `chore(data): update awesome-stars lists`.
+
+### `generate-assets`
+
+Depends on `update-starred-lists`. Generates:
+- QR code — `generate qr_code`
+- Word cloud by topic — `generate word_cloud --techs-path topics.md`
+- Word cloud by language — `generate word_cloud --techs-path languages.md`
+- SVG banner — `generate banner`
+- Skills badges — `generate skills`
+
+Commits to `.github/assets/img/`.
+
+### `update-readme-wakatime`
+
+Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stats) to inject WakaTime coding stats. Requires `WAKATIME_API_KEY` secret.
+
+### `update-readme-blog`
+
+Uses [`gautamkrishnar/blog-post-workflow`](https://github.com/gautamkrishnar/blog-post-workflow) to inject latest posts from `https://w4w.dev/feed.xml`.
+
+### `generate-profile-metrics`
+
+Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) to generate:
+- `metrics.svg` — personal metrics (lines, isocalendar, languages, habits, notable, topics)
+- `metrics.additional.svg` — music (Spotify), activity, stargazers, featured repos
+
+Requires `METRICS_TOKEN` secret (GitHub PAT with `read:user`, `public_repo`). Falls back gracefully to a placeholder SVG if the token is missing or auth fails.
+
+### `generate-event-art`
+
+Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then generates generative and animated SVGs.
+
+Requires `GITHUB_TOKEN` (automatically provided by Actions).
+
+### `update-skills`
+
+Depends on `generate-assets`, `update-readme-wakatime`, `update-readme-blog`. Runs:
+- `generate readme` — assembles all dynamic README sections
+- `generate skills` — re-renders skills badges
+
+Commits `README.md` + `.github/assets/img/readme/*.svg`.
+
+## Required secrets
+
+| Secret | Used by | Notes |
+|---|---|---|
+| `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
+| `METRICS_TOKEN` | `generate-profile-metrics` | PAT with `read:user`, `public_repo` |
+| `WAKATIME_API_KEY` | `update-readme-wakatime` | WakaTime API key |
+| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` | Spotify OAuth |
+| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` | Spotify OAuth |
+| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` | Spotify OAuth |

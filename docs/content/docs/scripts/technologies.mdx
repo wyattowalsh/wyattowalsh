@@ -1,0 +1,54 @@
+---
+title: Technologies
+description: Parses techs.md into shields.io badge rows for the README technologies section.
+---
+
+## Module
+
+`scripts/techs.py`
+
+## Input format
+
+The parser reads `techs.md` — a markdown file with technology entries, one per line, in a structured format:
+
+```markdown
+# Category Name
+
+## Subcategory
+
+- [TechName](https://shields.io/badge/...) — optional description
+```
+
+Each line with a badge URL is parsed into a `Technology` Pydantic model.
+
+## Technology model
+
+```python
+class Technology(BaseModel):
+    name: str
+    badge_url: str
+    link: Optional[str]
+    level: Optional[str]       # beginner | intermediate | advanced | expert
+    description: Optional[str]
+```
+
+## CLI
+
+The technologies section is generated as part of `generate readme`:
+
+```bash
+uv run python -m scripts.cli generate readme --config-path config.yaml
+```
+
+Or use `load_technologies()` directly:
+
+```python
+from scripts.techs import load_technologies
+
+techs = load_technologies(Path("techs.md"))
+```
+
+## Validation
+
+- `level` must be one of `beginner`, `intermediate`, `advanced`, `expert` (or null)
+- Pydantic validates all entries at load time — malformed lines are logged and skipped

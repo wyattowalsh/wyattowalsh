@@ -1,0 +1,73 @@
+---
+title: Fetch Metrics
+description: Fetches live GitHub GraphQL metrics — stars, commits, followers, repos — into a structured JSON file.
+---
+
+## Module
+
+`scripts/fetch_metrics.py`
+
+Shared HTTP helpers live in `scripts/_github_http.py` (`_headers`, `_graphql`).
+
+## What it fetches
+
+| Metric | Source |
+|---|---|
+| `total_commits` | GraphQL `contributionCalendar` |
+| `stars` | Sum across all repos |
+| `contributions_last_year` | GitHub contributions API |
+| `followers` / `following` | User profile |
+| `forks` | Sum across all repos |
+| `network_count` | Repo network count |
+| `open_issues_count` | All open issues |
+| `orgs_count` | Organizations membership |
+| `watchers` | Sum across all repos |
+| `repos` | Per-repo: name, stars, age_months, language |
+| `contributions_monthly` | Monthly contribution breakdown |
+
+## CLI
+
+```bash
+uv run python -m scripts.fetch_metrics \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/metrics.json
+```
+
+## Authentication
+
+Requires `GITHUB_TOKEN` in the environment (PAT with `read:user`, `public_repo`):
+
+```bash
+export GITHUB_TOKEN=ghp_...
+uv run python -m scripts.fetch_metrics --owner wyattowalsh --repo wyattowalsh --output metrics.json
+```
+
+Without a token, public API endpoints are used where possible (lower rate limits apply).
+
+## Output shape
+
+```json
+{
+  "total_commits": 5000,
+  "stars": 150,
+  "contributions_last_year": 800,
+  "followers": 200,
+  "forks": 40,
+  "network_count": 100,
+  "open_issues_count": 7,
+  "orgs_count": 2,
+  "watchers": 20,
+  "repos": [
+    { "name": "wyattowalsh", "stars": 50, "age_months": 36, "language": "Python" }
+  ],
+  "contributions_monthly": {
+    "2026-01": 120,
+    "2026-02": 95
+  }
+}
+```
+
+## Caching
+
+Results are cached in `logs/json/YYYY-MM-DD.json` (excluded from git via `.gitignore`). On the same day, the cached file is returned without hitting the API.

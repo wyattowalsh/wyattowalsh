@@ -1,0 +1,67 @@
+---
+title: Generative Art
+description: Lorenz / neural / flow-field SVG art seeded deterministically from GitHub metrics.
+---
+
+## Modules
+
+- `scripts/generative.py` — top-level orchestrator
+- `scripts/art/shared.py` — `seed_hash()`, `_hex_slice()`, `Noise2D`
+- `scripts/banner_patterns.py` — `PatternType` enum (shared with banner)
+
+## How it works
+
+1. `fetch_metrics` fetches live GitHub data → `metrics.json`
+2. `seed_hash(metrics)` produces a stable SHA-256 hex string from the metrics dict
+3. The seed initializes numpy's `default_rng` — output is fully deterministic for a given metrics snapshot
+4. Four SVG files are generated: activity (light/dark) + community (light/dark)
+
+## Entry points
+
+```python
+from scripts.generative import generate_community_art, generate_activity_art
+
+generate_activity_art(metrics=metrics_dict)
+generate_community_art(metrics=metrics_dict)
+```
+
+## CLI
+
+```bash
+# Fetch metrics first
+uv run python -m scripts.fetch_metrics \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/metrics.json
+
+# Generate art from metrics
+uv run python -m scripts.cli generate generative \
+  --metrics-path /tmp/metrics.json
+```
+
+## Output files
+
+| File | Description |
+|---|---|
+| `.github/assets/img/generative-activity.svg` | Activity-seeded attractor (light) |
+| `.github/assets/img/generative-activity-dark.svg` | Activity-seeded attractor (dark) |
+| `.github/assets/img/generative-community.svg` | Community-seeded attractor (light) |
+| `.github/assets/img/generative-community-dark.svg` | Community-seeded attractor (dark) |
+
+## PatternType selection
+
+The active pattern is chosen based on metrics hash characteristics — callers don't select it manually. All five live `PatternType` values (`LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`) may appear.
+
+## Ink Garden
+
+`scripts/art/ink_garden.py` is a related generative module that produces a procedural SVG garden whose plant density and species composition reflect your repository ecosystem:
+
+```python
+from scripts.art.ink_garden import generate, seed_hash
+
+svg_string = generate(metrics, seed=seed_hash(metrics), maturity=1.0)
+```
+
+- `maturity` ∈ `[0.0, 1.0]` — controls how grown the garden appears
+- Output is a self-contained SVG string (no file I/O)
+- Fully deterministic with an explicit seed

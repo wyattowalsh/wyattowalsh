@@ -1,0 +1,79 @@
+---
+title: Skills Badges
+description: Renders skills.yaml into shields.io badge sections injected into the README.
+---
+
+## Module
+
+`scripts/skills.py` — `SkillsBadgeGenerator`
+
+## Input: skills.yaml
+
+```yaml
+style: flat            # flat | flat-square | plastic | for-the-badge | social
+logo_color: white
+readme_path: README.md
+section_title: Skills
+categories:
+  - name: Languages
+    skills:
+      - name: Python
+        slug: python
+        color: "3776AB"
+        logo_color: white
+        url: https://python.org
+      - name: TypeScript
+        slug: typescript
+        color: "007ACC"
+```
+
+## SkillEntry fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | Display label on badge |
+| `slug` | No | shields.io slug (inferred from name if omitted) |
+| `logo_path` | No | Local SVG path for custom logo |
+| `color` | Yes | Hex color without `#` |
+| `logo_color` | No | Badge logo color |
+| `url` | No | Click-through URL |
+
+## SkillCategory / SkillSubcategory
+
+Categories can nest one level deep via `subcategories`:
+
+```yaml
+categories:
+  - name: Web
+    subcategories:
+      - name: Frontend
+        skills: [...]
+      - name: Backend
+        skills: [...]
+```
+
+## CLI
+
+```bash
+uv run python -m scripts.cli generate skills --skills-path skills.yaml
+```
+
+Generates shields.io badge HTML rows and injects them into `README.md` between managed marker blocks:
+
+```html
+<!-- skills:start -->
+...badges...
+<!-- skills:end -->
+```
+
+## SkillsSettings
+
+Configured under `skills_settings` in `config.yaml` or directly in `skills.yaml`:
+
+| Field | Default | Notes |
+|---|---|---|
+| `style` | `"flat"` | Badge style |
+| `logo_color` | `"white"` | Default logo color |
+| `readme_path` | `"README.md"` | Target README |
+| `section_title` | `"Skills"` | H2 heading |
+| `collapsible` | `False` | Wrap in `<details>` |

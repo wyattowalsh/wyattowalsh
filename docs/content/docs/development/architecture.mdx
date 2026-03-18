@@ -1,0 +1,102 @@
+---
+title: Architecture
+description: Codebase layout, module dependencies, and design decisions.
+---
+
+## Directory layout
+
+```
+wyattowalsh/
+├── scripts/
+│   ├── cli.py                  # Typer CLI — all commands
+│   ├── config.py               # Pydantic config models + load/save
+│   ├── utils.py                # Logger (Loguru), Rich console
+│   ├── banner.py               # SVG banner (~1878 lines)
+│   ├── banner_patterns.py      # PatternType enum (zero-dep)
+│   ├── qr.py                   # QR code generator
+│   ├── word_clouds.py          # Word cloud orchestrator
+│   ├── word_cloud_renderers.py # Rendering backends
+│   ├── techs.py                # Technology parser
+│   ├── readme_sections.py      # README assembler (~1548 lines)
+│   ├── skills.py               # Skills badge generator
+│   ├── generative.py           # Generative art entry
+│   ├── animated_art.py         # Animated art entry
+│   ├── fetch_metrics.py        # GitHub metrics fetcher
+│   ├── fetch_history.py        # GitHub history fetcher
+│   ├── _github_http.py         # Shared GitHub HTTP helpers
+│   └── art/
+│       ├── shared.py           # seed_hash, _hex_slice, Noise2D
+│       ├── _dev_profiles.py    # Mock profiles for local testing
+│       ├── ink_garden.py       # Ink garden SVG (~2027 lines)
+│       └── animate.py          # Animation primitives
+├── tests/
+│   └── fixtures/
+│       └── ink_garden/         # Golden SVG files
+├── .github/
+│   ├── assets/
+│   │   ├── img/                # Generated SVGs/PNGs
+│   │   ├── topics.md           # Starred-repo topics (auto-updated)
+│   │   └── languages.md        # Starred-repo languages (auto-updated)
+│   └── workflows/
+│       └── profile-updater.yml # Main CI workflow
+├── docs/                       # This Fumadocs site
+├── config.yaml                 # ProjectConfig (edit this)
+└── skills.yaml                 # Skills badge definitions
+```
+
+## Module dependency graph
+
+```
+cli.py
+  ├── config.py (always, for type annotations)
+  ├── banner.py (lazy — imported inside generate())
+  ├── qr.py (lazy)
+  ├── word_clouds.py (lazy)
+  ├── techs.py (lazy)
+  ├── readme_sections.py (lazy)
+  ├── skills.py (lazy)
+  ├── generative.py (lazy)
+  └── animated_art.py (lazy)
+
+banner.py
+  ├── banner_patterns.py (PatternType)
+  ├── svgwrite
+  └── numpy
+
+ink_garden.py
+  ├── art/shared.py (seed_hash, Noise2D)
+  └── numpy
+
+fetch_metrics.py + fetch_history.py
+  └── _github_http.py (_headers, _graphql)
+```
+
+All heavy domain modules (banner, qr, word_clouds, art) are **lazily imported** inside CLI command function bodies. This keeps `import scripts.cli` fast even when optional extras aren't installed.
+
+## Configuration flow
+
+```
+config.yaml → load_config() → ProjectConfig (Pydantic v2)
+                                    │
+                          ┌─────────┼─────────┐
+                    BannerSettings  QRSettings  WordCloudSettings ...
+                          │
+                    generate_banner(BannerConfig(**banner_settings))
+```
+
+`ProjectConfig` uses `mode="json"` serialization to produce safe-loadable YAML (avoids Python-object YAML tags from Pydantic's `HttpUrl` type).
+
+## Logging
+
+All modules use `get_logger(module=__name__)` from `scripts/utils.py` — a Loguru logger with structured JSON sinks in `logs/json/` and plain text in `logs/text/`. Both directories are gitignored. Loguru calls use keyword arguments instead of f-strings: `logger.info("msg: {key}", key=value)`.
+
+## Large modules
+
+The five largest modules are intentionally monolithic — empirical co-change analysis shows they always change together with their art siblings, not in isolation (Parnas's "change together, stay together"):
+
+| Module | Lines | Rationale |
+|---|---|---|
+| `banner.py` | ~1878 | Single rendering pipeline |
+| `readme_sections.py` | ~1548 | One coherent assembler |
+| `word_cloud_renderers.py` | ~1230 | Tightly coupled rendering variants |
+| `art/ink_garden.py` | ~2027 | Garden growth simulation |

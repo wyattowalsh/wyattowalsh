@@ -1,0 +1,93 @@
+---
+title: Testing
+description: pytest with hypothesis, parallel execution, coverage, and golden-file regression tests.
+---
+
+## Stack
+
+| Tool | Purpose |
+|---|---|
+| `pytest` | Test runner |
+| `pytest-xdist` | Parallel test execution (`-n auto`) |
+| `hypothesis` | Property-based / fuzz testing |
+| `pytest-cov` | Coverage reporting |
+| `pytest-mock` | Mock utilities |
+
+## Run tests
+
+```bash
+# Full suite (parallel)
+uv run python -m pytest
+
+# Single file, serial (useful for debugging)
+uv run python -m pytest tests/test_cli.py -v -n 0
+
+# Only non-integration tests
+uv run python -m pytest -m "not integration" -v
+```
+
+## pytest configuration
+
+From `pyproject.toml`:
+
+```toml
+[tool.pytest.ini_options]
+addopts = "-n auto --verbose --hypothesis-show-statistics --html=logs/report.html ..."
+testpaths = ["tests"]
+timeout = 500
+```
+
+Coverage is written to `logs/coverage/` (HTML) — excluded from git.
+
+## Test files
+
+| File | What it tests |
+|---|---|
+| `tests/test_cli.py` | All CLI commands via `typer.testing.CliRunner` |
+| `tests/test_ink_garden.py` | `ink_garden.generate()` smoke + golden-file regression |
+| `tests/test_word_clouds_red.py` | RED (xfail) stubs for unimplemented word-cloud features |
+| `tests/test_living_art_media.py` | Skipped — requires pre-generated artifacts |
+| `tests/test_readme_gfm_ux.py` | Skipped — requires full pipeline README |
+| `tests/test_techs.py` | Technology parser: parse, validation, Hypothesis fuzz |
+| `tests/test_banner.py` | Banner generation (patches `svgwrite`) |
+| `tests/test_fetch_metrics.py` | Metrics fetcher (expanded coverage) |
+
+## Golden-file tests
+
+`tests/test_ink_garden.py::TestGoldenFiles` compares deterministic SVG output against stored fixtures:
+
+```
+tests/fixtures/ink_garden/
+├── minimal_full.svg   # ~160 KB
+├── rich_full.svg      # ~1.4 MB
+└── rich_mid.svg       # ~1.4 MB
+```
+
+To regenerate after an intentional output change:
+
+```bash
+# Delete fixtures and re-run to regenerate
+rm -rf tests/fixtures/ink_garden/
+uv run python -c "
+from scripts.art.ink_garden import generate, seed_hash
+import pathlib
+# ... (see test file for full snippet)
+"
+uv run python -m pytest tests/test_ink_garden.py -v
+```
+
+## Mocking conventions
+
+- Heavy rendering (svgwrite, cairo) — patched via `@patch` at the source module
+- Lazy imports — patch at `scripts.banner.generate_banner`, NOT `scripts.cli.generate_banner`
+- Config I/O — use `tmp_path` fixture + real YAML files (no config mocking)
+- Do **not** mock the database (N/A) or the filesystem with MagicMock (use `tmp_path`)
+
+## RED tests (xfail)
+
+`tests/test_word_clouds_red.py` contains three `@pytest.mark.xfail(strict=True)` stubs for features not yet implemented:
+- `palette_tokenization` field
+- `layout_readability` knobs
+- `style_variant` output differentiation
+
+These tests will start passing automatically when the features land.
