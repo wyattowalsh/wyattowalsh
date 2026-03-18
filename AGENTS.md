@@ -15,7 +15,7 @@
 | Generate word clouds | `make generate-word-clouds` |
 | Generate all assets | `make generate` |
 | Lint + test + generate | `make all` |
-| Serve docs locally | `make docs` |
+| Serve docs locally (Fumadocs) | `cd docs && pnpm dev` |
 | Clean artifacts | `make clean` |
 | CLI help | `uv run readme --help` |
 
@@ -36,8 +36,7 @@ wyattowalsh/
 │   ├── word_clouds.py   # Word cloud generator — multiple input modes (1585 lines)
 │   └── techs.py         # Parse techs.md → Technology objects
 ├── tests/               # pytest suite (→ tests/AGENTS.md)
-├── docs/                # Docsify v4 site (active)
-├── docs1/               # ⚠️ LEGACY — do not edit; pending removal
+├── docs/                # Fumadocs (Next.js 15) dev docs site
 ├── .github/
 │   ├── workflows/profile-updater.yml  # Single unified CI workflow (5 jobs)
 │   └── assets/img/      # Generated: banner.svg, qr.png, wordcloud_*.svg
@@ -51,7 +50,7 @@ wyattowalsh/
 1. `starred` CLI → `.github/assets/languages.md` + `.github/assets/topics.md`
 2. `generate word_cloud --from-topics-md` → `wordcloud_by_topic.svg`
 3. `generate word_cloud --from-languages-md` → `wordcloud_by_language.svg`
-4. `generate qr_code` → `qr.png` (requires `.github/assets/img/icon.svg`)
+4. `generate qr_code` → `qr.png`
 5. `generate banner` → `banner.svg`
 6. `stefanzweifel/git-auto-commit-action@v5` auto-commits changed assets
 
@@ -99,8 +98,6 @@ CI secrets (GitHub Actions only — not needed locally):
 | HR-03 | `scripts/banner.py`, `scripts/word_clouds.py` | Monolithic (1730 / 1585 lines) — refactor candidates | P2 |
 | HR-04 | `scripts/banner.py` | `PatternType` defines `REACTION`, `CLIFFORD`, `FLAME`, `PDJ`, `IKEDA` — no draw functions exist (dead code) | P2 |
 | HR-05 | `scripts/config.py` vs `scripts/word_clouds.py` | Two word-cloud config models: `WordCloudSettingsModel` (config.py) and `WordCloudSettings` (word_clouds.py, strict `extra="forbid"`) — easy to confuse | P2 |
-| HR-06 | `docs/_navbar.md`, `docs/_404.md` | Both empty — Docsify navbar silently fails; 404 is blank screen | P2 |
-| HR-07 | `docs1/` | Legacy directory alongside active `docs/` | P2 |
 | HR-08 | repo root | No `.env.example` for local dev vars or CI secrets | P2 |
 | HR-09 | `tests/temp.py` | Stray empty file — delete it | P3 |
 | HR-10 | `scripts/banner.py` | `BannerConfig.output_path` defaults to `./assets/img/banner.svg`, not `.github/assets/img/banner.svg` — always override via `config.yaml` | P3 |
@@ -118,7 +115,7 @@ CI secrets (GitHub Actions only — not needed locally):
 
 | Symptom | Cause | Fix |
 |---------|-------|-----|
-| `FileNotFoundError: Default background SVG not found` | `icon.svg` missing | Ensure `.github/assets/img/icon.svg` exists before `make generate-qr` |
+| `FileNotFoundError: Default background SVG not found` | `icon.svg` missing | Background is optional (default=None); only set `background_svg` in config if you want a custom background |
 | `ImportError: No module named 'segno'` | QR extras not installed | `uv pip install -e ".[qr]"` |
 | `ImportError: No module named 'wordcloud'` | word-clouds extras not installed | `uv pip install -e ".[word-clouds]"` |
 | `ValidationError` from `WordCloudSettings` | Extra keys on strict model | Remove unknown fields — `extra="forbid"` in `WordCloudSettings` |

@@ -518,7 +518,6 @@ def generate(  # NOSONAR
         default_bg_path_str = (
             qr_background_path_cli
             or qr_settings_data.get("default_background_path")
-            or ".github/assets/img/icon.svg"
         )
         default_output_dir_str = (
             output_path_cli.parent
@@ -535,7 +534,9 @@ def generate(  # NOSONAR
 
         try:
             qr_gen = QRCodeGenerator(
-                default_background_path=Path(default_bg_path_str),
+                default_background_path=(
+                    Path(default_bg_path_str) if default_bg_path_str else None
+                ),
                 default_output_dir=Path(default_output_dir_str),
                 default_scale=(
                     qr_scale_cli

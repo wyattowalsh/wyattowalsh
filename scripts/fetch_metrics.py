@@ -34,6 +34,81 @@ def _get(url: str, token: str | None, *, accept: str | None = None) -> Any:
         return json.loads(resp.read().decode())
 
 
+def _collect_languages(owner: str, token: str | None) -> dict[str, int]:
+    """Aggregate language bytes across all non-fork repos for *owner*."""
+    try:
+        repos = _get(f"{_BASE}/users/{owner}/repos?per_page=100", token)
+    except Exception as exc:
+        logger.warning("Failed to fetch repos for language aggregation: {}", exc)
+        return {}
+
+    totals: dict[str, int] = {}
+    for repo in repos:
+        if repo.get("fork"):
+            continue
+        try:
+            lang_data = _get(repo["languages_url"], token)
+            for lang, count in lang_data.items():
+                totals[lang] = totals.get(lang, 0) + count
+        except Exception as exc:
+            logger.warning("Failed to fetch languages for {}: {}", repo.get("name"), exc)
+    return totals
+
+
+def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]:
+    """Collect traffic stats for *owner*/*repo*. Returns ``{}`` without a token."""
+    if token is None:
+        return {}
+
+    result: dict[str, Any] = {}
+    try:
+        views = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/views", token)
+        result["traffic_views_14d"] = views["count"]
+        result["traffic_unique_visitors_14d"] = views["uniques"]
+
+        clones = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/clones", token)
+        result["traffic_clones_14d"] = clones["count"]
+        result["traffic_unique_cloners_14d"] = clones["uniques"]
+
+        referrers = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/popular/referrers", token)
+        result["traffic_top_referrers"] = [r["referrer"] for r in referrers]
+    except Exception as exc:
+        logger.warning("Failed to fetch traffic stats: {}", exc)
+
+    return result
+
+
+def _collect_top_repos(
+    owner: str, token: str | None, limit: int | None = None
+) -> list[dict]:
+    """Return the top repos for *owner* sorted by stars descending."""
+    try:
+        repos = _get(f"{_BASE}/users/{owner}/repos?per_page=100", token)
+    except Exception as exc:
+        logger.warning("Failed to fetch repos for top repos: {}", exc)
+        return []
+
+    non_forks = [r for r in repos if not r.get("fork")]
+    non_forks.sort(key=lambda r: r.get("stargazers_count", 0), reverse=True)
+
+    if limit is not None:
+        non_forks = non_forks[:limit]
+
+    return [
+        {
+            "name": r["name"],
+            "full_name": r["full_name"],
+            "stars": r["stargazers_count"],
+            "forks": r["forks_count"],
+            "language": r.get("language"),
+            "description": r.get("description"),
+            "topics": r.get("topics", []),
+            "updated_at": r.get("updated_at"),
+        }
+        for r in non_forks
+    ]
+
+
 def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     """Collect GitHub metrics for *owner*/*repo* and return a flat dict."""
     metrics: dict[str, Any] = {}
@@ -111,8 +186,18 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
             contributionsCollection {
               contributionCalendar {
                 totalContributions
+                weeks {
+                  contributionDays {
+                    date
+                    contributionCount
+                    color
+                  }
+                }
               }
               totalCommitContributions
+              totalPullRequestContributions
+              totalIssueContributions
+              totalRepositoryContributions
             }
           }
         }
@@ -123,22 +208,46 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
             if errors:
                 logger.warning("GraphQL returned errors: {e}", e=errors)
             raw = gql_resp.get("data") or {}
-            contrib = (
+            contrib_coll = (
                 raw.get("viewer", {})
                 .get("contributionsCollection", {})
             )
-            metrics["contributions_last_year"] = (
-                contrib.get("contributionCalendar", {}).get("totalContributions", 0)
-            )
-            metrics["total_commits"] = contrib.get("totalCommitContributions", 0)
+            cal = contrib_coll.get("contributionCalendar", {})
+            metrics["contributions_last_year"] = cal.get("totalContributions", 0)
+            metrics["total_commits"] = contrib_coll.get("totalCommitContributions", 0)
+            metrics["total_prs"] = contrib_coll.get("totalPullRequestContributions")
+            metrics["total_issues"] = contrib_coll.get("totalIssueContributions")
+            metrics["total_repos_contributed"] = contrib_coll.get("totalRepositoryContributions")
+            metrics["contributions_calendar"] = [
+                {
+                    "date": d["date"],
+                    "count": d["contributionCount"],
+                    "color": d["color"],
+                }
+                for week in cal.get("weeks", [])
+                for d in week["contributionDays"]
+            ]
         except Exception as exc:
             logger.warning("GraphQL query failed: {}", exc)
             metrics["contributions_last_year"] = None
             metrics["total_commits"] = None
+            metrics["total_prs"] = None
+            metrics["total_issues"] = None
+            metrics["total_repos_contributed"] = None
+            metrics["contributions_calendar"] = []
     else:
         logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
         metrics["contributions_last_year"] = None
         metrics["total_commits"] = None
+        metrics["total_prs"] = None
+        metrics["total_issues"] = None
+        metrics["total_repos_contributed"] = None
+        metrics["contributions_calendar"] = []
+
+    # -- REST: languages, top repos, traffic -----------------------------
+    metrics["languages"] = _collect_languages(owner, token)
+    metrics["top_repos"] = _collect_top_repos(owner, token)
+    metrics.update(_collect_traffic(owner, repo, token))
 
     return metrics
 

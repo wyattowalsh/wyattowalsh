@@ -21,7 +21,6 @@ def runner() -> CliRunner:
 # ------------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
     """Test `config generate-default` command."""
     test_config_path = tmp_path / "test_cfg.yaml"
@@ -38,7 +37,6 @@ def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
         assert "qr_code_settings" in content
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> None:
     """Test `config view` after generating a default."""
     test_config_path = tmp_path / "view_cfg.yaml"
@@ -51,7 +49,6 @@ def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> Non
     assert "banner_settings" in result.stdout  # Check for a known key
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 def test_config_view_non_existent(runner: CliRunner, tmp_path: Path) -> None:
     """Test `config view` for a non-existent config file."""
     non_existent_path = tmp_path / "does_not_exist.yaml"
@@ -60,7 +57,6 @@ def test_config_view_non_existent(runner: CliRunner, tmp_path: Path) -> None:
     assert "Config file not found" in result.stdout
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 @patch("scripts.cli.load_config")
 @patch("scripts.cli.save_config")
 def test_config_save_existing(
@@ -73,10 +69,7 @@ def test_config_save_existing(
     test_config_path = tmp_path / "save_cfg.yaml"
 
     # Mock load_config to return a dummy ProjectConfig
-    if ProjectConfig:
-        mock_load_config.return_value = ProjectConfig()
-    else:  # If ProjectConfig couldn't be imported
-        mock_load_config.return_value = MagicMock()
+    mock_load_config.return_value = ProjectConfig()
 
     result = runner.invoke(app, ["config", "save", "--path", str(test_config_path)])
 
@@ -86,7 +79,6 @@ def test_config_save_existing(
     assert "Configuration successfully saved" in result.stdout
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 @patch("scripts.cli.save_config")
 def test_config_save_new_default(
     mock_save_config: MagicMock, runner: CliRunner, tmp_path: Path
@@ -113,7 +105,6 @@ def test_config_save_new_default(
 # ------------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 @patch("scripts.banner.generate_banner")  # patch at the source module
 @patch("scripts.cli.load_config")
 def test_generate_banner_basic(
@@ -126,17 +117,10 @@ def test_generate_banner_basic(
     test_config_path = tmp_path / "banner_gen_cfg.yaml"
 
     # Create a dummy config file or mock load_config effectively
-    if ProjectConfig:
-        dummy_config = ProjectConfig(banner_settings={"title": "Test Banner"})
-        with open(test_config_path, "w") as f:
-            yaml.dump(dummy_config.model_dump(mode="json"), f)
-        mock_load_config.return_value = dummy_config
-    else:
-        mock_load_config.return_value = MagicMock(
-            banner_settings={"title": "Test Banner"},
-            qr_code_settings={},
-            v_card_data={},
-        )
+    dummy_config = ProjectConfig(banner_settings={"title": "Test Banner"})
+    with open(test_config_path, "w") as f:
+        yaml.dump(dummy_config.model_dump(mode="json"), f)
+    mock_load_config.return_value = dummy_config
 
     output_svg_path = tmp_path / "generated_banner.svg"
 
@@ -163,7 +147,6 @@ def test_generate_banner_basic(
     assert banner_config_arg.title == "Test Banner"  # From dummy_config
 
 
-@pytest.mark.skipif(app is None, reason="CLI app failed to import")
 @patch("scripts.banner.generate_banner")  # patch at the source module
 @patch("scripts.cli.load_config")
 def test_generate_banner_cli_overrides(
@@ -237,9 +220,6 @@ def test_generate_banner_cli_overrides(
 # ------------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(
-    app is None, reason="CLI app failed to import"
-)
 @patch("scripts.cli.Settings")  # Mock the Settings class
 def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -> None:
     """Test `show-settings` command with JSON output (default)."""
@@ -261,9 +241,6 @@ def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -
     mock_settings_instance.model_dump_json.assert_called_once_with(indent=2)
 
 
-@pytest.mark.skipif(
-    app is None, reason="CLI app failed to import"
-)
 @patch("scripts.cli.Settings")
 @patch("scripts.cli.yaml")  # Mock the yaml module as a single patch
 def test_show_settings_yaml(
@@ -292,9 +269,6 @@ def test_show_settings_yaml(
     mock_yaml.dump.assert_called_once_with(dummy_data_dict, indent=2, sort_keys=False)
 
 
-@pytest.mark.skipif(
-    app is None, reason="CLI app failed to import"
-)
 @patch("scripts.cli.Settings")
 @patch("scripts.cli.yaml", None)  # Simulate PyYAML not being installed
 def test_show_settings_yaml_fallback_to_json(

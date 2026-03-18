@@ -75,7 +75,7 @@ class VCardDataModel(BaseModel):
 class QRCodeSettings(BaseModel):
     output_filename: str = "qr.png"
     output_dir: str = ".github/assets/img"
-    default_background_path: Optional[str] = ".github/assets/img/icon.svg"
+    default_background_path: Optional[str] = None
     default_scale: int = 25
     error_correction: str = "H"  # L, M, Q, H
 

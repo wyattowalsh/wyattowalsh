@@ -58,9 +58,15 @@ Key `addopts` flags decoded:
 | `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
 | `scripts/techs.py` | 315 | `test_techs.py` | ❌ Empty — zero coverage |
 | `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ❌ Empty — zero coverage |
-| `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ⚠️ Smoke only |
-
-**`tests/temp.py` is a stray empty file — delete it, do not add content to it.**
+| `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ✅ Smoke + golden file regression tests |
+| `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
+| Living art media outputs | — | `test_living_art_media.py` | ⏭️ Skipped — requires pre-generated artifacts |
+| Blog card contracts | — | `test_card_contracts_blog_red.py` | 🔴 RED — unimplemented features |
+| README GFM UX | — | `test_readme_gfm_ux.py` | ⏭️ Skipped — requires full pipeline |
+| `scripts/readme_sections.py` | — | `test_readme_sections.py` | ✅ Covered |
+| `scripts/readme_svg.py` | — | `test_readme_svg.py` | ✅ Covered |
+| `scripts/skills.py` | — | `test_skills.py` | ✅ Covered |
+| Word cloud features | — | `test_word_clouds_red.py` | 🔴 RED — unimplemented (xfail) |
 
 ## Test File Patterns
 

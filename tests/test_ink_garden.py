@@ -261,14 +261,43 @@ class TestGenerate:
 FIXTURES_DIR = Path(__file__).parent / "fixtures" / "ink_garden"
 
 
-@pytest.mark.skipif(not (Path(__file__).parent / "fixtures" / "ink_garden").exists(),
-                    reason="Golden fixtures not generated yet — run generate_fixtures script")
+@pytest.mark.skipif(
+    not (FIXTURES_DIR / "minimal_full.svg").exists(),
+    reason="Golden fixtures not generated yet — run generate_fixtures script",
+)
 class TestGoldenFiles:
     """Regression tests: compare generate() output against stored golden SVGs.
 
-    To regenerate golden files after an intentional output change:
-        python -m pytest tests/test_ink_garden.py --regenerate-golden
-    Or run: uv run python -m scripts.art.ink_garden --regenerate-fixtures
+    To regenerate golden files after an intentional output change, call
+    generate() directly with the same parameters used in each test, e.g.::
+
+        uv run python -c "
+        import json
+        from pathlib import Path
+        from scripts.art.ink_garden import generate, seed_hash
+
+        FIXTURES = Path('tests/fixtures/ink_garden')
+        FIXTURES.mkdir(parents=True, exist_ok=True)
+
+        # See MINIMAL_METRICS / RICH_METRICS constants at top of test file.
+        from tests.test_ink_garden import MINIMAL_METRICS, RICH_METRICS
+
+        (FIXTURES / 'minimal_full.svg').write_text(
+            generate(MINIMAL_METRICS, seed=seed_hash(MINIMAL_METRICS), maturity=1.0)
+        )
+        (FIXTURES / 'rich_full.svg').write_text(
+            generate(RICH_METRICS, seed=seed_hash(RICH_METRICS), maturity=1.0)
+        )
+        (FIXTURES / 'rich_mid.svg').write_text(
+            generate(RICH_METRICS, seed=seed_hash(RICH_METRICS), maturity=0.5)
+        )
+        "
+
+    See TestGoldenFiles source for the exact regeneration parameters.
+
+    Note: Golden SVG files contain numpy-generated floating-point path data.
+    Byte-exact comparison is valid only when numpy is pinned (see uv.lock).
+    Regenerate golden files after any numpy version bump.
     """
 
     def _load_golden(self, name: str) -> str:

@@ -71,7 +71,7 @@ ColorStop: TypeAlias = Tuple[str, float]
 # ------------------------------------------------------------------------------
 # PatternType lives in its own lightweight module so callers that don't need
 # svgwrite/numpy can import it without heavy dependencies.
-from .banner_patterns import PatternType  # noqa: E402  (re-exported for back-compat)
+from .banner_patterns import PatternType  # noqa: E402  (import after module-level TypeAlias/logger assignments)
 
 
 # ------------------------------------------------------------------------------

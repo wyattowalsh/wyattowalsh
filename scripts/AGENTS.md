@@ -6,13 +6,23 @@
 
 | File | Lines | Responsibility | Key Exports |
 |------|-------|---------------|-------------|
+| `_github_http.py` | 39 | Shared GitHub API HTTP helpers (no heavy deps) | `_headers()`, `_graphql()` |
+| `animated_art.py` | 960 | CSS-animated SVG story-art (Cosmic Genesis + Unfurling Spiral) driven by historical data | `generate_animated_community_art()`, `generate_animated_activity_art()` |
+| `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `PatternType`, `NoiseHandler`, `ColorPalette` |
+| `banner_patterns.py` | 46 | `PatternType` enum extracted from `banner.py` (zero heavy deps) | `PatternType` |
 | `cli.py` | 870 | Typer CLI entry point | `app`, `EntityType`, `generate()`, `config_cmd()` |
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
-| `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console`, `get_project_root()` |
-| `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `PatternType`, `NoiseHandler`, `ColorPalette` |
+| `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
+| `fetch_metrics.py` | 283 | GitHub REST + GraphQL metrics collector; outputs flat JSON dict | `collect()` |
+| `generative.py` | 277 | Static generative art (Clifford attractor + Phyllotaxis/flow-field) seeded by profile metrics | `generate_community_art()`, `generate_activity_art()` |
 | `qr.py` | 253 | Artistic vCard QR code | `QRCodeGenerator` |
-| `word_clouds.py` | 1585 | Word cloud generation | `WordCloudGenerator`, `WordCloudSettings`, `parse_markdown_for_word_cloud_frequencies()` |
+| `readme_sections.py` | 1548 | README dynamic section generators (badges, project cards, blog posts); orchestrates all section content | `generate_readme_sections()`, `ReadmeSectionsSettings` |
+| `readme_svg.py` | 1330 | Reusable SVG rendering helpers for README components (cards, charts, blocks) | `SvgCard`, `SvgBlock`, `SvgBlockRenderer`, `SvgRepoCardRenderer`, `SvgBlogCardRenderer`, `SvgConnectCardRenderer`, `ReadmeSvgAssetBuilder`, `SvgAssetWriter` |
+| `skills.py` | 153 | shields.io badge HTML generator from `SkillsSettings`; injects between README comment markers | `SkillsBadgeGenerator` |
 | `techs.py` | 315 | Parse techs.md proficiency data | `Technology`, `load_technologies()`, `parse_technology_line()`, `display_technologies()` |
+| `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console`, `get_project_root()` |
+| `word_cloud_renderers.py` | 1231 | Pure-SVG word cloud renderers — four layout strategies (Wordle, clustered, typographic, shaped) with OKLCH palettes | `WordleRenderer`, `ClusteredRenderer`, `TypographicRenderer`, `ShapedRenderer` |
+| `word_clouds.py` | 1585 | Word cloud generation | `WordCloudGenerator`, `WordCloudSettings`, `parse_markdown_for_word_cloud_frequencies()` |
 | `art/shared.py` | ~276 | Shared noise/color/math utilities for generative art | `Noise2D`, `oklch()`, `seed_hash()`, `compute_maturity()`, `make_radial_gradient()`, `make_linear_gradient()`, `parse_cli_args()` |
 | `art/ink_garden.py` | 2027 | Procedural botanical SVG garden — species-classified trees, leaves, blooms, insects, webs | `generate(metrics, *, seed, maturity) -> str` |
 | `art/animate.py` | — | Multi-frame animation driver; calls `ink_garden.generate()` per maturity step | (see module docstring) |

@@ -150,7 +150,8 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
-docs:
-	docsify serve ./docs
+.PHONY: docs
+docs: ## Serve the Fumadocs dev docs site locally
+	cd docs && pnpm dev
 # Declare targets that are not files
 .PHONY: all install format lint test generate-banner generate-qr generate-word-clouds generate-skills generate-generative generate-animated generate-tech-word-cloud generate clean clean-venv venv update-deps help docs

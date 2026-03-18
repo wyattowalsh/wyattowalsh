@@ -43,7 +43,7 @@ class QRCodeGenerator:
 
     def __init__(
         self,
-        default_background_path: Path,
+        default_background_path: Optional[Path],
         default_output_dir: Path,
         default_scale: int = 25,
     ):
@@ -52,24 +52,27 @@ class QRCodeGenerator:
 
         Args:
             default_background_path: Default path to the background SVG image.
+                                     Pass None to skip background by default.
             default_output_dir: Default directory to save generated QR codes.
             default_scale: Default scale factor for the QR code.
 
         Raises:
-            FileNotFoundError: If the default_background_path does not exist.
+            FileNotFoundError: If default_background_path is given but does
+                               not exist.
             OSError: If the default_output_dir cannot be created.
         """
         self.default_background_path = default_background_path
         self.default_output_dir = default_output_dir
         self.default_scale = default_scale
 
-        if not self.default_background_path.is_file():
-            msg = (
-                f"Default background SVG not found: "
-                f"{self.default_background_path}"
-            )
-            logger.error(msg)
-            raise FileNotFoundError(msg)
+        if self.default_background_path is not None:
+            if not self.default_background_path.is_file():
+                msg = (
+                    f"Default background SVG not found: "
+                    f"{self.default_background_path}"
+                )
+                logger.error(msg)
+                raise FileNotFoundError(msg)
         try:
             self.default_output_dir.mkdir(parents=True, exist_ok=True)
         except OSError as e:
@@ -113,7 +116,7 @@ class QRCodeGenerator:
         current_scale = scale or self.default_scale
         output_path = self.default_output_dir / output_filename
 
-        if not bg_path.is_file():
+        if bg_path is not None and not bg_path.is_file():
             msg = f"Background SVG for QR code not found: {bg_path}"
             logger.error(msg)
             raise FileNotFoundError(msg)
@@ -171,7 +174,11 @@ class QRCodeGenerator:
                 f"with background {bg_path}"
             )
             # Ensure .to_artistic is callable or handle appropriately
-            if hasattr(qrcode, "to_artistic") and callable(qrcode.to_artistic):
+            if (
+                bg_path is not None
+                and hasattr(qrcode, "to_artistic")
+                and callable(qrcode.to_artistic)
+            ):
                 qrcode.to_artistic(
                     background=str(bg_path),
                     target=str(output_path),
@@ -180,6 +187,13 @@ class QRCodeGenerator:
                     # E.g., kind='png' (default), border, dark module color,
                     # etc.
                 )
+            elif bg_path is None:
+                # No background provided — save a standard QR PNG
+                logger.info(
+                    "No background path provided; saving plain QR code to "
+                    f"{output_path}"
+                )
+                qrcode.save(str(output_path), scale=current_scale, kind="png")
             else:
                 # Fallback or error if .to_artistic is not available
                 # as expected
@@ -223,9 +237,7 @@ if __name__ == "__main__":
     # Assumes this script is in 'scripts/' directory relative to project root.
     try:
         project_root = Path(__file__).resolve().parent.parent
-        default_bg_svg_path = (
-            project_root / ".github" / "assets" / "img" / "icon.svg"
-        )
+        default_bg_svg_path = None  # icon.svg removed; background is optional
         default_output_directory = (
             project_root / ".github" / "assets" / "img"
         )

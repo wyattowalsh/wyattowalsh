@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "collections": [".source/index"],
+      "collections": [".source/server"],
       "collections/server": [".source/server"],
       "collections/*": [".source/*"]
     }
