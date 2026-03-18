@@ -54,8 +54,6 @@ lint: install ## Lint code using ruff, pylint, and mypy
 
 .PHONY: test
 test: install ## Run tests using pytest
-	@echo "Ensuring test dependencies are installed..."
-	$(UV) pip install -e ".[test]" --quiet # Ensure test extras are explicitly available
 	@echo "Running tests..."
 	$(UV) run --quiet -- python -m pytest
 
@@ -138,7 +136,7 @@ venv: $(LOCKFILE) ## Create virtual environment and sync dependencies
 .PHONY: update-deps
 update-deps: $(PYPROJECT) ## Update all dependencies in pyproject.toml to latest compatible versions and update lockfile
 	@echo "Updating dependencies and lockfile..."
-	$(UV) pip compile $(PYPROJECT) --all-extras --upgrade -o $(LOCKFILE)
+	$(UV) lock --upgrade
 	@echo "Dependencies updated. Run 'make install' or 'make venv' to apply changes."
 
 # ------------------------------------------------------------------------------

@@ -13,45 +13,41 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import ssl
-import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-from ._github_http import _graphql, _headers
+from ._github_http import _BASE, _graphql, _get
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
 
-_BASE = "https://api.github.com"
+
+def _json(url: str, token: str | None, **kw: Any) -> Any:
+    """GET and return just the parsed JSON (discard headers)."""
+    data, _ = _get(url, token, **kw)
+    return data
 
 
-def _get(url: str, token: str | None, *, accept: str | None = None) -> Any:
-    """Perform an authenticated GET and return parsed JSON."""
-    req = urllib.request.Request(url, headers=_headers(token, accept=accept))
-    ctx = ssl.create_default_context()
-    with urllib.request.urlopen(req, context=ctx) as resp:
-        return json.loads(resp.read().decode())
-
-
-def _collect_languages(owner: str, token: str | None) -> dict[str, int]:
-    """Aggregate language bytes across all non-fork repos for *owner*."""
-    try:
-        repos = _get(f"{_BASE}/users/{owner}/repos?per_page=100", token)
-    except Exception as exc:
-        logger.warning("Failed to fetch repos for language aggregation: {}", exc)
+def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
+    """Aggregate language bytes across all non-fork repos (parallel fetches)."""
+    non_forks = [r for r in repos if not r.get("fork")]
+    if not non_forks:
         return {}
-
     totals: dict[str, int] = {}
-    for repo in repos:
-        if repo.get("fork"):
-            continue
-        try:
-            lang_data = _get(repo["languages_url"], token)
-            for lang, count in lang_data.items():
-                totals[lang] = totals.get(lang, 0) + count
-        except Exception as exc:
-            logger.warning("Failed to fetch languages for {}: {}", repo.get("name"), exc)
+
+    def _fetch_lang(repo: dict) -> dict[str, int]:
+        data, _ = _get(repo["languages_url"], token)
+        return data
+
+    with ThreadPoolExecutor(max_workers=min(16, len(non_forks))) as pool:
+        futures = {pool.submit(_fetch_lang, r): r for r in non_forks}
+        for fut in as_completed(futures):
+            try:
+                for lang, count in fut.result().items():
+                    totals[lang] = totals.get(lang, 0) + count
+            except Exception as exc:
+                logger.warning("Failed to fetch languages for {}: {}", futures[fut].get("name"), exc)
     return totals
 
 
@@ -62,15 +58,15 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
 
     result: dict[str, Any] = {}
     try:
-        views = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/views", token)
+        views = _json(f"{_BASE}/repos/{owner}/{repo}/traffic/views", token)
         result["traffic_views_14d"] = views["count"]
         result["traffic_unique_visitors_14d"] = views["uniques"]
 
-        clones = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/clones", token)
+        clones = _json(f"{_BASE}/repos/{owner}/{repo}/traffic/clones", token)
         result["traffic_clones_14d"] = clones["count"]
         result["traffic_unique_cloners_14d"] = clones["uniques"]
 
-        referrers = _get(f"{_BASE}/repos/{owner}/{repo}/traffic/popular/referrers", token)
+        referrers = _json(f"{_BASE}/repos/{owner}/{repo}/traffic/popular/referrers", token)
         result["traffic_top_referrers"] = [r["referrer"] for r in referrers]
     except Exception as exc:
         logger.warning("Failed to fetch traffic stats: {}", exc)
@@ -78,22 +74,12 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
     return result
 
 
-def _collect_top_repos(
-    owner: str, token: str | None, limit: int | None = None
-) -> list[dict]:
-    """Return the top repos for *owner* sorted by stars descending."""
-    try:
-        repos = _get(f"{_BASE}/users/{owner}/repos?per_page=100", token)
-    except Exception as exc:
-        logger.warning("Failed to fetch repos for top repos: {}", exc)
-        return []
-
+def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict]:
+    """Return the top repos sorted by stars descending."""
     non_forks = [r for r in repos if not r.get("fork")]
     non_forks.sort(key=lambda r: r.get("stargazers_count", 0), reverse=True)
-
     if limit is not None:
         non_forks = non_forks[:limit]
-
     return [
         {
             "name": r["name"],
@@ -116,7 +102,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     # -- REST: repo stats ------------------------------------------------
     logger.info("Fetching repo stats for {}/{}", owner, repo)
     try:
-        repo_data = _get(f"{_BASE}/repos/{owner}/{repo}", token)
+        repo_data = _json(f"{_BASE}/repos/{owner}/{repo}", token)
         metrics["stars"] = repo_data.get("stargazers_count", 0)
         metrics["forks"] = repo_data.get("forks_count", 0)
         metrics["watchers"] = repo_data.get("watchers_count", 0)
@@ -128,7 +114,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     # -- REST: user stats ------------------------------------------------
     logger.info("Fetching user stats for {}", owner)
     try:
-        user_data = _get(f"{_BASE}/users/{owner}", token)
+        user_data = _json(f"{_BASE}/users/{owner}", token)
         metrics["followers"] = user_data.get("followers", 0)
         metrics["following"] = user_data.get("following", 0)
         metrics["public_repos"] = user_data.get("public_repos", 0)
@@ -138,7 +124,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
 
     # -- REST: orgs count ------------------------------------------------
     try:
-        orgs = _get(f"{_BASE}/users/{owner}/orgs", token)
+        orgs = _json(f"{_BASE}/users/{owner}/orgs", token)
         metrics["orgs_count"] = len(orgs) if isinstance(orgs, list) else 0
     except Exception as exc:
         logger.warning("Failed to fetch orgs: {}", exc)
@@ -148,7 +134,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     try:
         star_count = metrics.get("stars", 0)
         if star_count > 0:
-            stars = _get(
+            stars = _json(
                 f"{_BASE}/repos/{owner}/{repo}/stargazers?per_page=1&page={star_count}",
                 token,
                 accept="application/vnd.github.v3.star+json",
@@ -165,7 +151,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
 
     # -- REST: latest fork owner -----------------------------------------
     try:
-        forks = _get(
+        forks = _json(
             f"{_BASE}/repos/{owner}/{repo}/forks?sort=newest&per_page=1",
             token,
         )
@@ -178,6 +164,12 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         metrics["latest_fork_owner"] = None
 
     # -- GraphQL: contributions ------------------------------------------
+    # Set GraphQL field defaults (overwritten on success)
+    for _k in ("contributions_last_year", "total_commits", "total_prs",
+               "total_issues", "total_repos_contributed"):
+        metrics[_k] = None
+    metrics["contributions_calendar"] = []
+
     if token:
         logger.info("Fetching contribution stats via GraphQL")
         query = """
@@ -225,28 +217,23 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
                     "color": d["color"],
                 }
                 for week in cal.get("weeks", [])
-                for d in week["contributionDays"]
+                for d in week.get("contributionDays", [])
             ]
         except Exception as exc:
             logger.warning("GraphQL query failed: {}", exc)
-            metrics["contributions_last_year"] = None
-            metrics["total_commits"] = None
-            metrics["total_prs"] = None
-            metrics["total_issues"] = None
-            metrics["total_repos_contributed"] = None
-            metrics["contributions_calendar"] = []
     else:
         logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
-        metrics["contributions_last_year"] = None
-        metrics["total_commits"] = None
-        metrics["total_prs"] = None
-        metrics["total_issues"] = None
-        metrics["total_repos_contributed"] = None
-        metrics["contributions_calendar"] = []
 
     # -- REST: languages, top repos, traffic -----------------------------
-    metrics["languages"] = _collect_languages(owner, token)
-    metrics["top_repos"] = _collect_top_repos(owner, token)
+    try:
+        all_repos = _json(f"{_BASE}/users/{owner}/repos?per_page=100", token)
+        if not isinstance(all_repos, list):
+            all_repos = []
+    except Exception as exc:
+        logger.warning("Failed to fetch repos list: {}", exc)
+        all_repos = []
+    metrics["languages"] = _collect_languages(all_repos, token)
+    metrics["top_repos"] = _collect_top_repos(all_repos)
     metrics.update(_collect_traffic(owner, repo, token))
 
     return metrics

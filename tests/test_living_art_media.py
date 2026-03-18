@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 import json
 import re
@@ -24,7 +25,7 @@ def test_readme_embed_strategy_for_gif_with_png_fallback():
 
 def test_size_budget_behavior_enforced_by_helper_api():
     """Size-budget behavior contract: helper logs must report artifacts under budget (RED expected)."""
-    logs = Path("logs/json/2026-03-01.json")
+    logs = Path(f"logs/json/{date.today().isoformat()}.json")
     assert logs.exists(), "Expected log file with artifact size records"
     content = logs.read_text(encoding="utf-8")
     # logs file contains JSON objects per-line; search for inkgarden-growth size entries

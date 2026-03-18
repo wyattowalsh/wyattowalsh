@@ -11,9 +11,8 @@ of ``banner.py`` requires.
 Dead variants
 -------------
 The following enum members are defined for forward-compatibility or
-historical reasons but have **no corresponding draw function** in
-``banner.py``.  The following members have **no corresponding draw call** in ``generate_banner()``
-and are not reachable via the CLI:
+historical reasons but have **no corresponding draw call** in
+``generate_banner()`` and are not reachable via the CLI:
 
 * ``REACTION``
 * ``CLIFFORD``

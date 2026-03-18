@@ -38,7 +38,7 @@ def _make_repo(
 
 @pytest.fixture
 def mock_get():
-    """Patch _get in scripts.fetch_metrics."""
+    """Patch _get in scripts.fetch_metrics (returns (data, headers) tuples)."""
     with patch("scripts.fetch_metrics._get") as m:
         yield m
 
@@ -63,11 +63,10 @@ class TestCollectLanguages:
             _make_repo("b", languages_url="http://lang/b"),
         ]
         mock_get.side_effect = [
-            repos,                          # repos list
-            {"Python": 100, "Go": 50},      # languages for repo a
-            {"Python": 200, "Rust": 30},    # languages for repo b
+            ({"Python": 100, "Go": 50}, {}),    # languages for repo a
+            ({"Python": 200, "Rust": 30}, {}),   # languages for repo b
         ]
-        result = _collect_languages("owner", "tok")
+        result = _collect_languages(repos, "tok")
         assert result == {"Python": 300, "Go": 50, "Rust": 30}
 
     def test_skips_forks(self, mock_get: MagicMock) -> None:
@@ -78,23 +77,21 @@ class TestCollectLanguages:
             _make_repo("forked", fork=True, languages_url="http://lang/forked"),
         ]
         mock_get.side_effect = [
-            repos,
-            {"Python": 100},
+            ({"Python": 100}, {}),
         ]
-        result = _collect_languages("owner", "tok")
+        result = _collect_languages(repos, "tok")
         assert result == {"Python": 100}
-        # Should not have fetched languages for the fork (only 2 calls total)
-        assert mock_get.call_count == 2
+        # Should not have fetched languages for the fork (only 1 call — no repos list fetch)
+        assert mock_get.call_count == 1
 
     def test_handles_language_fetch_error(self, mock_get: MagicMock) -> None:
         from scripts.fetch_metrics import _collect_languages
 
         repos = [_make_repo("a", languages_url="http://lang/a")]
         mock_get.side_effect = [
-            repos,
             Exception("network error"),
         ]
-        result = _collect_languages("owner", "tok")
+        result = _collect_languages(repos, "tok")
         assert result == {}
 
 
@@ -113,9 +110,9 @@ class TestCollectTraffic:
         from scripts.fetch_metrics import _collect_traffic
 
         mock_get.side_effect = [
-            {"count": 100, "uniques": 42},          # views
-            {"count": 20, "uniques": 5},             # clones
-            [{"referrer": "google"}, {"referrer": "github"}],  # referrers
+            ({"count": 100, "uniques": 42}, {}),          # views
+            ({"count": 20, "uniques": 5}, {}),             # clones
+            ([{"referrer": "google"}, {"referrer": "github"}], {}),  # referrers
         ]
         result = _collect_traffic("owner", "repo", "tok")
         assert result["traffic_views_14d"] == 100
@@ -138,7 +135,7 @@ class TestCollectTraffic:
 # ---------------------------------------------------------------------------
 
 class TestCollectTopRepos:
-    def test_filters_forks_and_respects_limit(self, mock_get: MagicMock) -> None:
+    def test_filters_forks_and_respects_limit(self) -> None:
         from scripts.fetch_metrics import _collect_top_repos
 
         repos = [
@@ -147,19 +144,18 @@ class TestCollectTopRepos:
             _make_repo("star2", stars=50),
             _make_repo("star3", stars=30),
         ]
-        mock_get.return_value = repos
-        result = _collect_top_repos("owner", "tok", limit=2)
+        result = _collect_top_repos(repos, limit=2)
         assert len(result) == 2
         assert result[0]["name"] == "star1"
         assert result[1]["name"] == "star2"
         # Forked repo should not appear
         assert all(r["name"] != "forked" for r in result)
 
-    def test_returns_expected_fields(self, mock_get: MagicMock) -> None:
+    def test_returns_expected_fields(self) -> None:
         from scripts.fetch_metrics import _collect_top_repos
 
-        mock_get.return_value = [_make_repo("myrepo", stars=10, language="Python")]
-        result = _collect_top_repos("owner", "tok")
+        repos = [_make_repo("myrepo", stars=10, language="Python")]
+        result = _collect_top_repos(repos)
         repo = result[0]
         for key in ("name", "full_name", "stars", "forks", "language", "description", "topics", "updated_at"):
             assert key in repo
@@ -173,8 +169,8 @@ class TestGraphQLExpanded:
     def test_parses_all_new_fields(self, mock_get: MagicMock, mock_graphql: MagicMock) -> None:
         from scripts.fetch_metrics import collect
 
-        # Stub REST calls to return minimal data
-        mock_get.return_value = []
+        # Stub REST calls to return minimal data (tuples for _get)
+        mock_get.return_value = ([], {})
 
         mock_graphql.return_value = {
             "data": {
@@ -217,7 +213,7 @@ class TestGraphQLExpanded:
     def test_no_token_sets_none_values(self, mock_get: MagicMock) -> None:
         from scripts.fetch_metrics import collect
 
-        mock_get.return_value = []
+        mock_get.return_value = ([], {})
         result = collect("owner", "repo", None)
         assert result["contributions_last_year"] is None
         assert result["total_commits"] is None
@@ -248,16 +244,15 @@ class TestCollectIntegration:
         forks_data = [{"owner": {"login": "bob"}}]
 
         mock_get.side_effect = [
-            repo_data,   # repo stats
-            user_data,   # user stats
-            orgs,        # orgs
-            stars,       # latest stargazer
-            forks_data,  # latest fork
-            [],          # languages repos
-            [],          # top repos
-            {"count": 10, "uniques": 5},   # traffic views
-            {"count": 3, "uniques": 2},    # traffic clones
-            [],          # referrers
+            (repo_data, {}),   # 1. repo stats
+            (user_data, {}),   # 2. user stats
+            (orgs, {}),        # 3. orgs
+            (stars, {}),       # 4. latest stargazer
+            (forks_data, {}),  # 5. latest fork
+            ([], {}),          # 6. GET /users/{owner}/repos (shared for languages + top_repos)
+            ({"count": 10, "uniques": 5}, {}),   # 7. traffic views
+            ({"count": 3, "uniques": 2}, {}),    # 8. traffic clones
+            ([], {}),          # 9. traffic referrers
         ]
         mock_graphql.return_value = {
             "data": {
@@ -287,6 +282,7 @@ class TestCollectIntegration:
             "languages", "top_repos",
             "traffic_views_14d", "traffic_unique_visitors_14d",
             "traffic_clones_14d", "traffic_unique_cloners_14d",
+            "traffic_top_referrers",
         }
         assert expected_keys.issubset(set(result.keys())), (
             f"Missing keys: {expected_keys - set(result.keys())}"

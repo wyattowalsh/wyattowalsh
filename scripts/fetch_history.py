@@ -21,65 +21,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
-import ssl
-import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from ._github_http import _graphql, _headers
+from ._github_http import _BASE, _graphql, _get, _paginate_rest
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
-
-_BASE = "https://api.github.com"
-
-
-# ---------------------------------------------------------------------------
-# HTTP helpers
-# ---------------------------------------------------------------------------
-
-def _get(url: str, token: str | None, *, accept: str | None = None) -> Any:
-    """Perform an authenticated GET and return parsed JSON."""
-    req = urllib.request.Request(url, headers=_headers(token, accept=accept))
-    ctx = ssl.create_default_context()
-    with urllib.request.urlopen(req, context=ctx) as resp:
-        return json.loads(resp.read().decode()), resp.headers
-
-
-# ---------------------------------------------------------------------------
-# Pagination
-# ---------------------------------------------------------------------------
-
-_LINK_NEXT_RE = re.compile(r'<([^>]+)>;\s*rel="next"')
-
-
-def _paginate_rest(
-    url: str,
-    token: str | None,
-    *,
-    accept: str | None = None,
-) -> list[Any]:
-    """Follow ``Link: <...>; rel="next"`` headers to collect all pages."""
-    results: list[Any] = []
-    next_url: str | None = url
-    while next_url:
-        try:
-            data, headers = _get(next_url, token, accept=accept)
-        except Exception as exc:
-            logger.warning("Pagination request failed ({}): {}", next_url, exc)
-            break
-        if isinstance(data, list):
-            results.extend(data)
-        else:
-            logger.warning("Expected list from paginated endpoint, got {}", type(data).__name__)
-            break
-        link_header = headers.get("Link", "")
-        match = _LINK_NEXT_RE.search(link_header)
-        next_url = match.group(1) if match else None
-    return results
 
 
 # ---------------------------------------------------------------------------
