@@ -1,0 +1,91 @@
+---
+title: README SVG Helpers
+description: Reusable SVG rendering and writing helpers for README dynamic sections — cards, blocks, and asset builders.
+---
+
+## Module
+
+`scripts/readme_svg.py` — ~1330 lines. Used by `readme_sections.py` to render GitHub-style SVG cards for the README.
+
+## Architecture
+
+The module provides a layered rendering pipeline:
+
+```text
+SvgCard / SvgBlock (data models)
+    ↓
+SvgBlockRenderer (base block layout)
+    ↓
+SvgRepoCardRenderer / SvgBlogCardRenderer / SvgConnectCardRenderer
+    ↓
+ReadmeSvgAssetBuilder (orchestrates all renderers)
+    ↓
+SvgAssetWriter (writes SVG files to disk)
+```
+
+## Key classes
+
+### `SvgCardTheme`
+
+Color theme dataclass with light/dark variants:
+
+| Field | Purpose |
+|---|---|
+| `bg` | Background color |
+| `border` | Border color |
+| `title_color` | Title text color |
+| `text_color` | Body text color |
+| `accent` | Accent color for links/icons |
+| `meta_color` | Metadata text color |
+
+### `SvgCard`
+
+Data model for a single card (repo, blog post, or social link):
+
+| Field | Purpose |
+|---|---|
+| `title` | Card heading |
+| `description` | Body text |
+| `url` | Click-through URL |
+| `metadata` | Subtitle/meta line |
+
+### `SvgBlockRenderer`
+
+Base renderer that handles card grid layout, spacing, and SVG document structure. Subclassed by each card type renderer.
+
+### `SvgRepoCardRenderer`
+
+Renders GitHub-style repository cards with star/fork counts and language badges. Uses GitHub Octicons SVG paths for icons.
+
+### `SvgBlogCardRenderer`
+
+Renders blog post cards with publication date and source metadata.
+
+### `SvgConnectCardRenderer`
+
+Renders social/connect link cards with icon badges.
+
+### `ReadmeSvgAssetBuilder`
+
+Orchestrates all renderers to produce the full set of README SVG assets (repos, blog, connect sections) in both light and dark themes.
+
+### `SvgAssetWriter`
+
+Writes rendered SVG strings to disk at configured output paths.
+
+## Usage
+
+Typically called through `readme_sections.py`, not directly:
+
+```python
+from scripts.readme_svg import ReadmeSvgAssetBuilder, SvgAssetWriter
+
+builder = ReadmeSvgAssetBuilder(config)
+assets = builder.build_all()
+writer = SvgAssetWriter(output_dir=Path(".github/assets/img/readme"))
+writer.write_all(assets)
+```
+
+## Theme support
+
+Both light and dark themes are built-in. The builder generates separate SVG files for each theme, which are then referenced in the README using GitHub's `<picture>` / `<source>` media query pattern for automatic dark mode switching.

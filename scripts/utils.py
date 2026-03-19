@@ -216,9 +216,3 @@ if __name__ == "__main__":  # pragma: no cover
         log.warning(
             "Skipping progress bar demo as AppSettings are not available."
         )
-
-
-def get_project_root() -> Path:
-    """Returns the project root directory."""
-    # Assuming utils.py is in a 'scripts' subdirectory of the project root
-    return Path(__file__).resolve().parent.parent

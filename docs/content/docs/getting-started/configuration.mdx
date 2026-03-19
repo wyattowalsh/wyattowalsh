@@ -7,20 +7,27 @@ description: ProjectConfig drives every generator. All settings live in config.y
 
 All generators are driven by a single `config.yaml` file loaded via `load_config()` from `scripts/config.py`. The root type is `ProjectConfig` — a Pydantic v2 model that validates every field at load time.
 
-```bash
-# Generate defaults
-uv run python -m scripts.cli config generate-default --path config.yaml
-
-# View current config as YAML
-uv run python -m scripts.cli config view --path config.yaml --output-format yaml
-
-# Re-save (validate + round-trip)
-uv run python -m scripts.cli config save --path config.yaml
+```bash title="Generate defaults"
+uv run readme config generate-default --path config.yaml
 ```
+
+```bash title="View current config as YAML"
+uv run readme config view --path config.yaml --output-format yaml
+```
+
+```bash title="Re-save (validate + round-trip)"
+uv run readme config save --path config.yaml
+```
+
+<Callout type="info">
+Config files are serialized with `mode="json"` to produce clean, safe-loadable YAML — no Python-object YAML tags from Pydantic's `HttpUrl` type.
+</Callout>
 
 ## ProjectConfig
 
-```yaml
+The root config model maps to these top-level keys in `config.yaml`:
+
+```yaml title="config.yaml"
 banner_settings:      # BannerSettings
 qr_code_settings:     # QRCodeSettings
 v_card_data:          # VCardDataModel
@@ -59,6 +66,10 @@ readme_settings:      # ReadmeSvgSettings
 | `prompt` | `str\|null` | `null` | LLM prompt for curating keywords |
 | `stopwords` | `list[str]\|null` | `null` | Additional stopwords |
 
+<Callout type="warn" title="Two word-cloud config models">
+`WordCloudSettingsModel` in `config.py` is the top-level YAML config. `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Don't confuse them — the first accepts unknown keys, the second rejects them.
+</Callout>
+
 ## VCardDataModel
 
 Contact card data embedded in the QR code. Fields map directly to vCard 3.0 properties:
@@ -80,3 +91,7 @@ Contact card data embedded in the QR code. Fields map directly to vCard 3.0 prop
 | `DEBUG_MODE` | `False` | Extra verbose logging |
 | `LOG_ROTATION` | `"10 MB"` | Log file rotation policy |
 | `LOG_RETENTION` | `"10 days"` | Log retention period |
+
+<Callout type="info">
+Use `uv run readme show-settings` to see all current env-driven settings and their values.
+</Callout>

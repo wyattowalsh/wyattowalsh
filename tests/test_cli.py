@@ -53,12 +53,12 @@ def test_config_view_non_existent(runner: CliRunner, tmp_path: Path) -> None:
     """Test `config view` for a non-existent config file."""
     non_existent_path = tmp_path / "does_not_exist.yaml"
     result = runner.invoke(app, ["config", "view", "--path", str(non_existent_path)])
-    assert result.exit_code == 0  # Command itself is okay, prints error msg
+    assert result.exit_code == 1
     assert "Config file not found" in result.stdout
 
 
-@patch("scripts.cli.load_config")
-@patch("scripts.cli.save_config")
+@patch("scripts.cli.config_cmd.load_config")
+@patch("scripts.cli.config_cmd.save_config")
 def test_config_save_existing(
     mock_save_config: MagicMock,
     mock_load_config: MagicMock,
@@ -79,7 +79,7 @@ def test_config_save_existing(
     assert "Configuration successfully saved" in result.stdout
 
 
-@patch("scripts.cli.save_config")
+@patch("scripts.cli.config_cmd.save_config")
 def test_config_save_new_default(
     mock_save_config: MagicMock, runner: CliRunner, tmp_path: Path
 ) -> None:
@@ -93,8 +93,7 @@ def test_config_save_new_default(
     assert result.exit_code == 0
     mock_save_config.assert_called_once()
     # The first arg to save_config should be a ProjectConfig instance
-    if ProjectConfig:
-        assert isinstance(mock_save_config.call_args[0][0], ProjectConfig)
+    assert isinstance(mock_save_config.call_args[0][0], ProjectConfig)
     assert mock_save_config.call_args[0][1] == new_config_path
     assert "Configuration successfully saved" in result.stdout
     assert "default config to save" in result.stdout
@@ -106,7 +105,7 @@ def test_config_save_new_default(
 
 
 @patch("scripts.banner.generate_banner")  # patch at the source module
-@patch("scripts.cli.load_config")
+@patch("scripts.cli.generate.load_config")
 def test_generate_banner_basic(
     mock_load_config: MagicMock,
     mock_generate_banner_func: MagicMock,
@@ -148,7 +147,7 @@ def test_generate_banner_basic(
 
 
 @patch("scripts.banner.generate_banner")  # patch at the source module
-@patch("scripts.cli.load_config")
+@patch("scripts.cli.generate.load_config")
 def test_generate_banner_cli_overrides(
     mock_load_config: MagicMock,
     mock_generate_banner_func: MagicMock,
@@ -157,31 +156,18 @@ def test_generate_banner_cli_overrides(
 ) -> None:
     """Test `generate banner` with CLI options overriding config."""
     test_config_path = tmp_path / "override_cfg.yaml"
-    if ProjectConfig:
-        dummy_config = ProjectConfig(
-            banner_settings={
-                "title": "Config Title",
-                "width": 1000,
-                "height": 500,
-                "optimize_with_svgo": True,
-                "output_path": "config_banner.svg",  # Will be overridden
-            }
-        )
-        with open(test_config_path, "w") as f:
-            yaml.dump(dummy_config.model_dump(mode="json"), f)
-        mock_load_config.return_value = dummy_config
-    else:
-        mock_load_config.return_value = MagicMock(
-            banner_settings={
-                "title": "Config Title",
-                "width": 1000,
-                "height": 500,
-                "optimize_with_svgo": True,
-                "output_path": "config_banner.svg",
-            },
-            qr_code_settings={},
-            v_card_data={},
-        )
+    dummy_config = ProjectConfig(
+        banner_settings={
+            "title": "Config Title",
+            "width": 1000,
+            "height": 500,
+            "optimize_with_svgo": True,
+            "output_path": "config_banner.svg",  # Will be overridden
+        }
+    )
+    with open(test_config_path, "w") as f:
+        yaml.dump(dummy_config.model_dump(mode="json"), f)
+    mock_load_config.return_value = dummy_config
 
     cli_output_svg_path = tmp_path / "cli_banner.svg"
     cli_title = "CLI Title"
@@ -220,7 +206,7 @@ def test_generate_banner_cli_overrides(
 # ------------------------------------------------------------------------------
 
 
-@patch("scripts.cli.Settings")  # Mock the Settings class
+@patch("scripts.cli.settings_cmd.Settings")  # Mock the Settings class
 def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -> None:
     """Test `show-settings` command with JSON output (default)."""
     # Configure the mock Settings instance that will be created
@@ -241,8 +227,8 @@ def test_show_settings_json(mock_settings_class: MagicMock, runner: CliRunner) -
     mock_settings_instance.model_dump_json.assert_called_once_with(indent=2)
 
 
-@patch("scripts.cli.Settings")
-@patch("scripts.cli.yaml")  # Mock the yaml module as a single patch
+@patch("scripts.cli.settings_cmd.Settings")
+@patch("scripts.cli._display.yaml")  # Mock the yaml module in the shared display helper
 def test_show_settings_yaml(
     mock_yaml: MagicMock,
     mock_settings_class: MagicMock,
@@ -269,8 +255,8 @@ def test_show_settings_yaml(
     mock_yaml.dump.assert_called_once_with(dummy_data_dict, indent=2, sort_keys=False)
 
 
-@patch("scripts.cli.Settings")
-@patch("scripts.cli.yaml", None)  # Simulate PyYAML not being installed
+@patch("scripts.cli.settings_cmd.Settings")
+@patch("scripts.cli._display.yaml", None)  # Simulate PyYAML not being installed
 def test_show_settings_yaml_fallback_to_json(
     mock_settings_class: MagicMock, runner: CliRunner, caplog
 ) -> None:
@@ -290,3 +276,74 @@ def test_show_settings_yaml_fallback_to_json(
 
     # Check that model_dump_json was called due to fallback
     mock_settings_instance.model_dump_json.assert_called()
+
+
+# ------------------------------------------------------------------------------
+# Tests for `dev` commands
+# ------------------------------------------------------------------------------
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_install(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev install` runs uv sync."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(app, ["dev", "install"])
+    assert result.exit_code == 0
+    assert "Dependencies synced" in result.stdout
+    mock_subprocess.run.assert_called_once()
+    cmd = mock_subprocess.run.call_args[0][0]
+    assert cmd == ["uv", "sync", "--all-groups"]
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev lint` runs ruff, pylint, mypy."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(app, ["dev", "lint"])
+    assert result.exit_code == 0
+    assert "All linters passed" in result.stdout
+    assert mock_subprocess.run.call_count == 3  # ruff, pylint, mypy
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_format(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev format` runs ruff check --fix and ruff format."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(app, ["dev", "format"])
+    assert result.exit_code == 0
+    assert "Formatting complete" in result.stdout
+    assert mock_subprocess.run.call_count == 2  # ruff check --fix, ruff format
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_test(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev test` installs test deps then runs pytest."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(app, ["dev", "test"])
+    assert result.exit_code == 0
+    assert mock_subprocess.run.call_count == 2  # uv sync + pytest
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev lint` exits on linter failure."""
+    mock_subprocess.run.return_value = MagicMock(returncode=1)
+    result = runner.invoke(app, ["dev", "lint"])
+    assert result.exit_code != 0
+    assert "Command failed" in result.stdout
+
+
+def test_dev_clean(runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test `dev clean` removes cache directories."""
+    monkeypatch.chdir(tmp_path)
+    # Create some cache dirs
+    (tmp_path / ".pytest_cache").mkdir()
+    (tmp_path / ".mypy_cache").mkdir()
+    (tmp_path / "__pycache__").mkdir()
+    (tmp_path / ".coverage").touch()
+
+    result = runner.invoke(app, ["dev", "clean"])
+    assert result.exit_code == 0
+    assert "Cleaned" in result.stdout
+    assert not (tmp_path / ".pytest_cache").exists()
+    assert not (tmp_path / ".mypy_cache").exists()

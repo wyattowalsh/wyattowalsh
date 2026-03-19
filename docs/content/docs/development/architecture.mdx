@@ -5,19 +5,25 @@ description: Codebase layout, module dependencies, and design decisions.
 
 ## Directory layout
 
-```
+```text
 wyattowalsh/
 ├── scripts/
-│   ├── cli.py                  # Typer CLI — all commands
+│   ├── cli/                    # Typer CLI package
+│   │   ├── _app.py             # Root app, --version, sub-app registration
+│   │   ├── generate.py         # Generate subcommands (banner, qr, word-cloud, …)
+│   │   ├── config_cmd.py       # Config subcommands (view, save, generate-default)
+│   │   ├── settings_cmd.py     # show-settings command
+│   │   └── dev.py              # Dev tools (format, lint, test, clean, docs)
 │   ├── config.py               # Pydantic config models + load/save
 │   ├── utils.py                # Logger (Loguru), Rich console
-│   ├── banner.py               # SVG banner (~1878 lines)
+│   ├── banner.py               # SVG banner (~1730 lines)
 │   ├── banner_patterns.py      # PatternType enum (zero-dep)
 │   ├── qr.py                   # QR code generator
 │   ├── word_clouds.py          # Word cloud orchestrator
-│   ├── word_cloud_renderers.py # Rendering backends
+│   ├── word_cloud_renderers.py # Pure-SVG rendering backends
 │   ├── techs.py                # Technology parser
 │   ├── readme_sections.py      # README assembler (~1548 lines)
+│   ├── readme_svg.py           # SVG rendering helpers for README cards
 │   ├── skills.py               # Skills badge generator
 │   ├── generative.py           # Generative art entry
 │   ├── animated_art.py         # Animated art entry
@@ -28,6 +34,7 @@ wyattowalsh/
 │       ├── shared.py           # seed_hash, _hex_slice, Noise2D
 │       ├── _dev_profiles.py    # Mock profiles for local testing
 │       ├── ink_garden.py       # Ink garden SVG (~2027 lines)
+│       ├── topography.py       # Topographic contour art (~1170 lines)
 │       └── animate.py          # Animation primitives
 ├── tests/
 │   └── fixtures/
@@ -46,24 +53,29 @@ wyattowalsh/
 
 ## Module dependency graph
 
-```
-cli.py
-  ├── config.py (always, for type annotations)
-  ├── banner.py (lazy — imported inside generate())
-  ├── qr.py (lazy)
-  ├── word_clouds.py (lazy)
-  ├── techs.py (lazy)
-  ├── readme_sections.py (lazy)
-  ├── skills.py (lazy)
-  ├── generative.py (lazy)
-  └── animated_art.py (lazy)
+```text
+cli/
+  ├── _app.py
+  │   ├── generate.py (generate sub-app)
+  │   ├── config_cmd.py (config sub-app)
+  │   ├── dev.py (dev sub-app)
+  │   └── settings_cmd.py (show-settings)
+  └── generate.py
+      ├── banner.py (lazy — imported inside command body)
+      ├── qr.py (lazy)
+      ├── word_clouds.py (lazy)
+      ├── techs.py (lazy)
+      ├── readme_sections.py (lazy)
+      ├── skills.py (lazy)
+      ├── generative.py (lazy)
+      └── animated_art.py (lazy)
 
 banner.py
   ├── banner_patterns.py (PatternType)
   ├── svgwrite
   └── numpy
 
-ink_garden.py
+ink_garden.py / topography.py
   ├── art/shared.py (seed_hash, Noise2D)
   └── numpy
 
@@ -71,7 +83,9 @@ fetch_metrics.py + fetch_history.py
   └── _github_http.py (_headers, _graphql)
 ```
 
-All heavy domain modules (banner, qr, word_clouds, art) are **lazily imported** inside CLI command function bodies. This keeps `import scripts.cli` fast even when optional extras aren't installed.
+<Callout type="idea" title="Lazy imports">
+All heavy domain modules (banner, qr, word_clouds, art) are lazily imported inside CLI command function bodies in `cli/generate.py`. This keeps `import scripts.cli` fast even when optional extras aren't installed.
+</Callout>
 
 ## Configuration flow
 
@@ -90,13 +104,19 @@ config.yaml → load_config() → ProjectConfig (Pydantic v2)
 
 All modules use `get_logger(module=__name__)` from `scripts/utils.py` — a Loguru logger with structured JSON sinks in `logs/json/` and plain text in `logs/text/`. Both directories are gitignored. Loguru calls use keyword arguments instead of f-strings: `logger.info("msg: {key}", key=value)`.
 
+<Callout type="warn">
+`utils.py` calls `loguru_logger.remove()` at module import time. Importing any `scripts.*` module resets all Loguru handlers. Do not add file I/O, network calls, or subprocess calls to `utils.py` — it is imported by every other module.
+</Callout>
+
 ## Large modules
 
 The five largest modules are intentionally monolithic — empirical co-change analysis shows they always change together with their art siblings, not in isolation (Parnas's "change together, stay together"):
 
 | Module | Lines | Rationale |
 |---|---|---|
-| `banner.py` | ~1878 | Single rendering pipeline |
-| `readme_sections.py` | ~1548 | One coherent assembler |
-| `word_cloud_renderers.py` | ~1230 | Tightly coupled rendering variants |
 | `art/ink_garden.py` | ~2027 | Garden growth simulation |
+| `banner.py` | ~1730 | Single rendering pipeline |
+| `readme_sections.py` | ~1548 | One coherent assembler |
+| `readme_svg.py` | ~1330 | SVG card rendering helpers |
+| `word_cloud_renderers.py` | ~1230 | Tightly coupled rendering variants |
+| `art/topography.py` | ~1170 | Topographic contour map art |

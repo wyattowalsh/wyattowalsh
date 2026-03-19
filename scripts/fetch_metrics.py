@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-from ._github_http import _BASE, _graphql, _get
+from ._github_http import _BASE, _graphql, _get, _paginate_rest
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -226,7 +226,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
 
     # -- REST: languages, top repos, traffic -----------------------------
     try:
-        all_repos = _json(f"{_BASE}/users/{owner}/repos?per_page=100", token)
+        all_repos = _paginate_rest(f"{_BASE}/users/{owner}/repos?per_page=100", token)
         if not isinstance(all_repos, list):
             all_repos = []
     except Exception as exc:

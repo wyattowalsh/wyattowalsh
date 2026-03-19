@@ -50,6 +50,9 @@ from .utils import get_logger
 # Initialize logger for the module
 logger = get_logger(module=__name__)
 
+# Module-level RNG instance; re-seeded by generate_banner() for determinism.
+_rng: random.Random = random.Random()
+
 # ------------------------------------------------------------------------------
 # Constants and Type Aliases
 # ------------------------------------------------------------------------------
@@ -69,9 +72,8 @@ ColorStop: TypeAlias = Tuple[str, float]
 # ------------------------------------------------------------------------------
 # Enumerations
 # ------------------------------------------------------------------------------
-# PatternType lives in its own lightweight module so callers that don't need
-# svgwrite/numpy can import it without heavy dependencies.
-from .banner_patterns import PatternType  # noqa: E402  (import after module-level TypeAlias/logger assignments)
+# PatternType lives in its own lightweight module (banner_patterns.py) so
+# callers that don't need svgwrite/numpy can import it without heavy deps.
 
 
 # ------------------------------------------------------------------------------
@@ -304,53 +306,6 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
     return f"#{int(nr * 255):02x}{int(ng * 255):02x}{int(nb * 255):02x}"
 
 
-def get_luminance(hex_color: str) -> float:
-    """
-    Calculate the relative luminance of a color for contrast calculations.
-
-    Based on WCAG 2.0 formula.
-
-    Args:
-        hex_color: The hex color string (e.g., "#ff0000").
-
-    Returns:
-        A float between 0 (black) and 1 (white) representing luminance.
-    """
-    # Remove # and handle shorthand
-    h = hex_color.lstrip("#")
-    if len(h) == 3:
-        h = "".join([c * 2 for c in h])
-
-    try:
-        r, g, b = (int(h[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
-    except ValueError:
-        logger.warning("Cannot parse RGB components from hex: {hex_color}", hex_color=hex_color)
-        return 0.5  # Middle luminance as fallback
-
-    # Convert to linear RGB
-    r = r / 12.92 if r <= 0.03928 else ((r + 0.055) / 1.055) ** 2.4
-    g = g / 12.92 if g <= 0.03928 else ((g + 0.055) / 1.055) ** 2.4
-    b = b / 12.92 if b <= 0.03928 else ((b + 0.055) / 1.055) ** 2.4
-
-    # Calculate luminance
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
-
-
-def get_contrasting_color(background_color: str) -> str:
-    """
-    Returns either black or white, whichever provides better contrast with
-    the background.
-
-    Args:
-        background_color: The background color in hex format.
-
-    Returns:
-        "#000000" for black or "#ffffff" for white, based on contrast.
-    """
-    luminance = get_luminance(background_color)
-    return "#000000" if luminance > 0.5 else "#ffffff"
-
-
 def create_linear_gradient(
     dwg: Drawing,
     id_name: str,
@@ -431,35 +386,25 @@ class ColorPalette(BaseModel):
     gradient_stops: list[str] = Field(default_factory=list)
     dark_mode_palette: dict[str, str] = Field(default_factory=dict)
 
-    def __init__(self, **data):
-        """Initializes the color palette and generates derived schemes."""
-        super().__init__(**data)
-        self._generate_fixed_palette()
-        self._generate_dark_mode_palette()
-        self._generate_gradient_stops()
-
-    def _generate_fixed_palette(self) -> None:
-        """
-        Generates a cohesive pastel-like palette based on the primary color.
-        This version uses fixed values for a consistent look.
-        """
-        self.secondary = ["#bed6df", "#d3eef5"]
-        self.accent = ["#aed7e1", "#d1f3fa"]
-        self.neutral = ["#f9fbfc", "#e9f0f2"]
-        self.extra_accents = ["#ffd3ec", "#ffe8c4"]
-
-    def _generate_dark_mode_palette(self) -> None:
-        """Creates a predefined dark mode palette with suitable contrast."""
-        self.dark_mode_palette = {
-            "primary": "#3a4b52",
-            "background": "#14181a",
-            "surface": "#1e2427",
-            "text": "#f2f2f2",
-        }
-
-    def _generate_gradient_stops(self) -> None:
-        """Creates a predefined set of gradient stops around the primary color."""
-        self.gradient_stops = ["#6a9fb5", "#83b7ca", "#9bd0df", "#cfeff6", "#ffffff"]
+    def model_post_init(self, __context) -> None:
+        """Generate derived color schemes only for fields not explicitly set."""
+        if not self.secondary:
+            self.secondary = ["#bed6df", "#d3eef5"]
+        if not self.accent:
+            self.accent = ["#aed7e1", "#d1f3fa"]
+        if not self.neutral:
+            self.neutral = ["#f9fbfc", "#e9f0f2"]
+        if not self.extra_accents:
+            self.extra_accents = ["#ffd3ec", "#ffe8c4"]
+        if not self.gradient_stops:
+            self.gradient_stops = ["#6a9fb5", "#83b7ca", "#9bd0df", "#cfeff6", "#ffffff"]
+        if not self.dark_mode_palette:
+            self.dark_mode_palette = {
+                "primary": "#3a4b52",
+                "background": "#14181a",
+                "surface": "#1e2427",
+                "text": "#f2f2f2",
+            }
 
 
 class VisualEffects(BaseModel):
@@ -577,6 +522,10 @@ class BannerConfig(BaseModel):
     optimize_with_svgo: bool = True
     output_path: str = "./assets/img/banner.svg"
     dark_mode: bool = False
+    seed: int | None = Field(
+        default=None,
+        description="Random seed for deterministic output",
+    )
 
     def apply_dark_mode(self) -> None:
         """Override color palette and typography for dark mode."""
@@ -790,7 +739,7 @@ def add_glassmorphism_effect(dwg: Drawing, cfg: BannerConfig) -> filters.Filter:
         type="fractalNoise",
         baseFrequency="0.07",
         numOctaves=2,
-        seed=random.randint(1, 100),
+        seed=_rng.randint(1, 100),
         result="noise",
     )
     glass_filter.feDisplacementMap(
@@ -829,14 +778,14 @@ def generate_flow_field(
     points = []
     scale = 0.006 * cfg.flow_complexity
     for _ in range(num_points):
-        x_pos = random.uniform(0, cfg.width)
-        y_pos = random.uniform(0, cfg.height)
+        x_pos = _rng.uniform(0, cfg.width)
+        y_pos = _rng.uniform(0, cfg.height)
         angle = (
             _noise_handler_instance.pnoise2(x_pos * scale, y_pos * scale, octaves=2)
             * math.pi
             * 2
         )
-        strength = random.uniform(0.4, 0.9) * cfg.pattern_scale
+        strength = _rng.uniform(0.4, 0.9) * cfg.pattern_scale
         dx_val = math.cos(angle) * strength
         dy_val = math.sin(angle) * strength
         points.append((x_pos, y_pos, dx_val, dy_val))
@@ -1364,7 +1313,7 @@ def generate_neural_network(
                 / 2
             )
             nodes_list.append((layer_x_norm, y_norm, activation))
-            if random.random() < 0.2:
+            if _rng.random() < 0.2:
                 recurrent_node_indices.append(len(nodes_list) - 1)
 
     # Generate connections
@@ -1376,10 +1325,10 @@ def generate_neural_network(
             next_layer_end_idx = min(
                 next_layer_start_idx + nodes_per_layer, len(nodes_list)
             )
-            num_fwd = random.randint(2, 6)  # Connections per node
+            num_fwd = _rng.randint(2, 6)  # Connections per node
             for _ in range(num_fwd):
                 if next_layer_start_idx < next_layer_end_idx:
-                    target_idx = random.randint(
+                    target_idx = _rng.randint(
                         next_layer_start_idx, next_layer_end_idx - 1
                     )
                     weight = (
@@ -1393,18 +1342,18 @@ def generate_neural_network(
         if current_layer > 0:  # Connect to previous layer
             prev_layer_start = (current_layer - 1) * nodes_per_layer
             prev_layer_end = current_layer * nodes_per_layer
-            num_rec = random.randint(1, 3)
+            num_rec = _rng.randint(1, 3)
             for _ in range(num_rec):
                 if prev_layer_start < prev_layer_end:
-                    target_idx = random.randint(prev_layer_start, prev_layer_end - 1)
+                    target_idx = _rng.randint(prev_layer_start, prev_layer_end - 1)
                     weight = 0.3 + 0.3 * nodes_list[node_idx][2]
                     connections_list.append((node_idx, target_idx, weight))
             # Skip connections (multiple layers back)
         if current_layer > 2:
             far_prev_start = 0
             far_prev_end = (current_layer - 2) * nodes_per_layer
-            if far_prev_end > far_prev_start and random.random() < 0.3:
-                target_idx = random.randint(far_prev_start, far_prev_end - 1)
+            if far_prev_end > far_prev_start and _rng.random() < 0.3:
+                target_idx = _rng.randint(far_prev_start, far_prev_end - 1)
                 weight = 0.2 + 0.2 * nodes_list[node_idx][2]
                 connections_list.append((node_idx, target_idx, weight))
 
@@ -1478,8 +1427,8 @@ def draw_neural_network(
         tgt_y = y0 + nodes[tgt_idx][1] * height
 
         # Curved connection path
-        ctrl_x = (src_x + tgt_x) / 2 + random.uniform(-20, 20)
-        ctrl_y = (src_y + tgt_y) / 2 + random.uniform(-20, 20)
+        ctrl_x = (src_x + tgt_x) / 2 + _rng.uniform(-20, 20)
+        ctrl_y = (src_y + tgt_y) / 2 + _rng.uniform(-20, 20)
         path_d = f"M {src_x},{src_y} Q {ctrl_x},{ctrl_y} {tgt_x},{tgt_y}"
 
         # Outer glow for connection
@@ -1553,11 +1502,11 @@ def add_micro_details(dwg: Drawing, cfg: BannerConfig, group: Group) -> None:
     """
     count = 8  # Reduced count for subtlety
     for _ in range(count):
-        x_pos = random.uniform(0, cfg.width)
-        y_pos = random.uniform(0, cfg.height)
-        size = random.uniform(6, 14)
-        opacity = random.uniform(0.02, 0.06)
-        shape_type = random.random()
+        x_pos = _rng.uniform(0, cfg.width)
+        y_pos = _rng.uniform(0, cfg.height)
+        size = _rng.uniform(6, 14)
+        opacity = _rng.uniform(0.02, 0.06)
+        shape_type = _rng.random()
 
         if shape_type < 0.5:  # Draw a circle
             circle = dwg.circle(
@@ -1740,7 +1689,9 @@ def add_title_and_subtitle(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> 
 # ------------------------------------------------------------------------------
 # Main Banner Generation Orchestration
 # ------------------------------------------------------------------------------
-def generate_banner(cfg: BannerConfig) -> None:
+def generate_banner(
+    cfg: BannerConfig, *, seed: int | None = None
+) -> None:
     """
     Orchestrates the generation of all SVG banner elements.
 
@@ -1750,7 +1701,12 @@ def generate_banner(cfg: BannerConfig) -> None:
 
     Args:
         cfg: The main banner configuration object.
+        seed: Optional random seed for deterministic output.
+              Falls back to ``cfg.seed`` when *seed* is ``None``.
     """
+    global _rng
+    _rng = random.Random(seed if seed is not None else cfg.seed)
+
     cfg.apply_dark_mode()
     dwg = svgwrite.Drawing(
         filename=cfg.output_path,
@@ -1834,31 +1790,3 @@ def generate_banner(cfg: BannerConfig) -> None:
     # Optimize with SVGO if enabled
     if cfg.optimize_with_svgo:
         optimize_with_svgo(cfg.output_path)
-
-
-# ------------------------------------------------------------------------------
-# Auxiliary Analysis Functions (Not directly used in final rendering logic)
-# ------------------------------------------------------------------------------
-def analyze_background_brightness(
-    cfg: BannerConfig, x: float, y: float, radius: float = 100
-) -> float:
-    """
-    Analyzes the approximate brightness of the banner's background at a given point.
-    This is an estimation based on gradient and a conceptual noise pattern.
-    NOTE: This function is auxiliary and not directly used by the current SVG
-    generation logic to dynamically alter text colors in the final output.
-
-    Args:
-        cfg: The banner configuration.
-        x: The x-coordinate of the point to analyze.
-        y: The y-coordinate of the point to analyze.
-        radius: The radius around the point to sample (currently not used in calc).
-
-    Returns:
-        A float between 0 (black) and 1 (white) representing the approximate
-        brightness of the background at the given point.
-    """
-    # This function is not directly used in the final rendering logic,
-    # but it's provided for potential future use.
-    # For now, it's a placeholder and returns a constant value.
-    return 0.5  # Placeholder value, replace with actual calculation if needed

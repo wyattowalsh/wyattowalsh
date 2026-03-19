@@ -7,6 +7,7 @@ import os
 import re
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import dataclasses
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from html import escape
@@ -298,8 +299,18 @@ class StarHistoryClient:
         owner, name = parts
         timestamps: list[datetime] = []
         cursor: Optional[str] = None
+        max_pages = 50
+        page_count = 0
 
         while True:
+            page_count += 1
+            if page_count > max_pages:
+                logger.warning(
+                    "Star history pagination limit reached (%d pages)",
+                    max_pages,
+                )
+                break
+
             variables: dict[str, object] = {"owner": owner, "name": name}
             if cursor is not None:
                 variables["after"] = cursor
@@ -575,7 +586,7 @@ class ReadmeSectionGenerator:
                 accent=None,
             )
             # populate icon payloads (brand glyph or data-uri)
-            self._set_card_icon_data_uri(
+            card = self._set_card_icon_data_uri(
                 card,
                 url=link.url,
                 host=host,
@@ -661,7 +672,7 @@ class ReadmeSectionGenerator:
         host: Optional[str] = None,
         label: Optional[str] = None,
         accent: Optional[str] = None,
-    ) -> None:
+    ) -> SvgCard:
         icon_data_uri = self._brand_icon_data_uri(
             url=url,
             host=host,
@@ -669,7 +680,8 @@ class ReadmeSectionGenerator:
             accent=accent,
         )
         if icon_data_uri:
-            object.__setattr__(card, "icon_data_uri", icon_data_uri)
+            return dataclasses.replace(card, icon_data_uri=icon_data_uri)
+        return card
 
     # -- Simple Icons CDN integration ------------------------------------
 
@@ -1043,7 +1055,7 @@ class ReadmeSectionGenerator:
                 badge="Featured",
                 icon=repo_name[:2].upper(),
             )
-            self._set_card_icon_data_uri(
+            card = self._set_card_icon_data_uri(
                 card,
                 url=repo_url,
                 label=repo_name,
@@ -1095,7 +1107,7 @@ class ReadmeSectionGenerator:
             languages=languages,
         )
 
-        self._set_card_icon_data_uri(
+        card = self._set_card_icon_data_uri(
             card,
             url=metadata.html_url,
             label=metadata.name,
@@ -1207,7 +1219,7 @@ class ReadmeSectionGenerator:
                 badge=None,
                 accent=accent,
             )
-            self._set_card_icon_data_uri(
+            card = self._set_card_icon_data_uri(
                 card,
                 url=post.url,
                 host=host,

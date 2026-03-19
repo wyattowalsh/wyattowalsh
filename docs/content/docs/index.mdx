@@ -3,15 +3,13 @@ title: Overview
 description: Developer documentation for the wyattowalsh GitHub profile README generator.
 ---
 
-# wyattowalsh / wyattowalsh
-
 This repo auto-generates a fully dynamic GitHub profile `README.md` — SVG banners, generative art, word clouds, QR codes, GitHub metrics, skills badges, and more — via a Python CLI that runs daily on GitHub Actions.
 
 ## What lives here
 
 | Layer | What it does |
 |---|---|
-| **CLI** (`scripts/cli.py`) | Typer-based entry point for every generation command |
+| **CLI** (`scripts/cli/`) | Typer-based entry point for every generation and dev command |
 | **Config** (`scripts/config.py`) | Pydantic models that drive all settings via `config.yaml` |
 | **Banner** (`scripts/banner.py`) | Procedural SVG banner with chaos-attractor backgrounds |
 | **QR Code** (`scripts/qr.py`) | Styled QR codes with embedded SVG backgrounds |
@@ -21,14 +19,31 @@ This repo auto-generates a fully dynamic GitHub profile `README.md` — SVG bann
 | **Generative Art** (`scripts/generative.py`) | Lorenz/neural/flow-field SVG art seeded from GitHub metrics |
 | **Animated Art** (`scripts/animated_art.py`) | CSS-animated SVGs seeded from commit history |
 | **Ink Garden** (`scripts/art/ink_garden.py`) | Procedural garden that grows with your activity |
+| **Topography** (`scripts/art/topography.py`) | Topographic contour art with hillshade and rivers |
 | **Metrics** (`scripts/fetch_metrics.py`) | GitHub GraphQL API → structured metrics JSON |
 | **History** (`scripts/fetch_history.py`) | Paginated commit history → time-series JSON |
 | **README Sections** (`scripts/readme_sections.py`) | Assembles final README from all generated fragments |
+| **README SVG** (`scripts/readme_svg.py`) | Reusable SVG rendering helpers for README cards and blocks |
 
 ## Quick navigation
 
-- [Getting Started](/docs/getting-started) — installation, first run
-- [CLI Reference](/docs/cli) — all commands and flags
-- [Scripts](/docs/scripts/banner) — per-module deep dives
-- [Workflows](/docs/workflows) — the GitHub Actions pipeline
-- [Development](/docs/development/testing) — testing, architecture
+<Cards>
+  <Card href="/docs/getting-started" title="Getting Started">
+    Clone, install, and run your first generation
+  </Card>
+  <Card href="/docs/cli" title="CLI Reference">
+    All commands, flags, and subcommands
+  </Card>
+  <Card href="/docs/scripts/banner" title="Script Modules">
+    Per-module deep dives for every generator
+  </Card>
+  <Card href="/docs/workflows" title="GitHub Actions">
+    The daily CI pipeline and job graph
+  </Card>
+  <Card href="/docs/development/architecture" title="Architecture">
+    Directory layout, module dependencies, and design decisions
+  </Card>
+  <Card href="/docs/development/testing" title="Testing">
+    pytest, golden-file regression, and property-based testing
+  </Card>
+</Cards>

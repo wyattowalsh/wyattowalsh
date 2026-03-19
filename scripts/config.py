@@ -459,36 +459,37 @@ def save_config(
 
 # NOTE: dev/test scaffolding — consider moving to a standalone script
 if __name__ == "__main__":
-    print(f"--- Testing ProjectConfig ({DEFAULT_CONFIG_PATH}) ---")
+    logger.info("--- Testing ProjectConfig ({path}) ---", path=DEFAULT_CONFIG_PATH)
     initial_cfg: Optional[ProjectConfig] = None
     try:
-        print("Attempting to load existing config...")
+        logger.info("Attempting to load existing config...")
         initial_cfg = load_config()
-        print("Loaded config (existing or newly created default).")
+        logger.info("Loaded config (existing or newly created default).")
     except (FileNotFoundError, ValueError, IOError) as e_load:
-        print(
-            f"Error loading config: {e_load}. "
-            "This shouldn't happen if default creation works."
+        logger.error(
+            "Error loading config: {e}. "
+            "This shouldn't happen if default creation works.",
+            e=e_load,
         )
         initial_cfg = ProjectConfig()
-        print("Using in-memory default config due to load failure.")
+        logger.info("Using in-memory default config due to load failure.")
 
     if initial_cfg:
-        print("Current config (loaded or default):")
+        logger.info("Current config (loaded or default):")
         # For display, we can dump it as YAML string to test that part too
         try:
             yaml_str_display = yaml.dump(
-                initial_cfg.model_dump(mode="python"), 
-                indent=2, 
-                sort_keys=False
+                initial_cfg.model_dump(mode="python"),
+                indent=2,
+                sort_keys=False,
             )
-            print(yaml_str_display)
+            logger.debug("Config YAML:\n{yaml_str}", yaml_str=yaml_str_display)
         except Exception as e_display:
-            print(
-                "Could not serialize current config to YAML for display: "
-                f"{e_display}"
+            logger.warning(
+                "Could not serialize current config to YAML for display: {e}",
+                e=e_display,
             )
-            print(initial_cfg.model_dump_json(indent=2))
+            logger.debug("Config JSON: {json}", json=initial_cfg.model_dump_json(indent=2))
 
         initial_cfg.project_name = "Updated Project Name via Test Script"
         if initial_cfg.banner_settings:
@@ -496,34 +497,43 @@ if __name__ == "__main__":
                 "Updated Banner Title via Test Script"
             )
 
-        print("\nAttempting to save modified config...")
+        logger.info("Attempting to save modified config...")
         try:
             save_config(initial_cfg)
-            print(f"Saved updated config to {DEFAULT_CONFIG_PATH}.")
+            logger.info("Saved updated config to {path}.", path=DEFAULT_CONFIG_PATH)
         except IOError as e_save_mod:
-            print(f"Error saving modified config: {e_save_mod}")
+            logger.error("Error saving modified config: {e}", e=e_save_mod)
 
-        print("\nAttempting to reload config for verification...")
+        logger.info("Attempting to reload config for verification...")
         try:
             reloaded_cfg = load_config()
-            print("Reloaded config:")
+            logger.info("Reloaded config:")
             yaml_str_reloaded = yaml.dump(
-                reloaded_cfg.model_dump(mode="python"), 
-                indent=2, 
-                sort_keys=False
+                reloaded_cfg.model_dump(mode="python"),
+                indent=2,
+                sort_keys=False,
             )
-            print(yaml_str_reloaded)
+            logger.debug("Reloaded YAML:\n{yaml_str}", yaml_str=yaml_str_reloaded)
 
-            assert reloaded_cfg.project_name == (
-                "Updated Project Name via Test Script"
-            )
-            if reloaded_cfg.banner_settings:
-                assert (
-                    reloaded_cfg.banner_settings.title ==
-                    "Updated Banner Title via Test Script"
+            if reloaded_cfg.project_name != "Updated Project Name via Test Script":
+                logger.error(
+                    "Mismatch: project_name is {actual!r}, expected "
+                    "'Updated Project Name via Test Script'",
+                    actual=reloaded_cfg.project_name,
                 )
-            print("Assertion successful: Reloaded matches saved.")
+            elif (
+                reloaded_cfg.banner_settings
+                and reloaded_cfg.banner_settings.title
+                != "Updated Banner Title via Test Script"
+            ):
+                logger.error(
+                    "Mismatch: banner title is {actual!r}, expected "
+                    "'Updated Banner Title via Test Script'",
+                    actual=reloaded_cfg.banner_settings.title,
+                )
+            else:
+                logger.info("Verification successful: Reloaded matches saved.")
         except (FileNotFoundError, ValueError, IOError) as e_reload:
-            print(f"Error reloading/asserting: {e_reload}")
+            logger.error("Error reloading/verifying: {e}", e=e_reload)
     else:
-        print("Critical error: initial_cfg is None after load attempts.")
+        logger.error("Critical error: initial_cfg is None after load attempts.")

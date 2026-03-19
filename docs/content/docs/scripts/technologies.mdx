@@ -9,38 +9,32 @@ description: Parses techs.md into shields.io badge rows for the README technolog
 
 ## Input format
 
-The parser reads `techs.md` — a markdown file with technology entries, one per line, in a structured format:
+The parser reads `techs.md` — a markdown file with technology entries organized by category:
 
 ```markdown
-# Category Name
+## Programming Languages
+- Python (Level: 5) - Primary language
+- Go (Level: 3)
 
-## Subcategory
-
-- [TechName](https://shields.io/badge/...) — optional description
+## Cloud & DevOps
+- Docker (Level: 4)
 ```
 
-Each line with a badge URL is parsed into a `Technology` Pydantic model.
+Each line is parsed by `parse_technology_line()` into a `Technology` Pydantic model.
 
 ## Technology model
 
 ```python
 class Technology(BaseModel):
     name: str
-    badge_url: str
-    link: Optional[str]
-    level: Optional[str]       # beginner | intermediate | advanced | expert
-    description: Optional[str]
+    level: int                 # 1–5 (Pydantic ge=1, le=5)
+    category: Optional[str]
+    notes: Optional[str]
 ```
 
 ## CLI
 
-The technologies section is generated as part of `generate readme`:
-
-```bash
-uv run python -m scripts.cli generate readme --config-path config.yaml
-```
-
-Or use `load_technologies()` directly:
+Use `load_technologies()` directly:
 
 ```python
 from scripts.techs import load_technologies
@@ -48,7 +42,17 @@ from scripts.techs import load_technologies
 techs = load_technologies(Path("techs.md"))
 ```
 
+Or display as a Rich table:
+
+```python
+from scripts.techs import load_technologies, display_technologies
+
+techs = load_technologies(Path("techs.md"))
+display_technologies(techs)
+```
+
 ## Validation
 
-- `level` must be one of `beginner`, `intermediate`, `advanced`, `expert` (or null)
-- Pydantic validates all entries at load time — malformed lines are logged and skipped
+- `level` must be an integer between 1 and 5 — Pydantic enforces `ge=1, le=5`
+- Lines that don't match the expected format return `None` from `parse_technology_line()`
+- Category is inferred from the nearest `##` heading above each entry

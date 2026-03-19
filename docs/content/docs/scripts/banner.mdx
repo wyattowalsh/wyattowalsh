@@ -57,6 +57,10 @@ Defined in `scripts/banner_patterns.py`. Live variants:
 
 Dead variants (draw functions not yet implemented): `REACTION`, `CLIFFORD`, `FLAME`, `PDJ`, `IKEDA`.
 
+<Callout type="info">
+The active pattern is chosen automatically based on the metrics hash. All five live patterns may appear in generated output.
+</Callout>
+
 ## SVGO optimization
 
 If `optimize_with_svgo=True` and `svgo` is on `PATH`, the generated SVG is piped through SVGO to reduce file size. Falls back silently if SVGO is unavailable.
@@ -67,3 +71,14 @@ If `optimize_with_svgo=True` and `svgo` is on `PATH`, the generated SVG is piped
 |---|---|
 | `banner.svg` | Light-mode banner |
 | `banner-dark.svg` | Dark-mode banner (auto-derived path) |
+
+## Related
+
+<Cards>
+  <Card href="/docs/scripts/generative-art" title="Generative Art">
+    Lorenz/neural/flow-field SVGs that share PatternType with the banner
+  </Card>
+  <Card href="/docs/getting-started/configuration" title="Configuration">
+    BannerSettings reference in config.yaml
+  </Card>
+</Cards>

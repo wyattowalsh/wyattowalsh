@@ -6,7 +6,7 @@
 
 ```bash
 # Full suite (parallel, all plugins from pyproject.toml)
-make test
+uv run readme dev test
 
 # Direct equivalent
 uv run python -m pytest
@@ -53,7 +53,7 @@ Key `addopts` flags decoded:
 |--------|-------|-----------|--------|
 | `scripts/banner.py` | 1730 | `test_banner.py` | ✅ Covered |
 | `scripts/qr.py` | 253 | `test_qr.py` | ✅ Covered |
-| `scripts/cli.py` | 870 | `test_cli.py` | ⚠️ Fragile — HR-01 import bug skips all tests |
+| `scripts/cli/` | — | `test_cli.py` | ✅ Covered (CLI refactored to package) |
 | `scripts/utils.py` | 172 | `test_utils.py` | ✅ Covered |
 | `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
 | `scripts/techs.py` | 315 | `test_techs.py` | ❌ Empty — zero coverage |
@@ -89,8 +89,8 @@ Key `addopts` flags decoded:
 
 ### `test_cli.py`
 - Uses `typer.testing.CliRunner`
-- ⚠️ **HR-01 (must fix first):** Line `from config import ProjectConfig` → `from scripts.config import ProjectConfig`. Current guard sets `app = None` and silently skips everything.
-- Pattern after fix: `result = runner.invoke(app, ["generate", "banner"]); assert result.exit_code == 0`
+- Imports `app` from `scripts.cli` (now a package)
+- Pattern: `result = runner.invoke(app, ["generate", "banner"]); assert result.exit_code == 0`
 
 ### `test_utils.py`
 - **Critical:** `reset_loguru_handlers` autouse fixture removes Loguru sinks before each test — required because `scripts/utils.py` calls `loguru_logger.remove()` at import time

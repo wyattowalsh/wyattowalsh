@@ -5,8 +5,12 @@ description: OKLCH-palettized word clouds generated from your GitHub starred-rep
 
 ## Modules
 
-- `scripts/word_clouds.py` — orchestration, file I/O, palette selection
-- `scripts/word_cloud_renderers.py` — rendering backends (matplotlib/wordcloud integration)
+- `scripts/word_clouds.py` — orchestration, file I/O, palette selection (~1585 lines)
+- `scripts/word_cloud_renderers.py` — pure-SVG rendering backends with four layout strategies (~1231 lines)
+
+<Callout type="warn" title="Two config models">
+`WordCloudSettingsModel` in `config.py` is the top-level YAML config (part of `ProjectConfig`). `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Extra keys silently pass in the first, raise `ValidationError` in the second.
+</Callout>
 
 ## What it generates
 
@@ -61,3 +65,25 @@ word_cloud_settings:
 |---|---|
 | `wordcloud_by_topic.svg` | Topics from starred repos |
 | `wordcloud_by_language.svg` | Languages from starred repos |
+
+## Rendering backends
+
+`word_cloud_renderers.py` provides four pure-SVG layout strategies with OKLCH color palettes:
+
+| Renderer | Strategy |
+|---|---|
+| `WordleRenderer` | Classic Wordle-style random placement |
+| `ClusteredRenderer` | Grouped by semantic clusters |
+| `TypographicRenderer` | Typography-focused layout |
+| `ShapedRenderer` | Mask-based shape filling |
+
+## Related
+
+<Cards>
+  <Card href="/docs/getting-started/configuration" title="Configuration">
+    WordCloudSettingsModel reference in config.yaml
+  </Card>
+  <Card href="/docs/workflows" title="Workflows">
+    How word clouds are generated in the CI pipeline
+  </Card>
+</Cards>

@@ -45,10 +45,28 @@ All animations use CSS `@keyframes` with `animation` properties embedded directl
 
 ## Dev profiles
 
-`scripts/art/_dev_profiles.py` contains a `PROFILES` dict of mock metrics used for local testing without a live GitHub token. Import it directly:
+`scripts/art/_dev_profiles.py` contains a `PROFILES` dict of mock metrics used for local testing without a live GitHub token:
 
 ```python
 from scripts.art._dev_profiles import PROFILES
 
 mock_metrics = PROFILES["high_activity"]
 ```
+
+<Callout type="idea">
+Use dev profiles to test art generation locally without a `GITHUB_TOKEN`. Available profiles include various activity levels and repo compositions.
+</Callout>
+
+## Related
+
+<Cards>
+  <Card href="/docs/scripts/generative-art" title="Generative Art">
+    Static generative art using the same shared utilities
+  </Card>
+  <Card href="/docs/scripts/ink-garden" title="Ink Garden">
+    Procedural botanical garden with animation support
+  </Card>
+  <Card href="/docs/data/fetch-history" title="Fetch History">
+    The commit history data source that seeds animations
+  </Card>
+</Cards>

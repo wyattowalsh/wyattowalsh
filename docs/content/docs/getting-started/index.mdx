@@ -11,6 +11,10 @@ description: Clone the repo, install dependencies with uv, and run your first ge
 | [uv](https://docs.astral.sh/uv/) | latest |
 | GitHub Token | PAT with `read:user`, `public_repo` |
 
+<Callout type="info" title="macOS extras">
+For QR code generation, you also need Cairo: `brew install cairo`. Set `DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` before running.
+</Callout>
+
 ## Clone
 
 ```bash
@@ -22,43 +26,48 @@ cd wyattowalsh
 
 The project uses **optional dependency groups** — install only what you need:
 
-```bash
-# Core only (config, CLI skeleton)
-uv sync
-
-# All extras (everything needed for local generation)
-uv sync --all-extras
-
-# Targeted extras
-uv pip install .[banner]       # SVG banner (svgwrite, numpy)
-uv pip install .[qr]           # QR code (qrcode, pillow)
-uv pip install .[word-clouds]  # Word clouds (wordcloud, matplotlib)
-uv pip install .[script-tools] # Starred-list fetcher
+```bash title="All dev deps (recommended)"
+uv sync --all-groups
 ```
+
+```bash title="Or use the CLI"
+uv run readme dev install
+```
+
+<Callout type="idea">
+`uv sync --all-groups` installs format, lint, test, and all generation extras in one shot. For CI or minimal setups, use `uv sync` for core only.
+</Callout>
 
 ## First run
 
 Generate a default config, then run the full pipeline:
 
-```bash
-# 1. Create config.yaml with all defaults
-uv run python -m scripts.cli config generate-default --path config.yaml
+```bash title="1. Create config.yaml with all defaults"
+uv run readme config generate-default --path config.yaml
+```
 
-# 2. Preview the config
-uv run python -m scripts.cli config view --path config.yaml
+```bash title="2. Preview the config"
+uv run readme config view --path config.yaml
+```
 
-# 3. Generate the SVG banner
-uv run python -m scripts.cli generate banner --config-path config.yaml
+```bash title="3. Generate the SVG banner"
+uv run readme generate banner --config-path config.yaml
+```
 
-# 4. Generate a QR code
-uv run python -m scripts.cli generate qr_code --config-path config.yaml
+```bash title="4. Generate a QR code"
+uv run readme generate qr --config-path config.yaml
+```
 
-# 5. Generate word clouds (requires .github/assets/topics.md)
-uv run python -m scripts.cli generate word_cloud \
+```bash title="5. Generate word clouds (requires .github/assets/topics.md)"
+uv run readme generate word-cloud \
   --config-path config.yaml \
   --techs-path .github/assets/topics.md \
   --output-path .github/assets/img/wordcloud.svg
 ```
+
+<Callout type="warn">
+Word cloud generation requires `.github/assets/topics.md` to exist. Run the `starred` CLI first or use the CI workflow to generate it.
+</Callout>
 
 ## Environment variables
 
@@ -69,3 +78,14 @@ uv run python -m scripts.cli generate word_cloud \
 | `DEBUG_MODE` | No | Enable verbose debug logging |
 
 Set them in your shell or a `.env` file (python-dotenv is not included — export manually or use `direnv`).
+
+## Next steps
+
+<Cards>
+  <Card href="/docs/getting-started/configuration" title="Configuration">
+    Customize every generator via config.yaml
+  </Card>
+  <Card href="/docs/cli" title="CLI Reference">
+    All commands, flags, and subcommands
+  </Card>
+</Cards>

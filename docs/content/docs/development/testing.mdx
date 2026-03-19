@@ -16,7 +16,10 @@ description: pytest with hypothesis, parallel execution, coverage, and golden-fi
 ## Run tests
 
 ```bash
-# Full suite (parallel)
+# Full suite (parallel) via CLI
+uv run readme dev test
+
+# Direct pytest (equivalent)
 uv run python -m pytest
 
 # Single file, serial (useful for debugging)
@@ -24,6 +27,12 @@ uv run python -m pytest tests/test_cli.py -v -n 0
 
 # Only non-integration tests
 uv run python -m pytest -m "not integration" -v
+
+# Filter by expression
+uv run readme dev test -k "test_banner"
+
+# Skip coverage
+uv run readme dev test --no-coverage
 ```
 
 ## pytest configuration
@@ -43,7 +52,7 @@ Coverage is written to `logs/coverage/` (HTML) — excluded from git.
 
 | File | What it tests |
 |---|---|
-| `tests/test_cli.py` | All CLI commands via `typer.testing.CliRunner` |
+| `tests/test_cli.py` | All CLI commands via `typer.testing.CliRunner` (imports from `scripts.cli` package) |
 | `tests/test_ink_garden.py` | `ink_garden.generate()` smoke + golden-file regression |
 | `tests/test_word_clouds_red.py` | RED (xfail) stubs for unimplemented word-cloud features |
 | `tests/test_living_art_media.py` | Skipped — requires pre-generated artifacts |
@@ -51,6 +60,12 @@ Coverage is written to `logs/coverage/` (HTML) — excluded from git.
 | `tests/test_techs.py` | Technology parser: parse, validation, Hypothesis fuzz |
 | `tests/test_banner.py` | Banner generation (patches `svgwrite`) |
 | `tests/test_fetch_metrics.py` | Metrics fetcher (expanded coverage) |
+| `tests/test_readme_sections.py` | README section assembler |
+| `tests/test_readme_svg.py` | SVG rendering helpers |
+| `tests/test_skills.py` | Skills badge generator |
+| `tests/test_qr.py` | QR code generation (Cairo integration) |
+| `tests/test_utils.py` | Logger and utility functions |
+| `tests/test_card_contracts_blog_red.py` | RED — unimplemented blog card features |
 
 ## Golden-file tests
 
@@ -82,6 +97,10 @@ uv run python -m pytest tests/test_ink_garden.py -v
 - Lazy imports — patch at `scripts.banner.generate_banner`, NOT `scripts.cli.generate_banner`
 - Config I/O — use `tmp_path` fixture + real YAML files (no config mocking)
 - Do **not** mock the database (N/A) or the filesystem with MagicMock (use `tmp_path`)
+
+<Callout type="warn" title="Loguru handler reset">
+`scripts/utils.py` calls `loguru_logger.remove()` at import time. Tests that import any `scripts.*` module need the `reset_loguru_handlers` autouse fixture (see `test_utils.py`).
+</Callout>
 
 ## RED tests (xfail)
 

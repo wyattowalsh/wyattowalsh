@@ -44,6 +44,13 @@ def mock_get():
 
 
 @pytest.fixture
+def mock_paginate_rest():
+    """Patch _paginate_rest in scripts.fetch_metrics."""
+    with patch("scripts.fetch_metrics._paginate_rest") as m:
+        yield m
+
+
+@pytest.fixture
 def mock_graphql():
     """Patch _graphql in scripts.fetch_metrics."""
     with patch("scripts.fetch_metrics._graphql") as m:
@@ -228,7 +235,7 @@ class TestGraphQLExpanded:
 # ---------------------------------------------------------------------------
 
 class TestCollectIntegration:
-    def test_collect_returns_all_expected_keys(self, mock_get: MagicMock, mock_graphql: MagicMock) -> None:
+    def test_collect_returns_all_expected_keys(self, mock_get: MagicMock, mock_paginate_rest: MagicMock, mock_graphql: MagicMock) -> None:
         from scripts.fetch_metrics import collect
 
         # Stub REST calls
@@ -249,11 +256,12 @@ class TestCollectIntegration:
             (orgs, {}),        # 3. orgs
             (stars, {}),       # 4. latest stargazer
             (forks_data, {}),  # 5. latest fork
-            ([], {}),          # 6. GET /users/{owner}/repos (shared for languages + top_repos)
-            ({"count": 10, "uniques": 5}, {}),   # 7. traffic views
-            ({"count": 3, "uniques": 2}, {}),    # 8. traffic clones
-            ([], {}),          # 9. traffic referrers
+            ({"count": 10, "uniques": 5}, {}),   # 6. traffic views
+            ({"count": 3, "uniques": 2}, {}),     # 7. traffic clones
+            ([], {}),          # 8. traffic referrers
         ]
+        # Repos list now uses _paginate_rest
+        mock_paginate_rest.return_value = []
         mock_graphql.return_value = {
             "data": {
                 "viewer": {

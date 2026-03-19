@@ -5,7 +5,11 @@ description: Generates a styled QR code PNG with an embedded SVG background, vCa
 
 ## Module
 
-`scripts/qr.py` — uses `qrcode`, `Pillow`, and `cairosvg` for SVG rasterization.
+`scripts/qr.py` — uses `segno`, `Pillow`, and `cairosvg` for SVG rasterization.
+
+<Callout type="warn" title="System dependency">
+Requires Cairo (macOS: `brew install cairo`). Set `DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` before running.
+</Callout>
 
 ## What it generates
 
@@ -64,3 +68,14 @@ END:VCARD
 | `H` | ~30% | Largest (default) |
 
 Use `H` when embedding a background image — the image covers some modules.
+
+## Related
+
+<Cards>
+  <Card href="/docs/getting-started/configuration" title="Configuration">
+    QRCodeSettings and VCardDataModel reference
+  </Card>
+  <Card href="/docs/cli/generate" title="CLI generate">
+    Full CLI options for qr generation
+  </Card>
+</Cards>

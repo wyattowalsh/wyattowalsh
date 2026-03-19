@@ -1,0 +1,77 @@
+---
+title: Ink Garden
+description: Procedural botanical SVG garden whose species composition and density reflect your GitHub activity.
+---
+
+## Module
+
+`scripts/art/ink_garden.py` — ~2027 lines. Shared utilities in `scripts/art/shared.py`.
+
+## What it generates
+
+A self-contained SVG string depicting a procedural garden. The garden's characteristics are seeded from your GitHub metrics:
+
+- **Plant species** — trees, leaves, blooms — are classified by repository language distribution
+- **Density and maturity** — controlled by the `maturity` parameter (0.0 = seedling, 1.0 = fully grown)
+- **Insects, webs, and environmental details** — add organic texture
+- **Deterministic output** — same seed + metrics + maturity always produces the same SVG
+
+## Entry point
+
+```python
+from scripts.art.ink_garden import generate
+from scripts.art.shared import seed_hash
+
+svg_string = generate(metrics, seed=seed_hash(metrics), maturity=1.0)
+```
+
+| Parameter | Type | Notes |
+|---|---|---|
+| `metrics` | `dict` | GitHub metrics from `fetch_metrics.py` |
+| `seed` | `str` | SHA-256 hex string (use `seed_hash(metrics)`) |
+| `maturity` | `float` | 0.0–1.0 — controls garden growth level |
+
+Returns a complete SVG string (no file I/O).
+
+## CLI
+
+The ink garden is generated as part of the animated art pipeline:
+
+```bash
+# Fetch metrics first
+uv run python -m scripts.fetch_metrics \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/metrics.json
+
+# Generate via the animated art command
+uv run readme generate animated \
+  --history-path /tmp/history.json
+```
+
+## Seed and determinism
+
+`seed_hash(metrics)` produces a stable SHA-256 hex string from the metrics dictionary. Individual parameters (noise frequencies, color hues, species weights) are derived by slicing hex digits from this seed, ensuring fully deterministic output.
+
+## Animation
+
+`scripts/art/animate.py` drives multi-frame animation by calling `generate()` at different maturity levels (0.0 → 1.0), producing growth animation frames.
+
+## Testing
+
+`tests/test_ink_garden.py` includes:
+- Smoke tests — verify `generate()` returns valid SVG
+- Golden-file regression tests — compare output against stored fixtures in `tests/fixtures/ink_garden/`
+
+To regenerate golden files after intentional changes:
+
+```bash
+rm -rf tests/fixtures/ink_garden/
+uv run python -m pytest tests/test_ink_garden.py -v
+```
+
+## Related
+
+- [Generative Art](/docs/scripts/generative-art) — Lorenz/neural/flow-field art (same `shared.py` utilities)
+- [Animated Art](/docs/scripts/animated-art) — CSS-animated SVGs that can use ink garden frames
+- [Topography](/docs/scripts/generative-art) — Topographic contour art (`art/topography.py`)

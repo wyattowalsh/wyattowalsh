@@ -37,8 +37,6 @@ from scripts.banner import (
     generate_flow_field,
     generate_lorenz,
     generate_neural_network,
-    get_contrasting_color,
-    get_luminance,
     optimize_with_svgo,
     parse_rgba_color,
 )
@@ -377,43 +375,6 @@ def test_adjust_hue() -> None:
     assert adjust_hue("#12345", 120) == "#12345"  # Invalid length
 
 
-def test_get_luminance() -> None:
-    """Test luminance calculation for hex colors."""
-    assert get_luminance("#000000") == pytest.approx(0.0)  # Black
-    assert get_luminance("#ffffff") == pytest.approx(1.0)  # White
-    assert get_luminance("#808080") == pytest.approx(
-        0.21586050000000003
-    )  # Grey (specific WCAG approx)
-    # Check relative luminance (darker colors should have lower luminance)
-    assert get_luminance("#ff0000") < get_luminance("#ffff00")  # Red < Yellow
-    assert get_luminance("#0000ff") < get_luminance("#00ff00")  # Blue < Green
-    # Test shorthand
-    assert get_luminance("#000") == pytest.approx(0.0)
-    assert get_luminance("#fff") == pytest.approx(1.0)
-    # Test invalid hex - should return fallback (0.5 in current code)
-    assert get_luminance("invalid") == 0.5
-
-
-def test_get_contrasting_color() -> None:
-    """Test contrasting color selection (black or white)."""
-    assert get_contrasting_color("#000000") == "#ffffff"  # Dark bg -> White text
-    assert get_contrasting_color("#202020") == "#ffffff"  # Darkish bg -> White text
-    assert get_contrasting_color("#ffffff") == "#000000"  # Light bg -> Black text
-    assert get_contrasting_color("#f0f0f0") == "#000000"  # Lightish bg -> Black text
-    # Test a color near the middle threshold (luminance ~0.5)
-    # #767676 has luminance ~0.18, so should get white text
-    assert get_contrasting_color("#767676") == "#ffffff"
-    # #888888 has luminance ~0.25, should get white
-    assert get_contrasting_color("#888888") == "#ffffff"
-    # A color whose luminance is exactly 0.5 (e.g. #b2b2b2, lum ~0.49) or slightly above would flip to black.
-    # The threshold is 0.5 in the code (returns black if luminance > 0.5)
-    # Luminance of #b3b3b3 is approx 0.468 according to sRGB. This should be white.
-    assert get_contrasting_color("#b3b3b3") == "#ffffff"  # Luminance ~0.468
-    # Let's test a color that should be black, e.g., #b4b4b4 (Luminance ~0.476)
-    # Still white. #c0c0c0 (silver) has lum ~0.55, so should be black.
-    assert get_contrasting_color("#c0c0c0") == "#000000"  # Luminance ~0.55
-
-
 @patch("scripts.banner.NoiseHandler._actual_noise_module", None)
 @patch("scripts.banner.NoiseHandler._noise_module_available", False)
 @patch("scripts.banner.NoiseHandler._initialized_flag", True)  # Pretend it tried
@@ -487,10 +448,10 @@ def test_color_palette_default_instantiation(
     assert default_color_palette is not None
     assert default_color_palette.primary == "#6a9fb5"
 
-    # Check if the fixed palette generation has run and set specific values
-    assert default_color_palette.secondary == ["#bed6df", "#d3eef5"]
-    assert default_color_palette.accent == ["#aed7e1", "#d1f3fa"]
-    assert default_color_palette.neutral == ["#f9fbfc", "#e9f0f2"]
+    # Field defaults are used directly (model_post_init only fills empty lists)
+    assert default_color_palette.secondary == ["#4A90E2", "#357ABD"]
+    assert default_color_palette.accent == ["#61DAFB", "#41B883"]
+    assert default_color_palette.neutral == ["#F8F9FA", "#343A40"]
     assert default_color_palette.extra_accents == ["#ffd3ec", "#ffe8c4"]
 
     # Check that pattern_colors has default entries (spot check a few)
@@ -522,28 +483,14 @@ def test_color_palette_with_custom_primary() -> None:
     # and _generate_gradient_stops will set their predefined values.
     # Verify that these predefined values are indeed what's present.
 
-    assert palette.secondary == ["#bed6df", "#d3eef5"]
-    assert palette.accent == ["#aed7e1", "#d1f3fa"]
-    assert palette.neutral == ["#f9fbfc", "#e9f0f2"]
+    # Field defaults are used directly (model_post_init only fills empty lists)
+    assert palette.secondary == ["#4A90E2", "#357ABD"]
+    assert palette.accent == ["#61DAFB", "#41B883"]
+    assert palette.neutral == ["#F8F9FA", "#343A40"]
 
     assert palette.dark_mode_palette["primary"] == "#3a4b52"
     expected_gradient_stops = ["#6a9fb5", "#83b7ca", "#9bd0df", "#cfeff6", "#ffffff"]
     assert palette.gradient_stops == expected_gradient_stops
-
-    # Pattern colors should remain the defaults from the Field definition
-    assert palette.pattern_colors["lorenz"] == ["#00e8f5", "#00a8b4"]
-
-    # More tests for Phase 4, 5 will follow.
-    assert palette.neutral == ["#f9fbfc", "#e9f0f2"]
-
-    assert palette.dark_mode_palette["primary"] == "#3a4b52"
-    assert palette.gradient_stops == [
-        "#6a9fb5",
-        "#83b7ca",
-        "#9bd0df",
-        "#cfeff6",
-        "#ffffff",
-    ]
 
     # Pattern colors should remain the defaults from the Field definition
     assert palette.pattern_colors["lorenz"] == ["#00e8f5", "#00a8b4"]
@@ -767,6 +714,7 @@ def test_define_background_calls(
         mock_noise_rect_instance,
         mock_vignette_rect_instance,
     ]
+    mock_shapes_rect_constructor.reset_mock()  # Reset call count for fresh assertions
 
     # Re-run define_background with the new side_effect
     define_background(
@@ -1283,11 +1231,7 @@ def test_draw_aizawa_calls(
         mock_path_instance.add.assert_any_call(mock_animate_instance)
 
 
-@patch("random.uniform")
-@patch("random.random")  # To control shape_type
 def test_add_micro_details_calls(
-    mock_random_random: MagicMock,
-    mock_random_uniform: MagicMock,
     default_banner_config: BannerConfig,
     mock_svgwrite_drawing: MagicMock,
 ) -> None:
@@ -1297,14 +1241,23 @@ def test_add_micro_details_calls(
     mock_dwg_instance.line = MagicMock(spec=svgwrite.shapes.Line)
     mock_group_instance = MagicMock(spec=svgwrite.container.Group)
 
+    import scripts.banner as _banner_mod
+
+    mock_rng = MagicMock()
     # For 8 iterations (count=8 in add_micro_details):
     # x_pos, y_pos, size, opacity = 4 calls per iteration
-    mock_random_uniform.side_effect = [10.0, 20.0, 5.0, 0.05] * 8
+    mock_rng.uniform = MagicMock(side_effect=[10.0, 20.0, 5.0, 0.05] * 8)
 
     # Let's have 4 circles and 4 crosses
-    mock_random_random.side_effect = [0.2, 0.7, 0.3, 0.8, 0.1, 0.9, 0.4, 0.6]
+    mock_rng.random = MagicMock(side_effect=[0.2, 0.7, 0.3, 0.8, 0.1, 0.9, 0.4, 0.6])
 
-    add_micro_details(mock_dwg_instance, default_banner_config, mock_group_instance)
+    old_rng = getattr(_banner_mod, "_rng", None)
+    _banner_mod._rng = mock_rng
+    try:
+        add_micro_details(mock_dwg_instance, default_banner_config, mock_group_instance)
+    finally:
+        if old_rng is not None:
+            _banner_mod._rng = old_rng
 
     num_circles_expected = 4
     num_crosses_expected = 4  # Each cross is 2 lines
@@ -1444,9 +1397,10 @@ def test_add_octocat_file_not_found(
     mock_isfile.assert_called_once_with(octo_svg_path)
     mock_dwg_instance.image.assert_not_called()  # image factory method
     mock_fg_group_instance.add.assert_not_called()
-    # Assert logger warning
+    # Assert logger warning (structured logging style)
     mock_logger.warning.assert_called_once_with(
-        f"Octocat SVG not found at {octo_svg_path}, skipping."
+        "Octocat SVG not found at {octo_svg_path}, skipping.",
+        octo_svg_path=octo_svg_path,
     )
 
 

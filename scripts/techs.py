@@ -18,15 +18,11 @@ from pathlib import Path
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, ValidationError
-from rich.console import Console
 from rich.table import Table
 
-from .utils import get_logger  # Changed to relative import
+from .utils import console, get_logger  # Changed to relative import
 
 logger = get_logger(module=__name__)  # Initialize logger
-
-# Initialize Rich Console for better output
-console = Console()
 
 
 # Define a Pydantic model for a technology entry

@@ -38,9 +38,12 @@ def _get(url: str, token: str | None, *, accept: str | None = None) -> tuple[Any
         return json.loads(resp.read().decode()), resp.headers
 
 
-def _graphql(query: str, token: str) -> dict[str, Any]:
+def _graphql(query: str, token: str, *, variables: dict[str, Any] | None = None) -> dict[str, Any]:
     """Execute a GitHub GraphQL query (requires token)."""
-    body = json.dumps({"query": query}).encode()
+    payload: dict[str, Any] = {"query": query}
+    if variables:
+        payload["variables"] = variables
+    body = json.dumps(payload).encode()
     req = urllib.request.Request(
         _GRAPHQL_URL,
         data=body,
@@ -64,11 +67,17 @@ def _paginate_rest(
     token: str | None,
     *,
     accept: str | None = None,
+    max_pages: int = 100,
 ) -> list[Any]:
     """Follow ``Link: <...>; rel="next"`` headers to collect all pages."""
     results: list[Any] = []
     next_url: str | None = url
+    page_count = 0
     while next_url:
+        if page_count >= max_pages:
+            logger.warning("Reached max page limit ({}) for {}", max_pages, url)
+            break
+        page_count += 1
         try:
             data, headers = _get(next_url, token, accept=accept)
         except Exception as exc:

@@ -1,0 +1,105 @@
+---
+title: dev command
+description: Development tools — install, format, lint, test, clean, and serve docs. Replaces the former Makefile.
+---
+
+## Synopsis
+
+```bash
+uv run readme dev [COMMAND] [OPTIONS]
+```
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| `install` | Sync all dependencies from the lockfile (`uv sync --all-groups`) |
+| `format` | Format code with black, isort, and autoflake |
+| `lint` | Lint with ruff, pylint, and mypy |
+| `test` | Run the pytest suite |
+| `clean` | Remove caches, build artifacts, and generated files |
+| `docs` | Serve the Fumadocs dev docs site locally (`pnpm dev`) |
+| `update-deps` | Update all dependencies to latest compatible versions |
+
+## `dev install`
+
+```bash
+uv run readme dev install
+```
+
+Runs `uv sync --all-groups` to install all dependency groups from the lockfile.
+
+## `dev format`
+
+```bash
+uv run readme dev format
+```
+
+Runs three formatters in sequence on `scripts/` and `tests/`:
+1. `black` — code formatting
+2. `isort` — import sorting
+3. `autoflake` — remove unused imports and variables
+
+## `dev lint`
+
+```bash
+uv run readme dev lint
+```
+
+Runs three linters in sequence:
+1. `ruff check` — fast linting
+2. `pylint` — deep analysis
+3. `mypy` — type checking
+
+## `dev test`
+
+```bash
+# Full suite with coverage
+uv run readme dev test
+
+# Without coverage
+uv run readme dev test --no-coverage
+
+# Filter by expression
+uv run readme dev test -k "test_banner"
+
+# Filter by marker
+uv run readme dev test -m "not integration"
+```
+
+| Option | Default | Notes |
+|---|---|---|
+| `--coverage/--no-coverage` | `--coverage` | Enable/disable coverage reporting |
+| `-k` | — | pytest `-k` filter expression |
+| `-m` | — | pytest `-m` marker expression |
+
+## `dev clean`
+
+```bash
+# Basic clean (caches only)
+uv run readme dev clean
+
+# Also remove .venv
+uv run readme dev clean --venv
+
+# Also remove generated assets
+uv run readme dev clean --generated
+```
+
+Removes `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`, `logs/`, and `.coverage*` files. Optional flags extend to `.venv` and generated assets in `.github/assets/img/`.
+
+## `dev docs`
+
+```bash
+uv run readme dev docs
+```
+
+Starts the Fumadocs dev server (`pnpm dev` inside the `docs/` directory). Requires `pnpm` and `node` to be installed.
+
+## `dev update-deps`
+
+```bash
+uv run readme dev update-deps
+```
+
+Recompiles the lockfile with latest compatible versions. Run `readme dev install` afterward to apply.

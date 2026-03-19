@@ -8,9 +8,17 @@
 |------|-------|---------------|-------------|
 | `_github_http.py` | 39 | Shared GitHub API HTTP helpers (no heavy deps) | `_headers()`, `_graphql()` |
 | `animated_art.py` | 960 | CSS-animated SVG story-art (Cosmic Genesis + Unfurling Spiral) driven by historical data | `generate_animated_community_art()`, `generate_animated_activity_art()` |
-| `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `PatternType`, `NoiseHandler`, `ColorPalette` |
+| `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `NoiseHandler`, `ColorPalette` |
 | `banner_patterns.py` | 46 | `PatternType` enum extracted from `banner.py` (zero heavy deps) | `PatternType` |
-| `cli.py` | 870 | Typer CLI entry point | `app`, `EntityType`, `generate()`, `config_cmd()` |
+| `cli/` | — | Typer CLI package (see submodules below) | `app`, `DEFAULT_CONFIG_PATH` |
+| `cli/__init__.py` | 9 | Package init; re-exports `app` and `DEFAULT_CONFIG_PATH` | `app`, `DEFAULT_CONFIG_PATH` |
+| `cli/__main__.py` | 6 | Enables `python -m scripts.cli` | — |
+| `cli/_app.py` | 60 | Root Typer app, `--version` callback, sub-app registration | `app` |
+| `cli/_display.py` | 55 | Shared display helpers: `OutputFormat` enum, `display_config()` | `OutputFormat`, `display_config()` |
+| `cli/config_cmd.py` | 165 | Config subcommands: `view`, `save`, `generate-default` | `config_app` |
+| `cli/settings_cmd.py` | 45 | `show-settings` command | `show_settings()` |
+| `cli/generate.py` | 1334 | Generate subcommands: `banner`, `qr`, `word-cloud`, `skills`, `generative`, `animated`, `readme-sections`, `all` | `generate_app` |
+| `cli/dev.py` | 185 | Dev tools (replaces Makefile): `install`, `format`, `lint`, `test`, `clean`, `docs`, `update-deps` | `dev_app` |
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
 | `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
 | `fetch_metrics.py` | 283 | GitHub REST + GraphQL metrics collector; outputs flat JSON dict | `collect()` |
@@ -20,13 +28,14 @@
 | `readme_svg.py` | 1330 | Reusable SVG rendering helpers for README components (cards, charts, blocks) | `SvgCard`, `SvgBlock`, `SvgBlockRenderer`, `SvgRepoCardRenderer`, `SvgBlogCardRenderer`, `SvgConnectCardRenderer`, `ReadmeSvgAssetBuilder`, `SvgAssetWriter` |
 | `skills.py` | 153 | shields.io badge HTML generator from `SkillsSettings`; injects between README comment markers | `SkillsBadgeGenerator` |
 | `techs.py` | 315 | Parse techs.md proficiency data | `Technology`, `load_technologies()`, `parse_technology_line()`, `display_technologies()` |
-| `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console`, `get_project_root()` |
+| `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console` |
 | `word_cloud_renderers.py` | 1231 | Pure-SVG word cloud renderers — four layout strategies (Wordle, clustered, typographic, shaped) with OKLCH palettes | `WordleRenderer`, `ClusteredRenderer`, `TypographicRenderer`, `ShapedRenderer` |
 | `word_clouds.py` | 1585 | Word cloud generation | `WordCloudGenerator`, `WordCloudSettings`, `parse_markdown_for_word_cloud_frequencies()` |
 | `art/shared.py` | ~276 | Shared noise/color/math utilities for generative art | `Noise2D`, `oklch()`, `seed_hash()`, `compute_maturity()`, `make_radial_gradient()`, `make_linear_gradient()`, `parse_cli_args()` |
 | `art/ink_garden.py` | 2027 | Procedural botanical SVG garden — species-classified trees, leaves, blooms, insects, webs | `generate(metrics, *, seed, maturity) -> str` |
+| `art/_dev_profiles.py` | 64 | Mock GitHub profiles for local animation testing | `PROFILES` |
 | `art/animate.py` | — | Multi-frame animation driver; calls `ink_garden.generate()` per maturity step | (see module docstring) |
-| `art/topography.py` | — | Topographic contour generative art | (see module docstring) |
+| `art/topography.py` | 1170 | Topographic contour generative art — hillshade, rivers, contour lines, compass rose | `generate(metrics, *, seed, maturity) -> str` |
 
 Always use **relative imports** within `scripts/`:
 ```python
@@ -81,33 +90,33 @@ logger.error("Generation failed: {e}", exc_info=True)
 
 ## CLI Extension Guide
 
-To add a new generator (e.g., `readme generate my_asset`):
+To add a new generator (e.g., `readme generate my-asset`):
 
-1. Add enum value to `EntityType` in `cli.py`:
+1. Add a config model in `config.py` and attach it to `ProjectConfig`.
+
+2. Add a new command function in `cli/generate.py`:
    ```python
-   class EntityType(str, Enum):
-       MY_ASSET = "my_asset"
-   ```
-
-2. Add a config model in `config.py` and attach it to `ProjectConfig`.
-
-3. Add a branch in `generate()` command in `cli.py`:
-   ```python
-   elif entity == EntityType.MY_ASSET:
-       from .my_module import MyGenerator
-       gen = MyGenerator(cfg.my_asset_settings)
+   @generate_app.command(name="my-asset", help="Generate my asset.")
+   def my_asset(
+       config_path: Annotated[Optional[Path], typer.Option("--config-path", ...)] = None,
+   ) -> None:
+       from ..my_module import MyGenerator
+       proj_config = _load_project_config(config_path)
+       gen = MyGenerator(proj_config.my_asset_settings)
        gen.generate()
    ```
 
-4. Add Makefile target and include in `generate` target.
+3. Optionally add the call to the `all_assets()` command in `cli/generate.py`.
+
+To add a dev tool, add a command to `cli/dev.py`.
 
 ## Banner (`banner.py`)
 
-Entry: `make generate-banner` → `cli.py` → `generate_banner(BannerConfig)`
+Entry: `uv run readme generate banner` → `cli/generate.py:banner()` → `generate_banner(BannerConfig)`
 
 **Key classes:**
 - `BannerConfig` — top-level config aggregating `ColorPalette`, `Typography`, `VisualEffects`, plus `title`, `subtitle`, `width` (1200), `height` (630), `output_path`, `optimize_with_svgo`
-- `PatternType` enum — **active:** `LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA` · **dead (no draw fn):** `REACTION`, `CLIFFORD`, `FLAME`, `PDJ`, `IKEDA`
+- `PatternType` enum — **active:** `LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`, `CLIFFORD` · **dead (no draw fn):** `REACTION`, `FLAME`, `PDJ`, `IKEDA`
 - `NoiseHandler` — lazy Perlin noise; auto-falls-back to trig if `noise` package absent
 - `ColorPalette` — primary/secondary/accent/dark-mode palette generation
 
@@ -118,9 +127,10 @@ Entry: `make generate-banner` → `cli.py` → `generate_banner(BannerConfig)`
 
 ## QR Code (`qr.py`)
 
-Entry: `make generate-qr` → `cli.py` → `QRCodeGenerator.generate_artistic_vcard_qr()`
+Entry: `uv run readme generate qr` → `cli/generate.py:qr()` → `QRCodeGenerator.generate_artistic_vcard_qr()`
 
-**System Cairo required** (macOS: `brew install cairo`). Makefile sets:
+**System Cairo required** (macOS: `brew install cairo`). Set before running:
+
 ```bash
 export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH
 ```
@@ -139,7 +149,7 @@ export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH
 
 ## Word Clouds (`word_clouds.py`)
 
-Entry: `make generate-word-clouds` → two invocations: `--from-topics-md` + `--from-languages-md`
+Entry: `uv run readme generate word-cloud --from-topics-md` / `--from-languages-md`
 
 **Module-level path constants:**
 ```python

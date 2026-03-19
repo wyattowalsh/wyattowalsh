@@ -52,16 +52,19 @@ uv run python -m scripts.cli generate generative \
 
 The active pattern is chosen based on metrics hash characteristics — callers don't select it manually. All five live `PatternType` values (`LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`) may appear.
 
-## Ink Garden
+## Related art modules
 
-`scripts/art/ink_garden.py` is a related generative module that produces a procedural SVG garden whose plant density and species composition reflect your repository ecosystem:
-
-```python
-from scripts.art.ink_garden import generate, seed_hash
-
-svg_string = generate(metrics, seed=seed_hash(metrics), maturity=1.0)
-```
-
-- `maturity` ∈ `[0.0, 1.0]` — controls how grown the garden appears
-- Output is a self-contained SVG string (no file I/O)
-- Fully deterministic with an explicit seed
+<Cards>
+  <Card href="/docs/scripts/ink-garden" title="Ink Garden">
+    Procedural botanical garden whose species reflect your repo ecosystem
+  </Card>
+  <Card href="/docs/scripts/animated-art" title="Animated Art">
+    CSS-animated SVGs seeded from commit history
+  </Card>
+  <Card href="/docs/scripts/banner" title="Banner">
+    SVG banner using shared PatternType and chaos attractors
+  </Card>
+  <Card href="/docs/data/fetch-metrics" title="Fetch Metrics">
+    The metrics data source that seeds all generative art
+  </Card>
+</Cards>

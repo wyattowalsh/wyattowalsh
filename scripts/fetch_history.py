@@ -38,9 +38,13 @@ logger = get_logger(module=__name__)
 
 def _fetch_account_created(owner: str, token: str) -> str | None:
     """Return ``user.createdAt`` via GraphQL."""
-    query = '{ user(login: "%s") { createdAt } }' % owner
+    query = """
+    query($login: String!) {
+      user(login: $login) { createdAt }
+    }
+    """
     try:
-        resp = _graphql(query, token)
+        resp = _graphql(query, token, variables={"login": owner})
         errors = resp.get("errors")
         if errors:
             logger.warning("GraphQL errors fetching account creation: {}", errors)
@@ -145,9 +149,9 @@ def _fetch_contributions_monthly(
         from_dt = f"{year}-01-01T00:00:00Z"
         to_dt = f"{year}-12-31T23:59:59Z"
         query = """
-        {
-          user(login: "%s") {
-            contributionsCollection(from: "%s", to: "%s") {
+        query($login: String!, $from: DateTime!, $to: DateTime!) {
+          user(login: $login) {
+            contributionsCollection(from: $from, to: $to) {
               contributionCalendar {
                 weeks {
                   contributionDays {
@@ -159,9 +163,9 @@ def _fetch_contributions_monthly(
             }
           }
         }
-        """ % (owner, from_dt, to_dt)
+        """
         try:
-            resp = _graphql(query, token)
+            resp = _graphql(query, token, variables={"login": owner, "from": from_dt, "to": to_dt})
             errors = resp.get("errors")
             if errors:
                 logger.warning("GraphQL errors for contributions year {}: {}", year, errors)
