@@ -13,12 +13,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from typing import Literal
 
 import markdown
 from bs4 import BeautifulSoup
+from pydantic import BaseModel, ConfigDict
 
 from .utils import get_logger
 
@@ -50,8 +52,8 @@ RENDERER_CHOICES: list[str] = [
 ]
 
 DEFAULT_RENDERER: RendererName = "classic"
-DEFAULT_WIDTH = 800
-DEFAULT_HEIGHT = 500
+DEFAULT_WIDTH = 1600
+DEFAULT_HEIGHT = 1000
 DEFAULT_MAX_WORDS = 1000
 
 # Resolve project root relative to this script
@@ -77,6 +79,14 @@ def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
     all_uls = soup.find_all("ul")[1:]
     entries = [len(ul.find_all("li")) for ul in all_uls]
     return dict(zip(topics, entries))
+
+
+_OTHERS_RE = re.compile(r"^\s*others?\s*$", re.IGNORECASE)
+
+
+def _filter_others(frequencies: dict[str, int]) -> dict[str, int]:
+    """Remove generic 'others'/'other' catch-all bucket from frequencies."""
+    return {k: v for k, v in frequencies.items() if not _OTHERS_RE.match(k)}
 
 
 # ---------------------------------------------------------------------------
@@ -139,8 +149,8 @@ def _generate_svg(
 
 # Default color palettes per source type
 _SOURCE_COLOR_DEFAULTS: dict[str, str] = {
-    "topics": "sunset",
-    "languages": "neon",
+    "topics": "rainbow",
+    "languages": "sunset",
 }
 
 
@@ -176,7 +186,7 @@ def generate_word_cloud(
     md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
     if not md_file.exists():
         md_file = _PROJECT_ROOT / f"{source}.md"
-    frequencies = parse_frequencies_from_md(md_file)
+    frequencies = _filter_others(parse_frequencies_from_md(md_file))
 
     if renderer == "classic":
         ext = ".png"
@@ -252,15 +262,14 @@ def get_languages_word_cloud() -> None:
 parse_markdown_for_word_cloud_frequencies = parse_frequencies_from_md
 
 
-class WordCloudSettings:
-    """Minimal settings object expected by the CLI."""
-
-    def __init__(self, **kwargs):
-        self.renderer = kwargs.get("renderer", DEFAULT_RENDERER)
-        self.width = kwargs.get("width", DEFAULT_WIDTH)
-        self.height = kwargs.get("height", DEFAULT_HEIGHT)
-        self.max_words = kwargs.get("max_words", DEFAULT_MAX_WORDS)
-        self.output_dir = kwargs.get("output_dir", str(PROFILE_IMG_OUTPUT_DIR))
+class WordCloudSettings(BaseModel):
+    """Settings for word cloud generation."""
+    model_config = ConfigDict(extra="forbid")
+    renderer: str = DEFAULT_RENDERER
+    width: int = DEFAULT_WIDTH
+    height: int = DEFAULT_HEIGHT
+    max_words: int = DEFAULT_MAX_WORDS
+    output_dir: str = str(PROFILE_IMG_OUTPUT_DIR)
 
 
 class WordCloudGenerator:
@@ -273,18 +282,35 @@ class WordCloudGenerator:
 
     def generate(
         self,
-        frequencies: dict[str, int],
+        frequencies: dict[str, int] | None = None,
         output_path: str | Path | None = None,
+        source: str = "topics",
         **kwargs,
     ) -> None:
-        renderer = kwargs.get("renderer", DEFAULT_RENDERER)
-        out = Path(output_path) if output_path else PROFILE_IMG_OUTPUT_DIR
-        out.parent.mkdir(parents=True, exist_ok=True)
-        generate_word_cloud(
-            source="topics",
-            renderer=renderer,
-            output_dir=str(out.parent) if out.is_file() else str(out),
-        )
+        renderer = kwargs.get("renderer", getattr(self.settings, "renderer", DEFAULT_RENDERER))
+        width = getattr(self.settings, "width", DEFAULT_WIDTH)
+        height = getattr(self.settings, "height", DEFAULT_HEIGHT)
+
+        out_dir = Path(output_path).parent if output_path and Path(output_path).is_file() else Path(output_path or self.settings.output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        if frequencies:
+            frequencies = _filter_others(frequencies)
+            ext = ".png" if renderer == "classic" else ".svg"
+            out_file = out_dir / f"wordcloud_by_{source}{ext}"
+            if renderer == "classic":
+                _generate_classic(frequencies, out_file, width=width, height=height)
+            else:
+                _generate_svg(
+                    renderer, frequencies, out_file,
+                    width=width, height=height,
+                )
+        else:
+            # Fall back to reading from markdown
+            generate_word_cloud(
+                source=source, renderer=renderer,
+                output_dir=str(out_dir),
+            )
 
 
 def main() -> None:

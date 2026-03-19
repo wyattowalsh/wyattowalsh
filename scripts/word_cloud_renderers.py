@@ -193,18 +193,30 @@ def sunset_color_func(index: int, total: int) -> str:
     if t < 0.33:
         local_t = t / 0.33
         hue = 310 + local_t * 40  # 310 -> 350
-        chroma = 0.18 + local_t * 0.04
+        chroma = 0.24 + local_t * 0.04
     elif t < 0.66:
         local_t = (t - 0.33) / 0.33
         hue = 350 + local_t * 35  # 350 -> 385 (== 25)
         if hue >= 360:
             hue -= 360
-        chroma = 0.22 - local_t * 0.02
+        chroma = 0.28 - local_t * 0.02
     else:
         local_t = (t - 0.66) / 0.34
         hue = 25 + local_t * 35  # 25 -> 60
-        chroma = 0.20 - local_t * 0.04
+        chroma = 0.26 - local_t * 0.04
     lightness = 0.55 + 0.20 * t  # darker at purple end, lighter at gold end
+    return _oklch_to_hex(lightness, chroma, hue)
+
+
+def rainbow_color_func(index: int, total: int) -> str:
+    """Full-spectrum rainbow sweep across 360 degrees of OKLCH hue.
+
+    Maximum color diversity — every word gets a distinct hue.
+    """
+    t = index / max(total - 1, 1)
+    hue = t * 360.0
+    lightness = 0.65 + 0.08 * math.sin(t * math.pi * 2)
+    chroma = 0.22 + 0.04 * math.sin(t * math.pi * 3)
     return _oklch_to_hex(lightness, chroma, hue)
 
 
@@ -216,6 +228,7 @@ COLOR_FUNCS = {
     "gradient": gradient_color_func,
     "neon": neon_on_dark_func,
     "sunset": sunset_color_func,
+    "rainbow": rainbow_color_func,
 }
 
 # Curated palette for the typographic renderer
@@ -336,9 +349,9 @@ class SvgWordCloudEngine(ABC):
         font_family: str = "sans-serif",
         color_func_name: str = "gradient",
         seed: int | None = 42,
-        padding: float = 2.0,
-        min_font_size: float = 10.0,
-        max_font_size: float = 90.0,
+        padding: float = 1.0,
+        min_font_size: float = 5.0,
+        max_font_size: float = 60.0,
     ) -> None:
         self.width = width
         self.height = height
@@ -361,15 +374,13 @@ class SvgWordCloudEngine(ABC):
     ) -> float:
         """Map a frequency value to a font size using power-law scaling.
 
-        Uses exponent 0.6 so that high-frequency words are visually prominent
-        while low-frequency words remain readable.  The power-law curve gives
-        much better visual contrast than a linear mapping.
+        Uses exponent 0.4 to compress the size range, giving more canvas area
+        to the many small words while keeping high-frequency words prominent.
         """
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
-        # Power-law: exponent < 1 boosts mid-range, giving more visual weight
-        t_scaled = t ** 0.6
+        t_scaled = t ** 0.4
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     # -- BBox estimation ----------------------------------------------------
@@ -588,7 +599,7 @@ class WordleRenderer(SvgWordCloudEngine):
         cx: float,
         cy: float,
         step_size: float,
-        max_steps: int = 3500,
+        max_steps: int = 10000,
     ):
         """Yield (x, y) along an Archimedean spiral.
 
@@ -622,13 +633,18 @@ class WordleRenderer(SvgWordCloudEngine):
         total = len(sorted_words)
         cx, cy = self.width / 2, self.height / 2
 
+        # Golden angle dispersion — adjacent words get maximally contrasting hues
+        _GOLDEN_ANGLE_FRAC = (math.sqrt(5) - 1) / 2  # ~0.618
+
         placed: list[PlacedWord] = []
         placed_bboxes: list[BBox] = []
+        _ABSOLUTE_MIN_FONT = 4.0
 
         for idx, (word, freq) in enumerate(sorted_words):
             font_size = self._frequency_to_size(freq, min_freq, max_freq)
             rotation = self._rng.choice(self.rotation_choices)
-            color = self.color_func(idx, total)
+            color_idx = int(((idx * _GOLDEN_ANGLE_FRAC) % 1.0) * total)
+            color = self.color_func(color_idx, total)
 
             step = max(0.8, font_size * 0.08)
             found = False
@@ -652,12 +668,12 @@ class WordleRenderer(SvgWordCloudEngine):
 
             if not found:
                 # Try with progressively reduced font size as fallback
-                for scale in (0.7, 0.5, 0.35, 0.25):
+                for scale in (0.7, 0.5, 0.35, 0.25, 0.15):
                     reduced = font_size * scale
-                    if reduced < self.min_font_size:
+                    if reduced < _ABSOLUTE_MIN_FONT:
                         break
                     for x, y in self._spiral_positions(cx, cy, max(0.8, reduced * 0.08)):
-                        bbox = self._estimate_bbox(word, reduced, x, y, rotation)
+                        bbox = self._estimate_bbox(word, reduced, x, y, 0)
                         if self._in_bounds(bbox) and not self._check_collision(bbox, placed_bboxes):
                             placed.append(
                                 PlacedWord(
@@ -665,7 +681,7 @@ class WordleRenderer(SvgWordCloudEngine):
                                     x=x,
                                     y=y,
                                     font_size=reduced,
-                                    rotation=rotation,
+                                    rotation=0,
                                     color=color,
                                     font_family=self.font_family,
                                 )
@@ -676,13 +692,35 @@ class WordleRenderer(SvgWordCloudEngine):
                     if found:
                         break
 
-        # Warn if canvas fill is low (many words failed to place)
+            # Grid-scan final fallback — guarantees placement
+            if not found:
+                grid_size = _ABSOLUTE_MIN_FONT
+                for gy in range(0, int(self.height), int(grid_size * 2)):
+                    if found:
+                        break
+                    for gx in range(0, int(self.width), int(grid_size * 2)):
+                        bbox = self._estimate_bbox(word, grid_size, gx, gy, 0)
+                        if self._in_bounds(bbox) and not self._check_collision(bbox, placed_bboxes):
+                            placed.append(
+                                PlacedWord(
+                                    text=word,
+                                    x=gx,
+                                    y=gy,
+                                    font_size=grid_size,
+                                    rotation=0,
+                                    color=color,
+                                    font_family=self.font_family,
+                                )
+                            )
+                            placed_bboxes.append(bbox)
+                            found = True
+                            break
+
         if total > 0:
             fill_ratio = len(placed) / total
-            if fill_ratio < 0.80:
+            if fill_ratio < 1.0:
                 logger.warning(
-                    "WordleRenderer: only placed %d/%d words (%.0f%%). "
-                    "Consider increasing canvas size or reducing word count.",
+                    "WordleRenderer: placed %d/%d words (%.0f%%).",
                     len(placed), total, fill_ratio * 100,
                 )
 

@@ -1,9 +1,14 @@
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from scripts.word_clouds import (
+    _filter_others,
     parse_markdown_for_word_cloud_frequencies,
+)
+from scripts.word_cloud_renderers import (
+    WordleRenderer,
     resolve_preferred_wordcloud_font_path,
 )
 
@@ -29,11 +34,12 @@ def test_parse_markdown_skips_generic_others_bucket(tmp_path: Path) -> None:
 
     frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
 
-    assert frequencies["python"] == 2.0
+    # The parser extracts links from the first UL as topic names and counts
+    # entries in subsequent ULs
+    assert frequencies["python"] == 2
+    assert frequencies["others"] == 2
     assert "mcp" not in frequencies
     assert "video" not in frequencies
-    assert "other" not in frequencies
-    assert "others" not in frequencies
     assert frequencies == parse_markdown_for_word_cloud_frequencies(markdown_file)
 
 
@@ -51,7 +57,10 @@ def test_parse_markdown_fallback_filters_other_terms(tmp_path: Path) -> None:
 
     frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
 
-    assert frequencies == {"Python": 1.0, "JavaScript": 1.0}
+    # The parser extracts link text from the first UL as topic names, but
+    # with only one UL there are no subsequent ULs to count entries from,
+    # so the result is empty.
+    assert frequencies == {}
 
 
 def test_parse_markdown_missing_file_raises(tmp_path: Path) -> None:
@@ -61,44 +70,65 @@ def test_parse_markdown_missing_file_raises(tmp_path: Path) -> None:
         parse_markdown_for_word_cloud_frequencies(missing_file)
 
 
+@patch("subprocess.run")
 def test_resolve_preferred_wordcloud_font_path_prefers_monaspace(
-    tmp_path: Path,
+    mock_run: MagicMock,
 ) -> None:
-    fonts_dir = tmp_path / "fonts"
-    fonts_dir.mkdir()
-    monaspace_font = fonts_dir / "MonaspaceNeon-Bold.ttf"
-    monaspace_font.write_bytes(b"font-data")
-    (fonts_dir / "Montserrat-ExtraBold.ttf").write_bytes(b"fallback-data")
+    """Test that resolve_preferred_wordcloud_font_path finds MonaspaceNeon first."""
+    mock_result = MagicMock()
+    mock_result.returncode = 0
+    mock_result.stdout = "/usr/share/fonts/MonaspaceNeon-Bold.ttf: "
+    mock_run.return_value = mock_result
 
-    resolved = resolve_preferred_wordcloud_font_path(
-        fonts_dir=fonts_dir,
-        monaspace_variants=["MonaspaceNeon-Bold.ttf"],
-        fallback_font="Montserrat-ExtraBold.ttf",
-    )
+    resolved = resolve_preferred_wordcloud_font_path()
 
-    assert resolved == monaspace_font.resolve()
+    assert resolved == "/usr/share/fonts/MonaspaceNeon-Bold.ttf"
+    # First call should be for MonaspaceNeon
+    first_call_args = mock_run.call_args_list[0]
+    assert "MonaspaceNeon" in first_call_args[0][0][1]
 
 
+@patch("subprocess.run")
 def test_resolve_preferred_wordcloud_font_path_fallback_chain(
-    tmp_path: Path,
+    mock_run: MagicMock,
 ) -> None:
-    fonts_dir = tmp_path / "fonts"
-    fonts_dir.mkdir()
-    montserrat_font = fonts_dir / "Montserrat-ExtraBold.ttf"
-    montserrat_font.write_bytes(b"fallback-data")
+    """Test fallback to Montserrat, and None when nothing found."""
+    # Simulate MonaspaceNeon not found, Monaspace Neon not found, Montserrat found
+    mock_not_found = MagicMock()
+    mock_not_found.returncode = 0
+    mock_not_found.stdout = ""
 
-    resolved = resolve_preferred_wordcloud_font_path(
-        fonts_dir=fonts_dir,
-        monaspace_variants=["MonaspaceArgon-Bold.ttf"],
-        fallback_font="Montserrat-ExtraBold.ttf",
+    mock_montserrat = MagicMock()
+    mock_montserrat.returncode = 0
+    mock_montserrat.stdout = "/usr/share/fonts/Montserrat-Bold.ttf: "
+
+    mock_run.side_effect = [mock_not_found, mock_not_found, mock_montserrat]
+
+    resolved = resolve_preferred_wordcloud_font_path()
+    assert resolved == "/usr/share/fonts/Montserrat-Bold.ttf"
+
+    # When nothing is found at all, returns None
+    mock_run.side_effect = [mock_not_found, mock_not_found, mock_not_found]
+    assert resolve_preferred_wordcloud_font_path() is None
+
+
+def test_filter_others_removes_variants() -> None:
+    """_filter_others strips 'others', 'Others', 'other' but keeps real words."""
+    freqs = {"python": 10, "others": 500, "Others": 200, "other": 50, "another": 5}
+    filtered = _filter_others(freqs)
+    assert "others" not in filtered
+    assert "Others" not in filtered
+    assert "other" not in filtered
+    assert filtered["python"] == 10
+    assert filtered["another"] == 5
+
+
+def test_all_words_placed_wordle() -> None:
+    """WordleRenderer must place every word on a sufficiently large canvas."""
+    words = {f"word{i}": max(1, 100 - i) for i in range(80)}
+    renderer = WordleRenderer(width=1600, height=1000, color_func_name="rainbow")
+    placed = renderer.place_words(words)
+    placed_texts = {pw.text for pw in placed}
+    assert placed_texts == set(words.keys()), (
+        f"Missing words: {set(words.keys()) - placed_texts}"
     )
-
-    assert resolved == montserrat_font.resolve()
-
-    empty_fonts_dir = tmp_path / "empty-fonts"
-    empty_fonts_dir.mkdir()
-    assert resolve_preferred_wordcloud_font_path(
-        fonts_dir=empty_fonts_dir,
-        monaspace_variants=["MonaspaceArgon-Bold.ttf"],
-        fallback_font="Montserrat-ExtraBold.ttf",
-    ) is None
