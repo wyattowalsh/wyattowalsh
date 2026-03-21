@@ -240,12 +240,17 @@ def _milestone_indices(events: list) -> list[tuple[int, float]]:
 
 _COMMUNITY_CSS = """\
 <style>
-  .cr{{animation:cellReveal 0.8s ease-out both}}
+  .cr{{animation:cellReveal 1.2s ease-out both,cellBreathe var(--br,7s) ease-in-out var(--bd,2s) infinite}}
   @keyframes cellReveal{{from{{opacity:0}}to{{opacity:var(--o,0.8)}}}}
+  @keyframes cellBreathe{{
+    0%,100%{{opacity:var(--o,0.8)}}
+    50%{{opacity:calc(var(--o,0.8) * 0.6)}}
+  }}
   @keyframes twinkle{{0%,100%{{opacity:.15}}50%{{opacity:.85}}}}
   @keyframes milestonePulse{{
     0%{{r:5;opacity:.8;stroke-width:2}}
-    100%{{r:50;opacity:0;stroke-width:.3}}
+    50%{{r:50;opacity:0;stroke-width:.3}}
+    100%{{r:5;opacity:0;stroke-width:2}}
   }}
   @keyframes zoomOut{{
     0%{{transform:scale(1.45) translate(-15.5%,-15.5%)}}
@@ -255,12 +260,12 @@ _COMMUNITY_CSS = """\
   @keyframes bgWarm1{{from{{stop-color:{bg_from1}}}to{{stop-color:{bg_to1}}}}}
   @keyframes bgWarm2{{from{{stop-color:{bg_from2}}}to{{stop-color:{bg_to2}}}}}
   @keyframes densityFlash{{
-    0%,90%{{opacity:0}}
-    95%{{opacity:.35}}
+    0%,85%{{opacity:0}}
+    92%{{opacity:.35}}
     100%{{opacity:0}}
   }}
   @keyframes labelFade{{
-    0%{{opacity:0}}10%{{opacity:0.6}}40%{{opacity:0.6}}100%{{opacity:0}}
+    0%{{opacity:0}}8%{{opacity:0.6}}35%{{opacity:0.6}}100%{{opacity:0}}
   }}
   .zoom-wrap{{
     animation:zoomOut {dur_s} ease-in-out both;
@@ -279,7 +284,7 @@ def generate(
     history: dict,
     dark_mode: bool = False,
     output_path: Path | None = None,
-    duration: float = 30.0,
+    duration: float = 60.0,
 ) -> Path:
     """Generate the *Cosmic Genesis* community artwork."""
     metrics = history.get("current_metrics", {})
@@ -484,17 +489,19 @@ def generate(
                 end_r = rng.uniform(80, 300)
                 end_x = _WIDTH / 2 + end_r * math.cos(angle)
                 end_y = _HEIGHT / 2 + end_r * math.sin(angle)
-                p_dur = round(rng.uniform(2.0, 4.0), 1)
+                p_dur = round(rng.uniform(3.0, 6.0), 1)
                 p_color = oklch(0.7, 0.12, 60) if dark_mode else oklch(0.5, 0.10, 60)
+                # Looping particle: drifts out, fades, then resets and repeats
+                cycle_dur = round(p_dur + rng.uniform(4.0, 8.0), 1)
                 parts.append(
                     f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="1.2" '
                     f'fill="{p_color}" opacity="0">\n'
-                    f'  <animate attributeName="cx" from="{_WIDTH / 2}" to="{end_x:.0f}" '
-                    f'dur="{p_dur}s" begin="{t_sec:.1f}s" fill="freeze"/>\n'
-                    f'  <animate attributeName="cy" from="{_HEIGHT / 2}" to="{end_y:.0f}" '
-                    f'dur="{p_dur}s" begin="{t_sec:.1f}s" fill="freeze"/>\n'
-                    f'  <animate attributeName="opacity" values="0;0.7;0" '
-                    f'dur="{p_dur}s" begin="{t_sec:.1f}s" fill="freeze"/>\n'
+                    f'  <animate attributeName="cx" values="{_WIDTH / 2};{end_x:.0f};{_WIDTH / 2}" '
+                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="cy" values="{_HEIGHT / 2};{end_y:.0f};{_HEIGHT / 2}" '
+                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="opacity" values="0;0.7;0.7;0" '
+                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
                     f"</circle>\n"
                 )
         parts.append("</g>\n")
@@ -527,10 +534,14 @@ def generate(
             # Radius varies by density
             r = round(1.5 + val * 3.0, 1)
 
+            # Breathing period varies per cell for organic feel
+            breathe_dur = round(5.0 + (row * 0.3 + col * 0.7) % 6.0, 1)
+            breathe_delay = round(delay + 1.5, 2)
             parts.append(
                 f'<circle class="cr" cx="{cx}" cy="{cy}" r="{r}" '
                 f'fill="{color}" '
-                f'style="--o:{alpha};animation-delay:{delay:.2f}s"/>\n'
+                f'style="--o:{alpha};--br:{breathe_dur}s;--bd:{breathe_delay}s;'
+                f'animation-delay:{delay:.2f}s"/>\n'
             )
             cell_count += 1
 
@@ -565,10 +576,12 @@ def generate(
             ms_delay = round(math.sqrt(frac) * duration * 0.93, 2)
             mx = _WIDTH // 2 + rng.randint(-60, 60)
             my = _HEIGHT // 2 + rng.randint(-60, 60)
+            # Pulse rings loop with longer period for ongoing life
+            pulse_period = round(3.0 + frac * 4.0, 1)
             parts.append(
                 f'<circle cx="{mx}" cy="{my}" r="5" fill="none" '
                 f'stroke="{milestone_stroke}" stroke-width="2" opacity="0.8" '
-                f'style="animation:milestonePulse 2s ease-out {ms_delay}s both"/>\n'
+                f'style="animation:milestonePulse {pulse_period}s ease-out {ms_delay}s infinite"/>\n'
             )
             label = _MILESTONE_LABELS.get(val, "")
             if label:

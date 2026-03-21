@@ -179,6 +179,10 @@ _ACTIVITY_CSS = """\
     50%{{opacity:.88}}
     100%{{opacity:.85}}
   }}
+  @keyframes dotShimmer{{
+    0%,100%{{opacity:.85}}
+    50%{{opacity:.55}}
+  }}
   @keyframes pulse{{
     0%,100%{{opacity:.7;r:{pulse_r1}}}
     50%{{opacity:1;r:{pulse_r2}}}
@@ -186,6 +190,10 @@ _ACTIVITY_CSS = """\
   @keyframes flowDraw{{
     0%{{stroke-dashoffset:var(--len,500)}}
     100%{{stroke-dashoffset:0}}
+  }}
+  @keyframes flowPulse{{
+    0%,100%{{opacity:0.40}}
+    50%{{opacity:0.20}}
   }}
   @keyframes glowIn{{
     0%{{opacity:0}}
@@ -213,7 +221,7 @@ def generate(
     history: dict,
     dark_mode: bool = False,
     output_path: Path | None = None,
-    duration: float = 30.0,
+    duration: float = 60.0,
 ) -> Path:
     """Generate the *Unfurling Spiral* activity artwork."""
     metrics = history.get("current_metrics", {})
@@ -360,7 +368,10 @@ def generate(
     if not top_lang_hues:
         top_lang_hues = [flow_hue_base]
 
-    parts.append('<g id="flowField" opacity="0.40">\n')
+    parts.append(
+        '<g id="flowField" opacity="0.40"'
+        ' style="animation:flowPulse 8s ease-in-out 5s infinite">\n'
+    )
     for li, trail in enumerate(lines):
         if len(trail) < 2:
             continue
@@ -413,13 +424,15 @@ def generate(
         # Older repos get bigger ripples
         ripple_max_r = round(20 + 30 * (1 - i / max(n_points - 1, 1)), 0)
         ripple_dur = round(1.0 + 1.0 * (1 - i / max(n_points - 1, 1)), 1)
+        # Ripple rings loop with longer period for continuous life
+        ripple_cycle = round(ripple_dur + 4.0 + (i % 5) * 1.5, 1)
         parts.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="0" fill="none" '
             f'stroke="{ripple_color}" stroke-width="1.8" opacity="0">\n'
-            f'  <animate attributeName="r" from="0" to="{ripple_max_r}" '
-            f'dur="{ripple_dur}s" begin="{d:.2f}s" fill="freeze"/>\n'
-            f'  <animate attributeName="opacity" values="0.55;0" '
-            f'dur="{ripple_dur}s" begin="{d:.2f}s" fill="freeze"/>\n'
+            f'  <animate attributeName="r" values="0;{ripple_max_r};0" '
+            f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
+            f'  <animate attributeName="opacity" values="0;0.55;0" '
+            f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
             f"</circle>\n"
         )
     parts.append("</g>\n")
@@ -435,12 +448,14 @@ def generate(
             continue
         d = delays[i]
         color, _ = palette[i]
+        # Connecting arcs loop: draw-in then reset
+        arc_cycle = round(2.5 + (i % 4) * 0.8, 1)
         parts.append(
             f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
             f'stroke="{color}" stroke-width="0.5" '
             f'stroke-dasharray="{length:.0f}" stroke-dashoffset="{length:.0f}">\n'
-            f'  <animate attributeName="stroke-dashoffset" from="{length:.0f}" to="0" '
-            f'dur="0.8s" begin="{d:.2f}s" fill="freeze"/>\n'
+            f'  <animate attributeName="stroke-dashoffset" values="{length:.0f};0;{length:.0f}" '
+            f'dur="{arc_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
             f"</line>\n"
         )
     parts.append("</g>\n")
@@ -456,10 +471,14 @@ def generate(
         d = delays[i]
         appear_dur = round(max(0.8, 1.5 - i * 0.003), 2)
 
+        # Dot shimmer period varies by position for organic feel
+        shimmer_dur = round(4.0 + (i * 0.7) % 5.0, 1)
+        shimmer_delay = round(d + appear_dur + 0.5, 2)
         elem = (
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{dot_r}" fill="{color}" '
             f'opacity="0" '
-            f'style="animation:dotAppear {appear_dur}s ease-out {d:.2f}s both"/>\n'
+            f'style="animation:dotAppear {appear_dur}s ease-out {d:.2f}s both,'
+            f'dotShimmer {shimmer_dur}s ease-in-out {shimmer_delay}s infinite"/>\n'
         )
 
         if i >= glow_threshold:

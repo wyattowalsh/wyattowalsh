@@ -222,7 +222,7 @@ def main() -> None:
     # ── Animated SVG mode (multi-frame stacking) ──────────────
     if opts.get("svg"):
         svg_frames = opts.get("frames") or 7
-        total_dur = 30.0
+        total_dur = 60.0
         logger.info(
             "SVG mode: profile={}  target_mat={:.3f}  frames={}",
             profile, target_mat, svg_frames,

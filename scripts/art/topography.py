@@ -213,7 +213,7 @@ def generate(
     maturity: float | None = None,
     chrome_maturity: float | None = None,
     timeline: bool = True,
-    loop_duration: float = 30.0,
+    loop_duration: float = 60.0,
     reveal_fraction: float = 0.93,
 ) -> str:
     mat = maturity if maturity is not None else compute_maturity(metrics)
