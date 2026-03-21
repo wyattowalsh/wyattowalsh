@@ -270,3 +270,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,linux,windows,python,git
+# Local editor/agent state
+.cursor/
+.serena/
+skills-lock.json
+
+# Local development artifacts
+logs/
+.benchmarks/
