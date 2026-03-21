@@ -2,7 +2,7 @@
 <defs>
 <style>
 :root {
-  --card-bg: transparent;
+  --card-bg: #ffffff;
   --card-border: #d0d7de;
   --title-color: #0969da;
   --text-color: #656d76;
@@ -12,7 +12,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --card-bg: transparent;
+    --card-bg: #0d1117;
     --card-border: #30363d;
     --title-color: #58a6ff;
     --text-color: #8b949e;
@@ -28,18 +28,21 @@
 .rc-lang-label { fill: var(--stat-color); font: 400 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 </style>
 <clipPath id="card-clip"><rect width="500" height="185" rx="10" /></clipPath>
-<filter id="shadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter>
+<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient>
 <clipPath id="thumb-clip"><rect x="352" y="18" width="130" height="75" rx="8" /></clipPath>
 <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--spark-stroke)" stop-opacity="0.18" /><stop offset="100%" stop-color="var(--spark-stroke)" stop-opacity="0" /></linearGradient>
 </defs>
 <rect width="500" height="185" rx="10" fill="var(--card-bg)" filter="url(#shadow)" />
+<rect width="500" height="185" rx="10" fill="url(#glass-grad)" />
 <rect x="0.5" y="0.5" width="499" height="184" rx="10" fill="none" stroke="var(--card-border)" stroke-width="1" />
+<rect x="1.5" y="1.5" width="497" height="182" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
 <rect width="500" height="3" rx="0" fill="#e34c26" clip-path="url(#card-clip)" />
 <image href="data:image/webp;base64,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" x="352" y="18" width="130" height="75" preserveAspectRatio="xMidYMid slice" clip-path="url(#thumb-clip)" />
 <rect x="352" y="18" width="130" height="75" rx="8" fill="none" stroke="var(--card-border)" stroke-opacity="0.5" stroke-width="1" />
 <g transform="translate(20,129)" class="sparkline-group">
-<path d="M0.0,28.0 C76.7,23.3 383.3,4.7 460.0,0.0 L460.0,28.0 L0,28.0 Z" fill="url(#spark-grad)" />
-<path d="M0.0,28.0 C76.7,23.3 383.3,4.7 460.0,0.0" fill="none" stroke="var(--spark-stroke)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M0.0,28.0 C3.3,28.0 13.3,28.0 20.0,28.0 C26.7,28.0 33.3,28.0 40.0,28.0 C46.7,28.0 53.3,28.0 60.0,28.0 C66.7,28.0 73.3,28.0 80.0,28.0 C86.7,28.0 93.3,28.0 100.0,28.0 C106.7,28.0 113.3,28.0 120.0,28.0 C126.7,28.0 133.3,28.0 140.0,28.0 C146.7,28.0 153.3,28.0 160.0,28.0 C166.7,28.0 173.3,28.0 180.0,28.0 C186.7,28.0 193.3,28.0 200.0,28.0 C206.7,28.0 213.3,28.0 220.0,28.0 C226.7,28.0 233.3,28.0 240.0,28.0 C246.7,28.0 253.3,28.0 260.0,28.0 C266.7,28.0 273.3,28.0 280.0,28.0 C286.7,28.0 293.3,28.0 300.0,28.0 C306.7,28.0 313.3,28.0 320.0,28.0 C326.7,28.0 333.3,28.0 340.0,28.0 C346.7,28.0 353.3,28.0 360.0,28.0 C366.7,28.0 373.3,28.0 380.0,28.0 C386.7,28.0 393.3,28.0 400.0,28.0 C406.7,28.0 413.3,28.0 420.0,28.0 C426.7,28.0 433.3,28.0 440.0,28.0 C446.7,28.0 456.7,28.0 460.0,28.0 L460.0,28.0 L0,28.0 Z" fill="url(#spark-grad)" />
+<path d="M0.0,28.0 C3.3,28.0 13.3,28.0 20.0,28.0 C26.7,28.0 33.3,28.0 40.0,28.0 C46.7,28.0 53.3,28.0 60.0,28.0 C66.7,28.0 73.3,28.0 80.0,28.0 C86.7,28.0 93.3,28.0 100.0,28.0 C106.7,28.0 113.3,28.0 120.0,28.0 C126.7,28.0 133.3,28.0 140.0,28.0 C146.7,28.0 153.3,28.0 160.0,28.0 C166.7,28.0 173.3,28.0 180.0,28.0 C186.7,28.0 193.3,28.0 200.0,28.0 C206.7,28.0 213.3,28.0 220.0,28.0 C226.7,28.0 233.3,28.0 240.0,28.0 C246.7,28.0 253.3,28.0 260.0,28.0 C266.7,28.0 273.3,28.0 280.0,28.0 C286.7,28.0 293.3,28.0 300.0,28.0 C306.7,28.0 313.3,28.0 320.0,28.0 C326.7,28.0 333.3,28.0 340.0,28.0 C346.7,28.0 353.3,28.0 360.0,28.0 C366.7,28.0 373.3,28.0 380.0,28.0 C386.7,28.0 393.3,28.0 400.0,28.0 C406.7,28.0 413.3,28.0 420.0,28.0 C426.7,28.0 433.3,28.0 440.0,28.0 C446.7,28.0 456.7,28.0 460.0,28.0" fill="none" stroke="var(--spark-stroke)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
 </g>
 <svg x="20" y="18" width="18" height="18" viewBox="0 0 16 16" fill="var(--meta-color)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" /></svg>
 <text class="rc-title" x="44" y="33">proxywhirl</text>
@@ -49,7 +52,22 @@
 <svg x="272" y="21" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" /></svg>
 <text class="rc-desc" x="20" y="54">rotating proxy system Topics data ·</text>
 <text class="rc-desc" x="20" y="70">data-extraction · dataextraction</text>
-<rect x="20" y="155" width="340" height="3" rx="1.5" fill="#e34c26" fill-opacity="0.5" />
-<circle class="rc-lang-dot" cx="25" cy="167" r="5" fill="#e34c26" />
-<text class="rc-lang-label" x="35" y="171">HTML</text>
+<clipPath id="lang-bar-clip"><rect x="20" y="155" width="340" height="4" rx="2" /></clipPath>
+<g clip-path="url(#lang-bar-clip)">
+<rect x="20.0" y="155" width="278.1" height="4" fill="#e34c26" />
+<rect x="298.1" y="155" width="57.4" height="4" fill="#3572A5" />
+<rect x="355.6" y="155" width="3.9" height="4" fill="#3178c6" />
+<rect x="359.4" y="155" width="1.0" height="4" fill="#DA5B0B" />
+<rect x="360.4" y="155" width="1.0" height="4" fill="#8b949e" />
+<rect x="361.4" y="155" width="1.0" height="4" fill="#f1e05a" />
+<rect x="362.4" y="155" width="1.0" height="4" fill="#563d7c" />
+<rect x="363.4" y="155" width="1.0" height="4" fill="#8b949e" />
+<rect x="364.4" y="155" width="1.0" height="4" fill="#8b949e" />
+</g>
+<circle class="rc-lang-dot" cx="24" cy="167" r="4" fill="#e34c26" />
+<text class="rc-meta" x="32" y="171">HTML 82%</text>
+<circle class="rc-lang-dot" cx="98" cy="167" r="4" fill="#3572A5" />
+<text class="rc-meta" x="106" y="171">Python 17%</text>
+<circle class="rc-lang-dot" cx="185" cy="167" r="4" fill="#3178c6" />
+<text class="rc-meta" x="193" y="171">TypeScript 1%</text>
 </svg>

@@ -19,10 +19,10 @@ import re
 import sys
 from pathlib import Path
 
+from ..utils import get_logger
 from . import ink_garden, topography
 from ._dev_profiles import PROFILES
 from .shared import compute_maturity, parse_cli_args, seed_hash
-from ..utils import get_logger
 
 logger = get_logger(module=__name__)
 

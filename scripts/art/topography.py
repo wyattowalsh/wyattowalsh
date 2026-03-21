@@ -9,19 +9,24 @@ Light theme on cream paper.
 """
 from __future__ import annotations
 
-from datetime import timedelta
 import math
+from datetime import timedelta
 
 import numpy as np
 
 from .shared import (
-    WIDTH, HEIGHT, LANG_HUES,
-    seed_hash, hex_frac, oklch, Noise2D,
+    HEIGHT,
+    LANG_HUES,
+    WIDTH,
+    Noise2D,
     compute_maturity,
     contributions_monthly_to_daily_series,
-    map_date_to_loop_delay,
+    hex_frac,
     make_radial_gradient,
+    map_date_to_loop_delay,
     normalize_timeline_window,
+    oklch,
+    seed_hash,
 )
 
 # Map margins

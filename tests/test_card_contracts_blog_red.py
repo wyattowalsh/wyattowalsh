@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import re
-
 from scripts.readme_svg import SvgBlock, SvgBlockRenderer, SvgCard, SvgCardFamily
 
 
@@ -30,11 +28,9 @@ def test_blog_transparent_surface_contract_red() -> None:
         )
     )
 
-    shell = re.search(r'fill="#0F172A" fill-opacity="([0-9.]+)" stroke=', svg)
-
     assert '<rect width="100%" height="100%"' not in svg
-    assert shell is not None
-    assert float(shell.group(1)) <= 0.24
+    assert 'fill="var(--card-bg)"' in svg
+    assert 'class="section-title"' not in svg
 
 
 def test_blog_clutterless_top_right_contract_red() -> None:

@@ -36,7 +36,7 @@ import math
 import os
 import random
 import subprocess
-from typing import Any, List, Optional, Tuple, TypeAlias, Union
+from typing import Any, TypeAlias
 
 import numpy as np
 import svgwrite  # type: ignore
@@ -59,13 +59,13 @@ _rng: random.Random = random.Random()
 NodePosition: TypeAlias = tuple[float, float]
 """Type alias for a 2D node position (x, y)."""
 
-Point2D: TypeAlias = Tuple[float, float]
+Point2D: TypeAlias = tuple[float, float]
 """Type alias for a 2D point (x, y)."""
 
-Point3D: TypeAlias = Tuple[float, float, float]
+Point3D: TypeAlias = tuple[float, float, float]
 """Type alias for a 3D point (x, y, z)."""
 
-ColorStop: TypeAlias = Tuple[str, float]
+ColorStop: TypeAlias = tuple[str, float]
 """Type alias for a color stop (color string, position as float 0.0-1.0)."""
 
 
@@ -148,7 +148,7 @@ class NoiseHandler:
     """
 
     _noise_module_available: bool = False
-    _actual_noise_module: Optional[Any] = None  # Stores the imported noise module
+    _actual_noise_module: Any | None = None  # Stores the imported noise module
     _initialized_flag: bool = False  # Tracks if initialization attempt has occurred
 
     @classmethod
@@ -309,8 +309,8 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
 def create_linear_gradient(
     dwg: Drawing,
     id_name: str,
-    colors: List[str],
-    opacities: Optional[List[float]] = None,
+    colors: list[str],
+    opacities: list[float] | None = None,
     angle: float = 0,
 ) -> gradients.LinearGradient:
     """
@@ -549,8 +549,8 @@ class BannerConfig(BaseModel):
 def _create_basic_glow_filter(
     dwg: Drawing,
     filter_id: str,
-    std_deviation: Union[str, float],
-    color_matrix_values: Optional[str] = None,
+    std_deviation: str | float,
+    color_matrix_values: str | None = None,
 ) -> filters.Filter:
     """Helper to create a basic glow filter with GaussianBlur and optional ColorMatrix."""
     glow_filter = dwg.defs.add(dwg.filter(id=filter_id))
@@ -1151,7 +1151,7 @@ def draw_clifford(
     dark_mode: bool = False,
     grid_size: int = 150,
     return_first_hit: bool = False,
-) -> Optional[np.ndarray]:
+) -> np.ndarray | None:
     """
     Draw a Clifford Strange Attractor as a density-mapped SVG raster.
 
@@ -1248,9 +1248,7 @@ def draw_clifford(
                 lit = 0.55 + 0.40 * t
 
             r, g, b_ch = colorsys.hls_to_rgb(base_hue, lit, sat)
-            hex_color = "#{:02x}{:02x}{:02x}".format(
-                int(r * 255), int(g * 255), int(b_ch * 255)
-            )
+            hex_color = f"#{int(r * 255):02x}{int(g * 255):02x}{int(b_ch * 255):02x}"
 
             alpha = val * (0.95 if dark_mode else 0.85)
 

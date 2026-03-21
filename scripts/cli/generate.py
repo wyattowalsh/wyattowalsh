@@ -8,7 +8,7 @@ import sys
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Annotated, Any, Dict, List, Optional
+from typing import Annotated, Any
 
 import typer
 
@@ -35,7 +35,7 @@ class ReadmeCardVariant(str, Enum):
     LEGACY = "legacy"
 
 
-def _load_project_config(config_path: Optional[Path]) -> ProjectConfig:
+def _load_project_config(config_path: Path | None) -> ProjectConfig:
     """Load project config with consistent error handling."""
     effective_path = config_path or DEFAULT_CONFIG_PATH
     try:
@@ -46,7 +46,7 @@ def _load_project_config(config_path: Optional[Path]) -> ProjectConfig:
             f"[yellow]{effective_path}[/yellow]. Run [cyan]readme config generate-default[/cyan]."
         )
         raise typer.Exit(code=1)
-    except (ValueError, IOError) as e:
+    except (OSError, ValueError) as e:
         console.print(f"[bold red]Error:[/bold red] Failed to load config: {e}")
         raise typer.Exit(code=1)
 
@@ -59,7 +59,7 @@ def _load_project_config(config_path: Optional[Path]) -> ProjectConfig:
 @generate_app.command(help="Generate SVG profile banner (light + dark variants).")
 def banner(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -67,7 +67,7 @@ def banner(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output path for generated file.",
@@ -75,7 +75,7 @@ def banner(
         ),
     ] = None,
     title: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--title",
             help="Banner title.",
@@ -83,7 +83,7 @@ def banner(
         ),
     ] = None,
     subtitle: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--subtitle",
             help="Banner subtitle.",
@@ -91,7 +91,7 @@ def banner(
         ),
     ] = None,
     width: Annotated[
-        Optional[int],
+        int | None,
         typer.Option(
             "--width",
             help="Banner width (px).",
@@ -99,7 +99,7 @@ def banner(
         ),
     ] = None,
     height: Annotated[
-        Optional[int],
+        int | None,
         typer.Option(
             "--height",
             help="Banner height (px).",
@@ -107,7 +107,7 @@ def banner(
         ),
     ] = None,
     optimize_banner: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--optimize-banner/--no-optimize-banner",
             help="Optimize banner with SVGO.",
@@ -200,7 +200,7 @@ def banner(
 @generate_app.command(help="Generate artistic vCard QR code.")
 def qr(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -208,7 +208,7 @@ def qr(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output path for generated file.",
@@ -216,7 +216,7 @@ def qr(
         ),
     ] = None,
     qr_error_correction: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--qr-error-correction",
             help="QR error correction (L,M,Q,H).",
@@ -225,7 +225,7 @@ def qr(
         ),
     ] = None,
     qr_scale: Annotated[
-        Optional[int],
+        int | None,
         typer.Option(
             "--qr-scale",
             help="QR code scale factor.",
@@ -233,7 +233,7 @@ def qr(
         ),
     ] = None,
     qr_background_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--qr-background-path",
             help="QR background SVG path.",
@@ -412,9 +412,9 @@ def _wc_import():
 
 def _wc_from_topics(
     wc,
-    output_path: Optional[Path],
-    stopwords_list: List[str],
-) -> Optional[Path]:
+    output_path: Path | None,
+    stopwords_list: list[str],
+) -> Path | None:
     """Generate word cloud from topics.md with topic-specific overrides."""
     logger.info("Generating word cloud from topics.md: {path}", path=wc.TOPICS_MD_PATH)
     if not wc.TOPICS_MD_PATH.exists():
@@ -459,9 +459,9 @@ def _wc_from_topics(
 
 def _wc_from_languages(
     wc,
-    output_path: Optional[Path],
-    stopwords_list: List[str],
-) -> Optional[Path]:
+    output_path: Path | None,
+    stopwords_list: list[str],
+) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
     logger.info(
         f"Generating word cloud from languages.md: {wc.LANGUAGES_MD_PATH}"
@@ -509,20 +509,20 @@ def _wc_from_languages(
 def _wc_from_techs(
     wc,
     techs_path: Path,
-    output_path: Optional[Path],
-) -> Optional[Path]:
+    output_path: Path | None,
+) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(
         f"Loading technologies from specified path: {techs_path}"
     )
-    loaded_techs_list: List = wc.load_technologies(techs_path)
+    loaded_techs_list: list = wc.load_technologies(techs_path)
     if not loaded_techs_list:
         logger.warning(
             f"load_technologies returned no data from {techs_path}."
         )
         return None
 
-    frequencies: Dict[str, float] = {
+    frequencies: dict[str, float] = {
         tech.name: float(tech.level) for tech in loaded_techs_list
     }
     if not frequencies:
@@ -553,8 +553,8 @@ def _wc_from_techs(
 def _wc_from_prompt(
     wc,
     text: str,
-    output_path: Optional[Path],
-) -> Optional[Path]:
+    output_path: Path | None,
+) -> Path | None:
     """Generate word cloud from a text prompt."""
     logger.info("Generating word cloud from text (prompt).")
 
@@ -580,7 +580,7 @@ def _wc_from_prompt(
 )
 def word_cloud(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -588,7 +588,7 @@ def word_cloud(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output path for generated file.",
@@ -596,7 +596,7 @@ def word_cloud(
         ),
     ] = None,
     techs_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--techs-path",
             help="Technologies.md path (for word clouds).",
@@ -604,7 +604,7 @@ def word_cloud(
         ),
     ] = None,
     prompt: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--prompt",
             help="Prompt for word cloud.",
@@ -646,11 +646,11 @@ def word_cloud(
         proj_config.word_cloud_settings or ConfigWordCloudSettingsModel()
     )
 
-    stopwords_list: List[str] = []
+    stopwords_list: list[str] = []
     if config_wc_model and config_wc_model.stopwords:
         stopwords_list.extend(config_wc_model.stopwords)
 
-    generated_path: Optional[Path] = None
+    generated_path: Path | None = None
 
     if from_topics_md:
         generated_path = _wc_from_topics(wc, output_path, stopwords_list)
@@ -705,7 +705,7 @@ def word_cloud(
 )
 def generative_art(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -713,7 +713,7 @@ def generative_art(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output directory for generated files.",
@@ -721,7 +721,7 @@ def generative_art(
         ),
     ] = None,
     metrics_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--metrics-path",
             help="Path to metrics JSON for generative art.",
@@ -772,7 +772,7 @@ def generative_art(
 @generate_app.command(help="Generate animated artwork from historical data.")
 def animated(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -780,7 +780,7 @@ def animated(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output directory for generated files.",
@@ -788,7 +788,7 @@ def animated(
         ),
     ] = None,
     history_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--history-path",
             help="Path to history JSON for animated art.",
@@ -850,7 +850,7 @@ def animated(
 )
 def living_art(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -893,7 +893,7 @@ def living_art(
         ),
     ] = 400,
     only: Annotated[
-        Optional[str],
+        str | None,
         typer.Option(
             "--only",
             help="Restrict generation to one style: inkgarden or topo.",
@@ -956,7 +956,7 @@ def living_art(
 @generate_app.command(help="Generate shields.io technology badges and inject into README.")
 def skills(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -964,7 +964,7 @@ def skills(
         ),
     ] = None,
     skills_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--skills-path",
             help="Path to skills.yaml for badge generation.",
@@ -998,9 +998,9 @@ def skills(
 def _collect_card_style_update(
     card_style_updates: dict[str, dict[str, Any]],
     family: str,
-    variant: Optional[ReadmeCardVariant],
-    transparent_canvas: Optional[bool],
-    show_title: Optional[bool],
+    variant: ReadmeCardVariant | None,
+    transparent_canvas: bool | None,
+    show_title: bool | None,
 ) -> None:
     """Collect non-None card style overrides into *card_style_updates*."""
     update: dict[str, Any] = {}
@@ -1020,7 +1020,7 @@ def _collect_card_style_update(
 )
 def readme_sections(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -1028,7 +1028,7 @@ def readme_sections(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Output path for README file.",
@@ -1037,7 +1037,7 @@ def readme_sections(
     ] = None,
     # -- default card --
     readme_default_card_variant: Annotated[
-        Optional[ReadmeCardVariant],
+        ReadmeCardVariant | None,
         typer.Option(
             "--readme-default-card-variant",
             help="Default README per-card SVG variant.",
@@ -1046,24 +1046,24 @@ def readme_sections(
         ),
     ] = None,
     readme_default_card_transparent_canvas: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-default-card-transparent-canvas/--no-readme-default-card-transparent-canvas",
-            help="Default README per-card SVG canvas transparency.",
+            help="Default README legacy per-card SVG canvas transparency.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     readme_default_card_show_title: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-default-card-show-title/--no-readme-default-card-show-title",
-            help="Default README per-card SVG title visibility.",
+            help="Default README legacy per-card SVG title visibility.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     # -- connect card --
     readme_connect_card_variant: Annotated[
-        Optional[ReadmeCardVariant],
+        ReadmeCardVariant | None,
         typer.Option(
             "--readme-connect-card-variant",
             help="Connect README per-card SVG variant.",
@@ -1072,24 +1072,24 @@ def readme_sections(
         ),
     ] = None,
     readme_connect_card_transparent_canvas: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-connect-card-transparent-canvas/--no-readme-connect-card-transparent-canvas",
-            help="Connect README per-card SVG canvas transparency.",
+            help="Connect README legacy per-card SVG canvas transparency.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     readme_connect_card_show_title: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-connect-card-show-title/--no-readme-connect-card-show-title",
-            help="Connect README per-card SVG title visibility.",
+            help="Connect README legacy per-card SVG title visibility.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     # -- featured card --
     readme_featured_card_variant: Annotated[
-        Optional[ReadmeCardVariant],
+        ReadmeCardVariant | None,
         typer.Option(
             "--readme-featured-card-variant",
             help="Featured README per-card SVG variant.",
@@ -1098,24 +1098,24 @@ def readme_sections(
         ),
     ] = None,
     readme_featured_card_transparent_canvas: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-featured-card-transparent-canvas/--no-readme-featured-card-transparent-canvas",
-            help="Featured README per-card SVG canvas transparency.",
+            help="Featured README legacy per-card SVG canvas transparency.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     readme_featured_card_show_title: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-featured-card-show-title/--no-readme-featured-card-show-title",
-            help="Featured README per-card SVG title visibility.",
+            help="Featured README legacy per-card SVG title visibility.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     # -- blog card --
     readme_blog_card_variant: Annotated[
-        Optional[ReadmeCardVariant],
+        ReadmeCardVariant | None,
         typer.Option(
             "--readme-blog-card-variant",
             help="Blog README per-card SVG variant.",
@@ -1124,18 +1124,18 @@ def readme_sections(
         ),
     ] = None,
     readme_blog_card_transparent_canvas: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-blog-card-transparent-canvas/--no-readme-blog-card-transparent-canvas",
-            help="Blog README per-card SVG canvas transparency.",
+            help="Blog README legacy per-card SVG canvas transparency.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
     readme_blog_card_show_title: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--readme-blog-card-show-title/--no-readme-blog-card-show-title",
-            help="Blog README per-card SVG title visibility.",
+            help="Blog README legacy per-card SVG title visibility.",
             rich_help_panel="Card Styles",
         ),
     ] = None,
@@ -1224,7 +1224,7 @@ def readme_sections(
 )
 def all_assets(
     config_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--config-path",
             help="Project configuration file path.",
@@ -1232,7 +1232,7 @@ def all_assets(
         ),
     ] = None,
     output_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output-path",
             help="Base output directory for generated files.",
@@ -1240,7 +1240,7 @@ def all_assets(
         ),
     ] = None,
     metrics_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--metrics-path",
             help="Path to metrics JSON for generative art (optional).",
@@ -1248,7 +1248,7 @@ def all_assets(
         ),
     ] = None,
     history_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--history-path",
             help="Path to history JSON for animated art (optional).",
@@ -1256,7 +1256,7 @@ def all_assets(
         ),
     ] = None,
     skills_path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--skills-path",
             help="Path to skills.yaml for badge generation (optional).",
@@ -1267,7 +1267,7 @@ def all_assets(
     """Run all generators, skipping those that lack required data paths."""
     from rich.panel import Panel  # lazy import
 
-    results: List[tuple[str, str]] = []  # (name, status)
+    results: list[tuple[str, str]] = []  # (name, status)
 
     # -- banner --
     try:

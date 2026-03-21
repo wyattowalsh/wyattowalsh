@@ -19,15 +19,13 @@ from __future__ import annotations
 
 import argparse
 import colorsys
-import hashlib
 import json
 import math
 from pathlib import Path
-from typing import Optional
 
 import svgwrite
 
-from .art.shared import phyllotaxis_points, flow_field_lines, _seed_hash, _hex_slice
+from .art.shared import _hex_slice, _seed_hash, flow_field_lines, phyllotaxis_points
 from .banner import draw_clifford
 from .utils import get_logger
 
@@ -45,7 +43,7 @@ _HEIGHT = 800
 def generate_community_art(
     metrics: dict,
     dark_mode: bool = False,
-    output_path: Optional[Path] = None,
+    output_path: Path | None = None,
 ) -> Path:
     """Generate community artwork seeded by others' interactions.
 
@@ -120,7 +118,7 @@ def generate_community_art(
 def generate_activity_art(
     metrics: dict,
     dark_mode: bool = False,
-    output_path: Optional[Path] = None,
+    output_path: Path | None = None,
 ) -> Path:
     """Generate activity artwork seeded by the owner's GitHub journey.
 

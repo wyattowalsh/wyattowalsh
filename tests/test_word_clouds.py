@@ -3,13 +3,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from scripts.word_clouds import (
-    _filter_others,
-    parse_markdown_for_word_cloud_frequencies,
-)
 from scripts.word_cloud_renderers import (
     WordleRenderer,
     resolve_preferred_wordcloud_font_path,
+)
+from scripts.word_clouds import (
+    _filter_others,
+    parse_markdown_for_word_cloud_frequencies,
 )
 
 

@@ -8,7 +8,6 @@ import base64
 import re
 from html import escape
 from pathlib import Path
-from typing import List
 from urllib.parse import quote
 
 from .config import (
@@ -87,7 +86,7 @@ class SkillsBadgeGenerator:
             return f'<a href="{escape(skill.url)}">{img}</a>'
         return img
 
-    def _render_skills(self, skills: List[SkillEntry]) -> str:
+    def _render_skills(self, skills: list[SkillEntry]) -> str:
         """Render a list of skills as a <p> block of badges."""
         if not skills:
             return ""

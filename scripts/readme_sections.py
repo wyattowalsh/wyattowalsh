@@ -1,25 +1,27 @@
 """README dynamic section generator (badges, projects, and blog posts)."""
 
 import base64
+import dataclasses
+import hashlib
 import ipaddress
 import json
 import os
 import re
 import time
+from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import dataclasses
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from html import escape
 from pathlib import Path
-from typing import Optional, Sequence
 from urllib.error import HTTPError
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
-import defusedxml.ElementTree as DefusedET
 from xml.etree.ElementTree import Element
 
-from .config import ReadmeSectionsSettings
+import defusedxml.ElementTree as DefusedET
+
+from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -27,6 +29,7 @@ from .readme_svg import (
     SvgBlockRenderer,
     SvgBlogCardRenderer,
     SvgCard,
+    SvgCardFamily,
     SvgConnectCardRenderer,
     SvgRepoCardRenderer,
 )
@@ -86,7 +89,7 @@ def _build_remote_get_request(
     url: str,
     headers: dict[str, str],
     context: str,
-) -> Optional[Request]:
+) -> Request | None:
     if not _is_safe_remote_url(url):
         logger.warning("Blocked unsafe URL for {context}: {url}", context=context, url=url)
         return None
@@ -100,18 +103,18 @@ class RepoMetadata:
     full_name: str
     name: str
     html_url: str
-    description: Optional[str]
+    description: str | None
     stars: int
-    homepage: Optional[str]
+    homepage: str | None
     topics: list[str]
-    updated_at: Optional[str]
+    updated_at: str | None
     # additional metadata exposed for featured cards
-    created_at: Optional[str] = None
-    size_kb: Optional[int] = None
-    forks: Optional[int] = None
-    language: Optional[str] = None
-    open_graph_image_url: Optional[str] = None
-    languages: Optional[dict[str, int]] = None
+    created_at: str | None = None
+    size_kb: int | None = None
+    forks: int | None = None
+    language: str | None = None
+    open_graph_image_url: str | None = None
+    languages: dict[str, int] | None = None
 
 
 @dataclass(frozen=True)
@@ -120,7 +123,7 @@ class BlogPost:
 
     title: str
     url: str
-    image_url: Optional[str] = None
+    image_url: str | None = None
 
 
 class GitHubRepoClient:
@@ -129,7 +132,7 @@ class GitHubRepoClient:
     def __init__(self, timeout: float = 10.0) -> None:
         self.timeout = timeout
 
-    def fetch_repo_metadata(self, full_name: str) -> Optional[RepoMetadata]:
+    def fetch_repo_metadata(self, full_name: str) -> RepoMetadata | None:
         """Fetch metadata for owner/repo from GitHub REST API."""
         request = _build_remote_get_request(
             url=f"https://api.github.com/repos/{full_name}",
@@ -165,7 +168,7 @@ class GitHubRepoClient:
 
     def fetch_repo_languages(
         self, full_name: str,
-    ) -> Optional[dict[str, int]]:
+    ) -> dict[str, int] | None:
         """Fetch language byte-count breakdown for owner/repo."""
         request = _build_remote_get_request(
             url=f"https://api.github.com/repos/{full_name}/languages",
@@ -237,7 +240,7 @@ class BlogFeedClient:
             link = (item.findtext("link") or "").strip()
             if not (title and link):
                 continue
-            image_url: Optional[str] = None
+            image_url: str | None = None
             enc = item.find("enclosure")
             if enc is not None:
                 enc_url = (enc.get("url") or "").strip()
@@ -289,7 +292,7 @@ class StarHistoryClient:
         self,
         full_name: str,
         sample: int = 24,
-    ) -> Optional[list[int]]:
+    ) -> list[int] | None:
         """Return cumulative star counts sampled to *sample* time bins."""
         parts = full_name.split("/", 1)
         if len(parts) != 2:
@@ -298,7 +301,7 @@ class StarHistoryClient:
 
         owner, name = parts
         timestamps: list[datetime] = []
-        cursor: Optional[str] = None
+        cursor: str | None = None
         max_pages = 50
         page_count = 0
 
@@ -369,7 +372,7 @@ class StarHistoryClient:
         # Bucket into *sample* evenly-spaced time bins from first star to now
         timestamps.sort()
         t_start = timestamps[0]
-        t_end = datetime.now(timezone.utc)
+        t_end = datetime.now(UTC)
         if t_end <= t_start:
             t_end = timestamps[-1]
 
@@ -415,7 +418,7 @@ class BlogMetadataClient:
     def __init__(self, timeout: float = 10.0) -> None:
         self.timeout = timeout
 
-    def fetch_metadata(self, url: str) -> dict[str, Optional[str]]:
+    def fetch_metadata(self, url: str) -> dict[str, str | None]:
         parsed_host = urlparse(url).netloc.replace("www.", "") or None
         fallback = {
             "hero_image": None,
@@ -470,7 +473,7 @@ class BlogMetadataClient:
         self,
         html: str,
         candidates: tuple[tuple[str, str], ...],
-    ) -> Optional[str]:
+    ) -> str | None:
         for attr, value in candidates:
             # Try property/name before content
             pattern_prop_first = re.compile(
@@ -498,21 +501,22 @@ class ReadmeSectionGenerator:
     FEATURED_END = "<!-- README:FEATURED_PROJECTS:END -->"
     BLOG_START = "<!-- README:BLOG_POSTS:START -->"
     BLOG_END = "<!-- README:BLOG_POSTS:END -->"
+    _CARD_STYLE_FIELDS = ("variant", "transparent_canvas", "show_title")
 
     def __init__(
         self,
         settings: ReadmeSectionsSettings,
-        repo_client: Optional[GitHubRepoClient] = None,
-        blog_client: Optional[BlogFeedClient] = None,
-        star_history_client: Optional[StarHistoryClient] = None,
-        blog_metadata_client: Optional[BlogMetadataClient] = None,
+        repo_client: GitHubRepoClient | None = None,
+        blog_client: BlogFeedClient | None = None,
+        star_history_client: StarHistoryClient | None = None,
+        blog_metadata_client: BlogMetadataClient | None = None,
     ) -> None:
         self.settings = settings
         self.repo_client = repo_client or GitHubRepoClient()
         self.blog_client = blog_client or BlogFeedClient()
         self.star_history_client = star_history_client or StarHistoryClient()
         self.blog_metadata_client = blog_metadata_client or BlogMetadataClient()
-        self.svg_builder: Optional[ReadmeSvgAssetBuilder] = None
+        self.svg_builder: ReadmeSvgAssetBuilder | None = None
         if self.settings.svg.enabled:
             self.svg_builder = ReadmeSvgAssetBuilder(
                 output_dir=self.settings.svg.output_dir
@@ -603,13 +607,16 @@ class ReadmeSectionGenerator:
                 output_dir=self.settings.svg.output_dir,
             )
             for card in svg_cards:
-                name = re.sub(
-                    r"[^a-zA-Z0-9_-]+", "-", card.title,
-                ).strip("-_").lower() or "link"
-                asset = f"connect-{name}"
+                asset = f"connect-{self._slugify_asset_segment(card.title, fallback='link')}"
                 writer.write(
                     asset_name=asset,
-                    svg_content=card_renderer.render_card(card),
+                    svg_content=self._render_card_svg_asset(
+                        family="connect",
+                        card=card,
+                        width=140,
+                        height=130,
+                        section_title="Connect",
+                    ),
                 )
                 src = (
                     Path(self.settings.svg.output_dir)
@@ -668,10 +675,10 @@ class ReadmeSectionGenerator:
         self,
         card: SvgCard,
         *,
-        url: Optional[str] = None,
-        host: Optional[str] = None,
-        label: Optional[str] = None,
-        accent: Optional[str] = None,
+        url: str | None = None,
+        host: str | None = None,
+        label: str | None = None,
+        accent: str | None = None,
     ) -> SvgCard:
         icon_data_uri = self._brand_icon_data_uri(
             url=url,
@@ -699,7 +706,7 @@ class ReadmeSectionGenerator:
         slug: str,
         bg_color: str,
         fg_color: str = "white",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Fetch an icon from the Simple Icons CDN and wrap it in a 64x64 SVG.
 
         Returns a ``data:image/svg+xml;base64,...`` URI on success, or *None*
@@ -766,15 +773,16 @@ class ReadmeSectionGenerator:
 
     # -- w4w.dev favicon fetcher -----------------------------------------
 
-    def _fetch_w4w_favicon_data_uri(self) -> Optional[str]:
+    def _fetch_w4w_favicon_data_uri(self) -> str | None:
         """Fetch w4w.dev logo, convert to PNG, return as data URI."""
         # Try local optimized ICO first (checked into repo assets)
         local_ico = Path(".github/assets/img/favicon.ico")
         if local_ico.exists():
             ico_bytes = local_ico.read_bytes()
             try:
-                from PIL import Image as _Img
                 from io import BytesIO as _BIO
+
+                from PIL import Image as _Img
                 with _Img.open(_BIO(ico_bytes)) as img:
                     img = img.resize((64, 64), _Img.Resampling.LANCZOS)
                     buf = _BIO()
@@ -802,11 +810,11 @@ class ReadmeSectionGenerator:
     def _brand_icon_data_uri(
         self,
         *,
-        url: Optional[str] = None,
-        host: Optional[str] = None,
-        label: Optional[str] = None,
-        accent: Optional[str] = None,
-    ) -> Optional[str]:
+        url: str | None = None,
+        host: str | None = None,
+        label: str | None = None,
+        accent: str | None = None,
+    ) -> str | None:
         normalized_host = (host or "").strip().replace("www.", "").lower()
         if not normalized_host and url:
             normalized_host = (
@@ -853,9 +861,9 @@ class ReadmeSectionGenerator:
                 return favicon_uri
 
         # --- Hardcoded glyph fallbacks ------------------------------------
-        glyph: Optional[str] = None
-        background: Optional[str] = None
-        foreground: Optional[str] = None
+        glyph: str | None = None
+        background: str | None = None
+        foreground: str | None = None
         if normalized_host.endswith("linkedin.com"):
             background, foreground = ("0A66C2", "FFFFFF")
             glyph = (
@@ -925,8 +933,8 @@ class ReadmeSectionGenerator:
         fallback_lines: list[str] = []
         repos = self.settings.featured_repos
         # Fetch all repo metadata + languages in parallel
-        metadata_by_name: dict[str, Optional[RepoMetadata]] = {}
-        languages_by_name: dict[str, Optional[dict[str, int]]] = {}
+        metadata_by_name: dict[str, RepoMetadata | None] = {}
+        languages_by_name: dict[str, dict[str, int] | None] = {}
         if repos:
             max_workers = min(16, len(repos) * 2)
             with ThreadPoolExecutor(max_workers=max_workers) as pool:
@@ -987,8 +995,6 @@ class ReadmeSectionGenerator:
             lines = ["- No featured repositories configured."]
             return "\n".join(lines)
 
-        # Render individual per-card SVGs
-        card_renderer = SvgRepoCardRenderer(width=500, height=185)
         card_embeds: list[tuple[str, str]] = []  # (html_url, img_src)
 
         if self._svg_section_enabled("featured_projects"):
@@ -996,11 +1002,18 @@ class ReadmeSectionGenerator:
                 output_dir=self.settings.svg.output_dir,
             )
             for card in svg_cards:
-                repo_name = re.sub(
-                    r"[^a-zA-Z0-9_-]+", "-", card.title
-                ).strip("-_").lower() or "repo"
-                asset_name = f"featured-card-{repo_name}"
-                svg_markup = card_renderer.render_card(card)
+                repo_identity = card.kicker or card.title
+                asset_name = (
+                    f"featured-card-"
+                    f"{self._slugify_asset_segment(repo_identity, fallback='repo')}"
+                )
+                svg_markup = self._render_card_svg_asset(
+                    family="featured",
+                    card=card,
+                    width=500,
+                    height=185,
+                    section_title="Featured Projects",
+                )
                 writer.write(asset_name=asset_name, svg_content=svg_markup)
                 src = (
                     Path(self.settings.svg.output_dir) / f"{asset_name}.svg"
@@ -1037,8 +1050,8 @@ class ReadmeSectionGenerator:
     def _build_project_svg_card(
         self,
         repo_full_name: str,
-        metadata: Optional[RepoMetadata],
-        languages: Optional[dict[str, int]] = None,
+        metadata: RepoMetadata | None,
+        languages: dict[str, int] | None = None,
     ) -> SvgCard:
         if metadata is None:
             repo_url = f"https://github.com/{repo_full_name}"
@@ -1157,7 +1170,7 @@ class ReadmeSectionGenerator:
             return "\n".join(lines)
 
         # Fetch blog post metadata in parallel
-        metadata_by_url: dict[str, dict[str, Optional[str]]] = {}
+        metadata_by_url: dict[str, dict[str, str | None]] = {}
         max_workers = min(8, len(posts))
         with ThreadPoolExecutor(max_workers=max_workers) as pool:
             future_to_url = {
@@ -1200,7 +1213,7 @@ class ReadmeSectionGenerator:
             # Resolve hero image: convert relative URLs to absolute, then
             # fetch as a base64 data URI so GitHub's SVG sanitizer can render
             # the embedded image.
-            hero_data_uri: Optional[str] = None
+            hero_data_uri: str | None = None
             # Try RSS enclosure first, then og:image from HTML
             hero_url = post.image_url or metadata.get("hero_image")
             if hero_url:
@@ -1219,35 +1232,34 @@ class ReadmeSectionGenerator:
                 badge=None,
                 accent=accent,
             )
-            card = self._set_card_icon_data_uri(
-                card,
-                url=post.url,
-                host=host,
-                label=post.title,
-                accent=accent,
-            )
             svg_cards.append(card)
             meta_bits = [bit for bit in card_meta if bit]
             line = f"- [{escape(clean_title)}]({escape(post.url)})"
             if meta_bits:
                 line += f" — {escape(' · '.join(meta_bits))}"
             fallback_lines.append(line)
-        # Render per-card blog SVGs
-        blog_renderer = SvgBlogCardRenderer(width=480, height=150)
         card_embeds: list[tuple[str, str]] = []
 
         if self._svg_section_enabled("blog_posts"):
             writer = SvgAssetWriter(
                 output_dir=self.settings.svg.output_dir,
             )
+            used_assets: set[str] = set()
             for idx, card in enumerate(svg_cards):
-                name = re.sub(
-                    r"[^a-zA-Z0-9_-]+", "-", card.title,
-                ).strip("-_").lower()[:40] or f"post-{idx}"
-                asset = f"blog-{name}"
+                asset = self._make_blog_asset_name(
+                    card=card,
+                    index=idx,
+                    used_assets=used_assets,
+                )
                 writer.write(
                     asset_name=asset,
-                    svg_content=blog_renderer.render_card(card),
+                    svg_content=self._render_card_svg_asset(
+                        family="blog",
+                        card=card,
+                        width=480,
+                        height=150,
+                        section_title="Latest Blog Posts",
+                    ),
                 )
                 src = (
                     Path(self.settings.svg.output_dir)
@@ -1303,10 +1315,98 @@ class ReadmeSectionGenerator:
             Path(self.settings.svg.output_dir) / f"{normalized}.svg"
         ).as_posix()
 
+    def _resolved_card_style(self, family: str) -> ReadmeSvgCardStyleSettings:
+        default_style = self.settings.svg.card_styles.default
+        family_style = getattr(self.settings.svg.card_styles, family)
+        family_fields = getattr(family_style, "model_fields_set", set())
+        updates = {
+            field: getattr(family_style, field)
+            for field in self._CARD_STYLE_FIELDS
+            if field in family_fields
+        }
+        return default_style.model_copy(update=updates)
+
+    def _render_card_svg_asset(
+        self,
+        *,
+        family: str,
+        card: SvgCard,
+        width: int,
+        height: int,
+        section_title: str,
+    ) -> str:
+        style = self._resolved_card_style(family)
+        if style.variant == "legacy":
+            renderer = SvgBlockRenderer(
+                width=width,
+                card_height=height,
+                padding=16,
+            )
+            block = SvgBlock(
+                title=section_title,
+                cards=(card,),
+                columns=1,
+                family=SvgCardFamily(family),
+                show_title=style.show_title,
+                transparent_canvas=style.transparent_canvas,
+            )
+            return renderer.render(block)
+        if family == "connect":
+            return SvgConnectCardRenderer(width=width, height=height).render_card(card)
+        if family == "featured":
+            return SvgRepoCardRenderer(width=width, height=height).render_card(card)
+        if family == "blog":
+            return SvgBlogCardRenderer(width=width, height=height).render_card(card)
+        raise ValueError(f"Unsupported card family: {family}")
+
+    def _slugify_asset_segment(
+        self,
+        value: str,
+        *,
+        fallback: str,
+        max_length: int | None = None,
+    ) -> str:
+        slug = re.sub(r"[^a-zA-Z0-9_-]+", "-", value).strip("-_").lower()
+        if max_length is not None:
+            slug = slug[:max_length].rstrip("-_")
+        return slug or fallback
+
+    def _make_blog_asset_name(
+        self,
+        *,
+        card: SvgCard,
+        index: int,
+        used_assets: set[str],
+    ) -> str:
+        base = self._slugify_asset_segment(
+            card.title,
+            fallback=f"post-{index}",
+            max_length=40,
+        )
+        asset = f"blog-{base}"
+        if asset not in used_assets:
+            used_assets.add(asset)
+            return asset
+
+        unique_source = card.url or f"{card.title}-{index}"
+        suffix = hashlib.sha1(unique_source.encode("utf-8")).hexdigest()[:8]
+        deduped_base = self._slugify_asset_segment(
+            card.title,
+            fallback=f"post-{index}",
+            max_length=31,
+        )
+        asset = f"blog-{deduped_base}-{suffix}"
+        counter = 2
+        while asset in used_assets:
+            asset = f"blog-{deduped_base}-{suffix}-{counter}"
+            counter += 1
+        used_assets.add(asset)
+        return asset
+
     def _build_featured_repo_fallback_line(
         self,
         repo_full_name: str,
-        metadata: Optional[RepoMetadata],
+        metadata: RepoMetadata | None,
     ) -> str:
         if metadata is None:
             repo_name = repo_full_name.split("/")[-1]
@@ -1370,7 +1470,7 @@ class ReadmeSectionGenerator:
         except OSError as exc:
             logger.warning("Failed to write README SVG asset {asset_name}: {exc}", asset_name=asset_name, exc=exc)
 
-    def _format_timestamp(self, timestamp: Optional[str]) -> Optional[str]:
+    def _format_timestamp(self, timestamp: str | None) -> str | None:
         if not timestamp:
             return None
         if "T" not in timestamp:
@@ -1380,8 +1480,8 @@ class ReadmeSectionGenerator:
     def _repo_background_image(
         self,
         repo_full_name: str,
-        metadata: Optional[RepoMetadata],
-    ) -> Optional[str]:
+        metadata: RepoMetadata | None,
+    ) -> str | None:
         # Try to get the custom social preview from the repo HTML page
         og_url = self._scrape_repo_og_image(repo_full_name)
         if og_url:
@@ -1400,7 +1500,7 @@ class ReadmeSectionGenerator:
 
     def _scrape_repo_og_image(
         self, repo_full_name: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         """Scrape og:image / twitter:image from a GitHub repo page."""
         page_url = f"https://github.com/{repo_full_name}"
         request = _build_remote_get_request(
@@ -1453,7 +1553,7 @@ class ReadmeSectionGenerator:
         self,
         url: str,
         context: str,
-    ) -> Optional[str]:
+    ) -> str | None:
         request = _build_remote_get_request(
             url=url,
             headers={"User-Agent": "readme-section-generator"},
@@ -1497,8 +1597,9 @@ class ReadmeSectionGenerator:
         # Optimize large images: resize to thumbnail + compress as WEBP
         if len(image_bytes) > 50_000:
             try:
-                from PIL import Image as _Img
                 from io import BytesIO as _BIO
+
+                from PIL import Image as _Img
                 with _Img.open(_BIO(image_bytes)) as img:
                     img = img.convert("RGB")
                     img.thumbnail((480, 270), _Img.Resampling.LANCZOS)
@@ -1526,11 +1627,11 @@ class ReadmeSectionGenerator:
     def _build_star_history_points(
         self,
         repo_full_name: str,
-        metadata: Optional[RepoMetadata],
+        metadata: RepoMetadata | None,
     ) -> tuple[float, ...] | None:
         if metadata is None:
             return None
-        history: Optional[list[int]] = None
+        history: list[int] | None = None
         if self.star_history_client:
             history = self.star_history_client.fetch_star_history(
                 repo_full_name,

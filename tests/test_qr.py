@@ -1,12 +1,11 @@
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 # import pytest # Pytest is a framework, not a library to import here
-from pydantic import HttpUrl
-
 from scripts.config import VCardDataModel as ConfigVCardDataModel
 from scripts.qr import QRCodeGenerator
 from scripts.qr import logger as qr_logger
@@ -71,7 +70,7 @@ def default_vcard_data() -> ConfigVCardDataModel:
 @pytest.fixture
 def qr_generator_instance(
     mock_project_root: Path, caplog: Any
-) -> Generator[QRCodeGenerator, None, None]:
+) -> Generator[QRCodeGenerator]:
     """Initializes QRCodeGenerator with mock paths and configures logger."""
     bg_path = mock_project_root / ".github" / "assets" / "img" / "icon.svg"
     output_dir = (

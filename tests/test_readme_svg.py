@@ -12,7 +12,9 @@ from scripts.readme_svg import (
     SvgBlock,
     SvgBlockRenderer,
     SvgCard,
+    SvgCardFamily,
     SvgCardTheme,
+    SvgConnectCardRenderer,
     SvgRepoCardRenderer,
 )
 
@@ -292,6 +294,22 @@ class TestSvgBlockRenderer:
         # No <text class="title"> header element
         assert 'class="title"' not in svg
 
+    def test_render_honors_explicit_title_and_canvas_options(self) -> None:
+        renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
+        block = SvgBlock(
+            title="Featured",
+            cards=(SvgCard(title="Item"),),
+            columns=1,
+            family=SvgCardFamily.FEATURED,
+            show_title=True,
+            transparent_canvas=False,
+        )
+
+        svg = renderer.render(block)
+
+        assert 'class="section-title"' in svg
+        assert '<rect width="100%" height="100%" fill="var(--canvas-bg)" />' in svg
+
     def test_font_family_in_css(self) -> None:
         renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
         block = SvgBlock(
@@ -391,7 +409,12 @@ class TestReadmeSvgAssetBuilder:
         renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
         title = "A Very Long Blog Post Title That Would Normally Be Truncated ... update"
         card = SvgCard(title=title, lines=("w4w.dev",), url="https://w4w.dev/blog/long")
-        block = SvgBlock(title="Blog", cards=(card,), columns=1)
+        block = SvgBlock(
+            title="Blog",
+            cards=(card,),
+            columns=1,
+            family=SvgCardFamily.BLOG,
+        )
         svg = renderer.render(block)
 
         # No badge rect/text rendered (CSS class definition is fine)
@@ -399,6 +422,41 @@ class TestReadmeSvgAssetBuilder:
         assert "update" not in svg
         assert "..." not in svg
         assert "<tspan" in svg
+
+
+class TestSvgConnectCardRenderer:
+    def test_real_icon_does_not_render_monogram_overlay(self) -> None:
+        renderer = SvgConnectCardRenderer(width=140, height=130)
+        card = SvgCard(
+            title="GitHub",
+            icon="GH",
+            icon_data_uri="data:image/svg+xml;base64,PHN2Zy8+",
+            kicker="CODE",
+            badge="Builder",
+            accent="181717",
+        )
+
+        svg = renderer.render_card(card)
+
+        assert 'href="data:image/svg+xml;base64,PHN2Zy8+"' in svg
+        assert 'class="con-mono"' not in svg
+        assert "Builder" in svg
+        assert "CODE" not in svg
+
+    def test_missing_icon_renders_monogram_fallback(self) -> None:
+        renderer = SvgConnectCardRenderer(width=140, height=130)
+        card = SvgCard(
+            title="GitHub",
+            icon="GH",
+            kicker="CODE",
+            badge="Builder",
+            accent="181717",
+        )
+
+        svg = renderer.render_card(card)
+
+        assert 'class="con-mono"' in svg
+        assert ">GH</text>" in svg
 
 
 class TestSvgRepoCardRenderer:

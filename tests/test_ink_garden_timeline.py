@@ -6,8 +6,10 @@ import pytest
 
 pytest.importorskip("numpy", reason="numpy is required by scripts.art.ink_garden")
 
-from scripts.art.ink_garden import generate  # noqa: E402
-from scripts.art.ink_garden import seed_hash  # noqa: E402
+from scripts.art.ink_garden import (
+    generate,  # noqa: E402
+    seed_hash,  # noqa: E402
+)
 
 
 def _extract_timeline_points(svg: str) -> list[tuple[str, float]]:

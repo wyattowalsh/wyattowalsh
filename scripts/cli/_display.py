@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Union
 
 from ..config import ProjectConfig
 from ..config import Settings as AppSettings
@@ -23,7 +22,7 @@ class OutputFormat(str, Enum):
 
 
 def display_config(
-    config_data: Union[ProjectConfig, AppSettings],
+    config_data: ProjectConfig | AppSettings,
     output_format: OutputFormat = OutputFormat.JSON,
 ) -> None:
     """Pretty-print a config/settings object to the console."""

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import Literal
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -56,7 +56,7 @@ class VCardDataModel(BaseModel):
     title: str = "Developer & Tech Enthusiast"
     tel_work_voice: str = "2096022545"
     email_internet: str = "wyattowalsh@gmail.com"
-    url_work: Optional[List[TypedUrl]] = Field(
+    url_work: list[TypedUrl] | None = Field(
         default=[
             TypedUrl(url=HttpUrl("https://www.w4w.dev/"), label="Website"),
             TypedUrl(
@@ -75,7 +75,7 @@ class VCardDataModel(BaseModel):
 class QRCodeSettings(BaseModel):
     output_filename: str = "qr.png"
     output_dir: str = ".github/assets/img"
-    default_background_path: Optional[str] = None
+    default_background_path: str | None = None
     default_scale: int = 25
     error_correction: str = "H"  # L, M, Q, H
 
@@ -83,11 +83,11 @@ class QRCodeSettings(BaseModel):
 class WordCloudSettingsModel(BaseModel):
     output_dir: str = ".github/assets/img"
     output_filename: str = "word_cloud.png"
-    prompt: Optional[str] = Field(
+    prompt: str | None = Field(
         default="My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React",
         description="Default prompt for word cloud generation."
     )
-    stopwords: Optional[List[str]] = Field(
+    stopwords: list[str] | None = Field(
         default_factory=list,  # type: ignore
         description="List of stopwords for word clouds."
     )
@@ -97,30 +97,30 @@ class SkillEntry(BaseModel):
     """A single technology/skill badge."""
 
     name: str = Field(..., description="Display name for the badge")
-    slug: Optional[str] = Field(
+    slug: str | None = Field(
         None, description="Simple Icons slug for logo"
     )
-    logo_path: Optional[str] = Field(
+    logo_path: str | None = Field(
         None,
         description="Path to local SVG for custom logo (base64-encoded into badge URL)",
     )
     color: str = Field(
         "555555", description="Hex color without # prefix"
     )
-    logo_color: Optional[str] = Field(
+    logo_color: str | None = Field(
         None,
         description=(
             "Override logoColor per skill. Only applies when using "
             "slug (Simple Icons); ignored when logo_path is set."
         ),
     )
-    url: Optional[str] = Field(
+    url: str | None = Field(
         None, description="Click-through link URL"
     )
 
     @field_validator("logo_path")
     @classmethod
-    def validate_logo_path(cls, v: Optional[str]) -> Optional[str]:
+    def validate_logo_path(cls, v: str | None) -> str | None:
         if v is None:
             return v
         if not v:
@@ -133,7 +133,7 @@ class SkillEntry(BaseModel):
 
     @field_validator("url")
     @classmethod
-    def validate_url_scheme(cls, v: Optional[str]) -> Optional[str]:
+    def validate_url_scheme(cls, v: str | None) -> str | None:
         if v is None:
             return v
         if not v.lower().startswith(("http://", "https://")):
@@ -147,15 +147,15 @@ class SkillSubcategory(BaseModel):
     """A subcategory containing skills."""
 
     name: str = Field(..., description="Subcategory display name")
-    skills: List[SkillEntry] = Field(default_factory=list)
+    skills: list[SkillEntry] = Field(default_factory=list)
 
 
 class SkillCategory(BaseModel):
     """A top-level category with skills and optional subcategories."""
 
     name: str = Field(..., description="Category display name")
-    skills: List[SkillEntry] = Field(default_factory=list)
-    subcategories: List[SkillSubcategory] = Field(default_factory=list)
+    skills: list[SkillEntry] = Field(default_factory=list)
+    subcategories: list[SkillSubcategory] = Field(default_factory=list)
 
 
 class SkillsSettings(BaseModel):
@@ -182,7 +182,7 @@ class SkillsSettings(BaseModel):
     collapsible: bool = Field(
         False, description="Wrap in <details> tag"
     )
-    categories: List[SkillCategory] = Field(default_factory=list)
+    categories: list[SkillCategory] = Field(default_factory=list)
 
 
 class ReadmeSocialLink(BaseModel):
@@ -191,7 +191,7 @@ class ReadmeSocialLink(BaseModel):
     label: str = Field(..., description="Badge label text")
     url: str = Field(..., description="Destination URL")
     color: str = Field("555555", description="Badge color hex (without #)")
-    logo: Optional[str] = Field(
+    logo: str | None = Field(
         None, description="Simple Icons slug for shields.io logo"
     )
     logo_color: str = Field("white", description="Badge logo color")
@@ -220,17 +220,23 @@ class ReadmeSvgCardStyleSettings(BaseModel):
     variant: Literal["gh-card", "legacy"] = Field(
         "gh-card",
         description=(
-            "Per-card rendering variant. Use 'gh-card' for the modern "
-            "transparent card treatment or 'legacy' for fallback styling."
+            "Per-card rendering variant. Use 'gh-card' for the dedicated "
+            "family renderer or 'legacy' for the shared block renderer."
         ),
     )
     transparent_canvas: bool = Field(
         True,
-        description="Render each per-card SVG without an outer background canvas.",
+        description=(
+            "When variant='legacy', render each per-card SVG without an outer "
+            "background canvas."
+        ),
     )
     show_title: bool = Field(
         False,
-        description="Render section title text above each per-card SVG.",
+        description=(
+            "When variant='legacy', render section title text above each "
+            "per-card SVG."
+        ),
     )
 
 
@@ -288,7 +294,7 @@ class ReadmeSectionsSettings(BaseModel):
     badge_style: str = Field(
         "for-the-badge", description="shields.io style for social badges"
     )
-    social_links: List[ReadmeSocialLink] = Field(
+    social_links: list[ReadmeSocialLink] = Field(
         default_factory=lambda: [
             ReadmeSocialLink(
                 label="w4w.dev",
@@ -316,7 +322,7 @@ class ReadmeSectionsSettings(BaseModel):
             ),
         ]
     )
-    featured_repos: List[ReadmeFeaturedRepo] = Field(
+    featured_repos: list[ReadmeFeaturedRepo] = Field(
         default_factory=lambda: [
             ReadmeFeaturedRepo(full_name="wyattowalsh/listentropy"),
             ReadmeFeaturedRepo(full_name="wyattowalsh/mdxpad"),
@@ -341,22 +347,22 @@ class ProjectConfig(BaseSettings):
     """Project-specific configuration, loaded from a YAML file."""
 
     project_name: str = "My Awesome Project"
-    author_email: Optional[str] = None
+    author_email: str | None = None
     version: str = "0.1.0"
 
-    banner_settings: Optional[BannerSettings] = Field(
+    banner_settings: BannerSettings | None = Field(
         default_factory=BannerSettings
     )
-    v_card_data: Optional[VCardDataModel] = Field(
+    v_card_data: VCardDataModel | None = Field(
         default_factory=VCardDataModel
     )
-    qr_code_settings: Optional[QRCodeSettings] = Field(
+    qr_code_settings: QRCodeSettings | None = Field(
         default_factory=QRCodeSettings
     )
-    word_cloud_settings: Optional[WordCloudSettingsModel] = Field(
+    word_cloud_settings: WordCloudSettingsModel | None = Field(
         default_factory=WordCloudSettingsModel
     )
-    readme_sections_settings: Optional[ReadmeSectionsSettings] = Field(
+    readme_sections_settings: ReadmeSectionsSettings | None = Field(
         default_factory=ReadmeSectionsSettings
     )
 
@@ -374,7 +380,7 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
     at default path."""
     if path.exists():
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
 
             if data is None:  # File is empty or only comments/whitespace
@@ -397,7 +403,7 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
         except ValidationError as e:
             raise ValueError(f"Invalid config data in {path}:\\n{e}") from e
         except Exception as e:
-            raise IOError(f"Error loading config from {path}: {e}") from e
+            raise OSError(f"Error loading config from {path}: {e}") from e
     else:
         # File does not exist
         if path == DEFAULT_CONFIG_PATH:
@@ -428,7 +434,7 @@ def load_skills(path: Path = DEFAULT_SKILLS_PATH) -> SkillsSettings:
     if not path.exists():
         raise FileNotFoundError(f"Skills file not found: {path}")
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         if data is None:
             raise ValueError(f"Skills YAML file is empty: {path}")
@@ -454,18 +460,18 @@ def save_config(
                 default_flow_style=False,  # Encourage block style
             )
     except Exception as e:
-        raise IOError(f"Failed to save config to {path}: {e}") from e
+        raise OSError(f"Failed to save config to {path}: {e}") from e
 
 
 # NOTE: dev/test scaffolding — consider moving to a standalone script
 if __name__ == "__main__":
     logger.info("--- Testing ProjectConfig ({path}) ---", path=DEFAULT_CONFIG_PATH)
-    initial_cfg: Optional[ProjectConfig] = None
+    initial_cfg: ProjectConfig | None = None
     try:
         logger.info("Attempting to load existing config...")
         initial_cfg = load_config()
         logger.info("Loaded config (existing or newly created default).")
-    except (FileNotFoundError, ValueError, IOError) as e_load:
+    except (OSError, FileNotFoundError, ValueError) as e_load:
         logger.error(
             "Error loading config: {e}. "
             "This shouldn't happen if default creation works.",
@@ -501,7 +507,7 @@ if __name__ == "__main__":
         try:
             save_config(initial_cfg)
             logger.info("Saved updated config to {path}.", path=DEFAULT_CONFIG_PATH)
-        except IOError as e_save_mod:
+        except OSError as e_save_mod:
             logger.error("Error saving modified config: {e}", e=e_save_mod)
 
         logger.info("Attempting to reload config for verification...")
@@ -533,7 +539,7 @@ if __name__ == "__main__":
                 )
             else:
                 logger.info("Verification successful: Reloaded matches saved.")
-        except (FileNotFoundError, ValueError, IOError) as e_reload:
+        except (OSError, FileNotFoundError, ValueError) as e_reload:
             logger.error("Error reloading/verifying: {e}", e=e_reload)
     else:
         logger.error("Critical error: initial_cfg is None after load attempts.")

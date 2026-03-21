@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from enum import Enum
 from html import escape
 from pathlib import Path
 
@@ -131,6 +132,15 @@ class SvgCard:
     languages: dict[str, int] | None = None
 
 
+class SvgCardFamily(str, Enum):
+    """Supported card families for legacy block rendering."""
+
+    DEFAULT = "default"
+    CONNECT = "connect"
+    FEATURED = "featured"
+    BLOG = "blog"
+
+
 @dataclass(frozen=True)
 class SvgBlock:
     """A group of cards rendered as a single SVG section asset."""
@@ -138,6 +148,9 @@ class SvgBlock:
     title: str
     cards: tuple[SvgCard, ...]
     columns: int = 1
+    family: SvgCardFamily | str | None = None
+    show_title: bool = False
+    transparent_canvas: bool = True
 
 
 # ---------------------------------------------------------------------------
@@ -167,9 +180,21 @@ class SvgBlockRenderer:
         card_width = int(
             (self.width - (self.padding * (columns + 1))) / columns
         )
-        height = self.padding + (rows * (self.card_height + self.padding))
+        title_offset = 28 if block.show_title and block.title else 0
+        canvas_padding = 16 if not block.transparent_canvas else 0
+        height = (
+            self.padding
+            + title_offset
+            + canvas_padding
+            + (rows * (self.card_height + self.padding))
+        )
 
-        family = (block.title or "").lower()
+        block_family = block.family or block.title or ""
+        family = (
+            block_family.value
+            if isinstance(block_family, SvgCardFamily)
+            else str(block_family)
+        ).lower()
 
         svg_lines = [
             (
@@ -184,11 +209,28 @@ class SvgBlockRenderer:
             "</defs>",
         ]
 
+        if not block.transparent_canvas:
+            svg_lines.append(
+                '<rect width="100%" height="100%" fill="var(--canvas-bg)" />'
+            )
+
+        if block.show_title and block.title:
+            svg_lines.append(
+                f'<text class="section-title" x="{self.padding}" '
+                f'y="{self.padding + 16}">{self._esc(block.title)}</text>'
+            )
+
+        card_y_offset = title_offset + canvas_padding
+
         for idx, card in enumerate(cards):
             column = idx % columns
             row = idx // columns
             x = self.padding + (column * (card_width + self.padding))
-            y = self.padding + (row * (self.card_height + self.padding))
+            y = (
+                self.padding
+                + card_y_offset
+                + (row * (self.card_height + self.padding))
+            )
             svg_lines.extend(
                 self._render_card(card, x, y, card_width, idx, family)
             )
@@ -204,6 +246,7 @@ class SvgBlockRenderer:
         return "\n".join(
             [
                 ":root {",
+                f"  --canvas-bg: {lt.bg};",
                 f"  --card-bg: {lt.bg};",
                 f"  --card-border: {lt.border};",
                 f"  --title-color: {lt.title_color};",
@@ -214,6 +257,7 @@ class SvgBlockRenderer:
                 "}",
                 "@media (prefers-color-scheme: dark) {",
                 "  :root {",
+                f"    --canvas-bg: {dk.bg};",
                 f"    --card-bg: {dk.bg};",
                 f"    --card-border: {dk.border};",
                 f"    --title-color: {dk.title_color};",
@@ -223,17 +267,27 @@ class SvgBlockRenderer:
                 f"    --link-color: {dk.link_color};",
                 "  }",
                 "}",
-                f".card-title {{ fill: var(--title-color); font: 700 16px/1.25 {FONT_FAMILY}; }}",
-                f".card-line {{ fill: var(--text-color); font: 400 14px/1.4 {FONT_FAMILY}; }}",
-                f".card-meta {{ fill: var(--meta-color); font: 400 12px/1.4 {FONT_FAMILY}; }}",
-                f".card-kicker {{ fill: var(--meta-color); font: 700 11px/1.2 {FONT_FAMILY};"
+                ".section-title { fill: var(--title-color); "
+                f"font: 700 14px/1.2 {FONT_FAMILY}; }}",
+                ".card-title { fill: var(--title-color); "
+                f"font: 700 16px/1.25 {FONT_FAMILY}; }}",
+                ".card-line { fill: var(--text-color); "
+                f"font: 400 14px/1.4 {FONT_FAMILY}; }}",
+                ".card-meta { fill: var(--meta-color); "
+                f"font: 400 12px/1.4 {FONT_FAMILY}; }}",
+                ".card-kicker { fill: var(--meta-color); "
+                f"font: 700 11px/1.2 {FONT_FAMILY};"
                 " letter-spacing: 0.08em; text-transform: uppercase; }",
-                f".card-icon {{ fill: var(--title-color); font: 700 12px/1 {FONT_FAMILY}; }}",
-                f".card-badge {{ fill: var(--title-color); font: 700 12px/1 {FONT_FAMILY};"
+                ".card-icon { fill: var(--title-color); "
+                f"font: 700 12px/1 {FONT_FAMILY}; }}",
+                ".card-badge { fill: var(--title-color); "
+                f"font: 700 12px/1 {FONT_FAMILY};"
                 " letter-spacing: 0.01em; }",
-                ".sparkline { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.88; }",
+                ".sparkline { fill: none; stroke: var(--accent); "
+                "stroke-width: 2; opacity: 0.88; }",
                 ".lang-dot { stroke: var(--card-border); stroke-width: 1; }",
-                f".lang-label {{ fill: var(--meta-color); font: 400 12px/1 {FONT_FAMILY}; }}",
+                ".lang-label { fill: var(--meta-color); "
+                f"font: 400 12px/1 {FONT_FAMILY}; }}",
             ]
         )
 
@@ -249,6 +303,7 @@ class SvgBlockRenderer:
         family: str = "",
     ) -> list[str]:
         accent = self._normalize_hex_color(card.accent)
+        is_blog_family = "blog" in family
         lines: list[str] = [
             f'<g class="card" transform="translate({x},{y})">'
         ]
@@ -285,7 +340,7 @@ class SvgBlockRenderer:
         title_y = 32
         monogram = self._truncate((card.icon or "").upper(), 3)
         icon_data_uri = self._sanitize_icon_data_uri(card.icon_data_uri)
-        if icon_data_uri or monogram:
+        if not is_blog_family and (icon_data_uri or monogram):
             cx = 34
             cy = 28
             r = 14
@@ -321,7 +376,7 @@ class SvgBlockRenderer:
             inner_x = 56
 
         # Kicker
-        if card.kicker:
+        if card.kicker and not is_blog_family:
             lines.append(
                 f'<text class="card-kicker" x="{inner_x}" y="20">'
                 f"{self._esc(self._truncate(card.kicker, 56))}</text>"
@@ -329,7 +384,7 @@ class SvgBlockRenderer:
             title_y = 40
 
         # Badge (suppressed for blog family)
-        if card.badge and "blog" not in family:
+        if card.badge and not is_blog_family:
             badge_text = self._truncate(card.badge, 20)
             badge_width = max(60, min(200, len(badge_text) * 7 + 20))
             badge_x = max(16, width - badge_width - 16)
@@ -346,7 +401,7 @@ class SvgBlockRenderer:
             )
 
         # Title
-        if "blog" in family:
+        if is_blog_family:
             sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
             sanitized_title = re.sub(
                 r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE
@@ -379,7 +434,7 @@ class SvgBlockRenderer:
         for line in visible_lines[:3]:
             display = (
                 line
-                if "blog" in family
+                if is_blog_family
                 else self._truncate(line, 72)
             )
             lines.append(
@@ -602,9 +657,16 @@ class SvgRepoCardRenderer:
             "</style>",
             f'<clipPath id="card-clip">'
             f'<rect width="{w}" height="{h}" rx="10" /></clipPath>',
-            '<filter id="shadow">'
+            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
+            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
+            ' flood-color="#000000" flood-opacity="0.06"/>'
             '<feDropShadow dx="0" dy="1" stdDeviation="2"'
-            ' flood-opacity="0.08"/></filter>',
+            ' flood-color="#000000" flood-opacity="0.04"/>'
+            '</filter>',
+            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
+            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
+            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
+            '</linearGradient>',
         ]
         if has_thumb:
             thumb_x = w - thumb_w - 18
@@ -633,9 +695,19 @@ class SvgRepoCardRenderer:
             ' fill="var(--card-bg)" filter="url(#shadow)" />'
         )
         lines.append(
+            f'<rect width="{w}" height="{h}" rx="10"'
+            ' fill="url(#glass-grad)" />'
+        )
+        lines.append(
             f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
             ' rx="10" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
+        )
+        # ── Inner rim lighting ──
+        lines.append(
+            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
+            ' rx="9" fill="none"'
+            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
         )
 
         # ── Top accent bar (3px in primary language color) ──
@@ -1023,6 +1095,20 @@ class SvgBlogCardRenderer:
         lines.append(
             f'<clipPath id="bar-clip">'
             f'<rect width="{w}" height="{h}" rx="10"/></clipPath>'
+            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
+            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
+            ' flood-color="#000000" flood-opacity="0.06"/>'
+            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
+            ' flood-color="#000000" flood-opacity="0.04"/>'
+            '</filter>'
+            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
+            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
+            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
+            '</linearGradient>'
+            '<linearGradient id="footer-div-grad" x1="0" y1="0" x2="1" y2="0">'
+            '<stop offset="0%" stop-color="var(--accent)" stop-opacity="0.5" />'
+            '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />'
+            '</linearGradient>'
         )
         if has_hero:
             hx = w - hero_w - 18
@@ -1035,9 +1121,23 @@ class SvgBlogCardRenderer:
 
         # Shell
         lines.append(
+            f'<rect width="{w}" height="{h}" rx="10"'
+            ' fill="var(--card-bg)" filter="url(#shadow)" />'
+        )
+        lines.append(
+            f'<rect width="{w}" height="{h}" rx="10"'
+            ' fill="url(#glass-grad)" />'
+        )
+        lines.append(
             f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
             ' rx="10" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
+        )
+        # Inner rim lighting
+        lines.append(
+            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
+            ' rx="9" fill="none"'
+            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
         )
 
         # Top accent bar
@@ -1065,9 +1165,12 @@ class SvgBlogCardRenderer:
 
         # Title (word-wrapped, up to 2 lines)
         text_w = (w - hero_w - 56) if has_hero else (w - 40)
-        char_lim = int(text_w / 6.8)
+
+        # Use more conservative character width estimates for proportional fonts
+        # 16px 600-weight title avg width ~9.2px
+        title_char_lim = int(text_w / 9.2)
         title_lines = SvgRepoCardRenderer._word_wrap(
-            card.title, char_lim, max_lines=2,
+            card.title, title_char_lim, max_lines=2,
         )
         ty = 32
         for tl in title_lines:
@@ -1079,12 +1182,14 @@ class SvgBlogCardRenderer:
 
         # Summary (word-wrapped; reduce to 2 lines when title uses 2 lines)
         n_title_lines = len(title_lines)
-        summary_y = 52 if n_title_lines <= 1 else 68
+        summary_y = ty + 2  # consistent 20px gap from the last title baseline
         max_summary_lines = 2 if n_title_lines >= 2 else 3
         raw = " ".join(
             ln.strip() for ln in (card.lines or ()) if ln.strip()
         )
-        desc_cpl = int(text_w / 6.8)
+
+        # 13px 400-weight desc avg width ~7.5px
+        desc_cpl = int(text_w / 7.5)
         wrapped = SvgRepoCardRenderer._word_wrap(
             raw, desc_cpl, max_lines=max_summary_lines,
         )
@@ -1098,8 +1203,8 @@ class SvgBlogCardRenderer:
 
         # Accent line above footer
         lines.append(
-            f'<rect x="{px}" y="{h - 30}" width="60"'
-            ' height="2" rx="1" fill="var(--accent)" fill-opacity="0.3" />'
+            f'<rect x="{px}" y="{h - 30}" width="80"'
+            ' height="1.5" rx="0.5" fill="url(#footer-div-grad)" />'
         )
 
         # Footer: date · host
@@ -1119,6 +1224,7 @@ class SvgBlogCardRenderer:
         lt, dk = LIGHT_THEME, DARK_THEME
         return "\n".join([
             ":root {",
+            "  --card-bg: #ffffff;",
             f"  --card-border: {lt.border};",
             f"  --title-color: {lt.link_color};",
             f"  --text-color: {lt.text_color};",
@@ -1126,6 +1232,7 @@ class SvgBlogCardRenderer:
             f"  --accent: {lt.accent};",
             "}",
             "@media (prefers-color-scheme: dark) { :root {",
+            "  --card-bg: #0d1117;",
             f"  --card-border: {dk.border};",
             f"  --title-color: {dk.link_color};",
             f"  --text-color: {dk.text_color};",
@@ -1169,15 +1276,19 @@ class SvgConnectCardRenderer:
         "email": "#EA4335",
     }
 
-    def _accent_color(self, card: SvgCard) -> str | None:
-        """Resolve brand accent color from card.accent or title."""
+    def _accent_color(self, card: SvgCard) -> str:
+        """Resolve brand accent color.
+
+        Uses `card.accent` if present, falls back to known brand color by title,
+        or uses the CSS variable `var(--accent)`.
+        """
         if card.accent:
             raw = card.accent.strip()
             if not raw.startswith("#"):
                 raw = f"#{raw}"
             return raw
         title_lower = card.title.strip().lower()
-        return self._BRAND_COLORS.get(title_lower)
+        return self._BRAND_COLORS.get(title_lower, "var(--accent)")
 
     def render_card(self, card: SvgCard) -> str:
         w, h = self.width, self.height
@@ -1198,6 +1309,28 @@ class SvgConnectCardRenderer:
         lines.append(
             f'<clipPath id="bar-clip">'
             f'<rect width="{w}" height="{h}" rx="12"/></clipPath>'
+            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
+            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
+            ' flood-color="#000000" flood-opacity="0.06"/>'
+            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
+            ' flood-color="#000000" flood-opacity="0.04"/>'
+            '</filter>'
+            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
+            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
+            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
+            '</linearGradient>'
+            '<radialGradient id="icon-glow">'
+            f'<stop offset="0%" stop-color="{esc(accent, quote=True)}" '
+            'stop-opacity="0.18" />'
+            f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
+            'stop-opacity="0" />'
+            '</radialGradient>'
+            '<linearGradient id="mono-grad" x1="0" y1="0" x2="0" y2="1">'
+            f'<stop offset="0%" stop-color="{esc(accent, quote=True)}" '
+            'stop-opacity="0.2" />'
+            f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
+            'stop-opacity="0.05" />'
+            '</linearGradient>'
         )
         if icon_uri:
             lines.append(
@@ -1209,18 +1342,36 @@ class SvgConnectCardRenderer:
 
         # Shell — subtle border, rounded
         lines.append(
+            f'<rect width="{w}" height="{h}" rx="12"'
+            ' fill="var(--card-bg)" filter="url(#shadow)" />'
+        )
+        lines.append(
+            f'<rect width="{w}" height="{h}" rx="12"'
+            ' fill="url(#glass-grad)" />'
+        )
+        lines.append(
             f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
             ' rx="12" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
         )
+        # Inner rim lighting
+        lines.append(
+            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
+            ' rx="11" fill="none"'
+            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
+        )
 
-        # Brand-colored accent bar at the top
-        if accent:
-            lines.append(
-                f'<rect x="0" y="0" width="{w}" height="3"'
-                f' fill="{esc(accent, quote=True)}"'
-                ' clip-path="url(#bar-clip)"/>'
-            )
+        # Brand-colored accent bar at the top (with fallback)
+        lines.append(
+            f'<rect x="0" y="0" width="{w}" height="3"'
+            f' fill="{esc(accent, quote=True)}"'
+            ' clip-path="url(#bar-clip)"/>'
+        )
+
+        # Brand icon glow
+        lines.append(
+            f'<circle cx="{cx}" cy="42" r="34" fill="url(#icon-glow)" />'
+        )
 
         # Brand icon — large, centered, rounded-square clip
         if icon_uri:
@@ -1235,7 +1386,7 @@ class SvgConnectCardRenderer:
             mono = (card.icon or card.title[:2]).upper()
             lines.append(
                 f'<rect x="{cx - 24}" y="18" width="48" height="48"'
-                ' rx="12" fill="var(--card-border)" fill-opacity="0.2" />'
+                ' rx="12" fill="url(#mono-grad)" />'
             )
             lines.append(
                 f'<text class="con-mono" x="{cx}" y="50"'
@@ -1251,7 +1402,7 @@ class SvgConnectCardRenderer:
         )
 
         # Category label — small, centered
-        sub = card.kicker or card.badge or ""
+        sub = card.badge or card.kicker or ""
         if sub:
             lines.append(
                 f'<text class="con-sub" x="{cx}" y="100"'
@@ -1266,22 +1417,26 @@ class SvgConnectCardRenderer:
         lt, dk = LIGHT_THEME, DARK_THEME
         return "\n".join([
             ":root {",
+            "  --card-bg: #ffffff;",
             f"  --card-border: {lt.border};",
             f"  --title-color: {lt.title_color};",
             f"  --text-color: {lt.text_color};",
             f"  --meta-color: {lt.meta_color};",
+            f"  --accent: {lt.accent};",
             "}",
             "@media (prefers-color-scheme: dark) { :root {",
+            "  --card-bg: #0d1117;",
             f"  --card-border: {dk.border};",
             f"  --title-color: {dk.title_color};",
             f"  --text-color: {dk.text_color};",
             f"  --meta-color: {dk.meta_color};",
+            f"  --accent: {dk.accent};",
             "}}",
             f".con-title {{ fill: var(--title-color);"
             f" font: 600 14px/1.25 {FONT_FAMILY}; }}",
             f".con-sub {{ fill: var(--meta-color);"
             f" font: 400 11px/1 {FONT_FAMILY};"
-            " text-transform: uppercase; letter-spacing: 0.06em; }}",
+            " text-transform: uppercase; letter-spacing: 0.08em; }",
             f".con-mono {{ fill: var(--meta-color);"
             f" font: 700 18px/1 {FONT_FAMILY}; }}",
         ])

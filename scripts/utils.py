@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import sys  # noqa: F401 -- ensures `sys` is available for `logger.add(..., format=...)`
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 # Prefer optional imports for loguru/rich so tests can run in minimal env
 try:
@@ -79,7 +79,7 @@ try:
 
     # Explicitly provide default values during instantiation if linter requires
     # or ensure defaults in Settings model are sufficient for pydantic-settings
-    app_settings: Optional[AppSettings] = AppSettings()
+    app_settings: AppSettings | None = AppSettings()
 except ImportError:
     app_settings = None
     loguru_logger.warning(  # Use the imported loguru_logger

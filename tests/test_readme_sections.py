@@ -1,7 +1,6 @@
 """Tests for README dynamic section generation."""
 
 import re
-from typing import Optional
 from pathlib import Path
 
 from scripts.config import (
@@ -28,12 +27,12 @@ class StubRepoClient:
         self.metadata_by_repo = metadata_by_repo
         self.languages_by_repo = languages_by_repo or {}
 
-    def fetch_repo_metadata(self, full_name: str) -> Optional[RepoMetadata]:
+    def fetch_repo_metadata(self, full_name: str) -> RepoMetadata | None:
         return self.metadata_by_repo.get(full_name)
 
     def fetch_repo_languages(
         self, full_name: str,
-    ) -> Optional[dict[str, int]]:
+    ) -> dict[str, int] | None:
         return self.languages_by_repo.get(full_name)
 
 
@@ -49,7 +48,7 @@ class StubStarHistoryClient:
     def __init__(self, series: dict[str, list[int]]) -> None:
         self.series = series
 
-    def fetch_star_history(self, full_name: str, sample: int = 24) -> Optional[list[int]]:
+    def fetch_star_history(self, full_name: str, sample: int = 24) -> list[int] | None:
         return self.series.get(full_name)
 
 
@@ -57,7 +56,7 @@ class StubBlogMetadataClient:
     def __init__(self, metadata: dict[str, dict[str, str]]) -> None:
         self.metadata = metadata
 
-    def fetch_metadata(self, url: str) -> dict[str, Optional[str]]:
+    def fetch_metadata(self, url: str) -> dict[str, str | None]:
         data = self.metadata.get(url, {})
         return {
             "hero_image": data.get("hero_image"),
@@ -271,7 +270,7 @@ class TestRendering:
         html = generator._render_featured_projects()
 
         # Per-card SVG should be created
-        card_svg_path = tmp_path / "svg" / "featured-card-riso.svg"
+        card_svg_path = tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
         assert card_svg_path.exists()
         svg = card_svg_path.read_text(encoding="utf-8")
         assert "riso" in svg
@@ -284,8 +283,54 @@ class TestRendering:
         assert "lang-bar-clip" in svg
         # HTML uses table layout with per-card img tags
         assert "<table>" in html
-        assert "featured-card-riso.svg" in html
+        assert "featured-card-wyattowalsh-riso.svg" in html
         assert "Composable scaffolding framework" in svg
+
+    def test_featured_projects_use_full_repo_identity_in_asset_names(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[
+                ReadmeFeaturedRepo(full_name="wyattowalsh/demo"),
+                ReadmeFeaturedRepo(full_name="octocat/demo"),
+            ],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/demo": RepoMetadata(
+                        full_name="wyattowalsh/demo",
+                        name="demo",
+                        html_url="https://github.com/wyattowalsh/demo",
+                        description="First demo repo",
+                        stars=10,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "octocat/demo": RepoMetadata(
+                        full_name="octocat/demo",
+                        name="demo",
+                        html_url="https://github.com/octocat/demo",
+                        description="Second demo repo",
+                        stars=20,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-02T00:00:00Z",
+                    ),
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        html = generator._render_featured_projects()
+
+        assert (tmp_path / "svg" / "featured-card-wyattowalsh-demo.svg").exists()
+        assert (tmp_path / "svg" / "featured-card-octocat-demo.svg").exists()
+        assert "featured-card-wyattowalsh-demo.svg" in html
+        assert "featured-card-octocat-demo.svg" in html
 
     def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -305,7 +350,7 @@ class TestRendering:
 
         assert "Unable to fetch repository metadata." not in html
         # Per-card SVG should exist with fallback content
-        card_svg_path = tmp_path / "svg" / "featured-card-riso.svg"
+        card_svg_path = tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
         assert card_svg_path.exists()
         svg = card_svg_path.read_text(encoding="utf-8")
         assert "Unable to fetch repository metadata." not in svg
@@ -358,6 +403,38 @@ class TestRendering:
         assert "Auto-updated from" in html
         assert "https://w4w.dev/feed.xml" in html
 
+    def test_blog_posts_deduplicate_colliding_svg_names(self, tmp_path: Path) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=2,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title="Weekly Update on Readme Cards and Asset Naming",
+                        url="https://w4w.dev/blog/weekly-update-1",
+                    ),
+                    BlogPost(
+                        title="Weekly Update on Readme Cards and Asset Naming",
+                        url="https://w4w.dev/blog/weekly-update-2",
+                    ),
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient({}),
+        )
+
+        html = generator._render_blog_posts()
+
+        svg_files = sorted(path.name for path in (tmp_path / "svg").glob("blog-*.svg"))
+        assert len(svg_files) == 2
+        assert len(set(svg_files)) == 2
+        assert all(name.startswith("blog-weekly-update") for name in svg_files)
+        assert any(re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name) for name in svg_files)
+        assert all(name in html for name in svg_files)
+
     def test_featured_project_card_builds_with_icon_data_uri(
         self, tmp_path: Path, monkeypatch
     ) -> None:
@@ -397,7 +474,7 @@ class TestRendering:
         )
         assert getattr(card, "icon_data_uri", None) is not None
 
-    def test_blog_card_composition_sets_icon_data_uri_when_available(
+    def test_blog_cards_do_not_embed_icon_payloads(
         self, tmp_path: Path, monkeypatch
     ) -> None:
         settings = ReadmeSectionsSettings(
@@ -430,10 +507,51 @@ class TestRendering:
         # Per-card SVG should exist
         svg_path = tmp_path / "svg" / "blog-github-changelog.svg"
         assert svg_path.exists()
-        # The card building logic sets icon_data_uri even though the blog
-        # renderer does not embed it. Verify by checking the HTML output
-        # contains the per-card SVG reference.
+        svg = svg_path.read_text(encoding="utf-8")
+        assert "data:image" not in svg
         assert "blog-github-changelog.svg" in html
+
+    def test_featured_projects_support_legacy_card_variant(self, tmp_path: Path) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+                card_styles={
+                    "featured": {
+                        "variant": "legacy",
+                        "transparent_canvas": False,
+                        "show_title": True,
+                    }
+                },
+            ),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage=None,
+                        topics=["python"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        generator._render_featured_projects()
+
+        svg = (
+            tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
+        ).read_text(encoding="utf-8")
+        assert 'class="section-title"' in svg
+        assert '<rect width="100%" height="100%" fill="var(--canvas-bg)" />' in svg
 
 
 class TestRemoteFetchSafety:
@@ -569,7 +687,7 @@ class TestReadmeInjection:
         assert "<!-- README:BLOG_POSTS:START -->" in content
         assert "<!-- README:BLOG_POSTS:END -->" in content
         assert "connect-github.svg" in content
-        assert "featured-card-riso.svg" in content
+        assert "featured-card-wyattowalsh-riso.svg" in content
         assert "blog-first-post.svg" in content
         assert ".github/assets/img/gh.gif" not in content
         assert "github.com/wyattowalsh" in content
@@ -710,11 +828,11 @@ class TestReadmeInjection:
 
         content = readme_path.read_text(encoding="utf-8")
         assert not (svg_dir / "top-contact.svg").exists()
-        assert (svg_dir / "featured-card-riso.svg").exists()
+        assert (svg_dir / "featured-card-wyattowalsh-riso.svg").exists()
         assert not (svg_dir / "blog-posts.svg").exists()
         assert "top-contact.svg" not in content
         assert "blog-posts.svg" not in content
-        assert "featured-card-riso.svg" in content
+        assert "featured-card-wyattowalsh-riso.svg" in content
         assert "github.com/wyattowalsh" in content
 
     def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:
@@ -770,7 +888,7 @@ class TestReadmeInjection:
         generator._render_featured_projects()
 
         # Per-card SVG should exist
-        card_svg_path = tmp_path / "svg" / "featured-card-riso.svg"
+        card_svg_path = tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
         assert card_svg_path.exists()
         svg = card_svg_path.read_text(encoding="utf-8")
 

@@ -9,12 +9,10 @@ import calendar
 import hashlib
 import math
 import re
+from collections.abc import Mapping, Sequence
 from datetime import date as dt_date
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
-from typing import Mapping
-from typing import Sequence
 
 import numpy as np
 
@@ -486,7 +484,7 @@ def hsl_to_hex(h: float, s: float, lightness: float) -> str:
     """Convert HSL (all 0..1) to hex colour string."""
     import colorsys
     r, g, b = colorsys.hls_to_rgb(h, lightness, s)
-    return "#{:02x}{:02x}{:02x}".format(int(r * 255), int(g * 255), int(b * 255))
+    return f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
 
 
 def lerp_color(hex1: str, hex2: str, t: float) -> str:
@@ -496,6 +494,4 @@ def lerp_color(hex1: str, hex2: str, t: float) -> str:
     r = int(r1 + (r2 - r1) * t)
     g = int(g1 + (g2 - g1) * t)
     b = int(b1 + (b2 - b1) * t)
-    return "#{:02x}{:02x}{:02x}".format(
-        max(0, min(255, r)), max(0, min(255, g)), max(0, min(255, b))
-    )
+    return f"#{max(0, min(255, r)):02x}{max(0, min(255, g)):02x}{max(0, min(255, b)):02x}"

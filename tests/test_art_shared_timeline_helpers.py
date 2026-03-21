@@ -3,9 +3,11 @@ from __future__ import annotations
 from datetime import date as dt_date
 from datetime import datetime
 
-from scripts.art.shared import contributions_monthly_to_daily_series
-from scripts.art.shared import map_date_to_loop_delay
-from scripts.art.shared import normalize_timeline_window
+from scripts.art.shared import (
+    contributions_monthly_to_daily_series,
+    map_date_to_loop_delay,
+    normalize_timeline_window,
+)
 
 
 def test_normalize_timeline_window_uses_history_and_events() -> None:

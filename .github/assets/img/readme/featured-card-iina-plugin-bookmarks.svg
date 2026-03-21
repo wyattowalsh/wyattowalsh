@@ -2,7 +2,7 @@
 <defs>
 <style>
 :root {
-  --card-bg: transparent;
+  --card-bg: #ffffff;
   --card-border: #d0d7de;
   --title-color: #0969da;
   --text-color: #656d76;
@@ -12,7 +12,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --card-bg: transparent;
+    --card-bg: #0d1117;
     --card-border: #30363d;
     --title-color: #58a6ff;
     --text-color: #8b949e;
@@ -28,18 +28,21 @@
 .rc-lang-label { fill: var(--stat-color); font: 400 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 </style>
 <clipPath id="card-clip"><rect width="500" height="185" rx="10" /></clipPath>
-<filter id="shadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/></filter>
+<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter>
+<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient>
 <clipPath id="thumb-clip"><rect x="352" y="18" width="130" height="75" rx="8" /></clipPath>
 <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--spark-stroke)" stop-opacity="0.18" /><stop offset="100%" stop-color="var(--spark-stroke)" stop-opacity="0" /></linearGradient>
 </defs>
 <rect width="500" height="185" rx="10" fill="var(--card-bg)" filter="url(#shadow)" />
+<rect width="500" height="185" rx="10" fill="url(#glass-grad)" />
 <rect x="0.5" y="0.5" width="499" height="184" rx="10" fill="none" stroke="var(--card-border)" stroke-width="1" />
+<rect x="1.5" y="1.5" width="497" height="182" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
 <rect width="500" height="3" rx="0" fill="#3178c6" clip-path="url(#card-clip)" />
 <image href="data:image/webp;base64,UklGRvgEAABXRUJQVlA4IOwEAAAQOQCdASqVAQ4BPpVKoU0lpCOoobQ4wRASiWlu/Hv8M6PCADCh+LlbjunmzwFAS/sdWFu/6UKhvADN36fJVtyGWyBgKUZrdpDzcMM8YRIJs0Zt2R/egYaBAZe2dX5/OLhj56BIi2hPQ2ks0Gy65fmrdR/i12wpf53fsJtZm7xKifdXoA+GPLQfnrHS/DsgAhIiSMBOHlXcXD1N2YHE431R4K6cVuuLEoKi4eKGS8DrDeit1CAXjjeBriNX4fK72ccimmTenouH0RTd36rIECpWvgoDmC9yQ7TDoTmpiv7ZZ6ajeBWsjbJyGKGYrgVbzc3gQoZKeFyLyWi1qajG6XD1BB1TudUM07fpwbc3mb4VedXg3gL1eyMegTwrVcuNn2JwOucFKcetWSFLWQTonpQk2539g82+L87bKEgr94gq7kOH8U11X6efsb+P0ZZLVKjUWrnONjA32H0/Gk8eiXFbxg5lICVZBW6d2HvQFnvuketmF1HUn7IkQ9FTvHXGon+/2dxrpFHgkBn+4KO0YzvO6AcKu9UOZVWyNvJLRRQuqBiAVwtNUsmxJhDLT3jgkNM11xo4BKKAARnlJCS4N5pbyLg2KSku3phNykRayQCSvoAA/tel//xDn9bf9ynyo5eN5YW3uIs90hRwTolUW6P5J8Ej1XDLZXqVO21rQ2ax6AsPeKWRAyqEA9pZn1xdSms6nrl/SyF1XYyl9zvj09ZuB2ZLsGKWUYWFyqbdByBb7O1ESYsx4BdKYeP4H+p1S7yEazjJzexH6s4axaBuorJf/2zgegVkbjtraXlfzKS1w3zfp6irBRu5NoadpAbxbWMaUiGbA7cAd4zI0bGWVD7nO1F/7SkmuDiGwigpJUIUE+3FWj54j2XRGFX7RziM6i+5chpYenti723WT4ByOX7kTgKzfrFR70QVNXSjbUiVsE91fzlPNQv3UFiNmQuLbUiH9G98+grVqUoJ8Oy71FYivMfR4gB3NsgPxw0J2zNBmSSiFqQ1Z5eiF4eAXlxRrQ6RhG1Rn+94xpGnCc2ehx5CxgWj9MYWpq+OLU9jb4b1M3Xa4kf9UNgTOknLqiP2IcKkqosr5I4ekNONAjlwxa+GMl9XjSfGrEAjfgFjgxlagcy3iEDJf0cc78w0AQGnID/9797TrIgElOSwmVIuNMFQ3i15cN9p1+ScfWni9t0huD3DW5MxJpeR5eao3csXQzLjtZ7ZX65wL/CrPNkVlL2jszEmTYnYI6HZhwCstq/LaglOiw5MLgAFxB43sHXRUZ+EjtibRjjiQSqkkinuhwXhpDMLBK6jA5xG90LN15jSFQvjCTbMYeS0HkbYee9BFeEyO9eMuEp1xwmnW13xhdTaMgbZUjyn3k0dm17PO/qxkBgcD0TJZBPSHMKBMXrtNaH6k8vENBtD0Gg36KAB/hB1C5O70n9NQELhDs7THuHWk8nrxS5TOsorQvZJD2QVRAV9KQTRKsm66LRHloAmVGp+ECx4HSn9WzmuL/SNkCtNj+QfdK8IeUTdKUpdWts71e/LU2FcJc0sSAyrGd/8/MT2JtIptu07t7GuUGOmrFgqiwow3hcLAvAq8H83o6YqHC09rhGJBEFv4UNKpCQ3bGTXZAN5Ubu9aJLS23leMXmsnqqgNe6b6/LW6M2f0tPpn7gVLQYg2SgVvS+xAAA=" x="352" y="18" width="130" height="75" preserveAspectRatio="xMidYMid slice" clip-path="url(#thumb-clip)" />
 <rect x="352" y="18" width="130" height="75" rx="8" fill="none" stroke="var(--card-border)" stroke-opacity="0.5" stroke-width="1" />
 <g transform="translate(20,129)" class="sparkline-group">
-<path d="M0.0,28.0 C76.7,23.3 383.3,4.7 460.0,0.0 L460.0,28.0 L0,28.0 Z" fill="url(#spark-grad)" />
-<path d="M0.0,28.0 C76.7,23.3 383.3,4.7 460.0,0.0" fill="none" stroke="var(--spark-stroke)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M0.0,28.0 C3.3,26.8 13.3,22.2 20.0,21.0 C26.7,19.8 33.3,21.0 40.0,21.0 C46.7,21.0 53.3,21.0 60.0,21.0 C66.7,21.0 73.3,21.0 80.0,21.0 C86.7,21.0 93.3,22.2 100.0,21.0 C106.7,19.8 113.3,15.2 120.0,14.0 C126.7,12.8 133.3,14.0 140.0,14.0 C146.7,14.0 153.3,15.2 160.0,14.0 C166.7,12.8 173.3,8.2 180.0,7.0 C186.7,5.8 193.3,7.0 200.0,7.0 C206.7,7.0 213.3,7.0 220.0,7.0 C226.7,7.0 233.3,7.0 240.0,7.0 C246.7,7.0 253.3,7.0 260.0,7.0 C266.7,7.0 273.3,7.0 280.0,7.0 C286.7,7.0 293.3,7.0 300.0,7.0 C306.7,7.0 313.3,7.0 320.0,7.0 C326.7,7.0 333.3,7.0 340.0,7.0 C346.7,7.0 353.3,7.0 360.0,7.0 C366.7,7.0 373.3,7.0 380.0,7.0 C386.7,7.0 393.3,7.0 400.0,7.0 C406.7,7.0 413.3,8.2 420.0,7.0 C426.7,5.8 433.3,1.2 440.0,0.0 C446.7,-1.2 456.7,0.0 460.0,0.0 L460.0,28.0 L0,28.0 Z" fill="url(#spark-grad)" />
+<path d="M0.0,28.0 C3.3,26.8 13.3,22.2 20.0,21.0 C26.7,19.8 33.3,21.0 40.0,21.0 C46.7,21.0 53.3,21.0 60.0,21.0 C66.7,21.0 73.3,21.0 80.0,21.0 C86.7,21.0 93.3,22.2 100.0,21.0 C106.7,19.8 113.3,15.2 120.0,14.0 C126.7,12.8 133.3,14.0 140.0,14.0 C146.7,14.0 153.3,15.2 160.0,14.0 C166.7,12.8 173.3,8.2 180.0,7.0 C186.7,5.8 193.3,7.0 200.0,7.0 C206.7,7.0 213.3,7.0 220.0,7.0 C226.7,7.0 233.3,7.0 240.0,7.0 C246.7,7.0 253.3,7.0 260.0,7.0 C266.7,7.0 273.3,7.0 280.0,7.0 C286.7,7.0 293.3,7.0 300.0,7.0 C306.7,7.0 313.3,7.0 320.0,7.0 C326.7,7.0 333.3,7.0 340.0,7.0 C346.7,7.0 353.3,7.0 360.0,7.0 C366.7,7.0 373.3,7.0 380.0,7.0 C386.7,7.0 393.3,7.0 400.0,7.0 C406.7,7.0 413.3,8.2 420.0,7.0 C426.7,5.8 433.3,1.2 440.0,0.0 C446.7,-1.2 456.7,0.0 460.0,0.0" fill="none" stroke="var(--spark-stroke)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
 </g>
 <svg x="20" y="18" width="18" height="18" viewBox="0 0 16 16" fill="var(--meta-color)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" /></svg>
 <text class="rc-title" x="44" y="33">iina-plugin-bookmarks</text>
@@ -50,7 +53,19 @@
 <text class="rc-desc" x="20" y="54">media bookmark manager plugin for the iina</text>
 <text class="rc-desc" x="20" y="70">video player Topics fumadocs · iina ·</text>
 <text class="rc-desc" x="20" y="86">iina-plugin</text>
-<rect x="20" y="155" width="340" height="3" rx="1.5" fill="#3178c6" fill-opacity="0.5" />
-<circle class="rc-lang-dot" cx="25" cy="167" r="5" fill="#3178c6" />
-<text class="rc-lang-label" x="35" y="171">TypeScript</text>
+<clipPath id="lang-bar-clip"><rect x="20" y="155" width="340" height="4" rx="2" /></clipPath>
+<g clip-path="url(#lang-bar-clip)">
+<rect x="20.0" y="155" width="294.9" height="4" fill="#3178c6" />
+<rect x="314.9" y="155" width="31.0" height="4" fill="#8b949e" />
+<rect x="345.9" y="155" width="5.0" height="4" fill="#e34c26" />
+<rect x="350.9" y="155" width="4.9" height="4" fill="#8b949e" />
+<rect x="355.8" y="155" width="3.0" height="4" fill="#89e051" />
+<rect x="358.8" y="155" width="1.2" height="4" fill="#f1e05a" />
+</g>
+<circle class="rc-lang-dot" cx="24" cy="167" r="4" fill="#3178c6" />
+<text class="rc-meta" x="32" y="171">TypeScript 87%</text>
+<circle class="rc-lang-dot" cx="137" cy="167" r="4" fill="#8b949e" />
+<text class="rc-meta" x="145" y="171">SCSS 9%</text>
+<circle class="rc-lang-dot" cx="204" cy="167" r="4" fill="#e34c26" />
+<text class="rc-meta" x="212" y="171">HTML 1%</text>
 </svg>

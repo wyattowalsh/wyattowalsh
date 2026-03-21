@@ -27,7 +27,6 @@ from scripts.art.ink_garden import (  # noqa: E402
     seed_hash,
 )
 
-
 # ---------------------------------------------------------------------------
 # Sample metrics constants — module-level, immutable, no shared state
 # ---------------------------------------------------------------------------

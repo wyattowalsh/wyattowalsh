@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
-from ..config import DEFAULT_CONFIG_PATH, load_config, save_config, ProjectConfig
+from ..config import DEFAULT_CONFIG_PATH, ProjectConfig, load_config, save_config
 from ..utils import console, get_logger
 from ._display import OutputFormat, display_config
 
@@ -25,7 +25,7 @@ config_app = typer.Typer(
 @config_app.command(help="Display the current project configuration.")
 def view(
     path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(help="Path to config file.", rich_help_panel="Configuration"),
     ] = None,
     output_format: Annotated[
@@ -60,7 +60,7 @@ def view(
             f"[yellow]{effective_path}[/yellow]."
         )
         raise typer.Exit(code=1)
-    except (ValueError, IOError) as e:
+    except (OSError, ValueError) as e:
         logger.error(
             f"Failed to load/display config from {effective_path}: {e}"
         )
@@ -74,7 +74,7 @@ def view(
 @config_app.command(help="Save the current configuration (creates default if missing).")
 def save(
     path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(help="Path to config file.", rich_help_panel="Configuration"),
     ] = None,
 ) -> None:
@@ -104,7 +104,7 @@ def save(
             f"{effective_path}[/]"
         )
         display_config(config_to_save, OutputFormat.JSON)
-    except (ValueError, IOError) as e:
+    except (OSError, ValueError) as e:
         logger.error(
             f"Failed to save configuration to {effective_path}: {e}"
         )
@@ -118,7 +118,7 @@ def save(
 @config_app.command(name="generate-default", help="Generate a default configuration file.")
 def generate_default(
     path: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(help="Path to write config.", rich_help_panel="Configuration"),
     ] = None,
     output_format: Annotated[
@@ -152,7 +152,7 @@ def generate_default(
     except typer.Abort:
         logger.info("Default config generation aborted by user.")
         console.print("Aborted. No changes made.")
-    except IOError as e:
+    except OSError as e:
         logger.error(
             f"Failed to gen/save default config at {effective_path}: {e}"
         )

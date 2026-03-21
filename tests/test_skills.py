@@ -1,7 +1,6 @@
 """Tests for skills badge generation."""
 
 import base64
-import textwrap
 from pathlib import Path
 from urllib.parse import quote
 
@@ -16,7 +15,6 @@ from scripts.config import (
     load_skills,
 )
 from scripts.skills import SkillsBadgeGenerator
-
 
 # ---------------------------------------------------------------------------
 # Model tests

@@ -1,5 +1,6 @@
 import pytest
-from scripts.word_clouds import WordCloudSettings, WordCloudGenerator
+
+from scripts.word_clouds import WordCloudGenerator, WordCloudSettings
 
 
 @pytest.mark.xfail(strict=True, reason="palette_tokenization field not yet implemented in WordCloudSettings")

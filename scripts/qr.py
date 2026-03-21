@@ -24,7 +24,6 @@ Key improvements:
 """
 
 from pathlib import Path
-from typing import Optional
 
 import segno  # type: ignore
 
@@ -43,7 +42,7 @@ class QRCodeGenerator:
 
     def __init__(
         self,
-        default_background_path: Optional[Path],
+        default_background_path: Path | None,
         default_output_dir: Path,
         default_scale: int = 25,
     ):
@@ -87,8 +86,8 @@ class QRCodeGenerator:
         self,
         vcard_details: VCardDataModel,
         output_filename: str,
-        background_path: Optional[Path] = None,
-        scale: Optional[int] = None,
+        background_path: Path | None = None,
+        scale: int | None = None,
         error_correction: str = "H",
     ) -> Path:
         """
@@ -159,7 +158,7 @@ class QRCodeGenerator:
                     vcard_lines.append(
                         f"item{i+1}.X-ABLabel:{typed_url_item.label}"
                     )
-            
+
             # Add other fields as necessary, e.g., PHOTO, ADR
 
             vcard_lines.append("END:VCARD")

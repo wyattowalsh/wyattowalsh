@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import shutil
 import subprocess
-import sys
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 
@@ -77,11 +76,11 @@ def test(
         typer.Option("--coverage/--no-coverage", help="Enable coverage reporting."),
     ] = True,
     filter_expr: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("-k", help="pytest -k filter expression."),
     ] = None,
     marker: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("-m", help="pytest -m marker expression."),
     ] = None,
 ) -> None:

@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-from ._github_http import _BASE, _graphql, _get, _paginate_rest
+from ._github_http import _BASE, _get, _graphql, _paginate_rest
 from .utils import get_logger
 
 logger = get_logger(module=__name__)

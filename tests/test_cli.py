@@ -6,8 +6,8 @@ import pytest
 import yaml
 from typer.testing import CliRunner
 
+from scripts.cli import app
 from scripts.config import ProjectConfig
-from scripts.cli import DEFAULT_CONFIG_PATH, app
 
 
 # Fixture for CliRunner
@@ -31,7 +31,7 @@ def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
     assert test_config_path.exists()
     assert "Default configuration generated" in result.stdout
     # Verify content — config is saved as YAML
-    with open(test_config_path, "r") as f:
+    with open(test_config_path) as f:
         content = yaml.safe_load(f)
         assert "banner_settings" in content
         assert "qr_code_settings" in content

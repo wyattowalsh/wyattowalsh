@@ -15,7 +15,6 @@ project READMEs, skills matrices, or generating visualizations like word clouds.
 
 import re
 from pathlib import Path
-from typing import List, Optional
 
 from pydantic import BaseModel, Field, ValidationError
 from rich.table import Table
@@ -36,10 +35,10 @@ class Technology(BaseModel):
         ge=1,
         le=5,
     )
-    category: Optional[str] = Field(
+    category: str | None = Field(
         None, description="Category of the technology (e.g., Frontend, Backend)"
     )
-    notes: Optional[str] = Field(None, description="Additional notes or usage context")
+    notes: str | None = Field(None, description="Additional notes or usage context")
 
 
 # Predefined categories for technologies (can be expanded)
@@ -80,8 +79,8 @@ PREDEFINED_CATEGORIES = [
 
 
 def parse_technology_line(
-    line: str, current_category: Optional[str]
-) -> Optional[Technology]:
+    line: str, current_category: str | None
+) -> Technology | None:
     """
     Parses a single line of Markdown to extract technology information.
 
@@ -127,7 +126,7 @@ def parse_technology_line(
     return None
 
 
-def load_technologies(md_file_path: Path) -> List[Technology]:
+def load_technologies(md_file_path: Path) -> list[Technology]:
     """
     Loads technology data from a Markdown file.
 
@@ -145,10 +144,10 @@ def load_technologies(md_file_path: Path) -> List[Technology]:
         return []
 
     technologies = []
-    current_category: Optional[str] = None
+    current_category: str | None = None
 
     try:
-        with open(md_file_path, "r", encoding="utf-8") as f:
+        with open(md_file_path, encoding="utf-8") as f:
             for line_num, line in enumerate(f, 1):
                 line_stripped = line.strip()
                 if line_stripped.startswith("## "):
@@ -189,7 +188,7 @@ def load_technologies(md_file_path: Path) -> List[Technology]:
     return technologies
 
 
-def display_technologies(technologies: List[Technology]) -> None:
+def display_technologies(technologies: list[Technology]) -> None:
     """
     Displays the list of technologies in a Rich Table, grouped by category.
 
@@ -211,7 +210,7 @@ def display_technologies(technologies: List[Technology]) -> None:
     table.add_column("Notes", style="italic yellow")
 
     # Group technologies by category
-    categorized_techs: dict[str, List[Technology]] = {}
+    categorized_techs: dict[str, list[Technology]] = {}
     for tech in technologies:
         cat = tech.category or "Uncategorized"
         if cat not in categorized_techs:

@@ -13,21 +13,27 @@ Light theme on aged paper.
 """
 from __future__ import annotations
 
-from datetime import datetime
-from datetime import timedelta
 import math
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 import numpy as np
 
 from .shared import (
-    WIDTH, HEIGHT, CX, CY, LANG_HUES,
-    seed_hash, oklch, Noise2D,
-    contributions_monthly_to_daily_series,
+    CX,
+    CY,
+    HEIGHT,
+    LANG_HUES,
+    WIDTH,
+    Noise2D,
     compute_maturity,
+    contributions_monthly_to_daily_series,
+    make_linear_gradient,
+    make_radial_gradient,
     map_date_to_loop_delay,
-    make_radial_gradient, make_linear_gradient,
     normalize_timeline_window,
+    oklch,
+    seed_hash,
 )
 
 # Hard caps to prevent file-size blowout

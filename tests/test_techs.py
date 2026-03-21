@@ -2,10 +2,9 @@
 from __future__ import annotations
 
 import pytest
-from hypothesis import given, settings, strategies as st
-from pathlib import Path
+from hypothesis import given, settings
+from hypothesis import strategies as st
 from pydantic import ValidationError
-
 
 SAMPLE_MD = (
     "## Programming Languages\n"

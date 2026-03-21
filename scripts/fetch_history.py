@@ -22,11 +22,11 @@ import argparse
 import json
 import os
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from ._github_http import _BASE, _graphql, _get, _paginate_rest
+from ._github_http import _BASE, _graphql, _paginate_rest
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -133,7 +133,7 @@ def _fetch_contributions_monthly(
     GitHub enforces 1-year windows on ``contributionsCollection``, so we
     loop year by year from the account creation year to the current year.
     """
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     current_year = now.year
 
     if account_created:
