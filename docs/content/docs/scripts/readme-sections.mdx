@@ -7,7 +7,7 @@ description: Assembles all dynamic README sections using marker blocks and SVG c
 
 `scripts/readme_sections.py` — ~1548 lines.
 
-`ReadmeSectionGenerator` is the main class. It reads `config.yaml`, fetches data, and writes sections back into `README.md` between HTML comment markers.
+`ReadmeSectionGenerator` is the main class. It reads `config.yaml` from the `readme_sections_settings` key, fetches data, and writes sections back into `README.md` between HTML comment markers.
 
 ## Marker block system
 
@@ -26,11 +26,14 @@ The generator reads the existing README, replaces content between markers, and w
 `ReadmeSvgSettings` controls the SVG card style used for featured repos, connect links, and blog cards:
 
 ```yaml
-readme_settings:
-  enabled: true
-  variant: gh-card         # gh-card | legacy
-  transparent_canvas: false
-  show_title: true
+readme_sections_settings:
+  svg:
+    enabled: true
+    card_styles:
+      default:
+        variant: gh-card   # gh-card | legacy
+        transparent_canvas: true
+        show_title: false
 ```
 
 | Variant | Description |
@@ -43,17 +46,18 @@ readme_settings:
 `ReadmeSocialLink` models define the social badges in the header:
 
 ```yaml
-social_links:
-  - label: "w4w.dev"
-    url: https://w4w.dev
-    color: "6a9fb5"
-    logo: globe
+readme_sections_settings:
+  social_links:
+    - label: "w4w.dev"
+      url: https://w4w.dev
+      color: "6a9fb5"
+      logo: globe
 ```
 
 ## CLI
 
 ```bash
-uv run python -m scripts.cli generate readme --config-path config.yaml
+uv run python -m scripts.cli generate readme-sections --config-path ./config.yaml
 ```
 
 ## Featured repos
@@ -61,7 +65,8 @@ uv run python -m scripts.cli generate readme --config-path config.yaml
 `ReadmeFeaturedRepo` entries define which repos appear in the featured section:
 
 ```yaml
-featured_repos:
-  - full_name: wyattowalsh/wyattowalsh
-  - full_name: wyattowalsh/listentropy
+readme_sections_settings:
+  featured_repos:
+    - full_name: wyattowalsh/wyattowalsh
+    - full_name: wyattowalsh/listentropy
 ```

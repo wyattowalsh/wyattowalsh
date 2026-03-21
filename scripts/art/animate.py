@@ -19,9 +19,6 @@ import re
 import sys
 from pathlib import Path
 
-import cairosvg
-from PIL import Image
-
 from . import ink_garden, topography
 from ._dev_profiles import PROFILES
 from .shared import compute_maturity, parse_cli_args, seed_hash
@@ -90,7 +87,7 @@ def narrative_timing(t: float) -> float:
 _ACT_EASING = {
     1: "cubic-bezier(0.25, 0.1, 0.25, 1.0)",    # gentle ease-out (roots)
     2: "cubic-bezier(0.42, 0.0, 0.58, 1.0)",     # ease-in-out (growth)
-    3: "cubic-bezier(0.0, 0.0, 0.2, 1.0)",       # ease-out (dramatic)
+    3: "cubic-bezier(0.34, 1.56, 0.64, 1.0)",    # overshoot (dramatic arrival)
 }
 
 
@@ -175,8 +172,11 @@ def _build_stacked_svg(
     return "\n".join(out)
 
 
-def svg_to_png(svg_str: str, size: int, frame_id: str = "") -> Image.Image | None:
+def svg_to_png(svg_str: str, size: int, frame_id: str = ""):
     """Convert SVG string to PIL Image at given size. Returns None on failure."""
+    import cairosvg
+    from PIL import Image
+
     try:
         png_data = cairosvg.svg2png(
             bytestring=svg_str.encode("utf-8"),
@@ -251,6 +251,7 @@ def main() -> None:
                 kw: dict[str, object] = {"seed": fixed_seed, "maturity": mat}
                 if key == "topo":
                     kw["chrome_maturity"] = target_mat
+                    kw["timeline"] = False
                 frame_svgs.append(gen_fn(target, **kw))
                 delays.append(delay)
 
@@ -264,6 +265,8 @@ def main() -> None:
         return
 
     # ── GIF mode ──────────────────────────────────────────────
+    from PIL import Image
+
     logger.info("Profile: {}  target_mat={:.3f}  frames={}", profile, target_mat, n_frames)
 
     # Generate frames — same metrics every frame, only maturity changes
@@ -280,6 +283,7 @@ def main() -> None:
             kw: dict[str, object] = {"seed": fixed_seed, "maturity": mat}
             if key == "topo":
                 kw["chrome_maturity"] = target_mat  # chrome always full
+                kw["timeline"] = False
             svg = gen_fn(target, **kw)
             img = svg_to_png(svg, size, frame_id=f"{slug}-f{fi:02d}")
             if img is not None:

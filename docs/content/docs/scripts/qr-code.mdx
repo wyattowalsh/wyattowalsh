@@ -26,7 +26,7 @@ Set in `config.yaml` under `qr_code_settings`:
 qr_code_settings:
   output_filename: qr.png
   output_dir: .github/assets/img
-  default_background_path: .github/assets/img/icon.svg
+  default_background_path: null
   default_scale: 25
   error_correction: H   # L | M | Q | H
 ```
@@ -34,8 +34,8 @@ qr_code_settings:
 ## CLI
 
 ```bash
-uv run python -m scripts.cli generate qr_code \
-  --config-path config.yaml \
+uv run python -m scripts.cli generate qr \
+  --config-path ./config.yaml \
   --output-path .github/assets/img/qr.png \
   --qr-scale 25 \
   --qr-background-path .github/assets/img/icon.svg

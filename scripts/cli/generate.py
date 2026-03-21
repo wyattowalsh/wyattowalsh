@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
@@ -438,7 +440,7 @@ def _wc_from_topics(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_by_topic.svg"
+    out_filename = output_path.name if output_path else "wordcloud_wordle_by_topics.svg"
 
     settings = wc.WordCloudSettings(
         renderer="wordle",
@@ -487,7 +489,7 @@ def _wc_from_languages(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_by_language.svg"
+    out_filename = output_path.name if output_path else "wordcloud_wordle_by_languages.svg"
 
     settings = wc.WordCloudSettings(
         renderer="wordle",
@@ -798,14 +800,12 @@ def animated(
     _load_project_config(config_path)  # validate config exists
 
     try:
-        from ..animated_art import (
-            generate_animated_activity_art,
-            generate_animated_community_art,
-        )
+        from ..art.cosmic_genesis import generate as generate_animated_community_art
+        from ..art.unfurling_spiral import generate as generate_animated_activity_art
     except ImportError:
         logger.error(
             "Animated art dependencies/script components are missing. "
-            "Ensure animated_art.py is correct."
+            "Ensure art/cosmic_genesis.py and art/unfurling_spiral.py exist."
         )
         console.print(
             "[bold red]Error:[/bold red] Animated art components missing."
@@ -837,6 +837,115 @@ def animated(
                     history, dark_mode=dark, output_path=out,
                 )
             console.print(f"[bold green]Generated: {out}[/]")
+
+
+# ---------------------------------------------------------------------------
+# living-art
+# ---------------------------------------------------------------------------
+
+
+@generate_app.command(
+    name="living-art",
+    help="Generate living-art growth outputs (timeline SVG + GIF compatibility).",
+)
+def living_art(
+    config_path: Annotated[
+        Optional[Path],
+        typer.Option(
+            "--config-path",
+            help="Project configuration file path.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    profile: Annotated[
+        str,
+        typer.Option(
+            "--profile",
+            help="Animation profile name used by scripts.art.animate.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = "wyatt",
+    frames: Annotated[
+        int,
+        typer.Option(
+            "--frames",
+            min=2,
+            help="GIF frame count for compatibility output.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = 24,
+    svg_frames: Annotated[
+        int,
+        typer.Option(
+            "--svg-frames",
+            min=2,
+            help="Stacked timeline SVG frame count.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = 7,
+    size: Annotated[
+        int,
+        typer.Option(
+            "--size",
+            min=64,
+            help="Render size in px for GIF output.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = 400,
+    only: Annotated[
+        Optional[str],
+        typer.Option(
+            "--only",
+            help="Restrict generation to one style: inkgarden or topo.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = None,
+    svg_only: Annotated[
+        bool,
+        typer.Option(
+            "--svg-only",
+            help="Generate timeline SVGs only (skip legacy GIF compatibility files).",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = False,
+) -> None:
+    """Generate living-art assets with dual-write compatibility by default."""
+    _load_project_config(config_path)  # validate config exists
+
+    base_cmd = [sys.executable, "-m", "scripts.art.animate", "--profile", profile]
+    if only:
+        base_cmd.extend(["--only", only])
+
+    try:
+        subprocess.run(
+            [*base_cmd, "--svg", "--frames", str(svg_frames)],
+            check=True,
+        )
+        console.print(
+            "[bold green]Generated timeline SVGs:[/] "
+            ".github/assets/img/inkgarden-growth-animated.svg, "
+            ".github/assets/img/topo-growth-animated.svg"
+        )
+    except subprocess.CalledProcessError as exc:
+        logger.error("Living-art SVG generation failed: {}", exc)
+        raise typer.Exit(code=1) from exc
+
+    if svg_only:
+        return
+
+    try:
+        subprocess.run(
+            [*base_cmd, "--frames", str(frames), "--size", str(size)],
+            check=True,
+        )
+        console.print(
+            "[bold green]Generated compatibility GIFs:[/] "
+            ".github/assets/img/inkgarden-growth.gif, "
+            ".github/assets/img/topo-growth.gif"
+        )
+    except subprocess.CalledProcessError as exc:
+        logger.error("Living-art GIF generation failed: {}", exc)
+        raise typer.Exit(code=1) from exc
 
 
 # ---------------------------------------------------------------------------
@@ -1243,6 +1352,13 @@ def all_assets(
             "[yellow]Skipping animated art — --history-path not provided or file missing.[/yellow]"
         )
         results.append(("Animated Art", "[yellow]SKIPPED[/yellow]"))
+
+    # -- living art (dual-write contract) --
+    try:
+        living_art(config_path=config_path)
+        results.append(("Living Art", "[green]OK[/green]"))
+    except (typer.Exit, SystemExit):
+        results.append(("Living Art", "[red]FAILED[/red]"))
 
     # -- summary panel --
     lines = [f"  {name:<25} {status}" for name, status in results]

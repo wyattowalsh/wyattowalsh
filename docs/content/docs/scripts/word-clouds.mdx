@@ -35,16 +35,16 @@ These are updated nightly by the `update-starred-lists` workflow job.
 
 ```bash
 # Topics word cloud
-uv run python -m scripts.cli generate word_cloud \
-  --config-path config.yaml \
-  --techs-path .github/assets/topics.md \
-  --output-path .github/assets/img/wordcloud_by_topic.svg
+uv run python -m scripts.cli generate word-cloud \
+  --config-path ./config.yaml \
+  --from-topics-md \
+  --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
 
 # Languages word cloud
-uv run python -m scripts.cli generate word_cloud \
-  --config-path config.yaml \
-  --techs-path .github/assets/languages.md \
-  --output-path .github/assets/img/wordcloud_by_language.svg
+uv run python -m scripts.cli generate word-cloud \
+  --config-path ./config.yaml \
+  --from-languages-md \
+  --output-path .github/assets/img/wordcloud_wordle_by_languages.svg
 ```
 
 ## Configuration
@@ -55,16 +55,16 @@ Under `word_cloud_settings` in `config.yaml`:
 word_cloud_settings:
   output_dir: .github/assets/img
   output_filename: word_cloud.png
-  prompt: null          # Optional LLM prompt for keyword curation
-  stopwords: null       # Additional stopwords list
+  prompt: "My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React"
+  stopwords: []         # Additional stopwords list
 ```
 
 ## Output files
 
 | File | Description |
 |---|---|
-| `wordcloud_by_topic.svg` | Topics from starred repos |
-| `wordcloud_by_language.svg` | Languages from starred repos |
+| `wordcloud_wordle_by_topics.svg` | Topics from starred repos |
+| `wordcloud_wordle_by_languages.svg` | Languages from starred repos |
 
 ## Rendering backends
 

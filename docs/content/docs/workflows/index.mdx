@@ -45,9 +45,9 @@ Commits both files with `chore(data): update awesome-stars lists`.
 ### `generate-assets`
 
 Depends on `update-starred-lists`. Generates:
-- QR code — `generate qr_code`
-- Word cloud by topic — `generate word_cloud --techs-path topics.md`
-- Word cloud by language — `generate word_cloud --techs-path languages.md`
+- QR code — `generate qr`
+- Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_wordle_by_topics.svg`
+- Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_wordle_by_languages.svg`
 - SVG banner — `generate banner`
 - Skills badges — `generate skills`
 
@@ -71,14 +71,14 @@ Requires `METRICS_TOKEN` secret (GitHub PAT with `read:user`, `public_repo`). Fa
 
 ### `generate-event-art`
 
-Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then generates generative and animated SVGs.
+Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then generates generative and animated SVGs. The animated CLI entry point is `scripts/animated_art.py`, which is a compatibility shim over generators in `scripts/art/*`.
 
 Requires `GITHUB_TOKEN` (automatically provided by Actions).
 
 ### `update-skills`
 
 Depends on `generate-assets`, `update-readme-wakatime`, `update-readme-blog`. Runs:
-- `generate readme` — assembles all dynamic README sections
+- `generate readme-sections` — assembles all dynamic README sections
 - `generate skills` — re-renders skills badges
 
 Commits `README.md` + `.github/assets/img/readme/*.svg`.

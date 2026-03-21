@@ -56,8 +56,8 @@ Key `addopts` flags decoded:
 | `scripts/cli/` | — | `test_cli.py` | ✅ Covered (CLI refactored to package) |
 | `scripts/utils.py` | 172 | `test_utils.py` | ✅ Covered |
 | `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
-| `scripts/techs.py` | 315 | `test_techs.py` | ❌ Empty — zero coverage |
-| `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ❌ Empty — zero coverage |
+| `scripts/techs.py` | 315 | `test_techs.py` | ✅ Covered — model, parser, file-loading, and Hypothesis tests |
+| `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ✅ Covered — markdown parsing, font resolution, filtering, and layout tests |
 | `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ✅ Smoke + golden file regression tests |
 | `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
 | Living art media outputs | — | `test_living_art_media.py` | ⏭️ Skipped — requires pre-generated artifacts |
@@ -118,7 +118,7 @@ def mock_project_root(tmp_path, monkeypatch):
     return tmp_path
 ```
 
-### Adding tests for `test_techs.py`
+### Extending `test_techs.py`
 ```python
 from scripts.techs import Technology, load_technologies, parse_technology_line
 
@@ -143,35 +143,41 @@ def test_load_technologies(tmp_path):
     assert techs[0].category == "Languages"
 ```
 
-### Adding tests for `test_word_clouds.py`
+### Extending `test_word_clouds.py`
 ```python
-from scripts.word_clouds import (
-    WordCloudGenerator, WordCloudSettings,
-    parse_markdown_for_word_cloud_frequencies,
-)
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from scripts.word_clouds import _filter_others, parse_markdown_for_word_cloud_frequencies
+from scripts.word_cloud_renderers import WordleRenderer, resolve_preferred_wordcloud_font_path
 
 def test_parse_frequencies(tmp_path):
     md = tmp_path / "topics.md"
-    md.write_text("- Python\n- JavaScript\n- Go\n")
+    md.write_text(
+        "## Contents\n- [python](#python)\n\n## python\n- [org/repo](https://example.com/repo)\n"
+    )
     freqs = parse_markdown_for_word_cloud_frequencies(md)
-    assert "Python" in freqs
+    assert freqs["python"] == 1
 
 def test_parse_frequencies_missing_file(tmp_path):
     with pytest.raises(FileNotFoundError):
         parse_markdown_for_word_cloud_frequencies(tmp_path / "missing.md")
 
-def test_word_cloud_settings_rejects_unknown():
-    with pytest.raises(ValidationError):
-        WordCloudSettings(nonexistent_key="value")  # extra="forbid"
+def test_filter_others():
+    filtered = _filter_others({"python": 10, "others": 5, "other": 3})
+    assert filtered == {"python": 10}
 
-def test_generate_mocked(tmp_path):
-    settings = WordCloudSettings(output_dir=str(tmp_path), output_filename="out.png")
-    with patch("scripts.word_clouds.WordCloud") as mock_wc:
-        mock_img = MagicMock()
-        mock_wc.return_value.generate_from_text.return_value = mock_img
-        gen = WordCloudGenerator(settings)
-        gen.generate(text_input="Python Go TypeScript Cloud")
+@patch("subprocess.run")
+def test_font_resolution(mock_run: MagicMock):
+    mock_result = MagicMock(returncode=0, stdout="/usr/share/fonts/Montserrat-Bold.ttf: ")
+    mock_run.side_effect = [MagicMock(returncode=0, stdout=""), MagicMock(returncode=0, stdout=""), mock_result]
+    assert resolve_preferred_wordcloud_font_path() == "/usr/share/fonts/Montserrat-Bold.ttf"
+
+def test_wordle_places_all_words():
+    words = {f"word{i}": max(1, 100 - i) for i in range(40)}
+    placed = WordleRenderer(width=1200, height=800).place_words(words)
+    assert {p.text for p in placed} == set(words)
 ```
 
 ### Hypothesis (property-based) — good candidates

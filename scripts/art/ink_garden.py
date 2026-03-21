@@ -13,6 +13,8 @@ Light theme on aged paper.
 """
 from __future__ import annotations
 
+from datetime import datetime
+from datetime import timedelta
 import math
 from collections import defaultdict
 
@@ -21,8 +23,11 @@ import numpy as np
 from .shared import (
     WIDTH, HEIGHT, CX, CY, LANG_HUES,
     seed_hash, oklch, Noise2D,
+    contributions_monthly_to_daily_series,
     compute_maturity,
+    map_date_to_loop_delay,
     make_radial_gradient, make_linear_gradient,
+    normalize_timeline_window,
 )
 
 # Hard caps to prevent file-size blowout
@@ -124,6 +129,14 @@ def _classify_species(repo: dict) -> str:
 
 def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch_fn):
     """Draw a single leaf with the given shape onto the SVG parts list."""
+    # Deterministic imperfection: slight position jitter (1-2px) via seeded rng
+    lx += rng.uniform(-1.5, 1.5)
+    ly += rng.uniform(-1.5, 1.5)
+
+    def _serrate(val, scale=1.0):
+        """Micro-serration: vary a value by 10-20% for organic imperfection."""
+        return val + val * rng.uniform(-0.15, 0.15) * scale
+
     if leaf_shape == "oak_lobed":
         tip_x = lx + ls * math.cos(la)
         tip_y = ly + ls * math.sin(la)
@@ -132,30 +145,30 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         dy = tip_y - ly
         fill_c = oklch_fn(0.48, 0.19, lh)
         stroke_c = oklch_fn(0.36, 0.14, lh)
-        b1x = lx + dx * 0.2 + ls * 0.3 * math.cos(perp)
-        b1y = ly + dy * 0.2 + ls * 0.3 * math.sin(perp)
-        v1x = lx + dx * 0.35 + ls * 0.08 * math.cos(perp)
-        v1y = ly + dy * 0.35 + ls * 0.08 * math.sin(perp)
-        b2x = lx + dx * 0.5 + ls * 0.35 * math.cos(perp)
-        b2y = ly + dy * 0.5 + ls * 0.35 * math.sin(perp)
-        v2x = lx + dx * 0.65 + ls * 0.1 * math.cos(perp)
-        v2y = ly + dy * 0.65 + ls * 0.1 * math.sin(perp)
-        b3x = lx + dx * 0.8 + ls * 0.25 * math.cos(perp)
-        b3y = ly + dy * 0.8 + ls * 0.25 * math.sin(perp)
-        cp_b1x = (lx + b1x) / 2 + ls * 0.15 * math.cos(perp)
-        cp_b1y = (ly + b1y) / 2 + ls * 0.15 * math.sin(perp)
-        cp_v1x = (b1x + v1x) / 2
-        cp_v1y = (b1y + v1y) / 2
-        cp_b2x = (v1x + b2x) / 2 + ls * 0.18 * math.cos(perp)
-        cp_b2y = (v1y + b2y) / 2 + ls * 0.18 * math.sin(perp)
-        cp_v2x = (b2x + v2x) / 2
-        cp_v2y = (b2y + v2y) / 2
-        cp_b3x = (v2x + b3x) / 2 + ls * 0.12 * math.cos(perp)
-        cp_b3y = (v2y + b3y) / 2 + ls * 0.12 * math.sin(perp)
-        cp_tipx = (b3x + tip_x) / 2
-        cp_tipy = (b3y + tip_y) / 2
-        back_cp1x = (tip_x + lx) / 2 - ls * 0.1 * math.cos(perp)
-        back_cp1y = (tip_y + ly) / 2 - ls * 0.1 * math.sin(perp)
+        b1x = lx + dx * 0.2 + _serrate(ls * 0.3) * math.cos(perp)
+        b1y = ly + dy * 0.2 + _serrate(ls * 0.3) * math.sin(perp)
+        v1x = lx + dx * 0.35 + _serrate(ls * 0.08) * math.cos(perp)
+        v1y = ly + dy * 0.35 + _serrate(ls * 0.08) * math.sin(perp)
+        b2x = lx + dx * 0.5 + _serrate(ls * 0.35) * math.cos(perp)
+        b2y = ly + dy * 0.5 + _serrate(ls * 0.35) * math.sin(perp)
+        v2x = lx + dx * 0.65 + _serrate(ls * 0.1) * math.cos(perp)
+        v2y = ly + dy * 0.65 + _serrate(ls * 0.1) * math.sin(perp)
+        b3x = lx + dx * 0.8 + _serrate(ls * 0.25) * math.cos(perp)
+        b3y = ly + dy * 0.8 + _serrate(ls * 0.25) * math.sin(perp)
+        cp_b1x = (lx + b1x) / 2 + _serrate(ls * 0.15) * math.cos(perp)
+        cp_b1y = (ly + b1y) / 2 + _serrate(ls * 0.15) * math.sin(perp)
+        cp_v1x = (b1x + v1x) / 2 + rng.uniform(-0.5, 0.5)
+        cp_v1y = (b1y + v1y) / 2 + rng.uniform(-0.5, 0.5)
+        cp_b2x = (v1x + b2x) / 2 + _serrate(ls * 0.18) * math.cos(perp)
+        cp_b2y = (v1y + b2y) / 2 + _serrate(ls * 0.18) * math.sin(perp)
+        cp_v2x = (b2x + v2x) / 2 + rng.uniform(-0.5, 0.5)
+        cp_v2y = (b2y + v2y) / 2 + rng.uniform(-0.5, 0.5)
+        cp_b3x = (v2x + b3x) / 2 + _serrate(ls * 0.12) * math.cos(perp)
+        cp_b3y = (v2y + b3y) / 2 + _serrate(ls * 0.12) * math.sin(perp)
+        cp_tipx = (b3x + tip_x) / 2 + rng.uniform(-0.5, 0.5)
+        cp_tipy = (b3y + tip_y) / 2 + rng.uniform(-0.5, 0.5)
+        back_cp1x = (tip_x + lx) / 2 - _serrate(ls * 0.1) * math.cos(perp)
+        back_cp1y = (tip_y + ly) / 2 - _serrate(ls * 0.1) * math.sin(perp)
         d = (f"M{lx:.1f},{ly:.1f} "
              f"Q{cp_b1x:.1f},{cp_b1y:.1f} {b1x:.1f},{b1y:.1f} "
              f"Q{cp_v1x:.1f},{cp_v1y:.1f} {v1x:.1f},{v1y:.1f} "
@@ -230,11 +243,11 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         tip_x = lx + ls * math.cos(la)
         tip_y = ly + ls * math.sin(la)
         perp = la + math.pi / 2
-        bulge = ls * 0.35
-        cp1x = (lx + tip_x) / 2 + bulge * math.cos(perp)
-        cp1y = (ly + tip_y) / 2 + bulge * math.sin(perp)
-        cp2x = (lx + tip_x) / 2 - bulge * math.cos(perp)
-        cp2y = (ly + tip_y) / 2 - bulge * math.sin(perp)
+        bulge = _serrate(ls * 0.35)
+        cp1x = (lx + tip_x) / 2 + bulge * math.cos(perp) + rng.uniform(-0.5, 0.5)
+        cp1y = (ly + tip_y) / 2 + bulge * math.sin(perp) + rng.uniform(-0.5, 0.5)
+        cp2x = (lx + tip_x) / 2 - bulge * math.cos(perp) + rng.uniform(-0.5, 0.5)
+        cp2y = (ly + tip_y) / 2 - bulge * math.sin(perp) + rng.uniform(-0.5, 0.5)
         fill_c = oklch_fn(0.50, 0.19, lh)
         stroke_c = oklch_fn(0.38, 0.14, lh)
         P.append(f'<path d="M{lx:.1f},{ly:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
@@ -257,6 +270,9 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
 
 def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch_fn):
     """Draw a bloom of the given type onto the SVG parts list."""
+    # Deterministic imperfection: slight position jitter (1-2px)
+    bx += rng.uniform(-1.5, 1.5)
+    by += rng.uniform(-1.5, 1.5)
     if bloom_type == "radial_petal":
         for layer in range(petal_layers):
             lf = layer / max(1, petal_layers)
@@ -404,8 +420,18 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
                  f'fill="#5a4a30" opacity="0.04"/>')
 
 
-def generate(metrics: dict, *, seed: str | None = None, maturity: float | None = None) -> str:
-    mat = maturity if maturity is not None else compute_maturity(metrics)
+def generate(
+    metrics: dict,
+    *,
+    seed: str | None = None,
+    maturity: float | None = None,
+    timeline: bool = False,
+    loop_duration: float = 30.0,
+    reveal_fraction: float = 0.93,
+) -> str:
+    base_mat = maturity if maturity is not None else compute_maturity(metrics)
+    timeline_enabled = bool(timeline and loop_duration > 0)
+    mat = 1.0 if timeline_enabled else base_mat
     h = seed if seed is not None else seed_hash(metrics)
     base_seed = int(h[:8], 16)
     noise = Noise2D(seed=int(h[8:16], 16))
@@ -421,6 +447,110 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     contributions = metrics.get("contributions_last_year", 200)
     orgs = metrics.get("orgs_count", 1)
 
+    def _repo_date(repo: dict) -> str | None:
+        for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
+            val = repo.get(key)
+            if isinstance(val, str) and val.strip():
+                return val[:10] if len(val) >= 10 else val
+        return None
+
+    timeline_window = normalize_timeline_window(
+        [
+            {"date": _repo_date(repo)}
+            for repo in repos
+            if isinstance(repo, dict) and _repo_date(repo)
+        ],
+        {
+            "account_created": metrics.get("account_created"),
+            "repos": repos,
+            "contributions_monthly": monthly,
+        },
+        fallback_days=365,
+    )
+    timeline_start, timeline_end = timeline_window
+    timeline_span_days = max((timeline_end - timeline_start).days, 1)
+    daily_series = contributions_monthly_to_daily_series(
+        monthly,
+        reference_year=timeline_end.year,
+    )
+    sorted_daily = sorted(daily_series.items(), key=lambda kv: kv[0])
+    total_daily = sum(max(0, int(v)) for _, v in sorted_daily)
+
+    def _parse_date(value: str | None) -> datetime | None:
+        if not value:
+            return None
+        try:
+            if len(value) == 10:
+                return datetime.fromisoformat(value)
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
+        except ValueError:
+            return None
+
+    def _date_at_fraction(frac: float) -> str:
+        frac = max(0.0, min(1.0, frac))
+        day_offset = int(round(frac * timeline_span_days))
+        return (timeline_start + timedelta(days=day_offset)).isoformat()
+
+    def _date_for_activity_fraction(frac: float) -> str:
+        frac = max(0.0, min(1.0, frac))
+        if total_daily <= 0 or not sorted_daily:
+            return _date_at_fraction(frac)
+        threshold = frac * total_daily
+        running = 0.0
+        for day, count in sorted_daily:
+            running += max(0, int(count))
+            if running >= threshold:
+                return day
+        return sorted_daily[-1][0]
+
+    def _offset_date(when: str, frac_offset: float) -> str:
+        base = _parse_date(when)
+        if base is None:
+            base = datetime.combine(timeline_start, datetime.min.time())
+        add_days = int(round(max(0.0, frac_offset) * timeline_span_days))
+        shifted = (base + timedelta(days=add_days)).date()
+        if shifted < timeline_start:
+            shifted = timeline_start
+        if shifted > timeline_end:
+            shifted = timeline_end
+        return shifted.isoformat()
+
+    def _month_key_date(month_key: str, idx: int) -> str:
+        mk = str(month_key).strip()
+        if len(mk) == 7 and mk[4] == "-":
+            return f"{mk}-01"
+        if mk.isdigit():
+            month_n = max(1, min(12, int(mk)))
+            return f"{timeline_end.year:04d}-{month_n:02d}-01"
+        approx_month = 1 + (idx % 12)
+        return f"{timeline_end.year:04d}-{approx_month:02d}-01"
+
+    def _timeline_style(
+        when: str,
+        opacity: float,
+        cls: str = "tl-reveal",
+        *,
+        delay_offset_frac: float = 0.0,
+        duration_scale: float = 1.0,
+        ease: str = "ease-out",
+    ) -> str:
+        if not timeline_enabled:
+            return f'opacity="{opacity}"'
+        delay = map_date_to_loop_delay(
+            when,
+            timeline_window,
+            duration=loop_duration,
+            reveal_fraction=reveal_fraction,
+        )
+        delay += max(-0.08, min(0.12, delay_offset_frac)) * loop_duration
+        delay = max(0.0, min(loop_duration, delay))
+        duration = max(0.35, 0.9 * duration_scale)
+        return (
+            f'class="{cls}" '
+            f'style="--delay:{delay:.3f}s;--to:{max(0.0, min(1.0, opacity)):.3f};'
+            f'--dur:{duration:.3f}s;--ease:{ease}" data-delay="{delay:.3f}" data-when="{when}"'
+        )
+
     # Ground line — slightly below center, gentle hills
     GROUND_Y = CY + 40
 
@@ -428,25 +558,52 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         return GROUND_Y + noise.noise(x * 0.008, 0) * 25 + noise.noise(x * 0.02, 5) * 8
 
     # Collect all visual elements
-    all_segs = []   # (x1,y1,x2,y2,sw,hue,depth,is_main,bark_mat)
-    roots = []       # (x1,y1,x2,y2,sw)
-    leaves = []      # (x,y,angle,size,hue,has_vein,leaf_shape)
-    blooms = []      # (x,y,size,hue,n_petals,layers,bloom_type)
-    buds = []        # (x,y,size,hue)
-    berries = []     # (x,y,size,hue)
+    all_segs = []   # (x1,y1,x2,y2,sw,hue,depth,is_main,bark_mat,when)
+    roots = []       # (x1,y1,x2,y2,sw,when)
+    leaves = []      # (x,y,angle,size,hue,has_vein,leaf_shape,when)
+    blooms = []      # (x,y,size,hue,n_petals,layers,bloom_type,when)
+    buds = []        # (x,y,size,hue,when)
+    berries = []     # (x,y,size,hue,when)
     tendrils = []    # list of point-lists
     mushrooms_list = []  # (x,y,size,hue)
     insects = []     # (x,y,type,size,hue)
     webs = []        # (cx,cy,radius,n_spokes)
     dew_drops = []   # (x,y,size)
     seeds = []       # (x,y,angle,size)
-    labels = []      # (lx,ly,text,ax,ay)
+    labels = []      # (lx,ly,text,ax,ay,when)
 
     # Track plant base positions for ground cover enhancement
     plant_bases = []
 
     # ── Plant generation (progressive: blank soil → full garden) ────
     n_repos = len(repos)
+    spread = min(MAX_REPOS, n_repos)
+    cluster_rng = np.random.default_rng(base_seed ^ 0xC1A55EED)
+    cluster_sizes = []
+    remaining = spread
+    while remaining > 0:
+        max_size = min(4, remaining)
+        min_size = 1 if remaining <= 2 else 2
+        size = int(cluster_rng.integers(min_size, max_size + 1))
+        if remaining - size == 1 and size > min_size:
+            size -= 1
+        cluster_sizes.append(size)
+        remaining -= size
+    cluster_count = len(cluster_sizes)
+    if cluster_count > 1:
+        cluster_centers_base = np.linspace(95, WIDTH - 95, cluster_count)
+    else:
+        cluster_centers_base = np.array([CX], dtype=float)
+    cluster_centers = []
+    for ci, base_center in enumerate(cluster_centers_base):
+        nudge = noise.fbm(ci * 2.3 + 0.7, spread * 0.41 + 0.3, 3) * 36 + cluster_rng.uniform(-16, 16)
+        cluster_centers.append(float(max(85, min(WIDTH - 85, base_center + nudge))))
+    cluster_slot = {}
+    cursor = 0
+    for ci, size in enumerate(cluster_sizes):
+        for local_idx in range(size):
+            cluster_slot[cursor + local_idx] = (ci, local_idx, size)
+        cursor += size
 
     RAMP = 0.15  # growth ramp width (mat units)
     first_start = 0.03
@@ -469,13 +626,36 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         hue = LANG_HUES.get(lang, 160)
         repo_stars = repo.get("stars", 0)
         age = repo.get("age_months", 6)
+        repo_date = _repo_date(repo) or _date_for_activity_fraction(ri / max(1, n_repos))
+        trunk_when = repo_date
+        branch_when = _offset_date(repo_date, 0.08)
+        leaf_when = _offset_date(repo_date, 0.14)
+        bloom_when = _offset_date(repo_date, 0.22)
+        root_when = _offset_date(repo_date, 0.05)
 
         species = _classify_species(repo)
         style = SPECIES.get(species)
 
-        spread = min(MAX_REPOS, n_repos)
-        base_x = 80 + (WIDTH - 160) * (ri / max(1, spread - 1)) if spread > 1 else CX
-        base_x += rng.uniform(-20, 20)
+        # Seasonal color variation: date-aware hue drift + mature autumn accent.
+        is_autumn = mat > 0.7 and ri >= n_repos - 2 and n_repos >= 2
+        repo_dt = _parse_date(repo_date)
+        repo_month = repo_dt.month if repo_dt else timeline_end.month
+        season_phase = ((repo_month - 1) / 12.0) * 2 * math.pi
+        leaf_hue_shift = 16 * math.sin(season_phase - 0.4) + rng.uniform(-5, 5)
+        bloom_hue_shift = 22 * math.cos(season_phase - 0.2) + rng.uniform(-8, 8)
+        autumn_leaf_hue = rng.integers(30, 50) if is_autumn else None
+        if ri < spread:
+            cluster_idx, in_cluster_pos, cluster_size = cluster_slot.get(ri, (0, 0, 1))
+            cluster_center = cluster_centers[cluster_idx]
+            local_t = (in_cluster_pos - (cluster_size - 1) / 2.0)
+            intra_spacing = rng.uniform(13, 27) * (0.9 + 0.1 * min(cluster_size, 3))
+            arc_pull = math.sin((in_cluster_pos + 1) * 1.3 + cluster_idx * 0.8) * 6
+            base_x = cluster_center + local_t * intra_spacing + arc_pull + noise.noise(cluster_center * 0.01, ri * 0.23) * 10
+        else:
+            base_x = CX + noise.noise(ri * 0.31, 0.7) * 28
+        # Clamp to canvas bounds with margin
+        base_x = max(80, min(WIDTH - 80, base_x))
+        base_x += rng.uniform(-8, 8)
         gy = ground_y_at(base_x)
 
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
@@ -491,7 +671,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         bloom_boost = min(2.0, 1.0 + stars_total / 200.0)
 
         if main_length >= 5:
-            labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy))
+            labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy, trunk_when))
         plant_bases.append((base_x, gy))
 
         # ── Fern growth (special algorithm) ───────────────────────
@@ -511,7 +691,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
                     sw = max(0.3, stem_sw * 0.5 * (1 - t * 0.7))
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, f_hue, 1, si < 3, bark_maturity))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, f_hue, 1, si < 3, bark_maturity, branch_when))
 
                     # Pinnate leaflets along both sides (alternating, shrinking)
                     if si > 1 and si < n_spine - 1:
@@ -520,7 +700,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         perp = cur_angle + side * math.pi / 2
                         la = perp + rng.uniform(-0.2, 0.2)
                         if len(leaves) < MAX_LEAVES:
-                            leaves.append((nx_, ny_, la, max(2, leaflet_size), (f_hue + 15) % 360, False, "pinnate"))
+                            _lhue = autumn_leaf_hue if is_autumn else (f_hue + 15 + leaf_hue_shift) % 360
+                            leaves.append((nx_, ny_, la, max(2, leaflet_size), _lhue, False, "pinnate", leaf_when))
 
                     cx_, cy_ = nx_, ny_
 
@@ -534,7 +715,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     sl = 3 * (1 - t * 0.5)
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
-                    all_segs.append((cx_, cy_, nx_, ny_, 0.3, f_hue, 2, False, bark_maturity))
+                    all_segs.append((cx_, cy_, nx_, ny_, 0.3, f_hue, 2, False, bark_maturity, branch_when))
                     cx_, cy_ = nx_, ny_
 
             n_fronds = max(2, min(5, 2 + age // 12))
@@ -560,11 +741,11 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     sway = noise.noise(bx * 0.01 + ji * 0.5, by * 0.01) * 2
                     nx_ = cx_ + sway
                     ny_ = cy_ - joint_spacing
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, b_hue, 0, True, bark_maturity))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, b_hue, 0, True, bark_maturity, trunk_when))
 
                     # Visible joint (short horizontal widening)
                     jw = sw * 1.8
-                    all_segs.append((nx_ - jw, ny_, nx_ + jw, ny_, sw * 0.6, b_hue, 1, False, bark_maturity))
+                    all_segs.append((nx_ - jw, ny_, nx_ + jw, ny_, sw * 0.6, b_hue, 1, False, bark_maturity, branch_when))
 
                     # Narrow leaf clusters at alternating joints
                     if ji % 2 == 0 and ji > 0:
@@ -574,7 +755,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             la = -math.pi / 2 + side * (0.8 + bi * 0.2) + rng.uniform(-0.15, 0.15)
                             ls = rng.uniform(6, 14) * (1 - t * 0.3)
                             if len(leaves) < MAX_LEAVES:
-                                leaves.append((nx_, ny_, la, ls, (b_hue + 20) % 360, False, "narrow_blade"))
+                                _lhue = autumn_leaf_hue if is_autumn else (b_hue + 20 + leaf_hue_shift) % 360
+                                leaves.append((nx_, ny_, la, ls, _lhue, False, "narrow_blade", leaf_when))
 
                     cx_, cy_ = nx_, ny_
 
@@ -622,13 +804,14 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity, trunk_when if depth == 0 else branch_when))
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
-                        leaves.append((nx_, ny_, la, ls, (hue + 25) % 360, rng.random() < 0.7, style_d["leaf_shape"]))
+                        _lhue = autumn_leaf_hue if is_autumn else (hue + 25 + leaf_hue_shift) % 360
+                        leaves.append((nx_, ny_, la, ls, _lhue, rng.random() < 0.7, style_d["leaf_shape"], leaf_when))
                         if rng.random() < 0.15:
                             dew_drops.append((
                                 nx_ + ls * 0.5 * math.cos(la),
@@ -637,32 +820,39 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             ))
 
                     if depth >= 2 and rng.random() < 0.12:
-                        buds.append((nx_, ny_, rng.uniform(2, 4), hue))
+                        buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
                     angle = a
 
+                    # Murray's Law: child branch width from parent^3 = child1^3 + child2^3
                     if len(all_segs) < MAX_SEGS and rng.random() < style_d["branch_prob"] * (1 - depth / max_d):
                         fa = rng.uniform(0.4, 1.1) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d)
+                        # Murray's law: assume remaining trunk takes ~70% of flow
+                        child_sw = (sw ** 3 * 0.3) ** (1.0 / 3.0)
+                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw, style_d, max_d)
 
                 # Terminal fork
                 if depth < max_d and len(all_segs) < MAX_SEGS:
                     fork_lo, fork_hi = style_d["fork_range"]
-                    for _ in range(rng.integers(fork_lo, fork_hi)):
+                    n_forks = rng.integers(fork_lo, fork_hi)
+                    # Murray's Law: parent_sw^3 = sum(child_sw_i^3)
+                    # Equal split among n_forks children
+                    child_sw_fork = (sw ** 3 / max(1, n_forks)) ** (1.0 / 3.0)
+                    for _ in range(n_forks):
                         if len(all_segs) >= MAX_SEGS:
                             break
                         fa = rng.uniform(0.3, 1.0) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d)
+                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw_fork, style_d, max_d)
 
                 # Blooms at tips — bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = 5 + min(18, repo_stars * 0.8)
                     petal_layers = 1 + min(3, repo_stars // 5)
-                    blooms.append((cx_, cy_, bloom_size, hue, n_petals, petal_layers, style_d["bloom_type"]))
+                    blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
                 # Berries
                 if depth >= max_d and rng.random() < 0.2:
@@ -672,6 +862,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             cy_ + rng.uniform(-6, 6),
                             rng.uniform(1.5, 3),
                             (hue + 180) % 360,
+                            bloom_when,
                         ))
 
             _grow(base_x, gy, base_angle, 0, short_length, stem_sw * 0.6)
@@ -700,13 +891,14 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity))
+                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity, trunk_when if depth == 0 else branch_when))
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
-                        leaves.append((nx_, ny_, la, ls, (hue + 25) % 360, rng.random() < 0.7, style_d["leaf_shape"]))
+                        _lhue = autumn_leaf_hue if is_autumn else (hue + 25 + leaf_hue_shift) % 360
+                        leaves.append((nx_, ny_, la, ls, _lhue, rng.random() < 0.7, style_d["leaf_shape"], leaf_when))
                         if rng.random() < 0.15:
                             dew_drops.append((
                                 nx_ + ls * 0.5 * math.cos(la),
@@ -715,7 +907,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             ))
 
                     if depth >= 2 and rng.random() < 0.12:
-                        buds.append((nx_, ny_, rng.uniform(2, 4), hue))
+                        buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
                     angle = a
@@ -725,22 +917,29 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     if depth == 0:
                         trunk_ok = (si + seg_idx) > n_s * style_d["min_trunk_ratio"]
 
+                    # Murray's Law: child branch width from parent^3 = child1^3 + child2^3
                     if trunk_ok and len(all_segs) < MAX_SEGS and rng.random() < style_d["branch_prob"] * (1 - depth / max_d):
                         angle_range = style_d.get("branch_angle_range", (0.4, 1.1))
                         fa = rng.uniform(angle_range[0], angle_range[1]) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d, si)
+                        # Murray's law: assume remaining trunk takes ~70% of flow
+                        child_sw = (sw ** 3 * 0.3) ** (1.0 / 3.0)
+                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw, style_d, max_d, si)
 
-                # Terminal fork
+                # Terminal fork — Murray's Law: parent_sw^3 = sum(child_sw_i^3)
                 if depth < max_d and len(all_segs) < MAX_SEGS:
                     fork_lo, fork_hi = style_d["fork_range"]
-                    for _ in range(rng.integers(fork_lo, fork_hi)):
+                    n_forks = rng.integers(fork_lo, fork_hi)
+                    # Equal split among n_forks children
+                    child_sw_fork = (sw ** 3 / max(1, n_forks)) ** (1.0 / 3.0)
+                    for _ in range(n_forks):
                         if len(all_segs) >= MAX_SEGS:
                             break
                         spread_a = style_d["base_angle_spread"] if depth == 0 else 1.0
-                        fa = rng.uniform(0.3, spread_a) * rng.choice([-1, 1])
+                        lo_a, hi_a = sorted((0.3, spread_a))
+                        fa = rng.uniform(lo_a, hi_a) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), sw * style_d["width_decay"], style_d, max_d, 0)
+                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw_fork, style_d, max_d, 0)
 
                 # Blooms at tips (fern and bamboo have no blooms — handled above)
                 # bloom probability boosted by total stars
@@ -748,7 +947,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = 5 + min(18, repo_stars * 0.8)
                     petal_layers = 1 + min(3, repo_stars // 5)
-                    blooms.append((cx_, cy_, bloom_size, hue, n_petals, petal_layers, style_d["bloom_type"]))
+                    blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
                 # Berries
                 if depth >= max_d and rng.random() < 0.2:
@@ -758,6 +957,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             cy_ + rng.uniform(-6, 6),
                             rng.uniform(1.5, 3),
                             (hue + 180) % 360,
+                            bloom_when,
                         ))
 
             _grow(base_x, gy, base_angle, 0, main_length, stem_sw)
@@ -783,7 +983,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 sl = r_len / r_segs
                 nrx = rx + sl * math.cos(ra)
                 nry = ry + sl * math.sin(ra)
-                roots.append((rx, ry, nrx, nry, r_sw * (1 - rsi / r_segs * 0.6)))
+                roots.append((rx, ry, nrx, nry, r_sw * (1 - rsi / r_segs * 0.6), root_when))
                 rx, ry = nrx, nry
                 r_sw *= 0.92
                 if rng.random() < 0.2 and len(roots) < MAX_ROOTS:
@@ -794,7 +994,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                             break
                         bnrx = brx + 8 * math.cos(bra) + rng.uniform(-2, 2)
                         bnry = bry + 8 * math.sin(bra) + rng.uniform(-1, 1)
-                        roots.append((brx, bry, bnrx, bnry, r_sw * 0.4))
+                        roots.append((brx, bry, bnrx, bnry, r_sw * 0.4, root_when))
                         brx, bry = bnrx, bnry
 
     # Restore stable RNG for ambient elements (independent of n_visible)
@@ -857,6 +1057,13 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     # ══════════════════════════════════════════════════════════════
     P = []  # parts list
     P.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">')
+    if timeline_enabled:
+        P.append(
+            "<style>"
+            "@keyframes inkGardenReveal{0%{opacity:0}100%{opacity:var(--to,1)}}"
+            ".tl-reveal{opacity:0;animation:inkGardenReveal var(--dur,.9s) var(--ease,ease-out) var(--delay,0s) both}"
+            "</style>"
+        )
 
     # ── defs ──────────────────────────────────────────────────────
     P.append('<defs>')
@@ -964,6 +1171,40 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     # Vignette overlay — subtle edge darkening
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vignette)"/>')
 
+    # ── Atmospheric layers (morning mist + light rays) ─────────
+    # Morning mist: 3-4 blurred radial gradient ellipses at ground level
+    atmo_rng = np.random.default_rng(base_seed ^ 0xF0F0F0F0)
+    n_mist = atmo_rng.integers(3, 5)
+    for mi_atm in range(n_mist):
+        mist_id = f"mist{mi_atm}"
+        mist_cx = atmo_rng.uniform(80, WIDTH - 80)
+        mist_cy = GROUND_Y + atmo_rng.uniform(-30, 10)
+        mist_rx = atmo_rng.uniform(80, 180)
+        mist_ry = atmo_rng.uniform(20, 50)
+        mist_op = atmo_rng.uniform(0.04, 0.08)
+        mist_grad = make_radial_gradient(mist_id, '50%', '50%', '60%',
+            [('0%', '#f0f0f0', mist_op), ('50%', '#e8e8e8', mist_op * 0.5), ('100%', '#f5f0e6', 0.0)])
+        P.append(f'<defs>{mist_grad}</defs>')
+        P.append(f'<ellipse cx="{mist_cx:.0f}" cy="{mist_cy:.0f}" rx="{mist_rx:.0f}" ry="{mist_ry:.0f}" '
+                 f'fill="url(#{mist_id})"/>')
+
+    # Light rays: 2-3 diagonal linear gradient bands from upper-left
+    n_rays = atmo_rng.integers(2, 4)
+    for ray_i in range(n_rays):
+        ray_id = f"lightray{ray_i}"
+        # Diagonal band from upper-left toward lower-right
+        ray_x = atmo_rng.uniform(50, WIDTH * 0.5)
+        ray_y = atmo_rng.uniform(20, GROUND_Y * 0.4)
+        ray_w = atmo_rng.uniform(40, 100)
+        ray_h = atmo_rng.uniform(200, 500)
+        ray_op = 0.03
+        ray_rot = atmo_rng.uniform(20, 45)
+        ray_grad = make_linear_gradient(ray_id, '0', '0', '1', '1',
+            [('0%', '#fffbe8', ray_op), ('40%', '#fff8e0', ray_op * 0.6), ('100%', '#f5f0e6', 0.0)])
+        P.append(f'<defs>{ray_grad}</defs>')
+        P.append(f'<rect x="{ray_x:.0f}" y="{ray_y:.0f}" width="{ray_w:.0f}" height="{ray_h:.0f}" '
+                 f'fill="url(#{ray_id})" transform="rotate({ray_rot:.0f},{ray_x:.0f},{ray_y:.0f})"/>')
+
     # ── Underground strata ────────────────────────────────────────
     max((r.get("age_months", 6) for r in repos), default=12)
     n_strata = 1 + int(mat * 3)
@@ -1044,12 +1285,12 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     # ── Roots ─────────────────────────────────────────────────────
     root_colors = [oklch(0.42, 0.06, 35), oklch(0.40, 0.07, 30), oklch(0.44, 0.05, 40)]
     P.append('<g opacity="0.4">')
-    for ri_r, (rx1, ry1, rx2, ry2, rsw) in enumerate(roots):
+    for ri_r, (rx1, ry1, rx2, ry2, rsw, when) in enumerate(roots):
         rc = root_colors[ri_r % len(root_colors)]
         mx = (rx1 + rx2) / 2 + rng.uniform(-1.5, 1.5)
         my = (ry1 + ry2) / 2 + rng.uniform(-1.5, 1.5)
         P.append(f'<path d="M{rx1:.1f},{ry1:.1f} Q{mx:.1f},{my:.1f} {rx2:.1f},{ry2:.1f}" '
-                 f'fill="none" stroke="{rc}" stroke-width="{rsw:.1f}" stroke-linecap="round"/>')
+                 f'fill="none" stroke="{rc}" stroke-width="{rsw:.1f}" {_timeline_style(when, 0.4)} stroke-linecap="round"/>')
         # Root hairs at fine tips
         if rsw < 0.5 and rng.random() < 0.3:
             for _ in range(rng.integers(2, 5)):
@@ -1057,26 +1298,30 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 hl = rng.uniform(1.5, 4)
                 P.append(f'<line x1="{rx2:.1f}" y1="{ry2:.1f}" '
                          f'x2="{rx2 + hl * math.cos(ha):.1f}" y2="{ry2 + hl * math.sin(ha):.1f}" '
-                         f'stroke="{rc}" stroke-width="0.15" opacity="0.3"/>')
+                         f'stroke="{rc}" stroke-width="0.15" {_timeline_style(when, 0.3)}/>')
     P.append('</g>')
 
     # Mycorrhizal network — dashed threads with nutrient exchange nodes
     if len(repos) > 1 and forks > 0:
         P.append('<g opacity="0.12">')
         myco_nodes = []
-        for _ in range(min(15, forks)):
+        myco_count = min(15, forks)
+        for my_i in range(myco_count):
             mx1 = rng.uniform(60, WIDTH - 60)
             my1 = rng.uniform(GROUND_Y + 20, GROUND_Y + 70)
             mx2 = mx1 + rng.uniform(-90, 90)
             my2 = my1 + rng.uniform(-15, 15)
             mid_x = (mx1 + mx2) / 2
             mid_y = my1 + rng.uniform(8, 22)
+            my_when = _date_for_activity_fraction((my_i + 1) / (myco_count + 1))
             P.append(f'<path d="M{mx1:.0f},{my1:.0f} Q{mid_x:.0f},{mid_y:.0f} {mx2:.0f},{my2:.0f}" '
-                     f'fill="none" stroke="#a09060" stroke-width="0.5" stroke-dasharray="2 3"/>')
-            myco_nodes.append((mid_x, mid_y))
+                     f'fill="none" stroke="#a09060" stroke-width="0.5" stroke-dasharray="2 3" '
+                     f'{_timeline_style(my_when, 0.25, delay_offset_frac=-0.02, duration_scale=1.25, ease="linear")}/>')
+            myco_nodes.append((mid_x, mid_y, my_when))
         # Nutrient exchange nodes (tiny circles at junctions)
-        for nx, ny in myco_nodes[:8]:
-            P.append(f'<circle cx="{nx:.0f}" cy="{ny:.0f}" r="1.2" fill="#b0a060" opacity="0.5"/>')
+        for nx, ny, n_when in myco_nodes[:8]:
+            P.append(f'<circle cx="{nx:.0f}" cy="{ny:.0f}" r="1.2" fill="#b0a060" '
+                     f'{_timeline_style(n_when, 0.5, delay_offset_frac=0.01, duration_scale=0.8)}/>')
         P.append('</g>')
 
     # ── Ground surface ────────────────────────────────────────────
@@ -1289,12 +1534,42 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                      f'fill="none" stroke="#6a5a4a" stroke-width="{0.3 + bsz * 0.05:.2f}" '
                      f'opacity="{rng.uniform(0.06, 0.12):.2f}" stroke-linecap="round"/>')
 
-    # ── Plant shadow patches (cast shadows on ground) ────────────
+    # ── Plant shadow patches (stippled shadows on ground) ─────────
+    # Sun from upper-left → shadows offset toward lower-right
     for bx_s, by_s in plant_bases:
-        # Soft elliptical shadow beneath each plant
         shadow_w = 20 + rng.uniform(0, 15)
-        P.append(f'<ellipse cx="{bx_s + 5:.0f}" cy="{by_s + 2:.0f}" rx="{shadow_w:.0f}" ry="{shadow_w * 0.2:.0f}" '
-                 f'fill="#5a5030" opacity="{0.01 + mat * 0.04:.3f}"/>')
+        shadow_cx = bx_s + 5   # offset right (sun from left)
+        shadow_cy = by_s + 2   # offset down (sun from above)
+        n_stipple = max(30, min(50, int(30 + mat * 20)))
+        for _ in range(n_stipple):
+            # Distribute dots in elliptical region, biased toward lower-right
+            angle_s = rng.uniform(0, 2 * math.pi)
+            dist_s = rng.uniform(0, 1) ** 0.5  # sqrt for uniform area distribution
+            sx_s = shadow_cx + dist_s * shadow_w * math.cos(angle_s) + rng.uniform(0, 3)
+            sy_s = shadow_cy + dist_s * shadow_w * 0.2 * math.sin(angle_s) + rng.uniform(0, 2)
+            sr_s = rng.uniform(0.3, 0.8)
+            so_s = rng.uniform(0.05, 0.15)
+            P.append(f'<circle cx="{sx_s:.1f}" cy="{sy_s:.1f}" r="{sr_s:.1f}" '
+                     f'fill="#5a5030" opacity="{so_s:.3f}"/>')
+    # Branch-cast shadows to break fence-line symmetry and add depth
+    seg_shadow_budget = min(220, max(80, int(len(all_segs) * 0.35)))
+    shadow_step = max(1, len(all_segs) // max(1, seg_shadow_budget))
+    for si_shadow, (x1, y1, x2, y2, sw, _hue, depth, is_main, _bark_mat, when) in enumerate(all_segs[::shadow_step]):
+        if depth > 2 and not is_main:
+            continue
+        if max(y1, y2) < GROUND_Y - 140:
+            continue
+        proj = 4 + sw * 1.8 + depth * 1.2
+        skew = 1.5 + depth * 0.5
+        sx1, sy1 = x1 + proj, y1 + skew
+        sx2, sy2 = x2 + proj, y2 + skew
+        op_base = 0.04 + min(0.12, sw * 0.015) * (1.0 - min(0.75, depth * 0.12))
+        if si_shadow % 2 == 0:
+            P.append(
+                f'<path d="M{sx1:.1f},{sy1:.1f} Q{(sx1 + sx2) / 2 + 1.2:.1f},{(sy1 + sy2) / 2 + 1.0:.1f} {sx2:.1f},{sy2:.1f}" '
+                f'fill="none" stroke="#5f5536" stroke-width="{max(0.35, sw * 0.85):.2f}" stroke-linecap="round" '
+                f'{_timeline_style(when, op_base, delay_offset_frac=0.01, duration_scale=1.15, ease="linear")}/>'
+            )
 
     # ── Above ground: ink filter group ────────────────────────────
     P.append('<g filter="url(#ink)">')
@@ -1336,22 +1611,23 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
     # Stipple from monthly activity
     max_m = max(monthly.values()) if monthly else 100
-    for mkey, count in monthly.items():
+    for m_idx, (mkey, count) in enumerate(monthly.items()):
         intensity = count / max(1, max_m)
         mi_val = int(mkey) - 1 if mkey.isdigit() else 0
         angle = -math.pi / 2 + mi_val * 2 * math.pi / 12
         cx_m = CX + 200 * math.cos(angle)
         cy_m = min(CY - 80 + 180 * math.sin(angle), GROUND_Y - 30)
+        m_when = _month_key_date(str(mkey), m_idx)
         for _ in range(int(intensity * 30)):
             dx = cx_m + rng.normal(0, 50)
             dy = cy_m + rng.normal(0, 50)
             if dy > GROUND_Y - 5:
                 continue
             P.append(f'<circle cx="{dx:.0f}" cy="{dy:.0f}" r="{rng.uniform(0.15,0.5):.1f}" '
-                     f'fill="#c8bfa8" opacity="{0.06+intensity*0.12:.2f}"/>')
+                     f'fill="#c8bfa8" {_timeline_style(m_when, 0.06 + intensity * 0.12)}/>')
 
     # PASS 1: Main stems with rich bark texture
-    for x1, y1, x2, y2, sw, hue, depth, is_main, bark_mat in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, bark_mat, when in all_segs:
         if not is_main:
             continue
         # Main stroke — warm dark brown
@@ -1362,13 +1638,16 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         if sw > 3:
             # Shadow layer (darker, full width)
             P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{oklch(0.22, 0.07, hue)}" stroke-width="{sw:.1f}" opacity="0.9" stroke-linecap="round"/>')
+                     f'fill="none" stroke="{oklch(0.22, 0.07, hue)}" stroke-width="{sw:.1f}" '
+                     f'{_timeline_style(when, 0.9)} stroke-linecap="round"/>')
             # Core layer (current color, narrower)
             P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{color}" stroke-width="{sw*0.55:.1f}" opacity="0.55" stroke-linecap="round"/>')
+                     f'fill="none" stroke="{color}" stroke-width="{sw*0.55:.1f}" '
+                     f'{_timeline_style(when, 0.55)} stroke-linecap="round"/>')
         else:
             P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" opacity="0.85" stroke-linecap="round"/>')
+                     f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" '
+                     f'{_timeline_style(when, 0.85)} stroke-linecap="round"/>')
         # Highlight edge — subtle lighter line on one side
         if sw > 2.5:
             perp = math.atan2(y2 - y1, x2 - x1) + math.pi / 2
@@ -1376,7 +1655,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             P.append(f'<path d="M{x1 + hoff * math.cos(perp):.1f},{y1 + hoff * math.sin(perp):.1f} '
                      f'Q{mx + hoff * math.cos(perp):.1f},{my + hoff * math.sin(perp):.1f} '
                      f'{x2 + hoff * math.cos(perp):.1f},{y2 + hoff * math.sin(perp):.1f}" '
-                     f'fill="none" stroke="{color_light}" stroke-width="0.3" opacity="0.25"/>')
+                     f'fill="none" stroke="{color_light}" stroke-width="0.3" {_timeline_style(when, 0.25)}/>')
         # Bark texture — longitudinal grain lines, density driven by bark_mat
         # bark_mat: 0.0 = young (smooth bark) → 1.0 = old (deeply furrowed)
         bark_thresh = max(2.5, 3.5 - bark_mat * 1.0)  # young trees need thicker stems for bark
@@ -1397,7 +1676,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                              f'y1="{y1 + off * math.sin(perp) + jy1:.1f}" '
                              f'x2="{x2 + off * math.cos(perp) + jx2:.1f}" '
                              f'y2="{y2 + off * math.sin(perp) + jy2:.1f}" '
-                             f'stroke="{bark_c}" stroke-width="{line_w:.2f}" opacity="{grain_opacity:.2f}"/>')
+                             f'stroke="{bark_c}" stroke-width="{line_w:.2f}" '
+                             f'{_timeline_style(when, grain_opacity)}/>')
                 # Occasional knot mark — probability increases with bark maturity
                 knot_prob = 0.04 + bark_mat * 0.08
                 if seg_len > 15 and rng.random() < knot_prob and mat > 0.4:
@@ -1405,14 +1685,15 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     ky = (y1 + y2) / 2 + rng.uniform(-2, 2)
                     kr = sw * rng.uniform(0.15, 0.3) * (0.8 + bark_mat * 0.4)
                     P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr:.1f}" fill="none" '
-                             f'stroke="{bark_c}" stroke-width="{0.25 + bark_mat * 0.15:.2f}" opacity="{0.10 + bark_mat * 0.06:.2f}"/>')
+                             f'stroke="{bark_c}" stroke-width="{0.25 + bark_mat * 0.15:.2f}" '
+                             f'{_timeline_style(when, 0.10 + bark_mat * 0.06)}/>')
                     # Mature bark: add concentric ring inside knot
                     if bark_mat > 0.6 and kr > 1:
                         P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr * 0.55:.1f}" fill="none" '
-                                 f'stroke="{bark_c}" stroke-width="0.15" opacity="{0.06 + bark_mat * 0.04:.2f}"/>')
+                                 f'stroke="{bark_c}" stroke-width="0.15" {_timeline_style(when, 0.06 + bark_mat * 0.04)}/>')
 
     # Water droplet trails on thick stems
-    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat, when in all_segs:
         if is_main and sw > 3.5 and rng.random() < 0.04 and mat > 0.4 and len(P) - elem_count < MAX_ELEMENTS:
             seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if seg_len > 12:
@@ -1426,10 +1707,10 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     dr_t = 0.6 - di_t * 0.08
                     if dr_t > 0.2:
                         P.append(f'<circle cx="{trail_x + rng.uniform(-0.5, 0.5):.1f}" cy="{ty_t:.1f}" '
-                                 f'r="{dr_t:.1f}" fill="url(#dewGrad)" opacity="0.3"/>')
+                                 f'r="{dr_t:.1f}" fill="url(#dewGrad)" {_timeline_style(when, 0.3)}/>')
 
     # PASS 2: Secondary branches
-    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat in all_segs:
+    for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat, when in all_segs:
         if is_main:
             continue
         d_frac = depth / 6
@@ -1438,7 +1719,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         mx = (x1 + x2) / 2 + rng.uniform(-2, 2)
         my = (y1 + y2) / 2 + rng.uniform(-2, 2)
         P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                 f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" opacity="{op:.2f}" stroke-linecap="round"/>')
+                 f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" {_timeline_style(when, op)} stroke-linecap="round"/>')
 
     # PASS 3: Tendrils with leaf buds
     for pts in tendrils:
@@ -1470,54 +1751,86 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     for leaf_tuple in leaves[:MAX_LEAVES]:
         if not budget_ok():
             break
-        lx, ly, la, ls, lh, has_vein, leaf_shape = leaf_tuple
+        lx, ly, la, ls, lh, has_vein, leaf_shape, leaf_when = leaf_tuple
+        if ls > 3.2 and budget_ok():
+            shx = lx + 2.0 + math.cos(la) * 0.8
+            shy = ly + 1.8 + math.sin(la) * 0.6
+            stx = shx + ls * 0.82 * math.cos(la)
+            sty = shy + ls * 0.82 * math.sin(la)
+            sperp = la + math.pi / 2
+            sbulge = ls * 0.22
+            sc1x = (shx + stx) / 2 + sbulge * math.cos(sperp)
+            sc1y = (shy + sty) / 2 + sbulge * math.sin(sperp)
+            sc2x = (shx + stx) / 2 - sbulge * 0.85 * math.cos(sperp)
+            sc2y = (shy + sty) / 2 - sbulge * 0.85 * math.sin(sperp)
+            P.append(
+                f'<path d="M{shx:.1f},{shy:.1f} Q{sc1x:.1f},{sc1y:.1f} {stx:.1f},{sty:.1f} '
+                f'Q{sc2x:.1f},{sc2y:.1f} {shx:.1f},{shy:.1f}" fill="#574c33" '
+                f'{_timeline_style(leaf_when, 0.07, delay_offset_frac=-0.015, duration_scale=1.2, ease="linear")}/>'
+            )
+        P.append(f'<g {_timeline_style(leaf_when, 1.0, delay_offset_frac=0.004 * math.sin(la), duration_scale=0.95)}>')
         _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch)
+        if has_vein and ls > 5 and budget_ok():
+            tip_x = lx + ls * math.cos(la)
+            tip_y = ly + ls * math.sin(la)
+            P.append(
+                f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
+                f'stroke="#f5efdf" stroke-width="0.16" '
+                f'{_timeline_style(leaf_when, 0.16, delay_offset_frac=0.02, duration_scale=0.7)}/>'
+            )
+        P.append('</g>')
 
     # PASS 5: Buds with sepals
-    for bx, by, bs, bh in buds:
+    for bx, by, bs, bh, when in buds:
         bud_rot = rng.uniform(-30, 30)
         bud_c = oklch(0.58, 0.18, bh)
         sepal_c = oklch(0.42, 0.14, (bh + 120) % 360)
         # Sepals — small protective leaves wrapping the bud
         for si_s in range(2):
             sa_s = bud_rot + (si_s - 0.5) * 40
-            P.append(f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" '
-                     f'fill="{sepal_c}" opacity="0.3" '
-                     f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>')
+        P.append(f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" '
+                 f'fill="{sepal_c}" {_timeline_style(when, 0.3)} '
+                 f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>')
         # Bud body
         P.append(f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.4:.1f}" ry="{bs:.1f}" '
-                 f'fill="{bud_c}" opacity="0.5" stroke="{oklch(0.45, 0.14, bh)}" stroke-width="0.2" '
+                 f'fill="{bud_c}" {_timeline_style(when, 0.5)} stroke="{oklch(0.45, 0.14, bh)}" stroke-width="0.2" '
                  f'transform="rotate({bud_rot:.0f},{bx:.1f},{by:.1f})"/>')
 
     # PASS 6: Multi-layer blooms with species-specific types (capped)
     for bloom_tuple in blooms[:MAX_BLOOMS]:
         if not budget_ok():
             break
-        bx, by, bs, bh, n_petals, petal_layers, bloom_type = bloom_tuple
+        bx, by, bs, bh, n_petals, petal_layers, bloom_type, when = bloom_tuple
+        P.append(
+            f'<ellipse cx="{bx + 2.2:.1f}" cy="{by + bs * 0.58:.1f}" rx="{bs * 0.55:.1f}" ry="{max(1.2, bs * 0.18):.1f}" '
+            f'fill="#61563a" {_timeline_style(when, 0.08, delay_offset_frac=-0.012, duration_scale=1.25, ease="linear")}/>'
+        )
+        P.append(f'<g {_timeline_style(when, 1.0, delay_offset_frac=0.008, duration_scale=0.9)}>')
         _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch)
         # Bloom center glow overlay
         P.append(f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs*0.6:.1f}" '
-                 f'fill="url(#petalGlow)" opacity="0.5"/>')
+                 f'fill="url(#petalGlow)" {_timeline_style(when, 0.5, delay_offset_frac=0.025, duration_scale=0.75)}/>')
+        P.append('</g>')
 
     # PASS 7: Berries with calyx and richer highlights
-    for bi_idx, (bx, by, bs, bh) in enumerate(berries):
+    for bi_idx, (bx, by, bs, bh, when) in enumerate(berries):
         if not budget_ok():
             break
         # Tiny stem + calyx (only on first 20 berries to save budget)
         if bi_idx < 20:
             P.append(f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" x2="{bx:.1f}" y2="{by - bs * 1.5:.1f}" '
-                     f'stroke="#6a5a3a" stroke-width="0.3" opacity="0.35"/>')
+                     f'stroke="#6a5a3a" stroke-width="0.3" {_timeline_style(when, 0.35)}/>')
             for ci_b in range(3):
                 ca_b = ci_b * 2 * math.pi / 3 - math.pi / 2
                 P.append(f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" '
                          f'x2="{bx + bs * 0.3 * math.cos(ca_b):.1f}" y2="{by - bs + bs * 0.3 * math.sin(ca_b):.1f}" '
-                         f'stroke="#5a7a3a" stroke-width="0.2" opacity="0.3"/>')
+                         f'stroke="#5a7a3a" stroke-width="0.2" {_timeline_style(when, 0.3)}/>')
         # Berry body
         P.append(f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs:.1f}" fill="{oklch(0.42, 0.24, bh)}" '
-                 f'opacity="0.6" stroke="{oklch(0.33, 0.18, bh)}" stroke-width="0.3"/>')
+                 f'{_timeline_style(when, 0.6)} stroke="{oklch(0.33, 0.18, bh)}" stroke-width="0.3"/>')
         # Highlight
         P.append(f'<circle cx="{bx - bs * 0.25:.1f}" cy="{by - bs * 0.25:.1f}" r="{bs * 0.28:.1f}" '
-                 f'fill="#fff" opacity="0.25"/>')
+                 f'fill="#fff" {_timeline_style(when, 0.25)}/>')
 
     P.append('</g>')  # end ink filter
 
@@ -1764,21 +2077,21 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
     # ── Labels (botanical plate annotation with halos) ────────────
     P.append('<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
-    for li, (lx, ly, text, ax, ay) in enumerate(labels):
+    for li, (lx, ly, text, ax, ay, when) in enumerate(labels):
         # Dashed leader line with small arrowhead
         P.append(f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
-                 f'stroke="#a09070" stroke-width="0.35" opacity="0.3" stroke-dasharray="1.5 2"/>')
+                 f'stroke="#a09070" stroke-width="0.35" {_timeline_style(when, 0.3)} stroke-dasharray="1.5 2"/>')
         # Anchor dot — small circle at plant base
         P.append(f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="1.2" fill="none" '
-                 f'stroke="#a09070" stroke-width="0.4" opacity="0.3"/>')
-        P.append(f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="0.4" fill="#a09070" opacity="0.3"/>')
+                 f'stroke="#a09070" stroke-width="0.4" {_timeline_style(when, 0.3)}/>')
+        P.append(f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="0.4" fill="#a09070" {_timeline_style(when, 0.3)}/>')
         # Label text with paint-order halo for readability
         P.append(f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-style="italic" '
-                 f'opacity="0.55" paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2.5" '
+                 f'{_timeline_style(when, 0.55)} paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2.5" '
                  f'stroke-linejoin="round">{text}</text>')
         # Plate number annotation (small, upright)
         P.append(f'<text x="{lx:.0f}" y="{ly + 9:.0f}" text-anchor="middle" font-size="5" '
-                 f'opacity="0.3" font-style="normal" paint-order="stroke fill" stroke="#f5f0e6" '
+                 f'{_timeline_style(when, 0.3)} font-style="normal" paint-order="stroke fill" stroke="#f5f0e6" '
                  f'stroke-width="2" stroke-linejoin="round">Fig. {li + 1}</text>')
     P.append('</g>')
 

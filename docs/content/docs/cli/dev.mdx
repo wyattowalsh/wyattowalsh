@@ -14,7 +14,7 @@ uv run readme dev [COMMAND] [OPTIONS]
 | Command | Purpose |
 |---|---|
 | `install` | Sync all dependencies from the lockfile (`uv sync --all-groups`) |
-| `format` | Format code with black, isort, and autoflake |
+| `format` | Format code with `ruff check --fix` and `ruff format` |
 | `lint` | Lint with ruff, pylint, and mypy |
 | `test` | Run the pytest suite |
 | `clean` | Remove caches, build artifacts, and generated files |
@@ -35,10 +35,9 @@ Runs `uv sync --all-groups` to install all dependency groups from the lockfile.
 uv run readme dev format
 ```
 
-Runs three formatters in sequence on `scripts/` and `tests/`:
-1. `black` — code formatting
-2. `isort` — import sorting
-3. `autoflake` — remove unused imports and variables
+Runs two Ruff commands in sequence on `scripts/` and `tests/`:
+1. `uv run -- python -m ruff check --fix scripts tests`
+2. `uv run -- python -m ruff format scripts tests`
 
 ## `dev lint`
 

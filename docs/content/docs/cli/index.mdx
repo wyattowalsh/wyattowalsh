@@ -55,7 +55,7 @@ uv run python -m scripts.cli [COMMAND] [OPTIONS]
 | Subcommand | Description |
 |---|---|
 | `install` | Sync all dependencies |
-| `format` | Auto-format with black, isort, autoflake |
+| `format` | Auto-format with `ruff check --fix` and `ruff format` |
 | `lint` | Lint with ruff, pylint, mypy |
 | `test` | Run pytest suite |
 | `clean` | Remove caches and artifacts |

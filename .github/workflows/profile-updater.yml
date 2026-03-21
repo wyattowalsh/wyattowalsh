@@ -99,14 +99,14 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --techs-path .github/assets/topics.md \
-            --output-path .github/assets/img/wordcloud_by_topic.svg
+            --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
 
       - name: Generate Word Cloud by Language
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --techs-path .github/assets/languages.md \
-            --output-path .github/assets/img/wordcloud_by_language.svg
+            --output-path .github/assets/img/wordcloud_wordle_by_languages.svg
 
       - name: Generate Banner
         run: uv run python -m scripts.cli generate banner --config-path config.yaml
@@ -417,11 +417,15 @@ jobs:
           uv run python -m scripts.cli generate animated \
             --history-path "$RUNNER_TEMP/history.json"
 
-      - name: Commit generative artwork
+      - name: Generate living-art outputs (timeline SVG + GIF compatibility)
+        run: |
+          uv run python -m scripts.cli generate living-art
+
+      - name: Commit generated art outputs
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
-          commit_message: "art: regenerate event-driven and animated artwork"
-          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg"
+          commit_message: "art: regenerate event-driven, animated, and living-art outputs"
+          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

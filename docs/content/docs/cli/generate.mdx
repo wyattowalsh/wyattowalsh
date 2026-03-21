@@ -15,8 +15,8 @@ uv run python -m scripts.cli generate ENTITY_TYPE [OPTIONS]
 
 | Option | Applies to | Notes |
 |---|---|---|
-| `--config-path` | Most | Path to `config.yaml` (default: `~/.w4w-config.yaml`) |
-| `--output-path` | banner, word_cloud | Override config output path |
+| `--config-path` | Most | Path to `config.yaml` (default: `./config.yaml`) |
+| `--output-path` | Most generators | Override the command's output path |
 
 ## `generate banner`
 
@@ -24,7 +24,7 @@ Generates a light-mode SVG banner and automatically derives a dark-mode variant.
 
 ```bash
 uv run python -m scripts.cli generate banner \
-  --config-path config.yaml \
+  --config-path ./config.yaml \
   --output-path .github/assets/img/banner.svg \
   --title "My Name" \
   --subtitle "Developer" \
@@ -38,15 +38,15 @@ uv run python -m scripts.cli generate banner \
 | `--subtitle` | Overrides `banner_settings.subtitle` |
 | `--width` | Overrides `banner_settings.width` |
 | `--height` | Overrides `banner_settings.height` |
-| `--optimize/--no-optimize` | Toggle SVGO post-processing |
+| `--optimize-banner/--no-optimize-banner` | Toggle SVGO post-processing |
 
 CLI options take precedence over config values. Calls `generate_banner(cfg=BannerConfig(...))` twice — once for light, once for dark.
 
-## `generate qr_code`
+## `generate qr`
 
 ```bash
-uv run python -m scripts.cli generate qr_code \
-  --config-path config.yaml \
+uv run python -m scripts.cli generate qr \
+  --config-path ./config.yaml \
   --output-path .github/assets/img/qr.png \
   --qr-scale 25 \
   --qr-background-path .github/assets/img/icon.svg
@@ -57,22 +57,22 @@ uv run python -m scripts.cli generate qr_code \
 | `--qr-scale` | Module size in pixels |
 | `--qr-background-path` | SVG to embed behind QR modules |
 
-## `generate word_cloud`
+## `generate word-cloud`
 
 ```bash
-uv run python -m scripts.cli generate word_cloud \
-  --config-path config.yaml \
-  --techs-path .github/assets/topics.md \
-  --output-path .github/assets/img/wordcloud_by_topic.svg \
-  --prompt "Focus on ML and distributed systems"
+uv run python -m scripts.cli generate word-cloud \
+  --config-path ./config.yaml \
+  --from-topics-md \
+  --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
 ```
 
 | Option | Notes |
 |---|---|
-| `--techs-path` | Markdown file with starred-repo data (topics or languages) |
+| `--techs-path` | Custom markdown file with technology data |
 | `--output-path` | Output SVG path |
 | `--prompt` | Optional LLM prompt for keyword curation |
-| `--topics/--languages` | Toggle between topics or languages word cloud modes |
+| `--from-topics-md` | Generate from `.github/assets/topics.md` |
+| `--from-languages-md` | Generate from `.github/assets/languages.md` |
 
 ## `generate generative`
 
@@ -96,6 +96,8 @@ uv run python -m scripts.cli generate animated \
 
 Produces `animated-activity.svg`, `animated-activity-dark.svg`, `animated-community.svg`, `animated-community-dark.svg`.
 
+`scripts/animated_art.py` is the CLI entry point and a backward-compatible shim over the generators in `scripts/art/*`.
+
 ## `generate skills`
 
 Renders `skills.yaml` into shields.io badge rows and injects them into the README.
@@ -105,11 +107,11 @@ uv run python -m scripts.cli generate skills \
   --skills-path skills.yaml
 ```
 
-## `generate readme`
+## `generate readme-sections`
 
 Assembles all dynamic README sections and writes them to `README.md` via marker blocks.
 
 ```bash
-uv run python -m scripts.cli generate readme \
-  --config-path config.yaml
+uv run python -m scripts.cli generate readme-sections \
+  --config-path ./config.yaml
 ```

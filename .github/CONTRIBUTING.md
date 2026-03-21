@@ -25,12 +25,14 @@ Before you start working on an issue, please leave a comment to let others know 
     git clone https://github.com/YOUR_USERNAME/wyattowalsh.git
     cd wyattowalsh
     ```
-3.  **Set up the Python environment using `uv`:**
-    Refer to the main `README.md` and `Makefile` for instructions on setting up the development environment with `uv`. Typically, this involves:
+3.  **Set up the Python environment using `uv` (CLI-first workflow):**
+    Use `uv` exclusively, then run project commands through the `readme` CLI:
     ```bash
-    uv venv  # Create virtual environment
-    uv sync  # Install dependencies
-    # or simply `make install` or `make venv`
+    uv sync --all-groups
+    uv run readme --help
+    # optional convenience wrappers:
+    # make install
+    # make help
     ```
 4.  **Create a new branch** for your changes:
     ```bash
@@ -41,16 +43,18 @@ Before you start working on an issue, please leave a comment to let others know 
 
 ### Making Changes
 
-*   Ensure your code adheres to the project's coding standards. Use the linting and formatting tools provided:
+*   Ensure your code adheres to the project's coding standards. Prefer CLI commands directly (Makefile targets are convenience wrappers):
     ```bash
-    make format
-    make lint
+    uv run readme dev format
+    uv run readme dev lint
+    # or: make format && make lint
     ```
 *   Consult the [Development Notes](https://readme.w4w.dev/notes) for any specific guidelines related to the area you are working on.
 *   Write clear, concise, and well-documented code.
 *   Add tests for any new features or bug fixes. Ensure all tests pass:
     ```bash
-    make test
+    uv run readme dev test
+    # or: make test
     ```
 *   Update documentation if your changes require it.
 *   Ensure your commit messages are clear and descriptive. We loosely follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.

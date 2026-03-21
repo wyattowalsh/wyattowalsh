@@ -9,6 +9,7 @@ Light theme on cream paper.
 """
 from __future__ import annotations
 
+from datetime import timedelta
 import math
 
 import numpy as np
@@ -17,7 +18,10 @@ from .shared import (
     WIDTH, HEIGHT, LANG_HUES,
     seed_hash, hex_frac, oklch, Noise2D,
     compute_maturity,
+    contributions_monthly_to_daily_series,
+    map_date_to_loop_delay,
     make_radial_gradient,
+    normalize_timeline_window,
 )
 
 # Map margins
@@ -69,15 +73,24 @@ def _grid_to_map(gx: float, gy: float, cell_w: float, cell_h: float):
 
 
 # Precomputed once at module level — oklch() is pure, args are constants
+# Pure OKLCH ramp: lightness marches 0.45→0.95, hue blue(240)→green(140)→brown(50)→gray(200)
 _TOPO_STOPS = [
-    (0.00, "#a8d4f0"), (0.06, "#c6ecff"), (0.10, "#acd0a5"),
-    (0.16, oklch(0.58, 0.17, 140)), (0.22, oklch(0.62, 0.15, 120)),
-    (0.30, oklch(0.66, 0.13, 100)),
-    (0.38, "#d1d7ab"), (0.46, "#e8e1b6"), (0.54, "#efebc0"),
-    (0.62, "#e4cf9c"), (0.70, "#d4b896"),
-    (0.78, oklch(0.72, 0.06, 65)), (0.86, oklch(0.80, 0.04, 55)),
-    (0.92, oklch(0.87, 0.02, 200)), (0.96, oklch(0.93, 0.01, 200)),
-    (1.00, "#f5f4f2"),
+    (0.00, oklch(0.45, 0.10, 240)),   # deep water — dark blue
+    (0.06, oklch(0.52, 0.09, 230)),   # shallow water — lighter blue
+    (0.10, oklch(0.55, 0.12, 180)),   # shoreline — blue-green transition
+    (0.16, oklch(0.58, 0.17, 140)),   # lowland — green
+    (0.22, oklch(0.62, 0.15, 120)),   # low hills — yellow-green
+    (0.30, oklch(0.66, 0.13, 100)),   # mid-hills — warm green
+    (0.38, oklch(0.70, 0.11, 90)),    # mid-elevation — olive
+    (0.46, oklch(0.74, 0.09, 75)),    # upper mid — warm tan
+    (0.54, oklch(0.77, 0.08, 65)),    # highlands — light tan
+    (0.62, oklch(0.80, 0.07, 55)),    # high terrain — warm brown
+    (0.70, oklch(0.82, 0.06, 50)),    # upper highlands — pale brown
+    (0.78, oklch(0.85, 0.05, 60)),    # sub-alpine — light brown
+    (0.86, oklch(0.88, 0.03, 100)),   # alpine — pale olive-gray
+    (0.92, oklch(0.91, 0.02, 200)),   # near-summit — cool gray
+    (0.96, oklch(0.93, 0.01, 200)),   # summit ridge — light gray
+    (1.00, oklch(0.95, 0.005, 200)),  # snow peaks — near-white gray
 ]
 
 
@@ -166,16 +179,54 @@ def _point_to_segment_distance(px: float, py: float, p1: tuple, p2: tuple) -> fl
     return math.sqrt((px - proj_x) ** 2 + (py - proj_y) ** 2)
 
 
-def generate(metrics: dict, *, seed: str | None = None, maturity: float | None = None,
-             chrome_maturity: float | None = None) -> str:
+def _chaikin_smooth(points: list[tuple[float, float]], iterations: int = 1, closed: bool = False) -> list[tuple[float, float]]:
+    """Deterministic polyline smoothing for less angular contour and river curves."""
+    if len(points) < 3 or iterations <= 0:
+        return points
+    smoothed = points[:]
+    for _ in range(iterations):
+        if len(smoothed) < 3:
+            break
+        nxt: list[tuple[float, float]] = []
+        if not closed:
+            nxt.append(smoothed[0])
+        seg_count = len(smoothed) if closed else len(smoothed) - 1
+        for i in range(seg_count):
+            p0 = smoothed[i]
+            p1 = smoothed[(i + 1) % len(smoothed)]
+            qx = 0.75 * p0[0] + 0.25 * p1[0]
+            qy = 0.75 * p0[1] + 0.25 * p1[1]
+            rx = 0.25 * p0[0] + 0.75 * p1[0]
+            ry = 0.25 * p0[1] + 0.75 * p1[1]
+            nxt.append((qx, qy))
+            nxt.append((rx, ry))
+        if not closed:
+            nxt.append(smoothed[-1])
+        smoothed = nxt
+    return smoothed
+
+
+def generate(
+    metrics: dict,
+    *,
+    seed: str | None = None,
+    maturity: float | None = None,
+    chrome_maturity: float | None = None,
+    timeline: bool = True,
+    loop_duration: float = 30.0,
+    reveal_fraction: float = 0.93,
+) -> str:
     mat = maturity if maturity is not None else compute_maturity(metrics)
     chrome_mat = chrome_maturity if chrome_maturity is not None else mat
+    timeline_enabled = bool(timeline and loop_duration > 0)
+    growth_mat = 1.0 if timeline_enabled else mat
+    chrome_mat = 1.0 if timeline_enabled else chrome_mat
 
     def _fade(start: float, full: float) -> float:
         """Smooth 0→1 ramp between start and full maturity."""
-        return max(0.0, min(1.0, (mat - start) / max(0.001, full - start)))
+        return max(0.0, min(1.0, (growth_mat - start) / max(0.001, full - start)))
 
-    h = seed if seed is not None else seed_hash(metrics)
+    h = seed_hash({"seed": seed}) if seed is not None else seed_hash(metrics)
     rng = np.random.default_rng(int(h[:8], 16))
     noise = Noise2D(seed=int(h[8:16], 16))
     noise2 = Noise2D(seed=int(h[16:24], 16))
@@ -189,14 +240,86 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     stars = metrics.get("stars", 0)
     metrics.get("network_count", 0)
 
-    grid = 180
+    def _repo_date(repo: dict) -> str | None:
+        for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
+            val = repo.get(key)
+            if isinstance(val, str) and val.strip():
+                if len(val) >= 10:
+                    return val[:10]
+                return val
+        return None
+
+    timeline_window = normalize_timeline_window(
+        [
+            {"date": _repo_date(repo)}
+            for repo in repos
+            if isinstance(repo, dict) and _repo_date(repo)
+        ],
+        {
+            "account_created": metrics.get("account_created"),
+            "repos": repos,
+            "contributions_monthly": monthly,
+        },
+        fallback_days=365,
+    )
+    daily_series = contributions_monthly_to_daily_series(
+        monthly,
+        reference_year=timeline_window[1].year,
+    )
+    sorted_daily = sorted(daily_series.items(), key=lambda kv: kv[0])
+    total_daily = sum(max(0, int(v)) for _, v in sorted_daily)
+
+    def _date_for_activity_fraction(frac: float) -> str:
+        frac = max(0.0, min(1.0, frac))
+        if total_daily <= 0 or not sorted_daily:
+            start, end = timeline_window
+            span = max((end - start).days, 1)
+            day_offset = int(round(frac * span))
+            return (start + timedelta(days=day_offset)).isoformat()
+        threshold = frac * total_daily
+        running = 0.0
+        for day, count in sorted_daily:
+            running += max(0, int(count))
+            if running >= threshold:
+                return day
+        return sorted_daily[-1][0]
+
+    def _month_key_date(month_key: str, idx: int) -> str:
+        mk = str(month_key).strip()
+        if len(mk) == 7 and mk[4] == "-":
+            return f"{mk}-01"
+        if mk.isdigit():
+            month_n = max(1, min(12, int(mk)))
+            return f"{timeline_window[1].year:04d}-{month_n:02d}-01"
+        approx_month = 1 + (idx % 12)
+        return f"{timeline_window[1].year:04d}-{approx_month:02d}-01"
+
+    def _timeline_style(when: str, opacity: float, cls: str = "tl-reveal") -> str:
+        if not timeline_enabled:
+            return f'opacity="{opacity:.2f}"'
+        delay = map_date_to_loop_delay(
+            when,
+            timeline_window,
+            duration=loop_duration,
+            reveal_fraction=reveal_fraction,
+        )
+        return (
+            f'class="{cls}" '
+            f'style="--delay:{delay:.3f}s;--to:{max(0.0, min(1.0, opacity)):.3f};'
+            f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" data-when="{when}"'
+        )
+
+    grid = 200
     elevation = np.zeros((grid, grid))
 
     # ── 1. Subtle base terrain noise ───────────────────────────────
     terrain_oct = max(3, min(7, 3 + total_commits // 6000))
     for gy in range(grid):
         for gx in range(grid):
-            elevation[gy, gx] = noise.fbm(gx / grid * 6, gy / grid * 6, terrain_oct) * 0.08
+            base_terrain = noise.fbm(gx / grid * 6, gy / grid * 6, terrain_oct) * 0.08
+            macro_relief = noise2.fbm(gx / grid * 2.2 + 13.0, gy / grid * 2.2 + 7.0, 3) * 0.06
+            ridge_field = abs(noise2.fbm(gx / grid * 9.0 + 91.0, gy / grid * 9.0 + 37.0, 2)) * 0.02
+            elevation[gy, gx] = base_terrain + macro_relief + ridge_field
 
     # ── 2. Repos as PRIMARY terrain features (distinct hills) ──────
     # Relative scaling: normalize to this profile's own data range
@@ -245,7 +368,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
         # Language-specific terrain texture on this hill
         lang = repo.get("language")
-        lang_seed = hash(str(lang)) & 0xFFFF
+        lang_seed = int(seed_hash({"language": str(lang)})[:4], 16)
         tex_freq, tex_amp = LANG_TERRAIN.get(lang, (10.0, 0.05))
 
         y_lo = max(0, int((rcy - 3 * sigma) * grid))
@@ -259,7 +382,8 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 base_gaussian = peak_h * math.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma))
                 # Language-specific texture frequency and amplitude
                 texture = noise.noise(fx * tex_freq + lang_seed, fy * tex_freq) * tex_amp * base_gaussian
-                elevation[gy, gx] += base_gaussian + texture
+                ridge_tex = abs(noise2.noise((fx + lang_seed * 1e-4) * (tex_freq * 0.7), fy * (tex_freq * 0.9))) * 0.018
+                elevation[gy, gx] += base_gaussian + texture + ridge_tex * base_gaussian
 
         repo_positions.append((rcx, rcy, repo))
 
@@ -304,7 +428,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             elevation[gy, gx] += central_height * math.exp(-(dx * dx + dy * dy) / (2 * central_sigma * central_sigma))
 
     # ── 5. River valleys from saddle points between major peaks ────
-    n_rivers = max(1, min(5, forks // 5))
+    n_rivers = max(2, min(8, 2 + forks // 4))
     river_paths = []
     # Sort repos by peak height to find top peaks for saddle-point river starts
     sorted_repos = sorted(repo_positions, key=lambda rp: rp[2].get("stars", 0), reverse=True)
@@ -329,14 +453,14 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     for rvi in range(n_rivers):
         rx, ry = river_starts[rvi]
         rpts = [(rx, ry)]
-        for _ in range(60):
+        for _ in range(80):
             gxi = min(grid - 2, max(1, int(rx * grid)))
             gyi = min(grid - 2, max(1, int(ry * grid)))
             dedx = (elevation[gyi, gxi + 1] - elevation[gyi, gxi - 1]) / 2
             dedy = (elevation[gyi + 1, gxi] - elevation[gyi - 1, gxi]) / 2
             nv = noise2.noise(rx * 8 + rvi * 10, ry * 8) * 0.3
-            rx += -dedx * 0.8 + nv * 0.02
-            ry += -dedy * 0.8 + noise2.noise(rx * 5, ry * 5 + rvi * 5) * 0.02
+            rx += -dedx * 0.9 + nv * 0.022
+            ry += -dedy * 0.9 + noise2.noise(rx * 5, ry * 5 + rvi * 5) * 0.022
             rx = max(0.02, min(0.98, rx))
             ry = max(0.02, min(0.98, ry))
             rpts.append((rx, ry))
@@ -349,7 +473,30 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                     d = math.sqrt(dy * dy + dx2 * dx2)
                     if d < 3:
                         elevation[yi, xi] -= 0.03 * (1 - d / 3)
-        river_paths.append(rpts)
+        main_path = _chaikin_smooth(rpts, iterations=2)
+        river_paths.append(main_path)
+
+        # Tributaries: branch from upper reaches and merge downstream.
+        trib_count = 1 + (1 if forks > 20 else 0) + (1 if contributions > 1200 else 0)
+        branch_origin_max = max(6, len(main_path) // 3)
+        for tbi in range(min(3, trib_count)):
+            bidx = 3 + int((tbi + 1) * branch_origin_max / (min(3, trib_count) + 1))
+            if bidx >= len(main_path):
+                continue
+            brx, bry = main_path[bidx]
+            tpts = [(brx, bry)]
+            for _ in range(24):
+                gxi = min(grid - 2, max(1, int(brx * grid)))
+                gyi = min(grid - 2, max(1, int(bry * grid)))
+                dedx = (elevation[gyi, gxi + 1] - elevation[gyi, gxi - 1]) / 2
+                dedy = (elevation[gyi + 1, gxi] - elevation[gyi - 1, gxi]) / 2
+                nudge = noise2.noise(brx * 12 + 17 * (tbi + 1), bry * 12 + 11 * (rvi + 1))
+                brx += -dedx * 0.55 + nudge * 0.012
+                bry += -dedy * 0.55 + noise2.noise(brx * 7, bry * 7 + 9 * (tbi + 1)) * 0.01
+                brx = max(0.02, min(0.98, brx))
+                bry = max(0.02, min(0.98, bry))
+                tpts.append((brx, bry))
+            river_paths.append(_chaikin_smooth(tpts, iterations=1))
 
     # Normalize
     e_min, e_max = elevation.min(), elevation.max()
@@ -379,8 +526,11 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
 
     # Hillshade
     hillshade = np.zeros((grid, grid))
+    relief = np.zeros((grid, grid))
     sun_az = math.radians(315)
-    sun_alt = math.radians(45)
+    sun_alt = math.radians(32)
+    sun_az2 = math.radians(36)
+    sun_alt2 = math.radians(18)
     for gy in range(1, grid - 1):
         for gx in range(1, grid - 1):
             dzdx = (elevation[gy, gx + 1] - elevation[gy, gx - 1]) / 2
@@ -388,13 +538,31 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             slope = math.atan(math.sqrt(dzdx ** 2 + dzdy ** 2) * 5)
             aspect = math.atan2(-dzdy, dzdx)
             hs = math.cos(sun_alt) * math.cos(slope) + math.sin(sun_alt) * math.sin(slope) * math.cos(sun_az - aspect)
-            hillshade[gy, gx] = max(0, min(1, (hs + 1) / 2))
+            hs2 = math.cos(sun_alt2) * math.cos(slope) + math.sin(sun_alt2) * math.sin(slope) * math.cos(sun_az2 - aspect)
+            hillshade[gy, gx] = max(0, min(1, 0.68 * ((hs + 1) / 2) + 0.32 * ((hs2 + 1) / 2)))
+            curvature = abs(
+                elevation[gy, gx + 1]
+                + elevation[gy, gx - 1]
+                + elevation[gy + 1, gx]
+                + elevation[gy - 1, gx]
+                - 4 * elevation[gy, gx]
+            )
+            relief[gy, gx] = max(0.0, min(1.0, curvature * 18.0 + math.sqrt(dzdx * dzdx + dzdy * dzdy) * 6.0))
 
     # ══════════════════════════════════════════════════════════════
     # BUILD SVG
     # ══════════════════════════════════════════════════════════════
     P = []
     P.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">')
+    if timeline_enabled:
+        P.append(
+            "<style>"
+            "@keyframes topoReveal{0%{opacity:0}100%{opacity:var(--to,1)}}"
+            ".tl-reveal{opacity:0;animation:topoReveal .8s ease-out var(--delay,0s) both}"
+            ".tl-soft{animation-duration:1.15s}"
+            ".tl-crisp{animation-duration:.65s}"
+            "</style>"
+        )
 
     P.append('<defs>')
     # Paper texture filter
@@ -493,13 +661,16 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             g_c = int(c[3:5], 16)
             b_c = int(c[5:7], 16)
             sf = 0.30 + hs * 0.95
+            rf = relief[min(gy, grid - 1), min(gx, grid - 1)]
+            sf *= 0.94 + rf * 0.26
             r_c = max(0, min(255, int(r_c * sf)))
             g_c = max(0, min(255, int(g_c * sf)))
             b_c = max(0, min(255, int(b_c * sf)))
             mx, my = _grid_to_map(gx, gy, cell_w, cell_h)
-            elev_op = min(0.8, 0.1 + mat * 1.5)
+            elev_op = min(0.8, 0.1 + growth_mat * 1.5)
+            elev_when = _date_for_activity_fraction(e)
             P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{cell_w*fill_step+.5:.1f}" height="{cell_h*fill_step+.5:.1f}" '
-                     f'fill="#{r_c:02x}{g_c:02x}{b_c:02x}" opacity="{elev_op:.2f}"/>')
+                     f'fill="#{r_c:02x}{g_c:02x}{b_c:02x}" {_timeline_style(elev_when, elev_op, "tl-reveal tl-soft")}/>')
 
     # ── Water + vegetation overlays ───────────────────────────────
     # Biome type → SVG pattern id mapping
@@ -524,7 +695,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             sw, sh = cell_w * 6, cell_h * 6
             fx_norm, fy_norm = gx / grid, gy / grid
 
-            if 0.20 < e < 0.50:
+            if 0.10 < e < 0.93:
                 # Find nearest repo peak to determine biome-specific vegetation
                 nearest_biome = "mixed"
                 nearest_dist = float("inf")
@@ -535,22 +706,44 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                         lang = rrepo.get("language")
                         nearest_biome = LANG_BIOME.get(lang, LANG_BIOME[None])[0]
 
-                # Use biome-specific pattern if close to a repo peak, generic trees otherwise
-                pattern_id = _BIOME_PATTERN.get(nearest_biome, "trees") if nearest_dist < 0.25 else "trees"
-                tree_op = 0.5 * _fade(0.05, 0.25)
-                # Proximity boost: closer to repo = denser vegetation
-                if nearest_dist < 0.15:
-                    tree_op *= 1.0 + 0.4 * (1.0 - nearest_dist / 0.15)
-                if tree_op > 0:
-                    P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#{pattern_id})" opacity="{min(0.6, tree_op):.2f}"/>')
-            elif 0.10 < e < 0.20:
-                marsh_op = 0.4 * _fade(0.10, 0.30)
-                if marsh_op > 0:
-                    P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#marsh)" opacity="{marsh_op:.2f}"/>')
-            elif 0.80 < e < 0.93:
-                scree_op = 0.4 * _fade(0.15, 0.40)
-                if scree_op > 0:
-                    P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#scree)" opacity="{scree_op:.2f}"/>')
+                # Elevation-correlated biome placement:
+                #   forest only below 0.6, rocky only above 0.7, alpine only above 0.6,
+                #   grassland/savanna in mid-range (0.3-0.7)
+                _elev_ok = {
+                    "forest": e < 0.6,
+                    "woodland": e < 0.6,
+                    "tropical": e < 0.6,
+                    "rocky": e > 0.7,
+                    "alpine": e > 0.6,
+                    "grassland": 0.3 < e < 0.7,
+                    "savanna": 0.3 < e < 0.7,
+                    "scrubland": 0.2 < e < 0.6,
+                    "mixed": 0.15 < e < 0.7,
+                }
+                biome_fits_elevation = _elev_ok.get(nearest_biome, True)
+
+                if 0.10 < e < 0.20:
+                    # Low wetland: marsh overlay
+                    marsh_op = 0.4 * _fade(0.10, 0.30)
+                    if marsh_op > 0:
+                        marsh_when = _date_for_activity_fraction(0.15)
+                        P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#marsh)" {_timeline_style(marsh_when, marsh_op)}/>')
+                elif 0.80 < e < 0.93:
+                    # High elevation: scree overlay
+                    scree_op = 0.4 * _fade(0.15, 0.40)
+                    if scree_op > 0:
+                        scree_when = _date_for_activity_fraction(e)
+                        P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#scree)" {_timeline_style(scree_when, scree_op)}/>')
+                elif 0.20 < e < 0.80 and biome_fits_elevation:
+                    # Use biome-specific pattern if close to a repo peak and elevation matches
+                    pattern_id = _BIOME_PATTERN.get(nearest_biome, "trees") if nearest_dist < 0.25 else "trees"
+                    tree_op = 0.5 * _fade(0.05, 0.25)
+                    # Proximity boost: closer to repo = denser vegetation
+                    if nearest_dist < 0.15:
+                        tree_op *= 1.0 + 0.4 * (1.0 - nearest_dist / 0.15)
+                    if tree_op > 0:
+                        tree_when = _date_for_activity_fraction(0.25 + 0.6 * e)
+                        P.append(f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#{pattern_id})" {_timeline_style(tree_when, min(0.6, tree_op))}/>')
 
     # ── Lakes/ponds in low-lying depressions ────────────────────────
     lake_fade = _fade(0.15, 0.40)
@@ -586,14 +779,19 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
     activity_flow = min(2.0, 1.0 + contributions / 1500.0)
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
+    # Desaturated OKLCH blue for rivers
+    river_color = oklch(0.55, 0.08, 240)
+    river_shadow_color = oklch(0.40, 0.06, 240)
+    river_highlight_color = oklch(0.73, 0.05, 225)
     for rvi, rpts in enumerate(river_paths if river_fade > 0 else []):
         if len(rpts) < 3:
             continue
-        # Draw river in segments with increasing width, scaled by activity
+        # Draw river in segments with width varying by downstream distance
+        # Width: 0.3px at start → 1.2px at end, scaled by activity
         n_seg = len(rpts) - 1
         for j in range(0, n_seg - 1, 2):
             frac = j / max(1, n_seg)
-            sw_r = ((0.4 + mat * 0.4) + frac * (1.5 + mat * 1.5)) * activity_flow
+            sw_r = (0.3 + frac * 0.9) * activity_flow
             op_r = (0.35 + frac * 0.25) * river_fade
             x1r = MAP_L + rpts[j][0] * MAP_W
             y1r = MAP_T + rpts[j][1] * MAP_H
@@ -602,13 +800,25 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 y2r = MAP_T + rpts[j + 1][1] * MAP_H
                 x3r = MAP_L + rpts[j + 2][0] * MAP_W
                 y3r = MAP_T + rpts[j + 2][1] * MAP_H
+                # Shadow-side darkening stroke offset 0.5px
+                seg_when = _date_for_activity_fraction(frac)
+                P.append(f'<path d="M{x1r+0.5:.1f},{y1r+0.5:.1f} Q{x2r+0.5:.1f},{y2r+0.5:.1f} {x3r+0.5:.1f},{y3r+0.5:.1f}" '
+                         f'fill="none" stroke="{river_shadow_color}" stroke-width="{sw_r*0.85:.2f}" {_timeline_style(seg_when, op_r*0.45, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
                 P.append(f'<path d="M{x1r:.1f},{y1r:.1f} Q{x2r:.1f},{y2r:.1f} {x3r:.1f},{y3r:.1f}" '
-                         f'fill="none" stroke="#5b92c7" stroke-width="{sw_r:.2f}" opacity="{op_r:.2f}" stroke-linecap="round"/>')
+                         f'fill="none" stroke="{river_color}" stroke-width="{sw_r:.2f}" {_timeline_style(seg_when, op_r, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
+                P.append(f'<path d="M{x1r-0.25:.1f},{y1r-0.25:.1f} Q{x2r-0.25:.1f},{y2r-0.25:.1f} {x3r-0.25:.1f},{y3r-0.25:.1f}" '
+                         f'fill="none" stroke="{river_highlight_color}" stroke-width="{max(0.18, sw_r*0.28):.2f}" {_timeline_style(seg_when, op_r*0.35, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
             else:
                 x2r = MAP_L + rpts[j + 1][0] * MAP_W
                 y2r = MAP_T + rpts[j + 1][1] * MAP_H
+                # Shadow-side darkening stroke offset 0.5px
+                seg_when = _date_for_activity_fraction(frac)
+                P.append(f'<line x1="{x1r+0.5:.1f}" y1="{y1r+0.5:.1f}" x2="{x2r+0.5:.1f}" y2="{y2r+0.5:.1f}" '
+                         f'stroke="{river_shadow_color}" stroke-width="{sw_r*0.85:.2f}" {_timeline_style(seg_when, op_r*0.45, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
                 P.append(f'<line x1="{x1r:.1f}" y1="{y1r:.1f}" x2="{x2r:.1f}" y2="{y2r:.1f}" '
-                         f'stroke="#5b92c7" stroke-width="{sw_r:.2f}" opacity="{op_r:.2f}" stroke-linecap="round"/>')
+                         f'stroke="{river_color}" stroke-width="{sw_r:.2f}" {_timeline_style(seg_when, op_r, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
+                P.append(f'<line x1="{x1r-0.25:.1f}" y1="{y1r-0.25:.1f}" x2="{x2r-0.25:.1f}" y2="{y2r-0.25:.1f}" '
+                         f'stroke="{river_highlight_color}" stroke-width="{max(0.18, sw_r*0.28):.2f}" {_timeline_style(seg_when, op_r*0.35, "tl-reveal tl-crisp")} stroke-linecap="round"/>')
         if len(rpts) > 10 and rlabel_fade > 0:
             mid = len(rpts) // 4
             # Build guide path from river points for textPath
@@ -638,23 +848,30 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         if contour_fade <= 0:
             continue
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
-        sw = 1.0 if is_index else 0.35
+        # Contour hierarchy: every 5th level (index) gets heavier stroke
+        sw = 0.6 if is_index else 0.25
         sc = "#a0522d" if is_index else "#c17d4b"
-        op = (0.55 if is_index else 0.25) * contour_fade
+        op = (0.55 if is_index else 0.20) * contour_fade
         for chain in chains:
             if len(chain) < 2:
                 continue
-            pd = f"M{chain[0][0]:.1f},{chain[0][1]:.1f}"
-            for j in range(1, len(chain) - 1, 2):
-                if j + 1 < len(chain):
-                    pd += f" Q{chain[j][0]:.1f},{chain[j][1]:.1f} {chain[j+1][0]:.1f},{chain[j+1][1]:.1f}"
+            smooth_chain = _chaikin_smooth(chain, iterations=2 if is_index else 1)
+            pd = f"M{smooth_chain[0][0]:.1f},{smooth_chain[0][1]:.1f}"
+            for j in range(1, len(smooth_chain) - 1, 2):
+                if j + 1 < len(smooth_chain):
+                    pd += f" Q{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f} {smooth_chain[j+1][0]:.1f},{smooth_chain[j+1][1]:.1f}"
                 else:
-                    pd += f" L{chain[j][0]:.1f},{chain[j][1]:.1f}"
-            P.append(f'<path d="{pd}" fill="none" stroke="{sc}" stroke-width="{sw}" opacity="{op:.2f}" '
+                    pd += f" L{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f}"
+            contour_when = _date_for_activity_fraction(level)
+            P.append(f'<path d="{pd}" fill="none" stroke="{sc}" stroke-width="{sw}" {_timeline_style(contour_when, op)} '
                      f'stroke-linecap="round" stroke-linejoin="round"/>')
+            if is_index:
+                P.append(f'<path d="{pd}" fill="none" stroke="#7e4d2a" stroke-width="{max(0.3, sw * 0.55):.2f}" '
+                         f'{_timeline_style(contour_when, op * 0.35, "tl-reveal tl-crisp")} stroke-linecap="round" stroke-linejoin="round"/>')
+        # Elevation labels on index contours showing meters
         clabel_fade = _fade(0.10, 0.30)
         if is_index and chains and clabel_fade > 0:
-            longest = max(chains, key=len)
+            longest = _chaikin_smooth(max(chains, key=len), iterations=1)
             mid_i = len(longest) // 2
             mid = longest[mid_i]
             # Compute rotation angle along contour for label
@@ -663,7 +880,7 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                 label_angle = math.degrees(math.atan2(nxt[1] - mid[1], nxt[0] - mid[0]))
             else:
                 label_angle = 0
-            elev = f"{int(level*1000)}"
+            elev = f"{int(level*1000)}m"
             P.append(f'<text x="{mid[0]:.0f}" y="{mid[1]+1:.0f}" font-family="monospace" font-size="5" '
                      f'fill="#8b4513" opacity="{0.6 * clabel_fade:.2f}" text-anchor="middle" '
                      f'stroke="rgba(245,240,232,0.8)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill" '
@@ -804,10 +1021,10 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             trail_d += f" Q{cx:.1f},{cy:.1f} {x2m:.1f},{y2m:.1f}"
         # White casing
         P.append(f'<path d="{trail_d}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" '
-                 f'stroke-linecap="round"/>')
+                 f'{_timeline_style(_date_for_activity_fraction(0.2), 0.35)} stroke-linecap="round"/>')
         # Brown dashed trail on top
         P.append(f'<path d="{trail_d}" fill="none" stroke="#8a6840" stroke-width="0.8" '
-                 f'opacity="0.35" stroke-dasharray="5 2.5" stroke-linecap="round"/>')
+                 f'{_timeline_style(_date_for_activity_fraction(0.25), 0.35)} stroke-dasharray="5 2.5" stroke-linecap="round"/>')
 
         # Diamond milestone markers with age labels
         for wi, (wx, wy, wrepo) in enumerate(chrono):
@@ -817,11 +1034,12 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             age_label = f"{age_m // 12}y" if age_m >= 12 else f"{age_m}mo"
             dy_off = 14
             ds = 2.5  # diamond half-size
+            milestone_when = _repo_date(wrepo) or _date_for_activity_fraction(min(1.0, wi / max(1, len(chrono))))
             P.append(f'<polygon points="{mx_w:.0f},{my_w+dy_off-ds:.0f} {mx_w+ds:.0f},{my_w+dy_off:.0f} '
                      f'{mx_w:.0f},{my_w+dy_off+ds:.0f} {mx_w-ds:.0f},{my_w+dy_off:.0f}" '
-                     f'fill="#8a6840" opacity="0.35" stroke="#5a4020" stroke-width="0.3"/>')
+                     f'fill="#8a6840" {_timeline_style(milestone_when, 0.35)} stroke="#5a4020" stroke-width="0.3"/>')
             P.append(f'<text x="{mx_w + 5:.0f}" y="{my_w + dy_off + 1:.0f}" font-family="Georgia,serif" '
-                     f'font-size="4.5" fill="#5c3a1e" opacity="0.4" font-style="italic" '
+                     f'font-size="4.5" fill="#5c3a1e" {_timeline_style(milestone_when, 0.4)} font-style="italic" '
                      f'stroke="rgba(245,240,232,0.6)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill"'
                      f'>{age_label}</text>')
 
@@ -837,19 +1055,20 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
         mc = oklch(0.45, 0.18, hue)
         # Relative marker size: top-star repo gets biggest marker
         star_frac = (repo_stars - min_stars) / max(1, max_stars - min_stars) if max_stars > min_stars else 0.5
+        repo_when = _repo_date(repo) or _date_for_activity_fraction(star_frac)
         if star_frac > 0.7:
             bs = 4 + int(star_frac * 4)
             P.append(f'<rect x="{lx-bs:.0f}" y="{ly-bs:.0f}" width="{bs*2:.0f}" height="{bs*2:.0f}" '
-                     f'fill="{mc}" opacity="0.5" stroke="#3a2a1a" stroke-width="0.4"/>')
+                     f'fill="{mc}" {_timeline_style(repo_when, 0.5)} stroke="#3a2a1a" stroke-width="0.4"/>')
         else:
             mr = 2.5 + star_frac * 5
-            P.append(f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" opacity="0.65" stroke="#fff" stroke-width="0.5"/>')
+            P.append(f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65)} stroke="#fff" stroke-width="0.5"/>')
         P.append(f'<text x="{lx+8:.0f}" y="{ly+3:.0f}" font-family="Georgia,serif" font-size="6.5" '
-                 f'fill="#2c1a0e" opacity="0.65" font-weight="bold" '
+                 f'fill="#2c1a0e" {_timeline_style(repo_when, 0.65)} font-weight="bold" '
                  f'stroke="rgba(245,240,232,0.75)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill">{name}</text>')
         if repo_stars > 0:
             P.append(f'<text x="{lx+8:.0f}" y="{ly+10:.0f}" font-family="Georgia,serif" font-size="5" '
-                     f'fill="#5c3a1e" opacity="0.45" font-variant="small-caps" '
+                     f'fill="#5c3a1e" {_timeline_style(repo_when, 0.45)} font-variant="small-caps" '
                      f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                      f'>{repo_stars} stars</text>')
 
@@ -889,9 +1108,10 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
             ly = max(MAP_T - 20, min(MAP_B + 20, MAP_T + MAP_H / 2 + (MAP_H / 2 + 10) * math.sin(angle)))
             mn = int(mkey) - 1 if mkey.isdigit() else mi
             m_op = (0.25 + monthly[mkey] / max(1, max_m) * 0.45) * month_fade
+            month_when = _month_key_date(mkey, mi)
             P.append(f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" dominant-baseline="central" '
-                     f'font-family="Georgia,serif" font-size="7" fill="#5a4a3a" '
-                     f'opacity="{m_op:.2f}">{month_labels[mn%12]}</text>')
+                    f'font-family="Georgia,serif" font-size="7" fill="#5a4a3a" '
+                    f'{_timeline_style(month_when, m_op)}>{month_labels[mn%12]}</text>')
 
     # ── Compass rose — complexity controlled by chrome_mat ──────────
     ccx, ccy, cr = MAP_R - 45, MAP_T + 45, 24
@@ -1155,6 +1375,23 @@ def generate(metrics: dict, *, seed: str | None = None, maturity: float | None =
                  f'font-family="Georgia,serif" font-size="3.5" fill="#8a7a6a" opacity="0.25" '
                  f'font-style="italic">Datum: WGS 84  \u00b7  Contour interval: variable  \u00b7  '
                  f'Projection: Mercator</text>')
+
+    # ── Cloud shadows (large faint elliptical overlays) ──────────
+    cloud_shadow_noise = Noise2D(seed=int(h[8:16], 16) ^ 0xBEEF)
+    for cs_i in range(3):
+        # Deterministic placement from seed hash
+        cs_frac_x = hex_frac(h, (cs_i * 6) % 56, (cs_i * 6 + 4) % 56 + 2)
+        cs_frac_y = hex_frac(h, (cs_i * 6 + 2) % 56, (cs_i * 6 + 6) % 56 + 2)
+        cs_cx = MAP_L + cs_frac_x * MAP_W
+        cs_cy = MAP_T + cs_frac_y * MAP_H
+        # Large organic ellipse — use noise for slight shape distortion
+        cs_rx = 40 + cloud_shadow_noise.noise(cs_i * 3.7, 0.5) * 25 + 30
+        cs_ry = 25 + cloud_shadow_noise.noise(0.5, cs_i * 3.7) * 15 + 20
+        cs_angle = cloud_shadow_noise.noise(cs_i * 2.1, cs_i * 1.3) * 30
+        cs_opacity = 0.03 + (cs_i % 2) * 0.02  # 0.03, 0.05, 0.03
+        P.append(f'<ellipse cx="{cs_cx:.1f}" cy="{cs_cy:.1f}" rx="{cs_rx:.1f}" ry="{cs_ry:.1f}" '
+                 f'fill="#1a2a3a" opacity="{cs_opacity:.3f}" '
+                 f'transform="rotate({cs_angle:.1f},{cs_cx:.1f},{cs_cy:.1f})"/>')
 
     # ── Foxing / age spots (scaled by mat) ────────────────────────
     for _ in range(int(mat * 8)):

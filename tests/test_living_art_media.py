@@ -1,36 +1,139 @@
-from datetime import date
-from pathlib import Path
-import json
-import re
-
 import pytest
 
-pytestmark = pytest.mark.skip(reason="Requires pre-generated artifacts — run after full pipeline execution")
+pytest.importorskip("numpy", reason="scripts.art.animate imports scripts.art.ink_garden")
+
+from scripts.art import animate  # noqa: E402
 
 
-def test_gif_artifacts_emitted():
-    """Expected GIF artifact names/paths are emitted for living-art outputs."""
-    inkg = Path(".github/assets/img/inkgarden-growth.gif")
-    topo = Path(".github/assets/img/topo-growth.gif")
-    assert inkg.is_file(), f"Missing expected GIF artifact: {inkg}"
-    assert topo.is_file(), f"Missing expected GIF artifact: {topo}"
+def _stub_svg() -> str:
+    return (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        '<defs><linearGradient id="grad"><stop offset="0%" stop-color="#111"/></linearGradient></defs>'
+        '<g id="layer"><circle id="dot" cx="50" cy="50" r="20" fill="url(#grad)"/></g>'
+        "</svg>"
+    )
 
 
-def test_readme_embed_strategy_for_gif_with_png_fallback():
-    """README should represent GIF embed strategy with PNG fallback (expected to fail until implemented)."""
-    txt = Path("README.md").read_text(encoding="utf-8")
-    # The project should document the GIF-first embed strategy with PNG fallback
-    assert "GIF with PNG fallback" in txt, "README must document GIF embed strategy with PNG fallback"
+def test_build_stacked_svg_has_narrative_css_and_frame_groups() -> None:
+    svg = animate._build_stacked_svg(  # noqa: SLF001
+        frame_svgs=[_stub_svg(), _stub_svg(), _stub_svg()],
+        delays=[0.0, 7.5, 25.5],
+        transition=1.2,
+        total_duration=30.0,
+    )
+
+    assert "Narrative growth animation: 3-act timing" in svg
+    assert "@keyframes emerge" in svg
+    assert "@keyframes grow" in svg
+    assert "@keyframes bloom" in svg
+    assert svg.count('<g class="f f') == 3
+    assert 'class="f f0"' in svg
+    assert 'class="f f1"' in svg
+    assert 'class="f f2"' in svg
 
 
-def test_size_budget_behavior_enforced_by_helper_api():
-    """Size-budget behavior contract: helper logs must report artifacts under budget (RED expected)."""
-    logs = Path(f"logs/json/{date.today().isoformat()}.json")
-    assert logs.exists(), "Expected log file with artifact size records"
-    content = logs.read_text(encoding="utf-8")
-    # logs file contains JSON objects per-line; search for inkgarden-growth size entries
-    matches = re.findall(r'inkgarden-growth:\s*(\d+)\s*KB', content)
-    assert matches, "No inkgarden-growth size entries found in logs"
-    # Enforce an aggressive budget of 50 KB to make this test fail until production enforces it
-    sizes = [int(m) for m in matches]
-    assert all(s <= 50 for s in sizes), f"Size budget exceeded for inkgarden-growth: {sizes}"
+def test_main_svg_mode_writes_expected_living_artifacts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        animate,
+        "PROFILES",
+        {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
+    )
+    monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
+    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
+    monkeypatch.setattr(animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg())
+    monkeypatch.setattr(
+        animate.sys,
+        "argv",
+        ["animate", "--svg", "--frames", "4", "--profile", "wyatt"],
+    )
+
+    animate.main()
+
+    output_dir = tmp_path / ".github" / "assets" / "img"
+    inkgarden = output_dir / "inkgarden-growth-animated.svg"
+    topography = output_dir / "topo-growth-animated.svg"
+
+    assert inkgarden.is_file(), f"Missing expected animated artifact: {inkgarden}"
+    assert topography.is_file(), f"Missing expected animated artifact: {topography}"
+
+    inkgarden_svg = inkgarden.read_text(encoding="utf-8")
+    topography_svg = topography.read_text(encoding="utf-8")
+    for svg in (inkgarden_svg, topography_svg):
+        assert "Narrative growth animation: 3-act timing" in svg
+        assert svg.count('<g class="f f') == 4
+
+
+def test_main_svg_mode_disables_topography_timeline_for_static_frames(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        animate,
+        "PROFILES",
+        {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
+    )
+    monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
+    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
+    topo_calls: list[dict] = []
+
+    def _capture_topo(*_args, **kwargs):
+        topo_calls.append(kwargs)
+        return _stub_svg()
+
+    monkeypatch.setattr(animate.topography, "generate", _capture_topo)
+    monkeypatch.setattr(
+        animate.sys,
+        "argv",
+        ["animate", "--svg", "--frames", "4", "--profile", "wyatt"],
+    )
+
+    animate.main()
+
+    assert len(topo_calls) == 4
+    for kwargs in topo_calls:
+        assert kwargs.get("timeline") is False
+
+
+def test_main_gif_mode_disables_topography_timeline(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    class _FakePalImage:
+        def convert(self, _mode: str):
+            return self
+
+        def quantize(self, **_kwargs):
+            return self
+
+        def save(self, out_path, **_kwargs) -> None:
+            out_path.write_bytes(b"GIF89a")
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        animate,
+        "PROFILES",
+        {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
+    )
+    monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
+    monkeypatch.setattr(animate, "svg_to_png", lambda *_args, **_kwargs: _FakePalImage())
+    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
+    topo_calls: list[dict] = []
+
+    def _capture_topo(*_args, **kwargs):
+        topo_calls.append(kwargs)
+        return _stub_svg()
+
+    monkeypatch.setattr(animate.topography, "generate", _capture_topo)
+    monkeypatch.setattr(
+        animate.sys,
+        "argv",
+        ["animate", "--frames", "3", "--profile", "wyatt", "--only", "topo"],
+    )
+
+    animate.main()
+
+    assert len(topo_calls) == 3
+    for kwargs in topo_calls:
+        assert kwargs.get("timeline") is False

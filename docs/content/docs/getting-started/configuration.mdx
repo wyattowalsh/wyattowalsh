@@ -5,18 +5,18 @@ description: ProjectConfig drives every generator. All settings live in config.y
 
 ## Overview
 
-All generators are driven by a single `config.yaml` file loaded via `load_config()` from `scripts/config.py`. The root type is `ProjectConfig` — a Pydantic v2 model that validates every field at load time.
+All generators are driven by a single `./config.yaml` file loaded via `load_config()` from `scripts/config.py`. The root type is `ProjectConfig` — a Pydantic v2 model that validates every field at load time.
 
 ```bash title="Generate defaults"
-uv run readme config generate-default --path config.yaml
+uv run readme config generate-default --path ./config.yaml
 ```
 
 ```bash title="View current config as YAML"
-uv run readme config view --path config.yaml --output-format yaml
+uv run readme config view --path ./config.yaml --output-format yaml
 ```
 
 ```bash title="Re-save (validate + round-trip)"
-uv run readme config save --path config.yaml
+uv run readme config save --path ./config.yaml
 ```
 
 <Callout type="info">
@@ -28,12 +28,11 @@ Config files are serialized with `mode="json"` to produce clean, safe-loadable Y
 The root config model maps to these top-level keys in `config.yaml`:
 
 ```yaml title="config.yaml"
-banner_settings:      # BannerSettings
-qr_code_settings:     # QRCodeSettings
-v_card_data:          # VCardDataModel
-word_cloud_settings:  # WordCloudSettingsModel
-skills_settings:      # SkillsSettings
-readme_settings:      # ReadmeSvgSettings
+banner_settings:           # BannerSettings
+qr_code_settings:          # QRCodeSettings
+v_card_data:               # VCardDataModel
+word_cloud_settings:       # WordCloudSettingsModel
+readme_sections_settings:  # ReadmeSectionsSettings
 ```
 
 ## BannerSettings
@@ -53,7 +52,7 @@ readme_settings:      # ReadmeSvgSettings
 |---|---|---|---|
 | `output_filename` | `str` | `"qr.png"` | Output filename |
 | `output_dir` | `str` | `.github/assets/img` | Output directory |
-| `default_background_path` | `str\|null` | `".github/assets/img/icon.svg"` | SVG embedded behind QR |
+| `default_background_path` | `str\|null` | `null` | Optional SVG embedded behind QR |
 | `default_scale` | `int` | `25` | Module size in pixels |
 | `error_correction` | `str` | `"H"` | L / M / Q / H |
 
@@ -63,11 +62,19 @@ readme_settings:      # ReadmeSvgSettings
 |---|---|---|---|
 | `output_dir` | `str` | `.github/assets/img` | Output directory |
 | `output_filename` | `str` | `"word_cloud.png"` | Default filename |
-| `prompt` | `str\|null` | `null` | LLM prompt for curating keywords |
-| `stopwords` | `list[str]\|null` | `null` | Additional stopwords |
+| `prompt` | `str\|null` | `"My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React"` | Default prompt for curating keywords |
+| `stopwords` | `list[str]\|null` | `[]` | Additional stopwords |
 
 <Callout type="warn" title="Two word-cloud config models">
 `WordCloudSettingsModel` in `config.py` is the top-level YAML config. `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Don't confuse them — the first accepts unknown keys, the second rejects them.
+</Callout>
+
+## ReadmeSectionsSettings
+
+Dynamic README configuration lives under `readme_sections_settings` in `config.yaml`. This includes the README path, social links, featured repos, blog feed settings, and nested SVG card controls under `svg`.
+
+<Callout type="info">
+`skills.yaml` is loaded separately via `load_skills()` and is not a top-level key in `ProjectConfig`.
 </Callout>
 
 ## VCardDataModel
