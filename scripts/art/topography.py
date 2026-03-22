@@ -780,12 +780,6 @@ def generate(
     )
     P.append("</defs>")
 
-    # ── CSS for interactive hover tooltips (works in direct SVG view) ──
-    P.append('<style>')
-    P.append('.repo-peak{cursor:pointer}')
-    P.append('.repo-peak:hover{filter:brightness(1.1)}')
-    P.append('</style>')
-
     # Background with paper texture
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f5f0e8"/>')
     P.append(
@@ -1298,7 +1292,6 @@ def generate(
         ly = MAP_T + rcy * MAP_H
         repo_stars = repo.get("stars", 0)
         name = repo.get("name", "")
-        repo_lang = repo.get("language", "")
         hue = terrain_hues[idx_rp] if idx_rp < len(terrain_hues) else LANG_HUES.get(repo.get("language"), 160)
         mc = oklch(0.45, 0.18, hue)
         # Relative marker size: top-star repo gets biggest marker
@@ -1307,23 +1300,7 @@ def generate(
             if max_stars > min_stars
             else 0.5
         )
-        # Lookup elevation at repo position for tooltip
-        _gxi = min(grid - 1, max(0, int(rcx * grid)))
-        _gyi = min(grid - 1, max(0, int(rcy * grid)))
-        _elev = float(elevation[_gyi, _gxi])
-        _elev_label = (
-            "summit" if _elev > 0.7
-            else "ridge" if _elev > 0.5
-            else "highland" if _elev > 0.3
-            else "valley" if _elev < 0.15
-            else "lowland"
-        )
-        _tt_lang = repo_lang or "?"
-        _tt_text = f"{name} \u00b7 {_tt_lang} \u00b7 \u2605{repo_stars} \u00b7 {_elev_label}"
-        _tt_text = _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         repo_when = _repo_date(repo) or _date_for_activity_fraction(star_frac)
-        P.append(f'<g class="repo-peak">')
-        P.append(f'<title>{_tt_text}</title>')
         if star_frac > 0.7:
             bs = 4 + int(star_frac * 4)
             P.append(
@@ -1347,7 +1324,6 @@ def generate(
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
             )
-        P.append('</g>')
 
     # ── Topic place names ──────────────────────────────────────
     if top_topics and repo_positions:
