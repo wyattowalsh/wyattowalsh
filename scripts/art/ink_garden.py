@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 
+from .optimize import optimize_layout_sa, optimize_palette_hues
 from .shared import (
     CX,
     CY,
@@ -721,6 +722,35 @@ def generate(
             cluster_slot[cursor + local_idx] = (ci, local_idx, size)
         cursor += size
 
+    # ── Metaheuristic layout + palette optimization ───────────────
+    if len(repos) >= 2:
+        initial_positions = [
+            (WIDTH * (0.12 + 0.76 * i / max(len(repos) - 1, 1)), GROUND_Y)
+            for i in range(len(repos))
+        ]
+        tree_weights = [max(1, repo.get("stars", 0)) for repo in repos]
+        optimized = optimize_layout_sa(
+            initial_positions,
+            tree_weights,
+            WIDTH,
+            HEIGHT,
+            min_spacing=WIDTH / max(len(repos) + 1, 2) * 0.7,
+            iterations=200,
+            seed=int(h[:8], 16) if h else 42,
+        )
+        tree_x_positions = [pos[0] for pos in optimized]
+    else:
+        tree_x_positions = [WIDTH / 2]
+
+    repo_hues = [LANG_HUES.get(repo.get("language"), 155) for repo in repos]
+    if len(repo_hues) >= 2:
+        repo_hues = optimize_palette_hues(
+            repo_hues,
+            max_shift=12.0,
+            iterations=150,
+            seed=int(h[:8], 16) if h else 42,
+        )
+
     RAMP = 0.15  # growth ramp width (mat units)
     first_start = 0.03
     last_full = max(first_start + RAMP, mat)
@@ -739,7 +769,7 @@ def generate(
         rng = np.random.default_rng(base_seed ^ ((ri + 1) * 0x9E3779B9))
 
         lang = repo.get("language")
-        hue = LANG_HUES.get(lang, 160)
+        hue = repo_hues[ri] if ri < len(repo_hues) else LANG_HUES.get(lang, 160)
         repo_stars = repo.get("stars", 0)
         age = repo.get("age_months", 6)
         repo_date = _repo_date(repo) or _date_for_activity_fraction(ri / max(1, n_repos))
@@ -760,18 +790,10 @@ def generate(
         leaf_hue_shift = 16 * math.sin(season_phase - 0.4) + rng.uniform(-5, 5)
         bloom_hue_shift = 22 * math.cos(season_phase - 0.2) + rng.uniform(-8, 8)
         autumn_leaf_hue = rng.integers(30, 50) if is_autumn else None
-        if ri < spread:
-            cluster_idx, in_cluster_pos, cluster_size = cluster_slot.get(ri, (0, 0, 1))
-            cluster_center = cluster_centers[cluster_idx]
-            local_t = (in_cluster_pos - (cluster_size - 1) / 2.0)
-            intra_spacing = rng.uniform(13, 27) * (0.9 + 0.1 * min(cluster_size, 3))
-            arc_pull = math.sin((in_cluster_pos + 1) * 1.3 + cluster_idx * 0.8) * 6
-            base_x = cluster_center + local_t * intra_spacing + arc_pull + noise.noise(cluster_center * 0.01, ri * 0.23) * 10
-        else:
-            base_x = CX + noise.noise(ri * 0.31, 0.7) * 28
-        # Clamp to canvas bounds with margin
-        base_x = max(80, min(WIDTH - 80, base_x))
+        # Use metaheuristic-optimized x position (SA layout optimizer)
+        base_x = tree_x_positions[ri] if ri < len(tree_x_positions) else CX
         base_x += rng.uniform(-8, 8)
+        base_x = max(80, min(WIDTH - 80, base_x))
         gy = ground_y_at(base_x)
 
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
