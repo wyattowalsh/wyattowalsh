@@ -145,7 +145,7 @@ class TestRendering:
         )
         generator = ReadmeSectionGenerator(settings=settings)
 
-        html = generator._render_top_badges()
+        generator._render_top_badges()
 
         # Per-card SVGs should exist
         assert (tmp_path / "svg" / "connect-linkedin.svg").exists()
@@ -500,7 +500,10 @@ class TestRendering:
         assert len(svg_files) == 2
         assert len(set(svg_files)) == 2
         assert all(name.startswith("blog-weekly-update") for name in svg_files)
-        assert any(re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name) for name in svg_files)
+        assert any(
+            re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name)
+            for name in svg_files
+        )
         assert all(name in html for name in svg_files)
 
     def test_featured_project_card_builds_with_icon_data_uri(
@@ -579,7 +582,9 @@ class TestRendering:
         assert "data:image" not in svg
         assert "blog-github-changelog.svg" in html
 
-    def test_featured_projects_support_legacy_card_variant(self, tmp_path: Path) -> None:
+    def test_featured_projects_support_legacy_card_variant(
+        self, tmp_path: Path
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
                 enabled=True,
@@ -992,8 +997,27 @@ class TestReadmeInjection:
         )
         generator = ReadmeSectionGenerator(
             settings=settings,
-            blog_client=StubBlogClient([BlogPost(title="A Very Long Blog Post Title That Would Normally Be Truncated ... update", url="https://w4w.dev/blog/long")]),
-            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/long": {"hero_image": None, "summary": "Long post", "published": "2026-03-01", "host": "w4w.dev"}}),
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title=(
+                            "A Very Long Blog Post Title That Would Normally"
+                            " Be Truncated ... update"
+                        ),
+                        url="https://w4w.dev/blog/long",
+                    )
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/long": {
+                        "hero_image": None,
+                        "summary": "Long post",
+                        "published": "2026-03-01",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
         )
 
         generator._render_blog_posts()
@@ -1151,6 +1175,91 @@ class TestProjectCardMeta:
         assert "★ 5" in card.meta
         # forks=0 should not appear
         assert not any("⑂" in m for m in card.meta)
+
+
+class TestRepoBackgroundImage:
+    """Verify _repo_background_image prefers API OG image over HTML scrape."""
+
+    def test_api_og_image_used_before_html_scrape(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient({}),
+        )
+        metadata = RepoMetadata(
+            full_name="wyattowalsh/riso",
+            name="riso",
+            html_url="https://github.com/wyattowalsh/riso",
+            description="Test repo",
+            stars=1,
+            homepage=None,
+            topics=[],
+            updated_at=None,
+            open_graph_image_url="https://custom-preview.example.com/riso.png",
+        )
+        # Mock _fetch_remote_image_data_uri to return a data URI
+        monkeypatch.setattr(
+            generator,
+            "_fetch_remote_image_data_uri",
+            lambda url, context: "data:image/png;base64,AAAA" if "custom-preview" in url else None,
+        )
+        # Mock _scrape_repo_og_image to track if it gets called
+        scrape_called = []
+        monkeypatch.setattr(
+            generator,
+            "_scrape_repo_og_image",
+            lambda repo_full_name: scrape_called.append(True) or None,
+        )
+
+        result = generator._repo_background_image("wyattowalsh/riso", metadata)
+
+        assert result == "data:image/png;base64,AAAA"
+        assert not scrape_called, "HTML scrape should not be called when API OG image succeeds"
+
+    def test_generic_githubassets_url_skipped(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient({}),
+        )
+        metadata = RepoMetadata(
+            full_name="wyattowalsh/riso",
+            name="riso",
+            html_url="https://github.com/wyattowalsh/riso",
+            description="Test repo",
+            stars=1,
+            homepage=None,
+            topics=[],
+            updated_at=None,
+            open_graph_image_url="https://opengraph.githubassets.com/abc/wyattowalsh/riso",
+        )
+        scrape_called = []
+        monkeypatch.setattr(
+            generator,
+            "_scrape_repo_og_image",
+            lambda repo_full_name: scrape_called.append(True) or None,
+        )
+        monkeypatch.setattr(
+            generator,
+            "_fetch_remote_image_data_uri",
+            lambda url, context: "data:image/png;base64,BBBB" if "opengraph.githubassets.com/1/" in url else None,
+        )
+
+        result = generator._repo_background_image("wyattowalsh/riso", metadata)
+
+        # Should have fallen through to HTML scrape (which returns None),
+        # then to the auto-generated fallback
+        assert scrape_called, "HTML scrape should be called when API OG URL is generic"
 
 
 class TestBlogTitleSanitization:

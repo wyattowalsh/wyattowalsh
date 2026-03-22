@@ -1485,7 +1485,17 @@ class ReadmeSectionGenerator:
         repo_full_name: str,
         metadata: RepoMetadata | None,
     ) -> str | None:
-        # Try to get the custom social preview from the repo HTML page
+        # 1. Prefer the API-provided OG image (avoids HTML scrape)
+        if metadata and metadata.open_graph_image_url:
+            api_og = metadata.open_graph_image_url
+            if "opengraph.githubassets.com" not in api_og:
+                data_uri = self._fetch_remote_image_data_uri(
+                    api_og,
+                    context=f"repo API OG image for {repo_full_name}",
+                )
+                if data_uri:
+                    return data_uri
+        # 2. Fall back to HTML scrape for custom social preview
         og_url = self._scrape_repo_og_image(repo_full_name)
         if og_url:
             data_uri = self._fetch_remote_image_data_uri(
@@ -1494,7 +1504,7 @@ class ReadmeSectionGenerator:
             )
             if data_uri:
                 return data_uri
-        # Fall back to the auto-generated GitHub OG image
+        # 3. Final fallback: auto-generated GitHub OG image
         fallback = f"https://opengraph.githubassets.com/1/{repo_full_name}"
         return self._fetch_remote_image_data_uri(
             fallback,
