@@ -87,7 +87,7 @@ Produces `generative-activity.svg`, `generative-activity-dark.svg`, `generative-
 
 ## `generate animated`
 
-Generates CSS-animated SVGs seeded from commit history data.
+Generates CSS-animated SVGs seeded from commit history data, plus GitHub-safe GIF previews for inline README playback.
 
 ```bash
 uv run python -m scripts.cli generate animated \
@@ -95,6 +95,7 @@ uv run python -m scripts.cli generate animated \
 ```
 
 Produces `animated-activity.svg`, `animated-activity-dark.svg`, `animated-community.svg`, `animated-community-dark.svg`.
+Also produces `animated-activity.gif`, `animated-activity-dark.gif`, `animated-community.gif`, `animated-community-dark.gif`.
 
 `scripts/animated_art.py` is the CLI entry point and a backward-compatible shim over the generators in `scripts/art/*`.
 

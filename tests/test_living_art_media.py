@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import pytest
 
 pytest.importorskip("numpy", reason="scripts.art.animate imports scripts.art.ink_garden")
 
+from scripts import animated_art  # noqa: E402
 from scripts.art import animate  # noqa: E402
 
 
@@ -137,3 +140,53 @@ def test_main_gif_mode_disables_topography_timeline(
     assert len(topo_calls) == 3
     for kwargs in topo_calls:
         assert kwargs.get("timeline") is False
+
+
+def test_generate_compatibility_gifs_writes_expected_historical_artifacts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    class _FakeImage:
+        def __init__(self, key: str) -> None:
+            self.key = key
+
+        def convert(self, _mode: str):
+            return self
+
+        def quantize(self, **_kwargs):
+            return self
+
+        def save(self, out_path, **_kwargs) -> None:
+            Path(out_path).write_bytes(f"GIF89a:{self.key}".encode("utf-8"))
+
+    snapshot_progresses: list[float] = []
+
+    monkeypatch.setattr(
+        animated_art,
+        "render_animated_community_svg",
+        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"]) or _stub_svg(),
+    )
+    monkeypatch.setattr(
+        animated_art,
+        "render_animated_activity_svg",
+        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"]) or _stub_svg(),
+    )
+    monkeypatch.setattr(
+        "scripts.art.animate.svg_to_png",
+        lambda _svg, _size, frame_id="": _FakeImage(frame_id),
+        raising=False,
+    )
+
+    outputs = animated_art.generate_compatibility_gifs(
+        {"current_metrics": {}, "repos": [], "contributions_monthly": {}},
+        output_dir=tmp_path,
+        frames=4,
+        size=200,
+    )
+
+    assert len(outputs) == 4
+    assert (tmp_path / "animated-community.gif").is_file()
+    assert (tmp_path / "animated-community-dark.gif").is_file()
+    assert (tmp_path / "animated-activity.gif").is_file()
+    assert (tmp_path / "animated-activity-dark.gif").is_file()
+    assert min(snapshot_progresses) >= 0.0
+    assert max(snapshot_progresses) <= 1.0

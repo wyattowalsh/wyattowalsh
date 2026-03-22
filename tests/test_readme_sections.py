@@ -274,7 +274,8 @@ class TestRendering:
         assert card_svg_path.exists()
         svg = card_svg_path.read_text(encoding="utf-8")
         assert "riso" in svg
-        assert "Composable scaffolding framework" in svg
+        assert "Composable scaffolding" in svg
+        assert "framework" in svg
         # OG image embedded as thumbnail
         assert "data:image/png;base64," in svg
         # Sparkline rendered
@@ -284,7 +285,7 @@ class TestRendering:
         # HTML uses table layout with per-card img tags
         assert "<table>" in html
         assert "featured-card-wyattowalsh-riso.svg" in html
-        assert "Composable scaffolding framework" in svg
+        assert 'width="33.33%"' in html
 
     def test_featured_projects_use_full_repo_identity_in_asset_names(
         self, tmp_path: Path
@@ -331,6 +332,73 @@ class TestRendering:
         assert (tmp_path / "svg" / "featured-card-octocat-demo.svg").exists()
         assert "featured-card-wyattowalsh-demo.svg" in html
         assert "featured-card-octocat-demo.svg" in html
+
+    def test_featured_projects_render_three_columns_per_row(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[
+                ReadmeFeaturedRepo(full_name="wyattowalsh/one"),
+                ReadmeFeaturedRepo(full_name="wyattowalsh/two"),
+                ReadmeFeaturedRepo(full_name="wyattowalsh/three"),
+                ReadmeFeaturedRepo(full_name="wyattowalsh/four"),
+            ],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/one": RepoMetadata(
+                        full_name="wyattowalsh/one",
+                        name="one",
+                        html_url="https://github.com/wyattowalsh/one",
+                        description="One",
+                        stars=1,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "wyattowalsh/two": RepoMetadata(
+                        full_name="wyattowalsh/two",
+                        name="two",
+                        html_url="https://github.com/wyattowalsh/two",
+                        description="Two",
+                        stars=2,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "wyattowalsh/three": RepoMetadata(
+                        full_name="wyattowalsh/three",
+                        name="three",
+                        html_url="https://github.com/wyattowalsh/three",
+                        description="Three",
+                        stars=3,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                    "wyattowalsh/four": RepoMetadata(
+                        full_name="wyattowalsh/four",
+                        name="four",
+                        html_url="https://github.com/wyattowalsh/four",
+                        description="Four",
+                        stars=4,
+                        homepage=None,
+                        topics=[],
+                        updated_at="2026-02-01T00:00:00Z",
+                    ),
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        html = generator._render_featured_projects()
+
+        assert html.count("<tr>") == 2
+        assert html.count('width="33.33%"') == 6
+        assert html.count('width="100%"') == 4
 
     def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -690,6 +758,7 @@ class TestReadmeInjection:
         assert "featured-card-wyattowalsh-riso.svg" in content
         assert "blog-first-post.svg" in content
         assert ".github/assets/img/gh.gif" not in content
+        assert ".github/assets/img/animated-community.gif" not in content
         assert "github.com/wyattowalsh" in content
         assert "Auto-updated from" in content
         assert '<a href="https://example.com/feed.xml">RSS feed</a>' in content

@@ -16,7 +16,10 @@ from __future__ import annotations
 
 import io
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from ..utils import get_logger
@@ -174,15 +177,41 @@ def _build_stacked_svg(
 
 def svg_to_png(svg_str: str, size: int, frame_id: str = ""):
     """Convert SVG string to PIL Image at given size. Returns None on failure."""
-    import cairosvg
     from PIL import Image
 
     try:
-        png_data = cairosvg.svg2png(
-            bytestring=svg_str.encode("utf-8"),
-            output_width=size,
-            output_height=size,
-        )
+        try:
+            import cairosvg
+
+            png_data = cairosvg.svg2png(
+                bytestring=svg_str.encode("utf-8"),
+                output_width=size,
+                output_height=size,
+            )
+        except (ImportError, OSError) as exc:
+            rsvg_convert = shutil.which("rsvg-convert")
+            if not rsvg_convert:
+                raise RuntimeError("Neither cairosvg nor rsvg-convert is available") from exc
+
+            with tempfile.NamedTemporaryFile("w", suffix=".svg", delete=False) as tmp_svg:
+                tmp_svg.write(svg_str)
+                tmp_svg_path = Path(tmp_svg.name)
+            try:
+                result = subprocess.run(
+                    [
+                        rsvg_convert,
+                        "-w",
+                        str(size),
+                        "-h",
+                        str(size),
+                        str(tmp_svg_path),
+                    ],
+                    check=True,
+                    capture_output=True,
+                )
+            finally:
+                tmp_svg_path.unlink(missing_ok=True)
+            png_data = result.stdout
         return Image.open(io.BytesIO(png_data)).convert("RGBA")
     except Exception as exc:
         logger.error("SVG-to-PNG failed for {}: {}", frame_id, exc)

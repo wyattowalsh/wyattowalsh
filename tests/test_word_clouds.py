@@ -9,6 +9,8 @@ from scripts.word_cloud_renderers import (
 )
 from scripts.word_clouds import (
     _filter_others,
+    WordCloudGenerator,
+    WordCloudSettings,
     parse_markdown_for_word_cloud_frequencies,
 )
 
@@ -132,3 +134,48 @@ def test_all_words_placed_wordle() -> None:
     assert placed_texts == set(words.keys()), (
         f"Missing words: {set(words.keys()) - placed_texts}"
     )
+
+
+def test_generator_honors_explicit_output_path_and_filters_others(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_generate_svg(
+        renderer_name: str,
+        frequencies: dict[str, int],
+        output_path: str | Path,
+        width: int = 0,
+        height: int = 0,
+        **kwargs,
+    ) -> None:
+        captured["renderer"] = renderer_name
+        captured["frequencies"] = dict(frequencies)
+        captured["output_path"] = Path(output_path)
+        captured["color_func_name"] = kwargs.get("color_func_name")
+        Path(output_path).write_text("<svg />", encoding="utf-8")
+
+    monkeypatch.setattr("scripts.word_clouds._generate_svg", fake_generate_svg)
+
+    generator = WordCloudGenerator(
+        base_settings=WordCloudSettings(
+            renderer="clustered",
+            output_dir=str(tmp_path),
+        )
+    )
+    output_path = tmp_path / "custom.svg"
+
+    result = generator.generate(
+        frequencies={"Python": 3, "others": 99},
+        output_path=output_path,
+        source="topics",
+        color_func_name="gradient",
+    )
+
+    assert result == output_path
+    assert captured["renderer"] == "clustered"
+    assert captured["frequencies"] == {"Python": 3}
+    assert captured["output_path"] == output_path
+    assert captured["color_func_name"] == "gradient"
+    assert output_path.exists()

@@ -378,6 +378,7 @@ def _wc_import():
     try:
         from ..techs import Technology, load_technologies
         from ..word_clouds import (
+            _filter_others,
             DEFAULT_FONT_PATH,
             LANGUAGES_MD_PATH,
             PROFILE_IMG_OUTPUT_DIR,
@@ -396,6 +397,7 @@ def _wc_import():
             TOPICS_MD_PATH=TOPICS_MD_PATH,
             WordCloudGenerator=WordCloudGenerator,
             WordCloudSettings=WordCloudSettings,
+            _filter_others=_filter_others,
             parse_markdown_for_word_cloud_frequencies=parse_markdown_for_word_cloud_frequencies,
         )
     except ImportError as e_import:
@@ -424,7 +426,9 @@ def _wc_from_topics(
         )
         return None
 
-    frequencies = wc.parse_markdown_for_word_cloud_frequencies(wc.TOPICS_MD_PATH)
+    frequencies = wc._filter_others(
+        wc.parse_markdown_for_word_cloud_frequencies(wc.TOPICS_MD_PATH)
+    )
     if not frequencies:
         logger.warning(
             f"No frequencies parsed from {wc.TOPICS_MD_PATH.name}, "
@@ -443,7 +447,7 @@ def _wc_from_topics(
     out_filename = output_path.name if output_path else "wordcloud_wordle_by_topics.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="wordle",
+        renderer="clustered",
         width=1200,
         height=800,
         max_words=num_terms,
@@ -454,6 +458,7 @@ def _wc_from_topics(
         frequencies=frequencies,
         output_path=out_dir / out_filename,
         source="topics",
+        color_func_name="gradient",
     )
 
 
@@ -473,7 +478,9 @@ def _wc_from_languages(
         )
         return None
 
-    frequencies = wc.parse_markdown_for_word_cloud_frequencies(wc.LANGUAGES_MD_PATH)
+    frequencies = wc._filter_others(
+        wc.parse_markdown_for_word_cloud_frequencies(wc.LANGUAGES_MD_PATH)
+    )
     if not frequencies:
         logger.warning(
             f"No frequencies parsed from {wc.LANGUAGES_MD_PATH.name}, "
@@ -492,7 +499,7 @@ def _wc_from_languages(
     out_filename = output_path.name if output_path else "wordcloud_wordle_by_languages.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="wordle",
+        renderer="typographic",
         width=1200,
         height=800,
         max_words=num_terms,
@@ -503,6 +510,7 @@ def _wc_from_languages(
         frequencies=frequencies,
         output_path=out_dir / out_filename,
         source="languages",
+        color_func_name="sunset",
     )
 
 
@@ -795,11 +803,30 @@ def animated(
             rich_help_panel="Animated Options",
         ),
     ] = None,
+    gif_frames: Annotated[
+        int,
+        typer.Option(
+            "--gif-frames",
+            min=2,
+            help="GIF frame count for GitHub-safe compatibility previews.",
+            rich_help_panel="Animated Options",
+        ),
+    ] = 18,
+    gif_size: Annotated[
+        int,
+        typer.Option(
+            "--gif-size",
+            min=64,
+            help="Render size in px for animated compatibility GIFs.",
+            rich_help_panel="Animated Options",
+        ),
+    ] = 400,
 ) -> None:
     """Generate animated artwork from historical data."""
     _load_project_config(config_path)  # validate config exists
 
     try:
+        from ..animated_art import generate_compatibility_gifs
         from ..art.cosmic_genesis import generate as generate_animated_community_art
         from ..art.unfurling_spiral import generate as generate_animated_activity_art
     except ImportError:
@@ -837,6 +864,15 @@ def animated(
                     history, dark_mode=dark, output_path=out,
                 )
             console.print(f"[bold green]Generated: {out}[/]")
+
+    gif_outputs = generate_compatibility_gifs(
+        history,
+        output_dir=output_dir,
+        frames=gif_frames,
+        size=gif_size,
+    )
+    for out in gif_outputs:
+        console.print(f"[bold green]Generated: {out}[/]")
 
 
 # ---------------------------------------------------------------------------

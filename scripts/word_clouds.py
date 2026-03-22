@@ -286,30 +286,40 @@ class WordCloudGenerator:
         output_path: str | Path | None = None,
         source: str = "topics",
         **kwargs,
-    ) -> None:
+    ) -> Path:
         renderer = kwargs.get("renderer", getattr(self.settings, "renderer", DEFAULT_RENDERER))
         width = getattr(self.settings, "width", DEFAULT_WIDTH)
         height = getattr(self.settings, "height", DEFAULT_HEIGHT)
+        color_func_name = kwargs.get("color_func_name")
 
-        out_dir = Path(output_path).parent if output_path and Path(output_path).is_file() else Path(output_path or self.settings.output_dir)
+        explicit_output = Path(output_path) if output_path is not None else None
+        if explicit_output is not None and explicit_output.suffix:
+            out_file = explicit_output
+            out_dir = out_file.parent
+        else:
+            out_dir = explicit_output or Path(self.settings.output_dir)
+            ext = ".png" if renderer == "classic" else ".svg"
+            out_file = out_dir / f"wordcloud_by_{source}{ext}"
+
         out_dir.mkdir(parents=True, exist_ok=True)
 
         if frequencies:
             frequencies = _filter_others(frequencies)
-            ext = ".png" if renderer == "classic" else ".svg"
-            out_file = out_dir / f"wordcloud_by_{source}{ext}"
             if renderer == "classic":
                 _generate_classic(frequencies, out_file, width=width, height=height)
             else:
                 _generate_svg(
                     renderer, frequencies, out_file,
                     width=width, height=height,
+                    color_func_name=color_func_name,
                 )
+            return out_file
         else:
             # Fall back to reading from markdown
-            generate_word_cloud(
+            return generate_word_cloud(
                 source=source, renderer=renderer,
                 output_dir=str(out_dir),
+                color_func_name=color_func_name,
             )
 
 

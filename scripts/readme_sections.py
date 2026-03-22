@@ -932,6 +932,9 @@ class ReadmeSectionGenerator:
         svg_cards: list[SvgCard] = []
         fallback_lines: list[str] = []
         repos = self.settings.featured_repos
+        featured_columns = 3
+        featured_card_width = 360
+        featured_card_height = 198
         # Fetch all repo metadata + languages in parallel
         metadata_by_name: dict[str, RepoMetadata | None] = {}
         languages_by_name: dict[str, dict[str, int] | None] = {}
@@ -1010,8 +1013,8 @@ class ReadmeSectionGenerator:
                 svg_markup = self._render_card_svg_asset(
                     family="featured",
                     card=card,
-                    width=500,
-                    height=185,
+                    width=featured_card_width,
+                    height=featured_card_height,
                     section_title="Featured Projects",
                 )
                 writer.write(asset_name=asset_name, svg_content=svg_markup)
@@ -1020,25 +1023,25 @@ class ReadmeSectionGenerator:
                 ).as_posix()
                 card_embeds.append((card.url or "#", src))
 
-        # Build HTML table grid (2 columns)
+        # Build HTML table grid (3 columns)
         table_lines: list[str] = []
         if card_embeds:
             table_lines.append('<table><tbody>')
-            for i in range(0, len(card_embeds), 2):
+            for i in range(0, len(card_embeds), featured_columns):
                 table_lines.append("<tr>")
-                for j in range(2):
+                for j in range(featured_columns):
                     idx = i + j
                     if idx < len(card_embeds):
                         url, src = card_embeds[idx]
                         table_lines.append(
-                            f'<td><a href="{escape(url)}"'
+                            f'<td valign="top" width="33.33%"><a href="{escape(url)}"'
                             f' target="_blank">'
-                            f'<img src="{escape(src)}" width="500"'
+                            f'<img src="{escape(src)}" width="100%"'
                             f' alt="{escape(svg_cards[idx].title)}"'
                             f' loading="lazy"/></a></td>'
                         )
                     else:
-                        table_lines.append("<td></td>")
+                        table_lines.append('<td width="33.33%"></td>')
                 table_lines.append("</tr>")
             table_lines.append("</tbody></table>")
 

@@ -59,25 +59,29 @@
 </tr>
 <tr>
 <td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.svg">
-    <img src=".github/assets/img/animated-community.svg" width="100%" alt="Cosmic Genesis — Clifford attractor community art where density reveals as stars and forks accumulate"/>
-  </picture>
+  <a href=".github/assets/img/animated-community.svg">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.gif">
+      <img src=".github/assets/img/animated-community.gif" width="100%" alt="Cosmic Genesis — Clifford attractor community art where density reveals as stars and forks accumulate"/>
+    </picture>
+  </a>
   <br/>
-  <sub><b>Cosmic Genesis</b> — Clifford attractor density field revealed progressively as stars and forks accumulate (<code>animated-community.svg</code>)</sub>
+  <sub><b>Cosmic Genesis</b> — Clifford attractor density field revealed progressively as stars and forks accumulate (<code>animated-community.gif</code>, source SVG: <code>animated-community.svg</code>)</sub>
 </td>
 <td width="50%" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.svg">
-    <img src=".github/assets/img/animated-activity.svg" width="100%" alt="Unfurling Spiral — phyllotaxis spiral activity art that grows from a single seed as contributions build"/>
-  </picture>
+  <a href=".github/assets/img/animated-activity.svg">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.gif">
+      <img src=".github/assets/img/animated-activity.gif" width="100%" alt="Unfurling Spiral — phyllotaxis spiral activity art that grows from a single seed as contributions build"/>
+    </picture>
+  </a>
   <br/>
-  <sub><b>Unfurling Spiral</b> — phyllotaxis spiral grows from a single seed as contributions build (<code>animated-activity.svg</code>)</sub>
+  <sub><b>Unfurling Spiral</b> — phyllotaxis spiral grows from a single seed as contributions build (<code>animated-activity.gif</code>, source SVG: <code>animated-activity.svg</code>)</sub>
 </td>
 </tr>
 </table>
 
-> [!NOTE] Compatibility phase: Ink Garden & Topography embed stable GIFs linking to timeline-aware SVGs. Cosmic Genesis & Unfurling Spiral use self-animating CSS/SMIL SVGs directly. Regenerate via `uv run readme generate living-art` and `uv run readme generate animated`. See footnote[^1].
+> [!NOTE] Compatibility phase: all four living-art panels now embed stable GIFs for GitHub-safe inline playback and link through to their richer SVG sources. Regenerate via `uv run readme generate living-art` and `uv run readme generate animated`. See footnote[^1].
 
 <!-- BEGIN MANAGED MARKER -->
 <details>
@@ -98,11 +102,13 @@
   - Terrain/chrome: `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars`
     - Mapping: commits → base noise detail; monthly contributions → ridge intensity + month label opacity; forks → river count; followers → contour density; contributions/stars → survey/title annotations.
 - **Cosmic Genesis** (animated — community)
-  - Visual: `animated-community.svg` / `animated-community-dark.svg`
+  - Visual (compat): `animated-community.gif` / `animated-community-dark.gif`
+  - Visual (source): `animated-community.svg` / `animated-community-dark.svg`
   - Data inputs: commit history timeline with `stars`, `forks`, `languages`, milestone events
   - Mapping: Clifford attractor density field; stars/forks → progressive reveal density; language → OKLCH hue; calendar milestones → ring-burst animations; contribution particles → emission rate.
 - **Unfurling Spiral** (animated — activity)
-  - Visual: `animated-activity.svg` / `animated-activity-dark.svg`
+  - Visual (compat): `animated-activity.gif` / `animated-activity-dark.gif`
+  - Visual (source): `animated-activity.svg` / `animated-activity-dark.svg`
   - Data inputs: `public_repos`, `followers`, `orgs_count`, `contributions_last_year`, `total_commits`, `following`, `languages`
   - Mapping: Phyllotaxis spiral; repos/followers → octave complexity; contributions → dot count & temporal easing; languages → palette colors; flow-field lines draw as activity builds.
 - Growth timing (all four): `compute_maturity(metrics)` drives maturity and timeline staging over ~30s; maturity computed from commits, stars, contributions, followers, repo_count/age, forks, network_size.
@@ -110,7 +116,7 @@
 </details>
 <!-- END MANAGED MARKER -->
 
-[^1]: Living-art outputs are dual-written during migration: GIF embeds remain for GitHub-safe inline playback, while timeline-aware `*-growth-animated.svg` files are generated as the forward contract.
+[^1]: Living-art outputs are dual-written during migration: GIF embeds remain for GitHub-safe inline playback, while richer SVG sources stay available behind the linked images.
 
 > Note: the header banner (`banner.svg`) is config-driven (`config.yaml`), not mapped to GitHub activity metrics.
 

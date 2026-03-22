@@ -622,6 +622,8 @@ class SvgRepoCardRenderer:
 
     # Approximate char width at 13px sans-serif
     _CHAR_W = 6.8
+    _TITLE_FONT_SIZES = (17, 16, 15, 14, 13, 12)
+    _DESC_FONT_SIZES = (13, 12, 11, 10, 9)
 
     def __init__(
         self,
@@ -639,9 +641,36 @@ class SvgRepoCardRenderer:
         has_thumb = bool(card.background_image)
         thumb_w, thumb_h = (130, 75) if has_thumb else (0, 0)
         px = 20  # left padding
-
-        # Available width for text (pixels)
+        sparkline_data = card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
         text_px_w = (w - thumb_w - 36 - px) if has_thumb else (w - px - 20)
+        raw_desc = " ".join(
+            ln.strip() for ln in (card.lines or ()) if ln.strip()
+        )
+        bar_y = h - 30
+        show_sparkline = False
+        layout: tuple[list[str], list[str], int, int] | None = None
+        for try_sparkline in ([True, False] if sparkline_data else [False]):
+            text_bottom = (h - 64) if try_sparkline else (bar_y - 12)
+            available_height = max(36, text_bottom - 16)
+            candidate, fits = self._fit_copy_layout(
+                title=card.title,
+                description=raw_desc,
+                text_px_w=text_px_w,
+                available_height=available_height,
+            )
+            layout = candidate
+            if fits or not try_sparkline:
+                show_sparkline = try_sparkline and sparkline_data is not None and fits
+                break
+
+        if layout is None:
+            layout = ([card.title], [], 17, 13)
+        title_lines, desc_lines, title_size, desc_size = layout
+        title_x = px + 24
+        title_y = 16 + title_size
+        title_line_height = title_size + 4
+        desc_y = title_y + (len(title_lines) * title_line_height) + (10 if desc_lines else 0)
+        desc_line_height = desc_size + 3
 
         lines: list[str] = [
             (
@@ -676,8 +705,7 @@ class SvgRepoCardRenderer:
                 f'width="{thumb_w}" height="{thumb_h}" rx="8" />'
                 f'</clipPath>'
             )
-        # Sparkline gradient
-        if card.sparkline and len(card.sparkline) >= 2:
+        if show_sparkline:
             lines.append(
                 '<linearGradient id="spark-grad" x1="0" y1="0"'
                 ' x2="0" y2="1">'
@@ -689,7 +717,6 @@ class SvgRepoCardRenderer:
             )
         lines.append("</defs>")
 
-        # ── Card shell ──
         lines.append(
             f'<rect width="{w}" height="{h}" rx="10"'
             ' fill="var(--card-bg)" filter="url(#shadow)" />'
@@ -703,21 +730,18 @@ class SvgRepoCardRenderer:
             ' rx="10" fill="none"'
             ' stroke="var(--card-border)" stroke-width="1" />'
         )
-        # ── Inner rim lighting ──
         lines.append(
             f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
             ' rx="9" fill="none"'
             ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
         )
 
-        # ── Top accent bar (3px in primary language color) ──
         accent_color = lang_color or "var(--spark-stroke)"
         lines.append(
             f'<rect width="{w}" height="3" rx="0"'
             f' fill="{accent_color}" clip-path="url(#card-clip)" />'
         )
 
-        # ── OG thumbnail (right column) ──
         if has_thumb:
             thumb_x = w - thumb_w - 18
             lines.append(
@@ -734,13 +758,12 @@ class SvgRepoCardRenderer:
                 ' stroke-opacity="0.5" stroke-width="1" />'
             )
 
-        # ── Sparkline (subtle area chart above footer) ──
-        if card.sparkline and len(card.sparkline) >= 2:
+        if show_sparkline and sparkline_data:
             spark_w = w - 40
             spark_h = 28
             spark_y = h - 56
             spark_path = self._smooth_sparkline(
-                card.sparkline, width=spark_w, height=spark_h,
+                sparkline_data, width=spark_w, height=spark_h,
             )
             if spark_path:
                 area = (
@@ -762,39 +785,29 @@ class SvgRepoCardRenderer:
                 )
                 lines.append("</g>")
 
-        # ── Title row: repo icon + name ──
         lines.append(
             f'<svg x="{px}" y="18" width="18" height="18"'
             ' viewBox="0 0 16 16" fill="var(--meta-color)">'
             f'<path fill-rule="evenodd" d="{REPO_ICON_PATH}" /></svg>'
         )
-        title_max = 26 if has_thumb else 42
-        title_text = esc(self._truncate(card.title, title_max), quote=True)
-        lines.append(
-            f'<text class="rc-title" x="{px + 24}" y="33">'
-            f"{title_text}</text>"
-        )
-
-        # ── Stars / forks (top-right, beside or above thumbnail) ──
-        stat_right = (w - thumb_w - 36) if has_thumb else (w - 20)
-        self._render_stats(lines, card.meta, stat_right, 33)
-
-        # ── Description (word-wrapped, up to 3 lines) ──
-        raw_desc = " ".join(
-            ln.strip() for ln in (card.lines or ()) if ln.strip()
-        )
-        chars_per_line = int(text_px_w / self._CHAR_W)
-        wrapped = self._word_wrap(raw_desc, chars_per_line, max_lines=3)
-        dy = 54
-        for i, line_text in enumerate(wrapped):
+        for index, line_text in enumerate(title_lines):
             lines.append(
-                f'<text class="rc-desc" x="{px}" y="{dy}">'
+                f'<text class="rc-title" x="{title_x}" y="{title_y + (index * title_line_height)}"'
+                f' style="font: 600 {title_size}px/1.25 {FONT_FAMILY};">'
                 f"{esc(line_text, quote=True)}</text>"
             )
-            dy += 16
 
-        # ── Language distribution bar ──
-        bar_y = h - 30
+        stat_right = (w - thumb_w - 36) if has_thumb else (w - 20)
+        self._render_stats(lines, card.meta, stat_right, title_y)
+
+        for line_text in desc_lines:
+            lines.append(
+                f'<text class="rc-desc" x="{px}" y="{desc_y}"'
+                f' style="font: 400 {desc_size}px/1.5 {FONT_FAMILY};">'
+                f"{esc(line_text, quote=True)}</text>"
+            )
+            desc_y += desc_line_height
+
         bar_w = min(w - 40, 340)
         if card.languages and sum(card.languages.values()) > 0:
             self._render_lang_bar(
@@ -807,12 +820,8 @@ class SvgRepoCardRenderer:
                 ' fill-opacity="0.5" />'
             )
 
-        # ── Footer stats ──
         fy = h - 14
-        fx = px
-        fx = self._render_footer(
-            lines, card, fx, fy, lang_name, lang_color,
-        )
+        self._render_footer(lines, card, px, fy, lang_name, lang_color)
 
         lines.append("</svg>")
         return "\n".join(lines)
@@ -986,7 +995,13 @@ class SvgRepoCardRenderer:
         return None, None
 
     @staticmethod
-    def _word_wrap(text: str, width: int, max_lines: int = 3) -> list[str]:
+    def _word_wrap(
+        text: str,
+        width: int,
+        max_lines: int | None = 3,
+        *,
+        ellipsize: bool = True,
+    ) -> list[str]:
         """Break *text* into lines of at most *width* characters on word
         boundaries.  The last visible line is ellipsized if there is
         remaining text."""
@@ -1003,19 +1018,76 @@ class SvgRepoCardRenderer:
                 if current:
                     result.append(current)
                 current = word
-                if len(result) >= max_lines:
+                if max_lines is not None and len(result) >= max_lines:
                     break
-        if current and len(result) < max_lines:
+        if current and (max_lines is None or len(result) < max_lines):
             result.append(current)
         # Ellipsize last line if we ran out of room
         full = " ".join(words)
         shown = " ".join(result)
-        if len(shown) < len(full):
+        if result and ellipsize and len(shown) < len(full):
             last = result[-1]
             if len(last) > width - 1:
                 last = last[: width - 1]
             result[-1] = f"{last}\u2026"
-        return result[:max_lines]
+        return result[:max_lines] if max_lines is not None else result
+
+    @staticmethod
+    def _chars_for_width(width_px: int, font_size: int, factor: float) -> int:
+        return max(8, int(width_px / max(font_size * factor, 1)))
+
+    def _fit_copy_layout(
+        self,
+        *,
+        title: str,
+        description: str,
+        text_px_w: int,
+        available_height: int,
+    ) -> tuple[tuple[list[str], list[str], int, int], bool]:
+        best: tuple[list[str], list[str], int, int] | None = None
+        best_overflow: int | None = None
+
+        for title_size in self._TITLE_FONT_SIZES:
+            title_width = self._chars_for_width(text_px_w, title_size, 0.56)
+            title_lines = self._word_wrap(
+                title,
+                title_width,
+                max_lines=None,
+                ellipsize=False,
+            )
+            title_line_height = title_size + 4
+            title_height = len(title_lines) * title_line_height
+            for desc_size in self._DESC_FONT_SIZES:
+                desc_width = self._chars_for_width(text_px_w, desc_size, 0.58)
+                desc_lines = self._word_wrap(
+                    description,
+                    desc_width,
+                    max_lines=None,
+                    ellipsize=False,
+                )
+                desc_line_height = desc_size + 3
+                gap = 10 if desc_lines else 0
+                total_height = title_height + gap + (len(desc_lines) * desc_line_height)
+                layout = (title_lines, desc_lines, title_size, desc_size)
+                if total_height <= available_height:
+                    return layout, True
+                overflow = total_height - available_height
+                if best is None or best_overflow is None or overflow < best_overflow:
+                    best = layout
+                    best_overflow = overflow
+
+        if best is None:
+            return ([title], [], 17, 13), False
+
+        title_lines, desc_lines, title_size, desc_size = best
+        title_height = len(title_lines) * (title_size + 4)
+        remaining_height = max(0, available_height - title_height - (10 if desc_lines else 0))
+        max_desc_lines = remaining_height // (desc_size + 3)
+        if max_desc_lines <= 0:
+            desc_lines = []
+        else:
+            desc_lines = desc_lines[:max_desc_lines]
+        return (title_lines, desc_lines, title_size, desc_size), False
 
     @staticmethod
     def _truncate(value: str, limit: int) -> str:
@@ -1076,17 +1148,50 @@ class SvgBlogCardRenderer:
         self.height = height
 
     def render_card(self, card: SvgCard) -> str:
-        w, h = self.width, self.height
+        w = self.width
         esc = escape
         has_hero = bool(card.background_image)
         hero_w, hero_h = (110, 68) if has_hero else (0, 0)
         px = 20
+        text_w = (w - hero_w - 56) if has_hero else (w - 40)
+        sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
+        sanitized_title = re.sub(
+            r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE,
+        ).strip()
+        raw = " ".join(
+            ln.strip() for ln in (card.lines or ()) if ln.strip()
+        )
+        title_size = 16
+        desc_size = 13
+        title_line_height = title_size + 4
+        desc_line_height = desc_size + 3
+        title_char_lim = SvgRepoCardRenderer._chars_for_width(text_w, title_size, 0.58)
+        desc_cpl = SvgRepoCardRenderer._chars_for_width(text_w, desc_size, 0.58)
+        title_lines = SvgRepoCardRenderer._word_wrap(
+            sanitized_title,
+            title_char_lim,
+            max_lines=None,
+            ellipsize=False,
+        )
+        wrapped = SvgRepoCardRenderer._word_wrap(
+            raw,
+            desc_cpl,
+            max_lines=None,
+            ellipsize=False,
+        )
+        title_top = 18
+        title_first_y = title_top + title_size
+        summary_y = title_first_y + (len(title_lines) * title_line_height) + (8 if wrapped else 0)
+        content_bottom = summary_y + (max(0, len(wrapped) - 1) * desc_line_height)
+        hero_bottom = 18 + hero_h if has_hero else 0
+        footer_y = max(content_bottom + 28, hero_bottom + 26, self.height - 14)
+        h = footer_y + 14
 
         lines: list[str] = [
             f'<svg xmlns="http://www.w3.org/2000/svg" '
             f'xmlns:xlink="http://www.w3.org/1999/xlink" '
             f'width="{w}" height="{h}" viewBox="0 0 {w} {h}" '
-            f'role="img" aria-label="{esc(card.title, quote=True)}">',
+            f'role="img" aria-label="{esc(sanitized_title, quote=True)}">',
             "<defs><style>",
             self._css(),
             "</style>",
@@ -1163,52 +1268,30 @@ class SvgBlogCardRenderer:
                 ' stroke-width="1" />'
             )
 
-        # Title (word-wrapped, up to 2 lines)
-        text_w = (w - hero_w - 56) if has_hero else (w - 40)
-
-        # Use more conservative character width estimates for proportional fonts
-        # 16px 600-weight title avg width ~9.2px
-        title_char_lim = int(text_w / 9.2)
-        title_lines = SvgRepoCardRenderer._word_wrap(
-            card.title, title_char_lim, max_lines=2,
-        )
-        ty = 32
+        ty = title_first_y
         for tl in title_lines:
             lines.append(
                 f'<text class="blog-title" x="{px}" y="{ty}">'
                 f"{esc(tl, quote=True)}</text>"
             )
-            ty += 18
+            ty += title_line_height
 
-        # Summary (word-wrapped; reduce to 2 lines when title uses 2 lines)
-        n_title_lines = len(title_lines)
-        summary_y = ty + 2  # consistent 20px gap from the last title baseline
-        max_summary_lines = 2 if n_title_lines >= 2 else 3
-        raw = " ".join(
-            ln.strip() for ln in (card.lines or ()) if ln.strip()
-        )
-
-        # 13px 400-weight desc avg width ~7.5px
-        desc_cpl = int(text_w / 7.5)
-        wrapped = SvgRepoCardRenderer._word_wrap(
-            raw, desc_cpl, max_lines=max_summary_lines,
-        )
         dy = summary_y
         for line_text in wrapped:
             lines.append(
                 f'<text class="blog-desc" x="{px}" y="{dy}">'
                 f"{esc(line_text, quote=True)}</text>"
             )
-            dy += 16
+            dy += desc_line_height
 
         # Accent line above footer
         lines.append(
-            f'<rect x="{px}" y="{h - 30}" width="80"'
+            f'<rect x="{px}" y="{footer_y - 16}" width="80"'
             ' height="1.5" rx="0.5" fill="url(#footer-div-grad)" />'
         )
 
         # Footer: date · host
-        fy = h - 14
+        fy = footer_y
         meta_parts = [m for m in (card.meta or ()) if m.strip()]
         if meta_parts:
             joined = " · ".join(meta_parts)
@@ -1396,19 +1479,10 @@ class SvgConnectCardRenderer:
 
         # Platform name — centered below icon
         lines.append(
-            f'<text class="con-title" x="{cx}" y="84"'
+            f'<text class="con-title" x="{cx}" y="96"'
             f' text-anchor="middle">'
             f"{esc(card.title, quote=True)}</text>"
         )
-
-        # Category label — small, centered
-        sub = card.badge or card.kicker or ""
-        if sub:
-            lines.append(
-                f'<text class="con-sub" x="{cx}" y="100"'
-                f' text-anchor="middle">'
-                f"{esc(sub, quote=True)}</text>"
-            )
 
         lines.append("</svg>")
         return "\n".join(lines)

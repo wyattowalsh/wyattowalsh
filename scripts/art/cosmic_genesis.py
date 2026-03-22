@@ -280,13 +280,22 @@ _COMMUNITY_CSS = """\
 # =========================================================================
 
 
-def generate(
+def _clamp_snapshot_progress(snapshot_progress: float | None) -> float | None:
+    if snapshot_progress is None:
+        return None
+    return max(0.0, min(1.0, snapshot_progress))
+
+
+def _render_svg(
     history: dict,
     dark_mode: bool = False,
-    output_path: Path | None = None,
     duration: float = 60.0,
-) -> Path:
-    """Generate the *Cosmic Genesis* community artwork."""
+    snapshot_progress: float | None = None,
+) -> tuple[str, int]:
+    snapshot_progress = _clamp_snapshot_progress(snapshot_progress)
+    snapshot_mode = snapshot_progress is not None
+    progress_time = duration * (snapshot_progress or 0.0)
+
     metrics = history.get("current_metrics", {})
     stars_events = history.get("stars", [])
     forks_events = history.get("forks", [])
@@ -295,10 +304,6 @@ def generate(
         + [{"date": e.get("date", ""), "kind": "fork"} for e in forks_events],
         key=lambda e: e.get("date", ""),
     )
-
-    suffix = "-dark" if dark_mode else ""
-    out = Path(output_path or f".github/assets/img/animated-community{suffix}.svg")
-    out.parent.mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------------
     # 1. Continuous attractor parameters (replaces SHA-256)
@@ -327,9 +332,7 @@ def generate(
     density, first_hit = _compute_clifford(a, b, c, d, iters, grid_sz)
     max_density = density.max()
     if max_density <= 0:
-        logger.warning("Clifford attractor produced empty grid")
-        out.write_text(svg_header(_WIDTH, _HEIGHT) + svg_footer(), encoding="utf-8")
-        return out
+        return svg_header(_WIDTH, _HEIGHT) + svg_footer(), 0
 
     norm = np.log1p(density) / np.log1p(max_density)
 
@@ -351,8 +354,8 @@ def generate(
         bg_from1, bg_to1 = "#05080f", "#12081e"
         bg_from2, bg_to2 = "#080e1a", "#1a0e2e"
         star_colors = [
-            oklch(0.90, 0.02, 220),  # cool white-blue
-            oklch(0.85, 0.01, 50),  # warm white
+            oklch(0.90, 0.02, 220),
+            oklch(0.85, 0.01, 50),
             "#ffffff",
         ]
         timeline_bg = "rgba(255,255,255,0.08)"
@@ -385,18 +388,28 @@ def generate(
     parts.append("<defs>\n")
 
     # Radial gradient for deep-space background
-    parts.append(
-        f'<radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">\n'
-        f'  <stop offset="0%" stop-color="{bg_from1}">\n'
-        f'    <animate attributeName="stop-color" values="{bg_from1};{bg_to1};{bg_from1}" '
-        f'dur="{dur_s}" repeatCount="indefinite"/>\n'
-        f"  </stop>\n"
-        f'  <stop offset="100%" stop-color="{bg_from2}">\n'
-        f'    <animate attributeName="stop-color" values="{bg_from2};{bg_to2};{bg_from2}" '
-        f'dur="{dur_s}" repeatCount="indefinite"/>\n'
-        f"  </stop>\n"
-        f"</radialGradient>\n"
-    )
+    if snapshot_mode:
+        bg_stop_1 = bg_to1 if (snapshot_progress or 0.0) >= 0.65 else bg_from1
+        bg_stop_2 = bg_to2 if (snapshot_progress or 0.0) >= 0.65 else bg_from2
+        parts.append(
+            f'<radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">\n'
+            f'  <stop offset="0%" stop-color="{bg_stop_1}"/>\n'
+            f'  <stop offset="100%" stop-color="{bg_stop_2}"/>\n'
+            f"</radialGradient>\n"
+        )
+    else:
+        parts.append(
+            f'<radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">\n'
+            f'  <stop offset="0%" stop-color="{bg_from1}">\n'
+            f'    <animate attributeName="stop-color" values="{bg_from1};{bg_to1};{bg_from1}" '
+            f'dur="{dur_s}" repeatCount="indefinite"/>\n'
+            f"  </stop>\n"
+            f'  <stop offset="100%" stop-color="{bg_from2}">\n'
+            f'    <animate attributeName="stop-color" values="{bg_from2};{bg_to2};{bg_from2}" '
+            f'dur="{dur_s}" repeatCount="indefinite"/>\n'
+            f"  </stop>\n"
+            f"</radialGradient>\n"
+        )
 
     # Glow filter for milestone rings
     parts.append(
@@ -407,24 +420,22 @@ def generate(
     parts.append('<filter id="nebBlur"><feGaussianBlur stdDeviation="40"/></filter>\n')
     parts.append("</defs>\n")
 
-    # CSS
-    parts.append(css)
+    if not snapshot_mode:
+        parts.append(css)
 
     # Background rect
     parts.append(f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="url(#bgGrad)"/>\n')
 
     # ---- Layer 1: Three-depth starfield ----
-    # Use a fallback seed from metrics for deterministic randomness
     star_seed = (metrics.get("stars", 0) * 7919 + metrics.get("forks", 0) * 6271) % (
         2**31
     )
     rng = random.Random(star_seed)
 
     star_layers = [
-        # (count, r_lo, r_hi, op_lo, op_hi, twinkle_lo, twinkle_hi, color_pool)
-        (40, 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),  # far
-        (35, 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),  # mid
-        (15, 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),  # near (colored)
+        (40, 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),
+        (35, 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),
+        (15, 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),
     ]
 
     parts.append('<g id="starfield">\n')
@@ -437,11 +448,17 @@ def generate(
             tw_delay = round(rng.uniform(0, duration), 1)
             opacity = round(rng.uniform(op_lo, op_hi), 2)
             color = rng.choice(colors)
-            parts.append(
-                f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr}" fill="{color}" '
-                f'opacity="{opacity}" '
-                f'style="animation:twinkle {tw_dur}s ease-in-out {tw_delay}s infinite"/>\n'
-            )
+            if snapshot_mode:
+                parts.append(
+                    f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr}" fill="{color}" '
+                    f'opacity="{opacity}"/>\n'
+                )
+            else:
+                parts.append(
+                    f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr}" fill="{color}" '
+                    f'opacity="{opacity}" '
+                    f'style="animation:twinkle {tw_dur}s ease-in-out {tw_delay}s infinite"/>\n'
+                )
     parts.append("</g>\n")
 
     # ---- Layer 2: Nebula wisps (language-colored) ----
@@ -452,7 +469,7 @@ def generate(
         nebula_hues = [280, 200, 50]
 
     parts.append('<g id="nebula">\n')
-    for i, hue in enumerate(nebula_hues * 2):  # 6 wisps
+    for i, hue in enumerate(nebula_hues * 2):
         nx = rng.uniform(100, 700)
         ny = rng.uniform(100, 700)
         rx = rng.uniform(120, 250)
@@ -460,13 +477,20 @@ def generate(
         drift_x = rng.uniform(-30, 30)
         nebula_color = oklch(0.25 if dark_mode else 0.65, 0.10, hue)
         neb_dur = round(rng.uniform(20, 30))
-        parts.append(
-            f'<ellipse cx="{nx:.0f}" cy="{ny:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
-            f'fill="{nebula_color}" opacity="0.06" filter="url(#nebBlur)">\n'
-            f'  <animate attributeName="cx" values="{nx:.0f};{nx + drift_x:.0f};{nx:.0f}" '
-            f'dur="{neb_dur}s" repeatCount="indefinite"/>\n'
-            f"</ellipse>\n"
-        )
+        if snapshot_mode:
+            current_x = nx + drift_x * (snapshot_progress or 0.0) * 0.5
+            parts.append(
+                f'<ellipse cx="{current_x:.0f}" cy="{ny:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
+                f'fill="{nebula_color}" opacity="0.06" filter="url(#nebBlur)"/>\n'
+            )
+        else:
+            parts.append(
+                f'<ellipse cx="{nx:.0f}" cy="{ny:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
+                f'fill="{nebula_color}" opacity="0.06" filter="url(#nebBlur)">\n'
+                f'  <animate attributeName="cx" values="{nx:.0f};{nx + drift_x:.0f};{nx:.0f}" '
+                f'dur="{neb_dur}s" repeatCount="indefinite"/>\n'
+                f"</ellipse>\n"
+            )
     parts.append("</g>\n")
 
     # ---- Layer 3: Contribution particles ----
@@ -477,7 +501,7 @@ def generate(
         median_count = sorted(counts)[len(counts) // 2] if counts else 1
 
         parts.append('<g id="particles">\n')
-        for idx, (month, count) in enumerate(months_sorted):
+        for idx, (_month, count) in enumerate(months_sorted):
             if count <= median_count * 0.5:
                 continue
             t_frac = idx / max(len(months_sorted) - 1, 1)
@@ -491,23 +515,42 @@ def generate(
                 end_y = _HEIGHT / 2 + end_r * math.sin(angle)
                 p_dur = round(rng.uniform(3.0, 6.0), 1)
                 p_color = oklch(0.7, 0.12, 60) if dark_mode else oklch(0.5, 0.10, 60)
-                # Looping particle: drifts out, fades, then resets and repeats
                 cycle_dur = round(p_dur + rng.uniform(4.0, 8.0), 1)
-                parts.append(
-                    f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="1.2" '
-                    f'fill="{p_color}" opacity="0">\n'
-                    f'  <animate attributeName="cx" values="{_WIDTH / 2};{end_x:.0f};{_WIDTH / 2}" '
-                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
-                    f'  <animate attributeName="cy" values="{_HEIGHT / 2};{end_y:.0f};{_HEIGHT / 2}" '
-                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
-                    f'  <animate attributeName="opacity" values="0;0.7;0.7;0" '
-                    f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
-                    f"</circle>\n"
-                )
+                if snapshot_mode:
+                    if progress_time < t_sec:
+                        continue
+                    particle_progress = min(1.0, (progress_time - t_sec) / max(p_dur, 0.1))
+                    current_x = (_WIDTH / 2) + (end_x - (_WIDTH / 2)) * particle_progress
+                    current_y = (_HEIGHT / 2) + (end_y - (_HEIGHT / 2)) * particle_progress
+                    opacity = round(0.7 * max(0.2, 1.0 - (particle_progress * 0.4)), 3)
+                    parts.append(
+                        f'<circle cx="{current_x:.0f}" cy="{current_y:.0f}" r="1.2" '
+                        f'fill="{p_color}" opacity="{opacity}"/>\n'
+                    )
+                else:
+                    parts.append(
+                        f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="1.2" '
+                        f'fill="{p_color}" opacity="0">\n'
+                        f'  <animate attributeName="cx" values="{_WIDTH / 2};{end_x:.0f};{_WIDTH / 2}" '
+                        f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
+                        f'  <animate attributeName="cy" values="{_HEIGHT / 2};{end_y:.0f};{_HEIGHT / 2}" '
+                        f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
+                        f'  <animate attributeName="opacity" values="0;0.7;0.7;0" '
+                        f'dur="{cycle_dur}s" begin="{t_sec:.1f}s" repeatCount="indefinite"/>\n'
+                        f"</circle>\n"
+                    )
         parts.append("</g>\n")
 
     # ---- Layer 4: Zoom wrapper for attractor reveal ----
-    parts.append('<g class="zoom-wrap">\n')
+    if snapshot_mode:
+        scale = 1.08 - (0.08 * (snapshot_progress or 0.0))
+        parts.append(
+            '<g class="zoom-wrap" '
+            f'transform="translate({_WIDTH / 2:.0f} {_HEIGHT / 2:.0f}) scale({scale:.3f}) '
+            f'translate({-_WIDTH / 2:.0f} {-_HEIGHT / 2:.0f})">\n'
+        )
+    else:
+        parts.append('<g class="zoom-wrap">\n')
 
     # ---- Layer 4a: Attractor cells as soft circles with jitter ----
     threshold = 0.03
@@ -524,49 +567,72 @@ def generate(
             color = _density_color_oklch(val, time_frac, hue_shift)
 
             alpha = round(val * (0.92 if dark_mode else 0.82), 3)
-            # Center of the cell with deterministic jitter
             cx = round(
                 col * pixel_w + pixel_w / 2 + math.sin(row * 0.7 + col * 1.3) * 1.5, 1
             )
             cy = round(
                 row * pixel_h + pixel_h / 2 + math.cos(row * 1.1 + col * 0.9) * 1.5, 1
             )
-            # Radius varies by density
             r = round(1.5 + val * 3.0, 1)
-
-            # Breathing period varies per cell for organic feel
             breathe_dur = round(5.0 + (row * 0.3 + col * 0.7) % 6.0, 1)
             breathe_delay = round(delay + 1.5, 2)
-            parts.append(
-                f'<circle class="cr" cx="{cx}" cy="{cy}" r="{r}" '
-                f'fill="{color}" '
-                f'style="--o:{alpha};--br:{breathe_dur}s;--bd:{breathe_delay}s;'
-                f'animation-delay:{delay:.2f}s"/>\n'
-            )
+            if snapshot_mode:
+                if progress_time < delay:
+                    continue
+                reveal_progress = min(1.0, (progress_time - delay) / 1.2)
+                parts.append(
+                    f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{color}" '
+                    f'opacity="{round(alpha * reveal_progress, 3)}"/>\n'
+                )
+            else:
+                parts.append(
+                    f'<circle class="cr" cx="{cx}" cy="{cy}" r="{r}" '
+                    f'fill="{color}" '
+                    f'style="--o:{alpha};--br:{breathe_dur}s;--bd:{breathe_delay}s;'
+                    f'animation-delay:{delay:.2f}s"/>\n'
+                )
             cell_count += 1
 
     parts.append("</g>\n")
 
     # ---- Layer 4b: Shaped density flash (follows attractor density) ----
-    parts.append(
-        f'<g id="densityFlash" style="animation:densityFlash {dur_s} ease-in-out both">\n'
-    )
-    # Only render flash for highest-density cells
-    for row in range(grid_sz):
-        for col in range(grid_sz):
-            val = float(norm[row, col])
-            if val < 0.5:
-                continue
-            flash_alpha = round((val - 0.5) * 2.0 * 0.35, 3)
-            cx = round(col * pixel_w + pixel_w / 2, 1)
-            cy = round(row * pixel_h + pixel_h / 2, 1)
-            r = round(1.5 + val * 3.0, 1)
-            parts.append(
-                f'<circle cx="{cx}" cy="{cy}" r="{r}" '
-                f'fill="white" opacity="{flash_alpha}"/>\n'
-            )
+    if snapshot_mode:
+        flash_progress = max(0.0, min(1.0, ((snapshot_progress or 0.0) - 0.85) / 0.15))
+        if flash_progress > 0:
+            parts.append('<g id="densityFlash">\n')
+            for row in range(grid_sz):
+                for col in range(grid_sz):
+                    val = float(norm[row, col])
+                    if val < 0.5:
+                        continue
+                    flash_alpha = round((val - 0.5) * 2.0 * 0.35 * flash_progress, 3)
+                    cx = round(col * pixel_w + pixel_w / 2, 1)
+                    cy = round(row * pixel_h + pixel_h / 2, 1)
+                    r = round(1.5 + val * 3.0, 1)
+                    parts.append(
+                        f'<circle cx="{cx}" cy="{cy}" r="{r}" '
+                        f'fill="white" opacity="{flash_alpha}"/>\n'
+                    )
+            parts.append("</g>\n")
+    else:
+        parts.append(
+            f'<g id="densityFlash" style="animation:densityFlash {dur_s} ease-in-out both">\n'
+        )
+        for row in range(grid_sz):
+            for col in range(grid_sz):
+                val = float(norm[row, col])
+                if val < 0.5:
+                    continue
+                flash_alpha = round((val - 0.5) * 2.0 * 0.35, 3)
+                cx = round(col * pixel_w + pixel_w / 2, 1)
+                cy = round(row * pixel_h + pixel_h / 2, 1)
+                r = round(1.5 + val * 3.0, 1)
+                parts.append(
+                    f'<circle cx="{cx}" cy="{cy}" r="{r}" '
+                    f'fill="white" opacity="{flash_alpha}"/>\n'
+                )
+        parts.append("</g>\n")
     parts.append("</g>\n")
-    parts.append("</g>\n")  # close zoom-wrap
 
     # ---- Layer 5: Milestone pulse rings with poetic labels ----
     milestones = _milestone_indices(all_events)
@@ -576,21 +642,37 @@ def generate(
             ms_delay = round(math.sqrt(frac) * duration * 0.93, 2)
             mx = _WIDTH // 2 + rng.randint(-60, 60)
             my = _HEIGHT // 2 + rng.randint(-60, 60)
-            # Pulse rings loop with longer period for ongoing life
             pulse_period = round(3.0 + frac * 4.0, 1)
-            parts.append(
-                f'<circle cx="{mx}" cy="{my}" r="5" fill="none" '
-                f'stroke="{milestone_stroke}" stroke-width="2" opacity="0.8" '
-                f'style="animation:milestonePulse {pulse_period}s ease-out {ms_delay}s infinite"/>\n'
-            )
             label = _MILESTONE_LABELS.get(val, "")
-            if label:
+            if snapshot_mode:
+                if progress_time < ms_delay:
+                    continue
+                milestone_progress = min(1.0, (progress_time - ms_delay) / 2.5)
+                ring_r = round(5 + (24 * milestone_progress), 1)
+                ring_opacity = round(0.8 * max(0.35, 1.0 - (milestone_progress * 0.5)), 3)
                 parts.append(
-                    f'<text x="{mx}" y="{my + 18}" text-anchor="middle" '
-                    f'font-size="8" font-family="monospace" fill="{text_color}" '
-                    f'opacity="0" style="animation:labelFade 4s ease-out {ms_delay}s both">'
-                    f"{label}</text>\n"
+                    f'<circle cx="{mx}" cy="{my}" r="{ring_r}" fill="none" '
+                    f'stroke="{milestone_stroke}" stroke-width="2" opacity="{ring_opacity}"/>\n'
                 )
+                if label and milestone_progress >= 0.25:
+                    parts.append(
+                        f'<text x="{mx}" y="{my + 18}" text-anchor="middle" '
+                        f'font-size="8" font-family="monospace" fill="{text_color}" '
+                        f'opacity="0.6">{label}</text>\n'
+                    )
+            else:
+                parts.append(
+                    f'<circle cx="{mx}" cy="{my}" r="5" fill="none" '
+                    f'stroke="{milestone_stroke}" stroke-width="2" opacity="0.8" '
+                    f'style="animation:milestonePulse {pulse_period}s ease-out {ms_delay}s infinite"/>\n'
+                )
+                if label:
+                    parts.append(
+                        f'<text x="{mx}" y="{my + 18}" text-anchor="middle" '
+                        f'font-size="8" font-family="monospace" fill="{text_color}" '
+                        f'opacity="0" style="animation:labelFade 4s ease-out {ms_delay}s both">'
+                        f"{label}</text>\n"
+                    )
         parts.append("</g>\n")
 
     # ---- Layer 6: Timeline bar at bottom ----
@@ -602,15 +684,20 @@ def generate(
         f'<rect x="{bar_x}" y="{bar_y}" width="{bar_w}" height="{bar_h}" '
         f'rx="2" fill="{timeline_bg}"/>\n'
     )
-    parts.append(
-        f'<rect x="{bar_x}" y="{bar_y}" width="0" height="{bar_h}" rx="2" '
-        f'fill="{timeline_fg}" opacity="0.8">\n'
-        f'  <animate attributeName="width" from="0" to="{bar_w}" '
-        f'dur="{dur_s}" fill="freeze"/>\n'
-        f"</rect>\n"
-    )
+    if snapshot_mode:
+        parts.append(
+            f'<rect x="{bar_x}" y="{bar_y}" width="{round(bar_w * (snapshot_progress or 0.0), 1)}" '
+            f'height="{bar_h}" rx="2" fill="{timeline_fg}" opacity="0.8"/>\n'
+        )
+    else:
+        parts.append(
+            f'<rect x="{bar_x}" y="{bar_y}" width="0" height="{bar_h}" rx="2" '
+            f'fill="{timeline_fg}" opacity="0.8">\n'
+            f'  <animate attributeName="width" from="0" to="{bar_w}" '
+            f'dur="{dur_s}" fill="freeze"/>\n'
+            f"</rect>\n"
+        )
 
-    # Year tick marks on timeline
     account_created = history.get("account_created")
     all_dates = [e.get("date", "") for e in all_events]
     all_dates = [d for d in all_dates if d]
@@ -636,8 +723,35 @@ def generate(
         )
 
     parts.append(svg_footer())
+    return "".join(parts), cell_count
 
-    svg_text = "".join(parts)
+
+def render_svg(
+    history: dict,
+    dark_mode: bool = False,
+    duration: float = 60.0,
+    snapshot_progress: float | None = None,
+) -> str:
+    svg_text, _ = _render_svg(
+        history,
+        dark_mode=dark_mode,
+        duration=duration,
+        snapshot_progress=snapshot_progress,
+    )
+    return svg_text
+
+
+def generate(
+    history: dict,
+    dark_mode: bool = False,
+    output_path: Path | None = None,
+    duration: float = 60.0,
+) -> Path:
+    """Generate the *Cosmic Genesis* community artwork."""
+    suffix = "-dark" if dark_mode else ""
+    out = Path(output_path or f".github/assets/img/animated-community{suffix}.svg")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    svg_text, cell_count = _render_svg(history, dark_mode=dark_mode, duration=duration)
     out.write_text(svg_text, encoding="utf-8")
 
     size_kb = len(svg_text.encode("utf-8")) / 1024

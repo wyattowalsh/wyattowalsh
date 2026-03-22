@@ -217,20 +217,25 @@ _ACTIVITY_CSS = """\
 # =========================================================================
 
 
-def generate(
+def _clamp_snapshot_progress(snapshot_progress: float | None) -> float | None:
+    if snapshot_progress is None:
+        return None
+    return max(0.0, min(1.0, snapshot_progress))
+
+
+def _render_svg(
     history: dict,
     dark_mode: bool = False,
-    output_path: Path | None = None,
     duration: float = 60.0,
-) -> Path:
-    """Generate the *Unfurling Spiral* activity artwork."""
+    snapshot_progress: float | None = None,
+) -> tuple[str, int, int]:
+    snapshot_progress = _clamp_snapshot_progress(snapshot_progress)
+    snapshot_mode = snapshot_progress is not None
+    progress_time = duration * (snapshot_progress or 0.0)
+
     metrics = history.get("current_metrics", {})
     repos = history.get("repos", [])
     contributions_monthly = history.get("contributions_monthly", {})
-
-    suffix = "-dark" if dark_mode else ""
-    out = Path(output_path or f".github/assets/img/animated-activity{suffix}.svg")
-    out.parent.mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------------
     # 1. Continuous parameters (replaces SHA-256)
@@ -273,13 +278,11 @@ def generate(
         seed=flow_seed,
     )
 
-    # Contribution-aware timing
     delays = [
         _contribution_aware_easing(i, n_points, duration, contributions_monthly)
         for i in range(n_points)
     ]
 
-    # Language palette
     palette = _build_language_palette(metrics, n_points)
 
     # ------------------------------------------------------------------
@@ -302,13 +305,11 @@ def generate(
         ripple_color = "rgba(100,80,200,0.45)"
         conn_opacity = 0.10
 
-    # Timeline arc geometry
     arc_cx = _WIDTH // 2
     arc_cy = _HEIGHT - 30
     arc_r = _WIDTH // 2 - 50
     arc_len = round(math.pi * arc_r, 1)
 
-    # Dot sizes
     base_r = max(2.0, min(5.0, 120.0 / math.sqrt(max(n_points, 1))))
     pulse_r1 = round(base_r + 1, 1)
     pulse_r2 = round(base_r + 3, 1)
@@ -322,7 +323,6 @@ def generate(
     parts: list[str] = []
     parts.append(svg_header(_WIDTH, _HEIGHT))
 
-    # Defs
     parts.append("<defs>\n")
     parts.append(
         '<filter id="spiralGlow" x="-50%" y="-50%" width="200%" height="200%">'
@@ -330,36 +330,43 @@ def generate(
         '<feComposite in="SourceGraphic" in2="b" operator="over"/>'
         "</filter>\n"
     )
-    # Breathing radial gradient
     avg_monthly = (
         sum(contributions_monthly.values()) / max(len(contributions_monthly), 1)
         if contributions_monthly
         else 50
     )
     pulse_period = round(max(3.0, 8.0 - min(5.0, avg_monthly / 100)), 1)
-    parts.append(
-        f'<radialGradient id="bgRad" cx="50%" cy="50%" r="0%">\n'
-        f'  <stop offset="0%" stop-color="{bg_radial_color}" stop-opacity="0.25">\n'
-        f'    <animate attributeName="stop-opacity" values="0.25;0.40;0.25" '
-        f'dur="{pulse_period}s" repeatCount="indefinite"/>\n'
-        f"  </stop>\n"
-        f'  <stop offset="100%" stop-color="{bg_color}" stop-opacity="0"/>\n'
-        f'  <animate attributeName="r" from="0%" to="75%" dur="{duration}s" fill="freeze"/>\n'
-        f"</radialGradient>\n"
-    )
+    if snapshot_mode:
+        radial_extent = max(5.0, 75.0 * (snapshot_progress or 0.0))
+        radial_opacity = round(0.25 + ((snapshot_progress or 0.0) * 0.15), 3)
+        parts.append(
+            f'<radialGradient id="bgRad" cx="50%" cy="50%" r="{radial_extent:.1f}%">\n'
+            f'  <stop offset="0%" stop-color="{bg_radial_color}" stop-opacity="{radial_opacity}"/>\n'
+            f'  <stop offset="100%" stop-color="{bg_color}" stop-opacity="0"/>\n'
+            f"</radialGradient>\n"
+        )
+    else:
+        parts.append(
+            f'<radialGradient id="bgRad" cx="50%" cy="50%" r="0%">\n'
+            f'  <stop offset="0%" stop-color="{bg_radial_color}" stop-opacity="0.25">\n'
+            f'    <animate attributeName="stop-opacity" values="0.25;0.40;0.25" '
+            f'dur="{pulse_period}s" repeatCount="indefinite"/>\n'
+            f"  </stop>\n"
+            f'  <stop offset="100%" stop-color="{bg_color}" stop-opacity="0"/>\n'
+            f'  <animate attributeName="r" from="0%" to="75%" dur="{duration}s" fill="freeze"/>\n'
+            f"</radialGradient>\n"
+        )
     parts.append("</defs>\n")
 
-    # CSS
-    parts.append(css)
+    if not snapshot_mode:
+        parts.append(css)
 
-    # Background
     parts.append(f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="{bg_color}"/>\n')
     parts.append(f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="url(#bgRad)"/>\n')
 
     # ---- Layer 1: Flow-field lines (tapered, language-colored) ----
     center_x, center_y = _WIDTH / 2, _HEIGHT / 2
 
-    # Build nebula hues from top languages
     lang_bytes = metrics.get("languages", {})
     top_lang_hues = [
         LANG_HUES.get(lang, 200)
@@ -368,10 +375,13 @@ def generate(
     if not top_lang_hues:
         top_lang_hues = [flow_hue_base]
 
-    parts.append(
-        '<g id="flowField" opacity="0.40"'
-        ' style="animation:flowPulse 8s ease-in-out 5s infinite">\n'
-    )
+    if snapshot_mode:
+        parts.append('<g id="flowField" opacity="0.40">\n')
+    else:
+        parts.append(
+            '<g id="flowField" opacity="0.40"'
+            ' style="animation:flowPulse 8s ease-in-out 5s infinite">\n'
+        )
     for li, trail in enumerate(lines):
         if len(trail) < 2:
             continue
@@ -388,32 +398,39 @@ def generate(
         )
         trail_len_rounded = round(trail_len, 0)
 
-        # Radial opacity modulation
         avg_dist = sum(
             math.sqrt((p[0] - center_x) ** 2 + (p[1] - center_y) ** 2) for p in trail
         ) / len(trail)
         dist_frac = min(1.0, avg_dist / (canvas_radius * 1.2))
         alpha = round(0.20 + 0.35 * dist_frac * bg_intensity, 2)
 
-        # Language-spectrum hue
         fl_hue = top_lang_hues[li % len(top_lang_hues)]
         fl_color = oklch(0.50 if dark_mode else 0.42, 0.08, fl_hue)
 
         fl_delay = round((li / max(len(lines), 1)) * duration * 0.6, 2)
         fl_dur = round(duration * 0.35 + (li % 5) * 0.5, 1)
 
-        # Tapered stroke using gradient along path
-        # SVG workaround: use stroke-width that's slightly larger
         sw_start = 1.5
         sw_end = 0.3
         sw_avg = round((sw_start + sw_end) / 2, 1)
 
-        parts.append(
-            f'<path class="fd" d="{path_d}" stroke="{fl_color}" stroke-width="{sw_avg}" '
-            f'opacity="{alpha}" stroke-linecap="round" '
-            f'stroke-dasharray="{trail_len_rounded}" '
-            f'style="--len:{trail_len_rounded};--dur:{fl_dur}s;--del:{fl_delay}s"/>\n'
-        )
+        if snapshot_mode:
+            if progress_time < fl_delay:
+                continue
+            line_progress = min(1.0, (progress_time - fl_delay) / max(fl_dur, 0.1))
+            dash_offset = round(trail_len_rounded * (1.0 - line_progress), 1)
+            parts.append(
+                f'<path d="{path_d}" stroke="{fl_color}" stroke-width="{sw_avg}" '
+                f'opacity="{alpha}" stroke-linecap="round" '
+                f'stroke-dasharray="{trail_len_rounded}" stroke-dashoffset="{dash_offset}" fill="none"/>\n'
+            )
+        else:
+            parts.append(
+                f'<path class="fd" d="{path_d}" stroke="{fl_color}" stroke-width="{sw_avg}" '
+                f'opacity="{alpha}" stroke-linecap="round" '
+                f'stroke-dasharray="{trail_len_rounded}" '
+                f'style="--len:{trail_len_rounded};--dur:{fl_dur}s;--del:{fl_delay}s"/>\n'
+            )
     parts.append("</g>\n")
 
     # ---- Layer 2: Variable ripple rings (SMIL per ring) ----
@@ -421,20 +438,28 @@ def generate(
     for i in range(n_points):
         px, py = pts[i]
         d = delays[i]
-        # Older repos get bigger ripples
         ripple_max_r = round(20 + 30 * (1 - i / max(n_points - 1, 1)), 0)
         ripple_dur = round(1.0 + 1.0 * (1 - i / max(n_points - 1, 1)), 1)
-        # Ripple rings loop with longer period for continuous life
         ripple_cycle = round(ripple_dur + 4.0 + (i % 5) * 1.5, 1)
-        parts.append(
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="0" fill="none" '
-            f'stroke="{ripple_color}" stroke-width="1.8" opacity="0">\n'
-            f'  <animate attributeName="r" values="0;{ripple_max_r};0" '
-            f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
-            f'  <animate attributeName="opacity" values="0;0.55;0" '
-            f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
-            f"</circle>\n"
-        )
+        if snapshot_mode:
+            if progress_time < d:
+                continue
+            ripple_progress = min(1.0, (progress_time - d) / max(ripple_dur, 0.1))
+            opacity = round(0.55 * max(0.0, 1.0 - ripple_progress), 3)
+            parts.append(
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{ripple_max_r * ripple_progress:.1f}" fill="none" '
+                f'stroke="{ripple_color}" stroke-width="1.8" opacity="{opacity}"/>\n'
+            )
+        else:
+            parts.append(
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="0" fill="none" '
+                f'stroke="{ripple_color}" stroke-width="1.8" opacity="0">\n'
+                f'  <animate attributeName="r" values="0;{ripple_max_r};0" '
+                f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
+                f'  <animate attributeName="opacity" values="0;0.55;0" '
+                f'dur="{ripple_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
+                f"</circle>\n"
+            )
     parts.append("</g>\n")
 
     # ---- Layer 3: Connecting arcs between sequential dots ----
@@ -448,16 +473,26 @@ def generate(
             continue
         d = delays[i]
         color, _ = palette[i]
-        # Connecting arcs loop: draw-in then reset
         arc_cycle = round(2.5 + (i % 4) * 0.8, 1)
-        parts.append(
-            f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-            f'stroke="{color}" stroke-width="0.5" '
-            f'stroke-dasharray="{length:.0f}" stroke-dashoffset="{length:.0f}">\n'
-            f'  <animate attributeName="stroke-dashoffset" values="{length:.0f};0;{length:.0f}" '
-            f'dur="{arc_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
-            f"</line>\n"
-        )
+        if snapshot_mode:
+            if progress_time < d:
+                continue
+            connection_progress = min(1.0, (progress_time - d) / max(arc_cycle, 0.1))
+            dash_offset = round(length * (1.0 - connection_progress), 1)
+            parts.append(
+                f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+                f'stroke="{color}" stroke-width="0.5" stroke-dasharray="{length:.0f}" '
+                f'stroke-dashoffset="{dash_offset}"/>\n'
+            )
+        else:
+            parts.append(
+                f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+                f'stroke="{color}" stroke-width="0.5" '
+                f'stroke-dasharray="{length:.0f}" stroke-dashoffset="{length:.0f}">\n'
+                f'  <animate attributeName="stroke-dashoffset" values="{length:.0f};0;{length:.0f}" '
+                f'dur="{arc_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
+                f"</line>\n"
+            )
     parts.append("</g>\n")
 
     # ---- Layer 4: Phyllotaxis dots (language-colored) ----
@@ -471,15 +506,23 @@ def generate(
         d = delays[i]
         appear_dur = round(max(0.8, 1.5 - i * 0.003), 2)
 
-        # Dot shimmer period varies by position for organic feel
         shimmer_dur = round(4.0 + (i * 0.7) % 5.0, 1)
         shimmer_delay = round(d + appear_dur + 0.5, 2)
-        elem = (
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{dot_r}" fill="{color}" '
-            f'opacity="0" '
-            f'style="animation:dotAppear {appear_dur}s ease-out {d:.2f}s both,'
-            f'dotShimmer {shimmer_dur}s ease-in-out {shimmer_delay}s infinite"/>\n'
-        )
+        if snapshot_mode:
+            if progress_time < d:
+                continue
+            dot_progress = min(1.0, (progress_time - d) / max(appear_dur, 0.1))
+            elem = (
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{dot_r * (0.4 + (0.6 * dot_progress)):.2f}" '
+                f'fill="{color}" opacity="{dot_progress:.3f}"/>\n'
+            )
+        else:
+            elem = (
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{dot_r}" fill="{color}" '
+                f'opacity="0" '
+                f'style="animation:dotAppear {appear_dur}s ease-out {d:.2f}s both,'
+                f'dotShimmer {shimmer_dur}s ease-in-out {shimmer_delay}s infinite"/>\n'
+            )
 
         if i >= glow_threshold:
             glow_parts.append(elem)
@@ -488,7 +531,6 @@ def generate(
 
     parts.append("</g>\n")
 
-    # Glow group for outer dots
     if glow_parts:
         parts.append('<g id="spiralGlow" filter="url(#spiralGlow)">\n')
         parts.extend(glow_parts)
@@ -499,13 +541,21 @@ def generate(
         fx, fy = pts[0]
         first_delay = delays[0] + 1.5
         pulse_color, _ = palette[0]
-        # First dot: cardiac rhythm pulse
-        parts.append(
-            f'<circle cx="{fx:.1f}" cy="{fy:.1f}" r="{pulse_r1}" fill="{pulse_color}" '
-            f'opacity="0" '
-            f'style="animation:dotAppear 1.5s ease-out {delays[0]:.2f}s both, '
-            f'pulse 2.5s cubic-bezier(0.22,0.61,0.36,1) {first_delay:.1f}s infinite"/>\n'
-        )
+        if snapshot_mode:
+            if progress_time >= delays[0]:
+                pulse_progress = min(1.0, max(0.0, (progress_time - delays[0]) / 1.5))
+                pulse_radius = pulse_r1 + ((pulse_r2 - pulse_r1) * pulse_progress)
+                parts.append(
+                    f'<circle cx="{fx:.1f}" cy="{fy:.1f}" r="{pulse_radius:.2f}" fill="{pulse_color}" '
+                    f'opacity="0.8"/>\n'
+                )
+        else:
+            parts.append(
+                f'<circle cx="{fx:.1f}" cy="{fy:.1f}" r="{pulse_r1}" fill="{pulse_color}" '
+                f'opacity="0" '
+                f'style="animation:dotAppear 1.5s ease-out {delays[0]:.2f}s both, '
+                f'pulse 2.5s cubic-bezier(0.22,0.61,0.36,1) {first_delay:.1f}s infinite"/>\n'
+            )
 
     # ---- Layer 6: Timeline arc ----
     arc_path = (
@@ -514,15 +564,21 @@ def generate(
     parts.append(
         f'<path d="{arc_path}" fill="none" stroke="{arc_bg_color}" stroke-width="3"/>\n'
     )
-    parts.append(
-        f'<path d="{arc_path}" fill="none" stroke="{arc_fg_color}" stroke-width="3" '
-        f'stroke-dasharray="{arc_len}" stroke-dashoffset="{arc_len}" opacity="0.7">\n'
-        f'  <animate attributeName="stroke-dashoffset" from="{arc_len}" to="0" '
-        f'dur="{duration}s" fill="freeze"/>\n'
-        f"</path>\n"
-    )
+    if snapshot_mode:
+        dash_offset = round(arc_len * (1.0 - (snapshot_progress or 0.0)), 1)
+        parts.append(
+            f'<path d="{arc_path}" fill="none" stroke="{arc_fg_color}" stroke-width="3" '
+            f'stroke-dasharray="{arc_len}" stroke-dashoffset="{dash_offset}" opacity="0.7"/>\n'
+        )
+    else:
+        parts.append(
+            f'<path d="{arc_path}" fill="none" stroke="{arc_fg_color}" stroke-width="3" '
+            f'stroke-dasharray="{arc_len}" stroke-dashoffset="{arc_len}" opacity="0.7">\n'
+            f'  <animate attributeName="stroke-dashoffset" from="{arc_len}" to="0" '
+            f'dur="{duration}s" fill="freeze"/>\n'
+            f"</path>\n"
+        )
 
-    # Year marks on arc
     repo_dates = [r.get("date", "") for r in repos if r.get("date")]
     account_created = history.get("account_created")
     if repo_dates:
@@ -550,8 +606,39 @@ def generate(
         )
 
     parts.append(svg_footer())
+    return "".join(parts), n_points, len(lines)
 
-    svg_text = "".join(parts)
+
+def render_svg(
+    history: dict,
+    dark_mode: bool = False,
+    duration: float = 60.0,
+    snapshot_progress: float | None = None,
+) -> str:
+    svg_text, _, _ = _render_svg(
+        history,
+        dark_mode=dark_mode,
+        duration=duration,
+        snapshot_progress=snapshot_progress,
+    )
+    return svg_text
+
+
+def generate(
+    history: dict,
+    dark_mode: bool = False,
+    output_path: Path | None = None,
+    duration: float = 60.0,
+) -> Path:
+    """Generate the *Unfurling Spiral* activity artwork."""
+    suffix = "-dark" if dark_mode else ""
+    out = Path(output_path or f".github/assets/img/animated-activity{suffix}.svg")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    svg_text, n_points, line_count = _render_svg(
+        history,
+        dark_mode=dark_mode,
+        duration=duration,
+    )
     out.write_text(svg_text, encoding="utf-8")
 
     size_kb = len(svg_text.encode("utf-8")) / 1024
@@ -559,7 +646,7 @@ def generate(
         "Unfurling Spiral saved: {path} ({pts} dots, {lines} flow lines, {kb:.0f} KB)",
         path=out,
         pts=n_points,
-        lines=len(lines),
+        lines=line_count,
         kb=size_kb,
     )
     return out

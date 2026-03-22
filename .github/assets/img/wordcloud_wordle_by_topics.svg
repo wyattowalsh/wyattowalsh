@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
   <defs>
     <filter id="wc-glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur in="SourceGraphic" stdDeviation="1.0" result="blur" />
@@ -12,78 +12,169 @@
       <stop stop-color="#000000" stop-opacity="0.03" offset="100%" />
     </radialGradient>
   </defs>
-  <rect width="800" height="500" fill="url(#wc-bg-grad)" />
-  <text x="400.0" y="250.0" font-size="90.0" fill="#914abe" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,400.0,250.0)" filter="url(#wc-glow)" letter-spacing="0.5">others</text>
-  <text x="356.1" y="74.0" font-size="47.8" fill="#924abe" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">python</text>
-  <text x="434.8" y="419.5" font-size="38.1" fill="#934abd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">llm</text>
-  <text x="225.3" y="280.6" font-size="36.2" fill="#944abd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,225.3,280.6)" filter="url(#wc-glow)" letter-spacing="0.5">ai</text>
-  <text x="567.5" y="227.8" font-size="35.6" fill="#9549bd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,567.5,227.8)" filter="url(#wc-glow)" letter-spacing="0.5">machine-learning</text>
-  <text x="348.9" y="416.7" font-size="35.2" fill="#9549bd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">react</text>
-  <text x="455.8" y="466.6" font-size="32.8" fill="#9649bd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">hacktoberfest</text>
-  <text x="355.3" y="22.0" font-size="31.5" fill="#9749bd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">javascript</text>
-  <text x="194.7" y="195.4" font-size="29.6" fill="#9849bd" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,194.7,195.4)" filter="url(#wc-glow)">awesome</text>
-  <text x="569.2" y="419.2" font-size="29.5" fill="#9949bc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">data-science</text>
-  <text x="166.4" y="400.6" font-size="29.4" fill="#9a48bc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,166.4,400.6)" filter="url(#wc-glow)">deep-learning</text>
-  <text x="673.0" y="161.3" font-size="29.4" fill="#9b48bc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,673.0,161.3)" filter="url(#wc-glow)">awesome-list</text>
-  <text x="651.5" y="288.6" font-size="29.4" fill="#9c48bc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,651.5,288.6)" filter="url(#wc-glow)">chatgpt</text>
-  <text x="525.5" y="32.4" font-size="29.4" fill="#9d48bc" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">typescript</text>
-  <text x="183.6" y="98.5" font-size="28.4" fill="#9e48bb" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,183.6,98.5)" filter="url(#wc-glow)">markdown</text>
-  <text x="648.6" y="360.7" font-size="28.4" fill="#9e47bb" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,648.6,360.7)" filter="url(#wc-glow)">openai</text>
-  <text x="463.7" y="78.4" font-size="22.9" fill="#9f47bb" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">nlp</text>
-  <text x="156.1" y="276.0" font-size="22.6" fill="#a047bb" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">nextjs</text>
-  <text x="161.2" y="44.3" font-size="15.8" fill="#a147ba" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">artificial-intelligence</text>
-  <text x="212.9" y="17.0" font-size="21.9" fill="#a246ba" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">nodejs</text>
-  <text x="624.0" y="459.8" font-size="21.8" fill="#a346ba" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">pytorch</text>
-  <text x="87.1" y="230.9" font-size="21.6" fill="#a446ba" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,87.1,230.9)">github</text>
-  <text x="302.3" y="471.9" font-size="21.1" fill="#a546b9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,302.3,471.9)">html</text>
-  <text x="508.7" y="81.4" font-size="20.7" fill="#a646b9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">css</text>
-  <text x="77.7" y="175.3" font-size="20.7" fill="#a745b9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(20.0,77.7,175.3)">database</text>
-  <text x="682.4" y="36.7" font-size="20.4" fill="#a745b8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">documentation</text>
-  <text x="754.0" y="286.6" font-size="20.4" fill="#a845b8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,754.0,286.6)">ethereum</text>
-  <text x="39.7" y="300.2" font-size="14.2" fill="#a945b8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,39.7,300.2)">open-source</text>
-  <text x="78.5" y="116.1" font-size="20.2" fill="#aa45b8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,78.5,116.1)">macos</text>
-  <text x="733.3" y="419.3" font-size="14.0" fill="#ac44b7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,733.3,419.3)">chrome-extension</text>
-  <text x="276.6" y="418.9" font-size="19.7" fill="#ad44b7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">api</text>
-  <text x="740.2" y="356.4" font-size="19.6" fill="#ae44b6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,740.2,356.4)">chatbot</text>
-  <text x="725.7" y="466.5" font-size="13.7" fill="#af43b6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,725.7,466.5)">postgresql</text>
-  <text x="90.1" y="293.3" font-size="19.5" fill="#af43b5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,90.1,293.3)">sql</text>
-  <text x="702.5" y="65.8" font-size="19.5" fill="#b043b5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">stable-diffusion</text>
-  <text x="143.2" y="13.3" font-size="18.8" fill="#b143b5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">docker</text>
-  <text x="57.4" y="370.6" font-size="18.6" fill="#b242b4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-45.0,57.4,370.6)">cli</text>
-  <text x="769.8" y="130.2" font-size="18.4" fill="#b542b3" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,769.8,130.2)">automation</text>
-  <text x="621.2" y="486.8" font-size="18.3" fill="#b641b3" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">analytics</text>
-  <text x="81.3" y="71.1" font-size="18.3" fill="#b741b2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">python3</text>
-  <text x="43.6" y="424.3" font-size="12.8" fill="#b741b2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-20.0,43.6,424.3)">reactjs</text>
-  <text x="705.5" y="11.3" font-size="17.9" fill="#b841b1" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">music</text>
-  <text x="566.6" y="61.2" font-size="12.5" fill="#b941b1" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">tensorflow</text>
-  <text x="44.9" y="461.9" font-size="12.4" fill="#ba40b0" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,44.9,461.9)">framework</text>
-  <text x="142.7" y="299.3" font-size="12.4" fill="#bb40b0" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">tailwindcss</text>
-  <text x="24.6" y="115.0" font-size="17.3" fill="#be3fae" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,24.6,115.0)">data</text>
-  <text x="27.4" y="64.5" font-size="17.3" fill="#be3fae" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,27.4,64.5)">trading</text>
-  <text x="59.0" y="10.7" font-size="12.0" fill="#bf3fad" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">computer-vision</text>
-  <text x="771.2" y="220.2" font-size="17.1" fill="#c33eab" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">vue</text>
-  <text x="19.0" y="239.2" font-size="16.9" fill="#c43daa" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">ios</text>
-  <text x="21.1" y="369.2" font-size="16.8" fill="#c63da9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,21.1,369.2)">mysql</text>
-  <text x="13.3" y="153.2" font-size="11.7" fill="#c73ca9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(45.0,13.3,153.2)">web</text>
-  <text x="771.1" y="15.9" font-size="16.3" fill="#ca3ca7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,771.1,15.9)">go</text>
-  <text x="748.3" y="385.1" font-size="11.4" fill="#ca3ba6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">graphql</text>
-  <text x="659.5" y="9.8" font-size="16.2" fill="#cd3aa4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">git</text>
-  <text x="260.4" y="87.8" font-size="16.0" fill="#cf3aa2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,260.4,87.8)">php</text>
-  <text x="538.5" y="81.9" font-size="16.0" fill="#d039a2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">r</text>
-  <text x="779.6" y="476.1" font-size="15.9" fill="#d4389f" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,779.6,476.1)">swift</text>
-  <text x="282.4" y="442.8" font-size="10.9" fill="#d7379c" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">java</text>
-  <text x="104.2" y="266.5" font-size="10.8" fill="#d9369a" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">json</text>
-  <text x="21.7" y="201.2" font-size="10.8" fill="#db3598" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,21.7,201.2)">shell</text>
-  <text x="261.3" y="65.1" font-size="10.5" fill="#de3595" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bot</text>
-  <text x="19.7" y="485.5" font-size="10.5" fill="#df3693" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">node</text>
-  <text x="268.4" y="473.9" font-size="10.3" fill="#e3388e" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,268.4,473.9)">android</text>
-  <text x="502.1" y="58.2" font-size="10.1" fill="#e63a89" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">mac</text>
-  <text x="769.1" y="201.7" font-size="10.1" fill="#e73b88" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">npm</text>
-  <text x="134.6" y="159.8" font-size="12.4" fill="#f74d66" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-15.0,134.6,159.8)">c</text>
-  <text x="259.1" y="25.3" font-size="12.1" fill="#fa535d" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,259.1,25.3)">3d</text>
-  <text x="615.5" y="14.1" font-size="12.1" fill="#fc5955" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,615.5,14.1)">qt</text>
-  <text x="788.7" y="371.7" font-size="11.4" fill="#fd6846" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,788.7,371.7)">eslint</text>
-  <text x="6.9" y="426.1" font-size="10.9" fill="#fc7936" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,6.9,426.1)">kotlin</text>
-  <text x="69.1" y="26.0" font-size="10.0" fill="#fb7f33" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bugbounty</text>
-  <text x="6.2" y="70.0" font-size="10.0" fill="#f78d2d" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,6.2,70.0)">neovim</text>
+  <rect width="1200" height="800" fill="url(#wc-bg-grad)" />
+  <text x="200.0" y="133.3" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Other</text>
+  <text x="200.0" y="133.3" font-size="44.3" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">hacktoberfest</text>
+  <text x="194.9" y="80.5" font-size="40.6" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">awesome</text>
+  <text x="238.8" y="185.7" font-size="40.2" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">awesome-list</text>
+  <text x="161.5" y="31.6" font-size="39.1" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">markdown</text>
+  <text x="251.6" y="230.8" font-size="28.3" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">documentation</text>
+  <text x="321.0" y="96.1" font-size="14.0" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">open-source</text>
+  <text x="110.6" y="233.2" font-size="27.9" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">macos</text>
+  <text x="313.8" y="44.2" font-size="13.8" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">chrome-extension</text>
+  <text x="381.2" y="106.2" font-size="27.1" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,381.2,106.2)">chatbot</text>
+  <text x="67.5" y="81.0" font-size="25.0" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">python3</text>
+  <text x="54.1" y="196.2" font-size="25.0" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">reactjs</text>
+  <text x="282.0" y="14.8" font-size="24.4" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">music</text>
+  <text x="304.2" y="78.9" font-size="12.1" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">framework</text>
+  <text x="217.0" y="258.0" font-size="11.7" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">trading</text>
+  <text x="80.6" y="171.1" font-size="11.5" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">finance</text>
+  <text x="319.0" y="63.5" font-size="11.5" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">self-hosted</text>
+  <text x="281.3" y="256.0" font-size="11.4" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">chrome</text>
+  <text x="50.0" y="230.2" font-size="22.8" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">ios</text>
+  <text x="22.5" y="146.4" font-size="22.5" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,22.5,146.4)">mysql</text>
+  <text x="161.8" y="257.7" font-size="10.6" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">electron</text>
+  <text x="51.8" y="50.1" font-size="10.4" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">windows</text>
+  <text x="98.5" y="258.3" font-size="10.0" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">chatgpt-api</text>
+  <text x="49.9" y="16.8" font-size="20.0" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">json</text>
+  <text x="321.1" y="254.7" font-size="9.8" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">jekyll</text>
+  <text x="332.8" y="21.9" font-size="19.3" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bot</text>
+  <text x="376.6" y="238.1" font-size="19.3" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">node</text>
+  <text x="388.0" y="178.4" font-size="18.3" fill="#D1D5DB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,388.0,178.4)">mac</text>
+  <text x="360.6" y="16.0" font-size="16.6" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">js</text>
+  <text x="17.2" y="22.7" font-size="16.1" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,17.2,22.7)">vuejs</text>
+  <text x="28.2" y="256.5" font-size="14.5" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">emoji</text>
+  <text x="62.1" y="101.3" font-size="6.9" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">development</text>
+  <text x="14.3" y="236.1" font-size="13.8" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">es6</text>
+  <text x="92.8" y="60.8" font-size="6.9" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">ipfs</text>
+  <text x="9.9" y="102.4" font-size="13.8" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,9.9,102.4)">p2p</text>
+  <text x="13.4" y="55.6" font-size="13.0" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">3d</text>
+  <text x="385.5" y="44.4" font-size="13.0" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">qt</text>
+  <text x="388.6" y="206.5" font-size="12.2" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">pwa</text>
+  <text x="254.0" y="255.0" font-size="6.1" fill="#374151" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">xml</text>
+  <text x="190.1" y="3.4" font-size="5.5" fill="#4B5563" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">eslint</text>
+  <text x="107.7" y="61.6" font-size="5.5" fill="#6B7280" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">game</text>
+  <text x="216.1" y="3.8" font-size="5.5" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">gis</text>
+  <text x="280.2" y="63.8" font-size="5.0" fill="#9CA3AF" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,280.2,63.8)">vpn</text>
+  <text x="600.0" y="133.3" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">AI/ML</text>
+  <text x="600.0" y="133.3" font-size="50.2" fill="#7C3AED" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">llm</text>
+  <text x="587.9" y="72.2" font-size="48.1" fill="#8B5CF6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">ai</text>
+  <text x="632.7" y="179.2" font-size="23.7" fill="#A78BFA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">machine-learning</text>
+  <text x="639.5" y="221.7" font-size="40.3" fill="#C4B5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">deep-learning</text>
+  <text x="695.4" y="63.4" font-size="40.2" fill="#6D28D9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">chatgpt</text>
+  <text x="716.2" y="117.8" font-size="39.1" fill="#7C3AED" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">openai</text>
+  <text x="516.5" y="141.0" font-size="31.9" fill="#8B5CF6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">nlp</text>
+  <text x="559.5" y="26.1" font-size="15.7" fill="#A78BFA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">artificial-intelligence</text>
+  <text x="480.1" y="90.6" font-size="30.4" fill="#C4B5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">pytorch</text>
+  <text x="634.2" y="257.2" font-size="14.0" fill="#6D28D9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">natural-language-processing</text>
+  <text x="709.9" y="153.9" font-size="13.4" fill="#7C3AED" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">stable-diffusion</text>
+  <text x="521.5" y="61.1" font-size="12.2" fill="#8B5CF6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">tensorflow</text>
+  <text x="642.0" y="8.0" font-size="11.8" fill="#A78BFA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">reinforcement-learning</text>
+  <text x="479.3" y="171.5" font-size="11.6" fill="#C4B5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">computer-vision</text>
+  <text x="527.3" y="8.2" font-size="10.9" fill="#6D28D9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">neural-network</text>
+  <text x="515.2" y="44.1" font-size="10.4" fill="#7C3AED" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">scikit-learn</text>
+  <text x="1000.0" y="133.3" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Web</text>
+  <text x="1000.0" y="133.3" font-size="47.0" fill="#2563EB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1000.0,133.3)" filter="url(#wc-glow)" letter-spacing="0.5">react</text>
+  <text x="1041.9" y="227.0" font-size="42.7" fill="#3B82F6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">javascript</text>
+  <text x="940.8" y="39.4" font-size="40.2" fill="#60A5FA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">typescript</text>
+  <text x="942.7" y="145.4" font-size="31.5" fill="#93C5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,942.7,145.4)" filter="url(#wc-glow)">nextjs</text>
+  <text x="1082.2" y="95.4" font-size="30.5" fill="#1D4ED8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">nodejs</text>
+  <text x="1065.2" y="150.0" font-size="29.4" fill="#2563EB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1065.2,150.0)" filter="url(#wc-glow)">html</text>
+  <text x="904.5" y="150.1" font-size="28.7" fill="#3B82F6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,904.5,150.1)" filter="url(#wc-glow)">css</text>
+  <text x="889.5" y="106.0" font-size="27.2" fill="#60A5FA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">api</text>
+  <text x="933.6" y="76.3" font-size="12.1" fill="#93C5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">tailwindcss</text>
+  <text x="1104.0" y="133.4" font-size="23.0" fill="#1D4ED8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">vue</text>
+  <text x="1074.0" y="43.5" font-size="22.5" fill="#2563EB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1074.0,43.5)">web</text>
+  <text x="1128.1" y="163.9" font-size="21.7" fill="#3B82F6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">graphql</text>
+  <text x="872.8" y="201.2" font-size="20.3" fill="#60A5FA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,872.8,201.2)">frontend</text>
+  <text x="910.4" y="209.9" font-size="18.6" fill="#93C5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,910.4,209.9)">svelte</text>
+  <text x="1105.6" y="41.6" font-size="17.0" fill="#1D4ED8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1105.6,41.6)">angular</text>
+  <text x="852.6" y="141.7" font-size="17.0" fill="#2563EB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">django</text>
+  <text x="853.0" y="78.0" font-size="16.6" fill="#3B82F6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">backend</text>
+  <text x="1051.4" y="71.0" font-size="8.3" fill="#60A5FA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bootstrap</text>
+  <text x="1144.9" y="119.1" font-size="16.1" fill="#93C5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1144.9,119.1)">flask</text>
+  <text x="1109.3" y="188.6" font-size="16.1" fill="#1D4ED8" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">http</text>
+  <text x="1150.5" y="64.1" font-size="13.8" fill="#2563EB" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">webpack</text>
+  <text x="1050.3" y="190.8" font-size="11.1" fill="#3B82F6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">deno</text>
+  <text x="940.2" y="7.3" font-size="11.1" fill="#60A5FA" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">express</text>
+  <text x="1062.0" y="7.1" font-size="11.1" fill="#93C5FD" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">rails</text>
+  <text x="200.0" y="400.0" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Languages</text>
+  <text x="200.0" y="400.0" font-size="60.0" fill="#DC2626" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,200.0,400.0)" filter="url(#wc-glow)" letter-spacing="0.5">python</text>
+  <text x="125.8" y="405.5" font-size="22.0" fill="#EF4444" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">golang</text>
+  <text x="146.4" y="376.8" font-size="21.7" fill="#F87171" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,146.4,376.8)">go</text>
+  <text x="257.0" y="373.7" font-size="21.2" fill="#FCA5A5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">php</text>
+  <text x="248.0" y="402.4" font-size="21.2" fill="#B91C1C" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">r</text>
+  <text x="276.3" y="422.3" font-size="20.9" fill="#DC2626" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,276.3,422.3)">swift</text>
+  <text x="140.2" y="456.6" font-size="20.3" fill="#EF4444" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">java</text>
+  <text x="131.3" y="348.6" font-size="20.3" fill="#F87171" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">rust</text>
+  <text x="249.1" y="459.9" font-size="20.0" fill="#FCA5A5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,249.1,459.9)">ruby</text>
+  <text x="267.9" y="342.9" font-size="20.0" fill="#B91C1C" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">shell</text>
+  <text x="139.1" y="430.0" font-size="16.6" fill="#DC2626" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bash</text>
+  <text x="170.5" y="289.6" font-size="15.6" fill="#EF4444" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">c-plus-plus</text>
+  <text x="249.0" y="425.7" font-size="14.5" fill="#F87171" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">cpp</text>
+  <text x="124.5" y="378.6" font-size="13.8" fill="#FCA5A5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">c</text>
+  <text x="117.5" y="326.7" font-size="13.8" fill="#B91C1C" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">objective-c</text>
+  <text x="298.2" y="396.9" font-size="13.0" fill="#DC2626" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,298.2,396.9)">csharp</text>
+  <text x="272.2" y="472.1" font-size="12.2" fill="#EF4444" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,272.2,472.1)">scala</text>
+  <text x="245.0" y="311.9" font-size="11.1" fill="#F87171" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,245.0,311.9)">julia</text>
+  <text x="141.6" y="477.2" font-size="9.6" fill="#FCA5A5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">clojure</text>
+  <text x="282.8" y="374.5" font-size="9.6" fill="#B91C1C" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,282.8,374.5)">kotlin</text>
+  <text x="110.3" y="385.5" font-size="9.6" fill="#DC2626" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">zig</text>
+  <text x="113.4" y="427.4" font-size="5.0" fill="#EF4444" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">dart</text>
+  <text x="159.8" y="346.5" font-size="5.0" fill="#F87171" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,159.8,346.5)">haskell</text>
+  <text x="112.5" y="373.5" font-size="5.0" fill="#FCA5A5" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">lua</text>
+  <text x="600.0" y="400.0" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Data</text>
+  <text x="600.0" y="400.0" font-size="20.2" fill="#059669" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">data-science</text>
+  <text x="582.8" y="368.1" font-size="28.7" fill="#10B981" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">database</text>
+  <text x="687.3" y="350.5" font-size="27.1" fill="#34D399" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,687.3,350.5)">postgresql</text>
+  <text x="629.1" y="432.0" font-size="26.9" fill="#6EE7B7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">sql</text>
+  <text x="493.9" y="395.5" font-size="25.6" fill="#047857" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,493.9,395.5)">data-visualization</text>
+  <text x="727.9" y="362.9" font-size="25.4" fill="#059669" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,727.9,362.9)">data-analysis</text>
+  <text x="581.9" y="332.5" font-size="25.0" fill="#10B981" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">analytics</text>
+  <text x="577.9" y="435.0" font-size="23.5" fill="#34D399" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">data</text>
+  <text x="621.5" y="468.8" font-size="22.8" fill="#6EE7B7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">jupyter-notebook</text>
+  <text x="616.8" y="497.9" font-size="21.2" fill="#047857" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">statistics</text>
+  <text x="581.3" y="305.2" font-size="16.6" fill="#059669" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">mongodb</text>
+  <text x="677.0" y="443.9" font-size="16.6" fill="#10B981" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">numpy</text>
+  <text x="635.5" y="299.2" font-size="14.5" fill="#34D399" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">nosql</text>
+  <text x="608.3" y="520.0" font-size="13.0" fill="#6EE7B7" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">data-structures</text>
+  <text x="563.6" y="279.7" font-size="12.2" fill="#047857" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bioinformatics</text>
+  <text x="1000.0" y="400.0" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Tools</text>
+  <text x="1000.0" y="400.0" font-size="30.1" fill="#0891B2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,1000.0,400.0)" filter="url(#wc-glow)">github</text>
+  <text x="959.2" y="422.7" font-size="25.6" fill="#06B6D4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">cli</text>
+  <text x="981.8" y="332.0" font-size="25.2" fill="#22D3EE" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">automation</text>
+  <text x="959.8" y="392.2" font-size="21.5" fill="#67E8F9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">git</text>
+  <text x="1062.4" y="385.2" font-size="21.5" fill="#0E7490" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">testing</text>
+  <text x="1065.1" y="412.1" font-size="17.5" fill="#0891B2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">terminal</text>
+  <text x="966.1" y="369.9" font-size="13.0" fill="#06B6D4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">vim</text>
+  <text x="1028.8" y="459.2" font-size="12.2" fill="#22D3EE" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">package-manager</text>
+  <text x="929.5" y="407.6" font-size="11.1" fill="#67E8F9" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,929.5,407.6)">code-quality</text>
+  <text x="1044.7" y="363.7" font-size="11.1" fill="#0E7490" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">homebrew</text>
+  <text x="1041.0" y="430.2" font-size="5.0" fill="#0891B2" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">code-review</text>
+  <text x="1034.3" y="437.9" font-size="5.0" fill="#06B6D4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">emacs</text>
+  <text x="972.0" y="444.3" font-size="5.0" fill="#22D3EE" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">neovim</text>
+  <text x="200.0" y="666.7" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">Security</text>
+  <text x="200.0" y="666.7" font-size="28.3" fill="#BE185D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,200.0,666.7)" filter="url(#wc-glow)">ethereum</text>
+  <text x="171.9" y="588.5" font-size="23.5" fill="#EC4899" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">blockchain</text>
+  <text x="241.9" y="745.9" font-size="23.0" fill="#F472B6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">cryptocurrency</text>
+  <text x="260.4" y="645.8" font-size="21.5" fill="#F9A8D4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bitcoin</text>
+  <text x="138.6" y="684.0" font-size="19.0" fill="#9D174D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">security</text>
+  <text x="143.9" y="659.6" font-size="16.6" fill="#BE185D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">solidity</text>
+  <text x="268.8" y="667.9" font-size="13.0" fill="#EC4899" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">cybersecurity</text>
+  <text x="235.7" y="702.2" font-size="13.0" fill="#F472B6" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,235.7,702.2)">hacking</text>
+  <text x="116.6" y="640.0" font-size="12.2" fill="#F9A8D4" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">penetration-testing</text>
+  <text x="168.5" y="700.6" font-size="5.0" fill="#9D174D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">bugbounty</text>
+  <text x="600.0" y="666.7" font-size="48.0" fill="#e5e7eb" font-family="sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.5">DevOps</text>
+  <text x="600.0" y="666.7" font-size="25.8" fill="#D97706" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,600.0,666.7)">docker</text>
+  <text x="647.6" y="654.5" font-size="22.0" fill="#F59E0B" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">linux</text>
+  <text x="565.3" y="681.7" font-size="20.6" fill="#FBBF24" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">aws</text>
+  <text x="596.6" y="611.3" font-size="19.7" fill="#FCD34D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">kubernetes</text>
+  <text x="646.7" y="723.6" font-size="19.0" fill="#B45309" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(90.0,646.7,723.6)">monitoring</text>
+  <text x="582.0" y="725.5" font-size="19.0" fill="#D97706" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">serverless</text>
+  <text x="552.4" y="656.6" font-size="18.3" fill="#F59E0B" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">devops</text>
+  <text x="524.0" y="693.6" font-size="16.6" fill="#FBBF24" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">azure</text>
+  <text x="582.9" y="586.9" font-size="16.1" fill="#FCD34D" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">deployment</text>
+  <text x="562.1" y="637.3" font-size="9.6" fill="#B45309" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">ansible</text>
+  <text x="645.0" y="631.3" font-size="9.6" fill="#D97706" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">terraform</text>
+  <text x="597.6" y="743.6" font-size="5.0" fill="#F59E0B" font-family="sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central">continuous-integration</text>
 </svg>

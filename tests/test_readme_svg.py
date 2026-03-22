@@ -9,6 +9,7 @@ from scripts.readme_svg import (
     LIGHT_THEME,
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
+    SvgBlogCardRenderer,
     SvgBlock,
     SvgBlockRenderer,
     SvgCard,
@@ -440,7 +441,7 @@ class TestSvgConnectCardRenderer:
 
         assert 'href="data:image/svg+xml;base64,PHN2Zy8+"' in svg
         assert 'class="con-mono"' not in svg
-        assert "Builder" in svg
+        assert "Builder" not in svg
         assert "CODE" not in svg
 
     def test_missing_icon_renders_monogram_fallback(self) -> None:
@@ -457,6 +458,25 @@ class TestSvgConnectCardRenderer:
 
         assert 'class="con-mono"' in svg
         assert ">GH</text>" in svg
+        assert "Builder" not in svg
+        assert "CODE" not in svg
+
+
+class TestSvgBlogCardRenderer:
+    def test_blog_card_expands_for_full_copy_without_ellipsis(self) -> None:
+        renderer = SvgBlogCardRenderer(width=480, height=150)
+        card = SvgCard(
+            title="A Very Long Blog Post Title That Should Wrap Cleanly Without Forced Ellipses update",
+            lines=(" ".join(["Readable"] * 80) + " TAIL-MARKER-123",),
+            meta=("2026-03-01", "w4w.dev"),
+        )
+
+        svg = renderer.render_card(card)
+
+        assert 'height="' in svg
+        assert "TAIL-MARKER-123" in svg
+        assert "…" not in svg
+        assert " update" not in svg
 
 
 class TestSvgRepoCardRenderer:

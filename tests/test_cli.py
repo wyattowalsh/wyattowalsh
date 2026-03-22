@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -7,13 +8,27 @@ import yaml
 from typer.testing import CliRunner
 
 from scripts.cli import app
+from scripts.cli.generate import _wc_from_languages, _wc_from_topics, _wc_import
 from scripts.config import ProjectConfig
+from scripts.word_clouds import WordCloudSettings
 
 
 # Fixture for CliRunner
 @pytest.fixture
 def runner() -> CliRunner:
     return CliRunner()
+
+
+class _CapturingWordCloudGenerator:
+    last_settings: WordCloudSettings | None = None
+    last_kwargs: dict[str, object] | None = None
+
+    def __init__(self, base_settings: WordCloudSettings) -> None:
+        type(self).last_settings = base_settings
+
+    def generate(self, **kwargs):
+        type(self).last_kwargs = kwargs
+        return kwargs["output_path"]
 
 
 # ------------------------------------------------------------------------------
@@ -35,6 +50,60 @@ def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
         content = yaml.safe_load(f)
         assert "banner_settings" in content
         assert "qr_code_settings" in content
+
+
+def test_wc_from_topics_uses_clustered_renderer_with_stable_filename(
+    tmp_path: Path,
+) -> None:
+    topics_md = tmp_path / "topics.md"
+    topics_md.write_text("- placeholder", encoding="utf-8")
+    wc = SimpleNamespace(
+        TOPICS_MD_PATH=topics_md,
+        PROFILE_IMG_OUTPUT_DIR=tmp_path,
+        parse_markdown_for_word_cloud_frequencies=lambda _: {"python": 4, "others": 2},
+        _filter_others=lambda freqs: {k: v for k, v in freqs.items() if k != "others"},
+        WordCloudSettings=WordCloudSettings,
+        WordCloudGenerator=_CapturingWordCloudGenerator,
+    )
+
+    result = _wc_from_topics(wc, None, [])
+
+    assert result == tmp_path / "wordcloud_wordle_by_topics.svg"
+    assert _CapturingWordCloudGenerator.last_settings is not None
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "clustered"
+    assert _CapturingWordCloudGenerator.last_kwargs is not None
+    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {"python": 4}
+    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "gradient"
+
+
+def test_wc_from_languages_uses_typographic_renderer_with_stable_filename(
+    tmp_path: Path,
+) -> None:
+    languages_md = tmp_path / "languages.md"
+    languages_md.write_text("- placeholder", encoding="utf-8")
+    wc = SimpleNamespace(
+        LANGUAGES_MD_PATH=languages_md,
+        PROFILE_IMG_OUTPUT_DIR=tmp_path,
+        parse_markdown_for_word_cloud_frequencies=lambda _: {"Python": 5, "Others": 1},
+        _filter_others=lambda freqs: {k: v for k, v in freqs.items() if k.lower() != "others"},
+        WordCloudSettings=WordCloudSettings,
+        WordCloudGenerator=_CapturingWordCloudGenerator,
+    )
+
+    result = _wc_from_languages(wc, None, [])
+
+    assert result == tmp_path / "wordcloud_wordle_by_languages.svg"
+    assert _CapturingWordCloudGenerator.last_settings is not None
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "typographic"
+    assert _CapturingWordCloudGenerator.last_kwargs is not None
+    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {"Python": 5}
+    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "sunset"
+
+
+def test_wc_import_exposes_filter_others() -> None:
+    wc = _wc_import()
+
+    assert hasattr(wc, "_filter_others")
 
 
 def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> None:
