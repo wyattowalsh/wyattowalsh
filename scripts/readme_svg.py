@@ -37,7 +37,7 @@ FORK_ICON_PATH = (
 
 # NOTE: SVG <text> ignores CSS line-height; vertical spacing uses y/dy attributes.
 FONT_FAMILY = (
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",'
+    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',"
     " Helvetica, Arial, sans-serif"
 )
 
