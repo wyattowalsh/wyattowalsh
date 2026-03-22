@@ -944,6 +944,22 @@ def living_art(
             rich_help_panel="Living Art Options",
         ),
     ] = False,
+    metrics_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--metrics-path",
+            help="Path to metrics JSON for living-art (uses mock profiles if omitted).",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = None,
+    history_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--history-path",
+            help="Path to history JSON for richer contribution data (optional).",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = None,
 ) -> None:
     """Generate living-art assets with dual-write compatibility by default."""
     _load_project_config(config_path)  # validate config exists
@@ -951,6 +967,10 @@ def living_art(
     base_cmd = [sys.executable, "-m", "scripts.art.animate", "--profile", profile]
     if only:
         base_cmd.extend(["--only", only])
+    if metrics_path and metrics_path.exists():
+        base_cmd.extend(["--metrics-path", str(metrics_path)])
+    if history_path and history_path.exists():
+        base_cmd.extend(["--history-path", str(history_path)])
 
     try:
         subprocess.run(

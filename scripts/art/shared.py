@@ -267,6 +267,17 @@ def normalize_live_metrics(
     metrics: dict[str, Any] = dict(raw)
     now = datetime.now(tz=UTC)
 
+    # 0. Coerce None numeric fields to 0 (GraphQL fields are None without a token)
+    _NUMERIC_KEYS = (
+        "stars", "forks", "watchers", "followers", "following",
+        "public_repos", "orgs_count", "contributions_last_year",
+        "total_commits", "total_prs", "total_issues",
+        "total_repos_contributed", "open_issues_count", "network_count",
+    )
+    for k in _NUMERIC_KEYS:
+        if k in metrics and metrics[k] is None:
+            metrics[k] = 0
+
     # 1. top_repos → repos with age_months
     if "top_repos" in metrics and "repos" not in metrics:
         # Build a creation-date lookup from history if available

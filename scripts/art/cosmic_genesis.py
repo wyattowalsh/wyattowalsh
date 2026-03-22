@@ -101,10 +101,12 @@ def _continuous_attractor_params(
     w = _norm(watchers, 500)
     n = _norm(network, 3000)
 
-    a = 1.5 + s * 0.5  # [1.5, 2.0]
-    b = 1.5 + f * 0.5  # [1.5, 2.0]
-    c = -1.5 + n * 2.0  # [-1.5, 0.5]
-    d = -1.5 + w * 2.0  # [-1.5, 0.5]
+    # Wider parameter range for denser attractors at all profile sizes.
+    # Base values (1.7, 1.7, -1.3, -1.3) produce rich structure even at zero metrics.
+    a = 1.7 + s * 0.4  # [1.7, 2.1]
+    b = 1.7 + f * 0.4  # [1.7, 2.1]
+    c = -1.3 + n * 1.6  # [-1.3, 0.3]
+    d = -1.3 + w * 1.6  # [-1.3, 0.3]
 
     ratio = forks / max(stars, 1)
     hue_shift = min(1.0, ratio * 2.0)
@@ -311,8 +313,8 @@ def _render_svg(
     a, b, c, d, hue_shift = _continuous_attractor_params(metrics)
 
     grid_sz = 100
-    iters = 1_500_000 + (metrics.get("network_count") or 0) * 30_000
-    iters = min(iters, grid_sz * grid_sz * 80)
+    iters = 2_000_000 + (metrics.get("network_count") or 0) * 30_000
+    iters = min(iters, grid_sz * grid_sz * 200)
 
     logger.info(
         "Cosmic Genesis: a={a:.3f} b={b:.3f} c={c:.3f} d={d:.3f} "

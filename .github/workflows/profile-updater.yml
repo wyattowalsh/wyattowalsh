@@ -475,8 +475,13 @@ jobs:
             --history-path "$RUNNER_TEMP/history.json"
 
       - name: Generate living-art outputs (timeline SVG + GIF compatibility)
+        env:
+          OWNER: ${{ github.repository_owner }}
         run: |
-          uv run python -m scripts.cli generate living-art
+          uv run python -m scripts.cli generate living-art \
+            --profile "$OWNER" \
+            --metrics-path "$RUNNER_TEMP/metrics.json" \
+            --history-path "$RUNNER_TEMP/history.json"
 
       - name: Commit generated art outputs
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
