@@ -564,6 +564,29 @@ def generate(
         "Ruby": (0.56, 0.04, 350),       # rosy
     }.get(dominant_lang, (0.58, 0.02, 150))
 
+    # Circadian cycle from commit hours
+    commit_hours = metrics.get("commit_hour_distribution", {})
+    if commit_hours and isinstance(commit_hours, dict):
+        peak_hour = max(commit_hours, key=commit_hours.get)
+        if isinstance(peak_hour, str):
+            peak_hour = int(peak_hour)
+    else:
+        peak_hour = 12  # default to midday
+
+    # Time-of-day palette
+    if 5 <= peak_hour <= 8:
+        time_of_day = "dawn"
+        sky_gradient = [(0.85, 0.12, 25), (0.75, 0.10, 45)]  # pink-orange OKLCH
+    elif 17 <= peak_hour <= 20:
+        time_of_day = "golden"
+        sky_gradient = [(0.82, 0.10, 60), (0.70, 0.08, 45)]  # warm amber
+    elif peak_hour >= 21 or peak_hour <= 4:
+        time_of_day = "night"
+        sky_gradient = [(0.20, 0.05, 250), (0.15, 0.03, 270)]  # deep blue
+    else:
+        time_of_day = "day"
+        sky_gradient = [(0.90, 0.03, 210), (0.85, 0.02, 200)]  # light blue
+
     def _repo_date(repo: dict) -> str | None:
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
             val = repo.get(key)
@@ -1246,9 +1269,12 @@ def generate(
     <stop offset="92%" stop-color="#b0986a" stop-opacity="{0.20 + mat * 0.30:.3f}"/>
     <stop offset="100%" stop-color="#8a7850" stop-opacity="{0.28 + mat * 0.32:.3f}"/>
   </radialGradient>''')
-    # Sky gradient — pale blue at top fading to parchment
+    # Sky gradient — derived from circadian cycle (commit peak hour)
+    sky_top = oklch(*sky_gradient[0])
+    sky_mid = oklch(*sky_gradient[1])
+    sky_top_opacity = 0.85 if time_of_day == "night" else 0.6
     P.append(make_linear_gradient('skyGrad', '0', '0', '0', '1',
-        [('0%', '#dce8f0', 0.6), ('30%', '#eef3ee', 0.3), ('55%', '#f5f0e6', 0.0)]))
+        [('0%', sky_top, sky_top_opacity), ('30%', sky_mid, 0.3), ('55%', '#f5f0e6', 0.0)]))
     # Bloom center glow — white hot-spot overlay
     P.append(make_radial_gradient('petalGlow', '50%', '60%', '70%',
         [('0%', '#ffffff', 0.45), ('40%', '#ffffff', 0.15), ('100%', '#ffffff', 0.0)]))
@@ -1698,6 +1724,23 @@ def generate(
         P.append(f'<ellipse cx="{awx:.0f}" cy="{awy:.0f}" rx="{awrx:.0f}" ry="{awry:.0f}" '
                  f'fill="{wash_c}" opacity="{rng.uniform(0.02, 0.04):.3f}" '
                  f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>')
+
+    # ── Circadian sky elements (stars, moon, dawn glow) ──────────
+    if time_of_day == "night":
+        # Night sky stars
+        for _ in range(30):
+            sx = rng.uniform(20, WIDTH - 20)
+            sy = rng.uniform(10, GROUND_Y * 0.4)
+            sr = rng.uniform(0.5, 1.5)
+            P.append(f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr:.1f}" fill="white" opacity="{rng.uniform(0.3, 0.7):.2f}"/>')
+        # Moon
+        mx, my = WIDTH * 0.75, HEIGHT * 0.12
+        P.append(f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="18" fill="{oklch(0.92, 0.02, 80)}" opacity="0.8"/>')
+        P.append(f'<circle cx="{mx + 5:.0f}" cy="{my - 3:.0f}" r="16" fill="{oklch(0.20, 0.05, 250)}"/>')
+
+    if time_of_day == "dawn":
+        # Dawn sun glow near horizon
+        P.append(f'<circle cx="{WIDTH * 0.3:.0f}" cy="{GROUND_Y - 20:.0f}" r="40" fill="{oklch(0.90, 0.15, 50)}" opacity="0.15" filter="url(#dew)"/>')
 
     # ── Bird silhouettes (distant, high in sky) ──────────────────
     if mat > 0.35:
