@@ -426,6 +426,21 @@ def generate(
 
         repo_positions.append((rcx, rcy, repo))
 
+    # ── Place names from topic clusters ──
+    topic_clusters = metrics.get("topic_clusters", {})
+    top_topics = list(topic_clusters.keys())[:6]
+
+    def _topic_to_place_name(topic: str, elev_val: float) -> str:
+        """Convert a topic to a cartographic-style place name."""
+        name = topic.replace("-", " ").title()
+        if elev_val > 0.7:
+            return f"Mt. {name}"
+        if elev_val < 0.15:
+            return f"{name} Lake"
+        if elev_val < 0.3:
+            return f"{name} Valley"
+        return f"{name} Pass"
+
     # ── 3. Ridgeline backbone from monthly contributions ───────────
     max_m = max(monthly.values()) if monthly else 100
     months_sorted = sorted(monthly.keys())
@@ -882,7 +897,10 @@ def generate(
 
     # ── Rivers (widening downstream, fade in gradually) ───────────
     # Data mapping: activity (contributions) -> river flow volume
-    activity_flow = min(2.0, 1.0 + contributions / 1500.0)
+    star_vel = metrics.get("star_velocity", {})
+    flow_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    river_width_boost = 1.0 + min(1.0, flow_rate * 0.1)  # up to 2x width
+    activity_flow = min(2.0, 1.0 + contributions / 1500.0) * river_width_boost
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
     # Desaturated OKLCH blue for rivers
@@ -1264,6 +1282,78 @@ def generate(
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
             )
+
+    # ── Topic place names ──────────────────────────────────────
+    if top_topics and repo_positions:
+        sorted_repos_tp = sorted(repo_positions, key=lambda rp: rp[2].get("stars", 0), reverse=True)
+        for ti, topic in enumerate(top_topics[:min(len(sorted_repos_tp), 5)]):
+            rx_tp, ry_tp, repo_tp = sorted_repos_tp[ti]
+            # Get elevation at this repo's position
+            gx_i = min(grid - 1, max(0, int(rx_tp * grid)))
+            gy_i = min(grid - 1, max(0, int(ry_tp * grid)))
+            elev = float(elevation[gy_i, gx_i])
+            place = _topic_to_place_name(topic, elev)
+            mx_tp, my_tp = MAP_L + rx_tp * MAP_W, MAP_T + ry_tp * MAP_H
+            label_color = oklch(0.35, 0.02, 30)
+            P.append(
+                f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
+                f'font-family="Georgia, serif" font-size="7" font-style="italic" '
+                f'fill="{label_color}" text-anchor="middle" opacity="0.7">'
+                f'{place}</text>'
+            )
+
+    # ── Settlement symbol (followers-driven) ──────────────────
+    followers_count = metrics.get("followers", 0)
+    if followers_count > 0 and repo_positions:
+        # Place settlement near center of map at the most prominent repo
+        best = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
+        sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
+        settle_color = oklch(0.3, 0.02, 30)
+
+        if followers_count >= 1000:
+            # Capital city — double circle
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1.2"/>')
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3" fill="{settle_color}"/>')
+            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 27:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle">{metrics.get("label", "")}</text>')
+        elif followers_count >= 100:
+            # Town — filled circle
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3.5" fill="{settle_color}"/>')
+            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 25:.0f}" font-family="Georgia, serif" font-size="6" fill="{settle_color}" text-anchor="middle">{metrics.get("label", "")}</text>')
+        else:
+            # Village — small dot
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="2" fill="{settle_color}"/>')
+
+    # ── Contribution streak trail ─────────────────────────────
+    streaks = metrics.get("contribution_streaks", {})
+    streak_len = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+
+    if streak_len > 0 and repo_positions:
+        # Trail connects repo hills in order of creation
+        trail_repos = sorted(repo_positions, key=lambda rp: rp[2].get("age_months", 0), reverse=True)
+        n_trail = min(streak_len, len(trail_repos))
+        if n_trail >= 2:
+            trail_points = []
+            for ti_s in range(n_trail):
+                tx_s = MAP_L + trail_repos[ti_s][0] * MAP_W
+                ty_s = MAP_T + trail_repos[ti_s][1] * MAP_H
+                trail_points.append(f"{tx_s:.0f},{ty_s:.0f}")
+            trail_d_s = "M" + " L".join(trail_points)
+            trail_color = oklch(0.45, 0.08, 25) if streak_active else oklch(0.6, 0.03, 30)
+            dash_s = "" if streak_active else ' stroke-dasharray="4,3"'
+            P.append(
+                f'<path d="{trail_d_s}" fill="none" stroke="{trail_color}" '
+                f'stroke-width="1.2"{dash_s} opacity="0.6"/>'
+            )
+            # Trail blazes (small triangles along the path)
+            if streak_active:
+                for ti_s in range(0, n_trail, 2):
+                    bx_s = MAP_L + trail_repos[ti_s][0] * MAP_W
+                    by_s = MAP_T + trail_repos[ti_s][1] * MAP_H
+                    P.append(
+                        f'<polygon points="{bx_s:.0f},{by_s - 3:.0f} {bx_s - 2:.0f},{by_s + 1:.0f} {bx_s + 2:.0f},{by_s + 1:.0f}" '
+                        f'fill="{trail_color}" opacity="0.5"/>'
+                    )
 
     # ── Watershed ridge lines (dashed, connecting peaks) ──────────
     ridge_fade = _fade(0.30, 0.55)
@@ -1700,6 +1790,38 @@ def generate(
         P.append(
             f'<text x="{ix + 7}" y="{iy + 1.5}" font-family="Georgia,serif" font-size="4.5" fill="#3a2a1a" opacity="0.45">{text}</text>'
         )
+
+    # ── Weather indicator (issue-driven) ──
+    issue_stats = metrics.get("issue_stats", {})
+    open_count = issue_stats.get("open_count", 0) if isinstance(issue_stats, dict) else 0
+    closed_count = issue_stats.get("closed_count", 0) if isinstance(issue_stats, dict) else 0
+
+    # Weather symbol in legend corner
+    wx_w, wy_w = MAP_R - 40, MAP_T + 15
+    if open_count == 0 and closed_count > 5:
+        # Sun symbol
+        sun_color = oklch(0.80, 0.15, 70)
+        P.append(f'<circle cx="{wx_w}" cy="{wy_w}" r="6" fill="{sun_color}" opacity="0.8"/>')
+        for ray_i in range(8):
+            a = ray_i * math.pi / 4
+            P.append(f'<line x1="{wx_w + 8 * math.cos(a):.1f}" y1="{wy_w + 8 * math.sin(a):.1f}" '
+                     f'x2="{wx_w + 11 * math.cos(a):.1f}" y2="{wy_w + 11 * math.sin(a):.1f}" '
+                     f'stroke="{sun_color}" stroke-width="1" opacity="0.6"/>')
+    elif open_count > 20:
+        # Storm cloud
+        storm_color = oklch(0.55, 0.05, 240)
+        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="10" ry="5" fill="{storm_color}" opacity="0.5"/>')
+        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 2}" rx="7" ry="4" fill="{storm_color}" opacity="0.4"/>')
+        # Lightning bolt
+        if open_count > 50:
+            bolt_color = oklch(0.80, 0.15, 60)
+            P.append(f'<path d="M{wx_w},{wy_w + 5} l-2,4 3,0 -2,4" stroke="{bolt_color}" stroke-width="1" fill="none"/>')
+    elif open_count > 5:
+        # Partial clouds
+        sun_partial = oklch(0.80, 0.15, 70)
+        cloud_partial = oklch(0.7, 0.03, 220)
+        P.append(f'<circle cx="{wx_w - 4}" cy="{wy_w}" r="5" fill="{sun_partial}" opacity="0.6"/>')
+        P.append(f'<ellipse cx="{wx_w + 3}" cy="{wy_w + 1}" rx="7" ry="4" fill="{cloud_partial}" opacity="0.4"/>')
 
     # ── Tiered title cartouche ────────────────────────────────────
     cart_x, cart_y = MAP_L - 5, HEIGHT - 52
