@@ -17,6 +17,7 @@ from scripts.readme_svg import (
     SvgCardTheme,
     SvgConnectCardRenderer,
     SvgRepoCardRenderer,
+    _word_wrap,
 )
 
 
@@ -585,7 +586,7 @@ class TestSvgRepoCardRenderer:
         assert "Processing" in svg
 
     def test_word_wrap_helper(self) -> None:
-        lines = SvgRepoCardRenderer._word_wrap(
+        lines = _word_wrap(
             "hello world foo bar baz qux", width=12, max_lines=2,
         )
         assert len(lines) == 2

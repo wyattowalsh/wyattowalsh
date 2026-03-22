@@ -104,6 +104,54 @@ LANGUAGE_COLORS: dict[str, str] = {
 
 
 # ---------------------------------------------------------------------------
+# Text wrapping utilities
+# ---------------------------------------------------------------------------
+
+
+def _word_wrap(
+    text: str,
+    width: int,
+    max_lines: int | None = 3,
+    *,
+    ellipsize: bool = True,
+) -> list[str]:
+    """Break *text* into lines of at most *width* characters on word
+    boundaries.  The last visible line is ellipsized if there is
+    remaining text."""
+    if not text:
+        return []
+    words = text.split()
+    result: list[str] = []
+    current = ""
+    for word in words:
+        trial = f"{current} {word}".strip() if current else word
+        if len(trial) <= width:
+            current = trial
+        else:
+            if current:
+                result.append(current)
+            current = word
+            if max_lines is not None and len(result) >= max_lines:
+                break
+    if current and (max_lines is None or len(result) < max_lines):
+        result.append(current)
+    # Ellipsize last line if we ran out of room
+    full = " ".join(words)
+    shown = " ".join(result)
+    if result and ellipsize and len(shown) < len(full):
+        last = result[-1]
+        if len(last) > width - 1:
+            last = last[: width - 1]
+        result[-1] = f"{last}\u2026"
+    return result[:max_lines] if max_lines is not None else result
+
+
+def _chars_for_width(width_px: int, font_size: int, factor: float) -> int:
+    """Approximate character count that fits in *width_px* at *font_size*."""
+    return max(8, int(width_px / max(font_size * factor, 1)))
+
+
+# ---------------------------------------------------------------------------
 # Card and block dataclasses (public API — do NOT change fields)
 # ---------------------------------------------------------------------------
 
@@ -994,48 +1042,6 @@ class SvgRepoCardRenderer:
                 return lang, color
         return None, None
 
-    @staticmethod
-    def _word_wrap(
-        text: str,
-        width: int,
-        max_lines: int | None = 3,
-        *,
-        ellipsize: bool = True,
-    ) -> list[str]:
-        """Break *text* into lines of at most *width* characters on word
-        boundaries.  The last visible line is ellipsized if there is
-        remaining text."""
-        if not text:
-            return []
-        words = text.split()
-        result: list[str] = []
-        current = ""
-        for word in words:
-            trial = f"{current} {word}".strip() if current else word
-            if len(trial) <= width:
-                current = trial
-            else:
-                if current:
-                    result.append(current)
-                current = word
-                if max_lines is not None and len(result) >= max_lines:
-                    break
-        if current and (max_lines is None or len(result) < max_lines):
-            result.append(current)
-        # Ellipsize last line if we ran out of room
-        full = " ".join(words)
-        shown = " ".join(result)
-        if result and ellipsize and len(shown) < len(full):
-            last = result[-1]
-            if len(last) > width - 1:
-                last = last[: width - 1]
-            result[-1] = f"{last}\u2026"
-        return result[:max_lines] if max_lines is not None else result
-
-    @staticmethod
-    def _chars_for_width(width_px: int, font_size: int, factor: float) -> int:
-        return max(8, int(width_px / max(font_size * factor, 1)))
-
     def _fit_copy_layout(
         self,
         *,
@@ -1048,8 +1054,8 @@ class SvgRepoCardRenderer:
         best_overflow: int | None = None
 
         for title_size in self._TITLE_FONT_SIZES:
-            title_width = self._chars_for_width(text_px_w, title_size, 0.56)
-            title_lines = self._word_wrap(
+            title_width = _chars_for_width(text_px_w, title_size, 0.56)
+            title_lines = _word_wrap(
                 title,
                 title_width,
                 max_lines=None,
@@ -1058,8 +1064,8 @@ class SvgRepoCardRenderer:
             title_line_height = title_size + 4
             title_height = len(title_lines) * title_line_height
             for desc_size in self._DESC_FONT_SIZES:
-                desc_width = self._chars_for_width(text_px_w, desc_size, 0.58)
-                desc_lines = self._word_wrap(
+                desc_width = _chars_for_width(text_px_w, desc_size, 0.58)
+                desc_lines = _word_wrap(
                     description,
                     desc_width,
                     max_lines=None,
@@ -1165,15 +1171,15 @@ class SvgBlogCardRenderer:
         desc_size = 13
         title_line_height = title_size + 4
         desc_line_height = desc_size + 3
-        title_char_lim = SvgRepoCardRenderer._chars_for_width(text_w, title_size, 0.58)
-        desc_cpl = SvgRepoCardRenderer._chars_for_width(text_w, desc_size, 0.58)
-        title_lines = SvgRepoCardRenderer._word_wrap(
+        title_char_lim = _chars_for_width(text_w, title_size, 0.58)
+        desc_cpl = _chars_for_width(text_w, desc_size, 0.58)
+        title_lines = _word_wrap(
             sanitized_title,
             title_char_lim,
             max_lines=None,
             ellipsize=False,
         )
-        wrapped = SvgRepoCardRenderer._word_wrap(
+        wrapped = _word_wrap(
             raw,
             desc_cpl,
             max_lines=None,
