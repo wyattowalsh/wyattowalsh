@@ -430,7 +430,7 @@ class TestReadmeSvgAssetBuilder:
 
 
 class TestSvgConnectCardRenderer:
-    def test_real_icon_does_not_render_monogram_overlay(self) -> None:
+    def test_real_icon_renders_without_text(self) -> None:
         renderer = SvgConnectCardRenderer(width=140, height=130)
         card = SvgCard(
             title="GitHub",
@@ -444,11 +444,12 @@ class TestSvgConnectCardRenderer:
         svg = renderer.render_card(card)
 
         assert 'href="data:image/svg+xml;base64,PHN2Zy8+"' in svg
-        assert 'class="con-mono"' not in svg
+        assert "<text" not in svg
         assert "Builder" not in svg
         assert "CODE" not in svg
+        assert "GitHub" not in svg.split("</style>", 1)[-1]
 
-    def test_missing_icon_renders_monogram_fallback(self) -> None:
+    def test_missing_icon_renders_no_fallback_text(self) -> None:
         renderer = SvgConnectCardRenderer(width=140, height=130)
         card = SvgCard(
             title="GitHub",
@@ -460,10 +461,9 @@ class TestSvgConnectCardRenderer:
 
         svg = renderer.render_card(card)
 
-        assert 'class="con-mono"' in svg
-        assert ">GH</text>" in svg
-        assert "Builder" not in svg
-        assert "CODE" not in svg
+        # No text elements at all — icon-only card
+        assert "<text" not in svg
+        assert "icon-glow" in svg  # glow circle still present
 
 
 class TestSvgBlogCardRenderer:

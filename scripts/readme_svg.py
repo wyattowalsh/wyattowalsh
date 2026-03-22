@@ -1392,12 +1392,6 @@ class SvgConnectCardRenderer:
             f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
             'stop-opacity="0" />'
             '</radialGradient>'
-            '<linearGradient id="mono-grad" x1="0" y1="0" x2="0" y2="1">'
-            f'<stop offset="0%" stop-color="{esc(accent, quote=True)}" '
-            'stop-opacity="0.2" />'
-            f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
-            'stop-opacity="0.05" />'
-            '</linearGradient>'
         )
         if icon_uri:
             lines.append(
@@ -1425,25 +1419,6 @@ class SvgConnectCardRenderer:
                 ' preserveAspectRatio="xMidYMid meet"'
                 ' clip-path="url(#ico-clip)" />'
             )
-        else:
-            # Fallback monogram
-            mono = (card.icon or card.title[:2]).upper()
-            lines.append(
-                f'<rect x="{cx - 24}" y="18" width="48" height="48"'
-                ' rx="12" fill="url(#mono-grad)" />'
-            )
-            lines.append(
-                f'<text class="con-mono" x="{cx}" y="50"'
-                f' text-anchor="middle">'
-                f"{esc(mono, quote=True)}</text>"
-            )
-
-        # Platform name — centered below icon
-        lines.append(
-            f'<text class="con-title" x="{cx}" y="96"'
-            f' text-anchor="middle">'
-            f"{esc(card.title, quote=True)}</text>"
-        )
 
         lines.append("</svg>")
         return "\n".join(lines)
@@ -1467,13 +1442,6 @@ class SvgConnectCardRenderer:
             f"  --meta-color: {dk.meta_color};",
             f"  --accent: {dk.accent};",
             "}}",
-            f".con-title {{ fill: var(--title-color);"
-            f" font: 600 14px {FONT_FAMILY}; }}",
-            f".con-sub {{ fill: var(--meta-color);"
-            f" font: 400 11px {FONT_FAMILY};"
-            " text-transform: uppercase; letter-spacing: 0.08em; }",
-            f".con-mono {{ fill: var(--meta-color);"
-            f" font: 700 18px {FONT_FAMILY}; }}",
         ])
 
 
