@@ -1,40 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360" height="198" viewBox="0 0 360 198" role="img" aria-label="proxywhirl">
 <defs>
 <style>
-:root {
-  --card-bg: #ffffff;
-  --card-border: #d0d7de;
-  --title-color: #0969da;
-  --text-color: #656d76;
-  --meta-color: #656d76;
-  --stat-color: #24292e;
-  --spark-stroke: #e34c26;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --card-bg: #0d1117;
-    --card-border: #30363d;
-    --title-color: #58a6ff;
-    --text-color: #8b949e;
-    --meta-color: #8b949e;
-    --stat-color: #8b949e;
-    --spark-stroke: #58a6ff;
-  }
-}
-.rc-title { fill: var(--title-color); font: 600 17px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
-.rc-desc { fill: var(--text-color); font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
-.rc-meta { fill: var(--stat-color); font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.rc-bg { fill: #ffffff; }
+.rc-border { stroke: #d0d7de; }
+.rc-title { fill: #0969da; font: 600 17px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.rc-desc { fill: #656d76; font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.rc-meta { fill: #24292e; font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 .rc-lang-dot { stroke: none; }
-.rc-lang-label { fill: var(--stat-color); font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.rc-lang-label { fill: #24292e; font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
+.sparkline { fill: none; stroke: #e34c26; stroke-width: 2; opacity: 0.88; }
+@media (prefers-color-scheme: dark) {
+  .rc-bg { fill: #0d1117; }
+  .rc-border { stroke: #30363d; }
+  .rc-title { fill: #58a6ff; }
+  .rc-desc { fill: #8b949e; }
+  .rc-meta { fill: #8b949e; }
+  .rc-lang-label { fill: #8b949e; }
+  .sparkline { stroke: #58a6ff; }
+}
 </style>
 <clipPath id="card-clip"><rect width="360" height="198" rx="10" /></clipPath>
 <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter><linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient>
 <clipPath id="thumb-clip"><rect x="212" y="18" width="130" height="75" rx="8" /></clipPath>
 <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--spark-stroke)" stop-opacity="0.18" /><stop offset="100%" stop-color="var(--spark-stroke)" stop-opacity="0" /></linearGradient>
 </defs>
-<rect width="360" height="198" rx="10" fill="var(--card-bg)" filter="url(#shadow)" />
+<rect class="rc-bg" width="360" height="198" rx="10" filter="url(#shadow)" />
 <rect width="360" height="198" rx="10" fill="url(#glass-grad)" />
-<rect x="0.5" y="0.5" width="359" height="197" rx="10" fill="none" stroke="var(--card-border)" stroke-width="1" />
+<rect class="rc-border" x="0.5" y="0.5" width="359" height="197" rx="10" fill="none" stroke-width="1" />
 <rect x="1.5" y="1.5" width="357" height="195" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
 <rect x="0" y="0" width="360" height="3" fill="#e34c26" clip-path="url(#card-clip)" />
 <image href="data:image/webp;base64,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" x="212" y="18" width="130" height="75" preserveAspectRatio="xMidYMid slice" clip-path="url(#thumb-clip)" />
