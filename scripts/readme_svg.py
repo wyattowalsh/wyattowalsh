@@ -152,6 +152,55 @@ def _chars_for_width(width_px: int, font_size: int, factor: float) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Card shell helpers (shared across SvgRepoCard / SvgBlogCard / SvgConnect)
+# ---------------------------------------------------------------------------
+
+
+def _shadow_filter_defs() -> str:
+    """Return SVG ``<filter>`` and ``<linearGradient>`` defs for the shared
+    drop-shadow + glass-gradient treatment used by all gh-card renderers."""
+    return (
+        '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
+        '<feDropShadow dx="0" dy="4" stdDeviation="5"'
+        ' flood-color="#000000" flood-opacity="0.06"/>'
+        '<feDropShadow dx="0" dy="1" stdDeviation="2"'
+        ' flood-color="#000000" flood-opacity="0.04"/>'
+        '</filter>'
+        '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
+        '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
+        '</linearGradient>'
+    )
+
+
+def _card_shell(
+    w: int,
+    h: int,
+    rx: int = 10,
+    accent_fill: str = "var(--accent)",
+    clip_id: str = "bar-clip",
+) -> list[str]:
+    """Return the five ``<rect>`` elements forming the standard card shell:
+    background with shadow, glass overlay, border, inner rim, accent bar."""
+    inner_rx = max(rx - 1, 0)
+    return [
+        f'<rect width="{w}" height="{h}" rx="{rx}"'
+        ' fill="var(--card-bg)" filter="url(#shadow)" />',
+        f'<rect width="{w}" height="{h}" rx="{rx}"'
+        ' fill="url(#glass-grad)" />',
+        f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
+        f' rx="{rx}" fill="none"'
+        ' stroke="var(--card-border)" stroke-width="1" />',
+        f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
+        f' rx="{inner_rx}" fill="none"'
+        ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />',
+        f'<rect x="0" y="0" width="{w}" height="3"'
+        f' fill="{accent_fill}"'
+        f' clip-path="url(#{clip_id})" />',
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Card and block dataclasses (public API — do NOT change fields)
 # ---------------------------------------------------------------------------
 
@@ -734,16 +783,7 @@ class SvgRepoCardRenderer:
             "</style>",
             f'<clipPath id="card-clip">'
             f'<rect width="{w}" height="{h}" rx="10" /></clipPath>',
-            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
-            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
-            ' flood-color="#000000" flood-opacity="0.06"/>'
-            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
-            ' flood-color="#000000" flood-opacity="0.04"/>'
-            '</filter>',
-            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
-            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
-            '</linearGradient>',
+            _shadow_filter_defs(),
         ]
         if has_thumb:
             thumb_x = w - thumb_w - 18
@@ -765,30 +805,8 @@ class SvgRepoCardRenderer:
             )
         lines.append("</defs>")
 
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="10"'
-            ' fill="var(--card-bg)" filter="url(#shadow)" />'
-        )
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="10"'
-            ' fill="url(#glass-grad)" />'
-        )
-        lines.append(
-            f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
-            ' rx="10" fill="none"'
-            ' stroke="var(--card-border)" stroke-width="1" />'
-        )
-        lines.append(
-            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
-            ' rx="9" fill="none"'
-            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
-        )
-
         accent_color = lang_color or "var(--spark-stroke)"
-        lines.append(
-            f'<rect width="{w}" height="3" rx="0"'
-            f' fill="{accent_color}" clip-path="url(#card-clip)" />'
-        )
+        lines.extend(_card_shell(w, h, rx=10, accent_fill=accent_color, clip_id="card-clip"))
 
         if has_thumb:
             thumb_x = w - thumb_w - 18
@@ -1202,21 +1220,12 @@ class SvgBlogCardRenderer:
             self._css(),
             "</style>",
         ]
-        # Clip for top accent bar (full card outline)
+        # Shared defs: clip, shadow, glass + blog-specific footer gradient
         lines.append(
             f'<clipPath id="bar-clip">'
             f'<rect width="{w}" height="{h}" rx="10"/></clipPath>'
-            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
-            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
-            ' flood-color="#000000" flood-opacity="0.06"/>'
-            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
-            ' flood-color="#000000" flood-opacity="0.04"/>'
-            '</filter>'
-            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
-            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
-            '</linearGradient>'
-            '<linearGradient id="footer-div-grad" x1="0" y1="0" x2="1" y2="0">'
+            + _shadow_filter_defs()
+            + '<linearGradient id="footer-div-grad" x1="0" y1="0" x2="1" y2="0">'
             '<stop offset="0%" stop-color="var(--accent)" stop-opacity="0.5" />'
             '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />'
             '</linearGradient>'
@@ -1231,32 +1240,7 @@ class SvgBlogCardRenderer:
         lines.append("</defs>")
 
         # Shell
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="10"'
-            ' fill="var(--card-bg)" filter="url(#shadow)" />'
-        )
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="10"'
-            ' fill="url(#glass-grad)" />'
-        )
-        lines.append(
-            f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
-            ' rx="10" fill="none"'
-            ' stroke="var(--card-border)" stroke-width="1" />'
-        )
-        # Inner rim lighting
-        lines.append(
-            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
-            ' rx="9" fill="none"'
-            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
-        )
-
-        # Top accent bar
-        lines.append(
-            f'<rect x="0" y="0" width="{w}" height="3"'
-            ' fill="var(--accent)"'
-            ' clip-path="url(#bar-clip)"/>'
-        )
+        lines.extend(_card_shell(w, h, rx=10, accent_fill="var(--accent)"))
 
         # Hero thumbnail
         if has_hero:
@@ -1394,21 +1378,12 @@ class SvgConnectCardRenderer:
             self._css(),
             "</style>",
         ]
-        # Clip for accent bar (full card outline)
+        # Shared defs: clip, shadow, glass + connect-specific gradients
         lines.append(
             f'<clipPath id="bar-clip">'
             f'<rect width="{w}" height="{h}" rx="12"/></clipPath>'
-            '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
-            '<feDropShadow dx="0" dy="4" stdDeviation="5"'
-            ' flood-color="#000000" flood-opacity="0.06"/>'
-            '<feDropShadow dx="0" dy="1" stdDeviation="2"'
-            ' flood-color="#000000" flood-opacity="0.04"/>'
-            '</filter>'
-            '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
-            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
-            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
-            '</linearGradient>'
-            '<radialGradient id="icon-glow">'
+            + _shadow_filter_defs()
+            + '<radialGradient id="icon-glow">'
             f'<stop offset="0%" stop-color="{esc(accent, quote=True)}" '
             'stop-opacity="0.18" />'
             f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
@@ -1429,33 +1404,10 @@ class SvgConnectCardRenderer:
             )
         lines.append("</defs>")
 
-        # Shell — subtle border, rounded
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="12"'
-            ' fill="var(--card-bg)" filter="url(#shadow)" />'
-        )
-        lines.append(
-            f'<rect width="{w}" height="{h}" rx="12"'
-            ' fill="url(#glass-grad)" />'
-        )
-        lines.append(
-            f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
-            ' rx="12" fill="none"'
-            ' stroke="var(--card-border)" stroke-width="1" />'
-        )
-        # Inner rim lighting
-        lines.append(
-            f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
-            ' rx="11" fill="none"'
-            ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />'
-        )
-
-        # Brand-colored accent bar at the top (with fallback)
-        lines.append(
-            f'<rect x="0" y="0" width="{w}" height="3"'
-            f' fill="{esc(accent, quote=True)}"'
-            ' clip-path="url(#bar-clip)"/>'
-        )
+        # Shell
+        lines.extend(_card_shell(
+            w, h, rx=12, accent_fill=esc(accent, quote=True),
+        ))
 
         # Brand icon glow
         lines.append(
