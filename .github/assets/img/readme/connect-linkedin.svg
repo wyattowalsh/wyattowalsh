@@ -16,22 +16,15 @@
   --meta-color: #8b949e;
   --accent: #58a6ff;
 }}
-.con-title { fill: var(--title-color); font: 600 14px/1.25 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
-.con-sub { fill: var(--meta-color); font: 400 11px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.08em; }
-.con-mono { fill: var(--meta-color); font: 700 18px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 </style>
-<clipPath id="bar-clip"><rect width="140" height="130" rx="12"/></clipPath><filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter><linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient><radialGradient id="icon-glow"><stop offset="0%" stop-color="#0A66C2" stop-opacity="0.18" /><stop offset="100%" stop-color="#0A66C2" stop-opacity="0" /></radialGradient><linearGradient id="mono-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0A66C2" stop-opacity="0.2" /><stop offset="100%" stop-color="#0A66C2" stop-opacity="0.05" /></linearGradient>
+<clipPath id="bar-clip"><rect width="140" height="130" rx="12"/></clipPath><filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter><linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient><radialGradient id="icon-glow"><stop offset="0%" stop-color="#0A66C2" stop-opacity="0.18" /><stop offset="100%" stop-color="#0A66C2" stop-opacity="0" /></radialGradient>
 <clipPath id="ico-clip"><rect x="46" y="18" width="48" height="48" rx="12" /></clipPath>
 </defs>
 <rect width="140" height="130" rx="12" fill="var(--card-bg)" filter="url(#shadow)" />
 <rect width="140" height="130" rx="12" fill="url(#glass-grad)" />
 <rect x="0.5" y="0.5" width="139" height="129" rx="12" fill="none" stroke="var(--card-border)" stroke-width="1" />
 <rect x="1.5" y="1.5" width="137" height="127" rx="11" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
-<rect x="0" y="0" width="140" height="3" fill="#0A66C2" clip-path="url(#bar-clip)"/>
+<rect x="0" y="0" width="140" height="3" fill="#0A66C2" clip-path="url(#bar-clip)" />
 <circle cx="70" cy="42" r="34" fill="url(#icon-glow)" />
 <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwQTY2QzInLz48c3ZnIHg9JzEyJyB5PScxMicgd2lkdGg9JzQwJyBoZWlnaHQ9JzQwJyB2aWV3Qm94PScwIDAgMjQgMjQnIGZpbGw9JyNGRkZGRkYnPjxuczA6dGl0bGUgeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+TGlua2VkSW48L25zMDp0aXRsZT48bnMwOnBhdGggeG1sbnM6bnMwPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZD0iTTIwLjQ0NyAyMC40NTJoLTMuNTU0di01LjU2OWMwLTEuMzI4LS4wMjctMy4wMzctMS44NTItMy4wMzctMS44NTMgMC0yLjEzNiAxLjQ0NS0yLjEzNiAyLjkzOXY1LjY2N0g5LjM1MVY5aDMuNDE0djEuNTYxaC4wNDZjLjQ3Ny0uOSAxLjYzNy0xLjg1IDMuMzctMS44NSAzLjYwMSAwIDQuMjY3IDIuMzcgNC4yNjcgNS40NTV2Ni4yODZ6TTUuMzM3IDcuNDMzYy0xLjE0NCAwLTIuMDYzLS45MjYtMi4wNjMtMi4wNjUgMC0xLjEzOC45Mi0yLjA2MyAyLjA2My0yLjA2MyAxLjE0IDAgMi4wNjQuOTI1IDIuMDY0IDIuMDYzIDAgMS4xMzktLjkyNSAyLjA2NS0yLjA2NCAyLjA2NXptMS43ODIgMTMuMDE5SDMuNTU1VjloMy41NjR2MTEuNDUyek0yMi4yMjUgMEgxLjc3MUMuNzkyIDAgMCAuNzc0IDAgMS43Mjl2MjAuNTQyQzAgMjMuMjI3Ljc5MiAyNCAxLjc3MSAyNGgyMC40NTFDMjMuMiAyNCAyNCAyMy4yMjcgMjQgMjIuMjcxVjEuNzI5QzI0IC43NzQgMjMuMiAwIDIyLjIyMiAwaC4wMDN6IiAvPjwvc3ZnPjwvc3ZnPg==" x="46" y="18" width="48" height="48" preserveAspectRatio="xMidYMid meet" clip-path="url(#ico-clip)" />
-<rect x="46" y="18" width="48" height="48" rx="12" fill="url(#mono-grad)" />
-<text class="con-mono" x="70" y="50" text-anchor="middle">LI</text>
-<text class="con-title" x="70" y="84" text-anchor="middle">LinkedIn</text>
-<text class="con-sub" x="70" y="100" text-anchor="middle">SOCIAL</text>
 </svg>
