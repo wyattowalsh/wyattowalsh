@@ -3551,15 +3551,114 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
 
         all_results = self._solve_all(texts, sizes)
 
+        # Optimize frame ordering for smoothest visual transitions
+        order = self._optimize_frame_order(all_results)
+        ordered_results = [all_results[i] for i in order]
+
         frame_bodies: list[str] = []
         algo_names: list[str] = []
-        for name, positions in all_results:
-            placed = self._render_frame(name, positions, texts, sizes, colors, weights, opacities)
-            body = self._render_frame_svg_body(placed, name, len(frame_bodies))
+        for name, positions in ordered_results:
+            placed = self._render_frame(
+                name, positions, texts, sizes, colors, weights, opacities,
+            )
+            body = self._render_frame_svg_body(
+                placed, name, len(frame_bodies),
+            )
             frame_bodies.append(body)
             algo_names.append(name)
 
         return self._stack_frames(frame_bodies, algo_names)
+
+    # -- Frame ordering via metaheuristic TSP solver ----------------------
+
+    @staticmethod
+    def _layout_distance(
+        a: list[tuple[float, float, float]],
+        b: list[tuple[float, float, float]],
+    ) -> float:
+        """Visual distance between two layouts.
+
+        Sum of Euclidean displacements for each word plus a rotation
+        penalty.  Smaller distance = more similar layouts = smoother
+        transition.
+        """
+        total = 0.0
+        for (ax, ay, ar), (bx, by, br) in zip(a, b):
+            dx = ax - bx
+            dy = ay - by
+            dr = (ar - br) * 2.0  # rotation diff weighted higher
+            total += math.sqrt(dx * dx + dy * dy + dr * dr)
+        return total
+
+    def _optimize_frame_order(
+        self,
+        results: list[tuple[str, list[tuple[float, float, float]]]],
+    ) -> list[int]:
+        """Solve TSP on the frame distance matrix using simulated
+        annealing to find the ordering with smoothest visual transitions.
+        """
+        n = len(results)
+        if n <= 2:
+            return list(range(n))
+
+        # Build distance matrix
+        positions = [r[1] for r in results]
+        dist = [[0.0] * n for _ in range(n)]
+        for i in range(n):
+            for j in range(i + 1, n):
+                d = self._layout_distance(positions[i], positions[j])
+                dist[i][j] = d
+                dist[j][i] = d
+
+        def tour_cost(order: list[int]) -> float:
+            return sum(
+                dist[order[k]][order[(k + 1) % n]]
+                for k in range(n)
+            )
+
+        # SA for TSP: start with nearest-neighbor heuristic
+        rng = random.Random(42)
+        visited = [False] * n
+        order = [0]
+        visited[0] = True
+        for _ in range(n - 1):
+            last = order[-1]
+            best_next = -1
+            best_d = float("inf")
+            for j in range(n):
+                if not visited[j] and dist[last][j] < best_d:
+                    best_d = dist[last][j]
+                    best_next = j
+            order.append(best_next)
+            visited[best_next] = True
+
+        best_cost = tour_cost(order)
+        best_order = list(order)
+        temp = best_cost * 0.3
+        cooling = 0.995
+
+        for _ in range(5000):
+            # 2-opt swap
+            i = rng.randint(0, n - 2)
+            j = rng.randint(i + 1, n - 1)
+            order[i:j + 1] = reversed(order[i:j + 1])
+            c = tour_cost(order)
+            delta = c - best_cost
+            if delta < 0 or rng.random() < math.exp(
+                -delta / max(temp, 1e-10)
+            ):
+                best_cost = c
+                best_order = list(order)
+            else:
+                order[i:j + 1] = reversed(order[i:j + 1])
+            temp *= cooling
+
+        logger.info(
+            "Frame ordering optimized: tour cost {c:.0f} "
+            "(SA-TSP, 5000 iterations)",
+            c=best_cost,
+        )
+        return best_order
 
 
 # ---------------------------------------------------------------------------
