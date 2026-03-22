@@ -35,6 +35,7 @@ FORK_ICON_PATH = (
 # Theme support
 # ---------------------------------------------------------------------------
 
+# NOTE: SVG <text> ignores CSS line-height; vertical spacing uses y/dy attributes.
 FONT_FAMILY = (
     '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",'
     " Helvetica, Arial, sans-serif"
@@ -365,26 +366,26 @@ class SvgBlockRenderer:
                 "  }",
                 "}",
                 ".section-title { fill: var(--title-color); "
-                f"font: 700 14px/1.2 {FONT_FAMILY}; }}",
+                f"font: 700 14px {FONT_FAMILY}; }}",
                 ".card-title { fill: var(--title-color); "
-                f"font: 700 16px/1.25 {FONT_FAMILY}; }}",
+                f"font: 700 16px {FONT_FAMILY}; }}",
                 ".card-line { fill: var(--text-color); "
-                f"font: 400 14px/1.4 {FONT_FAMILY}; }}",
+                f"font: 400 14px {FONT_FAMILY}; }}",
                 ".card-meta { fill: var(--meta-color); "
-                f"font: 400 12px/1.4 {FONT_FAMILY}; }}",
+                f"font: 400 12px {FONT_FAMILY}; }}",
                 ".card-kicker { fill: var(--meta-color); "
-                f"font: 700 11px/1.2 {FONT_FAMILY};"
+                f"font: 700 11px {FONT_FAMILY};"
                 " letter-spacing: 0.08em; text-transform: uppercase; }",
                 ".card-icon { fill: var(--title-color); "
-                f"font: 700 12px/1 {FONT_FAMILY}; }}",
+                f"font: 700 12px {FONT_FAMILY}; }}",
                 ".card-badge { fill: var(--title-color); "
-                f"font: 700 12px/1 {FONT_FAMILY};"
+                f"font: 700 12px {FONT_FAMILY};"
                 " letter-spacing: 0.01em; }",
                 ".sparkline { fill: none; stroke: var(--accent); "
                 "stroke-width: 2; opacity: 0.88; }",
                 ".lang-dot { stroke: var(--card-border); stroke-width: 1; }",
                 ".lang-label { fill: var(--meta-color); "
-                f"font: 400 12px/1 {FONT_FAMILY}; }}",
+                f"font: 400 12px {FONT_FAMILY}; }}",
             ]
         )
 
@@ -859,7 +860,7 @@ class SvgRepoCardRenderer:
         for index, line_text in enumerate(title_lines):
             lines.append(
                 f'<text class="rc-title" x="{title_x}" y="{title_y + (index * title_line_height)}"'
-                f' style="font: 600 {title_size}px/1.25 {FONT_FAMILY};">'
+                f' style="font: 600 {title_size}px {FONT_FAMILY};">'
                 f"{esc(line_text, quote=True)}</text>"
             )
 
@@ -869,7 +870,7 @@ class SvgRepoCardRenderer:
         for line_text in desc_lines:
             lines.append(
                 f'<text class="rc-desc" x="{px}" y="{desc_y}"'
-                f' style="font: 400 {desc_size}px/1.5 {FONT_FAMILY};">'
+                f' style="font: 400 {desc_size}px {FONT_FAMILY};">'
                 f"{esc(line_text, quote=True)}</text>"
             )
             desc_y += desc_line_height
@@ -919,14 +920,14 @@ class SvgRepoCardRenderer:
                 "  }",
                 "}",
                 f".rc-title {{ fill: var(--title-color);"
-                f" font: 600 17px/1.25 {FONT_FAMILY}; }}",
+                f" font: 600 17px {FONT_FAMILY}; }}",
                 f".rc-desc {{ fill: var(--text-color);"
-                f" font: 400 13px/1.5 {FONT_FAMILY}; }}",
+                f" font: 400 13px {FONT_FAMILY}; }}",
                 f".rc-meta {{ fill: var(--stat-color);"
-                f" font: 400 12px/1 {FONT_FAMILY}; }}",
+                f" font: 400 12px {FONT_FAMILY}; }}",
                 ".rc-lang-dot { stroke: none; }",
                 f".rc-lang-label {{ fill: var(--stat-color);"
-                f" font: 400 12px/1 {FONT_FAMILY}; }}",
+                f" font: 400 12px {FONT_FAMILY}; }}",
             ]
         )
 
@@ -1313,11 +1314,11 @@ class SvgBlogCardRenderer:
             f"  --accent: {dk.accent};",
             "}}",
             f".blog-title {{ fill: var(--title-color);"
-            f" font: 600 16px/1.25 {FONT_FAMILY}; }}",
+            f" font: 600 16px {FONT_FAMILY}; }}",
             f".blog-desc {{ fill: var(--text-color);"
-            f" font: 400 13px/1.5 {FONT_FAMILY}; }}",
+            f" font: 400 13px {FONT_FAMILY}; }}",
             f".blog-meta {{ fill: var(--meta-color);"
-            f" font: 400 12px/1 {FONT_FAMILY}; }}",
+            f" font: 400 12px {FONT_FAMILY}; }}",
         ])
 
 
@@ -1465,12 +1466,12 @@ class SvgConnectCardRenderer:
             f"  --accent: {dk.accent};",
             "}}",
             f".con-title {{ fill: var(--title-color);"
-            f" font: 600 14px/1.25 {FONT_FAMILY}; }}",
+            f" font: 600 14px {FONT_FAMILY}; }}",
             f".con-sub {{ fill: var(--meta-color);"
-            f" font: 400 11px/1 {FONT_FAMILY};"
+            f" font: 400 11px {FONT_FAMILY};"
             " text-transform: uppercase; letter-spacing: 0.08em; }",
             f".con-mono {{ fill: var(--meta-color);"
-            f" font: 700 18px/1 {FONT_FAMILY}; }}",
+            f" font: 700 18px {FONT_FAMILY}; }}",
         ])
 
 
