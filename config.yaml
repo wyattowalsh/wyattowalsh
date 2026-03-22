@@ -27,7 +27,7 @@ v_card_data:
 qr_code_settings:
   output_filename: qr.png
   output_dir: .github/assets/img
-  default_background_path: null
+  default_background_path: .github/assets/img/icon.svg
   default_scale: 25
   error_correction: H
 word_cloud_settings:
