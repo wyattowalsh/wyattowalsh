@@ -10,10 +10,15 @@ on:
       - main
       - dev
 
+concurrency:
+  group: profile-updater-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update-starred-lists:
     name: Update Starred Repository Lists (MD Files)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write # To commit languages.md and topics.md
     outputs:
@@ -21,6 +26,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: Set up Python 3.13
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -57,7 +64,7 @@ jobs:
             --message 'chore(data): update awesome-stars topics.md' \
             --topic --topic_limit 500 \
             --filename ./.github/assets/topics.md
-      
+
       - name: Commit updated starred lists
         id: commit_starred_lists
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
@@ -72,6 +79,7 @@ jobs:
     name: Generate Profile Assets (QR, WordClouds, Banner)
     runs-on: ubuntu-latest
     needs: update-starred-lists # Depends on the md files being up-to-date
+    timeout-minutes: 20
     permissions:
       contents: write # To commit generated image assets
     steps:
@@ -123,13 +131,29 @@ jobs:
   update-readme-wakatime:
     name: Update README - WakaTime Stats
     runs-on: ubuntu-latest
-    needs: update-starred-lists
+    needs: generate-event-art
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+      - name: Preflight WakaTime auth gate
+        id: wakatime_auth
+        env:
+          WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
+        run: |
+          set -euo pipefail
+          has_wakatime_api_key=false
+          [ -n "${WAKATIME_API_KEY:-}" ] && has_wakatime_api_key=true
+          echo "has_wakatime_api_key=${has_wakatime_api_key}" >> "$GITHUB_OUTPUT"
+          if [ "${has_wakatime_api_key}" != "true" ]; then
+            echo "::notice::WAKATIME_API_KEY is missing; skipping WakaTime README update."
+          fi
       - name: WakaTime Readme Stats
+        if: ${{ steps.wakatime_auth.outputs.has_wakatime_api_key == 'true' }}
         uses: anmol098/waka-readme-stats@2c04c57e0ee35e9e40aef7fbc7d866d063dcf7cd # v4
         with:
           WAKATIME_API_KEY: ${{ secrets.WAKATIME_API_KEY }}
@@ -149,12 +173,15 @@ jobs:
   update-readme-blog:
     name: Update README - Latest Blog Posts
     runs-on: ubuntu-latest
-    needs: update-starred-lists
+    needs: update-readme-wakatime
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
       - name: Blog Post Workflow
         uses: gautamkrishnar/blog-post-workflow@71dc71018921efdf8a81745f431f32c989f699a7 # v1
         with:
@@ -166,25 +193,39 @@ jobs:
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
     runs-on: ubuntu-latest
-    needs: update-starred-lists
+    needs: generate-assets
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
       - name: Preflight metrics auth gates
         id: metrics_auth
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
         run: |
           set -euo pipefail
           # Secret setup guidance:
           # - METRICS_TOKEN: GitHub PAT (classic) with at least read:user, public_repo (add read:org for org/collab visibility).
           has_metrics_token=false
           [ -n "${METRICS_TOKEN:-}" ] && has_metrics_token=true
+          has_spotify_tokens=false
+          if [ -n "${SPOTIFY_CLIENT_ID:-}" ] && [ -n "${SPOTIFY_CLIENT_SECRET:-}" ] && [ -n "${SPOTIFY_REFRESH_TOKEN:-}" ]; then
+            has_spotify_tokens=true
+          fi
           echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
+          echo "has_spotify_tokens=${has_spotify_tokens}" >> "$GITHUB_OUTPUT"
           if [ "${has_metrics_token}" != "true" ]; then
-            echo "::warning::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
+            echo "::notice::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
+          fi
+          if [ "${has_spotify_tokens}" != "true" ]; then
+            echo "::notice::Spotify secrets are incomplete; music metrics are disabled."
           fi
       - name: Personal metrics
         id: personal_metrics
@@ -208,7 +249,7 @@ jobs:
           plugin_habits_facts: yes
           plugin_habits_charts: yes
           plugin_notable: yes
-          plugin_notable_repositories: yes
+          plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_gists: yes
           plugin_topics: yes
           plugin_topics_sort: stars
@@ -268,7 +309,7 @@ jobs:
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          plugin_music: yes
+          plugin_music: ${{ steps.metrics_auth.outputs.has_spotify_tokens == 'true' && 'yes' || 'no' }}
           plugin_music_provider: spotify
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
@@ -306,7 +347,7 @@ jobs:
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          plugin_music: yes
+          plugin_music: ${{ steps.metrics_auth.outputs.has_spotify_tokens == 'true' && 'yes' || 'no' }}
           plugin_music_provider: spotify
           plugin_music_mode: recent
           plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
@@ -345,7 +386,7 @@ jobs:
             fi
 
             if [ -n "$reason" ]; then
-              echo "::warning::Sanitizing ${label}: ${reason}. Replacing with placeholder SVG."
+              echo "::notice::Sanitizing ${label}: ${reason}. Replacing with placeholder SVG."
               cat > "$file" <<'SVGEOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" role="img" aria-label="Metrics unavailable">
@@ -370,12 +411,15 @@ jobs:
   generate-event-art:
     name: Generate Event-Driven Artwork
     runs-on: ubuntu-latest
-    needs: generate-assets
+    needs: generate-profile-metrics
+    timeout-minutes: 25
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: Set up Python 3.13
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -425,7 +469,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "art: regenerate event-driven, animated, and living-art outputs"
-          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg"
+          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/animated-*.gif .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
@@ -433,7 +477,8 @@ jobs:
   update-skills:
     name: Finalize README Sections
     runs-on: ubuntu-latest
-    needs: [generate-assets, update-readme-wakatime, update-readme-blog]
+    needs: update-readme-blog
+    timeout-minutes: 20
     permissions:
       contents: write
     steps:

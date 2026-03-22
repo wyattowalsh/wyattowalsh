@@ -139,7 +139,11 @@ class TestBadgeUrl:
 
     def test_logo_path_base64(self, tmp_path):
         svg_file = tmp_path / "test.svg"
-        svg_content = b'<svg xmlns="http://www.w3.org/2000/svg"><circle r="5" fill="white"/></svg>'
+        svg_content = (
+            b'<svg xmlns="http://www.w3.org/2000/svg">'
+            b'<circle r="5" fill="white"/>'
+            b"</svg>"
+        )
         svg_file.write_bytes(svg_content)
 
         skill = SkillEntry(

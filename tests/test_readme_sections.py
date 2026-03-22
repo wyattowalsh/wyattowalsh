@@ -904,7 +904,9 @@ class TestReadmeInjection:
         assert "featured-card-wyattowalsh-riso.svg" in content
         assert "github.com/wyattowalsh" in content
 
-    def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(self, tmp_path: Path) -> None:
+    def test_connect_cards_remove_handle_open_profile_and_pill_but_clickable(
+        self, tmp_path: Path
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             social_links=[
@@ -929,7 +931,9 @@ class TestReadmeInjection:
         # Expect no upper-right pill element on connect cards
         assert 'class="card-pill"' not in svg
 
-    def test_featured_cards_include_richer_metadata_and_exclude_footer_copy(self, tmp_path: Path, monkeypatch) -> None:
+    def test_featured_cards_include_richer_metadata_and_exclude_footer_copy(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
@@ -969,14 +973,18 @@ class TestReadmeInjection:
         assert getattr(card, "homepage", None) is not None
         assert getattr(card, "topics", None) is not None
         assert getattr(card, "updated_at", None) is not None
-        assert any(m.startswith("lang:") for m in card.meta), "meta should contain lang: prefix"
+        assert any(
+            m.startswith("lang:") for m in card.meta
+        ), "meta should contain lang: prefix"
         assert any("★" in m for m in card.meta), "meta should contain star icon"
         assert any("⑂" in m for m in card.meta), "meta should contain fork icon"
 
-        # The rendered SVG should not include the generic footer copy 'GitHub repository'
+        # The rendered SVG should not include the generic footer copy.
         assert "GitHub repository" not in svg
 
-    def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(self, tmp_path: Path, monkeypatch) -> None:
+    def test_blog_cards_remove_badge_and_update_kicker_and_wrap_titles(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             blog_feed_url="https://w4w.dev/feed.xml",
@@ -988,7 +996,7 @@ class TestReadmeInjection:
             blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/long": {"hero_image": None, "summary": "Long post", "published": "2026-03-01", "host": "w4w.dev"}}),
         )
 
-        html = generator._render_blog_posts()
+        generator._render_blog_posts()
 
         # Per-card SVG should be generated (title slug has trailing "update" stripped)
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
@@ -1001,13 +1009,42 @@ class TestReadmeInjection:
         # The blog-desc should contain the summary
         assert "Long post" in svg
 
-    def test_card_generators_are_bespoke_per_family(self, tmp_path: Path, monkeypatch) -> None:
-        settings = ReadmeSectionsSettings(svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")), featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")], blog_feed_url="https://w4w.dev/feed.xml", blog_post_limit=1)
+    def test_card_generators_are_bespoke_per_family(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
         generator = ReadmeSectionGenerator(
             settings=settings,
-            repo_client=StubRepoClient({"wyattowalsh/riso": RepoMetadata(full_name="wyattowalsh/riso", name="riso", html_url="https://github.com/wyattowalsh/riso", description="Composable scaffolding framework", stars=42, homepage=None, topics=["python"], updated_at="2026-02-01T00:00:00Z")} ),
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage=None,
+                        topics=["python"],
+                        updated_at="2026-02-01T00:00:00Z",
+                    )
+                }
+            ),
             blog_client=StubBlogClient([BlogPost(title="Post", url="https://w4w.dev/blog/post")]),
-            blog_metadata_client=StubBlogMetadataClient({"https://w4w.dev/blog/post": {"hero_image": None, "summary": "x", "published": "2026-03-01", "host": "w4w.dev"}}),
+            blog_metadata_client=StubBlogMetadataClient(
+                {
+                    "https://w4w.dev/blog/post": {
+                        "hero_image": None,
+                        "summary": "x",
+                        "published": "2026-03-01",
+                        "host": "w4w.dev",
+                    }
+                }
+            ),
         )
 
         generator._render_top_badges()
@@ -1024,7 +1061,9 @@ class TestReadmeInjection:
         assert connect_svg, "connect card SVGs should be generated"
         connect_content = connect_svg[0].read_text(encoding="utf-8")
 
-        featured_has_stars = any("\u2605" in (m or "") for m in (featured_card.meta or []))
+        featured_has_stars = any(
+            "\u2605" in (m or "") for m in (featured_card.meta or [])
+        )
         top_has_stars = "\u2605" in connect_content
         assert featured_has_stars and not top_has_stars
 
@@ -1032,7 +1071,9 @@ class TestReadmeInjection:
 class TestProjectCardMeta:
     """Verify project card meta includes lang:, star, and fork prefixes."""
 
-    def test_project_card_meta_contains_lang_star_fork(self, tmp_path: Path, monkeypatch) -> None:
+    def test_project_card_meta_contains_lang_star_fork(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
@@ -1070,7 +1111,9 @@ class TestProjectCardMeta:
         assert "★ 42" in card.meta
         assert "⑂ 12" in card.meta
 
-    def test_project_card_meta_omits_lang_when_none(self, tmp_path: Path, monkeypatch) -> None:
+    def test_project_card_meta_omits_lang_when_none(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
             featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
@@ -1129,7 +1172,7 @@ class TestBlogTitleSanitization:
             ),
         )
 
-        html = generator._render_blog_posts()
+        generator._render_blog_posts()
 
         # The per-card SVG file name should reflect the stripped title
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
@@ -1153,7 +1196,7 @@ class TestBlogTitleSanitization:
             ),
         )
 
-        html = generator._render_blog_posts()
+        generator._render_blog_posts()
 
         # "update" in the middle should NOT be stripped
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))

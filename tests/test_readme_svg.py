@@ -9,9 +9,9 @@ from scripts.readme_svg import (
     LIGHT_THEME,
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
-    SvgBlogCardRenderer,
     SvgBlock,
     SvgBlockRenderer,
+    SvgBlogCardRenderer,
     SvgCard,
     SvgCardFamily,
     SvgCardTheme,
@@ -408,7 +408,10 @@ class TestReadmeSvgAssetBuilder:
 
     def test_blog_card_no_badge_and_wrapping(self) -> None:
         renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
-        title = "A Very Long Blog Post Title That Would Normally Be Truncated ... update"
+        title = (
+            "A Very Long Blog Post Title That Would Normally Be Truncated"
+            " ... update"
+        )
         card = SvgCard(title=title, lines=("w4w.dev",), url="https://w4w.dev/blog/long")
         block = SvgBlock(
             title="Blog",
@@ -466,7 +469,10 @@ class TestSvgBlogCardRenderer:
     def test_blog_card_expands_for_full_copy_without_ellipsis(self) -> None:
         renderer = SvgBlogCardRenderer(width=480, height=150)
         card = SvgCard(
-            title="A Very Long Blog Post Title That Should Wrap Cleanly Without Forced Ellipses update",
+            title=(
+                "A Very Long Blog Post Title That Should Wrap Cleanly Without"
+                " Forced Ellipses update"
+            ),
             lines=(" ".join(["Readable"] * 80) + " TAIL-MARKER-123",),
             meta=("2026-03-01", "w4w.dev"),
         )

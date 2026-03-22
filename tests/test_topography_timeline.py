@@ -40,7 +40,11 @@ def _sample_metrics() -> dict:
 
 def _timeline_delay_rows(svg: str) -> list[tuple[str, float]]:
     rows: list[tuple[str, float]] = []
-    for delay, when in re.findall(r'data-delay="([0-9]+(?:\.[0-9]+)?)"\s+data-when="(\d{4}-\d{2}-\d{2})"', svg):
+    matches = re.findall(
+        r'data-delay="([0-9]+(?:\.[0-9]+)?)"\s+data-when="(\d{4}-\d{2}-\d{2})"',
+        svg,
+    )
+    for delay, when in matches:
         rows.append((when, float(delay)))
     return rows
 
