@@ -135,6 +135,7 @@ jobs:
     name: Update README - WakaTime Stats
     runs-on: ubuntu-latest
     needs: generate-event-art
+    if: ${{ always() && !cancelled() }}
     timeout-minutes: 15
     permissions:
       contents: write
@@ -177,6 +178,7 @@ jobs:
     name: Update README - Latest Blog Posts
     runs-on: ubuntu-latest
     needs: update-readme-wakatime
+    if: ${{ always() && !cancelled() }}
     timeout-minutes: 10
     permissions:
       contents: write
@@ -425,6 +427,7 @@ jobs:
     name: Generate Event-Driven Artwork
     runs-on: ubuntu-latest
     needs: generate-profile-metrics
+    if: ${{ always() && needs.generate-profile-metrics.result != 'cancelled' }}
     timeout-minutes: 25
     permissions:
       contents: write
@@ -496,6 +499,7 @@ jobs:
     name: Finalize README Sections
     runs-on: ubuntu-latest
     needs: update-readme-blog
+    if: ${{ always() && !cancelled() }}
     timeout-minutes: 20
     permissions:
       contents: write
