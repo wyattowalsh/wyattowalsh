@@ -714,6 +714,8 @@ def generate(
 
     # Track plant base positions for ground cover enhancement
     plant_bases = []
+    # Track per-tree tooltip data for interactive SVG titles
+    tree_tooltips = []  # (x, base_y, top_y, name, lang, stars, species)
 
     # ── Plant generation (progressive: blank soil → full garden) ────
     n_repos = len(repos)
@@ -835,6 +837,10 @@ def generate(
         if main_length >= 5:
             labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy, trunk_when))
         plant_bases.append((base_x, gy))
+        tree_tooltips.append((
+            base_x, gy, gy - main_length,
+            repo.get("name", ""), repo.get("language", ""), repo_stars, species,
+        ))
 
         # ── Fern growth (special algorithm) ───────────────────────
         if species == "fern":
@@ -1312,6 +1318,13 @@ def generate(
   </pattern>''')
     P.append('</defs>')
 
+    # ── CSS for interactive hover tooltips (works in direct SVG view) ──
+    P.append('<style>')
+    P.append('.repo-tree{cursor:pointer}')
+    P.append('.repo-tree .tooltip{opacity:0;transition:opacity .3s;pointer-events:none}')
+    P.append('.repo-tree:hover .tooltip{opacity:1}')
+    P.append('.repo-tree:hover{filter:brightness(1.05)}')
+    P.append('</style>')
 
     # ── Background (aged parchment with canvas texture) ──────────
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f0e8d8" filter="url(#paper)"/>')
@@ -2587,6 +2600,29 @@ def generate(
                  f'font-family="Georgia,serif" font-size="5.5" fill="#a09080" opacity="0.3" '
                  f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" stroke-linejoin="round">'
                  f'Pl. {plate_num}</text>')
+
+    # ── Interactive tooltip overlays (visible when SVG viewed directly) ──
+    for tt_x, tt_base_y, tt_top_y, tt_name, tt_lang, tt_stars, tt_species in tree_tooltips:
+        tt_lang_str = tt_lang or "?"
+        tt_label = f"{tt_name} \u00b7 {tt_lang_str} \u00b7 \u2605{tt_stars} \u00b7 {tt_species}"
+        # Escape XML special characters in tooltip text
+        tt_label = tt_label.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        tt_h = max(40, tt_base_y - tt_top_y)
+        tt_w = max(30, tt_h * 0.4)
+        P.append(f'<g class="repo-tree">')
+        P.append(f'<title>{tt_label}</title>')
+        P.append(f'<rect x="{tt_x - tt_w / 2:.1f}" y="{tt_top_y:.1f}" '
+                 f'width="{tt_w:.1f}" height="{tt_h:.1f}" fill="transparent"/>')
+        # CSS hover tooltip (text + background)
+        P.append(f'<g class="tooltip">')
+        tw = max(100, len(tt_label) * 3.6)
+        P.append(f'<rect x="{tt_x - tw / 2:.1f}" y="{tt_top_y - 22:.1f}" '
+                 f'width="{tw:.1f}" height="16" rx="4" fill="rgba(0,0,0,0.75)"/>')
+        P.append(f'<text x="{tt_x:.1f}" y="{tt_top_y - 10:.1f}" '
+                 f'font-family="monospace" font-size="5.5" fill="white" '
+                 f'text-anchor="middle">{tt_label}</text>')
+        P.append('</g>')
+        P.append('</g>')
 
     P.append('</svg>')
     return '\n'.join(P)
