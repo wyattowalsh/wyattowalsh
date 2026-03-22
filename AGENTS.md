@@ -40,8 +40,17 @@ wyattowalsh/
 │   ├── utils.py         # get_logger(), create_progress(), console
 │   ├── banner.py        # SVG banner — Lorenz attractor, flow fields
 │   ├── qr.py            # Artistic vCard QR code — segno + Cairo
-│   ├── word_clouds.py   # Word cloud generator — multiple input modes
-│   ├── word_cloud_renderers.py # Pure-SVG word cloud rendering backends
+│   ├── word_clouds/     # Word cloud subpackage — generation + renderers
+│   │   ├── generate.py  # Generation pipeline, CLI, settings
+│   │   ├── core.py      # PlacedWord, BBox, font constants
+│   │   ├── colors.py    # OKLCH palettes, domain clustering
+│   │   ├── engine.py    # SvgWordCloudEngine base class
+│   │   ├── solvers.py   # 25 metaheuristic optimization solvers
+│   │   ├── wordle.py    # WordleRenderer
+│   │   ├── clustered.py # ClusteredRenderer
+│   │   ├── typographic.py # TypographicRenderer
+│   │   ├── shaped.py    # ShapedRenderer
+│   │   └── metaheuristic.py # MetaheuristicAnimRenderer + registry
 │   ├── readme_sections.py # README dynamic section assembler
 │   ├── readme_svg.py    # SVG rendering helpers for README components
 │   ├── skills.py        # shields.io badge generator from skills.yaml

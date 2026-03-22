@@ -5,9 +5,9 @@ Supports two modes:
   - "wordle" | "clustered" | "typographic" | "shaped": SVG-native renderers
 
 Usage:
-    python scripts/word_clouds.py                          # classic PNG
-    python scripts/word_clouds.py --renderer wordle        # SVG wordle
-    python scripts/word_clouds.py --renderer all           # every renderer
+    python -m scripts.word_clouds                          # classic PNG
+    python -m scripts.word_clouds --renderer wordle        # SVG wordle
+    python -m scripts.word_clouds --renderer all           # every renderer
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ import markdown
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, ConfigDict
 
-from .utils import get_logger
+from ..utils import get_logger
 
 logger = get_logger(module=__name__)
 
@@ -30,7 +30,9 @@ logger = get_logger(module=__name__)
 # Settings
 # ---------------------------------------------------------------------------
 
-RendererName = Literal["classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"]
+RendererName = Literal[
+    "classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"
+]
 
 # Default paths used by CLI (restored for backwards compat)
 DEFAULT_FONT_PATH: Path | None = None
@@ -48,7 +50,13 @@ TOPICS_MD_PATH = Path(".github/assets/topics.md")
 PROFILE_IMG_OUTPUT_DIR = Path(".github/assets/img")
 
 RENDERER_CHOICES: list[str] = [
-    "classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim", "all",
+    "classic",
+    "wordle",
+    "clustered",
+    "typographic",
+    "shaped",
+    "metaheuristic-anim",
+    "all",
 ]
 
 DEFAULT_RENDERER: RendererName = "classic"
@@ -58,13 +66,14 @@ DEFAULT_MAX_WORDS = 1000
 
 # Resolve project root relative to this script
 _SCRIPT_DIR = Path(__file__).resolve().parent
-_PROJECT_ROOT = _SCRIPT_DIR.parent
+_PROJECT_ROOT = _SCRIPT_DIR.parent.parent
 _ASSETS_DIR = _PROJECT_ROOT / "assets"
 
 
 # ---------------------------------------------------------------------------
 # Markdown parsing helpers
 # ---------------------------------------------------------------------------
+
 
 def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
     """Parse a starred-topics/languages markdown file into {name: count}."""
@@ -92,6 +101,7 @@ def _filter_others(frequencies: dict[str, int]) -> dict[str, int]:
 # ---------------------------------------------------------------------------
 # Classic (bitmap) renderer
 # ---------------------------------------------------------------------------
+
 
 def _generate_classic(
     frequencies: dict[str, int],
@@ -127,6 +137,7 @@ def _generate_classic(
 # SVG renderer dispatch
 # ---------------------------------------------------------------------------
 
+
 def _generate_svg(
     renderer_name: str,
     frequencies: dict[str, int],
@@ -136,7 +147,7 @@ def _generate_svg(
     **renderer_kwargs,
 ) -> None:
     """Generate an SVG word cloud using one of the SVG-native renderers."""
-    from .word_cloud_renderers import get_renderer
+    from .metaheuristic import get_renderer
 
     renderer = get_renderer(
         renderer_name,
@@ -203,8 +214,11 @@ def generate_word_cloud(
         ext = ".svg"
         out = output_dir / f"wordcloud_{renderer}_by_{source}{ext}"
         _generate_svg(
-            renderer, frequencies, out,
-            width=width, height=height,
+            renderer,
+            frequencies,
+            out,
+            width=width,
+            height=height,
             color_func_name=color_func_name,
         )
 
@@ -223,7 +237,14 @@ def generate_all(
     Returns list of output paths.
     """
     renderers = (
-        ["classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"]
+        [
+            "classic",
+            "wordle",
+            "clustered",
+            "typographic",
+            "shaped",
+            "metaheuristic-anim",
+        ]
         if renderer == "all"
         else [renderer]
     )
@@ -247,6 +268,7 @@ def generate_all(
 # Backward-compatible entry points
 # ---------------------------------------------------------------------------
 
+
 def get_topics_word_cloud() -> None:
     """Legacy entry point for topics word cloud."""
     generate_word_cloud("topics", renderer="classic")
@@ -258,10 +280,6 @@ def get_languages_word_cloud() -> None:
 
 
 # ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
-
-# ---------------------------------------------------------------------------
 # CLI compatibility shims (consumed by scripts/cli.py)
 # ---------------------------------------------------------------------------
 
@@ -271,6 +289,7 @@ parse_markdown_for_word_cloud_frequencies = parse_frequencies_from_md
 
 class WordCloudSettings(BaseModel):
     """Settings for word cloud generation."""
+
     model_config = ConfigDict(extra="forbid")
     renderer: str = DEFAULT_RENDERER
     width: int = DEFAULT_WIDTH
@@ -283,9 +302,9 @@ class WordCloudGenerator:
     """Minimal generator class expected by the CLI."""
 
     def __init__(self, **kwargs):
-        self.settings = kwargs.get("settings") or kwargs.get(
-            "base_settings"
-        ) or WordCloudSettings()
+        self.settings = (
+            kwargs.get("settings") or kwargs.get("base_settings") or WordCloudSettings()
+        )
 
     def generate(
         self,
@@ -294,7 +313,9 @@ class WordCloudGenerator:
         source: str = "topics",
         **kwargs,
     ) -> Path:
-        renderer = kwargs.get("renderer", getattr(self.settings, "renderer", DEFAULT_RENDERER))
+        renderer = kwargs.get(
+            "renderer", getattr(self.settings, "renderer", DEFAULT_RENDERER)
+        )
         width = getattr(self.settings, "width", DEFAULT_WIDTH)
         height = getattr(self.settings, "height", DEFAULT_HEIGHT)
         color_func_name = kwargs.get("color_func_name")
@@ -316,15 +337,19 @@ class WordCloudGenerator:
                 _generate_classic(frequencies, out_file, width=width, height=height)
             else:
                 _generate_svg(
-                    renderer, frequencies, out_file,
-                    width=width, height=height,
+                    renderer,
+                    frequencies,
+                    out_file,
+                    width=width,
+                    height=height,
                     color_func_name=color_func_name,
                 )
             return out_file
         else:
             # Fall back to reading from markdown
             return generate_word_cloud(
-                source=source, renderer=renderer,
+                source=source,
+                renderer=renderer,
                 output_dir=str(out_dir),
                 color_func_name=color_func_name,
             )

@@ -3,16 +3,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from scripts.word_cloud_renderers import (
-    WordleRenderer,
-    resolve_preferred_wordcloud_font_path,
-)
 from scripts.word_clouds import (
     WordCloudGenerator,
     WordCloudSettings,
     _filter_others,
     parse_markdown_for_word_cloud_frequencies,
 )
+from scripts.word_clouds.core import resolve_preferred_wordcloud_font_path
+from scripts.word_clouds.wordle import WordleRenderer
 
 
 def test_parse_markdown_skips_generic_others_bucket(tmp_path: Path) -> None:
@@ -156,7 +154,7 @@ def test_generator_honors_explicit_output_path_and_filters_others(
         captured["color_func_name"] = kwargs.get("color_func_name")
         Path(output_path).write_text("<svg />", encoding="utf-8")
 
-    monkeypatch.setattr("scripts.word_clouds._generate_svg", fake_generate_svg)
+    monkeypatch.setattr("scripts.word_clouds.generate._generate_svg", fake_generate_svg)
 
     generator = WordCloudGenerator(
         base_settings=WordCloudSettings(

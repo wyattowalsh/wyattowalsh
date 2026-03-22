@@ -29,8 +29,17 @@
 | `skills.py` | 153 | shields.io badge HTML generator from `SkillsSettings`; injects between README comment markers | `SkillsBadgeGenerator` |
 | `techs.py` | 315 | Parse techs.md proficiency data | `Technology`, `load_technologies()`, `parse_technology_line()`, `display_technologies()` |
 | `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console` |
-| `word_cloud_renderers.py` | 1231 | Pure-SVG word cloud renderers — four layout strategies (Wordle, clustered, typographic, shaped) with OKLCH palettes | `WordleRenderer`, `ClusteredRenderer`, `TypographicRenderer`, `ShapedRenderer` |
-| `word_clouds.py` | 1585 | Word cloud generation | `WordCloudGenerator`, `WordCloudSettings`, `parse_markdown_for_word_cloud_frequencies()` |
+| `word_clouds/` | — | Word cloud subpackage — generation pipeline + SVG renderers | — |
+| `word_clouds/generate.py` | 402 | Generation pipeline, CLI, settings, markdown parsing | `WordCloudGenerator`, `WordCloudSettings`, `parse_markdown_for_word_cloud_frequencies()` |
+| `word_clouds/core.py` | 78 | Shared data types and font constants | `PlacedWord`, `BBox`, `FONT_STACK` |
+| `word_clouds/colors.py` | 473 | OKLCH color palettes and domain clustering | `COLOR_FUNCS`, `_classify_word()` |
+| `word_clouds/engine.py` | 352 | Abstract base SVG renderer | `SvgWordCloudEngine` |
+| `word_clouds/solvers.py` | 1828 | 25 metaheuristic optimization solvers + aesthetic cost function | `_META_SOLVERS`, `_aesthetic_cost()` |
+| `word_clouds/wordle.py` | 200 | Classic Wordle spiral placement | `WordleRenderer` |
+| `word_clouds/clustered.py` | 195 | Semantic clustering layout | `ClusteredRenderer` |
+| `word_clouds/typographic.py` | 93 | Editorial baseline-grid layout | `TypographicRenderer` |
+| `word_clouds/shaped.py` | 319 | Shape-constrained placement | `ShapedRenderer` |
+| `word_clouds/metaheuristic.py` | 499 | 25-frame animated renderer + registry | `MetaheuristicAnimRenderer`, `RENDERERS`, `get_renderer()` |
 | `art/shared.py` | ~276 | Shared noise/color/math utilities for generative art | `Noise2D`, `oklch()`, `seed_hash()`, `compute_maturity()`, `make_radial_gradient()`, `make_linear_gradient()`, `parse_cli_args()` |
 | `art/ink_garden.py` | 2027 | Procedural botanical SVG garden — species-classified trees, leaves, blooms, insects, webs | `generate(metrics, *, seed, maturity) -> str` |
 | `art/_dev_profiles.py` | 64 | Mock GitHub profiles for local animation testing | `PROFILES` |
