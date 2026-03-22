@@ -17,6 +17,7 @@ Public API::
 from __future__ import annotations
 
 import math
+import random
 from pathlib import Path
 
 from ..utils import get_logger
@@ -130,38 +131,41 @@ def _fallback_easing(index: int, total: int, duration: float) -> float:
 def _build_language_palette(
     metrics: dict,
     n_points: int,
-) -> list[tuple[str, float]]:
-    """Build (color_hex, chroma) list for each dot from language distribution.
+) -> list[tuple[str, float, float]]:
+    """Build (color_hex, chroma, size_mult) list for each dot from language distribution.
 
-    Returns list of (oklch_hex_color, chroma_value) tuples.
+    Returns list of (oklch_hex_color, chroma_value, size_multiplier) tuples.
+    The *size_multiplier* scales each spiral dot so that dominant languages
+    produce visibly larger points (0.7 -- 2.2 range).
     """
     lang_bytes = metrics.get("languages", {})
     if not lang_bytes:
         # Fallback: neutral palette
-        return [(oklch(0.55, 0.04, 200), 0.04)] * n_points
+        return [(oklch(0.55, 0.04, 200), 0.04, 1.0)] * n_points
 
     total_bytes = sum(lang_bytes.values()) or 1
     # Sort by proportion descending
     sorted_langs = sorted(lang_bytes.items(), key=lambda x: -x[1])
 
-    # Build distribution
-    lang_slots: list[str] = []
+    # Build distribution -- each language gets proportional slots
+    lang_slots: list[tuple[str, float]] = []
     for lang, byte_count in sorted_langs:
         n = max(1, round(byte_count / total_bytes * n_points))
-        lang_slots.extend([lang] * n)
+        size_mult = 0.7 + (byte_count / total_bytes) * 1.5  # larger for dominant langs
+        lang_slots.extend([(lang, size_mult)] * n)
     # Pad or trim to n_points
     while len(lang_slots) < n_points:
-        lang_slots.append(sorted_langs[0][0])
+        lang_slots.append((sorted_langs[0][0], 1.0))
     lang_slots = lang_slots[:n_points]
 
-    result: list[tuple[str, float]] = []
-    for lang in lang_slots:
+    result: list[tuple[str, float, float]] = []
+    for lang, size_mult in lang_slots:
         hue = LANG_HUES.get(lang, 200)
         # Top language gets high chroma, others moderate
         is_top = lang == sorted_langs[0][0]
         C = 0.16 if is_top else 0.10
         L = 0.55
-        result.append((oklch(L, C, hue), C))
+        result.append((oklch(L, C, hue), C, size_mult))
 
     return result
 
@@ -268,10 +272,15 @@ def _render_svg(
     scale = canvas_radius / max(max_radius, 1.0) * 12.0
     pts = phyllotaxis_points(n_points, _WIDTH / 2, _HEIGHT / 2, scale=scale)
 
+    # Star velocity -> emission intensity multiplier
+    star_vel = history.get("star_velocity") or metrics.get("star_velocity", {})
+    vel_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    emission_mult = 1.0 + min(1.0, vel_rate * 0.15)  # up to 2x
+
     lines = flow_field_lines(
         _WIDTH,
         _HEIGHT,
-        num_lines=line_count,
+        num_lines=int(line_count * emission_mult),
         freq=flow_freq,
         octaves=octaves,
         step_size=4.0 * flow_mag,
@@ -472,7 +481,7 @@ def _render_svg(
         if length < 0.5:
             continue
         d = delays[i]
-        color, _ = palette[i]
+        color, _, _ = palette[i]
         arc_cycle = round(2.5 + (i % 4) * 0.8, 1)
         if snapshot_mode:
             if progress_time < d:
@@ -495,14 +504,14 @@ def _render_svg(
             )
     parts.append("</g>\n")
 
-    # ---- Layer 4: Phyllotaxis dots (language-colored) ----
+    # ---- Layer 4: Phyllotaxis dots (language-colored, byte-proportional sizes) ----
     glow_threshold = int(n_points * 0.65)
     parts.append('<g id="spiral">\n')
     glow_parts: list[str] = []
 
     for i, (px, py) in enumerate(pts):
-        dot_r = round(base_r + math.log1p(i) * 0.7, 2)
-        color, _ = palette[i]
+        color, _, size_mult = palette[i]
+        dot_r = round((base_r + math.log1p(i) * 0.7) * size_mult, 2)
         d = delays[i]
         appear_dur = round(max(0.8, 1.5 - i * 0.003), 2)
 
@@ -536,11 +545,125 @@ def _render_svg(
         parts.extend(glow_parts)
         parts.append("</g>\n")
 
+    # ── Topic connection arcs ──────────────────────────────────
+    topic_clusters = metrics.get("topic_clusters", {})
+    top_topics = (
+        list(topic_clusters.keys())[:5] if isinstance(topic_clusters, dict) else []
+    )
+
+    if top_topics:
+        # Use enriched repos from metrics (they carry topics), fall back to timeline repos
+        enriched_repos = metrics.get("repos", repos)
+        # Map repos to their spiral point indices
+        repo_indices: dict[str, int] = {}
+        for ri, repo in enumerate(enriched_repos[:n_points]):
+            rname = repo.get("name", "") if isinstance(repo, dict) else ""
+            if rname:
+                repo_indices[rname] = ri
+
+        arc_color_base = oklch(0.65 if dark_mode else 0.45, 0.08, 240)
+        parts.append('<g id="topic-arcs" opacity="0.15">\n')
+        for topic in top_topics:
+            # Find all repos with this topic
+            matching: list[int] = []
+            for repo in enriched_repos[:n_points]:
+                if not isinstance(repo, dict):
+                    continue
+                if topic in (repo.get("topics") or []):
+                    idx = repo_indices.get(repo.get("name", ""))
+                    if idx is not None and idx < len(pts):
+                        matching.append(idx)
+
+            if len(matching) >= 2:
+                # Draw curved connections between matching points
+                for mi in range(len(matching) - 1):
+                    p1 = pts[matching[mi]]
+                    p2 = pts[matching[mi + 1]]
+                    # Quadratic bezier with control point offset toward center
+                    mx = (p1[0] + p2[0]) / 2
+                    my = (p1[1] + p2[1]) / 2
+                    # Pull control point toward center for nice arc
+                    cx_pt = mx + (_WIDTH / 2 - mx) * 0.3
+                    cy_pt = my + (_HEIGHT / 2 - my) * 0.3
+                    parts.append(
+                        f'<path d="M{p1[0]:.0f},{p1[1]:.0f} Q{cx_pt:.0f},{cy_pt:.0f} {p2[0]:.0f},{p2[1]:.0f}" '
+                        f'fill="none" stroke="{arc_color_base}" stroke-width="0.8"/>\n'
+                    )
+        parts.append("</g>\n")
+
+    # ── Streak pulse rings ────────────────────────────────────
+    streaks = history.get("contribution_streaks") or metrics.get(
+        "contribution_streaks", {}
+    )
+    streak_months = (
+        streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    )
+    streak_active = (
+        streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    )
+
+    if streak_months > 0:
+        n_rings = min(8, streak_months)
+        ring_color = (
+            oklch(0.7 if dark_mode else 0.5, 0.12, 160)
+            if streak_active
+            else oklch(0.6, 0.05, 200)
+        )
+        parts.append('<g id="streak-rings">\n')
+        for ri in range(n_rings):
+            radius = 30 + ri * 35
+            opacity = 0.15 - ri * 0.015
+            if opacity <= 0:
+                break
+
+            if snapshot_mode:
+                if (snapshot_progress or 0) > 0.3:
+                    parts.append(
+                        f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="{radius}" '
+                        f'fill="none" stroke="{ring_color}" stroke-width="0.8" '
+                        f'opacity="{opacity:.3f}"/>\n'
+                    )
+            else:
+                pulse_dur = round(4 + ri * 0.5, 1)
+                delay = round(ri * 1.2, 1)
+                parts.append(
+                    f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="{radius}" '
+                    f'fill="none" stroke="{ring_color}" stroke-width="0.8" opacity="0">\n'
+                    f'  <animate attributeName="opacity" values="0;{opacity:.3f};{opacity:.3f};0" '
+                    f'dur="{pulse_dur}s" begin="{delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="r" values="{radius};{radius + 5};{radius}" '
+                    f'dur="{pulse_dur}s" begin="{delay}s" repeatCount="indefinite"/>\n'
+                    f"</circle>\n"
+                )
+        parts.append("</g>\n")
+
+    # ── PR Review cross-pollination ─────────────────────────────
+    review_count = metrics.get("pr_review_count", 0) or 0
+    n_review_dots = min(15, review_count // 10)
+    if n_review_dots > 0 and len(pts) > 5:
+        parts.append('<g id="review-dots" opacity="0.3">\n')
+        review_rng = random.Random(42 + review_count)
+        for _ in range(n_review_dots):
+            # Random pair of non-adjacent spiral points
+            i1 = review_rng.randint(0, len(pts) - 1)
+            i2 = review_rng.randint(0, len(pts) - 1)
+            if abs(i1 - i2) < 3:
+                continue
+            p1 = pts[i1]
+            p2 = pts[i2]
+            mx = (p1[0] + p2[0]) / 2
+            my = (p1[1] + p2[1]) / 2
+            dot_color = oklch(0.7 if dark_mode else 0.5, 0.1, 300)
+            parts.append(
+                f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="2" fill="{dot_color}"/>\n'
+            )
+        parts.append("</g>\n")
+
     # ---- Layer 5: Heartbeat pulse with outward propagation ----
     if pts:
         fx, fy = pts[0]
         first_delay = delays[0] + 1.5
-        pulse_color, _ = palette[0]
+        pulse_color, _, _ = palette[0]
         if snapshot_mode:
             if progress_time >= delays[0]:
                 pulse_progress = min(1.0, max(0.0, (progress_time - delays[0]) / 1.5))
