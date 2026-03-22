@@ -294,6 +294,9 @@ def normalize_live_metrics(
                 "name": r["name"],
                 "language": r.get("language"),
                 "stars": r.get("stars", 0),
+                "forks": r.get("forks", 0),
+                "topics": r.get("topics", []),
+                "description": r.get("description", ""),
             }
             # Prefer history creation date; fall back to updated_at
             date_str = creation_dates.get(r["name"]) or r.get("updated_at")
