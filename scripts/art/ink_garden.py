@@ -107,6 +107,30 @@ SPECIES = {
         "min_trunk_ratio": 0.0,
         "base_angle_spread": 0.3,
     },
+    "wisteria": {
+        "branch_prob": 0.3,
+        "fork_range": (2, 4),
+        "length_decay": (0.6, 0.85),
+        "width_decay": 0.4,
+        "noise_strength": 0.35,
+        "leaf_prob": 0.7,
+        "leaf_shape": "teardrop",
+        "bloom_type": "cascade",
+        "min_trunk_ratio": 0.25,
+        "base_angle_spread": 0.8,
+    },
+    "banyan": {
+        "branch_prob": 0.5,
+        "fork_range": (3, 6),
+        "length_decay": (0.35, 0.6),
+        "width_decay": 0.55,
+        "noise_strength": 0.2,
+        "leaf_prob": 0.5,
+        "leaf_shape": "small_round",
+        "bloom_type": "aerial_root",
+        "min_trunk_ratio": 0.15,
+        "base_angle_spread": 1.0,
+    },
 }
 
 
@@ -115,7 +139,33 @@ def _classify_species(repo: dict) -> str:
     stars = repo.get("stars", 0)
     age = repo.get("age_months", 0)
     lang = repo.get("language")
+    topics = set(repo.get("topics") or [])
+    forks = repo.get("forks", 0)
+    desc = (repo.get("description") or "").lower()
 
+    # Topic-driven species (highest priority -- richest signal)
+    ai_topics = {"ai", "machine-learning", "deep-learning", "neural-network", "llm", "agents", "nlp"}
+    data_topics = {"database", "sql", "data", "etl", "pipeline", "data-science", "analytics"}
+    web_topics = {"web", "frontend", "react", "vue", "next", "svelte", "html", "css"}
+    infra_topics = {"cli", "tool", "utility", "devops", "infrastructure", "docker", "kubernetes"}
+    creative_topics = {"game", "graphics", "creative", "art", "music", "visualization"}
+
+    if topics & ai_topics:
+        return "wisteria"
+    if topics & data_topics:
+        return "oak"
+    if topics & web_topics:
+        return "fern"
+    if topics & infra_topics:
+        return "bamboo"
+    if topics & creative_topics:
+        return "wildflower"
+
+    # Fork-heavy repos -- spreading banyan
+    if forks > max(stars * 0.4, 3):
+        return "banyan"
+
+    # Fall through to existing logic
     if stars >= 100:
         return "oak"
     if stars >= 20 and age >= 24:
@@ -425,6 +475,44 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
         P.append(f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.75:.1f}" rx="{bs * 0.3:.1f}" ry="{bs * 0.06:.1f}" '
                  f'fill="#5a4a30" opacity="0.04"/>')
 
+    elif bloom_type == "cascade":
+        # Wisteria cascade — drooping chains of small florets
+        cascade_c = oklch_fn(0.58, 0.22, bh)
+        cascade_d = oklch_fn(0.48, 0.18, (bh + 20) % 360)
+        n_chains = max(2, min(5, n_petals // 2))
+        for ci_c in range(n_chains):
+            chain_angle = -math.pi / 2 + (ci_c - n_chains / 2.0) * 0.3 + rng.uniform(-0.15, 0.15)
+            chain_len = bs * rng.uniform(0.8, 1.5)
+            n_florets = max(3, int(chain_len / 4))
+            cx_c, cy_c = bx, by
+            for fi_c in range(n_florets):
+                if not budget_ok():
+                    break
+                t = fi_c / n_florets
+                cx_c += rng.uniform(-1.5, 1.5)
+                cy_c += chain_len / n_florets
+                fr = max(1, bs * 0.12 * (1 - t * 0.4))
+                fc = cascade_c if fi_c % 2 == 0 else cascade_d
+                P.append(f'<circle cx="{cx_c:.1f}" cy="{cy_c:.1f}" r="{fr:.1f}" '
+                         f'fill="{fc}" opacity="{0.55 - t * 0.15:.2f}"/>')
+
+    elif bloom_type == "aerial_root":
+        # Banyan aerial roots — thin dangling lines from branches
+        root_c = oklch_fn(0.42, 0.08, 40)
+        n_roots_ar = max(2, min(6, n_petals // 2))
+        for ri_ar in range(n_roots_ar):
+            if not budget_ok():
+                break
+            rx_ar = bx + rng.uniform(-bs * 0.6, bs * 0.6)
+            ry_ar = by
+            root_len = bs * rng.uniform(0.5, 1.8)
+            mid_x = rx_ar + rng.uniform(-4, 4)
+            mid_y = ry_ar + root_len * 0.5
+            end_y = ry_ar + root_len
+            P.append(f'<path d="M{rx_ar:.1f},{ry_ar:.1f} Q{mid_x:.1f},{mid_y:.1f} {rx_ar + rng.uniform(-2, 2):.1f},{end_y:.1f}" '
+                     f'fill="none" stroke="{root_c}" stroke-width="{rng.uniform(0.4, 1.0):.2f}" '
+                     f'opacity="0.35" stroke-linecap="round"/>')
+
 
 def generate(
     metrics: dict,
@@ -452,6 +540,28 @@ def generate(
     stars_total = metrics.get("stars", 0)
     contributions = metrics.get("contributions_last_year", 200)
     orgs = metrics.get("orgs_count", 1)
+
+    # ── Enriched metric extraction ────────────────────────────────
+    streaks = metrics.get("contribution_streaks", {})
+    current_streak = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    vigor_multiplier = 1.0 + min(0.5, current_streak * 0.04)  # up to 1.5x
+
+    lang_bytes = metrics.get("languages", {})
+    if lang_bytes and isinstance(lang_bytes, dict):
+        dominant_lang = max(lang_bytes, key=lang_bytes.get)
+    else:
+        dominant_lang = None
+
+    # Sky and atmosphere tinting based on dominant language
+    lang_sky_tint = {
+        "Python": (0.58, 0.03, 150),    # cool green-blue
+        "JavaScript": (0.62, 0.04, 65),  # warm amber
+        "TypeScript": (0.56, 0.04, 230), # cool blue
+        "Rust": (0.55, 0.03, 30),        # warm rust
+        "Go": (0.58, 0.04, 185),         # teal
+        "Ruby": (0.56, 0.04, 350),       # rosy
+    }.get(dominant_lang, (0.58, 0.02, 150))
 
     def _repo_date(repo: dict) -> str | None:
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
@@ -669,12 +779,13 @@ def generate(
         commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
         main_length = max(50, (70 + min(280, age * 3.5)) * tree_t * commit_factor)
         max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
-        # Data mapping: commits -> trunk thickness
+        # Data mapping: commits -> trunk thickness (vigor from contribution streaks)
         stem_sw = max(2.5, (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0)) * (0.4 + 0.6 * tree_t))
+        stem_sw *= vigor_multiplier
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
-        # Data mapping: stars -> bloom density multiplier
-        bloom_boost = min(2.0, 1.0 + stars_total / 200.0)
+        # Data mapping: stars -> bloom density multiplier (vigor boosts blooms)
+        bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
 
         if main_length >= 5:
             labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy, trunk_when))
@@ -1026,19 +1137,22 @@ def generate(
         mx = 60 + rng.uniform(0, WIDTH - 120)
         mushrooms_list.append((mx, ground_y_at(mx) + rng.uniform(-3, 5), 4 + rng.uniform(0, 6), 30 + rng.integers(0, 40)))
 
-    # ── Insects ───────────────────────────────────────────────────
-    if mat > 0.15:
-        for _ in range(min(5, watchers // 2)):
-            insects.append((rng.uniform(50, WIDTH - 50), rng.uniform(40, GROUND_Y - 20), "butterfly", rng.uniform(8, 16), rng.integers(0, 360)))
-    if mat > 0.25:
-        for _ in range(min(4, contributions // 500)):
-            insects.append((rng.uniform(80, WIDTH - 80), rng.uniform(60, GROUND_Y - 40), "bee", rng.uniform(4, 8), 45))
-    if mat > 0.35:
-        for _ in range(min(3, orgs)):
-            insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(30, GROUND_Y - 50), "dragonfly", rng.uniform(10, 18), rng.integers(0, 360)))
-    if mat > 0.45:
-        for _ in range(min(3, stars_total // 8)):
-            insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(GROUND_Y - 15, GROUND_Y + 5), "ladybug", rng.uniform(3, 5), 0))
+    # ── Insects (data-driven: PRs -> pollinators, reviews -> bees) ──
+    total_prs_count = metrics.get("total_prs", 0) or 0
+    review_count = metrics.get("pr_review_count", 0) or 0
+    n_butterflies = min(8, max(1, total_prs_count // 20))
+    n_bees = min(4, max(0, review_count // 40))
+    n_dragonflies = min(3, max(0, (metrics.get("public_gists", 0) or 0) // 10))
+    n_ladybugs = min(4, max(1, len(repos) // 3))
+
+    for _ in range(n_butterflies):
+        insects.append((rng.uniform(50, WIDTH - 50), rng.uniform(40, GROUND_Y - 20), "butterfly", rng.uniform(8, 16), rng.integers(0, 360)))
+    for _ in range(n_bees):
+        insects.append((rng.uniform(80, WIDTH - 80), rng.uniform(60, GROUND_Y - 40), "bee", rng.uniform(4, 8), 45))
+    for _ in range(n_dragonflies):
+        insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(30, GROUND_Y - 50), "dragonfly", rng.uniform(10, 18), rng.integers(0, 360)))
+    for _ in range(n_ladybugs):
+        insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(GROUND_Y - 15, GROUND_Y + 5), "ladybug", rng.uniform(3, 5), 0))
 
     # ── Webs ──────────────────────────────────────────────────────
     if mat > 0.25:
@@ -1210,6 +1324,39 @@ def generate(
         P.append(f'<defs>{ray_grad}</defs>')
         P.append(f'<rect x="{ray_x:.0f}" y="{ray_y:.0f}" width="{ray_w:.0f}" height="{ray_h:.0f}" '
                  f'fill="url(#{ray_id})" transform="rotate({ray_rot:.0f},{ray_x:.0f},{ray_y:.0f})"/>')
+
+    # ── Issue-driven weather ──────────────────────────────────────
+    issue_stats = metrics.get("issue_stats", {})
+    open_issues_count = issue_stats.get("open_count", 0) if isinstance(issue_stats, dict) else 0
+    closed_issues_count = issue_stats.get("closed_count", 0) if isinstance(issue_stats, dict) else 0
+
+    if open_issues_count == 0 and closed_issues_count > 10:
+        # Clear skies: sunbeams through canopy
+        for sb_i in range(3):
+            sx = 150 + sb_i * 250 + rng.uniform(-40, 40)
+            P.append(
+                f'<line x1="{sx:.0f}" y1="0" x2="{sx + 60:.0f}" y2="{GROUND_Y:.0f}" '
+                f'stroke="{oklch(0.95, 0.05, 80)}" stroke-width="12" '
+                f'opacity="0.08" stroke-linecap="round"/>'
+            )
+    elif open_issues_count > 20:
+        # Storm clouds
+        for ci in range(min(4, open_issues_count // 15)):
+            cx = 100 + ci * 180 + rng.uniform(-30, 30)
+            cy = 30 + rng.uniform(0, 20)
+            P.append(
+                f'<ellipse cx="{cx:.0f}" cy="{cy:.0f}" rx="{rng.uniform(60, 100):.0f}" '
+                f'ry="{rng.uniform(20, 35):.0f}" fill="{oklch(0.55, 0.03, 240)}" opacity="0.15"/>'
+            )
+        # Rain drops
+        if open_issues_count > 40:
+            for _ in range(min(20, open_issues_count // 3)):
+                rx = rng.uniform(30, WIDTH - 30)
+                ry = rng.uniform(50, GROUND_Y - 20)
+                P.append(
+                    f'<line x1="{rx:.0f}" y1="{ry:.0f}" x2="{rx - 2:.0f}" y2="{ry + 8:.0f}" '
+                    f'stroke="{oklch(0.7, 0.08, 220)}" stroke-width="0.8" opacity="0.2"/>'
+                )
 
     # ── Underground strata ────────────────────────────────────────
     max((r.get("age_months", 6) for r in repos), default=12)
@@ -1514,14 +1661,18 @@ def generate(
                          f'{mx + ml_m * math.cos(ma_m):.1f},{my + ml_m * math.sin(ma_m):.1f}" '
                          f'fill="none" stroke="#d0c8a0" stroke-width="0.15" opacity="0.08"/>')
 
-    # ── Atmospheric wash (faint watercolor sky suggestion) ────────
-    for _ in range(int(mat * 6)) if mat >= 0.15 else ():
+    # ── Atmospheric wash (faint watercolor sky suggestion, language-tinted) ─
+    tint_l, tint_c, tint_h = lang_sky_tint
+    for wash_i in range(int(mat * 6)) if mat >= 0.15 else ():
         awx = rng.uniform(60, WIDTH - 60)
         awy = rng.uniform(36, GROUND_Y - 80)
         awrx = rng.uniform(50, 120)
         awry = rng.uniform(20, 50)
-        # Very faint blue-gray watercolor washes
-        wash_c = rng.choice(["#d0dce8", "#e0e8e8", "#d8e0e0", "#d8d8e4"])
+        # Alternate between default washes and language-tinted washes
+        if wash_i % 3 == 0 and dominant_lang is not None:
+            wash_c = oklch(tint_l + rng.uniform(-0.03, 0.03), tint_c, tint_h + rng.uniform(-10, 10))
+        else:
+            wash_c = rng.choice(["#d0dce8", "#e0e8e8", "#d8e0e0", "#d8d8e4"])
         P.append(f'<ellipse cx="{awx:.0f}" cy="{awy:.0f}" rx="{awrx:.0f}" ry="{awry:.0f}" '
                  f'fill="{wash_c}" opacity="{rng.uniform(0.02, 0.04):.3f}" '
                  f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>')
@@ -1875,6 +2026,36 @@ def generate(
     # ── Dew drops ─────────────────────────────────────────────────
     for dx, dy, ds in dew_drops:
         P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{ds:.1f}" fill="url(#dewGrad)" filter="url(#dew)"/>')
+
+    # ── Fireflies (star velocity driven) ─────────────────────────
+    star_vel = metrics.get("star_velocity", {})
+    star_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    n_fireflies = min(12, max(0, int(star_rate * 2)))
+    if n_fireflies > 0:
+        P.append('<g id="fireflies">')
+        for fi in range(n_fireflies):
+            fx = rng.uniform(60, WIDTH - 60)
+            fy = rng.uniform(GROUND_Y - 200, GROUND_Y - 30)
+            glow_r = 3 + star_rate * 0.3
+            pulse_dur = rng.uniform(2.0, 4.0)
+            delay = rng.uniform(0, 6)
+            glow_color = oklch(0.85, 0.15, 85)
+            if timeline_enabled:
+                when = _date_for_activity_fraction(0.7 + fi * 0.02)
+                P.append(
+                    f'<circle cx="{fx:.0f}" cy="{fy:.0f}" r="{glow_r:.1f}" '
+                    f'fill="{glow_color}" filter="url(#dew)" '
+                    f'{_timeline_style(when, 0.6)}/>'
+                )
+            else:
+                P.append(
+                    f'<circle cx="{fx:.0f}" cy="{fy:.0f}" r="{glow_r:.1f}" '
+                    f'fill="{glow_color}" filter="url(#dew)" opacity="0">'
+                    f'<animate attributeName="opacity" values="0;0.7;0.7;0" '
+                    f'dur="{pulse_dur:.1f}s" begin="{delay:.1f}s" repeatCount="indefinite"/>'
+                    f'</circle>'
+                )
+        P.append('</g>')
 
     # ── Insects (detailed, naturalist style) ──────────────────────
     for ix, iy, itype, isz, ihue in insects:
