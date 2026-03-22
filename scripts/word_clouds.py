@@ -30,7 +30,7 @@ logger = get_logger(module=__name__)
 # Settings
 # ---------------------------------------------------------------------------
 
-RendererName = Literal["classic", "wordle", "clustered", "typographic", "shaped"]
+RendererName = Literal["classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"]
 
 # Default paths used by CLI (restored for backwards compat)
 DEFAULT_FONT_PATH: Path | None = None
@@ -48,7 +48,7 @@ TOPICS_MD_PATH = Path(".github/assets/topics.md")
 PROFILE_IMG_OUTPUT_DIR = Path(".github/assets/img")
 
 RENDERER_CHOICES: list[str] = [
-    "classic", "wordle", "clustered", "typographic", "shaped", "all",
+    "classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim", "all",
 ]
 
 DEFAULT_RENDERER: RendererName = "classic"
@@ -223,7 +223,7 @@ def generate_all(
     Returns list of output paths.
     """
     renderers = (
-        ["classic", "wordle", "clustered", "typographic", "shaped"]
+        ["classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"]
         if renderer == "all"
         else [renderer]
     )
