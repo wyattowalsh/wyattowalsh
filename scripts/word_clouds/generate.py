@@ -67,7 +67,7 @@ DEFAULT_MAX_WORDS = 1000
 # Resolve project root relative to this script
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _SCRIPT_DIR.parent.parent
-_ASSETS_DIR = _PROJECT_ROOT / "assets"
+_ASSETS_DIR = _PROJECT_ROOT / ".github" / "assets" / "img"
 
 
 # ---------------------------------------------------------------------------

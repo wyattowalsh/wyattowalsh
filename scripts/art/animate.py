@@ -25,7 +25,7 @@ from pathlib import Path
 from ..utils import get_logger
 from . import ink_garden, topography
 from ._dev_profiles import PROFILES
-from .shared import compute_maturity, parse_cli_args, seed_hash
+from .shared import compute_maturity, normalize_live_metrics, parse_cli_args, seed_hash
 
 logger = get_logger(module=__name__)
 
@@ -226,17 +226,50 @@ def svg_to_png(svg_str: str, size: int, frame_id: str = ""):
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    opts = parse_cli_args(sys.argv[1:], extra_keys={"frames": int, "size": int, "svg": bool})
+    opts = parse_cli_args(
+        sys.argv[1:],
+        extra_keys={
+            "frames": int, "size": int, "svg": bool,
+            "metrics_path": str, "history_path": str,
+        },
+    )
     profile = opts["profile"] or "wyatt"
     n_frames = opts.get("frames") or 24
     size = opts.get("size") or 400
     only = opts["only"]
 
-    if profile not in PROFILES:
-        logger.error("Unknown profile: {}. Available: {}", profile, list(PROFILES.keys()))
+    metrics_file = opts.get("metrics_path")
+    history_file = opts.get("history_path")
+
+    if metrics_file:
+        import json
+
+        try:
+            raw = json.loads(Path(str(metrics_file)).read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as exc:
+            logger.warning("Failed to load metrics from {}: {}. Falling back to mock profiles.", metrics_file, exc)
+            raw = None
+
+        if raw is not None:
+            history = None
+            if history_file:
+                try:
+                    history = json.loads(Path(str(history_file)).read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, OSError) as exc:
+                    logger.warning("Failed to load history from {}: {}", history_file, exc)
+            target = normalize_live_metrics(raw, owner=str(profile), history=history)
+            logger.info("Loaded live metrics from {}", metrics_file)
+        else:
+            if profile not in PROFILES:
+                logger.error("No valid metrics and unknown profile: {}. Available: {}", profile, list(PROFILES.keys()))
+                return
+            target = PROFILES[profile]
+    elif profile in PROFILES:
+        target = PROFILES[profile]
+    else:
+        logger.error("Unknown profile: {} and no --metrics-path given. Available: {}", profile, list(PROFILES.keys()))
         return
 
-    target = PROFILES[profile]
     fixed_seed = seed_hash(target)
     target_mat = compute_maturity(target)
     out_dir = Path(".github/assets/img")

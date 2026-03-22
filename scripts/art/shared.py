@@ -9,8 +9,9 @@ import calendar
 import hashlib
 import math
 import re
+from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from datetime import date as dt_date
+from datetime import UTC, date as dt_date
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -247,6 +248,81 @@ def compute_maturity(m: dict) -> float:
 
 
 # ---------------------------------------------------------------------------
+# Live metrics normalization
+# ---------------------------------------------------------------------------
+
+
+def normalize_live_metrics(
+    raw: dict[str, Any],
+    *,
+    owner: str | None = None,
+    history: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Transform ``fetch_metrics.collect()`` output into the shape generators expect.
+
+    The art generators (ink_garden, topography) consume a metrics dict shaped
+    like the mock profiles in ``_dev_profiles.py``.  Live API data differs in
+    key names and structure.  This function bridges the gap.
+    """
+    metrics: dict[str, Any] = dict(raw)
+    now = datetime.now(tz=UTC)
+
+    # 1. top_repos → repos with age_months
+    if "top_repos" in metrics and "repos" not in metrics:
+        # Build a creation-date lookup from history if available
+        creation_dates: dict[str, str] = {}
+        if history and history.get("repos"):
+            for r in history["repos"]:
+                if r.get("name") and r.get("date"):
+                    creation_dates[r["name"]] = r["date"]
+
+        repos: list[dict[str, Any]] = []
+        for r in metrics.pop("top_repos"):
+            repo: dict[str, Any] = {
+                "name": r["name"],
+                "language": r.get("language"),
+                "stars": r.get("stars", 0),
+            }
+            # Prefer history creation date; fall back to updated_at
+            date_str = creation_dates.get(r["name"]) or r.get("updated_at")
+            if date_str:
+                try:
+                    dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+                    repo["age_months"] = max(
+                        1, (now.year - dt.year) * 12 + (now.month - dt.month),
+                    )
+                except ValueError:
+                    repo["age_months"] = 6
+            else:
+                repo["age_months"] = 6
+            repos.append(repo)
+        metrics["repos"] = repos
+
+    # 2. contributions_calendar → contributions_monthly
+    if "contributions_monthly" not in metrics and "contributions_calendar" in metrics:
+        monthly: dict[str, int] = defaultdict(int)
+        for entry in metrics["contributions_calendar"]:
+            date_str = entry.get("date", "")
+            if len(date_str) >= 7:
+                monthly[date_str[:7]] += entry.get("count", 0)
+        metrics["contributions_monthly"] = dict(sorted(monthly.items()))
+
+    # 3. Merge richer history data when available
+    if history:
+        if "account_created" not in metrics and "account_created" in history:
+            metrics["account_created"] = history["account_created"]
+        # Prefer history's multi-year contributions_monthly over single-year calendar
+        if history.get("contributions_monthly"):
+            metrics["contributions_monthly"] = history["contributions_monthly"]
+
+    # 4. Label
+    if "label" not in metrics and owner:
+        metrics["label"] = owner
+
+    return metrics
+
+
+# ---------------------------------------------------------------------------
 # Hash utilities
 # ---------------------------------------------------------------------------
 
@@ -272,7 +348,7 @@ def parse_cli_args(argv: list[str], extra_keys: dict[str, type] | None = None) -
     result: dict[str, str | int | bool | None] = {"profile": None, "only": None}
     keys: dict[str, tuple[str, type]] = {"--profile": ("profile", str), "--only": ("only", str)}
     if extra_keys:
-        keys.update({f"--{k}": (k, v) for k, v in extra_keys.items()})
+        keys.update({f"--{k.replace('_', '-')}": (k, v) for k, v in extra_keys.items()})
     i = 0
     while i < len(argv):
         if argv[i] in keys:
