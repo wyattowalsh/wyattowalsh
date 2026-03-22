@@ -1650,7 +1650,7 @@ class ReadmeSectionGenerator:
                 repo_full_name,
                 sample=24,
             )
-        if history:
+        if history and len(set(history)) > 1:
             return tuple(float(value) for value in history)
         if metadata.stars > 0:
             return (0.0, float(metadata.stars))
