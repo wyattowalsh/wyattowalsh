@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="140" height="130" viewBox="0 0 140 130" role="img" aria-label="X.com">
 <defs><style>
 :root {
-  --card-bg: #ffffff;
+  --card-bg: transparent;
   --card-border: #d0d7de;
   --title-color: #1f2328;
   --text-color: #656d76;
@@ -9,7 +9,7 @@
   --accent: #0969da;
 }
 @media (prefers-color-scheme: dark) { :root {
-  --card-bg: #0d1117;
+  --card-bg: transparent;
   --card-border: #30363d;
   --title-color: #e6edf3;
   --text-color: #8b949e;

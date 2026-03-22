@@ -56,7 +56,7 @@ class SvgCardTheme:
 
 
 LIGHT_THEME = SvgCardTheme(
-    bg="#ffffff",
+    bg="transparent",
     border="#d0d7de",
     title_color="#1f2328",
     text_color="#656d76",
@@ -66,7 +66,7 @@ LIGHT_THEME = SvgCardTheme(
 )
 
 DARK_THEME = SvgCardTheme(
-    bg="#0d1117",
+    bg="transparent",
     border="#30363d",
     title_color="#e6edf3",
     text_color="#8b949e",
@@ -898,7 +898,7 @@ class SvgRepoCardRenderer:
         # sanitizer does not resolve var() in <img> context.
         return "\n".join(
             [
-                f".rc-bg {{ fill: #ffffff; }}",
+                f".rc-bg {{ fill: transparent; }}",
                 f".rc-border {{ stroke: {lt.border}; }}",
                 f".rc-title {{ fill: {lt.link_color};"
                 f" font: 600 17px {FONT_FAMILY}; }}",
@@ -912,7 +912,7 @@ class SvgRepoCardRenderer:
                 f".sparkline {{ fill: none; stroke: {ac};"
                 " stroke-width: 2; opacity: 0.88; }",
                 "@media (prefers-color-scheme: dark) {",
-                f"  .rc-bg {{ fill: #0d1117; }}",
+                f"  .rc-bg {{ fill: transparent; }}",
                 f"  .rc-border {{ stroke: {dk.border}; }}",
                 f"  .rc-title {{ fill: {dk.link_color}; }}",
                 f"  .rc-desc {{ fill: {dk.text_color}; }}",
@@ -1290,7 +1290,7 @@ class SvgBlogCardRenderer:
         lt, dk = LIGHT_THEME, DARK_THEME
         return "\n".join([
             ":root {",
-            "  --card-bg: #ffffff;",
+            "  --card-bg: transparent;",
             f"  --card-border: {lt.border};",
             f"  --title-color: {lt.link_color};",
             f"  --text-color: {lt.text_color};",
@@ -1298,7 +1298,7 @@ class SvgBlogCardRenderer:
             f"  --accent: {lt.accent};",
             "}",
             "@media (prefers-color-scheme: dark) { :root {",
-            "  --card-bg: #0d1117;",
+            "  --card-bg: transparent;",
             f"  --card-border: {dk.border};",
             f"  --title-color: {dk.link_color};",
             f"  --text-color: {dk.text_color};",
@@ -1424,7 +1424,7 @@ class SvgConnectCardRenderer:
         lt, dk = LIGHT_THEME, DARK_THEME
         return "\n".join([
             ":root {",
-            "  --card-bg: #ffffff;",
+            "  --card-bg: transparent;",
             f"  --card-border: {lt.border};",
             f"  --title-color: {lt.title_color};",
             f"  --text-color: {lt.text_color};",
@@ -1432,7 +1432,7 @@ class SvgConnectCardRenderer:
             f"  --accent: {lt.accent};",
             "}",
             "@media (prefers-color-scheme: dark) { :root {",
-            "  --card-bg: #0d1117;",
+            "  --card-bg: transparent;",
             f"  --card-border: {dk.border};",
             f"  --title-color: {dk.title_color};",
             f"  --text-color: {dk.text_color};",

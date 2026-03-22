@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480" height="176" viewBox="0 0 480 176" role="img" aria-label="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)">
 <defs><style>
 :root {
-  --card-bg: #ffffff;
+  --card-bg: transparent;
   --card-border: #d0d7de;
   --title-color: #0969da;
   --text-color: #656d76;
@@ -9,7 +9,7 @@
   --accent: #0969da;
 }
 @media (prefers-color-scheme: dark) { :root {
-  --card-bg: #0d1117;
+  --card-bg: transparent;
   --card-border: #30363d;
   --title-color: #58a6ff;
   --text-color: #8b949e;

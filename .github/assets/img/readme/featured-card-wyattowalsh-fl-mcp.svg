@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="360" height="198" viewBox="0 0 360 198" role="img" aria-label="fl-mcp">
 <defs>
 <style>
-.rc-bg { fill: #ffffff; }
+.rc-bg { fill: transparent; }
 .rc-border { stroke: #d0d7de; }
 .rc-title { fill: #0969da; font: 600 17px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 .rc-desc { fill: #656d76; font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
@@ -10,7 +10,7 @@
 .rc-lang-label { fill: #24292e; font: 400 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; }
 .sparkline { fill: none; stroke: #3572A5; stroke-width: 2; opacity: 0.88; }
 @media (prefers-color-scheme: dark) {
-  .rc-bg { fill: #0d1117; }
+  .rc-bg { fill: transparent; }
   .rc-border { stroke: #30363d; }
   .rc-title { fill: #58a6ff; }
   .rc-desc { fill: #8b949e; }
