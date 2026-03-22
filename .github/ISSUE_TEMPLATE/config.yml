@@ -1,17 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Project Documentation
+  - name: GitHub Discussions
+    url: https://github.com/wyattowalsh/wyattowalsh/discussions
+    about: Ask questions and share ideas in Discussions before opening an issue.
+  - name: Documentation
     url: https://readme.w4w.dev
-    about: Please check the general documentation for answers first.
-  - name: Development Notes
-    url: https://readme.w4w.dev/notes
-    about: Review development notes for technical insights and guidelines.
-  - name: Project Roadmap
-    url: https://readme.w4w.dev/roadmap
-    about: Check the project roadmap for planned features and direction.
-  - name: GitHub Repository
-    url: https://github.com/wyattowalsh/wyattowalsh
-    about: Browse the codebase, existing issues, and discussions.
-  - name: GitHub Community Support
-    url: https://github.com/wyattowalsh/wyattowalsh/discussions # Assuming you have discussions enabled
-    about: Please ask and answer questions here. 
+    about: Check the docs for setup guides, configuration, and fork instructions.

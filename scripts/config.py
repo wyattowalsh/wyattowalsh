@@ -34,7 +34,7 @@ class Settings(BaseSettings):
 
 
 class BannerSettings(BaseModel):
-    title: str = "Wyatt Walsh"
+    title: str = "Your Name"
     subtitle: str = "Software Engineer & AI Enthusiast"
     output_path: str = ".github/assets/img/banner.svg"
     width: int = 1200
@@ -48,26 +48,16 @@ class TypedUrl(BaseModel):
 
 
 class VCardDataModel(BaseModel):
-    displayname: str = "Wyatt Walsh"
-    n_givenname: str = "Wyatt"
-    n_familyname: str = "Walsh"
+    displayname: str = "Your Name"
+    n_givenname: str = "Your"
+    n_familyname: str = "Name"
     fn: str = "Wyatt Walsh"
     org: str = "Personal Portfolio Project"
     title: str = "Developer & Tech Enthusiast"
-    tel_work_voice: str = "2096022545"
-    email_internet: str = "wyattowalsh@gmail.com"
+    tel_work_voice: str = ""
+    email_internet: str = ""
     url_work: list[TypedUrl] | None = Field(
-        default=[
-            TypedUrl(url=HttpUrl("https://www.w4w.dev/"), label="Website"),
-            TypedUrl(
-                url=HttpUrl("https://www.linkedin.com/in/wyattowalsh"),
-                label="LinkedIn"
-            ),
-            TypedUrl(
-                url=HttpUrl("https://www.github.com/wyattowalsh"),
-                label="GitHub"
-            ),
-        ],
+        default=[],
         description="Work-related URLs with labels."
     )
 
@@ -295,47 +285,13 @@ class ReadmeSectionsSettings(BaseModel):
         "for-the-badge", description="shields.io style for social badges"
     )
     social_links: list[ReadmeSocialLink] = Field(
-        default_factory=lambda: [
-            ReadmeSocialLink(
-                label="w4w.dev",
-                url="https://w4w.dev",
-                color="000000",
-                logo="safari",
-            ),
-            ReadmeSocialLink(
-                label="LinkedIn",
-                url="https://linkedin.com/in/wyattowalsh",
-                color="0A66C2",
-                logo="linkedin",
-            ),
-            ReadmeSocialLink(
-                label="GitHub",
-                url="https://github.com/wyattowalsh",
-                color="181717",
-                logo="github",
-            ),
-            ReadmeSocialLink(
-                label="Email",
-                url="mailto:wyattowalsh@gmail.com",
-                color="EA4335",
-                logo="gmail",
-            ),
-        ]
+        default_factory=list
     )
     featured_repos: list[ReadmeFeaturedRepo] = Field(
-        default_factory=lambda: [
-            ReadmeFeaturedRepo(full_name="wyattowalsh/listentropy"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/mdxpad"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/proxywhirl"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/nbadb"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/agents"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/personal-website"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/riso"),
-            ReadmeFeaturedRepo(full_name="wyattowalsh/iina-plugin-bookmarks"),
-        ]
+        default_factory=list
     )
     blog_feed_url: str = Field(
-        "https://w4w.dev/feed.xml", description="RSS/Atom feed URL for blog posts"
+        "", description="RSS/Atom feed URL for blog posts"
     )
     blog_post_limit: int = Field(
         5, ge=1, le=10, description="Number of latest blog posts to render"

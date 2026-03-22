@@ -1,0 +1,152 @@
+---
+title: Fork & Repurpose
+description: How to fork this repo and make it your own GitHub profile README in under 10 minutes.
+---
+
+This repo is designed to be forked. Every personal detail lives in `config.yaml` — change that file and you have your own profile README with generative art, word clouds, SVG cards, and automated updates.
+
+## Quick start
+
+```bash title="1. Fork and clone"
+# Fork via GitHub UI, then:
+git clone https://github.com/YOUR_USERNAME/YOUR_USERNAME.git
+cd YOUR_USERNAME
+```
+
+```bash title="2. Install"
+uv sync --all-groups
+```
+
+```bash title="3. Generate your config"
+uv run readme config generate-default --path config.yaml
+```
+
+```bash title="4. Edit config.yaml with your details"
+# Open config.yaml in your editor and replace all placeholder values
+```
+
+```bash title="5. Generate everything"
+uv run readme generate banner --config-path config.yaml
+uv run readme generate qr --config-path config.yaml
+uv run readme generate readme --config-path config.yaml
+```
+
+## What to change in config.yaml
+
+The generated `config.yaml` contains every setting. Here are the fields you **must** customize:
+
+### Banner
+
+```yaml title="config.yaml"
+banner_settings:
+  title: "Your Name"           # Your name or handle
+  subtitle: "Your Tagline"     # What you do
+```
+
+### Contact / QR code
+
+```yaml title="config.yaml"
+v_card_data:
+  displayname: "Your Name"
+  n_givenname: "First"
+  n_familyname: "Last"
+  email_internet: "you@example.com"
+  tel_work_voice: ""           # Optional — leave empty to omit
+  url_work:
+    - url: "https://yoursite.com"
+    - url: "https://linkedin.com/in/you"
+    - url: "https://github.com/you"
+```
+
+### Social links and featured repos
+
+```yaml title="config.yaml"
+readme_sections_settings:
+  social_links:
+    - url: "https://yoursite.com"
+      platform: website
+      label: "yoursite.com"
+    - url: "https://linkedin.com/in/you"
+      platform: linkedin
+      label: LinkedIn
+    - url: "https://github.com/you"
+      platform: github
+      label: GitHub
+  featured_repos:
+    - full_name: "you/your-best-project"
+    - full_name: "you/another-project"
+  blog_feed_url: "https://yoursite.com/feed.xml"  # Or "" to disable
+```
+
+<Callout type="info" title="No blog?">
+Set `blog_feed_url` to an empty string and the blog section will be skipped entirely.
+</Callout>
+
+## GitHub workflow setup
+
+The CI workflow at `.github/workflows/profile-updater.yml` runs on a schedule to regenerate your README. You need to set one secret:
+
+| Secret | Required | Purpose |
+|---|---|---|
+| `GITHUB_TOKEN` | Yes (automatic) | Built-in token — no setup needed |
+| `METRICS_TOKEN` | Optional | GitHub PAT for richer metrics |
+| `WAKATIME_API_KEY` | Optional | WakaTime coding stats |
+
+The workflow uses `github.repository_owner` dynamically, so **no username edits are needed** in the workflow file itself.
+
+<Callout type="warn" title="Blog feed URL">
+If you have a blog, update the feed URL in the workflow file at `.github/workflows/profile-updater.yml` (search for `feed_list`). This is the one place outside `config.yaml` where a URL is hardcoded.
+</Callout>
+
+## GitHub community files
+
+These files under `.github/` reference the original author's contact info. Update them for your fork:
+
+| File | What to change |
+|---|---|
+| `CONTRIBUTING.md` | Repository URL, contact email |
+| `SECURITY.md` | Vulnerability report email |
+| `CODE_OF_CONDUCT.md` | Enforcement contact email |
+| `FUNDING.yml` | Your GitHub Sponsors username (or delete) |
+| `ISSUE_TEMPLATE/config.yml` | Documentation URLs |
+
+## What you get for free
+
+Everything below works automatically once `config.yaml` is set up:
+
+- **SVG banner** with Lorenz attractor animation
+- **QR code** with embedded vCard
+- **Word clouds** from your starred repos (topics + languages)
+- **Featured project cards** with live star counts and descriptions
+- **Blog post cards** from your RSS feed
+- **Contact/social cards** with platform icons
+- **Living artworks** — 4 generative art pieces driven by your GitHub activity
+- **Metaheuristic word cloud animation** — 25 optimization algorithms
+- **Automated daily updates** via GitHub Actions
+
+## Customization levels
+
+| Level | Effort | What you get |
+|---|---|---|
+| **Just fork** | 5 min | Change `config.yaml`, push, done |
+| **Customize art** | 30 min | Tweak colors/parameters in `scripts/art/` |
+| **Add generators** | Hours | Write new `SvgWordCloudEngine` subclasses or art scripts |
+| **New card types** | Hours | Extend `scripts/readme_svg.py` with new card renderers |
+
+## Repo structure at a glance
+
+```
+├── config.yaml              # ← All your personal config lives here
+├── README.md                # Generated output — don't edit by hand
+├── scripts/
+│   ├── word_clouds/         # Word cloud subpackage (5 renderers + 25 solvers)
+│   ├── art/                 # Generative art (ink garden, topography, cosmic, spiral)
+│   ├── readme_sections.py   # README assembly
+│   ├── readme_svg.py        # SVG card renderers
+│   ├── banner.py            # Lorenz attractor banner
+│   └── qr.py                # Artistic QR code
+├── .github/
+│   ├── workflows/           # CI/CD automation
+│   └── assets/              # Generated images and data
+└── docs/                    # This documentation site (Fumadocs)
+```
