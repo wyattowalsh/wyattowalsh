@@ -184,23 +184,23 @@ def _density_color_oklch(
     """OKLCH color ramp: violet → teal → amber → gold with chroma bloom."""
     if time_frac < 0.25:
         t = time_frac / 0.25
-        L = 0.15 + 0.10 * t + 0.15 * val
-        C = 0.02 + 0.06 * val * t  # chroma blooms with time
+        L = 0.20 + 0.12 * t + 0.18 * val
+        C = 0.04 + 0.10 * val * t  # chroma blooms with time
         H = 280 - t * 30 + hue_shift * 20
     elif time_frac < 0.55:
         t = (time_frac - 0.25) / 0.30
-        L = 0.25 + 0.20 * t + 0.18 * val
-        C = 0.06 + 0.08 * val
+        L = 0.30 + 0.22 * t + 0.20 * val
+        C = 0.09 + 0.12 * val
         H = 250 - t * 80 + hue_shift * 15
     elif time_frac < 0.85:
         t = (time_frac - 0.55) / 0.30
-        L = 0.40 + 0.20 * t + 0.15 * val
-        C = 0.10 + 0.08 * val
+        L = 0.45 + 0.22 * t + 0.18 * val
+        C = 0.14 + 0.12 * val
         H = 50 - t * 10 + hue_shift * 10
     else:
         t = (time_frac - 0.85) / 0.15
-        L = 0.70 + 0.18 * t
-        C = 0.10 * (1.0 - t * 0.6)
+        L = 0.72 + 0.18 * t
+        C = 0.14 * (1.0 - t * 0.6)
         H = 75 + hue_shift * 5
 
     return oklch(L, C, H)
@@ -432,11 +432,18 @@ def _render_svg(
     )
     rng = random.Random(star_seed)
 
-    star_layers = [
-        (40, 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),
-        (35, 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),
-        (15, 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),
-    ]
+    if dark_mode:
+        star_layers = [
+            (60, 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),
+            (50, 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),
+            (25, 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),
+        ]
+    else:
+        star_layers = [
+            (60, 0.4, 0.8, 0.15, 0.30, 4.0, 8.0, [star_colors[2]]),
+            (50, 0.8, 1.5, 0.30, 0.50, 2.0, 5.0, [star_colors[2]]),
+            (25, 1.5, 2.5, 0.50, 0.75, 1.5, 3.0, star_colors[:2]),
+        ]
 
     parts.append('<g id="starfield">\n')
     for count, r_lo, r_hi, op_lo, op_hi, tw_lo, tw_hi, colors in star_layers:
@@ -475,18 +482,19 @@ def _render_svg(
         rx = rng.uniform(120, 250)
         ry = rng.uniform(80, 180)
         drift_x = rng.uniform(-30, 30)
-        nebula_color = oklch(0.25 if dark_mode else 0.65, 0.10, hue)
+        nebula_color = oklch(0.30 if dark_mode else 0.50, 0.15 if dark_mode else 0.18, hue)
         neb_dur = round(rng.uniform(20, 30))
+        neb_opacity = "0.08" if dark_mode else "0.14"
         if snapshot_mode:
             current_x = nx + drift_x * (snapshot_progress or 0.0) * 0.5
             parts.append(
                 f'<ellipse cx="{current_x:.0f}" cy="{ny:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
-                f'fill="{nebula_color}" opacity="0.06" filter="url(#nebBlur)"/>\n'
+                f'fill="{nebula_color}" opacity="{neb_opacity}" filter="url(#nebBlur)"/>\n'
             )
         else:
             parts.append(
                 f'<ellipse cx="{nx:.0f}" cy="{ny:.0f}" rx="{rx:.0f}" ry="{ry:.0f}" '
-                f'fill="{nebula_color}" opacity="0.06" filter="url(#nebBlur)">\n'
+                f'fill="{nebula_color}" opacity="{neb_opacity}" filter="url(#nebBlur)">\n'
                 f'  <animate attributeName="cx" values="{nx:.0f};{nx + drift_x:.0f};{nx:.0f}" '
                 f'dur="{neb_dur}s" repeatCount="indefinite"/>\n'
                 f"</ellipse>\n"
@@ -566,14 +574,14 @@ def _render_svg(
             time_frac = delay / max(max_delay, 0.001)
             color = _density_color_oklch(val, time_frac, hue_shift)
 
-            alpha = round(val * (0.92 if dark_mode else 0.82), 3)
+            alpha = round(val * (0.92 if dark_mode else 0.88), 3)
             cx = round(
                 col * pixel_w + pixel_w / 2 + math.sin(row * 0.7 + col * 1.3) * 1.5, 1
             )
             cy = round(
                 row * pixel_h + pixel_h / 2 + math.cos(row * 1.1 + col * 0.9) * 1.5, 1
             )
-            r = round(1.5 + val * 3.0, 1)
+            r = round(2.5 + val * 3.5, 1)
             breathe_dur = round(5.0 + (row * 0.3 + col * 0.7) % 6.0, 1)
             breathe_delay = round(delay + 1.5, 2)
             if snapshot_mode:
@@ -608,7 +616,7 @@ def _render_svg(
                     flash_alpha = round((val - 0.5) * 2.0 * 0.35 * flash_progress, 3)
                     cx = round(col * pixel_w + pixel_w / 2, 1)
                     cy = round(row * pixel_h + pixel_h / 2, 1)
-                    r = round(1.5 + val * 3.0, 1)
+                    r = round(2.5 + val * 3.5, 1)
                     parts.append(
                         f'<circle cx="{cx}" cy="{cy}" r="{r}" '
                         f'fill="white" opacity="{flash_alpha}"/>\n'
@@ -626,7 +634,7 @@ def _render_svg(
                 flash_alpha = round((val - 0.5) * 2.0 * 0.35, 3)
                 cx = round(col * pixel_w + pixel_w / 2, 1)
                 cy = round(row * pixel_h + pixel_h / 2, 1)
-                r = round(1.5 + val * 3.0, 1)
+                r = round(2.5 + val * 3.5, 1)
                 parts.append(
                     f'<circle cx="{cx}" cy="{cy}" r="{r}" '
                     f'fill="white" opacity="{flash_alpha}"/>\n'

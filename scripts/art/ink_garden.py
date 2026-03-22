@@ -183,10 +183,10 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
              f"Q{cp_b3x:.1f},{cp_b3y:.1f} {b3x:.1f},{b3y:.1f} "
              f"Q{cp_tipx:.1f},{cp_tipy:.1f} {tip_x:.1f},{tip_y:.1f} "
              f"Q{back_cp1x:.1f},{back_cp1y:.1f} {lx:.1f},{ly:.1f} Z")
-        P.append(f'<path d="{d}" fill="{fill_c}" opacity="0.4" stroke="{stroke_c}" stroke-width="0.3"/>')
+        P.append(f'<path d="{d}" fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
         if has_vein and budget_ok():
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.3"/>')
+                     f'stroke="{stroke_c}" stroke-width="0.25" opacity="0.4"/>')
 
     elif leaf_shape == "small_round":
         cx_l = lx + ls * 0.5 * math.cos(la)
@@ -195,9 +195,9 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         fill_c = oklch_fn(0.53, 0.19, lh)
         stroke_c = oklch_fn(0.40, 0.14, lh)
         P.append(f'<circle cx="{cx_l:.1f}" cy="{cy_l:.1f}" r="{r:.1f}" '
-                 f'fill="{fill_c}" opacity="0.4" stroke="{stroke_c}" stroke-width="0.3"/>')
+                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
         P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{cx_l:.1f}" y2="{cy_l:.1f}" '
-                 f'stroke="{stroke_c}" stroke-width="0.3" opacity="0.3"/>')
+                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.4"/>')
 
     elif leaf_shape == "pinnate":
         tip_x = lx + ls * math.cos(la)
@@ -205,7 +205,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         stroke_c = oklch_fn(0.40, 0.16, lh)
         fill_c = oklch_fn(0.50, 0.19, lh)
         P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                 f'stroke="{stroke_c}" stroke-width="0.3" opacity="0.4"/>')
+                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.55"/>')
         perp = la + math.pi / 2
         for pi in range(1, 4):
             t = pi / 4.0
@@ -217,10 +217,10 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
                 ex = mx + leaflet_len * math.cos(ea)
                 ey = my + leaflet_len * math.sin(ea)
                 P.append(f'<line x1="{mx:.1f}" y1="{my:.1f}" x2="{ex:.1f}" y2="{ey:.1f}" '
-                         f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.35"/>')
+                         f'stroke="{stroke_c}" stroke-width="0.3" opacity="0.45"/>')
                 er = leaflet_len * 0.4
                 P.append(f'<ellipse cx="{ex:.1f}" cy="{ey:.1f}" rx="{er:.1f}" ry="{er*0.6:.1f}" '
-                         f'fill="{fill_c}" opacity="0.35" '
+                         f'fill="{fill_c}" opacity="0.5" '
                          f'transform="rotate({math.degrees(ea):.0f},{ex:.1f},{ey:.1f})"/>')
 
     elif leaf_shape == "narrow_blade":
@@ -231,7 +231,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         fill_c = oklch_fn(0.50, 0.19, lh)
         stroke_c = oklch_fn(0.38, 0.14, lh)
         P.append(f'<ellipse cx="{cx_l:.1f}" cy="{cy_l:.1f}" rx="{rx:.1f}" ry="{ry:.1f}" '
-                 f'fill="{fill_c}" opacity="0.4" stroke="{stroke_c}" stroke-width="0.2" '
+                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.3" '
                  f'transform="rotate({math.degrees(la):.0f},{cx_l:.1f},{cy_l:.1f})"/>')
 
     elif leaf_shape == "needle_cluster":
@@ -242,7 +242,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
             nl = ls * rng.uniform(0.5, 0.9)
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" '
                      f'x2="{lx + nl * math.cos(na):.1f}" y2="{ly + nl * math.sin(na):.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.4"/>')
+                     f'stroke="{stroke_c}" stroke-width="0.5" opacity="0.55"/>')
 
     else:
         # "teardrop" — the original quad-bezier almond shape
@@ -258,7 +258,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         stroke_c = oklch_fn(0.38, 0.14, lh)
         P.append(f'<path d="M{lx:.1f},{ly:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
                  f'Q{cp2x:.1f},{cp2y:.1f} {lx:.1f},{ly:.1f}" '
-                 f'fill="{fill_c}" opacity="0.42" stroke="{stroke_c}" stroke-width="0.3"/>')
+                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
         if has_vein and budget_ok():
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
                      f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.3"/>')
@@ -282,8 +282,8 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
     if bloom_type == "radial_petal":
         for layer in range(petal_layers):
             lf = layer / max(1, petal_layers)
-            lr = bs * (1 - lf * 0.3)
-            lo = 0.4 + lf * 0.2
+            lr = bs * (1.15 - lf * 0.3)
+            lo = 0.55 + lf * 0.2
             rot_off = layer * 0.3
             ph = (bh + layer * 15) % 360
             pc = oklch_fn(0.56 + lf * 0.14, 0.26 - lf * 0.06, ph)
@@ -667,10 +667,10 @@ def generate(
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
         # Data mapping: commits -> trunk height, total_commits scales globally
         commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
-        main_length = (50 + min(250, age * 3.0)) * tree_t * commit_factor
+        main_length = max(30, (50 + min(250, age * 3.0)) * tree_t * commit_factor)
         max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
         # Data mapping: commits -> trunk thickness
-        stem_sw = (2.5 + min(3.0, age * 0.05) + min(1.5, total_commits / 5000.0)) * (0.3 + 0.7 * tree_t)
+        stem_sw = max(1.8, (2.5 + min(3.0, age * 0.05) + min(1.5, total_commits / 5000.0)) * (0.4 + 0.6 * tree_t))
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
         # Data mapping: stars -> bloom density multiplier
@@ -856,7 +856,7 @@ def generate(
                 # Blooms at tips — bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = 5 + min(18, repo_stars * 0.8)
+                    bloom_size = max(8, 5 + min(18, repo_stars * 0.8))
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
@@ -951,7 +951,7 @@ def generate(
                 # bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = 5 + min(18, repo_stars * 0.8)
+                    bloom_size = max(8, 5 + min(18, repo_stars * 0.8))
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
@@ -1103,11 +1103,12 @@ def generate(
     <stop offset="100%" stop-color="#a8d4ee" stop-opacity="0.15"/>
   </radialGradient>''')
     # Vignette gradient — subtle edge darkening for aged look
-    P.append(f'''<radialGradient id="vignette" cx="50%" cy="48%" r="55%">
+    P.append(f'''<radialGradient id="vignette" cx="50%" cy="48%" r="52%">
     <stop offset="0%" stop-color="#f5f0e6" stop-opacity="0"/>
-    <stop offset="65%" stop-color="#f5f0e6" stop-opacity="0"/>
-    <stop offset="88%" stop-color="#d8c8a0" stop-opacity="0.15"/>
-    <stop offset="100%" stop-color="#b0986a" stop-opacity="{0.12 + mat * 0.28:.3f}"/>
+    <stop offset="55%" stop-color="#f5f0e6" stop-opacity="0"/>
+    <stop offset="80%" stop-color="#c8b890" stop-opacity="0.12"/>
+    <stop offset="92%" stop-color="#b0986a" stop-opacity="{0.20 + mat * 0.30:.3f}"/>
+    <stop offset="100%" stop-color="#8a7850" stop-opacity="{0.28 + mat * 0.32:.3f}"/>
   </radialGradient>''')
     # Sky gradient — pale blue at top fading to parchment
     P.append(make_linear_gradient('skyGrad', '0', '0', '0', '1',
@@ -1120,21 +1121,21 @@ def generate(
         [('0%', '#fffbe8', mat * 0.18), ('40%', '#fff8e0', mat * 0.07), ('100%', '#f5f0e6', 0.0)]))
     # Grass — multiple blade types, seed heads, varied greens
     P.append('''<pattern id="grass" width="18" height="10" patternUnits="userSpaceOnUse">
-    <line x1="2" y1="10" x2="1" y2="2" stroke="#7a9a5a" stroke-width="0.35" opacity="0.3"/>
-    <line x1="4" y1="10" x2="5" y2="3" stroke="#8aaa6a" stroke-width="0.4" opacity="0.28"/>
-    <path d="M7,10 Q6,5 8,1" fill="none" stroke="#6a8a4a" stroke-width="0.3" opacity="0.25"/>
-    <line x1="10" y1="10" x2="9" y2="2" stroke="#9aba7a" stroke-width="0.35" opacity="0.26"/>
-    <path d="M13,10 Q14,6 12,1" fill="none" stroke="#7a9a5a" stroke-width="0.3" opacity="0.24"/>
-    <circle cx="12" cy="1" r="0.5" fill="#b0aa70" opacity="0.2"/>
-    <line x1="16" y1="10" x2="15" y2="4" stroke="#8a9a6a" stroke-width="0.3" opacity="0.22"/>
+    <line x1="2" y1="10" x2="1" y2="2" stroke="#6a8a4a" stroke-width="0.5" opacity="0.4"/>
+    <line x1="4" y1="10" x2="5" y2="3" stroke="#7a9a5a" stroke-width="0.5" opacity="0.38"/>
+    <path d="M7,10 Q6,5 8,1" fill="none" stroke="#5a7a3a" stroke-width="0.45" opacity="0.35"/>
+    <line x1="10" y1="10" x2="9" y2="2" stroke="#8aaa6a" stroke-width="0.5" opacity="0.36"/>
+    <path d="M13,10 Q14,6 12,1" fill="none" stroke="#6a8a4a" stroke-width="0.45" opacity="0.34"/>
+    <circle cx="12" cy="1" r="0.6" fill="#a09a60" opacity="0.3"/>
+    <line x1="16" y1="10" x2="15" y2="4" stroke="#7a8a5a" stroke-width="0.45" opacity="0.32"/>
   </pattern>''')
     # Soil layers — rich earth tones with organic texture
     P.append('''<pattern id="soil1" width="24" height="8" patternUnits="userSpaceOnUse">
-    <rect width="24" height="8" fill="#c4a87a"/>
-    <circle cx="5" cy="3" r="0.9" fill="#b09060" opacity="0.35"/>
-    <circle cx="16" cy="5" r="0.6" fill="#a08050" opacity="0.3"/>
-    <circle cx="20" cy="2" r="0.4" fill="#c0a870" opacity="0.2"/>
-    <path d="M0,6 Q6,5 12,6.5 Q18,7 24,6" fill="none" stroke="#b09868" stroke-width="0.3" opacity="0.15"/>
+    <rect width="24" height="8" fill="#c0a070"/>
+    <circle cx="5" cy="3" r="1.1" fill="#a08050" opacity="0.45"/>
+    <circle cx="16" cy="5" r="0.8" fill="#907040" opacity="0.4"/>
+    <circle cx="20" cy="2" r="0.5" fill="#b09860" opacity="0.3"/>
+    <path d="M0,6 Q6,5 12,6.5 Q18,7 24,6" fill="none" stroke="#a08858" stroke-width="0.4" opacity="0.25"/>
   </pattern>''')
     P.append('''<pattern id="soil2" width="20" height="7" patternUnits="userSpaceOnUse">
     <rect width="20" height="7" fill="#a88860"/>
@@ -1151,29 +1152,28 @@ def generate(
 
 
     # ── Background (aged parchment with canvas texture) ──────────
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f5f0e6" filter="url(#paper)"/>')
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f0e8d8" filter="url(#paper)"/>')
     # Canvas texture overlay — subtle woven linen feel
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#ede8dc" filter="url(#canvas)" opacity="0.12"/>')
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#e8e0d0" filter="url(#canvas)" opacity="0.18"/>')
     # Sky gradient — pale blue wash at top
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#skyGrad)"/>')
     # Atmospheric light wash from upper-left
     P.append(f'<rect x="0" y="0" width="{WIDTH}" height="{GROUND_Y:.0f}" fill="url(#lightRay)"/>')
     # Water stain marks — large, very faint irregular patches
-    for _ in range(int(mat * 5)):
+    for _ in range(max(2, int(mat * 7))):
         wcx = rng.uniform(80, WIDTH - 80)
         wcy = rng.uniform(80, HEIGHT - 80)
         wrx = rng.uniform(40, 100)
         wry = rng.uniform(30, 80)
         P.append(f'<ellipse cx="{wcx:.0f}" cy="{wcy:.0f}" rx="{wrx:.0f}" ry="{wry:.0f}" '
-                 f'fill="#ddd0b0" opacity="{rng.uniform(0.02,0.05):.3f}" '
+                 f'fill="#d8c8a0" opacity="{rng.uniform(0.04,0.09):.3f}" '
                  f'transform="rotate({rng.uniform(-20,20):.0f},{wcx:.0f},{wcy:.0f})"/>')
     # Foxing spots — varied sizes and warm tones
-    fox_colors = ["#d8c8a8", "#cfc0a0", "#d0c4a4", "#c8b898"]
-    if mat >= 0.05:
-        for _ in range(int(mat * 35)):
-            P.append(f'<circle cx="{rng.uniform(20,WIDTH-20):.0f}" cy="{rng.uniform(20,HEIGHT-20):.0f}" '
-                     f'r="{rng.uniform(1.5,7):.1f}" fill="{rng.choice(fox_colors)}" '
-                     f'opacity="{rng.uniform(0.02,0.07):.3f}"/>')
+    fox_colors = ["#d0b888", "#c8b090", "#ccb894", "#c0a880"]
+    for _ in range(max(8, int(mat * 45))):
+        P.append(f'<circle cx="{rng.uniform(20,WIDTH-20):.0f}" cy="{rng.uniform(20,HEIGHT-20):.0f}" '
+                 f'r="{rng.uniform(1.5,8):.1f}" fill="{rng.choice(fox_colors)}" '
+                 f'opacity="{rng.uniform(0.04,0.12):.3f}"/>')
     # Vignette overlay — subtle edge darkening
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vignette)"/>')
 
@@ -1225,7 +1225,7 @@ def generate(
             f" L{x:.1f},{y:.1f}" for x, y in layer_pts[1:]
         )
         lp += f" L{WIDTH},{HEIGHT} L0,{HEIGHT} Z"
-        P.append(f'<path d="{lp}" fill="{soil_fills[si]}" opacity="0.5"/>')
+        P.append(f'<path d="{lp}" fill="{soil_fills[si]}" opacity="0.65"/>')
 
     # Tiny soil creatures — beetles and earthworm segments
     for _ in range(int(mat * 6)):
@@ -1331,14 +1331,14 @@ def generate(
         P.append('</g>')
 
     # ── Ground surface ────────────────────────────────────────────
-    P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+15} L0,{GROUND_Y+15} Z" fill="url(#grass)" opacity="0.6"/>')
-    # Main ground line — warm earth tone, slightly thicker
-    P.append(f'<path d="{ground_path}" fill="none" stroke="#7a6a3a" stroke-width="1.4" opacity="0.45"/>')
+    P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+15} L0,{GROUND_Y+15} Z" fill="url(#grass)" opacity="0.8"/>')
+    # Main ground line — warm earth tone, thicker for visibility
+    P.append(f'<path d="{ground_path}" fill="none" stroke="#6a5a2a" stroke-width="2.0" opacity="0.6"/>')
     # Secondary ground line — lighter, offset slightly below for depth
     sub_ground = f"M{ground_pts[0][0]},{ground_pts[0][1]+1.5:.1f}" + "".join(
         f" L{x:.1f},{y+1.5:.1f}" for x, y in ground_pts[1:]
     )
-    P.append(f'<path d="{sub_ground}" fill="none" stroke="#9a8a5a" stroke-width="0.5" opacity="0.25"/>')
+    P.append(f'<path d="{sub_ground}" fill="none" stroke="#8a7a4a" stroke-width="0.7" opacity="0.35"/>')
 
     # Branch density map for ground cover enhancement
     bd = defaultdict(int)
@@ -1347,21 +1347,21 @@ def generate(
     max_bd = max(bd.values()) if bd else 1
 
     # Ground cover (enhanced with fern frondlets, moss patches, clover)
-    for _ in range(10 + int(mat * 60)):
+    for _ in range(25 + int(mat * 80)):
         gcx = rng.uniform(20, WIDTH - 20)
         gcy = ground_y_at(gcx) + rng.uniform(-3, 3)
         r_val = rng.random()
         if r_val < 0.4:
             # Grass tufts
-            for _ in range(rng.integers(2, 5)):
-                ga = -math.pi / 2 + rng.uniform(-0.4, 0.4)
-                gl = rng.uniform(3, 8)
+            for _ in range(rng.integers(3, 7)):
+                ga = -math.pi / 2 + rng.uniform(-0.5, 0.5)
+                gl = rng.uniform(4, 12)
                 P.append(f'<line x1="{gcx:.0f}" y1="{gcy:.0f}" '
                          f'x2="{gcx+gl*math.cos(ga):.0f}" y2="{gcy+gl*math.sin(ga):.0f}" '
-                         f'stroke="#7a9a5a" stroke-width="0.4" opacity="0.25"/>')
+                         f'stroke="#6a8a4a" stroke-width="0.5" opacity="0.35"/>')
         elif r_val < 0.55:
             # Stones
-            P.append(f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.5,1.5):.1f}" fill="#b0a080" opacity="0.2"/>')
+            P.append(f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.8,2.2):.1f}" fill="#a09070" opacity="0.3"/>')
         elif r_val < 0.7 and mat > 0.25:
             # Small fern frondlets at ground level (where branch density is high)
             grid_key = (int(gcx / 30), int(gcy / 30))
@@ -2110,21 +2110,21 @@ def generate(
     if mat < 0.15:
         # Single thin neatline
         P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#b0a888" stroke-width="0.6" rx="1"/>')
+                 f'fill="none" stroke="#9a8a68" stroke-width="1.0" rx="1"/>')
     elif mat < 0.35:
         # Double neatline
         P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#8a7a60" stroke-width="1.2" rx="2"/>')
+                 f'fill="none" stroke="#7a6a50" stroke-width="1.6" rx="2"/>')
         P.append(f'<rect x="{m + 4}" y="{m + 4}" width="{WIDTH - 2 * m - 8}" height="{HEIGHT - 2 * m - 8}" '
-                 f'fill="none" stroke="#c0b898" stroke-width="0.4" rx="1"/>')
+                 f'fill="none" stroke="#a09878" stroke-width="0.6" rx="1"/>')
     else:
         # Triple neatline (mat >= 0.35)
         P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#8a7a60" stroke-width="1.5" rx="2"/>')
+                 f'fill="none" stroke="#7a6a50" stroke-width="2.0" rx="2"/>')
         P.append(f'<rect x="{m + 5}" y="{m + 5}" width="{WIDTH - 2 * m - 10}" height="{HEIGHT - 2 * m - 10}" '
-                 f'fill="none" stroke="#c0b898" stroke-width="0.5" rx="1"/>')
+                 f'fill="none" stroke="#a09878" stroke-width="0.7" rx="1"/>')
         P.append(f'<rect x="{m + 2.5}" y="{m + 2.5}" width="{WIDTH - 2 * m - 5}" height="{HEIGHT - 2 * m - 5}" '
-                 f'fill="none" stroke="#d0c8b0" stroke-width="0.25" rx="1.5" stroke-dasharray="4 2"/>')
+                 f'fill="none" stroke="#b8b098" stroke-width="0.35" rx="1.5" stroke-dasharray="4 2"/>')
 
     # --- Corner dots (mat 0.35–0.6) or scrollwork (mat >= 0.6) ---
     if 0.35 <= mat < 0.6:

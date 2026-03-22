@@ -175,13 +175,13 @@ _ACTIVITY_CSS = """\
   @keyframes dotAppear{{
     0%{{r:0;opacity:0;fill:white}}
     8%{{opacity:1;fill:white}}
-    25%{{opacity:.9}}
-    50%{{opacity:.88}}
-    100%{{opacity:.85}}
+    25%{{opacity:.95}}
+    50%{{opacity:.92}}
+    100%{{opacity:.90}}
   }}
   @keyframes dotShimmer{{
-    0%,100%{{opacity:.85}}
-    50%{{opacity:.55}}
+    0%,100%{{opacity:.90}}
+    50%{{opacity:.65}}
   }}
   @keyframes pulse{{
     0%,100%{{opacity:.7;r:{pulse_r1}}}
@@ -192,8 +192,8 @@ _ACTIVITY_CSS = """\
     100%{{stroke-dashoffset:0}}
   }}
   @keyframes flowPulse{{
-    0%,100%{{opacity:0.40}}
-    50%{{opacity:0.20}}
+    0%,100%{{opacity:0.55}}
+    50%{{opacity:0.35}}
   }}
   @keyframes glowIn{{
     0%{{opacity:0}}
@@ -249,7 +249,7 @@ def _render_svg(
     flow_seed = params["flow_seed"]
     flow_hue_base = params["flow_hue_base"]
 
-    n_points = max(10, len(repos) or metrics.get("public_repos") or 50)
+    n_points = max(20, len(repos) or metrics.get("public_repos") or 50)
     n_points = min(n_points, 250)
 
     logger.info(
@@ -295,22 +295,22 @@ def _render_svg(
         arc_bg_color = "rgba(255,255,255,0.08)"
         arc_fg_color = "#7c6ef0"
         ripple_color = "rgba(180,160,255,0.5)"
-        conn_opacity = 0.15
+        conn_opacity = 0.22
     else:
         bg_color = "#f5f5fa"
-        bg_radial_color = "#d8d0e8"
+        bg_radial_color = "#c8b8e0"
         text_color = "rgba(0,0,0,0.3)"
-        arc_bg_color = "rgba(0,0,0,0.06)"
+        arc_bg_color = "rgba(0,0,0,0.10)"
         arc_fg_color = "#6c5ce7"
-        ripple_color = "rgba(100,80,200,0.45)"
-        conn_opacity = 0.10
+        ripple_color = "rgba(100,80,200,0.55)"
+        conn_opacity = 0.18
 
     arc_cx = _WIDTH // 2
     arc_cy = _HEIGHT - 30
     arc_r = _WIDTH // 2 - 50
     arc_len = round(math.pi * arc_r, 1)
 
-    base_r = max(2.0, min(5.0, 120.0 / math.sqrt(max(n_points, 1))))
+    base_r = max(3.0, min(6.0, 140.0 / math.sqrt(max(n_points, 1))))
     pulse_r1 = round(base_r + 1, 1)
     pulse_r2 = round(base_r + 3, 1)
 
@@ -348,8 +348,8 @@ def _render_svg(
     else:
         parts.append(
             f'<radialGradient id="bgRad" cx="50%" cy="50%" r="0%">\n'
-            f'  <stop offset="0%" stop-color="{bg_radial_color}" stop-opacity="0.25">\n'
-            f'    <animate attributeName="stop-opacity" values="0.25;0.40;0.25" '
+            f'  <stop offset="0%" stop-color="{bg_radial_color}" stop-opacity="0.35">\n'
+            f'    <animate attributeName="stop-opacity" values="0.35;0.50;0.35" '
             f'dur="{pulse_period}s" repeatCount="indefinite"/>\n'
             f"  </stop>\n"
             f'  <stop offset="100%" stop-color="{bg_color}" stop-opacity="0"/>\n'
@@ -376,10 +376,10 @@ def _render_svg(
         top_lang_hues = [flow_hue_base]
 
     if snapshot_mode:
-        parts.append('<g id="flowField" opacity="0.40">\n')
+        parts.append('<g id="flowField" opacity="0.55">\n')
     else:
         parts.append(
-            '<g id="flowField" opacity="0.40"'
+            '<g id="flowField" opacity="0.55"'
             ' style="animation:flowPulse 8s ease-in-out 5s infinite">\n'
         )
     for li, trail in enumerate(lines):
@@ -402,7 +402,7 @@ def _render_svg(
             math.sqrt((p[0] - center_x) ** 2 + (p[1] - center_y) ** 2) for p in trail
         ) / len(trail)
         dist_frac = min(1.0, avg_dist / (canvas_radius * 1.2))
-        alpha = round(0.20 + 0.35 * dist_frac * bg_intensity, 2)
+        alpha = round(0.30 + 0.40 * dist_frac * bg_intensity, 2)
 
         fl_hue = top_lang_hues[li % len(top_lang_hues)]
         fl_color = oklch(0.50 if dark_mode else 0.42, 0.08, fl_hue)
@@ -410,8 +410,8 @@ def _render_svg(
         fl_delay = round((li / max(len(lines), 1)) * duration * 0.6, 2)
         fl_dur = round(duration * 0.35 + (li % 5) * 0.5, 1)
 
-        sw_start = 1.5
-        sw_end = 0.3
+        sw_start = 2.2
+        sw_end = 0.6
         sw_avg = round((sw_start + sw_end) / 2, 1)
 
         if snapshot_mode:
@@ -481,13 +481,13 @@ def _render_svg(
             dash_offset = round(length * (1.0 - connection_progress), 1)
             parts.append(
                 f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-                f'stroke="{color}" stroke-width="0.5" stroke-dasharray="{length:.0f}" '
+                f'stroke="{color}" stroke-width="1.0" stroke-dasharray="{length:.0f}" '
                 f'stroke-dashoffset="{dash_offset}"/>\n'
             )
         else:
             parts.append(
                 f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-                f'stroke="{color}" stroke-width="0.5" '
+                f'stroke="{color}" stroke-width="1.0" '
                 f'stroke-dasharray="{length:.0f}" stroke-dashoffset="{length:.0f}">\n'
                 f'  <animate attributeName="stroke-dashoffset" values="{length:.0f};0;{length:.0f}" '
                 f'dur="{arc_cycle}s" begin="{d:.2f}s" repeatCount="indefinite"/>\n'
@@ -501,7 +501,7 @@ def _render_svg(
     glow_parts: list[str] = []
 
     for i, (px, py) in enumerate(pts):
-        dot_r = round(base_r + math.log1p(i) * 0.5, 2)
+        dot_r = round(base_r + math.log1p(i) * 0.7, 2)
         color, _ = palette[i]
         d = delays[i]
         appear_dur = round(max(0.8, 1.5 - i * 0.003), 2)
