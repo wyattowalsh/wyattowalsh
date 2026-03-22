@@ -902,7 +902,7 @@ class SvgRepoCardRenderer:
         return "\n".join(
             [
                 ":root {",
-                "  --card-bg: transparent;",
+                "  --card-bg: #ffffff;",
                 f"  --card-border: {lt.border};",
                 f"  --title-color: {lt.link_color};",
                 f"  --text-color: {lt.text_color};",
@@ -912,7 +912,7 @@ class SvgRepoCardRenderer:
                 "}",
                 "@media (prefers-color-scheme: dark) {",
                 "  :root {",
-                "    --card-bg: transparent;",
+                "    --card-bg: #0d1117;",
                 f"    --card-border: {dk.border};",
                 f"    --title-color: {dk.link_color};",
                 f"    --text-color: {dk.text_color};",

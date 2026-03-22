@@ -513,7 +513,7 @@ class TestSvgRepoCardRenderer:
         card = SvgCard(title="test")
         svg = renderer.render_card(card)
 
-        assert "--card-bg: transparent" in svg
+        assert "--card-bg: #ffffff" in svg
         assert "--card-border:" in svg
         assert "--title-color:" in svg
         assert "--stat-color:" in svg
@@ -672,9 +672,10 @@ class TestSvgRepoCardRenderer:
         assert 'height="3"' in svg
         assert 'fill-opacity="0.5"' in svg
 
-    def test_transparent_background(self) -> None:
+    def test_solid_background_for_github_compat(self) -> None:
         renderer = SvgRepoCardRenderer()
         card = SvgCard(title="repo")
         svg = renderer.render_card(card)
 
-        assert "transparent" in svg
+        assert "--card-bg: #ffffff" in svg
+        assert "--card-bg: #0d1117" in svg
