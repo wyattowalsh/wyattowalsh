@@ -17,6 +17,7 @@ from datetime import timedelta
 
 import numpy as np
 
+from .optimize import optimize_layout_pso, optimize_palette_hues
 from .shared import (
     HEIGHT,
     LANG_HUES,
@@ -349,25 +350,9 @@ def generate(
     max_age = max(6, max(all_ages))
     min_age = min(all_ages)
 
+    # ── 2a. Compute initial repo hill positions (hash + repulsion) ──
     repo_positions = []
     for ri, repo in enumerate(repos):
-        repo_stars = repo.get("stars", 0)
-        age = repo.get("age_months", 6)
-
-        # Stars -> peak height RELATIVE to this profile's range
-        star_frac = (
-            (repo_stars - min_stars) / max(1, max_stars - min_stars)
-            if max_stars > min_stars
-            else 0.5
-        )
-        peak_h = 0.15 + star_frac * 0.6
-
-        # Age -> hill width RELATIVE to this profile's range
-        age_frac = (
-            (age - min_age) / max(1, max_age - min_age) if max_age > min_age else 0.5
-        )
-        sigma = 0.03 + age_frac * 0.08
-
         # Organic position: hash-seeded with repulsion to avoid overlap
         a_idx = (ri * 4) % 56
         (ri * 4 + 4) % 56
@@ -390,6 +375,65 @@ def generate(
                     rcy += ddy / d * push
             rcx = max(0.12, min(0.88, rcx))
             rcy = max(0.12, min(0.88, rcy))
+
+        repo_positions.append((rcx, rcy, repo))
+
+    # ── 2b. Optimize hill positions with PSO ──
+    if len(repo_positions) >= 2:
+        # Extract positions and weights for optimizer
+        raw_positions = [(rp[0] * MAP_W + MAP_L, rp[1] * MAP_H + MAP_T) for rp in repo_positions]
+        hill_weights = [max(1, rp[2].get("stars", 0)) for rp in repo_positions]
+
+        optimized = optimize_layout_pso(
+            raw_positions,
+            hill_weights,
+            MAP_W,
+            MAP_H,
+            min_spacing=MAP_W / max(len(repo_positions) + 1, 2) * 0.6,
+            iterations=100,
+            swarm_size=12,
+            seed=int(h[:8], 16),
+        )
+
+        # Convert back to normalized coordinates and update repo_positions
+        repo_positions = [
+            ((opt[0] - MAP_L) / MAP_W, (opt[1] - MAP_T) / MAP_H, rp[2])
+            for opt, rp in zip(optimized, repo_positions)
+        ]
+        # Clamp to valid range
+        repo_positions = [
+            (max(0.08, min(0.92, rp[0])), max(0.08, min(0.92, rp[1])), rp[2])
+            for rp in repo_positions
+        ]
+
+    # ── 2c. Optimize language terrain hues for color harmony ──
+    terrain_hues = [LANG_HUES.get(rp[2].get("language"), 155) for rp in repo_positions]
+    if len(terrain_hues) >= 2:
+        terrain_hues = optimize_palette_hues(
+            terrain_hues,
+            max_shift=10.0,
+            iterations=100,
+            seed=int(h[:8], 16),
+        )
+
+    # ── 2d. Apply elevation from optimized positions ──
+    for ri, (rcx, rcy, repo) in enumerate(repo_positions):
+        repo_stars = repo.get("stars", 0)
+        age = repo.get("age_months", 6)
+
+        # Stars -> peak height RELATIVE to this profile's range
+        star_frac = (
+            (repo_stars - min_stars) / max(1, max_stars - min_stars)
+            if max_stars > min_stars
+            else 0.5
+        )
+        peak_h = 0.15 + star_frac * 0.6
+
+        # Age -> hill width RELATIVE to this profile's range
+        age_frac = (
+            (age - min_age) / max(1, max_age - min_age) if max_age > min_age else 0.5
+        )
+        sigma = 0.03 + age_frac * 0.08
 
         # Language-specific terrain texture on this hill
         lang = repo.get("language")
@@ -423,8 +467,6 @@ def generate(
                     * 0.018
                 )
                 elevation[gy, gx] += base_gaussian + texture + ridge_tex * base_gaussian
-
-        repo_positions.append((rcx, rcy, repo))
 
     # ── Place names from topic clusters ──
     topic_clusters = metrics.get("topic_clusters", {})
@@ -1250,7 +1292,7 @@ def generate(
         ly = MAP_T + rcy * MAP_H
         repo_stars = repo.get("stars", 0)
         name = repo.get("name", "")
-        hue = LANG_HUES.get(repo.get("language"), 160)
+        hue = terrain_hues[idx_rp] if idx_rp < len(terrain_hues) else LANG_HUES.get(repo.get("language"), 160)
         mc = oklch(0.45, 0.18, hue)
         # Relative marker size: top-star repo gets biggest marker
         star_frac = (
