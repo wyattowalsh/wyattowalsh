@@ -313,7 +313,10 @@ def _render_svg(
     a, b, c, d, hue_shift = _continuous_attractor_params(metrics)
 
     grid_sz = 100
-    iters = 2_000_000 + (metrics.get("network_count") or 0) * 30_000
+    star_vel = metrics.get("star_velocity", {})
+    vel_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    vel_boost = int(vel_rate * 100_000)  # up to 1M extra for high velocity
+    iters = 2_000_000 + (metrics.get("network_count") or 0) * 30_000 + vel_boost
     iters = min(iters, grid_sz * grid_sz * 200)
 
     logger.info(
@@ -470,9 +473,79 @@ def _render_svg(
                 )
     parts.append("</g>\n")
 
+    # ---- Layer 1b: Topic Constellations ----
+    topic_clusters = metrics.get("topic_clusters", {})
+    top_topics = list(topic_clusters.keys())[:6]
+    if top_topics:
+        parts.append('<g id="constellations">\n')
+        constellation_rng = random.Random((star_seed + 42) % (2**31))
+
+        for ci, topic in enumerate(top_topics):
+            # Each constellation = cluster of 3-5 bright stars connected by lines
+            n_points = min(5, max(3, topic_clusters.get(topic, 1)))
+            base_x = 80 + constellation_rng.uniform(0, _WIDTH - 160)
+            base_y = 80 + constellation_rng.uniform(0, _HEIGHT - 200)
+
+            points = [(base_x, base_y)]
+            for _ in range(n_points - 1):
+                px = points[-1][0] + constellation_rng.uniform(-50, 50)
+                py = points[-1][1] + constellation_rng.uniform(-50, 50)
+                px = max(30, min(_WIDTH - 30, px))
+                py = max(30, min(_HEIGHT - 50, py))
+                points.append((px, py))
+
+            # Connecting lines (faint)
+            line_color = oklch(0.6 if dark_mode else 0.4, 0.04, 220)
+            for i in range(len(points) - 1):
+                x1, y1 = points[i]
+                x2, y2 = points[i + 1]
+                if snapshot_mode:
+                    parts.append(
+                        f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
+                        f'stroke="{line_color}" stroke-width="0.5" opacity="0.3"/>\n'
+                    )
+                else:
+                    fade_dur = round(duration * 0.8 + ci * 2)
+                    parts.append(
+                        f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
+                        f'stroke="{line_color}" stroke-width="0.5" opacity="0">\n'
+                        f'  <animate attributeName="opacity" values="0;0.3;0.3;0" '
+                        f'dur="{fade_dur}s" begin="{ci * 3}s" repeatCount="indefinite"/>\n'
+                        f'</line>\n'
+                    )
+
+            # Constellation stars (brighter than background stars)
+            for px, py in points:
+                star_color = oklch(0.85 if dark_mode else 0.55, 0.03, 200)
+                if snapshot_mode:
+                    parts.append(
+                        f'<circle cx="{px:.0f}" cy="{py:.0f}" r="1.8" '
+                        f'fill="{star_color}" opacity="0.6"/>\n'
+                    )
+                else:
+                    parts.append(
+                        f'<circle cx="{px:.0f}" cy="{py:.0f}" r="1.8" '
+                        f'fill="{star_color}" opacity="0.6" '
+                        f'style="animation:twinkle 3s ease-in-out {constellation_rng.uniform(0, 5):.1f}s infinite"/>\n'
+                    )
+
+            # Constellation label
+            label_x, label_y = points[0]
+            label_color = "rgba(255,255,255,0.25)" if dark_mode else "rgba(0,0,0,0.2)"
+            name = topic.replace("-", " ").title()
+            parts.append(
+                f'<text x="{label_x:.0f}" y="{label_y - 8:.0f}" '
+                f'font-family="Georgia,serif" font-size="6" font-style="italic" '
+                f'fill="{label_color}" text-anchor="middle">{name}</text>\n'
+            )
+
+        parts.append('</g>\n')
+
     # ---- Layer 2: Nebula wisps (language-colored) ----
     langs = metrics.get("languages", {})
-    top_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:3]
+    diversity = metrics.get("language_diversity", 1.0) or 1.0
+    n_nebula_langs = max(3, min(8, int(diversity * 2)))
+    top_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:n_nebula_langs]
     nebula_hues = [LANG_HUES.get(lang, 200) for lang, _ in top_langs]
     if not nebula_hues:
         nebula_hues = [280, 200, 50]
@@ -502,6 +575,46 @@ def _render_svg(
                 f"</ellipse>\n"
             )
     parts.append("</g>\n")
+
+    # ---- Layer 2b: PR Merge Aurora ----
+    recent_prs = metrics.get("recent_merged_prs", [])
+    if recent_prs and isinstance(recent_prs, list):
+        parts.append('<g id="aurora" opacity="0.15">\n')
+        for pi, pr in enumerate(recent_prs[:8]):
+            # Aurora band position and color from PR's repo language
+            repo_name = pr.get("repo_name", "")
+            adds = pr.get("additions", 0) or 0
+            dels = pr.get("deletions", 0) or 0
+            band_width = min(200, max(30, (adds + dels) * 0.3))
+
+            # Hue from repo name hash for variety
+            pr_hue = (hash(repo_name) % 120) + 120  # greens and blues
+            aurora_color = oklch(0.45 if dark_mode else 0.55, 0.2, pr_hue)
+
+            # Arc across upper portion of canvas
+            cx = _WIDTH / 2
+            cy = -100 - pi * 40
+            rx = 300 + pi * 30
+            ry = 200 + pi * 20
+
+            if snapshot_mode:
+                if (snapshot_progress or 0) > pi / max(len(recent_prs), 1):
+                    parts.append(
+                        f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" '
+                        f'fill="none" stroke="{aurora_color}" stroke-width="{band_width:.0f}" '
+                        f'opacity="0.12" filter="url(#nebBlur)"/>\n'
+                    )
+            else:
+                shimmer_dur = round(15 + pi * 3, 1)
+                parts.append(
+                    f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" '
+                    f'fill="none" stroke="{aurora_color}" stroke-width="{band_width:.0f}" '
+                    f'opacity="0" filter="url(#nebBlur)">\n'
+                    f'  <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" '
+                    f'dur="{shimmer_dur}s" begin="{pi * 2}s" repeatCount="indefinite"/>\n'
+                    f'</ellipse>\n'
+                )
+        parts.append('</g>\n')
 
     # ---- Layer 3: Contribution particles ----
     contributions_monthly = history.get("contributions_monthly", {})
@@ -550,6 +663,47 @@ def _render_svg(
                         f"</circle>\n"
                     )
         parts.append("</g>\n")
+
+    # ---- Layer 3b: Gist Comets ----
+    n_gists = metrics.get("public_gists", 0) or 0
+    n_comets = min(6, n_gists // 5)
+    if n_comets > 0:
+        parts.append('<g id="comets">\n')
+        for ci in range(n_comets):
+            # Comet trajectory: diagonal across the field
+            start_x = rng.uniform(0, _WIDTH * 0.3)
+            start_y = rng.uniform(0, _HEIGHT * 0.3)
+            end_x = rng.uniform(_WIDTH * 0.7, _WIDTH)
+            end_y = rng.uniform(_HEIGHT * 0.5, _HEIGHT * 0.9)
+            comet_dur = round(rng.uniform(8, 15), 1)
+            comet_delay = round(rng.uniform(0, duration * 0.7), 1)
+
+            tail_color = oklch(0.75 if dark_mode else 0.55, 0.12, 55)
+            head_color = oklch(0.90 if dark_mode else 0.65, 0.08, 50)
+
+            if snapshot_mode:
+                prog = snapshot_progress or 0
+                if prog > comet_delay / max(duration, 1):
+                    comet_frac = min(1, (prog - comet_delay / max(duration, 1)) * 3)
+                    cx = start_x + (end_x - start_x) * comet_frac
+                    cy = start_y + (end_y - start_y) * comet_frac
+                    parts.append(
+                        f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="2" '
+                        f'fill="{head_color}" opacity="0.7"/>\n'
+                    )
+            else:
+                parts.append(
+                    f'<circle cx="{start_x:.0f}" cy="{start_y:.0f}" r="2" '
+                    f'fill="{head_color}" opacity="0">\n'
+                    f'  <animate attributeName="cx" values="{start_x:.0f};{end_x:.0f}" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="cy" values="{start_y:.0f};{end_y:.0f}" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="opacity" values="0;0.8;0.8;0" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'</circle>\n'
+                )
+        parts.append('</g>\n')
 
     # ---- Layer 4: Zoom wrapper for attractor reveal ----
     if snapshot_mode:
