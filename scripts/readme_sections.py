@@ -932,7 +932,7 @@ class ReadmeSectionGenerator:
         svg_cards: list[SvgCard] = []
         fallback_lines: list[str] = []
         repos = self.settings.featured_repos
-        featured_columns = 3
+        featured_columns = 2
         featured_card_width = 360
         featured_card_height = 198
         # Fetch all repo metadata + languages in parallel
@@ -1023,7 +1023,7 @@ class ReadmeSectionGenerator:
                 ).as_posix()
                 card_embeds.append((card.url or "#", src))
 
-        # Build HTML table grid (3 columns)
+        # Build HTML table grid (2 columns)
         table_lines: list[str] = []
         if card_embeds:
             table_lines.append('<table><tbody>')
@@ -1034,14 +1034,14 @@ class ReadmeSectionGenerator:
                     if idx < len(card_embeds):
                         url, src = card_embeds[idx]
                         table_lines.append(
-                            f'<td valign="top" width="33.33%"><a href="{escape(url)}"'
+                            f'<td valign="top" width="50%"><a href="{escape(url)}"'
                             f' target="_blank">'
                             f'<img src="{escape(src)}" width="100%"'
                             f' alt="{escape(svg_cards[idx].title)}"'
                             f' loading="lazy"/></a></td>'
                         )
                     else:
-                        table_lines.append('<td width="33.33%"></td>')
+                        table_lines.append('<td width="50%"></td>')
                 table_lines.append("</tr>")
             table_lines.append("</tbody></table>")
 
