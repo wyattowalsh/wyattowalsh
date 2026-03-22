@@ -796,6 +796,50 @@ def _render_svg(
                     f'fill="white" opacity="{flash_alpha}"/>\n'
                 )
         parts.append("</g>\n")
+
+    # ---- Layer 4c: Language Diversity Ring ----
+    langs = metrics.get("languages", {})
+    if langs and isinstance(langs, dict) and len(langs) >= 2:
+        sorted_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:12]
+        total_bytes = sum(b for _, b in sorted_langs) or 1
+
+        ring_cx = _WIDTH / 2
+        ring_cy = _HEIGHT / 2
+        ring_r = min(_WIDTH, _HEIGHT) * 0.42
+        ring_width = 4
+
+        parts.append('<g id="lang-ring" opacity="0.5">\n')
+
+        angle_offset = -90  # start at top
+        for lang, byte_count in sorted_langs:
+            fraction = byte_count / total_bytes
+            sweep_angle = fraction * 360
+
+            # Arc start and end in radians
+            start_rad = math.radians(angle_offset)
+            end_rad = math.radians(angle_offset + sweep_angle)
+
+            # Arc endpoints
+            x1 = ring_cx + ring_r * math.cos(start_rad)
+            y1 = ring_cy + ring_r * math.sin(start_rad)
+            x2 = ring_cx + ring_r * math.cos(end_rad)
+            y2 = ring_cy + ring_r * math.sin(end_rad)
+
+            large_arc = 1 if sweep_angle > 180 else 0
+            hue = LANG_HUES.get(lang, 200)
+            color = oklch(0.65 if dark_mode else 0.50, 0.15, hue)
+
+            if sweep_angle > 1:  # skip tiny slivers
+                parts.append(
+                    f'<path d="M{x1:.1f},{y1:.1f} A{ring_r:.0f},{ring_r:.0f} 0 {large_arc},1 {x2:.1f},{y2:.1f}" '
+                    f'fill="none" stroke="{color}" stroke-width="{ring_width}" '
+                    f'stroke-linecap="round"/>\n'
+                )
+
+            angle_offset += sweep_angle
+
+        parts.append('</g>\n')
+
     parts.append("</g>\n")
 
     # ---- Layer 5: Milestone pulse rings with poetic labels ----
