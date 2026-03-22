@@ -430,7 +430,7 @@ class TestReadmeSvgAssetBuilder:
 
 
 class TestSvgConnectCardRenderer:
-    def test_real_icon_renders_without_text(self) -> None:
+    def test_real_icon_shows_title_only(self) -> None:
         renderer = SvgConnectCardRenderer(width=140, height=130)
         card = SvgCard(
             title="GitHub",
@@ -442,14 +442,18 @@ class TestSvgConnectCardRenderer:
         )
 
         svg = renderer.render_card(card)
+        body = svg.split("</style>", 1)[-1]
 
         assert 'href="data:image/svg+xml;base64,PHN2Zy8+"' in svg
-        assert "<text" not in svg
-        assert "Builder" not in svg
-        assert "CODE" not in svg
-        assert "GitHub" not in svg.split("</style>", 1)[-1]
+        assert 'class="con-title"' in body
+        assert ">GitHub</text>" in body
+        # No monogram, subtitle, badge, or kicker
+        assert 'class="con-mono"' not in body
+        assert 'class="con-sub"' not in body
+        assert "Builder" not in body
+        assert "CODE" not in body
 
-    def test_missing_icon_renders_no_fallback_text(self) -> None:
+    def test_missing_icon_shows_title_no_monogram(self) -> None:
         renderer = SvgConnectCardRenderer(width=140, height=130)
         card = SvgCard(
             title="GitHub",
@@ -460,10 +464,13 @@ class TestSvgConnectCardRenderer:
         )
 
         svg = renderer.render_card(card)
+        body = svg.split("</style>", 1)[-1]
 
-        # No text elements at all — icon-only card
-        assert "<text" not in svg
-        assert "icon-glow" in svg  # glow circle still present
+        # Title present, no monogram fallback
+        assert 'class="con-title"' in body
+        assert ">GitHub</text>" in body
+        assert 'class="con-mono"' not in body
+        assert "icon-glow" in svg
 
 
 class TestSvgBlogCardRenderer:

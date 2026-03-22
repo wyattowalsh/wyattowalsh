@@ -1420,6 +1420,13 @@ class SvgConnectCardRenderer:
                 ' clip-path="url(#ico-clip)" />'
             )
 
+        # Platform name — centered below icon
+        lines.append(
+            f'<text class="con-title" x="{cx}" y="96"'
+            f' text-anchor="middle">'
+            f"{esc(card.title, quote=True)}</text>"
+        )
+
         lines.append("</svg>")
         return "\n".join(lines)
 
@@ -1442,6 +1449,8 @@ class SvgConnectCardRenderer:
             f"  --meta-color: {dk.meta_color};",
             f"  --accent: {dk.accent};",
             "}}",
+            f".con-title {{ fill: var(--title-color);"
+            f" font: 600 14px {FONT_FAMILY}; }}",
         ])
 
 
