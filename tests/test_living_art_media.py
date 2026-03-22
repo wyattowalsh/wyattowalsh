@@ -2,7 +2,9 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("numpy", reason="scripts.art.animate imports scripts.art.ink_garden")
+pytest.importorskip(
+    "numpy", reason="scripts.art.animate imports scripts.art.ink_garden"
+)
 
 from scripts import animated_art  # noqa: E402
 from scripts.art import animate  # noqa: E402
@@ -11,7 +13,8 @@ from scripts.art import animate  # noqa: E402
 def _stub_svg() -> str:
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
-        '<defs><linearGradient id="grad"><stop offset="0%" stop-color="#111"/></linearGradient></defs>'
+        "<defs><linearGradient id=\"grad\"><stop offset=\"0%\" "
+        'stop-color="#111"/></linearGradient></defs>'
         '<g id="layer"><circle id="dot" cx="50" cy="50" r="20" fill="url(#grad)"/></g>'
         "</svg>"
     )
@@ -45,8 +48,12 @@ def test_main_svg_mode_writes_expected_living_artifacts(
         {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
-    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
-    monkeypatch.setattr(animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg())
+    monkeypatch.setattr(
+        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
     monkeypatch.setattr(
         animate.sys,
         "argv",
@@ -79,7 +86,9 @@ def test_main_svg_mode_disables_topography_timeline_for_static_frames(
         {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
-    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
+    monkeypatch.setattr(
+        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
     topo_calls: list[dict] = []
 
     def _capture_topo(*_args, **kwargs):
@@ -120,8 +129,12 @@ def test_main_gif_mode_disables_topography_timeline(
         {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
-    monkeypatch.setattr(animate, "svg_to_png", lambda *_args, **_kwargs: _FakePalImage())
-    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg())
+    monkeypatch.setattr(
+        animate, "svg_to_png", lambda *_args, **_kwargs: _FakePalImage()
+    )
+    monkeypatch.setattr(
+        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
     topo_calls: list[dict] = []
 
     def _capture_topo(*_args, **kwargs):
@@ -156,19 +169,21 @@ def test_generate_compatibility_gifs_writes_expected_historical_artifacts(
             return self
 
         def save(self, out_path, **_kwargs) -> None:
-            Path(out_path).write_bytes(f"GIF89a:{self.key}".encode("utf-8"))
+            Path(out_path).write_bytes(f"GIF89a:{self.key}".encode())
 
     snapshot_progresses: list[float] = []
 
     monkeypatch.setattr(
         animated_art,
         "render_animated_community_svg",
-        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"]) or _stub_svg(),
+        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"])
+        or _stub_svg(),
     )
     monkeypatch.setattr(
         animated_art,
         "render_animated_activity_svg",
-        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"]) or _stub_svg(),
+        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"])
+        or _stub_svg(),
     )
     monkeypatch.setattr(
         "scripts.art.animate.svg_to_png",

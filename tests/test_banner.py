@@ -541,27 +541,6 @@ def test_define_background_calls(
     mock_filter_instance.feComposite = MagicMock()
     mock_filter_instance.feColorMatrix = MagicMock()
 
-    # Mock feRadialGradient method call on the filter instance and what it returns
-    mock_fe_radial_gradient_element = MagicMock(
-        spec=svgwrite.base.BaseElement
-    )  # Element returned by feRadialGradient
-    mock_fe_radial_gradient_element.add_stop_color = (
-        MagicMock()
-    )  # This element should have add_stop_color
-    mock_filter_instance.feRadialGradient = MagicMock(
-        return_value=mock_fe_radial_gradient_element
-    )
-
-    # Add mocking for select_id directly on mock_filter_instance
-    # This is called on the filter: filter_def.select_id("radial").add_stop_color(...)
-    mock_selected_element_for_stop_color = (
-        MagicMock()
-    )  # This is what filter_def.select_id("radial") returns
-    mock_selected_element_for_stop_color.add_stop_color = MagicMock()
-    mock_filter_instance.select_id = MagicMock(
-        return_value=mock_selected_element_for_stop_color
-    )
-
     # Mock linearGradient if not already handled by the main fixture
     if not hasattr(mock_dwg_instance, "linearGradient") or not isinstance(
         mock_dwg_instance.linearGradient, MagicMock
@@ -572,6 +551,16 @@ def test_define_background_calls(
     mock_gradient_instance = MagicMock(spec=svgwrite.gradients.LinearGradient)
     mock_gradient_instance.add_stop_color = MagicMock()
     mock_dwg_instance.linearGradient.return_value = mock_gradient_instance
+
+    if not hasattr(mock_dwg_instance, "radialGradient") or not isinstance(
+        mock_dwg_instance.radialGradient, MagicMock
+    ):
+        mock_dwg_instance.radialGradient = MagicMock(
+            spec=svgwrite.gradients.RadialGradient
+        )
+    mock_vignette_gradient_instance = MagicMock(spec=svgwrite.gradients.RadialGradient)
+    mock_vignette_gradient_instance.add_stop_color = MagicMock()
+    mock_dwg_instance.radialGradient.return_value = mock_vignette_gradient_instance
 
     # Mock clipPath
     if not hasattr(mock_dwg_instance.defs, "clipPath") or not isinstance(
@@ -732,7 +721,6 @@ def test_define_background_calls(
 
     # Assert that dwg.filter was called for "noiseFilter"
     # The fixture mocks dwg.filter. We need to check its calls.
-    noise_filter_call = mocker.call(id="noiseFilter")
     mock_dwg_instance.filter.assert_any_call(id="noiseFilter")
 
     # Get the mock object that was returned by the call for "noiseFilter"
@@ -762,32 +750,19 @@ def test_define_background_calls(
     # mock_dwg_instance.defs.add.assert_any_call(mock_filter_instance) # This mock_filter_instance is generic
 
     # Assertions for vignette filter
-    vignette_filter_call = mocker.call(id="vignetteFilter")
-    mock_dwg_instance.filter.assert_any_call(id="vignetteFilter")
-    # Assume mock_filter_instance is returned for this call too.
-
-    mock_filter_instance.feRadialGradient.assert_any_call(
-        id="radial", cx="0.5", cy="0.5", r="0.7", fx="0.5", fy="0.5", result="grad"
+    mock_dwg_instance.radialGradient.assert_called_with(
+        id="vignetteGradient", cx="50%", cy="50%", r="70%", fx="50%", fy="50%"
     )
-    # The feRadialGradient returns mock_fe_radial_gradient_element
-    # but add_stop_color is called on the result of select_id("radial")
-    mock_selected_element_for_stop_color.add_stop_color.assert_any_call(
-        "0%", "white", opacity="0"
+    mock_vignette_gradient_instance.add_stop_color.assert_any_call(
+        "0%", "black", opacity="0"
     )
-    mock_selected_element_for_stop_color.add_stop_color.assert_any_call(
+    mock_vignette_gradient_instance.add_stop_color.assert_any_call(
+        "55%", "black", opacity="0"
+    )
+    mock_vignette_gradient_instance.add_stop_color.assert_any_call(
         "100%", "black", opacity="1"
     )
-
-    mock_filter_instance.feComposite.assert_any_call(
-        in_="SourceGraphic",
-        in2="grad",
-        operator="arithmetic",
-        k1="0",
-        k2="1",
-        k3="0",
-        k4="0",
-        result="masked",
-    )
+    mock_dwg_instance.defs.add.assert_any_call(mock_vignette_gradient_instance)
     # mock_dwg_instance.defs.add.assert_any_call(mock_filter_instance) # Again, generic
 
     # Assertions for noise overlay rectangle
@@ -813,8 +788,7 @@ def test_define_background_calls(
     mock_shapes_rect_constructor.assert_any_call(
         insert=(0, 0),
         size=(default_banner_config.width, default_banner_config.height),
-        fill="black",
-        filter="url(#vignetteFilter)",
+        fill="url(#vignetteGradient)",
         opacity=default_banner_config.effects.vignette_intensity,
     )
     mock_vignette_rect_instance.__setitem__.assert_called_once_with(

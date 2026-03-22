@@ -671,28 +671,15 @@ def define_background(dwg: Drawing, cfg: BannerConfig) -> None:
         type="matrix", values=("1 0 0 0 0 " "0 1 0 0 0 " "0 0 1 0 0 " "0 0 0 0.07 0")
     )  # Low alpha from turbulence
 
-    # Vignette filter definition
-    vignette_filter_def = dwg.defs.add(dwg.filter(id="vignetteFilter"))
-    vignette_filter_def.feRadialGradient(
-        id="radial", cx="0.5", cy="0.5", r="0.7", fx="0.5", fy="0.5", result="grad"
+    # Vignette gradient definition
+    vignette_gradient = dwg.defs.add(
+        dwg.radialGradient(
+            id="vignetteGradient", cx="50%", cy="50%", r="70%", fx="50%", fy="50%"
+        )
     )
-    vignette_filter_def.select_id("radial").add_stop_color(
-        "0%", "white", opacity="0"
-    )  # Transparent center
-    vignette_filter_def.select_id("radial").add_stop_color(
-        "100%", "black", opacity="1"
-    )  # Opaque edge
-    # Apply gradient as an alpha mask
-    vignette_filter_def.feComposite(
-        in_="SourceGraphic",
-        in2="grad",
-        operator="arithmetic",
-        k1="0",
-        k2="1",
-        k3="0",
-        k4="0",
-        result="masked",
-    )  # k2=1 takes alpha from grad
+    vignette_gradient.add_stop_color("0%", "black", opacity="0")
+    vignette_gradient.add_stop_color("55%", "black", opacity="0")
+    vignette_gradient.add_stop_color("100%", "black", opacity="1")
 
     # Noise overlay
     noise_rect = shapes.Rect(
@@ -709,8 +696,7 @@ def define_background(dwg: Drawing, cfg: BannerConfig) -> None:
     vignette_rect = shapes.Rect(
         insert=(0, 0),
         size=(cfg.width, cfg.height),
-        fill="black",  # Base color, filter will use its alpha
-        filter="url(#vignetteFilter)",
+        fill="url(#vignetteGradient)",
         opacity=cfg.effects.vignette_intensity,
     )
     vignette_rect["clip-path"] = "url(#cornerClip)"

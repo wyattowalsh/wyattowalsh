@@ -69,7 +69,7 @@ wyattowalsh/
 
 **Asset pipeline** (CI: daily 1AM UTC, push to main/master, manual dispatch):
 
-1. `starred` CLI → `.github/assets/languages.md` + `.github/assets/topics.md`
+1. `uv run starred` CLI → `.github/assets/languages.md` + `.github/assets/topics.md`
 2. `readme generate word-cloud --techs-path topics.md` → `wordcloud_by_topic.svg`
 3. `readme generate word-cloud --techs-path languages.md` → `wordcloud_by_language.svg`
 4. `readme generate qr` → `qr.png`
@@ -155,4 +155,4 @@ CI secrets (GitHub Actions only — not needed locally):
 | `load_config()` returns defaults silently | `config.yaml` missing or empty | Auto-creates with defaults; edit the created file |
 | `generate qr` Cairo error | Cairo not in dyld path (macOS) | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |
 | `noise` module warning but continues | `noise` package absent | Expected — `NoiseHandler` falls back to trig automatically |
-| `starred` command not found | script-tools not installed | `uv sync --extra script-tools` |
+| `starred` command not found | script-tools not installed or command not run through `uv` | `uv sync --extra script-tools` then `uv run starred ...` |

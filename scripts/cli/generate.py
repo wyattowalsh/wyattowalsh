@@ -378,13 +378,13 @@ def _wc_import():
     try:
         from ..techs import Technology, load_technologies
         from ..word_clouds import (
-            _filter_others,
             DEFAULT_FONT_PATH,
             LANGUAGES_MD_PATH,
             PROFILE_IMG_OUTPUT_DIR,
             TOPICS_MD_PATH,
             WordCloudGenerator,
             WordCloudSettings,
+            _filter_others,
             parse_markdown_for_word_cloud_frequencies,
         )
 

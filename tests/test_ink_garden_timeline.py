@@ -15,7 +15,9 @@ from scripts.art.ink_garden import (
 def _extract_timeline_points(svg: str) -> list[tuple[str, float]]:
     return [
         (when, float(delay))
-        for delay, when in re.findall(r'data-delay="([0-9.]+)" data-when="([0-9-]+)"', svg)
+        for delay, when in re.findall(
+            r'data-delay="([0-9.]+)" data-when="([0-9-]+)"', svg
+        )
     ]
 
 

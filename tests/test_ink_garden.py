@@ -4,6 +4,7 @@ ink_garden generates SVG strings — no file I/O, no PIL, no cairosvg.
 The only heavy dependency is numpy (used by Noise2D in shared.py).
 Tests are safe to run in parallel with -n auto: no shared mutable state.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -69,6 +70,7 @@ RICH_METRICS: dict = {
 # TestModuleImport
 # ---------------------------------------------------------------------------
 
+
 class TestModuleImport:
     """Smoke: module and public API surface are importable."""
 
@@ -100,36 +102,58 @@ class TestModuleImport:
 # TestClassifySpecies
 # ---------------------------------------------------------------------------
 
+
 class TestClassifySpecies:
     """Unit tests for _classify_species — pure function, no I/O."""
 
     def test_high_stars_yields_oak(self) -> None:
         """Repos with >= 100 stars are classified as oak."""
-        assert _classify_species({"stars": 100, "age_months": 12, "language": "Python"}) == "oak"
+        assert (
+            _classify_species({"stars": 100, "age_months": 12, "language": "Python"})
+            == "oak"
+        )
 
     def test_mid_stars_and_old_age_yields_birch(self) -> None:
         """Repos with >= 20 stars and >= 24 months are classified as birch."""
-        assert _classify_species({"stars": 20, "age_months": 24, "language": "Go"}) == "birch"
+        assert (
+            _classify_species({"stars": 20, "age_months": 24, "language": "Go"})
+            == "birch"
+        )
 
     def test_rust_language_yields_conifer(self) -> None:
         """Rust repos (low stars) are classified as conifer."""
-        assert _classify_species({"stars": 0, "age_months": 10, "language": "Rust"}) == "conifer"
+        assert (
+            _classify_species({"stars": 0, "age_months": 10, "language": "Rust"})
+            == "conifer"
+        )
 
     def test_javascript_language_yields_fern(self) -> None:
         """JavaScript repos (low stars) are classified as fern."""
-        assert _classify_species({"stars": 0, "age_months": 10, "language": "JavaScript"}) == "fern"
+        assert (
+            _classify_species({"stars": 0, "age_months": 10, "language": "JavaScript"})
+            == "fern"
+        )
 
     def test_shell_language_yields_bamboo(self) -> None:
         """Shell repos are classified as bamboo."""
-        assert _classify_species({"stars": 0, "age_months": 10, "language": "Shell"}) == "bamboo"
+        assert (
+            _classify_species({"stars": 0, "age_months": 10, "language": "Shell"})
+            == "bamboo"
+        )
 
     def test_very_young_repo_yields_seedling(self) -> None:
         """Repos younger than 6 months are classified as seedling."""
-        assert _classify_species({"stars": 0, "age_months": 3, "language": "Python"}) == "seedling"
+        assert (
+            _classify_species({"stars": 0, "age_months": 3, "language": "Python"})
+            == "seedling"
+        )
 
     def test_few_stars_mid_age_yields_shrub(self) -> None:
         """Repos with < 5 stars and age 6-18 months are classified as shrub."""
-        assert _classify_species({"stars": 2, "age_months": 10, "language": "Python"}) == "shrub"
+        assert (
+            _classify_species({"stars": 2, "age_months": 10, "language": "Python"})
+            == "shrub"
+        )
 
     def test_default_case_yields_wildflower(self) -> None:
         """Repos that match no other rule are classified as wildflower."""
@@ -144,8 +168,8 @@ class TestClassifySpecies:
         assert len(result) > 0
 
     def test_result_is_always_a_known_species(self) -> None:
-        """Classification always returns a string present in SPECIES or a known alias."""
-        # The full set includes fern, bamboo, seedling which may not be in SPECIES dict
+        """Classification always returns a known species string or alias."""
+        # The full set includes fern, bamboo, and seedling aliases.
         known = set(SPECIES.keys()) | {"fern", "bamboo", "seedling"}
         for repo in [
             {"stars": 200, "age_months": 40, "language": "Python"},
@@ -163,6 +187,7 @@ class TestClassifySpecies:
 # ---------------------------------------------------------------------------
 # TestGenerate
 # ---------------------------------------------------------------------------
+
 
 class TestGenerate:
     """Smoke tests for the generate() entry point."""
@@ -185,7 +210,7 @@ class TestGenerate:
 
     def test_deterministic_with_explicit_hex_seed(self) -> None:
         """Same hex seed produces byte-identical SVG output."""
-        # The seed parameter must be a SHA-256 hex string; use seed_hash() to produce one.
+        # The seed must be a SHA-256 hex string from seed_hash().
         hex_seed = seed_hash(MINIMAL_METRICS)
         r1 = generate(MINIMAL_METRICS, seed=hex_seed)
         r2 = generate(MINIMAL_METRICS, seed=hex_seed)
@@ -232,11 +257,21 @@ class TestGenerate:
                 {"name": "oak", "stars": 100, "age_months": 40, "language": "Python"},
                 {"name": "birch", "stars": 20, "age_months": 24, "language": "Python"},
                 {"name": "conifer", "stars": 0, "age_months": 10, "language": "Rust"},
-                {"name": "fern", "stars": 0, "age_months": 10, "language": "JavaScript"},
+                {
+                    "name": "fern",
+                    "stars": 0,
+                    "age_months": 10,
+                    "language": "JavaScript",
+                },
                 {"name": "bamboo", "stars": 0, "age_months": 10, "language": "Shell"},
                 {"name": "seedling", "stars": 0, "age_months": 2, "language": "Python"},
                 {"name": "shrub", "stars": 2, "age_months": 10, "language": "Python"},
-                {"name": "wildflower", "stars": 8, "age_months": 20, "language": "Python"},
+                {
+                    "name": "wildflower",
+                    "stars": 8,
+                    "age_months": 20,
+                    "language": "Python",
+                },
             ],
         }
         result = generate(metrics, maturity=0.8)
@@ -337,5 +372,9 @@ class TestGoldenFiles:
         """All stored golden files are valid SVG (start with <svg, end with </svg>)."""
         for name in ("minimal_full.svg", "rich_full.svg", "rich_mid.svg"):
             content = self._load_golden(name)
-            assert content.lstrip().startswith("<svg"), f"{name} does not start with <svg"
-            assert content.rstrip().endswith("</svg>"), f"{name} does not end with </svg>"
+            assert content.lstrip().startswith("<svg"), (
+                f"{name} does not start with <svg"
+            )
+            assert content.rstrip().endswith("</svg>"), (
+                f"{name} does not end with </svg>"
+            )

@@ -73,19 +73,23 @@ except Exception:  # pragma: no cover - fallback minimal console/progress
     class TimeRemainingColumn:
         pass
 
-# Attempt to import settings, gracefully handle if not found
-try:
-    from .config import Settings as AppSettings
+def _load_app_settings() -> Any | None:
+    """Load logging settings without importing scripts.config during bootstrap.
 
-    # Explicitly provide default values during instantiation if linter requires
-    # or ensure defaults in Settings model are sufficient for pydantic-settings
-    app_settings: AppSettings | None = AppSettings()
-except ImportError:
-    app_settings = None
-    loguru_logger.warning(  # Use the imported loguru_logger
-        "`scripts.config.Settings` not found or failed to import. "
-        "Logging to files might be disabled or use defaults."
-    )
+    This avoids the circular import where scripts.config imports get_logger from
+    this module while this module tries to import Settings from scripts.config.
+    Tests may still inject a top-level `config` module with a `settings` object,
+    so that compatibility path is preserved.
+    """
+
+    config_module = sys.modules.get("config")
+    if config_module is not None:
+        return getattr(config_module, "settings", None)
+
+    return None
+
+
+app_settings = _load_app_settings()
 
 # 1. Prepare console + remove default Loguru sink
 console = Console()
@@ -163,9 +167,11 @@ if app_settings and hasattr(app_settings, "log_level"):
 else:
     loguru_logger.info(  # Use the imported loguru_logger
         "File logging (text/JSON) is disabled because "
-        "`scripts.config.Settings` was not found, failed to import, "
-        "or lacks `log_level`."
+        "settings are unavailable or lack `log_level`."
     )
+
+
+logger = loguru_logger
 
 
 # 4. Helpers

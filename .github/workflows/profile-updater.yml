@@ -14,6 +14,9 @@ concurrency:
   group: profile-updater-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   update-starred-lists:
     name: Update Starred Repository Lists (MD Files)
@@ -50,7 +53,7 @@ jobs:
           REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
           USERNAME: ${{ github.repository_owner }}
         run: |
-          starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
+          uv run starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
             --message 'chore(data): update awesome-stars languages.md' \
             --filename ./.github/assets/languages.md
 
@@ -60,7 +63,7 @@ jobs:
           REPOSITORY: ${{ steps.get_repo_name.outputs.REPOSITORY_NAME }}
           USERNAME: ${{ github.repository_owner }}
         run: |
-          starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
+          uv run starred --username ${USERNAME} --repository ${REPOSITORY} --sort \
             --message 'chore(data): update awesome-stars topics.md' \
             --topic --topic_limit 500 \
             --filename ./.github/assets/topics.md
@@ -106,14 +109,14 @@ jobs:
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
-            --techs-path .github/assets/topics.md \
+            --from-topics-md \
             --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
 
       - name: Generate Word Cloud by Language
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
-            --techs-path .github/assets/languages.md \
+            --from-languages-md \
             --output-path .github/assets/img/wordcloud_wordle_by_languages.svg
 
       - name: Generate Banner
@@ -407,6 +410,16 @@ jobs:
 
           sanitize_svg ./.github/assets/img/metrics.svg "metrics.svg"
           sanitize_svg ./.github/assets/img/metrics.additional.svg "metrics.additional.svg"
+
+      - name: Commit metrics outputs
+        if: ${{ always() }}
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          commit_message: "chore(metrics): update generated metrics assets"
+          file_pattern: ".github/assets/img/metrics.svg .github/assets/img/metrics.additional.svg"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
   generate-event-art:
     name: Generate Event-Driven Artwork
