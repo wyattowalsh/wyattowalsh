@@ -432,8 +432,8 @@ class SvgBlockRenderer:
         inner_x = 16
         title_y = 32
         monogram = self._truncate((card.icon or "").upper(), 3)
-        icon_data_uri = self._sanitize_icon_data_uri(card.icon_data_uri)
-        if not is_blog_family and (icon_data_uri or monogram):
+        # GitHub strips data: URIs from <image> — always use monogram
+        if not is_blog_family and monogram:
             cx = 34
             cy = 28
             r = 14
@@ -443,25 +443,7 @@ class SvgBlockRenderer:
                 f' stroke="{accent}" stroke-opacity="0.40"'
                 ' stroke-width="1" />'
             )
-            if icon_data_uri:
-                icon_clip_id = f"icon-clip-{card_index}"
-                img_size = r * 2 - 4
-                img_offset_x = cx - img_size / 2
-                img_offset_y = cy - img_size / 2
-                lines.append(
-                    f'<defs><clipPath id="{icon_clip_id}">'
-                    f'<circle cx="{cx}" cy="{cy}" r="{r - 1}" />'
-                    f"</clipPath></defs>"
-                )
-                lines.append(
-                    f'<image class="card-icon-image"'
-                    f' href="{self._esc(icon_data_uri)}"'
-                    f' x="{img_offset_x}" y="{img_offset_y}"'
-                    f' width="{img_size}" height="{img_size}"'
-                    ' preserveAspectRatio="xMidYMid meet"'
-                    f' clip-path="url(#{icon_clip_id})" />'
-                )
-            elif monogram:
+            if monogram:
                 lines.append(
                     f'<text class="card-icon" x="{cx}" y="{cy + 4}"'
                     f' text-anchor="middle">{self._esc(monogram)}</text>'
@@ -1167,8 +1149,9 @@ class SvgBlogCardRenderer:
     def render_card(self, card: SvgCard) -> str:
         w = self.width
         esc = escape
-        has_hero = bool(card.background_image)
-        hero_w, hero_h = (110, 68) if has_hero else (0, 0)
+        # Skip hero thumbnails — GitHub strips data: URIs from <image> in SVGs
+        has_hero = False
+        hero_w, hero_h = (0, 0)
         px = 20
         text_w = (w - hero_w - 56) if has_hero else (w - 40)
         sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
@@ -1401,14 +1384,19 @@ class SvgConnectCardRenderer:
             f'<circle cx="{cx}" cy="42" r="34" fill="url(#icon-glow)" />'
         )
 
-        # Brand icon — large, centered, rounded-square clip
-        if icon_uri:
-            lines.append(
-                f'<image href="{esc(icon_uri, quote=True)}"'
-                f' x="{cx - 24}" y="18" width="48" height="48"'
-                ' preserveAspectRatio="xMidYMid meet"'
-                ' clip-path="url(#ico-clip)" />'
-            )
+        # Brand icon — inline monogram (GitHub strips data: URIs from <image>)
+        monogram = (card.icon or card.title[:1]).upper()
+        lines.append(
+            f'<rect x="{cx - 24}" y="18" width="48" height="48"'
+            f' rx="12" fill="{esc(accent, quote=True)}" />'
+        )
+        lines.append(
+            f'<text x="{cx}" y="50" text-anchor="middle"'
+            f' font-size="22" font-weight="700"'
+            f' fill="#ffffff" font-family='
+            f"\"'Segoe UI', Arial, sans-serif\">"
+            f'{esc(monogram, quote=True)}</text>'
+        )
 
         # Platform name — centered below icon
         lines.append(
