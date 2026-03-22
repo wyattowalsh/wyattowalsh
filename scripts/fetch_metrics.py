@@ -74,6 +74,117 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
     return result
 
 
+def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict]:
+    """Fetch user's recent merged PRs (last 50) via GraphQL."""
+    if not token:
+        return []
+    query = """
+    query($login: String!) {
+      user(login: $login) {
+        pullRequests(first: 50, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
+          nodes { mergedAt additions deletions repository { name } }
+        }
+      }
+    }
+    """
+    try:
+        resp = _graphql(query, token, variables={"login": owner})
+        errors = resp.get("errors")
+        if errors:
+            logger.warning("GraphQL errors fetching merged PRs: {}", errors)
+            return []
+        nodes = (
+            (resp.get("data") or {})
+            .get("user", {})
+            .get("pullRequests", {})
+            .get("nodes", [])
+        )
+        return [
+            {
+                "merged_at": n.get("mergedAt"),
+                "additions": n.get("additions", 0),
+                "deletions": n.get("deletions", 0),
+                "repo_name": (n.get("repository") or {}).get("name", ""),
+            }
+            for n in nodes
+        ]
+    except Exception as exc:
+        logger.warning("Failed to fetch recent merged PRs: {}", exc)
+        return []
+
+
+def _collect_issue_stats(owner: str, token: str | None) -> dict[str, int]:
+    """Fetch user's open/closed issue counts via GraphQL."""
+    if not token:
+        return {"open_count": 0, "closed_count": 0}
+    query = """
+    query($login: String!) {
+      user(login: $login) {
+        open: issues(states: OPEN) { totalCount }
+        closed: issues(states: CLOSED) { totalCount }
+      }
+    }
+    """
+    try:
+        resp = _graphql(query, token, variables={"login": owner})
+        errors = resp.get("errors")
+        if errors:
+            logger.warning("GraphQL errors fetching issue stats: {}", errors)
+            return {"open_count": 0, "closed_count": 0}
+        user = (resp.get("data") or {}).get("user", {})
+        return {
+            "open_count": (user.get("open") or {}).get("totalCount", 0),
+            "closed_count": (user.get("closed") or {}).get("totalCount", 0),
+        }
+    except Exception as exc:
+        logger.warning("Failed to fetch issue stats: {}", exc)
+        return {"open_count": 0, "closed_count": 0}
+
+
+def _collect_commit_hour_distribution(owner: str, token: str | None) -> dict[int, int]:
+    """Bucket recent push-event commit timestamps by hour (0-23) from public events."""
+    try:
+        data = _json(f"{_BASE}/users/{owner}/events?per_page=100", token)
+        if not isinstance(data, list):
+            return {}
+        from datetime import datetime as _dt
+        hours: dict[int, int] = {}
+        for event in data:
+            if event.get("type") != "PushEvent":
+                continue
+            created = event.get("created_at", "")
+            if created:
+                try:
+                    dt = _dt.fromisoformat(created.replace("Z", "+00:00"))
+                    hour = dt.hour
+                    hours[hour] = hours.get(hour, 0) + 1
+                except (ValueError, AttributeError):
+                    pass
+        return hours
+    except Exception as exc:
+        logger.warning("Failed to fetch commit hour distribution: {}", exc)
+        return {}
+
+
+def _collect_releases(owner: str, repo: str, token: str | None) -> list[dict]:
+    """Fetch recent releases for owner/repo via REST."""
+    try:
+        data = _json(f"{_BASE}/repos/{owner}/{repo}/releases?per_page=20", token)
+        if not isinstance(data, list):
+            return []
+        return [
+            {
+                "tag_name": r.get("tag_name", ""),
+                "published_at": r.get("published_at"),
+                "name": r.get("name", ""),
+            }
+            for r in data
+        ]
+    except Exception as exc:
+        logger.warning("Failed to fetch releases: {}", exc)
+        return []
+
+
 def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict]:
     """Return the top repos sorted by stars descending."""
     non_forks = [r for r in repos if not r.get("fork")]
@@ -166,7 +277,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     # -- GraphQL: contributions ------------------------------------------
     # Set GraphQL field defaults (overwritten on success)
     for _k in ("contributions_last_year", "total_commits", "total_prs",
-               "total_issues", "total_repos_contributed"):
+               "total_issues", "total_repos_contributed", "pr_review_count"):
         metrics[_k] = None
     metrics["contributions_calendar"] = []
 
@@ -188,6 +299,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
               }
               totalCommitContributions
               totalPullRequestContributions
+              totalPullRequestReviewContributions
               totalIssueContributions
               totalRepositoryContributions
             }
@@ -210,6 +322,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
             metrics["total_prs"] = contrib_coll.get("totalPullRequestContributions")
             metrics["total_issues"] = contrib_coll.get("totalIssueContributions")
             metrics["total_repos_contributed"] = contrib_coll.get("totalRepositoryContributions")
+            metrics["pr_review_count"] = contrib_coll.get("totalPullRequestReviewContributions", 0)
             metrics["contributions_calendar"] = [
                 {
                     "date": d["date"],
@@ -235,6 +348,31 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     metrics["languages"] = _collect_languages(all_repos, token)
     metrics["top_repos"] = _collect_top_repos(all_repos)
     metrics.update(_collect_traffic(owner, repo, token))
+
+    # -- New collectors: PRs, issues, commit hours, releases ----------------
+    try:
+        metrics["recent_merged_prs"] = _collect_recent_merged_prs(owner, token)
+    except Exception as exc:
+        logger.warning("Failed to collect recent merged PRs: {}", exc)
+        metrics["recent_merged_prs"] = []
+
+    try:
+        metrics["issue_stats"] = _collect_issue_stats(owner, token)
+    except Exception as exc:
+        logger.warning("Failed to collect issue stats: {}", exc)
+        metrics["issue_stats"] = {"open_count": 0, "closed_count": 0}
+
+    try:
+        metrics["commit_hour_distribution"] = _collect_commit_hour_distribution(owner, token)
+    except Exception as exc:
+        logger.warning("Failed to collect commit hour distribution: {}", exc)
+        metrics["commit_hour_distribution"] = {}
+
+    try:
+        metrics["releases"] = _collect_releases(owner, repo, token)
+    except Exception as exc:
+        logger.warning("Failed to collect releases: {}", exc)
+        metrics["releases"] = []
 
     return metrics
 
