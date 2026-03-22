@@ -205,6 +205,82 @@ def _fetch_current_metrics(
         return {}
 
 
+def compute_star_velocity(stars_timeline: list[dict]) -> dict[str, Any]:
+    """Bucket stars into months and compute velocity / trend signals.
+
+    Returns ``{recent_rate, peak_rate, trend}`` where *trend* is one of
+    "rising", "falling", or "stable".
+    """
+    if not stars_timeline:
+        return {"recent_rate": 0.0, "peak_rate": 0.0, "trend": "stable"}
+
+    monthly: dict[str, int] = defaultdict(int)
+    for star in stars_timeline:
+        date_str = star.get("date", "")
+        if len(date_str) >= 7:
+            monthly[date_str[:7]] += 1
+
+    if not monthly:
+        return {"recent_rate": 0.0, "peak_rate": 0.0, "trend": "stable"}
+
+    sorted_months = sorted(monthly.keys())
+    peak_rate = max(monthly.values())
+
+    # Recent rate: average stars/month in the last 6 months
+    last_6 = sorted_months[-6:] if len(sorted_months) >= 6 else sorted_months
+    recent_total = sum(monthly.get(m, 0) for m in last_6)
+    recent_rate = recent_total / len(last_6) if last_6 else 0.0
+
+    # Trend: compare last 3 months vs prior 3 months
+    trend = "stable"
+    if len(sorted_months) >= 6:
+        last_3 = sorted_months[-3:]
+        prior_3 = sorted_months[-6:-3]
+        sum_last = sum(monthly.get(m, 0) for m in last_3)
+        sum_prior = sum(monthly.get(m, 0) for m in prior_3)
+        if sum_last > sum_prior:
+            trend = "rising"
+        elif sum_last < sum_prior:
+            trend = "falling"
+
+    return {
+        "recent_rate": round(recent_rate, 2),
+        "peak_rate": peak_rate,
+        "trend": trend,
+    }
+
+
+def compute_contribution_streaks(contributions_monthly: dict[str, int]) -> dict[str, Any]:
+    """Analyse consecutive months with nonzero contributions.
+
+    Returns ``{longest_streak_months, current_streak_months, streak_active}``.
+    """
+    if not contributions_monthly:
+        return {"longest_streak_months": 0, "current_streak_months": 0, "streak_active": False}
+
+    sorted_months = sorted(contributions_monthly.keys())
+    nonzero = {m for m, c in contributions_monthly.items() if c > 0}
+
+    longest = 0
+    current = 0
+
+    for m in sorted_months:
+        if m in nonzero:
+            current += 1
+            longest = max(longest, current)
+        else:
+            current = 0
+
+    # streak_active: is the most recent month nonzero?
+    streak_active = sorted_months[-1] in nonzero if sorted_months else False
+
+    return {
+        "longest_streak_months": longest,
+        "current_streak_months": current,
+        "streak_active": streak_active,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
@@ -245,6 +321,10 @@ def collect_history(
 
     # 6. Current metrics snapshot
     result["current_metrics"] = _fetch_current_metrics(owner, repo, token)
+
+    # 7. Derived signals
+    result["star_velocity"] = compute_star_velocity(result.get("stars", []))
+    result["contribution_streaks"] = compute_contribution_streaks(result.get("contributions_monthly", {}))
 
     return result
 

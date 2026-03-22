@@ -273,6 +273,7 @@ def normalize_live_metrics(
         "public_repos", "orgs_count", "contributions_last_year",
         "total_commits", "total_prs", "total_issues",
         "total_repos_contributed", "open_issues_count", "network_count",
+        "pr_review_count",
     )
     for k in _NUMERIC_KEYS:
         if k in metrics and metrics[k] is None:
@@ -329,6 +330,44 @@ def normalize_live_metrics(
     # 4. Label
     if "label" not in metrics and owner:
         metrics["label"] = owner
+
+    # 5. Topic aggregation
+    topic_counts: dict[str, int] = defaultdict(int)
+    for repo in metrics.get("repos", []):
+        for topic in repo.get("topics", []):
+            topic_counts[topic] += 1
+    metrics["topic_clusters"] = dict(
+        sorted(topic_counts.items(), key=lambda kv: kv[1], reverse=True)
+    )
+
+    # 6. Language diversity (Shannon entropy in bits)
+    lang_bytes = metrics.get("languages", {})
+    if lang_bytes:
+        total = sum(lang_bytes.values())
+        if total > 0:
+            entropy = 0.0
+            for count in lang_bytes.values():
+                if count > 0:
+                    p = count / total
+                    entropy -= p * math.log2(p)
+            metrics["language_diversity"] = round(entropy, 4)
+        else:
+            metrics["language_diversity"] = 0.0
+        metrics["language_count"] = len(lang_bytes)
+    else:
+        metrics["language_diversity"] = 0.0
+        metrics["language_count"] = 0
+
+    # 7. Pass through new fields from fetch_metrics and fetch_history
+    _PASSTHROUGH_KEYS = (
+        "recent_merged_prs", "issue_stats", "pr_review_count",
+        "commit_hour_distribution", "releases",
+        "star_velocity", "contribution_streaks",
+    )
+    if history:
+        for key in _PASSTHROUGH_KEYS:
+            if key not in metrics and key in history:
+                metrics[key] = history[key]
 
     return metrics
 

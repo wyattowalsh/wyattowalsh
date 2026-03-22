@@ -185,13 +185,13 @@ def _card_shell(
     background with shadow, glass overlay, border, inner rim, accent bar."""
     inner_rx = max(rx - 1, 0)
     return [
-        f'<rect width="{w}" height="{h}" rx="{rx}"'
-        ' fill="var(--card-bg)" filter="url(#shadow)" />',
+        f'<rect class="rc-bg" width="{w}" height="{h}" rx="{rx}"'
+        ' filter="url(#shadow)" />',
         f'<rect width="{w}" height="{h}" rx="{rx}"'
         ' fill="url(#glass-grad)" />',
-        f'<rect x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
+        f'<rect class="rc-border" x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
         f' rx="{rx}" fill="none"'
-        ' stroke="var(--card-border)" stroke-width="1" />',
+        ' stroke-width="1" />',
         f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
         f' rx="{inner_rx}" fill="none"'
         ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />',
@@ -341,51 +341,46 @@ class SvgBlockRenderer:
     def _build_css(self) -> str:  # noqa: PLR6301
         lt = LIGHT_THEME
         dk = DARK_THEME
+        # Use direct colors — GitHub SVG sanitizer doesn't resolve var().
         return "\n".join(
             [
-                ":root {",
-                f"  --canvas-bg: {lt.bg};",
-                f"  --card-bg: {lt.bg};",
-                f"  --card-border: {lt.border};",
-                f"  --title-color: {lt.title_color};",
-                f"  --text-color: {lt.text_color};",
-                f"  --meta-color: {lt.meta_color};",
-                f"  --accent: {lt.accent};",
-                f"  --link-color: {lt.link_color};",
-                "}",
-                "@media (prefers-color-scheme: dark) {",
-                "  :root {",
-                f"    --canvas-bg: {dk.bg};",
-                f"    --card-bg: {dk.bg};",
-                f"    --card-border: {dk.border};",
-                f"    --title-color: {dk.title_color};",
-                f"    --text-color: {dk.text_color};",
-                f"    --meta-color: {dk.meta_color};",
-                f"    --accent: {dk.accent};",
-                f"    --link-color: {dk.link_color};",
-                "  }",
-                "}",
-                ".section-title { fill: var(--title-color); "
-                f"font: 700 14px {FONT_FAMILY}; }}",
-                ".card-title { fill: var(--title-color); "
-                f"font: 700 16px {FONT_FAMILY}; }}",
-                ".card-line { fill: var(--text-color); "
-                f"font: 400 14px {FONT_FAMILY}; }}",
-                ".card-meta { fill: var(--meta-color); "
-                f"font: 400 12px {FONT_FAMILY}; }}",
-                ".card-kicker { fill: var(--meta-color); "
-                f"font: 700 11px {FONT_FAMILY};"
+                f".rc-bg {{ fill: {lt.bg}; }}",
+                f".rc-border {{ stroke: {lt.border}; }}",
+                f".section-title {{ fill: {lt.title_color};"
+                f" font: 700 14px {FONT_FAMILY}; }}",
+                f".card-title {{ fill: {lt.title_color};"
+                f" font: 700 16px {FONT_FAMILY}; }}",
+                f".card-line {{ fill: {lt.text_color};"
+                f" font: 400 14px {FONT_FAMILY}; }}",
+                f".card-meta {{ fill: {lt.meta_color};"
+                f" font: 400 12px {FONT_FAMILY}; }}",
+                f".card-kicker {{ fill: {lt.meta_color};"
+                f" font: 700 11px {FONT_FAMILY};"
                 " letter-spacing: 0.08em; text-transform: uppercase; }",
-                ".card-icon { fill: var(--title-color); "
-                f"font: 700 12px {FONT_FAMILY}; }}",
-                ".card-badge { fill: var(--title-color); "
-                f"font: 700 12px {FONT_FAMILY};"
+                f".card-icon {{ fill: {lt.title_color};"
+                f" font: 700 12px {FONT_FAMILY}; }}",
+                f".card-badge {{ fill: {lt.title_color};"
+                f" font: 700 12px {FONT_FAMILY};"
                 " letter-spacing: 0.01em; }",
-                ".sparkline { fill: none; stroke: var(--accent); "
-                "stroke-width: 2; opacity: 0.88; }",
-                ".lang-dot { stroke: var(--card-border); stroke-width: 1; }",
-                ".lang-label { fill: var(--meta-color); "
-                f"font: 400 12px {FONT_FAMILY}; }}",
+                f".sparkline {{ fill: none; stroke: {lt.accent};"
+                " stroke-width: 2; opacity: 0.88; }",
+                f".lang-dot {{ stroke: {lt.border}; stroke-width: 1; }}",
+                f".lang-label {{ fill: {lt.meta_color};"
+                f" font: 400 12px {FONT_FAMILY}; }}",
+                "@media (prefers-color-scheme: dark) {",
+                f"  .rc-bg {{ fill: {dk.bg}; }}",
+                f"  .rc-border {{ stroke: {dk.border}; }}",
+                f"  .section-title {{ fill: {dk.title_color}; }}",
+                f"  .card-title {{ fill: {dk.title_color}; }}",
+                f"  .card-line {{ fill: {dk.text_color}; }}",
+                f"  .card-meta {{ fill: {dk.meta_color}; }}",
+                f"  .card-kicker {{ fill: {dk.meta_color}; }}",
+                f"  .card-icon {{ fill: {dk.title_color}; }}",
+                f"  .card-badge {{ fill: {dk.title_color}; }}",
+                f"  .sparkline {{ stroke: {dk.accent}; }}",
+                f"  .lang-dot {{ stroke: {dk.border}; }}",
+                f"  .lang-label {{ fill: {dk.meta_color}; }}",
+                "}",
             ]
         )
 
@@ -899,37 +894,32 @@ class SvgRepoCardRenderer:
         lt = LIGHT_THEME
         dk = DARK_THEME
         ac = accent or lt.accent
+        # Use direct colors instead of CSS custom properties — GitHub's SVG
+        # sanitizer does not resolve var() in <img> context.
         return "\n".join(
             [
-                ":root {",
-                "  --card-bg: #ffffff;",
-                f"  --card-border: {lt.border};",
-                f"  --title-color: {lt.link_color};",
-                f"  --text-color: {lt.text_color};",
-                f"  --meta-color: {lt.meta_color};",
-                "  --stat-color: #24292e;",
-                f"  --spark-stroke: {ac};",
-                "}",
-                "@media (prefers-color-scheme: dark) {",
-                "  :root {",
-                "    --card-bg: #0d1117;",
-                f"    --card-border: {dk.border};",
-                f"    --title-color: {dk.link_color};",
-                f"    --text-color: {dk.text_color};",
-                f"    --meta-color: {dk.meta_color};",
-                f"    --stat-color: {dk.text_color};",
-                f"    --spark-stroke: {dk.accent};",
-                "  }",
-                "}",
-                f".rc-title {{ fill: var(--title-color);"
+                f".rc-bg {{ fill: #ffffff; }}",
+                f".rc-border {{ stroke: {lt.border}; }}",
+                f".rc-title {{ fill: {lt.link_color};"
                 f" font: 600 17px {FONT_FAMILY}; }}",
-                f".rc-desc {{ fill: var(--text-color);"
+                f".rc-desc {{ fill: {lt.text_color};"
                 f" font: 400 13px {FONT_FAMILY}; }}",
-                f".rc-meta {{ fill: var(--stat-color);"
+                f".rc-meta {{ fill: #24292e;"
                 f" font: 400 12px {FONT_FAMILY}; }}",
                 ".rc-lang-dot { stroke: none; }",
-                f".rc-lang-label {{ fill: var(--stat-color);"
+                f".rc-lang-label {{ fill: #24292e;"
                 f" font: 400 12px {FONT_FAMILY}; }}",
+                f".sparkline {{ fill: none; stroke: {ac};"
+                " stroke-width: 2; opacity: 0.88; }",
+                "@media (prefers-color-scheme: dark) {",
+                f"  .rc-bg {{ fill: #0d1117; }}",
+                f"  .rc-border {{ stroke: {dk.border}; }}",
+                f"  .rc-title {{ fill: {dk.link_color}; }}",
+                f"  .rc-desc {{ fill: {dk.text_color}; }}",
+                f"  .rc-meta {{ fill: {dk.text_color}; }}",
+                f"  .rc-lang-label {{ fill: {dk.text_color}; }}",
+                f"  .sparkline {{ stroke: {dk.accent}; }}",
+                "}",
             ]
         )
 

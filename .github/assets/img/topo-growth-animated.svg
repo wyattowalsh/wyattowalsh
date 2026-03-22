@@ -12111,7 +12111,7 @@
 <text x="571" y="372" font-family="Georgia,serif" font-size="5" fill="#5c3a1e" opacity="0.45" font-variant="small-caps" stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill">8 stars</text>
 <circle cx="400" cy="375" r="6" fill="none" stroke="#cc3828" stroke-width="1.5" opacity="0.5"/>
 <circle cx="400" cy="375" r="2.5" fill="#cc3828" opacity="0.65"/>
-<text x="410" y="378" font-family="Georgia,serif" font-size="9" fill="#1a1a1a" font-weight="bold" opacity="0.65" letter-spacing="0.5" stroke="rgba(245,240,232,0.8)" stroke-width="3" stroke-linejoin="round" paint-order="stroke fill">wyattowalsh</text>
+<text x="410" y="378" font-family="Georgia,serif" font-size="9" fill="#1a1a1a" font-weight="bold" opacity="0.65" letter-spacing="0.5" stroke="rgba(245,240,232,0.8)" stroke-width="3" stroke-linejoin="round" paint-order="stroke fill">wyatt</text>
 <polygon points="695,105 700,105 695,77" fill="#1a1a1a" opacity="0.5" stroke="#0a0a0a" stroke-width="0.3"/>
 <polygon points="695,105 690,105 695,77" fill="#f0eeea" opacity="0.65" stroke="#2c2c2c" stroke-width="0.4"/>
 <text x="695" y="66" text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif" font-size="8" fill="#2c1a0e" opacity="0.5" font-weight="bold" stroke="rgba(245,240,232,0.7)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill">N</text>
@@ -12142,7 +12142,7 @@
 <text x="630" y="726.0" font-family="Georgia,serif" font-size="4.5" fill="#3a2a1a" opacity="0.45">River / lake</text>
 <rect x="55" y="748" width="260" height="44" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" opacity="0.95" rx="1"/>
 <text x="185" y="764" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#0a0a0a" font-weight="bold" opacity="0.7" letter-spacing="1.5">Topographic Survey</text>
-<text x="185" y="775" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#2a1a0a" opacity="0.6" font-style="italic">wyattowalsh</text>
+<text x="185" y="775" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#2a1a0a" opacity="0.6" font-style="italic">wyatt</text>
 <ellipse cx="633.9" cy="100.5" rx="78.5" ry="43.1" fill="#1a2a3a" opacity="0.070" transform="rotate(0.0,633.9,100.5)"/>
 <ellipse cx="543.3" cy="648.9" rx="58.0" ry="46.5" fill="#1a2a3a" opacity="0.110" transform="rotate(-8.4,543.3,648.9)"/>
 <ellipse cx="487.7" cy="73.6" rx="63.0" ry="48.3" fill="#1a2a3a" opacity="0.070" transform="rotate(5.8,487.7,73.6)"/>
@@ -27865,7 +27865,7 @@
 <text x="282" y="364" font-family="Georgia,serif" font-size="6.5" fill="#2c1a0e" opacity="0.65" font-weight="bold" stroke="rgba(245,240,232,0.75)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill">mindmap_transformer</text>
 <circle cx="400" cy="375" r="6" fill="none" stroke="#cc3828" stroke-width="1.5" opacity="0.5"/>
 <circle cx="400" cy="375" r="2.5" fill="#cc3828" opacity="0.65"/>
-<text x="410" y="378" font-family="Georgia,serif" font-size="9" fill="#1a1a1a" font-weight="bold" opacity="0.65" letter-spacing="0.5" stroke="rgba(245,240,232,0.8)" stroke-width="3" stroke-linejoin="round" paint-order="stroke fill">wyattowalsh</text>
+<text x="410" y="378" font-family="Georgia,serif" font-size="9" fill="#1a1a1a" font-weight="bold" opacity="0.65" letter-spacing="0.5" stroke="rgba(245,240,232,0.8)" stroke-width="3" stroke-linejoin="round" paint-order="stroke fill">wyatt</text>
 <polygon points="695,105 700,105 695,77" fill="#1a1a1a" opacity="0.5" stroke="#0a0a0a" stroke-width="0.3"/>
 <polygon points="695,105 690,105 695,77" fill="#f0eeea" opacity="0.65" stroke="#2c2c2c" stroke-width="0.4"/>
 <text x="695" y="66" text-anchor="middle" dominant-baseline="central" font-family="Georgia,serif" font-size="8" fill="#2c1a0e" opacity="0.5" font-weight="bold" stroke="rgba(245,240,232,0.7)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill">N</text>
@@ -27896,7 +27896,7 @@
 <text x="630" y="726.0" font-family="Georgia,serif" font-size="4.5" fill="#3a2a1a" opacity="0.45">River / lake</text>
 <rect x="55" y="748" width="260" height="44" fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" opacity="0.95" rx="1"/>
 <text x="185" y="764" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#0a0a0a" font-weight="bold" opacity="0.7" letter-spacing="1.5">Topographic Survey</text>
-<text x="185" y="775" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#2a1a0a" opacity="0.6" font-style="italic">wyattowalsh</text>
+<text x="185" y="775" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#2a1a0a" opacity="0.6" font-style="italic">wyatt</text>
 <ellipse cx="633.9" cy="100.5" rx="78.5" ry="43.1" fill="#1a2a3a" opacity="0.070" transform="rotate(0.0,633.9,100.5)"/>
 <ellipse cx="543.3" cy="648.9" rx="58.0" ry="46.5" fill="#1a2a3a" opacity="0.110" transform="rotate(-8.4,543.3,648.9)"/>
 <ellipse cx="487.7" cy="73.6" rx="63.0" ry="48.3" fill="#1a2a3a" opacity="0.070" transform="rotate(5.8,487.7,73.6)"/>
