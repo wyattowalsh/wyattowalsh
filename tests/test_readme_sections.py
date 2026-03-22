@@ -1203,23 +1203,30 @@ class TestRepoBackgroundImage:
             open_graph_image_url="https://custom-preview.example.com/riso.png",
         )
         # Mock _fetch_remote_image_data_uri to return a data URI
+        def _stub_fetch(url: str, context: str) -> str | None:
+            if "custom-preview" in url:
+                return "data:image/png;base64,AAAA"
+            return None
+
         monkeypatch.setattr(
-            generator,
-            "_fetch_remote_image_data_uri",
-            lambda url, context: "data:image/png;base64,AAAA" if "custom-preview" in url else None,
+            generator, "_fetch_remote_image_data_uri", _stub_fetch,
         )
         # Mock _scrape_repo_og_image to track if it gets called
-        scrape_called = []
+        scrape_called: list[bool] = []
         monkeypatch.setattr(
             generator,
             "_scrape_repo_og_image",
             lambda repo_full_name: scrape_called.append(True) or None,
         )
 
-        result = generator._repo_background_image("wyattowalsh/riso", metadata)
+        result = generator._repo_background_image(
+            "wyattowalsh/riso", metadata,
+        )
 
         assert result == "data:image/png;base64,AAAA"
-        assert not scrape_called, "HTML scrape should not be called when API OG image succeeds"
+        assert not scrape_called, (
+            "HTML scrape should not be called when API OG image succeeds"
+        )
 
     def test_generic_githubassets_url_skipped(
         self, tmp_path: Path, monkeypatch
@@ -1249,13 +1256,16 @@ class TestRepoBackgroundImage:
             "_scrape_repo_og_image",
             lambda repo_full_name: scrape_called.append(True) or None,
         )
+        def _stub_fetch(url: str, context: str) -> str | None:
+            if "opengraph.githubassets.com/1/" in url:
+                return "data:image/png;base64,BBBB"
+            return None
+
         monkeypatch.setattr(
-            generator,
-            "_fetch_remote_image_data_uri",
-            lambda url, context: "data:image/png;base64,BBBB" if "opengraph.githubassets.com/1/" in url else None,
+            generator, "_fetch_remote_image_data_uri", _stub_fetch,
         )
 
-        result = generator._repo_background_image("wyattowalsh/riso", metadata)
+        generator._repo_background_image("wyattowalsh/riso", metadata)
 
         # Should have fallen through to HTML scrape (which returns None),
         # then to the auto-generated fallback

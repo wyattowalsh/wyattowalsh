@@ -807,7 +807,9 @@ class SvgRepoCardRenderer:
         lines.append("</defs>")
 
         accent_color = lang_color or "var(--spark-stroke)"
-        lines.extend(_card_shell(w, h, rx=10, accent_fill=accent_color, clip_id="card-clip"))
+        lines.extend(_card_shell(
+            w, h, rx=10, accent_fill=accent_color, clip_id="card-clip",
+        ))
 
         if has_thumb:
             thumb_x = w - thumb_w - 18
