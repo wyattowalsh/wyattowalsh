@@ -2,7 +2,7 @@
 <defs>
 <style>
 :root {
-  --card-bg: transparent;
+  --card-bg: #ffffff;
   --card-border: #d0d7de;
   --title-color: #0969da;
   --text-color: #656d76;
@@ -12,7 +12,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --card-bg: transparent;
+    --card-bg: #0d1117;
     --card-border: #30363d;
     --title-color: #58a6ff;
     --text-color: #8b949e;
