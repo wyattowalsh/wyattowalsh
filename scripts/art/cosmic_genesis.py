@@ -311,8 +311,8 @@ def _render_svg(
     a, b, c, d, hue_shift = _continuous_attractor_params(metrics)
 
     grid_sz = 100
-    iters = 800_000 + (metrics.get("network_count") or 0) * 30_000
-    iters = min(iters, grid_sz * grid_sz * 50)
+    iters = 1_500_000 + (metrics.get("network_count") or 0) * 30_000
+    iters = min(iters, grid_sz * grid_sz * 80)
 
     logger.info(
         "Cosmic Genesis: a={a:.3f} b={b:.3f} c={c:.3f} d={d:.3f} "
@@ -440,9 +440,9 @@ def _render_svg(
         ]
     else:
         star_layers = [
-            (60, 0.4, 0.8, 0.15, 0.30, 4.0, 8.0, [star_colors[2]]),
-            (50, 0.8, 1.5, 0.30, 0.50, 2.0, 5.0, [star_colors[2]]),
-            (25, 1.5, 2.5, 0.50, 0.75, 1.5, 3.0, star_colors[:2]),
+            (60, 0.4, 0.8, 0.25, 0.45, 4.0, 8.0, [star_colors[2]]),
+            (50, 0.8, 1.5, 0.40, 0.60, 2.0, 5.0, [star_colors[2]]),
+            (25, 1.5, 2.5, 0.55, 0.80, 1.5, 3.0, star_colors[:2]),
         ]
 
     parts.append('<g id="starfield">\n')
@@ -476,15 +476,15 @@ def _render_svg(
         nebula_hues = [280, 200, 50]
 
     parts.append('<g id="nebula">\n')
-    for i, hue in enumerate(nebula_hues * 2):
+    for i, hue in enumerate(nebula_hues * 3):
         nx = rng.uniform(100, 700)
         ny = rng.uniform(100, 700)
         rx = rng.uniform(120, 250)
         ry = rng.uniform(80, 180)
         drift_x = rng.uniform(-30, 30)
-        nebula_color = oklch(0.30 if dark_mode else 0.50, 0.15 if dark_mode else 0.18, hue)
+        nebula_color = oklch(0.30 if dark_mode else 0.45, 0.18 if dark_mode else 0.25, hue)
         neb_dur = round(rng.uniform(20, 30))
-        neb_opacity = "0.08" if dark_mode else "0.14"
+        neb_opacity = "0.12" if dark_mode else "0.20"
         if snapshot_mode:
             current_x = nx + drift_x * (snapshot_progress or 0.0) * 0.5
             parts.append(
@@ -561,7 +561,7 @@ def _render_svg(
         parts.append('<g class="zoom-wrap">\n')
 
     # ---- Layer 4a: Attractor cells as soft circles with jitter ----
-    threshold = 0.03
+    threshold = 0.02
     cell_count = 0
     parts.append('<g id="attractor">\n')
     for row in range(grid_sz):
@@ -574,14 +574,14 @@ def _render_svg(
             time_frac = delay / max(max_delay, 0.001)
             color = _density_color_oklch(val, time_frac, hue_shift)
 
-            alpha = round(val * (0.92 if dark_mode else 0.88), 3)
+            alpha = round(val * (0.96 if dark_mode else 0.95), 3)
             cx = round(
                 col * pixel_w + pixel_w / 2 + math.sin(row * 0.7 + col * 1.3) * 1.5, 1
             )
             cy = round(
                 row * pixel_h + pixel_h / 2 + math.cos(row * 1.1 + col * 0.9) * 1.5, 1
             )
-            r = round(2.5 + val * 3.5, 1)
+            r = round(3.5 + val * 3.5, 1)
             breathe_dur = round(5.0 + (row * 0.3 + col * 0.7) % 6.0, 1)
             breathe_delay = round(delay + 1.5, 2)
             if snapshot_mode:
@@ -616,7 +616,7 @@ def _render_svg(
                     flash_alpha = round((val - 0.5) * 2.0 * 0.35 * flash_progress, 3)
                     cx = round(col * pixel_w + pixel_w / 2, 1)
                     cy = round(row * pixel_h + pixel_h / 2, 1)
-                    r = round(2.5 + val * 3.5, 1)
+                    r = round(3.5 + val * 3.5, 1)
                     parts.append(
                         f'<circle cx="{cx}" cy="{cy}" r="{r}" '
                         f'fill="white" opacity="{flash_alpha}"/>\n'
@@ -634,7 +634,7 @@ def _render_svg(
                 flash_alpha = round((val - 0.5) * 2.0 * 0.35, 3)
                 cx = round(col * pixel_w + pixel_w / 2, 1)
                 cy = round(row * pixel_h + pixel_h / 2, 1)
-                r = round(2.5 + val * 3.5, 1)
+                r = round(3.5 + val * 3.5, 1)
                 parts.append(
                     f'<circle cx="{cx}" cy="{cy}" r="{r}" '
                     f'fill="white" opacity="{flash_alpha}"/>\n'

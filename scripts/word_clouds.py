@@ -110,9 +110,14 @@ def _generate_classic(
         height=height,
         scale=4,
         mode="RGBA",
-        relative_scaling=0,
-        colormap="jet",
+        relative_scaling=0.5,
+        colormap="cool",
         contour_color="white",
+        prefer_horizontal=0.85,
+        min_font_size=6,
+        max_font_size=200,
+        font_step=2,
+        collocations=False,
     )
     wc.generate_from_frequencies(frequencies)
     wc.to_file(str(output_path))
@@ -147,10 +152,12 @@ def _generate_svg(
 # High-level generators
 # ---------------------------------------------------------------------------
 
-# Default color palettes per source type
+# Default color palettes per source type -- chosen for visual distinctiveness
+# and readability: ocean for topics (cool, professional), aurora for languages
+# (diverse hues matching the variety of programming languages).
 _SOURCE_COLOR_DEFAULTS: dict[str, str] = {
-    "topics": "rainbow",
-    "languages": "sunset",
+    "topics": "ocean",
+    "languages": "aurora",
 }
 
 

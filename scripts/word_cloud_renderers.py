@@ -7,10 +7,14 @@ Four canonical SOTA approaches for generating word clouds as pure SVG:
   - ShapedRenderer: words packed inside a shape boundary
 
 Visual enhancements:
-  - OKLCH perceptually uniform color palettes (gradient, neon, sunset)
-  - Power-law font sizing for better visual contrast
-  - Subtle glow filter on largest words for depth
-  - Varied rotation angles for organic placement
+  - OKLCH perceptually uniform color palettes (ocean, flora, sunset, aurora, etc.)
+  - Power-law font sizing with exponent tuning for visual hierarchy
+  - Multi-layer glow/shadow filters for depth and dimensionality
+  - Font weight variation tied to frequency for typographic hierarchy
+  - Curated rotation angles biased toward readability
+  - Modern font stacks with system font fallbacks
+  - Subtle background treatments with radial gradients
+  - Opacity modulation for atmospheric depth
 """
 
 from __future__ import annotations
@@ -41,7 +45,8 @@ class PlacedWord:
     rotation: float  # degrees
     color: str  # CSS color string
     font_weight: int = 400
-    font_family: str = "sans-serif"
+    font_family: str = "Inter, 'Segoe UI', system-ui, -apple-system, sans-serif"
+    opacity: float = 1.0
 
 
 @dataclass(slots=True)
@@ -84,6 +89,12 @@ class BBox:
 
 _DEFAULT_HUE = 210  # blue
 
+# -- Modern font stack -------------------------------------------------------
+# Prioritizes Inter (widely available, excellent for UI/data-viz), then
+# system UI fonts, then generic sans-serif.
+FONT_STACK = "Inter, 'Segoe UI', system-ui, -apple-system, sans-serif"
+FONT_STACK_MONO = "'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace"
+
 def _hsl_to_css(h: float, s: float, lightness: float) -> str:
     """Convert HSL (0-360, 0-1, 0-1) to hex CSS color."""
     r, g, b = colorsys.hls_to_rgb(h / 360.0, lightness, s)
@@ -118,6 +129,25 @@ def _oklch_to_hex(L: float, C: float, H: float) -> str:
     return f"#{int(rv * 255):02x}{int(gv * 255):02x}{int(bv * 255):02x}"
 
 
+def _interpolate_anchors(
+    t: float,
+    anchors: list[tuple[float, float, float]],
+) -> tuple[float, float, float]:
+    """Smoothly interpolate between OKLCH anchor points.
+
+    *anchors* is a list of (hue, chroma, lightness) tuples.
+    *t* ranges from 0 to 1.
+    """
+    pos = t * (len(anchors) - 1)
+    lo = int(pos)
+    hi = min(lo + 1, len(anchors) - 1)
+    frac = pos - lo
+    h = anchors[lo][0] + frac * (anchors[hi][0] - anchors[lo][0])
+    c = anchors[lo][1] + frac * (anchors[hi][1] - anchors[lo][1])
+    lv = anchors[lo][2] + frac * (anchors[hi][2] - anchors[lo][2])
+    return h, c, lv
+
+
 # -- Original (legacy) color functions --------------------------------------
 
 def primary_color_func(index: int, total: int) -> str:
@@ -142,19 +172,17 @@ def triadic_color_func(index: int, total: int) -> str:
     return _hsl_to_css(hue, 0.75, lightness)
 
 
-# -- New vibrant OKLCH-based color functions --------------------------------
+# -- OKLCH-based color functions (perceptually uniform) ----------------------
 
 def gradient_color_func(index: int, total: int) -> str:
-    """Smooth multi-hue gradient: purple -> blue -> cyan -> green.
+    """Smooth multi-hue gradient: indigo -> blue -> teal -> emerald.
 
     Uses OKLCH for perceptually uniform spacing across the spectrum.
     """
     t = index / max(total - 1, 1)
-    # Sweep hue from 300 (purple) through 240 (blue), 200 (cyan), to 145 (green)
-    hue = 300 - t * 155  # 300 -> 145
-    # Vary lightness subtly: brighter in the middle, deeper at the ends
-    lightness = 0.62 + 0.12 * math.sin(t * math.pi)
-    chroma = 0.18 + 0.06 * math.sin(t * math.pi * 2)
+    hue = 280 - t * 140  # 280 (indigo) -> 140 (emerald)
+    lightness = 0.58 + 0.14 * math.sin(t * math.pi)
+    chroma = 0.20 + 0.05 * math.sin(t * math.pi * 2)
     return _oklch_to_hex(lightness, chroma, hue)
 
 
@@ -163,61 +191,113 @@ def neon_on_dark_func(index: int, total: int) -> str:
 
     Designed for dark backgrounds -- high chroma, high lightness.
     """
-    # Four neon anchor hues with ultra-high chroma for maximum vibrancy
-    neon_hues = [
+    neon_anchors = [
         (250, 0.28, 0.72),   # electric blue
         (330, 0.30, 0.70),   # hot pink
         (155, 0.28, 0.78),   # cyber green
         (80, 0.26, 0.80),    # amber/lime
     ]
     t = index / max(total - 1, 1)
-    # Smoothly interpolate around the neon palette
-    pos = t * (len(neon_hues) - 1)
-    lo = int(pos)
-    hi = min(lo + 1, len(neon_hues) - 1)
-    frac = pos - lo
-    h = neon_hues[lo][0] + frac * (neon_hues[hi][0] - neon_hues[lo][0])
-    c = neon_hues[lo][1] + frac * (neon_hues[hi][1] - neon_hues[lo][1])
-    lv = neon_hues[lo][2] + frac * (neon_hues[hi][2] - neon_hues[lo][2])
+    h, c, lv = _interpolate_anchors(t, neon_anchors)
     return _oklch_to_hex(lv, c, h)
 
 
 def sunset_color_func(index: int, total: int) -> str:
-    """Warm sunset gradient: deep purple -> magenta -> coral -> gold.
+    """Warm sunset gradient: deep plum -> magenta -> coral -> amber -> gold.
 
-    Rich, warm palette inspired by golden-hour sky colors.
+    Rich, warm palette inspired by golden-hour sky colors with smooth
+    five-stop interpolation for nuance.
     """
+    sunset_anchors = [
+        (310, 0.22, 0.48),   # deep plum
+        (340, 0.26, 0.58),   # magenta rose
+        (15,  0.24, 0.65),   # warm coral
+        (40,  0.22, 0.72),   # amber
+        (65,  0.20, 0.78),   # gold
+    ]
     t = index / max(total - 1, 1)
-    # Hue sweep: 310 (deep purple) -> 350 (magenta) -> 25 (coral) -> 60 (gold)
-    # Use piecewise interpolation for smooth wrap-around
-    if t < 0.33:
-        local_t = t / 0.33
-        hue = 310 + local_t * 40  # 310 -> 350
-        chroma = 0.24 + local_t * 0.04
-    elif t < 0.66:
-        local_t = (t - 0.33) / 0.33
-        hue = 350 + local_t * 35  # 350 -> 385 (== 25)
-        if hue >= 360:
-            hue -= 360
-        chroma = 0.28 - local_t * 0.02
-    else:
-        local_t = (t - 0.66) / 0.34
-        hue = 25 + local_t * 35  # 25 -> 60
-        chroma = 0.26 - local_t * 0.04
-    lightness = 0.55 + 0.20 * t  # darker at purple end, lighter at gold end
-    return _oklch_to_hex(lightness, chroma, hue)
+    h, c, lv = _interpolate_anchors(t, sunset_anchors)
+    return _oklch_to_hex(lv, c, h)
 
 
 def rainbow_color_func(index: int, total: int) -> str:
     """Full-spectrum rainbow sweep across 360 degrees of OKLCH hue.
 
-    Maximum color diversity — every word gets a distinct hue.
+    Maximum color diversity with controlled lightness for readability.
     """
     t = index / max(total - 1, 1)
     hue = t * 360.0
-    lightness = 0.65 + 0.08 * math.sin(t * math.pi * 2)
+    lightness = 0.62 + 0.10 * math.sin(t * math.pi * 2)
     chroma = 0.22 + 0.04 * math.sin(t * math.pi * 3)
     return _oklch_to_hex(lightness, chroma, hue)
+
+
+def ocean_color_func(index: int, total: int) -> str:
+    """Deep ocean palette: navy -> sapphire -> cerulean -> aqua -> seafoam.
+
+    Cool-toned, sophisticated palette with high contrast against white.
+    """
+    ocean_anchors = [
+        (255, 0.18, 0.38),   # deep navy
+        (240, 0.22, 0.48),   # sapphire
+        (220, 0.20, 0.56),   # cerulean
+        (195, 0.18, 0.62),   # aqua
+        (170, 0.16, 0.68),   # seafoam
+    ]
+    t = index / max(total - 1, 1)
+    h, c, lv = _interpolate_anchors(t, ocean_anchors)
+    return _oklch_to_hex(lv, c, h)
+
+
+def flora_color_func(index: int, total: int) -> str:
+    """Botanical palette: sage -> emerald -> chartreuse -> olive -> teal.
+
+    Earthy, natural tones with enough contrast for readability.
+    """
+    flora_anchors = [
+        (155, 0.14, 0.52),   # sage
+        (145, 0.20, 0.56),   # emerald
+        (120, 0.22, 0.62),   # chartreuse
+        (105, 0.16, 0.50),   # olive
+        (180, 0.16, 0.48),   # teal
+    ]
+    t = index / max(total - 1, 1)
+    h, c, lv = _interpolate_anchors(t, flora_anchors)
+    return _oklch_to_hex(lv, c, h)
+
+
+def aurora_color_func(index: int, total: int) -> str:
+    """Northern lights palette: violet -> cyan -> green -> pink -> lavender.
+
+    Ethereal, luminous colors inspired by aurora borealis.
+    """
+    aurora_anchors = [
+        (290, 0.22, 0.55),   # violet
+        (200, 0.20, 0.65),   # cyan
+        (150, 0.22, 0.60),   # green
+        (340, 0.20, 0.62),   # pink
+        (280, 0.16, 0.68),   # lavender
+    ]
+    t = index / max(total - 1, 1)
+    h, c, lv = _interpolate_anchors(t, aurora_anchors)
+    return _oklch_to_hex(lv, c, h)
+
+
+def ember_color_func(index: int, total: int) -> str:
+    """Warm ember palette: crimson -> burnt orange -> copper -> terracotta.
+
+    Rich, warm tones with depth, suitable for topics/skills emphasis.
+    """
+    ember_anchors = [
+        (15, 0.24, 0.48),    # crimson
+        (30, 0.22, 0.56),    # burnt orange
+        (45, 0.20, 0.62),    # copper
+        (25, 0.18, 0.52),    # terracotta
+        (5, 0.22, 0.44),     # deep red
+    ]
+    t = index / max(total - 1, 1)
+    h, c, lv = _interpolate_anchors(t, ember_anchors)
+    return _oklch_to_hex(lv, c, h)
 
 
 COLOR_FUNCS = {
@@ -229,21 +309,34 @@ COLOR_FUNCS = {
     "neon": neon_on_dark_func,
     "sunset": sunset_color_func,
     "rainbow": rainbow_color_func,
+    "ocean": ocean_color_func,
+    "flora": flora_color_func,
+    "aurora": aurora_color_func,
+    "ember": ember_color_func,
 }
 
-# Curated palette for the typographic renderer
-TYPOGRAPHIC_PALETTE = ["#60A5FA", "#34D399", "#F59E0B", "#EF4444", "#A78BFA"]
+# Curated palette for the typographic renderer -- higher contrast, balanced hues
+TYPOGRAPHIC_PALETTE = [
+    "#2563EB",  # royal blue
+    "#059669",  # emerald
+    "#D97706",  # amber
+    "#7C3AED",  # violet
+    "#DC2626",  # crimson
+    "#0891B2",  # cyan
+    "#BE185D",  # rose
+    "#4F46E5",  # indigo
+]
 
-# Cluster-specific palettes (hue families)
+# Cluster-specific palettes (hue families) -- refined for cohesion and contrast
 CLUSTER_PALETTES: dict[str, list[str]] = {
-    "AI/ML": ["#7C3AED", "#8B5CF6", "#A78BFA", "#C4B5FD", "#6D28D9"],
-    "Web": ["#2563EB", "#3B82F6", "#60A5FA", "#93C5FD", "#1D4ED8"],
-    "Data": ["#059669", "#10B981", "#34D399", "#6EE7B7", "#047857"],
-    "DevOps": ["#D97706", "#F59E0B", "#FBBF24", "#FCD34D", "#B45309"],
-    "Languages": ["#DC2626", "#EF4444", "#F87171", "#FCA5A5", "#B91C1C"],
-    "Tools": ["#0891B2", "#06B6D4", "#22D3EE", "#67E8F9", "#0E7490"],
-    "Security": ["#BE185D", "#EC4899", "#F472B6", "#F9A8D4", "#9D174D"],
-    "Other": ["#4B5563", "#6B7280", "#9CA3AF", "#D1D5DB", "#374151"],
+    "AI/ML": ["#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#5B21B6"],
+    "Web": ["#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#1E40AF"],
+    "Data": ["#047857", "#059669", "#10B981", "#34D399", "#065F46"],
+    "DevOps": ["#B45309", "#D97706", "#F59E0B", "#FBBF24", "#92400E"],
+    "Languages": ["#B91C1C", "#DC2626", "#EF4444", "#F87171", "#991B1B"],
+    "Tools": ["#0E7490", "#0891B2", "#06B6D4", "#22D3EE", "#155E75"],
+    "Security": ["#9D174D", "#BE185D", "#EC4899", "#F472B6", "#831843"],
+    "Other": ["#374151", "#4B5563", "#6B7280", "#9CA3AF", "#1F2937"],
 }
 
 # Semantic clusters for technology keywords
@@ -346,12 +439,12 @@ class SvgWordCloudEngine(ABC):
         self,
         width: int = 800,
         height: int = 500,
-        font_family: str = "sans-serif",
+        font_family: str = FONT_STACK,
         color_func_name: str = "gradient",
         seed: int | None = 42,
-        padding: float = 1.0,
-        min_font_size: float = 5.0,
-        max_font_size: float = 60.0,
+        padding: float = 2.0,
+        min_font_size: float = 7.0,
+        max_font_size: float = 72.0,
     ) -> None:
         self.width = width
         self.height = height
@@ -374,14 +467,51 @@ class SvgWordCloudEngine(ABC):
     ) -> float:
         """Map a frequency value to a font size using power-law scaling.
 
-        Uses exponent 0.4 to compress the size range, giving more canvas area
-        to the many small words while keeping high-frequency words prominent.
+        Uses exponent 0.5 (square root) to create a strong visual hierarchy
+        where the top words are substantially larger, while mid-range words
+        remain clearly readable. This produces a more dramatic and visually
+        appealing size contrast than linear scaling.
         """
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
-        t_scaled = t ** 0.4
+        t_scaled = t ** 0.5
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
+
+    def _frequency_to_weight(
+        self,
+        freq: float,
+        min_freq: float,
+        max_freq: float,
+    ) -> int:
+        """Map frequency to font-weight for visual hierarchy.
+
+        Top-frequency words get bold (700-800), mid-range get medium (500),
+        low-frequency get regular (400). Steps of 100.
+        """
+        if max_freq == min_freq:
+            return 500
+        t = (freq - min_freq) / (max_freq - min_freq)
+        # Non-linear: emphasize boldness at the top end
+        raw = 400 + (t ** 0.6) * 400  # 400 -> 800
+        return int(round(raw / 100)) * 100
+
+    def _frequency_to_opacity(
+        self,
+        freq: float,
+        min_freq: float,
+        max_freq: float,
+    ) -> float:
+        """Map frequency to opacity for atmospheric depth.
+
+        Highest-frequency words are fully opaque; lowest get slightly
+        transparent (0.65) to create a sense of depth without losing
+        readability.
+        """
+        if max_freq == min_freq:
+            return 1.0
+        t = (freq - min_freq) / (max_freq - min_freq)
+        return 0.65 + 0.35 * (t ** 0.4)
 
     # -- BBox estimation ----------------------------------------------------
 
@@ -442,27 +572,56 @@ class SvgWordCloudEngine(ABC):
 
     @staticmethod
     def _add_glow_filter(root: ET.Element) -> ET.Element:
-        """Add a subtle glow/depth SVG filter definition to the root element.
+        """Add SVG filter definitions to the root element.
 
-        The filter creates a soft shadow behind text for a sense of depth.
-        Applied only to the top 20% largest words to avoid visual noise.
+        Creates two filters:
+        - ``wc-glow``: soft colored glow behind the top 20% of words, giving
+          them a luminous halo effect that suggests importance and depth.
+        - ``wc-shadow``: subtle drop shadow for secondary words, adding a
+          gentle lift off the background.
 
         Returns the <defs> element so callers can append additional definitions.
         """
         defs = ET.SubElement(root, "defs")
+
+        # Primary glow for large/important words
         filt = ET.SubElement(
             defs, "filter",
             id="wc-glow",
-            x="-20%", y="-20%",
-            width="140%", height="140%",
+            x="-30%", y="-30%",
+            width="160%", height="160%",
         )
+        # Layer 1: soft outer glow
         ET.SubElement(
             filt, "feGaussianBlur",
-            attrib={"in": "SourceGraphic", "stdDeviation": "1.0", "result": "blur"},
+            attrib={"in": "SourceGraphic", "stdDeviation": "2.5", "result": "glow1"},
+        )
+        # Layer 2: tighter inner glow for crispness
+        ET.SubElement(
+            filt, "feGaussianBlur",
+            attrib={"in": "SourceGraphic", "stdDeviation": "0.8", "result": "glow2"},
         )
         merge = ET.SubElement(filt, "feMerge")
-        ET.SubElement(merge, "feMergeNode", attrib={"in": "blur"})
+        ET.SubElement(merge, "feMergeNode", attrib={"in": "glow1"})
+        ET.SubElement(merge, "feMergeNode", attrib={"in": "glow2"})
         ET.SubElement(merge, "feMergeNode", attrib={"in": "SourceGraphic"})
+
+        # Subtle drop shadow for mid-tier words
+        shadow_filt = ET.SubElement(
+            defs, "filter",
+            id="wc-shadow",
+            x="-10%", y="-10%",
+            width="120%", height="120%",
+        )
+        ET.SubElement(
+            shadow_filt, "feDropShadow",
+            attrib={
+                "dx": "0", "dy": "1",
+                "stdDeviation": "0.5",
+                "flood-color": "#00000020",
+            },
+        )
+
         return defs
 
     def _glow_size_threshold(self, placed_words: list[PlacedWord]) -> float:
@@ -474,7 +633,14 @@ class SvgWordCloudEngine(ABC):
         return sizes[min(cutoff_idx, len(sizes) - 1)]
 
     def render_svg(self, placed_words: list[PlacedWord]) -> str:
-        """Render placed words into an SVG string with optional glow on large words."""
+        """Render placed words into a polished SVG with layered visual effects.
+
+        Visual hierarchy is achieved through four tiers:
+        - **Tier 1** (top ~10%): glow filter + bold weight + letter-spacing
+        - **Tier 2** (top ~30%): drop shadow + semi-bold weight
+        - **Tier 3** (middle): standard rendering, medium weight
+        - **Tier 4** (smallest): reduced opacity for atmospheric depth
+        """
         root = ET.Element(
             "svg",
             xmlns="http://www.w3.org/2000/svg",
@@ -483,23 +649,25 @@ class SvgWordCloudEngine(ABC):
             viewBox=f"0 0 {self.width} {self.height}",
         )
 
-        # Add glow filter and background gradient definitions
+        # Add filter definitions
         defs = self._add_glow_filter(root)
 
-        # Subtle radial background gradient for depth
+        # Soft radial vignette background -- white center fading to a very
+        # faint cool gray at the edges, providing subtle depth without
+        # competing with the words.
         radial = ET.SubElement(
             defs, "radialGradient",
             id="wc-bg-grad",
-            cx="50%", cy="50%", r="70%",
+            cx="50%", cy="50%", r="75%",
         )
         ET.SubElement(radial, "stop", offset="0%", attrib={
-            "stop-color": "#ffffff", "stop-opacity": "0.06",
+            "stop-color": "#fafbfc", "stop-opacity": "1",
         })
         ET.SubElement(radial, "stop", offset="100%", attrib={
-            "stop-color": "#000000", "stop-opacity": "0.03",
+            "stop-color": "#f0f1f3", "stop-opacity": "1",
         })
 
-        # Background rect with subtle radial gradient
+        # Background rect
         ET.SubElement(
             root,
             "rect",
@@ -508,14 +676,19 @@ class SvgWordCloudEngine(ABC):
             fill="url(#wc-bg-grad)",
         )
 
+        # Compute tier thresholds from placed word sizes
         glow_threshold = self._glow_size_threshold(placed_words)
 
-        # Determine large-word threshold for letter-spacing (top ~10%)
-        large_threshold = float("inf")
+        # Top ~10% for letter-spacing / tier-1 treatment
+        tier1_threshold = float("inf")
+        # Top ~30% for shadow / tier-2 treatment
+        tier2_threshold = float("inf")
         if placed_words:
             sizes = sorted((pw.font_size for pw in placed_words), reverse=True)
-            large_idx = max(1, int(len(sizes) * 0.1))
-            large_threshold = sizes[min(large_idx, len(sizes) - 1)]
+            t1_idx = max(1, int(len(sizes) * 0.10))
+            tier1_threshold = sizes[min(t1_idx, len(sizes) - 1)]
+            t2_idx = max(1, int(len(sizes) * 0.30))
+            tier2_threshold = sizes[min(t2_idx, len(sizes) - 1)]
 
         for pw in placed_words:
             attrs: dict[str, str] = {
@@ -528,16 +701,28 @@ class SvgWordCloudEngine(ABC):
                 "text-anchor": "middle",
                 "dominant-baseline": "central",
             }
+
+            # Opacity for atmospheric depth
+            if pw.opacity < 1.0:
+                attrs["opacity"] = f"{pw.opacity:.2f}"
+
             if pw.rotation != 0:
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
-            # Apply glow to the top 20% largest words
+
+            # Tier 1: largest words get luminous glow + generous letter-spacing
             if pw.font_size >= glow_threshold:
                 attrs["filter"] = "url(#wc-glow)"
-            # Slight letter-spacing on the largest words for breathing room
-            if pw.font_size >= large_threshold:
-                attrs["letter-spacing"] = "0.5"
+            # Tier 2: mid-large words get subtle drop shadow
+            elif pw.font_size >= tier2_threshold:
+                attrs["filter"] = "url(#wc-shadow)"
+
+            # Letter-spacing scales with font size for top words
+            if pw.font_size >= tier1_threshold:
+                spacing = max(0.5, pw.font_size * 0.02)
+                attrs["letter-spacing"] = f"{spacing:.1f}"
+
             elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 
@@ -585,11 +770,13 @@ class WordleRenderer(SvgWordCloudEngine):
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        # Rotation biased toward horizontal but with occasional dramatic angles
+        # Rotation strongly biased toward horizontal for readability,
+        # with occasional 90-degree and subtle tilts for organic variety.
+        # Avoids extreme angles (45, -45) that hurt legibility.
         if rotation_choices is not None:
             self.rotation_choices = rotation_choices
         elif allow_angled:
-            self.rotation_choices = [0, 0, 0, 0, 90, -20, 15, -10, 20, -15, 45, -45]
+            self.rotation_choices = [0, 0, 0, 0, 0, 0, 90, 90, -8, 8, -5, 5]
         else:
             self.rotation_choices = [0, 90]
         self.spiral_tightness = spiral_tightness
@@ -642,7 +829,13 @@ class WordleRenderer(SvgWordCloudEngine):
 
         for idx, (word, freq) in enumerate(sorted_words):
             font_size = self._frequency_to_size(freq, min_freq, max_freq)
-            rotation = self._rng.choice(self.rotation_choices)
+            font_weight = self._frequency_to_weight(freq, min_freq, max_freq)
+            opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
+            # Large words stay horizontal for readability; smaller ones get rotation
+            if font_size > (self.min_font_size + self.max_font_size) * 0.6:
+                rotation = self._rng.choice([0, 0, 0, 0, 90])
+            else:
+                rotation = self._rng.choice(self.rotation_choices)
             color_idx = int(((idx * _GOLDEN_ANGLE_FRAC) % 1.0) * total)
             color = self.color_func(color_idx, total)
 
@@ -659,7 +852,9 @@ class WordleRenderer(SvgWordCloudEngine):
                             font_size=font_size,
                             rotation=rotation,
                             color=color,
+                            font_weight=font_weight,
                             font_family=self.font_family,
+                            opacity=opacity,
                         )
                     )
                     placed_bboxes.append(bbox)
@@ -683,7 +878,9 @@ class WordleRenderer(SvgWordCloudEngine):
                                     font_size=reduced,
                                     rotation=0,
                                     color=color,
+                                    font_weight=font_weight,
                                     font_family=self.font_family,
+                                    opacity=opacity,
                                 )
                             )
                             placed_bboxes.append(bbox)
@@ -692,7 +889,7 @@ class WordleRenderer(SvgWordCloudEngine):
                     if found:
                         break
 
-            # Grid-scan final fallback — guarantees placement
+            # Grid-scan final fallback -- guarantees placement
             if not found:
                 grid_size = _ABSOLUTE_MIN_FONT
                 for gy in range(0, int(self.height), int(grid_size * 2)):
@@ -709,7 +906,9 @@ class WordleRenderer(SvgWordCloudEngine):
                                     font_size=grid_size,
                                     rotation=0,
                                     color=color,
+                                    font_weight=400,
                                     font_family=self.font_family,
+                                    opacity=0.6,
                                 )
                             )
                             placed_bboxes.append(bbox)
@@ -805,9 +1004,9 @@ class ClusteredRenderer(SvgWordCloudEngine):
             cx, cy = sx + sw / 2, sy + sh / 2
             palette = CLUSTER_PALETTES.get(cluster_name, CLUSTER_PALETTES["Other"])
 
-            # Optional faint cluster label
+            # Optional faint cluster label -- rendered as a watermark behind words
             if self.show_cluster_labels:
-                label_size = min(sw, sh) * 0.18
+                label_size = min(sw, sh) * 0.16
                 placed.append(
                     PlacedWord(
                         text=cluster_name,
@@ -815,9 +1014,10 @@ class ClusteredRenderer(SvgWordCloudEngine):
                         y=cy,
                         font_size=label_size,
                         rotation=0,
-                        color="#e5e7eb",  # very faint gray
-                        font_weight=300,
+                        color="#e8eaed",  # very faint gray watermark
+                        font_weight=200,
                         font_family=self.font_family,
+                        opacity=0.5,
                     )
                 )
 
@@ -827,13 +1027,15 @@ class ClusteredRenderer(SvgWordCloudEngine):
 
             for local_idx, (word, freq) in enumerate(sorted_words):
                 font_size = self._frequency_to_size(freq, min_freq, max_freq)
+                font_weight = self._frequency_to_weight(freq, min_freq, max_freq)
+                opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
                 # Scale font down slightly so words fit in their sector
                 font_size = min(font_size, sh * 0.4, sw * 0.3)
                 if font_size < self.min_font_size:
                     font_size = self.min_font_size
 
                 color = palette[local_idx % len(palette)]
-                rotation = self._rng.choice([0, 0, 0, 90])  # bias toward horizontal
+                rotation = self._rng.choice([0, 0, 0, 0, 90])  # strong horizontal bias
 
                 step = max(1.0, font_size * 0.12)
                 found = False
@@ -855,7 +1057,9 @@ class ClusteredRenderer(SvgWordCloudEngine):
                                 font_size=font_size,
                                 rotation=rotation,
                                 color=color,
+                                font_weight=font_weight,
                                 font_family=self.font_family,
+                                opacity=opacity,
                             )
                         )
                         placed_bboxes.append(bbox)
@@ -883,7 +1087,9 @@ class ClusteredRenderer(SvgWordCloudEngine):
                                         font_size=reduced,
                                         rotation=0,
                                         color=color,
+                                        font_weight=font_weight,
                                         font_family=self.font_family,
+                                        opacity=opacity,
                                     )
                                 )
                                 placed_bboxes.append(bbox)
@@ -917,9 +1123,9 @@ class TypographicRenderer(SvgWordCloudEngine):
         self,
         *,
         palette: list[str] | None = None,
-        line_spacing: float = 1.5,
-        margin: float = 20.0,
-        weight_range: tuple[int, int] = (200, 900),
+        line_spacing: float = 1.4,
+        margin: float = 28.0,
+        weight_range: tuple[int, int] = (300, 800),
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -956,6 +1162,7 @@ class TypographicRenderer(SvgWordCloudEngine):
         for idx, (word, freq) in enumerate(sorted_words):
             font_size = self._frequency_to_size(freq, min_freq, max_freq)
             weight = self._freq_to_weight(freq, min_freq, max_freq)
+            opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
             color = self.palette[idx % len(self.palette)]
             word_w = self._estimate_text_width(word, font_size)
             word_h = self._estimate_text_height(font_size) * self.line_spacing
@@ -982,10 +1189,11 @@ class TypographicRenderer(SvgWordCloudEngine):
                     color=color,
                     font_weight=weight,
                     font_family=self.font_family,
+                    opacity=opacity,
                 )
             )
 
-            cursor_x += word_w + font_size * 0.4  # gap between words
+            cursor_x += word_w + font_size * 0.5  # slightly more generous word gap
 
         return placed
 
@@ -1126,7 +1334,9 @@ class ShapedRenderer(SvgWordCloudEngine):
 
         for idx, (word, freq) in enumerate(sorted_words):
             font_size = self._frequency_to_size(freq, min_freq, max_freq)
-            rotation = self._rng.choice([0, 0, 90])  # bias horizontal
+            font_weight = self._frequency_to_weight(freq, min_freq, max_freq)
+            opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
+            rotation = self._rng.choice([0, 0, 0, 0, 90])  # strong horizontal bias
             color = self.color_func(idx, total)
 
             step = max(1.0, font_size * 0.12)
@@ -1145,7 +1355,9 @@ class ShapedRenderer(SvgWordCloudEngine):
                             font_size=font_size,
                             rotation=rotation,
                             color=color,
+                            font_weight=font_weight,
                             font_family=self.font_family,
+                            opacity=opacity,
                         )
                     )
                     placed_bboxes.append(bbox)
@@ -1171,7 +1383,9 @@ class ShapedRenderer(SvgWordCloudEngine):
                                     font_size=reduced,
                                     rotation=0,
                                     color=color,
+                                    font_weight=font_weight,
                                     font_family=self.font_family,
+                                    opacity=opacity,
                                 )
                             )
                             placed_bboxes.append(bbox)
@@ -1195,14 +1409,37 @@ class ShapedRenderer(SvgWordCloudEngine):
             height=str(self.height),
             viewBox=f"0 0 {self.width} {self.height}",
         )
+
+        # Filters and background
+        defs = self._add_glow_filter(root)
+        radial = ET.SubElement(
+            defs, "radialGradient",
+            id="wc-bg-grad",
+            cx="50%", cy="50%", r="75%",
+        )
+        ET.SubElement(radial, "stop", offset="0%", attrib={
+            "stop-color": "#fafbfc", "stop-opacity": "1",
+        })
+        ET.SubElement(radial, "stop", offset="100%", attrib={
+            "stop-color": "#f0f1f3", "stop-opacity": "1",
+        })
         ET.SubElement(
             root, "rect",
-            width=str(self.width), height=str(self.height), fill="none",
+            width=str(self.width), height=str(self.height),
+            fill="url(#wc-bg-grad)",
         )
 
-        # Add glow filter
-        self._add_glow_filter(root)
         glow_threshold = self._glow_size_threshold(placed_words)
+
+        # Tier thresholds
+        tier1_threshold = float("inf")
+        tier2_threshold = float("inf")
+        if placed_words:
+            sizes = sorted((pw.font_size for pw in placed_words), reverse=True)
+            t1_idx = max(1, int(len(sizes) * 0.10))
+            tier1_threshold = sizes[min(t1_idx, len(sizes) - 1)]
+            t2_idx = max(1, int(len(sizes) * 0.30))
+            tier2_threshold = sizes[min(t2_idx, len(sizes) - 1)]
 
         # Shape outline polygon
         points_str = " ".join(f"{x:.1f},{y:.1f}" for x, y in self._polygon)
@@ -1213,7 +1450,7 @@ class ShapedRenderer(SvgWordCloudEngine):
             stroke=self.outline_color,
         ).set("stroke-width", str(self.outline_width))
 
-        # Text elements
+        # Text elements with full visual hierarchy
         for pw in placed_words:
             attrs: dict[str, str] = {
                 "x": f"{pw.x:.1f}",
@@ -1225,12 +1462,19 @@ class ShapedRenderer(SvgWordCloudEngine):
                 "text-anchor": "middle",
                 "dominant-baseline": "central",
             }
+            if pw.opacity < 1.0:
+                attrs["opacity"] = f"{pw.opacity:.2f}"
             if pw.rotation != 0:
                 attrs["transform"] = (
                     f"rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"
                 )
             if pw.font_size >= glow_threshold:
                 attrs["filter"] = "url(#wc-glow)"
+            elif pw.font_size >= tier2_threshold:
+                attrs["filter"] = "url(#wc-shadow)"
+            if pw.font_size >= tier1_threshold:
+                spacing = max(0.5, pw.font_size * 0.02)
+                attrs["letter-spacing"] = f"{spacing:.1f}"
             elem = ET.SubElement(root, "text", attrib=attrs)
             elem.text = pw.text
 

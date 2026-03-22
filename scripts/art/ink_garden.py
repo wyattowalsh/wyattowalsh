@@ -183,7 +183,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
              f"Q{cp_b3x:.1f},{cp_b3y:.1f} {b3x:.1f},{b3y:.1f} "
              f"Q{cp_tipx:.1f},{cp_tipy:.1f} {tip_x:.1f},{tip_y:.1f} "
              f"Q{back_cp1x:.1f},{back_cp1y:.1f} {lx:.1f},{ly:.1f} Z")
-        P.append(f'<path d="{d}" fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
+        P.append(f'<path d="{d}" fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
         if has_vein and budget_ok():
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
                      f'stroke="{stroke_c}" stroke-width="0.25" opacity="0.4"/>')
@@ -195,7 +195,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         fill_c = oklch_fn(0.53, 0.19, lh)
         stroke_c = oklch_fn(0.40, 0.14, lh)
         P.append(f'<circle cx="{cx_l:.1f}" cy="{cy_l:.1f}" r="{r:.1f}" '
-                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
+                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
         P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{cx_l:.1f}" y2="{cy_l:.1f}" '
                  f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.4"/>')
 
@@ -205,7 +205,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         stroke_c = oklch_fn(0.40, 0.16, lh)
         fill_c = oklch_fn(0.50, 0.19, lh)
         P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.55"/>')
+                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.68"/>')
         perp = la + math.pi / 2
         for pi in range(1, 4):
             t = pi / 4.0
@@ -231,7 +231,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         fill_c = oklch_fn(0.50, 0.19, lh)
         stroke_c = oklch_fn(0.38, 0.14, lh)
         P.append(f'<ellipse cx="{cx_l:.1f}" cy="{cy_l:.1f}" rx="{rx:.1f}" ry="{ry:.1f}" '
-                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.3" '
+                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.3" '
                  f'transform="rotate({math.degrees(la):.0f},{cx_l:.1f},{cy_l:.1f})"/>')
 
     elif leaf_shape == "needle_cluster":
@@ -242,7 +242,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
             nl = ls * rng.uniform(0.5, 0.9)
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" '
                      f'x2="{lx + nl * math.cos(na):.1f}" y2="{ly + nl * math.sin(na):.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.5" opacity="0.55"/>')
+                     f'stroke="{stroke_c}" stroke-width="0.5" opacity="0.68"/>')
 
     else:
         # "teardrop" — the original quad-bezier almond shape
@@ -258,7 +258,7 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         stroke_c = oklch_fn(0.38, 0.14, lh)
         P.append(f'<path d="M{lx:.1f},{ly:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
                  f'Q{cp2x:.1f},{cp2y:.1f} {lx:.1f},{ly:.1f}" '
-                 f'fill="{fill_c}" opacity="0.55" stroke="{stroke_c}" stroke-width="0.4"/>')
+                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
         if has_vein and budget_ok():
             P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
                      f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.3"/>')
@@ -667,10 +667,10 @@ def generate(
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
         # Data mapping: commits -> trunk height, total_commits scales globally
         commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
-        main_length = max(30, (50 + min(250, age * 3.0)) * tree_t * commit_factor)
+        main_length = max(50, (70 + min(280, age * 3.5)) * tree_t * commit_factor)
         max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
         # Data mapping: commits -> trunk thickness
-        stem_sw = max(1.8, (2.5 + min(3.0, age * 0.05) + min(1.5, total_commits / 5000.0)) * (0.4 + 0.6 * tree_t))
+        stem_sw = max(2.5, (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0)) * (0.4 + 0.6 * tree_t))
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
         # Data mapping: stars -> bloom density multiplier
@@ -856,7 +856,7 @@ def generate(
                 # Blooms at tips — bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = max(8, 5 + min(18, repo_stars * 0.8))
+                    bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
@@ -951,7 +951,7 @@ def generate(
                 # bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = max(8, 5 + min(18, repo_stars * 0.8))
+                    bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
 
@@ -1347,7 +1347,7 @@ def generate(
     max_bd = max(bd.values()) if bd else 1
 
     # Ground cover (enhanced with fern frondlets, moss patches, clover)
-    for _ in range(25 + int(mat * 80)):
+    for _ in range(40 + int(mat * 120)):
         gcx = rng.uniform(20, WIDTH - 20)
         gcy = ground_y_at(gcx) + rng.uniform(-3, 3)
         r_val = rng.random()

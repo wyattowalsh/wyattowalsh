@@ -746,7 +746,7 @@ def generate(
             g_c = max(0, min(255, int(g_c * sf)))
             b_c = max(0, min(255, int(b_c * sf)))
             mx, my = _grid_to_map(gx, gy, cell_w, cell_h)
-            elev_op = min(0.9, 0.25 + growth_mat * 1.5)
+            elev_op = min(0.9, 0.40 + growth_mat * 1.5)
             elev_when = _date_for_activity_fraction(e)
             P.append(
                 f'<rect x="{mx:.1f}" y="{my:.1f}" width="{cell_w * fill_step + 0.5:.1f}" height="{cell_h * fill_step + 0.5:.1f}" '
@@ -966,7 +966,7 @@ def generate(
                 )
 
     # ── Contour lines (warm brown, Swiss style) ──────────────────
-    n_levels = max(18, min(35, 14 + followers // 8))
+    n_levels = max(24, min(40, 18 + followers // 6))
     levels = [i / n_levels for i in range(1, n_levels)]
     for li, level in enumerate(levels):
         is_index = li % 5 == 0
@@ -975,7 +975,7 @@ def generate(
             continue
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
         # Contour hierarchy: every 5th level (index) gets heavier stroke
-        sw = 0.9 if is_index else 0.35
+        sw = 1.2 if is_index else 0.5
         sc = "#8a4220" if is_index else "#a06838"
         op = (0.7 if is_index else 0.35) * contour_fade
         for chain in chains:
@@ -1336,7 +1336,7 @@ def generate(
             )
 
     # ── Compass rose — complexity controlled by chrome_mat ──────────
-    ccx, ccy, cr = MAP_R - 45, MAP_T + 45, 28
+    ccx, ccy, cr = MAP_R - 45, MAP_T + 45, 32
     if chrome_mat < 0.2:
         P.append(
             f'<polygon points="{ccx},{ccy - cr + 4} {ccx - 5},{ccy} {ccx + 5},{ccy}" '
@@ -1505,10 +1505,10 @@ def generate(
                 gx_l = MAP_L + i * MAP_W / 10
                 gy_l = MAP_T + i * MAP_H / 10
                 P.append(
-                    f'<line x1="{gx_l:.0f}" y1="{MAP_T}" x2="{gx_l:.0f}" y2="{MAP_B}" stroke="#8a8868" stroke-width="0.2" opacity="0.14"/>'
+                    f'<line x1="{gx_l:.0f}" y1="{MAP_T}" x2="{gx_l:.0f}" y2="{MAP_B}" stroke="#8a8868" stroke-width="0.3" opacity="0.20"/>'
                 )
                 P.append(
-                    f'<line x1="{MAP_L}" y1="{gy_l:.0f}" x2="{MAP_R}" y2="{gy_l:.0f}" stroke="#8a8868" stroke-width="0.2" opacity="0.14"/>'
+                    f'<line x1="{MAP_L}" y1="{gy_l:.0f}" x2="{MAP_R}" y2="{gy_l:.0f}" stroke="#8a8868" stroke-width="0.3" opacity="0.20"/>'
                 )
         if chrome_mat > 0.7:
             # + Coordinate tick labels
