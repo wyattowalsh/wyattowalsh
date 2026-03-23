@@ -890,8 +890,8 @@ class SvgRepoCardRenderer:
                 f"{esc(line_text, quote=True)}</text>"
             )
 
-        stat_right = (w - thumb_w - 36) if has_thumb else (w - 20)
-        self._render_stats(lines, card.meta, stat_right, title_y)
+        if not has_thumb:
+            self._render_stats(lines, card.meta, w - 20, title_y)
 
         for line_text in desc_lines:
             lines.append(
@@ -918,6 +918,11 @@ class SvgRepoCardRenderer:
 
         fy = h - 14
         self._render_footer(lines, card, px, fy, lang_name, lang_color)
+        # When thumbnail is present, render stats below the description
+        # instead of in the title row (where they'd overlap the image)
+        if has_thumb:
+            stats_y = desc_y + 6
+            self._render_stats(lines, card.meta, w - 20, stats_y)
 
         lines.append("</svg>")
         return "\n".join(lines)
