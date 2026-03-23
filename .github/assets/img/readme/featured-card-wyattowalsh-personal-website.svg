@@ -23,7 +23,7 @@
 <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter><linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient>
 <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--spark-stroke)" stop-opacity="0.18" /><stop offset="100%" stop-color="var(--spark-stroke)" stop-opacity="0" /></linearGradient>
 </defs>
-<rect class="rc-bg" width="360" height="198" rx="10" filter="url(#shadow)" />
+<rect class="rc-bg" width="360" height="198" rx="10" fill="transparent" filter="url(#shadow)" />
 <rect width="360" height="198" rx="10" fill="url(#glass-grad)" />
 <rect class="rc-border" x="0.5" y="0.5" width="359" height="197" rx="10" fill="none" stroke-width="1" />
 <rect x="1.5" y="1.5" width="357" height="195" rx="9" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />

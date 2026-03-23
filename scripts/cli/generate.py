@@ -447,7 +447,7 @@ def _wc_from_topics(
     out_filename = output_path.name if output_path else "wordcloud_wordle_by_topics.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="clustered",
+        renderer="wordle",
         width=1200,
         height=800,
         max_words=num_terms,
@@ -499,7 +499,7 @@ def _wc_from_languages(
     out_filename = output_path.name if output_path else "wordcloud_wordle_by_languages.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="typographic",
+        renderer="wordle",
         width=1200,
         height=800,
         max_words=num_terms,

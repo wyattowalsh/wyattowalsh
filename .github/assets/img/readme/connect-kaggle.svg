@@ -16,12 +16,18 @@
   --meta-color: #8b949e;
   --accent: #58a6ff;
 }}
+.rc-bg { fill: transparent; }
+.rc-border { stroke: #d0d7de; }
+@media (prefers-color-scheme: dark) {
+  .rc-bg { fill: transparent; }
+  .rc-border { stroke: #30363d; }
+}
 .con-title { fill: var(--title-color); font: 600 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
 </style>
 <clipPath id="bar-clip"><rect width="140" height="130" rx="12"/></clipPath><filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.06"/><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.04"/></filter><linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" /><stop offset="100%" stop-color="#ffffff" stop-opacity="0" /></linearGradient><radialGradient id="icon-glow"><stop offset="0%" stop-color="#20BEFF" stop-opacity="0.18" /><stop offset="100%" stop-color="#20BEFF" stop-opacity="0" /></radialGradient>
 <clipPath id="ico-clip"><rect x="46" y="18" width="48" height="48" rx="12" /></clipPath>
 </defs>
-<rect class="rc-bg" width="140" height="130" rx="12" filter="url(#shadow)" />
+<rect class="rc-bg" width="140" height="130" rx="12" fill="transparent" filter="url(#shadow)" />
 <rect width="140" height="130" rx="12" fill="url(#glass-grad)" />
 <rect class="rc-border" x="0.5" y="0.5" width="139" height="129" rx="12" fill="none" stroke-width="1" />
 <rect x="1.5" y="1.5" width="137" height="127" rx="11" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />

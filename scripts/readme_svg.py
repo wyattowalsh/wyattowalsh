@@ -186,7 +186,7 @@ def _card_shell(
     inner_rx = max(rx - 1, 0)
     return [
         f'<rect class="rc-bg" width="{w}" height="{h}" rx="{rx}"'
-        ' filter="url(#shadow)" />',
+        ' fill="transparent" filter="url(#shadow)" />',
         f'<rect width="{w}" height="{h}" rx="{rx}"'
         ' fill="url(#glass-grad)" />',
         f'<rect class="rc-border" x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
@@ -409,7 +409,7 @@ class SvgBlockRenderer:
         # Card background rect — gh-card style
         lines.append(
             f'<rect width="{width}" height="{self.card_height}"'
-            ' rx="6" fill="var(--card-bg)"'
+            ' rx="6" fill="transparent"'
             ' stroke="var(--card-border)" stroke-width="1" />'
         )
 
@@ -1305,6 +1305,12 @@ class SvgBlogCardRenderer:
             f"  --meta-color: {dk.meta_color};",
             f"  --accent: {dk.accent};",
             "}}",
+            f".rc-bg {{ fill: transparent; }}",
+            f".rc-border {{ stroke: {lt.border}; }}",
+            "@media (prefers-color-scheme: dark) {",
+            f"  .rc-bg {{ fill: transparent; }}",
+            f"  .rc-border {{ stroke: {dk.border}; }}",
+            "}",
             f".blog-title {{ fill: var(--title-color);"
             f" font: 600 16px {FONT_FAMILY}; }}",
             f".blog-desc {{ fill: var(--text-color);"
@@ -1439,6 +1445,12 @@ class SvgConnectCardRenderer:
             f"  --meta-color: {dk.meta_color};",
             f"  --accent: {dk.accent};",
             "}}",
+            f".rc-bg {{ fill: transparent; }}",
+            f".rc-border {{ stroke: {lt.border}; }}",
+            "@media (prefers-color-scheme: dark) {",
+            f"  .rc-bg {{ fill: transparent; }}",
+            f"  .rc-border {{ stroke: {dk.border}; }}",
+            "}",
             f".con-title {{ fill: var(--title-color);"
             f" font: 600 14px {FONT_FAMILY}; }}",
         ])
