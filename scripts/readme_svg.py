@@ -1031,7 +1031,7 @@ class SvgRepoCardRenderer:
                     f'<text class="rc-meta" x="{x + 12}" y="{y}">'
                     f"{esc(label, quote=True)}</text>"
                 )
-                x += 12 + int(len(label) * 7.2) + 14
+                x += 12 + int(len(label) * 7.8) + 18
         elif lang_name and lang_color:
             lines.append(
                 f'<circle class="rc-lang-dot" cx="{x + 5}" cy="{y - 4}"'

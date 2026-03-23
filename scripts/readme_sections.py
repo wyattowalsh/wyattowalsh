@@ -1107,8 +1107,7 @@ class ReadmeSectionGenerator:
         if relative:
             info_bits.append(f"Updated {relative}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
-        # Skip OG image embedding — GitHub's SVG sanitizer strips data: URIs
-        # from <image> elements, breaking the entire card rendering.
+        bg_image = self._repo_background_image(repo_full_name, metadata)
         accent = self._repo_accent_color(metadata) or "8B5CF6"
         card = SvgCard(
             title=metadata.name,
@@ -1116,7 +1115,7 @@ class ReadmeSectionGenerator:
             lines=tuple(lines),
             meta=tuple(info_bits),
             url=metadata.html_url,
-            background_image=None,
+            background_image=bg_image,
             sparkline=sparkline,
             icon=metadata.name[:2].upper(),
             badge="Showcase",
