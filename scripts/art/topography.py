@@ -24,6 +24,7 @@ from .shared import (
     WIDTH,
     Noise2D,
     WorldState,
+    _build_world_palette_extended,
     atmospheric_haze_filter,
     compute_maturity,
     compute_world_state,
@@ -33,7 +34,12 @@ from .shared import (
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
+    oklch_gradient,
+    oklch_lerp,
+    organic_texture_filter,
     seed_hash,
+    select_palette_for_world,
+    visual_complexity,
 )
 
 # Map margins
@@ -108,15 +114,12 @@ _TOPO_STOPS = [
 
 def _topo_color(e: float) -> str:
     # Swiss warm-humid hypsometric ramp (Imhof-inspired)
+    # Uses oklch_lerp for perceptually uniform interpolation between OKLCH-defined stops
     stops = _TOPO_STOPS
     for i in range(len(stops) - 1):
         if e <= stops[i + 1][0]:
             t = (e - stops[i][0]) / max(0.001, stops[i + 1][0] - stops[i][0])
-            c1, c2 = stops[i][1], stops[i + 1][1]
-            r = int(int(c1[1:3], 16) * (1 - t) + int(c2[1:3], 16) * t)
-            g = int(int(c1[3:5], 16) * (1 - t) + int(c2[3:5], 16) * t)
-            b = int(int(c1[5:7], 16) * (1 - t) + int(c2[5:7], 16) * t)
-            return f"#{r:02x}{g:02x}{b:02x}"
+            return oklch_lerp(stops[i][1], stops[i + 1][1], t)
     return stops[-1][1]
 
 
@@ -242,6 +245,13 @@ def generate(
 
     # ── WorldState: coherent atmosphere across all artworks ────────
     world: WorldState = compute_world_state(metrics)
+
+    # ── OKLCH palette & complexity (Phase 4d) ─────────────────────
+    palette_name = select_palette_for_world(world)
+    pal = _build_world_palette_extended(
+        world.time_of_day, world.weather, world.season, world.energy,
+    )
+    complexity = visual_complexity(metrics)
 
     def _fade(start: float, full: float) -> float:
         """Smooth 0→1 ramp between start and full maturity."""
@@ -694,7 +704,9 @@ def generate(
         )
 
     P.append("<defs>")
-    # Paper texture filter
+    # Organic paper texture (OKLCH pipeline)
+    P.append(organic_texture_filter("topoTexture", "paper", intensity=0.3))
+    # Paper texture filter (retained for backward compatibility)
     P.append("""<filter id="paper" x="0%" y="0%" width="100%" height="100%"
     color-interpolation-filters="linearRGB">
     <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5"
@@ -795,9 +807,9 @@ def generate(
     P.append('</style>')
 
     # Background with paper texture
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f5f0e8"/>')
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}"/>')
     P.append(
-        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f5f0e8" filter="url(#paper)" opacity="0.5"/>'
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)" opacity="0.5"/>'
     )
 
     # ── Elevation fill + hillshade ────────────────────────────────
@@ -903,7 +915,7 @@ def generate(
                         if nearest_dist < 0.25
                         else "trees"
                     )
-                    tree_op = 0.5 * _fade(0.05, 0.25)
+                    tree_op = 0.5 * _fade(0.05, 0.25) * (0.7 + 0.6 * complexity)
                     # Proximity boost: closer to repo = denser vegetation
                     if nearest_dist < 0.15:
                         tree_op *= 1.0 + 0.4 * (1.0 - nearest_dist / 0.15)
@@ -1039,8 +1051,13 @@ def generate(
                     f'<textPath href="#rv{rvi}" startOffset="50%" text-anchor="middle">R. {rvi + 1}</textPath></text>'
                 )
 
-    # ── Contour lines (warm brown, Swiss style) ──────────────────
-    n_levels = max(24, min(40, 18 + followers // 6))
+    # ── Contour lines (warm brown, Swiss style — OKLCH gradient) ──
+    # Scale contour density by visual complexity
+    _base_n_levels = max(24, min(40, 18 + followers // 6))
+    n_levels = int(_base_n_levels * (0.8 + 0.4 * complexity))
+    # OKLCH-derived contour colors from palette
+    _contour_index_c = oklch_lerp(pal["accent"], pal["text_primary"], 0.6)
+    _contour_normal_c = oklch_lerp(pal["accent"], pal["muted"], 0.4)
     levels = [i / n_levels for i in range(1, n_levels)]
     for li, level in enumerate(levels):
         is_index = li % 5 == 0
@@ -1050,7 +1067,7 @@ def generate(
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
         # Contour hierarchy: every 5th level (index) gets heavier stroke
         sw = 1.2 if is_index else 0.5
-        sc = "#8a4220" if is_index else "#a06838"
+        sc = _contour_index_c if is_index else _contour_normal_c
         op = (0.7 if is_index else 0.35) * contour_fade
         for chain in chains:
             if len(chain) < 2:
@@ -1069,7 +1086,7 @@ def generate(
             )
             if is_index:
                 P.append(
-                    f'<path d="{pd}" fill="none" stroke="#6e3d1a" stroke-width="{max(0.4, sw * 0.55):.2f}" '
+                    f'<path d="{pd}" fill="none" stroke="{oklch_lerp(_contour_index_c, pal["text_primary"], 0.5)}" stroke-width="{max(0.4, sw * 0.55):.2f}" '
                     f'{_timeline_style(contour_when, op * 0.45, "tl-reveal tl-crisp")} stroke-linecap="round" stroke-linejoin="round"/>'
                 )
         # Elevation labels on index contours showing meters
@@ -1087,7 +1104,7 @@ def generate(
             elev = f"{int(level * 1000)}m"
             P.append(
                 f'<text x="{mid[0]:.0f}" y="{mid[1] + 1:.0f}" font-family="monospace" font-size="5.5" '
-                f'fill="#7a3510" opacity="{0.7 * clabel_fade:.2f}" text-anchor="middle" '
+                f'fill="{oklch_lerp(_contour_index_c, pal["text_primary"], 0.4)}" opacity="{0.7 * clabel_fade:.2f}" text-anchor="middle" '
                 f'stroke="rgba(245,240,232,0.8)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill" '
                 f'transform="rotate({label_angle:.0f},{mid[0]:.0f},{mid[1]:.0f})">{elev}</text>'
             )
@@ -1269,9 +1286,9 @@ def generate(
             f'<path d="{trail_d}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" '
             f'{_timeline_style(_date_for_activity_fraction(0.2), 0.35)} stroke-linecap="round"/>'
         )
-        # Brown dashed trail on top
+        # Dashed trail on top (palette accent)
         P.append(
-            f'<path d="{trail_d}" fill="none" stroke="#8a6840" stroke-width="0.8" '
+            f'<path d="{trail_d}" fill="none" stroke="{pal["accent"]}" stroke-width="0.8" '
             f'{_timeline_style(_date_for_activity_fraction(0.25), 0.35)} stroke-dasharray="5 2.5" stroke-linecap="round"/>'
         )
 
@@ -1289,11 +1306,11 @@ def generate(
             P.append(
                 f'<polygon points="{mx_w:.0f},{my_w + dy_off - ds:.0f} {mx_w + ds:.0f},{my_w + dy_off:.0f} '
                 f'{mx_w:.0f},{my_w + dy_off + ds:.0f} {mx_w - ds:.0f},{my_w + dy_off:.0f}" '
-                f'fill="#8a6840" {_timeline_style(milestone_when, 0.35)} stroke="#5a4020" stroke-width="0.3"/>'
+                f'fill="{pal["accent"]}" {_timeline_style(milestone_when, 0.35)} stroke="{oklch_lerp(pal["accent"], pal["text_primary"], 0.5)}" stroke-width="0.3"/>'
             )
             P.append(
                 f'<text x="{mx_w + 5:.0f}" y="{my_w + dy_off + 1:.0f}" font-family="Georgia,serif" '
-                f'font-size="4.5" fill="#5c3a1e" {_timeline_style(milestone_when, 0.4)} font-style="italic" '
+                f'font-size="4.5" fill="{pal["text_secondary"]}" {_timeline_style(milestone_when, 0.4)} font-style="italic" '
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{age_label}</text>"
             )
@@ -1472,7 +1489,7 @@ def generate(
         # Place settlement near center of map at the most prominent repo
         best = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
-        settle_color = "#4a3520"
+        settle_color = pal["text_secondary"]
 
         if followers_count > 1000:
             # Capital: 5-point star symbol
@@ -1562,17 +1579,17 @@ def generate(
             cy_w = (y1_w + y2_w) / 2 + rng.uniform(-10, 10)
             P.append(
                 f'<path d="M{x1_w:.1f},{y1_w:.1f} Q{cx_w:.1f},{cy_w:.1f} {x2_w:.1f},{y2_w:.1f}" '
-                f'fill="none" stroke="#c09060" stroke-width="0.4" opacity="0.12" '
+                f'fill="none" stroke="{oklch_lerp(pal["accent"], pal["highlight"], 0.4)}" stroke-width="0.4" opacity="0.12" '
                 f'stroke-dasharray="3 2 1 2" stroke-linecap="round"/>'
             )
 
     # Center marker
     cx_m, cy_m = MAP_L + MAP_W / 2, MAP_T + MAP_H / 2
     P.append(
-        f'<circle cx="{cx_m:.0f}" cy="{cy_m:.0f}" r="6" fill="none" stroke="#cc3828" stroke-width="1.5" opacity="0.5"/>'
+        f'<circle cx="{cx_m:.0f}" cy="{cy_m:.0f}" r="6" fill="none" stroke="{pal["highlight"]}" stroke-width="1.5" opacity="0.5"/>'
     )
     P.append(
-        f'<circle cx="{cx_m:.0f}" cy="{cy_m:.0f}" r="2.5" fill="#cc3828" opacity="0.65"/>'
+        f'<circle cx="{cx_m:.0f}" cy="{cy_m:.0f}" r="2.5" fill="{pal["highlight"]}" opacity="0.65"/>'
     )
     P.append(
         f'<text x="{cx_m + 10:.0f}" y="{cy_m + 3:.0f}" font-family="Georgia,serif" font-size="9" '
@@ -1613,7 +1630,7 @@ def generate(
             month_when = _month_key_date(mkey, mi)
             P.append(
                 f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" dominant-baseline="central" '
-                f'font-family="Georgia,serif" font-size="7" fill="#5a4a3a" '
+                f'font-family="Georgia,serif" font-size="7" fill="{pal["text_secondary"]}" '
                 f"{_timeline_style(month_when, m_op)}>{month_labels[mn % 12]}</text>"
             )
 
@@ -1906,51 +1923,47 @@ def generate(
     leg_x, leg_y = MAP_R - 125, MAP_B + 15
     n_legend_entries = 1 + int(chrome_mat * 4)
     entries = [
-        ("circle", "#cc3828", "Profile center"),
-        ("line", "#5b92c7", "River / lake"),
-        ("dash", "#8a6840", "Timeline trail"),
-        ("contour", "#a0522d", "Contour (index)"),
-        ("bm", "#5a4a3a", "Benchmark"),
+        ("circle", pal["highlight"], "Profile center"),
+        ("line", oklch_lerp(pal["accent"], pal["muted"], 0.3), "River / lake"),
+        ("dash", pal["accent"], "Timeline trail"),
+        ("contour", _contour_index_c, "Contour (index)"),
+        ("bm", pal["text_secondary"], "Benchmark"),
     ][:n_legend_entries]
     leg_w, leg_h = 115, 14 + len(entries) * 5.5 + (22 if chrome_mat > 0.5 else 0)
     P.append(
         f'<rect x="{leg_x}" y="{leg_y}" width="{leg_w}" height="{leg_h}" '
-        f'fill="#f5f0e8" stroke="#3a2a1a" stroke-width="0.8" rx="1.5" opacity="0.95"/>'
+        f'fill="{pal["bg_primary"]}" stroke="{pal["text_primary"]}" stroke-width="0.8" rx="1.5" opacity="0.95"/>'
     )
     P.append(
         f'<rect x="{leg_x + 2}" y="{leg_y + 2}" width="{leg_w - 4}" height="{leg_h - 4}" '
-        f'fill="none" stroke="#8a7a5a" stroke-width="0.4" rx="0.5" opacity="0.5"/>'
+        f'fill="none" stroke="{pal["border"]}" stroke-width="0.4" rx="0.5" opacity="0.5"/>'
     )
     P.append(
         f'<text x="{leg_x + leg_w / 2:.0f}" y="{leg_y + 10}" text-anchor="middle" '
-        f'font-family="Georgia,serif" font-size="6.5" fill="#1a0a00" font-weight="bold" opacity="0.6" '
+        f'font-family="Georgia,serif" font-size="6.5" fill="{pal["text_primary"]}" font-weight="bold" opacity="0.6" '
         f'letter-spacing="1.5" font-variant="small-caps">Legend</text>'
     )
     if chrome_mat > 0.5:
         ramp_x, ramp_y, ramp_w = leg_x + 6, leg_y + 14, 60
-        ramp_colors = [
-            "#a8d4f0",
-            "#94bf8b",
-            "#bdcc96",
-            "#e8e1b6",
-            "#d4b896",
-            "#c9a87c",
-            "#e4e0d0",
-            "#f5f4f2",
-        ]
+        # OKLCH hypsometric ramp for elevation legend
+        ramp_colors = oklch_gradient(
+            [(0.65, 0.10, 220), (0.60, 0.12, 145), (0.70, 0.10, 110), (0.80, 0.06, 80),
+             (0.75, 0.08, 50), (0.70, 0.08, 40), (0.85, 0.03, 60), (0.92, 0.01, 200)],
+            8,
+        )
         seg_w = ramp_w / len(ramp_colors)
         for ci, rc in enumerate(ramp_colors):
             P.append(
                 f'<rect x="{ramp_x + ci * seg_w:.1f}" y="{ramp_y}" width="{seg_w + 0.5:.1f}" height="5" fill="{rc}" opacity="0.7"/>'
             )
         P.append(
-            f'<rect x="{ramp_x}" y="{ramp_y}" width="{ramp_w}" height="5" fill="none" stroke="#5a4a3a" stroke-width="0.3" opacity="0.4"/>'
+            f'<rect x="{ramp_x}" y="{ramp_y}" width="{ramp_w}" height="5" fill="none" stroke="{pal["text_secondary"]}" stroke-width="0.3" opacity="0.4"/>'
         )
         P.append(
-            f'<text x="{ramp_x}" y="{ramp_y + 10}" font-family="monospace" font-size="3.5" fill="#5a4a3a" opacity="0.4">Low</text>'
+            f'<text x="{ramp_x}" y="{ramp_y + 10}" font-family="monospace" font-size="3.5" fill="{pal["text_secondary"]}" opacity="0.4">Low</text>'
         )
         P.append(
-            f'<text x="{ramp_x + ramp_w}" y="{ramp_y + 10}" text-anchor="end" font-family="monospace" font-size="3.5" fill="#5a4a3a" opacity="0.4">High</text>'
+            f'<text x="{ramp_x + ramp_w}" y="{ramp_y + 10}" text-anchor="end" font-family="monospace" font-size="3.5" fill="{pal["text_secondary"]}" opacity="0.4">High</text>'
         )
     entry_offset = (14 + 16) if chrome_mat > 0.5 else 14
     for li_l, (shape, color, text) in enumerate(entries):
@@ -1980,7 +1993,7 @@ def generate(
                 f'<line x1="{ix - 2}" y1="{iy}" x2="{ix + 2}" y2="{iy}" stroke="{color}" stroke-width="0.3" opacity="0.4"/>'
             )
         P.append(
-            f'<text x="{ix + 7}" y="{iy + 1.5}" font-family="Georgia,serif" font-size="4.5" fill="#3a2a1a" opacity="0.45">{text}</text>'
+            f'<text x="{ix + 7}" y="{iy + 1.5}" font-family="Georgia,serif" font-size="4.5" fill="{pal["text_primary"]}" opacity="0.45">{text}</text>'
         )
 
     # ── Weather indicator (WorldState-driven) ──
@@ -2039,31 +2052,31 @@ def generate(
         cart_h = 44
         P.append(
             f'<rect x="{cart_x}" y="{cart_y}" width="{cart_w}" height="{cart_h}" '
-            f'fill="#f5f0e8" stroke="#1a1a1a" stroke-width="1.5" opacity="0.95" rx="1"/>'
+            f'fill="{pal["bg_primary"]}" stroke="{pal["text_primary"]}" stroke-width="1.5" opacity="0.95" rx="1"/>'
         )
         if chrome_mat > 0.3:
             P.append(
                 f'<rect x="{cart_x + 3}" y="{cart_y + 3}" width="{cart_w - 6}" height="{cart_h - 6}" '
-                f'fill="none" stroke="#2c2c2c" stroke-width="0.3" opacity="0.3" rx="0.5"/>'
+                f'fill="none" stroke="{pal["text_secondary"]}" stroke-width="0.3" opacity="0.3" rx="0.5"/>'
             )
         P.append(
             f'<text x="{cart_x + cart_w / 2:.0f}" y="{cart_y + 16}" text-anchor="middle" '
-            f'font-family="Georgia,serif" font-size="12" fill="#0a0a0a" font-weight="bold" opacity="0.7" '
+            f'font-family="Georgia,serif" font-size="12" fill="{pal["text_primary"]}" font-weight="bold" opacity="0.7" '
             f'letter-spacing="1.5">Topographic Survey</text>'
         )
         P.append(
             f'<text x="{cart_x + cart_w / 2:.0f}" y="{cart_y + 27}" text-anchor="middle" '
-            f'font-family="Georgia,serif" font-size="8.5" fill="#2a1a0a" opacity="0.6" '
+            f'font-family="Georgia,serif" font-size="8.5" fill="{pal["text_primary"]}" opacity="0.6" '
             f'font-style="italic">{metrics.get("label", "")}</text>'
         )
         if chrome_mat > 0.4:
             P.append(
                 f'<line x1="{cart_x + 10}" y1="{cart_y + 31}" x2="{cart_x + cart_w - 10}" y2="{cart_y + 31}" '
-                f'stroke="#2c2c2c" stroke-width="0.4" opacity="0.2"/>'
+                f'stroke="{pal["text_secondary"]}" stroke-width="0.4" opacity="0.2"/>'
             )
             P.append(
                 f'<text x="{cart_x + cart_w / 2:.0f}" y="{cart_y + 39}" text-anchor="middle" '
-                f'font-family="Georgia,serif" font-size="5.5" fill="#5a4a3a" opacity="0.4" letter-spacing="0.3">'
+                f'font-family="Georgia,serif" font-size="5.5" fill="{pal["text_secondary"]}" opacity="0.4" letter-spacing="0.3">'
                 f"{len(repos)} repositories  \u00b7  {contributions} contributions  \u00b7  {stars} stars</text>"
             )
 
@@ -2120,7 +2133,7 @@ def generate(
             _fog_angle = rng.uniform(-20, 20)
             P.append(
                 f'<ellipse cx="{_ffx:.1f}" cy="{_ffy:.1f}" rx="{_fog_rx:.1f}" ry="{_fog_ry:.1f}" '
-                f'fill="#e8e4dc" opacity="{fog_opacity:.3f}" filter="url(#valleyFog)" '
+                f'fill="{pal["muted"]}" opacity="{fog_opacity:.3f}" filter="url(#valleyFog)" '
                 f'transform="rotate({_fog_angle:.1f},{_ffx:.1f},{_ffy:.1f})"/>'
             )
 

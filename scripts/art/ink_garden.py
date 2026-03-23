@@ -21,6 +21,7 @@ import numpy as np
 
 from .optimize import optimize_layout_sa, optimize_palette_hues
 from .shared import (
+    ART_PALETTE_ANCHORS,
     CX,
     CY,
     HEIGHT,
@@ -28,6 +29,7 @@ from .shared import (
     WIDTH,
     Noise2D,
     WorldState,
+    _build_world_palette_extended,
     atmospheric_haze_filter,
     aurora_band_elements,
     aurora_filter,
@@ -40,8 +42,12 @@ from .shared import (
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
+    oklch_gradient,
+    oklch_lerp,
     seed_hash,
+    select_palette_for_world,
     snow_pattern,
+    visual_complexity,
     volumetric_glow_filter,
     weather_overlay_elements,
 )
@@ -553,6 +559,15 @@ def generate(
 
     # ── WorldState (unified atmospheric/environmental state) ─────
     world = compute_world_state(metrics)
+
+    # ── OKLCH palette & complexity (Phase 4c) ─────────────────────
+    palette_name = select_palette_for_world(world)
+    pal = _build_world_palette_extended(
+        world.time_of_day, world.weather, world.season, world.energy,
+    )
+    complexity = visual_complexity(metrics)
+    # Seasonal ground cover gradient via OKLCH pipeline
+    ground_colors = oklch_gradient(ART_PALETTE_ANCHORS[palette_name], 5)
 
     # ── Enriched metric extraction ────────────────────────────────
     streaks = metrics.get("contribution_streaks", {})
@@ -1365,9 +1380,9 @@ def generate(
     P.append('</style>')
 
     # ── Background (aged parchment with canvas texture) ──────────
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#f0e8d8" filter="url(#paper)"/>')
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)"/>')
     # Canvas texture overlay — subtle woven linen feel
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#e8e0d0" filter="url(#canvas)" opacity="0.18"/>')
+    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_secondary"]}" filter="url(#canvas)" opacity="0.18"/>')
     # Sky gradient — pale blue wash at top
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#skyGrad)"/>')
     # Atmospheric light wash from upper-left
@@ -1379,10 +1394,10 @@ def generate(
         wrx = rng.uniform(40, 100)
         wry = rng.uniform(30, 80)
         P.append(f'<ellipse cx="{wcx:.0f}" cy="{wcy:.0f}" rx="{wrx:.0f}" ry="{wry:.0f}" '
-                 f'fill="#d8c8a0" opacity="{rng.uniform(0.04,0.09):.3f}" '
+                 f'fill="{rng.choice(ground_colors)}" opacity="{rng.uniform(0.04,0.09):.3f}" '
                  f'transform="rotate({rng.uniform(-20,20):.0f},{wcx:.0f},{wcy:.0f})"/>')
-    # Foxing spots — varied sizes and warm tones
-    fox_colors = ["#d0b888", "#c8b090", "#ccb894", "#c0a880"]
+    # Foxing spots — varied sizes and warm tones (OKLCH gradient)
+    fox_colors = oklch_gradient([(0.78, 0.06, 55), (0.74, 0.07, 45), (0.76, 0.06, 50), (0.72, 0.05, 40)], 4)
     for _ in range(max(8, int(mat * 45))):
         P.append(f'<circle cx="{rng.uniform(20,WIDTH-20):.0f}" cy="{rng.uniform(20,HEIGHT-20):.0f}" '
                  f'r="{rng.uniform(1.5,8):.1f}" fill="{rng.choice(fox_colors)}" '
@@ -1402,7 +1417,7 @@ def generate(
         mist_ry = atmo_rng.uniform(20, 50)
         mist_op = atmo_rng.uniform(0.04, 0.08)
         mist_grad = make_radial_gradient(mist_id, '50%', '50%', '60%',
-            [('0%', '#f0f0f0', mist_op), ('50%', '#e8e8e8', mist_op * 0.5), ('100%', '#f5f0e6', 0.0)])
+            [('0%', pal["muted"], mist_op), ('50%', oklch_lerp(pal["muted"], pal["bg_primary"], 0.5), mist_op * 0.5), ('100%', pal["bg_primary"], 0.0)])
         P.append(f'<defs>{mist_grad}</defs>')
         P.append(f'<ellipse cx="{mist_cx:.0f}" cy="{mist_cy:.0f}" rx="{mist_rx:.0f}" ry="{mist_ry:.0f}" '
                  f'fill="url(#{mist_id})"/>')
@@ -1518,7 +1533,7 @@ def generate(
             P.append(f'<circle cx="{fx_f:.1f}" cy="{fy_f:.1f}" r="{fr_f:.1f}" fill="none" '
                      f'stroke="#b8a880" stroke-width="0.25" opacity="0.05"/>')
     # Pebbles with highlights
-    pebble_colors = ["#a09070", "#b0a080", "#c0b090", "#a8987a", "#b8a888"]
+    pebble_colors = oklch_gradient([(0.62, 0.05, 55), (0.67, 0.05, 50), (0.72, 0.04, 48), (0.64, 0.05, 45), (0.69, 0.04, 52)], 5)
     for _ in range(2 + int(mat * 10)):
         px = rng.uniform(30, WIDTH - 30)
         py = rng.uniform(GROUND_Y + 10, min(HEIGHT - 20, GROUND_Y + n_strata * 30 + 30))
@@ -1650,12 +1665,14 @@ def generate(
                      f'fill="{fl_c}" opacity="{autumn_rng.uniform(0.12, 0.25):.2f}" '
                      f'transform="rotate({fl_rot:.0f},{flx:.0f},{fly:.0f})"/>')
     # Main ground line — warm earth tone, thicker for visibility
-    P.append(f'<path d="{ground_path}" fill="none" stroke="#6a5a2a" stroke-width="2.0" opacity="0.6"/>')
+    _ground_line_c = oklch_lerp(pal["ground"], pal["text_primary"], 0.4)
+    P.append(f'<path d="{ground_path}" fill="none" stroke="{_ground_line_c}" stroke-width="2.0" opacity="0.6"/>')
     # Secondary ground line — lighter, offset slightly below for depth
     sub_ground = f"M{ground_pts[0][0]},{ground_pts[0][1]+1.5:.1f}" + "".join(
         f" L{x:.1f},{y+1.5:.1f}" for x, y in ground_pts[1:]
     )
-    P.append(f'<path d="{sub_ground}" fill="none" stroke="#8a7a4a" stroke-width="0.7" opacity="0.35"/>')
+    _sub_ground_c = oklch_lerp(pal["ground"], pal["muted"], 0.5)
+    P.append(f'<path d="{sub_ground}" fill="none" stroke="{_sub_ground_c}" stroke-width="0.7" opacity="0.35"/>')
 
     # Branch density map for ground cover enhancement
     bd = defaultdict(int)
@@ -1664,7 +1681,16 @@ def generate(
     max_bd = max(bd.values()) if bd else 1
 
     # Ground cover (enhanced with fern frondlets, moss patches, clover)
-    for _ in range(40 + int(mat * 120)):
+    _gc_grass = oklch_lerp(pal["accent"], pal["ground"], 0.4)
+    _gc_fern = oklch_lerp(pal["accent"], pal["ground"], 0.35)
+    _gc_fern_light = oklch_lerp(pal["accent"], pal["highlight"], 0.3)
+    _gc_moss = oklch_lerp(pal["accent"], pal["ground"], 0.5)
+    _gc_stone = oklch_lerp(pal["muted"], pal["ground"], 0.6)
+    _gc_clover = oklch_lerp(pal["accent"], pal["ground"], 0.3)
+    _gc_clover_stem = oklch_lerp(pal["accent"], pal["ground"], 0.55)
+    # Scale ground cover count by visual complexity
+    _gc_count = int((40 + int(mat * 120)) * (0.7 + 0.6 * complexity))
+    for _ in range(_gc_count):
         gcx = rng.uniform(20, WIDTH - 20)
         gcy = ground_y_at(gcx) + rng.uniform(-3, 3)
         r_val = rng.random()
@@ -1675,10 +1701,10 @@ def generate(
                 gl = rng.uniform(4, 12)
                 P.append(f'<line x1="{gcx:.0f}" y1="{gcy:.0f}" '
                          f'x2="{gcx+gl*math.cos(ga):.0f}" y2="{gcy+gl*math.sin(ga):.0f}" '
-                         f'stroke="#6a8a4a" stroke-width="0.5" opacity="0.35"/>')
+                         f'stroke="{_gc_grass}" stroke-width="0.5" opacity="0.35"/>')
         elif r_val < 0.55:
             # Stones
-            P.append(f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.8,2.2):.1f}" fill="#a09070" opacity="0.3"/>')
+            P.append(f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.8,2.2):.1f}" fill="{_gc_stone}" opacity="0.3"/>')
         elif r_val < 0.7 and mat > 0.25:
             # Small fern frondlets at ground level (where branch density is high)
             grid_key = (int(gcx / 30), int(gcy / 30))
@@ -1694,14 +1720,14 @@ def generate(
                     nx_f = cx_f + fsl * math.cos(fa)
                     ny_f = cy_f + fsl * math.sin(fa)
                     P.append(f'<line x1="{cx_f:.1f}" y1="{cy_f:.1f}" x2="{nx_f:.1f}" y2="{ny_f:.1f}" '
-                             f'stroke="#6a9a4a" stroke-width="0.3" opacity="0.2"/>')
+                             f'stroke="{_gc_fern}" stroke-width="0.3" opacity="0.2"/>')
                     if fs > 0:
                         for side in [-1, 1]:
                             pa = fa + side * 1.0
                             pl = fsl * 0.5 * (1 - t)
                             P.append(f'<line x1="{nx_f:.1f}" y1="{ny_f:.1f}" '
                                      f'x2="{nx_f + pl * math.cos(pa):.1f}" y2="{ny_f + pl * math.sin(pa):.1f}" '
-                                     f'stroke="#7aaa5a" stroke-width="0.2" opacity="0.18"/>')
+                                     f'stroke="{_gc_fern_light}" stroke-width="0.2" opacity="0.18"/>')
                     cx_f, cy_f = nx_f, ny_f
         elif r_val < 0.85 and mat > 0.4:
             # Moss patches: clusters of tiny dots near plant bases
@@ -1712,11 +1738,11 @@ def generate(
                     dx = gcx + rng.uniform(-4, 4)
                     dy = gcy + rng.uniform(-2, 2)
                     P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{rng.uniform(0.3, 0.8):.1f}" '
-                             f'fill="#5a8a3a" opacity="{rng.uniform(0.12, 0.25):.2f}"/>')
+                             f'fill="{_gc_moss}" opacity="{rng.uniform(0.12, 0.25):.2f}"/>')
         elif r_val < 0.90 and mat > 0.4:
             # Clover: 3-circle trefoil
             clover_r = rng.uniform(1.2, 2.5)
-            clover_c = "#5a9a4a"
+            clover_c = _gc_clover
             for ci in range(3):
                 ca = ci * 2 * math.pi / 3 - math.pi / 2
                 ccx = gcx + clover_r * 0.5 * math.cos(ca)
@@ -1725,7 +1751,7 @@ def generate(
                          f'fill="{clover_c}" opacity="0.2"/>')
             # Tiny stem
             P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy + clover_r * 1.2:.1f}" '
-                     f'stroke="#4a7a3a" stroke-width="0.3" opacity="0.2"/>')
+                     f'stroke="{_gc_clover_stem}" stroke-width="0.3" opacity="0.2"/>')
         elif r_val < 0.95 and mat > 0.55:
             # Tiny wildflower: stem + 4-5 petal rosette
             wf_h = rng.uniform(4, 9)
@@ -1734,7 +1760,7 @@ def generate(
             oklch(0.50, 0.16, wf_hue)
             # Stem
             P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy - wf_h:.1f}" '
-                     f'stroke="#6a8a4a" stroke-width="0.3" opacity="0.2"/>')
+                     f'stroke="{_gc_grass}" stroke-width="0.3" opacity="0.2"/>')
             # Petals
             n_wp = rng.integers(4, 6)
             pr = wf_h * 0.15
@@ -1746,7 +1772,7 @@ def generate(
                          f'fill="{wf_c}" opacity="0.2"/>')
             # Center dot
             P.append(f'<circle cx="{gcx:.1f}" cy="{gcy - wf_h:.1f}" r="{pr * 0.3:.1f}" '
-                     f'fill="#e0c850" opacity="0.25"/>')
+                     f'fill="{pal["highlight"]}" opacity="0.25"/>')
         elif mat > 0.7:
             # Snail: spiral shell + body
             sn_r = rng.uniform(2, 4)
@@ -1811,7 +1837,7 @@ def generate(
         for _ in range(rng.integers(2, 5)):
             P.append(f'<circle cx="{mx + rng.uniform(-ms * 0.3, ms * 0.3):.1f}" '
                      f'cy="{cap_top + rng.uniform(-ms * 0.2, ms * 0.08):.1f}" '
-                     f'r="{rng.uniform(0.4, 1.3):.1f}" fill="#f0e8d0" opacity="0.45"/>')
+                     f'r="{rng.uniform(0.4, 1.3):.1f}" fill="{oklch_lerp(pal["bg_primary"], pal["highlight"], 0.15)}" opacity="0.45"/>')
         # Lichen/moss at mushroom base
         if mat > 0.4:
             n_lichen = rng.integers(2, 5)
@@ -1820,7 +1846,7 @@ def generate(
                 ly_m = my + rng.uniform(-1, 2)
                 lr_m = rng.uniform(0.8, 2.0)
                 P.append(f'<circle cx="{lx_m:.1f}" cy="{ly_m:.1f}" r="{lr_m:.1f}" '
-                         f'fill="#8aaa6a" opacity="{rng.uniform(0.08, 0.15):.2f}"/>')
+                         f'fill="{oklch_lerp(pal["accent"], pal["ground"], 0.35)}" opacity="{rng.uniform(0.08, 0.15):.2f}"/>')
         # Mycelium threads radiating from base
         if mat > 0.55:
             for _ in range(rng.integers(1, 3)):
@@ -1842,7 +1868,7 @@ def generate(
         if wash_i % 3 == 0 and dominant_lang is not None:
             wash_c = oklch(tint_l + rng.uniform(-0.03, 0.03), tint_c, tint_h + rng.uniform(-10, 10))
         else:
-            wash_c = rng.choice(["#d0dce8", "#e0e8e8", "#d8e0e0", "#d8d8e4"])
+            wash_c = rng.choice(oklch_gradient([(0.85, 0.03, 220), (0.87, 0.02, 200), (0.84, 0.02, 195), (0.84, 0.03, 250)], 4))
         P.append(f'<ellipse cx="{awx:.0f}" cy="{awy:.0f}" rx="{awrx:.0f}" ry="{awry:.0f}" '
                  f'fill="{wash_c}" opacity="{rng.uniform(0.02, 0.04):.3f}" '
                  f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>')
@@ -2114,10 +2140,11 @@ def generate(
                 P.append(f'<circle cx="{bud_x:.1f}" cy="{bud_y:.1f}" r="{bud_r * 0.4:.1f}" '
                          f'fill="#7aaa5a" opacity="0.25"/>')
 
-    # PASS 4: Leaves with species-specific shapes (capped)
+    # PASS 4: Leaves with species-specific shapes (capped, scaled by complexity)
+    _leaf_cap = int(MAX_LEAVES * (0.6 + 0.8 * complexity))
     def budget_ok():
         return len(P) - elem_count < MAX_ELEMENTS
-    for leaf_tuple in leaves[:MAX_LEAVES]:
+    for leaf_tuple in leaves[:_leaf_cap]:
         if not budget_ok():
             break
         lx, ly, la, ls, lh, has_vein, leaf_shape, leaf_when = leaf_tuple
@@ -2282,6 +2309,11 @@ def generate(
         P.append('</g>')
 
     # ── Insects (detailed, naturalist style) ──────────────────────
+    _insect_body = oklch_lerp(pal["text_primary"], pal["ground"], 0.3)
+    _insect_trail = oklch_lerp(pal["muted"], pal["bg_primary"], 0.4)
+    _bee_thorax = oklch_lerp(pal["highlight"], pal["accent"], 0.3)
+    _bee_abdomen = oklch_lerp(pal["highlight"], pal["accent"], 0.15)
+    _bee_stripe = oklch_lerp(pal["text_primary"], pal["ground"], 0.5)
     for ix, iy, itype, isz, ihue in insects:
         if itype == "butterfly":
             # Flight path — natural cubic Bezier arc showing trajectory
@@ -2293,11 +2325,11 @@ def generate(
             trail_end_y = iy + rng.uniform(-25, -5)
             P.append(f'<path d="M{ix - rng.uniform(15, 35):.0f},{iy + rng.uniform(5, 20):.0f} '
                      f'C{cp1x:.0f},{cp1y:.0f} {cp2x:.0f},{cp2y:.0f} {trail_end_x:.0f},{trail_end_y:.0f}" '
-                     f'fill="none" stroke="#c8c0a8" stroke-width="0.2" opacity="0.06" '
+                     f'fill="none" stroke="{_insect_trail}" stroke-width="0.2" opacity="0.06" '
                      f'stroke-dasharray="1.5 2" stroke-linecap="round"/>')
             # Body
             P.append(f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="1" ry="{isz * 0.3:.1f}" '
-                     f'fill="#3a3020" opacity="0.6"/>')
+                     f'fill="{_insect_body}" opacity="0.6"/>')
             wc1 = oklch(0.62, 0.22, ihue)
             wc2 = oklch(0.55, 0.18, (ihue + 30) % 360)
             wc_vein = oklch(0.40, 0.10, ihue)
@@ -2339,21 +2371,21 @@ def generate(
             # Antennae with clubbed tips
             for side in [-1, 1]:
                 P.append(f'<path d="M{ix},{iy - isz * 0.3:.0f} Q{ix + side * 3},{iy - isz * 0.6:.0f} '
-                         f'{ix + side * 5},{iy - isz * 0.7:.0f}" fill="none" stroke="#3a3020" '
+                         f'{ix + side * 5},{iy - isz * 0.7:.0f}" fill="none" stroke="{_insect_body}" '
                          f'stroke-width="0.3" opacity="0.4"/>')
                 P.append(f'<circle cx="{ix + side * 5:.0f}" cy="{iy - isz * 0.7:.0f}" r="0.6" '
-                         f'fill="#3a3020" opacity="0.35"/>')
+                         f'fill="{_insect_body}" opacity="0.35"/>')
         elif itype == "bee":
             # Fuzzy thorax
             P.append(f'<ellipse cx="{ix - isz * 0.1:.0f}" cy="{iy:.0f}" rx="{isz * 0.2:.1f}" ry="{isz * 0.18:.1f}" '
-                     f'fill="#c89020" opacity="0.55"/>')
+                     f'fill="{_bee_thorax}" opacity="0.55"/>')
             # Striped abdomen
             P.append(f'<ellipse cx="{ix + isz * 0.1:.0f}" cy="{iy:.0f}" rx="{isz * 0.28:.1f}" ry="{isz * 0.2:.1f}" '
-                     f'fill="#d4a030" opacity="0.6"/>')
+                     f'fill="{_bee_abdomen}" opacity="0.6"/>')
             for si_b in range(4):
                 bsx = ix + isz * 0.1 - isz * 0.15 + si_b * isz * 0.1
                 P.append(f'<line x1="{bsx:.0f}" y1="{iy - isz * 0.18:.0f}" x2="{bsx:.0f}" '
-                         f'y2="{iy + isz * 0.18:.0f}" stroke="#2a2010" stroke-width="0.7" opacity="0.25"/>')
+                         f'y2="{iy + isz * 0.18:.0f}" stroke="{_bee_stripe}" stroke-width="0.7" opacity="0.25"/>')
             # Wings (pair, translucent)
             for side in [-1, 1]:
                 P.append(f'<ellipse cx="{ix:.0f}" cy="{iy + side * isz * 0.25:.0f}" '
@@ -2361,17 +2393,19 @@ def generate(
                          f'fill="#e8e0d0" opacity="0.25" stroke="#c8c0b0" stroke-width="0.2"/>')
             # Head
             P.append(f'<circle cx="{ix - isz * 0.3:.0f}" cy="{iy:.0f}" r="{isz * 0.1:.1f}" '
-                     f'fill="#3a2a10" opacity="0.5"/>')
+                     f'fill="{_insect_body}" opacity="0.5"/>')
         elif itype == "dragonfly":
-            # Segmented body
+            # Segmented body — OKLCH lerp between accent and muted
+            _df_body = oklch_lerp(pal["accent"], pal["muted"], 0.5)
+            _df_head = oklch_lerp(pal["accent"], pal["muted"], 0.65)
             for si_d in range(5):
                 df = si_d / 5
                 dsx = ix - isz * 0.4 + si_d * isz * 0.2
                 dsr = isz * 0.06 * (1 - df * 0.4)
-                P.append(f'<circle cx="{dsx:.0f}" cy="{iy:.0f}" r="{dsr:.1f}" fill="#4a6a80" opacity="0.45"/>')
+                P.append(f'<circle cx="{dsx:.0f}" cy="{iy:.0f}" r="{dsr:.1f}" fill="{_df_body}" opacity="0.45"/>')
             # Head
             P.append(f'<circle cx="{ix - isz * 0.5:.0f}" cy="{iy:.0f}" r="{isz * 0.08:.1f}" '
-                     f'fill="#3a5a70" opacity="0.5"/>')
+                     f'fill="{_df_head}" opacity="0.5"/>')
             # Wings — 4 translucent with venation
             for side in [-1, 1]:
                 for pair, off in enumerate([-0.15, 0.05]):
@@ -2487,7 +2521,7 @@ def generate(
                  f'stroke="{seed_c}" stroke-width="0.15" opacity="0.15"/>')
 
     # ── Labels (botanical plate annotation with halos) ────────────
-    P.append('<g font-family="Georgia,serif" font-size="7.5" fill="#5a4a3a">')
+    P.append(f'<g font-family="Georgia,serif" font-size="7.5" fill="{pal["text_secondary"]}">')
     for li, (lx, ly, text, ax, ay, when) in enumerate(labels):
         # Dashed leader line with small arrowhead
         P.append(f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
@@ -2635,48 +2669,48 @@ def generate(
     if mat < 0.15:
         # Plain italic text, no box
         P.append(f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="9" fill="#5a4a3a" opacity="0.5" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2" stroke-linejoin="round">'
+                 f'font-size="9" fill="{pal["text_secondary"]}" opacity="0.5" font-style="italic" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
                  f'{label}</text>')
     elif mat < 0.35:
         # Simple box + text
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="#f5f0e6" opacity="0.8" rx="2"/>')
+                 f'fill="{pal["bg_primary"]}" opacity="0.8" rx="2"/>')
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="#a09070" stroke-width="0.6" rx="2"/>')
+                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.6" rx="2"/>')
         P.append(f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="9" fill="#5a4a3a" opacity="0.55" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2" stroke-linejoin="round">'
+                 f'font-size="9" fill="{pal["text_secondary"]}" opacity="0.55" font-style="italic" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
                  f'{label}</text>')
     elif mat < 0.6:
         # Box + subtitle
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="#f5f0e6" opacity="0.85" rx="3"/>')
+                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="#a09070" stroke-width="0.7" rx="3"/>')
+                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.7" rx="3"/>')
         P.append(f'<text x="{CX}" y="{cart_y + 13:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="#5a4a3a" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2" stroke-linejoin="round">'
+                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
                  f'{label}</text>')
         P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="#8a7a6a" opacity="0.35" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" stroke-linejoin="round">'
+                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.35" letter-spacing="2" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
                  f'BOTANICAL GARDEN</text>')
     elif mat < 0.8:
         # Full cartouche + leaf ornaments
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="#f5f0e6" opacity="0.85" rx="3"/>')
+                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="#a09070" stroke-width="0.8" rx="3"/>')
+                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>')
         P.append(f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
-                 f'fill="none" stroke="#c8c0a8" stroke-width="0.3" rx="2"/>')
+                 f'fill="none" stroke="{oklch_lerp(pal["border"], pal["bg_primary"], 0.4)}" stroke-width="0.3" rx="2"/>')
         P.append(f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="#5a4a3a" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2" stroke-linejoin="round">'
+                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
                  f'{label}</text>')
         P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="#8a7a6a" opacity="0.4" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" stroke-linejoin="round">'
+                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
                  f'BOTANICAL GARDEN</text>')
         for side in [-1, 1]:
             lx_d = CX + side * (cart_w / 2 - 18)
@@ -2687,21 +2721,21 @@ def generate(
     else:
         # Full + dividing rule + plate number (mat > 0.8)
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="#f5f0e6" opacity="0.85" rx="3"/>')
+                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
         P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="#a09070" stroke-width="0.8" rx="3"/>')
+                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>')
         P.append(f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
-                 f'fill="none" stroke="#c8c0a8" stroke-width="0.3" rx="2"/>')
+                 f'fill="none" stroke="{oklch_lerp(pal["border"], pal["bg_primary"], 0.4)}" stroke-width="0.3" rx="2"/>')
         P.append(f'<line x1="{cart_x + 15}" y1="{cart_y + cart_h * 0.62:.0f}" '
                  f'x2="{cart_x + cart_w - 15}" y2="{cart_y + cart_h * 0.62:.0f}" '
-                 f'stroke="#c0b898" stroke-width="0.3" opacity="0.4"/>')
+                 f'stroke="{oklch_lerp(pal["border"], pal["muted"], 0.5)}" stroke-width="0.3" opacity="0.4"/>')
         P.append(f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="#5a4a3a" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2" stroke-linejoin="round">'
+                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
                  f'{label}</text>')
         P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="#8a7a6a" opacity="0.4" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" stroke-linejoin="round">'
+                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
                  f'BOTANICAL GARDEN</text>')
         for side in [-1, 1]:
             lx_d = CX + side * (cart_w / 2 - 18)
@@ -2761,8 +2795,8 @@ def generate(
     if mat > 0.8:
         # Plate number (bottom-right)
         P.append(f'<text x="{WIDTH - m - 12}" y="{HEIGHT - m - 8}" text-anchor="end" '
-                 f'font-family="Georgia,serif" font-size="5.5" fill="#a09080" opacity="0.3" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" stroke-linejoin="round">'
+                 f'font-family="Georgia,serif" font-size="5.5" fill="{pal["muted"]}" opacity="0.3" '
+                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
                  f'Pl. {plate_num}</text>')
 
     # ── Interactive tooltip overlays (visible when SVG viewed directly) ──
