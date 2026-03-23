@@ -761,7 +761,7 @@ class SvgRepoCardRenderer:
         esc = escape
         lang_name, lang_color = self._extract_language(card.meta)
         has_thumb = bool(card.background_image)
-        thumb_w, thumb_h = (130, 75) if has_thumb else (0, 0)
+        thumb_w, thumb_h = (80, 48) if has_thumb else (0, 0)
         px = 20  # left padding
         sparkline_data = card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
         text_px_w = (w - thumb_w - 36 - px) if has_thumb else (w - px - 20)
