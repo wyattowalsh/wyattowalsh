@@ -52,8 +52,8 @@
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3178c6" />
 <text class="rc-meta" x="32" y="184">TypeScript 85%</text>
-<circle class="rc-lang-dot" cx="137" cy="180" r="4" fill="#8b949e" />
-<text class="rc-meta" x="145" y="184">MDX 8%</text>
-<circle class="rc-lang-dot" cx="198" cy="180" r="4" fill="#563d7c" />
-<text class="rc-meta" x="206" y="184">CSS 6%</text>
+<circle class="rc-lang-dot" cx="150" cy="180" r="4" fill="#8b949e" />
+<text class="rc-meta" x="158" y="184">MDX 8%</text>
+<circle class="rc-lang-dot" cx="219" cy="180" r="4" fill="#563d7c" />
+<text class="rc-meta" x="227" y="184">CSS 6%</text>
 </svg>
