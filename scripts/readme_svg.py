@@ -23,6 +23,32 @@ STAR_ICON_PATH = (
     " 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
 )
 
+ISSUE_ICON_PATH = (
+    "M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16"
+    "A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z"
+)
+
+LAW_ICON_PATH = (
+    "M8.75.75V2h.985c.304 0 .603.08.867.231l1.29.736c.038.022.08.033"
+    ".124.033h2.234a.75.75 0 0 1 0 1.5h-.427l2.111 4.692a.75.75 0 0 1"
+    "-.154.838l-.53-.53.529.531-.001.002-.002.002-.006.006-.006.005-.01"
+    ".01-.045.04c-.21.176-.441.327-.686.45C14.556 10.78 13.88 11 13 11"
+    "a4.498 4.498 0 0 1-2.023-.454 3.544 3.544 0 0 1-.686-.45l-.045"
+    "-.04-.016-.015-.006-.006-.004-.004v-.001a.75.75 0 0 1-.154-.838"
+    "L12.178 4.5h-.162c-.305 0-.604-.079-.868-.231l-1.29-.736a.245.245"
+    " 0 0 0-.124-.033H8.75V13h2.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0"
+    " 1 0-1.5h2.5V3.5h-.984a.245.245 0 0 0-.124.033l-1.289.737c-.265"
+    ".15-.564.23-.869.23h-.162l2.112 4.692a.75.75 0 0 1-.154.838l-.53"
+    "-.53.529.531-.001.002-.002.002-.006.006-.016.015-.045.04c-.21.176"
+    "-.441.327-.686.45C4.556 10.78 3.88 11 3 11a4.498 4.498 0 0 1"
+    "-2.023-.454 3.544 3.544 0 0 1-.686-.45l-.045-.04-.016-.015-.006"
+    "-.006-.004-.004v-.001a.75.75 0 0 1-.154-.838L2.178 4.5H1.75a.75"
+    ".75 0 0 1 0-1.5h2.234a.249.249 0 0 0 .125-.033l1.288-.737c.265"
+    "-.15.564-.23.869-.23h.984V.75a.75.75 0 0 1 1.5 0Zm2.945 8.477"
+    "c.285.135.718.273 1.305.273s1.02-.138 1.305-.273L13 6.327Zm-10"
+    " 0c.285.135.718.273 1.305.273s1.02-.138 1.305-.273L3 6.327Z"
+)
+
 FORK_ICON_PATH = (
     "M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878"
     "a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128"
@@ -229,6 +255,8 @@ class SvgCard:
     forks: int | None = None
     size_kb: int | None = None
     languages: dict[str, int] | None = None
+    license_spdx: str | None = None
+    open_issues: int | None = None
 
 
 class SvgCardFamily(str, Enum):
@@ -943,6 +971,10 @@ class SvgRepoCardRenderer:
             fork_match = re.match(r"[⑂]\s*(.+)", stripped)
             if fork_match:
                 items.append((FORK_ICON_PATH, fork_match.group(1).strip()))
+                continue
+            issue_match = re.match(r"[⊙]\s*(.+)", stripped)
+            if issue_match:
+                items.append((ISSUE_ICON_PATH, issue_match.group(1).strip()))
         if not items:
             return
         # Layout right-to-left from right_x
@@ -1005,6 +1037,21 @@ class SvgRepoCardRenderer:
                 f"{esc(lang_name, quote=True)}</text>"
             )
             x += 15 + len(lang_name) * 7 + 14
+
+        # License label — right-aligned in footer
+        if card.license_spdx and card.license_spdx != "NOASSERTION":
+            lt = card.license_spdx
+            text_w = int(len(lt) * 6.5)
+            lx = self.width - 20 - text_w
+            lines.append(
+                f'<svg x="{lx - 18}" y="{y - 12}" width="14" height="14"'
+                ' viewBox="0 0 16 16" fill="var(--meta-color)">'
+                f'<path d="{LAW_ICON_PATH}" /></svg>'
+            )
+            lines.append(
+                f'<text class="rc-meta" x="{lx}" y="{y}">'
+                f"{esc(lt, quote=True)}</text>"
+            )
 
         return x
 

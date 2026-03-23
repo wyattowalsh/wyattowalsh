@@ -115,6 +115,8 @@ class RepoMetadata:
     language: str | None = None
     open_graph_image_url: str | None = None
     languages: dict[str, int] | None = None
+    open_issues: int | None = None
+    license_spdx: str | None = None
 
 
 @dataclass(frozen=True)
@@ -164,6 +166,8 @@ class GitHubRepoClient:
             forks=int(payload.get("forks_count", 0)) if payload.get("forks_count") is not None else None,
             language=payload.get("language") or None,
             open_graph_image_url=payload.get("open_graph_image_url") or None,
+            open_issues=int(payload.get("open_issues_count", 0)) if payload.get("open_issues_count") is not None else None,
+            license_spdx=(payload.get("license") or {}).get("spdx_id") or None,
         )
 
     def fetch_repo_languages(
@@ -1097,9 +1101,11 @@ class ReadmeSectionGenerator:
         info_bits.append(f"★ {metadata.stars:,}")
         if metadata.forks:
             info_bits.append(f"⑂ {metadata.forks:,}")
-        updated = self._format_timestamp(metadata.updated_at)
-        if updated:
-            info_bits.append(f"Updated {updated}")
+        if metadata.open_issues is not None:
+            info_bits.append(f"⊙ {metadata.open_issues:,}")
+        relative = self._relative_time(metadata.updated_at)
+        if relative:
+            info_bits.append(f"Updated {relative}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
         # Skip OG image embedding — GitHub's SVG sanitizer strips data: URIs
         # from <image> elements, breaking the entire card rendering.
@@ -1122,6 +1128,8 @@ class ReadmeSectionGenerator:
             forks=metadata.forks,
             size_kb=metadata.size_kb,
             languages=languages,
+            license_spdx=metadata.license_spdx,
+            open_issues=metadata.open_issues,
         )
 
         card = self._set_card_icon_data_uri(
@@ -1480,6 +1488,36 @@ class ReadmeSectionGenerator:
         if "T" not in timestamp:
             return timestamp
         return timestamp.split("T", maxsplit=1)[0]
+
+    def _relative_time(self, iso_timestamp: str | None) -> str | None:
+        """Convert ISO timestamp to relative time like '3d ago', '2mo ago'."""
+        if not iso_timestamp:
+            return None
+        try:
+            dt = datetime.fromisoformat(iso_timestamp.replace("Z", "+00:00"))
+            delta = datetime.now(UTC) - dt
+            seconds = int(delta.total_seconds())
+            if seconds < 60:
+                return "just now"
+            minutes = seconds // 60
+            if minutes < 60:
+                return f"{minutes}m ago"
+            hours = minutes // 60
+            if hours < 24:
+                return f"{hours}h ago"
+            days = hours // 24
+            if days < 7:
+                return f"{days}d ago"
+            weeks = days // 7
+            if weeks < 5:
+                return f"{weeks}w ago"
+            months = days // 30
+            if months < 12:
+                return f"{months}mo ago"
+            years = days // 365
+            return f"{years}y ago"
+        except (ValueError, TypeError):
+            return None
 
     def _repo_background_image(
         self,
