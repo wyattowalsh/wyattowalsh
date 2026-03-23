@@ -474,12 +474,12 @@ MDX                      1 repo              ░░░░░░░░░░░�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<!-- BLOG-POST-LIST:START -->
- - Fri Feb 13 2026 12:00 AM - [ProxyWhirl](https://w4w.dev/blog/posts/proxywhirl)
- - Sun Dec 01 2024 12:00 AM - [Personal Web App v6](https://w4w.dev/blog/posts/w4w-v6)
- - Fri Jan 15 2021 12:00 AM - [Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3)
- - Thu Jan 14 2021 12:00 AM - [Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2)
- - Wed Jan 13 2021 12:00 AM - [Basics of Linear Regression Modeling and Ordinary Least Squares &lpar;OLS&rpar;](https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1)<!-- BLOG-POST-LIST:END -->
+<p align="center"><a href="https://w4w.dev/blog/posts/proxywhirl" target="_blank"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/w4w-v6" target="_blank"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" loading="lazy"/></a>
+<a href="https://w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="500" loading="lazy"/></a></p>
+<p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
 </details>
