@@ -21,15 +21,22 @@ import random
 from pathlib import Path
 
 from ..utils import get_logger
+from .optimize import optimize_palette_hues
 from .shared import (
     LANG_HUES,
     WorldState,
+    _build_world_palette_extended,
+    activity_tempo,
     compute_world_state,
     flow_field_lines,
     oklch,
+    oklch_lerp,
+    organic_texture_filter,
     phyllotaxis_points,
+    select_palette_for_world,
     svg_footer,
     svg_header,
+    visual_complexity,
     volumetric_glow_filter,
 )
 
@@ -150,6 +157,17 @@ def _build_language_palette(
     # Sort by proportion descending
     sorted_langs = sorted(lang_bytes.items(), key=lambda x: -x[1])
 
+    # Optimize hue harmony across the top languages
+    raw_hues = [LANG_HUES.get(lang, 200) for lang, _ in sorted_langs]
+    if len(raw_hues) >= 2:
+        optimized_hues = optimize_palette_hues(raw_hues, max_shift=10.0)
+    else:
+        optimized_hues = list(raw_hues)
+    # Map back: lang -> optimized hue
+    _opt_hue_map: dict[str, float] = {
+        lang: optimized_hues[i] for i, (lang, _) in enumerate(sorted_langs)
+    }
+
     # Build distribution -- each language gets proportional slots
     # Size multiplier creates a visible "pie-chart spiral" encoding:
     #   dominant language → 1.5x radius, minor languages → 0.6x radius
@@ -168,7 +186,7 @@ def _build_language_palette(
 
     result: list[tuple[str, float, float]] = []
     for lang, size_mult in lang_slots:
-        hue = LANG_HUES.get(lang, 200)
+        hue = _opt_hue_map.get(lang, LANG_HUES.get(lang, 200))
         # Top language gets high chroma, others moderate
         is_top = lang == sorted_langs[0][0]
         C = 0.16 if is_top else 0.10
@@ -261,15 +279,22 @@ def _render_svg(
     flow_seed = params["flow_seed"]
     flow_hue_base = params["flow_hue_base"]
 
+    # Visual complexity scaling — adjusts flow field detail
+    complexity = visual_complexity(metrics)
+    complexity_scale = 0.7 + 0.6 * complexity
+    line_count = int(line_count * complexity_scale)
+    octaves = max(1, min(6, int(octaves * complexity_scale)))
+
     n_points = max(30, len(repos) or metrics.get("public_repos") or 50)
     n_points = min(n_points, 250)
 
     logger.info(
-        "Unfurling Spiral: n_points={n} lines={l} octaves={o} dark={dm}",
+        "Unfurling Spiral: pts={n} lines={l} oct={o} dk={dm} cx={c:.2f}",
         n=n_points,
         l=line_count,
         o=octaves,
         dm=dark_mode,
+        c=complexity,
     )
 
     # ------------------------------------------------------------------
@@ -303,22 +328,27 @@ def _render_svg(
     palette = _build_language_palette(metrics, n_points)
 
     # ------------------------------------------------------------------
-    # 3. Build SVG
+    # 3. Compute OKLCH world-state palette
     # ------------------------------------------------------------------
+    ws = compute_world_state(metrics)
+    pal = _build_world_palette_extended(
+        ws.time_of_day, ws.weather, ws.season, ws.energy,
+    )
+
     if dark_mode:
-        bg_color = "#0a0d14"
-        bg_radial_color = "#1a1540"
+        bg_color = pal["bg_secondary"]
+        bg_radial_color = pal["bg_primary"]
         text_color = "rgba(255,255,255,0.4)"
         arc_bg_color = "rgba(255,255,255,0.08)"
-        arc_fg_color = "#7c6ef0"
+        arc_fg_color = pal["accent"]
         ripple_color = "rgba(180,160,255,0.5)"
         conn_opacity = 0.22
     else:
-        bg_color = "#f5f5fa"
-        bg_radial_color = "#c8b8e0"
+        bg_color = pal["bg_primary"]
+        bg_radial_color = pal["bg_secondary"]
         text_color = "rgba(0,0,0,0.3)"
         arc_bg_color = "rgba(0,0,0,0.10)"
-        arc_fg_color = "#6c5ce7"
+        arc_fg_color = pal["accent"]
         ripple_color = "rgba(100,80,200,0.55)"
         conn_opacity = 0.18
 
@@ -373,6 +403,8 @@ def _render_svg(
             f'  <animate attributeName="r" from="0%" to="75%" dur="{duration}s" fill="freeze"/>\n'
             f"</radialGradient>\n"
         )
+    parts.append(organic_texture_filter("flowDistort", "water", intensity=0.15))
+    parts.append("\n")
     parts.append("</defs>\n")
 
     if not snapshot_mode:
@@ -393,10 +425,10 @@ def _render_svg(
         top_lang_hues = [flow_hue_base]
 
     if snapshot_mode:
-        parts.append('<g id="flowField" opacity="0.65">\n')
+        parts.append('<g id="flowField" opacity="0.65" filter="url(#flowDistort)">\n')
     else:
         parts.append(
-            '<g id="flowField" opacity="0.65"'
+            '<g id="flowField" opacity="0.65" filter="url(#flowDistort)"'
             ' style="animation:flowPulse 8s ease-in-out 5s infinite">\n'
         )
     for li, trail in enumerate(lines):
@@ -640,7 +672,7 @@ def _render_svg(
     if streak_months > 0:
         n_rings = min(12, streak_months)
         # Golden stroke for active, grey dashed for broken
-        ring_color = "#d4af37" if streak_active else "#888888"
+        ring_color = pal["highlight"] if streak_active else pal["muted"]
         dash_attr = '' if streak_active else ' stroke-dasharray="3,5"'
         # Add volumetric glow filter for golden rings
         if streak_active:
@@ -680,7 +712,7 @@ def _render_svg(
     # ── DNA Helix Overlay (Code Review Cross-Pollination) ──────
     review_count = metrics.get("pr_review_count", 0) or 0
     if review_count > 0 and len(pts) > 5:
-        helix_color = "#8080c0"
+        helix_color = oklch_lerp(pal["accent"], pal["muted"], 0.4)
         helix_opacity = round(0.08 + min(0.04, review_count * 0.0005), 3)
         # Two intertwined spiral paths offset by 180 degrees
         # Use the same phyllotaxis center but with offset angles
@@ -740,7 +772,7 @@ def _render_svg(
     # ── Fibonacci Golden Ratio Overlay ────────────────────────
     # Subtle mathematical beauty: golden spiral curve + golden rectangles
     phi = (1 + math.sqrt(5)) / 2  # golden ratio ≈ 1.618
-    gold_color = "#d4af37"
+    gold_color = pal["highlight"]
 
     parts.append('<g id="golden-overlay">\n')
 
