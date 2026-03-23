@@ -66,21 +66,21 @@
   <a href=".github/assets/img/animated-community.svg">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.gif">
-      <img src=".github/assets/img/animated-community.gif" width="100%" alt="Cosmic Genesis — Clifford attractor community art where density reveals as stars and forks accumulate"/>
+      <img src=".github/assets/img/animated-community.gif" width="100%" alt="Turing Patterns — Gray-Scott reaction-diffusion simulation where emergent patterns self-organize from repo seed positions"/>
     </picture>
   </a>
   <br/>
-  <sub><b>Cosmic Genesis</b> — Clifford attractor density field revealed progressively as stars and forks accumulate (<code>animated-community.gif</code>, source SVG: <code>animated-community.svg</code>)</sub>
+  <sub><b>Turing Patterns</b> — Gray-Scott reaction-diffusion: repos seed perturbations that self-organize into spots, stripes, and labyrinths (<code>animated-community.gif</code>, source SVG: <code>animated-community.svg</code>)</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/animated-activity.svg">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.gif">
-      <img src=".github/assets/img/animated-activity.gif" width="100%" alt="Unfurling Spiral — phyllotaxis spiral activity art that grows from a single seed as contributions build"/>
+      <img src=".github/assets/img/animated-activity.gif" width="100%" alt="Physarum Network — slime mold agent simulation where organic filaments self-organize to connect repos"/>
     </picture>
   </a>
   <br/>
-  <sub><b>Unfurling Spiral</b> — phyllotaxis spiral grows from a single seed as contributions build (<code>animated-activity.gif</code>, source SVG: <code>animated-activity.svg</code>)</sub>
+  <sub><b>Physarum Network</b> — slime mold agents navigate between repos, depositing trails that form emergent organic networks (<code>animated-activity.gif</code>, source SVG: <code>animated-activity.svg</code>)</sub>
 </td>
 </tr>
 </table>
@@ -107,14 +107,14 @@ Each timelapse GIF shows your profile's artwork evolving frame by frame, where *
 </tr>
 <tr>
 <td width="50%" align="center">
-  <img src=".github/assets/img/living-cosmic.gif" width="100%" alt="Cosmic Genesis timelapse — daily evolution of the attractor field"/>
+  <img src=".github/assets/img/living-cosmic.gif" width="100%" alt="Turing Patterns timelapse — daily evolution of reaction-diffusion patterns"/>
   <br/>
-  <sub><b>Cosmic Genesis</b> timelapse — the cosmic field builds as stars and forks accumulate</sub>
+  <sub><b>Turing Patterns</b> timelapse — reaction-diffusion patterns self-organize day by day</sub>
 </td>
 <td width="50%" align="center">
-  <img src=".github/assets/img/living-spiral.gif" width="100%" alt="Unfurling Spiral timelapse — daily evolution of the phyllotaxis spiral"/>
+  <img src=".github/assets/img/living-spiral.gif" width="100%" alt="Physarum Network timelapse — daily evolution of slime mold network"/>
   <br/>
-  <sub><b>Unfurling Spiral</b> timelapse — the spiral unfurls as contributions build</sub>
+  <sub><b>Physarum Network</b> timelapse — organic filaments emerge and connect repos day by day</sub>
 </td>
 </tr>
 </table>
@@ -145,12 +145,12 @@ Generate: `uv run readme generate timelapse --metrics-path metrics.json --histor
   - Visual (compat): `animated-community.gif` / `animated-community-dark.gif`
   - Visual (source): `animated-community.svg` / `animated-community-dark.svg`
   - Data inputs: commit history timeline with `stars`, `forks`, `languages`, milestone events
-  - Mapping: Clifford attractor density field; stars/forks → progressive reveal density; language → OKLCH hue; calendar milestones → ring-burst animations; contribution particles → emission rate.
-- **Unfurling Spiral** (animated — activity)
+  - Mapping: Gray-Scott reaction-diffusion; language diversity → feed rate (pattern regime); star velocity → kill rate (topology); repos → seed perturbations; account age → simulation steps; language hue → Voronoi coloring.
+- **Physarum Network** (animated — activity)
   - Visual (compat): `animated-activity.gif` / `animated-activity-dark.gif`
   - Visual (source): `animated-activity.svg` / `animated-activity-dark.svg`
   - Data inputs: `public_repos`, `followers`, `orgs_count`, `contributions_last_year`, `total_commits`, `following`, `languages`
-  - Mapping: Phyllotaxis spiral; repos/followers → octave complexity; contributions → dot count & temporal easing; languages → palette colors; flow-field lines draw as activity builds.
+  - Mapping: Physarum agent simulation; repos → food sources; contributions → agent count; PR reviews → sensor angle; contribution streak → trail persistence; language diversity → multi-species trail coloring; emergent shortest-path network.
 - Growth timing (all four): `compute_maturity(metrics)` drives maturity and timeline staging over ~30s; maturity computed from commits, stars, contributions, followers, repo_count/age, forks, network_size.
 
 </details>
