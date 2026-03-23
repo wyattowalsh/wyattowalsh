@@ -417,10 +417,12 @@ Generate: `uv run readme generate timelapse --metrics-path metrics.json --histor
 
 ## Metrics
 
-<p align="center">
-  <img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="49%"/>
-  <img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="49%"/>
-</p>
+<table><tbody>
+<tr>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%"/></td>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="100%"/></td>
+</tr>
+</tbody></table>
 
 ## Word Clouds
 
