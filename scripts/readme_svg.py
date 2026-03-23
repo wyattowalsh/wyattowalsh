@@ -901,7 +901,10 @@ class SvgRepoCardRenderer:
             )
             desc_y += desc_line_height
 
-        bar_w = min(w - 40, 340)
+        # Shorten language bar when license label needs space in bottom-right
+        has_license = bool(card.license_spdx and card.license_spdx != "NOASSERTION")
+        license_reserve = (len(card.license_spdx or "") * 7 + 30) if has_license else 0
+        bar_w = min(w - 40 - license_reserve, 340)
         if card.languages and sum(card.languages.values()) > 0:
             self._render_lang_bar(
                 lines, card.languages, px, bar_y, bar_w,
@@ -1010,10 +1013,12 @@ class SvgRepoCardRenderer:
 
         if card.languages and sum(card.languages.values()) > 0:
             total = sum(card.languages.values())
+            has_license = bool(card.license_spdx and card.license_spdx != "NOASSERTION")
+            max_langs = 2 if has_license else 3
             top = sorted(
                 card.languages.items(), key=lambda kv: kv[1],
                 reverse=True,
-            )[:3]
+            )[:max_langs]
             for lname, lbytes in top:
                 lcolor = LANGUAGE_COLORS.get(lname, "#8b949e")
                 pct = round(100 * lbytes / total)
@@ -1038,20 +1043,25 @@ class SvgRepoCardRenderer:
             )
             x += 15 + len(lang_name) * 7 + 14
 
-        # License label — right-aligned in footer
+        # License label — right-aligned in footer, with overlap guard
         if card.license_spdx and card.license_spdx != "NOASSERTION":
             lt = card.license_spdx
-            text_w = int(len(lt) * 6.5)
-            lx = self.width - 20 - text_w
-            lines.append(
-                f'<svg x="{lx - 18}" y="{y - 12}" width="14" height="14"'
-                ' viewBox="0 0 16 16" fill="var(--meta-color)">'
-                f'<path d="{LAW_ICON_PATH}" /></svg>'
-            )
-            lines.append(
-                f'<text class="rc-meta" x="{lx}" y="{y}">'
-                f"{esc(lt, quote=True)}</text>"
-            )
+            text_w = int(len(lt) * 7)
+            icon_w = 18
+            license_total_w = icon_w + text_w
+            lx_text = self.width - 20 - text_w
+            lx_icon = lx_text - icon_w
+            # Only render if there's enough gap from the language dots
+            if lx_icon > x + 8:
+                lines.append(
+                    f'<svg x="{lx_icon}" y="{y - 12}" width="14" height="14"'
+                    ' viewBox="0 0 16 16" fill="var(--meta-color)">'
+                    f'<path d="{LAW_ICON_PATH}" /></svg>'
+                )
+                lines.append(
+                    f'<text class="rc-meta" x="{lx_text}" y="{y}">'
+                    f"{esc(lt, quote=True)}</text>"
+                )
 
         return x
 
