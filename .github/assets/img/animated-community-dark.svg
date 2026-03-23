@@ -212,28 +212,28 @@
 </ellipse>
 </g>
 <g id="aurora" opacity="0.15">
-<ellipse cx="400.0" cy="-100" rx="300" ry="200" fill="none" stroke="#007267" stroke-width="125" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-100" rx="300" ry="200" fill="none" stroke="#2a6600" stroke-width="125" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="15s" begin="0s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-140" rx="330" ry="220" fill="none" stroke="#007267" stroke-width="158" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-140" rx="330" ry="220" fill="none" stroke="#2a6600" stroke-width="158" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="18s" begin="2s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-180" rx="360" ry="240" fill="none" stroke="#007267" stroke-width="173" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-180" rx="360" ry="240" fill="none" stroke="#2a6600" stroke-width="173" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="21s" begin="4s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-220" rx="390" ry="260" fill="none" stroke="#007267" stroke-width="30" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-220" rx="390" ry="260" fill="none" stroke="#2a6600" stroke-width="30" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="24s" begin="6s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-260" rx="420" ry="280" fill="none" stroke="#007267" stroke-width="30" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-260" rx="420" ry="280" fill="none" stroke="#2a6600" stroke-width="30" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="27s" begin="8s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-300" rx="450" ry="300" fill="none" stroke="#007267" stroke-width="200" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-300" rx="450" ry="300" fill="none" stroke="#2a6600" stroke-width="200" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="30s" begin="10s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-340" rx="480" ry="320" fill="none" stroke="#005eae" stroke-width="200" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-340" rx="480" ry="320" fill="none" stroke="#006a94" stroke-width="200" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="33s" begin="12s" repeatCount="indefinite"/>
 </ellipse>
-<ellipse cx="400.0" cy="-380" rx="510" ry="340" fill="none" stroke="#007267" stroke-width="51" opacity="0" filter="url(#nebBlur)">
+<ellipse cx="400.0" cy="-380" rx="510" ry="340" fill="none" stroke="#2a6600" stroke-width="51" opacity="0" filter="url(#nebBlur)">
   <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" dur="36s" begin="14s" repeatCount="indefinite"/>
 </ellipse>
 </g>
