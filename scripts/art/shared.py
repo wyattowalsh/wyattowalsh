@@ -1058,3 +1058,398 @@ def firefly_elements(
         )
 
     return parts
+
+
+# ---------------------------------------------------------------------------
+# Extended OKLCH color science (Phase 1)
+# ---------------------------------------------------------------------------
+
+
+def _srgb_to_linear(c: float) -> float:
+    """sRGB gamma to linear transfer function (inverse of _linear_to_srgb)."""
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
+    """Convert hex color '#rrggbb' to OKLCH (L, C, H_degrees).
+
+    L in [0,1], C ~[0,0.4], H in [0,360).
+    Inverse of ``oklch()``.
+    """
+    r = int(hex_str[1:3], 16) / 255.0
+    g = int(hex_str[3:5], 16) / 255.0
+    b = int(hex_str[5:7], 16) / 255.0
+    rl = _srgb_to_linear(r)
+    gl = _srgb_to_linear(g)
+    bl = _srgb_to_linear(b)
+    l_ = 0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl
+    m_ = 0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl
+    s_ = 0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl
+    lc = l_ ** (1 / 3) if l_ >= 0 else 0.0
+    mc = m_ ** (1 / 3) if m_ >= 0 else 0.0
+    sc = s_ ** (1 / 3) if s_ >= 0 else 0.0
+    L = 0.2104542553 * lc + 0.7936177850 * mc - 0.0040720468 * sc
+    a = 1.9779984951 * lc - 2.4285922050 * mc + 0.4505937099 * sc
+    b_val = 0.0259040371 * lc + 0.7827717662 * mc - 0.8086757660 * sc
+    C = math.sqrt(a * a + b_val * b_val)
+    H = math.degrees(math.atan2(b_val, a)) % 360
+    return L, C, H
+
+
+def oklch_gamut_map(L: float, C: float, H: float) -> tuple[float, float, float]:
+    """Reduce chroma until the OKLCH triplet maps to a valid sRGB color.
+
+    Binary-search: halves C until all RGB channels in [0, 1].
+    Preserves hue and lightness — only chroma is reduced.
+    """
+    a = C * math.cos(math.radians(H))
+    b = C * math.sin(math.radians(H))
+
+    def _in_gamut(c_val: float) -> bool:
+        ca = c_val * math.cos(math.radians(H))
+        cb = c_val * math.sin(math.radians(H))
+        lc = L + 0.3963377774 * ca + 0.2158037573 * cb
+        mc = L - 0.1055613458 * ca - 0.0638541728 * cb
+        sc = L - 0.0894841775 * ca - 1.2914855480 * cb
+        l3 = lc ** 3
+        m3 = mc ** 3
+        s3 = sc ** 3
+        r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3
+        g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3
+        bv = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3
+        eps = -0.001
+        return r >= eps and g >= eps and bv >= eps and r <= 1.001 and g <= 1.001 and bv <= 1.001
+
+    if _in_gamut(C):
+        return L, C, H
+
+    lo, hi = 0.0, C
+    for _ in range(16):
+        mid = (lo + hi) / 2
+        if _in_gamut(mid):
+            lo = mid
+        else:
+            hi = mid
+    return L, lo, H
+
+
+def oklch_lerp(hex1: str, hex2: str, t: float) -> str:
+    """Perceptually uniform interpolation between two hex colors via OKLCH.
+
+    Handles hue wrapping across the 0/360 boundary.
+    *t* = 0.0 returns hex1, *t* = 1.0 returns hex2.
+    """
+    L1, C1, H1 = hex_to_oklch(hex1)
+    L2, C2, H2 = hex_to_oklch(hex2)
+    L = L1 + (L2 - L1) * t
+    C = C1 + (C2 - C1) * t
+    # Shortest-arc hue interpolation
+    dh = H2 - H1
+    if dh > 180:
+        dh -= 360
+    elif dh < -180:
+        dh += 360
+    H = (H1 + dh * t) % 360
+    return oklch(L, C, H)
+
+
+def oklch_gradient(anchors: list[tuple[float, float, float]], n: int) -> list[str]:
+    """Generate *n* evenly-spaced hex colors along an OKLCH anchor path.
+
+    *anchors*: list of (L, C, H) tuples defining the gradient stops.
+    Uses linear interpolation with shortest-arc hue wrapping.
+    """
+    if n <= 0:
+        return []
+    if n == 1 or len(anchors) < 2:
+        L, C, H = anchors[0] if anchors else (0.5, 0.0, 0)
+        return [oklch(L, C, H)]
+    colors: list[str] = []
+    for i in range(n):
+        pos = i / max(n - 1, 1) * (len(anchors) - 1)
+        lo = int(pos)
+        hi = min(lo + 1, len(anchors) - 1)
+        frac = pos - lo
+        L = anchors[lo][0] + frac * (anchors[hi][0] - anchors[lo][0])
+        C = anchors[lo][1] + frac * (anchors[hi][1] - anchors[lo][1])
+        dh = anchors[hi][2] - anchors[lo][2]
+        if dh > 180:
+            dh -= 360
+        elif dh < -180:
+            dh += 360
+        H = (anchors[lo][2] + frac * dh) % 360
+        colors.append(oklch(L, C, H))
+    return colors
+
+
+def wcag_contrast_ratio(hex_fg: str, hex_bg: str) -> float:
+    """WCAG 2.1 contrast ratio between two hex colors. Range [1, 21]."""
+    def _rel_lum(h: str) -> float:
+        r = _srgb_to_linear(int(h[1:3], 16) / 255.0)
+        g = _srgb_to_linear(int(h[3:5], 16) / 255.0)
+        b = _srgb_to_linear(int(h[5:7], 16) / 255.0)
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    l1 = _rel_lum(hex_fg)
+    l2 = _rel_lum(hex_bg)
+    lighter = max(l1, l2)
+    darker = min(l1, l2)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def ensure_contrast(hex_fg: str, hex_bg: str, min_ratio: float = 4.5) -> str:
+    """Adjust fg lightness in OKLCH to meet min_ratio against bg.
+
+    Tries darkening first, then lightening if needed.
+    """
+    if wcag_contrast_ratio(hex_fg, hex_bg) >= min_ratio:
+        return hex_fg
+    L, C, H = hex_to_oklch(hex_fg)
+    bg_L, _, _ = hex_to_oklch(hex_bg)
+    # Try moving L away from bg_L
+    for step in range(20):
+        if bg_L > 0.5:
+            candidate_L = max(0.0, L - step * 0.04)
+        else:
+            candidate_L = min(1.0, L + step * 0.04)
+        candidate = oklch(candidate_L, C, H)
+        if wcag_contrast_ratio(candidate, hex_bg) >= min_ratio:
+            return candidate
+    return hex_fg
+
+
+# ---------------------------------------------------------------------------
+# Art palette registry (Phase 2)
+# ---------------------------------------------------------------------------
+
+
+ART_PALETTE_ANCHORS: dict[str, list[tuple[float, float, float]]] = {
+    "sunset": [
+        (0.48, 0.22, 310), (0.58, 0.26, 340), (0.65, 0.24, 15),
+        (0.72, 0.22, 40), (0.78, 0.20, 65),
+    ],
+    "aurora": [
+        (0.55, 0.22, 290), (0.65, 0.20, 200), (0.60, 0.22, 150),
+        (0.62, 0.20, 340), (0.68, 0.16, 280),
+    ],
+    "ocean": [
+        (0.38, 0.18, 255), (0.48, 0.22, 240), (0.56, 0.20, 220),
+        (0.62, 0.18, 195), (0.68, 0.16, 170),
+    ],
+    "flora": [
+        (0.52, 0.14, 155), (0.56, 0.20, 145), (0.62, 0.22, 120),
+        (0.50, 0.16, 105), (0.48, 0.16, 180),
+    ],
+    "ember": [
+        (0.48, 0.24, 15), (0.56, 0.22, 30), (0.62, 0.20, 45),
+        (0.52, 0.18, 25), (0.44, 0.22, 5),
+    ],
+    "neon": [
+        (0.72, 0.28, 250), (0.70, 0.30, 330), (0.78, 0.28, 155),
+        (0.80, 0.26, 80),
+    ],
+    "cosmic": [
+        (0.15, 0.08, 280), (0.25, 0.14, 260), (0.35, 0.18, 240),
+        (0.30, 0.12, 300), (0.20, 0.10, 320),
+    ],
+    "spiral": [
+        (0.55, 0.12, 260), (0.60, 0.14, 220), (0.65, 0.16, 180),
+        (0.58, 0.10, 300), (0.52, 0.14, 340),
+    ],
+}
+
+
+CLUSTER_PALETTES: dict[str, list[str]] = {
+    "AI/ML": ["#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#5B21B6"],
+    "Web": ["#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#1E40AF"],
+    "Data": ["#047857", "#059669", "#10B981", "#34D399", "#065F46"],
+    "DevOps": ["#B45309", "#D97706", "#F59E0B", "#FBBF24", "#92400E"],
+    "Languages": ["#B91C1C", "#DC2626", "#EF4444", "#F87171", "#991B1B"],
+    "Tools": ["#0E7490", "#0891B2", "#06B6D4", "#22D3EE", "#155E75"],
+    "Security": ["#9D174D", "#BE185D", "#EC4899", "#F472B6", "#831843"],
+    "Other": ["#374151", "#4B5563", "#6B7280", "#9CA3AF", "#1F2937"],
+}
+
+
+def select_palette_for_world(world: WorldState) -> str:
+    """Choose the best ART_PALETTE name based on world state."""
+    if world.time_of_day == "night":
+        return "cosmic"
+    if world.time_of_day == "dawn" or world.time_of_day == "golden":
+        return "sunset"
+    season_map = {"spring": "flora", "summer": "ember", "autumn": "sunset", "winter": "ocean"}
+    base = season_map.get(world.season, "aurora")
+    if world.energy > 0.7:
+        return "neon"
+    if world.aurora_intensity > 0.5:
+        return "aurora"
+    return base
+
+
+def _build_world_palette_extended(
+    time_of_day: str,
+    weather: str,
+    season: str,
+    energy: float,
+) -> dict[str, str]:
+    """Build an extended 12-key OKLCH palette from world-state properties.
+
+    Superset of the 5-key palette from ``_build_world_palette``.
+    """
+    base = _build_world_palette(time_of_day, weather, season, energy)
+
+    # Derive additional keys from the 5 base colors
+    is_dark = time_of_day == "night"
+    if is_dark:
+        base["bg_primary"] = oklch(0.12, 0.03, 260)
+        base["bg_secondary"] = oklch(0.08, 0.04, 280)
+        base["text_primary"] = oklch(0.92, 0.02, 220)
+        base["text_secondary"] = oklch(0.72, 0.04, 230)
+    else:
+        base["bg_primary"] = oklch(0.97, 0.01, 210)
+        base["bg_secondary"] = oklch(0.93, 0.02, 220)
+        base["text_primary"] = oklch(0.15, 0.02, 250)
+        base["text_secondary"] = oklch(0.40, 0.03, 240)
+
+    # Weather modulates highlight
+    storm_boost = {"clear": 0.0, "cloudy": -0.02, "rainy": -0.04, "stormy": -0.06}
+    h_adj = storm_boost.get(weather, 0.0)
+    season_hues = {"spring": 130, "summer": 145, "autumn": 40, "winter": 220}
+    accent_H = season_hues.get(season, 145)
+
+    base["highlight"] = oklch(0.75 + energy * 0.1, 0.22 + h_adj, accent_H - 30)
+    base["muted"] = oklch(0.55 + h_adj, 0.06, accent_H + 20)
+    base["border"] = oklch(0.60 if is_dark else 0.80, 0.03, accent_H)
+
+    return base
+
+
+# ---------------------------------------------------------------------------
+# GitHub data → visual parameters (Phase 6)
+# ---------------------------------------------------------------------------
+
+
+def visual_complexity(metrics: dict[str, Any]) -> float:
+    """0.0-1.0 complexity score from language diversity (Shannon entropy).
+
+    0 languages → 0.0, 1 language → 0.15, max entropy for 10 → 1.0.
+    """
+    entropy = metrics.get("language_diversity", 0.0)
+    return min(1.0, entropy / 3.32)
+
+
+def topic_affinity_matrix(
+    repos: list[dict[str, Any]],
+) -> dict[tuple[int, int], float]:
+    """Return affinity scores (0-1) between repo pairs based on shared topics.
+
+    High-affinity repos share many topics and should be placed near each other.
+    """
+    affinities: dict[tuple[int, int], float] = {}
+    for i in range(len(repos)):
+        topics_i = set(repos[i].get("topics", []))
+        if not topics_i:
+            continue
+        for j in range(i + 1, len(repos)):
+            topics_j = set(repos[j].get("topics", []))
+            if not topics_j:
+                continue
+            shared = len(topics_i & topics_j)
+            union = len(topics_i | topics_j)
+            if shared > 0 and union > 0:
+                affinities[(i, j)] = shared / union
+    return affinities
+
+
+def activity_tempo(contributions_monthly: dict[str, int] | None) -> float:
+    """0.0-1.0 tempo from contribution pattern.
+
+    Bursty → higher tempo (faster animations), steady → moderate tempo.
+    Measured as coefficient of variation of monthly counts.
+    """
+    if not contributions_monthly:
+        return 0.5
+    counts = [v for v in contributions_monthly.values() if isinstance(v, (int, float))]
+    if len(counts) < 2:
+        return 0.5
+    mean = sum(counts) / len(counts)
+    if mean <= 0:
+        return 0.0
+    variance = sum((c - mean) ** 2 for c in counts) / len(counts)
+    cv = math.sqrt(variance) / mean
+    return min(1.0, cv / 2.0)
+
+
+# ---------------------------------------------------------------------------
+# Advanced SVG techniques (Phase 5)
+# ---------------------------------------------------------------------------
+
+
+def organic_texture_filter(
+    filter_id: str,
+    texture_type: str = "cloud",
+    intensity: float = 0.5,
+    seed: int = 0,
+) -> str:
+    """SVG filter with feTurbulence + feDisplacementMap for organic textures.
+
+    *texture_type*: 'cloud', 'water', 'marble', 'paper'.
+    *intensity*: 0.0-1.0 controls displacement scale.
+    Returns a ``<filter>`` element string.
+    """
+    params: dict[str, tuple[str, str, int, float]] = {
+        # (type, baseFrequency, numOctaves, base_scale)
+        "cloud": ("fractalNoise", "0.02 0.02", 3, 3.0),
+        "water": ("turbulence", "0.03 0.01", 2, 5.0),
+        "marble": ("fractalNoise", "0.04 0.04", 5, 2.0),
+        "paper": ("fractalNoise", "0.35 0.25", 3, 0.8),
+    }
+    turb_type, freq, octaves, base_scale = params.get(texture_type, params["cloud"])
+    scale = round(base_scale * intensity, 2)
+    return (
+        f'<filter id="{filter_id}" x="-5%" y="-5%" width="110%" height="110%">'
+        f'<feTurbulence type="{turb_type}" baseFrequency="{freq}" '
+        f'numOctaves="{octaves}" seed="{seed}" result="tex"/>'
+        f'<feDisplacementMap in="SourceGraphic" in2="tex" '
+        f'scale="{scale}" xChannelSelector="R" yChannelSelector="G"/>'
+        f'</filter>'
+    )
+
+
+def blend_mode_filter(filter_id: str, mode: str = "multiply") -> str:
+    """SVG feBlend filter. modes: multiply, screen, overlay, soft-light."""
+    return (
+        f'<filter id="{filter_id}">'
+        f'<feBlend in="SourceGraphic" in2="BackgroundImage" mode="{mode}"/>'
+        f'</filter>'
+    )
+
+
+def smil_animate(
+    attr: str,
+    values: list[str],
+    dur: float,
+    begin: float = 0.0,
+    repeat: str = "indefinite",
+    fill: str = "freeze",
+) -> str:
+    """Generate an SVG ``<animate>`` element string."""
+    vals = ";".join(values)
+    return (
+        f'<animate attributeName="{attr}" values="{vals}" '
+        f'dur="{dur}s" begin="{begin}s" repeatCount="{repeat}" fill="{fill}"/>'
+    )
+
+
+def smil_animate_transform(
+    transform_type: str,
+    values: list[str],
+    dur: float,
+    begin: float = 0.0,
+    repeat: str = "indefinite",
+) -> str:
+    """Generate an SVG ``<animateTransform>`` element string."""
+    vals = ";".join(values)
+    return (
+        f'<animateTransform attributeName="transform" type="{transform_type}" '
+        f'values="{vals}" dur="{dur}s" begin="{begin}s" repeatCount="{repeat}"/>'
+    )
