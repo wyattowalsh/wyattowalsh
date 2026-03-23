@@ -27,7 +27,6 @@
 <rect x="1.5" y="1.5" width="137" height="127" rx="11" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />
 <rect x="0" y="0" width="140" height="3" fill="#000000" clip-path="url(#bar-clip)" />
 <circle cx="70" cy="42" r="34" fill="url(#icon-glow)" />
-<rect x="46" y="18" width="48" height="48" rx="12" fill="#000000" />
-<text x="70" y="50" text-anchor="middle" font-size="22" font-weight="700" fill="#ffffff" font-family="'Segoe UI', Arial, sans-serif">XC</text>
+<image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTQnIGZpbGw9JyMwMDAnLz48dGV4dCB4PSczMicgeT0nNDYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZpbGw9JyNmZmYnIGZvbnQtZmFtaWx5PSdzZXJpZicgZm9udC1zaXplPSc0MCcgZm9udC13ZWlnaHQ9JzcwMCc+8J2VjzwvdGV4dD48L3N2Zz4=" x="46" y="18" width="48" height="48" preserveAspectRatio="xMidYMid meet" clip-path="url(#ico-clip)" />
 <text class="con-title" x="70" y="96" text-anchor="middle">X.com</text>
 </svg>
