@@ -27,14 +27,23 @@ from .shared import (
     LANG_HUES,
     WIDTH,
     Noise2D,
+    WorldState,
+    atmospheric_haze_filter,
+    aurora_band_elements,
+    aurora_filter,
     compute_maturity,
+    compute_world_state,
     contributions_monthly_to_daily_series,
+    firefly_elements,
     make_linear_gradient,
     make_radial_gradient,
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
     seed_hash,
+    snow_pattern,
+    volumetric_glow_filter,
+    weather_overlay_elements,
 )
 
 # Hard caps to prevent file-size blowout
@@ -542,6 +551,9 @@ def generate(
     contributions = metrics.get("contributions_last_year", 200)
     orgs = metrics.get("orgs_count", 1)
 
+    # ── WorldState (unified atmospheric/environmental state) ─────
+    world = compute_world_state(metrics)
+
     # ── Enriched metric extraction ────────────────────────────────
     streaks = metrics.get("contribution_streaks", {})
     current_streak = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
@@ -716,6 +728,8 @@ def generate(
     plant_bases = []
     # Track per-tree tooltip data for interactive SVG titles
     tree_tooltips = []  # (x, base_y, top_y, name, lang, stars, species)
+    # Depth plane classification per repo (bg/mid/fg) for atmospheric perspective
+    repo_depth_planes = {}  # ri -> "bg" | "mid" | "fg"
 
     # ── Plant generation (progressive: blank soil → full garden) ────
     n_repos = len(repos)
@@ -820,6 +834,20 @@ def generate(
         base_x += rng.uniform(-8, 8)
         base_x = max(80, min(WIDTH - 80, base_x))
         gy = ground_y_at(base_x)
+
+        # Classify depth plane by age: oldest -> background, newest -> foreground
+        if n_repos >= 3:
+            ages_sorted = sorted(r.get("age_months", 6) for r in repos)
+            age_p33 = ages_sorted[len(ages_sorted) // 3]
+            age_p66 = ages_sorted[2 * len(ages_sorted) // 3]
+            if age >= age_p66:
+                repo_depth_planes[ri] = "bg"
+            elif age <= age_p33:
+                repo_depth_planes[ri] = "fg"
+            else:
+                repo_depth_planes[ri] = "mid"
+        else:
+            repo_depth_planes[ri] = "mid"
 
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
         # Data mapping: commits -> trunk height, total_commits scales globally
@@ -1316,6 +1344,16 @@ def generate(
     <circle cx="8" cy="3" r="0.5" fill="#807040" opacity="0.2"/>
     <path d="M0,2 Q4,3 8,2 Q12,1 16,2" fill="none" stroke="#806840" stroke-width="0.2" opacity="0.12"/>
   </pattern>''')
+    # ── World-state atmospheric filters & patterns ─────────────────
+    P.append(atmospheric_haze_filter("bgHaze", 0.5))
+    P.append(volumetric_glow_filter("fireflyGlow", radius=2.0))
+    P.append(aurora_filter("auroraGlow"))
+    # Sun glow gradient for clear weather
+    P.append(make_radial_gradient('weatherSunGlow', '12%', '-2%', '90%',
+        [('0%', '#fffbe8', 0.12), ('50%', '#fff8e0', 0.04), ('100%', '#f5f0e6', 0.0)]))
+    # Seasonal ground patterns
+    if world.season == "winter":
+        P.append(snow_pattern("groundSnow", density=0.6, seed=base_seed))
     P.append('</defs>')
 
     # ── CSS for interactive hover tooltips (works in direct SVG view) ──
@@ -1538,8 +1576,79 @@ def generate(
                      f'{_timeline_style(n_when, 0.5, delay_offset_frac=0.01, duration_scale=0.8)}/>')
         P.append('</g>')
 
-    # ── Ground surface ────────────────────────────────────────────
-    P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+15} L0,{GROUND_Y+15} Z" fill="url(#grass)" opacity="0.8"/>')
+    # ── Mycelial Network (topic-based underground connections) ────
+    # Repos sharing topics are connected by organic tendrils underground
+    if len(repos) >= 2 and len(plant_bases) >= 2:
+        mycelium_rng = np.random.default_rng(base_seed ^ 0xABCD1234)
+        topic_connections: list[tuple[int, int, int]] = []  # (ri_a, ri_b, shared_count)
+        for ri_a in range(len(repos)):
+            topics_a = set(repos[ri_a].get("topics") or [])
+            if not topics_a:
+                continue
+            for ri_b in range(ri_a + 1, len(repos)):
+                topics_b = set(repos[ri_b].get("topics") or [])
+                shared = topics_a & topics_b
+                if shared:
+                    topic_connections.append((ri_a, ri_b, len(shared)))
+        if topic_connections:
+            P.append('<g opacity="0.2">')
+            for ri_a, ri_b, shared_count in topic_connections[:12]:  # cap at 12 connections
+                if ri_a >= len(plant_bases) or ri_b >= len(plant_bases):
+                    continue
+                x_a, y_a = plant_bases[ri_a]
+                x_b, y_b = plant_bases[ri_b]
+                # Tendrils run below ground level
+                depth_offset = 20 + shared_count * 8
+                tendril_y = GROUND_Y + depth_offset
+                # Quadratic bezier for organic curve
+                mid_x = (x_a + x_b) / 2 + mycelium_rng.uniform(-30, 30)
+                mid_y = tendril_y + mycelium_rng.uniform(5, 20)
+                tendril_sw = round(0.3 + shared_count * 0.2, 2)
+                tendril_color = oklch(0.42, 0.06, 35 + mycelium_rng.uniform(-10, 10))
+                tendril_opacity = round(0.15 + min(0.10, shared_count * 0.03), 3)
+                P.append(
+                    f'<path d="M{x_a:.1f},{y_a + 5:.1f} Q{mid_x:.1f},{mid_y:.1f} {x_b:.1f},{y_b + 5:.1f}" '
+                    f'fill="none" stroke="{tendril_color}" stroke-width="{tendril_sw}" '
+                    f'opacity="{tendril_opacity}" stroke-linecap="round"/>'
+                )
+                # Small nutrient exchange nodes at midpoints
+                if shared_count >= 2:
+                    node_color = oklch(0.50, 0.08, 50)
+                    P.append(
+                        f'<circle cx="{mid_x:.1f}" cy="{mid_y:.1f}" r="{0.8 + shared_count * 0.3:.1f}" '
+                        f'fill="{node_color}" opacity="{tendril_opacity * 0.8:.3f}"/>'
+                    )
+            P.append('</g>')
+
+    # ── Ground surface (season-aware) ─────────────────────────────
+    grass_opacity = {"spring": 0.85, "summer": 0.8, "autumn": 0.55, "winter": 0.3}.get(world.season, 0.8)
+    P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+15} L0,{GROUND_Y+15} Z" fill="url(#grass)" opacity="{grass_opacity}"/>')
+    # Winter snow cover on ground
+    if world.season == "winter":
+        P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+10} L0,{GROUND_Y+10} Z" fill="url(#groundSnow)" opacity="0.5"/>')
+        # Snow drift caps along the ground line
+        snow_rng = np.random.default_rng(base_seed ^ 0x5A0FFEEE)
+        for drift_i in range(8):
+            dx_snow = snow_rng.uniform(40, WIDTH - 40)
+            dy_snow = ground_y_at(dx_snow) - snow_rng.uniform(1, 4)
+            drx = snow_rng.uniform(12, 30)
+            dry = snow_rng.uniform(3, 7)
+            P.append(f'<ellipse cx="{dx_snow:.0f}" cy="{dy_snow:.0f}" rx="{drx:.0f}" ry="{dry:.0f}" '
+                     f'fill="#f0f0f8" opacity="{snow_rng.uniform(0.15, 0.3):.2f}"/>')
+    # Autumn fallen leaf ellipses scattered on ground
+    if world.season == "autumn":
+        autumn_rng = np.random.default_rng(base_seed ^ 0xFA110EAF)
+        autumn_colors = [oklch(0.52, 0.18, h) for h in (25, 35, 45, 15, 55)]
+        for _ in range(20):
+            flx = autumn_rng.uniform(30, WIDTH - 30)
+            fly = ground_y_at(flx) + autumn_rng.uniform(-2, 3)
+            fl_rx = autumn_rng.uniform(1.5, 4)
+            fl_ry = autumn_rng.uniform(0.8, 2)
+            fl_rot = autumn_rng.uniform(-60, 60)
+            fl_c = autumn_rng.choice(autumn_colors)
+            P.append(f'<ellipse cx="{flx:.0f}" cy="{fly:.0f}" rx="{fl_rx:.1f}" ry="{fl_ry:.1f}" '
+                     f'fill="{fl_c}" opacity="{autumn_rng.uniform(0.12, 0.25):.2f}" '
+                     f'transform="rotate({fl_rot:.0f},{flx:.0f},{fly:.0f})"/>')
     # Main ground line — warm earth tone, thicker for visibility
     P.append(f'<path d="{ground_path}" fill="none" stroke="#6a5a2a" stroke-width="2.0" opacity="0.6"/>')
     # Secondary ground line — lighter, offset slightly below for depth
@@ -1755,6 +1864,16 @@ def generate(
         # Dawn sun glow near horizon
         P.append(f'<circle cx="{WIDTH * 0.3:.0f}" cy="{GROUND_Y - 20:.0f}" r="40" fill="{oklch(0.90, 0.15, 50)}" opacity="0.15" filter="url(#dew)"/>')
 
+    # ── Aurora Canopy (after sky, before trees) ───────────────────
+    aurora_els = aurora_band_elements(
+        world,
+        languages=metrics.get("languages"),
+        width=WIDTH, height=HEIGHT,
+        seed=base_seed,
+    )
+    if aurora_els:
+        P.extend(aurora_els)
+
     # ── Bird silhouettes (distant, high in sky) ──────────────────
     if mat > 0.35:
         n_birds = int((mat - 0.35) * 8)
@@ -1804,6 +1923,21 @@ def generate(
                 f'<path d="M{sx1:.1f},{sy1:.1f} Q{(sx1 + sx2) / 2 + 1.2:.1f},{(sy1 + sy2) / 2 + 1.0:.1f} {sx2:.1f},{sy2:.1f}" '
                 f'fill="none" stroke="#5f5536" stroke-width="{max(0.35, sw * 0.85):.2f}" stroke-linecap="round" '
                 f'{_timeline_style(when, op_base, delay_offset_frac=0.01, duration_scale=1.15, ease="linear")}/>'
+            )
+
+    # ── Atmospheric depth: background haze for distant elements ───
+    # Subtle haze strip in the upper canopy to push oldest trees back visually
+    bg_trees_exist = any(plane == "bg" for plane in repo_depth_planes.values())
+    if bg_trees_exist:
+        # Find the x-ranges of background trees and apply localized haze
+        bg_bases = [(plant_bases[ri][0], plant_bases[ri][1])
+                    for ri in repo_depth_planes
+                    if repo_depth_planes[ri] == "bg" and ri < len(plant_bases)]
+        for bgx, bgy in bg_bases:
+            # Localized atmospheric haze ellipses around background trees
+            P.append(
+                f'<ellipse cx="{bgx:.0f}" cy="{bgy - 80:.0f}" rx="80" ry="120" '
+                f'fill="#e8e4da" opacity="0.08" filter="url(#bgHaze)"/>'
             )
 
     # ── Above ground: ink filter group ────────────────────────────
@@ -2135,6 +2269,18 @@ def generate(
                 )
         P.append('</g>')
 
+    # ── Bioluminescent firefly layer (shared library, glow-filtered) ─
+    fly_els = firefly_elements(
+        metrics.get("star_velocity"),
+        width=WIDTH, height=HEIGHT,
+        y_min=0.3, y_max=0.85,
+        seed=base_seed,
+    )
+    if fly_els:
+        P.append('<g filter="url(#fireflyGlow)">')
+        P.extend(fly_els)
+        P.append('</g>')
+
     # ── Insects (detailed, naturalist style) ──────────────────────
     for ix, iy, itype, isz, ihue in insects:
         if itype == "butterfly":
@@ -2359,6 +2505,24 @@ def generate(
                  f'{_timeline_style(when, 0.3)} font-style="normal" paint-order="stroke fill" stroke="#f5f0e6" '
                  f'stroke-width="2" stroke-linejoin="round">Fig. {li + 1}</text>')
     P.append('</g>')
+
+    # ── Weather overlay (from WorldState) ──────────────────────────
+    weather_els = weather_overlay_elements(world, width=WIDTH, height=HEIGHT, seed=base_seed)
+    for el in weather_els:
+        P.append(el)
+
+    # ── Foreground warm tint for newest-repo depth plane ─────────
+    fg_trees_exist = any(plane == "fg" for plane in repo_depth_planes.values())
+    if fg_trees_exist:
+        fg_bases = [(plant_bases[ri][0], plant_bases[ri][1])
+                    for ri in repo_depth_planes
+                    if repo_depth_planes[ri] == "fg" and ri < len(plant_bases)]
+        for fgx, fgy in fg_bases:
+            # Subtle warm glow around foreground trees
+            P.append(
+                f'<ellipse cx="{fgx:.0f}" cy="{fgy - 60:.0f}" rx="60" ry="100" '
+                f'fill="{oklch(0.80, 0.06, 50)}" opacity="0.04"/>'
+            )
 
     # ── Tiered botanical border ────────────────────────────────────
     m = 16

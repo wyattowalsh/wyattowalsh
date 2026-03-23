@@ -444,10 +444,10 @@ def _wc_from_topics(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_wordle_by_topics.svg"
+    out_filename = output_path.name if output_path else "wordcloud_metaheuristic-anim_by_topics.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="wordle",
+        renderer="metaheuristic-anim",
         width=1200,
         height=800,
         max_words=num_terms,
@@ -458,7 +458,7 @@ def _wc_from_topics(
         frequencies=frequencies,
         output_path=out_dir / out_filename,
         source="topics",
-        color_func_name="gradient",
+        color_func_name="ocean",
     )
 
 
@@ -496,10 +496,10 @@ def _wc_from_languages(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_wordle_by_languages.svg"
+    out_filename = output_path.name if output_path else "wordcloud_metaheuristic-anim_by_languages.svg"
 
     settings = wc.WordCloudSettings(
-        renderer="wordle",
+        renderer="metaheuristic-anim",
         width=1200,
         height=800,
         max_words=num_terms,
@@ -510,7 +510,7 @@ def _wc_from_languages(
         frequencies=frequencies,
         output_path=out_dir / out_filename,
         source="languages",
-        color_func_name="sunset",
+        color_func_name="aurora",
     )
 
 
@@ -1002,6 +1002,129 @@ def living_art(
     except subprocess.CalledProcessError as exc:
         logger.error("Living-art GIF generation failed: {}", exc)
         raise typer.Exit(code=1) from exc
+
+
+# ---------------------------------------------------------------------------
+# timelapse
+# ---------------------------------------------------------------------------
+
+
+@generate_app.command(
+    name="timelapse",
+    help="Generate living-art timelapse GIFs where each frame = one day of profile history.",
+)
+def timelapse(
+    config_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--config-path",
+            help="Project configuration file path.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    profile: Annotated[
+        str,
+        typer.Option(
+            "--profile",
+            help="GitHub username (used for labeling).",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = "wyattowalsh",
+    metrics_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--metrics-path",
+            help="Path to metrics JSON from fetch_metrics.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = None,
+    history_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--history-path",
+            help="Path to history JSON from fetch_history.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = None,
+    max_frames: Annotated[
+        int,
+        typer.Option(
+            "--max-frames",
+            min=5,
+            help="Maximum frames per GIF.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = 150,
+    size: Annotated[
+        int,
+        typer.Option(
+            "--size",
+            min=64,
+            help="Frame size in pixels (square).",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = 400,
+    only: Annotated[
+        str | None,
+        typer.Option(
+            "--only",
+            help="Restrict to one style: inkgarden, topo, cosmic, spiral.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = None,
+    dark_mode: Annotated[
+        bool,
+        typer.Option(
+            "--dark-mode",
+            help="Enable dark mode for cosmic/spiral styles.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = False,
+    workers: Annotated[
+        int,
+        typer.Option(
+            "--workers",
+            min=1,
+            help="Parallel rendering workers.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = 4,
+) -> None:
+    """Generate timelapse GIFs showing day-by-day profile evolution."""
+    if not metrics_path or not metrics_path.exists():
+        console.print(
+            "[bold red]Error:[/bold red] --metrics-path is required and must exist."
+        )
+        raise typer.Exit(code=1)
+    if not history_path or not history_path.exists():
+        console.print(
+            "[bold red]Error:[/bold red] --history-path is required and must exist."
+        )
+        raise typer.Exit(code=1)
+
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    history = json.loads(history_path.read_text(encoding="utf-8"))
+
+    from ..art.timelapse import render_timelapse
+
+    styles = [only] if only else None
+    outputs = render_timelapse(
+        history,
+        metrics,
+        styles=styles,
+        max_frames=max_frames,
+        size=size,
+        owner=profile,
+        dark_mode=dark_mode,
+        workers=workers,
+    )
+
+    for p in outputs:
+        size_mb = p.stat().st_size / (1024 * 1024)
+        console.print(f"[bold green]Generated:[/] {p} ({size_mb:.1f} MB)")
+
+    if not outputs:
+        console.print("[yellow]No timelapse GIFs generated.[/yellow]")
 
 
 # ---------------------------------------------------------------------------

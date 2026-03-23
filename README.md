@@ -85,7 +85,43 @@
 </tr>
 </table>
 
-> [!NOTE] Compatibility phase: all four living-art panels now embed stable GIFs for GitHub-safe inline playback and link through to their richer SVG sources. Regenerate via `uv run readme generate living-art` and `uv run readme generate animated`. See footnote[^1].
+> [!NOTE] Compatibility phase: all four living-art panels now embed stable GIFs for GitHub-safe inline playback and link through to their richer SVG sources. Regenerate via `uv run readme generate living-art` and `uv run readme generate animated`. Timelapse GIFs (daily history evolution) via `uv run readme generate timelapse`. See footnote[^1].
+
+<details>
+<summary><strong>Timelapse GIFs — day-by-day evolution (click to expand)</strong></summary>
+
+Each timelapse GIF shows your profile's artwork evolving frame by frame, where **each frame = one real calendar day** from account creation to yesterday. Weather, season, time-of-day, and energy levels all change based on your real GitHub data.
+
+<table role="presentation">
+<tr>
+<td width="50%" align="center">
+  <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden timelapse — daily evolution from bare soil to full botanical garden"/>
+  <br/>
+  <sub><b>Ink Garden</b> timelapse — watch the botanical garden grow day by day</sub>
+</td>
+<td width="50%" align="center">
+  <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography timelapse — daily evolution of the terrain map"/>
+  <br/>
+  <sub><b>Topography</b> timelapse — terrain emerges and evolves day by day</sub>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center">
+  <img src=".github/assets/img/living-cosmic.gif" width="100%" alt="Cosmic Genesis timelapse — daily evolution of the attractor field"/>
+  <br/>
+  <sub><b>Cosmic Genesis</b> timelapse — the cosmic field builds as stars and forks accumulate</sub>
+</td>
+<td width="50%" align="center">
+  <img src=".github/assets/img/living-spiral.gif" width="100%" alt="Unfurling Spiral timelapse — daily evolution of the phyllotaxis spiral"/>
+  <br/>
+  <sub><b>Unfurling Spiral</b> timelapse — the spiral unfurls as contributions build</sub>
+</td>
+</tr>
+</table>
+
+Generate: `uv run readme generate timelapse --metrics-path metrics.json --history-path history.json --profile YOUR_USERNAME`
+
+</details>
 
 <!-- BEGIN MANAGED MARKER -->
 <details>
@@ -382,15 +418,15 @@
 ## Metrics
 
 <p align="center">
-  <img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, activity, languages, and habits" width="49%"/>
-  <img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: music, activity, and stargazers" width="49%"/>
+  <img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="49%"/>
+  <img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="49%"/>
 </p>
 
 ## Word Clouds
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_wordle_by_topics.svg" alt="Word cloud of project topics, larger words indicate more frequently used topics" width="49%"/>
-  <img src=".github/assets/img/wordcloud_wordle_by_languages.svg" alt="Word cloud of programming languages used across repositories" width="49%"/>
+  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg" alt="Animated word cloud of topics, each frame placed by a different metaheuristic algorithm" width="49%"/>
+  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of languages, each frame placed by a different metaheuristic algorithm" width="49%"/>
 </p>
 
 <sub>Data source mapping: in Markdown-source mode (<code>--from-topics-md</code> / <code>--from-languages-md</code>), these clouds are generated from <code>.github/assets/topics.md</code> and <code>.github/assets/languages.md</code>, with term size based on parsed Markdown frequencies.</sub>

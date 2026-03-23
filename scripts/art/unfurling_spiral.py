@@ -23,11 +23,14 @@ from pathlib import Path
 from ..utils import get_logger
 from .shared import (
     LANG_HUES,
+    WorldState,
+    compute_world_state,
     flow_field_lines,
     oklch,
     phyllotaxis_points,
     svg_footer,
     svg_header,
+    volumetric_glow_filter,
 )
 
 logger = get_logger(module=__name__)
@@ -148,10 +151,15 @@ def _build_language_palette(
     sorted_langs = sorted(lang_bytes.items(), key=lambda x: -x[1])
 
     # Build distribution -- each language gets proportional slots
+    # Size multiplier creates a visible "pie-chart spiral" encoding:
+    #   dominant language → 1.5x radius, minor languages → 0.6x radius
+    max_proportion = sorted_langs[0][1] / total_bytes if sorted_langs else 0.5
     lang_slots: list[tuple[str, float]] = []
     for lang, byte_count in sorted_langs:
         n = max(1, round(byte_count / total_bytes * n_points))
-        size_mult = 0.7 + (byte_count / total_bytes) * 1.5  # larger for dominant langs
+        proportion = byte_count / total_bytes
+        # Scale from 0.6 (minor) to 1.5 (dominant) based on proportion
+        size_mult = 0.6 + (proportion / max(max_proportion, 0.01)) * 0.9
         lang_slots.extend([(lang, size_mult)] * n)
     # Pad or trim to n_points
     while len(lang_slots) < n_points:
@@ -545,7 +553,7 @@ def _render_svg(
         parts.extend(glow_parts)
         parts.append("</g>\n")
 
-    # ── Topic connection arcs ──────────────────────────────────
+    # ── Topic connection arcs with labels ────────────────────────
     topic_clusters = metrics.get("topic_clusters", {})
     top_topics = (
         list(topic_clusters.keys())[:5] if isinstance(topic_clusters, dict) else []
@@ -561,9 +569,18 @@ def _render_svg(
             if rname:
                 repo_indices[rname] = ri
 
-        arc_color_base = oklch(0.65 if dark_mode else 0.45, 0.08, 240)
-        parts.append('<g id="topic-arcs" opacity="0.15">\n')
-        for topic in top_topics:
+        parts.append('<g id="topic-arcs">\n')
+        for ti_topic, topic in enumerate(top_topics):
+            # Derive arc color from the topic's primary language hue
+            cluster_info = topic_clusters.get(topic, {})
+            primary_lang = (
+                cluster_info.get("primary_language", "")
+                if isinstance(cluster_info, dict)
+                else ""
+            )
+            topic_hue = LANG_HUES.get(primary_lang, 200 + ti_topic * 30)
+            arc_color = oklch(0.60 if dark_mode else 0.45, 0.10, topic_hue)
+
             # Find all repos with this topic
             matching: list[int] = []
             for repo in enriched_repos[:n_points]:
@@ -575,6 +592,10 @@ def _render_svg(
                         matching.append(idx)
 
             if len(matching) >= 2:
+                # Collect midpoints for label placement
+                mid_xs: list[float] = []
+                mid_ys: list[float] = []
+
                 # Draw curved connections between matching points
                 for mi in range(len(matching) - 1):
                     p1 = pts[matching[mi]]
@@ -585,13 +606,27 @@ def _render_svg(
                     # Pull control point toward center for nice arc
                     cx_pt = mx + (_WIDTH / 2 - mx) * 0.3
                     cy_pt = my + (_HEIGHT / 2 - my) * 0.3
+                    mid_xs.append(mx)
+                    mid_ys.append(my)
                     parts.append(
                         f'<path d="M{p1[0]:.0f},{p1[1]:.0f} Q{cx_pt:.0f},{cy_pt:.0f} {p2[0]:.0f},{p2[1]:.0f}" '
-                        f'fill="none" stroke="{arc_color_base}" stroke-width="0.8"/>\n'
+                        f'fill="none" stroke="{arc_color}" stroke-width="0.4" opacity="0.12"/>\n'
+                    )
+
+                # Label at the centroid of arc midpoints
+                if mid_xs:
+                    label_x = sum(mid_xs) / len(mid_xs)
+                    label_y = sum(mid_ys) / len(mid_ys)
+                    label_color = oklch(0.70 if dark_mode else 0.35, 0.06, topic_hue)
+                    parts.append(
+                        f'<text x="{label_x:.0f}" y="{label_y:.0f}" '
+                        f'text-anchor="middle" font-size="6" '
+                        f'font-family="monospace" fill="{label_color}" '
+                        f'opacity="0.4">{topic}</text>\n'
                     )
         parts.append("</g>\n")
 
-    # ── Streak pulse rings ────────────────────────────────────
+    # ── Streak pulse rings (golden glow for active, grey dashed for broken) ──
     streaks = history.get("contribution_streaks") or metrics.get(
         "contribution_streaks", {}
     )
@@ -603,17 +638,22 @@ def _render_svg(
     )
 
     if streak_months > 0:
-        n_rings = min(8, streak_months)
-        ring_color = (
-            oklch(0.7 if dark_mode else 0.5, 0.12, 160)
-            if streak_active
-            else oklch(0.6, 0.05, 200)
+        n_rings = min(12, streak_months)
+        # Golden stroke for active, grey dashed for broken
+        ring_color = "#d4af37" if streak_active else "#888888"
+        dash_attr = '' if streak_active else ' stroke-dasharray="3,5"'
+        # Add volumetric glow filter for golden rings
+        if streak_active:
+            parts.append(f"<defs>{volumetric_glow_filter('streakGlow', radius=1.5)}</defs>\n")
+        parts.append(
+            f'<g id="streak-rings"'
+            f'{" filter=" + chr(34) + "url(#streakGlow)" + chr(34) if streak_active else ""}>\n'
         )
-        parts.append('<g id="streak-rings">\n')
         for ri in range(n_rings):
-            radius = 30 + ri * 35
-            opacity = 0.15 - ri * 0.015
-            if opacity <= 0:
+            radius = 30 + ri * 25
+            # Opacity decreasing outward: 0.3 → 0.05
+            opacity = round(0.3 - ri * (0.25 / max(n_rings - 1, 1)), 3)
+            if opacity < 0.02:
                 break
 
             if snapshot_mode:
@@ -621,14 +661,14 @@ def _render_svg(
                     parts.append(
                         f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="{radius}" '
                         f'fill="none" stroke="{ring_color}" stroke-width="0.8" '
-                        f'opacity="{opacity:.3f}"/>\n'
+                        f'opacity="{opacity:.3f}"{dash_attr}/>\n'
                     )
             else:
                 pulse_dur = round(4 + ri * 0.5, 1)
                 delay = round(ri * 1.2, 1)
                 parts.append(
                     f'<circle cx="{_WIDTH / 2}" cy="{_HEIGHT / 2}" r="{radius}" '
-                    f'fill="none" stroke="{ring_color}" stroke-width="0.8" opacity="0">\n'
+                    f'fill="none" stroke="{ring_color}" stroke-width="0.8" opacity="0"{dash_attr}>\n'
                     f'  <animate attributeName="opacity" values="0;{opacity:.3f};{opacity:.3f};0" '
                     f'dur="{pulse_dur}s" begin="{delay}s" repeatCount="indefinite"/>\n'
                     f'  <animate attributeName="r" values="{radius};{radius + 5};{radius}" '
@@ -637,27 +677,109 @@ def _render_svg(
                 )
         parts.append("</g>\n")
 
-    # ── PR Review cross-pollination ─────────────────────────────
+    # ── DNA Helix Overlay (Code Review Cross-Pollination) ──────
     review_count = metrics.get("pr_review_count", 0) or 0
-    n_review_dots = min(15, review_count // 10)
-    if n_review_dots > 0 and len(pts) > 5:
-        parts.append('<g id="review-dots" opacity="0.3">\n')
-        review_rng = random.Random(42 + review_count)
-        for _ in range(n_review_dots):
-            # Random pair of non-adjacent spiral points
-            i1 = review_rng.randint(0, len(pts) - 1)
-            i2 = review_rng.randint(0, len(pts) - 1)
-            if abs(i1 - i2) < 3:
-                continue
-            p1 = pts[i1]
-            p2 = pts[i2]
-            mx = (p1[0] + p2[0]) / 2
-            my = (p1[1] + p2[1]) / 2
-            dot_color = oklch(0.7 if dark_mode else 0.5, 0.1, 300)
+    if review_count > 0 and len(pts) > 5:
+        helix_color = "#8080c0"
+        helix_opacity = round(0.08 + min(0.04, review_count * 0.0005), 3)
+        # Two intertwined spiral paths offset by 180 degrees
+        # Use the same phyllotaxis center but with offset angles
+        helix_n = min(len(pts), 80)
+        helix_scale = scale * 0.95  # slightly smaller than main spiral
+        golden_angle = math.pi * (3.0 - math.sqrt(5.0))
+
+        strand_a: list[tuple[float, float]] = []
+        strand_b: list[tuple[float, float]] = []
+        for hi in range(helix_n):
+            r_h = math.sqrt(hi) * 12.0 * helix_scale / max(math.sqrt(n_points) * 12.0, 1.0)
+            theta = hi * golden_angle
+            # Strand A: original angle
+            strand_a.append((
+                _WIDTH / 2 + r_h * math.cos(theta),
+                _HEIGHT / 2 + r_h * math.sin(theta),
+            ))
+            # Strand B: offset by pi (180 degrees)
+            strand_b.append((
+                _WIDTH / 2 + r_h * math.cos(theta + math.pi),
+                _HEIGHT / 2 + r_h * math.sin(theta + math.pi),
+            ))
+
+        parts.append(f'<g id="dna-helix" opacity="{helix_opacity}">\n')
+
+        # Draw strand A
+        if len(strand_a) >= 2:
+            path_a = f"M{strand_a[0][0]:.1f},{strand_a[0][1]:.1f}"
+            for sx, sy in strand_a[1:]:
+                path_a += f" L{sx:.1f},{sy:.1f}"
             parts.append(
-                f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="2" fill="{dot_color}"/>\n'
+                f'<path d="{path_a}" fill="none" stroke="{helix_color}" '
+                f'stroke-width="0.3" stroke-linecap="round"/>\n'
+            )
+
+        # Draw strand B
+        if len(strand_b) >= 2:
+            path_b = f"M{strand_b[0][0]:.1f},{strand_b[0][1]:.1f}"
+            for sx, sy in strand_b[1:]:
+                path_b += f" L{sx:.1f},{sy:.1f}"
+            parts.append(
+                f'<path d="{path_b}" fill="none" stroke="{helix_color}" '
+                f'stroke-width="0.3" stroke-linecap="round"/>\n'
+            )
+
+        # Draw connecting rungs — density proportional to review count
+        rung_interval = max(2, 20 - min(15, review_count // 5))
+        rung_color = oklch(0.60 if dark_mode else 0.45, 0.08, 260)
+        for hi in range(0, min(len(strand_a), len(strand_b)), rung_interval):
+            parts.append(
+                f'<line x1="{strand_a[hi][0]:.1f}" y1="{strand_a[hi][1]:.1f}" '
+                f'x2="{strand_b[hi][0]:.1f}" y2="{strand_b[hi][1]:.1f}" '
+                f'stroke="{rung_color}" stroke-width="0.2" opacity="0.12"/>\n'
             )
         parts.append("</g>\n")
+
+    # ── Fibonacci Golden Ratio Overlay ────────────────────────
+    # Subtle mathematical beauty: golden spiral curve + golden rectangles
+    phi = (1 + math.sqrt(5)) / 2  # golden ratio ≈ 1.618
+    gold_color = "#d4af37"
+
+    parts.append('<g id="golden-overlay">\n')
+
+    # Golden spiral: r = phi^(theta / (pi/2)), scaled to canvas
+    golden_pts: list[tuple[float, float]] = []
+    max_theta = 6 * math.pi  # ~3 full turns
+    spiral_scale = canvas_radius / (phi ** (max_theta / (math.pi / 2)))
+    for step in range(200):
+        theta = (step / 199) * max_theta
+        r_golden = spiral_scale * (phi ** (theta / (math.pi / 2)))
+        gx = _WIDTH / 2 + r_golden * math.cos(theta)
+        gy = _HEIGHT / 2 - r_golden * math.sin(theta)
+        if 0 <= gx <= _WIDTH and 0 <= gy <= _HEIGHT:
+            golden_pts.append((gx, gy))
+
+    if len(golden_pts) >= 2:
+        gpath = f"M{golden_pts[0][0]:.1f},{golden_pts[0][1]:.1f}"
+        for gx, gy in golden_pts[1:]:
+            gpath += f" L{gx:.1f},{gy:.1f}"
+        parts.append(
+            f'<path d="{gpath}" fill="none" stroke="{gold_color}" '
+            f'stroke-width="0.5" opacity="0.06" stroke-linecap="round"/>\n'
+        )
+
+    # Golden rectangles: 3 nested subdivisions from center
+    rect_w = canvas_radius * 1.6
+    rect_h = rect_w / phi
+    for gi in range(3):
+        shrink = phi ** gi
+        rw = rect_w / shrink
+        rh = rw / phi
+        rx = _WIDTH / 2 - rw / 2
+        ry = _HEIGHT / 2 - rh / 2
+        parts.append(
+            f'<rect x="{rx:.1f}" y="{ry:.1f}" width="{rw:.1f}" height="{rh:.1f}" '
+            f'fill="none" stroke="{gold_color}" stroke-width="0.3" opacity="0.04"/>\n'
+        )
+
+    parts.append("</g>\n")
 
     # ---- Layer 5: Heartbeat pulse with outward propagation ----
     if pts:

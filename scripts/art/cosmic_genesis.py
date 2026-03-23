@@ -26,9 +26,13 @@ import numpy as np
 from ..utils import get_logger
 from .shared import (
     LANG_HUES,
+    WorldState,
+    aurora_filter,
+    compute_world_state,
     oklch,
     svg_footer,
     svg_header,
+    volumetric_glow_filter,
 )
 
 logger = get_logger(module=__name__)
@@ -423,6 +427,17 @@ def _render_svg(
     )
     # Nebula blur filter
     parts.append('<filter id="nebBlur"><feGaussianBlur stdDeviation="40"/></filter>\n')
+    # Volumetric glow for nebula wisps
+    parts.append(volumetric_glow_filter("nebulaGlow", radius=5.0) + "\n")
+    # Aurora filter for PR merge bands
+    parts.append(aurora_filter("prAurora") + "\n")
+    # Comet trail gradient
+    parts.append(
+        '<linearGradient id="cometTrail" x1="0%" y1="0%" x2="100%" y2="0%">\n'
+        '  <stop offset="0%" stop-color="#d4a030" stop-opacity="0.6"/>\n'
+        '  <stop offset="100%" stop-color="#d4a030" stop-opacity="0"/>\n'
+        '</linearGradient>\n'
+    )
     parts.append("</defs>\n")
 
     if not snapshot_mode:
@@ -475,91 +490,138 @@ def _render_svg(
 
     # ---- Layer 1b: Topic Constellations ----
     topic_clusters = metrics.get("topic_clusters", {})
-    top_topics = list(topic_clusters.keys())[:6]
+    top_topics = list(topic_clusters.keys())[:8]
     if top_topics:
         parts.append('<g id="constellations">\n')
         constellation_rng = random.Random((star_seed + 42) % (2**31))
 
+        # Pre-compute low-density zones to place constellations
+        # (avoid high-density attractor regions)
+        _low_density_zones: list[tuple[float, float]] = []
+        _zone_step = grid_sz // 5
+        for _zr in range(0, grid_sz, _zone_step):
+            for _zc in range(0, grid_sz, _zone_step):
+                _zone_avg = float(np.mean(norm[_zr:_zr + _zone_step, _zc:_zc + _zone_step]))
+                if _zone_avg < 0.15:
+                    _low_density_zones.append((
+                        (_zc + _zone_step / 2) * pixel_w,
+                        (_zr + _zone_step / 2) * pixel_h,
+                    ))
+        # Fallback: use edges and corners
+        if len(_low_density_zones) < len(top_topics):
+            for _fx in [100, 400, 700]:
+                for _fy in [80, 400, 700]:
+                    _low_density_zones.append((_fx, _fy))
+
+        constellation_rng.shuffle(_low_density_zones)
+
         for ci, topic in enumerate(top_topics):
-            # Each constellation = cluster of 3-5 bright stars connected by lines
+            # Each constellation = cluster of 3-5 brighter stars connected by lines
             n_points = min(5, max(3, topic_clusters.get(topic, 1)))
-            base_x = 80 + constellation_rng.uniform(0, _WIDTH - 160)
-            base_y = 80 + constellation_rng.uniform(0, _HEIGHT - 200)
+
+            # Place in low-density region
+            if ci < len(_low_density_zones):
+                base_x, base_y = _low_density_zones[ci]
+            else:
+                base_x = 80 + constellation_rng.uniform(0, _WIDTH - 160)
+                base_y = 80 + constellation_rng.uniform(0, _HEIGHT - 200)
 
             points = [(base_x, base_y)]
             for _ in range(n_points - 1):
-                px = points[-1][0] + constellation_rng.uniform(-50, 50)
-                py = points[-1][1] + constellation_rng.uniform(-50, 50)
+                px = points[-1][0] + constellation_rng.uniform(-45, 45)
+                py = points[-1][1] + constellation_rng.uniform(-45, 45)
                 px = max(30, min(_WIDTH - 30, px))
                 py = max(30, min(_HEIGHT - 50, py))
                 points.append((px, py))
 
             # Connecting lines (faint)
-            line_color = oklch(0.6 if dark_mode else 0.4, 0.04, 220)
             for i in range(len(points) - 1):
                 x1, y1 = points[i]
                 x2, y2 = points[i + 1]
                 if snapshot_mode:
                     parts.append(
                         f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
-                        f'stroke="{line_color}" stroke-width="0.5" opacity="0.3"/>\n'
+                        f'stroke="#ffffff" stroke-width="0.3" opacity="0.15"/>\n'
                     )
                 else:
                     fade_dur = round(duration * 0.8 + ci * 2)
                     parts.append(
                         f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
-                        f'stroke="{line_color}" stroke-width="0.5" opacity="0">\n'
-                        f'  <animate attributeName="opacity" values="0;0.3;0.3;0" '
+                        f'stroke="#ffffff" stroke-width="0.3" opacity="0">\n'
+                        f'  <animate attributeName="opacity" values="0;0.15;0.15;0" '
                         f'dur="{fade_dur}s" begin="{ci * 3}s" repeatCount="indefinite"/>\n'
                         f'</line>\n'
                     )
 
             # Constellation stars (brighter than background stars)
             for px, py in points:
-                star_color = oklch(0.85 if dark_mode else 0.55, 0.03, 200)
+                star_color = oklch(0.90 if dark_mode else 0.60, 0.04, 210)
                 if snapshot_mode:
                     parts.append(
                         f'<circle cx="{px:.0f}" cy="{py:.0f}" r="1.8" '
-                        f'fill="{star_color}" opacity="0.6"/>\n'
+                        f'fill="{star_color}" opacity="0.7"/>\n'
                     )
                 else:
                     parts.append(
                         f'<circle cx="{px:.0f}" cy="{py:.0f}" r="1.8" '
-                        f'fill="{star_color}" opacity="0.6" '
+                        f'fill="{star_color}" opacity="0.7" '
                         f'style="animation:twinkle 3s ease-in-out {constellation_rng.uniform(0, 5):.1f}s infinite"/>\n'
                     )
 
-            # Constellation label
+            # Constellation label (small monospace)
             label_x, label_y = points[0]
-            label_color = "rgba(255,255,255,0.25)" if dark_mode else "rgba(0,0,0,0.2)"
-            name = topic.replace("-", " ").title()
+            name = topic.replace("-", " ")
             parts.append(
                 f'<text x="{label_x:.0f}" y="{label_y - 8:.0f}" '
-                f'font-family="Georgia,serif" font-size="6" font-style="italic" '
-                f'fill="{label_color}" text-anchor="middle">{name}</text>\n'
+                f'font-family="monospace" font-size="7" '
+                f'fill="#ffffff" opacity="0.5" text-anchor="middle">{name}</text>\n'
             )
 
         parts.append('</g>\n')
 
-    # ---- Layer 2: Nebula wisps (language-colored) ----
+    # ---- Layer 2: Full-Spectrum Nebula (language-colored) ----
     langs = metrics.get("languages", {})
     diversity = metrics.get("language_diversity", 1.0) or 1.0
-    n_nebula_langs = max(3, min(8, int(diversity * 2)))
-    top_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:n_nebula_langs]
-    nebula_hues = [LANG_HUES.get(lang, 200) for lang, _ in top_langs]
-    if not nebula_hues:
-        nebula_hues = [280, 200, 50]
+    total_lang_bytes = sum(langs.values()) if langs else 1
 
-    parts.append('<g id="nebula">\n')
-    for i, hue in enumerate(nebula_hues * 3):
-        nx = rng.uniform(100, 700)
-        ny = rng.uniform(100, 700)
-        rx = rng.uniform(120, 250)
-        ry = rng.uniform(80, 180)
-        drift_x = rng.uniform(-30, 30)
+    # Use ALL languages; number of wisps scaled by diversity
+    all_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True) if langs else []
+    if diversity > 3.0:
+        # High diversity: rich multi-colored field with 8+ wisps
+        n_wisps = max(8, min(16, len(all_langs) * 2))
+    elif diversity > 1.5:
+        # Medium diversity: moderate nebula
+        n_wisps = max(5, min(10, len(all_langs) + 2))
+    else:
+        # Low diversity: sparse, 2-3 monochromatic wisps
+        n_wisps = max(2, min(3, len(all_langs)))
+
+    # Build wisp specs: each language gets wisps sized by byte proportion
+    wisp_specs: list[tuple[float, float]] = []  # (hue, size_scale)
+    if all_langs:
+        for lang, byte_count in all_langs:
+            proportion = byte_count / max(total_lang_bytes, 1)
+            hue = LANG_HUES.get(lang, 200)
+            # Dominant languages get larger wisps; at least 1 wisp each
+            n_for_lang = max(1, round(proportion * n_wisps))
+            for _ in range(n_for_lang):
+                wisp_specs.append((hue, 0.5 + proportion * 1.5))
+    if not wisp_specs:
+        wisp_specs = [(280, 1.0), (200, 1.0), (50, 1.0)]
+
+    # Cap to target wisp count
+    wisp_specs = wisp_specs[:n_wisps]
+
+    parts.append('<g id="nebula" filter="url(#nebulaGlow)">\n')
+    for i, (hue, size_scale) in enumerate(wisp_specs):
+        nx = rng.uniform(80, 720)
+        ny = rng.uniform(80, 720)
+        rx = rng.uniform(100, 220) * size_scale
+        ry = rng.uniform(70, 160) * size_scale
+        drift_x = rng.uniform(-35, 35)
         nebula_color = oklch(0.30 if dark_mode else 0.45, 0.18 if dark_mode else 0.25, hue)
-        neb_dur = round(rng.uniform(20, 30))
-        neb_opacity = "0.12" if dark_mode else "0.20"
+        neb_dur = round(rng.uniform(18, 32))
+        neb_opacity = round(0.08 + 0.06 * size_scale, 3) if dark_mode else round(0.14 + 0.08 * size_scale, 3)
         if snapshot_mode:
             current_x = nx + drift_x * (snapshot_progress or 0.0) * 0.5
             parts.append(
@@ -579,39 +641,44 @@ def _render_svg(
     # ---- Layer 2b: PR Merge Aurora ----
     recent_prs = metrics.get("recent_merged_prs", [])
     if recent_prs and isinstance(recent_prs, list):
-        parts.append('<g id="aurora" opacity="0.15">\n')
-        for pi, pr in enumerate(recent_prs[:8]):
-            # Aurora band position and color from PR's repo language
+        aurora_prs = recent_prs[:5]
+        parts.append('<g id="aurora" opacity="0.18" filter="url(#prAurora)">\n')
+        for pi, pr in enumerate(aurora_prs):
+            # Aurora band color from PR's repo language
+            pr_lang = pr.get("language") or pr.get("repo_language", "")
             repo_name = pr.get("repo_name", "")
             adds = pr.get("additions", 0) or 0
             dels = pr.get("deletions", 0) or 0
-            band_width = min(200, max(30, (adds + dels) * 0.3))
+            band_width = min(180, max(25, (adds + dels) * 0.25))
 
-            # Hue from repo name hash for variety
-            pr_hue = (hash(repo_name) % 120) + 120  # greens and blues
-            aurora_color = oklch(0.45 if dark_mode else 0.55, 0.2, pr_hue)
+            # Use LANG_HUES for the PR's language; fall back to repo name hash
+            if pr_lang and pr_lang in LANG_HUES:
+                pr_hue = LANG_HUES[pr_lang]
+            else:
+                pr_hue = (hash(repo_name) % 120) + 120
+            aurora_color = oklch(0.50 if dark_mode else 0.58, 0.22, pr_hue)
 
-            # Arc across upper portion of canvas
+            # Elliptical bands across the upper arc
             cx = _WIDTH / 2
-            cy = -100 - pi * 40
-            rx = 300 + pi * 30
-            ry = 200 + pi * 20
+            cy = -80 - pi * 50
+            rx = 320 + pi * 25
+            ry = 220 + pi * 18
 
             if snapshot_mode:
-                if (snapshot_progress or 0) > pi / max(len(recent_prs), 1):
+                if (snapshot_progress or 0) > pi / max(len(aurora_prs), 1):
                     parts.append(
                         f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" '
                         f'fill="none" stroke="{aurora_color}" stroke-width="{band_width:.0f}" '
-                        f'opacity="0.12" filter="url(#nebBlur)"/>\n'
+                        f'opacity="0.14"/>\n'
                     )
             else:
-                shimmer_dur = round(15 + pi * 3, 1)
+                shimmer_dur = round(14 + pi * 3.5, 1)
                 parts.append(
                     f'<ellipse cx="{cx}" cy="{cy}" rx="{rx}" ry="{ry}" '
                     f'fill="none" stroke="{aurora_color}" stroke-width="{band_width:.0f}" '
-                    f'opacity="0" filter="url(#nebBlur)">\n'
-                    f'  <animate attributeName="opacity" values="0;0.12;0.08;0.12;0" '
-                    f'dur="{shimmer_dur}s" begin="{pi * 2}s" repeatCount="indefinite"/>\n'
+                    f'opacity="0">\n'
+                    f'  <animate attributeName="opacity" values="0;0.14;0.08;0.14;0" '
+                    f'dur="{shimmer_dur}s" begin="{pi * 2.5}s" repeatCount="indefinite"/>\n'
                     f'</ellipse>\n'
                 )
         parts.append('</g>\n')
@@ -665,43 +732,99 @@ def _render_svg(
         parts.append("</g>\n")
 
     # ---- Layer 3b: Gist Comets ----
-    n_gists = metrics.get("public_gists", 0) or 0
-    n_comets = min(6, n_gists // 5)
+    public_gists = metrics.get("public_gists", 0) or 0
+    n_comets = min(8, public_gists)
     if n_comets > 0:
         parts.append('<g id="comets">\n')
         for ci in range(n_comets):
-            # Comet trajectory: diagonal across the field
-            start_x = rng.uniform(0, _WIDTH * 0.3)
-            start_y = rng.uniform(0, _HEIGHT * 0.3)
-            end_x = rng.uniform(_WIDTH * 0.7, _WIDTH)
-            end_y = rng.uniform(_HEIGHT * 0.5, _HEIGHT * 0.9)
-            comet_dur = round(rng.uniform(8, 15), 1)
+            # Comet trajectory: arc from one edge toward center
+            edge = ci % 4  # top, right, bottom, left
+            if edge == 0:
+                start_x = rng.uniform(0, _WIDTH)
+                start_y = -10
+                end_x = _WIDTH / 2 + rng.uniform(-150, 150)
+                end_y = _HEIGHT / 2 + rng.uniform(-100, 100)
+            elif edge == 1:
+                start_x = _WIDTH + 10
+                start_y = rng.uniform(0, _HEIGHT)
+                end_x = _WIDTH / 2 + rng.uniform(-150, 150)
+                end_y = _HEIGHT / 2 + rng.uniform(-100, 100)
+            elif edge == 2:
+                start_x = rng.uniform(0, _WIDTH)
+                start_y = _HEIGHT + 10
+                end_x = _WIDTH / 2 + rng.uniform(-150, 150)
+                end_y = _HEIGHT / 2 + rng.uniform(-100, 100)
+            else:
+                start_x = -10
+                start_y = rng.uniform(0, _HEIGHT)
+                end_x = _WIDTH / 2 + rng.uniform(-150, 150)
+                end_y = _HEIGHT / 2 + rng.uniform(-100, 100)
+
+            comet_dur = round(rng.uniform(7, 14), 1)
             comet_delay = round(rng.uniform(0, duration * 0.7), 1)
 
-            tail_color = oklch(0.75 if dark_mode else 0.55, 0.12, 55)
-            head_color = oklch(0.90 if dark_mode else 0.65, 0.08, 50)
+            head_color = oklch(0.92 if dark_mode else 0.68, 0.08, 50)
+            tail_color = "#d4a030"
+
+            # Trail path: tapered line from start toward head
+            # Use a thin path with decreasing stroke-width effect
+            dx = end_x - start_x
+            dy = end_y - start_y
+            trail_len = math.sqrt(dx * dx + dy * dy)
+            # Midpoint for quadratic bezier curve (slight arc)
+            mid_x = (start_x + end_x) / 2 + rng.uniform(-40, 40)
+            mid_y = (start_y + end_y) / 2 + rng.uniform(-40, 40)
 
             if snapshot_mode:
                 prog = snapshot_progress or 0
                 if prog > comet_delay / max(duration, 1):
-                    comet_frac = min(1, (prog - comet_delay / max(duration, 1)) * 3)
-                    cx = start_x + (end_x - start_x) * comet_frac
-                    cy = start_y + (end_y - start_y) * comet_frac
+                    comet_frac = min(1.0, (prog - comet_delay / max(duration, 1)) * 3)
+                    cx = start_x + dx * comet_frac
+                    cy = start_y + dy * comet_frac
+                    # Trail: thin path from slightly behind to head
+                    trail_frac = max(0, comet_frac - 0.15)
+                    tx = start_x + dx * trail_frac
+                    ty = start_y + dy * trail_frac
                     parts.append(
-                        f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="2" '
-                        f'fill="{head_color}" opacity="0.7"/>\n'
+                        f'<line x1="{tx:.0f}" y1="{ty:.0f}" x2="{cx:.0f}" y2="{cy:.0f}" '
+                        f'stroke="{tail_color}" stroke-width="1.5" opacity="0.3" '
+                        f'stroke-linecap="round"/>\n'
+                    )
+                    parts.append(
+                        f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="2.5" '
+                        f'fill="{head_color}" opacity="0.8"/>\n'
                     )
             else:
+                # Animated comet head
                 parts.append(
-                    f'<circle cx="{start_x:.0f}" cy="{start_y:.0f}" r="2" '
+                    f'<circle cx="{start_x:.0f}" cy="{start_y:.0f}" r="2.5" '
                     f'fill="{head_color}" opacity="0">\n'
                     f'  <animate attributeName="cx" values="{start_x:.0f};{end_x:.0f}" '
                     f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
                     f'  <animate attributeName="cy" values="{start_y:.0f};{end_y:.0f}" '
                     f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
-                    f'  <animate attributeName="opacity" values="0;0.8;0.8;0" '
+                    f'  <animate attributeName="opacity" values="0;0.85;0.85;0" '
                     f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
                     f'</circle>\n'
+                )
+                # Animated trail (thin line that follows)
+                trail_delay = round(comet_delay + 0.3, 1)
+                parts.append(
+                    f'<line x1="{start_x:.0f}" y1="{start_y:.0f}" '
+                    f'x2="{start_x:.0f}" y2="{start_y:.0f}" '
+                    f'stroke="{tail_color}" stroke-width="1.5" opacity="0" '
+                    f'stroke-linecap="round">\n'
+                    f'  <animate attributeName="x1" values="{start_x:.0f};{end_x:.0f}" '
+                    f'dur="{comet_dur}s" begin="{trail_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="y1" values="{start_y:.0f};{end_y:.0f}" '
+                    f'dur="{comet_dur}s" begin="{trail_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="x2" values="{start_x:.0f};{end_x:.0f}" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="y2" values="{start_y:.0f};{end_y:.0f}" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="opacity" values="0;0.35;0.35;0" '
+                    f'dur="{comet_dur}s" begin="{comet_delay}s" repeatCount="indefinite"/>\n'
+                    f'</line>\n'
                 )
         parts.append('</g>\n')
 
@@ -796,6 +919,93 @@ def _render_svg(
                     f'fill="white" opacity="{flash_alpha}"/>\n'
                 )
         parts.append("</g>\n")
+
+    # ---- Layer 4b2: Dark Matter Web (high-density connections) ----
+    # Find cells in the density grid above the 90th percentile and connect them
+    _flat_density = norm.flatten()
+    _flat_nonzero = _flat_density[_flat_density > 0]
+    if len(_flat_nonzero) > 20:
+        _p90 = float(np.percentile(_flat_nonzero, 90))
+        _high_cells: list[tuple[float, float]] = []
+        for _hr in range(grid_sz):
+            for _hc in range(grid_sz):
+                if float(norm[_hr, _hc]) >= _p90:
+                    _high_cells.append((
+                        round(_hc * pixel_w + pixel_w / 2, 1),
+                        round(_hr * pixel_h + pixel_h / 2, 1),
+                    ))
+
+        # Sample ~20 high-density cells
+        dm_rng = random.Random(star_seed + 7)
+        if len(_high_cells) > 20:
+            _high_cells = dm_rng.sample(_high_cells, 20)
+
+        parts.append('<g id="dark-matter">\n')
+        for _ia in range(len(_high_cells)):
+            for _ib in range(_ia + 1, len(_high_cells)):
+                _ax, _ay = _high_cells[_ia]
+                _bx, _by = _high_cells[_ib]
+                _dist = math.sqrt((_ax - _bx) ** 2 + (_ay - _by) ** 2)
+                if _dist < 150:
+                    if snapshot_mode:
+                        parts.append(
+                            f'<line x1="{_ax}" y1="{_ay}" x2="{_bx}" y2="{_by}" '
+                            f'stroke="#4060a0" opacity="0.06" stroke-width="0.5"/>\n'
+                        )
+                    else:
+                        _dm_dur = round(20 + dm_rng.uniform(0, 15), 1)
+                        parts.append(
+                            f'<line x1="{_ax}" y1="{_ay}" x2="{_bx}" y2="{_by}" '
+                            f'stroke="#4060a0" stroke-width="0.5" opacity="0">\n'
+                            f'  <animate attributeName="opacity" values="0;0.06;0.06;0" '
+                            f'dur="{_dm_dur}s" begin="{dm_rng.uniform(0, 10):.1f}s" '
+                            f'repeatCount="indefinite"/>\n'
+                            f'</line>\n'
+                        )
+        parts.append('</g>\n')
+
+    # ---- Layer 4b3: Release Supernova Events ----
+    releases = metrics.get("releases", [])
+    if releases and isinstance(releases, list):
+        supernova_rng = random.Random(star_seed + 99)
+        parts.append('<g id="supernovae">\n')
+        for si, release in enumerate(releases[:5]):
+            # Seeded position from release name/tag
+            release_tag = release.get("tag_name", "") or release.get("name", f"r{si}")
+            _rseed = hash(release_tag) & 0x7FFFFFFF
+            _rrng = random.Random(_rseed)
+            sx = _rrng.uniform(80, _WIDTH - 80)
+            sy = _rrng.uniform(80, _HEIGHT - 80)
+            ring_r = _rrng.uniform(8, 15)
+            ring_opacity = round(_rrng.uniform(0.3, 0.5), 2)
+
+            if snapshot_mode:
+                # Show ring at current size
+                expand_progress = min(1.0, (snapshot_progress or 0.0) * 2)
+                current_r = ring_r * (0.5 + 0.5 * expand_progress)
+                parts.append(
+                    f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{current_r:.1f}" '
+                    f'fill="none" stroke="#f0e8d0" stroke-width="1.5" '
+                    f'opacity="{ring_opacity}"/>\n'
+                )
+            else:
+                pulse_dur = round(4 + si * 1.5, 1)
+                pulse_begin = round(si * 3 + supernova_rng.uniform(0, 5), 1)
+                parts.append(
+                    f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{ring_r * 0.3:.1f}" '
+                    f'fill="none" stroke="#f0e8d0" stroke-width="1.5" opacity="0">\n'
+                    f'  <animate attributeName="r" '
+                    f'values="{ring_r * 0.3:.1f};{ring_r:.1f};{ring_r * 1.5:.1f}" '
+                    f'dur="{pulse_dur}s" begin="{pulse_begin}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="opacity" '
+                    f'values="0;{ring_opacity};0" '
+                    f'dur="{pulse_dur}s" begin="{pulse_begin}s" repeatCount="indefinite"/>\n'
+                    f'  <animate attributeName="stroke-width" '
+                    f'values="1.5;0.5;0.2" '
+                    f'dur="{pulse_dur}s" begin="{pulse_begin}s" repeatCount="indefinite"/>\n'
+                    f'</circle>\n'
+                )
+        parts.append('</g>\n')
 
     # ---- Layer 4c: Language Diversity Ring ----
     langs = metrics.get("languages", {})

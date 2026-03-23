@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import colorsys
 import math
+from collections.abc import Callable
 
 _DEFAULT_HUE = 210  # blue
 
@@ -438,6 +439,68 @@ DOMAIN_CLUSTERS: dict[str, set[str]] = {
 }
 
 
+def _srgb_to_linear(c: float) -> float:
+    """sRGB gamma to linear transfer function (inverse of _linear_to_srgb)."""
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def _hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
+    """Convert hex color string to OKLCH (L, C, H_degrees).
+
+    Inverse of ``_oklch_to_hex``.  Used for perceptually-uniform hue
+    rotation of existing palette colors.
+    """
+    r = int(hex_str[1:3], 16) / 255.0
+    g = int(hex_str[3:5], 16) / 255.0
+    b = int(hex_str[5:7], 16) / 255.0
+    rl = _srgb_to_linear(r)
+    gl = _srgb_to_linear(g)
+    bl = _srgb_to_linear(b)
+    # Linear RGB → LMS (cube-root space)
+    l_ = (0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl)
+    m_ = (0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl)
+    s_ = (0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl)
+    lc = l_ ** (1 / 3) if l_ >= 0 else 0.0
+    mc = m_ ** (1 / 3) if m_ >= 0 else 0.0
+    sc = s_ ** (1 / 3) if s_ >= 0 else 0.0
+    # LMS → OKLab
+    L = 0.2104542553 * lc + 0.7936177850 * mc - 0.0040720468 * sc
+    a = 1.9779984951 * lc - 2.4285922050 * mc + 0.4505937099 * sc
+    b_val = 0.0259040371 * lc + 0.7827717662 * mc - 0.8086757660 * sc
+    C = math.sqrt(a * a + b_val * b_val)
+    H = math.degrees(math.atan2(b_val, a)) % 360
+    return L, C, H
+
+
+def make_shifted_color_func(
+    base_func_name: str,
+    hue_offset: float,
+) -> Callable[[int, int], str]:
+    """Create a color function with OKLCH hue rotation applied.
+
+    Converts each color from the base palette to OKLCH, rotates the hue
+    by *hue_offset* degrees, clamps lightness and chroma for readability,
+    and converts back to hex.
+
+    Works with all palette types (OKLCH and HSL based).
+
+    Constraints (per color-science review):
+    - Lightness L clamped to [0.38, 0.68] for contrast against white bg
+    - Chroma C clamped to [0.16, 0.24] for consistent visual weight
+    """
+    base_func = COLOR_FUNCS.get(base_func_name, ocean_color_func)
+
+    def shifted(index: int, total: int) -> str:
+        hex_color = base_func(index, total)
+        L, C, H = _hex_to_oklch(hex_color)
+        H = (H + hue_offset) % 360
+        L = max(0.38, min(0.68, L))
+        C = max(0.16, min(0.24, C))
+        return _oklch_to_hex(L, C, H)
+
+    return shifted
+
+
 def _classify_word(word: str) -> str:
     """Return the cluster name for a given word, or 'Other'."""
     lower = word.lower().strip()
@@ -470,4 +533,7 @@ __all__ = [
     "CLUSTER_PALETTES",
     "DOMAIN_CLUSTERS",
     "_classify_word",
+    "_srgb_to_linear",
+    "_hex_to_oklch",
+    "make_shifted_color_func",
 ]

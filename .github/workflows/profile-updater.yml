@@ -110,14 +110,14 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-topics-md \
-            --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
+            --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg
 
       - name: Generate Word Cloud by Language
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-languages-md \
-            --output-path .github/assets/img/wordcloud_wordle_by_languages.svg
+            --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
 
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
@@ -246,10 +246,13 @@ jobs:
           plugin_languages_details: "bytes-size, percentage"
           plugin_languages_threshold: "2%"
           plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14
+          plugin_habits_from: 1000
+          plugin_habits_days: 30
           plugin_habits_facts: yes
           plugin_habits_charts: yes
+          plugin_habits_charts_type: classic
+          plugin_habits_languages_limit: 8
+          plugin_habits_languages_threshold: "0%"
           plugin_notable: yes
           plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_gists: yes
@@ -263,10 +266,10 @@ jobs:
         id: check_personal_metrics
         if: ${{ always() }}
         run: |
-          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
+          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
           if [ ! -f ./.github/assets/img/metrics.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "${AUTH_ERROR_PATTERN}" ./.github/assets/img/metrics.svg; then
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "${ERROR_PATTERN}" ./.github/assets/img/metrics.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -288,10 +291,13 @@ jobs:
           plugin_languages_details: "bytes-size, percentage"
           plugin_languages_threshold: "2%"
           plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 14
+          plugin_habits_from: 1000
+          plugin_habits_days: 30
           plugin_habits_facts: yes
           plugin_habits_charts: yes
+          plugin_habits_charts_type: classic
+          plugin_habits_languages_limit: 8
+          plugin_habits_languages_threshold: "0%"
           plugin_notable: yes
           plugin_gists: yes
           plugin_topics: yes
@@ -318,7 +324,10 @@ jobs:
           plugin_music_limit: 5
           plugin_activity: yes
           plugin_activity_limit: 5
-          plugin_activity_days: 14
+          plugin_activity_load: 300
+          plugin_activity_days: 0
+          plugin_activity_visibility: public
+          plugin_activity_timestamps: yes
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
@@ -330,10 +339,10 @@ jobs:
         id: check_additional_metrics
         if: ${{ always() }}
         run: |
-          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
+          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
           if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "${AUTH_ERROR_PATTERN}" ./.github/assets/img/metrics.additional.svg; then
+          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "${ERROR_PATTERN}" ./.github/assets/img/metrics.additional.svg; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
           else
             echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
@@ -356,7 +365,10 @@ jobs:
           plugin_music_limit: 5
           plugin_activity: yes
           plugin_activity_limit: 5
-          plugin_activity_days: 14
+          plugin_activity_load: 300
+          plugin_activity_days: 0
+          plugin_activity_visibility: public
+          plugin_activity_timestamps: yes
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
@@ -368,7 +380,7 @@ jobs:
         if: ${{ always() }}
         run: |
           set -euo pipefail
-          AUTH_ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized"
+          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
 
           sanitize_svg() {
             local file="$1"
@@ -383,8 +395,8 @@ jobs:
               reason="missing <svg> opening tag"
             elif ! grep -Eiq "</svg>" "$file"; then
               reason="missing </svg> closing tag"
-            elif grep -Eiq "${AUTH_ERROR_PATTERN}" "$file"; then
-              reason="SVG contains auth/error message: $(grep -Eio "${AUTH_ERROR_PATTERN}" "$file" | head -1)"
+            elif grep -Eiq "${ERROR_PATTERN}" "$file"; then
+              reason="SVG contains auth/error message: $(grep -Eio "${ERROR_PATTERN}" "$file" | head -1)"
             fi
 
             if [ -n "$reason" ]; then
@@ -483,11 +495,24 @@ jobs:
             --metrics-path "$RUNNER_TEMP/metrics.json" \
             --history-path "$RUNNER_TEMP/history.json"
 
+      - name: Generate timelapse GIFs (daily history)
+        env:
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          uv run python -m scripts.cli generate timelapse \
+            --metrics-path "$RUNNER_TEMP/metrics.json" \
+            --history-path "$RUNNER_TEMP/history.json" \
+            --profile "$OWNER" \
+            --max-frames 120 \
+            --size 400 \
+            --workers 4
+        timeout-minutes: 20
+
       - name: Commit generated art outputs
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
-          commit_message: "art: regenerate event-driven, animated, and living-art outputs"
-          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/animated-*.gif .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg"
+          commit_message: "art: regenerate event-driven, animated, living-art, and timelapse outputs"
+          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/animated-*.gif .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-*.gif"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

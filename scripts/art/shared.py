@@ -11,6 +11,7 @@ import math
 import re
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from datetime import UTC, date as dt_date
 from datetime import datetime, timedelta
 from typing import Any
@@ -245,6 +246,185 @@ def compute_maturity(m: dict) -> float:
         + 0.08 * _log(m.get("network_count", 1), 1, 3000)
     )
     return _smoothstep(raw)
+
+
+# ---------------------------------------------------------------------------
+# World State — coherent atmospheric/environmental state across all artworks
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class WorldState:
+    """Unified environmental state derived from GitHub data.
+
+    All 4 art generators read this to produce coherent atmospherics —
+    the same time-of-day lighting, weather, season, and energy level.
+    """
+
+    time_of_day: str = "day"
+    """'dawn' | 'day' | 'golden' | 'night' — from commit hour distribution."""
+
+    weather: str = "clear"
+    """'clear' | 'cloudy' | 'rainy' | 'stormy' — from issue open/close ratio."""
+
+    season: str = "summer"
+    """'spring' | 'summer' | 'autumn' | 'winter' — from language distribution."""
+
+    energy: float = 0.5
+    """0.0-1.0 — from star velocity (rate of new stars)."""
+
+    vitality: float = 0.5
+    """0.0-1.0 — from contribution streak activity."""
+
+    aurora_intensity: float = 0.0
+    """0.0-1.0 — from PR merge rate."""
+
+    palette: dict[str, str] = field(default_factory=dict)
+    """Derived OKLCH palette: sky_top, sky_bottom, ground, accent, glow."""
+
+
+# Language family groupings for season derivation
+_LANG_SEASON: dict[str, str] = {
+    "Python": "summer", "Jupyter Notebook": "summer",
+    "JavaScript": "autumn", "TypeScript": "autumn", "HTML": "autumn", "CSS": "autumn",
+    "Rust": "winter", "C": "winter", "C++": "winter", "Go": "winter",
+    "Ruby": "spring", "Shell": "spring", "Java": "spring",
+}
+
+
+def compute_world_state(metrics: dict[str, Any]) -> WorldState:
+    """Derive a unified WorldState from a metrics snapshot.
+
+    Designed to degrade gracefully: missing data produces calm defaults
+    (clear day in summer at medium energy). Works for any GitHub user.
+    """
+    # ── Time of day (from commit hour distribution) ──────────────
+    commit_hours = metrics.get("commit_hour_distribution") or {}
+    if commit_hours and isinstance(commit_hours, dict):
+        try:
+            peak = max(commit_hours, key=lambda k: commit_hours[k])
+            peak_hour = int(peak) if isinstance(peak, str) else peak
+        except (ValueError, TypeError):
+            peak_hour = 12
+    else:
+        peak_hour = 12
+
+    if 5 <= peak_hour <= 8:
+        time_of_day = "dawn"
+    elif 17 <= peak_hour <= 20:
+        time_of_day = "golden"
+    elif peak_hour >= 21 or peak_hour <= 4:
+        time_of_day = "night"
+    else:
+        time_of_day = "day"
+
+    # ── Weather (from issue stats) ───────────────────────────────
+    open_issues = metrics.get("open_issues_count", 0) or 0
+    issue_stats = metrics.get("issue_stats") or {}
+    closed_issues = issue_stats.get("closed_count", 0) or 0
+    total_issues = open_issues + closed_issues
+
+    if total_issues == 0:
+        weather = "clear"
+    else:
+        open_ratio = open_issues / total_issues
+        if open_ratio < 0.15:
+            weather = "clear"
+        elif open_ratio < 0.35:
+            weather = "cloudy"
+        elif open_ratio < 0.6:
+            weather = "rainy"
+        else:
+            weather = "stormy"
+
+    # ── Season (from dominant language family) ────────────────────
+    lang_bytes = metrics.get("languages") or {}
+    if lang_bytes and isinstance(lang_bytes, dict):
+        # Weight each language's season by byte count
+        season_weight: dict[str, float] = defaultdict(float)
+        for lang, byte_count in lang_bytes.items():
+            s = _LANG_SEASON.get(lang, "summer")
+            season_weight[s] += byte_count
+        season = max(season_weight, key=season_weight.get) if season_weight else "summer"
+    else:
+        season = "summer"
+
+    # ── Energy (from star velocity) ──────────────────────────────
+    star_vel = metrics.get("star_velocity") or {}
+    recent_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    energy = min(1.0, math.log1p(recent_rate) / math.log1p(20))
+
+    # ── Vitality (from contribution streaks) ─────────────────────
+    streaks = metrics.get("contribution_streaks") or {}
+    streak_months = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    vitality = min(1.0, streak_months / 12.0) if streak_active else max(0.0, streak_months / 24.0)
+
+    # ── Aurora intensity (from PR merge rate) ────────────────────
+    recent_prs = metrics.get("recent_merged_prs") or []
+    pr_count = len(recent_prs) if isinstance(recent_prs, list) else 0
+    aurora_intensity = min(1.0, pr_count / 15.0)
+
+    # ── Derived palette ──────────────────────────────────────────
+    palette = _build_world_palette(time_of_day, weather, season, energy)
+
+    return WorldState(
+        time_of_day=time_of_day,
+        weather=weather,
+        season=season,
+        energy=energy,
+        vitality=vitality,
+        aurora_intensity=aurora_intensity,
+        palette=palette,
+    )
+
+
+def _build_world_palette(
+    time_of_day: str,
+    weather: str,
+    season: str,
+    energy: float,
+) -> dict[str, str]:
+    """Build an OKLCH palette from world-state properties."""
+    # Base sky hue by time of day
+    sky_params: dict[str, tuple[float, float, float]] = {
+        "dawn": (0.82, 0.12, 25),
+        "day": (0.88, 0.04, 210),
+        "golden": (0.80, 0.10, 55),
+        "night": (0.18, 0.05, 250),
+    }
+    sky_L, sky_C, sky_H = sky_params.get(time_of_day, (0.88, 0.04, 210))
+
+    # Weather modifies sky lightness and chroma
+    weather_mod: dict[str, tuple[float, float]] = {
+        "clear": (0.0, 0.0),
+        "cloudy": (-0.08, -0.03),
+        "rainy": (-0.15, -0.05),
+        "stormy": (-0.25, -0.08),
+    }
+    dL, dC = weather_mod.get(weather, (0.0, 0.0))
+    sky_L = max(0.05, min(0.95, sky_L + dL))
+    sky_C = max(0.0, sky_C + dC)
+
+    # Season drives accent and ground hue
+    season_hues: dict[str, tuple[float, float]] = {
+        "spring": (130, 95),     # fresh green, warm ground
+        "summer": (145, 80),     # deep green, rich earth
+        "autumn": (40, 35),      # warm amber, russet ground
+        "winter": (220, 200),    # cool blue, grey ground
+    }
+    accent_H, ground_H = season_hues.get(season, (145, 80))
+
+    # Energy drives glow brightness
+    glow_L = 0.5 + energy * 0.35
+
+    return {
+        "sky_top": oklch(sky_L, sky_C, sky_H),
+        "sky_bottom": oklch(max(0.05, sky_L - 0.15), max(0.0, sky_C - 0.02), sky_H + 10),
+        "ground": oklch(0.45 + energy * 0.1, 0.06, ground_H),
+        "accent": oklch(0.65, 0.14, accent_H),
+        "glow": oklch(glow_L, 0.18, accent_H - 20),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -624,3 +804,257 @@ def lerp_color(hex1: str, hex2: str, t: float) -> str:
     g = int(g1 + (g2 - g1) * t)
     b = int(b1 + (b2 - b1) * t)
     return f"#{max(0, min(255, r)):02x}{max(0, min(255, g)):02x}{max(0, min(255, b)):02x}"
+
+
+# ---------------------------------------------------------------------------
+# SVG filter & pattern library (shared across all generators)
+# ---------------------------------------------------------------------------
+
+
+def atmospheric_haze_filter(filter_id: str, intensity: float = 0.5) -> str:
+    """Gaussian blur + desaturation for atmospheric perspective / depth-of-field.
+
+    *intensity* 0.0-1.0 controls blur radius and desaturation amount.
+    Apply to background elements to create depth.
+    """
+    blur = round(0.3 + intensity * 1.5, 2)
+    desat = round(1.0 - intensity * 0.4, 3)  # 1.0 = full color, 0.6 = muted
+    return (
+        f'<filter id="{filter_id}" x="-5%" y="-5%" width="110%" height="110%">'
+        f'<feGaussianBlur in="SourceGraphic" stdDeviation="{blur}" result="blur"/>'
+        f'<feColorMatrix in="blur" type="saturate" values="{desat}"/>'
+        f'</filter>'
+    )
+
+
+def volumetric_glow_filter(filter_id: str, radius: float = 3.0) -> str:
+    """Soft radial glow via blur + luminance composite.
+
+    Use on fireflies, bioluminescent elements, aurora highlights.
+    """
+    return (
+        f'<filter id="{filter_id}" x="-20%" y="-20%" width="140%" height="140%">'
+        f'<feGaussianBlur in="SourceGraphic" stdDeviation="{radius:.1f}" result="glow"/>'
+        f'<feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>'
+        f'</filter>'
+    )
+
+
+def aurora_filter(filter_id: str) -> str:
+    """Ethereal aurora effect: heavy blur + slight color shift.
+
+    Apply to aurora band paths for soft, luminous appearance.
+    """
+    return (
+        f'<filter id="{filter_id}" x="-10%" y="-30%" width="120%" height="160%">'
+        f'<feGaussianBlur in="SourceGraphic" stdDeviation="4 8" result="soft"/>'
+        f'<feColorMatrix in="soft" type="saturate" values="1.3" result="vivid"/>'
+        f'<feMerge><feMergeNode in="vivid"/><feMergeNode in="SourceGraphic"/></feMerge>'
+        f'</filter>'
+    )
+
+
+def rain_pattern(pattern_id: str, intensity: float = 0.5, seed: int = 0) -> str:
+    """SVG pattern of angled rain drops.
+
+    *intensity* 0.0-1.0 controls drop count and opacity.
+    """
+    rng_val = seed * 7919
+    opacity = round(0.15 + intensity * 0.3, 3)
+    pw, ph = 30, 40
+    drops: list[str] = []
+    n_drops = max(2, min(8, int(3 + intensity * 5)))
+    for i in range(n_drops):
+        x = ((rng_val + i * 137) % pw)
+        y = ((rng_val + i * 211) % ph)
+        length = round(4 + intensity * 6, 1)
+        drops.append(
+            f'<line x1="{x}" y1="{y}" x2="{x - 1.5}" y2="{y + length}" '
+            f'stroke="#8ab4d0" stroke-width="0.4" opacity="{opacity}" stroke-linecap="round"/>'
+        )
+    return (
+        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'
+        + "".join(drops)
+        + "</pattern>"
+    )
+
+
+def snow_pattern(pattern_id: str, density: float = 0.5, seed: int = 0) -> str:
+    """SVG pattern of snowflakes (small circles and star shapes).
+
+    *density* 0.0-1.0 controls flake count.
+    """
+    rng_val = seed * 6271
+    pw, ph = 40, 40
+    flakes: list[str] = []
+    n_flakes = max(2, min(10, int(3 + density * 7)))
+    for i in range(n_flakes):
+        x = ((rng_val + i * 173) % pw)
+        y = ((rng_val + i * 251) % ph)
+        r = round(0.5 + (i % 3) * 0.3, 2)
+        opacity = round(0.3 + (i % 4) * 0.1, 2)
+        flakes.append(
+            f'<circle cx="{x}" cy="{y}" r="{r}" fill="#e8f0ff" opacity="{opacity}"/>'
+        )
+    return (
+        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'
+        + "".join(flakes)
+        + "</pattern>"
+    )
+
+
+def lightning_path(x: float, y: float, length: float, seed: int = 0) -> str:
+    """Generate a jagged lightning bolt SVG path starting at (x, y).
+
+    Returns an SVG ``<path>`` element string with bright white stroke.
+    """
+    rng_val = seed * 3571
+    pts = [(x, y)]
+    cx, cy = x, y
+    segments = max(3, min(8, int(length / 15)))
+    seg_len = length / segments
+    for i in range(segments):
+        dx = ((rng_val + i * 137) % 20 - 10)
+        cy += seg_len
+        cx += dx
+        pts.append((cx, cy))
+        # Branch with 30% probability
+        if (rng_val + i) % 3 == 0 and i < segments - 1:
+            bx = cx + ((rng_val + i * 97) % 16 - 8)
+            by = cy + seg_len * 0.5
+            pts.append((bx, by))
+            pts.append((cx, cy))  # return to main bolt
+    d = "M" + " L".join(f"{px:.1f},{py:.1f}" for px, py in pts)
+    return (
+        f'<path d="{d}" fill="none" stroke="#f0f0ff" stroke-width="1.2" '
+        f'opacity="0.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
+
+
+def weather_overlay_elements(
+    world: WorldState,
+    width: int = 800,
+    height: int = 800,
+    seed: int = 0,
+) -> list[str]:
+    """Generate SVG elements for weather effects based on WorldState.
+
+    Returns a list of SVG element strings to insert into the artwork.
+    Includes filter defs and visual elements (rain drops, clouds, lightning, snow).
+    """
+    parts: list[str] = []
+
+    if world.weather == "clear":
+        # Sunbeams from upper-left
+        beam_opacity = 0.08 + world.energy * 0.06
+        if world.time_of_day != "night":
+            parts.append(
+                f'<ellipse cx="{width * 0.12}" cy="{height * -0.02}" '
+                f'rx="{width * 0.9}" ry="{height * 0.45}" '
+                f'fill="url(#weatherSunGlow)" opacity="{beam_opacity:.3f}"/>'
+            )
+        return parts
+
+    if world.weather in ("rainy", "stormy"):
+        # Rain overlay
+        intensity = 0.5 if world.weather == "rainy" else 0.9
+        parts.append(rain_pattern("weatherRain", intensity=intensity, seed=seed))
+        rain_opacity = round(0.3 + intensity * 0.3, 3)
+        parts.append(
+            f'<rect width="{width}" height="{height}" fill="url(#weatherRain)" opacity="{rain_opacity}"/>'
+        )
+
+    if world.weather == "stormy":
+        # Lightning bolt
+        lx = width * (0.3 + (seed % 40) / 100.0)
+        parts.append(lightning_path(lx, 0, height * 0.4, seed=seed))
+
+    if world.weather in ("cloudy", "rainy", "stormy"):
+        # Cloud wash — darken sky slightly
+        cloud_opacity = {"cloudy": 0.08, "rainy": 0.15, "stormy": 0.25}.get(world.weather, 0.1)
+        parts.append(
+            f'<rect width="{width}" height="{height * 0.45}" '
+            f'fill="#7a7a8a" opacity="{cloud_opacity}" rx="40"/>'
+        )
+
+    return parts
+
+
+def aurora_band_elements(
+    world: WorldState,
+    languages: dict[str, int] | None = None,
+    width: int = 800,
+    height: int = 800,
+    seed: int = 0,
+) -> list[str]:
+    """Generate aurora borealis band SVG elements.
+
+    Returns empty list if aurora_intensity < 0.2.
+    """
+    if world.aurora_intensity < 0.2:
+        return []
+
+    langs = languages or {}
+    sorted_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True)[:6]
+    if not sorted_langs:
+        sorted_langs = [("Python", 1)]
+
+    parts: list[str] = []
+    rng_val = seed * 4219
+    n_bands = max(1, min(5, int(world.aurora_intensity * 5)))
+
+    for i in range(n_bands):
+        lang = sorted_langs[i % len(sorted_langs)][0]
+        hue = LANG_HUES.get(lang, 155)
+        color = oklch(0.60 + world.aurora_intensity * 0.15, 0.18, hue)
+        y_base = height * (0.02 + i * 0.06)
+        cx = width * 0.5 + ((rng_val + i * 137) % 100 - 50)
+        band_w = width * (0.4 + world.aurora_intensity * 0.4)
+        band_h = height * (0.04 + world.aurora_intensity * 0.03)
+        opacity = round(world.aurora_intensity * 0.35 * (1.0 - i * 0.12), 3)
+        parts.append(
+            f'<ellipse cx="{cx:.0f}" cy="{y_base:.0f}" '
+            f'rx="{band_w:.0f}" ry="{band_h:.0f}" '
+            f'fill="{color}" opacity="{opacity}" '
+            f'filter="url(#auroraGlow)"/>'
+        )
+
+    return parts
+
+
+def firefly_elements(
+    star_velocity: dict[str, Any] | None,
+    width: int = 800,
+    height: int = 800,
+    y_min: float = 0.3,
+    y_max: float = 0.85,
+    seed: int = 0,
+) -> list[str]:
+    """Generate glowing firefly/bioluminescent particle SVG elements.
+
+    Returns empty list if star velocity is zero or missing.
+    """
+    vel = star_velocity or {}
+    rate = vel.get("recent_rate", 0) if isinstance(vel, dict) else 0
+    if rate <= 0:
+        return []
+
+    n_flies = max(1, min(15, int(rate * 1.5)))
+    rng_val = seed * 8317
+    parts: list[str] = []
+
+    for i in range(n_flies):
+        x = (rng_val + i * 173) % width
+        y = int(height * y_min + ((rng_val + i * 251) % int(height * (y_max - y_min))))
+        r = round(0.8 + (i % 3) * 0.4, 2)
+        glow_r = round(r * 3, 1)
+        opacity = round(0.3 + (i % 5) * 0.1, 2)
+        color = oklch(0.78, 0.16, 95 + (i % 4) * 10)  # warm gold-green
+        parts.append(
+            f'<circle cx="{x}" cy="{y}" r="{glow_r}" fill="{color}" opacity="{opacity * 0.3:.3f}"/>'
+        )
+        parts.append(
+            f'<circle cx="{x}" cy="{y}" r="{r}" fill="{color}" opacity="{opacity}"/>'
+        )
+
+    return parts

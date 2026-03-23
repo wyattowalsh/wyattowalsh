@@ -23,7 +23,10 @@ from .shared import (
     LANG_HUES,
     WIDTH,
     Noise2D,
+    WorldState,
+    atmospheric_haze_filter,
     compute_maturity,
+    compute_world_state,
     contributions_monthly_to_daily_series,
     hex_frac,
     make_radial_gradient,
@@ -236,6 +239,9 @@ def generate(
     timeline_enabled = bool(timeline and loop_duration > 0)
     growth_mat = 1.0 if timeline_enabled else mat
     chrome_mat = 1.0 if timeline_enabled else chrome_mat
+
+    # ── WorldState: coherent atmosphere across all artworks ────────
+    world: WorldState = compute_world_state(metrics)
 
     def _fade(start: float, full: float) -> float:
         """Smooth 0→1 ramp between start and full maturity."""
@@ -778,6 +784,8 @@ def generate(
             ],
         )
     )
+    # Valley fog / atmospheric haze filter (WorldState-driven)
+    P.append(atmospheric_haze_filter("valleyFog", intensity=0.4))
     P.append("</defs>")
 
     # ── CSS for interactive hover tooltips (works in direct SVG view) ──
@@ -1361,35 +1369,138 @@ def generate(
             place = _topic_to_place_name(topic, elev)
             mx_tp, my_tp = MAP_L + rx_tp * MAP_W, MAP_T + ry_tp * MAP_H
             label_color = oklch(0.35, 0.02, 30)
+            topic_when = _repo_date(repo_tp) or _date_for_activity_fraction(elev)
+            # Halo for readability
             P.append(
                 f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
-                f'font-family="Georgia, serif" font-size="7" font-style="italic" '
-                f'fill="{label_color}" text-anchor="middle" opacity="0.7">'
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(topic_when, 0.65)}>'
+                f'{place}</text>'
+            )
+            P.append(
+                f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="{label_color}" text-anchor="middle" '
+                f'{_timeline_style(topic_when, 0.65)}>'
                 f'{place}</text>'
             )
 
-    # ── Settlement symbol (followers-driven) ──────────────────
-    followers_count = metrics.get("followers", 0)
+    # ── Named geographic features from topics (at elevation extremes) ──
+    if len(top_topics) >= 1 and repo_positions:
+        _feature_color = oklch(0.30, 0.03, 30)
+        # 1st topic → "Mt. {topic}" at the highest repo peak
+        _highest_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
+        _hx = MAP_L + _highest_rp[0] * MAP_W
+        _hy = MAP_T + _highest_rp[1] * MAP_H
+        _mt_name = f"Mt. {top_topics[0].replace('-', ' ').title()}"
+        _mt_when = _repo_date(_highest_rp[2]) or _date_for_activity_fraction(0.95)
+        P.append(
+            f'<text x="{_hx:.0f}" y="{_hy - 18:.0f}" '
+            f'font-family="Georgia, serif" font-size="9" font-style="italic" '
+            f'fill="#f5f0e8" text-anchor="middle" '
+            f'stroke="#f5f0e8" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill" '
+            f'{_timeline_style(_mt_when, 0.7)}>'
+            f'{_mt_name}</text>'
+        )
+        P.append(
+            f'<text x="{_hx:.0f}" y="{_hy - 18:.0f}" '
+            f'font-family="Georgia, serif" font-size="9" font-style="italic" '
+            f'fill="{_feature_color}" text-anchor="middle" '
+            f'{_timeline_style(_mt_when, 0.7)}>'
+            f'{_mt_name}</text>'
+        )
+
+        # 2nd topic → "{topic} Lake" at the lowest elevation point
+        if len(top_topics) >= 2:
+            _lowest_rp = min(repo_positions, key=lambda rp: rp[2].get("stars", 0))
+            _lx = MAP_L + _lowest_rp[0] * MAP_W
+            _ly = MAP_T + _lowest_rp[1] * MAP_H
+            _lake_name = f"{top_topics[1].replace('-', ' ').title()} Lake"
+            _lake_when = _repo_date(_lowest_rp[2]) or _date_for_activity_fraction(0.05)
+            P.append(
+                f'<text x="{_lx:.0f}" y="{_ly + 20:.0f}" '
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(_lake_when, 0.6)}>'
+                f'{_lake_name}</text>'
+            )
+            P.append(
+                f'<text x="{_lx:.0f}" y="{_ly + 20:.0f}" '
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="#1a4f8a" text-anchor="middle" '
+                f'{_timeline_style(_lake_when, 0.6)}>'
+                f'{_lake_name}</text>'
+            )
+
+        # 3rd topic → "{topic} Valley" in a valley area (mid-low elevation)
+        if len(top_topics) >= 3 and len(repo_positions) >= 3:
+            # Pick a repo with mid-low elevation for the valley
+            _elev_sorted = sorted(
+                repo_positions,
+                key=lambda rp: float(elevation[
+                    min(grid - 1, max(0, int(rp[1] * grid))),
+                    min(grid - 1, max(0, int(rp[0] * grid)))
+                ])
+            )
+            _valley_rp = _elev_sorted[len(_elev_sorted) // 3]
+            _vx = MAP_L + _valley_rp[0] * MAP_W
+            _vy = MAP_T + _valley_rp[1] * MAP_H
+            _valley_name = f"{top_topics[2].replace('-', ' ').title()} Valley"
+            _valley_when = _repo_date(_valley_rp[2]) or _date_for_activity_fraction(0.25)
+            P.append(
+                f'<text x="{_vx:.0f}" y="{_vy + 20:.0f}" '
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(_valley_when, 0.6)}>'
+                f'{_valley_name}</text>'
+            )
+            P.append(
+                f'<text x="{_vx:.0f}" y="{_vy + 20:.0f}" '
+                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'fill="{_feature_color}" text-anchor="middle" '
+                f'{_timeline_style(_valley_when, 0.6)}>'
+                f'{_valley_name}</text>'
+            )
+
+    # ── Settlement symbol (followers-driven cartographic markers) ──
+    followers_count = metrics.get("followers", 0) or 0
     if followers_count > 0 and repo_positions:
         # Place settlement near center of map at the most prominent repo
         best = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
-        settle_color = oklch(0.3, 0.02, 30)
+        settle_color = "#4a3520"
 
-        if followers_count >= 1000:
-            # Capital city — double circle
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1.2"/>')
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3" fill="{settle_color}"/>')
-            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 27:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle">{metrics.get("label", "")}</text>')
-        elif followers_count >= 100:
-            # Town — filled circle
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3.5" fill="{settle_color}"/>')
-            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 25:.0f}" font-family="Georgia, serif" font-size="6" fill="{settle_color}" text-anchor="middle">{metrics.get("label", "")}</text>')
+        if followers_count > 1000:
+            # Capital: 5-point star symbol
+            _star_r_out, _star_r_in = 7, 3.2
+            _star_pts = []
+            for _si in range(10):
+                _a = math.radians(-90 + _si * 36)
+                _r = _star_r_out if _si % 2 == 0 else _star_r_in
+                _star_pts.append(f"{sx_s + _r * math.cos(_a):.1f},{sy_s + 15 + _r * math.sin(_a):.1f}")
+            P.append(f'<polygon points="{" ".join(_star_pts)}" fill="{settle_color}" opacity="0.6"/>')
+            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 29:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle" opacity="0.6">{metrics.get("label", "")}</text>')
+        elif followers_count > 500:
+            # City: double circle
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>')
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="2.5" fill="{settle_color}" opacity="0.5"/>')
+            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 27:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle" opacity="0.5">{metrics.get("label", "")}</text>')
+        elif followers_count > 200:
+            # Town: filled circle
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3" fill="{settle_color}" opacity="0.5"/>')
+            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 25:.0f}" font-family="Georgia, serif" font-size="6" fill="{settle_color}" text-anchor="middle" opacity="0.5">{metrics.get("label", "")}</text>')
+        elif followers_count > 50:
+            # Hamlet: small dot
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="1.5" fill="{settle_color}" opacity="0.4"/>')
         else:
-            # Village — small dot
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="2" fill="{settle_color}"/>')
+            # Tiny settlement: faint dot
+            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="1" fill="{settle_color}" opacity="0.3"/>')
 
-    # ── Contribution streak trail ─────────────────────────────
+    # ── Contribution streak trail (WorldState-aware) ──────────
     streaks = metrics.get("contribution_streaks", {})
     streak_len = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
     streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
@@ -1405,20 +1516,35 @@ def generate(
                 ty_s = MAP_T + trail_repos[ti_s][1] * MAP_H
                 trail_points.append(f"{tx_s:.0f},{ty_s:.0f}")
             trail_d_s = "M" + " L".join(trail_points)
-            trail_color = oklch(0.45, 0.08, 25) if streak_active else oklch(0.6, 0.03, 30)
-            dash_s = "" if streak_active else ' stroke-dasharray="4,3"'
+            # Active: dashed red; Broken: grey dashed
+            trail_color = oklch(0.48, 0.16, 22) if streak_active else oklch(0.62, 0.03, 200)
+            dash_style = ' stroke-dasharray="4,3"' if streak_active else ' stroke-dasharray="3,4"'
+            _trail_opacity = 0.6 if streak_active else 0.35
+            # White casing for contrast
+            P.append(
+                f'<path d="{trail_d_s}" fill="none" stroke="rgba(255,255,255,0.3)" '
+                f'stroke-width="2.2" stroke-linecap="round" opacity="{_trail_opacity}"/>'
+            )
             P.append(
                 f'<path d="{trail_d_s}" fill="none" stroke="{trail_color}" '
-                f'stroke-width="1.2"{dash_s} opacity="0.6"/>'
+                f'stroke-width="1.2"{dash_style} opacity="{_trail_opacity}" stroke-linecap="round"/>'
             )
-            # Trail blazes (small triangles along the path)
-            if streak_active:
-                for ti_s in range(0, n_trail, 2):
-                    bx_s = MAP_L + trail_repos[ti_s][0] * MAP_W
-                    by_s = MAP_T + trail_repos[ti_s][1] * MAP_H
+            # Blaze markers: small rectangles every few peaks (cartographic trail blazes)
+            _blaze_interval = max(2, n_trail // 4)
+            for ti_s in range(0, n_trail, _blaze_interval):
+                bx_s = MAP_L + trail_repos[ti_s][0] * MAP_W
+                by_s = MAP_T + trail_repos[ti_s][1] * MAP_H
+                if streak_active:
+                    # Red rectangular blaze (painted trail markers)
                     P.append(
-                        f'<polygon points="{bx_s:.0f},{by_s - 3:.0f} {bx_s - 2:.0f},{by_s + 1:.0f} {bx_s + 2:.0f},{by_s + 1:.0f}" '
-                        f'fill="{trail_color}" opacity="0.5"/>'
+                        f'<rect x="{bx_s - 1.5:.0f}" y="{by_s - 3:.0f}" width="3" height="5" '
+                        f'fill="{trail_color}" rx="0.5" opacity="0.55"/>'
+                    )
+                else:
+                    # Faded grey blaze
+                    P.append(
+                        f'<rect x="{bx_s - 1:.0f}" y="{by_s - 2:.0f}" width="2" height="3.5" '
+                        f'fill="{trail_color}" rx="0.3" opacity="0.3"/>'
                     )
 
     # ── Watershed ridge lines (dashed, connecting peaks) ──────────
@@ -1857,14 +1983,9 @@ def generate(
             f'<text x="{ix + 7}" y="{iy + 1.5}" font-family="Georgia,serif" font-size="4.5" fill="#3a2a1a" opacity="0.45">{text}</text>'
         )
 
-    # ── Weather indicator (issue-driven) ──
-    issue_stats = metrics.get("issue_stats", {})
-    open_count = issue_stats.get("open_count", 0) if isinstance(issue_stats, dict) else 0
-    closed_count = issue_stats.get("closed_count", 0) if isinstance(issue_stats, dict) else 0
-
-    # Weather symbol in legend corner
+    # ── Weather indicator (WorldState-driven) ──
     wx_w, wy_w = MAP_R - 40, MAP_T + 15
-    if open_count == 0 and closed_count > 5:
+    if world.weather == "clear":
         # Sun symbol
         sun_color = oklch(0.80, 0.15, 70)
         P.append(f'<circle cx="{wx_w}" cy="{wy_w}" r="6" fill="{sun_color}" opacity="0.8"/>')
@@ -1873,21 +1994,31 @@ def generate(
             P.append(f'<line x1="{wx_w + 8 * math.cos(a):.1f}" y1="{wy_w + 8 * math.sin(a):.1f}" '
                      f'x2="{wx_w + 11 * math.cos(a):.1f}" y2="{wy_w + 11 * math.sin(a):.1f}" '
                      f'stroke="{sun_color}" stroke-width="1" opacity="0.6"/>')
-    elif open_count > 20:
-        # Storm cloud
-        storm_color = oklch(0.55, 0.05, 240)
-        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="10" ry="5" fill="{storm_color}" opacity="0.5"/>')
-        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 2}" rx="7" ry="4" fill="{storm_color}" opacity="0.4"/>')
-        # Lightning bolt
-        if open_count > 50:
-            bolt_color = oklch(0.80, 0.15, 60)
-            P.append(f'<path d="M{wx_w},{wy_w + 5} l-2,4 3,0 -2,4" stroke="{bolt_color}" stroke-width="1" fill="none"/>')
-    elif open_count > 5:
-        # Partial clouds
-        sun_partial = oklch(0.80, 0.15, 70)
-        cloud_partial = oklch(0.7, 0.03, 220)
-        P.append(f'<circle cx="{wx_w - 4}" cy="{wy_w}" r="5" fill="{sun_partial}" opacity="0.6"/>')
-        P.append(f'<ellipse cx="{wx_w + 3}" cy="{wy_w + 1}" rx="7" ry="4" fill="{cloud_partial}" opacity="0.4"/>')
+    elif world.weather == "cloudy":
+        # Cloud shape
+        cloud_color = oklch(0.7, 0.03, 220)
+        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{cloud_color}" opacity="0.45"/>')
+        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{cloud_color}" opacity="0.35"/>')
+        P.append(f'<ellipse cx="{wx_w + 4}" cy="{wy_w + 1}" rx="5" ry="3" fill="{cloud_color}" opacity="0.35"/>')
+    elif world.weather == "rainy":
+        # Cloud + rain lines
+        rain_cloud = oklch(0.58, 0.04, 230)
+        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{rain_cloud}" opacity="0.5"/>')
+        P.append(f'<ellipse cx="{wx_w - 4}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{rain_cloud}" opacity="0.4"/>')
+        rain_line_color = oklch(0.55, 0.10, 230)
+        for _ri in range(4):
+            _rx = wx_w - 5 + _ri * 3.5
+            P.append(f'<line x1="{_rx:.1f}" y1="{wy_w + 5}" x2="{_rx - 1:.1f}" y2="{wy_w + 10}" '
+                     f'stroke="{rain_line_color}" stroke-width="0.6" opacity="0.5" stroke-linecap="round"/>')
+    elif world.weather == "stormy":
+        # Cloud + lightning zigzag
+        storm_color = oklch(0.50, 0.05, 240)
+        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="10" ry="5" fill="{storm_color}" opacity="0.55"/>')
+        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 2}" rx="7" ry="4" fill="{storm_color}" opacity="0.45"/>')
+        # Lightning zigzag
+        bolt_color = oklch(0.85, 0.18, 60)
+        P.append(f'<path d="M{wx_w},{wy_w + 5} l-2,4 3,0 -2,4" '
+                 f'stroke="{bolt_color}" stroke-width="1.2" fill="none" opacity="0.8" stroke-linecap="round"/>')
 
     # ── Tiered title cartouche ────────────────────────────────────
     cart_x, cart_y = MAP_L - 5, HEIGHT - 52
@@ -1963,6 +2094,35 @@ def generate(
             f'fill="#1a2a3a" opacity="{cs_opacity:.3f}" '
             f'transform="rotate({cs_angle:.1f},{cs_cx:.1f},{cs_cy:.1f})"/>'
         )
+
+    # ── Valley fog / atmospheric haze (WorldState energy-driven) ──
+    if world.energy < 0.7:
+        fog_opacity = (1.0 - world.energy) * 0.15
+        # Find low-elevation valley positions for fog ellipses
+        _fog_spots: list[tuple[float, float]] = []
+        for _fgy in range(10, grid - 10, 25):
+            for _fgx in range(10, grid - 10, 25):
+                _fe = elevation[_fgy, _fgx]
+                if _fe < 0.25:
+                    _fmx, _fmy = _grid_to_map(_fgx, _fgy, cell_w, cell_h)
+                    _fog_spots.append((_fmx, _fmy))
+        # Place 2-3 fog ellipses at the lowest valley positions
+        _fog_spots_sorted = sorted(
+            _fog_spots,
+            key=lambda fp: elevation[
+                min(grid - 1, max(0, int((fp[1] - MAP_T) / cell_h))),
+                min(grid - 1, max(0, int((fp[0] - MAP_L) / cell_w))),
+            ],
+        )
+        for _fi, (_ffx, _ffy) in enumerate(_fog_spots_sorted[:3]):
+            _fog_rx = 60 + rng.uniform(0, 40)
+            _fog_ry = 15 + rng.uniform(0, 10)
+            _fog_angle = rng.uniform(-20, 20)
+            P.append(
+                f'<ellipse cx="{_ffx:.1f}" cy="{_ffy:.1f}" rx="{_fog_rx:.1f}" ry="{_fog_ry:.1f}" '
+                f'fill="#e8e4dc" opacity="{fog_opacity:.3f}" filter="url(#valleyFog)" '
+                f'transform="rotate({_fog_angle:.1f},{_ffx:.1f},{_ffy:.1f})"/>'
+            )
 
     # ── Foxing / age spots (scaled by mat) ────────────────────────
     for _ in range(int(mat * 8)):
