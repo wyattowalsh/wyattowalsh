@@ -24,14 +24,21 @@ from pathlib import Path
 import numpy as np
 
 from ..utils import get_logger
+from .optimize import optimize_palette_hues
 from .shared import (
     LANG_HUES,
     WorldState,
+    _build_world_palette_extended,
+    activity_tempo,
     aurora_filter,
     compute_world_state,
     oklch,
+    oklch_lerp,
+    organic_texture_filter,
+    select_palette_for_world,
     svg_footer,
     svg_header,
+    visual_complexity,
     volumetric_glow_filter,
 )
 
@@ -303,6 +310,20 @@ def _render_svg(
     progress_time = duration * (snapshot_progress or 0.0)
 
     metrics = history.get("current_metrics", {})
+
+    # ------------------------------------------------------------------
+    # WorldState palette (OKLCH color pipeline)
+    # ------------------------------------------------------------------
+    ws = compute_world_state(metrics)
+    pal = _build_world_palette_extended(
+        ws.time_of_day, ws.weather, ws.season, ws.energy,
+    )
+    palette_name = select_palette_for_world(ws)
+    complexity = visual_complexity(metrics)
+    tempo = activity_tempo(history.get("contributions_monthly"))
+    # Scale factor for visual detail: 0.7 at minimum complexity, 1.3 at maximum
+    detail_scale = 0.7 + 0.6 * complexity
+
     stars_events = history.get("stars", [])
     forks_events = history.get("forks", [])
     all_events = sorted(
@@ -325,7 +346,8 @@ def _render_svg(
 
     logger.info(
         "Cosmic Genesis: a={a:.3f} b={b:.3f} c={c:.3f} d={d:.3f} "
-        "grid={g} iters={i} dark={dm}",
+        "grid={g} iters={i} dark={dm} "
+        "palette={pal} complexity={cx:.2f} tempo={tp:.2f}",
         a=a,
         b=b,
         c=c,
@@ -333,6 +355,9 @@ def _render_svg(
         g=grid_sz,
         i=iters,
         dm=dark_mode,
+        pal=palette_name,
+        cx=complexity,
+        tp=tempo,
     )
 
     # ------------------------------------------------------------------
@@ -358,29 +383,33 @@ def _render_svg(
     pixel_w = round(_WIDTH / grid_sz, 2)
     pixel_h = round(_HEIGHT / grid_sz, 2)
 
-    # Background colours
+    # Background colours — derived from WorldState palette
     if dark_mode:
-        bg_from1, bg_to1 = "#05080f", "#12081e"
-        bg_from2, bg_to2 = "#080e1a", "#1a0e2e"
+        bg_from1 = pal["bg_primary"]
+        bg_to1 = pal["bg_secondary"]
+        bg_from2 = pal["bg_secondary"]
+        bg_to2 = pal["bg_primary"]
         star_colors = [
             oklch(0.90, 0.02, 220),
             oklch(0.85, 0.01, 50),
             "#ffffff",
         ]
         timeline_bg = "rgba(255,255,255,0.08)"
-        timeline_fg = "#7c6ef0"
+        timeline_fg = pal["accent"]
         text_color = "rgba(255,255,255,0.5)"
         milestone_stroke = "rgba(150,130,255,0.7)"
     else:
-        bg_from1, bg_to1 = "#f0f2f8", "#e8e0f0"
-        bg_from2, bg_to2 = "#e8eef5", "#ddd0e8"
+        bg_from1 = pal["bg_primary"]
+        bg_to1 = pal["bg_secondary"]
+        bg_from2 = pal["bg_secondary"]
+        bg_to2 = pal["bg_primary"]
         star_colors = [
             oklch(0.45, 0.02, 260),
             oklch(0.50, 0.01, 50),
-            "#444466",
+            pal["text_secondary"],
         ]
         timeline_bg = "rgba(0,0,0,0.06)"
-        timeline_fg = "#6c5ce7"
+        timeline_fg = pal["accent"]
         text_color = "rgba(0,0,0,0.35)"
         milestone_stroke = "rgba(100,80,200,0.6)"
 
@@ -432,12 +461,15 @@ def _render_svg(
     # Aurora filter for PR merge bands
     parts.append(aurora_filter("prAurora") + "\n")
     # Comet trail gradient
+    _comet_highlight = pal["highlight"]
     parts.append(
         '<linearGradient id="cometTrail" x1="0%" y1="0%" x2="100%" y2="0%">\n'
-        '  <stop offset="0%" stop-color="#d4a030" stop-opacity="0.6"/>\n'
-        '  <stop offset="100%" stop-color="#d4a030" stop-opacity="0"/>\n'
+        f'  <stop offset="0%" stop-color="{_comet_highlight}" stop-opacity="0.6"/>\n'
+        f'  <stop offset="100%" stop-color="{_comet_highlight}" stop-opacity="0"/>\n'
         '</linearGradient>\n'
     )
+    # Organic nebula texture filter
+    parts.append(organic_texture_filter("nebulaTexture", "cloud", intensity=0.2) + "\n")
     parts.append("</defs>\n")
 
     if not snapshot_mode:
@@ -454,15 +486,15 @@ def _render_svg(
 
     if dark_mode:
         star_layers = [
-            (60, 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),
-            (50, 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),
-            (25, 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),
+            (int(60 * detail_scale), 0.3, 0.6, 0.05, 0.15, 4.0, 8.0, [star_colors[2]]),
+            (int(50 * detail_scale), 0.6, 1.2, 0.15, 0.35, 2.0, 5.0, [star_colors[2]]),
+            (int(25 * detail_scale), 1.2, 2.0, 0.30, 0.60, 1.5, 3.0, star_colors[:2]),
         ]
     else:
         star_layers = [
-            (60, 0.4, 0.8, 0.25, 0.45, 4.0, 8.0, [star_colors[2]]),
-            (50, 0.8, 1.5, 0.40, 0.60, 2.0, 5.0, [star_colors[2]]),
-            (25, 1.5, 2.5, 0.55, 0.80, 1.5, 3.0, star_colors[:2]),
+            (int(60 * detail_scale), 0.4, 0.8, 0.25, 0.45, 4.0, 8.0, [star_colors[2]]),
+            (int(50 * detail_scale), 0.8, 1.5, 0.40, 0.60, 2.0, 5.0, [star_colors[2]]),
+            (int(25 * detail_scale), 1.5, 2.5, 0.55, 0.80, 1.5, 3.0, star_colors[:2]),
         ]
 
     parts.append('<g id="starfield">\n')
@@ -471,7 +503,9 @@ def _render_svg(
             sx = rng.uniform(10, _WIDTH - 10)
             sy = rng.uniform(10, _HEIGHT - 30)
             sr = round(rng.uniform(r_lo, r_hi), 1)
-            tw_dur = round(rng.uniform(tw_lo, tw_hi), 1)
+            # Tempo scales twinkle: high tempo → faster twinkle (shorter duration)
+            _tw_scale = 1.0 - 0.3 * tempo  # [0.7, 1.0]
+            tw_dur = round(rng.uniform(tw_lo, tw_hi) * _tw_scale, 1)
             tw_delay = round(rng.uniform(0, duration), 1)
             opacity = round(rng.uniform(op_lo, op_hi), 2)
             color = rng.choice(colors)
@@ -490,7 +524,8 @@ def _render_svg(
 
     # ---- Layer 1b: Topic Constellations ----
     topic_clusters = metrics.get("topic_clusters", {})
-    top_topics = list(topic_clusters.keys())[:8]
+    max_constellations = max(3, int(8 * detail_scale))
+    top_topics = list(topic_clusters.keys())[:max_constellations]
     if top_topics:
         parts.append('<g id="constellations">\n')
         constellation_rng = random.Random((star_seed + 42) % (2**31))
@@ -535,19 +570,20 @@ def _render_svg(
                 points.append((px, py))
 
             # Connecting lines (faint)
+            _line_color = pal["text_primary"] if dark_mode else pal["text_secondary"]
             for i in range(len(points) - 1):
                 x1, y1 = points[i]
                 x2, y2 = points[i + 1]
                 if snapshot_mode:
                     parts.append(
                         f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
-                        f'stroke="#ffffff" stroke-width="0.3" opacity="0.15"/>\n'
+                        f'stroke="{_line_color}" stroke-width="0.3" opacity="0.15"/>\n'
                     )
                 else:
                     fade_dur = round(duration * 0.8 + ci * 2)
                     parts.append(
                         f'<line x1="{x1:.0f}" y1="{y1:.0f}" x2="{x2:.0f}" y2="{y2:.0f}" '
-                        f'stroke="#ffffff" stroke-width="0.3" opacity="0">\n'
+                        f'stroke="{_line_color}" stroke-width="0.3" opacity="0">\n'
                         f'  <animate attributeName="opacity" values="0;0.15;0.15;0" '
                         f'dur="{fade_dur}s" begin="{ci * 3}s" repeatCount="indefinite"/>\n'
                         f'</line>\n'
@@ -571,10 +607,11 @@ def _render_svg(
             # Constellation label (small monospace)
             label_x, label_y = points[0]
             name = topic.replace("-", " ")
+            _label_fill = pal["text_primary"] if dark_mode else pal["text_secondary"]
             parts.append(
                 f'<text x="{label_x:.0f}" y="{label_y - 8:.0f}" '
                 f'font-family="monospace" font-size="7" '
-                f'fill="#ffffff" opacity="0.5" text-anchor="middle">{name}</text>\n'
+                f'fill="{_label_fill}" opacity="0.5" text-anchor="middle">{name}</text>\n'
             )
 
         parts.append('</g>\n')
@@ -584,14 +621,14 @@ def _render_svg(
     diversity = metrics.get("language_diversity", 1.0) or 1.0
     total_lang_bytes = sum(langs.values()) if langs else 1
 
-    # Use ALL languages; number of wisps scaled by diversity
+    # Use ALL languages; number of wisps scaled by diversity and visual complexity
     all_langs = sorted(langs.items(), key=lambda x: x[1], reverse=True) if langs else []
     if diversity > 3.0:
         # High diversity: rich multi-colored field with 8+ wisps
-        n_wisps = max(8, min(16, len(all_langs) * 2))
+        n_wisps = max(8, min(16, int(len(all_langs) * 2 * detail_scale)))
     elif diversity > 1.5:
         # Medium diversity: moderate nebula
-        n_wisps = max(5, min(10, len(all_langs) + 2))
+        n_wisps = max(5, min(10, int((len(all_langs) + 2) * detail_scale)))
     else:
         # Low diversity: sparse, 2-3 monochromatic wisps
         n_wisps = max(2, min(3, len(all_langs)))
@@ -612,7 +649,14 @@ def _render_svg(
     # Cap to target wisp count
     wisp_specs = wisp_specs[:n_wisps]
 
-    parts.append('<g id="nebula" filter="url(#nebulaGlow)">\n')
+    # Optimize nebula hues for color harmony
+    wisp_hues = [hue for hue, _ in wisp_specs]
+    if len(wisp_hues) >= 2:
+        wisp_hues = optimize_palette_hues(wisp_hues, max_shift=12.0)
+        wisp_specs = [(wisp_hues[i], sz) for i, (_, sz) in enumerate(wisp_specs)]
+
+    parts.append('<g id="nebula" filter="url(#nebulaTexture)">\n')
+    parts.append('<g filter="url(#nebulaGlow)">\n')
     for i, (hue, size_scale) in enumerate(wisp_specs):
         nx = rng.uniform(80, 720)
         ny = rng.uniform(80, 720)
@@ -636,7 +680,8 @@ def _render_svg(
                 f'dur="{neb_dur}s" repeatCount="indefinite"/>\n'
                 f"</ellipse>\n"
             )
-    parts.append("</g>\n")
+    parts.append("</g>\n")  # close inner nebulaGlow group
+    parts.append("</g>\n")  # close outer nebulaTexture group
 
     # ---- Layer 2b: PR Merge Aurora ----
     recent_prs = metrics.get("recent_merged_prs", [])
@@ -764,7 +809,7 @@ def _render_svg(
             comet_delay = round(rng.uniform(0, duration * 0.7), 1)
 
             head_color = oklch(0.92 if dark_mode else 0.68, 0.08, 50)
-            tail_color = "#d4a030"
+            tail_color = pal["highlight"]
 
             # Trail path: tapered line from start toward head
             # Use a thin path with decreasing stroke-width effect
@@ -940,6 +985,7 @@ def _render_svg(
         if len(_high_cells) > 20:
             _high_cells = dm_rng.sample(_high_cells, 20)
 
+        _dm_color = oklch_lerp(pal["accent"], pal["muted"], 0.5)
         parts.append('<g id="dark-matter">\n')
         for _ia in range(len(_high_cells)):
             for _ib in range(_ia + 1, len(_high_cells)):
@@ -950,13 +996,13 @@ def _render_svg(
                     if snapshot_mode:
                         parts.append(
                             f'<line x1="{_ax}" y1="{_ay}" x2="{_bx}" y2="{_by}" '
-                            f'stroke="#4060a0" opacity="0.06" stroke-width="0.5"/>\n'
+                            f'stroke="{_dm_color}" opacity="0.06" stroke-width="0.5"/>\n'
                         )
                     else:
                         _dm_dur = round(20 + dm_rng.uniform(0, 15), 1)
                         parts.append(
                             f'<line x1="{_ax}" y1="{_ay}" x2="{_bx}" y2="{_by}" '
-                            f'stroke="#4060a0" stroke-width="0.5" opacity="0">\n'
+                            f'stroke="{_dm_color}" stroke-width="0.5" opacity="0">\n'
                             f'  <animate attributeName="opacity" values="0;0.06;0.06;0" '
                             f'dur="{_dm_dur}s" begin="{dm_rng.uniform(0, 10):.1f}s" '
                             f'repeatCount="indefinite"/>\n'
@@ -968,6 +1014,7 @@ def _render_svg(
     releases = metrics.get("releases", [])
     if releases and isinstance(releases, list):
         supernova_rng = random.Random(star_seed + 99)
+        _supernova_color = pal["glow"]
         parts.append('<g id="supernovae">\n')
         for si, release in enumerate(releases[:5]):
             # Seeded position from release name/tag
@@ -985,7 +1032,7 @@ def _render_svg(
                 current_r = ring_r * (0.5 + 0.5 * expand_progress)
                 parts.append(
                     f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{current_r:.1f}" '
-                    f'fill="none" stroke="#f0e8d0" stroke-width="1.5" '
+                    f'fill="none" stroke="{_supernova_color}" stroke-width="1.5" '
                     f'opacity="{ring_opacity}"/>\n'
                 )
             else:
@@ -993,7 +1040,7 @@ def _render_svg(
                 pulse_begin = round(si * 3 + supernova_rng.uniform(0, 5), 1)
                 parts.append(
                     f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{ring_r * 0.3:.1f}" '
-                    f'fill="none" stroke="#f0e8d0" stroke-width="1.5" opacity="0">\n'
+                    f'fill="none" stroke="{_supernova_color}" stroke-width="1.5" opacity="0">\n'
                     f'  <animate attributeName="r" '
                     f'values="{ring_r * 0.3:.1f};{ring_r:.1f};{ring_r * 1.5:.1f}" '
                     f'dur="{pulse_dur}s" begin="{pulse_begin}s" repeatCount="indefinite"/>\n'
