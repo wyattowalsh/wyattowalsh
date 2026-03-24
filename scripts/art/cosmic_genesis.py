@@ -40,6 +40,7 @@ from .shared import (
     svg_footer,
     svg_header,
     visual_complexity,
+    volumetric_glow_filter,
 )
 
 logger = get_logger(module=__name__)
@@ -83,14 +84,31 @@ def _simulate_gray_scott(
     kill: float,
     n_steps: int,
     rng_seed: int = 42,
+    *,
+    noise_amp: float = 0.02,
+    v_seed_intensity: float = 1.0,
+    f_grid: np.ndarray | None = None,
+    k_grid: np.ndarray | None = None,
+    pr_flow_bias_quadrant: int | None = None,
+    defect_positions: list[tuple[int, int]] | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Run Gray-Scott reaction-diffusion and return (U, V, first_hit).
 
     *seed_positions*: list of (row, col, radius) for initial V-perturbation.
     *first_hit*: iteration when V first exceeds 0.15 at each cell (-1 = never).
+
+    Extended parameters (all degrade gracefully to defaults):
+      *noise_amp*: amplitude of symmetry-breaking noise on V.
+      *v_seed_intensity*: V value when seeding repo positions (0.5-1.0).
+      *f_grid* / *k_grid*: per-cell feed/kill rate arrays (Voronoi topic regions).
+      *pr_flow_bias_quadrant*: if set (0-3), bias seed positions toward that quadrant.
+      *defect_positions*: extra V-blob nucleation points from open issues.
     """
     Du = 0.16
     Dv = 0.08
+
+    # Clamp v_seed_intensity
+    v_seed = min(1.0, max(0.5, v_seed_intensity))
 
     U = np.ones((N, N), dtype=np.float64)
     V = np.zeros((N, N), dtype=np.float64)
@@ -99,29 +117,54 @@ def _simulate_gray_scott(
     rng = np.random.default_rng(rng_seed)
     yy, xx = np.mgrid[0:N, 0:N]
 
-    # Seed perturbation zones
-    for ry, rx, radius in seed_positions:
+    # --- PR flow bias: shift seed positions toward a quadrant ---
+    biased_seeds = list(seed_positions)
+    if pr_flow_bias_quadrant is not None and biased_seeds:
+        qr_offset = [(-N // 8, -N // 8), (-N // 8, N // 8),
+                      (N // 8, -N // 8), (N // 8, N // 8)]
+        dr, dc = qr_offset[pr_flow_bias_quadrant % 4]
+        biased_seeds = [
+            (max(2, min(N - 3, r + dr // 2)),
+             max(2, min(N - 3, c + dc // 2)),
+             rad)
+            for r, c, rad in biased_seeds
+        ]
+
+    # Seed perturbation zones (with v_seed_intensity)
+    for ry, rx, radius in biased_seeds:
         mask = (xx - rx) ** 2 + (yy - ry) ** 2 < radius**2
-        V[mask] = 1.0
+        V[mask] = v_seed
         U[mask] = 0.5
 
     # Fallback: guarantee at least some seeds via random blobs
-    if not seed_positions or np.sum(V > 0) < 5:
-        n_fallback = max(3, 6 - len(seed_positions))
+    if not biased_seeds or np.sum(V > 0) < 5:
+        n_fallback = max(3, 6 - len(biased_seeds))
         for _ in range(n_fallback):
             cy = int(rng.integers(N // 4, 3 * N // 4))
             cx = int(rng.integers(N // 4, 3 * N // 4))
             r = int(rng.integers(2, max(3, N // 15)))
             mask = (xx - cx) ** 2 + (yy - cy) ** 2 < r**2
-            V[mask] = 1.0
+            V[mask] = v_seed
             U[mask] = 0.5
 
-    # Add small noise to break symmetry
-    V += rng.uniform(0, 0.02, (N, N))
+    # --- Defect perturbations: extra nucleation points from open issues ---
+    if defect_positions:
+        for dy, dx in defect_positions:
+            if 0 <= dy < N and 0 <= dx < N:
+                r_def = max(1, N // 40)
+                mask = (xx - dx) ** 2 + (yy - dy) ** 2 < r_def**2
+                V[mask] = v_seed * 0.8
+                U[mask] = 0.5
+
+    # Add small noise to break symmetry (amplitude driven by data)
+    V += rng.uniform(0, noise_amp, (N, N))
     U = np.clip(U, 0, 1)
 
     # Record initial first_hit
     first_hit[V > 0.15] = 0
+
+    # Use per-cell f/k grids if provided, else broadcast scalar
+    use_fk_grids = f_grid is not None and k_grid is not None
 
     # Simulate
     report_interval = max(1, n_steps // 5)
@@ -129,8 +172,12 @@ def _simulate_gray_scott(
         lap_U = _laplacian(U)
         lap_V = _laplacian(V)
         uvv = U * V * V
-        U += Du * lap_U - uvv + feed * (1.0 - U)
-        V += Dv * lap_V + uvv - (feed + kill) * V
+        if use_fk_grids:
+            U += Du * lap_U - uvv + f_grid * (1.0 - U)
+            V += Dv * lap_V + uvv - (f_grid + k_grid) * V
+        else:
+            U += Du * lap_U - uvv + feed * (1.0 - U)
+            V += Dv * lap_V + uvv - (feed + kill) * V
         np.clip(U, 0, 1, out=U)
         np.clip(V, 0, 1, out=V)
 
@@ -271,7 +318,10 @@ def _render_svg(
     # Simulation parameters from GitHub data
     # ------------------------------------------------------------------
     total_stars = metrics.get("stars", 0) or 0
-    N = min(120, max(60, 60 + total_stars // 10))
+    network_count = metrics.get("network_count", 0) or 0
+
+    # #9 — network_count → Grid density boost
+    N = min(120, max(60, 60 + total_stars // 10 + network_count // 100))
 
     # Feed rate from language diversity / complexity [0.025, 0.060]
     feed = 0.025 + 0.035 * complexity
@@ -289,9 +339,73 @@ def _render_svg(
     rng_seed = (total_stars * 7919 + (metrics.get("forks", 0) or 0) * 6271) % (2**31)
     rng = random.Random(rng_seed)
 
+    # ------------------------------------------------------------------
+    # New data reads for enhanced mappings
+    # ------------------------------------------------------------------
+    followers = metrics.get("followers", 0) or 0
+    total_commits = metrics.get("total_commits", 0) or 0
+    contributions = metrics.get("contributions_last_year", 0) or 0
+    topic_clusters = metrics.get("topic_clusters", {}) or {}
+    commit_hours = metrics.get("commit_hour_distribution", {}) or {}
+    releases = metrics.get("releases", []) or []
+    recent_merged_prs = metrics.get("recent_merged_prs", []) or []
+    streaks = metrics.get("contribution_streaks", {}) or {}
+    total_issues = metrics.get("total_issues", 0) or metrics.get("open_issues_count", 0) or 0
+    public_gists = metrics.get("public_gists", 0) or 0
+
+    # #2 — total_commits → Noise perturbation amplitude
+    noise_amp = 0.02 + min(0.05, total_commits / 50000)
+
+    # #8 — contribution_streaks → Pattern stability
+    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    if streak_active:
+        noise_amp *= 0.7  # active streak → more ordered
+    elif streaks and not streak_active:
+        noise_amp *= 1.2  # broken streak → more chaotic
+
+    # #3 — contributions_last_year → V-seed intensity
+    v_seed_intensity = 0.5 + min(0.5, contributions / 2000)
+
+    # #7 — recent_merged_prs → Flow bias in V-seed placement
+    pr_count = len(recent_merged_prs) if isinstance(recent_merged_prs, list) else 0
+    pr_flow_bias_quadrant: int | None = None
+    if pr_count > 0:
+        pr_flow_bias_quadrant = pr_count % 4
+
     # Repo positions on the grid
     repo_positions = _repo_grid_positions(history, metrics, N, rng)
     seed_positions = [(r, c, rad) for r, c, rad, _h in repo_positions]
+
+    # #10 — total_issues → Defect perturbations (extra nucleation points)
+    defect_positions: list[tuple[int, int]] = []
+    if total_issues > 0:
+        defect_rng = random.Random(rng_seed + 9999)
+        n_defects = min(15, total_issues)
+        for _ in range(n_defects):
+            dy = defect_rng.randint(2, N - 3)
+            dx = defect_rng.randint(2, N - 3)
+            defect_positions.append((dy, dx))
+
+    # #4 — topic_clusters → Multi-region f/k variation (Voronoi regions)
+    f_grid: np.ndarray | None = None
+    k_grid: np.ndarray | None = None
+    top_topics = list(topic_clusters.keys())[:5] if topic_clusters else []
+    if len(top_topics) >= 3:
+        voronoi_hue_pre = _build_voronoi_hue_map(N, repo_positions)
+        f_grid = np.full((N, N), feed, dtype=np.float64)
+        k_grid = np.full((N, N), kill, dtype=np.float64)
+
+        # Assign each unique hue a slight f/k offset
+        unique_hues = sorted(set(float(h) for _, _, _, h in repo_positions))
+        fk_offsets = [
+            (-0.002, -0.001), (0.002, 0.001), (-0.001, 0.002),
+            (0.001, -0.002), (0.0015, 0.0015),
+        ]
+        for idx, hue_val in enumerate(unique_hues[:5]):
+            region_mask = np.abs(voronoi_hue_pre - hue_val) < 0.5
+            df, dk = fk_offsets[idx % len(fk_offsets)]
+            f_grid[region_mask] += df
+            k_grid[region_mask] += dk
 
     logger.info(
         "Turing RD: N={N} feed={f:.4f} kill={k:.4f} steps={s} "
@@ -322,6 +436,12 @@ def _render_svg(
         kill,
         effective_steps,
         rng_seed=rng_seed,
+        noise_amp=noise_amp,
+        v_seed_intensity=v_seed_intensity,
+        f_grid=f_grid,
+        k_grid=k_grid,
+        pr_flow_bias_quadrant=pr_flow_bias_quadrant,
+        defect_positions=defect_positions,
     )
 
     # Voronoi hue map
@@ -359,6 +479,14 @@ def _render_svg(
 
     # Background
     parts.append(f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="{bg_color}"/>\n')
+
+    # ------------------------------------------------------------------
+    # SVG defs — #1 border glow filter (followers-driven)
+    # ------------------------------------------------------------------
+    if followers > 0:
+        parts.append("<defs>\n")
+        parts.append(volumetric_glow_filter("borderGlow", radius=4.0))
+        parts.append("\n</defs>\n")
 
     # ------------------------------------------------------------------
     # Render grid cells
@@ -413,6 +541,82 @@ def _render_svg(
     parts.append(f'<g id="turing-pattern">\n')
     parts.extend(rects)
     parts.append("</g>\n")
+
+    # ------------------------------------------------------------------
+    # #1 — followers → Grid border glow
+    # ------------------------------------------------------------------
+    if followers > 0:
+        glow_intensity = min(1.0, followers / 500)
+        glow_opacity = round(0.15 + 0.55 * glow_intensity, 3)
+        glow_color = pal["accent"]
+        parts.append(
+            f'<rect x="4" y="4" width="{_WIDTH - 8}" height="{_HEIGHT - 8}" '
+            f'rx="6" ry="6" fill="none" stroke="{glow_color}" '
+            f'stroke-width="{round(1.5 + 2.5 * glow_intensity, 2)}" '
+            f'opacity="{glow_opacity}" filter="url(#borderGlow)"/>\n'
+        )
+
+    # ------------------------------------------------------------------
+    # #6 — releases → Shockwave rings
+    # ------------------------------------------------------------------
+    if releases and repo_positions:
+        n_rings = min(5, len(releases) if isinstance(releases, list) else 0)
+        if n_rings > 0:
+            ring_color = pal.get("highlight", pal["accent"])
+            for ri in range(n_rings):
+                # Place ring at a repo position (cycle through available)
+                rp = repo_positions[ri % len(repo_positions)]
+                cx_ring = round(rp[1] * (_WIDTH / N), 2)
+                cy_ring = round(rp[0] * (_HEIGHT / N), 2)
+                ring_r = round(15 + ri * 12, 1)
+                ring_opacity = round(0.30 - ri * 0.03, 2)
+                ring_opacity = max(0.15, ring_opacity)
+                parts.append(
+                    f'<circle cx="{cx_ring}" cy="{cy_ring}" r="{ring_r}" '
+                    f'fill="none" stroke="{ring_color}" stroke-width="1.2" '
+                    f'opacity="{ring_opacity}"/>\n'
+                )
+
+    # ------------------------------------------------------------------
+    # #5 — commit_hour_distribution → Circadian gradient overlay
+    # ------------------------------------------------------------------
+    if commit_hours and isinstance(commit_hours, dict):
+        tod = ws.time_of_day
+        # Dawn=warm overlay, night=cool overlay, day/golden=neutral
+        if tod == "dawn":
+            circ_color = pal.get("warm", pal["accent"])
+        elif tod == "night":
+            circ_color = pal.get("cool", pal.get("secondary", pal["accent"]))
+        elif tod == "golden":
+            circ_color = pal.get("warm", pal["accent"])
+        else:
+            circ_color = pal.get("muted", pal["accent"])
+
+        circ_opacity = round(0.06 + 0.04 * min(1.0, len(commit_hours) / 24), 3)
+        parts.append(
+            f'<defs><radialGradient id="circadianGrad" cx="50%" cy="50%" r="70%">\n'
+            f'  <stop offset="0%" stop-color="{circ_color}" stop-opacity="{circ_opacity}"/>\n'
+            f'  <stop offset="100%" stop-color="{circ_color}" stop-opacity="0"/>\n'
+            f'</radialGradient></defs>\n'
+            f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="url(#circadianGrad)"/>\n'
+        )
+
+    # ------------------------------------------------------------------
+    # #11 — public_gists → Accent dots
+    # ------------------------------------------------------------------
+    if public_gists > 0:
+        n_dots = min(public_gists, 10)
+        dot_color = pal.get("highlight", pal["accent"])
+        dot_rng = random.Random(rng_seed + 7777)
+        for di in range(n_dots):
+            dx = round(dot_rng.uniform(20, _WIDTH - 20), 2)
+            dy = round(dot_rng.uniform(20, _HEIGHT - 40), 2)
+            dot_r = round(dot_rng.uniform(2.0, 4.5), 2)
+            dot_opacity = round(dot_rng.uniform(0.3, 0.7), 2)
+            parts.append(
+                f'<circle cx="{dx}" cy="{dy}" r="{dot_r}" '
+                f'fill="{dot_color}" opacity="{dot_opacity}"/>\n'
+            )
 
     # ------------------------------------------------------------------
     # Timeline bar at bottom
