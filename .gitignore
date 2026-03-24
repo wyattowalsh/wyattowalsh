@@ -1,5 +1,6 @@
 .cursor/mcp.json
 .vscode/
+.playwright-mcp/
 
 ### Generated outputs — never commit ###
 logs/json/
