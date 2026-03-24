@@ -45,17 +45,18 @@
 <text class="rc-desc" x="20" y="134" style="font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">latex · link-shortener</text>
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="320" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="168" width="271.1" height="4" fill="#3178c6" />
-<rect x="291.1" y="168" width="25.3" height="4" fill="#8b949e" />
-<rect x="316.4" y="168" width="17.9" height="4" fill="#563d7c" />
-<rect x="334.3" y="168" width="5.7" height="4" fill="#f1e05a" />
+<rect x="20.0" y="168" width="248.4" height="4" fill="#3178c6" />
+<rect x="268.4" y="168" width="26.2" height="4" fill="#563d7c" />
+<rect x="294.6" y="168" width="20.6" height="4" fill="#8b949e" />
+<rect x="315.2" y="168" width="17.8" height="4" fill="#f1e05a" />
+<rect x="333.0" y="168" width="7.0" height="4" fill="#3572A5" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3178c6" />
-<text class="rc-meta" x="32" y="184">TypeScript 85%</text>
-<circle class="rc-lang-dot" cx="163" cy="180" r="4" fill="#8b949e" />
-<text class="rc-meta" x="171" y="184">MDX 8%</text>
-<circle class="rc-lang-dot" cx="239" cy="180" r="4" fill="#563d7c" />
-<text class="rc-meta" x="247" y="184">CSS 6%</text>
+<text class="rc-meta" x="32" y="184">TypeScript 78%</text>
+<circle class="rc-lang-dot" cx="163" cy="180" r="4" fill="#563d7c" />
+<text class="rc-meta" x="171" y="184">CSS 8%</text>
+<circle class="rc-lang-dot" cx="239" cy="180" r="4" fill="#8b949e" />
+<text class="rc-meta" x="247" y="184">MDX 6%</text>
 <text class="rc-meta" x="333" y="154">2</text>
 <svg x="315" y="142" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" /></svg>
 <text class="rc-meta" x="296" y="154">3</text>
