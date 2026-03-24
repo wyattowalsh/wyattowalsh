@@ -35,8 +35,9 @@ generate-event-art (independent) ─────────────┘
 Uses the `starred` CLI to rebuild `.github/assets/topics.md` and `.github/assets/languages.md` from your GitHub stars.
 
 ```bash
-starred --username wyattowalsh --sort --filename .github/assets/topics.md
-starred --username wyattowalsh --sort --topic --topic_limit 500 \
+uv run starred --username wyattowalsh --sort \
+  --filename .github/assets/languages.md
+uv run starred --username wyattowalsh --sort --topic --topic_limit 500 \
   --filename .github/assets/topics.md
 ```
 
@@ -46,8 +47,8 @@ Commits both files with `chore(data): update awesome-stars lists`.
 
 Depends on `update-starred-lists`. Generates:
 - QR code — `generate qr`
-- Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_wordle_by_topics.svg`
-- Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_wordle_by_languages.svg`
+- Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_metaheuristic-anim_by_topics.svg`
+- Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_metaheuristic-anim_by_languages.svg`
 - SVG banner — `generate banner`
 - Skills badges — `generate skills`
 

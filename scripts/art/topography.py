@@ -247,7 +247,7 @@ def generate(
     world: WorldState = compute_world_state(metrics)
 
     # ── OKLCH palette & complexity (Phase 4d) ─────────────────────
-    palette_name = select_palette_for_world(world)
+    select_palette_for_world(world)
     pal = _build_world_palette_extended(
         world.time_of_day, world.weather, world.season, world.energy,
     )
@@ -486,8 +486,17 @@ def generate(
 
     # ── Place names from topic clusters ──
     topic_clusters = metrics.get("topic_clusters", {})
-    top_topics = list(topic_clusters.keys())[:6]
-
+    top_topic_entries = [
+        (topic, count)
+        for _index, topic, count in sorted(
+            (
+                (index, str(topic).strip(), max(1, int(count or 0)))
+                for index, (topic, count) in enumerate(topic_clusters.items())
+                if str(topic).strip()
+            ),
+            key=lambda item: (-item[2], item[0]),
+        )[:6]
+    ]
     def _topic_to_place_name(topic: str, elev_val: float) -> str:
         """Convert a topic to a cartographic-style place name."""
         name = topic.replace("-", " ").title()
@@ -498,6 +507,10 @@ def generate(
         if elev_val < 0.3:
             return f"{name} Valley"
         return f"{name} Pass"
+
+    def _topic_cluster_note(count: int) -> str:
+        noun = "repo" if count == 1 else "repos"
+        return f"{count} linked {noun}"
 
     # ── 3. Ridgeline backbone from monthly contributions ───────────
     max_m = max(monthly.values()) if monthly else 100
@@ -1376,7 +1389,7 @@ def generate(
         _tt_text = f"{name} \u00b7 {_tt_lang} \u00b7 \u2605{repo_stars} \u00b7 {_elev_label}"
         _tt_text = _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         repo_when = _repo_date(repo) or _date_for_activity_fraction(star_frac)
-        P.append(f'<g class="repo-peak">')
+        P.append('<g class="repo-peak">')
         P.append(f'<title>{_tt_text}</title>')
         if star_frac > 0.7:
             bs = 4 + int(star_frac * 4)
@@ -1404,22 +1417,27 @@ def generate(
         P.append('</g>')
 
     # ── Topic place names ──────────────────────────────────────
-    if top_topics and repo_positions:
+    if len(top_topic_entries) > 3 and len(repo_positions) > 3:
         sorted_repos_tp = sorted(repo_positions, key=lambda rp: rp[2].get("stars", 0), reverse=True)
-        for ti, topic in enumerate(top_topics[:min(len(sorted_repos_tp), 5)]):
-            rx_tp, ry_tp, repo_tp = sorted_repos_tp[ti]
+        for (topic, topic_count), (rx_tp, ry_tp, repo_tp) in zip(
+            top_topic_entries[3:],
+            sorted_repos_tp[3:],
+            strict=False,
+        ):
             # Get elevation at this repo's position
             gx_i = min(grid - 1, max(0, int(rx_tp * grid)))
             gy_i = min(grid - 1, max(0, int(ry_tp * grid)))
             elev = float(elevation[gy_i, gx_i])
             place = _topic_to_place_name(topic, elev)
+            cluster_note = _topic_cluster_note(topic_count)
             mx_tp, my_tp = MAP_L + rx_tp * MAP_W, MAP_T + ry_tp * MAP_H
             label_color = oklch(0.35, 0.02, 30)
             topic_when = _repo_date(repo_tp) or _date_for_activity_fraction(elev)
+            label_size = 7.5 + min(2.0, max(0, topic_count - 1) * 0.6)
             # Halo for readability
             P.append(
                 f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
                 f'fill="#f5f0e8" text-anchor="middle" '
                 f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
                 f'{_timeline_style(topic_when, 0.65)}>'
@@ -1427,20 +1445,37 @@ def generate(
             )
             P.append(
                 f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
+                f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
                 f'fill="{label_color}" text-anchor="middle" '
                 f'{_timeline_style(topic_when, 0.65)}>'
                 f'{place}</text>'
             )
+            P.append(
+                f'<text x="{mx_tp:.0f}" y="{my_tp - 4:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
+                f'{cluster_note}</text>'
+            )
+            P.append(
+                f'<text x="{mx_tp:.0f}" y="{my_tp - 4:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
+                f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
+                f'{cluster_note}</text>'
+            )
 
     # ── Named geographic features from topics (at elevation extremes) ──
-    if len(top_topics) >= 1 and repo_positions:
+    if top_topic_entries and repo_positions:
         _feature_color = oklch(0.30, 0.03, 30)
         # 1st topic → "Mt. {topic}" at the highest repo peak
         _highest_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         _hx = MAP_L + _highest_rp[0] * MAP_W
         _hy = MAP_T + _highest_rp[1] * MAP_H
-        _mt_name = f"Mt. {top_topics[0].replace('-', ' ').title()}"
+        _mt_topic, _mt_count = top_topic_entries[0]
+        _mt_name = f"Mt. {_mt_topic.replace('-', ' ').title()}"
+        _mt_note = _topic_cluster_note(_mt_count)
         _mt_when = _repo_date(_highest_rp[2]) or _date_for_activity_fraction(0.95)
         P.append(
             f'<text x="{_hx:.0f}" y="{_hy - 18:.0f}" '
@@ -1457,13 +1492,30 @@ def generate(
             f'{_timeline_style(_mt_when, 0.7)}>'
             f'{_mt_name}</text>'
         )
+        P.append(
+            f'<text x="{_hx:.0f}" y="{_hy - 10:.0f}" '
+            f'font-family="Georgia, serif" font-size="5.3" letter-spacing="0.9" '
+            f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
+            f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
+            f'{_timeline_style(_mt_when, 0.5, "tl-reveal tl-soft")}>'
+            f'{_mt_note}</text>'
+        )
+        P.append(
+            f'<text x="{_hx:.0f}" y="{_hy - 10:.0f}" '
+            f'font-family="Georgia, serif" font-size="5.3" letter-spacing="0.9" '
+            f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
+            f'{_timeline_style(_mt_when, 0.5, "tl-reveal tl-soft")}>'
+            f'{_mt_note}</text>'
+        )
 
         # 2nd topic → "{topic} Lake" at the lowest elevation point
-        if len(top_topics) >= 2:
+        if len(top_topic_entries) >= 2:
             _lowest_rp = min(repo_positions, key=lambda rp: rp[2].get("stars", 0))
             _lx = MAP_L + _lowest_rp[0] * MAP_W
             _ly = MAP_T + _lowest_rp[1] * MAP_H
-            _lake_name = f"{top_topics[1].replace('-', ' ').title()} Lake"
+            _lake_topic, _lake_count = top_topic_entries[1]
+            _lake_name = f"{_lake_topic.replace('-', ' ').title()} Lake"
+            _lake_note = _topic_cluster_note(_lake_count)
             _lake_when = _repo_date(_lowest_rp[2]) or _date_for_activity_fraction(0.05)
             P.append(
                 f'<text x="{_lx:.0f}" y="{_ly + 20:.0f}" '
@@ -1480,9 +1532,24 @@ def generate(
                 f'{_timeline_style(_lake_when, 0.6)}>'
                 f'{_lake_name}</text>'
             )
+            P.append(
+                f'<text x="{_lx:.0f}" y="{_ly + 28:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(_lake_when, 0.46, "tl-reveal tl-soft")}>'
+                f'{_lake_note}</text>'
+            )
+            P.append(
+                f'<text x="{_lx:.0f}" y="{_ly + 28:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="#4a82b7" text-anchor="middle" '
+                f'{_timeline_style(_lake_when, 0.46, "tl-reveal tl-soft")}>'
+                f'{_lake_note}</text>'
+            )
 
         # 3rd topic → "{topic} Valley" in a valley area (mid-low elevation)
-        if len(top_topics) >= 3 and len(repo_positions) >= 3:
+        if len(top_topic_entries) >= 3 and len(repo_positions) >= 3:
             # Pick a repo with mid-low elevation for the valley
             _elev_sorted = sorted(
                 repo_positions,
@@ -1494,7 +1561,9 @@ def generate(
             _valley_rp = _elev_sorted[len(_elev_sorted) // 3]
             _vx = MAP_L + _valley_rp[0] * MAP_W
             _vy = MAP_T + _valley_rp[1] * MAP_H
-            _valley_name = f"{top_topics[2].replace('-', ' ').title()} Valley"
+            _valley_topic, _valley_count = top_topic_entries[2]
+            _valley_name = f"{_valley_topic.replace('-', ' ').title()} Valley"
+            _valley_note = _topic_cluster_note(_valley_count)
             _valley_when = _repo_date(_valley_rp[2]) or _date_for_activity_fraction(0.25)
             P.append(
                 f'<text x="{_vx:.0f}" y="{_vy + 20:.0f}" '
@@ -1510,6 +1579,21 @@ def generate(
                 f'fill="{_feature_color}" text-anchor="middle" '
                 f'{_timeline_style(_valley_when, 0.6)}>'
                 f'{_valley_name}</text>'
+            )
+            P.append(
+                f'<text x="{_vx:.0f}" y="{_vy + 28:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
+                f'stroke="#f5f0e8" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill" '
+                f'{_timeline_style(_valley_when, 0.46, "tl-reveal tl-soft")}>'
+                f'{_valley_note}</text>'
+            )
+            P.append(
+                f'<text x="{_vx:.0f}" y="{_vy + 28:.0f}" '
+                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
+                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
+                f'{_timeline_style(_valley_when, 0.46, "tl-reveal tl-soft")}>'
+                f'{_valley_note}</text>'
             )
 
     # ── Settlement symbol (followers-driven cartographic markers) ──
@@ -2238,7 +2322,7 @@ def generate(
 
     # ── Data mapping 4: total_prs → road/path density ─────────────
     _total_prs = metrics.get("total_prs", 0)
-    if isinstance(_total_prs, (int, float)) and _total_prs > 10 and repo_positions:
+    if isinstance(_total_prs, int | float) and _total_prs > 10 and repo_positions:
         _n_paths = min(5, int(_total_prs) // 20)
         # Find settlement position (same logic as settlement symbol)
         _settle_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
@@ -2264,7 +2348,7 @@ def generate(
 
     # ── Data mapping 5: total_issues → scree/rough terrain markers ─
     _total_issues = metrics.get("total_issues", 0)
-    if isinstance(_total_issues, (int, float)) and _total_issues > 0:
+    if isinstance(_total_issues, int | float) and _total_issues > 0:
         _n_scree = min(8, int(_total_issues))
         _scree_color = pal["muted"]
         # Find low-elevation areas for scree placement
@@ -2296,7 +2380,7 @@ def generate(
 
     # ── Data mapping 6: following → compass rose detail ────────────
     _following = metrics.get("following", 0)
-    if isinstance(_following, (int, float)) and _following > 20:
+    if isinstance(_following, int | float) and _following > 20:
         # Add inner ring and extra detail points to the existing compass rose
         # The compass rose is at (ccx, ccy) with radius cr
         # Add an ornate inner ring
@@ -2327,7 +2411,7 @@ def generate(
 
     # ── Data mapping 7: orgs_count → territory borders ────────────
     _orgs_count = metrics.get("orgs_count", 0)
-    if isinstance(_orgs_count, (int, float)) and _orgs_count > 0:
+    if isinstance(_orgs_count, int | float) and _orgs_count > 0:
         _n_territories = min(4, int(_orgs_count))
         _border_color = pal["border"]
         # Divide map into quadrants for territory borders
@@ -2350,7 +2434,7 @@ def generate(
 
     # ── Data mapping 8: public_gists → map annotations ────────────
     _public_gists = metrics.get("public_gists", 0)
-    if isinstance(_public_gists, (int, float)) and _public_gists > 0:
+    if isinstance(_public_gists, int | float) and _public_gists > 0:
         _n_annotations = min(6, int(_public_gists))
         _anno_labels = [
             "Here be code", "Notes", "Sketch",
@@ -2375,7 +2459,7 @@ def generate(
 
     # ── Data mapping 9: traffic_views_14d → legend visitor count ──
     _traffic_views = metrics.get("traffic_views_14d", 0)
-    if isinstance(_traffic_views, (int, float)) and _traffic_views > 0:
+    if isinstance(_traffic_views, int | float) and _traffic_views > 0:
         # Add visitor count text in the legend area, below existing entries
         _vis_y = leg_y + leg_h - 4
         P.append(
@@ -2387,7 +2471,7 @@ def generate(
 
     # ── Data mapping 10: watchers → watchtower symbols ────────────
     _watchers = metrics.get("watchers", 0)
-    if isinstance(_watchers, (int, float)) and _watchers > 0:
+    if isinstance(_watchers, int | float) and _watchers > 0:
         _n_towers = min(3, int(_watchers) // 10)
         _tower_color = pal["text_secondary"]
         # Place towers at high-elevation spots

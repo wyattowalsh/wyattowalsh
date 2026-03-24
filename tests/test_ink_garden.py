@@ -24,6 +24,7 @@ from scripts.art.ink_garden import (  # noqa: E402
     MAX_SEGS,
     SPECIES,
     _classify_species,
+    _overflow_specimen_annotation,
     generate,
     seed_hash,
 )
@@ -161,6 +162,30 @@ class TestClassifySpecies:
         result = _classify_species({"stars": 8, "age_months": 20, "language": "Python"})
         assert result == "wildflower"
 
+    def test_ai_topics_yield_wisteria(self) -> None:
+        """AI-oriented topics should map to the cascading wisteria species."""
+        result = _classify_species(
+            {
+                "stars": 4,
+                "age_months": 8,
+                "language": "Python",
+                "topics": ["ai", "agents"],
+            }
+        )
+        assert result == "wisteria"
+
+    def test_fork_heavy_repo_yields_banyan(self) -> None:
+        """Fork-heavy repos should map to the spreading banyan species."""
+        result = _classify_species(
+            {
+                "stars": 6,
+                "forks": 8,
+                "age_months": 14,
+                "language": "Python",
+            }
+        )
+        assert result == "banyan"
+
     def test_empty_dict_does_not_crash(self) -> None:
         """_classify_species handles an empty dict without raising."""
         result = _classify_species({})
@@ -191,6 +216,18 @@ class TestClassifySpecies:
 
 class TestGenerate:
     """Smoke tests for the generate() entry point."""
+
+    def test_overflow_specimen_annotation_summarizes_topics(self) -> None:
+        """Overflow helper should dedupe and compact topic hints."""
+        summary, topics = _overflow_specimen_annotation(
+            [
+                {"topics": ["cli", "automation", "cli"]},
+                {"topics": ["ai", "automation"]},
+            ]
+        )
+
+        assert summary == "+2 specimens held back"
+        assert topics == "cli / automation / ai"
 
     def test_returns_str(self) -> None:
         """generate() returns a string."""
@@ -286,6 +323,53 @@ class TestGenerate:
             result = generate(MINIMAL_METRICS, seed=seed)
             assert result.lstrip().startswith("<svg")
             assert result.rstrip().endswith("</svg>")
+
+    def test_topic_annotations_render_beneath_repo_labels(self) -> None:
+        """Repo topics should appear as compact specimen annotations in labels."""
+        metrics = {
+            **MINIMAL_METRICS,
+            "repos": [
+                {
+                    "name": "signal-garden",
+                    "stars": 22,
+                    "age_months": 18,
+                    "language": "Python",
+                    "topics": ["ai", "agents", "automation"],
+                }
+            ],
+        }
+        result = generate(metrics, seed=seed_hash(metrics), maturity=0.9)
+        assert "signal-garden" in result
+        assert "ai · agents +1" in result
+
+    def test_repo_visibility_tiering_keeps_high_value_late_repo(self) -> None:
+        """Important late repos should still survive the MAX_REPOS render cap."""
+        repos = [
+            {
+                "name": f"tiny-repo-{index}",
+                "stars": 0,
+                "forks": 0,
+                "age_months": 2,
+                "language": "Python",
+            }
+            for index in range(MAX_REPOS + 2)
+        ]
+        repos[-1] = {
+            "name": "priority-archive",
+            "stars": 180,
+            "forks": 28,
+            "age_months": 48,
+            "language": "Go",
+            "topics": ["cli", "automation"],
+            "description": "Important late repo that should survive tiering.",
+        }
+        metrics = {**RICH_METRICS, "repos": repos}
+        result = generate(metrics, seed=seed_hash(metrics), maturity=0.9)
+        assert "priority-archive" in result
+        assert 'id="study-drawers"' in result
+        assert "Study Drawers" in result
+        assert "+2 specimens held back" in result
+        assert f"tiny-repo-{MAX_REPOS - 1}" not in result
 
 
 # ---------------------------------------------------------------------------

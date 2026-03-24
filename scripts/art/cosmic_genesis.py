@@ -25,6 +25,7 @@ from __future__ import annotations
 import math
 import random
 from datetime import date as dt_date
+from html import escape
 from pathlib import Path
 
 import numpy as np
@@ -222,6 +223,7 @@ def _repo_grid_positions(
     metrics: dict,
     N: int,
     rng: random.Random,
+    topic_lookup: dict[str, tuple[str, int, float]] | None = None,
 ) -> list[tuple[int, int, float, float]]:
     """Map repos onto the N x N grid. Returns [(row, col, radius, hue), ...]."""
     repos = metrics.get("repos", []) or history.get("repos", []) or []
@@ -238,6 +240,11 @@ def _repo_grid_positions(
         row = margin + (h % (N - 2 * margin))
         col = margin + ((h >> 8) % (N - 2 * margin))
         radius = max(2.0, min(N / 8, 2.0 + math.log1p(stars) * 0.8))
+        if topic_lookup:
+            _topic_name, _topic_count, topic_signal = _repo_topic_signal(
+                repo, topic_lookup
+            )
+            radius *= 1.0 + topic_signal * 0.35
         positions.append((row, col, radius, hue))
 
     return positions
@@ -267,6 +274,53 @@ def _build_voronoi_hue_map(
         min_dist[closer] = dist[closer]
 
     return hue_map
+
+
+def _top_topic_entries(
+    topic_clusters: dict[str, int], *, limit: int = 5
+) -> list[tuple[str, int, float]]:
+    """Return normalized topic counts sorted by strength."""
+    cleaned: list[tuple[str, int]] = []
+    for topic, count in topic_clusters.items():
+        normalized = str(topic).strip().replace("-", " ")
+        if not normalized:
+            continue
+        cleaned.append((normalized, max(1, int(count or 0))))
+
+    cleaned.sort(key=lambda item: (-item[1], item[0].lower()))
+    if not cleaned:
+        return []
+
+    max_count = cleaned[0][1]
+    return [
+        (topic, count, count / max_count)
+        for topic, count in cleaned[:limit]
+    ]
+
+
+def _repo_topic_signal(
+    repo: dict,
+    topic_lookup: dict[str, tuple[str, int, float]],
+) -> tuple[str, int, float]:
+    """Return the strongest normalized topic signal attached to a repo."""
+    best_topic = ""
+    best_count = 0
+    best_signal = 0.0
+    for topic in repo.get("topics") or []:
+        normalized = str(topic).strip().replace("-", " ").lower()
+        if not normalized:
+            continue
+        entry = topic_lookup.get(normalized)
+        if entry is None:
+            continue
+        topic_name, topic_count, topic_signal = entry
+        if topic_signal > best_signal or (
+            topic_signal == best_signal and topic_count > best_count
+        ):
+            best_topic = topic_name
+            best_count = topic_count
+            best_signal = topic_signal
+    return best_topic, best_count, best_signal
 
 
 # ---------------------------------------------------------------------------
@@ -299,6 +353,7 @@ def _render_svg(
     snapshot_mode = snapshot_progress is not None
 
     metrics = history.get("current_metrics", {})
+    repos = metrics.get("repos", []) or history.get("repos", []) or []
 
     # ------------------------------------------------------------------
     # World-state palette
@@ -346,18 +401,29 @@ def _render_svg(
     total_commits = metrics.get("total_commits", 0) or 0
     contributions = metrics.get("contributions_last_year", 0) or 0
     topic_clusters = metrics.get("topic_clusters", {}) or {}
+    top_topic_entries = _top_topic_entries(topic_clusters)
+    topic_lookup = {
+        topic.lower(): (topic, count, signal)
+        for topic, count, signal in top_topic_entries
+    }
     commit_hours = metrics.get("commit_hour_distribution", {}) or {}
     releases = metrics.get("releases", []) or []
     recent_merged_prs = metrics.get("recent_merged_prs", []) or []
     streaks = metrics.get("contribution_streaks", {}) or {}
-    total_issues = metrics.get("total_issues", 0) or metrics.get("open_issues_count", 0) or 0
+    total_issues = (
+        metrics.get("total_issues", 0)
+        or metrics.get("open_issues_count", 0)
+        or 0
+    )
     public_gists = metrics.get("public_gists", 0) or 0
 
     # #2 — total_commits → Noise perturbation amplitude
     noise_amp = 0.02 + min(0.05, total_commits / 50000)
 
     # #8 — contribution_streaks → Pattern stability
-    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    streak_active = (
+        streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    )
     if streak_active:
         noise_amp *= 0.7  # active streak → more ordered
     elif streaks and not streak_active:
@@ -373,8 +439,32 @@ def _render_svg(
         pr_flow_bias_quadrant = pr_count % 4
 
     # Repo positions on the grid
-    repo_positions = _repo_grid_positions(history, metrics, N, rng)
+    repo_positions = _repo_grid_positions(
+        history,
+        metrics,
+        N,
+        rng,
+        topic_lookup=topic_lookup,
+    )
     seed_positions = [(r, c, rad) for r, c, rad, _h in repo_positions]
+    repo_annotations: list[dict[str, float | int | str]] = []
+    for repo, (row, col, radius, hue) in zip(
+        repos[: len(repo_positions)], repo_positions, strict=False
+    ):
+        topic_label, topic_count, topic_signal = _repo_topic_signal(repo, topic_lookup)
+        if topic_signal <= 0:
+            continue
+        repo_annotations.append(
+            {
+                "row": row,
+                "col": col,
+                "radius": radius,
+                "hue": hue,
+                "label": topic_label,
+                "count": topic_count,
+                "signal": topic_signal,
+            }
+        )
 
     # #10 — total_issues → Defect perturbations (extra nucleation points)
     defect_positions: list[tuple[int, int]] = []
@@ -389,23 +479,24 @@ def _render_svg(
     # #4 — topic_clusters → Multi-region f/k variation (Voronoi regions)
     f_grid: np.ndarray | None = None
     k_grid: np.ndarray | None = None
-    top_topics = list(topic_clusters.keys())[:5] if topic_clusters else []
-    if len(top_topics) >= 3:
-        voronoi_hue_pre = _build_voronoi_hue_map(N, repo_positions)
+    if repo_annotations:
         f_grid = np.full((N, N), feed, dtype=np.float64)
         k_grid = np.full((N, N), kill, dtype=np.float64)
-
-        # Assign each unique hue a slight f/k offset
-        unique_hues = sorted(set(float(h) for _, _, _, h in repo_positions))
-        fk_offsets = [
-            (-0.002, -0.001), (0.002, 0.001), (-0.001, 0.002),
-            (0.001, -0.002), (0.0015, 0.0015),
-        ]
-        for idx, hue_val in enumerate(unique_hues[:5]):
-            region_mask = np.abs(voronoi_hue_pre - hue_val) < 0.5
-            df, dk = fk_offsets[idx % len(fk_offsets)]
-            f_grid[region_mask] += df
-            k_grid[region_mask] += dk
+        yy_topic, xx_topic = np.mgrid[0:N, 0:N]
+        for annotation in repo_annotations[:5]:
+            row = float(annotation["row"])
+            col = float(annotation["col"])
+            signal = float(annotation["signal"])
+            sigma = max(3.5, float(annotation["radius"]) * 1.8)
+            dy = np.minimum(
+                np.abs(yy_topic - row), N - np.abs(yy_topic - row)
+            ).astype(np.float64)
+            dx = np.minimum(
+                np.abs(xx_topic - col), N - np.abs(xx_topic - col)
+            ).astype(np.float64)
+            influence = np.exp(-(dx * dx + dy * dy) / (2 * sigma * sigma))
+            f_grid += (signal - 0.45) * 0.003 * influence
+            k_grid += (0.55 - signal) * 0.002 * influence
 
     logger.info(
         "Turing RD: N={N} feed={f:.4f} kill={k:.4f} steps={s} "
@@ -538,9 +629,53 @@ def _render_svg(
                 )
             cell_count += 1
 
-    parts.append(f'<g id="turing-pattern">\n')
+    parts.append('<g id="turing-pattern">\n')
     parts.extend(rects)
     parts.append("</g>\n")
+
+    if repo_annotations:
+        parts.append('<g id="topic-constellations">\n')
+        for annotation in sorted(
+            repo_annotations,
+            key=lambda item: (-int(item["count"]), str(item["label"])),
+        )[:3]:
+            cx_const = round(float(annotation["col"]) * (_WIDTH / N), 2)
+            cy_const = round(float(annotation["row"]) * (_HEIGHT / N), 2)
+            signal = float(annotation["signal"])
+            count = int(annotation["count"])
+            ring_r = round(
+                max(12.0, float(annotation["radius"]) * (_WIDTH / N) * (1.0 + signal)),
+                1,
+            )
+            ring_color = oklch(
+                0.72 if dark_mode else 0.42,
+                0.14,
+                float(annotation["hue"]),
+            )
+            topic_name = escape(f'{str(annotation["label"]).title()} Field')
+            noun = "repo" if count == 1 else "repos"
+            topic_note = escape(f"{count} linked {noun}")
+            parts.append(
+                f'<circle cx="{cx_const}" cy="{cy_const}" r="{ring_r}" fill="none" '
+                f'stroke="{ring_color}" stroke-width="1.1" opacity="0.48"/>\n'
+            )
+            parts.append(
+                f'<text x="{cx_const}" y="{cy_const - ring_r - 6:.1f}" '
+                f'text-anchor="middle" '
+                f'font-size="8.2" font-family="Georgia,serif" font-style="italic" '
+                f'fill="{pal["text_secondary"]}" paint-order="stroke fill" '
+                f'stroke="{bg_color}" stroke-width="2.2" stroke-linejoin="round">'
+                f'{topic_name}</text>\n'
+            )
+            parts.append(
+                f'<text x="{cx_const}" y="{cy_const - ring_r + 3:.1f}" '
+                f'text-anchor="middle" '
+                f'font-size="5.1" font-family="Georgia,serif" letter-spacing="0.7" '
+                f'fill="{pal["muted"]}" paint-order="stroke fill" '
+                f'stroke="{bg_color}" stroke-width="1.7" stroke-linejoin="round">'
+                f'{topic_note}</text>\n'
+            )
+        parts.append("</g>\n")
 
     # ------------------------------------------------------------------
     # #1 — followers → Grid border glow
@@ -595,7 +730,8 @@ def _render_svg(
         circ_opacity = round(0.06 + 0.04 * min(1.0, len(commit_hours) / 24), 3)
         parts.append(
             f'<defs><radialGradient id="circadianGrad" cx="50%" cy="50%" r="70%">\n'
-            f'  <stop offset="0%" stop-color="{circ_color}" stop-opacity="{circ_opacity}"/>\n'
+            f'  <stop offset="0%" stop-color="{circ_color}" '
+            f'stop-opacity="{circ_opacity}"/>\n'
             f'  <stop offset="100%" stop-color="{circ_color}" stop-opacity="0"/>\n'
             f'</radialGradient></defs>\n'
             f'<rect width="{_WIDTH}" height="{_HEIGHT}" fill="url(#circadianGrad)"/>\n'

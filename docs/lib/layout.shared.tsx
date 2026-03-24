@@ -7,17 +7,12 @@ export function baseOptions(): BaseLayoutProps {
       title: (
         <>
           <Image src="/icon.svg" alt="" width={24} height={24} />
-          wyattowalsh docs
+          <span className="font-semibold">wyattowalsh docs</span>
         </>
       ),
       url: '/',
+      transparentMode: 'top',
     },
-    links: [
-      {
-        text: 'GitHub',
-        url: 'https://github.com/wyattowalsh/wyattowalsh',
-        external: true,
-      },
-    ],
+    githubUrl: 'https://github.com/wyattowalsh/wyattowalsh',
   };
 }

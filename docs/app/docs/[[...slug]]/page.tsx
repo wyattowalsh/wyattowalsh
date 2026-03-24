@@ -21,7 +21,26 @@ export default async function Page({ params }: Props) {
   const MDX = page.data.body;
 
   return (
-    <DocsPage toc={page.data.toc ?? []} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc ?? []}
+      full={page.data.full}
+      tableOfContent={{
+        style: 'clerk',
+        footer: (
+          <a
+            href={`https://github.com/wyattowalsh/wyattowalsh/blob/main/docs/content/docs/${(slug ?? []).join('/')}.mdx`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-fd-muted-foreground hover:text-fd-foreground transition-colors"
+          >
+            Edit on GitHub
+          </a>
+        ),
+      }}
+      breadcrumb={{
+        includePage: true,
+      }}
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>

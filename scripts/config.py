@@ -5,6 +5,7 @@ import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .word_clouds.readability import LayoutReadabilitySettings
 from .utils import get_logger
 
 # Lines broken for length where necessary.
@@ -80,6 +81,10 @@ class WordCloudSettingsModel(BaseModel):
     stopwords: list[str] | None = Field(
         default_factory=list,  # type: ignore
         description="List of stopwords for word clouds."
+    )
+    layout_readability: LayoutReadabilitySettings = Field(
+        default_factory=LayoutReadabilitySettings,
+        description="Shared readability/orientation tuning for word-cloud layouts.",
     )
 
 

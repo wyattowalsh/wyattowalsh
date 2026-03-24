@@ -22,6 +22,7 @@ import markdown
 from bs4 import BeautifulSoup
 from pydantic import BaseModel, ConfigDict
 
+from .readability import LayoutReadabilitySettings
 from ..utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -179,6 +180,7 @@ def generate_word_cloud(
     height: int = DEFAULT_HEIGHT,
     output_dir: str | Path | None = None,
     color_func_name: str | None = None,
+    layout_readability: LayoutReadabilitySettings | dict[str, object] | None = None,
 ) -> Path:
     """Generate a word cloud for the given source and renderer.
 
@@ -220,6 +222,7 @@ def generate_word_cloud(
             width=width,
             height=height,
             color_func_name=color_func_name,
+            layout_readability=layout_readability,
         )
 
     return out
@@ -296,6 +299,7 @@ class WordCloudSettings(BaseModel):
     height: int = DEFAULT_HEIGHT
     max_words: int = DEFAULT_MAX_WORDS
     output_dir: str = str(PROFILE_IMG_OUTPUT_DIR)
+    layout_readability: LayoutReadabilitySettings = LayoutReadabilitySettings()
 
 
 class WordCloudGenerator:
@@ -319,6 +323,10 @@ class WordCloudGenerator:
         width = getattr(self.settings, "width", DEFAULT_WIDTH)
         height = getattr(self.settings, "height", DEFAULT_HEIGHT)
         color_func_name = kwargs.get("color_func_name")
+        layout_readability = kwargs.get(
+            "layout_readability",
+            getattr(self.settings, "layout_readability", None),
+        )
 
         explicit_output = Path(output_path) if output_path is not None else None
         if explicit_output is not None and explicit_output.suffix:
@@ -343,6 +351,7 @@ class WordCloudGenerator:
                     width=width,
                     height=height,
                     color_func_name=color_func_name,
+                    layout_readability=layout_readability,
                 )
             return out_file
         else:
@@ -352,6 +361,7 @@ class WordCloudGenerator:
                 renderer=renderer,
                 output_dir=str(out_dir),
                 color_func_name=color_func_name,
+                layout_readability=layout_readability,
             )
 
 

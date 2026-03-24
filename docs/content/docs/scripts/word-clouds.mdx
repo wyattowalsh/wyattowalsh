@@ -5,8 +5,8 @@ description: OKLCH-palettized word clouds generated from your GitHub starred-rep
 
 ## Modules
 
-- `scripts/word_clouds.py` — orchestration, file I/O, palette selection (~1585 lines)
-- `scripts/word_cloud_renderers.py` — pure-SVG rendering backends with four layout strategies (~1231 lines)
+- `scripts/word_clouds/generate.py` — orchestration, file I/O, CLI-facing settings, and output dispatch
+- `scripts/word_clouds/metaheuristic.py` — animated SVG renderer that sequences 25 solver layouts into one asset
 
 <Callout type="warn" title="Two config models">
 `WordCloudSettingsModel` in `config.py` is the top-level YAML config (part of `ProjectConfig`). `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Extra keys silently pass in the first, raise `ValidationError` in the second.
@@ -18,7 +18,7 @@ SVG word clouds where:
 - **Topics cloud** — keywords from repositories you've starred, sorted by topic frequency
 - **Languages cloud** — programming languages across your starred repos
 
-Each cloud uses a hand-tuned OKLCH color palette and is output as an SVG (via matplotlib → SVG backend).
+The README and CI pipeline default to animated SVGs where each frame is laid out by a different metaheuristic solver. Static renderers remain available for manual generation.
 
 ## Input data
 
@@ -38,13 +38,13 @@ These are updated nightly by the `update-starred-lists` workflow job.
 uv run python -m scripts.cli generate word-cloud \
   --config-path ./config.yaml \
   --from-topics-md \
-  --output-path .github/assets/img/wordcloud_wordle_by_topics.svg
+  --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg
 
 # Languages word cloud
 uv run python -m scripts.cli generate word-cloud \
   --config-path ./config.yaml \
   --from-languages-md \
-  --output-path .github/assets/img/wordcloud_wordle_by_languages.svg
+  --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
 ```
 
 ## Configuration
@@ -63,12 +63,12 @@ word_cloud_settings:
 
 | File | Description |
 |---|---|
-| `wordcloud_wordle_by_topics.svg` | Topics from starred repos |
-| `wordcloud_wordle_by_languages.svg` | Languages from starred repos |
+| `wordcloud_metaheuristic-anim_by_topics.svg` | Animated topics cloud using 25 metaheuristic solver frames |
+| `wordcloud_metaheuristic-anim_by_languages.svg` | Animated languages cloud using 25 metaheuristic solver frames |
 
 ## Rendering backends
 
-`word_cloud_renderers.py` provides four pure-SVG layout strategies with OKLCH color palettes:
+The `scripts/word_clouds/` subpackage provides several SVG renderers. The CI pipeline and README use the animated metaheuristic renderer:
 
 | Renderer | Strategy |
 |---|---|
@@ -76,6 +76,7 @@ word_cloud_settings:
 | `ClusteredRenderer` | Grouped by semantic clusters |
 | `TypographicRenderer` | Typography-focused layout |
 | `ShapedRenderer` | Mask-based shape filling |
+| `MetaheuristicAnimRenderer` | 25 solver frames ordered into one CSS-animated SVG |
 
 ## Related
 

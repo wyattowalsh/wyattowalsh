@@ -118,7 +118,10 @@ class ClusteredRenderer(SvgWordCloudEngine):
                     font_size = self.min_font_size
 
                 color = palette[local_idx % len(palette)]
-                rotation = self._rng.choice([0, 0, 0, 0, 90])  # strong horizontal bias
+                rotation = self.layout_readability.choose_rotation(
+                    self._rng,
+                    is_large_word=self._is_large_word(font_size),
+                )
 
                 step = max(1.0, font_size * 0.12)
                 found = False

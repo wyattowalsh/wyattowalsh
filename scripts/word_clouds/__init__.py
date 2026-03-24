@@ -29,6 +29,7 @@ from .generate import (
     parse_frequencies_from_md,
     parse_markdown_for_word_cloud_frequencies,
 )
+from .readability import LayoutReadabilityPolicy, LayoutReadabilitySettings
 
 __all__ = [
     # Generation pipeline
@@ -44,6 +45,8 @@ __all__ = [
     "RendererName",
     "WordCloudGenerator",
     "WordCloudSettings",
+    "LayoutReadabilityPolicy",
+    "LayoutReadabilitySettings",
     "_filter_others",
     "generate_all",
     "generate_word_cloud",

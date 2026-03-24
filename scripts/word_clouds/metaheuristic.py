@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import math
+import os
 import random
+from concurrent.futures import ProcessPoolExecutor
 
 from .core import PlacedWord
-from .colors import COLOR_FUNCS
+from .colors import COLOR_FUNCS, make_shifted_color_func
 from .engine import SvgWordCloudEngine
 from .solvers import (
     _META_SOLVERS,
-    _META_ROTATIONS,
     _aesthetic_cost,
+    configure_layout_readability,
     _eval_fitness,
     _random_solution,
     _solve_harmony_search,
@@ -25,6 +27,18 @@ from ..utils import get_logger
 logger = get_logger(module=__name__)
 
 
+def _run_solver(
+    args: tuple[str, int, list[float], float, float, int, int, list[str], object],
+) -> tuple[str, list[tuple[float, float, float]]]:
+    """Worker function for parallel solver execution (top-level for pickling)."""
+    name, n_words, sizes, canvas_w, canvas_h, max_iter, seed, texts, layout_readability = args
+    configure_layout_readability(layout_readability)
+    solver_fn = _META_SOLVERS[name]
+    rng = random.Random(seed)
+    placements = solver_fn(n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts)
+    return name, placements
+
+
 class MetaheuristicAnimRenderer(SvgWordCloudEngine):
     """Animated word cloud showing 25 metaheuristic optimization algorithms.
 
@@ -36,8 +50,8 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
     def __init__(
         self,
         *,
-        hold_duration: float = 2.0,
-        fade_duration: float = 0.6,
+        hold_duration: float = 1.8,
+        fade_duration: float = 0.2,
         pop_size: int = 20,
         max_iter: int = 300,
         **kwargs,
@@ -54,18 +68,16 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
     ) -> tuple[list[str], list[float], list[float], list[str], list[int], list[float]]:
         """Prepare word data from frequencies.
 
-        Filters out the word "others" (catch-all bucket).
+        Filters out generic catch-all buckets like "other" and "others".
         Returns (texts, sizes, freq_values, colors, weights, opacities).
         """
         sorted_words = [
             (w, f)
             for w, f in sorted(frequencies.items(), key=lambda kv: kv[1], reverse=True)
-            if w.lower() != "others"
+            if w.lower() not in {"other", "others"}
         ]
         if not sorted_words:
-            sorted_words = sorted(
-                frequencies.items(), key=lambda kv: kv[1], reverse=True
-            )
+            return [], [], [], [], [], []
         freqs = [f for _, f in sorted_words]
         min_freq = min(freqs)
         max_freq = max(freqs)
@@ -80,7 +92,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         opacities: list[float] = []
 
         for idx, (word, freq) in enumerate(sorted_words):
-            texts.append(word)
+            texts.append(word.lower())
             sizes_list.append(self._frequency_to_size(freq, min_freq, max_freq))
             weights.append(self._frequency_to_weight(freq, min_freq, max_freq))
             opacities.append(self._frequency_to_opacity(freq, min_freq, max_freq))
@@ -94,22 +106,38 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         texts: list[str],
         sizes: list[float],
     ) -> list[tuple[str, list[tuple[float, float, float]]]]:
-        """Run all 25 metaheuristic solvers and return (name, placements) pairs."""
+        """Run all 25 metaheuristic solvers in parallel and return (name, placements) pairs."""
         n_words = len(texts)
-        results: list[tuple[str, list[tuple[float, float, float]]]] = []
+        canvas_w = float(self.width)
+        canvas_h = float(self.height)
 
-        for name, solver_fn in _META_SOLVERS.items():
-            rng = random.Random(self.seed)
-            placements = solver_fn(
+        # Build args for each solver (top-level worker for pickling)
+        solver_args = [
+            (
+                name,
                 n_words,
                 sizes,
-                float(self.width),
-                float(self.height),
+                canvas_w,
+                canvas_h,
                 self.max_iter,
-                rng,
+                self.seed,
                 texts,
+                self.layout_readability,
             )
-            results.append((name, placements))
+            for name in _META_SOLVERS
+        ]
+
+        n_workers = min(len(solver_args), os.cpu_count() or 4)
+        logger.info(
+            "Running {n} solvers across {w} workers",
+            n=len(solver_args),
+            w=n_workers,
+        )
+
+        with ProcessPoolExecutor(max_workers=n_workers) as executor:
+            results = list(executor.map(_run_solver, solver_args))
+
+        for name, _ in results:
             logger.debug("MetaheuristicAnimRenderer: {name} completed", name=name)
 
         return results
@@ -163,15 +191,13 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             tier2_threshold = pw_sizes[min(t2_idx, len(pw_sizes) - 1)]
 
         for pw in placed_words:
+            # font-family, text-anchor, dominant-baseline moved to CSS
             attrs_parts = [
                 f'x="{pw.x:.1f}"',
                 f'y="{pw.y:.1f}"',
                 f'font-size="{pw.font_size:.1f}"',
                 f'fill="{pw.color}"',
-                f'font-family="{pw.font_family or self.font_family}"',
                 f'font-weight="{pw.font_weight}"',
-                'text-anchor="middle"',
-                'dominant-baseline="central"',
             ]
             if pw.opacity < 1.0:
                 attrs_parts.append(f'opacity="{pw.opacity:.2f}"')
@@ -180,21 +206,31 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                     f'transform="rotate({pw.rotation:.1f},{pw.x:.1f},{pw.y:.1f})"'
                 )
             if pw.font_size >= glow_threshold:
-                attrs_parts.append(f'filter="url(#wc-glow-f{frame_idx})"')
+                attrs_parts.append('filter="url(#wc-glow)"')
             elif pw.font_size >= tier2_threshold:
-                attrs_parts.append(f'filter="url(#wc-shadow-f{frame_idx})"')
+                attrs_parts.append('filter="url(#wc-shadow)"')
             if pw.font_size >= tier1_threshold:
                 spacing = max(0.5, pw.font_size * 0.02)
                 attrs_parts.append(f'letter-spacing="{spacing:.1f}"')
 
             lines.append(f"  <text {' '.join(attrs_parts)}>{pw.text}</text>")
 
-        # Algorithm name label at bottom
+        # Algorithm name label — pill-shaped badge (prominent)
+        label_y = self.height * 0.96
+        pill_w = len(algo_name) * 9.5 + 32
+        pill_h = 30
+        cx = self.width / 2
         lines.append(
-            f'  <text class="algo-label" x="50%" y="95%" text-anchor="middle"'
-            f' fill="#555555" opacity="0.6"'
-            f' style="font: 500 14px {self.font_family};">'
-            f"{algo_name}</text>"
+            f'  <g class="algo-label">'
+            f'<rect x="{cx - pill_w / 2:.1f}" y="{label_y - pill_h / 2:.1f}"'
+            f' width="{pill_w:.1f}" height="{pill_h}" rx="{pill_h // 2}"'
+            f' fill="white" fill-opacity="0.88"'
+            f' stroke="#c0c0c0" stroke-width="0.75"/>'
+            f'<text x="{cx:.1f}" y="{label_y:.1f}"'
+            f' text-anchor="middle" dominant-baseline="central"'
+            f' fill="#333"'
+            f' style="font: 700 16px {self.font_family}; letter-spacing: 0.8px;">'
+            f"{algo_name}</text></g>"
         )
         return "\n".join(lines)
 
@@ -205,19 +241,22 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
     ) -> str:
         """Stack all frames into a single SVG with CSS opacity animation.
 
-        Each frame gets 2s hold + 0.6s fade, cycling infinitely.
+        Slideshow style: each frame held then quick fade to next, cycling
+        infinitely.  Filters are shared (2 total, not per-frame) and
+        repeated text attributes are in CSS for smaller file size.
         """
         n = len(frame_bodies)
         frame_time = self.hold_duration + self.fade_duration
         total_duration = frame_time * n
 
-        # Build CSS keyframes for cycling animation
+        # -- CSS keyframes for cycling animation --------------------------
         css_lines = [
-            "/* Metaheuristic word cloud animation: 25 algorithms cycling */",
-            ".mf { opacity: 0; position: absolute; }",
+            "/* Metaheuristic word cloud animation */",
+            f".mf {{ opacity: 0; will-change: opacity; }}",
+            f".mf text {{ font-family: {self.font_family};"
+            f" text-anchor: middle; dominant-baseline: central; }}",
         ]
 
-        # Each frame visible for (hold + fade) / total of the cycle
         visible_pct = (self.hold_duration / total_duration) * 100
         fade_in_pct = (self.fade_duration / total_duration) * 100
         fade_out_pct = fade_in_pct
@@ -227,38 +266,44 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             visible_start = start_pct + fade_in_pct
             visible_end = visible_start + visible_pct
             end_pct = visible_end + fade_out_pct
-            # Wrap-around safety
             kf_name = f"mf{i}"
             css_lines.append(f"@keyframes {kf_name} {{")
             if i == 0:
-                css_lines.append(f"  0% {{ opacity: 1; }}")
+                css_lines.append("  0% { opacity: 1; }")
                 css_lines.append(f"  {visible_pct:.2f}% {{ opacity: 1; }}")
                 css_lines.append(
-                    f"  {visible_pct + fade_out_pct:.2f}% {{ opacity: 0; }}"
+                    f"  {visible_pct + fade_out_pct:.2f}% {{ opacity: 0; visibility: hidden; }}"
                 )
-                css_lines.append(f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; }}")
-                css_lines.append(f"  100% {{ opacity: 1; }}")
+                css_lines.append(f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; visibility: hidden; }}")
+                css_lines.append("  100% { opacity: 1; }")
             else:
                 if start_pct > 0:
-                    css_lines.append(f"  0% {{ opacity: 0; }}")
-                    css_lines.append(f"  {start_pct:.2f}% {{ opacity: 0; }}")
+                    css_lines.append("  0% { opacity: 0; visibility: hidden; }")
+                    css_lines.append(f"  {start_pct:.2f}% {{ opacity: 0; visibility: hidden; }}")
                 css_lines.append(
-                    f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; }}"
+                    f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; visibility: visible; }}"
                 )
                 css_lines.append(f"  {min(visible_end, 99.99):.2f}% {{ opacity: 1; }}")
                 if end_pct < 100:
-                    css_lines.append(f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; }}")
-                    css_lines.append(f"  100% {{ opacity: 0; }}")
+                    css_lines.append(f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; visibility: hidden; }}")
+                    css_lines.append("  100% { opacity: 0; visibility: hidden; }")
                 else:
-                    css_lines.append(f"  100% {{ opacity: 0; }}")
+                    css_lines.append("  100% { opacity: 0; visibility: hidden; }")
             css_lines.append("}")
             css_lines.append(
                 f".mf.mf{i} {{ animation: {kf_name} {total_duration:.1f}s infinite; }}"
             )
 
+        # Dark mode support (prefers-color-scheme works inside SVG on GitHub)
+        css_lines.append("@media (prefers-color-scheme: dark) {")
+        css_lines.append("  .wc-bg { fill: #0d1117; }")
+        css_lines.append("  .algo-label rect { fill: #1a1a2e; fill-opacity: 0.85; stroke: #333; }")
+        css_lines.append("  .algo-label text { fill: #ccc; }")
+        css_lines.append("}")
+
         css = "\n".join(css_lines)
 
-        # Build SVG
+        # -- Build SVG ----------------------------------------------------
         svg_parts: list[str] = [
             f'<svg xmlns="http://www.w3.org/2000/svg"'
             f' width="{self.width}" height="{self.height}"'
@@ -266,32 +311,31 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             "<defs>",
         ]
 
-        # Add glow/shadow filters for each frame (namespaced)
-        for fi in range(n):
-            svg_parts.append(
-                f'  <filter id="wc-glow-f{fi}" x="-30%" y="-30%" width="160%" height="160%">'
-            )
-            svg_parts.append(
-                f'    <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="glow1"/>'
-            )
-            svg_parts.append(
-                f'    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="glow2"/>'
-            )
-            svg_parts.append("    <feMerge>")
-            svg_parts.append('      <feMergeNode in="glow1"/>')
-            svg_parts.append('      <feMergeNode in="glow2"/>')
-            svg_parts.append('      <feMergeNode in="SourceGraphic"/>')
-            svg_parts.append("    </feMerge>")
-            svg_parts.append("  </filter>")
-            svg_parts.append(
-                f'  <filter id="wc-shadow-f{fi}" x="-10%" y="-10%" width="120%" height="120%">'
-            )
-            svg_parts.append(
-                f'    <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#00000020"/>'
-            )
-            svg_parts.append("  </filter>")
+        # Two shared filters (not per-frame copies)
+        svg_parts.append(
+            '  <filter id="wc-glow" x="-30%" y="-30%" width="160%" height="160%">'
+        )
+        svg_parts.append(
+            '    <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="glow1"/>'
+        )
+        svg_parts.append(
+            '    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="glow2"/>'
+        )
+        svg_parts.append("    <feMerge>")
+        svg_parts.append('      <feMergeNode in="glow1"/>')
+        svg_parts.append('      <feMergeNode in="glow2"/>')
+        svg_parts.append('      <feMergeNode in="SourceGraphic"/>')
+        svg_parts.append("    </feMerge>")
+        svg_parts.append("  </filter>")
+        svg_parts.append(
+            '  <filter id="wc-shadow" x="-10%" y="-10%" width="120%" height="120%">'
+        )
+        svg_parts.append(
+            '    <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#00000020"/>'
+        )
+        svg_parts.append("  </filter>")
 
-        # Background gradient
+        # Background gradient (light mode)
         svg_parts.append('  <radialGradient id="wc-bg-grad" cx="50%" cy="50%" r="75%">')
         svg_parts.append(
             '    <stop offset="0%" stop-color="#fafbfc" stop-opacity="1"/>'
@@ -303,9 +347,9 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         svg_parts.append("</defs>")
         svg_parts.append(f"<style>\n{css}\n</style>")
 
-        # Background rect
+        # Background rect (class for dark mode override)
         svg_parts.append(
-            f'<rect width="{self.width}" height="{self.height}" fill="url(#wc-bg-grad)"/>'
+            f'<rect class="wc-bg" width="{self.width}" height="{self.height}" fill="url(#wc-bg-grad)"/>'
         )
 
         # Frame groups
@@ -328,6 +372,9 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         if not frequencies:
             return []
         texts, sizes, _, colors, weights, opacities = self._prepare_words(frequencies)
+        if not texts:
+            return []
+        configure_layout_readability(self.layout_readability)
         rng = random.Random(self.seed)
         positions = _solve_harmony_search(
             len(texts),
@@ -350,6 +397,10 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
     ) -> str:
         """Generate animated SVG with all 25 metaheuristic algorithm frames.
 
+        Each frame uses a monotonic OKLCH hue advance (~1.6° per frame,
+        ~40° total) from the base palette, creating a subtle chromatic
+        arc as different algorithms explore the solution space.
+
         Parameters
         ----------
         frequencies : dict mapping word text to frequency count.
@@ -358,11 +409,16 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         """
         if palette is not None:
             self.color_func = COLOR_FUNCS.get(palette, self.color_func)
+            self.color_func_name = palette
 
         if not frequencies:
             return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
 
-        texts, sizes, _, colors, weights, opacities = self._prepare_words(frequencies)
+        texts, sizes, _, _base_colors, weights, opacities = self._prepare_words(
+            frequencies
+        )
+        if not texts:
+            return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
         logger.info(
             "MetaheuristicAnimRenderer: solving {n} words with 25 algorithms",
             n=len(texts),
@@ -374,9 +430,26 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         order = self._optimize_frame_order(all_results)
         ordered_results = [all_results[i] for i in order]
 
+        # Determine base palette name for hue shifting
+        base_palette = getattr(self, "color_func_name", "ocean") or "ocean"
+        total = len(texts)
+        _GOLDEN_ANGLE_FRAC = (math.sqrt(5) - 1) / 2
+
         frame_bodies: list[str] = []
         algo_names: list[str] = []
-        for name, positions in ordered_results:
+        n_frames = len(ordered_results)
+
+        for frame_idx, (name, positions) in enumerate(ordered_results):
+            # Per-frame hue shift: monotonic advance through OKLCH space
+            hue_offset = _frame_hue_offset(frame_idx, n_frames)
+            shifted_func = make_shifted_color_func(base_palette, hue_offset)
+
+            # Regenerate colors with shifted palette
+            colors = []
+            for word_idx in range(total):
+                color_idx = int(((word_idx * _GOLDEN_ANGLE_FRAC) % 1.0) * total)
+                colors.append(shifted_func(color_idx, total))
+
             placed = self._render_frame(
                 name,
                 positions,
@@ -454,9 +527,10 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             order.append(best_next)
             visited[best_next] = True
 
-        best_cost = tour_cost(order)
+        current_cost = tour_cost(order)
+        best_cost = current_cost
         best_order = list(order)
-        temp = best_cost * 0.3
+        temp = current_cost * 0.3
         cooling = 0.995
 
         for _ in range(5000):
@@ -465,10 +539,12 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             j = rng.randint(i + 1, n - 1)
             order[i : j + 1] = reversed(order[i : j + 1])
             c = tour_cost(order)
-            delta = c - best_cost
+            delta = c - current_cost
             if delta < 0 or rng.random() < math.exp(-delta / max(temp, 1e-10)):
-                best_cost = c
-                best_order = list(order)
+                current_cost = c
+                if current_cost < best_cost:
+                    best_cost = current_cost
+                    best_order = list(order)
             else:
                 order[i : j + 1] = reversed(order[i : j + 1])
             temp *= cooling
@@ -478,6 +554,18 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             c=best_cost,
         )
         return best_order
+
+
+def _frame_hue_offset(frame_idx: int, total_frames: int) -> float:
+    """Compute monotonic OKLCH hue rotation for a frame.
+
+    ~1.6° per frame, ~40° total across all frames.  Creates a subtle
+    chromatic arc: the word cloud *breathes* through color space as
+    different algorithms explore the solution space.
+    """
+    if total_frames <= 1:
+        return 0.0
+    return (frame_idx / (total_frames - 1)) * 40.0
 
 
 RENDERERS: dict[str, type[SvgWordCloudEngine]] = {

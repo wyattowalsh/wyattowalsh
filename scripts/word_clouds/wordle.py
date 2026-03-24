@@ -34,13 +34,10 @@ class WordleRenderer(SvgWordCloudEngine):
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        # Rotation strongly biased toward horizontal for readability,
-        # with occasional 90-degree and subtle tilts for organic variety.
-        # Avoids extreme angles (45, -45) that hurt legibility.
         if rotation_choices is not None:
             self.rotation_choices = rotation_choices
         elif allow_angled:
-            self.rotation_choices = [0, 0, 0, 0, 0, 0, 90, 90, -8, 8, -5, 5]
+            self.rotation_choices = list(self.layout_readability.standard_rotations)
         else:
             self.rotation_choices = [0, 90]
         self.spiral_tightness = spiral_tightness
@@ -95,9 +92,11 @@ class WordleRenderer(SvgWordCloudEngine):
             font_size = self._frequency_to_size(freq, min_freq, max_freq)
             font_weight = self._frequency_to_weight(freq, min_freq, max_freq)
             opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
-            # Large words stay horizontal for readability; smaller ones get rotation
-            if font_size > (self.min_font_size + self.max_font_size) * 0.6:
-                rotation = self._rng.choice([0, 0, 0, 0, 90])
+            if self._is_large_word(font_size):
+                rotation = self.layout_readability.choose_rotation(
+                    self._rng,
+                    is_large_word=True,
+                )
             else:
                 rotation = self._rng.choice(self.rotation_choices)
             color_idx = int(((idx * _GOLDEN_ANGLE_FRAC) % 1.0) * total)

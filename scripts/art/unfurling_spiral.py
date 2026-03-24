@@ -5,9 +5,12 @@ depositing chemoattractant trails that diffuse/decay into organic filaments.
 CSS-animated SVG safe for ``<img>`` embedding (no JS).
 """
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import math
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -16,23 +19,14 @@ import numpy as np
 from ..utils import get_logger
 from .optimize import optimize_placement
 from .shared import (
+    HEIGHT,
     LANG_HUES,
     WIDTH,
-    HEIGHT,
-    WorldState,
-    compute_world_state,
     _build_world_palette_extended,
-    select_palette_for_world,
-    visual_complexity,
-    activity_tempo,
-    topic_affinity_matrix,
+    compute_world_state,
     oklch,
-    oklch_lerp,
-    oklch_gradient,
-    normalize_timeline_window,
-    map_date_to_loop_delay,
-    svg_header,
     svg_footer,
+    svg_header,
     volumetric_glow_filter,
 )
 
@@ -75,6 +69,53 @@ def _voronoi_hue_map(
         hue_map[closer] = hue
         min_dist[closer] = dist[closer]
     return hue_map
+
+
+def _top_topic_entries(
+    topic_clusters: dict[str, int], *, limit: int = 5
+) -> list[tuple[str, int, float]]:
+    """Return normalized topic counts sorted by strength."""
+    cleaned: list[tuple[str, int]] = []
+    for topic, count in topic_clusters.items():
+        normalized = str(topic).strip().replace("-", " ")
+        if not normalized:
+            continue
+        cleaned.append((normalized, max(1, int(count or 0))))
+
+    cleaned.sort(key=lambda item: (-item[1], item[0].lower()))
+    if not cleaned:
+        return []
+
+    max_count = cleaned[0][1]
+    return [
+        (topic, count, count / max_count)
+        for topic, count in cleaned[:limit]
+    ]
+
+
+def _repo_topic_signal(
+    repo: dict[str, Any],
+    topic_lookup: dict[str, tuple[str, int, float]],
+) -> tuple[str, int, float]:
+    """Return the strongest normalized topic signal attached to a repo."""
+    best_topic = ""
+    best_count = 0
+    best_signal = 0.0
+    for topic in repo.get("topics") or []:
+        normalized = str(topic).strip().replace("-", " ").lower()
+        if not normalized:
+            continue
+        entry = topic_lookup.get(normalized)
+        if entry is None:
+            continue
+        topic_name, topic_count, topic_signal = entry
+        if topic_signal > best_signal or (
+            topic_signal == best_signal and topic_count > best_count
+        ):
+            best_topic = topic_name
+            best_count = topic_count
+            best_signal = topic_signal
+    return best_topic, best_count, best_signal
 
 
 def _run_physarum(
@@ -354,8 +395,6 @@ def _render_svg(
     pal = _build_world_palette_extended(
         ws.time_of_day, ws.weather, ws.season, ws.energy
     )
-    complexity = visual_complexity(metrics)
-
     contributions = metrics.get("contributions_last_year", 0) or 0
     N_agents = min(3000, max(500, 500 + contributions * 2))
 
@@ -433,24 +472,33 @@ def _render_svg(
 
     # --- Item 4: topic_clusters → multi-species food attractiveness ---
     topic_clusters = metrics.get("topic_clusters") or {}
+    top_topic_entries = _top_topic_entries(topic_clusters)
+    topic_lookup = {
+        topic.lower(): (topic, count, signal)
+        for topic, count, signal in top_topic_entries
+    }
 
     # Separate food data for rendering: (grid_x, grid_y, hue, strength)
     food_render: list[tuple[int, int, float, float]] = []
+    food_annotations: list[dict[str, float | int | str]] = []
     for i, (fx, fy, hue) in enumerate(food_positions):
-        star_count = 1.0
-        repo_topics: list[str] = []
-        # Try to match back to a repo for star count and topics
-        for r in repos:
-            if isinstance(r, dict) and LANG_HUES.get(r.get("language"), 155) == hue:
-                star_count = max(1.0, (r.get("stars", 0) or 0) * 0.3)
-                repo_topics = r.get("topics", []) or []
-                break
-        # Item 4: topic-rich repos become stronger attractors
-        if repo_topics and topic_clusters:
-            food_strength = star_count * (1 + 0.1 * len(repo_topics))
-        else:
-            food_strength = star_count
+        repo = repos[i] if i < len(repos) and isinstance(repos[i], dict) else {}
+        star_count = max(1.0, (repo.get("stars", 0) or 0) * 0.3)
+        topic_label, topic_count, topic_signal = _repo_topic_signal(repo, topic_lookup)
+        food_strength = star_count * (1 + 0.45 * topic_signal)
         food_render.append((fx, fy, hue, food_strength))
+        if topic_signal > 0:
+            food_annotations.append(
+                {
+                    "x": fx,
+                    "y": fy,
+                    "hue": hue,
+                    "label": topic_label,
+                    "count": topic_count,
+                    "signal": topic_signal,
+                    "strength": food_strength,
+                }
+            )
 
     # Build strength list for simulation
     food_sim = [(fx, fy, s) for fx, fy, _h, s in food_render]
@@ -687,6 +735,44 @@ def _render_svg(
             f'fill="{color}" opacity="0.8"/>\n'
         )
     parts.append("</g>\n")
+
+    if food_annotations:
+        parts.append('<g id="topic-nexuses">\n')
+        for annotation in sorted(
+            food_annotations,
+            key=lambda item: (-int(item["count"]), str(item["label"])),
+        )[:3]:
+            sx = float(annotation["x"]) * scale_factor
+            sy = float(annotation["y"]) * scale_factor
+            count = int(annotation["count"])
+            ring_r = round(max(14.0, 12.0 + float(annotation["strength"]) * 0.8), 1)
+            ring_color = oklch(
+                0.72 if dark_mode else 0.44,
+                0.15,
+                float(annotation["hue"]),
+            )
+            topic_name = escape(f'{str(annotation["label"]).title()} Nexus')
+            noun = "repo" if count == 1 else "repos"
+            topic_note = escape(f"{count} linked {noun}")
+            parts.append(
+                f'<circle cx="{sx:.1f}" cy="{sy:.1f}" r="{ring_r}" fill="none" '
+                f'stroke="{ring_color}" stroke-width="1.0" opacity="0.45"/>\n'
+            )
+            parts.append(
+                f'<text x="{sx:.1f}" y="{sy - ring_r - 5:.1f}" text-anchor="middle" '
+                f'font-size="8.0" font-family="Georgia,serif" font-style="italic" '
+                f'fill="{pal["text_secondary"]}" paint-order="stroke fill" '
+                f'stroke="{bg_color}" stroke-width="2.1" stroke-linejoin="round">'
+                f'{topic_name}</text>\n'
+            )
+            parts.append(
+                f'<text x="{sx:.1f}" y="{sy - ring_r + 4:.1f}" text-anchor="middle" '
+                f'font-size="5.0" font-family="Georgia,serif" letter-spacing="0.7" '
+                f'fill="{pal["muted"]}" paint-order="stroke fill" '
+                f'stroke="{bg_color}" stroke-width="1.7" stroke-linejoin="round">'
+                f'{topic_note}</text>\n'
+            )
+        parts.append("</g>\n")
 
     # ==================================================================
     # Layer 4 — Timeline progress bar

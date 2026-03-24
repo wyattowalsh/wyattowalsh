@@ -6,13 +6,55 @@ import math
 import random
 
 from .core import BBox
+from .readability import DEFAULT_LAYOUT_READABILITY_POLICY, coerce_layout_readability_policy
 
 # ---------------------------------------------------------------------------
 # Metaheuristic aesthetic cost function
 # ---------------------------------------------------------------------------
 
 # Rotation choices biased toward horizontal for readability
-_META_ROTATIONS = [0, 0, 0, 0, 90, -8, 8]
+_META_ROTATIONS = list(DEFAULT_LAYOUT_READABILITY_POLICY.standard_rotations)
+_ACTIVE_LAYOUT_READABILITY = DEFAULT_LAYOUT_READABILITY_POLICY
+
+
+def configure_layout_readability(layout_readability: object | None = None):
+    """Set the active readability policy for solver helpers and workers."""
+
+    global _ACTIVE_LAYOUT_READABILITY
+    _ACTIVE_LAYOUT_READABILITY = coerce_layout_readability_policy(layout_readability)
+    return _ACTIVE_LAYOUT_READABILITY
+
+
+def _rotation_readability_penalty(rotation: float) -> float:
+    """Map rotation into a readability penalty.
+
+    Horizontal text is ideal, subtle tilts are cheap, and vertical words are
+    penalized the most because they slow scanning in landscape layouts.
+    """
+
+    abs_rotation = abs(rotation)
+    if abs_rotation == 0:
+        return 0.0
+    if abs_rotation <= 10.0:
+        return min(1.0, (abs_rotation / 10.0) * 0.2)
+    if abs_rotation >= 80.0:
+        return 1.0
+    return min(1.0, abs_rotation / 90.0)
+
+
+def _landscape_aspect_penalty(hull_w: float, hull_h: float, target_aspect_ratio: float, landscape_bias_weight: float) -> float:
+    """Prefer broader, landscape-friendly hulls instead of portrait stacks."""
+
+    if hull_w <= 0 or hull_h <= 0:
+        return 1.0
+
+    aspect = hull_w / hull_h
+    target_penalty = min(1.0, abs(aspect - target_aspect_ratio) / max(target_aspect_ratio, 1.0))
+    if aspect >= 1.0:
+        return target_penalty
+
+    portrait_penalty = min(1.0, 1.0 - aspect)
+    return min(1.0, target_penalty + portrait_penalty * landscape_bias_weight)
 
 
 def _estimate_word_bbox(
@@ -38,6 +80,7 @@ def _aesthetic_cost(
     canvas_w: float,
     canvas_h: float,
     texts: list[str] | None = None,
+    layout_readability: object | None = None,
 ) -> float:
     """Evaluate the aesthetic quality of a word placement solution.
 
@@ -53,6 +96,11 @@ def _aesthetic_cost(
     Uses spatial grid hashing for O(n) overlap detection and approximate NN.
     """
     n = len(positions)
+    policy = (
+        coerce_layout_readability_policy(layout_readability)
+        if layout_readability is not None
+        else _ACTIVE_LAYOUT_READABILITY
+    )
     if n == 0:
         return 0.0
 
@@ -134,6 +182,16 @@ def _aesthetic_cost(
                             overlap_area += ox * oy
     overlap_norm = min(1.0, overlap_area / canvas_area)
 
+    # 1b. Out-of-bounds penalty — words must stay fully on canvas
+    oob_area = 0.0
+    for i in range(n):
+        left_oob = max(0.0, -bx[i])
+        top_oob = max(0.0, -by[i])
+        right_oob = max(0.0, bx2[i] - canvas_w)
+        bottom_oob = max(0.0, by2[i] - canvas_h)
+        oob_area += (left_oob + right_oob) * bh[i] + (top_oob + bottom_oob) * bw[i]
+    oob_norm = min(1.0, oob_area / canvas_area)
+
     # 2. Packing density
     total_bbox_area = 0.0
     min_x = bx[0]
@@ -209,18 +267,18 @@ def _aesthetic_cost(
     max_size = max(sizes) if sizes else 1.0
     flow_penalty = 0.0
     for i in range(n):
-        flow_penalty += (sizes[i] / max(max_size, 1.0)) * (abs(positions[i][2]) / 90.0)
+        flow_penalty += (sizes[i] / max(max_size, 1.0)) * _rotation_readability_penalty(
+            positions[i][2]
+        )
     reading_flow = min(1.0, flow_penalty / max(n, 1))
 
-    # 6. Golden ratio harmony
-    phi = 1.618033988749895
-    if hull_h > 0:
-        aspect = hull_w / hull_h
-        if 0 < aspect < 1.0:
-            aspect = 1.0 / aspect
-    else:
-        aspect = 1.0
-    golden = min(1.0, abs(aspect - phi) / phi)
+    # 6. Landscape-friendly aspect ratio
+    landscape = _landscape_aspect_penalty(
+        hull_w,
+        hull_h,
+        policy.target_aspect_ratio,
+        policy.landscape_bias_weight,
+    )
 
     # 7. Size gradient
     center_x, center_y = canvas_w / 2, canvas_h / 2
@@ -233,16 +291,21 @@ def _aesthetic_cost(
         )
     size_gradient = min(1.0, gradient_penalty / max(n, 1))
 
-    # Weighted sum
-    return (
-        10.0 * overlap_norm
-        + 3.0 * packing
+    # Weighted sum — overlap and out-of-bounds are hard constraints
+    # (1000x penalty) so metaheuristic solvers are forced to find
+    # zero-overlap, fully-on-canvas solutions.
+    hard_violations = overlap_norm + oob_norm
+    aesthetic = (
+        3.0 * packing
         + 2.0 * balance
         + 2.0 * uniformity
-        + 1.5 * reading_flow
-        + 1.0 * golden
+        + policy.reading_flow_weight * reading_flow
+        + 1.0 * landscape
         + 1.0 * size_gradient
     )
+    if hard_violations > 0:
+        return 1000.0 * hard_violations + aesthetic
+    return aesthetic
 
 
 # ---------------------------------------------------------------------------
@@ -253,13 +316,13 @@ def _random_solution(
     n: int, canvas_w: float, canvas_h: float, rng: random.Random,
 ) -> list[tuple[float, float, float]]:
     """Generate a random placement solution."""
-    margin_x = canvas_w * 0.05
-    margin_y = canvas_h * 0.05
+    margin_x = canvas_w * 0.15
+    margin_y = canvas_h * 0.15
     sol: list[tuple[float, float, float]] = []
     for _ in range(n):
         x = rng.uniform(margin_x, canvas_w - margin_x)
         y = rng.uniform(margin_y, canvas_h - margin_y)
-        rot = rng.choice(_META_ROTATIONS)
+        rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
         sol.append((x, y, float(rot)))
     return sol
 
@@ -268,14 +331,12 @@ def _clamp_solution(
     sol: list[tuple[float, float, float]], canvas_w: float, canvas_h: float,
 ) -> list[tuple[float, float, float]]:
     """Clamp positions to canvas bounds and rotations to valid set."""
-    mx, my = canvas_w * 0.05, canvas_h * 0.05
+    mx, my = canvas_w * 0.15, canvas_h * 0.15
     result: list[tuple[float, float, float]] = []
     for x, y, rot in sol:
         x = max(mx, min(canvas_w - mx, x))
         y = max(my, min(canvas_h - my, y))
-        # Snap rotation to nearest valid
-        valid_rots = [0.0, 90.0, -8.0, 8.0]
-        rot = min(valid_rots, key=lambda r: abs(r - rot))
+        rot = _ACTIVE_LAYOUT_READABILITY.snap_rotation(rot)
         result.append((x, y, rot))
     return result
 
@@ -286,9 +347,10 @@ def _eval_fitness(
     canvas_w: float,
     canvas_h: float,
     texts: list[str] | None = None,
+    layout_readability: object | None = None,
 ) -> float:
     """Return fitness (higher is better) = negative cost."""
-    return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts)
+    return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts, layout_readability)
 
 
 # ---------------------------------------------------------------------------
@@ -321,11 +383,11 @@ def _solve_harmony_search(
                 if rng.random() < par:
                     x += rng.gauss(0, bw)
                     y += rng.gauss(0, bw)
-                    rot = rng.choice(_META_ROTATIONS)
+                    rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
             else:
                 x = rng.uniform(canvas_w * 0.05, canvas_w * 0.95)
                 y = rng.uniform(canvas_h * 0.05, canvas_h * 0.95)
-                rot = rng.choice(_META_ROTATIONS)
+                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
             new_harmony.append((x, y, float(rot)))
         new_harmony = _clamp_solution(new_harmony, canvas_w, canvas_h)
         new_fit = _eval_fitness(new_harmony, sizes, canvas_w, canvas_h, texts)
@@ -364,7 +426,7 @@ def _solve_simulated_annealing(
             x, y, rot = neighbor[idx]
             x += rng.gauss(0, canvas_w * 0.05)
             y += rng.gauss(0, canvas_h * 0.05)
-            rot = rng.choice(_META_ROTATIONS)
+            rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
             neighbor[idx] = (x, y, float(rot))
         neighbor = _clamp_solution(neighbor, canvas_w, canvas_h)
         neighbor_cost = _aesthetic_cost(neighbor, sizes, canvas_w, canvas_h, texts)
@@ -538,7 +600,7 @@ def _solve_ant_colony(
                 gi, gj = cells[chosen]
                 x = (gj + rng.random()) * cell_w
                 y = (gi + rng.random()) * cell_h
-                rot = rng.choice(_META_ROTATIONS)
+                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
                 sol.append((x, y, float(rot)))
 
             sol = _clamp_solution(sol, canvas_w, canvas_h)
@@ -1377,7 +1439,7 @@ def _solve_biogeography(
                     elif d % 3 == 1:
                         new_habitats[i][d] = rng.uniform(canvas_h * 0.05, canvas_h * 0.95)
                     else:
-                        new_habitats[i][d] = float(rng.choice(_META_ROTATIONS))
+                        new_habitats[i][d] = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
 
         for i in range(pop_size):
             sol = vec_to_sol(new_habitats[i])
@@ -1517,7 +1579,7 @@ def _solve_tabu_search(
                 x, y, rot = neighbor[idx]
                 x += rng.gauss(0, canvas_w * 0.08)
                 y += rng.gauss(0, canvas_h * 0.08)
-                rot = rng.choice(_META_ROTATIONS)
+                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
                 neighbor[idx] = (x, y, float(rot))
             neighbors.append(_clamp_solution(neighbor, canvas_w, canvas_h))
 

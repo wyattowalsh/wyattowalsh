@@ -16,10 +16,6 @@ def test_palette_tokenization_option_present():
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="layout_readability field not yet implemented in WordCloudSettings",
-)
 def test_layout_readability_knobs_present():
     """RED test for layout and readability tuning knobs."""
     model_fields = getattr(WordCloudSettings, "model_fields", {})

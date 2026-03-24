@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 
 from .colors import COLOR_FUNCS, primary_color_func
 from .core import BBox, FONT_STACK, PlacedWord
+from .readability import coerce_layout_readability_policy
 from ..utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -27,6 +28,7 @@ class SvgWordCloudEngine(ABC):
         padding: float = 2.0,
         min_font_size: float = 7.0,
         max_font_size: float = 72.0,
+        layout_readability: object | None = None,
     ) -> None:
         self.width = width
         self.height = height
@@ -37,7 +39,13 @@ class SvgWordCloudEngine(ABC):
         self.padding = padding
         self.min_font_size = min_font_size
         self.max_font_size = max_font_size
+        self.layout_readability = coerce_layout_readability_policy(layout_readability)
         self._rng = random.Random(seed)
+
+    def _is_large_word(self, font_size: float) -> bool:
+        return self.layout_readability.is_large_word(
+            font_size, self.min_font_size, self.max_font_size
+        )
 
     # -- Frequency scaling --------------------------------------------------
 

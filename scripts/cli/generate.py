@@ -416,6 +416,7 @@ def _wc_from_topics(
     wc,
     output_path: Path | None,
     stopwords_list: list[str],
+    layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from topics.md with topic-specific overrides."""
     logger.info("Generating word cloud from topics.md: {path}", path=wc.TOPICS_MD_PATH)
@@ -452,6 +453,7 @@ def _wc_from_topics(
         height=800,
         max_words=num_terms,
         output_dir=str(out_dir),
+        layout_readability=layout_readability,
     )
     generator = wc.WordCloudGenerator(base_settings=settings)
     return generator.generate(
@@ -466,6 +468,7 @@ def _wc_from_languages(
     wc,
     output_path: Path | None,
     stopwords_list: list[str],
+    layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
     logger.info(
@@ -504,6 +507,7 @@ def _wc_from_languages(
         height=800,
         max_words=num_terms,
         output_dir=str(out_dir),
+        layout_readability=layout_readability,
     )
     generator = wc.WordCloudGenerator(base_settings=settings)
     return generator.generate(
@@ -518,6 +522,7 @@ def _wc_from_techs(
     wc,
     techs_path: Path,
     output_path: Path | None,
+    layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(
@@ -547,7 +552,10 @@ def _wc_from_techs(
     out_dir = Path(output_path.parent) if output_path else Path(wc.WordCloudSettings().output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    settings = wc.WordCloudSettings(output_dir=str(out_dir))
+    settings = wc.WordCloudSettings(
+        output_dir=str(out_dir),
+        layout_readability=layout_readability,
+    )
     generator = wc.WordCloudGenerator(base_settings=settings)
 
     logger.info("Generating word cloud from calculated frequencies.")
@@ -562,6 +570,7 @@ def _wc_from_prompt(
     wc,
     text: str,
     output_path: Path | None,
+    layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from a text prompt."""
     logger.info("Generating word cloud from text (prompt).")
@@ -569,7 +578,10 @@ def _wc_from_prompt(
     out_dir = Path(output_path.parent) if output_path else Path(wc.WordCloudSettings().output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    settings = wc.WordCloudSettings(output_dir=str(out_dir))
+    settings = wc.WordCloudSettings(
+        output_dir=str(out_dir),
+        layout_readability=layout_readability,
+    )
     generator = wc.WordCloudGenerator(base_settings=settings)
     return generator.generate(
         output_path=output_path,
@@ -659,15 +671,31 @@ def word_cloud(
         stopwords_list.extend(config_wc_model.stopwords)
 
     generated_path: Path | None = None
+    layout_readability = getattr(config_wc_model, "layout_readability", None)
 
     if from_topics_md:
-        generated_path = _wc_from_topics(wc, output_path, stopwords_list)
+        generated_path = _wc_from_topics(
+            wc,
+            output_path,
+            stopwords_list,
+            layout_readability=layout_readability,
+        )
 
     elif from_languages_md:
-        generated_path = _wc_from_languages(wc, output_path, stopwords_list)
+        generated_path = _wc_from_languages(
+            wc,
+            output_path,
+            stopwords_list,
+            layout_readability=layout_readability,
+        )
 
     elif techs_path and techs_path.exists():
-        generated_path = _wc_from_techs(wc, techs_path, output_path)
+        generated_path = _wc_from_techs(
+            wc,
+            techs_path,
+            output_path,
+            layout_readability=layout_readability,
+        )
 
     else:
         # Resolve prompt text from CLI arg or config
@@ -682,7 +710,12 @@ def word_cloud(
 
         if effective_prompt is not None:
             logger.info(f'Using prompt for word cloud: "{effective_prompt}"')
-            generated_path = _wc_from_prompt(wc, effective_prompt, output_path)
+            generated_path = _wc_from_prompt(
+                wc,
+                effective_prompt,
+                output_path,
+                layout_readability=layout_readability,
+            )
         else:
             logger.error(
                 "Word cloud generation skipped: No valid input "

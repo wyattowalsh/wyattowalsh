@@ -11,6 +11,9 @@ unique growth algorithms, leaf shapes, and bloom types.
 
 Light theme on aged paper.
 """
+
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import math
@@ -28,7 +31,6 @@ from .shared import (
     LANG_HUES,
     WIDTH,
     Noise2D,
-    WorldState,
     _build_world_palette_extended,
     atmospheric_haze_filter,
     aurora_band_elements,
@@ -165,13 +167,36 @@ def _classify_species(repo: dict, *, species_threshold_mult: float = 1.0) -> str
     lang = repo.get("language")
     topics = set(repo.get("topics") or [])
     forks = repo.get("forks", 0)
-    desc = (repo.get("description") or "").lower()
 
     # Topic-driven species (highest priority -- richest signal)
-    ai_topics = {"ai", "machine-learning", "deep-learning", "neural-network", "llm", "agents", "nlp"}
-    data_topics = {"database", "sql", "data", "etl", "pipeline", "data-science", "analytics"}
+    ai_topics = {
+        "ai",
+        "machine-learning",
+        "deep-learning",
+        "neural-network",
+        "llm",
+        "agents",
+        "nlp",
+    }
+    data_topics = {
+        "database",
+        "sql",
+        "data",
+        "etl",
+        "pipeline",
+        "data-science",
+        "analytics",
+    }
     web_topics = {"web", "frontend", "react", "vue", "next", "svelte", "html", "css"}
-    infra_topics = {"cli", "tool", "utility", "devops", "infrastructure", "docker", "kubernetes"}
+    infra_topics = {
+        "cli",
+        "tool",
+        "utility",
+        "devops",
+        "infrastructure",
+        "docker",
+        "kubernetes",
+    }
     creative_topics = {"game", "graphics", "creative", "art", "music", "visualization"}
 
     if topics & ai_topics:
@@ -205,6 +230,99 @@ def _classify_species(repo: dict, *, species_threshold_mult: float = 1.0) -> str
     if stars < 5 * species_threshold_mult and age < 18:
         return "shrub"
     return "wildflower"
+
+
+def _escape_svg_text(text: str) -> str:
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _repo_visibility_score(repo: dict) -> float:
+    """Rank repos for full-plant rendering when the profile exceeds MAX_REPOS."""
+    stars = float(repo.get("stars", 0) or 0)
+    forks = float(repo.get("forks", 0) or 0)
+    watchers = float(repo.get("watchers", 0) or 0)
+    age_months = float(repo.get("age_months", 0) or 0)
+    topic_count = len(repo.get("topics") or [])
+    has_description = 1.0 if repo.get("description") else 0.0
+    return (
+        math.log1p(stars) * 4.0
+        + math.log1p(forks) * 2.2
+        + math.log1p(watchers) * 1.4
+        + min(age_months, 72.0) * 0.05
+        + topic_count * 0.8
+        + has_description * 0.4
+    )
+
+
+def _select_primary_repos(
+    repos: list[dict], *, limit: int
+) -> tuple[list[dict], list[dict]]:
+    """Select full-detail repos while preserving input chronology for the chosen set."""
+    if len(repos) <= limit:
+        return repos, []
+
+    ranked = sorted(
+        enumerate(repos),
+        key=lambda item: (_repo_visibility_score(item[1]), -item[0]),
+        reverse=True,
+    )
+    primary_indices = {index for index, _repo in ranked[:limit]}
+    primary = [repo for index, repo in enumerate(repos) if index in primary_indices]
+    overflow = [repo for _index, repo in ranked[limit:]]
+    return primary, overflow
+
+
+def _repo_topic_annotation(repo: dict, *, max_topics: int = 2) -> str:
+    """Build a compact specimen-note label from repo topics."""
+    cleaned: list[str] = []
+    seen: set[str] = set()
+    for topic in repo.get("topics") or []:
+        normalized = str(topic).strip().replace("-", " ")
+        if not normalized:
+            continue
+        dedupe_key = normalized.lower()
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        cleaned.append(normalized)
+
+    if not cleaned:
+        return ""
+
+    shown = cleaned[:max_topics]
+    label = " · ".join(shown)
+    remaining = len(cleaned) - len(shown)
+    if remaining > 0:
+        label = f"{label} +{remaining}"
+    if len(label) > 28 and len(cleaned) > 1:
+        label = f"{cleaned[0]} +{len(cleaned) - 1}"
+    return label
+
+
+def _overflow_specimen_annotation(
+    overflow_repos: list[dict], *, max_topics: int = 3
+) -> tuple[str, str]:
+    """Build compact study-drawer text for repos outside the main render cap."""
+    count = len(overflow_repos)
+    specimen_label = "specimen" if count == 1 else "specimens"
+    summary = f"+{count} {specimen_label} held back"
+
+    topics: list[str] = []
+    seen: set[str] = set()
+    for repo in overflow_repos:
+        for topic in repo.get("topics") or []:
+            normalized = str(topic).strip().replace("-", " ")
+            if not normalized:
+                continue
+            dedupe_key = normalized.lower()
+            if dedupe_key in seen:
+                continue
+            seen.add(dedupe_key)
+            topics.append(normalized)
+            if len(topics) >= max_topics:
+                return summary, " / ".join(topics)
+
+    return summary, " / ".join(topics)
 
 
 def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch_fn):
@@ -249,18 +367,25 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         cp_tipy = (b3y + tip_y) / 2 + rng.uniform(-0.5, 0.5)
         back_cp1x = (tip_x + lx) / 2 - _serrate(ls * 0.1) * math.cos(perp)
         back_cp1y = (tip_y + ly) / 2 - _serrate(ls * 0.1) * math.sin(perp)
-        d = (f"M{lx:.1f},{ly:.1f} "
-             f"Q{cp_b1x:.1f},{cp_b1y:.1f} {b1x:.1f},{b1y:.1f} "
-             f"Q{cp_v1x:.1f},{cp_v1y:.1f} {v1x:.1f},{v1y:.1f} "
-             f"Q{cp_b2x:.1f},{cp_b2y:.1f} {b2x:.1f},{b2y:.1f} "
-             f"Q{cp_v2x:.1f},{cp_v2y:.1f} {v2x:.1f},{v2y:.1f} "
-             f"Q{cp_b3x:.1f},{cp_b3y:.1f} {b3x:.1f},{b3y:.1f} "
-             f"Q{cp_tipx:.1f},{cp_tipy:.1f} {tip_x:.1f},{tip_y:.1f} "
-             f"Q{back_cp1x:.1f},{back_cp1y:.1f} {lx:.1f},{ly:.1f} Z")
-        P.append(f'<path d="{d}" fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
+        d = (
+            f"M{lx:.1f},{ly:.1f} "
+            f"Q{cp_b1x:.1f},{cp_b1y:.1f} {b1x:.1f},{b1y:.1f} "
+            f"Q{cp_v1x:.1f},{cp_v1y:.1f} {v1x:.1f},{v1y:.1f} "
+            f"Q{cp_b2x:.1f},{cp_b2y:.1f} {b2x:.1f},{b2y:.1f} "
+            f"Q{cp_v2x:.1f},{cp_v2y:.1f} {v2x:.1f},{v2y:.1f} "
+            f"Q{cp_b3x:.1f},{cp_b3y:.1f} {b3x:.1f},{b3y:.1f} "
+            f"Q{cp_tipx:.1f},{cp_tipy:.1f} {tip_x:.1f},{tip_y:.1f} "
+            f"Q{back_cp1x:.1f},{back_cp1y:.1f} {lx:.1f},{ly:.1f} Z"
+        )
+        P.append(
+            f'<path d="{d}" fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>'
+        )
         if has_vein and budget_ok():
-            P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.25" opacity="0.4"/>')
+            P.append(
+                f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" '
+                f'y2="{tip_y:.1f}" stroke="{stroke_c}" '
+                f'stroke-width="0.25" opacity="0.4"/>'
+            )
 
     elif leaf_shape == "small_round":
         cx_l = lx + ls * 0.5 * math.cos(la)
@@ -268,18 +393,25 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         r = ls * 0.4
         fill_c = oklch_fn(0.53, 0.19, lh)
         stroke_c = oklch_fn(0.40, 0.14, lh)
-        P.append(f'<circle cx="{cx_l:.1f}" cy="{cy_l:.1f}" r="{r:.1f}" '
-                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
-        P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{cx_l:.1f}" y2="{cy_l:.1f}" '
-                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.4"/>')
+        P.append(
+            f'<circle cx="{cx_l:.1f}" cy="{cy_l:.1f}" r="{r:.1f}" '
+            f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>'
+        )
+        P.append(
+            f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{cx_l:.1f}" y2="{cy_l:.1f}" '
+            f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.4"/>'
+        )
 
     elif leaf_shape == "pinnate":
         tip_x = lx + ls * math.cos(la)
         tip_y = ly + ls * math.sin(la)
         stroke_c = oklch_fn(0.40, 0.16, lh)
         fill_c = oklch_fn(0.50, 0.19, lh)
-        P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                 f'stroke="{stroke_c}" stroke-width="0.4" opacity="0.68"/>')
+        P.append(
+            f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" '
+            f'y2="{tip_y:.1f}" stroke="{stroke_c}" '
+            f'stroke-width="0.4" opacity="0.68"/>'
+        )
         perp = la + math.pi / 2
         for pi in range(1, 4):
             t = pi / 4.0
@@ -290,12 +422,17 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
                 ea = la + side * 0.7
                 ex = mx + leaflet_len * math.cos(ea)
                 ey = my + leaflet_len * math.sin(ea)
-                P.append(f'<line x1="{mx:.1f}" y1="{my:.1f}" x2="{ex:.1f}" y2="{ey:.1f}" '
-                         f'stroke="{stroke_c}" stroke-width="0.3" opacity="0.45"/>')
+                P.append(
+                    f'<line x1="{mx:.1f}" y1="{my:.1f}" x2="{ex:.1f}" '
+                    f'y2="{ey:.1f}" stroke="{stroke_c}" '
+                    f'stroke-width="0.3" opacity="0.45"/>'
+                )
                 er = leaflet_len * 0.4
-                P.append(f'<ellipse cx="{ex:.1f}" cy="{ey:.1f}" rx="{er:.1f}" ry="{er*0.6:.1f}" '
-                         f'fill="{fill_c}" opacity="0.5" '
-                         f'transform="rotate({math.degrees(ea):.0f},{ex:.1f},{ey:.1f})"/>')
+                P.append(
+                    f'<ellipse cx="{ex:.1f}" cy="{ey:.1f}" rx="{er:.1f}" '
+                    f'ry="{er * 0.6:.1f}" fill="{fill_c}" opacity="0.5" '
+                    f'transform="rotate({math.degrees(ea):.0f},{ex:.1f},{ey:.1f})"/>'
+                )
 
     elif leaf_shape == "narrow_blade":
         cx_l = lx + ls * 0.4 * math.cos(la)
@@ -304,9 +441,12 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         ry = ls * 0.5
         fill_c = oklch_fn(0.50, 0.19, lh)
         stroke_c = oklch_fn(0.38, 0.14, lh)
-        P.append(f'<ellipse cx="{cx_l:.1f}" cy="{cy_l:.1f}" rx="{rx:.1f}" ry="{ry:.1f}" '
-                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.3" '
-                 f'transform="rotate({math.degrees(la):.0f},{cx_l:.1f},{cy_l:.1f})"/>')
+        P.append(
+            f'<ellipse cx="{cx_l:.1f}" cy="{cy_l:.1f}" rx="{rx:.1f}" '
+            f'ry="{ry:.1f}" fill="{fill_c}" opacity="0.68" '
+            f'stroke="{stroke_c}" stroke-width="0.3" '
+            f'transform="rotate({math.degrees(la):.0f},{cx_l:.1f},{cy_l:.1f})"/>'
+        )
 
     elif leaf_shape == "needle_cluster":
         stroke_c = oklch_fn(0.38, 0.17, lh)
@@ -314,9 +454,11 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         for ni in range(n_needles):
             na = la + (ni - n_needles / 2.0) * 0.4
             nl = ls * rng.uniform(0.5, 0.9)
-            P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" '
-                     f'x2="{lx + nl * math.cos(na):.1f}" y2="{ly + nl * math.sin(na):.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.5" opacity="0.68"/>')
+            P.append(
+                f'<line x1="{lx:.1f}" y1="{ly:.1f}" '
+                f'x2="{lx + nl * math.cos(na):.1f}" y2="{ly + nl * math.sin(na):.1f}" '
+                f'stroke="{stroke_c}" stroke-width="0.5" opacity="0.68"/>'
+            )
 
     else:
         # "teardrop" — the original quad-bezier almond shape
@@ -330,12 +472,16 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
         cp2y = (ly + tip_y) / 2 - bulge * math.sin(perp) + rng.uniform(-0.5, 0.5)
         fill_c = oklch_fn(0.50, 0.19, lh)
         stroke_c = oklch_fn(0.38, 0.14, lh)
-        P.append(f'<path d="M{lx:.1f},{ly:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
-                 f'Q{cp2x:.1f},{cp2y:.1f} {lx:.1f},{ly:.1f}" '
-                 f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>')
+        P.append(
+            f'<path d="M{lx:.1f},{ly:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
+            f'Q{cp2x:.1f},{cp2y:.1f} {lx:.1f},{ly:.1f}" '
+            f'fill="{fill_c}" opacity="0.68" stroke="{stroke_c}" stroke-width="0.4"/>'
+        )
         if has_vein and budget_ok():
-            P.append(f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                     f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.3"/>')
+            P.append(
+                f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
+                f'stroke="{stroke_c}" stroke-width="0.2" opacity="0.3"/>'
+            )
             for vi in range(1, 3):
                 vt = vi / 3
                 vx = lx + (tip_x - lx) * vt
@@ -343,12 +489,16 @@ def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklc
                 for side in [-1, 1]:
                     va = la + side * (0.5 + vi * 0.1)
                     vl = ls * 0.2 * (1 - vt * 0.5)
-                    P.append(f'<line x1="{vx:.1f}" y1="{vy:.1f}" '
-                             f'x2="{vx + vl * math.cos(va):.1f}" y2="{vy + vl * math.sin(va):.1f}" '
-                             f'stroke="{stroke_c}" stroke-width="0.15" opacity="0.2"/>')
+                    P.append(
+                        f'<line x1="{vx:.1f}" y1="{vy:.1f}" '
+                        f'x2="{vx + vl * math.cos(va):.1f}" y2="{vy + vl * math.sin(va):.1f}" '
+                        f'stroke="{stroke_c}" stroke-width="0.15" opacity="0.2"/>'
+                    )
 
 
-def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch_fn):
+def _draw_bloom(
+    P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch_fn
+):
     """Draw a bloom of the given type onto the SVG parts list."""
     # Deterministic imperfection: slight position jitter (1-2px)
     bx += rng.uniform(-1.5, 1.5)
@@ -372,21 +522,31 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
                 cp1y = by + cp_r * math.sin(pa + 0.35)
                 cp2x = bx + cp_r * math.cos(pa - 0.35)
                 cp2y = by + cp_r * math.sin(pa - 0.35)
-                P.append(f'<path d="M{bx:.1f},{by:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
-                         f'Q{cp2x:.1f},{cp2y:.1f} {bx:.1f},{by:.1f}" '
-                         f'fill="{pc}" opacity="{lo:.2f}" stroke="{pd}" stroke-width="0.2"/>')
-                P.append(f'<line x1="{bx:.1f}" y1="{by:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
-                         f'stroke="{pd}" stroke-width="0.15" opacity="0.15"/>')
+                P.append(
+                    f'<path d="M{bx:.1f},{by:.1f} Q{cp1x:.1f},{cp1y:.1f} {tip_x:.1f},{tip_y:.1f} '
+                    f'Q{cp2x:.1f},{cp2y:.1f} {bx:.1f},{by:.1f}" '
+                    f'fill="{pc}" opacity="{lo:.2f}" stroke="{pd}" stroke-width="0.2"/>'
+                )
+                P.append(
+                    f'<line x1="{bx:.1f}" y1="{by:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
+                    f'stroke="{pd}" stroke-width="0.15" opacity="0.15"/>'
+                )
         # Center + stamens
-        P.append(f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs * 0.18:.1f}" fill="{oklch_fn(0.72, 0.15, (bh + 60) % 360)}" opacity="0.8"/>')
+        P.append(
+            f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs * 0.18:.1f}" fill="{oklch_fn(0.72, 0.15, (bh + 60) % 360)}" opacity="0.8"/>'
+        )
         for si_st in range(max(3, n_petals - 2)):
             sa = si_st * 2 * math.pi / max(3, n_petals - 2) + 0.15
             sr = bs * 0.35
             stx = bx + sr * math.cos(sa)
             sty = by + sr * math.sin(sa)
-            P.append(f'<line x1="{bx:.1f}" y1="{by:.1f}" x2="{stx:.1f}" y2="{sty:.1f}" '
-                     f'stroke="{oklch_fn(0.65, 0.10, (bh + 40) % 360)}" stroke-width="0.3" opacity="0.4"/>')
-            P.append(f'<circle cx="{stx:.1f}" cy="{sty:.1f}" r="0.8" fill="{oklch_fn(0.70, 0.18, 50)}" opacity="0.6"/>')
+            P.append(
+                f'<line x1="{bx:.1f}" y1="{by:.1f}" x2="{stx:.1f}" y2="{sty:.1f}" '
+                f'stroke="{oklch_fn(0.65, 0.10, (bh + 40) % 360)}" stroke-width="0.3" opacity="0.4"/>'
+            )
+            P.append(
+                f'<circle cx="{stx:.1f}" cy="{sty:.1f}" r="0.8" fill="{oklch_fn(0.70, 0.18, 50)}" opacity="0.6"/>'
+            )
 
     elif bloom_type == "acorn":
         body_c = oklch_fn(0.45, 0.12, 35)
@@ -396,23 +556,33 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
         body_r = bs * 0.35
         cap_h = bs * 0.25
         # Stem nub at top
-        P.append(f'<line x1="{bx:.1f}" y1="{by - body_r * 0.6 - cap_h:.1f}" '
-                 f'x2="{bx:.1f}" y2="{by - body_r * 0.6 - cap_h - 3:.1f}" '
-                 f'stroke="{cap_dark}" stroke-width="0.6" opacity="0.45" stroke-linecap="round"/>')
+        P.append(
+            f'<line x1="{bx:.1f}" y1="{by - body_r * 0.6 - cap_h:.1f}" '
+            f'x2="{bx:.1f}" y2="{by - body_r * 0.6 - cap_h - 3:.1f}" '
+            f'stroke="{cap_dark}" stroke-width="0.6" opacity="0.45" stroke-linecap="round"/>'
+        )
         # Acorn body with outline and subtle shading
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by + body_r * 0.3:.1f}" rx="{body_r:.1f}" ry="{body_r * 1.2:.1f}" '
-                 f'fill="{body_c}" opacity="0.6" stroke="{body_dark}" stroke-width="0.3"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by + body_r * 0.3:.1f}" rx="{body_r:.1f}" ry="{body_r * 1.2:.1f}" '
+            f'fill="{body_c}" opacity="0.6" stroke="{body_dark}" stroke-width="0.3"/>'
+        )
         # Body longitudinal grain lines
         for gi_a in range(-1, 2):
-            P.append(f'<line x1="{bx + gi_a * body_r * 0.3:.1f}" y1="{by - body_r * 0.7:.1f}" '
-                     f'x2="{bx + gi_a * body_r * 0.25:.1f}" y2="{by + body_r * 1.3:.1f}" '
-                     f'stroke="{body_dark}" stroke-width="0.15" opacity="0.12"/>')
+            P.append(
+                f'<line x1="{bx + gi_a * body_r * 0.3:.1f}" y1="{by - body_r * 0.7:.1f}" '
+                f'x2="{bx + gi_a * body_r * 0.25:.1f}" y2="{by + body_r * 1.3:.1f}" '
+                f'stroke="{body_dark}" stroke-width="0.15" opacity="0.12"/>'
+            )
         # Body highlight
-        P.append(f'<ellipse cx="{bx - body_r * 0.25:.1f}" cy="{by:.1f}" rx="{body_r * 0.25:.1f}" ry="{body_r * 0.6:.1f}" '
-                 f'fill="#fff" opacity="0.08"/>')
+        P.append(
+            f'<ellipse cx="{bx - body_r * 0.25:.1f}" cy="{by:.1f}" rx="{body_r * 0.25:.1f}" ry="{body_r * 0.6:.1f}" '
+            f'fill="#fff" opacity="0.08"/>'
+        )
         # Cap with cross-hatching texture
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by - body_r * 0.4:.1f}" rx="{body_r * 1.1:.1f}" ry="{cap_h:.1f}" '
-                 f'fill="{cap_c}" opacity="0.55" stroke="{cap_dark}" stroke-width="0.3"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by - body_r * 0.4:.1f}" rx="{body_r * 1.1:.1f}" ry="{cap_h:.1f}" '
+            f'fill="{cap_c}" opacity="0.55" stroke="{cap_dark}" stroke-width="0.3"/>'
+        )
         # Cap cross-hatch pattern (tiny scale marks)
         n_cap_lines = max(3, int(body_r * 1.5))
         for ci_cap in range(n_cap_lines):
@@ -420,12 +590,16 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
             cy_cap = by - body_r * 0.4
             hlen = cap_h * 0.6 * (1 - abs(cx_off) / (body_r * 1.1))
             if hlen > 0.5:
-                P.append(f'<line x1="{bx + cx_off:.1f}" y1="{cy_cap - hlen:.1f}" '
-                         f'x2="{bx + cx_off:.1f}" y2="{cy_cap + hlen:.1f}" '
-                         f'stroke="{cap_dark}" stroke-width="0.15" opacity="0.15"/>')
+                P.append(
+                    f'<line x1="{bx + cx_off:.1f}" y1="{cy_cap - hlen:.1f}" '
+                    f'x2="{bx + cx_off:.1f}" y2="{cy_cap + hlen:.1f}" '
+                    f'stroke="{cap_dark}" stroke-width="0.15" opacity="0.15"/>'
+                )
         # Point at bottom of acorn
-        P.append(f'<circle cx="{bx:.1f}" cy="{by + body_r * 1.45:.1f}" r="0.5" '
-                 f'fill="{body_dark}" opacity="0.4"/>')
+        P.append(
+            f'<circle cx="{bx:.1f}" cy="{by + body_r * 1.45:.1f}" r="0.5" '
+            f'fill="{body_dark}" opacity="0.4"/>'
+        )
 
     elif bloom_type == "catkin":
         stroke_c = oklch_fn(0.50, 0.08, 80)
@@ -435,22 +609,28 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
         cpy = by + droop_len * 0.5
         ex = bx + rng.uniform(-3, 3)
         ey = by + droop_len
-        P.append(f'<path d="M{bx:.1f},{by:.1f} Q{cpx:.1f},{cpy:.1f} {ex:.1f},{ey:.1f}" '
-                 f'fill="none" stroke="{stroke_c}" stroke-width="0.5" opacity="0.45"/>')
+        P.append(
+            f'<path d="M{bx:.1f},{by:.1f} Q{cpx:.1f},{cpy:.1f} {ex:.1f},{ey:.1f}" '
+            f'fill="none" stroke="{stroke_c}" stroke-width="0.5" opacity="0.45"/>'
+        )
         n_dots = rng.integers(5, 8)
         for di in range(n_dots):
             t = (di + 1) / (n_dots + 1)
             t2 = t
-            dx = (1 - t2) ** 2 * bx + 2 * (1 - t2) * t2 * cpx + t2 ** 2 * ex
-            dy = (1 - t2) ** 2 * by + 2 * (1 - t2) * t2 * cpy + t2 ** 2 * ey
-            P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{rng.uniform(0.8, 1.5):.1f}" '
-                     f'fill="{dot_c}" opacity="0.45"/>')
+            dx = (1 - t2) ** 2 * bx + 2 * (1 - t2) * t2 * cpx + t2**2 * ex
+            dy = (1 - t2) ** 2 * by + 2 * (1 - t2) * t2 * cpy + t2**2 * ey
+            P.append(
+                f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{rng.uniform(0.8, 1.5):.1f}" '
+                f'fill="{dot_c}" opacity="0.45"/>'
+            )
         # Pollen particles drifting from catkin
         for pi_p in range(rng.integers(3, 6)):
             px_p = ex + rng.uniform(-8, 8)
             py_p = ey + rng.uniform(-3, 8)
-            P.append(f'<circle cx="{px_p:.1f}" cy="{py_p:.1f}" r="{rng.uniform(0.3, 0.6):.1f}" '
-                     f'fill="#d8c870" opacity="{rng.uniform(0.15, 0.30):.2f}"/>')
+            P.append(
+                f'<circle cx="{px_p:.1f}" cy="{py_p:.1f}" r="{rng.uniform(0.3, 0.6):.1f}" '
+                f'fill="#d8c870" opacity="{rng.uniform(0.15, 0.30):.2f}"/>'
+            )
 
     elif bloom_type == "berry_cluster":
         berry_c = oklch_fn(0.40, 0.22, (bh + 180) % 360)
@@ -461,10 +641,14 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
             bcx = bx + dist * math.cos(angle)
             bcy = by + dist * math.sin(angle)
             br = rng.uniform(bs * 0.12, bs * 0.22)
-            P.append(f'<circle cx="{bcx:.1f}" cy="{bcy:.1f}" r="{br:.1f}" '
-                     f'fill="{berry_c}" opacity="0.55" stroke="{oklch_fn(0.32, 0.18, (bh + 180) % 360)}" stroke-width="0.2"/>')
-            P.append(f'<circle cx="{bcx - br * 0.25:.1f}" cy="{bcy - br * 0.25:.1f}" r="{br * 0.3:.1f}" '
-                     f'fill="#fff" opacity="0.2"/>')
+            P.append(
+                f'<circle cx="{bcx:.1f}" cy="{bcy:.1f}" r="{br:.1f}" '
+                f'fill="{berry_c}" opacity="0.55" stroke="{oklch_fn(0.32, 0.18, (bh + 180) % 360)}" stroke-width="0.2"/>'
+            )
+            P.append(
+                f'<circle cx="{bcx - br * 0.25:.1f}" cy="{bcy - br * 0.25:.1f}" r="{br * 0.3:.1f}" '
+                f'fill="#fff" opacity="0.2"/>'
+            )
 
     elif bloom_type == "pine_cone":
         cone_c1 = oklch_fn(0.40, 0.10, 30)
@@ -473,8 +657,10 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
         cone_c4 = oklch_fn(0.42, 0.12, 32)
         cone_outline = oklch_fn(0.28, 0.06, 22)
         # Overall cone outline (elongated oval)
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.45:.1f}" ry="{bs * 0.7:.1f}" '
-                 f'fill="{cone_c2}" opacity="0.3" stroke="{cone_outline}" stroke-width="0.3"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.45:.1f}" ry="{bs * 0.7:.1f}" '
+            f'fill="{cone_c2}" opacity="0.3" stroke="{cone_outline}" stroke-width="0.3"/>'
+        )
         # Overlapping scales in rows (5 rows, alternating offset)
         n_rows = 5
         for row in range(n_rows):
@@ -488,24 +674,29 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
             for si_sc in range(n_scales):
                 sx = bx - row_w + offset + si_sc * scale_w
                 # Individual scale — pointed arch shape
-                P.append(f'<path d="M{sx:.1f},{row_y + bs * 0.12:.1f} '
-                         f'Q{sx + scale_w * 0.2:.1f},{row_y - bs * 0.02:.1f} {sx + scale_w * 0.5:.1f},{row_y - bs * 0.08:.1f} '
-                         f'Q{sx + scale_w * 0.8:.1f},{row_y - bs * 0.02:.1f} {sx + scale_w:.1f},{row_y + bs * 0.12:.1f}" '
-                         f'fill="{c}" opacity="0.45" stroke="{cone_outline}" stroke-width="0.15"/>')
+                P.append(
+                    f'<path d="M{sx:.1f},{row_y + bs * 0.12:.1f} '
+                    f"Q{sx + scale_w * 0.2:.1f},{row_y - bs * 0.02:.1f} {sx + scale_w * 0.5:.1f},{row_y - bs * 0.08:.1f} "
+                    f'Q{sx + scale_w * 0.8:.1f},{row_y - bs * 0.02:.1f} {sx + scale_w:.1f},{row_y + bs * 0.12:.1f}" '
+                    f'fill="{c}" opacity="0.45" stroke="{cone_outline}" stroke-width="0.15"/>'
+                )
         # Stem at top
-        P.append(f'<line x1="{bx:.1f}" y1="{by - bs * 0.65:.1f}" x2="{bx:.1f}" y2="{by - bs * 0.85:.1f}" '
-                 f'stroke="{cone_outline}" stroke-width="0.5" opacity="0.4" stroke-linecap="round"/>')
+        P.append(
+            f'<line x1="{bx:.1f}" y1="{by - bs * 0.65:.1f}" x2="{bx:.1f}" y2="{by - bs * 0.85:.1f}" '
+            f'stroke="{cone_outline}" stroke-width="0.5" opacity="0.4" stroke-linecap="round"/>'
+        )
         # Shadow beneath
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.75:.1f}" rx="{bs * 0.3:.1f}" ry="{bs * 0.06:.1f}" '
-                 f'fill="#5a4a30" opacity="0.04"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.75:.1f}" rx="{bs * 0.3:.1f}" ry="{bs * 0.06:.1f}" '
+            f'fill="#5a4a30" opacity="0.04"/>'
+        )
 
     elif bloom_type == "cascade":
         # Wisteria cascade — drooping chains of small florets
         cascade_c = oklch_fn(0.58, 0.22, bh)
         cascade_d = oklch_fn(0.48, 0.18, (bh + 20) % 360)
         n_chains = max(2, min(5, n_petals // 2))
-        for ci_c in range(n_chains):
-            chain_angle = -math.pi / 2 + (ci_c - n_chains / 2.0) * 0.3 + rng.uniform(-0.15, 0.15)
+        for _ in range(n_chains):
             chain_len = bs * rng.uniform(0.8, 1.5)
             n_florets = max(3, int(chain_len / 4))
             cx_c, cy_c = bx, by
@@ -517,8 +708,10 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
                 cy_c += chain_len / n_florets
                 fr = max(1, bs * 0.12 * (1 - t * 0.4))
                 fc = cascade_c if fi_c % 2 == 0 else cascade_d
-                P.append(f'<circle cx="{cx_c:.1f}" cy="{cy_c:.1f}" r="{fr:.1f}" '
-                         f'fill="{fc}" opacity="{0.55 - t * 0.15:.2f}"/>')
+                P.append(
+                    f'<circle cx="{cx_c:.1f}" cy="{cy_c:.1f}" r="{fr:.1f}" '
+                    f'fill="{fc}" opacity="{0.55 - t * 0.15:.2f}"/>'
+                )
 
     elif bloom_type == "aerial_root":
         # Banyan aerial roots — thin dangling lines from branches
@@ -533,9 +726,11 @@ def _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budg
             mid_x = rx_ar + rng.uniform(-4, 4)
             mid_y = ry_ar + root_len * 0.5
             end_y = ry_ar + root_len
-            P.append(f'<path d="M{rx_ar:.1f},{ry_ar:.1f} Q{mid_x:.1f},{mid_y:.1f} {rx_ar + rng.uniform(-2, 2):.1f},{end_y:.1f}" '
-                     f'fill="none" stroke="{root_c}" stroke-width="{rng.uniform(0.4, 1.0):.2f}" '
-                     f'opacity="0.35" stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{rx_ar:.1f},{ry_ar:.1f} Q{mid_x:.1f},{mid_y:.1f} {rx_ar + rng.uniform(-2, 2):.1f},{end_y:.1f}" '
+                f'fill="none" stroke="{root_c}" stroke-width="{rng.uniform(0.4, 1.0):.2f}" '
+                f'opacity="0.35" stroke-linecap="round"/>'
+            )
 
 
 def generate(
@@ -554,16 +749,14 @@ def generate(
     base_seed = int(h[:8], 16)
     noise = Noise2D(seed=int(h[8:16], 16))
 
-    repos = metrics.get("repos", [])[:MAX_REPOS]
+    raw_repos = list(metrics.get("repos", []))
+    repos, overflow_repos = _select_primary_repos(raw_repos, limit=MAX_REPOS)
     monthly = metrics.get("contributions_monthly", {})
     forks = metrics.get("forks", 0)
-    watchers = metrics.get("watchers", 0)
     total_commits = metrics.get("total_commits", 500)
     open_issues = metrics.get("open_issues_count", 0)
     network = metrics.get("network_count", 0)
     stars_total = metrics.get("stars", 0)
-    contributions = metrics.get("contributions_last_year", 200)
-    orgs = metrics.get("orgs_count", 1)
 
     # ── WorldState (unified atmospheric/environmental state) ─────
     world = compute_world_state(metrics)
@@ -571,7 +764,10 @@ def generate(
     # ── OKLCH palette & complexity (Phase 4c) ─────────────────────
     palette_name = select_palette_for_world(world)
     pal = _build_world_palette_extended(
-        world.time_of_day, world.weather, world.season, world.energy,
+        world.time_of_day,
+        world.weather,
+        world.season,
+        world.energy,
     )
     complexity = visual_complexity(metrics)
     # Seasonal ground cover gradient via OKLCH pipeline
@@ -579,8 +775,9 @@ def generate(
 
     # ── Enriched metric extraction ────────────────────────────────
     streaks = metrics.get("contribution_streaks", {})
-    current_streak = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
-    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    current_streak = (
+        streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    )
     vigor_multiplier = 1.0 + min(0.5, current_streak * 0.04)  # up to 1.5x
 
     # ── New data-mapping metrics ───────────────────────────────────
@@ -605,12 +802,12 @@ def generate(
 
     # Sky and atmosphere tinting based on dominant language
     lang_sky_tint = {
-        "Python": (0.58, 0.03, 150),    # cool green-blue
+        "Python": (0.58, 0.03, 150),  # cool green-blue
         "JavaScript": (0.62, 0.04, 65),  # warm amber
-        "TypeScript": (0.56, 0.04, 230), # cool blue
-        "Rust": (0.55, 0.03, 30),        # warm rust
-        "Go": (0.58, 0.04, 185),         # teal
-        "Ruby": (0.56, 0.04, 350),       # rosy
+        "TypeScript": (0.56, 0.04, 230),  # cool blue
+        "Rust": (0.55, 0.03, 30),  # warm rust
+        "Go": (0.58, 0.04, 185),  # teal
+        "Ruby": (0.56, 0.04, 350),  # rosy
     }.get(dominant_lang, (0.58, 0.02, 150))
 
     # Circadian cycle from commit hours
@@ -671,7 +868,9 @@ def generate(
         try:
             if len(value) == 10:
                 return datetime.fromisoformat(value)
-            return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
+            return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(
+                tzinfo=None
+            )
         except ValueError:
             return None
 
@@ -747,19 +946,19 @@ def generate(
         return GROUND_Y + noise.noise(x * 0.008, 0) * 25 + noise.noise(x * 0.02, 5) * 8
 
     # Collect all visual elements
-    all_segs = []   # (x1,y1,x2,y2,sw,hue,depth,is_main,bark_mat,when)
-    roots = []       # (x1,y1,x2,y2,sw,when)
-    leaves = []      # (x,y,angle,size,hue,has_vein,leaf_shape,when)
-    blooms = []      # (x,y,size,hue,n_petals,layers,bloom_type,when)
-    buds = []        # (x,y,size,hue,when)
-    berries = []     # (x,y,size,hue,when)
-    tendrils = []    # list of point-lists
+    all_segs = []  # (x1,y1,x2,y2,sw,hue,depth,is_main,bark_mat,when)
+    roots = []  # (x1,y1,x2,y2,sw,when)
+    leaves = []  # (x,y,angle,size,hue,has_vein,leaf_shape,when)
+    blooms = []  # (x,y,size,hue,n_petals,layers,bloom_type,when)
+    buds = []  # (x,y,size,hue,when)
+    berries = []  # (x,y,size,hue,when)
+    tendrils = []  # list of point-lists
     mushrooms_list = []  # (x,y,size,hue)
-    insects = []     # (x,y,type,size,hue)
-    webs = []        # (cx,cy,radius,n_spokes)
-    dew_drops = []   # (x,y,size)
-    seeds = []       # (x,y,angle,size)
-    labels = []      # (lx,ly,text,ax,ay,when)
+    insects = []  # (x,y,type,size,hue)
+    webs = []  # (cx,cy,radius,n_spokes)
+    dew_drops = []  # (x,y,size)
+    seeds = []  # (x,y,angle,size)
+    labels = []  # (lx,ly,text,subtext,ax,ay,when)
 
     # Track plant base positions for ground cover enhancement
     plant_bases = []
@@ -789,7 +988,9 @@ def generate(
         cluster_centers_base = np.array([CX], dtype=float)
     cluster_centers = []
     for ci, base_center in enumerate(cluster_centers_base):
-        nudge = noise.fbm(ci * 2.3 + 0.7, spread * 0.41 + 0.3, 3) * 36 + cluster_rng.uniform(-16, 16)
+        nudge = noise.fbm(
+            ci * 2.3 + 0.7, spread * 0.41 + 0.3, 3
+        ) * 36 + cluster_rng.uniform(-16, 16)
         cluster_centers.append(float(max(85, min(WIDTH - 85, base_center + nudge))))
     cluster_slot = {}
     cursor = 0
@@ -834,7 +1035,11 @@ def generate(
 
     for ri, repo in enumerate(repos):
         # Per-tree growth: stagger birth times, grow from seedling → full
-        tree_start = first_start + (ri / max(1, n_repos - 1)) * (last_start - first_start) if n_repos > 1 else first_start
+        tree_start = (
+            first_start + (ri / max(1, n_repos - 1)) * (last_start - first_start)
+            if n_repos > 1
+            else first_start
+        )
         tree_t = max(0.0, min(1.0, (mat - tree_start) / RAMP))
 
         if tree_t <= 0:
@@ -848,7 +1053,9 @@ def generate(
         hue = repo_hues[ri] if ri < len(repo_hues) else LANG_HUES.get(lang, 160)
         repo_stars = repo.get("stars", 0)
         age = repo.get("age_months", 6)
-        repo_date = _repo_date(repo) or _date_for_activity_fraction(ri / max(1, n_repos))
+        repo_date = _repo_date(repo) or _date_for_activity_fraction(
+            ri / max(1, n_repos)
+        )
         trunk_when = repo_date
         branch_when = _offset_date(repo_date, 0.08)
         leaf_when = _offset_date(repo_date, 0.14)
@@ -892,7 +1099,11 @@ def generate(
         main_length = max(50, (70 + min(280, age * 3.5)) * tree_t * commit_factor)
         max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
         # Data mapping: commits -> trunk thickness (vigor from contribution streaks)
-        stem_sw = max(2.5, (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0)) * (0.4 + 0.6 * tree_t))
+        stem_sw = max(
+            2.5,
+            (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0))
+            * (0.4 + 0.6 * tree_t),
+        )
         stem_sw *= vigor_multiplier
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
@@ -900,15 +1111,33 @@ def generate(
         bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
 
         if main_length >= 5:
-            labels.append((base_x, gy + 18, repo.get("name", ""), base_x, gy, trunk_when))
+            labels.append(
+                (
+                    base_x,
+                    gy + 18,
+                    repo.get("name", ""),
+                    _repo_topic_annotation(repo),
+                    base_x,
+                    gy,
+                    trunk_when,
+                )
+            )
         plant_bases.append((base_x, gy))
-        tree_tooltips.append((
-            base_x, gy, gy - main_length,
-            repo.get("name", ""), repo.get("language", ""), repo_stars, species,
-        ))
+        tree_tooltips.append(
+            (
+                base_x,
+                gy,
+                gy - main_length,
+                repo.get("name", ""),
+                repo.get("language", ""),
+                repo_stars,
+                species,
+            )
+        )
 
         # ── Fern growth (special algorithm) ───────────────────────
         if species == "fern":
+
             def _grow_frond(fx, fy, f_angle, f_length, f_hue):
                 """Grow a single fern frond: arcing spine with pinnate leaflets."""
                 n_spine = max(8, int(f_length / 8))
@@ -924,7 +1153,20 @@ def generate(
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
                     sw = max(0.3, stem_sw * 0.5 * (1 - t * 0.7))
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, f_hue, 1, si < 3, bark_maturity, branch_when))
+                    all_segs.append(
+                        (
+                            cx_,
+                            cy_,
+                            nx_,
+                            ny_,
+                            sw,
+                            f_hue,
+                            1,
+                            si < 3,
+                            bark_maturity,
+                            branch_when,
+                        )
+                    )
 
                     # Pinnate leaflets along both sides (alternating, shrinking)
                     if si > 1 and si < n_spine - 1:
@@ -933,8 +1175,23 @@ def generate(
                         perp = cur_angle + side * math.pi / 2
                         la = perp + rng.uniform(-0.2, 0.2)
                         if len(leaves) < MAX_LEAVES:
-                            _lhue = autumn_leaf_hue if is_autumn else (f_hue + 15 + leaf_hue_shift) % 360
-                            leaves.append((nx_, ny_, la, max(2, leaflet_size), _lhue, False, "pinnate", leaf_when))
+                            _lhue = (
+                                autumn_leaf_hue
+                                if is_autumn
+                                else (f_hue + 15 + leaf_hue_shift) % 360
+                            )
+                            leaves.append(
+                                (
+                                    nx_,
+                                    ny_,
+                                    la,
+                                    max(2, leaflet_size),
+                                    _lhue,
+                                    False,
+                                    "pinnate",
+                                    leaf_when,
+                                )
+                            )
 
                     cx_, cy_ = nx_, ny_
 
@@ -948,17 +1205,33 @@ def generate(
                     sl = 3 * (1 - t * 0.5)
                     nx_ = cx_ + sl * math.cos(cur_angle)
                     ny_ = cy_ + sl * math.sin(cur_angle)
-                    all_segs.append((cx_, cy_, nx_, ny_, 0.3, f_hue, 2, False, bark_maturity, branch_when))
+                    all_segs.append(
+                        (
+                            cx_,
+                            cy_,
+                            nx_,
+                            ny_,
+                            0.3,
+                            f_hue,
+                            2,
+                            False,
+                            bark_maturity,
+                            branch_when,
+                        )
+                    )
                     cx_, cy_ = nx_, ny_
 
             n_fronds = max(2, min(5, 2 + age // 12))
             for fi in range(n_fronds):
-                f_angle = base_angle + (fi - n_fronds / 2.0) * 0.4 + rng.uniform(-0.15, 0.15)
+                f_angle = (
+                    base_angle + (fi - n_fronds / 2.0) * 0.4 + rng.uniform(-0.15, 0.15)
+                )
                 f_length = main_length * rng.uniform(0.6, 1.0)
                 _grow_frond(base_x, gy, f_angle, f_length, hue)
 
         # ── Bamboo growth (special algorithm) ─────────────────────
         elif species == "bamboo":
+
             def _grow_bamboo(bx, by, b_hue):
                 """Grow a bamboo cane: straight vertical with joints and leaf clusters."""
                 cane_height = min(300, main_length * 1.5)
@@ -974,22 +1247,67 @@ def generate(
                     sway = noise.noise(bx * 0.01 + ji * 0.5, by * 0.01) * 2
                     nx_ = cx_ + sway
                     ny_ = cy_ - joint_spacing
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, b_hue, 0, True, bark_maturity, trunk_when))
+                    all_segs.append(
+                        (
+                            cx_,
+                            cy_,
+                            nx_,
+                            ny_,
+                            sw,
+                            b_hue,
+                            0,
+                            True,
+                            bark_maturity,
+                            trunk_when,
+                        )
+                    )
 
                     # Visible joint (short horizontal widening)
                     jw = sw * 1.8
-                    all_segs.append((nx_ - jw, ny_, nx_ + jw, ny_, sw * 0.6, b_hue, 1, False, bark_maturity, branch_when))
+                    all_segs.append(
+                        (
+                            nx_ - jw,
+                            ny_,
+                            nx_ + jw,
+                            ny_,
+                            sw * 0.6,
+                            b_hue,
+                            1,
+                            False,
+                            bark_maturity,
+                            branch_when,
+                        )
+                    )
 
                     # Narrow leaf clusters at alternating joints
                     if ji % 2 == 0 and ji > 0:
                         n_blades = rng.integers(2, 5)
                         side = rng.choice([-1, 1])
                         for bi in range(n_blades):
-                            la = -math.pi / 2 + side * (0.8 + bi * 0.2) + rng.uniform(-0.15, 0.15)
+                            la = (
+                                -math.pi / 2
+                                + side * (0.8 + bi * 0.2)
+                                + rng.uniform(-0.15, 0.15)
+                            )
                             ls = rng.uniform(6, 14) * (1 - t * 0.3)
                             if len(leaves) < MAX_LEAVES:
-                                _lhue = autumn_leaf_hue if is_autumn else (b_hue + 20 + leaf_hue_shift) % 360
-                                leaves.append((nx_, ny_, la, ls, _lhue, False, "narrow_blade", leaf_when))
+                                _lhue = (
+                                    autumn_leaf_hue
+                                    if is_autumn
+                                    else (b_hue + 20 + leaf_hue_shift) % 360
+                                )
+                                leaves.append(
+                                    (
+                                        nx_,
+                                        ny_,
+                                        la,
+                                        ls,
+                                        _lhue,
+                                        False,
+                                        "narrow_blade",
+                                        leaf_when,
+                                    )
+                                )
 
                     cx_, cy_ = nx_, ny_
 
@@ -1015,7 +1333,16 @@ def generate(
             short_length = min(60, main_length * 0.4)
             short_depth = min(2, max_depth)
 
-            def _grow(x, y, angle, depth, length, sw, style_d=seedling_style, max_d=short_depth):
+            def _grow(
+                x,
+                y,
+                angle,
+                depth,
+                length,
+                sw,
+                style_d=seedling_style,
+                max_d=short_depth,
+            ):
                 if depth > max_d or length < 5 or len(all_segs) >= MAX_SEGS:
                     return
                 n_s = max(2, int(length / 12))
@@ -1037,20 +1364,50 @@ def generate(
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity, trunk_when if depth == 0 else branch_when))
+                    all_segs.append(
+                        (
+                            cx_,
+                            cy_,
+                            nx_,
+                            ny_,
+                            sw,
+                            hue,
+                            depth,
+                            depth == 0,
+                            bark_maturity,
+                            trunk_when if depth == 0 else branch_when,
+                        )
+                    )
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
-                        _lhue = autumn_leaf_hue if is_autumn else (hue + 25 + leaf_hue_shift) % 360
-                        leaves.append((nx_, ny_, la, ls, _lhue, rng.random() < 0.7, style_d["leaf_shape"], leaf_when))
+                        _lhue = (
+                            autumn_leaf_hue
+                            if is_autumn
+                            else (hue + 25 + leaf_hue_shift) % 360
+                        )
+                        leaves.append(
+                            (
+                                nx_,
+                                ny_,
+                                la,
+                                ls,
+                                _lhue,
+                                rng.random() < 0.7,
+                                style_d["leaf_shape"],
+                                leaf_when,
+                            )
+                        )
                         if rng.random() < 0.15:
-                            dew_drops.append((
-                                nx_ + ls * 0.5 * math.cos(la),
-                                ny_ + ls * 0.5 * math.sin(la),
-                                rng.uniform(1, 2.5),
-                            ))
+                            dew_drops.append(
+                                (
+                                    nx_ + ls * 0.5 * math.cos(la),
+                                    ny_ + ls * 0.5 * math.sin(la),
+                                    rng.uniform(1, 2.5),
+                                )
+                            )
 
                     if depth >= 2 and rng.random() < 0.12:
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
@@ -1059,12 +1416,23 @@ def generate(
                     angle = a
 
                     # Murray's Law: child branch width from parent^3 = child1^3 + child2^3
-                    if len(all_segs) < MAX_SEGS and rng.random() < style_d["branch_prob"] * (1 - depth / max_d):
+                    if len(all_segs) < MAX_SEGS and rng.random() < style_d[
+                        "branch_prob"
+                    ] * (1 - depth / max_d):
                         fa = rng.uniform(0.4, 1.1) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
                         # Murray's law: assume remaining trunk takes ~70% of flow
-                        child_sw = (sw ** 3 * 0.3) ** (1.0 / 3.0)
-                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw, style_d, max_d)
+                        child_sw = (sw**3 * 0.3) ** (1.0 / 3.0)
+                        _grow(
+                            cx_,
+                            cy_,
+                            a + fa,
+                            depth + 1,
+                            length * rng.uniform(decay_lo, decay_hi),
+                            child_sw,
+                            style_d,
+                            max_d,
+                        )
 
                 # Terminal fork
                 if depth < max_d and len(all_segs) < MAX_SEGS:
@@ -1072,37 +1440,70 @@ def generate(
                     n_forks = rng.integers(fork_lo, fork_hi)
                     # Murray's Law: parent_sw^3 = sum(child_sw_i^3)
                     # Equal split among n_forks children
-                    child_sw_fork = (sw ** 3 / max(1, n_forks)) ** (1.0 / 3.0)
+                    child_sw_fork = (sw**3 / max(1, n_forks)) ** (1.0 / 3.0)
                     for _ in range(n_forks):
                         if len(all_segs) >= MAX_SEGS:
                             break
                         fa = rng.uniform(0.3, 1.0) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw_fork, style_d, max_d)
+                        _grow(
+                            cx_,
+                            cy_,
+                            angle + fa,
+                            depth + 1,
+                            length * rng.uniform(decay_lo, decay_hi),
+                            child_sw_fork,
+                            style_d,
+                            max_d,
+                        )
 
                 # Blooms at tips — bloom probability boosted by total stars
                 if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
-                    blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
+                    blooms.append(
+                        (
+                            cx_,
+                            cy_,
+                            bloom_size,
+                            (hue + bloom_hue_shift) % 360,
+                            n_petals,
+                            petal_layers,
+                            style_d["bloom_type"],
+                            bloom_when,
+                        )
+                    )
 
                 # Berries
                 if depth >= max_d and rng.random() < 0.2:
                     for _ in range(rng.integers(2, 6)):
-                        berries.append((
-                            cx_ + rng.uniform(-6, 6),
-                            cy_ + rng.uniform(-6, 6),
-                            rng.uniform(1.5, 3),
-                            (hue + 180) % 360,
-                            bloom_when,
-                        ))
+                        berries.append(
+                            (
+                                cx_ + rng.uniform(-6, 6),
+                                cy_ + rng.uniform(-6, 6),
+                                rng.uniform(1.5, 3),
+                                (hue + 180) % 360,
+                                bloom_when,
+                            )
+                        )
 
             _grow(base_x, gy, base_angle, 0, short_length, stem_sw * 0.6)
 
         # ── Standard species-driven growth (oak, birch, conifer, shrub, wildflower) ──
         elif style is not None:
-            def _grow(x, y, angle, depth, length, sw, style_d=style, max_d=max_depth, seg_idx=0):
+
+            def _grow(
+                x,
+                y,
+                angle,
+                depth,
+                length,
+                sw,
+                style_d=style,
+                max_d=max_depth,
+                seg_idx=0,
+            ):
                 if depth > max_d or length < 5 or len(all_segs) >= MAX_SEGS:
                     return
                 n_s = max(2, int(length / 12))
@@ -1124,20 +1525,50 @@ def generate(
                         nx_ = cx_ + sl * math.cos(a)
                         ny_ = cy_ + sl * math.sin(a)
 
-                    all_segs.append((cx_, cy_, nx_, ny_, sw, hue, depth, depth == 0, bark_maturity, trunk_when if depth == 0 else branch_when))
+                    all_segs.append(
+                        (
+                            cx_,
+                            cy_,
+                            nx_,
+                            ny_,
+                            sw,
+                            hue,
+                            depth,
+                            depth == 0,
+                            bark_maturity,
+                            trunk_when if depth == 0 else branch_when,
+                        )
+                    )
 
                     if depth >= 1 and rng.random() < style_d["leaf_prob"]:
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
-                        _lhue = autumn_leaf_hue if is_autumn else (hue + 25 + leaf_hue_shift) % 360
-                        leaves.append((nx_, ny_, la, ls, _lhue, rng.random() < 0.7, style_d["leaf_shape"], leaf_when))
+                        _lhue = (
+                            autumn_leaf_hue
+                            if is_autumn
+                            else (hue + 25 + leaf_hue_shift) % 360
+                        )
+                        leaves.append(
+                            (
+                                nx_,
+                                ny_,
+                                la,
+                                ls,
+                                _lhue,
+                                rng.random() < 0.7,
+                                style_d["leaf_shape"],
+                                leaf_when,
+                            )
+                        )
                         if rng.random() < 0.15:
-                            dew_drops.append((
-                                nx_ + ls * 0.5 * math.cos(la),
-                                ny_ + ls * 0.5 * math.sin(la),
-                                rng.uniform(1, 2.5),
-                            ))
+                            dew_drops.append(
+                                (
+                                    nx_ + ls * 0.5 * math.cos(la),
+                                    ny_ + ls * 0.5 * math.sin(la),
+                                    rng.uniform(1, 2.5),
+                                )
+                            )
 
                     if depth >= 2 and rng.random() < 0.12:
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
@@ -1151,20 +1582,36 @@ def generate(
                         trunk_ok = (si + seg_idx) > n_s * style_d["min_trunk_ratio"]
 
                     # Murray's Law: child branch width from parent^3 = child1^3 + child2^3
-                    if trunk_ok and len(all_segs) < MAX_SEGS and rng.random() < style_d["branch_prob"] * (1 - depth / max_d):
+                    if (
+                        trunk_ok
+                        and len(all_segs) < MAX_SEGS
+                        and rng.random() < style_d["branch_prob"] * (1 - depth / max_d)
+                    ):
                         angle_range = style_d.get("branch_angle_range", (0.4, 1.1))
-                        fa = rng.uniform(angle_range[0], angle_range[1]) * rng.choice([-1, 1])
+                        fa = rng.uniform(angle_range[0], angle_range[1]) * rng.choice(
+                            [-1, 1]
+                        )
                         decay_lo, decay_hi = style_d["length_decay"]
                         # Murray's law: assume remaining trunk takes ~70% of flow
-                        child_sw = (sw ** 3 * 0.3) ** (1.0 / 3.0)
-                        _grow(cx_, cy_, a + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw, style_d, max_d, si)
+                        child_sw = (sw**3 * 0.3) ** (1.0 / 3.0)
+                        _grow(
+                            cx_,
+                            cy_,
+                            a + fa,
+                            depth + 1,
+                            length * rng.uniform(decay_lo, decay_hi),
+                            child_sw,
+                            style_d,
+                            max_d,
+                            si,
+                        )
 
                 # Terminal fork — Murray's Law: parent_sw^3 = sum(child_sw_i^3)
                 if depth < max_d and len(all_segs) < MAX_SEGS:
                     fork_lo, fork_hi = style_d["fork_range"]
                     n_forks = rng.integers(fork_lo, fork_hi)
                     # Equal split among n_forks children
-                    child_sw_fork = (sw ** 3 / max(1, n_forks)) ** (1.0 / 3.0)
+                    child_sw_fork = (sw**3 / max(1, n_forks)) ** (1.0 / 3.0)
                     for _ in range(n_forks):
                         if len(all_segs) >= MAX_SEGS:
                             break
@@ -1172,7 +1619,17 @@ def generate(
                         lo_a, hi_a = sorted((0.3, spread_a))
                         fa = rng.uniform(lo_a, hi_a) * rng.choice([-1, 1])
                         decay_lo, decay_hi = style_d["length_decay"]
-                        _grow(cx_, cy_, angle + fa, depth + 1, length * rng.uniform(decay_lo, decay_hi), child_sw_fork, style_d, max_d, 0)
+                        _grow(
+                            cx_,
+                            cy_,
+                            angle + fa,
+                            depth + 1,
+                            length * rng.uniform(decay_lo, decay_hi),
+                            child_sw_fork,
+                            style_d,
+                            max_d,
+                            0,
+                        )
 
                 # Blooms at tips (fern and bamboo have no blooms — handled above)
                 # bloom probability boosted by total stars
@@ -1180,18 +1637,31 @@ def generate(
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
-                    blooms.append((cx_, cy_, bloom_size, (hue + bloom_hue_shift) % 360, n_petals, petal_layers, style_d["bloom_type"], bloom_when))
+                    blooms.append(
+                        (
+                            cx_,
+                            cy_,
+                            bloom_size,
+                            (hue + bloom_hue_shift) % 360,
+                            n_petals,
+                            petal_layers,
+                            style_d["bloom_type"],
+                            bloom_when,
+                        )
+                    )
 
                 # Berries
                 if depth >= max_d and rng.random() < 0.2:
                     for _ in range(rng.integers(2, 6)):
-                        berries.append((
-                            cx_ + rng.uniform(-6, 6),
-                            cy_ + rng.uniform(-6, 6),
-                            rng.uniform(1.5, 3),
-                            (hue + 180) % 360,
-                            bloom_when,
-                        ))
+                        berries.append(
+                            (
+                                cx_ + rng.uniform(-6, 6),
+                                cy_ + rng.uniform(-6, 6),
+                                rng.uniform(1.5, 3),
+                                (hue + 180) % 360,
+                                bloom_when,
+                            )
+                        )
 
             _grow(base_x, gy, base_angle, 0, main_length, stem_sw)
 
@@ -1199,7 +1669,11 @@ def generate(
         # Data mapping: forks -> wider root spread angle and more root count
         fork_spread = min(1.2, 0.5 + forks / 20.0)
         root_depth = (40 + min(100, age * 1.2)) * tree_t
-        n_roots = max(1, round(max(2, min(7, 2 + forks // 5)) * tree_t)) if root_depth >= 1 else 0
+        n_roots = (
+            max(1, round(max(2, min(7, 2 + forks // 5)) * tree_t))
+            if root_depth >= 1
+            else 0
+        )
         for rootn in range(n_roots):
             if len(roots) >= MAX_ROOTS:
                 break
@@ -1216,7 +1690,9 @@ def generate(
                 sl = r_len / r_segs
                 nrx = rx + sl * math.cos(ra)
                 nry = ry + sl * math.sin(ra)
-                roots.append((rx, ry, nrx, nry, r_sw * (1 - rsi / r_segs * 0.6), root_when))
+                roots.append(
+                    (rx, ry, nrx, nry, r_sw * (1 - rsi / r_segs * 0.6), root_when)
+                )
                 rx, ry = nrx, nry
                 r_sw *= 0.92
                 if rng.random() < 0.2 and len(roots) < MAX_ROOTS:
@@ -1251,7 +1727,14 @@ def generate(
     # ── Mushrooms ─────────────────────────────────────────────────
     for mi in range(min(6, open_issues)):
         mx = 60 + rng.uniform(0, WIDTH - 120)
-        mushrooms_list.append((mx, ground_y_at(mx) + rng.uniform(-3, 5), 4 + rng.uniform(0, 6), 30 + rng.integers(0, 40)))
+        mushrooms_list.append(
+            (
+                mx,
+                ground_y_at(mx) + rng.uniform(-3, 5),
+                4 + rng.uniform(0, 6),
+                30 + rng.integers(0, 40),
+            )
+        )
 
     # ── Insects (data-driven: PRs -> pollinators, reviews -> bees) ──
     total_prs_count = metrics.get("total_prs", 0) or 0
@@ -1262,13 +1745,45 @@ def generate(
     n_ladybugs = min(4, max(1, len(repos) // 3))
 
     for _ in range(n_butterflies):
-        insects.append((rng.uniform(50, WIDTH - 50), rng.uniform(40, GROUND_Y - 20), "butterfly", rng.uniform(8, 16), rng.integers(0, 360)))
+        insects.append(
+            (
+                rng.uniform(50, WIDTH - 50),
+                rng.uniform(40, GROUND_Y - 20),
+                "butterfly",
+                rng.uniform(8, 16),
+                rng.integers(0, 360),
+            )
+        )
     for _ in range(n_bees):
-        insects.append((rng.uniform(80, WIDTH - 80), rng.uniform(60, GROUND_Y - 40), "bee", rng.uniform(4, 8), 45))
+        insects.append(
+            (
+                rng.uniform(80, WIDTH - 80),
+                rng.uniform(60, GROUND_Y - 40),
+                "bee",
+                rng.uniform(4, 8),
+                45,
+            )
+        )
     for _ in range(n_dragonflies):
-        insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(30, GROUND_Y - 50), "dragonfly", rng.uniform(10, 18), rng.integers(0, 360)))
+        insects.append(
+            (
+                rng.uniform(60, WIDTH - 60),
+                rng.uniform(30, GROUND_Y - 50),
+                "dragonfly",
+                rng.uniform(10, 18),
+                rng.integers(0, 360),
+            )
+        )
     for _ in range(n_ladybugs):
-        insects.append((rng.uniform(60, WIDTH - 60), rng.uniform(GROUND_Y - 15, GROUND_Y + 5), "ladybug", rng.uniform(3, 5), 0))
+        insects.append(
+            (
+                rng.uniform(60, WIDTH - 60),
+                rng.uniform(GROUND_Y - 15, GROUND_Y + 5),
+                "ladybug",
+                rng.uniform(3, 5),
+                0,
+            )
+        )
 
     # ── Webs ──────────────────────────────────────────────────────
     if mat > 0.25:
@@ -1280,19 +1795,34 @@ def generate(
     # ── Falling seeds (dandelion wisps + maple samaras) ───────────
     if mat > 0.2:
         for _ in range(min(10, stars_total // 5)):
-            seeds.append((rng.uniform(40, WIDTH - 40), rng.uniform(30, GROUND_Y - 10), rng.uniform(-0.3, 0.3), rng.uniform(2, 5)))
+            seeds.append(
+                (
+                    rng.uniform(40, WIDTH - 40),
+                    rng.uniform(30, GROUND_Y - 10),
+                    rng.uniform(-0.3, 0.3),
+                    rng.uniform(2, 5),
+                )
+            )
     # Maple samaras — spinning helicopter seeds
     samaras = []
     if mat > 0.35:
         for _ in range(min(6, stars_total // 8)):
-            samaras.append((rng.uniform(50, WIDTH - 50), rng.uniform(40, GROUND_Y - 20),
-                            rng.uniform(-0.8, 0.8), rng.uniform(3, 7)))
+            samaras.append(
+                (
+                    rng.uniform(50, WIDTH - 50),
+                    rng.uniform(40, GROUND_Y - 20),
+                    rng.uniform(-0.8, 0.8),
+                    rng.uniform(3, 7),
+                )
+            )
 
     # ══════════════════════════════════════════════════════════════
     # BUILD SVG
     # ══════════════════════════════════════════════════════════════
     P = []  # parts list
-    P.append(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">')
+    P.append(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">'
+    )
     if timeline_enabled:
         P.append(
             "<style>"
@@ -1302,36 +1832,36 @@ def generate(
         )
 
     # ── defs ──────────────────────────────────────────────────────
-    P.append('<defs>')
+    P.append("<defs>")
     # Canvas/paper texture overlay — subtle woven linen feel via feTurbulence + feDisplacementMap
-    P.append('''<filter id="canvas" x="0" y="0" width="100%" height="100%">
+    P.append("""<filter id="canvas" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="turbulence" baseFrequency="0.35 0.25" numOctaves="3" seed="19" result="weave"/>
     <feDisplacementMap in="SourceGraphic" in2="weave" scale="0.8" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>''')
+  </filter>""")
     # Ink displacement — subtle organic wobble
-    P.append('''<filter id="ink" x="-3%" y="-3%" width="106%" height="106%">
+    P.append("""<filter id="ink" x="-3%" y="-3%" width="106%" height="106%">
     <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="42" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-  </filter>''')
+  </filter>""")
     # Paper grain — diffuse lighting for tactile parchment feel
-    P.append('''<filter id="paper" x="0" y="0" width="100%" height="100%">
+    P.append("""<filter id="paper" x="0" y="0" width="100%" height="100%">
     <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="5" seed="7" result="noise"/>
     <feDiffuseLighting in="noise" lighting-color="#f8f3ea" surfaceScale="1.2" result="lit">
       <feDistantLight azimuth="225" elevation="55"/>
     </feDiffuseLighting>
     <feComposite in="SourceGraphic" in2="lit" operator="arithmetic" k1="0.6" k2="0.5" k3="0.1" k4="0"/>
-  </filter>''')
+  </filter>""")
     # Soft glow for dew and highlights
-    P.append('''<filter id="dew">
+    P.append("""<filter id="dew">
     <feGaussianBlur in="SourceGraphic" stdDeviation="0.6"/>
     <feComposite in="SourceGraphic" operator="over"/>
-  </filter>''')
+  </filter>""")
     # Dew drop radial gradient
-    P.append('''<radialGradient id="dewGrad" cx="30%" cy="30%">
+    P.append("""<radialGradient id="dewGrad" cx="30%" cy="30%">
     <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
     <stop offset="35%" stop-color="#e8f4ff" stop-opacity="0.65"/>
     <stop offset="100%" stop-color="#a8d4ee" stop-opacity="0.15"/>
-  </radialGradient>''')
+  </radialGradient>""")
     # Vignette gradient — subtle edge darkening for aged look
     P.append(f'''<radialGradient id="vignette" cx="50%" cy="48%" r="52%">
     <stop offset="0%" stop-color="#f5f0e6" stop-opacity="0"/>
@@ -1344,16 +1874,50 @@ def generate(
     sky_top = oklch(*sky_gradient[0])
     sky_mid = oklch(*sky_gradient[1])
     sky_top_opacity = 0.85 if time_of_day == "night" else 0.6
-    P.append(make_linear_gradient('skyGrad', '0', '0', '0', '1',
-        [('0%', sky_top, sky_top_opacity), ('30%', sky_mid, 0.3), ('55%', '#f5f0e6', 0.0)]))
+    P.append(
+        make_linear_gradient(
+            "skyGrad",
+            "0",
+            "0",
+            "0",
+            "1",
+            [
+                ("0%", sky_top, sky_top_opacity),
+                ("30%", sky_mid, 0.3),
+                ("55%", "#f5f0e6", 0.0),
+            ],
+        )
+    )
     # Bloom center glow — white hot-spot overlay
-    P.append(make_radial_gradient('petalGlow', '50%', '60%', '70%',
-        [('0%', '#ffffff', 0.45), ('40%', '#ffffff', 0.15), ('100%', '#ffffff', 0.0)]))
+    P.append(
+        make_radial_gradient(
+            "petalGlow",
+            "50%",
+            "60%",
+            "70%",
+            [
+                ("0%", "#ffffff", 0.45),
+                ("40%", "#ffffff", 0.15),
+                ("100%", "#ffffff", 0.0),
+            ],
+        )
+    )
     # Atmospheric light from upper-left
-    P.append(make_radial_gradient('lightRay', '12%', '-2%', '90%',
-        [('0%', '#fffbe8', mat * 0.18), ('40%', '#fff8e0', mat * 0.07), ('100%', '#f5f0e6', 0.0)]))
+    P.append(
+        make_radial_gradient(
+            "lightRay",
+            "12%",
+            "-2%",
+            "90%",
+            [
+                ("0%", "#fffbe8", mat * 0.18),
+                ("40%", "#fff8e0", mat * 0.07),
+                ("100%", "#f5f0e6", 0.0),
+            ],
+        )
+    )
     # Grass — multiple blade types, seed heads, varied greens
-    P.append('''<pattern id="grass" width="18" height="10" patternUnits="userSpaceOnUse">
+    P.append("""<pattern id="grass" width="18" height="10" patternUnits="userSpaceOnUse">
     <line x1="2" y1="10" x2="1" y2="2" stroke="#6a8a4a" stroke-width="0.5" opacity="0.4"/>
     <line x1="4" y1="10" x2="5" y2="3" stroke="#7a9a5a" stroke-width="0.5" opacity="0.38"/>
     <path d="M7,10 Q6,5 8,1" fill="none" stroke="#5a7a3a" stroke-width="0.45" opacity="0.35"/>
@@ -1361,69 +1925,94 @@ def generate(
     <path d="M13,10 Q14,6 12,1" fill="none" stroke="#6a8a4a" stroke-width="0.45" opacity="0.34"/>
     <circle cx="12" cy="1" r="0.6" fill="#a09a60" opacity="0.3"/>
     <line x1="16" y1="10" x2="15" y2="4" stroke="#7a8a5a" stroke-width="0.45" opacity="0.32"/>
-  </pattern>''')
+  </pattern>""")
     # Soil layers — rich earth tones with organic texture
-    P.append('''<pattern id="soil1" width="24" height="8" patternUnits="userSpaceOnUse">
+    P.append("""<pattern id="soil1" width="24" height="8" patternUnits="userSpaceOnUse">
     <rect width="24" height="8" fill="#c0a070"/>
     <circle cx="5" cy="3" r="1.1" fill="#a08050" opacity="0.45"/>
     <circle cx="16" cy="5" r="0.8" fill="#907040" opacity="0.4"/>
     <circle cx="20" cy="2" r="0.5" fill="#b09860" opacity="0.3"/>
     <path d="M0,6 Q6,5 12,6.5 Q18,7 24,6" fill="none" stroke="#a08858" stroke-width="0.4" opacity="0.25"/>
-  </pattern>''')
-    P.append('''<pattern id="soil2" width="20" height="7" patternUnits="userSpaceOnUse">
+  </pattern>""")
+    P.append("""<pattern id="soil2" width="20" height="7" patternUnits="userSpaceOnUse">
     <rect width="20" height="7" fill="#a88860"/>
     <circle cx="4" cy="3" r="1.1" fill="#988050" opacity="0.3"/>
     <circle cx="14" cy="5" r="0.7" fill="#907848" opacity="0.25"/>
     <path d="M0,4 C5,3 10,5 20,4" fill="none" stroke="#9a8858" stroke-width="0.25" opacity="0.15"/>
-  </pattern>''')
-    P.append('''<pattern id="soil3" width="16" height="6" patternUnits="userSpaceOnUse">
+  </pattern>""")
+    P.append("""<pattern id="soil3" width="16" height="6" patternUnits="userSpaceOnUse">
     <rect width="16" height="6" fill="#907850"/>
     <circle cx="8" cy="3" r="0.5" fill="#807040" opacity="0.2"/>
     <path d="M0,2 Q4,3 8,2 Q12,1 16,2" fill="none" stroke="#806840" stroke-width="0.2" opacity="0.12"/>
-  </pattern>''')
+  </pattern>""")
     # ── World-state atmospheric filters & patterns ─────────────────
     P.append(atmospheric_haze_filter("bgHaze", 0.5))
     P.append(volumetric_glow_filter("fireflyGlow", radius=2.0))
     P.append(aurora_filter("auroraGlow"))
     # Sun glow gradient for clear weather
-    P.append(make_radial_gradient('weatherSunGlow', '12%', '-2%', '90%',
-        [('0%', '#fffbe8', 0.12), ('50%', '#fff8e0', 0.04), ('100%', '#f5f0e6', 0.0)]))
+    P.append(
+        make_radial_gradient(
+            "weatherSunGlow",
+            "12%",
+            "-2%",
+            "90%",
+            [
+                ("0%", "#fffbe8", 0.12),
+                ("50%", "#fff8e0", 0.04),
+                ("100%", "#f5f0e6", 0.0),
+            ],
+        )
+    )
     # Seasonal ground patterns
     if world.season == "winter":
         P.append(snow_pattern("groundSnow", density=0.6, seed=base_seed))
-    P.append('</defs>')
+    P.append("</defs>")
 
     # ── CSS for interactive hover tooltips (works in direct SVG view) ──
-    P.append('<style>')
-    P.append('.repo-tree{cursor:pointer}')
-    P.append('.repo-tree .tooltip{opacity:0;transition:opacity .3s;pointer-events:none}')
-    P.append('.repo-tree:hover .tooltip{opacity:1}')
-    P.append('.repo-tree:hover{filter:brightness(1.05)}')
-    P.append('</style>')
+    P.append("<style>")
+    P.append(".repo-tree{cursor:pointer}")
+    P.append(
+        ".repo-tree .tooltip{opacity:0;transition:opacity .3s;pointer-events:none}"
+    )
+    P.append(".repo-tree:hover .tooltip{opacity:1}")
+    P.append(".repo-tree:hover{filter:brightness(1.05)}")
+    P.append("</style>")
 
     # ── Background (aged parchment with canvas texture) ──────────
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)"/>')
+    P.append(
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)"/>'
+    )
     # Canvas texture overlay — subtle woven linen feel
-    P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_secondary"]}" filter="url(#canvas)" opacity="0.18"/>')
+    P.append(
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_secondary"]}" filter="url(#canvas)" opacity="0.18"/>'
+    )
     # Sky gradient — pale blue wash at top
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#skyGrad)"/>')
     # Atmospheric light wash from upper-left
-    P.append(f'<rect x="0" y="0" width="{WIDTH}" height="{GROUND_Y:.0f}" fill="url(#lightRay)"/>')
+    P.append(
+        f'<rect x="0" y="0" width="{WIDTH}" height="{GROUND_Y:.0f}" fill="url(#lightRay)"/>'
+    )
     # Water stain marks — large, very faint irregular patches
     for _ in range(max(2, int(mat * 7))):
         wcx = rng.uniform(80, WIDTH - 80)
         wcy = rng.uniform(80, HEIGHT - 80)
         wrx = rng.uniform(40, 100)
         wry = rng.uniform(30, 80)
-        P.append(f'<ellipse cx="{wcx:.0f}" cy="{wcy:.0f}" rx="{wrx:.0f}" ry="{wry:.0f}" '
-                 f'fill="{rng.choice(ground_colors)}" opacity="{rng.uniform(0.04,0.09):.3f}" '
-                 f'transform="rotate({rng.uniform(-20,20):.0f},{wcx:.0f},{wcy:.0f})"/>')
+        P.append(
+            f'<ellipse cx="{wcx:.0f}" cy="{wcy:.0f}" rx="{wrx:.0f}" ry="{wry:.0f}" '
+            f'fill="{rng.choice(ground_colors)}" opacity="{rng.uniform(0.04, 0.09):.3f}" '
+            f'transform="rotate({rng.uniform(-20, 20):.0f},{wcx:.0f},{wcy:.0f})"/>'
+        )
     # Foxing spots — varied sizes and warm tones (OKLCH gradient)
-    fox_colors = oklch_gradient([(0.78, 0.06, 55), (0.74, 0.07, 45), (0.76, 0.06, 50), (0.72, 0.05, 40)], 4)
+    fox_colors = oklch_gradient(
+        [(0.78, 0.06, 55), (0.74, 0.07, 45), (0.76, 0.06, 50), (0.72, 0.05, 40)], 4
+    )
     for _ in range(max(8, int(mat * 45))):
-        P.append(f'<circle cx="{rng.uniform(20,WIDTH-20):.0f}" cy="{rng.uniform(20,HEIGHT-20):.0f}" '
-                 f'r="{rng.uniform(1.5,8):.1f}" fill="{rng.choice(fox_colors)}" '
-                 f'opacity="{rng.uniform(0.04,0.12):.3f}"/>')
+        P.append(
+            f'<circle cx="{rng.uniform(20, WIDTH - 20):.0f}" cy="{rng.uniform(20, HEIGHT - 20):.0f}" '
+            f'r="{rng.uniform(1.5, 8):.1f}" fill="{rng.choice(fox_colors)}" '
+            f'opacity="{rng.uniform(0.04, 0.12):.3f}"/>'
+        )
     # Vignette overlay — subtle edge darkening
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vignette)"/>')
 
@@ -1438,11 +2027,26 @@ def generate(
         mist_rx = atmo_rng.uniform(80, 180)
         mist_ry = atmo_rng.uniform(20, 50)
         mist_op = atmo_rng.uniform(0.04, 0.08)
-        mist_grad = make_radial_gradient(mist_id, '50%', '50%', '60%',
-            [('0%', pal["muted"], mist_op), ('50%', oklch_lerp(pal["muted"], pal["bg_primary"], 0.5), mist_op * 0.5), ('100%', pal["bg_primary"], 0.0)])
-        P.append(f'<defs>{mist_grad}</defs>')
-        P.append(f'<ellipse cx="{mist_cx:.0f}" cy="{mist_cy:.0f}" rx="{mist_rx:.0f}" ry="{mist_ry:.0f}" '
-                 f'fill="url(#{mist_id})"/>')
+        mist_grad = make_radial_gradient(
+            mist_id,
+            "50%",
+            "50%",
+            "60%",
+            [
+                ("0%", pal["muted"], mist_op),
+                (
+                    "50%",
+                    oklch_lerp(pal["muted"], pal["bg_primary"], 0.5),
+                    mist_op * 0.5,
+                ),
+                ("100%", pal["bg_primary"], 0.0),
+            ],
+        )
+        P.append(f"<defs>{mist_grad}</defs>")
+        P.append(
+            f'<ellipse cx="{mist_cx:.0f}" cy="{mist_cy:.0f}" rx="{mist_rx:.0f}" ry="{mist_ry:.0f}" '
+            f'fill="url(#{mist_id})"/>'
+        )
 
     # Light rays: 2-3 diagonal linear gradient bands from upper-left
     n_rays = atmo_rng.integers(2, 4)
@@ -1455,16 +2059,32 @@ def generate(
         ray_h = atmo_rng.uniform(200, 500)
         ray_op = 0.03
         ray_rot = atmo_rng.uniform(20, 45)
-        ray_grad = make_linear_gradient(ray_id, '0', '0', '1', '1',
-            [('0%', '#fffbe8', ray_op), ('40%', '#fff8e0', ray_op * 0.6), ('100%', '#f5f0e6', 0.0)])
-        P.append(f'<defs>{ray_grad}</defs>')
-        P.append(f'<rect x="{ray_x:.0f}" y="{ray_y:.0f}" width="{ray_w:.0f}" height="{ray_h:.0f}" '
-                 f'fill="url(#{ray_id})" transform="rotate({ray_rot:.0f},{ray_x:.0f},{ray_y:.0f})"/>')
+        ray_grad = make_linear_gradient(
+            ray_id,
+            "0",
+            "0",
+            "1",
+            "1",
+            [
+                ("0%", "#fffbe8", ray_op),
+                ("40%", "#fff8e0", ray_op * 0.6),
+                ("100%", "#f5f0e6", 0.0),
+            ],
+        )
+        P.append(f"<defs>{ray_grad}</defs>")
+        P.append(
+            f'<rect x="{ray_x:.0f}" y="{ray_y:.0f}" width="{ray_w:.0f}" height="{ray_h:.0f}" '
+            f'fill="url(#{ray_id})" transform="rotate({ray_rot:.0f},{ray_x:.0f},{ray_y:.0f})"/>'
+        )
 
     # ── Issue-driven weather ──────────────────────────────────────
     issue_stats = metrics.get("issue_stats", {})
-    open_issues_count = issue_stats.get("open_count", 0) if isinstance(issue_stats, dict) else 0
-    closed_issues_count = issue_stats.get("closed_count", 0) if isinstance(issue_stats, dict) else 0
+    open_issues_count = (
+        issue_stats.get("open_count", 0) if isinstance(issue_stats, dict) else 0
+    )
+    closed_issues_count = (
+        issue_stats.get("closed_count", 0) if isinstance(issue_stats, dict) else 0
+    )
 
     if open_issues_count == 0 and closed_issues_count > 10:
         # Clear skies: sunbeams through canopy
@@ -1522,15 +2142,21 @@ def generate(
         creature = rng.choice(["beetle", "worm_seg"])
         if creature == "beetle":
             # Tiny beetle silhouette
-            P.append(f'<ellipse cx="{scx:.0f}" cy="{scy:.0f}" rx="2" ry="1.5" '
-                     f'fill="#4a3a20" opacity="0.08"/>')
-            P.append(f'<line x1="{scx - 2:.0f}" y1="{scy:.0f}" x2="{scx + 2:.0f}" y2="{scy:.0f}" '
-                     f'stroke="#4a3a20" stroke-width="0.2" opacity="0.06"/>')
+            P.append(
+                f'<ellipse cx="{scx:.0f}" cy="{scy:.0f}" rx="2" ry="1.5" '
+                f'fill="#4a3a20" opacity="0.08"/>'
+            )
+            P.append(
+                f'<line x1="{scx - 2:.0f}" y1="{scy:.0f}" x2="{scx + 2:.0f}" y2="{scy:.0f}" '
+                f'stroke="#4a3a20" stroke-width="0.2" opacity="0.06"/>'
+            )
         else:
             # Earthworm segment — small curved pink-brown
             rng.uniform(-0.5, 0.5)
-            P.append(f'<path d="M{scx:.0f},{scy:.0f} Q{scx + 6:.0f},{scy + 3:.0f} {scx + 12:.0f},{scy + 1:.0f}" '
-                     f'fill="none" stroke="#b0887a" stroke-width="1" opacity="0.06" stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{scx:.0f},{scy:.0f} Q{scx + 6:.0f},{scy + 3:.0f} {scx + 12:.0f},{scy + 1:.0f}" '
+                f'fill="none" stroke="#b0887a" stroke-width="1" opacity="0.06" stroke-linecap="round"/>'
+            )
     # Worm trails — sinuous paths between strata
     for _ in range(int(mat * 7)):
         wx = rng.uniform(40, WIDTH - 40)
@@ -1540,13 +2166,17 @@ def generate(
             wx += rng.uniform(6, 14) * rng.choice([-1, 1])
             wy += rng.uniform(1, 5)
             wd += f" L{wx:.0f},{wy:.0f}"
-        P.append(f'<path d="{wd}" fill="none" stroke="#a89870" stroke-width="0.4" '
-                 f'opacity="0.08" stroke-linecap="round"/>')
+        P.append(
+            f'<path d="{wd}" fill="none" stroke="#a89870" stroke-width="0.4" '
+            f'opacity="0.08" stroke-linecap="round"/>'
+        )
     # Tiny fossils (spiral ammonites) in deeper strata
     if mat > 0.6:
         for _ in range(int((mat - 0.6) * 8)):
             fx_f = rng.uniform(60, WIDTH - 60)
-            fy_f = rng.uniform(GROUND_Y + 40, min(HEIGHT - 40, GROUND_Y + n_strata * 30))
+            fy_f = rng.uniform(
+                GROUND_Y + 40, min(HEIGHT - 40, GROUND_Y + n_strata * 30)
+            )
             fr_f = rng.uniform(2, 5)
             # Spiral shell fossil
             foss_d = f"M{fx_f + fr_f:.1f},{fy_f:.1f}"
@@ -1556,11 +2186,24 @@ def generate(
                 if fr_cur < 0.3:
                     break
                 foss_d += f" L{fx_f + fr_cur * math.cos(fa_f):.1f},{fy_f + fr_cur * math.sin(fa_f):.1f}"
-            P.append(f'<path d="{foss_d}" fill="none" stroke="#c0b090" stroke-width="0.3" opacity="0.06"/>')
-            P.append(f'<circle cx="{fx_f:.1f}" cy="{fy_f:.1f}" r="{fr_f:.1f}" fill="none" '
-                     f'stroke="#b8a880" stroke-width="0.25" opacity="0.05"/>')
+            P.append(
+                f'<path d="{foss_d}" fill="none" stroke="#c0b090" stroke-width="0.3" opacity="0.06"/>'
+            )
+            P.append(
+                f'<circle cx="{fx_f:.1f}" cy="{fy_f:.1f}" r="{fr_f:.1f}" fill="none" '
+                f'stroke="#b8a880" stroke-width="0.25" opacity="0.05"/>'
+            )
     # Pebbles with highlights
-    pebble_colors = oklch_gradient([(0.62, 0.05, 55), (0.67, 0.05, 50), (0.72, 0.04, 48), (0.64, 0.05, 45), (0.69, 0.04, 52)], 5)
+    pebble_colors = oklch_gradient(
+        [
+            (0.62, 0.05, 55),
+            (0.67, 0.05, 50),
+            (0.72, 0.04, 48),
+            (0.64, 0.05, 45),
+            (0.69, 0.04, 52),
+        ],
+        5,
+    )
     for _ in range(2 + int(mat * 10)):
         px = rng.uniform(30, WIDTH - 30)
         py = rng.uniform(GROUND_Y + 10, min(HEIGHT - 20, GROUND_Y + n_strata * 30 + 30))
@@ -1568,13 +2211,17 @@ def generate(
         pry = rng.uniform(1, 2.8)
         prot = rng.uniform(-20, 20)
         pc = rng.choice(pebble_colors)
-        P.append(f'<ellipse cx="{px:.0f}" cy="{py:.0f}" rx="{prx:.1f}" ry="{pry:.1f}" '
-                 f'fill="{pc}" opacity="{rng.uniform(0.12,0.25):.2f}" '
-                 f'transform="rotate({prot:.0f},{px:.0f},{py:.0f})"/>')
+        P.append(
+            f'<ellipse cx="{px:.0f}" cy="{py:.0f}" rx="{prx:.1f}" ry="{pry:.1f}" '
+            f'fill="{pc}" opacity="{rng.uniform(0.12, 0.25):.2f}" '
+            f'transform="rotate({prot:.0f},{px:.0f},{py:.0f})"/>'
+        )
         # Tiny highlight on each pebble
-        P.append(f'<ellipse cx="{px - prx * 0.2:.1f}" cy="{py - pry * 0.3:.1f}" '
-                 f'rx="{prx * 0.3:.1f}" ry="{pry * 0.25:.1f}" fill="#f0e8d8" opacity="0.06" '
-                 f'transform="rotate({prot:.0f},{px:.0f},{py:.0f})"/>')
+        P.append(
+            f'<ellipse cx="{px - prx * 0.2:.1f}" cy="{py - pry * 0.3:.1f}" '
+            f'rx="{prx * 0.3:.1f}" ry="{pry * 0.25:.1f}" fill="#f0e8d8" opacity="0.06" '
+            f'transform="rotate({prot:.0f},{px:.0f},{py:.0f})"/>'
+        )
 
     # ── Roots ─────────────────────────────────────────────────────
     root_colors = [oklch(0.42, 0.06, 35), oklch(0.40, 0.07, 30), oklch(0.44, 0.05, 40)]
@@ -1583,17 +2230,21 @@ def generate(
         rc = root_colors[ri_r % len(root_colors)]
         mx = (rx1 + rx2) / 2 + rng.uniform(-1.5, 1.5)
         my = (ry1 + ry2) / 2 + rng.uniform(-1.5, 1.5)
-        P.append(f'<path d="M{rx1:.1f},{ry1:.1f} Q{mx:.1f},{my:.1f} {rx2:.1f},{ry2:.1f}" '
-                 f'fill="none" stroke="{rc}" stroke-width="{rsw:.1f}" {_timeline_style(when, 0.4)} stroke-linecap="round"/>')
+        P.append(
+            f'<path d="M{rx1:.1f},{ry1:.1f} Q{mx:.1f},{my:.1f} {rx2:.1f},{ry2:.1f}" '
+            f'fill="none" stroke="{rc}" stroke-width="{rsw:.1f}" {_timeline_style(when, 0.4)} stroke-linecap="round"/>'
+        )
         # Root hairs at fine tips
         if rsw < 0.5 and rng.random() < 0.3:
             for _ in range(rng.integers(2, 5)):
                 ha = rng.uniform(0, 2 * math.pi)
                 hl = rng.uniform(1.5, 4)
-                P.append(f'<line x1="{rx2:.1f}" y1="{ry2:.1f}" '
-                         f'x2="{rx2 + hl * math.cos(ha):.1f}" y2="{ry2 + hl * math.sin(ha):.1f}" '
-                         f'stroke="{rc}" stroke-width="0.15" {_timeline_style(when, 0.3)}/>')
-    P.append('</g>')
+                P.append(
+                    f'<line x1="{rx2:.1f}" y1="{ry2:.1f}" '
+                    f'x2="{rx2 + hl * math.cos(ha):.1f}" y2="{ry2 + hl * math.sin(ha):.1f}" '
+                    f'stroke="{rc}" stroke-width="0.15" {_timeline_style(when, 0.3)}/>'
+                )
+    P.append("</g>")
 
     # Mycorrhizal network — dashed threads with nutrient exchange nodes
     if len(repos) > 1 and forks > 0:
@@ -1608,15 +2259,19 @@ def generate(
             mid_x = (mx1 + mx2) / 2
             mid_y = my1 + rng.uniform(8, 22)
             my_when = _date_for_activity_fraction((my_i + 1) / (myco_count + 1))
-            P.append(f'<path d="M{mx1:.0f},{my1:.0f} Q{mid_x:.0f},{mid_y:.0f} {mx2:.0f},{my2:.0f}" '
-                     f'fill="none" stroke="#a09060" stroke-width="0.5" stroke-dasharray="2 3" '
-                     f'{_timeline_style(my_when, 0.25, delay_offset_frac=-0.02, duration_scale=1.25, ease="linear")}/>')
+            P.append(
+                f'<path d="M{mx1:.0f},{my1:.0f} Q{mid_x:.0f},{mid_y:.0f} {mx2:.0f},{my2:.0f}" '
+                f'fill="none" stroke="#a09060" stroke-width="0.5" stroke-dasharray="2 3" '
+                f"{_timeline_style(my_when, 0.25, delay_offset_frac=-0.02, duration_scale=1.25, ease='linear')}/>"
+            )
             myco_nodes.append((mid_x, mid_y, my_when))
         # Nutrient exchange nodes (tiny circles at junctions)
         for nx, ny, n_when in myco_nodes[:8]:
-            P.append(f'<circle cx="{nx:.0f}" cy="{ny:.0f}" r="1.2" fill="#b0a060" '
-                     f'{_timeline_style(n_when, 0.5, delay_offset_frac=0.01, duration_scale=0.8)}/>')
-        P.append('</g>')
+            P.append(
+                f'<circle cx="{nx:.0f}" cy="{ny:.0f}" r="1.2" fill="#b0a060" '
+                f"{_timeline_style(n_when, 0.5, delay_offset_frac=0.01, duration_scale=0.8)}/>"
+            )
+        P.append("</g>")
 
     # ── Mycelial Network (topic-based underground connections) ────
     # Repos sharing topics are connected by organic tendrils underground
@@ -1634,7 +2289,9 @@ def generate(
                     topic_connections.append((ri_a, ri_b, len(shared)))
         if topic_connections:
             P.append('<g opacity="0.2">')
-            for ri_a, ri_b, shared_count in topic_connections[:12]:  # cap at 12 connections
+            for ri_a, ri_b, shared_count in topic_connections[
+                :12
+            ]:  # cap at 12 connections
                 if ri_a >= len(plant_bases) or ri_b >= len(plant_bases):
                     continue
                 x_a, y_a = plant_bases[ri_a]
@@ -1660,14 +2317,20 @@ def generate(
                         f'<circle cx="{mid_x:.1f}" cy="{mid_y:.1f}" r="{0.8 + shared_count * 0.3:.1f}" '
                         f'fill="{node_color}" opacity="{tendril_opacity * 0.8:.3f}"/>'
                     )
-            P.append('</g>')
+            P.append("</g>")
 
     # ── Ground surface (season-aware) ─────────────────────────────
-    grass_opacity = {"spring": 0.85, "summer": 0.8, "autumn": 0.55, "winter": 0.3}.get(world.season, 0.8)
-    P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+15} L0,{GROUND_Y+15} Z" fill="url(#grass)" opacity="{grass_opacity}"/>')
+    grass_opacity = {"spring": 0.85, "summer": 0.8, "autumn": 0.55, "winter": 0.3}.get(
+        world.season, 0.8
+    )
+    P.append(
+        f'<path d="{ground_path} L{WIDTH},{GROUND_Y + 15} L0,{GROUND_Y + 15} Z" fill="url(#grass)" opacity="{grass_opacity}"/>'
+    )
     # Winter snow cover on ground
     if world.season == "winter":
-        P.append(f'<path d="{ground_path} L{WIDTH},{GROUND_Y+10} L0,{GROUND_Y+10} Z" fill="url(#groundSnow)" opacity="0.5"/>')
+        P.append(
+            f'<path d="{ground_path} L{WIDTH},{GROUND_Y + 10} L0,{GROUND_Y + 10} Z" fill="url(#groundSnow)" opacity="0.5"/>'
+        )
         # Snow drift caps along the ground line
         snow_rng = np.random.default_rng(base_seed ^ 0x5A0FFEEE)
         for drift_i in range(8):
@@ -1675,8 +2338,10 @@ def generate(
             dy_snow = ground_y_at(dx_snow) - snow_rng.uniform(1, 4)
             drx = snow_rng.uniform(12, 30)
             dry = snow_rng.uniform(3, 7)
-            P.append(f'<ellipse cx="{dx_snow:.0f}" cy="{dy_snow:.0f}" rx="{drx:.0f}" ry="{dry:.0f}" '
-                     f'fill="#f0f0f8" opacity="{snow_rng.uniform(0.15, 0.3):.2f}"/>')
+            P.append(
+                f'<ellipse cx="{dx_snow:.0f}" cy="{dy_snow:.0f}" rx="{drx:.0f}" ry="{dry:.0f}" '
+                f'fill="#f0f0f8" opacity="{snow_rng.uniform(0.15, 0.3):.2f}"/>'
+            )
     # Autumn fallen leaf ellipses scattered on ground
     if world.season == "autumn":
         autumn_rng = np.random.default_rng(base_seed ^ 0xFA110EAF)
@@ -1688,9 +2353,11 @@ def generate(
             fl_ry = autumn_rng.uniform(0.8, 2)
             fl_rot = autumn_rng.uniform(-60, 60)
             fl_c = autumn_rng.choice(autumn_colors)
-            P.append(f'<ellipse cx="{flx:.0f}" cy="{fly:.0f}" rx="{fl_rx:.1f}" ry="{fl_ry:.1f}" '
-                     f'fill="{fl_c}" opacity="{autumn_rng.uniform(0.12, 0.25):.2f}" '
-                     f'transform="rotate({fl_rot:.0f},{flx:.0f},{fly:.0f})"/>')
+            P.append(
+                f'<ellipse cx="{flx:.0f}" cy="{fly:.0f}" rx="{fl_rx:.1f}" ry="{fl_ry:.1f}" '
+                f'fill="{fl_c}" opacity="{autumn_rng.uniform(0.12, 0.25):.2f}" '
+                f'transform="rotate({fl_rot:.0f},{flx:.0f},{fly:.0f})"/>'
+            )
 
     # ── Data mapping: total_issues → fallen leaves on ground ─────
     # For each open issue (capped at 12), scatter 1-2 small leaf-shaped
@@ -1699,9 +2366,7 @@ def generate(
     if total_issues > 0 and plant_bases:
         _issue_leaf_count = min(12, total_issues)
         _issue_leaf_rng = np.random.default_rng(base_seed ^ 0x1550E5)
-        _issue_leaf_colors = [
-            oklch(0.55, 0.14, h) for h in (30, 35, 40, 25, 45)
-        ]
+        _issue_leaf_colors = [oklch(0.55, 0.14, h) for h in (30, 35, 40, 25, 45)]
         for _il_i in range(_issue_leaf_count):
             # Pick a tree base to scatter near
             _il_base_x, _il_base_y = plant_bases[_il_i % len(plant_bases)]
@@ -1725,18 +2390,22 @@ def generate(
                     f'x2="{_il_x + _il_rx * 0.7:.1f}" y2="{_il_y:.1f}" '
                     f'stroke="{oklch(0.40, 0.10, 30)}" stroke-width="0.2" '
                     f'opacity="0.12"/>'
-                    f'</g>'
+                    f"</g>"
                 )
 
     # Main ground line — warm earth tone, thicker for visibility
     _ground_line_c = oklch_lerp(pal["ground"], pal["text_primary"], 0.4)
-    P.append(f'<path d="{ground_path}" fill="none" stroke="{_ground_line_c}" stroke-width="2.0" opacity="0.6"/>')
+    P.append(
+        f'<path d="{ground_path}" fill="none" stroke="{_ground_line_c}" stroke-width="2.0" opacity="0.6"/>'
+    )
     # Secondary ground line — lighter, offset slightly below for depth
-    sub_ground = f"M{ground_pts[0][0]},{ground_pts[0][1]+1.5:.1f}" + "".join(
-        f" L{x:.1f},{y+1.5:.1f}" for x, y in ground_pts[1:]
+    sub_ground = f"M{ground_pts[0][0]},{ground_pts[0][1] + 1.5:.1f}" + "".join(
+        f" L{x:.1f},{y + 1.5:.1f}" for x, y in ground_pts[1:]
     )
     _sub_ground_c = oklch_lerp(pal["ground"], pal["muted"], 0.5)
-    P.append(f'<path d="{sub_ground}" fill="none" stroke="{_sub_ground_c}" stroke-width="0.7" opacity="0.35"/>')
+    P.append(
+        f'<path d="{sub_ground}" fill="none" stroke="{_sub_ground_c}" stroke-width="0.7" opacity="0.35"/>'
+    )
 
     # Branch density map for ground cover enhancement
     bd = defaultdict(int)
@@ -1763,12 +2432,16 @@ def generate(
             for _ in range(rng.integers(3, 7)):
                 ga = -math.pi / 2 + rng.uniform(-0.5, 0.5)
                 gl = rng.uniform(4, 12)
-                P.append(f'<line x1="{gcx:.0f}" y1="{gcy:.0f}" '
-                         f'x2="{gcx+gl*math.cos(ga):.0f}" y2="{gcy+gl*math.sin(ga):.0f}" '
-                         f'stroke="{_gc_grass}" stroke-width="0.5" opacity="0.35"/>')
+                P.append(
+                    f'<line x1="{gcx:.0f}" y1="{gcy:.0f}" '
+                    f'x2="{gcx + gl * math.cos(ga):.0f}" y2="{gcy + gl * math.sin(ga):.0f}" '
+                    f'stroke="{_gc_grass}" stroke-width="0.5" opacity="0.35"/>'
+                )
         elif r_val < 0.55:
             # Stones
-            P.append(f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.8,2.2):.1f}" fill="{_gc_stone}" opacity="0.3"/>')
+            P.append(
+                f'<circle cx="{gcx:.0f}" cy="{gcy:.0f}" r="{rng.uniform(0.8, 2.2):.1f}" fill="{_gc_stone}" opacity="0.3"/>'
+            )
         elif r_val < 0.7 and mat > 0.25:
             # Small fern frondlets at ground level (where branch density is high)
             grid_key = (int(gcx / 30), int(gcy / 30))
@@ -1783,15 +2456,19 @@ def generate(
                     fsl = frond_len / 4
                     nx_f = cx_f + fsl * math.cos(fa)
                     ny_f = cy_f + fsl * math.sin(fa)
-                    P.append(f'<line x1="{cx_f:.1f}" y1="{cy_f:.1f}" x2="{nx_f:.1f}" y2="{ny_f:.1f}" '
-                             f'stroke="{_gc_fern}" stroke-width="0.3" opacity="0.2"/>')
+                    P.append(
+                        f'<line x1="{cx_f:.1f}" y1="{cy_f:.1f}" x2="{nx_f:.1f}" y2="{ny_f:.1f}" '
+                        f'stroke="{_gc_fern}" stroke-width="0.3" opacity="0.2"/>'
+                    )
                     if fs > 0:
                         for side in [-1, 1]:
                             pa = fa + side * 1.0
                             pl = fsl * 0.5 * (1 - t)
-                            P.append(f'<line x1="{nx_f:.1f}" y1="{ny_f:.1f}" '
-                                     f'x2="{nx_f + pl * math.cos(pa):.1f}" y2="{ny_f + pl * math.sin(pa):.1f}" '
-                                     f'stroke="{_gc_fern_light}" stroke-width="0.2" opacity="0.18"/>')
+                            P.append(
+                                f'<line x1="{nx_f:.1f}" y1="{ny_f:.1f}" '
+                                f'x2="{nx_f + pl * math.cos(pa):.1f}" y2="{ny_f + pl * math.sin(pa):.1f}" '
+                                f'stroke="{_gc_fern_light}" stroke-width="0.2" opacity="0.18"/>'
+                            )
                     cx_f, cy_f = nx_f, ny_f
         elif r_val < 0.85 and mat > 0.4:
             # Moss patches: clusters of tiny dots near plant bases
@@ -1801,8 +2478,10 @@ def generate(
                 for _ in range(n_dots):
                     dx = gcx + rng.uniform(-4, 4)
                     dy = gcy + rng.uniform(-2, 2)
-                    P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{rng.uniform(0.3, 0.8):.1f}" '
-                             f'fill="{_gc_moss}" opacity="{rng.uniform(0.12, 0.25):.2f}"/>')
+                    P.append(
+                        f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{rng.uniform(0.3, 0.8):.1f}" '
+                        f'fill="{_gc_moss}" opacity="{rng.uniform(0.12, 0.25):.2f}"/>'
+                    )
         elif r_val < 0.90 and mat > 0.4:
             # Clover: 3-circle trefoil
             clover_r = rng.uniform(1.2, 2.5)
@@ -1811,11 +2490,15 @@ def generate(
                 ca = ci * 2 * math.pi / 3 - math.pi / 2
                 ccx = gcx + clover_r * 0.5 * math.cos(ca)
                 ccy = gcy + clover_r * 0.5 * math.sin(ca)
-                P.append(f'<circle cx="{ccx:.1f}" cy="{ccy:.1f}" r="{clover_r * 0.45:.1f}" '
-                         f'fill="{clover_c}" opacity="0.2"/>')
+                P.append(
+                    f'<circle cx="{ccx:.1f}" cy="{ccy:.1f}" r="{clover_r * 0.45:.1f}" '
+                    f'fill="{clover_c}" opacity="0.2"/>'
+                )
             # Tiny stem
-            P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy + clover_r * 1.2:.1f}" '
-                     f'stroke="{_gc_clover_stem}" stroke-width="0.3" opacity="0.2"/>')
+            P.append(
+                f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy + clover_r * 1.2:.1f}" '
+                f'stroke="{_gc_clover_stem}" stroke-width="0.3" opacity="0.2"/>'
+            )
         elif r_val < 0.95 and mat > 0.55:
             # Tiny wildflower: stem + 4-5 petal rosette
             wf_h = rng.uniform(4, 9)
@@ -1823,8 +2506,10 @@ def generate(
             wf_c = oklch(0.62, 0.22, wf_hue)
             oklch(0.50, 0.16, wf_hue)
             # Stem
-            P.append(f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy - wf_h:.1f}" '
-                     f'stroke="{_gc_grass}" stroke-width="0.3" opacity="0.2"/>')
+            P.append(
+                f'<line x1="{gcx:.1f}" y1="{gcy:.1f}" x2="{gcx:.1f}" y2="{gcy - wf_h:.1f}" '
+                f'stroke="{_gc_grass}" stroke-width="0.3" opacity="0.2"/>'
+            )
             # Petals
             n_wp = rng.integers(4, 6)
             pr = wf_h * 0.15
@@ -1832,76 +2517,107 @@ def generate(
                 wa = wp * 2 * math.pi / n_wp
                 px = gcx + pr * math.cos(wa)
                 py = gcy - wf_h + pr * math.sin(wa)
-                P.append(f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{pr * 0.6:.1f}" '
-                         f'fill="{wf_c}" opacity="0.2"/>')
+                P.append(
+                    f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{pr * 0.6:.1f}" '
+                    f'fill="{wf_c}" opacity="0.2"/>'
+                )
             # Center dot
-            P.append(f'<circle cx="{gcx:.1f}" cy="{gcy - wf_h:.1f}" r="{pr * 0.3:.1f}" '
-                     f'fill="{pal["highlight"]}" opacity="0.25"/>')
+            P.append(
+                f'<circle cx="{gcx:.1f}" cy="{gcy - wf_h:.1f}" r="{pr * 0.3:.1f}" '
+                f'fill="{pal["highlight"]}" opacity="0.25"/>'
+            )
         elif mat > 0.7:
             # Snail: spiral shell + body
             sn_r = rng.uniform(2, 4)
             sn_c = oklch(0.58, 0.06, 35)
             sn_dark = oklch(0.42, 0.08, 30)
             # Body — soft slug shape
-            P.append(f'<ellipse cx="{gcx + sn_r * 0.6:.1f}" cy="{gcy:.1f}" '
-                     f'rx="{sn_r * 0.9:.1f}" ry="{sn_r * 0.3:.1f}" '
-                     f'fill="{oklch(0.55, 0.04, 45)}" opacity="0.2"/>')
+            P.append(
+                f'<ellipse cx="{gcx + sn_r * 0.6:.1f}" cy="{gcy:.1f}" '
+                f'rx="{sn_r * 0.9:.1f}" ry="{sn_r * 0.3:.1f}" '
+                f'fill="{oklch(0.55, 0.04, 45)}" opacity="0.2"/>'
+            )
             # Shell spiral (3/4 turn)
             shell_pts = []
             for st in range(12):
                 sa = st * 0.5 + math.pi * 0.5
                 sr = sn_r * (1 - st * 0.07)
-                shell_pts.append((gcx + sr * math.cos(sa), gcy - sn_r * 0.15 + sr * 0.6 * math.sin(sa)))
+                shell_pts.append(
+                    (
+                        gcx + sr * math.cos(sa),
+                        gcy - sn_r * 0.15 + sr * 0.6 * math.sin(sa),
+                    )
+                )
             if len(shell_pts) > 2:
                 shell_d = f"M{shell_pts[0][0]:.1f},{shell_pts[0][1]:.1f}"
                 for sp in shell_pts[1:]:
                     shell_d += f" L{sp[0]:.1f},{sp[1]:.1f}"
-                P.append(f'<path d="{shell_d}" fill="none" stroke="{sn_dark}" '
-                         f'stroke-width="0.4" opacity="0.18"/>')
-            P.append(f'<ellipse cx="{gcx:.1f}" cy="{gcy - sn_r * 0.1:.1f}" '
-                     f'rx="{sn_r * 0.55:.1f}" ry="{sn_r * 0.45:.1f}" '
-                     f'fill="{sn_c}" opacity="0.2" stroke="{sn_dark}" stroke-width="0.2"/>')
+                P.append(
+                    f'<path d="{shell_d}" fill="none" stroke="{sn_dark}" '
+                    f'stroke-width="0.4" opacity="0.18"/>'
+                )
+            P.append(
+                f'<ellipse cx="{gcx:.1f}" cy="{gcy - sn_r * 0.1:.1f}" '
+                f'rx="{sn_r * 0.55:.1f}" ry="{sn_r * 0.45:.1f}" '
+                f'fill="{sn_c}" opacity="0.2" stroke="{sn_dark}" stroke-width="0.2"/>'
+            )
             # Tentacles
-            P.append(f'<line x1="{gcx + sn_r * 0.8:.1f}" y1="{gcy - sn_r * 0.15:.1f}" '
-                     f'x2="{gcx + sn_r * 1.2:.1f}" y2="{gcy - sn_r * 0.5:.1f}" '
-                     f'stroke="{sn_dark}" stroke-width="0.2" opacity="0.15"/>')
-            P.append(f'<line x1="{gcx + sn_r * 0.9:.1f}" y1="{gcy - sn_r * 0.15:.1f}" '
-                     f'x2="{gcx + sn_r * 1.3:.1f}" y2="{gcy - sn_r * 0.4:.1f}" '
-                     f'stroke="{sn_dark}" stroke-width="0.2" opacity="0.15"/>')
+            P.append(
+                f'<line x1="{gcx + sn_r * 0.8:.1f}" y1="{gcy - sn_r * 0.15:.1f}" '
+                f'x2="{gcx + sn_r * 1.2:.1f}" y2="{gcy - sn_r * 0.5:.1f}" '
+                f'stroke="{sn_dark}" stroke-width="0.2" opacity="0.15"/>'
+            )
+            P.append(
+                f'<line x1="{gcx + sn_r * 0.9:.1f}" y1="{gcy - sn_r * 0.15:.1f}" '
+                f'x2="{gcx + sn_r * 1.3:.1f}" y2="{gcy - sn_r * 0.4:.1f}" '
+                f'stroke="{sn_dark}" stroke-width="0.2" opacity="0.15"/>'
+            )
 
     # ── Mushrooms (with gills, stem detail, ground shadow) ───────
     for mx, my, ms, mh in mushrooms_list:
         # Ground shadow
-        P.append(f'<ellipse cx="{mx:.1f}" cy="{my + 1:.1f}" rx="{ms * 0.5:.1f}" ry="{ms * 0.15:.1f}" '
-                 f'fill="#6a5a3a" opacity="0.06"/>')
+        P.append(
+            f'<ellipse cx="{mx:.1f}" cy="{my + 1:.1f}" rx="{ms * 0.5:.1f}" ry="{ms * 0.15:.1f}" '
+            f'fill="#6a5a3a" opacity="0.06"/>'
+        )
         # Stem with subtle gradient feel
         stem_c = oklch(0.72, 0.04, 45)
         stem_dark = oklch(0.62, 0.05, 40)
-        P.append(f'<rect x="{mx - ms * 0.12:.1f}" y="{my - ms:.1f}" width="{ms * 0.24:.1f}" '
-                 f'height="{ms:.1f}" fill="{stem_c}" opacity="0.7" rx="1"/>')
+        P.append(
+            f'<rect x="{mx - ms * 0.12:.1f}" y="{my - ms:.1f}" width="{ms * 0.24:.1f}" '
+            f'height="{ms:.1f}" fill="{stem_c}" opacity="0.7" rx="1"/>'
+        )
         # Stem texture lines
         for si_m in range(2):
             sx_off = mx - ms * 0.04 + si_m * ms * 0.06
-            P.append(f'<line x1="{sx_off:.1f}" y1="{my - ms * 0.9:.1f}" x2="{sx_off:.1f}" y2="{my:.1f}" '
-                     f'stroke="{stem_dark}" stroke-width="0.15" opacity="0.15"/>')
+            P.append(
+                f'<line x1="{sx_off:.1f}" y1="{my - ms * 0.9:.1f}" x2="{sx_off:.1f}" y2="{my:.1f}" '
+                f'stroke="{stem_dark}" stroke-width="0.15" opacity="0.15"/>'
+            )
         # Cap — dome shape
         cap_c = oklch(0.55, 0.12, mh)
         cap_dark = oklch(0.45, 0.10, mh)
         cap_top = my - ms
-        P.append(f'<ellipse cx="{mx:.1f}" cy="{cap_top:.1f}" rx="{ms * 0.6:.1f}" ry="{ms * 0.4:.1f}" '
-                 f'fill="{cap_c}" opacity="0.65" stroke="{cap_dark}" stroke-width="0.3"/>')
+        P.append(
+            f'<ellipse cx="{mx:.1f}" cy="{cap_top:.1f}" rx="{ms * 0.6:.1f}" ry="{ms * 0.4:.1f}" '
+            f'fill="{cap_c}" opacity="0.65" stroke="{cap_dark}" stroke-width="0.3"/>'
+        )
         # Gills — radial lines under cap
         n_gills = max(4, int(ms * 1.5))
         for gi in range(n_gills):
             gf = gi / n_gills
             gx = mx - ms * 0.45 + gf * ms * 0.9
-            P.append(f'<line x1="{gx:.1f}" y1="{cap_top + ms * 0.25:.1f}" x2="{gx:.1f}" y2="{cap_top + ms * 0.38:.1f}" '
-                     f'stroke="{cap_dark}" stroke-width="0.2" opacity="0.15"/>')
+            P.append(
+                f'<line x1="{gx:.1f}" y1="{cap_top + ms * 0.25:.1f}" x2="{gx:.1f}" y2="{cap_top + ms * 0.38:.1f}" '
+                f'stroke="{cap_dark}" stroke-width="0.2" opacity="0.15"/>'
+            )
         # Cap spots
         for _ in range(rng.integers(2, 5)):
-            P.append(f'<circle cx="{mx + rng.uniform(-ms * 0.3, ms * 0.3):.1f}" '
-                     f'cy="{cap_top + rng.uniform(-ms * 0.2, ms * 0.08):.1f}" '
-                     f'r="{rng.uniform(0.4, 1.3):.1f}" fill="{oklch_lerp(pal["bg_primary"], pal["highlight"], 0.15)}" opacity="0.45"/>')
+            P.append(
+                f'<circle cx="{mx + rng.uniform(-ms * 0.3, ms * 0.3):.1f}" '
+                f'cy="{cap_top + rng.uniform(-ms * 0.2, ms * 0.08):.1f}" '
+                f'r="{rng.uniform(0.4, 1.3):.1f}" fill="{oklch_lerp(pal["bg_primary"], pal["highlight"], 0.15)}" opacity="0.45"/>'
+            )
         # Lichen/moss at mushroom base
         if mat > 0.4:
             n_lichen = rng.integers(2, 5)
@@ -1909,17 +2625,21 @@ def generate(
                 lx_m = mx + rng.uniform(-ms * 0.4, ms * 0.4)
                 ly_m = my + rng.uniform(-1, 2)
                 lr_m = rng.uniform(0.8, 2.0)
-                P.append(f'<circle cx="{lx_m:.1f}" cy="{ly_m:.1f}" r="{lr_m:.1f}" '
-                         f'fill="{oklch_lerp(pal["accent"], pal["ground"], 0.35)}" opacity="{rng.uniform(0.08, 0.15):.2f}"/>')
+                P.append(
+                    f'<circle cx="{lx_m:.1f}" cy="{ly_m:.1f}" r="{lr_m:.1f}" '
+                    f'fill="{oklch_lerp(pal["accent"], pal["ground"], 0.35)}" opacity="{rng.uniform(0.08, 0.15):.2f}"/>'
+                )
         # Mycelium threads radiating from base
         if mat > 0.55:
             for _ in range(rng.integers(1, 3)):
                 ma_m = rng.uniform(-0.5, 0.5) + math.pi / 2
                 ml_m = rng.uniform(4, 10)
-                P.append(f'<path d="M{mx:.1f},{my:.1f} Q{mx + ml_m * 0.5 * math.cos(ma_m) + rng.uniform(-2, 2):.1f},'
-                         f'{my + ml_m * 0.5 * math.sin(ma_m):.1f} '
-                         f'{mx + ml_m * math.cos(ma_m):.1f},{my + ml_m * math.sin(ma_m):.1f}" '
-                         f'fill="none" stroke="#d0c8a0" stroke-width="0.15" opacity="0.08"/>')
+                P.append(
+                    f'<path d="M{mx:.1f},{my:.1f} Q{mx + ml_m * 0.5 * math.cos(ma_m) + rng.uniform(-2, 2):.1f},'
+                    f"{my + ml_m * 0.5 * math.sin(ma_m):.1f} "
+                    f'{mx + ml_m * math.cos(ma_m):.1f},{my + ml_m * math.sin(ma_m):.1f}" '
+                    f'fill="none" stroke="#d0c8a0" stroke-width="0.15" opacity="0.08"/>'
+                )
 
     # ── Atmospheric wash (faint watercolor sky suggestion, language-tinted) ─
     tint_l, tint_c, tint_h = lang_sky_tint
@@ -1930,12 +2650,26 @@ def generate(
         awry = rng.uniform(20, 50)
         # Alternate between default washes and language-tinted washes
         if wash_i % 3 == 0 and dominant_lang is not None:
-            wash_c = oklch(tint_l + rng.uniform(-0.03, 0.03), tint_c, tint_h + rng.uniform(-10, 10))
+            wash_c = oklch(
+                tint_l + rng.uniform(-0.03, 0.03), tint_c, tint_h + rng.uniform(-10, 10)
+            )
         else:
-            wash_c = rng.choice(oklch_gradient([(0.85, 0.03, 220), (0.87, 0.02, 200), (0.84, 0.02, 195), (0.84, 0.03, 250)], 4))
-        P.append(f'<ellipse cx="{awx:.0f}" cy="{awy:.0f}" rx="{awrx:.0f}" ry="{awry:.0f}" '
-                 f'fill="{wash_c}" opacity="{rng.uniform(0.02, 0.04):.3f}" '
-                 f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>')
+            wash_c = rng.choice(
+                oklch_gradient(
+                    [
+                        (0.85, 0.03, 220),
+                        (0.87, 0.02, 200),
+                        (0.84, 0.02, 195),
+                        (0.84, 0.03, 250),
+                    ],
+                    4,
+                )
+            )
+        P.append(
+            f'<ellipse cx="{awx:.0f}" cy="{awy:.0f}" rx="{awrx:.0f}" ry="{awry:.0f}" '
+            f'fill="{wash_c}" opacity="{rng.uniform(0.02, 0.04):.3f}" '
+            f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>'
+        )
 
     # ── Circadian sky elements (stars, moon, dawn glow) ──────────
     if time_of_day == "night":
@@ -1944,21 +2678,30 @@ def generate(
             sx = rng.uniform(20, WIDTH - 20)
             sy = rng.uniform(10, GROUND_Y * 0.4)
             sr = rng.uniform(0.5, 1.5)
-            P.append(f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr:.1f}" fill="white" opacity="{rng.uniform(0.3, 0.7):.2f}"/>')
+            P.append(
+                f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr:.1f}" fill="white" opacity="{rng.uniform(0.3, 0.7):.2f}"/>'
+            )
         # Moon
         mx, my = WIDTH * 0.75, HEIGHT * 0.12
-        P.append(f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="18" fill="{oklch(0.92, 0.02, 80)}" opacity="0.8"/>')
-        P.append(f'<circle cx="{mx + 5:.0f}" cy="{my - 3:.0f}" r="16" fill="{oklch(0.20, 0.05, 250)}"/>')
+        P.append(
+            f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="18" fill="{oklch(0.92, 0.02, 80)}" opacity="0.8"/>'
+        )
+        P.append(
+            f'<circle cx="{mx + 5:.0f}" cy="{my - 3:.0f}" r="16" fill="{oklch(0.20, 0.05, 250)}"/>'
+        )
 
     if time_of_day == "dawn":
         # Dawn sun glow near horizon
-        P.append(f'<circle cx="{WIDTH * 0.3:.0f}" cy="{GROUND_Y - 20:.0f}" r="40" fill="{oklch(0.90, 0.15, 50)}" opacity="0.15" filter="url(#dew)"/>')
+        P.append(
+            f'<circle cx="{WIDTH * 0.3:.0f}" cy="{GROUND_Y - 20:.0f}" r="40" fill="{oklch(0.90, 0.15, 50)}" opacity="0.15" filter="url(#dew)"/>'
+        )
 
     # ── Aurora Canopy (after sky, before trees) ───────────────────
     aurora_els = aurora_band_elements(
         world,
         languages=metrics.get("languages"),
-        width=WIDTH, height=HEIGHT,
+        width=WIDTH,
+        height=HEIGHT,
         seed=base_seed,
     )
     if aurora_els:
@@ -1972,33 +2715,52 @@ def generate(
             by_b = rng.uniform(30, GROUND_Y * 0.3)
             bsz = rng.uniform(2, 5)
             # Simple M-shape bird
-            P.append(f'<path d="M{bx_b - bsz:.1f},{by_b:.1f} Q{bx_b - bsz * 0.4:.1f},{by_b - bsz * 0.6:.1f} '
-                     f'{bx_b:.1f},{by_b:.1f} Q{bx_b + bsz * 0.4:.1f},{by_b - bsz * 0.6:.1f} '
-                     f'{bx_b + bsz:.1f},{by_b:.1f}" '
-                     f'fill="none" stroke="#6a5a4a" stroke-width="{0.3 + bsz * 0.05:.2f}" '
-                     f'opacity="{rng.uniform(0.06, 0.12):.2f}" stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{bx_b - bsz:.1f},{by_b:.1f} Q{bx_b - bsz * 0.4:.1f},{by_b - bsz * 0.6:.1f} '
+                f"{bx_b:.1f},{by_b:.1f} Q{bx_b + bsz * 0.4:.1f},{by_b - bsz * 0.6:.1f} "
+                f'{bx_b + bsz:.1f},{by_b:.1f}" '
+                f'fill="none" stroke="#6a5a4a" stroke-width="{0.3 + bsz * 0.05:.2f}" '
+                f'opacity="{rng.uniform(0.06, 0.12):.2f}" stroke-linecap="round"/>'
+            )
 
     # ── Plant shadow patches (stippled shadows on ground) ─────────
     # Sun from upper-left → shadows offset toward lower-right
     for bx_s, by_s in plant_bases:
         shadow_w = 20 + rng.uniform(0, 15)
-        shadow_cx = bx_s + 5   # offset right (sun from left)
-        shadow_cy = by_s + 2   # offset down (sun from above)
+        shadow_cx = bx_s + 5  # offset right (sun from left)
+        shadow_cy = by_s + 2  # offset down (sun from above)
         n_stipple = max(30, min(50, int(30 + mat * 20)))
         for _ in range(n_stipple):
             # Distribute dots in elliptical region, biased toward lower-right
             angle_s = rng.uniform(0, 2 * math.pi)
             dist_s = rng.uniform(0, 1) ** 0.5  # sqrt for uniform area distribution
             sx_s = shadow_cx + dist_s * shadow_w * math.cos(angle_s) + rng.uniform(0, 3)
-            sy_s = shadow_cy + dist_s * shadow_w * 0.2 * math.sin(angle_s) + rng.uniform(0, 2)
+            sy_s = (
+                shadow_cy
+                + dist_s * shadow_w * 0.2 * math.sin(angle_s)
+                + rng.uniform(0, 2)
+            )
             sr_s = rng.uniform(0.3, 0.8)
             so_s = rng.uniform(0.05, 0.15)
-            P.append(f'<circle cx="{sx_s:.1f}" cy="{sy_s:.1f}" r="{sr_s:.1f}" '
-                     f'fill="#5a5030" opacity="{so_s:.3f}"/>')
+            P.append(
+                f'<circle cx="{sx_s:.1f}" cy="{sy_s:.1f}" r="{sr_s:.1f}" '
+                f'fill="#5a5030" opacity="{so_s:.3f}"/>'
+            )
     # Branch-cast shadows to break fence-line symmetry and add depth
     seg_shadow_budget = min(220, max(80, int(len(all_segs) * 0.35)))
     shadow_step = max(1, len(all_segs) // max(1, seg_shadow_budget))
-    for si_shadow, (x1, y1, x2, y2, sw, _hue, depth, is_main, _bark_mat, when) in enumerate(all_segs[::shadow_step]):
+    for si_shadow, (
+        x1,
+        y1,
+        x2,
+        y2,
+        sw,
+        _hue,
+        depth,
+        is_main,
+        _bark_mat,
+        when,
+    ) in enumerate(all_segs[::shadow_step]):
         if depth > 2 and not is_main:
             continue
         if max(y1, y2) < GROUND_Y - 140:
@@ -2012,7 +2774,7 @@ def generate(
             P.append(
                 f'<path d="M{sx1:.1f},{sy1:.1f} Q{(sx1 + sx2) / 2 + 1.2:.1f},{(sy1 + sy2) / 2 + 1.0:.1f} {sx2:.1f},{sy2:.1f}" '
                 f'fill="none" stroke="#5f5536" stroke-width="{max(0.35, sw * 0.85):.2f}" stroke-linecap="round" '
-                f'{_timeline_style(when, op_base, delay_offset_frac=0.01, duration_scale=1.15, ease="linear")}/>'
+                f"{_timeline_style(when, op_base, delay_offset_frac=0.01, duration_scale=1.15, ease='linear')}/>"
             )
 
     # ── Atmospheric depth: background haze for distant elements ───
@@ -2020,9 +2782,11 @@ def generate(
     bg_trees_exist = any(plane == "bg" for plane in repo_depth_planes.values())
     if bg_trees_exist:
         # Find the x-ranges of background trees and apply localized haze
-        bg_bases = [(plant_bases[ri][0], plant_bases[ri][1])
-                    for ri in repo_depth_planes
-                    if repo_depth_planes[ri] == "bg" and ri < len(plant_bases)]
+        bg_bases = [
+            (plant_bases[ri][0], plant_bases[ri][1])
+            for ri in repo_depth_planes
+            if repo_depth_planes[ri] == "bg" and ri < len(plant_bases)
+        ]
         for bgx, bgy in bg_bases:
             # Localized atmospheric haze ellipses around background trees
             P.append(
@@ -2053,8 +2817,10 @@ def generate(
                 y1_h = cy_h - 12 * sin_h - off * cos_h
                 x2_h = cx_h + 12 * cos_h + off * sin_h
                 y2_h = cy_h + 12 * sin_h - off * cos_h
-                P.append(f'<line x1="{x1_h:.1f}" y1="{y1_h:.1f}" x2="{x2_h:.1f}" y2="{y2_h:.1f}" '
-                         f'stroke="#9a9070" stroke-width="0.25" opacity="{df * 0.13:.3f}"/>')
+                P.append(
+                    f'<line x1="{x1_h:.1f}" y1="{y1_h:.1f}" x2="{x2_h:.1f}" y2="{y2_h:.1f}" '
+                    f'stroke="#9a9070" stroke-width="0.25" opacity="{df * 0.13:.3f}"/>'
+                )
             # Cross-hatch (perpendicular) for dense areas
             if df > 0.45:
                 cos_c = math.cos(hatch_angle + math.pi / 2)
@@ -2065,8 +2831,10 @@ def generate(
                     y1_c = cy_h - 10 * sin_c - off * cos_c
                     x2_c = cx_h + 10 * cos_c + off * sin_c
                     y2_c = cy_h + 10 * sin_c - off * cos_c
-                    P.append(f'<line x1="{x1_c:.1f}" y1="{y1_c:.1f}" x2="{x2_c:.1f}" y2="{y2_c:.1f}" '
-                             f'stroke="#9a9070" stroke-width="0.2" opacity="{df * 0.08:.3f}"/>')
+                    P.append(
+                        f'<line x1="{x1_c:.1f}" y1="{y1_c:.1f}" x2="{x2_c:.1f}" y2="{y2_c:.1f}" '
+                        f'stroke="#9a9070" stroke-width="0.2" opacity="{df * 0.08:.3f}"/>'
+                    )
 
     # Stipple from monthly activity
     max_m = max(monthly.values()) if monthly else 100
@@ -2082,8 +2850,10 @@ def generate(
             dy = cy_m + rng.normal(0, 50)
             if dy > GROUND_Y - 5:
                 continue
-            P.append(f'<circle cx="{dx:.0f}" cy="{dy:.0f}" r="{rng.uniform(0.15,0.5):.1f}" '
-                     f'fill="#c8bfa8" {_timeline_style(m_when, 0.06 + intensity * 0.12)}/>')
+            P.append(
+                f'<circle cx="{dx:.0f}" cy="{dy:.0f}" r="{rng.uniform(0.15, 0.5):.1f}" '
+                f'fill="#c8bfa8" {_timeline_style(m_when, 0.06 + intensity * 0.12)}/>'
+            )
 
     # PASS 1: Main stems with rich bark texture
     for x1, y1, x2, y2, sw, hue, depth, is_main, bark_mat, when in all_segs:
@@ -2096,28 +2866,38 @@ def generate(
         my = (y1 + y2) / 2 + rng.uniform(-1, 1)
         if sw > 3:
             # Shadow layer (darker, full width)
-            P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{oklch(0.22, 0.07, hue)}" stroke-width="{sw:.1f}" '
-                     f'{_timeline_style(when, 0.9)} stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
+                f'fill="none" stroke="{oklch(0.22, 0.07, hue)}" stroke-width="{sw:.1f}" '
+                f'{_timeline_style(when, 0.9)} stroke-linecap="round"/>'
+            )
             # Core layer (current color, narrower)
-            P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{color}" stroke-width="{sw*0.55:.1f}" '
-                     f'{_timeline_style(when, 0.55)} stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
+                f'fill="none" stroke="{color}" stroke-width="{sw * 0.55:.1f}" '
+                f'{_timeline_style(when, 0.55)} stroke-linecap="round"/>'
+            )
         else:
-            P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                     f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" '
-                     f'{_timeline_style(when, 0.85)} stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
+                f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" '
+                f'{_timeline_style(when, 0.85)} stroke-linecap="round"/>'
+            )
         # Highlight edge — subtle lighter line on one side
         if sw > 2.5:
             perp = math.atan2(y2 - y1, x2 - x1) + math.pi / 2
             hoff = sw * 0.3
-            P.append(f'<path d="M{x1 + hoff * math.cos(perp):.1f},{y1 + hoff * math.sin(perp):.1f} '
-                     f'Q{mx + hoff * math.cos(perp):.1f},{my + hoff * math.sin(perp):.1f} '
-                     f'{x2 + hoff * math.cos(perp):.1f},{y2 + hoff * math.sin(perp):.1f}" '
-                     f'fill="none" stroke="{color_light}" stroke-width="0.3" {_timeline_style(when, 0.25)}/>')
+            P.append(
+                f'<path d="M{x1 + hoff * math.cos(perp):.1f},{y1 + hoff * math.sin(perp):.1f} '
+                f"Q{mx + hoff * math.cos(perp):.1f},{my + hoff * math.sin(perp):.1f} "
+                f'{x2 + hoff * math.cos(perp):.1f},{y2 + hoff * math.sin(perp):.1f}" '
+                f'fill="none" stroke="{color_light}" stroke-width="0.3" {_timeline_style(when, 0.25)}/>'
+            )
         # Bark texture — longitudinal grain lines, density driven by bark_mat
         # bark_mat: 0.0 = young (smooth bark) → 1.0 = old (deeply furrowed)
-        bark_thresh = max(2.5, 3.5 - bark_mat * 1.0)  # young trees need thicker stems for bark
+        bark_thresh = max(
+            2.5, 3.5 - bark_mat * 1.0
+        )  # young trees need thicker stems for bark
         if sw > bark_thresh and mat > 0.3 and len(P) - elem_count < MAX_ELEMENTS:
             seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if seg_len > 8:
@@ -2128,32 +2908,50 @@ def generate(
                 for bi in range(n_grain):
                     off = (bi - n_grain / 2) * 0.7
                     jitter = 0.6 + bark_mat * 0.4  # older = more irregular
-                    jx1, jy1 = rng.uniform(-jitter, jitter), rng.uniform(-jitter, jitter)
-                    jx2, jy2 = rng.uniform(-jitter, jitter), rng.uniform(-jitter, jitter)
+                    jx1, jy1 = (
+                        rng.uniform(-jitter, jitter),
+                        rng.uniform(-jitter, jitter),
+                    )
+                    jx2, jy2 = (
+                        rng.uniform(-jitter, jitter),
+                        rng.uniform(-jitter, jitter),
+                    )
                     line_w = 0.15 + rng.uniform(0, 0.15) + bark_mat * 0.08
-                    P.append(f'<line x1="{x1 + off * math.cos(perp) + jx1:.1f}" '
-                             f'y1="{y1 + off * math.sin(perp) + jy1:.1f}" '
-                             f'x2="{x2 + off * math.cos(perp) + jx2:.1f}" '
-                             f'y2="{y2 + off * math.sin(perp) + jy2:.1f}" '
-                             f'stroke="{bark_c}" stroke-width="{line_w:.2f}" '
-                             f'{_timeline_style(when, grain_opacity)}/>')
+                    P.append(
+                        f'<line x1="{x1 + off * math.cos(perp) + jx1:.1f}" '
+                        f'y1="{y1 + off * math.sin(perp) + jy1:.1f}" '
+                        f'x2="{x2 + off * math.cos(perp) + jx2:.1f}" '
+                        f'y2="{y2 + off * math.sin(perp) + jy2:.1f}" '
+                        f'stroke="{bark_c}" stroke-width="{line_w:.2f}" '
+                        f"{_timeline_style(when, grain_opacity)}/>"
+                    )
                 # Occasional knot mark — probability increases with bark maturity
                 knot_prob = 0.04 + bark_mat * 0.08
                 if seg_len > 15 and rng.random() < knot_prob and mat > 0.4:
                     kx = (x1 + x2) / 2 + rng.uniform(-2, 2)
                     ky = (y1 + y2) / 2 + rng.uniform(-2, 2)
                     kr = sw * rng.uniform(0.15, 0.3) * (0.8 + bark_mat * 0.4)
-                    P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr:.1f}" fill="none" '
-                             f'stroke="{bark_c}" stroke-width="{0.25 + bark_mat * 0.15:.2f}" '
-                             f'{_timeline_style(when, 0.10 + bark_mat * 0.06)}/>')
+                    P.append(
+                        f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr:.1f}" fill="none" '
+                        f'stroke="{bark_c}" stroke-width="{0.25 + bark_mat * 0.15:.2f}" '
+                        f"{_timeline_style(when, 0.10 + bark_mat * 0.06)}/>"
+                    )
                     # Mature bark: add concentric ring inside knot
                     if bark_mat > 0.6 and kr > 1:
-                        P.append(f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr * 0.55:.1f}" fill="none" '
-                                 f'stroke="{bark_c}" stroke-width="0.15" {_timeline_style(when, 0.06 + bark_mat * 0.04)}/>')
+                        P.append(
+                            f'<circle cx="{kx:.1f}" cy="{ky:.1f}" r="{kr * 0.55:.1f}" fill="none" '
+                            f'stroke="{bark_c}" stroke-width="0.15" {_timeline_style(when, 0.06 + bark_mat * 0.04)}/>'
+                        )
 
     # Water droplet trails on thick stems
     for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat, when in all_segs:
-        if is_main and sw > 3.5 and rng.random() < 0.04 and mat > 0.4 and len(P) - elem_count < MAX_ELEMENTS:
+        if (
+            is_main
+            and sw > 3.5
+            and rng.random() < 0.04
+            and mat > 0.4
+            and len(P) - elem_count < MAX_ELEMENTS
+        ):
             seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             if seg_len > 12:
                 # Small droplets trailing down stem
@@ -2165,8 +2963,10 @@ def generate(
                         break
                     dr_t = 0.6 - di_t * 0.08
                     if dr_t > 0.2:
-                        P.append(f'<circle cx="{trail_x + rng.uniform(-0.5, 0.5):.1f}" cy="{ty_t:.1f}" '
-                                 f'r="{dr_t:.1f}" fill="url(#dewGrad)" {_timeline_style(when, 0.3)}/>')
+                        P.append(
+                            f'<circle cx="{trail_x + rng.uniform(-0.5, 0.5):.1f}" cy="{ty_t:.1f}" '
+                            f'r="{dr_t:.1f}" fill="url(#dewGrad)" {_timeline_style(when, 0.3)}/>'
+                        )
 
     # PASS 2: Secondary branches
     for x1, y1, x2, y2, sw, hue, depth, is_main, _bark_mat, when in all_segs:
@@ -2177,8 +2977,10 @@ def generate(
         op = max(0.3, 0.80 - depth * 0.08)
         mx = (x1 + x2) / 2 + rng.uniform(-2, 2)
         my = (y1 + y2) / 2 + rng.uniform(-2, 2)
-        P.append(f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
-                 f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" {_timeline_style(when, op)} stroke-linecap="round"/>')
+        P.append(
+            f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
+            f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" {_timeline_style(when, op)} stroke-linecap="round"/>'
+        )
 
     # PASS 3: Tendrils with leaf buds
     for pts in tendrils:
@@ -2187,10 +2989,12 @@ def generate(
         pd = f"M{pts[0][0]:.1f},{pts[0][1]:.1f}"
         for j in range(1, len(pts) - 1, 2):
             if j + 1 < len(pts):
-                pd += f" Q{pts[j][0]:.1f},{pts[j][1]:.1f} {pts[j+1][0]:.1f},{pts[j+1][1]:.1f}"
+                pd += f" Q{pts[j][0]:.1f},{pts[j][1]:.1f} {pts[j + 1][0]:.1f},{pts[j + 1][1]:.1f}"
         # Main tendril — tapered stroke
-        P.append(f'<path d="{pd}" fill="none" stroke="#5a8a3a" stroke-width="0.5" '
-                 f'opacity="0.35" stroke-linecap="round"/>')
+        P.append(
+            f'<path d="{pd}" fill="none" stroke="#5a8a3a" stroke-width="0.5" '
+            f'opacity="0.35" stroke-linecap="round"/>'
+        )
         # Tiny leaf buds at alternating points along tendril
         for j in range(2, len(pts) - 1, 3):
             bx_t, by_t = pts[j]
@@ -2201,13 +3005,17 @@ def generate(
                 bud_r = rng.uniform(1, 2)
                 bud_x = bx_t + bud_r * math.cos(perp_a)
                 bud_y = by_t + bud_r * math.sin(perp_a)
-                P.append(f'<circle cx="{bud_x:.1f}" cy="{bud_y:.1f}" r="{bud_r * 0.4:.1f}" '
-                         f'fill="#7aaa5a" opacity="0.25"/>')
+                P.append(
+                    f'<circle cx="{bud_x:.1f}" cy="{bud_y:.1f}" r="{bud_r * 0.4:.1f}" '
+                    f'fill="#7aaa5a" opacity="0.25"/>'
+                )
 
     # PASS 4: Leaves with species-specific shapes (capped, scaled by complexity)
     _leaf_cap = int(MAX_LEAVES * (0.6 + 0.8 * complexity))
+
     def budget_ok():
         return len(P) - elem_count < MAX_ELEMENTS
+
     for leaf_tuple in leaves[:_leaf_cap]:
         if not budget_ok():
             break
@@ -2226,9 +3034,11 @@ def generate(
             P.append(
                 f'<path d="M{shx:.1f},{shy:.1f} Q{sc1x:.1f},{sc1y:.1f} {stx:.1f},{sty:.1f} '
                 f'Q{sc2x:.1f},{sc2y:.1f} {shx:.1f},{shy:.1f}" fill="#574c33" '
-                f'{_timeline_style(leaf_when, 0.07, delay_offset_frac=-0.015, duration_scale=1.2, ease="linear")}/>'
+                f"{_timeline_style(leaf_when, 0.07, delay_offset_frac=-0.015, duration_scale=1.2, ease='linear')}/>"
             )
-        P.append(f'<g {_timeline_style(leaf_when, 1.0, delay_offset_frac=0.004 * math.sin(la), duration_scale=0.95)}>')
+        P.append(
+            f"<g {_timeline_style(leaf_when, 1.0, delay_offset_frac=0.004 * math.sin(la), duration_scale=0.95)}>"
+        )
         _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch)
         if has_vein and ls > 5 and budget_ok():
             tip_x = lx + ls * math.cos(la)
@@ -2236,9 +3046,9 @@ def generate(
             P.append(
                 f'<line x1="{lx:.1f}" y1="{ly:.1f}" x2="{tip_x:.1f}" y2="{tip_y:.1f}" '
                 f'stroke="#f5efdf" stroke-width="0.16" '
-                f'{_timeline_style(leaf_when, 0.16, delay_offset_frac=0.02, duration_scale=0.7)}/>'
+                f"{_timeline_style(leaf_when, 0.16, delay_offset_frac=0.02, duration_scale=0.7)}/>"
             )
-        P.append('</g>')
+        P.append("</g>")
 
     # PASS 5: Buds with sepals
     for bx, by, bs, bh, when in buds:
@@ -2248,13 +3058,17 @@ def generate(
         # Sepals — small protective leaves wrapping the bud
         for si_s in range(2):
             sa_s = bud_rot + (si_s - 0.5) * 40
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" '
-                 f'fill="{sepal_c}" {_timeline_style(when, 0.3)} '
-                 f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" '
+            f'fill="{sepal_c}" {_timeline_style(when, 0.3)} '
+            f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>'
+        )
         # Bud body
-        P.append(f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.4:.1f}" ry="{bs:.1f}" '
-                 f'fill="{bud_c}" {_timeline_style(when, 0.5)} stroke="{oklch(0.45, 0.14, bh)}" stroke-width="0.2" '
-                 f'transform="rotate({bud_rot:.0f},{bx:.1f},{by:.1f})"/>')
+        P.append(
+            f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.4:.1f}" ry="{bs:.1f}" '
+            f'fill="{bud_c}" {_timeline_style(when, 0.5)} stroke="{oklch(0.45, 0.14, bh)}" stroke-width="0.2" '
+            f'transform="rotate({bud_rot:.0f},{bx:.1f},{by:.1f})"/>'
+        )
 
     # PASS 6: Multi-layer blooms with species-specific types (capped)
     for bloom_tuple in blooms[:MAX_BLOOMS]:
@@ -2265,12 +3079,18 @@ def generate(
             f'<ellipse cx="{bx + 2.2:.1f}" cy="{by + bs * 0.58:.1f}" rx="{bs * 0.55:.1f}" ry="{max(1.2, bs * 0.18):.1f}" '
             f'fill="#61563a" {_timeline_style(when, 0.08, delay_offset_frac=-0.012, duration_scale=1.25, ease="linear")}/>'
         )
-        P.append(f'<g {_timeline_style(when, 1.0, delay_offset_frac=0.008, duration_scale=0.9)}>')
-        _draw_bloom(P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch)
+        P.append(
+            f"<g {_timeline_style(when, 1.0, delay_offset_frac=0.008, duration_scale=0.9)}>"
+        )
+        _draw_bloom(
+            P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch
+        )
         # Bloom center glow overlay
-        P.append(f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs*0.6:.1f}" '
-                 f'fill="url(#petalGlow)" {_timeline_style(when, 0.5, delay_offset_frac=0.025, duration_scale=0.75)}/>')
-        P.append('</g>')
+        P.append(
+            f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs * 0.6:.1f}" '
+            f'fill="url(#petalGlow)" {_timeline_style(when, 0.5, delay_offset_frac=0.025, duration_scale=0.75)}/>'
+        )
+        P.append("</g>")
 
     # PASS 7: Berries with calyx and richer highlights
     for bi_idx, (bx, by, bs, bh, when) in enumerate(berries):
@@ -2278,21 +3098,29 @@ def generate(
             break
         # Tiny stem + calyx (only on first 20 berries to save budget)
         if bi_idx < 20:
-            P.append(f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" x2="{bx:.1f}" y2="{by - bs * 1.5:.1f}" '
-                     f'stroke="#6a5a3a" stroke-width="0.3" {_timeline_style(when, 0.35)}/>')
+            P.append(
+                f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" x2="{bx:.1f}" y2="{by - bs * 1.5:.1f}" '
+                f'stroke="#6a5a3a" stroke-width="0.3" {_timeline_style(when, 0.35)}/>'
+            )
             for ci_b in range(3):
                 ca_b = ci_b * 2 * math.pi / 3 - math.pi / 2
-                P.append(f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" '
-                         f'x2="{bx + bs * 0.3 * math.cos(ca_b):.1f}" y2="{by - bs + bs * 0.3 * math.sin(ca_b):.1f}" '
-                         f'stroke="#5a7a3a" stroke-width="0.2" {_timeline_style(when, 0.3)}/>')
+                P.append(
+                    f'<line x1="{bx:.1f}" y1="{by - bs:.1f}" '
+                    f'x2="{bx + bs * 0.3 * math.cos(ca_b):.1f}" y2="{by - bs + bs * 0.3 * math.sin(ca_b):.1f}" '
+                    f'stroke="#5a7a3a" stroke-width="0.2" {_timeline_style(when, 0.3)}/>'
+                )
         # Berry body
-        P.append(f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs:.1f}" fill="{oklch(0.42, 0.24, bh)}" '
-                 f'{_timeline_style(when, 0.6)} stroke="{oklch(0.33, 0.18, bh)}" stroke-width="0.3"/>')
+        P.append(
+            f'<circle cx="{bx:.1f}" cy="{by:.1f}" r="{bs:.1f}" fill="{oklch(0.42, 0.24, bh)}" '
+            f'{_timeline_style(when, 0.6)} stroke="{oklch(0.33, 0.18, bh)}" stroke-width="0.3"/>'
+        )
         # Highlight
-        P.append(f'<circle cx="{bx - bs * 0.25:.1f}" cy="{by - bs * 0.25:.1f}" r="{bs * 0.28:.1f}" '
-                 f'fill="#fff" {_timeline_style(when, 0.25)}/>')
+        P.append(
+            f'<circle cx="{bx - bs * 0.25:.1f}" cy="{by - bs * 0.25:.1f}" r="{bs * 0.28:.1f}" '
+            f'fill="#fff" {_timeline_style(when, 0.25)}/>'
+        )
 
-    P.append('</g>')  # end ink filter
+    P.append("</g>")  # end ink filter
 
     # ── Spider webs (delicate, with dew beading) ─────────────────
     for wcx, wcy, wr, n_sp in webs:
@@ -2301,15 +3129,19 @@ def generate(
             sa = si_sp * 2 * math.pi / n_sp
             ex = wcx + wr * math.cos(sa)
             ey = wcy + wr * math.sin(sa)
-            P.append(f'<line x1="{wcx:.1f}" y1="{wcy:.1f}" x2="{ex:.1f}" y2="{ey:.1f}" '
-                     f'stroke="#c0b8a0" stroke-width="0.25" opacity="0.2"/>')
+            P.append(
+                f'<line x1="{wcx:.1f}" y1="{wcy:.1f}" x2="{ex:.1f}" y2="{ey:.1f}" '
+                f'stroke="#c0b8a0" stroke-width="0.25" opacity="0.2"/>'
+            )
             # Dew drops along radial threads
             if rng.random() < 0.5:
                 dt = rng.uniform(0.3, 0.8)
                 ddx = wcx + (ex - wcx) * dt
                 ddy = wcy + (ey - wcy) * dt
-                P.append(f'<circle cx="{ddx:.1f}" cy="{ddy:.1f}" r="{rng.uniform(0.4, 1.0):.1f}" '
-                         f'fill="url(#dewGrad)" opacity="0.4"/>')
+                P.append(
+                    f'<circle cx="{ddx:.1f}" cy="{ddy:.1f}" r="{rng.uniform(0.4, 1.0):.1f}" '
+                    f'fill="url(#dewGrad)" opacity="0.4"/>'
+                )
         # Spiral capture threads — closer spacing near center
         for ring in range(3, int(wr), 3):
             ring_pts = []
@@ -2318,13 +3150,19 @@ def generate(
                 # Slight sag between spokes
                 sag = 0.8 if s % 2 == 0 else 1.0
                 r_eff = ring * sag
-                ring_pts.append(f"{wcx + r_eff * math.cos(angle):.1f},{wcy + r_eff * math.sin(angle):.1f}")
+                ring_pts.append(
+                    f"{wcx + r_eff * math.cos(angle):.1f},{wcy + r_eff * math.sin(angle):.1f}"
+                )
             rpts = " ".join(ring_pts)
-            P.append(f'<polyline points="{rpts}" fill="none" stroke="#c8c0a8" '
-                     f'stroke-width="0.15" opacity="{0.12 + 0.03 * (ring / wr):.2f}"/>')
+            P.append(
+                f'<polyline points="{rpts}" fill="none" stroke="#c8c0a8" '
+                f'stroke-width="0.15" opacity="{0.12 + 0.03 * (ring / wr):.2f}"/>'
+            )
         # Hub — tiny spiral at center
-        P.append(f'<circle cx="{wcx:.1f}" cy="{wcy:.1f}" r="1.2" fill="none" '
-                 f'stroke="#b8b098" stroke-width="0.3" opacity="0.2"/>')
+        P.append(
+            f'<circle cx="{wcx:.1f}" cy="{wcy:.1f}" r="1.2" fill="none" '
+            f'stroke="#b8b098" stroke-width="0.3" opacity="0.2"/>'
+        )
 
     # ── Data mapping: total_repos_contributed → spider web span ───
     # If total_repos_contributed > 5, add thin connecting lines between
@@ -2363,7 +3201,7 @@ def generate(
                 f'fill="none" stroke="#c0b8a0" stroke-width="0.3" '
                 f'stroke-dasharray="3 4" stroke-linecap="round"/>'
             )
-        P.append('</g>')
+        P.append("</g>")
 
     # ── Data mapping: releases → falling seeds/fruit ──────────────
     # For each release (capped at 5), add 1-3 small seed/fruit shapes
@@ -2374,12 +3212,16 @@ def generate(
             _seed_rng = np.random.default_rng(base_seed ^ 0x5EED0F)
             # Sort trees by height (smallest top_y = tallest) and pick tallest
             _sorted_trees = sorted(tree_tooltips, key=lambda t: t[2])
-            _tallest_trees = _sorted_trees[:max(1, min(3, len(_sorted_trees)))]
+            _tallest_trees = _sorted_trees[: max(1, min(3, len(_sorted_trees)))]
             _seed_color = pal.get("highlight", oklch(0.65, 0.12, 80))
             for _rel_i in range(_release_count):
                 # Pick a tall tree to drop from
                 _src_tree = _tallest_trees[_rel_i % len(_tallest_trees)]
-                _tree_x, _tree_base_y, _tree_top_y = _src_tree[0], _src_tree[1], _src_tree[2]
+                _tree_x, _tree_base_y, _tree_top_y = (
+                    _src_tree[0],
+                    _src_tree[1],
+                    _src_tree[2],
+                )
                 _canopy_y = _tree_top_y + (_tree_base_y - _tree_top_y) * 0.25
                 _n_seeds = _seed_rng.integers(1, 4)  # 1-3 seeds per release
                 for _ in range(_n_seeds):
@@ -2398,7 +3240,9 @@ def generate(
 
     # ── Dew drops ─────────────────────────────────────────────────
     for dx, dy, ds in dew_drops:
-        P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{ds:.1f}" fill="url(#dewGrad)" filter="url(#dew)"/>')
+        P.append(
+            f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{ds:.1f}" fill="url(#dewGrad)" filter="url(#dew)"/>'
+        )
 
     # ── Fireflies (star velocity driven) ─────────────────────────
     star_vel = metrics.get("star_velocity", {})
@@ -2418,7 +3262,7 @@ def generate(
                 P.append(
                     f'<circle cx="{fx:.0f}" cy="{fy:.0f}" r="{glow_r:.1f}" '
                     f'fill="{glow_color}" filter="url(#dew)" '
-                    f'{_timeline_style(when, 0.6)}/>'
+                    f"{_timeline_style(when, 0.6)}/>"
                 )
             else:
                 P.append(
@@ -2426,21 +3270,23 @@ def generate(
                     f'fill="{glow_color}" filter="url(#dew)" opacity="0">'
                     f'<animate attributeName="opacity" values="0;0.7;0.7;0" '
                     f'dur="{pulse_dur:.1f}s" begin="{delay:.1f}s" repeatCount="indefinite"/>'
-                    f'</circle>'
+                    f"</circle>"
                 )
-        P.append('</g>')
+        P.append("</g>")
 
     # ── Bioluminescent firefly layer (shared library, glow-filtered) ─
     fly_els = firefly_elements(
         metrics.get("star_velocity"),
-        width=WIDTH, height=HEIGHT,
-        y_min=0.3, y_max=0.85,
+        width=WIDTH,
+        height=HEIGHT,
+        y_min=0.3,
+        y_max=0.85,
         seed=base_seed,
     )
     if fly_els:
         P.append('<g filter="url(#fireflyGlow)">')
         P.extend(fly_els)
-        P.append('</g>')
+        P.append("</g>")
 
     # ── Insects (detailed, naturalist style) ──────────────────────
     _insect_body = oklch_lerp(pal["text_primary"], pal["ground"], 0.3)
@@ -2457,13 +3303,17 @@ def generate(
             cp2y = iy + rng.uniform(-15, 5)
             trail_end_x = ix + rng.uniform(15, 40)
             trail_end_y = iy + rng.uniform(-25, -5)
-            P.append(f'<path d="M{ix - rng.uniform(15, 35):.0f},{iy + rng.uniform(5, 20):.0f} '
-                     f'C{cp1x:.0f},{cp1y:.0f} {cp2x:.0f},{cp2y:.0f} {trail_end_x:.0f},{trail_end_y:.0f}" '
-                     f'fill="none" stroke="{_insect_trail}" stroke-width="0.2" opacity="0.06" '
-                     f'stroke-dasharray="1.5 2" stroke-linecap="round"/>')
+            P.append(
+                f'<path d="M{ix - rng.uniform(15, 35):.0f},{iy + rng.uniform(5, 20):.0f} '
+                f'C{cp1x:.0f},{cp1y:.0f} {cp2x:.0f},{cp2y:.0f} {trail_end_x:.0f},{trail_end_y:.0f}" '
+                f'fill="none" stroke="{_insect_trail}" stroke-width="0.2" opacity="0.06" '
+                f'stroke-dasharray="1.5 2" stroke-linecap="round"/>'
+            )
             # Body
-            P.append(f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="1" ry="{isz * 0.3:.1f}" '
-                     f'fill="{_insect_body}" opacity="0.6"/>')
+            P.append(
+                f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="1" ry="{isz * 0.3:.1f}" '
+                f'fill="{_insect_body}" opacity="0.6"/>'
+            )
             wc1 = oklch(0.62, 0.22, ihue)
             wc2 = oklch(0.55, 0.18, (ihue + 30) % 360)
             wc_vein = oklch(0.40, 0.10, ihue)
@@ -2482,12 +3332,17 @@ def generate(
                 w_cp3y = iy + isz * 0.05
                 w_cp4x = ix + side * isz * 0.1
                 w_cp4y = iy + isz * 0.02
-                P.append(f'<path d="M{ix:.0f},{iy:.0f} '
-                         f'C{w_cp1x:.0f},{w_cp1y:.0f} {w_cp2x:.0f},{w_cp2y:.0f} {w_tip_x:.0f},{w_tip_y:.0f} '
-                         f'C{w_cp3x:.0f},{w_cp3y:.0f} {w_cp4x:.0f},{w_cp4y:.0f} {ix:.0f},{iy:.0f}" '
-                         f'fill="{wc1}" opacity="0.45" stroke="{wc_vein}" stroke-width="0.3"/>')
+                P.append(
+                    f'<path d="M{ix:.0f},{iy:.0f} '
+                    f"C{w_cp1x:.0f},{w_cp1y:.0f} {w_cp2x:.0f},{w_cp2y:.0f} {w_tip_x:.0f},{w_tip_y:.0f} "
+                    f'C{w_cp3x:.0f},{w_cp3y:.0f} {w_cp4x:.0f},{w_cp4y:.0f} {ix:.0f},{iy:.0f}" '
+                    f'fill="{wc1}" opacity="0.45" stroke="{wc_vein}" stroke-width="0.3"/>'
+                )
                 # Wing spot
-                P.append(f'<circle cx="{uwx:.0f}" cy="{uwy:.0f}" r="{isz * 0.08:.1f}" fill="#fff" opacity="0.3"/>')
+                P.append(
+                    f'<circle cx="{uwx:.0f}" cy="{uwy:.0f}" '
+                    f'r="{isz * 0.08:.1f}" fill="#fff" opacity="0.3"/>'
+                )
                 # Wing venation — 3 veins per wing using curved paths
                 for vi in range(3):
                     va = (vi - 1) * 0.4 + side * 0.2
@@ -2495,39 +3350,67 @@ def generate(
                     vey = uwy + isz * 0.25 * math.sin(va - 0.5)
                     vmx = (ix + vex) / 2 + side * isz * 0.05
                     vmy = (iy + vey) / 2 - isz * 0.08
-                    P.append(f'<path d="M{ix:.0f},{iy:.0f} Q{vmx:.0f},{vmy:.0f} {vex:.0f},{vey:.0f}" '
-                             f'fill="none" stroke="{wc_vein}" stroke-width="0.2" opacity="0.15"/>')
+                    P.append(
+                        f'<path d="M{ix:.0f},{iy:.0f} '
+                        f'Q{vmx:.0f},{vmy:.0f} {vex:.0f},{vey:.0f}" '
+                        f'fill="none" stroke="{wc_vein}" '
+                        f'stroke-width="0.2" opacity="0.15"/>'
+                    )
                 # Lower wings
                 lwx = ix + side * isz * 0.35
                 lwy = iy + isz * 0.15
-                P.append(f'<ellipse cx="{lwx:.0f}" cy="{lwy:.0f}" rx="{isz * 0.25:.1f}" ry="{isz * 0.2:.1f}" '
-                         f'fill="{wc2}" opacity="0.4"/>')
+                P.append(
+                    f'<ellipse cx="{lwx:.0f}" cy="{lwy:.0f}" '
+                    f'rx="{isz * 0.25:.1f}" ry="{isz * 0.2:.1f}" '
+                    f'fill="{wc2}" opacity="0.4"/>'
+                )
             # Antennae with clubbed tips
             for side in [-1, 1]:
-                P.append(f'<path d="M{ix},{iy - isz * 0.3:.0f} Q{ix + side * 3},{iy - isz * 0.6:.0f} '
-                         f'{ix + side * 5},{iy - isz * 0.7:.0f}" fill="none" stroke="{_insect_body}" '
-                         f'stroke-width="0.3" opacity="0.4"/>')
-                P.append(f'<circle cx="{ix + side * 5:.0f}" cy="{iy - isz * 0.7:.0f}" r="0.6" '
-                         f'fill="{_insect_body}" opacity="0.35"/>')
+                P.append(
+                    f'<path d="M{ix},{iy - isz * 0.3:.0f} '
+                    f"Q{ix + side * 3},{iy - isz * 0.6:.0f} "
+                    f'{ix + side * 5},{iy - isz * 0.7:.0f}" '
+                    f'fill="none" stroke="{_insect_body}" '
+                    f'stroke-width="0.3" opacity="0.4"/>'
+                )
+                P.append(
+                    f'<circle cx="{ix + side * 5:.0f}" '
+                    f'cy="{iy - isz * 0.7:.0f}" r="0.6" '
+                    f'fill="{_insect_body}" opacity="0.35"/>'
+                )
         elif itype == "bee":
             # Fuzzy thorax
-            P.append(f'<ellipse cx="{ix - isz * 0.1:.0f}" cy="{iy:.0f}" rx="{isz * 0.2:.1f}" ry="{isz * 0.18:.1f}" '
-                     f'fill="{_bee_thorax}" opacity="0.55"/>')
+            P.append(
+                f'<ellipse cx="{ix - isz * 0.1:.0f}" cy="{iy:.0f}" '
+                f'rx="{isz * 0.2:.1f}" ry="{isz * 0.18:.1f}" '
+                f'fill="{_bee_thorax}" opacity="0.55"/>'
+            )
             # Striped abdomen
-            P.append(f'<ellipse cx="{ix + isz * 0.1:.0f}" cy="{iy:.0f}" rx="{isz * 0.28:.1f}" ry="{isz * 0.2:.1f}" '
-                     f'fill="{_bee_abdomen}" opacity="0.6"/>')
+            P.append(
+                f'<ellipse cx="{ix + isz * 0.1:.0f}" cy="{iy:.0f}" '
+                f'rx="{isz * 0.28:.1f}" ry="{isz * 0.2:.1f}" '
+                f'fill="{_bee_abdomen}" opacity="0.6"/>'
+            )
             for si_b in range(4):
                 bsx = ix + isz * 0.1 - isz * 0.15 + si_b * isz * 0.1
-                P.append(f'<line x1="{bsx:.0f}" y1="{iy - isz * 0.18:.0f}" x2="{bsx:.0f}" '
-                         f'y2="{iy + isz * 0.18:.0f}" stroke="{_bee_stripe}" stroke-width="0.7" opacity="0.25"/>')
+                P.append(
+                    f'<line x1="{bsx:.0f}" y1="{iy - isz * 0.18:.0f}" x2="{bsx:.0f}" '
+                    f'y2="{iy + isz * 0.18:.0f}" stroke="{_bee_stripe}" '
+                    f'stroke-width="0.7" opacity="0.25"/>'
+                )
             # Wings (pair, translucent)
             for side in [-1, 1]:
-                P.append(f'<ellipse cx="{ix:.0f}" cy="{iy + side * isz * 0.25:.0f}" '
-                         f'rx="{isz * 0.3:.1f}" ry="{isz * 0.1:.1f}" '
-                         f'fill="#e8e0d0" opacity="0.25" stroke="#c8c0b0" stroke-width="0.2"/>')
+                P.append(
+                    f'<ellipse cx="{ix:.0f}" cy="{iy + side * isz * 0.25:.0f}" '
+                    f'rx="{isz * 0.3:.1f}" ry="{isz * 0.1:.1f}" '
+                    f'fill="#e8e0d0" opacity="0.25" '
+                    f'stroke="#c8c0b0" stroke-width="0.2"/>'
+                )
             # Head
-            P.append(f'<circle cx="{ix - isz * 0.3:.0f}" cy="{iy:.0f}" r="{isz * 0.1:.1f}" '
-                     f'fill="{_insect_body}" opacity="0.5"/>')
+            P.append(
+                f'<circle cx="{ix - isz * 0.3:.0f}" cy="{iy:.0f}" r="{isz * 0.1:.1f}" '
+                f'fill="{_insect_body}" opacity="0.5"/>'
+            )
         elif itype == "dragonfly":
             # Segmented body — OKLCH lerp between accent and muted
             _df_body = oklch_lerp(pal["accent"], pal["muted"], 0.5)
@@ -2536,10 +3419,15 @@ def generate(
                 df = si_d / 5
                 dsx = ix - isz * 0.4 + si_d * isz * 0.2
                 dsr = isz * 0.06 * (1 - df * 0.4)
-                P.append(f'<circle cx="{dsx:.0f}" cy="{iy:.0f}" r="{dsr:.1f}" fill="{_df_body}" opacity="0.45"/>')
+                P.append(
+                    f'<circle cx="{dsx:.0f}" cy="{iy:.0f}" '
+                    f'r="{dsr:.1f}" fill="{_df_body}" opacity="0.45"/>'
+                )
             # Head
-            P.append(f'<circle cx="{ix - isz * 0.5:.0f}" cy="{iy:.0f}" r="{isz * 0.08:.1f}" '
-                     f'fill="{_df_head}" opacity="0.5"/>')
+            P.append(
+                f'<circle cx="{ix - isz * 0.5:.0f}" cy="{iy:.0f}" r="{isz * 0.08:.1f}" '
+                f'fill="{_df_head}" opacity="0.5"/>'
+            )
             # Wings — 4 translucent with venation
             for side in [-1, 1]:
                 for pair, off in enumerate([-0.15, 0.05]):
@@ -2547,41 +3435,61 @@ def generate(
                     wy = iy + side * isz * 0.25
                     wrx = isz * (0.38 - pair * 0.06)
                     wry = isz * 0.08
-                    P.append(f'<ellipse cx="{wx:.0f}" cy="{wy:.0f}" rx="{wrx:.1f}" ry="{wry:.1f}" '
-                             f'fill="#d8e8f0" opacity="0.22" stroke="#a0b8c8" stroke-width="0.2" '
-                             f'transform="rotate({side * (8 + pair * 5)},{wx:.0f},{wy:.0f})"/>')
+                    P.append(
+                        f'<ellipse cx="{wx:.0f}" cy="{wy:.0f}" '
+                        f'rx="{wrx:.1f}" ry="{wry:.1f}" '
+                        f'fill="#d8e8f0" opacity="0.22" '
+                        f'stroke="#a0b8c8" stroke-width="0.2" '
+                        f'transform="rotate({side * (8 + pair * 5)},{wx:.0f},{wy:.0f})"/>'
+                    )
                     # Single vein line through wing
-                    P.append(f'<line x1="{wx - wrx * 0.8:.0f}" y1="{wy:.0f}" x2="{wx + wrx * 0.8:.0f}" y2="{wy:.0f}" '
-                             f'stroke="#a0b8c8" stroke-width="0.15" opacity="0.15" '
-                             f'transform="rotate({side * (8 + pair * 5)},{wx:.0f},{wy:.0f})"/>')
+                    P.append(
+                        f'<line x1="{wx - wrx * 0.8:.0f}" y1="{wy:.0f}" '
+                        f'x2="{wx + wrx * 0.8:.0f}" y2="{wy:.0f}" '
+                        f'stroke="#a0b8c8" stroke-width="0.15" opacity="0.15" '
+                        f'transform="rotate({side * (8 + pair * 5)},{wx:.0f},{wy:.0f})"/>'
+                    )
 
         elif itype == "ladybug":
             lb_c = oklch(0.48, 0.24, 20)  # red-orange
             lb_dark = "#2a1a0a"
             # Body
-            P.append(f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="{isz * 0.4:.1f}" ry="{isz * 0.45:.1f}" '
-                     f'fill="{lb_c}" opacity="0.55" stroke="{lb_dark}" stroke-width="0.3"/>')
+            P.append(
+                f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" '
+                f'rx="{isz * 0.4:.1f}" ry="{isz * 0.45:.1f}" '
+                f'fill="{lb_c}" opacity="0.55" stroke="{lb_dark}" stroke-width="0.3"/>'
+            )
             # Center line (wing split)
-            P.append(f'<line x1="{ix:.0f}" y1="{iy - isz * 0.4:.0f}" x2="{ix:.0f}" y2="{iy + isz * 0.4:.0f}" '
-                     f'stroke="{lb_dark}" stroke-width="0.3" opacity="0.35"/>')
+            P.append(
+                f'<line x1="{ix:.0f}" y1="{iy - isz * 0.4:.0f}" '
+                f'x2="{ix:.0f}" y2="{iy + isz * 0.4:.0f}" '
+                f'stroke="{lb_dark}" stroke-width="0.3" opacity="0.35"/>'
+            )
             # Spots (3-4 per side)
             n_spots_lb = rng.integers(2, 4)
             for spi in range(n_spots_lb):
                 for side in [-1, 1]:
                     spx = ix + side * isz * rng.uniform(0.1, 0.25)
                     spy = iy - isz * 0.2 + spi * isz * 0.2
-                    P.append(f'<circle cx="{spx:.1f}" cy="{spy:.1f}" r="{isz * 0.06:.1f}" '
-                             f'fill="{lb_dark}" opacity="0.4"/>')
+                    P.append(
+                        f'<circle cx="{spx:.1f}" cy="{spy:.1f}" r="{isz * 0.06:.1f}" '
+                        f'fill="{lb_dark}" opacity="0.4"/>'
+                    )
             # Head
-            P.append(f'<ellipse cx="{ix:.0f}" cy="{iy - isz * 0.45:.0f}" rx="{isz * 0.2:.1f}" ry="{isz * 0.12:.1f}" '
-                     f'fill="{lb_dark}" opacity="0.45"/>')
+            P.append(
+                f'<ellipse cx="{ix:.0f}" cy="{iy - isz * 0.45:.0f}" '
+                f'rx="{isz * 0.2:.1f}" ry="{isz * 0.12:.1f}" '
+                f'fill="{lb_dark}" opacity="0.45"/>'
+            )
             # Tiny legs
             for li_lb in range(3):
                 for side in [-1, 1]:
                     ly_lb = iy - isz * 0.1 + li_lb * isz * 0.15
-                    P.append(f'<line x1="{ix + side * isz * 0.3:.0f}" y1="{ly_lb:.0f}" '
-                             f'x2="{ix + side * isz * 0.55:.0f}" y2="{ly_lb + 1:.0f}" '
-                             f'stroke="{lb_dark}" stroke-width="0.2" opacity="0.2"/>')
+                    P.append(
+                        f'<line x1="{ix + side * isz * 0.3:.0f}" y1="{ly_lb:.0f}" '
+                        f'x2="{ix + side * isz * 0.55:.0f}" y2="{ly_lb + 1:.0f}" '
+                        f'stroke="{lb_dark}" stroke-width="0.2" opacity="0.2"/>'
+                    )
 
     # ── Fallen leaves on ground ───────────────────────────────────
     n_fallen = int(mat * 10)
@@ -2600,34 +3508,50 @@ def generate(
         cp1_fy = fly - fl_size * 0.25
         cp2_fx = (flx + tip_fx) / 2 + fl_size * 0.3
         cp2_fy = fly + fl_size * 0.25
-        P.append(f'<path d="M{flx:.1f},{fly:.1f} Q{cp1_fx:.1f},{cp1_fy:.1f} {tip_fx:.1f},{fly:.1f} '
-                 f'Q{cp2_fx:.1f},{cp2_fy:.1f} {flx:.1f},{fly:.1f}" '
-                 f'fill="{fl_c}" opacity="0.2" stroke="{fl_sc}" stroke-width="0.2" '
-                 f'transform="rotate({fl_rot:.0f},{flx:.1f},{fly:.1f})"/>')
+        P.append(
+            f'<path d="M{flx:.1f},{fly:.1f} '
+            f"Q{cp1_fx:.1f},{cp1_fy:.1f} {tip_fx:.1f},{fly:.1f} "
+            f'Q{cp2_fx:.1f},{cp2_fy:.1f} {flx:.1f},{fly:.1f}" '
+            f'fill="{fl_c}" opacity="0.2" stroke="{fl_sc}" stroke-width="0.2" '
+            f'transform="rotate({fl_rot:.0f},{flx:.1f},{fly:.1f})"/>'
+        )
         # Midvein
-        P.append(f'<line x1="{flx:.1f}" y1="{fly:.1f}" x2="{tip_fx:.1f}" y2="{fly:.1f}" '
-                 f'stroke="{fl_sc}" stroke-width="0.15" opacity="0.15" '
-                 f'transform="rotate({fl_rot:.0f},{flx:.1f},{fly:.1f})"/>')
+        P.append(
+            f'<line x1="{flx:.1f}" y1="{fly:.1f}" x2="{tip_fx:.1f}" y2="{fly:.1f}" '
+            f'stroke="{fl_sc}" stroke-width="0.15" opacity="0.15" '
+            f'transform="rotate({fl_rot:.0f},{flx:.1f},{fly:.1f})"/>'
+        )
 
     # ── Falling seeds (dandelion-like wisps) ──────────────────────
     for sx, sy, sa, ss in seeds:
         # Seed body — tiny dark teardrop
-        P.append(f'<ellipse cx="{sx:.0f}" cy="{sy + ss * 0.15:.0f}" rx="{ss * 0.12:.1f}" ry="{ss * 0.2:.1f}" '
-                 f'fill="#a09060" opacity="0.35"/>')
+        P.append(
+            f'<ellipse cx="{sx:.0f}" cy="{sy + ss * 0.15:.0f}" '
+            f'rx="{ss * 0.12:.1f}" ry="{ss * 0.2:.1f}" '
+            f'fill="#a09060" opacity="0.35"/>'
+        )
         # Pappus filaments — radiating upward like a dandelion clock
         n_filaments = rng.integers(6, 12)
         for fi in range(n_filaments):
-            fa = -math.pi / 2 + (fi - n_filaments / 2) * (math.pi * 0.8 / n_filaments) + sa
+            fa = (
+                -math.pi / 2
+                + (fi - n_filaments / 2) * (math.pi * 0.8 / n_filaments)
+                + sa
+            )
             fl = ss * rng.uniform(0.7, 1.1)
             # Curved filament
             cpx = sx + fl * 0.5 * math.cos(fa) + rng.uniform(-1, 1)
             cpy = sy + fl * 0.5 * math.sin(fa) + rng.uniform(-0.5, 0.5)
             tip_x = sx + fl * math.cos(fa)
             tip_y = sy + fl * math.sin(fa)
-            P.append(f'<path d="M{sx:.0f},{sy:.0f} Q{cpx:.1f},{cpy:.1f} {tip_x:.1f},{tip_y:.1f}" '
-                     f'fill="none" stroke="#c8c0a0" stroke-width="0.15" opacity="0.2"/>')
+            P.append(
+                f'<path d="M{sx:.0f},{sy:.0f} Q{cpx:.1f},{cpy:.1f} {tip_x:.1f},{tip_y:.1f}" '
+                f'fill="none" stroke="#c8c0a0" stroke-width="0.15" opacity="0.2"/>'
+            )
             # Tiny barb at tip
-            P.append(f'<circle cx="{tip_x:.1f}" cy="{tip_y:.1f}" r="0.3" fill="#d8d0b0" opacity="0.2"/>')
+            P.append(
+                f'<circle cx="{tip_x:.1f}" cy="{tip_y:.1f}" r="0.3" fill="#d8d0b0" opacity="0.2"/>'
+            )
 
     # ── Maple samaras (helicopter seeds) ───────────────────────────
     for smx, smy, sma, sms in samaras:
@@ -2635,8 +3559,10 @@ def generate(
         seed_c = oklch(0.50, 0.08, 35)
         wing_c = oklch(0.58, 0.06, 40)
         # Seed body (round nut)
-        P.append(f'<circle cx="{smx:.1f}" cy="{smy:.1f}" r="{sms * 0.15:.1f}" '
-                 f'fill="{seed_c}" opacity="0.35"/>')
+        P.append(
+            f'<circle cx="{smx:.1f}" cy="{smy:.1f}" r="{sms * 0.15:.1f}" '
+            f'fill="{seed_c}" opacity="0.35"/>'
+        )
         # Wing — elongated teardrop
         wing_len = sms
         wing_w = sms * 0.2
@@ -2647,44 +3573,133 @@ def generate(
         cp2_sm = (smy + wy_tip) / 2 + wing_w * math.sin(perp_sm)
         cp3_sm = (smx + wx_tip) / 2 - wing_w * 0.3 * math.cos(perp_sm)
         cp4_sm = (smy + wy_tip) / 2 - wing_w * 0.3 * math.sin(perp_sm)
-        P.append(f'<path d="M{smx:.1f},{smy:.1f} Q{cp1_sm:.1f},{cp2_sm:.1f} {wx_tip:.1f},{wy_tip:.1f} '
-                 f'Q{cp3_sm:.1f},{cp4_sm:.1f} {smx:.1f},{smy:.1f}" '
-                 f'fill="{wing_c}" opacity="0.2" stroke="{seed_c}" stroke-width="0.2"/>')
+        P.append(
+            f'<path d="M{smx:.1f},{smy:.1f} Q{cp1_sm:.1f},{cp2_sm:.1f} {wx_tip:.1f},{wy_tip:.1f} '
+            f'Q{cp3_sm:.1f},{cp4_sm:.1f} {smx:.1f},{smy:.1f}" '
+            f'fill="{wing_c}" opacity="0.2" stroke="{seed_c}" stroke-width="0.2"/>'
+        )
         # Wing vein
-        P.append(f'<line x1="{smx:.1f}" y1="{smy:.1f}" x2="{wx_tip:.1f}" y2="{wy_tip:.1f}" '
-                 f'stroke="{seed_c}" stroke-width="0.15" opacity="0.15"/>')
+        P.append(
+            f'<line x1="{smx:.1f}" y1="{smy:.1f}" x2="{wx_tip:.1f}" y2="{wy_tip:.1f}" '
+            f'stroke="{seed_c}" stroke-width="0.15" opacity="0.15"/>'
+        )
 
     # ── Labels (botanical plate annotation with halos) ────────────
-    P.append(f'<g font-family="Georgia,serif" font-size="7.5" fill="{pal["text_secondary"]}">')
-    for li, (lx, ly, text, ax, ay, when) in enumerate(labels):
+    P.append(
+        f'<g font-family="Georgia,serif" font-size="7.5" fill="{pal["text_secondary"]}">'
+    )
+    for li, (lx, ly, text, subtext, ax, ay, when) in enumerate(labels):
+        safe_text = _escape_svg_text(str(text))
+        safe_subtext = _escape_svg_text(str(subtext)) if subtext else ""
         # Dashed leader line with small arrowhead
-        P.append(f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
-                 f'stroke="#a09070" stroke-width="0.35" {_timeline_style(when, 0.3)} stroke-dasharray="1.5 2"/>')
+        P.append(
+            f'<line x1="{ax:.0f}" y1="{ay:.0f}" x2="{lx:.0f}" y2="{ly:.0f}" '
+            f'stroke="#a09070" stroke-width="0.35" {_timeline_style(when, 0.3)} stroke-dasharray="1.5 2"/>'
+        )
         # Anchor dot — small circle at plant base
-        P.append(f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="1.2" fill="none" '
-                 f'stroke="#a09070" stroke-width="0.4" {_timeline_style(when, 0.3)}/>')
-        P.append(f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="0.4" fill="#a09070" {_timeline_style(when, 0.3)}/>')
+        P.append(
+            f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="1.2" fill="none" '
+            f'stroke="#a09070" stroke-width="0.4" {_timeline_style(when, 0.3)}/>'
+        )
+        P.append(
+            f'<circle cx="{ax:.0f}" cy="{ay:.0f}" r="0.4" fill="#a09070" {_timeline_style(when, 0.3)}/>'
+        )
         # Label text with paint-order halo for readability
-        P.append(f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-style="italic" '
-                 f'{_timeline_style(when, 0.55)} paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2.5" '
-                 f'stroke-linejoin="round">{text}</text>')
+        P.append(
+            f'<text x="{lx:.0f}" y="{ly:.0f}" text-anchor="middle" font-style="italic" '
+            f'{_timeline_style(when, 0.55)} paint-order="stroke fill" stroke="#f5f0e6" stroke-width="2.5" '
+            f'stroke-linejoin="round">{safe_text}</text>'
+        )
+        fig_y = ly + 9
+        if safe_subtext:
+            P.append(
+                f'<text x="{lx:.0f}" y="{ly + 8:.0f}" text-anchor="middle" font-size="5.2" '
+                f'{_timeline_style(when, 0.34)} font-style="normal" letter-spacing="0.3" '
+                f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.8" '
+                f'stroke-linejoin="round">{safe_subtext}</text>'
+            )
+            fig_y = ly + 16
         # Plate number annotation (small, upright)
-        P.append(f'<text x="{lx:.0f}" y="{ly + 9:.0f}" text-anchor="middle" font-size="5" '
-                 f'{_timeline_style(when, 0.3)} font-style="normal" paint-order="stroke fill" stroke="#f5f0e6" '
-                 f'stroke-width="2" stroke-linejoin="round">Fig. {li + 1}</text>')
-    P.append('</g>')
+        P.append(
+            f'<text x="{lx:.0f}" y="{fig_y:.0f}" text-anchor="middle" font-size="5" '
+            f'{_timeline_style(when, 0.3)} font-style="normal" paint-order="stroke fill" stroke="#f5f0e6" '
+            f'stroke-width="2" stroke-linejoin="round">Fig. {li + 1}</text>'
+        )
+    P.append("</g>")
+
+    if overflow_repos:
+        overflow_summary, overflow_topics = _overflow_specimen_annotation(
+            overflow_repos
+        )
+        safe_overflow_summary = _escape_svg_text(overflow_summary)
+        safe_overflow_topics = _escape_svg_text(overflow_topics) if overflow_topics else ""
+        drawer_w = 146
+        drawer_h = 34 if safe_overflow_topics else 28
+        drawer_x = WIDTH - drawer_w - 22
+        drawer_y = HEIGHT - drawer_h - 54
+        drawer_fill = oklch_lerp(pal["bg_primary"], pal["border"], 0.08)
+        drawer_stroke = oklch_lerp(pal["border"], pal["muted"], 0.25)
+        drawer_title = oklch_lerp(pal["text_secondary"], pal["border"], 0.25)
+
+        P.append('<g id="study-drawers">')
+        P.append(
+            f'<rect x="{drawer_x + 2}" y="{drawer_y + 2}" width="{drawer_w}" height="{drawer_h}" '
+            f'fill="#e5dccd" opacity="0.18" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{drawer_x}" y="{drawer_y}" width="{drawer_w}" height="{drawer_h}" '
+            f'fill="{drawer_fill}" opacity="0.92" stroke="{drawer_stroke}" stroke-width="0.7" rx="3"/>'
+        )
+        P.append(
+            f'<line x1="{drawer_x + 10}" y1="{drawer_y + 12}" x2="{drawer_x + drawer_w - 10}" y2="{drawer_y + 12}" '
+            f'stroke="{drawer_stroke}" stroke-width="0.35" opacity="0.45"/>'
+        )
+        P.append(
+            f'<text x="{drawer_x + 11}" y="{drawer_y + 9}" text-anchor="start" '
+            f'font-family="Georgia,serif" font-size="5.1" letter-spacing="1.2" font-variant="small-caps" '
+            f'fill="{drawer_title}" opacity="0.72">Study Drawers</text>'
+        )
+        P.append(
+            f'<text x="{drawer_x + 11}" y="{drawer_y + 21}" text-anchor="start" '
+            f'font-family="Georgia,serif" font-size="5.7" font-style="italic" '
+            f'fill="{pal["text_secondary"]}" opacity="0.58" paint-order="stroke fill" '
+            f'stroke="#f5f0e6" stroke-width="1.6" stroke-linejoin="round">{safe_overflow_summary}</text>'
+        )
+        if safe_overflow_topics:
+            P.append(
+                f'<text x="{drawer_x + 11}" y="{drawer_y + 29}" text-anchor="start" '
+                f'font-family="Georgia,serif" font-size="4.9" '
+                f'fill="{pal["muted"]}" opacity="0.68" paint-order="stroke fill" '
+                f'stroke="#f5f0e6" stroke-width="1.4" stroke-linejoin="round">{safe_overflow_topics}</text>'
+            )
+        for specimen_idx in range(min(len(overflow_repos), 3)):
+            specimen_x = drawer_x + drawer_w - 16 - specimen_idx * 10
+            specimen_y = drawer_y + 8
+            P.append(
+                f'<ellipse cx="{specimen_x}" cy="{specimen_y}" rx="3.1" ry="1.8" '
+                f'fill="{pal["accent"]}" opacity="0.22" stroke="{drawer_stroke}" stroke-width="0.3"/>'
+            )
+            P.append(
+                f'<line x1="{specimen_x}" y1="{specimen_y + 1.6}" x2="{specimen_x}" y2="{specimen_y + 6.0}" '
+                f'stroke="{drawer_stroke}" stroke-width="0.25" opacity="0.45"/>'
+            )
+        P.append("</g>")
 
     # ── Weather overlay (from WorldState) ──────────────────────────
-    weather_els = weather_overlay_elements(world, width=WIDTH, height=HEIGHT, seed=base_seed)
+    weather_els = weather_overlay_elements(
+        world, width=WIDTH, height=HEIGHT, seed=base_seed
+    )
     for el in weather_els:
         P.append(el)
 
     # ── Foreground warm tint for newest-repo depth plane ─────────
     fg_trees_exist = any(plane == "fg" for plane in repo_depth_planes.values())
     if fg_trees_exist:
-        fg_bases = [(plant_bases[ri][0], plant_bases[ri][1])
-                    for ri in repo_depth_planes
-                    if repo_depth_planes[ri] == "fg" and ri < len(plant_bases)]
+        fg_bases = [
+            (plant_bases[ri][0], plant_bases[ri][1])
+            for ri in repo_depth_planes
+            if repo_depth_planes[ri] == "fg" and ri < len(plant_bases)
+        ]
         for fgx, fgy in fg_bases:
             # Subtle warm glow around foreground trees
             P.append(
@@ -2700,55 +3715,93 @@ def generate(
     # --- Border neatlines ---
     if mat < 0.15:
         # Single thin neatline
-        P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#9a8a68" stroke-width="1.0" rx="1"/>')
+        P.append(
+            f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
+            f'fill="none" stroke="#9a8a68" stroke-width="1.0" rx="1"/>'
+        )
     elif mat < 0.35:
         # Double neatline
-        P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#7a6a50" stroke-width="1.6" rx="2"/>')
-        P.append(f'<rect x="{m + 4}" y="{m + 4}" width="{WIDTH - 2 * m - 8}" height="{HEIGHT - 2 * m - 8}" '
-                 f'fill="none" stroke="#a09878" stroke-width="0.6" rx="1"/>')
+        P.append(
+            f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
+            f'fill="none" stroke="#7a6a50" stroke-width="1.6" rx="2"/>'
+        )
+        P.append(
+            f'<rect x="{m + 4}" y="{m + 4}" width="{WIDTH - 2 * m - 8}" height="{HEIGHT - 2 * m - 8}" '
+            f'fill="none" stroke="#a09878" stroke-width="0.6" rx="1"/>'
+        )
     else:
         # Triple neatline (mat >= 0.35)
-        P.append(f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
-                 f'fill="none" stroke="#7a6a50" stroke-width="2.0" rx="2"/>')
-        P.append(f'<rect x="{m + 5}" y="{m + 5}" width="{WIDTH - 2 * m - 10}" height="{HEIGHT - 2 * m - 10}" '
-                 f'fill="none" stroke="#a09878" stroke-width="0.7" rx="1"/>')
-        P.append(f'<rect x="{m + 2.5}" y="{m + 2.5}" width="{WIDTH - 2 * m - 5}" height="{HEIGHT - 2 * m - 5}" '
-                 f'fill="none" stroke="#b8b098" stroke-width="0.35" rx="1.5" stroke-dasharray="4 2"/>')
+        P.append(
+            f'<rect x="{m}" y="{m}" width="{WIDTH - 2 * m}" height="{HEIGHT - 2 * m}" '
+            f'fill="none" stroke="#7a6a50" stroke-width="2.0" rx="2"/>'
+        )
+        P.append(
+            f'<rect x="{m + 5}" y="{m + 5}" width="{WIDTH - 2 * m - 10}" height="{HEIGHT - 2 * m - 10}" '
+            f'fill="none" stroke="#a09878" stroke-width="0.7" rx="1"/>'
+        )
+        P.append(
+            f'<rect x="{m + 2.5}" y="{m + 2.5}" width="{WIDTH - 2 * m - 5}" height="{HEIGHT - 2 * m - 5}" '
+            f'fill="none" stroke="#b8b098" stroke-width="0.35" rx="1.5" stroke-dasharray="4 2"/>'
+        )
 
     # --- Corner dots (mat 0.35–0.6) or scrollwork (mat >= 0.6) ---
     if 0.35 <= mat < 0.6:
-        for cx_c, cy_c in [(m + 5, m + 5), (WIDTH - m - 5, m + 5),
-                           (WIDTH - m - 5, HEIGHT - m - 5), (m + 5, HEIGHT - m - 5)]:
-            P.append(f'<circle cx="{cx_c}" cy="{cy_c}" r="1.5" fill="#a09070" opacity="0.2"/>')
+        for cx_c, cy_c in [
+            (m + 5, m + 5),
+            (WIDTH - m - 5, m + 5),
+            (WIDTH - m - 5, HEIGHT - m - 5),
+            (m + 5, HEIGHT - m - 5),
+        ]:
+            P.append(
+                f'<circle cx="{cx_c}" cy="{cy_c}" r="1.5" fill="#a09070" opacity="0.2"/>'
+            )
     elif mat >= 0.6:
         for cx_c, cy_c, rot in [
-            (m + 5, m + 5, 0), (WIDTH - m - 5, m + 5, 90),
-            (WIDTH - m - 5, HEIGHT - m - 5, 180), (m + 5, HEIGHT - m - 5, 270),
+            (m + 5, m + 5, 0),
+            (WIDTH - m - 5, m + 5, 90),
+            (WIDTH - m - 5, HEIGHT - m - 5, 180),
+            (m + 5, HEIGHT - m - 5, 270),
         ]:
             P.append(f'<g transform="rotate({rot},{cx_c},{cy_c})">')
-            P.append(f'<path d="M{cx_c},{cy_c} Q{cx_c + 15},{cy_c + 1} {cx_c + 25},{cy_c + 8}" '
-                     f'fill="none" stroke="#a09070" stroke-width="0.7" opacity="0.4"/>')
-            P.append(f'<path d="M{cx_c},{cy_c} Q{cx_c + 1},{cy_c + 15} {cx_c + 8},{cy_c + 25}" '
-                     f'fill="none" stroke="#a09070" stroke-width="0.7" opacity="0.4"/>')
-            P.append(f'<path d="M{cx_c + 25},{cy_c + 8} Q{cx_c + 28},{cy_c + 12} {cx_c + 24},{cy_c + 14} '
-                     f'Q{cx_c + 20},{cy_c + 12} {cx_c + 22},{cy_c + 9}" '
-                     f'fill="none" stroke="#a09070" stroke-width="0.5" opacity="0.35"/>')
-            P.append(f'<path d="M{cx_c + 8},{cy_c + 25} Q{cx_c + 12},{cy_c + 28} {cx_c + 14},{cy_c + 24} '
-                     f'Q{cx_c + 12},{cy_c + 20} {cx_c + 9},{cy_c + 22}" '
-                     f'fill="none" stroke="#a09070" stroke-width="0.5" opacity="0.35"/>')
-            P.append(f'<path d="M{cx_c + 4},{cy_c + 4} Q{cx_c + 10},{cy_c + 1} {cx_c + 14},{cy_c + 6} '
-                     f'Q{cx_c + 10},{cy_c + 9} {cx_c + 4},{cy_c + 4}" '
-                     f'fill="#b8c898" opacity="0.12" stroke="#a0b078" stroke-width="0.25"/>')
-            P.append(f'<path d="M{cx_c + 4},{cy_c + 4} Q{cx_c + 1},{cy_c + 10} {cx_c + 6},{cy_c + 14} '
-                     f'Q{cx_c + 9},{cy_c + 10} {cx_c + 4},{cy_c + 4}" '
-                     f'fill="#b8c898" opacity="0.12" stroke="#a0b078" stroke-width="0.25"/>')
-            P.append(f'<line x1="{cx_c + 4}" y1="{cy_c + 4}" x2="{cx_c + 13}" y2="{cx_c + 5}" '
-                     f'stroke="#90a868" stroke-width="0.2" opacity="0.15"/>')
-            P.append(f'<circle cx="{cx_c + 16}" cy="{cy_c + 4}" r="1" fill="#c09070" opacity="0.15"/>')
-            P.append(f'<circle cx="{cx_c + 4}" cy="{cy_c + 16}" r="1" fill="#c09070" opacity="0.15"/>')
-            P.append('</g>')
+            P.append(
+                f'<path d="M{cx_c},{cy_c} Q{cx_c + 15},{cy_c + 1} {cx_c + 25},{cy_c + 8}" '
+                f'fill="none" stroke="#a09070" stroke-width="0.7" opacity="0.4"/>'
+            )
+            P.append(
+                f'<path d="M{cx_c},{cy_c} Q{cx_c + 1},{cy_c + 15} {cx_c + 8},{cy_c + 25}" '
+                f'fill="none" stroke="#a09070" stroke-width="0.7" opacity="0.4"/>'
+            )
+            P.append(
+                f'<path d="M{cx_c + 25},{cy_c + 8} Q{cx_c + 28},{cy_c + 12} {cx_c + 24},{cy_c + 14} '
+                f'Q{cx_c + 20},{cy_c + 12} {cx_c + 22},{cy_c + 9}" '
+                f'fill="none" stroke="#a09070" stroke-width="0.5" opacity="0.35"/>'
+            )
+            P.append(
+                f'<path d="M{cx_c + 8},{cy_c + 25} Q{cx_c + 12},{cy_c + 28} {cx_c + 14},{cy_c + 24} '
+                f'Q{cx_c + 12},{cy_c + 20} {cx_c + 9},{cy_c + 22}" '
+                f'fill="none" stroke="#a09070" stroke-width="0.5" opacity="0.35"/>'
+            )
+            P.append(
+                f'<path d="M{cx_c + 4},{cy_c + 4} Q{cx_c + 10},{cy_c + 1} {cx_c + 14},{cy_c + 6} '
+                f'Q{cx_c + 10},{cy_c + 9} {cx_c + 4},{cy_c + 4}" '
+                f'fill="#b8c898" opacity="0.12" stroke="#a0b078" stroke-width="0.25"/>'
+            )
+            P.append(
+                f'<path d="M{cx_c + 4},{cy_c + 4} Q{cx_c + 1},{cy_c + 10} {cx_c + 6},{cy_c + 14} '
+                f'Q{cx_c + 9},{cy_c + 10} {cx_c + 4},{cy_c + 4}" '
+                f'fill="#b8c898" opacity="0.12" stroke="#a0b078" stroke-width="0.25"/>'
+            )
+            P.append(
+                f'<line x1="{cx_c + 4}" y1="{cy_c + 4}" x2="{cx_c + 13}" y2="{cx_c + 5}" '
+                f'stroke="#90a868" stroke-width="0.2" opacity="0.15"/>'
+            )
+            P.append(
+                f'<circle cx="{cx_c + 16}" cy="{cy_c + 4}" r="1" fill="#c09070" opacity="0.15"/>'
+            )
+            P.append(
+                f'<circle cx="{cx_c + 4}" cy="{cy_c + 16}" r="1" fill="#c09070" opacity="0.15"/>'
+            )
+            P.append("</g>")
 
     # --- Top vine (mat >= 0.6) ---
     if mat >= 0.6:
@@ -2763,14 +3816,23 @@ def generate(
             vine_d = f"M{vine_pts[0][0]:.1f},{vine_pts[0][1]:.1f}"
             for j in range(1, len(vine_pts) - 1, 2):
                 if j + 1 < len(vine_pts):
-                    vine_d += f" Q{vine_pts[j][0]:.1f},{vine_pts[j][1]:.1f} {vine_pts[j+1][0]:.1f},{vine_pts[j+1][1]:.1f}"
-            P.append(f'<path d="{vine_d}" fill="none" stroke="#a0b078" stroke-width="0.4" opacity="0.15"/>')
+                    vine_d += (
+                        f" Q{vine_pts[j][0]:.1f},{vine_pts[j][1]:.1f}"
+                        f" {vine_pts[j + 1][0]:.1f},{vine_pts[j + 1][1]:.1f}"
+                    )
+            P.append(
+                f'<path d="{vine_d}" fill="none" stroke="#a0b078" '
+                f'stroke-width="0.4" opacity="0.15"/>'
+            )
             for j in range(0, len(vine_pts), 3):
                 vvx, vvy = vine_pts[j]
                 side = 1 if j % 2 == 0 else -1
-                P.append(f'<ellipse cx="{vvx + 2:.0f}" cy="{vvy + side * 3:.0f}" rx="2" ry="1" '
-                         f'fill="#b0c890" opacity="0.08" '
-                         f'transform="rotate({side * 20},{vvx + 2:.0f},{vvy + side * 3:.0f})"/>')
+                P.append(
+                    f'<ellipse cx="{vvx + 2:.0f}" cy="{vvy + side * 3:.0f}" rx="2" ry="1" '
+                    f'fill="#b0c890" opacity="0.08" '
+                    f'transform="rotate({side * 20},{vvx + 2:.0f},'
+                    f'{vvy + side * 3:.0f})"/>'
+                )
 
     # --- Bottom vine (mat > 0.8) ---
     if mat > 0.8:
@@ -2785,98 +3847,188 @@ def generate(
             vine_d_b = f"M{vine_pts_b[0][0]:.1f},{vine_pts_b[0][1]:.1f}"
             for j in range(1, len(vine_pts_b) - 1, 2):
                 if j + 1 < len(vine_pts_b):
-                    vine_d_b += f" Q{vine_pts_b[j][0]:.1f},{vine_pts_b[j][1]:.1f} {vine_pts_b[j+1][0]:.1f},{vine_pts_b[j+1][1]:.1f}"
-            P.append(f'<path d="{vine_d_b}" fill="none" stroke="#a0b078" stroke-width="0.35" opacity="0.12"/>')
+                    vine_d_b += (
+                        f" Q{vine_pts_b[j][0]:.1f},{vine_pts_b[j][1]:.1f}"
+                        f" {vine_pts_b[j + 1][0]:.1f},{vine_pts_b[j + 1][1]:.1f}"
+                    )
+            P.append(
+                f'<path d="{vine_d_b}" fill="none" stroke="#a0b078" '
+                f'stroke-width="0.35" opacity="0.12"/>'
+            )
             for j in range(0, len(vine_pts_b), 4):
                 vvx_b, vvy_b = vine_pts_b[j]
                 side = 1 if j % 2 == 0 else -1
-                P.append(f'<ellipse cx="{vvx_b + 1.5:.0f}" cy="{vvy_b + side * 2.5:.0f}" rx="1.8" ry="0.9" '
-                         f'fill="#b0c890" opacity="0.06" '
-                         f'transform="rotate({side * 25},{vvx_b + 1.5:.0f},{vvy_b + side * 2.5:.0f})"/>')
+                P.append(
+                    f'<ellipse cx="{vvx_b + 1.5:.0f}" '
+                    f'cy="{vvy_b + side * 2.5:.0f}" rx="1.8" ry="0.9" '
+                    f'fill="#b0c890" opacity="0.06" '
+                    f'transform="rotate({side * 25},{vvx_b + 1.5:.0f},'
+                    f'{vvy_b + side * 2.5:.0f})"/>'
+                )
 
     # ── Tiered title cartouche ──────────────────────────────────
     cart_w = max(140, len(label) * 8 + 60)
     cart_h = 32 if mat >= 0.35 else 18
     cart_x = CX - cart_w / 2
     cart_y = HEIGHT - m - 6 - cart_h
+    cart_inner_stroke = oklch_lerp(pal["border"], pal["bg_primary"], 0.4)
+    cart_rule_stroke = oklch_lerp(pal["border"], pal["muted"], 0.5)
 
     if mat < 0.15:
         # Plain italic text, no box
-        P.append(f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="9" fill="{pal["text_secondary"]}" opacity="0.5" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
-                 f'{label}</text>')
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="9" '
+            f'fill="{pal["text_secondary"]}" opacity="0.5" '
+            f'font-style="italic" paint-order="stroke fill" '
+            f'stroke="{pal["bg_primary"]}" stroke-width="2" '
+            f'stroke-linejoin="round">'
+            f"{label}</text>"
+        )
     elif mat < 0.35:
         # Simple box + text
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="{pal["bg_primary"]}" opacity="0.8" rx="2"/>')
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.6" rx="2"/>')
-        P.append(f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="9" fill="{pal["text_secondary"]}" opacity="0.55" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
-                 f'{label}</text>')
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="{pal["bg_primary"]}" opacity="0.8" rx="2"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="none" stroke="{pal["border"]}" stroke-width="0.6" rx="2"/>'
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 12:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="9" '
+            f'fill="{pal["text_secondary"]}" opacity="0.55" '
+            f'font-style="italic" paint-order="stroke fill" '
+            f'stroke="{pal["bg_primary"]}" stroke-width="2" '
+            f'stroke-linejoin="round">'
+            f"{label}</text>"
+        )
     elif mat < 0.6:
         # Box + subtitle
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.7" rx="3"/>')
-        P.append(f'<text x="{CX}" y="{cart_y + 13:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
-                 f'{label}</text>')
-        P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.35" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
-                 f'BOTANICAL GARDEN</text>')
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="none" stroke="{pal["border"]}" stroke-width="0.7" rx="3"/>'
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 13:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="10" '
+            f'fill="{pal["text_secondary"]}" opacity="0.6" '
+            f'font-style="italic" paint-order="stroke fill" '
+            f'stroke="{pal["bg_primary"]}" stroke-width="2" '
+            f'stroke-linejoin="round">'
+            f"{label}</text>"
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="5.5" '
+            f'fill="{pal["muted"]}" opacity="0.35" letter-spacing="2" '
+            f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" '
+            f'stroke-width="1.5" stroke-linejoin="round">'
+            f"BOTANICAL GARDEN</text>"
+        )
     elif mat < 0.8:
         # Full cartouche + leaf ornaments
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>')
-        P.append(f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
-                 f'fill="none" stroke="{oklch_lerp(pal["border"], pal["bg_primary"], 0.4)}" stroke-width="0.3" rx="2"/>')
-        P.append(f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
-                 f'{label}</text>')
-        P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
-                 f'BOTANICAL GARDEN</text>')
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" '
+            f'width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
+            f'fill="none" stroke="{cart_inner_stroke}" '
+            f'stroke-width="0.3" rx="2"/>'
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="10" '
+            f'fill="{pal["text_secondary"]}" opacity="0.6" '
+            f'font-style="italic" paint-order="stroke fill" '
+            f'stroke="{pal["bg_primary"]}" stroke-width="2" '
+            f'stroke-linejoin="round">{label}</text>'
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="5.5" '
+            f'fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
+            f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" '
+            f'stroke-width="1.5" stroke-linejoin="round">'
+            f"BOTANICAL GARDEN</text>"
+        )
         for side in [-1, 1]:
             lx_d = CX + side * (cart_w / 2 - 18)
             ly_d = cart_y + 13
-            P.append(f'<path d="M{lx_d:.0f},{ly_d:.0f} Q{lx_d + side * 5:.0f},{ly_d - 3:.0f} '
-                     f'{lx_d + side * 8:.0f},{ly_d:.0f} Q{lx_d + side * 5:.0f},{ly_d + 2:.0f} '
-                     f'{lx_d:.0f},{ly_d:.0f}" fill="#b0c090" opacity="0.2"/>')
+            P.append(
+                f'<path d="M{lx_d:.0f},{ly_d:.0f} '
+                f"Q{lx_d + side * 5:.0f},{ly_d - 3:.0f} "
+                f"{lx_d + side * 8:.0f},{ly_d:.0f} "
+                f"Q{lx_d + side * 5:.0f},{ly_d + 2:.0f} "
+                f'{lx_d:.0f},{ly_d:.0f}" fill="#b0c090" opacity="0.2"/>'
+            )
     else:
         # Full + dividing rule + plate number (mat > 0.8)
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>')
-        P.append(f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" width="{cart_w:.0f}" height="{cart_h}" '
-                 f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>')
-        P.append(f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
-                 f'fill="none" stroke="{oklch_lerp(pal["border"], pal["bg_primary"], 0.4)}" stroke-width="0.3" rx="2"/>')
-        P.append(f'<line x1="{cart_x + 15}" y1="{cart_y + cart_h * 0.62:.0f}" '
-                 f'x2="{cart_x + cart_w - 15}" y2="{cart_y + cart_h * 0.62:.0f}" '
-                 f'stroke="{oklch_lerp(pal["border"], pal["muted"], 0.5)}" stroke-width="0.3" opacity="0.4"/>')
-        P.append(f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="10" fill="{pal["text_secondary"]}" opacity="0.6" font-style="italic" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="2" stroke-linejoin="round">'
-                 f'{label}</text>')
-        P.append(f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" font-family="Georgia,serif" '
-                 f'font-size="5.5" fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
-                 f'BOTANICAL GARDEN</text>')
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="{pal["bg_primary"]}" opacity="0.85" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x:.0f}" y="{cart_y:.0f}" '
+            f'width="{cart_w:.0f}" height="{cart_h}" '
+            f'fill="none" stroke="{pal["border"]}" stroke-width="0.8" rx="3"/>'
+        )
+        P.append(
+            f'<rect x="{cart_x + 2.5:.1f}" y="{cart_y + 2.5:.1f}" '
+            f'width="{cart_w - 5:.0f}" height="{cart_h - 5}" '
+            f'fill="none" stroke="{cart_inner_stroke}" '
+            f'stroke-width="0.3" rx="2"/>'
+        )
+        P.append(
+            f'<line x1="{cart_x + 15}" y1="{cart_y + cart_h * 0.62:.0f}" '
+            f'x2="{cart_x + cart_w - 15}" y2="{cart_y + cart_h * 0.62:.0f}" '
+            f'stroke="{cart_rule_stroke}" stroke-width="0.3" opacity="0.4"/>'
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 14:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="10" '
+            f'fill="{pal["text_secondary"]}" opacity="0.6" '
+            f'font-style="italic" paint-order="stroke fill" '
+            f'stroke="{pal["bg_primary"]}" stroke-width="2" '
+            f'stroke-linejoin="round">'
+            f"{label}</text>"
+        )
+        P.append(
+            f'<text x="{CX}" y="{cart_y + 25:.0f}" text-anchor="middle" '
+            f'font-family="Georgia,serif" font-size="5.5" '
+            f'fill="{pal["muted"]}" opacity="0.4" letter-spacing="2" '
+            f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" '
+            f'stroke-width="1.5" stroke-linejoin="round">'
+            f"BOTANICAL GARDEN</text>"
+        )
         for side in [-1, 1]:
             lx_d = CX + side * (cart_w / 2 - 18)
             ly_d = cart_y + 13
-            P.append(f'<path d="M{lx_d:.0f},{ly_d:.0f} Q{lx_d + side * 5:.0f},{ly_d - 3:.0f} '
-                     f'{lx_d + side * 8:.0f},{ly_d:.0f} Q{lx_d + side * 5:.0f},{ly_d + 2:.0f} '
-                     f'{lx_d:.0f},{ly_d:.0f}" fill="#b0c090" opacity="0.2"/>')
+            P.append(
+                f'<path d="M{lx_d:.0f},{ly_d:.0f} '
+                f"Q{lx_d + side * 5:.0f},{ly_d - 3:.0f} "
+                f"{lx_d + side * 8:.0f},{ly_d:.0f} "
+                f"Q{lx_d + side * 5:.0f},{ly_d + 2:.0f} "
+                f'{lx_d:.0f},{ly_d:.0f}" fill="#b0c090" opacity="0.2"/>'
+            )
 
     # ── Tiered legend / scale bar / plate number ─────────────────
     if mat >= 0.35:
@@ -2884,17 +4036,27 @@ def generate(
         sb_x = WIDTH - m - 65
         sb_y = m + 12
         sb_len = 50
-        P.append(f'<line x1="{sb_x}" y1="{sb_y}" x2="{sb_x + sb_len}" y2="{sb_y}" '
-                 f'stroke="#8a7a6a" stroke-width="0.6" opacity="0.25"/>')
+        P.append(
+            f'<line x1="{sb_x}" y1="{sb_y}" x2="{sb_x + sb_len}" y2="{sb_y}" '
+            f'stroke="#8a7a6a" stroke-width="0.6" opacity="0.25"/>'
+        )
         for tick_x in [sb_x, sb_x + sb_len / 2, sb_x + sb_len]:
-            P.append(f'<line x1="{tick_x}" y1="{sb_y - 2}" x2="{tick_x}" y2="{sb_y + 2}" '
-                     f'stroke="#8a7a6a" stroke-width="0.4" opacity="0.25"/>')
-        P.append(f'<rect x="{sb_x}" y="{sb_y - 0.8}" width="{sb_len / 2}" height="1.6" '
-                 f'fill="#8a7a6a" opacity="0.15"/>')
-        P.append(f'<text x="{sb_x + sb_len / 2}" y="{sb_y + 7}" text-anchor="middle" '
-                 f'font-family="Georgia,serif" font-size="4" fill="#8a7a6a" opacity="0.25" '
-                 f'paint-order="stroke fill" stroke="#f5f0e6" stroke-width="1.5" '
-                 f'stroke-linejoin="round">scale</text>')
+            P.append(
+                f'<line x1="{tick_x}" y1="{sb_y - 2}" x2="{tick_x}" '
+                f'y2="{sb_y + 2}" stroke="#8a7a6a" '
+                f'stroke-width="0.4" opacity="0.25"/>'
+            )
+        P.append(
+            f'<rect x="{sb_x}" y="{sb_y - 0.8}" width="{sb_len / 2}" height="1.6" '
+            f'fill="#8a7a6a" opacity="0.15"/>'
+        )
+        P.append(
+            f'<text x="{sb_x + sb_len / 2}" y="{sb_y + 7}" '
+            f'text-anchor="middle" font-family="Georgia,serif" font-size="4" '
+            f'fill="#8a7a6a" opacity="0.25" paint-order="stroke fill" '
+            f'stroke="#f5f0e6" stroke-width="1.5" '
+            f'stroke-linejoin="round">scale</text>'
+        )
 
     if mat >= 0.6:
         # Species legend (bottom-left)
@@ -2908,53 +4070,91 @@ def generate(
                 species_shown.add(sp)
                 legend_items.append(sp)
         if legend_items:
-            P.append('<g font-family="Georgia,serif" font-size="5" fill="#8a7a6a" opacity="0.35">')
+            P.append(
+                '<g font-family="Georgia,serif" font-size="5" '
+                'fill="#8a7a6a" opacity="0.35">'
+            )
             for li_l, sp_name in enumerate(legend_items):
                 liy = leg_y + li_l * 8
                 if sp_name in ("oak", "birch"):
-                    P.append(f'<circle cx="{leg_x + 3}" cy="{liy}" r="2" fill="none" '
-                             f'stroke="#8a7a6a" stroke-width="0.4"/>')
+                    P.append(
+                        f'<circle cx="{leg_x + 3}" cy="{liy}" r="2" fill="none" '
+                        f'stroke="#8a7a6a" stroke-width="0.4"/>'
+                    )
                 elif sp_name == "conifer":
-                    P.append(f'<path d="M{leg_x + 3},{liy - 2.5} L{leg_x + 5.5},{liy + 2} '
-                             f'L{leg_x + 0.5},{liy + 2} Z" fill="none" stroke="#8a7a6a" stroke-width="0.4"/>')
+                    P.append(
+                        f'<path d="M{leg_x + 3},{liy - 2.5} '
+                        f"L{leg_x + 5.5},{liy + 2} "
+                        f'L{leg_x + 0.5},{liy + 2} Z" fill="none" '
+                        f'stroke="#8a7a6a" stroke-width="0.4"/>'
+                    )
                 elif sp_name in ("fern",):
-                    P.append(f'<path d="M{leg_x + 1},{liy + 2} Q{leg_x + 3},{liy - 2} {leg_x + 5},{liy + 1}" '
-                             f'fill="none" stroke="#8a7a6a" stroke-width="0.4"/>')
+                    P.append(
+                        f'<path d="M{leg_x + 1},{liy + 2} '
+                        f'Q{leg_x + 3},{liy - 2} {leg_x + 5},{liy + 1}" '
+                        f'fill="none" stroke="#8a7a6a" stroke-width="0.4"/>'
+                    )
                 else:
-                    P.append(f'<rect x="{leg_x + 1}" y="{liy - 2}" width="4" height="4" fill="none" '
-                             f'stroke="#8a7a6a" stroke-width="0.4" rx="0.5"/>')
-                P.append(f'<text x="{leg_x + 10}" y="{liy + 1.5}" font-style="italic">{sp_name}</text>')
-            P.append('</g>')
+                    P.append(
+                        f'<rect x="{leg_x + 1}" y="{liy - 2}" width="4" '
+                        f'height="4" fill="none" stroke="#8a7a6a" '
+                        f'stroke-width="0.4" rx="0.5"/>'
+                    )
+                P.append(
+                    f'<text x="{leg_x + 10}" y="{liy + 1.5}" '
+                    f'font-style="italic">{sp_name}</text>'
+                )
+            P.append("</g>")
 
     if mat > 0.8:
         # Plate number (bottom-right)
-        P.append(f'<text x="{WIDTH - m - 12}" y="{HEIGHT - m - 8}" text-anchor="end" '
-                 f'font-family="Georgia,serif" font-size="5.5" fill="{pal["muted"]}" opacity="0.3" '
-                 f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" stroke-width="1.5" stroke-linejoin="round">'
-                 f'Pl. {plate_num}</text>')
+        P.append(
+            f'<text x="{WIDTH - m - 12}" y="{HEIGHT - m - 8}" text-anchor="end" '
+            f'font-family="Georgia,serif" font-size="5.5" '
+            f'fill="{pal["muted"]}" opacity="0.3" '
+            f'paint-order="stroke fill" stroke="{pal["bg_primary"]}" '
+            f'stroke-width="1.5" stroke-linejoin="round">'
+            f"Pl. {plate_num}</text>"
+        )
 
     # ── Interactive tooltip overlays (visible when SVG viewed directly) ──
-    for tt_x, tt_base_y, tt_top_y, tt_name, tt_lang, tt_stars, tt_species in tree_tooltips:
+    for (
+        tt_x,
+        tt_base_y,
+        tt_top_y,
+        tt_name,
+        tt_lang,
+        tt_stars,
+        tt_species,
+    ) in tree_tooltips:
         tt_lang_str = tt_lang or "?"
         tt_label = f"{tt_name} \u00b7 {tt_lang_str} \u00b7 \u2605{tt_stars} \u00b7 {tt_species}"
         # Escape XML special characters in tooltip text
-        tt_label = tt_label.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        tt_label = (
+            tt_label.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        )
         tt_h = max(40, tt_base_y - tt_top_y)
         tt_w = max(30, tt_h * 0.4)
-        P.append(f'<g class="repo-tree">')
-        P.append(f'<title>{tt_label}</title>')
-        P.append(f'<rect x="{tt_x - tt_w / 2:.1f}" y="{tt_top_y:.1f}" '
-                 f'width="{tt_w:.1f}" height="{tt_h:.1f}" fill="transparent"/>')
+        P.append('<g class="repo-tree">')
+        P.append(f"<title>{tt_label}</title>")
+        P.append(
+            f'<rect x="{tt_x - tt_w / 2:.1f}" y="{tt_top_y:.1f}" '
+            f'width="{tt_w:.1f}" height="{tt_h:.1f}" fill="transparent"/>'
+        )
         # CSS hover tooltip (text + background)
-        P.append(f'<g class="tooltip">')
+        P.append('<g class="tooltip">')
         tw = max(100, len(tt_label) * 3.6)
-        P.append(f'<rect x="{tt_x - tw / 2:.1f}" y="{tt_top_y - 22:.1f}" '
-                 f'width="{tw:.1f}" height="16" rx="4" fill="rgba(0,0,0,0.75)"/>')
-        P.append(f'<text x="{tt_x:.1f}" y="{tt_top_y - 10:.1f}" '
-                 f'font-family="monospace" font-size="5.5" fill="white" '
-                 f'text-anchor="middle">{tt_label}</text>')
-        P.append('</g>')
-        P.append('</g>')
+        P.append(
+            f'<rect x="{tt_x - tw / 2:.1f}" y="{tt_top_y - 22:.1f}" '
+            f'width="{tw:.1f}" height="16" rx="4" fill="rgba(0,0,0,0.75)"/>'
+        )
+        P.append(
+            f'<text x="{tt_x:.1f}" y="{tt_top_y - 10:.1f}" '
+            f'font-family="monospace" font-size="5.5" fill="white" '
+            f'text-anchor="middle">{tt_label}</text>'
+        )
+        P.append("</g>")
+        P.append("</g>")
 
-    P.append('</svg>')
-    return '\n'.join(P)
+    P.append("</svg>")
+    return "\n".join(P)
