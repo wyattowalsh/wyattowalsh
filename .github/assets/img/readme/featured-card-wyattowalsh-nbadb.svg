@@ -45,12 +45,12 @@
 <text class="rc-desc" x="20" y="124" style="font: 400 9px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">Topics database · kaggle · kaggle-dataset</text>
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="269" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="168" width="221.8" height="4" fill="#3572A5" />
-<rect x="241.8" y="168" width="46.8" height="4" fill="#DA5B0B" />
+<rect x="20.0" y="168" width="224.0" height="4" fill="#3572A5" />
+<rect x="244.0" y="168" width="44.7" height="4" fill="#DA5B0B" />
 <rect x="288.7" y="168" width="1.0" height="4" fill="#563d7c" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3572A5" />
-<text class="rc-meta" x="32" y="184">Python 82%</text>
+<text class="rc-meta" x="32" y="184">Python 83%</text>
 <circle class="rc-lang-dot" cx="132" cy="180" r="4" fill="#DA5B0B" />
 <text class="rc-meta" x="140" y="184">Jupyter Notebook 17%</text>
 <text class="rc-meta" x="333" y="142">9</text>
