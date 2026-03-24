@@ -150,8 +150,16 @@ SPECIES = {
 }
 
 
-def _classify_species(repo: dict) -> str:
-    """Classify a repo into a plant species based on its metrics."""
+def _classify_species(repo: dict, *, species_threshold_mult: float = 1.0) -> str:
+    """Classify a repo into a plant species based on its metrics.
+
+    Parameters
+    ----------
+    species_threshold_mult : float
+        Multiplier applied to star-count thresholds for species classification.
+        Values < 1.0 lower the thresholds, making rarer species (bamboo,
+        wildflower) appear at lower star counts.  Driven by ``language_count``.
+    """
     stars = repo.get("stars", 0)
     age = repo.get("age_months", 0)
     lang = repo.get("language")
@@ -181,10 +189,10 @@ def _classify_species(repo: dict) -> str:
     if forks > max(stars * 0.4, 3):
         return "banyan"
 
-    # Fall through to existing logic
-    if stars >= 100:
+    # Fall through to existing logic (thresholds scaled by species_threshold_mult)
+    if stars >= 100 * species_threshold_mult:
         return "oak"
-    if stars >= 20 and age >= 24:
+    if stars >= 20 * species_threshold_mult and age >= 24:
         return "birch"
     if lang in ("Rust", "Go", "C", "C++"):
         return "conifer"
@@ -194,7 +202,7 @@ def _classify_species(repo: dict) -> str:
         return "bamboo"
     if age < 6:
         return "seedling"
-    if stars < 5 and age < 18:
+    if stars < 5 * species_threshold_mult and age < 18:
         return "shrub"
     return "wildflower"
 
@@ -575,6 +583,20 @@ def generate(
     streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
     vigor_multiplier = 1.0 + min(0.5, current_streak * 0.04)  # up to 1.5x
 
+    # ── New data-mapping metrics ───────────────────────────────────
+    releases = metrics.get("releases", [])
+    traffic_views_14d = metrics.get("traffic_views_14d", 0)
+    total_issues = metrics.get("total_issues", 0) or 0
+    total_repos_contributed = metrics.get("total_repos_contributed", 0)
+    language_count = metrics.get("language_count", 0)
+
+    # Data mapping: language_count → species variety multiplier
+    # If language_count > 5, lower star-count thresholds for rarer species
+    if language_count > 5:
+        species_threshold_mult = max(0.5, 1.0 - (language_count - 5) * 0.05)
+    else:
+        species_threshold_mult = 1.0
+
     lang_bytes = metrics.get("languages", {})
     if lang_bytes and isinstance(lang_bytes, dict):
         dominant_lang = max(lang_bytes, key=lang_bytes.get)
@@ -833,7 +855,7 @@ def generate(
         bloom_when = _offset_date(repo_date, 0.22)
         root_when = _offset_date(repo_date, 0.05)
 
-        species = _classify_species(repo)
+        species = _classify_species(repo, species_threshold_mult=species_threshold_mult)
         style = SPECIES.get(species)
 
         # Seasonal color variation: date-aware hue drift + mature autumn accent.
@@ -1446,12 +1468,17 @@ def generate(
 
     if open_issues_count == 0 and closed_issues_count > 10:
         # Clear skies: sunbeams through canopy
+        # Data mapping: traffic_views_14d → sunbeam intensity
+        # Scale sunbeam opacity when weather is clear and traffic > 0
+        _sunbeam_base_opacity = 0.08
+        if world.weather == "clear" and traffic_views_14d > 0:
+            _sunbeam_base_opacity *= 1.0 + min(0.5, traffic_views_14d / 5000)
         for sb_i in range(3):
             sx = 150 + sb_i * 250 + rng.uniform(-40, 40)
             P.append(
                 f'<line x1="{sx:.0f}" y1="0" x2="{sx + 60:.0f}" y2="{GROUND_Y:.0f}" '
                 f'stroke="{oklch(0.95, 0.05, 80)}" stroke-width="12" '
-                f'opacity="0.08" stroke-linecap="round"/>'
+                f'opacity="{_sunbeam_base_opacity:.3f}" stroke-linecap="round"/>'
             )
     elif open_issues_count > 20:
         # Storm clouds
@@ -1664,6 +1691,43 @@ def generate(
             P.append(f'<ellipse cx="{flx:.0f}" cy="{fly:.0f}" rx="{fl_rx:.1f}" ry="{fl_ry:.1f}" '
                      f'fill="{fl_c}" opacity="{autumn_rng.uniform(0.12, 0.25):.2f}" '
                      f'transform="rotate({fl_rot:.0f},{flx:.0f},{fly:.0f})"/>')
+
+    # ── Data mapping: total_issues → fallen leaves on ground ─────
+    # For each open issue (capped at 12), scatter 1-2 small leaf-shaped
+    # SVG elements on the ground near tree bases, using warm autumn colors
+    # regardless of season.
+    if total_issues > 0 and plant_bases:
+        _issue_leaf_count = min(12, total_issues)
+        _issue_leaf_rng = np.random.default_rng(base_seed ^ 0x1550E5)
+        _issue_leaf_colors = [
+            oklch(0.55, 0.14, h) for h in (30, 35, 40, 25, 45)
+        ]
+        for _il_i in range(_issue_leaf_count):
+            # Pick a tree base to scatter near
+            _il_base_x, _il_base_y = plant_bases[_il_i % len(plant_bases)]
+            _il_n_leaves = _issue_leaf_rng.integers(1, 3)  # 1-2 leaves
+            for _ in range(_il_n_leaves):
+                _il_x = _il_base_x + _issue_leaf_rng.uniform(-20, 20)
+                _il_y = ground_y_at(_il_x) + _issue_leaf_rng.uniform(-2, 3)
+                _il_rx = _issue_leaf_rng.uniform(1.5, 3.5)
+                _il_ry = _issue_leaf_rng.uniform(0.8, 1.8)
+                _il_rot = _issue_leaf_rng.uniform(-70, 70)
+                _il_c = _issue_leaf_rng.choice(_issue_leaf_colors)
+                # Leaf shape: ellipse with a pointed tip via path
+                _il_tip_dx = _il_rx * 0.8
+                _il_tip_dy = -_il_ry * 0.3
+                P.append(
+                    f'<g transform="rotate({_il_rot:.0f},{_il_x:.1f},{_il_y:.1f})">'
+                    f'<ellipse cx="{_il_x:.1f}" cy="{_il_y:.1f}" '
+                    f'rx="{_il_rx:.1f}" ry="{_il_ry:.1f}" '
+                    f'fill="{_il_c}" opacity="{_issue_leaf_rng.uniform(0.15, 0.28):.2f}"/>'
+                    f'<line x1="{_il_x - _il_rx * 0.7:.1f}" y1="{_il_y:.1f}" '
+                    f'x2="{_il_x + _il_rx * 0.7:.1f}" y2="{_il_y:.1f}" '
+                    f'stroke="{oklch(0.40, 0.10, 30)}" stroke-width="0.2" '
+                    f'opacity="0.12"/>'
+                    f'</g>'
+                )
+
     # Main ground line — warm earth tone, thicker for visibility
     _ground_line_c = oklch_lerp(pal["ground"], pal["text_primary"], 0.4)
     P.append(f'<path d="{ground_path}" fill="none" stroke="{_ground_line_c}" stroke-width="2.0" opacity="0.6"/>')
@@ -2262,6 +2326,76 @@ def generate(
         P.append(f'<circle cx="{wcx:.1f}" cy="{wcy:.1f}" r="1.2" fill="none" '
                  f'stroke="#b8b098" stroke-width="0.3" opacity="0.2"/>')
 
+    # ── Data mapping: total_repos_contributed → spider web span ───
+    # If total_repos_contributed > 5, add thin connecting lines between
+    # the 2-3 closest tree pairs with stroke-dasharray and low opacity.
+    if total_repos_contributed > 5 and len(tree_tooltips) >= 2:
+        _web_span_scale = 1.0 + min(0.5, total_repos_contributed / 50)
+        _web_rng = np.random.default_rng(base_seed ^ 0x5F1DEB)
+        # Compute pairwise distances between tree bases, pick closest pairs
+        _tree_positions = [(tt[0], tt[1]) for tt in tree_tooltips]
+        _tree_dists: list[tuple[float, int, int]] = []
+        for _ti_a in range(len(_tree_positions)):
+            for _ti_b in range(_ti_a + 1, len(_tree_positions)):
+                _dx = _tree_positions[_ti_a][0] - _tree_positions[_ti_b][0]
+                _dy = _tree_positions[_ti_a][1] - _tree_positions[_ti_b][1]
+                _tree_dists.append((math.hypot(_dx, _dy), _ti_a, _ti_b))
+        _tree_dists.sort()
+        _n_web_connections = min(3, len(_tree_dists))
+        _base_dist_threshold = 250  # base max distance for connections
+        _scaled_threshold = _base_dist_threshold * _web_span_scale
+        P.append('<g opacity="0.12">')
+        for _dist, _ti_a, _ti_b in _tree_dists[:_n_web_connections]:
+            if _dist > _scaled_threshold:
+                continue
+            _ax, _ay = _tree_positions[_ti_a]
+            _bx, _by = _tree_positions[_ti_b]
+            # Use canopy height (top_y) for web attachment points
+            _a_top = tree_tooltips[_ti_a][2]
+            _b_top = tree_tooltips[_ti_b][2]
+            # Web connects upper-third of trees with gentle sag
+            _conn_ay = _a_top + (_ay - _a_top) * 0.3
+            _conn_by = _b_top + (_by - _b_top) * 0.3
+            _sag_y = max(_conn_ay, _conn_by) + _web_rng.uniform(10, 25)
+            _mid_x = (_ax + _bx) / 2 + _web_rng.uniform(-10, 10)
+            P.append(
+                f'<path d="M{_ax:.1f},{_conn_ay:.1f} Q{_mid_x:.1f},{_sag_y:.1f} {_bx:.1f},{_conn_by:.1f}" '
+                f'fill="none" stroke="#c0b8a0" stroke-width="0.3" '
+                f'stroke-dasharray="3 4" stroke-linecap="round"/>'
+            )
+        P.append('</g>')
+
+    # ── Data mapping: releases → falling seeds/fruit ──────────────
+    # For each release (capped at 5), add 1-3 small seed/fruit shapes
+    # "falling" from the tallest trees.
+    if releases and tree_tooltips:
+        _release_count = min(5, len(releases) if isinstance(releases, list) else 0)
+        if _release_count > 0:
+            _seed_rng = np.random.default_rng(base_seed ^ 0x5EED0F)
+            # Sort trees by height (smallest top_y = tallest) and pick tallest
+            _sorted_trees = sorted(tree_tooltips, key=lambda t: t[2])
+            _tallest_trees = _sorted_trees[:max(1, min(3, len(_sorted_trees)))]
+            _seed_color = pal.get("highlight", oklch(0.65, 0.12, 80))
+            for _rel_i in range(_release_count):
+                # Pick a tall tree to drop from
+                _src_tree = _tallest_trees[_rel_i % len(_tallest_trees)]
+                _tree_x, _tree_base_y, _tree_top_y = _src_tree[0], _src_tree[1], _src_tree[2]
+                _canopy_y = _tree_top_y + (_tree_base_y - _tree_top_y) * 0.25
+                _n_seeds = _seed_rng.integers(1, 4)  # 1-3 seeds per release
+                for _ in range(_n_seeds):
+                    _sx = _tree_x + _seed_rng.uniform(-18, 18)
+                    _sy = _seed_rng.uniform(_canopy_y, _tree_base_y - 5)
+                    _srx = _seed_rng.uniform(1.2, 2.5)
+                    _sry = _seed_rng.uniform(1.8, 3.5)
+                    _srot = _seed_rng.uniform(-30, 30)
+                    _s_op = _seed_rng.uniform(0.18, 0.35)
+                    P.append(
+                        f'<ellipse cx="{_sx:.1f}" cy="{_sy:.1f}" '
+                        f'rx="{_srx:.1f}" ry="{_sry:.1f}" '
+                        f'fill="{_seed_color}" opacity="{_s_op:.2f}" '
+                        f'transform="rotate({_srot:.0f},{_sx:.1f},{_sy:.1f})"/>'
+                    )
+
     # ── Dew drops ─────────────────────────────────────────────────
     for dx, dy, ds in dew_drops:
         P.append(f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{ds:.1f}" fill="url(#dewGrad)" filter="url(#dew)"/>')
@@ -2769,7 +2903,7 @@ def generate(
         species_shown = set()
         legend_items = []
         for repo in repos[:MAX_REPOS]:
-            sp = _classify_species(repo)
+            sp = _classify_species(repo, species_threshold_mult=species_threshold_mult)
             if sp not in species_shown and len(legend_items) < 4:
                 species_shown.add(sp)
                 legend_items.append(sp)
