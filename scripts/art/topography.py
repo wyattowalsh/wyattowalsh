@@ -227,6 +227,179 @@ def _chaikin_smooth(
     return smoothed
 
 
+def _normalize_hour_distribution(commit_hours: object) -> dict[int, float]:
+    hours: dict[int, float] = {}
+    if not isinstance(commit_hours, dict):
+        return hours
+    for raw_hour, raw_count in commit_hours.items():
+        try:
+            hour = int(raw_hour)
+            count = float(raw_count)
+        except (TypeError, ValueError):
+            continue
+        if 0 <= hour <= 23 and count > 0:
+            hours[hour] = hours.get(hour, 0.0) + count
+    return hours
+
+
+def _commit_hour_hillshade_profile(commit_hours: object) -> dict[str, float]:
+    hours = _normalize_hour_distribution(commit_hours)
+    if not hours:
+        return {
+            "peak_hour": 12.0,
+            "focus": 0.35,
+            "sun_azimuth": 315.0,
+            "sun_altitude": 32.0,
+            "secondary_azimuth": 36.0,
+            "secondary_altitude": 18.0,
+            "primary_weight": 0.68,
+        }
+
+    total = sum(hours.values())
+    vec_x = sum(
+        math.cos(2 * math.pi * hour / 24.0) * weight
+        for hour, weight in hours.items()
+    )
+    vec_y = sum(
+        math.sin(2 * math.pi * hour / 24.0) * weight
+        for hour, weight in hours.items()
+    )
+    focus = min(1.0, max(0.0, math.hypot(vec_x, vec_y) / max(total, 1e-6)))
+    if abs(vec_x) < 1e-9 and abs(vec_y) < 1e-9:
+        peak_hour = 12.0
+    else:
+        mean_angle = math.atan2(vec_y, vec_x)
+        if mean_angle < 0:
+            mean_angle += 2 * math.pi
+        peak_hour = mean_angle * 24.0 / (2 * math.pi)
+
+    day_strength = max(0.0, math.cos((peak_hour - 12.0) * math.pi / 12.0))
+    sun_azimuth = (peak_hour / 24.0) * 360.0
+    sun_altitude = 14.0 + 20.0 * day_strength + 24.0 * focus
+    secondary_azimuth = (sun_azimuth + 95.0 + 25.0 * (1.0 - focus)) % 360.0
+    secondary_altitude = max(
+        8.0, sun_altitude * (0.42 + 0.16 * (1.0 - day_strength))
+    )
+    return {
+        "peak_hour": peak_hour,
+        "focus": focus,
+        "sun_azimuth": sun_azimuth,
+        "sun_altitude": sun_altitude,
+        "secondary_azimuth": secondary_azimuth,
+        "secondary_altitude": secondary_altitude,
+        "primary_weight": 0.54 + 0.26 * focus,
+    }
+
+
+def _settlement_scale_tier(followers_count: int | float) -> tuple[str, str]:
+    followers = max(0, int(followers_count or 0))
+    if followers >= 1000:
+        return "capital", "Capital"
+    if followers >= 500:
+        return "city", "City"
+    if followers >= 200:
+        return "town", "Town"
+    if followers >= 75:
+        return "village", "Village"
+    if followers >= 25:
+        return "hamlet", "Hamlet"
+    if followers > 0:
+        return "outpost", "Outpost"
+    return "none", "Unsettled"
+
+
+def _river_flow_profile(star_velocity: object) -> dict[str, str | float]:
+    recent_rate = 0.0
+    peak_rate = 0.0
+    trend = "steady"
+    if isinstance(star_velocity, dict):
+        try:
+            recent_rate = max(0.0, float(star_velocity.get("recent_rate", 0.0) or 0.0))
+        except (TypeError, ValueError):
+            recent_rate = 0.0
+        try:
+            peak_rate = max(0.0, float(star_velocity.get("peak_rate", 0.0) or 0.0))
+        except (TypeError, ValueError):
+            peak_rate = 0.0
+        trend = str(star_velocity.get("trend", "steady") or "steady").lower()
+
+    velocity_norm = min(1.0, max(recent_rate, peak_rate * 0.7) / 12.0)
+    if trend == "rising":
+        velocity_norm = min(1.0, velocity_norm + 0.08)
+    elif trend == "falling":
+        velocity_norm = max(0.0, velocity_norm - 0.05)
+
+    if velocity_norm >= 0.75:
+        tier = "torrent"
+    elif velocity_norm >= 0.45:
+        tier = "swift"
+    elif velocity_norm >= 0.20:
+        tier = "run"
+    else:
+        tier = "still"
+
+    return {
+        "tier": tier,
+        "velocity_norm": velocity_norm,
+        "width_scale": 1.0 + 0.9 * velocity_norm,
+        "current_opacity": 0.04 + 0.24 * velocity_norm,
+        "current_ratio": 0.16 + 0.12 * velocity_norm,
+        "dash": max(1.4, 2.8 - 1.2 * velocity_norm),
+        "gap": 2.2 + 1.6 * (1.0 - velocity_norm),
+    }
+
+
+def _polyline_distance(
+    px: float, py: float, points: list[tuple[float, float]]
+) -> float:
+    if len(points) < 2:
+        return float("inf")
+    return min(
+        _point_to_segment_distance(px, py, start, end)
+        for start, end in zip(points, points[1:], strict=False)
+    )
+
+
+def _choose_label_anchor(
+    anchor_x: float,
+    anchor_y: float,
+    candidates: list[tuple[float, float]],
+    blocked_paths: list[list[tuple[float, float]]],
+) -> tuple[float, float, float]:
+    best_choice: tuple[float, float, float] | None = None
+    best_score = -float("inf")
+    for dx, dy in candidates:
+        lx = anchor_x + dx
+        ly = anchor_y + dy
+        if not (MAP_L + 6 <= lx <= MAP_R - 6 and MAP_T + 6 <= ly <= MAP_B - 6):
+            continue
+        clearance = min(
+            (
+                _polyline_distance(lx, ly, path)
+                for path in blocked_paths
+                if len(path) >= 2
+            ),
+            default=36.0,
+        )
+        edge_buffer = min(lx - MAP_L, MAP_R - lx, ly - MAP_T, MAP_B - ly)
+        score = clearance + edge_buffer * 0.15 - (abs(dx) + abs(dy)) * 0.05
+        if score > best_score:
+            best_choice = (lx, ly, clearance)
+            best_score = score
+
+    if best_choice is not None:
+        return best_choice
+
+    dx, dy = candidates[0]
+    lx = max(MAP_L + 6, min(MAP_R - 6, anchor_x + dx))
+    ly = max(MAP_T + 6, min(MAP_B - 6, anchor_y + dy))
+    clearance = min(
+        (_polyline_distance(lx, ly, path) for path in blocked_paths if len(path) >= 2),
+        default=36.0,
+    )
+    return lx, ly, clearance
+
+
 def generate(
     metrics: dict,
     *,
@@ -269,6 +442,11 @@ def generate(
     contributions = metrics.get("contributions_last_year", 200)
     forks = metrics.get("forks", 0)
     stars = metrics.get("stars", 0)
+    commit_hour_profile = _commit_hour_hillshade_profile(
+        metrics.get("commit_hour_distribution", {})
+    )
+    river_flow_profile = _river_flow_profile(metrics.get("star_velocity", {}))
+    settlement_tier, settlement_title = _settlement_scale_tier(followers)
     metrics.get("network_count", 0)
 
     def _repo_date(repo: dict) -> str | None:
@@ -668,15 +846,18 @@ def generate(
     # Hillshade
     hillshade = np.zeros((grid, grid))
     relief = np.zeros((grid, grid))
-    sun_az = math.radians(315)
-    sun_alt = math.radians(32)
-    sun_az2 = math.radians(36)
-    sun_alt2 = math.radians(18)
+    sun_az = math.radians(commit_hour_profile["sun_azimuth"])
+    sun_alt = math.radians(commit_hour_profile["sun_altitude"])
+    sun_az2 = math.radians(commit_hour_profile["secondary_azimuth"])
+    sun_alt2 = math.radians(commit_hour_profile["secondary_altitude"])
+    hillshade_primary_weight = commit_hour_profile["primary_weight"]
+    hillshade_secondary_weight = 1.0 - hillshade_primary_weight
+    hillshade_slope_scale = 4.2 + commit_hour_profile["focus"] * 2.4
     for gy in range(1, grid - 1):
         for gx in range(1, grid - 1):
             dzdx = (elevation[gy, gx + 1] - elevation[gy, gx - 1]) / 2
             dzdy = (elevation[gy + 1, gx] - elevation[gy - 1, gx]) / 2
-            slope = math.atan(math.sqrt(dzdx**2 + dzdy**2) * 5)
+            slope = math.atan(math.sqrt(dzdx**2 + dzdy**2) * hillshade_slope_scale)
             aspect = math.atan2(-dzdy, dzdx)
             hs = math.cos(sun_alt) * math.cos(slope) + math.sin(sun_alt) * math.sin(
                 slope
@@ -685,7 +866,12 @@ def generate(
                 slope
             ) * math.cos(sun_az2 - aspect)
             hillshade[gy, gx] = max(
-                0, min(1, 0.68 * ((hs + 1) / 2) + 0.32 * ((hs2 + 1) / 2))
+                0,
+                min(
+                    1,
+                    hillshade_primary_weight * ((hs + 1) / 2)
+                    + hillshade_secondary_weight * ((hs2 + 1) / 2),
+                ),
             )
             curvature = abs(
                 elevation[gy, gx + 1]
@@ -704,7 +890,12 @@ def generate(
     # ══════════════════════════════════════════════════════════════
     P = []
     P.append(
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}" '
+        f'data-peak-commit-hour="{commit_hour_profile["peak_hour"]:.2f}" '
+        f'data-sun-azimuth="{commit_hour_profile["sun_azimuth"]:.1f}" '
+        f'data-sun-altitude="{commit_hour_profile["sun_altitude"]:.1f}" '
+        f'data-flow-tier="{river_flow_profile["tier"]}" '
+        f'data-settlement-tier="{settlement_tier}">'
     )
     if timeline_enabled:
         P.append(
@@ -983,22 +1174,33 @@ def generate(
 
     # ── Rivers (widening downstream, fade in gradually) ───────────
     # Data mapping: activity (contributions) -> river flow volume
-    star_vel = metrics.get("star_velocity", {})
-    flow_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
-    river_width_boost = 1.0 + min(1.0, flow_rate * 0.1)  # up to 2x width
+    river_width_boost = float(river_flow_profile["width_scale"])
     # Data mapping 3: recent_merged_prs → river width enhancement
     _recent_merged_prs = metrics.get("recent_merged_prs", [])
     if isinstance(_recent_merged_prs, list) and len(_recent_merged_prs) > 0:
         _pr_river_scale = 1.0 + min(0.5, len(_recent_merged_prs) * 0.05)
     else:
         _pr_river_scale = 1.0
-    activity_flow = min(2.0, 1.0 + contributions / 1500.0) * river_width_boost * _pr_river_scale
+    activity_flow = (
+        min(2.0, 1.0 + contributions / 1500.0)
+        * river_width_boost
+        * _pr_river_scale
+    )
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
     # Desaturated OKLCH blue for rivers
     river_color = oklch(0.48, 0.12, 240)
     river_shadow_color = oklch(0.35, 0.10, 240)
     river_highlight_color = oklch(0.68, 0.08, 225)
+    river_current_opacity = float(river_flow_profile["current_opacity"])
+    river_current_ratio = float(river_flow_profile["current_ratio"])
+    river_current_dash = float(river_flow_profile["dash"])
+    river_current_gap = float(river_flow_profile["gap"])
+    if river_fade > 0:
+        P.append(
+            f'<g id="river-system" data-flow-tier="{river_flow_profile["tier"]}" '
+            f'data-width-scale="{activity_flow:.2f}">'
+        )
     for rvi, rpts in enumerate(river_paths if river_fade > 0 else []):
         if len(rpts) < 3:
             continue
@@ -1030,6 +1232,13 @@ def generate(
                     f'<path d="M{x1r - 0.25:.1f},{y1r - 0.25:.1f} Q{x2r - 0.25:.1f},{y2r - 0.25:.1f} {x3r - 0.25:.1f},{y3r - 0.25:.1f}" '
                     f'fill="none" stroke="{river_highlight_color}" stroke-width="{max(0.18, sw_r * 0.28):.2f}" {_timeline_style(seg_when, op_r * 0.35, "tl-reveal tl-crisp")} stroke-linecap="round"/>'
                 )
+                if river_current_opacity > 0.08:
+                    P.append(
+                        f'<path d="M{x1r:.1f},{y1r:.1f} Q{x2r:.1f},{y2r:.1f} {x3r:.1f},{y3r:.1f}" '
+                        f'fill="none" stroke="{river_highlight_color}" stroke-width="{max(0.14, sw_r * river_current_ratio):.2f}" '
+                        f'{_timeline_style(seg_when, op_r * river_current_opacity, "tl-reveal tl-crisp")} '
+                        f'stroke-dasharray="{river_current_dash:.2f} {river_current_gap:.2f}" stroke-linecap="round"/>'
+                    )
             else:
                 x2r = MAP_L + rpts[j + 1][0] * MAP_W
                 y2r = MAP_T + rpts[j + 1][1] * MAP_H
@@ -1047,6 +1256,13 @@ def generate(
                     f'<line x1="{x1r - 0.25:.1f}" y1="{y1r - 0.25:.1f}" x2="{x2r - 0.25:.1f}" y2="{y2r - 0.25:.1f}" '
                     f'stroke="{river_highlight_color}" stroke-width="{max(0.18, sw_r * 0.28):.2f}" {_timeline_style(seg_when, op_r * 0.35, "tl-reveal tl-crisp")} stroke-linecap="round"/>'
                 )
+                if river_current_opacity > 0.08:
+                    P.append(
+                        f'<line x1="{x1r:.1f}" y1="{y1r:.1f}" x2="{x2r:.1f}" y2="{y2r:.1f}" '
+                        f'stroke="{river_highlight_color}" stroke-width="{max(0.14, sw_r * river_current_ratio):.2f}" '
+                        f'{_timeline_style(seg_when, op_r * river_current_opacity, "tl-reveal tl-crisp")} '
+                        f'stroke-dasharray="{river_current_dash:.2f} {river_current_gap:.2f}" stroke-linecap="round"/>'
+                    )
         if len(rpts) > 10 and rlabel_fade > 0:
             mid = len(rpts) // 4
             # Build guide path from river points for textPath
@@ -1092,6 +1308,8 @@ def generate(
                     f'stroke="{river_color}" stroke-width="0.6" opacity="{0.35 * river_fade:.2f}" '
                     f'marker-end="url(#riverArrow)"/>'
                 )
+    if river_fade > 0:
+        P.append("</g>")
 
     # ── Contour lines (warm brown, Swiss style — OKLCH gradient) ──
     # Scale contour density by visual complexity
@@ -1305,12 +1523,20 @@ def generate(
 
     # ── Progressive repo visibility for animation ─────────────────
     n_visible_repos = max(1, round(len(repo_positions) * min(1.0, mat * 2.2)))
+    river_map_paths = [
+        [(MAP_L + px * MAP_W, MAP_T + py * MAP_H) for px, py in rpts]
+        for rpts in river_paths
+        if len(rpts) >= 2
+    ]
 
     # ── Chronological trail (oldest → newest → center) ────────────
     visible_rp = repo_positions[:n_visible_repos]
     chrono = sorted(visible_rp, key=lambda rp: rp[2].get("age_months", 0), reverse=True)
     waypoints = [(rcx, rcy) for rcx, rcy, _ in chrono]
     waypoints.append((0.5, 0.5))  # end at profile center
+    trail_map_path = [
+        (MAP_L + wx * MAP_W, MAP_T + wy * MAP_H) for wx, wy in waypoints
+    ]
 
     if len(waypoints) >= 2:
         # Trail casing (white outline beneath for contrast)
@@ -1357,6 +1583,10 @@ def generate(
                 f">{age_label}</text>"
             )
 
+    label_obstacles = river_map_paths[:]
+    if len(trail_map_path) >= 2:
+        label_obstacles.append(trail_map_path)
+
     # ── Repo landmarks ────────────────────────────────────────────
     for idx_rp, (rcx, rcy, repo) in enumerate(repo_positions):
         if idx_rp >= n_visible_repos:
@@ -1389,6 +1619,18 @@ def generate(
         _tt_text = f"{name} \u00b7 {_tt_lang} \u00b7 \u2605{repo_stars} \u00b7 {_elev_label}"
         _tt_text = _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         repo_when = _repo_date(repo) or _date_for_activity_fraction(star_frac)
+        label_x, label_y, _ = _choose_label_anchor(
+            lx,
+            ly,
+            [(10, -8), (10, 5), (-10, -8), (-10, 5), (0, -14), (0, 15)],
+            label_obstacles,
+        )
+        label_anchor = "middle"
+        if label_x > lx + 2:
+            label_anchor = "start"
+        elif label_x < lx - 2:
+            label_anchor = "end"
+        detail_dir = -1 if label_y < ly else 1
         P.append('<g class="repo-peak">')
         P.append(f'<title>{_tt_text}</title>')
         if star_frac > 0.7:
@@ -1403,14 +1645,14 @@ def generate(
                 f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65)} stroke="#fff" stroke-width="0.5"/>'
             )
         P.append(
-            f'<text x="{lx + 8:.0f}" y="{ly + 3:.0f}" font-family="Georgia,serif" font-size="6.5" '
-            f'fill="#2c1a0e" {_timeline_style(repo_when, 0.65)} font-weight="bold" '
+            f'<text x="{label_x:.0f}" y="{label_y:.0f}" font-family="Georgia,serif" font-size="6.5" '
+            f'fill="#2c1a0e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.65)} font-weight="bold" '
             f'stroke="rgba(245,240,232,0.75)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill">{name}</text>'
         )
         if repo_stars > 0:
             P.append(
-                f'<text x="{lx + 8:.0f}" y="{ly + 10:.0f}" font-family="Georgia,serif" font-size="5" '
-                f'fill="#5c3a1e" {_timeline_style(repo_when, 0.45)} font-variant="small-caps" '
+                f'<text x="{label_x:.0f}" y="{label_y + 7 * detail_dir:.0f}" font-family="Georgia,serif" font-size="5" '
+                f'fill="#5c3a1e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.45)} font-variant="small-caps" '
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
             )
@@ -1434,34 +1676,45 @@ def generate(
             label_color = oklch(0.35, 0.02, 30)
             topic_when = _repo_date(repo_tp) or _date_for_activity_fraction(elev)
             label_size = 7.5 + min(2.0, max(0, topic_count - 1) * 0.6)
+            topic_x, topic_y, _ = _choose_label_anchor(
+                mx_tp,
+                my_tp,
+                [(0, -18), (18, -10), (-18, -10), (18, 10), (-18, 10), (0, 20)],
+                label_obstacles,
+            )
+            topic_anchor = "middle"
+            if topic_x > mx_tp + 3:
+                topic_anchor = "start"
+            elif topic_x < mx_tp - 3:
+                topic_anchor = "end"
             # Halo for readability
             P.append(
-                f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
+                f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
                 f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
-                f'fill="#f5f0e8" text-anchor="middle" '
+                f'fill="#f5f0e8" text-anchor="{topic_anchor}" '
                 f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
                 f'{_timeline_style(topic_when, 0.65)}>'
                 f'{place}</text>'
             )
             P.append(
-                f'<text x="{mx_tp:.0f}" y="{my_tp - 12:.0f}" '
+                f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
                 f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
-                f'fill="{label_color}" text-anchor="middle" '
+                f'fill="{label_color}" text-anchor="{topic_anchor}" '
                 f'{_timeline_style(topic_when, 0.65)}>'
                 f'{place}</text>'
             )
             P.append(
-                f'<text x="{mx_tp:.0f}" y="{my_tp - 4:.0f}" '
+                f'<text x="{topic_x:.0f}" y="{topic_y + 8:.0f}" '
                 f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
+                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="{topic_anchor}" '
                 f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
                 f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
                 f'{cluster_note}</text>'
             )
             P.append(
-                f'<text x="{mx_tp:.0f}" y="{my_tp - 4:.0f}" '
+                f'<text x="{topic_x:.0f}" y="{topic_y + 8:.0f}" '
                 f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
+                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="{topic_anchor}" '
                 f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
                 f'{cluster_note}</text>'
             )
@@ -1602,33 +1855,136 @@ def generate(
         # Place settlement near center of map at the most prominent repo
         best = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
+        settle_cy = sy_s + 15
         settle_color = pal["text_secondary"]
+        P.append(
+            f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}">'
+        )
 
-        if followers_count > 1000:
+        if settlement_tier == "capital":
             # Capital: 5-point star symbol
             _star_r_out, _star_r_in = 7, 3.2
             _star_pts = []
             for _si in range(10):
                 _a = math.radians(-90 + _si * 36)
                 _r = _star_r_out if _si % 2 == 0 else _star_r_in
-                _star_pts.append(f"{sx_s + _r * math.cos(_a):.1f},{sy_s + 15 + _r * math.sin(_a):.1f}")
-            P.append(f'<polygon points="{" ".join(_star_pts)}" fill="{settle_color}" opacity="0.6"/>')
-            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 29:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle" opacity="0.6">{metrics.get("label", "")}</text>')
-        elif followers_count > 500:
+                _star_pts.append(
+                    f"{sx_s + _r * math.cos(_a):.1f},{settle_cy + _r * math.sin(_a):.1f}"
+                )
+            P.append(
+                f'<polygon points="{" ".join(_star_pts)}" fill="{settle_color}" opacity="0.6"/>'
+            )
+        elif settlement_tier == "city":
             # City: double circle
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>')
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="2.5" fill="{settle_color}" opacity="0.5"/>')
-            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 27:.0f}" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="{settle_color}" text-anchor="middle" opacity="0.5">{metrics.get("label", "")}</text>')
-        elif followers_count > 200:
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>'
+            )
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="2.5" fill="{settle_color}" opacity="0.5"/>'
+            )
+        elif settlement_tier == "town":
             # Town: filled circle
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="3" fill="{settle_color}" opacity="0.5"/>')
-            P.append(f'<text x="{sx_s:.0f}" y="{sy_s + 25:.0f}" font-family="Georgia, serif" font-size="6" fill="{settle_color}" text-anchor="middle" opacity="0.5">{metrics.get("label", "")}</text>')
-        elif followers_count > 50:
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="3" fill="{settle_color}" opacity="0.5"/>'
+            )
+        elif settlement_tier == "village":
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="2.4" fill="{settle_color}" opacity="0.45"/>'
+            )
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="4.2" fill="none" stroke="{settle_color}" stroke-width="0.5" opacity="0.35"/>'
+            )
+        elif settlement_tier == "hamlet":
             # Hamlet: small dot
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="1.5" fill="{settle_color}" opacity="0.4"/>')
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="1.5" fill="{settle_color}" opacity="0.4"/>'
+            )
         else:
-            # Tiny settlement: faint dot
-            P.append(f'<circle cx="{sx_s:.0f}" cy="{sy_s + 15:.0f}" r="1" fill="{settle_color}" opacity="0.3"/>')
+            # Outpost: faint dot
+            P.append(
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="1" fill="{settle_color}" opacity="0.3"/>'
+            )
+
+        if settlement_tier in {"capital", "city", "town", "village"}:
+            settle_x, settle_y, _ = _choose_label_anchor(
+                sx_s,
+                settle_cy,
+                [(0, 14), (11, 6), (-11, 6), (11, -8), (-11, -8)],
+                label_obstacles,
+            )
+            settle_anchor = "middle"
+            if settle_x > sx_s + 2:
+                settle_anchor = "start"
+            elif settle_x < sx_s - 2:
+                settle_anchor = "end"
+            P.append(
+                f'<text x="{settle_x:.0f}" y="{settle_y:.0f}" font-family="Georgia, serif" font-size="6.2" '
+                f'font-weight="bold" fill="{settle_color}" text-anchor="{settle_anchor}" opacity="0.55" '
+                f'stroke="rgba(245,240,232,0.7)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill">{metrics.get("label", "")}</text>'
+            )
+        P.append("</g>")
+
+    # ── Portfolio footprint inset ─────────────────────────────────
+    if repo_positions:
+        inset_x = MAP_L + 12
+        inset_y = MAP_T + 12
+        inset_w = 92
+        inset_h = 56
+        mini_x = inset_x + 6
+        mini_y = inset_y + 16
+        mini_w = 34
+        mini_h = 26
+        P.append(
+            f'<g id="portfolio-footprint" data-settlement-tier="{settlement_tier}" '
+            f'data-flow-tier="{river_flow_profile["tier"]}" data-repos="{len(repo_positions)}">'
+        )
+        P.append(
+            f'<rect x="{inset_x}" y="{inset_y}" width="{inset_w}" height="{inset_h}" '
+            f'fill="{pal["bg_primary"]}" stroke="{pal["border"]}" stroke-width="0.7" rx="2" opacity="0.92"/>'
+        )
+        P.append(
+            f'<text x="{inset_x + 6}" y="{inset_y + 10}" font-family="Georgia,serif" font-size="5.8" '
+            f'fill="{pal["text_primary"]}" font-weight="bold" opacity="0.62" letter-spacing="0.8">Footprint</text>'
+        )
+        P.append(
+            f'<rect x="{mini_x}" y="{mini_y}" width="{mini_w}" height="{mini_h}" fill="none" '
+            f'stroke="{pal["text_secondary"]}" stroke-width="0.45" opacity="0.45"/>'
+        )
+        if len(trail_map_path) >= 2:
+            mini_d = ""
+            for point_i, (tx_i, ty_i) in enumerate(trail_map_path):
+                px_i = mini_x + ((tx_i - MAP_L) / MAP_W) * mini_w
+                py_i = mini_y + ((ty_i - MAP_T) / MAP_H) * mini_h
+                cmd = "M" if point_i == 0 else " L"
+                mini_d += f"{cmd}{px_i:.1f},{py_i:.1f}"
+            P.append(
+                f'<path d="{mini_d}" fill="none" stroke="{pal["accent"]}" stroke-width="0.6" '
+                f'opacity="0.32" stroke-dasharray="2 1"/>'
+            )
+        for rcx_fp, rcy_fp, repo_fp in repo_positions[:10]:
+            fp_x = mini_x + rcx_fp * mini_w
+            fp_y = mini_y + rcy_fp * mini_h
+            fp_r = 1.0 + min(1.2, repo_fp.get("stars", 0) / max(1, max_stars) * 1.4)
+            P.append(
+                f'<circle cx="{fp_x:.1f}" cy="{fp_y:.1f}" r="{fp_r:.1f}" fill="{pal["highlight"]}" opacity="0.62"/>'
+            )
+        P.append(
+            f'<circle cx="{mini_x + mini_w / 2:.1f}" cy="{mini_y + mini_h / 2:.1f}" r="1.4" fill="{pal["accent"]}" opacity="0.55"/>'
+        )
+        inset_text_x = inset_x + 46
+        P.append(
+            f'<text x="{inset_text_x}" y="{inset_y + 22}" font-family="monospace" font-size="4.6" '
+            f'fill="{pal["text_secondary"]}" opacity="0.62">{len(repo_positions)} repos</text>'
+        )
+        P.append(
+            f'<text x="{inset_text_x}" y="{inset_y + 31}" font-family="monospace" font-size="4.6" '
+            f'fill="{pal["text_secondary"]}" opacity="0.62">{settlement_title} reach</text>'
+        )
+        P.append(
+            f'<text x="{inset_text_x}" y="{inset_y + 40}" font-family="monospace" font-size="4.6" '
+            f'fill="{pal["text_secondary"]}" opacity="0.62">{stars} stars</text>'
+        )
+        P.append("</g>")
 
     # ── Contribution streak trail (WorldState-aware) ──────────
     streaks = metrics.get("contribution_streaks", {})

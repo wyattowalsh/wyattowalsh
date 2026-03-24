@@ -12,6 +12,7 @@ from typing import Annotated, Any
 
 import typer
 
+from ..art.artifacts import sync_living_art_artifacts
 from ..config import (
     DEFAULT_CONFIG_PATH,
     DEFAULT_SKILLS_PATH,
@@ -49,6 +50,16 @@ def _load_project_config(config_path: Path | None) -> ProjectConfig:
     except (OSError, ValueError) as e:
         console.print(f"[bold red]Error:[/bold red] Failed to load config: {e}")
         raise typer.Exit(code=1)
+
+
+def _refresh_living_art_artifacts(output_dir: Path) -> None:
+    """Regenerate the manifest and HTML gallery for current living-art outputs."""
+    manifest_path, gallery_path, manifest = sync_living_art_artifacts(output_dir)
+    console.print(
+        "[dim]Updated living-art index:[/] "
+        f"{manifest['total_assets']} assets, "
+        f"manifest={manifest_path}, gallery={gallery_path}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -806,109 +817,6 @@ def generative_art(
 
 
 # ---------------------------------------------------------------------------
-# animated
-# ---------------------------------------------------------------------------
-
-
-@generate_app.command(help="Generate animated artwork from historical data.")
-def animated(
-    config_path: Annotated[
-        Path | None,
-        typer.Option(
-            "--config-path",
-            help="Project configuration file path.",
-            rich_help_panel="Configuration",
-        ),
-    ] = None,
-    output_path: Annotated[
-        Path | None,
-        typer.Option(
-            "--output-path",
-            help="Output directory for generated files.",
-            rich_help_panel="Configuration",
-        ),
-    ] = None,
-    history_path: Annotated[
-        Path | None,
-        typer.Option(
-            "--history-path",
-            help="Path to history JSON for animated art.",
-            rich_help_panel="Animated Options",
-        ),
-    ] = None,
-    gif_frames: Annotated[
-        int,
-        typer.Option(
-            "--gif-frames",
-            min=2,
-            help="GIF frame count for GitHub-safe compatibility previews.",
-            rich_help_panel="Animated Options",
-        ),
-    ] = 18,
-    gif_size: Annotated[
-        int,
-        typer.Option(
-            "--gif-size",
-            min=64,
-            help="Render size in px for animated compatibility GIFs.",
-            rich_help_panel="Animated Options",
-        ),
-    ] = 400,
-) -> None:
-    """Generate animated artwork from historical data."""
-    _load_project_config(config_path)  # validate config exists
-
-    try:
-        from ..animated_art import generate_compatibility_gifs
-        from ..art.cosmic_genesis import generate as generate_animated_community_art
-        from ..art.unfurling_spiral import generate as generate_animated_activity_art
-    except ImportError:
-        logger.error(
-            "Animated art dependencies/script components are missing. "
-            "Ensure art/cosmic_genesis.py and art/unfurling_spiral.py exist."
-        )
-        console.print(
-            "[bold red]Error:[/bold red] Animated art components missing."
-        )
-        raise typer.Exit(code=1)
-
-    if not history_path or not history_path.exists():
-        logger.error("History JSON required. Use --history-path to specify.")
-        console.print(
-            "[bold red]Error:[/bold red] --history-path is required for animated art."
-        )
-        raise typer.Exit(code=1)
-
-    history = json.loads(history_path.read_text())
-
-    output_dir = Path(output_path) if output_path else Path(".github/assets/img")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    for art_type in ["community", "activity"]:
-        for dark in [False, True]:
-            suffix = "-dark" if dark else ""
-            out = output_dir / f"animated-{art_type}{suffix}.svg"
-            if art_type == "community":
-                generate_animated_community_art(
-                    history, dark_mode=dark, output_path=out,
-                )
-            else:
-                generate_animated_activity_art(
-                    history, dark_mode=dark, output_path=out,
-                )
-            console.print(f"[bold green]Generated: {out}[/]")
-
-    gif_outputs = generate_compatibility_gifs(
-        history,
-        output_dir=output_dir,
-        frames=gif_frames,
-        size=gif_size,
-    )
-    for out in gif_outputs:
-        console.print(f"[bold green]Generated: {out}[/]")
-
-
-# ---------------------------------------------------------------------------
 # living-art
 # ---------------------------------------------------------------------------
 
@@ -1019,6 +927,9 @@ def living_art(
         logger.error("Living-art SVG generation failed: {}", exc)
         raise typer.Exit(code=1) from exc
 
+    output_dir = Path(".github/assets/img")
+    _refresh_living_art_artifacts(output_dir)
+
     if svg_only:
         return
 
@@ -1035,6 +946,8 @@ def living_art(
     except subprocess.CalledProcessError as exc:
         logger.error("Living-art GIF generation failed: {}", exc)
         raise typer.Exit(code=1) from exc
+
+    _refresh_living_art_artifacts(output_dir)
 
 
 # ---------------------------------------------------------------------------
@@ -1101,18 +1014,10 @@ def timelapse(
         str | None,
         typer.Option(
             "--only",
-            help="Restrict to one style: inkgarden, topo, cosmic, spiral.",
+            help="Restrict to one style: inkgarden or topo.",
             rich_help_panel="Timelapse Options",
         ),
     ] = None,
-    dark_mode: Annotated[
-        bool,
-        typer.Option(
-            "--dark-mode",
-            help="Enable dark mode for cosmic/spiral styles.",
-            rich_help_panel="Timelapse Options",
-        ),
-    ] = False,
     workers: Annotated[
         int,
         typer.Option(
@@ -1148,7 +1053,6 @@ def timelapse(
         max_frames=max_frames,
         size=size,
         owner=profile,
-        dark_mode=dark_mode,
         workers=workers,
     )
 
@@ -1158,6 +1062,8 @@ def timelapse(
 
     if not outputs:
         console.print("[yellow]No timelapse GIFs generated.[/yellow]")
+    else:
+        _refresh_living_art_artifacts(outputs[0].parent)
 
 
 # ---------------------------------------------------------------------------

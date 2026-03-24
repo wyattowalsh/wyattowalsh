@@ -22,6 +22,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from ..utils import get_logger
 from . import ink_garden, topography
 from ._dev_profiles import PROFILES
@@ -255,13 +257,30 @@ def main() -> None:
             if history_file:
                 try:
                     history = json.loads(Path(str(history_file)).read_text(encoding="utf-8"))
-                except (json.JSONDecodeError, OSError) as exc:
+                except (json.JSONDecodeError, OSError, ValidationError) as exc:
                     logger.warning("Failed to load history from {}: {}", history_file, exc)
-            target = normalize_live_metrics(raw, owner=str(profile), history=history)
-            logger.info("Loaded live metrics from {}", metrics_file)
+            try:
+                target = normalize_live_metrics(raw, owner=str(profile), history=history)
+                logger.info("Loaded live metrics from {}", metrics_file)
+            except ValidationError as exc:
+                logger.warning(
+                    "Failed to validate metrics from {}: {}. Falling back to mock profiles.",
+                    metrics_file,
+                    exc,
+                )
+                raw = None
         else:
             if profile not in PROFILES:
                 logger.error("No valid metrics and unknown profile: {}. Available: {}", profile, list(PROFILES.keys()))
+                return
+            target = PROFILES[profile]
+        if raw is None:
+            if profile not in PROFILES:
+                logger.error(
+                    "No valid metrics and unknown profile: {}. Available: {}",
+                    profile,
+                    list(PROFILES.keys()),
+                )
                 return
             target = PROFILES[profile]
     elif profile in PROFILES:

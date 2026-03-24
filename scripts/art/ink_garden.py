@@ -272,6 +272,94 @@ def _select_primary_repos(
     return primary, overflow
 
 
+def _parse_iso_datetime(value: str | None) -> datetime | None:
+    if not value or not isinstance(value, str):
+        return None
+    try:
+        if len(value) == 10:
+            return datetime.fromisoformat(value)
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(
+            tzinfo=None
+        )
+    except ValueError:
+        return None
+
+
+def _recent_activity_variance(monthly: dict[str, int], *, window: int = 6) -> float:
+    if not isinstance(monthly, dict):
+        return 0.0
+
+    values = [
+        max(0.0, float(count or 0))
+        for _month, count in sorted(monthly.items())
+        if isinstance(count, int | float)
+    ]
+    values = values[-window:]
+    if len(values) < 2:
+        return 0.0
+
+    mean = sum(values) / len(values)
+    if mean <= 0.0:
+        return 0.0
+
+    variance = sum((value - mean) ** 2 for value in values) / len(values)
+    return min(2.0, math.sqrt(variance) / mean)
+
+
+def _summarize_merged_pr_cadence(
+    recent_merged_prs: list[dict],
+) -> dict[str, list[dict[str, str | float]] | float]:
+    parsed: list[tuple[datetime, dict[str, str | float]]] = []
+    for pr in recent_merged_prs:
+        if not isinstance(pr, dict):
+            continue
+
+        merged_at = _parse_iso_datetime(
+            pr.get("merged_at") or pr.get("mergedAt") or pr.get("date")
+        )
+        if merged_at is None:
+            continue
+
+        additions = max(0, int(pr.get("additions", 0) or 0))
+        deletions = max(0, int(pr.get("deletions", 0) or 0))
+        delta_scale = 1.0 + min(0.45, math.log1p(additions + deletions) * 0.08)
+        parsed.append(
+            (
+                merged_at,
+                {
+                    "when": merged_at.date().isoformat(),
+                    "repo_name": str(pr.get("repo_name") or ""),
+                    "delta_scale": delta_scale,
+                },
+            )
+        )
+
+    if not parsed:
+        return {"entries": [], "tempo": 0.0, "burst": 0.0}
+
+    parsed.sort(key=lambda item: item[0])
+    gaps = [
+        max(1.0, (curr[0] - prev[0]).total_seconds() / 86400.0)
+        for prev, curr in zip(parsed, parsed[1:])
+    ]
+    density = min(1.0, len(parsed) / 6.0)
+    if gaps:
+        mean_gap = sum(gaps) / len(gaps)
+        gap_variance = sum((gap - mean_gap) ** 2 for gap in gaps) / len(gaps)
+        gap_cv = math.sqrt(gap_variance) / mean_gap if mean_gap > 0 else 0.0
+        tempo = min(1.0, 18.0 / max(mean_gap, 1.0))
+        burst = min(1.0, density * 0.55 + tempo * 0.35 + min(0.10, gap_cv * 0.10))
+    else:
+        tempo = density
+        burst = min(1.0, density * 0.65)
+
+    return {
+        "entries": [entry for _merged_at, entry in parsed],
+        "tempo": tempo,
+        "burst": burst,
+    }
+
+
 def _repo_topic_annotation(repo: dict, *, max_topics: int = 2) -> str:
     """Build a compact specimen-note label from repo topics."""
     cleaned: list[str] = []
@@ -757,6 +845,20 @@ def generate(
     open_issues = metrics.get("open_issues_count", 0)
     network = metrics.get("network_count", 0)
     stars_total = metrics.get("stars", 0)
+    recent_merged_prs = metrics.get("recent_merged_prs", []) or []
+    if not isinstance(recent_merged_prs, list):
+        recent_merged_prs = []
+    recent_pr_signal = _summarize_merged_pr_cadence(recent_merged_prs)
+    activity_variance = _recent_activity_variance(monthly)
+    wind_sway_scale = 1.0 + min(
+        0.65,
+        activity_variance * 0.55 + float(recent_pr_signal["burst"]) * 0.35,
+    )
+    repo_lang_by_name = {
+        str(repo.get("name") or ""): repo.get("language")
+        for repo in raw_repos
+        if isinstance(repo, dict) and repo.get("name")
+    }
 
     # ── WorldState (unified atmospheric/environmental state) ─────
     world = compute_world_state(metrics)
@@ -863,16 +965,7 @@ def generate(
     total_daily = sum(max(0, int(v)) for _, v in sorted_daily)
 
     def _parse_date(value: str | None) -> datetime | None:
-        if not value:
-            return None
-        try:
-            if len(value) == 10:
-                return datetime.fromisoformat(value)
-            return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(
-                tzinfo=None
-            )
-        except ValueError:
-            return None
+        return _parse_iso_datetime(value)
 
     def _date_at_fraction(frac: float) -> str:
         frac = max(0.0, min(1.0, frac))
@@ -902,6 +995,13 @@ def generate(
         if shifted > timeline_end:
             shifted = timeline_end
         return shifted.isoformat()
+
+    def _time_fraction(when: str | None) -> float:
+        base = _parse_date(when)
+        if base is None:
+            return 0.5
+        day_offset = (base.date() - timeline_start).days
+        return max(0.0, min(1.0, day_offset / timeline_span_days))
 
     def _month_key_date(month_key: str, idx: int) -> str:
         mk = str(month_key).strip()
@@ -954,7 +1054,7 @@ def generate(
     berries = []  # (x,y,size,hue,when)
     tendrils = []  # list of point-lists
     mushrooms_list = []  # (x,y,size,hue)
-    insects = []  # (x,y,type,size,hue)
+    insects = []  # (x, y, type, size, hue, when, beat, role)
     webs = []  # (cx,cy,radius,n_spokes)
     dew_drops = []  # (x,y,size)
     seeds = []  # (x,y,angle,size)
@@ -1245,6 +1345,7 @@ def generate(
                     t = ji / n_joints
                     # Mostly vertical, very slight sway
                     sway = noise.noise(bx * 0.01 + ji * 0.5, by * 0.01) * 2
+                    sway *= wind_sway_scale
                     nx_ = cx_ + sway
                     ny_ = cy_ - joint_spacing
                     all_segs.append(
@@ -1739,12 +1840,42 @@ def generate(
     # ── Insects (data-driven: PRs -> pollinators, reviews -> bees) ──
     total_prs_count = metrics.get("total_prs", 0) or 0
     review_count = metrics.get("pr_review_count", 0) or 0
-    n_butterflies = min(8, max(1, total_prs_count // 20))
+    followers_count = metrics.get("followers", 0) or 0
+    merged_entries = list(recent_pr_signal["entries"])
+    cadence_tempo = float(recent_pr_signal["tempo"])
+    cadence_burst = float(recent_pr_signal["burst"])
+    pollinator_beat_scale = 1.0 + cadence_tempo * 0.35 + cadence_burst * 0.25
+    n_butterflies = min(8, max(1, total_prs_count // 20, len(merged_entries)))
     n_bees = min(4, max(0, review_count // 40))
     n_dragonflies = min(3, max(0, (metrics.get("public_gists", 0) or 0) // 10))
     n_ladybugs = min(4, max(1, len(repos) // 3))
 
-    for _ in range(n_butterflies):
+    merged_butterflies = min(n_butterflies, len(merged_entries))
+    for bi in range(merged_butterflies):
+        entry = merged_entries[bi]
+        when = str(entry["when"])
+        frac = _time_fraction(when)
+        repo_lang = repo_lang_by_name.get(str(entry["repo_name"])) or dominant_lang
+        hue = LANG_HUES.get(repo_lang, 200)
+        delta_scale = float(entry["delta_scale"])
+        ix = 80 + frac * (WIDTH - 160) + math.sin((bi + 1) * 1.7) * 18.0
+        iy = 58 + (GROUND_Y - 120) * (0.48 - frac * 0.18)
+        iy += math.sin(frac * math.tau * (1.15 + cadence_tempo)) * (
+            12 + cadence_burst * 10
+        )
+        insects.append(
+            (
+                ix,
+                max(38, min(GROUND_Y - 24, iy)),
+                "butterfly",
+                rng.uniform(8, 16) * delta_scale,
+                hue,
+                when,
+                pollinator_beat_scale * delta_scale,
+                "merged-pr",
+            )
+        )
+    for _ in range(n_butterflies - merged_butterflies):
         insects.append(
             (
                 rng.uniform(50, WIDTH - 50),
@@ -1752,6 +1883,9 @@ def generate(
                 "butterfly",
                 rng.uniform(8, 16),
                 rng.integers(0, 360),
+                None,
+                1.0,
+                None,
             )
         )
     for _ in range(n_bees):
@@ -1762,6 +1896,9 @@ def generate(
                 "bee",
                 rng.uniform(4, 8),
                 45,
+                None,
+                1.0,
+                None,
             )
         )
     for _ in range(n_dragonflies):
@@ -1772,6 +1909,9 @@ def generate(
                 "dragonfly",
                 rng.uniform(10, 18),
                 rng.integers(0, 360),
+                None,
+                1.0,
+                None,
             )
         )
     for _ in range(n_ladybugs):
@@ -1782,8 +1922,51 @@ def generate(
                 "ladybug",
                 rng.uniform(3, 5),
                 0,
+                None,
+                1.0,
+                None,
             )
         )
+
+    rare_fauna_tier = 0
+    if followers_count >= 60 and merged_entries:
+        rare_fauna_tier = 1
+    if followers_count >= 180 and len(merged_entries) >= 3:
+        rare_fauna_tier = 2
+
+    if rare_fauna_tier:
+        bloom_anchors = sorted(blooms, key=lambda bloom: bloom[2], reverse=True)
+        if not bloom_anchors:
+            bloom_anchors = [
+                (
+                    WIDTH * (0.38 + hi * 0.18),
+                    GROUND_Y - 120 - hi * 20,
+                    10.0,
+                    150,
+                    0,
+                    0,
+                    "wild",
+                    timeline_end.isoformat(),
+                )
+                for hi in range(rare_fauna_tier)
+            ]
+        for hi in range(rare_fauna_tier):
+            anchor = bloom_anchors[hi % len(bloom_anchors)]
+            when = str(merged_entries[min(len(merged_entries) - 1, hi)]["when"])
+            hx = anchor[0] + (-1 if hi % 2 == 0 else 1) * (16 + hi * 8)
+            hy = anchor[1] - (16 + hi * 6)
+            insects.append(
+                (
+                    hx,
+                    max(42, hy),
+                    "hummingbird",
+                    9.5 + hi * 1.4,
+                    (int(anchor[3]) + 25) % 360,
+                    when,
+                    1.05 + min(0.40, followers_count / 500.0) + cadence_burst * 0.20,
+                    "rare-fauna",
+                )
+            )
 
     # ── Webs ──────────────────────────────────────────────────────
     if mat > 0.25:
@@ -3294,15 +3477,36 @@ def generate(
     _bee_thorax = oklch_lerp(pal["highlight"], pal["accent"], 0.3)
     _bee_abdomen = oklch_lerp(pal["highlight"], pal["accent"], 0.15)
     _bee_stripe = oklch_lerp(pal["text_primary"], pal["ground"], 0.5)
-    for ix, iy, itype, isz, ihue in insects:
+    for ix, iy, itype, isz, ihue, iwhen, ibeat, irole in insects:
+        wrapped_insect = bool(iwhen or irole or abs(ibeat - 1.0) > 1e-6)
+        if wrapped_insect:
+            insect_attrs = [f'data-fauna="{itype}"', f'data-beat="{ibeat:.2f}"']
+            if irole:
+                insect_attrs.append(f'data-role="{irole}"')
+            if iwhen:
+                insect_attrs.append(
+                    _timeline_style(
+                        iwhen,
+                        0.58,
+                        delay_offset_frac=min(0.08, max(0.0, ibeat - 1.0) * 0.04),
+                        duration_scale=0.85 + min(0.35, max(0.0, ibeat - 1.0) * 0.20),
+                        ease="ease-in-out",
+                    )
+                )
+            else:
+                insect_attrs.append('opacity="0.58"')
+            P.append(f'<g {" ".join(insect_attrs)}>')
+
         if itype == "butterfly":
+            trail_scale = 1.0 + min(0.8, max(0.0, ibeat - 1.0) * 0.9)
+            wing_lift = 1.0 + min(0.3, max(0.0, ibeat - 1.0) * 0.35)
             # Flight path — natural cubic Bezier arc showing trajectory
-            cp1x = ix + rng.uniform(-30, -10)
-            cp1y = iy + rng.uniform(-20, -5)
-            cp2x = ix + rng.uniform(10, 30)
-            cp2y = iy + rng.uniform(-15, 5)
-            trail_end_x = ix + rng.uniform(15, 40)
-            trail_end_y = iy + rng.uniform(-25, -5)
+            cp1x = ix + rng.uniform(-30, -10) * trail_scale
+            cp1y = iy + rng.uniform(-20, -5) * wing_lift
+            cp2x = ix + rng.uniform(10, 30) * trail_scale
+            cp2y = iy + rng.uniform(-15, 5) * wing_lift
+            trail_end_x = ix + rng.uniform(15, 40) * trail_scale
+            trail_end_y = iy + rng.uniform(-25, -5) * wing_lift
             P.append(
                 f'<path d="M{ix - rng.uniform(15, 35):.0f},{iy + rng.uniform(5, 20):.0f} '
                 f'C{cp1x:.0f},{cp1y:.0f} {cp2x:.0f},{cp2y:.0f} {trail_end_x:.0f},{trail_end_y:.0f}" '
@@ -3320,14 +3524,14 @@ def generate(
             for side in [-1, 1]:
                 # Upper wings — natural Bezier outline
                 uwx = ix + side * isz * 0.5
-                uwy = iy - isz * 0.2
+                uwy = iy - isz * 0.2 * wing_lift
                 # Wing shape as cubic Bezier path for more natural silhouette
                 w_tip_x = ix + side * isz * 0.65
-                w_tip_y = iy - isz * 0.45
+                w_tip_y = iy - isz * 0.45 * wing_lift
                 w_cp1x = ix + side * isz * 0.15
-                w_cp1y = iy - isz * 0.5
+                w_cp1y = iy - isz * 0.5 * wing_lift
                 w_cp2x = ix + side * isz * 0.7
-                w_cp2y = iy - isz * 0.35
+                w_cp2y = iy - isz * 0.35 * wing_lift
                 w_cp3x = ix + side * isz * 0.55
                 w_cp3y = iy + isz * 0.05
                 w_cp4x = ix + side * isz * 0.1
@@ -3428,6 +3632,52 @@ def generate(
                 f'<circle cx="{ix - isz * 0.5:.0f}" cy="{iy:.0f}" r="{isz * 0.08:.1f}" '
                 f'fill="{_df_head}" opacity="0.5"/>'
             )
+        elif itype == "hummingbird":
+            hb_body = oklch(0.50, 0.12, ihue)
+            hb_wing = oklch(0.80, 0.05, (ihue + 20) % 360)
+            hb_tail = oklch(0.46, 0.08, (ihue + 8) % 360)
+            hb_throat = oklch(0.66, 0.18, (ihue + 70) % 360)
+            wing_span = isz * (0.90 + min(0.25, max(0.0, ibeat - 1.0) * 0.4))
+            trail_len = isz * (1.8 + min(0.9, max(0.0, ibeat - 1.0)))
+            P.append(
+                f'<path d="M{ix - trail_len:.1f},{iy + isz * 0.2:.1f} '
+                f'Q{ix - isz * 0.9:.1f},{iy - isz * 0.9:.1f} {ix - isz * 0.2:.1f},{iy - isz * 0.3:.1f}" '
+                f'fill="none" stroke="{_insect_trail}" stroke-width="0.25" opacity="0.08" '
+                f'stroke-dasharray="1.2 1.8" stroke-linecap="round"/>'
+            )
+            P.append(
+                f'<ellipse cx="{ix:.1f}" cy="{iy:.1f}" '
+                f'rx="{isz * 0.42:.1f}" ry="{isz * 0.18:.1f}" '
+                f'fill="{hb_body}" opacity="0.60"/>'
+            )
+            P.append(
+                f'<circle cx="{ix - isz * 0.28:.1f}" cy="{iy - isz * 0.02:.1f}" '
+                f'r="{isz * 0.10:.1f}" fill="{hb_throat}" opacity="0.55"/>'
+            )
+            P.append(
+                f'<path d="M{ix + isz * 0.32:.1f},{iy:.1f} '
+                f'L{ix + isz * 0.72:.1f},{iy - isz * 0.10:.1f} '
+                f'L{ix + isz * 0.24:.1f},{iy - isz * 0.20:.1f} Z" '
+                f'fill="{hb_tail}" opacity="0.45"/>'
+            )
+            for side, angle in ((-1, -28), (1, 24)):
+                wing_cx = ix + side * isz * 0.08
+                wing_cy = iy - isz * 0.30
+                P.append(
+                    f'<ellipse cx="{wing_cx:.1f}" cy="{wing_cy:.1f}" '
+                    f'rx="{wing_span * 0.42:.1f}" ry="{isz * 0.14:.1f}" '
+                    f'fill="{hb_wing}" opacity="0.24" '
+                    f'transform="rotate({angle + (ibeat - 1.0) * 18:.0f},{wing_cx:.1f},{wing_cy:.1f})"/>'
+                )
+            P.append(
+                f'<line x1="{ix - isz * 0.42:.1f}" y1="{iy - isz * 0.03:.1f}" '
+                f'x2="{ix - isz * 0.88:.1f}" y2="{iy - isz * 0.12:.1f}" '
+                f'stroke="{_insect_body}" stroke-width="0.35" opacity="0.55"/>'
+            )
+            P.append(
+                f'<circle cx="{ix - isz * 0.18:.1f}" cy="{iy - isz * 0.05:.1f}" '
+                f'r="{isz * 0.04:.1f}" fill="{_insect_body}" opacity="0.7"/>'
+            )
             # Wings — 4 translucent with venation
             for side in [-1, 1]:
                 for pair, off in enumerate([-0.15, 0.05]):
@@ -3490,6 +3740,9 @@ def generate(
                         f'x2="{ix + side * isz * 0.55:.0f}" y2="{ly_lb + 1:.0f}" '
                         f'stroke="{lb_dark}" stroke-width="0.2" opacity="0.2"/>'
                     )
+
+        if wrapped_insect:
+            P.append("</g>")
 
     # ── Fallen leaves on ground ───────────────────────────────────
     n_fallen = int(mat * 10)

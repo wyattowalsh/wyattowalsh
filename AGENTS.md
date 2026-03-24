@@ -55,7 +55,6 @@ wyattowalsh/
 │   ├── readme_svg.py    # SVG rendering helpers for README components
 │   ├── skills.py        # shields.io badge generator from skills.yaml
 │   ├── generative.py    # Static generative art (Clifford/Phyllotaxis)
-│   ├── animated_art.py  # CSS-animated SVGs from commit history
 │   ├── fetch_metrics.py # GitHub GraphQL metrics collector
 │   ├── fetch_history.py # GitHub commit history collector
 │   ├── _github_http.py  # Shared GitHub API HTTP helpers
@@ -143,7 +142,6 @@ CI secrets (GitHub Actions only — not needed locally):
 | ST-06 | `scripts/config.py` | Switch to native `YamlConfigSettingsSource` from `pydantic-settings` |
 | ST-07 | `scripts/config.py` | Use Pydantic v2 discriminated unions for type-safe generator config dispatch |
 | ST-08 | `scripts/` | Sub-package restructure: `generators/`, `data/`, `core/` |
-| ST-09 | `scripts/banner.py`, `scripts/animated_art.py` | Extract duplicate Clifford attractor to shared `art/shared.py` utility |
 
 ## Sub-file Index
 

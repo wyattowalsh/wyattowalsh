@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@upstash/redis": "^1.37.0",
     "fumadocs-core": "^15.8.5",
     "fumadocs-mdx": "^14.2.11",
     "fumadocs-ui": "^15.8.5",

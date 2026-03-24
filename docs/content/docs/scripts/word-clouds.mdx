@@ -20,6 +20,20 @@ SVG word clouds where:
 
 The README and CI pipeline default to animated SVGs where each frame is laid out by a different metaheuristic solver. Static renderers remain available for manual generation.
 
+## Optimization model
+
+All metaheuristic frames solve the same placement problem. The objective is "lower is better" and combines:
+
+- Hard feasibility penalties for overlap and out-of-bounds words
+- Packing density inside the occupied hull
+- Visual balance around the canvas center
+- Whitespace uniformity between neighboring words
+- Reading-flow penalties for hard-to-scan rotations
+- Landscape-aspect bias so layouts stay broad instead of collapsing into portrait stacks
+- Size-gradient preference so larger words stay closer to the visual center
+
+The readability policy is active during solver sampling, not just final scoring. Large words can use a different rotation palette than smaller words, which lets you keep headline terms mostly horizontal while still allowing more variation in the tail.
+
 ## Input data
 
 The word cloud reads a markdown file produced by the `starred` CLI tool:
@@ -55,9 +69,26 @@ Under `word_cloud_settings` in `config.yaml`:
 word_cloud_settings:
   output_dir: .github/assets/img
   output_filename: word_cloud.png
+  max_words: 180
   prompt: "My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React"
   stopwords: []         # Additional stopwords list
+  layout_readability:
+    standard_rotations: [0, 0, 0, -8, 8, 90]
+    large_word_rotations: [0, 0, 0, -8, 8]
+    large_word_threshold_ratio: 0.72
+    reading_flow_weight: 2.0
+    target_aspect_ratio: 1.8
+    landscape_bias_weight: 1.4
 ```
+
+Key knobs:
+
+- `max_words` limits the generated vocabulary before rendering for both classic and SVG backends
+- `standard_rotations` controls the general rotation palette
+- `large_word_rotations` applies only to the largest words in the layout
+- `large_word_threshold_ratio` decides which words count as "large"
+- `reading_flow_weight` increases or relaxes the cost of difficult rotations
+- `target_aspect_ratio` and `landscape_bias_weight` steer the solver toward wider layouts
 
 ## Output files
 

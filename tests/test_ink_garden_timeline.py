@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from copy import deepcopy
 
 import pytest
 
@@ -18,6 +19,13 @@ def _extract_timeline_points(svg: str) -> list[tuple[str, float]]:
         for delay, when in re.findall(
             r'data-delay="([0-9.]+)" data-when="([0-9-]+)"', svg
         )
+    ]
+
+
+def _extract_fauna_beats(svg: str, fauna: str) -> list[float]:
+    return [
+        float(beat)
+        for beat in re.findall(rf'data-fauna="{fauna}" data-beat="([0-9.]+)"', svg)
     ]
 
 
@@ -122,3 +130,158 @@ def test_ink_garden_timeline_is_deterministic_for_same_input() -> None:
     svg_1 = generate(metrics, seed=fixed_seed, timeline=True, loop_duration=30.0)
     svg_2 = generate(metrics, seed=fixed_seed, timeline=True, loop_duration=30.0)
     assert svg_1 == svg_2
+
+
+def test_ink_garden_timeline_merged_pr_dates_drive_pollinator_reveals() -> None:
+    metrics = _sample_metrics()
+    metrics["total_prs"] = 6
+    metrics["recent_merged_prs"] = [
+        {
+            "merged_at": "2023-01-20T12:00:00Z",
+            "additions": 24,
+            "deletions": 8,
+            "repo_name": "seed-repo",
+        },
+        {
+            "merged_at": "2023-02-18T09:00:00Z",
+            "additions": 12,
+            "deletions": 3,
+            "repo_name": "growth-repo",
+        },
+        {
+            "merged_at": "2023-03-20T16:30:00Z",
+            "additions": 31,
+            "deletions": 10,
+            "repo_name": "growth-repo",
+        },
+    ]
+
+    svg = generate(metrics, seed=seed_hash(metrics), timeline=True, loop_duration=24.0)
+    timeline_points = _extract_timeline_points(svg)
+    timeline_dates = {when for when, _delay in timeline_points}
+
+    assert 'data-fauna="butterfly"' in svg
+    assert "2023-01-20" in timeline_dates
+    assert 'data-when="2023-01-20"' in svg
+    assert 'data-when="2023-02-18"' in svg
+    assert 'data-when="2023-03-20"' in svg
+
+
+def test_ink_garden_tighter_merged_pr_cadence_strengthens_pollinator_beat() -> None:
+    fixed_seed = "0123456789abcdeffedcba9876543210"
+
+    tight_metrics = deepcopy(_sample_metrics())
+    tight_metrics["total_prs"] = 6
+    tight_metrics["recent_merged_prs"] = [
+        {
+            "merged_at": "2023-03-10T12:00:00Z",
+            "additions": 18,
+            "deletions": 6,
+            "repo_name": "seed-repo",
+        },
+        {
+            "merged_at": "2023-03-14T12:00:00Z",
+            "additions": 20,
+            "deletions": 5,
+            "repo_name": "growth-repo",
+        },
+        {
+            "merged_at": "2023-03-18T12:00:00Z",
+            "additions": 22,
+            "deletions": 7,
+            "repo_name": "growth-repo",
+        },
+    ]
+
+    sparse_metrics = deepcopy(_sample_metrics())
+    sparse_metrics["total_prs"] = 6
+    sparse_metrics["recent_merged_prs"] = [
+        {
+            "merged_at": "2023-01-10T12:00:00Z",
+            "additions": 18,
+            "deletions": 6,
+            "repo_name": "seed-repo",
+        },
+        {
+            "merged_at": "2023-02-20T12:00:00Z",
+            "additions": 20,
+            "deletions": 5,
+            "repo_name": "growth-repo",
+        },
+        {
+            "merged_at": "2023-03-29T12:00:00Z",
+            "additions": 22,
+            "deletions": 7,
+            "repo_name": "growth-repo",
+        },
+    ]
+
+    tight_svg = generate(
+        tight_metrics,
+        seed=fixed_seed,
+        timeline=True,
+        loop_duration=24.0,
+    )
+    sparse_svg = generate(
+        sparse_metrics,
+        seed=fixed_seed,
+        timeline=True,
+        loop_duration=24.0,
+    )
+
+    tight_beats = _extract_fauna_beats(tight_svg, "butterfly")
+    sparse_beats = _extract_fauna_beats(sparse_svg, "butterfly")
+
+    assert tight_beats
+    assert sparse_beats
+    assert max(tight_beats) > max(sparse_beats)
+
+
+def test_ink_garden_rare_fauna_requires_followers_and_recent_pollination() -> None:
+    fixed_seed = "89abcdef012345670123456789abcdef"
+    recent_merged_prs = [
+        {
+            "merged_at": "2023-03-05T09:00:00Z",
+            "additions": 16,
+            "deletions": 4,
+            "repo_name": "seed-repo",
+        },
+        {
+            "merged_at": "2023-03-11T09:00:00Z",
+            "additions": 21,
+            "deletions": 6,
+            "repo_name": "growth-repo",
+        },
+        {
+            "merged_at": "2023-03-16T09:00:00Z",
+            "additions": 25,
+            "deletions": 8,
+            "repo_name": "growth-repo",
+        },
+    ]
+
+    low_follow_metrics = deepcopy(_sample_metrics())
+    low_follow_metrics["total_prs"] = 6
+    low_follow_metrics["recent_merged_prs"] = recent_merged_prs
+
+    high_follow_metrics = deepcopy(_sample_metrics())
+    high_follow_metrics["total_prs"] = 6
+    high_follow_metrics["followers"] = 220
+    high_follow_metrics["recent_merged_prs"] = recent_merged_prs
+
+    low_svg = generate(
+        low_follow_metrics,
+        seed=fixed_seed,
+        timeline=True,
+        loop_duration=24.0,
+    )
+    high_svg = generate(
+        high_follow_metrics,
+        seed=fixed_seed,
+        timeline=True,
+        loop_duration=24.0,
+    )
+
+    assert 'data-fauna="hummingbird"' not in low_svg
+    assert 'data-fauna="hummingbird"' in high_svg
+    assert 'data-role="rare-fauna"' in high_svg

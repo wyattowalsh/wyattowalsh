@@ -9,7 +9,7 @@ const features = [
   },
   {
     title: 'Living Art',
-    description: 'Ink gardens, topographic maps, and cosmic genesis — grown from your GitHub data',
+    description: 'Ink gardens and topographic maps — grown from your GitHub data',
     icon: '\u2727',
   },
   {
@@ -44,16 +44,6 @@ const artPieces = [
     src: '/showcase/topo-growth.gif',
     title: 'Topography',
     description: 'Terrain contours and rivers emerge with activity',
-  },
-  {
-    src: '/showcase/animated-community.gif',
-    title: 'Cosmic Genesis',
-    description: 'Clifford attractor density field revealed as community grows',
-  },
-  {
-    src: '/showcase/animated-activity.gif',
-    title: 'Unfurling Spiral',
-    description: 'Phyllotaxis spiral grows from a single seed as contributions build',
   },
 ];
 
@@ -91,6 +81,8 @@ export default function HomePage() {
           <div className="flex gap-4 mt-2">
             <Link
               href="/docs"
+              data-telemetry-event="cta_click"
+              data-telemetry-label="hero_read_docs"
               className="rounded-lg bg-fd-primary px-6 py-3 text-sm font-medium text-fd-primary-foreground transition-all hover:bg-fd-primary/90 hover:shadow-lg hover:shadow-fd-primary/20"
             >
               Read the Docs
@@ -99,6 +91,8 @@ export default function HomePage() {
               href="https://github.com/wyattowalsh/wyattowalsh"
               target="_blank"
               rel="noopener noreferrer"
+              data-telemetry-event="cta_click"
+              data-telemetry-label="hero_github"
               className="rounded-lg border border-fd-border px-6 py-3 text-sm font-medium transition-all hover:bg-fd-accent hover:border-fd-accent-foreground/20"
             >
               GitHub
@@ -214,12 +208,16 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center">
             <Link
               href="/docs/getting-started"
+              data-telemetry-event="cta_click"
+              data-telemetry-label="footer_get_started"
               className="rounded-lg bg-fd-primary px-6 py-3 text-sm font-medium text-fd-primary-foreground transition-all hover:bg-fd-primary/90 hover:shadow-lg hover:shadow-fd-primary/20"
             >
               Get Started
             </Link>
             <Link
               href="/docs/getting-started/fork-and-repurpose"
+              data-telemetry-event="cta_click"
+              data-telemetry-label="footer_fork_and_repurpose"
               className="rounded-lg border border-fd-border px-6 py-3 text-sm font-medium transition-all hover:bg-fd-accent hover:border-fd-accent-foreground/20"
             >
               Fork & Repurpose

@@ -4,9 +4,17 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Callable
 
 from .core import BBox
-from .readability import DEFAULT_LAYOUT_READABILITY_POLICY, coerce_layout_readability_policy
+from .readability import (
+    DEFAULT_LAYOUT_READABILITY_POLICY,
+    LayoutReadabilityPolicy,
+    LayoutReadabilitySettings,
+    coerce_layout_readability_policy,
+)
+
+LayoutReadabilityConfig = LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
 
 # ---------------------------------------------------------------------------
 # Metaheuristic aesthetic cost function
@@ -15,14 +23,54 @@ from .readability import DEFAULT_LAYOUT_READABILITY_POLICY, coerce_layout_readab
 # Rotation choices biased toward horizontal for readability
 _META_ROTATIONS = list(DEFAULT_LAYOUT_READABILITY_POLICY.standard_rotations)
 _ACTIVE_LAYOUT_READABILITY = DEFAULT_LAYOUT_READABILITY_POLICY
+_ACTIVE_WORD_SIZES: tuple[float, ...] = ()
+_ACTIVE_MIN_FONT_SIZE = 0.0
+_ACTIVE_MAX_FONT_SIZE = 0.0
 
 
-def configure_layout_readability(layout_readability: object | None = None):
+def configure_layout_readability(
+    layout_readability: LayoutReadabilityConfig = None,
+    *,
+    word_sizes: list[float] | tuple[float, ...] | None = None,
+):
     """Set the active readability policy for solver helpers and workers."""
 
     global _ACTIVE_LAYOUT_READABILITY
+    global _ACTIVE_WORD_SIZES
+    global _ACTIVE_MIN_FONT_SIZE
+    global _ACTIVE_MAX_FONT_SIZE
+
     _ACTIVE_LAYOUT_READABILITY = coerce_layout_readability_policy(layout_readability)
+    _ACTIVE_WORD_SIZES = tuple(word_sizes or ())
+    if _ACTIVE_WORD_SIZES:
+        _ACTIVE_MIN_FONT_SIZE = min(_ACTIVE_WORD_SIZES)
+        _ACTIVE_MAX_FONT_SIZE = max(_ACTIVE_WORD_SIZES)
+    else:
+        _ACTIVE_MIN_FONT_SIZE = 0.0
+        _ACTIVE_MAX_FONT_SIZE = 0.0
     return _ACTIVE_LAYOUT_READABILITY
+
+
+def _rotation_for_font_size(rng: random.Random, font_size: float) -> float:
+    """Choose a rotation that respects the active large-word policy."""
+
+    if _ACTIVE_MAX_FONT_SIZE <= _ACTIVE_MIN_FONT_SIZE:
+        return _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+
+    is_large_word = _ACTIVE_LAYOUT_READABILITY.is_large_word(
+        font_size,
+        _ACTIVE_MIN_FONT_SIZE,
+        _ACTIVE_MAX_FONT_SIZE,
+    )
+    return _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng, is_large_word=is_large_word)
+
+
+def _clamped_population_size(pop_size: int | None, default: int = 20) -> int:
+    """Normalize optional population-size overrides for solver families."""
+
+    if pop_size is None:
+        return default
+    return max(1, int(pop_size))
 
 
 def _rotation_readability_penalty(rotation: float) -> float:
@@ -80,18 +128,21 @@ def _aesthetic_cost(
     canvas_w: float,
     canvas_h: float,
     texts: list[str] | None = None,
-    layout_readability: object | None = None,
+    layout_readability: LayoutReadabilityConfig = None,
 ) -> float:
     """Evaluate the aesthetic quality of a word placement solution.
 
     Returns a scalar cost (lower is better) combining:
-    1. Overlap penalty (weight 10.0)
+    1. Overlap penalty (hard constraint)
     2. Packing density (weight 3.0)
     3. Visual balance (weight 2.0)
     4. Whitespace uniformity (weight 2.0)
-    5. Reading flow (weight 1.5)
-    6. Golden ratio harmony (weight 1.0)
+    5. Reading flow (weight = policy.reading_flow_weight)
+    6. Landscape aspect preference (weight 1.0)
     7. Size gradient (weight 1.0)
+
+    Overlap and out-of-bounds penalties are treated as hard constraints with a
+    large multiplier so all solver families search for feasible layouts first.
 
     Uses spatial grid hashing for O(n) overlap detection and approximate NN.
     """
@@ -319,10 +370,15 @@ def _random_solution(
     margin_x = canvas_w * 0.15
     margin_y = canvas_h * 0.15
     sol: list[tuple[float, float, float]] = []
-    for _ in range(n):
+    for index in range(n):
         x = rng.uniform(margin_x, canvas_w - margin_x)
         y = rng.uniform(margin_y, canvas_h - margin_y)
-        rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+        font_size = (
+            _ACTIVE_WORD_SIZES[index]
+            if index < len(_ACTIVE_WORD_SIZES)
+            else _ACTIVE_MAX_FONT_SIZE
+        )
+        rot = _rotation_for_font_size(rng, font_size)
         sol.append((x, y, float(rot)))
     return sol
 
@@ -347,7 +403,7 @@ def _eval_fitness(
     canvas_w: float,
     canvas_h: float,
     texts: list[str] | None = None,
-    layout_readability: object | None = None,
+    layout_readability: LayoutReadabilityConfig = None,
 ) -> float:
     """Return fitness (higher is better) = negative cost."""
     return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts, layout_readability)
@@ -360,9 +416,10 @@ def _eval_fitness(
 def _solve_harmony_search(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Harmony Search: HMS=20, HMCR=0.9, PAR=0.3, shrinking bandwidth."""
-    hms = 20
+    hms = _clamped_population_size(pop_size)
     hmcr = 0.9
     par = 0.3
     bw_init = min(canvas_w, canvas_h) * 0.3
@@ -383,11 +440,11 @@ def _solve_harmony_search(
                 if rng.random() < par:
                     x += rng.gauss(0, bw)
                     y += rng.gauss(0, bw)
-                    rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+                    rot = _rotation_for_font_size(rng, sizes[i])
             else:
                 x = rng.uniform(canvas_w * 0.05, canvas_w * 0.95)
                 y = rng.uniform(canvas_h * 0.05, canvas_h * 0.95)
-                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+                rot = _rotation_for_font_size(rng, sizes[i])
             new_harmony.append((x, y, float(rot)))
         new_harmony = _clamp_solution(new_harmony, canvas_w, canvas_h)
         new_fit = _eval_fitness(new_harmony, sizes, canvas_w, canvas_h, texts)
@@ -426,7 +483,7 @@ def _solve_simulated_annealing(
             x, y, rot = neighbor[idx]
             x += rng.gauss(0, canvas_w * 0.05)
             y += rng.gauss(0, canvas_h * 0.05)
-            rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+            rot = _rotation_for_font_size(rng, sizes[idx])
             neighbor[idx] = (x, y, float(rot))
         neighbor = _clamp_solution(neighbor, canvas_w, canvas_h)
         neighbor_cost = _aesthetic_cost(neighbor, sizes, canvas_w, canvas_h, texts)
@@ -446,9 +503,10 @@ def _solve_simulated_annealing(
 def _solve_particle_swarm(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Particle Swarm Optimization: w=0.7->0.4, c1=c2=1.5."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     c1, c2 = 1.5, 1.5
     dim = n_words * 3  # x, y, rot per word
 
@@ -504,9 +562,10 @@ def _solve_particle_swarm(
 def _solve_differential_evolution(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Differential Evolution: F=0.8, CR=0.9, rand/1/bin."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     F = 0.8
     CR = 0.9
     dim = n_words * 3
@@ -549,10 +608,11 @@ def _solve_differential_evolution(
 def _solve_ant_colony(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Ant Colony Optimization: pheromone grid 10x10, rho=0.5."""
     grid_size = 10
-    n_ants = 20
+    n_ants = _clamped_population_size(pop_size)
     rho = 0.5
     alpha_p = 1.0
     beta_p = 2.0
@@ -600,7 +660,7 @@ def _solve_ant_colony(
                 gi, gj = cells[chosen]
                 x = (gj + rng.random()) * cell_w
                 y = (gi + rng.random()) * cell_h
-                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+                rot = _rotation_for_font_size(rng, sizes[w])
                 sol.append((x, y, float(rot)))
 
             sol = _clamp_solution(sol, canvas_w, canvas_h)
@@ -634,9 +694,10 @@ def _solve_ant_colony(
 def _solve_firefly(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Firefly Algorithm: beta0=1.0, gamma=0.01, alpha=0.2."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     beta0 = 1.0
     gamma = 0.01
     alpha_fa = 0.2
@@ -678,9 +739,10 @@ def _solve_firefly(
 def _solve_cuckoo_search(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Cuckoo Search: pa=0.25, Levy flights beta=1.5 (Mantegna)."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     pa = 0.25
     beta_levy = 1.5
 
@@ -739,9 +801,10 @@ def _solve_cuckoo_search(
 def _solve_bat(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Bat Algorithm: f_min=0, f_max=2, A=0.5->0, r=0->0.9."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     f_min, f_max = 0.0, 2.0
     dim = n_words * 3
 
@@ -800,9 +863,10 @@ def _solve_bat(
 def _solve_grey_wolf(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Grey Wolf Optimizer: alpha/beta/delta hierarchy, a=2->0."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -863,9 +927,10 @@ def _solve_grey_wolf(
 def _solve_whale(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Whale Optimization: a=2->0, spiral with b=1, 50% encircling vs spiral."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     b_spiral = 1.0
     dim = n_words * 3
 
@@ -930,9 +995,10 @@ def _solve_whale(
 def _solve_gravitational_search(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Gravitational Search: G=100->0.01 exponential decay."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     G_init = 100.0
     dim = n_words * 3
 
@@ -997,9 +1063,10 @@ def _solve_gravitational_search(
 def _solve_flower_pollination(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Flower Pollination: p=0.8 switch, Levy for global, gaussian for local."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     p_switch = 0.8
     beta_levy = 1.5
     dim = n_words * 3
@@ -1057,9 +1124,10 @@ def _solve_flower_pollination(
 def _solve_moth_flame(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Moth-Flame Optimization: logarithmic spiral, flames decrease n->1."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1113,9 +1181,10 @@ def _solve_moth_flame(
 def _solve_salp_swarm(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Salp Swarm: c1=2*exp(-(4t/T)^2), leader/follower chain."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1174,9 +1243,10 @@ def _solve_salp_swarm(
 def _solve_sine_cosine(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Sine Cosine Algorithm: a=2->0, r1 sinusoidal update."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1224,9 +1294,10 @@ def _solve_sine_cosine(
 def _solve_teaching_learning(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Teaching-Learning-Based Optimization: teacher + learner phases."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1284,9 +1355,10 @@ def _solve_teaching_learning(
 def _solve_jaya(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Jaya Algorithm: move toward best, away from worst. Zero hyperparameters."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1331,9 +1403,10 @@ def _solve_jaya(
 def _solve_water_cycle(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Water Cycle Algorithm: N_sr=4 (rivers+sea), evap_rate=0.01."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     n_sr = 4
     evap_rate = 0.01
     dim = n_words * 3
@@ -1388,9 +1461,10 @@ def _solve_water_cycle(
 def _solve_biogeography(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Biogeography-Based Optimization: immigration/emigration curves + mutation."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
     mutation_rate = 0.05
 
@@ -1439,7 +1513,8 @@ def _solve_biogeography(
                     elif d % 3 == 1:
                         new_habitats[i][d] = rng.uniform(canvas_h * 0.05, canvas_h * 0.95)
                     else:
-                        new_habitats[i][d] = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+                        word_index = d // 3
+                        new_habitats[i][d] = _rotation_for_font_size(rng, sizes[word_index])
 
         for i in range(pop_size):
             sol = vec_to_sol(new_habitats[i])
@@ -1455,9 +1530,10 @@ def _solve_biogeography(
 def _solve_artificial_bee_colony(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Artificial Bee Colony: employed->onlooker->scout, limit=n_words*5."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     limit = n_words * 5
     dim = n_words * 3
 
@@ -1579,7 +1655,7 @@ def _solve_tabu_search(
                 x, y, rot = neighbor[idx]
                 x += rng.gauss(0, canvas_w * 0.08)
                 y += rng.gauss(0, canvas_h * 0.08)
-                rot = _ACTIVE_LAYOUT_READABILITY.choose_rotation(rng)
+                rot = _rotation_for_font_size(rng, sizes[idx])
                 neighbor[idx] = (x, y, float(rot))
             neighbors.append(_clamp_solution(neighbor, canvas_w, canvas_h))
 
@@ -1610,9 +1686,10 @@ def _solve_tabu_search(
 def _solve_cultural(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Cultural Algorithm: belief space with normative knowledge, acceptance=0.2."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     acceptance_rate = 0.2
     dim = n_words * 3
 
@@ -1669,10 +1746,11 @@ def _solve_cultural(
 def _solve_invasive_weed(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Invasive Weed Optimization: seeds=5 initial, max_seeds=5, sigma decay."""
-    initial_pop = 5
-    max_pop = 20
+    max_pop = _clamped_population_size(pop_size)
+    initial_pop = min(5, max_pop)
     max_seeds = 5
     sigma_init = min(canvas_w, canvas_h) / 4
     sigma_final = min(canvas_w, canvas_h) / 40
@@ -1697,6 +1775,8 @@ def _solve_invasive_weed(
         sigma = sigma_init - (sigma_init - sigma_final) * ((it / max(max_iter - 1, 1)) ** 2)
 
         # Seed production
+        min_fit = 0.0
+        span = 1.0
         if len(fits) > 0:
             min_fit = min(fits)
             max_fit = max(fits)
@@ -1729,9 +1809,10 @@ def _solve_invasive_weed(
 def _solve_charged_system_search(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Charged System Search: ka=0.1, charged memory ratio=0.1."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     ka = 0.1
     dim = n_words * 3
 
@@ -1795,9 +1876,10 @@ def _solve_charged_system_search(
 def _solve_stochastic_fractal_search(
     n_words: int, sizes: list[float], canvas_w: float, canvas_h: float,
     max_iter: int, rng: random.Random, texts: list[str] | None = None,
+    pop_size: int | None = None,
 ) -> list[tuple[float, float, float]]:
     """Stochastic Fractal Search: gaussian walks at 2 scales."""
-    pop_size = 20
+    pop_size = _clamped_population_size(pop_size)
     dim = n_words * 3
 
     def sol_to_vec(sol: list[tuple[float, float, float]]) -> list[float]:
@@ -1861,7 +1943,7 @@ def _solve_stochastic_fractal_search(
 # Solver registry
 # ---------------------------------------------------------------------------
 
-_META_SOLVERS: dict[str, callable] = {
+_META_SOLVERS: dict[str, Callable[..., list[tuple[float, float, float]]]] = {
     "Harmony Search": _solve_harmony_search,
     "Simulated Annealing": _solve_simulated_annealing,
     "Particle Swarm": _solve_particle_swarm,

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 
-from scripts.art.topography import generate
+from scripts.art.topography import _choose_label_anchor, generate
 
 
 def _sample_metrics() -> dict:
@@ -47,6 +47,12 @@ def _timeline_delay_rows(svg: str) -> list[tuple[str, float]]:
     for delay, when in matches:
         rows.append((when, float(delay)))
     return rows
+
+
+def _data_attr(svg: str, name: str) -> str:
+    match = re.search(rf'{name}="([^"]+)"', svg)
+    assert match is not None
+    return match.group(1)
 
 
 def test_topography_timeline_enabled_by_default() -> None:
@@ -99,3 +105,55 @@ def test_topography_timeline_output_is_deterministic_for_same_input() -> None:
     svg_1 = generate(metrics, seed="fixed-seed", timeline=True, loop_duration=24.0)
     svg_2 = generate(metrics, seed="fixed-seed", timeline=True, loop_duration=24.0)
     assert svg_1 == svg_2
+
+
+def test_topography_maps_commit_hours_and_star_velocity_into_svg_metadata() -> None:
+    midday_metrics = _sample_metrics()
+    midday_metrics["commit_hour_distribution"] = {12: 14, 13: 8, 14: 3}
+    midday_metrics["star_velocity"] = {"recent_rate": 0.5, "peak_rate": 1.0}
+
+    night_metrics = _sample_metrics()
+    night_metrics["commit_hour_distribution"] = {23: 18, 0: 10, 1: 6}
+    night_metrics["star_velocity"] = {
+        "recent_rate": 6.0,
+        "peak_rate": 10.0,
+        "trend": "rising",
+    }
+
+    midday_svg = generate(midday_metrics, seed="topo-signals")
+    night_svg = generate(night_metrics, seed="topo-signals")
+
+    midday_altitude = float(_data_attr(midday_svg, "data-sun-altitude"))
+    night_altitude = float(_data_attr(night_svg, "data-sun-altitude"))
+    midday_azimuth = float(_data_attr(midday_svg, "data-sun-azimuth"))
+    night_azimuth = float(_data_attr(night_svg, "data-sun-azimuth"))
+
+    assert midday_altitude > night_altitude
+    assert midday_azimuth != night_azimuth
+    assert 'data-flow-tier="still"' in midday_svg
+    assert 'id="river-system"' in night_svg
+    assert 'data-flow-tier="swift"' in night_svg
+
+
+def test_topography_adds_portfolio_footprint_summary_and_settlement_tier() -> None:
+    metrics = _sample_metrics()
+    metrics["followers"] = 260
+
+    svg = generate(metrics, seed="topo-footprint")
+
+    assert 'id="portfolio-footprint"' in svg
+    assert 'data-settlement-tier="town"' in svg
+    assert "2 repos" in svg
+    assert "Town reach" in svg
+
+
+def test_topography_label_avoidance_prefers_clear_candidates() -> None:
+    label_x, label_y, clearance = _choose_label_anchor(
+        150,
+        100,
+        [(12, 0), (0, -20), (-20, -20), (18, 14)],
+        [[(100, 100), (200, 100)], [(150, 80), (150, 160)]],
+    )
+
+    assert (label_x, label_y) == (130, 80)
+    assert clearance >= 20

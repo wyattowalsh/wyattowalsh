@@ -5,11 +5,12 @@ from __future__ import annotations
 import math
 import os
 import random
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from .core import PlacedWord
 from .colors import COLOR_FUNCS, make_shifted_color_func
 from .engine import SvgWordCloudEngine
+from .readability import LayoutReadabilityPolicy, LayoutReadabilitySettings
 from .solvers import (
     _META_SOLVERS,
     _aesthetic_cost,
@@ -26,16 +27,67 @@ from ..utils import get_logger
 
 logger = get_logger(module=__name__)
 
+LayoutReadabilityConfig = LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
+
+_POPULATION_TUNED_SOLVERS = {
+    "Harmony Search",
+    "Particle Swarm",
+    "Differential Evolution",
+    "Ant Colony",
+    "Firefly",
+    "Cuckoo Search",
+    "Bat Algorithm",
+    "Grey Wolf",
+    "Whale Optimization",
+    "Gravitational Search",
+    "Flower Pollination",
+    "Moth-Flame",
+    "Salp Swarm",
+    "Sine Cosine",
+    "Teaching-Learning",
+    "Jaya",
+    "Water Cycle",
+    "Biogeography-Based",
+    "Artificial Bee Colony",
+    "Cultural Algorithm",
+    "Invasive Weed",
+    "Charged System Search",
+    "Stochastic Fractal Search",
+}
+
 
 def _run_solver(
-    args: tuple[str, int, list[float], float, float, int, int, list[str], object],
+    args: tuple[
+        str,
+        int,
+        list[float],
+        float,
+        float,
+        int,
+        int,
+        int | None,
+        list[str],
+        LayoutReadabilityConfig,
+    ],
 ) -> tuple[str, list[tuple[float, float, float]]]:
     """Worker function for parallel solver execution (top-level for pickling)."""
-    name, n_words, sizes, canvas_w, canvas_h, max_iter, seed, texts, layout_readability = args
-    configure_layout_readability(layout_readability)
+    name, n_words, sizes, canvas_w, canvas_h, max_iter, pop_size, seed, texts, layout_readability = args
+    configure_layout_readability(layout_readability, word_sizes=sizes)
     solver_fn = _META_SOLVERS[name]
     rng = random.Random(seed)
-    placements = solver_fn(n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts)
+    if name in _POPULATION_TUNED_SOLVERS:
+        placements = solver_fn(
+            n_words,
+            sizes,
+            canvas_w,
+            canvas_h,
+            max_iter,
+            rng,
+            texts,
+            pop_size=pop_size,
+        )
+    else:
+        placements = solver_fn(n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts)
     return name, placements
 
 
@@ -120,6 +172,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 canvas_w,
                 canvas_h,
                 self.max_iter,
+                self.pop_size,
                 self.seed,
                 texts,
                 self.layout_readability,
@@ -134,11 +187,60 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             w=n_workers,
         )
 
-        with ProcessPoolExecutor(max_workers=n_workers) as executor:
-            results = list(executor.map(_run_solver, solver_args))
+        results_by_name: dict[str, tuple[str, list[tuple[float, float, float]]]] = {}
+        failed_args: list[
+            tuple[
+                str,
+                int,
+                list[float],
+                float,
+                float,
+                int,
+                int,
+                int | None,
+                list[str],
+                LayoutReadabilityConfig,
+            ]
+        ] = []
 
-        for name, _ in results:
-            logger.debug("MetaheuristicAnimRenderer: {name} completed", name=name)
+        with ProcessPoolExecutor(max_workers=n_workers) as executor:
+            future_to_args = {
+                executor.submit(_run_solver, args): args for args in solver_args
+            }
+            for future in as_completed(future_to_args):
+                args = future_to_args[future]
+                name = args[0]
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    logger.warning(
+                        "MetaheuristicAnimRenderer: {name} worker failed, retrying locally: {error}",
+                        name=name,
+                        error=exc,
+                    )
+                    failed_args.append(args)
+                    continue
+
+                results_by_name[name] = result
+                logger.debug("MetaheuristicAnimRenderer: {name} completed", name=name)
+
+        for args in failed_args:
+            name = args[0]
+            try:
+                results_by_name[name] = _run_solver(args)
+            except Exception as exc:
+                logger.warning(
+                    "MetaheuristicAnimRenderer: {name} local retry failed, skipping frame: {error}",
+                    name=name,
+                    error=exc,
+                )
+                continue
+
+            logger.debug("MetaheuristicAnimRenderer: {name} completed via local retry", name=name)
+
+        results = [results_by_name[name] for name in _META_SOLVERS if name in results_by_name]
+        if not results:
+            raise RuntimeError("All metaheuristic solvers failed")
 
         return results
 

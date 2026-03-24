@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -6,8 +7,8 @@ pytest.importorskip(
     "numpy", reason="scripts.art.animate imports scripts.art.ink_garden"
 )
 
-from scripts import animated_art  # noqa: E402
 from scripts.art import animate  # noqa: E402
+from scripts.art.artifacts import sync_living_art_artifacts  # noqa: E402
 
 
 def _stub_svg() -> str:
@@ -155,53 +156,35 @@ def test_main_gif_mode_disables_topography_timeline(
         assert kwargs.get("timeline") is False
 
 
-def test_generate_compatibility_gifs_writes_expected_historical_artifacts(
-    monkeypatch: pytest.MonkeyPatch, tmp_path
-) -> None:
-    class _FakeImage:
-        def __init__(self, key: str) -> None:
-            self.key = key
+def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -> None:
+    for name, payload in {
+        "inkgarden-growth-animated.svg": "<svg />",
+        "inkgarden-growth.gif": "GIF89a",
+        "topo-growth-animated.svg": "<svg />",
+        "living-topo.gif": "GIF89a",
+    }.items():
+        path = tmp_path / name
+        if name.endswith(".gif"):
+            path.write_bytes(payload.encode())
+        else:
+            path.write_text(payload, encoding="utf-8")
 
-        def convert(self, _mode: str):
-            return self
+    manifest_path, gallery_path, manifest = sync_living_art_artifacts(tmp_path)
+    manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    gallery = gallery_path.read_text(encoding="utf-8")
 
-        def quantize(self, **_kwargs):
-            return self
-
-        def save(self, out_path, **_kwargs) -> None:
-            Path(out_path).write_bytes(f"GIF89a:{self.key}".encode())
-
-    snapshot_progresses: list[float] = []
-
-    monkeypatch.setattr(
-        animated_art,
-        "render_animated_community_svg",
-        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"])
-        or _stub_svg(),
+    assert manifest == manifest_data
+    assert manifest_data["counts"] == {
+        "source_svg": 2,
+        "compatibility_gif": 1,
+        "timelapse_gif": 1,
+    }
+    assert manifest_data["total_assets"] == 4
+    assert any(
+        asset["name"] == "inkgarden-growth-animated.svg"
+        for asset in manifest_data["assets"]
     )
-    monkeypatch.setattr(
-        animated_art,
-        "render_animated_activity_svg",
-        lambda *_args, **kwargs: snapshot_progresses.append(kwargs["snapshot_progress"])
-        or _stub_svg(),
-    )
-    monkeypatch.setattr(
-        "scripts.art.animate.svg_to_png",
-        lambda _svg, _size, frame_id="": _FakeImage(frame_id),
-        raising=False,
-    )
+    assert "Living Art Preview Gallery" in gallery
+    assert "inkgarden-growth-animated.svg" in gallery
+    assert "living-topo.gif" in gallery
 
-    outputs = animated_art.generate_compatibility_gifs(
-        {"current_metrics": {}, "repos": [], "contributions_monthly": {}},
-        output_dir=tmp_path,
-        frames=4,
-        size=200,
-    )
-
-    assert len(outputs) == 4
-    assert (tmp_path / "animated-community.gif").is_file()
-    assert (tmp_path / "animated-community-dark.gif").is_file()
-    assert (tmp_path / "animated-activity.gif").is_file()
-    assert (tmp_path / "animated-activity-dark.gif").is_file()
-    assert min(snapshot_progresses) >= 0.0
-    assert max(snapshot_progresses) <= 1.0

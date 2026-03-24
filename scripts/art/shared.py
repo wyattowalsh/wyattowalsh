@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
+from pydantic import BaseModel, ConfigDict, Field
 
 # Canvas
 WIDTH = 800
@@ -35,6 +36,22 @@ LANG_HUES = {
 _ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _YYYY_MM_RE = re.compile(r"^\d{4}-\d{2}$")
 _MONTH_ONLY_RE = re.compile(r"^\d{1,2}$")
+_SEASONS = ("spring", "summer", "autumn", "winter")
+_DAYLIGHT_HUE_DRIFT_ANCHORS = (
+    (0.0, -18.0),
+    (4.0, -14.0),
+    (7.0, 20.0),
+    (12.0, 2.0),
+    (17.0, 14.0),
+    (20.0, 18.0),
+    (24.0, -18.0),
+)
+_REPO_RECENCY_BANDS = (
+    ("fresh", 3),
+    ("recent", 12),
+    ("established", 36),
+    ("legacy", math.inf),
+)
 
 
 def _as_date(value: Any) -> dt_date | None:
@@ -223,6 +240,138 @@ def _smoothstep(t: float) -> float:
     return t * t * (3.0 - 2.0 * t)
 
 
+def _interpolate_hour_signal(
+    hour: float,
+    anchors: Sequence[tuple[float, float]],
+) -> float:
+    """Interpolate a smooth hourly signal from ordered control points."""
+    wrapped_hour = hour % 24.0
+    for (start_hour, start_value), (end_hour, end_value) in zip(
+        anchors,
+        anchors[1:],
+    ):
+        if start_hour <= wrapped_hour <= end_hour:
+            span = max(end_hour - start_hour, 1.0)
+            t = _smoothstep((wrapped_hour - start_hour) / span)
+            return start_value + (end_value - start_value) * t
+    return anchors[-1][1]
+
+
+def _compute_daylight_hue_drift(peak_hour: int) -> float:
+    """Derive a smooth hue drift so daylight does not jump between bins."""
+    return round(_interpolate_hour_signal(peak_hour, _DAYLIGHT_HUE_DRIFT_ANCHORS), 3)
+
+
+def _normalize_season_weights(
+    raw_weights: Mapping[str, float] | None,
+    *,
+    default: str = "summer",
+) -> dict[str, float]:
+    """Normalize seasonal weights while keeping a stable four-season contract."""
+    weights = {season: 0.0 for season in _SEASONS}
+    if raw_weights:
+        for season in _SEASONS:
+            try:
+                weights[season] = max(0.0, float(raw_weights.get(season, 0.0)))
+            except (TypeError, ValueError):
+                weights[season] = 0.0
+
+    total = sum(weights.values())
+    if total <= 0:
+        weights[default if default in weights else "summer"] = 1.0
+        return weights
+
+    return {season: value / total for season, value in weights.items()}
+
+
+def _weighted_hue(
+    weights: Mapping[str, float],
+    hue_map: Mapping[str, float],
+    *,
+    default: float,
+) -> float:
+    """Compute a circular weighted mean for hue values."""
+    x = 0.0
+    y = 0.0
+    for season, weight in weights.items():
+        if weight <= 0:
+            continue
+        hue = hue_map.get(season, default)
+        x += math.cos(math.radians(hue)) * weight
+        y += math.sin(math.radians(hue)) * weight
+    if abs(x) < 1e-9 and abs(y) < 1e-9:
+        return default
+    return math.degrees(math.atan2(y, x)) % 360
+
+
+def _seasonal_hues(
+    season: str,
+    season_transition_weights: Mapping[str, float] | None = None,
+) -> tuple[float, float]:
+    """Return accent and ground hues, blended when seasonal weights exist."""
+    season_hues: dict[str, tuple[float, float]] = {
+        "spring": (130, 95),
+        "summer": (145, 80),
+        "autumn": (40, 35),
+        "winter": (220, 200),
+    }
+    default_accent, default_ground = season_hues.get(season, (145, 80))
+    if not season_transition_weights:
+        return default_accent, default_ground
+
+    accent_map = {name: hues[0] for name, hues in season_hues.items()}
+    ground_map = {name: hues[1] for name, hues in season_hues.items()}
+    return (
+        _weighted_hue(season_transition_weights, accent_map, default=default_accent),
+        _weighted_hue(season_transition_weights, ground_map, default=default_ground),
+    )
+
+
+def _compute_activity_pressure(
+    metrics: Mapping[str, Any],
+    *,
+    energy: float,
+    vitality: float,
+    weather_severity: float,
+) -> float:
+    """Estimate present-tense activity pressure from recent contribution volume."""
+    monthly = metrics.get("contributions_monthly") or {}
+    if isinstance(monthly, Mapping) and monthly:
+        counts = [
+            max(0.0, float(value))
+            for _, value in sorted(monthly.items())
+            if isinstance(value, int | float)
+        ]
+        recent_window = counts[-3:] if counts else []
+        recent_mean = sum(recent_window) / len(recent_window) if recent_window else 0.0
+        baseline = sum(counts) / len(counts) if counts else 0.0
+        contribution_pressure = min(1.0, math.log1p(recent_mean) / math.log1p(120))
+        surge = max(0.0, recent_mean - baseline) / max(baseline, 1.0)
+        surge_pressure = min(1.0, surge / 1.5)
+    else:
+        monthly_baseline = max(
+            0.0,
+            float(metrics.get("contributions_last_year", 0) or 0) / 12.0,
+        )
+        contribution_pressure = min(
+            1.0,
+            math.log1p(monthly_baseline) / math.log1p(120),
+        )
+        surge_pressure = 0.0
+
+    return round(
+        min(
+            1.0,
+            0.45 * contribution_pressure
+            + 0.25 * max(0.0, min(1.0, energy))
+            + 0.15 * max(0.0, min(1.0, vitality))
+            + 0.10 * max(0.0, min(1.0, weather_severity))
+            + 0.05 * surge_pressure,
+        ),
+        4,
+    )
+
+
 def compute_maturity(m: dict) -> float:
     """0.0 = brand new account, 1.0 = massively prolific.
 
@@ -279,6 +428,18 @@ class WorldState:
     aurora_intensity: float = 0.0
     """0.0-1.0 — from PR merge rate."""
 
+    daylight_hue_drift: float = 0.0
+    """Continuous hue offset in degrees layered on top of time-of-day buckets."""
+
+    weather_severity: float = 0.0
+    """0.0-1.0 severity backing the coarse weather label."""
+
+    season_transition_weights: dict[str, float] = field(default_factory=dict)
+    """Normalized season blend weights used for cross-season palette shifts."""
+
+    activity_pressure: float = 0.5
+    """0.0-1.0 recent activity load derived from contributions and momentum."""
+
     palette: dict[str, str] = field(default_factory=dict)
     """Derived OKLCH palette: sky_top, sky_bottom, ground, accent, glow."""
 
@@ -309,6 +470,8 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
     else:
         peak_hour = 12
 
+    daylight_hue_drift = _compute_daylight_hue_drift(peak_hour)
+
     if 5 <= peak_hour <= 8:
         time_of_day = "dawn"
     elif 17 <= peak_hour <= 20:
@@ -326,13 +489,19 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
 
     if total_issues == 0:
         weather = "clear"
+        weather_severity = 0.0
     else:
         open_ratio = open_issues / total_issues
-        if open_ratio < 0.15:
+        issue_volume = min(1.0, total_issues / 40.0)
+        weather_severity = round(
+            min(1.0, open_ratio * (0.6 + 0.4 * issue_volume)),
+            4,
+        )
+        if weather_severity < 0.15:
             weather = "clear"
-        elif open_ratio < 0.35:
+        elif weather_severity < 0.35:
             weather = "cloudy"
-        elif open_ratio < 0.6:
+        elif weather_severity < 0.6:
             weather = "rainy"
         else:
             weather = "stormy"
@@ -344,10 +513,15 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
         season_weight: dict[str, float] = defaultdict(float)
         for lang, byte_count in lang_bytes.items():
             s = _LANG_SEASON.get(lang, "summer")
-            season_weight[s] += byte_count
-        season = max(season_weight, key=season_weight.get) if season_weight else "summer"
+            try:
+                season_weight[s] += max(0.0, float(byte_count))
+            except (TypeError, ValueError):
+                continue
+        season_transition_weights = _normalize_season_weights(season_weight)
+        season = max(season_transition_weights, key=season_transition_weights.get)
     else:
         season = "summer"
+        season_transition_weights = _normalize_season_weights(None)
 
     # ── Energy (from star velocity) ──────────────────────────────
     star_vel = metrics.get("star_velocity") or {}
@@ -356,17 +530,43 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
 
     # ── Vitality (from contribution streaks) ─────────────────────
     streaks = metrics.get("contribution_streaks") or {}
-    streak_months = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
-    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
-    vitality = min(1.0, streak_months / 12.0) if streak_active else max(0.0, streak_months / 24.0)
+    streak_months = (
+        streaks.get("current_streak_months", 0)
+        if isinstance(streaks, dict)
+        else 0
+    )
+    streak_active = (
+        streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    )
+    vitality = (
+        min(1.0, streak_months / 12.0)
+        if streak_active
+        else max(0.0, streak_months / 24.0)
+    )
 
     # ── Aurora intensity (from PR merge rate) ────────────────────
     recent_prs = metrics.get("recent_merged_prs") or []
     pr_count = len(recent_prs) if isinstance(recent_prs, list) else 0
     aurora_intensity = min(1.0, pr_count / 15.0)
 
+    activity_pressure = _compute_activity_pressure(
+        metrics,
+        energy=energy,
+        vitality=vitality,
+        weather_severity=weather_severity,
+    )
+
     # ── Derived palette ──────────────────────────────────────────
-    palette = _build_world_palette(time_of_day, weather, season, energy)
+    palette = _build_world_palette(
+        time_of_day,
+        weather,
+        season,
+        energy,
+        daylight_hue_drift=daylight_hue_drift,
+        weather_severity=weather_severity,
+        season_transition_weights=season_transition_weights,
+        activity_pressure=activity_pressure,
+    )
 
     return WorldState(
         time_of_day=time_of_day,
@@ -375,6 +575,10 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
         energy=energy,
         vitality=vitality,
         aurora_intensity=aurora_intensity,
+        daylight_hue_drift=daylight_hue_drift,
+        weather_severity=weather_severity,
+        season_transition_weights=season_transition_weights,
+        activity_pressure=activity_pressure,
         palette=palette,
     )
 
@@ -384,6 +588,11 @@ def _build_world_palette(
     weather: str,
     season: str,
     energy: float,
+    *,
+    daylight_hue_drift: float = 0.0,
+    weather_severity: float = 0.0,
+    season_transition_weights: Mapping[str, float] | None = None,
+    activity_pressure: float = 0.5,
 ) -> dict[str, str]:
     """Build an OKLCH palette from world-state properties."""
     # Base sky hue by time of day
@@ -394,6 +603,7 @@ def _build_world_palette(
         "night": (0.18, 0.05, 250),
     }
     sky_L, sky_C, sky_H = sky_params.get(time_of_day, (0.88, 0.04, 210))
+    sky_H = (sky_H + daylight_hue_drift) % 360
 
     # Weather modifies sky lightness and chroma
     weather_mod: dict[str, tuple[float, float]] = {
@@ -403,27 +613,31 @@ def _build_world_palette(
         "stormy": (-0.25, -0.08),
     }
     dL, dC = weather_mod.get(weather, (0.0, 0.0))
-    sky_L = max(0.05, min(0.95, sky_L + dL))
-    sky_C = max(0.0, sky_C + dC)
+    severity = max(0.0, min(1.0, weather_severity))
+    sky_L = max(0.05, min(0.95, sky_L + dL - severity * 0.03))
+    sky_C = max(0.0, sky_C + dC - severity * 0.015)
 
-    # Season drives accent and ground hue
-    season_hues: dict[str, tuple[float, float]] = {
-        "spring": (130, 95),     # fresh green, warm ground
-        "summer": (145, 80),     # deep green, rich earth
-        "autumn": (40, 35),      # warm amber, russet ground
-        "winter": (220, 200),    # cool blue, grey ground
-    }
-    accent_H, ground_H = season_hues.get(season, (145, 80))
+    # Season drives accent and ground hue, with optional transition blending
+    accent_H, ground_H = _seasonal_hues(season, season_transition_weights)
 
     # Energy drives glow brightness
-    glow_L = 0.5 + energy * 0.35
+    pressure = max(0.0, min(1.0, activity_pressure))
+    glow_L = min(0.92, 0.5 + energy * 0.28 + pressure * 0.07)
 
     return {
         "sky_top": oklch(sky_L, sky_C, sky_H),
-        "sky_bottom": oklch(max(0.05, sky_L - 0.15), max(0.0, sky_C - 0.02), sky_H + 10),
-        "ground": oklch(0.45 + energy * 0.1, 0.06, ground_H),
-        "accent": oklch(0.65, 0.14, accent_H),
-        "glow": oklch(glow_L, 0.18, accent_H - 20),
+        "sky_bottom": oklch(
+            max(0.05, sky_L - 0.15),
+            max(0.0, sky_C - 0.02),
+            sky_H + 10,
+        ),
+        "ground": oklch(
+            0.45 + energy * 0.08 + pressure * 0.04,
+            0.06 + pressure * 0.01,
+            ground_H,
+        ),
+        "accent": oklch(0.65 + pressure * 0.03, 0.14 + pressure * 0.02, accent_H),
+        "glow": oklch(glow_L, 0.18 + pressure * 0.01, accent_H - 20),
     }
 
 
@@ -432,11 +646,151 @@ def _build_world_palette(
 # ---------------------------------------------------------------------------
 
 
+class _SignalContractModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+
+class ContributionCalendarEntry(_SignalContractModel):
+    date: str
+    count: int = 0
+
+
+class RepoSignalEntry(_SignalContractModel):
+    name: str
+    language: str | None = None
+    stars: int | None = 0
+    forks: int | None = 0
+    topics: list[str] = Field(default_factory=list)
+    description: str = ""
+    updated_at: str | None = None
+    date: str | None = None
+    age_months: int | None = None
+
+
+class TimelineEventEntry(_SignalContractModel):
+    name: str | None = None
+    date: str | None = None
+
+
+class StarVelocitySignal(_SignalContractModel):
+    recent_rate: float = 0.0
+    peak_rate: float = 0.0
+    trend: str = "stable"
+
+
+class ContributionStreakSignal(_SignalContractModel):
+    current_streak_months: int = 0
+    longest_streak_months: int = 0
+    streak_active: bool = False
+
+
+class MetricsSnapshotContract(_SignalContractModel):
+    label: str | None = None
+    stars: int | None = 0
+    forks: int | None = 0
+    watchers: int | None = 0
+    followers: int | None = 0
+    following: int | None = 0
+    public_repos: int | None = 0
+    orgs_count: int | None = 0
+    contributions_last_year: int | None = 0
+    total_commits: int | None = 0
+    total_prs: int | None = 0
+    total_issues: int | None = 0
+    total_repos_contributed: int | None = 0
+    open_issues_count: int | None = 0
+    network_count: int | None = 0
+    pr_review_count: int | None = 0
+    account_created: str | None = None
+    languages: dict[str, int] = Field(default_factory=dict)
+    top_repos: list[RepoSignalEntry] = Field(default_factory=list)
+    repos: list[RepoSignalEntry] = Field(default_factory=list)
+    contributions_calendar: list[ContributionCalendarEntry] = Field(
+        default_factory=list
+    )
+    contributions_monthly: dict[str, int] = Field(default_factory=dict)
+    recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
+    issue_stats: dict[str, Any] = Field(default_factory=dict)
+    commit_hour_distribution: dict[str, int] = Field(default_factory=dict)
+    releases: list[dict[str, Any]] = Field(default_factory=list)
+    star_velocity: StarVelocitySignal | None = None
+    contribution_streaks: ContributionStreakSignal | None = None
+
+
+class HistorySnapshotContract(_SignalContractModel):
+    account_created: str | None = None
+    repos: list[RepoSignalEntry] = Field(default_factory=list)
+    stars: list[TimelineEventEntry] = Field(default_factory=list)
+    forks: list[TimelineEventEntry] = Field(default_factory=list)
+    contributions_monthly: dict[str, int] = Field(default_factory=dict)
+    current_metrics: dict[str, Any] = Field(default_factory=dict)
+    recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
+    issue_stats: dict[str, Any] = Field(default_factory=dict)
+    commit_hour_distribution: dict[str, int] = Field(default_factory=dict)
+    releases: list[dict[str, Any]] = Field(default_factory=list)
+    star_velocity: StarVelocitySignal | None = None
+    contribution_streaks: ContributionStreakSignal | None = None
+
+
+def _age_months_from_date(date_str: str | None, *, now: datetime) -> int | None:
+    """Return age in months from an ISO-like timestamp, or ``None`` if invalid."""
+    if not date_str:
+        return None
+    try:
+        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return max(1, (now.year - dt.year) * 12 + (now.month - dt.month))
+
+
+def _repo_recency_band(age_months: int) -> str:
+    """Bucket a repo age in months into a stable recency band."""
+    for band, upper_bound in _REPO_RECENCY_BANDS:
+        if age_months <= upper_bound:
+            return band
+    return "legacy"
+
+
+def _build_repo_recency_bands(
+    repos: Sequence[Mapping[str, Any]],
+    *,
+    now: datetime,
+) -> dict[str, int]:
+    """Aggregate repos into coarse age bands for downstream visual pacing."""
+    bands = {band: 0 for band, _ in _REPO_RECENCY_BANDS}
+    for repo in repos:
+        age_months = repo.get("age_months")
+        if not isinstance(age_months, int) or age_months <= 0:
+            derived_age = _age_months_from_date(
+                repo.get("date") or repo.get("updated_at"),
+                now=now,
+            )
+            age_months = derived_age if derived_age is not None else 6
+        bands[_repo_recency_band(age_months)] += 1
+    return bands
+
+
+def validate_live_metrics_payload(raw: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate and normalize the metrics payload used by living-art generators."""
+    contract = MetricsSnapshotContract.model_validate(raw)
+    return contract.model_dump(
+        mode="python", exclude_none=True, exclude_unset=True
+    )
+
+
+def validate_live_history_payload(history: Mapping[str, Any]) -> dict[str, Any]:
+    """Validate and normalize the history payload used by living-art generators."""
+    contract = HistorySnapshotContract.model_validate(history)
+    return contract.model_dump(
+        mode="python", exclude_none=True, exclude_unset=True
+    )
+
+
 def normalize_live_metrics(
-    raw: dict[str, Any],
+    raw: Mapping[str, Any],
     *,
     owner: str | None = None,
-    history: dict[str, Any] | None = None,
+    history: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Transform ``fetch_metrics.collect()`` output into the shape generators expect.
 
@@ -444,7 +798,10 @@ def normalize_live_metrics(
     like the mock profiles in ``_dev_profiles.py``.  Live API data differs in
     key names and structure.  This function bridges the gap.
     """
-    metrics: dict[str, Any] = dict(raw)
+    validated_history = (
+        validate_live_history_payload(history) if history is not None else None
+    )
+    metrics: dict[str, Any] = validate_live_metrics_payload(raw)
     now = datetime.now(tz=UTC)
 
     # 0. Coerce None numeric fields to 0 (GraphQL fields are None without a token)
@@ -463,8 +820,8 @@ def normalize_live_metrics(
     if "top_repos" in metrics and "repos" not in metrics:
         # Build a creation-date lookup from history if available
         creation_dates: dict[str, str] = {}
-        if history and history.get("repos"):
-            for r in history["repos"]:
+        if validated_history and validated_history.get("repos"):
+            for r in validated_history["repos"]:
                 if r.get("name") and r.get("date"):
                     creation_dates[r["name"]] = r["date"]
 
@@ -481,17 +838,29 @@ def normalize_live_metrics(
             # Prefer history creation date; fall back to updated_at
             date_str = creation_dates.get(r["name"]) or r.get("updated_at")
             if date_str:
-                try:
-                    dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-                    repo["age_months"] = max(
-                        1, (now.year - dt.year) * 12 + (now.month - dt.month),
-                    )
-                except ValueError:
-                    repo["age_months"] = 6
+                repo["age_months"] = _age_months_from_date(date_str, now=now) or 6
             else:
                 repo["age_months"] = 6
             repos.append(repo)
         metrics["repos"] = repos
+
+    if metrics.get("repos"):
+        creation_dates = {}
+        if validated_history and validated_history.get("repos"):
+            creation_dates = {
+                repo["name"]: repo["date"]
+                for repo in validated_history["repos"]
+                if repo.get("name") and repo.get("date")
+            }
+        for repo in metrics["repos"]:
+            if repo.get("age_months"):
+                continue
+            repo_date = (
+                repo.get("date")
+                or creation_dates.get(repo.get("name", ""))
+                or repo.get("updated_at")
+            )
+            repo["age_months"] = _age_months_from_date(repo_date, now=now) or 6
 
     # 2. contributions_calendar → contributions_monthly
     if "contributions_monthly" not in metrics and "contributions_calendar" in metrics:
@@ -503,12 +872,14 @@ def normalize_live_metrics(
         metrics["contributions_monthly"] = dict(sorted(monthly.items()))
 
     # 3. Merge richer history data when available
-    if history:
-        if "account_created" not in metrics and "account_created" in history:
-            metrics["account_created"] = history["account_created"]
+    if validated_history:
+        if "account_created" not in metrics and "account_created" in validated_history:
+            metrics["account_created"] = validated_history["account_created"]
         # Prefer history's multi-year contributions_monthly over single-year calendar
-        if history.get("contributions_monthly"):
-            metrics["contributions_monthly"] = history["contributions_monthly"]
+        if validated_history.get("contributions_monthly"):
+            metrics["contributions_monthly"] = validated_history[
+                "contributions_monthly"
+            ]
 
     # 4. Label
     if "label" not in metrics and owner:
@@ -541,16 +912,21 @@ def normalize_live_metrics(
         metrics["language_diversity"] = 0.0
         metrics["language_count"] = 0
 
+    metrics["repo_recency_bands"] = _build_repo_recency_bands(
+        metrics.get("repos", []),
+        now=now,
+    )
+
     # 7. Pass through new fields from fetch_metrics and fetch_history
     _PASSTHROUGH_KEYS = (
         "recent_merged_prs", "issue_stats", "pr_review_count",
         "commit_hour_distribution", "releases",
         "star_velocity", "contribution_streaks",
     )
-    if history:
+    if validated_history:
         for key in _PASSTHROUGH_KEYS:
-            if key not in metrics and key in history:
-                metrics[key] = history[key]
+            if key not in metrics and key in validated_history:
+                metrics[key] = validated_history[key]
 
     return metrics
 
@@ -702,6 +1078,37 @@ class Noise2D:
         return val / total
 
 
+NOISE_PRESETS: dict[str, dict[str, float | int]] = {
+    "calm": {"frequency": 0.003, "octaves": 2, "step_size": 2.5, "persistence": 0.55},
+    "balanced": {
+        "frequency": 0.005,
+        "octaves": 4,
+        "step_size": 4.0,
+        "persistence": 0.5,
+    },
+    "terrain": {
+        "frequency": 0.008,
+        "octaves": 5,
+        "step_size": 3.5,
+        "persistence": 0.58,
+    },
+    "storm": {"frequency": 0.014, "octaves": 6, "step_size": 5.0, "persistence": 0.68},
+}
+
+
+def resolve_noise_preset(
+    name: str | None = None,
+    **overrides: float | int | None,
+) -> dict[str, float | int]:
+    """Resolve a named noise preset with optional numeric overrides."""
+    preset_name = name if name in NOISE_PRESETS else "balanced"
+    preset = dict(NOISE_PRESETS[preset_name])
+    for key, value in overrides.items():
+        if value is not None:
+            preset[key] = value
+    return preset
+
+
 # ---------------------------------------------------------------------------
 # Generative-art math helpers (shared by generative.py + animated_art.py)
 # ---------------------------------------------------------------------------
@@ -787,6 +1194,118 @@ def svg_header(width: int, height: int) -> str:
 
 def svg_footer() -> str:
     return "</svg>\n"
+
+
+def annotation_tooltip_metadata(
+    label: str,
+    *,
+    value: str | int | float | None = None,
+    detail: str | None = None,
+    tags: Sequence[str] | None = None,
+    extra: Mapping[str, Any] | None = None,
+) -> dict[str, str]:
+    """Compose shared tooltip metadata for SVG annotations and overlays."""
+    title = str(label).strip() or "annotation"
+    tooltip_parts = [title]
+    if value not in (None, ""):
+        tooltip_parts.append(f"{value}")
+    if detail:
+        detail_text = str(detail).strip()
+        if detail_text:
+            tooltip_parts.append(detail_text)
+    tag_text = ", ".join(
+        str(tag).strip() for tag in (tags or []) if str(tag).strip()
+    )
+    if tag_text:
+        tooltip_parts.append(f"tags: {tag_text}")
+
+    tooltip = " · ".join(tooltip_parts)
+    metadata = {
+        "aria-label": tooltip,
+        "data-title": title,
+        "data-tooltip": tooltip,
+    }
+    if value not in (None, ""):
+        metadata["data-value"] = f"{value}"
+    if tag_text:
+        metadata["data-tags"] = tag_text
+    for key, raw_value in (extra or {}).items():
+        if raw_value in (None, ""):
+            continue
+        attr_name = (
+            key
+            if key.startswith(("data-", "aria-"))
+            else f"data-{key.replace('_', '-')}"
+        )
+        metadata[attr_name] = str(raw_value)
+    return metadata
+
+
+def sparkline_svg(
+    values: Sequence[int | float],
+    *,
+    width: int = 120,
+    height: int = 32,
+    stroke: str = "currentColor",
+    stroke_width: float = 1.5,
+    fill: str = "none",
+    padding: float = 2.0,
+    label: str | None = None,
+) -> str:
+    """Render a compact sparkline SVG with optional tooltip metadata."""
+    numeric_values = [
+        float(value) for value in values if isinstance(value, int | float)
+    ]
+    if not numeric_values:
+        return (
+            f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+            f'width="{width}" height="{height}"></svg>'
+        )
+
+    min_value = min(numeric_values)
+    max_value = max(numeric_values)
+    inner_width = max(width - padding * 2, 1.0)
+    inner_height = max(height - padding * 2, 1.0)
+    value_span = max(max_value - min_value, 1e-9)
+
+    points: list[str] = []
+    for idx, value in enumerate(numeric_values):
+        if len(numeric_values) == 1:
+            x = padding + inner_width / 2
+        else:
+            x = padding + inner_width * (idx / (len(numeric_values) - 1))
+        if math.isclose(min_value, max_value):
+            y = padding + inner_height / 2
+        else:
+            y = padding + inner_height * (1.0 - ((value - min_value) / value_span))
+        points.append(f"{x:.2f},{y:.2f}")
+
+    metadata = (
+        annotation_tooltip_metadata(
+            label,
+            value=f"{numeric_values[-1]:g}",
+            detail=f"range {min_value:g}-{max_value:g}",
+        )
+        if label
+        else {}
+    )
+    attrs = "".join(
+        f' {key}="{xml_escape(value)}"' for key, value in metadata.items()
+    )
+    title = (
+        f"<title>{xml_escape(metadata['data-tooltip'])}</title>"
+        if metadata
+        else ""
+    )
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'width="{width}" height="{height}"{attrs}>'
+        f"{title}"
+        f'<polyline fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}" '
+        f'stroke-linecap="round" stroke-linejoin="round" '
+        f'points="{" ".join(points)}"/>'
+        f"</svg>"
+    )
 
 
 def hsl_to_hex(h: float, s: float, lightness: float) -> str:
@@ -1298,12 +1817,26 @@ def _build_world_palette_extended(
     weather: str,
     season: str,
     energy: float,
+    *,
+    daylight_hue_drift: float = 0.0,
+    weather_severity: float = 0.0,
+    season_transition_weights: Mapping[str, float] | None = None,
+    activity_pressure: float = 0.5,
 ) -> dict[str, str]:
     """Build an extended 12-key OKLCH palette from world-state properties.
 
     Superset of the 5-key palette from ``_build_world_palette``.
     """
-    base = _build_world_palette(time_of_day, weather, season, energy)
+    base = _build_world_palette(
+        time_of_day,
+        weather,
+        season,
+        energy,
+        daylight_hue_drift=daylight_hue_drift,
+        weather_severity=weather_severity,
+        season_transition_weights=season_transition_weights,
+        activity_pressure=activity_pressure,
+    )
 
     # Derive additional keys from the 5 base colors
     is_dark = time_of_day == "night"
@@ -1320,11 +1853,15 @@ def _build_world_palette_extended(
 
     # Weather modulates highlight
     storm_boost = {"clear": 0.0, "cloudy": -0.02, "rainy": -0.04, "stormy": -0.06}
-    h_adj = storm_boost.get(weather, 0.0)
-    season_hues = {"spring": 130, "summer": 145, "autumn": 40, "winter": 220}
-    accent_H = season_hues.get(season, 145)
+    severity = max(0.0, min(1.0, weather_severity))
+    h_adj = storm_boost.get(weather, 0.0) - severity * 0.01
+    accent_H, _ = _seasonal_hues(season, season_transition_weights)
 
-    base["highlight"] = oklch(0.75 + energy * 0.1, 0.22 + h_adj, accent_H - 30)
+    base["highlight"] = oklch(
+        0.75 + energy * 0.1 + activity_pressure * 0.03 - severity * 0.02,
+        0.22 + h_adj + activity_pressure * 0.01,
+        accent_H - 30,
+    )
     base["muted"] = oklch(0.55 + h_adj, 0.06, accent_H + 20)
     base["border"] = oklch(0.60 if is_dark else 0.80, 0.03, accent_H)
 
@@ -1376,7 +1913,7 @@ def activity_tempo(contributions_monthly: dict[str, int] | None) -> float:
     """
     if not contributions_monthly:
         return 0.5
-    counts = [v for v in contributions_monthly.values() if isinstance(v, (int, float))]
+    counts = [v for v in contributions_monthly.values() if isinstance(v, int | float)]
     if len(counts) < 2:
         return 0.5
     mean = sum(counts) / len(counts)

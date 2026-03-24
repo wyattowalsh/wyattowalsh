@@ -2,20 +2,18 @@
 
 from __future__ import annotations
 
-import math
-
 import pytest
 
 pytest.importorskip("numpy", reason="scripts.art.shared requires numpy")
 
-from scripts.art.shared import (  # noqa: E402
+from scripts.art.shared import (  # noqa: E402, I001
     ART_PALETTE_ANCHORS,
     CLUSTER_PALETTES,
     WorldState,
     _build_world_palette_extended,
     activity_tempo,
+    annotation_tooltip_metadata,
     blend_mode_filter,
-    compute_world_state,
     ensure_contrast,
     hex_to_oklch,
     oklch,
@@ -23,9 +21,11 @@ from scripts.art.shared import (  # noqa: E402
     oklch_gradient,
     oklch_lerp,
     organic_texture_filter,
+    resolve_noise_preset,
     select_palette_for_world,
     smil_animate,
     smil_animate_transform,
+    sparkline_svg,
     topic_affinity_matrix,
     visual_complexity,
     wcag_contrast_ratio,
@@ -218,6 +218,28 @@ class TestPalettes:
         }
         assert expected.issubset(pal.keys()), f"Missing: {expected - pal.keys()}"
 
+    def test_extended_palette_responds_to_weighted_world_signals(self) -> None:
+        base = _build_world_palette_extended("day", "clear", "summer", 0.5)
+        shifted = _build_world_palette_extended(
+            "day",
+            "clear",
+            "summer",
+            0.5,
+            daylight_hue_drift=14.0,
+            weather_severity=0.55,
+            season_transition_weights={
+                "spring": 0.4,
+                "summer": 0.35,
+                "autumn": 0.25,
+                "winter": 0.0,
+            },
+            activity_pressure=0.85,
+        )
+
+        assert shifted["sky_top"] != base["sky_top"]
+        assert shifted["accent"] != base["accent"]
+        assert shifted["glow"] != base["glow"]
+
 
 # ---------------------------------------------------------------------------
 # GitHub data → visual parameter tests
@@ -294,3 +316,34 @@ class TestSvgTechniques:
         a = smil_animate_transform("rotate", ["0", "360"], 5.0)
         assert 'type="rotate"' in a
         assert 'values="0;360"' in a
+
+
+class TestSharedRuntimeHelpers:
+    def test_annotation_tooltip_metadata_composes_svg_attrs(self) -> None:
+        meta = annotation_tooltip_metadata(
+            "Signal Ridge",
+            value=12,
+            detail="linked repos",
+            tags=["ai", "maps"],
+            extra={"cluster": "ai"},
+        )
+
+        assert meta["aria-label"] == "Signal Ridge · 12 · linked repos · tags: ai, maps"
+        assert meta["data-title"] == "Signal Ridge"
+        assert meta["data-cluster"] == "ai"
+
+    def test_sparkline_svg_renders_polyline_with_metadata(self) -> None:
+        svg = sparkline_svg([1, 3, 2, 5], width=40, height=16, label="Contributions")
+
+        assert '<svg xmlns="http://www.w3.org/2000/svg"' in svg
+        assert 'viewBox="0 0 40 16"' in svg
+        assert "<polyline" in svg
+        assert 'data-tooltip="Contributions' in svg
+
+    def test_resolve_noise_preset_applies_named_defaults_and_overrides(self) -> None:
+        calm = resolve_noise_preset("calm")
+        terrain = resolve_noise_preset("terrain", octaves=6)
+
+        assert calm["octaves"] == 2
+        assert terrain["octaves"] == 6
+        assert terrain["frequency"] != calm["frequency"]

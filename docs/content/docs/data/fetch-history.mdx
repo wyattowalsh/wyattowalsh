@@ -51,22 +51,23 @@ export GITHUB_TOKEN=ghp_...
 ]
 ```
 
-## Usage in animated art
+## Usage in living art
 
-The history JSON is passed directly to `animated_art.py`:
+The history JSON is passed into the living-art commands so timeline growth and timelapse playback can use real repository chronology:
 
 ```bash
-uv run python -m scripts.cli generate animated \
+uv run python -m scripts.cli generate living-art \
+  --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json
 ```
 
-The commit timestamps are used to compute daily activity density, which seeds the CSS animation parameters.
+The commit timestamps are used to compute daily activity density, which seeds growth timing, reveal ordering, and day-by-day timelapse sampling.
 
 ## Related
 
 <Cards>
-  <Card href="/docs/scripts/animated-art" title="Animated Art">
-    Uses history data as the entropy source for CSS animations
+  <Card href="/docs/scripts/living-art-modes" title="Living Art Modes">
+    Shows how history feeds preview and export behavior for the remaining living-art outputs
   </Card>
   <Card href="/docs/data/fetch-metrics" title="Fetch Metrics">
     Companion module for GitHub metrics collection

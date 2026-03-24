@@ -35,7 +35,7 @@ Returns a complete SVG string (no file I/O).
 
 ## CLI
 
-The ink garden is generated as part of the animated art pipeline:
+The ink garden is generated through the living-art pipeline:
 
 ```bash
 # Fetch metrics first
@@ -44,9 +44,11 @@ uv run python -m scripts.fetch_metrics \
   --repo wyattowalsh \
   --output /tmp/metrics.json
 
-# Generate via the animated art command
-uv run readme generate animated \
-  --history-path /tmp/history.json
+# Generate the ink garden outputs only
+uv run readme generate living-art \
+  --metrics-path /tmp/metrics.json \
+  --history-path /tmp/history.json \
+  --only inkgarden
 ```
 
 ## Seed and determinism

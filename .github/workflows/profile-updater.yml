@@ -436,6 +436,11 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-groups
 
+      - name: Prepare living-art staging directory
+        run: |
+          mkdir -p "$RUNNER_TEMP/living-art-stage/inputs"
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs"
+
       - name: Fetch metrics and generate artwork
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -446,6 +451,7 @@ jobs:
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
             --output "$RUNNER_TEMP/metrics.json"
+          cp "$RUNNER_TEMP/metrics.json" "$RUNNER_TEMP/living-art-stage/inputs/metrics.json"
           uv run python -m scripts.cli generate generative \
             --metrics-path "$RUNNER_TEMP/metrics.json"
 
@@ -459,11 +465,7 @@ jobs:
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
             --output "$RUNNER_TEMP/history.json"
-
-      - name: Generate animated artwork
-        run: |
-          uv run python -m scripts.cli generate animated \
-            --history-path "$RUNNER_TEMP/history.json"
+          cp "$RUNNER_TEMP/history.json" "$RUNNER_TEMP/living-art-stage/inputs/history.json"
 
       - name: Generate living-art outputs (timeline SVG + GIF compatibility)
         env:
@@ -473,6 +475,15 @@ jobs:
             --profile "$OWNER" \
             --metrics-path "$RUNNER_TEMP/metrics.json" \
             --history-path "$RUNNER_TEMP/history.json"
+
+      - name: Stage living-art growth outputs
+        if: ${{ always() }}
+        run: |
+          shopt -s nullglob
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/growth"
+          for file in .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg; do
+            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/growth/"
+          done
 
       - name: Generate timelapse GIFs (daily history)
         env:
@@ -487,11 +498,46 @@ jobs:
             --workers 4
         timeout-minutes: 20
 
+      - name: Stage timelapse outputs and manifest
+        if: ${{ always() }}
+        run: |
+          shopt -s nullglob
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/timelapse"
+          for file in .github/assets/img/living-*.gif; do
+            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/timelapse/"
+          done
+
+          {
+            echo "# Living-art artifact summary"
+            echo
+            echo "## Inputs"
+            find "$RUNNER_TEMP/living-art-stage/inputs" -type f | sort | while read -r file; do
+              size=$(wc -c < "$file")
+              echo "- $(basename "$file") (${size} bytes)"
+            done
+            echo
+            echo "## Outputs"
+            find "$RUNNER_TEMP/living-art-stage/outputs" -type f | sort | while read -r file; do
+              size=$(wc -c < "$file")
+              rel=${file#"$RUNNER_TEMP/living-art-stage/"}
+              echo "- ${rel} (${size} bytes)"
+            done
+          } | tee "$RUNNER_TEMP/living-art-stage/manifest.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload living-art staging bundle
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: living-art-stage-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-stage
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Commit generated art outputs
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "art: regenerate event-driven, animated, living-art, and timelapse outputs"
-          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/animated-*.svg .github/assets/img/animated-*.gif .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-*.gif"
+          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-*.gif"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

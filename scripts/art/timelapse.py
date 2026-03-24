@@ -25,9 +25,16 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
+
 from ..utils import get_logger
 from .daily_snapshots import DailySnapshot, build_daily_snapshots, sample_frames
-from .shared import compute_maturity, seed_hash
+from .shared import (
+    compute_maturity,
+    seed_hash,
+    validate_live_history_payload,
+    validate_live_metrics_payload,
+)
 
 logger = get_logger(module=__name__)
 
@@ -39,8 +46,6 @@ logger = get_logger(module=__name__)
 _STYLE_REGISTRY: dict[str, tuple[str, str, str]] = {
     "inkgarden": ("scripts.art.ink_garden", "generate", "metrics"),
     "topo": ("scripts.art.topography", "generate", "metrics"),
-    "cosmic": ("scripts.art.cosmic_genesis", "render_svg", "history"),
-    "spiral": ("scripts.art.unfurling_spiral", "render_svg", "history"),
 }
 
 ALL_STYLES = list(_STYLE_REGISTRY.keys())
@@ -293,6 +298,9 @@ def render_timelapse(
     list[Path]
         Paths to generated GIF files.
     """
+    history = validate_live_history_payload(history)
+    current_metrics = validate_live_metrics_payload(current_metrics)
+
     start_time = time.monotonic()
     out_dir = Path(output_dir or ".github/assets/img")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -425,23 +433,29 @@ def main() -> None:
     parser.add_argument("--output-dir", default=None, help="Output directory")
     args = parser.parse_args()
 
-    metrics = json.loads(Path(args.metrics_path).read_text(encoding="utf-8"))
-    history = json.loads(Path(args.history_path).read_text(encoding="utf-8"))
+    try:
+        metrics = json.loads(Path(args.metrics_path).read_text(encoding="utf-8"))
+        history = json.loads(Path(args.history_path).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        raise SystemExit(f"Failed to load timelapse inputs: {exc}") from exc
 
     styles = [args.only] if args.only else None
     output_dir = Path(args.output_dir) if args.output_dir else None
 
-    outputs = render_timelapse(
-        history,
-        metrics,
-        styles=styles,
-        max_frames=args.max_frames,
-        size=args.size,
-        output_dir=output_dir,
-        owner=args.owner,
-        dark_mode=args.dark_mode,
-        workers=args.workers,
-    )
+    try:
+        outputs = render_timelapse(
+            history,
+            metrics,
+            styles=styles,
+            max_frames=args.max_frames,
+            size=args.size,
+            output_dir=output_dir,
+            owner=args.owner,
+            dark_mode=args.dark_mode,
+            workers=args.workers,
+        )
+    except ValidationError as exc:
+        raise SystemExit(f"Invalid timelapse payload: {exc}") from exc
 
     for p in outputs:
         size_mb = p.stat().st_size / (1024 * 1024)

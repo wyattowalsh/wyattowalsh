@@ -1,0 +1,72 @@
+---
+title: Living Art Modes
+description: Preview, export, and compatibility constraints across the living-art generators.
+---
+
+## Why modes exist
+
+The living-art suite writes different artifacts for different viewers because the richest SVG output is not the most portable output. GitHub README embeds, social previews, image viewers, and workflow artifact inspection all place different constraints on what survives.
+
+## Output matrix
+
+| Surface | Canonical artifact | Compatibility artifact | Why |
+|---|---|---|---|
+| Ink Garden | `inkgarden-growth-animated.svg` | `inkgarden-growth.gif` | Stacked SVG is richer, GIF survives inline embedding |
+| Topography | `topo-growth-animated.svg` | `topo-growth.gif` | Static/cartographic fallback is easier to read in flattened viewers |
+| Timelapse exports | `living-*.gif` | n/a | Timelapse is already flattened for portability |
+
+## CLI modes
+
+### `generate living-art`
+
+Runs the shared `scripts.art.animate` driver twice by default:
+
+1. `--svg --frames <svg-frames>` to write stacked timeline SVGs
+2. `--frames <frames> --size <size>` to write compatibility GIFs
+
+Use `--svg-only` when you want the richer source artifacts without rewriting the compatibility GIFs.
+
+```bash
+uv run readme generate living-art \
+  --metrics-path /tmp/metrics.json \
+  --history-path /tmp/history.json \
+  --svg-only
+```
+
+### `generate timelapse`
+
+Produces daily-history GIFs for one or all styles. These are export-oriented artifacts rather than source SVGs.
+
+```bash
+uv run readme generate timelapse \
+  --metrics-path /tmp/metrics.json \
+  --history-path /tmp/history.json \
+  --max-frames 120 \
+  --size 400
+```
+
+## Constraints to document and test
+
+| Constraint | Consequence |
+|---|---|
+| Timeline SVGs are source artifacts, not guaranteed inline playback assets | Link to them, do not rely on them for universal animation support |
+| Topography and Ink Garden can render static-safe frames | Frame generation should disable timeline CSS when producing GIF inputs |
+| Timelapse outputs are intentionally flattened | They are review/export artifacts, not interactive sources |
+
+<Callout type="idea" title="Recommended release review">
+Inspect both tiers: the source SVG for richness and the GIF preview for actual README behavior. A beautiful SVG that collapses into an unreadable flattened preview is still a release blocker.
+</Callout>
+
+## Related
+
+<Cards>
+  <Card href="/docs/scripts/ink-garden" title="Ink Garden">
+    Botanical growth renderer in the living-art set
+  </Card>
+  <Card href="/docs/scripts/topography" title="Topography">
+    Static-export behavior for the cartographic generator
+  </Card>
+  <Card href="/docs/scripts/world-state" title="World State">
+    Shared environmental model that informs the living-art outputs
+  </Card>
+</Cards>

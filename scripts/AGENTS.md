@@ -7,7 +7,6 @@
 | File | Lines | Responsibility | Key Exports |
 |------|-------|---------------|-------------|
 | `_github_http.py` | 39 | Shared GitHub API HTTP helpers (no heavy deps) | `_headers()`, `_graphql()` |
-| `animated_art.py` | 960 | CSS-animated SVG story-art (Cosmic Genesis + Unfurling Spiral) driven by historical data | `generate_animated_community_art()`, `generate_animated_activity_art()` |
 | `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `NoiseHandler`, `ColorPalette` |
 | `banner_patterns.py` | 46 | `PatternType` enum extracted from `banner.py` (zero heavy deps) | `PatternType` |
 | `cli/` | — | Typer CLI package (see submodules below) | `app`, `DEFAULT_CONFIG_PATH` |

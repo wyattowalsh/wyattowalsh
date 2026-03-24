@@ -85,20 +85,6 @@ uv run python -m scripts.cli generate generative \
 
 Produces `generative-activity.svg`, `generative-activity-dark.svg`, `generative-community.svg`, `generative-community-dark.svg` in `.github/assets/img/`.
 
-## `generate animated`
-
-Generates CSS-animated SVGs seeded from commit history data, plus GitHub-safe GIF previews for inline README playback.
-
-```bash
-uv run python -m scripts.cli generate animated \
-  --history-path /tmp/history.json
-```
-
-Produces `animated-activity.svg`, `animated-activity-dark.svg`, `animated-community.svg`, `animated-community-dark.svg`.
-Also produces `animated-activity.gif`, `animated-activity-dark.gif`, `animated-community.gif`, `animated-community-dark.gif`.
-
-`scripts/animated_art.py` is the CLI entry point and a backward-compatible shim over the generators in `scripts/art/*`.
-
 ## `generate skills`
 
 Renders `skills.yaml` into shields.io badge rows and injects them into the README.

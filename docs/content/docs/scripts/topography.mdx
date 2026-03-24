@@ -1,0 +1,85 @@
+---
+title: Topography
+description: Cartographic living art that turns repositories and activity into terrain, routes, and survey chrome.
+---
+
+## Module
+
+`scripts/art/topography.py` — cartographic living-art renderer backed by `scripts/art/shared.py`.
+
+## Generator mapping
+
+Topography treats the profile as a survey map rather than a literal project list. The generator starts from normalized metrics, derives a shared [World State](/docs/scripts/world-state), and then maps repository structure onto terrain and map furniture.
+
+| Signal | Topography mapping |
+|---|---|
+| `repos[]` | Each repository becomes a terrain feature, landmark, or named route anchor. |
+| `stars` and per-repo stars | Raise summit prominence, label importance, and flagship peak selection. |
+| `age_months` and repo chronology | Control ridge softness, erosion width, and reveal ordering for animated timelines. |
+| `languages` | Partition biome palette, terrain texture, and survey ornament. |
+| `contributions_monthly` | Feed route intensity, timeline density, and expedition-style overlays. |
+| `followers`, `forks`, `network_count` | Add contour density, tributaries, crossings, and collaborative chrome. |
+| `topic_clusters` | Produce named peaks, valleys, corridors, and annotation clusters. |
+| `commit_hour_distribution`, `issue_stats`, `star_velocity` | Influence hillshade angle, weather overlays, and atmosphere. |
+
+## Entry point
+
+```python
+from scripts.art.topography import generate
+
+svg = generate(metrics, seed="portfolio-map", maturity=0.9, timeline=True)
+```
+
+| Parameter | Type | Notes |
+|---|---|---|
+| `metrics` | `dict` | Normalized metrics snapshot with repo and contribution data |
+| `seed` | `str \| None` | Optional deterministic seed override |
+| `maturity` | `float \| None` | Controls how fully the terrain and chrome resolve |
+| `chrome_maturity` | `float \| None` | Lets labels and decorative cartography lag or lead terrain growth |
+| `timeline` | `bool` | When `True`, injects CSS reveal timing into the SVG |
+| `loop_duration` | `float` | Full loop length for timeline mode |
+| `reveal_fraction` | `float` | Share of the loop reserved for staged reveals |
+
+## Timeline versus static export
+
+Topography has a stricter split between authored animation and export-safe output than the animated pair:
+
+- `timeline=True` enables CSS-driven reveal choreography and treats the terrain as fully mature while the map animates into view.
+- `timeline=False` produces a static composition with no timeline CSS injected. This is the mode used for frame rendering in `scripts/art/animate.py` and for contexts that flatten animation.
+
+That behavior is visible in the implementation through `timeline_enabled = bool(timeline and loop_duration > 0)`. When the timeline is disabled, the generator keeps the requested maturity instead of forcing the map to full growth for animation staging.
+
+<Callout type="info" title="Why static export matters here">
+Topography carries dense labels, contour lines, and route overlays. Flattened viewers can make animated timing unreadable, so the generator supports a clean static composition instead of assuming every consumer can replay the timeline.
+</Callout>
+
+## World-state influence
+
+Topography reads `WorldState` to keep its atmosphere aligned with the other living-art systems:
+
+- `time_of_day` steers hillshade angle and color temperature
+- `weather` drives fog, haze, and warning-style overlays
+- `season` nudges biome palette selection
+- `energy` and `vitality` influence accent intensity and route presence
+
+## Outputs in the living-art lane
+
+| File | Meaning |
+|---|---|
+| `.github/assets/img/topo-growth-animated.svg` | Stacked timeline SVG used as the rich source artifact |
+| `.github/assets/img/topo-growth.gif` | GitHub-safe compatibility preview |
+| `.github/assets/img/living-topo.gif` | Day-by-day timelapse export |
+
+## Related
+
+<Cards>
+  <Card href="/docs/scripts/ink-garden" title="Ink Garden">
+    The botanical companion to the cartographic renderer
+  </Card>
+  <Card href="/docs/scripts/world-state" title="World State">
+    Shared atmospheric semantics across living-art generators
+  </Card>
+  <Card href="/docs/scripts/living-art-modes" title="Living Art Modes">
+    Preview, export, and compatibility constraints for all four generators
+  </Card>
+</Cards>

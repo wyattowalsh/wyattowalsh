@@ -15,11 +15,13 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, cast
 
 import markdown
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 from pydantic import BaseModel, ConfigDict
 
 from .readability import LayoutReadabilitySettings
@@ -83,10 +85,10 @@ def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
     html = markdown.markdown(text)
     soup = BeautifulSoup(html, "html.parser")
     first_ul = soup.find("ul")
-    if first_ul is None:
+    if not isinstance(first_ul, Tag):
         return {}
     topics = [a.text for a in first_ul.find_all("a")]
-    all_uls = soup.find_all("ul")[1:]
+    all_uls = [node for node in soup.find_all("ul") if isinstance(node, Tag)][1:]
     entries = [len(ul.find_all("li")) for ul in all_uls]
     return dict(zip(topics, entries))
 
@@ -94,9 +96,23 @@ def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
 _OTHERS_RE = re.compile(r"^\s*others?\s*$", re.IGNORECASE)
 
 
-def _filter_others(frequencies: dict[str, int]) -> dict[str, int]:
+def _filter_others(frequencies: Mapping[str, int | float]) -> dict[str, int | float]:
     """Remove generic 'others'/'other' catch-all bucket from frequencies."""
     return {k: v for k, v in frequencies.items() if not _OTHERS_RE.match(k)}
+
+
+def _limit_frequencies(
+    frequencies: Mapping[str, int | float],
+    max_words: int,
+) -> dict[str, int | float]:
+    """Keep only the most important terms when a max-word cap is configured."""
+
+    if max_words <= 0:
+        return {}
+    if len(frequencies) <= max_words:
+        return dict(frequencies)
+    sorted_terms = sorted(frequencies.items(), key=lambda item: item[1], reverse=True)
+    return dict(sorted_terms[:max_words])
 
 
 # ---------------------------------------------------------------------------
@@ -105,7 +121,7 @@ def _filter_others(frequencies: dict[str, int]) -> dict[str, int]:
 
 
 def _generate_classic(
-    frequencies: dict[str, int],
+    frequencies: Mapping[str, int | float],
     output_path: str | Path,
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
@@ -115,13 +131,13 @@ def _generate_classic(
     from wordcloud import WordCloud
 
     wc = WordCloud(
-        background_color=None,
+        background_color=cast(Any, None),
         max_words=max_words,
         width=width,
         height=height,
         scale=4,
         mode="RGBA",
-        relative_scaling=0.5,
+        relative_scaling=cast(Any, 0.5),
         colormap="cool",
         contour_color="white",
         prefer_horizontal=0.85,
@@ -130,7 +146,7 @@ def _generate_classic(
         font_step=2,
         collocations=False,
     )
-    wc.generate_from_frequencies(frequencies)
+    wc.generate_from_frequencies(dict(frequencies))
     wc.to_file(str(output_path))
 
 
@@ -141,7 +157,7 @@ def _generate_classic(
 
 def _generate_svg(
     renderer_name: str,
-    frequencies: dict[str, int],
+    frequencies: Mapping[str, int | float],
     output_path: str | Path,
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
@@ -174,10 +190,11 @@ _SOURCE_COLOR_DEFAULTS: dict[str, str] = {
 
 
 def generate_word_cloud(
-    source: Literal["topics", "languages"],
+    source: str,
     renderer: str = DEFAULT_RENDERER,
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
+    max_words: int = DEFAULT_MAX_WORDS,
     output_dir: str | Path | None = None,
     color_func_name: str | None = None,
     layout_readability: LayoutReadabilitySettings | dict[str, object] | None = None,
@@ -206,12 +223,21 @@ def generate_word_cloud(
     md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
     if not md_file.exists():
         md_file = _PROJECT_ROOT / f"{source}.md"
-    frequencies = _filter_others(parse_frequencies_from_md(md_file))
+    frequencies = _limit_frequencies(
+        _filter_others(parse_frequencies_from_md(md_file)),
+        max_words,
+    )
 
     if renderer == "classic":
         ext = ".png"
         out = output_dir / f"wordcloud_by_{source}{ext}"
-        _generate_classic(frequencies, out, width=width, height=height)
+        _generate_classic(
+            frequencies,
+            out,
+            width=width,
+            height=height,
+            max_words=max_words,
+        )
     else:
         ext = ".svg"
         out = output_dir / f"wordcloud_{renderer}_by_{source}{ext}"
@@ -312,7 +338,7 @@ class WordCloudGenerator:
 
     def generate(
         self,
-        frequencies: dict[str, int] | None = None,
+        frequencies: Mapping[str, int | float] | None = None,
         output_path: str | Path | None = None,
         source: str = "topics",
         **kwargs,
@@ -322,6 +348,9 @@ class WordCloudGenerator:
         )
         width = getattr(self.settings, "width", DEFAULT_WIDTH)
         height = getattr(self.settings, "height", DEFAULT_HEIGHT)
+        max_words = kwargs.get(
+            "max_words", getattr(self.settings, "max_words", DEFAULT_MAX_WORDS)
+        )
         color_func_name = kwargs.get("color_func_name")
         layout_readability = kwargs.get(
             "layout_readability",
@@ -340,13 +369,22 @@ class WordCloudGenerator:
         out_dir.mkdir(parents=True, exist_ok=True)
 
         if frequencies:
-            frequencies = _filter_others(frequencies)
+            normalized_frequencies = _limit_frequencies(
+                _filter_others(frequencies),
+                max_words,
+            )
             if renderer == "classic":
-                _generate_classic(frequencies, out_file, width=width, height=height)
+                _generate_classic(
+                    normalized_frequencies,
+                    out_file,
+                    width=width,
+                    height=height,
+                    max_words=max_words,
+                )
             else:
                 _generate_svg(
                     renderer,
-                    frequencies,
+                    normalized_frequencies,
                     out_file,
                     width=width,
                     height=height,
@@ -359,6 +397,7 @@ class WordCloudGenerator:
             return generate_word_cloud(
                 source=source,
                 renderer=renderer,
+                max_words=max_words,
                 output_dir=str(out_dir),
                 color_func_name=color_func_name,
                 layout_readability=layout_readability,

@@ -8,16 +8,16 @@ import pytest
 
 pytest.importorskip("numpy", reason="scripts.art.shared requires numpy")
 
-from scripts.art.daily_snapshots import (  # noqa: E402
+from scripts.art.daily_snapshots import (  # noqa: E402, I001
     DailySnapshot,
     build_daily_snapshots,
     sample_frames,
 )
-from scripts.art.shared import (  # noqa: E402
+from scripts.art.shared import (  # noqa: E402, I001
     WorldState,
     compute_world_state,
 )
-from scripts.art.timelapse import (  # noqa: E402
+from scripts.art.timelapse import (  # noqa: E402, I001
     _compute_frame_durations,
 )
 
@@ -36,6 +36,10 @@ def test_compute_world_state_defaults():
     assert 0.0 <= ws.energy <= 1.0
     assert 0.0 <= ws.vitality <= 1.0
     assert ws.aurora_intensity == 0.0
+    assert isinstance(ws.daylight_hue_drift, float)
+    assert ws.weather_severity == 0.0
+    assert ws.season_transition_weights["summer"] == pytest.approx(1.0)
+    assert 0.0 <= ws.activity_pressure <= 1.0
 
 
 def test_compute_world_state_night():
@@ -82,6 +86,55 @@ def test_compute_world_state_energy_from_stars():
     """High star velocity → high energy."""
     ws = compute_world_state({"star_velocity": {"recent_rate": 15.0}})
     assert ws.energy > 0.5
+
+
+def test_compute_world_state_hue_drift_weights_and_pressure() -> None:
+    """Continuous world-state fields should respond to mixed inputs."""
+    dawn = compute_world_state({"commit_hour_distribution": {7: 12, 12: 1}})
+    night = compute_world_state({"commit_hour_distribution": {23: 12, 12: 1}})
+    mixed = compute_world_state(
+        {
+            "languages": {"Python": 6000, "Ruby": 2500, "Rust": 1500},
+            "contributions_monthly": {
+                "2025-01": 12,
+                "2025-02": 34,
+                "2025-03": 48,
+            },
+            "star_velocity": {"recent_rate": 8.0},
+            "contribution_streaks": {
+                "current_streak_months": 9,
+                "streak_active": True,
+            },
+        }
+    )
+
+    assert dawn.daylight_hue_drift > 0.0
+    assert night.daylight_hue_drift < 0.0
+    assert sum(mixed.season_transition_weights.values()) == pytest.approx(1.0)
+    assert (
+        mixed.season_transition_weights["summer"]
+        > mixed.season_transition_weights["spring"]
+    )
+    assert mixed.activity_pressure > 0.3
+
+
+def test_compute_world_state_weather_severity_tracks_open_ratio() -> None:
+    """Weather severity should scale with open issue pressure."""
+    clear = compute_world_state(
+        {
+            "open_issues_count": 2,
+            "issue_stats": {"open_count": 2, "closed_count": 100},
+        }
+    )
+    stormy = compute_world_state(
+        {
+            "open_issues_count": 80,
+            "issue_stats": {"open_count": 80, "closed_count": 20},
+        }
+    )
+
+    assert clear.weather_severity < stormy.weather_severity
+    assert stormy.weather_severity > 0.5
 
 
 def test_compute_world_state_palette_keys():

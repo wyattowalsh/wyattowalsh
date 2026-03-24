@@ -6,13 +6,9 @@ import pytest
 
 pytest.importorskip("numpy", reason="living-art generators require numpy")
 
-from scripts.art.cosmic_genesis import render_svg as render_cosmic_genesis  # noqa: E402
 from scripts.art.ink_garden import generate as generate_ink_garden  # noqa: E402
 from scripts.art.shared import normalize_live_metrics, seed_hash  # noqa: E402
 from scripts.art.topography import generate as generate_topography  # noqa: E402
-from scripts.art.unfurling_spiral import (
-    render_svg as render_unfurling_spiral,  # noqa: E402
-)
 
 
 def _raw_metrics() -> dict:
@@ -71,19 +67,6 @@ def _history() -> dict:
     }
 
 
-def _animated_history(metrics: dict) -> dict:
-    return {
-        **_history(),
-        "stars": [
-            {"date": "2024-01-10T00:00:00Z"},
-            {"date": "2025-02-14T00:00:00Z"},
-        ],
-        "forks": [{"date": "2024-03-01T00:00:00Z"}],
-        "repos": metrics["repos"],
-        "current_metrics": metrics,
-    }
-
-
 def test_normalize_live_metrics_retains_enrichment_fields() -> None:
     metrics = normalize_live_metrics(
         _raw_metrics(), owner="signal-flow", history=_history()
@@ -99,8 +82,53 @@ def test_normalize_live_metrics_retains_enrichment_fields() -> None:
     }
     assert metrics["language_count"] == 2
     assert metrics["language_diversity"] > 0.0
+    assert sum(metrics["repo_recency_bands"].values()) == len(metrics["repos"])
     assert metrics["star_velocity"]["recent_rate"] == 4.5
     assert metrics["contribution_streaks"]["current_streak_months"] == 6
+
+
+def test_normalize_live_metrics_adds_repo_recency_bands() -> None:
+    payload = _raw_metrics()
+    payload.pop("top_repos", None)
+    payload["repos"] = [
+        {
+            "name": "seedling",
+            "language": "Python",
+            "stars": 8,
+            "topics": ["ai"],
+            "age_months": 2,
+        },
+        {
+            "name": "ridge-cli",
+            "language": "Go",
+            "stars": 18,
+            "topics": ["cli"],
+            "age_months": 8,
+        },
+        {
+            "name": "weather-station",
+            "language": "Rust",
+            "stars": 12,
+            "topics": ["ops"],
+            "age_months": 20,
+        },
+        {
+            "name": "archive-garden",
+            "language": "Python",
+            "stars": 4,
+            "topics": ["history"],
+            "age_months": 60,
+        },
+    ]
+
+    metrics = normalize_live_metrics(payload, owner="signal-flow", history=_history())
+
+    assert metrics["repo_recency_bands"] == {
+        "fresh": 1,
+        "recent": 1,
+        "established": 1,
+        "legacy": 1,
+    }
 
 
 def test_normalized_signals_reach_ink_garden_output() -> None:
@@ -172,29 +200,3 @@ def test_topography_topic_cluster_strength_reaches_annotations() -> None:
     assert "3 linked repos" in svg
     assert "2 linked repos" in svg
     assert svg.count("Mt. Ai") == 2
-
-
-def test_signal_strength_reaches_cosmic_genesis_output() -> None:
-    metrics = normalize_live_metrics(
-        _raw_metrics(), owner="signal-flow", history=_history()
-    )
-    metrics["topic_clusters"] = {"ai": 3, "agents": 2, "automation": 1}
-
-    svg = render_cosmic_genesis(_animated_history(metrics), duration=24.0)
-
-    assert 'id="topic-constellations"' in svg
-    assert "Ai Field" in svg
-    assert "3 linked repos" in svg
-
-
-def test_signal_strength_reaches_unfurling_spiral_output() -> None:
-    metrics = normalize_live_metrics(
-        _raw_metrics(), owner="signal-flow", history=_history()
-    )
-    metrics["topic_clusters"] = {"ai": 3, "agents": 2, "automation": 1}
-
-    svg = render_unfurling_spiral(_animated_history(metrics), duration=24.0)
-
-    assert 'id="topic-nexuses"' in svg
-    assert "Ai Nexus" in svg
-    assert "3 linked repos" in svg

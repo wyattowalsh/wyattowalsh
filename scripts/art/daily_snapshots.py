@@ -399,7 +399,7 @@ def build_daily_snapshots(
             metrics_dict["language_diversity"] = 0.0
             metrics_dict["language_count"] = 0
 
-        # Build history_dict (for cosmic_genesis / unfurling_spiral)
+        # Build history_dict for historical/timelapse consumers.
         stars_trunc = [
             s for s in all_stars if (s.get("date", "") or "")[:10] <= day_iso
         ]

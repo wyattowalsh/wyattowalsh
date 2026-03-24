@@ -42,7 +42,7 @@
 
 ## Living Art
 
-> Living artwork driven by this profile's GitHub data — watch it grow from bare soil to full bloom over 30 seconds.
+> Four generative works driven by this profile's GitHub history, repository graph, languages, stars, and contribution rhythms.
 
 <table role="presentation">
 <tr>
@@ -51,114 +51,19 @@
     <img src=".github/assets/img/inkgarden-growth.gif" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
   </a>
   <br/>
-  <sub><b>Ink Garden</b> — each tree is a repository, blooms appear as stars accumulate (<code>inkgarden-growth.gif</code>, timeline SVG: <code>inkgarden-growth-animated.svg</code>)</sub>
+  <sub><b>Ink Garden</b> demystified: every repository becomes a plant. Languages shift species and palette, repo age stretches trunks and branch depth, stars trigger blooms, and surrounding ecosystem details grow out of contributions, forks, watchers, issues, and network activity.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/topo-growth-animated.svg">
     <img src=".github/assets/img/topo-growth.gif" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
   </a>
   <br/>
-  <sub><b>Topography</b> — terrain contours, rivers, and cartographic chrome emerge with activity (<code>topo-growth.gif</code>, timeline SVG: <code>topo-growth-animated.svg</code>)</sub>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center">
-  <a href=".github/assets/img/animated-community.svg">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-community-dark.gif">
-      <img src=".github/assets/img/animated-community.gif" width="100%" alt="Turing Patterns — Gray-Scott reaction-diffusion simulation where emergent patterns self-organize from repo seed positions"/>
-    </picture>
-  </a>
-  <br/>
-  <sub><b>Turing Patterns</b> — Gray-Scott reaction-diffusion: repos seed perturbations that self-organize into spots, stripes, and labyrinths (<code>animated-community.gif</code>, source SVG: <code>animated-community.svg</code>)</sub>
-</td>
-<td width="50%" align="center">
-  <a href=".github/assets/img/animated-activity.svg">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/animated-activity-dark.gif">
-      <img src=".github/assets/img/animated-activity.gif" width="100%" alt="Physarum Network — slime mold agent simulation where organic filaments self-organize to connect repos"/>
-    </picture>
-  </a>
-  <br/>
-  <sub><b>Physarum Network</b> — slime mold agents navigate between repos, depositing trails that form emergent organic networks (<code>animated-activity.gif</code>, source SVG: <code>animated-activity.svg</code>)</sub>
+  <sub><b>Topography</b> demystified: the profile is redrawn as a survey map. Repositories rise into peaks and landmarks, stars increase summit prominence, language mix changes terrain character, and commits, contributions, forks, and followers feed contour density, river systems, and map annotations.</sub>
 </td>
 </tr>
 </table>
 
-> [!NOTE] Compatibility phase: all four living-art panels now embed stable GIFs for GitHub-safe inline playback and link through to their richer SVG sources. Regenerate via `uv run readme generate living-art` and `uv run readme generate animated`. Timelapse GIFs (daily history evolution) via `uv run readme generate timelapse`. See footnote[^1].
-
-<details>
-<summary><strong>Timelapse GIFs — day-by-day evolution (click to expand)</strong></summary>
-
-Each timelapse GIF shows your profile's artwork evolving frame by frame, where **each frame = one real calendar day** from account creation to yesterday. Weather, season, time-of-day, and energy levels all change based on your real GitHub data.
-
-<table role="presentation">
-<tr>
-<td width="50%" align="center">
-  <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden timelapse — daily evolution from bare soil to full botanical garden"/>
-  <br/>
-  <sub><b>Ink Garden</b> timelapse — watch the botanical garden grow day by day</sub>
-</td>
-<td width="50%" align="center">
-  <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography timelapse — daily evolution of the terrain map"/>
-  <br/>
-  <sub><b>Topography</b> timelapse — terrain emerges and evolves day by day</sub>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center">
-  <img src=".github/assets/img/living-cosmic.gif" width="100%" alt="Turing Patterns timelapse — daily evolution of reaction-diffusion patterns"/>
-  <br/>
-  <sub><b>Turing Patterns</b> timelapse — reaction-diffusion patterns self-organize day by day</sub>
-</td>
-<td width="50%" align="center">
-  <img src=".github/assets/img/living-spiral.gif" width="100%" alt="Physarum Network timelapse — daily evolution of slime mold network"/>
-  <br/>
-  <sub><b>Physarum Network</b> timelapse — organic filaments emerge and connect repos day by day</sub>
-</td>
-</tr>
-</table>
-
-Generate: `uv run readme generate timelapse --metrics-path metrics.json --history-path history.json --profile YOUR_USERNAME`
-
-</details>
-
-<!-- BEGIN MANAGED MARKER -->
-<details>
-<summary><strong>Living Art data mapping (click to expand)</strong></summary>
-
-- **Ink Garden** (living-art)
-  - Visual (compat): `inkgarden-growth.gif`
-  - Visual (timeline): `inkgarden-growth-animated.svg`
-  - Data inputs: `repos[]` (`name`, `language`, `stars`, `age_months`)
-  - Mapping: Each repo → one plant; language sets hue/species; age → plant size/branch depth; stars → bloom size/petal counts; repo names → botanical labels.
-  - Ecosystem details: `forks`, `watchers`, `contributions_last_year`, `orgs_count`, `network_count`, `open_issues_count`, `following`, `contributions_monthly`, `stars`
-    - Mapping notes: forks → root networks; watchers/contributions/orgs/stars add insects/seeds; network → webs; open issues → mushrooms; following → tendrils; monthly contributions → stipple density.
-- **Topography** (living-art)
-  - Visual (compat): `topo-growth.gif`
-  - Visual (timeline): `topo-growth-animated.svg`
-  - Data inputs: `repos[]` (`stars`, `age_months`, `language`, `name`)
-  - Mapping: Repos → hills/landmarks; stars → peak height & marker size; age → hill width & age markers; language → terrain texture & color; names/stars → map labels.
-  - Terrain/chrome: `total_commits`, `contributions_monthly`, `forks`, `followers`, `contributions_last_year`, `stars`
-    - Mapping: commits → base noise detail; monthly contributions → ridge intensity + month label opacity; forks → river count; followers → contour density; contributions/stars → survey/title annotations.
-- **Cosmic Genesis** (animated — community)
-  - Visual (compat): `animated-community.gif` / `animated-community-dark.gif`
-  - Visual (source): `animated-community.svg` / `animated-community-dark.svg`
-  - Data inputs: commit history timeline with `stars`, `forks`, `languages`, milestone events
-  - Mapping: Gray-Scott reaction-diffusion; language diversity → feed rate (pattern regime); star velocity → kill rate (topology); repos → seed perturbations; account age → simulation steps; language hue → Voronoi coloring.
-- **Physarum Network** (animated — activity)
-  - Visual (compat): `animated-activity.gif` / `animated-activity-dark.gif`
-  - Visual (source): `animated-activity.svg` / `animated-activity-dark.svg`
-  - Data inputs: `public_repos`, `followers`, `orgs_count`, `contributions_last_year`, `total_commits`, `following`, `languages`
-  - Mapping: Physarum agent simulation; repos → food sources; contributions → agent count; PR reviews → sensor angle; contribution streak → trail persistence; language diversity → multi-species trail coloring; emergent shortest-path network.
-- Growth timing (all four): `compute_maturity(metrics)` drives maturity and timeline staging over ~30s; maturity computed from commits, stars, contributions, followers, repo_count/age, forks, network_size.
-
-</details>
-<!-- END MANAGED MARKER -->
-
-[^1]: Living-art outputs are dual-written during migration: GIF embeds remain for GitHub-safe inline playback, while richer SVG sources stay available behind the linked images.
-
-> Note: the header banner (`banner.svg`) is config-driven (`config.yaml`), not mapped to GitHub activity metrics.
+Both pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The README keeps the GitHub-safe GIF previews inline, while each panel still links through to the richer SVG source.
 
 ## Tech Stack
 
@@ -431,7 +336,7 @@ Generate: `uv run readme generate timelapse --metrics-path metrics.json --histor
   <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of languages, each frame placed by a different metaheuristic algorithm" width="49%"/>
 </p>
 
-<sub>Data source mapping: in Markdown-source mode (<code>--from-topics-md</code> / <code>--from-languages-md</code>), these clouds are generated from <code>.github/assets/topics.md</code> and <code>.github/assets/languages.md</code>, with term size based on parsed Markdown frequencies.</sub>
+<sub>In Markdown-source mode (`--from-topics-md` / `--from-languages-md`), the word frequencies come from `.github/assets/topics.md` and `.github/assets/languages.md`, and those frequencies drive the relative size and weight of each term. The animated renderer then solves the same placement problem 25 different times with a registry of metaheuristic algorithms, reorders the resulting layouts to reduce visual jumps between frames, and exports the result as a single SVG with every frame stacked inside it. The motion comes from CSS opacity timing that cycles through those stacked layouts, while a small OKLCH hue shift per frame adds a subtle color drift, so the animation is showing alternate optimized arrangements of the same data rather than a GIF or JavaScript effect.</sub>
 
 <details>
 <summary><strong>WakaTime Stats</strong></summary>

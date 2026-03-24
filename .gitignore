@@ -1,6 +1,7 @@
 .cursor/mcp.json
 .vscode/
 .playwright-mcp/
+.env
 
 ### Generated outputs — never commit ###
 logs/json/
@@ -8,6 +9,7 @@ logs/text/
 logs/report.html
 logs/pytest-logs.txt
 logs/build.log
+.telemetry/
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,linux,windows,python,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,linux,windows,python,git

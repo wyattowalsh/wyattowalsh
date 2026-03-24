@@ -1,0 +1,64 @@
+---
+title: World State
+description: Shared environmental semantics that keep the remaining living-art generators in sync.
+---
+
+## Module
+
+`WorldState` lives in `scripts/art/shared.py` and is computed by `compute_world_state(metrics)`.
+
+## Purpose
+
+The living-art suite uses one shared environmental model so the remaining generators feel like different lenses on the same portfolio state instead of unrelated visualizations. A profile with late-night commit bursts, rising stars, and active merged PRs should read as the same moment whether you look at the garden or the map.
+
+## Fields
+
+| Field | Values | Derived from | What it affects |
+|---|---|---|---|
+| `time_of_day` | `dawn`, `day`, `golden`, `night` | Peak commit hour from `commit_hour_distribution` | Lighting, sky tone, hillshade, glow timing |
+| `weather` | `clear`, `cloudy`, `rainy`, `stormy` | Open-to-closed issue ratio | Fog, rain, storm overlays, environmental tension |
+| `season` | `spring`, `summer`, `autumn`, `winter` | Dominant language family weighting | Palette family and biome or flora bias |
+| `energy` | `0.0–1.0` | `star_velocity.recent_rate` | Accent strength, field intensity, motion pressure |
+| `vitality` | `0.0–1.0` | `contribution_streaks` | Growth, persistence, and liveliness cues |
+| `aurora_intensity` | `0.0–1.0` | `recent_merged_prs` count | Aurora bands, special-event glow, celebratory accents |
+| `palette` | `dict[str, str]` | Derived from all of the above | Shared sky, ground, accent, and glow colors |
+
+## Derivation rules
+
+`compute_world_state(metrics)` is intentionally conservative when data is sparse:
+
+- Missing commit-hour data falls back to a calm daytime scene.
+- Missing issue signals default to clear weather.
+- Unknown languages collapse toward a summer palette rather than failing.
+- Sparse streak or star-velocity data yields medium energy instead of a broken scene.
+
+That keeps the renderers stable even when the GitHub API returns partial data.
+
+## Generator usage
+
+| Generator | World-state use |
+|---|---|
+| Ink Garden | Lighting, weather overlays, ecosystem intensity, and palette family |
+| Topography | Hillshade direction, fog, weather indicators, and biome tint |
+
+## Contrast guardrails
+
+`scripts/art/shared.py` also exposes `wcag_contrast_ratio()` and `ensure_contrast()`. Those helpers exist because richer low-light scenes are only useful if labels and highlights remain readable against dark backgrounds.
+
+<Callout type="warn" title="World state is shared, not identical rendering">
+The same `WorldState` drives both remaining generators, but each renderer expresses it differently. A stormy night in Topography becomes fog and warning cues, while the same signals in Ink Garden may appear as darker canopies, denser glow, and calmer fauna motion.
+</Callout>
+
+## Related
+
+<Cards>
+  <Card href="/docs/scripts/ink-garden" title="Ink Garden">
+    Botanical renderer built on top of the shared environment
+  </Card>
+  <Card href="/docs/scripts/topography" title="Topography">
+    Cartographic generator built on top of the shared environment
+  </Card>
+  <Card href="/docs/scripts/living-art-modes" title="Living Art Modes">
+    Preview and export constraints for the living-art surface
+  </Card>
+</Cards>
