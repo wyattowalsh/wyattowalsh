@@ -85,15 +85,35 @@ def _run_physarum(
     sensor_angle: float,
     decay: float,
     rng: np.random.Generator,
+    *,
+    following: int = 0,
+    total_commits: int = 0,
+    burstiness_freq: float = 0.0,
+    releases: list[dict] | None = None,
+    obstacle_cells: list[tuple[int, int]] | None = None,
+    spawn_clusters: list[tuple[float, float]] | None = None,
 ) -> tuple[np.ndarray, list[tuple[np.ndarray, np.ndarray]], np.ndarray]:
     """Run Physarum simulation. Returns (trail, path_record, first_hit)."""
-    sensor_dist = 9.0
+    # --- Item 2: following → sensor distance scaling ---
+    sensor_dist = 9.0 + min(6.0, following * 0.03)
+
     turn_speed = 0.3
     move_speed = 1.0
-    deposit = 0.5
+
+    # --- Item 3: total_commits → trail deposit amount ---
+    deposit = 0.3 + min(0.7, total_commits / 10000)
 
     # Trail map
     trail = np.zeros((G, G), dtype=np.float64)
+
+    # --- Item 8: total_issues → obstacle cells (dead zones) ---
+    obstacle_mask = np.zeros((G, G), dtype=bool)
+    if obstacle_cells:
+        obs_radius = max(2, G // 80)
+        yy_obs, xx_obs = np.ogrid[:G, :G]
+        for ox, oy in obstacle_cells:
+            omask = ((xx_obs - ox) ** 2 + (yy_obs - oy) ** 2) < obs_radius**2
+            obstacle_mask[omask] = True
 
     # Seed food sources
     food_radius = max(3, G // 40)
@@ -111,9 +131,23 @@ def _run_physarum(
     )
     trail += noise
 
-    # Agent state
-    ax = rng.uniform(0, G, N_agents).astype(np.float64)
-    ay = rng.uniform(0, G, N_agents).astype(np.float64)
+    # --- Item 10: orgs_count → multi-colony spawn ---
+    if spawn_clusters and len(spawn_clusters) > 1:
+        # Distribute agents among spawn clusters
+        n_clusters = len(spawn_clusters)
+        agents_per_cluster = N_agents // n_clusters
+        ax_parts, ay_parts = [], []
+        for ci, (cx, cy) in enumerate(spawn_clusters):
+            n_this = agents_per_cluster if ci < n_clusters - 1 else N_agents - agents_per_cluster * (n_clusters - 1)
+            spread = G // 10
+            ax_parts.append(rng.normal(cx, spread, n_this).astype(np.float64) % G)
+            ay_parts.append(rng.normal(cy, spread, n_this).astype(np.float64) % G)
+        ax = np.concatenate(ax_parts)
+        ay = np.concatenate(ay_parts)
+    else:
+        # Default: uniform random spawn
+        ax = rng.uniform(0, G, N_agents).astype(np.float64)
+        ay = rng.uniform(0, G, N_agents).astype(np.float64)
     angles = rng.uniform(0, 2 * np.pi, N_agents)
 
     # Record subset
@@ -124,7 +158,43 @@ def _run_physarum(
     first_hit = np.full((G, G), -1, dtype=np.int32)
     hit_threshold = 0.3
 
+    # --- Item 6: releases → spore burst events ---
+    # Pre-compute burst schedule: map each release to a simulation step
+    burst_events: dict[int, list[tuple[int, int]]] = {}
+    if releases:
+        capped_releases = releases[:5]
+        for ri, _rel in enumerate(capped_releases):
+            # Distribute burst steps evenly across the simulation
+            burst_step = max(1, (ri + 1) * n_steps // (len(capped_releases) + 1))
+            # Find nearest food source for this burst
+            if food_positions:
+                fp_idx = ri % len(food_positions)
+                bx, by = food_positions[fp_idx][0], food_positions[fp_idx][1]
+            else:
+                bx, by = G // 2, G // 2
+            burst_events[burst_step] = burst_events.get(burst_step, [])
+            burst_events[burst_step].append((bx, by))
+
     for step in range(n_steps):
+        # --- Item 6: spawn burst agents at release steps ---
+        if step in burst_events:
+            for bx, by in burst_events[step]:
+                n_burst = rng.integers(20, 51)
+                burst_ax = rng.normal(bx, 5.0, n_burst).astype(np.float64) % G
+                burst_ay = rng.normal(by, 5.0, n_burst).astype(np.float64) % G
+                burst_angles = rng.uniform(0, 2 * np.pi, n_burst)
+                ax = np.concatenate([ax, burst_ax])
+                ay = np.concatenate([ay, burst_ay])
+                angles = np.concatenate([angles, burst_angles])
+                N_agents = len(ax)
+
+        # --- Item 5: commit_hour_distribution → speed variation ---
+        if burstiness_freq > 0:
+            speed_factor = 1.0 + 0.2 * math.sin(step * burstiness_freq)
+        else:
+            speed_factor = 1.0
+        effective_speed = move_speed * speed_factor
+
         # Sensor positions
         sl_x = (ax + np.cos(angles - sensor_angle) * sensor_dist) % G
         sl_y = (ay + np.sin(angles - sensor_angle) * sensor_dist) % G
@@ -153,14 +223,29 @@ def _run_physarum(
             ),
         )
 
-        # Move (toroidal wrap)
-        ax = (ax + np.cos(angles) * move_speed) % G
-        ay = (ay + np.sin(angles) * move_speed) % G
+        # Move (toroidal wrap) — Item 5: apply effective_speed
+        ax = (ax + np.cos(angles) * effective_speed) % G
+        ay = (ay + np.sin(angles) * effective_speed) % G
+
+        # --- Item 8: bounce agents off obstacle cells ---
+        if obstacle_cells:
+            ix_check = ax.astype(np.intp) % G
+            iy_check = ay.astype(np.intp) % G
+            in_obstacle = obstacle_mask[iy_check, ix_check]
+            if np.any(in_obstacle):
+                # Reverse direction and move back
+                angles[in_obstacle] += np.pi
+                ax[in_obstacle] = (ax[in_obstacle] + np.cos(angles[in_obstacle]) * effective_speed * 2) % G
+                ay[in_obstacle] = (ay[in_obstacle] + np.sin(angles[in_obstacle]) * effective_speed * 2) % G
 
         # Deposit
         ix = ax.astype(np.intp) % G
         iy = ay.astype(np.intp) % G
         np.add.at(trail, (iy, ix), deposit)
+
+        # --- Item 8: enforce obstacle dead zones (trail always zero) ---
+        if obstacle_cells:
+            trail[obstacle_mask] = 0.0
 
         # Diffuse + decay
         trail = _diffuse(trail, size=3) * decay
@@ -261,7 +346,10 @@ def _render_svg(
     # ------------------------------------------------------------------
     # Simulation parameters from data
     # ------------------------------------------------------------------
-    G = 400
+    # --- Item 7: network_count → grid resolution boost ---
+    network_count = metrics.get("network_count", 0) or 0
+    G = min(500, max(300, 300 + network_count // 50)) if network_count > 0 else 400
+
     ws = compute_world_state(metrics)
     pal = _build_world_palette_extended(
         ws.time_of_day, ws.weather, ws.season, ws.energy
@@ -284,6 +372,51 @@ def _render_svg(
 
     rng = np.random.default_rng(42)
 
+    # --- Item 2: following (passed to _run_physarum) ---
+    following = metrics.get("following", 0) or 0
+
+    # --- Item 3: total_commits (passed to _run_physarum) ---
+    total_commits = metrics.get("total_commits", 0) or 0
+
+    # --- Item 5: commit_hour_distribution → burstiness frequency ---
+    commit_hours = metrics.get("commit_hour_distribution") or {}
+    burstiness_freq = 0.0
+    if commit_hours and isinstance(commit_hours, dict):
+        hour_vals = [int(v) for v in commit_hours.values() if v]
+        if hour_vals:
+            mean_h = sum(hour_vals) / len(hour_vals)
+            variance_h = sum((v - mean_h) ** 2 for v in hour_vals) / len(hour_vals)
+            burstiness_freq = min(0.5, (variance_h ** 0.5) / max(1.0, mean_h) * 0.1)
+
+    # --- Item 6: releases (passed to _run_physarum) ---
+    releases_data = metrics.get("releases") or []
+    if not isinstance(releases_data, list):
+        releases_data = []
+
+    # --- Item 8: total_issues → obstacle cells ---
+    total_issues = metrics.get("total_issues", 0) or 0
+    obstacle_cells: list[tuple[int, int]] = []
+    if total_issues > 0:
+        n_obstacles = min(10, total_issues)
+        margin_obs = G // 8
+        for _ in range(n_obstacles):
+            ox = int(rng.integers(margin_obs, G - margin_obs))
+            oy = int(rng.integers(margin_obs, G - margin_obs))
+            obstacle_cells.append((ox, oy))
+
+    # --- Item 10: orgs_count → multi-colony spawn clusters ---
+    orgs_count = metrics.get("orgs_count", 0) or 0
+    spawn_clusters: list[tuple[float, float]] | None = None
+    if orgs_count > 1:
+        n_clusters = min(5, orgs_count)
+        spawn_clusters = []
+        for ci in range(n_clusters):
+            angle_c = 2 * math.pi * ci / n_clusters
+            radius_c = G * 0.25
+            cx = G / 2 + radius_c * math.cos(angle_c)
+            cy = G / 2 + radius_c * math.sin(angle_c)
+            spawn_clusters.append((cx, cy))
+
     logger.info(
         "Physarum Network: agents={a} steps={s} sensor={sa:.2f} decay={d} dk={dm}",
         a=N_agents,
@@ -298,16 +431,26 @@ def _render_svg(
     # ------------------------------------------------------------------
     food_positions = _place_food_sources(repos, metrics, G, rng)
 
+    # --- Item 4: topic_clusters → multi-species food attractiveness ---
+    topic_clusters = metrics.get("topic_clusters") or {}
+
     # Separate food data for rendering: (grid_x, grid_y, hue, strength)
     food_render: list[tuple[int, int, float, float]] = []
-    for fx, fy, hue in food_positions:
+    for i, (fx, fy, hue) in enumerate(food_positions):
         star_count = 1.0
-        # Try to match back to a repo for star count
+        repo_topics: list[str] = []
+        # Try to match back to a repo for star count and topics
         for r in repos:
             if isinstance(r, dict) and LANG_HUES.get(r.get("language"), 155) == hue:
                 star_count = max(1.0, (r.get("stars", 0) or 0) * 0.3)
+                repo_topics = r.get("topics", []) or []
                 break
-        food_render.append((fx, fy, hue, star_count))
+        # Item 4: topic-rich repos become stronger attractors
+        if repo_topics and topic_clusters:
+            food_strength = star_count * (1 + 0.1 * len(repo_topics))
+        else:
+            food_strength = star_count
+        food_render.append((fx, fy, hue, food_strength))
 
     # Build strength list for simulation
     food_sim = [(fx, fy, s) for fx, fy, _h, s in food_render]
@@ -331,11 +474,21 @@ def _render_svg(
         sensor_angle,
         decay,
         rng,
+        following=following,
+        total_commits=total_commits,
+        burstiness_freq=burstiness_freq,
+        releases=releases_data,
+        obstacle_cells=obstacle_cells if obstacle_cells else None,
+        spawn_clusters=spawn_clusters,
     )
 
     # ------------------------------------------------------------------
     # Palette
     # ------------------------------------------------------------------
+    # --- Item 11: traffic_views_14d → background luminosity ---
+    traffic_views = metrics.get("traffic_views_14d", 0) or 0
+    bg_boost = min(0.05, traffic_views / 10000) if traffic_views > 0 else 0.0
+
     if dark_mode:
         bg_color = pal["bg_secondary"]
         text_color = "rgba(255,255,255,0.4)"
@@ -343,13 +496,30 @@ def _render_svg(
         bg_color = pal["bg_primary"]
         text_color = "rgba(0,0,0,0.3)"
 
+    # Apply background luminosity boost from traffic
+    if bg_boost > 0:
+        # Parse the bg_color hex and lighten it slightly
+        try:
+            _bg = bg_color.lstrip("#")
+            _r = min(255, int(_bg[0:2], 16) + int(bg_boost * 255))
+            _g = min(255, int(_bg[2:4], 16) + int(bg_boost * 255))
+            _b = min(255, int(_bg[4:6], 16) + int(bg_boost * 255))
+            bg_color = f"#{_r:02x}{_g:02x}{_b:02x}"
+        except (ValueError, IndexError):
+            pass  # graceful degradation
+
     # ------------------------------------------------------------------
     # Build SVG
     # ------------------------------------------------------------------
     parts: list[str] = []
     parts.append(svg_header(_WIDTH, _HEIGHT))
     parts.append("<defs>\n")
-    parts.append(volumetric_glow_filter("foodGlow", radius=4.0))
+
+    # --- Item 9: watchers → trail glow intensity ---
+    watchers = metrics.get("watchers", 0) or 0
+    glow_radius = 2.0 + min(3.0, watchers * 0.05) if watchers > 0 else 4.0
+    parts.append(volumetric_glow_filter("foodGlow", radius=glow_radius))
+
     parts.append("\n</defs>\n")
 
     if not snapshot_mode:
@@ -421,6 +591,30 @@ def _render_svg(
                     f'fill="{color}" style="--o:{opacity:.3f};animation-delay:{delay}s"/>\n'
                 )
     parts.append("</g>\n")
+
+    # ==================================================================
+    # Layer 1b — Observer particles (Item 1: followers)
+    # ==================================================================
+    followers = metrics.get("followers", 0) or 0
+    if followers > 0:
+        n_observers = min(followers // 25, 20)
+        if n_observers > 0 and food_render:
+            muted_color = pal.get("muted", oklch(0.55, 0.06, 175))
+            scale_obs = _WIDTH / G
+            parts.append('<g id="observer-particles">\n')
+            for oi in range(n_observers):
+                # Place near a food source with slight offset
+                fi = oi % len(food_render)
+                ofx, ofy = food_render[fi][0], food_render[fi][1]
+                drift_x = (ofx + rng.uniform(-15, 15)) * scale_obs
+                drift_y = (ofy + rng.uniform(-15, 15)) * scale_obs
+                drift_x = max(0, min(_WIDTH, drift_x))
+                drift_y = max(0, min(_HEIGHT, drift_y))
+                parts.append(
+                    f'<circle cx="{drift_x:.1f}" cy="{drift_y:.1f}" r="2" '
+                    f'fill="{muted_color}" opacity="0.15"/>\n'
+                )
+            parts.append("</g>\n")
 
     # ==================================================================
     # Layer 2 — Agent filament paths (~100-150 paths)
