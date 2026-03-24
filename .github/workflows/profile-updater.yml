@@ -82,7 +82,7 @@ jobs:
     name: Generate Profile Assets (QR, WordClouds, Banner)
     runs-on: ubuntu-latest
     needs: update-starred-lists # Depends on the md files being up-to-date
-    timeout-minutes: 20
+    timeout-minutes: 45
     permissions:
       contents: write # To commit generated image assets
     steps:
@@ -170,27 +170,6 @@ jobs:
           SHOW_LANGUAGE_PER_REPO: "True"
           SHOW_SHORT_INFO: "True"
           SHOW_LOC_CHART: "True"
-
-  update-readme-blog:
-    name: Update README - Latest Blog Posts
-    runs-on: ubuntu-latest
-    needs: update-readme-wakatime
-    if: ${{ always() && !cancelled() }}
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-        with:
-          ref: ${{ github.head_ref || github.ref }}
-      - name: Blog Post Workflow
-        uses: gautamkrishnar/blog-post-workflow@71dc71018921efdf8a81745f431f32c989f699a7 # v1
-        with:
-          feed_list: "https://w4w.dev/feed.xml"
-          # ... other params from your blog-post-workflow.yml ...
-          template: "$newline - $date - [$title]($url)"
-          commit_message: "chore(readme): update blog posts section" # Example of specific commit message
 
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
@@ -520,7 +499,7 @@ jobs:
   update-skills:
     name: Finalize README Sections
     runs-on: ubuntu-latest
-    needs: update-readme-blog
+    needs: update-readme-wakatime
     if: ${{ always() && !cancelled() }}
     timeout-minutes: 20
     permissions:
