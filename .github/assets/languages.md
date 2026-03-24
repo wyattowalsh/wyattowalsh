@@ -141,7 +141,6 @@
 - [nalgeon/sqlean](https://github.com/nalgeon/sqlean) - The ultimate set of SQLite extensions
 - [pgvector/pgvector](https://github.com/pgvector/pgvector) - Open-source vector similarity search for Postgres
 - [emin/WebPQuickLook](https://github.com/emin/WebPQuickLook) - Mac OS X QuickLook plugin for WebP image files
-- [adobe-type-tools/afdko](https://github.com/adobe-type-tools/afdko) - Adobe Font Development Kit for OpenType
 - [viabtc/viabtc_exchange_server](https://github.com/viabtc/viabtc_exchange_server) - A trading engine with high-speed performance and real-time notification
 - [nihui/realsr-ncnn-vulkan](https://github.com/nihui/realsr-ncnn-vulkan) - RealSR super resolution implemented with ncnn library
 - [scottdraves/electricsheep](https://github.com/scottdraves/electricsheep) - infinite evolving crowdsourced artwork
@@ -1277,7 +1276,7 @@
 - [ABSphreak/readme-jokes](https://github.com/ABSphreak/readme-jokes) - 😄 Jokes for your GitHub READMEs
 - [openseadragon/openseadragon](https://github.com/openseadragon/openseadragon) - An open-source, web-based viewer for zoomable images, implemented in pure JavaScript.
 - [zenozeng/p5.js-svg](https://github.com/zenozeng/p5.js-svg) - SVG runtime for p5.js.
-- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.57.1) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
+- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.57.2) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
 - [Kiran1689/Awesome-Dev-Portfolios](https://github.com/Kiran1689/Awesome-Dev-Portfolios) - This repository aims to collect portfolios and their repositories from developers around the world.
 - [markdown-it/markdown-it](https://github.com/markdown-it/markdown-it) - Markdown parser, done right. 100% CommonMark support, extensions, syntax plugins & high speed
 - [antonmedv/spark](https://github.com/antonmedv/spark) - GitHub Stars Sparklines ⚡️
@@ -1719,7 +1718,7 @@
 - [nebulab/nextjs-storybook-tailwindcss](https://github.com/nebulab/nextjs-storybook-tailwindcss) - TLDR example project for this blog post: https://nebulab.it/blog/nextjs-tailwind-storybook/
 - [facebook/create-react-app](https://github.com/facebook/create-react-app) - Set up a modern web app by running one command.
 - [limedocs/limedocs-wiki-converter](https://github.com/limedocs/limedocs-wiki-converter) - Generate HTML & PDF documentation from you Github wiki or any other markdown-based wiki
-- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 5900 free MIT-licensed high-quality SVG icons for you to use in your web projects.
+- [tabler/tabler-icons](https://github.com/tabler/tabler-icons) - A set of over 6000 free MIT-licensed high-quality SVG icons for you to use in your web projects.
 - [FortAwesome/Font-Awesome](https://github.com/FortAwesome/Font-Awesome) - The iconic SVG, font, and CSS toolkit
 - [budparr/hugopipes-tailwindcss](https://github.com/budparr/hugopipes-tailwindcss) - Hugo's Pipes functionality using TailwindCSS and PurgeCSS
 - [ttntm/hugo-tailwind-boilerplate](https://github.com/ttntm/hugo-tailwind-boilerplate) - A boilerplate for Hugo sites based on Tailwind CSS.
@@ -2711,7 +2710,7 @@
 - [AlbertoVargasMoreno/YOURLS-Device-Charts](https://github.com/AlbertoVargasMoreno/YOURLS-Device-Charts) - A YOURLS plugin that use user-agent data to display charts showcasing information about browsers, platforms, and devices used by visitors.
 - [SachinSAgrawal/YOURLS-Device-Details](https://github.com/SachinSAgrawal/YOURLS-Device-Details) - A YOURLS plugin to parse the user-agent and display info about the IP and device.
 - [YOURLS/cache-stats-pages](https://github.com/YOURLS/cache-stats-pages) - YOURLS plugin: serve stat pages (http://sho.rt/blah+) from cache
-- [stefanofranco/yourls-api-shorturl-analytics](https://github.com/stefanofranco/yourls-api-shorturl-analytics) - This plugin adds a custom API action 'shorturl_analytics' to show stats in a range of dates.
+- [sphranko/yourls-api-shorturl-analytics](https://github.com/sphranko/yourls-api-shorturl-analytics) - This plugin adds a custom API action 'shorturl_analytics' to show stats in a range of dates.
 - [Codeinwp/yourls-api-list-extended](https://github.com/Codeinwp/yourls-api-list-extended) - YOURLS API List action with sorting, pagination, total count, and field selection.
 - [josheby/yourls-additional-charsets](https://github.com/josheby/yourls-additional-charsets) - Additional Charsets for YOURLS
 - [guessi/docker-yourls](https://github.com/guessi/docker-yourls) - Dockerize YOURLS service (Shorten URL Service)
@@ -2780,6 +2779,7 @@
 ## PostScript 
 
 - [cristoper/wav2vec](https://github.com/cristoper/wav2vec) - Python package and cli tool to convert wave files (WAV or AIFF) to vector graphics (SVG, PostScript, CVS)
+- [adobe-type-tools/afdko](https://github.com/adobe-type-tools/afdko) - Adobe Font Development Kit for OpenType
 
 ## PowerShell 
 
@@ -3112,7 +3112,7 @@
 - [vamplabAI/sgr-agent-core](https://github.com/vamplabAI/sgr-agent-core) - Schema-Guided Reasoning (SGR) has agentic system design created by neuraldeep community
 - [bytedance/USO](https://github.com/bytedance/USO) - [CVPR 2026] 🔥🔥 Official Repo of USO: Unified Style and Subject-Driven Generation via Disentangled and Reward Learning
 - [Textualize/textual](https://github.com/Textualize/textual) - The lean application framework for Python.  Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and a web browser.
-- [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - Access OpenAI models programmatically through your ChatGPT subscription.
+- [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - OpenAI & Ollama compatible API powered by Codex
 - [karpathy/rendergit](https://github.com/karpathy/rendergit) - Render any git repo into a single static HTML page for humans or LLMs
 - [Arindam200/reddit-mcp](https://github.com/Arindam200/reddit-mcp) - Model Context Protocol server implementation for Reddit
 - [adhikasp/mcp-reddit](https://github.com/adhikasp/mcp-reddit) - A Model Context Protocol (MCP) server that provides tools for fetching and analyzing Reddit content.
@@ -3196,7 +3196,7 @@
 - [AnCode666/nasa-mcp](https://github.com/AnCode666/nasa-mcp) - MCP server for use NASA APIs
 - [LearningCircuit/local-deep-research](https://github.com/LearningCircuit/local-deep-research) - Local Deep Research achieves ~95% on SimpleQA benchmark (tested with GPT-4.1-mini). Supports local and cloud LLMs (Ollama, Google, Anthropic, ...). Searches 10+ sources - arXiv, PubMed, web, and your 
 - [zilliztech/deep-searcher](https://github.com/zilliztech/deep-searcher) - Open Source Deep Research Alternative to Reason and Search on Private Data. Written in Python.
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skills and subagents, it handles different levels of tasks that could take minutes t
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
 - [QwenLM/Qwen3](https://github.com/QwenLM/Qwen3) - Qwen3 is the large language model series developed by Qwen team, Alibaba Cloud.
 - [carterlasalle/mac_messages_mcp](https://github.com/carterlasalle/mac_messages_mcp) - An MCP server that securely interfaces with your iMessage database via the Model Context Protocol (MCP), allowing LLMs to query and analyze iMessage conversations. It includes robust phone number vali
 - [audreyfeldroy/cookiecutter-pypackage](https://github.com/audreyfeldroy/cookiecutter-pypackage) - Cookiecutter template for a Python package.
@@ -3526,6 +3526,7 @@
 - [donnemartin/dev-setup](https://github.com/donnemartin/dev-setup) - macOS development environment setup:  Easy-to-understand instructions with automated setup scripts for developer tools like Vim, Sublime Text, Bash, iTerm, Python data analysis, Spark, Hadoop MapReduc
 - [win4r/GraphRAG4OpenWebUI](https://github.com/win4r/GraphRAG4OpenWebUI) - GraphRAG4OpenWebUI integrates Microsoft's GraphRAG technology into Open WebUI, providing a versatile information retrieval API. It combines local, global, and web searches for advanced Q&A systems and
 - [karaketir16/openwebui-langfuse](https://github.com/karaketir16/openwebui-langfuse) - This repository provides resources and guidelines to facilitate the integration of Open-WebUI and Langfuse, enabling seamless monitoring and management of AI model usage statistics.
+- [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [open-webui/pipelines](https://github.com/open-webui/pipelines) - Pipelines: Versatile, UI-Agnostic OpenAI-Compatible Plugin Framework
 - [Alibaba-NLP/DeepResearch](https://github.com/Alibaba-NLP/DeepResearch) - Tongyi Deep Research, the Leading Open-source Deep Research Agent
 - [hitsz-ids/synthetic-data-generator](https://github.com/hitsz-ids/synthetic-data-generator) - SDG is a specialized framework designed to generate high-quality structured tabular data.
@@ -5137,7 +5138,7 @@
 
 ## Tcl 
 
-- [kweaver-ai/kweaver](https://github.com/kweaver-ai/kweaver) - KWeaver is an open-source ecosystem for building, deploying, and running decision intelligence AI applications. This ecosystem adopts business knowledge network (Business Knowledge Network) as its cor
+- [kweaver-ai/kweaver](https://github.com/kweaver-ai/kweaver) - KWeaver Core is a harness-first foundation for enterprise decision agents. It turns fragmented data, knowledge, tools, and policies into governed context, safe execution, and verifiable feedback loops
 - [macports/macports-ports](https://github.com/macports/macports-ports) - The MacPorts ports tree
 
 ## TeX 
@@ -5401,7 +5402,7 @@
 - [bytebot-ai/bytebot](https://github.com/bytebot-ai/bytebot) - Bytebot is a self-hosted AI desktop agent that automates computer tasks through natural language commands, operating within a containerized Linux desktop environment.
 - [codexu/note-gen](https://github.com/codexu/note-gen) - A cross-platform Markdown AI note-taking software.
 - [plait-board/drawnix](https://github.com/plait-board/drawnix) - 开源白板工具（SaaS），一体化白板，包含思维导图、流程图、自由画等。All in one open-source whiteboard tool with mind, flowchart, freehand and etc.
-- [dtyq/magic](https://github.com/dtyq/magic) - Super Magic. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)
+- [dtyq/magic](https://github.com/dtyq/magic) - Magicrew. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)
 - [vercel/hyper](https://github.com/vercel/hyper) - A terminal built on web technologies
 - [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) - An open-source AI agent that brings the power of Gemini directly into your terminal.
 - [vercel/streamdown](https://github.com/vercel/streamdown) - A drop-in replacement for react-markdown, designed for AI-powered streaming.
@@ -5788,7 +5789,6 @@
 - [harbassan/spicetify-apps](https://github.com/harbassan/spicetify-apps) - A collection of spicetify custom apps to improve your spotify experience.
 - [Konsl/spicetify-visualizer](https://github.com/Konsl/spicetify-visualizer) - Audio Visualizer for Spicetify
 - [spicetify/marketplace](https://github.com/spicetify/marketplace) - Download extensions and themes directly from Spicetify
-- [open-webui/docs](https://github.com/open-webui/docs) - https://docs.openwebui.com
 - [RamiAwar/dataline](https://github.com/RamiAwar/dataline) - Chat with your data - AI data analysis and visualization on CSV, Postgres, MySQL, Snowflake, SQLite...
 - [sourcegraph/cody-public-snapshot](https://github.com/sourcegraph/cody-public-snapshot) - Type less, code more: Cody is an AI code assistant that uses advanced search and codebase context to help you write and fix code.
 - [benkeen/generatedata](https://github.com/benkeen/generatedata) - A powerful, feature-rich, random test data generator.
