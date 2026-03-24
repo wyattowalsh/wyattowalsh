@@ -34,7 +34,7 @@
 </tr>
 <tr>
 <td valign="top" width="50%"><a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="100%" alt="ai-web-feeds" loading="lazy"/></a></td>
-<td width="50%"></td>
+<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-wyattowalsh.svg" width="100%" alt="wyattowalsh" loading="lazy"/></a></td>
 </tr>
 </tbody></table>
 <!-- README:FEATURED_PROJECTS:END -->
