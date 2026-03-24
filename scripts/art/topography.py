@@ -796,6 +796,11 @@ def generate(
             ],
         )
     )
+    # River flow arrow marker (used when recent_merged_prs present)
+    P.append(f'<marker id="riverArrow" viewBox="0 0 6 6" refX="3" refY="3" '
+             f'markerWidth="4" markerHeight="4" orient="auto">'
+             f'<path d="M0,1 L5,3 L0,5" fill="{oklch(0.48, 0.12, 240)}" opacity="0.4"/>'
+             f'</marker>')
     # Valley fog / atmospheric haze filter (WorldState-driven)
     P.append(atmospheric_haze_filter("valleyFog", intensity=0.4))
     P.append("</defs>")
@@ -968,7 +973,13 @@ def generate(
     star_vel = metrics.get("star_velocity", {})
     flow_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
     river_width_boost = 1.0 + min(1.0, flow_rate * 0.1)  # up to 2x width
-    activity_flow = min(2.0, 1.0 + contributions / 1500.0) * river_width_boost
+    # Data mapping 3: recent_merged_prs → river width enhancement
+    _recent_merged_prs = metrics.get("recent_merged_prs", [])
+    if isinstance(_recent_merged_prs, list) and len(_recent_merged_prs) > 0:
+        _pr_river_scale = 1.0 + min(0.5, len(_recent_merged_prs) * 0.05)
+    else:
+        _pr_river_scale = 1.0
+    activity_flow = min(2.0, 1.0 + contributions / 1500.0) * river_width_boost * _pr_river_scale
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
     # Desaturated OKLCH blue for rivers
@@ -1049,6 +1060,24 @@ def generate(
                     f'<text font-family="Georgia,serif" font-size="6.5" fill="#1a4f8a" '
                     f'opacity="{0.5 * rlabel_fade:.2f}" font-style="italic">'
                     f'<textPath href="#rv{rvi}" startOffset="50%" text-anchor="middle">R. {rvi + 1}</textPath></text>'
+                )
+
+    # ── Data mapping 3 (cont.): arrow markers along rivers for merged PRs ──
+    if isinstance(_recent_merged_prs, list) and len(_recent_merged_prs) > 0 and river_fade > 0:
+        for rvi_a, rpts_a in enumerate(river_paths):
+            if len(rpts_a) < 10:
+                continue
+            # Place arrows at 1/4, 1/2, 3/4 along each main river
+            for arrow_frac in [0.25, 0.5, 0.75]:
+                ai = min(len(rpts_a) - 2, int(arrow_frac * len(rpts_a)))
+                ax1 = MAP_L + rpts_a[ai][0] * MAP_W
+                ay1 = MAP_T + rpts_a[ai][1] * MAP_H
+                ax2 = MAP_L + rpts_a[ai + 1][0] * MAP_W
+                ay2 = MAP_T + rpts_a[ai + 1][1] * MAP_H
+                P.append(
+                    f'<line x1="{ax1:.1f}" y1="{ay1:.1f}" x2="{ax2:.1f}" y2="{ay2:.1f}" '
+                    f'stroke="{river_color}" stroke-width="0.6" opacity="{0.35 * river_fade:.2f}" '
+                    f'marker-end="url(#riverArrow)"/>'
                 )
 
     # ── Contour lines (warm brown, Swiss style — OKLCH gradient) ──
@@ -2136,6 +2165,256 @@ def generate(
                 f'fill="{pal["muted"]}" opacity="{fog_opacity:.3f}" filter="url(#valleyFog)" '
                 f'transform="rotate({_fog_angle:.1f},{_ffx:.1f},{_ffy:.1f})"/>'
             )
+
+    # ══════════════════════════════════════════════════════════════
+    # NEW DATA MAPPINGS (additive visual enhancements)
+    # ══════════════════════════════════════════════════════════════
+
+    # ── Data mapping 1: releases → flag symbols on peaks ──────────
+    _releases = metrics.get("releases", [])
+    if isinstance(_releases, list) and len(_releases) > 0 and spots_sorted:
+        _n_flags = min(5, len(_releases))
+        for _fi_flag in range(_n_flags):
+            if _fi_flag < len(spots_sorted):
+                _flag_x, _flag_y, _flag_e = spots_sorted[_fi_flag]
+                _flag_h = 8  # flag pole height
+                _flag_color = pal["highlight"]
+                # Flag pole (vertical line)
+                P.append(
+                    f'<line x1="{_flag_x:.1f}" y1="{_flag_y:.1f}" '
+                    f'x2="{_flag_x:.1f}" y2="{_flag_y - _flag_h:.1f}" '
+                    f'stroke="{_flag_color}" stroke-width="0.6" opacity="0.55"/>'
+                )
+                # Flag triangle at top
+                _ftx = _flag_x
+                _fty = _flag_y - _flag_h
+                P.append(
+                    f'<polygon points="{_ftx:.1f},{_fty:.1f} '
+                    f'{_ftx + 5:.1f},{_fty + 2:.1f} '
+                    f'{_ftx:.1f},{_fty + 4:.1f}" '
+                    f'fill="{_flag_color}" opacity="0.50"/>'
+                )
+
+    # ── Data mapping 2: commit_hour_distribution → sun/moon in legend ─
+    _commit_hours = metrics.get("commit_hour_distribution", {})
+    if isinstance(_commit_hours, dict) and len(_commit_hours) > 0:
+        # Determine peak commit hour
+        _peak_hour = max(_commit_hours, key=lambda k: _commit_hours.get(k, 0))
+        try:
+            _peak_h_int = int(_peak_hour)
+        except (ValueError, TypeError):
+            _peak_h_int = 12
+        # Position in upper-right area of legend box
+        _sun_moon_x = leg_x + leg_w - 14
+        _sun_moon_y = leg_y + 10
+        if 6 <= _peak_h_int <= 18:
+            # Daytime: draw small sun (circle + rays)
+            _sun_c = oklch(0.80, 0.15, 70)
+            P.append(
+                f'<circle cx="{_sun_moon_x}" cy="{_sun_moon_y}" r="3" '
+                f'fill="{_sun_c}" opacity="0.6"/>'
+            )
+            for _ray_i in range(6):
+                _ra = _ray_i * math.pi / 3
+                P.append(
+                    f'<line x1="{_sun_moon_x + 4 * math.cos(_ra):.1f}" '
+                    f'y1="{_sun_moon_y + 4 * math.sin(_ra):.1f}" '
+                    f'x2="{_sun_moon_x + 5.5 * math.cos(_ra):.1f}" '
+                    f'y2="{_sun_moon_y + 5.5 * math.sin(_ra):.1f}" '
+                    f'stroke="{_sun_c}" stroke-width="0.5" opacity="0.45"/>'
+                )
+        else:
+            # Nighttime: draw crescent moon
+            _moon_c = oklch(0.80, 0.08, 220)
+            P.append(
+                f'<circle cx="{_sun_moon_x}" cy="{_sun_moon_y}" r="3.5" '
+                f'fill="{_moon_c}" opacity="0.5"/>'
+            )
+            # Overlap circle to create crescent shape
+            P.append(
+                f'<circle cx="{_sun_moon_x + 1.5}" cy="{_sun_moon_y - 0.5}" r="3" '
+                f'fill="{pal["bg_primary"]}" opacity="0.55"/>'
+            )
+
+    # ── Data mapping 4: total_prs → road/path density ─────────────
+    _total_prs = metrics.get("total_prs", 0)
+    if isinstance(_total_prs, (int, float)) and _total_prs > 10 and repo_positions:
+        _n_paths = min(5, int(_total_prs) // 20)
+        # Find settlement position (same logic as settlement symbol)
+        _settle_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
+        _settle_mx = MAP_L + _settle_rp[0] * MAP_W
+        _settle_my = MAP_T + _settle_rp[1] * MAP_H
+        # Connect settlement to nearby repo peaks
+        _path_targets = sorted(
+            repo_positions,
+            key=lambda rp: math.sqrt(
+                (rp[0] - _settle_rp[0]) ** 2 + (rp[1] - _settle_rp[1]) ** 2
+            ),
+        )
+        for _pi_path in range(min(_n_paths, len(_path_targets) - 1)):
+            _trp = _path_targets[_pi_path + 1]  # skip self (index 0)
+            _tx_path = MAP_L + _trp[0] * MAP_W
+            _ty_path = MAP_T + _trp[1] * MAP_H
+            P.append(
+                f'<line x1="{_settle_mx:.1f}" y1="{_settle_my:.1f}" '
+                f'x2="{_tx_path:.1f}" y2="{_ty_path:.1f}" '
+                f'stroke="{pal["text_secondary"]}" stroke-width="0.5" '
+                f'stroke-dasharray="3,3" opacity="0.15" stroke-linecap="round"/>'
+            )
+
+    # ── Data mapping 5: total_issues → scree/rough terrain markers ─
+    _total_issues = metrics.get("total_issues", 0)
+    if isinstance(_total_issues, (int, float)) and _total_issues > 0:
+        _n_scree = min(8, int(_total_issues))
+        _scree_color = pal["muted"]
+        # Find low-elevation areas for scree placement
+        _low_spots: list[tuple[float, float]] = []
+        for _sgy in range(5, grid - 5, 15):
+            for _sgx in range(5, grid - 5, 15):
+                _se = elevation[_sgy, _sgx]
+                if _se < 0.30:
+                    _smx, _smy = _grid_to_map(_sgx, _sgy, cell_w, cell_h)
+                    _low_spots.append((_smx, _smy))
+        # Deterministic selection from low spots
+        _scree_rng = np.random.default_rng(int(h[:6], 16) ^ 0xCAFE)
+        if _low_spots:
+            _scree_indices = _scree_rng.choice(
+                len(_low_spots), size=min(_n_scree, len(_low_spots)), replace=False
+            )
+            for _si_scree in _scree_indices:
+                _scx, _scy = _low_spots[_si_scree]
+                # Cluster of 3-5 tiny dots/marks
+                _n_dots = 3 + int(_scree_rng.integers(0, 3))
+                for _di in range(_n_dots):
+                    _dx_s = _scree_rng.uniform(-4, 4)
+                    _dy_s = _scree_rng.uniform(-4, 4)
+                    _dr_s = _scree_rng.uniform(0.3, 0.7)
+                    P.append(
+                        f'<circle cx="{_scx + _dx_s:.1f}" cy="{_scy + _dy_s:.1f}" '
+                        f'r="{_dr_s:.1f}" fill="{_scree_color}" opacity="0.20"/>'
+                    )
+
+    # ── Data mapping 6: following → compass rose detail ────────────
+    _following = metrics.get("following", 0)
+    if isinstance(_following, (int, float)) and _following > 20:
+        # Add inner ring and extra detail points to the existing compass rose
+        # The compass rose is at (ccx, ccy) with radius cr
+        # Add an ornate inner ring
+        _inner_r = cr * 0.45
+        P.append(
+            f'<circle cx="{ccx}" cy="{ccy}" r="{_inner_r:.1f}" '
+            f'fill="none" stroke="#2c2c2c" stroke-width="0.5" opacity="0.25"/>'
+        )
+        # Add 8 secondary tick marks between the main points at inner ring
+        for _ci_rose in range(8):
+            _rose_a = math.radians(_ci_rose * 45 + 22.5)
+            _r_in_rose = _inner_r - 2
+            _r_out_rose = _inner_r + 2
+            P.append(
+                f'<line x1="{ccx + _r_in_rose * math.sin(_rose_a):.1f}" '
+                f'y1="{ccy - _r_in_rose * math.cos(_rose_a):.1f}" '
+                f'x2="{ccx + _r_out_rose * math.sin(_rose_a):.1f}" '
+                f'y2="{ccy - _r_out_rose * math.cos(_rose_a):.1f}" '
+                f'stroke="#2c2c2c" stroke-width="0.3" opacity="0.20"/>'
+            )
+        # Small decorative diamond at compass center
+        _cd = 2.5
+        P.append(
+            f'<polygon points="{ccx},{ccy - _cd} {ccx + _cd},{ccy} '
+            f'{ccx},{ccy + _cd} {ccx - _cd},{ccy}" '
+            f'fill="none" stroke="#2c2c2c" stroke-width="0.4" opacity="0.20"/>'
+        )
+
+    # ── Data mapping 7: orgs_count → territory borders ────────────
+    _orgs_count = metrics.get("orgs_count", 0)
+    if isinstance(_orgs_count, (int, float)) and _orgs_count > 0:
+        _n_territories = min(4, int(_orgs_count))
+        _border_color = pal["border"]
+        # Divide map into quadrants for territory borders
+        _quadrants = [
+            (MAP_L, MAP_T, MAP_W / 2, MAP_H / 2),           # top-left
+            (MAP_L + MAP_W / 2, MAP_T, MAP_W / 2, MAP_H / 2),  # top-right
+            (MAP_L, MAP_T + MAP_H / 2, MAP_W / 2, MAP_H / 2),  # bottom-left
+            (MAP_L + MAP_W / 2, MAP_T + MAP_H / 2, MAP_W / 2, MAP_H / 2),  # bottom-right
+        ]
+        for _qi in range(_n_territories):
+            _qx, _qy, _qw, _qh = _quadrants[_qi]
+            # Inset slightly so borders don't overlap the neatline
+            _inset = 6
+            P.append(
+                f'<rect x="{_qx + _inset:.1f}" y="{_qy + _inset:.1f}" '
+                f'width="{_qw - 2 * _inset:.1f}" height="{_qh - 2 * _inset:.1f}" '
+                f'fill="none" stroke="{_border_color}" stroke-width="0.8" '
+                f'stroke-dasharray="8,4" opacity="0.15" rx="2"/>'
+            )
+
+    # ── Data mapping 8: public_gists → map annotations ────────────
+    _public_gists = metrics.get("public_gists", 0)
+    if isinstance(_public_gists, (int, float)) and _public_gists > 0:
+        _n_annotations = min(6, int(_public_gists))
+        _anno_labels = [
+            "Here be code", "Notes", "Sketch",
+            "Fragments", "Draft", "Marginalia",
+        ]
+        _anno_rng = np.random.default_rng(int(h[4:10], 16) ^ 0xBEAD)
+        for _ai_gist in range(_n_annotations):
+            # Deterministic positions spread across the map
+            _ax_frac = 0.1 + (_ai_gist * 0.17) % 0.8
+            _ay_frac = 0.15 + ((_ai_gist * 0.23 + 0.1) % 0.7)
+            _ax = MAP_L + _ax_frac * MAP_W + _anno_rng.uniform(-15, 15)
+            _ay = MAP_T + _ay_frac * MAP_H + _anno_rng.uniform(-10, 10)
+            # Clamp within map bounds
+            _ax = max(MAP_L + 10, min(MAP_R - 30, _ax))
+            _ay = max(MAP_T + 10, min(MAP_B - 10, _ay))
+            _anno_text = _anno_labels[_ai_gist % len(_anno_labels)]
+            P.append(
+                f'<text x="{_ax:.1f}" y="{_ay:.1f}" '
+                f'font-family="Georgia,serif" font-size="6" font-style="italic" '
+                f'fill="{pal["text_secondary"]}" opacity="0.30">{_anno_text}</text>'
+            )
+
+    # ── Data mapping 9: traffic_views_14d → legend visitor count ──
+    _traffic_views = metrics.get("traffic_views_14d", 0)
+    if isinstance(_traffic_views, (int, float)) and _traffic_views > 0:
+        # Add visitor count text in the legend area, below existing entries
+        _vis_y = leg_y + leg_h - 4
+        P.append(
+            f'<text x="{leg_x + leg_w / 2:.0f}" y="{_vis_y:.0f}" '
+            f'text-anchor="middle" font-family="Georgia,serif" font-size="4" '
+            f'fill="{pal["text_secondary"]}" opacity="0.35" font-style="italic">'
+            f'Visitors: {int(_traffic_views)}</text>'
+        )
+
+    # ── Data mapping 10: watchers → watchtower symbols ────────────
+    _watchers = metrics.get("watchers", 0)
+    if isinstance(_watchers, (int, float)) and _watchers > 0:
+        _n_towers = min(3, int(_watchers) // 10)
+        _tower_color = pal["text_secondary"]
+        # Place towers at high-elevation spots
+        for _ti_tower in range(_n_towers):
+            if _ti_tower < len(spots_sorted):
+                # Use high-elevation spots, offset from flags
+                _tower_idx = min(len(spots_sorted) - 1, _ti_tower + min(5, len(_releases) if isinstance(metrics.get("releases", []), list) else 0))
+                _twx, _twy, _twe = spots_sorted[_tower_idx]
+                # Tower body (thin rectangle)
+                _tw_w, _tw_h = 3, 8
+                P.append(
+                    f'<rect x="{_twx - _tw_w / 2:.1f}" y="{_twy - _tw_h:.1f}" '
+                    f'width="{_tw_w}" height="{_tw_h}" '
+                    f'fill="{_tower_color}" opacity="0.35" rx="0.3"/>'
+                )
+                # Tower roof (triangle)
+                P.append(
+                    f'<polygon points="{_twx - _tw_w:.1f},{_twy - _tw_h:.1f} '
+                    f'{_twx:.1f},{_twy - _tw_h - 4:.1f} '
+                    f'{_twx + _tw_w:.1f},{_twy - _tw_h:.1f}" '
+                    f'fill="{_tower_color}" opacity="0.30"/>'
+                )
+                # Small window
+                P.append(
+                    f'<rect x="{_twx - 0.5:.1f}" y="{_twy - _tw_h + 2:.1f}" '
+                    f'width="1" height="1.5" fill="{pal["bg_primary"]}" opacity="0.4"/>'
+                )
 
     # ── Foxing / age spots (scaled by mat) ────────────────────────
     for _ in range(int(mat * 8)):
