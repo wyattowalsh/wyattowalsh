@@ -339,7 +339,7 @@
 - [AlibabaResearch/AdvancedLiterateMachinery](https://github.com/AlibabaResearch/AdvancedLiterateMachinery) - A collection of original, innovative ideas and algorithms towards Advanced Literate Machinery. This project is maintained by the OCR Team in the Language Technology Lab, Tongyi Lab, Alibaba Group.
 - [LMMS/lmms](https://github.com/LMMS/lmms) - Cross-platform music production software
 - [infiniflow/infinity](https://github.com/infiniflow/infinity) - The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
-- [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Deeplake is a unified context engine for AI agents such as OpenClaw. By structuring memory, database, and skills in filesystem-like format, it enables scalable context management and continuous learni
+- [activeloopai/deeplake](https://github.com/activeloopai/deeplake) - Deeplake is AI Data Runtime for Agents. It provides serverless postgres with a multimodal datalake, enabling scalable retrieval and training.
 - [qpdf/qpdf](https://github.com/qpdf/qpdf) - qpdf: A content-preserving PDF document transformer
 - [tesseract-ocr/tesseract](https://github.com/tesseract-ocr/tesseract) - Tesseract Open Source OCR Engine (main repository)
 - [Distributive-Network/PythonMonkey](https://github.com/Distributive-Network/PythonMonkey) - A Mozilla SpiderMonkey JavaScript engine embedded into the Python VM, using the Python engine to provide the JS host environment.
@@ -1268,7 +1268,6 @@
 - [anaisbetts/mcp-youtube](https://github.com/anaisbetts/mcp-youtube) - A Model-Context Protocol Server for YouTube
 - [pskill9/website-downloader](https://github.com/pskill9/website-downloader) - MCP server to download entire websites
 - [mzxrai/mcp-webresearch](https://github.com/mzxrai/mcp-webresearch) - MCP web research server (give Claude real-time info from the web)
-- [smithery-ai/mcp-obsidian](https://github.com/smithery-ai/mcp-obsidian) - A connector for Claude Desktop to read and search an Obsidian vault.
 - [jamesgeorge007/github-activity-readme](https://github.com/jamesgeorge007/github-activity-readme) - Updates README with the recent GitHub activity of a user
 - [maddhruv/github-readme-npm-downloads](https://github.com/maddhruv/github-readme-npm-downloads) - Show npm packages downloads :arrow_double_down: in GitHub README
 - [omidnikrah/github-readme-stackoverflow](https://github.com/omidnikrah/github-readme-stackoverflow) - 📊.  Dynamically generated your StackOverflow status on your GitHub READMEs!
@@ -2237,7 +2236,6 @@
 - [gztchan/awesome-design](https://github.com/gztchan/awesome-design) - 🌟 Curated design resources from all over the world.
 - [alexpate/awesome-design-systems](https://github.com/alexpate/awesome-design-systems) - 💅🏻 ⚒ A collection of awesome design systems
 - [enaqx/awesome-pentest](https://github.com/enaqx/awesome-pentest) - A collection of awesome penetration testing resources, tools and other shiny things
-- [punkpeye/awesome-mcp-devtools](https://github.com/punkpeye/awesome-mcp-devtools) - A curated list of developer tools, SDKs, libraries, and testing utilities for Model Context Protocol (MCP) server development.
 - [MobinX/awesome-mcp-list](https://github.com/MobinX/awesome-mcp-list) - A concise list for mcp servers
 - [willccbb/claude-deep-research](https://github.com/willccbb/claude-deep-research) - Claude Deep Research config for Claude Code.
 - [markbattistella/docsify-auto-headers](https://github.com/markbattistella/docsify-auto-headers) - An auto heading numbering plugin for docsify.js
@@ -2311,7 +2309,6 @@
 - [essence-language/vscode-extension](https://github.com/essence-language/vscode-extension) - Visual Studio Code Extension for Essence
 - [dracula/dracula-theme](https://github.com/dracula/dracula-theme) - 🧛🏻‍♂️ One theme. All platforms.
 - [spuerFan/mcp-research](https://github.com/spuerFan/mcp-research) - Research and documentation about Model Context Protocol (MCP) servers and implementations
-- [punkpeye/awesome-mcp-clients](https://github.com/punkpeye/awesome-mcp-clients) - A collection of MCP clients.
 - [drwpow/awesome-terminal-backgrounds](https://github.com/drwpow/awesome-terminal-backgrounds) - ✨ very cool
 - [maguowei/awesome-stars](https://github.com/maguowei/awesome-stars) - My Awesome List
 - [harrytea/Awesome-Document-Understanding](https://github.com/harrytea/Awesome-Document-Understanding) - Document Artifical Intelligence
@@ -2329,7 +2326,6 @@
 - [rob-med/awesome-TS-anomaly-detection](https://github.com/rob-med/awesome-TS-anomaly-detection) - List of tools & datasets for anomaly detection on time-series data.
 - [yuan-shuhan/trustworthy-anomaly-detection-papers](https://github.com/yuan-shuhan/trustworthy-anomaly-detection-papers) - Papers on trustworthy anomaly detection
 - [Pikeras72/Hardstyle-Songs-AI-Generator](https://github.com/Pikeras72/Hardstyle-Songs-AI-Generator) - 🎵 Hardstyle AI Composer - Generative artificial intelligence model trained to compose Hardstyle music.🎵
-- [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) - A collection of MCP servers.
 - [deepseek-ai/DeepSeek-Coder-V2](https://github.com/deepseek-ai/DeepSeek-Coder-V2) - DeepSeek-Coder-V2: Breaking the Barrier of Closed-Source Models in Code Intelligence
 - [practical-tutorials/project-based-learning](https://github.com/practical-tutorials/project-based-learning) - Curated list of project-based tutorials
 - [Agent-Tools/awesome-autonomous-web](https://github.com/Agent-Tools/awesome-autonomous-web) - 
@@ -3244,7 +3240,6 @@
 - [ChandekarDhruvin/claude-openweather-mcp](https://github.com/ChandekarDhruvin/claude-openweather-mcp) - 
 - [anna8murphy/mcp-compare-zipcodes](https://github.com/anna8murphy/mcp-compare-zipcodes) - 
 - [radial-hks/mcp-server-proj](https://github.com/radial-hks/mcp-server-proj) - MCP Server PROJ (cartographic projections and coordinate transformations )
-- [aimino/imagemagic-mcp](https://github.com/aimino/imagemagic-mcp) - 
 - [SkyworkAI/Mureka-mcp](https://github.com/SkyworkAI/Mureka-mcp) - generate lyrics, song and background music(instrumental). Model Context Protocol (MCP) server.
 - [phretor/infosec-opml](https://github.com/phretor/infosec-opml) - My very personal and opinionatedly organized infosec/cybersec sources in one OPML file
 - [tuan3w/awesome-tech-rss](https://github.com/tuan3w/awesome-tech-rss) - List of awesome RSS channels related to startup, science and technology.
@@ -3479,7 +3474,6 @@
 - [yihong0618/GitHubPoster](https://github.com/yihong0618/GitHubPoster) - Make everything a GitHub svg poster and Skyline!
 - [zongmin-yu/sqlite-literature-management-fastmcp-mcp-server](https://github.com/zongmin-yu/sqlite-literature-management-fastmcp-mcp-server) - A flexible system for managing various types of sources (papers, books, webpages, etc.) and integrating them with knowledge graphs.
 - [kvas-it/mcp-server-fs](https://github.com/kvas-it/mcp-server-fs) - MCP server providing basic file system operations. Supports navigation, reading, writing, and analyzing files.
-- [punkpeye/mcp-filesystem-python](https://github.com/punkpeye/mcp-filesystem-python) - A MCP Filesystem implementation for Claude, written mostly by Claude
 - [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) - Open Source AI Platform - AI Chat with advanced features that works with every LLM
 - [NVlabs/VILA](https://github.com/NVlabs/VILA) - VILA is a family of state-of-the-art vision language models (VLMs) for diverse multimodal AI tasks across the edge, data center, and cloud.
 - [thunlp/LLaVA-UHD](https://github.com/thunlp/LLaVA-UHD) - LLaVA-UHD v3: Progressive Visual Compression for Efficient Native-Resolution Encoding in MLLMs
@@ -3615,7 +3609,7 @@
 - [chris-greening/instascrape](https://github.com/chris-greening/instascrape) - Powerful and flexible Instagram scraping library for Python, providing easy-to-use and expressive tools for accessing data programmatically
 - [uhh-lt/Taxonomy_Refinement_Embeddings](https://github.com/uhh-lt/Taxonomy_Refinement_Embeddings) - Taxonomy refinement method to improve domain-specific taxonomy systems.
 - [oneal2000/DRAGIN](https://github.com/oneal2000/DRAGIN) - Source code of DRAGIN, ACL 2024 main conference Long Paper (Oral)
-- [pydantic/pydantic-ai](https://github.com/pydantic/pydantic-ai) - GenAI Agent Framework, the Pydantic way
+- [pydantic/pydantic-ai](https://github.com/pydantic/pydantic-ai) - AI Agent Framework, the Pydantic way
 - [Malith-Rukshan/Suno-API](https://github.com/Malith-Rukshan/Suno-API) - SunoAI Unofficial Python API Library and REST API for Suno.ai — Create Music with Generative AI ! ✨
 - [gitmylo/audio-webui](https://github.com/gitmylo/audio-webui) - A webui for different audio related Neural Networks
 - [salu133445/lakh-pianoroll-dataset](https://github.com/salu133445/lakh-pianoroll-dataset) - A collection of 174,154 multi-track piano-rolls
@@ -4757,7 +4751,7 @@
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch) - A cross-platform desktop All-in-One assistant tool for Claude Code, Codex, OpenCode, openclaw & Gemini CLI.
 - [agentgateway/agentgateway](https://github.com/agentgateway/agentgateway) - Next Generation Agentic Proxy for AI Agents and MCP servers
 - [grafbase/grafbase](https://github.com/grafbase/grafbase) - The Grafbase GraphQL Federation Gateway
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Build web APIs for agents in Markdown
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
 - [microsoft/wassette](https://github.com/microsoft/wassette) - Wassette: A security-oriented runtime that runs WebAssembly Components via MCP
 - [aws/amazon-q-developer-cli](https://github.com/aws/amazon-q-developer-cli) - ✨ Agentic chat experience in your terminal. Build applications using natural language.
 - [j178/prek](https://github.com/j178/prek) - ⚡ Better `pre-commit`, re-engineered in Rust
@@ -5806,7 +5800,6 @@
 - [teoxoy/profile-readme-stats](https://github.com/teoxoy/profile-readme-stats) - Showcase your github stats on your profile README.md
 - [ryo-ma/github-profile-trophy](https://github.com/ryo-ma/github-profile-trophy) - 🏆 Add dynamically generated GitHub Stat Trophies  on your readme
 - [leerob/directories](https://github.com/leerob/directories) - Find rules and MCP servers
-- [punkpeye/fastmcp](https://github.com/punkpeye/fastmcp) - A TypeScript framework for building MCP servers.
 - [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) - Model Context Protocol Servers
 - [zaidmukaddam/scira](https://github.com/zaidmukaddam/scira) - Scira (Formerly MiniPerplx) is a minimalistic AI-powered search engine that helps you find information on the internet and cites it too. Powered by Vercel AI SDK!
 - [ahmedkhaleel2004/gitdiagram](https://github.com/ahmedkhaleel2004/gitdiagram) - Free, simple, fast interactive diagrams for any GitHub repository
