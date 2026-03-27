@@ -79,6 +79,7 @@
 - [development](#development)
 - [devops](#devops)
 - [discord](#discord)
+- [distributed-systems](#distributed-systems)
 - [django](#django)
 - [docker](#docker)
 - [documentation](#documentation)
@@ -350,7 +351,7 @@
 - [agent-infra/sandbox](https://github.com/agent-infra/sandbox) - All-in-One Sandbox for AI Agents that combines Browser, Shell, File, MCP and VSCode Server in a single Docker container.
 - [Onelevenvy/flock](https://github.com/Onelevenvy/flock) - Flock is a workflow-based low-code platform for rapidly building chatbots, RAG, and coordinating multi-agent teams, powered by LangGraph, Langchain, FastAPI, and NextJS.（Flock 是一个基于workflow工作流的低代码平台，用
 - [context-space/context-space](https://github.com/context-space/context-space) - Ultimate Context Engineering Infrastructure, starting from MCPs and Integrations
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The context development platform. Store, enrich, and retrieve structured knowledge with graph-native infrastructure, semantic retrieval, and portable context cores.
 - [derisk-ai/OpenDerisk](https://github.com/derisk-ai/OpenDerisk) - AI-Native Risk Intelligence Systems, OpenDeRisk——Your application system risk intelligent manager provides 7* 24-hour comprehensive and in-depth protection.
 - [Canner/wren-engine](https://github.com/Canner/wren-engine) - The open context engine for AI agents support 15+ data sources. MCP-native. Built on Rust and Apache DataFusion.
@@ -403,7 +404,7 @@
 - [AnotiaWang/deep-research-web-ui](https://github.com/AnotiaWang/deep-research-web-ui) - (Supports DeepSeek R1) An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.
 - [HKUDS/Auto-Deep-Research](https://github.com/HKUDS/Auto-Deep-Research) - "Your Fully-Automated Personal AI Assistant"
 - [zilliztech/deep-searcher](https://github.com/zilliztech/deep-searcher) - Open Source Deep Research Alternative to Reason and Search on Private Data. Written in Python.
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [leshchenko1979/fast-mcp-telegram](https://github.com/leshchenko1979/fast-mcp-telegram) - Telegram MCP Server and HTTP-MTProto bridge | Multi-user auth, intelligent search, file sending, web setup | Docker & PyPI ready
 - [gabrimatic/mcp-web-search-tool](https://github.com/gabrimatic/mcp-web-search-tool) - A MCP server providing real-time web search capabilities to any AI model.
 - [cyanheads/mcp-reporter](https://github.com/cyanheads/mcp-reporter) - mcp-reporter is a streamlined utility that generates comprehensive capability reports for Model Context Protocol servers, empowering developers to easily understand available functionality across thei
@@ -541,7 +542,7 @@
 - [grafbase/grafbase](https://github.com/grafbase/grafbase) - The Grafbase GraphQL Federation Gateway
 - [steipete/Peekaboo](https://github.com/steipete/Peekaboo) - Peekaboo is a macOS CLI & optional MCP server that enables AI agents to capture screenshots of applications, or the entire system, with optional visual question answering through local or remote AI mo
 - [context-space/context-space](https://github.com/context-space/context-space) - Ultimate Context Engineering Infrastructure, starting from MCPs and Integrations
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The context development platform. Store, enrich, and retrieve structured knowledge with graph-native infrastructure, semantic retrieval, and portable context cores.
 - [bytechefhq/bytechef](https://github.com/bytechefhq/bytechef) - Open-source, AI-native, low-code platform for API orchestration, workflow automation, and AI agent integration across internal systems and SaaS products.
 - [sigoden/llm-functions](https://github.com/sigoden/llm-functions) - Easily create LLM tools and agents using plain Bash/JavaScript/Python functions.
@@ -674,7 +675,7 @@
 - [gcui-art/suno-api](https://github.com/gcui-art/suno-api) - Use API to call the music generation AI of suno.ai, and easily integrate it into agents like GPTs.
 - [AnotiaWang/deep-research-web-ui](https://github.com/AnotiaWang/deep-research-web-ui) - (Supports DeepSeek R1) An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.
 - [PlanExeOrg/PlanExe](https://github.com/PlanExeOrg/PlanExe) - Create a plan from a description in minutes
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [revokslab/codecrawl](https://github.com/revokslab/codecrawl) - 🌊 Turn entire codebases into LLM-ready data. Extract data, search, and llms.txt from any repo with a single API.
 - [GoogleCloudPlatform/kubectl-ai](https://github.com/GoogleCloudPlatform/kubectl-ai) - AI powered Kubernetes Assistant
 - [mcp-use/mcp-use](https://github.com/mcp-use/mcp-use) - The fullstack MCP framework to develop MCP Apps for ChatGPT / Claude & MCP Servers for AI Agents.
@@ -1064,7 +1065,7 @@
 - [Klavis-AI/klavis](https://github.com/Klavis-AI/klavis) - Klavis AI:  MCP integration platforms that let AI agents use tools reliably at any scale
 - [aipotheosis-labs/aci](https://github.com/aipotheosis-labs/aci) - ACI.dev is the open source tool-calling platform that hooks up 600+ tools into any agentic IDE or custom AI agent through direct function calling or a unified MCP server. The birthplace of VibeOps.
 - [golf-mcp/golf](https://github.com/golf-mcp/golf) - Production-Ready MCP Server Framework • Build, deploy & scale secure AI agent infrastructure • Includes Auth, Observability, Debugger, Telemetry & Runtime • Run real-world MCPs powering AI Agents
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [gabrielbacha/MCP-Manager-GUI](https://github.com/gabrielbacha/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.
 - [cyanheads/model-context-protocol-resources](https://github.com/cyanheads/model-context-protocol-resources) - Exploring the Model Context Protocol (MCP) through practical guides, clients, and servers I've built while learning about this new protocol.
 - [lastmile-ai/openai-agents-mcp](https://github.com/lastmile-ai/openai-agents-mcp) - An MCP extension package for OpenAI Agents SDK
@@ -1168,7 +1169,7 @@
 - [ankane/ahoy](https://github.com/ankane/ahoy) - Simple, powerful, first-party analytics for Rails
 - [BaseSecrete/active_analytics](https://github.com/BaseSecrete/active_analytics) - First-party, privacy-focused traffic analytics for Ruby on Rails applications.
 - [Maciek-roboblog/Claude-Code-Usage-Monitor](https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor) - Real-time Claude Code usage monitor with predictions and warnings
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [subnetmarco/pgmcp](https://github.com/subnetmarco/pgmcp) - An MCP server to query any Postgres database in natural language.
 - [oceanbase/oceanbase](https://github.com/oceanbase/oceanbase) - The Fastest Distributed Database for Transactional, Analytical, and  AI Workloads.
 - [umami-software/umami](https://github.com/umami-software/umami) - Umami is a modern, privacy-focused analytics platform. An open-source alternative to Google Analytics, Mixpanel and Amplitude.
@@ -1285,7 +1286,7 @@
 - [fastapi/fastapi-vscode](https://github.com/fastapi/fastapi-vscode) - VS Code extension for FastAPI and friends ✨
 - [AndrewWalsh/demystify](https://github.com/AndrewWalsh/demystify) - Automated documentation for APIs
 - [grafbase/grafbase](https://github.com/grafbase/grafbase) - The Grafbase GraphQL Federation Gateway
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [bytechefhq/bytechef](https://github.com/bytechefhq/bytechef) - Open-source, AI-native, low-code platform for API orchestration, workflow automation, and AI agent integration across internal systems and SaaS products.
 - [airweave-ai/airweave](https://github.com/airweave-ai/airweave) - Open-source context retrieval layer for AI agents
 - [microsoft/rushstack](https://github.com/microsoft/rushstack) - Monorepo for tools developed by the Rush Stack community
@@ -1364,7 +1365,7 @@
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
 - [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) - A Claude Code plugin that automatically captures everything Claude does during your coding sessions, compresses it with AI (using Claude's agent-sdk), and injects relevant context back into future ses
 - [SmythOS/sre](https://github.com/SmythOS/sre) - The SmythOS Runtime Environment (SRE) is an open-source, cloud-native runtime for agentic AI. Secure, modular, and production-ready, it lets developers build, run, and manage intelligent agents across
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [Bessouat40/RAGLight](https://github.com/Bessouat40/RAGLight) - RAGLight is a modular framework for Retrieval-Augmented Generation (RAG). It makes it easy to plug in different LLMs, embeddings, and vector stores, and now includes seamless MCP integration to connec
 - [subnetmarco/pgmcp](https://github.com/subnetmarco/pgmcp) - An MCP server to query any Postgres database in natural language.
 - [cryxnet/DeepMCPAgent](https://github.com/cryxnet/DeepMCPAgent) - Model-agnostic plug-n-play LangChain/LangGraph agents powered entirely by MCP tools over HTTP/SSE.
@@ -1558,7 +1559,6 @@
 
 - [AnirudhG07/awesome-yazi](https://github.com/AnirudhG07/awesome-yazi) - A collection of Yazi's Plugins, flavours and more resources.
 - [VoltAgent/awesome-openclaw-skills](https://github.com/VoltAgent/awesome-openclaw-skills) - The awesome collection of OpenClaw skills. 5,400+ skills filtered and categorized from the official OpenClaw Skills Registry.🦞
-- [aden-hive/hive](https://github.com/aden-hive/hive) - Outcome driven agent development framework that evolves
 - [YouMind-OpenLab/awesome-nano-banana-pro-prompts](https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts) - 🍌 World's largest Nano Banana Pro prompt library — 10,000+ curated prompts with preview images, 16 languages. Google Gemini AI image generation. Free & open source.
 - [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) - A collection of 100+ specialized Claude Code subagents covering a wide range of development use cases
 - [etewiah/awesome-notebooklm](https://github.com/etewiah/awesome-notebooklm) - A curated list of tools related to notebooklm as well as examples of great podcasts generated by notebooklm
@@ -3301,7 +3301,7 @@
 ## data-engineering 
 
 - [astronomer/agents](https://github.com/astronomer/agents) - AI agent tooling for data engineering workflows.
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [cocoindex-io/cocoindex](https://github.com/cocoindex-io/cocoindex) - Data transformation framework for AI. Ultra performant, with incremental processing.  🌟 Star if you like it!
 - [Eventual-Inc/Daft](https://github.com/Eventual-Inc/Daft) - High-performance data engine for AI and multimodal workloads. Process images, audio, video, and structured data at any scale
 - [ruc-datalab/DeepAnalyze](https://github.com/ruc-datalab/DeepAnalyze) - DeepAnalyze is the first agentic LLM for autonomous data science. 🎈你的AI数据分析师，自动分析大量数据，一键生成专业分析报告！
@@ -3332,7 +3332,7 @@
 - [fastai/fastbook](https://github.com/fastai/fastbook) - The fastai book, published as Jupyter Notebooks
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
 - [kotartemiy/pygooglenews](https://github.com/kotartemiy/pygooglenews) - If Google News had a Python library
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [trustgraph-ai/trustgraph](https://github.com/trustgraph-ai/trustgraph) - The context development platform. Store, enrich, and retrieve structured knowledge with graph-native infrastructure, semantic retrieval, and portable context cores.
 - [Bessouat40/RAGLight](https://github.com/Bessouat40/RAGLight) - RAGLight is a modular framework for Retrieval-Augmented Generation (RAG). It makes it easy to plug in different LLMs, embeddings, and vector stores, and now includes seamless MCP integration to connec
 - [gradio-app/gradio](https://github.com/gradio-app/gradio) - Build and share delightful machine learning apps, all in Python. 🌟 Star to support our work!
@@ -3569,7 +3569,7 @@
 ## database 
 
 - [tursodatabase/turso](https://github.com/tursodatabase/turso) - Turso is an in-process SQL database, compatible with SQLite.
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [subnetmarco/pgmcp](https://github.com/subnetmarco/pgmcp) - An MCP server to query any Postgres database in natural language.
 - [bytebase/dbhub](https://github.com/bytebase/dbhub) - Zero-dependency, token-efficient database MCP server for Postgres, MySQL, SQL Server, MariaDB, SQLite.
 - [oceanbase/oceanbase](https://github.com/oceanbase/oceanbase) - The Fastest Distributed Database for Transactional, Analytical, and  AI Workloads.
@@ -4017,6 +4017,18 @@
 - [lucid-eleven/nft-discord-bot](https://github.com/lucid-eleven/nft-discord-bot) - Discord bot for ERC721 NFT collections
 - [Rapptz/discord.py](https://github.com/Rapptz/discord.py) - An API wrapper for Discord written in Python.
 - [tqdm/tqdm](https://github.com/tqdm/tqdm) - :zap: A Fast, Extensible Progress Bar for Python and CLI
+
+## distributed-systems 
+
+- [spacedriveapp/spacedrive](https://github.com/spacedriveapp/spacedrive) - Spacedrive is an open source cross-platform file explorer, powered by a virtual distributed filesystem written in Rust.
+- [Eventual-Inc/Daft](https://github.com/Eventual-Inc/Daft) - High-performance data engine for AI and multimodal workloads. Process images, audio, video, and structured data at any scale
+- [vesoft-inc/nebula](https://github.com/vesoft-inc/nebula) - A distributed, fast open-source graph database featuring horizontal scalability and high availability
+- [redis/redis](https://github.com/redis/redis) - For developers, who are building real-time data-driven applications, Redis is the preferred, fastest, and most feature-rich cache, data structure server, and document and vector query engine.
+- [conductor-oss/conductor](https://github.com/conductor-oss/conductor) - Conductor is an event driven agentic orchestration platform providing durable and highly resilient execution engine for applications and AI Agents
+- [Netflix/genie](https://github.com/Netflix/genie) - Distributed Big Data Orchestration Service
+- [pachyderm/pachyderm](https://github.com/pachyderm/pachyderm) - Data-Centric Pipelines and Data Versioning
+- [storj/storj](https://github.com/storj/storj) - Ongoing Storj v3 development. Decentralized cloud object storage that is affordable, easy to use, private, and secure.
+- [binhnguyennus/awesome-scalability](https://github.com/binhnguyennus/awesome-scalability) - The Patterns of Scalable, Reliable, and Performant Large-Scale Systems
 
 ## django 
 
@@ -6513,7 +6525,7 @@
 - [IAAR-Shanghai/SurveyX](https://github.com/IAAR-Shanghai/SurveyX) - Academic Survey Paper Generation.
 - [HKUDS/Auto-Deep-Research](https://github.com/HKUDS/Auto-Deep-Research) - "Your Fully-Automated Personal AI Assistant"
 - [zilliztech/deep-searcher](https://github.com/zilliztech/deep-searcher) - Open Source Deep Research Alternative to Reason and Search on Private Data. Written in Python.
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [revokslab/codecrawl](https://github.com/revokslab/codecrawl) - 🌊 Turn entire codebases into LLM-ready data. Extract data, search, and llms.txt from any repo with a single API.
 - [zxypro1/openapi-to-mcp-converter](https://github.com/zxypro1/openapi-to-mcp-converter) - A tool for automatically converting OpenAPI into Model Context Protocol (MCP) Server instance
 - [BjornMelin/unified-knowledge-system](https://github.com/BjornMelin/unified-knowledge-system) - A comprehensive unified knowledge management system integrating multiple data sources with advanced search capabilities
@@ -6943,7 +6955,7 @@
 - [hudson-and-thames/mlfinlab](https://github.com/hudson-and-thames/mlfinlab) - MlFinLab helps portfolio managers and traders who want to leverage the power of machine learning by providing reproducible, interpretable, and easy to use tools.
 - [onnx/onnx](https://github.com/onnx/onnx) - Open standard for machine learning interoperability
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [Eventual-Inc/Daft](https://github.com/Eventual-Inc/Daft) - High-performance data engine for AI and multimodal workloads. Process images, audio, video, and structured data at any scale
 - [K-Dense-AI/karpathy](https://github.com/K-Dense-AI/karpathy) - An agentic Machine Learning Engineer
 - [gradio-app/gradio](https://github.com/gradio-app/gradio) - Build and share delightful machine learning apps, all in Python. 🌟 Star to support our work!
@@ -7388,7 +7400,7 @@
 - [steventhanna/proton](https://github.com/steventhanna/proton) - A stand-alone application to quickly preview and edit Markdown files using Electron.
 - [brrd/abricotine](https://github.com/brrd/abricotine) - Markdown editor with inline preview
 - [ZeroSumQuant/claude-conversation-extractor](https://github.com/ZeroSumQuant/claude-conversation-extractor) - Extract clean conversation logs from Claude Code's internal storage
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [slidevjs/slidev](https://github.com/slidevjs/slidev) - Presentation Slides for Developers
 - [serkodev/markdown-exit](https://github.com/serkodev/markdown-exit) - Fast, customizable Markdown parser and renderer with full CommonMark support. TypeScript rewrite of markdown-it with enhancements.
 - [logseq/logseq](https://github.com/logseq/logseq) - A privacy-first, open-source platform for knowledge management and collaboration. Download link:  http://github.com/logseq/logseq/releases. roadmap: https://discuss.logseq.com/t/logseq-product-roadmap
@@ -7630,6 +7642,7 @@
 - [grafbase/grafbase](https://github.com/grafbase/grafbase) - The Grafbase GraphQL Federation Gateway
 - [steipete/Peekaboo](https://github.com/steipete/Peekaboo) - Peekaboo is a macOS CLI & optional MCP server that enables AI agents to capture screenshots of applications, or the entire system, with optional visual question answering through local or remote AI mo
 - [context-space/context-space](https://github.com/context-space/context-space) - Ultimate Context Engineering Infrastructure, starting from MCPs and Integrations
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [derisk-ai/OpenDerisk](https://github.com/derisk-ai/OpenDerisk) - AI-Native Risk Intelligence Systems, OpenDeRisk——Your application system risk intelligent manager provides 7* 24-hour comprehensive and in-depth protection.
 - [microsoft/wassette](https://github.com/microsoft/wassette) - Wassette: A security-oriented runtime that runs WebAssembly Components via MCP
 - [bytechefhq/bytechef](https://github.com/bytechefhq/bytechef) - Open-source, AI-native, low-code platform for API orchestration, workflow automation, and AI agent integration across internal systems and SaaS products.
@@ -8589,7 +8602,7 @@
 - [pinkpixel-dev/deep-research-mcp](https://github.com/pinkpixel-dev/deep-research-mcp) - A Model Context Protocol (MCP) compliant server designed for comprehensive web research. It uses Tavily's Search and Crawl APIs to gather detailed information on a given topic, then structures this da
 - [docmd-io/docmd](https://github.com/docmd-io/docmd) - Generate minimal, fast & beautiful docs from Markdown. No React, no bloat, just content. Built for developers.
 - [typograf/typograf](https://github.com/typograf/typograf) - 📖 Типографика на JavaScript
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [nativefier/nativefier](https://github.com/nativefier/nativefier) - Make any web page a desktop application
 - [chiunhau/p5-manager](https://github.com/chiunhau/p5-manager) - A p5js template builder & sketches manager. Built for p5js enthusiasts.
 - [Zettlr/Zettlr](https://github.com/Zettlr/Zettlr) - Your One-Stop Publication Workbench
@@ -12331,7 +12344,7 @@
 - [golf-mcp/golf](https://github.com/golf-mcp/golf) - Production-Ready MCP Server Framework • Build, deploy & scale secure AI agent infrastructure • Includes Auth, Observability, Debugger, Telemetry & Runtime • Run real-world MCPs powering AI Agents
 - [bytedance/Dolphin](https://github.com/bytedance/Dolphin) - The official repo for “Dolphin: Document Image Parsing via Heterogeneous Anchor Prompting”, ACL, 2025.
 - [openai/openai-python](https://github.com/openai/openai-python) - The official Python library for the OpenAI API
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [pypa/hatch](https://github.com/pypa/hatch) - Modern, extensible Python project management
 - [yaml/pyyaml](https://github.com/yaml/pyyaml) - Canonical source repository for PyYAML
 - [pydantic/pydantic-settings](https://github.com/pydantic/pydantic-settings) - Settings management using pydantic
@@ -13077,6 +13090,7 @@
 - [AmeNetwork/aser](https://github.com/AmeNetwork/aser) - Aser is a lightweight, self-assembling AI Agent frame.
 - [Onelevenvy/flock](https://github.com/Onelevenvy/flock) - Flock is a workflow-based low-code platform for rapidly building chatbots, RAG, and coordinating multi-agent teams, powered by LangGraph, Langchain, FastAPI, and NextJS.（Flock 是一个基于workflow工作流的低代码平台，用
 - [SmythOS/sre](https://github.com/SmythOS/sre) - The SmythOS Runtime Environment (SRE) is an open-source, cloud-native runtime for agentic AI. Secure, modular, and production-ready, it lets developers build, run, and manage intelligent agents across
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [derisk-ai/OpenDerisk](https://github.com/derisk-ai/OpenDerisk) - AI-Native Risk Intelligence Systems, OpenDeRisk——Your application system risk intelligent manager provides 7* 24-hour comprehensive and in-depth protection.
 - [Bessouat40/RAGLight](https://github.com/Bessouat40/RAGLight) - RAGLight is a modular framework for Retrieval-Augmented Generation (RAG). It makes it easy to plug in different LLMs, embeddings, and vector stores, and now includes seamless MCP integration to connec
 - [ggozad/haiku.rag](https://github.com/ggozad/haiku.rag) - Opinionated agentic RAG powered by LanceDB, Pydantic AI, and Docling
@@ -13754,7 +13768,7 @@
 - [agentgateway/agentgateway](https://github.com/agentgateway/agentgateway) - Next Generation Agentic Proxy for AI Agents and MCP servers
 - [winfunc/opcode](https://github.com/winfunc/opcode) - A powerful GUI app and Toolkit for Claude Code - Create custom agents, manage interactive Claude Code sessions, run secure background agents, and more.
 - [grafbase/grafbase](https://github.com/grafbase/grafbase) - The Grafbase GraphQL Federation Gateway
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [aws/amazon-q-developer-cli](https://github.com/aws/amazon-q-developer-cli) - ✨ Agentic chat experience in your terminal. Build applications using natural language.
 - [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep) - ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - [librespot-org/librespot](https://github.com/librespot-org/librespot) - Open Source Spotify client library
@@ -14126,7 +14140,7 @@
 
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
 - [tursodatabase/turso](https://github.com/tursodatabase/turso) - Turso is an in-process SQL database, compatible with SQLite.
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
+- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace framework — build the APIs and MCPs your agents need to understand and work with your data.
 - [Canner/wren-engine](https://github.com/Canner/wren-engine) - The open context engine for AI agents support 15+ data sources. MCP-native. Built on Rust and Apache DataFusion.
 - [bytebase/dbhub](https://github.com/bytebase/dbhub) - Zero-dependency, token-efficient database MCP server for Postgres, MySQL, SQL Server, MariaDB, SQLite.
 - [SeaQL/sea-orm](https://github.com/SeaQL/sea-orm) - 🐚 A powerful relational ORM for Rust
@@ -14822,7 +14836,7 @@
 - [kunwarVivek/mcp-github-project-manager](https://github.com/kunwarVivek/mcp-github-project-manager) - a mcp server to manage github project's functionality
 - [Zarestia-Dev/rclone-manager](https://github.com/Zarestia-Dev/rclone-manager) - RClone Manager is a cross-platform GUI application designed to help users manage Rclone remotes efficiently.
 - [gcui-art/suno-api](https://github.com/gcui-art/suno-api) - Use API to call the music generation AI of suno.ai, and easily integrate it into agents like GPTs.
-- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of tasks that coul
+- [bytedance/deer-flow](https://github.com/bytedance/deer-flow) - An open-source long-horizon SuperAgent harness that researches, codes, and creates. With the help of sandboxes, memories, tools, skill, subagents and message gateway, it handles different levels of ta
 - [colinhacks/zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation with static type inference
 - [vercel/turborepo](https://github.com/vercel/turborepo) - Build system optimized for JavaScript and TypeScript, written in Rust
 - [belnadris/angular-electron](https://github.com/belnadris/angular-electron) - Ultra-fast bootstrapping with Angular and Electron :speedboat:
@@ -15402,7 +15416,6 @@
 
 ## webapp 
 
-- [statespace-tech/statespace](https://github.com/statespace-tech/statespace) - Statespace — Build agent-native APIs.
 - [donnemartin/system-design-primer](https://github.com/donnemartin/system-design-primer) - Learn how to design large-scale systems. Prep for the system design interview.  Includes Anki flashcards.
 - [toolswatch/blackhat-arsenal-tools](https://github.com/toolswatch/blackhat-arsenal-tools) - Official Black Hat Arsenal Security Tools Repository
 - [imputnet/cobalt](https://github.com/imputnet/cobalt) - best way to save what you love
