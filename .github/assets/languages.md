@@ -1256,7 +1256,6 @@
 - [firecrawl/firecrawl-mcp-server](https://github.com/firecrawl/firecrawl-mcp-server) - 🔥 Official Firecrawl MCP Server - Adds powerful web scraping and search to Cursor, Claude and any other LLM clients.
 - [e2b-dev/mcp-server](https://github.com/e2b-dev/mcp-server) - Giving Claude ability to run code with E2B via MCP (Model Context Protocol)
 - [Daksh777/SpotifyNoPremium](https://github.com/Daksh777/SpotifyNoPremium) - A cross-platform Spicetify theme which declutters Spotify stock UI and removes all ads.
-- [sanoojes/spicetify-lucid](https://github.com/sanoojes/spicetify-lucid) - A Dynamic, Highly Customizable Spicetify theme inspired by Bloom and Microsoft Fluent Design.
 - [Tetrax-10/Nord-Spotify](https://github.com/Tetrax-10/Nord-Spotify) - Nord Themed Spotify
 - [Comfy-Themes/Spicetify](https://github.com/Comfy-Themes/Spicetify) - Stay comfy while listening to music
 - [spicetify/cli](https://github.com/spicetify/cli) - Command-line tool to customize Spotify client. Supports Windows, macOS, and Linux.
