@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-03-29T03:14:18.330882+00:00",
+  "generated_at": "2026-03-29T05:12:33.033302+00:00",
   "output_dir": ".github/assets/img",
-  "total_assets": 8,
+  "total_assets": 12,
   "counts": {
     "source_svg": 6,
-    "compatibility_gif": 2,
+    "compatibility_gif": 6,
     "timelapse_gif": 0
   },
   "styles": [
@@ -17,13 +17,49 @@
   ],
   "assets": [
     {
+      "name": "ferrofluid-growth.gif",
+      "path": "ferrofluid-growth.gif",
+      "style": "ferrofluid",
+      "style_label": "Ferrofluid",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 2217
+    },
+    {
+      "name": "genetic-growth.gif",
+      "path": "genetic-growth.gif",
+      "style": "genetic",
+      "style_label": "Genetic Landscape",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 199318
+    },
+    {
       "name": "inkgarden-growth.gif",
       "path": "inkgarden-growth.gif",
       "style": "inkgarden",
       "style_label": "Ink Garden",
       "channel": "compatibility_gif",
       "variant": "default",
-      "bytes": 1894694
+      "bytes": 2480227
+    },
+    {
+      "name": "lenia-growth.gif",
+      "path": "lenia-growth.gif",
+      "style": "lenia",
+      "style_label": "Lenia",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 746
+    },
+    {
+      "name": "physarum-growth.gif",
+      "path": "physarum-growth.gif",
+      "style": "physarum",
+      "style_label": "Physarum",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 746
     },
     {
       "name": "topo-growth.gif",
@@ -32,7 +68,7 @@
       "style_label": "Topography",
       "channel": "compatibility_gif",
       "variant": "default",
-      "bytes": 1285783
+      "bytes": 2711750
     },
     {
       "name": "ferrofluid-growth-animated.svg",
@@ -41,7 +77,7 @@
       "style_label": "Ferrofluid",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 1491971
+      "bytes": 1445575
     },
     {
       "name": "genetic-growth-animated.svg",
@@ -50,7 +86,7 @@
       "style_label": "Genetic Landscape",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 377931
+      "bytes": 423700
     },
     {
       "name": "inkgarden-growth-animated.svg",
@@ -59,7 +95,7 @@
       "style_label": "Ink Garden",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 7241315
+      "bytes": 7101376
     },
     {
       "name": "lenia-growth-animated.svg",
@@ -68,7 +104,7 @@
       "style_label": "Lenia",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 689503
+      "bytes": 682508
     },
     {
       "name": "physarum-growth-animated.svg",
@@ -77,7 +113,7 @@
       "style_label": "Physarum",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 321984
+      "bytes": 323825
     },
     {
       "name": "topo-growth-animated.svg",
@@ -86,7 +122,7 @@
       "style_label": "Topography",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 14144841
+      "bytes": 14159323
     }
   ]
 }
