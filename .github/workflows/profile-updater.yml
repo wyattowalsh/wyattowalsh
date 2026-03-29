@@ -213,6 +213,7 @@ jobs:
         continue-on-error: true
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
+          output_action: none
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
@@ -258,6 +259,7 @@ jobs:
         if: ${{ steps.personal_metrics.outcome != 'success' || steps.check_personal_metrics.outputs.needs_fallback == 'true' }}
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
+          output_action: none
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
@@ -290,6 +292,7 @@ jobs:
         continue-on-error: true
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
+          output_action: none
           filename: .github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
@@ -331,6 +334,7 @@ jobs:
         if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.check_additional_metrics.outputs.needs_fallback == 'true' }}
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
+          output_action: none
           filename: .github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
@@ -435,6 +439,9 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --all-groups
+
+      - name: Install librsvg for GIF rasterization
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
 
       - name: Prepare living-art staging directory
         run: |
