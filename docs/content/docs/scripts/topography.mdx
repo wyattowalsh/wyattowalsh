@@ -42,7 +42,7 @@ svg = generate(metrics, seed="portfolio-map", maturity=0.9, timeline=True)
 
 ## Timeline versus static export
 
-Topography has a stricter split between authored animation and export-safe output than the animated pair:
+Topography has a stricter split between authored animation and export-safe output than the rest of the living-art suite:
 
 - `timeline=True` enables CSS-driven reveal choreography and treats the terrain as fully mature while the map animates into view.
 - `timeline=False` produces a static composition with no timeline CSS injected. This is the mode used for frame rendering in `scripts/art/animate.py` and for contexts that flatten animation.
@@ -80,6 +80,6 @@ Topography reads `WorldState` to keep its atmosphere aligned with the other livi
     Shared atmospheric semantics across living-art generators
   </Card>
   <Card href="/docs/scripts/living-art-modes" title="Living Art Modes">
-    Preview, export, and compatibility constraints for all four generators
+    Preview, export, and compatibility constraints for the six-style suite
   </Card>
 </Cards>

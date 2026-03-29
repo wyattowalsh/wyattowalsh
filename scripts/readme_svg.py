@@ -931,20 +931,40 @@ class SvgRepoCardRenderer:
         lt = LIGHT_THEME
         dk = DARK_THEME
         ac = accent or lt.accent
-        # Use direct colors instead of CSS custom properties — GitHub's SVG
-        # sanitizer does not resolve var() in <img> context.
+        # CSS custom properties for elements that use var() references
+        # (repo icon fill, thumb border, sparkline gradient).
+        # Class-based rules provide the primary dark-mode switch;
+        # :root variables cover inline var() usages.
         return "\n".join(
             [
+                f":root {{",
+                f"  --card-bg: transparent;",
+                f"  --card-border: {lt.border};",
+                f"  --title-color: {lt.title_color};",
+                f"  --text-color: {lt.text_color};",
+                f"  --meta-color: {lt.meta_color};",
+                f"  --accent: {lt.accent};",
+                f"  --spark-stroke: {ac};",
+                f"}}",
+                f"@media (prefers-color-scheme: dark) {{ :root {{",
+                f"  --card-bg: transparent;",
+                f"  --card-border: {dk.border};",
+                f"  --title-color: {dk.title_color};",
+                f"  --text-color: {dk.text_color};",
+                f"  --meta-color: {dk.meta_color};",
+                f"  --accent: {dk.accent};",
+                f"  --spark-stroke: {dk.accent};",
+                f"}}}}",
                 f".rc-bg {{ fill: transparent; }}",
                 f".rc-border {{ stroke: {lt.border}; }}",
                 f".rc-title {{ fill: {lt.link_color};"
                 f" font: 600 17px {FONT_FAMILY}; }}",
                 f".rc-desc {{ fill: {lt.text_color};"
                 f" font: 400 13px {FONT_FAMILY}; }}",
-                f".rc-meta {{ fill: #24292e;"
+                f".rc-meta {{ fill: {lt.meta_color};"
                 f" font: 400 12px {FONT_FAMILY}; }}",
                 ".rc-lang-dot { stroke: none; }",
-                f".rc-lang-label {{ fill: #24292e;"
+                f".rc-lang-label {{ fill: {lt.meta_color};"
                 f" font: 400 12px {FONT_FAMILY}; }}",
                 f".sparkline {{ fill: none; stroke: {ac};"
                 " stroke-width: 2; opacity: 0.88; }",
@@ -953,8 +973,8 @@ class SvgRepoCardRenderer:
                 f"  .rc-border {{ stroke: {dk.border}; }}",
                 f"  .rc-title {{ fill: {dk.link_color}; }}",
                 f"  .rc-desc {{ fill: {dk.text_color}; }}",
-                f"  .rc-meta {{ fill: {dk.text_color}; }}",
-                f"  .rc-lang-label {{ fill: {dk.text_color}; }}",
+                f"  .rc-meta {{ fill: {dk.meta_color}; }}",
+                f"  .rc-lang-label {{ fill: {dk.meta_color}; }}",
                 f"  .sparkline {{ stroke: {dk.accent}; }}",
                 "}",
             ]

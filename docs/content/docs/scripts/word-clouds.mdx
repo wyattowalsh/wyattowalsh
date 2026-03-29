@@ -69,7 +69,7 @@ Under `word_cloud_settings` in `config.yaml`:
 word_cloud_settings:
   output_dir: .github/assets/img
   output_filename: word_cloud.png
-  max_words: 180
+  max_words: 1000
   prompt: "My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React"
   stopwords: []         # Additional stopwords list
   layout_readability:
@@ -84,11 +84,13 @@ word_cloud_settings:
 Key knobs:
 
 - `max_words` limits the generated vocabulary before rendering for both classic and SVG backends
+- `stopwords` filters explicit prompt terms and markdown-derived frequencies before layout
 - `standard_rotations` controls the general rotation palette
 - `large_word_rotations` applies only to the largest words in the layout
 - `large_word_threshold_ratio` decides which words count as "large"
 - `reading_flow_weight` increases or relaxes the cost of difficult rotations
 - `target_aspect_ratio` and `landscape_bias_weight` steer the solver toward wider layouts
+- `prompt` is tokenized from comma/newline separated tags or free text when you generate directly from text
 
 ## Output files
 

@@ -3,16 +3,17 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Annotated, Any
+from typing import Annotated, Any, Mapping
 
 import typer
 
-from ..art.artifacts import sync_living_art_artifacts
+from ..art.artifacts import LIVING_ART_STYLE_KEYS, sync_living_art_artifacts
 from ..config import (
     DEFAULT_CONFIG_PATH,
     DEFAULT_SKILLS_PATH,
@@ -60,6 +61,75 @@ def _refresh_living_art_artifacts(output_dir: Path) -> None:
         f"{manifest['total_assets']} assets, "
         f"manifest={manifest_path}, gallery={gallery_path}"
     )
+
+
+def _format_style_help(styles: tuple[str, ...]) -> str:
+    """Render a human-readable style list for CLI help text."""
+    if not styles:
+        return ""
+    if len(styles) == 1:
+        return styles[0]
+    return f"{', '.join(styles[:-1])}, or {styles[-1]}"
+
+
+_LIVING_ART_STYLE_HELP = _format_style_help(LIVING_ART_STYLE_KEYS)
+
+
+def _selected_living_art_styles(only: str | None) -> tuple[str, ...]:
+    """Return the active living-art styles for this command invocation."""
+    if only:
+        if only not in LIVING_ART_STYLE_KEYS:
+            console.print(
+                f"[bold red]Error:[/bold red] Unknown style [bold]{only}[/bold]. "
+                f"Choose from: {_LIVING_ART_STYLE_HELP}"
+            )
+            raise typer.Exit(code=1)
+        return (only,)
+    return tuple(LIVING_ART_STYLE_KEYS)
+
+
+def _growth_output_paths(styles: tuple[str, ...], suffix: str) -> list[Path]:
+    """Compute the expected growth output paths for the selected styles."""
+    output_dir = Path(".github/assets/img")
+    return [output_dir / f"{style}{suffix}" for style in styles]
+
+
+def _apply_stopword_filter(
+    frequencies: Mapping[str, int | float],
+    stopwords_list: list[str],
+) -> dict[str, int | float]:
+    """Drop case-insensitive stopwords from explicit frequency maps."""
+    blocked = {word.strip().casefold() for word in stopwords_list if word.strip()}
+    if not blocked:
+        return dict(frequencies)
+    return {
+        term: weight
+        for term, weight in frequencies.items()
+        if term.casefold() not in blocked
+    }
+
+
+def _prompt_to_frequencies(text: str, stopwords_list: list[str]) -> dict[str, float]:
+    """Derive prompt frequencies from tags or free text."""
+    blocked = {word.strip().casefold() for word in stopwords_list if word.strip()}
+
+    chunked = [chunk.strip() for chunk in re.split(r"[\n,;|]+", text) if chunk.strip()]
+    if len(chunked) > 1:
+        frequencies: dict[str, float] = {}
+        for chunk in chunked:
+            phrase = chunk.split(":", 1)[-1].strip()
+            if not phrase or phrase.casefold() in blocked:
+                continue
+            frequencies[phrase] = frequencies.get(phrase, 0.0) + 1.0
+        if frequencies:
+            return frequencies
+
+    frequencies: dict[str, float] = {}
+    for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9+#.\-]*", text):
+        if token.casefold() in blocked:
+            continue
+        frequencies[token] = frequencies.get(token, 0.0) + 1.0
+    return frequencies
 
 
 # ---------------------------------------------------------------------------
@@ -390,12 +460,12 @@ def _wc_import():
         from ..techs import Technology, load_technologies
         from ..word_clouds import (
             DEFAULT_FONT_PATH,
+            DEFAULT_MAX_WORDS,
             LANGUAGES_MD_PATH,
             PROFILE_IMG_OUTPUT_DIR,
             TOPICS_MD_PATH,
             WordCloudGenerator,
             WordCloudSettings,
-            _filter_others,
             parse_markdown_for_word_cloud_frequencies,
         )
 
@@ -403,12 +473,12 @@ def _wc_import():
             Technology=Technology,
             load_technologies=load_technologies,
             DEFAULT_FONT_PATH=DEFAULT_FONT_PATH,
+            DEFAULT_MAX_WORDS=DEFAULT_MAX_WORDS,
             LANGUAGES_MD_PATH=LANGUAGES_MD_PATH,
             PROFILE_IMG_OUTPUT_DIR=PROFILE_IMG_OUTPUT_DIR,
             TOPICS_MD_PATH=TOPICS_MD_PATH,
             WordCloudGenerator=WordCloudGenerator,
             WordCloudSettings=WordCloudSettings,
-            _filter_others=_filter_others,
             parse_markdown_for_word_cloud_frequencies=parse_markdown_for_word_cloud_frequencies,
         )
     except ImportError as e_import:
@@ -423,46 +493,58 @@ def _wc_import():
         raise typer.Exit(code=1)
 
 
-def _wc_from_topics(
+def _wc_from_markdown(
     wc,
+    md_path: Path,
+    source: str,
+    color_func_name: str,
     output_path: Path | None,
     stopwords_list: list[str],
+    max_words: int,
     layout_readability=None,
 ) -> Path | None:
-    """Generate word cloud from topics.md with topic-specific overrides."""
-    logger.info("Generating word cloud from topics.md: {path}", path=wc.TOPICS_MD_PATH)
-    if not wc.TOPICS_MD_PATH.exists():
+    """Generate word cloud from a markdown file with source-specific overrides."""
+    logger.info("Generating word cloud from {}: {}", source, md_path)
+    if not md_path.exists():
         logger.error(
-            f"Topics Markdown file not found: {wc.TOPICS_MD_PATH}. "
-            "Cannot generate topics word cloud via CLI."
+            f"Markdown file not found: {md_path}. "
+            f"Cannot generate {source} word cloud via CLI."
         )
         return None
 
-    frequencies = wc._filter_others(
-        wc.parse_markdown_for_word_cloud_frequencies(wc.TOPICS_MD_PATH)
+    frequencies = _apply_stopword_filter(
+        wc.parse_markdown_for_word_cloud_frequencies(md_path),
+        stopwords_list,
     )
     if not frequencies:
         logger.warning(
-            f"No frequencies parsed from {wc.TOPICS_MD_PATH.name}, "
-            "skipping topics word cloud generation via CLI."
+            f"No frequencies parsed from {md_path.name}, "
+            f"skipping {source} word cloud generation via CLI."
         )
         return None
 
     num_terms = len(frequencies)
+    effective_max_words = min(max_words, num_terms)
     logger.info(
-        f"Setting max_words to {num_terms} to include all "
-        f"terms from {wc.TOPICS_MD_PATH.name}."
+        f"Using max_words={effective_max_words} for "
+        f"{md_path.name} ({num_terms} filtered terms)."
     )
 
-    out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
+    out_dir = (
+        Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_metaheuristic-anim_by_topics.svg"
+    out_filename = (
+        output_path.name
+        if output_path
+        else f"wordcloud_metaheuristic-anim_by_{source}.svg"
+    )
 
     settings = wc.WordCloudSettings(
         renderer="metaheuristic-anim",
         width=1200,
         height=800,
-        max_words=num_terms,
+        max_words=effective_max_words,
         output_dir=str(out_dir),
         layout_readability=layout_readability,
     )
@@ -470,8 +552,22 @@ def _wc_from_topics(
     return generator.generate(
         frequencies=frequencies,
         output_path=out_dir / out_filename,
-        source="topics",
-        color_func_name="ocean",
+        source=source,
+        color_func_name=color_func_name,
+    )
+
+
+def _wc_from_topics(
+    wc,
+    output_path: Path | None,
+    stopwords_list: list[str],
+    max_words: int,
+    layout_readability=None,
+) -> Path | None:
+    """Generate word cloud from topics.md with topic-specific overrides."""
+    return _wc_from_markdown(
+        wc, wc.TOPICS_MD_PATH, "topics", "ocean",
+        output_path, stopwords_list, max_words, layout_readability,
     )
 
 
@@ -479,53 +575,13 @@ def _wc_from_languages(
     wc,
     output_path: Path | None,
     stopwords_list: list[str],
+    max_words: int,
     layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
-    logger.info(
-        f"Generating word cloud from languages.md: {wc.LANGUAGES_MD_PATH}"
-    )
-    if not wc.LANGUAGES_MD_PATH.exists():
-        logger.error(
-            f"Languages Markdown file not found: {wc.LANGUAGES_MD_PATH}. "
-            "Cannot generate languages word cloud via CLI."
-        )
-        return None
-
-    frequencies = wc._filter_others(
-        wc.parse_markdown_for_word_cloud_frequencies(wc.LANGUAGES_MD_PATH)
-    )
-    if not frequencies:
-        logger.warning(
-            f"No frequencies parsed from {wc.LANGUAGES_MD_PATH.name}, "
-            "skipping languages word cloud generation via CLI."
-        )
-        return None
-
-    num_terms = len(frequencies)
-    logger.info(
-        f"Setting max_words to {num_terms} to include all "
-        f"terms from {wc.LANGUAGES_MD_PATH.name}."
-    )
-
-    out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = output_path.name if output_path else "wordcloud_metaheuristic-anim_by_languages.svg"
-
-    settings = wc.WordCloudSettings(
-        renderer="metaheuristic-anim",
-        width=1200,
-        height=800,
-        max_words=num_terms,
-        output_dir=str(out_dir),
-        layout_readability=layout_readability,
-    )
-    generator = wc.WordCloudGenerator(base_settings=settings)
-    return generator.generate(
-        frequencies=frequencies,
-        output_path=out_dir / out_filename,
-        source="languages",
-        color_func_name="aurora",
+    return _wc_from_markdown(
+        wc, wc.LANGUAGES_MD_PATH, "languages", "aurora",
+        output_path, stopwords_list, max_words, layout_readability,
     )
 
 
@@ -533,6 +589,8 @@ def _wc_from_techs(
     wc,
     techs_path: Path,
     output_path: Path | None,
+    stopwords_list: list[str],
+    max_words: int,
     layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
@@ -546,9 +604,12 @@ def _wc_from_techs(
         )
         return None
 
-    frequencies: dict[str, float] = {
-        tech.name: float(tech.level) for tech in loaded_techs_list
-    }
+    frequencies = _apply_stopword_filter(
+        {
+            tech.name: float(tech.level) for tech in loaded_techs_list
+        },
+        stopwords_list,
+    )
     if not frequencies:
         logger.warning(
             f"No frequencies derived from {techs_path}."
@@ -565,6 +626,7 @@ def _wc_from_techs(
 
     settings = wc.WordCloudSettings(
         output_dir=str(out_dir),
+        max_words=max_words,
         layout_readability=layout_readability,
     )
     generator = wc.WordCloudGenerator(base_settings=settings)
@@ -581,20 +643,29 @@ def _wc_from_prompt(
     wc,
     text: str,
     output_path: Path | None,
+    stopwords_list: list[str],
+    max_words: int,
     layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from a text prompt."""
     logger.info("Generating word cloud from text (prompt).")
+
+    frequencies = _prompt_to_frequencies(text, stopwords_list)
+    if not frequencies:
+        logger.error("Prompt produced no usable terms after stopword filtering.")
+        return None
 
     out_dir = Path(output_path.parent) if output_path else Path(wc.WordCloudSettings().output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     settings = wc.WordCloudSettings(
         output_dir=str(out_dir),
+        max_words=max_words,
         layout_readability=layout_readability,
     )
     generator = wc.WordCloudGenerator(base_settings=settings)
     return generator.generate(
+        frequencies=frequencies,
         output_path=output_path,
         source="prompt",
     )
@@ -680,6 +751,10 @@ def word_cloud(
     stopwords_list: list[str] = []
     if config_wc_model and config_wc_model.stopwords:
         stopwords_list.extend(config_wc_model.stopwords)
+    max_words = max(
+        1,
+        int(getattr(config_wc_model, "max_words", wc.DEFAULT_MAX_WORDS)),
+    )
 
     generated_path: Path | None = None
     layout_readability = getattr(config_wc_model, "layout_readability", None)
@@ -689,6 +764,7 @@ def word_cloud(
             wc,
             output_path,
             stopwords_list,
+            max_words,
             layout_readability=layout_readability,
         )
 
@@ -697,6 +773,7 @@ def word_cloud(
             wc,
             output_path,
             stopwords_list,
+            max_words,
             layout_readability=layout_readability,
         )
 
@@ -705,6 +782,8 @@ def word_cloud(
             wc,
             techs_path,
             output_path,
+            stopwords_list,
+            max_words,
             layout_readability=layout_readability,
         )
 
@@ -725,6 +804,8 @@ def word_cloud(
                 wc,
                 effective_prompt,
                 output_path,
+                stopwords_list,
+                max_words,
                 layout_readability=layout_readability,
             )
         else:
@@ -873,7 +954,7 @@ def living_art(
         str | None,
         typer.Option(
             "--only",
-            help="Restrict generation to one style: inkgarden or topo.",
+            help=f"Restrict to one style: {_LIVING_ART_STYLE_HELP}.",
             rich_help_panel="Living Art Options",
         ),
     ] = None,
@@ -905,6 +986,7 @@ def living_art(
     """Generate living-art assets with dual-write compatibility by default."""
     _load_project_config(config_path)  # validate config exists
 
+    active_styles = _selected_living_art_styles(only)
     base_cmd = [sys.executable, "-m", "scripts.art.animate", "--profile", profile]
     if only:
         base_cmd.extend(["--only", only])
@@ -918,11 +1000,9 @@ def living_art(
             [*base_cmd, "--svg", "--frames", str(svg_frames)],
             check=True,
         )
-        console.print(
-            "[bold green]Generated timeline SVGs:[/] "
-            ".github/assets/img/inkgarden-growth-animated.svg, "
-            ".github/assets/img/topo-growth-animated.svg"
-        )
+        console.print("[bold green]Generated timeline SVGs:[/]")
+        for path in _growth_output_paths(active_styles, "-growth-animated.svg"):
+            console.print(f"  - {path}")
     except subprocess.CalledProcessError as exc:
         logger.error("Living-art SVG generation failed: {}", exc)
         raise typer.Exit(code=1) from exc
@@ -938,11 +1018,9 @@ def living_art(
             [*base_cmd, "--frames", str(frames), "--size", str(size)],
             check=True,
         )
-        console.print(
-            "[bold green]Generated compatibility GIFs:[/] "
-            ".github/assets/img/inkgarden-growth.gif, "
-            ".github/assets/img/topo-growth.gif"
-        )
+        console.print("[bold green]Generated compatibility GIFs:[/]")
+        for path in _growth_output_paths(active_styles, "-growth.gif"):
+            console.print(f"  - {path}")
     except subprocess.CalledProcessError as exc:
         logger.error("Living-art GIF generation failed: {}", exc)
         raise typer.Exit(code=1) from exc
@@ -1014,7 +1092,7 @@ def timelapse(
         str | None,
         typer.Option(
             "--only",
-            help="Restrict to one style: inkgarden or topo.",
+            help=f"Restrict to one style: {_LIVING_ART_STYLE_HELP}.",
             rich_help_panel="Timelapse Options",
         ),
     ] = None,

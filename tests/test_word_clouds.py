@@ -1,5 +1,5 @@
-from pathlib import Path
 import random
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -12,7 +12,7 @@ from scripts.word_clouds import (
     _filter_others,
     parse_markdown_for_word_cloud_frequencies,
 )
-from scripts.word_clouds.core import resolve_preferred_wordcloud_font_path
+from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
 from scripts.word_clouds.metaheuristic import MetaheuristicAnimRenderer
 from scripts.word_clouds.solvers import (
     _aesthetic_cost,
@@ -134,7 +134,11 @@ def test_filter_others_removes_variants() -> None:
 
 
 def test_metaheuristic_prepare_words_lowercases_and_filters_generic_buckets() -> None:
-    renderer = MetaheuristicAnimRenderer(width=1200, height=800, color_func_name="ocean")
+    renderer = MetaheuristicAnimRenderer(
+        width=1200,
+        height=800,
+        color_func_name="ocean",
+    )
 
     texts, sizes, freqs, colors, weights, opacities = renderer._prepare_words(
         {"Python": 3, "OTHER": 10, "Go": 2, "Others": 7}
@@ -149,11 +153,17 @@ def test_metaheuristic_prepare_words_lowercases_and_filters_generic_buckets() ->
 
 
 def test_metaheuristic_prepare_words_keeps_all_non_others_items() -> None:
-    renderer = MetaheuristicAnimRenderer(width=1200, height=800, color_func_name="aurora")
+    renderer = MetaheuristicAnimRenderer(
+        width=1200,
+        height=800,
+        color_func_name="aurora",
+    )
     frequencies = {f"Topic{i}": float(300 - i) for i in range(180)}
     frequencies["others"] = 999.0
 
-    texts, sizes, freqs, colors, weights, opacities = renderer._prepare_words(frequencies)
+    texts, sizes, freqs, colors, weights, opacities = renderer._prepare_words(
+        frequencies
+    )
 
     assert len(texts) == 180
     assert len(set(texts)) == 180
@@ -176,7 +186,9 @@ def test_wordcloud_settings_include_layout_readability() -> None:
 
     assert isinstance(settings.layout_readability, LayoutReadabilitySettings)
     assert settings.layout_readability.target_aspect_ratio > 1.0
-    assert settings.layout_readability.standard_rotations.count(0.0) > settings.layout_readability.standard_rotations.count(90.0)
+    assert settings.layout_readability.standard_rotations.count(0.0) > (
+        settings.layout_readability.standard_rotations.count(90.0)
+    )
 
 
 def test_aesthetic_cost_prefers_horizontal_landscape_layout() -> None:
@@ -222,6 +234,70 @@ def test_typographic_renderer_keeps_horizontal_layout() -> None:
 
     assert placed
     assert all(word.rotation == 0 for word in placed)
+
+
+def test_metaheuristic_place_words_passes_word_sizes_to_readability_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    renderer = MetaheuristicAnimRenderer(
+        width=1200,
+        height=800,
+        layout_readability=LayoutReadabilitySettings(),
+    )
+    captured: dict[str, object] = {}
+
+    def fake_configure(layout_readability, *, word_sizes=None):
+        captured["layout_readability"] = layout_readability
+        captured["word_sizes"] = list(word_sizes or [])
+
+    def fake_solve(
+        n_words: int,
+        sizes: list[float],
+        canvas_w: float,
+        canvas_h: float,
+        max_iter: int,
+        rng: random.Random,
+        texts: list[str] | None = None,
+        pop_size: int | None = None,
+    ) -> list[tuple[float, float, float]]:
+        return [(100.0, 120.0, 0.0)] * n_words
+
+    def fake_render_frame(
+        name: str,
+        positions: list[tuple[float, float, float]],
+        texts: list[str],
+        sizes: list[float],
+        colors: list[str],
+        weights: list[int],
+        opacities: list[float],
+    ) -> list[PlacedWord]:
+        return [
+            PlacedWord(
+                text=texts[index],
+                font_size=sizes[index],
+                x=positions[index][0],
+                y=positions[index][1],
+                rotation=positions[index][2],
+                color=colors[index],
+                font_weight=weights[index],
+                opacity=opacities[index],
+            )
+            for index in range(len(texts))
+        ]
+
+    monkeypatch.setattr(
+        metaheuristic_module,
+        "configure_layout_readability",
+        fake_configure,
+    )
+    monkeypatch.setattr(metaheuristic_module, "_solve_harmony_search", fake_solve)
+    monkeypatch.setattr(renderer, "_render_frame", fake_render_frame)
+
+    placed = renderer.place_words({"Python": 9.0, "Go": 3.0})
+
+    assert {word.text for word in placed} == {"python", "go"}
+    assert captured["layout_readability"] == renderer.layout_readability
+    assert captured["word_sizes"] == [72.0, 7.0]
 
 
 def test_all_words_placed_wordle() -> None:
@@ -316,6 +392,45 @@ def test_generator_limits_svg_frequencies_to_max_words(
     assert captured["frequencies"] == {"Python": 10, "Rust": 8}
 
 
+def test_generator_uses_renderer_specific_default_filename_for_svg_frequencies(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_generate_svg(
+        renderer_name: str,
+        frequencies: dict[str, int | float],
+        output_path: str | Path,
+        width: int = 0,
+        height: int = 0,
+        **kwargs,
+    ) -> None:
+        captured["renderer"] = renderer_name
+        captured["output_path"] = Path(output_path)
+        Path(output_path).write_text("<svg />", encoding="utf-8")
+
+    monkeypatch.setattr("scripts.word_clouds.generate._generate_svg", fake_generate_svg)
+
+    generator = WordCloudGenerator(
+        base_settings=WordCloudSettings(
+            renderer="clustered",
+            output_dir=str(tmp_path),
+        )
+    )
+
+    result = generator.generate(
+        frequencies={"Python": 4, "Go": 2},
+        source="topics",
+    )
+
+    expected = tmp_path / "wordcloud_clustered_by_topics.svg"
+    assert result == expected
+    assert captured["renderer"] == "clustered"
+    assert captured["output_path"] == expected
+    assert expected.exists()
+
+
 def test_run_solver_passes_pop_size_to_population_tuned_solver(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -334,7 +449,11 @@ def test_run_solver_passes_pop_size_to_population_tuned_solver(
         captured["pop_size"] = pop_size
         return [(100.0, 100.0, 0.0)] * n_words
 
-    monkeypatch.setitem(metaheuristic_module._META_SOLVERS, "Particle Swarm", fake_solver)
+    monkeypatch.setitem(
+        metaheuristic_module._META_SOLVERS,
+        "Particle Swarm",
+        fake_solver,
+    )
 
     name, placements = metaheuristic_module._run_solver(
         (
@@ -363,7 +482,18 @@ def test_metaheuristic_solver_failures_retry_locally(
     call_counts: dict[str, int] = {}
 
     def fake_run_solver(
-        args: tuple[str, int, list[float], float, float, int, int, int | None, list[str], object],
+        args: tuple[
+            str,
+            int,
+            list[float],
+            float,
+            float,
+            int,
+            int,
+            int | None,
+            list[str],
+            object,
+        ],
     ) -> tuple[str, list[tuple[float, float, float]]]:
         name, n_words, *_ = args
         call_counts[name] = call_counts.get(name, 0) + 1
@@ -394,7 +524,11 @@ def test_metaheuristic_solver_failures_retry_locally(
 
     monkeypatch.setattr(metaheuristic_module, "_run_solver", fake_run_solver)
     monkeypatch.setattr(metaheuristic_module, "ProcessPoolExecutor", FakeExecutor)
-    monkeypatch.setattr(metaheuristic_module, "as_completed", lambda futures: list(futures))
+    monkeypatch.setattr(
+        metaheuristic_module,
+        "as_completed",
+        lambda futures: list(futures),
+    )
 
     results = renderer._solve_all(["python", "go"], [72.0, 12.0])
     result_names = {name for name, _ in results}

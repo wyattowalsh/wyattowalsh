@@ -74,6 +74,54 @@ uv run python -m scripts.cli generate word-cloud \
 | `--from-topics-md` | Generate from `.github/assets/topics.md` |
 | `--from-languages-md` | Generate from `.github/assets/languages.md` |
 
+## `generate living-art`
+
+Generates the public six-style living-art surface:
+
+- stacked source SVGs such as `inkgarden-growth-animated.svg`
+- README-safe compatibility GIFs such as `inkgarden-growth.gif`
+- `living-art-manifest.json` and `living-art-preview.html`
+
+```bash
+uv run python -m scripts.cli generate living-art \
+  --metrics-path /tmp/metrics.json \
+  --history-path /tmp/history.json \
+  --profile wyattowalsh
+```
+
+| Option | Notes |
+|---|---|
+| `--profile` | Profile label passed through to `scripts.art.animate` |
+| `--frames` | Compatibility GIF frame count |
+| `--svg-frames` | Stacked timeline SVG frame count |
+| `--size` | GIF render size in px |
+| `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
+| `--svg-only` | Skip compatibility GIF generation and only refresh the SVG/index surface |
+| `--metrics-path` | Optional metrics JSON for live data |
+| `--history-path` | Optional history JSON for richer chronology |
+
+## `generate timelapse`
+
+Produces day-by-day GIF exports for one or all living-art styles. These are heavier review/export artifacts and are kept out of the daily README CI path.
+
+```bash
+uv run python -m scripts.cli generate timelapse \
+  --metrics-path /tmp/metrics.json \
+  --history-path /tmp/history.json \
+  --only physarum \
+  --max-frames 120
+```
+
+| Option | Notes |
+|---|---|
+| `--profile` | Owner/label for daily snapshot generation |
+| `--metrics-path` | Required metrics JSON from `fetch_metrics` |
+| `--history-path` | Required history JSON from `fetch_history` |
+| `--max-frames` | Upper bound on frames per GIF |
+| `--size` | Output frame size in px |
+| `--only` | Restrict to one style from the six-style living-art set |
+| `--workers` | Parallel render workers |
+
 ## `generate generative`
 
 Generates Lorenz-attractor / neural-network / flow-field SVG art seeded from GitHub metrics.

@@ -1,5 +1,5 @@
-project_name: My Awesome Project
-version: 0.1.0
+project_name: wyattowalsh
+version: 1.0.0
 # author_email: your.email@example.com # Optional: uncomment and set
 banner_settings:
   title: Wyatt Walsh
@@ -15,7 +15,7 @@ v_card_data:
   fn: Wyatt Walsh
   org: Personal Portfolio Project
   title: Developer & Tech Enthusiast
-  tel_work_voice: '2096022545'
+  # tel_work_voice removed — do not expose personal phone on public profile
   email_internet: wyattowalsh@gmail.com
   url_work:
     - url: https://www.w4w.dev/
@@ -33,7 +33,9 @@ qr_code_settings:
 word_cloud_settings:
   output_dir: .github/assets/img
   output_filename: word_cloud.png
+  max_words: 1000
   prompt: 'My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React'
+  stopwords: []
 readme_sections_settings:
   readme_path: README.md
   badge_style: for-the-badge
@@ -64,7 +66,6 @@ readme_sections_settings:
     - full_name: wyattowalsh/personal-website
     - full_name: wyattowalsh/mdxpad
     - full_name: wyattowalsh/ai-web-feeds
-    - full_name: wyattowalsh/wyattowalsh
   blog_feed_url: https://w4w.dev/feed.xml
   blog_post_limit: 5
   svg:

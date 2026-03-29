@@ -13,6 +13,7 @@ pytest.importorskip(
 )
 
 import scripts.cli.generate as generate_cmd  # noqa: E402
+from scripts.art.artifacts import LIVING_ART_STYLE_KEYS  # noqa: E402
 from scripts.cli import app  # noqa: E402
 
 
@@ -92,33 +93,40 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     def _stub_subprocess_run(
         command: list[str],
         check: bool = True,
+        **kwargs: object,
     ) -> CompletedProcess[str]:
-        del check
+        del check, kwargs
         out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--svg" in command:
-            _write_svg(out_dir / "inkgarden-growth-animated.svg")
-            _write_svg(out_dir / "topo-growth-animated.svg")
+        if "--only" in command:
+            only_idx = command.index("--only")
+            active: tuple[str, ...] = (command[only_idx + 1],)
         else:
-            _write_gif(out_dir / "inkgarden-growth.gif")
-            _write_gif(out_dir / "topo-growth.gif")
+            active = LIVING_ART_STYLE_KEYS
+        for style in active:
+            if "--svg" in command:
+                _write_svg(out_dir / f"{style}-growth-animated.svg")
+            else:
+                _write_gif(out_dir / f"{style}-growth.gif")
         return CompletedProcess(command, 0)
 
     def _stub_render_timelapse(
         history: dict,
-        metrics: dict,
+        current_metrics: dict,
         *,
         styles: list[str] | None = None,
         max_frames: int = 150,
         size: int = 400,
-        owner: str = "wyattowalsh",
-        workers: int = 4,
+        output_dir: Path | None = None,
+        owner: str = "",
+        workers: int | None = None,
+        timeout_seconds: int = 1200,
     ) -> list[Path]:
-        del history, metrics, styles, max_frames, size, owner, workers
+        del (
+            history, current_metrics, styles, max_frames, size,
+            output_dir, owner, workers, timeout_seconds,
+        )
         out_dir = tmp_path / ".github" / "assets" / "img"
-        outputs = [
-            out_dir / "living-inkgarden.gif",
-            out_dir / "living-topo.gif",
-        ]
+        outputs = [out_dir / f"living-{s}.gif" for s in LIVING_ART_STYLE_KEYS]
         for path in outputs:
             _write_gif(path)
         return outputs
@@ -164,16 +172,15 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     assert timelapse.exit_code == 0, timelapse.stdout
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    expected_outputs = [
-        output_dir / "inkgarden-growth-animated.svg",
-        output_dir / "topo-growth-animated.svg",
-        output_dir / "inkgarden-growth.gif",
-        output_dir / "topo-growth.gif",
-        output_dir / "living-inkgarden.gif",
-        output_dir / "living-topo.gif",
-        output_dir / "living-art-manifest.json",
-        output_dir / "living-art-preview.html",
-    ]
+    expected_outputs = (
+        [output_dir / f"{s}-growth-animated.svg" for s in LIVING_ART_STYLE_KEYS]
+        + [output_dir / f"{s}-growth.gif" for s in LIVING_ART_STYLE_KEYS]
+        + [output_dir / f"living-{s}.gif" for s in LIVING_ART_STYLE_KEYS]
+        + [
+            output_dir / "living-art-manifest.json",
+            output_dir / "living-art-preview.html",
+        ]
+    )
 
     for path in expected_outputs:
         assert path.exists(), (
@@ -183,10 +190,10 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     manifest = json.loads(
         (output_dir / "living-art-manifest.json").read_text(encoding="utf-8")
     )
-    assert manifest["total_assets"] == 6
-    assert manifest["counts"]["source_svg"] == 2
-    assert manifest["counts"]["compatibility_gif"] == 2
-    assert manifest["counts"]["timelapse_gif"] == 2
+    assert manifest["total_assets"] == 18
+    assert manifest["counts"]["source_svg"] == 6
+    assert manifest["counts"]["compatibility_gif"] == 6
+    assert manifest["counts"]["timelapse_gif"] == 6
 
 
 def test_living_art_svg_only_skips_compatibility_gifs(
@@ -209,16 +216,21 @@ def test_living_art_svg_only_skips_compatibility_gifs(
     def _stub_subprocess_run(
         command: list[str],
         check: bool = True,
+        **kwargs: object,
     ) -> CompletedProcess[str]:
-        del check
+        del check, kwargs
         calls.append(command)
         out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--svg" in command:
-            _write_svg(out_dir / "inkgarden-growth-animated.svg")
-            _write_svg(out_dir / "topo-growth-animated.svg")
+        if "--only" in command:
+            only_idx = command.index("--only")
+            active: tuple[str, ...] = (command[only_idx + 1],)
         else:
-            _write_gif(out_dir / "inkgarden-growth.gif")
-            _write_gif(out_dir / "topo-growth.gif")
+            active = LIVING_ART_STYLE_KEYS
+        for style in active:
+            if "--svg" in command:
+                _write_svg(out_dir / f"{style}-growth-animated.svg")
+            else:
+                _write_gif(out_dir / f"{style}-growth.gif")
         return CompletedProcess(command, 0)
 
     monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
@@ -243,9 +255,131 @@ def test_living_art_svg_only_skips_compatibility_gifs(
     assert "--svg" in calls[0]
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    assert (output_dir / "inkgarden-growth-animated.svg").exists()
-    assert (output_dir / "topo-growth-animated.svg").exists()
+    for style in LIVING_ART_STYLE_KEYS:
+        assert (output_dir / f"{style}-growth-animated.svg").exists()
+        assert not (output_dir / f"{style}-growth.gif").exists()
     assert (output_dir / "living-art-manifest.json").exists()
     assert (output_dir / "living-art-preview.html").exists()
-    assert not (output_dir / "inkgarden-growth.gif").exists()
-    assert not (output_dir / "topo-growth.gif").exists()
+
+
+def test_living_art_only_forwards_selected_style_to_animate(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        generate_cmd,
+        "_load_project_config",
+        lambda *_args, **_kwargs: None,
+    )
+
+    history_path = tmp_path / "history.json"
+    metrics_path = tmp_path / "metrics.json"
+    _write_json(history_path, _history_payload())
+    _write_json(metrics_path, _metrics_payload())
+
+    calls: list[list[str]] = []
+
+    def _stub_subprocess_run(
+        command: list[str],
+        check: bool = True,
+    ) -> CompletedProcess[str]:
+        del check
+        calls.append(command)
+        out_dir = tmp_path / ".github" / "assets" / "img"
+        _write_svg(out_dir / "topo-growth-animated.svg")
+        return CompletedProcess(command, 0)
+
+    monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "living-art",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+            "--profile",
+            "rehearsal",
+            "--only",
+            "topo",
+            "--svg-only",
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert len(calls) == 1
+    assert calls[0].count("--only") == 1
+    assert "topo" in calls[0]
+
+
+def test_timelapse_only_forwards_selected_style_to_renderer(
+    runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        generate_cmd,
+        "_load_project_config",
+        lambda *_args, **_kwargs: None,
+    )
+
+    history_path = tmp_path / "history.json"
+    metrics_path = tmp_path / "metrics.json"
+    _write_json(history_path, _history_payload())
+    _write_json(metrics_path, _metrics_payload())
+
+    captured: dict[str, object] = {}
+
+    def _stub_render_timelapse(
+        history: dict,
+        metrics: dict,
+        *,
+        styles: list[str] | None = None,
+        max_frames: int = 150,
+        size: int = 400,
+        owner: str = "wyattowalsh",
+        workers: int = 4,
+    ) -> list[Path]:
+        captured["history"] = history
+        captured["metrics"] = metrics
+        captured["styles"] = styles
+        captured["max_frames"] = max_frames
+        captured["size"] = size
+        captured["owner"] = owner
+        captured["workers"] = workers
+        return []
+
+    monkeypatch.setattr(
+        "scripts.art.timelapse.render_timelapse",
+        _stub_render_timelapse,
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "timelapse",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+            "--profile",
+            "rehearsal",
+            "--only",
+            "inkgarden",
+            "--max-frames",
+            "6",
+            "--size",
+            "96",
+            "--workers",
+            "2",
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["styles"] == ["inkgarden"]
+    assert captured["max_frames"] == 6
+    assert captured["size"] == 96
+    assert captured["owner"] == "rehearsal"
+    assert captured["workers"] == 2

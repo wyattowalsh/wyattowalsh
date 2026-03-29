@@ -13,10 +13,15 @@ from typing import Any
 MANIFEST_FILENAME = "living-art-manifest.json"
 GALLERY_FILENAME = "living-art-preview.html"
 
-_STYLE_LABELS = {
+LIVING_ART_STYLE_LABELS = {
     "inkgarden": "Ink Garden",
     "topo": "Topography",
+    "genetic": "Genetic Landscape",
+    "physarum": "Physarum",
+    "lenia": "Lenia",
+    "ferrofluid": "Ferrofluid",
 }
+LIVING_ART_STYLE_KEYS = tuple(LIVING_ART_STYLE_LABELS.keys())
 _CHANNEL_LABELS = {
     "compatibility_gif": "Compatibility GIFs",
     "source_svg": "Source SVGs",
@@ -28,39 +33,47 @@ def _light_dark_variant(raw_variant: str | None, *, default: str = "default") ->
     return "dark" if raw_variant == "-dark" else default
 
 
+_STYLE_KEYS = "|".join(re.escape(k) for k in LIVING_ART_STYLE_LABELS)
+_GROWTH_SVG_RE = re.compile(rf"^({_STYLE_KEYS})-growth-animated\.svg$")
+_GROWTH_GIF_RE = re.compile(rf"^({_STYLE_KEYS})-growth\.gif$")
+_TIMELAPSE_RE = re.compile(rf"^living-({_STYLE_KEYS})(-dark)?\.gif$")
+
+
 def _asset_descriptor(path: Path) -> dict[str, Any] | None:
-    if path.name in {"inkgarden-growth-animated.svg", "topo-growth-animated.svg"}:
-        style = "inkgarden" if path.name.startswith("inkgarden") else "topo"
+    m = _GROWTH_SVG_RE.match(path.name)
+    if m:
+        style = m.group(1)
         return {
             "name": path.name,
             "path": path.name,
             "style": style,
-            "style_label": _STYLE_LABELS[style],
+            "style_label": LIVING_ART_STYLE_LABELS.get(style, style),
             "channel": "source_svg",
             "variant": "default",
             "bytes": path.stat().st_size,
         }
 
-    if path.name in {"inkgarden-growth.gif", "topo-growth.gif"}:
-        style = "inkgarden" if path.name.startswith("inkgarden") else "topo"
+    m = _GROWTH_GIF_RE.match(path.name)
+    if m:
+        style = m.group(1)
         return {
             "name": path.name,
             "path": path.name,
             "style": style,
-            "style_label": _STYLE_LABELS[style],
+            "style_label": LIVING_ART_STYLE_LABELS.get(style, style),
             "channel": "compatibility_gif",
             "variant": "default",
             "bytes": path.stat().st_size,
         }
 
-    timelapse_match = re.fullmatch(r"living-(inkgarden|topo)(-dark)?\.gif", path.name)
-    if timelapse_match:
-        style, raw_variant = timelapse_match.groups()
+    m = _TIMELAPSE_RE.match(path.name)
+    if m:
+        style, raw_variant = m.groups()
         return {
             "name": path.name,
             "path": path.name,
             "style": style,
-            "style_label": _STYLE_LABELS[style],
+            "style_label": LIVING_ART_STYLE_LABELS.get(style, style),
             "channel": "timelapse_gif",
             "variant": _light_dark_variant(raw_variant),
             "bytes": path.stat().st_size,
@@ -214,6 +227,8 @@ def sync_living_art_artifacts(output_dir: Path) -> tuple[Path, Path, dict[str, A
 
 __all__ = [
     "GALLERY_FILENAME",
+    "LIVING_ART_STYLE_KEYS",
+    "LIVING_ART_STYLE_LABELS",
     "MANIFEST_FILENAME",
     "build_living_art_manifest",
     "sync_living_art_artifacts",

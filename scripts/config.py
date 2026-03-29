@@ -74,6 +74,11 @@ class QRCodeSettings(BaseModel):
 class WordCloudSettingsModel(BaseModel):
     output_dir: str = ".github/assets/img"
     output_filename: str = "word_cloud.png"
+    max_words: int = Field(
+        default=1000,
+        ge=1,
+        description="Maximum number of terms to render in generated word clouds.",
+    )
     prompt: str | None = Field(
         default="My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React",
         description="Default prompt for word cloud generation."

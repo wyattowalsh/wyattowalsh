@@ -104,9 +104,8 @@ uv run python -m pytest tests/test_ink_garden.py -v
 
 ## RED tests (xfail)
 
-`tests/test_word_clouds_red.py` contains three `@pytest.mark.xfail(strict=True)` stubs for features not yet implemented:
+`tests/test_word_clouds_red.py` now tracks the remaining `@pytest.mark.xfail(strict=True)` gaps that are intentionally still unimplemented:
 - `palette_tokenization` field
-- `layout_readability` knobs
 - `style_variant` output differentiation
 
-These tests will start passing automatically when the features land.
+`layout_readability` has moved into the main covered suite, so those knobs are no longer part of the RED backlog.

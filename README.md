@@ -42,7 +42,7 @@
 
 ## Living Art
 
-> Four generative works driven by this profile's GitHub history, repository graph, languages, stars, and contribution rhythms.
+> Six generative works driven by this profile's GitHub history, repository graph, languages, stars, and contribution rhythms.
 
 <table role="presentation">
 <tr>
@@ -61,9 +61,41 @@
   <sub><b>Topography</b> demystified: the profile is redrawn as a survey map. Repositories rise into peaks and landmarks, stars increase summit prominence, language mix changes terrain character, and commits, contributions, forks, and followers feed contour density, river systems, and map annotations.</sub>
 </td>
 </tr>
+<tr>
+<td width="50%" align="center">
+  <a href=".github/assets/img/genetic-growth-animated.svg">
+    <img src=".github/assets/img/genetic-growth.gif" width="100%" alt="Genetic Landscape — evolutionary terrain where repositories become adaptive peaks"/>
+  </a>
+  <br/>
+  <sub><b>Genetic Landscape</b> demystified: repositories become fitness peaks on an evolving terrain. Language families tint local biomes, repo age softens or sharpens ridgelines, stars raise peak fitness, and maturity advances adaptive populations that speciate around the strongest projects.</sub>
+</td>
+<td width="50%" align="center">
+  <a href=".github/assets/img/physarum-growth-animated.svg">
+    <img src=".github/assets/img/physarum-growth.gif" width="100%" alt="Physarum — slime-mold transport network grown from repository nutrient nodes"/>
+  </a>
+  <br/>
+  <sub><b>Physarum</b> demystified: the profile becomes a slime-mold colony that explores and connects repositories as nutrient sources. Topic affinity, contribution cadence, and collaboration signals steer the search, while denser portfolio activity thickens the glowing transport veins.</sub>
+</td>
+</tr>
+<tr>
+<td width="50%" align="center">
+  <a href=".github/assets/img/lenia-growth-animated.svg">
+    <img src=".github/assets/img/lenia-growth.gif" width="100%" alt="Lenia — continuous cellular automata where each repository seeds a digital organism"/>
+  </a>
+  <br/>
+  <sub><b>Lenia</b> demystified: each repository seeds a soft-bodied digital organism inside a continuous cellular automata field. Language mix tunes the kernel physics, contribution momentum changes vitality, and maturity stages the colony from faint sparks into bioluminescent life.</sub>
+</td>
+<td width="50%" align="center">
+  <a href=".github/assets/img/ferrofluid-growth-animated.svg">
+    <img src=".github/assets/img/ferrofluid-growth.gif" width="100%" alt="Ferrofluid — magnetic spike sculpture shaped by repository fields"/>
+  </a>
+  <br/>
+  <sub><b>Ferrofluid</b> demystified: repositories act as magnetic dipoles beneath a dark metallic pool. Stars amplify field strength, language signatures bend the iridescent hue drift, and overall portfolio energy raises or calms the spike forest and its mirrored reflections.</sub>
+</td>
+</tr>
 </table>
 
-Both pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The README keeps the GitHub-safe GIF previews inline, while each panel still links through to the richer SVG source.
+All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The README keeps the GitHub-safe GIF previews inline, while each panel links through to the richer SVG source and the generated preview gallery in `.github/assets/img/living-art-preview.html`.
 
 ## Tech Stack
 
@@ -159,6 +191,8 @@ Both pieces share a common environmental signal model: commit-hour distribution 
   <img alt="Apache Kafka" src="https://img.shields.io/badge/Apache%20Kafka-231F20?style=for-the-badge&amp;logo=apachekafka&amp;logoColor=white"/>
   <img alt="Dask" src="https://img.shields.io/badge/Dask-FC6E6B?style=for-the-badge&amp;logo=dask&amp;logoColor=white"/>
   <img alt="SQLAlchemy" src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&amp;logo=sqlalchemy&amp;logoColor=white"/>
+  <img alt="Kedro" src="https://img.shields.io/badge/Kedro-FFC900?style=for-the-badge&amp;logo=kedro&amp;logoColor=white"/>
+  <img alt="dagster" src="https://img.shields.io/badge/dagster-4F43DD?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwb2x5Z29uIHBvaW50cz0iMTIsMiAyMCw3IDIwLDE3IDEyLDIyIDQsMTcgNCw3IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwb2x5Z29uIHBvaW50cz0iMTIsNiAxNiw5IDE2LDE1IDEyLDE4IDgsMTUgOCw5IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC4zIi8%2BPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMi41IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPgo%3D"/>
 </p>
 
 #### Modeling
@@ -172,16 +206,13 @@ Both pieces share a common environmental signal model: commit-hour distribution 
   <img alt="SciPy" src="https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&amp;logo=scipy&amp;logoColor=white"/>
   <img alt="OpenCV" src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&amp;logo=opencv&amp;logoColor=white"/>
   <img alt="OpenAI Gym" src="https://img.shields.io/badge/OpenAI%20Gym-0081A5?style=for-the-badge&amp;logo=openaigym&amp;logoColor=white"/>
+  <img alt="Pydantic" src="https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&amp;logo=pydantic&amp;logoColor=white"/>
 </p>
 
 #### Deployment
 
 <p>
-  <img alt="Kedro" src="https://img.shields.io/badge/Kedro-FFC900?style=for-the-badge&amp;logo=kedro&amp;logoColor=white"/>
-  <img alt="dagster" src="https://img.shields.io/badge/dagster-4F43DD?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwb2x5Z29uIHBvaW50cz0iMTIsMiAyMCw3IDIwLDE3IDEyLDIyIDQsMTcgNCw3IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwb2x5Z29uIHBvaW50cz0iMTIsNiAxNiw5IDE2LDE1IDEyLDE4IDgsMTUgOCw5IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC4zIi8%2BPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMi41IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPgo%3D"/>
-  <img alt="Flask" src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&amp;logo=flask&amp;logoColor=white"/>
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&amp;logo=fastapi&amp;logoColor=white"/>
-  <img alt="Express" src="https://img.shields.io/badge/Express-000000?style=for-the-badge&amp;logo=express&amp;logoColor=white"/>
   <img alt="Prefect" src="https://img.shields.io/badge/Prefect-070E10?style=for-the-badge&amp;logo=prefect&amp;logoColor=white"/>
 </p>
 
@@ -276,8 +307,9 @@ Both pieces share a common environmental signal model: commit-hour distribution 
   <img alt="Electron" src="https://img.shields.io/badge/Electron-47848F?style=for-the-badge&amp;logo=electron&amp;logoColor=white"/>
   <img alt="Zod" src="https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&amp;logo=zod&amp;logoColor=white"/>
   <img alt="Framer Motion" src="https://img.shields.io/badge/Framer%20Motion-0055FF?style=for-the-badge&amp;logo=framer&amp;logoColor=white"/>
-  <img alt="Pydantic" src="https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&amp;logo=pydantic&amp;logoColor=white"/>
   <img alt="Puppeteer" src="https://img.shields.io/badge/Puppeteer-40B5A4?style=for-the-badge&amp;logo=puppeteer&amp;logoColor=white"/>
+  <img alt="Flask" src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&amp;logo=flask&amp;logoColor=white"/>
+  <img alt="Express" src="https://img.shields.io/badge/Express-000000?style=for-the-badge&amp;logo=express&amp;logoColor=white"/>
 </p>
 
 ### Miscellaneous
@@ -336,7 +368,7 @@ Both pieces share a common environmental signal model: commit-hour distribution 
   <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of languages, each frame placed by a different metaheuristic algorithm" width="49%"/>
 </p>
 
-<sub>In Markdown-source mode (`--from-topics-md` / `--from-languages-md`), the word frequencies come from `.github/assets/topics.md` and `.github/assets/languages.md`, and those frequencies drive the relative size and weight of each term. The animated renderer then solves the same placement problem 25 different times with a registry of metaheuristic algorithms, reorders the resulting layouts to reduce visual jumps between frames, and exports the result as a single SVG with every frame stacked inside it. The motion comes from CSS opacity timing that cycles through those stacked layouts, while a small OKLCH hue shift per frame adds a subtle color drift, so the animation is showing alternate optimized arrangements of the same data rather than a GIF or JavaScript effect.</sub>
+<sub>Animated word clouds of my GitHub topics and languages — each frame is a different algorithmic layout, cycling through 25 metaheuristic placement strategies. Word size reflects frequency; color drifts via OKLCH hue shifts between frames.</sub>
 
 <details>
 <summary><strong>WakaTime Stats</strong></summary>
@@ -441,4 +473,3 @@ MDX                      1 repo              ░░░░░░░░░░░�
     <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
   </a>
 </p>
-

@@ -24,8 +24,8 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from pydantic import BaseModel, ConfigDict
 
-from .readability import LayoutReadabilitySettings
 from ..utils import get_logger
+from .readability import LayoutReadabilitySettings
 
 logger = get_logger(module=__name__)
 
@@ -176,6 +176,14 @@ def _generate_svg(
     Path(output_path).write_text(svg_content, encoding="utf-8")
 
 
+def _default_output_filename(source: str, renderer: str) -> str:
+    """Return the canonical output filename for the requested renderer."""
+
+    if renderer == "classic":
+        return f"wordcloud_by_{source}.png"
+    return f"wordcloud_{renderer}_by_{source}.svg"
+
+
 # ---------------------------------------------------------------------------
 # High-level generators
 # ---------------------------------------------------------------------------
@@ -228,9 +236,9 @@ def generate_word_cloud(
         max_words,
     )
 
+    out = output_dir / _default_output_filename(source, renderer)
+
     if renderer == "classic":
-        ext = ".png"
-        out = output_dir / f"wordcloud_by_{source}{ext}"
         _generate_classic(
             frequencies,
             out,
@@ -239,8 +247,6 @@ def generate_word_cloud(
             max_words=max_words,
         )
     else:
-        ext = ".svg"
-        out = output_dir / f"wordcloud_{renderer}_by_{source}{ext}"
         _generate_svg(
             renderer,
             frequencies,
@@ -363,8 +369,7 @@ class WordCloudGenerator:
             out_dir = out_file.parent
         else:
             out_dir = explicit_output or Path(self.settings.output_dir)
-            ext = ".png" if renderer == "classic" else ".svg"
-            out_file = out_dir / f"wordcloud_by_{source}{ext}"
+            out_file = out_dir / _default_output_filename(source, renderer)
 
         out_dir.mkdir(parents=True, exist_ok=True)
 

@@ -19,7 +19,6 @@ Usage::
 from __future__ import annotations
 
 import os
-import sys
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -28,9 +27,8 @@ from typing import Any
 from pydantic import ValidationError
 
 from ..utils import get_logger
-from .daily_snapshots import DailySnapshot, build_daily_snapshots, sample_frames
+from .daily_snapshots import build_daily_snapshots, sample_frames
 from .shared import (
-    compute_maturity,
     seed_hash,
     validate_live_history_payload,
     validate_live_metrics_payload,
@@ -42,10 +40,14 @@ logger = get_logger(module=__name__)
 # Frame rendering
 # ---------------------------------------------------------------------------
 
-# Style name → (module_path, function_name, dict_key)
-_STYLE_REGISTRY: dict[str, tuple[str, str, str]] = {
-    "inkgarden": ("scripts.art.ink_garden", "generate", "metrics"),
-    "topo": ("scripts.art.topography", "generate", "metrics"),
+# Style name → (module_path, function_name)
+_STYLE_REGISTRY: dict[str, tuple[str, str]] = {
+    "inkgarden": ("scripts.art.ink_garden", "generate"),
+    "topo": ("scripts.art.topography", "generate"),
+    "genetic": ("scripts.art.genetic_landscape", "generate"),
+    "physarum": ("scripts.art.physarum", "generate"),
+    "lenia": ("scripts.art.lenia", "generate"),
+    "ferrofluid": ("scripts.art.ferrofluid", "generate"),
 }
 
 ALL_STYLES = list(_STYLE_REGISTRY.keys())
@@ -57,7 +59,6 @@ def _render_single_frame(
     seed_hex: str,
     size: int,
     final_maturity: float,
-    dark_mode: bool,
 ) -> bytes | None:
     """Render one frame as PNG bytes. Runs in a worker process.
 
@@ -65,7 +66,7 @@ def _render_single_frame(
     """
     from .animate import svg_to_png
 
-    mod_path, func_name, dict_key = _STYLE_REGISTRY[style]
+    mod_path, func_name = _STYLE_REGISTRY[style]
 
     # Import the generator
     import importlib
@@ -73,24 +74,15 @@ def _render_single_frame(
     mod = importlib.import_module(mod_path)
     gen_fn = getattr(mod, func_name)
 
-    # Build kwargs based on style
-    if dict_key == "metrics":
-        data = snapshot_data["metrics_dict"]
-        kwargs: dict[str, Any] = {
-            "seed": seed_hex,
-            "maturity": snapshot_data["maturity"],
-            "timeline": False,
-        }
-        if style == "topo":
-            kwargs["chrome_maturity"] = final_maturity
-        svg_str = gen_fn(data, **kwargs)
-    else:
-        data = snapshot_data["history_dict"]
-        kwargs = {
-            "dark_mode": dark_mode,
-            "snapshot_progress": snapshot_data["progress"],
-        }
-        svg_str = gen_fn(data, **kwargs)
+    data = snapshot_data["metrics_dict"]
+    kwargs: dict[str, Any] = {
+        "seed": seed_hex,
+        "maturity": snapshot_data["maturity"],
+        "timeline": False,
+    }
+    if style == "topo":
+        kwargs["chrome_maturity"] = final_maturity
+    svg_str = gen_fn(data, **kwargs)
 
     # SVG → PNG
     img = svg_to_png(svg_str, size, frame_id=f"{style}-d{snapshot_data['day_index']}")
@@ -168,8 +160,9 @@ def _assemble_gif(
 
     Performs progressive quality degradation if file exceeds max_size_mb.
     """
-    from PIL import Image
     import io
+
+    from PIL import Image
 
     images = [Image.open(io.BytesIO(f)).convert("RGB") for f in png_frames]
 
@@ -264,7 +257,6 @@ def render_timelapse(
     size: int = 400,
     output_dir: Path | None = None,
     owner: str = "",
-    dark_mode: bool = False,
     workers: int | None = None,
     timeout_seconds: int = 1200,
 ) -> list[Path]:
@@ -277,7 +269,7 @@ def render_timelapse(
     current_metrics : dict
         Output of ``fetch_metrics.collect()``.
     styles : list[str] | None
-        Art styles to render. Default: all four.
+        Art styles to render. Default: all available living-art styles.
     max_frames : int
         Maximum frames per GIF.
     size : int
@@ -286,8 +278,6 @@ def render_timelapse(
         Output directory. Default: ``.github/assets/img``.
     owner : str
         GitHub username.
-    dark_mode : bool
-        Dark mode for cosmic/spiral.
     workers : int | None
         Parallel workers. Default: min(cpu_count, 8).
     timeout_seconds : int
@@ -369,7 +359,6 @@ def render_timelapse(
                     seed_hex,
                     size,
                     final_maturity,
-                    dark_mode,
                 ): i
                 for i, snap_data in enumerate(serialized_frames)
             }
@@ -394,8 +383,7 @@ def render_timelapse(
             continue
 
         # Assemble GIF
-        suffix = "-dark" if dark_mode and style in ("cosmic", "spiral") else ""
-        gif_path = out_dir / f"living-{style}{suffix}.gif"
+        gif_path = out_dir / f"living-{style}.gif"
         _assemble_gif(valid_frames, valid_durations, gif_path)
         outputs.append(gif_path)
 
@@ -425,9 +413,14 @@ def main() -> None:
         "--max-frames", type=int, default=150, help="Max frames per GIF"
     )
     parser.add_argument("--size", type=int, default=400, help="Frame size in px")
-    parser.add_argument("--only", default=None, help="Restrict to one style")
     parser.add_argument(
-        "--dark-mode", action="store_true", help="Dark mode for cosmic/spiral"
+        "--only",
+        default=None,
+        help=(
+            "Restrict to one style: "
+            + ", ".join(ALL_STYLES[:-1])
+            + f", or {ALL_STYLES[-1]}"
+        ),
     )
     parser.add_argument("--workers", type=int, default=None, help="Parallel workers")
     parser.add_argument("--output-dir", default=None, help="Output directory")
@@ -451,7 +444,6 @@ def main() -> None:
             size=args.size,
             output_dir=output_dir,
             owner=args.owner,
-            dark_mode=args.dark_mode,
             workers=args.workers,
         )
     except ValidationError as exc:

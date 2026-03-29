@@ -8,7 +8,10 @@ pytest.importorskip(
 )
 
 from scripts.art import animate  # noqa: E402
-from scripts.art.artifacts import sync_living_art_artifacts  # noqa: E402
+from scripts.art.artifacts import (  # noqa: E402
+    LIVING_ART_STYLE_KEYS,
+    sync_living_art_artifacts,
+)
 
 
 def _stub_svg() -> str:
@@ -56,6 +59,18 @@ def test_main_svg_mode_writes_expected_living_artifacts(
         animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
     monkeypatch.setattr(
+        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
         animate.sys,
         "argv",
         ["animate", "--svg", "--frames", "4", "--profile", "wyatt"],
@@ -64,17 +79,12 @@ def test_main_svg_mode_writes_expected_living_artifacts(
     animate.main()
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    inkgarden = output_dir / "inkgarden-growth-animated.svg"
-    topography = output_dir / "topo-growth-animated.svg"
-
-    assert inkgarden.is_file(), f"Missing expected animated artifact: {inkgarden}"
-    assert topography.is_file(), f"Missing expected animated artifact: {topography}"
-
-    inkgarden_svg = inkgarden.read_text(encoding="utf-8")
-    topography_svg = topography.read_text(encoding="utf-8")
-    for svg in (inkgarden_svg, topography_svg):
-        assert "Narrative growth animation: 3-act timing" in svg
-        assert svg.count('<g class="f f') == 4
+    for style in LIVING_ART_STYLE_KEYS:
+        path = output_dir / f"{style}-growth-animated.svg"
+        assert path.is_file(), f"Missing expected animated artifact: {path}"
+        svg_text = path.read_text(encoding="utf-8")
+        assert "Narrative growth animation: 3-act timing" in svg_text
+        assert svg_text.count('<g class="f f') == 4
 
 
 def test_main_svg_mode_disables_topography_timeline_for_static_frames(
@@ -89,6 +99,18 @@ def test_main_svg_mode_disables_topography_timeline_for_static_frames(
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
     monkeypatch.setattr(
         animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
     topo_calls: list[dict] = []
 
@@ -157,17 +179,11 @@ def test_main_gif_mode_disables_topography_timeline(
 
 
 def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -> None:
-    for name, payload in {
-        "inkgarden-growth-animated.svg": "<svg />",
-        "inkgarden-growth.gif": "GIF89a",
-        "topo-growth-animated.svg": "<svg />",
-        "living-topo.gif": "GIF89a",
-    }.items():
-        path = tmp_path / name
-        if name.endswith(".gif"):
-            path.write_bytes(payload.encode())
-        else:
-            path.write_text(payload, encoding="utf-8")
+    for style in LIVING_ART_STYLE_KEYS:
+        svg_path = tmp_path / f"{style}-growth-animated.svg"
+        svg_path.write_text("<svg />", encoding="utf-8")
+        (tmp_path / f"{style}-growth.gif").write_bytes(b"GIF89a")
+        (tmp_path / f"living-{style}.gif").write_bytes(b"GIF89a")
 
     manifest_path, gallery_path, manifest = sync_living_art_artifacts(tmp_path)
     manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -175,16 +191,54 @@ def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -
 
     assert manifest == manifest_data
     assert manifest_data["counts"] == {
-        "source_svg": 2,
-        "compatibility_gif": 1,
-        "timelapse_gif": 1,
+        "source_svg": 6,
+        "compatibility_gif": 6,
+        "timelapse_gif": 6,
     }
-    assert manifest_data["total_assets"] == 4
-    assert any(
-        asset["name"] == "inkgarden-growth-animated.svg"
-        for asset in manifest_data["assets"]
-    )
+    assert manifest_data["total_assets"] == 18
+    actual_styles = {a["style"] for a in manifest_data["assets"]}
+    assert actual_styles == set(LIVING_ART_STYLE_KEYS)
     assert "Living Art Preview Gallery" in gallery
-    assert "inkgarden-growth-animated.svg" in gallery
-    assert "living-topo.gif" in gallery
+    for style in LIVING_ART_STYLE_KEYS:
+        assert f"{style}-growth-animated.svg" in gallery
+
+
+def test_main_svg_mode_propagates_generator_failure(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        animate,
+        "PROFILES",
+        {"wyatt": {"label": "stub", "repos": [], "contributions_monthly": {}}},
+    )
+    monkeypatch.setattr(animate, "compute_maturity", lambda _m: 0.5)
+    monkeypatch.setattr(
+        animate.ink_garden, "generate", lambda *_a, **_kw: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.topography, "generate", lambda *_a, **_kw: _stub_svg()
+    )
+
+    def _failing(*_a, **_kw):
+        raise RuntimeError("Simulated generator failure")
+
+    monkeypatch.setattr(animate.genetic_landscape, "generate", _failing)
+    monkeypatch.setattr(
+        animate.physarum, "generate", lambda *_a, **_kw: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.lenia, "generate", lambda *_a, **_kw: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.ferrofluid, "generate", lambda *_a, **_kw: _stub_svg()
+    )
+    monkeypatch.setattr(
+        animate.sys,
+        "argv",
+        ["animate", "--svg", "--frames", "2", "--profile", "wyatt"],
+    )
+
+    with pytest.raises(RuntimeError, match="Simulated generator failure"):
+        animate.main()
 

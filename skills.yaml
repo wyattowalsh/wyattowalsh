@@ -167,6 +167,12 @@ categories:
     - name: SQLAlchemy
       slug: sqlalchemy
       color: D71F00
+    - name: Kedro
+      slug: kedro
+      color: FFC900
+    - name: dagster
+      logo_path: .github/assets/skill-icons/dagster.svg
+      color: 4F43DD
   - name: Modeling
     skills:
     - name: scikit-learn
@@ -193,23 +199,14 @@ categories:
     - name: OpenAI Gym
       slug: openaigym
       color: 0081A5
+    - name: Pydantic
+      slug: pydantic
+      color: E92063
   - name: Deployment
     skills:
-    - name: Kedro
-      slug: kedro
-      color: FFC900
-    - name: dagster
-      logo_path: .github/assets/skill-icons/dagster.svg
-      color: 4F43DD
-    - name: Flask
-      slug: flask
-      color: '000000'
     - name: FastAPI
       slug: fastapi
       color: '009688'
-    - name: Express
-      slug: express
-      color: '000000'
     - name: Prefect
       slug: prefect
       color: 070E10
@@ -267,12 +264,6 @@ categories:
   - name: Zsh
     slug: zsh
     color: F15A24
-  - name: Anaconda
-    slug: anaconda
-    color: 44A833
-  - name: Poetry
-    slug: poetry
-    color: 60A5FA
   - name: Jupyter
     slug: jupyter
     color: F37626
@@ -288,9 +279,6 @@ categories:
   - name: Python Hypothesis
     logo_path: .github/assets/skill-icons/python-hypothesis.svg
     color: BD1C2B
-  - name: PyEnv
-    logo_path: .github/assets/skill-icons/pyenv.svg
-    color: '306998'
   - name: Visual Studio Code
     slug: visualstudiocode
     logo_path: .github/assets/skill-icons/vscode.svg
@@ -420,12 +408,15 @@ categories:
   - name: Framer Motion
     slug: framer
     color: 0055FF
-  - name: Pydantic
-    slug: pydantic
-    color: E92063
   - name: Puppeteer
     slug: puppeteer
     color: 40B5A4
+  - name: Flask
+    slug: flask
+    color: '000000'
+  - name: Express
+    slug: express
+    color: '000000'
 - name: Miscellaneous
   skills:
   - name: Jira
@@ -452,14 +443,6 @@ categories:
   - name: Obsidian
     slug: obsidian
     color: 7C3AED
-  - name: Microsoft Office
-    slug: microsoftoffice
-    logo_path: .github/assets/skill-icons/ms-office.svg
-    color: D83B01
-  - name: Microsoft Excel
-    slug: microsoftexcel
-    logo_path: .github/assets/skill-icons/ms-excel.svg
-    color: '217346'
   - name: Mermaid.js
     slug: mermaid
     color: FF3670
@@ -490,12 +473,6 @@ categories:
   - name: Boxy SVG
     slug: boxysvg
     color: 3584E3
-  - name: isort
-    logo_path: .github/assets/skill-icons/isort.svg
-    color: EF8336
-  - name: black
-    logo_path: .github/assets/skill-icons/black.svg
-    color: 1C1C1C
   - name: Pylint
     logo_path: .github/assets/skill-icons/pylint.svg
     color: 2A6DB2
@@ -523,6 +500,3 @@ categories:
   - name: Kaggle
     slug: kaggle
     color: 20BEFF
-  - name: Spotify
-    slug: spotify
-    color: 1ED760

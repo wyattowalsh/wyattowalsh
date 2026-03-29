@@ -29,6 +29,7 @@ from .shared import (
     CY,
     HEIGHT,
     LANG_HUES,
+    MAX_REPOS,
     WIDTH,
     Noise2D,
     _build_world_palette_extended,
@@ -46,8 +47,10 @@ from .shared import (
     oklch,
     oklch_gradient,
     oklch_lerp,
+    repo_visibility_score,
     seed_hash,
     select_palette_for_world,
+    select_primary_repos,
     snow_pattern,
     visual_complexity,
     volumetric_glow_filter,
@@ -57,7 +60,6 @@ from .shared import (
 # Hard caps to prevent file-size blowout
 MAX_SEGS = 4000
 MAX_ROOTS = 800
-MAX_REPOS = 10
 MAX_LEAVES = 600
 MAX_BLOOMS = 80
 MAX_ELEMENTS = 25000  # total SVG elements budget
@@ -236,40 +238,10 @@ def _escape_svg_text(text: str) -> str:
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def _repo_visibility_score(repo: dict) -> float:
-    """Rank repos for full-plant rendering when the profile exceeds MAX_REPOS."""
-    stars = float(repo.get("stars", 0) or 0)
-    forks = float(repo.get("forks", 0) or 0)
-    watchers = float(repo.get("watchers", 0) or 0)
-    age_months = float(repo.get("age_months", 0) or 0)
-    topic_count = len(repo.get("topics") or [])
-    has_description = 1.0 if repo.get("description") else 0.0
-    return (
-        math.log1p(stars) * 4.0
-        + math.log1p(forks) * 2.2
-        + math.log1p(watchers) * 1.4
-        + min(age_months, 72.0) * 0.05
-        + topic_count * 0.8
-        + has_description * 0.4
-    )
-
-
-def _select_primary_repos(
-    repos: list[dict], *, limit: int
-) -> tuple[list[dict], list[dict]]:
-    """Select full-detail repos while preserving input chronology for the chosen set."""
-    if len(repos) <= limit:
-        return repos, []
-
-    ranked = sorted(
-        enumerate(repos),
-        key=lambda item: (_repo_visibility_score(item[1]), -item[0]),
-        reverse=True,
-    )
-    primary_indices = {index for index, _repo in ranked[:limit]}
-    primary = [repo for index, repo in enumerate(repos) if index in primary_indices]
-    overflow = [repo for _index, repo in ranked[limit:]]
-    return primary, overflow
+# _repo_visibility_score and _select_primary_repos moved to shared.py
+# Kept as local aliases for backward compatibility within this module.
+_repo_visibility_score = repo_visibility_score
+_select_primary_repos = lambda repos, *, limit: select_primary_repos(repos, limit=limit)
 
 
 def _parse_iso_datetime(value: str | None) -> datetime | None:

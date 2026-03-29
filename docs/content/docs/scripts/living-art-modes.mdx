@@ -13,6 +13,10 @@ The living-art suite writes different artifacts for different viewers because th
 |---|---|---|---|
 | Ink Garden | `inkgarden-growth-animated.svg` | `inkgarden-growth.gif` | Stacked SVG is richer, GIF survives inline embedding |
 | Topography | `topo-growth-animated.svg` | `topo-growth.gif` | Static/cartographic fallback is easier to read in flattened viewers |
+| Genetic Landscape | `genetic-growth-animated.svg` | `genetic-growth.gif` | Timeline SVG preserves layered contour and population reveal timing |
+| Physarum | `physarum-growth-animated.svg` | `physarum-growth.gif` | GIF preserves the transport-network read even where SVG animation is flattened |
+| Lenia | `lenia-growth-animated.svg` | `lenia-growth.gif` | SVG keeps the soft reveal ordering; GIF stays README-safe |
+| Ferrofluid | `ferrofluid-growth-animated.svg` | `ferrofluid-growth.gif` | Rich SVG keeps metallic gradients and staged spike emergence |
 | Timelapse exports | `living-*.gif` | n/a | Timelapse is already flattened for portability |
 
 ## CLI modes
@@ -25,11 +29,13 @@ Runs the shared `scripts.art.animate` driver twice by default:
 2. `--frames <frames> --size <size>` to write compatibility GIFs
 
 Use `--svg-only` when you want the richer source artifacts without rewriting the compatibility GIFs.
+Use `--only <style>` when you want to regenerate just one style from the six-style surface.
 
 ```bash
 uv run readme generate living-art \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
+  --only ferrofluid \
   --svg-only
 ```
 
@@ -41,6 +47,7 @@ Produces daily-history GIFs for one or all styles. These are export-oriented art
 uv run readme generate timelapse \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
+  --only inkgarden \
   --max-frames 120 \
   --size 400
 ```
@@ -50,7 +57,8 @@ uv run readme generate timelapse \
 | Constraint | Consequence |
 |---|---|
 | Timeline SVGs are source artifacts, not guaranteed inline playback assets | Link to them, do not rely on them for universal animation support |
-| Topography and Ink Garden can render static-safe frames | Frame generation should disable timeline CSS when producing GIF inputs |
+| Compatibility GIFs are the public README-safe previews for all six styles | Review both the rich SVG source and the flattened GIF preview before shipping |
+| Topography explicitly disables internal timeline chrome during GIF frame rasterization | Cartographic labels stay readable in flattened exports |
 | Timelapse outputs are intentionally flattened | They are review/export artifacts, not interactive sources |
 
 <Callout type="idea" title="Recommended release review">
@@ -64,7 +72,7 @@ Inspect both tiers: the source SVG for richness and the GIF preview for actual R
     Botanical growth renderer in the living-art set
   </Card>
   <Card href="/docs/scripts/topography" title="Topography">
-    Static-export behavior for the cartographic generator
+    Cartographic member of the six-style living-art surface
   </Card>
   <Card href="/docs/scripts/world-state" title="World State">
     Shared environmental model that informs the living-art outputs

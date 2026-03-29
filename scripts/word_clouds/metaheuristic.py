@@ -7,27 +7,26 @@ import os
 import random
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
-from .core import PlacedWord
+from ..utils import get_logger
+from .clustered import ClusteredRenderer
 from .colors import COLOR_FUNCS, make_shifted_color_func
+from .core import PlacedWord
 from .engine import SvgWordCloudEngine
 from .readability import LayoutReadabilityPolicy, LayoutReadabilitySettings
+from .shaped import ShapedRenderer
 from .solvers import (
     _META_SOLVERS,
-    _aesthetic_cost,
-    configure_layout_readability,
-    _eval_fitness,
-    _random_solution,
     _solve_harmony_search,
+    configure_layout_readability,
 )
-from .wordle import WordleRenderer
-from .clustered import ClusteredRenderer
 from .typographic import TypographicRenderer
-from .shaped import ShapedRenderer
-from ..utils import get_logger
+from .wordle import WordleRenderer
 
 logger = get_logger(module=__name__)
 
-LayoutReadabilityConfig = LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
+LayoutReadabilityConfig = (
+    LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
+)
 
 _POPULATION_TUNED_SOLVERS = {
     "Harmony Search",
@@ -71,7 +70,18 @@ def _run_solver(
     ],
 ) -> tuple[str, list[tuple[float, float, float]]]:
     """Worker function for parallel solver execution (top-level for pickling)."""
-    name, n_words, sizes, canvas_w, canvas_h, max_iter, pop_size, seed, texts, layout_readability = args
+    (
+        name,
+        n_words,
+        sizes,
+        canvas_w,
+        canvas_h,
+        max_iter,
+        pop_size,
+        seed,
+        texts,
+        layout_readability,
+    ) = args
     configure_layout_readability(layout_readability, word_sizes=sizes)
     solver_fn = _META_SOLVERS[name]
     rng = random.Random(seed)
@@ -158,7 +168,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         texts: list[str],
         sizes: list[float],
     ) -> list[tuple[str, list[tuple[float, float, float]]]]:
-        """Run all 25 metaheuristic solvers in parallel and return (name, placements) pairs."""
+        """Run all metaheuristic solvers and return their placement results."""
         n_words = len(texts)
         canvas_w = float(self.width)
         canvas_h = float(self.height)
@@ -214,7 +224,8 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                     result = future.result()
                 except Exception as exc:
                     logger.warning(
-                        "MetaheuristicAnimRenderer: {name} worker failed, retrying locally: {error}",
+                        "MetaheuristicAnimRenderer: {name} worker failed; "
+                        "retrying locally: {error}",
                         name=name,
                         error=exc,
                     )
@@ -230,15 +241,23 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 results_by_name[name] = _run_solver(args)
             except Exception as exc:
                 logger.warning(
-                    "MetaheuristicAnimRenderer: {name} local retry failed, skipping frame: {error}",
+                    "MetaheuristicAnimRenderer: {name} local retry failed; "
+                    "skipping frame: {error}",
                     name=name,
                     error=exc,
                 )
                 continue
 
-            logger.debug("MetaheuristicAnimRenderer: {name} completed via local retry", name=name)
+            logger.debug(
+                "MetaheuristicAnimRenderer: {name} completed via local retry",
+                name=name,
+            )
 
-        results = [results_by_name[name] for name in _META_SOLVERS if name in results_by_name]
+        results = [
+            results_by_name[name]
+            for name in _META_SOLVERS
+            if name in results_by_name
+        ]
         if not results:
             raise RuntimeError("All metaheuristic solvers failed")
 
@@ -354,7 +373,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         # -- CSS keyframes for cycling animation --------------------------
         css_lines = [
             "/* Metaheuristic word cloud animation */",
-            f".mf {{ opacity: 0; will-change: opacity; }}",
+            ".mf { opacity: 0; will-change: opacity; }",
             f".mf text {{ font-family: {self.font_family};"
             f" text-anchor: middle; dominant-baseline: central; }}",
         ]
@@ -374,20 +393,31 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 css_lines.append("  0% { opacity: 1; }")
                 css_lines.append(f"  {visible_pct:.2f}% {{ opacity: 1; }}")
                 css_lines.append(
-                    f"  {visible_pct + fade_out_pct:.2f}% {{ opacity: 0; visibility: hidden; }}"
+                    f"  {visible_pct + fade_out_pct:.2f}% {{ opacity: 0; "
+                    "visibility: hidden; }}"
                 )
-                css_lines.append(f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; visibility: hidden; }}")
+                css_lines.append(
+                    f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; "
+                    "visibility: hidden; }}"
+                )
                 css_lines.append("  100% { opacity: 1; }")
             else:
                 if start_pct > 0:
                     css_lines.append("  0% { opacity: 0; visibility: hidden; }")
-                    css_lines.append(f"  {start_pct:.2f}% {{ opacity: 0; visibility: hidden; }}")
+                    css_lines.append(
+                        f"  {start_pct:.2f}% {{ opacity: 0; "
+                        "visibility: hidden; }}"
+                    )
                 css_lines.append(
-                    f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; visibility: visible; }}"
+                    f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; "
+                    "visibility: visible; }}"
                 )
                 css_lines.append(f"  {min(visible_end, 99.99):.2f}% {{ opacity: 1; }}")
                 if end_pct < 100:
-                    css_lines.append(f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; visibility: hidden; }}")
+                    css_lines.append(
+                        f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; "
+                        "visibility: hidden; }}"
+                    )
                     css_lines.append("  100% { opacity: 0; visibility: hidden; }")
                 else:
                     css_lines.append("  100% { opacity: 0; visibility: hidden; }")
@@ -399,7 +429,10 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         # Dark mode support (prefers-color-scheme works inside SVG on GitHub)
         css_lines.append("@media (prefers-color-scheme: dark) {")
         css_lines.append("  .wc-bg { fill: #0d1117; }")
-        css_lines.append("  .algo-label rect { fill: #1a1a2e; fill-opacity: 0.85; stroke: #333; }")
+        css_lines.append(
+            "  .algo-label rect { fill: #1a1a2e; fill-opacity: 0.85; "
+            "stroke: #333; }"
+        )
         css_lines.append("  .algo-label text { fill: #ccc; }")
         css_lines.append("}")
 
@@ -433,7 +466,8 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             '  <filter id="wc-shadow" x="-10%" y="-10%" width="120%" height="120%">'
         )
         svg_parts.append(
-            '    <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#00000020"/>'
+            "    <feDropShadow dx=\"0\" dy=\"1\" stdDeviation=\"0.5\" "
+            'flood-color="#00000020"/>'
         )
         svg_parts.append("  </filter>")
 
@@ -451,7 +485,8 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
 
         # Background rect (class for dark mode override)
         svg_parts.append(
-            f'<rect class="wc-bg" width="{self.width}" height="{self.height}" fill="url(#wc-bg-grad)"/>'
+            f'<rect class="wc-bg" width="{self.width}" '
+            f'height="{self.height}" fill="url(#wc-bg-grad)"/>'
         )
 
         # Frame groups
@@ -476,7 +511,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         texts, sizes, _, colors, weights, opacities = self._prepare_words(frequencies)
         if not texts:
             return []
-        configure_layout_readability(self.layout_readability)
+        configure_layout_readability(self.layout_readability, word_sizes=sizes)
         rng = random.Random(self.seed)
         positions = _solve_harmony_search(
             len(texts),
