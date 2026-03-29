@@ -525,6 +525,25 @@ def _make_mealpy_solver(optimizer_class: type) -> Callable[..., list[tuple[float
     return solver
 
 
+# Optimizers excluded via empirical benchmarking on word-cloud placement.
+# These either crash (triggering random fallback), produce degenerate layouts,
+# or consistently rank in the bottom 15% across problem sizes.
+_EXCLUDED_OPTIMIZERS: frozenset[str] = frozenset({
+    # Fallback-only (0ms, cost=random): solver errors caught internally
+    "DevCHIO", "DevSARO", "ImprovedBSO", "ImprovedTLO", "OCRO",
+    "OriginalBSA", "OriginalBSO", "OriginalCEM", "OriginalCHIO",
+    "OriginalEHO", "OriginalIWO", "OriginalMA", "OriginalSARO", "SwarmHC",
+    # Degenerate layouts (cost >= 16): worst possible quality
+    "BaseGA", "DevGSKA", "MultiGA", "OppoTWO", "OriginalBFO",
+    "OriginalGSKA", "SingleGA",
+    # Poor performers (cost 7-12): well below median
+    "DevFOA", "OriginalFOA", "OriginalHBO", "OriginalSBO", "WhaleFOA",
+    # Bottom of viable range with better alternatives in same family
+    "OriginalBMO", "OriginalCA", "OriginalCDO", "OriginalFOX",
+    "OriginalPFA", "OriginalSSDO", "SwarmSA",
+})
+
+
 # Build the registry dynamically from all mealpy optimizers.
 # Suppress stdout during get_all_optimizers() as it prints a line per optimizer.
 def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float, float]]]]:
@@ -539,7 +558,8 @@ def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float,
 
     registry: dict[str, Callable[..., list[tuple[float, float, float]]]] = {}
     for name, cls in all_optimizers.items():
-        registry[name] = _make_mealpy_solver(cls)
+        if name not in _EXCLUDED_OPTIMIZERS:
+            registry[name] = _make_mealpy_solver(cls)
     return registry
 
 
