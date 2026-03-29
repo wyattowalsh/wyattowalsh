@@ -33,16 +33,16 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
   const isConfigured = isAdminConfigured(config);
   const storage = getTelemetryStorageDescription(config);
   const errorCopy = params.error ? ERROR_COPY[params.error] : undefined;
-  const nextPath = params.next?.startsWith('/') ? params.next : '/admin';
+  const nextPath = params.next?.startsWith('/') && !params.next.startsWith('//') ? params.next : '/admin';
 
   return (
     <main className="admin-login-page">
       <section className="admin-login-card">
         <div className="admin-eyebrow">Observability</div>
-        <h1 className="admin-title">Docs admin panel</h1>
+        <h1 className="admin-title">Telemetry explorer</h1>
         <p className="admin-copy">
-          Sign in with the shared admin password to inspect page traffic, search
-          behavior, CTA clicks, and route-level health inside the docs app.
+          Sign in with the shared password to explore page traffic, searches,
+          clicks, and recent telemetry from the docs app.
         </p>
 
         {!isConfigured ? (
@@ -77,9 +77,8 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         </form>
 
         <p className="admin-footnote">
-          Telemetry stays first-party. Storage uses{' '}
-          <code>{storage.adapter}</code>
-          {' '}with target <code>{storage.target}</code>.
+          Telemetry stays first-party in a local store. Current target:{' '}
+          <code>{storage.target}</code>.
         </p>
       </section>
     </main>

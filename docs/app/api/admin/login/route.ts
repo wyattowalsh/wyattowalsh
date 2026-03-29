@@ -8,15 +8,40 @@ import { recordAdminAuthResult, recordApiObservation, getRequestId } from '@/lib
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+const loginAttempts = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 5;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const attempts = loginAttempts.get(ip) ?? [];
+  const recent = attempts.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT_MAX) {
+    loginAttempts.set(ip, recent);
+    return true;
+  }
+  recent.push(now);
+  loginAttempts.set(ip, recent);
+  return false;
+}
+
 export async function POST(request: Request) {
   const startedAt = performance.now();
   const requestId = getRequestId(request);
+
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: 'Too many login attempts. Try again later.' },
+      { status: 429 },
+    );
+  }
 
   try {
     const formData = await request.formData();
     const password = String(formData.get('password') ?? '');
     const nextPath = String(formData.get('next') ?? '/admin');
-    const destination = nextPath.startsWith('/') ? nextPath : '/admin';
+    const destination = nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/admin';
 
     const authentication = await authenticateAdminPassword(password);
     if (!authentication.ok) {

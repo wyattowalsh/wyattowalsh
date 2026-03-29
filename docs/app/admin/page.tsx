@@ -35,11 +35,10 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       <section className="admin-hero">
         <div>
           <div className="admin-eyebrow">Protected</div>
-          <h1 className="admin-title">Docs observability</h1>
+          <h1 className="admin-title">Telemetry explorer</h1>
           <p className="admin-copy admin-copy-wide">
-            First-party telemetry for the docs site: route traffic, search usage,
-            CTA engagement, auth failures, and request health from the existing
-            Next.js API surface.
+            Explore the docs app telemetry in one place: traffic, searches,
+            clicks, referrers, and recent events collected from the site.
           </p>
         </div>
         <div className="admin-toolbar">

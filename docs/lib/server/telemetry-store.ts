@@ -1,12 +1,8 @@
 import 'server-only';
 
-import { Redis } from '@upstash/redis';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import {
-  getDocsServerConfig,
-  isPersistentTelemetryConfigured,
-} from '@/lib/server/config';
+import { getDocsServerConfig } from '@/lib/server/config';
 
 export type TelemetryEventName =
   | 'page_view'
@@ -52,7 +48,7 @@ type TelemetryStoreData = {
 };
 
 export type TelemetryDashboardSnapshot = {
-  adapter: 'filesystem' | 'upstash-redis';
+  adapter: 'filesystem';
   storageTarget: string;
   totalRetainedEvents: number;
   windowDays: number;
@@ -95,35 +91,9 @@ const EMPTY_STORE: TelemetryStoreData = {
 };
 
 let writeQueue: Promise<void> = Promise.resolve();
-let redisClient: Redis | null | undefined;
-
-type ResolvedStore = {
-  adapter: 'filesystem' | 'upstash-redis';
-  storageTarget: string;
-  data: TelemetryStoreData;
-};
 
 function resolveStorePath(): string {
   return path.resolve(process.cwd(), getDocsServerConfig().telemetryStorePath);
-}
-
-function getRedisClient(): Redis | null {
-  if (redisClient !== undefined) {
-    return redisClient;
-  }
-
-  const config = getDocsServerConfig();
-  if (!isPersistentTelemetryConfigured(config)) {
-    redisClient = null;
-    return redisClient;
-  }
-
-  redisClient = new Redis({
-    url: config.telemetryRedisRestUrl!,
-    token: config.telemetryRedisRestToken!,
-  });
-
-  return redisClient;
 }
 
 function sanitizeScalar(value: unknown, maxLength = 240): string | undefined {
@@ -244,77 +214,11 @@ async function writeFilesystemStore(data: TelemetryStoreData): Promise<void> {
   await writeFile(storePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
-async function readRedisStore(): Promise<TelemetryStoreData> {
-  const redis = getRedisClient();
-  const config = getDocsServerConfig();
-  if (!redis) {
-    return EMPTY_STORE;
-  }
-
-  const content = await redis.get<string>(config.telemetryRedisKey);
-  if (!content) {
-    return EMPTY_STORE;
-  }
-
-  try {
-    const parsed = JSON.parse(content) as Partial<TelemetryStoreData>;
-    if (!Array.isArray(parsed.events)) {
-      return EMPTY_STORE;
-    }
-
-    return {
-      version: 1,
-      events: parsed.events,
-    };
-  } catch {
-    return EMPTY_STORE;
-  }
-}
-
-async function writeRedisStore(data: TelemetryStoreData): Promise<void> {
-  const redis = getRedisClient();
-  const config = getDocsServerConfig();
-  if (!redis) {
-    return;
-  }
-
-  await redis.set(config.telemetryRedisKey, JSON.stringify(data));
-}
-
-async function readStore(): Promise<ResolvedStore> {
-  const config = getDocsServerConfig();
-
-  if (isPersistentTelemetryConfigured(config)) {
-    try {
-      return {
-        adapter: 'upstash-redis',
-        storageTarget: config.telemetryRedisKey,
-        data: await readRedisStore(),
-      };
-    } catch {
-      // Fall back to filesystem if Redis is configured but currently unreachable.
-    }
-  }
-
-  return {
-    adapter: 'filesystem',
-    storageTarget: resolveStorePath(),
-    data: await readFilesystemStore(),
-  };
+async function readStore(): Promise<TelemetryStoreData> {
+  return readFilesystemStore();
 }
 
 async function writeStore(data: TelemetryStoreData): Promise<void> {
-  const config = getDocsServerConfig();
-
-  if (isPersistentTelemetryConfigured(config)) {
-    try {
-      await writeRedisStore(data);
-      return;
-    } catch {
-      // Fall back to filesystem if Redis is configured but currently unreachable.
-    }
-  }
-
   await writeFilesystemStore(data);
 }
 
@@ -328,7 +232,7 @@ export async function recordTelemetryEvent(
     const store = await readStore();
     const retentionThreshold =
       Date.now() - config.telemetryRetentionDays * 24 * 60 * 60 * 1000;
-    const retainedEvents = store.data.events.filter((event) => {
+    const retainedEvents = store.events.filter((event) => {
       const timestamp = Date.parse(event.occurredAt);
       return Number.isFinite(timestamp) && timestamp >= retentionThreshold;
     });
@@ -358,9 +262,7 @@ export async function getTelemetryDashboardSnapshot(
   const store = await readStore();
   const now = Date.now();
   const threshold = now - windowDays * 24 * 60 * 60 * 1000;
-  const events = store.data.events.filter(
-    (event) => Date.parse(event.occurredAt) >= threshold,
-  );
+  const events = store.events.filter((event) => Date.parse(event.occurredAt) >= threshold);
 
   const pageCounts = new Map<string, { pathname: string; title?: string; views: number }>();
   const referrerCounts = new Map<string, number>();
@@ -489,9 +391,9 @@ export async function getTelemetryDashboardSnapshot(
   }
 
   return {
-    adapter: store.adapter,
-    storageTarget: store.storageTarget,
-    totalRetainedEvents: store.data.events.length,
+    adapter: 'filesystem',
+    storageTarget: resolveStorePath(),
+    totalRetainedEvents: store.events.length,
     windowDays,
     summary: {
       pageViews,
