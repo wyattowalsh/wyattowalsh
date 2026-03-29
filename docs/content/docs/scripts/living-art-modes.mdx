@@ -13,19 +13,23 @@ The living-art suite writes different artifacts for different viewers because th
 |---|---|---|---|
 | Ink Garden | `inkgarden-growth-animated.svg` | `inkgarden-growth.gif` | Stacked SVG is richer, GIF survives inline embedding |
 | Topography | `topo-growth-animated.svg` | `topo-growth.gif` | Static/cartographic fallback is easier to read in flattened viewers |
+| Genetic Landscape | `genetic-growth-animated.svg` | `genetic-growth.gif` | Evolutionary terrain benefits from both high-fidelity SVG and portable GIF |
+| Physarum | `physarum-growth-animated.svg` | `physarum-growth.gif` | Network growth is best seen animated; GIF gives broad compatibility |
+| Lenia | `lenia-growth-animated.svg` | `lenia-growth.gif` | Continuous automata need smooth playback; GIF provides universal fallback |
+| Ferrofluid | `ferrofluid-growth-animated.svg` | `ferrofluid-growth.gif` | Metallic spike dynamics are richest in SVG; GIF for inline embedding |
 | Timelapse exports | `living-*.gif` | n/a | Timelapse is already flattened for portability |
 
 ## CLI modes
 
 ### `generate living-art`
 
-Runs the shared `scripts.art.animate` driver twice by default:
+Runs the shared six-style `scripts.art.animate` driver twice by default:
 
 1. `--svg --frames <svg-frames>` to write stacked timeline SVGs
 2. `--frames <frames> --size <size>` to write compatibility GIFs
 
 Use `--svg-only` when you want the richer source artifacts without rewriting the compatibility GIFs.
-Use `--only inkgarden` or `--only topo` when you want to regenerate just one style.
+Use `--only inkgarden`, `--only topo`, `--only genetic`, `--only physarum`, `--only lenia`, or `--only ferrofluid` when you want to regenerate just one style.
 
 ```bash
 uv run readme generate living-art \

@@ -1,6 +1,6 @@
 ---
 title: World State
-description: Shared environmental semantics that keep the living-art generators in sync.
+description: Shared environmental semantics that keep the six living-art generators in sync.
 ---
 
 ## Module
@@ -9,7 +9,7 @@ description: Shared environmental semantics that keep the living-art generators 
 
 ## Purpose
 
-The living-art suite uses one shared environmental model so the generators feel like different lenses on the same portfolio state instead of unrelated visualizations. A profile with late-night commit bursts, rising stars, and active merged PRs should read as the same moment whether you look at the garden or the map.
+The living-art suite uses one shared environmental model so the six generators feel like different lenses on the same portfolio state instead of unrelated visualizations. A profile with late-night commit bursts, rising stars, and active merged PRs should read as the same moment whether you look at the garden, the map, the automata colony, or the ferrofluid pool.
 
 ## Fields
 
@@ -40,13 +40,17 @@ That keeps the renderers stable even when the GitHub API returns partial data.
 |---|---|
 | Ink Garden | Lighting, weather overlays, ecosystem intensity, and palette family |
 | Topography | Hillshade direction, fog, weather indicators, and biome tint |
+| Genetic Landscape | Terrain elevation scale, mutation rate, and adaptive-peak palette |
+| Physarum | Nutrient diffusion rate, trail decay, and network-glow intensity |
+| Lenia | Growth kernel amplitude, color-channel mapping, and time-step scale |
+| Ferrofluid | Magnetic field strength, spike density, and metallic-sheen palette |
 
 ## Contrast guardrails
 
 `scripts/art/shared.py` also exposes `wcag_contrast_ratio()` and `ensure_contrast()`. Those helpers exist because richer low-light scenes are only useful if labels and highlights remain readable against dark backgrounds.
 
 <Callout type="warn" title="World state is shared, not identical rendering">
-The same `WorldState` drives every living-art generator, but each renderer expresses it differently. A stormy night may become foggy ridges in Topography or denser canopies in Ink Garden.
+The same `WorldState` drives every living-art generator, but each renderer expresses it differently. A stormy night may become foggy ridges in Topography, denser canopies in Ink Garden, accelerated mutation in Genetic Landscape, thicker Physarum trails, faster Lenia growth kernels, or taller Ferrofluid spikes.
 </Callout>
 
 ## Related

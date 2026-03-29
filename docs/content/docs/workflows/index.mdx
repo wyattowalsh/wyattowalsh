@@ -72,7 +72,7 @@ Requires `METRICS_TOKEN` secret (GitHub PAT with `read:user`, `public_repo`). Fa
 
 ### `generate-event-art`
 
-Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the living-art growth surface. The job stages the generated growth SVGs/GIFs plus `living-art-manifest.json` and `living-art-preview.html`, uploads the full staging bundle, and auto-commits the committed living-art assets.
+Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the six-style living-art growth surface. The job stages the generated growth SVGs/GIFs plus `living-art-manifest.json` and `living-art-preview.html`, uploads the full staging bundle, and auto-commits the committed living-art assets.
 
 Timelapse GIFs stay manual-only because they are not embedded in the README and are the most expensive living-art export.
 
