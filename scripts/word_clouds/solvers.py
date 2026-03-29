@@ -7,11 +7,9 @@ helpers are preserved exactly as before.
 
 from __future__ import annotations
 
-import io
 import logging
 import math
 import random
-import sys
 from collections.abc import Callable
 
 import numpy as np
@@ -24,15 +22,22 @@ from .readability import (
     LayoutReadabilitySettings,
     coerce_layout_readability_policy,
 )
+from ..utils import get_logger
 
 # Suppress ALL mealpy console logging
 logging.getLogger("mealpy").setLevel(logging.CRITICAL)
+
+logger = get_logger(module=__name__)
 
 LayoutReadabilityConfig = LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
 
 # ---------------------------------------------------------------------------
 # Metaheuristic aesthetic cost function
 # ---------------------------------------------------------------------------
+
+# NOTE: These module-level globals are safe because _run_solver (in metaheuristic.py)
+# runs in ProcessPoolExecutor (separate processes with isolated memory).
+# Do NOT switch to ThreadPoolExecutor without refactoring to pass state explicitly.
 
 # Rotation choices biased toward horizontal for readability
 _META_ROTATIONS = list(DEFAULT_LAYOUT_READABILITY_POLICY.standard_rotations)
@@ -143,6 +148,7 @@ def _aesthetic_cost(
     canvas_h: float,
     texts: list[str] | None = None,
     layout_readability: LayoutReadabilityConfig = None,
+    cost_weights: dict[str, float] | None = None,
 ) -> float:
     """Evaluate the aesthetic quality of a word placement solution.
 
@@ -360,13 +366,14 @@ def _aesthetic_cost(
     # (1000x penalty) so metaheuristic solvers are forced to find
     # zero-overlap, fully-on-canvas solutions.
     hard_violations = overlap_norm + oob_norm
+    w = cost_weights or {}
     aesthetic = (
-        3.0 * packing
-        + 2.0 * balance
-        + 2.0 * uniformity
-        + policy.reading_flow_weight * reading_flow
-        + 1.0 * landscape
-        + 1.0 * size_gradient
+        w.get("packing", 3.0) * packing
+        + w.get("balance", 2.0) * balance
+        + w.get("uniformity", 2.0) * uniformity
+        + w.get("reading_flow", policy.reading_flow_weight) * reading_flow
+        + w.get("landscape", 1.0) * landscape
+        + w.get("size_gradient", 1.0) * size_gradient
     )
     if hard_violations > 0:
         return 1000.0 * hard_violations + aesthetic
@@ -418,9 +425,10 @@ def _eval_fitness(
     canvas_h: float,
     texts: list[str] | None = None,
     layout_readability: LayoutReadabilityConfig = None,
+    cost_weights: dict[str, float] | None = None,
 ) -> float:
     """Return fitness (higher is better) = negative cost."""
-    return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts, layout_readability)
+    return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts, layout_readability, cost_weights)
 
 
 # ---------------------------------------------------------------------------
@@ -437,6 +445,7 @@ def _mealpy_solve(
     rng: random.Random,
     texts: list[str] | None = None,
     pop_size: int | None = None,
+    cost_weights: dict[str, float] | None = None,
 ) -> list[tuple[float, float, float]]:
     """Run any mealpy optimizer on the word-cloud placement problem.
 
@@ -453,8 +462,8 @@ def _mealpy_solve(
     margin_x = canvas_w * 0.15
     margin_y = canvas_h * 0.15
     rot_choices = _ACTIVE_LAYOUT_READABILITY.standard_rotations
-    rot_min = float(min(rot_choices)) if rot_choices else -90.0
-    rot_max = float(max(rot_choices)) if rot_choices else 90.0
+    rot_min = float(min(rot_choices)) - 1.0 if rot_choices else -90.0
+    rot_max = float(max(rot_choices)) + 1.0 if rot_choices else 90.0
 
     lb: list[float] = []
     ub: list[float] = []
@@ -473,7 +482,7 @@ def _mealpy_solve(
             rot = _ACTIVE_LAYOUT_READABILITY.snap_rotation(rot)
             sol_tuples.append((x, y, rot))
         sol_tuples = _clamp_solution(sol_tuples, canvas_w, canvas_h)
-        return _aesthetic_cost(sol_tuples, sizes, canvas_w, canvas_h, texts)
+        return _aesthetic_cost(sol_tuples, sizes, canvas_w, canvas_h, texts, cost_weights=cost_weights)
 
     problem = {
         "bounds": bounds,
@@ -493,8 +502,11 @@ def _mealpy_solve(
         for i in range(0, dim, 3):
             sol_tuples.append((float(best_vec[i]), float(best_vec[i + 1]), float(best_vec[i + 2])))
         return _clamp_solution(sol_tuples, canvas_w, canvas_h)
-    except Exception:
-        # Fall back to random solution if optimizer fails
+    except (RuntimeError, ValueError, TypeError) as exc:
+        logger.debug(
+            "Solver {} failed, falling back to random: {}",
+            optimizer_class.__name__, exc,
+        )
         return _random_solution(n_words, canvas_w, canvas_h, rng)
 
 
@@ -514,10 +526,11 @@ def _make_mealpy_solver(optimizer_class: type) -> Callable[..., list[tuple[float
         rng: random.Random,
         texts: list[str] | None = None,
         pop_size: int | None = None,
+        cost_weights: dict[str, float] | None = None,
     ) -> list[tuple[float, float, float]]:
         return _mealpy_solve(
             optimizer_class, n_words, sizes, canvas_w, canvas_h,
-            max_iter, rng, texts, pop_size,
+            max_iter, rng, texts, pop_size, cost_weights,
         )
 
     solver.__name__ = f"_solve_{optimizer_class.__name__}"
@@ -549,12 +562,7 @@ _EXCLUDED_OPTIMIZERS: frozenset[str] = frozenset({
 def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float, float]]]]:
     from mealpy import get_all_optimizers
 
-    old_stdout = sys.stdout
-    sys.stdout = io.StringIO()
-    try:
-        all_optimizers = get_all_optimizers()
-    finally:
-        sys.stdout = old_stdout
+    all_optimizers = get_all_optimizers(verbose=False)
 
     registry: dict[str, Callable[..., list[tuple[float, float, float]]]] = {}
     for name, cls in all_optimizers.items():
@@ -564,6 +572,3 @@ def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float,
 
 
 _META_SOLVERS: dict[str, Callable[..., list[tuple[float, float, float]]]] = _build_solver_registry()
-
-# Backwards-compatible alias: metaheuristic.py imports _solve_harmony_search directly
-_solve_harmony_search = _META_SOLVERS.get("OriginalHS", next(iter(_META_SOLVERS.values())))

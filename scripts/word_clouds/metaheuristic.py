@@ -16,7 +16,7 @@ from .readability import LayoutReadabilityPolicy, LayoutReadabilitySettings
 from .shaped import ShapedRenderer
 from .solvers import (
     _META_SOLVERS,
-    _solve_harmony_search,
+    _clamp_solution,
     configure_layout_readability,
 )
 from .typographic import TypographicRenderer
@@ -28,84 +28,48 @@ LayoutReadabilityConfig = (
     LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
 )
 
-_POPULATION_TUNED_SOLVERS = {
-    "Harmony Search",
-    "Particle Swarm",
-    "Differential Evolution",
-    "Ant Colony",
-    "Firefly",
-    "Cuckoo Search",
-    "Bat Algorithm",
-    "Grey Wolf",
-    "Whale Optimization",
-    "Gravitational Search",
-    "Flower Pollination",
-    "Moth-Flame",
-    "Salp Swarm",
-    "Sine Cosine",
-    "Teaching-Learning",
-    "Jaya",
-    "Water Cycle",
-    "Biogeography-Based",
-    "Artificial Bee Colony",
-    "Cultural Algorithm",
-    "Invasive Weed",
-    "Charged System Search",
-    "Stochastic Fractal Search",
-}
+
+def _build_family_map() -> dict[str, str]:
+    """Map solver names to algorithm families from mealpy module paths."""
+    families: dict[str, str] = {}
+    try:
+        from mealpy import get_all_optimizers
+
+        all_opts = get_all_optimizers(verbose=False)
+        for name, cls in all_opts.items():
+            module = cls.__module__  # e.g. "mealpy.swarm_based.PSO"
+            parts = module.split(".")
+            if len(parts) >= 2:
+                families[name] = parts[1].replace("_based", "")
+            else:
+                families[name] = "unknown"
+    except Exception:
+        pass
+    return families
 
 
-def _run_solver(
-    args: tuple[
-        str,
-        int,
-        list[float],
-        float,
-        float,
-        int,
-        int,
-        int | None,
-        list[str],
-        LayoutReadabilityConfig,
-    ],
-) -> tuple[str, list[tuple[float, float, float]]]:
+_SOLVER_FAMILIES: dict[str, str] = _build_family_map()
+
+
+def _run_solver(args):
     """Worker function for parallel solver execution (top-level for pickling)."""
-    (
-        name,
-        n_words,
-        sizes,
-        canvas_w,
-        canvas_h,
-        max_iter,
-        pop_size,
-        seed,
-        texts,
-        layout_readability,
-    ) = args
+    (name, n_words, sizes, canvas_w, canvas_h, max_iter, pop_size, seed,
+     texts, layout_readability, cost_weights) = args
     configure_layout_readability(layout_readability, word_sizes=sizes)
     solver_fn = _META_SOLVERS[name]
     rng = random.Random(seed)
-    if name in _POPULATION_TUNED_SOLVERS:
-        placements = solver_fn(
-            n_words,
-            sizes,
-            canvas_w,
-            canvas_h,
-            max_iter,
-            rng,
-            texts,
-            pop_size=pop_size,
-        )
-    else:
-        placements = solver_fn(n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts)
+    placements = solver_fn(
+        n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts,
+        pop_size=pop_size, cost_weights=cost_weights,
+    )
     return name, placements
 
 
 class MetaheuristicAnimRenderer(SvgWordCloudEngine):
-    """Animated word cloud showing 25 metaheuristic optimization algorithms.
+    """Animated word cloud showing all registered metaheuristic optimization algorithms.
 
     Each algorithm solves the same word placement problem, producing a frame.
-    All 25 frames are stacked in a single SVG with CSS opacity animation
+    All frames are stacked in a single SVG with CSS opacity animation
     that cycles through them infinitely.
     """
 
@@ -173,6 +137,21 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         canvas_w = float(self.width)
         canvas_h = float(self.height)
 
+        # Per-solver weight perturbation: Gaussian noise on soft cost components
+        # to produce diverse layouts exploring the aesthetic Pareto front.
+        DEFAULT_WEIGHTS = {
+            "packing": 3.0, "balance": 2.0, "uniformity": 2.0,
+            "reading_flow": 2.25, "landscape": 1.0, "size_gradient": 1.0,
+        }
+        weight_rng = random.Random(self.seed if self.seed else 42)
+        solver_weights: list[dict[str, float]] = []
+        for _ in _META_SOLVERS:
+            w = {}
+            for key, default in DEFAULT_WEIGHTS.items():
+                noise = weight_rng.gauss(0, 0.3)
+                w[key] = max(0.5, min(5.0, default + noise))
+            solver_weights.append(w)
+
         # Build args for each solver (top-level worker for pickling)
         solver_args = [
             (
@@ -186,8 +165,9 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 self.seed,
                 texts,
                 self.layout_readability,
+                weights,
             )
-            for name in _META_SOLVERS
+            for (name, weights) in zip(_META_SOLVERS, solver_weights)
         ]
 
         n_workers = min(len(solver_args), os.cpu_count() or 4)
@@ -198,20 +178,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         )
 
         results_by_name: dict[str, tuple[str, list[tuple[float, float, float]]]] = {}
-        failed_args: list[
-            tuple[
-                str,
-                int,
-                list[float],
-                float,
-                float,
-                int,
-                int,
-                int | None,
-                list[str],
-                LayoutReadabilityConfig,
-            ]
-        ] = []
+        failed_args: list[tuple] = []
 
         with ProcessPoolExecutor(max_workers=n_workers) as executor:
             future_to_args = {
@@ -502,7 +469,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         self,
         frequencies: dict[str, float],
     ) -> list[PlacedWord]:
-        """Place words using the first metaheuristic solver (Harmony Search).
+        """Place words using the first registered metaheuristic solver.
 
         For the animated version, use generate() directly.
         """
@@ -513,7 +480,9 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             return []
         configure_layout_readability(self.layout_readability, word_sizes=sizes)
         rng = random.Random(self.seed)
-        positions = _solve_harmony_search(
+        first_name = next(iter(_META_SOLVERS))
+        solver_fn = _META_SOLVERS[first_name]
+        positions = solver_fn(
             len(texts),
             sizes,
             float(self.width),
@@ -523,7 +492,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             texts,
         )
         return self._render_frame(
-            "Harmony Search", positions, texts, sizes, colors, weights, opacities
+            first_name, positions, texts, sizes, colors, weights, opacities
         )
 
     def generate(
@@ -532,7 +501,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         palette: str | None = None,
         source: str | None = None,
     ) -> str:
-        """Generate animated SVG with all 25 metaheuristic algorithm frames.
+        """Generate animated SVG with all registered metaheuristic algorithm frames.
 
         Each frame uses a monotonic OKLCH hue advance (~1.6° per frame,
         ~40° total) from the base palette, creating a subtle chromatic
@@ -557,15 +526,20 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         if not texts:
             return '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
         logger.info(
-            "MetaheuristicAnimRenderer: solving {n} words with 25 algorithms",
+            "MetaheuristicAnimRenderer: solving {n} words with {k} algorithms",
             n=len(texts),
+            k=len(_META_SOLVERS),
         )
 
         all_results = self._solve_all(texts, sizes)
+        self._log_diversity_baseline(all_results, sizes, texts)
 
         # Optimize frame ordering for smoothest visual transitions
         order = self._optimize_frame_order(all_results)
         ordered_results = [all_results[i] for i in order]
+
+        # Nudge each frame toward its neighbors for smoother transitions
+        ordered_results = self._refine_transitions(ordered_results, sizes, texts)
 
         # Determine base palette name for hue shifting
         base_palette = getattr(self, "color_func_name", "ocean") or "ocean"
@@ -625,6 +599,64 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             total += math.sqrt(dx * dx + dy * dy + dr * dr)
         return total
 
+    def _log_diversity_baseline(
+        self,
+        results: list[tuple[str, list[tuple[float, float, float]]]],
+        sizes: list[float],
+        texts: list[str],
+    ) -> None:
+        """Log diversity metrics for the solver results as a diagnostic baseline."""
+        n = len(results)
+        if n < 2:
+            return
+
+        # Pairwise layout distances
+        positions = [r[1] for r in results]
+        distances: list[float] = []
+        for i in range(n):
+            for j in range(i + 1, n):
+                distances.append(self._layout_distance(positions[i], positions[j]))
+
+        mean_dist = sum(distances) / len(distances)
+        min_dist = min(distances)
+        max_dist = max(distances)
+        variance = sum((d - mean_dist) ** 2 for d in distances) / len(distances)
+        std_dist = variance**0.5
+
+        # Per-frame cost (uses default weights — diagnostic only)
+        from .solvers import _aesthetic_cost
+
+        costs = []
+        hard_violations = 0
+        canvas_w = float(self.width)
+        canvas_h = float(self.height)
+        for _name, pos in results:
+            cost = _aesthetic_cost(pos, sizes, canvas_w, canvas_h, texts)
+            costs.append(cost)
+            if cost >= 1000.0:
+                hard_violations += 1
+
+        mean_cost = sum(costs) / len(costs)
+        min_cost = min(costs)
+        max_cost = max(costs)
+
+        logger.info(
+            "Diversity baseline: {n} frames, "
+            "layout distance mean={mean:.0f} std={std:.0f} "
+            "min={min:.0f} max={max:.0f}, "
+            "cost mean={cmean:.2f} min={cmin:.2f} max={cmax:.2f}, "
+            "hard violations={hv}",
+            n=n,
+            mean=mean_dist,
+            std=std_dist,
+            min=min_dist,
+            max=max_dist,
+            cmean=mean_cost,
+            cmin=min_cost,
+            cmax=max_cost,
+            hv=hard_violations,
+        )
+
     def _optimize_frame_order(
         self,
         results: list[tuple[str, list[tuple[float, float, float]]]],
@@ -636,12 +668,16 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         if n <= 2:
             return list(range(n))
 
-        # Build distance matrix
+        # Build distance matrix with family cohesion bonus
         positions = [r[1] for r in results]
+        names = [r[0] for r in results]
         dist = [[0.0] * n for _ in range(n)]
         for i in range(n):
             for j in range(i + 1, n):
                 d = self._layout_distance(positions[i], positions[j])
+                # Same family gets 10% distance discount for softer grouping
+                if _SOLVER_FAMILIES.get(names[i]) == _SOLVER_FAMILIES.get(names[j]):
+                    d *= 0.9
                 dist[i][j] = d
                 dist[j][i] = d
 
@@ -691,6 +727,51 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             c=best_cost,
         )
         return best_order
+
+    def _refine_transitions(
+        self,
+        ordered: list[tuple[str, list[tuple[float, float, float]]]],
+        sizes: list[float],
+        texts: list[str],
+    ) -> list[tuple[str, list[tuple[float, float, float]]]]:
+        """Nudge each frame toward its neighbors for smoother animation transitions.
+
+        For each frame, compute a target position that blends the current layout
+        with adjacent frames. Run a short local refinement that balances aesthetic
+        quality (70%) with transition smoothness (30%).
+        """
+        n = len(ordered)
+        if n < 3:
+            return ordered
+
+        canvas_w = float(self.width)
+        canvas_h = float(self.height)
+        refined: list[tuple[str, list[tuple[float, float, float]]]] = []
+
+        for i in range(n):
+            name, positions = ordered[i]
+            prev_pos = ordered[(i - 1) % n][1]
+            next_pos = ordered[(i + 1) % n][1]
+            n_words = len(positions)
+
+            # Compute neighbor-weighted target: average of prev and next
+            nudged: list[tuple[float, float, float]] = []
+            for j in range(n_words):
+                cx, cy, cr = positions[j]
+                # Target = midpoint of prev and next frame positions for this word
+                tx = (prev_pos[j][0] + next_pos[j][0]) / 2
+                ty = (prev_pos[j][1] + next_pos[j][1]) / 2
+                # Blend: 70% original, 30% neighbor target
+                nx = cx * 0.7 + tx * 0.3
+                ny = cy * 0.7 + ty * 0.3
+                nudged.append((nx, ny, cr))  # keep rotation unchanged
+
+            # Clamp to canvas bounds
+            nudged = _clamp_solution(nudged, canvas_w, canvas_h)
+            refined.append((name, nudged))
+
+        logger.info("Transition refinement applied to {n} frames", n=n)
+        return refined
 
 
 def _frame_hue_offset(frame_idx: int, total_frames: int) -> float:

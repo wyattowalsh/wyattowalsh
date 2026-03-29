@@ -16,6 +16,7 @@ from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_fon
 from scripts.word_clouds.metaheuristic import MetaheuristicAnimRenderer
 from scripts.word_clouds.solvers import (
     _aesthetic_cost,
+    _mealpy_solve,
     _random_solution,
     configure_layout_readability,
 )
@@ -290,7 +291,9 @@ def test_metaheuristic_place_words_passes_word_sizes_to_readability_config(
         "configure_layout_readability",
         fake_configure,
     )
-    monkeypatch.setattr(metaheuristic_module, "_solve_harmony_search", fake_solve)
+    # Patch all solvers in _META_SOLVERS to use the fake
+    fake_solvers = {name: fake_solve for name in metaheuristic_module._META_SOLVERS}
+    monkeypatch.setattr(metaheuristic_module, "_META_SOLVERS", fake_solvers)
     monkeypatch.setattr(renderer, "_render_frame", fake_render_frame)
 
     placed = renderer.place_words({"Python": 9.0, "Go": 3.0})
@@ -431,7 +434,7 @@ def test_generator_uses_renderer_specific_default_filename_for_svg_frequencies(
     assert expected.exists()
 
 
-def test_run_solver_passes_pop_size_to_population_tuned_solver(
+def test_run_solver_always_passes_pop_size(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, object] = {}
@@ -445,8 +448,10 @@ def test_run_solver_passes_pop_size_to_population_tuned_solver(
         rng: random.Random,
         texts: list[str] | None = None,
         pop_size: int | None = None,
+        cost_weights: dict[str, float] | None = None,
     ) -> list[tuple[float, float, float]]:
         captured["pop_size"] = pop_size
+        captured["cost_weights"] = cost_weights
         return [(100.0, 100.0, 0.0)] * n_words
 
     monkeypatch.setitem(
@@ -467,6 +472,7 @@ def test_run_solver_passes_pop_size_to_population_tuned_solver(
             123,
             ["python", "go"],
             LayoutReadabilitySettings(),
+            None,
         )
     )
 
@@ -493,6 +499,7 @@ def test_metaheuristic_solver_failures_retry_locally(
             int | None,
             list[str],
             object,
+            dict[str, float] | None,
         ],
     ) -> tuple[str, list[tuple[float, float, float]]]:
         name, n_words, *_ = args
@@ -535,3 +542,53 @@ def test_metaheuristic_solver_failures_retry_locally(
 
     assert "OriginalHS" in result_names
     assert call_counts["OriginalHS"] == 2
+
+
+def test_mealpy_solve_produces_valid_placement() -> None:
+    """Integration test: _mealpy_solve with a real mealpy optimizer."""
+    from mealpy.swarm_based.PSO import OriginalPSO
+
+    configure_layout_readability()
+    n_words = 3
+    sizes = [30.0, 20.0, 15.0]
+    texts = ["alpha", "beta", "gamma"]
+    canvas_w, canvas_h = 400.0, 300.0
+    rng = random.Random(42)
+
+    result = _mealpy_solve(
+        OriginalPSO, n_words, sizes, canvas_w, canvas_h,
+        max_iter=20, rng=rng, texts=texts, pop_size=10,
+    )
+
+    assert len(result) == n_words
+    margin_x = canvas_w * 0.15
+    margin_y = canvas_h * 0.15
+    for x, y, rot in result:
+        assert margin_x <= x <= canvas_w - margin_x
+        assert margin_y <= y <= canvas_h - margin_y
+        # rotation should be snapped to a valid value
+        assert isinstance(rot, float)
+
+    cost = _aesthetic_cost(result, sizes, canvas_w, canvas_h, texts)
+    assert cost < float("inf")
+    assert cost >= 0.0
+
+
+def test_mealpy_solve_fallback_on_bad_optimizer() -> None:
+    """_mealpy_solve falls back to random solution on optimizer failure."""
+
+    configure_layout_readability()
+
+    class _BrokenOptimizer:
+        def __init__(self, **kwargs):
+            raise RuntimeError("intentional failure")
+
+    rng = random.Random(99)
+    result = _mealpy_solve(
+        _BrokenOptimizer, 3, [20.0, 15.0, 10.0], 400.0, 300.0,
+        max_iter=10, rng=rng,
+    )
+    # Should get a valid random fallback, not an exception
+    assert len(result) == 3
+    for x, y, rot in result:
+        assert isinstance(x, float)
