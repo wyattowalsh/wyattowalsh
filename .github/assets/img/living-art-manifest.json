@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-03-29T02:08:03.970428+00:00",
+  "output_dir": ".github/assets/img",
+  "total_assets": 8,
+  "counts": {
+    "source_svg": 6,
+    "compatibility_gif": 2,
+    "timelapse_gif": 0
+  },
+  "styles": [
+    "ferrofluid",
+    "genetic",
+    "inkgarden",
+    "lenia",
+    "physarum",
+    "topo"
+  ],
+  "assets": [
+    {
+      "name": "inkgarden-growth.gif",
+      "path": "inkgarden-growth.gif",
+      "style": "inkgarden",
+      "style_label": "Ink Garden",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 1894694
+    },
+    {
+      "name": "topo-growth.gif",
+      "path": "topo-growth.gif",
+      "style": "topo",
+      "style_label": "Topography",
+      "channel": "compatibility_gif",
+      "variant": "default",
+      "bytes": 1285783
+    },
+    {
+      "name": "ferrofluid-growth-animated.svg",
+      "path": "ferrofluid-growth-animated.svg",
+      "style": "ferrofluid",
+      "style_label": "Ferrofluid",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 1467492
+    },
+    {
+      "name": "genetic-growth-animated.svg",
+      "path": "genetic-growth-animated.svg",
+      "style": "genetic",
+      "style_label": "Genetic Landscape",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 433449
+    },
+    {
+      "name": "inkgarden-growth-animated.svg",
+      "path": "inkgarden-growth-animated.svg",
+      "style": "inkgarden",
+      "style_label": "Ink Garden",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 7076156
+    },
+    {
+      "name": "lenia-growth-animated.svg",
+      "path": "lenia-growth-animated.svg",
+      "style": "lenia",
+      "style_label": "Lenia",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 679998
+    },
+    {
+      "name": "physarum-growth-animated.svg",
+      "path": "physarum-growth-animated.svg",
+      "style": "physarum",
+      "style_label": "Physarum",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 305247
+    },
+    {
+      "name": "topo-growth-animated.svg",
+      "path": "topo-growth-animated.svg",
+      "style": "topo",
+      "style_label": "Topography",
+      "channel": "source_svg",
+      "variant": "default",
+      "bytes": 13413492
+    }
+  ]
+}
