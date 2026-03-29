@@ -59,18 +59,6 @@ def test_main_svg_mode_writes_expected_living_artifacts(
         animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
     monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
         animate.sys,
         "argv",
         ["animate", "--svg", "--frames", "4", "--profile", "wyatt"],
@@ -99,18 +87,6 @@ def test_main_svg_mode_disables_topography_timeline_for_static_frames(
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
     monkeypatch.setattr(
         animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
     topo_calls: list[dict] = []
 
@@ -191,11 +167,11 @@ def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -
 
     assert manifest == manifest_data
     assert manifest_data["counts"] == {
-        "source_svg": 6,
-        "compatibility_gif": 6,
-        "timelapse_gif": 6,
+        "source_svg": 2,
+        "compatibility_gif": 2,
+        "timelapse_gif": 2,
     }
-    assert manifest_data["total_assets"] == 18
+    assert manifest_data["total_assets"] == 6
     actual_styles = {a["style"] for a in manifest_data["assets"]}
     assert actual_styles == set(LIVING_ART_STYLE_KEYS)
     assert "Living Art Preview Gallery" in gallery
@@ -216,23 +192,11 @@ def test_main_svg_mode_propagates_generator_failure(
     monkeypatch.setattr(
         animate.ink_garden, "generate", lambda *_a, **_kw: _stub_svg()
     )
-    monkeypatch.setattr(
-        animate.topography, "generate", lambda *_a, **_kw: _stub_svg()
-    )
 
     def _failing(*_a, **_kw):
         raise RuntimeError("Simulated generator failure")
 
-    monkeypatch.setattr(animate.genetic_landscape, "generate", _failing)
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_a, **_kw: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_a, **_kw: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_a, **_kw: _stub_svg()
-    )
+    monkeypatch.setattr(animate.topography, "generate", _failing)
     monkeypatch.setattr(
         animate.sys,
         "argv",

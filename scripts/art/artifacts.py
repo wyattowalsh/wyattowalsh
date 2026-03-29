@@ -16,10 +16,6 @@ GALLERY_FILENAME = "living-art-preview.html"
 LIVING_ART_STYLE_LABELS = {
     "inkgarden": "Ink Garden",
     "topo": "Topography",
-    "genetic": "Genetic Landscape",
-    "physarum": "Physarum",
-    "lenia": "Lenia",
-    "ferrofluid": "Ferrofluid",
 }
 LIVING_ART_STYLE_KEYS = tuple(LIVING_ART_STYLE_LABELS.keys())
 _CHANNEL_LABELS = {

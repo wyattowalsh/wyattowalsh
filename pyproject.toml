@@ -5,19 +5,19 @@ description = "github profile repo"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "email-validator>=2.2.0",
+    "email-validator>=2.3.0",
     "loguru>=0.7.3",
-    "matplotlib>=3.10.3",
+    "matplotlib>=3.10.8",
     "noise>=1.2.2",
     "numpy>=2.2.6",
-    "pillow>=11.2.1",
-    "pydantic>=2.11.5",
-    "scipy>=1.15.0",
-    "pydantic-settings>=2.9.1",
-    "pyyaml>=6.0.2",
-    "rich>=14.0.0",
+    "pillow>=12.1.1",
+    "pydantic>=2.12.5",
+    "scipy>=1.16.3",
+    "pydantic-settings>=2.13.1",
+    "pyyaml>=6.0.3",
+    "rich>=14.3.3",
     "svgwrite>=1.4.3",
-    "typer>=0.16.0",
+    "typer>=0.24.1",
     "defusedxml>=0.7.1",
 ]
 
@@ -26,41 +26,41 @@ readme = "scripts.cli:app"
 
 [project.optional-dependencies]
 format = [
-    "ruff>=0.11.11",
+    "ruff>=0.15.8",
 ]
 lint = [
-    "mypy>=1.15.0",
-    "pylint>=3.3.7",
-    "ruff>=0.11.11",
+    "mypy>=1.19.1",
+    "pylint>=4.0.5",
+    "ruff>=0.15.8",
 ]
 qr = [
-    "cairosvg>=2.7.0",
+    "cairosvg>=2.9.0",
     "qrcode-artistic>=3.0.2",
     "segno>=1.6.6",
 ]
 test = [
-    "hypothesis>=6.131.30",
-    "pytest>=8.3.5",
-    "pytest-benchmark>=5.1.0",
-    "pytest-cov>=6.1.1",
+    "hypothesis>=6.151.10",
+    "pytest>=9.0.2",
+    "pytest-benchmark>=5.2.3",
+    "pytest-cov>=7.1.0",
     "pytest-emoji>=0.2.0",
-    "pytest-html>=4.1.1",
+    "pytest-html>=4.2.0",
     "pytest-icdiff>=0.9",
     "pytest-instafail>=0.5.0",
-    "pytest-mock>=3.14.1",
-    "pytest-sugar>=1.0.0",
+    "pytest-mock>=3.15.1",
+    "pytest-sugar>=1.1.1",
     "pytest-timeout>=2.4.0",
-    "pytest-xdist>=3.7.0",
+    "pytest-xdist>=3.8.0",
     "readme[qr]",
 ]
 word-clouds = [
-    "beautifulsoup4>=4.13.4",
-    "fonttools>=4.58.1",
-    "markdown>=3.8",
-    "wordcloud>=1.9.4",
+    "beautifulsoup4>=4.14.3",
+    "fonttools>=4.62.1",
+    "markdown>=3.10.2",
+    "wordcloud>=1.9.6",
 ]
 script-tools = [
-    "starred>=1.5.1",
+    "starred>=4.3.0",
 ]
 dev = [
     "readme[format,lint,test]",

@@ -76,7 +76,7 @@ uv run python -m scripts.cli generate word-cloud \
 
 ## `generate living-art`
 
-Generates the public six-style living-art surface:
+Generates the living-art surface:
 
 - stacked source SVGs such as `inkgarden-growth-animated.svg`
 - README-safe compatibility GIFs such as `inkgarden-growth.gif`
@@ -95,7 +95,7 @@ uv run python -m scripts.cli generate living-art \
 | `--frames` | Compatibility GIF frame count |
 | `--svg-frames` | Stacked timeline SVG frame count |
 | `--size` | GIF render size in px |
-| `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
+| `--only` | Restrict to one style: `inkgarden` or `topo` |
 | `--svg-only` | Skip compatibility GIF generation and only refresh the SVG/index surface |
 | `--metrics-path` | Optional metrics JSON for live data |
 | `--history-path` | Optional history JSON for richer chronology |
@@ -108,7 +108,7 @@ Produces day-by-day GIF exports for one or all living-art styles. These are heav
 uv run python -m scripts.cli generate timelapse \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
-  --only physarum \
+  --only topo \
   --max-frames 120
 ```
 
@@ -119,7 +119,7 @@ uv run python -m scripts.cli generate timelapse \
 | `--history-path` | Required history JSON from `fetch_history` |
 | `--max-frames` | Upper bound on frames per GIF |
 | `--size` | Output frame size in px |
-| `--only` | Restrict to one style from the six-style living-art set |
+| `--only` | Restrict to one style: `inkgarden` or `topo` |
 | `--workers` | Parallel render workers |
 
 ## `generate generative`

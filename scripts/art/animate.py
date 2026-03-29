@@ -9,8 +9,8 @@ then stacks them in a single SVG with CSS-timed overlays so the artwork
 genuinely evolves from bare soil to its final state.
 
 Usage:
-  uv run python -m scripts.art.animate [--profile NAME] [--frames N] [--size PX] [--only inkgarden|topo|genetic|physarum|lenia|ferrofluid]
-  uv run python -m scripts.art.animate --svg [--profile NAME] [--frames N] [--only inkgarden|topo|genetic|physarum|lenia|ferrofluid]
+  uv run python -m scripts.art.animate [--profile NAME] [--frames N] [--size PX] [--only inkgarden|topo]
+  uv run python -m scripts.art.animate --svg [--profile NAME] [--frames N] [--only inkgarden|topo]
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from ..utils import get_logger
-from . import ferrofluid, genetic_landscape, ink_garden, lenia, physarum, topography
+from . import ink_garden, topography
 from ._dev_profiles import PROFILES
 from .shared import compute_maturity, normalize_live_metrics, parse_cli_args, seed_hash
 
@@ -297,10 +297,6 @@ def main() -> None:
     all_generators = {
         "inkgarden": ("inkgarden-growth", ink_garden.generate),
         "topo": ("topo-growth", topography.generate),
-        "genetic": ("genetic-growth", genetic_landscape.generate),
-        "physarum": ("physarum-growth", physarum.generate),
-        "lenia": ("lenia-growth", lenia.generate),
-        "ferrofluid": ("ferrofluid-growth", ferrofluid.generate),
     }
     if only and only in all_generators:
         generators = {only: all_generators[only]}

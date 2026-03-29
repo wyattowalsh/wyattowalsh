@@ -66,6 +66,7 @@ readme_sections_settings:
     - full_name: wyattowalsh/personal-website
     - full_name: wyattowalsh/mdxpad
     - full_name: wyattowalsh/ai-web-feeds
+    - full_name: wyattowalsh/iina-plugin-bookmarks
   blog_feed_url: https://w4w.dev/feed.xml
   blog_post_limit: 5
   svg:

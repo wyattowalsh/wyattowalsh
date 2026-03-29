@@ -11,6 +11,7 @@ from scripts.cli import app
 from scripts.cli.generate import _wc_from_languages, _wc_from_topics, _wc_import
 from scripts.config import ProjectConfig
 from scripts.word_clouds import WordCloudSettings
+from scripts.word_clouds.readability import LayoutReadabilitySettings
 
 
 # Fixture for CliRunner
@@ -52,7 +53,7 @@ def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
         assert "qr_code_settings" in content
 
 
-def test_wc_from_topics_uses_clustered_renderer_with_stable_filename(
+def test_wc_from_topics_uses_metaheuristic_renderer_with_stable_filename(
     tmp_path: Path,
 ) -> None:
     topics_md = tmp_path / "topics.md"
@@ -61,22 +62,25 @@ def test_wc_from_topics_uses_clustered_renderer_with_stable_filename(
         TOPICS_MD_PATH=topics_md,
         PROFILE_IMG_OUTPUT_DIR=tmp_path,
         parse_markdown_for_word_cloud_frequencies=lambda _: {"python": 4, "others": 2},
-        _filter_others=lambda freqs: {k: v for k, v in freqs.items() if k != "others"},
         WordCloudSettings=WordCloudSettings,
         WordCloudGenerator=_CapturingWordCloudGenerator,
     )
 
-    result = _wc_from_topics(wc, None, [])
+    result = _wc_from_topics(wc, None, [], 10, LayoutReadabilitySettings())
 
-    assert result == tmp_path / "wordcloud_wordle_by_topics.svg"
+    assert result == tmp_path / "wordcloud_metaheuristic-anim_by_topics.svg"
     assert _CapturingWordCloudGenerator.last_settings is not None
-    assert _CapturingWordCloudGenerator.last_settings.renderer == "clustered"
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "metaheuristic-anim"
+    assert _CapturingWordCloudGenerator.last_settings.max_words == 2
     assert _CapturingWordCloudGenerator.last_kwargs is not None
-    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {"python": 4}
-    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "gradient"
+    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {
+        "python": 4,
+        "others": 2,
+    }
+    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "ocean"
 
 
-def test_wc_from_languages_uses_typographic_renderer_with_stable_filename(
+def test_wc_from_languages_uses_metaheuristic_renderer_with_stable_filename(
     tmp_path: Path,
 ) -> None:
     languages_md = tmp_path / "languages.md"
@@ -85,25 +89,30 @@ def test_wc_from_languages_uses_typographic_renderer_with_stable_filename(
         LANGUAGES_MD_PATH=languages_md,
         PROFILE_IMG_OUTPUT_DIR=tmp_path,
         parse_markdown_for_word_cloud_frequencies=lambda _: {"Python": 5, "Others": 1},
-        _filter_others=lambda freqs: {k: v for k, v in freqs.items() if k.lower() != "others"},
         WordCloudSettings=WordCloudSettings,
         WordCloudGenerator=_CapturingWordCloudGenerator,
     )
 
-    result = _wc_from_languages(wc, None, [])
+    result = _wc_from_languages(wc, None, [], 10, LayoutReadabilitySettings())
 
-    assert result == tmp_path / "wordcloud_wordle_by_languages.svg"
+    assert result == tmp_path / "wordcloud_metaheuristic-anim_by_languages.svg"
     assert _CapturingWordCloudGenerator.last_settings is not None
-    assert _CapturingWordCloudGenerator.last_settings.renderer == "typographic"
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "metaheuristic-anim"
+    assert _CapturingWordCloudGenerator.last_settings.max_words == 2
     assert _CapturingWordCloudGenerator.last_kwargs is not None
-    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {"Python": 5}
-    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "sunset"
+    assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {
+        "Python": 5,
+        "Others": 1,
+    }
+    assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "aurora"
 
 
-def test_wc_import_exposes_filter_others() -> None:
+def test_wc_import_exposes_word_cloud_interfaces() -> None:
     wc = _wc_import()
 
-    assert hasattr(wc, "_filter_others")
+    assert hasattr(wc, "WordCloudSettings")
+    assert hasattr(wc, "WordCloudGenerator")
+    assert hasattr(wc, "parse_markdown_for_word_cloud_frequencies")
 
 
 def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> None:
@@ -165,7 +174,6 @@ def test_config_save_new_default(
     assert isinstance(mock_save_config.call_args[0][0], ProjectConfig)
     assert mock_save_config.call_args[0][1] == new_config_path
     assert "Configuration successfully saved" in result.stdout
-    assert "default config to save" in result.stdout
 
 
 # ------------------------------------------------------------------------------

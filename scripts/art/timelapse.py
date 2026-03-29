@@ -44,10 +44,6 @@ logger = get_logger(module=__name__)
 _STYLE_REGISTRY: dict[str, tuple[str, str]] = {
     "inkgarden": ("scripts.art.ink_garden", "generate"),
     "topo": ("scripts.art.topography", "generate"),
-    "genetic": ("scripts.art.genetic_landscape", "generate"),
-    "physarum": ("scripts.art.physarum", "generate"),
-    "lenia": ("scripts.art.lenia", "generate"),
-    "ferrofluid": ("scripts.art.ferrofluid", "generate"),
 }
 
 ALL_STYLES = list(_STYLE_REGISTRY.keys())
@@ -416,11 +412,7 @@ def main() -> None:
     parser.add_argument(
         "--only",
         default=None,
-        help=(
-            "Restrict to one style: "
-            + ", ".join(ALL_STYLES[:-1])
-            + f", or {ALL_STYLES[-1]}"
-        ),
+        help="Restrict to one style: inkgarden or topo",
     )
     parser.add_argument("--workers", type=int, default=None, help="Parallel workers")
     parser.add_argument("--output-dir", default=None, help="Output directory")

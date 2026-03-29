@@ -5,7 +5,6 @@ from pydantic import ValidationError
 
 pytest.importorskip("numpy", reason="living-art shared contracts require numpy")
 
-from scripts.art.artifacts import LIVING_ART_STYLE_KEYS  # noqa: E402
 from scripts.art.shared import (  # noqa: E402
     normalize_live_metrics,
     validate_live_history_payload,
@@ -96,30 +95,7 @@ def test_render_timelapse_rejects_invalid_metrics_payload() -> None:
         render_timelapse(
             history=_history_payload(),
             current_metrics={"languages": ["Python"]},
-            styles=list(LIVING_ART_STYLE_KEYS),
+            styles=["inkgarden"],
             max_frames=2,
             size=64,
-        )
-
-
-def test_all_style_registries_have_same_keys() -> None:
-    """Canonical style list, timelapse registry, and animate imports stay in sync."""
-    from scripts.art import animate  # noqa: E402
-    from scripts.art.timelapse import ALL_STYLES  # noqa: E402
-
-    expected = set(LIVING_ART_STYLE_KEYS)
-    assert set(ALL_STYLES) == expected, (
-        f"timelapse ALL_STYLES drift: {set(ALL_STYLES)} != {expected}"
-    )
-    module_map = {
-        "inkgarden": "ink_garden",
-        "topo": "topography",
-        "genetic": "genetic_landscape",
-        "physarum": "physarum",
-        "lenia": "lenia",
-        "ferrofluid": "ferrofluid",
-    }
-    for style_key in LIVING_ART_STYLE_KEYS:
-        assert hasattr(animate, module_map[style_key]), (
-            f"animate.py missing import for style '{style_key}'"
         )

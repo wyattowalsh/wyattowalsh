@@ -13,7 +13,6 @@ pytest.importorskip(
 )
 
 import scripts.cli.generate as generate_cmd  # noqa: E402
-from scripts.art.artifacts import LIVING_ART_STYLE_KEYS  # noqa: E402
 from scripts.cli import app  # noqa: E402
 
 
@@ -93,40 +92,33 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     def _stub_subprocess_run(
         command: list[str],
         check: bool = True,
-        **kwargs: object,
     ) -> CompletedProcess[str]:
-        del check, kwargs
+        del check
         out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--only" in command:
-            only_idx = command.index("--only")
-            active: tuple[str, ...] = (command[only_idx + 1],)
+        if "--svg" in command:
+            _write_svg(out_dir / "inkgarden-growth-animated.svg")
+            _write_svg(out_dir / "topo-growth-animated.svg")
         else:
-            active = LIVING_ART_STYLE_KEYS
-        for style in active:
-            if "--svg" in command:
-                _write_svg(out_dir / f"{style}-growth-animated.svg")
-            else:
-                _write_gif(out_dir / f"{style}-growth.gif")
+            _write_gif(out_dir / "inkgarden-growth.gif")
+            _write_gif(out_dir / "topo-growth.gif")
         return CompletedProcess(command, 0)
 
     def _stub_render_timelapse(
         history: dict,
-        current_metrics: dict,
+        metrics: dict,
         *,
         styles: list[str] | None = None,
         max_frames: int = 150,
         size: int = 400,
-        output_dir: Path | None = None,
-        owner: str = "",
-        workers: int | None = None,
-        timeout_seconds: int = 1200,
+        owner: str = "wyattowalsh",
+        workers: int = 4,
     ) -> list[Path]:
-        del (
-            history, current_metrics, styles, max_frames, size,
-            output_dir, owner, workers, timeout_seconds,
-        )
+        del history, metrics, styles, max_frames, size, owner, workers
         out_dir = tmp_path / ".github" / "assets" / "img"
-        outputs = [out_dir / f"living-{s}.gif" for s in LIVING_ART_STYLE_KEYS]
+        outputs = [
+            out_dir / "living-inkgarden.gif",
+            out_dir / "living-topo.gif",
+        ]
         for path in outputs:
             _write_gif(path)
         return outputs
@@ -172,15 +164,16 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     assert timelapse.exit_code == 0, timelapse.stdout
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    expected_outputs = (
-        [output_dir / f"{s}-growth-animated.svg" for s in LIVING_ART_STYLE_KEYS]
-        + [output_dir / f"{s}-growth.gif" for s in LIVING_ART_STYLE_KEYS]
-        + [output_dir / f"living-{s}.gif" for s in LIVING_ART_STYLE_KEYS]
-        + [
-            output_dir / "living-art-manifest.json",
-            output_dir / "living-art-preview.html",
-        ]
-    )
+    expected_outputs = [
+        output_dir / "inkgarden-growth-animated.svg",
+        output_dir / "topo-growth-animated.svg",
+        output_dir / "inkgarden-growth.gif",
+        output_dir / "topo-growth.gif",
+        output_dir / "living-inkgarden.gif",
+        output_dir / "living-topo.gif",
+        output_dir / "living-art-manifest.json",
+        output_dir / "living-art-preview.html",
+    ]
 
     for path in expected_outputs:
         assert path.exists(), (
@@ -190,10 +183,10 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     manifest = json.loads(
         (output_dir / "living-art-manifest.json").read_text(encoding="utf-8")
     )
-    assert manifest["total_assets"] == 18
-    assert manifest["counts"]["source_svg"] == 6
-    assert manifest["counts"]["compatibility_gif"] == 6
-    assert manifest["counts"]["timelapse_gif"] == 6
+    assert manifest["total_assets"] == 6
+    assert manifest["counts"]["source_svg"] == 2
+    assert manifest["counts"]["compatibility_gif"] == 2
+    assert manifest["counts"]["timelapse_gif"] == 2
 
 
 def test_living_art_svg_only_skips_compatibility_gifs(
@@ -216,21 +209,16 @@ def test_living_art_svg_only_skips_compatibility_gifs(
     def _stub_subprocess_run(
         command: list[str],
         check: bool = True,
-        **kwargs: object,
     ) -> CompletedProcess[str]:
-        del check, kwargs
+        del check
         calls.append(command)
         out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--only" in command:
-            only_idx = command.index("--only")
-            active: tuple[str, ...] = (command[only_idx + 1],)
+        if "--svg" in command:
+            _write_svg(out_dir / "inkgarden-growth-animated.svg")
+            _write_svg(out_dir / "topo-growth-animated.svg")
         else:
-            active = LIVING_ART_STYLE_KEYS
-        for style in active:
-            if "--svg" in command:
-                _write_svg(out_dir / f"{style}-growth-animated.svg")
-            else:
-                _write_gif(out_dir / f"{style}-growth.gif")
+            _write_gif(out_dir / "inkgarden-growth.gif")
+            _write_gif(out_dir / "topo-growth.gif")
         return CompletedProcess(command, 0)
 
     monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
@@ -255,11 +243,12 @@ def test_living_art_svg_only_skips_compatibility_gifs(
     assert "--svg" in calls[0]
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    for style in LIVING_ART_STYLE_KEYS:
-        assert (output_dir / f"{style}-growth-animated.svg").exists()
-        assert not (output_dir / f"{style}-growth.gif").exists()
+    assert (output_dir / "inkgarden-growth-animated.svg").exists()
+    assert (output_dir / "topo-growth-animated.svg").exists()
     assert (output_dir / "living-art-manifest.json").exists()
     assert (output_dir / "living-art-preview.html").exists()
+    assert not (output_dir / "inkgarden-growth.gif").exists()
+    assert not (output_dir / "topo-growth.gif").exists()
 
 
 def test_living_art_only_forwards_selected_style_to_animate(
