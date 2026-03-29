@@ -497,7 +497,7 @@ def test_metaheuristic_solver_failures_retry_locally(
     ) -> tuple[str, list[tuple[float, float, float]]]:
         name, n_words, *_ = args
         call_counts[name] = call_counts.get(name, 0) + 1
-        if name == "Harmony Search" and call_counts[name] == 1:
+        if name == "OriginalHS" and call_counts[name] == 1:
             raise RuntimeError("worker boom")
         return name, [(100.0, 100.0, 0.0)] * n_words
 
@@ -533,5 +533,5 @@ def test_metaheuristic_solver_failures_retry_locally(
     results = renderer._solve_all(["python", "go"], [72.0, 12.0])
     result_names = {name for name, _ in results}
 
-    assert "Harmony Search" in result_names
-    assert call_counts["Harmony Search"] == 2
+    assert "OriginalHS" in result_names
+    assert call_counts["OriginalHS"] == 2

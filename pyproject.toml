@@ -10,6 +10,7 @@ dependencies = [
     "matplotlib>=3.10.8",
     "noise>=1.2.2",
     "numpy>=2.2.6",
+    "mealpy>=3.0.1",
     "pillow>=12.1.1",
     "pydantic>=2.12.5",
     "scipy>=1.16.3",
