@@ -211,7 +211,7 @@ jobs:
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
@@ -256,7 +256,7 @@ jobs:
 
       - name: Personal metrics (fallback without repositories)
         if: ${{ steps.personal_metrics.outcome != 'success' || steps.check_personal_metrics.outputs.needs_fallback == 'true' }}
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
@@ -288,7 +288,7 @@ jobs:
       - name: Personal metrics (additional)
         id: personal_metrics_additional
         continue-on-error: true
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           filename: .github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
@@ -312,7 +312,7 @@ jobs:
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
           plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/listentropy, wyattowalsh/mdxpad, wyattowalsh/proxywhirl, wyattowalsh/nbadb, wyattowalsh/agents, wyattowalsh/personal-website, wyattowalsh/riso, wyattowalsh/iina-plugin-bookmarks"
+          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
 
       - name: Check additional metrics output
         id: check_additional_metrics
@@ -329,7 +329,7 @@ jobs:
 
       - name: Personal metrics (additional fallback)
         if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.check_additional_metrics.outputs.needs_fallback == 'true' }}
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           filename: .github/assets/img/metrics.additional.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
@@ -353,7 +353,7 @@ jobs:
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
           plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/listentropy, wyattowalsh/mdxpad, wyattowalsh/proxywhirl, wyattowalsh/nbadb, wyattowalsh/agents, wyattowalsh/personal-website, wyattowalsh/riso, wyattowalsh/iina-plugin-bookmarks"
+          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
 
       - name: Sanitize final metrics SVG outputs
         if: ${{ always() }}
@@ -441,7 +441,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/living-art-stage/inputs"
           mkdir -p "$RUNNER_TEMP/living-art-stage/outputs"
 
-      - name: Fetch metrics and generate artwork
+      - name: Fetch metrics
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
@@ -452,8 +452,6 @@ jobs:
             --repo "$REPO_NAME" \
             --output "$RUNNER_TEMP/metrics.json"
           cp "$RUNNER_TEMP/metrics.json" "$RUNNER_TEMP/living-art-stage/inputs/metrics.json"
-          uv run python -m scripts.cli generate generative \
-            --metrics-path "$RUNNER_TEMP/metrics.json"
 
       - name: Fetch historical data
         env:
@@ -476,37 +474,27 @@ jobs:
             --metrics-path "$RUNNER_TEMP/metrics.json" \
             --history-path "$RUNNER_TEMP/history.json"
 
-      - name: Stage living-art growth outputs
+      - name: Stage living-art growth outputs and index
         if: ${{ always() }}
         run: |
           shopt -s nullglob
           mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/growth"
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/index"
           for file in .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg; do
             cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/growth/"
           done
-
-      - name: Generate timelapse GIFs (daily history)
-        env:
-          OWNER: ${{ github.repository_owner }}
-        run: |
-          uv run python -m scripts.cli generate timelapse \
-            --metrics-path "$RUNNER_TEMP/metrics.json" \
-            --history-path "$RUNNER_TEMP/history.json" \
-            --profile "$OWNER" \
-            --max-frames 120 \
-            --size 400 \
-            --workers 4
-        timeout-minutes: 20
-
-      - name: Stage timelapse outputs and manifest
-        if: ${{ always() }}
-        run: |
-          shopt -s nullglob
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/timelapse"
-          for file in .github/assets/img/living-*.gif; do
-            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/timelapse/"
+          for file in .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html; do
+            if [[ -f "$file" ]]; then
+              cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/index/"
+            fi
           done
 
+      # Timelapse GIFs removed from daily CI — they are not displayed in the README
+      # and are the most expensive step. Run manually via workflow_dispatch if needed.
+
+      - name: Stage living-art outputs and manifest
+        if: ${{ always() }}
+        run: |
           {
             echo "# Living-art artifact summary"
             echo
@@ -536,8 +524,8 @@ jobs:
       - name: Commit generated art outputs
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
-          commit_message: "art: regenerate event-driven, animated, living-art, and timelapse outputs"
-          file_pattern: ".github/assets/img/generative-*.svg .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-*.gif"
+          commit_message: "art: regenerate living-art assets"
+          file_pattern: ".github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
