@@ -374,7 +374,7 @@
 - [agiresearch/A-mem](https://github.com/agiresearch/A-mem) - A-MEM: Agentic Memory for LLM Agents
 - [MemTensor/MemOS](https://github.com/MemTensor/MemOS) - AI memory OS for LLM and Agent systems(moltbot,clawdbot,openclaw), enabling persistent Skill memory for cross-task skill reuse and evolution.
 - [campfirein/cipher](https://github.com/campfirein/cipher) - Byterover Cipher is an opensource memory layer specifically designed for coding agents. Compatible with Cursor, Codex, Claude Code, Windsurf, Cline, Claude Desktop, Gemini CLI, AWS's Kiro, VS Code, Ro
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [sockeye44/better-memory-mcp](https://github.com/sockeye44/better-memory-mcp) - Enhanced MCP server for enabling memory for Claude through a knowledge graph with temporal tracking, confidence scores, and entity management
 - [mobile-next/mobile-mcp](https://github.com/mobile-next/mobile-mcp) - Model Context Protocol Server for Mobile Automation and Scraping (iOS, Android, Emulators, Simulators and Real Devices)
 - [0xPlaygrounds/rig](https://github.com/0xPlaygrounds/rig) - ⚙️🦀 Build modular and scalable LLM Applications in Rust
@@ -589,7 +589,7 @@
 - [joseairosa/recall](https://github.com/joseairosa/recall) - Persistent cross-session memory for Claude & AI agents. Self-host on Redis/Valkey, or use the managed SaaS at recallmcp.com.
 - [caspianmoon/memoripy](https://github.com/caspianmoon/memoripy) - An AI memory layer with short- and long-term storage, semantic clustering, and optional memory decay for context-aware applications.
 - [agentset-ai/agentset](https://github.com/agentset-ai/agentset) - The open-source RAG platform: built-in citations, deep research, 22+ file formats, partitions, MCP server, and more.
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [memvid/memvid](https://github.com/memvid/memvid) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, single-file memory layer. Give your agents instant retrieval and long-term memory.
 - [tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp](https://github.com/tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp) - This guide provides complete instructions for implementing an **Agentic Semantic Memory System** that enables Claude agents to:
 - [getzep/zep](https://github.com/getzep/zep) - Zep | Examples, Integrations, & More
@@ -631,7 +631,7 @@
 - [facebookresearch/map-anything](https://github.com/facebookresearch/map-anything) - MapAnything: Universal Feed-Forward Metric 3D Reconstruction
 - [github/spec-kit](https://github.com/github/spec-kit) - 💫 Toolkit to help you get started with Spec-Driven Development
 - [bytebot-ai/bytebot](https://github.com/bytebot-ai/bytebot) - Bytebot is a self-hosted AI desktop agent that automates computer tasks through natural language commands, operating within a containerized Linux desktop environment.
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [dtyq/magic](https://github.com/dtyq/magic) - Magicrew. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)
 - [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) - An open-source AI agent that brings the power of Gemini directly into your terminal.
 - [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - OpenAI & Ollama compatible API powered by Codex
@@ -906,7 +906,7 @@
 - [DS4SD/quackling](https://github.com/DS4SD/quackling) - Build document-native LLM applications
 - [docling-project/docling](https://github.com/docling-project/docling) - Get your documents ready for gen AI
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow) - RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine that fuses cutting-edge RAG with Agent capabilities to create a superior context layer for LLMs
-- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Turn entire websites into LLM-ready markdown or structured data
+- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Power AI agents with clean web data
 - [OpenBB-finance/OpenBB](https://github.com/OpenBB-finance/OpenBB) - Financial data platform for analysts, quants and AI agents.
 - [yokoffing/ChatGPT-Prompts](https://github.com/yokoffing/ChatGPT-Prompts) - ChatGPT and Bing AI prompt curation
 - [friuns2/Leaked-GPTs](https://github.com/friuns2/Leaked-GPTs) - Leaked GPTs Prompts Bypass the 25 message limit or to try out GPTs without a Plus subscription.
@@ -1012,6 +1012,7 @@
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
 - [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code: From requirement to production-grade code. Planned, tested, verified.
 - [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
+- [rohitg00/pro-workflow](https://github.com/rohitg00/pro-workflow) - Claude Code learns from your corrections — self-correcting memory that compounds over 50+ sessions. Context engineering, parallel worktrees, agent teams, and 17 battle-tested skills.
 - [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) - A lightweight alternative to OpenClaw that runs in containers for security. Connects to WhatsApp, Telegram, Slack, Discord, Gmail and other messaging apps,, has memory, scheduled jobs, and runs direct
 - [astronomer/agents](https://github.com/astronomer/agents) - AI agent tooling for data engineering workflows.
 - [cafferychen777/gmail-mcp](https://github.com/cafferychen777/gmail-mcp) - Gmail automation via a Chrome extension + Model Context Protocol (MCP). Control Gmail from Claude Desktop. No API keys. Free.
@@ -1101,7 +1102,7 @@
 - [neuml/txtai](https://github.com/neuml/txtai) - 💡 All-in-one AI framework for semantic search, LLM orchestration and language model workflows
 - [enricoros/big-AGI](https://github.com/enricoros/big-AGI) - AI suite powered by state-of-the-art models and providing advanced AI/AGI functions. Includes AI personas, AGI functions, world-class Beam multi-model chats, text-to-image, voice, response streaming, 
 - [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) - The all-in-one AI productivity accelerator. On device and privacy first with no annoying setup or configuration.
-- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Turn entire websites into LLM-ready markdown or structured data
+- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Power AI agents with clean web data
 - [Anil-matcha/Awesome-GPT-Store](https://github.com/Anil-matcha/Awesome-GPT-Store) - Custom GPT Store - A collection of major GPTS available in public
 - [mem0ai/mem0](https://github.com/mem0ai/mem0) - Universal memory layer for AI Agents
 - [ComposioHQ/composio](https://github.com/ComposioHQ/composio) - Composio powers 1000+ toolkits, tool search, context management, authentication, and a sandboxed workbench to help you build AI agents that turn intent into action.
@@ -1566,7 +1567,7 @@
 - [Lissy93/dashy](https://github.com/Lissy93/dashy) - 🚀 A self-hostable personal dashboard built for you. Includes status-checking, widgets, themes, icon packs, a UI editor and tons more!
 - [themeselection/best-chrome-extensions](https://github.com/themeselection/best-chrome-extensions) - A curated list of Best Awesome Chrome Extensions to boost your productivity in your Browsers
 - [aitemr/awesome-git-hooks](https://github.com/aitemr/awesome-git-hooks) - 😎 A collection of awesome Git Hooks
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [travisvn/awesome-claude-skills](https://github.com/travisvn/awesome-claude-skills) - A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows — particularly Claude Code
 - [typeddjango/awesome-python-typing](https://github.com/typeddjango/awesome-python-typing) - Collection of awesome Python types, stubs, plugins, and tools to work with them.
 - [D3Ext/aesthetic-wallpapers](https://github.com/D3Ext/aesthetic-wallpapers) - An awesome collection of aesthetic wallpapers
@@ -1795,7 +1796,7 @@
 - [jaywcjlove/awesome-mac](https://github.com/jaywcjlove/awesome-mac) -  This project is dedicated to collecting high-quality macOS software and organizing them systematically by different categories for easy search and use.
 - [Hack-with-Github/Awesome-Hacking](https://github.com/Hack-with-Github/Awesome-Hacking) - A collection of various awesome lists for hackers, pentesters and security researchers
 - [papers-we-love/papers-we-love](https://github.com/papers-we-love/papers-we-love) - Papers from the computer science community to read and discuss.
-- [vinta/awesome-python](https://github.com/vinta/awesome-python) - An opinionated list of Python frameworks, libraries, tools, and resources.
+- [vinta/awesome-python](https://github.com/vinta/awesome-python) - An opinionated list of Python frameworks, libraries, tools, and resources
 - [rossant/awesome-math](https://github.com/rossant/awesome-math) - A curated list of awesome mathematics resources
 - [krzjoa/awesome-python-data-science](https://github.com/krzjoa/awesome-python-data-science) - Probably the best curated list of data science software in Python.
 - [abhisheknaiidu/awesome-github-profile-readme](https://github.com/abhisheknaiidu/awesome-github-profile-readme) - 😎 A curated list of awesome GitHub Profile which updates in real time
@@ -2382,13 +2383,13 @@
 - [papersgpt/papersgpt-for-zotero](https://github.com/papersgpt/papersgpt-for-zotero) - A powerful Zotero AI and MCP plugin with ChatGPT, Gemini 3.1, Claude, Grok, DeepSeek, OpenRouter, Kimi 2.5, GLM 5, SiliconFlow, GPT-oss, Gemma 3, Qwen 3.5
 - [mem0ai/mem0-chrome-extension](https://github.com/mem0ai/mem0-chrome-extension) - OpenMemory Chrome Extension: Long-term memory for ChatGPT, Claude, Perplexity, Grok etc
 - [memodb-io/memobase](https://github.com/memodb-io/memobase) - User Profile-Based Long-Term Memory for AI Chatbot Applications.
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [Aider-AI/aider](https://github.com/Aider-AI/aider) - aider is AI pair programming in your terminal
 - [phodal/understand-prompt](https://github.com/phodal/understand-prompt) - 【🔞🔞🔞 内含不适合未成年人阅读的图片】基于我擅长的编程、绘画、写作展开的 AI 探索和总结：StableDiffusion 是一种强大的图像生成模型，能够通过对一张图片进行演化来生成新的图片。ChatGPT 是一个基于 Transformer 的语言生成模型，它能够自动为输入的主题生成合适的文章。而 Github Copilot 是一个智能编程助手，能够加速日常编程活动。
 - [yym68686/ChatGPT-Telegram-Bot](https://github.com/yym68686/ChatGPT-Telegram-Bot) - TeleChat: 🤖️ an AI chat Telegram bot can Web Search Powered by GPT-5, DALL·E , Groq, Gemini 2.5 Pro/Flash and the official Claude4.1 API using Python on Zeabur, fly.io and Replit.
 - [crmne/ruby_llm](https://github.com/crmne/ruby_llm) - One beautiful Ruby API for OpenAI, Anthropic, Gemini, Bedrock, Azure, OpenRouter, DeepSeek, Ollama, VertexAI, Perplexity, Mistral, xAI, GPUStack & OpenAI compatible APIs. Agents, Chat, Vision, Audio, 
 - [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) - Implement a ChatGPT-like LLM in PyTorch from scratch, step by step
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - OpenAI & Ollama compatible API powered by Codex
 - [Kilo-Org/kilocode](https://github.com/Kilo-Org/kilocode) - Kilo is the all-in-one agentic engineering platform. Build, ship, and iterate faster with the most popular open source coding agent. #1 coding agent on OpenRouter. 1.5M+ Kilo Coders. 25T+ tokens proce
 - [openai/openai-cookbook](https://github.com/openai/openai-cookbook) - Examples and guides for using the OpenAI API
@@ -2878,7 +2879,7 @@
 
 ## coding 
 
-- [steveyegge/beads](https://github.com/steveyegge/beads) - Beads - A memory upgrade for your coding agent
+- [gastownhall/beads](https://github.com/gastownhall/beads) - Beads - A memory upgrade for your coding agent
 - [sammcj/mcp-devtools](https://github.com/sammcj/mcp-devtools) - A modular MCP server that provides commonly used developer tools for AI coding agents
 - [aidenybai/react-grab](https://github.com/aidenybai/react-grab) - Select context for coding agents directly from your website
 - [angrysky56/ast-mcp-server](https://github.com/angrysky56/ast-mcp-server) - By transforming source code into a queryable Semantic Graph and a structured AST, this tool bridges the gap between "reading text" and "understanding structure." For an AI assistant, it provides the "
@@ -3038,7 +3039,7 @@
 - [extractus/article-extractor](https://github.com/extractus/article-extractor) - To extract main article from given URL with Node.js
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
 - [adbar/trafilatura](https://github.com/adbar/trafilatura) - Python & Command-line tool to gather text and metadata on the Web: Crawling, scraping, extraction, output as CSV, JSON, HTML, MD, TXT, XML
-- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Turn entire websites into LLM-ready markdown or structured data
+- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Power AI agents with clean web data
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
 - [lorey/mlscraper](https://github.com/lorey/mlscraper) - 🤖 Scrape data from HTML websites automatically by just providing examples
 - [friuns2/Leaked-GPTs](https://github.com/friuns2/Leaked-GPTs) - Leaked GPTs Prompts Bypass the 25 message limit or to try out GPTs without a Plus subscription.
@@ -3879,11 +3880,12 @@
 - [SixHq/Overture](https://github.com/SixHq/Overture) - Overture is an open-source, locally running web interface delivered as an MCP (Model Context Protocol) server that visually maps out the execution plan of any AI coding agent as an interactive flowcha
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
 - [sindresorhus/Pasteboard-Viewer](https://github.com/sindresorhus/Pasteboard-Viewer) - 📋 Inspect the system pasteboards on macOS
+- [rohitg00/pro-workflow](https://github.com/rohitg00/pro-workflow) - Claude Code learns from your corrections — self-correcting memory that compounds over 50+ sessions. Context engineering, parallel worktrees, agent teams, and 17 battle-tested skills.
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
 - [daytonaio/daytona](https://github.com/daytonaio/daytona) - Daytona is a Secure and Elastic Infrastructure for Running AI-Generated Code
 - [robert-v/ProcessSpy-public](https://github.com/robert-v/ProcessSpy-public) - ProcessSpy - advanced process monitor for Mac
 - [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 47 Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
-- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - +192 Claude Code skills & agent plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory.
+- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 220+ Claude Code skills & agent plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory.
 - [raintree-technology/claude-starter](https://github.com/raintree-technology/claude-starter) - Advanced Claude Code framework: 40+ skills, meta-commands, TOON format (30-60% token savings), workflow automation & skill orchestration. npx create-claude-starter@latest
 - [marimo-team/marimo](https://github.com/marimo-team/marimo) - A reactive notebook for Python — run reproducible experiments, query with SQL, execute as a script, deploy as an app, and version with git. Stored as pure Python. All in a modern, AI-native editor.
 - [0PandaDEV/ziit-vscode](https://github.com/0PandaDEV/ziit-vscode) - The VS Code extension for the time tracking software Ziit.
@@ -4696,7 +4698,7 @@
 - [0xPlaygrounds/rig](https://github.com/0xPlaygrounds/rig) - ⚙️🦀 Build modular and scalable LLM Applications in Rust
 - [katanemo/plano](https://github.com/katanemo/plano) - Plano is an AI-native proxy and data plane for agentic apps — with built-in orchestration, safety, observability, and smart LLM routing so you stay focused on your agents core logic.
 - [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) - Implement a ChatGPT-like LLM in PyTorch from scratch, step by step
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [dyad-sh/dyad](https://github.com/dyad-sh/dyad) - Local, open-source AI app builder for power users ✨ v0 / Lovable / Replit / Bolt alternative 🌟 Star if you like it!
 - [souvikmajumder26/Multi-Agent-Medical-Assistant](https://github.com/souvikmajumder26/Multi-Agent-Medical-Assistant) - ⚕️GenAI powered multi-agentic medical diagnostics and healthcare research assistance chatbot. 🏥 Designed for healthcare professionals, researchers and patients.
 - [ssdeanx/deep-research-mcp-server](https://github.com/ssdeanx/deep-research-mcp-server) - MCP Deep Research Server using Gemini creating a Research AI Agent
@@ -4719,7 +4721,6 @@
 - [truefoundry/cognita](https://github.com/truefoundry/cognita) - RAG (Retrieval Augmented Generation) Framework for building modular, open source applications for production by TrueFoundry
 - [traceloop/openllmetry](https://github.com/traceloop/openllmetry) - Open-source observability for your GenAI or LLM application, based on OpenTelemetry
 - [awslabs/agent-squad](https://github.com/awslabs/agent-squad) - Flexible and powerful framework for managing multiple AI agents and handling complex conversations
-- [jupyterlab/jupyter-ai](https://github.com/jupyterlab/jupyter-ai) - A generative AI extension for JupyterLab
 - [mbarinov/repogpt](https://github.com/mbarinov/repogpt) - RepoGPT: AI-powered GitHub assistant to chat, manage, and explore your repos effortlessly.
 - [aishwaryanr/awesome-generative-ai-guide](https://github.com/aishwaryanr/awesome-generative-ai-guide) - A one stop repository for generative AI research updates, interview resources, notebooks and much more!
 - [steven2358/awesome-generative-ai](https://github.com/steven2358/awesome-generative-ai) - A curated list of modern Generative Artificial Intelligence projects and services
@@ -6467,7 +6468,7 @@
 - [MemTensor/MemOS](https://github.com/MemTensor/MemOS) - AI memory OS for LLM and Agent systems(moltbot,clawdbot,openclaw), enabling persistent Skill memory for cross-task skill reuse and evolution.
 - [campfirein/cipher](https://github.com/campfirein/cipher) - Byterover Cipher is an opensource memory layer specifically designed for coding agents. Compatible with Cursor, Codex, Claude Code, Windsurf, Cline, Claude Desktop, Gemini CLI, AWS's Kiro, VS Code, Ro
 - [caspianmoon/memoripy](https://github.com/caspianmoon/memoripy) - An AI memory layer with short- and long-term storage, semantic clustering, and optional memory decay for context-aware applications.
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [memvid/memvid](https://github.com/memvid/memvid) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, single-file memory layer. Give your agents instant retrieval and long-term memory.
 - [tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp](https://github.com/tristan-mcinnis/claude-code-agentic-semantic-memory-system-mcp) - This guide provides complete instructions for implementing an **Agentic Semantic Memory System** that enables Claude agents to:
 - [getzep/zep](https://github.com/getzep/zep) - Zep | Examples, Integrations, & More
@@ -6491,7 +6492,7 @@
 - [von-development/awesome-LangGraph](https://github.com/von-development/awesome-LangGraph) - An index of the LangChain + LangGraph ecosystem: concepts, projects, tools, templates, and guides for LLM & multi-agent apps.
 - [bytebot-ai/bytebot](https://github.com/bytebot-ai/bytebot) - Bytebot is a self-hosted AI desktop agent that automates computer tasks through natural language commands, operating within a containerized Linux desktop environment.
 - [codexu/note-gen](https://github.com/codexu/note-gen) - A cross-platform Markdown AI note-taking software.
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [dtyq/magic](https://github.com/dtyq/magic) - Magicrew. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)
 - [vllm-project/vllm](https://github.com/vllm-project/vllm) - A high-throughput and memory-efficient inference and serving engine for LLMs
 - [vamplabAI/sgr-agent-core](https://github.com/vamplabAI/sgr-agent-core) - Schema-Guided Reasoning (SGR) has agentic system design created by neuraldeep community
@@ -6625,7 +6626,6 @@
 - [QuivrHQ/MegaParse](https://github.com/QuivrHQ/MegaParse) - File Parser optimised for LLM Ingestion with no loss 🧠 Parse PDFs, Docx, PPTx in a format that is ideal for LLMs.
 - [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) - LangChain4j is an open-source Java library that simplifies the integration of LLMs into Java applications through a unified API, providing access to popular LLMs and vector databases. It makes impleme
 - [henomis/lingoose](https://github.com/henomis/lingoose) - 🪿 LinGoose is a Go framework for building awesome AI/LLM applications.
-- [vladmandic/sdnext](https://github.com/vladmandic/sdnext) - SD.Next: All-in-one WebUI for AI generative image and video creation, captioning and processing
 - [pydantic/pydantic-ai](https://github.com/pydantic/pydantic-ai) - AI Agent Framework, the Pydantic way
 - [tuan3w/obsidian-template](https://github.com/tuan3w/obsidian-template) - Starter templates for Obsidian
 - [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer) - The best way to get AI coding agents to solve hard problems in complex codebases.
@@ -6774,7 +6774,7 @@
 - [lazyFrogLOL/llmdocparser](https://github.com/lazyFrogLOL/llmdocparser) - A package for parsing PDFs and analyzing their content using LLMs.
 - [infiniflow/ragflow](https://github.com/infiniflow/ragflow) - RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine that fuses cutting-edge RAG with Agent capabilities to create a superior context layer for LLMs
 - [adbar/trafilatura](https://github.com/adbar/trafilatura) - Python & Command-line tool to gather text and metadata on the Web: Crawling, scraping, extraction, output as CSV, JSON, HTML, MD, TXT, XML
-- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Turn entire websites into LLM-ready markdown or structured data
+- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Power AI agents with clean web data
 - [mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) - High-performance In-browser LLM Inference Engine
 - [yokoffing/ChatGPT-Prompts](https://github.com/yokoffing/ChatGPT-Prompts) - ChatGPT and Bing AI prompt curation
 - [geeks-of-data/knowledge-gpt](https://github.com/geeks-of-data/knowledge-gpt) - Extract knowledge from all information sources using gpt and other language models. Index and make Q&A session with information sources.
@@ -7482,7 +7482,7 @@
 - [reorproject/reor](https://github.com/reorproject/reor) - Private & local AI personal knowledge management app for high entropy people.
 - [docling-project/docling](https://github.com/docling-project/docling) - Get your documents ready for gen AI
 - [mixmark-io/turndown](https://github.com/mixmark-io/turndown) - 🛏 An HTML to Markdown converter written in JavaScript
-- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Turn entire websites into LLM-ready markdown or structured data
+- [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - 🔥 The Web Data API for AI - Power AI agents with clean web data
 - [Anmol-Baranwal/Cool-GIFs-For-GitHub](https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub) - 🤝 Awesome List of GIFs & avatars to use in GitHub.
 - [tim-gromeyer/html2md](https://github.com/tim-gromeyer/html2md) - Transform your HTML into clean, easy-to-read markdown with html2md.
 - [VikParuchuri/texify](https://github.com/VikParuchuri/texify) - Math OCR model that outputs LaTeX and markdown
@@ -9200,7 +9200,7 @@
 - [souzatharsis/podcastfy](https://github.com/souzatharsis/podcastfy) - An Open Source Python alternative to NotebookLM's podcast feature: Transforming Multimodal Content into Captivating Multilingual Audio Conversations with GenAI
 - [thewh1teagle/vibe](https://github.com/thewh1teagle/vibe) - Transcribe on your own!
 - [bytebot-ai/bytebot](https://github.com/bytebot-ai/bytebot) - Bytebot is a self-hosted AI desktop agent that automates computer tasks through natural language commands, operating within a containerized Linux desktop environment.
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [vllm-project/vllm](https://github.com/vllm-project/vllm) - A high-throughput and memory-efficient inference and serving engine for LLMs
 - [RayBytes/ChatMock](https://github.com/RayBytes/ChatMock) - OpenAI & Ollama compatible API powered by Codex
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Build, deploy, and orchestrate AI agents. Sim is the central intelligence layer for your AI workforce.
@@ -9517,7 +9517,6 @@
 - [bountyyfi/invisible-prompt-injection](https://github.com/bountyyfi/invisible-prompt-injection) - 
 - [antirez/tgterm](https://github.com/antirez/tgterm) - Control your MacOS terminals via Telegram, for fun coding agents interaction and profit
 - [Osilly/Vision-DeepResearch](https://github.com/Osilly/Vision-DeepResearch) - Multimodal deep-research MLLM and benchmark. The first long-horizon multimodal deep-research MLLM, extending the number of reasoning turns to dozens and the number of search-engine interactions to hun
-- [rohitg00/pro-workflow](https://github.com/rohitg00/pro-workflow) - Battle-tested AI workflows from power users. Self-correcting memory, parallel worktrees, wrap-up rituals, and the 80/20 AI coding ratio.
 - [zai-org/GLM-OCR](https://github.com/zai-org/GLM-OCR) - GLM-OCR: Accurate ×  Fast × Comprehensive
 - [MoonshotAI/Kimi-K2.5](https://github.com/MoonshotAI/Kimi-K2.5) - Moonshot's most powerful model
 - [gradio-app/daggr](https://github.com/gradio-app/daggr) - Chain apps and models to build robust AI workflows 🤗
@@ -9558,7 +9557,7 @@
 - [AutoForgeAI/autoforge](https://github.com/AutoForgeAI/autoforge) - 
 - [Dimillian/Skills](https://github.com/Dimillian/Skills) - My Codex Skills
 - [nsandman/linkedin-api](https://github.com/nsandman/linkedin-api) - LinkedIn Voyager API
-- [steveyegge/gastown](https://github.com/steveyegge/gastown) - Gas Town - multi-agent workspace manager
+- [gastownhall/gastown](https://github.com/gastownhall/gastown) - Gas Town - multi-agent workspace manager
 - [0xSojalSec/PentestAgent](https://github.com/0xSojalSec/PentestAgent) - All-in-one offensive security toolbox with AI agent and MCP architecture. Integrates tools like Nmap, Metasploit, FFUF, SQLMap. Enables pentesting, bug bounty hunting, threat hunting, and reporting. R
 - [xkiranj/markitdown-mcp-npx](https://github.com/xkiranj/markitdown-mcp-npx) - NPX wrapper for Microsoft's MarkItDown MCP server - run without Docker
 - [fvanevski/trafilatura_mcp](https://github.com/fvanevski/trafilatura_mcp) - Trafilatura MCP Server
@@ -10296,7 +10295,7 @@
 - [leonkt/zotero-memento](https://github.com/leonkt/zotero-memento) - Zotero extension that combats link rot by archiving webpages and journal articles.
 - [eschnett/zotero-citationcounts](https://github.com/eschnett/zotero-citationcounts) - Zotero plugin for auto-fetching citation counts from various sources
 - [bwiernik/zotero-shortdoi](https://github.com/bwiernik/zotero-shortdoi) - Zotero extension to retrieve and validate DOIs and shortDOIs
-- [scitedotai/scite-zotero-plugin](https://github.com/scitedotai/scite-zotero-plugin) - See how your saved papers are being cited. Displays supporting, contrasting, and mentioning citation counts directly in your library.
+- [scitedotai/scite-zotero-plugin](https://github.com/scitedotai/scite-zotero-plugin) - See how your saved papers are cited. Supporting, contrasting, and mentioning counts appear directly in your Zotero library.
 - [mason-bryant/Obsidian-Tagvis](https://github.com/mason-bryant/Obsidian-Tagvis) - 
 - [mark-when/vscode](https://github.com/mark-when/vscode) - VS code extension
 - [StoicLoofah/chronoline.js](https://github.com/StoicLoofah/chronoline.js) - chronoline.js is a library for making a chronology timeline out of events on a horizontal timescale.
@@ -10764,6 +10763,7 @@
 - [Miraculix200/StableDiffusionUI_SageMakerSL](https://github.com/Miraculix200/StableDiffusionUI_SageMakerSL) - Notebook for running Automatic1111 Stable Diffusion webui on SageMaker Studio Lab
 - [cagliostrolab/forge-colab](https://github.com/cagliostrolab/forge-colab) - 
 - [llamastack/llama-stack](https://github.com/llamastack/llama-stack) - Composable building blocks to build LLM Apps
+- [jupyterlab/jupyter-ai](https://github.com/jupyterlab/jupyter-ai) - An open source extension that connects AI agents to computational notebooks in JupyterLab.
 - [jamesmurdza/awesome-ai-devtools](https://github.com/jamesmurdza/awesome-ai-devtools) - Curated list of AI-powered developer tools.
 - [tawandakembo/code-collator](https://github.com/tawandakembo/code-collator) - 
 - [opslane/opslane](https://github.com/opslane/opslane) - Run multiple Claude Code sessions in parallel
@@ -12062,6 +12062,7 @@
 ## productivity 
 
 - [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) - The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
+- [rohitg00/pro-workflow](https://github.com/rohitg00/pro-workflow) - Claude Code learns from your corrections — self-correcting memory that compounds over 50+ sessions. Context engineering, parallel worktrees, agent teams, and 17 battle-tested skills.
 - [cafferychen777/gmail-mcp](https://github.com/cafferychen777/gmail-mcp) - Gmail automation via a Chrome extension + Model Context Protocol (MCP). Control Gmail from Claude Desktop. No API keys. Free.
 - [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 47 Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
 - [raintree-technology/claude-starter](https://github.com/raintree-technology/claude-starter) - Advanced Claude Code framework: 40+ skills, meta-commands, TOON format (30-60% token savings), workflow automation & skill orchestration. npx create-claude-starter@latest
@@ -12150,10 +12151,10 @@
 
 - [darrenhinde/OpenAgentsControl](https://github.com/darrenhinde/OpenAgentsControl) - AI agent framework for plan-first development workflows with approval-based execution. Multi-language support (TypeScript, Python, Go, Rust) with automatic testing, code review, and validation built f
 - [YouMind-OpenLab/awesome-nano-banana-pro-prompts](https://github.com/YouMind-OpenLab/awesome-nano-banana-pro-prompts) - 🍌 World's largest Nano Banana Pro prompt library — 10,000+ curated prompts with preview images, 16 languages. Google Gemini AI image generation. Free & open source.
-- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - +192 Claude Code skills & agent plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory.
+- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 220+ Claude Code skills & agent plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory.
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) - Community-contributed instructions, agents, skills, and configurations to help you make the most of GitHub Copilot.
 - [danielrosehill/AI-Agent-Ideation-Chatbot-System-Prompt](https://github.com/danielrosehill/AI-Agent-Ideation-Chatbot-System-Prompt) - System prompt (03/25) for a conversational AI agent and assistant idea generator
-- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Collection of extracted System Prompts from popular chatbots like ChatGPT, Claude & Gemini
+- [asgeirtj/system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks) - Extracted system prompts from ChatGPT (GPT-5.4, GPT-5.3, Codex), Claude (Opus 4.6, Sonnet 4.6, Claude Code), Gemini (3.1 Pro, 3 Flash, CLI), Grok (4.2, 4), Perplexity, and more. Updated regularly.
 - [humanlayer/12-factor-agents](https://github.com/humanlayer/12-factor-agents) - What are the principles we can use to build LLM-powered software that is actually good enough to put in the hands of production customers?
 - [IBM/mcp-context-forge](https://github.com/IBM/mcp-context-forge) - An AI Gateway, registry, and proxy that sits in front of any MCP, A2A, or REST/gRPC APIs, exposing a unified endpoint with centralized discovery, guardrails and management. Optimizes Agent & Tool call
 - [brendancopley/mcp-chain-of-draft-prompt-tool](https://github.com/brendancopley/mcp-chain-of-draft-prompt-tool) - MCP prompt tool applying Chain-of-Draft (CoD) reasoning - BYOLLM
@@ -12286,7 +12287,7 @@
 - [sansan0/TrendRadar](https://github.com/sansan0/TrendRadar) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热点筛选工具！聚合多平台热点 +  RSS 订阅，支持关键词精准筛选。AI 智能筛选新闻 + AI 翻译 +  AI 分析简报直推手机，也支持接入 MCP 架构，
 - [qeeqbox/social-analyzer](https://github.com/qeeqbox/social-analyzer) - API, CLI, and Web App for analyzing and finding a person's profile in 1000 social media \ websites
 - [deepnote/deepnote](https://github.com/deepnote/deepnote) - Deepnote is a drop-in replacement for Jupyter with an AI-first design, sleek UI, new blocks, and native data integrations. Use Python, R, and SQL locally in your favorite IDE, then scale to Deepnote c
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [memvid/memvid](https://github.com/memvid/memvid) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, single-file memory layer. Give your agents instant retrieval and long-term memory.
 - [giampaolo/psutil](https://github.com/giampaolo/psutil) - Cross-platform lib for process and system monitoring in Python
 - [bloomberg/memray](https://github.com/bloomberg/memray) - Memray is a memory profiler for Python
@@ -12441,6 +12442,7 @@
 - [AmberSahdev/Open-Interface](https://github.com/AmberSahdev/Open-Interface) - Control Any Computer Using LLMs.
 - [browser-use/browser-use](https://github.com/browser-use/browser-use) - 🌐 Make websites accessible for AI agents. Automate tasks online with ease.
 - [PySpur-Dev/pyspur](https://github.com/PySpur-Dev/pyspur) - A visual playground for agentic workflows: Iterate over your agents 10x faster
+- [vladmandic/sdnext](https://github.com/vladmandic/sdnext) - SD.Next: All-in-one WebUI for AI generative image and video creation, captioning and processing
 - [scrapy-plugins/scrapy-playwright](https://github.com/scrapy-plugins/scrapy-playwright) - 🎭 Playwright integration for Scrapy
 - [vladkens/twscrape](https://github.com/vladkens/twscrape) - 2025! X / Twitter API scrapper with authorization support. Allows you to scrape search results, User's profiles (followers/following), Tweets (favoriters/retweeters) and more.
 - [huaying/instagram-crawler](https://github.com/huaying/instagram-crawler) - Get Instagram posts/profile/hashtag data without using Instagram API
@@ -12858,7 +12860,7 @@
 - [clayrisser/sphinx-jekyll-builder](https://github.com/clayrisser/sphinx-jekyll-builder) - sphinx builder that outputs jekyll compatible markdown files with frontmatter
 - [serhii-londar/open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps) - 🚀 Awesome list of open source applications for macOS. https://t.me/s/opensourcemacosapps
 - [amitkaps/hackermath](https://github.com/amitkaps/hackermath) - Introduction to Statistics and Basics of Mathematics for Data Science - The Hacker's Way
-- [vinta/awesome-python](https://github.com/vinta/awesome-python) - An opinionated list of Python frameworks, libraries, tools, and resources.
+- [vinta/awesome-python](https://github.com/vinta/awesome-python) - An opinionated list of Python frameworks, libraries, tools, and resources
 - [krzjoa/awesome-python-data-science](https://github.com/krzjoa/awesome-python-data-science) - Probably the best curated list of data science software in Python.
 - [CodeCutTech/Data-science](https://github.com/CodeCutTech/Data-science) - Collection of useful data science topics along with articles, videos, and code
 - [lukasmasuch/best-of-python](https://github.com/lukasmasuch/best-of-python) - 🏆 A ranked list of awesome Python open-source libraries and tools. Updated weekly.
@@ -12953,6 +12955,7 @@
 - [yandex-research/rtdl](https://github.com/yandex-research/rtdl) - Research on Tabular Deep Learning: Papers & Packages
 - [WenjieDu/PyPOTS](https://github.com/WenjieDu/PyPOTS) - A Python toolkit/library for reality-centric machine/deep learning and data mining on partially-observed time series, including SOTA neural network models for scientific analysis tasks of imputation/c
 - [XavierXiao/Dreambooth-Stable-Diffusion](https://github.com/XavierXiao/Dreambooth-Stable-Diffusion) - Implementation of Dreambooth (https://arxiv.org/abs/2208.12242) with Stable Diffusion
+- [vladmandic/sdnext](https://github.com/vladmandic/sdnext) - SD.Next: All-in-one WebUI for AI generative image and video creation, captioning and processing
 - [mostafaelaraby/wavegan-pytorch](https://github.com/mostafaelaraby/wavegan-pytorch) - Pytorch Implementation of wavegan model to generate audio
 - [kitops-ml/kitops](https://github.com/kitops-ml/kitops) - An open source DevOps tool from the CNCF for packaging and versioning AI/ML models, datasets, code, and configuration into an OCI Artifact.
 - [pyannote/pyannote-audio](https://github.com/pyannote/pyannote-audio) - Neural building blocks for speaker diarization: speech activity detection, speaker change detection, overlapped speech detection, speaker embedding
@@ -13105,7 +13108,7 @@
 - [kingjulio8238/Memary](https://github.com/kingjulio8238/Memary) - The Open Source Memory Layer For Autonomous Agents
 - [MemTensor/MemOS](https://github.com/MemTensor/MemOS) - AI memory OS for LLM and Agent systems(moltbot,clawdbot,openclaw), enabling persistent Skill memory for cross-task skill reuse and evolution.
 - [agentset-ai/agentset](https://github.com/agentset-ai/agentset) - The open-source RAG platform: built-in citations, deep research, 22+ file formats, partitions, MCP server, and more.
-- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - SQL Native Memory Layer for LLMs, AI Agents & Multi-Agent Systems
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [memvid/memvid](https://github.com/memvid/memvid) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, single-file memory layer. Give your agents instant retrieval and long-term memory.
 - [MODSetter/SurfSense](https://github.com/MODSetter/SurfSense) - Open source alternative to NotebookLM for teams. Join our Discord: https://discord.gg/ejRNvftDp9
 - [airweave-ai/airweave](https://github.com/airweave-ai/airweave) - Open-source context retrieval layer for AI agents
@@ -14802,6 +14805,7 @@
 - [ast-grep/ast-grep](https://github.com/ast-grep/ast-grep) - ⚡A CLI tool for code structural search, lint and rewriting. Written in Rust
 - [angular/angular](https://github.com/angular/angular) - Deliver web apps with confidence 🚀
 - [serkodev/markdown-exit](https://github.com/serkodev/markdown-exit) - Fast, customizable Markdown parser and renderer with full CommonMark support. TypeScript rewrite of markdown-it with enhancements.
+- [MemoriLabs/Memori](https://github.com/MemoriLabs/Memori) - Memori is agent-native memory infrastructure. A SQL-native, LLM-agnostic layer that turns agent execution and interactions into structured, persistent state for production systems.
 - [hashintel/hash](https://github.com/hashintel/hash) - 🚀  The open-source, multi-tenant platform for self-building knowledge graphs and simulation
 - [lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev) - ⚡ Lingo.dev - open-source, AI-powered i18n toolkit for instant localization with LLMs. Bring your own LLM or use Lingo.dev Localization Engine. Join discord:
 - [rolldown/rolldown](https://github.com/rolldown/rolldown) - Fast Rust bundler for JavaScript/TypeScript with Rollup-compatible API.
