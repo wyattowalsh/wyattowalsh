@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-01T02:48:27.029959+00:00",
+  "generated_at": "2026-04-02T02:48:30.832525+00:00",
   "output_dir": ".github/assets/img",
   "total_assets": 12,
   "counts": {
@@ -32,7 +32,7 @@
       "style_label": "Genetic Landscape",
       "channel": "compatibility_gif",
       "variant": "default",
-      "bytes": 199738
+      "bytes": 215902
     },
     {
       "name": "inkgarden-growth.gif",
@@ -41,7 +41,7 @@
       "style_label": "Ink Garden",
       "channel": "compatibility_gif",
       "variant": "default",
-      "bytes": 2291444
+      "bytes": 2358553
     },
     {
       "name": "lenia-growth.gif",
@@ -68,7 +68,7 @@
       "style_label": "Topography",
       "channel": "compatibility_gif",
       "variant": "default",
-      "bytes": 2762166
+      "bytes": 2776971
     },
     {
       "name": "ferrofluid-growth-animated.svg",
@@ -77,7 +77,7 @@
       "style_label": "Ferrofluid",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 1486553
+      "bytes": 1467604
     },
     {
       "name": "genetic-growth-animated.svg",
@@ -86,7 +86,7 @@
       "style_label": "Genetic Landscape",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 453479
+      "bytes": 512857
     },
     {
       "name": "inkgarden-growth-animated.svg",
@@ -95,7 +95,7 @@
       "style_label": "Ink Garden",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 7034813
+      "bytes": 7115017
     },
     {
       "name": "lenia-growth-animated.svg",
@@ -104,7 +104,7 @@
       "style_label": "Lenia",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 667614
+      "bytes": 663310
     },
     {
       "name": "physarum-growth-animated.svg",
@@ -113,7 +113,7 @@
       "style_label": "Physarum",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 489179
+      "bytes": 371537
     },
     {
       "name": "topo-growth-animated.svg",
@@ -122,7 +122,7 @@
       "style_label": "Topography",
       "channel": "source_svg",
       "variant": "default",
-      "bytes": 15556575
+      "bytes": 15002704
     }
   ]
 }
