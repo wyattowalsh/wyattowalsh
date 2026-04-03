@@ -18,7 +18,8 @@ from __future__ import annotations
 
 import math
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
+from typing import Any
 
 import numpy as np
 
@@ -241,7 +242,12 @@ def _escape_svg_text(text: str) -> str:
 # _repo_visibility_score and _select_primary_repos moved to shared.py
 # Kept as local aliases for backward compatibility within this module.
 _repo_visibility_score = repo_visibility_score
-_select_primary_repos = lambda repos, *, limit: select_primary_repos(repos, limit=limit)
+
+
+def _select_primary_repos(
+    repos: list[dict[str, Any]], *, limit: int
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    return select_primary_repos(repos, limit=limit)
 
 
 def _parse_iso_datetime(value: str | None) -> datetime | None:
@@ -276,6 +282,63 @@ def _recent_activity_variance(monthly: dict[str, int], *, window: int = 6) -> fl
 
     variance = sum((value - mean) ** 2 for value in values) / len(values)
     return min(2.0, math.sqrt(variance) / mean)
+
+
+def _daily_contribution_series(
+    metrics: dict[str, Any],
+    *,
+    reference_year: int,
+) -> dict[str, int]:
+    raw_daily = metrics.get("contributions_daily") or {}
+    daily: dict[str, int] = {}
+    if isinstance(raw_daily, dict):
+        for key, value in raw_daily.items():
+            when = str(key).strip()
+            if len(when) >= 10 and when[4] == "-" and when[7] == "-":
+                daily[when[:10]] = max(0, int(value or 0))
+    if daily:
+        return dict(sorted(daily.items()))
+    return contributions_monthly_to_daily_series(
+        metrics.get("contributions_monthly"),
+        reference_year=reference_year,
+    )
+
+
+def _extract_dated_entries(events: object, *keys: str) -> list[dict[str, Any]]:
+    if not isinstance(events, list):
+        return []
+
+    extracted: list[dict[str, Any]] = []
+    for event in events:
+        if not isinstance(event, dict):
+            continue
+
+        parsed: datetime | None = None
+        for key in keys:
+            raw = event.get(key)
+            if not isinstance(raw, str) or not raw.strip():
+                continue
+            parsed = _parse_iso_datetime(raw)
+            if parsed is not None:
+                break
+        if parsed is None:
+            continue
+
+        extracted.append(
+            {
+                "when": parsed.date().isoformat(),
+                "repo_name": str(event.get("repo_name") or ""),
+                "label": str(
+                    event.get("tag_name")
+                    or event.get("name")
+                    or event.get("title")
+                    or ""
+                ),
+            }
+        )
+
+    extracted.sort(key=lambda entry: str(entry["when"]))
+    return extracted
 
 
 def _summarize_merged_pr_cadence(
@@ -329,6 +392,67 @@ def _summarize_merged_pr_cadence(
         "entries": [entry for _merged_at, entry in parsed],
         "tempo": tempo,
         "burst": burst,
+    }
+
+
+def _repo_emergence_dates(
+    repo_when: str | None,
+    timeline_window: tuple[date, date],
+    *,
+    repo_frac: float | None,
+    prev_frac: float | None,
+    next_frac: float | None,
+    age_days: int | None = None,
+) -> dict[str, str]:
+    timeline_start, timeline_end = timeline_window
+    span_days = max((timeline_end - timeline_start).days, 1)
+    parsed = _parse_iso_datetime(repo_when)
+    base_day = parsed.date() if parsed is not None else timeline_start
+
+    spacing_candidates: list[float] = []
+    if repo_frac is not None:
+        for neighbor_frac in (prev_frac, next_frac):
+            if neighbor_frac is None:
+                continue
+            gap_days = abs(neighbor_frac - repo_frac) * span_days
+            if gap_days > 0:
+                spacing_candidates.append(gap_days)
+
+    local_spacing_days = (
+        min(spacing_candidates)
+        if spacing_candidates
+        else max(28.0, span_days / 3.0)
+    )
+
+    age_scale = 1.0
+    if age_days is not None:
+        if age_days <= 120:
+            age_scale = 0.86
+        elif age_days >= 540:
+            age_scale = 1.12
+        else:
+            age_scale = 0.94 + min(0.14, age_days / 1800.0)
+
+    emergence_window_days = max(
+        18.0,
+        min(120.0, local_spacing_days * 0.55 * age_scale),
+    )
+    root_days = max(2, int(round(emergence_window_days * 0.10)))
+    branch_days = max(root_days + 2, int(round(emergence_window_days * 0.20)))
+    leaf_days = max(branch_days + 3, int(round(emergence_window_days * 0.38)))
+    bloom_days = max(leaf_days + 4, int(round(emergence_window_days * 0.60)))
+    detail_days = max(bloom_days + 4, int(round(emergence_window_days * 0.78)))
+
+    def _shift(day_offset: int) -> str:
+        shifted = min(max(base_day + timedelta(days=day_offset), timeline_start), timeline_end)
+        return shifted.isoformat()
+
+    return {
+        "root": _shift(root_days),
+        "branch": _shift(branch_days),
+        "leaf": _shift(leaf_days),
+        "bloom": _shift(bloom_days),
+        "detail": _shift(detail_days),
     }
 
 
@@ -805,13 +929,19 @@ def generate(
     base_mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     mat = 1.0 if timeline_enabled else base_mat
-    h = seed if seed is not None else seed_hash(metrics)
+    if seed is None:
+        h = seed_hash(metrics)
+    elif len(seed) == 64 and all(ch in "0123456789abcdef" for ch in seed.lower()):
+        h = seed.lower()
+    else:
+        h = seed_hash({"seed": seed})
     base_seed = int(h[:8], 16)
     noise = Noise2D(seed=int(h[8:16], 16))
 
     raw_repos = list(metrics.get("repos", []))
     repos, overflow_repos = _select_primary_repos(raw_repos, limit=MAX_REPOS)
     monthly = metrics.get("contributions_monthly", {})
+    releases = metrics.get("releases", []) or []
     forks = metrics.get("forks", 0)
     total_commits = metrics.get("total_commits", 500)
     open_issues = metrics.get("open_issues_count", 0)
@@ -821,6 +951,20 @@ def generate(
     if not isinstance(recent_merged_prs, list):
         recent_merged_prs = []
     recent_pr_signal = _summarize_merged_pr_cadence(recent_merged_prs)
+    release_entries = _extract_dated_entries(
+        releases,
+        "date",
+        "published_at",
+        "released_at",
+        "created_at",
+    )
+    merged_pr_entries = _extract_dated_entries(
+        recent_merged_prs,
+        "merged_at",
+        "mergedAt",
+        "date",
+        "created_at",
+    )
     activity_variance = _recent_activity_variance(monthly)
     wind_sway_scale = 1.0 + min(
         0.65,
@@ -855,7 +999,6 @@ def generate(
     vigor_multiplier = 1.0 + min(0.5, current_streak * 0.04)  # up to 1.5x
 
     # ── New data-mapping metrics ───────────────────────────────────
-    releases = metrics.get("releases", [])
     traffic_views_14d = metrics.get("traffic_views_14d", 0)
     total_issues = metrics.get("total_issues", 0) or 0
     total_repos_contributed = metrics.get("total_repos_contributed", 0)
@@ -919,18 +1062,21 @@ def generate(
             {"date": _repo_date(repo)}
             for repo in repos
             if isinstance(repo, dict) and _repo_date(repo)
-        ],
+        ]
+        + [{"date": str(entry["when"])} for entry in release_entries]
+        + [{"date": str(entry["when"])} for entry in merged_pr_entries],
         {
             "account_created": metrics.get("account_created"),
             "repos": repos,
             "contributions_monthly": monthly,
+            "contributions_daily": metrics.get("contributions_daily", {}),
         },
         fallback_days=365,
     )
     timeline_start, timeline_end = timeline_window
     timeline_span_days = max((timeline_end - timeline_start).days, 1)
-    daily_series = contributions_monthly_to_daily_series(
-        monthly,
+    daily_series = _daily_contribution_series(
+        metrics,
         reference_year=timeline_end.year,
     )
     sorted_daily = sorted(daily_series.items(), key=lambda kv: kv[0])
@@ -974,6 +1120,104 @@ def generate(
             return 0.5
         day_offset = (base.date() - timeline_start).days
         return max(0.0, min(1.0, day_offset / timeline_span_days))
+
+    has_explicit_repo_recency = total_repos_contributed > 0
+    repo_recency_days_by_name: dict[str, int] = {}
+    if has_explicit_repo_recency:
+        explicit_age_days: list[int] = []
+        for repo in raw_repos:
+            if not isinstance(repo, dict):
+                continue
+            repo_name = str(repo.get("name") or "")
+            repo_dt = _parse_date(_repo_date(repo))
+            if repo_dt is None:
+                continue
+            age_days = max(0, (timeline_end - repo_dt.date()).days)
+            if repo_name:
+                repo_recency_days_by_name[repo_name] = age_days
+            explicit_age_days.append(age_days)
+        has_explicit_repo_recency = (
+            len(explicit_age_days) >= 2
+            and (len(explicit_age_days) / max(1, len(raw_repos))) >= 0.5
+        )
+
+    if has_explicit_repo_recency:
+        portfolio_breadth = max(len(raw_repos), int(total_repos_contributed or 0))
+        breadth_factor = min(1.0, portfolio_breadth / 14.0)
+        fresh_repo_share = sum(age <= 120 for age in explicit_age_days) / len(
+            explicit_age_days
+        )
+        recent_repo_share = sum(age <= 240 for age in explicit_age_days) / len(
+            explicit_age_days
+        )
+        established_repo_share = sum(age >= 540 for age in explicit_age_days) / len(
+            explicit_age_days
+        )
+        seedling_pressure = max(
+            0.0,
+            min(
+                1.0,
+                fresh_repo_share * 0.75
+                + recent_repo_share * 0.35
+                - breadth_factor * 0.30,
+            ),
+        )
+        canopy_balance = max(
+            0.0,
+            min(1.0, established_repo_share * 0.55 + breadth_factor * 0.45),
+        )
+        bloom_cadence_scale = max(
+            0.55,
+            min(1.2, 0.72 + canopy_balance * 0.40 - seedling_pressure * 0.20),
+        )
+        ambient_seed_scale = max(
+            0.45,
+            min(1.5, 0.55 + recent_repo_share * 0.65 + breadth_factor * 0.15),
+        )
+        release_seed_scale = max(
+            0.75,
+            min(1.4, 0.85 + recent_repo_share * 0.35 + breadth_factor * 0.10),
+        )
+    else:
+        breadth_factor = 0.0
+        seedling_pressure = 0.0
+        canopy_balance = 0.0
+        bloom_cadence_scale = 1.0
+        ambient_seed_scale = 1.0
+        release_seed_scale = 1.0
+
+    repo_growth_order: dict[int, float] = {
+        ri: ri / max(1, len(repos) - 1) for ri in range(len(repos))
+    }
+    dated_repo_fracs: dict[int, float] = {}
+    for ri, repo in enumerate(repos):
+        repo_when = _repo_date(repo)
+        if _parse_date(repo_when) is not None:
+            dated_repo_fracs[ri] = _time_fraction(repo_when)
+
+    chronological_growth = len(dated_repo_fracs) >= 2
+    dated_time_span = 0.0
+    repo_neighbor_fracs: dict[int, tuple[float | None, float | None]] = {}
+    if chronological_growth:
+        ordered_repo_items = sorted(
+            dated_repo_fracs.items(),
+            key=lambda item: (item[1], item[0]),
+        )
+        ordered_repo_indices = [idx for idx, _frac in ordered_repo_items]
+        denom = max(1, len(ordered_repo_indices) - 1)
+        repo_growth_order = {
+            idx: pos / denom for pos, idx in enumerate(ordered_repo_indices)
+        }
+        dated_values = list(dated_repo_fracs.values())
+        dated_time_span = max(dated_values) - min(dated_values)
+        for pos, (idx, frac) in enumerate(ordered_repo_items):
+            prev_frac = ordered_repo_items[pos - 1][1] if pos > 0 else None
+            next_frac = (
+                ordered_repo_items[pos + 1][1]
+                if pos + 1 < len(ordered_repo_items)
+                else None
+            )
+            repo_neighbor_fracs[idx] = (prev_frac, next_frac)
 
     def _month_key_date(month_key: str, idx: int) -> str:
         mk = str(month_key).strip()
@@ -1036,6 +1280,7 @@ def generate(
     plant_bases = []
     # Track per-tree tooltip data for interactive SVG titles
     tree_tooltips = []  # (x, base_y, top_y, name, lang, stars, species)
+    rendered_repo_meta: list[dict[str, Any]] = []
     # Depth plane classification per repo (bg/mid/fg) for atmospheric perspective
     repo_depth_planes = {}  # ri -> "bg" | "mid" | "fg"
 
@@ -1104,18 +1349,30 @@ def generate(
     first_start = 0.03
     last_full = max(first_start + RAMP, mat)
     last_start = last_full - RAMP
+    chronological_growth_span = 0.0
+    if chronological_growth:
+        target_growth_span = (
+            0.16
+            + min(0.12, dated_time_span * 0.24)
+            + min(0.08, math.log1p(len(dated_repo_fracs)) * 0.05)
+        )
+        chronological_growth_span = min(
+            0.48,
+            min(target_growth_span, max(0.12, (mat - first_start) * 0.98)),
+        )
 
     for ri, repo in enumerate(repos):
         # Per-tree growth: stagger birth times, grow from seedling → full
-        tree_start = (
-            first_start + (ri / max(1, n_repos - 1)) * (last_start - first_start)
-            if n_repos > 1
-            else first_start
-        )
-        tree_t = max(0.0, min(1.0, (mat - tree_start) / RAMP))
-
-        if tree_t <= 0:
-            continue  # not yet sprouted
+        if chronological_growth:
+            tree_start = (
+                first_start + repo_growth_order.get(ri, 0.0) * chronological_growth_span
+            )
+        else:
+            tree_start = (
+                first_start + (ri / max(1, n_repos - 1)) * (last_start - first_start)
+                if n_repos > 1
+                else first_start
+            )
 
         # Per-repo RNG — each tree is fully deterministic regardless
         # of how many other trees are visible (stable across frames)
@@ -1124,17 +1381,119 @@ def generate(
         lang = repo.get("language")
         hue = repo_hues[ri] if ri < len(repo_hues) else LANG_HUES.get(lang, 160)
         repo_stars = repo.get("stars", 0)
+        repo_forks = max(0, int(repo.get("forks", 0) or 0))
         age = repo.get("age_months", 6)
         repo_date = _repo_date(repo) or _date_for_activity_fraction(
             ri / max(1, n_repos)
         )
+        repo_name = str(repo.get("name", ""))
+        repo_frac = dated_repo_fracs.get(ri)
+        prev_repo_frac, next_repo_frac = repo_neighbor_fracs.get(ri, (None, None))
+        repo_age_days = (
+            repo_recency_days_by_name.get(repo_name) if has_explicit_repo_recency else None
+        )
+        repo_topics = [topic for topic in repo.get("topics") or [] if topic]
+        repo_star_signal = min(
+            1.0,
+            math.log1p(max(0, int(repo_stars or 0))) / math.log1p(80),
+        )
+        repo_fork_signal = min(1.0, math.log1p(repo_forks) / math.log1p(20))
+        repo_topic_signal = min(1.0, len(repo_topics) / 5.0)
+        repo_age_signal = min(1.0, age / 36.0)
+        repo_growth_signal = (
+            repo_star_signal * 0.45
+            + repo_fork_signal * 0.15
+            + repo_topic_signal * 0.15
+            + repo_age_signal * 0.15
+            + min(1.0, current_streak / 8.0) * 0.10
+        )
+        tree_ramp = (
+            max(0.09, RAMP - repo_growth_signal * 0.05)
+            if chronological_growth
+            else RAMP
+        )
+        tree_t = max(0.0, min(1.0, (mat - tree_start) / tree_ramp))
+
+        if tree_t <= 0:
+            continue  # not yet sprouted
+        if chronological_growth and tree_t < 0.05:
+            continue  # too new to show a visible specimen yet
+
         trunk_when = repo_date
-        branch_when = _offset_date(repo_date, 0.08)
-        leaf_when = _offset_date(repo_date, 0.14)
-        bloom_when = _offset_date(repo_date, 0.22)
-        root_when = _offset_date(repo_date, 0.05)
+        if chronological_growth and repo_frac is not None:
+            emergence_dates = _repo_emergence_dates(
+                repo_date,
+                timeline_window,
+                repo_frac=repo_frac,
+                prev_frac=prev_repo_frac,
+                next_frac=next_repo_frac,
+                age_days=repo_age_days,
+            )
+            branch_when = emergence_dates["branch"]
+            leaf_when = emergence_dates["leaf"]
+            bloom_when = emergence_dates["bloom"]
+            root_when = emergence_dates["root"]
+            detail_when = emergence_dates["detail"]
+        else:
+            branch_when = _offset_date(repo_date, 0.08)
+            leaf_when = _offset_date(repo_date, 0.14)
+            bloom_when = _offset_date(repo_date, 0.22)
+            root_when = _offset_date(repo_date, 0.05)
+            detail_when = _offset_date(repo_date, 0.28)
+
+        if chronological_growth and repo_frac is not None:
+            leaf_growth_gate = 0.20
+            bloom_growth_gate = 0.48
+            late_detail_growth_gate = 0.68
+            if repo_age_days is not None:
+                if repo_age_days <= 120:
+                    leaf_growth_gate = 0.25
+                    bloom_growth_gate = 0.56
+                    late_detail_growth_gate = 0.74
+                elif repo_age_days >= 540:
+                    leaf_growth_gate = 0.16
+                    bloom_growth_gate = 0.42
+                    late_detail_growth_gate = 0.60
+            eagerness = repo_growth_signal * 0.06
+            leaf_growth_gate = max(0.10, min(0.42, leaf_growth_gate - eagerness))
+            bloom_growth_gate = max(
+                leaf_growth_gate + 0.10,
+                min(0.80, bloom_growth_gate - eagerness * 0.8),
+            )
+            late_detail_growth_gate = max(
+                bloom_growth_gate + 0.10,
+                min(0.92, late_detail_growth_gate - eagerness * 0.6),
+            )
+        else:
+            leaf_growth_gate = 0.0
+            bloom_growth_gate = 0.0
+            late_detail_growth_gate = 0.0
 
         species = _classify_species(repo, species_threshold_mult=species_threshold_mult)
+        repo_canopy_scale = 1.0
+        repo_branch_scale = 1.0
+        repo_bloom_scale = bloom_cadence_scale
+        if repo_age_days is not None:
+            if repo_age_days <= 120:
+                repo_canopy_scale = 0.62 + breadth_factor * 0.20 + canopy_balance * 0.10
+                repo_branch_scale = 0.55 + breadth_factor * 0.18 + canopy_balance * 0.10
+                repo_bloom_scale *= 0.65 + canopy_balance * 0.15
+            elif repo_age_days <= 240:
+                repo_canopy_scale = 0.78 + breadth_factor * 0.12 + canopy_balance * 0.08
+                repo_branch_scale = 0.72 + breadth_factor * 0.12 + canopy_balance * 0.08
+                repo_bloom_scale *= 0.80 + canopy_balance * 0.12
+            elif repo_age_days >= 540:
+                repo_canopy_scale = 1.0 + canopy_balance * 0.06
+                repo_branch_scale = 1.0 + canopy_balance * 0.04
+                repo_bloom_scale *= 0.96 + canopy_balance * 0.08
+        if (
+            repo_age_days is not None
+            and repo_age_days <= 240
+            and seedling_pressure > 0.35
+            and repo_stars < 45
+            and species in {"wildflower", "shrub"}
+        ):
+            species = "seedling"
         style = SPECIES.get(species)
 
         # Seasonal color variation: date-aware hue drift + mature autumn accent.
@@ -1168,21 +1527,66 @@ def generate(
         base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
         # Data mapping: commits -> trunk height, total_commits scales globally
         commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
-        main_length = max(50, (70 + min(280, age * 3.5)) * tree_t * commit_factor)
-        max_depth = max(1, round(max(2, min(6, 2 + age // 12)) * tree_t))
-        # Data mapping: commits -> trunk thickness (vigor from contribution streaks)
-        stem_sw = max(
-            2.5,
-            (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0))
-            * (0.4 + 0.6 * tree_t),
-        )
+        if chronological_growth:
+            main_length = max(
+                14.0,
+                (42 + min(260, age * 3.2))
+                * tree_t
+                * (0.88 + repo_growth_signal * 0.28)
+                * commit_factor
+                * repo_canopy_scale,
+            )
+            max_depth = max(
+                1,
+                round(
+                    max(2, min(6, 2 + age // 12))
+                    * max(0.35, tree_t)
+                    * repo_branch_scale
+                ),
+            )
+            # Data mapping: commits -> trunk thickness (vigor from contribution streaks)
+            stem_sw = max(
+                1.15,
+                (2.3 + min(3.0, age * 0.055) + min(1.6, total_commits / 4500.0))
+                * (0.22 + 0.78 * tree_t),
+            )
+        else:
+            min_main_length = 42 if repo_age_days is not None else 50
+            main_length = max(
+                min_main_length,
+                (70 + min(280, age * 3.5))
+                * tree_t
+                * commit_factor
+                * repo_canopy_scale,
+            )
+            max_depth = max(
+                1,
+                round(max(2, min(6, 2 + age // 12)) * tree_t * repo_branch_scale),
+            )
+            # Data mapping: commits -> trunk thickness (vigor from contribution streaks)
+            stem_sw = max(
+                2.5,
+                (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0))
+                * (0.4 + 0.6 * tree_t),
+            )
         stem_sw *= vigor_multiplier
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
         # Data mapping: stars -> bloom density multiplier (vigor boosts blooms)
-        bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
+        if chronological_growth:
+            bloom_boost = min(
+                2.2,
+                0.9
+                + repo_star_signal * 0.7
+                + repo_fork_signal * 0.2
+                + repo_topic_signal * 0.15
+                + stars_total / 300.0,
+            ) * vigor_multiplier
+        else:
+            bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
+        bloom_boost = max(0.35, min(2.4, bloom_boost * repo_bloom_scale))
 
-        if main_length >= 5:
+        if main_length >= (20 if chronological_growth else 5):
             labels.append(
                 (
                     base_x,
@@ -1205,6 +1609,22 @@ def generate(
                 repo_stars,
                 species,
             )
+        )
+        rendered_repo_meta.append(
+            {
+                "x": base_x,
+                "base_y": gy,
+                "top_y": gy - main_length,
+                "name": repo_name,
+                "lang": lang,
+                "when": repo_date,
+                "time_frac": repo_frac
+                if repo_frac is not None
+                else repo_growth_order.get(ri, 0.5),
+                "tree_t": tree_t,
+                "bloom_gate": bloom_growth_gate,
+                "late_detail_gate": late_detail_growth_gate,
+            }
         )
 
         # ── Fern growth (special algorithm) ───────────────────────
@@ -1246,7 +1666,7 @@ def generate(
                         side = 1 if si % 2 == 0 else -1
                         perp = cur_angle + side * math.pi / 2
                         la = perp + rng.uniform(-0.2, 0.2)
-                        if len(leaves) < MAX_LEAVES:
+                        if tree_t >= leaf_growth_gate and len(leaves) < MAX_LEAVES:
                             _lhue = (
                                 autumn_leaf_hue
                                 if is_autumn
@@ -1363,7 +1783,7 @@ def generate(
                                 + rng.uniform(-0.15, 0.15)
                             )
                             ls = rng.uniform(6, 14) * (1 - t * 0.3)
-                            if len(leaves) < MAX_LEAVES:
+                            if tree_t >= leaf_growth_gate and len(leaves) < MAX_LEAVES:
                                 _lhue = (
                                     autumn_leaf_hue
                                     if is_autumn
@@ -1452,7 +1872,11 @@ def generate(
                         )
                     )
 
-                    if depth >= 1 and rng.random() < style_d["leaf_prob"]:
+                    if (
+                        tree_t >= leaf_growth_gate
+                        and depth >= 1
+                        and rng.random() < style_d["leaf_prob"]
+                    ):
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
@@ -1482,7 +1906,7 @@ def generate(
                                 )
                             )
 
-                    if depth >= 2 and rng.random() < 0.12:
+                    if tree_t >= bloom_growth_gate and depth >= 2 and rng.random() < 0.12:
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
@@ -1531,7 +1955,11 @@ def generate(
                         )
 
                 # Blooms at tips — bloom probability boosted by total stars
-                if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
+                if (
+                    tree_t >= bloom_growth_gate
+                    and depth >= max_d - 1
+                    and rng.random() < min(0.85, 0.6 * bloom_boost)
+                ):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
@@ -1549,7 +1977,11 @@ def generate(
                     )
 
                 # Berries
-                if depth >= max_d and rng.random() < 0.2:
+                if (
+                    tree_t >= late_detail_growth_gate
+                    and depth >= max_d
+                    and rng.random() < 0.2
+                ):
                     for _ in range(rng.integers(2, 6)):
                         berries.append(
                             (
@@ -1557,7 +1989,7 @@ def generate(
                                 cy_ + rng.uniform(-6, 6),
                                 rng.uniform(1.5, 3),
                                 (hue + 180) % 360,
-                                bloom_when,
+                                detail_when,
                             )
                         )
 
@@ -1613,7 +2045,11 @@ def generate(
                         )
                     )
 
-                    if depth >= 1 and rng.random() < style_d["leaf_prob"]:
+                    if (
+                        tree_t >= leaf_growth_gate
+                        and depth >= 1
+                        and rng.random() < style_d["leaf_prob"]
+                    ):
                         side = rng.choice([-1, 1])
                         la = a + side * (0.5 + rng.uniform(0, 0.6))
                         ls = 5 + rng.uniform(0, 6) * (1 - depth / (max_d + 1))
@@ -1643,7 +2079,7 @@ def generate(
                                 )
                             )
 
-                    if depth >= 2 and rng.random() < 0.12:
+                    if tree_t >= bloom_growth_gate and depth >= 2 and rng.random() < 0.12:
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
@@ -1706,7 +2142,11 @@ def generate(
 
                 # Blooms at tips (fern and bamboo have no blooms — handled above)
                 # bloom probability boosted by total stars
-                if depth >= max_d - 1 and rng.random() < min(0.85, 0.6 * bloom_boost):
+                if (
+                    tree_t >= bloom_growth_gate
+                    and depth >= max_d - 1
+                    and rng.random() < min(0.85, 0.6 * bloom_boost)
+                ):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
                     bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
                     petal_layers = 1 + min(3, repo_stars // 5)
@@ -1724,7 +2164,11 @@ def generate(
                     )
 
                 # Berries
-                if depth >= max_d and rng.random() < 0.2:
+                if (
+                    tree_t >= late_detail_growth_gate
+                    and depth >= max_d
+                    and rng.random() < 0.2
+                ):
                     for _ in range(rng.integers(2, 6)):
                         berries.append(
                             (
@@ -1732,7 +2176,7 @@ def generate(
                                 cy_ + rng.uniform(-6, 6),
                                 rng.uniform(1.5, 3),
                                 (hue + 180) % 360,
-                                bloom_when,
+                                detail_when,
                             )
                         )
 
@@ -1781,6 +2225,84 @@ def generate(
 
     # Restore stable RNG for ambient elements (independent of n_visible)
     rng = np.random.default_rng(base_seed ^ 0xA5A5A5A5)
+
+    def _closest_repo_meta_for_when(
+        when: str | None,
+        *,
+        repo_name: str = "",
+    ) -> dict[str, Any] | None:
+        if not rendered_repo_meta:
+            return None
+
+        candidates = rendered_repo_meta
+        if repo_name:
+            named = [meta for meta in candidates if meta["name"] == repo_name]
+            if named:
+                candidates = named
+
+        matured = [
+            meta
+            for meta in candidates
+            if float(meta["tree_t"]) >= float(meta["late_detail_gate"])
+        ]
+        if matured:
+            candidates = matured
+
+        if when:
+            target_frac = _time_fraction(when)
+            return min(
+                candidates,
+                key=lambda meta: (
+                    abs(float(meta["time_frac"]) - target_frac),
+                    float(meta["top_y"]),
+                ),
+            )
+
+        return min(candidates, key=lambda meta: float(meta["top_y"]))
+
+    def _anchor_for_event_when(
+        when: str | None,
+        *,
+        repo_name: str = "",
+        fallback_index: int = 0,
+    ) -> tuple[float, float, float, int, int, int, str, str]:
+        target_frac = _time_fraction(when)
+        if blooms:
+            return min(
+                blooms,
+                key=lambda bloom: (
+                    abs(_time_fraction(bloom[7]) - target_frac),
+                    -float(bloom[2]),
+                ),
+            )
+
+        repo_meta = _closest_repo_meta_for_when(when, repo_name=repo_name)
+        if repo_meta is not None:
+            anchor_hue = LANG_HUES.get(repo_meta["lang"], 150)
+            anchor_y = float(repo_meta["top_y"]) + (
+                float(repo_meta["base_y"]) - float(repo_meta["top_y"])
+            ) * 0.28
+            return (
+                float(repo_meta["x"]),
+                anchor_y,
+                10.0,
+                anchor_hue,
+                0,
+                0,
+                "wild",
+                str(repo_meta["when"]),
+            )
+
+        return (
+            WIDTH * (0.38 + fallback_index * 0.18),
+            GROUND_Y - 120 - fallback_index * 20,
+            10.0,
+            150,
+            0,
+            0,
+            "wild",
+            when or timeline_end.isoformat(),
+        )
 
     # ── Tendrils ──────────────────────────────────────────────────
     n_tendrils = min(6, metrics.get("following", 0) // 12)
@@ -1900,31 +2422,38 @@ def generate(
             )
         )
 
+    late_fauna_entries = sorted(
+        [
+            {
+                "when": str(entry["when"]),
+                "repo_name": str(entry.get("repo_name") or ""),
+            }
+            for entry in merged_entries
+        ]
+        + [
+            {
+                "when": str(entry["when"]),
+                "repo_name": str(entry.get("repo_name") or ""),
+            }
+            for entry in release_entries
+        ],
+        key=lambda entry: str(entry["when"]),
+    )
     rare_fauna_tier = 0
-    if followers_count >= 60 and merged_entries:
+    if followers_count >= 60 and late_fauna_entries:
         rare_fauna_tier = 1
-    if followers_count >= 180 and len(merged_entries) >= 3:
+    if followers_count >= 180 and len(late_fauna_entries) >= 3:
         rare_fauna_tier = 2
 
     if rare_fauna_tier:
-        bloom_anchors = sorted(blooms, key=lambda bloom: bloom[2], reverse=True)
-        if not bloom_anchors:
-            bloom_anchors = [
-                (
-                    WIDTH * (0.38 + hi * 0.18),
-                    GROUND_Y - 120 - hi * 20,
-                    10.0,
-                    150,
-                    0,
-                    0,
-                    "wild",
-                    timeline_end.isoformat(),
-                )
-                for hi in range(rare_fauna_tier)
-            ]
         for hi in range(rare_fauna_tier):
-            anchor = bloom_anchors[hi % len(bloom_anchors)]
-            when = str(merged_entries[min(len(merged_entries) - 1, hi)]["when"])
+            entry = late_fauna_entries[min(len(late_fauna_entries) - 1, hi)]
+            when = str(entry["when"])
+            anchor = _anchor_for_event_when(
+                when,
+                repo_name=str(entry["repo_name"]),
+                fallback_index=hi,
+            )
             hx = anchor[0] + (-1 if hi % 2 == 0 else 1) * (16 + hi * 8)
             hy = anchor[1] - (16 + hi * 6)
             insects.append(
@@ -1949,7 +2478,13 @@ def generate(
 
     # ── Falling seeds (dandelion wisps + maple samaras) ───────────
     if mat > 0.2:
-        for _ in range(min(10, stars_total // 5)):
+        ambient_seed_count = min(10, stars_total // 5)
+        if has_explicit_repo_recency:
+            ambient_seed_count = min(
+                12,
+                max(0, int(round(ambient_seed_count * ambient_seed_scale))),
+            )
+        for _ in range(ambient_seed_count):
             seeds.append(
                 (
                     rng.uniform(40, WIDTH - 40),
@@ -3368,28 +3903,107 @@ def generate(
             # Sort trees by height (smallest top_y = tallest) and pick tallest
             _sorted_trees = sorted(tree_tooltips, key=lambda t: t[2])
             _tallest_trees = _sorted_trees[: max(1, min(3, len(_sorted_trees)))]
+            _release_signal_entries = [
+                release_entries[_rel_i] if _rel_i < len(release_entries) else None
+                for _rel_i in range(_release_count)
+            ]
             _seed_color = pal.get("highlight", oklch(0.65, 0.12, 80))
-            for _rel_i in range(_release_count):
-                # Pick a tall tree to drop from
-                _src_tree = _tallest_trees[_rel_i % len(_tallest_trees)]
-                _tree_x, _tree_base_y, _tree_top_y = (
-                    _src_tree[0],
-                    _src_tree[1],
-                    _src_tree[2],
+            for _rel_i, _release_entry in enumerate(_release_signal_entries):
+                _release_when = (
+                    str(_release_entry["when"]) if _release_entry is not None else None
                 )
+                _release_repo_name = (
+                    str(_release_entry.get("repo_name") or "")
+                    if _release_entry is not None
+                    else ""
+                )
+                _release_label = (
+                    _escape_svg_text(str(_release_entry.get("label") or ""))
+                    if _release_entry is not None
+                    else ""
+                )
+                _src_meta = (
+                    _closest_repo_meta_for_when(
+                        _release_when,
+                        repo_name=_release_repo_name,
+                    )
+                    if _release_when is not None
+                    else None
+                )
+                if _src_meta is not None:
+                    if (
+                        not timeline_enabled
+                        and float(_src_meta["tree_t"]) < float(_src_meta["late_detail_gate"])
+                    ):
+                        continue
+                    _tree_x = float(_src_meta["x"])
+                    _tree_base_y = float(_src_meta["base_y"])
+                    _tree_top_y = float(_src_meta["top_y"])
+                else:
+                    # Pick a tall tree to drop from
+                    _src_tree = _tallest_trees[_rel_i % len(_tallest_trees)]
+                    _tree_x, _tree_base_y, _tree_top_y = (
+                        _src_tree[0],
+                        _src_tree[1],
+                        _src_tree[2],
+                    )
                 _canopy_y = _tree_top_y + (_tree_base_y - _tree_top_y) * 0.25
-                _n_seeds = _seed_rng.integers(1, 4)  # 1-3 seeds per release
-                for _ in range(_n_seeds):
+                _base_seed_count = int(_seed_rng.integers(1, 4))
+                _n_seeds = _base_seed_count  # 1-3 seeds per release
+                _chronology_scale = (
+                    0.90 + _time_fraction(_release_when) * 0.35
+                    if _release_when is not None
+                    else 1.0
+                )
+                if has_explicit_repo_recency or _release_when is not None:
+                    _n_seeds = max(
+                        1,
+                        min(
+                            4,
+                            int(
+                                round(
+                                    _base_seed_count
+                                    * release_seed_scale
+                                    * _chronology_scale
+                                )
+                            ),
+                        ),
+                    )
+                for _seed_i in range(_n_seeds):
                     _sx = _tree_x + _seed_rng.uniform(-18, 18)
                     _sy = _seed_rng.uniform(_canopy_y, _tree_base_y - 5)
                     _srx = _seed_rng.uniform(1.2, 2.5)
                     _sry = _seed_rng.uniform(1.8, 3.5)
                     _srot = _seed_rng.uniform(-30, 30)
                     _s_op = _seed_rng.uniform(0.18, 0.35)
+                    _seed_attrs: list[str] = []
+                    if _release_when is not None:
+                        _seed_attrs.append('data-role="release-seed"')
+                        _seed_attrs.append(f'data-when="{_release_when}"')
+                        if _release_label:
+                            _seed_attrs.append(f'data-release="{_release_label}"')
+                    if timeline_enabled and _release_when is not None:
+                        _seed_attrs.append(
+                            _timeline_style(
+                                _release_when,
+                                _s_op,
+                                delay_offset_frac=max(
+                                    -0.04,
+                                    min(
+                                        0.04,
+                                        (_seed_i - (_n_seeds - 1) / 2.0) * 0.015,
+                                    ),
+                                ),
+                                duration_scale=0.82,
+                                ease="ease-in-out",
+                            )
+                        )
+                    else:
+                        _seed_attrs.append(f'opacity="{_s_op:.2f}"')
                     P.append(
                         f'<ellipse cx="{_sx:.1f}" cy="{_sy:.1f}" '
                         f'rx="{_srx:.1f}" ry="{_sry:.1f}" '
-                        f'fill="{_seed_color}" opacity="{_s_op:.2f}" '
+                        f'fill="{_seed_color}" {" ".join(_seed_attrs)} '
                         f'transform="rotate({_srot:.0f},{_sx:.1f},{_sy:.1f})"/>'
                     )
 
@@ -4289,8 +4903,8 @@ def generate(
         leg_y = HEIGHT - m - 12
         species_shown = set()
         legend_items = []
-        for repo in repos[:MAX_REPOS]:
-            sp = _classify_species(repo, species_threshold_mult=species_threshold_mult)
+        for tooltip in tree_tooltips:
+            sp = tooltip[6]
             if sp not in species_shown and len(legend_items) < 4:
                 species_shown.add(sp)
                 legend_items.append(sp)

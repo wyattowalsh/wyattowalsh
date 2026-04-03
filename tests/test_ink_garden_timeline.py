@@ -29,6 +29,14 @@ def _extract_fauna_beats(svg: str, fauna: str) -> list[float]:
     ]
 
 
+def _extract_fauna_dates(svg: str, fauna: str) -> list[str]:
+    return re.findall(rf'data-fauna="{fauna}"[^>]+data-when="([0-9-]+)"', svg)
+
+
+def _extract_role_dates(svg: str, role: str) -> list[str]:
+    return re.findall(rf'data-role="{role}"[^>]+data-when="([0-9-]+)"', svg)
+
+
 def _sample_metrics() -> dict:
     return {
         "label": "Ink Timeline Test",
@@ -167,6 +175,27 @@ def test_ink_garden_timeline_merged_pr_dates_drive_pollinator_reveals() -> None:
     assert 'data-when="2023-03-20"' in svg
 
 
+def test_ink_garden_timeline_release_seeds_follow_dated_release_chronology() -> None:
+    metrics = _sample_metrics()
+    metrics["releases"] = [
+        {
+            "tag_name": "v0.1.0",
+            "published_at": "2023-01-25T00:00:00Z",
+        },
+        {
+            "tag_name": "v0.2.0",
+            "published_at": "2023-03-25T00:00:00Z",
+        },
+    ]
+
+    svg = generate(metrics, seed=seed_hash(metrics), timeline=True, loop_duration=24.0)
+    release_dates = _extract_role_dates(svg, "release-seed")
+
+    assert release_dates
+    assert "2023-01-25" in release_dates
+    assert "2023-03-25" in release_dates
+
+
 def test_ink_garden_tighter_merged_pr_cadence_strengthens_pollinator_beat() -> None:
     fixed_seed = "0123456789abcdeffedcba9876543210"
 
@@ -285,3 +314,20 @@ def test_ink_garden_rare_fauna_requires_followers_and_recent_pollination() -> No
     assert 'data-fauna="hummingbird"' not in low_svg
     assert 'data-fauna="hummingbird"' in high_svg
     assert 'data-role="rare-fauna"' in high_svg
+
+
+def test_ink_garden_rare_fauna_can_follow_release_dates_without_recent_prs() -> None:
+    metrics = _sample_metrics()
+    metrics["followers"] = 220
+    metrics["releases"] = [
+        {
+            "tag_name": "v0.2.0",
+            "published_at": "2023-02-25T00:00:00Z",
+        }
+    ]
+
+    svg = generate(metrics, seed=seed_hash(metrics), timeline=True, loop_duration=24.0)
+    hummingbird_dates = _extract_fauna_dates(svg, "hummingbird")
+
+    assert "2023-02-25" in hummingbird_dates
+    assert 'data-role="rare-fauna"' in svg

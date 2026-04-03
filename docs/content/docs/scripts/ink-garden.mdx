@@ -38,18 +38,25 @@ Returns a complete SVG string (no file I/O).
 The ink garden is generated through the living-art pipeline:
 
 ```bash
-# Fetch metrics first
+# Fetch inputs first
 uv run python -m scripts.fetch_metrics \
   --owner wyattowalsh \
   --repo wyattowalsh \
   --output /tmp/metrics.json
 
-# Generate the ink garden outputs only
-uv run readme generate living-art \
+uv run python -m scripts.fetch_history \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output /tmp/history.json
+
+# Generate the Ink Garden timelapse only
+uv run python -m scripts.cli generate living-art \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
   --only inkgarden
 ```
+
+That command writes `living-inkgarden.gif` and refreshes `living-art-manifest.json` plus `living-art-preview.html` in the output directory.
 
 ## Seed and determinism
 

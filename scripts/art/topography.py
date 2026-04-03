@@ -13,7 +13,7 @@ Light theme on cream paper.
 from __future__ import annotations
 
 import math
-from datetime import timedelta
+from datetime import date, timedelta
 
 import numpy as np
 
@@ -257,12 +257,10 @@ def _commit_hour_hillshade_profile(commit_hours: object) -> dict[str, float]:
 
     total = sum(hours.values())
     vec_x = sum(
-        math.cos(2 * math.pi * hour / 24.0) * weight
-        for hour, weight in hours.items()
+        math.cos(2 * math.pi * hour / 24.0) * weight for hour, weight in hours.items()
     )
     vec_y = sum(
-        math.sin(2 * math.pi * hour / 24.0) * weight
-        for hour, weight in hours.items()
+        math.sin(2 * math.pi * hour / 24.0) * weight for hour, weight in hours.items()
     )
     focus = min(1.0, max(0.0, math.hypot(vec_x, vec_y) / max(total, 1e-6)))
     if abs(vec_x) < 1e-9 and abs(vec_y) < 1e-9:
@@ -277,9 +275,7 @@ def _commit_hour_hillshade_profile(commit_hours: object) -> dict[str, float]:
     sun_azimuth = (peak_hour / 24.0) * 360.0
     sun_altitude = 14.0 + 20.0 * day_strength + 24.0 * focus
     secondary_azimuth = (sun_azimuth + 95.0 + 25.0 * (1.0 - focus)) % 360.0
-    secondary_altitude = max(
-        8.0, sun_altitude * (0.42 + 0.16 * (1.0 - day_strength))
-    )
+    secondary_altitude = max(8.0, sun_altitude * (0.42 + 0.16 * (1.0 - day_strength)))
     return {
         "peak_hour": peak_hour,
         "focus": focus,
@@ -346,6 +342,87 @@ def _river_flow_profile(star_velocity: object) -> dict[str, str | float]:
         "current_ratio": 0.16 + 0.12 * velocity_norm,
         "dash": max(1.4, 2.8 - 1.2 * velocity_norm),
         "gap": 2.2 + 1.6 * (1.0 - velocity_norm),
+    }
+
+
+def _repo_recency_landscape_profile(
+    repos: object, timeline_window: tuple[date, date]
+) -> dict[str, str | float]:
+    if not isinstance(repos, list) or not repos:
+        return {
+            "band": "balanced",
+            "mean_recency": 0.5,
+            "legacy_share": 0.0,
+            "recent_share": 0.0,
+        }
+
+    start, end = timeline_window
+    span_days = max(1, end.toordinal() - start.toordinal())
+    recencies: list[float] = []
+    legacy_count = 0
+    recent_count = 0
+
+    for repo in repos:
+        if not isinstance(repo, dict):
+            continue
+
+        repo_day: date | None = None
+        for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
+            raw = repo.get(key)
+            if not isinstance(raw, str) or not raw.strip():
+                continue
+            try:
+                repo_day = date.fromisoformat(raw[:10])
+            except ValueError:
+                repo_day = None
+            if repo_day is not None:
+                break
+
+        if repo_day is None:
+            try:
+                age_months = float(repo.get("age_months", 0) or 0.0)
+            except (TypeError, ValueError):
+                age_months = 0.0
+            if age_months > 0:
+                repo_day = end - timedelta(days=int(age_months * 30.4))
+
+        if repo_day is None:
+            continue
+
+        recency = max(
+            0.0,
+            min(1.0, (repo_day.toordinal() - start.toordinal()) / span_days),
+        )
+        recencies.append(recency)
+        if recency <= 0.34:
+            legacy_count += 1
+        elif recency >= 0.66:
+            recent_count += 1
+
+    if not recencies:
+        return {
+            "band": "balanced",
+            "mean_recency": 0.5,
+            "legacy_share": 0.0,
+            "recent_share": 0.0,
+        }
+
+    mean_recency = sum(recencies) / len(recencies)
+    legacy_share = legacy_count / len(recencies)
+    recent_share = recent_count / len(recencies)
+
+    if mean_recency <= 0.38 and recent_share <= 0.25:
+        band = "legacy"
+    elif mean_recency >= 0.62 and recent_share >= 0.34:
+        band = "recent"
+    else:
+        band = "balanced"
+
+    return {
+        "band": band,
+        "mean_recency": mean_recency,
+        "legacy_share": legacy_share,
+        "recent_share": recent_share,
     }
 
 
@@ -422,7 +499,10 @@ def generate(
     # ── OKLCH palette & complexity (Phase 4d) ─────────────────────
     select_palette_for_world(world)
     pal = _build_world_palette_extended(
-        world.time_of_day, world.weather, world.season, world.energy,
+        world.time_of_day,
+        world.weather,
+        world.season,
+        world.energy,
     )
     complexity = visual_complexity(metrics)
 
@@ -442,39 +522,239 @@ def generate(
     contributions = metrics.get("contributions_last_year", 200)
     forks = metrics.get("forks", 0)
     stars = metrics.get("stars", 0)
+    total_issues_raw = metrics.get("total_issues", 0)
+    recent_merged_prs = metrics.get("recent_merged_prs", [])
+    releases = metrics.get("releases", [])
     commit_hour_profile = _commit_hour_hillshade_profile(
         metrics.get("commit_hour_distribution", {})
     )
     river_flow_profile = _river_flow_profile(metrics.get("star_velocity", {}))
     settlement_tier, settlement_title = _settlement_scale_tier(followers)
     metrics.get("network_count", 0)
+    try:
+        issue_pressure = min(1.0, max(0.0, float(total_issues_raw or 0.0) / 36.0))
+    except (TypeError, ValueError):
+        issue_pressure = 0.0
 
-    def _repo_date(repo: dict) -> str | None:
+    def _history_day(value: object) -> date | None:
+        if isinstance(value, date):
+            return value
+        if not isinstance(value, str):
+            return None
+        raw = value.strip()
+        if not raw:
+            return None
+        try:
+            return date.fromisoformat(raw[:10])
+        except ValueError:
+            return None
+
+    repo_day_cache: dict[tuple[int, int | None], date | None] = {}
+
+    def _repo_day(repo: dict, *, fallback_end: date | None = None) -> date | None:
+        cache_key = (
+            id(repo),
+            fallback_end.toordinal() if fallback_end is not None else None,
+        )
+        if cache_key in repo_day_cache:
+            return repo_day_cache[cache_key]
+
+        repo_day: date | None = None
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
-            val = repo.get(key)
-            if isinstance(val, str) and val.strip():
-                if len(val) >= 10:
-                    return val[:10]
-                return val
+            repo_day = _history_day(repo.get(key))
+            if repo_day is not None:
+                break
+
+        if repo_day is None and fallback_end is not None:
+            try:
+                age_months = float(repo.get("age_months", 0) or 0.0)
+            except (TypeError, ValueError):
+                age_months = 0.0
+            if age_months > 0:
+                repo_day = fallback_end - timedelta(days=int(age_months * 30.4))
+
+        repo_day_cache[cache_key] = repo_day
+        return repo_day
+
+    def _repo_date(repo: dict, *, fallback_end: date | None = None) -> str | None:
+        repo_day = _repo_day(repo, fallback_end=fallback_end)
+        return repo_day.isoformat() if repo_day is not None else None
+
+    def _release_day(release: object) -> date | None:
+        if not isinstance(release, dict):
+            return None
+        for key in ("published_at", "released_at", "date", "created_at"):
+            release_day = _history_day(release.get(key))
+            if release_day is not None:
+                return release_day
         return None
+
+    def _release_date(release: object) -> str | None:
+        release_day = _release_day(release)
+        return release_day.isoformat() if release_day is not None else None
+
+    def _merged_pr_day(pr: object) -> date | None:
+        if not isinstance(pr, dict):
+            return None
+        for key in ("merged_at", "closed_at", "date", "created_at"):
+            pr_day = _history_day(pr.get(key))
+            if pr_day is not None:
+                return pr_day
+        return None
+
+    def _merged_pr_date(pr: object) -> str | None:
+        pr_day = _merged_pr_day(pr)
+        return pr_day.isoformat() if pr_day is not None else None
+
+    deterministic_history_now = date(2024, 1, 1)
+
+    explicit_history_window = normalize_timeline_window(
+        [
+            {"date": when}
+            for when in (
+                [
+                    _repo_date(repo)
+                    for repo in repos
+                    if isinstance(repo, dict) and _repo_date(repo)
+                ]
+                + [
+                    _release_date(release)
+                    for release in releases
+                    if _release_date(release)
+                ]
+                + [
+                    _merged_pr_date(pr)
+                    for pr in recent_merged_prs
+                    if _merged_pr_date(pr)
+                ]
+            )
+            if when
+        ],
+        {
+            "account_created": metrics.get("account_created"),
+            "contributions_monthly": monthly,
+            "contributions_daily": metrics.get("contributions_daily", {}),
+        },
+        fallback_days=365,
+        now=deterministic_history_now,
+    )
+    repo_age_anchor = max(explicit_history_window[1], deterministic_history_now)
 
     timeline_window = normalize_timeline_window(
         [
-            {"date": _repo_date(repo)}
-            for repo in repos
-            if isinstance(repo, dict) and _repo_date(repo)
+            {"date": when}
+            for when in (
+                [
+                    _repo_date(repo, fallback_end=repo_age_anchor)
+                    for repo in repos
+                    if isinstance(repo, dict)
+                    and _repo_date(repo, fallback_end=repo_age_anchor)
+                ]
+                + [
+                    _release_date(release)
+                    for release in releases
+                    if _release_date(release)
+                ]
+                + [
+                    _merged_pr_date(pr)
+                    for pr in recent_merged_prs
+                    if _merged_pr_date(pr)
+                ]
+            )
+            if when
         ],
         {
             "account_created": metrics.get("account_created"),
             "repos": repos,
             "contributions_monthly": monthly,
+            "contributions_daily": metrics.get("contributions_daily", {}),
         },
         fallback_days=365,
+        now=deterministic_history_now,
     )
+    repos_for_recency = []
+    for repo in repos:
+        if not isinstance(repo, dict):
+            continue
+        repo_for_recency = dict(repo)
+        if not _history_day(repo_for_recency.get("date")):
+            resolved_repo_when = _repo_date(
+                repo_for_recency, fallback_end=repo_age_anchor
+            )
+            if resolved_repo_when is not None:
+                repo_for_recency["date"] = resolved_repo_when
+        repos_for_recency.append(repo_for_recency)
+    repo_timeline_window = normalize_timeline_window(
+        [
+            {"date": _repo_date(repo, fallback_end=repo_age_anchor)}
+            for repo in repos
+            if isinstance(repo, dict) and _repo_date(repo, fallback_end=repo_age_anchor)
+        ],
+        {
+            "account_created": metrics.get("account_created"),
+            "repos": repos,
+            "contributions_monthly": monthly,
+            "contributions_daily": metrics.get("contributions_daily", {}),
+        },
+        fallback_days=365,
+        now=deterministic_history_now,
+    )
+    repo_recency_profile = _repo_recency_landscape_profile(
+        repos_for_recency, repo_timeline_window
+    )
+    contour_roughness = min(
+        1.0,
+        max(
+            0.0,
+            float(repo_recency_profile["mean_recency"]) * 0.72 + issue_pressure * 0.48,
+        ),
+    )
+    contour_smooth_normal = (
+        2 if contour_roughness < 0.22 else 1 if contour_roughness < 0.74 else 0
+    )
+    contour_smooth_index = (
+        3 if contour_roughness < 0.14 else 2 if contour_roughness < 0.68 else 1
+    )
+    foothill_density = min(
+        1.0,
+        max(
+            0.0,
+            issue_pressure * 0.55 + float(repo_recency_profile["recent_share"]) * 0.65,
+        ),
+    )
+    foothill_count = (
+        0 if foothill_density <= 0.08 else 1 + int(round(foothill_density * 3.0))
+    )
+    foothill_span_end = 0.30 + float(repo_recency_profile["legacy_share"]) * 0.06
+    foothill_levels = [
+        0.12 + (idx + 1) * (foothill_span_end - 0.12) / (foothill_count + 1)
+        for idx in range(foothill_count)
+    ]
     daily_series = contributions_monthly_to_daily_series(
         monthly,
         reference_year=timeline_window[1].year,
     )
+    activity_series_mode = "monthly" if daily_series else "none"
+    raw_daily_series = metrics.get("contributions_daily", {})
+    parsed_daily_series: dict[str, int] = {}
+    if isinstance(raw_daily_series, dict):
+        for raw_day, raw_count in sorted(raw_daily_series.items()):
+            parsed_day = _history_day(raw_day)
+            if parsed_day is None:
+                continue
+            try:
+                parsed_daily_series[parsed_day.isoformat()] = max(
+                    0, int(raw_count or 0)
+                )
+            except (TypeError, ValueError):
+                continue
+    if parsed_daily_series:
+        if daily_series:
+            daily_series.update(parsed_daily_series)
+            activity_series_mode = "hybrid"
+        else:
+            daily_series = parsed_daily_series
+            activity_series_mode = "daily"
     sorted_daily = sorted(daily_series.items(), key=lambda kv: kv[0])
     total_daily = sum(max(0, int(v)) for _, v in sorted_daily)
 
@@ -518,8 +798,44 @@ def generate(
             f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" data-when="{when}"'
         )
 
+    def _repo_when(repo: dict) -> str | None:
+        return _repo_date(repo, fallback_end=repo_age_anchor)
+
+    def _later_when(*when_values: object) -> str:
+        parsed_days = [
+            day for value in when_values if (day := _history_day(value)) is not None
+        ]
+        if not parsed_days:
+            return timeline_window[0].isoformat()
+        return max(parsed_days).isoformat()
+
+    timeline_start_day, timeline_end_day = timeline_window
+    timeline_start_ord = timeline_start_day.toordinal()
+    timeline_end_ord = timeline_end_day.toordinal()
+    central_peak_day = (
+        _history_day(_date_for_activity_fraction(0.58)) or timeline_start_day
+    )
+    river_carve_day = (
+        _history_day(
+            _date_for_activity_fraction(
+                min(0.82, 0.44 + float(river_flow_profile["velocity_norm"]) * 0.22)
+            )
+        )
+        or central_peak_day
+    )
+
     grid = 200
     elevation = np.zeros((grid, grid))
+    base_birth_weight = 0.035
+    terrain_birth_mass = np.full((grid, grid), base_birth_weight, dtype=float)
+    terrain_birth_ord = np.full(
+        (grid, grid),
+        float(timeline_start_ord) * base_birth_weight,
+        dtype=float,
+    )
+    terrain_feature_mass = np.zeros((grid, grid), dtype=float)
+    terrain_birth_first = np.full((grid, grid), float(timeline_end_ord), dtype=float)
+    terrain_birth_latest = np.full((grid, grid), float(timeline_start_ord), dtype=float)
 
     # ── 1. Subtle base terrain noise ───────────────────────────────
     terrain_oct = max(3, min(7, 3 + total_commits // 6000))
@@ -575,7 +891,9 @@ def generate(
     # ── 2b. Optimize hill positions with PSO ──
     if len(repo_positions) >= 2:
         # Extract positions and weights for optimizer
-        raw_positions = [(rp[0] * MAP_W + MAP_L, rp[1] * MAP_H + MAP_T) for rp in repo_positions]
+        raw_positions = [
+            (rp[0] * MAP_W + MAP_L, rp[1] * MAP_H + MAP_T) for rp in repo_positions
+        ]
         hill_weights = [max(1, rp[2].get("stars", 0)) for rp in repo_positions]
 
         optimized = optimize_layout_pso(
@@ -614,6 +932,10 @@ def generate(
     for ri, (rcx, rcy, repo) in enumerate(repo_positions):
         repo_stars = repo.get("stars", 0)
         age = repo.get("age_months", 6)
+        repo_when_day = (
+            _repo_day(repo, fallback_end=repo_age_anchor) or timeline_start_day
+        )
+        repo_when_ord = repo_when_day.toordinal()
 
         # Stars -> peak height RELATIVE to this profile's range
         star_frac = (
@@ -660,7 +982,21 @@ def generate(
                     )
                     * 0.018
                 )
-                elevation[gy, gx] += base_gaussian + texture + ridge_tex * base_gaussian
+                repo_contribution = base_gaussian + texture + ridge_tex * base_gaussian
+                elevation[gy, gx] += repo_contribution
+                repo_birth_weight = (
+                    base_gaussian + abs(texture) + ridge_tex * max(base_gaussian, 0.0)
+                )
+                if repo_birth_weight > 1e-6:
+                    terrain_birth_mass[gy, gx] += repo_birth_weight
+                    terrain_birth_ord[gy, gx] += repo_birth_weight * repo_when_ord
+                    terrain_feature_mass[gy, gx] += repo_birth_weight
+                    terrain_birth_first[gy, gx] = min(
+                        terrain_birth_first[gy, gx], float(repo_when_ord)
+                    )
+                    terrain_birth_latest[gy, gx] = max(
+                        terrain_birth_latest[gy, gx], float(repo_when_ord)
+                    )
 
     # ── Place names from topic clusters ──
     topic_clusters = metrics.get("topic_clusters", {})
@@ -675,6 +1011,7 @@ def generate(
             key=lambda item: (-item[2], item[0]),
         )[:6]
     ]
+
     def _topic_to_place_name(topic: str, elev_val: float) -> str:
         """Convert a topic to a cartographic-style place name."""
         name = topic.replace("-", " ").title()
@@ -690,13 +1027,113 @@ def generate(
         noun = "repo" if count == 1 else "repos"
         return f"{count} linked {noun}"
 
+    def _feature_kind_from_elevation(elev_val: float) -> str:
+        if elev_val > 0.7:
+            return "mountain"
+        if elev_val < 0.15:
+            return "lake"
+        if elev_val < 0.3:
+            return "valley"
+        return "pass"
+
+    def _escape_attr(value: object) -> str:
+        return (
+            str(value)
+            .replace("&", "&amp;")
+            .replace('"', "&quot;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+        )
+
+    def _repo_topic_keys(repo: dict) -> set[str]:
+        return {
+            topic_text.casefold()
+            for raw_topic in repo.get("topics") or []
+            if (topic_text := str(raw_topic).strip())
+        }
+
+    repo_terrain_points: list[tuple[float, float, dict, float]] = []
+    topic_repo_positions: dict[str, list[tuple[float, float, dict, float]]] = {}
+    for rcx, rcy, repo in repo_positions:
+        gx_i = min(grid - 1, max(0, int(rcx * grid)))
+        gy_i = min(grid - 1, max(0, int(rcy * grid)))
+        repo_elev = float(elevation[gy_i, gx_i])
+        repo_sample = (rcx, rcy, repo, repo_elev)
+        repo_terrain_points.append(repo_sample)
+        for topic_key in _repo_topic_keys(repo):
+            topic_repo_positions.setdefault(topic_key, []).append(repo_sample)
+
+    def _pick_topic_host(
+        topic: str, rank: int
+    ) -> tuple[tuple[float, float, dict, float] | None, bool]:
+        direct_candidates = topic_repo_positions.get(str(topic).strip().casefold(), [])
+        candidates = direct_candidates or repo_terrain_points
+        if not candidates:
+            return None, False
+        if rank == 0:
+            selected = max(
+                candidates,
+                key=lambda item: (
+                    item[3],
+                    item[2].get("stars", 0),
+                    -item[2].get("age_months", 0),
+                ),
+            )
+        elif rank == 1:
+            selected = min(
+                candidates,
+                key=lambda item: (
+                    item[3],
+                    -item[2].get("stars", 0),
+                    item[2].get("age_months", 0),
+                ),
+            )
+        elif rank == 2:
+            selected = min(
+                candidates,
+                key=lambda item: (
+                    abs(item[3] - 0.24),
+                    abs(item[3] - 0.18),
+                    -item[2].get("stars", 0),
+                ),
+            )
+        else:
+            selected = max(
+                candidates,
+                key=lambda item: (
+                    item[2].get("stars", 0),
+                    item[3],
+                    -item[2].get("age_months", 0),
+                ),
+            )
+        return selected, bool(direct_candidates)
+
+    topic_feature_specs: list[dict[str, object]] = []
+    for topic_rank, (topic, topic_count) in enumerate(top_topic_entries):
+        host, matched_topic = _pick_topic_host(topic, topic_rank)
+        if host is None:
+            continue
+        rcx, rcy, repo, repo_elev = host
+        topic_feature_specs.append(
+            {
+                "topic": topic,
+                "count": topic_count,
+                "rank": topic_rank,
+                "matched_topic": matched_topic,
+                "rcx": rcx,
+                "rcy": rcy,
+                "repo": repo,
+                "elev": repo_elev,
+            }
+        )
+
     # ── 3. Ridgeline backbone from monthly contributions ───────────
     max_m = max(monthly.values()) if monthly else 100
     months_sorted = sorted(monthly.keys())
     if len(months_sorted) >= 2:
         ridge_r = 0.2
-        for i in range(len(months_sorted)):
-            j = (i + 1) % len(months_sorted)
+        for i in range(len(months_sorted) - 1):
+            j = i + 1
             mkey1, mkey2 = months_sorted[i], months_sorted[j]
             intensity = (monthly[mkey1] + monthly[mkey2]) / (2 * max(1, max_m))
             angle1 = -math.pi / 2 + i * 2 * math.pi / len(months_sorted)
@@ -705,6 +1142,8 @@ def generate(
             p2 = (0.5 + ridge_r * math.cos(angle2), 0.5 + ridge_r * math.sin(angle2))
             ridge_height = intensity * 0.18
             ridge_width = 0.025
+            ridge_day = _history_day(_month_key_date(mkey2, j)) or timeline_start_day
+            ridge_ord = ridge_day.toordinal()
             # Bounding box for the ridge segment
             min_rx = min(p1[0], p2[0]) - 3 * ridge_width
             max_rx = max(p1[0], p2[0]) + 3 * ridge_width
@@ -718,21 +1157,46 @@ def generate(
                 for gx in range(x_lo, x_hi):
                     fx, fy = gx / grid, gy / grid
                     d = _point_to_segment_distance(fx, fy, p1, p2)
-                    elevation[gy, gx] += ridge_height * math.exp(
+                    ridge_contribution = ridge_height * math.exp(
                         -(d * d) / (2 * ridge_width * ridge_width)
                     )
+                    elevation[gy, gx] += ridge_contribution
+                    if ridge_contribution > 1e-6:
+                        ridge_birth_weight = ridge_contribution * 1.15
+                        terrain_birth_mass[gy, gx] += ridge_birth_weight
+                        terrain_birth_ord[gy, gx] += ridge_birth_weight * ridge_ord
+                        terrain_feature_mass[gy, gx] += ridge_birth_weight
+                        terrain_birth_first[gy, gx] = min(
+                            terrain_birth_first[gy, gx], float(ridge_ord)
+                        )
+                        terrain_birth_latest[gy, gx] = max(
+                            terrain_birth_latest[gy, gx], float(ridge_ord)
+                        )
 
     # ── 4. Central peak (always prominent, scaled to profile) ──────
     # Central peak is always the tallest — height relative to repo count
     central_height = 0.45 + 0.25 * min(1.0, len(repos) / max(1, len(repos) + 2))
     central_sigma = 0.06 + 0.04 * min(1.0, len(repos) / 12)
+    central_peak_ord = central_peak_day.toordinal()
     for gy in range(grid):
         for gx in range(grid):
             fx, fy = gx / grid, gy / grid
             dx, dy = fx - 0.5, fy - 0.5
-            elevation[gy, gx] += central_height * math.exp(
+            central_contribution = central_height * math.exp(
                 -(dx * dx + dy * dy) / (2 * central_sigma * central_sigma)
             )
+            elevation[gy, gx] += central_contribution
+            if central_contribution > 1e-6:
+                central_birth_weight = central_contribution * 0.82
+                terrain_birth_mass[gy, gx] += central_birth_weight
+                terrain_birth_ord[gy, gx] += central_birth_weight * central_peak_ord
+                terrain_feature_mass[gy, gx] += central_birth_weight
+                terrain_birth_first[gy, gx] = min(
+                    terrain_birth_first[gy, gx], float(central_peak_ord)
+                )
+                terrain_birth_latest[gy, gx] = max(
+                    terrain_birth_latest[gy, gx], float(central_peak_ord)
+                )
 
     # ── 5. River valleys from saddle points between major peaks ────
     n_rivers = max(2, min(8, 2 + forks // 4))
@@ -766,6 +1230,7 @@ def generate(
     for rvi in range(n_rivers):
         rx, ry = river_starts[rvi]
         rpts = [(rx, ry)]
+        river_carve_ord = river_carve_day.toordinal()
         for _ in range(80):
             gxi = min(grid - 2, max(1, int(rx * grid)))
             gyi = min(grid - 2, max(1, int(ry * grid)))
@@ -786,6 +1251,18 @@ def generate(
                     d = math.sqrt(dy * dy + dx2 * dx2)
                     if d < 3:
                         elevation[yi, xi] -= 0.03 * (1 - d / 3)
+                        river_birth_weight = 0.015 * (1 - d / 3)
+                        terrain_birth_mass[yi, xi] += river_birth_weight
+                        terrain_birth_ord[yi, xi] += (
+                            river_birth_weight * river_carve_ord
+                        )
+                        terrain_feature_mass[yi, xi] += river_birth_weight
+                        terrain_birth_first[yi, xi] = min(
+                            terrain_birth_first[yi, xi], float(river_carve_ord)
+                        )
+                        terrain_birth_latest[yi, xi] = max(
+                            terrain_birth_latest[yi, xi], float(river_carve_ord)
+                        )
         main_path = _chaikin_smooth(rpts, iterations=2)
         river_paths.append(main_path)
 
@@ -823,6 +1300,11 @@ def generate(
     # Domain warp for organic contour feel
     warp_noise = Noise2D(seed=int(h[24:32], 16))
     warped = np.zeros_like(elevation)
+    warped_birth_mass = np.zeros_like(terrain_birth_mass)
+    warped_birth_ord = np.zeros_like(terrain_birth_ord)
+    warped_feature_mass = np.zeros_like(terrain_feature_mass)
+    warped_birth_first = np.zeros_like(terrain_birth_first)
+    warped_birth_latest = np.zeros_like(terrain_birth_latest)
     for gy in range(grid):
         for gx in range(grid):
             wx = warp_noise.fbm(gx / 40, gy / 40, 2) * 2.5
@@ -838,7 +1320,42 @@ def generate(
                 + elevation[y1_, x0] * (1 - fx) * fy
                 + elevation[y1_, x1_] * fx * fy
             )
+            warped_birth_mass[gy, gx] = (
+                terrain_birth_mass[y0, x0] * (1 - fx) * (1 - fy)
+                + terrain_birth_mass[y0, x1_] * fx * (1 - fy)
+                + terrain_birth_mass[y1_, x0] * (1 - fx) * fy
+                + terrain_birth_mass[y1_, x1_] * fx * fy
+            )
+            warped_birth_ord[gy, gx] = (
+                terrain_birth_ord[y0, x0] * (1 - fx) * (1 - fy)
+                + terrain_birth_ord[y0, x1_] * fx * (1 - fy)
+                + terrain_birth_ord[y1_, x0] * (1 - fx) * fy
+                + terrain_birth_ord[y1_, x1_] * fx * fy
+            )
+            warped_feature_mass[gy, gx] = (
+                terrain_feature_mass[y0, x0] * (1 - fx) * (1 - fy)
+                + terrain_feature_mass[y0, x1_] * fx * (1 - fy)
+                + terrain_feature_mass[y1_, x0] * (1 - fx) * fy
+                + terrain_feature_mass[y1_, x1_] * fx * fy
+            )
+            warped_birth_first[gy, gx] = (
+                terrain_birth_first[y0, x0] * (1 - fx) * (1 - fy)
+                + terrain_birth_first[y0, x1_] * fx * (1 - fy)
+                + terrain_birth_first[y1_, x0] * (1 - fx) * fy
+                + terrain_birth_first[y1_, x1_] * fx * fy
+            )
+            warped_birth_latest[gy, gx] = max(
+                terrain_birth_latest[y0, x0],
+                terrain_birth_latest[y0, x1_],
+                terrain_birth_latest[y1_, x0],
+                terrain_birth_latest[y1_, x1_],
+            )
     elevation = warped
+    terrain_birth_mass = warped_birth_mass
+    terrain_birth_ord = warped_birth_ord
+    terrain_feature_mass = warped_feature_mass
+    terrain_birth_first = warped_birth_first
+    terrain_birth_latest = warped_birth_latest
 
     cell_w = MAP_W / grid
     cell_h = MAP_H / grid
@@ -885,6 +1402,56 @@ def generate(
                 min(1.0, curvature * 18.0 + math.sqrt(dzdx * dzdx + dzdy * dzdy) * 6.0),
             )
 
+    terrain_birth_field = np.where(
+        terrain_feature_mass > 1e-6,
+        terrain_birth_latest,
+        float(timeline_start_ord),
+    )
+
+    def _when_from_ordinal(raw_ordinal: float) -> str:
+        clamped = max(
+            timeline_start_ord,
+            min(timeline_end_ord, int(round(raw_ordinal))),
+        )
+        return date.fromordinal(clamped).isoformat()
+
+    def _birth_when_at_grid(gx: int, gy: int) -> str:
+        grid_x = min(grid - 1, max(0, int(gx)))
+        grid_y = min(grid - 1, max(0, int(gy)))
+        return _when_from_ordinal(float(terrain_birth_field[grid_y, grid_x]))
+
+    def _birth_when_at_map(mx: float, my: float) -> str:
+        gx = int(round((mx - MAP_L) / max(cell_w, 1e-6)))
+        gy = int(round((my - MAP_T) / max(cell_h, 1e-6)))
+        return _birth_when_at_grid(gx, gy)
+
+    def _birth_when_at_norm(nx: float, ny: float) -> str:
+        return _birth_when_at_grid(int(round(nx * grid)), int(round(ny * grid)))
+
+    def _chain_birth_when(points: list[tuple[float, float]]) -> str:
+        if not points:
+            return timeline_start_day.isoformat()
+        ordinals = [
+            int(
+                round(
+                    terrain_birth_field[
+                        min(
+                            grid - 1,
+                            max(0, int(round((py - MAP_T) / max(cell_h, 1e-6)))),
+                        ),
+                        min(
+                            grid - 1,
+                            max(0, int(round((px - MAP_L) / max(cell_w, 1e-6)))),
+                        ),
+                    ]
+                )
+            )
+            for px, py in points
+        ]
+        ordinals.sort()
+        ordinal_index = min(len(ordinals) - 1, int(round((len(ordinals) - 1) * 0.65)))
+        return _when_from_ordinal(float(ordinals[ordinal_index]))
+
     # ══════════════════════════════════════════════════════════════
     # BUILD SVG
     # ══════════════════════════════════════════════════════════════
@@ -895,7 +1462,12 @@ def generate(
         f'data-sun-azimuth="{commit_hour_profile["sun_azimuth"]:.1f}" '
         f'data-sun-altitude="{commit_hour_profile["sun_altitude"]:.1f}" '
         f'data-flow-tier="{river_flow_profile["tier"]}" '
-        f'data-settlement-tier="{settlement_tier}">'
+        f'data-settlement-tier="{settlement_tier}" '
+        f'data-activity-series="{activity_series_mode}" '
+        f'data-central-rise-date="{central_peak_day.isoformat()}" '
+        f'data-river-carve-date="{river_carve_day.isoformat()}" '
+        f'data-timeline-start="{timeline_start_day.isoformat()}" '
+        f'data-timeline-end="{timeline_end_day.isoformat()}">'
     )
     if timeline_enabled:
         P.append(
@@ -1001,19 +1573,21 @@ def generate(
         )
     )
     # River flow arrow marker (used when recent_merged_prs present)
-    P.append(f'<marker id="riverArrow" viewBox="0 0 6 6" refX="3" refY="3" '
-             f'markerWidth="4" markerHeight="4" orient="auto">'
-             f'<path d="M0,1 L5,3 L0,5" fill="{oklch(0.48, 0.12, 240)}" opacity="0.4"/>'
-             f'</marker>')
+    P.append(
+        f'<marker id="riverArrow" viewBox="0 0 6 6" refX="3" refY="3" '
+        f'markerWidth="4" markerHeight="4" orient="auto">'
+        f'<path d="M0,1 L5,3 L0,5" fill="{oklch(0.48, 0.12, 240)}" opacity="0.4"/>'
+        f"</marker>"
+    )
     # Valley fog / atmospheric haze filter (WorldState-driven)
     P.append(atmospheric_haze_filter("valleyFog", intensity=0.4))
     P.append("</defs>")
 
     # ── CSS for interactive hover tooltips (works in direct SVG view) ──
-    P.append('<style>')
-    P.append('.repo-peak{cursor:pointer}')
-    P.append('.repo-peak:hover{filter:brightness(1.1)}')
-    P.append('</style>')
+    P.append("<style>")
+    P.append(".repo-peak{cursor:pointer}")
+    P.append(".repo-peak:hover{filter:brightness(1.1)}")
+    P.append("</style>")
 
     # Background with paper texture
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}"/>')
@@ -1039,7 +1613,7 @@ def generate(
             b_c = max(0, min(255, int(b_c * sf)))
             mx, my = _grid_to_map(gx, gy, cell_w, cell_h)
             elev_op = min(0.9, 0.40 + growth_mat * 1.5)
-            elev_when = _date_for_activity_fraction(e)
+            elev_when = _birth_when_at_grid(gx, gy)
             P.append(
                 f'<rect x="{mx:.1f}" y="{my:.1f}" width="{cell_w * fill_step + 0.5:.1f}" height="{cell_h * fill_step + 0.5:.1f}" '
                 f'fill="#{r_c:02x}{g_c:02x}{b_c:02x}" {_timeline_style(elev_when, elev_op, "tl-reveal tl-soft")}/>'
@@ -1105,7 +1679,7 @@ def generate(
                     # Low wetland: marsh overlay
                     marsh_op = 0.4 * _fade(0.10, 0.30)
                     if marsh_op > 0:
-                        marsh_when = _date_for_activity_fraction(0.15)
+                        marsh_when = _birth_when_at_grid(gx, gy)
                         P.append(
                             f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#marsh)" {_timeline_style(marsh_when, marsh_op)}/>'
                         )
@@ -1113,7 +1687,7 @@ def generate(
                     # High elevation: scree overlay
                     scree_op = 0.4 * _fade(0.15, 0.40)
                     if scree_op > 0:
-                        scree_when = _date_for_activity_fraction(e)
+                        scree_when = _birth_when_at_grid(gx, gy)
                         P.append(
                             f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#scree)" {_timeline_style(scree_when, scree_op)}/>'
                         )
@@ -1129,7 +1703,7 @@ def generate(
                     if nearest_dist < 0.15:
                         tree_op *= 1.0 + 0.4 * (1.0 - nearest_dist / 0.15)
                     if tree_op > 0:
-                        tree_when = _date_for_activity_fraction(0.25 + 0.6 * e)
+                        tree_when = _birth_when_at_grid(gx, gy)
                         P.append(
                             f'<rect x="{mx:.1f}" y="{my:.1f}" width="{sw:.1f}" height="{sh:.1f}" fill="url(#{pattern_id})" {_timeline_style(tree_when, min(0.6, tree_op))}/>'
                         )
@@ -1158,33 +1732,34 @@ def generate(
             lr = 6 + rng.uniform(0, 10)
             lry = lr * rng.uniform(0.55, 0.85)
             la = rng.uniform(-15, 15)
+            lake_when = _birth_when_at_map(lk_x, lk_y)
             P.append(
                 f'<ellipse cx="{lk_x:.1f}" cy="{lk_y:.1f}" rx="{lr:.1f}" ry="{lry:.1f}" '
-                f'fill="#90c8e8" stroke="#4a82b7" stroke-width="0.5" opacity="{0.45 * lake_fade:.2f}" '
-                f'transform="rotate({la:.0f},{lk_x:.0f},{lk_y:.0f})"/>'
+                f'fill="#90c8e8" stroke="#4a82b7" stroke-width="0.5" '
+                f'transform="rotate({la:.0f},{lk_x:.0f},{lk_y:.0f})" '
+                f"{_timeline_style(lake_when, 0.45 * lake_fade)}/>"
             )
             # Bathymetric contour rings
             for ring_i in range(1, 3):
                 rf = 1 - ring_i * 0.3
                 P.append(
                     f'<ellipse cx="{lk_x:.1f}" cy="{lk_y:.1f}" rx="{lr * rf:.1f}" ry="{lry * rf:.1f}" '
-                    f'fill="none" stroke="#5b92c7" stroke-width="0.2" opacity="0.12" '
-                    f'transform="rotate({la:.0f},{lk_x:.0f},{lk_y:.0f})"/>'
+                    f'fill="none" stroke="#5b92c7" stroke-width="0.2" '
+                    f'transform="rotate({la:.0f},{lk_x:.0f},{lk_y:.0f})" '
+                    f"{_timeline_style(lake_when, 0.12, 'tl-reveal tl-crisp')}/>"
                 )
 
     # ── Rivers (widening downstream, fade in gradually) ───────────
     # Data mapping: activity (contributions) -> river flow volume
     river_width_boost = float(river_flow_profile["width_scale"])
     # Data mapping 3: recent_merged_prs → river width enhancement
-    _recent_merged_prs = metrics.get("recent_merged_prs", [])
+    _recent_merged_prs = recent_merged_prs
     if isinstance(_recent_merged_prs, list) and len(_recent_merged_prs) > 0:
         _pr_river_scale = 1.0 + min(0.5, len(_recent_merged_prs) * 0.05)
     else:
         _pr_river_scale = 1.0
     activity_flow = (
-        min(2.0, 1.0 + contributions / 1500.0)
-        * river_width_boost
-        * _pr_river_scale
+        min(2.0, 1.0 + contributions / 1500.0) * river_width_boost * _pr_river_scale
     )
     river_fade = _fade(0.03, 0.15)
     rlabel_fade = _fade(0.15, 0.35)
@@ -1219,7 +1794,10 @@ def generate(
                 x3r = MAP_L + rpts[j + 2][0] * MAP_W
                 y3r = MAP_T + rpts[j + 2][1] * MAP_H
                 # Shadow-side darkening stroke offset 0.5px
-                seg_when = _date_for_activity_fraction(frac)
+                seg_when = _later_when(
+                    _birth_when_at_norm(rpts[j + 1][0], rpts[j + 1][1]),
+                    river_carve_day.isoformat(),
+                )
                 P.append(
                     f'<path d="M{x1r + 0.5:.1f},{y1r + 0.5:.1f} Q{x2r + 0.5:.1f},{y2r + 0.5:.1f} {x3r + 0.5:.1f},{y3r + 0.5:.1f}" '
                     f'fill="none" stroke="{river_shadow_color}" stroke-width="{sw_r * 0.85:.2f}" {_timeline_style(seg_when, op_r * 0.45, "tl-reveal tl-crisp")} stroke-linecap="round"/>'
@@ -1236,14 +1814,17 @@ def generate(
                     P.append(
                         f'<path d="M{x1r:.1f},{y1r:.1f} Q{x2r:.1f},{y2r:.1f} {x3r:.1f},{y3r:.1f}" '
                         f'fill="none" stroke="{river_highlight_color}" stroke-width="{max(0.14, sw_r * river_current_ratio):.2f}" '
-                        f'{_timeline_style(seg_when, op_r * river_current_opacity, "tl-reveal tl-crisp")} '
+                        f"{_timeline_style(seg_when, op_r * river_current_opacity, 'tl-reveal tl-crisp')} "
                         f'stroke-dasharray="{river_current_dash:.2f} {river_current_gap:.2f}" stroke-linecap="round"/>'
                     )
             else:
                 x2r = MAP_L + rpts[j + 1][0] * MAP_W
                 y2r = MAP_T + rpts[j + 1][1] * MAP_H
                 # Shadow-side darkening stroke offset 0.5px
-                seg_when = _date_for_activity_fraction(frac)
+                seg_when = _later_when(
+                    _birth_when_at_norm(rpts[j + 1][0], rpts[j + 1][1]),
+                    river_carve_day.isoformat(),
+                )
                 P.append(
                     f'<line x1="{x1r + 0.5:.1f}" y1="{y1r + 0.5:.1f}" x2="{x2r + 0.5:.1f}" y2="{y2r + 0.5:.1f}" '
                     f'stroke="{river_shadow_color}" stroke-width="{sw_r * 0.85:.2f}" {_timeline_style(seg_when, op_r * 0.45, "tl-reveal tl-crisp")} stroke-linecap="round"/>'
@@ -1260,7 +1841,7 @@ def generate(
                     P.append(
                         f'<line x1="{x1r:.1f}" y1="{y1r:.1f}" x2="{x2r:.1f}" y2="{y2r:.1f}" '
                         f'stroke="{river_highlight_color}" stroke-width="{max(0.14, sw_r * river_current_ratio):.2f}" '
-                        f'{_timeline_style(seg_when, op_r * river_current_opacity, "tl-reveal tl-crisp")} '
+                        f"{_timeline_style(seg_when, op_r * river_current_opacity, 'tl-reveal tl-crisp')} "
                         f'stroke-dasharray="{river_current_dash:.2f} {river_current_gap:.2f}" stroke-linecap="round"/>'
                     )
         if len(rpts) > 10 and rlabel_fade > 0:
@@ -1292,7 +1873,11 @@ def generate(
                 )
 
     # ── Data mapping 3 (cont.): arrow markers along rivers for merged PRs ──
-    if isinstance(_recent_merged_prs, list) and len(_recent_merged_prs) > 0 and river_fade > 0:
+    if (
+        isinstance(_recent_merged_prs, list)
+        and len(_recent_merged_prs) > 0
+        and river_fade > 0
+    ):
         for rvi_a, rpts_a in enumerate(river_paths):
             if len(rpts_a) < 10:
                 continue
@@ -1319,6 +1904,16 @@ def generate(
     _contour_index_c = oklch_lerp(pal["accent"], pal["text_primary"], 0.6)
     _contour_normal_c = oklch_lerp(pal["accent"], pal["muted"], 0.4)
     levels = [i / n_levels for i in range(1, n_levels)]
+    P.append(
+        f'<g id="topography-contours" data-recency-band="{repo_recency_profile["band"]}" '
+        f'data-recency-mean="{float(repo_recency_profile["mean_recency"]):.3f}" '
+        f'data-contour-roughness="{contour_roughness:.3f}" '
+        f'data-contour-smoothing-normal="{contour_smooth_normal}" '
+        f'data-contour-smoothing-index="{contour_smooth_index}" '
+        f'data-foothill-density="{foothill_density:.3f}" '
+        f'data-foothill-count="{foothill_count}" '
+        f'data-issue-pressure="{issue_pressure:.3f}">'
+    )
     for li, level in enumerate(levels):
         is_index = li % 5 == 0
         contour_fade = 1.0 if is_index else _fade(0.03, 0.15)
@@ -1332,14 +1927,17 @@ def generate(
         for chain in chains:
             if len(chain) < 2:
                 continue
-            smooth_chain = _chaikin_smooth(chain, iterations=2 if is_index else 1)
+            smooth_chain = _chaikin_smooth(
+                chain,
+                iterations=contour_smooth_index if is_index else contour_smooth_normal,
+            )
             pd = f"M{smooth_chain[0][0]:.1f},{smooth_chain[0][1]:.1f}"
             for j in range(1, len(smooth_chain) - 1, 2):
                 if j + 1 < len(smooth_chain):
                     pd += f" Q{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f} {smooth_chain[j + 1][0]:.1f},{smooth_chain[j + 1][1]:.1f}"
                 else:
                     pd += f" L{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f}"
-            contour_when = _date_for_activity_fraction(level)
+            contour_when = _chain_birth_when(smooth_chain)
             P.append(
                 f'<path d="{pd}" fill="none" stroke="{sc}" stroke-width="{sw}" {_timeline_style(contour_when, op)} '
                 f'stroke-linecap="round" stroke-linejoin="round"/>'
@@ -1369,6 +1967,39 @@ def generate(
                 f'transform="rotate({label_angle:.0f},{mid[0]:.0f},{mid[1]:.0f})">{elev}</text>'
             )
 
+    foothill_fade = _fade(0.04, 0.18)
+    if foothill_levels and foothill_fade > 0:
+        foothill_color = oklch_lerp(_contour_normal_c, pal["bg_primary"], 0.35)
+        foothill_width = 0.38 + foothill_density * 0.18
+        foothill_opacity = (0.12 + foothill_density * 0.18) * foothill_fade
+        foothill_smooth = max(1, contour_smooth_normal + 1)
+        for foothill_level in foothill_levels:
+            foothill_chains = _extract_contours(
+                elevation, grid, foothill_level, cell_w, cell_h
+            )
+            for chain in foothill_chains:
+                if len(chain) < 2:
+                    continue
+                smooth_chain = _chaikin_smooth(chain, iterations=foothill_smooth)
+                foothill_when = _chain_birth_when(smooth_chain)
+                pd = f"M{smooth_chain[0][0]:.1f},{smooth_chain[0][1]:.1f}"
+                for j in range(1, len(smooth_chain) - 1, 2):
+                    if j + 1 < len(smooth_chain):
+                        pd += (
+                            f" Q{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f} "
+                            f"{smooth_chain[j + 1][0]:.1f},{smooth_chain[j + 1][1]:.1f}"
+                        )
+                    else:
+                        pd += f" L{smooth_chain[j][0]:.1f},{smooth_chain[j][1]:.1f}"
+                P.append(
+                    f'<path d="{pd}" fill="none" stroke="{foothill_color}" '
+                    f'stroke-width="{foothill_width:.2f}" '
+                    f'data-band="{repo_recency_profile["band"]}" '
+                    f"{_timeline_style(foothill_when, foothill_opacity, 'foothill-contour tl-reveal tl-soft')} "
+                    f'stroke-linecap="round" stroke-linejoin="round"/>'
+                )
+    P.append("</g>")
+
     # ── Hachures on steep slopes ──────────────────────────────────
     hachure_fade = _fade(0.10, 0.30)
     if hachure_fade > 0:
@@ -1387,9 +2018,11 @@ def generate(
                     aspect = math.atan2(-dzdy, dzdx)
                     hlen = min(6, slope * 45)
                     op_h = min(0.3, slope * 3.5) * hachure_fade
+                    hachure_when = _birth_when_at_grid(gx, gy)
                     P.append(
                         f'<line x1="{mx:.1f}" y1="{my:.1f}" x2="{mx + hlen * math.cos(aspect):.1f}" '
-                        f'y2="{my + hlen * math.sin(aspect):.1f}" stroke="#7a5a3a" stroke-width="0.3" opacity="{op_h:.2f}"/>'
+                        f'y2="{my + hlen * math.sin(aspect):.1f}" stroke="#7a5a3a" stroke-width="0.3" '
+                        f"{_timeline_style(hachure_when, op_h, 'tl-reveal tl-crisp')}/>"
                     )
 
     # ── Snow/ice at highest peaks ──────────────────────────────────
@@ -1400,17 +2033,19 @@ def generate(
                 e = elevation[min(gy, grid - 1), min(gx, grid - 1)]
                 if e > 0.93:
                     mx, my = _grid_to_map(gx, gy, cell_w, cell_h)
+                    snow_when = _birth_when_at_grid(gx, gy)
                     for _ in range(4):
                         sx = mx + rng.uniform(0, cell_w * 3)
                         sy = my + rng.uniform(0, cell_h * 3)
                         P.append(
                             f'<circle cx="{sx:.1f}" cy="{sy:.1f}" r="{rng.uniform(0.3, 0.8):.1f}" '
-                            f'fill="#f5f4f2" opacity="0.25"/>'
+                            f'fill="#f5f4f2" {_timeline_style(snow_when, 0.25, "tl-reveal tl-crisp")}/>'
                         )
                         if rng.random() > 0.5:
                             P.append(
                                 f'<line x1="{sx:.1f}" y1="{sy:.1f}" x2="{sx + rng.uniform(-1.5, 1.5):.1f}" '
-                                f'y2="{sy + rng.uniform(-1.5, 1.5):.1f}" stroke="#d0ccc0" stroke-width="0.2" opacity="0.15"/>'
+                                f'y2="{sy + rng.uniform(-1.5, 1.5):.1f}" stroke="#d0ccc0" stroke-width="0.2" '
+                                f"{_timeline_style(snow_when, 0.15, 'tl-reveal tl-crisp')}/>"
                             )
 
     # ── Cloud/mist wisps (atmospheric suggestion) ─────────────────
@@ -1455,54 +2090,63 @@ def generate(
                 if (dy, dx) != (0, 0)
             ):
                 spots.append((*_grid_to_map(gx, gy, cell_w, cell_h), e))
-    n_spots = max(0, round(mat * 18 * star_prominence))
     spots_sorted = sorted(spots, key=lambda s: s[2], reverse=True)
+    n_spots = (
+        min(len(spots_sorted), max(1, round(18 * star_prominence)))
+        if timeline_enabled
+        else max(0, round(mat * 18 * star_prominence))
+    )
+    P.append('<g id="spot-heights">')
     for si_spot, (sx, sy, se) in enumerate(spots_sorted[:n_spots]):
+        spot_when = _birth_when_at_map(sx, sy)
         # Top 3 peaks get larger summit markers when stars are high
         if si_spot < 3 and stars > 20:
             # Summit cross marker
             cross_sz = 4.5 + star_prominence
             P.append(
                 f'<line x1="{sx:.0f}" y1="{sy - cross_sz:.0f}" x2="{sx:.0f}" y2="{sy + cross_sz:.0f}" '
-                f'stroke="#4a3a2a" stroke-width="1.0" opacity="0.55"/>'
+                f'stroke="#4a3a2a" stroke-width="1.0" {_timeline_style(spot_when, 0.55, "tl-reveal tl-crisp")}/>'
             )
             P.append(
                 f'<line x1="{sx - cross_sz:.0f}" y1="{sy:.0f}" x2="{sx + cross_sz:.0f}" y2="{sy:.0f}" '
-                f'stroke="#4a3a2a" stroke-width="1.0" opacity="0.55"/>'
+                f'stroke="#4a3a2a" stroke-width="1.0" {_timeline_style(spot_when, 0.55, "tl-reveal tl-crisp")}/>'
             )
             # Bold summit label
             P.append(
                 f'<text x="{sx + 7:.0f}" y="{sy + 2:.0f}" font-family="monospace" font-size="6" '
-                f'fill="#2a1a0a" opacity="0.6" font-weight="bold">{int(se * 1000)}</text>'
+                f'fill="#2a1a0a" font-weight="bold" {_timeline_style(spot_when, 0.6, "tl-reveal tl-crisp")}>{int(se * 1000)}</text>'
             )
         else:
             P.append(
                 f'<polygon points="{sx:.0f},{sy - 4:.0f} {sx - 4:.0f},{sy + 4:.0f} {sx + 4:.0f},{sy + 4:.0f}" '
-                f'fill="none" stroke="#4a3a2a" stroke-width="0.7" opacity="0.5"/>'
+                f'fill="none" stroke="#4a3a2a" stroke-width="0.7" {_timeline_style(spot_when, 0.5, "tl-reveal tl-crisp")}/>'
             )
             P.append(
-                f'<text x="{sx + 6:.0f}" y="{sy + 2:.0f}" font-family="monospace" font-size="5.5" fill="#4a3a2a" opacity="0.5">{int(se * 1000)}</text>'
+                f'<text x="{sx + 6:.0f}" y="{sy + 2:.0f}" font-family="monospace" font-size="5.5" fill="#4a3a2a" '
+                f"{_timeline_style(spot_when, 0.5, 'tl-reveal tl-crisp')}>{int(se * 1000)}</text>"
             )
+    P.append("</g>")
 
     # ── Survey benchmarks at secondary peaks ──────────────────────
     bm_fade = _fade(0.25, 0.50)
     if bm_fade > 0:
         bm_max = max(1, round(bm_fade * 3))
         bm_count = 0
-        for sx, sy, se in spots[:8]:
+        for sx, sy, se in spots_sorted[3:11]:
             if se > 0.6 and bm_count < bm_max:
+                bm_when = _birth_when_at_map(sx, sy)
                 # BM symbol: circle with horizontal line through it
                 P.append(
                     f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="3" fill="none" '
-                    f'stroke="#4a3a2a" stroke-width="0.7" opacity="0.45"/>'
+                    f'stroke="#4a3a2a" stroke-width="0.7" {_timeline_style(bm_when, 0.45, "tl-reveal tl-crisp")}/>'
                 )
                 P.append(
                     f'<line x1="{sx - 4:.0f}" y1="{sy:.0f}" x2="{sx + 4:.0f}" y2="{sy:.0f}" '
-                    f'stroke="#4a3a2a" stroke-width="0.5" opacity="0.45"/>'
+                    f'stroke="#4a3a2a" stroke-width="0.5" {_timeline_style(bm_when, 0.45, "tl-reveal tl-crisp")}/>'
                 )
                 P.append(
                     f'<text x="{sx + 6:.0f}" y="{sy + 1:.0f}" font-family="monospace" font-size="4.5" '
-                    f'fill="#4a3a2a" opacity="0.45">BM {int(se * 1000)}</text>'
+                    f'fill="#4a3a2a" {_timeline_style(bm_when, 0.45, "tl-reveal tl-crisp")}>BM {int(se * 1000)}</text>'
                 )
                 bm_count += 1
 
@@ -1512,17 +2156,25 @@ def generate(
         for rvi, rpts in enumerate(river_paths):
             if len(rpts) > 3:
                 sx_r, sy_r = MAP_L + rpts[0][0] * MAP_W, MAP_T + rpts[0][1] * MAP_H
+                spring_when = _later_when(
+                    _birth_when_at_norm(rpts[0][0], rpts[0][1]),
+                    river_carve_day.isoformat(),
+                )
                 P.append(
-                    f'<circle cx="{sx_r:.0f}" cy="{sy_r:.0f}" r="2" fill="#a8d4f0" opacity="0.3" '
-                    f'stroke="#5b92c7" stroke-width="0.3"/>'
+                    f'<circle cx="{sx_r:.0f}" cy="{sy_r:.0f}" r="2" fill="#a8d4f0" '
+                    f'stroke="#5b92c7" stroke-width="0.3" {_timeline_style(spring_when, 0.3, "tl-reveal tl-soft")}/>'
                 )
                 P.append(
                     f'<text x="{sx_r + 4:.0f}" y="{sy_r + 1:.0f}" font-family="Georgia,serif" '
-                    f'font-size="4" fill="#1a4f8a" opacity="0.3" font-style="italic">Spr.</text>'
+                    f'font-size="4" fill="#1a4f8a" font-style="italic" {_timeline_style(spring_when, 0.3, "tl-reveal tl-soft")}>Spr.</text>'
                 )
 
     # ── Progressive repo visibility for animation ─────────────────
-    n_visible_repos = max(1, round(len(repo_positions) * min(1.0, mat * 2.2)))
+    n_visible_repos = (
+        len(repo_positions)
+        if timeline_enabled
+        else max(1, round(len(repo_positions) * min(1.0, mat * 2.2)))
+    )
     river_map_paths = [
         [(MAP_L + px * MAP_W, MAP_T + py * MAP_H) for px, py in rpts]
         for rpts in river_paths
@@ -1531,16 +2183,22 @@ def generate(
 
     # ── Chronological trail (oldest → newest → center) ────────────
     visible_rp = repo_positions[:n_visible_repos]
-    chrono = sorted(visible_rp, key=lambda rp: rp[2].get("age_months", 0), reverse=True)
+    chrono = sorted(
+        visible_rp,
+        key=lambda rp: (
+            _repo_day(rp[2], fallback_end=repo_age_anchor) or timeline_start_day,
+            str(rp[2].get("name", "")),
+        ),
+    )
     waypoints = [(rcx, rcy) for rcx, rcy, _ in chrono]
     waypoints.append((0.5, 0.5))  # end at profile center
-    trail_map_path = [
-        (MAP_L + wx * MAP_W, MAP_T + wy * MAP_H) for wx, wy in waypoints
-    ]
+    trail_map_path = [(MAP_L + wx * MAP_W, MAP_T + wy * MAP_H) for wx, wy in waypoints]
 
     if len(waypoints) >= 2:
-        # Trail casing (white outline beneath for contrast)
-        trail_d = f"M{MAP_L + waypoints[0][0] * MAP_W:.1f},{MAP_T + waypoints[0][1] * MAP_H:.1f}"
+        trail_when = (
+            _repo_when(chrono[0][2]) if chrono else _date_for_activity_fraction(0.2)
+        )
+        P.append('<g id="chronology-trail">')
         for wi in range(len(waypoints) - 1):
             x1m = MAP_L + waypoints[wi][0] * MAP_W
             y1m = MAP_T + waypoints[wi][1] * MAP_H
@@ -1548,17 +2206,23 @@ def generate(
             y2m = MAP_T + waypoints[wi + 1][1] * MAP_H
             cx = (x1m + x2m) / 2 + rng.uniform(-15, 15)
             cy = (y1m + y2m) / 2 + rng.uniform(-15, 15)
-            trail_d += f" Q{cx:.1f},{cy:.1f} {x2m:.1f},{y2m:.1f}"
-        # White casing
-        P.append(
-            f'<path d="{trail_d}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" '
-            f'{_timeline_style(_date_for_activity_fraction(0.2), 0.35)} stroke-linecap="round"/>'
-        )
-        # Dashed trail on top (palette accent)
-        P.append(
-            f'<path d="{trail_d}" fill="none" stroke="{pal["accent"]}" stroke-width="0.8" '
-            f'{_timeline_style(_date_for_activity_fraction(0.25), 0.35)} stroke-dasharray="5 2.5" stroke-linecap="round"/>'
-        )
+            trail_segment = (
+                f"M{x1m:.1f},{y1m:.1f} Q{cx:.1f},{cy:.1f} {x2m:.1f},{y2m:.1f}"
+            )
+            segment_repo_index = min(wi + 1, len(chrono) - 1) if chrono else 0
+            segment_when = (
+                _repo_when(chrono[segment_repo_index][2]) if chrono else trail_when
+            ) or trail_when
+            if chrono and wi >= len(chrono) - 1:
+                segment_when = _later_when(segment_when, central_peak_day.isoformat())
+            P.append(
+                f'<path d="{trail_segment}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" '
+                f'{_timeline_style(segment_when, 0.35)} stroke-linecap="round"/>'
+            )
+            P.append(
+                f'<path d="{trail_segment}" fill="none" stroke="{pal["accent"]}" stroke-width="0.8" '
+                f'{_timeline_style(segment_when, 0.35)} stroke-dasharray="5 2.5" stroke-linecap="round"/>'
+            )
 
         # Diamond milestone markers with age labels
         for wi, (wx, wy, wrepo) in enumerate(chrono):
@@ -1568,7 +2232,7 @@ def generate(
             age_label = f"{age_m // 12}y" if age_m >= 12 else f"{age_m}mo"
             dy_off = 14
             ds = 2.5  # diamond half-size
-            milestone_when = _repo_date(wrepo) or _date_for_activity_fraction(
+            milestone_when = _repo_when(wrepo) or _date_for_activity_fraction(
                 min(1.0, wi / max(1, len(chrono)))
             )
             P.append(
@@ -1582,10 +2246,109 @@ def generate(
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{age_label}</text>"
             )
+        P.append("</g>")
 
     label_obstacles = river_map_paths[:]
     if len(trail_map_path) >= 2:
         label_obstacles.append(trail_map_path)
+
+    def _render_topic_feature(
+        *,
+        topic: str,
+        topic_count: int,
+        rank: int,
+        rcx: float,
+        rcy: float,
+        repo: dict,
+        elev_val: float,
+        matched_topic: bool,
+        place_name: str,
+        feature_kind: str,
+        candidates: list[tuple[float, float]],
+        label_size: float,
+        note_size: float,
+        label_color: str,
+        note_color: str,
+        leader_color: str,
+    ) -> None:
+        mx_tp = MAP_L + rcx * MAP_W
+        my_tp = MAP_T + rcy * MAP_H
+        topic_when = _repo_when(repo) or _birth_when_at_map(mx_tp, my_tp)
+        topic_x, topic_y, clearance = _choose_label_anchor(
+            mx_tp,
+            my_tp,
+            candidates,
+            label_obstacles,
+        )
+        topic_anchor = "middle"
+        if topic_x > mx_tp + 3:
+            topic_anchor = "start"
+        elif topic_x < mx_tp - 3:
+            topic_anchor = "end"
+        note_y = topic_y + 8
+        if note_y > MAP_B - 6:
+            note_y = topic_y - 8
+        elif note_y < MAP_T + 6:
+            note_y = topic_y + 8
+        leader_y = topic_y - 4 if note_y > topic_y else topic_y + 4
+        leader_mid_x = (mx_tp + topic_x) / 2
+        leader_mid_y = (my_tp + leader_y) / 2
+        leader_distance = math.hypot(topic_x - mx_tp, leader_y - my_tp)
+        cluster_note = _topic_cluster_note(topic_count)
+
+        P.append(
+            f'<g class="topic-feature{" topic-feature-promoted" if rank < 3 else ""}" '
+            f'data-topic="{_escape_attr(topic)}" '
+            f'data-topic-rank="{rank}" '
+            f'data-repo="{_escape_attr(repo.get("name", ""))}" '
+            f'data-topic-count="{int(topic_count)}" '
+            f'data-feature-kind="{feature_kind}" '
+            f'data-topic-match="{"direct" if matched_topic else "fallback"}" '
+            f'data-feature-elevation="{elev_val:.3f}" '
+            f'data-anchor-clearance="{clearance:.1f}">'
+        )
+        if leader_distance >= 10:
+            P.append(
+                f'<path class="topic-feature-leader" '
+                f'd="M{mx_tp:.1f},{my_tp:.1f} Q{leader_mid_x:.1f},{leader_mid_y - 2.0:.1f} {topic_x:.1f},{leader_y:.1f}" '
+                f'fill="none" stroke="{leader_color}" stroke-width="0.55" '
+                f'stroke-linecap="round" stroke-dasharray="1.8 1.6" opacity="0.45" '
+                f"{_timeline_style(topic_when, 0.52, 'tl-reveal tl-soft')}/>"
+            )
+            label_obstacles.append(
+                [(mx_tp, my_tp), (leader_mid_x, leader_mid_y), (topic_x, leader_y)]
+            )
+        P.append(
+            f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
+            f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
+            f'fill="#f5f0e8" text-anchor="{topic_anchor}" '
+            f'stroke="#f5f0e8" stroke-width="2.1" stroke-linejoin="round" paint-order="stroke fill" '
+            f"{_timeline_style(topic_when, 0.65)}>"
+            f"{place_name}</text>"
+        )
+        P.append(
+            f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
+            f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
+            f'fill="{label_color}" text-anchor="{topic_anchor}" '
+            f"{_timeline_style(topic_when, 0.65)}>"
+            f"{place_name}</text>"
+        )
+        P.append(
+            f'<text x="{topic_x:.0f}" y="{note_y:.0f}" '
+            f'font-family="Georgia, serif" font-size="{note_size:.1f}" letter-spacing="0.8" '
+            f'font-variant="small-caps" fill="#f5f0e8" text-anchor="{topic_anchor}" '
+            f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
+            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft')}>"
+            f"{cluster_note}</text>"
+        )
+        P.append(
+            f'<text x="{topic_x:.0f}" y="{note_y:.0f}" '
+            f'font-family="Georgia, serif" font-size="{note_size:.1f}" letter-spacing="0.8" '
+            f'font-variant="small-caps" fill="{note_color}" text-anchor="{topic_anchor}" '
+            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft')}>"
+            f"{cluster_note}</text>"
+        )
+        P.append("</g>")
 
     # ── Repo landmarks ────────────────────────────────────────────
     for idx_rp, (rcx, rcy, repo) in enumerate(repo_positions):
@@ -1596,7 +2359,11 @@ def generate(
         repo_stars = repo.get("stars", 0)
         name = repo.get("name", "")
         repo_lang = repo.get("language", "")
-        hue = terrain_hues[idx_rp] if idx_rp < len(terrain_hues) else LANG_HUES.get(repo.get("language"), 160)
+        hue = (
+            terrain_hues[idx_rp]
+            if idx_rp < len(terrain_hues)
+            else LANG_HUES.get(repo.get("language"), 160)
+        )
         mc = oklch(0.45, 0.18, hue)
         # Relative marker size: top-star repo gets biggest marker
         star_frac = (
@@ -1609,16 +2376,24 @@ def generate(
         _gyi = min(grid - 1, max(0, int(rcy * grid)))
         _elev = float(elevation[_gyi, _gxi])
         _elev_label = (
-            "summit" if _elev > 0.7
-            else "ridge" if _elev > 0.5
-            else "highland" if _elev > 0.3
-            else "valley" if _elev < 0.15
+            "summit"
+            if _elev > 0.7
+            else "ridge"
+            if _elev > 0.5
+            else "highland"
+            if _elev > 0.3
+            else "valley"
+            if _elev < 0.15
             else "lowland"
         )
         _tt_lang = repo_lang or "?"
-        _tt_text = f"{name} \u00b7 {_tt_lang} \u00b7 \u2605{repo_stars} \u00b7 {_elev_label}"
-        _tt_text = _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        repo_when = _repo_date(repo) or _date_for_activity_fraction(star_frac)
+        _tt_text = (
+            f"{name} \u00b7 {_tt_lang} \u00b7 \u2605{repo_stars} \u00b7 {_elev_label}"
+        )
+        _tt_text = (
+            _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        )
+        repo_when = _repo_when(repo) or _birth_when_at_map(lx, ly)
         label_x, label_y, _ = _choose_label_anchor(
             lx,
             ly,
@@ -1632,7 +2407,7 @@ def generate(
             label_anchor = "end"
         detail_dir = -1 if label_y < ly else 1
         P.append('<g class="repo-peak">')
-        P.append(f'<title>{_tt_text}</title>')
+        P.append(f"<title>{_tt_text}</title>")
         if star_frac > 0.7:
             bs = 4 + int(star_frac * 4)
             P.append(
@@ -1656,197 +2431,121 @@ def generate(
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
             )
-        P.append('</g>')
+        P.append("</g>")
 
     # ── Topic place names ──────────────────────────────────────
-    if len(top_topic_entries) > 3 and len(repo_positions) > 3:
-        sorted_repos_tp = sorted(repo_positions, key=lambda rp: rp[2].get("stars", 0), reverse=True)
-        for (topic, topic_count), (rx_tp, ry_tp, repo_tp) in zip(
-            top_topic_entries[3:],
-            sorted_repos_tp[3:],
-            strict=False,
-        ):
-            # Get elevation at this repo's position
-            gx_i = min(grid - 1, max(0, int(rx_tp * grid)))
-            gy_i = min(grid - 1, max(0, int(ry_tp * grid)))
-            elev = float(elevation[gy_i, gx_i])
-            place = _topic_to_place_name(topic, elev)
-            cluster_note = _topic_cluster_note(topic_count)
-            mx_tp, my_tp = MAP_L + rx_tp * MAP_W, MAP_T + ry_tp * MAP_H
-            label_color = oklch(0.35, 0.02, 30)
-            topic_when = _repo_date(repo_tp) or _date_for_activity_fraction(elev)
-            label_size = 7.5 + min(2.0, max(0, topic_count - 1) * 0.6)
-            topic_x, topic_y, _ = _choose_label_anchor(
-                mx_tp,
-                my_tp,
-                [(0, -18), (18, -10), (-18, -10), (18, 10), (-18, 10), (0, 20)],
-                label_obstacles,
-            )
-            topic_anchor = "middle"
-            if topic_x > mx_tp + 3:
-                topic_anchor = "start"
-            elif topic_x < mx_tp - 3:
-                topic_anchor = "end"
-            # Halo for readability
-            P.append(
-                f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
-                f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
-                f'fill="#f5f0e8" text-anchor="{topic_anchor}" '
-                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(topic_when, 0.65)}>'
-                f'{place}</text>'
-            )
-            P.append(
-                f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
-                f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
-                f'fill="{label_color}" text-anchor="{topic_anchor}" '
-                f'{_timeline_style(topic_when, 0.65)}>'
-                f'{place}</text>'
-            )
-            P.append(
-                f'<text x="{topic_x:.0f}" y="{topic_y + 8:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="{topic_anchor}" '
-                f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
-                f'{cluster_note}</text>'
-            )
-            P.append(
-                f'<text x="{topic_x:.0f}" y="{topic_y + 8:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.1" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="{topic_anchor}" '
-                f'{_timeline_style(topic_when, 0.48, "tl-reveal tl-soft")}>'
-                f'{cluster_note}</text>'
-            )
+    for topic_spec in topic_feature_specs[3:]:
+        _render_topic_feature(
+            topic=str(topic_spec["topic"]),
+            topic_count=int(topic_spec["count"]),
+            rank=int(topic_spec["rank"]),
+            rcx=float(topic_spec["rcx"]),
+            rcy=float(topic_spec["rcy"]),
+            repo=topic_spec["repo"],
+            elev_val=float(topic_spec["elev"]),
+            matched_topic=bool(topic_spec["matched_topic"]),
+            place_name=_topic_to_place_name(
+                str(topic_spec["topic"]), float(topic_spec["elev"])
+            ),
+            feature_kind=_feature_kind_from_elevation(float(topic_spec["elev"])),
+            candidates=[
+                (0, -24),
+                (24, -18),
+                (-24, -18),
+                (28, 8),
+                (-28, 8),
+                (0, 24),
+                (30, 18),
+                (-30, 18),
+            ],
+            label_size=7.5 + min(2.0, max(0, int(topic_spec["count"]) - 1) * 0.6),
+            note_size=5.1,
+            label_color=oklch(0.35, 0.02, 30),
+            note_color=pal["muted"],
+            leader_color=pal["border"],
+        )
 
-    # ── Named geographic features from topics (at elevation extremes) ──
-    if top_topic_entries and repo_positions:
+    # ── Named geographic features from topics (hosted by topic-carrying repos) ──
+    if topic_feature_specs:
         _feature_color = oklch(0.30, 0.03, 30)
-        # 1st topic → "Mt. {topic}" at the highest repo peak
-        _highest_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
-        _hx = MAP_L + _highest_rp[0] * MAP_W
-        _hy = MAP_T + _highest_rp[1] * MAP_H
-        _mt_topic, _mt_count = top_topic_entries[0]
-        _mt_name = f"Mt. {_mt_topic.replace('-', ' ').title()}"
-        _mt_note = _topic_cluster_note(_mt_count)
-        _mt_when = _repo_date(_highest_rp[2]) or _date_for_activity_fraction(0.95)
-        P.append(
-            f'<text x="{_hx:.0f}" y="{_hy - 18:.0f}" '
-            f'font-family="Georgia, serif" font-size="9" font-style="italic" '
-            f'fill="#f5f0e8" text-anchor="middle" '
-            f'stroke="#f5f0e8" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill" '
-            f'{_timeline_style(_mt_when, 0.7)}>'
-            f'{_mt_name}</text>'
-        )
-        P.append(
-            f'<text x="{_hx:.0f}" y="{_hy - 18:.0f}" '
-            f'font-family="Georgia, serif" font-size="9" font-style="italic" '
-            f'fill="{_feature_color}" text-anchor="middle" '
-            f'{_timeline_style(_mt_when, 0.7)}>'
-            f'{_mt_name}</text>'
-        )
-        P.append(
-            f'<text x="{_hx:.0f}" y="{_hy - 10:.0f}" '
-            f'font-family="Georgia, serif" font-size="5.3" letter-spacing="0.9" '
-            f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
-            f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
-            f'{_timeline_style(_mt_when, 0.5, "tl-reveal tl-soft")}>'
-            f'{_mt_note}</text>'
-        )
-        P.append(
-            f'<text x="{_hx:.0f}" y="{_hy - 10:.0f}" '
-            f'font-family="Georgia, serif" font-size="5.3" letter-spacing="0.9" '
-            f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
-            f'{_timeline_style(_mt_when, 0.5, "tl-reveal tl-soft")}>'
-            f'{_mt_note}</text>'
-        )
-
-        # 2nd topic → "{topic} Lake" at the lowest elevation point
-        if len(top_topic_entries) >= 2:
-            _lowest_rp = min(repo_positions, key=lambda rp: rp[2].get("stars", 0))
-            _lx = MAP_L + _lowest_rp[0] * MAP_W
-            _ly = MAP_T + _lowest_rp[1] * MAP_H
-            _lake_topic, _lake_count = top_topic_entries[1]
-            _lake_name = f"{_lake_topic.replace('-', ' ').title()} Lake"
-            _lake_note = _topic_cluster_note(_lake_count)
-            _lake_when = _repo_date(_lowest_rp[2]) or _date_for_activity_fraction(0.05)
-            P.append(
-                f'<text x="{_lx:.0f}" y="{_ly + 20:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
-                f'fill="#f5f0e8" text-anchor="middle" '
-                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(_lake_when, 0.6)}>'
-                f'{_lake_name}</text>'
-            )
-            P.append(
-                f'<text x="{_lx:.0f}" y="{_ly + 20:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
-                f'fill="#1a4f8a" text-anchor="middle" '
-                f'{_timeline_style(_lake_when, 0.6)}>'
-                f'{_lake_name}</text>'
-            )
-            P.append(
-                f'<text x="{_lx:.0f}" y="{_ly + 28:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
-                f'stroke="#f5f0e8" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(_lake_when, 0.46, "tl-reveal tl-soft")}>'
-                f'{_lake_note}</text>'
-            )
-            P.append(
-                f'<text x="{_lx:.0f}" y="{_ly + 28:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="#4a82b7" text-anchor="middle" '
-                f'{_timeline_style(_lake_when, 0.46, "tl-reveal tl-soft")}>'
-                f'{_lake_note}</text>'
-            )
-
-        # 3rd topic → "{topic} Valley" in a valley area (mid-low elevation)
-        if len(top_topic_entries) >= 3 and len(repo_positions) >= 3:
-            # Pick a repo with mid-low elevation for the valley
-            _elev_sorted = sorted(
-                repo_positions,
-                key=lambda rp: float(elevation[
-                    min(grid - 1, max(0, int(rp[1] * grid))),
-                    min(grid - 1, max(0, int(rp[0] * grid)))
-                ])
-            )
-            _valley_rp = _elev_sorted[len(_elev_sorted) // 3]
-            _vx = MAP_L + _valley_rp[0] * MAP_W
-            _vy = MAP_T + _valley_rp[1] * MAP_H
-            _valley_topic, _valley_count = top_topic_entries[2]
-            _valley_name = f"{_valley_topic.replace('-', ' ').title()} Valley"
-            _valley_note = _topic_cluster_note(_valley_count)
-            _valley_when = _repo_date(_valley_rp[2]) or _date_for_activity_fraction(0.25)
-            P.append(
-                f'<text x="{_vx:.0f}" y="{_vy + 20:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
-                f'fill="#f5f0e8" text-anchor="middle" '
-                f'stroke="#f5f0e8" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(_valley_when, 0.6)}>'
-                f'{_valley_name}</text>'
-            )
-            P.append(
-                f'<text x="{_vx:.0f}" y="{_vy + 20:.0f}" '
-                f'font-family="Georgia, serif" font-size="8" font-style="italic" '
-                f'fill="{_feature_color}" text-anchor="middle" '
-                f'{_timeline_style(_valley_when, 0.6)}>'
-                f'{_valley_name}</text>'
-            )
-            P.append(
-                f'<text x="{_vx:.0f}" y="{_vy + 28:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="#f5f0e8" text-anchor="middle" '
-                f'stroke="#f5f0e8" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill" '
-                f'{_timeline_style(_valley_when, 0.46, "tl-reveal tl-soft")}>'
-                f'{_valley_note}</text>'
-            )
-            P.append(
-                f'<text x="{_vx:.0f}" y="{_vy + 28:.0f}" '
-                f'font-family="Georgia, serif" font-size="5.0" letter-spacing="0.8" '
-                f'font-variant="small-caps" fill="{pal["muted"]}" text-anchor="middle" '
-                f'{_timeline_style(_valley_when, 0.46, "tl-reveal tl-soft")}>'
-                f'{_valley_note}</text>'
+        promoted_feature_specs = [
+            (
+                "mountain",
+                lambda topic: f"Mt. {topic.replace('-', ' ').title()}",
+                [
+                    (0, -30),
+                    (26, -24),
+                    (-26, -24),
+                    (32, -10),
+                    (-32, -10),
+                    (26, 10),
+                    (-26, 10),
+                ],
+                9.0,
+                5.3,
+                _feature_color,
+                pal["muted"],
+            ),
+            (
+                "lake",
+                lambda topic: f"{topic.replace('-', ' ').title()} Lake",
+                [
+                    (0, 30),
+                    (24, 24),
+                    (-24, 24),
+                    (30, 10),
+                    (-30, 10),
+                    (0, -22),
+                ],
+                8.0,
+                5.0,
+                "#1a4f8a",
+                "#4a82b7",
+            ),
+            (
+                "valley",
+                lambda topic: f"{topic.replace('-', ' ').title()} Valley",
+                [
+                    (0, 28),
+                    (24, 20),
+                    (-24, 20),
+                    (30, 8),
+                    (-30, 8),
+                    (0, -24),
+                ],
+                8.0,
+                5.0,
+                _feature_color,
+                pal["muted"],
+            ),
+        ]
+        for topic_spec in topic_feature_specs[:3]:
+            (
+                feature_kind,
+                feature_label,
+                candidates,
+                label_size,
+                note_size,
+                label_color,
+                note_color,
+            ) = promoted_feature_specs[int(topic_spec["rank"])]
+            _render_topic_feature(
+                topic=str(topic_spec["topic"]),
+                topic_count=int(topic_spec["count"]),
+                rank=int(topic_spec["rank"]),
+                rcx=float(topic_spec["rcx"]),
+                rcy=float(topic_spec["rcy"]),
+                repo=topic_spec["repo"],
+                elev_val=float(topic_spec["elev"]),
+                matched_topic=bool(topic_spec["matched_topic"]),
+                place_name=feature_label(str(topic_spec["topic"])),
+                feature_kind=feature_kind,
+                candidates=candidates,
+                label_size=label_size,
+                note_size=note_size,
+                label_color=label_color,
+                note_color=note_color,
+                leader_color=oklch_lerp(label_color, pal["border"], 0.45),
             )
 
     # ── Settlement symbol (followers-driven cartographic markers) ──
@@ -1857,8 +2556,10 @@ def generate(
         sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
         settle_cy = sy_s + 15
         settle_color = pal["text_secondary"]
+        settlement_when = _repo_when(best[2]) or _date_for_activity_fraction(0.42)
         P.append(
-            f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}">'
+            f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}" '
+            f"{_timeline_style(settlement_when, 0.95, 'tl-reveal tl-soft')}>"
         )
 
         if settlement_tier == "capital":
@@ -1934,9 +2635,11 @@ def generate(
         mini_y = inset_y + 16
         mini_w = 34
         mini_h = 26
+        footprint_when = _date_for_activity_fraction(0.6)
         P.append(
             f'<g id="portfolio-footprint" data-settlement-tier="{settlement_tier}" '
-            f'data-flow-tier="{river_flow_profile["tier"]}" data-repos="{len(repo_positions)}">'
+            f'data-flow-tier="{river_flow_profile["tier"]}" data-repos="{len(repo_positions)}" '
+            f"{_timeline_style(footprint_when, 0.95, 'tl-reveal tl-soft')}>"
         )
         P.append(
             f'<rect x="{inset_x}" y="{inset_y}" width="{inset_w}" height="{inset_h}" '
@@ -1988,12 +2691,22 @@ def generate(
 
     # ── Contribution streak trail (WorldState-aware) ──────────
     streaks = metrics.get("contribution_streaks", {})
-    streak_len = streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
-    streak_active = streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    streak_len = (
+        streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
+    )
+    streak_active = (
+        streaks.get("streak_active", False) if isinstance(streaks, dict) else False
+    )
 
     if streak_len > 0 and repo_positions:
         # Trail connects repo hills in order of creation
-        trail_repos = sorted(repo_positions, key=lambda rp: rp[2].get("age_months", 0), reverse=True)
+        trail_repos = sorted(
+            repo_positions,
+            key=lambda rp: (
+                _repo_day(rp[2], fallback_end=repo_age_anchor) or timeline_start_day,
+                str(rp[2].get("name", "")),
+            ),
+        )
         n_trail = min(streak_len, len(trail_repos))
         if n_trail >= 2:
             trail_points = []
@@ -2003,8 +2716,14 @@ def generate(
                 trail_points.append(f"{tx_s:.0f},{ty_s:.0f}")
             trail_d_s = "M" + " L".join(trail_points)
             # Active: dashed red; Broken: grey dashed
-            trail_color = oklch(0.48, 0.16, 22) if streak_active else oklch(0.62, 0.03, 200)
-            dash_style = ' stroke-dasharray="4,3"' if streak_active else ' stroke-dasharray="3,4"'
+            trail_color = (
+                oklch(0.48, 0.16, 22) if streak_active else oklch(0.62, 0.03, 200)
+            )
+            dash_style = (
+                ' stroke-dasharray="4,3"'
+                if streak_active
+                else ' stroke-dasharray="3,4"'
+            )
             _trail_opacity = 0.6 if streak_active else 0.35
             # White casing for contrast
             P.append(
@@ -2416,8 +3135,16 @@ def generate(
         ramp_x, ramp_y, ramp_w = leg_x + 6, leg_y + 14, 60
         # OKLCH hypsometric ramp for elevation legend
         ramp_colors = oklch_gradient(
-            [(0.65, 0.10, 220), (0.60, 0.12, 145), (0.70, 0.10, 110), (0.80, 0.06, 80),
-             (0.75, 0.08, 50), (0.70, 0.08, 40), (0.85, 0.03, 60), (0.92, 0.01, 200)],
+            [
+                (0.65, 0.10, 220),
+                (0.60, 0.12, 145),
+                (0.70, 0.10, 110),
+                (0.80, 0.06, 80),
+                (0.75, 0.08, 50),
+                (0.70, 0.08, 40),
+                (0.85, 0.03, 60),
+                (0.92, 0.01, 200),
+            ],
             8,
         )
         seg_w = ramp_w / len(ramp_colors)
@@ -2470,37 +3197,59 @@ def generate(
     if world.weather == "clear":
         # Sun symbol
         sun_color = oklch(0.80, 0.15, 70)
-        P.append(f'<circle cx="{wx_w}" cy="{wy_w}" r="6" fill="{sun_color}" opacity="0.8"/>')
+        P.append(
+            f'<circle cx="{wx_w}" cy="{wy_w}" r="6" fill="{sun_color}" opacity="0.8"/>'
+        )
         for ray_i in range(8):
             a = ray_i * math.pi / 4
-            P.append(f'<line x1="{wx_w + 8 * math.cos(a):.1f}" y1="{wy_w + 8 * math.sin(a):.1f}" '
-                     f'x2="{wx_w + 11 * math.cos(a):.1f}" y2="{wy_w + 11 * math.sin(a):.1f}" '
-                     f'stroke="{sun_color}" stroke-width="1" opacity="0.6"/>')
+            P.append(
+                f'<line x1="{wx_w + 8 * math.cos(a):.1f}" y1="{wy_w + 8 * math.sin(a):.1f}" '
+                f'x2="{wx_w + 11 * math.cos(a):.1f}" y2="{wy_w + 11 * math.sin(a):.1f}" '
+                f'stroke="{sun_color}" stroke-width="1" opacity="0.6"/>'
+            )
     elif world.weather == "cloudy":
         # Cloud shape
         cloud_color = oklch(0.7, 0.03, 220)
-        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{cloud_color}" opacity="0.45"/>')
-        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{cloud_color}" opacity="0.35"/>')
-        P.append(f'<ellipse cx="{wx_w + 4}" cy="{wy_w + 1}" rx="5" ry="3" fill="{cloud_color}" opacity="0.35"/>')
+        P.append(
+            f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{cloud_color}" opacity="0.45"/>'
+        )
+        P.append(
+            f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{cloud_color}" opacity="0.35"/>'
+        )
+        P.append(
+            f'<ellipse cx="{wx_w + 4}" cy="{wy_w + 1}" rx="5" ry="3" fill="{cloud_color}" opacity="0.35"/>'
+        )
     elif world.weather == "rainy":
         # Cloud + rain lines
         rain_cloud = oklch(0.58, 0.04, 230)
-        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{rain_cloud}" opacity="0.5"/>')
-        P.append(f'<ellipse cx="{wx_w - 4}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{rain_cloud}" opacity="0.4"/>')
+        P.append(
+            f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="9" ry="4.5" fill="{rain_cloud}" opacity="0.5"/>'
+        )
+        P.append(
+            f'<ellipse cx="{wx_w - 4}" cy="{wy_w + 1}" rx="6" ry="3.5" fill="{rain_cloud}" opacity="0.4"/>'
+        )
         rain_line_color = oklch(0.55, 0.10, 230)
         for _ri in range(4):
             _rx = wx_w - 5 + _ri * 3.5
-            P.append(f'<line x1="{_rx:.1f}" y1="{wy_w + 5}" x2="{_rx - 1:.1f}" y2="{wy_w + 10}" '
-                     f'stroke="{rain_line_color}" stroke-width="0.6" opacity="0.5" stroke-linecap="round"/>')
+            P.append(
+                f'<line x1="{_rx:.1f}" y1="{wy_w + 5}" x2="{_rx - 1:.1f}" y2="{wy_w + 10}" '
+                f'stroke="{rain_line_color}" stroke-width="0.6" opacity="0.5" stroke-linecap="round"/>'
+            )
     elif world.weather == "stormy":
         # Cloud + lightning zigzag
         storm_color = oklch(0.50, 0.05, 240)
-        P.append(f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="10" ry="5" fill="{storm_color}" opacity="0.55"/>')
-        P.append(f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 2}" rx="7" ry="4" fill="{storm_color}" opacity="0.45"/>')
+        P.append(
+            f'<ellipse cx="{wx_w}" cy="{wy_w}" rx="10" ry="5" fill="{storm_color}" opacity="0.55"/>'
+        )
+        P.append(
+            f'<ellipse cx="{wx_w - 5}" cy="{wy_w + 2}" rx="7" ry="4" fill="{storm_color}" opacity="0.45"/>'
+        )
         # Lightning zigzag
         bolt_color = oklch(0.85, 0.18, 60)
-        P.append(f'<path d="M{wx_w},{wy_w + 5} l-2,4 3,0 -2,4" '
-                 f'stroke="{bolt_color}" stroke-width="1.2" fill="none" opacity="0.8" stroke-linecap="round"/>')
+        P.append(
+            f'<path d="M{wx_w},{wy_w + 5} l-2,4 3,0 -2,4" '
+            f'stroke="{bolt_color}" stroke-width="1.2" fill="none" opacity="0.8" stroke-linecap="round"/>'
+        )
 
     # ── Tiered title cartouche ────────────────────────────────────
     cart_x, cart_y = MAP_L - 5, HEIGHT - 52
@@ -2611,14 +3360,43 @@ def generate(
     # ══════════════════════════════════════════════════════════════
 
     # ── Data mapping 1: releases → flag symbols on peaks ──────────
-    _releases = metrics.get("releases", [])
-    if isinstance(_releases, list) and len(_releases) > 0 and spots_sorted:
+    _releases = releases
+    _release_flag_sites = list(spots_sorted)
+    if not _release_flag_sites and repo_positions:
+        _release_flag_sites = sorted(
+            [
+                (
+                    MAP_L + rp[0] * MAP_W,
+                    MAP_T + rp[1] * MAP_H,
+                    float(
+                        elevation[
+                            min(grid - 1, max(0, int(rp[1] * grid))),
+                            min(grid - 1, max(0, int(rp[0] * grid))),
+                        ]
+                    ),
+                )
+                for rp in repo_positions
+            ],
+            key=lambda site: site[2],
+            reverse=True,
+        )
+    if isinstance(_releases, list) and len(_releases) > 0 and _release_flag_sites:
         _n_flags = min(5, len(_releases))
         for _fi_flag in range(_n_flags):
-            if _fi_flag < len(spots_sorted):
-                _flag_x, _flag_y, _flag_e = spots_sorted[_fi_flag]
+            if _fi_flag < len(_release_flag_sites):
+                _flag_x, _flag_y, _flag_e = _release_flag_sites[_fi_flag]
                 _flag_h = 8  # flag pole height
                 _flag_color = pal["highlight"]
+                _release_date_value = _release_date(_releases[_fi_flag])
+                _release_when = _later_when(
+                    _release_date_value or _birth_when_at_map(_flag_x, _flag_y),
+                    _birth_when_at_map(_flag_x, _flag_y),
+                )
+                P.append(
+                    f'<g class="release-flag" data-release-date="{_release_date_value or _release_when}" '
+                    f'data-release-reveal-date="{_release_when}" '
+                    f"{_timeline_style(_release_when, 0.95, 'tl-reveal tl-soft')}>"
+                )
                 # Flag pole (vertical line)
                 P.append(
                     f'<line x1="{_flag_x:.1f}" y1="{_flag_y:.1f}" '
@@ -2630,10 +3408,11 @@ def generate(
                 _fty = _flag_y - _flag_h
                 P.append(
                     f'<polygon points="{_ftx:.1f},{_fty:.1f} '
-                    f'{_ftx + 5:.1f},{_fty + 2:.1f} '
+                    f"{_ftx + 5:.1f},{_fty + 2:.1f} "
                     f'{_ftx:.1f},{_fty + 4:.1f}" '
                     f'fill="{_flag_color}" opacity="0.50"/>'
                 )
+                P.append("</g>")
 
     # ── Data mapping 2: commit_hour_distribution → sun/moon in legend ─
     _commit_hours = metrics.get("commit_hour_distribution", {})
@@ -2680,6 +3459,11 @@ def generate(
     _total_prs = metrics.get("total_prs", 0)
     if isinstance(_total_prs, int | float) and _total_prs > 10 and repo_positions:
         _n_paths = min(5, int(_total_prs) // 20)
+        _merged_pr_dates = sorted(
+            _merged_pr_date(pr)
+            for pr in _recent_merged_prs
+            if _merged_pr_date(pr) is not None
+        )
         # Find settlement position (same logic as settlement symbol)
         _settle_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         _settle_mx = MAP_L + _settle_rp[0] * MAP_W
@@ -2695,11 +3479,17 @@ def generate(
             _trp = _path_targets[_pi_path + 1]  # skip self (index 0)
             _tx_path = MAP_L + _trp[0] * MAP_W
             _ty_path = MAP_T + _trp[1] * MAP_H
+            _path_when = (
+                _merged_pr_dates[min(_pi_path, len(_merged_pr_dates) - 1)]
+                if _merged_pr_dates
+                else _repo_when(_trp[2]) or _birth_when_at_map(_tx_path, _ty_path)
+            )
             P.append(
                 f'<line x1="{_settle_mx:.1f}" y1="{_settle_my:.1f}" '
                 f'x2="{_tx_path:.1f}" y2="{_ty_path:.1f}" '
                 f'stroke="{pal["text_secondary"]}" stroke-width="0.5" '
-                f'stroke-dasharray="3,3" opacity="0.15" stroke-linecap="round"/>'
+                f'stroke-dasharray="3,3" stroke-linecap="round" '
+                f"{_timeline_style(_path_when, 0.15, 'tl-reveal tl-soft')}/>"
             )
 
     # ── Data mapping 5: total_issues → scree/rough terrain markers ─
@@ -2772,10 +3562,15 @@ def generate(
         _border_color = pal["border"]
         # Divide map into quadrants for territory borders
         _quadrants = [
-            (MAP_L, MAP_T, MAP_W / 2, MAP_H / 2),           # top-left
+            (MAP_L, MAP_T, MAP_W / 2, MAP_H / 2),  # top-left
             (MAP_L + MAP_W / 2, MAP_T, MAP_W / 2, MAP_H / 2),  # top-right
             (MAP_L, MAP_T + MAP_H / 2, MAP_W / 2, MAP_H / 2),  # bottom-left
-            (MAP_L + MAP_W / 2, MAP_T + MAP_H / 2, MAP_W / 2, MAP_H / 2),  # bottom-right
+            (
+                MAP_L + MAP_W / 2,
+                MAP_T + MAP_H / 2,
+                MAP_W / 2,
+                MAP_H / 2,
+            ),  # bottom-right
         ]
         for _qi in range(_n_territories):
             _qx, _qy, _qw, _qh = _quadrants[_qi]
@@ -2793,8 +3588,12 @@ def generate(
     if isinstance(_public_gists, int | float) and _public_gists > 0:
         _n_annotations = min(6, int(_public_gists))
         _anno_labels = [
-            "Here be code", "Notes", "Sketch",
-            "Fragments", "Draft", "Marginalia",
+            "Here be code",
+            "Notes",
+            "Sketch",
+            "Fragments",
+            "Draft",
+            "Marginalia",
         ]
         _anno_rng = np.random.default_rng(int(h[4:10], 16) ^ 0xBEAD)
         for _ai_gist in range(_n_annotations):
@@ -2822,7 +3621,7 @@ def generate(
             f'<text x="{leg_x + leg_w / 2:.0f}" y="{_vis_y:.0f}" '
             f'text-anchor="middle" font-family="Georgia,serif" font-size="4" '
             f'fill="{pal["text_secondary"]}" opacity="0.35" font-style="italic">'
-            f'Visitors: {int(_traffic_views)}</text>'
+            f"Visitors: {int(_traffic_views)}</text>"
         )
 
     # ── Data mapping 10: watchers → watchtower symbols ────────────
@@ -2834,7 +3633,16 @@ def generate(
         for _ti_tower in range(_n_towers):
             if _ti_tower < len(spots_sorted):
                 # Use high-elevation spots, offset from flags
-                _tower_idx = min(len(spots_sorted) - 1, _ti_tower + min(5, len(_releases) if isinstance(metrics.get("releases", []), list) else 0))
+                _tower_idx = min(
+                    len(spots_sorted) - 1,
+                    _ti_tower
+                    + min(
+                        5,
+                        len(_releases)
+                        if isinstance(metrics.get("releases", []), list)
+                        else 0,
+                    ),
+                )
                 _twx, _twy, _twe = spots_sorted[_tower_idx]
                 # Tower body (thin rectangle)
                 _tw_w, _tw_h = 3, 8
@@ -2846,7 +3654,7 @@ def generate(
                 # Tower roof (triangle)
                 P.append(
                     f'<polygon points="{_twx - _tw_w:.1f},{_twy - _tw_h:.1f} '
-                    f'{_twx:.1f},{_twy - _tw_h - 4:.1f} '
+                    f"{_twx:.1f},{_twy - _tw_h - 4:.1f} "
                     f'{_twx + _tw_w:.1f},{_twy - _tw_h:.1f}" '
                     f'fill="{_tower_color}" opacity="0.30"/>'
                 )

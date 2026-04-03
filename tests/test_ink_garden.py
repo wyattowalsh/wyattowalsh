@@ -7,6 +7,9 @@ Tests are safe to run in parallel with -n auto: no shared mutable state.
 
 from __future__ import annotations
 
+import hashlib
+import re
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -24,7 +27,9 @@ from scripts.art.ink_garden import (  # noqa: E402
     MAX_SEGS,
     SPECIES,
     _classify_species,
+    _daily_contribution_series,
     _overflow_specimen_annotation,
+    _repo_emergence_dates,
     generate,
     seed_hash,
 )
@@ -65,6 +70,37 @@ RICH_METRICS: dict = {
     ],
     "contributions_monthly": {"2024-01": 50, "2024-02": 40},
 }
+
+
+def _count_falling_seed_bodies(svg: str) -> int:
+    return len(re.findall(r'fill="#a09060" opacity="0\.35"', svg))
+
+
+def _count_release_seed_ellipses(svg: str) -> int:
+    return len(
+        re.findall(
+            r'<ellipse[^>]+opacity="0\.(?:1[89]|2\d|3[0-5])"[^>]+transform="rotate\(',
+            svg,
+        )
+    )
+
+
+def _release_seed_dates(svg: str) -> list[str]:
+    return re.findall(
+        r'<ellipse[^>]+data-role="release-seed"[^>]+data-when="([^"]+)"',
+        svg,
+    )
+
+
+def _extract_repo_tooltip_height(svg: str, repo_name: str) -> float:
+    match = re.search(
+        rf'<g class="repo-tree">.*?<title>{re.escape(repo_name)}[^<]*</title>.*?'
+        rf'<rect [^>]*height="([0-9.]+)" fill="transparent"/>',
+        svg,
+        re.S,
+    )
+    assert match is not None
+    return float(match.group(1))
 
 
 # ---------------------------------------------------------------------------
@@ -207,6 +243,52 @@ class TestClassifySpecies:
             {"stars": 8, "age_months": 20, "language": "Python"},
         ]:
             assert _classify_species(repo) in known
+
+
+class TestEmergenceTiming:
+    def test_daily_contribution_series_prefers_explicit_daily_history(self) -> None:
+        metrics = {
+            "contributions_monthly": {"2023-01": 40},
+            "contributions_daily": {
+                "2023-01-01": 1,
+                "2023-01-20": 39,
+            },
+        }
+
+        series = _daily_contribution_series(metrics, reference_year=2023)
+
+        assert list(series.items()) == [("2023-01-01", 1), ("2023-01-20", 39)]
+
+    def test_repo_emergence_dates_follow_local_neighbor_spacing(self) -> None:
+        base_day = date(2022, 2, 1)
+        timeline_window = (date(2022, 1, 1), date(2024, 12, 31))
+
+        tight = _repo_emergence_dates(
+            base_day.isoformat(),
+            timeline_window,
+            repo_frac=0.03,
+            prev_frac=None,
+            next_frac=0.10,
+            age_days=60,
+        )
+        wide = _repo_emergence_dates(
+            base_day.isoformat(),
+            timeline_window,
+            repo_frac=0.03,
+            prev_frac=None,
+            next_frac=0.95,
+            age_days=720,
+        )
+
+        tight_root = date.fromisoformat(tight["root"])
+        tight_leaf = date.fromisoformat(tight["leaf"])
+        tight_bloom = date.fromisoformat(tight["bloom"])
+        tight_detail = date.fromisoformat(tight["detail"])
+        wide_bloom = date.fromisoformat(wide["bloom"])
+
+        assert tight_root < tight_leaf < tight_bloom < tight_detail
+        assert tight_bloom < wide_bloom
+        assert (wide_bloom - base_day).days <= 120
 
 
 # ---------------------------------------------------------------------------
@@ -371,6 +453,462 @@ class TestGenerate:
         assert "+2 specimens held back" in result
         assert f"tiny-repo-{MAX_REPOS - 1}" not in result
 
+    def test_recent_repo_with_low_breadth_biases_species_toward_seedling(self) -> None:
+        """Recent repos stay seedling-heavy until contribution breadth widens."""
+        fixed_seed = "0123456789abcdef" * 4
+        base_metrics = {
+            **MINIMAL_METRICS,
+            "stars": 36,
+            "total_commits": 900,
+            "account_created": "2022-01-01T00:00:00Z",
+            "contributions_monthly": {
+                "2024-04": 18,
+                "2024-05": 24,
+                "2024-06": 30,
+            },
+            "repos": [
+                {
+                    "name": "foundation-repo",
+                    "stars": 12,
+                    "age_months": 30,
+                    "language": "Go",
+                    "date": "2022-03-14T00:00:00Z",
+                },
+                {
+                    "name": "recent-growth",
+                    "stars": 24,
+                    "age_months": 9,
+                    "language": "Python",
+                    "date": "2024-05-20T00:00:00Z",
+                },
+            ],
+        }
+
+        narrow_svg = generate(
+            {**base_metrics, "total_repos_contributed": 2},
+            seed=fixed_seed,
+            maturity=1.0,
+        )
+        broad_svg = generate(
+            {**base_metrics, "total_repos_contributed": 18},
+            seed=fixed_seed,
+            maturity=1.0,
+        )
+
+        assert "<title>recent-growth · Python · ★24 · seedling</title>" in narrow_svg
+        assert "<title>recent-growth · Python · ★24 · wildflower</title>" in broad_svg
+        assert 'font-style="italic">seedling</text>' in narrow_svg
+        assert 'font-style="italic">wildflower</text>' in broad_svg
+
+    def test_recency_bias_requires_explicit_breadth_signal(self) -> None:
+        """Underspecified profiles should stay on the legacy species mapping path."""
+        fixed_seed = "fedcba9876543210" * 4
+        metrics = {
+            **MINIMAL_METRICS,
+            "stars": 36,
+            "total_commits": 900,
+            "account_created": "2022-01-01T00:00:00Z",
+            "contributions_monthly": {
+                "2024-04": 18,
+                "2024-05": 24,
+                "2024-06": 30,
+            },
+            "repos": [
+                {
+                    "name": "recent-growth",
+                    "stars": 24,
+                    "age_months": 9,
+                    "language": "Python",
+                    "date": "2024-05-20T00:00:00Z",
+                }
+            ],
+        }
+
+        svg = generate(metrics, seed=fixed_seed, maturity=1.0)
+
+        assert "<title>recent-growth · Python · ★24 · wildflower</title>" in svg
+
+    def test_recency_bias_requires_more_than_one_dated_repo(self) -> None:
+        """A single dated repo should not trigger portfolio-wide recency bias."""
+        fixed_seed = "0011223344556677" * 4
+        metrics = {
+            **MINIMAL_METRICS,
+            "stars": 28,
+            "total_commits": 640,
+            "account_created": "2022-01-01T00:00:00Z",
+            "total_repos_contributed": 8,
+            "contributions_monthly": {
+                "2024-04": 12,
+                "2024-05": 17,
+                "2024-06": 21,
+            },
+            "repos": [
+                {
+                    "name": "dated-recent",
+                    "stars": 24,
+                    "age_months": 8,
+                    "language": "Python",
+                    "date": "2024-05-20T00:00:00Z",
+                },
+                {
+                    "name": "undated-foundation",
+                    "stars": 10,
+                    "age_months": 28,
+                    "language": "Go",
+                },
+            ],
+        }
+
+        svg = generate(metrics, seed=fixed_seed, maturity=1.0)
+        legacy_svg = generate(
+            {
+                **metrics,
+                "repos": [
+                    {
+                        **metrics["repos"][0],
+                        "date": None,
+                    },
+                    metrics["repos"][1],
+                ],
+            },
+            seed=fixed_seed,
+            maturity=1.0,
+        )
+
+        assert "<title>dated-recent · Python · ★24 · wildflower</title>" in svg
+        dated_height = _extract_repo_tooltip_height(svg, "dated-recent")
+        legacy_height = _extract_repo_tooltip_height(legacy_svg, "dated-recent")
+        assert dated_height == legacy_height
+
+    def test_recent_repo_profile_increases_falling_seed_emergence(self) -> None:
+        """Recent repo growth should surface more ambient seeds than older canopies."""
+        fixed_seed = "89abcdef01234567" * 4
+        recent_metrics = {
+            **MINIMAL_METRICS,
+            "stars": 20,
+            "total_commits": 720,
+            "account_created": "2021-01-01T00:00:00Z",
+            "total_repos_contributed": 14,
+            "contributions_monthly": {
+                "2024-03": 10,
+                "2024-04": 14,
+                "2024-05": 19,
+                "2024-06": 22,
+            },
+            "repos": [
+                {
+                    "name": "sprout-a",
+                    "stars": 4,
+                    "age_months": 4,
+                    "language": "Python",
+                    "date": "2024-03-02T00:00:00Z",
+                },
+                {
+                    "name": "sprout-b",
+                    "stars": 5,
+                    "age_months": 3,
+                    "language": "TypeScript",
+                    "date": "2024-04-08T00:00:00Z",
+                },
+                {
+                    "name": "sprout-c",
+                    "stars": 6,
+                    "age_months": 2,
+                    "language": "Go",
+                    "date": "2024-05-05T00:00:00Z",
+                },
+                {
+                    "name": "sprout-d",
+                    "stars": 5,
+                    "age_months": 1,
+                    "language": "Rust",
+                    "date": "2024-06-01T00:00:00Z",
+                },
+            ],
+        }
+        established_metrics = {
+            **recent_metrics,
+            "repos": [
+                {
+                    "name": "canopy-a",
+                    "stars": 4,
+                    "age_months": 32,
+                    "language": "Python",
+                    "date": "2022-03-02T00:00:00Z",
+                },
+                {
+                    "name": "canopy-b",
+                    "stars": 5,
+                    "age_months": 30,
+                    "language": "TypeScript",
+                    "date": "2022-04-08T00:00:00Z",
+                },
+                {
+                    "name": "canopy-c",
+                    "stars": 6,
+                    "age_months": 28,
+                    "language": "Go",
+                    "date": "2022-05-05T00:00:00Z",
+                },
+                {
+                    "name": "canopy-d",
+                    "stars": 5,
+                    "age_months": 26,
+                    "language": "Rust",
+                    "date": "2022-06-01T00:00:00Z",
+                },
+            ],
+        }
+
+        recent_svg = generate(recent_metrics, seed=fixed_seed, maturity=1.0)
+        established_svg = generate(established_metrics, seed=fixed_seed, maturity=1.0)
+
+        assert _count_falling_seed_bodies(recent_svg) > _count_falling_seed_bodies(
+            established_svg
+        )
+
+    def test_recent_repo_profile_increases_release_seed_emergence(self) -> None:
+        """Release seed drops should also respond to recent portfolio growth."""
+        fixed_seed = "76543210fedcba98" * 4
+        recent_metrics = {
+            **MINIMAL_METRICS,
+            "stars": 24,
+            "total_commits": 840,
+            "account_created": "2021-01-01T00:00:00Z",
+            "total_repos_contributed": 12,
+            "releases": [{"tag": "v1"}, {"tag": "v2"}, {"tag": "v3"}],
+            "contributions_monthly": {
+                "2024-03": 8,
+                "2024-04": 13,
+                "2024-05": 18,
+                "2024-06": 20,
+            },
+            "repos": [
+                {
+                    "name": "recent-a",
+                    "stars": 6,
+                    "age_months": 4,
+                    "language": "Python",
+                    "date": "2024-03-10T00:00:00Z",
+                },
+                {
+                    "name": "recent-b",
+                    "stars": 7,
+                    "age_months": 3,
+                    "language": "Go",
+                    "date": "2024-04-12T00:00:00Z",
+                },
+                {
+                    "name": "recent-c",
+                    "stars": 5,
+                    "age_months": 2,
+                    "language": "Rust",
+                    "date": "2024-05-18T00:00:00Z",
+                },
+            ],
+        }
+        established_metrics = {
+            **recent_metrics,
+            "repos": [
+                {
+                    "name": "recent-a",
+                    "stars": 6,
+                    "age_months": 28,
+                    "language": "Python",
+                    "date": "2022-03-10T00:00:00Z",
+                },
+                {
+                    "name": "recent-b",
+                    "stars": 7,
+                    "age_months": 26,
+                    "language": "Go",
+                    "date": "2022-04-12T00:00:00Z",
+                },
+                {
+                    "name": "recent-c",
+                    "stars": 5,
+                    "age_months": 24,
+                    "language": "Rust",
+                    "date": "2022-05-18T00:00:00Z",
+                },
+            ],
+        }
+
+        recent_svg = generate(recent_metrics, seed=fixed_seed, maturity=1.0)
+        established_svg = generate(established_metrics, seed=fixed_seed, maturity=1.0)
+
+        assert _count_release_seed_ellipses(recent_svg) > _count_release_seed_ellipses(
+            established_svg
+        )
+
+    def test_timeline_release_seeds_use_explicit_release_dates(self) -> None:
+        fixed_seed = "abcdef0123456789" * 4
+        metrics = {
+            **MINIMAL_METRICS,
+            "stars": 24,
+            "total_commits": 840,
+            "account_created": "2021-01-01T00:00:00Z",
+            "total_repos_contributed": 12,
+            "contributions_monthly": {
+                "2024-03": 8,
+                "2024-04": 13,
+                "2024-05": 18,
+                "2024-06": 20,
+            },
+            "contributions_daily": {
+                "2024-03-10": 3,
+                "2024-04-12": 5,
+                "2024-05-18": 6,
+                "2024-06-22": 7,
+            },
+            "releases": [
+                {"published_at": "2024-04-10T00:00:00Z", "name": "v1.0.0"},
+                {"published_at": "2024-06-15T00:00:00Z", "name": "v1.1.0"},
+            ],
+            "repos": [
+                {
+                    "name": "recent-a",
+                    "stars": 6,
+                    "age_months": 4,
+                    "language": "Python",
+                    "date": "2024-03-10T00:00:00Z",
+                },
+                {
+                    "name": "recent-b",
+                    "stars": 7,
+                    "age_months": 3,
+                    "language": "Go",
+                    "date": "2024-04-12T00:00:00Z",
+                },
+                {
+                    "name": "recent-c",
+                    "stars": 5,
+                    "age_months": 2,
+                    "language": "Rust",
+                    "date": "2024-05-18T00:00:00Z",
+                },
+            ],
+        }
+
+        svg = generate(
+            metrics,
+            seed=fixed_seed,
+            maturity=1.0,
+            timeline=True,
+            loop_duration=24.0,
+        )
+
+        release_dates = _release_seed_dates(svg)
+
+        assert "2024-04-10" in release_dates
+        assert "2024-06-15" in release_dates
+
+    def test_overflow_recent_repos_still_bias_portfolio_seed_emergence(self) -> None:
+        """Hidden recent repos should still influence portfolio-level growth bias."""
+        fixed_seed = "13579bdf2468ace0" * 4
+        visible_canopy = [
+            {
+                "name": f"canopy-{index}",
+                "stars": 60 + index,
+                "age_months": 36,
+                "language": "Python",
+                "date": f"2022-03-{(index % 9) + 1:02d}T00:00:00Z",
+            }
+            for index in range(MAX_REPOS)
+        ]
+        overflow_recent = [
+            {
+                "name": f"overflow-sprout-{index}",
+                "stars": 0,
+                "age_months": 1,
+                "language": "Python",
+                "date": f"2024-06-{index + 1:02d}T00:00:00Z",
+            }
+            for index in range(4)
+        ]
+        overflow_established = [
+            {
+                **repo,
+                "age_months": 24,
+                "date": f"2022-06-{index + 1:02d}T00:00:00Z",
+            }
+            for index, repo in enumerate(overflow_recent)
+        ]
+        base_metrics = {
+            **MINIMAL_METRICS,
+            "stars": 30,
+            "total_commits": 1100,
+            "account_created": "2021-01-01T00:00:00Z",
+            "total_repos_contributed": MAX_REPOS + 4,
+            "contributions_monthly": {
+                "2024-03": 8,
+                "2024-04": 11,
+                "2024-05": 15,
+                "2024-06": 19,
+            },
+        }
+
+        recent_overflow_svg = generate(
+            {**base_metrics, "repos": visible_canopy + overflow_recent},
+            seed=fixed_seed,
+            maturity=1.0,
+        )
+        established_overflow_svg = generate(
+            {**base_metrics, "repos": visible_canopy + overflow_established},
+            seed=fixed_seed,
+            maturity=1.0,
+        )
+
+        assert "+4 specimens held back" in recent_overflow_svg
+        recent_seed_bodies = _count_falling_seed_bodies(recent_overflow_svg)
+        established_seed_bodies = _count_falling_seed_bodies(established_overflow_svg)
+        assert recent_seed_bodies > established_seed_bodies
+
+    def test_dated_growth_prefers_older_repos_before_late_star_projects(self) -> None:
+        """Low-maturity frames should surface older repos first."""
+        metrics = {
+            "total_commits": 800,
+            "stars": 120,
+            "contributions_last_year": 200,
+            "followers": 20,
+            "forks": 6,
+            "network_count": 10,
+            "account_created": "2022-01-01T00:00:00Z",
+            "contributions_monthly": {
+                "2022-02": 4,
+                "2022-03": 6,
+                "2024-07": 12,
+            },
+            "repos": [
+                {
+                    "name": "late-hit",
+                    "stars": 90,
+                    "forks": 12,
+                    "age_months": 8,
+                    "language": "Python",
+                    "date": "2024-07-01T00:00:00Z",
+                    "topics": ["ai", "agents", "automation"],
+                },
+                {
+                    "name": "early-seed",
+                    "stars": 4,
+                    "forks": 0,
+                    "age_months": 28,
+                    "language": "Go",
+                    "date": "2022-02-01T00:00:00Z",
+                    "topics": ["cli"],
+                },
+            ],
+        }
+
+        fixed_seed = seed_hash(metrics)
+        early_svg = generate(metrics, seed=fixed_seed, maturity=0.24)
+        later_svg = generate(metrics, seed=fixed_seed, maturity=0.36)
+
+        assert "early-seed" in early_svg
+        assert "late-hit" not in early_svg
+        assert "late-hit" in later_svg
+
 
 # ---------------------------------------------------------------------------
 # TestGoldenFiles
@@ -424,14 +962,32 @@ class TestGoldenFiles:
             pytest.skip(f"Golden file {name} not found — run fixture generator first")
         return path.read_text()
 
+    def _assert_matches_golden(
+        self,
+        actual: str,
+        expected: str,
+        *,
+        message: str,
+    ) -> None:
+        actual_hash = hashlib.sha256(actual.encode()).hexdigest()
+        expected_hash = hashlib.sha256(expected.encode()).hexdigest()
+        assert actual_hash == expected_hash, (
+            f"{message} expected sha256={expected_hash} len={len(expected)}, "
+            f"actual sha256={actual_hash} len={len(actual)}"
+        )
+
     def test_minimal_full_maturity_matches_golden(self) -> None:
         """Minimal metrics at full maturity produce identical SVG to stored golden."""
         expected = self._load_golden("minimal_full.svg")
         hex_seed = seed_hash(MINIMAL_METRICS)
         actual = generate(MINIMAL_METRICS, seed=hex_seed, maturity=1.0)
-        assert actual == expected, (
-            "SVG output changed — if intentional, delete tests/fixtures/ink_garden/ "
-            "and re-run to regenerate golden files."
+        self._assert_matches_golden(
+            actual,
+            expected,
+            message=(
+                "SVG output changed — if intentional, delete "
+                "tests/fixtures/ink_garden/ and re-run to regenerate golden files."
+            ),
         )
 
     def test_rich_full_maturity_matches_golden(self) -> None:
@@ -439,8 +995,10 @@ class TestGoldenFiles:
         expected = self._load_golden("rich_full.svg")
         hex_seed = seed_hash(RICH_METRICS)
         actual = generate(RICH_METRICS, seed=hex_seed, maturity=1.0)
-        assert actual == expected, (
-            "SVG output changed — if intentional, regenerate golden files."
+        self._assert_matches_golden(
+            actual,
+            expected,
+            message="SVG output changed — if intentional, regenerate golden files.",
         )
 
     def test_rich_mid_maturity_matches_golden(self) -> None:
@@ -448,8 +1006,10 @@ class TestGoldenFiles:
         expected = self._load_golden("rich_mid.svg")
         hex_seed = seed_hash(RICH_METRICS)
         actual = generate(RICH_METRICS, seed=hex_seed, maturity=0.5)
-        assert actual == expected, (
-            "SVG output changed — if intentional, regenerate golden files."
+        self._assert_matches_golden(
+            actual,
+            expected,
+            message="SVG output changed — if intentional, regenerate golden files.",
         )
 
     def test_golden_files_are_valid_svg(self) -> None:
