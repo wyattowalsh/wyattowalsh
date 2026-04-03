@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from subprocess import CompletedProcess
 
 import pytest
 from typer.testing import CliRunner
@@ -90,21 +89,6 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     _write_json(history_path, _history_payload())
     _write_json(metrics_path, _metrics_payload())
 
-    def _stub_subprocess_run(
-        command: list[str],
-        check: bool = True,
-        **kwargs,
-    ) -> CompletedProcess[str]:
-        del check, kwargs
-        out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--svg" in command:
-            for style in LIVING_ART_STYLE_KEYS:
-                _write_svg(out_dir / f"{style}-growth-animated.svg")
-        else:
-            for style in LIVING_ART_STYLE_KEYS:
-                _write_gif(out_dir / f"{style}-growth.gif")
-        return CompletedProcess(command, 0)
-
     def _stub_render_timelapse(
         history: dict,
         metrics: dict,
@@ -122,7 +106,6 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
             _write_gif(path)
         return outputs
 
-    monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
     monkeypatch.setattr(
         "scripts.art.timelapse.render_timelapse",
         _stub_render_timelapse,
@@ -165,27 +148,21 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     output_dir = tmp_path / ".github" / "assets" / "img"
     expected_outputs = []
     for style in LIVING_ART_STYLE_KEYS:
-        expected_outputs.append(output_dir / f"{style}-growth-animated.svg")
-        expected_outputs.append(output_dir / f"{style}-growth.gif")
         expected_outputs.append(output_dir / f"living-{style}.gif")
     expected_outputs.append(output_dir / "living-art-manifest.json")
     expected_outputs.append(output_dir / "living-art-preview.html")
 
     for path in expected_outputs:
-        assert path.exists(), (
-            f"Expected rehearsal artifact was not generated: {path}"
-        )
+        assert path.exists(), f"Expected rehearsal artifact was not generated: {path}"
 
     manifest = json.loads(
         (output_dir / "living-art-manifest.json").read_text(encoding="utf-8")
     )
-    assert manifest["total_assets"] == 18
-    assert manifest["counts"]["source_svg"] == 6
-    assert manifest["counts"]["compatibility_gif"] == 6
+    assert manifest["total_assets"] == 6
     assert manifest["counts"]["timelapse_gif"] == 6
 
 
-def test_living_art_svg_only_skips_compatibility_gifs(
+def test_living_art_only_forwards_selected_style_to_renderer(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.chdir(tmp_path)
@@ -200,83 +177,34 @@ def test_living_art_svg_only_skips_compatibility_gifs(
     _write_json(history_path, _history_payload())
     _write_json(metrics_path, _metrics_payload())
 
-    calls: list[list[str]] = []
+    captured: dict[str, object] = {}
 
-    def _stub_subprocess_run(
-        command: list[str],
-        check: bool = True,
-        **kwargs,
-    ) -> CompletedProcess[str]:
-        del check, kwargs
-        calls.append(command)
+    def _stub_render_timelapse(
+        history: dict,
+        metrics: dict,
+        *,
+        styles: list[str] | None = None,
+        max_frames: int = 150,
+        size: int = 400,
+        owner: str = "wyattowalsh",
+        workers: int = 4,
+    ) -> list[Path]:
+        captured["history"] = history
+        captured["metrics"] = metrics
+        captured["styles"] = styles
+        captured["max_frames"] = max_frames
+        captured["size"] = size
+        captured["owner"] = owner
+        captured["workers"] = workers
         out_dir = tmp_path / ".github" / "assets" / "img"
-        if "--svg" in command:
-            for style in LIVING_ART_STYLE_KEYS:
-                _write_svg(out_dir / f"{style}-growth-animated.svg")
-        else:
-            for style in LIVING_ART_STYLE_KEYS:
-                _write_gif(out_dir / f"{style}-growth.gif")
-        return CompletedProcess(command, 0)
+        output = out_dir / "living-topo.gif"
+        _write_gif(output)
+        return [output]
 
-    monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
-
-    result = runner.invoke(
-        app,
-        [
-            "generate",
-            "living-art",
-            "--metrics-path",
-            str(metrics_path),
-            "--history-path",
-            str(history_path),
-            "--profile",
-            "rehearsal",
-            "--svg-only",
-        ],
-    )
-
-    assert result.exit_code == 0, result.stdout
-    assert len(calls) == 1
-    assert "--svg" in calls[0]
-
-    output_dir = tmp_path / ".github" / "assets" / "img"
-    for style in LIVING_ART_STYLE_KEYS:
-        assert (output_dir / f"{style}-growth-animated.svg").exists()
-    assert (output_dir / "living-art-manifest.json").exists()
-    assert (output_dir / "living-art-preview.html").exists()
-    for style in LIVING_ART_STYLE_KEYS:
-        assert not (output_dir / f"{style}-growth.gif").exists()
-
-
-def test_living_art_only_forwards_selected_style_to_animate(
-    runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
-    monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(
-        generate_cmd,
-        "_load_project_config",
-        lambda *_args, **_kwargs: None,
+        "scripts.art.timelapse.render_timelapse",
+        _stub_render_timelapse,
     )
-
-    history_path = tmp_path / "history.json"
-    metrics_path = tmp_path / "metrics.json"
-    _write_json(history_path, _history_payload())
-    _write_json(metrics_path, _metrics_payload())
-
-    calls: list[list[str]] = []
-
-    def _stub_subprocess_run(
-        command: list[str],
-        check: bool = True,
-        **kwargs,
-    ) -> CompletedProcess[str]:
-        del check, kwargs
-        calls.append(command)
-        out_dir = tmp_path / ".github" / "assets" / "img"
-        _write_svg(out_dir / "topo-growth-animated.svg")
-        return CompletedProcess(command, 0)
-
-    monkeypatch.setattr(generate_cmd.subprocess, "run", _stub_subprocess_run)
 
     result = runner.invoke(
         app,
@@ -291,14 +219,21 @@ def test_living_art_only_forwards_selected_style_to_animate(
             "rehearsal",
             "--only",
             "topo",
-            "--svg-only",
+            "--max-frames",
+            "6",
+            "--size",
+            "96",
+            "--workers",
+            "2",
         ],
     )
 
     assert result.exit_code == 0, result.stdout
-    assert len(calls) == 1
-    assert calls[0].count("--only") == 1
-    assert "topo" in calls[0]
+    assert captured["styles"] == ["topo"]
+    assert captured["max_frames"] == 6
+    assert captured["size"] == 96
+    assert captured["owner"] == "rehearsal"
+    assert captured["workers"] == 2
 
 
 def test_timelapse_only_forwards_selected_style_to_renderer(

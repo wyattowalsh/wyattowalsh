@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
-import sys
 from enum import Enum
 from pathlib import Path
 from types import SimpleNamespace
@@ -31,6 +29,7 @@ generate_app = typer.Typer(
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
+
 
 class ReadmeCardVariant(str, Enum):
     GH_CARD = "gh-card"
@@ -88,10 +87,53 @@ def _selected_living_art_styles(only: str | None) -> tuple[str, ...]:
     return tuple(LIVING_ART_STYLE_KEYS)
 
 
-def _growth_output_paths(styles: tuple[str, ...], suffix: str) -> list[Path]:
-    """Compute the expected growth output paths for the selected styles."""
-    output_dir = Path(".github/assets/img")
-    return [output_dir / f"{style}{suffix}" for style in styles]
+def _load_required_json(option_name: str, path: Path | None) -> dict[str, Any]:
+    """Read a required JSON payload from disk with consistent CLI errors."""
+    if not path or not path.exists():
+        console.print(
+            f"[bold red]Error:[/bold red] {option_name} is required and must exist."
+        )
+        raise typer.Exit(code=1)
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _generate_living_art_timelapse(
+    *,
+    profile: str,
+    metrics_path: Path | None,
+    history_path: Path | None,
+    only: str | None,
+    max_frames: int,
+    size: int,
+    workers: int,
+) -> list[Path]:
+    """Render canonical living-art timelapse GIF outputs."""
+    metrics = _load_required_json("--metrics-path", metrics_path)
+    history = _load_required_json("--history-path", history_path)
+    active_styles = _selected_living_art_styles(only)
+
+    from ..art.timelapse import render_timelapse
+
+    outputs = render_timelapse(
+        history,
+        metrics,
+        styles=list(active_styles),
+        max_frames=max_frames,
+        size=size,
+        owner=profile,
+        workers=workers,
+    )
+
+    for path in outputs:
+        size_mb = path.stat().st_size / (1024 * 1024)
+        console.print(f"[bold green]Generated:[/] {path} ({size_mb:.1f} MB)")
+
+    if not outputs:
+        console.print("[yellow]No timelapse GIFs generated.[/yellow]")
+    else:
+        _refresh_living_art_artifacts(outputs[0].parent)
+
+    return outputs
 
 
 def _apply_stopword_filter(
@@ -216,9 +258,7 @@ def banner(
     banner_data = cfg_banner_settings_defaults.model_dump()
 
     if proj_config.banner_settings:
-        banner_data.update(
-            proj_config.banner_settings.model_dump(exclude_unset=True)
-        )
+        banner_data.update(proj_config.banner_settings.model_dump(exclude_unset=True))
 
     if output_path:
         banner_data["output_path"] = str(output_path)
@@ -241,8 +281,7 @@ def banner(
         )
         generate_banner(cfg=final_banner_config)
         console.print(
-            "[bold green]SVG banner generated: "
-            f"{final_banner_config.output_path}[/]"
+            f"[bold green]SVG banner generated: {final_banner_config.output_path}[/]"
         )
         # Generate dark variant — failure does not affect the primary banner
         try:
@@ -267,9 +306,7 @@ def banner(
             )
     except Exception as e:
         logger.error("Banner generation failed: {e}", e=e, exc_info=True)
-        console.print(
-            f"[bold red]Error:[/bold red] Banner generation failed: {e}"
-        )
+        console.print(f"[bold red]Error:[/bold red] Banner generation failed: {e}")
         raise typer.Exit(code=1)
 
 
@@ -341,9 +378,8 @@ def qr(
     cfg_qr_settings_defaults = ConfigQRCodeSettings()
     qr_settings_data = cfg_qr_settings_defaults.model_dump()
 
-    if (
-        proj_config.qr_code_settings
-        and isinstance(proj_config.qr_code_settings, ConfigQRCodeSettings)
+    if proj_config.qr_code_settings and isinstance(
+        proj_config.qr_code_settings, ConfigQRCodeSettings
     ):
         qr_settings_data.update(
             proj_config.qr_code_settings.model_dump(exclude_unset=True)
@@ -361,9 +397,8 @@ def qr(
         logger.error("Critical: VCardData is None despite default_factory.")
         raise typer.Exit(code=1)
 
-    default_bg_path_str = (
-        qr_background_path
-        or qr_settings_data.get("default_background_path")
+    default_bg_path_str = qr_background_path or qr_settings_data.get(
+        "default_background_path"
     )
     default_output_dir_str = (
         output_path.parent
@@ -374,8 +409,7 @@ def qr(
     final_output_filename = (
         output_path.name
         if output_path
-        else qr_settings_data.get("output_filename")
-        or "qr.png"
+        else qr_settings_data.get("output_filename") or "qr.png"
     )
 
     try:
@@ -413,26 +447,20 @@ def qr(
             f"{qr_scale or qr_settings_data.get('default_scale', 25)}, "
             f"error_correction={error_correction}"
         )
-        logger.debug(
-            "VCard Details: {cfg_vcard_data}", cfg_vcard_data=cfg_vcard_data
-        )
+        logger.debug("VCard Details: {cfg_vcard_data}", cfg_vcard_data=cfg_vcard_data)
 
         generated_qr_path = qr_gen.generate_artistic_vcard_qr(
             vcard_details=cfg_vcard_data,
             output_filename=final_output_filename,
             error_correction=error_correction,
         )
-        console.print(
-            f"[bold green]QR code generated: {generated_qr_path}[/]"
-        )
+        console.print(f"[bold green]QR code generated: {generated_qr_path}[/]")
     except FileNotFoundError as fnf_error:
         logger.error(
             f"QR generation error (file not found): {fnf_error}",
             exc_info=True,
         )
-        console.print(
-            f"[bold red]File Not Found Error:[/bold red] {fnf_error}"
-        )
+        console.print(f"[bold red]File Not Found Error:[/bold red] {fnf_error}")
         raise typer.Exit(code=1)
     except ValueError as val_error:
         logger.error(
@@ -443,9 +471,7 @@ def qr(
         raise typer.Exit(code=1)
     except Exception as e:
         logger.error("QR generation failed: {e}", e=e, exc_info=True)
-        console.print(
-            f"[bold red]Error:[/bold red] QR generation failed: {e}"
-        )
+        console.print(f"[bold red]Error:[/bold red] QR generation failed: {e}")
         raise typer.Exit(code=1)
 
 
@@ -487,9 +513,7 @@ def _wc_import():
             "Word cloud/techs components missing. Install dependencies: "
             "uv pip install readme[word-clouds]"
         )
-        console.print(
-            "[bold red]Error:[/bold red] Word cloud components missing."
-        )
+        console.print("[bold red]Error:[/bold red] Word cloud components missing.")
         raise typer.Exit(code=1)
 
 
@@ -530,9 +554,7 @@ def _wc_from_markdown(
         f"{md_path.name} ({num_terms} filtered terms)."
     )
 
-    out_dir = (
-        Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
-    )
+    out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
     out_filename = (
         output_path.name
@@ -566,8 +588,14 @@ def _wc_from_topics(
 ) -> Path | None:
     """Generate word cloud from topics.md with topic-specific overrides."""
     return _wc_from_markdown(
-        wc, wc.TOPICS_MD_PATH, "topics", "ocean",
-        output_path, stopwords_list, max_words, layout_readability,
+        wc,
+        wc.TOPICS_MD_PATH,
+        "topics",
+        "ocean",
+        output_path,
+        stopwords_list,
+        max_words,
+        layout_readability,
     )
 
 
@@ -580,8 +608,14 @@ def _wc_from_languages(
 ) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
     return _wc_from_markdown(
-        wc, wc.LANGUAGES_MD_PATH, "languages", "aurora",
-        output_path, stopwords_list, max_words, layout_readability,
+        wc,
+        wc.LANGUAGES_MD_PATH,
+        "languages",
+        "aurora",
+        output_path,
+        stopwords_list,
+        max_words,
+        layout_readability,
     )
 
 
@@ -594,34 +628,27 @@ def _wc_from_techs(
     layout_readability=None,
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
-    logger.info(
-        f"Loading technologies from specified path: {techs_path}"
-    )
+    logger.info(f"Loading technologies from specified path: {techs_path}")
     loaded_techs_list: list = wc.load_technologies(techs_path)
     if not loaded_techs_list:
-        logger.warning(
-            f"load_technologies returned no data from {techs_path}."
-        )
+        logger.warning(f"load_technologies returned no data from {techs_path}.")
         return None
 
     frequencies = _apply_stopword_filter(
-        {
-            tech.name: float(tech.level) for tech in loaded_techs_list
-        },
+        {tech.name: float(tech.level) for tech in loaded_techs_list},
         stopwords_list,
     )
     if not frequencies:
-        logger.warning(
-            f"No frequencies derived from {techs_path}."
-        )
+        logger.warning(f"No frequencies derived from {techs_path}.")
         return None
 
-    logger.info(
-        f"Derived {len(frequencies)} terms with "
-        f"frequencies from {techs_path}."
-    )
+    logger.info(f"Derived {len(frequencies)} terms with frequencies from {techs_path}.")
 
-    out_dir = Path(output_path.parent) if output_path else Path(wc.WordCloudSettings().output_dir)
+    out_dir = (
+        Path(output_path.parent)
+        if output_path
+        else Path(wc.WordCloudSettings().output_dir)
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     settings = wc.WordCloudSettings(
@@ -655,7 +682,11 @@ def _wc_from_prompt(
         logger.error("Prompt produced no usable terms after stopword filtering.")
         return None
 
-    out_dir = Path(output_path.parent) if output_path else Path(wc.WordCloudSettings().output_dir)
+    out_dir = (
+        Path(output_path.parent)
+        if output_path
+        else Path(wc.WordCloudSettings().output_dir)
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
 
     settings = wc.WordCloudSettings(
@@ -744,9 +775,7 @@ def word_cloud(
     proj_config = _load_project_config(config_path)
     wc = _wc_import()
 
-    config_wc_model = (
-        proj_config.word_cloud_settings or ConfigWordCloudSettingsModel()
-    )
+    config_wc_model = proj_config.word_cloud_settings or ConfigWordCloudSettingsModel()
 
     stopwords_list: list[str] = []
     if config_wc_model and config_wc_model.stopwords:
@@ -794,9 +823,7 @@ def word_cloud(
             cfg_data = config_wc_model.model_dump(exclude_unset=True)
             if cfg_data.get("prompt") is not None:
                 effective_prompt = cfg_data["prompt"]
-                logger.info(
-                    f'Using config prompt for word cloud: "{effective_prompt}"'
-                )
+                logger.info(f'Using config prompt for word cloud: "{effective_prompt}"')
 
         if effective_prompt is not None:
             logger.info(f'Using prompt for word cloud: "{effective_prompt}"')
@@ -815,16 +842,10 @@ def word_cloud(
             )
 
     if generated_path and Path(generated_path).exists():
-        console.print(
-            f"[bold green]Word cloud generated: {generated_path}[/]"
-        )
+        console.print(f"[bold green]Word cloud generated: {generated_path}[/]")
     else:
-        logger.error(
-            "Word cloud generation failed or produced no output file."
-        )
-        console.print(
-            "[bold red]Error:[/bold red] Word cloud generation failed."
-        )
+        logger.error("Word cloud generation failed or produced no output file.")
+        console.print("[bold red]Error:[/bold red] Word cloud generation failed.")
 
 
 # ---------------------------------------------------------------------------
@@ -872,9 +893,7 @@ def generative_art(
             "Generative art dependencies/script components are missing. "
             "Ensure generative.py is correct."
         )
-        console.print(
-            "[bold red]Error:[/bold red] Generative art components missing."
-        )
+        console.print("[bold red]Error:[/bold red] Generative art components missing.")
         raise typer.Exit(code=1)
 
     if not metrics_path or not metrics_path.exists():
@@ -904,7 +923,7 @@ def generative_art(
 
 @generate_app.command(
     name="living-art",
-    help="Generate living-art growth outputs (timeline SVG + GIF compatibility).",
+    help="Generate living-art timelapse GIFs.",
 )
 def living_art(
     config_path: Annotated[
@@ -919,34 +938,26 @@ def living_art(
         str,
         typer.Option(
             "--profile",
-            help="Animation profile name used by scripts.art.animate.",
+            help="GitHub username (used for labeling).",
             rich_help_panel="Living Art Options",
         ),
-    ] = "wyatt",
-    frames: Annotated[
+    ] = "wyattowalsh",
+    max_frames: Annotated[
         int,
         typer.Option(
+            "--max-frames",
             "--frames",
-            min=2,
-            help="GIF frame count for compatibility output.",
+            min=5,
+            help="Maximum frames per GIF.",
             rich_help_panel="Living Art Options",
         ),
-    ] = 24,
-    svg_frames: Annotated[
-        int,
-        typer.Option(
-            "--svg-frames",
-            min=2,
-            help="Stacked timeline SVG frame count.",
-            rich_help_panel="Living Art Options",
-        ),
-    ] = 7,
+    ] = 150,
     size: Annotated[
         int,
         typer.Option(
             "--size",
             min=64,
-            help="Render size in px for GIF output.",
+            help="Frame size in pixels (square).",
             rich_help_panel="Living Art Options",
         ),
     ] = 400,
@@ -958,19 +969,11 @@ def living_art(
             rich_help_panel="Living Art Options",
         ),
     ] = None,
-    svg_only: Annotated[
-        bool,
-        typer.Option(
-            "--svg-only",
-            help="Generate timeline SVGs only (skip legacy GIF compatibility files).",
-            rich_help_panel="Living Art Options",
-        ),
-    ] = False,
     metrics_path: Annotated[
         Path | None,
         typer.Option(
             "--metrics-path",
-            help="Path to metrics JSON for living-art (uses mock profiles if omitted).",
+            help="Path to metrics JSON from fetch_metrics.",
             rich_help_panel="Living Art Options",
         ),
     ] = None,
@@ -978,54 +981,31 @@ def living_art(
         Path | None,
         typer.Option(
             "--history-path",
-            help="Path to history JSON for richer contribution data (optional).",
+            help="Path to history JSON from fetch_history.",
             rich_help_panel="Living Art Options",
         ),
     ] = None,
+    workers: Annotated[
+        int,
+        typer.Option(
+            "--workers",
+            min=1,
+            help="Parallel rendering workers.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = 4,
 ) -> None:
-    """Generate living-art assets with dual-write compatibility by default."""
+    """Generate canonical living-art timelapse GIFs."""
     _load_project_config(config_path)  # validate config exists
-
-    active_styles = _selected_living_art_styles(only)
-    base_cmd = [sys.executable, "-m", "scripts.art.animate", "--profile", profile]
-    if only:
-        base_cmd.extend(["--only", only])
-    if metrics_path and metrics_path.exists():
-        base_cmd.extend(["--metrics-path", str(metrics_path)])
-    if history_path and history_path.exists():
-        base_cmd.extend(["--history-path", str(history_path)])
-
-    try:
-        subprocess.run(
-            [*base_cmd, "--svg", "--frames", str(svg_frames)],
-            check=True,
-        )
-        console.print("[bold green]Generated timeline SVGs:[/]")
-        for path in _growth_output_paths(active_styles, "-growth-animated.svg"):
-            console.print(f"  - {path}")
-    except subprocess.CalledProcessError as exc:
-        logger.error("Living-art SVG generation failed: {}", exc)
-        raise typer.Exit(code=1) from exc
-
-    output_dir = Path(".github/assets/img")
-    _refresh_living_art_artifacts(output_dir)
-
-    if svg_only:
-        return
-
-    try:
-        subprocess.run(
-            [*base_cmd, "--frames", str(frames), "--size", str(size)],
-            check=True,
-        )
-        console.print("[bold green]Generated compatibility GIFs:[/]")
-        for path in _growth_output_paths(active_styles, "-growth.gif"):
-            console.print(f"  - {path}")
-    except subprocess.CalledProcessError as exc:
-        logger.error("Living-art GIF generation failed: {}", exc)
-        raise typer.Exit(code=1) from exc
-
-    _refresh_living_art_artifacts(output_dir)
+    _generate_living_art_timelapse(
+        profile=profile,
+        metrics_path=metrics_path,
+        history_path=history_path,
+        only=only,
+        max_frames=max_frames,
+        size=size,
+        workers=workers,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1074,6 +1054,7 @@ def timelapse(
         int,
         typer.Option(
             "--max-frames",
+            "--frames",
             min=5,
             help="Maximum frames per GIF.",
             rich_help_panel="Timelapse Options",
@@ -1107,41 +1088,15 @@ def timelapse(
     ] = 4,
 ) -> None:
     """Generate timelapse GIFs showing day-by-day profile evolution."""
-    if not metrics_path or not metrics_path.exists():
-        console.print(
-            "[bold red]Error:[/bold red] --metrics-path is required and must exist."
-        )
-        raise typer.Exit(code=1)
-    if not history_path or not history_path.exists():
-        console.print(
-            "[bold red]Error:[/bold red] --history-path is required and must exist."
-        )
-        raise typer.Exit(code=1)
-
-    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
-    history = json.loads(history_path.read_text(encoding="utf-8"))
-
-    from ..art.timelapse import render_timelapse
-
-    styles = [only] if only else None
-    outputs = render_timelapse(
-        history,
-        metrics,
-        styles=styles,
+    _generate_living_art_timelapse(
+        profile=profile,
+        metrics_path=metrics_path,
+        history_path=history_path,
+        only=only,
         max_frames=max_frames,
         size=size,
-        owner=profile,
         workers=workers,
     )
-
-    for p in outputs:
-        size_mb = p.stat().st_size / (1024 * 1024)
-        console.print(f"[bold green]Generated:[/] {p} ({size_mb:.1f} MB)")
-
-    if not outputs:
-        console.print("[yellow]No timelapse GIFs generated.[/yellow]")
-    else:
-        _refresh_living_art_artifacts(outputs[0].parent)
 
 
 # ---------------------------------------------------------------------------
@@ -1149,7 +1104,9 @@ def timelapse(
 # ---------------------------------------------------------------------------
 
 
-@generate_app.command(help="Generate shields.io technology badges and inject into README.")
+@generate_app.command(
+    help="Generate shields.io technology badges and inject into README."
+)
 def skills(
     config_path: Annotated[
         Path | None,
@@ -1389,9 +1346,7 @@ def readme_sections(
         style_update_payload: dict[str, Any] = {}
         for family, update in card_style_updates.items():
             current_style = getattr(current_styles, family)
-            style_update_payload[family] = current_style.model_copy(
-                update=update
-            )
+            style_update_payload[family] = current_style.model_copy(update=update)
         readme_settings = readme_settings.model_copy(
             update={
                 "svg": readme_settings.svg.model_copy(
@@ -1427,6 +1382,14 @@ def all_assets(
             rich_help_panel="Configuration",
         ),
     ] = None,
+    profile: Annotated[
+        str,
+        typer.Option(
+            "--profile",
+            help="GitHub username used for living-art labeling.",
+            rich_help_panel="Configuration",
+        ),
+    ] = "wyattowalsh",
     output_path: Annotated[
         Path | None,
         typer.Option(
@@ -1549,12 +1512,31 @@ def all_assets(
         )
         results.append(("Animated Art", "[yellow]SKIPPED[/yellow]"))
 
-    # -- living art (dual-write contract) --
-    try:
-        living_art(config_path=config_path)
-        results.append(("Living Art", "[green]OK[/green]"))
-    except (typer.Exit, SystemExit):
-        results.append(("Living Art", "[red]FAILED[/red]"))
+    # -- living art / timelapse (optional; requires both metrics + history) --
+    missing_living_art_inputs: list[str] = []
+    if not metrics_path or not metrics_path.exists():
+        missing_living_art_inputs.append("--metrics-path")
+    if not history_path or not history_path.exists():
+        missing_living_art_inputs.append("--history-path")
+
+    if missing_living_art_inputs:
+        missing_display = ", ".join(missing_living_art_inputs)
+        console.print(
+            "[yellow]Skipping living art — missing required "
+            f"{missing_display}.[/yellow]"
+        )
+        results.append(("Living Art", "[yellow]SKIPPED[/yellow]"))
+    else:
+        try:
+            living_art(
+                config_path=config_path,
+                profile=profile,
+                metrics_path=metrics_path,
+                history_path=history_path,
+            )
+            results.append(("Living Art", "[green]OK[/green]"))
+        except (typer.Exit, SystemExit):
+            results.append(("Living Art", "[red]FAILED[/red]"))
 
     # -- summary panel --
     lines = [f"  {name:<25} {status}" for name, status in results]

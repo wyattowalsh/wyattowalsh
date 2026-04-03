@@ -9,7 +9,7 @@ const features = [
   },
   {
     title: 'Living Art',
-    description: 'Ink gardens and topographic maps — grown from your GitHub data',
+    description: 'Timelapse GIFs plus preview indexing driven by GitHub metrics and historical activity signals',
     icon: '\u2727',
   },
   {
@@ -29,7 +29,7 @@ const features = [
   },
   {
     title: 'GitHub Metrics',
-    description: 'GraphQL API fetching, commit history, and daily CI pipeline automation',
+    description: 'GraphQL/REST data collection, historical signal snapshots, and daily CI pipeline automation',
     icon: '\u25B3',
   },
 ];
@@ -38,12 +38,12 @@ const artPieces = [
   {
     src: '/showcase/inkgarden-growth.gif',
     title: 'Ink Garden',
-    description: 'Each tree is a repository — blooms appear as stars accumulate',
+    description: 'Legacy showcase sample — current CLI/workflow contract publishes living-inkgarden timelapse GIFs',
   },
   {
     src: '/showcase/topo-growth.gif',
     title: 'Topography',
-    description: 'Terrain contours and rivers emerge with activity',
+    description: 'Legacy showcase sample — current CLI/workflow contract publishes living-topo timelapse GIFs',
   },
 ];
 
@@ -75,7 +75,7 @@ export default function HomePage() {
           </h1>
           <p className="max-w-2xl text-lg sm:text-xl text-fd-muted-foreground leading-relaxed">
             A fully dynamic GitHub profile README generator — SVG banners,
-            generative art, word clouds, QR codes, living art, and metrics —
+            generative art, word clouds, QR codes, living-art timelapses, and metrics —
             all driven by a Python CLI running daily on GitHub Actions.
           </p>
           <div className="flex gap-4 mt-2">
@@ -108,7 +108,7 @@ export default function HomePage() {
             Living Art
           </h2>
           <p className="text-fd-muted-foreground text-center mb-10 max-w-xl mx-auto">
-            Artwork driven by real GitHub data — watch it grow from bare soil to full bloom
+            Current contract: `living-*.gif` timelapses plus `living-art-manifest.json` and `living-art-preview.html`. The cards below use legacy showcase samples kept in the docs site.
           </p>
           <div className="art-gallery">
             {artPieces.map((piece) => (

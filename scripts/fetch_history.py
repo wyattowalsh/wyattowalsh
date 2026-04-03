@@ -123,12 +123,12 @@ def _fetch_repo_timeline(
     return repos
 
 
-def _fetch_contributions_monthly(
+def _fetch_contributions(
     owner: str,
     token: str,
     account_created: str | None,
-) -> dict[str, int]:
-    """Aggregate daily contribution counts into monthly totals via GraphQL.
+) -> tuple[dict[str, int], dict[str, int]]:
+    """Fetch exact daily contributions and aggregate monthly compatibility buckets.
 
     GitHub enforces 1-year windows on ``contributionsCollection``, so we
     loop year by year from the account creation year to the current year.
@@ -145,6 +145,7 @@ def _fetch_contributions_monthly(
         start_year = current_year
 
     monthly: dict[str, int] = defaultdict(int)
+    daily: dict[str, int] = {}
     for year in range(start_year, current_year + 1):
         from_dt = f"{year}-01-01T00:00:00Z"
         to_dt = f"{year}-12-31T23:59:59Z"
@@ -179,15 +180,17 @@ def _fetch_contributions_monthly(
             for week in calendar.get("weeks", []):
                 for day in week.get("contributionDays", []):
                     date_str = day.get("date", "")
-                    count = day.get("contributionCount", 0)
-                    if date_str and count:
-                        month_key = date_str[:7]  # "YYYY-MM"
-                        monthly[month_key] += count
+                    count = int(day.get("contributionCount", 0) or 0)
+                    if not date_str:
+                        continue
+                    daily[date_str] = count
+                    month_key = date_str[:7]  # "YYYY-MM"
+                    monthly[month_key] += count
         except Exception as exc:
             logger.warning("Contributions query failed for year {}: {}", year, exc)
             continue
 
-    return dict(sorted(monthly.items()))
+    return dict(sorted(daily.items())), dict(sorted(monthly.items()))
 
 
 def _fetch_current_metrics(
@@ -312,11 +315,14 @@ def collect_history(
 
     # 5. Contribution calendar (GraphQL, year-by-year)
     if token:
-        result["contributions_monthly"] = _fetch_contributions_monthly(
+        contributions_daily, contributions_monthly = _fetch_contributions(
             owner, token, account_created,
         )
+        result["contributions_daily"] = contributions_daily
+        result["contributions_monthly"] = contributions_monthly
     else:
         logger.info("No GITHUB_TOKEN -- skipping contribution calendar (requires GraphQL)")
+        result["contributions_daily"] = {}
         result["contributions_monthly"] = {}
 
     # 6. Current metrics snapshot

@@ -42,7 +42,9 @@
 
 ## Living Art
 
-> Six generative works driven by this profile's GitHub history, repository graph, languages, stars, and contribution rhythms.
+> Current automation contract: canonical timelapse GIFs named `living-<style>.gif`, plus `living-art-manifest.json` and `living-art-preview.html`.
+>
+> The gallery below uses older checked-in growth renders as showcase samples. Keep them as visual context only — they are not the current workflow artifact names.
 
 <table role="presentation">
 <tr>
@@ -95,7 +97,7 @@
 </tr>
 </table>
 
-All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The README keeps the GitHub-safe GIF previews inline, while each panel links through to the richer SVG source and the generated preview gallery in `.github/assets/img/living-art-preview.html`.
+All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`) and refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`; treat the checked-in growth SVG/GIF filenames above as legacy showcase assets rather than generated contract outputs.
 
 ## Tech Stack
 

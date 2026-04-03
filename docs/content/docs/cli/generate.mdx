@@ -76,10 +76,9 @@ uv run python -m scripts.cli generate word-cloud \
 
 ## `generate living-art`
 
-Generates the six-style living-art surface:
+Generates the canonical living-art timelapse surface:
 
-- stacked source SVGs such as `inkgarden-growth-animated.svg`
-- README-safe compatibility GIFs such as `inkgarden-growth.gif`
+- `living-*.gif`
 - `living-art-manifest.json` and `living-art-preview.html`
 
 ```bash
@@ -91,18 +90,18 @@ uv run python -m scripts.cli generate living-art \
 
 | Option | Notes |
 |---|---|
-| `--profile` | Profile label passed through to `scripts.art.animate` |
-| `--frames` | Compatibility GIF frame count |
-| `--svg-frames` | Stacked timeline SVG frame count |
+| `--profile` | Profile label used for timelapse labeling |
+| `--frames` | Alias for `--max-frames` |
+| `--max-frames` | Maximum frames per GIF |
 | `--size` | GIF render size in px |
 | `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
-| `--svg-only` | Skip compatibility GIF generation and only refresh the SVG/index surface |
-| `--metrics-path` | Optional metrics JSON for live data |
-| `--history-path` | Optional history JSON for richer chronology |
+| `--metrics-path` | Required metrics JSON for live data |
+| `--history-path` | Required history JSON for chronology |
+| `--workers` | Parallel render workers |
 
 ## `generate timelapse`
 
-Produces day-by-day GIF exports for one or all living-art styles. These are heavier review/export artifacts and are kept out of the daily README CI path.
+Produces the same day-by-day living-art GIF contract as `generate living-art`. Document these commands as aliases in practice unless the implementation diverges again later.
 
 ```bash
 uv run python -m scripts.cli generate timelapse \
@@ -121,6 +120,10 @@ uv run python -m scripts.cli generate timelapse \
 | `--size` | Output frame size in px |
 | `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
 | `--workers` | Parallel render workers |
+
+<Callout type="info" title="`generate all` is conditional here">
+The living-art step inside `generate all` is skipped unless both `--metrics-path` and `--history-path` are provided.
+</Callout>
 
 ## `generate generative`
 

@@ -11,21 +11,18 @@ description: The Unified Profile Updater workflow runs every generator job on a 
 
 ## Job graph
 
-```
+```text
 update-starred-lists
-        │
         ▼
-generate-assets ──────────────────────────────┐
-        │                                     │
-update-readme-wakatime                        │
-        │                                     │
-update-readme-blog                            │
-        │                                     │
-        ▼                                     │
-update-skills (needs all three above)         │
-                                              │
-generate-profile-metrics (independent)        │
-generate-event-art (independent) ─────────────┘
+generate-assets
+        ▼
+generate-profile-metrics
+        ▼
+generate-event-art
+        ▼
+update-readme-wakatime
+        ▼
+update-skills
 ```
 
 ## Job details
@@ -49,18 +46,12 @@ Depends on `update-starred-lists`. Generates:
 - QR code — `generate qr`
 - Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_metaheuristic-anim_by_topics.svg`
 - Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_metaheuristic-anim_by_languages.svg`
-- SVG banner — `generate banner`
-- Skills badges — `generate skills`
 
 Commits to `.github/assets/img/`.
 
 ### `update-readme-wakatime`
 
 Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stats) to inject WakaTime coding stats. Requires `WAKATIME_API_KEY` secret.
-
-### `update-readme-blog`
-
-Uses [`gautamkrishnar/blog-post-workflow`](https://github.com/gautamkrishnar/blog-post-workflow) to inject latest posts from `https://w4w.dev/feed.xml`.
 
 ### `generate-profile-metrics`
 
@@ -72,13 +63,19 @@ Requires `METRICS_TOKEN` secret (GitHub PAT with `read:user`, `public_repo`). Fa
 
 ### `generate-event-art`
 
-Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the six-style living-art growth surface. The job stages the generated growth SVGs/GIFs plus `living-art-manifest.json` and `living-art-preview.html`, uploads the full staging bundle, and auto-commits the committed living-art assets.
+Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the canonical living-art timelapse surface.
 
-Timelapse GIFs stay manual-only because they are not embedded in the README and are the most expensive living-art export.
+The job stages and commits:
+
+- `living-*.gif`
+- `living-art-manifest.json`
+- `living-art-preview.html`
+
+The uploaded staging bundle also includes the fetched `metrics.json` and `history.json` inputs for review.
 
 ### `update-skills`
 
-Depends on `generate-assets`, `update-readme-wakatime`, `update-readme-blog`. Runs:
+Depends on `update-readme-wakatime`. Runs:
 - `generate readme-sections` — assembles all dynamic README sections
 - `generate skills` — re-renders skills badges
 
@@ -102,7 +99,7 @@ Commits `README.md` + `.github/assets/img/readme/*.svg`.
     How the metrics collector works
   </Card>
   <Card href="/docs/data/fetch-history" title="Fetch History">
-    How the commit history collector works
+    How the historical GitHub signal collector works
   </Card>
   <Card href="/docs/cli/generate" title="CLI generate">
     All generate subcommands used by the workflow

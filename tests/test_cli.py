@@ -7,6 +7,7 @@ import pytest
 import yaml
 from typer.testing import CliRunner
 
+import scripts.cli.generate as generate_cmd
 from scripts.cli import app
 from scripts.cli.generate import _wc_from_languages, _wc_from_topics, _wc_import
 from scripts.config import ProjectConfig
@@ -424,3 +425,125 @@ def test_dev_clean(runner: CliRunner, tmp_path: Path, monkeypatch: pytest.Monkey
     assert "Cleaned" in result.stdout
     assert not (tmp_path / ".pytest_cache").exists()
     assert not (tmp_path / ".mypy_cache").exists()
+
+
+def test_generate_all_passes_metrics_and_history_to_living_art(
+    runner: CliRunner,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    metrics_path = tmp_path / "metrics.json"
+    history_path = tmp_path / "history.json"
+    metrics_path.write_text("{}", encoding="utf-8")
+    history_path.write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(generate_cmd, "banner", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "qr", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "word_cloud", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "skills", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "readme_sections", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "generative_art", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "animated", lambda **_kwargs: None, raising=False)
+
+    captured: dict[str, Path | str | None] = {}
+
+    def _stub_living_art(
+        *,
+        config_path: Path | None = None,
+        metrics_path: Path | None = None,
+        history_path: Path | None = None,
+        **_kwargs,
+    ) -> None:
+        captured["config_path"] = config_path
+        captured["metrics_path"] = metrics_path
+        captured["history_path"] = history_path
+        captured["profile"] = _kwargs.get("profile")
+
+    monkeypatch.setattr(generate_cmd, "living_art", _stub_living_art)
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "all",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["metrics_path"] == metrics_path
+    assert captured["history_path"] == history_path
+    assert captured["profile"] == "wyattowalsh"
+
+
+def test_generate_all_passes_profile_to_living_art(
+    runner: CliRunner,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    metrics_path = tmp_path / "metrics.json"
+    history_path = tmp_path / "history.json"
+    metrics_path.write_text("{}", encoding="utf-8")
+    history_path.write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(generate_cmd, "banner", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "qr", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "word_cloud", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "skills", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "readme_sections", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "generative_art", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "animated", lambda **_kwargs: None, raising=False)
+
+    captured: dict[str, str | None] = {}
+
+    def _stub_living_art(**_kwargs) -> None:
+        captured["profile"] = _kwargs.get("profile")
+
+    monkeypatch.setattr(generate_cmd, "living_art", _stub_living_art)
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "all",
+            "--profile",
+            "octocat",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["profile"] == "octocat"
+
+
+def test_generate_all_skips_living_art_when_required_inputs_missing(
+    runner: CliRunner,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(generate_cmd, "banner", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "qr", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "word_cloud", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "skills", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "readme_sections", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "generative_art", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "animated", lambda **_kwargs: None, raising=False)
+
+    called = {"living_art": False}
+
+    def _stub_living_art(**_kwargs) -> None:
+        called["living_art"] = True
+
+    monkeypatch.setattr(generate_cmd, "living_art", _stub_living_art)
+
+    result = runner.invoke(app, ["generate", "all"])
+
+    assert result.exit_code == 0, result.stdout
+    assert called["living_art"] is False
+    assert "Skipping living art" in result.stdout

@@ -16,6 +16,7 @@ def test_normalize_timeline_window_uses_history_and_events() -> None:
         "repos": [{"date": "2020-01-10T00:00:00Z"}],
         "stars": [{"date": "2022-06-01T00:00:00Z"}],
         "contributions_monthly": {"2021-03": 12},
+        "contributions_daily": {"2021-03-05": 1},
     }
     events = [{"date": "2023-02-15T00:00:00Z"}]
     start, end = normalize_timeline_window(events, history)
@@ -28,6 +29,17 @@ def test_normalize_timeline_window_fallback_without_dates() -> None:
     start, end = normalize_timeline_window([], {}, fallback_days=30, now=now)
     assert start == dt_date(2026, 2, 18)
     assert end == now
+
+
+
+
+def test_normalize_timeline_window_uses_contributions_daily_dates() -> None:
+    history = {"contributions_daily": {"2024-05-20": 3}}
+
+    start, end = normalize_timeline_window([], history)
+
+    assert start == dt_date(2024, 5, 20)
+    assert end == dt_date(2024, 5, 20)
 
 
 def test_map_date_to_loop_delay_with_clamp_and_easing() -> None:

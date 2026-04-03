@@ -117,6 +117,10 @@ def normalize_timeline_window(
             parsed = _as_date(month_key)
             if parsed:
                 observed.append(parsed)
+        for day_key in (history.get("contributions_daily", {}) or {}).keys():
+            parsed = _as_date(day_key)
+            if parsed:
+                observed.append(parsed)
 
     if observed:
         start = min(observed)
@@ -655,6 +659,11 @@ class ContributionCalendarEntry(_SignalContractModel):
     count: int = 0
 
 
+class ContributionDailyEntry(_SignalContractModel):
+    date: str
+    count: int = 0
+
+
 class RepoSignalEntry(_SignalContractModel):
     name: str
     language: str | None = None
@@ -692,6 +701,7 @@ class MetricsSnapshotContract(_SignalContractModel):
     followers: int | None = 0
     following: int | None = 0
     public_repos: int | None = 0
+    public_gists: int | None = 0
     orgs_count: int | None = 0
     contributions_last_year: int | None = 0
     total_commits: int | None = 0
@@ -709,10 +719,16 @@ class MetricsSnapshotContract(_SignalContractModel):
         default_factory=list
     )
     contributions_monthly: dict[str, int] = Field(default_factory=dict)
+    contributions_daily: dict[str, int] = Field(default_factory=dict)
     recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
     issue_stats: dict[str, Any] = Field(default_factory=dict)
     commit_hour_distribution: dict[str, int] = Field(default_factory=dict)
     releases: list[dict[str, Any]] = Field(default_factory=list)
+    traffic_views_14d: int | None = 0
+    traffic_unique_visitors_14d: int | None = 0
+    traffic_clones_14d: int | None = 0
+    traffic_unique_cloners_14d: int | None = 0
+    traffic_top_referrers: list[str] = Field(default_factory=list)
     star_velocity: StarVelocitySignal | None = None
     contribution_streaks: ContributionStreakSignal | None = None
 
@@ -723,6 +739,7 @@ class HistorySnapshotContract(_SignalContractModel):
     stars: list[TimelineEventEntry] = Field(default_factory=list)
     forks: list[TimelineEventEntry] = Field(default_factory=list)
     contributions_monthly: dict[str, int] = Field(default_factory=dict)
+    contributions_daily: dict[str, int] = Field(default_factory=dict)
     current_metrics: dict[str, Any] = Field(default_factory=dict)
     recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
     issue_stats: dict[str, Any] = Field(default_factory=dict)
@@ -862,19 +879,36 @@ def normalize_live_metrics(
             )
             repo["age_months"] = _age_months_from_date(repo_date, now=now) or 6
 
-    # 2. contributions_calendar → contributions_monthly
-    if "contributions_monthly" not in metrics and "contributions_calendar" in metrics:
-        monthly: dict[str, int] = defaultdict(int)
+    # 2. contributions_calendar → contributions_monthly / contributions_daily
+    if "contributions_daily" not in metrics and "contributions_calendar" in metrics:
+        daily: dict[str, int] = {}
         for entry in metrics["contributions_calendar"]:
             date_str = entry.get("date", "")
-            if len(date_str) >= 7:
-                monthly[date_str[:7]] += entry.get("count", 0)
+            if date_str:
+                daily[date_str] = int(entry.get("count", 0) or 0)
+        metrics["contributions_daily"] = dict(sorted(daily.items()))
+
+    if "contributions_monthly" not in metrics:
+        monthly: dict[str, int] = defaultdict(int)
+        if metrics.get("contributions_daily"):
+            for date_str, count in metrics["contributions_daily"].items():
+                if len(date_str) >= 7:
+                    monthly[date_str[:7]] += int(count or 0)
+        elif "contributions_calendar" in metrics:
+            for entry in metrics["contributions_calendar"]:
+                date_str = entry.get("date", "")
+                if len(date_str) >= 7:
+                    monthly[date_str[:7]] += int(entry.get("count", 0) or 0)
         metrics["contributions_monthly"] = dict(sorted(monthly.items()))
 
     # 3. Merge richer history data when available
     if validated_history:
         if "account_created" not in metrics and "account_created" in validated_history:
             metrics["account_created"] = validated_history["account_created"]
+        if validated_history.get("contributions_daily"):
+            metrics["contributions_daily"] = validated_history[
+                "contributions_daily"
+            ]
         # Prefer history's multi-year contributions_monthly over single-year calendar
         if validated_history.get("contributions_monthly"):
             metrics["contributions_monthly"] = validated_history[
@@ -922,6 +956,10 @@ def normalize_live_metrics(
         "recent_merged_prs", "issue_stats", "pr_review_count",
         "commit_hour_distribution", "releases",
         "star_velocity", "contribution_streaks",
+        "public_gists",
+        "traffic_views_14d", "traffic_unique_visitors_14d",
+        "traffic_clones_14d", "traffic_unique_cloners_14d",
+        "traffic_top_referrers",
     )
     if validated_history:
         for key in _PASSTHROUGH_KEYS:

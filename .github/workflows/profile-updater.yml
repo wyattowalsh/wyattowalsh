@@ -472,7 +472,7 @@ jobs:
             --output "$RUNNER_TEMP/history.json"
           cp "$RUNNER_TEMP/history.json" "$RUNNER_TEMP/living-art-stage/inputs/history.json"
 
-      - name: Generate living-art outputs (timeline SVG + GIF compatibility)
+      - name: Generate living-art outputs (canonical timelapse GIFs)
         env:
           OWNER: ${{ github.repository_owner }}
         run: |
@@ -481,23 +481,20 @@ jobs:
             --metrics-path "$RUNNER_TEMP/metrics.json" \
             --history-path "$RUNNER_TEMP/history.json"
 
-      - name: Stage living-art growth outputs and index
+      - name: Stage living-art timelapse outputs and index
         if: ${{ always() }}
         run: |
           shopt -s nullglob
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/growth"
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/timelapse"
           mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/index"
-          for file in .github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg; do
-            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/growth/"
+          for file in .github/assets/img/living-*.gif; do
+            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/timelapse/"
           done
           for file in .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html; do
             if [[ -f "$file" ]]; then
               cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/index/"
             fi
           done
-
-      # Timelapse GIFs removed from daily CI — they are not displayed in the README
-      # and are the most expensive step. Run manually via workflow_dispatch if needed.
 
       - name: Stage living-art outputs and manifest
         if: ${{ always() }}
@@ -532,7 +529,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "art: regenerate living-art assets"
-          file_pattern: ".github/assets/img/*-growth.gif .github/assets/img/*-growth-animated.svg .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html"
+          file_pattern: ".github/assets/img/living-*.gif .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

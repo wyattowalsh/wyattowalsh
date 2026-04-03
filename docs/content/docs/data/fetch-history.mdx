@@ -1,6 +1,6 @@
 ---
 title: Fetch History
-description: Paginates the full GitHub commit history into a time-series JSON file for animated art generation.
+description: Collects historical GitHub signals into a JSON snapshot used by living-art timelapse generation.
 ---
 
 ## Module
@@ -11,14 +11,18 @@ Shared HTTP helpers live in `scripts/_github_http.py`.
 
 ## What it fetches
 
-A paginated list of commits across the default branch, returning each commit's:
+`fetch_history` builds one consolidated history payload for living-art rendering. The shape includes:
 
-- `sha` — commit hash
-- `date` — ISO 8601 timestamp
-- `message` — first line of commit message
-- `additions` / `deletions` — line change counts
+- `account_created` — account creation timestamp when GraphQL access is available
+- `stars` — historical starring events for the profile repository
+- `forks` — historical fork events for the profile repository
+- `repos` — repository timeline data for the account
+- `contributions_daily` / `contributions_monthly` — contribution calendar history
+- `current_metrics` — current snapshot values used alongside the historical series
+- `star_velocity` — derived velocity signal computed from the star timeline
+- `contribution_streaks` — derived streak metadata computed from `contributions_monthly`
 
-Pagination uses a local `_get(url, token)` that returns `(data, next_url)` tuples and follows GitHub's `Link: <...>; rel="next"` headers until exhausted.
+Internally the module mixes REST and GraphQL calls, then derives the extra signals before writing the final JSON.
 
 ## CLI
 
@@ -40,20 +44,43 @@ export GITHUB_TOKEN=ghp_...
 ## Output shape
 
 ```json
-[
-  {
-    "sha": "abc123",
-    "date": "2026-03-17T12:00:00Z",
-    "message": "feat: add ink garden",
-    "additions": 200,
-    "deletions": 10
+{
+  "account_created": "2020-01-01T00:00:00Z",
+  "stars": [
+    { "starred_at": "2024-01-10T12:00:00Z" }
+  ],
+  "forks": [
+    { "created_at": "2024-02-01T09:30:00Z" }
+  ],
+  "repos": [
+    {
+      "name": "orchid-core",
+      "created_at": "2023-06-01T00:00:00Z",
+      "stargazers_count": 12,
+      "forks_count": 3,
+      "topics": ["ai", "agents"]
+    }
+  ],
+  "contributions_daily": {
+    "2025-01-01": 2
+  },
+  "contributions_monthly": {
+    "2025-01": 12
+  },
+  "star_velocity": {
+    "stars_last_30d": 4
+  },
+  "contribution_streaks": {
+    "longest_streak_months": 6,
+    "current_streak_months": 3,
+    "streak_active": true
   }
-]
+}
 ```
 
 ## Usage in living art
 
-The history JSON is passed into the living-art commands so timeline growth and timelapse playback can use real repository chronology:
+The history JSON is passed into the living-art commands so the canonical `living-*.gif` timelapses can use real repository chronology:
 
 ```bash
 uv run python -m scripts.cli generate living-art \
@@ -61,13 +88,13 @@ uv run python -m scripts.cli generate living-art \
   --history-path /tmp/history.json
 ```
 
-The commit timestamps are used to compute daily activity density, which seeds growth timing, reveal ordering, and day-by-day timelapse sampling.
+The commit timestamps are used to compute daily activity density and day-by-day sampling. After a successful render, the same output directory is re-indexed into `living-art-manifest.json` and `living-art-preview.html`.
 
 ## Related
 
 <Cards>
   <Card href="/docs/scripts/living-art-modes" title="Living Art Modes">
-    Shows how history feeds preview and export behavior for the remaining living-art outputs
+    Shows the current timelapse-only artifact contract and preview indexing behavior
   </Card>
   <Card href="/docs/data/fetch-metrics" title="Fetch Metrics">
     Companion module for GitHub metrics collection

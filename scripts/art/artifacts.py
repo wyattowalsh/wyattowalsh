@@ -23,8 +23,6 @@ LIVING_ART_STYLE_LABELS = {
 }
 LIVING_ART_STYLE_KEYS = tuple(LIVING_ART_STYLE_LABELS.keys())
 _CHANNEL_LABELS = {
-    "compatibility_gif": "Compatibility GIFs",
-    "source_svg": "Source SVGs",
     "timelapse_gif": "Timelapse GIFs",
 }
 
@@ -34,38 +32,10 @@ def _light_dark_variant(raw_variant: str | None, *, default: str = "default") ->
 
 
 _STYLE_KEYS = "|".join(re.escape(k) for k in LIVING_ART_STYLE_LABELS)
-_GROWTH_SVG_RE = re.compile(rf"^({_STYLE_KEYS})-growth-animated\.svg$")
-_GROWTH_GIF_RE = re.compile(rf"^({_STYLE_KEYS})-growth\.gif$")
 _TIMELAPSE_RE = re.compile(rf"^living-({_STYLE_KEYS})(-dark)?\.gif$")
 
 
 def _asset_descriptor(path: Path) -> dict[str, Any] | None:
-    m = _GROWTH_SVG_RE.match(path.name)
-    if m:
-        style = m.group(1)
-        return {
-            "name": path.name,
-            "path": path.name,
-            "style": style,
-            "style_label": LIVING_ART_STYLE_LABELS.get(style, style),
-            "channel": "source_svg",
-            "variant": "default",
-            "bytes": path.stat().st_size,
-        }
-
-    m = _GROWTH_GIF_RE.match(path.name)
-    if m:
-        style = m.group(1)
-        return {
-            "name": path.name,
-            "path": path.name,
-            "style": style,
-            "style_label": LIVING_ART_STYLE_LABELS.get(style, style),
-            "channel": "compatibility_gif",
-            "variant": "default",
-            "bytes": path.stat().st_size,
-        }
-
     m = _TIMELAPSE_RE.match(path.name)
     if m:
         style, raw_variant = m.groups()
@@ -108,8 +78,6 @@ def build_living_art_manifest(output_dir: Path) -> dict[str, Any]:
         "output_dir": str(output_dir),
         "total_assets": len(assets),
         "counts": {
-            "source_svg": counts.get("source_svg", 0),
-            "compatibility_gif": counts.get("compatibility_gif", 0),
             "timelapse_gif": counts.get("timelapse_gif", 0),
         },
         "styles": sorted({asset["style"] for asset in assets}),
@@ -123,26 +91,30 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
         grouped.setdefault(asset["channel"], []).append(asset)
 
     sections: list[str] = []
-    for channel in ("source_svg", "compatibility_gif", "timelapse_gif"):
+    for channel in ("timelapse_gif",):
         assets = grouped.get(channel) or []
         if not assets:
             continue
         cards = []
         for asset in assets:
             meta = (
-                f'{escape(asset["style_label"])} · '
-                f'{escape(asset["variant"])} · '
-                f'{asset["bytes"] / 1024:.1f} KB'
+                f"{escape(asset['style_label'])} · "
+                f"{escape(asset['variant'])} · "
+                f"{asset['bytes'] / 1024:.1f} KB"
             )
             cards.append(
                 "\n".join(
                     [
                         '<article class="asset-card">',
                         f'<a href="{escape(asset["path"])}">',
-                        f'<img src="{escape(asset["path"])}" alt="{escape(asset["style_label"])} preview" loading="lazy"/>',
+                        (
+                            f'<img src="{escape(asset["path"])}" '
+                            f'alt="{escape(asset["style_label"])} preview" '
+                            'loading="lazy"/>'
+                        ),
                         "</a>",
-                        f'<h3>{escape(asset["name"])}</h3>',
-                        f'<p>{meta}</p>',
+                        f"<h3>{escape(asset['name'])}</h3>",
+                        f"<p>{meta}</p>",
                         "</article>",
                     ]
                 )
@@ -151,7 +123,7 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
             "\n".join(
                 [
                     "<section>",
-                    f'<h2>{escape(_CHANNEL_LABELS[channel])}</h2>',
+                    f"<h2>{escape(_CHANNEL_LABELS[channel])}</h2>",
                     '<div class="asset-grid">',
                     *cards,
                     "</div>",
@@ -162,14 +134,19 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
 
     empty_state = ""
     if manifest["total_assets"] == 0:
-        empty_state = '<p class="empty-state">No living-art assets were found in this directory yet.</p>'
+        empty_state = (
+            '<p class="empty-state">'
+            "No living-art assets were found in this directory yet."
+            "</p>"
+        )
 
     summary_items = "".join(
-        f'<li><strong>{count}</strong> {escape(_CHANNEL_LABELS[channel])}</li>'
+        f"<li><strong>{count}</strong> {escape(_CHANNEL_LABELS[channel])}</li>"
         for channel, count in manifest["counts"].items()
     )
     sections_markup = "\n".join(sections)
-    return """<!DOCTYPE html>
+    return (
+        """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -177,23 +154,67 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
   <title>Living Art Preview Gallery</title>
   <style>
     :root { color-scheme: light dark; }
-    body { font-family: ui-serif, Georgia, serif; margin: 0; padding: 32px; background: #f4efe6; color: #211c18; }
+    body {
+      font-family: ui-serif, Georgia, serif;
+      margin: 0;
+      padding: 32px;
+      background: #f4efe6;
+      color: #211c18;
+    }
     main { max-width: 1180px; margin: 0 auto; }
     h1, h2, h3 { margin: 0; }
     p, li { line-height: 1.5; }
-    .summary { display: flex; gap: 18px; flex-wrap: wrap; padding: 0; margin: 18px 0 28px; list-style: none; }
-    .summary li { background: rgba(255,255,255,0.75); border: 1px solid rgba(33,28,24,0.12); border-radius: 999px; padding: 10px 14px; }
+    .summary {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 0;
+      margin: 18px 0 28px;
+      list-style: none;
+    }
+    .summary li {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(33,28,24,0.12);
+      border-radius: 999px;
+      padding: 10px 14px;
+    }
     section { margin-top: 30px; }
-    .asset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 14px; }
-    .asset-card { background: rgba(255,255,255,0.78); border: 1px solid rgba(33,28,24,0.12); border-radius: 18px; padding: 14px; box-shadow: 0 12px 30px rgba(33,28,24,0.08); }
-    .asset-card a { display: block; aspect-ratio: 1 / 1; background: #ddd4c6; border-radius: 12px; overflow: hidden; }
-    .asset-card img { width: 100%; height: 100%; object-fit: contain; display: block; background: linear-gradient(135deg, #f8f3eb, #e6dccd); }
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 14px;
+    }
+    .asset-card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(33,28,24,0.12);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(33,28,24,0.08);
+    }
+    .asset-card a {
+      display: block;
+      aspect-ratio: 1 / 1;
+      background: #ddd4c6;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .asset-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: linear-gradient(135deg, #f8f3eb, #e6dccd);
+    }
     .asset-card h3 { font-size: 0.98rem; margin-top: 12px; }
     .asset-card p { margin: 6px 0 0; color: #5d5146; font-size: 0.92rem; }
     .empty-state { margin-top: 18px; color: #5d5146; }
     @media (prefers-color-scheme: dark) {
       body { background: #151412; color: #efe6d7; }
-      .summary li, .asset-card { background: rgba(35,32,29,0.88); border-color: rgba(239,230,215,0.12); }
+      .summary li, .asset-card {
+        background: rgba(35,32,29,0.88);
+        border-color: rgba(239,230,215,0.12);
+      }
       .asset-card p, .empty-state { color: #b8ac9c; }
       .asset-card a { background: #26211c; }
       .asset-card img { background: linear-gradient(135deg, #1f1b17, #2e2924); }
@@ -203,14 +224,17 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
 <body>
   <main>
     <h1>Living Art Preview Gallery</h1>
-    <p>Canonical source SVGs, compatibility GIFs, and timelapse exports discovered in this output directory.</p>
+    <p>Canonical living-art timelapse GIFs discovered in this output directory.</p>
     <ul class="summary">__SUMMARY__</ul>
     __EMPTY__
     __SECTIONS__
   </main>
 </body>
 </html>
-""".replace("__SUMMARY__", summary_items).replace("__EMPTY__", empty_state).replace("__SECTIONS__", sections_markup)
+""".replace("__SUMMARY__", summary_items)
+        .replace("__EMPTY__", empty_state)
+        .replace("__SECTIONS__", sections_markup)
+    )
 
 
 def sync_living_art_artifacts(output_dir: Path) -> tuple[Path, Path, dict[str, Any]]:

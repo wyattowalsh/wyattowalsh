@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect, useEffectEvent } from 'react';
+import { useCallback, useEffect } from 'react';
 
 type ClientTelemetryEvent = {
   name: 'page_view' | 'cta_click' | 'outbound_click';
@@ -31,7 +31,7 @@ export function TelemetryProvider() {
   const searchParams = useSearchParams();
   const searchKey = searchParams.toString();
 
-  const dispatchTelemetry = useEffectEvent((events: ClientTelemetryEvent[]) => {
+  const dispatchTelemetry = useCallback((events: ClientTelemetryEvent[]) => {
     if (events.length === 0) {
       return;
     }
@@ -55,9 +55,9 @@ export function TelemetryProvider() {
       body: payload,
       keepalive: true,
     });
-  });
+  }, []);
 
-  const buildBaseEvent = useEffectEvent(
+  const buildBaseEvent = useCallback(
     (name: ClientTelemetryEvent['name']): ClientTelemetryEvent => ({
       name,
       pathname,
@@ -65,6 +65,7 @@ export function TelemetryProvider() {
       referrer: document.referrer || undefined,
       sessionId: getClientSessionId(),
     }),
+    [pathname],
   );
 
   useEffect(() => {

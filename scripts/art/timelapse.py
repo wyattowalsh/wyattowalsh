@@ -58,7 +58,6 @@ def _render_single_frame(
     style: str,
     seed_hex: str,
     size: int,
-    final_maturity: float,
 ) -> bytes | None:
     """Render one frame as PNG bytes. Runs in a worker process.
 
@@ -80,8 +79,6 @@ def _render_single_frame(
         "maturity": snapshot_data["maturity"],
         "timeline": False,
     }
-    if style == "topo":
-        kwargs["chrome_maturity"] = final_maturity
     svg_str = gen_fn(data, **kwargs)
 
     # SVG → PNG
@@ -314,7 +311,6 @@ def render_timelapse(
     # Compute deterministic seed from final snapshot
     final_snap = sampled[-1]
     seed_hex = seed_hash(final_snap.metrics_dict)
-    final_maturity = final_snap.maturity
 
     # Serialize snapshots for multiprocessing
     serialized_frames = [
@@ -358,7 +354,6 @@ def render_timelapse(
                     style,
                     seed_hex,
                     size,
-                    final_maturity,
                 ): i
                 for i, snap_data in enumerate(serialized_frames)
             }
@@ -416,7 +411,10 @@ def main() -> None:
     parser.add_argument(
         "--only",
         default=None,
-        help="Restrict to one style: inkgarden, topo, genetic, physarum, lenia, or ferrofluid",
+        help=(
+            "Restrict to one style: inkgarden, topo, genetic, physarum, "
+            "lenia, or ferrofluid"
+        ),
     )
     parser.add_argument("--workers", type=int, default=None, help="Parallel workers")
     parser.add_argument("--output-dir", default=None, help="Output directory")

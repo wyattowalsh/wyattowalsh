@@ -17,16 +17,16 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date as dt_date
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta
 from typing import Any
 
+from ..utils import get_logger
 from .shared import (
     WorldState,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
 )
-from ..utils import get_logger
 
 logger = get_logger(module=__name__)
 
@@ -181,6 +181,71 @@ def _trailing_year_contributions(
     return total
 
 
+def _truncate_daily(
+    contributions_daily: dict[str, int],
+    up_to: dt_date,
+) -> dict[str, int]:
+    """Return only daily contribution points <= up_to date."""
+    truncated: dict[str, int] = {}
+    for key, value in contributions_daily.items():
+        parsed = _parse_date(key)
+        if parsed is not None and parsed <= up_to:
+            truncated[key] = value
+    return truncated
+
+
+def _with_canonical_date(
+    item: dict[str, Any],
+    *,
+    fallback_keys: tuple[str, ...],
+) -> dict[str, Any]:
+    """Fill a canonical ``date`` field from fallback keys when needed."""
+    if item.get("date"):
+        return item
+
+    normalized = dict(item)
+    for key in fallback_keys:
+        value = normalized.get(key)
+        if isinstance(value, str) and value:
+            normalized["date"] = value
+            break
+    return normalized
+
+
+def _advance_dated_cursor(
+    items: list[dict[str, Any]],
+    cursor: int,
+    day_iso: str,
+    *,
+    date_key: str = "date",
+) -> int:
+    """Advance a sorted event cursor through all entries on or before ``day_iso``."""
+    while (
+        cursor < len(items)
+        and (items[cursor].get(date_key, "") or "")[:10] <= day_iso
+    ):
+        cursor += 1
+    return cursor
+
+
+def _repo_recency_bands(
+    repos: list[dict[str, Any]],
+) -> dict[str, int]:
+    """Bucket repos by coarse recency bands."""
+    bands = {"fresh": 0, "recent": 0, "established": 0, "legacy": 0}
+    for repo in repos:
+        age = int(repo.get("age_months", 0) or 0)
+        if age <= 3:
+            bands["fresh"] += 1
+        elif age <= 12:
+            bands["recent"] += 1
+        elif age <= 36:
+            bands["established"] += 1
+        else:
+            bands["legacy"] += 1
+    return bands
+
+
 # ---------------------------------------------------------------------------
 # Core builder
 # ---------------------------------------------------------------------------
@@ -228,6 +293,10 @@ def build_daily_snapshots(
         account_created,
         yesterday,
     )
+    from ..fetch_history import (
+        compute_contribution_streaks,
+        compute_star_velocity,
+    )
 
     # Pre-index timeline events
     stars_cumulative = _cumulative_counts_by_date(
@@ -250,9 +319,20 @@ def build_daily_snapshots(
         current_repos,
     )
 
-    # Contributions: monthly → daily
-    hist_monthly = history.get("contributions_monthly", {})
-    daily_contribs = contributions_monthly_to_daily_series(hist_monthly)
+    # Contributions: prefer daily if available; fallback to monthly expansion.
+    hist_monthly = history.get("contributions_monthly", {}) or {}
+    raw_daily = history.get("contributions_daily", {}) or {}
+    hist_daily: dict[str, int] = {}
+    if isinstance(raw_daily, dict):
+        for key, value in raw_daily.items():
+            d = _parse_date(str(key))
+            if d is not None:
+                hist_daily[d.isoformat()] = max(0, int(value or 0))
+    daily_contribs = (
+        hist_daily
+        if hist_daily
+        else contributions_monthly_to_daily_series(hist_monthly)
+    )
 
     # Current scalar values for interpolation
     curr = current_metrics
@@ -267,7 +347,27 @@ def build_daily_snapshots(
     curr_open_issues = curr.get("open_issues_count", 0) or 0
     curr_gists = curr.get("public_gists", 0) or 0
     curr_pr_review = curr.get("pr_review_count", 0) or 0
+    curr_total_repos_contrib = curr.get("total_repos_contributed", 0) or 0
     curr_languages = curr.get("languages", {}) or {}
+    issue_stats = curr.get("issue_stats", {}) or history.get("issue_stats", {}) or {}
+    commit_hour_distribution = (
+        curr.get("commit_hour_distribution", {})
+        or history.get("commit_hour_distribution", {})
+        or {}
+    )
+    all_releases = sorted(
+        [
+            _with_canonical_date(release, fallback_keys=("published_at",))
+            for release in (
+                history.get("releases", []) or curr.get("releases", []) or []
+            )
+        ],
+        key=lambda e: e.get("date", ""),
+    )
+    all_recent_merged_prs = sorted(
+        history.get("recent_merged_prs", []) or curr.get("recent_merged_prs", []) or [],
+        key=lambda e: e.get("merged_at", ""),
+    )
 
     # Account created string for history_dict
     ac_str = history.get("account_created", account_created.isoformat())
@@ -276,6 +376,13 @@ def build_daily_snapshots(
     all_stars = sorted(history.get("stars", []), key=lambda e: e.get("date", ""))
     all_forks = sorted(history.get("forks", []), key=lambda e: e.get("date", ""))
     all_hist_repos = sorted(history.get("repos", []), key=lambda e: e.get("date", ""))
+    sorted_daily_items = sorted(daily_contribs.items())
+    daily_cursor = 0
+    stars_cursor = 0
+    forks_cursor = 0
+    repos_cursor = 0
+    releases_cursor = 0
+    merged_prs_cursor = 0
 
     snapshots: list[DailySnapshot] = []
 
@@ -323,8 +430,27 @@ def build_daily_snapshots(
         # Language distribution
         langs = _language_distribution_at_day(repos_so_far, curr_languages)
 
-        # Monthly contributions truncated
+        # Monthly/daily contributions truncated
         monthly_trunc = _truncate_monthly(hist_monthly, day)
+        while (
+            daily_cursor < len(sorted_daily_items)
+            and sorted_daily_items[daily_cursor][0] <= day_iso
+        ):
+            daily_cursor += 1
+        daily_trunc = dict(sorted_daily_items[:daily_cursor])
+        releases_cursor = _advance_dated_cursor(
+            all_releases,
+            releases_cursor,
+            day_iso,
+        )
+        releases_trunc = all_releases[:releases_cursor]
+        merged_prs_cursor = _advance_dated_cursor(
+            all_recent_merged_prs,
+            merged_prs_cursor,
+            day_iso,
+            date_key="merged_at",
+        )
+        recent_merged_prs_trunc = all_recent_merged_prs[:merged_prs_cursor]
 
         # Build metrics_dict (for ink_garden / topography)
         metrics_dict: dict[str, Any] = {
@@ -340,38 +466,31 @@ def build_daily_snapshots(
             "total_commits": _interpolate_scalar(curr_total_commits, progress),
             "total_prs": _interpolate_scalar(curr_total_prs, progress),
             "total_issues": _interpolate_scalar(curr_total_issues, progress),
+            "total_repos_contributed": _interpolate_scalar(
+                curr_total_repos_contrib, progress
+            ),
             "open_issues_count": _interpolate_scalar(curr_open_issues, progress),
             "network_count": _interpolate_scalar(curr_network, progress),
             "public_gists": _interpolate_scalar(curr_gists, progress),
             "pr_review_count": _interpolate_scalar(curr_pr_review, progress),
             "languages": langs,
             "contributions_monthly": monthly_trunc,
+            "contributions_daily": daily_trunc,
             "label": owner,
             "account_created": ac_str,
+            "issue_stats": issue_stats,
+            "commit_hour_distribution": commit_hour_distribution,
+            "recent_merged_prs": recent_merged_prs_trunc,
+            "releases": releases_trunc,
         }
 
-        # Passthrough fields that are computed per-snapshot later
-        # (star_velocity, contribution_streaks — recompute every 30 days)
-        if day_idx % 30 == 0 or day_idx == total_days - 1:
-            # Recompute derived signals
-            from ..fetch_history import (
-                compute_star_velocity,
-                compute_contribution_streaks,
-            )
-
-            stars_up_to = [
-                s for s in all_stars if (s.get("date", "") or "")[:10] <= day_iso
-            ]
-            metrics_dict["star_velocity"] = compute_star_velocity(stars_up_to)
-            metrics_dict["contribution_streaks"] = compute_contribution_streaks(
-                monthly_trunc
-            )
-            # Cache for next 29 days
-            _cached_sv = metrics_dict["star_velocity"]
-            _cached_cs = metrics_dict["contribution_streaks"]
-        else:
-            metrics_dict["star_velocity"] = _cached_sv  # noqa: F821
-            metrics_dict["contribution_streaks"] = _cached_cs  # noqa: F821
+        # Recompute derived signals every day.
+        stars_cursor = _advance_dated_cursor(all_stars, stars_cursor, day_iso)
+        stars_trunc = all_stars[:stars_cursor]
+        metrics_dict["star_velocity"] = compute_star_velocity(stars_trunc)
+        metrics_dict["contribution_streaks"] = compute_contribution_streaks(
+            monthly_trunc
+        )
 
         # Topic clusters
         topic_counts: dict[str, int] = defaultdict(int)
@@ -381,6 +500,7 @@ def build_daily_snapshots(
         metrics_dict["topic_clusters"] = dict(
             sorted(topic_counts.items(), key=lambda kv: kv[1], reverse=True)
         )
+        metrics_dict["repo_recency_bands"] = _repo_recency_bands(repos_so_far)
 
         # Language diversity
         if langs:
@@ -400,15 +520,10 @@ def build_daily_snapshots(
             metrics_dict["language_count"] = 0
 
         # Build history_dict for historical/timelapse consumers.
-        stars_trunc = [
-            s for s in all_stars if (s.get("date", "") or "")[:10] <= day_iso
-        ]
-        forks_trunc = [
-            f for f in all_forks if (f.get("date", "") or "")[:10] <= day_iso
-        ]
-        repos_trunc = [
-            r for r in all_hist_repos if (r.get("date", "") or "")[:10] <= day_iso
-        ]
+        forks_cursor = _advance_dated_cursor(all_forks, forks_cursor, day_iso)
+        forks_trunc = all_forks[:forks_cursor]
+        repos_cursor = _advance_dated_cursor(all_hist_repos, repos_cursor, day_iso)
+        repos_trunc = all_hist_repos[:repos_cursor]
 
         history_dict: dict[str, Any] = {
             "account_created": ac_str,
@@ -416,9 +531,14 @@ def build_daily_snapshots(
             "forks": forks_trunc,
             "repos": repos_trunc,
             "contributions_monthly": monthly_trunc,
+            "contributions_daily": daily_trunc,
             "current_metrics": metrics_dict,
             "star_velocity": metrics_dict.get("star_velocity", {}),
             "contribution_streaks": metrics_dict.get("contribution_streaks", {}),
+            "releases": releases_trunc,
+            "recent_merged_prs": recent_merged_prs_trunc,
+            "issue_stats": issue_stats,
+            "commit_hour_distribution": commit_hour_distribution,
         }
 
         # Maturity and world state

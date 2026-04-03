@@ -17,7 +17,7 @@ from scripts.art.artifacts import (  # noqa: E402
 def _stub_svg() -> str:
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
-        "<defs><linearGradient id=\"grad\"><stop offset=\"0%\" "
+        '<defs><linearGradient id="grad"><stop offset="0%" '
         'stop-color="#111"/></linearGradient></defs>'
         '<g id="layer"><circle id="dot" cx="50" cy="50" r="20" fill="url(#grad)"/></g>'
         "</svg>"
@@ -192,9 +192,6 @@ def test_main_gif_mode_disables_topography_timeline(
 
 def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -> None:
     for style in LIVING_ART_STYLE_KEYS:
-        svg_path = tmp_path / f"{style}-growth-animated.svg"
-        svg_path.write_text("<svg />", encoding="utf-8")
-        (tmp_path / f"{style}-growth.gif").write_bytes(b"GIF89a")
         (tmp_path / f"living-{style}.gif").write_bytes(b"GIF89a")
 
     manifest_path, gallery_path, manifest = sync_living_art_artifacts(tmp_path)
@@ -203,16 +200,14 @@ def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -
 
     assert manifest == manifest_data
     assert manifest_data["counts"] == {
-        "source_svg": 6,
-        "compatibility_gif": 6,
         "timelapse_gif": 6,
     }
-    assert manifest_data["total_assets"] == 18
+    assert manifest_data["total_assets"] == 6
     actual_styles = {a["style"] for a in manifest_data["assets"]}
     assert actual_styles == set(LIVING_ART_STYLE_KEYS)
     assert "Living Art Preview Gallery" in gallery
     for style in LIVING_ART_STYLE_KEYS:
-        assert f"{style}-growth-animated.svg" in gallery
+        assert f"living-{style}.gif" in gallery
 
 
 def test_main_svg_mode_propagates_generator_failure(
@@ -225,21 +220,13 @@ def test_main_svg_mode_propagates_generator_failure(
         {"wyatt": {"label": "stub", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _m: 0.5)
-    monkeypatch.setattr(
-        animate.ink_garden, "generate", lambda *_a, **_kw: _stub_svg()
-    )
+    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_a, **_kw: _stub_svg())
     monkeypatch.setattr(
         animate.genetic_landscape, "generate", lambda *_a, **_kw: _stub_svg()
     )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_a, **_kw: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_a, **_kw: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_a, **_kw: _stub_svg()
-    )
+    monkeypatch.setattr(animate.physarum, "generate", lambda *_a, **_kw: _stub_svg())
+    monkeypatch.setattr(animate.lenia, "generate", lambda *_a, **_kw: _stub_svg())
+    monkeypatch.setattr(animate.ferrofluid, "generate", lambda *_a, **_kw: _stub_svg())
 
     def _failing(*_a, **_kw):
         raise RuntimeError("Simulated generator failure")
@@ -253,4 +240,3 @@ def test_main_svg_mode_propagates_generator_failure(
 
     with pytest.raises(RuntimeError, match="Simulated generator failure"):
         animate.main()
-

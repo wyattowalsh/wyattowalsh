@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import io
+import types
 from datetime import date, timedelta
 
 import pytest
@@ -19,6 +21,7 @@ from scripts.art.shared import (  # noqa: E402, I001
 )
 from scripts.art.timelapse import (  # noqa: E402, I001
     _compute_frame_durations,
+    _render_single_frame,
 )
 
 
@@ -176,6 +179,8 @@ def _mock_history(days: int = 30) -> dict:
 
 
 def _mock_metrics() -> dict:
+    release_day = date.today() - timedelta(days=4)
+    merged_pr_day = date.today() - timedelta(days=3)
     return {
         "stars": 10,
         "forks": 3,
@@ -192,6 +197,21 @@ def _mock_metrics() -> dict:
         "network_count": 15,
         "public_gists": 3,
         "pr_review_count": 8,
+        "total_repos_contributed": 7,
+        "issue_stats": {"open_count": 2, "closed_count": 10},
+        "commit_hour_distribution": {9: 3, 21: 4},
+        "releases": [
+            {
+                "published_at": f"{release_day.isoformat()}T12:00:00Z",
+                "name": "v1.0.0",
+            }
+        ],
+        "recent_merged_prs": [
+            {
+                "merged_at": f"{merged_pr_day.isoformat()}T12:00:00Z",
+                "title": "PR",
+            }
+        ],
         "languages": {"Python": 50000, "JavaScript": 20000},
         "top_repos": [
             {
@@ -262,7 +282,12 @@ def test_build_daily_snapshots_metrics_dict_keys():
         "forks",
         "followers",
         "contributions_monthly",
+        "contributions_daily",
         "languages",
+        "issue_stats",
+        "commit_hour_distribution",
+        "repo_recency_bands",
+        "total_repos_contributed",
     }
     for s in snaps:
         assert required.issubset(s.metrics_dict.keys()), (
@@ -281,12 +306,168 @@ def test_build_daily_snapshots_history_dict_keys():
         "forks",
         "repos",
         "contributions_monthly",
+        "contributions_daily",
         "current_metrics",
+        "issue_stats",
+        "commit_hour_distribution",
     }
     for s in snaps:
         assert required.issubset(s.history_dict.keys()), (
             f"Missing keys: {required - s.history_dict.keys()}"
         )
+
+
+def test_build_daily_snapshots_prefers_contributions_daily() -> None:
+    """When daily contributions are present, snapshots should use them."""
+    history = _mock_history(days=7)
+    start = date.fromisoformat(history["account_created"][:10])
+    history["contributions_daily"] = {
+        (start + timedelta(days=i)).isoformat(): i + 1 for i in range(7)
+    }
+    history["contributions_monthly"] = {f"{start.year:04d}-{start.month:02d}": 999}
+    metrics = _mock_metrics()
+    snaps = build_daily_snapshots(history, metrics, owner="testuser")
+    assert (
+        snaps[-1].metrics_dict["contributions_daily"]
+        == history["contributions_daily"]
+    )
+
+
+def test_build_daily_snapshots_monthly_fallback_still_works() -> None:
+    """Monthly-only payloads should still produce daily contributions for rendering."""
+    history = _mock_history(days=7)
+    history.pop("contributions_daily", None)
+    metrics = _mock_metrics()
+    snaps = build_daily_snapshots(history, metrics, owner="testuser")
+    assert "contributions_daily" in snaps[-1].metrics_dict
+    assert "contributions_daily" in snaps[-1].history_dict
+    assert isinstance(snaps[-1].metrics_dict["contributions_daily"], dict)
+
+
+def test_build_daily_snapshots_release_and_pr_events_follow_chronology() -> None:
+    """Release and merged-PR events should appear on their actual in-range days."""
+    history = _mock_history(days=10)
+    start = date.fromisoformat(history["account_created"][:10])
+    release_day = start + timedelta(days=2)
+    merged_pr_day = start + timedelta(days=4)
+    metrics = _mock_metrics()
+    metrics["releases"] = [
+        {
+            "published_at": f"{release_day.isoformat()}T12:00:00Z",
+            "name": "v1.0.0",
+        }
+    ]
+    metrics["recent_merged_prs"] = [
+        {
+            "merged_at": f"{merged_pr_day.isoformat()}T12:00:00Z",
+            "title": "PR",
+        }
+    ]
+
+    snaps = build_daily_snapshots(history, metrics, owner="testuser")
+    snap_by_day = {snap.day: snap for snap in snaps}
+
+    assert snap_by_day[release_day - timedelta(days=1)].metrics_dict["releases"] == []
+    assert (
+        snap_by_day[release_day].metrics_dict["releases"][0]["published_at"].startswith(
+            release_day.isoformat()
+        )
+    )
+    assert (
+        snap_by_day[release_day].history_dict["releases"][0]["published_at"].startswith(
+            release_day.isoformat()
+        )
+    )
+
+    assert (
+        snap_by_day[merged_pr_day - timedelta(days=1)].metrics_dict["recent_merged_prs"]
+        == []
+    )
+    assert snap_by_day[merged_pr_day].metrics_dict["recent_merged_prs"][0][
+        "merged_at"
+    ].startswith(merged_pr_day.isoformat())
+    assert snap_by_day[merged_pr_day].history_dict["recent_merged_prs"][0][
+        "merged_at"
+    ].startswith(merged_pr_day.isoformat())
+
+
+def test_build_daily_snapshots_recomputes_derived_signals_per_day(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Derived signals should be recomputed for each day."""
+    history = _mock_history(days=5)
+    metrics = _mock_metrics()
+
+    star_calls: list[int] = []
+    streak_calls: list[int] = []
+
+    def _fake_star_velocity(stars_up_to: list[dict]) -> dict[str, float]:
+        star_calls.append(len(stars_up_to))
+        return {"recent_rate": float(len(stars_up_to))}
+
+    def _fake_streaks(monthly: dict[str, int]) -> dict[str, int | bool]:
+        streak_calls.append(len(monthly))
+        return {
+            "current_streak_months": len(streak_calls),
+            "longest_streak_months": len(streak_calls),
+            "streak_active": True,
+        }
+
+    monkeypatch.setattr(
+        "scripts.fetch_history.compute_star_velocity",
+        _fake_star_velocity,
+    )
+    monkeypatch.setattr(
+        "scripts.fetch_history.compute_contribution_streaks",
+        _fake_streaks,
+    )
+
+    snaps = build_daily_snapshots(history, metrics, owner="testuser")
+    assert len(star_calls) == len(snaps)
+    assert len(streak_calls) == len(snaps)
+    assert (
+        snaps[-1].metrics_dict["contribution_streaks"]["current_streak_months"]
+        == len(snaps)
+    )
+
+
+def test_render_single_frame_topo_does_not_leak_chrome_maturity(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Topography timelapse frames should not force final chrome maturity."""
+    captured: dict[str, object] = {}
+
+    def _fake_generate(data: dict, **kwargs: object) -> str:
+        captured["kwargs"] = kwargs
+        return "<svg/>"
+
+    class _FakeImage:
+        def save(self, buffer: io.BytesIO, format: str = "PNG") -> None:  # noqa: A002
+            _ = format
+            buffer.write(b"png")
+
+    monkeypatch.setattr(
+        "scripts.art.animate.svg_to_png",
+        lambda _svg, _size, frame_id: _FakeImage(),
+    )
+    monkeypatch.setattr(
+        "importlib.import_module",
+        lambda _path: types.SimpleNamespace(generate=_fake_generate),
+    )
+
+    result = _render_single_frame(
+        {
+            "metrics_dict": {},
+            "maturity": 0.4,
+            "day_index": 1,
+        },
+        "topo",
+        "abc123",
+        128,
+    )
+
+    assert result == b"png"
+    assert "chrome_maturity" not in captured.get("kwargs", {})
 
 
 # ---------------------------------------------------------------------------

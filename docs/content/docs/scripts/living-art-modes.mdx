@@ -1,50 +1,47 @@
 ---
 title: Living Art Modes
-description: Preview, export, and compatibility constraints across the living-art generators.
+description: Current timelapse-only artifact contract across the living-art generators.
 ---
 
-## Why modes exist
+## Current contract
 
-The living-art suite writes different artifacts for different viewers because the richest SVG output is not the most portable output. GitHub README embeds, social previews, image viewers, and workflow artifact inspection all place different constraints on what survives.
+The public living-art contract is now timelapse-only: the generators publish canonical GIFs named `living-<style>.gif`, then rebuild `living-art-manifest.json` and `living-art-preview.html` from the files that exist in the output directory.
+
+Legacy growth SVG/GIF filenames such as `inkgarden-growth-animated.svg` or `topo-growth.gif` may still exist in the repository as checked-in showcase art, but they are not the current CLI/workflow artifact contract.
 
 ## Output matrix
 
-| Surface | Canonical artifact | Compatibility artifact | Why |
+| Surface | Canonical artifact | Indexed companion files | Notes |
 |---|---|---|---|
-| Ink Garden | `inkgarden-growth-animated.svg` | `inkgarden-growth.gif` | Stacked SVG is richer, GIF survives inline embedding |
-| Topography | `topo-growth-animated.svg` | `topo-growth.gif` | Static/cartographic fallback is easier to read in flattened viewers |
-| Genetic Landscape | `genetic-growth-animated.svg` | `genetic-growth.gif` | Evolutionary terrain benefits from both high-fidelity SVG and portable GIF |
-| Physarum | `physarum-growth-animated.svg` | `physarum-growth.gif` | Network growth is best seen animated; GIF gives broad compatibility |
-| Lenia | `lenia-growth-animated.svg` | `lenia-growth.gif` | Continuous automata need smooth playback; GIF provides universal fallback |
-| Ferrofluid | `ferrofluid-growth-animated.svg` | `ferrofluid-growth.gif` | Metallic spike dynamics are richest in SVG; GIF for inline embedding |
-| Timelapse exports | `living-*.gif` | n/a | Timelapse is already flattened for portability |
+| Ink Garden | `living-inkgarden.gif` | `living-art-manifest.json`, `living-art-preview.html` | Timelapse GIF discovered by the manifest/gallery scan |
+| Topography | `living-topo.gif` | `living-art-manifest.json`, `living-art-preview.html` | Same contract as the other styles |
+| Genetic Landscape | `living-genetic.gif` | `living-art-manifest.json`, `living-art-preview.html` | Same contract as the other styles |
+| Physarum | `living-physarum.gif` | `living-art-manifest.json`, `living-art-preview.html` | Same contract as the other styles |
+| Lenia | `living-lenia.gif` | `living-art-manifest.json`, `living-art-preview.html` | Same contract as the other styles |
+| Ferrofluid | `living-ferrofluid.gif` | `living-art-manifest.json`, `living-art-preview.html` | Same contract as the other styles |
 
 ## CLI modes
 
 ### `generate living-art`
 
-Runs the shared six-style `scripts.art.animate` driver twice by default:
+Generates canonical living-art timelapse GIFs. This command currently shares its implementation and artifact contract with `generate timelapse`.
 
-1. `--svg --frames <svg-frames>` to write stacked timeline SVGs
-2. `--frames <frames> --size <size>` to write compatibility GIFs
-
-Use `--svg-only` when you want the richer source artifacts without rewriting the compatibility GIFs.
 Use `--only inkgarden`, `--only topo`, `--only genetic`, `--only physarum`, `--only lenia`, or `--only ferrofluid` when you want to regenerate just one style.
 
 ```bash
-uv run readme generate living-art \
+uv run python -m scripts.cli generate living-art \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
   --only topo \
-  --svg-only
+  --max-frames 120
 ```
 
 ### `generate timelapse`
 
-Produces daily-history GIFs for one or all styles. These are export-oriented artifacts rather than source SVGs.
+Produces the same day-by-day GIF contract as `generate living-art`.
 
 ```bash
-uv run readme generate timelapse \
+uv run python -m scripts.cli generate timelapse \
   --metrics-path /tmp/metrics.json \
   --history-path /tmp/history.json \
   --only inkgarden \
@@ -52,16 +49,20 @@ uv run readme generate timelapse \
   --size 400
 ```
 
+## `generate all` caveat
+
+Document `generate all` as conditional only. The living-art portion is skipped unless both `--metrics-path` and `--history-path` are supplied.
+
 ## Constraints to document and test
 
 | Constraint | Consequence |
 |---|---|
-| Timeline SVGs are source artifacts, not guaranteed inline playback assets | Link to them, do not rely on them for universal animation support |
-| Topography and Ink Garden can render static-safe frames | Frame generation should disable timeline CSS when producing GIF inputs |
-| Timelapse outputs are intentionally flattened | They are review/export artifacts, not interactive sources |
+| `living-art-manifest.json` and `living-art-preview.html` are regenerated from discovered `living-*.gif` files | Stage and review the GIFs and the index files together |
+| `generate living-art` and `generate timelapse` currently share the same implementation | Do not document separate growth-vs-timelapse output contracts |
+| Legacy `*-growth*` assets may still be checked in | Treat them as showcase collateral, not current generated workflow outputs |
 
 <Callout type="idea" title="Recommended release review">
-Inspect both tiers: the source SVG for richness and the GIF preview for actual README behavior. A beautiful SVG that collapses into an unreadable flattened preview is still a release blocker.
+Inspect the canonical timelapse GIFs and the generated preview gallery together. If the GIFs render but the gallery/index contract is stale or misleading, treat that as a release blocker.
 </Callout>
 
 ## Related
