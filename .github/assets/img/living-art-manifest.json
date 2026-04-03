@@ -1,11 +1,9 @@
 {
-  "generated_at": "2026-04-03T02:47:15.131711+00:00",
+  "generated_at": "2026-04-03T15:30:59.350927+00:00",
   "output_dir": ".github/assets/img",
-  "total_assets": 12,
+  "total_assets": 6,
   "counts": {
-    "source_svg": 6,
-    "compatibility_gif": 6,
-    "timelapse_gif": 0
+    "timelapse_gif": 6
   },
   "styles": [
     "ferrofluid",
@@ -17,112 +15,58 @@
   ],
   "assets": [
     {
-      "name": "ferrofluid-growth.gif",
-      "path": "ferrofluid-growth.gif",
+      "name": "living-ferrofluid.gif",
+      "path": "living-ferrofluid.gif",
       "style": "ferrofluid",
       "style_label": "Ferrofluid",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 2217
+      "bytes": 1643434
     },
     {
-      "name": "genetic-growth.gif",
-      "path": "genetic-growth.gif",
+      "name": "living-genetic.gif",
+      "path": "living-genetic.gif",
       "style": "genetic",
       "style_label": "Genetic Landscape",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 187753
+      "bytes": 2120069
     },
     {
-      "name": "inkgarden-growth.gif",
-      "path": "inkgarden-growth.gif",
+      "name": "living-inkgarden.gif",
+      "path": "living-inkgarden.gif",
       "style": "inkgarden",
       "style_label": "Ink Garden",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 2342628
+      "bytes": 5541215
     },
     {
-      "name": "lenia-growth.gif",
-      "path": "lenia-growth.gif",
+      "name": "living-lenia.gif",
+      "path": "living-lenia.gif",
       "style": "lenia",
       "style_label": "Lenia",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 746
+      "bytes": 459981
     },
     {
-      "name": "physarum-growth.gif",
-      "path": "physarum-growth.gif",
+      "name": "living-physarum.gif",
+      "path": "living-physarum.gif",
       "style": "physarum",
       "style_label": "Physarum",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 746
+      "bytes": 1453799
     },
     {
-      "name": "topo-growth.gif",
-      "path": "topo-growth.gif",
+      "name": "living-topo.gif",
+      "path": "living-topo.gif",
       "style": "topo",
       "style_label": "Topography",
-      "channel": "compatibility_gif",
+      "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 2887853
-    },
-    {
-      "name": "ferrofluid-growth-animated.svg",
-      "path": "ferrofluid-growth-animated.svg",
-      "style": "ferrofluid",
-      "style_label": "Ferrofluid",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 1468766
-    },
-    {
-      "name": "genetic-growth-animated.svg",
-      "path": "genetic-growth-animated.svg",
-      "style": "genetic",
-      "style_label": "Genetic Landscape",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 421132
-    },
-    {
-      "name": "inkgarden-growth-animated.svg",
-      "path": "inkgarden-growth-animated.svg",
-      "style": "inkgarden",
-      "style_label": "Ink Garden",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 7195095
-    },
-    {
-      "name": "lenia-growth-animated.svg",
-      "path": "lenia-growth-animated.svg",
-      "style": "lenia",
-      "style_label": "Lenia",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 692068
-    },
-    {
-      "name": "physarum-growth-animated.svg",
-      "path": "physarum-growth-animated.svg",
-      "style": "physarum",
-      "style_label": "Physarum",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 361744
-    },
-    {
-      "name": "topo-growth-animated.svg",
-      "path": "topo-growth-animated.svg",
-      "style": "topo",
-      "style_label": "Topography",
-      "channel": "source_svg",
-      "variant": "default",
-      "bytes": 13573996
+      "bytes": 603864
     }
   ]
 }
