@@ -63,14 +63,14 @@
 <text class="rc-desc" x="20" y="124" style="font: 400 9px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">Topics database · kaggle · kaggle-dataset</text>
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="269" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="168" width="224.0" height="4" fill="#3572A5" />
-<rect x="244.0" y="168" width="44.7" height="4" fill="#DA5B0B" />
+<rect x="20.0" y="168" width="231.4" height="4" fill="#3572A5" />
+<rect x="251.4" y="168" width="37.4" height="4" fill="#DA5B0B" />
 <rect x="288.7" y="168" width="1.0" height="4" fill="#563d7c" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3572A5" />
-<text class="rc-meta" x="32" y="184">Python 83%</text>
+<text class="rc-meta" x="32" y="184">Python 86%</text>
 <circle class="rc-lang-dot" cx="132" cy="180" r="4" fill="#DA5B0B" />
-<text class="rc-meta" x="140" y="184">Jupyter Notebook 17%</text>
+<text class="rc-meta" x="140" y="184">Jupyter Notebook 14%</text>
 <text class="rc-meta" x="326" y="142">10</text>
 <svg x="308" y="130" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" /></svg>
 <text class="rc-meta" x="282" y="142">14</text>
