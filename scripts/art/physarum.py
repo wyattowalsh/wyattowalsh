@@ -826,7 +826,8 @@ def generate(
     config = CFG
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
-    growth_mat = 1.0 if timeline_enabled else mat
+    explicit_snapshot = maturity is not None
+    growth_mat = 1.0 if timeline_enabled and not explicit_snapshot else mat
 
     # ── WorldState ────────────────────────────────────────────────
     world: WorldState = compute_world_state(metrics)
@@ -998,6 +999,7 @@ def generate(
     def _timeline_style(when: str, opacity: float, cls: str = "tl-reveal") -> str:
         if not timeline_enabled:
             return f'opacity="{opacity:.2f}"'
+        final_opacity = max(0.0, min(1.0, opacity))
         delay = map_date_to_loop_delay(
             when,
             timeline_window,
@@ -1006,7 +1008,7 @@ def generate(
         )
         return (
             f'class="{cls}" '
-            f'style="--delay:{delay:.3f}s;--to:{max(0.0, min(1.0, opacity)):.3f};'
+            f'style="opacity:{final_opacity:.3f};--delay:{delay:.3f}s;--to:{final_opacity:.3f};'
             f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" data-when="{when}"'
         )
 

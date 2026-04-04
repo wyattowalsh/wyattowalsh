@@ -292,6 +292,41 @@ def test_physarum_timeline_can_be_enabled_and_disabled() -> None:
     assert "opacity=" in legacy_svg
 
 
+def test_physarum_timeline_includes_static_opacity_fallbacks() -> None:
+    svg = generate(_sample_metrics(), seed="physarum-static-fallback", timeline=True)
+
+    assert re.search(
+        r'class="tl-reveal[^"]*"\s+style="opacity:[0-9.]+;--delay:',
+        svg,
+    )
+
+
+def test_physarum_explicit_maturity_with_timeline_preserves_growth_staging() -> None:
+    metrics = _sample_metrics()
+
+    early_svg = generate(
+        metrics,
+        seed="physarum-timeline-maturity",
+        timeline=True,
+        maturity=0.08,
+    )
+    late_svg = generate(
+        metrics,
+        seed="physarum-timeline-maturity",
+        timeline=True,
+        maturity=0.85,
+    )
+
+    assert "@keyframes physReveal" in early_svg
+    assert "@keyframes physReveal" in late_svg
+    assert 'class="tl-reveal' in early_svg
+    assert 'class="tl-reveal' in late_svg
+    assert early_svg != late_svg
+    assert late_svg.count('data-role="physarum-node-core"') > early_svg.count(
+        'data-role="physarum-node-core"',
+    )
+
+
 def test_physarum_timeline_prefers_contributions_daily_when_available() -> None:
     metrics = {
         **_sample_metrics(),
