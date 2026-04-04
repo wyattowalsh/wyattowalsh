@@ -767,19 +767,31 @@ def generate(
         *,
         fallback_opacity: bool = True,
     ) -> str:
+        final_opacity = max(0.0, min(1.0, opacity))
+        opacity_attr = (
+            f'opacity="{final_opacity:.2f}"' if fallback_opacity else ""
+        )
         if not timeline_enabled:
-            return f'opacity="{opacity:.2f}"' if fallback_opacity else ""
+            return opacity_attr
         delay = map_date_to_loop_delay(
             when,
             timeline_window,
             duration=loop_duration,
             reveal_fraction=reveal_fraction,
         )
-        return (
-            f'class="{cls}" '
-            f'style="--delay:{delay:.3f}s;--to:{max(0.0, min(1.0, opacity)):.3f};'
-            f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" data-when="{when}"'
-        )
+        attrs = [
+            attr
+            for attr in (
+                opacity_attr,
+                f'class="{cls}"',
+                f'style="--delay:{delay:.3f}s;--to:{final_opacity:.3f};'
+                f'--dur:{loop_duration:.2f}s"',
+                f'data-delay="{delay:.3f}"',
+                f'data-when="{when}"',
+            )
+            if attr
+        ]
+        return " ".join(attrs)
 
     # ── Dipole placement ──────────────────────────────────────────
     pool_y = HEIGHT * CFG.pool_y_fraction
@@ -908,7 +920,7 @@ def generate(
         P.append(
             "<style>"
             "@keyframes ferroReveal{0%{opacity:0}100%{opacity:var(--to,1)}}"
-            ".tl-reveal{opacity:0;animation:ferroReveal .8s ease-out var(--delay,0s) both}"
+            ".tl-reveal{animation:ferroReveal .8s ease-out var(--delay,0s) both}"
             ".tl-soft{animation-duration:1.15s}"
             "</style>"
         )

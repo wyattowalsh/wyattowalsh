@@ -115,6 +115,17 @@ def _count_dipole_markers(svg: str) -> int:
     return len(re.findall(r"<circle ", svg))
 
 
+def _spike_polygons(svg: str) -> list[ET.Element]:
+    root = ET.fromstring(svg)
+    return [
+        elem
+        for elem in root.iter()
+        if elem.tag.endswith("polygon")
+        and elem.attrib.get("fill", "").startswith("url(#sg")
+        and "filter" not in elem.attrib
+    ]
+
+
 def _root_attr(svg: str, name: str) -> float:
     root = ET.fromstring(svg)
     return float(root.attrib[name])
@@ -223,6 +234,24 @@ def test_ferrofluid_timeline_can_be_enabled_and_disabled() -> None:
     assert 'class="tl-reveal"' not in legacy_svg
     assert "data-delay=" not in legacy_svg
     assert "opacity=" in legacy_svg
+
+
+def test_ferrofluid_timeline_svg_keeps_static_spike_opacity_for_export() -> None:
+    timeline_svg = generate(
+        _sample_metrics(),
+        seed="fixed-seed",
+        timeline=True,
+        loop_duration=24.0,
+    )
+
+    spike_polygons = _spike_polygons(timeline_svg)
+
+    assert spike_polygons
+    assert ".tl-reveal{opacity:0;" not in timeline_svg
+    assert all(polygon.attrib.get("class") == "tl-reveal" for polygon in spike_polygons)
+    assert all(
+        polygon.attrib.get("opacity") == "0.95" for polygon in spike_polygons
+    )
 
 
 def test_ferrofluid_legacy_maturity_still_changes_shape() -> None:
