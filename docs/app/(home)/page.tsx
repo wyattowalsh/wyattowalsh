@@ -36,14 +36,46 @@ const features = [
 
 const artPieces = [
   {
-    src: '/showcase/inkgarden-growth.gif',
+    src: '/showcase/living-inkgarden.gif',
+    href: '/showcase/living-inkgarden.gif',
     title: 'Ink Garden',
-    description: 'Legacy showcase sample — current CLI/workflow contract publishes living-inkgarden timelapse GIFs',
+    description:
+      'Botanical timelapse where repositories sprout into a living ecosystem of trunks, blooms, and canopy light',
   },
   {
-    src: '/showcase/topo-growth.gif',
+    src: '/showcase/living-topo.gif',
+    href: '/showcase/living-topo.gif',
     title: 'Topography',
-    description: 'Legacy showcase sample — current CLI/workflow contract publishes living-topo timelapse GIFs',
+    description:
+      'Cartographic timelapse that turns repository history into contour lines, ridges, and survey-map weather',
+  },
+  {
+    src: '/showcase/living-genetic.gif',
+    href: '/showcase/living-genetic.gif',
+    title: 'Genetic Landscape',
+    description:
+      'Evolutionary terrain timelapse where repositories compete as adaptive peaks across a shifting biome',
+  },
+  {
+    src: '/showcase/living-physarum.gif',
+    href: '/showcase/living-physarum.gif',
+    title: 'Physarum',
+    description:
+      'Slime-mold timelapse that routes glowing transport veins between repository nutrient nodes',
+  },
+  {
+    src: '/showcase/living-lenia.gif',
+    href: '/showcase/living-lenia.gif',
+    title: 'Lenia',
+    description:
+      'Continuous cellular-automata timelapse where repositories seed soft digital organisms',
+  },
+  {
+    src: '/showcase/living-ferrofluid.gif',
+    href: '/showcase/living-ferrofluid.gif',
+    title: 'Ferrofluid',
+    description:
+      'Magnetic spike timelapse sculpted by repository fields, stars, and portfolio energy',
   },
 ];
 
@@ -108,11 +140,26 @@ export default function HomePage() {
             Living Art
           </h2>
           <p className="text-fd-muted-foreground text-center mb-10 max-w-xl mx-auto">
-            Current contract: `living-*.gif` timelapses plus `living-art-manifest.json` and `living-art-preview.html`. The cards below use legacy showcase samples kept in the docs site.
+            Current contract: `living-*.gif` timelapses plus `living-art-manifest.json` and `living-art-preview.html`.
+            The docs site mirrors that canonical surface under `/showcase/`.
           </p>
+          <div className="flex flex-wrap justify-center gap-4 mb-10 text-sm">
+            <Link
+              href="/showcase/living-art-preview.html"
+              className="rounded-full border border-fd-border px-4 py-2 transition-colors hover:bg-fd-accent"
+            >
+              Open preview gallery
+            </Link>
+            <Link
+              href="/showcase/living-art-manifest.json"
+              className="rounded-full border border-fd-border px-4 py-2 transition-colors hover:bg-fd-accent"
+            >
+              Open manifest JSON
+            </Link>
+          </div>
           <div className="art-gallery">
             {artPieces.map((piece) => (
-              <div key={piece.title} className="relative group">
+              <Link key={piece.title} href={piece.href} className="relative group block">
                 <Image
                   src={piece.src}
                   alt={piece.title}
@@ -125,7 +172,7 @@ export default function HomePage() {
                   <h3 className="text-white font-semibold text-lg">{piece.title}</h3>
                   <p className="text-white/80 text-sm">{piece.description}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

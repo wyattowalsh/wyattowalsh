@@ -612,13 +612,15 @@ def _render_svg(
                 duration=loop_duration,
                 reveal_fraction=reveal_fraction,
             )
+            # Keep a visible inline opacity fallback for static SVG rasterizers.
             style_parts.append(
                 f'class="tl-reveal" '
-                f'style="--delay:{delay:.3f}s;--to:{mat_opacity:.2f};--dur:{loop_duration:.2f}s" '
+                f'style="opacity:{mat_opacity:.3f};--delay:{delay:.3f}s;'
+                f'--to:{mat_opacity:.3f};--dur:{loop_duration:.2f}s" '
                 f'data-delay="{delay:.3f}" data-when="{when}"'
             )
         else:
-            style_parts.append(f'opacity="{mat_opacity:.2f}"')
+            style_parts.append(f'opacity="{mat_opacity:.3f}"')
 
         P.append(
             f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
@@ -651,13 +653,14 @@ def _render_svg(
             P.append(
                 f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
                 f'fill="{core_color}" class="tl-reveal" '
-                f'style="--delay:{delay:.3f}s;--to:{core_opacity:.2f};--dur:{loop_duration:.2f}s" '
+                f'style="opacity:{core_opacity:.3f};--delay:{delay:.3f}s;'
+                f'--to:{core_opacity:.3f};--dur:{loop_duration:.2f}s" '
                 f'data-delay="{delay:.3f}" data-when="{when}"/>'
             )
         else:
             P.append(
                 f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
-                f'fill="{core_color}" opacity="{core_opacity:.2f}"/>'
+                f'fill="{core_color}" opacity="{core_opacity:.3f}"/>'
             )
         budget.add(1)
     P.append("</g>")
@@ -667,10 +670,17 @@ def _render_svg(
 
 
 def _fade_ramp(growth_mat: float, field_value: float) -> float:
-    """Progressive reveal: higher field values require more maturity to appear."""
-    # Low values appear early, high values need maturity >= 0.5
-    threshold = 0.1 + 0.4 * field_value
-    return max(0.0, min(1.0, (growth_mat - threshold) / max(0.001, 1.0 - threshold)))
+    """Keep low-maturity static exports legible while preserving a maturity ramp."""
+    # Timelapse snapshots for sparse histories can stay near zero maturity for a
+    # long time. Preserve a dim organism residue so static rasterization does not
+    # collapse to a monochrome background, then ramp toward full intensity.
+    threshold = 0.04 + 0.22 * field_value
+    reveal = max(
+        0.0,
+        min(1.0, (growth_mat - threshold) / max(0.001, 1.0 - threshold)),
+    )
+    residue_floor = (0.24 + 0.22 * growth_mat) * (1.0 - 0.35 * field_value)
+    return max(reveal, min(0.50, max(0.12, residue_floor)))
 
 
 # ---------------------------------------------------------------------------

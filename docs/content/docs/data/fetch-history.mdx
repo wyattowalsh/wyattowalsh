@@ -88,7 +88,7 @@ uv run python -m scripts.cli generate living-art \
   --history-path /tmp/history.json
 ```
 
-The commit timestamps are used to compute daily activity density and day-by-day sampling. After a successful render, the same output directory is re-indexed into `living-art-manifest.json` and `living-art-preview.html`.
+The commit timestamps are used to compute daily activity density and day-by-day sampling. After a successful render, the canonical output directory is re-indexed into `living-art-manifest.json` and `living-art-preview.html`, then mirrored into `docs/public/showcase/` when the docs site is available.
 
 ## Related
 

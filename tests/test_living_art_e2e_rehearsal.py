@@ -78,6 +78,8 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.chdir(tmp_path)
+    docs_showcase = tmp_path / "docs" / "public" / "showcase"
+    docs_showcase.mkdir(parents=True)
     monkeypatch.setattr(
         generate_cmd,
         "_load_project_config",
@@ -158,8 +160,13 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     manifest = json.loads(
         (output_dir / "living-art-manifest.json").read_text(encoding="utf-8")
     )
-    assert manifest["total_assets"] == 6
-    assert manifest["counts"]["timelapse_gif"] == 6
+    assert manifest["total_assets"] == len(LIVING_ART_STYLE_KEYS)
+    assert manifest["counts"]["timelapse_gif"] == len(LIVING_ART_STYLE_KEYS)
+
+    for style in LIVING_ART_STYLE_KEYS:
+        assert (docs_showcase / f"living-{style}.gif").exists()
+    assert (docs_showcase / "living-art-manifest.json").exists()
+    assert (docs_showcase / "living-art-preview.html").exists()
 
 
 def test_living_art_only_forwards_selected_style_to_renderer(

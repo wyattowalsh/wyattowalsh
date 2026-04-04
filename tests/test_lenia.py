@@ -143,6 +143,10 @@ def _count_circles(svg: str) -> int:
     return len(root.findall(".//{http://www.w3.org/2000/svg}circle"))
 
 
+def _circle_opacities(svg: str) -> list[float]:
+    return [float(opacity) for opacity in re.findall(r'opacity="([0-9.]+)"', svg)]
+
+
 def _resolve_palette(metrics: dict) -> tuple[str, tuple[tuple[float, str], ...], str]:
     repos = metrics["repos"]
     language_mix = _extract_language_mix(repos, metrics.get("languages"))
@@ -203,6 +207,28 @@ def test_lenia_timeline_can_be_enabled_and_disabled() -> None:
     assert "opacity=" in legacy_svg
 
 
+def test_lenia_timeline_svg_keeps_inline_opacity_for_static_rasterizers() -> None:
+    svg = generate(
+        _sample_metrics(),
+        seed="lenia-timeline-static-fallback",
+        timeline=True,
+        maturity=0.45,
+    )
+
+    reveal_styles = re.findall(
+        r'class="tl-reveal"\s+style="opacity:([0-9.]+);'
+        r"--delay:([0-9.]+)s;--to:([0-9.]+);",
+        svg,
+    )
+
+    assert reveal_styles
+    assert any(float(opacity) > 0.0 for opacity, _, _ in reveal_styles)
+    assert all(
+        abs(float(opacity) - float(target)) < 0.001
+        for opacity, _, target in reveal_styles
+    )
+
+
 def test_lenia_timeline_repo_dates_follow_chronology_in_delays() -> None:
     svg = generate(
         _sample_metrics(),
@@ -236,6 +262,97 @@ def test_lenia_handles_empty_and_minimal_metrics_without_crashing() -> None:
 
     assert root.tag.endswith("svg")
     assert svg.rstrip().endswith("</svg>")
+
+
+def test_lenia_static_low_maturity_keeps_seed_residue_visible() -> None:
+    svg = generate(
+        _sample_metrics(),
+        seed="lenia-static-floor",
+        timeline=False,
+        maturity=0.0,
+    )
+
+    opacities = _circle_opacities(svg)
+
+    assert opacities
+    assert max(opacities) >= 0.12
+
+
+def test_lenia_static_adjacent_low_maturities_change_rasterized_frames() -> None:
+    from hashlib import sha256
+    from io import BytesIO
+
+    from PIL import Image
+
+    from scripts.art.timelapse import _render_single_frame
+
+    metrics = _sample_metrics()
+    png_hashes: dict[float, str] = {}
+
+    for day_index, maturity in enumerate((0.0, 0.003, 0.009, 0.010)):
+        frame = _render_single_frame(
+            {
+                "metrics_dict": metrics,
+                "history_dict": {},
+                "maturity": maturity,
+                "progress": maturity,
+                "day_index": day_index,
+            },
+            "lenia",
+            "lenia-static-adjacent-export",
+            96,
+        )
+        assert frame is not None
+        rgba = Image.open(BytesIO(frame)).convert("RGBA")
+        png_hashes[maturity] = sha256(rgba.tobytes()).hexdigest()
+
+    assert png_hashes[0.0] != png_hashes[0.003]
+    assert png_hashes[0.009] != png_hashes[0.010]
+
+
+def test_lenia_static_timelapse_export_produces_distinct_gif_frames(tmp_path) -> None:
+    from hashlib import sha256
+    from io import BytesIO
+
+    from PIL import Image, ImageSequence
+
+    from scripts.art.timelapse import _assemble_gif, _render_single_frame
+
+    metrics = _sample_metrics()
+    png_frames: list[bytes] = []
+
+    for day_index, maturity in enumerate((0.0, 0.01, 0.02)):
+        frame = _render_single_frame(
+            {
+                "metrics_dict": metrics,
+                "history_dict": {},
+                "maturity": maturity,
+                "progress": maturity,
+                "day_index": day_index,
+            },
+            "lenia",
+            "lenia-static-export",
+            96,
+        )
+        assert frame is not None
+        png_frames.append(frame)
+
+    output_path = tmp_path / "living-lenia.gif"
+    _assemble_gif(png_frames, [160] * len(png_frames), output_path)
+
+    frames = [
+        frame.copy().convert("RGBA")
+        for frame in ImageSequence.Iterator(Image.open(output_path))
+    ]
+    frame_hashes = [sha256(frame.tobytes()).hexdigest() for frame in frames]
+    frame_colors = [
+        len(Image.open(BytesIO(png)).convert("RGBA").getcolors(maxcolors=100_000) or [])
+        for png in png_frames
+    ]
+
+    assert len(frames) == 3
+    assert len(set(frame_hashes)) == 3
+    assert all(color_count > 8 for color_count in frame_colors)
 
 
 def test_lenia_language_mix_changes_generated_field() -> None:

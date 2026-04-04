@@ -203,11 +203,48 @@ def test_sync_living_art_artifacts_writes_manifest_and_gallery(tmp_path: Path) -
         "timelapse_gif": 6,
     }
     assert manifest_data["total_assets"] == 6
+    assert all(asset["channel"] == "timelapse_gif" for asset in manifest_data["assets"])
     actual_styles = {a["style"] for a in manifest_data["assets"]}
     assert actual_styles == set(LIVING_ART_STYLE_KEYS)
     assert "Living Art Preview Gallery" in gallery
+    assert "Compatibility GIFs" not in gallery
+    assert "Source SVGs" not in gallery
+    assert "growth.gif" not in gallery
     for style in LIVING_ART_STYLE_KEYS:
         assert f"living-{style}.gif" in gallery
+
+
+def test_sync_living_art_artifacts_mirrors_docs_public_showcase(
+    tmp_path: Path,
+) -> None:
+    source_dir = tmp_path / ".github" / "assets" / "img"
+    public_dir = tmp_path / "docs" / "public" / "showcase"
+    source_dir.mkdir(parents=True)
+    public_dir.mkdir(parents=True)
+
+    for style in LIVING_ART_STYLE_KEYS:
+        (source_dir / f"living-{style}.gif").write_bytes(b"GIF89a")
+
+    # Legacy showcase collateral should survive the public mirror refresh.
+    (public_dir / "inkgarden-growth.gif").write_bytes(b"GIF89a")
+    (public_dir / "living-old.gif").write_bytes(b"GIF89a")
+
+    sync_living_art_artifacts(source_dir, public_surface_dir=public_dir)
+
+    public_manifest = json.loads(
+        (public_dir / "living-art-manifest.json").read_text(encoding="utf-8")
+    )
+    public_gallery = (public_dir / "living-art-preview.html").read_text(
+        encoding="utf-8"
+    )
+
+    assert not (public_dir / "living-old.gif").exists()
+    assert (public_dir / "inkgarden-growth.gif").exists()
+    assert public_manifest["counts"] == {"timelapse_gif": 6}
+    assert public_manifest["output_dir"] == str(public_dir)
+    for style in LIVING_ART_STYLE_KEYS:
+        assert (public_dir / f"living-{style}.gif").exists()
+        assert f"living-{style}.gif" in public_gallery
 
 
 def test_main_svg_mode_propagates_generator_failure(

@@ -3,15 +3,22 @@
 from __future__ import annotations
 
 import json
+import os
 import re
-from enum import Enum
+import sys
+from collections.abc import Mapping
+from enum import StrEnum
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Annotated, Any, Mapping
+from typing import Annotated, Any
 
 import typer
 
-from ..art.artifacts import LIVING_ART_STYLE_KEYS, sync_living_art_artifacts
+from ..art.artifacts import (
+    DEFAULT_PUBLIC_SURFACE_DIR,
+    LIVING_ART_STYLE_KEYS,
+    sync_living_art_artifacts,
+)
 from ..config import (
     DEFAULT_CONFIG_PATH,
     DEFAULT_SKILLS_PATH,
@@ -25,13 +32,16 @@ logger = get_logger(module=__name__)
 
 generate_app = typer.Typer(
     name="generate",
-    help="[bold]Generate profile assets[/bold] — banners, QR codes, word clouds, and more.",
+    help=(
+        "[bold]Generate profile assets[/bold] — banners, QR codes, "
+        "word clouds, and more."
+    ),
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
 
 
-class ReadmeCardVariant(str, Enum):
+class ReadmeCardVariant(StrEnum):
     GH_CARD = "gh-card"
     LEGACY = "legacy"
 
@@ -44,7 +54,10 @@ def _load_project_config(config_path: Path | None) -> ProjectConfig:
     except FileNotFoundError:
         console.print(
             f"[bold red]Error:[/bold red] Config not found: "
-            f"[yellow]{effective_path}[/yellow]. Run [cyan]readme config generate-default[/cyan]."
+            "[yellow]"
+            f"{effective_path}"
+            "[/yellow]. Run "
+            "[cyan]readme config generate-default[/cyan]."
         )
         raise typer.Exit(code=1)
     except (OSError, ValueError) as e:
@@ -54,11 +67,24 @@ def _load_project_config(config_path: Path | None) -> ProjectConfig:
 
 def _refresh_living_art_artifacts(output_dir: Path) -> None:
     """Regenerate the manifest and HTML gallery for current living-art outputs."""
-    manifest_path, gallery_path, manifest = sync_living_art_artifacts(output_dir)
+    public_surface_dir = (
+        DEFAULT_PUBLIC_SURFACE_DIR
+        if DEFAULT_PUBLIC_SURFACE_DIR.parent.exists()
+        else None
+    )
+    manifest_path, gallery_path, manifest = sync_living_art_artifacts(
+        output_dir,
+        public_surface_dir=public_surface_dir,
+    )
     console.print(
         "[dim]Updated living-art index:[/] "
         f"{manifest['total_assets']} assets, "
         f"manifest={manifest_path}, gallery={gallery_path}"
+        + (
+            f", public_surface={public_surface_dir}"
+            if public_surface_dir is not None
+            else ""
+        )
     )
 
 
@@ -294,7 +320,8 @@ def banner(
             dark_banner_config = BannerConfig(**dark_banner_data)
             generate_banner(cfg=dark_banner_config)
             console.print(
-                f"[bold green]Dark SVG banner generated: {dark_banner_config.output_path}[/]"
+                "[bold green]Dark SVG banner generated: "
+                f"{dark_banner_config.output_path}[/]"
             )
         except Exception as dark_err:
             logger.warning(
@@ -922,6 +949,127 @@ def generative_art(
 
 
 @generate_app.command(
+    name="animated",
+    help="Generate CSS-animated SVG living art seeded from commit history.",
+)
+def animated(
+    config_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--config-path",
+            help="Project configuration file path.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    profile: Annotated[
+        str,
+        typer.Option(
+            "--profile",
+            help="GitHub username (used for labeling).",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = "wyattowalsh",
+    output_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--output-path",
+            help="Legacy animated exports always write into .github/assets/img.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    metrics_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--metrics-path",
+            help="Path to metrics JSON from fetch_metrics.",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = None,
+    history_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--history-path",
+            help="Path to history JSON from fetch_history.",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = None,
+    frames: Annotated[
+        int,
+        typer.Option(
+            "--frames",
+            min=2,
+            help="Frame count for the growth animation.",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = 7,
+    size: Annotated[
+        int,
+        typer.Option(
+            "--size",
+            min=64,
+            help="Frame size in pixels (square).",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = 400,
+    only: Annotated[
+        str | None,
+        typer.Option(
+            "--only",
+            help=f"Restrict to one style: {_LIVING_ART_STYLE_HELP}.",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = None,
+    svg: Annotated[
+        bool,
+        typer.Option(
+            "--svg/--gif",
+            help="Emit animated SVG stacks (default) or legacy GIF growth loops.",
+            rich_help_panel="Animated Art Options",
+        ),
+    ] = True,
+) -> None:
+    """Generate legacy animated living-art outputs via the compatibility module."""
+    _load_project_config(config_path)
+
+    from ..art import animate as animate_module
+
+    if output_path is not None:
+        logger.info(
+            "Animated art ignores --output-path and writes to .github/assets/img: {}",
+            output_path,
+        )
+
+    argv = [
+        "animate",
+        "--profile",
+        profile,
+        "--frames",
+        str(frames),
+        "--size",
+        str(size),
+    ]
+    if only is not None:
+        argv.extend(["--only", only])
+    if svg:
+        argv.append("--svg")
+    if metrics_path is not None:
+        argv.extend(["--metrics-path", str(metrics_path)])
+    if history_path is not None:
+        argv.extend(["--history-path", str(history_path)])
+
+    repo_root = Path(__file__).resolve().parents[2]
+    previous_cwd = Path.cwd()
+    previous_argv = sys.argv[:]
+    try:
+        os.chdir(repo_root)
+        sys.argv = argv
+        animate_module.main()
+    finally:
+        sys.argv = previous_argv
+        os.chdir(previous_cwd)
+
+
+@generate_app.command(
     name="living-art",
     help="Generate living-art timelapse GIFs.",
 )
@@ -1015,7 +1163,10 @@ def living_art(
 
 @generate_app.command(
     name="timelapse",
-    help="Generate living-art timelapse GIFs where each frame = one day of profile history.",
+    help=(
+        "Generate living-art timelapse GIFs where each frame = one day of "
+        "profile history."
+    ),
 )
 def timelapse(
     config_path: Annotated[
@@ -1088,6 +1239,7 @@ def timelapse(
     ] = 4,
 ) -> None:
     """Generate timelapse GIFs showing day-by-day profile evolution."""
+    _load_project_config(config_path)  # validate config exists
     _generate_living_art_timelapse(
         profile=profile,
         metrics_path=metrics_path,
@@ -1491,7 +1643,8 @@ def all_assets(
             results.append(("Generative Art", "[red]FAILED[/red]"))
     else:
         console.print(
-            "[yellow]Skipping generative art — --metrics-path not provided or file missing.[/yellow]"
+            "[yellow]Skipping generative art — --metrics-path not provided "
+            "or file missing.[/yellow]"
         )
         results.append(("Generative Art", "[yellow]SKIPPED[/yellow]"))
 
@@ -1500,7 +1653,9 @@ def all_assets(
         try:
             animated(
                 config_path=config_path,
+                profile=profile,
                 output_path=output_path,
+                metrics_path=metrics_path,
                 history_path=history_path,
             )
             results.append(("Animated Art", "[green]OK[/green]"))
@@ -1508,7 +1663,8 @@ def all_assets(
             results.append(("Animated Art", "[red]FAILED[/red]"))
     else:
         console.print(
-            "[yellow]Skipping animated art — --history-path not provided or file missing.[/yellow]"
+            "[yellow]Skipping animated art — --history-path not provided "
+            "or file missing.[/yellow]"
         )
         results.append(("Animated Art", "[yellow]SKIPPED[/yellow]"))
 

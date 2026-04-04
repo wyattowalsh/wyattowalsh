@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 from collections import Counter
 from datetime import UTC, datetime
 from html import escape
@@ -12,6 +13,7 @@ from typing import Any
 
 MANIFEST_FILENAME = "living-art-manifest.json"
 GALLERY_FILENAME = "living-art-preview.html"
+DEFAULT_PUBLIC_SURFACE_DIR = Path("docs/public/showcase")
 
 LIVING_ART_STYLE_LABELS = {
     "inkgarden": "Ink Garden",
@@ -237,7 +239,56 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
     )
 
 
-def sync_living_art_artifacts(output_dir: Path) -> tuple[Path, Path, dict[str, Any]]:
+def _sync_public_surface(
+    output_dir: Path,
+    manifest: dict[str, Any],
+    public_surface_dir: Path,
+) -> None:
+    """Mirror the canonical living-art surface to a public preview directory."""
+    public_surface_dir = Path(public_surface_dir)
+    public_surface_dir.mkdir(parents=True, exist_ok=True)
+
+    if public_surface_dir.resolve() == output_dir.resolve():
+        return
+
+    staging_dir = public_surface_dir / ".living-art-sync"
+    if staging_dir.exists():
+        shutil.rmtree(staging_dir)
+    staging_dir.mkdir(parents=True)
+
+    for asset in manifest["assets"]:
+        shutil.copy2(output_dir / asset["path"], staging_dir / asset["path"])
+
+    public_manifest = build_living_art_manifest(staging_dir)
+    public_manifest["output_dir"] = str(public_surface_dir)
+    (staging_dir / MANIFEST_FILENAME).write_text(
+        json.dumps(public_manifest, indent=2),
+        encoding="utf-8",
+    )
+    (staging_dir / GALLERY_FILENAME).write_text(
+        _render_gallery(public_manifest),
+        encoding="utf-8",
+    )
+
+    for path in list(public_surface_dir.iterdir()):
+        if not path.is_file():
+            continue
+        if path.name in {MANIFEST_FILENAME, GALLERY_FILENAME}:
+            path.unlink()
+            continue
+        if path.suffix.lower() == ".gif" and path.name.startswith("living-"):
+            path.unlink()
+
+    for path in list(staging_dir.iterdir()):
+        shutil.move(str(path), public_surface_dir / path.name)
+    staging_dir.rmdir()
+
+
+def sync_living_art_artifacts(
+    output_dir: Path,
+    *,
+    public_surface_dir: Path | None = None,
+) -> tuple[Path, Path, dict[str, Any]]:
     """Rewrite the manifest and preview gallery from the files that exist now."""
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -246,10 +297,15 @@ def sync_living_art_artifacts(output_dir: Path) -> tuple[Path, Path, dict[str, A
     gallery_path = output_dir / GALLERY_FILENAME
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     gallery_path.write_text(_render_gallery(manifest), encoding="utf-8")
+
+    if public_surface_dir is not None:
+        _sync_public_surface(output_dir, manifest, public_surface_dir)
+
     return manifest_path, gallery_path, manifest
 
 
 __all__ = [
+    "DEFAULT_PUBLIC_SURFACE_DIR",
     "GALLERY_FILENAME",
     "LIVING_ART_STYLE_KEYS",
     "LIVING_ART_STYLE_LABELS",

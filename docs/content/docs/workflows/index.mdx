@@ -55,11 +55,13 @@ Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stat
 
 ### `generate-profile-metrics`
 
-Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) to generate:
+Uses [`felipecrs/metrics`](https://github.com/felipecrs/metrics) — a fork of [`lowlighter/metrics`](https://github.com/lowlighter/metrics) pinned at `b300bc3a0fcf0fa3cbb101064948c0f2126c3f25` — to generate:
 - `metrics.svg` — personal metrics (lines, isocalendar, languages, habits, notable, topics)
 - `metrics.additional.svg` — music (Spotify), activity, stargazers, featured repos
 
-Requires `METRICS_TOKEN` secret (GitHub PAT with `read:user`, `public_repo`). Falls back gracefully to a placeholder SVG if the token is missing or auth fails.
+`METRICS_TOKEN` is the GitHub PAT for repository-aware sections such as traffic, notable repositories, stars, and stargazers. If it is missing, the workflow falls back to `GITHUB_TOKEN` and disables the repo-sensitive plugins that need broader access.
+
+Each SVG is generated progressively: the workflow tries the richer plugin set first, then retries with a stable subset if validation fails (`plugin_habits` off for personal metrics; `plugin_activity` and `plugin_music` off for additional metrics). Placeholder SVGs are only written if every attempt still fails validation.
 
 ### `generate-event-art`
 
@@ -67,11 +69,14 @@ Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch
 
 The job stages and commits:
 
-- `living-*.gif`
-- `living-art-manifest.json`
-- `living-art-preview.html`
+- `.github/assets/img/living-*.gif`
+- `.github/assets/img/living-art-manifest.json`
+- `.github/assets/img/living-art-preview.html`
+- `docs/public/showcase/living-*.gif`
+- `docs/public/showcase/living-art-manifest.json`
+- `docs/public/showcase/living-art-preview.html`
 
-The uploaded staging bundle also includes the fetched `metrics.json` and `history.json` inputs for review.
+The uploaded staging bundle also includes the fetched `metrics.json` and `history.json` inputs plus the mirrored docs showcase surface for review.
 
 ### `update-skills`
 
@@ -81,16 +86,16 @@ Depends on `update-readme-wakatime`. Runs:
 
 Commits `README.md` + `.github/assets/img/readme/*.svg`.
 
-## Required secrets
+## Secrets used by the workflow
 
 | Secret | Used by | Notes |
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
-| `METRICS_TOKEN` | `generate-profile-metrics` | PAT with `read:user`, `public_repo` |
-| `WAKATIME_API_KEY` | `update-readme-wakatime` | WakaTime API key |
-| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` | Spotify OAuth |
-| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` | Spotify OAuth |
-| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` | Spotify OAuth |
+| `METRICS_TOKEN` | `generate-profile-metrics` | Optional PAT for repo-aware metrics (`read:user`, `public_repo`); workflow falls back to `GITHUB_TOKEN` when absent |
+| `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
+| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
+| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
+| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
 
 ## Related
 

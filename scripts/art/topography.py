@@ -2312,7 +2312,7 @@ def generate(
                 f'<path class="topic-feature-leader" '
                 f'd="M{mx_tp:.1f},{my_tp:.1f} Q{leader_mid_x:.1f},{leader_mid_y - 2.0:.1f} {topic_x:.1f},{leader_y:.1f}" '
                 f'fill="none" stroke="{leader_color}" stroke-width="0.55" '
-                f'stroke-linecap="round" stroke-dasharray="1.8 1.6" opacity="0.45" '
+                f'stroke-linecap="round" stroke-dasharray="1.8 1.6" '
                 f"{_timeline_style(topic_when, 0.52, 'tl-reveal tl-soft')}/>"
             )
             label_obstacles.append(

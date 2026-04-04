@@ -44,20 +44,20 @@
 
 > Current automation contract: canonical timelapse GIFs named `living-<style>.gif`, plus `living-art-manifest.json` and `living-art-preview.html`.
 >
-> The gallery below uses older checked-in growth renders as showcase samples. Keep them as visual context only — they are not the current workflow artifact names.
+> This README embeds the canonical timelapse GIFs directly. The docs site mirrors the same files under `docs/public/showcase/` so the public preview surface stays aligned with the workflow outputs.
 
 <table role="presentation">
 <tr>
 <td width="50%" align="center">
-  <a href=".github/assets/img/inkgarden-growth-animated.svg">
-    <img src=".github/assets/img/inkgarden-growth.gif" width="100%" alt="Ink Garden — botanical growth animation where each tree is a repository"/>
+  <a href=".github/assets/img/living-inkgarden.gif">
+    <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden — botanical timelapse where each tree is a repository"/>
   </a>
   <br/>
   <sub><b>Ink Garden</b> demystified: every repository becomes a plant. Languages shift species and palette, repo age stretches trunks and branch depth, stars trigger blooms, and surrounding ecosystem details grow out of contributions, forks, watchers, issues, and network activity.</sub>
 </td>
 <td width="50%" align="center">
-  <a href=".github/assets/img/topo-growth-animated.svg">
-    <img src=".github/assets/img/topo-growth.gif" width="100%" alt="Topography — cartographic map animation where terrain emerges with activity"/>
+  <a href=".github/assets/img/living-topo.gif">
+    <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography — cartographic timelapse where terrain emerges with activity"/>
   </a>
   <br/>
   <sub><b>Topography</b> demystified: the profile is redrawn as a survey map. Repositories rise into peaks and landmarks, stars increase summit prominence, language mix changes terrain character, and commits, contributions, forks, and followers feed contour density, river systems, and map annotations.</sub>
@@ -65,15 +65,15 @@
 </tr>
 <tr>
 <td width="50%" align="center">
-  <a href=".github/assets/img/genetic-growth-animated.svg">
-    <img src=".github/assets/img/genetic-growth.gif" width="100%" alt="Genetic Landscape — evolutionary terrain where repositories become adaptive peaks"/>
+  <a href=".github/assets/img/living-genetic.gif">
+    <img src=".github/assets/img/living-genetic.gif" width="100%" alt="Genetic Landscape — evolutionary timelapse where repositories become adaptive peaks"/>
   </a>
   <br/>
   <sub><b>Genetic Landscape</b> demystified: repositories become fitness peaks on an evolving terrain. Language families tint local biomes, repo age softens or sharpens ridgelines, stars raise peak fitness, and maturity advances adaptive populations that speciate around the strongest projects.</sub>
 </td>
 <td width="50%" align="center">
-  <a href=".github/assets/img/physarum-growth-animated.svg">
-    <img src=".github/assets/img/physarum-growth.gif" width="100%" alt="Physarum — slime-mold transport network grown from repository nutrient nodes"/>
+  <a href=".github/assets/img/living-physarum.gif">
+    <img src=".github/assets/img/living-physarum.gif" width="100%" alt="Physarum — slime-mold timelapse grown from repository nutrient nodes"/>
   </a>
   <br/>
   <sub><b>Physarum</b> demystified: the profile becomes a slime-mold colony that explores and connects repositories as nutrient sources. Topic affinity, contribution cadence, and collaboration signals steer the search, while denser portfolio activity thickens the glowing transport veins.</sub>
@@ -81,15 +81,15 @@
 </tr>
 <tr>
 <td width="50%" align="center">
-  <a href=".github/assets/img/lenia-growth-animated.svg">
-    <img src=".github/assets/img/lenia-growth.gif" width="100%" alt="Lenia — continuous cellular automata where each repository seeds a digital organism"/>
+  <a href=".github/assets/img/living-lenia.gif">
+    <img src=".github/assets/img/living-lenia.gif" width="100%" alt="Lenia — continuous cellular automata timelapse where each repository seeds a digital organism"/>
   </a>
   <br/>
   <sub><b>Lenia</b> demystified: each repository seeds a soft-bodied digital organism inside a continuous cellular automata field. Language mix tunes the kernel physics, contribution momentum changes vitality, and maturity stages the colony from faint sparks into bioluminescent life.</sub>
 </td>
 <td width="50%" align="center">
-  <a href=".github/assets/img/ferrofluid-growth-animated.svg">
-    <img src=".github/assets/img/ferrofluid-growth.gif" width="100%" alt="Ferrofluid — magnetic spike sculpture shaped by repository fields"/>
+  <a href=".github/assets/img/living-ferrofluid.gif">
+    <img src=".github/assets/img/living-ferrofluid.gif" width="100%" alt="Ferrofluid — magnetic spike timelapse shaped by repository fields"/>
   </a>
   <br/>
   <sub><b>Ferrofluid</b> demystified: repositories act as magnetic dipoles beneath a dark metallic pool. Stars amplify field strength, language signatures bend the iridescent hue drift, and overall portfolio energy raises or calms the spike forest and its mirrored reflections.</sub>
@@ -97,7 +97,7 @@
 </tr>
 </table>
 
-All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`) and refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`; treat the checked-in growth SVG/GIF filenames above as legacy showcase assets rather than generated contract outputs.
+All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`), refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`, and mirrors the same public surface into `docs/public/showcase/`.
 
 ## Tech Stack
 

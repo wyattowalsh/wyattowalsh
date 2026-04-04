@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -273,3 +274,21 @@ def test_all_generators_accept_plain_seed_strings(
 
     assert svg.lstrip().startswith("<svg")
     assert svg.rstrip().endswith("</svg>")
+
+
+def test_readme_living_art_section_uses_canonical_timelapse_gifs() -> None:
+    readme = Path("README.md").read_text(encoding="utf-8")
+
+    for style in LIVING_ART_STYLE_KEYS:
+        assert f".github/assets/img/living-{style}.gif" in readme
+        assert f".github/assets/img/{style}-growth.gif" not in readme
+
+
+def test_docs_homepage_uses_mirrored_canonical_timelapses() -> None:
+    homepage = Path("docs/app/(home)/page.tsx").read_text(encoding="utf-8")
+
+    for style in LIVING_ART_STYLE_KEYS:
+        assert f"/showcase/living-{style}.gif" in homepage
+    assert "/showcase/living-art-preview.html" in homepage
+    assert "/showcase/living-art-manifest.json" in homepage
+    assert "growth.gif" not in homepage

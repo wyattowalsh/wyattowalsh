@@ -21,6 +21,28 @@ def runner() -> CliRunner:
     return CliRunner()
 
 
+def test_refresh_living_art_artifacts_mirrors_docs_showcase(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    output_dir = tmp_path / ".github" / "assets" / "img"
+    showcase_dir = tmp_path / "docs" / "public" / "showcase"
+    output_dir.mkdir(parents=True)
+    showcase_dir.mkdir(parents=True)
+
+    for style in ("inkgarden", "topo"):
+        (output_dir / f"living-{style}.gif").write_bytes(b"GIF89a")
+
+    generate_cmd._refresh_living_art_artifacts(output_dir)
+
+    assert (output_dir / "living-art-manifest.json").exists()
+    assert (output_dir / "living-art-preview.html").exists()
+    assert (showcase_dir / "living-inkgarden.gif").exists()
+    assert (showcase_dir / "living-topo.gif").exists()
+    assert (showcase_dir / "living-art-manifest.json").exists()
+    assert (showcase_dir / "living-art-preview.html").exists()
+
+
 class _CapturingWordCloudGenerator:
     last_settings: WordCloudSettings | None = None
     last_kwargs: dict[str, object] | None = None
@@ -411,7 +433,11 @@ def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None
     assert "Command failed" in result.stdout
 
 
-def test_dev_clean(runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_dev_clean(
+    runner: CliRunner,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Test `dev clean` removes cache directories."""
     monkeypatch.chdir(tmp_path)
     # Create some cache dirs
@@ -479,6 +505,58 @@ def test_generate_all_passes_metrics_and_history_to_living_art(
     assert captured["profile"] == "wyattowalsh"
 
 
+def test_generate_all_passes_metrics_and_history_to_animated_art(
+    runner: CliRunner,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    metrics_path = tmp_path / "metrics.json"
+    history_path = tmp_path / "history.json"
+    metrics_path.write_text("{}", encoding="utf-8")
+    history_path.write_text("{}", encoding="utf-8")
+
+    monkeypatch.setattr(generate_cmd, "banner", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "qr", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "word_cloud", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "skills", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "readme_sections", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "generative_art", lambda **_kwargs: None)
+    monkeypatch.setattr(generate_cmd, "living_art", lambda **_kwargs: None)
+
+    captured: dict[str, Path | str | None] = {}
+
+    def _stub_animated(
+        *,
+        config_path: Path | None = None,
+        metrics_path: Path | None = None,
+        history_path: Path | None = None,
+        **_kwargs,
+    ) -> None:
+        captured["config_path"] = config_path
+        captured["metrics_path"] = metrics_path
+        captured["history_path"] = history_path
+        captured["profile"] = _kwargs.get("profile")
+
+    monkeypatch.setattr(generate_cmd, "animated", _stub_animated, raising=False)
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "all",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["metrics_path"] == metrics_path
+    assert captured["history_path"] == history_path
+    assert captured["profile"] == "wyattowalsh"
+
+
 def test_generate_all_passes_profile_to_living_art(
     runner: CliRunner,
     monkeypatch: pytest.MonkeyPatch,
@@ -520,6 +598,59 @@ def test_generate_all_passes_profile_to_living_art(
 
     assert result.exit_code == 0, result.stdout
     assert captured["profile"] == "octocat"
+
+
+def test_generate_animated_invokes_compat_module(
+    runner: CliRunner,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    metrics_path = tmp_path / "metrics.json"
+    history_path = tmp_path / "history.json"
+    metrics_path.write_text("{}", encoding="utf-8")
+    history_path.write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(generate_cmd, "load_config", lambda _path: ProjectConfig())
+
+    captured: dict[str, object] = {}
+
+    import scripts.art.animate as animate_module
+
+    def _stub_main() -> None:
+        captured["argv"] = generate_cmd.sys.argv[:]
+        captured["cwd"] = Path.cwd()
+
+    monkeypatch.setattr(animate_module, "main", _stub_main)
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "animated",
+            "--profile",
+            "octocat",
+            "--metrics-path",
+            str(metrics_path),
+            "--history-path",
+            str(history_path),
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["cwd"] == Path(__file__).resolve().parents[1]
+    assert captured["argv"] == [
+        "animate",
+        "--profile",
+        "octocat",
+        "--frames",
+        "7",
+        "--size",
+        "400",
+        "--svg",
+        "--metrics-path",
+        str(metrics_path),
+        "--history-path",
+        str(history_path),
+    ]
 
 
 def test_generate_all_skips_living_art_when_required_inputs_missing(

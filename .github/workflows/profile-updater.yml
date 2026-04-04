@@ -246,6 +246,7 @@ jobs:
         id: check_personal_metrics
         if: ${{ always() }}
         run: |
+          set -euo pipefail
           ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
           if [ ! -f ./.github/assets/img/metrics.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
@@ -271,15 +272,10 @@ jobs:
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
           plugin_languages_threshold: "2%"
-          plugin_habits: yes
-          plugin_habits_from: 1000
-          plugin_habits_days: 30
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_charts_type: classic
-          plugin_habits_languages_limit: 8
-          plugin_habits_languages_threshold: "0%"
+          # Drop flaky plugins here so fallback still renders a valid SVG.
+          plugin_habits: no
           plugin_notable: yes
+          plugin_notable_repositories: no
           plugin_gists: yes
           plugin_topics: yes
           plugin_topics_sort: stars
@@ -321,6 +317,7 @@ jobs:
         id: check_additional_metrics
         if: ${{ always() }}
         run: |
+          set -euo pipefail
           ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
           if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
             echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
@@ -341,17 +338,9 @@ jobs:
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          plugin_music: ${{ steps.metrics_auth.outputs.has_spotify_tokens == 'true' && 'yes' || 'no' }}
-          plugin_music_provider: spotify
-          plugin_music_mode: recent
-          plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
-          plugin_music_limit: 5
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_load: 300
-          plugin_activity_days: 0
-          plugin_activity_visibility: public
-          plugin_activity_timestamps: yes
+          # Keep fallback focused on stable repository/star sections.
+          plugin_music: no
+          plugin_activity: no
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
@@ -487,12 +476,21 @@ jobs:
           shopt -s nullglob
           mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/timelapse"
           mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/index"
+          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase"
           for file in .github/assets/img/living-*.gif; do
             cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/timelapse/"
           done
           for file in .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html; do
             if [[ -f "$file" ]]; then
               cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/index/"
+            fi
+          done
+          for file in docs/public/showcase/living-*.gif; do
+            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase/"
+          done
+          for file in docs/public/showcase/living-art-manifest.json docs/public/showcase/living-art-preview.html; do
+            if [[ -f "$file" ]]; then
+              cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase/"
             fi
           done
 
@@ -529,7 +527,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "art: regenerate living-art assets"
-          file_pattern: ".github/assets/img/living-*.gif .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html"
+          file_pattern: ".github/assets/img/living-*.gif .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html docs/public/showcase/living-*.gif docs/public/showcase/living-art-manifest.json docs/public/showcase/living-art-preview.html"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

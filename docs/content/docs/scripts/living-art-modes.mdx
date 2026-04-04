@@ -5,7 +5,7 @@ description: Current timelapse-only artifact contract across the living-art gene
 
 ## Current contract
 
-The public living-art contract is now timelapse-only: the generators publish canonical GIFs named `living-<style>.gif`, then rebuild `living-art-manifest.json` and `living-art-preview.html` from the files that exist in the output directory.
+The public living-art contract is now timelapse-only: the generators publish canonical GIFs named `living-<style>.gif`, then rebuild `living-art-manifest.json` and `living-art-preview.html` from the files that exist in the output directory. When `docs/public/showcase/` exists, the same canonical files are mirrored there for the docs home page and direct preview links.
 
 Legacy growth SVG/GIF filenames such as `inkgarden-growth-animated.svg` or `topo-growth.gif` may still exist in the repository as checked-in showcase art, but they are not the current CLI/workflow artifact contract.
 
@@ -58,6 +58,7 @@ Document `generate all` as conditional only. The living-art portion is skipped u
 | Constraint | Consequence |
 |---|---|
 | `living-art-manifest.json` and `living-art-preview.html` are regenerated from discovered `living-*.gif` files | Stage and review the GIFs and the index files together |
+| `docs/public/showcase/` exists in this repository | Mirror the canonical `living-*.gif` files plus the regenerated manifest/gallery there so docs surfaces stay aligned |
 | `generate living-art` and `generate timelapse` currently share the same implementation | Do not document separate growth-vs-timelapse output contracts |
 | Legacy `*-growth*` assets may still be checked in | Treat them as showcase collateral, not current generated workflow outputs |
 

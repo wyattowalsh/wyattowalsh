@@ -4,6 +4,7 @@ import re
 from datetime import date, timedelta
 
 import pytest
+from defusedxml import ElementTree
 
 from scripts.art.topography import _choose_label_anchor, generate
 
@@ -282,6 +283,23 @@ def test_topography_timeline_can_be_disabled_for_legacy_opacity_mode() -> None:
     assert 'class="tl-reveal"' not in svg
     assert "data-delay=" not in svg
     assert "opacity=" in svg
+
+
+def test_topography_topic_feature_leaders_do_not_duplicate_opacity_when_static(
+) -> None:
+    svg = generate(
+        _topic_feature_metrics(),
+        seed="topo-topic-features-static",
+        timeline=False,
+        maturity=0.35,
+    )
+
+    ElementTree.fromstring(svg)
+    ai_markup = _topic_feature_markup(svg, "ai")
+    leader = re.search(r'<path class="topic-feature-leader"[^>]+>', ai_markup)
+
+    assert leader is not None
+    assert leader.group(0).count('opacity="') == 1
 
 
 def test_topography_timeline_output_is_deterministic_for_same_input() -> None:
