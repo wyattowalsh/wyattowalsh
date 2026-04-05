@@ -2869,12 +2869,12 @@
 - [pchalasani/claude-code-tools](https://github.com/pchalasani/claude-code-tools) - Practical productivity tools for Claude Code, Codex-CLI, and similar CLI coding agents.
 - [the-momentum/open-wearables](https://github.com/the-momentum/open-wearables) - Self-hosted platform to unify wearable health data through one AI-ready API.
 - [nsandman/linkedin-api](https://github.com/nsandman/linkedin-api) - LinkedIn Voyager API
-- [HKUDS/DeepTutor](https://github.com/HKUDS/DeepTutor) - "DeepTutor: AI-Powered Personalized Learning Assistant"
+- [HKUDS/DeepTutor](https://github.com/HKUDS/DeepTutor) - "DeepTutor: Agent-Native Personalized Learning Assistant"
 - [sczhou/CodeFormer](https://github.com/sczhou/CodeFormer) - [NeurIPS 2022] Towards Robust Blind Face Restoration with Codebook Lookup Transformer
 - [0xSojalSec/PentestAgent](https://github.com/0xSojalSec/PentestAgent) - All-in-one offensive security toolbox with AI agent and MCP architecture. Integrates tools like Nmap, Metasploit, FFUF, SQLMap. Enables pentesting, bug bounty hunting, threat hunting, and reporting. R
 - [fvanevski/trafilatura_mcp](https://github.com/fvanevski/trafilatura_mcp) - Trafilatura MCP Server
 - [patrickfreyer/apple-mail-mcp](https://github.com/patrickfreyer/apple-mail-mcp) - MCP server giving AI assistants full access to Apple Mail - read, search, compose, organize & analyze emails via natural language
-- [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 47 Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
+- [gked2121/claude-skills](https://github.com/gked2121/claude-skills) - 100+ Production-Ready Claude Code Skills for developers, marketers, sales teams, and business professionals. 32 OneWave AI custom skills + 15 Official Anthropic skills.
 - [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) - 220+ Claude Code skills & agent plugins for Claude Code, Codex, Gemini CLI, Cursor, and 8 more coding agents — engineering, marketing, product, compliance, C-level advisory.
 - [ahmedasmar/devops-claude-skills](https://github.com/ahmedasmar/devops-claude-skills) - A Claude Code Skills Marketplace for DevOps workflows
 - [conorluddy/ios-simulator-skill](https://github.com/conorluddy/ios-simulator-skill) - An IOS Simulator Skill for ClaudeCode. Use it to optimise Claude's ability to build, run and interact with your apps, without using up any of the available token/context budget.
@@ -5209,7 +5209,7 @@
 - [maxritter/pilot-shell](https://github.com/maxritter/pilot-shell) - The professional development environment for Claude Code
 - [Yeachan-Heo/oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) - OmX - Oh My codeX: Your codex is not alone. Add hooks, agent teams, HUDs, and so much more.
 - [AndrewWalsh/demystify](https://github.com/AndrewWalsh/demystify) - Automated documentation for APIs
-- [op7418/CodePilot](https://github.com/op7418/CodePilot) - A desktop GUI for Claude Code — chat, code, and manage projects visually. Built with Electron + Next.js.
+- [op7418/CodePilot](https://github.com/op7418/CodePilot) - A multi-model AI agent desktop client — connect any AI provider, extend with MCP & skills, control from your phone. Built with Electron + Next.js.
 - [different-ai/openwork](https://github.com/different-ai/openwork) - An open-source alternative to Claude Cowork built for teams, powered by opencode
 - [NoeFabris/opencode-antigravity-auth](https://github.com/NoeFabris/opencode-antigravity-auth) - Enable Opencode to authenticate against Antigravity (Google's IDE) via OAuth so you can use Antigravity rate limits and access models like gemini-3-pro and claude-opus-4-5-thinking with your Google cr
 - [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) - omo; the best agent harness - previously oh-my-opencode
@@ -5678,7 +5678,6 @@
 - [supermemoryai/apple-mcp](https://github.com/supermemoryai/apple-mcp) - Collection of apple-native tools for the model context protocol.
 - [turlockmike/apple-notifier-mcp](https://github.com/turlockmike/apple-notifier-mcp) - 
 - [tchbw/mcp-imessage](https://github.com/tchbw/mcp-imessage) - Lets Claude send & receive iMessage with Model Context Protocol
-- [aindreyway/mcp-codex-keeper](https://github.com/aindreyway/mcp-codex-keeper) - An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest documentation and best practices across the software development 
 - [PolarVista/Xcode-mcp-server](https://github.com/PolarVista/Xcode-mcp-server) - 
 - [Tom-Semple/mcp-apple-notes-fixed](https://github.com/Tom-Semple/mcp-apple-notes-fixed) - 
 - [MissionSquad/mcp-helper-tools](https://github.com/MissionSquad/mcp-helper-tools) - 
@@ -5689,7 +5688,6 @@
 - [tokenizin-agency/mcp-npx-fetch](https://github.com/tokenizin-agency/mcp-npx-fetch) - A powerful MCP server for fetching and transforming web content into various formats (HTML, JSON, Markdown, Plain Text) with ease.
 - [mahawi1992/mcp-documentation-server](https://github.com/mahawi1992/mcp-documentation-server) - MCP Documentation Server with AI Learning Capabilities
 - [movibe/memory-bank-mcp](https://github.com/movibe/memory-bank-mcp) - MCP Server para gerenciar o Memory Bank
-- [aindreyway/mcp-neurolora](https://github.com/aindreyway/mcp-neurolora) - An intelligent MCP server that provides tools for collecting and documenting code from directories
 - [RafalWilinski/aws-mcp](https://github.com/RafalWilinski/aws-mcp) - Talk with your AWS using Claude. Model Context Protocol (MCP) server for AWS. Better Amazon Q alternative.
 - [boorich/mcp-human-loop](https://github.com/boorich/mcp-human-loop) - Evaluate if a task requires human intervention
 - [Braffolk/mcp-summarization-functions](https://github.com/Braffolk/mcp-summarization-functions) - Provides summarised output from various actions that could otherwise eat up tokens and cause crashes for AI agents
