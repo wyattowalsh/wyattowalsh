@@ -2,17 +2,23 @@
 
 from __future__ import annotations
 
+import inspect
 from datetime import date, timedelta
 
 import pytest
 
 pytest.importorskip("numpy", reason="scripts.art.shared requires numpy")
 
-from scripts.art.daily_snapshots import build_daily_snapshots  # noqa: E402
+from scripts.art import daily_snapshots as daily_snapshots_module  # noqa: E402
+from scripts.art.daily_snapshots import (
+    build_daily_snapshots,  # noqa: E402
+    sample_frames,  # noqa: E402
+)
+from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES  # noqa: E402
 
 
-def _history_for_days(days: int = 14) -> dict:
-    start = date.today() - timedelta(days=days)
+def _history_for_days(days: int = 14, *, anchor_day: date) -> dict:
+    start = anchor_day - timedelta(days=days)
     return {
         "account_created": f"{start.isoformat()}T00:00:00Z",
         "repos": [
@@ -44,9 +50,9 @@ def _history_for_days(days: int = 14) -> dict:
     }
 
 
-def _metrics_for_history() -> dict:
-    release_day = date.today() - timedelta(days=7)
-    merged_pr_day = date.today() - timedelta(days=4)
+def _metrics_for_history(*, anchor_day: date) -> dict:
+    release_day = anchor_day - timedelta(days=7)
+    merged_pr_day = anchor_day - timedelta(days=4)
     return {
         "followers": 20,
         "following": 10,
@@ -95,21 +101,51 @@ def _metrics_for_history() -> dict:
     }
 
 
-def test_build_daily_snapshots_terminal_day_contract() -> None:
-    history = _history_for_days(3)
-    metrics = _metrics_for_history()
+def _freeze_timeline_end(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    anchor_day: date,
+) -> None:
+    monkeypatch.setattr(
+        daily_snapshots_module,
+        "_timeline_end_day",
+        lambda *, include_today: (
+            anchor_day if include_today else anchor_day - timedelta(days=1)
+        ),
+    )
 
-    snaps_default = build_daily_snapshots(history, metrics)
-    snaps_with_today = build_daily_snapshots(history, metrics, include_today=True)
 
-    assert snaps_default[-1].day == date.today() - timedelta(days=1)
-    assert snaps_with_today[-1].day == date.today()
+def test_build_daily_snapshots_terminal_day_contract(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(3, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps_default = build_daily_snapshots(
+        history,
+        metrics,
+        include_today=False,
+    )
+    snaps_with_today = build_daily_snapshots(
+        history,
+        metrics,
+        include_today=True,
+    )
+
+    assert snaps_default[-1].day == anchor_day - timedelta(days=1)
+    assert snaps_with_today[-1].day == anchor_day
     assert len(snaps_with_today) == len(snaps_default) + 1
 
 
-def test_language_allocation_grows_gradually() -> None:
-    history = _history_for_days(14)
-    metrics = _metrics_for_history()
+def test_language_allocation_grows_gradually(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(14, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
     snaps = build_daily_snapshots(history, metrics)
 
     first_val = snaps[0].metrics_dict["languages"].get("Python", 0)
@@ -120,9 +156,13 @@ def test_language_allocation_grows_gradually() -> None:
     assert final_val <= metrics["languages"]["Python"]
 
 
-def test_atmospheric_inputs_are_not_frozen_across_timeline() -> None:
-    history = _history_for_days(18)
-    metrics = _metrics_for_history()
+def test_atmospheric_inputs_are_not_frozen_across_timeline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
     snaps = build_daily_snapshots(history, metrics)
 
     issue_series = [s.metrics_dict["issue_stats"]["open_count"] for s in snaps]
@@ -136,3 +176,10 @@ def test_atmospheric_inputs_are_not_frozen_across_timeline() -> None:
 
     assert len(set(issue_series)) > 1
     assert len(set(hour_peaks)) > 1
+
+
+def test_sample_frames_default_matches_published_contract() -> None:
+    max_frames_default = inspect.signature(sample_frames).parameters[
+        "max_frames"
+    ].default
+    assert max_frames_default == DEFAULT_PUBLISHED_MAX_FRAMES == 120

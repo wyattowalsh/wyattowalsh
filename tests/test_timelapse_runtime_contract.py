@@ -30,6 +30,16 @@ def test_small_frame_durations_keep_final_hold() -> None:
     assert _compute_frame_durations(2) == [1200, 3000]
 
 
+def test_high_frame_count_runtime_plan_stays_within_budget() -> None:
+    """Floor protection should not allow runtime plans to exceed total_ms."""
+    frame_count = 150
+    durations = _compute_frame_durations(frame_count)
+
+    assert len(durations) == frame_count
+    assert durations[-1] == 3000
+    assert sum(durations) <= DEFAULT_PUBLISHED_RUNTIME_MS
+
+
 def test_dropped_frame_duration_alignment_uses_original_indices() -> None:
     """Duration mapping must follow original frame indices after failures."""
     all_durations = [101, 202, 303, 404]

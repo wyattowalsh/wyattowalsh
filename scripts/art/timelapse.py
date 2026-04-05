@@ -148,6 +148,35 @@ def _compute_frame_durations(
         durations.insert(-1, mid_per)
     durations = durations[:n_frames]
 
+    # Keep published runtime plans within the requested total budget whenever
+    # feasible while preserving the contracted final hold and narrative pacing.
+    overrun_ms = sum(durations) - total_ms
+    if overrun_ms > 0 and len(durations) > 1:
+        middle_indices = list(range(first_count, first_count + mid_count))
+        late_indices = list(
+            range(first_count + mid_count, first_count + mid_count + last_count)
+        )
+        early_indices = list(range(0, first_count))
+
+        for group_indices in (middle_indices, late_indices, early_indices):
+            if overrun_ms <= 0:
+                break
+            if not group_indices:
+                continue
+
+            while overrun_ms > 0:
+                changed = False
+                for idx in group_indices:
+                    if overrun_ms <= 0:
+                        break
+                    if durations[idx] <= 1:
+                        continue
+                    durations[idx] -= 1
+                    overrun_ms -= 1
+                    changed = True
+                if not changed:
+                    break
+
     return durations
 
 
@@ -355,7 +384,6 @@ def render_timelapse(
         {
             "metrics_dict": s.metrics_dict,
             "maturity": s.maturity,
-            "progress": s.progress,
             "day_index": s.day_index,
         }
         for s in sampled

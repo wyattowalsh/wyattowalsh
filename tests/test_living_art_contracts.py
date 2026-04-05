@@ -186,6 +186,7 @@ def test_render_timelapse_uses_validated_contributions_daily(
         *,
         owner: str = "",
         include_today: bool = False,
+        **_: Any,
     ) -> list[object]:
         del current_metrics, owner, include_today
         captured["contributions_daily"] = history["contributions_daily"]

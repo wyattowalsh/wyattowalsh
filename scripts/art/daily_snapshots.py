@@ -30,6 +30,7 @@ from .shared import (
 )
 
 logger = get_logger(module=__name__)
+DEFAULT_PUBLISHED_MAX_FRAMES = 120
 
 
 # ---------------------------------------------------------------------------
@@ -761,7 +762,7 @@ def build_daily_snapshots(
 def sample_frames(
     snapshots: list[DailySnapshot],
     *,
-    max_frames: int = 150,
+    max_frames: int = DEFAULT_PUBLISHED_MAX_FRAMES,
 ) -> list[DailySnapshot]:
     """Adaptively sample snapshots to produce a manageable frame count.
 
