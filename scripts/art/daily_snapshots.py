@@ -2,7 +2,8 @@
 daily_snapshots.py — Historical daily state reconstruction
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Reconstructs what a GitHub profile looked like on each calendar day
-from account creation through yesterday, producing DailySnapshot objects
+from account creation through a configurable terminal day,
+producing DailySnapshot objects
 that all 4 art generators can consume for timelapse GIF rendering.
 
 Public API::
@@ -133,29 +134,29 @@ def _interpolate_scalar(current_value: int | float, progress: float) -> int:
 def _language_distribution_at_day(
     repos_so_far: list[dict[str, Any]],
     current_languages: dict[str, int],
+    final_repo_counts_by_lang: dict[str, int],
 ) -> dict[str, int]:
     """Approximate language byte distribution for repos existing on a given day.
 
-    Partitions current total bytes by repo primary language, then sums
-    only for repos that exist on this day.
+    Partitions current byte totals by language adoption progress over time.
+    Each existing repo contributes gradually during its first 6 months.
     """
-    if not current_languages or not repos_so_far:
+    if not current_languages:
         return {}
 
-    # Count repos per language in the current full set
-    total_repos_by_lang: dict[str, int] = defaultdict(int)
+    active_weight_by_lang: dict[str, float] = defaultdict(float)
     for r in repos_so_far:
         lang = r.get("language")
         if lang:
-            total_repos_by_lang[lang] += 1
+            age_months = max(1, int(r.get("age_months", 1) or 1))
+            active_weight_by_lang[lang] += min(1.0, age_months / 6.0)
 
-    # Approximate: distribute current byte count proportionally
     result: dict[str, int] = {}
     for lang, byte_count in current_languages.items():
-        repo_count = total_repos_by_lang.get(lang, 0)
-        if repo_count > 0:
-            result[lang] = byte_count  # full allocation if any repo of this lang exists
-        # Otherwise: don't include this language yet
+        denom = max(1, final_repo_counts_by_lang.get(lang, 0))
+        activation = min(1.0, active_weight_by_lang.get(lang, 0.0) / float(denom))
+        if activation > 0:
+            result[lang] = max(1, round(max(0, int(byte_count or 0)) * activation))
 
     return result
 
@@ -221,11 +222,163 @@ def _advance_dated_cursor(
 ) -> int:
     """Advance a sorted event cursor through all entries on or before ``day_iso``."""
     while (
-        cursor < len(items)
-        and (items[cursor].get(date_key, "") or "")[:10] <= day_iso
+        cursor < len(items) and (items[cursor].get(date_key, "") or "")[:10] <= day_iso
     ):
         cursor += 1
     return cursor
+
+
+def _timeline_end_day(*, include_today: bool) -> dt_date:
+    """Resolve terminal snapshot day.
+
+    Excluding today by default avoids partial-day artifacts that can cause
+    unstable timelapse output when metrics are fetched at different times.
+    """
+    return dt_date.today() if include_today else dt_date.today() - timedelta(days=1)
+
+
+def _rolling_activity_ratio(daily_contribs: dict[str, int], day: dt_date) -> float:
+    """Compute bounded recent activity ratio from real contribution history."""
+    recent_total = 0
+    long_total = 0
+    for i in range(365):
+        d = (day - timedelta(days=i)).isoformat()
+        value = max(0, int(daily_contribs.get(d, 0) or 0))
+        long_total += value
+        if i < 60:
+            recent_total += value
+    if long_total <= 0:
+        return 0.0
+    return max(0.0, min(1.0, recent_total / float(long_total)))
+
+
+def _estimate_issue_stats_at_day(
+    *,
+    day: dt_date,
+    progress: float,
+    daily_contribs: dict[str, int],
+    open_issues_current: int,
+    issue_stats_current: dict[str, Any],
+    releases_count: int,
+    merged_prs_count: int,
+) -> tuple[dict[str, int], int]:
+    """Estimate historical issue-open/close pressure when no daily issue log exists."""
+    current_open = max(0, int(open_issues_current or 0))
+    current_closed = max(0, int(issue_stats_current.get("closed_count", 0) or 0))
+    total_current = current_open + current_closed
+    if total_current <= 0:
+        return {"open_count": 0, "closed_count": 0}, 0
+
+    activity_ratio = _rolling_activity_ratio(daily_contribs, day)
+    issue_volume = max(
+        0.0,
+        min(
+            1.0,
+            (progress * 0.75) + (activity_ratio * 0.25),
+        ),
+    )
+    estimated_total = max(1, round(total_current * issue_volume))
+
+    release_pressure = min(1.0, (releases_count + merged_prs_count) / 16.0)
+    current_open_ratio = current_open / float(total_current)
+    open_ratio = (
+        current_open_ratio + (0.20 * (1.0 - progress)) - (0.12 * release_pressure)
+    )
+    open_ratio = max(0.05, min(0.90, open_ratio))
+
+    estimated_open = min(estimated_total, max(0, round(estimated_total * open_ratio)))
+    estimated_closed = max(0, estimated_total - estimated_open)
+    return {
+        "open_count": estimated_open,
+        "closed_count": estimated_closed,
+    }, estimated_open
+
+
+def _hour_from_event(event: dict[str, Any], keys: tuple[str, ...]) -> int | None:
+    for key in keys:
+        value = event.get(key)
+        if not isinstance(value, str) or not value:
+            continue
+        try:
+            if "T" in value:
+                return datetime.fromisoformat(value.replace("Z", "+00:00")).hour
+        except ValueError:
+            continue
+    return None
+
+
+def _estimate_commit_hours_at_day(
+    *,
+    day: dt_date,
+    daily_contribs: dict[str, int],
+    base_distribution: dict[str, int] | dict[int, int],
+    stars: list[dict[str, Any]],
+    forks: list[dict[str, Any]],
+    releases: list[dict[str, Any]],
+    merged_prs: list[dict[str, Any]],
+) -> dict[int, int]:
+    """Estimate hourly activity distribution from available history and priors."""
+    event_hours: dict[int, int] = defaultdict(int)
+
+    for ev in stars:
+        hour = _hour_from_event(ev, ("date",))
+        if hour is not None:
+            event_hours[hour] += 1
+    for ev in forks:
+        hour = _hour_from_event(ev, ("date",))
+        if hour is not None:
+            event_hours[hour] += 1
+    for ev in releases:
+        hour = _hour_from_event(ev, ("published_at", "date"))
+        if hour is not None:
+            event_hours[hour] += 2
+    for ev in merged_prs:
+        hour = _hour_from_event(ev, ("merged_at", "date"))
+        if hour is not None:
+            event_hours[hour] += 2
+
+    normalized_base: dict[int, int] = {}
+    for key, value in (base_distribution or {}).items():
+        try:
+            hour = int(key)
+            if 0 <= hour <= 23:
+                normalized_base[hour] = max(0, int(value or 0))
+        except (TypeError, ValueError):
+            continue
+
+    recent_points: list[tuple[dt_date, int]] = []
+    for i in range(90):
+        d = day - timedelta(days=i)
+        v = max(0, int(daily_contribs.get(d.isoformat(), 0) or 0))
+        if v > 0:
+            recent_points.append((d, v))
+    weekend_weight = sum(v for d, v in recent_points if d.weekday() >= 5) / max(
+        1, sum(v for _, v in recent_points)
+    )
+    synthetic_peak = int(round(14 + 8 * weekend_weight))
+    synthetic_peak = max(8, min(22, synthetic_peak))
+    synthetic: dict[int, int] = {}
+    for hour in range(24):
+        dist = abs(hour - synthetic_peak)
+        synthetic[hour] = max(0, 10 - dist * 2)
+
+    if not normalized_base:
+        return synthetic
+
+    total_event_points = sum(event_hours.values())
+    event_weight = min(0.70, total_event_points / 30.0)
+    trend_weight = 0.20 if total_event_points > 0 else 0.35
+    base_weight = max(0.10, 1.0 - event_weight - trend_weight)
+
+    result: dict[int, int] = {}
+    for hour in range(24):
+        combined = (
+            normalized_base.get(hour, 0) * base_weight
+            + synthetic.get(hour, 0) * trend_weight
+            + event_hours.get(hour, 0) * event_weight * 8
+        )
+        result[hour] = max(0, int(round(combined)))
+    return result
 
 
 def _repo_recency_bands(
@@ -256,8 +409,9 @@ def build_daily_snapshots(
     current_metrics: dict[str, Any],
     *,
     owner: str = "",
+    include_today: bool = False,
 ) -> list[DailySnapshot]:
-    """Build one DailySnapshot per day from account creation to yesterday.
+    """Build one DailySnapshot per day from account creation to terminal day.
 
     Parameters
     ----------
@@ -267,6 +421,9 @@ def build_daily_snapshots(
         Output of ``fetch_metrics.collect()`` (or normalized metrics).
     owner : str
         GitHub username for labeling.
+    include_today : bool
+        If True, include today's partial day as the terminal snapshot.
+        Defaults to False for deterministic daily comparisons.
 
     Returns
     -------
@@ -279,11 +436,11 @@ def build_daily_snapshots(
         account_created = dt_date.today() - timedelta(days=365)
         logger.warning("No account_created in history; defaulting to 1 year ago")
 
-    yesterday = dt_date.today() - timedelta(days=1)
-    if account_created > yesterday:
-        account_created = yesterday
+    timeline_end = _timeline_end_day(include_today=include_today)
+    if account_created > timeline_end:
+        account_created = timeline_end
 
-    total_days = (yesterday - account_created).days + 1
+    total_days = (timeline_end - account_created).days + 1
     if total_days <= 0:
         return []
 
@@ -291,7 +448,7 @@ def build_daily_snapshots(
         "Building {} daily snapshots from {} to {}",
         total_days,
         account_created,
-        yesterday,
+        timeline_end,
     )
     from ..fetch_history import (
         compute_contribution_streaks,
@@ -302,12 +459,12 @@ def build_daily_snapshots(
     stars_cumulative = _cumulative_counts_by_date(
         history.get("stars", []),
         account_created,
-        yesterday,
+        timeline_end,
     )
     forks_cumulative = _cumulative_counts_by_date(
         history.get("forks", []),
         account_created,
-        yesterday,
+        timeline_end,
     )
 
     # Repo details (merged history dates + current details)
@@ -349,8 +506,10 @@ def build_daily_snapshots(
     curr_pr_review = curr.get("pr_review_count", 0) or 0
     curr_total_repos_contrib = curr.get("total_repos_contributed", 0) or 0
     curr_languages = curr.get("languages", {}) or {}
-    issue_stats = curr.get("issue_stats", {}) or history.get("issue_stats", {}) or {}
-    commit_hour_distribution = (
+    current_issue_stats = (
+        curr.get("issue_stats", {}) or history.get("issue_stats", {}) or {}
+    )
+    base_commit_hour_distribution = (
         curr.get("commit_hour_distribution", {})
         or history.get("commit_hour_distribution", {})
         or {}
@@ -377,6 +536,11 @@ def build_daily_snapshots(
     all_forks = sorted(history.get("forks", []), key=lambda e: e.get("date", ""))
     all_hist_repos = sorted(history.get("repos", []), key=lambda e: e.get("date", ""))
     sorted_daily_items = sorted(daily_contribs.items())
+    final_repo_counts_by_lang: dict[str, int] = defaultdict(int)
+    for _, repo in dated_repos:
+        lang = repo.get("language")
+        if lang:
+            final_repo_counts_by_lang[str(lang)] += 1
     daily_cursor = 0
     stars_cursor = 0
     forks_cursor = 0
@@ -428,7 +592,11 @@ def build_daily_snapshots(
         contribs_last_year = _trailing_year_contributions(daily_contribs, day)
 
         # Language distribution
-        langs = _language_distribution_at_day(repos_so_far, curr_languages)
+        langs = _language_distribution_at_day(
+            repos_so_far,
+            curr_languages,
+            final_repo_counts_by_lang,
+        )
 
         # Monthly/daily contributions truncated
         monthly_trunc = _truncate_monthly(hist_monthly, day)
@@ -451,6 +619,17 @@ def build_daily_snapshots(
             date_key="merged_at",
         )
         recent_merged_prs_trunc = all_recent_merged_prs[:merged_prs_cursor]
+        forks_cursor_for_day = _advance_dated_cursor(all_forks, forks_cursor, day_iso)
+        forks_trunc = all_forks[:forks_cursor_for_day]
+        issue_stats, open_issues_estimate = _estimate_issue_stats_at_day(
+            day=day,
+            progress=progress,
+            daily_contribs=daily_contribs,
+            open_issues_current=curr_open_issues,
+            issue_stats_current=current_issue_stats,
+            releases_count=len(releases_trunc),
+            merged_prs_count=len(recent_merged_prs_trunc),
+        )
 
         # Build metrics_dict (for ink_garden / topography)
         metrics_dict: dict[str, Any] = {
@@ -469,7 +648,7 @@ def build_daily_snapshots(
             "total_repos_contributed": _interpolate_scalar(
                 curr_total_repos_contrib, progress
             ),
-            "open_issues_count": _interpolate_scalar(curr_open_issues, progress),
+            "open_issues_count": open_issues_estimate,
             "network_count": _interpolate_scalar(curr_network, progress),
             "public_gists": _interpolate_scalar(curr_gists, progress),
             "pr_review_count": _interpolate_scalar(curr_pr_review, progress),
@@ -479,7 +658,6 @@ def build_daily_snapshots(
             "label": owner,
             "account_created": ac_str,
             "issue_stats": issue_stats,
-            "commit_hour_distribution": commit_hour_distribution,
             "recent_merged_prs": recent_merged_prs_trunc,
             "releases": releases_trunc,
         }
@@ -490,6 +668,15 @@ def build_daily_snapshots(
         metrics_dict["star_velocity"] = compute_star_velocity(stars_trunc)
         metrics_dict["contribution_streaks"] = compute_contribution_streaks(
             monthly_trunc
+        )
+        metrics_dict["commit_hour_distribution"] = _estimate_commit_hours_at_day(
+            day=day,
+            daily_contribs=daily_contribs,
+            base_distribution=base_commit_hour_distribution,
+            stars=stars_trunc,
+            forks=forks_trunc,
+            releases=releases_trunc,
+            merged_prs=recent_merged_prs_trunc,
         )
 
         # Topic clusters
@@ -520,8 +707,7 @@ def build_daily_snapshots(
             metrics_dict["language_count"] = 0
 
         # Build history_dict for historical/timelapse consumers.
-        forks_cursor = _advance_dated_cursor(all_forks, forks_cursor, day_iso)
-        forks_trunc = all_forks[:forks_cursor]
+        forks_cursor = forks_cursor_for_day
         repos_cursor = _advance_dated_cursor(all_hist_repos, repos_cursor, day_iso)
         repos_trunc = all_hist_repos[:repos_cursor]
 
@@ -538,7 +724,7 @@ def build_daily_snapshots(
             "releases": releases_trunc,
             "recent_merged_prs": recent_merged_prs_trunc,
             "issue_stats": issue_stats,
-            "commit_hour_distribution": commit_hour_distribution,
+            "commit_hour_distribution": metrics_dict["commit_hour_distribution"],
         }
 
         # Maturity and world state
@@ -581,9 +767,10 @@ def sample_frames(
 
     Strategy:
     1. Always include first and last day.
-    2. Mark event days (new repo, star burst, contribution spike) — budget 40%.
+    2. Score eventful transitions
+       (repos, stars, releases, PRs, language/topic/world shifts).
     3. Fill remaining budget with uniform temporal sampling.
-    4. Deduplicate adjacent frames with maturity delta < 0.001.
+    4. Deduplicate only near-identical adjacent frames across multiple signals.
     """
     if not snapshots:
         return []
@@ -601,26 +788,65 @@ def sample_frames(
         score = 0.0
         curr = snapshots[i].metrics_dict
         prev = snapshots[i - 1].metrics_dict
+        curr_world = snapshots[i].world_state
+        prev_world = snapshots[i - 1].world_state
 
         # New repo created
-        if len(curr.get("repos", [])) > len(prev.get("repos", [])):
-            score += 3.0
+        repo_diff = len(curr.get("repos", [])) - len(prev.get("repos", []))
+        if repo_diff > 0:
+            score += 2.5 + min(2.0, repo_diff * 0.8)
 
         # Star burst (>= 3 new stars in a day)
         star_diff = curr.get("stars", 0) - prev.get("stars", 0)
-        if star_diff >= 3:
-            score += 2.0 + min(3.0, star_diff * 0.3)
+        if star_diff > 0:
+            score += min(4.0, star_diff * 0.5)
 
         # Maturity jump
         mat_diff = abs(snapshots[i].maturity - snapshots[i - 1].maturity)
         if mat_diff > 0.01:
             score += mat_diff * 50
 
-        # Contribution spike
+        # Contribution/month boundary changes
         monthly_curr = curr.get("contributions_monthly", {})
         monthly_prev = prev.get("contributions_monthly", {})
         if len(monthly_curr) > len(monthly_prev):
+            score += 1.2
+
+        # Releases / merged PRs
+        release_diff = len(curr.get("releases", [])) - len(prev.get("releases", []))
+        if release_diff > 0:
+            score += 2.0 + min(3.0, release_diff * 1.2)
+        merged_pr_diff = len(curr.get("recent_merged_prs", [])) - len(
+            prev.get("recent_merged_prs", [])
+        )
+        if merged_pr_diff > 0:
+            score += 1.5 + min(3.0, merged_pr_diff * 0.9)
+
+        # Language/topic shifts
+        lang_div_diff = abs(
+            float(curr.get("language_diversity", 0.0) or 0.0)
+            - float(prev.get("language_diversity", 0.0) or 0.0)
+        )
+        score += min(2.5, lang_div_diff * 4.0)
+        if curr.get("language_count", 0) != prev.get("language_count", 0):
             score += 1.0
+        if curr.get("topic_clusters", {}) != prev.get("topic_clusters", {}):
+            score += 0.8
+
+        # Atmosphere/world shifts
+        if curr_world.time_of_day != prev_world.time_of_day:
+            score += 1.2
+        if curr_world.weather != prev_world.weather:
+            score += 1.6
+        if curr_world.season != prev_world.season:
+            score += 1.2
+        score += min(
+            1.8,
+            abs(curr_world.weather_severity - prev_world.weather_severity) * 4.0,
+        )
+        score += min(
+            1.4, abs(curr_world.activity_pressure - prev_world.activity_pressure) * 2.5
+        )
 
         if score > 0:
             event_scores.append((score, i))
@@ -639,14 +865,32 @@ def sample_frames(
             if len(selected_indices) >= max_frames:
                 break
 
-    # Sort and deduplicate by maturity delta
+    # Sort and deduplicate by multi-signal similarity
     sorted_indices = sorted(selected_indices)
     result: list[DailySnapshot] = [snapshots[sorted_indices[0]]]
     for idx in sorted_indices[1:]:
-        if abs(snapshots[idx].maturity - result[-1].maturity) >= 0.001:
-            result.append(snapshots[idx])
-        elif idx == n - 1:
-            result.append(snapshots[idx])  # always include last
+        candidate = snapshots[idx]
+        previous = result[-1]
+        is_distinct = any(
+            (
+                abs(candidate.maturity - previous.maturity) >= 0.001,
+                candidate.world_state.time_of_day != previous.world_state.time_of_day,
+                candidate.world_state.weather != previous.world_state.weather,
+                candidate.world_state.season != previous.world_state.season,
+                candidate.metrics_dict.get("stars", 0)
+                != previous.metrics_dict.get("stars", 0),
+                candidate.metrics_dict.get("forks", 0)
+                != previous.metrics_dict.get("forks", 0),
+                candidate.metrics_dict.get("language_count", 0)
+                != previous.metrics_dict.get("language_count", 0),
+                len(candidate.metrics_dict.get("releases", []))
+                != len(previous.metrics_dict.get("releases", [])),
+                len(candidate.metrics_dict.get("recent_merged_prs", []))
+                != len(previous.metrics_dict.get("recent_merged_prs", [])),
+            )
+        )
+        if is_distinct or idx == n - 1:
+            result.append(candidate)
 
     # Final trim if over budget
     if len(result) > max_frames:

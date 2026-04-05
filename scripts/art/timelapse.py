@@ -36,6 +36,11 @@ from .shared import (
 
 logger = get_logger(module=__name__)
 
+# Canonical published-contract defaults used by CLI and CI.
+DEFAULT_PUBLISHED_MAX_FRAMES = 120
+DEFAULT_PUBLISHED_RUNTIME_MS = 30_000
+MIN_PUBLISHED_RUNTIME_MS = 24_000
+
 # ---------------------------------------------------------------------------
 # Frame rendering
 # ---------------------------------------------------------------------------
@@ -99,37 +104,43 @@ def _render_single_frame(
 # ---------------------------------------------------------------------------
 
 
-def _compute_frame_durations(n_frames: int, total_ms: int = 12000) -> list[int]:
+def _compute_frame_durations(
+    n_frames: int,
+    total_ms: int = DEFAULT_PUBLISHED_RUNTIME_MS,
+) -> list[int]:
     """Narrative-paced frame durations in milliseconds.
 
-    - First 5%: 200ms (slow genesis)
-    - Middle 80%: distributed evenly from remaining budget
-    - Last 15%: 150ms (dramatic finish)
-    - Final frame: 2000ms hold
+    Contract for published assets:
+    - Default runtime target: ~30s for 120 sampled frames.
+    - Runtime floor for legibility: >=24s for default frame-count contract.
+    - Final frame is always held for 3000ms.
     """
     if n_frames <= 1:
-        return [2000]
+        return [3000]
     if n_frames == 2:
-        return [500, 2000]
+        return [1200, 3000]
 
     durations: list[int] = []
 
-    first_count = max(1, int(n_frames * 0.05))
-    last_count = max(1, int(n_frames * 0.15))
+    first_count = max(1, int(n_frames * 0.10))
+    last_count = max(1, int(n_frames * 0.20))
     mid_count = n_frames - first_count - last_count - 1  # -1 for final hold
 
-    first_budget = first_count * 200
-    last_budget = last_count * 150
-    final_hold = 2000
-    mid_budget = max(total_ms - first_budget - last_budget - final_hold, mid_count * 50)
-    mid_per = max(50, mid_budget // max(1, mid_count))
+    first_budget = first_count * 260
+    last_budget = last_count * 220
+    final_hold = 3000
+    mid_budget = max(
+        total_ms - first_budget - last_budget - final_hold,
+        mid_count * 160,
+    )
+    mid_per = max(160, mid_budget // max(1, mid_count))
 
     for _ in range(first_count):
-        durations.append(200)
+        durations.append(260)
     for _ in range(mid_count):
         durations.append(mid_per)
     for _ in range(last_count):
-        durations.append(150)
+        durations.append(220)
     durations.append(final_hold)
 
     # Pad or trim to exact n_frames
@@ -138,6 +149,28 @@ def _compute_frame_durations(n_frames: int, total_ms: int = 12000) -> list[int]:
     durations = durations[:n_frames]
 
     return durations
+
+
+def _select_valid_frames_with_durations(
+    png_frames: list[tuple[int, bytes | None]],
+    durations: list[int],
+) -> tuple[list[bytes], list[int]]:
+    """Return successful frames and preserve duration alignment by source index."""
+    valid_frames: list[bytes] = []
+    valid_durations: list[int] = []
+    for frame_index, frame_data in sorted(png_frames, key=lambda item: item[0]):
+        if frame_data is None:
+            continue
+        if frame_index >= len(durations):
+            logger.warning(
+                "Frame index {} exceeds duration plan length {}; dropping frame",
+                frame_index,
+                len(durations),
+            )
+            continue
+        valid_frames.append(frame_data)
+        valid_durations.append(durations[frame_index])
+    return valid_frames, valid_durations
 
 
 # ---------------------------------------------------------------------------
@@ -250,7 +283,7 @@ def render_timelapse(
     current_metrics: dict[str, Any],
     *,
     styles: list[str] | None = None,
-    max_frames: int = 150,
+    max_frames: int = DEFAULT_PUBLISHED_MAX_FRAMES,
     size: int = 400,
     output_dir: Path | None = None,
     owner: str = "",
@@ -297,7 +330,12 @@ def render_timelapse(
 
     # Build daily snapshots
     logger.info("Building daily snapshots for timelapse...")
-    snapshots = build_daily_snapshots(history, current_metrics, owner=owner)
+    snapshots = build_daily_snapshots(
+        history,
+        current_metrics,
+        owner=owner,
+        include_today=True,
+    )
     if not snapshots:
         logger.warning("No snapshots generated — cannot render timelapse")
         return []
@@ -316,7 +354,6 @@ def render_timelapse(
     serialized_frames = [
         {
             "metrics_dict": s.metrics_dict,
-            "history_dict": s.history_dict,
             "maturity": s.maturity,
             "progress": s.progress,
             "day_index": s.day_index,
@@ -325,6 +362,12 @@ def render_timelapse(
     ]
 
     durations = _compute_frame_durations(len(sampled))
+    planned_runtime_s = sum(durations) / 1000
+    logger.info(
+        "Timelapse runtime contract: {} frames planned, {:.1f}s playback",
+        len(sampled),
+        planned_runtime_s,
+    )
     outputs: list[Path] = []
 
     for style in active_styles:
@@ -366,12 +409,11 @@ def render_timelapse(
                     logger.warning("Frame {} failed for {}: {}", idx, style, exc)
                     png_frames.append((idx, None))
 
-        # Sort by index and filter failures
-        png_frames.sort(key=lambda x: x[0])
-        valid_frames = [f for _, f in png_frames if f is not None]
-        valid_durations = [
-            durations[i] for i, (_, f) in enumerate(png_frames) if f is not None
-        ]
+        # Filter failures while preserving per-frame duration alignment.
+        valid_frames, valid_durations = _select_valid_frames_with_durations(
+            png_frames,
+            durations,
+        )
 
         if not valid_frames:
             logger.error("No valid frames rendered for {}", style)
@@ -405,7 +447,10 @@ def main() -> None:
     parser.add_argument("--history-path", required=True, help="Path to history JSON")
     parser.add_argument("--owner", default="", help="GitHub username")
     parser.add_argument(
-        "--max-frames", type=int, default=150, help="Max frames per GIF"
+        "--max-frames",
+        type=int,
+        default=DEFAULT_PUBLISHED_MAX_FRAMES,
+        help="Max frames per GIF (default contract: ~30s runtime for canonical output)",
     )
     parser.add_argument("--size", type=int, default=400, help="Frame size in px")
     parser.add_argument(

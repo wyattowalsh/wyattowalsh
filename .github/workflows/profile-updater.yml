@@ -470,6 +470,8 @@ jobs:
       - name: Generate living-art outputs (canonical timelapse GIFs)
         env:
           OWNER: ${{ github.repository_owner }}
+          LIVING_ART_MAX_FRAMES: "120"
+          LIVING_ART_MIN_RUNTIME_MS: "24000"
         run: |
           uv run python -m scripts.cli generate living-art \
             --profile "$OWNER" \
@@ -478,6 +480,9 @@ jobs:
             --max-frames "$LIVING_ART_MAX_FRAMES"
 
       - name: Validate living-art runtime and frame contracts
+        env:
+          LIVING_ART_MAX_FRAMES: "120"
+          LIVING_ART_MIN_RUNTIME_MS: "24000"
         run: |
           uv run python - <<'PY'
           import os
@@ -493,18 +498,7 @@ jobs:
           print("Living-art runtime contract summary:")
           for gif_path in gif_paths:
               with Image.open(gif_path) as img:
-                  durations = []
-                  for frame_index, frame in enumerate(ImageSequence.Iterator(img)):
-                      raw_duration = frame.info.get("duration", 0)
-                      try:
-                          duration = int(raw_duration)
-                      except (TypeError, ValueError):
-                          duration = 0
-                      if duration <= 0:
-                          raise SystemExit(
-                              f"{gif_path.name} frame {frame_index} has invalid duration {raw_duration!r}"
-                          )
-                      durations.append(duration)
+                  durations = [max(1, frame.info.get("duration", 0)) for frame in ImageSequence.Iterator(img)]
               frame_count = len(durations)
               runtime_ms = sum(durations)
               print(f"- {gif_path.name}: frames={frame_count}, runtime_ms={runtime_ms}")

@@ -516,9 +516,9 @@ def test_compute_frame_durations_length():
 
 
 def test_compute_frame_durations_last_hold():
-    """Final frame should be 2000ms hold."""
+    """Final frame should be 3000ms hold."""
     durations = _compute_frame_durations(20)
-    assert durations[-1] == 2000
+    assert durations[-1] == 3000
 
 
 def test_compute_frame_durations_all_positive():

@@ -19,6 +19,7 @@ from ..art.artifacts import (
     LIVING_ART_STYLE_KEYS,
     sync_living_art_artifacts,
 )
+from ..art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 from ..config import (
     DEFAULT_CONFIG_PATH,
     DEFAULT_SKILLS_PATH,
@@ -29,6 +30,7 @@ from ..config import (
 from ..utils import console, get_logger
 
 logger = get_logger(module=__name__)
+_LIVING_ART_DEFAULT_MAX_FRAMES = DEFAULT_PUBLISHED_MAX_FRAMES
 
 generate_app = typer.Typer(
     name="generate",
@@ -1096,10 +1098,10 @@ def living_art(
             "--max-frames",
             "--frames",
             min=5,
-            help="Maximum frames per GIF.",
+            help="Maximum frames per GIF (default 120 targets ~30s playback).",
             rich_help_panel="Living Art Options",
         ),
-    ] = 150,
+    ] = _LIVING_ART_DEFAULT_MAX_FRAMES,
     size: Annotated[
         int,
         typer.Option(
@@ -1207,10 +1209,10 @@ def timelapse(
             "--max-frames",
             "--frames",
             min=5,
-            help="Maximum frames per GIF.",
+            help="Maximum frames per GIF (default 120 targets ~30s playback).",
             rich_help_panel="Timelapse Options",
         ),
-    ] = 150,
+    ] = _LIVING_ART_DEFAULT_MAX_FRAMES,
     size: Annotated[
         int,
         typer.Option(
