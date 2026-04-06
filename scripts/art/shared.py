@@ -723,7 +723,11 @@ class MetricsSnapshotContract(_SignalContractModel):
     recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
     issue_stats: dict[str, Any] = Field(default_factory=dict)
     commit_hour_distribution: dict[str, int] = Field(default_factory=dict)
+    commit_hour_distribution_scope: str | None = None
+    commit_hour_distribution_sample_size: int = 0
     releases: list[dict[str, Any]] = Field(default_factory=list)
+    releases_scope: str | None = None
+    releases_repo_count: int = 0
     traffic_views_14d: int | None = 0
     traffic_unique_visitors_14d: int | None = 0
     traffic_clones_14d: int | None = 0
@@ -744,7 +748,11 @@ class HistorySnapshotContract(_SignalContractModel):
     recent_merged_prs: list[dict[str, Any]] = Field(default_factory=list)
     issue_stats: dict[str, Any] = Field(default_factory=dict)
     commit_hour_distribution: dict[str, int] = Field(default_factory=dict)
+    commit_hour_distribution_scope: str | None = None
+    commit_hour_distribution_sample_size: int = 0
     releases: list[dict[str, Any]] = Field(default_factory=list)
+    releases_scope: str | None = None
+    releases_repo_count: int = 0
     star_velocity: StarVelocitySignal | None = None
     contribution_streaks: ContributionStreakSignal | None = None
 
@@ -954,7 +962,12 @@ def normalize_live_metrics(
     # 7. Pass through new fields from fetch_metrics and fetch_history
     _PASSTHROUGH_KEYS = (
         "recent_merged_prs", "issue_stats", "pr_review_count",
-        "commit_hour_distribution", "releases",
+        "commit_hour_distribution",
+        "commit_hour_distribution_scope",
+        "commit_hour_distribution_sample_size",
+        "releases",
+        "releases_scope",
+        "releases_repo_count",
         "star_velocity", "contribution_streaks",
         "public_gists",
         "traffic_views_14d", "traffic_unique_visitors_14d",

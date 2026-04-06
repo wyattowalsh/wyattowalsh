@@ -328,8 +328,7 @@ def test_build_daily_snapshots_prefers_contributions_daily() -> None:
     metrics = _mock_metrics()
     snaps = build_daily_snapshots(history, metrics, owner="testuser")
     assert (
-        snaps[-1].metrics_dict["contributions_daily"]
-        == history["contributions_daily"]
+        snaps[-1].metrics_dict["contributions_daily"] == history["contributions_daily"]
     )
 
 
@@ -369,26 +368,30 @@ def test_build_daily_snapshots_release_and_pr_events_follow_chronology() -> None
 
     assert snap_by_day[release_day - timedelta(days=1)].metrics_dict["releases"] == []
     assert (
-        snap_by_day[release_day].metrics_dict["releases"][0]["published_at"].startswith(
-            release_day.isoformat()
-        )
+        snap_by_day[release_day]
+        .metrics_dict["releases"][0]["published_at"]
+        .startswith(release_day.isoformat())
     )
     assert (
-        snap_by_day[release_day].history_dict["releases"][0]["published_at"].startswith(
-            release_day.isoformat()
-        )
+        snap_by_day[release_day]
+        .history_dict["releases"][0]["published_at"]
+        .startswith(release_day.isoformat())
     )
 
     assert (
         snap_by_day[merged_pr_day - timedelta(days=1)].metrics_dict["recent_merged_prs"]
         == []
     )
-    assert snap_by_day[merged_pr_day].metrics_dict["recent_merged_prs"][0][
-        "merged_at"
-    ].startswith(merged_pr_day.isoformat())
-    assert snap_by_day[merged_pr_day].history_dict["recent_merged_prs"][0][
-        "merged_at"
-    ].startswith(merged_pr_day.isoformat())
+    assert (
+        snap_by_day[merged_pr_day]
+        .metrics_dict["recent_merged_prs"][0]["merged_at"]
+        .startswith(merged_pr_day.isoformat())
+    )
+    assert (
+        snap_by_day[merged_pr_day]
+        .history_dict["recent_merged_prs"][0]["merged_at"]
+        .startswith(merged_pr_day.isoformat())
+    )
 
 
 def test_build_daily_snapshots_recomputes_derived_signals_per_day(
@@ -425,10 +428,9 @@ def test_build_daily_snapshots_recomputes_derived_signals_per_day(
     snaps = build_daily_snapshots(history, metrics, owner="testuser")
     assert len(star_calls) == len(snaps)
     assert len(streak_calls) == len(snaps)
-    assert (
-        snaps[-1].metrics_dict["contribution_streaks"]["current_streak_months"]
-        == len(snaps)
-    )
+    assert snaps[-1].metrics_dict["contribution_streaks"][
+        "current_streak_months"
+    ] == len(snaps)
 
 
 def test_render_single_frame_topo_does_not_leak_chrome_maturity(
@@ -467,7 +469,9 @@ def test_render_single_frame_topo_does_not_leak_chrome_maturity(
     )
 
     assert result == b"png"
-    assert "chrome_maturity" not in captured.get("kwargs", {})
+    kwargs = captured.get("kwargs")
+    assert isinstance(kwargs, dict)
+    assert "chrome_maturity" not in kwargs
 
 
 # ---------------------------------------------------------------------------
@@ -482,6 +486,17 @@ def test_sample_frames_respects_max():
     snaps = build_daily_snapshots(history, metrics)
     sampled = sample_frames(snaps, max_frames=30)
     assert len(sampled) <= 30
+
+
+def test_sample_frames_uses_full_budget_for_long_timelines():
+    """Representative sampling should use the full published budget when trimming."""
+    history = _mock_history(days=200)
+    metrics = _mock_metrics()
+    snaps = build_daily_snapshots(history, metrics)
+
+    sampled = sample_frames(snaps, max_frames=30)
+
+    assert len(sampled) == 30
 
 
 def test_sample_frames_includes_first_and_last():

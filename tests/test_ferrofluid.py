@@ -249,9 +249,7 @@ def test_ferrofluid_timeline_svg_keeps_static_spike_opacity_for_export() -> None
     assert spike_polygons
     assert ".tl-reveal{opacity:0;" not in timeline_svg
     assert all(polygon.attrib.get("class") == "tl-reveal" for polygon in spike_polygons)
-    assert all(
-        polygon.attrib.get("opacity") == "0.95" for polygon in spike_polygons
-    )
+    assert all(polygon.attrib.get("opacity") == "0.95" for polygon in spike_polygons)
 
 
 def test_ferrofluid_legacy_maturity_still_changes_shape() -> None:
@@ -287,6 +285,27 @@ def test_ferrofluid_higher_repo_star_energy_yields_richer_spike_field() -> None:
     assert _count_spike_gradients(high_energy_svg) > _count_spike_gradients(
         low_energy_svg
     )
+
+
+def test_ferrofluid_dense_repo_snapshots_keep_all_dipoles_and_add_capillaries() -> None:
+    metrics = _sample_metrics()
+    metrics["repos"] = [
+        {
+            "name": f"repo-{index}",
+            "language": ("Python", "Go", "Rust", "TypeScript")[index % 4],
+            "stars": max(1, 20 - index),
+            "forks": max(0, 4 - (index % 3)),
+            "topics": ["automation", f"cluster-{index % 3}"],
+            "age_months": 3 + index,
+            "date": f"2023-{(index % 9) + 1:02d}-{(index % 20) + 1:02d}T00:00:00Z",
+        }
+        for index in range(12)
+    ]
+
+    svg = generate(metrics, seed="ferro-all-repos", timeline=False, maturity=1.0)
+
+    assert len(re.findall(r'data-role="ferro-dipole"', svg)) == len(metrics["repos"])
+    assert len(re.findall(r'data-role="ferro-capillary"', svg)) >= len(metrics["repos"])
 
 
 def test_ferrofluid_signals_scale_with_cumulative_snapshot_metrics() -> None:

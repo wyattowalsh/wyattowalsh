@@ -122,6 +122,10 @@ def test_normalize_live_metrics_preserves_fetch_metrics_passthrough_fields() -> 
             "traffic_clones_14d": 20,
             "traffic_unique_cloners_14d": 8,
             "traffic_top_referrers": ["google", "github"],
+            "commit_hour_distribution_scope": "recent_push_events_window",
+            "commit_hour_distribution_sample_size": 12,
+            "releases_scope": "account_owned_repos",
+            "releases_repo_count": 4,
         },
         owner="contract-test",
         history=_history_payload(),
@@ -133,6 +137,10 @@ def test_normalize_live_metrics_preserves_fetch_metrics_passthrough_fields() -> 
     assert metrics["traffic_clones_14d"] == 20
     assert metrics["traffic_unique_cloners_14d"] == 8
     assert metrics["traffic_top_referrers"] == ["google", "github"]
+    assert metrics["commit_hour_distribution_scope"] == "recent_push_events_window"
+    assert metrics["commit_hour_distribution_sample_size"] == 12
+    assert metrics["releases_scope"] == "account_owned_repos"
+    assert metrics["releases_repo_count"] == 4
 
 
 def test_normalize_live_metrics_keeps_monthly_only_payloads_working() -> None:

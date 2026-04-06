@@ -31,12 +31,15 @@ from .shared import (
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    hex_frac,
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
     oklch_gradient,
+    order_repos_for_visual_plan,
     organic_texture_filter,
     repo_to_canvas_position,
+    repo_visibility_score,
     seed_hash,
     select_palette_for_world,
     select_primary_repos,
@@ -97,6 +100,13 @@ def _as_non_negative_float(value: Any) -> float:
         return max(0.0, float(value or 0.0))
     except (TypeError, ValueError):
         return 0.0
+
+
+def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
+    """Return a soft repo-density signal that keeps rising beyond the baseline."""
+    if repo_count <= 0:
+        return 0.0
+    return min(1.0, math.log1p(repo_count) / math.log1p(max(2, baseline * 4)))
 
 
 def _repo_growth_profile(metrics: dict[str, Any]) -> tuple[float, float]:
@@ -244,7 +254,7 @@ def _derive_landscape_dynamics(
     growth_share, legacy_share = _repo_growth_profile(metrics)
     repos = metrics.get("repos", [])
     repo_count = len(repos) if isinstance(repos, list) else 0
-    repo_signal = min(1.0, repo_count / max(1, CFG.max_repos))
+    repo_signal = _dense_repo_signal(repo_count, baseline=CFG.max_repos)
 
     raw_daily = metrics.get("contributions_daily", {})
     if isinstance(raw_daily, dict) and raw_daily:
@@ -539,8 +549,10 @@ def _simulate_population(
         # Mutate all organisms slightly (terrain-following drift + noise)
         gx_idx = np.clip(((xs - _MAP_L) / cell_w).astype(int), 0, grid - 1)
         gy_idx = np.clip(((ys - _MAP_T) / cell_h).astype(int), 0, grid - 1)
-        xs += terrain_grad_x[gy_idx, gx_idx] * cell_w * gradient_gain
-        ys += terrain_grad_y[gy_idx, gx_idx] * cell_h * gradient_gain
+        grad_x = np.asarray(terrain_grad_x)[gy_idx, gx_idx]
+        grad_y = np.asarray(terrain_grad_y)[gy_idx, gx_idx]
+        xs += grad_x * cell_w * gradient_gain
+        ys += grad_y * cell_h * gradient_gain
         xs += rng.normal(0, mutation_rate * 3.0, pop_count)
         ys += rng.normal(0, mutation_rate * 3.0, pop_count)
 
@@ -608,11 +620,37 @@ def generate(
     rng = np.random.default_rng(int(h[:8], 16))
     noise = Noise2D(seed=int(h[8:16], 16))
 
-    repos = metrics.get("repos", [])
+    raw_repos = metrics.get("repos", [])
+    preferred_repo_names = metrics.get("repo_visual_order")
+    repos = order_repos_for_visual_plan(
+        list(raw_repos) if isinstance(raw_repos, list) else [],
+        preferred_names=(
+            preferred_repo_names
+            if isinstance(preferred_repo_names, (list, tuple))
+            else None
+        ),
+    )
     primary_repos, _overflow = select_primary_repos(repos, limit=CFG.max_repos)
     tempo = activity_tempo(metrics.get("contributions_monthly"))
     affinities = topic_affinity_matrix(primary_repos)
     dynamics = _derive_landscape_dynamics(metrics, maturity=mat, tempo=tempo)
+    repo_density_signal = _dense_repo_signal(len(primary_repos), baseline=CFG.max_repos)
+    visibility_scores = [repo_visibility_score(repo) for repo in primary_repos]
+    visibility_max = max(visibility_scores, default=1.0)
+    visibility_min = min(visibility_scores, default=0.0)
+    visibility_span = max(0.001, visibility_max - visibility_min)
+    visibility_norms = [
+        (
+            0.18 + 0.82 * ((score - visibility_min) / visibility_span)
+            if len(visibility_scores) > 1
+            else 1.0
+        )
+        for score in visibility_scores
+    ]
+    crowding_scale = max(
+        0.42,
+        1.0 / math.sqrt(max(1.0, len(primary_repos) / max(1, CFG.max_repos))),
+    )
 
     # ── Timeline window ───────────────────────────────────────────
     def _repo_date(repo: dict) -> str | None:
@@ -730,8 +768,10 @@ def generate(
     # Remap from (0..MAP_W, 0..MAP_H) to canvas coords
     initial_positions = [(_MAP_L + x, _MAP_T + y) for x, y in initial_positions]
     weights = [
-        math.log1p(max(1, _as_non_negative_int(r.get("stars", 0)))) + 1.0
-        for r in primary_repos
+        math.log1p(max(1, _as_non_negative_int(r.get("stars", 0))))
+        + 0.9
+        + 0.7 * visibility_norms[index]
+        for index, r in enumerate(primary_repos)
     ]
 
     # Optimize placement to avoid overlap
@@ -741,7 +781,7 @@ def generate(
             weights,
             float(WIDTH),
             float(HEIGHT),
-            min_spacing=70.0,
+            min_spacing=70.0 * crowding_scale,
             seed=int(h[:8], 16),
         )
     else:
@@ -758,6 +798,7 @@ def generate(
     peaks: list[
         tuple[float, float, float, str, dict]
     ] = []  # (cx, cy, height, color, repo)
+    micro_colonies: list[dict[str, Any]] = []
     repo_count_visible = len(primary_repos)
     max_repo_age = max(
         (
@@ -767,6 +808,22 @@ def generate(
         ),
         default=0,
     )
+    labeled_peak_indices: set[int] = set()
+    if primary_repos:
+        ranked_peak_indices = sorted(
+            range(len(primary_repos)),
+            key=lambda idx: (
+                visibility_scores[idx],
+                _as_non_negative_int(primary_repos[idx].get("stars", 0)),
+                -_as_non_negative_int(primary_repos[idx].get("age_months", 0)),
+            ),
+            reverse=True,
+        )
+        label_limit = max(
+            4,
+            min(8, int(round(math.sqrt(len(primary_repos)) * 2.0))),
+        )
+        labeled_peak_indices = set(ranked_peak_indices[:label_limit])
 
     for ri in range(min(repo_count_visible, len(primary_repos))):
         repo = primary_repos[ri]
@@ -778,6 +835,17 @@ def generate(
         peak_h, sigma_grid, terrace_height, terrace_sigma = _repo_peak_profile(
             repo,
             max_repo_age=max_repo_age,
+        )
+        visibility = visibility_norms[ri] if ri < len(visibility_norms) else 1.0
+        peak_h *= 0.58 + 0.72 * visibility
+        sigma_grid = max(
+            1.6,
+            sigma_grid * (0.74 + 0.42 * visibility) * (crowding_scale**0.45),
+        )
+        terrace_height *= 0.62 + 0.74 * visibility
+        terrace_sigma = max(
+            1.8,
+            terrace_sigma * (0.82 + 0.30 * (1.0 - visibility)) * (crowding_scale**0.25),
         )
         hue = opt_hues[ri] if ri < len(opt_hues) else 155.0
         color = oklch(0.65, 0.14, hue)
@@ -799,6 +867,65 @@ def generate(
 
         peaks.append((px, py, peak_h, color, repo))
 
+        colony_hash = seed_hash(
+            {"seed": h, "repo": repo.get("name", ""), "layer": "gl-micro-colony"}
+        )
+        colony_count = min(
+            3,
+            1
+            + int(visibility < 0.72)
+            + int(visibility < 0.42 or repo_density_signal > 0.7),
+        )
+        for colony_idx in range(colony_count):
+            angle = (
+                2.0
+                * math.pi
+                * (
+                    hex_frac(colony_hash, colony_idx * 4, colony_idx * 4 + 4)
+                    + colony_idx / max(1, colony_count)
+                )
+            )
+            offset = (
+                12.0
+                + 10.0 * colony_idx
+                + 18.0 * (1.0 - visibility)
+                + 10.0 * repo_density_signal
+            ) * crowding_scale
+            colony_x = max(
+                _MAP_L + 8.0,
+                min(_MAP_R - 8.0, px + math.cos(angle) * offset),
+            )
+            colony_y = max(
+                _MAP_T + 8.0,
+                min(_MAP_B - 8.0, py + math.sin(angle) * offset),
+            )
+            colony_height = (
+                peak_h * (0.10 + 0.08 * (1.0 - visibility)) * (1.0 - 0.14 * colony_idx)
+            )
+            colony_sigma = max(1.1, sigma_grid * (0.32 + 0.08 * colony_idx))
+            colony_gpx = (colony_x - _MAP_L) / cell_w
+            colony_gpy = (colony_y - _MAP_T) / cell_h
+            for gy in range(grid):
+                for gx in range(grid):
+                    elevation[gy, gx] += colony_height * _gaussian(
+                        gx,
+                        gy,
+                        colony_gpx,
+                        colony_gpy,
+                        colony_sigma,
+                    )
+            micro_colonies.append(
+                {
+                    "x": colony_x,
+                    "y": colony_y,
+                    "height": colony_height,
+                    "color": color,
+                    "repo": repo,
+                    "owner_index": ri,
+                    "visibility": visibility,
+                }
+            )
+
     # Add saddle ridges between topic-related repos
     ridge_fade = (
         _fade(0.3, 0.7)
@@ -806,7 +933,18 @@ def generate(
         else min(1.0, 0.2 + max(0.0, dynamics.ridge_intensity - 1.0) * 0.45)
     )
     if ridge_fade > 0:
-        for (i, j), affinity in affinities.items():
+        affinity_pairs = sorted(
+            affinities.items(),
+            key=lambda item: (
+                item[1]
+                * (visibility_norms[item[0][0]] + visibility_norms[item[0][1]])
+                * 0.5,
+                -abs(item[0][0] - item[0][1]),
+            ),
+            reverse=True,
+        )
+        ridge_pair_limit = max(CFG.max_repos, int(round(len(primary_repos) * 1.5)))
+        for (i, j), affinity in affinity_pairs[:ridge_pair_limit]:
             if i >= len(peaks) or j >= len(peaks):
                 continue
             p1 = peaks[i]
@@ -819,6 +957,16 @@ def generate(
                 * 0.3
                 * ridge_fade
                 * dynamics.ridge_intensity
+                * (0.72 + 0.28 * ((visibility_norms[i] + visibility_norms[j]) * 0.5))
+            )
+            ridge_sigma = max(
+                5.0,
+                8.0
+                * (
+                    0.72
+                    + 0.18 * repo_density_signal
+                    + 0.10 * (1.0 - min(visibility_norms[i], visibility_norms[j]))
+                ),
             )
             for gy in range(grid):
                 for gx in range(grid):
@@ -833,7 +981,9 @@ def generate(
                     proj_x = gx1 + t * dx
                     proj_y = gy1 + t * dy
                     dist = math.hypot(gx - proj_x, gy - proj_y)
-                    elevation[gy, gx] += ridge_h * math.exp(-dist * dist / 8.0)
+                    elevation[gy, gx] += ridge_h * math.exp(
+                        -(dist * dist) / ridge_sigma
+                    )
 
     # Normalize elevation for contour extraction
     e_min = float(elevation.min())
@@ -866,12 +1016,12 @@ def generate(
     static_contour_signal = min(
         1.0,
         (math.log1p(max(activity_total, 1)) / math.log1p(2400.0)) * 0.7
-        + (len(primary_repos) / max(1, CFG.max_repos)) * 0.3,
+        + repo_density_signal * 0.3,
     )
     static_peak_signal = min(
         1.0,
         (math.log1p(max(total_repo_stars, 1)) / math.log1p(4000.0)) * 0.65
-        + (len(peaks) / max(1, CFG.max_repos)) * 0.35,
+        + _dense_repo_signal(len(peaks), baseline=CFG.max_repos) * 0.35,
     )
     static_population_signal = min(
         1.0,
@@ -958,18 +1108,39 @@ def generate(
 
     # ── Peak markers & glow ───────────────────────────────────────
     peak_fade = _fade(0.15, 0.6) if timeline_enabled else max(0.25, static_peak_signal)
+    colony_fade = (
+        _fade(0.10, 0.55) if timeline_enabled else max(0.16, static_peak_signal * 0.72)
+    )
+    if colony_fade > 0:
+        for colony in micro_colonies:
+            if not budget.ok():
+                break
+            colony_when = _repo_date(colony["repo"]) or start_date
+            colony_visibility = float(colony["visibility"])
+            colony_radius = 1.3 + 2.2 * colony_visibility
+            colony_opacity = (0.10 + 0.18 * colony_visibility) * colony_fade
+            P.append(
+                f'<circle data-role="gl-micro-colony" '
+                f'data-owner-index="{int(colony["owner_index"])}" '
+                f'cx="{float(colony["x"]):.1f}" cy="{float(colony["y"]):.1f}" '
+                f'r="{colony_radius:.1f}" fill="{colony["color"]}" '
+                f'filter="url(#glHaze)" '
+                f"{_timeline_style(colony_when, colony_opacity, 'tl-reveal tl-soft')}/>"
+            )
+            budget.add(1)
     for pi, (px, py, ph, color, repo) in enumerate(peaks):
         if not budget.ok():
             break
         peak_when = _repo_date(repo) or start_date
-        r_glow = max(8.0, min(40.0, ph * 1.5))
-        r_core = max(3.0, min(12.0, ph * 0.5))
+        peak_visibility = visibility_norms[pi] if pi < len(visibility_norms) else 1.0
+        r_glow = max(5.5, min(40.0, ph * (1.05 + 0.40 * peak_visibility)))
+        r_core = max(2.2, min(12.0, ph * (0.28 + 0.22 * peak_visibility)))
 
         # Glow
         P.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_glow:.1f}" '
             f'fill="{color}" filter="url(#glHaze)" '
-            f"{_timeline_style(peak_when, 0.25 * peak_fade)}/>"
+            f"{_timeline_style(peak_when, (0.12 + 0.18 * peak_visibility) * peak_fade)}/>"
         )
         budget.add(1)
 
@@ -977,7 +1148,7 @@ def generate(
         P.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_core:.1f}" '
             f'fill="{color}" '
-            f"{_timeline_style(peak_when, 0.8 * peak_fade)}/>"
+            f"{_timeline_style(peak_when, (0.45 + 0.35 * peak_visibility) * peak_fade)}/>"
         )
         budget.add(1)
 
@@ -994,9 +1165,9 @@ def generate(
             best_pi = 0
             best_dist = float("inf")
             for pi, (px, py, _, _, _) in enumerate(peaks):
-                d = math.hypot(ox - px, oy - py)
-                if d < best_dist:
-                    best_dist = d
+                dist_to_peak = math.hypot(ox - px, oy - py)
+                if dist_to_peak < best_dist:
+                    best_dist = dist_to_peak
                     best_pi = pi
 
             trail_color = peaks[best_pi][3] if peaks else pal.get("accent", "#888888")
@@ -1026,9 +1197,9 @@ def generate(
             best_pi = 0
             best_dist = float("inf")
             for pi, (px, py, _, _, _) in enumerate(peaks):
-                d = math.hypot(ox - px, oy - py)
-                if d < best_dist:
-                    best_dist = d
+                dist_to_peak = math.hypot(ox - px, oy - py)
+                if dist_to_peak < best_dist:
+                    best_dist = dist_to_peak
                     best_pi = pi
 
             dot_color = peaks[best_pi][3] if peaks else "#aaaaaa"
@@ -1051,6 +1222,8 @@ def generate(
         for pi, (px, py, ph, color, repo) in enumerate(peaks):
             if not budget.ok():
                 break
+            if pi not in labeled_peak_indices:
+                continue
             name = repo.get("name", "")
             if not name:
                 continue

@@ -1,8 +1,8 @@
 """
 timelapse.py — GIF rendering pipeline for daily-history living art
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Renders timelapse GIFs where each frame = one day of GitHub profile
-history, showing the genuine evolution of the artworks over time.
+Renders timelapse GIFs from representative sampled days across GitHub
+profile history, showing the genuine evolution of the artworks over time.
 
 Public API::
 
@@ -27,7 +27,13 @@ from typing import Any
 from pydantic import ValidationError
 
 from ..utils import get_logger
-from .daily_snapshots import build_daily_snapshots, sample_frames
+from .daily_snapshots import (
+    DEFAULT_PUBLISHED_MAX_FRAMES as SNAPSHOT_PUBLISHED_MAX_FRAMES,
+)
+from .daily_snapshots import (
+    build_daily_snapshots,
+    sample_frames,
+)
 from .shared import (
     seed_hash,
     validate_live_history_payload,
@@ -37,7 +43,7 @@ from .shared import (
 logger = get_logger(module=__name__)
 
 # Canonical published-contract defaults used by CLI and CI.
-DEFAULT_PUBLISHED_MAX_FRAMES = 120
+DEFAULT_PUBLISHED_MAX_FRAMES = SNAPSHOT_PUBLISHED_MAX_FRAMES
 DEFAULT_PUBLISHED_RUNTIME_MS = 30_000
 MIN_PUBLISHED_RUNTIME_MS = 24_000
 

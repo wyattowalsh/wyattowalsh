@@ -586,6 +586,27 @@ def test_physarum_richer_cumulative_snapshots_generate_denser_networks() -> None
     assert late_svg.count("<path ") > early_svg.count("<path ")
 
 
+def test_physarum_prefers_full_repo_set_over_truncated_top_repos() -> None:
+    metrics = _sample_metrics()
+    metrics["repos"] = [
+        {
+            "name": f"repo-{index}",
+            "language": ("Python", "Go", "Rust", "TypeScript")[index % 4],
+            "stars": max(1, 14 - index),
+            "age_months": 2 + index,
+            "date": f"2023-{(index % 9) + 1:02d}-{(index % 20) + 1:02d}T00:00:00Z",
+            "topics": ["automation", f"cluster-{index % 3}"],
+        }
+        for index in range(12)
+    ]
+    metrics["top_repos"] = metrics["repos"][:4]
+
+    svg = generate(metrics, seed="physarum-all-repos", timeline=False, maturity=0.45)
+
+    assert svg.count('data-role="physarum-node-core"') == len(metrics["repos"])
+    assert svg.count('data-role="physarum-node-satellite"') >= len(metrics["repos"])
+
+
 @pytest.mark.parametrize(
     ("metrics", "seed"),
     [

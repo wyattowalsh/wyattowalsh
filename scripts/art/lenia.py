@@ -60,7 +60,9 @@ from .shared import (
     normalize_timeline_window,
     oklch,
     oklch_lerp,
+    order_repos_for_visual_plan,
     repo_to_canvas_position,
+    repo_visibility_score,
     seed_hash,
     select_palette_for_world,
     select_primary_repos,
@@ -78,7 +80,7 @@ from .shared import (
 class LeniaConfig:
     """Tunable parameters for the Lenia simulation and rendering."""
 
-    max_repos: int = 10
+    max_repos: int = MAX_REPOS
     max_elements: int = 25_000
     grid_resolution: int = 50
     dt: float = 0.1
@@ -108,6 +110,8 @@ class _SeedSpec:
     amplitude: float
     softness: float
     when: str
+    kind: str = "repo"
+    visibility: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -186,6 +190,13 @@ def _clamp_canvas_position(x: float, y: float) -> tuple[float, float]:
         max(WIDTH * 0.08, min(WIDTH * 0.92, x)),
         max(HEIGHT * 0.08, min(HEIGHT * 0.92, y)),
     )
+
+
+def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
+    """Return a soft density signal that keeps rising past the baseline."""
+    if repo_count <= 0:
+        return 0.0
+    return min(1.0, math.log1p(repo_count) / math.log1p(max(2, baseline * 4)))
 
 
 # ---------------------------------------------------------------------------
@@ -532,7 +543,9 @@ def _render_svg(
     field: np.ndarray,
     *,
     config: LeniaConfig,
+    field_threshold: float,
     palette: _LeniaPalette,
+    seed_specs: list[_SeedSpec],
     timeline: bool,
     timeline_lookup: list[list[str]],
     timeline_window: tuple[dt_date, dt_date],
@@ -576,6 +589,97 @@ def _render_svg(
     # ── Background ────────────────────────────────────────────────
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{palette.background}"/>')
 
+    # ── Seed halos, secondary populations, and nutrient dust ─────
+    if seed_specs:
+        repo_seed_color = palette.core
+        satellite_seed_color = (
+            palette.ramp[min(2, len(palette.ramp) - 1)][1]
+            if palette.ramp
+            else palette.core
+        )
+        nutrient_seed_color = (
+            palette.ramp[min(1, len(palette.ramp) - 1)][1]
+            if palette.ramp
+            else palette.core
+        )
+        P.append('<g filter="url(#lenia-glow)">')
+        for spec in seed_specs:
+            if not budget.ok():
+                break
+            cx = (spec.gx + 0.5) * cell_size
+            cy = (spec.gy + 0.5) * cell_size
+            if spec.kind == "repo":
+                seed_color = repo_seed_color
+                halo_radius = cell_size * (
+                    0.18 + 0.22 * spec.radius + 0.12 * spec.visibility
+                )
+                halo_opacity = (
+                    0.06 + 0.06 * spec.visibility + 0.05 * spec.amplitude
+                ) * _fade_ramp(growth_mat, 0.55 + 0.25 * spec.visibility)
+            elif spec.kind == "satellite":
+                seed_color = satellite_seed_color
+                halo_radius = cell_size * (
+                    0.12 + 0.16 * spec.radius + 0.10 * spec.visibility
+                )
+                halo_opacity = (
+                    0.05 + 0.05 * spec.visibility + 0.04 * spec.amplitude
+                ) * _fade_ramp(growth_mat, 0.45 + 0.20 * spec.visibility)
+            else:
+                seed_color = nutrient_seed_color
+                halo_radius = cell_size * (0.10 + 0.12 * spec.radius)
+                halo_opacity = (
+                    0.03 + 0.05 * spec.visibility + 0.03 * spec.amplitude
+                ) * _fade_ramp(growth_mat, 0.30 + 0.18 * spec.visibility)
+            if halo_opacity < 0.01:
+                continue
+            if timeline:
+                delay = map_date_to_loop_delay(
+                    spec.when,
+                    timeline_window,
+                    duration=loop_duration,
+                    reveal_fraction=reveal_fraction,
+                )
+                halo_attrs = (
+                    f'class="tl-reveal" '
+                    f'style="opacity:{halo_opacity:.3f};--delay:{delay:.3f}s;'
+                    f'--to:{halo_opacity:.3f};--dur:{loop_duration:.2f}s" '
+                    f'data-delay="{delay:.3f}" data-when="{spec.when}"'
+                )
+            else:
+                halo_attrs = f'opacity="{halo_opacity:.3f}"'
+            P.append(
+                f'<circle data-role="lenia-seed-halo" data-kind="{spec.kind}" '
+                f'cx="{cx:.1f}" cy="{cy:.1f}" r="{halo_radius:.1f}" '
+                f'fill="{seed_color}" {halo_attrs}/>'
+            )
+            budget.add(1)
+            if spec.kind != "nutrient" and budget.ok():
+                orbit_opacity = halo_opacity * (0.44 if spec.kind == "repo" else 0.36)
+                orbit_rx = halo_radius * (1.8 + 0.2 * (1.0 - spec.visibility))
+                orbit_ry = orbit_rx * (0.62 if spec.kind == "repo" else 0.48)
+                if timeline:
+                    delay = map_date_to_loop_delay(
+                        spec.when,
+                        timeline_window,
+                        duration=loop_duration,
+                        reveal_fraction=reveal_fraction,
+                    )
+                    orbit_attrs = (
+                        f'class="tl-reveal" '
+                        f'style="opacity:{orbit_opacity:.3f};--delay:{delay:.3f}s;'
+                        f'--to:{orbit_opacity:.3f};--dur:{loop_duration:.2f}s" '
+                        f'data-delay="{delay:.3f}" data-when="{spec.when}"'
+                    )
+                else:
+                    orbit_attrs = f'opacity="{orbit_opacity:.3f}"'
+                P.append(
+                    f'<ellipse data-role="lenia-seed-orbit" data-kind="{spec.kind}" '
+                    f'cx="{cx:.1f}" cy="{cy:.1f}" rx="{orbit_rx:.1f}" ry="{orbit_ry:.1f}" '
+                    f'fill="none" stroke="{seed_color}" stroke-width="0.7" {orbit_attrs}/>'
+                )
+                budget.add(1)
+        P.append("</g>")
+
     # ── Organism circles ──────────────────────────────────────────
     P.append('<g filter="url(#lenia-glow)">')
 
@@ -584,7 +688,7 @@ def _render_svg(
     for gy in range(N):
         for gx in range(N):
             v = float(field[gy, gx])
-            if v > config.field_threshold:
+            if v > field_threshold:
                 cells.append((v, gx, gy))
     cells.sort(key=lambda c: c[0])
 
@@ -679,7 +783,10 @@ def _fade_ramp(growth_mat: float, field_value: float) -> float:
         0.0,
         min(1.0, (growth_mat - threshold) / max(0.001, 1.0 - threshold)),
     )
-    residue_floor = (0.24 + 0.22 * growth_mat) * (1.0 - 0.35 * field_value)
+    low_maturity_gain = min(1.0, growth_mat * 28.0)
+    residue_floor = (
+        0.20 + 0.18 * low_maturity_gain + 0.14 * growth_mat
+    ) * (1.0 - 0.35 * field_value)
     return max(reveal, min(0.50, max(0.12, residue_floor)))
 
 
@@ -719,9 +826,10 @@ def _extract_language_mix(
             return {k: v / total for k, v in weights.items()}
 
     for repo in repos:
-        lang = repo.get("language")
-        if not lang:
+        lang_raw = repo.get("language")
+        if not lang_raw:
             continue
+        lang = str(lang_raw)
         star_weight = 1.0 + 0.35 * math.log1p(int(repo.get("stars", 0) or 0))
         weights[lang] = weights.get(lang, 0.0) + star_weight
 
@@ -911,17 +1019,19 @@ def _augment_primary_repos(
     merged_repo_names: frozenset[str],
     limit: int,
 ) -> list[dict]:
-    """Promote merged or fresh repos into the limited seed pool."""
+    """Promote merged or fresh repos without truncating the full seed pool."""
     if not all_repos:
         return primary_repos
+    _ = limit
 
-    def _priority(repo: dict) -> tuple[int, int, float, int, str]:
+    def _priority(repo: dict) -> tuple[int, int, float, float, int, str]:
         name = str(repo.get("name") or "").strip()
         age_months = int(repo.get("age_months", 0) or 0)
         is_recent = age_months > 0 and age_months <= 12
         return (
             1 if name in merged_repo_names else 0,
             1 if is_recent else 0,
+            repo_visibility_score(repo),
             float(repo.get("stars", 0) or 0.0),
             -age_months if age_months > 0 else 0,
             name,
@@ -940,9 +1050,14 @@ def _augment_primary_repos(
             continue
         selected.append(repo)
         seen.add(key)
-        if len(selected) >= limit:
-            break
-    return selected or primary_repos
+    for repo in all_repos:
+        name = str(repo.get("name") or "").strip()
+        key = name or f"repo-{len(selected)}"
+        if key in seen:
+            continue
+        selected.append(repo)
+        seen.add(key)
+    return selected or primary_repos or all_repos
 
 
 def _semantic_repo_positions(
@@ -1162,7 +1277,7 @@ def _derive_dynamics(
         )
         / 360.0
     )
-    repo_density = min(1.0, len(repos) / max(1, config.max_repos))
+    repo_density = _dense_repo_signal(len(repos), baseline=config.max_repos)
     activity_drive = max(
         0.0,
         min(
@@ -1297,16 +1412,37 @@ def _build_seed_specs(
     specs: list[_SeedSpec] = []
     commit_angle = 2.0 * math.pi * dynamics.commit_phase
     drift_x, drift_y = dynamics.seed_drift
-    satellite_budget = dynamics.satellite_count
+    visibility_scores = [repo_visibility_score(repo) for repo in repos]
+    visibility_max = max(visibility_scores, default=1.0)
+    visibility_min = min(visibility_scores, default=0.0)
+    visibility_span = max(0.001, visibility_max - visibility_min)
+    visibility_norms = [
+        (
+            0.18 + 0.82 * ((score - visibility_min) / visibility_span)
+            if len(visibility_scores) > 1
+            else 1.0
+        )
+        for score in visibility_scores
+    ]
+    crowding_scale = max(
+        0.46,
+        1.0 / math.sqrt(max(1.0, len(repos) / max(1, config.max_repos))),
+    )
+    satellite_budget = dynamics.satellite_count + int(
+        round(math.sqrt(max(0.0, float(len(repos) - config.max_repos))))
+    )
     semantic_positions = _semantic_repo_positions(repos, h=h, dynamics=dynamics)
 
-    for repo, (cx, cy) in zip(repos, semantic_positions, strict=False):
+    for index, (repo, (cx, cy)) in enumerate(
+        zip(repos, semantic_positions, strict=False)
+    ):
         gx = int(cx / WIDTH * N) % N
         gy = int(cy / HEIGHT * N) % N
         repo_name = str(repo.get("name") or "").strip()
         repo_stars = int(repo.get("stars", 0) or 0)
         age_months = int(repo.get("age_months", 1) or 1)
         topic_count = len(repo.get("topics") or [])
+        visibility = visibility_norms[index] if index < len(visibility_norms) else 1.0
         age_norm = math.tanh(age_months / 18.0)
         star_norm = math.tanh(repo_stars / 18.0)
         is_recent = age_months <= 12
@@ -1322,12 +1458,14 @@ def _build_seed_specs(
         amplitude = 0.24 + 0.26 * star_norm + 0.16 * age_norm
         amplitude += 0.05 * min(1.0, topic_count / 4.0)
         amplitude += 0.06 * dynamics.pr_burst + 0.04 * dynamics.recency_mix
+        amplitude += 0.08 * dynamics.activity_drive + 0.04 * dynamics.pr_density
         if is_recent:
-            amplitude += 0.04
-        if is_merged:
             amplitude += 0.06
+        if is_merged:
+            amplitude += 0.10
+        amplitude *= (0.56 + 0.60 * visibility) * (0.84 + 0.16 * crowding_scale)
         radius = max(
-            2,
+            1,
             int(
                 round(
                     config.seed_radius
@@ -1336,8 +1474,13 @@ def _build_seed_specs(
                         + 0.50 * age_norm
                         + 0.25 * star_norm
                         + 0.12 * dynamics.streak_strength
-                        - 0.06 * float(is_fresh)
+                        + 0.14 * dynamics.recency_mix
+                        + 0.10 * dynamics.pr_burst
+                        + 0.08 * float(is_recent)
+                        - 0.02 * float(is_fresh)
                     )
+                    * (0.52 + 0.48 * visibility)
+                    * crowding_scale
                 )
             ),
         )
@@ -1365,17 +1508,26 @@ def _build_seed_specs(
                     "updated_at",
                 )
                 or timeline_start,
+                kind="repo",
+                visibility=visibility,
             )
         )
 
-        if satellite_budget > 0 and (is_recent or is_merged):
+        if satellite_budget > 0 and (is_recent or is_merged or visibility < 0.45):
             satellite_budget -= 1
             sat_angle = commit_angle + (
                 math.pi / 3.0 if satellite_budget % 2 == 0 else -math.pi / 3.0
             )
             sat_distance = max(
                 1,
-                int(round(1.0 + 2.0 * dynamics.pr_burst + 1.5 * dynamics.recency_mix)),
+                int(
+                    round(
+                        1.0
+                        + 2.0 * dynamics.pr_burst
+                        + 1.5 * dynamics.recency_mix
+                        + 1.0 * (1.0 - visibility)
+                    )
+                ),
             )
             sat_gx = (gx + int(round(math.cos(sat_angle) * sat_distance))) % N
             sat_gy = (gy + int(round(math.sin(sat_angle) * sat_distance))) % N
@@ -1383,8 +1535,12 @@ def _build_seed_specs(
                 _SeedSpec(
                     gx=sat_gx,
                     gy=sat_gy,
-                    radius=max(1, radius - 1),
-                    amplitude=min(0.90, amplitude * (0.72 + 0.10 * dynamics.pr_burst)),
+                    radius=max(1, radius),
+                    amplitude=min(
+                        0.90,
+                        amplitude
+                        * (0.46 + 0.20 * (1.0 - visibility) + 0.12 * dynamics.pr_burst),
+                    ),
                     softness=min(1.0, softness + 0.08),
                     when=_signal_date(
                         repo,
@@ -1395,6 +1551,8 @@ def _build_seed_specs(
                         "updated_at",
                     )
                     or timeline_start,
+                    kind="satellite",
+                    visibility=max(0.22, visibility * 0.88),
                 )
             )
 
@@ -1446,10 +1604,12 @@ def _build_seed_specs(
                 _SeedSpec(
                     gx=gx,
                     gy=gy,
-                    radius=max(1, 1 + int(round(2 * intensity))),
+                    radius=max(1, 1 + int(round(2.5 * intensity + dynamics.pr_burst))),
                     amplitude=0.08 + 0.12 * intensity + 0.02 * dynamics.pr_burst,
                     softness=0.42 + 0.25 * intensity + 0.08 * dynamics.commit_focus,
                     when=day,
+                    kind="nutrient",
+                    visibility=min(1.0, 0.24 + 0.52 * intensity),
                 )
             )
 
@@ -1466,6 +1626,8 @@ def _build_seed_specs(
             amplitude=0.28,
             softness=0.70,
             when=timeline_start,
+            kind="repo",
+            visibility=0.4,
         )
     ]
 
@@ -1558,8 +1720,17 @@ def generate(
     rng = np.random.default_rng(int(h[:8], 16))
 
     # ── Extract data ──────────────────────────────────────────────
-    repos = metrics.get("top_repos") or metrics.get("repos") or []
-    all_repos = metrics.get("repos") or repos
+    raw_repos = metrics.get("repos") or metrics.get("top_repos") or []
+    preferred_repo_names = metrics.get("repo_visual_order")
+    repos = order_repos_for_visual_plan(
+        list(raw_repos) if isinstance(raw_repos, list) else [],
+        preferred_names=(
+            preferred_repo_names
+            if isinstance(preferred_repo_names, (list, tuple))
+            else None
+        ),
+    )
+    all_repos = repos
     monthly = metrics.get("contributions_monthly", {}) or {}
     releases = metrics.get("releases", []) or []
     recent_merged_prs = metrics.get("recent_merged_prs", []) or []
@@ -1679,13 +1850,30 @@ def generate(
         + 0.15 * dynamics.repo_density
         + 0.10 * dynamics.release_energy,
     )
-    field = np.maximum(field, np.clip(seed_field * residue_gain, 0.0, 1.0))
+    seed_residue = np.clip(seed_field * residue_gain, 0.0, 1.0)
+    simulation_mix = min(
+        0.18,
+        0.05
+        + 0.10 * dynamics.activity_drive
+        + 0.04 * dynamics.recent_flux
+        + 0.03 * dynamics.release_energy,
+    )
+    field = np.maximum(seed_residue, np.clip(field * simulation_mix, 0.0, 1.0))
 
     # ── Render ────────────────────────────────────────────────────
+    field_render_threshold = max(
+        0.04,
+        config.field_threshold
+        - 0.10 * dynamics.activity_drive
+        - 0.05 * max(dynamics.pr_burst, dynamics.recent_flux)
+        - 0.03 * dynamics.streak_strength,
+    )
     return _render_svg(
         field,
         config=config,
+        field_threshold=field_render_threshold,
         palette=palette,
+        seed_specs=seed_specs,
         timeline=timeline_enabled,
         timeline_lookup=timeline_lookup,
         timeline_window=timeline_window,

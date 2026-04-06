@@ -536,7 +536,32 @@ def test_lenia_augment_primary_repos_promotes_recent_merged_repo() -> None:
         limit=2,
     )
 
-    assert [repo["name"] for repo in selected] == ["fresh-merge", "legacy-core"]
+    assert [repo["name"] for repo in selected] == [
+        "fresh-merge",
+        "legacy-core",
+        "stable-cli",
+    ]
+
+
+def test_lenia_prefers_full_repo_set_over_truncated_top_repos() -> None:
+    metrics = _sample_metrics()
+    metrics["repos"] = [
+        {
+            "name": f"repo-{index}",
+            "language": ("Python", "Go", "Rust", "TypeScript")[index % 4],
+            "stars": max(1, 16 - index),
+            "age_months": 2 + index,
+            "date": f"2024-{(index % 9) + 1:02d}-{(index % 20) + 1:02d}T00:00:00Z",
+            "topics": ["automation", f"cluster-{index % 3}"],
+        }
+        for index in range(12)
+    ]
+    metrics["top_repos"] = metrics["repos"][:4]
+
+    svg = generate(metrics, seed="lenia-all-repos", timeline=False, maturity=0.45)
+
+    assert svg.count('data-role="lenia-seed-halo"') >= len(metrics["repos"])
+    assert 'data-kind="satellite"' in svg
 
 
 def test_lenia_derived_dynamics_use_recent_snapshot_signals() -> None:

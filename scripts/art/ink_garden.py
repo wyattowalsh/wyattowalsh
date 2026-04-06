@@ -48,6 +48,7 @@ from .shared import (
     oklch,
     oklch_gradient,
     oklch_lerp,
+    order_repos_for_visual_plan,
     repo_visibility_score,
     seed_hash,
     select_palette_for_world,
@@ -248,36 +249,26 @@ def _select_primary_repos(
     repos: list[dict[str, Any]],
     *,
     limit: int,
+    repo_visual_order: list[str] | None = None,
     canonical_repo_names: list[str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    if not canonical_repo_names:
-        if len(repos) <= limit:
-            return repos, []
-        return select_primary_repos(repos, limit=limit)
+    preferred_names: list[str] = []
+    seen_names: set[str] = set()
+    for source in (repo_visual_order, canonical_repo_names):
+        if not isinstance(source, list | tuple):
+            continue
+        for raw_name in source:
+            name = str(raw_name).strip() if isinstance(raw_name, str) else ""
+            if not name or name in seen_names:
+                continue
+            seen_names.add(name)
+            preferred_names.append(name)
 
-    canonical_name_set = {
-        name for name in canonical_repo_names if isinstance(name, str) and name
-    }
-    if not canonical_name_set:
-        if len(repos) <= limit:
-            return repos, []
-        return select_primary_repos(repos, limit=limit)
-
-    canonical_indices = {
-        index
-        for index, repo in enumerate(repos)
-        if str(repo.get("name") or "") in canonical_name_set
-    }
-    if not canonical_indices:
-        return [], list(repos)
-    # Do not backfill canonical gaps with non-canonical repos. That would let
-    # filler trees appear early and then disappear when a late canonical repo arrives.
-    primary = [repo for index, repo in enumerate(repos) if index in canonical_indices][
-        :limit
-    ]
-    primary_ids = {id(repo) for repo in primary}
-    overflow = [repo for repo in repos if id(repo) not in primary_ids]
-    return primary, overflow
+    ordered_repos = order_repos_for_visual_plan(
+        repos,
+        preferred_names=preferred_names or None,
+    )
+    return select_primary_repos(ordered_repos, limit=limit)
 
 
 def _parse_iso_datetime(value: str | None) -> datetime | None:
@@ -511,30 +502,155 @@ def _repo_topic_annotation(repo: dict, *, max_topics: int = 2) -> str:
     return label
 
 
-def _overflow_specimen_annotation(
-    overflow_repos: list[dict], *, max_topics: int = 3
-) -> tuple[str, str]:
-    """Build compact study-drawer text for repos outside the main render cap."""
-    count = len(overflow_repos)
-    specimen_label = "specimen" if count == 1 else "specimens"
-    summary = f"+{count} {specimen_label} held back"
+def _build_repo_ecology_plan(
+    repos: list[dict[str, Any]],
+    *,
+    base_seed: int,
+    repo_recency_days_by_name: dict[str, int],
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    """Assign stable canopy/understory/groundcover roles for accretive growth."""
+    stratum_layouts: dict[str, dict[str, Any]] = {
+        "canopy": {
+            "anchors": np.linspace(104, WIDTH - 104, 7),
+            "slot_order": (3, 2, 4, 1, 5, 0, 6),
+            "cycle_x": (0.0, -18.0, 18.0, -34.0, 34.0),
+            "cycle_y": (-12.0, -16.0, -10.0, -18.0),
+            "size_base": 0.92,
+            "size_gain": 0.28,
+            "branch_base": 0.95,
+            "branch_gain": 0.18,
+            "bloom_base": 0.92,
+            "bloom_gain": 0.22,
+            "max_depth": 6,
+            "depth_plane": "bg",
+            "angle_spread": 0.24,
+            "leaf_shift": 0.02,
+            "bloom_shift": 0.01,
+            "detail_shift": 0.01,
+            "label_threshold": 0.38,
+        },
+        "understory": {
+            "anchors": np.linspace(88, WIDTH - 88, 10),
+            "slot_order": (4, 5, 3, 6, 2, 7, 1, 8, 0, 9),
+            "cycle_x": (0.0, -14.0, 14.0, -24.0, 24.0),
+            "cycle_y": (7.0, 11.0, 5.0, 13.0),
+            "size_base": 0.58,
+            "size_gain": 0.20,
+            "branch_base": 0.62,
+            "branch_gain": 0.14,
+            "bloom_base": 0.78,
+            "bloom_gain": 0.18,
+            "max_depth": 4,
+            "depth_plane": "mid",
+            "angle_spread": 0.38,
+            "leaf_shift": 0.05,
+            "bloom_shift": 0.04,
+            "detail_shift": 0.03,
+            "label_threshold": 0.54,
+        },
+        "groundcover": {
+            "anchors": np.linspace(64, WIDTH - 64, 14),
+            "slot_order": (6, 7, 5, 8, 4, 9, 3, 10, 2, 11, 1, 12, 0, 13),
+            "cycle_x": (0.0, -10.0, 10.0, -18.0, 18.0),
+            "cycle_y": (15.0, 18.0, 13.0, 20.0, 16.0),
+            "size_base": 0.34,
+            "size_gain": 0.16,
+            "branch_base": 0.42,
+            "branch_gain": 0.10,
+            "bloom_base": 0.64,
+            "bloom_gain": 0.14,
+            "max_depth": 3,
+            "depth_plane": "fg",
+            "angle_spread": 0.55,
+            "leaf_shift": 0.08,
+            "bloom_shift": 0.08,
+            "detail_shift": 0.06,
+            "label_threshold": 0.76,
+        },
+    }
+    counts = {"canopy": 0, "understory": 0, "groundcover": 0}
+    plans: list[dict[str, Any]] = []
 
-    topics: list[str] = []
-    seen: set[str] = set()
-    for repo in overflow_repos:
-        for topic in repo.get("topics") or []:
-            normalized = str(topic).strip().replace("-", " ")
-            if not normalized:
-                continue
-            dedupe_key = normalized.lower()
-            if dedupe_key in seen:
-                continue
-            seen.add(dedupe_key)
-            topics.append(normalized)
-            if len(topics) >= max_topics:
-                return summary, " / ".join(topics)
+    for ri, repo in enumerate(repos):
+        repo_name = str(repo.get("name") or f"repo-{ri}")
+        age_months = max(0.0, float(repo.get("age_months", 0) or 0.0))
+        age_days = repo_recency_days_by_name.get(repo_name)
+        stars = max(0.0, float(repo.get("stars", 0) or 0.0))
+        forks = max(0.0, float(repo.get("forks", 0) or 0.0))
+        topic_count = len(repo.get("topics") or [])
+        visibility = _repo_visibility_score(repo)
 
-    return summary, " / ".join(topics)
+        visibility_signal = min(1.0, visibility / 18.0)
+        maturity_signal = min(1.0, age_months / 42.0)
+        star_signal = min(1.0, math.log1p(stars) / math.log1p(200))
+        root_signal = min(1.0, math.log1p(forks) / math.log1p(16))
+        topic_signal = min(1.0, topic_count / 4.0)
+        ecology_signal = (
+            visibility_signal * 0.45
+            + maturity_signal * 0.25
+            + star_signal * 0.20
+            + root_signal * 0.05
+            + topic_signal * 0.05
+        )
+
+        if age_months >= 20 and ecology_signal >= 0.48:
+            stratum = "canopy"
+        elif age_months >= 6 or ecology_signal >= 0.24 or stars >= 6 or topic_count >= 2:
+            stratum = "understory"
+        else:
+            stratum = "groundcover"
+
+        if age_days is not None:
+            if age_days <= 120 and stratum == "canopy":
+                stratum = "understory"
+            if age_days <= 60 and ecology_signal < 0.68:
+                stratum = "groundcover"
+        else:
+            if age_months <= 4 and stratum == "canopy":
+                stratum = "understory"
+            if age_months <= 2 and ecology_signal < 0.68:
+                stratum = "groundcover"
+
+        cfg = stratum_layouts[stratum]
+        slot_order = cfg["slot_order"]
+        slot_index = ri
+        cycle = slot_index // len(slot_order)
+        anchor_index = slot_order[slot_index % len(slot_order)]
+        anchor_x = float(cfg["anchors"][anchor_index])
+        repo_rng = np.random.default_rng(
+            base_seed ^ int(seed_hash({"repo": repo_name, "stratum": stratum})[:8], 16)
+        )
+        x = anchor_x + cfg["cycle_x"][cycle % len(cfg["cycle_x"])]
+        x += float(repo_rng.uniform(-5.5, 5.5))
+        ground_offset = cfg["cycle_y"][cycle % len(cfg["cycle_y"])]
+        ground_offset += float(repo_rng.uniform(-1.5, 1.5))
+
+        counts[stratum] += 1
+        show_label = (
+            ecology_signal >= float(cfg["label_threshold"])
+            or stars >= 60
+            or (ri < MAX_REPOS and stratum != "groundcover")
+        )
+
+        plans.append(
+            {
+                "stratum": stratum,
+                "x": max(60.0, min(WIDTH - 60.0, x)),
+                "ground_offset": ground_offset,
+                "size_scale": cfg["size_base"] + ecology_signal * cfg["size_gain"],
+                "branch_scale": cfg["branch_base"] + ecology_signal * cfg["branch_gain"],
+                "bloom_scale": cfg["bloom_base"] + ecology_signal * cfg["bloom_gain"],
+                "max_depth": cfg["max_depth"],
+                "depth_plane": cfg["depth_plane"],
+                "angle_spread": cfg["angle_spread"],
+                "leaf_gate_shift": cfg["leaf_shift"],
+                "bloom_gate_shift": cfg["bloom_shift"],
+                "detail_gate_shift": cfg["detail_shift"],
+                "show_label": show_label,
+            }
+        )
+
+    return plans, counts
 
 
 def _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch_fn):
@@ -966,12 +1082,13 @@ def generate(
     base_seed = int(h[:8], 16)
     noise = Noise2D(seed=int(h[8:16], 16))
 
-    raw_repos = list(metrics.get("repos", []))
-    repos, overflow_repos = _select_primary_repos(
-        raw_repos,
+    repos, _ = _select_primary_repos(
+        list(metrics.get("repos", [])),
         limit=MAX_REPOS,
+        repo_visual_order=metrics.get("repo_visual_order"),
         canonical_repo_names=metrics.get("canonical_primary_repo_names"),
     )
+    raw_repos = list(repos)
     monthly = metrics.get("contributions_monthly", {})
     releases = metrics.get("releases", []) or []
     forks = metrics.get("forks", 0)
@@ -1153,6 +1270,11 @@ def generate(
         day_offset = (base.date() - timeline_start).days
         return max(0.0, min(1.0, day_offset / timeline_span_days))
 
+    repo_visual_order = metrics.get("repo_visual_order")
+    use_accretive_layout = bool(repo_visual_order) or bool(
+        metrics.get("canonical_primary_repo_names")
+    ) or len(repos) > MAX_REPOS
+
     has_explicit_repo_recency = total_repos_contributed > 0
     repo_recency_days_by_name: dict[str, int] = {}
     if has_explicit_repo_recency:
@@ -1251,6 +1373,23 @@ def generate(
             )
             repo_neighbor_fracs[idx] = (prev_frac, next_frac)
 
+    repo_ecology_plan: list[dict[str, Any]] = []
+    strata_counts = {"canopy": 0, "understory": 0, "groundcover": 0}
+    ecology_density = 1.0
+    canopy_share = 0.0
+    understory_share = 0.0
+    groundcover_share = 0.0
+    if use_accretive_layout:
+        repo_ecology_plan, strata_counts = _build_repo_ecology_plan(
+            repos,
+            base_seed=base_seed,
+            repo_recency_days_by_name=repo_recency_days_by_name,
+        )
+        ecology_density = min(1.35, len(repos) / max(1, MAX_REPOS))
+        canopy_share = strata_counts["canopy"] / max(1, len(repos))
+        understory_share = strata_counts["understory"] / max(1, len(repos))
+        groundcover_share = strata_counts["groundcover"] / max(1, len(repos))
+
     def _month_key_date(month_key: str, idx: int) -> str:
         mk = str(month_key).strip()
         if len(mk) == 7 and mk[4] == "-":
@@ -1310,6 +1449,7 @@ def generate(
 
     # Track plant base positions for ground cover enhancement
     plant_bases = []
+    plant_bases_by_repo_index: dict[int, tuple[float, float]] = {}
     # Track per-tree tooltip data for interactive SVG titles
     tree_tooltips = []  # (x, base_y, top_y, name, lang, stars, species)
     rendered_repo_meta: list[dict[str, Any]] = []
@@ -1318,38 +1458,9 @@ def generate(
 
     # ── Plant generation (progressive: blank soil → full garden) ────
     n_repos = len(repos)
-    spread = min(MAX_REPOS, n_repos)
-    cluster_rng = np.random.default_rng(base_seed ^ 0xC1A55EED)
-    cluster_sizes = []
-    remaining = spread
-    while remaining > 0:
-        max_size = min(4, remaining)
-        min_size = 1 if remaining <= 2 else 2
-        size = int(cluster_rng.integers(min_size, max_size + 1))
-        if remaining - size == 1 and size > min_size:
-            size -= 1
-        cluster_sizes.append(size)
-        remaining -= size
-    cluster_count = len(cluster_sizes)
-    if cluster_count > 1:
-        cluster_centers_base = np.linspace(95, WIDTH - 95, cluster_count)
-    else:
-        cluster_centers_base = np.array([CX], dtype=float)
-    cluster_centers = []
-    for ci, base_center in enumerate(cluster_centers_base):
-        nudge = noise.fbm(
-            ci * 2.3 + 0.7, spread * 0.41 + 0.3, 3
-        ) * 36 + cluster_rng.uniform(-16, 16)
-        cluster_centers.append(float(max(85, min(WIDTH - 85, base_center + nudge))))
-    cluster_slot = {}
-    cursor = 0
-    for ci, size in enumerate(cluster_sizes):
-        for local_idx in range(size):
-            cluster_slot[cursor + local_idx] = (ci, local_idx, size)
-        cursor += size
 
     # ── Metaheuristic layout + palette optimization ───────────────
-    if len(repos) >= 2:
+    if len(repos) >= 2 and not use_accretive_layout:
         initial_positions = [
             (WIDTH * (0.12 + 0.76 * i / max(len(repos) - 1, 1)), GROUND_Y)
             for i in range(len(repos))
@@ -1441,6 +1552,11 @@ def generate(
             + repo_age_signal * 0.15
             + min(1.0, current_streak / 8.0) * 0.10
         )
+        layout_plan = (
+            repo_ecology_plan[ri]
+            if use_accretive_layout and ri < len(repo_ecology_plan)
+            else None
+        )
         tree_ramp = (
             max(0.09, RAMP - repo_growth_signal * 0.05)
             if chronological_growth
@@ -1502,6 +1618,19 @@ def generate(
             leaf_growth_gate = 0.0
             bloom_growth_gate = 0.0
             late_detail_growth_gate = 0.0
+        if layout_plan is not None:
+            leaf_growth_gate = max(
+                0.08,
+                leaf_growth_gate - float(layout_plan["leaf_gate_shift"]),
+            )
+            bloom_growth_gate = max(
+                leaf_growth_gate + 0.08,
+                bloom_growth_gate - float(layout_plan["bloom_gate_shift"]),
+            )
+            late_detail_growth_gate = max(
+                bloom_growth_gate + 0.08,
+                late_detail_growth_gate - float(layout_plan["detail_gate_shift"]),
+            )
 
         species = _classify_species(repo, species_threshold_mult=species_threshold_mult)
         repo_canopy_scale = 1.0
@@ -1528,6 +1657,10 @@ def generate(
             and species in {"wildflower", "shrub"}
         ):
             species = "seedling"
+        if layout_plan is not None:
+            repo_canopy_scale *= float(layout_plan["size_scale"])
+            repo_branch_scale *= float(layout_plan["branch_scale"])
+            repo_bloom_scale *= float(layout_plan["bloom_scale"])
         style = SPECIES.get(species)
 
         # Seasonal color variation: date-aware hue drift + mature autumn accent.
@@ -1538,27 +1671,34 @@ def generate(
         leaf_hue_shift = 16 * math.sin(season_phase - 0.4) + rng.uniform(-5, 5)
         bloom_hue_shift = 22 * math.cos(season_phase - 0.2) + rng.uniform(-8, 8)
         autumn_leaf_hue = rng.integers(30, 50) if is_autumn else None
-        # Use metaheuristic-optimized x position (SA layout optimizer)
-        base_x = tree_x_positions[ri] if ri < len(tree_x_positions) else CX
-        base_x += rng.uniform(-8, 8)
-        base_x = max(80, min(WIDTH - 80, base_x))
-        gy = ground_y_at(base_x)
+        if layout_plan is not None:
+            base_x = float(layout_plan["x"])
+            gy = ground_y_at(base_x) + float(layout_plan["ground_offset"])
+            repo_depth_planes[ri] = str(layout_plan["depth_plane"])
+            angle_spread = float(layout_plan["angle_spread"])
+        else:
+            # Use metaheuristic-optimized x position (SA layout optimizer)
+            base_x = tree_x_positions[ri] if ri < len(tree_x_positions) else CX
+            base_x += rng.uniform(-8, 8)
+            base_x = max(80, min(WIDTH - 80, base_x))
+            gy = ground_y_at(base_x)
 
-        # Classify depth plane by age: oldest -> background, newest -> foreground
-        if n_repos >= 3:
-            ages_sorted = sorted(r.get("age_months", 6) for r in repos)
-            age_p33 = ages_sorted[len(ages_sorted) // 3]
-            age_p66 = ages_sorted[2 * len(ages_sorted) // 3]
-            if age >= age_p66:
-                repo_depth_planes[ri] = "bg"
-            elif age <= age_p33:
-                repo_depth_planes[ri] = "fg"
+            # Classify depth plane by age: oldest -> background, newest -> foreground
+            if n_repos >= 3:
+                ages_sorted = sorted(r.get("age_months", 6) for r in repos)
+                age_p33 = ages_sorted[len(ages_sorted) // 3]
+                age_p66 = ages_sorted[2 * len(ages_sorted) // 3]
+                if age >= age_p66:
+                    repo_depth_planes[ri] = "bg"
+                elif age <= age_p33:
+                    repo_depth_planes[ri] = "fg"
+                else:
+                    repo_depth_planes[ri] = "mid"
             else:
                 repo_depth_planes[ri] = "mid"
-        else:
-            repo_depth_planes[ri] = "mid"
+            angle_spread = 0.3
 
-        base_angle = -math.pi / 2 + rng.uniform(-0.3, 0.3)
+        base_angle = -math.pi / 2 + rng.uniform(-angle_spread, angle_spread)
         # Data mapping: commits -> trunk height, total_commits scales globally
         commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
         if chronological_growth:
@@ -1600,6 +1740,12 @@ def generate(
                 (3.2 + min(3.5, age * 0.06) + min(1.8, total_commits / 4000.0))
                 * (0.4 + 0.6 * tree_t),
             )
+        if layout_plan is not None:
+            max_depth = min(max_depth, int(layout_plan["max_depth"]))
+            stem_sw *= max(
+                0.5,
+                min(1.1, 0.48 + float(layout_plan["size_scale"]) * 0.55),
+            )
         stem_sw *= vigor_multiplier
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
@@ -1620,19 +1766,27 @@ def generate(
             bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
         bloom_boost = max(0.35, min(2.4, bloom_boost * repo_bloom_scale))
 
-        if main_length >= (20 if chronological_growth else 5):
+        topic_annotation = _repo_topic_annotation(
+            repo,
+            max_topics=1 if layout_plan and layout_plan["stratum"] == "groundcover" else 2,
+        )
+        if (
+            main_length >= (20 if chronological_growth else 5)
+            and (layout_plan is None or bool(layout_plan["show_label"]))
+        ):
             labels.append(
                 (
                     base_x,
                     gy + 18,
                     repo.get("name", ""),
-                    _repo_topic_annotation(repo),
+                    topic_annotation,
                     base_x,
                     gy,
                     trunk_when,
                 )
             )
         plant_bases.append((base_x, gy))
+        plant_bases_by_repo_index[ri] = (base_x, gy)
         tree_tooltips.append(
             (
                 base_x,
@@ -1658,6 +1812,7 @@ def generate(
                 "tree_t": tree_t,
                 "bloom_gate": bloom_growth_gate,
                 "late_detail_gate": late_detail_growth_gate,
+                "stratum": layout_plan["stratum"] if layout_plan is not None else "midstory",
             }
         )
 
@@ -2752,14 +2907,30 @@ def generate(
     # ── Atmospheric layers (morning mist + light rays) ─────────
     # Morning mist: 3-4 blurred radial gradient ellipses at ground level
     atmo_rng = np.random.default_rng(base_seed ^ 0xF0F0F0F0)
-    n_mist = atmo_rng.integers(3, 5)
+    if use_accretive_layout:
+        mist_min = 3 + int(ecology_density > 1.0) + int(groundcover_share > 0.32)
+        mist_max = mist_min + 2 + int(understory_share > 0.28)
+        n_mist = int(atmo_rng.integers(mist_min, mist_max))
+    else:
+        n_mist = int(atmo_rng.integers(3, 5))
     for mi_atm in range(n_mist):
         mist_id = f"mist{mi_atm}"
         mist_cx = atmo_rng.uniform(80, WIDTH - 80)
-        mist_cy = GROUND_Y + atmo_rng.uniform(-30, 10)
-        mist_rx = atmo_rng.uniform(80, 180)
-        mist_ry = atmo_rng.uniform(20, 50)
-        mist_op = atmo_rng.uniform(0.04, 0.08)
+        if use_accretive_layout:
+            mist_cy = GROUND_Y + atmo_rng.uniform(
+                -38 - 18 * understory_share,
+                14 + 18 * groundcover_share,
+            )
+            mist_rx = atmo_rng.uniform(90, 210 + ecology_density * 20)
+            mist_ry = atmo_rng.uniform(24, 58 + groundcover_share * 12)
+            mist_op = atmo_rng.uniform(0.045, 0.09) * (
+                1.0 + groundcover_share * 0.40 + understory_share * 0.25
+            )
+        else:
+            mist_cy = GROUND_Y + atmo_rng.uniform(-30, 10)
+            mist_rx = atmo_rng.uniform(80, 180)
+            mist_ry = atmo_rng.uniform(20, 50)
+            mist_op = atmo_rng.uniform(0.04, 0.08)
         mist_grad = make_radial_gradient(
             mist_id,
             "50%",
@@ -2782,7 +2953,12 @@ def generate(
         )
 
     # Light rays: 2-3 diagonal linear gradient bands from upper-left
-    n_rays = atmo_rng.integers(2, 4)
+    if use_accretive_layout:
+        ray_min = 2 + int(canopy_share > 0.35)
+        ray_max = ray_min + 2
+        n_rays = int(atmo_rng.integers(ray_min, ray_max))
+    else:
+        n_rays = int(atmo_rng.integers(2, 4))
     for ray_i in range(n_rays):
         ray_id = f"lightray{ray_i}"
         # Diagonal band from upper-left toward lower-right
@@ -3155,7 +3331,17 @@ def generate(
     _gc_clover = oklch_lerp(pal["accent"], pal["ground"], 0.3)
     _gc_clover_stem = oklch_lerp(pal["accent"], pal["ground"], 0.55)
     # Scale ground cover count by visual complexity
-    _gc_count = int((40 + int(mat * 120)) * (0.7 + 0.6 * complexity))
+    _gc_density_scale = 1.0
+    if use_accretive_layout:
+        _gc_density_scale += (
+            max(0.0, ecology_density - 1.0) * 0.25
+            + groundcover_share * 0.55
+            + understory_share * 0.20
+        )
+    _gc_count = min(
+        260,
+        int((40 + int(mat * 120)) * (0.7 + 0.6 * complexity) * _gc_density_scale),
+    )
     for _ in range(_gc_count):
         gcx = rng.uniform(20, WIDTH - 20)
         gcy = ground_y_at(gcx) + rng.uniform(-3, 3)
@@ -3516,9 +3702,9 @@ def generate(
     if bg_trees_exist:
         # Find the x-ranges of background trees and apply localized haze
         bg_bases = [
-            (plant_bases[ri][0], plant_bases[ri][1])
+            plant_bases_by_repo_index[ri]
             for ri in repo_depth_planes
-            if repo_depth_planes[ri] == "bg" and ri < len(plant_bases)
+            if repo_depth_planes[ri] == "bg" and ri in plant_bases_by_repo_index
         ]
         for bgx, bgy in bg_bases:
             # Localized atmospheric haze ellipses around background trees
@@ -4508,63 +4694,50 @@ def generate(
         )
     P.append("</g>")
 
-    if overflow_repos:
-        overflow_summary, overflow_topics = _overflow_specimen_annotation(
-            overflow_repos
-        )
-        safe_overflow_summary = _escape_svg_text(overflow_summary)
-        safe_overflow_topics = (
-            _escape_svg_text(overflow_topics) if overflow_topics else ""
-        )
-        drawer_w = 146
-        drawer_h = 34 if safe_overflow_topics else 28
-        drawer_x = WIDTH - drawer_w - 22
-        drawer_y = HEIGHT - drawer_h - 54
-        drawer_fill = oklch_lerp(pal["bg_primary"], pal["border"], 0.08)
-        drawer_stroke = oklch_lerp(pal["border"], pal["muted"], 0.25)
-        drawer_title = oklch_lerp(pal["text_secondary"], pal["border"], 0.25)
+    if use_accretive_layout and n_repos > MAX_REPOS:
+        panel_w = 154
+        panel_h = 44
+        panel_x = WIDTH - panel_w - 22
+        panel_y = HEIGHT - panel_h - 54
+        panel_fill = oklch_lerp(pal["bg_primary"], pal["border"], 0.08)
+        panel_stroke = oklch_lerp(pal["border"], pal["muted"], 0.25)
+        panel_title = oklch_lerp(pal["text_secondary"], pal["border"], 0.25)
+        strata_rows = [
+            ("Canopy", strata_counts["canopy"], oklch_lerp(pal["border"], pal["muted"], 0.30)),
+            ("Understory", strata_counts["understory"], oklch_lerp(pal["accent"], pal["highlight"], 0.35)),
+            ("Groundcover", strata_counts["groundcover"], oklch_lerp(pal["accent"], pal["ground"], 0.42)),
+        ]
 
-        P.append('<g id="study-drawers">')
+        P.append('<g id="ecology-strata">')
         P.append(
-            f'<rect x="{drawer_x + 2}" y="{drawer_y + 2}" width="{drawer_w}" height="{drawer_h}" '
+            f'<rect x="{panel_x + 2}" y="{panel_y + 2}" width="{panel_w}" height="{panel_h}" '
             f'fill="#e5dccd" opacity="0.18" rx="3"/>'
         )
         P.append(
-            f'<rect x="{drawer_x}" y="{drawer_y}" width="{drawer_w}" height="{drawer_h}" '
-            f'fill="{drawer_fill}" opacity="0.92" stroke="{drawer_stroke}" stroke-width="0.7" rx="3"/>'
+            f'<rect x="{panel_x}" y="{panel_y}" width="{panel_w}" height="{panel_h}" '
+            f'fill="{panel_fill}" opacity="0.92" stroke="{panel_stroke}" stroke-width="0.7" rx="3"/>'
         )
         P.append(
-            f'<line x1="{drawer_x + 10}" y1="{drawer_y + 12}" x2="{drawer_x + drawer_w - 10}" y2="{drawer_y + 12}" '
-            f'stroke="{drawer_stroke}" stroke-width="0.35" opacity="0.45"/>'
+            f'<text x="{panel_x + 11}" y="{panel_y + 9}" text-anchor="start" '
+            f'font-family="Georgia,serif" font-size="5.1" letter-spacing="1.0" font-variant="small-caps" '
+            f'fill="{panel_title}" opacity="0.72">Ecology Strata</text>'
         )
         P.append(
-            f'<text x="{drawer_x + 11}" y="{drawer_y + 9}" text-anchor="start" '
-            f'font-family="Georgia,serif" font-size="5.1" letter-spacing="1.2" font-variant="small-caps" '
-            f'fill="{drawer_title}" opacity="0.72">Study Drawers</text>'
+            f'<text x="{panel_x + 11}" y="{panel_y + 16}" text-anchor="start" '
+            f'font-family="Georgia,serif" font-size="4.7" '
+            f'fill="{pal["muted"]}" opacity="0.62">All {n_repos} repos rooted on canvas</text>'
         )
-        P.append(
-            f'<text x="{drawer_x + 11}" y="{drawer_y + 21}" text-anchor="start" '
-            f'font-family="Georgia,serif" font-size="5.7" font-style="italic" '
-            f'fill="{pal["text_secondary"]}" opacity="0.58" paint-order="stroke fill" '
-            f'stroke="#f5f0e6" stroke-width="1.6" stroke-linejoin="round">{safe_overflow_summary}</text>'
-        )
-        if safe_overflow_topics:
+        for row_index, (row_label, row_count, row_color) in enumerate(strata_rows):
+            row_y = panel_y + 23 + row_index * 6.5
+            bar_w = 10 + min(28, row_count * 3.5)
             P.append(
-                f'<text x="{drawer_x + 11}" y="{drawer_y + 29}" text-anchor="start" '
-                f'font-family="Georgia,serif" font-size="4.9" '
-                f'fill="{pal["muted"]}" opacity="0.68" paint-order="stroke fill" '
-                f'stroke="#f5f0e6" stroke-width="1.4" stroke-linejoin="round">{safe_overflow_topics}</text>'
-            )
-        for specimen_idx in range(min(len(overflow_repos), 3)):
-            specimen_x = drawer_x + drawer_w - 16 - specimen_idx * 10
-            specimen_y = drawer_y + 8
-            P.append(
-                f'<ellipse cx="{specimen_x}" cy="{specimen_y}" rx="3.1" ry="1.8" '
-                f'fill="{pal["accent"]}" opacity="0.22" stroke="{drawer_stroke}" stroke-width="0.3"/>'
+                f'<line x1="{panel_x + 11}" y1="{row_y}" x2="{panel_x + 11 + bar_w:.1f}" y2="{row_y}" '
+                f'stroke="{row_color}" stroke-width="2.2" opacity="0.42" stroke-linecap="round"/>'
             )
             P.append(
-                f'<line x1="{specimen_x}" y1="{specimen_y + 1.6}" x2="{specimen_x}" y2="{specimen_y + 6.0}" '
-                f'stroke="{drawer_stroke}" stroke-width="0.25" opacity="0.45"/>'
+                f'<text x="{panel_x + 44}" y="{row_y + 1.6:.1f}" text-anchor="start" '
+                f'font-family="Georgia,serif" font-size="4.6" fill="{pal["text_secondary"]}" '
+                f'opacity="0.60">{row_label} · {row_count}</text>'
             )
         P.append("</g>")
 
@@ -4579,9 +4752,9 @@ def generate(
     fg_trees_exist = any(plane == "fg" for plane in repo_depth_planes.values())
     if fg_trees_exist:
         fg_bases = [
-            (plant_bases[ri][0], plant_bases[ri][1])
+            plant_bases_by_repo_index[ri]
             for ri in repo_depth_planes
-            if repo_depth_planes[ri] == "fg" and ri < len(plant_bases)
+            if repo_depth_planes[ri] == "fg" and ri in plant_bases_by_repo_index
         ]
         for fgx, fgy in fg_bases:
             # Subtle warm glow around foreground trees

@@ -48,7 +48,11 @@ def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
                 for lang, count in fut.result().items():
                     totals[lang] = totals.get(lang, 0) + count
             except Exception as exc:
-                logger.warning("Failed to fetch languages for {}: {}", futures[fut].get("name"), exc)
+                logger.warning(
+                    "Failed to fetch languages for {}: {}",
+                    futures[fut].get("name"),
+                    exc,
+                )
     return totals
 
 
@@ -67,7 +71,10 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
         result["traffic_clones_14d"] = clones["count"]
         result["traffic_unique_cloners_14d"] = clones["uniques"]
 
-        referrers = _json(f"{_BASE}/repos/{owner}/{repo}/traffic/popular/referrers", token)
+        referrers = _json(
+            f"{_BASE}/repos/{owner}/{repo}/traffic/popular/referrers",
+            token,
+        )
         result["traffic_top_referrers"] = [r["referrer"] for r in referrers]
     except Exception as exc:
         logger.warning("Failed to fetch traffic stats: {}", exc)
@@ -109,7 +116,11 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
         merged_prs: list[dict[str, Any]] = []
         cursor: str | None = None
         while True:
-            resp = _graphql(query, token, variables={"login": owner, "cursor": cursor})
+            resp = _graphql(
+                query,
+                token,
+                variables={"login": owner, "cursor": cursor},
+            )
             errors = resp.get("errors")
             if errors:
                 logger.warning("GraphQL errors fetching merged PRs: {}", errors)
@@ -179,10 +190,10 @@ def _collect_commit_hour_distribution(
 ) -> tuple[dict[int, int], int]:
     """Bucket commit activity by hour from GitHub's visible push-event window.
 
-    GitHub does not expose an all-time, account-wide commit timestamp history, so
-    this intentionally models a recent activity window using push-event timestamps
-    weighted by each event's commit count rather than claiming to be a lifetime
-    histogram.
+    GitHub does not expose an all-time, account-wide commit timestamp history.
+    This intentionally models a recent activity window using push-event
+    timestamps weighted by each event's commit count rather than claiming to be
+    a lifetime histogram.
     """
     try:
         data = _paginate_rest(f"{_BASE}/users/{owner}/events?per_page=100", token)
@@ -228,17 +239,27 @@ def _collect_releases(
     to another account. If the owned-repo inventory is unavailable, fall back to
     the profile repo and surface that narrower scope in metadata.
     """
+    owner_casefold = owner.casefold()
     repo_sources_by_full_name: dict[str, dict[str, Any]] = {}
     for repo_data in repos or []:
         repo_name = repo_data.get("name")
         if not repo_name:
             continue
         repo_owner = repo_data.get("owner")
-        owner_login = repo_owner.get("login") if isinstance(repo_owner, dict) else None
+        owner_login = (
+            str(repo_owner.get("login")).casefold()
+            if isinstance(repo_owner, dict) and repo_owner.get("login")
+            else None
+        )
         full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
-        if owner_login and owner_login != owner:
+        full_name_casefold = full_name.casefold()
+        if owner_login and owner_login != owner_casefold:
             continue
-        if owner_login is None and "/" in full_name and not full_name.startswith(f"{owner}/"):
+        if (
+            owner_login is None
+            and "/" in full_name_casefold
+            and not full_name_casefold.startswith(f"{owner_casefold}/")
+        ):
             continue
         repo_sources_by_full_name[full_name] = repo_data
 
@@ -247,15 +268,22 @@ def _collect_releases(
     if not repo_sources:
         repo_sources = [{"name": repo, "full_name": f"{owner}/{repo}"}]
 
-    def _fetch_repo_releases(repo_data: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    def _fetch_repo_releases(
+        repo_data: dict[str, Any]
+    ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         repo_name = str(repo_data.get("name") or repo)
         full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
-        data = _paginate_rest(f"{_BASE}/repos/{full_name}/releases?per_page=100", token)
+        data = _paginate_rest(
+            f"{_BASE}/repos/{full_name}/releases?per_page=100",
+            token,
+        )
         return repo_data, data if isinstance(data, list) else []
 
     releases: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=min(8, len(repo_sources))) as pool:
-        futures = {pool.submit(_fetch_repo_releases, entry): entry for entry in repo_sources}
+        futures = {
+            pool.submit(_fetch_repo_releases, entry): entry for entry in repo_sources
+        }
         for fut in as_completed(futures):
             repo_data = futures[fut]
             repo_name = str(repo_data.get("name") or repo)
@@ -279,13 +307,16 @@ def _collect_releases(
                         "repo_full_name": full_name,
                     }
                 )
+    # Preserve the legacy "most recent releases first" ordering even though the
+    # release pool now spans the account's owned repositories.
     releases.sort(
         key=lambda entry: (
             entry.get("published_at") or "",
             entry.get("repo_full_name") or "",
             entry.get("tag_name") or "",
             entry.get("name") or "",
-        )
+        ),
+        reverse=True,
     )
     return releases, scope, len(repo_sources)
 
@@ -426,8 +457,13 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
             metrics["total_commits"] = contrib_coll.get("totalCommitContributions", 0)
             metrics["total_prs"] = contrib_coll.get("totalPullRequestContributions")
             metrics["total_issues"] = contrib_coll.get("totalIssueContributions")
-            metrics["total_repos_contributed"] = contrib_coll.get("totalRepositoryContributions")
-            metrics["pr_review_count"] = contrib_coll.get("totalPullRequestReviewContributions", 0)
+            metrics["total_repos_contributed"] = contrib_coll.get(
+                "totalRepositoryContributions"
+            )
+            metrics["pr_review_count"] = contrib_coll.get(
+                "totalPullRequestReviewContributions",
+                0,
+            )
             metrics["contributions_calendar"] = [
                 {
                     "date": d["date"],

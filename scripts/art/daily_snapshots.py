@@ -19,7 +19,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date as dt_date
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 from ..utils import get_logger
 from .shared import (
@@ -887,162 +887,214 @@ def build_daily_snapshots(
 # ---------------------------------------------------------------------------
 
 
+def _repo_signature(metrics: dict[str, Any]) -> tuple[str, ...]:
+    return tuple(
+        str(repo.get("name") or "")
+        for repo in metrics.get("repos", [])
+        if isinstance(repo, dict) and repo.get("name")
+    )
+
+
+def _counter_delta(current: object, previous: object) -> float:
+    current_mapping = (
+        cast("dict[str, Any]", current) if isinstance(current, dict) else {}
+    )
+    previous_mapping = (
+        cast("dict[str, Any]", previous) if isinstance(previous, dict) else {}
+    )
+    keys = set(current_mapping.keys()) | set(previous_mapping.keys())
+    return sum(
+        abs(
+            float(current_mapping.get(key, 0) or 0)
+            - float(previous_mapping.get(key, 0) or 0)
+        )
+        for key in keys
+    )
+
+
+def _sequence_displacement(
+    current_sequence: tuple[str, ...],
+    previous_sequence: tuple[str, ...],
+) -> int:
+    current_positions = {name: index for index, name in enumerate(current_sequence)}
+    previous_positions = {name: index for index, name in enumerate(previous_sequence)}
+    shared_names = current_positions.keys() & previous_positions.keys()
+    return sum(
+        abs(current_positions[name] - previous_positions[name]) for name in shared_names
+    )
+
+
+def _transition_score(previous: DailySnapshot, current: DailySnapshot) -> float:
+    previous_metrics = previous.metrics_dict
+    current_metrics = current.metrics_dict
+    previous_world = previous.world_state
+    current_world = current.world_state
+    previous_repo_signature = _repo_signature(previous_metrics)
+    current_repo_signature = _repo_signature(current_metrics)
+
+    score = 0.0
+
+    repo_diff = len(current_repo_signature) - len(previous_repo_signature)
+    if repo_diff > 0:
+        score += 2.8 + min(4.2, repo_diff * (1.0 + current.progress * 2.0))
+
+    repo_displacement = _sequence_displacement(
+        current_repo_signature,
+        previous_repo_signature,
+    )
+    if repo_displacement > 0:
+        score += min(3.2, repo_displacement * 1.1)
+
+    star_diff = max(
+        0,
+        int(current_metrics.get("stars", 0) or 0)
+        - int(previous_metrics.get("stars", 0) or 0),
+    )
+    if star_diff > 0:
+        score += min(4.0, star_diff * 0.35)
+
+    fork_diff = max(
+        0,
+        int(current_metrics.get("forks", 0) or 0)
+        - int(previous_metrics.get("forks", 0) or 0),
+    )
+    if fork_diff > 0:
+        score += min(2.5, fork_diff * 0.45)
+
+    maturity_diff = abs(current.maturity - previous.maturity)
+    if maturity_diff > 0.001:
+        score += min(3.2, maturity_diff * 35.0)
+
+    contributions_day_diff = max(
+        0,
+        len(current_metrics.get("contributions_daily", {}))
+        - len(previous_metrics.get("contributions_daily", {})),
+    )
+    if contributions_day_diff > 0:
+        score += min(1.5, contributions_day_diff * 0.15)
+
+    if len(current_metrics.get("contributions_monthly", {})) > len(
+        previous_metrics.get("contributions_monthly", {})
+    ):
+        score += 0.9
+
+    release_diff = len(current_metrics.get("releases", [])) - len(
+        previous_metrics.get("releases", [])
+    )
+    if release_diff > 0:
+        score += 2.0 + min(3.0, release_diff * 1.2)
+
+    merged_pr_diff = len(current_metrics.get("recent_merged_prs", [])) - len(
+        previous_metrics.get("recent_merged_prs", [])
+    )
+    if merged_pr_diff > 0:
+        score += 1.5 + min(3.0, merged_pr_diff * 0.9)
+
+    language_mix_shift = _counter_delta(
+        current_metrics.get("languages"),
+        previous_metrics.get("languages"),
+    )
+    if language_mix_shift > 0:
+        score += min(2.8, math.log1p(language_mix_shift))
+
+    language_diversity_diff = abs(
+        float(current_metrics.get("language_diversity", 0.0) or 0.0)
+        - float(previous_metrics.get("language_diversity", 0.0) or 0.0)
+    )
+    if language_diversity_diff > 0:
+        score += min(2.0, language_diversity_diff * 4.0)
+
+    if current_metrics.get("language_count", 0) != previous_metrics.get(
+        "language_count",
+        0,
+    ):
+        score += 1.0
+
+    topic_shift = _counter_delta(
+        current_metrics.get("topic_clusters"),
+        previous_metrics.get("topic_clusters"),
+    )
+    if topic_shift > 0:
+        score += min(2.6, topic_shift * 0.6)
+
+    recency_shift = _counter_delta(
+        current_metrics.get("repo_recency_bands"),
+        previous_metrics.get("repo_recency_bands"),
+    )
+    if recency_shift > 0:
+        score += min(2.3, recency_shift * 0.75)
+
+    if current_world.time_of_day != previous_world.time_of_day:
+        score += 1.2
+    if current_world.weather != previous_world.weather:
+        score += 1.6
+    if current_world.season != previous_world.season:
+        score += 1.2
+
+    score += min(
+        1.8,
+        abs(current_world.weather_severity - previous_world.weather_severity) * 4.0,
+    )
+    score += min(
+        1.4,
+        abs(current_world.activity_pressure - previous_world.activity_pressure) * 2.5,
+    )
+    return score
+
+
 def sample_frames(
     snapshots: list[DailySnapshot],
     *,
     max_frames: int = DEFAULT_PUBLISHED_MAX_FRAMES,
 ) -> list[DailySnapshot]:
-    """Adaptively sample snapshots to produce a manageable frame count.
+    """Select representative snapshots without collapsing the published frame budget.
 
     Strategy:
-    1. Always include first and last day.
-    2. Score eventful transitions
-       (repos, stars, releases, PRs, language/topic/world shifts).
-    3. Fill remaining budget with uniform temporal sampling.
-    4. Deduplicate only near-identical adjacent frames across multiple signals.
+    1. Always include the first and last day.
+    2. Partition the interior timeline into budget-sized temporal buckets.
+    3. Within each bucket, prefer the day with the largest cumulative,
+       structural, or ecological transition.
+    4. Break ties toward later days so quiet cumulative growth still reads
+       forward instead of flattening into early-bucket states.
     """
-    if not snapshots:
+    if not snapshots or max_frames <= 0:
         return []
+    if max_frames == 1:
+        return [snapshots[-1]]
     if len(snapshots) <= max_frames:
         return list(snapshots)
+    if max_frames == 2:
+        return [snapshots[0], snapshots[-1]]
 
     n = len(snapshots)
-    selected_indices: set[int] = {0, n - 1}
-
-    def _repo_signature(metrics: dict[str, Any]) -> tuple[str, ...]:
-        return tuple(
-            str(repo.get("name") or "")
-            for repo in metrics.get("repos", [])
-            if isinstance(repo, dict) and repo.get("name")
+    transition_scores = [0.0] * n
+    for index in range(1, n):
+        transition_scores[index] = _transition_score(
+            snapshots[index - 1],
+            snapshots[index],
         )
 
-    # Identify event days
-    event_budget = int(max_frames * 0.4)
-    event_scores: list[tuple[float, int]] = []
-
-    for i in range(1, n):
-        score = 0.0
-        curr = snapshots[i].metrics_dict
-        prev = snapshots[i - 1].metrics_dict
-        curr_world = snapshots[i].world_state
-        prev_world = snapshots[i - 1].world_state
-
-        # New repo created
-        repo_diff = len(curr.get("repos", [])) - len(prev.get("repos", []))
-        if repo_diff > 0:
-            score += 2.5 + min(2.0, repo_diff * 0.8)
-
-        # Star burst (>= 3 new stars in a day)
-        star_diff = curr.get("stars", 0) - prev.get("stars", 0)
-        if star_diff > 0:
-            score += min(4.0, star_diff * 0.5)
-
-        # Maturity jump
-        mat_diff = abs(snapshots[i].maturity - snapshots[i - 1].maturity)
-        if mat_diff > 0.01:
-            score += mat_diff * 50
-
-        # Contribution/month boundary changes
-        monthly_curr = curr.get("contributions_monthly", {})
-        monthly_prev = prev.get("contributions_monthly", {})
-        if len(monthly_curr) > len(monthly_prev):
-            score += 1.2
-
-        # Releases / merged PRs
-        release_diff = len(curr.get("releases", [])) - len(prev.get("releases", []))
-        if release_diff > 0:
-            score += 2.0 + min(3.0, release_diff * 1.2)
-        merged_pr_diff = len(curr.get("recent_merged_prs", [])) - len(
-            prev.get("recent_merged_prs", [])
+    interior_slots = max_frames - 2
+    interior_count = n - 2
+    selected_indices = [0]
+    for slot_index in range(interior_slots):
+        start = 1 + (slot_index * interior_count) // interior_slots
+        stop = 1 + ((slot_index + 1) * interior_count) // interior_slots
+        bucket_span = max(1, stop - start)
+        bucket_indices = range(start, stop)
+        bucket_reference = snapshots[start - 1]
+        best_index = max(
+            bucket_indices,
+            key=lambda index: (
+                transition_scores[index]
+                + _transition_score(bucket_reference, snapshots[index])
+                + 0.15 * ((index - start + 1) / bucket_span),
+                index,
+            ),
         )
-        if merged_pr_diff > 0:
-            score += 1.5 + min(3.0, merged_pr_diff * 0.9)
-
-        # Language/topic shifts
-        lang_div_diff = abs(
-            float(curr.get("language_diversity", 0.0) or 0.0)
-            - float(prev.get("language_diversity", 0.0) or 0.0)
-        )
-        score += min(2.5, lang_div_diff * 4.0)
-        if curr.get("language_count", 0) != prev.get("language_count", 0):
-            score += 1.0
-        if curr.get("topic_clusters", {}) != prev.get("topic_clusters", {}):
-            score += 0.8
-
-        # Atmosphere/world shifts
-        if curr_world.time_of_day != prev_world.time_of_day:
-            score += 1.2
-        if curr_world.weather != prev_world.weather:
-            score += 1.6
-        if curr_world.season != prev_world.season:
-            score += 1.2
-        score += min(
-            1.8,
-            abs(curr_world.weather_severity - prev_world.weather_severity) * 4.0,
-        )
-        score += min(
-            1.4, abs(curr_world.activity_pressure - prev_world.activity_pressure) * 2.5
-        )
-
-        if score > 0:
-            event_scores.append((score, i))
-
-    # Select top event days
-    event_scores.sort(reverse=True)
-    for _, idx in event_scores[:event_budget]:
-        selected_indices.add(idx)
-
-    # Fill remaining budget with uniform sampling
-    remaining = max_frames - len(selected_indices)
-    if remaining > 0:
-        step = max(1, n // remaining)
-        for i in range(0, n, step):
-            selected_indices.add(i)
-            if len(selected_indices) >= max_frames:
-                break
-
-    # Sort and deduplicate by multi-signal similarity
-    sorted_indices = sorted(selected_indices)
-    result: list[DailySnapshot] = [snapshots[sorted_indices[0]]]
-    for idx in sorted_indices[1:]:
-        candidate = snapshots[idx]
-        previous = result[-1]
-        candidate_repo_signature = _repo_signature(candidate.metrics_dict)
-        previous_repo_signature = _repo_signature(previous.metrics_dict)
-        is_distinct = any(
-            (
-                abs(candidate.maturity - previous.maturity) >= 0.001,
-                candidate.world_state.time_of_day != previous.world_state.time_of_day,
-                candidate.world_state.weather != previous.world_state.weather,
-                candidate.world_state.season != previous.world_state.season,
-                candidate_repo_signature != previous_repo_signature,
-                candidate.metrics_dict.get("stars", 0)
-                != previous.metrics_dict.get("stars", 0),
-                candidate.metrics_dict.get("forks", 0)
-                != previous.metrics_dict.get("forks", 0),
-                candidate.metrics_dict.get("language_count", 0)
-                != previous.metrics_dict.get("language_count", 0),
-                candidate.metrics_dict.get("repo_visual_order", [])
-                != previous.metrics_dict.get("repo_visual_order", []),
-                len(candidate.metrics_dict.get("releases", []))
-                != len(previous.metrics_dict.get("releases", [])),
-                len(candidate.metrics_dict.get("recent_merged_prs", []))
-                != len(previous.metrics_dict.get("recent_merged_prs", [])),
-            )
-        )
-        if is_distinct or idx == n - 1:
-            result.append(candidate)
-
-    # Final trim if over budget
-    if len(result) > max_frames:
-        step = len(result) / max_frames
-        sampled: list[DailySnapshot] = []
-        for i in range(max_frames):
-            sampled.append(result[int(i * step)])
-        # Ensure last frame
-        if sampled[-1] is not result[-1]:
-            sampled[-1] = result[-1]
-        result = sampled
+        selected_indices.append(best_index)
+    selected_indices.append(n - 1)
+    result = [snapshots[index] for index in selected_indices]
 
     logger.info(
         "Sampled {} frames from {} days (first: {}, last: {})",

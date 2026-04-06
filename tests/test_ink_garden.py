@@ -28,8 +28,8 @@ from scripts.art.ink_garden import (  # noqa: E402
     SPECIES,
     _classify_species,
     _daily_contribution_series,
-    _overflow_specimen_annotation,
     _repo_emergence_dates,
+    _select_primary_repos,
     generate,
     seed_hash,
 )
@@ -101,6 +101,10 @@ def _extract_repo_tooltip_height(svg: str, repo_name: str) -> float:
     )
     assert match is not None
     return float(match.group(1))
+
+
+def _count_repo_tree_groups(svg: str) -> int:
+    return len(re.findall(r'<g class="repo-tree">', svg))
 
 
 # ---------------------------------------------------------------------------
@@ -299,17 +303,20 @@ class TestEmergenceTiming:
 class TestGenerate:
     """Smoke tests for the generate() entry point."""
 
-    def test_overflow_specimen_annotation_summarizes_topics(self) -> None:
-        """Overflow helper should dedupe and compact topic hints."""
-        summary, topics = _overflow_specimen_annotation(
+    def test_repo_visual_order_is_applied_without_overflow(self) -> None:
+        """The shared all-repo contract should preserve order without omissions."""
+        ordered, overflow = _select_primary_repos(
             [
-                {"topics": ["cli", "automation", "cli"]},
-                {"topics": ["ai", "automation"]},
-            ]
+                {"name": "repo-c"},
+                {"name": "repo-a"},
+                {"name": "repo-b"},
+            ],
+            limit=MAX_REPOS,
+            repo_visual_order=["repo-a", "repo-b", "repo-c"],
         )
 
-        assert summary == "+2 specimens held back"
-        assert topics == "cli / automation / ai"
+        assert [repo["name"] for repo in ordered] == ["repo-a", "repo-b", "repo-c"]
+        assert overflow == []
 
     def test_returns_str(self) -> None:
         """generate() returns a string."""
@@ -354,7 +361,7 @@ class TestGenerate:
         assert isinstance(result, str)
 
     def test_repos_beyond_soft_max_remain_renderable(self) -> None:
-        """Supplying more than MAX_REPOS repos still produces a valid SVG."""
+        """Dense profiles should keep every repo on-canvas under the new ecology."""
         extra_repos = [
             {
                 "name": f"repo-{i}",
@@ -364,8 +371,12 @@ class TestGenerate:
             }
             for i in range(MAX_REPOS + 5)
         ]
-        result = generate({**RICH_METRICS, "repos": extra_repos}, maturity=0.5)
+        result = generate({**RICH_METRICS, "repos": extra_repos}, maturity=1.0)
         assert result.lstrip().startswith("<svg")
+        assert _count_repo_tree_groups(result) == len(extra_repos)
+        assert "Ecology Strata" in result
+        assert f"All {len(extra_repos)} repos rooted on canvas" in result
+        assert "held back" not in result
 
     def test_rich_metrics_mid_maturity_produces_substantial_svg(self) -> None:
         """Rich metrics at maturity=0.5 produce more than a skeleton SVG."""
@@ -454,6 +465,11 @@ class TestGenerate:
         result = generate(metrics, seed=seed_hash(metrics), maturity=0.9)
         assert "priority-archive" in result
         assert f"tiny-repo-{MAX_REPOS - 1}" in result
+        assert _count_repo_tree_groups(result) == len(repos)
+        assert _extract_repo_tooltip_height(
+            result,
+            "priority-archive",
+        ) > _extract_repo_tooltip_height(result, "tiny-repo-0")
 
     def test_all_repo_contract_keeps_existing_tree_visible_without_pin(self) -> None:
         """Timelapse frames no longer need a pinned top-N cohort to stay stable."""
@@ -487,6 +503,11 @@ class TestGenerate:
 
         assert f"steady-repo-{MAX_REPOS - 1}" in svg
         assert "late-superstar" in svg
+        assert _count_repo_tree_groups(svg) == len(repos)
+        assert _extract_repo_tooltip_height(
+            svg,
+            f"steady-repo-{MAX_REPOS - 1}",
+        ) > _extract_repo_tooltip_height(svg, "late-superstar")
 
     def test_all_repo_contract_keeps_under_limit_fillers_visible(self) -> None:
         """The shared contract should not hide filler repos before later arrivals."""
@@ -867,8 +888,8 @@ class TestGenerate:
         assert "2024-04-10" in release_dates
         assert "2024-06-15" in release_dates
 
-    def test_overflow_recent_repos_still_bias_portfolio_seed_emergence(self) -> None:
-        """Hidden recent repos should still influence portfolio-level growth bias."""
+    def test_all_repo_recent_repos_still_bias_portfolio_seed_emergence(self) -> None:
+        """Recent understory additions should still influence portfolio-level growth."""
         fixed_seed = "13579bdf2468ace0" * 4
         visible_canopy = [
             {
@@ -923,7 +944,10 @@ class TestGenerate:
             maturity=1.0,
         )
 
-        assert "+4 specimens held back" in recent_overflow_svg
+        expected_repo_count = len(visible_canopy) + len(overflow_recent)
+        assert _count_repo_tree_groups(recent_overflow_svg) == expected_repo_count
+        assert "overflow-sprout-0" in recent_overflow_svg
+        assert "held back" not in recent_overflow_svg
         recent_seed_bodies = _count_falling_seed_bodies(recent_overflow_svg)
         established_seed_bodies = _count_falling_seed_bodies(established_overflow_svg)
         assert recent_seed_bodies > established_seed_bodies

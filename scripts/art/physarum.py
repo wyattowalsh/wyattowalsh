@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
-from scipy.ndimage import uniform_filter
+from scipy.ndimage import uniform_filter  # type: ignore[import-untyped]
 
 from .shared import (
     ART_PALETTE_ANCHORS,
@@ -36,7 +36,9 @@ from .shared import (
     oklch,
     oklch_gradient,
     oklch_lerp,
+    order_repos_for_visual_plan,
     repo_to_canvas_position,
+    repo_visibility_score,
     seed_hash,
     select_primary_repos,
     topic_affinity_matrix,
@@ -207,6 +209,13 @@ def _coerce_nonnegative_int(value: Any) -> int:
         return max(0, int(value or 0))
     except (TypeError, ValueError):
         return 0
+
+
+def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
+    """Return a soft density signal that continues rising beyond the baseline."""
+    if repo_count <= 0:
+        return 0.0
+    return min(1.0, math.log1p(repo_count) / math.log1p(max(2, baseline * 4)))
 
 
 def _repo_topics(repo: dict[str, Any], *, limit: int = 3) -> list[str]:
@@ -848,7 +857,16 @@ def generate(
     rng = np.random.default_rng(int(h[:8], 16))
 
     # ── Extract data ──────────────────────────────────────────────
-    repos = metrics.get("top_repos") or metrics.get("repos") or []
+    raw_repos = metrics.get("repos") or metrics.get("top_repos") or []
+    preferred_repo_names = metrics.get("repo_visual_order")
+    repos = order_repos_for_visual_plan(
+        list(raw_repos) if isinstance(raw_repos, list) else [],
+        preferred_names=(
+            preferred_repo_names
+            if isinstance(preferred_repo_names, (list, tuple))
+            else None
+        ),
+    )
     monthly = metrics.get("contributions_monthly", {})
     daily = metrics.get("contributions_daily", {})
     stars = _coerce_nonnegative_int(metrics.get("stars", 0))
@@ -879,6 +897,22 @@ def generate(
     derived = compute_derived_metrics(metrics)
 
     primary_repos, _overflow = select_primary_repos(repos, limit=config.max_repos)
+    repo_density_signal = _dense_repo_signal(
+        len(primary_repos),
+        baseline=config.max_repos,
+    )
+    visibility_scores = [repo_visibility_score(repo) for repo in primary_repos]
+    visibility_max = max(visibility_scores, default=1.0)
+    visibility_min = min(visibility_scores, default=0.0)
+    visibility_span = max(0.001, visibility_max - visibility_min)
+    visibility_norms = [
+        (
+            0.18 + 0.82 * ((score - visibility_min) / visibility_span)
+            if len(visibility_scores) > 1
+            else 1.0
+        )
+        for score in visibility_scores
+    ]
     tempo = activity_tempo(monthly)
     pr_tempo, pr_burst, repo_pr_boosts = _summarize_recent_pr_activity(
         metrics.get("recent_merged_prs"),
@@ -1017,6 +1051,22 @@ def generate(
     cell_w = WIDTH / grid
     cell_h = HEIGHT / grid
     repo_count = len(primary_repos)
+    labeled_node_indices: set[int] = set()
+    if primary_repos:
+        ranked_node_indices = sorted(
+            range(len(primary_repos)),
+            key=lambda idx: (
+                visibility_scores[idx],
+                _coerce_nonnegative_int(primary_repos[idx].get("stars", 0)),
+                -_coerce_nonnegative_int(primary_repos[idx].get("age_months", 0)),
+            ),
+            reverse=True,
+        )
+        label_limit = max(
+            4,
+            min(8, int(round(math.sqrt(len(primary_repos)) * 2.0))),
+        )
+        labeled_node_indices = set(ranked_node_indices[:label_limit])
     fresh_repos = _coerce_nonnegative_int(repo_recency_bands.get("fresh"))
     recent_repos = _coerce_nonnegative_int(repo_recency_bands.get("recent"))
     established_repos = _coerce_nonnegative_int(
@@ -1070,11 +1120,13 @@ def generate(
 
     food_sources: list[tuple[int, int, float]] = []
     food_canvas: list[dict[str, Any]] = []
+    secondary_nodes: list[dict[str, Any]] = []
     for index, repo in enumerate(primary_repos):
         cx, cy = repo_to_canvas_position(repo, h, strategy="language_cluster")
         repo_stars = _coerce_nonnegative_int(repo.get("stars", 0))
         age_months = _coerce_nonnegative_int(repo.get("age_months", 0))
         age_signal = _repo_age_signal(repo)
+        visibility = visibility_norms[index] if index < len(visibility_norms) else 1.0
         affinity_signal = min(1.65, affinity_boosts[index])
         repo_name = str(repo.get("name") or "").strip().casefold()
         pr_signal = 1.0 + repo_pr_boosts.get(repo_name, 0.0)
@@ -1098,10 +1150,11 @@ def generate(
             * pr_signal
             * recency_mult
             * activity_mult
+            * (0.52 + 0.70 * visibility)
         )
         gx = int(min(grid - 1, max(0, cx / cell_w)))
         gy = int(min(grid - 1, max(0, cy / cell_h)))
-        identity = _repo_identity_palette(repo)
+        repo_identity = _repo_identity_palette(repo)
         food_sources.append((gx, gy, conc))
         food_canvas.append(
             {
@@ -1109,11 +1162,60 @@ def generate(
                 "cy": cy,
                 "conc": conc,
                 "repo": repo,
-                "identity": identity,
+                "identity": repo_identity,
+                "visibility": visibility,
             }
         )
+        secondary_hash = seed_hash(
+            {"seed": h, "repo": repo.get("name", ""), "layer": "physarum-secondary"}
+        )
+        satellite_count = min(
+            2,
+            int(len(repo.get("topics") or []) >= 2)
+            + int(visibility < 0.55)
+            + int(repo_density_signal > 0.72 and visibility < 0.78),
+        )
+        for satellite_index in range(satellite_count):
+            angle_hash = seed_hash({"seed": secondary_hash, "index": satellite_index})
+            sat_angle = 2.0 * math.pi * (int(angle_hash[:8], 16) / 0xFFFFFFFF)
+            sat_distance = (
+                10.0
+                + 7.0 * satellite_index
+                + 8.0 * (1.0 - visibility)
+                + 4.0 * repo_density_signal
+            )
+            sat_cx = max(
+                18.0,
+                min(WIDTH - 18.0, cx + math.cos(sat_angle) * sat_distance),
+            )
+            sat_cy = max(
+                18.0,
+                min(HEIGHT - 18.0, cy + math.sin(sat_angle) * sat_distance),
+            )
+            sat_conc = (
+                conc
+                * (0.16 + 0.10 * (1.0 - visibility))
+                * (1.0 - 0.15 * satellite_index)
+            )
+            sat_gx = int(min(grid - 1, max(0, sat_cx / cell_w)))
+            sat_gy = int(min(grid - 1, max(0, sat_cy / cell_h)))
+            food_sources.append((sat_gx, sat_gy, sat_conc))
+            secondary_nodes.append(
+                {
+                    "cx": sat_cx,
+                    "cy": sat_cy,
+                    "conc": sat_conc,
+                    "repo": repo,
+                    "identity": repo_identity,
+                    "visibility": visibility,
+                    "when": _repo_date(repo) or _date_for_activity_fraction(0.3),
+                }
+            )
 
     # Agent count from cumulative snapshot state
+    repo_density_bonus = 2.4 * config.max_repos * repo_density_signal + 1.6 * math.sqrt(
+        max(0.0, float(repo_count - config.max_repos))
+    )
     n_agents = int(
         config.agent_base * 0.04
         + config.agent_scale
@@ -1124,7 +1226,7 @@ def generate(
             + 0.20 * ecosystem_signal
         )
         + 4.0 * collaboration_signal
-        + 3.0 * min(repo_count, config.max_repos)
+        + repo_density_bonus
     )
     n_agents = int(
         n_agents
@@ -1143,7 +1245,7 @@ def generate(
         + established_repos * 0.02
         + issue_resolution * 0.18
         + pr_burst * 0.22
-        + repo_count * 0.01,
+        + 0.06 * repo_density_signal,
     )
     evap = (
         config.evaporation
@@ -1186,6 +1288,7 @@ def generate(
                     commit_focus * 2.0
                     + pr_burst * 1.8
                     + fresh_share * 1.6
+                    + repo_density_signal * 1.4
                     + streak_signal * 1.2
                     - issue_pressure * 1.4,
                 ),
@@ -1201,6 +1304,7 @@ def generate(
             + 0.07 * min(collaboration_signal, 4.0)
             + 0.12 * pr_burst
             + 0.06 * commit_focus
+            + 0.08 * repo_density_signal
             + 0.06 * min(topic_diversity, 6),
         ),
     )
@@ -1369,31 +1473,41 @@ def generate(
     # ── Food source nodes ─────────────────────────────────────────
     node_fade = _fade(0.10, 0.40)
     if node_fade > 0:
-        for node in food_canvas:
+        for index, node in enumerate(food_canvas):
             if not budget.ok():
                 break
             cx = float(node["cx"])
             cy = float(node["cy"])
             conc = float(node["conc"])
             repo = node["repo"]
-            identity: PhysarumIdentityPalette = node["identity"]
+            node_identity: PhysarumIdentityPalette = node["identity"]
+            visibility = float(node["visibility"])
             identity_visibility = min(
                 1.0,
-                0.45 * identity.topic_signal + 0.20 * min(1.0, math.log1p(conc) / 4.0),
+                0.45 * node_identity.topic_signal
+                + 0.20 * min(1.0, math.log1p(conc) / 4.0),
             )
-            r = 3.0 + math.log1p(conc) * (1.35 + 0.30 * identity_visibility)
+            r = 2.7 + math.log1p(conc) * (
+                1.10 + 0.28 * identity_visibility + 0.16 * visibility
+            )
             node_when = _repo_date(repo) or _date_for_activity_fraction(0.3)
-            language = identity.language or "unknown"
-            halo_opacity = (0.24 + 0.18 * identity_visibility) * node_fade
-            core_opacity = (0.76 + 0.18 * identity_visibility) * node_fade
-            shell_opacity = (0.34 + 0.16 * identity_visibility) * node_fade
-            halo_radius = r * (1.85 + 0.18 * identity.topic_signal)
-            shell_width = 0.8 + 0.5 * identity.topic_signal
+            language = node_identity.language or "unknown"
+            halo_opacity = (
+                0.18 + 0.18 * identity_visibility + 0.08 * visibility
+            ) * node_fade
+            core_opacity = (
+                0.66 + 0.18 * identity_visibility + 0.10 * visibility
+            ) * node_fade
+            shell_opacity = (
+                0.26 + 0.16 * identity_visibility + 0.08 * visibility
+            ) * node_fade
+            halo_radius = r * (1.85 + 0.18 * node_identity.topic_signal)
+            shell_width = 0.8 + 0.5 * node_identity.topic_signal
             # Outer glow ring
             P.append(
                 f'<circle data-role="physarum-node-halo" data-language="{language}" '
                 f'cx="{cx:.1f}" cy="{cy:.1f}" r="{halo_radius:.1f}" '
-                f'fill="{identity.node_halo}" filter="url(#nodeGlow)" '
+                f'fill="{node_identity.node_halo}" filter="url(#nodeGlow)" '
                 f"{_timeline_style(node_when, halo_opacity, 'tl-reveal tl-soft')}/>"
             )
             budget.add(1)
@@ -1402,7 +1516,7 @@ def generate(
             P.append(
                 f'<circle data-role="physarum-node-shell" data-language="{language}" '
                 f'cx="{cx:.1f}" cy="{cy:.1f}" r="{r * 1.28:.1f}" fill="none" '
-                f'stroke="{identity.node_shell}" stroke-width="{shell_width:.2f}" '
+                f'stroke="{node_identity.node_shell}" stroke-width="{shell_width:.2f}" '
                 f"{_timeline_style(node_when, shell_opacity, 'tl-reveal tl-soft')}/>"
             )
             budget.add(1)
@@ -1410,7 +1524,7 @@ def generate(
             P.append(
                 f'<circle data-role="physarum-node-core" data-language="{language}" '
                 f'cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
-                f'fill="{identity.node_core}" filter="url(#nodeGlow)" '
+                f'fill="{node_identity.node_core}" filter="url(#nodeGlow)" '
                 f"{_timeline_style(node_when, core_opacity, 'tl-reveal tl-crisp')}"
                 "/>"
             )
@@ -1418,20 +1532,49 @@ def generate(
 
             # Repo name label
             label = repo.get("name", "")
-            if label and node_fade > 0.5:
+            if label and node_fade > 0.5 and index in labeled_node_indices:
                 label_timeline = _timeline_style(
                     node_when, 0.5 * node_fade, "tl-reveal tl-soft"
                 )
                 P.append(
                     f'<text x="{cx:.1f}" y="{cy + r + 8:.1f}" '
                     'font-family="monospace" font-size="6" '
-                    f'fill="{identity.label_color}" '
+                    f'fill="{node_identity.label_color}" '
                     f'text-anchor="middle" '
                     f"{label_timeline}"
                     ">"
                     f"{label}</text>"
                 )
                 budget.add(1)
+
+    satellite_fade = (
+        _fade(0.16, 0.58) if timeline_enabled else max(0.12, node_fade * 0.72)
+    )
+    if satellite_fade > 0:
+        for node in secondary_nodes:
+            if not budget.ok():
+                break
+            cx = float(node["cx"])
+            cy = float(node["cy"])
+            conc = float(node["conc"])
+            satellite_identity: PhysarumIdentityPalette = node["identity"]
+            visibility = float(node["visibility"])
+            satellite_language = satellite_identity.language or "unknown"
+            halo_radius = 1.6 + math.log1p(conc) * (0.9 + 0.2 * visibility)
+            halo_opacity = (0.12 + 0.10 * visibility) * satellite_fade
+            satellite_style = _timeline_style(
+                str(node["when"]),
+                halo_opacity,
+                "tl-reveal tl-soft",
+            )
+            P.append(
+                f'<circle data-role="physarum-node-satellite" '
+                f'data-language="{satellite_language}" '
+                f'cx="{cx:.1f}" cy="{cy:.1f}" r="{halo_radius:.1f}" '
+                f'fill="{satellite_identity.node_shell}" filter="url(#nodeGlow)" '
+                f"{satellite_style}/>"
+            )
+            budget.add(1)
 
     P.append("</svg>")
     return "\n".join(P)

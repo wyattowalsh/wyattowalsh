@@ -36,6 +36,7 @@ from .shared import (
     oklch,
     oklch_gradient,
     oklch_lerp,
+    order_repos_for_visual_plan,
     organic_texture_filter,
     seed_hash,
     select_palette_for_world,
@@ -510,13 +511,49 @@ def generate(
         """Smooth 0→1 ramp between start and full maturity."""
         return max(0.0, min(1.0, (growth_mat - start) / max(0.001, full - start)))
 
+    def _sample_ranked_indices(length: int, limit: int) -> list[int]:
+        if length <= 0 or limit <= 0:
+            return []
+        if length <= limit:
+            return list(range(length))
+        if limit == 1:
+            return [0]
+        return sorted(
+            {
+                int(round(step * (length - 1) / max(1, limit - 1)))
+                for step in range(limit)
+            }
+        )
+
     h = seed_hash({"seed": seed}) if seed is not None else seed_hash(metrics)
     rng = np.random.default_rng(int(h[:8], 16))
     noise = Noise2D(seed=int(h[8:16], 16))
     noise2 = Noise2D(seed=int(h[16:24], 16))
 
     monthly = metrics.get("contributions_monthly", {})
-    repos = metrics.get("repos", [])
+    raw_repos = metrics.get("repos", [])
+    preferred_repo_names: list[str] = []
+    seen_repo_names: set[str] = set()
+    for source in (
+        metrics.get("repo_visual_order"),
+        metrics.get("canonical_primary_repo_names"),
+    ):
+        if not isinstance(source, list | tuple):
+            continue
+        for raw_name in source:
+            repo_name = str(raw_name).strip() if isinstance(raw_name, str) else ""
+            if not repo_name or repo_name in seen_repo_names:
+                continue
+            seen_repo_names.add(repo_name)
+            preferred_repo_names.append(repo_name)
+    repos = order_repos_for_visual_plan(
+        [
+            repo
+            for repo in (raw_repos if isinstance(raw_repos, list | tuple) else [])
+            if isinstance(repo, dict)
+        ],
+        preferred_names=preferred_repo_names or None,
+    )
     total_commits = metrics.get("total_commits", 500)
     followers = metrics.get("followers", 10)
     contributions = metrics.get("contributions_last_year", 200)
@@ -783,12 +820,51 @@ def generate(
         approx_month = 1 + (idx % 12)
         return f"{timeline_window[1].year:04d}-{approx_month:02d}-01"
 
-    def _timeline_style(when: str, opacity: float, cls: str = "tl-reveal") -> str:
+    static_accretion_floor = 0.18
+    static_accretion_span = 0.14 + min(0.18, len(repos) / 72.0)
+
+    def _static_accretion_signal(
+        when: str | None,
+        *,
+        window: tuple[date, date] | None = None,
+    ) -> float:
+        if timeline_enabled:
+            return 1.0
+        active_window = window or timeline_window
+        when_day = _history_day(when) or active_window[0]
+        timeline_span_days = max(1, (active_window[1] - active_window[0]).days)
+        reveal_frac = max(
+            0.0,
+            min(1.0, (when_day - active_window[0]).days / timeline_span_days),
+        )
+        local_progress = max(
+            0.0,
+            min(1.0, (mat - reveal_frac) / max(0.05, static_accretion_span)),
+        )
+        eased = local_progress * local_progress * (3.0 - 2.0 * local_progress)
+        base_signal = max(
+            0.08,
+            static_accretion_floor * (1.0 - 0.40 * reveal_frac),
+        )
+        return base_signal + (1.0 - base_signal) * eased
+
+    def _timeline_style(
+        when: str,
+        opacity: float,
+        cls: str = "tl-reveal",
+        *,
+        window: tuple[date, date] | None = None,
+    ) -> str:
+        active_window = window or timeline_window
         if not timeline_enabled:
-            return f'opacity="{opacity:.2f}"'
+            static_signal = _static_accretion_signal(when, window=active_window)
+            return (
+                f'opacity="{max(0.03, opacity * static_signal):.3f}" '
+                f'data-static-accretion="{static_signal:.3f}"'
+            )
         delay = map_date_to_loop_delay(
             when,
-            timeline_window,
+            active_window,
             duration=loop_duration,
             reveal_fraction=reveal_fraction,
         )
@@ -1009,7 +1085,7 @@ def generate(
                 if str(topic).strip()
             ),
             key=lambda item: (-item[2], item[0]),
-        )[:6]
+        )
     ]
 
     def _topic_to_place_name(topic: str, elev_val: float) -> str:
@@ -1199,21 +1275,52 @@ def generate(
                 )
 
     # ── 5. River valleys from saddle points between major peaks ────
-    n_rivers = max(2, min(8, 2 + forks // 4))
+    n_rivers = max(2, min(10, 2 + forks // 4 + len(repo_positions) // 10))
     river_paths = []
-    # Sort repos by peak height to find top peaks for saddle-point river starts
+    # Sample prominence bands across the full ordered repo set so newer/secondary
+    # repos can accrete new tributary basins without hiding older terrain.
     sorted_repos = sorted(
         repo_positions, key=lambda rp: rp[2].get("stars", 0), reverse=True
     )
-    top_peaks = sorted_repos[: max(3, min(len(sorted_repos), 5))]
+    peak_source_limit = min(
+        len(sorted_repos),
+        max(5, min(12, 4 + len(sorted_repos) // 2)),
+    )
+    peak_sources = [
+        sorted_repos[idx]
+        for idx in _sample_ranked_indices(len(sorted_repos), peak_source_limit)
+    ]
     river_starts = []
-    if len(top_peaks) >= 2:
-        for pi in range(len(top_peaks)):
-            for pj in range(pi + 1, len(top_peaks)):
-                mid_x = (top_peaks[pi][0] + top_peaks[pj][0]) / 2
-                mid_y = (top_peaks[pi][1] + top_peaks[pj][1]) / 2
-                river_starts.append((mid_x, mid_y))
-        river_starts = river_starts[:n_rivers]
+    if len(peak_sources) >= 2:
+        strongest_peak = peak_sources[0]
+        for pi in range(len(peak_sources) - 1):
+            left_peak = peak_sources[pi]
+            right_peak = peak_sources[pi + 1]
+            river_starts.append(
+                (
+                    (left_peak[0] + right_peak[0]) / 2,
+                    (left_peak[1] + right_peak[1]) / 2,
+                )
+            )
+        if len(peak_sources) >= 4:
+            accent_step = max(2, len(peak_sources) // max(2, n_rivers - 1))
+            for accent_index in range(accent_step, len(peak_sources), accent_step):
+                accent_peak = peak_sources[accent_index]
+                river_starts.append(
+                    (
+                        (strongest_peak[0] + accent_peak[0]) / 2,
+                        (strongest_peak[1] + accent_peak[1]) / 2,
+                    )
+                )
+        deduped_river_starts: list[tuple[float, float]] = []
+        seen_river_starts: set[tuple[int, int]] = set()
+        for mid_x, mid_y in river_starts:
+            rounded_key = (int(round(mid_x * 1000)), int(round(mid_y * 1000)))
+            if rounded_key in seen_river_starts:
+                continue
+            seen_river_starts.add(rounded_key)
+            deduped_river_starts.append((mid_x, mid_y))
+        river_starts = deduped_river_starts[:n_rivers]
     else:
         # Fallback: random starts if not enough peaks
         for rvi in range(n_rivers):
@@ -1267,10 +1374,17 @@ def generate(
         river_paths.append(main_path)
 
         # Tributaries: branch from upper reaches and merge downstream.
-        trib_count = 1 + (1 if forks > 20 else 0) + (1 if contributions > 1200 else 0)
+        trib_count = min(
+            5,
+            1
+            + (1 if forks > 20 else 0)
+            + (1 if contributions > 1200 else 0)
+            + len(repo_positions) // 10,
+        )
         branch_origin_max = max(6, len(main_path) // 3)
-        for tbi in range(min(3, trib_count)):
-            bidx = 3 + int((tbi + 1) * branch_origin_max / (min(3, trib_count) + 1))
+        tributary_limit = min(5, trib_count)
+        for tbi in range(tributary_limit):
+            bidx = 3 + int((tbi + 1) * branch_origin_max / (tributary_limit + 1))
             if bidx >= len(main_path):
                 continue
             brx, bry = main_path[bidx]
@@ -2091,10 +2205,11 @@ def generate(
             ):
                 spots.append((*_grid_to_map(gx, gy, cell_w, cell_h), e))
     spots_sorted = sorted(spots, key=lambda s: s[2], reverse=True)
+    spot_budget = 18 + min(12, len(repo_positions))
     n_spots = (
-        min(len(spots_sorted), max(1, round(18 * star_prominence)))
+        min(len(spots_sorted), max(1, round(spot_budget * star_prominence)))
         if timeline_enabled
-        else max(0, round(mat * 18 * star_prominence))
+        else max(1, round(max(0.18, mat) * spot_budget * star_prominence))
     )
     P.append('<g id="spot-heights">')
     for si_spot, (sx, sy, se) in enumerate(spots_sorted[:n_spots]):
@@ -2130,9 +2245,10 @@ def generate(
     # ── Survey benchmarks at secondary peaks ──────────────────────
     bm_fade = _fade(0.25, 0.50)
     if bm_fade > 0:
-        bm_max = max(1, round(bm_fade * 3))
+        bm_max = min(6, max(1, round((2 + len(repo_positions) / 8) * bm_fade)))
         bm_count = 0
-        for sx, sy, se in spots_sorted[3:11]:
+        bm_scan_end = min(len(spots_sorted), 4 + bm_max * 4)
+        for sx, sy, se in spots_sorted[3:bm_scan_end]:
             if se > 0.6 and bm_count < bm_max:
                 bm_when = _birth_when_at_map(sx, sy)
                 # BM symbol: circle with horizontal line through it
@@ -2169,12 +2285,6 @@ def generate(
                     f'font-size="4" fill="#1a4f8a" font-style="italic" {_timeline_style(spring_when, 0.3, "tl-reveal tl-soft")}>Spr.</text>'
                 )
 
-    # ── Progressive repo visibility for animation ─────────────────
-    n_visible_repos = (
-        len(repo_positions)
-        if timeline_enabled
-        else max(1, round(len(repo_positions) * min(1.0, mat * 2.2)))
-    )
     river_map_paths = [
         [(MAP_L + px * MAP_W, MAP_T + py * MAP_H) for px, py in rpts]
         for rpts in river_paths
@@ -2182,9 +2292,8 @@ def generate(
     ]
 
     # ── Chronological trail (oldest → newest → center) ────────────
-    visible_rp = repo_positions[:n_visible_repos]
     chrono = sorted(
-        visible_rp,
+        repo_positions,
         key=lambda rp: (
             _repo_day(rp[2], fallback_end=repo_age_anchor) or timeline_start_day,
             str(rp[2].get("name", "")),
@@ -2198,7 +2307,10 @@ def generate(
         trail_when = (
             _repo_when(chrono[0][2]) if chrono else _date_for_activity_fraction(0.2)
         )
-        P.append('<g id="chronology-trail">')
+        P.append(
+            f'<g id="chronology-trail" data-repo-count="{len(chrono)}" '
+            'data-cumulative="true">'
+        )
         for wi in range(len(waypoints) - 1):
             x1m = MAP_L + waypoints[wi][0] * MAP_W
             y1m = MAP_T + waypoints[wi][1] * MAP_H
@@ -2217,11 +2329,11 @@ def generate(
                 segment_when = _later_when(segment_when, central_peak_day.isoformat())
             P.append(
                 f'<path d="{trail_segment}" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" '
-                f'{_timeline_style(segment_when, 0.35)} stroke-linecap="round"/>'
+                f'{_timeline_style(segment_when, 0.35, window=repo_timeline_window)} stroke-linecap="round"/>'
             )
             P.append(
                 f'<path d="{trail_segment}" fill="none" stroke="{pal["accent"]}" stroke-width="0.8" '
-                f'{_timeline_style(segment_when, 0.35)} stroke-dasharray="5 2.5" stroke-linecap="round"/>'
+                f'{_timeline_style(segment_when, 0.35, window=repo_timeline_window)} stroke-dasharray="5 2.5" stroke-linecap="round"/>'
             )
 
         # Diamond milestone markers with age labels
@@ -2238,11 +2350,11 @@ def generate(
             P.append(
                 f'<polygon points="{mx_w:.0f},{my_w + dy_off - ds:.0f} {mx_w + ds:.0f},{my_w + dy_off:.0f} '
                 f'{mx_w:.0f},{my_w + dy_off + ds:.0f} {mx_w - ds:.0f},{my_w + dy_off:.0f}" '
-                f'fill="{pal["accent"]}" {_timeline_style(milestone_when, 0.35)} stroke="{oklch_lerp(pal["accent"], pal["text_primary"], 0.5)}" stroke-width="0.3"/>'
+                f'fill="{pal["accent"]}" {_timeline_style(milestone_when, 0.35, window=repo_timeline_window)} stroke="{oklch_lerp(pal["accent"], pal["text_primary"], 0.5)}" stroke-width="0.3"/>'
             )
             P.append(
                 f'<text x="{mx_w + 5:.0f}" y="{my_w + dy_off + 1:.0f}" font-family="Georgia,serif" '
-                f'font-size="4.5" fill="{pal["text_secondary"]}" {_timeline_style(milestone_when, 0.4)} font-style="italic" '
+                f'font-size="4.5" fill="{pal["text_secondary"]}" {_timeline_style(milestone_when, 0.4, window=repo_timeline_window)} font-style="italic" '
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{age_label}</text>"
             )
@@ -2251,6 +2363,25 @@ def generate(
     label_obstacles = river_map_paths[:]
     if len(trail_map_path) >= 2:
         label_obstacles.append(trail_map_path)
+
+    promoted_topic_limit = min(
+        len(topic_feature_specs),
+        4 if len(topic_feature_specs) >= 4 and len(repos) >= 6 else 3,
+    )
+
+    def _label_span_points(
+        text: str,
+        x: float,
+        y: float,
+        anchor: str,
+        font_size: float,
+    ) -> list[tuple[float, float]]:
+        span = max(10.0, len(text) * font_size * 0.34)
+        if anchor == "middle":
+            return [(x - span * 0.5, y), (x + span * 0.5, y)]
+        if anchor == "end":
+            return [(x - span, y), (x, y)]
+        return [(x, y), (x + span, y)]
 
     def _render_topic_feature(
         *,
@@ -2297,7 +2428,7 @@ def generate(
         cluster_note = _topic_cluster_note(topic_count)
 
         P.append(
-            f'<g class="topic-feature{" topic-feature-promoted" if rank < 3 else ""}" '
+            f'<g class="topic-feature{" topic-feature-promoted" if rank < promoted_topic_limit else ""}" '
             f'data-topic="{_escape_attr(topic)}" '
             f'data-topic-rank="{rank}" '
             f'data-repo="{_escape_attr(repo.get("name", ""))}" '
@@ -2313,7 +2444,7 @@ def generate(
                 f'd="M{mx_tp:.1f},{my_tp:.1f} Q{leader_mid_x:.1f},{leader_mid_y - 2.0:.1f} {topic_x:.1f},{leader_y:.1f}" '
                 f'fill="none" stroke="{leader_color}" stroke-width="0.55" '
                 f'stroke-linecap="round" stroke-dasharray="1.8 1.6" '
-                f"{_timeline_style(topic_when, 0.52, 'tl-reveal tl-soft')}/>"
+                f"{_timeline_style(topic_when, 0.52, 'tl-reveal tl-soft', window=repo_timeline_window)}/>"
             )
             label_obstacles.append(
                 [(mx_tp, my_tp), (leader_mid_x, leader_mid_y), (topic_x, leader_y)]
@@ -2323,14 +2454,14 @@ def generate(
             f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
             f'fill="#f5f0e8" text-anchor="{topic_anchor}" '
             f'stroke="#f5f0e8" stroke-width="2.1" stroke-linejoin="round" paint-order="stroke fill" '
-            f"{_timeline_style(topic_when, 0.65)}>"
+            f"{_timeline_style(topic_when, 0.65, window=repo_timeline_window)}>"
             f"{place_name}</text>"
         )
         P.append(
             f'<text x="{topic_x:.0f}" y="{topic_y:.0f}" '
             f'font-family="Georgia, serif" font-size="{label_size:.1f}" font-style="italic" '
             f'fill="{label_color}" text-anchor="{topic_anchor}" '
-            f"{_timeline_style(topic_when, 0.65)}>"
+            f"{_timeline_style(topic_when, 0.65, window=repo_timeline_window)}>"
             f"{place_name}</text>"
         )
         P.append(
@@ -2338,22 +2469,20 @@ def generate(
             f'font-family="Georgia, serif" font-size="{note_size:.1f}" letter-spacing="0.8" '
             f'font-variant="small-caps" fill="#f5f0e8" text-anchor="{topic_anchor}" '
             f'stroke="#f5f0e8" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke fill" '
-            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft')}>"
+            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
             f"{cluster_note}</text>"
         )
         P.append(
             f'<text x="{topic_x:.0f}" y="{note_y:.0f}" '
             f'font-family="Georgia, serif" font-size="{note_size:.1f}" letter-spacing="0.8" '
             f'font-variant="small-caps" fill="{note_color}" text-anchor="{topic_anchor}" '
-            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft')}>"
+            f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
             f"{cluster_note}</text>"
         )
         P.append("</g>")
 
     # ── Repo landmarks ────────────────────────────────────────────
     for idx_rp, (rcx, rcy, repo) in enumerate(repo_positions):
-        if idx_rp >= n_visible_repos:
-            continue
         lx = MAP_L + rcx * MAP_W
         ly = MAP_T + rcy * MAP_H
         repo_stars = repo.get("stars", 0)
@@ -2394,6 +2523,7 @@ def generate(
             _tt_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         )
         repo_when = _repo_when(repo) or _birth_when_at_map(lx, ly)
+        repo_signal = _static_accretion_signal(repo_when, window=repo_timeline_window)
         label_x, label_y, _ = _choose_label_anchor(
             lx,
             ly,
@@ -2406,39 +2536,64 @@ def generate(
         elif label_x < lx - 2:
             label_anchor = "end"
         detail_dir = -1 if label_y < ly else 1
-        P.append('<g class="repo-peak">')
+        marker_scale = 0.62 + 0.38 * repo_signal
+        label_size = max(4.9, 6.5 - max(0, len(repo_positions) - 12) * 0.08)
+        label_size *= 0.82 + 0.18 * repo_signal
+        detail_size = max(4.0, label_size - 1.5)
+        P.append(
+            f'<g class="repo-peak" data-repo="{_escape_attr(name)}" '
+            f'data-visual-order="{idx_rp}" data-reveal-date="{repo_when}" '
+            f'data-static-signal="{repo_signal:.3f}">'
+        )
         P.append(f"<title>{_tt_text}</title>")
         if star_frac > 0.7:
-            bs = 4 + int(star_frac * 4)
+            bs = (4 + int(star_frac * 4)) * marker_scale
             P.append(
-                f'<rect x="{lx - bs:.0f}" y="{ly - bs:.0f}" width="{bs * 2:.0f}" height="{bs * 2:.0f}" '
-                f'fill="{mc}" {_timeline_style(repo_when, 0.5)} stroke="#3a2a1a" stroke-width="0.4"/>'
+                f'<rect x="{lx - bs:.1f}" y="{ly - bs:.1f}" width="{bs * 2:.1f}" height="{bs * 2:.1f}" '
+                f'fill="{mc}" {_timeline_style(repo_when, 0.5, window=repo_timeline_window)} stroke="#3a2a1a" stroke-width="0.4"/>'
             )
         else:
-            mr = 2.5 + star_frac * 5
+            mr = (2.5 + star_frac * 5) * marker_scale
             P.append(
-                f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65)} stroke="#fff" stroke-width="0.5"/>'
+                f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65, window=repo_timeline_window)} stroke="#fff" stroke-width="0.5"/>'
             )
         P.append(
-            f'<text x="{label_x:.0f}" y="{label_y:.0f}" font-family="Georgia,serif" font-size="6.5" '
-            f'fill="#2c1a0e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.65)} font-weight="bold" '
+            f'<text x="{label_x:.0f}" y="{label_y:.0f}" font-family="Georgia,serif" font-size="{label_size:.2f}" '
+            f'fill="#2c1a0e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.65, window=repo_timeline_window)} font-weight="bold" '
             f'stroke="rgba(245,240,232,0.75)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill">{name}</text>'
         )
-        if repo_stars > 0:
+        label_obstacles.append(
+            _label_span_points(str(name), label_x, label_y, label_anchor, label_size)
+        )
+        show_detail_note = repo_stars > 0 and (
+            len(repo_positions) <= 14 or star_frac >= 0.55 or repo_signal >= 0.72
+        )
+        if show_detail_note:
             P.append(
-                f'<text x="{label_x:.0f}" y="{label_y + 7 * detail_dir:.0f}" font-family="Georgia,serif" font-size="5" '
-                f'fill="#5c3a1e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.45)} font-variant="small-caps" '
+                f'<text x="{label_x:.0f}" y="{label_y + 7 * detail_dir:.0f}" font-family="Georgia,serif" font-size="{detail_size:.2f}" '
+                f'fill="#5c3a1e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.45, window=repo_timeline_window)} font-variant="small-caps" '
                 f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
+            )
+            label_obstacles.append(
+                _label_span_points(
+                    f"{repo_stars} stars",
+                    label_x,
+                    label_y + 7 * detail_dir,
+                    label_anchor,
+                    detail_size,
+                )
             )
         P.append("</g>")
 
     # ── Topic place names ──────────────────────────────────────
-    for topic_spec in topic_feature_specs[3:]:
+    for topic_spec in topic_feature_specs[promoted_topic_limit:]:
+        topic_rank = int(topic_spec["rank"])
+        secondary_rank = max(0, topic_rank - promoted_topic_limit)
         _render_topic_feature(
             topic=str(topic_spec["topic"]),
             topic_count=int(topic_spec["count"]),
-            rank=int(topic_spec["rank"]),
+            rank=topic_rank,
             rcx=float(topic_spec["rcx"]),
             rcy=float(topic_spec["rcy"]),
             repo=topic_spec["repo"],
@@ -2458,11 +2613,20 @@ def generate(
                 (30, 18),
                 (-30, 18),
             ],
-            label_size=7.5 + min(2.0, max(0, int(topic_spec["count"]) - 1) * 0.6),
-            note_size=5.1,
+            label_size=max(
+                5.0,
+                7.5
+                + min(2.0, max(0, int(topic_spec["count"]) - 1) * 0.6)
+                - secondary_rank * 0.22,
+            ),
+            note_size=max(3.8, 5.1 - secondary_rank * 0.12),
             label_color=oklch(0.35, 0.02, 30),
             note_color=pal["muted"],
-            leader_color=pal["border"],
+            leader_color=oklch_lerp(
+                pal["border"],
+                pal["text_secondary"],
+                min(0.75, secondary_rank * 0.08),
+            ),
         )
 
     # ── Named geographic features from topics (hosted by topic-carrying repos) ──
@@ -2518,8 +2682,24 @@ def generate(
                 _feature_color,
                 pal["muted"],
             ),
+            (
+                "pass",
+                lambda topic: f"{topic.replace('-', ' ').title()} Pass",
+                [
+                    (0, -26),
+                    (24, -10),
+                    (-24, -10),
+                    (28, 10),
+                    (-28, 10),
+                    (0, 22),
+                ],
+                7.6,
+                4.8,
+                oklch_lerp(_feature_color, pal["accent"], 0.35),
+                pal["text_secondary"],
+            ),
         ]
-        for topic_spec in topic_feature_specs[:3]:
+        for topic_spec in topic_feature_specs[:promoted_topic_limit]:
             (
                 feature_kind,
                 feature_label,
@@ -2664,12 +2844,24 @@ def generate(
                 f'<path d="{mini_d}" fill="none" stroke="{pal["accent"]}" stroke-width="0.6" '
                 f'opacity="0.32" stroke-dasharray="2 1"/>'
             )
-        for rcx_fp, rcy_fp, repo_fp in repo_positions[:10]:
+        for rcx_fp, rcy_fp, repo_fp in repo_positions:
             fp_x = mini_x + rcx_fp * mini_w
             fp_y = mini_y + rcy_fp * mini_h
-            fp_r = 1.0 + min(1.2, repo_fp.get("stars", 0) / max(1, max_stars) * 1.4)
+            repo_when = _repo_when(repo_fp) or footprint_when
+            fp_signal = _static_accretion_signal(repo_when, window=repo_timeline_window)
+            fp_r = (
+                0.55
+                + min(
+                    1.0,
+                    repo_fp.get("stars", 0) / max(1, max_stars) * 1.15,
+                )
+            ) * (0.75 + 0.25 * fp_signal)
+            fp_cls = 'class="footprint-repo"' if not timeline_enabled else ""
             P.append(
-                f'<circle cx="{fp_x:.1f}" cy="{fp_y:.1f}" r="{fp_r:.1f}" fill="{pal["highlight"]}" opacity="0.62"/>'
+                f'<circle {fp_cls} data-repo="{_escape_attr(repo_fp.get("name", ""))}" '
+                f'cx="{fp_x:.1f}" cy="{fp_y:.1f}" r="{fp_r:.1f}" '
+                f'fill="{oklch_lerp(pal["highlight"], pal["accent"], min(1.0, fp_signal * 0.55))}" '
+                f"{_timeline_style(repo_when, 0.32 + 0.28 * fp_signal, 'footprint-repo tl-reveal tl-soft', window=repo_timeline_window)}/>"
             )
         P.append(
             f'<circle cx="{mini_x + mini_w / 2:.1f}" cy="{mini_y + mini_h / 2:.1f}" r="1.4" fill="{pal["accent"]}" opacity="0.55"/>'
@@ -2755,9 +2947,17 @@ def generate(
     # ── Watershed ridge lines (dashed, connecting peaks) ──────────
     ridge_fade = _fade(0.30, 0.55)
     if ridge_fade > 0 and len(sorted_repos) >= 2:
-        for pi_w in range(min(3, len(sorted_repos) - 1)):
-            r1 = sorted_repos[pi_w]
-            r2 = sorted_repos[pi_w + 1]
+        ridge_source_limit = min(
+            len(sorted_repos),
+            max(4, min(8, 3 + len(sorted_repos) // 4)),
+        )
+        ridge_sources = [
+            sorted_repos[idx]
+            for idx in _sample_ranked_indices(len(sorted_repos), ridge_source_limit)
+        ]
+        for pi_w in range(max(0, len(ridge_sources) - 1)):
+            r1 = ridge_sources[pi_w]
+            r2 = ridge_sources[pi_w + 1]
             x1_w = MAP_L + r1[0] * MAP_W
             y1_w = MAP_T + r1[1] * MAP_H
             x2_w = MAP_L + r2[0] * MAP_W
@@ -3458,7 +3658,10 @@ def generate(
     # ── Data mapping 4: total_prs → road/path density ─────────────
     _total_prs = metrics.get("total_prs", 0)
     if isinstance(_total_prs, int | float) and _total_prs > 10 and repo_positions:
-        _n_paths = min(5, int(_total_prs) // 20)
+        _n_paths = min(
+            8,
+            max(2, int(_total_prs) // 20 + len(repo_positions) // 12),
+        )
         _merged_pr_dates = sorted(
             _merged_pr_date(pr)
             for pr in _recent_merged_prs
@@ -3475,8 +3678,14 @@ def generate(
                 (rp[0] - _settle_rp[0]) ** 2 + (rp[1] - _settle_rp[1]) ** 2
             ),
         )
-        for _pi_path in range(min(_n_paths, len(_path_targets) - 1)):
-            _trp = _path_targets[_pi_path + 1]  # skip self (index 0)
+        _path_targets = _path_targets[1:]
+        sampled_path_targets = [
+            _path_targets[idx]
+            for idx in _sample_ranked_indices(
+                len(_path_targets), min(_n_paths, len(_path_targets))
+            )
+        ]
+        for _pi_path, _trp in enumerate(sampled_path_targets):
             _tx_path = MAP_L + _trp[0] * MAP_W
             _ty_path = MAP_T + _trp[1] * MAP_H
             _path_when = (

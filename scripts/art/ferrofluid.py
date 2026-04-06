@@ -29,8 +29,10 @@ from .shared import (
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
+    order_repos_for_visual_plan,
     organic_texture_filter,
     repo_to_canvas_position,
+    repo_visibility_score,
     seed_hash,
     select_primary_repos,
 )
@@ -56,6 +58,13 @@ class FerrofluidConfig:
 
 
 CFG = FerrofluidConfig()
+
+
+def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
+    """Return a soft density signal that continues rising past the baseline."""
+    if repo_count <= 0:
+        return 0.0
+    return min(1.0, math.log1p(repo_count) / math.log1p(max(2, baseline * 4)))
 
 
 @dataclass(frozen=True)
@@ -305,7 +314,7 @@ def _compute_ferrofluid_signals(
         min(1.0, language_count / 6.0),
         min(1.0, topic_count / 6.0),
     )
-    repo_presence = min(1.0, repo_count / max(1.0, CFG.max_repos * 0.6))
+    repo_presence = _dense_repo_signal(repo_count, baseline=CFG.max_repos)
 
     star_velocity_pull = min(
         1.0,
@@ -516,7 +525,9 @@ def _select_strongest_spikes(
     if max_spikes <= 0:
         return []
 
-    candidates = [tuple(map(int, idx)) for idx in np.argwhere(spike_mask)]
+    candidates: list[tuple[int, int]] = [
+        (int(idx[0]), int(idx[1])) for idx in np.argwhere(spike_mask)
+    ]
     ranked = sorted(
         candidates,
         key=lambda idx: (
@@ -594,10 +605,7 @@ def _highlight_fill(
 ) -> str:
     """Specular highlight tint anchored to language identity and spike energy."""
     hue = _wrap_hue(
-        lang_hue * 0.78
-        + 195.0 * 0.22
-        + 14.0 * field_norm
-        + 10.0 * height_ratio
+        lang_hue * 0.78 + 195.0 * 0.22 + 14.0 * field_norm + 10.0 * height_ratio
     )
     return oklch(
         0.70 + 0.10 * height_ratio,
@@ -632,17 +640,31 @@ def _ambient_ripple_specs(
 
     specs: list[dict[str, float | int | str]] = []
     for owner_index, anchor in enumerate(anchors):
-        anchor_x = float(anchor.get("x", WIDTH * 0.5) or WIDTH * 0.5)
+        raw_anchor_x = anchor.get("x", WIDTH * 0.5)
+        anchor_x = (
+            float(raw_anchor_x)
+            if isinstance(raw_anchor_x, int | float)
+            else WIDTH * 0.5
+        )
         lang = str(anchor.get("lang") or "unknown")
-        lang_hue = float(anchor.get("lang_hue", LANG_HUES.get(lang, 155)) or 155.0)
-        strength = float(anchor.get("strength", 0.22) or 0.22)
+        raw_lang_hue = anchor.get("lang_hue", LANG_HUES.get(lang, 155))
+        lang_hue = (
+            float(raw_lang_hue)
+            if isinstance(raw_lang_hue, int | float)
+            else float(LANG_HUES.get(lang, 155))
+        )
+        raw_strength = anchor.get("strength", 0.22)
+        strength = float(raw_strength) if isinstance(raw_strength, int | float) else 0.22
         identity = str(
-            anchor.get("identity")
-            or anchor.get("name")
-            or f"ambient-{owner_index}"
+            anchor.get("identity") or anchor.get("name") or f"ambient-{owner_index}"
         )
         when = str(anchor.get("date") or fallback_when)
-        anchor_index = int(anchor.get("owner_index", owner_index) or owner_index)
+        raw_owner_index = anchor.get("owner_index", owner_index)
+        anchor_index = (
+            int(raw_owner_index)
+            if isinstance(raw_owner_index, int | float)
+            else owner_index
+        )
         ring_count = 1 + int(strength > 0.42)
         if signals.traffic_heat + signals.release_charge > 0.72:
             ring_count += 1
@@ -650,13 +672,17 @@ def _ambient_ripple_specs(
             ring_count = min(ring_count, 2)
 
         for ring_idx in range(ring_count):
-            lateral = (_stable_fraction(visual_seed, identity, "ripple-x", ring_idx) - 0.5) * (
-                20.0 + 16.0 * ring_idx
-            )
-            vertical = (_stable_fraction(visual_seed, identity, "ripple-y", ring_idx) - 0.5) * 8.0
+            lateral = (
+                _stable_fraction(visual_seed, identity, "ripple-x", ring_idx) - 0.5
+            ) * (20.0 + 16.0 * ring_idx)
+            vertical = (
+                _stable_fraction(visual_seed, identity, "ripple-y", ring_idx) - 0.5
+            ) * 8.0
             cx = max(50.0, min(WIDTH - 50.0, anchor_x + lateral))
             cy = pool_y + vertical
-            rx = 16.0 + 10.0 * ring_idx + 12.0 * strength + 12.0 * signals.release_charge
+            rx = (
+                16.0 + 10.0 * ring_idx + 12.0 * strength + 12.0 * signals.release_charge
+            )
             opacity = min(
                 0.16,
                 0.03
@@ -714,7 +740,9 @@ def generate(
     # ── WorldState ────────────────────────────────────────────────
     world: WorldState = compute_world_state(metrics)
 
-    snapshot_seed = seed_hash({"seed": seed}) if seed is not None else seed_hash(metrics)
+    snapshot_seed = (
+        seed_hash({"seed": seed}) if seed is not None else seed_hash(metrics)
+    )
     visual_seed = str(
         seed
         if seed is not None
@@ -727,10 +755,24 @@ def generate(
     )
 
     # ── Extract metrics ───────────────────────────────────────────
-    repos = list(metrics.get("repos", []))
+    raw_repos = metrics.get("repos") or metrics.get("top_repos") or []
+    preferred_repo_names = metrics.get("repo_visual_order")
+    repos = order_repos_for_visual_plan(
+        list(raw_repos) if isinstance(raw_repos, list) else [],
+        preferred_names=(
+            preferred_repo_names
+            if isinstance(preferred_repo_names, (list, tuple))
+            else None
+        ),
+    )
     monthly = metrics.get("contributions_monthly", {})
 
     top_repos, _overflow = select_primary_repos(repos, limit=CFG.max_repos)
+    repo_density_signal = _dense_repo_signal(len(top_repos), baseline=CFG.max_repos)
+    visibility_scores = [repo_visibility_score(repo) for repo in top_repos]
+    visibility_max = max(visibility_scores, default=1.0)
+    visibility_min = min(visibility_scores, default=0.0)
+    visibility_span = max(0.001, visibility_max - visibility_min)
     signals = _compute_ferrofluid_signals(
         metrics,
         world,
@@ -768,9 +810,7 @@ def generate(
         fallback_opacity: bool = True,
     ) -> str:
         final_opacity = max(0.0, min(1.0, opacity))
-        opacity_attr = (
-            f'opacity="{final_opacity:.2f}"' if fallback_opacity else ""
-        )
+        opacity_attr = f'opacity="{final_opacity:.2f}"' if fallback_opacity else ""
         if not timeline_enabled:
             return opacity_attr
         delay = map_date_to_loop_delay(
@@ -800,20 +840,26 @@ def generate(
 
     dipoles: list[tuple[float, float, float]] = []
     spike_meta: list[dict] = []  # per-repo metadata for timeline
-    for repo in top_repos:
+    for index, repo in enumerate(top_repos):
         rx, ry = repo_to_canvas_position(
             repo, visual_seed, WIDTH, pool_y * 0.9, strategy="language_cluster"
         )
         repo_name = str(repo.get("name", "") or "")
         repo_lang = repo.get("language")
         repo_lang_hue = float(LANG_HUES.get(repo_lang, 155))
-        repo_stars = int(repo.get("stars", 0) or 0)
         repo_forks = int(repo.get("forks", 0) or 0)
         repo_topics = repo.get("topics") or []
         repo_age = min(1.0, max(float(repo.get("age_months", 1) or 1), 1.0) / 48.0)
-        repo_visibility = _norm_log(
-            repo_stars + 1.6 * repo_forks + len(repo_topics) * 2,
-            180.0,
+        relative_visibility = (
+            0.18
+            + 0.82 * ((visibility_scores[index] - visibility_min) / visibility_span)
+            if len(visibility_scores) > 1
+            else 1.0
+        )
+        repo_prominence = _norm_log(repo_visibility_score(repo), 32.0)
+        repo_visibility = min(
+            1.0,
+            0.20 + 0.48 * relative_visibility + 0.32 * repo_prominence,
         )
         repo_identity = f"{repo_name}:{repo_lang or 'unknown'}"
         repo_bias = _stable_fraction(visual_seed, repo_identity, "dipole-bias") - 0.5
@@ -869,6 +915,12 @@ def generate(
                 "lang": repo_lang,
                 "lang_hue": repo_lang_hue,
                 "strength": repo_visibility,
+                "capillary_count": min(
+                    2,
+                    int(repo_prominence > 0.55)
+                    + int(len(repo_topics) >= 2)
+                    + int(repo_density_signal > 0.72 and repo_visibility < 0.78),
+                ),
             }
         )
 
@@ -1019,8 +1071,7 @@ def generate(
                 bright,
                 tip,
                 extra_attrs=(
-                    f'data-owner-index="{owner_index}" '
-                    f'data-lang="{lang_label}"'
+                    f'data-owner-index="{owner_index}" data-lang="{lang_label}"'
                 ),
             )
         )
@@ -1039,8 +1090,96 @@ def generate(
                 "lang_hue": lang_hue,
                 "field_norm": field_norm,
                 "height_ratio": height_ratio,
+                "role": "ferro-spike",
             }
         )
+
+    covered_owner_indices = {
+        int(record["owner_index"])
+        for record in spike_records
+        if int(record["owner_index"]) >= 0
+    }
+    for owner_index, owner in enumerate(spike_meta):
+        capillary_count = int(owner.get("capillary_count", 0) or 0)
+        if owner_index not in covered_owner_indices:
+            capillary_count = max(1, capillary_count)
+        if capillary_count <= 0:
+            continue
+        for capillary_index in range(capillary_count):
+            owner_strength = float(owner["strength"])
+            lateral = (
+                _stable_fraction(
+                    visual_seed,
+                    str(owner["identity"]),
+                    "capillary-x",
+                    capillary_index,
+                )
+                - 0.5
+            ) * (18.0 + 8.0 * capillary_index)
+            sx = max(
+                WIDTH * 0.06,
+                min(WIDTH * 0.94, float(owner["x"]) + lateral),
+            )
+            sy = float(owner["y"])
+            sh = (
+                4.2
+                + 8.0 * owner_strength
+                + 6.0 * signals.dipole_lift
+                + 2.0 * capillary_index
+            )
+            if owner_index not in covered_owner_indices:
+                sh *= 1.12
+            field_val = max(
+                b_crit * (1.05 + 0.12 * capillary_index),
+                b_crit
+                * (1.12 + 0.38 * owner_strength + 0.18 * signals.collaboration_heat),
+            )
+            owner_distance = min(
+                1.0,
+                abs(lateral) / max(WIDTH * 0.12, 1.0),
+            )
+            field_norm = min(1.0, field_val / max(selected_field_max, field_val, 1e-6))
+            height_ratio = min(1.0, sh / max(selected_height_max, sh, 1e-6))
+            lang_hue = float(owner["lang_hue"])
+            dark, bright, tip = _spike_gradient_palette(
+                lang_hue=lang_hue,
+                field_norm=field_norm,
+                owner_distance=owner_distance,
+                height_ratio=height_ratio,
+                light_angle=light_angle,
+                iridescence=signals.iridescence,
+            )
+            lang_label = str(owner.get("lang") or "unknown")
+            grad_id = f"sgc{owner_index}_{capillary_index}"
+            grad_defs.append(
+                _make_spike_gradient(
+                    grad_id,
+                    dark,
+                    bright,
+                    tip,
+                    extra_attrs=(
+                        f'data-owner-index="{owner_index}" data-lang="{lang_label}"'
+                    ),
+                )
+            )
+            spike_records.append(
+                {
+                    "grad_id": grad_id,
+                    "yi": -1,
+                    "xi": -1,
+                    "sx": sx,
+                    "sy": sy,
+                    "height": sh,
+                    "field": field_val,
+                    "when": str(owner["date"]),
+                    "owner_index": owner_index,
+                    "lang": lang_label,
+                    "lang_hue": lang_hue,
+                    "field_norm": field_norm,
+                    "height_ratio": height_ratio,
+                    "role": "ferro-capillary",
+                }
+            )
 
     for gd in grad_defs:
         P.append(gd)
@@ -1113,8 +1252,9 @@ def generate(
         field_val = float(record["field"])
         bw = CFG.spike_base_width * math.sqrt(max(0.3, field_val / max(b_crit * 3, 1)))
         pts = _spike_polygon(sx, pool_y, bw, sh)
+        role = str(record.get("role") or "ferro-spike")
         P.append(
-            f'<polygon points="{pts}" fill="url(#{record["grad_id"]})" '
+            f'<polygon data-role="{role}" points="{pts}" fill="url(#{record["grad_id"]})" '
             f"{_timeline_style(str(record['when']), 0.95, 'tl-reveal')}/>"
         )
         budget.add(1)

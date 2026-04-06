@@ -386,6 +386,28 @@ def test_genetic_landscape_static_frames_keep_all_snapshot_repo_peaks() -> None:
     assert root.attrib["data-peak-count"] == "3"
 
 
+def test_genetic_landscape_dense_repo_snapshots_add_micro_colonies_without_omission(
+) -> None:
+    metrics = _sample_metrics()
+    metrics["repos"] = [
+        {
+            "name": f"repo-{index}",
+            "language": ("Python", "Go", "Rust", "TypeScript")[index % 4],
+            "stars": max(1, 18 - index),
+            "age_months": 4 + index,
+            "date": f"2023-{(index % 9) + 1:02d}-{(index % 25) + 1:02d}T00:00:00Z",
+            "topics": ["automation", f"cluster-{index % 3}"],
+        }
+        for index in range(12)
+    ]
+
+    svg = generate(metrics, seed="genetic-dense-repos", timeline=False, maturity=0.22)
+    root = _svg_root(svg)
+
+    assert root.attrib["data-peak-count"] == str(len(metrics["repos"]))
+    assert svg.count('data-role="gl-micro-colony"') >= len(metrics["repos"])
+
+
 def test_genetic_landscape_static_render_uses_snapshot_signals_at_same_maturity() -> (
     None
 ):

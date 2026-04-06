@@ -81,6 +81,30 @@ def _topic_feature_markup(svg: str, topic: str) -> str:
     return match.group(1)
 
 
+def _repo_peak_order(svg: str) -> list[str]:
+    return re.findall(r'<g class="repo-peak"[^>]*data-repo="([^"]+)"', svg)
+
+
+def _repo_peak_signal(svg: str, repo_name: str) -> float:
+    pattern = (
+        r'<g class="repo-peak"[^>]*data-repo="'
+        + re.escape(repo_name)
+        + r'"[^>]*data-static-signal="([^"]+)"'
+    )
+    match = re.search(
+        pattern,
+        svg,
+    )
+    assert match is not None
+    return float(match.group(1))
+
+
+def _portfolio_footprint_repos(svg: str) -> list[str]:
+    return re.findall(
+        r'<circle[^>]*data-repo="([^"]+)"', _group_markup(svg, "portfolio-footprint")
+    )
+
+
 def _topic_feature_metrics() -> dict:
     return {
         "label": "Topo Topics",
@@ -285,8 +309,39 @@ def test_topography_timeline_can_be_disabled_for_legacy_opacity_mode() -> None:
     assert "opacity=" in svg
 
 
-def test_topography_topic_feature_leaders_do_not_duplicate_opacity_when_static(
-) -> None:
+def test_topography_static_mode_keeps_all_repo_landmarks_accretively_visible() -> None:
+    metrics = _sample_metrics()
+    metrics["repos"].extend(
+        [
+            {
+                "name": "gamma",
+                "language": "Rust",
+                "stars": 8,
+                "age_months": 7,
+                "date": "2023-04-20T12:00:00Z",
+            },
+            {
+                "name": "delta",
+                "language": "TypeScript",
+                "stars": 2,
+                "age_months": 3,
+                "date": "2023-06-18T12:00:00Z",
+            },
+        ]
+    )
+
+    svg = generate(metrics, seed="topo-static-accretion", timeline=False, maturity=0.08)
+
+    assert len(_repo_peak_order(svg)) == 4
+    assert set(_repo_peak_order(svg)) == {"alpha", "beta", "gamma", "delta"}
+    assert _portfolio_footprint_repos(svg) == _repo_peak_order(svg)
+    assert 'data-repo-count="4"' in svg
+    assert _repo_peak_signal(svg, "alpha") > _repo_peak_signal(svg, "delta")
+
+
+def test_topography_topic_feature_leaders_do_not_duplicate_opacity_when_static() -> (
+    None
+):
     svg = generate(
         _topic_feature_metrics(),
         seed="topo-topic-features-static",
@@ -321,6 +376,79 @@ def test_topography_timeline_keeps_all_repo_landmarks_with_low_maturity() -> Non
     assert ">alpha</text>" in svg
     assert ">beta</text>" in svg
     assert 'data-when="2023-03-12"' in svg
+
+
+def test_topography_repo_visual_order_controls_landmark_sequence() -> None:
+    metrics = _sample_metrics()
+    metrics["repos"] = [
+        {
+            "name": "gamma",
+            "language": "Rust",
+            "stars": 8,
+            "age_months": 7,
+            "date": "2023-04-20T12:00:00Z",
+        },
+        metrics["repos"][0],
+        metrics["repos"][1],
+    ]
+    metrics["repo_visual_order"] = ["alpha", "beta", "gamma"]
+
+    svg = generate(metrics, seed="topo-visual-order", timeline=False, maturity=0.4)
+
+    assert _repo_peak_order(svg) == ["alpha", "beta", "gamma"]
+
+
+def test_topography_repo_timeline_window_preserves_repo_reveal_spacing() -> None:
+    metrics = _sample_metrics()
+    metrics["releases"] = [{"name": "v9.0.0", "published_at": "2025-01-01T00:00:00Z"}]
+
+    svg = generate(
+        metrics,
+        seed="topo-repo-window",
+        timeline=True,
+        loop_duration=24.0,
+    )
+
+    trail_rows = _timeline_delay_rows(_group_markup(svg, "chronology-trail"))
+    early_delays = [delay for when, delay in trail_rows if when == "2023-01-05"]
+    later_delays = [delay for when, delay in trail_rows if when == "2023-03-12"]
+
+    assert early_delays
+    assert later_delays
+    assert min(later_delays) - max(early_delays) > 8.0
+
+
+def test_topography_dense_static_portfolios_keep_all_repo_markers() -> None:
+    metrics = _sample_metrics()
+    languages = [
+        "Python",
+        "Go",
+        "Rust",
+        "TypeScript",
+    ]
+    dense_repos = []
+    for index in range(12):
+        repo_name = f"repo-{index:02d}"
+        created = date(2023, 1, 5) + timedelta(days=index * 16)
+        dense_repos.append(
+            {
+                "name": repo_name,
+                "language": languages[index % len(languages)],
+                "stars": index + 1,
+                "age_months": max(1, 24 - index),
+                "date": f"{created.isoformat()}T00:00:00Z",
+            }
+        )
+
+    metrics["repos"] = dense_repos
+    metrics["repo_visual_order"] = [repo["name"] for repo in dense_repos]
+    metrics["followers"] = 120
+    metrics["stars"] = sum(int(repo["stars"]) for repo in dense_repos)
+
+    svg = generate(metrics, seed="topo-dense-static", timeline=False, maturity=0.16)
+
+    assert len(_repo_peak_order(svg)) == 12
+    assert len(_portfolio_footprint_repos(svg)) == 12
 
 
 def test_topography_prefers_daily_activity_series_when_available() -> None:
@@ -537,6 +665,61 @@ def test_topography_topic_features_add_legible_promoted_labels(
     assert "Automation Valley" in automation_markup
     assert 'class="topic-feature-leader"' in ai_markup
     assert float(_data_attr(automation_markup, "data-anchor-clearance")) >= 0.0
+
+
+def test_topography_expands_topic_feature_coverage_for_broad_topic_sets() -> None:
+    metrics = _topic_feature_metrics()
+    metrics["repos"].extend(
+        [
+            {
+                "name": "mesh-harbor",
+                "language": "TypeScript",
+                "stars": 6,
+                "age_months": 5,
+                "topics": ["mesh"],
+                "date": "2023-04-10T12:00:00Z",
+            },
+            {
+                "name": "observability-ridge",
+                "language": "Python",
+                "stars": 11,
+                "age_months": 8,
+                "topics": ["observability"],
+                "date": "2023-04-20T12:00:00Z",
+            },
+            {
+                "name": "stream-basin",
+                "language": "Go",
+                "stars": 4,
+                "age_months": 4,
+                "topics": ["streaming"],
+                "date": "2023-05-01T12:00:00Z",
+            },
+            {
+                "name": "docs-pass",
+                "language": "Ruby",
+                "stars": 3,
+                "age_months": 3,
+                "topics": ["docs"],
+                "date": "2023-05-08T12:00:00Z",
+            },
+        ]
+    )
+    metrics["topic_clusters"] = {
+        "ai": 1,
+        "agents": 1,
+        "automation": 1,
+        "cli": 1,
+        "mesh": 1,
+        "observability": 1,
+        "streaming": 1,
+        "docs": 1,
+    }
+
+    svg = generate(metrics, seed="topo-topic-expansion", timeline=False, maturity=0.45)
+
+    assert 'data-topic-rank="7"' in svg
+    assert len(re.findall(r'class="[^"]*topic-feature', svg)) >= 8
 
 
 def test_topography_label_avoidance_prefers_clear_candidates() -> None:

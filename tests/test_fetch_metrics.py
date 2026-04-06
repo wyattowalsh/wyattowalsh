@@ -92,7 +92,8 @@ class TestCollectLanguages:
         ]
         result = _collect_languages(repos, "tok")
         assert result == {"Python": 100}
-        # Should not have fetched languages for the fork (only 1 call — no repos list fetch)
+        # Should not have fetched languages for the fork
+        # (only 1 call — no repos list fetch).
         assert mock_get.call_count == 1
 
     def test_handles_language_fetch_error(self, mock_get: MagicMock) -> None:
@@ -121,8 +122,8 @@ class TestCollectTraffic:
         from scripts.fetch_metrics import _collect_traffic
 
         mock_get.side_effect = [
-            ({"count": 100, "uniques": 42}, {}),          # views
-            ({"count": 20, "uniques": 5}, {}),             # clones
+            ({"count": 100, "uniques": 42}, {}),  # views
+            ({"count": 20, "uniques": 5}, {}),  # clones
             (
                 [{"referrer": "google"}, {"referrer": "github"}],
                 {},
@@ -332,20 +333,20 @@ class TestCollectReleases:
         assert repo_count == 2
         assert releases == [
             {
-                "tag_name": "v1.0.0",
-                "published_at": "2024-01-01T00:00:00Z",
-                "date": "2024-01-01T00:00:00Z",
-                "name": "Alpha 1",
-                "repo_name": "alpha",
-                "repo_full_name": "owner/alpha",
-            },
-            {
                 "tag_name": "v2.0.0",
                 "published_at": "2024-02-01T00:00:00Z",
                 "date": "2024-02-01T00:00:00Z",
                 "name": "Beta 2",
                 "repo_name": "beta",
                 "repo_full_name": "owner/beta",
+            },
+            {
+                "tag_name": "v1.0.0",
+                "published_at": "2024-01-01T00:00:00Z",
+                "date": "2024-01-01T00:00:00Z",
+                "name": "Alpha 1",
+                "repo_name": "alpha",
+                "repo_full_name": "owner/alpha",
             },
         ]
 
@@ -381,6 +382,33 @@ class TestCollectReleases:
             "tok",
         )
 
+    def test_matches_owned_repos_case_insensitively(
+        self, mock_paginate_rest: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _BASE, _collect_releases
+
+        repos = [_make_repo("alpha", owner_login="WyAttOwAlsh")]
+        repos[0]["full_name"] = "WyAttOwAlsh/alpha"
+        mock_paginate_rest.return_value = [
+            {
+                "tag_name": "v1.0.0",
+                "published_at": "2024-04-01T00:00:00Z",
+                "name": "Alpha 1",
+            },
+        ]
+
+        releases, scope, repo_count = _collect_releases(
+            "wyattowalsh", "profile", "tok", repos=repos
+        )
+
+        assert scope == "account_owned_repos"
+        assert repo_count == 1
+        assert releases[0]["repo_full_name"] == "WyAttOwAlsh/alpha"
+        mock_paginate_rest.assert_called_once_with(
+            f"{_BASE}/repos/WyAttOwAlsh/alpha/releases?per_page=100",
+            "tok",
+        )
+
 
 # ---------------------------------------------------------------------------
 # _collect_top_repos
@@ -409,7 +437,16 @@ class TestCollectTopRepos:
         repos = [_make_repo("myrepo", stars=10, language="Python")]
         result = _collect_top_repos(repos)
         repo = result[0]
-        for key in ("name", "full_name", "stars", "forks", "language", "description", "topics", "updated_at"):
+        for key in (
+            "name",
+            "full_name",
+            "stars",
+            "forks",
+            "language",
+            "description",
+            "topics",
+            "updated_at",
+        ):
             assert key in repo
 
 
@@ -531,7 +568,7 @@ class TestCollectIntegration:
             (forks_data, {}),  # 5. latest fork
             ({"count": 10, "uniques": 5}, {}),  # 6. traffic views
             ({"count": 3, "uniques": 2}, {}),  # 7. traffic clones
-            ([], {}),          # 8. traffic referrers
+            ([], {}),  # 8. traffic referrers
         ]
         # Repos list now uses _paginate_rest
         mock_paginate_rest.return_value = []
