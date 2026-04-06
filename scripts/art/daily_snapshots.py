@@ -27,6 +27,7 @@ from .shared import (
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    select_primary_repos,
 )
 
 logger = get_logger(module=__name__)
@@ -125,6 +126,95 @@ def _repos_by_creation_date(
 
     result.sort(key=lambda x: x[0])
     return result
+
+
+def _canonical_primary_repo_names(
+    dated_repos: list[tuple[dt_date, dict[str, Any]]],
+    *,
+    terminal_day: dt_date,
+) -> list[str]:
+    """Freeze a stable full-tree repo cohort for cumulative timelapse frames."""
+    if not dated_repos:
+        return []
+
+    final_repos: list[dict[str, Any]] = []
+    for created, repo_info in dated_repos:
+        if created > terminal_day:
+            continue
+        repo = dict(repo_info)
+        repo["age_months"] = max(
+            1,
+            (terminal_day.year - created.year) * 12
+            + (terminal_day.month - created.month),
+        )
+        final_repos.append(repo)
+
+    primary_repos, _overflow_repos = select_primary_repos(final_repos)
+    return [
+        str(repo.get("name"))
+        for repo in primary_repos
+        if isinstance(repo.get("name"), str) and repo.get("name")
+    ]
+
+
+def _allocate_star_delta(
+    delta: int,
+    repo_weights: dict[str, int | float],
+    repo_balances: dict[str, float],
+) -> dict[str, int]:
+    """Allocate only newly accrued stars without clawing back prior repo totals."""
+    if delta <= 0 or not repo_weights:
+        return {}
+
+    normalized_weights = {
+        name: max(0.0, float(weight or 0.0)) for name, weight in repo_weights.items()
+    }
+    total_weight = sum(normalized_weights.values())
+    if total_weight <= 0:
+        equal_weight = 1.0 / len(normalized_weights)
+        normalized_weights = {name: equal_weight for name in normalized_weights}
+    else:
+        normalized_weights = {
+            name: weight / total_weight for name, weight in normalized_weights.items()
+        }
+
+    quotas = {
+        name: repo_balances.get(name, 0.0) + (delta * share)
+        for name, share in normalized_weights.items()
+    }
+    allocations = {
+        name: max(0, int(math.floor(quota))) for name, quota in quotas.items()
+    }
+    assigned = sum(allocations.values())
+
+    while assigned > delta:
+        removable = min(
+            (name for name, allocation in allocations.items() if allocation > 0),
+            key=lambda name: (
+                quotas[name] - allocations[name],
+                normalized_weights[name],
+                name,
+            ),
+        )
+        allocations[removable] -= 1
+        assigned -= 1
+
+    while assigned < delta:
+        recipient = max(
+            quotas,
+            key=lambda name: (
+                quotas[name] - allocations[name],
+                normalized_weights[name],
+                name,
+            ),
+        )
+        allocations[recipient] += 1
+        assigned += 1
+
+    for name, quota in quotas.items():
+        repo_balances[name] = quota - allocations[name]
+
+    return allocations
 
 
 def _interpolate_scalar(current_value: int | float, progress: float) -> int:
@@ -476,6 +566,18 @@ def build_daily_snapshots(
         history.get("repos", []),
         current_repos,
     )
+    canonical_primary_repo_names = current_metrics.get("canonical_primary_repo_names")
+    if not isinstance(canonical_primary_repo_names, list):
+        canonical_primary_repo_names = _canonical_primary_repo_names(
+            dated_repos,
+            terminal_day=timeline_end,
+        )
+    else:
+        canonical_primary_repo_names = [
+            str(name)
+            for name in canonical_primary_repo_names
+            if isinstance(name, str) and name
+        ]
 
     # Contributions: prefer daily if available; fallback to monthly expansion.
     hist_monthly = history.get("contributions_monthly", {}) or {}
@@ -548,6 +650,11 @@ def build_daily_snapshots(
     repos_cursor = 0
     releases_cursor = 0
     merged_prs_cursor = 0
+    repo_star_allocations: dict[str, int] = defaultdict(int)
+    repo_star_balances: dict[str, float] = defaultdict(float)
+    pending_star_delta = 0
+    previous_total_stars = 0
+    previous_maturity = 0.0
 
     snapshots: list[DailySnapshot] = []
 
@@ -555,39 +662,42 @@ def build_daily_snapshots(
         day = account_created + timedelta(days=day_idx)
         progress = day_idx / max(1, total_days - 1)
         day_iso = day.isoformat()
+        total_stars = stars_cumulative.get(day, 0)
+        pending_star_delta += max(0, total_stars - previous_total_stars)
 
         # Repos existing on this day
-        repos_so_far: list[dict[str, Any]] = []
+        active_repos: list[tuple[dt_date, dict[str, Any]]] = []
         for created, repo_info in dated_repos:
             if created <= day:
-                age_months = max(
-                    1, (day.year - created.year) * 12 + (day.month - created.month)
-                )
-                r = dict(repo_info)
-                r["age_months"] = age_months
-                # Distribute stars proportionally
-                total_stars = stars_cumulative.get(day, 0)
-                if repos_so_far or total_stars == 0:
-                    # Proportional distribution based on current stars
-                    pass
-                repos_so_far.append(r)
+                active_repos.append((created, repo_info))
             else:
                 break
 
-        # Distribute cumulative stars across repos proportionally
-        total_stars = stars_cumulative.get(day, 0)
-        if repos_so_far and total_stars > 0:
-            total_current_stars = sum(r.get("stars", 0) for r in repos_so_far)
-            if total_current_stars > 0:
-                for r in repos_so_far:
-                    r["stars"] = round(
-                        total_stars * (r.get("stars", 0) / total_current_stars)
-                    )
-            else:
-                # Equal distribution
-                per_repo = total_stars // len(repos_so_far)
-                for r in repos_so_far:
-                    r["stars"] = per_repo
+        if active_repos and pending_star_delta > 0:
+            repo_weights = {
+                str(repo_info.get("name")): repo_info.get("stars", 0)
+                for _, repo_info in active_repos
+                if repo_info.get("name")
+            }
+            if repo_weights:
+                allocations = _allocate_star_delta(
+                    pending_star_delta,
+                    repo_weights,
+                    repo_star_balances,
+                )
+                for repo_name, repo_delta in allocations.items():
+                    repo_star_allocations[repo_name] += repo_delta
+                pending_star_delta -= sum(allocations.values())
+
+        repos_so_far: list[dict[str, Any]] = []
+        for created, repo_info in active_repos:
+            age_months = max(
+                1, (day.year - created.year) * 12 + (day.month - created.month)
+            )
+            r = dict(repo_info)
+            r["age_months"] = age_months
+            r["stars"] = repo_star_allocations.get(str(r.get("name")), 0)
+            repos_so_far.append(r)
 
         # Trailing year contributions
         contribs_last_year = _trailing_year_contributions(daily_contribs, day)
@@ -689,6 +799,7 @@ def build_daily_snapshots(
             sorted(topic_counts.items(), key=lambda kv: kv[1], reverse=True)
         )
         metrics_dict["repo_recency_bands"] = _repo_recency_bands(repos_so_far)
+        metrics_dict["canonical_primary_repo_names"] = canonical_primary_repo_names
 
         # Language diversity
         if langs:
@@ -728,8 +839,8 @@ def build_daily_snapshots(
             "commit_hour_distribution": metrics_dict["commit_hour_distribution"],
         }
 
-        # Maturity and world state
-        maturity = compute_maturity(metrics_dict)
+        # Timelapse frames should never regress once cumulative signals have appeared.
+        maturity = max(previous_maturity, compute_maturity(metrics_dict))
         world_state = compute_world_state(metrics_dict)
 
         snapshots.append(
@@ -744,6 +855,8 @@ def build_daily_snapshots(
                 history_dict=history_dict,
             )
         )
+        previous_total_stars = max(previous_total_stars, total_stars)
+        previous_maturity = maturity
 
     logger.info(
         "Built {} snapshots; maturity range {:.3f} → {:.3f}",
@@ -780,6 +893,13 @@ def sample_frames(
 
     n = len(snapshots)
     selected_indices: set[int] = {0, n - 1}
+
+    def _repo_signature(metrics: dict[str, Any]) -> tuple[str, ...]:
+        return tuple(
+            str(repo.get("name") or "")
+            for repo in metrics.get("repos", [])
+            if isinstance(repo, dict) and repo.get("name")
+        )
 
     # Identify event days
     event_budget = int(max_frames * 0.4)
@@ -872,18 +992,23 @@ def sample_frames(
     for idx in sorted_indices[1:]:
         candidate = snapshots[idx]
         previous = result[-1]
+        candidate_repo_signature = _repo_signature(candidate.metrics_dict)
+        previous_repo_signature = _repo_signature(previous.metrics_dict)
         is_distinct = any(
             (
                 abs(candidate.maturity - previous.maturity) >= 0.001,
                 candidate.world_state.time_of_day != previous.world_state.time_of_day,
                 candidate.world_state.weather != previous.world_state.weather,
                 candidate.world_state.season != previous.world_state.season,
+                candidate_repo_signature != previous_repo_signature,
                 candidate.metrics_dict.get("stars", 0)
                 != previous.metrics_dict.get("stars", 0),
                 candidate.metrics_dict.get("forks", 0)
                 != previous.metrics_dict.get("forks", 0),
                 candidate.metrics_dict.get("language_count", 0)
                 != previous.metrics_dict.get("language_count", 0),
+                candidate.metrics_dict.get("canonical_primary_repo_names", [])
+                != previous.metrics_dict.get("canonical_primary_repo_names", []),
                 len(candidate.metrics_dict.get("releases", []))
                 != len(previous.metrics_dict.get("releases", [])),
                 len(candidate.metrics_dict.get("recent_merged_prs", []))

@@ -20,10 +20,11 @@ def _snapshot(
     releases: int = 0,
     merged_prs: int = 0,
     weather: str = "clear",
+    repo_count: int = 1,
 ) -> DailySnapshot:
     day = date.today() - timedelta(days=(20 - idx))
     metrics = {
-        "repos": [{"name": "repo"}],
+        "repos": [{"name": f"repo-{i}"} for i in range(repo_count)],
         "stars": stars,
         "forks": 1,
         "releases": [{"name": f"r{i}"} for i in range(releases)],
@@ -69,3 +70,12 @@ def test_sample_frames_keeps_weather_shift_even_with_equal_maturity() -> None:
     sampled_weathers = [s.world_state.weather for s in sampled]
 
     assert "stormy" in sampled_weathers
+
+
+def test_sample_frames_keeps_repo_growth_event_even_when_other_signals_match() -> None:
+    snaps = [_snapshot(idx=i, repo_count=1) for i in range(20)]
+    snaps[11] = _snapshot(idx=11, repo_count=2)
+
+    sampled = sample_frames(snaps, max_frames=6)
+
+    assert any(len(s.metrics_dict.get("repos", [])) == 2 for s in sampled)

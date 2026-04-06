@@ -245,9 +245,37 @@ _repo_visibility_score = repo_visibility_score
 
 
 def _select_primary_repos(
-    repos: list[dict[str, Any]], *, limit: int
+    repos: list[dict[str, Any]],
+    *,
+    limit: int,
+    canonical_repo_names: list[str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    return select_primary_repos(repos, limit=limit)
+    if len(repos) <= limit:
+        return repos, []
+    if not canonical_repo_names:
+        return select_primary_repos(repos, limit=limit)
+
+    canonical_name_set = {
+        name for name in canonical_repo_names if isinstance(name, str) and name
+    }
+    if not canonical_name_set:
+        return select_primary_repos(repos, limit=limit)
+
+    canonical_indices = {
+        index
+        for index, repo in enumerate(repos)
+        if str(repo.get("name") or "") in canonical_name_set
+    }
+    if not canonical_indices:
+        return select_primary_repos(repos, limit=limit)
+    # Do not backfill canonical gaps with non-canonical repos. That would let
+    # filler trees appear early and then disappear when a late canonical repo arrives.
+    primary = [repo for index, repo in enumerate(repos) if index in canonical_indices][
+        :limit
+    ]
+    primary_ids = {id(repo) for repo in primary}
+    overflow = [repo for repo in repos if id(repo) not in primary_ids]
+    return primary, overflow
 
 
 def _parse_iso_datetime(value: str | None) -> datetime | None:
@@ -256,9 +284,7 @@ def _parse_iso_datetime(value: str | None) -> datetime | None:
     try:
         if len(value) == 10:
             return datetime.fromisoformat(value)
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(
-            tzinfo=None
-        )
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).replace(tzinfo=None)
     except ValueError:
         return None
 
@@ -419,9 +445,7 @@ def _repo_emergence_dates(
                 spacing_candidates.append(gap_days)
 
     local_spacing_days = (
-        min(spacing_candidates)
-        if spacing_candidates
-        else max(28.0, span_days / 3.0)
+        min(spacing_candidates) if spacing_candidates else max(28.0, span_days / 3.0)
     )
 
     age_scale = 1.0
@@ -444,7 +468,9 @@ def _repo_emergence_dates(
     detail_days = max(bloom_days + 4, int(round(emergence_window_days * 0.78)))
 
     def _shift(day_offset: int) -> str:
-        shifted = min(max(base_day + timedelta(days=day_offset), timeline_start), timeline_end)
+        shifted = min(
+            max(base_day + timedelta(days=day_offset), timeline_start), timeline_end
+        )
         return shifted.isoformat()
 
     return {
@@ -939,7 +965,11 @@ def generate(
     noise = Noise2D(seed=int(h[8:16], 16))
 
     raw_repos = list(metrics.get("repos", []))
-    repos, overflow_repos = _select_primary_repos(raw_repos, limit=MAX_REPOS)
+    repos, overflow_repos = _select_primary_repos(
+        raw_repos,
+        limit=MAX_REPOS,
+        canonical_repo_names=metrics.get("canonical_primary_repo_names"),
+    )
     monthly = metrics.get("contributions_monthly", {})
     releases = metrics.get("releases", []) or []
     forks = metrics.get("forks", 0)
@@ -1390,7 +1420,9 @@ def generate(
         repo_frac = dated_repo_fracs.get(ri)
         prev_repo_frac, next_repo_frac = repo_neighbor_fracs.get(ri, (None, None))
         repo_age_days = (
-            repo_recency_days_by_name.get(repo_name) if has_explicit_repo_recency else None
+            repo_recency_days_by_name.get(repo_name)
+            if has_explicit_repo_recency
+            else None
         )
         repo_topics = [topic for topic in repo.get("topics") or [] if topic]
         repo_star_signal = min(
@@ -1554,10 +1586,7 @@ def generate(
             min_main_length = 42 if repo_age_days is not None else 50
             main_length = max(
                 min_main_length,
-                (70 + min(280, age * 3.5))
-                * tree_t
-                * commit_factor
-                * repo_canopy_scale,
+                (70 + min(280, age * 3.5)) * tree_t * commit_factor * repo_canopy_scale,
             )
             max_depth = max(
                 1,
@@ -1574,14 +1603,17 @@ def generate(
         bark_maturity = min(1.0, age / 60.0)
         # Data mapping: stars -> bloom density multiplier (vigor boosts blooms)
         if chronological_growth:
-            bloom_boost = min(
-                2.2,
-                0.9
-                + repo_star_signal * 0.7
-                + repo_fork_signal * 0.2
-                + repo_topic_signal * 0.15
-                + stars_total / 300.0,
-            ) * vigor_multiplier
+            bloom_boost = (
+                min(
+                    2.2,
+                    0.9
+                    + repo_star_signal * 0.7
+                    + repo_fork_signal * 0.2
+                    + repo_topic_signal * 0.15
+                    + stars_total / 300.0,
+                )
+                * vigor_multiplier
+            )
         else:
             bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
         bloom_boost = max(0.35, min(2.4, bloom_boost * repo_bloom_scale))
@@ -1906,7 +1938,11 @@ def generate(
                                 )
                             )
 
-                    if tree_t >= bloom_growth_gate and depth >= 2 and rng.random() < 0.12:
+                    if (
+                        tree_t >= bloom_growth_gate
+                        and depth >= 2
+                        and rng.random() < 0.12
+                    ):
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
@@ -2079,7 +2115,11 @@ def generate(
                                 )
                             )
 
-                    if tree_t >= bloom_growth_gate and depth >= 2 and rng.random() < 0.12:
+                    if (
+                        tree_t >= bloom_growth_gate
+                        and depth >= 2
+                        and rng.random() < 0.12
+                    ):
                         buds.append((nx_, ny_, rng.uniform(2, 4), hue, bloom_when))
 
                     cx_, cy_ = nx_, ny_
@@ -2279,9 +2319,10 @@ def generate(
         repo_meta = _closest_repo_meta_for_when(when, repo_name=repo_name)
         if repo_meta is not None:
             anchor_hue = LANG_HUES.get(repo_meta["lang"], 150)
-            anchor_y = float(repo_meta["top_y"]) + (
-                float(repo_meta["base_y"]) - float(repo_meta["top_y"])
-            ) * 0.28
+            anchor_y = (
+                float(repo_meta["top_y"])
+                + (float(repo_meta["base_y"]) - float(repo_meta["top_y"])) * 0.28
+            )
             return (
                 float(repo_meta["x"]),
                 anchor_y,
@@ -3931,9 +3972,8 @@ def generate(
                     else None
                 )
                 if _src_meta is not None:
-                    if (
-                        not timeline_enabled
-                        and float(_src_meta["tree_t"]) < float(_src_meta["late_detail_gate"])
+                    if not timeline_enabled and float(_src_meta["tree_t"]) < float(
+                        _src_meta["late_detail_gate"]
                     ):
                         continue
                     _tree_x = float(_src_meta["x"])
@@ -4081,7 +4121,7 @@ def generate(
                 )
             else:
                 insect_attrs.append('opacity="0.58"')
-            P.append(f'<g {" ".join(insect_attrs)}>')
+            P.append(f"<g {' '.join(insect_attrs)}>")
 
         if itype == "butterfly":
             trail_scale = 1.0 + min(0.8, max(0.0, ibeat - 1.0) * 0.9)
@@ -4242,7 +4282,7 @@ def generate(
             )
             P.append(
                 f'<path d="M{ix + isz * 0.32:.1f},{iy:.1f} '
-                f'L{ix + isz * 0.72:.1f},{iy - isz * 0.10:.1f} '
+                f"L{ix + isz * 0.72:.1f},{iy - isz * 0.10:.1f} "
                 f'L{ix + isz * 0.24:.1f},{iy - isz * 0.20:.1f} Z" '
                 f'fill="{hb_tail}" opacity="0.45"/>'
             )
@@ -4471,7 +4511,9 @@ def generate(
             overflow_repos
         )
         safe_overflow_summary = _escape_svg_text(overflow_summary)
-        safe_overflow_topics = _escape_svg_text(overflow_topics) if overflow_topics else ""
+        safe_overflow_topics = (
+            _escape_svg_text(overflow_topics) if overflow_topics else ""
+        )
         drawer_w = 146
         drawer_h = 34 if safe_overflow_topics else 28
         drawer_x = WIDTH - drawer_w - 22

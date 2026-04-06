@@ -453,6 +453,43 @@ class TestGenerate:
         assert "+2 specimens held back" in result
         assert f"tiny-repo-{MAX_REPOS - 1}" not in result
 
+    def test_canonical_primary_repo_names_keep_visible_tree_stable(self) -> None:
+        """Timelapse cohort pinning keeps an existing tree from disappearing."""
+        canonical_names = [f"steady-repo-{index}" for index in range(MAX_REPOS)]
+        repos = [
+            {
+                "name": repo_name,
+                "stars": 8,
+                "forks": 1,
+                "age_months": 24,
+                "language": "Python",
+            }
+            for repo_name in canonical_names
+        ]
+        repos.append(
+            {
+                "name": "late-superstar",
+                "stars": 250,
+                "forks": 40,
+                "age_months": 2,
+                "language": "Go",
+                "topics": ["agents", "automation"],
+            }
+        )
+        fixed_seed = "0123456789abcdef" * 4
+        later_metrics = {**RICH_METRICS, "repos": repos}
+        pinned_metrics = {
+            **later_metrics,
+            "canonical_primary_repo_names": canonical_names,
+        }
+
+        without_pin = generate(later_metrics, seed=fixed_seed, maturity=0.9)
+        with_pin = generate(pinned_metrics, seed=fixed_seed, maturity=0.9)
+
+        assert f"steady-repo-{MAX_REPOS - 1}" not in without_pin
+        assert f"steady-repo-{MAX_REPOS - 1}" in with_pin
+        assert "+1 specimen held back" in with_pin
+
     def test_recent_repo_with_low_breadth_biases_species_toward_seedling(self) -> None:
         """Recent repos stay seedling-heavy until contribution breadth widens."""
         fixed_seed = "0123456789abcdef" * 4

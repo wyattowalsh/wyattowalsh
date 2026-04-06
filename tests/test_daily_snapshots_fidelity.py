@@ -14,6 +14,7 @@ from scripts.art.daily_snapshots import (
     build_daily_snapshots,  # noqa: E402
     sample_frames,  # noqa: E402
 )
+from scripts.art.shared import MAX_REPOS, select_primary_repos  # noqa: E402
 from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES  # noqa: E402
 
 
@@ -178,8 +179,181 @@ def test_atmospheric_inputs_are_not_frozen_across_timeline(
     assert len(set(hour_peaks)) > 1
 
 
+def test_repo_star_allocation_stays_monotonic_when_late_repo_enters(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    start = anchor_day - timedelta(days=12)
+    late_repo_day = start + timedelta(days=6)
+
+    history = {
+        "account_created": f"{start.isoformat()}T00:00:00Z",
+        "repos": [
+            {"date": start.isoformat(), "name": "foundation"},
+            {"date": late_repo_day.isoformat(), "name": "breakout"},
+        ],
+        "stars": [
+            {
+                "date": f"{(start + timedelta(days=1)).isoformat()}T12:00:00Z",
+                "user": "a",
+            },
+            {
+                "date": f"{(start + timedelta(days=2)).isoformat()}T12:00:00Z",
+                "user": "b",
+            },
+            {
+                "date": f"{(start + timedelta(days=3)).isoformat()}T12:00:00Z",
+                "user": "c",
+            },
+            {
+                "date": f"{(start + timedelta(days=8)).isoformat()}T12:00:00Z",
+                "user": "d",
+            },
+        ],
+        "forks": [],
+        "contributions_daily": {
+            (start + timedelta(days=i)).isoformat(): 3 for i in range(13)
+        },
+        "contributions_monthly": {f"{start.year:04d}-{start.month:02d}": 39},
+    }
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+    metrics["top_repos"] = [
+        {
+            "name": "foundation",
+            "language": "Python",
+            "stars": 10,
+            "forks": 1,
+            "topics": ["core"],
+        },
+        {
+            "name": "breakout",
+            "language": "Python",
+            "stars": 250,
+            "forks": 1,
+            "topics": ["viral"],
+        },
+    ]
+
+    snaps = build_daily_snapshots(history, metrics)
+    foundation_by_day = {
+        snap.day: next(
+            repo["stars"]
+            for repo in snap.metrics_dict["repos"]
+            if repo["name"] == "foundation"
+        )
+        for snap in snaps
+    }
+
+    foundation_series = [foundation_by_day[snap.day] for snap in snaps]
+
+    assert foundation_series == sorted(foundation_series)
+    assert foundation_by_day[late_repo_day - timedelta(days=1)] > 0
+    assert (
+        foundation_by_day[late_repo_day]
+        == foundation_by_day[late_repo_day - timedelta(days=1)]
+    )
+
+
+def test_build_daily_snapshots_freezes_canonical_primary_repo_names(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(20, anchor_day=anchor_day)
+    start = date.fromisoformat(history["account_created"][:10])
+    repo_names = [f"core-{index}" for index in range(MAX_REPOS)]
+    repo_names.extend(["shadow-repo", "late-surge"])
+    repo_dates = [start + timedelta(days=index) for index in range(len(repo_names))]
+    history["repos"] = [
+        {"date": repo_date.isoformat(), "name": repo_name}
+        for repo_date, repo_name in zip(repo_dates, repo_names, strict=True)
+    ]
+
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+    metrics["top_repos"] = [
+        {
+            "name": repo_name,
+            "language": "Python",
+            "stars": 24 - index,
+            "forks": 2,
+            "topics": ["core"],
+        }
+        for index, repo_name in enumerate(repo_names[:MAX_REPOS])
+    ]
+    metrics["top_repos"].extend(
+        [
+            {
+                "name": "shadow-repo",
+                "language": "Python",
+                "stars": 1,
+                "forks": 0,
+                "topics": [],
+            },
+            {
+                "name": "late-surge",
+                "language": "Go",
+                "stars": 180,
+                "forks": 28,
+                "topics": ["automation", "viz"],
+                "description": "Late repo with enduring prominence.",
+            },
+        ]
+    )
+
+    terminal_day = anchor_day - timedelta(days=1)
+    final_repos = []
+    for repo_date, repo in zip(repo_dates, metrics["top_repos"], strict=True):
+        final_repo = dict(repo)
+        final_repo["age_months"] = max(
+            1,
+            (terminal_day.year - repo_date.year) * 12
+            + (terminal_day.month - repo_date.month),
+        )
+        final_repos.append(final_repo)
+    expected_primary, _overflow = select_primary_repos(final_repos, limit=MAX_REPOS)
+    expected_names = [repo["name"] for repo in expected_primary]
+
+    snaps = build_daily_snapshots(history, metrics)
+
+    assert snaps
+    assert {
+        tuple(snap.metrics_dict["canonical_primary_repo_names"]) for snap in snaps
+    } == {tuple(expected_names)}
+
+
+def test_build_daily_snapshots_clamps_maturity_when_rolling_signals_fade(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2026, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(400, anchor_day=anchor_day)
+    start = date.fromisoformat(history["account_created"][:10])
+    history["contributions_daily"] = {
+        start.isoformat(): 120,
+        (start + timedelta(days=1)).isoformat(): 120,
+    }
+    history["contributions_monthly"] = {f"{start.year:04d}-{start.month:02d}": 240}
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    monkeypatch.setattr(
+        daily_snapshots_module,
+        "compute_maturity",
+        lambda metrics: (
+            0.85 if metrics.get("contributions_last_year", 0) > 0 else 0.25
+        ),
+    )
+
+    snaps = build_daily_snapshots(history, metrics)
+    maturities = [snap.maturity for snap in snaps]
+
+    assert any(snap.metrics_dict["contributions_last_year"] == 0 for snap in snaps)
+    assert maturities == sorted(maturities)
+    assert maturities[-1] == 0.85
+
+
 def test_sample_frames_default_matches_published_contract() -> None:
-    max_frames_default = inspect.signature(sample_frames).parameters[
-        "max_frames"
-    ].default
+    max_frames_default = (
+        inspect.signature(sample_frames).parameters["max_frames"].default
+    )
     assert max_frames_default == DEFAULT_PUBLISHED_MAX_FRAMES == 120
