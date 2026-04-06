@@ -20,14 +20,14 @@ all: lint test generate ## Run linting, tests, and generation targets
 # ------------------------------------------------------------------------------
 .PHONY: install
 install: ## Sync dependencies from uv.lock
-	$(UV) sync --all-groups
+	$(UV) sync --all-extras
 
 .PHONY: format
 format: ## Format code via Ruff (CLI wrapper)
 	$(CLI) dev format
 
 .PHONY: lint
-lint: ## Lint and type-check via CLI (ruff + pylint + mypy)
+lint: ## Lint and type-check via CLI (ruff + pylint + ty)
 	$(CLI) dev lint
 
 .PHONY: test

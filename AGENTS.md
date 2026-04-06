@@ -90,7 +90,7 @@ wyattowalsh/
 - **Package manager:** `uv` only. `uv add <pkg>` to add; `uv sync --all-extras` to install all extras; never `pip`.
 - **Logging:** `from .utils import get_logger; logger = get_logger(module=__name__)` — never `print()` or stdlib `logging`.
 - **Imports:** relative within `scripts/` (`from .config import ProjectConfig`, not `from config import ...`).
-- **Types:** Pydantic v2 models for all config/data. `mypy` enforces `disallow_untyped_defs = true`.
+- **Types:** Pydantic v2 models for all config/data. Use `ty` for type checking.
 
 | ❌ Anti-pattern | ✅ Correct |
 |----------------|-----------|

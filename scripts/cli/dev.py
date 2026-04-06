@@ -75,14 +75,14 @@ def format_code() -> None:
 
 
 @dev_app.command(
-    help="Lint with [cyan]ruff[/cyan], [cyan]pylint[/cyan], and [cyan]mypy[/cyan].",
+    help="Lint with [cyan]ruff[/cyan], [cyan]pylint[/cyan], and [cyan]ty[/cyan].",
 )
 def lint() -> None:
     """Run all linters."""
     _sync_optional_dependencies("lint")
     _run(["uv", "run", "--", "python", "-m", "ruff", "check", *SRC_DIRS])
     _run(["uv", "run", "--", "python", "-m", "pylint", *SRC_DIRS])
-    _run(["uv", "run", "--", "python", "-m", "mypy", *SRC_DIRS])
+    _run(["uv", "run", "--", "ty", "check", *SRC_DIRS])
     console.print("[bold green]All linters passed.[/bold green]")
 
 
@@ -136,7 +136,7 @@ def clean(
         removed += 1
 
     # Remove specific dirs
-    for name in [".pytest_cache", ".mypy_cache", "logs"]:
+    for name in [".pytest_cache", "logs"]:
         target = Path(name)
         if target.exists():
             shutil.rmtree(target, ignore_errors=True)

@@ -30,11 +30,11 @@ format = [
     "ruff>=0.15.8",
 ]
 lint = [
-    "mypy>=1.19.1",
     "pylint>=4.0.5",
     "ruff>=0.15.8",
     "readme[qr]",
     "readme[word-clouds]",
+    "ty>=0.0.29",
 ]
 qr = [
     "cairosvg>=2.9.0",
@@ -112,7 +112,54 @@ include = ["scripts*"]
 [tool.uv]
 package = true
 
-[tool.mypy]
-plugins = ["pydantic.mypy"]
-warn_unreachable = true
-disallow_untyped_defs = true
+[tool.ty.environment]
+python-version = "3.13"
+
+[tool.ty.src]
+include = ["scripts", "tests"]
+
+[tool.ty.rules]
+all = "error"
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "warn"
+invalid-assignment = "warn"
+invalid-context-manager = "warn"
+invalid-return-type = "warn"
+no-matching-overload = "warn"
+not-iterable = "warn"
+not-subscriptable = "warn"
+too-many-positional-arguments = "warn"
+unknown-argument = "warn"
+unresolved-attribute = "warn"
+unsupported-operator = "warn"
+
+[[tool.ty.overrides]]
+include = [
+    "scripts/art/**",
+    "scripts/banner.py",
+    "scripts/cli/**",
+    "scripts/config.py",
+    "scripts/qr.py",
+    "scripts/readme_sections.py",
+    "scripts/readme_svg.py",
+    "scripts/techs.py",
+    "scripts/utils.py",
+    "scripts/word_clouds/**",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "warn"
+invalid-assignment = "warn"
+invalid-context-manager = "warn"
+invalid-return-type = "warn"
+no-matching-overload = "warn"
+not-iterable = "warn"
+not-subscriptable = "warn"
+too-many-positional-arguments = "warn"
+unknown-argument = "warn"
+unresolved-attribute = "warn"
+unsupported-operator = "warn"

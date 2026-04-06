@@ -13,9 +13,9 @@ uv run readme dev [COMMAND] [OPTIONS]
 
 | Command | Purpose |
 |---|---|
-| `install` | Sync all dependencies from the lockfile (`uv sync --all-groups`) |
+| `install` | Sync all dependencies from the lockfile (`uv sync --all-extras`) |
 | `format` | Format code with `ruff check --fix` and `ruff format` |
-| `lint` | Lint with ruff, pylint, and mypy |
+| `lint` | Lint with ruff, pylint, and ty |
 | `test` | Run the pytest suite |
 | `clean` | Remove caches, build artifacts, and generated files |
 | `docs` | Serve the Fumadocs dev docs site locally (`pnpm dev`) |
@@ -27,7 +27,7 @@ uv run readme dev [COMMAND] [OPTIONS]
 uv run readme dev install
 ```
 
-Runs `uv sync --all-groups` to install all dependency groups from the lockfile.
+Runs `uv sync --all-extras` to install all dependency extras from the lockfile.
 
 ## `dev format`
 
@@ -48,7 +48,7 @@ uv run readme dev lint
 Runs three linters in sequence:
 1. `ruff check` — fast linting
 2. `pylint` — deep analysis
-3. `mypy` — type checking
+3. `ty check` — type checking
 
 ## `dev test`
 
@@ -85,7 +85,7 @@ uv run readme dev clean --venv
 uv run readme dev clean --generated
 ```
 
-Removes `__pycache__/`, `.pytest_cache/`, `.mypy_cache/`, `logs/`, and `.coverage*` files. Optional flags extend to `.venv` and generated assets in `.github/assets/img/`.
+Removes `__pycache__/`, `.pytest_cache/`, `logs/`, and `.coverage*` files. Optional flags extend to `.venv` and generated assets in `.github/assets/img/`.
 
 ## `dev docs`
 

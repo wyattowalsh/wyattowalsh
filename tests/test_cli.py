@@ -411,7 +411,7 @@ def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
-    """Test `dev lint` runs ruff, pylint, mypy."""
+    """Test `dev lint` runs ruff, pylint, ty."""
     mock_subprocess.run.return_value = MagicMock(returncode=0)
     result = runner.invoke(app, ["dev", "lint"])
     assert result.exit_code == 0
@@ -427,7 +427,7 @@ def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
             cwd=None,
         ),
         call(
-            ["uv", "run", "--", "python", "-m", "mypy", "scripts", "tests"],
+            ["uv", "run", "--", "ty", "check", "scripts", "tests"],
             cwd=None,
         ),
     ]
@@ -533,6 +533,24 @@ def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None
     assert "Command failed" in result.stdout
 
 
+@patch("scripts.cli.dev.subprocess")
+def test_dev_lint_ty_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev lint` exits if ty fails."""
+    mock_subprocess.run.side_effect = [
+        MagicMock(returncode=0),
+        MagicMock(returncode=0),
+        MagicMock(returncode=0),
+        MagicMock(returncode=1),
+    ]
+    result = runner.invoke(app, ["dev", "lint"])
+    assert result.exit_code == 1
+    assert "Command failed" in result.stdout
+    assert mock_subprocess.run.call_args_list[-1] == call(
+        ["uv", "run", "--", "ty", "check", "scripts", "tests"],
+        cwd=None,
+    )
+
+
 def test_dev_clean(
     runner: CliRunner,
     tmp_path: Path,
@@ -542,7 +560,6 @@ def test_dev_clean(
     monkeypatch.chdir(tmp_path)
     # Create some cache dirs
     (tmp_path / ".pytest_cache").mkdir()
-    (tmp_path / ".mypy_cache").mkdir()
     (tmp_path / "__pycache__").mkdir()
     (tmp_path / ".coverage").touch()
 
@@ -550,7 +567,6 @@ def test_dev_clean(
     assert result.exit_code == 0
     assert "Cleaned" in result.stdout
     assert not (tmp_path / ".pytest_cache").exists()
-    assert not (tmp_path / ".mypy_cache").exists()
 
 
 def test_generate_all_passes_metrics_and_history_to_living_art(
