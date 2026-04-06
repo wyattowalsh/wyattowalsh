@@ -248,6 +248,11 @@ def test_repo_star_allocation_stays_monotonic_when_late_repo_enters(
     foundation_series = [foundation_by_day[snap.day] for snap in snaps]
 
     assert foundation_series == sorted(foundation_series)
+    assert all(
+        sum(repo["stars"] for repo in snap.metrics_dict["repos"])
+        == snap.metrics_dict["stars"]
+        for snap in snaps
+    )
     assert foundation_by_day[late_repo_day - timedelta(days=1)] > 0
     assert (
         foundation_by_day[late_repo_day]
@@ -339,9 +344,7 @@ def test_build_daily_snapshots_clamps_maturity_when_rolling_signals_fade(
     monkeypatch.setattr(
         daily_snapshots_module,
         "compute_maturity",
-        lambda metrics: (
-            0.85 if metrics.get("contributions_last_year", 0) > 0 else 0.25
-        ),
+        lambda metrics: 0.85 if metrics.get("contributions_last_year", 0) > 0 else 0.25,
     )
 
     snaps = build_daily_snapshots(history, metrics)
