@@ -201,7 +201,7 @@ Parses structured `techs.md` with proficiency levels 1–5.
 uv add <package>
 
 # Edit pyproject.toml [project.optional-dependencies] then sync
-uv sync --all-groups
+uv sync --all-extras
 
 # Install single extra locally (bypasses lockfile — dev only)
 uv pip install -e ".[qr]"

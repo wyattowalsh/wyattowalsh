@@ -33,6 +33,8 @@ lint = [
     "mypy>=1.19.1",
     "pylint>=4.0.5",
     "ruff>=0.15.8",
+    "readme[qr]",
+    "readme[word-clouds]",
 ]
 qr = [
     "cairosvg>=2.9.0",
@@ -53,6 +55,7 @@ test = [
     "pytest-timeout>=2.4.0",
     "pytest-xdist>=3.8.0",
     "readme[qr]",
+    "readme[word-clouds]",
 ]
 word-clouds = [
     "beautifulsoup4>=4.14.3",

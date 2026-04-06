@@ -26,13 +26,28 @@ SRC_DIRS = ["scripts", "tests"]
 def _run(
     cmd: list[str], *, cwd: str | None = None, check: bool = True
 ) -> subprocess.CompletedProcess[bytes]:
-    """Run a subprocess, streaming output. Raises typer.Exit on failure when *check* is True."""
+    """Run a subprocess, streaming output.
+
+    Raises typer.Exit on failure when *check* is True.
+    """
     console.print(f"[dim]$ {' '.join(cmd)}[/dim]")
     result = subprocess.run(cmd, cwd=cwd)
     if check and result.returncode != 0:
         console.print(f"[bold red]Command failed (exit {result.returncode})[/bold red]")
         raise typer.Exit(code=result.returncode)
     return result
+
+
+def _sync_optional_dependencies(*extras: str, all_extras: bool = False) -> None:
+    """Sync optional dependency extras using the project's uv extras contract."""
+    cmd = ["uv", "sync"]
+    if all_extras:
+        cmd.append("--all-extras")
+    else:
+        cmd.append("--inexact")
+        for extra in extras:
+            cmd.extend(["--extra", extra])
+    _run(cmd)
 
 
 # ---------------------------------------------------------------------------
@@ -43,7 +58,7 @@ def _run(
 @dev_app.command(help="Sync all dependencies from the lockfile.")
 def install() -> None:
     """Install/sync project dependencies."""
-    _run(["uv", "sync", "--all-groups"])
+    _sync_optional_dependencies(all_extras=True)
     console.print("[bold green]Dependencies synced.[/bold green]")
 
 
@@ -53,6 +68,7 @@ def install() -> None:
 )
 def format_code() -> None:
     """Auto-format source code."""
+    _sync_optional_dependencies("format")
     _run(["uv", "run", "--", "python", "-m", "ruff", "check", "--fix", *SRC_DIRS])
     _run(["uv", "run", "--", "python", "-m", "ruff", "format", *SRC_DIRS])
     console.print("[bold green]Formatting complete.[/bold green]")
@@ -63,6 +79,7 @@ def format_code() -> None:
 )
 def lint() -> None:
     """Run all linters."""
+    _sync_optional_dependencies("lint")
     _run(["uv", "run", "--", "python", "-m", "ruff", "check", *SRC_DIRS])
     _run(["uv", "run", "--", "python", "-m", "pylint", *SRC_DIRS])
     _run(["uv", "run", "--", "python", "-m", "mypy", *SRC_DIRS])
@@ -85,7 +102,7 @@ def test(
     ] = None,
 ) -> None:
     """Run pytest."""
-    _run(["uv", "sync", "--group", "test"])
+    _sync_optional_dependencies("test")
     cmd = ["uv", "run", "--", "python", "-m", "pytest"]
     if not coverage:
         cmd.append("--no-cov")
@@ -104,7 +121,10 @@ def clean(
     ] = False,
     generated: Annotated[
         bool,
-        typer.Option("--generated/--no-generated", help="Also remove generated assets."),
+        typer.Option(
+            "--generated/--no-generated",
+            help="Also remove generated assets.",
+        ),
     ] = False,
 ) -> None:
     """Clean up caches and optional artifacts."""

@@ -1,7 +1,8 @@
 import json
+import tomllib
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 import yaml
@@ -392,7 +393,20 @@ def test_dev_install(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     assert "Dependencies synced" in result.stdout
     mock_subprocess.run.assert_called_once()
     cmd = mock_subprocess.run.call_args[0][0]
-    assert cmd == ["uv", "sync", "--all-groups"]
+    assert cmd == ["uv", "sync", "--all-extras"]
+
+
+def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
+    """Test lint/test extras include optional deps needed by the dev wrappers."""
+    pyproject = tomllib.loads(
+        (Path(__file__).resolve().parents[1] / "pyproject.toml").read_text()
+    )
+    optional_deps = pyproject["project"]["optional-dependencies"]
+
+    assert "readme[qr]" in optional_deps["lint"]
+    assert "readme[word-clouds]" in optional_deps["lint"]
+    assert "readme[qr]" in optional_deps["test"]
+    assert "readme[word-clouds]" in optional_deps["test"]
 
 
 @patch("scripts.cli.dev.subprocess")
@@ -402,7 +416,21 @@ def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     result = runner.invoke(app, ["dev", "lint"])
     assert result.exit_code == 0
     assert "All linters passed" in result.stdout
-    assert mock_subprocess.run.call_count == 3  # ruff, pylint, mypy
+    assert mock_subprocess.run.call_args_list == [
+        call(["uv", "sync", "--inexact", "--extra", "lint"], cwd=None),
+        call(
+            ["uv", "run", "--", "python", "-m", "ruff", "check", "scripts", "tests"],
+            cwd=None,
+        ),
+        call(
+            ["uv", "run", "--", "python", "-m", "pylint", "scripts", "tests"],
+            cwd=None,
+        ),
+        call(
+            ["uv", "run", "--", "python", "-m", "mypy", "scripts", "tests"],
+            cwd=None,
+        ),
+    ]
 
 
 @patch("scripts.cli.dev.subprocess")
@@ -412,7 +440,28 @@ def test_dev_format(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     result = runner.invoke(app, ["dev", "format"])
     assert result.exit_code == 0
     assert "Formatting complete" in result.stdout
-    assert mock_subprocess.run.call_count == 2  # ruff check --fix, ruff format
+    assert mock_subprocess.run.call_args_list == [
+        call(["uv", "sync", "--inexact", "--extra", "format"], cwd=None),
+        call(
+            [
+                "uv",
+                "run",
+                "--",
+                "python",
+                "-m",
+                "ruff",
+                "check",
+                "--fix",
+                "scripts",
+                "tests",
+            ],
+            cwd=None,
+        ),
+        call(
+            ["uv", "run", "--", "python", "-m", "ruff", "format", "scripts", "tests"],
+            cwd=None,
+        ),
+    ]
 
 
 @patch("scripts.cli.dev.subprocess")
@@ -421,13 +470,64 @@ def test_dev_test(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     mock_subprocess.run.return_value = MagicMock(returncode=0)
     result = runner.invoke(app, ["dev", "test"])
     assert result.exit_code == 0
-    assert mock_subprocess.run.call_count == 2  # uv sync + pytest
+    assert mock_subprocess.run.call_args_list == [
+        call(["uv", "sync", "--inexact", "--extra", "test"], cwd=None),
+        call(["uv", "run", "--", "python", "-m", "pytest"], cwd=None),
+    ]
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_test_option_passthrough(
+    mock_subprocess: MagicMock, runner: CliRunner
+) -> None:
+    """Test `dev test` forwards pytest selection flags."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(
+        app,
+        ["dev", "test", "--no-coverage", "-k", "dev", "-m", "slow"],
+    )
+    assert result.exit_code == 0
+    assert mock_subprocess.run.call_args_list == [
+        call(["uv", "sync", "--inexact", "--extra", "test"], cwd=None),
+        call(
+            [
+                "uv",
+                "run",
+                "--",
+                "python",
+                "-m",
+                "pytest",
+                "--no-cov",
+                "-k",
+                "dev",
+                "-m",
+                "slow",
+            ],
+            cwd=None,
+        ),
+    ]
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_test_sync_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+    """Test `dev test` exits if dependency sync fails."""
+    mock_subprocess.run.return_value = MagicMock(returncode=2)
+    result = runner.invoke(app, ["dev", "test"])
+    assert result.exit_code == 2
+    assert "Command failed" in result.stdout
+    mock_subprocess.run.assert_called_once_with(
+        ["uv", "sync", "--inexact", "--extra", "test"],
+        cwd=None,
+    )
 
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     """Test `dev lint` exits on linter failure."""
-    mock_subprocess.run.return_value = MagicMock(returncode=1)
+    mock_subprocess.run.side_effect = [
+        MagicMock(returncode=0),
+        MagicMock(returncode=1),
+    ]
     result = runner.invoke(app, ["dev", "lint"])
     assert result.exit_code != 0
     assert "Command failed" in result.stdout

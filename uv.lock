@@ -1584,8 +1584,11 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "beautifulsoup4" },
     { name = "cairosvg" },
+    { name = "fonttools" },
     { name = "hypothesis" },
+    { name = "markdown" },
     { name = "mypy" },
     { name = "pylint" },
     { name = "pytest" },
@@ -1602,14 +1605,22 @@ dev = [
     { name = "qrcode-artistic" },
     { name = "ruff" },
     { name = "segno" },
+    { name = "wordcloud" },
 ]
 format = [
     { name = "ruff" },
 ]
 lint = [
+    { name = "beautifulsoup4" },
+    { name = "cairosvg" },
+    { name = "fonttools" },
+    { name = "markdown" },
     { name = "mypy" },
     { name = "pylint" },
+    { name = "qrcode-artistic" },
     { name = "ruff" },
+    { name = "segno" },
+    { name = "wordcloud" },
 ]
 qr = [
     { name = "cairosvg" },
@@ -1620,8 +1631,11 @@ script-tools = [
     { name = "starred" },
 ]
 test = [
+    { name = "beautifulsoup4" },
     { name = "cairosvg" },
+    { name = "fonttools" },
     { name = "hypothesis" },
+    { name = "markdown" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
     { name = "pytest-cov" },
@@ -1635,6 +1649,7 @@ test = [
     { name = "pytest-xdist" },
     { name = "qrcode-artistic" },
     { name = "segno" },
+    { name = "wordcloud" },
 ]
 word-clouds = [
     { name = "beautifulsoup4" },
@@ -1676,7 +1691,10 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "qrcode-artistic", marker = "extra == 'qr'", specifier = ">=3.0.2" },
     { name = "readme", extras = ["format", "lint", "test"], marker = "extra == 'dev'" },
+    { name = "readme", extras = ["qr"], marker = "extra == 'lint'" },
     { name = "readme", extras = ["qr"], marker = "extra == 'test'" },
+    { name = "readme", extras = ["word-clouds"], marker = "extra == 'lint'" },
+    { name = "readme", extras = ["word-clouds"], marker = "extra == 'test'" },
     { name = "rich", specifier = ">=14.3.3" },
     { name = "ruff", marker = "extra == 'format'", specifier = ">=0.15.8" },
     { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.15.8" },
