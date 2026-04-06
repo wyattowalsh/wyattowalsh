@@ -73,7 +73,7 @@ except Exception:  # pragma: no cover - fallback minimal console/progress
     class TimeRemainingColumn:
         pass
 
-def _load_app_settings() -> Any | None:
+def _load_app_settings() -> tuple[Any | None, str | None]:
     """Load logging settings without importing scripts.config during bootstrap.
 
     This avoids the circular import where scripts.config imports get_logger from
@@ -82,14 +82,17 @@ def _load_app_settings() -> Any | None:
     so that compatibility path is preserved.
     """
 
-    config_module = sys.modules.get("config")
-    if config_module is not None:
-        return getattr(config_module, "settings", None)
+    if "config" not in sys.modules:
+        return None, None
 
-    return None
+    config_module = sys.modules["config"]
+    if config_module is None:
+        return None, "`config` module not found; file logging remains disabled."
+
+    return getattr(config_module, "settings", None), None
 
 
-app_settings = _load_app_settings()
+app_settings, app_settings_warning = _load_app_settings()
 
 # 1. Prepare console + remove default Loguru sink
 console = Console()
@@ -124,6 +127,9 @@ loguru_logger.add(  # Use the imported loguru_logger
     ),
     enqueue=True,  # For thread-safe logging
 )
+
+if app_settings_warning is not None:
+    loguru_logger.warning(app_settings_warning)
 
 # 3. Rotating text & JSON sinks
 if app_settings and hasattr(app_settings, "log_level"):
@@ -194,13 +200,20 @@ def create_progress(description: str = "Working…") -> Progress:
         # ...
     ```
     """
+    progress_kwargs = {
+        "console": console,
+        "transient": True,
+    }
+
+    if not hasattr(console, "_live_stack"):
+        progress_kwargs["disable"] = True
+
     return Progress(
         TextColumn("[bold blue]{task.description}"),
         BarColumn(bar_width=None),
         "[progress.percentage]{task.percentage:>3.0f}%",
         TimeRemainingColumn(),
-        console=console,
-        transient=True,  # Progress bar disappears after completion
+        **progress_kwargs,
     )
 
 

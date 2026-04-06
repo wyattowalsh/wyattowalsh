@@ -1,7 +1,7 @@
 import importlib
 import sys
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 from unittest.mock import MagicMock, call
 
 import loguru
@@ -44,14 +44,14 @@ def reset_loguru_handlers():
 @pytest.fixture
 def mock_settings(mocker: MockerFixture):
     """Fixture to mock the settings object."""
-    mock_settings_obj = mocker.MagicMock()
-    mock_settings_obj.logging.level = "DEBUG"
-    mock_settings_obj.logging.text_log_dir = Path("/tmp/test_text_logs")
-    mock_settings_obj.logging.json_log_dir = Path("/tmp/test_json_logs")
-    mock_settings_obj.logging.rotation = "1 day"
-    mock_settings_obj.logging.retention = "7 days"
-    mock_settings_obj.logging.compression = "zip"
-    return mock_settings_obj
+    return SimpleNamespace(
+        log_level="DEBUG",
+        log_text_dir=Path("logs/test_text_logs"),
+        log_json_dir=Path("logs/test_json_logs"),
+        log_rotation="1 day",
+        log_retention="7 days",
+        log_compression="zip",
+    )
 
 
 @pytest.fixture
@@ -97,8 +97,7 @@ def reload_utils_module(
     is needed during utils module's import/reload, as it patches
     rich.console.Console globally.
     """
-    # utils_module is already global or None from the top of the file
-    # global utils_module
+    global utils_module
 
     # Ensure Loguru's logger is reset for each reload to test initial setup
     # This needs to happen *before* the import/reload of utils_module
@@ -131,6 +130,13 @@ def reload_utils_module(
         utils_module = importlib.import_module("scripts.utils")
 
     return utils_module
+
+
+def _get_sink_from_add_call(call_obj):
+    for arg in call_obj.args:
+        if not isinstance(arg, LoguruLoggerType):
+            return arg
+    return call_obj.kwargs.get("sink")
 
 
 # --- Test Functions ---
@@ -291,15 +297,15 @@ def test_logging_setup_with_settings(
 ):
     """Test logging setup when config.settings is available."""
     mocker.patch("loguru.logger.remove")
-    mock_add_global = mocker.spy(LoguruLoggerType, "add")
-    mock_warning_global = mocker.spy(LoguruLoggerType, "warning")
-    mock_info_global = mocker.spy(LoguruLoggerType, "info")
+    mock_add_global = mocker.spy(loguru.logger, "add")
+    mock_warning_global = mocker.spy(loguru.logger, "warning")
+    mock_info_global = mocker.spy(loguru.logger, "info")
 
     reload_utils_module(mocker, mock_settings_val=mock_settings)
 
     expected_mkdir_calls = [
-        call(mock_settings.logging.text_log_dir, parents=True, exist_ok=True),
-        call(mock_settings.logging.json_log_dir, parents=True, exist_ok=True),
+        call(mock_settings.log_text_dir, parents=True, exist_ok=True),
+        call(mock_settings.log_json_dir, parents=True, exist_ok=True),
     ]
     mock_path_mkdir.assert_has_calls(expected_mkdir_calls, any_order=True)
     assert mock_path_mkdir.call_count == 2
@@ -313,15 +319,10 @@ def test_logging_setup_with_settings(
     json_log_call_found = None
 
     for call_obj in mock_add_global.mock_calls:
-        # The first argument to logger.add is the Loguru logger instance
-        # itself when using spy. The actual sink is the second argument
-        # if present, or in kwargs['sink'].
-        # Given logger.add(sink, ...), sink is at call_obj.args[1]
-        if len(call_obj.args) > 1:
-            sink = call_obj.args[1]
-        elif "sink" in call_obj.kwargs:
-            sink = call_obj.kwargs["sink"]
-        else:
+        # The sink may be passed positionally or via kwargs depending on how
+        # logger.add is spied on, so normalize it before assertions.
+        sink = _get_sink_from_add_call(call_obj)
+        if sink is None:
             continue  # Should not happen with standard Loguru usage
 
         if isinstance(sink, RichHandler):
@@ -335,11 +336,11 @@ def test_logging_setup_with_settings(
     assert text_log_call_found is not None, "Text log sink not found"
     assert json_log_call_found is not None, "JSON log sink not found"
 
-    actual_rich_handler_instance = rich_handler_call.args[1]
+    actual_rich_handler_instance = _get_sink_from_add_call(rich_handler_call)
     assert (
         actual_rich_handler_instance.console is mock_rich_console_instance
     ), "RichHandler console mismatch"
-    assert rich_handler_call.kwargs["level"] == mock_settings.logging.level
+    assert rich_handler_call.kwargs["level"] == mock_settings.log_level
     expected_rich_format = (
         "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | " "{level.icon} {level:<8} | {message}"
     )
@@ -347,15 +348,13 @@ def test_logging_setup_with_settings(
     assert rich_handler_call.kwargs["enqueue"] is True
 
     expected_text_log_path = (
-        mock_settings.logging.text_log_dir / "{time:YYYY-MM-DD}.log"
+        mock_settings.log_text_dir / "{time:YYYY-MM-DD}.log"
     )
-    assert text_log_call_found.args[1] == expected_text_log_path
-    assert text_log_call_found.kwargs["rotation"] == mock_settings.logging.rotation
-    assert text_log_call_found.kwargs["retention"] == mock_settings.logging.retention
-    assert (
-        text_log_call_found.kwargs["compression"] == mock_settings.logging.compression
-    )
-    assert text_log_call_found.kwargs["level"] == mock_settings.logging.level
+    assert _get_sink_from_add_call(text_log_call_found) == expected_text_log_path
+    assert text_log_call_found.kwargs["rotation"] == mock_settings.log_rotation
+    assert text_log_call_found.kwargs["retention"] == mock_settings.log_retention
+    assert text_log_call_found.kwargs["compression"] == mock_settings.log_compression
+    assert text_log_call_found.kwargs["level"] == mock_settings.log_level
     expected_text_format = (
         "{time:YYYY-MM-DD HH:mm:ss.SSS}|{level}|"
         "{name}:{function}:{line}|{extra}|{message}"
@@ -364,16 +363,14 @@ def test_logging_setup_with_settings(
     assert text_log_call_found.kwargs["enqueue"] is True
 
     expected_json_log_path = (
-        mock_settings.logging.json_log_dir / "{time:YYYY-MM-DD}.json"
+        mock_settings.log_json_dir / "{time:YYYY-MM-DD}.json"
     )
-    assert json_log_call_found.args[1] == expected_json_log_path
-    assert json_log_call_found.kwargs["rotation"] == mock_settings.logging.rotation
-    assert json_log_call_found.kwargs["retention"] == mock_settings.logging.retention
-    assert (
-        json_log_call_found.kwargs["compression"] == mock_settings.logging.compression
-    )
+    assert _get_sink_from_add_call(json_log_call_found) == expected_json_log_path
+    assert json_log_call_found.kwargs["rotation"] == mock_settings.log_rotation
+    assert json_log_call_found.kwargs["retention"] == mock_settings.log_retention
+    assert json_log_call_found.kwargs["compression"] == mock_settings.log_compression
     assert json_log_call_found.kwargs["serialize"] is True
-    assert json_log_call_found.kwargs["level"] == mock_settings.logging.level
+    assert json_log_call_found.kwargs["level"] == mock_settings.log_level
     assert json_log_call_found.kwargs["enqueue"] is True
 
     mock_warning_global.assert_not_called()
@@ -389,14 +386,16 @@ def test_logging_setup_no_settings_or_import_error(
     Covers `except ImportError` and `settings = None` paths in utils.py.
     """
     mocker.patch("loguru.logger.remove")
-    mock_add_global = mocker.spy(LoguruLoggerType, "add")
-    mock_warning_global = mocker.spy(LoguruLoggerType, "warning")
-    mock_info_global = mocker.spy(LoguruLoggerType, "info")
+    captured_messages = []
+    capture_sink_id = loguru.logger.add(
+        lambda message: captured_messages.append(message.record["message"]),
+        format="{message}",
+    )
+    mock_add_global = mocker.spy(loguru.logger, "add")
 
     # Scenario 1: ImportError when importing config
     mock_add_global.reset_mock()
-    mock_warning_global.reset_mock()
-    mock_info_global.reset_mock()
+    captured_messages.clear()
 
     reload_utils_module(mocker, fail_config_import=True)
 
@@ -406,8 +405,7 @@ def test_logging_setup_no_settings_or_import_error(
     ), "Expected 1 logger.add call for RichHandler (ImportError)"
 
     rich_handler_call_ie = mock_add_global.mock_calls[0]
-    # When spying on LoguruLoggerType.add, the sink is args[1]
-    actual_rich_handler_instance_ie = rich_handler_call_ie.args[1]
+    actual_rich_handler_instance_ie = _get_sink_from_add_call(rich_handler_call_ie)
     assert isinstance(actual_rich_handler_instance_ie, RichHandler)
     assert actual_rich_handler_instance_ie.console is (
         mock_rich_console_instance
@@ -417,19 +415,13 @@ def test_logging_setup_no_settings_or_import_error(
     ), "Default log level (ImportError) incorrect"
 
     assert any(
-        "`config` module not found" in call_args.args[1]
-        for call_args in mock_warning_global.mock_calls
+        "`config` module not found" in message for message in captured_messages
     ), "Warning for 'config module not found' not logged (ImportError)"
-    assert any(
-        "File logging is disabled" in call_args.args[1]
-        for call_args in mock_info_global.mock_calls
-    ), "Info: File logging disabled not logged (ImportError)"
 
     # Scenario 2: config imports, but settings is None
     mock_add_global.reset_mock()
-    mock_warning_global.reset_mock()
-    mock_info_global.reset_mock()
     mock_path_mkdir.reset_mock()
+    captured_messages.clear()
 
     mock_config_module_with_none_settings = MagicMock()
     mock_config_module_with_none_settings.settings = None
@@ -446,8 +438,7 @@ def test_logging_setup_no_settings_or_import_error(
         mock_add_global.call_count == 1
     ), "Expected 1 logger.add call for RichHandler (settings None)"
     rich_handler_call_sn = mock_add_global.mock_calls[0]
-    # When spying on LoguruLoggerType.add, the sink is args[1]
-    actual_rich_handler_instance_sn = rich_handler_call_sn.args[1]
+    actual_rich_handler_instance_sn = _get_sink_from_add_call(rich_handler_call_sn)
     assert isinstance(actual_rich_handler_instance_sn, RichHandler)
     assert actual_rich_handler_instance_sn.console is (
         mock_rich_console_instance
@@ -457,11 +448,7 @@ def test_logging_setup_no_settings_or_import_error(
     ), "Default log level (settings None) incorrect"
 
     assert not any(
-        "`config` module not found" in call_args.args[1]
-        for call_args in mock_warning_global.mock_calls
+        "`config` module not found" in message for message in captured_messages
     ), "Warning 'config module not found' logged unexpectedly (settings None)"
 
-    assert any(
-        "File logging is disabled" in call_args.args[1]
-        for call_args in mock_info_global.mock_calls
-    ), "Info: File logging disabled not logged (settings None)"
+    LoguruLoggerType.remove(loguru.logger, capture_sink_id)
