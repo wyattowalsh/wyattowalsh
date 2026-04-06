@@ -490,6 +490,37 @@ class TestGenerate:
         assert f"steady-repo-{MAX_REPOS - 1}" in with_pin
         assert "+1 specimen held back" in with_pin
 
+    def test_canonical_primary_repo_names_filter_under_limit_fillers(self) -> None:
+        """Pinned cohorts should hide under-limit non-canonical filler repos."""
+        fixed_seed = "89abcdef01234567" * 4
+        repos = [
+            {
+                "name": "steady-repo-0",
+                "stars": 12,
+                "forks": 1,
+                "age_months": 24,
+                "language": "Python",
+            },
+            {
+                "name": "filler-repo",
+                "stars": 2,
+                "forks": 0,
+                "age_months": 4,
+                "language": "Python",
+            },
+        ]
+        metrics = {
+            **RICH_METRICS,
+            "repos": repos,
+            "canonical_primary_repo_names": ["steady-repo-0", "late-superstar"],
+        }
+
+        svg = generate(metrics, seed=fixed_seed, maturity=0.9)
+
+        assert "steady-repo-0" in svg
+        assert "filler-repo" not in svg
+        assert "+1 specimen held back" in svg
+
     def test_recent_repo_with_low_breadth_biases_species_toward_seedling(self) -> None:
         """Recent repos stay seedling-heavy until contribution breadth widens."""
         fixed_seed = "0123456789abcdef" * 4

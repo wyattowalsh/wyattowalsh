@@ -250,15 +250,17 @@ def _select_primary_repos(
     limit: int,
     canonical_repo_names: list[str] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    if len(repos) <= limit:
-        return repos, []
     if not canonical_repo_names:
+        if len(repos) <= limit:
+            return repos, []
         return select_primary_repos(repos, limit=limit)
 
     canonical_name_set = {
         name for name in canonical_repo_names if isinstance(name, str) and name
     }
     if not canonical_name_set:
+        if len(repos) <= limit:
+            return repos, []
         return select_primary_repos(repos, limit=limit)
 
     canonical_indices = {
@@ -267,7 +269,7 @@ def _select_primary_repos(
         if str(repo.get("name") or "") in canonical_name_set
     }
     if not canonical_indices:
-        return select_primary_repos(repos, limit=limit)
+        return [], list(repos)
     # Do not backfill canonical gaps with non-canonical repos. That would let
     # filler trees appear early and then disappear when a late canonical repo arrives.
     primary = [repo for index, repo in enumerate(repos) if index in canonical_indices][
