@@ -46,6 +46,8 @@
 >
 > This README embeds the canonical timelapse GIFs directly. The docs site mirrors the same files under `docs/public/showcase/` so the public preview surface stays aligned with the workflow outputs.
 
+Operationally, each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time instead of being re-sampled as disconnected scenes.
+
 <table role="presentation">
 <tr>
 <td width="50%" align="center">
@@ -53,14 +55,14 @@
     <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden — botanical timelapse where each tree is a repository"/>
   </a>
   <br/>
-  <sub><b>Ink Garden</b> demystified: every repository becomes a plant. Languages shift species and palette, repo age stretches trunks and branch depth, stars trigger blooms, and surrounding ecosystem details grow out of contributions, forks, watchers, issues, and network activity.</sub>
+  <sub><b>Ink Garden</b> demystified: a deterministic botanical encoding of the cumulative repository set. A stable canonical repository cohort supplies the mature tree layer, language families parameterize species morphology and hue, repository age controls trunk establishedness and branching depth, and monotonic per-repo star growth is expressed as blossom density, canopy complexity, and understory detail.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-topo.gif">
     <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography — cartographic timelapse where terrain emerges with activity"/>
   </a>
   <br/>
-  <sub><b>Topography</b> demystified: the profile is redrawn as a survey map. Repositories rise into peaks and landmarks, stars increase summit prominence, language mix changes terrain character, and commits, contributions, forks, and followers feed contour density, river systems, and map annotations.</sub>
+  <sub><b>Topography</b> demystified: the profile is modeled as a cartographic height field rather than a project list. Repository positions become survey anchors, per-repo stars raise local prominence, age and chronology control erosion and reveal order, and forks, followers, network links, and contribution volume thicken contours, tributaries, and annotation density.</sub>
 </td>
 </tr>
 <tr>
@@ -69,14 +71,14 @@
     <img src=".github/assets/img/living-genetic.gif" width="100%" alt="Genetic Landscape — evolutionary timelapse where repositories become adaptive peaks"/>
   </a>
   <br/>
-  <sub><b>Genetic Landscape</b> demystified: repositories become fitness peaks on an evolving terrain. Language families tint local biomes, repo age softens or sharpens ridgelines, stars raise peak fitness, and maturity advances adaptive populations that speciate around the strongest projects.</sub>
+  <sub><b>Genetic Landscape</b> demystified: repositories define a fitness surface on which a deterministic population evolves over maturity-bounded generations. Per-repo stars elevate peak fitness, recency and age reshape ridge geometry, language and topic structure partition biomes, and cumulative activity modulates mutation pressure, population count, and trail persistence around the dominant peaks.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-physarum.gif">
     <img src=".github/assets/img/living-physarum.gif" width="100%" alt="Physarum — slime-mold timelapse grown from repository nutrient nodes"/>
   </a>
   <br/>
-  <sub><b>Physarum</b> demystified: the profile becomes a slime-mold colony that explores and connects repositories as nutrient sources. Topic affinity, contribution cadence, and collaboration signals steer the search, while denser portfolio activity thickens the glowing transport veins.</sub>
+  <sub><b>Physarum</b> demystified: a stylized agent-based transport simulation seeded by the cumulative portfolio state. Repositories act as nutrient nodes, topic affinity and language identity tint local food basins, contribution density and recent activity scale agent population and deposition rate, and collaboration pressure thickens the emergent vein network into an efficient transport graph.</sub>
 </td>
 </tr>
 <tr>
@@ -85,19 +87,19 @@
     <img src=".github/assets/img/living-lenia.gif" width="100%" alt="Lenia — continuous cellular automata timelapse where each repository seeds a digital organism"/>
   </a>
   <br/>
-  <sub><b>Lenia</b> demystified: each repository seeds a soft-bodied digital organism inside a continuous cellular automata field. Language mix tunes the kernel physics, contribution momentum changes vitality, and maturity stages the colony from faint sparks into bioluminescent life.</sub>
+  <sub><b>Lenia</b> demystified: each repository seeds an organism within a continuous cellular-automata field rather than a discrete sprite layer. Language mix resolves kernel and palette parameters, cumulative activity adjusts growth coefficients and simulation depth, and recency, streak, and release signals bias drift, vitality, and burst structure as the colony matures from faint perturbations into stable bioluminescent life.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-ferrofluid.gif">
     <img src=".github/assets/img/living-ferrofluid.gif" width="100%" alt="Ferrofluid — magnetic spike timelapse shaped by repository fields"/>
   </a>
   <br/>
-  <sub><b>Ferrofluid</b> demystified: repositories act as magnetic dipoles beneath a dark metallic pool. Stars amplify field strength, language signatures bend the iridescent hue drift, and overall portfolio energy raises or calms the spike forest and its mirrored reflections.</sub>
+  <sub><b>Ferrofluid</b> demystified: the portfolio is treated as a set of submerged magnetic dipoles beneath a viscous fluid interface. Repository positions place field sources, per-repo stars and star velocity amplify moment and spike gain, contribution and collaboration heat modulate surface tension and highlight density, and release cadence plus language signatures bend the iridescent sheen of the resulting spike forest.</sub>
 </td>
 </tr>
 </table>
 
-All six pieces share a common environmental signal model: commit-hour distribution pushes the scene toward dawn, day, golden hour, or night; issue pressure changes the weather; language families tilt the seasonal palette; and star velocity plus contribution streaks raise or calm the overall energy. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`), refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`, and mirrors the same public surface into `docs/public/showcase/`.
+All six pieces share a common `WorldState` latent environmental model computed from the same cumulative snapshot: commit-hour distribution sets the chronobiology (`dawn`, `day`, `golden`, `night`), issue pressure sets weather, language families set the seasonal palette, and star velocity plus contribution streaks modulate system energy and vitality. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`), refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`, and mirrors the same public surface into `docs/public/showcase/`.
 
 ## Tech Stack
 
