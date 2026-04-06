@@ -18,26 +18,69 @@ logger = get_logger(module=__name__)
 ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
     (
         "insufficient-token-scopes",
-        re.compile(r"Insufficient token scopes", re.IGNORECASE),
+        re.compile(
+            r"(?:^|[\s:>-])Insufficient token scopes(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
     ),
     (
         "repository-sections-disabled",
         re.compile(
-            r"Repository and collaborations sections disabled",
+            r"(?:^|[\s:>-])Repository and collaborations sections disabled"
+            r"(?:$|[.!()])",
             re.IGNORECASE,
         ),
     ),
-    ("api-error", re.compile(r"API error:\s*(401|403)", re.IGNORECASE)),
-    ("bad-credentials", re.compile(r"Bad credentials", re.IGNORECASE)),
+    (
+        "api-error",
+        re.compile(r"(?:^|[\s:>-])API error:\s*(401|403)\b.*", re.IGNORECASE),
+    ),
+    (
+        "bad-credentials",
+        re.compile(
+            r"(?:^|[\s:>-])Bad credentials(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
+    ),
     (
         "authentication-error",
-        re.compile(r"authentication(?: failed| error)?", re.IGNORECASE),
+        re.compile(
+            r"(?:^|[\s:>-])authentication(?: failed| error)?(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
     ),
-    ("forbidden", re.compile(r"forbidden", re.IGNORECASE)),
-    ("unauthorized", re.compile(r"unauthorized", re.IGNORECASE)),
-    ("unexpected-error", re.compile(r"Unexpected error", re.IGNORECASE)),
-    ("type-error", re.compile(r"TypeError", re.IGNORECASE)),
-    ("spotify-invalid-grant", re.compile(r"invalid_grant", re.IGNORECASE)),
+    (
+        "forbidden",
+        re.compile(
+            r"(?:^|[\s:>-])Forbidden(?:$|[.!()]|\s+\(\d{3}\))",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "unauthorized",
+        re.compile(
+            r"(?:^|[\s:>-])Unauthorized(?:$|[.!()]|\s+\(\d{3}\))",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "unexpected-error",
+        re.compile(
+            r"(?:^|[\s:>-])Unexpected error(?:$|[:.!()])",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "type-error",
+        re.compile(r"(?:^|[\s:>-])TypeError(?:$|[:.!()]|\s+[A-Z])"),
+    ),
+    (
+        "spotify-invalid-grant",
+        re.compile(
+            r"(?:^|[\s:>-])invalid_grant(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
+    ),
 )
 
 PLACEHOLDER_TEXT_MARKERS: Final[tuple[str, ...]] = (
@@ -46,6 +89,25 @@ PLACEHOLDER_TEXT_MARKERS: Final[tuple[str, ...]] = (
 )
 PLACEHOLDER_ARIA_LABEL: Final[str] = "metrics unavailable"
 MEMORY_PATH: Final[Path] = Path("<memory>")
+NON_RENDERED_SVG_TAGS: Final[frozenset[str]] = frozenset(
+    {
+        "clippath",
+        "defs",
+        "desc",
+        "filter",
+        "lineargradient",
+        "marker",
+        "mask",
+        "metadata",
+        "pattern",
+        "radialgradient",
+        "style",
+        "symbol",
+        "title",
+    },
+)
+STRUCTURAL_SVG_TAGS: Final[frozenset[str]] = frozenset({"g"})
+LENGTH_VALUE_PATTERN: Final[re.Pattern[str]] = re.compile(r"[-+]?(?:\d+\.?\d*|\.\d+)")
 
 
 class SvgValidationStatus(StrEnum):
@@ -56,6 +118,7 @@ class SvgValidationStatus(StrEnum):
     EMPTY = "empty"
     MALFORMED = "malformed"
     INVALID_ROOT = "invalid-root"
+    CONTENTLESS = "contentless"
     ERROR_PAYLOAD = "error-payload"
     PLACEHOLDER = "placeholder"
 
@@ -119,29 +182,165 @@ class SvgRecoveryResult:
         }
 
 
-def detect_metrics_error_signal(svg_text: str) -> tuple[str, str] | None:
-    """Return the first known metrics error signal found in *svg_text*."""
+def _normalize_text(text: str) -> str:
+    """Collapse internal whitespace to simplify text matching."""
 
+    return " ".join(text.split())
+
+
+def detect_metrics_error_signal(visible_text: str) -> tuple[str, str] | None:
+    """Return the first known metrics error signal found in visible SVG text."""
+
+    normalized_text = _normalize_text(visible_text)
     for signal_name, pattern in ERROR_SIGNAL_PATTERNS:
-        match = pattern.search(svg_text)
+        match = pattern.search(normalized_text)
         if match is not None:
-            return signal_name, match.group(0)
+            return signal_name, normalized_text
     return None
 
 
 def is_placeholder_svg(svg_text: str) -> bool:
     """Return whether *svg_text* matches the placeholder SVG content."""
 
-    normalized = svg_text.casefold()
+    normalized = _normalize_text(svg_text).casefold()
     if PLACEHOLDER_ARIA_LABEL in normalized:
         return True
-    return all(marker.casefold() in normalized for marker in PLACEHOLDER_TEXT_MARKERS)
+
+    try:
+        root = xml_etree.fromstring(svg_text)
+    except xml_etree.ParseError:
+        return all(
+            marker.casefold() in normalized
+            for marker in PLACEHOLDER_TEXT_MARKERS
+        )
+
+    visible_text = _extract_visible_svg_text(root).casefold()
+    return all(marker.casefold() in visible_text for marker in PLACEHOLDER_TEXT_MARKERS)
 
 
 def _local_name(tag: str) -> str:
     """Extract an XML local name from a namespaced tag."""
 
     return tag.rsplit("}", maxsplit=1)[-1]
+
+
+def _extract_svg_text_fragments(root: xml_etree.Element[str]) -> tuple[str, ...]:
+    """Return non-empty visible text fragments from an SVG tree."""
+
+    def _collect_visible_text(
+        element: xml_etree.Element[str],
+        *,
+        parent_hidden: bool = False,
+    ) -> list[str]:
+        local_name = _local_name(element.tag).casefold()
+        element_hidden = parent_hidden or (
+            element is not root and local_name in NON_RENDERED_SVG_TAGS
+        )
+
+        fragments: list[str] = []
+        if not element_hidden:
+            text = (element.text or "").strip()
+            if text:
+                fragments.append(text)
+
+        for child in element:
+            fragments.extend(_collect_visible_text(child, parent_hidden=element_hidden))
+            if not element_hidden:
+                tail = (child.tail or "").strip()
+                if tail:
+                    fragments.append(tail)
+
+        return fragments
+
+    return tuple(_collect_visible_text(root))
+
+
+def _extract_visible_svg_text(root: xml_etree.Element[str]) -> str:
+    """Return normalized visible text extracted from an SVG tree."""
+
+    return _normalize_text(" ".join(_extract_svg_text_fragments(root)))
+
+
+def _has_positive_length(value: str | None) -> bool:
+    """Return whether an SVG length-like attribute is present and positive."""
+
+    if value is None:
+        return False
+
+    match = LENGTH_VALUE_PATTERN.search(value.strip())
+    if match is None:
+        return False
+
+    return float(match.group(0)) > 0
+
+
+def _has_rendered_attributes(
+    element: xml_etree.Element[str],
+    local_name: str,
+) -> bool:
+    """Return whether *element* has attributes consistent with visible content."""
+
+    if local_name in {"text", "tspan", "textpath"}:
+        return False
+
+    if local_name == "path":
+        return bool((element.attrib.get("d") or "").strip())
+
+    if local_name in {"polyline", "polygon"}:
+        return bool((element.attrib.get("points") or "").strip())
+
+    if local_name in {"use", "image"}:
+        href = element.attrib.get("href") or element.attrib.get(
+            "{http://www.w3.org/1999/xlink}href",
+        )
+        return bool((href or "").strip())
+
+    if local_name in {"rect", "foreignobject"}:
+        has_positive_width = _has_positive_length(element.attrib.get("width"))
+        has_positive_height = _has_positive_length(element.attrib.get("height"))
+        return has_positive_width and has_positive_height
+
+    if local_name == "circle":
+        return _has_positive_length(element.attrib.get("r"))
+
+    if local_name == "ellipse":
+        return _has_positive_length(element.attrib.get("rx")) and _has_positive_length(
+            element.attrib.get("ry"),
+        )
+
+    if local_name == "line":
+        return (
+            (element.attrib.get("x1") != element.attrib.get("x2"))
+            or (element.attrib.get("y1") != element.attrib.get("y2"))
+        ) and all(
+            key in element.attrib
+            for key in ("x1", "x2", "y1", "y2")
+        )
+
+    return bool(element.attrib)
+
+
+def _has_meaningful_svg_content(root: xml_etree.Element[str]) -> bool:
+    """Return whether an SVG tree contains visible or textual content."""
+
+    for element in root.iter():
+        if element is root:
+            continue
+
+        local_name = _local_name(element.tag).casefold()
+        if local_name in NON_RENDERED_SVG_TAGS:
+            continue
+
+        if (element.text or "").strip():
+            return True
+
+        if local_name in STRUCTURAL_SVG_TAGS:
+            continue
+
+        if _has_rendered_attributes(element, local_name):
+            return True
+
+    return False
 
 
 def validate_svg_content(
@@ -157,18 +356,6 @@ def validate_svg_content(
             path=path,
             status=SvgValidationStatus.EMPTY,
             detail="SVG content is empty.",
-        )
-
-    error_signal = detect_metrics_error_signal(svg_text)
-    if error_signal is not None:
-        signal_name, matched_text = error_signal
-        return SvgValidationResult(
-            path=path,
-            status=SvgValidationStatus.ERROR_PAYLOAD,
-            detail=(
-                f"SVG contains known metrics failure signal "
-                f"{signal_name!r}: {matched_text!r}."
-            ),
         )
 
     if is_placeholder_svg(svg_text):
@@ -192,6 +379,25 @@ def validate_svg_content(
             path=path,
             status=SvgValidationStatus.INVALID_ROOT,
             detail=f"Expected <svg> root element, found <{_local_name(root.tag)}>.",
+        )
+
+    error_signal = detect_metrics_error_signal(_extract_visible_svg_text(root))
+    if error_signal is not None:
+        signal_name, matched_text = error_signal
+        return SvgValidationResult(
+            path=path,
+            status=SvgValidationStatus.ERROR_PAYLOAD,
+            detail=(
+                f"SVG contains known metrics failure signal "
+                f"{signal_name!r}: {matched_text!r}."
+            ),
+        )
+
+    if not _has_meaningful_svg_content(root):
+        return SvgValidationResult(
+            path=path,
+            status=SvgValidationStatus.CONTENTLESS,
+            detail="SVG contains no meaningful rendered or textual content.",
         )
 
     return SvgValidationResult(
