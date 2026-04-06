@@ -2043,11 +2043,81 @@ def smil_animate_transform(
 # ---------------------------------------------------------------------------
 
 MAX_REPOS: int = 10
-"""Hard cap on repos rendered with full visual treatment in any art module."""
+"""Soft emphasis baseline for dense living-art layouts."""
+
+
+def stable_repo_visual_order(
+    repos: Sequence[Mapping[str, Any]],
+    *,
+    preferred_names: Sequence[str] | None = None,
+) -> list[str]:
+    """Build the stable all-repo order consumed by living-art renderers.
+
+    The contract is exhaustive and monotonic: preferred names retain their
+    relative order, and every remaining repo is appended the first time it
+    appears in *repos*. Callers should therefore pass repos in the desired
+    accretive order.
+    """
+    ordered_names: list[str] = []
+    seen: set[str] = set()
+
+    for raw_name in preferred_names or ():
+        name = str(raw_name).strip() if isinstance(raw_name, str) else ""
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        ordered_names.append(name)
+
+    for repo in repos:
+        name = str(repo.get("name") or "").strip()
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        ordered_names.append(name)
+
+    return ordered_names
+
+
+def order_repos_for_visual_plan(
+    repos: Sequence[dict[str, Any]],
+    *,
+    preferred_names: Sequence[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Return repos ordered under the stable all-repo representation contract."""
+    ordered_repos = list(repos)
+    if len(ordered_repos) <= 1:
+        return ordered_repos
+
+    plan = stable_repo_visual_order(ordered_repos, preferred_names=preferred_names)
+    if not plan:
+        return ordered_repos
+
+    plan_index = {name: index for index, name in enumerate(plan)}
+    sorted_pairs = sorted(
+        enumerate(ordered_repos),
+        key=lambda item: (
+            plan_index.get(
+                str(item[1].get("name") or "").strip(),
+                len(plan_index) + item[0],
+            ),
+            item[0],
+        ),
+    )
+
+    deduped: list[dict[str, Any]] = []
+    seen_names: set[str] = set()
+    for _index, repo in sorted_pairs:
+        name = str(repo.get("name") or "").strip()
+        if name:
+            if name in seen_names:
+                continue
+            seen_names.add(name)
+        deduped.append(repo)
+    return deduped
 
 
 def repo_visibility_score(repo: dict[str, Any]) -> float:
-    """Rank repos for full visual treatment when the profile exceeds *MAX_REPOS*.
+    """Rank repos for soft emphasis when repo density gets high.
 
     Scoring weights: stars (dominant), forks, watchers, topic count,
     age (capped at 6 years), and description presence.
@@ -2071,22 +2141,15 @@ def repo_visibility_score(repo: dict[str, Any]) -> float:
 def select_primary_repos(
     repos: list[dict[str, Any]], *, limit: int = MAX_REPOS
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Select the most prominent repos while preserving chronological order.
+    """Expose every repo while preserving the caller's stable visual order.
 
-    Returns ``(primary, overflow)`` where *primary* contains at most *limit*
-    repos ordered by their original position in *repos*.
+    ``limit`` is retained as a soft-emphasis hint for compatibility, but living
+    art renderers should consume the full repo set rather than dropping an
+    overflow tail. Callers that need emphasis can derive it from
+    :func:`repo_visibility_score` without omitting repos from the returned plan.
     """
-    if len(repos) <= limit:
-        return repos, []
-    ranked = sorted(
-        enumerate(repos),
-        key=lambda item: (repo_visibility_score(item[1]), -item[0]),
-        reverse=True,
-    )
-    primary_indices = {index for index, _repo in ranked[:limit]}
-    primary = [repo for index, repo in enumerate(repos) if index in primary_indices]
-    overflow = [repo for _index, repo in ranked[limit:]]
-    return primary, overflow
+    _ = limit
+    return order_repos_for_visual_plan(repos), []
 
 
 # ── Language-family spatial clustering ────────────────────────────────────

@@ -14,7 +14,11 @@ from scripts.art.daily_snapshots import (
     build_daily_snapshots,  # noqa: E402
     sample_frames,  # noqa: E402
 )
-from scripts.art.shared import MAX_REPOS, select_primary_repos  # noqa: E402
+from scripts.art.shared import (  # noqa: E402
+    MAX_REPOS,
+    select_primary_repos,
+    stable_repo_visual_order,
+)
 from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES  # noqa: E402
 
 
@@ -260,7 +264,19 @@ def test_repo_star_allocation_stays_monotonic_when_late_repo_enters(
     )
 
 
-def test_build_daily_snapshots_freezes_canonical_primary_repo_names(
+def test_select_primary_repos_preserves_all_repos_under_shared_contract() -> None:
+    repos = [
+        {"name": "foundation", "stars": 6, "forks": 1, "age_months": 24},
+        {"name": "late-surge", "stars": 250, "forks": 18, "age_months": 2},
+    ]
+
+    primary, overflow = select_primary_repos(repos, limit=1)
+
+    assert [repo["name"] for repo in primary] == ["foundation", "late-surge"]
+    assert overflow == []
+
+
+def test_build_daily_snapshots_freezes_repo_visual_order(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     anchor_day = date(2025, 1, 15)
@@ -316,15 +332,79 @@ def test_build_daily_snapshots_freezes_canonical_primary_repo_names(
             + (terminal_day.month - repo_date.month),
         )
         final_repos.append(final_repo)
-    expected_primary, _overflow = select_primary_repos(final_repos, limit=MAX_REPOS)
-    expected_names = [repo["name"] for repo in expected_primary]
+    expected_names = stable_repo_visual_order(final_repos)
 
     snaps = build_daily_snapshots(history, metrics)
 
     assert snaps
     assert {
-        tuple(snap.metrics_dict["canonical_primary_repo_names"]) for snap in snaps
+        tuple(snap.metrics_dict["repo_visual_order"]) for snap in snaps
     } == {tuple(expected_names)}
+    assert all(
+        "canonical_primary_repo_names" not in snap.metrics_dict for snap in snaps
+    )
+    assert all(
+        [repo["name"] for repo in snap.metrics_dict["repos"]]
+        == expected_names[: len(snap.metrics_dict["repos"])]
+        for snap in snaps
+    )
+
+
+def test_build_daily_snapshots_prefers_full_repo_inventory_over_top_repos(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    start = anchor_day - timedelta(days=6)
+    history = {
+        "account_created": f"{start.isoformat()}T00:00:00Z",
+        "repos": [
+            {"date": start.isoformat(), "name": "alpha"},
+            {"date": (start + timedelta(days=2)).isoformat(), "name": "beta"},
+        ],
+        "stars": [],
+        "forks": [],
+        "contributions_daily": {
+            (start + timedelta(days=i)).isoformat(): 2 for i in range(7)
+        },
+        "contributions_monthly": {f"{start.year:04d}-{start.month:02d}": 14},
+    }
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+    metrics["top_repos"] = [
+        {
+            "name": "alpha",
+            "language": "Python",
+            "stars": 10,
+            "forks": 1,
+            "topics": ["core"],
+        }
+    ]
+    metrics["repos"] = [
+        {
+            "name": "alpha",
+            "language": "Python",
+            "stars": 10,
+            "forks": 1,
+            "topics": ["core"],
+        },
+        {
+            "name": "beta",
+            "language": "Go",
+            "stars": 3,
+            "forks": 1,
+            "topics": ["viz"],
+            "description": "Secondary repo that should still retain details.",
+        },
+    ]
+
+    snaps = build_daily_snapshots(history, metrics)
+    final_repos = snaps[-1].metrics_dict["repos"]
+
+    assert [repo["name"] for repo in final_repos] == ["alpha", "beta"]
+    beta = next(repo for repo in final_repos if repo["name"] == "beta")
+    assert beta["language"] == "Go"
+    assert beta["topics"] == ["viz"]
+    assert snaps[-1].metrics_dict["repo_visual_order"] == ["alpha", "beta"]
 
 
 def test_build_daily_snapshots_clamps_maturity_when_rolling_signals_fade(

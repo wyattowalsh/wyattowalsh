@@ -353,10 +353,15 @@ class TestGenerate:
         result = generate(metrics)
         assert isinstance(result, str)
 
-    def test_repos_beyond_max_are_capped(self) -> None:
-        """Supplying more than MAX_REPOS repos does not raise; output is valid SVG."""
+    def test_repos_beyond_soft_max_remain_renderable(self) -> None:
+        """Supplying more than MAX_REPOS repos still produces a valid SVG."""
         extra_repos = [
-            {"name": f"repo-{i}", "stars": i, "age_months": i + 1, "language": "Python"}
+            {
+                "name": f"repo-{i}",
+                "stars": i,
+                "age_months": i + 1,
+                "language": "Python",
+            }
             for i in range(MAX_REPOS + 5)
         ]
         result = generate({**RICH_METRICS, "repos": extra_repos}, maturity=0.5)
@@ -424,8 +429,8 @@ class TestGenerate:
         assert "signal-garden" in result
         assert "ai · agents +1" in result
 
-    def test_repo_visibility_tiering_keeps_high_value_late_repo(self) -> None:
-        """Important late repos should still survive the MAX_REPOS render cap."""
+    def test_all_repo_contract_keeps_high_value_late_repo_visible(self) -> None:
+        """Important late repos now accrete without hiding earlier repos."""
         repos = [
             {
                 "name": f"tiny-repo-{index}",
@@ -448,14 +453,11 @@ class TestGenerate:
         metrics = {**RICH_METRICS, "repos": repos}
         result = generate(metrics, seed=seed_hash(metrics), maturity=0.9)
         assert "priority-archive" in result
-        assert 'id="study-drawers"' in result
-        assert "Study Drawers" in result
-        assert "+2 specimens held back" in result
-        assert f"tiny-repo-{MAX_REPOS - 1}" not in result
+        assert f"tiny-repo-{MAX_REPOS - 1}" in result
 
-    def test_canonical_primary_repo_names_keep_visible_tree_stable(self) -> None:
-        """Timelapse cohort pinning keeps an existing tree from disappearing."""
-        canonical_names = [f"steady-repo-{index}" for index in range(MAX_REPOS)]
+    def test_all_repo_contract_keeps_existing_tree_visible_without_pin(self) -> None:
+        """Timelapse frames no longer need a pinned top-N cohort to stay stable."""
+        repo_names = [f"steady-repo-{index}" for index in range(MAX_REPOS)]
         repos = [
             {
                 "name": repo_name,
@@ -464,7 +466,7 @@ class TestGenerate:
                 "age_months": 24,
                 "language": "Python",
             }
-            for repo_name in canonical_names
+            for repo_name in repo_names
         ]
         repos.append(
             {
@@ -477,21 +479,17 @@ class TestGenerate:
             }
         )
         fixed_seed = "0123456789abcdef" * 4
-        later_metrics = {**RICH_METRICS, "repos": repos}
-        pinned_metrics = {
-            **later_metrics,
-            "canonical_primary_repo_names": canonical_names,
-        }
+        svg = generate(
+            {**RICH_METRICS, "repos": repos},
+            seed=fixed_seed,
+            maturity=0.9,
+        )
 
-        without_pin = generate(later_metrics, seed=fixed_seed, maturity=0.9)
-        with_pin = generate(pinned_metrics, seed=fixed_seed, maturity=0.9)
+        assert f"steady-repo-{MAX_REPOS - 1}" in svg
+        assert "late-superstar" in svg
 
-        assert f"steady-repo-{MAX_REPOS - 1}" not in without_pin
-        assert f"steady-repo-{MAX_REPOS - 1}" in with_pin
-        assert "+1 specimen held back" in with_pin
-
-    def test_canonical_primary_repo_names_filter_under_limit_fillers(self) -> None:
-        """Pinned cohorts should hide under-limit non-canonical filler repos."""
+    def test_all_repo_contract_keeps_under_limit_fillers_visible(self) -> None:
+        """The shared contract should not hide filler repos before later arrivals."""
         fixed_seed = "89abcdef01234567" * 4
         repos = [
             {
@@ -512,14 +510,12 @@ class TestGenerate:
         metrics = {
             **RICH_METRICS,
             "repos": repos,
-            "canonical_primary_repo_names": ["steady-repo-0", "late-superstar"],
         }
 
         svg = generate(metrics, seed=fixed_seed, maturity=0.9)
 
         assert "steady-repo-0" in svg
-        assert "filler-repo" not in svg
-        assert "+1 specimen held back" in svg
+        assert "filler-repo" in svg
 
     def test_recent_repo_with_low_breadth_biases_species_toward_seedling(self) -> None:
         """Recent repos stay seedling-heavy until contribution breadth widens."""

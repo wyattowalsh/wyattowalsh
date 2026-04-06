@@ -27,7 +27,8 @@ from .shared import (
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
-    select_primary_repos,
+    order_repos_for_visual_plan,
+    stable_repo_visual_order,
 )
 
 logger = get_logger(module=__name__)
@@ -128,12 +129,13 @@ def _repos_by_creation_date(
     return result
 
 
-def _canonical_primary_repo_names(
+def _stable_repo_visual_order(
     dated_repos: list[tuple[dt_date, dict[str, Any]]],
     *,
     terminal_day: dt_date,
+    preferred_names: list[str] | None = None,
 ) -> list[str]:
-    """Freeze a stable full-tree repo cohort for cumulative timelapse frames."""
+    """Freeze the stable all-repo visual order for cumulative timelapse frames."""
     if not dated_repos:
         return []
 
@@ -149,12 +151,18 @@ def _canonical_primary_repo_names(
         )
         final_repos.append(repo)
 
-    primary_repos, _overflow_repos = select_primary_repos(final_repos)
-    return [
+    final_repo_names = {
         str(repo.get("name"))
-        for repo in primary_repos
+        for repo in final_repos
         if isinstance(repo.get("name"), str) and repo.get("name")
+    }
+    filtered_preferred_names = [
+        name for name in (preferred_names or []) if name in final_repo_names
     ]
+    return stable_repo_visual_order(
+        final_repos,
+        preferred_names=filtered_preferred_names,
+    )
 
 
 def _allocate_star_delta(
@@ -559,25 +567,28 @@ def build_daily_snapshots(
     )
 
     # Repo details (merged history dates + current details)
-    current_repos = current_metrics.get("top_repos", []) or current_metrics.get(
-        "repos", []
+    current_repos = current_metrics.get("repos", []) or current_metrics.get(
+        "top_repos", []
     )
     dated_repos = _repos_by_creation_date(
         history.get("repos", []),
         current_repos,
     )
-    canonical_primary_repo_names = current_metrics.get("canonical_primary_repo_names")
-    if not isinstance(canonical_primary_repo_names, list):
-        canonical_primary_repo_names = _canonical_primary_repo_names(
-            dated_repos,
-            terminal_day=timeline_end,
-        )
-    else:
-        canonical_primary_repo_names = [
+    preferred_repo_names_source = current_metrics.get("repo_visual_order")
+    preferred_repo_names = (
+        [
             str(name)
-            for name in canonical_primary_repo_names
+            for name in preferred_repo_names_source
             if isinstance(name, str) and name
         ]
+        if isinstance(preferred_repo_names_source, list)
+        else []
+    )
+    repo_visual_order = _stable_repo_visual_order(
+        dated_repos,
+        terminal_day=timeline_end,
+        preferred_names=preferred_repo_names,
+    )
 
     # Contributions: prefer daily if available; fallback to monthly expansion.
     hist_monthly = history.get("contributions_monthly", {}) or {}
@@ -698,6 +709,10 @@ def build_daily_snapshots(
             r["age_months"] = age_months
             r["stars"] = repo_star_allocations.get(str(r.get("name")), 0)
             repos_so_far.append(r)
+        repos_so_far = order_repos_for_visual_plan(
+            repos_so_far,
+            preferred_names=repo_visual_order,
+        )
 
         # Trailing year contributions
         contribs_last_year = _trailing_year_contributions(daily_contribs, day)
@@ -799,7 +814,7 @@ def build_daily_snapshots(
             sorted(topic_counts.items(), key=lambda kv: kv[1], reverse=True)
         )
         metrics_dict["repo_recency_bands"] = _repo_recency_bands(repos_so_far)
-        metrics_dict["canonical_primary_repo_names"] = canonical_primary_repo_names
+        metrics_dict["repo_visual_order"] = repo_visual_order
 
         # Language diversity
         if langs:
@@ -1007,8 +1022,8 @@ def sample_frames(
                 != previous.metrics_dict.get("forks", 0),
                 candidate.metrics_dict.get("language_count", 0)
                 != previous.metrics_dict.get("language_count", 0),
-                candidate.metrics_dict.get("canonical_primary_repo_names", [])
-                != previous.metrics_dict.get("canonical_primary_repo_names", []),
+                candidate.metrics_dict.get("repo_visual_order", [])
+                != previous.metrics_dict.get("repo_visual_order", []),
                 len(candidate.metrics_dict.get("releases", []))
                 != len(previous.metrics_dict.get("releases", [])),
                 len(candidate.metrics_dict.get("recent_merged_prs", []))

@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -74,40 +75,72 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
     return result
 
 
-def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict]:
-    """Fetch user's recent merged PRs (last 50) via GraphQL."""
+def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, Any]]:
+    """Fetch the account's merged PR history via paginated GraphQL."""
     if not token:
         return []
     query = """
-    query($login: String!) {
+    query($login: String!, $cursor: String) {
       user(login: $login) {
-        pullRequests(first: 50, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
-          nodes { mergedAt additions deletions repository { name } }
+        pullRequests(
+          first: 100
+          after: $cursor
+          states: MERGED
+          orderBy: {field: UPDATED_AT, direction: DESC}
+        ) {
+          nodes {
+            mergedAt
+            additions
+            deletions
+            repository {
+              name
+              nameWithOwner
+            }
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
         }
       }
     }
     """
     try:
-        resp = _graphql(query, token, variables={"login": owner})
-        errors = resp.get("errors")
-        if errors:
-            logger.warning("GraphQL errors fetching merged PRs: {}", errors)
-            return []
-        nodes = (
-            (resp.get("data") or {})
-            .get("user", {})
-            .get("pullRequests", {})
-            .get("nodes", [])
-        )
-        return [
-            {
-                "merged_at": n.get("mergedAt"),
-                "additions": n.get("additions", 0),
-                "deletions": n.get("deletions", 0),
-                "repo_name": (n.get("repository") or {}).get("name", ""),
-            }
-            for n in nodes
-        ]
+        merged_prs: list[dict[str, Any]] = []
+        cursor: str | None = None
+        while True:
+            resp = _graphql(query, token, variables={"login": owner, "cursor": cursor})
+            errors = resp.get("errors")
+            if errors:
+                logger.warning("GraphQL errors fetching merged PRs: {}", errors)
+                return []
+            pull_requests = (
+                ((resp.get("data") or {}).get("user") or {})
+                .get("pullRequests", {})
+            )
+            nodes = pull_requests.get("nodes", [])
+            for node in nodes:
+                repo = node.get("repository") or {}
+                repo_name = repo.get("name", "")
+                merged_prs.append(
+                    {
+                        "merged_at": node.get("mergedAt"),
+                        "additions": int(node.get("additions", 0) or 0),
+                        "deletions": int(node.get("deletions", 0) or 0),
+                        "repo_name": repo_name,
+                        "repo_full_name": (
+                            repo.get("nameWithOwner")
+                            or (f"{owner}/{repo_name}" if repo_name else "")
+                        ),
+                    }
+                )
+            page_info = pull_requests.get("pageInfo", {})
+            end_cursor = page_info.get("endCursor")
+            if not page_info.get("hasNextPage") or not end_cursor:
+                break
+            cursor = str(end_cursor)
+        merged_prs.sort(key=lambda entry: entry.get("merged_at") or "")
+        return merged_prs
     except Exception as exc:
         logger.warning("Failed to fetch recent merged PRs: {}", exc)
         return []
@@ -141,48 +174,120 @@ def _collect_issue_stats(owner: str, token: str | None) -> dict[str, int]:
         return {"open_count": 0, "closed_count": 0}
 
 
-def _collect_commit_hour_distribution(owner: str, token: str | None) -> dict[int, int]:
-    """Bucket recent push-event commit timestamps by hour (0-23) from public events."""
+def _collect_commit_hour_distribution(
+    owner: str, token: str | None
+) -> tuple[dict[int, int], int]:
+    """Bucket commit activity by hour from GitHub's visible push-event window.
+
+    GitHub does not expose an all-time, account-wide commit timestamp history, so
+    this intentionally models a recent activity window using push-event timestamps
+    weighted by each event's commit count rather than claiming to be a lifetime
+    histogram.
+    """
     try:
-        data = _json(f"{_BASE}/users/{owner}/events?per_page=100", token)
+        data = _paginate_rest(f"{_BASE}/users/{owner}/events?per_page=100", token)
         if not isinstance(data, list):
-            return {}
-        from datetime import datetime as _dt
+            return {}, 0
         hours: dict[int, int] = {}
+        sampled_commits = 0
         for event in data:
             if event.get("type") != "PushEvent":
                 continue
             created = event.get("created_at", "")
-            if created:
-                try:
-                    dt = _dt.fromisoformat(created.replace("Z", "+00:00"))
-                    hour = dt.hour
-                    hours[hour] = hours.get(hour, 0) + 1
-                except (ValueError, AttributeError):
-                    pass
-        return hours
+            if not created:
+                continue
+            try:
+                dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+            except (ValueError, AttributeError):
+                continue
+            payload = event.get("payload")
+            payload_dict = payload if isinstance(payload, dict) else {}
+            event_size = payload_dict.get("size")
+            if isinstance(event_size, int) and event_size > 0:
+                commit_count = event_size
+            else:
+                commit_count = len(payload_dict.get("commits") or []) or 1
+            sampled_commits += commit_count
+            hour = dt.hour
+            hours[hour] = hours.get(hour, 0) + commit_count
+        return dict(sorted(hours.items())), sampled_commits
     except Exception as exc:
         logger.warning("Failed to fetch commit hour distribution: {}", exc)
-        return {}
+        return {}, 0
 
 
-def _collect_releases(owner: str, repo: str, token: str | None) -> list[dict]:
-    """Fetch recent releases for owner/repo via REST."""
-    try:
-        data = _json(f"{_BASE}/repos/{owner}/{repo}/releases?per_page=20", token)
-        if not isinstance(data, list):
-            return []
-        return [
-            {
-                "tag_name": r.get("tag_name", ""),
-                "published_at": r.get("published_at"),
-                "name": r.get("name", ""),
-            }
-            for r in data
-        ]
-    except Exception as exc:
-        logger.warning("Failed to fetch releases: {}", exc)
-        return []
+def _collect_releases(
+    owner: str,
+    repo: str,
+    token: str | None,
+    repos: list[dict[str, Any]] | None = None,
+) -> tuple[list[dict[str, Any]], str, int]:
+    """Fetch published releases across account-owned repos when available.
+
+    Collaborator/member repos are excluded because their release history belongs
+    to another account. If the owned-repo inventory is unavailable, fall back to
+    the profile repo and surface that narrower scope in metadata.
+    """
+    repo_sources_by_full_name: dict[str, dict[str, Any]] = {}
+    for repo_data in repos or []:
+        repo_name = repo_data.get("name")
+        if not repo_name:
+            continue
+        repo_owner = repo_data.get("owner")
+        owner_login = repo_owner.get("login") if isinstance(repo_owner, dict) else None
+        full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
+        if owner_login and owner_login != owner:
+            continue
+        if owner_login is None and "/" in full_name and not full_name.startswith(f"{owner}/"):
+            continue
+        repo_sources_by_full_name[full_name] = repo_data
+
+    repo_sources = list(repo_sources_by_full_name.values())
+    scope = "account_owned_repos" if repo_sources else "profile_repo_fallback"
+    if not repo_sources:
+        repo_sources = [{"name": repo, "full_name": f"{owner}/{repo}"}]
+
+    def _fetch_repo_releases(repo_data: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+        repo_name = str(repo_data.get("name") or repo)
+        full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
+        data = _paginate_rest(f"{_BASE}/repos/{full_name}/releases?per_page=100", token)
+        return repo_data, data if isinstance(data, list) else []
+
+    releases: list[dict[str, Any]] = []
+    with ThreadPoolExecutor(max_workers=min(8, len(repo_sources))) as pool:
+        futures = {pool.submit(_fetch_repo_releases, entry): entry for entry in repo_sources}
+        for fut in as_completed(futures):
+            repo_data = futures[fut]
+            repo_name = str(repo_data.get("name") or repo)
+            full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
+            try:
+                _, raw_releases = fut.result()
+            except Exception as exc:
+                logger.warning("Failed to fetch releases for {}: {}", full_name, exc)
+                continue
+            for release in raw_releases:
+                published_at = release.get("published_at")
+                if not published_at:
+                    continue
+                releases.append(
+                    {
+                        "tag_name": release.get("tag_name", ""),
+                        "published_at": published_at,
+                        "date": published_at,
+                        "name": release.get("name", ""),
+                        "repo_name": repo_name,
+                        "repo_full_name": full_name,
+                    }
+                )
+    releases.sort(
+        key=lambda entry: (
+            entry.get("published_at") or "",
+            entry.get("repo_full_name") or "",
+            entry.get("tag_name") or "",
+            entry.get("name") or "",
+        )
+    )
+    return releases, scope, len(repo_sources)
 
 
 def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict]:
@@ -346,6 +451,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         logger.warning("Failed to fetch repos list: {}", exc)
         all_repos = []
     metrics["languages"] = _collect_languages(all_repos, token)
+    metrics["repos"] = all_repos
     metrics["top_repos"] = _collect_top_repos(all_repos)
     metrics.update(_collect_traffic(owner, repo, token))
 
@@ -362,17 +468,28 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         logger.warning("Failed to collect issue stats: {}", exc)
         metrics["issue_stats"] = {"open_count": 0, "closed_count": 0}
 
+    metrics["commit_hour_distribution_scope"] = "recent_push_events_window"
     try:
-        metrics["commit_hour_distribution"] = _collect_commit_hour_distribution(owner, token)
+        (
+            metrics["commit_hour_distribution"],
+            metrics["commit_hour_distribution_sample_size"],
+        ) = _collect_commit_hour_distribution(owner, token)
     except Exception as exc:
         logger.warning("Failed to collect commit hour distribution: {}", exc)
         metrics["commit_hour_distribution"] = {}
+        metrics["commit_hour_distribution_sample_size"] = 0
 
     try:
-        metrics["releases"] = _collect_releases(owner, repo, token)
+        (
+            metrics["releases"],
+            metrics["releases_scope"],
+            metrics["releases_repo_count"],
+        ) = _collect_releases(owner, repo, token, repos=all_repos or None)
     except Exception as exc:
         logger.warning("Failed to collect releases: {}", exc)
         metrics["releases"] = []
+        metrics["releases_scope"] = "unavailable"
+        metrics["releases_repo_count"] = 0
 
     return metrics
 
