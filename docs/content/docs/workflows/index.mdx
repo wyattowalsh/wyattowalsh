@@ -59,9 +59,15 @@ Uses [`felipecrs/metrics`](https://github.com/felipecrs/metrics) — a fork of [
 - `metrics.svg` — personal metrics (lines, isocalendar, languages, habits, notable, topics)
 - `metrics.additional.svg` — music (Spotify), activity, stargazers, featured repos
 
-`METRICS_TOKEN` is the GitHub PAT for repository-aware sections such as traffic, notable repositories, stars, and stargazers. If it is missing, the workflow falls back to `GITHUB_TOKEN` and disables the repo-sensitive plugins that need broader access.
+For the canonical `wyattowalsh/wyattowalsh` repo, the intended steady state is the full rich metrics cards. Keep `METRICS_TOKEN` plus the Spotify OAuth trio configured so repository-aware and music sections can render on the first pass.
 
-Each SVG is generated progressively: the workflow tries the richer plugin set first, then retries with a stable subset if validation fails (`plugin_habits` off for personal metrics; `plugin_activity` and `plugin_music` off for additional metrics). Placeholder SVGs are only written if every attempt still fails validation.
+The job now hardens metrics updates with `scripts.metrics_svg`:
+- backs up the previously committed metrics SVGs before regeneration
+- validates each render and retries a smaller fallback plugin set when needed
+- restores the previous valid asset if a new SVG is malformed, contains a known error payload, or matches the placeholder SVG
+- commits only after both final SVGs pass validation
+
+Placeholder metrics SVGs are treated as invalid recovery artifacts, not the desired output, and are never the intended steady state.
 
 ### `generate-event-art`
 
@@ -91,11 +97,11 @@ Commits `README.md` + `.github/assets/img/readme/*.svg`.
 | Secret | Used by | Notes |
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
-| `METRICS_TOKEN` | `generate-profile-metrics` | Optional PAT for repo-aware metrics (`read:user`, `public_repo`); workflow falls back to `GITHUB_TOKEN` when absent |
+| `METRICS_TOKEN` | `generate-profile-metrics` | Canonical repo: expected PAT for repo-aware metrics (`read:user`, `public_repo`; add `read:org` if needed). Forks can omit it, but rich repository sections will be reduced and recovery may preserve the last valid asset. |
 | `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
-| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
-| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
-| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` | Optional Spotify OAuth secret for the music plugin |
+| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` | Canonical repo: expected with the other Spotify secrets for the music panel on `metrics.additional.svg` |
+| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` | Canonical repo: expected with the other Spotify secrets for the music panel on `metrics.additional.svg` |
+| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` | Canonical repo: expected with the other Spotify secrets for the music panel on `metrics.additional.svg` |
 
 ## Related
 

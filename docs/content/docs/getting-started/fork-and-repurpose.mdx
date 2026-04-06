@@ -84,15 +84,24 @@ Set `blog_feed_url` to an empty string and the blog section will be skipped enti
 
 ## GitHub workflow setup
 
-The CI workflow at `.github/workflows/profile-updater.yml` runs on a schedule to regenerate your README. You need to set one secret:
+The CI workflow at `.github/workflows/profile-updater.yml` runs on a schedule to regenerate your README and metrics assets.
+
+For the canonical `wyattowalsh/wyattowalsh` repo, configure the full metrics secret set so the rich cards regenerate instead of degrading to fallback sections or preserving the previous asset. Forks can start with the built-in token and add the richer secrets later.
 
 | Secret | Required | Purpose |
 |---|---|---|
 | `GITHUB_TOKEN` | Yes (automatic) | Built-in token — no setup needed |
-| `METRICS_TOKEN` | Optional | GitHub PAT for richer metrics |
+| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | GitHub PAT for repository-aware metrics (`read:user`, `public_repo`; add `read:org` if needed) |
+| `SPOTIFY_CLIENT_ID` | Canonical repo: yes / forks: optional | Spotify OAuth client ID for the music panel on `metrics.additional.svg` |
+| `SPOTIFY_CLIENT_SECRET` | Canonical repo: yes / forks: optional | Spotify OAuth client secret for the music panel on `metrics.additional.svg` |
+| `SPOTIFY_REFRESH_TOKEN` | Canonical repo: yes / forks: optional | Spotify OAuth refresh token for the music panel on `metrics.additional.svg` |
 | `WAKATIME_API_KEY` | Optional | WakaTime coding stats |
 
 The workflow uses `github.repository_owner` dynamically, so **no username edits are needed** in the workflow file itself.
+
+<Callout type="info" title="Metrics safety net">
+The metrics job now backs up the current SVGs, validates every render, rejects placeholder/error payloads, and restores the last valid asset before committing. That recovery path is a safety net—not the intended steady state for the canonical repo.
+</Callout>
 
 <Callout type="warn" title="Blog feed URL">
 If you have a blog, update the feed URL in the workflow file at `.github/workflows/profile-updater.yml` (search for `feed_list`). This is the one place outside `config.yaml` where a URL is hardcoded.
