@@ -174,7 +174,7 @@ jobs:
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
     runs-on: ubuntu-latest
-    needs: generate-assets
+    needs: update-starred-lists
     timeout-minutes: 20
     permissions:
       contents: write
@@ -183,6 +183,14 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           ref: ${{ github.head_ref || github.ref }}
+      - name: Set up Python 3.13
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13'
+      - name: Install uv
+        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+      - name: Install metrics helper dependencies
+        run: uv sync --locked
       - name: Preflight metrics auth gates
         id: metrics_auth
         env:
@@ -208,6 +216,26 @@ jobs:
           if [ "${has_spotify_tokens}" != "true" ]; then
             echo "::notice::Spotify secrets are incomplete; music metrics are disabled."
           fi
+      - name: Back up existing metrics assets
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/metrics-backups"
+
+          backup_metric() {
+            local source_path="$1"
+            local backup_path="$2"
+
+            if [ -f "$source_path" ]; then
+              cp "$source_path" "$backup_path"
+              echo "::notice::Backed up $(basename "$source_path") to ${backup_path}."
+            else
+              rm -f "$backup_path"
+              echo "::notice::No existing $(basename "$source_path") asset found to back up."
+            fi
+          }
+
+          backup_metric ./.github/assets/img/metrics.svg "$RUNNER_TEMP/metrics-backups/metrics.svg"
+          backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
@@ -242,27 +270,20 @@ jobs:
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
-      - name: Check personal metrics output
-        id: check_personal_metrics
+      - name: Validate personal metrics output
+        id: validate_personal_metrics
         if: ${{ always() }}
-        run: |
-          set -euo pipefail
-          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
-          if [ ! -f ./.github/assets/img/metrics.svg ]; then
-            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.svg || grep -Eiq "${ERROR_PATTERN}" ./.github/assets/img/metrics.svg; then
-            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
-          fi
+        continue-on-error: true
+        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
 
       - name: Personal metrics (fallback without repositories)
-        if: ${{ steps.personal_metrics.outcome != 'success' || steps.check_personal_metrics.outputs.needs_fallback == 'true' }}
+        if: ${{ steps.personal_metrics.outcome != 'success' || steps.validate_personal_metrics.outcome != 'success' }}
+        continue-on-error: true
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          token: ${{ github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: "header, activity, community, metadata"
           plugin_lines: yes
@@ -282,6 +303,14 @@ jobs:
           plugin_topics_limit: 15
           config_timezone: America/Los_Angeles
           config_padding: 10%
+      - name: Recover personal metrics output
+        id: recover_personal_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          uv run python -m scripts.metrics_svg recover \
+            ./.github/assets/img/metrics.svg \
+            --previous "$RUNNER_TEMP/metrics-backups/metrics.svg"
 
       - name: Personal metrics (additional)
         id: personal_metrics_additional
@@ -313,89 +342,52 @@ jobs:
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
 
-      - name: Check additional metrics output
-        id: check_additional_metrics
+      - name: Validate additional metrics output
+        id: validate_additional_metrics
         if: ${{ always() }}
-        run: |
-          set -euo pipefail
-          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
-          if [ ! -f ./.github/assets/img/metrics.additional.svg ]; then
-            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          elif ! grep -Eiq "<svg[^>]*>" ./.github/assets/img/metrics.additional.svg || ! grep -Eiq "</svg>" ./.github/assets/img/metrics.additional.svg || grep -Eiq "${ERROR_PATTERN}" ./.github/assets/img/metrics.additional.svg; then
-            echo "needs_fallback=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "needs_fallback=false" >> "$GITHUB_OUTPUT"
-          fi
+        continue-on-error: true
+        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
 
       - name: Personal metrics (additional fallback)
-        if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.check_additional_metrics.outputs.needs_fallback == 'true' }}
+        if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.validate_additional_metrics.outcome != 'success' }}
+        continue-on-error: true
         uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          token: ${{ github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          # Keep fallback focused on stable repository/star sections.
+          # Keep fallback on the most stable public GitHub sections only.
           plugin_music: no
           plugin_activity: no
-          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stargazers_charts: yes
-          plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
+          plugin_stargazers: no
+          plugin_stargazers_charts: no
+          plugin_stars: no
+          plugin_stars_limit: 0
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
+      - name: Recover additional metrics output
+        id: recover_additional_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          uv run python -m scripts.metrics_svg recover \
+            ./.github/assets/img/metrics.additional.svg \
+            --previous "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
 
-      - name: Sanitize final metrics SVG outputs
+      - name: Validate final metrics assets
+        id: validate_final_metrics
         if: ${{ always() }}
         run: |
           set -euo pipefail
-          ERROR_PATTERN="Insufficient token scopes|Repository and collaborations sections disabled|API error:[[:space:]]*(401|403)|Bad credentials|authentication( failed| error)?|forbidden|unauthorized|Unexpected error"
-
-          sanitize_svg() {
-            local file="$1"
-            local label="${2:-$(basename "$file")}"
-            local reason=""
-
-            if [ ! -e "$file" ]; then
-              reason="file does not exist"
-            elif [ ! -s "$file" ]; then
-              reason="file is empty (0 bytes)"
-            elif ! grep -Eiq "<svg[^>]*>" "$file"; then
-              reason="missing <svg> opening tag"
-            elif ! grep -Eiq "</svg>" "$file"; then
-              reason="missing </svg> closing tag"
-            elif grep -Eiq "${ERROR_PATTERN}" "$file"; then
-              reason="SVG contains auth/error message: $(grep -Eio "${ERROR_PATTERN}" "$file" | head -1)"
-            fi
-
-            if [ -n "$reason" ]; then
-              echo "::notice::Sanitizing ${label}: ${reason}. Replacing with placeholder SVG."
-              cat > "$file" <<'SVGEOF'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200" role="img" aria-label="Metrics unavailable">
-            <rect width="100%" height="100%" rx="8" fill="#0d1117"/>
-            <text x="50%" y="45%" fill="#c9d1d9" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="22">Metrics temporarily unavailable</text>
-            <text x="50%" y="65%" fill="#8b949e" dominant-baseline="middle" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14">Check workflow logs for details</text>
-          </svg>
-          SVGEOF
-              # Verify the placeholder is well-formed
-              if ! grep -q '</svg>' "$file"; then
-                echo "::error::Failed to write valid placeholder SVG to ${label}"
-                return 1
-              fi
-            else
-              echo "::notice::${label} passed SVG validation."
-            fi
-          }
-
-          sanitize_svg ./.github/assets/img/metrics.svg "metrics.svg"
-          sanitize_svg ./.github/assets/img/metrics.additional.svg "metrics.additional.svg"
+          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
+          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
 
       - name: Commit metrics outputs
-        if: ${{ always() }}
+        if: ${{ always() && steps.validate_final_metrics.outcome == 'success' }}
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(metrics): update generated metrics assets"
@@ -461,6 +453,20 @@ jobs:
             --output "$RUNNER_TEMP/history.json"
           cp "$RUNNER_TEMP/history.json" "$RUNNER_TEMP/living-art-stage/inputs/history.json"
 
+      - name: Resolve living-art runtime contract constants
+        run: |
+          uv run python - <<'PY'
+          import os
+          from scripts.art.timelapse import (
+              DEFAULT_PUBLISHED_MAX_FRAMES,
+              MIN_PUBLISHED_RUNTIME_MS,
+          )
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"LIVING_ART_MAX_FRAMES={DEFAULT_PUBLISHED_MAX_FRAMES}\n")
+              env_file.write(f"LIVING_ART_MIN_RUNTIME_MS={MIN_PUBLISHED_RUNTIME_MS}\n")
+          PY
+
       - name: Generate living-art outputs (canonical timelapse GIFs)
         env:
           OWNER: ${{ github.repository_owner }}
@@ -468,7 +474,49 @@ jobs:
           uv run python -m scripts.cli generate living-art \
             --profile "$OWNER" \
             --metrics-path "$RUNNER_TEMP/metrics.json" \
-            --history-path "$RUNNER_TEMP/history.json"
+            --history-path "$RUNNER_TEMP/history.json" \
+            --max-frames "$LIVING_ART_MAX_FRAMES"
+
+      - name: Validate living-art runtime and frame contracts
+        run: |
+          uv run python - <<'PY'
+          import os
+          from pathlib import Path
+          from PIL import Image, ImageSequence
+
+          max_frames = int(os.environ["LIVING_ART_MAX_FRAMES"])
+          min_runtime_ms = int(os.environ["LIVING_ART_MIN_RUNTIME_MS"])
+          gif_paths = sorted(Path(".github/assets/img").glob("living-*.gif"))
+          if not gif_paths:
+              raise SystemExit("No living-art GIF outputs found for contract validation")
+
+          print("Living-art runtime contract summary:")
+          for gif_path in gif_paths:
+              with Image.open(gif_path) as img:
+                  durations = []
+                  for frame_index, frame in enumerate(ImageSequence.Iterator(img)):
+                      raw_duration = frame.info.get("duration", 0)
+                      try:
+                          duration = int(raw_duration)
+                      except (TypeError, ValueError):
+                          duration = 0
+                      if duration <= 0:
+                          raise SystemExit(
+                              f"{gif_path.name} frame {frame_index} has invalid duration {raw_duration!r}"
+                          )
+                      durations.append(duration)
+              frame_count = len(durations)
+              runtime_ms = sum(durations)
+              print(f"- {gif_path.name}: frames={frame_count}, runtime_ms={runtime_ms}")
+              if frame_count > max_frames:
+                  raise SystemExit(
+                      f"{gif_path.name} has {frame_count} frames, exceeds max contract {max_frames}"
+                  )
+              if runtime_ms < min_runtime_ms:
+                  raise SystemExit(
+                      f"{gif_path.name} runtime {runtime_ms}ms below contract floor {min_runtime_ms}ms"
+                  )
+          PY
 
       - name: Stage living-art timelapse outputs and index
         if: ${{ always() }}
