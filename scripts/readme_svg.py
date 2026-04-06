@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from html import escape
 from pathlib import Path
 
@@ -83,7 +83,7 @@ class SvgCardTheme:
 
 
 LIGHT_THEME = SvgCardTheme(
-    bg="transparent",
+    bg="#ffffff",
     border="#d0d7de",
     title_color="#1f2328",
     text_color="#656d76",
@@ -93,7 +93,7 @@ LIGHT_THEME = SvgCardTheme(
 )
 
 DARK_THEME = SvgCardTheme(
-    bg="transparent",
+    bg="#0d1117",
     border="#30363d",
     title_color="#e6edf3",
     text_color="#8b949e",
@@ -129,6 +129,19 @@ LANGUAGE_COLORS: dict[str, str] = {
     "R": "#198CE7",
     "Jupyter Notebook": "#DA5B0B",
 }
+
+
+def sanitize_blog_title(title: str) -> str:
+    """Remove decorative trailing update markers while preserving real words."""
+    sanitized = re.sub(r"\.{2,}|[…]", " ", title)
+    sanitized = re.sub(r"\s+", " ", sanitized).strip()
+    sanitized = re.sub(
+        r"\bupdate\b[!.:;?]*\s*$",
+        "",
+        sanitized,
+        flags=re.IGNORECASE,
+    )
+    return re.sub(r"\s+", " ", sanitized).strip()
 
 
 # ---------------------------------------------------------------------------
@@ -193,11 +206,11 @@ def _shadow_filter_defs() -> str:
         ' flood-color="#000000" flood-opacity="0.06"/>'
         '<feDropShadow dx="0" dy="1" stdDeviation="2"'
         ' flood-color="#000000" flood-opacity="0.04"/>'
-        '</filter>'
+        "</filter>"
         '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
         '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
         '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
-        '</linearGradient>'
+        "</linearGradient>"
     )
 
 
@@ -213,9 +226,8 @@ def _card_shell(
     inner_rx = max(rx - 1, 0)
     return [
         f'<rect class="rc-bg" width="{w}" height="{h}" rx="{rx}"'
-        ' fill="transparent" filter="url(#shadow)" />',
-        f'<rect width="{w}" height="{h}" rx="{rx}"'
-        ' fill="url(#glass-grad)" />',
+        ' fill="var(--card-bg)" filter="url(#shadow)" />',
+        f'<rect width="{w}" height="{h}" rx="{rx}" fill="url(#glass-grad)" />',
         f'<rect class="rc-border" x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
         f' rx="{rx}" fill="none"'
         ' stroke-width="1" />',
@@ -259,7 +271,7 @@ class SvgCard:
     open_issues: int | None = None
 
 
-class SvgCardFamily(str, Enum):
+class SvgCardFamily(StrEnum):
     """Supported card families for legacy block rendering."""
 
     DEFAULT = "default"
@@ -304,9 +316,7 @@ class SvgBlockRenderer:
         cards = block.cards or (SvgCard(title="No items available."),)
         columns = max(1, block.columns)
         rows = (len(cards) + columns - 1) // columns
-        card_width = int(
-            (self.width - (self.padding * (columns + 1))) / columns
-        )
+        card_width = int((self.width - (self.padding * (columns + 1))) / columns)
         title_offset = 28 if block.show_title and block.title else 0
         canvas_padding = 16 if not block.transparent_canvas else 0
         height = (
@@ -353,14 +363,8 @@ class SvgBlockRenderer:
             column = idx % columns
             row = idx // columns
             x = self.padding + (column * (card_width + self.padding))
-            y = (
-                self.padding
-                + card_y_offset
-                + (row * (self.card_height + self.padding))
-            )
-            svg_lines.extend(
-                self._render_card(card, x, y, card_width, idx, family)
-            )
+            y = self.padding + card_y_offset + (row * (self.card_height + self.padding))
+            svg_lines.extend(self._render_card(card, x, y, card_width, idx, family))
 
         svg_lines.append("</svg>")
         return "\n".join(svg_lines)
@@ -370,46 +374,51 @@ class SvgBlockRenderer:
     def _build_css(self) -> str:  # noqa: PLR6301
         lt = LIGHT_THEME
         dk = DARK_THEME
-        # Use direct colors — GitHub SVG sanitizer doesn't resolve var().
         return "\n".join(
             [
-                f".rc-bg {{ fill: {lt.bg}; }}",
-                f".rc-border {{ stroke: {lt.border}; }}",
-                f".section-title {{ fill: {lt.title_color};"
+                ":root {",
+                f"  --canvas-bg: {lt.bg};",
+                f"  --card-bg: {lt.bg};",
+                f"  --card-border: {lt.border};",
+                f"  --title-color: {lt.title_color};",
+                f"  --text-color: {lt.text_color};",
+                f"  --meta-color: {lt.meta_color};",
+                f"  --accent: {lt.accent};",
+                f"  --link-color: {lt.link_color};",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                f"  --canvas-bg: {dk.bg};",
+                f"  --card-bg: {dk.bg};",
+                f"  --card-border: {dk.border};",
+                f"  --title-color: {dk.title_color};",
+                f"  --text-color: {dk.text_color};",
+                f"  --meta-color: {dk.meta_color};",
+                f"  --accent: {dk.accent};",
+                f"  --link-color: {dk.link_color};",
+                "}}",
+                ".rc-bg { fill: var(--card-bg); }",
+                ".rc-border { stroke: var(--card-border); }",
+                ".section-title { fill: var(--title-color);"
                 f" font: 700 14px {FONT_FAMILY}; }}",
-                f".card-title {{ fill: {lt.title_color};"
+                ".card-title { fill: var(--title-color);"
                 f" font: 700 16px {FONT_FAMILY}; }}",
-                f".card-line {{ fill: {lt.text_color};"
+                ".card-line { fill: var(--text-color);"
                 f" font: 400 14px {FONT_FAMILY}; }}",
-                f".card-meta {{ fill: {lt.meta_color};"
+                ".card-meta { fill: var(--meta-color);"
                 f" font: 400 12px {FONT_FAMILY}; }}",
-                f".card-kicker {{ fill: {lt.meta_color};"
+                ".card-kicker { fill: var(--meta-color);"
                 f" font: 700 11px {FONT_FAMILY};"
                 " letter-spacing: 0.08em; text-transform: uppercase; }",
-                f".card-icon {{ fill: {lt.title_color};"
+                ".card-icon { fill: var(--title-color);"
                 f" font: 700 12px {FONT_FAMILY}; }}",
-                f".card-badge {{ fill: {lt.title_color};"
+                ".card-badge { fill: var(--title-color);"
                 f" font: 700 12px {FONT_FAMILY};"
                 " letter-spacing: 0.01em; }",
-                f".sparkline {{ fill: none; stroke: {lt.accent};"
+                ".sparkline { fill: none; stroke: var(--accent);"
                 " stroke-width: 2; opacity: 0.88; }",
-                f".lang-dot {{ stroke: {lt.border}; stroke-width: 1; }}",
-                f".lang-label {{ fill: {lt.meta_color};"
+                ".lang-dot { stroke: var(--card-border); stroke-width: 1; }",
+                ".lang-label { fill: var(--meta-color);"
                 f" font: 400 12px {FONT_FAMILY}; }}",
-                "@media (prefers-color-scheme: dark) {",
-                f"  .rc-bg {{ fill: {dk.bg}; }}",
-                f"  .rc-border {{ stroke: {dk.border}; }}",
-                f"  .section-title {{ fill: {dk.title_color}; }}",
-                f"  .card-title {{ fill: {dk.title_color}; }}",
-                f"  .card-line {{ fill: {dk.text_color}; }}",
-                f"  .card-meta {{ fill: {dk.meta_color}; }}",
-                f"  .card-kicker {{ fill: {dk.meta_color}; }}",
-                f"  .card-icon {{ fill: {dk.title_color}; }}",
-                f"  .card-badge {{ fill: {dk.title_color}; }}",
-                f"  .sparkline {{ stroke: {dk.accent}; }}",
-                f"  .lang-dot {{ stroke: {dk.border}; }}",
-                f"  .lang-label {{ fill: {dk.meta_color}; }}",
-                "}",
             ]
         )
 
@@ -426,9 +435,7 @@ class SvgBlockRenderer:
     ) -> list[str]:
         accent = self._normalize_hex_color(card.accent)
         is_blog_family = "blog" in family
-        lines: list[str] = [
-            f'<g class="card" transform="translate({x},{y})">'
-        ]
+        lines: list[str] = [f'<g class="card" transform="translate({x},{y})">']
         if card.url:
             lines.append(
                 f'<a href="{self._esc(card.url)}"'
@@ -438,7 +445,7 @@ class SvgBlockRenderer:
         # Card background rect — gh-card style
         lines.append(
             f'<rect width="{width}" height="{self.card_height}"'
-            ' rx="6" fill="transparent"'
+            ' rx="6" fill="var(--card-bg)"'
             ' stroke="var(--card-border)" stroke-width="1" />'
         )
 
@@ -524,10 +531,7 @@ class SvgBlockRenderer:
 
         # Title
         if is_blog_family:
-            sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
-            sanitized_title = re.sub(
-                r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE
-            ).strip()
+            sanitized_title = sanitize_blog_title(card.title)
             lines.append(
                 f'<text class="card-title" x="{inner_x}" y="{title_y}">'
                 f'<tspan x="{inner_x}">'
@@ -554,11 +558,7 @@ class SvgBlockRenderer:
                     visible_lines.append(str(t))
 
         for line in visible_lines[:3]:
-            display = (
-                line
-                if is_blog_family
-                else self._truncate(line, 72)
-            )
+            display = line if is_blog_family else self._truncate(line, 72)
             lines.append(
                 f'<text class="card-line" x="{inner_x}" y="{text_y}">'
                 f"{self._esc(display)}</text>"
@@ -579,9 +579,7 @@ class SvgBlockRenderer:
         if card.meta:
             bottom_y = self.card_height - 14
             meta_x = inner_x
-            meta_x = self._render_bottom_bar(
-                lines, card.meta, meta_x, bottom_y
-            )
+            meta_x = self._render_bottom_bar(lines, card.meta, meta_x, bottom_y)
 
         if card.url:
             lines.append("</a>")
@@ -652,12 +650,9 @@ class SvgBlockRenderer:
             remaining.append(stripped)
 
         if remaining:
-            joined = " \u00b7 ".join(
-                self._truncate(r, 28) for r in remaining
-            )
+            joined = " \u00b7 ".join(self._truncate(r, 28) for r in remaining)
             lines.append(
-                f'<text class="card-meta" x="{x}" y="{y}">'
-                f"{self._esc(joined)}</text>"
+                f'<text class="card-meta" x="{x}" y="{y}">{self._esc(joined)}</text>'
             )
             x += len(joined) * 7
 
@@ -763,15 +758,15 @@ class SvgRepoCardRenderer:
         has_thumb = bool(card.background_image)
         thumb_w, thumb_h = (80, 48) if has_thumb else (0, 0)
         px = 20  # left padding
-        sparkline_data = card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
-        text_px_w = (w - thumb_w - 36 - px) if has_thumb else (w - px - 20)
-        raw_desc = " ".join(
-            ln.strip() for ln in (card.lines or ()) if ln.strip()
+        sparkline_data = (
+            card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
         )
+        text_px_w = (w - thumb_w - 36 - px) if has_thumb else (w - px - 20)
+        raw_desc = " ".join(ln.strip() for ln in (card.lines or ()) if ln.strip())
         bar_y = h - 30
         show_sparkline = False
         layout: tuple[list[str], list[str], int, int] | None = None
-        for try_sparkline in ([True, False] if sparkline_data else [False]):
+        for try_sparkline in [True, False] if sparkline_data else [False]:
             text_bottom = (h - 64) if try_sparkline else (bar_y - 12)
             available_height = max(36, text_bottom - 16)
             candidate, fits = self._fit_copy_layout(
@@ -791,7 +786,9 @@ class SvgRepoCardRenderer:
         title_x = px + 24
         title_y = 16 + title_size
         title_line_height = title_size + 4
-        desc_y = title_y + (len(title_lines) * title_line_height) + (10 if desc_lines else 0)
+        desc_y = (
+            title_y + (len(title_lines) * title_line_height) + (10 if desc_lines else 0)
+        )
         desc_line_height = desc_size + 3
 
         lines: list[str] = [
@@ -816,7 +813,7 @@ class SvgRepoCardRenderer:
                 f'<clipPath id="thumb-clip">'
                 f'<rect x="{thumb_x}" y="18" '
                 f'width="{thumb_w}" height="{thumb_h}" rx="8" />'
-                f'</clipPath>'
+                f"</clipPath>"
             )
         if show_sparkline:
             lines.append(
@@ -826,14 +823,20 @@ class SvgRepoCardRenderer:
                 ' stop-opacity="0.18" />'
                 '<stop offset="100%" stop-color="var(--spark-stroke)"'
                 ' stop-opacity="0" />'
-                '</linearGradient>'
+                "</linearGradient>"
             )
         lines.append("</defs>")
 
         accent_color = lang_color or "var(--spark-stroke)"
-        lines.extend(_card_shell(
-            w, h, rx=10, accent_fill=accent_color, clip_id="card-clip",
-        ))
+        lines.extend(
+            _card_shell(
+                w,
+                h,
+                rx=10,
+                accent_fill=accent_color,
+                clip_id="card-clip",
+            )
+        )
 
         if has_thumb:
             thumb_x = w - thumb_w - 18
@@ -856,20 +859,16 @@ class SvgRepoCardRenderer:
             spark_h = 28
             spark_y = h - 56
             spark_path = self._smooth_sparkline(
-                sparkline_data, width=spark_w, height=spark_h,
+                sparkline_data,
+                width=spark_w,
+                height=spark_h,
             )
             if spark_path:
-                area = (
-                    f"{spark_path} "
-                    f"L{spark_w:.1f},{spark_h:.1f} L0,{spark_h:.1f} Z"
-                )
+                area = f"{spark_path} L{spark_w:.1f},{spark_h:.1f} L0,{spark_h:.1f} Z"
                 lines.append(
-                    f'<g transform="translate({px},{spark_y})"'
-                    ' class="sparkline-group">'
+                    f'<g transform="translate({px},{spark_y})" class="sparkline-group">'
                 )
-                lines.append(
-                    f'<path d="{area}" fill="url(#spark-grad)" />'
-                )
+                lines.append(f'<path d="{area}" fill="url(#spark-grad)" />')
                 lines.append(
                     f'<path d="{spark_path}"'
                     ' fill="none" stroke="var(--spark-stroke)"'
@@ -885,7 +884,8 @@ class SvgRepoCardRenderer:
         )
         for index, line_text in enumerate(title_lines):
             lines.append(
-                f'<text class="rc-title" x="{title_x}" y="{title_y + (index * title_line_height)}"'
+                f'<text class="rc-title" x="{title_x}" '
+                f'y="{title_y + (index * title_line_height)}"'
                 f' style="font: 600 {title_size}px {FONT_FAMILY};">'
                 f"{esc(line_text, quote=True)}</text>"
             )
@@ -907,7 +907,11 @@ class SvgRepoCardRenderer:
         bar_w = min(w - 40 - license_reserve, 340)
         if card.languages and sum(card.languages.values()) > 0:
             self._render_lang_bar(
-                lines, card.languages, px, bar_y, bar_w,
+                lines,
+                card.languages,
+                px,
+                bar_y,
+                bar_w,
             )
         elif lang_name and lang_color:
             lines.append(
@@ -930,53 +934,43 @@ class SvgRepoCardRenderer:
     def _build_css(self, accent: str | None = None) -> str:
         lt = LIGHT_THEME
         dk = DARK_THEME
-        ac = accent or lt.accent
-        # CSS custom properties for elements that use var() references
-        # (repo icon fill, thumb border, sparkline gradient).
-        # Class-based rules provide the primary dark-mode switch;
-        # :root variables cover inline var() usages.
+        light_accent = accent or lt.accent
+        dark_accent = accent or dk.accent
         return "\n".join(
             [
-                f":root {{",
-                f"  --card-bg: transparent;",
+                ":root {",
+                f"  --card-bg: {lt.bg};",
                 f"  --card-border: {lt.border};",
-                f"  --title-color: {lt.title_color};",
+                f"  --title-color: {lt.link_color};",
                 f"  --text-color: {lt.text_color};",
                 f"  --meta-color: {lt.meta_color};",
-                f"  --accent: {lt.accent};",
-                f"  --spark-stroke: {ac};",
-                f"}}",
-                f"@media (prefers-color-scheme: dark) {{ :root {{",
-                f"  --card-bg: transparent;",
+                f"  --stat-color: {lt.meta_color};",
+                f"  --accent: {light_accent};",
+                f"  --spark-stroke: {light_accent};",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                f"  --card-bg: {dk.bg};",
                 f"  --card-border: {dk.border};",
-                f"  --title-color: {dk.title_color};",
+                f"  --title-color: {dk.link_color};",
                 f"  --text-color: {dk.text_color};",
                 f"  --meta-color: {dk.meta_color};",
-                f"  --accent: {dk.accent};",
-                f"  --spark-stroke: {dk.accent};",
-                f"}}}}",
-                f".rc-bg {{ fill: transparent; }}",
-                f".rc-border {{ stroke: {lt.border}; }}",
-                f".rc-title {{ fill: {lt.link_color};"
+                f"  --stat-color: {dk.meta_color};",
+                f"  --accent: {dark_accent};",
+                f"  --spark-stroke: {dark_accent};",
+                "}}",
+                ".rc-bg { fill: var(--card-bg); }",
+                ".rc-border { stroke: var(--card-border); }",
+                ".rc-title { fill: var(--title-color);"
                 f" font: 600 17px {FONT_FAMILY}; }}",
-                f".rc-desc {{ fill: {lt.text_color};"
+                ".rc-desc { fill: var(--text-color);"
                 f" font: 400 13px {FONT_FAMILY}; }}",
-                f".rc-meta {{ fill: {lt.meta_color};"
+                ".rc-meta { fill: var(--stat-color);"
                 f" font: 400 12px {FONT_FAMILY}; }}",
                 ".rc-lang-dot { stroke: none; }",
-                f".rc-lang-label {{ fill: {lt.meta_color};"
+                ".rc-lang-label { fill: var(--meta-color);"
                 f" font: 400 12px {FONT_FAMILY}; }}",
-                f".sparkline {{ fill: none; stroke: {ac};"
+                ".sparkline { fill: none; stroke: var(--spark-stroke);"
                 " stroke-width: 2; opacity: 0.88; }",
-                "@media (prefers-color-scheme: dark) {",
-                f"  .rc-bg {{ fill: transparent; }}",
-                f"  .rc-border {{ stroke: {dk.border}; }}",
-                f"  .rc-title {{ fill: {dk.link_color}; }}",
-                f"  .rc-desc {{ fill: {dk.text_color}; }}",
-                f"  .rc-meta {{ fill: {dk.meta_color}; }}",
-                f"  .rc-lang-label {{ fill: {dk.meta_color}; }}",
-                f"  .sparkline {{ stroke: {dk.accent}; }}",
-                "}",
             ]
         )
 
@@ -990,7 +984,7 @@ class SvgRepoCardRenderer:
         """Render star/fork counts right-aligned at (right_x, y)."""
         esc = escape
         items: list[tuple[str, str]] = []  # (icon_path, count_text)
-        for item in (meta or ()):
+        for item in meta or ():
             stripped = item.strip()
             star_match = re.match(r"[★☆]\s*(.+)", stripped)
             if star_match:
@@ -1011,8 +1005,7 @@ class SvgRepoCardRenderer:
             text_w = int(len(ct) * 7)
             x -= text_w
             lines.append(
-                f'<text class="rc-meta" x="{x}" y="{y}">'
-                f"{esc(ct, quote=True)}</text>"
+                f'<text class="rc-meta" x="{x}" y="{y}">{esc(ct, quote=True)}</text>'
             )
             x -= 18
             vb = "0 0 16 16"
@@ -1041,7 +1034,8 @@ class SvgRepoCardRenderer:
             has_license = bool(card.license_spdx and card.license_spdx != "NOASSERTION")
             max_langs = 2 if has_license else 3
             top = sorted(
-                card.languages.items(), key=lambda kv: kv[1],
+                card.languages.items(),
+                key=lambda kv: kv[1],
                 reverse=True,
             )[:max_langs]
             for lname, lbytes in top:
@@ -1073,7 +1067,6 @@ class SvgRepoCardRenderer:
             lt = card.license_spdx
             text_w = int(len(lt) * 7)
             icon_w = 18
-            license_total_w = icon_w + text_w
             lx_text = self.width - 20 - text_w
             lx_icon = lx_text - icon_w
             # Only render if there's enough gap from the language dots
@@ -1103,7 +1096,9 @@ class SvgRepoCardRenderer:
         if total <= 0:
             return
         sorted_langs = sorted(
-            languages.items(), key=lambda kv: kv[1], reverse=True,
+            languages.items(),
+            key=lambda kv: kv[1],
+            reverse=True,
         )
         # Clip to card shape
         clip_id = "lang-bar-clip"
@@ -1127,9 +1122,10 @@ class SvgRepoCardRenderer:
     # -- helpers -----------------------------------------------------------
 
     def _extract_language(
-        self, meta: tuple[str, ...] | None,
+        self,
+        meta: tuple[str, ...] | None,
     ) -> tuple[str | None, str | None]:
-        for item in (meta or ()):
+        for item in meta or ():
             if item.strip().startswith("lang:"):
                 lang = item.strip()[5:].strip()
                 color = LANGUAGE_COLORS.get(lang, "#8b949e")
@@ -1181,7 +1177,9 @@ class SvgRepoCardRenderer:
 
         title_lines, desc_lines, title_size, desc_size = best
         title_height = len(title_lines) * (title_size + 4)
-        remaining_height = max(0, available_height - title_height - (10 if desc_lines else 0))
+        remaining_height = max(
+            0, available_height - title_height - (10 if desc_lines else 0)
+        )
         max_desc_lines = remaining_height // (desc_size + 3)
         if max_desc_lines <= 0:
             desc_lines = []
@@ -1224,9 +1222,7 @@ class SvgRepoCardRenderer:
             cp2x = p2[0] - (p3[0] - p1[0]) / 6
             cp2y = p2[1] - (p3[1] - p1[1]) / 6
             parts.append(
-                f"C{cp1x:.1f},{cp1y:.1f}"
-                f" {cp2x:.1f},{cp2y:.1f}"
-                f" {p2[0]:.1f},{p2[1]:.1f}"
+                f"C{cp1x:.1f},{cp1y:.1f} {cp2x:.1f},{cp2y:.1f} {p2[0]:.1f},{p2[1]:.1f}"
             )
         return " ".join(parts)
 
@@ -1254,13 +1250,8 @@ class SvgBlogCardRenderer:
         hero_w, hero_h = (110, 68) if has_hero else (0, 0)
         px = 20
         text_w = (w - hero_w - 56) if has_hero else (w - 40)
-        sanitized_title = re.sub(r"\.{2,}|[…]", "", card.title)
-        sanitized_title = re.sub(
-            r"\bupdate\b", "", sanitized_title, flags=re.IGNORECASE,
-        ).strip()
-        raw = " ".join(
-            ln.strip() for ln in (card.lines or ()) if ln.strip()
-        )
+        sanitized_title = sanitize_blog_title(card.title)
+        raw = " ".join(ln.strip() for ln in (card.lines or ()) if ln.strip())
         title_size = 16
         desc_size = 13
         title_line_height = title_size + 4
@@ -1281,7 +1272,11 @@ class SvgBlogCardRenderer:
         )
         title_top = 18
         title_first_y = title_top + title_size
-        summary_y = title_first_y + (len(title_lines) * title_line_height) + (8 if wrapped else 0)
+        summary_y = (
+            title_first_y
+            + (len(title_lines) * title_line_height)
+            + (8 if wrapped else 0)
+        )
         content_bottom = summary_y + (max(0, len(wrapped) - 1) * desc_line_height)
         hero_bottom = 18 + hero_h if has_hero else 0
         footer_y = max(content_bottom + 28, hero_bottom + 26, self.height - 14)
@@ -1304,7 +1299,7 @@ class SvgBlogCardRenderer:
             + '<linearGradient id="footer-div-grad" x1="0" y1="0" x2="1" y2="0">'
             '<stop offset="0%" stop-color="var(--accent)" stop-opacity="0.5" />'
             '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />'
-            '</linearGradient>'
+            "</linearGradient>"
         )
         if has_hero:
             hx = w - hero_w - 18
@@ -1371,36 +1366,34 @@ class SvgBlogCardRenderer:
 
     def _css(self) -> str:
         lt, dk = LIGHT_THEME, DARK_THEME
-        return "\n".join([
-            ":root {",
-            "  --card-bg: transparent;",
-            f"  --card-border: {lt.border};",
-            f"  --title-color: {lt.link_color};",
-            f"  --text-color: {lt.text_color};",
-            f"  --meta-color: {lt.meta_color};",
-            f"  --accent: {lt.accent};",
-            "}",
-            "@media (prefers-color-scheme: dark) { :root {",
-            "  --card-bg: transparent;",
-            f"  --card-border: {dk.border};",
-            f"  --title-color: {dk.link_color};",
-            f"  --text-color: {dk.text_color};",
-            f"  --meta-color: {dk.meta_color};",
-            f"  --accent: {dk.accent};",
-            "}}",
-            f".rc-bg {{ fill: transparent; }}",
-            f".rc-border {{ stroke: {lt.border}; }}",
-            "@media (prefers-color-scheme: dark) {",
-            f"  .rc-bg {{ fill: transparent; }}",
-            f"  .rc-border {{ stroke: {dk.border}; }}",
-            "}",
-            f".blog-title {{ fill: var(--title-color);"
-            f" font: 600 16px {FONT_FAMILY}; }}",
-            f".blog-desc {{ fill: var(--text-color);"
-            f" font: 400 13px {FONT_FAMILY}; }}",
-            f".blog-meta {{ fill: var(--meta-color);"
-            f" font: 400 12px {FONT_FAMILY}; }}",
-        ])
+        return "\n".join(
+            [
+                ":root {",
+                f"  --card-bg: {lt.bg};",
+                f"  --card-border: {lt.border};",
+                f"  --title-color: {lt.link_color};",
+                f"  --text-color: {lt.text_color};",
+                f"  --meta-color: {lt.meta_color};",
+                f"  --accent: {lt.accent};",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                f"  --card-bg: {dk.bg};",
+                f"  --card-border: {dk.border};",
+                f"  --title-color: {dk.link_color};",
+                f"  --text-color: {dk.text_color};",
+                f"  --meta-color: {dk.meta_color};",
+                f"  --accent: {dk.accent};",
+                "}}",
+                ".rc-bg { fill: var(--card-bg); }",
+                ".rc-border { stroke: var(--card-border); }",
+                f".blog-title {{ fill: var(--title-color);"
+                f" font: 600 16px {FONT_FAMILY}; }}",
+                f".blog-desc {{ fill: var(--text-color);"
+                f" font: 400 13px {FONT_FAMILY}; }}",
+                f".blog-meta {{ fill: var(--meta-color);"
+                f" font: 400 12px {FONT_FAMILY}; }}",
+            ]
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -1470,7 +1463,7 @@ class SvgConnectCardRenderer:
             'stop-opacity="0.18" />'
             f'<stop offset="100%" stop-color="{esc(accent, quote=True)}" '
             'stop-opacity="0" />'
-            '</radialGradient>'
+            "</radialGradient>"
         )
         if icon_uri:
             lines.append(
@@ -1481,14 +1474,17 @@ class SvgConnectCardRenderer:
         lines.append("</defs>")
 
         # Shell
-        lines.extend(_card_shell(
-            w, h, rx=12, accent_fill=esc(accent, quote=True),
-        ))
+        lines.extend(
+            _card_shell(
+                w,
+                h,
+                rx=12,
+                accent_fill=esc(accent, quote=True),
+            )
+        )
 
         # Brand icon glow
-        lines.append(
-            f'<circle cx="{cx}" cy="42" r="34" fill="url(#icon-glow)" />'
-        )
+        lines.append(f'<circle cx="{cx}" cy="42" r="34" fill="url(#icon-glow)" />')
 
         # Brand icon — large, centered, rounded-square clip
         if icon_uri:
@@ -1511,32 +1507,30 @@ class SvgConnectCardRenderer:
 
     def _css(self) -> str:
         lt, dk = LIGHT_THEME, DARK_THEME
-        return "\n".join([
-            ":root {",
-            "  --card-bg: transparent;",
-            f"  --card-border: {lt.border};",
-            f"  --title-color: {lt.title_color};",
-            f"  --text-color: {lt.text_color};",
-            f"  --meta-color: {lt.meta_color};",
-            f"  --accent: {lt.accent};",
-            "}",
-            "@media (prefers-color-scheme: dark) { :root {",
-            "  --card-bg: transparent;",
-            f"  --card-border: {dk.border};",
-            f"  --title-color: {dk.title_color};",
-            f"  --text-color: {dk.text_color};",
-            f"  --meta-color: {dk.meta_color};",
-            f"  --accent: {dk.accent};",
-            "}}",
-            f".rc-bg {{ fill: transparent; }}",
-            f".rc-border {{ stroke: {lt.border}; }}",
-            "@media (prefers-color-scheme: dark) {",
-            f"  .rc-bg {{ fill: transparent; }}",
-            f"  .rc-border {{ stroke: {dk.border}; }}",
-            "}",
-            f".con-title {{ fill: var(--title-color);"
-            f" font: 600 14px {FONT_FAMILY}; }}",
-        ])
+        return "\n".join(
+            [
+                ":root {",
+                f"  --card-bg: {lt.bg};",
+                f"  --card-border: {lt.border};",
+                f"  --title-color: {lt.title_color};",
+                f"  --text-color: {lt.text_color};",
+                f"  --meta-color: {lt.meta_color};",
+                f"  --accent: {lt.accent};",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                f"  --card-bg: {dk.bg};",
+                f"  --card-border: {dk.border};",
+                f"  --title-color: {dk.title_color};",
+                f"  --text-color: {dk.text_color};",
+                f"  --meta-color: {dk.meta_color};",
+                f"  --accent: {dk.accent};",
+                "}}",
+                ".rc-bg { fill: var(--card-bg); }",
+                ".rc-border { stroke: var(--card-border); }",
+                f".con-title {{ fill: var(--title-color);"
+                f" font: 600 14px {FONT_FAMILY}; }}",
+            ]
+        )
 
 
 # ---------------------------------------------------------------------------

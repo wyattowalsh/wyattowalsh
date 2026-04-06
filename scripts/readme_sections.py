@@ -32,6 +32,7 @@ from .readme_svg import (
     SvgCardFamily,
     SvgConnectCardRenderer,
     SvgRepoCardRenderer,
+    sanitize_blog_title,
 )
 from .utils import get_logger
 
@@ -91,7 +92,9 @@ def _build_remote_get_request(
     context: str,
 ) -> Request | None:
     if not _is_safe_remote_url(url):
-        logger.warning("Blocked unsafe URL for {context}: {url}", context=context, url=url)
+        logger.warning(
+            "Blocked unsafe URL for {context}: {url}", context=context, url=url
+        )
         return None
     return Request(url=url, headers=headers, method="GET")
 
@@ -147,9 +150,7 @@ class GitHubRepoClient:
             with urlopen(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
-            logger.warning(
-                f"Failed to fetch repo metadata for {full_name}: {exc}"
-            )
+            logger.warning(f"Failed to fetch repo metadata for {full_name}: {exc}")
             return None
 
         return RepoMetadata(
@@ -162,16 +163,23 @@ class GitHubRepoClient:
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
             created_at=payload.get("created_at") or None,
-            size_kb=int(payload.get("size", 0)) if payload.get("size") is not None else None,
-            forks=int(payload.get("forks_count", 0)) if payload.get("forks_count") is not None else None,
+            size_kb=int(payload.get("size", 0))
+            if payload.get("size") is not None
+            else None,
+            forks=int(payload.get("forks_count", 0))
+            if payload.get("forks_count") is not None
+            else None,
             language=payload.get("language") or None,
             open_graph_image_url=payload.get("open_graph_image_url") or None,
-            open_issues=int(payload.get("open_issues_count", 0)) if payload.get("open_issues_count") is not None else None,
+            open_issues=int(payload.get("open_issues_count", 0))
+            if payload.get("open_issues_count") is not None
+            else None,
             license_spdx=(payload.get("license") or {}).get("spdx_id") or None,
         )
 
     def fetch_repo_languages(
-        self, full_name: str,
+        self,
+        full_name: str,
     ) -> dict[str, int] | None:
         """Fetch language byte-count breakdown for owner/repo."""
         request = _build_remote_get_request(
@@ -186,7 +194,9 @@ class GitHubRepoClient:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
             logger.warning(
-                "Failed to fetch languages for %s: %s", full_name, exc,
+                "Failed to fetch languages for %s: %s",
+                full_name,
+                exc,
             )
             return None
         if isinstance(payload, dict) and payload:
@@ -223,13 +233,21 @@ class BlogFeedClient:
             with urlopen(request, timeout=self.timeout) as response:
                 body = response.read()
         except Exception as exc:  # pragma: no cover - network path
-            logger.warning("Failed to fetch blog feed {feed_url}: {exc}", feed_url=feed_url, exc=exc)
+            logger.warning(
+                "Failed to fetch blog feed {feed_url}: {exc}",
+                feed_url=feed_url,
+                exc=exc,
+            )
             return []
 
         try:
             root = DefusedET.fromstring(body)
         except DefusedET.ParseError as exc:
-            logger.warning("Invalid blog feed XML from {feed_url}: {exc}", feed_url=feed_url, exc=exc)
+            logger.warning(
+                "Invalid blog feed XML from {feed_url}: {exc}",
+                feed_url=feed_url,
+                exc=exc,
+            )
             return []
 
         posts = self._parse_rss_items(root)
@@ -251,9 +269,13 @@ class BlogFeedClient:
                 enc_type = (enc.get("type") or "").strip().lower()
                 if enc_url and enc_type.startswith("image/"):
                     image_url = enc_url
-            posts.append(BlogPost(
-                title=title, url=link, image_url=image_url,
-            ))
+            posts.append(
+                BlogPost(
+                    title=title,
+                    url=link,
+                    image_url=image_url,
+                )
+            )
         return posts
 
     def _parse_atom_entries(self, root: Element) -> list[BlogPost]:
@@ -280,7 +302,8 @@ class StarHistoryClient:
     _QUERY = (
         "query($owner:String!, $name:String!, $after:String) {"
         "  repository(owner:$owner, name:$name) {"
-        "    stargazers(first:100, after:$after, orderBy:{field:STARRED_AT, direction:ASC}) {"
+        "    stargazers(first:100, after:$after, "
+        "orderBy:{field:STARRED_AT, direction:ASC}) {"
         "      totalCount"
         "      edges { starredAt cursor }"
         "      pageInfo { hasNextPage endCursor }"
@@ -322,7 +345,9 @@ class StarHistoryClient:
             if cursor is not None:
                 variables["after"] = cursor
 
-            body = json.dumps({"query": self._QUERY, "variables": variables}).encode("utf-8")
+            body = json.dumps({"query": self._QUERY, "variables": variables}).encode(
+                "utf-8"
+            )
             request = Request(
                 url=self._GRAPHQL_URL,
                 data=body,
@@ -388,7 +413,9 @@ class StarHistoryClient:
         ts_idx = 0
         for b in range(sample):
             bin_end = t_start.timestamp() + (b + 1) * bin_width
-            while ts_idx < len(timestamps) and timestamps[ts_idx].timestamp() <= bin_end:
+            while (
+                ts_idx < len(timestamps) and timestamps[ts_idx].timestamp() <= bin_end
+            ):
                 ts_idx += 1
             sampled.append(ts_idx)
 
@@ -404,11 +431,17 @@ class StarHistoryClient:
         if not token:
             try:
                 import subprocess
-                token = subprocess.check_output(
-                    ["gh", "auth", "token"],
-                    stderr=subprocess.DEVNULL,
-                    timeout=5,
-                ).decode().strip() or None
+
+                token = (
+                    subprocess.check_output(
+                        ["gh", "auth", "token"],
+                        stderr=subprocess.DEVNULL,
+                        timeout=5,
+                    )
+                    .decode()
+                    .strip()
+                    or None
+                )
             except Exception:
                 pass
         if token:
@@ -496,6 +529,7 @@ class BlogMetadataClient:
                 return match.group(1).strip()
         return None
 
+
 class ReadmeSectionGenerator:
     """Renders and injects dynamic README sections between markers."""
 
@@ -530,7 +564,10 @@ class ReadmeSectionGenerator:
         """Render dynamic sections and inject them into README."""
         readme_path = Path(self.settings.readme_path)
         if not readme_path.exists():
-            logger.warning("README not found at {readme_path}, skipping injection", readme_path=readme_path)
+            logger.warning(
+                "README not found at {readme_path}, skipping injection",
+                readme_path=readme_path,
+            )
             return readme_path
 
         content = readme_path.read_text(encoding="utf-8")
@@ -577,6 +614,39 @@ class ReadmeSectionGenerator:
 
     def _render_top_badges(self) -> str:
         svg_cards: list[SvgCard] = []
+        if not self.settings.social_links:
+            fallback_card: SvgCard | None = None
+            if self.settings.featured_repos:
+                owner = (
+                    self.settings.featured_repos[0].full_name.split("/", 1)[0].strip()
+                )
+                if owner:
+                    fallback_card = SvgCard(
+                        title="GitHub",
+                        url=f"https://github.com/{owner}",
+                        icon="GH",
+                        accent="181717",
+                    )
+            elif self.settings.blog_feed_url:
+                parsed_feed = urlparse(self.settings.blog_feed_url)
+                host = parsed_feed.netloc.replace("www.", "")
+                if host and parsed_feed.scheme in {"http", "https"}:
+                    fallback_card = SvgCard(
+                        title=host,
+                        url=f"{parsed_feed.scheme}://{host}",
+                        accent="334155",
+                    )
+            if fallback_card is not None:
+                parsed = urlparse(fallback_card.url or "")
+                host = parsed.netloc.replace("www.", "")
+                fallback_card = self._set_card_icon_data_uri(
+                    fallback_card,
+                    url=fallback_card.url,
+                    host=host,
+                    label=fallback_card.title,
+                    accent=fallback_card.accent,
+                )
+                svg_cards.append(fallback_card)
         for link in self.settings.social_links:
             parsed = urlparse(link.url)
             host = parsed.netloc.replace("www.", "")
@@ -603,7 +673,6 @@ class ReadmeSectionGenerator:
             )
             svg_cards.append(card)
         # Render per-card SVGs
-        card_renderer = SvgConnectCardRenderer(width=140, height=130)
         card_embeds: list[tuple[str, str]] = []
 
         if self._svg_section_enabled("top_contact"):
@@ -611,7 +680,10 @@ class ReadmeSectionGenerator:
                 output_dir=self.settings.svg.output_dir,
             )
             for card in svg_cards:
-                asset = f"connect-{self._slugify_asset_segment(card.title, fallback='link')}"
+                asset = (
+                    "connect-"
+                    f"{self._slugify_asset_segment(card.title, fallback='link')}"
+                )
                 writer.write(
                     asset_name=asset,
                     svg_content=self._render_card_svg_asset(
@@ -622,10 +694,7 @@ class ReadmeSectionGenerator:
                         section_title="Connect",
                     ),
                 )
-                src = (
-                    Path(self.settings.svg.output_dir)
-                    / f"{asset}.svg"
-                ).as_posix()
+                src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
                 card_embeds.append((card.url or "#", src))
 
         result: list[str] = []
@@ -637,9 +706,7 @@ class ReadmeSectionGenerator:
                     f'<img src="{escape(src)}" width="140"'
                     f' loading="lazy"/></a>'
                 )
-            result.append(
-                '<p align="center">' + "\n".join(imgs) + "</p>"
-            )
+            result.append('<p align="center">' + "\n".join(imgs) + "</p>")
         return "\n".join(result)
 
     def _social_icon(self, label: str) -> str:
@@ -671,7 +738,9 @@ class ReadmeSectionGenerator:
         host = parsed.netloc.replace("www.", "").lower()
         if any(kw in host for kw in ("github.com", "gitlab.com", "bitbucket.org")):
             return "CODE"
-        if any(kw in host for kw in ("linkedin.com", "kaggle.com", "x.com", "twitter.com")):
+        if any(
+            kw in host for kw in ("linkedin.com", "kaggle.com", "x.com", "twitter.com")
+        ):
             return "SOCIAL"
         return "WEBSITE"
 
@@ -717,10 +786,7 @@ class ReadmeSectionGenerator:
         if the network request fails so the caller can fall back to a
         hardcoded glyph.
         """
-        cdn_url = (
-            f"https://cdn.jsdelivr.net/npm/simple-icons@v11"
-            f"/icons/{slug}.svg"
-        )
+        cdn_url = f"https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/{slug}.svg"
         request = _build_remote_get_request(
             url=cdn_url,
             headers={"User-Agent": "readme-section-generator"},
@@ -754,7 +820,9 @@ class ReadmeSectionGenerator:
             child_str = _et_tostring(child, encoding="unicode")
             # Strip any namespace prefixes injected by ElementTree.
             child_str = re.sub(
-                r'\s*xmlns(?::[a-z]+)?="[^"]*"', "", child_str,
+                r'\s*xmlns(?::[a-z]+)?="[^"]*"',
+                "",
+                child_str,
             )
             inner_parts.append(child_str)
         icon_paths = "".join(inner_parts)
@@ -770,10 +838,9 @@ class ReadmeSectionGenerator:
             f"</svg>"
             "</svg>"
         )
-        return (
-            "data:image/svg+xml;base64,"
-            + base64.b64encode(wrapper_svg.encode("utf-8")).decode("ascii")
-        )
+        return "data:image/svg+xml;base64," + base64.b64encode(
+            wrapper_svg.encode("utf-8")
+        ).decode("ascii")
 
     # -- w4w.dev favicon fetcher -----------------------------------------
 
@@ -787,13 +854,12 @@ class ReadmeSectionGenerator:
                 from io import BytesIO as _BIO
 
                 from PIL import Image as _Img
+
                 with _Img.open(_BIO(ico_bytes)) as img:
                     img = img.resize((64, 64), _Img.Resampling.LANCZOS)
                     buf = _BIO()
                     img.save(buf, format="PNG")
-                    png_b64 = base64.b64encode(
-                        buf.getvalue()
-                    ).decode("ascii")
+                    png_b64 = base64.b64encode(buf.getvalue()).decode("ascii")
                     return f"data:image/png;base64,{png_b64}"
             except Exception:
                 pass
@@ -803,7 +869,8 @@ class ReadmeSectionGenerator:
             "https://w4w.dev/favicon.ico",
         ):
             result = self._fetch_remote_image_data_uri(
-                candidate, context="w4w.dev favicon",
+                candidate,
+                context="w4w.dev favicon",
             )
             if result:
                 return result
@@ -821,9 +888,7 @@ class ReadmeSectionGenerator:
     ) -> str | None:
         normalized_host = (host or "").strip().replace("www.", "").lower()
         if not normalized_host and url:
-            normalized_host = (
-                urlparse(url).netloc.strip().replace("www.", "").lower()
-            )
+            normalized_host = urlparse(url).netloc.strip().replace("www.", "").lower()
 
         accent_hex = (
             accent.lstrip("#")
@@ -832,9 +897,7 @@ class ReadmeSectionGenerator:
         )
 
         # --- X/Twitter: use Unicode 𝕏 glyph instead of CDN fetch ---------
-        if normalized_host.endswith("x.com") or normalized_host.endswith(
-            "twitter.com"
-        ):
+        if normalized_host.endswith("x.com") or normalized_host.endswith("twitter.com"):
             x_svg = (
                 "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"
                 "<rect width='64' height='64' rx='14' fill='#000'/>"
@@ -843,16 +906,17 @@ class ReadmeSectionGenerator:
                 "\U0001d54f</text>"
                 "</svg>"
             )
-            return (
-                "data:image/svg+xml;base64,"
-                + base64.b64encode(x_svg.encode("utf-8")).decode("ascii")
-            )
+            return "data:image/svg+xml;base64," + base64.b64encode(
+                x_svg.encode("utf-8")
+            ).decode("ascii")
 
         # --- Try Simple Icons CDN first for known platforms ---------------
         for suffix, (slug, bg_color) in self._SIMPLE_ICON_MAP.items():
             if normalized_host.endswith(suffix):
                 si_uri = self._fetch_simple_icon_data_uri(
-                    slug=slug, bg_color=bg_color, fg_color="white",
+                    slug=slug,
+                    bg_color=bg_color,
+                    fg_color="white",
                 )
                 if si_uri:
                     return si_uri
@@ -872,34 +936,46 @@ class ReadmeSectionGenerator:
             background, foreground = ("0A66C2", "FFFFFF")
             glyph = (
                 f"<circle cx='21.5' cy='19.5' r='4.5' fill='#{foreground}'/>"
-                f"<rect x='17' y='27' width='9' height='20' rx='2' fill='#{foreground}'/>"
-                f"<path d='M34 27h8v3.2c1.5-2.2 3.9-3.8 7.4-3.8 7.3 0 8.6 4.8 8.6 11.2V47h-9v-6.6c0-3.4-.6-5.8-3.4-5.8-2.9 0-4.1 2.1-4.1 5.8V47h-8.5z' fill='#{foreground}'/>"
+                f"<rect x='17' y='27' width='9' height='20' "
+                f"rx='2' fill='#{foreground}'/>"
+                f"<path d='M34 27h8v3.2c1.5-2.2 3.9-3.8 7.4-3.8 "
+                "7.3 0 8.6 4.8 8.6 11.2V47h-9v-6.6c0-3.4-.6-5.8-3.4-5.8"
+                f"-2.9 0-4.1 2.1-4.1 5.8V47h-8.5z' fill='#{foreground}'/>"
             )
         elif normalized_host.endswith("kaggle.com"):
             background, foreground = ("20BEFF", "062F40")
             glyph = (
-                f"<path d='M20 15h7v15.4L38.2 15h9.2L34 31.4 47.6 49h-9.3L27 34.2V49h-7z' fill='#{foreground}'/>"
+                f"<path d='M20 15h7v15.4L38.2 15h9.2L34 31.4 "
+                f"47.6 49h-9.3L27 34.2V49h-7z' fill='#{foreground}'/>"
             )
         elif normalized_host.endswith("x.com") or normalized_host.endswith(
             "twitter.com"
         ):
             background, foreground = ("000000", "FFFFFF")
             glyph = (
-                f"<path d='M15 15h10.5l8.6 11.7L43.3 15H53L38.9 32.2 53.2 49H42.7l-9.4-12.1L23.6 49H14l14.4-17.6z' fill='#{foreground}'/>"
+                f"<path d='M15 15h10.5l8.6 11.7L43.3 15H53L38.9 32.2 "
+                f"53.2 49H42.7l-9.4-12.1L23.6 49H14l14.4-17.6z' "
+                f"fill='#{foreground}'/>"
             )
         elif normalized_host.endswith("github.com"):
             background, foreground = ("181717", "FFFFFF")
             glyph = (
-                f"<path d='M22.5 24 18 16m23.5 8L46 16' stroke='#{foreground}' stroke-width='3.8' stroke-linecap='round' fill='none'/>"
+                f"<path d='M22.5 24 18 16m23.5 8L46 16' "
+                f"stroke='#{foreground}' stroke-width='3.8' "
+                "stroke-linecap='round' fill='none'/>"
                 f"<circle cx='32' cy='34' r='13' fill='#{foreground}'/>"
                 f"<circle cx='27.2' cy='33' r='1.7' fill='#{background}'/>"
                 f"<circle cx='36.8' cy='33' r='1.7' fill='#{background}'/>"
-                f"<path d='M27.8 39.3c1.2 1.2 7.2 1.2 8.4 0' stroke='#{background}' stroke-width='2.1' stroke-linecap='round' fill='none'/>"
+                f"<path d='M27.8 39.3c1.2 1.2 7.2 1.2 8.4 0' "
+                f"stroke='#{background}' stroke-width='2.1' "
+                "stroke-linecap='round' fill='none'/>"
             )
         elif normalized_host.endswith("w4w.dev"):
             background, foreground = ("0F172A", "22D3EE")
             glyph = (
-                f"<path d='M11 44 19 20 27 44 35 20 43 44 51 20' stroke='#{foreground}' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/>"
+                f"<path d='M11 44 19 20 27 44 35 20 43 44 51 20' "
+                f"stroke='#{foreground}' stroke-width='4' "
+                "stroke-linecap='round' stroke-linejoin='round' fill='none'/>"
                 f"<circle cx='19' cy='20' r='2.6' fill='#{foreground}'/>"
                 f"<circle cx='35' cy='20' r='2.6' fill='#{foreground}'/>"
                 f"<circle cx='51' cy='20' r='2.6' fill='#{foreground}'/>"
@@ -909,14 +985,21 @@ class ReadmeSectionGenerator:
         ):
             background, foreground = (accent_hex or "EA4335", "FFFFFF")
             glyph = (
-                f"<rect x='12' y='20' width='40' height='24' rx='4' fill='none' stroke='#{foreground}' stroke-width='3'/>"
-                f"<path d='M14 23.5 32 35l18-11.5' fill='none' stroke='#{foreground}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/>"
+                f"<rect x='12' y='20' width='40' height='24' rx='4' "
+                f"fill='none' stroke='#{foreground}' stroke-width='3'/>"
+                f"<path d='M14 23.5 32 35l18-11.5' fill='none' "
+                f"stroke='#{foreground}' stroke-width='3' "
+                "stroke-linecap='round' stroke-linejoin='round'/>"
             )
         elif normalized_host or label:
             background, foreground = (accent_hex or "334155", "E2E8F0")
             glyph = (
-                f"<circle cx='32' cy='32' r='13' fill='none' stroke='#{foreground}' stroke-width='3'/>"
-                f"<path d='M19 32h26M32 19.5c4.2 4.4 4.2 20.6 0 25M32 19.5c-4.2 4.4-4.2 20.6 0 25' stroke='#{foreground}' stroke-width='2.4' stroke-linecap='round' fill='none'/>"
+                f"<circle cx='32' cy='32' r='13' fill='none' "
+                f"stroke='#{foreground}' stroke-width='3'/>"
+                f"<path d='M19 32h26M32 19.5c4.2 4.4 4.2 20.6 0 25"
+                "M32 19.5c-4.2 4.4-4.2 20.6 0 25' "
+                f"stroke='#{foreground}' stroke-width='2.4' "
+                "stroke-linecap='round' fill='none'/>"
             )
         if not glyph or not background or not foreground:
             return None
@@ -927,18 +1010,18 @@ class ReadmeSectionGenerator:
             f"{glyph}"
             "</svg>"
         )
-        return (
-            "data:image/svg+xml;base64,"
-            + base64.b64encode(icon_svg.encode("utf-8")).decode("ascii")
-        )
+        return "data:image/svg+xml;base64," + base64.b64encode(
+            icon_svg.encode("utf-8")
+        ).decode("ascii")
 
     def _render_featured_projects(self) -> str:
         svg_cards: list[SvgCard] = []
         fallback_lines: list[str] = []
         repos = self.settings.featured_repos
-        featured_columns = 2
+        featured_columns = 3
         featured_card_width = 360
         featured_card_height = 198
+        column_width = f"{100 / featured_columns:.2f}%"
         # Fetch all repo metadata + languages in parallel
         metadata_by_name: dict[str, RepoMetadata | None] = {}
         languages_by_name: dict[str, dict[str, int] | None] = {}
@@ -946,9 +1029,10 @@ class ReadmeSectionGenerator:
             max_workers = min(16, len(repos) * 2)
             with ThreadPoolExecutor(max_workers=max_workers) as pool:
                 meta_futures = {
-                    pool.submit(
-                        self.repo_client.fetch_repo_metadata, repo.full_name
-                    ): ("meta", repo.full_name)
+                    pool.submit(self.repo_client.fetch_repo_metadata, repo.full_name): (
+                        "meta",
+                        repo.full_name,
+                    )
                     for repo in repos
                 }
                 lang_futures = {
@@ -958,13 +1042,8 @@ class ReadmeSectionGenerator:
                     ): ("lang", repo.full_name)
                     for repo in repos
                 }
-                for future in as_completed(
-                    {**meta_futures, **lang_futures}
-                ):
-                    tag = (
-                        meta_futures.get(future)
-                        or lang_futures.get(future)
-                    )
+                for future in as_completed({**meta_futures, **lang_futures}):
+                    tag = meta_futures.get(future) or lang_futures.get(future)
                     if tag is None:
                         continue  # pragma: no cover
                     kind, name = tag
@@ -976,7 +1055,9 @@ class ReadmeSectionGenerator:
                     except Exception as exc:  # pragma: no cover
                         logger.warning(
                             "Failed to fetch %s for %s: %s",
-                            kind, name, exc,
+                            kind,
+                            name,
+                            exc,
                         )
                         if kind == "meta":
                             metadata_by_name[name] = None
@@ -988,7 +1069,9 @@ class ReadmeSectionGenerator:
             langs = languages_by_name.get(repo.full_name)
             svg_cards.append(
                 self._build_project_svg_card(
-                    repo.full_name, metadata, languages=langs,
+                    repo.full_name,
+                    metadata,
+                    languages=langs,
                 )
             )
             fallback_lines.append(
@@ -1027,10 +1110,10 @@ class ReadmeSectionGenerator:
                 ).as_posix()
                 card_embeds.append((card.url or "#", src))
 
-        # Build HTML table grid (2 columns)
+        # Build HTML table grid (3 columns)
         table_lines: list[str] = []
         if card_embeds:
-            table_lines.append('<table><tbody>')
+            table_lines.append("<table><tbody>")
             for i in range(0, len(card_embeds), featured_columns):
                 table_lines.append("<tr>")
                 for j in range(featured_columns):
@@ -1038,14 +1121,15 @@ class ReadmeSectionGenerator:
                     if idx < len(card_embeds):
                         url, src = card_embeds[idx]
                         table_lines.append(
-                            f'<td valign="top" width="50%"><a href="{escape(url)}"'
+                            f'<td valign="top" width="{column_width}">'
+                            f'<a href="{escape(url)}"'
                             f' target="_blank">'
                             f'<img src="{escape(src)}" width="100%"'
                             f' alt="{escape(svg_cards[idx].title)}"'
                             f' loading="lazy"/></a></td>'
                         )
                     else:
-                        table_lines.append('<td width="50%"></td>')
+                        table_lines.append(f'<td width="{column_width}"></td>')
                 table_lines.append("</tr>")
             table_lines.append("</tbody></table>")
 
@@ -1087,7 +1171,8 @@ class ReadmeSectionGenerator:
         if metadata.topics:
             topics = " · ".join(metadata.topics[:3])
             lines.append(f"Topics {topics}")
-        # avoid duplicative host clutter in the visible lines; surface homepage in card attributes instead
+        # Avoid duplicative host clutter in visible lines; surface homepage
+        # in card attributes instead.
         if metadata.homepage:
             homepage_host = urlparse(metadata.homepage).netloc.replace("www.", "")
             if homepage_host:
@@ -1174,7 +1259,10 @@ class ReadmeSectionGenerator:
             )
             lines = [
                 self._wrap_blog_post_list_markers(fallback_lines),
-                f'<p align="center"><sub>📡 Source: <a href="{feed_url}">RSS feed</a></sub></p>',
+                (
+                    f'<p align="center"><sub>📡 Source: '
+                    f'<a href="{feed_url}">RSS feed</a></sub></p>'
+                ),
             ]
             if svg_embed:
                 lines.insert(0, f'<p align="center">{svg_embed}</p>')
@@ -1205,15 +1293,11 @@ class ReadmeSectionGenerator:
         # Build cards preserving original post order
         for post in posts:
             metadata = metadata_by_url.get(post.url, {})
-            host = metadata.get("host") or urlparse(post.url).netloc.replace(
-                "www.", ""
-            )
+            host = metadata.get("host") or urlparse(post.url).netloc.replace("www.", "")
             summary = metadata.get("summary") or "Tap to read the full story."
             published = metadata.get("published")
             # Sanitize title — strip trailing "update" noise (anchored)
-            clean_title = re.sub(
-                r"\s*\bupdate\s*$", "", post.title, flags=re.IGNORECASE
-            ).strip()
+            clean_title = sanitize_blog_title(post.title)
             card_meta: list[str] = []
             if published:
                 card_meta.append(f"Published {published[:10]}")
@@ -1230,7 +1314,8 @@ class ReadmeSectionGenerator:
             if hero_url:
                 absolute_hero = urljoin(post.url, hero_url)
                 hero_data_uri = self._fetch_remote_image_data_uri(
-                    absolute_hero, context="blog hero",
+                    absolute_hero,
+                    context="blog hero",
                 )
             card = SvgCard(
                 title=clean_title,
@@ -1272,10 +1357,7 @@ class ReadmeSectionGenerator:
                         section_title="Latest Blog Posts",
                     ),
                 )
-                src = (
-                    Path(self.settings.svg.output_dir)
-                    / f"{asset}.svg"
-                ).as_posix()
+                src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
                 card_embeds.append((card.url or "#", src))
 
         result: list[str] = []
@@ -1287,9 +1369,7 @@ class ReadmeSectionGenerator:
                     f'<img src="{escape(src)}" width="500"'
                     f' loading="lazy"/></a>'
                 )
-            result.append(
-                '<p align="center">' + "\n".join(imgs) + "</p>"
-            )
+            result.append('<p align="center">' + "\n".join(imgs) + "</p>")
         result.append(
             f'<p align="center"><sub>📡 Auto-updated from '
             f'<a href="{feed_url}">RSS feed</a></sub></p>'
@@ -1314,17 +1394,12 @@ class ReadmeSectionGenerator:
         )
         src = escape(self._svg_asset_src(asset_name))
         alt = escape(alt_text)
-        return (
-            f'<img src="{src}" alt="{alt}" '
-            f'width="{renderer.width}" loading="lazy"/>'
-        )
+        return f'<img src="{src}" alt="{alt}" width="{renderer.width}" loading="lazy"/>'
 
     def _svg_asset_src(self, asset_name: str) -> str:
         filename = re.sub(r"[^a-zA-Z0-9_-]+", "-", asset_name).strip("-_")
         normalized = filename or "section"
-        return (
-            Path(self.settings.svg.output_dir) / f"{normalized}.svg"
-        ).as_posix()
+        return (Path(self.settings.svg.output_dir) / f"{normalized}.svg").as_posix()
 
     def _resolved_card_style(self, family: str) -> ReadmeSvgCardStyleSettings:
         default_style = self.settings.svg.card_styles.default
@@ -1479,7 +1554,11 @@ class ReadmeSectionGenerator:
             rendered = render_from.render(block)
             self.svg_builder.write_raw(asset_name=asset_name, svg_content=rendered)
         except OSError as exc:
-            logger.warning("Failed to write README SVG asset {asset_name}: {exc}", asset_name=asset_name, exc=exc)
+            logger.warning(
+                "Failed to write README SVG asset {asset_name}: {exc}",
+                asset_name=asset_name,
+                exc=exc,
+            )
 
     def _format_timestamp(self, timestamp: str | None) -> str | None:
         if not timestamp:
@@ -1550,7 +1629,8 @@ class ReadmeSectionGenerator:
         )
 
     def _scrape_repo_og_image(
-        self, repo_full_name: str,
+        self,
+        repo_full_name: str,
     ) -> str | None:
         """Scrape og:image / twitter:image from a GitHub repo page."""
         page_url = f"https://github.com/{repo_full_name}"
@@ -1567,7 +1647,8 @@ class ReadmeSectionGenerator:
         except Exception as exc:
             logger.warning(
                 "Failed to fetch repo page for %s: %s",
-                repo_full_name, exc,
+                repo_full_name,
+                exc,
             )
             return None
         # Parse og:image or twitter:image meta tags
@@ -1631,14 +1712,25 @@ class ReadmeSectionGenerator:
                     logger.info(
                         "Rate-limited (429) fetching image for %s, "
                         "retrying in %ds (attempt %d/%d)",
-                        context, delay, attempt + 1, max_retries,
+                        context,
+                        delay,
+                        attempt + 1,
+                        max_retries,
                     )
                     time.sleep(delay)
                     continue
-                logger.warning("Failed to fetch image for {context}: {exc}", context=context, exc=exc)
+                logger.warning(
+                    "Failed to fetch image for {context}: {exc}",
+                    context=context,
+                    exc=exc,
+                )
                 return None
             except Exception as exc:  # pragma: no cover - network path
-                logger.warning("Failed to fetch image for {context}: {exc}", context=context, exc=exc)
+                logger.warning(
+                    "Failed to fetch image for {context}: {exc}",
+                    context=context,
+                    exc=exc,
+                )
                 return None
 
         if not image_bytes:
@@ -1651,6 +1743,7 @@ class ReadmeSectionGenerator:
                 from io import BytesIO as _BIO
 
                 from PIL import Image as _Img
+
                 with _Img.open(_BIO(image_bytes)) as img:
                     img = img.convert("RGB")
                     img.thumbnail((480, 270), _Img.Resampling.LANCZOS)

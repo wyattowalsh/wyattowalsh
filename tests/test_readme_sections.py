@@ -210,6 +210,33 @@ class TestRendering:
                 f"connect-{label}.svg should contain brand icon data URI"
             )
 
+    def test_top_contact_falls_back_to_owner_profile_when_social_links_missing(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        def failing_urlopen(request, timeout=10.0):  # noqa: ARG001
+            raise RuntimeError("network disabled for test")
+
+        monkeypatch.setattr("scripts.readme_sections.urlopen", failing_urlopen)
+
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(settings=settings)
+
+        html = generator._render_top_badges()
+
+        svg_path = tmp_path / "svg" / "connect-github.svg"
+        assert svg_path.exists()
+        svg = svg_path.read_text(encoding="utf-8")
+        assert "connect-github.svg" in html
+        assert 'href="https://github.com/wyattowalsh"' in html
+        assert "data:image" in svg
+        assert "★" not in svg
+
     def test_featured_projects_render_per_card_svgs(
         self, tmp_path: Path, monkeypatch
     ) -> None:
