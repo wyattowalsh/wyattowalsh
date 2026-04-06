@@ -21,6 +21,7 @@
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
 | `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
 | `fetch_metrics.py` | 283 | GitHub REST + GraphQL metrics collector; outputs flat JSON dict | `collect()` |
+| `metrics_svg.py` | 325 | Metrics SVG validation + recovery helper for workflow-safe asset preservation | `validate_svg_file()`, `recover_svg_file()`, `main()` |
 | `generative.py` | 277 | Static generative art (Clifford attractor + Phyllotaxis/flow-field) seeded by profile metrics | `generate_community_art()`, `generate_activity_art()` |
 | `qr.py` | 253 | Artistic vCard QR code | `QRCodeGenerator` |
 | `readme_sections.py` | 1548 | README dynamic section generators (badges, project cards, blog posts); orchestrates all section content | `generate_readme_sections()`, `ReadmeSectionsSettings` |
@@ -49,6 +50,12 @@ Always use **relative imports** within `scripts/`:
 ```python
 from .config import ProjectConfig, load_config
 from .utils import get_logger
+```
+
+For workflow-safe metrics SVG handling, invoke:
+```bash
+uv run python -m scripts.metrics_svg validate .github/assets/img/metrics.svg
+uv run python -m scripts.metrics_svg recover .github/assets/img/metrics.svg --previous .github/assets/img/metrics.previous.svg
 ```
 
 ## Pydantic v2 Patterns

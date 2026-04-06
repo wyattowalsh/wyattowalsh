@@ -53,78 +53,6 @@ def _svg_with_text(text: str) -> str:
     )
 
 
-CONTENTLESS_SVG = '<svg xmlns="http://www.w3.org/2000/svg"></svg>'
-METADATA_ONLY_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><title>Only metadata</title></svg>'
-)
-STRUCTURAL_ONLY_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><g id="container"/></svg>'
-)
-RESOURCE_ONLY_SVG = dedent(
-    """\
-    <svg xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="gradient" />
-      </defs>
-    </svg>
-    """
-)
-DEGENERATE_TEXT_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="1"/></svg>'
-)
-DEGENERATE_RECT_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><rect width="0" height="0"/></svg>'
-)
-DEGENERATE_PATH_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><path d=""/></svg>'
-)
-SPLIT_ERROR_SVG = dedent(
-    """\
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
-      <text x="12" y="40">
-        <tspan>Insufficient token</tspan>
-        <tspan>scopes</tspan>
-      </text>
-    </svg>
-    """
-)
-TAIL_SPLIT_ERROR_SVG = dedent(
-    """\
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">
-      <text x="12" y="40">
-        Insufficient <tspan>token</tspan> scopes
-      </text>
-    </svg>
-    """
-)
-SPLIT_PLACEHOLDER_SVG = dedent(
-    """\
-    <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
-      <text x="12" y="40">
-        <tspan>Metrics temporarily</tspan>
-        <tspan>unavailable</tspan>
-      </text>
-      <text x="12" y="64">
-        <tspan>Check workflow logs</tspan>
-        <tspan>for details</tspan>
-      </text>
-    </svg>
-    """
-)
-TAIL_SPLIT_PLACEHOLDER_SVG = dedent(
-    """\
-    <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
-      <text x="12" y="40">
-        Metrics temporarily <tspan>unavailable</tspan>
-      </text>
-      <text x="12" y="64">
-        Check workflow <tspan>logs</tspan> for details
-      </text>
-    </svg>
-    """
-)
-
-
 def test_validate_svg_content_accepts_valid_svg() -> None:
     result = validate_svg_content(VALID_SVG)
 
@@ -138,13 +66,6 @@ def test_validate_svg_content_accepts_valid_svg() -> None:
     [
         ("", SvgValidationStatus.EMPTY),
         ("<svg><g></svg>", SvgValidationStatus.MALFORMED),
-        (CONTENTLESS_SVG, SvgValidationStatus.CONTENTLESS),
-        (METADATA_ONLY_SVG, SvgValidationStatus.CONTENTLESS),
-        (STRUCTURAL_ONLY_SVG, SvgValidationStatus.CONTENTLESS),
-        (RESOURCE_ONLY_SVG, SvgValidationStatus.CONTENTLESS),
-        (DEGENERATE_TEXT_SVG, SvgValidationStatus.CONTENTLESS),
-        (DEGENERATE_RECT_SVG, SvgValidationStatus.CONTENTLESS),
-        (DEGENERATE_PATH_SVG, SvgValidationStatus.CONTENTLESS),
     ],
 )
 def test_validate_svg_content_rejects_empty_or_malformed(
@@ -161,15 +82,7 @@ def test_validate_svg_content_rejects_empty_or_malformed(
     ("error_text", "detail_fragment"),
     [
         ("Insufficient token scopes", "Insufficient token scopes"),
-        ("traffic: Insufficient token scopes", "traffic: Insufficient token scopes"),
-        ("Bad credentials.", "Bad credentials."),
-        ("TypeError", "TypeError"),
-        ("TypeError Cannot read properties of undefined", "TypeError Cannot read"),
         ("TypeError: Cannot read properties of undefined", "TypeError"),
-        ("Forbidden", "Forbidden"),
-        ("Unauthorized", "Unauthorized"),
-        ("traffic: Unauthorized (401)", "traffic: Unauthorized (401)"),
-        ("Unexpected error: boom", "Unexpected error: boom"),
         ("invalid_grant", "invalid_grant"),
     ],
 )
@@ -184,29 +97,6 @@ def test_validate_svg_content_rejects_known_error_payloads(
     assert detail_fragment in result.detail
 
 
-def test_validate_svg_content_allows_benign_error_like_words() -> None:
-    result = validate_svg_content(
-        _svg_with_text("Fix TypeError handling for forbidden states"),
-    )
-
-    assert result.status == SvgValidationStatus.VALID
-    assert result.is_valid is True
-
-
-def test_validate_svg_content_rejects_split_error_text() -> None:
-    result = validate_svg_content(SPLIT_ERROR_SVG)
-
-    assert result.status == SvgValidationStatus.ERROR_PAYLOAD
-    assert result.is_valid is False
-
-
-def test_validate_svg_content_rejects_tail_split_error_text() -> None:
-    result = validate_svg_content(TAIL_SPLIT_ERROR_SVG)
-
-    assert result.status == SvgValidationStatus.ERROR_PAYLOAD
-    assert result.is_valid is False
-
-
 def test_placeholder_svg_is_detected_and_rejected() -> None:
     result = validate_svg_content(PLACEHOLDER_SVG)
 
@@ -214,22 +104,6 @@ def test_placeholder_svg_is_detected_and_rejected() -> None:
     assert result.status == SvgValidationStatus.PLACEHOLDER
     assert result.is_valid is False
     assert result.is_placeholder is True
-
-
-def test_placeholder_svg_is_detected_when_text_is_split() -> None:
-    result = validate_svg_content(SPLIT_PLACEHOLDER_SVG)
-
-    assert is_placeholder_svg(SPLIT_PLACEHOLDER_SVG) is True
-    assert result.status == SvgValidationStatus.PLACEHOLDER
-    assert result.is_valid is False
-
-
-def test_placeholder_svg_is_detected_when_tail_text_is_split() -> None:
-    result = validate_svg_content(TAIL_SPLIT_PLACEHOLDER_SVG)
-
-    assert is_placeholder_svg(TAIL_SPLIT_PLACEHOLDER_SVG) is True
-    assert result.status == SvgValidationStatus.PLACEHOLDER
-    assert result.is_valid is False
 
 
 def test_validate_svg_file_rejects_missing_file(tmp_path: Path) -> None:

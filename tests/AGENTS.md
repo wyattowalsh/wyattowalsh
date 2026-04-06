@@ -60,6 +60,7 @@ Key `addopts` flags decoded:
 | `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ✅ Covered — markdown parsing, font resolution, filtering, and layout tests |
 | `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ✅ Smoke + golden file regression tests |
 | `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
+| `scripts/metrics_svg.py` | — | `test_metrics_svg.py` | ✅ Focused coverage — validation, placeholder detection, CLI exit codes, and previous-asset recovery |
 | Living art media outputs | — | `test_living_art_media.py` | ⏭️ Skipped — requires pre-generated artifacts |
 | Blog card contracts | — | `test_card_contracts_blog_red.py` | 🔴 RED — unimplemented features |
 | README GFM UX | — | `test_readme_gfm_ux.py` | ⏭️ Skipped — requires full pipeline |
@@ -96,6 +97,11 @@ Key `addopts` flags decoded:
 - **Critical:** `reset_loguru_handlers` autouse fixture removes Loguru sinks before each test — required because `scripts/utils.py` calls `loguru_logger.remove()` at import time
 - Uses `importlib.reload(scripts.utils)` to re-trigger module-level Loguru setup
 - Uses `pytest-mock` (`MockerFixture`) for patching Settings
+
+### `test_metrics_svg.py`
+- Pure-function/unit style: prefer `validate_svg_content()` for fast failure classification checks
+- Use `tmp_path` only when exercising `recover_svg_file()` or other file-based helpers
+- Cover both workflow error payloads (`Insufficient token scopes`, `TypeError`, `invalid_grant`) and explicit placeholder SVG detection
 
 ## Writing New Tests
 
