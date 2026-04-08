@@ -64,7 +64,7 @@
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="269" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
 <rect x="20.0" y="168" width="233.0" height="4" fill="#3572A5" />
-<rect x="253.0" y="168" width="35.7" height="4" fill="#DA5B0B" />
+<rect x="253.0" y="168" width="35.6" height="4" fill="#DA5B0B" />
 <rect x="288.7" y="168" width="1.0" height="4" fill="#563d7c" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3572A5" />
