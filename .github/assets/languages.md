@@ -1276,7 +1276,7 @@
 - [ABSphreak/readme-jokes](https://github.com/ABSphreak/readme-jokes) - 😄 Jokes for your GitHub READMEs
 - [openseadragon/openseadragon](https://github.com/openseadragon/openseadragon) - An open-source, web-based viewer for zoomable images, implemented in pure JavaScript.
 - [zenozeng/p5.js-svg](https://github.com/zenozeng/p5.js-svg) - SVG runtime for p5.js.
-- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.58.0) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
+- [gridsound/daw](https://github.com/gridsound/daw) - GridSound (1.58.2) is a work-in-progress free browser-based digital audio workstation following the Web Audio API 🎛🎹🎵✨ -- If you can, please sponsor us a little on our Patreon ❤️
 - [Kiran1689/Awesome-Dev-Portfolios](https://github.com/Kiran1689/Awesome-Dev-Portfolios) - This repository aims to collect portfolios and their repositories from developers around the world.
 - [markdown-it/markdown-it](https://github.com/markdown-it/markdown-it) - Markdown parser, done right. 100% CommonMark support, extensions, syntax plugins & high speed
 - [antonmedv/spark](https://github.com/antonmedv/spark) - GitHub Stars Sparklines ⚡️
