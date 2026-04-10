@@ -12,6 +12,10 @@
 <a href="https://x.com/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
+## About
+
+Machine learning engineer & open-source contributor focused on AI agents, data pipelines, and developer tools. Building at the intersection of research and production — from [MCP servers](https://github.com/wyattowalsh/mcp-crawl4ai) to [NBA analytics](https://github.com/wyattowalsh/nbadb) to [generative art](#living-art) driven by real GitHub data.
+
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
@@ -42,11 +46,7 @@
 
 ## Living Art
 
-> Current automation contract: canonical timelapse GIFs named `living-<style>.gif`, plus `living-art-manifest.json` and `living-art-preview.html`.
->
-> This README embeds the canonical timelapse GIFs directly. The docs site mirrors the same files under `docs/public/showcase/` so the public preview surface stays aligned with the workflow outputs.
-
-Operationally, each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time instead of being re-sampled as disconnected scenes.
+Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
 
 <table role="presentation">
 <tr>
@@ -55,14 +55,14 @@ Operationally, each GIF is a cumulative daily timelapse: frame *t* is rendered f
     <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden — botanical timelapse where each tree is a repository"/>
   </a>
   <br/>
-  <sub><b>Ink Garden</b> demystified: a deterministic botanical encoding of the cumulative repository set. A stable canonical repository cohort supplies the mature tree layer, language families parameterize species morphology and hue, repository age controls trunk establishedness and branching depth, and monotonic per-repo star growth is expressed as blossom density, canopy complexity, and understory detail.</sub>
+  <sub><b>Ink Garden</b> — each tree is a repository; blossoms grow with stars, species vary by language.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-topo.gif">
     <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography — cartographic timelapse where terrain emerges with activity"/>
   </a>
   <br/>
-  <sub><b>Topography</b> demystified: the profile is modeled as a cartographic height field rather than a project list. Repository positions become survey anchors, per-repo stars raise local prominence, age and chronology control erosion and reveal order, and forks, followers, network links, and contribution volume thicken contours, tributaries, and annotation density.</sub>
+  <sub><b>Topography</b> — repos become survey anchors; stars raise peaks, activity thickens contours.</sub>
 </td>
 </tr>
 <tr>
@@ -71,14 +71,14 @@ Operationally, each GIF is a cumulative daily timelapse: frame *t* is rendered f
     <img src=".github/assets/img/living-genetic.gif" width="100%" alt="Genetic Landscape — evolutionary timelapse where repositories become adaptive peaks"/>
   </a>
   <br/>
-  <sub><b>Genetic Landscape</b> demystified: repositories define a fitness surface on which a deterministic population evolves over maturity-bounded generations. Per-repo stars elevate peak fitness, recency and age reshape ridge geometry, language and topic structure partition biomes, and cumulative activity modulates mutation pressure, population count, and trail persistence around the dominant peaks.</sub>
+  <sub><b>Genetic Landscape</b> — repos define a fitness surface; populations evolve toward star-weighted peaks.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-physarum.gif">
     <img src=".github/assets/img/living-physarum.gif" width="100%" alt="Physarum — slime-mold timelapse grown from repository nutrient nodes"/>
   </a>
   <br/>
-  <sub><b>Physarum</b> demystified: a stylized agent-based transport simulation seeded by the cumulative portfolio state. Repositories act as nutrient nodes, topic affinity and language identity tint local food basins, contribution density and recent activity scale agent population and deposition rate, and collaboration pressure thickens the emergent vein network into an efficient transport graph.</sub>
+  <sub><b>Physarum</b> — repos act as nutrient nodes; slime-mold agents grow an efficient transport network.</sub>
 </td>
 </tr>
 <tr>
@@ -87,30 +87,26 @@ Operationally, each GIF is a cumulative daily timelapse: frame *t* is rendered f
     <img src=".github/assets/img/living-lenia.gif" width="100%" alt="Lenia — continuous cellular automata timelapse where each repository seeds a digital organism"/>
   </a>
   <br/>
-  <sub><b>Lenia</b> demystified: each repository seeds an organism within a continuous cellular-automata field rather than a discrete sprite layer. Language mix resolves kernel and palette parameters, cumulative activity adjusts growth coefficients and simulation depth, and recency, streak, and release signals bias drift, vitality, and burst structure as the colony matures from faint perturbations into stable bioluminescent life.</sub>
+  <sub><b>Lenia</b> — repos seed organisms in a continuous cellular-automata field; activity drives growth.</sub>
 </td>
 <td width="50%" align="center">
   <a href=".github/assets/img/living-ferrofluid.gif">
     <img src=".github/assets/img/living-ferrofluid.gif" width="100%" alt="Ferrofluid — magnetic spike timelapse shaped by repository fields"/>
   </a>
   <br/>
-  <sub><b>Ferrofluid</b> demystified: the portfolio is treated as a set of submerged magnetic dipoles beneath a viscous fluid interface. Repository positions place field sources, per-repo stars and star velocity amplify moment and spike gain, contribution and collaboration heat modulate surface tension and highlight density, and release cadence plus language signatures bend the iridescent sheen of the resulting spike forest.</sub>
+  <sub><b>Ferrofluid</b> — repos place magnetic dipoles; stars amplify spikes, languages tint the sheen.</sub>
 </td>
 </tr>
 </table>
 
-All six pieces share a common `WorldState` latent environmental model computed from the same cumulative snapshot: commit-hour distribution sets the chronobiology (`dawn`, `day`, `golden`, `night`), issue pressure sets weather, language families set the seasonal palette, and star velocity plus contribution streaks modulate system energy and vitality. The current CLI/workflow path publishes timelapse GIFs (`living-*.gif`), refreshes `.github/assets/img/living-art-preview.html` plus `.github/assets/img/living-art-manifest.json`, and mirrors the same public surface into `docs/public/showcase/`.
-
 ## Tech Stack
 
-<p>
-  <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&amp;logo=python&amp;logoColor=white"/>
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&amp;logo=typescript&amp;logoColor=white"/>
-  <img alt="React" src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&amp;logo=react&amp;logoColor=white"/>
-  <img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&amp;logo=pytorch&amp;logoColor=white"/>
-  <img alt="LangChain" src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&amp;logo=langchain&amp;logoColor=white"/>
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&amp;logo=docker&amp;logoColor=white"/>
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"/>
+<p align="center">
+  <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge&amp;logo=openai&amp;logoColor=white"/>
+  <img alt="Data Engineering" src="https://img.shields.io/badge/Data%20Engineering-4169E1?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"/>
+  <img alt="Full-Stack" src="https://img.shields.io/badge/Full--Stack-61DAFB?style=for-the-badge&amp;logo=react&amp;logoColor=black"/>
+  <img alt="MCP Ecosystem" src="https://img.shields.io/badge/MCP%20Ecosystem-1C3C3C?style=for-the-badge&amp;logo=langchain&amp;logoColor=white"/>
+  <img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-181717?style=for-the-badge&amp;logo=github&amp;logoColor=white"/>
 </p>
 
 <details>
@@ -456,9 +452,9 @@ MDX                      1 repo              ░░░░░░░░░░░�
 </details>
 
 <p align="center">
-  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation left" width="170" loading="lazy"/>
   <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200"/>
-  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation right" width="170" loading="lazy"/>
+  <br/>
+  <sub>Scan for contact info</sub>
 </p>
 
 ---

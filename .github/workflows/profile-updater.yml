@@ -82,7 +82,8 @@ jobs:
     name: Generate Profile Assets (QR, WordClouds, Banner)
     runs-on: ubuntu-latest
     needs: update-starred-lists # Depends on the md files being up-to-date
-    timeout-minutes: 45
+    if: ${{ always() && !cancelled() }}
+    timeout-minutes: 60
     permissions:
       contents: write # To commit generated image assets
     steps:
@@ -169,7 +170,7 @@ jobs:
           SHOW_EDITORS: "True"
           SHOW_LANGUAGE_PER_REPO: "True"
           SHOW_SHORT_INFO: "True"
-          SHOW_LOC_CHART: "True"
+          SHOW_LOC_CHART: "False"
 
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
@@ -239,7 +240,7 @@ jobs:
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
-        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
+        uses: lowlighter/metrics@latest
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
@@ -279,7 +280,7 @@ jobs:
       - name: Personal metrics (fallback without repositories)
         if: ${{ steps.personal_metrics.outcome != 'success' || steps.validate_personal_metrics.outcome != 'success' }}
         continue-on-error: true
-        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
+        uses: lowlighter/metrics@latest
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
@@ -315,7 +316,7 @@ jobs:
       - name: Personal metrics (additional)
         id: personal_metrics_additional
         continue-on-error: true
-        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
+        uses: lowlighter/metrics@latest
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
@@ -351,7 +352,7 @@ jobs:
       - name: Personal metrics (additional fallback)
         if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.validate_additional_metrics.outcome != 'success' }}
         continue-on-error: true
-        uses: felipecrs/metrics@b300bc3a0fcf0fa3cbb101064948c0f2126c3f25 # forked-3.34.0
+        uses: lowlighter/metrics@latest
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
@@ -399,8 +400,8 @@ jobs:
   generate-event-art:
     name: Generate Event-Driven Artwork
     runs-on: ubuntu-latest
-    needs: generate-profile-metrics
-    if: ${{ always() && needs.generate-profile-metrics.result != 'cancelled' }}
+    needs: update-starred-lists
+    if: ${{ always() && !cancelled() }}
     timeout-minutes: 25
     permissions:
       contents: write

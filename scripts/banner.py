@@ -489,7 +489,7 @@ class BannerConfig(BaseModel):
     height: int = 480
 
     title: str = "Hey, GitHub! 👋"
-    subtitle: str = "Exploring technology, one commit at a time"
+    subtitle: str = "Building AI agents, data pipelines, and developer tools"
 
     colors: ColorPalette = Field(default_factory=ColorPalette)
     typography: Typography = Field(default_factory=Typography)

@@ -361,11 +361,11 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 css_lines.append(f"  {visible_pct:.2f}% {{ opacity: 1; }}")
                 css_lines.append(
                     f"  {visible_pct + fade_out_pct:.2f}% {{ opacity: 0; "
-                    "visibility: hidden; }}"
+                    "visibility: hidden; }"
                 )
                 css_lines.append(
                     f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; "
-                    "visibility: hidden; }}"
+                    "visibility: hidden; }"
                 )
                 css_lines.append("  100% { opacity: 1; }")
             else:
@@ -373,17 +373,18 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                     css_lines.append("  0% { opacity: 0; visibility: hidden; }")
                     css_lines.append(
                         f"  {start_pct:.2f}% {{ opacity: 0; "
-                        "visibility: hidden; }}"
+                        "visibility: hidden; }"
                     )
                 css_lines.append(
                     f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; "
-                    "visibility: visible; }}"
+                    "visibility: visible; }"
                 )
                 css_lines.append(f"  {min(visible_end, 99.99):.2f}% {{ opacity: 1; }}")
+                # NOTE: The `}}` above is correct — it's inside an f-string, escaping to `}`
                 if end_pct < 100:
                     css_lines.append(
                         f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; "
-                        "visibility: hidden; }}"
+                        "visibility: hidden; }"
                     )
                     css_lines.append("  100% { opacity: 0; visibility: hidden; }")
                 else:
