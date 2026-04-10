@@ -332,6 +332,8 @@ class WordCloudSettings(BaseModel):
     max_words: int = DEFAULT_MAX_WORDS
     output_dir: str = str(PROFILE_IMG_OUTPUT_DIR)
     layout_readability: LayoutReadabilitySettings = LayoutReadabilitySettings()
+    max_solvers: int | None = None
+    max_iter: int | None = None
 
 
 class WordCloudGenerator:
@@ -387,6 +389,11 @@ class WordCloudGenerator:
                     max_words=max_words,
                 )
             else:
+                extra_kwargs = {}
+                if getattr(self.settings, 'max_solvers', None) is not None:
+                    extra_kwargs['max_solvers'] = self.settings.max_solvers
+                if getattr(self.settings, 'max_iter', None) is not None:
+                    extra_kwargs['max_iter'] = self.settings.max_iter
                 _generate_svg(
                     renderer,
                     normalized_frequencies,
@@ -395,6 +402,7 @@ class WordCloudGenerator:
                     height=height,
                     color_func_name=color_func_name,
                     layout_readability=layout_readability,
+                    **extra_kwargs,
                 )
             return out_file
         else:

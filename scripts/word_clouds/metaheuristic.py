@@ -80,6 +80,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         fade_duration: float = 0.2,
         pop_size: int = 20,
         max_iter: int = 300,
+        max_solvers: int | None = None,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -87,6 +88,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         self.fade_duration = fade_duration
         self.pop_size = pop_size
         self.max_iter = max_iter
+        self.max_solvers = max_solvers
 
     def _prepare_words(
         self,
@@ -137,6 +139,23 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         canvas_w = float(self.width)
         canvas_h = float(self.height)
 
+        # Select solvers: either all or a random subset.
+        # Supports WORDCLOUD_MAX_SOLVERS env var for CI timeout control.
+        solver_names = list(_META_SOLVERS.keys())
+        effective_max_solvers = self.max_solvers
+        if effective_max_solvers is None:
+            env_max = os.environ.get("WORDCLOUD_MAX_SOLVERS")
+            if env_max is not None:
+                effective_max_solvers = int(env_max)
+        if effective_max_solvers is not None and effective_max_solvers < len(solver_names):
+            weight_rng_seed = self.seed if self.seed else 42
+            subset_rng = random.Random(weight_rng_seed)
+            solver_names = sorted(subset_rng.sample(solver_names, effective_max_solvers))
+            logger.info(
+                "Using {n}/{total} solvers (max_solvers={m})",
+                n=len(solver_names), total=len(_META_SOLVERS), m=effective_max_solvers,
+            )
+
         # Per-solver weight perturbation: Gaussian noise on soft cost components
         # to produce diverse layouts exploring the aesthetic Pareto front.
         DEFAULT_WEIGHTS = {
@@ -145,7 +164,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         }
         weight_rng = random.Random(self.seed if self.seed else 42)
         solver_weights: list[dict[str, float]] = []
-        for _ in _META_SOLVERS:
+        for _ in solver_names:
             w = {}
             for key, default in DEFAULT_WEIGHTS.items():
                 noise = weight_rng.gauss(0, 0.3)
@@ -167,7 +186,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 self.layout_readability,
                 weights,
             )
-            for (name, weights) in zip(_META_SOLVERS, solver_weights)
+            for (name, weights) in zip(solver_names, solver_weights)
         ]
 
         n_workers = min(len(solver_args), os.cpu_count() or 4)

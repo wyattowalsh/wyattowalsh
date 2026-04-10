@@ -107,6 +107,8 @@ jobs:
         run: uv run python -m scripts.cli generate qr --config-path config.yaml
 
       - name: Generate Word Cloud by Topic
+        env:
+          WORDCLOUD_MAX_SOLVERS: "25"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
@@ -114,6 +116,8 @@ jobs:
             --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg
 
       - name: Generate Word Cloud by Language
+        env:
+          WORDCLOUD_MAX_SOLVERS: "25"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
