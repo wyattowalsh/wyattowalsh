@@ -156,6 +156,12 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 n=len(solver_names), total=len(_META_SOLVERS), m=effective_max_solvers,
             )
 
+        # Support WORDCLOUD_MAX_ITER env var override
+        effective_max_iter = self.max_iter
+        env_iter = os.environ.get("WORDCLOUD_MAX_ITER")
+        if env_iter is not None:
+            effective_max_iter = int(env_iter)
+
         # Per-solver weight perturbation: Gaussian noise on soft cost components
         # to produce diverse layouts exploring the aesthetic Pareto front.
         DEFAULT_WEIGHTS = {
@@ -179,7 +185,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 sizes,
                 canvas_w,
                 canvas_h,
-                self.max_iter,
+                effective_max_iter,
                 self.pop_size,
                 self.seed,
                 texts,
