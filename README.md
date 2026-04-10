@@ -17,24 +17,24 @@
 <!-- README:FEATURED_PROJECTS:START -->
 <table><tbody>
 <tr>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/agents" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="100%" alt="agents" loading="lazy"/></a></td>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/nbadb" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="100%" alt="nbadb" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/agents" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="100%" alt="agents" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/nbadb" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="100%" alt="nbadb" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="100%" alt="proxywhirl" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="100%" alt="proxywhirl" loading="lazy"/></a></td>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="100%" alt="mcp-crawl4ai" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="100%" alt="mcp-crawl4ai" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/fl-mcp" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="100%" alt="fl-mcp" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/listentropy" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="100%" alt="listentropy" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/fl-mcp" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="100%" alt="fl-mcp" loading="lazy"/></a></td>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/listentropy" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="100%" alt="listentropy" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/personal-website" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="100%" alt="personal-website" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mdxpad" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="100%" alt="mdxpad" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="100%" alt="ai-web-feeds" loading="lazy"/></a></td>
 </tr>
 <tr>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/personal-website" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="100%" alt="personal-website" loading="lazy"/></a></td>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/mdxpad" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="100%" alt="mdxpad" loading="lazy"/></a></td>
-</tr>
-<tr>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="100%" alt="ai-web-feeds" loading="lazy"/></a></td>
-<td valign="top" width="50%"><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="100%" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="100%" alt="iina-plugin-bookmarks" loading="lazy"/></a></td>
+<td width="33.33%"></td>
+<td width="33.33%"></td>
 </tr>
 </tbody></table>
 <!-- README:FEATURED_PROJECTS:END -->
