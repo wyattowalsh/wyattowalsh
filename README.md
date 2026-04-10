@@ -12,10 +12,6 @@
 <a href="https://x.com/wyattowalsh" target="_blank"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
-## About
-
-Machine learning engineer & open-source contributor focused on AI agents, data pipelines, and developer tools. Building at the intersection of research and production — from [MCP servers](https://github.com/wyattowalsh/mcp-crawl4ai) to [NBA analytics](https://github.com/wyattowalsh/nbadb) to [generative art](#living-art) driven by real GitHub data.
-
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
