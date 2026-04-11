@@ -126,9 +126,6 @@ jobs:
             --from-languages-md \
             --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
 
-      - name: Generate Banner
-        run: uv run python -m scripts.cli generate banner --config-path config.yaml
-
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
@@ -179,7 +176,7 @@ jobs:
           SHOW_EDITORS: "True"
           SHOW_LANGUAGE_PER_REPO: "True"
           SHOW_SHORT_INFO: "True"
-          SHOW_LOC_CHART: "False"
+          SHOW_LOC_CHART: "True"
 
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs

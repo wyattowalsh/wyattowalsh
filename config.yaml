@@ -3,7 +3,7 @@ version: 1.0.0
 # author_email: your.email@example.com # Optional: uncomment and set
 banner_settings:
   title: Wyatt Walsh
-  subtitle: "Building AI agents, data pipelines, and developer tools"
+  subtitle: ""
   output_path: .github/assets/img/banner.svg
   width: 1200
   height: 630
