@@ -337,11 +337,11 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             f'  <g class="algo-label">'
             f'<rect x="{cx - pill_w / 2:.1f}" y="{label_y - pill_h / 2:.1f}"'
             f' width="{pill_w:.1f}" height="{pill_h}" rx="{pill_h // 2}"'
-            f' fill="white" fill-opacity="0.88"'
-            f' stroke="#c0c0c0" stroke-width="0.75"/>'
+            f' fill="#1a1a2e" fill-opacity="0.85"'
+            f' stroke="#444" stroke-width="0.75"/>'
             f'<text x="{cx:.1f}" y="{label_y:.1f}"'
             f' text-anchor="middle" dominant-baseline="central"'
-            f' fill="#333"'
+            f' fill="#ccc"'
             f' style="font: 700 16px {self.font_family}; letter-spacing: 0.8px;">'
             f"{algo_name}</text></g>"
         )
@@ -419,15 +419,15 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                 f".mf.mf{i} {{ animation: {kf_name} {total_duration:.1f}s infinite; }}"
             )
 
-        # Dark mode support (prefers-color-scheme works inside SVG on GitHub)
-        css_lines.append("@media (prefers-color-scheme: dark) {")
-        css_lines.append("  .wc-bg { fill: #0d1117; }")
+        # Light mode support (override dark default for light-theme users)
+        css_lines.append("@media (prefers-color-scheme: light) {")
+        css_lines.append("  .wc-bg { fill: url(#wc-bg-grad-light); }")
         css_lines.append(
-            "  .algo-label rect { fill: #1a1a2e; fill-opacity: 0.85; "
-            "stroke: #333; }"
+            "  .algo-label rect { fill: white; fill-opacity: 0.88; "
+            "stroke: #c0c0c0; }"
         )
-        css_lines.append("  .algo-label text { fill: #ccc; }")
-        css_lines.append("}")
+        css_lines.append("  .algo-label text { fill: #333; }")
+        css_lines.append("}") 
 
         css = "\n".join(css_lines)
 
@@ -444,10 +444,10 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             '  <filter id="wc-glow" x="-30%" y="-30%" width="160%" height="160%">'
         )
         svg_parts.append(
-            '    <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="glow1"/>'
+            '    <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="glow1"/>'
         )
         svg_parts.append(
-            '    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="glow2"/>'
+            '    <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="glow2"/>'
         )
         svg_parts.append("    <feMerge>")
         svg_parts.append('      <feMergeNode in="glow1"/>')
@@ -459,13 +459,22 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             '  <filter id="wc-shadow" x="-10%" y="-10%" width="120%" height="120%">'
         )
         svg_parts.append(
-            "    <feDropShadow dx=\"0\" dy=\"1\" stdDeviation=\"0.5\" "
-            'flood-color="#00000020"/>'
+            "    <feDropShadow dx=\"0\" dy=\"1\" stdDeviation=\"1.0\" "
+            'flood-color="#ffffff18"/>'
         )
         svg_parts.append("  </filter>")
 
-        # Background gradient (light mode)
+        # Background gradient (dark by default, light via media query)
         svg_parts.append('  <radialGradient id="wc-bg-grad" cx="50%" cy="50%" r="75%">')
+        svg_parts.append(
+            '    <stop offset="0%" stop-color="#161b22" stop-opacity="1"/>'
+        )
+        svg_parts.append(
+            '    <stop offset="100%" stop-color="#0d1117" stop-opacity="1"/>'
+        )
+        svg_parts.append("  </radialGradient>")
+        # Light-mode override gradient
+        svg_parts.append('  <radialGradient id="wc-bg-grad-light" cx="50%" cy="50%" r="75%">')
         svg_parts.append(
             '    <stop offset="0%" stop-color="#fafbfc" stop-opacity="1"/>'
         )

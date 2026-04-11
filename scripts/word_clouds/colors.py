@@ -485,8 +485,8 @@ def make_shifted_color_func(
     Works with all palette types (OKLCH and HSL based).
 
     Constraints (per color-science review):
-    - Lightness L clamped to [0.38, 0.68] for contrast against white bg
-    - Chroma C clamped to [0.16, 0.24] for consistent visual weight
+    - Lightness L clamped to [0.50, 0.82] for contrast against dark bg
+    - Chroma C clamped to [0.18, 0.30] for vivid visual weight
     """
     base_func = COLOR_FUNCS.get(base_func_name, ocean_color_func)
 
@@ -494,8 +494,8 @@ def make_shifted_color_func(
         hex_color = base_func(index, total)
         L, C, H = _hex_to_oklch(hex_color)
         H = (H + hue_offset) % 360
-        L = max(0.38, min(0.68, L))
-        C = max(0.16, min(0.24, C))
+        L = max(0.50, min(0.82, L))
+        C = max(0.18, min(0.30, C))
         return _oklch_to_hex(L, C, H)
 
     return shifted
