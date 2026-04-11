@@ -108,8 +108,8 @@ jobs:
 
       - name: Generate Word Cloud by Topic
         env:
-          WORDCLOUD_MAX_SOLVERS: "15"
-          WORDCLOUD_MAX_ITER: "300"
+          WORDCLOUD_MAX_SOLVERS: "12"
+          WORDCLOUD_MAX_ITER: "200"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
@@ -118,8 +118,8 @@ jobs:
 
       - name: Generate Word Cloud by Language
         env:
-          WORDCLOUD_MAX_SOLVERS: "15"
-          WORDCLOUD_MAX_ITER: "300"
+          WORDCLOUD_MAX_SOLVERS: "12"
+          WORDCLOUD_MAX_ITER: "200"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
