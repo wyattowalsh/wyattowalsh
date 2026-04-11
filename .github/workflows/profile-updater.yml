@@ -126,11 +126,14 @@ jobs:
             --from-languages-md \
             --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
 
+      - name: Generate Banner
+        run: uv run python -m scripts.cli generate banner --config-path config.yaml
+
       - name: Commit generated assets
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(assets): update generated profile assets"
-          file_pattern: ".github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg"
+          file_pattern: ".github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg .github/assets/img/banner*.svg"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
