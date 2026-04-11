@@ -2329,7 +2329,6 @@
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Build, deploy, and orchestrate AI agents. Sim is the central intelligence layer for your AI workforce.
 - [souvikmajumder26/Multi-Agent-Medical-Assistant](https://github.com/souvikmajumder26/Multi-Agent-Medical-Assistant) - ⚕️GenAI powered multi-agentic medical diagnostics and healthcare research assistance chatbot. 🏥 Designed for healthcare professionals, researchers and patients.
 - [Pierrad/obsidian-github-copilot](https://github.com/Pierrad/obsidian-github-copilot) - A bridge between Obsidian and Github Copilot
-- [ThinkInAIXYZ/deepchat](https://github.com/ThinkInAIXYZ/deepchat) - 🐬DeepChat - A smart assistant that connects powerful AI to your personal world
 - [ztjhz/BetterChatGPT](https://github.com/ztjhz/BetterChatGPT) - An amazing UI for OpenAI's ChatGPT (Website + Windows + MacOS + Linux)
 - [chatmcp/mcp-server-chatsum](https://github.com/chatmcp/mcp-server-chatsum) - Query and Summarize your chat messages.
 - [MoAshour93/ConstructionAI](https://github.com/MoAshour93/ConstructionAI) - This repository contains projects developed to showcase how to apply Generative AI and open-source LLMs in the construction industry
@@ -9503,6 +9502,7 @@
 
 ## others 
 
+- [contentauth/c2pa-python](https://github.com/contentauth/c2pa-python) - Python binding for c2pa-rs library
 - [mattpocock/skills](https://github.com/mattpocock/skills) - My personal directory of skills, straight from my .claude directory.
 - [pbakaus/impeccable](https://github.com/pbakaus/impeccable) - The design language that makes your AI harness better at design.
 - [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) - A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls.
@@ -12351,7 +12351,7 @@
 - [NiaOrg/NiaPy](https://github.com/NiaOrg/NiaPy) - Python microframework for building nature-inspired algorithms. Official docs: https://niapy.org
 - [Pattio/DeepSwarm](https://github.com/Pattio/DeepSwarm) - Neural Architecture Search Powered by Swarm Intelligence 🐜
 - [fastapi/fastapi-vscode](https://github.com/fastapi/fastapi-vscode) - VS Code extension for FastAPI and friends ✨
-- [wkentaro/gdown](https://github.com/wkentaro/gdown) - Google Drive Public File Downloader when Curl/Wget Fails
+- [wkentaro/gdown](https://github.com/wkentaro/gdown) - Google Drive public file downloader when curl/wget fails.
 - [Rikj000/MoniGoMani](https://github.com/Rikj000/MoniGoMani) - Isn't that what we all want? Our money to go many? Well that's what this framework/strategy hopes to do for you! By giving you & HyperOpt a lot of signals to alter the weights from.
 - [just-nilux/awesome-freqtrade](https://github.com/just-nilux/awesome-freqtrade) - A continuously updated collection of Freqtrade and FreqAI Resources, Code Snippets, Strategies
 - [hudson-and-thames/mlfinlab](https://github.com/hudson-and-thames/mlfinlab) - MlFinLab helps portfolio managers and traders who want to leverage the power of machine learning by providing reproducible, interpretable, and easy to use tools.
