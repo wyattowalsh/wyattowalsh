@@ -1428,7 +1428,7 @@
   <text x="926.5" y="572.9" font-size="38.9" fill="#00b3ab" font-weight="600" opacity="0.85" transform="rotate(90.0,926.5,572.9)" filter="url(#wc-glow)" letter-spacing="0.8">agent</text>
   <text x="777.4" y="588.3" font-size="38.6" fill="#2580da" font-weight="600" opacity="0.85" transform="rotate(90.0,777.4,588.3)" filter="url(#wc-glow)" letter-spacing="0.8">macos</text>
   <text x="487.3" y="589.7" font-size="36.7" fill="#413fb3" font-weight="600" opacity="0.84" transform="rotate(-6.0,487.3,589.7)" filter="url(#wc-glow)" letter-spacing="0.7">rag</text>
-  <text x="309.4" y="220.4" font-size="34.9" fill="#00a6c5" font-weight="500" opacity="0.83" transform="rotate(6.0,309.4,220.4)" filter="url(#wc-glow)" letter-spacing="0.7">ai-agents</text>
+  <text x="309.4" y="220.3" font-size="34.9" fill="#00a6c5" font-weight="500" opacity="0.83" transform="rotate(6.0,309.4,220.3)" filter="url(#wc-glow)" letter-spacing="0.7">ai-agents</text>
   <text x="698.3" y="396.0" font-size="34.4" fill="#4868cd" font-weight="500" opacity="0.83" transform="rotate(90.0,698.3,396.0)" filter="url(#wc-glow)" letter-spacing="0.7">nodejs</text>
   <text x="346.0" y="413.5" font-size="33.8" fill="#00b69e" font-weight="500" opacity="0.82" filter="url(#wc-glow)" letter-spacing="0.7">cli</text>
   <text x="457.9" y="190.1" font-size="33.8" fill="#0090d9" font-weight="500" opacity="0.82" transform="rotate(90.0,457.9,190.1)" filter="url(#wc-glow)" letter-spacing="0.7">obsidian-md</text>
@@ -1457,7 +1457,7 @@
   <text x="733.5" y="295.8" font-size="28.4" fill="#00adb7" font-weight="500" opacity="0.79" transform="rotate(6.0,733.5,295.8)" filter="url(#wc-glow)">api</text>
   <text x="450.0" y="379.9" font-size="28.4" fill="#3e73d5" font-weight="500" opacity="0.79" transform="rotate(6.0,450.0,379.9)" filter="url(#wc-glow)">sql</text>
   <text x="582.7" y="484.5" font-size="27.8" fill="#3b33a4" font-weight="500" opacity="0.79" transform="rotate(6.0,582.7,484.5)" filter="url(#wc-glow)">visualization</text>
-  <text x="396.7" y="327.7" font-size="27.5" fill="#009cd1" font-weight="500" opacity="0.79" transform="rotate(90.0,396.7,327.7)" filter="url(#wc-glow)">docker</text>
+  <text x="396.7" y="327.8" font-size="27.5" fill="#009cd1" font-weight="500" opacity="0.79" transform="rotate(90.0,396.7,327.8)" filter="url(#wc-glow)">docker</text>
   <text x="381.5" y="398.9" font-size="26.8" fill="#4a5ac9" font-weight="500" opacity="0.79" transform="rotate(6.0,381.5,398.9)" filter="url(#wc-glow)">ethereum</text>
   <text x="647.8" y="541.5" font-size="26.8" fill="#00b4a9" font-weight="500" opacity="0.79" transform="rotate(90.0,647.8,541.5)" filter="url(#wc-glow)">windows</text>
   <text x="800.8" y="388.7" font-size="26.5" fill="#1c83db" font-weight="500" opacity="0.78" transform="rotate(6.0,800.8,388.7)" filter="url(#wc-glow)">framework</text>
@@ -1479,7 +1479,7 @@
   <text x="314.2" y="548.3" font-size="24.7" fill="#4270d3" font-weight="500" opacity="0.77" transform="rotate(6.0,314.2,548.3)" filter="url(#wc-shadow)">youtube</text>
   <text x="820.1" y="215.4" font-size="24.5" fill="#3a30a0" font-weight="500" opacity="0.77" filter="url(#wc-shadow)">vue</text>
   <text x="633.7" y="404.7" font-size="24.3" fill="#0099d5" font-weight="500" opacity="0.77" transform="rotate(90.0,633.7,404.7)" filter="url(#wc-shadow)">golang</text>
-  <text x="898.9" y="426.8" font-size="24.1" fill="#4a56c9" font-weight="500" opacity="0.77" transform="rotate(90.0,898.9,426.8)" filter="url(#wc-shadow)">tailwindcss</text>
+  <text x="899.0" y="426.8" font-size="24.1" fill="#4a56c9" font-weight="500" opacity="0.77" transform="rotate(90.0,899.0,426.8)" filter="url(#wc-shadow)">tailwindcss</text>
   <text x="659.7" y="468.7" font-size="23.7" fill="#00b3ad" font-weight="500" opacity="0.77" transform="rotate(6.0,659.7,468.7)" filter="url(#wc-shadow)">video</text>
   <text x="595.1" y="613.3" font-size="23.3" fill="#2a7fda" font-weight="500" opacity="0.77" transform="rotate(90.0,595.1,613.3)" filter="url(#wc-shadow)">git</text>
   <text x="739.1" y="599.3" font-size="23.1" fill="#413eb2" font-weight="500" opacity="0.76" transform="rotate(90.0,739.1,599.3)" filter="url(#wc-shadow)">gui</text>
@@ -1530,7 +1530,7 @@
   <text x="601.7" y="361.8" font-size="19.1" fill="#00b6a5" font-weight="500" opacity="0.74" transform="rotate(90.0,601.7,361.8)">google</text>
   <text x="348.5" y="592.3" font-size="19.1" fill="#0087db" font-weight="500" opacity="0.74" transform="rotate(-6.0,348.5,592.3)">svelte</text>
   <text x="747.7" y="285.9" font-size="19.1" fill="#4445ba" font-weight="500" opacity="0.74" transform="rotate(6.0,747.7,285.9)">web3</text>
-  <text x="680.3" y="349.2" font-size="18.8" fill="#00abbd" font-weight="500" opacity="0.74" transform="rotate(90.0,680.3,349.2)">firefox</text>
+  <text x="680.2" y="349.2" font-size="18.8" fill="#00abbd" font-weight="500" opacity="0.74" transform="rotate(90.0,680.2,349.2)">firefox</text>
   <text x="470.7" y="203.5" font-size="18.8" fill="#436fd2" font-weight="500" opacity="0.74" transform="rotate(6.0,470.7,203.5)">frontend</text>
   <text x="875.4" y="536.2" font-size="18.8" fill="#392f9e" font-weight="500" opacity="0.74" transform="rotate(90.0,875.4,536.2)">react-native</text>
   <text x="763.5" y="476.0" font-size="18.5" fill="#0097d6" font-weight="500" opacity="0.74" transform="rotate(6.0,763.5,476.0)">mongodb</text>
@@ -1589,7 +1589,7 @@
   <text x="827.9" y="472.2" font-size="14.7" fill="#446dd0" font-weight="400" opacity="0.71" transform="rotate(6.0,827.9,472.2)">github-api</text>
   <text x="646.1" y="372.4" font-size="14.7" fill="#382e9d" font-weight="400" opacity="0.71" transform="rotate(90.0,646.1,372.4)">google-cloud</text>
   <text x="285.2" y="605.4" font-size="14.7" fill="#0096d7" font-weight="400" opacity="0.71" transform="rotate(90.0,285.2,605.4)">osint</text>
-  <text x="488.4" y="159.4" font-size="14.7" fill="#4a52c9" font-weight="400" opacity="0.71" transform="rotate(90.0,488.4,159.4)">webpack</text>
+  <text x="488.5" y="159.4" font-size="14.7" fill="#4a52c9" font-weight="400" opacity="0.71" transform="rotate(90.0,488.5,159.4)">webpack</text>
   <text x="271.0" y="282.1" font-size="14.3" fill="#00b2af" font-weight="400" opacity="0.71" transform="rotate(90.0,271.0,282.1)">coding</text>
   <text x="509.0" y="257.8" font-size="14.3" fill="#307dd9" font-weight="400" opacity="0.71" transform="rotate(90.0,509.0,257.8)">csharp</text>
   <text x="618.3" y="477.8" font-size="14.3" fill="#403baf" font-weight="400" opacity="0.71" transform="rotate(90.0,618.3,477.8)">distributed-systems</text>
@@ -1988,7 +1988,7 @@
   <text x="374.3" y="418.3" font-size="11.5" fill="#5166cd" font-weight="400" opacity="0.69" transform="rotate(6.0,374.3,418.3)">xml</text>
   <text x="675.8" y="237.4" font-size="10.7" fill="#00b6a6" font-weight="400" opacity="0.68" transform="rotate(90.0,675.8,237.4)">beginner-project</text>
   <text x="505.7" y="298.7" font-size="10.7" fill="#008ddc" font-weight="400" opacity="0.68" transform="rotate(-6.0,505.7,298.7)">clojure</text>
-  <text x="710.7" y="530.2" font-size="10.7" fill="#514bc2" font-weight="400" opacity="0.68" transform="rotate(90.0,710.7,530.2)">config</text>
+  <text x="710.7" y="530.3" font-size="10.7" fill="#514bc2" font-weight="400" opacity="0.68" transform="rotate(90.0,710.7,530.3)">config</text>
   <text x="361.8" y="220.3" font-size="10.7" fill="#00afba" font-weight="400" opacity="0.68">continuous-integration</text>
   <text x="478.5" y="499.8" font-size="10.7" fill="#4674d7" font-weight="400" opacity="0.68" transform="rotate(6.0,478.5,499.8)">gulp</text>
   <text x="354.6" y="483.8" font-size="10.7" fill="#4533a7" font-weight="400" opacity="0.68" transform="rotate(6.0,354.6,483.8)">home-assistant</text>
