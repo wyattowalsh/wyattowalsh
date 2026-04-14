@@ -50,8 +50,9 @@
 <text class="rc-desc" x="20" y="128" style="font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">agentic-ai · agentic-workflow</text>
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="269" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="168" width="267.1" height="4" fill="#3572A5" />
-<rect x="287.1" y="168" width="1.9" height="4" fill="#8b949e" />
+<rect x="20.0" y="168" width="266.4" height="4" fill="#3572A5" />
+<rect x="286.4" y="168" width="1.8" height="4" fill="#8b949e" />
+<rect x="288.2" y="168" width="1.0" height="4" fill="#8b949e" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3572A5" />
 <text class="rc-meta" x="32" y="184">Python 99%</text>

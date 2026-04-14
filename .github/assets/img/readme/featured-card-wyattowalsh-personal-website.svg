@@ -56,19 +56,19 @@
 <text class="rc-desc" x="20" y="134" style="font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">latex · link-shortener</text>
 <clipPath id="lang-bar-clip"><rect x="20" y="168" width="320" height="4" rx="2" /></clipPath>
 <g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="168" width="239.4" height="4" fill="#3178c6" />
-<rect x="259.4" y="168" width="44.9" height="4" fill="#563d7c" />
-<rect x="304.3" y="168" width="16.2" height="4" fill="#8b949e" />
-<rect x="320.5" y="168" width="14.0" height="4" fill="#f1e05a" />
+<rect x="20.0" y="168" width="233.3" height="4" fill="#3178c6" />
+<rect x="253.3" y="168" width="51.0" height="4" fill="#563d7c" />
+<rect x="304.4" y="168" width="16.2" height="4" fill="#8b949e" />
+<rect x="320.5" y="168" width="13.9" height="4" fill="#f1e05a" />
 <rect x="334.5" y="168" width="5.5" height="4" fill="#3572A5" />
 </g>
 <circle class="rc-lang-dot" cx="24" cy="180" r="4" fill="#3178c6" />
-<text class="rc-meta" x="32" y="184">TypeScript 75%</text>
+<text class="rc-meta" x="32" y="184">TypeScript 73%</text>
 <circle class="rc-lang-dot" cx="163" cy="180" r="4" fill="#563d7c" />
-<text class="rc-meta" x="171" y="184">CSS 14%</text>
+<text class="rc-meta" x="171" y="184">CSS 16%</text>
 <circle class="rc-lang-dot" cx="247" cy="180" r="4" fill="#8b949e" />
 <text class="rc-meta" x="255" y="184">MDX 5%</text>
-<text class="rc-meta" x="333" y="154">2</text>
+<text class="rc-meta" x="333" y="154">3</text>
 <svg x="315" y="142" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" /></svg>
 <text class="rc-meta" x="296" y="154">3</text>
 <svg x="278" y="142" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" /></svg>
