@@ -33,6 +33,24 @@ from .shared import (
 
 logger = get_logger(module=__name__)
 DEFAULT_PUBLISHED_MAX_FRAMES = 120
+MONOTONIC_CUMULATIVE_KEYS: tuple[str, ...] = (
+    "stars",
+    "forks",
+    "watchers",
+    "followers",
+    "public_repos",
+    "orgs_count",
+    "total_commits",
+    "total_prs",
+    "total_issues",
+    "total_repos_contributed",
+    "network_count",
+    "public_gists",
+    "pr_review_count",
+    "release_count",
+    "merged_pr_count",
+    "contributions_to_date",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -93,6 +111,12 @@ def _cumulative_counts_by_date(
         cumulative[current] = running
         current += timedelta(days=1)
     return cumulative
+
+
+def _monotone_non_decreasing(current: int, previous: int) -> int:
+    """Clamp *current* so cumulative public-history channels never regress."""
+
+    return max(previous, current)
 
 
 def _repos_by_creation_date(
@@ -666,6 +690,7 @@ def build_daily_snapshots(
     pending_star_delta = 0
     previous_total_stars = 0
     previous_maturity = 0.0
+    previous_cumulative_state: dict[str, int] = {}
 
     snapshots: list[DailySnapshot] = []
 
@@ -756,36 +781,96 @@ def build_daily_snapshots(
             releases_count=len(releases_trunc),
             merged_prs_count=len(recent_merged_prs_trunc),
         )
+        contributions_to_date = sum(daily_trunc.values())
+        cumulative_state = {
+            "stars": total_stars,
+            "forks": forks_cumulative.get(day, 0),
+            "watchers": _monotone_non_decreasing(
+                _interpolate_scalar(curr_watchers, progress),
+                previous_cumulative_state.get("watchers", 0),
+            ),
+            "followers": _monotone_non_decreasing(
+                _interpolate_scalar(curr_followers, progress),
+                previous_cumulative_state.get("followers", 0),
+            ),
+            "public_repos": len(repos_so_far),
+            "orgs_count": _monotone_non_decreasing(
+                _interpolate_scalar(curr_orgs, progress),
+                previous_cumulative_state.get("orgs_count", 0),
+            ),
+            "total_commits": _monotone_non_decreasing(
+                _interpolate_scalar(curr_total_commits, progress),
+                previous_cumulative_state.get("total_commits", 0),
+            ),
+            "total_prs": _monotone_non_decreasing(
+                _interpolate_scalar(curr_total_prs, progress),
+                previous_cumulative_state.get("total_prs", 0),
+            ),
+            "total_issues": _monotone_non_decreasing(
+                _interpolate_scalar(curr_total_issues, progress),
+                previous_cumulative_state.get("total_issues", 0),
+            ),
+            "total_repos_contributed": _monotone_non_decreasing(
+                _interpolate_scalar(curr_total_repos_contrib, progress),
+                previous_cumulative_state.get("total_repos_contributed", 0),
+            ),
+            "network_count": _monotone_non_decreasing(
+                _interpolate_scalar(curr_network, progress),
+                previous_cumulative_state.get("network_count", 0),
+            ),
+            "public_gists": _monotone_non_decreasing(
+                _interpolate_scalar(curr_gists, progress),
+                previous_cumulative_state.get("public_gists", 0),
+            ),
+            "pr_review_count": _monotone_non_decreasing(
+                _interpolate_scalar(curr_pr_review, progress),
+                previous_cumulative_state.get("pr_review_count", 0),
+            ),
+            "release_count": len(releases_trunc),
+            "merged_pr_count": len(recent_merged_prs_trunc),
+            "contributions_to_date": _monotone_non_decreasing(
+                contributions_to_date,
+                previous_cumulative_state.get("contributions_to_date", 0),
+            ),
+        }
+        recent_activity_state = {
+            "contributions_last_year": contribs_last_year,
+            "open_issues_count": open_issues_estimate,
+            "issue_stats": issue_stats,
+        }
 
         # Build metrics_dict (for ink_garden / topography)
         metrics_dict: dict[str, Any] = {
             "repos": repos_so_far,
-            "stars": total_stars,
-            "forks": forks_cumulative.get(day, 0),
-            "watchers": _interpolate_scalar(curr_watchers, progress),
-            "followers": _interpolate_scalar(curr_followers, progress),
+            "stars": cumulative_state["stars"],
+            "forks": cumulative_state["forks"],
+            "watchers": cumulative_state["watchers"],
+            "followers": cumulative_state["followers"],
             "following": _interpolate_scalar(curr_following, progress),
-            "public_repos": len(repos_so_far),
-            "orgs_count": _interpolate_scalar(curr_orgs, progress),
+            "public_repos": cumulative_state["public_repos"],
+            "orgs_count": cumulative_state["orgs_count"],
             "contributions_last_year": contribs_last_year,
-            "total_commits": _interpolate_scalar(curr_total_commits, progress),
-            "total_prs": _interpolate_scalar(curr_total_prs, progress),
-            "total_issues": _interpolate_scalar(curr_total_issues, progress),
-            "total_repos_contributed": _interpolate_scalar(
-                curr_total_repos_contrib, progress
-            ),
+            "total_commits": cumulative_state["total_commits"],
+            "total_prs": cumulative_state["total_prs"],
+            "total_issues": cumulative_state["total_issues"],
+            "total_repos_contributed": cumulative_state["total_repos_contributed"],
             "open_issues_count": open_issues_estimate,
-            "network_count": _interpolate_scalar(curr_network, progress),
-            "public_gists": _interpolate_scalar(curr_gists, progress),
-            "pr_review_count": _interpolate_scalar(curr_pr_review, progress),
+            "network_count": cumulative_state["network_count"],
+            "public_gists": cumulative_state["public_gists"],
+            "pr_review_count": cumulative_state["pr_review_count"],
             "languages": langs,
             "contributions_monthly": monthly_trunc,
             "contributions_daily": daily_trunc,
+            "contributions_to_date": cumulative_state["contributions_to_date"],
             "label": owner,
             "account_created": ac_str,
             "issue_stats": issue_stats,
             "recent_merged_prs": recent_merged_prs_trunc,
+            "merged_pr_count": cumulative_state["merged_pr_count"],
             "releases": releases_trunc,
+            "release_count": cumulative_state["release_count"],
+            "cumulative_state": cumulative_state,
+            "recent_activity_state": recent_activity_state,
         }
 
         # Recompute derived signals every day.
@@ -872,6 +957,7 @@ def build_daily_snapshots(
         )
         previous_total_stars = max(previous_total_stars, total_stars)
         previous_maturity = maturity
+        previous_cumulative_state = cumulative_state.copy()
 
     logger.info(
         "Built {} snapshots; maturity range {:.3f} → {:.3f}",
@@ -879,7 +965,45 @@ def build_daily_snapshots(
         snapshots[0].maturity if snapshots else 0,
         snapshots[-1].maturity if snapshots else 0,
     )
+    validate_snapshot_monotonic_contract(snapshots)
     return snapshots
+
+
+def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None:
+    """Raise when cumulative profile-history channels regress across snapshots."""
+
+    if len(snapshots) < 2:
+        return
+
+    previous = snapshots[0]
+    previous_cumulative = cast(
+        "dict[str, int]",
+        previous.metrics_dict.get("cumulative_state", {}),
+    )
+    for current in snapshots[1:]:
+        current_cumulative = cast(
+            "dict[str, int]",
+            current.metrics_dict.get("cumulative_state", {}),
+        )
+        for key in MONOTONIC_CUMULATIVE_KEYS:
+            current_value = int(
+                current_cumulative.get(key, current.metrics_dict.get(key, 0)) or 0
+            )
+            previous_value = int(
+                previous_cumulative.get(key, previous.metrics_dict.get(key, 0)) or 0
+            )
+            if current_value < previous_value:
+                raise ValueError(
+                    f"Cumulative snapshot channel {key!r} regressed on "
+                    f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                )
+        if current.maturity < previous.maturity:
+            raise ValueError(
+                f"Snapshot maturity regressed on {current.day.isoformat()}: "
+                f"{previous.maturity:.4f} -> {current.maturity:.4f}"
+            )
+        previous = current
+        previous_cumulative = current_cumulative
 
 
 # ---------------------------------------------------------------------------

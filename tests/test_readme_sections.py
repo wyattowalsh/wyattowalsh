@@ -1,7 +1,9 @@
 """Tests for README dynamic section generation."""
 
+import json
 import re
 from pathlib import Path
+from textwrap import dedent
 
 from scripts.config import (
     ReadmeFeaturedRepo,
@@ -31,7 +33,8 @@ class StubRepoClient:
         return self.metadata_by_repo.get(full_name)
 
     def fetch_repo_languages(
-        self, full_name: str,
+        self,
+        full_name: str,
     ) -> dict[str, int] | None:
         return self.languages_by_repo.get(full_name)
 
@@ -100,7 +103,7 @@ class TestRendering:
                     color="181717",
                     logo="github",
                 ),
-            ]
+            ],
         )
         generator = ReadmeSectionGenerator(settings=settings)
 
@@ -155,12 +158,8 @@ class TestRendering:
         for svg_name in ("connect-linkedin.svg", "connect-github.svg"):
             svg = (tmp_path / "svg" / svg_name).read_text(encoding="utf-8")
             # Visible text elements should not contain protocol prefixes
-            text_values = re.findall(r'>([^<]+)<', svg)
-            assert all(
-                "://" not in val
-                for val in text_values
-                if val.strip()
-            )
+            text_values = re.findall(r">([^<]+)<", svg)
+            assert all("://" not in val for val in text_values if val.strip())
 
     def test_top_contact_cards_include_brand_icon_payloads_for_known_networks(
         self, tmp_path: Path, monkeypatch
@@ -237,7 +236,7 @@ class TestRendering:
         assert "data:image" in svg
         assert "★" not in svg
 
-    def test_featured_projects_render_per_card_svgs(
+    def test_featured_projects_render_per_card_svgs_and_manifest(
         self, tmp_path: Path, monkeypatch
     ) -> None:
         class FakeResponse:
@@ -285,7 +284,8 @@ class TestRendering:
                 },
                 languages_by_repo={
                     "wyattowalsh/riso": {
-                        "Python": 8000, "Shell": 2000,
+                        "Python": 8000,
+                        "Shell": 2000,
                     },
                 },
             ),
@@ -298,8 +298,11 @@ class TestRendering:
 
         # Per-card SVG should be created
         card_svg_path = tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
+        manifest_path = tmp_path / "svg" / "featured-projects.manifest.json"
         assert card_svg_path.exists()
+        assert manifest_path.exists()
         svg = card_svg_path.read_text(encoding="utf-8")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         assert "riso" in svg
         assert "Composable scaffolding" in svg
         assert "framework" in svg
@@ -309,10 +312,21 @@ class TestRendering:
         assert "sparkline-group" in svg
         # Multi-language bar rendered
         assert "lang-bar-clip" in svg
-        # HTML uses table layout with per-card img tags
+        # HTML uses a single-column hero layout with descriptive alt/rel attrs
         assert "<table>" in html
         assert "featured-card-wyattowalsh-riso.svg" in html
-        assert 'width="33.33%"' in html
+        assert 'width="100.00%"' in html
+        assert 'rel="noopener noreferrer"' in html
+        assert (
+            'alt="Featured project card for riso: Composable scaffolding framework"'
+            in html
+        )
+        assert manifest["projects"][0]["layout"] == "primary"
+        assert manifest["projects"][0]["svg_asset_path"].endswith(
+            "featured-card-wyattowalsh-riso.svg"
+        )
+        assert manifest["projects"][0]["updated_label"].startswith("Updated ")
+        assert manifest["projects"][0]["top_languages"] == ["Python", "Shell"]
 
     def test_featured_projects_use_full_repo_identity_in_asset_names(
         self, tmp_path: Path
@@ -360,7 +374,7 @@ class TestRendering:
         assert "featured-card-wyattowalsh-demo.svg" in html
         assert "featured-card-octocat-demo.svg" in html
 
-    def test_featured_projects_render_three_columns_per_row(
+    def test_featured_projects_render_two_columns_for_four_primary_cards(
         self, tmp_path: Path
     ) -> None:
         settings = ReadmeSectionsSettings(
@@ -424,8 +438,163 @@ class TestRendering:
         html = generator._render_featured_projects()
 
         assert html.count("<tr>") == 2
-        assert html.count('width="33.33%"') == 6
+        assert html.count('width="50.00%"') == 4
         assert html.count('width="100%"') == 4
+
+    def test_featured_projects_render_three_columns_for_six_primary_cards(
+        self, tmp_path: Path
+    ) -> None:
+        repos = [
+            ReadmeFeaturedRepo(full_name=f"wyattowalsh/repo-{index}")
+            for index in range(6)
+        ]
+        metadata = {
+            repo.full_name: RepoMetadata(
+                full_name=repo.full_name,
+                name=repo.full_name.split("/")[-1],
+                html_url=f"https://github.com/{repo.full_name}",
+                description=f"Repo {index}",
+                stars=index,
+                homepage=None,
+                topics=[],
+                updated_at="2026-02-01T00:00:00Z",
+            )
+            for index, repo in enumerate(repos, start=1)
+        }
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=repos,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(metadata),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        html = generator._render_featured_projects()
+
+        assert html.count("<tr>") == 2
+        assert html.count('width="33.33%"') == 6
+        assert "More Featured Projects" not in html
+
+    def test_featured_projects_split_primary_and_secondary_cards(
+        self, tmp_path: Path
+    ) -> None:
+        repos = [
+            ReadmeFeaturedRepo(full_name=f"wyattowalsh/repo-{index}")
+            for index in range(7)
+        ]
+        metadata = {
+            repo.full_name: RepoMetadata(
+                full_name=repo.full_name,
+                name=repo.full_name.split("/")[-1],
+                html_url=f"https://github.com/{repo.full_name}",
+                description=(
+                    "A very long repository description with https://repo.example.com "
+                    "Topics python templates and duplicate repo.example.com clutter."
+                ),
+                stars=index,
+                homepage="https://repo.example.com",
+                topics=["python", "templates", "svg"],
+                updated_at="2026-02-01T00:00:00Z",
+                language="Python",
+                forks=index,
+            )
+            for index, repo in enumerate(repos, start=1)
+        }
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=repos,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(metadata),
+            star_history_client=StubStarHistoryClient({}),
+            blog_metadata_client=StubBlogMetadataClient({}),
+        )
+
+        html = generator._render_featured_projects()
+        manifest = json.loads(
+            (tmp_path / "svg" / "featured-projects.manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
+        assert "More Featured Projects" in html
+        assert len([p for p in manifest["projects"] if p["layout"] == "primary"]) == 6
+        assert len([p for p in manifest["projects"] if p["layout"] == "secondary"]) == 1
+        assert manifest["projects"][0]["summary"].startswith("A very long repository")
+        assert "https://" not in manifest["projects"][0]["summary"]
+        assert "Topics" not in manifest["projects"][0]["summary"]
+        compact_svg = (
+            tmp_path / "svg" / "featured-card-wyattowalsh-repo-6.svg"
+        ).read_text(encoding="utf-8")
+        assert "sparkline-group" not in compact_svg
+        assert "thumb-clip" not in compact_svg
+
+    def test_featured_projects_mirror_docs_showcase_surface(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        (tmp_path / "docs" / "public" / "showcase").mkdir(parents=True)
+
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=".github/assets/img/readme"),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/riso")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/riso": RepoMetadata(
+                        full_name="wyattowalsh/riso",
+                        name="riso",
+                        html_url="https://github.com/wyattowalsh/riso",
+                        description="Composable scaffolding framework",
+                        stars=42,
+                        homepage=None,
+                        topics=["python"],
+                        updated_at="2026-02-01T00:00:00Z",
+                        language="Python",
+                    )
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        generator._render_featured_projects()
+
+        canonical_manifest = (
+            tmp_path
+            / ".github"
+            / "assets"
+            / "img"
+            / "readme"
+            / "featured-projects.manifest.json"
+        )
+        public_manifest = (
+            tmp_path
+            / "docs"
+            / "public"
+            / "showcase"
+            / "featured-projects.manifest.json"
+        )
+        public_card = (
+            tmp_path
+            / "docs"
+            / "public"
+            / "showcase"
+            / "featured-projects"
+            / "featured-card-wyattowalsh-riso.svg"
+        )
+        manifest = json.loads(public_manifest.read_text(encoding="utf-8"))
+
+        assert canonical_manifest.exists()
+        assert public_manifest.exists()
+        assert public_card.exists()
+        assert manifest["projects"][0]["svg_asset_path"] == (
+            "/showcase/featured-projects/featured-card-wyattowalsh-riso.svg"
+        )
 
     def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -450,6 +619,50 @@ class TestRendering:
         svg = card_svg_path.read_text(encoding="utf-8")
         assert "Unable to fetch repository metadata." not in svg
         assert "Live stats are temporarily unavailable." in svg
+
+    def test_featured_projects_normalize_summary_from_description_and_topics(
+        self,
+    ) -> None:
+        generator = ReadmeSectionGenerator(settings=ReadmeSectionsSettings())
+        metadata = RepoMetadata(
+            full_name="wyattowalsh/demo",
+            name="demo",
+            html_url="https://github.com/wyattowalsh/demo",
+            description=(
+                "An orchestration toolkit for https://demo.dev with Topics: "
+                "python, ai, and github. Visit demo.dev/repo for more."
+            ),
+            stars=10,
+            homepage="https://demo.dev/repo",
+            topics=["python", "ai", "github"],
+            updated_at="2026-02-01T00:00:00Z",
+            language="Python",
+        )
+
+        summary = generator._normalize_project_summary(metadata, compact=False)
+
+        assert "https://" not in summary
+        assert "Topics" not in summary
+        assert "demo.dev" not in summary
+        assert summary.startswith("An orchestration toolkit")
+
+    def test_featured_projects_normalize_summary_falls_back_to_topics(self) -> None:
+        generator = ReadmeSectionGenerator(settings=ReadmeSectionsSettings())
+        metadata = RepoMetadata(
+            full_name="wyattowalsh/demo",
+            name="demo",
+            html_url="https://github.com/wyattowalsh/demo",
+            description="No description provided.",
+            stars=10,
+            homepage=None,
+            topics=["ai-agents", "tooling", "github"],
+            updated_at="2026-02-01T00:00:00Z",
+            language="Python",
+        )
+
+        summary = generator._normalize_project_summary(metadata, compact=False)
+
+        assert summary == "AI Agents, Tooling, and GitHub workflows."
 
     def test_blog_posts_render_svg_cards_with_metadata(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -481,7 +694,7 @@ class TestRendering:
                         "summary": "Another deep dive.",
                         "published": "2026-02-19",
                         "host": "w4w.dev",
-                    }
+                    },
                 }
             ),
         )
@@ -497,6 +710,7 @@ class TestRendering:
         assert "<svg" not in html
         assert "Auto-updated from" in html
         assert "https://w4w.dev/feed.xml" in html
+        assert 'target="_blank" rel="noopener noreferrer"' in html
 
     def test_blog_posts_deduplicate_colliding_svg_names(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -528,10 +742,149 @@ class TestRendering:
         assert len(set(svg_files)) == 2
         assert all(name.startswith("blog-weekly-update") for name in svg_files)
         assert any(
-            re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name)
-            for name in svg_files
+            re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name) for name in svg_files
         )
         assert all(name in html for name in svg_files)
+
+    def test_generate_rewrites_metrics_section_when_assets_are_placeholders(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        placeholder = dedent(
+            """\
+            <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
+              <text x="12" y="40">Metrics temporarily unavailable</text>
+              <text x="12" y="64">Check workflow logs for details</text>
+            </svg>
+            """
+        )
+        (metrics_dir / "metrics.svg").write_text(placeholder, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(
+            placeholder,
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "Metrics temporarily unavailable" in rendered
+        assert ".github/assets/img/metrics.svg" not in rendered
+
+    def test_generate_keeps_valid_metrics_and_replaces_invalid_peer(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        valid_svg = '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="20">Healthy metrics</text></svg>'
+        placeholder = dedent(
+            """\
+            <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
+              <text x="12" y="40">Metrics temporarily unavailable</text>
+              <text x="12" y="64">Check workflow logs for details</text>
+            </svg>
+            """
+        )
+        (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(
+            placeholder,
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert ".github/assets/img/metrics.svg" in rendered
+        assert ".github/assets/img/metrics.additional.svg" not in rendered
+        assert "placeholder output" in rendered
+
+    def test_generate_replaces_stale_wakatime_block_with_fallback(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+
+                <details>
+                <summary><strong>WakaTime Stats</strong></summary>
+
+                <!--START_SECTION:waka-->
+                Last Updated on 27/04/2025 18:43:21 UTC
+                <!--END_SECTION:waka-->
+
+                </details>
+                """
+            ),
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "WakaTime stats are temporarily unavailable right now." in rendered
+        assert "outside the freshness window" in rendered
 
     def test_featured_project_card_builds_with_icon_data_uri(
         self, tmp_path: Path, monkeypatch
@@ -647,11 +1000,21 @@ class TestRendering:
 
         generator._render_featured_projects()
 
-        svg = (
-            tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg"
-        ).read_text(encoding="utf-8")
+        svg = (tmp_path / "svg" / "featured-card-wyattowalsh-riso.svg").read_text(
+            encoding="utf-8"
+        )
         assert 'class="section-title"' in svg
         assert '<rect width="100%" height="100%" fill="var(--canvas-bg)" />' in svg
+
+
+class TestDocsFeaturedProjectsContract:
+    def test_docs_home_reads_shared_featured_projects_manifest(self) -> None:
+        page = Path("docs/app/(home)/page.tsx").read_text(encoding="utf-8")
+
+        assert "loadFeaturedProjectsManifest" in page
+        assert "featured-projects.manifest.json" in page
+        assert "/showcase/featured-projects/" in page
+        assert "Featured Projects" in page
 
 
 class TestRemoteFetchSafety:
@@ -859,9 +1222,7 @@ class TestReadmeInjection:
         assert "blog-first-post.svg" in generated
         assert "blog-first-post.svg" in refreshed
 
-    def test_generate_respects_svg_feature_toggles(
-        self, tmp_path: Path
-    ) -> None:
+    def test_generate_respects_svg_feature_toggles(self, tmp_path: Path) -> None:
         readme_path = tmp_path / "README.md"
         readme_path.write_text(
             "before\n"
@@ -1005,9 +1366,9 @@ class TestReadmeInjection:
         assert getattr(card, "homepage", None) is not None
         assert getattr(card, "topics", None) is not None
         assert getattr(card, "updated_at", None) is not None
-        assert any(
-            m.startswith("lang:") for m in card.meta
-        ), "meta should contain lang: prefix"
+        assert any(m.startswith("lang:") for m in card.meta), (
+            "meta should contain lang: prefix"
+        )
         assert any("★" in m for m in card.meta), "meta should contain star icon"
         assert any("⑂" in m for m in card.meta), "meta should contain fork icon"
 
@@ -1085,7 +1446,9 @@ class TestReadmeInjection:
                     )
                 }
             ),
-            blog_client=StubBlogClient([BlogPost(title="Post", url="https://w4w.dev/blog/post")]),
+            blog_client=StubBlogClient(
+                [BlogPost(title="Post", url="https://w4w.dev/blog/post")]
+            ),
             blog_metadata_client=StubBlogMetadataClient(
                 {
                     "https://w4w.dev/blog/post": {
@@ -1229,6 +1592,7 @@ class TestRepoBackgroundImage:
             updated_at=None,
             open_graph_image_url="https://custom-preview.example.com/riso.png",
         )
+
         # Mock _fetch_remote_image_data_uri to return a data URI
         def _stub_fetch(url: str, context: str) -> str | None:
             if "custom-preview" in url:
@@ -1236,7 +1600,9 @@ class TestRepoBackgroundImage:
             return None
 
         monkeypatch.setattr(
-            generator, "_fetch_remote_image_data_uri", _stub_fetch,
+            generator,
+            "_fetch_remote_image_data_uri",
+            _stub_fetch,
         )
         # Mock _scrape_repo_og_image to track if it gets called
         scrape_called: list[bool] = []
@@ -1247,7 +1613,8 @@ class TestRepoBackgroundImage:
         )
 
         result = generator._repo_background_image(
-            "wyattowalsh/riso", metadata,
+            "wyattowalsh/riso",
+            metadata,
         )
 
         assert result == "data:image/png;base64,AAAA"
@@ -1283,13 +1650,16 @@ class TestRepoBackgroundImage:
             "_scrape_repo_og_image",
             lambda repo_full_name: scrape_called.append(True) or None,
         )
+
         def _stub_fetch(url: str, context: str) -> str | None:
             if "opengraph.githubassets.com/1/" in url:
                 return "data:image/png;base64,BBBB"
             return None
 
         monkeypatch.setattr(
-            generator, "_fetch_remote_image_data_uri", _stub_fetch,
+            generator,
+            "_fetch_remote_image_data_uri",
+            _stub_fetch,
         )
 
         generator._repo_background_image("wyattowalsh/riso", metadata)
@@ -1335,7 +1705,12 @@ class TestBlogTitleSanitization:
         generator = ReadmeSectionGenerator(
             settings=settings,
             blog_client=StubBlogClient(
-                [BlogPost(title="How to update your system", url="https://w4w.dev/blog/sys")]
+                [
+                    BlogPost(
+                        title="How to update your system",
+                        url="https://w4w.dev/blog/sys",
+                    )
+                ]
             ),
             blog_metadata_client=StubBlogMetadataClient(
                 {"https://w4w.dev/blog/sys": {"host": "w4w.dev"}}

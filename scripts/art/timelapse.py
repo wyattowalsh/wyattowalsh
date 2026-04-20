@@ -33,6 +33,7 @@ from .daily_snapshots import (
 from .daily_snapshots import (
     build_daily_snapshots,
     sample_frames,
+    validate_snapshot_monotonic_contract,
 )
 from .shared import (
     seed_hash,
@@ -380,6 +381,7 @@ def render_timelapse(
     if not sampled:
         logger.warning("No frames after sampling")
         return []
+    validate_snapshot_monotonic_contract(sampled)
 
     # Compute deterministic seed from final snapshot
     final_snap = sampled[-1]

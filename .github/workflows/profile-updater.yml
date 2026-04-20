@@ -394,6 +394,24 @@ jobs:
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
 
+      - name: Summarize metrics asset health
+        if: ${{ always() }}
+        run: |
+          uv run python - <<'PY'
+          from pathlib import Path
+          from scripts.metrics_svg import validate_svg_file
+
+          for asset_name in ("metrics.svg", "metrics.additional.svg"):
+              path = Path(".github/assets/img") / asset_name
+              result = validate_svg_file(path)
+              print(f"{asset_name}: status={result.status.value} detail={result.detail}")
+              if not result.is_valid:
+                  print(
+                      f"::notice::{asset_name} is in degraded state ({result.status.value}); "
+                      "README generation will render an explicit fallback instead of a broken card."
+                  )
+          PY
+
       - name: Commit metrics outputs
         if: ${{ always() }}
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5

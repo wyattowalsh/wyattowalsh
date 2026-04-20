@@ -410,8 +410,7 @@ class TestReadmeSvgAssetBuilder:
     def test_blog_card_no_badge_and_wrapping(self) -> None:
         renderer = SvgBlockRenderer(width=480, card_height=120, padding=12)
         title = (
-            "A Very Long Blog Post Title That Would Normally Be Truncated"
-            " ... update"
+            "A Very Long Blog Post Title That Would Normally Be Truncated ... update"
         )
         card = SvgCard(title=title, lines=("w4w.dev",), url="https://w4w.dev/blog/long")
         block = SvgBlock(
@@ -567,6 +566,18 @@ class TestSvgRepoCardRenderer:
         assert "45" in svg
         assert "M5 3.25a" in svg  # fork icon path
 
+    def test_updated_stat_rendered_on_primary_cards(self) -> None:
+        renderer = SvgRepoCardRenderer()
+        card = SvgCard(
+            title="repo",
+            meta=("★ 123", "⑂ 45", "Updated 2 days ago"),
+        )
+
+        svg = renderer.render_card(card)
+
+        assert "2 days ago" in svg
+        assert "M8 1.5a6.5" in svg
+
     def test_no_forks_omits_fork_section(self) -> None:
         renderer = SvgRepoCardRenderer()
         card = SvgCard(
@@ -594,7 +605,9 @@ class TestSvgRepoCardRenderer:
 
     def test_word_wrap_helper(self) -> None:
         lines = _word_wrap(
-            "hello world foo bar baz qux", width=12, max_lines=2,
+            "hello world foo bar baz qux",
+            width=12,
+            max_lines=2,
         )
         assert len(lines) == 2
         assert lines[0] == "hello world"
@@ -653,12 +666,64 @@ class TestSvgRepoCardRenderer:
         assert 'href="data:image/png;base64,iVBOR"' in svg
         assert 'clip-path="url(#thumb-clip)"' in svg
 
+    def test_dense_primary_cards_keep_body_text_above_floor(self) -> None:
+        renderer = SvgRepoCardRenderer(width=340, height=198)
+        card = SvgCard(
+            title="repo with an exceptionally long title competing with the thumbnail",
+            lines=(
+                "An extremely dense repository description that would previously force "
+                "the renderer to shrink copy too far in order to preserve the "
+                "thumbnail and sparkline at the same time.",
+            ),
+            meta=("lang:Python", "★ 123", "⑂ 45", "Updated 2 days ago"),
+            background_image="data:image/png;base64,iVBOR",
+            sparkline=(0.0, 2.0, 5.0, 8.0, 12.0),
+            languages={"Python": 8000, "Shell": 2000},
+            license_spdx="MIT",
+        )
+
+        svg = renderer.render_card(card)
+
+        assert "font: 400 10px" not in svg
+        assert "font: 400 9px" not in svg
+        assert (
+            "font: 400 11px" in svg
+            or "font: 400 12px" in svg
+            or "font: 400 13px" in svg
+        )
+
     def test_no_thumbnail_when_no_image(self) -> None:
         renderer = SvgRepoCardRenderer()
         card = SvgCard(title="repo")
         svg = renderer.render_card(card)
 
         assert "thumb-clip" not in svg
+
+    def test_compact_cards_omit_thumbnail_sparkline_and_extra_footer_noise(
+        self,
+    ) -> None:
+        renderer = SvgRepoCardRenderer(width=360, height=162)
+        card = SvgCard(
+            title="repo",
+            lines=("Compact cards keep only the highest-signal copy.",),
+            meta=("lang:Python", "★ 123", "⑂ 45", "Updated 2 days ago"),
+            background_image="data:image/png;base64,iVBOR",
+            sparkline=(0.0, 2.0, 5.0, 8.0, 12.0),
+            languages={"Python": 8000, "Shell": 2000, "HTML": 500},
+            license_spdx="MIT",
+        )
+
+        svg = renderer.render_card(card)
+
+        assert "thumb-clip" not in svg
+        assert "sparkline-group" not in svg
+        assert "Shell 19%" not in svg
+        assert "MIT" not in svg
+        assert "M5 3.25a" not in svg
+        assert "Python 76%" in svg
+        assert "123" in svg
+        assert "2 days ago" in svg
+        assert "M8 1.5a6.5" in svg
 
     def test_language_bar_rendered(self) -> None:
         renderer = SvgRepoCardRenderer()

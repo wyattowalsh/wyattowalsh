@@ -58,6 +58,12 @@ FORK_ICON_PATH = (
     "a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"
 )
 
+CLOCK_ICON_PATH = (
+    "M8 1.5a6.5 6.5 0 1 1 0 13a6.5 6.5 0 0 1 0-13Zm0 1.5a5 5 0 1 0 0 10"
+    "A5 5 0 0 0 8 3Zm.75 1.75a.75.75 0 0 0-1.5 0v3.19c0 .2.08.39.22.53l1.75"
+    " 1.75a.75.75 0 1 0 1.06-1.06l-1.53-1.53Z"
+)
+
 # ---------------------------------------------------------------------------
 # Theme support
 # ---------------------------------------------------------------------------
@@ -739,8 +745,8 @@ class SvgRepoCardRenderer:
 
     # Approximate char width at 13px sans-serif
     _CHAR_W = 6.8
-    _TITLE_FONT_SIZES = (17, 16, 15, 14, 13, 12)
-    _DESC_FONT_SIZES = (13, 12, 11, 10, 9)
+    _TITLE_FONT_SIZES = (17, 16, 15, 14)
+    _DESC_FONT_SIZES = (13, 12, 11)
 
     def __init__(
         self,
@@ -754,30 +760,48 @@ class SvgRepoCardRenderer:
         w = self.width
         h = self.height
         esc = escape
+        compact = self._is_compact_card()
         lang_name, lang_color = self._extract_language(card.meta)
-        has_thumb = bool(card.background_image)
-        thumb_w, thumb_h = (80, 48) if has_thumb else (0, 0)
         px = 20  # left padding
         sparkline_data = (
             card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
         )
-        text_px_w = (w - thumb_w - 36 - px) if has_thumb else (w - px - 20)
         raw_desc = " ".join(ln.strip() for ln in (card.lines or ()) if ln.strip())
         bar_y = h - 30
+        show_thumb = False
         show_sparkline = False
+        thumb_w = 0
+        thumb_h = 0
         layout: tuple[list[str], list[str], int, int] | None = None
-        for try_sparkline in [True, False] if sparkline_data else [False]:
-            text_bottom = (h - 64) if try_sparkline else (bar_y - 12)
-            available_height = max(36, text_bottom - 16)
-            candidate, fits = self._fit_copy_layout(
-                title=card.title,
-                description=raw_desc,
-                text_px_w=text_px_w,
-                available_height=available_height,
+        thumb_trials = (
+            [True, False] if card.background_image and not compact else [False]
+        )
+        selected = False
+        for try_thumb in thumb_trials:
+            candidate_thumb_w, candidate_thumb_h = (80, 48) if try_thumb else (0, 0)
+            text_px_w = (
+                (w - candidate_thumb_w - 36 - px) if try_thumb else (w - px - 20)
             )
-            layout = candidate
-            if fits or not try_sparkline:
-                show_sparkline = try_sparkline and sparkline_data is not None and fits
+            spark_trials = [True, False] if sparkline_data and not compact else [False]
+            for try_sparkline in spark_trials:
+                text_bottom = (h - 64) if try_sparkline else (bar_y - 12)
+                available_height = max(36, text_bottom - 16)
+                candidate, fits = self._fit_copy_layout(
+                    title=card.title,
+                    description=raw_desc,
+                    text_px_w=text_px_w,
+                    available_height=available_height,
+                    max_desc_lines=1 if compact else 2,
+                )
+                layout = candidate
+                if fits:
+                    show_thumb = try_thumb
+                    show_sparkline = try_sparkline and sparkline_data is not None
+                    thumb_w = candidate_thumb_w
+                    thumb_h = candidate_thumb_h
+                    selected = True
+                    break
+            if selected:
                 break
 
         if layout is None:
@@ -807,7 +831,7 @@ class SvgRepoCardRenderer:
             f'<rect width="{w}" height="{h}" rx="10" /></clipPath>',
             _shadow_filter_defs(),
         ]
-        if has_thumb:
+        if show_thumb:
             thumb_x = w - thumb_w - 18
             lines.append(
                 f'<clipPath id="thumb-clip">'
@@ -838,10 +862,11 @@ class SvgRepoCardRenderer:
             )
         )
 
-        if has_thumb:
+        if show_thumb:
             thumb_x = w - thumb_w - 18
+            thumb_image = card.background_image or ""
             lines.append(
-                f'<image href="{esc(card.background_image, quote=True)}"'
+                f'<image href="{esc(thumb_image, quote=True)}"'
                 f' x="{thumb_x}" y="18"'
                 f' width="{thumb_w}" height="{thumb_h}"'
                 ' preserveAspectRatio="xMidYMid slice"'
@@ -890,8 +915,8 @@ class SvgRepoCardRenderer:
                 f"{esc(line_text, quote=True)}</text>"
             )
 
-        if not has_thumb:
-            self._render_stats(lines, card.meta, w - 20, title_y)
+        if not show_thumb and not compact:
+            self._render_stats(lines, card.meta, w - 20, title_y, compact=compact)
 
         for line_text in desc_lines:
             lines.append(
@@ -906,13 +931,7 @@ class SvgRepoCardRenderer:
         license_reserve = (len(card.license_spdx or "") * 7 + 30) if has_license else 0
         bar_w = min(w - 40 - license_reserve, 340)
         if card.languages and sum(card.languages.values()) > 0:
-            self._render_lang_bar(
-                lines,
-                card.languages,
-                px,
-                bar_y,
-                bar_w,
-            )
+            self._render_lang_bar(lines, card.languages, px, bar_y, bar_w)
         elif lang_name and lang_color:
             lines.append(
                 f'<rect x="{px}" y="{bar_y}" width="{bar_w}"'
@@ -921,12 +940,12 @@ class SvgRepoCardRenderer:
             )
 
         fy = h - 14
-        self._render_footer(lines, card, px, fy, lang_name, lang_color)
+        self._render_footer(lines, card, px, fy, lang_name, lang_color, compact=compact)
         # When thumbnail is present, render stats below the description
         # instead of in the title row (where they'd overlap the image)
-        if has_thumb:
+        if show_thumb:
             stats_y = desc_y + 6
-            self._render_stats(lines, card.meta, w - 20, stats_y)
+            self._render_stats(lines, card.meta, w - 20, stats_y, compact=compact)
 
         lines.append("</svg>")
         return "\n".join(lines)
@@ -980,8 +999,10 @@ class SvgRepoCardRenderer:
         meta: tuple[str, ...],
         right_x: int,
         y: int,
+        *,
+        compact: bool,
     ) -> None:
-        """Render star/fork counts right-aligned at (right_x, y)."""
+        """Render stats right-aligned at (right_x, y)."""
         esc = escape
         items: list[tuple[str, str]] = []  # (icon_path, count_text)
         for item in meta or ():
@@ -990,13 +1011,15 @@ class SvgRepoCardRenderer:
             if star_match:
                 items.append((STAR_ICON_PATH, star_match.group(1).strip()))
                 continue
+            if compact:
+                continue
             fork_match = re.match(r"[⑂]\s*(.+)", stripped)
             if fork_match:
                 items.append((FORK_ICON_PATH, fork_match.group(1).strip()))
                 continue
-            issue_match = re.match(r"[⊙]\s*(.+)", stripped)
-            if issue_match:
-                items.append((ISSUE_ICON_PATH, issue_match.group(1).strip()))
+            updated_match = re.match(r"Updated\s+(.+)", stripped)
+            if updated_match:
+                items.append((CLOCK_ICON_PATH, updated_match.group(1).strip()))
         if not items:
             return
         # Layout right-to-left from right_x
@@ -1024,15 +1047,16 @@ class SvgRepoCardRenderer:
         y: int,
         lang_name: str | None,
         lang_color: str | None,
+        *,
+        compact: bool,
     ) -> int:
-        """Render footer — languages only (stats shown in title row)."""
+        """Render footer metadata, with compact cards surfacing language + star + recency."""
         x = start_x
         esc = escape
 
         if card.languages and sum(card.languages.values()) > 0:
             total = sum(card.languages.values())
-            has_license = bool(card.license_spdx and card.license_spdx != "NOASSERTION")
-            max_langs = 2 if has_license else 3
+            max_langs = 1 if compact else 2
             top = sorted(
                 card.languages.items(),
                 key=lambda kv: kv[1],
@@ -1062,8 +1086,37 @@ class SvgRepoCardRenderer:
             )
             x += 15 + len(lang_name) * 7 + 14
 
+        compact_meta_items: list[tuple[str, str]] = []
+        if compact:
+            for item in card.meta or ():
+                stripped = item.strip()
+                star_match = re.match(r"[★☆]\s*(.+)", stripped)
+                if star_match:
+                    compact_meta_items.append(
+                        (STAR_ICON_PATH, star_match.group(1).strip())
+                    )
+                    continue
+                updated_match = re.match(r"Updated\s+(.+)", stripped)
+                if updated_match:
+                    compact_meta_items.append(
+                        (CLOCK_ICON_PATH, updated_match.group(1).strip())
+                    )
+            for icon_path, label in compact_meta_items:
+                icon_x = x
+                text_x = icon_x + 16
+                lines.append(
+                    f'<svg x="{icon_x}" y="{y - 12}" width="14" height="14"'
+                    ' viewBox="0 0 16 16" fill="var(--meta-color)">'
+                    f'<path d="{icon_path}" /></svg>'
+                )
+                lines.append(
+                    f'<text class="rc-meta" x="{text_x}" y="{y}">'
+                    f"{esc(label, quote=True)}</text>"
+                )
+                x = text_x + int(len(label) * 7.2) + 14
+
         # License label — right-aligned in footer, with overlap guard
-        if card.license_spdx and card.license_spdx != "NOASSERTION":
+        if not compact and card.license_spdx and card.license_spdx != "NOASSERTION":
             lt = card.license_spdx
             text_w = int(len(lt) * 7)
             icon_w = 18
@@ -1139,6 +1192,7 @@ class SvgRepoCardRenderer:
         description: str,
         text_px_w: int,
         available_height: int,
+        max_desc_lines: int,
     ) -> tuple[tuple[list[str], list[str], int, int], bool]:
         best: tuple[list[str], list[str], int, int] | None = None
         best_overflow: int | None = None
@@ -1148,8 +1202,8 @@ class SvgRepoCardRenderer:
             title_lines = _word_wrap(
                 title,
                 title_width,
-                max_lines=None,
-                ellipsize=False,
+                max_lines=2,
+                ellipsize=True,
             )
             title_line_height = title_size + 4
             title_height = len(title_lines) * title_line_height
@@ -1158,8 +1212,8 @@ class SvgRepoCardRenderer:
                 desc_lines = _word_wrap(
                     description,
                     desc_width,
-                    max_lines=None,
-                    ellipsize=False,
+                    max_lines=max_desc_lines,
+                    ellipsize=True,
                 )
                 desc_line_height = desc_size + 3
                 gap = 10 if desc_lines else 0
@@ -1175,17 +1229,10 @@ class SvgRepoCardRenderer:
         if best is None:
             return ([title], [], 17, 13), False
 
-        title_lines, desc_lines, title_size, desc_size = best
-        title_height = len(title_lines) * (title_size + 4)
-        remaining_height = max(
-            0, available_height - title_height - (10 if desc_lines else 0)
-        )
-        max_desc_lines = remaining_height // (desc_size + 3)
-        if max_desc_lines <= 0:
-            desc_lines = []
-        else:
-            desc_lines = desc_lines[:max_desc_lines]
-        return (title_lines, desc_lines, title_size, desc_size), False
+        return best, False
+
+    def _is_compact_card(self) -> bool:
+        return self.width <= 320 or self.height <= 170
 
     @staticmethod
     def _truncate(value: str, limit: int) -> str:
@@ -1316,8 +1363,9 @@ class SvgBlogCardRenderer:
         # Hero thumbnail
         if has_hero:
             hx = w - hero_w - 18
+            hero_image = card.background_image or ""
             lines.append(
-                f'<image href="{esc(card.background_image, quote=True)}"'
+                f'<image href="{esc(hero_image, quote=True)}"'
                 f' x="{hx}" y="18" width="{hero_w}" height="{hero_h}"'
                 ' preserveAspectRatio="xMidYMid slice"'
                 ' clip-path="url(#hero-clip)" />'

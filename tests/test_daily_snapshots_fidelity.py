@@ -337,9 +337,9 @@ def test_build_daily_snapshots_freezes_repo_visual_order(
     snaps = build_daily_snapshots(history, metrics)
 
     assert snaps
-    assert {
-        tuple(snap.metrics_dict["repo_visual_order"]) for snap in snaps
-    } == {tuple(expected_names)}
+    assert {tuple(snap.metrics_dict["repo_visual_order"]) for snap in snaps} == {
+        tuple(expected_names)
+    }
     assert all(
         "canonical_primary_repo_names" not in snap.metrics_dict for snap in snaps
     )
@@ -433,6 +433,43 @@ def test_build_daily_snapshots_clamps_maturity_when_rolling_signals_fade(
     assert any(snap.metrics_dict["contributions_last_year"] == 0 for snap in snaps)
     assert maturities == sorted(maturities)
     assert maturities[-1] == 0.85
+
+
+def test_build_daily_snapshots_exposes_split_monotonic_and_recent_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(14, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+    final_metrics = snaps[-1].metrics_dict
+
+    assert "cumulative_state" in final_metrics
+    assert "recent_activity_state" in final_metrics
+    assert final_metrics["cumulative_state"]["contributions_to_date"] == sum(
+        final_metrics["contributions_daily"].values()
+    )
+    assert (
+        final_metrics["recent_activity_state"]["contributions_last_year"]
+        == (final_metrics["contributions_last_year"])
+    )
+
+
+def test_build_daily_snapshots_monotonic_cumulative_channels_never_regress(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+
+    for key in ("stars", "forks", "public_repos", "release_count", "merged_pr_count"):
+        series = [snap.metrics_dict["cumulative_state"][key] for snap in snaps]
+        assert series == sorted(series), f"{key} regressed: {series}"
 
 
 def test_sample_frames_default_matches_published_contract() -> None:

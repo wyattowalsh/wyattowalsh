@@ -7,13 +7,15 @@ import ipaddress
 import json
 import os
 import re
+import shutil
 import time
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from html import escape
 from pathlib import Path
+from typing import cast
 from urllib.error import HTTPError
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
@@ -22,6 +24,7 @@ from xml.etree.ElementTree import Element
 import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
+from .metrics_svg import SvgValidationStatus, validate_svg_file
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -37,6 +40,79 @@ from .readme_svg import (
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
+
+FEATURED_PROJECTS_MANIFEST_FILENAME = "featured-projects.manifest.json"
+FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH = Path(
+    "docs/public/showcase/featured-projects.manifest.json"
+)
+FEATURED_PROJECTS_PUBLIC_DIR = Path("docs/public/showcase/featured-projects")
+_URL_RE = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
+_TOPIC_PREFIX_RE = re.compile(r"\btopics?\b\s*[:\-]\s*", flags=re.IGNORECASE)
+_PARENS_URL_RE = re.compile(r"\((?:https?://|www\.)[^)]*\)", flags=re.IGNORECASE)
+_DUPLICATE_PUNCTUATION_RE = re.compile(r"\s*([,;:/|·])\s*")
+_WHITESPACE_RE = re.compile(r"\s+")
+_GENERIC_DESCRIPTION_RE = re.compile(
+    r"^(?:"
+    r"no description provided"
+    r"|repository"
+    r"|repo"
+    r"|source code"
+    r"|work in progress"
+    r"|wip"
+    r"|coming soon"
+    r")\.?$",
+    flags=re.IGNORECASE,
+)
+_METRICS_SECTION_RE = re.compile(
+    r"(?ms)^## Metrics\n.*?(?=^## Word Clouds\n)",
+)
+_WAKATIME_SECTION_RE = re.compile(
+    r"(?ms)(<!--START_SECTION:waka-->)(.*?)(<!--END_SECTION:waka-->)",
+)
+_WAKATIME_UPDATED_RE = re.compile(
+    r"Last Updated on (\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} UTC)",
+)
+_WAKATIME_TIMESTAMP_FORMAT = "%d/%m/%Y %H:%M:%S UTC"
+_WAKATIME_FRESHNESS_WINDOW = timedelta(days=3)
+_ACRONYM_REPLACEMENTS = {
+    "ai": "AI",
+    "api": "API",
+    "cli": "CLI",
+    "css": "CSS",
+    "db": "DB",
+    "devops": "DevOps",
+    "github": "GitHub",
+    "html": "HTML",
+    "ios": "iOS",
+    "llm": "LLM",
+    "ml": "ML",
+    "nba": "NBA",
+    "ocr": "OCR",
+    "pdf": "PDF",
+    "qr": "QR",
+    "sdk": "SDK",
+    "seo": "SEO",
+    "sql": "SQL",
+    "svg": "SVG",
+    "ui": "UI",
+    "ux": "UX",
+}
+
+
+@dataclass(frozen=True)
+class FeaturedProjectArtifact:
+    """Rendered card asset plus manifest-facing metadata."""
+
+    layout: str
+    card: SvgCard
+    asset_name: str
+    asset_src: str
+    public_asset_src: str | None
+    alt_text: str
+    summary: str
+    updated_label: str | None
+    top_languages: tuple[str, ...]
+    thumbnail_present: bool
 
 
 def _is_public_remote_host(host: str) -> bool:
@@ -589,6 +665,7 @@ class ReadmeSectionGenerator:
             self.BLOG_END,
             self._render_blog_posts(),
         )
+        content = self._postprocess_static_sections(content, readme_path=readme_path)
         readme_path.write_text(content, encoding="utf-8")
         return readme_path
 
@@ -610,6 +687,114 @@ class ReadmeSectionGenerator:
             )
             return content
         replacement = f"{marker_start}\n{rendered}\n{marker_end}"
+        return content[: match.start()] + replacement + content[match.end() :]
+
+    def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
+        content = self._rewrite_metrics_section(content, readme_path=readme_path)
+        return self._rewrite_wakatime_section(content)
+
+    def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
+        repo_root = readme_path.parent
+        metrics_path = repo_root / ".github" / "assets" / "img" / "metrics.svg"
+        additional_path = (
+            repo_root / ".github" / "assets" / "img" / "metrics.additional.svg"
+        )
+        primary = validate_svg_file(metrics_path)
+        additional = validate_svg_file(additional_path)
+
+        primary_is_valid = primary.is_valid
+        additional_is_valid = additional.is_valid
+        if primary_is_valid and additional_is_valid:
+            body = "\n".join(
+                [
+                    "<table><tbody>",
+                    "<tr>",
+                    '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>',
+                    '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="100%" loading="lazy"/></td>',
+                    "</tr>",
+                    "</tbody></table>",
+                ]
+            )
+        elif primary_is_valid or additional_is_valid:
+            primary_cell = (
+                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>'
+                if primary_is_valid
+                else self._metrics_fallback_cell(primary)
+            )
+            additional_cell = (
+                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="100%" loading="lazy"/></td>'
+                if additional_is_valid
+                else self._metrics_fallback_cell(additional)
+            )
+            body = "\n".join(
+                [
+                    "<table><tbody>",
+                    "<tr>",
+                    primary_cell,
+                    additional_cell,
+                    "</tr>",
+                    "</tbody></table>",
+                ]
+            )
+        else:
+            body = (
+                "> Metrics temporarily unavailable. The latest generated SVGs did not "
+                "pass validation, so this section is hidden until a healthy refresh lands."
+            )
+
+        replacement = f"## Metrics\n\n{body}\n\n"
+        if not _METRICS_SECTION_RE.search(content):
+            logger.warning("Metrics section heading not found in README.")
+            return content
+        return _METRICS_SECTION_RE.sub(replacement, content, count=1)
+
+    def _metrics_fallback_cell(self, result: object) -> str:
+        validation = getattr(result, "status", None)
+        if validation == SvgValidationStatus.PLACEHOLDER:
+            reason = "placeholder output"
+        elif validation is None:
+            reason = "missing output"
+        else:
+            reason = validation.value.replace("-", " ")
+        return (
+            '<td valign="top" width="50%">'
+            "<div><strong>Metrics temporarily unavailable.</strong><br/>"
+            f"The latest asset validated as {escape(reason)}."
+            "</div></td>"
+        )
+
+    def _rewrite_wakatime_section(self, content: str) -> str:
+        match = _WAKATIME_SECTION_RE.search(content)
+        if not match:
+            return content
+        inner = match.group(2)
+        updated_match = _WAKATIME_UPDATED_RE.search(inner)
+        if updated_match is not None:
+            try:
+                updated_at = datetime.strptime(
+                    updated_match.group(1),
+                    _WAKATIME_TIMESTAMP_FORMAT,
+                ).replace(tzinfo=UTC)
+            except ValueError:
+                updated_at = None
+            if updated_at is not None:
+                if datetime.now(UTC) - updated_at <= _WAKATIME_FRESHNESS_WINDOW:
+                    return content
+                detail = (
+                    f"Latest available update was {updated_match.group(1)}, which is "
+                    "outside the freshness window."
+                )
+            else:
+                detail = "The latest WakaTime timestamp could not be parsed."
+        else:
+            detail = "No fresh WakaTime timestamp was found in the generated section."
+
+        replacement = (
+            f"{match.group(1)}\n"
+            "> WakaTime stats are temporarily unavailable right now. "
+            f"{detail}\n"
+            f"{match.group(3)}"
+        )
         return content[: match.start()] + replacement + content[match.end() :]
 
     def _render_top_badges(self) -> str:
@@ -702,7 +887,8 @@ class ReadmeSectionGenerator:
             imgs = []
             for url, src in card_embeds:
                 imgs.append(
-                    f'<a href="{escape(url)}" target="_blank">'
+                    f'<a href="{escape(url)}" target="_blank"'
+                    ' rel="noopener noreferrer">'
                     f'<img src="{escape(src)}" width="140"'
                     f' loading="lazy"/></a>'
                 )
@@ -1014,14 +1200,333 @@ class ReadmeSectionGenerator:
             icon_svg.encode("utf-8")
         ).decode("ascii")
 
+    def _featured_layout_plan(
+        self, repo_count: int
+    ) -> tuple[dict[str, int], dict[str, int] | None]:
+        if repo_count <= 1:
+            return (
+                {
+                    "columns": 1,
+                    "width": 1100,
+                    "height": 236,
+                    "count": repo_count,
+                },
+                None,
+            )
+        if repo_count <= 4:
+            return (
+                {
+                    "columns": 2,
+                    "width": 540,
+                    "height": 214,
+                    "count": repo_count,
+                },
+                None,
+            )
+        if repo_count <= 6:
+            return (
+                {
+                    "columns": 3,
+                    "width": 360,
+                    "height": 198,
+                    "count": repo_count,
+                },
+                None,
+            )
+        return (
+            {
+                "columns": 3,
+                "width": 360,
+                "height": 198,
+                "count": 6,
+            },
+            {
+                "columns": 3,
+                "width": 360,
+                "height": 162,
+                "count": max(repo_count - 6, 0),
+            },
+        )
+
+    def _featured_public_surface_dir(self) -> Path | None:
+        output_dir = Path(self.settings.svg.output_dir)
+        trailing_parts = output_dir.parts[-4:]
+        if trailing_parts != (".github", "assets", "img", "readme"):
+            return None
+        if FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.parent.exists():
+            return FEATURED_PROJECTS_PUBLIC_DIR
+        return None
+
+    def _cleanup_featured_assets(
+        self,
+        *,
+        output_dir: Path,
+        public_surface_dir: Path | None,
+    ) -> None:
+        for path in output_dir.glob("featured-card-*.svg"):
+            path.unlink(missing_ok=True)
+        (output_dir / FEATURED_PROJECTS_MANIFEST_FILENAME).unlink(missing_ok=True)
+        if public_surface_dir is None:
+            return
+        public_surface_dir.mkdir(parents=True, exist_ok=True)
+        for path in public_surface_dir.glob("featured-card-*.svg"):
+            path.unlink(missing_ok=True)
+        FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.unlink(missing_ok=True)
+
+    def _write_featured_manifest(
+        self,
+        *,
+        output_dir: Path,
+        manifest: dict[str, object],
+        public_surface_dir: Path | None,
+    ) -> Path:
+        manifest_path = output_dir / FEATURED_PROJECTS_MANIFEST_FILENAME
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        if public_surface_dir is not None:
+            FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.write_text(
+                json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+        return manifest_path
+
+    def _humanize_topic(self, topic: str) -> str:
+        cleaned = topic.replace("_", " ").replace("-", " ").strip()
+        if not cleaned:
+            return ""
+        words: list[str] = []
+        for raw_word in cleaned.split():
+            normalized = raw_word.casefold()
+            replacement = _ACRONYM_REPLACEMENTS.get(normalized)
+            if replacement:
+                words.append(replacement)
+            elif raw_word.isupper():
+                words.append(raw_word)
+            else:
+                words.append(raw_word.capitalize())
+        return " ".join(words)
+
+    def _topic_summary(self, topics: Sequence[str]) -> str | None:
+        cleaned_topics: list[str] = []
+        for topic in topics:
+            humanized = self._humanize_topic(topic)
+            if not humanized:
+                continue
+            if humanized.casefold() in {item.casefold() for item in cleaned_topics}:
+                continue
+            cleaned_topics.append(humanized)
+            if len(cleaned_topics) == 3:
+                break
+        if not cleaned_topics:
+            return None
+        if len(cleaned_topics) == 1:
+            return f"{cleaned_topics[0]} workflows and tooling."
+        if len(cleaned_topics) == 2:
+            return f"{cleaned_topics[0]} and {cleaned_topics[1]} workflows."
+        return (
+            f"{cleaned_topics[0]}, {cleaned_topics[1]}, and "
+            f"{cleaned_topics[2]} workflows."
+        )
+
+    def _clean_summary_text(
+        self,
+        text: str,
+        *,
+        homepage: str | None = None,
+    ) -> str:
+        summary = _PARENS_URL_RE.sub(" ", text)
+        summary = _URL_RE.sub(" ", summary)
+        summary = _TOPIC_PREFIX_RE.sub("", summary)
+        summary = re.sub(r"\btopics?\b", " ", summary, flags=re.IGNORECASE)
+        summary = summary.replace("(", " ").replace(")", " ")
+        summary = re.sub(r"\bfrom\s+and\b", "and", summary, flags=re.IGNORECASE)
+
+        if homepage:
+            try:
+                parsed_homepage = urlparse(homepage)
+            except ValueError:
+                parsed_homepage = None
+            candidates = {homepage}
+            if parsed_homepage is not None:
+                host = parsed_homepage.netloc.replace("www.", "").strip()
+                if host:
+                    candidates.add(host)
+                if parsed_homepage.path and parsed_homepage.path != "/":
+                    candidates.add(parsed_homepage.path.strip("/"))
+                    if host:
+                        candidates.add(f"{host}/{parsed_homepage.path.strip('/')}")
+            for candidate in candidates:
+                if candidate:
+                    summary = re.sub(
+                        re.escape(candidate),
+                        " ",
+                        summary,
+                        flags=re.IGNORECASE,
+                    )
+
+        summary = _DUPLICATE_PUNCTUATION_RE.sub(r"\1 ", summary)
+        summary = re.sub(r"\s*/\s*", "/", summary)
+        summary = re.sub(r",\s*\.", ".", summary)
+        summary = re.sub(r"\s+\.", ".", summary)
+        summary = re.sub(r"\s+([,.;:!?])", r"\1", summary)
+        summary = re.sub(r"([,;:/|·]){2,}", r"\1", summary)
+        summary = _WHITESPACE_RE.sub(" ", summary)
+        return summary.strip(" -–—,;:/|·.")
+
+    def _shorten_summary(
+        self,
+        summary: str,
+        *,
+        compact: bool,
+    ) -> str:
+        if not summary:
+            return ""
+        sentence = re.split(r"(?<=[.!?])\s+", summary, maxsplit=1)[0].strip()
+        candidate = sentence or summary
+        max_words = 11 if compact else 20
+        max_chars = 82 if compact else 150
+        words = candidate.split()
+        if len(words) > max_words:
+            candidate = " ".join(words[:max_words]).rstrip(",;:/|·")
+            candidate = f"{candidate}..."
+        elif len(candidate) > max_chars:
+            truncated = candidate[: max_chars - 3].rstrip(" ,;:/|·")
+            candidate = f"{truncated}..."
+        return candidate
+
+    def _normalize_project_summary(
+        self,
+        metadata: RepoMetadata,
+        *,
+        compact: bool,
+    ) -> str:
+        summary = self._clean_summary_text(
+            metadata.description or "",
+            homepage=metadata.homepage,
+        )
+        if not summary or _GENERIC_DESCRIPTION_RE.fullmatch(summary):
+            summary = self._topic_summary(metadata.topics) or ""
+        if not summary and metadata.language:
+            summary = f"Source code and project assets built with {metadata.language}."
+        if not summary:
+            summary = "Source code and project assets."
+        return self._shorten_summary(summary, compact=compact)
+
+    def _featured_card_alt_text(self, title: str, summary: str) -> str:
+        if summary:
+            return f"Featured project card for {title}: {summary}"
+        return f"Featured project card for {title}"
+
+    def _top_languages(
+        self,
+        languages: dict[str, int] | None,
+        *,
+        compact: bool,
+    ) -> tuple[str, ...]:
+        if not languages:
+            return ()
+        limit = 1 if compact else 2
+        ranked = sorted(languages.items(), key=lambda item: item[1], reverse=True)
+        return tuple(language for language, _ in ranked[:limit])
+
+    def _featured_manifest(
+        self,
+        *,
+        artifacts: Sequence[FeaturedProjectArtifact],
+        output_dir: Path,
+        public_surface_dir: Path | None,
+        primary_layout: dict[str, int],
+        secondary_layout: dict[str, int] | None,
+    ) -> dict[str, object]:
+        return {
+            "generated_at": datetime.now(tz=UTC).isoformat(),
+            "output_dir": str(output_dir),
+            "public_surface_dir": str(public_surface_dir)
+            if public_surface_dir
+            else None,
+            "priority_contract": "featured_repos order is authoritative",
+            "layouts": {
+                "primary": primary_layout,
+                "secondary": secondary_layout,
+            },
+            "projects": [
+                {
+                    "full_name": artifact.card.kicker or artifact.card.title,
+                    "title": artifact.card.title,
+                    "url": artifact.card.url,
+                    "summary": artifact.summary,
+                    "stars": self._extract_numeric_meta_value(
+                        artifact.card.meta, "star"
+                    ),
+                    "forks": self._extract_numeric_meta_value(
+                        artifact.card.meta, "fork"
+                    ),
+                    "updated_label": artifact.updated_label,
+                    "top_languages": list(artifact.top_languages),
+                    "license": artifact.card.license_spdx,
+                    "thumbnail_present": artifact.thumbnail_present,
+                    "svg_asset_path": artifact.public_asset_src or artifact.asset_src,
+                    "layout": artifact.layout,
+                    "alt_text": artifact.alt_text,
+                }
+                for artifact in artifacts
+            ],
+        }
+
+    def _extract_numeric_meta_value(
+        self,
+        meta: Sequence[str],
+        kind: str,
+    ) -> int | None:
+        patterns = {
+            "star": re.compile(r"[★☆]\s*([\d,]+)"),
+            "fork": re.compile(r"[⑂]\s*([\d,]+)"),
+        }
+        pattern = patterns[kind]
+        for item in meta:
+            match = pattern.match(item.strip())
+            if match:
+                return int(match.group(1).replace(",", ""))
+        return None
+
+    def _render_featured_table(
+        self,
+        *,
+        artifacts: Sequence[FeaturedProjectArtifact],
+        columns: int,
+        section_label: str | None = None,
+    ) -> str:
+        if not artifacts:
+            return ""
+        column_width = f"{100 / columns:.2f}%"
+        lines: list[str] = []
+        if section_label:
+            lines.append(f'<p align="center"><sub>{escape(section_label)}</sub></p>')
+        lines.append("<table><tbody>")
+        for row_start in range(0, len(artifacts), columns):
+            lines.append("<tr>")
+            for offset in range(columns):
+                idx = row_start + offset
+                if idx >= len(artifacts):
+                    lines.append(f'<td width="{column_width}"></td>')
+                    continue
+                artifact = artifacts[idx]
+                lines.append(
+                    f'<td valign="top" width="{column_width}">'
+                    f'<a href="{escape(artifact.card.url or "#")}"'
+                    f' target="_blank" rel="noopener noreferrer">'
+                    f'<img src="{escape(artifact.asset_src)}" width="100%"'
+                    f' alt="{escape(artifact.alt_text)}"'
+                    f' loading="lazy"/></a></td>'
+                )
+            lines.append("</tr>")
+        lines.append("</tbody></table>")
+        return "\n".join(lines)
+
     def _render_featured_projects(self) -> str:
-        svg_cards: list[SvgCard] = []
-        fallback_lines: list[str] = []
         repos = self.settings.featured_repos
-        featured_columns = 3
-        featured_card_width = 360
-        featured_card_height = 198
-        column_width = f"{100 / featured_columns:.2f}%"
         # Fetch all repo metadata + languages in parallel
         metadata_by_name: dict[str, RepoMetadata | None] = {}
         languages_by_name: dict[str, dict[str, int] | None] = {}
@@ -1049,9 +1554,13 @@ class ReadmeSectionGenerator:
                     kind, name = tag
                     try:
                         if kind == "meta":
-                            metadata_by_name[name] = future.result()
+                            metadata_by_name[name] = cast(
+                                RepoMetadata | None, future.result()
+                            )
                         else:
-                            languages_by_name[name] = future.result()
+                            languages_by_name[name] = cast(
+                                dict[str, int] | None, future.result()
+                            )
                     except Exception as exc:  # pragma: no cover
                         logger.warning(
                             "Failed to fetch %s for %s: %s",
@@ -1063,86 +1572,129 @@ class ReadmeSectionGenerator:
                             metadata_by_name[name] = None
                         else:
                             languages_by_name[name] = None
-        # Build cards preserving original order
-        for repo in repos:
-            metadata = metadata_by_name.get(repo.full_name)
-            langs = languages_by_name.get(repo.full_name)
-            svg_cards.append(
-                self._build_project_svg_card(
-                    repo.full_name,
-                    metadata,
-                    languages=langs,
-                )
-            )
-            fallback_lines.append(
-                self._build_featured_repo_fallback_line(
-                    repo_full_name=repo.full_name,
-                    metadata=metadata,
-                )
-            )
-
-        if not svg_cards:
+        if not repos:
             lines = ["- No featured repositories configured."]
             return "\n".join(lines)
 
-        card_embeds: list[tuple[str, str]] = []  # (html_url, img_src)
+        primary_layout, secondary_layout = self._featured_layout_plan(len(repos))
+        primary_limit = primary_layout["count"]
 
+        primary_artifacts: list[FeaturedProjectArtifact] = []
+        secondary_artifacts: list[FeaturedProjectArtifact] = []
+
+        output_dir = Path(self.settings.svg.output_dir)
+        public_surface_dir = self._featured_public_surface_dir()
         if self._svg_section_enabled("featured_projects"):
-            writer = SvgAssetWriter(
-                output_dir=self.settings.svg.output_dir,
+            output_dir.mkdir(parents=True, exist_ok=True)
+            self._cleanup_featured_assets(
+                output_dir=output_dir,
+                public_surface_dir=public_surface_dir,
             )
-            for card in svg_cards:
-                repo_identity = card.kicker or card.title
-                asset_name = (
-                    f"featured-card-"
-                    f"{self._slugify_asset_segment(repo_identity, fallback='repo')}"
-                )
+            writer = SvgAssetWriter(output_dir=self.settings.svg.output_dir)
+        else:
+            writer = None
+
+        for index, repo in enumerate(repos):
+            layout = "primary" if index < primary_limit else "secondary"
+            layout_spec = primary_layout if layout == "primary" else secondary_layout
+            if layout_spec is None:
+                continue
+            compact = layout == "secondary"
+            metadata = metadata_by_name.get(repo.full_name)
+            languages = languages_by_name.get(repo.full_name)
+            card = self._build_project_svg_card(
+                repo.full_name,
+                metadata,
+                languages=languages,
+                compact=compact,
+            )
+            repo_identity = card.kicker or card.title
+            asset_name = (
+                f"featured-card-"
+                f"{self._slugify_asset_segment(repo_identity, fallback='repo')}"
+            )
+            canonical_src = (output_dir / f"{asset_name}.svg").as_posix()
+            public_src = (
+                f"/showcase/featured-projects/{asset_name}.svg"
+                if public_surface_dir is not None
+                else None
+            )
+            if writer is not None:
                 svg_markup = self._render_card_svg_asset(
                     family="featured",
                     card=card,
-                    width=featured_card_width,
-                    height=featured_card_height,
+                    width=layout_spec["width"],
+                    height=layout_spec["height"],
                     section_title="Featured Projects",
                 )
                 writer.write(asset_name=asset_name, svg_content=svg_markup)
-                src = (
-                    Path(self.settings.svg.output_dir) / f"{asset_name}.svg"
-                ).as_posix()
-                card_embeds.append((card.url or "#", src))
+                if public_surface_dir is not None:
+                    public_surface_dir.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(
+                        output_dir / f"{asset_name}.svg",
+                        public_surface_dir / f"{asset_name}.svg",
+                    )
+            summary = next(iter(card.lines), "")
+            artifact = FeaturedProjectArtifact(
+                layout=layout,
+                card=card,
+                asset_name=asset_name,
+                asset_src=canonical_src,
+                public_asset_src=public_src,
+                alt_text=self._featured_card_alt_text(card.title, summary),
+                summary=summary,
+                updated_label=(
+                    f"Updated {relative}"
+                    if (relative := self._relative_time(card.updated_at))
+                    else None
+                ),
+                top_languages=self._top_languages(languages, compact=compact),
+                thumbnail_present=bool(card.background_image),
+            )
+            if layout == "primary":
+                primary_artifacts.append(artifact)
+            else:
+                secondary_artifacts.append(artifact)
 
-        # Build HTML table grid (3 columns)
-        table_lines: list[str] = []
-        if card_embeds:
-            table_lines.append("<table><tbody>")
-            for i in range(0, len(card_embeds), featured_columns):
-                table_lines.append("<tr>")
-                for j in range(featured_columns):
-                    idx = i + j
-                    if idx < len(card_embeds):
-                        url, src = card_embeds[idx]
-                        table_lines.append(
-                            f'<td valign="top" width="{column_width}">'
-                            f'<a href="{escape(url)}"'
-                            f' target="_blank">'
-                            f'<img src="{escape(src)}" width="100%"'
-                            f' alt="{escape(svg_cards[idx].title)}"'
-                            f' loading="lazy"/></a></td>'
-                        )
-                    else:
-                        table_lines.append(f'<td width="{column_width}"></td>')
-                table_lines.append("</tr>")
-            table_lines.append("</tbody></table>")
+        manifest_artifacts = [*primary_artifacts, *secondary_artifacts]
+        if writer is not None and manifest_artifacts:
+            self._write_featured_manifest(
+                output_dir=output_dir,
+                manifest=self._featured_manifest(
+                    artifacts=manifest_artifacts,
+                    output_dir=output_dir,
+                    public_surface_dir=public_surface_dir,
+                    primary_layout=primary_layout,
+                    secondary_layout=secondary_layout,
+                ),
+                public_surface_dir=public_surface_dir,
+            )
 
         result_lines: list[str] = []
-        if table_lines:
-            result_lines.append("\n".join(table_lines))
-        return "\n".join(result_lines)
+        if primary_artifacts:
+            result_lines.append(
+                self._render_featured_table(
+                    artifacts=primary_artifacts,
+                    columns=primary_layout["columns"],
+                )
+            )
+        if secondary_artifacts and secondary_layout is not None:
+            result_lines.append(
+                self._render_featured_table(
+                    artifacts=secondary_artifacts,
+                    columns=secondary_layout["columns"],
+                    section_label="More Featured Projects",
+                )
+            )
+        return "\n".join(line for line in result_lines if line)
 
     def _build_project_svg_card(
         self,
         repo_full_name: str,
         metadata: RepoMetadata | None,
         languages: dict[str, int] | None = None,
+        *,
+        compact: bool = False,
     ) -> SvgCard:
         if metadata is None:
             repo_url = f"https://github.com/{repo_full_name}"
@@ -1166,33 +1718,25 @@ class ReadmeSectionGenerator:
             )
             return card
 
-        description = metadata.description or "No description provided."
-        lines: list[str] = [description]
-        if metadata.topics:
-            topics = " · ".join(metadata.topics[:3])
-            lines.append(f"Topics {topics}")
-        # Avoid duplicative host clutter in visible lines; surface homepage
-        # in card attributes instead.
-        if metadata.homepage:
-            homepage_host = urlparse(metadata.homepage).netloc.replace("www.", "")
-            if homepage_host:
-                # keep homepage as an attribute for the renderer to expose if desired
-                pass
-        # richer metadata for featured projects — use prefixed tokens so the
-        # new gh-card-style SVG renderer can parse language dots and stat icons.
+        summary = self._normalize_project_summary(metadata, compact=compact)
+        lines = [summary]
         info_bits: list[str] = []
         if metadata.language:
             info_bits.append(f"lang:{metadata.language}")
         info_bits.append(f"★ {metadata.stars:,}")
         if metadata.forks:
             info_bits.append(f"⑂ {metadata.forks:,}")
-        if metadata.open_issues is not None:
-            info_bits.append(f"⊙ {metadata.open_issues:,}")
         relative = self._relative_time(metadata.updated_at)
         if relative:
             info_bits.append(f"Updated {relative}")
-        sparkline = self._build_star_history_points(repo_full_name, metadata)
-        bg_image = self._repo_background_image(repo_full_name, metadata)
+        sparkline = (
+            None
+            if compact
+            else self._build_star_history_points(repo_full_name, metadata)
+        )
+        bg_image = (
+            None if compact else self._repo_background_image(repo_full_name, metadata)
+        )
         accent = self._repo_accent_color(metadata) or "8B5CF6"
         card = SvgCard(
             title=metadata.name,
@@ -1365,7 +1909,7 @@ class ReadmeSectionGenerator:
             imgs = []
             for url, src in card_embeds:
                 imgs.append(
-                    f'<a href="{escape(url)}" target="_blank">'
+                    f'<a href="{escape(url)}" target="_blank" rel="noopener noreferrer">'
                     f'<img src="{escape(src)}" width="500"'
                     f' loading="lazy"/></a>'
                 )
@@ -1501,7 +2045,7 @@ class ReadmeSectionGenerator:
                 f"- [{escape(repo_name)}]({escape(repo_url)}) "
                 "— Live stats are temporarily unavailable; open repository for details."
             )
-        description = metadata.description or "No description provided."
+        description = self._normalize_project_summary(metadata, compact=False)
         return (
             f"- [{escape(metadata.name)}]({escape(metadata.html_url)}) "
             f"— {escape(description)} (★ {metadata.stars:,})"
@@ -1695,6 +2239,8 @@ class ReadmeSectionGenerator:
             return None
         max_retries = 3
         backoff_delays = (1, 2, 4)
+        image_bytes = b""
+        content_type = "image/png"
         for attempt in range(max_retries + 1):
             try:
                 with urlopen(request, timeout=10.0) as response:
