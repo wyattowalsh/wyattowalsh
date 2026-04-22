@@ -27,10 +27,11 @@
 <td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="100%" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a></td>
 </tr>
 </tbody></table>
+<p align="center"><sub>More Featured Projects</sub></p>
 <table><tbody>
 <tr>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="100%" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="100%" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="100%" alt="Featured project card for personal-website: Files for my personal web app." loading="lazy"/></a></td>
+<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="100%" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted..." loading="lazy"/></a></td>
 <td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="100%" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a></td>
 </tr>
 <tr>
