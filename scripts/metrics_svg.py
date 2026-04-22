@@ -81,6 +81,21 @@ ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
             re.IGNORECASE,
         ),
     ),
+    (
+        "spotify-invalid-refresh-token",
+        re.compile(
+            r"(?:^|[\s:>-])(?:API returned 400\s*\(Invalid refresh token\)|"
+            r"Invalid refresh token)(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "tweets-unavailable",
+        re.compile(
+            r"(?:^|[\s:>-])Tweets unavailable(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
+    ),
 )
 
 PLACEHOLDER_TEXT_MARKERS: Final[tuple[str, ...]] = (

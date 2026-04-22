@@ -171,6 +171,9 @@ def test_validate_svg_content_rejects_empty_or_malformed(
         ("traffic: Unauthorized (401)", "traffic: Unauthorized (401)"),
         ("Unexpected error: boom", "Unexpected error: boom"),
         ("invalid_grant", "invalid_grant"),
+        ("Invalid refresh token", "Invalid refresh token"),
+        ("API returned 400 (Invalid refresh token)", "Invalid refresh token"),
+        ("Tweets unavailable", "Tweets unavailable"),
     ],
 )
 def test_validate_svg_content_rejects_known_error_payloads(
