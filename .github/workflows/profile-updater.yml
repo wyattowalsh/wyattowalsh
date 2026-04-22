@@ -243,7 +243,7 @@ jobs:
           backup_metric ./.github/assets/img/metrics.svg "$RUNNER_TEMP/metrics-backups/metrics.svg"
           backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
       - name: Personal metrics
-        id: personal_metrics
+        id: lowlighter_metrics_primary
         continue-on-error: true
         uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
@@ -285,7 +285,7 @@ jobs:
         run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
 
       - name: Personal metrics (additional)
-        id: personal_metrics_additional
+        id: lowlighter_metrics_additional
         continue-on-error: true
         uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
@@ -331,9 +331,9 @@ jobs:
         if: ${{ always() }}
         run: |
           set -euo pipefail
-          test "${{ steps.personal_metrics.outcome }}" = "success"
+          test "${{ steps.lowlighter_metrics_primary.outcome }}" = "success"
           test "${{ steps.validate_personal_metrics.outcome }}" = "success"
-          test "${{ steps.personal_metrics_additional.outcome }}" = "success"
+          test "${{ steps.lowlighter_metrics_additional.outcome }}" = "success"
           test "${{ steps.validate_additional_metrics.outcome }}" = "success"
 
       - name: Summarize metrics asset health
