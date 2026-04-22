@@ -321,7 +321,7 @@ class TestRendering:
             'alt="Featured project card for riso: Composable scaffolding framework"'
             in html
         )
-        assert manifest["projects"][0]["layout"] == "primary"
+        assert "layout" not in manifest["projects"][0]
         assert manifest["projects"][0]["svg_asset_path"].endswith(
             "featured-card-wyattowalsh-riso.svg"
         )
@@ -477,9 +477,28 @@ class TestRendering:
         assert html.count('width="33.33%"') == 6
         assert "More Featured Projects" not in html
 
-    def test_featured_projects_split_primary_and_secondary_cards(
-        self, tmp_path: Path
+    def test_featured_projects_keep_one_card_variety_for_larger_sets(
+        self, tmp_path: Path, monkeypatch
     ) -> None:
+        class FakeResponse:
+            def __init__(self, payload: bytes) -> None:
+                self._payload = payload
+                self.headers = {"Content-Type": "image/png"}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return None
+
+            def read(self) -> bytes:
+                return self._payload
+
+        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
+            return FakeResponse(b"mock-image-bytes")
+
+        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+
         repos = [
             ReadmeFeaturedRepo(full_name=f"wyattowalsh/repo-{index}")
             for index in range(7)
@@ -509,7 +528,12 @@ class TestRendering:
         generator = ReadmeSectionGenerator(
             settings=settings,
             repo_client=StubRepoClient(metadata),
-            star_history_client=StubStarHistoryClient({}),
+            star_history_client=StubStarHistoryClient(
+                {
+                    repo.full_name: [0, index, index + 2, index + 5]
+                    for index, repo in enumerate(repos, start=1)
+                }
+            ),
             blog_metadata_client=StubBlogMetadataClient({}),
         )
 
@@ -520,17 +544,21 @@ class TestRendering:
             )
         )
 
-        assert "More Featured Projects" in html
-        assert len([p for p in manifest["projects"] if p["layout"] == "primary"]) == 6
-        assert len([p for p in manifest["projects"] if p["layout"] == "secondary"]) == 1
+        assert "More Featured Projects" not in html
+        assert html.count("<tr>") == 3
+        assert len(manifest["projects"]) == 7
+        assert [project["full_name"] for project in manifest["projects"]] == [
+            repo.full_name for repo in repos
+        ]
+        assert "layout" not in manifest["projects"][0]
         assert manifest["projects"][0]["summary"].startswith("A very long repository")
         assert "https://" not in manifest["projects"][0]["summary"]
         assert "Topics" not in manifest["projects"][0]["summary"]
-        compact_svg = (
+        later_svg = (
             tmp_path / "svg" / "featured-card-wyattowalsh-repo-6.svg"
         ).read_text(encoding="utf-8")
-        assert "sparkline-group" not in compact_svg
-        assert "thumb-clip" not in compact_svg
+        assert "sparkline-group" in later_svg
+        assert "thumb-clip" in later_svg
 
     def test_featured_projects_mirror_docs_showcase_surface(
         self, tmp_path: Path, monkeypatch
@@ -645,6 +673,33 @@ class TestRendering:
         assert "Topics" not in summary
         assert "demo.dev" not in summary
         assert summary.startswith("An orchestration toolkit")
+        assert "..." not in summary
+
+    def test_featured_projects_normalize_summary_keeps_full_clean_copy(self) -> None:
+        generator = ReadmeSectionGenerator(settings=ReadmeSectionsSettings())
+        metadata = RepoMetadata(
+            full_name="wyattowalsh/demo",
+            name="demo",
+            html_url="https://github.com/wyattowalsh/demo",
+            description=(
+                "A long but meaningful repository description for data tooling "
+                "and agent workflows, with no need to shorten it once URLs and "
+                "boilerplate have been removed."
+            ),
+            stars=10,
+            homepage=None,
+            topics=["data-tooling", "agents"],
+            updated_at="2026-02-01T00:00:00Z",
+            language="Python",
+        )
+
+        summary = generator._normalize_project_summary(metadata, compact=True)
+
+        assert summary == (
+            "A long but meaningful repository description for data tooling and "
+            "agent workflows, with no need to shorten it once URLs and "
+            "boilerplate have been removed"
+        )
 
     def test_featured_projects_normalize_summary_falls_back_to_topics(self) -> None:
         generator = ReadmeSectionGenerator(settings=ReadmeSectionsSettings())
@@ -746,7 +801,7 @@ class TestRendering:
         )
         assert all(name in html for name in svg_files)
 
-    def test_generate_rewrites_metrics_section_when_assets_are_placeholders(
+    def test_generate_keeps_metrics_image_table_when_assets_are_placeholders(
         self,
         tmp_path: Path,
     ) -> None:
@@ -791,10 +846,11 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
-        assert "Metrics temporarily unavailable" in rendered
-        assert ".github/assets/img/metrics.svg" not in rendered
+        assert ".github/assets/img/metrics.svg" in rendered
+        assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert "Metrics temporarily unavailable" not in rendered
 
-    def test_generate_keeps_valid_metrics_and_replaces_invalid_peer(
+    def test_generate_keeps_metrics_image_table_when_only_one_asset_is_valid(
         self,
         tmp_path: Path,
     ) -> None:
@@ -841,8 +897,8 @@ class TestRendering:
         rendered = readme.read_text(encoding="utf-8")
 
         assert ".github/assets/img/metrics.svg" in rendered
-        assert ".github/assets/img/metrics.additional.svg" not in rendered
-        assert "placeholder output" in rendered
+        assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert "placeholder output" not in rendered
 
     def test_generate_replaces_stale_wakatime_block_with_fallback(
         self,

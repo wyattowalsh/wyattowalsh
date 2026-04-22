@@ -24,7 +24,6 @@ from xml.etree.ElementTree import Element
 import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
-from .metrics_svg import SvgValidationStatus, validate_svg_file
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -103,7 +102,6 @@ _ACRONYM_REPLACEMENTS = {
 class FeaturedProjectArtifact:
     """Rendered card asset plus manifest-facing metadata."""
 
-    layout: str
     card: SvgCard
     asset_name: str
     asset_src: str
@@ -694,74 +692,23 @@ class ReadmeSectionGenerator:
         return self._rewrite_wakatime_section(content)
 
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
-        repo_root = readme_path.parent
-        metrics_path = repo_root / ".github" / "assets" / "img" / "metrics.svg"
-        additional_path = (
-            repo_root / ".github" / "assets" / "img" / "metrics.additional.svg"
+        _ = readme_path
+        body = "\n".join(
+            [
+                "<table><tbody>",
+                "<tr>",
+                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>',
+                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, activity, and stargazers" width="100%" loading="lazy"/></td>',
+                "</tr>",
+                "</tbody></table>",
+            ]
         )
-        primary = validate_svg_file(metrics_path)
-        additional = validate_svg_file(additional_path)
-
-        primary_is_valid = primary.is_valid
-        additional_is_valid = additional.is_valid
-        if primary_is_valid and additional_is_valid:
-            body = "\n".join(
-                [
-                    "<table><tbody>",
-                    "<tr>",
-                    '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>',
-                    '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="100%" loading="lazy"/></td>',
-                    "</tr>",
-                    "</tbody></table>",
-                ]
-            )
-        elif primary_is_valid or additional_is_valid:
-            primary_cell = (
-                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>'
-                if primary_is_valid
-                else self._metrics_fallback_cell(primary)
-            )
-            additional_cell = (
-                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, music, activity, and stargazers" width="100%" loading="lazy"/></td>'
-                if additional_is_valid
-                else self._metrics_fallback_cell(additional)
-            )
-            body = "\n".join(
-                [
-                    "<table><tbody>",
-                    "<tr>",
-                    primary_cell,
-                    additional_cell,
-                    "</tr>",
-                    "</tbody></table>",
-                ]
-            )
-        else:
-            body = (
-                "> Metrics temporarily unavailable. The latest generated SVGs did not "
-                "pass validation, so this section is hidden until a healthy refresh lands."
-            )
 
         replacement = f"## Metrics\n\n{body}\n\n"
         if not _METRICS_SECTION_RE.search(content):
             logger.warning("Metrics section heading not found in README.")
             return content
         return _METRICS_SECTION_RE.sub(replacement, content, count=1)
-
-    def _metrics_fallback_cell(self, result: object) -> str:
-        validation = getattr(result, "status", None)
-        if validation == SvgValidationStatus.PLACEHOLDER:
-            reason = "placeholder output"
-        elif validation is None:
-            reason = "missing output"
-        else:
-            reason = validation.value.replace("-", " ")
-        return (
-            '<td valign="top" width="50%">'
-            "<div><strong>Metrics temporarily unavailable.</strong><br/>"
-            f"The latest asset validated as {escape(reason)}."
-            "</div></td>"
-        )
 
     def _rewrite_wakatime_section(self, content: str) -> str:
         match = _WAKATIME_SECTION_RE.search(content)
@@ -1200,53 +1147,24 @@ class ReadmeSectionGenerator:
             icon_svg.encode("utf-8")
         ).decode("ascii")
 
-    def _featured_layout_plan(
-        self, repo_count: int
-    ) -> tuple[dict[str, int], dict[str, int] | None]:
+    def _featured_layout_plan(self, repo_count: int) -> dict[str, int]:
         if repo_count <= 1:
-            return (
-                {
-                    "columns": 1,
-                    "width": 1100,
-                    "height": 236,
-                    "count": repo_count,
-                },
-                None,
-            )
+            return {
+                "columns": 1,
+                "width": 1100,
+                "height": 236,
+            }
         if repo_count <= 4:
-            return (
-                {
-                    "columns": 2,
-                    "width": 540,
-                    "height": 214,
-                    "count": repo_count,
-                },
-                None,
-            )
-        if repo_count <= 6:
-            return (
-                {
-                    "columns": 3,
-                    "width": 360,
-                    "height": 198,
-                    "count": repo_count,
-                },
-                None,
-            )
-        return (
-            {
-                "columns": 3,
-                "width": 360,
-                "height": 198,
-                "count": 6,
-            },
-            {
-                "columns": 3,
-                "width": 360,
-                "height": 162,
-                "count": max(repo_count - 6, 0),
-            },
-        )
+            return {
+                "columns": 2,
+                "width": 540,
+                "height": 214,
+            }
+        return {
+            "columns": 3,
+            "width": 360,
+            "height": 216,
+        }
 
     def _featured_public_surface_dir(self) -> Path | None:
         output_dir = Path(self.settings.svg.output_dir)
@@ -1381,20 +1299,8 @@ class ReadmeSectionGenerator:
         *,
         compact: bool,
     ) -> str:
-        if not summary:
-            return ""
-        sentence = re.split(r"(?<=[.!?])\s+", summary, maxsplit=1)[0].strip()
-        candidate = sentence or summary
-        max_words = 11 if compact else 20
-        max_chars = 82 if compact else 150
-        words = candidate.split()
-        if len(words) > max_words:
-            candidate = " ".join(words[:max_words]).rstrip(",;:/|·")
-            candidate = f"{candidate}..."
-        elif len(candidate) > max_chars:
-            truncated = candidate[: max_chars - 3].rstrip(" ,;:/|·")
-            candidate = f"{truncated}..."
-        return candidate
+        del compact
+        return summary.strip()
 
     def _normalize_project_summary(
         self,
@@ -1422,14 +1328,11 @@ class ReadmeSectionGenerator:
     def _top_languages(
         self,
         languages: dict[str, int] | None,
-        *,
-        compact: bool,
     ) -> tuple[str, ...]:
         if not languages:
             return ()
-        limit = 1 if compact else 2
         ranked = sorted(languages.items(), key=lambda item: item[1], reverse=True)
-        return tuple(language for language, _ in ranked[:limit])
+        return tuple(language for language, _ in ranked[:2])
 
     def _featured_manifest(
         self,
@@ -1437,8 +1340,6 @@ class ReadmeSectionGenerator:
         artifacts: Sequence[FeaturedProjectArtifact],
         output_dir: Path,
         public_surface_dir: Path | None,
-        primary_layout: dict[str, int],
-        secondary_layout: dict[str, int] | None,
     ) -> dict[str, object]:
         return {
             "generated_at": datetime.now(tz=UTC).isoformat(),
@@ -1447,10 +1348,6 @@ class ReadmeSectionGenerator:
             if public_surface_dir
             else None,
             "priority_contract": "featured_repos order is authoritative",
-            "layouts": {
-                "primary": primary_layout,
-                "secondary": secondary_layout,
-            },
             "projects": [
                 {
                     "full_name": artifact.card.kicker or artifact.card.title,
@@ -1468,7 +1365,6 @@ class ReadmeSectionGenerator:
                     "license": artifact.card.license_spdx,
                     "thumbnail_present": artifact.thumbnail_present,
                     "svg_asset_path": artifact.public_asset_src or artifact.asset_src,
-                    "layout": artifact.layout,
                     "alt_text": artifact.alt_text,
                 }
                 for artifact in artifacts
@@ -1576,11 +1472,8 @@ class ReadmeSectionGenerator:
             lines = ["- No featured repositories configured."]
             return "\n".join(lines)
 
-        primary_layout, secondary_layout = self._featured_layout_plan(len(repos))
-        primary_limit = primary_layout["count"]
-
-        primary_artifacts: list[FeaturedProjectArtifact] = []
-        secondary_artifacts: list[FeaturedProjectArtifact] = []
+        layout = self._featured_layout_plan(len(repos))
+        artifacts: list[FeaturedProjectArtifact] = []
 
         output_dir = Path(self.settings.svg.output_dir)
         public_surface_dir = self._featured_public_surface_dir()
@@ -1594,19 +1487,13 @@ class ReadmeSectionGenerator:
         else:
             writer = None
 
-        for index, repo in enumerate(repos):
-            layout = "primary" if index < primary_limit else "secondary"
-            layout_spec = primary_layout if layout == "primary" else secondary_layout
-            if layout_spec is None:
-                continue
-            compact = layout == "secondary"
+        for repo in repos:
             metadata = metadata_by_name.get(repo.full_name)
             languages = languages_by_name.get(repo.full_name)
             card = self._build_project_svg_card(
                 repo.full_name,
                 metadata,
                 languages=languages,
-                compact=compact,
             )
             repo_identity = card.kicker or card.title
             asset_name = (
@@ -1623,8 +1510,8 @@ class ReadmeSectionGenerator:
                 svg_markup = self._render_card_svg_asset(
                     family="featured",
                     card=card,
-                    width=layout_spec["width"],
-                    height=layout_spec["height"],
+                    width=layout["width"],
+                    height=layout["height"],
                     section_title="Featured Projects",
                 )
                 writer.write(asset_name=asset_name, svg_content=svg_markup)
@@ -1636,7 +1523,6 @@ class ReadmeSectionGenerator:
                     )
             summary = next(iter(card.lines), "")
             artifact = FeaturedProjectArtifact(
-                layout=layout,
                 card=card,
                 asset_name=asset_name,
                 asset_src=canonical_src,
@@ -1648,53 +1534,32 @@ class ReadmeSectionGenerator:
                     if (relative := self._relative_time(card.updated_at))
                     else None
                 ),
-                top_languages=self._top_languages(languages, compact=compact),
+                top_languages=self._top_languages(languages),
                 thumbnail_present=bool(card.background_image),
             )
-            if layout == "primary":
-                primary_artifacts.append(artifact)
-            else:
-                secondary_artifacts.append(artifact)
+            artifacts.append(artifact)
 
-        manifest_artifacts = [*primary_artifacts, *secondary_artifacts]
-        if writer is not None and manifest_artifacts:
+        if writer is not None and artifacts:
             self._write_featured_manifest(
                 output_dir=output_dir,
                 manifest=self._featured_manifest(
-                    artifacts=manifest_artifacts,
+                    artifacts=artifacts,
                     output_dir=output_dir,
                     public_surface_dir=public_surface_dir,
-                    primary_layout=primary_layout,
-                    secondary_layout=secondary_layout,
                 ),
                 public_surface_dir=public_surface_dir,
             )
 
-        result_lines: list[str] = []
-        if primary_artifacts:
-            result_lines.append(
-                self._render_featured_table(
-                    artifacts=primary_artifacts,
-                    columns=primary_layout["columns"],
-                )
-            )
-        if secondary_artifacts and secondary_layout is not None:
-            result_lines.append(
-                self._render_featured_table(
-                    artifacts=secondary_artifacts,
-                    columns=secondary_layout["columns"],
-                    section_label="More Featured Projects",
-                )
-            )
-        return "\n".join(line for line in result_lines if line)
+        return self._render_featured_table(
+            artifacts=artifacts,
+            columns=layout["columns"],
+        )
 
     def _build_project_svg_card(
         self,
         repo_full_name: str,
         metadata: RepoMetadata | None,
         languages: dict[str, int] | None = None,
-        *,
-        compact: bool = False,
     ) -> SvgCard:
         if metadata is None:
             repo_url = f"https://github.com/{repo_full_name}"
@@ -1718,7 +1583,7 @@ class ReadmeSectionGenerator:
             )
             return card
 
-        summary = self._normalize_project_summary(metadata, compact=compact)
+        summary = self._normalize_project_summary(metadata, compact=False)
         lines = [summary]
         info_bits: list[str] = []
         if metadata.language:
@@ -1729,14 +1594,8 @@ class ReadmeSectionGenerator:
         relative = self._relative_time(metadata.updated_at)
         if relative:
             info_bits.append(f"Updated {relative}")
-        sparkline = (
-            None
-            if compact
-            else self._build_star_history_points(repo_full_name, metadata)
-        )
-        bg_image = (
-            None if compact else self._repo_background_image(repo_full_name, metadata)
-        )
+        sparkline = self._build_star_history_points(repo_full_name, metadata)
+        bg_image = self._repo_background_image(repo_full_name, metadata)
         accent = self._repo_accent_color(metadata) or "8B5CF6"
         card = SvgCard(
             title=metadata.name,

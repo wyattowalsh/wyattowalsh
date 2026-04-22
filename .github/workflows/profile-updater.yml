@@ -245,14 +245,15 @@ jobs:
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
           base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, community, repositories, metadata' || 'header, activity, community, metadata' }}
-          plugin_lines: yes
+          # Disabled until upstream handles bot/system authors without throwing.
+          plugin_lines: no
           plugin_isocalendar: yes
           plugin_traffic: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_languages: yes
@@ -269,7 +270,8 @@ jobs:
           plugin_habits_languages_threshold: "0%"
           plugin_notable: yes
           plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_gists: yes
+          # GitHub Actions tokens cannot read gists reliably for this account.
+          plugin_gists: no
           plugin_topics: yes
           plugin_topics_sort: stars
           plugin_topics_limit: 15
@@ -282,46 +284,10 @@ jobs:
         continue-on-error: true
         run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
 
-      - name: Personal metrics (fallback without repositories)
-        if: ${{ steps.personal_metrics.outcome != 'success' || steps.validate_personal_metrics.outcome != 'success' }}
-        continue-on-error: true
-        uses: lowlighter/metrics@latest
-        with:
-          output_action: none
-          filename: .github/assets/img/metrics.svg
-          token: ${{ github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
-          base: "header, activity, community, metadata"
-          plugin_lines: yes
-          plugin_isocalendar: yes
-          plugin_traffic: no
-          plugin_languages: yes
-          plugin_languages_ignored: "jupyter%20notebook"
-          plugin_languages_details: "bytes-size, percentage"
-          plugin_languages_threshold: "2%"
-          # Drop flaky plugins here so fallback still renders a valid SVG.
-          plugin_habits: no
-          plugin_notable: yes
-          plugin_notable_repositories: no
-          plugin_gists: yes
-          plugin_topics: yes
-          plugin_topics_sort: stars
-          plugin_topics_limit: 15
-          config_timezone: America/Los_Angeles
-          config_padding: 10%
-      - name: Recover personal metrics output
-        id: recover_personal_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: |
-          uv run python -m scripts.metrics_svg recover \
-            ./.github/assets/img/metrics.svg \
-            --previous "$RUNNER_TEMP/metrics-backups/metrics.svg"
-
       - name: Personal metrics (additional)
         id: personal_metrics_additional
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
@@ -330,11 +296,9 @@ jobs:
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          plugin_music: ${{ steps.metrics_auth.outputs.has_spotify_tokens == 'true' && 'yes' || 'no' }}
-          plugin_music_provider: spotify
-          plugin_music_mode: recent
-          plugin_music_token: "${{ secrets.SPOTIFY_CLIENT_ID }}, ${{ secrets.SPOTIFY_CLIENT_SECRET }}, ${{ secrets.SPOTIFY_REFRESH_TOKEN }}"
-          plugin_music_limit: 5
+          # Keep this card on stable GitHub-native panels; spotify currently breaks
+          # the action build before rendering completes.
+          plugin_music: no
           plugin_activity: yes
           plugin_activity_limit: 5
           plugin_activity_load: 300
@@ -354,44 +318,23 @@ jobs:
         continue-on-error: true
         run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
 
-      - name: Personal metrics (additional fallback)
-        if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.validate_additional_metrics.outcome != 'success' }}
-        continue-on-error: true
-        uses: lowlighter/metrics@latest
-        with:
-          output_action: none
-          filename: .github/assets/img/metrics.additional.svg
-          token: ${{ github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
-          base: ""
-          config_timezone: America/Los_Angeles
-          config_padding: 10%
-          # Keep fallback on the most stable public GitHub sections only.
-          plugin_music: no
-          plugin_activity: no
-          plugin_stargazers: no
-          plugin_stargazers_charts: no
-          plugin_stars: no
-          plugin_stars_limit: 0
-          plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
-      - name: Recover additional metrics output
-        id: recover_additional_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: |
-          uv run python -m scripts.metrics_svg recover \
-            ./.github/assets/img/metrics.additional.svg \
-            --previous "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
-
       - name: Validate final metrics assets
         id: validate_final_metrics
         if: ${{ always() }}
-        continue-on-error: true
         run: |
           set -euo pipefail
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
+
+      - name: Enforce metrics generation success
+        id: enforce_metrics_generation
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          test "${{ steps.personal_metrics.outcome }}" = "success"
+          test "${{ steps.validate_personal_metrics.outcome }}" = "success"
+          test "${{ steps.personal_metrics_additional.outcome }}" = "success"
+          test "${{ steps.validate_additional_metrics.outcome }}" = "success"
 
       - name: Summarize metrics asset health
         if: ${{ always() }}
@@ -405,14 +348,11 @@ jobs:
               result = validate_svg_file(path)
               print(f"{asset_name}: status={result.status.value} detail={result.detail}")
               if not result.is_valid:
-                  print(
-                      f"::notice::{asset_name} is in degraded state ({result.status.value}); "
-                      "README generation will render an explicit fallback instead of a broken card."
-                  )
+                  print(f"::error::{asset_name} is in degraded state ({result.status.value}).")
           PY
 
       - name: Commit metrics outputs
-        if: ${{ always() }}
+        if: ${{ success() && steps.validate_final_metrics.outcome == 'success' && steps.enforce_metrics_generation.outcome == 'success' }}
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(metrics): update generated metrics assets"
@@ -608,8 +548,10 @@ jobs:
   update-skills:
     name: Finalize README Sections
     runs-on: ubuntu-latest
-    needs: update-readme-wakatime
-    if: ${{ always() && !cancelled() }}
+    needs:
+      - update-readme-wakatime
+      - generate-profile-metrics
+    if: ${{ !cancelled() && needs.update-readme-wakatime.result == 'success' && needs.generate-profile-metrics.result == 'success' }}
     timeout-minutes: 20
     permissions:
       contents: write
