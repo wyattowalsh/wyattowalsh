@@ -367,13 +367,34 @@ jobs:
 
       - name: Commit metrics outputs
         if: ${{ success() && steps.validate_final_metrics.outcome == 'success' && steps.enforce_metrics_generation.outcome == 'success' }}
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
-        with:
-          commit_message: "chore(metrics): update generated metrics assets"
-          file_pattern: ".github/assets/img/metrics.svg .github/assets/img/metrics.additional.svg"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "github-actions[bot]@users.noreply.github.com"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+        env:
+          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg; then
+            echo "No metrics asset changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg
+          git commit -m "chore(metrics): update generated metrics assets"
+
+          for attempt in 1 2 3; do
+            if git push origin "HEAD:${TARGET_BRANCH}"; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Failed to push metrics commit after ${attempt} attempts."
+              exit 1
+            fi
+
+            git fetch origin "${TARGET_BRANCH}"
+            git rebase "origin/${TARGET_BRANCH}"
+          done
 
   generate-event-art:
     name: Generate Event-Driven Artwork
