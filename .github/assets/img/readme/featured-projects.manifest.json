@@ -1,19 +1,5 @@
 {
-  "generated_at": "2026-04-20T19:28:00.516760+00:00",
-  "layouts": {
-    "primary": {
-      "columns": 3,
-      "count": 6,
-      "height": 198,
-      "width": 360
-    },
-    "secondary": {
-      "columns": 3,
-      "count": 4,
-      "height": 162,
-      "width": 360
-    }
-  },
+  "generated_at": "2026-04-22T03:41:38.858542+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -21,7 +7,6 @@
       "alt_text": "Featured project card for agents: AI agent artifacts, configs, skills, tools, and more",
       "forks": 1,
       "full_name": "wyattowalsh/agents",
-      "layout": "primary",
       "license": "MIT",
       "stars": 1,
       "summary": "AI agent artifacts, configs, skills, tools, and more",
@@ -32,14 +17,13 @@
         "Python",
         "HTML"
       ],
-      "updated_label": "Updated 16h ago",
+      "updated_label": "Updated 2d ago",
       "url": "https://github.com/wyattowalsh/agents"
     },
     {
       "alt_text": "Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
       "forks": 14,
       "full_name": "wyattowalsh/nbadb",
-      "layout": "primary",
       "license": "MIT",
       "stars": 60,
       "summary": "Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
@@ -50,14 +34,13 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 22m ago",
+      "updated_label": "Updated 41m ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
       "alt_text": "Featured project card for proxywhirl: rotating proxy system",
       "forks": 1,
       "full_name": "wyattowalsh/proxywhirl",
-      "layout": "primary",
       "license": "MIT",
       "stars": 2,
       "summary": "rotating proxy system",
@@ -68,14 +51,13 @@
         "HTML",
         "Python"
       ],
-      "updated_label": "Updated 15h ago",
+      "updated_label": "Updated 1d ago",
       "url": "https://github.com/wyattowalsh/proxywhirl"
     },
     {
       "alt_text": "Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
       "forks": null,
       "full_name": "wyattowalsh/mcp-crawl4ai",
-      "layout": "primary",
       "license": "MIT",
       "stars": 0,
       "summary": "MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
@@ -93,7 +75,6 @@
       "alt_text": "Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
       "forks": null,
       "full_name": "wyattowalsh/fl-mcp",
-      "layout": "primary",
       "license": "MIT",
       "stars": 0,
       "summary": "Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
@@ -111,7 +92,6 @@
       "alt_text": "Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards",
       "forks": null,
       "full_name": "wyattowalsh/listentropy",
-      "layout": "primary",
       "license": "MIT",
       "stars": 0,
       "summary": "Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards",
@@ -126,35 +106,35 @@
       "url": "https://github.com/wyattowalsh/listentropy"
     },
     {
-      "alt_text": "Featured project card for personal-website: Files for my personal web app.",
+      "alt_text": "Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! \ud83d\udc68\u200d\ud83d\udcbb",
       "forks": null,
       "full_name": "wyattowalsh/personal-website",
-      "layout": "secondary",
       "license": null,
       "stars": 3,
-      "summary": "Files for my personal web app.",
+      "summary": "Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! \ud83d\udc68\u200d\ud83d\udcbb",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-personal-website.svg",
-      "thumbnail_present": false,
+      "thumbnail_present": true,
       "title": "personal-website",
       "top_languages": [
-        "TypeScript"
+        "TypeScript",
+        "CSS"
       ],
-      "updated_label": "Updated 5d ago",
+      "updated_label": "Updated 6d ago",
       "url": "https://github.com/wyattowalsh/personal-website"
     },
     {
-      "alt_text": "Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted...",
+      "alt_text": "Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools",
       "forks": null,
       "full_name": "wyattowalsh/mdxpad",
-      "layout": "secondary",
       "license": null,
       "stars": 0,
-      "summary": "macOS-first MDX editor with live preview, native file workflows, and AI-assisted...",
+      "summary": "macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-mdxpad.svg",
-      "thumbnail_present": false,
+      "thumbnail_present": true,
       "title": "mdxpad",
       "top_languages": [
-        "TypeScript"
+        "TypeScript",
+        "MDX"
       ],
       "updated_label": "Updated 3w ago",
       "url": "https://github.com/wyattowalsh/mdxpad"
@@ -163,34 +143,34 @@
       "alt_text": "Featured project card for ai-web-feeds: AI/ML web feeds",
       "forks": null,
       "full_name": "wyattowalsh/ai-web-feeds",
-      "layout": "secondary",
       "license": "MIT",
       "stars": 0,
       "summary": "AI/ML web feeds",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-ai-web-feeds.svg",
-      "thumbnail_present": false,
+      "thumbnail_present": true,
       "title": "ai-web-feeds",
       "top_languages": [
-        "TypeScript"
+        "TypeScript",
+        "Python"
       ],
-      "updated_label": "Updated 9h ago",
+      "updated_label": "Updated 1d ago",
       "url": "https://github.com/wyattowalsh/ai-web-feeds"
     },
     {
       "alt_text": "Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player",
       "forks": 1,
       "full_name": "wyattowalsh/iina-plugin-bookmarks",
-      "layout": "secondary",
       "license": "MIT",
       "stars": 7,
       "summary": "media bookmark manager plugin for the iina video player",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-iina-plugin-bookmarks.svg",
-      "thumbnail_present": false,
+      "thumbnail_present": true,
       "title": "iina-plugin-bookmarks",
       "top_languages": [
-        "TypeScript"
+        "TypeScript",
+        "SCSS"
       ],
-      "updated_label": "Updated 1d ago",
+      "updated_label": "Updated 2d ago",
       "url": "https://github.com/wyattowalsh/iina-plugin-bookmarks"
     }
   ],
