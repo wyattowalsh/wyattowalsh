@@ -2,6 +2,7 @@
 
 import json
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 from textwrap import dedent
 
@@ -17,6 +18,7 @@ from scripts.readme_sections import (
     BlogPost,
     ReadmeSectionGenerator,
     RepoMetadata,
+    StarHistoryClient,
 )
 
 
@@ -51,7 +53,13 @@ class StubStarHistoryClient:
     def __init__(self, series: dict[str, list[int]]) -> None:
         self.series = series
 
-    def fetch_star_history(self, full_name: str, sample: int = 24) -> list[int] | None:
+    def fetch_star_history(
+        self,
+        full_name: str,
+        sample: int = 24,
+        series_start: datetime | None = None,
+    ) -> list[int] | None:
+        _ = sample, series_start
         return self.series.get(full_name)
 
 
@@ -373,6 +381,67 @@ class TestRendering:
         assert (tmp_path / "svg" / "featured-card-octocat-demo.svg").exists()
         assert "featured-card-wyattowalsh-demo.svg" in html
         assert "featured-card-octocat-demo.svg" in html
+
+    def test_featured_projects_omit_sparkline_when_history_is_unavailable(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(enabled=True, output_dir=str(tmp_path / "svg")),
+            featured_repos=[ReadmeFeaturedRepo(full_name="wyattowalsh/demo")],
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            repo_client=StubRepoClient(
+                {
+                    "wyattowalsh/demo": RepoMetadata(
+                        full_name="wyattowalsh/demo",
+                        name="demo",
+                        html_url="https://github.com/wyattowalsh/demo",
+                        description="Repo without trustworthy history",
+                        stars=3,
+                        homepage=None,
+                        topics=["python"],
+                        updated_at="2026-02-02T00:00:00Z",
+                        created_at="2025-01-01T00:00:00Z",
+                    )
+                }
+            ),
+            star_history_client=StubStarHistoryClient({}),
+        )
+
+        generator._render_featured_projects()
+
+        svg = (tmp_path / "svg" / "featured-card-wyattowalsh-demo.svg").read_text(
+            encoding="utf-8"
+        )
+        assert "sparkline-group" not in svg
+
+    def test_build_star_history_points_aligns_final_point_to_live_star_count(
+        self,
+    ) -> None:
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(),
+            star_history_client=StubStarHistoryClient(
+                {"wyattowalsh/demo": [0, 1, 2]}
+            ),
+        )
+
+        points = generator._build_star_history_points(
+            "wyattowalsh/demo",
+            RepoMetadata(
+                full_name="wyattowalsh/demo",
+                name="demo",
+                html_url="https://github.com/wyattowalsh/demo",
+                description="Repo with lagging GraphQL history",
+                stars=3,
+                homepage=None,
+                topics=[],
+                updated_at="2026-02-02T00:00:00Z",
+                created_at="2025-01-01T00:00:00Z",
+            ),
+        )
+
+        assert points == (0.0, 1.0, 3.0)
 
     def test_featured_projects_render_two_columns_for_four_primary_cards(
         self, tmp_path: Path
@@ -1788,3 +1857,69 @@ class TestDeadCodeRemoval:
     def test_social_kicker_method_does_not_exist(self) -> None:
         """_social_kicker was dead code and should be removed."""
         assert not hasattr(ReadmeSectionGenerator, "_social_kicker")
+
+
+class TestStarHistoryClient:
+    def test_fetch_star_history_uses_repo_creation_time_for_low_star_repos(
+        self,
+        monkeypatch,
+    ) -> None:
+        client = StarHistoryClient()
+        response_payload = {
+            "data": {
+                "repository": {
+                    "stargazers": {
+                        "edges": [
+                            {
+                                "starredAt": "2021-01-23T00:56:37Z",
+                                "cursor": "cursor-1",
+                            },
+                            {
+                                "starredAt": "2021-02-01T23:22:04Z",
+                                "cursor": "cursor-2",
+                            },
+                        ],
+                        "pageInfo": {"hasNextPage": False, "endCursor": None},
+                    }
+                }
+            }
+        }
+
+        class _StubResponse:
+            def __enter__(self) -> "_StubResponse":
+                return self
+
+            def __exit__(self, exc_type, exc, tb) -> None:
+                return None
+
+            def read(self) -> bytes:
+                return json.dumps(response_payload).encode("utf-8")
+
+        monkeypatch.setattr(
+            "scripts.readme_sections.urlopen",
+            lambda request, timeout=10.0: _StubResponse(),
+        )
+        monkeypatch.setattr(
+            "scripts.readme_sections.datetime",
+            type(
+                "FrozenDateTime",
+                (),
+                {
+                    "fromisoformat": staticmethod(datetime.fromisoformat),
+                    "now": staticmethod(
+                        lambda tz=None: datetime(2026, 4, 22, tzinfo=UTC)
+                    ),
+                },
+            ),
+        )
+
+        sampled = client.fetch_star_history(
+            "wyattowalsh/personal-website",
+            sample=6,
+            series_start=datetime(2018, 11, 19, 9, 9, 41, tzinfo=UTC),
+        )
+
+        assert sampled is not None
+        assert sampled[0] == 0
+        assert sampled[-1] == 2
+        assert len(set(sampled)) > 1

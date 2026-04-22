@@ -393,6 +393,7 @@ class StarHistoryClient:
         self,
         full_name: str,
         sample: int = 24,
+        series_start: datetime | None = None,
     ) -> list[int] | None:
         """Return cumulative star counts sampled to *sample* time bins."""
         parts = full_name.split("/", 1)
@@ -472,9 +473,19 @@ class StarHistoryClient:
         if not timestamps:
             return None
 
-        # Bucket into *sample* evenly-spaced time bins from first star to now
+        # Bucket into *sample* evenly-spaced time bins from repo creation (when
+        # available) or first star to now so low-star repos still show early
+        # zero history instead of collapsing to a flat line.
         timestamps.sort()
         t_start = timestamps[0]
+        if series_start is not None:
+            normalized_start = (
+                series_start
+                if series_start.tzinfo is not None
+                else series_start.replace(tzinfo=UTC)
+            )
+            if normalized_start < t_start:
+                t_start = normalized_start
         t_end = datetime.now(UTC)
         if t_end <= t_start:
             t_end = timestamps[-1]
@@ -2182,15 +2193,28 @@ class ReadmeSectionGenerator:
             return None
         history: list[int] | None = None
         if self.star_history_client:
+            series_start = self._parse_iso_datetime(metadata.created_at)
             history = self.star_history_client.fetch_star_history(
                 repo_full_name,
                 sample=24,
+                series_start=series_start,
             )
-        if history and len(set(history)) > 1:
+        if history:
+            if metadata.stars > history[-1]:
+                history = [*history[:-1], metadata.stars]
             return tuple(float(value) for value in history)
-        if metadata.stars > 0:
-            return (0.0, float(metadata.stars))
         return None
+
+    def _parse_iso_datetime(self, value: str | None) -> datetime | None:
+        if not value:
+            return None
+        try:
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+        if parsed.tzinfo is None:
+            return parsed.replace(tzinfo=UTC)
+        return parsed.astimezone(UTC)
 
     def _wrap_blog_post_list_markers(self, lines: Sequence[str]) -> str:
         """Wrap blog post list in manager markers and a GFM <details> disclosure.
