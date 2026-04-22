@@ -252,7 +252,10 @@ jobs:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, community, repositories, metadata' || 'header, activity, community, metadata' }}
+          # The available token does not carry the scopes required by the
+          # repositories block, which renders an inline "Insufficient token scopes"
+          # error inside an otherwise healthy card.
+          base: header, activity, community, metadata
           # Disabled until upstream handles bot/system authors without throwing.
           plugin_lines: no
           plugin_isocalendar: yes

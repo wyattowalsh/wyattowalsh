@@ -219,6 +219,15 @@ def test_validate_svg_content_rejects_embedded_unexpected_error_panel() -> None:
     assert result.is_valid is False
 
 
+def test_validate_svg_content_rejects_embedded_scope_error_panel() -> None:
+    result = validate_svg_content(
+        _svg_with_text("0 Watchers Insufficient token scopes 8 Languages"),
+    )
+
+    assert result.status == SvgValidationStatus.ERROR_PAYLOAD
+    assert result.is_valid is False
+
+
 def test_placeholder_svg_is_detected_and_rejected() -> None:
     result = validate_svg_content(PLACEHOLDER_SVG)
 

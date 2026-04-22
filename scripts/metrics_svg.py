@@ -19,7 +19,7 @@ ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
     (
         "insufficient-token-scopes",
         re.compile(
-            r"(?:^|[\s:>-])Insufficient token scopes(?:$|[.!()])",
+            r"(?:^|[\s:>-])Insufficient token scopes(?:$|[\s.!()])",
             re.IGNORECASE,
         ),
     ),
@@ -27,7 +27,7 @@ ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
         "repository-sections-disabled",
         re.compile(
             r"(?:^|[\s:>-])Repository and collaborations sections disabled"
-            r"(?:$|[.!()])",
+            r"(?:$|[\s.!()])",
             re.IGNORECASE,
         ),
     ),
