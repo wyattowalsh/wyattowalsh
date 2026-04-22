@@ -38,6 +38,7 @@ from .shared import (
     oklch_lerp,
     order_repos_for_visual_plan,
     organic_texture_filter,
+    resolve_render_metrics,
     seed_hash,
     select_palette_for_world,
     visual_complexity,
@@ -488,6 +489,7 @@ def generate(
     loop_duration: float = 60.0,
     reveal_fraction: float = 0.93,
 ) -> str:
+    metrics = resolve_render_metrics(metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     chrome_mat = chrome_maturity if chrome_maturity is not None else mat
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -2464,6 +2466,9 @@ def generate(
             f"{_timeline_style(topic_when, 0.65, window=repo_timeline_window)}>"
             f"{place_name}</text>"
         )
+        label_obstacles.append(
+            _label_span_points(place_name, topic_x, topic_y, topic_anchor, label_size)
+        )
         P.append(
             f'<text x="{topic_x:.0f}" y="{note_y:.0f}" '
             f'font-family="Georgia, serif" font-size="{note_size:.1f}" letter-spacing="0.8" '
@@ -2478,6 +2483,9 @@ def generate(
             f'font-variant="small-caps" fill="{note_color}" text-anchor="{topic_anchor}" '
             f"{_timeline_style(topic_when, 0.48, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
             f"{cluster_note}</text>"
+        )
+        label_obstacles.append(
+            _label_span_points(cluster_note, topic_x, note_y, topic_anchor, note_size)
         )
         P.append("</g>")
 
@@ -2739,7 +2747,7 @@ def generate(
         settlement_when = _repo_when(best[2]) or _date_for_activity_fraction(0.42)
         P.append(
             f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}" '
-            f"{_timeline_style(settlement_when, 0.95, 'tl-reveal tl-soft')}>"
+            f"{_timeline_style(settlement_when, 0.95, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
         )
 
         if settlement_tier == "capital":

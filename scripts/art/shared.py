@@ -811,6 +811,22 @@ def validate_live_history_payload(history: Mapping[str, Any]) -> dict[str, Any]:
     )
 
 
+def resolve_render_metrics(metrics: Mapping[str, Any]) -> dict[str, Any]:
+    """Prefer the timelapse render contract when present.
+
+    ``render_state`` is an internal monotonic envelope used by canonical
+    living-art timelapse rendering.  Generators should read from it when
+    available, but retain access to stable metadata from the outer payload.
+    """
+    render_state = metrics.get("render_state")
+    if not isinstance(render_state, Mapping):
+        return dict(metrics)
+
+    resolved = dict(metrics)
+    resolved.update(dict(render_state))
+    return resolved
+
+
 def normalize_live_metrics(
     raw: Mapping[str, Any],
     *,

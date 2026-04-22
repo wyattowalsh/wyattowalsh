@@ -39,6 +39,7 @@ from .shared import (
     order_repos_for_visual_plan,
     repo_to_canvas_position,
     repo_visibility_score,
+    resolve_render_metrics,
     seed_hash,
     select_primary_repos,
     topic_affinity_matrix,
@@ -832,6 +833,7 @@ def generate(
     -------
     str : complete SVG markup.
     """
+    metrics = resolve_render_metrics(metrics)
     config = CFG
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)

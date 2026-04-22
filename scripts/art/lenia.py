@@ -63,6 +63,7 @@ from .shared import (
     order_repos_for_visual_plan,
     repo_to_canvas_position,
     repo_visibility_score,
+    resolve_render_metrics,
     seed_hash,
     select_palette_for_world,
     select_primary_repos,
@@ -1697,6 +1698,7 @@ def generate(
     str
         Complete SVG document as a string.
     """
+    metrics = resolve_render_metrics(metrics)
     config = CFG
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)

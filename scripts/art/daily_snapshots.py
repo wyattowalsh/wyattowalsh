@@ -51,6 +51,33 @@ MONOTONIC_CUMULATIVE_KEYS: tuple[str, ...] = (
     "merged_pr_count",
     "contributions_to_date",
 )
+RENDER_STATE_SCALAR_KEYS: tuple[str, ...] = (
+    "stars",
+    "forks",
+    "watchers",
+    "followers",
+    "public_repos",
+    "network_count",
+    "total_commits",
+    "total_prs",
+    "total_issues",
+    "total_repos_contributed",
+    "public_gists",
+    "pr_review_count",
+    "release_count",
+    "merged_pr_count",
+    "contributions_to_date",
+    "contributions_last_year",
+    "language_count",
+    "language_diversity",
+    "open_issues_count",
+)
+RENDER_STATE_MAPPING_KEYS: tuple[str, ...] = (
+    "languages",
+    "topic_clusters",
+    "repo_recency_bands",
+    "commit_hour_distribution",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -252,6 +279,236 @@ def _allocate_star_delta(
 def _interpolate_scalar(current_value: int | float, progress: float) -> int:
     """Linearly interpolate a scalar from 0 to current_value based on progress."""
     return max(0, round(current_value * progress))
+
+
+def _mapping_envelope(
+    current: dict[str | int, int | float] | None,
+    previous: dict[str | int, int | float] | None,
+) -> dict[str | int, int | float]:
+    """Clamp mapping values upward key-by-key."""
+    current_mapping = current or {}
+    previous_mapping = previous or {}
+    merged: dict[str | int, int | float] = {}
+    for key in set(current_mapping.keys()) | set(previous_mapping.keys()):
+        curr = current_mapping.get(key, 0) or 0
+        prev = previous_mapping.get(key, 0) or 0
+        merged[key] = max(curr, prev)
+    return merged
+
+
+def _allocate_histogram_delta(
+    delta: int,
+    histogram: dict[int, int],
+    distribution: dict[int, int],
+) -> dict[int, int]:
+    """Allocate an integer delta across histogram buckets using weighted quotas."""
+    if delta <= 0:
+        return dict(histogram)
+
+    normalized = {
+        hour: max(0.0, float(distribution.get(hour, 0) or 0.0)) for hour in range(24)
+    }
+    total = sum(normalized.values())
+    if total <= 0:
+        normalized = {hour: 0.0 for hour in range(24)}
+        normalized[12] = 1.0
+        total = 1.0
+
+    quotas = {hour: (delta * normalized[hour]) / total for hour in range(24)}
+    allocations = {hour: int(math.floor(quota)) for hour, quota in quotas.items()}
+    assigned = sum(allocations.values())
+
+    while assigned < delta:
+        recipient = max(
+            range(24),
+            key=lambda hour: (quotas[hour] - allocations[hour], -abs(hour - 12), -hour),
+        )
+        allocations[recipient] += 1
+        assigned += 1
+
+    updated = {int(hour): int(histogram.get(hour, 0) or 0) for hour in range(24)}
+    for hour, allocation in allocations.items():
+        updated[hour] = updated.get(hour, 0) + allocation
+    return updated
+
+
+def _build_render_state(
+    metrics_dict: dict[str, Any],
+    *,
+    previous_render_state: dict[str, Any] | None,
+    cumulative_commit_hours: dict[int, int],
+) -> dict[str, Any]:
+    """Build the monotonic timelapse render contract consumed by generators."""
+    previous_render_state = previous_render_state or {}
+    previous_star_velocity = previous_render_state.get("star_velocity", {})
+    current_star_velocity = metrics_dict.get("star_velocity", {})
+    prev_recent_rate = (
+        float(previous_star_velocity.get("recent_rate", 0.0) or 0.0)
+        if isinstance(previous_star_velocity, dict)
+        else 0.0
+    )
+    prev_peak_rate = (
+        float(previous_star_velocity.get("peak_rate", 0.0) or 0.0)
+        if isinstance(previous_star_velocity, dict)
+        else 0.0
+    )
+    current_recent_rate = (
+        float(current_star_velocity.get("recent_rate", 0.0) or 0.0)
+        if isinstance(current_star_velocity, dict)
+        else 0.0
+    )
+    current_peak_rate = (
+        float(current_star_velocity.get("peak_rate", 0.0) or 0.0)
+        if isinstance(current_star_velocity, dict)
+        else 0.0
+    )
+    render_recent_rate = max(prev_recent_rate, current_recent_rate)
+    render_peak_rate = max(prev_peak_rate, current_peak_rate, render_recent_rate)
+    render_trend = (
+        "rising"
+        if render_recent_rate > prev_recent_rate or render_peak_rate > prev_peak_rate
+        else str(previous_star_velocity.get("trend", "stable") or "stable")
+        if isinstance(previous_star_velocity, dict)
+        else "stable"
+    )
+
+    current_streaks = metrics_dict.get("contribution_streaks", {})
+    previous_streaks = previous_render_state.get("contribution_streaks", {})
+    streak_envelope = max(
+        int(current_streaks.get("longest_streak_months", 0) or 0)
+        if isinstance(current_streaks, dict)
+        else 0,
+        int(current_streaks.get("current_streak_months", 0) or 0)
+        if isinstance(current_streaks, dict)
+        else 0,
+        int(previous_streaks.get("longest_streak_months", 0) or 0)
+        if isinstance(previous_streaks, dict)
+        else 0,
+        int(previous_streaks.get("current_streak_months", 0) or 0)
+        if isinstance(previous_streaks, dict)
+        else 0,
+    )
+
+    current_issue_stats = (
+        metrics_dict.get("issue_stats")
+        if isinstance(metrics_dict.get("issue_stats"), dict)
+        else {}
+    )
+    previous_issue_stats = (
+        previous_render_state.get("issue_stats")
+        if isinstance(previous_render_state.get("issue_stats"), dict)
+        else {}
+    )
+    open_issue_envelope = max(
+        int(metrics_dict.get("open_issues_count", 0) or 0),
+        int(current_issue_stats.get("open_count", 0) or 0),
+        int(previous_render_state.get("open_issues_count", 0) or 0),
+        int(previous_issue_stats.get("open_count", 0) or 0),
+    )
+    closed_issue_envelope = max(
+        int(current_issue_stats.get("closed_count", 0) or 0),
+        int(previous_issue_stats.get("closed_count", 0) or 0),
+        max(0, int(metrics_dict.get("total_issues", 0) or 0) - open_issue_envelope),
+    )
+
+    cumulative_state = dict(metrics_dict.get("cumulative_state", {}))
+    languages = _mapping_envelope(
+        metrics_dict.get("languages"),
+        previous_render_state.get("languages"),
+    )
+    topic_clusters = _mapping_envelope(
+        metrics_dict.get("topic_clusters"),
+        previous_render_state.get("topic_clusters"),
+    )
+    repo_recency_bands = _mapping_envelope(
+        metrics_dict.get("repo_recency_bands"),
+        previous_render_state.get("repo_recency_bands"),
+    )
+    language_count = max(
+        int(metrics_dict.get("language_count", 0) or 0),
+        len(languages),
+        int(previous_render_state.get("language_count", 0) or 0),
+    )
+    language_diversity = max(
+        float(metrics_dict.get("language_diversity", 0.0) or 0.0),
+        float(previous_render_state.get("language_diversity", 0.0) or 0.0),
+    )
+
+    return {
+        "label": metrics_dict.get("label"),
+        "account_created": metrics_dict.get("account_created"),
+        "repos": [dict(repo) for repo in metrics_dict.get("repos", [])],
+        "repo_visual_order": list(metrics_dict.get("repo_visual_order", []) or []),
+        "stars": cumulative_state.get("stars", metrics_dict.get("stars", 0)),
+        "forks": cumulative_state.get("forks", metrics_dict.get("forks", 0)),
+        "watchers": cumulative_state.get("watchers", metrics_dict.get("watchers", 0)),
+        "followers": cumulative_state.get(
+            "followers", metrics_dict.get("followers", 0)
+        ),
+        "public_repos": cumulative_state.get(
+            "public_repos", metrics_dict.get("public_repos", 0)
+        ),
+        "network_count": cumulative_state.get(
+            "network_count", metrics_dict.get("network_count", 0)
+        ),
+        "total_commits": cumulative_state.get(
+            "total_commits", metrics_dict.get("total_commits", 0)
+        ),
+        "total_prs": cumulative_state.get("total_prs", metrics_dict.get("total_prs", 0)),
+        "total_issues": cumulative_state.get(
+            "total_issues", metrics_dict.get("total_issues", 0)
+        ),
+        "total_repos_contributed": cumulative_state.get(
+            "total_repos_contributed",
+            metrics_dict.get("total_repos_contributed", 0),
+        ),
+        "public_gists": cumulative_state.get(
+            "public_gists", metrics_dict.get("public_gists", 0)
+        ),
+        "pr_review_count": cumulative_state.get(
+            "pr_review_count", metrics_dict.get("pr_review_count", 0)
+        ),
+        "release_count": cumulative_state.get(
+            "release_count", metrics_dict.get("release_count", 0)
+        ),
+        "merged_pr_count": cumulative_state.get(
+            "merged_pr_count", metrics_dict.get("merged_pr_count", 0)
+        ),
+        "contributions_to_date": cumulative_state.get(
+            "contributions_to_date", metrics_dict.get("contributions_to_date", 0)
+        ),
+        # Keep compatibility with existing generators that still read this key.
+        "contributions_last_year": cumulative_state.get(
+            "contributions_to_date", metrics_dict.get("contributions_to_date", 0)
+        ),
+        "contributions_monthly": dict(metrics_dict.get("contributions_monthly", {})),
+        "contributions_daily": dict(metrics_dict.get("contributions_daily", {})),
+        "languages": languages,
+        "language_count": language_count,
+        "language_diversity": language_diversity,
+        "topic_clusters": topic_clusters,
+        "repo_recency_bands": repo_recency_bands,
+        "releases": list(metrics_dict.get("releases", []) or []),
+        "recent_merged_prs": list(metrics_dict.get("recent_merged_prs", []) or []),
+        "commit_hour_distribution": dict(cumulative_commit_hours),
+        "star_velocity": {
+            "recent_rate": round(render_recent_rate, 2),
+            "peak_rate": round(render_peak_rate, 2),
+            "trend": render_trend,
+        },
+        "contribution_streaks": {
+            "longest_streak_months": streak_envelope,
+            "current_streak_months": streak_envelope,
+            "streak_active": streak_envelope > 0,
+        },
+        # Treat issue burden as a monotonic envelope instead of a shrinking current-state estimate.
+        "open_issues_count": open_issue_envelope,
+        "issue_stats": {
+            "open_count": open_issue_envelope,
+            "closed_count": closed_issue_envelope,
+        },
+        "cumulative_state": cumulative_state,
+    }
 
 
 def _language_distribution_at_day(
@@ -691,6 +948,8 @@ def build_daily_snapshots(
     previous_total_stars = 0
     previous_maturity = 0.0
     previous_cumulative_state: dict[str, int] = {}
+    previous_render_state: dict[str, Any] = {}
+    cumulative_commit_hours: dict[int, int] = {}
 
     snapshots: list[DailySnapshot] = []
 
@@ -889,6 +1148,11 @@ def build_daily_snapshots(
             releases=releases_trunc,
             merged_prs=recent_merged_prs_trunc,
         )
+        cumulative_commit_hours = _allocate_histogram_delta(
+            max(0, int(daily_contribs.get(day_iso, 0) or 0)),
+            cumulative_commit_hours,
+            metrics_dict["commit_hour_distribution"],
+        )
 
         # Topic clusters
         topic_counts: dict[str, int] = defaultdict(int)
@@ -939,9 +1203,16 @@ def build_daily_snapshots(
             "commit_hour_distribution": metrics_dict["commit_hour_distribution"],
         }
 
+        render_state = _build_render_state(
+            metrics_dict,
+            previous_render_state=previous_render_state,
+            cumulative_commit_hours=cumulative_commit_hours,
+        )
+        metrics_dict["render_state"] = render_state
+
         # Timelapse frames should never regress once cumulative signals have appeared.
-        maturity = max(previous_maturity, compute_maturity(metrics_dict))
-        world_state = compute_world_state(metrics_dict)
+        maturity = max(previous_maturity, compute_maturity(render_state))
+        world_state = compute_world_state(render_state)
 
         snapshots.append(
             DailySnapshot(
@@ -958,6 +1229,7 @@ def build_daily_snapshots(
         previous_total_stars = max(previous_total_stars, total_stars)
         previous_maturity = maturity
         previous_cumulative_state = cumulative_state.copy()
+        previous_render_state = render_state
 
     logger.info(
         "Built {} snapshots; maturity range {:.3f} → {:.3f}",
@@ -1002,6 +1274,71 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                 f"Snapshot maturity regressed on {current.day.isoformat()}: "
                 f"{previous.maturity:.4f} -> {current.maturity:.4f}"
             )
+
+        previous_render_state = cast(
+            "dict[str, Any]",
+            previous.metrics_dict.get("render_state", {}),
+        )
+        current_render_state = cast(
+            "dict[str, Any]",
+            current.metrics_dict.get("render_state", {}),
+        )
+        if previous_render_state and current_render_state:
+            for key in RENDER_STATE_SCALAR_KEYS:
+                current_value = float(current_render_state.get(key, 0) or 0)
+                previous_value = float(previous_render_state.get(key, 0) or 0)
+                if current_value < previous_value:
+                    raise ValueError(
+                        f"Render-state scalar {key!r} regressed on "
+                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                    )
+
+            for key in RENDER_STATE_MAPPING_KEYS:
+                current_mapping = cast(
+                    "dict[str | int, int | float]",
+                    current_render_state.get(key, {}),
+                )
+                previous_mapping = cast(
+                    "dict[str | int, int | float]",
+                    previous_render_state.get(key, {}),
+                )
+                for item_key in set(current_mapping.keys()) | set(previous_mapping.keys()):
+                    current_value = float(current_mapping.get(item_key, 0) or 0)
+                    previous_value = float(previous_mapping.get(item_key, 0) or 0)
+                    if current_value < previous_value:
+                        raise ValueError(
+                            f"Render-state mapping {key!r}[{item_key!r}] regressed on "
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                        )
+
+            for key in ("releases", "recent_merged_prs", "repos"):
+                current_len = len(current_render_state.get(key, []) or [])
+                previous_len = len(previous_render_state.get(key, []) or [])
+                if current_len < previous_len:
+                    raise ValueError(
+                        f"Render-state sequence {key!r} regressed on "
+                        f"{current.day.isoformat()}: {previous_len} -> {current_len}"
+                    )
+
+            previous_repos = {
+                str(repo.get("name")): repo
+                for repo in previous_render_state.get("repos", [])
+                if isinstance(repo, dict) and repo.get("name")
+            }
+            current_repos = {
+                str(repo.get("name")): repo
+                for repo in current_render_state.get("repos", [])
+                if isinstance(repo, dict) and repo.get("name")
+            }
+            for repo_name in previous_repos.keys() & current_repos.keys():
+                for repo_key in ("stars", "forks", "age_months"):
+                    current_value = int(current_repos[repo_name].get(repo_key, 0) or 0)
+                    previous_value = int(previous_repos[repo_name].get(repo_key, 0) or 0)
+                    if current_value < previous_value:
+                        raise ValueError(
+                            f"Render-state repo {repo_name!r} key {repo_key!r} regressed on "
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                        )
         previous = current
         previous_cumulative = current_cumulative
 
@@ -1009,6 +1346,13 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
 # ---------------------------------------------------------------------------
 # Adaptive frame sampling
 # ---------------------------------------------------------------------------
+
+
+def _sampling_metrics(snapshot: DailySnapshot) -> dict[str, Any]:
+    render_state = snapshot.metrics_dict.get("render_state")
+    if isinstance(render_state, dict):
+        return render_state
+    return snapshot.metrics_dict
 
 
 def _repo_signature(metrics: dict[str, Any]) -> tuple[str, ...]:
@@ -1049,8 +1393,8 @@ def _sequence_displacement(
 
 
 def _transition_score(previous: DailySnapshot, current: DailySnapshot) -> float:
-    previous_metrics = previous.metrics_dict
-    current_metrics = current.metrics_dict
+    previous_metrics = _sampling_metrics(previous)
+    current_metrics = _sampling_metrics(current)
     previous_world = previous.world_state
     current_world = current.world_state
     previous_repo_signature = _repo_signature(previous_metrics)
@@ -1200,25 +1544,81 @@ def sample_frames(
 
     interior_slots = max_frames - 2
     interior_count = n - 2
-    selected_indices = [0]
-    for slot_index in range(interior_slots):
-        start = 1 + (slot_index * interior_count) // interior_slots
-        stop = 1 + ((slot_index + 1) * interior_count) // interior_slots
-        bucket_span = max(1, stop - start)
-        bucket_indices = range(start, stop)
-        bucket_reference = snapshots[start - 1]
-        best_index = max(
-            bucket_indices,
-            key=lambda index: (
-                transition_scores[index]
-                + _transition_score(bucket_reference, snapshots[index])
-                + 0.15 * ((index - start + 1) / bucket_span),
-                index,
-            ),
+    anchor_slots = interior_slots // 2
+    transition_slots = interior_slots - anchor_slots
+    selected_indices: set[int] = {0, n - 1}
+
+    if anchor_slots > 0:
+        total_anchor_count = anchor_slots + 2
+        for anchor_step in range(1, total_anchor_count - 1):
+            anchor_index = int(
+                round(anchor_step * (n - 1) / max(1, total_anchor_count - 1))
+            )
+            anchor_index = max(1, min(n - 2, anchor_index))
+            selected_indices.add(anchor_index)
+
+    if transition_slots > 0:
+        for slot_index in range(transition_slots):
+            start = 1 + (slot_index * interior_count) // transition_slots
+            stop = 1 + ((slot_index + 1) * interior_count) // transition_slots
+            if stop <= start:
+                stop = min(n - 1, start + 1)
+            bucket_span = max(1, stop - start)
+            bucket_indices = range(start, stop)
+            bucket_reference = snapshots[start - 1]
+            best_index = max(
+                bucket_indices,
+                key=lambda index: (
+                    transition_scores[index]
+                    + _transition_score(bucket_reference, snapshots[index])
+                    + 0.15 * ((index - start + 1) / bucket_span),
+                    index,
+                ),
+            )
+            selected_indices.add(best_index)
+
+    while len(selected_indices) < max_frames:
+        ordered = sorted(selected_indices)
+        best_gap: tuple[int, int] | None = None
+        best_span = 0
+        for left, right in zip(ordered, ordered[1:]):
+            span = right - left
+            if span > best_span:
+                best_gap = (left, right)
+                best_span = span
+        if best_gap is None or best_span <= 1:
+            break
+
+        left, right = best_gap
+        midpoint = left + (best_span // 2)
+        if midpoint in selected_indices:
+            midpoint = min(
+                (
+                    index
+                    for index in range(left + 1, right)
+                    if index not in selected_indices
+                ),
+                default=midpoint,
+            )
+        if midpoint in selected_indices:
+            break
+        selected_indices.add(midpoint)
+
+    ordered_indices = sorted(selected_indices)
+    if len(ordered_indices) > max_frames:
+        protected = {0, n - 1}
+        interior_selected = [
+            index for index in ordered_indices if index not in protected
+        ]
+        ranked_interior = sorted(
+            interior_selected,
+            key=lambda index: (transition_scores[index], index),
+            reverse=True,
         )
-        selected_indices.append(best_index)
-    selected_indices.append(n - 1)
-    result = [snapshots[index] for index in selected_indices]
+        keep_interior = sorted(ranked_interior[: interior_slots])
+        ordered_indices = [0, *keep_interior, n - 1]
+
+    result = [snapshots[index] for index in ordered_indices]
 
     logger.info(
         "Sampled {} frames from {} days (first: {}, last: {})",
