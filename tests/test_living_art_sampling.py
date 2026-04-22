@@ -177,3 +177,34 @@ def test_sample_frames_keeps_repo_visual_order_shift_without_count_change() -> N
         == ["alpha", "late-surge", "beta"]
         for snap in sampled
     )
+
+
+def test_sample_frames_preserves_even_real_day_anchors_when_transitions_are_flat() -> None:
+    snaps = [_snapshot(idx=i, repo_names=("foundation",)) for i in range(40)]
+
+    sampled = sample_frames(snaps, max_frames=6)
+    sampled_indices = [snap.day_index for snap in sampled]
+
+    assert sampled_indices[0] == 0
+    assert sampled_indices[-1] == 39
+    assert sampled_indices == sorted(sampled_indices)
+    # The anchor budget should keep the real-day chronology distributed
+    # instead of collapsing onto a late cluster when nothing dramatic happens.
+    assert any(10 <= idx <= 14 for idx in sampled_indices[1:-1])
+    assert any(25 <= idx <= 29 for idx in sampled_indices[1:-1])
+
+
+def test_sample_frames_fills_remaining_budget_from_largest_gaps() -> None:
+    snaps = [_snapshot(idx=i, repo_names=("foundation",)) for i in range(40)]
+    snaps[19] = _snapshot(idx=19, repo_names=("foundation",), releases=2)
+    snaps[38] = _snapshot(idx=38, repo_names=("foundation",), merged_prs=3)
+
+    sampled = sample_frames(snaps, max_frames=6)
+    sampled_indices = [snap.day_index for snap in sampled]
+    gaps = [
+        sampled_indices[index + 1] - sampled_indices[index]
+        for index in range(len(sampled_indices) - 1)
+    ]
+
+    assert len(sampled) == 6
+    assert max(gaps) <= 13

@@ -49,6 +49,7 @@ from .shared import (
     oklch_gradient,
     oklch_lerp,
     order_repos_for_visual_plan,
+    resolve_render_metrics,
     repo_visibility_score,
     seed_hash,
     select_palette_for_world,
@@ -1070,6 +1071,7 @@ def generate(
     loop_duration: float = 60.0,
     reveal_fraction: float = 0.93,
 ) -> str:
+    metrics = resolve_render_metrics(metrics)
     base_mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     mat = 1.0 if timeline_enabled else base_mat

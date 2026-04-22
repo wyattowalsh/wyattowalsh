@@ -518,6 +518,20 @@ def test_sample_frames_passthrough_small():
     assert len(sampled) == len(snaps)
 
 
+def test_sample_frames_return_real_snapshot_days() -> None:
+    """Sampling should never synthesize non-existent days."""
+    history = _mock_history(days=60)
+    metrics = _mock_metrics()
+    snaps = build_daily_snapshots(history, metrics)
+
+    sampled = sample_frames(snaps, max_frames=12)
+
+    source_days = {snap.day for snap in snaps}
+    assert sampled
+    assert all(snap.day in source_days for snap in sampled)
+    assert [snap.day for snap in sampled] == sorted(snap.day for snap in sampled)
+
+
 # ---------------------------------------------------------------------------
 # Frame duration tests
 # ---------------------------------------------------------------------------

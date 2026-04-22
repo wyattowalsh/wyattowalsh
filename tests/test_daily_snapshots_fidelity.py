@@ -457,6 +457,82 @@ def test_build_daily_snapshots_exposes_split_monotonic_and_recent_state(
     )
 
 
+def test_build_daily_snapshots_exposes_monotonic_render_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+    final_metrics = snaps[-1].metrics_dict
+    render_state = final_metrics["render_state"]
+
+    assert render_state["stars"] == final_metrics["cumulative_state"]["stars"]
+    assert (
+        render_state["contributions_last_year"]
+        == final_metrics["cumulative_state"]["contributions_to_date"]
+    )
+    assert render_state["repo_visual_order"] == final_metrics["repo_visual_order"]
+    assert render_state["repos"] == final_metrics["repos"]
+
+
+def test_build_daily_snapshots_render_state_channels_never_regress(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+
+    for key in (
+        "stars",
+        "forks",
+        "watchers",
+        "followers",
+        "public_repos",
+        "total_commits",
+        "release_count",
+        "merged_pr_count",
+        "contributions_to_date",
+        "contributions_last_year",
+    ):
+        series = [snap.metrics_dict["render_state"][key] for snap in snaps]
+        assert series == sorted(series), f"{key} regressed: {series}"
+
+    for key in (
+        "languages",
+        "topic_clusters",
+        "repo_recency_bands",
+        "commit_hour_distribution",
+    ):
+        previous: dict[object, float] = {}
+        for snap in snaps:
+            current = snap.metrics_dict["render_state"][key]
+            for item_key in set(previous.keys()) | set(current.keys()):
+                assert float(current.get(item_key, 0) or 0) >= float(
+                    previous.get(item_key, 0) or 0
+                )
+            previous = current
+
+    streak_series = [
+        snap.metrics_dict["render_state"]["contribution_streaks"][
+            "longest_streak_months"
+        ]
+        for snap in snaps
+    ]
+    assert streak_series == sorted(streak_series)
+
+    velocity_series = [
+        snap.metrics_dict["render_state"]["star_velocity"]["recent_rate"]
+        for snap in snaps
+    ]
+    assert velocity_series == sorted(velocity_series)
+
+
 def test_build_daily_snapshots_monotonic_cumulative_channels_never_regress(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

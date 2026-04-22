@@ -33,6 +33,7 @@ from .shared import (
     organic_texture_filter,
     repo_to_canvas_position,
     repo_visibility_score,
+    resolve_render_metrics,
     seed_hash,
     select_primary_repos,
 )
@@ -733,6 +734,7 @@ def generate(
     reveal_fraction: float = 0.93,
 ) -> str:
     """Render a ferrofluid magnetism sculpture as an SVG string."""
+    metrics = resolve_render_metrics(metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     maturity_hint = 1.0 if timeline_enabled else mat
