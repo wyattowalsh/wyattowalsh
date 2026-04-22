@@ -388,7 +388,6 @@ jobs:
       - name: Validate final metrics assets
         id: validate_final_metrics
         if: ${{ always() }}
-        continue-on-error: true
         run: |
           set -euo pipefail
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
@@ -413,7 +412,7 @@ jobs:
           PY
 
       - name: Commit metrics outputs
-        if: ${{ always() }}
+        if: ${{ always() && steps.validate_final_metrics.outcome == 'success' }}
         uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "chore(metrics): update generated metrics assets"
@@ -609,8 +608,10 @@ jobs:
   update-skills:
     name: Finalize README Sections
     runs-on: ubuntu-latest
-    needs: update-readme-wakatime
-    if: ${{ always() && !cancelled() }}
+    needs:
+      - update-readme-wakatime
+      - generate-profile-metrics
+    if: ${{ !cancelled() && needs.update-readme-wakatime.result == 'success' && needs.generate-profile-metrics.result == 'success' }}
     timeout-minutes: 20
     permissions:
       contents: write
