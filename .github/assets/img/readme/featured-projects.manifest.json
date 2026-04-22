@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T23:02:33.863393+00:00",
+  "generated_at": "2026-04-22T22:53:17.333989+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -38,20 +38,20 @@
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
-      "alt_text": "Featured project card for proxywhirl: Live stats are temporarily unavailable.",
-      "forks": null,
+      "alt_text": "Featured project card for proxywhirl: rotating proxy system",
+      "forks": 1,
       "full_name": "wyattowalsh/proxywhirl",
-      "license": null,
-      "stars": null,
-      "summary": "Live stats are temporarily unavailable.",
+      "license": "MIT",
+      "stars": 2,
+      "summary": "rotating proxy system",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-proxywhirl.svg",
-      "thumbnail_present": false,
+      "thumbnail_present": true,
       "title": "proxywhirl",
       "top_languages": [
         "HTML",
         "Python"
       ],
-      "updated_label": null,
+      "updated_label": "Updated 15h ago",
       "url": "https://github.com/wyattowalsh/proxywhirl"
     },
     {
