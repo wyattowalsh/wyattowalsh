@@ -308,12 +308,7 @@ jobs:
           # Keep this card on stable GitHub-native panels; spotify currently breaks
           # the action build before rendering completes.
           plugin_music: no
-          plugin_activity: yes
-          plugin_activity_limit: 5
-          plugin_activity_load: 300
-          plugin_activity_days: 0
-          plugin_activity_visibility: public
-          plugin_activity_timestamps: yes
+          plugin_activity: no
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
