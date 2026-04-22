@@ -246,7 +246,7 @@ jobs:
       - name: Personal metrics
         id: personal_metrics
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
@@ -286,7 +286,7 @@ jobs:
       - name: Personal metrics (fallback without repositories)
         if: ${{ steps.personal_metrics.outcome != 'success' || steps.validate_personal_metrics.outcome != 'success' }}
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
@@ -322,7 +322,7 @@ jobs:
       - name: Personal metrics (additional)
         id: personal_metrics_additional
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
@@ -358,7 +358,7 @@ jobs:
       - name: Personal metrics (additional fallback)
         if: ${{ steps.personal_metrics_additional.outcome != 'success' || steps.validate_additional_metrics.outcome != 'success' }}
         continue-on-error: true
-        uses: lowlighter/metrics@latest
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
