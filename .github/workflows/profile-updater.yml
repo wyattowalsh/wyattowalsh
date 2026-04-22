@@ -242,6 +242,7 @@ jobs:
 
           backup_metric ./.github/assets/img/metrics.svg "$RUNNER_TEMP/metrics-backups/metrics.svg"
           backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
+          rm -f ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg
       - name: Personal metrics
         id: lowlighter_metrics_primary
         continue-on-error: true
@@ -278,6 +279,14 @@ jobs:
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
+      - name: Collect personal metrics output
+        id: collect_personal_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cp /metrics_renders/.github/assets/img/metrics.svg ./.github/assets/img/metrics.svg
+
       - name: Validate personal metrics output
         id: validate_personal_metrics
         if: ${{ always() }}
@@ -312,6 +321,14 @@ jobs:
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
 
+      - name: Collect additional metrics output
+        id: collect_additional_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cp /metrics_renders/.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.additional.svg
+
       - name: Validate additional metrics output
         id: validate_additional_metrics
         if: ${{ always() }}
@@ -332,8 +349,10 @@ jobs:
         run: |
           set -euo pipefail
           test "${{ steps.lowlighter_metrics_primary.outcome }}" = "success"
+          test "${{ steps.collect_personal_metrics.outcome }}" = "success"
           test "${{ steps.validate_personal_metrics.outcome }}" = "success"
           test "${{ steps.lowlighter_metrics_additional.outcome }}" = "success"
+          test "${{ steps.collect_additional_metrics.outcome }}" = "success"
           test "${{ steps.validate_additional_metrics.outcome }}" = "success"
 
       - name: Summarize metrics asset health
