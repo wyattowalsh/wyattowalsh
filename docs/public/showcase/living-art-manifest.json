@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-21T04:43:33.559515+00:00",
+  "generated_at": "2026-04-22T02:42:00.520453+00:00",
   "output_dir": "docs/public/showcase",
   "total_assets": 6,
   "counts": {
@@ -39,7 +39,7 @@
       "style_label": "Ink Garden",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 6526903
+      "bytes": 6493633
     },
     {
       "name": "living-lenia.gif",
@@ -66,7 +66,7 @@
       "style_label": "Topography",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 10478971
+      "bytes": 11000743
     }
   ]
 }
