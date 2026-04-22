@@ -602,6 +602,25 @@ class TestSvgRepoCardRenderer:
         assert svg.count('class="rc-desc"') >= 2
         # Full words visible, not mid-word truncation
         assert "Processing" in svg
+        assert "…" not in svg
+
+    def test_repo_card_expands_for_full_description_without_ellipsis(self) -> None:
+        renderer = SvgRepoCardRenderer(width=320, height=162)
+        card = SvgCard(
+            title="repo",
+            lines=(
+                "A compact featured project card should still keep the full "
+                "normalized repository description visible instead of clipping "
+                "the tail behind an ellipsis.",
+            ),
+            meta=("lang:Python", "★ 5", "Updated 2 days ago"),
+        )
+
+        svg = renderer.render_card(card)
+
+        assert "ellipsis." in svg
+        assert "…" not in svg
+        assert "the tail behind an" in svg
 
     def test_word_wrap_helper(self) -> None:
         lines = _word_wrap(
@@ -691,6 +710,69 @@ class TestSvgRepoCardRenderer:
             or "font: 400 12px" in svg
             or "font: 400 13px" in svg
         )
+
+    def test_three_column_featured_cards_keep_full_surface_details(self) -> None:
+        renderer = SvgRepoCardRenderer(width=360, height=216)
+        card = SvgCard(
+            title="repo",
+            lines=(
+                "A taller default featured-project card keeps the complete "
+                "description visible while still leaving room for supporting "
+                "signals around the body copy.",
+            ),
+            meta=("lang:Python", "★ 123", "⑂ 45", "Updated 2 days ago"),
+            background_image="data:image/png;base64,iVBOR",
+            sparkline=(0.0, 2.0, 5.0, 8.0, 12.0),
+            languages={"Python": 8000, "Shell": 2000},
+            license_spdx="MIT",
+        )
+
+        svg = renderer.render_card(card)
+
+        assert "thumb-clip" in svg
+        assert "sparkline-group" in svg
+        assert "MIT" in svg
+        assert "Shell 20%" in svg
+        assert "…" not in svg
+
+    def test_thumbnail_stats_clear_description_and_sparkline_band(self) -> None:
+        renderer = SvgRepoCardRenderer(width=360, height=216)
+        card = SvgCard(
+            title="personal-website",
+            lines=(
+                "Files for my personal web app. Built using Vercel, Typescript, "
+                "NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. "
+                "Currently on V6! 👨‍💻",
+            ),
+            meta=("lang:TypeScript", "★ 3", "Updated 6d ago"),
+            background_image="data:image/png;base64,iVBOR",
+            sparkline=(0.0, 2.0, 5.0, 8.0, 12.0),
+            languages={
+                "TypeScript": 7200,
+                "CSS": 1700,
+                "SCSS": 500,
+                "JavaScript": 400,
+                "Python": 200,
+            },
+        )
+
+        svg = renderer.render_card(card)
+
+        desc_y_values = [
+            int(match)
+            for match in re.findall(r'<text class="rc-desc" x="20" y="(\d+)"', svg)
+        ]
+        stats_y_match = re.search(r'<text class="rc-meta" x="[^"]+" y="(\d+)">6d ago</text>', svg)
+        sparkline_y_match = re.search(
+            r'<g transform="translate\(20,(\d+)\)" class="sparkline-group">',
+            svg,
+        )
+
+        assert stats_y_match is not None
+        assert sparkline_y_match is not None
+        assert desc_y_values
+        assert max(desc_y_values) + 12 < int(stats_y_match.group(1))
+        assert int(stats_y_match.group(1)) + 8 < int(sparkline_y_match.group(1))
 
     def test_no_thumbnail_when_no_image(self) -> None:
         renderer = SvgRepoCardRenderer()

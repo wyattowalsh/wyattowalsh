@@ -762,6 +762,7 @@ class SvgRepoCardRenderer:
         esc = escape
         compact = self._is_compact_card()
         lang_name, lang_color = self._extract_language(card.meta)
+        stats_items = self._collect_stats(card.meta, compact=compact)
         px = 20  # left padding
         sparkline_data = (
             card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
@@ -773,6 +774,14 @@ class SvgRepoCardRenderer:
         thumb_w = 0
         thumb_h = 0
         layout: tuple[list[str], list[str], int, int] | None = None
+        best_candidate: tuple[
+            tuple[list[str], list[str], int, int],
+            int,
+            bool,
+            bool,
+            int,
+            int,
+        ] | None = None
         thumb_trials = (
             [True, False] if card.background_image and not compact else [False]
         )
@@ -784,14 +793,19 @@ class SvgRepoCardRenderer:
             )
             spark_trials = [True, False] if sparkline_data and not compact else [False]
             for try_sparkline in spark_trials:
-                text_bottom = (h - 64) if try_sparkline else (bar_y - 12)
+                text_bottom = self._text_bottom_limit(
+                    card_height=h,
+                    show_sparkline=try_sparkline,
+                    reserve_stats=try_thumb and bool(stats_items),
+                )
                 available_height = max(36, text_bottom - 16)
-                candidate, fits = self._fit_copy_layout(
+                candidate, fits, overflow = self._fit_copy_layout(
                     title=card.title,
                     description=raw_desc,
                     text_px_w=text_px_w,
                     available_height=available_height,
-                    max_desc_lines=1 if compact else 2,
+                    max_desc_lines=None,
+                    ellipsize_desc=False,
                 )
                 layout = candidate
                 if fits:
@@ -801,9 +815,43 @@ class SvgRepoCardRenderer:
                     thumb_h = candidate_thumb_h
                     selected = True
                     break
+                if (
+                    best_candidate is None
+                    or overflow < best_candidate[1]
+                    or (
+                        overflow == best_candidate[1]
+                        and not try_thumb
+                        and best_candidate[2]
+                    )
+                    or (
+                        overflow == best_candidate[1]
+                        and try_thumb == best_candidate[2]
+                        and not try_sparkline
+                        and best_candidate[3]
+                    )
+                ):
+                    best_candidate = (
+                        candidate,
+                        overflow,
+                        try_thumb,
+                        try_sparkline and sparkline_data is not None,
+                        candidate_thumb_w,
+                        candidate_thumb_h,
+                    )
             if selected:
                 break
 
+        if not selected and best_candidate is not None:
+            (
+                layout,
+                overflow,
+                show_thumb,
+                show_sparkline,
+                thumb_w,
+                thumb_h,
+            ) = best_candidate
+            h += overflow + 16
+            bar_y = h - 30
         if layout is None:
             layout = ([card.title], [], 17, 13)
         title_lines, desc_lines, title_size, desc_size = layout
@@ -915,8 +963,8 @@ class SvgRepoCardRenderer:
                 f"{esc(line_text, quote=True)}</text>"
             )
 
-        if not show_thumb and not compact:
-            self._render_stats(lines, card.meta, w - 20, title_y, compact=compact)
+        if not show_thumb and stats_items:
+            self._render_stats(lines, stats_items, w - 20, title_y)
 
         for line_text in desc_lines:
             lines.append(
@@ -942,10 +990,10 @@ class SvgRepoCardRenderer:
         fy = h - 14
         self._render_footer(lines, card, px, fy, lang_name, lang_color, compact=compact)
         # When thumbnail is present, render stats below the description
-        # instead of in the title row (where they'd overlap the image)
-        if show_thumb:
-            stats_y = desc_y + 6
-            self._render_stats(lines, card.meta, w - 20, stats_y, compact=compact)
+        # but above the sparkline/footer zone with reserved vertical space.
+        if show_thumb and stats_items:
+            stats_y = self._stats_row_y(h, show_sparkline=show_sparkline)
+            self._render_stats(lines, stats_items, w - 20, stats_y)
 
         lines.append("</svg>")
         return "\n".join(lines)
@@ -996,30 +1044,12 @@ class SvgRepoCardRenderer:
     def _render_stats(
         self,
         lines: list[str],
-        meta: tuple[str, ...],
+        items: list[tuple[str, str]],
         right_x: int,
         y: int,
-        *,
-        compact: bool,
     ) -> None:
         """Render stats right-aligned at (right_x, y)."""
         esc = escape
-        items: list[tuple[str, str]] = []  # (icon_path, count_text)
-        for item in meta or ():
-            stripped = item.strip()
-            star_match = re.match(r"[★☆]\s*(.+)", stripped)
-            if star_match:
-                items.append((STAR_ICON_PATH, star_match.group(1).strip()))
-                continue
-            if compact:
-                continue
-            fork_match = re.match(r"[⑂]\s*(.+)", stripped)
-            if fork_match:
-                items.append((FORK_ICON_PATH, fork_match.group(1).strip()))
-                continue
-            updated_match = re.match(r"Updated\s+(.+)", stripped)
-            if updated_match:
-                items.append((CLOCK_ICON_PATH, updated_match.group(1).strip()))
         if not items:
             return
         # Layout right-to-left from right_x
@@ -1192,8 +1222,9 @@ class SvgRepoCardRenderer:
         description: str,
         text_px_w: int,
         available_height: int,
-        max_desc_lines: int,
-    ) -> tuple[tuple[list[str], list[str], int, int], bool]:
+        max_desc_lines: int | None,
+        ellipsize_desc: bool,
+    ) -> tuple[tuple[list[str], list[str], int, int], bool, int]:
         best: tuple[list[str], list[str], int, int] | None = None
         best_overflow: int | None = None
 
@@ -1213,26 +1244,68 @@ class SvgRepoCardRenderer:
                     description,
                     desc_width,
                     max_lines=max_desc_lines,
-                    ellipsize=True,
+                    ellipsize=ellipsize_desc,
                 )
                 desc_line_height = desc_size + 3
                 gap = 10 if desc_lines else 0
                 total_height = title_height + gap + (len(desc_lines) * desc_line_height)
                 layout = (title_lines, desc_lines, title_size, desc_size)
                 if total_height <= available_height:
-                    return layout, True
+                    return layout, True, 0
                 overflow = total_height - available_height
                 if best is None or best_overflow is None or overflow < best_overflow:
                     best = layout
                     best_overflow = overflow
 
         if best is None:
-            return ([title], [], 17, 13), False
+            return ([title], [], 17, 13), False, 0
 
-        return best, False
+        return best, False, best_overflow or 0
 
     def _is_compact_card(self) -> bool:
         return self.width <= 320 or self.height <= 170
+
+    def _collect_stats(
+        self,
+        meta: tuple[str, ...] | None,
+        *,
+        compact: bool,
+    ) -> list[tuple[str, str]]:
+        items: list[tuple[str, str]] = []
+        for item in meta or ():
+            stripped = item.strip()
+            star_match = re.match(r"[★☆]\s*(.+)", stripped)
+            if star_match:
+                items.append((STAR_ICON_PATH, star_match.group(1).strip()))
+                continue
+            if compact:
+                continue
+            fork_match = re.match(r"[⑂]\s*(.+)", stripped)
+            if fork_match:
+                items.append((FORK_ICON_PATH, fork_match.group(1).strip()))
+                continue
+            updated_match = re.match(r"Updated\s+(.+)", stripped)
+            if updated_match:
+                items.append((CLOCK_ICON_PATH, updated_match.group(1).strip()))
+        return items
+
+    def _text_bottom_limit(
+        self,
+        *,
+        card_height: int,
+        show_sparkline: bool,
+        reserve_stats: bool,
+    ) -> int:
+        if show_sparkline:
+            sparkline_y = card_height - 56
+            return sparkline_y - (26 if reserve_stats else 12)
+        footer_bar_y = card_height - 30
+        return footer_bar_y - (28 if reserve_stats else 12)
+
+    def _stats_row_y(self, card_height: int, *, show_sparkline: bool) -> int:
+        if show_sparkline:
+            return card_height - 70
+        return card_height - 40
 
     @staticmethod
     def _truncate(value: str, limit: int) -> str:
