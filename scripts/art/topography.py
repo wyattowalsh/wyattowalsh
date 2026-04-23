@@ -30,6 +30,7 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     hex_frac,
+    is_monotonic_timelapse_metrics,
     make_radial_gradient,
     map_date_to_loop_delay,
     normalize_timeline_window,
@@ -489,6 +490,7 @@ def generate(
     loop_duration: float = 60.0,
     reveal_fraction: float = 0.93,
 ) -> str:
+    timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     chrome_mat = chrome_maturity if chrome_maturity is not None else mat
@@ -967,7 +969,7 @@ def generate(
         repo_positions.append((rcx, rcy, repo))
 
     # ── 2b. Optimize hill positions with PSO ──
-    if len(repo_positions) >= 2:
+    if len(repo_positions) >= 2 and not timelapse_contract:
         # Extract positions and weights for optimizer
         raw_positions = [
             (rp[0] * MAP_W + MAP_L, rp[1] * MAP_H + MAP_T) for rp in repo_positions
@@ -998,7 +1000,7 @@ def generate(
 
     # ── 2c. Optimize language terrain hues for color harmony ──
     terrain_hues = [LANG_HUES.get(rp[2].get("language"), 155) for rp in repo_positions]
-    if len(terrain_hues) >= 2:
+    if len(terrain_hues) >= 2 and not timelapse_contract:
         terrain_hues = optimize_palette_hues(
             terrain_hues,
             max_shift=10.0,
@@ -2549,9 +2551,10 @@ def generate(
         label_size *= 0.82 + 0.18 * repo_signal
         detail_size = max(4.0, label_size - 1.5)
         P.append(
-            f'<g class="repo-peak" data-repo="{_escape_attr(name)}" '
+            f'<g class="repo-peak" data-role="repo-peak" data-repo="{_escape_attr(name)}" '
             f'data-visual-order="{idx_rp}" data-reveal-date="{repo_when}" '
-            f'data-static-signal="{repo_signal:.3f}">'
+            f'data-static-signal="{repo_signal:.3f}" data-x="{lx:.1f}" '
+            f'data-y="{ly:.1f}">'
         )
         P.append(f"<title>{_tt_text}</title>")
         if star_frac > 0.7:

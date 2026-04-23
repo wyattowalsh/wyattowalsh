@@ -32,6 +32,7 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     hex_frac,
+    is_monotonic_timelapse_metrics,
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
@@ -597,6 +598,7 @@ def generate(
     reveal_fraction:
         Fraction of loop_duration used for the reveal phase.
     """
+    timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -777,7 +779,7 @@ def generate(
     ]
 
     # Optimize placement to avoid overlap
-    if len(initial_positions) >= 2:
+    if len(initial_positions) >= 2 and not timelapse_contract:
         optimized_positions = optimize_placement(
             initial_positions,
             weights,
@@ -791,7 +793,7 @@ def generate(
 
     # Optimize palette hues for harmony
     base_hues = [float(LANG_HUES.get(r.get("language"), 155)) for r in primary_repos]
-    if len(base_hues) >= 2:
+    if len(base_hues) >= 2 and not timelapse_contract:
         opt_hues = optimize_palette_hues(base_hues, seed=int(h[:8], 16))
     else:
         opt_hues = list(base_hues)
@@ -1141,6 +1143,8 @@ def generate(
         # Glow
         P.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_glow:.1f}" '
+            f'data-role="genetic-peak-glow" data-repo="{repo.get("name", "")}" '
+            f'data-x="{px:.1f}" data-y="{py:.1f}" '
             f'fill="{color}" filter="url(#glHaze)" '
             f"{_timeline_style(peak_when, (0.12 + 0.18 * peak_visibility) * peak_fade)}/>"
         )
@@ -1149,6 +1153,8 @@ def generate(
         # Core
         P.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_core:.1f}" '
+            f'data-role="genetic-peak-core" data-repo="{repo.get("name", "")}" '
+            f'data-x="{px:.1f}" data-y="{py:.1f}" '
             f'fill="{color}" '
             f"{_timeline_style(peak_when, (0.45 + 0.35 * peak_visibility) * peak_fade)}/>"
         )

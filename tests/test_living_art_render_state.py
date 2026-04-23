@@ -10,6 +10,9 @@ import pytest
 
 pytest.importorskip("numpy", reason="living-art generators require numpy")
 
+import scripts.art.genetic_landscape as genetic_landscape_module  # noqa: E402
+import scripts.art.ink_garden as ink_garden_module  # noqa: E402
+import scripts.art.topography as topography_module  # noqa: E402
 from scripts.art.ferrofluid import generate as generate_ferrofluid  # noqa: E402
 from scripts.art.genetic_landscape import generate as generate_genetic  # noqa: E402
 from scripts.art.ink_garden import generate as generate_ink_garden  # noqa: E402
@@ -20,6 +23,16 @@ from scripts.art.topography import generate as generate_topography  # noqa: E402
 
 Generator = Callable[..., str]
 Marker = Callable[[str], int]
+
+
+def _repo_xy(svg: str, *, role: str, repo_name: str) -> tuple[float, float]:
+    pattern = (
+        rf'data-role="{re.escape(role)}"[^>]*data-repo="{re.escape(repo_name)}"'
+        rf'[^>]*data-x="([0-9.]+)"[^>]*data-y="([0-9.]+)"'
+    )
+    match = re.search(pattern, svg)
+    assert match, f"Missing {role} marker for {repo_name}"
+    return float(match.group(1)), float(match.group(2))
 
 
 def _render_state(*, repo_count: int, stars: int) -> dict:
@@ -222,3 +235,66 @@ def test_generators_keep_monotonic_complexity_from_render_state(
     ]
 
     assert markers == sorted(markers), f"{style} markers regressed: {markers}"
+
+
+@pytest.mark.parametrize(
+    ("module", "style"),
+    [
+        (topography_module, "topo"),
+        (genetic_landscape_module, "genetic"),
+        (ink_garden_module, "inkgarden"),
+    ],
+)
+def test_render_state_skips_set_reoptimization(
+    monkeypatch: pytest.MonkeyPatch,
+    module: object,
+    style: str,
+) -> None:
+    render_state = _render_state(repo_count=3, stars=30)
+    wrapped = _wrapped_metrics(render_state)
+
+    def _boom(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("timelapse render_state should not re-optimize")
+
+    if hasattr(module, "optimize_palette_hues"):
+        monkeypatch.setattr(module, "optimize_palette_hues", _boom)
+    if hasattr(module, "optimize_placement"):
+        monkeypatch.setattr(module, "optimize_placement", _boom)
+    if hasattr(module, "optimize_layout_pso"):
+        monkeypatch.setattr(module, "optimize_layout_pso", _boom)
+    if hasattr(module, "optimize_layout_sa"):
+        monkeypatch.setattr(module, "optimize_layout_sa", _boom)
+
+    module.generate(wrapped, seed=f"{style}-stable", timeline=False)
+
+
+def test_topography_keeps_repo_peak_positions_stable_under_render_state() -> None:
+    early = _render_state(repo_count=1, stars=6)
+    late = _render_state(repo_count=3, stars=30)
+
+    early_svg = generate_topography(early, seed="topo-pos", timeline=False)
+    late_svg = generate_topography(late, seed="topo-pos", timeline=False)
+
+    assert _repo_xy(early_svg, role="repo-peak", repo_name="repo-0") == pytest.approx(
+        _repo_xy(late_svg, role="repo-peak", repo_name="repo-0")
+    )
+
+
+def test_genetic_keeps_repo_peak_positions_stable_under_render_state() -> None:
+    mid = _render_state(repo_count=2, stars=16)
+    late = _render_state(repo_count=3, stars=30)
+
+    mid_svg = generate_genetic(mid, seed="genetic-pos", timeline=False)
+    late_svg = generate_genetic(late, seed="genetic-pos", timeline=False)
+
+    assert _repo_xy(
+        mid_svg,
+        role="genetic-peak-core",
+        repo_name="repo-1",
+    ) == pytest.approx(
+        _repo_xy(
+            late_svg,
+            role="genetic-peak-core",
+            repo_name="repo-1",
+        )
+    )
