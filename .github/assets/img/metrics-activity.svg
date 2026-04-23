@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="224" viewBox="0 0 1200 224" role="img">
+<defs>
+<style>
+:root {
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #d0d7de;
+  --title-color: #1f2328;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+  --link-color: #0969da;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --canvas-bg: #0d1117;
+  --card-bg: #0d1117;
+  --card-border: #30363d;
+  --title-color: #e6edf3;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+  --link-color: #58a6ff;
+}}
+.rc-bg { fill: var(--card-bg); }
+.rc-border { stroke: var(--card-border); }
+.section-title { fill: var(--title-color); font: 700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-title { fill: var(--title-color); font: 700 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-line { fill: var(--text-color); font: 400 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-meta { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-kicker { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-icon { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-badge { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.01em; }
+.sparkline { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.88; }
+.lang-dot { stroke: var(--card-border); stroke-width: 1; }
+.lang-label { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+</style>
+</defs>
+<g class="card" transform="translate(24,24)">
+<rect width="1152" height="176" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
+<circle cx="34" cy="28" r="14" fill="#1f883d" fill-opacity="0.15" stroke="#1f883d" stroke-opacity="0.40" stroke-width="1" />
+<text class="card-icon" x="34" y="32" text-anchor="middle">GH</text>
+<text class="card-kicker" x="56" y="20">GitHub feed for wyattowalsh</text>
+<rect x="1074" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
+<text class="card-badge" x="1105.0" y="27" text-anchor="middle">Custom</text>
+<text class="card-title" x="56" y="40">Recent activity</text>
+<text class="card-line" x="56" y="62">5m ago | Pushed 1 commit to wyattowalsh/proxywhirl</text>
+<text class="card-line" x="56" y="82">5m ago | Pushed 1 commit to wyattowalsh/wyattowalsh</text>
+<text class="card-line" x="56" y="102">5m ago | Created branch in wyattowalsh/wyattowalsh</text>
+<text class="card-meta" x="56" y="162">GitHub · Items 3</text>
+</g>
+</svg>

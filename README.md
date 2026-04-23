@@ -344,8 +344,15 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 
 <table><tbody>
 <tr>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, activity, and stargazers" width="100%" loading="lazy"/></td>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and repository stats" width="100%" loading="lazy"/></td>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/></td>
+</tr>
+</tbody></table>
+
+<table><tbody>
+<tr>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/></td>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/></td>
 </tr>
 </tbody></table>
 
