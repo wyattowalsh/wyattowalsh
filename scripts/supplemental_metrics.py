@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
+import hmac
 import json
 import os
+import secrets
 import ssl
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -51,6 +55,16 @@ class SupplementalAssetStatus:
     title: str
     required_markers: tuple[str, ...]
     reason: str = ""
+
+
+@dataclass(frozen=True)
+class XOAuth1Credentials:
+    """User-context OAuth 1.0a credentials for X API v2 requests."""
+
+    api_key: str
+    api_key_secret: str
+    access_token: str
+    access_token_secret: str
 
 
 ASSET_SPECS: Final[dict[str, SupplementalAssetSpec]] = {
@@ -146,6 +160,98 @@ def _normalize_token(value: str | None) -> str:
     if not value:
         return ""
     return urllib.parse.unquote(value.strip())
+
+
+def _load_x_oauth1_credentials_from_env() -> XOAuth1Credentials | None:
+    api_key = _normalize_token(os.getenv("X_API_KEY"))
+    api_key_secret = _normalize_token(os.getenv("X_API_KEY_SECRET"))
+    access_token = _normalize_token(os.getenv("X_ACCESS_TOKEN"))
+    access_token_secret = _normalize_token(os.getenv("X_ACCESS_TOKEN_SECRET"))
+    if all((api_key, api_key_secret, access_token, access_token_secret)):
+        return XOAuth1Credentials(
+            api_key=api_key,
+            api_key_secret=api_key_secret,
+            access_token=access_token,
+            access_token_secret=access_token_secret,
+        )
+    return None
+
+
+def _oauth1_percent_encode(value: str) -> str:
+    return urllib.parse.quote(value, safe="~-._")
+
+
+def _build_x_oauth1_authorization_header(
+    *,
+    method: str,
+    url: str,
+    credentials: XOAuth1Credentials,
+    nonce: str | None = None,
+    timestamp: str | None = None,
+) -> str:
+    """Create an OAuth 1.0a Authorization header for an X API request."""
+
+    parsed = urllib.parse.urlsplit(url)
+    base_url = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+    oauth_params = {
+        "oauth_consumer_key": credentials.api_key,
+        "oauth_nonce": nonce or secrets.token_hex(16),
+        "oauth_signature_method": "HMAC-SHA1",
+        "oauth_timestamp": timestamp or str(int(time.time())),
+        "oauth_token": credentials.access_token,
+        "oauth_version": "1.0",
+    }
+    query_params = urllib.parse.parse_qsl(parsed.query, keep_blank_values=True)
+    signature_params = list(query_params) + list(oauth_params.items())
+    normalized = "&".join(
+        f"{_oauth1_percent_encode(key)}={_oauth1_percent_encode(value)}"
+        for key, value in sorted(
+            signature_params,
+            key=lambda item: (
+                _oauth1_percent_encode(item[0]),
+                _oauth1_percent_encode(item[1]),
+            ),
+        )
+    )
+    signature_base_string = "&".join(
+        (
+            method.upper(),
+            _oauth1_percent_encode(base_url),
+            _oauth1_percent_encode(normalized),
+        )
+    )
+    signing_key = (
+        f"{_oauth1_percent_encode(credentials.api_key_secret)}&"
+        f"{_oauth1_percent_encode(credentials.access_token_secret)}"
+    )
+    signature = base64.b64encode(
+        hmac.new(
+            signing_key.encode("utf-8"),
+            signature_base_string.encode("utf-8"),
+            hashlib.sha1,
+        ).digest()
+    ).decode("ascii")
+    oauth_params["oauth_signature"] = signature
+    serialized = ", ".join(
+        f'{_oauth1_percent_encode(key)}="{_oauth1_percent_encode(value)}"'
+        for key, value in sorted(oauth_params.items())
+    )
+    return f"OAuth {serialized}"
+
+
+def _x_request_json(
+    url: str,
+    credentials: XOAuth1Credentials,
+) -> Any:
+    headers = {
+        "Authorization": _build_x_oauth1_authorization_header(
+            method="GET",
+            url=url,
+            credentials=credentials,
+        ),
+        "Accept": "application/json",
+    }
+    return _request_json(url, headers=headers)
 
 
 def _write_manifest(
@@ -445,25 +551,31 @@ def _render_music_card(tracks: list[dict[str, str]]) -> SvgBlock:
     return SvgBlock(title=card.title, cards=(card,))
 
 
-def _fetch_x_user_id(handle: str, bearer_token: str) -> str:
-    payload = _request_json(
-        f"{X_API_BASE}/users/by/username/{urllib.parse.quote(handle)}",
-        headers={"Authorization": f"Bearer {bearer_token}"},
+def _fetch_authenticated_x_user(
+    credentials: XOAuth1Credentials,
+) -> dict[str, str]:
+    payload = _x_request_json(
+        f"{X_API_BASE}/users/me?user.fields=username,name",
+        credentials,
     )
     user = payload.get("data") if isinstance(payload, dict) else {}
     user_id = str(user.get("id") or "").strip()
-    if not user_id:
-        raise RuntimeError(f"X user lookup for {handle} returned no id")
-    return user_id
+    username = str(user.get("username") or "").strip()
+    if not user_id or not username:
+        raise RuntimeError("X authenticated user lookup returned no id or username")
+    return {
+        "id": user_id,
+        "username": username,
+        "name": str(user.get("name") or "").strip(),
+    }
 
 
 def _fetch_latest_posts(
-    handle: str,
-    bearer_token: str,
+    credentials: XOAuth1Credentials,
     *,
     limit: int = 3,
-) -> list[dict[str, str]]:
-    user_id = _fetch_x_user_id(handle, bearer_token)
+) -> tuple[dict[str, str], list[dict[str, str]]]:
+    user = _fetch_authenticated_x_user(credentials)
     params = urllib.parse.urlencode(
         {
             "max_results": str(limit),
@@ -471,9 +583,9 @@ def _fetch_latest_posts(
             "tweet.fields": "created_at,public_metrics,text",
         }
     )
-    payload = _request_json(
-        f"{X_API_BASE}/users/{user_id}/tweets?{params}",
-        headers={"Authorization": f"Bearer {bearer_token}"},
+    payload = _x_request_json(
+        f"{X_API_BASE}/users/{user['id']}/tweets?{params}",
+        credentials,
     )
     posts: list[dict[str, str]] = []
     for item in payload.get("data", []) if isinstance(payload, dict) else []:
@@ -485,7 +597,7 @@ def _fetch_latest_posts(
                 "likes": str(int(metrics.get("like_count") or 0)),
             }
         )
-    return posts
+    return user, posts
 
 
 def _render_posts_card(handle: str, posts: list[dict[str, str]]) -> SvgBlock:
@@ -526,11 +638,11 @@ def generate_supplemental_metrics(
     if not github_token:
         raise RuntimeError("A GitHub token is required to generate supplemental metrics")
 
-    x_bearer = _normalize_token(os.getenv("X_BEARER_TOKEN"))
+    x_credentials = _load_x_oauth1_credentials_from_env()
     spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID", "").strip()
     spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET", "").strip()
     spotify_refresh_token = os.getenv("SPOTIFY_REFRESH_TOKEN", "").strip()
-    effective_x_handle = (x_handle or owner).strip()
+    expected_x_handle = (x_handle or owner).strip().lstrip("@")
 
     metrics = collect_github_metrics(owner, repo, github_token)
     events = _fetch_recent_activity(owner, github_token)
@@ -593,11 +705,16 @@ def generate_supplemental_metrics(
             reason="spotify-secrets-missing",
         )
 
-    if x_bearer:
-        posts = _fetch_latest_posts(effective_x_handle, x_bearer)
+    if x_credentials:
+        x_user, posts = _fetch_latest_posts(x_credentials)
+        actual_handle = x_user["username"]
+        if expected_x_handle and actual_handle.lower() != expected_x_handle.lower():
+            raise RuntimeError(
+                f"X OAuth user mismatch: expected @{expected_x_handle}, got @{actual_handle}"
+            )
         builder.render_and_write(
             ASSET_SPECS["posts"].asset_name,
-            _render_posts_card(effective_x_handle, posts),
+            _render_posts_card(actual_handle, posts),
         )
         statuses["posts"] = SupplementalAssetStatus(
             asset_name=ASSET_SPECS["posts"].asset_name,
@@ -616,7 +733,7 @@ def generate_supplemental_metrics(
             optional=True,
             title=ASSET_SPECS["posts"].title,
             required_markers=ASSET_SPECS["posts"].required_markers,
-            reason="x-bearer-missing",
+            reason="x-oauth1-secrets-missing",
         )
 
     _write_manifest(manifest_path, statuses)

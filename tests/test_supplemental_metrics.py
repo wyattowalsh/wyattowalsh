@@ -6,6 +6,9 @@ import json
 from pathlib import Path
 
 from scripts.supplemental_metrics import (
+    XOAuth1Credentials,
+    _build_x_oauth1_authorization_header,
+    _fetch_authenticated_x_user,
     _fetch_latest_posts,
     _fetch_recent_tracks,
     generate_supplemental_metrics,
@@ -43,7 +46,10 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     monkeypatch.delenv("SPOTIFY_CLIENT_ID", raising=False)
     monkeypatch.delenv("SPOTIFY_CLIENT_SECRET", raising=False)
     monkeypatch.delenv("SPOTIFY_REFRESH_TOKEN", raising=False)
-    monkeypatch.delenv("X_BEARER_TOKEN", raising=False)
+    monkeypatch.delenv("X_API_KEY", raising=False)
+    monkeypatch.delenv("X_API_KEY_SECRET", raising=False)
+    monkeypatch.delenv("X_ACCESS_TOKEN", raising=False)
+    monkeypatch.delenv("X_ACCESS_TOKEN_SECRET", raising=False)
     monkeypatch.setattr(
         "scripts.supplemental_metrics.collect_github_metrics",
         lambda owner, repo, token: _sample_metrics(),
@@ -140,20 +146,67 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(monkeypa
     assert any("api/token" in url for url in calls)
 
 
-def test_fetch_latest_posts_uses_bearer_token_and_trims_text(monkeypatch) -> None:
+def test_build_x_oauth1_authorization_header_contains_signature() -> None:
+    credentials = XOAuth1Credentials(
+        api_key="api-key",
+        api_key_secret="api-secret",
+        access_token="access-token",
+        access_token_secret="access-secret",
+    )
+
+    header = _build_x_oauth1_authorization_header(
+        method="GET",
+        url="https://api.x.com/2/users/me?user.fields=username,name",
+        credentials=credentials,
+        nonce="fixednonce",
+        timestamp="1710000000",
+    )
+
+    assert header.startswith("OAuth ")
+    assert 'oauth_consumer_key="api-key"' in header
+    assert 'oauth_token="access-token"' in header
+    assert 'oauth_signature_method="HMAC-SHA1"' in header
+    assert 'oauth_nonce="fixednonce"' in header
+    assert 'oauth_timestamp="1710000000"' in header
+    assert 'oauth_signature="' in header
+
+
+def test_fetch_authenticated_x_user_uses_oauth1_headers(monkeypatch) -> None:
     captured: dict[str, str] = {}
 
-    def fake_fetch_x_user_id(handle: str, bearer_token: str) -> str:
-        captured["bearer_token"] = bearer_token
-        return "12345"
+    def fake_request_json(url: str, **kwargs: object) -> dict:
+        captured["url"] = url
+        captured["authorization"] = str((kwargs.get("headers") or {}).get("Authorization"))
+        return {"data": {"id": "12345", "username": "wyattowalsh", "name": "Wyatt"}}
 
     monkeypatch.setattr(
-        "scripts.supplemental_metrics._fetch_x_user_id",
-        fake_fetch_x_user_id,
+        "scripts.supplemental_metrics._request_json",
+        fake_request_json,
+    )
+
+    user = _fetch_authenticated_x_user(
+        XOAuth1Credentials(
+            api_key="api-key",
+            api_key_secret="api-secret",
+            access_token="access-token",
+            access_token_secret="access-secret",
+        )
+    )
+
+    assert user["id"] == "12345"
+    assert user["username"] == "wyattowalsh"
+    assert captured["url"].endswith("/users/me?user.fields=username,name")
+    assert captured["authorization"].startswith("OAuth ")
+
+
+def test_fetch_latest_posts_uses_authenticated_user_and_trims_text(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_authenticated_x_user",
+        lambda credentials: {"id": "12345", "username": "wyattowalsh", "name": "Wyatt"},
     )
     monkeypatch.setattr(
-        "scripts.supplemental_metrics._request_json",
-        lambda url, **kwargs: {
+        "scripts.supplemental_metrics._x_request_json",
+        lambda url, credentials: {
             "data": [
                 {
                     "text": "A longish post about metrics recovery and CI validation that should still be trimmed nicely for the card output.",
@@ -164,15 +217,22 @@ def test_fetch_latest_posts_uses_bearer_token_and_trims_text(monkeypatch) -> Non
         },
     )
 
-    posts = _fetch_latest_posts("wyattowalsh", "bearer-token")
+    user, posts = _fetch_latest_posts(
+        XOAuth1Credentials(
+            api_key="api-key",
+            api_key_secret="api-secret",
+            access_token="access-token",
+            access_token_secret="access-secret",
+        )
+    )
 
+    assert user["username"] == "wyattowalsh"
     assert len(posts) == 1
-    assert captured["bearer_token"] == "bearer-token"
     assert posts[0]["created_at"] == "2026-04-22T12:00:00Z"
     assert len(posts[0]["text"]) <= 84
 
 
-def test_generate_supplemental_metrics_decodes_url_escaped_x_bearer(
+def test_generate_supplemental_metrics_enables_x_posts_from_oauth1_secret_quartet(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
@@ -181,18 +241,13 @@ def test_generate_supplemental_metrics_decodes_url_escaped_x_bearer(
     captured: dict[str, str] = {}
 
     monkeypatch.setenv("GITHUB_TOKEN", "test-token")
-    monkeypatch.setenv("X_BEARER_TOKEN", "abc%3Ddef")
+    monkeypatch.setenv("X_API_KEY", "api-key")
+    monkeypatch.setenv("X_API_KEY_SECRET", "api-secret")
+    monkeypatch.setenv("X_ACCESS_TOKEN", "access-token")
+    monkeypatch.setenv("X_ACCESS_TOKEN_SECRET", "access-secret")
     monkeypatch.delenv("SPOTIFY_CLIENT_ID", raising=False)
     monkeypatch.delenv("SPOTIFY_CLIENT_SECRET", raising=False)
     monkeypatch.delenv("SPOTIFY_REFRESH_TOKEN", raising=False)
-    def fake_fetch_latest_posts(
-        handle: str,
-        bearer_token: str,
-        limit: int = 3,
-    ) -> list[dict[str, str]]:
-        captured["bearer_token"] = bearer_token
-        return [{"text": "Post", "created_at": "2026-04-22T12:00:00Z", "likes": "1"}]
-
     monkeypatch.setattr(
         "scripts.supplemental_metrics.collect_github_metrics",
         lambda owner, repo, token: _sample_metrics(),
@@ -201,6 +256,17 @@ def test_generate_supplemental_metrics_decodes_url_escaped_x_bearer(
         "scripts.supplemental_metrics._fetch_recent_activity",
         lambda owner, token, limit=3: [],
     )
+
+    def fake_fetch_latest_posts(
+        credentials: XOAuth1Credentials,
+        limit: int = 3,
+    ) -> tuple[dict[str, str], list[dict[str, str]]]:
+        captured["api_key"] = credentials.api_key
+        return (
+            {"id": "12345", "username": "wyattowalsh", "name": "Wyatt"},
+            [{"text": "Post", "created_at": "2026-04-22T12:00:00Z", "likes": "1"}],
+        )
+
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_latest_posts",
         fake_fetch_latest_posts,
@@ -213,5 +279,5 @@ def test_generate_supplemental_metrics_decodes_url_escaped_x_bearer(
         manifest_path=manifest_path,
     )
 
-    assert captured["bearer_token"] == "abc=def"
+    assert captured["api_key"] == "api-key"
     assert statuses["posts"].enabled is True

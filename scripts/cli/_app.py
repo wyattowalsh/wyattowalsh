@@ -7,6 +7,7 @@ from typing import Annotated
 
 import typer
 
+from .auth import auth_app
 from .config_cmd import config_app
 from .dev import dev_app
 from .generate import generate_app
@@ -52,6 +53,7 @@ def main(
 
 # -- Register sub-apps -------------------------------------------------------
 app.add_typer(generate_app)
+app.add_typer(auth_app)
 app.add_typer(config_app)
 app.add_typer(dev_app)
 
