@@ -142,6 +142,12 @@ def _truncate(value: str, limit: int) -> str:
     return f"{compact[: max(0, limit - 3)].rstrip()}..."
 
 
+def _normalize_token(value: str | None) -> str:
+    if not value:
+        return ""
+    return urllib.parse.unquote(value.strip())
+
+
 def _write_manifest(
     manifest_path: Path,
     statuses: dict[str, SupplementalAssetStatus],
@@ -520,7 +526,7 @@ def generate_supplemental_metrics(
     if not github_token:
         raise RuntimeError("A GitHub token is required to generate supplemental metrics")
 
-    x_bearer = os.getenv("X_BEARER_TOKEN", "").strip()
+    x_bearer = _normalize_token(os.getenv("X_BEARER_TOKEN"))
     spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID", "").strip()
     spotify_client_secret = os.getenv("SPOTIFY_CLIENT_SECRET", "").strip()
     spotify_refresh_token = os.getenv("SPOTIFY_REFRESH_TOKEN", "").strip()

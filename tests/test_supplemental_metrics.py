@@ -141,9 +141,15 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(monkeypa
 
 
 def test_fetch_latest_posts_uses_bearer_token_and_trims_text(monkeypatch) -> None:
+    captured: dict[str, str] = {}
+
+    def fake_fetch_x_user_id(handle: str, bearer_token: str) -> str:
+        captured["bearer_token"] = bearer_token
+        return "12345"
+
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_x_user_id",
-        lambda handle, bearer_token: "12345",
+        fake_fetch_x_user_id,
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._request_json",
@@ -161,5 +167,51 @@ def test_fetch_latest_posts_uses_bearer_token_and_trims_text(monkeypatch) -> Non
     posts = _fetch_latest_posts("wyattowalsh", "bearer-token")
 
     assert len(posts) == 1
+    assert captured["bearer_token"] == "bearer-token"
     assert posts[0]["created_at"] == "2026-04-22T12:00:00Z"
     assert len(posts[0]["text"]) <= 84
+
+
+def test_generate_supplemental_metrics_decodes_url_escaped_x_bearer(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    output_dir = tmp_path / "img"
+    manifest_path = tmp_path / "metrics-supplemental.json"
+    captured: dict[str, str] = {}
+
+    monkeypatch.setenv("GITHUB_TOKEN", "test-token")
+    monkeypatch.setenv("X_BEARER_TOKEN", "abc%3Ddef")
+    monkeypatch.delenv("SPOTIFY_CLIENT_ID", raising=False)
+    monkeypatch.delenv("SPOTIFY_CLIENT_SECRET", raising=False)
+    monkeypatch.delenv("SPOTIFY_REFRESH_TOKEN", raising=False)
+    def fake_fetch_latest_posts(
+        handle: str,
+        bearer_token: str,
+        limit: int = 3,
+    ) -> list[dict[str, str]]:
+        captured["bearer_token"] = bearer_token
+        return [{"text": "Post", "created_at": "2026-04-22T12:00:00Z", "likes": "1"}]
+
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics.collect_github_metrics",
+        lambda owner, repo, token: _sample_metrics(),
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_recent_activity",
+        lambda owner, token, limit=3: [],
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_latest_posts",
+        fake_fetch_latest_posts,
+    )
+
+    statuses = generate_supplemental_metrics(
+        owner="wyattowalsh",
+        repo="wyattowalsh",
+        output_dir=output_dir,
+        manifest_path=manifest_path,
+    )
+
+    assert captured["bearer_token"] == "abc=def"
+    assert statuses["posts"].enabled is True
