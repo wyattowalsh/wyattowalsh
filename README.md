@@ -354,6 +354,10 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 <td valign="top" width="50%"><img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/></td>
 <td valign="top" width="50%"><img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/></td>
 </tr>
+<tr>
+<td valign="top" width="50%"><img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/></td>
+<td valign="top" width="50%"></td>
+</tr>
 </tbody></table>
 
 ## Word Clouds
