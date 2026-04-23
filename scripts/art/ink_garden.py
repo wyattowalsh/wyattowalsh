@@ -41,6 +41,7 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     firefly_elements,
+    is_monotonic_timelapse_metrics,
     make_linear_gradient,
     make_radial_gradient,
     map_date_to_loop_delay,
@@ -1071,6 +1072,7 @@ def generate(
     loop_duration: float = 60.0,
     reveal_fraction: float = 0.93,
 ) -> str:
+    timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
     base_mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -1482,7 +1484,7 @@ def generate(
         tree_x_positions = [WIDTH / 2]
 
     repo_hues = [LANG_HUES.get(repo.get("language"), 155) for repo in repos]
-    if len(repo_hues) >= 2:
+    if len(repo_hues) >= 2 and not timelapse_contract:
         repo_hues = optimize_palette_hues(
             repo_hues,
             max_shift=12.0,

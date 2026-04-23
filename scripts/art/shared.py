@@ -827,6 +827,19 @@ def resolve_render_metrics(metrics: Mapping[str, Any]) -> dict[str, Any]:
     return resolved
 
 
+def is_monotonic_timelapse_metrics(metrics: Mapping[str, Any]) -> bool:
+    """Return ``True`` when metrics come from the canonical timelapse contract.
+
+    Timelapse snapshots either carry the outer ``render_state`` wrapper or are
+    already resolved down to the monotonic payload. In both cases we expose a
+    ``cumulative_state`` envelope that standalone live renders do not have.
+    """
+    return isinstance(metrics.get("render_state"), Mapping) or isinstance(
+        metrics.get("cumulative_state"),
+        Mapping,
+    )
+
+
 def normalize_live_metrics(
     raw: Mapping[str, Any],
     *,
