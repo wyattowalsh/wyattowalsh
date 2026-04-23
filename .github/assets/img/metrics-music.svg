@@ -37,15 +37,15 @@
 </defs>
 <g class="card" transform="translate(24,24)">
 <rect width="1152" height="176" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
-<circle cx="34" cy="28" r="14" fill="#0969da" fill-opacity="0.15" stroke="#0969da" stroke-opacity="0.40" stroke-width="1" />
-<text class="card-icon" x="34" y="32" text-anchor="middle">GH</text>
-<text class="card-kicker" x="56" y="20">GitHub last 30 days</text>
+<circle cx="34" cy="28" r="14" fill="#1db954" fill-opacity="0.15" stroke="#1db954" stroke-opacity="0.40" stroke-width="1" />
+<text class="card-icon" x="34" y="32" text-anchor="middle">SP</text>
+<text class="card-kicker" x="56" y="20">Spotify recent listens</text>
 <rect x="1074" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
 <text class="card-badge" x="1105.0" y="27" text-anchor="middle">Custom</text>
-<text class="card-title" x="56" y="40">Coding habits</text>
-<text class="card-line" x="56" y="62">30-day activity: 651 contributions across 26 active days</text>
-<text class="card-line" x="56" y="82">Current streak: 6d | longest streak: 10d</text>
-<text class="card-line" x="56" y="102">Peak hour: 06:00 UTC | focus: riso, proxywhirl | langs: JetBrains MPS, …</text>
-<text class="card-meta" x="56" y="162">Reviews 4 · Repos 170 · Busiest day 125</text>
+<text class="card-title" x="56" y="40">Recently played</text>
+<text class="card-line" x="56" y="62">Circle Of Life - Original Mix - Wasted Penguinz</text>
+<text class="card-line" x="56" y="82">Reinvented - Krusaders</text>
+<text class="card-line" x="56" y="102">Real Love - Original - Da Tweekaz</text>
+<text class="card-meta" x="56" y="162">Spotify · 1h ago</text>
 </g>
 </svg>
