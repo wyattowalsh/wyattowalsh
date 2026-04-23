@@ -3092,7 +3092,7 @@
   <text x="925.9" y="273.8" font-size="30.5" fill="#6c44bd" font-weight="500" opacity="0.80" transform="rotate(6.0,925.9,273.8)" filter="url(#wc-glow)">pytorch</text>
   <text x="789.7" y="256.0" font-size="29.7" fill="#008dec" font-weight="500" opacity="0.80" transform="rotate(90.0,789.7,256.0)" filter="url(#wc-glow)">documentation</text>
   <text x="885.1" y="313.7" font-size="29.3" fill="#6749c2" font-weight="500" opacity="0.80" transform="rotate(90.0,885.1,313.7)" filter="url(#wc-glow)">generative-ai</text>
-  <text x="833.1" y="535.0" font-size="29.3" fill="#00b0cc" font-weight="500" opacity="0.80" transform="rotate(90.0,833.1,535.0)" filter="url(#wc-glow)">html</text>
+  <text x="833.2" y="535.0" font-size="29.3" fill="#00b0cc" font-weight="500" opacity="0.80" transform="rotate(90.0,833.2,535.0)" filter="url(#wc-glow)">html</text>
   <text x="563.9" y="297.2" font-size="29.3" fill="#5671e6" font-weight="500" opacity="0.80" filter="url(#wc-glow)">prompt-engineering</text>
   <text x="577.0" y="380.1" font-size="29.0" fill="#6a45be" font-weight="500" opacity="0.80" transform="rotate(6.0,577.0,380.1)" filter="url(#wc-glow)">automation</text>
   <text x="659.2" y="634.8" font-size="29.0" fill="#009ee3" font-weight="500" opacity="0.80" transform="rotate(6.0,659.2,634.8)" filter="url(#wc-glow)">css</text>
@@ -3188,7 +3188,7 @@
   <text x="631.2" y="191.1" font-size="17.9" fill="#6658d1" font-weight="400" opacity="0.73" transform="rotate(90.0,631.2,191.1)">bot</text>
   <text x="900.1" y="310.9" font-size="17.9" fill="#00b8c0" font-weight="400" opacity="0.73" transform="rotate(6.0,900.1,310.9)">latex</text>
   <text x="329.5" y="187.9" font-size="17.9" fill="#2b83ed" font-weight="400" opacity="0.73" transform="rotate(90.0,329.5,187.9)">serverless</text>
-  <text x="309.8" y="505.0" font-size="17.9" fill="#6746bf" font-weight="400" opacity="0.73" transform="rotate(-6.0,309.8,505.0)">visual-studio-code</text>
+  <text x="309.8" y="505.1" font-size="17.9" fill="#6746bf" font-weight="400" opacity="0.73" transform="rotate(-6.0,309.8,505.1)">visual-studio-code</text>
   <text x="816.7" y="499.8" font-size="17.6" fill="#00acd3" font-weight="400" opacity="0.73" transform="rotate(6.0,816.7,499.8)">chatgpt-api</text>
   <text x="637.9" y="434.6" font-size="17.6" fill="#5e68e0" font-weight="400" opacity="0.73" transform="rotate(90.0,637.9,434.6)">library</text>
   <text x="648.8" y="342.3" font-size="17.3" fill="#6b45bd" font-weight="400" opacity="0.73" transform="rotate(6.0,648.8,342.3)">http</text>
@@ -3242,7 +3242,7 @@
   <text x="485.4" y="596.6" font-size="14.3" fill="#009de4" font-weight="400" opacity="0.71">distributed-systems</text>
   <text x="654.5" y="470.5" font-size="14.3" fill="#6657d0" font-weight="400" opacity="0.71" transform="rotate(-6.0,654.5,470.5)">flutter</text>
   <text x="546.2" y="398.6" font-size="14.3" fill="#00b7c1" font-weight="400" opacity="0.71" transform="rotate(6.0,546.2,398.6)">microservices</text>
-  <text x="748.5" y="303.9" font-size="14.3" fill="#3281ed" font-weight="400" opacity="0.71" transform="rotate(-6.0,748.5,303.9)">objective-c</text>
+  <text x="748.4" y="303.9" font-size="14.3" fill="#3281ed" font-weight="400" opacity="0.71" transform="rotate(-6.0,748.4,303.9)">objective-c</text>
   <text x="791.7" y="389.3" font-size="14.3" fill="#6746bf" font-weight="400" opacity="0.71">project-management</text>
   <text x="732.7" y="411.2" font-size="14.3" fill="#00aad6" font-weight="400" opacity="0.71" transform="rotate(6.0,732.7,411.2)">pwa</text>
   <text x="933.9" y="324.0" font-size="14.3" fill="#5f66de" font-weight="400" opacity="0.71" transform="rotate(90.0,933.9,324.0)">robotics</text>
@@ -3308,7 +3308,7 @@
   <text x="446.1" y="545.7" font-size="11.5" fill="#4e76e9" font-weight="400" opacity="0.69" transform="rotate(90.0,446.1,545.7)">iot</text>
   <text x="561.3" y="199.5" font-size="11.5" fill="#6945be" font-weight="400" opacity="0.69" transform="rotate(6.0,561.3,199.5)">jekyll-theme</text>
   <text x="359.1" y="310.9" font-size="11.5" fill="#00a1df" font-weight="400" opacity="0.69" transform="rotate(90.0,359.1,310.9)">jquery</text>
-  <text x="351.3" y="306.5" font-size="11.5" fill="#655bd4" font-weight="400" opacity="0.69" transform="rotate(90.0,351.3,306.5)">terraform</text>
+  <text x="351.3" y="306.4" font-size="11.5" fill="#655bd4" font-weight="400" opacity="0.69" transform="rotate(90.0,351.3,306.4)">terraform</text>
   <text x="843.2" y="424.3" font-size="11.5" fill="#00b9be" font-weight="400" opacity="0.69" transform="rotate(6.0,843.2,424.3)">xml</text>
   <text x="720.6" y="285.9" font-size="10.6" fill="#1087ee" font-weight="400" opacity="0.68" transform="rotate(90.0,720.6,285.9)">beginner-project</text>
   <text x="197.1" y="457.7" font-size="10.6" fill="#6647bf" font-weight="400" opacity="0.68" transform="rotate(6.0,197.1,457.7)">clojure</text>
@@ -3407,7 +3407,7 @@
   <text x="422.6" y="635.5" font-size="32.8" fill="#6468e1" font-weight="500" opacity="0.82" transform="rotate(6.0,422.6,635.5)" filter="url(#wc-glow)" letter-spacing="0.7">nextjs</text>
   <text x="676.5" y="447.0" font-size="32.4" fill="#7042ba" font-weight="500" opacity="0.81" transform="rotate(90.0,676.5,447.0)" filter="url(#wc-glow)" letter-spacing="0.6">open-source</text>
   <text x="395.0" y="572.8" font-size="32.2" fill="#0095ec" font-weight="500" opacity="0.81" filter="url(#wc-glow)" letter-spacing="0.6">rust</text>
-  <text x="761.4" y="465.1" font-size="32.0" fill="#6d50c9" font-weight="500" opacity="0.81" filter="url(#wc-glow)" letter-spacing="0.6">developer-tools</text>
+  <text x="761.4" y="465.2" font-size="32.0" fill="#6d50c9" font-weight="500" opacity="0.81" filter="url(#wc-glow)" letter-spacing="0.6">developer-tools</text>
   <text x="868.4" y="669.7" font-size="31.7" fill="#00b4ca" font-weight="500" opacity="0.81" filter="url(#wc-glow)" letter-spacing="0.6">nlp</text>
   <text x="686.5" y="419.8" font-size="31.4" fill="#4d79ec" font-weight="500" opacity="0.81" transform="rotate(90.0,686.5,419.8)" filter="url(#wc-glow)" letter-spacing="0.6">obsidian</text>
   <text x="259.8" y="195.3" font-size="31.4" fill="#6e44bc" font-weight="500" opacity="0.81" transform="rotate(90.0,259.8,195.3)" filter="url(#wc-glow)" letter-spacing="0.6">obsidian-plugin</text>
@@ -3575,7 +3575,7 @@
   <text x="344.5" y="538.9" font-size="14.3" fill="#6d4cc5" font-weight="400" opacity="0.71" transform="rotate(90.0,344.5,538.9)">web-development</text>
   <text x="273.6" y="506.5" font-size="14.3" fill="#00b3ce" font-weight="400" opacity="0.71" transform="rotate(-6.0,273.6,506.5)">website</text>
   <text x="903.0" y="357.2" font-size="13.8" fill="#5873e9" font-weight="400" opacity="0.71" transform="rotate(90.0,903.0,357.2)">algorithms</text>
-  <text x="439.3" y="357.3" font-size="13.8" fill="#6e43bb" font-weight="400" opacity="0.71" transform="rotate(6.0,439.3,357.3)">computer-science</text>
+  <text x="439.3" y="357.4" font-size="13.8" fill="#6e43bb" font-weight="400" opacity="0.71" transform="rotate(6.0,439.3,357.4)">computer-science</text>
   <text x="424.0" y="515.3" font-size="13.8" fill="#00a0e4" font-weight="400" opacity="0.71" transform="rotate(6.0,424.0,515.3)">emoji</text>
   <text x="353.1" y="252.6" font-size="13.8" fill="#6c5bd4" font-weight="400" opacity="0.71" transform="rotate(6.0,353.1,252.6)">homebrew</text>
   <text x="405.4" y="611.2" font-size="13.8" fill="#00b8c4" font-weight="400" opacity="0.71" transform="rotate(6.0,405.4,611.2)">ipfs</text>
@@ -3585,7 +3585,7 @@
   <text x="513.3" y="497.9" font-size="13.3" fill="#6369e2" font-weight="400" opacity="0.70" transform="rotate(6.0,513.3,497.9)">atom</text>
   <text x="630.4" y="237.8" font-size="13.3" fill="#7043bb" font-weight="400" opacity="0.70" transform="rotate(90.0,630.4,237.8)">discord</text>
   <text x="246.2" y="215.7" font-size="13.3" fill="#0098ea" font-weight="400" opacity="0.70" transform="rotate(6.0,246.2,215.7)">es6</text>
-  <text x="704.7" y="409.0" font-size="13.3" fill="#6d52cb" font-weight="400" opacity="0.70" transform="rotate(6.0,704.7,409.0)">firebase</text>
+  <text x="704.8" y="409.0" font-size="13.3" fill="#6d52cb" font-weight="400" opacity="0.70" transform="rotate(6.0,704.8,409.0)">firebase</text>
   <text x="845.3" y="356.1" font-size="13.3" fill="#00b5c9" font-weight="400" opacity="0.70" transform="rotate(90.0,845.3,356.1)">material-design</text>
   <text x="951.6" y="192.4" font-size="13.3" fill="#497bed" font-weight="400" opacity="0.70" transform="rotate(90.0,951.6,192.4)">mobile</text>
   <text x="526.1" y="316.8" font-size="13.3" fill="#6d44bc" font-weight="400" opacity="0.70" transform="rotate(90.0,526.1,316.8)">programming</text>
@@ -3655,7 +3655,7 @@
   <text x="610.5" y="584.3" font-size="9.6" fill="#009be7" font-weight="400" opacity="0.68" transform="rotate(6.0,610.5,584.3)">ansible</text>
   <text x="817.6" y="223.9" font-size="9.6" fill="#6c56cf" font-weight="400" opacity="0.68" transform="rotate(-6.0,817.6,223.9)">code-review</text>
   <text x="562.6" y="284.4" font-size="9.6" fill="#00b7c7" font-weight="400" opacity="0.68" transform="rotate(90.0,562.6,284.4)">cryptography</text>
-  <text x="661.1" y="283.6" font-size="9.6" fill="#3b80ee" font-weight="400" opacity="0.68" transform="rotate(-6.0,661.1,283.6)">dotfiles</text>
+  <text x="661.1" y="283.7" font-size="9.6" fill="#3b80ee" font-weight="400" opacity="0.68" transform="rotate(-6.0,661.1,283.7)">dotfiles</text>
   <text x="849.3" y="377.9" font-size="9.6" fill="#6d44bc" font-weight="400" opacity="0.68">emacs</text>
   <text x="413.1" y="230.3" font-size="9.6" fill="#00a9da" font-weight="400" opacity="0.68" transform="rotate(90.0,413.1,230.3)">emulator</text>
   <text x="643.3" y="393.2" font-size="9.6" fill="#6664de" font-weight="400" opacity="0.68" transform="rotate(6.0,643.3,393.2)">english</text>
@@ -3810,7 +3810,7 @@
   <text x="701.8" y="547.0" font-size="20.4" fill="#7349c2" font-weight="500" opacity="0.75">ruby</text>
   <text x="910.5" y="312.4" font-size="20.1" fill="#00b0d4" font-weight="500" opacity="0.75" transform="rotate(6.0,910.5,312.4)">bitcoin</text>
   <text x="292.3" y="211.6" font-size="20.1" fill="#6071e9" font-weight="500" opacity="0.75" transform="rotate(6.0,292.3,211.6)">neural-network</text>
-  <text x="504.5" y="581.6" font-size="20.1" fill="#7441b8" font-weight="500" opacity="0.75" transform="rotate(6.0,504.5,581.6)">statistics</text>
+  <text x="504.6" y="581.6" font-size="20.1" fill="#7441b8" font-weight="500" opacity="0.75" transform="rotate(6.0,504.6,581.6)">statistics</text>
   <text x="797.5" y="151.5" font-size="19.9" fill="#009ee8" font-weight="500" opacity="0.75" transform="rotate(6.0,797.5,151.5)">algorithmic-trading</text>
   <text x="379.4" y="346.5" font-size="19.9" fill="#7257d1" font-weight="500" opacity="0.75" transform="rotate(90.0,379.4,346.5)">cpp</text>
   <text x="748.6" y="318.8" font-size="19.9" fill="#00b7cb" font-weight="500" opacity="0.75" transform="rotate(90.0,748.6,318.8)">data-engineering</text>
@@ -3832,7 +3832,7 @@
   <text x="828.6" y="328.1" font-size="18.2" fill="#00aed7" font-weight="400" opacity="0.74" transform="rotate(6.0,828.6,328.1)">command-line</text>
   <text x="843.3" y="572.2" font-size="18.2" fill="#666de6" font-weight="400" opacity="0.74" transform="rotate(6.0,843.3,572.2)">jekyll</text>
   <text x="592.6" y="519.9" font-size="18.2" fill="#7441b8" font-weight="400" opacity="0.74" transform="rotate(90.0,592.6,519.9)">quantitative-finance</text>
-  <text x="804.7" y="270.3" font-size="18.2" fill="#009beb" font-weight="400" opacity="0.74" transform="rotate(90.0,804.7,270.3)">tui</text>
+  <text x="804.8" y="270.3" font-size="18.2" fill="#009beb" font-weight="400" opacity="0.74" transform="rotate(90.0,804.8,270.3)">tui</text>
   <text x="631.9" y="583.2" font-size="17.9" fill="#7353cd" font-weight="400" opacity="0.73" transform="rotate(6.0,631.9,583.2)">bot</text>
   <text x="812.9" y="489.9" font-size="17.9" fill="#00b6cd" font-weight="400" opacity="0.73" transform="rotate(90.0,812.9,489.9)">latex</text>
   <text x="662.8" y="515.9" font-size="17.9" fill="#487def" font-weight="400" opacity="0.73" transform="rotate(6.0,662.8,515.9)">serverless</text>
@@ -3918,7 +3918,7 @@
   <text x="684.6" y="549.9" font-size="13.3" fill="#7640b6" font-weight="400" opacity="0.70" transform="rotate(6.0,684.6,549.9)">tailwind</text>
   <text x="501.4" y="259.8" font-size="13.3" fill="#138af0" font-weight="400" opacity="0.70" transform="rotate(6.0,501.4,259.8)">telegram-bot</text>
   <text x="526.0" y="304.4" font-size="13.3" fill="#7246bf" font-weight="400" opacity="0.70" transform="rotate(6.0,526.0,304.4)">text-to-speech</text>
-  <text x="431.5" y="266.2" font-size="12.8" fill="#00aed7" font-weight="400" opacity="0.70" transform="rotate(6.0,431.5,266.2)">3d</text>
+  <text x="431.4" y="266.2" font-size="12.8" fill="#00aed7" font-weight="400" opacity="0.70" transform="rotate(6.0,431.4,266.2)">3d</text>
   <text x="813.8" y="228.7" font-size="12.8" fill="#646ee7" font-weight="400" opacity="0.70" transform="rotate(90.0,813.8,228.7)">code-quality</text>
   <text x="723.7" y="396.1" font-size="12.8" fill="#7441b8" font-weight="400" opacity="0.70" transform="rotate(6.0,723.7,396.1)">eslint</text>
   <text x="443.3" y="468.8" font-size="12.8" fill="#009bea" font-weight="400" opacity="0.70" transform="rotate(90.0,443.3,468.8)">facebook</text>
@@ -3997,7 +3997,7 @@
   <text x="420.4" y="425.0" font-size="9.6" fill="#00acdb" font-weight="400" opacity="0.68" transform="rotate(90.0,420.4,425.0)">virtual-reality</text>
   <text x="517.9" y="493.4" font-size="9.6" fill="#6a68e2" font-weight="400" opacity="0.68" transform="rotate(6.0,517.9,493.4)">vpn</text>
   <text x="248.7" y="454.8" font-size="9.6" fill="#7540b7" font-weight="400" opacity="0.68">web-components</text>
-  <text x="591.1" y="590.0" font-size="9.6" fill="#0095ed" font-weight="400" opacity="0.68" transform="rotate(90.0,591.1,590.0)">wordpress</text>
+  <text x="591.2" y="590.0" font-size="9.6" fill="#0095ed" font-weight="400" opacity="0.68" transform="rotate(90.0,591.2,590.0)">wordpress</text>
   <text x="851.3" y="219.3" font-size="7.0" fill="#734fc9" font-weight="400" opacity="0.65" transform="rotate(90.0,851.3,219.3)">archlinux</text>
   <text x="913.5" y="571.1" font-size="7.0" fill="#00b4cf" font-weight="400" opacity="0.65" transform="rotate(90.0,913.5,571.1)">dart</text>
   <text x="403.1" y="468.0" font-size="7.0" fill="#5478ed" font-weight="400" opacity="0.65" transform="rotate(90.0,403.1,468.0)">ember</text>
@@ -4014,7 +4014,7 @@
   <text x="362.9" y="502.6" font-size="7.0" fill="#7255cf" font-weight="400" opacity="0.65" transform="rotate(90.0,362.9,502.6)">localization</text>
   <text x="425.9" y="451.0" font-size="7.0" fill="#00b7cc" font-weight="400" opacity="0.65" transform="rotate(90.0,425.9,451.0)">mastodon</text>
   <text x="700.9" y="236.9" font-size="7.0" fill="#437fef" font-weight="400" opacity="0.65" transform="rotate(6.0,700.9,236.9)">matlab</text>
-  <text x="684.1" y="299.6" font-size="7.0" fill="#7242ba" font-weight="400" opacity="0.65" transform="rotate(90.0,684.1,299.6)">minecraft</text>
+  <text x="684.1" y="299.5" font-size="7.0" fill="#7242ba" font-weight="400" opacity="0.65" transform="rotate(90.0,684.1,299.5)">minecraft</text>
   <text x="695.7" y="590.6" font-size="7.0" fill="#00a9dd" font-weight="400" opacity="0.65" transform="rotate(6.0,695.7,590.6)">monero</text>
   <text x="527.8" y="276.1" font-size="7.0" fill="#6c64de" font-weight="400" opacity="0.65" transform="rotate(90.0,527.8,276.1)">mongoose</text>
   <text x="480.4" y="476.8" font-size="7.0" fill="#7640b7" font-weight="400" opacity="0.65" transform="rotate(6.0,480.4,476.8)">neovim</text>
