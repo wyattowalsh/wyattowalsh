@@ -362,7 +362,7 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 <summary><strong>WakaTime Stats</strong></summary>
 
 <!--START_SECTION:waka-->
-> WakaTime stats are temporarily unavailable right now. Latest available update was 27/04/2025 18:43:21 UTC, which is outside the freshness window.
+> WakaTime stats are temporarily unavailable right now. No fresh WakaTime timestamp was found in the generated section.
 <!--END_SECTION:waka-->
 
 </details>
