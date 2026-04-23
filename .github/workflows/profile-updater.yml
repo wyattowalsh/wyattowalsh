@@ -546,7 +546,9 @@ jobs:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'header, activity, community, repositories, metadata' || 'header, activity, community, metadata' }}
+          # Keep repositories probe-only until the full probe lane clears the
+          # inline "Insufficient token scopes" failure.
+          base: header, activity, community, metadata
           # Disabled until upstream handles bot/system authors without throwing.
           plugin_lines: no
           plugin_isocalendar: yes

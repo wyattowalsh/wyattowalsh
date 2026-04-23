@@ -61,7 +61,7 @@ Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stat
 
 Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) pinned to the `v3.34` release SHA `65836723097537a54cd8eb90f61839426b4266b6` for the stable GitHub-native cards:
 
-- `metrics.svg` — personal metrics (header, activity, community, repositories, metadata, languages, notable, topics)
+- `metrics.svg` — personal metrics (header, activity, community, metadata, languages, notable, topics)
 - `metrics.additional.svg` — stable GitHub-native secondary panels (featured repositories, recently starred repositories, stargazers)
 
 The same job also generates repo-owned supplemental cards that replace the upstream-brittle or deprecated panels:
@@ -90,7 +90,7 @@ Manual diagnostics lane for the legacy fuller `lowlighter/metrics` surface. It e
 - is the Spotify refresh token healthy?
 - do upstream `habits` or `activity` panels still render degraded payloads?
 
-It uploads probe SVG artifacts and fails closed if the probe renders or validation fail.
+It uploads probe SVG artifacts and fails closed if the probe renders or validation fail. The `repositories` block stays probe-only until this lane clears it without inline scope errors.
 
 ### `generate-event-art`
 
@@ -120,7 +120,7 @@ Commits `README.md` + `.github/assets/img/readme/*.svg`.
 | Secret | Used by | Notes |
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
-| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for repo-aware metrics (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but repository-aware sections will be reduced and recovery may preserve the last valid asset. |
+| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for richer GitHub reads (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but the probe-only repositories block will continue to fail and the production card stays on the reduced stable surface. |
 | `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
 | `SPOTIFY_CLIENT_ID` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
 | `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
