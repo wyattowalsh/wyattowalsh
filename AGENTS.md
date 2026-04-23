@@ -15,6 +15,8 @@
 | Generate word clouds | `uv run readme generate word-cloud` |
 | Generate all assets | `uv run readme generate all` |
 | Generate skills badges | `uv run readme generate skills` |
+| Generate supplemental metrics cards | `uv run readme generate supplemental-metrics` |
+| Mint Spotify refresh token | `uv run readme auth spotify-refresh-token` |
 | Generate README sections | `uv run readme generate readme-sections` |
 | Serve docs locally (Fumadocs) | `uv run readme dev docs` |
 | Clean artifacts | `uv run readme dev clean` |
@@ -32,6 +34,7 @@ wyattowalsh/
 ├── scripts/              # Asset generation package (→ scripts/AGENTS.md)
 │   ├── cli/             # Typer CLI package — `readme` entry point
 │   │   ├── _app.py      # Root app, --version, sub-app registration
+│   │   ├── auth.py      # Auth helpers (Spotify refresh token bootstrap)
 │   │   ├── generate.py  # Generate subcommands (banner, qr, word-cloud, …)
 │   │   ├── config_cmd.py # Config subcommands (view, save, generate-default)
 │   │   ├── settings_cmd.py # show-settings command
@@ -53,6 +56,8 @@ wyattowalsh/
 │   │   └── metaheuristic.py # MetaheuristicAnimRenderer + registry
 │   ├── readme_sections.py # README dynamic section assembler
 │   ├── readme_svg.py    # SVG rendering helpers for README components
+│   ├── supplemental_metrics.py # Repo-owned supplemental metrics cards
+│   ├── spotify_auth.py  # Spotify loopback auth-code helper
 │   ├── skills.py        # shields.io badge generator from skills.yaml
 │   ├── generative.py    # Static generative art (Clifford/Phyllotaxis)
 │   ├── fetch_metrics.py # GitHub GraphQL metrics collector
@@ -118,7 +123,7 @@ cfg = load_config()  # auto-creates defaults if missing
 | `DEBUG_MODE` | No (default: `false`) | Verbose debug output |
 
 CI secrets (GitHub Actions only — not needed locally):
-`WAKATIME_API_KEY` · `GH_TOKEN` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `TWITTER_TOKEN`
+`WAKATIME_API_KEY` · `GH_TOKEN` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `X_API_KEY` · `X_API_KEY_SECRET` · `X_ACCESS_TOKEN` · `X_ACCESS_TOKEN_SECRET`
 
 ## Known Issues
 

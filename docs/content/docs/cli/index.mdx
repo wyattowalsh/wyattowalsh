@@ -19,6 +19,9 @@ uv run python -m scripts.cli [COMMAND] [OPTIONS]
   <Card href="/docs/cli/generate" title="generate">
     Generate any asset type — banner, QR, word cloud, art, skills, or README sections
   </Card>
+  <Card href="/docs/cli/auth" title="auth">
+    Run one-time provider auth helpers such as the Spotify refresh-token bootstrap
+  </Card>
   <Card href="/docs/cli/config" title="config">
     View, save, or generate a default config.yaml
   </Card>
@@ -61,3 +64,9 @@ uv run python -m scripts.cli [COMMAND] [OPTIONS]
 | `clean` | Remove caches and artifacts |
 | `docs` | Serve Fumadocs dev site locally |
 | `update-deps` | Update lockfile to latest versions |
+
+## Auth subcommands
+
+| Subcommand | Description |
+|---|---|
+| `spotify-refresh-token` | Run the Spotify loopback auth flow and print a refresh token for CI |

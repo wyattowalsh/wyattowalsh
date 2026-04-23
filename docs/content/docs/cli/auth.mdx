@@ -1,0 +1,37 @@
+---
+title: auth
+description: One-time auth helpers for external provider setup.
+---
+
+## `auth spotify-refresh-token`
+
+Runs a local Spotify authorization-code flow and prints a refresh token for the repo-owned `metrics-music.svg` supplemental card.
+
+```bash
+uv run readme auth spotify-refresh-token \
+  --client-id "$SPOTIFY_CLIENT_ID" \
+  --client-secret "$SPOTIFY_CLIENT_SECRET"
+```
+
+By default the helper:
+
+- listens on `http://127.0.0.1:8888/callback`
+- opens the Spotify authorize URL in your default browser
+- requests the `user-read-recently-played` scope
+- prints the refresh token after a successful callback
+
+If you need to copy the authorize URL manually instead of auto-opening the browser:
+
+```bash
+uv run readme auth spotify-refresh-token \
+  --client-id "$SPOTIFY_CLIENT_ID" \
+  --client-secret "$SPOTIFY_CLIENT_SECRET" \
+  --no-open-browser
+```
+
+Required inputs:
+
+- `SPOTIFY_CLIENT_ID` or `--client-id`
+- `SPOTIFY_CLIENT_SECRET` or `--client-secret`
+
+After the helper prints a refresh token, store it in GitHub Actions as `SPOTIFY_REFRESH_TOKEN`.

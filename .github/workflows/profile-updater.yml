@@ -55,7 +55,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          TWITTER_TOKEN: ${{ secrets.TWITTER_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
 
@@ -86,17 +89,18 @@ jobs:
             [ -n "${spotify_error}" ] || spotify_error="ok"
           fi
 
+          x_oauth1_status="missing"
+          if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
+            x_oauth1_status="present"
+          fi
+
           {
             echo "### Metrics probe auth summary"
             echo
             echo "- GitHub token scopes: ${github_scope_header}"
             echo "- Spotify refresh status: ${spotify_status}"
             echo "- Spotify refresh detail: ${spotify_error}"
-            if [ -n "${TWITTER_TOKEN:-}" ]; then
-              echo "- Twitter token: present"
-            else
-              echo "- Twitter token: missing"
-            fi
+            echo "- X OAuth1 credentials: ${x_oauth1_status}"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Probe full personal metrics
@@ -168,9 +172,7 @@ jobs:
           plugin_stars_limit: 3
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
-          plugin_tweets: yes
-          plugin_tweets_token: ${{ secrets.TWITTER_TOKEN }}
-          plugin_tweets_limit: 2
+          plugin_tweets: no
 
       - name: Collect full additional metrics output
         if: ${{ always() }}
@@ -229,8 +231,6 @@ jobs:
 
           summarize_markers ./.github/assets/img/metrics.probe.additional.svg \
             "Recently played" \
-            "Latest tweets" \
-            "Tweets unavailable" \
             "Invalid refresh token" \
             "Recent activity" \
             "Featured repositories" \
@@ -495,6 +495,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
           # Secret setup guidance:
@@ -505,13 +509,21 @@ jobs:
           if [ -n "${SPOTIFY_CLIENT_ID:-}" ] && [ -n "${SPOTIFY_CLIENT_SECRET:-}" ] && [ -n "${SPOTIFY_REFRESH_TOKEN:-}" ]; then
             has_spotify_tokens=true
           fi
+          has_x_oauth1_tokens=false
+          if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
+            has_x_oauth1_tokens=true
+          fi
           echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
           echo "has_spotify_tokens=${has_spotify_tokens}" >> "$GITHUB_OUTPUT"
+          echo "has_x_oauth1_tokens=${has_x_oauth1_tokens}" >> "$GITHUB_OUTPUT"
           if [ "${has_metrics_token}" != "true" ]; then
             echo "::notice::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
           fi
           if [ "${has_spotify_tokens}" != "true" ]; then
             echo "::notice::Spotify secrets are incomplete; music metrics are disabled."
+          fi
+          if [ "${has_x_oauth1_tokens}" != "true" ]; then
+            echo "::notice::X OAuth1 secrets are incomplete; latest posts metrics are disabled."
           fi
       - name: Back up existing metrics assets
         run: |
@@ -543,9 +555,6 @@ jobs:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          # Keep the publish path on panels that have stayed healthy in validation.
-          # The repositories block still renders inline scope failures with the
-          # current token, even when the secret is present.
           base: header, activity, community, metadata
           # Disabled until upstream handles bot/system authors without throwing.
           plugin_lines: no
@@ -555,8 +564,8 @@ jobs:
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
           plugin_languages_threshold: "2%"
-          # The habits panel still intermittently emits inline "Unexpected error"
-          # payloads in full-mode probes, so leave it out of the scheduled publish path.
+          # The habits panel still emits inline errors in upstream renders; use
+          # the repo-owned supplemental card instead.
           plugin_habits: no
           plugin_habits_from: 1000
           plugin_habits_days: 30
@@ -642,6 +651,37 @@ jobs:
             ./.github/assets/img/metrics.additional.svg \
             --previous "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
 
+      - name: Generate supplemental metrics cards
+        id: generate_supplemental_metrics
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          set -euo pipefail
+          uv run python -m scripts.cli generate supplemental-metrics \
+            --config-path config.yaml \
+            --owner "${{ github.repository_owner }}" \
+            --repo "${{ github.event.repository.name }}" \
+            --output-dir .github/assets/img \
+            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json" \
+            --x-handle "${{ github.repository_owner }}"
+
+      - name: Validate supplemental metrics cards
+        id: validate_supplemental_metrics
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          uv run python -m scripts.supplemental_metrics validate \
+            --output-dir .github/assets/img \
+            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
+
       - name: Validate final metrics assets
         id: validate_final_metrics
         if: ${{ always() }}
@@ -649,6 +689,9 @@ jobs:
           set -euo pipefail
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
+          uv run python -m scripts.supplemental_metrics validate \
+            --output-dir .github/assets/img \
+            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
 
       - name: Summarize metrics asset health
         if: ${{ always() }}
@@ -657,10 +700,19 @@ jobs:
           from pathlib import Path
           from scripts.metrics_svg import validate_svg_file
 
-          for asset_name in ("metrics.svg", "metrics.additional.svg"):
+          for asset_name in (
+              "metrics.svg",
+              "metrics.additional.svg",
+              "metrics-habits.svg",
+              "metrics-activity.svg",
+              "metrics-music.svg",
+              "metrics-posts.svg",
+          ):
               path = Path(".github/assets/img") / asset_name
               result = validate_svg_file(path)
               print(f"{asset_name}: status={result.status.value} detail={result.detail}")
+              if asset_name in {"metrics-music.svg", "metrics-posts.svg"} and result.status.value == "missing":
+                  continue
               if not result.is_valid:
                   print(f"::error::{asset_name} is in degraded state ({result.status.value}).")
           PY
@@ -672,14 +724,27 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet -- ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg; then
+          owned_files=(
+            ./.github/assets/img/metrics.svg
+            ./.github/assets/img/metrics.additional.svg
+            ./.github/assets/img/metrics-habits.svg
+            ./.github/assets/img/metrics-activity.svg
+            ./.github/assets/img/metrics-music.svg
+            ./.github/assets/img/metrics-posts.svg
+          )
+
+          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
             echo "No metrics asset changes to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg
+          for file in "${owned_files[@]}"; do
+            if [ -e "$file" ] || git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+              git add -A -- "$file"
+            fi
+          done
           git commit -m "chore(metrics): update generated metrics assets"
 
           for attempt in 1 2 3; do

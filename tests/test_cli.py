@@ -151,6 +151,34 @@ def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> Non
     assert "banner_settings" in result.stdout  # Check for a known key
 
 
+@patch("scripts.cli.auth.mint_spotify_refresh_token")
+def test_auth_spotify_refresh_token_prints_refresh_token(
+    mock_mint_refresh_token: MagicMock,
+    runner: CliRunner,
+) -> None:
+    mock_mint_refresh_token.return_value = (
+        "refresh-token-123",
+        "https://accounts.spotify.com/authorize?...",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "auth",
+            "spotify-refresh-token",
+            "--client-id",
+            "client-id",
+            "--client-secret",
+            "client-secret",
+            "--no-open-browser",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "Spotify refresh token:" in result.stdout
+    assert "refresh-token-123" in result.stdout
+
+
 def test_config_view_non_existent(runner: CliRunner, tmp_path: Path) -> None:
     """Test `config view` for a non-existent config file."""
     non_existent_path = tmp_path / "does_not_exist.yaml"
