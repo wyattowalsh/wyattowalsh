@@ -15,6 +15,7 @@
 | Generate word clouds | `uv run readme generate word-cloud` |
 | Generate all assets | `uv run readme generate all` |
 | Generate skills badges | `uv run readme generate skills` |
+| Generate supplemental metrics cards | `uv run readme generate supplemental-metrics` |
 | Generate README sections | `uv run readme generate readme-sections` |
 | Serve docs locally (Fumadocs) | `uv run readme dev docs` |
 | Clean artifacts | `uv run readme dev clean` |
@@ -53,6 +54,7 @@ wyattowalsh/
 │   │   └── metaheuristic.py # MetaheuristicAnimRenderer + registry
 │   ├── readme_sections.py # README dynamic section assembler
 │   ├── readme_svg.py    # SVG rendering helpers for README components
+│   ├── supplemental_metrics.py # Repo-owned supplemental metrics cards
 │   ├── skills.py        # shields.io badge generator from skills.yaml
 │   ├── generative.py    # Static generative art (Clifford/Phyllotaxis)
 │   ├── fetch_metrics.py # GitHub GraphQL metrics collector
@@ -118,7 +120,7 @@ cfg = load_config()  # auto-creates defaults if missing
 | `DEBUG_MODE` | No (default: `false`) | Verbose debug output |
 
 CI secrets (GitHub Actions only — not needed locally):
-`WAKATIME_API_KEY` · `GH_TOKEN` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `TWITTER_TOKEN`
+`WAKATIME_API_KEY` · `GH_TOKEN` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `X_BEARER_TOKEN`
 
 ## Known Issues
 

@@ -969,6 +969,112 @@ class TestRendering:
         assert ".github/assets/img/metrics.additional.svg" in rendered
         assert "placeholder output" not in rendered
 
+    def test_generate_adds_valid_supplemental_metrics_assets(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        valid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Healthy metrics</text></svg>'
+        )
+        supplemental_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Coding habits</text>'
+            '<text x="1" y="40">30-day activity</text>'
+            "</svg>"
+        )
+        activity_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Recent activity</text>'
+            '<text x="1" y="40">GitHub</text>'
+            "</svg>"
+        )
+        (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics-habits.svg").write_text(
+            supplemental_svg,
+            encoding="utf-8",
+        )
+        (metrics_dir / "metrics-activity.svg").write_text(
+            activity_svg,
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert ".github/assets/img/metrics-habits.svg" in rendered
+        assert ".github/assets/img/metrics-activity.svg" in rendered
+
+    def test_generate_hides_invalid_supplemental_metrics_assets(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        valid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Healthy metrics</text></svg>'
+        )
+        invalid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">API error: 401</text></svg>'
+        )
+        (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics-posts.svg").write_text(invalid_svg, encoding="utf-8")
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert ".github/assets/img/metrics-posts.svg" not in rendered
+
     def test_generate_replaces_stale_wakatime_block_with_fallback(
         self,
         tmp_path: Path,

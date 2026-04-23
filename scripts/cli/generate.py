@@ -1322,6 +1322,76 @@ def _collect_card_style_update(
 
 
 @generate_app.command(
+    name="supplemental-metrics",
+    help="Generate repo-owned supplemental metrics cards.",
+)
+def supplemental_metrics(
+    config_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--config-path",
+            help="Project configuration file path.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    owner: Annotated[
+        str,
+        typer.Option(
+            "--owner",
+            help="GitHub owner/login to render metrics for.",
+            rich_help_panel="Supplemental Metrics Options",
+        ),
+    ] = "wyattowalsh",
+    repo: Annotated[
+        str,
+        typer.Option(
+            "--repo",
+            help="Repository name used for GitHub-side metrics hydration.",
+            rich_help_panel="Supplemental Metrics Options",
+        ),
+    ] = "wyattowalsh",
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory to write supplemental SVG assets into.",
+            rich_help_panel="Configuration",
+        ),
+    ] = Path(".github/assets/img"),
+    manifest_path: Annotated[
+        Path,
+        typer.Option(
+            "--manifest-path",
+            help="Path for the supplemental metrics manifest JSON.",
+            rich_help_panel="Configuration",
+        ),
+    ] = Path(".github/assets/img/metrics-supplemental.manifest.json"),
+    x_handle: Annotated[
+        str | None,
+        typer.Option(
+            "--x-handle",
+            help="X handle to query; defaults to --owner.",
+            rich_help_panel="Supplemental Metrics Options",
+        ),
+    ] = None,
+) -> None:
+    """Generate repo-owned supplemental metrics SVG assets."""
+    _load_project_config(config_path)
+    from ..supplemental_metrics import generate_supplemental_metrics
+
+    statuses = generate_supplemental_metrics(
+        owner=owner,
+        repo=repo,
+        output_dir=output_dir,
+        manifest_path=manifest_path,
+        x_handle=x_handle,
+    )
+    for key, status in statuses.items():
+        state = "enabled" if status.enabled else f"disabled ({status.reason})"
+        console.print(f"[bold green]{key}[/]: {state}")
+
+
+@generate_app.command(
     name="readme-sections",
     help="Generate dynamic README sections (badges, projects, blog posts).",
 )
@@ -1581,6 +1651,13 @@ def all_assets(
     from rich.panel import Panel  # lazy import
 
     results: list[tuple[str, str]] = []  # (name, status)
+    repo_name = Path.cwd().name
+    supplemental_output_dir = (
+        output_path if output_path and output_path.is_dir() else Path(".github/assets/img")
+    )
+    supplemental_manifest_path = (
+        supplemental_output_dir / "metrics-supplemental.manifest.json"
+    )
 
     # -- banner --
     try:
@@ -1624,6 +1701,27 @@ def all_assets(
         results.append(("Skills Badges", "[green]OK[/green]"))
     except (typer.Exit, SystemExit):
         results.append(("Skills Badges", "[red]FAILED[/red]"))
+
+    # -- supplemental metrics (optional; requires GitHub token) --
+    if any(os.getenv(name) for name in ("METRICS_TOKEN", "GITHUB_TOKEN", "GH_TOKEN")):
+        try:
+            supplemental_metrics(
+                config_path=config_path,
+                owner=profile,
+                repo=repo_name,
+                output_dir=supplemental_output_dir,
+                manifest_path=supplemental_manifest_path,
+                x_handle=profile,
+            )
+            results.append(("Supplemental Metrics", "[green]OK[/green]"))
+        except (typer.Exit, SystemExit):
+            results.append(("Supplemental Metrics", "[red]FAILED[/red]"))
+    else:
+        console.print(
+            "[yellow]Skipping supplemental metrics — no GitHub token found in "
+            "METRICS_TOKEN, GITHUB_TOKEN, or GH_TOKEN.[/yellow]"
+        )
+        results.append(("Supplemental Metrics", "[yellow]SKIPPED[/yellow]"))
 
     # -- readme sections --
     try:

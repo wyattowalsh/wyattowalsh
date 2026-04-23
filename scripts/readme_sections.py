@@ -24,6 +24,7 @@ from xml.etree.ElementTree import Element
 import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
+from .metrics_svg import validate_svg_file
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -70,6 +71,24 @@ _WAKATIME_SECTION_RE = re.compile(
 )
 _WAKATIME_UPDATED_RE = re.compile(
     r"Last Updated on (\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} UTC)",
+)
+_SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
+    (
+        "metrics-habits.svg",
+        "Supplemental metrics: coding habits and recent GitHub focus",
+    ),
+    (
+        "metrics-activity.svg",
+        "Supplemental metrics: recent GitHub activity feed",
+    ),
+    (
+        "metrics-music.svg",
+        "Supplemental metrics: recently played tracks from Spotify",
+    ),
+    (
+        "metrics-posts.svg",
+        "Supplemental metrics: latest posts from X",
+    ),
 )
 _WAKATIME_TIMESTAMP_FORMAT = "%d/%m/%Y %H:%M:%S UTC"
 _WAKATIME_FRESHNESS_WINDOW = timedelta(days=3)
@@ -703,18 +722,38 @@ class ReadmeSectionGenerator:
         return self._rewrite_wakatime_section(content)
 
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
-        _ = readme_path
-        body = "\n".join(
-            [
-                "<table><tbody>",
-                "<tr>",
-                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, coding habits, and topics" width="100%" loading="lazy"/></td>',
-                '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repos, activity, and stargazers" width="100%" loading="lazy"/></td>',
-                "</tr>",
-                "</tbody></table>",
-            ]
-        )
+        metrics_dir = readme_path.parent / ".github" / "assets" / "img"
+        body_lines = [
+            "<table><tbody>",
+            "<tr>",
+            '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and repository stats" width="100%" loading="lazy"/></td>',
+            '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/></td>',
+            "</tr>",
+            "</tbody></table>",
+        ]
 
+        valid_supplemental_assets = [
+            (filename, alt_text)
+            for filename, alt_text in _SUPPLEMENTAL_METRICS_ASSETS
+            if validate_svg_file(metrics_dir / filename).is_valid
+        ]
+        if valid_supplemental_assets:
+            body_lines.extend(["", "<table><tbody>"])
+            for index in range(0, len(valid_supplemental_assets), 2):
+                pair = valid_supplemental_assets[index : index + 2]
+                body_lines.append("<tr>")
+                for filename, alt_text in pair:
+                    body_lines.append(
+                        '<td valign="top" width="50%"><img '
+                        f'src=".github/assets/img/{filename}" '
+                        f'alt="{escape(alt_text)}" width="100%" loading="lazy"/></td>'
+                    )
+                if len(pair) == 1:
+                    body_lines.append('<td valign="top" width="50%"></td>')
+                body_lines.append("</tr>")
+            body_lines.extend(["</tbody></table>"])
+
+        body = "\n".join(body_lines)
         replacement = f"## Metrics\n\n{body}\n\n"
         if not _METRICS_SECTION_RE.search(content):
             logger.warning("Metrics section heading not found in README.")

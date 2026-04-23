@@ -123,7 +123,7 @@ uv run python -m scripts.cli generate timelapse \
 | `--workers` | Parallel render workers |
 
 <Callout type="info" title="`generate all` is conditional here">
-The living-art step inside `generate all` is skipped unless both `--metrics-path` and `--history-path` are provided.
+The living-art step inside `generate all` is skipped unless both `--metrics-path` and `--history-path` are provided. The supplemental metrics step is also skipped unless a GitHub token is present in `METRICS_TOKEN`, `GITHUB_TOKEN`, or `GH_TOKEN`.
 </Callout>
 
 ## `generate generative`
@@ -154,3 +154,51 @@ Assembles all dynamic README sections and writes them to `README.md` via marker 
 uv run python -m scripts.cli generate readme-sections \
   --config-path ./config.yaml
 ```
+
+This command also refreshes the featured-project card contract:
+
+- `.github/assets/img/readme/featured-card-*.svg`
+- `.github/assets/img/readme/featured-projects.manifest.json`
+- `docs/public/showcase/featured-projects/featured-card-*.svg` when the docs app exists
+- `docs/public/showcase/featured-projects.manifest.json` when the docs app exists
+
+It also renders the additive Metrics section from whichever validated assets are present:
+
+- `metrics.svg`
+- `metrics.additional.svg`
+- `metrics-habits.svg`
+- `metrics-activity.svg`
+- `metrics-music.svg`
+- `metrics-posts.svg`
+
+Optional supplemental cards are omitted automatically when their assets are missing or invalid.
+
+## `generate supplemental-metrics`
+
+Generates the repo-owned supplemental metrics cards that replace the upstream-brittle `habits`, `activity`, `music`, and `tweets` panels.
+
+```bash
+uv run python -m scripts.cli generate supplemental-metrics \
+  --owner wyattowalsh \
+  --repo wyattowalsh \
+  --output-dir .github/assets/img \
+  --manifest-path .github/assets/img/metrics-supplemental.manifest.json \
+  --x-handle wyattowalsh
+```
+
+Produces:
+
+- `.github/assets/img/metrics-habits.svg`
+- `.github/assets/img/metrics-activity.svg`
+- `.github/assets/img/metrics-music.svg` when Spotify secrets are complete and valid
+- `.github/assets/img/metrics-posts.svg` when `X_BEARER_TOKEN` is set and valid
+- `.github/assets/img/metrics-supplemental.manifest.json`
+
+Required runtime secrets:
+
+- GitHub token in `METRICS_TOKEN`, `GITHUB_TOKEN`, or `GH_TOKEN`
+
+Optional runtime secrets:
+
+- `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN`
+- `X_BEARER_TOKEN`

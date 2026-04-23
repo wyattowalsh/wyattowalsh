@@ -91,10 +91,11 @@ For the canonical `wyattowalsh/wyattowalsh` repo, configure the full metrics sec
 | Secret | Required | Purpose |
 |---|---|---|
 | `GITHUB_TOKEN` | Yes (automatic) | Built-in token — no setup needed |
-| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | GitHub PAT for repository-aware metrics (`read:user`, `public_repo`; add `read:org` if needed) |
-| `SPOTIFY_CLIENT_ID` | Canonical repo: yes / forks: optional | Spotify OAuth client ID for the music panel on `metrics.additional.svg` |
-| `SPOTIFY_CLIENT_SECRET` | Canonical repo: yes / forks: optional | Spotify OAuth client secret for the music panel on `metrics.additional.svg` |
-| `SPOTIFY_REFRESH_TOKEN` | Canonical repo: yes / forks: optional | Spotify OAuth refresh token for the music panel on `metrics.additional.svg` |
+| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | Classic GitHub PAT for repository-aware metrics (`read:user`, `repo`, `read:org`; add `gist` if you want gist-aware surfaces later) |
+| `SPOTIFY_CLIENT_ID` | Canonical repo: optional / forks: optional | Spotify OAuth client ID for the repo-owned `metrics-music.svg` supplemental card |
+| `SPOTIFY_CLIENT_SECRET` | Canonical repo: optional / forks: optional | Spotify OAuth client secret for the repo-owned `metrics-music.svg` supplemental card |
+| `SPOTIFY_REFRESH_TOKEN` | Canonical repo: optional / forks: optional | Spotify OAuth refresh token for the repo-owned `metrics-music.svg` supplemental card |
+| `X_BEARER_TOKEN` | Canonical repo: optional / forks: optional | X bearer token for the repo-owned `metrics-posts.svg` supplemental card |
 | `WAKATIME_API_KEY` | Optional | WakaTime coding stats |
 
 The workflow uses `github.repository_owner` dynamically, so **no username edits are needed** in the workflow file itself.
