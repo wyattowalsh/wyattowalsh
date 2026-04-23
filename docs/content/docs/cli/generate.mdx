@@ -191,7 +191,7 @@ Produces:
 - `.github/assets/img/metrics-habits.svg`
 - `.github/assets/img/metrics-activity.svg`
 - `.github/assets/img/metrics-music.svg` when Spotify secrets are complete and valid
-- `.github/assets/img/metrics-posts.svg` when `X_BEARER_TOKEN` is set and valid
+- `.github/assets/img/metrics-posts.svg` when the full X OAuth 1.0a secret quartet is set and valid
 - `.github/assets/img/metrics-supplemental.manifest.json`
 
 Required runtime secrets:
@@ -201,4 +201,6 @@ Required runtime secrets:
 Optional runtime secrets:
 
 - `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN`
-- `X_BEARER_TOKEN`
+- `X_API_KEY`, `X_API_KEY_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET`
+
+Use `uv run readme auth spotify-refresh-token` once on a local machine to mint a fresh `SPOTIFY_REFRESH_TOKEN` for CI.

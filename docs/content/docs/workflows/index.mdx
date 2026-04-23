@@ -88,9 +88,10 @@ Manual diagnostics lane for the legacy fuller `lowlighter/metrics` surface. It e
 
 - does the current `METRICS_TOKEN` satisfy the repositories block?
 - is the Spotify refresh token healthy?
+- are the X OAuth1 credentials present?
 - do upstream `habits` or `activity` panels still render degraded payloads?
 
-It uploads probe SVG artifacts and fails closed if the probe renders or validation fail. The `repositories` block stays probe-only until this lane clears it without inline scope errors.
+It uploads probe SVG artifacts and fails closed if the probe renders or validation fail.
 
 ### `generate-event-art`
 
@@ -113,19 +114,28 @@ Depends on `update-readme-wakatime`. Runs:
 - `generate readme-sections` — assembles all dynamic README sections
 - `generate skills` — re-renders skills badges
 
-Commits `README.md` + `.github/assets/img/readme/*.svg`.
+Commits:
+
+- `README.md`
+- `.github/assets/img/readme/featured-card-*.svg`
+- `.github/assets/img/readme/featured-projects.manifest.json`
+- mirrored docs showcase assets under `docs/public/showcase/featured-projects/`
+- `docs/public/showcase/featured-projects.manifest.json`
 
 ## Secrets used by the workflow
 
 | Secret | Used by | Notes |
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
-| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for richer GitHub reads (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but the probe-only repositories block will continue to fail and the production card stays on the reduced stable surface. |
+| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for repo-aware metrics (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but repository-aware sections will be reduced and recovery may preserve the last valid asset. |
 | `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
 | `SPOTIFY_CLIENT_ID` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
 | `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
-| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card; missing or invalid token keeps the card out of production |
-| `X_BEARER_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional bearer token for the repo-owned `metrics-posts.svg` supplemental card |
+| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card; mint it with `uv run readme auth spotify-refresh-token` and store it as a repo secret |
+| `X_API_KEY` | `generate-profile-metrics`, `probe-full-metrics` | Optional X API key for the repo-owned `metrics-posts.svg` supplemental card via OAuth 1.0a user-context |
+| `X_API_KEY_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional X API key secret for the repo-owned `metrics-posts.svg` supplemental card |
+| `X_ACCESS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional X access token for the repo-owned `metrics-posts.svg` supplemental card |
+| `X_ACCESS_TOKEN_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional X access token secret for the repo-owned `metrics-posts.svg` supplemental card |
 
 ## Related
 

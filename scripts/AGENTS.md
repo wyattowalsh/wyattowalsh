@@ -13,6 +13,7 @@
 | `cli/__init__.py` | 9 | Package init; re-exports `app` and `DEFAULT_CONFIG_PATH` | `app`, `DEFAULT_CONFIG_PATH` |
 | `cli/__main__.py` | 6 | Enables `python -m scripts.cli` | — |
 | `cli/_app.py` | 60 | Root Typer app, `--version` callback, sub-app registration | `app` |
+| `cli/auth.py` | ~100 | One-time auth helpers, currently Spotify refresh-token bootstrap | `auth_app` |
 | `cli/_display.py` | 55 | Shared display helpers: `OutputFormat` enum, `display_config()` | `OutputFormat`, `display_config()` |
 | `cli/config_cmd.py` | 165 | Config subcommands: `view`, `save`, `generate-default` | `config_app` |
 | `cli/settings_cmd.py` | 45 | `show-settings` command | `show_settings()` |
@@ -26,6 +27,7 @@
 | `qr.py` | 253 | Artistic vCard QR code | `QRCodeGenerator` |
 | `readme_sections.py` | 1548 | README dynamic section generators (badges, project cards, blog posts); orchestrates all section content | `generate_readme_sections()`, `ReadmeSectionsSettings` |
 | `readme_svg.py` | 1330 | Reusable SVG rendering helpers for README components (cards, charts, blocks) | `SvgCard`, `SvgBlock`, `SvgBlockRenderer`, `SvgRepoCardRenderer`, `SvgBlogCardRenderer`, `SvgConnectCardRenderer`, `ReadmeSvgAssetBuilder`, `SvgAssetWriter` |
+| `spotify_auth.py` | ~220 | Spotify loopback authorization-code helper for minting refresh tokens | `build_spotify_authorize_url()`, `exchange_spotify_authorization_code()`, `mint_spotify_refresh_token()` |
 | `skills.py` | 153 | shields.io badge HTML generator from `SkillsSettings`; injects between README comment markers | `SkillsBadgeGenerator` |
 | `techs.py` | 315 | Parse techs.md proficiency data | `Technology`, `load_technologies()`, `parse_technology_line()`, `display_technologies()` |
 | `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console` |

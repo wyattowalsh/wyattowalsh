@@ -55,7 +55,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
 
@@ -86,17 +89,18 @@ jobs:
             [ -n "${spotify_error}" ] || spotify_error="ok"
           fi
 
+          x_oauth1_status="missing"
+          if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
+            x_oauth1_status="present"
+          fi
+
           {
             echo "### Metrics probe auth summary"
             echo
             echo "- GitHub token scopes: ${github_scope_header}"
             echo "- Spotify refresh status: ${spotify_status}"
             echo "- Spotify refresh detail: ${spotify_error}"
-            if [ -n "${X_BEARER_TOKEN:-}" ]; then
-              echo "- X bearer token: present"
-            else
-              echo "- X bearer token: missing"
-            fi
+            echo "- X OAuth1 credentials: ${x_oauth1_status}"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Probe full personal metrics
@@ -491,7 +495,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
           # Secret setup guidance:
@@ -502,19 +509,21 @@ jobs:
           if [ -n "${SPOTIFY_CLIENT_ID:-}" ] && [ -n "${SPOTIFY_CLIENT_SECRET:-}" ] && [ -n "${SPOTIFY_REFRESH_TOKEN:-}" ]; then
             has_spotify_tokens=true
           fi
-          has_x_bearer_token=false
-          [ -n "${X_BEARER_TOKEN:-}" ] && has_x_bearer_token=true
+          has_x_oauth1_tokens=false
+          if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
+            has_x_oauth1_tokens=true
+          fi
           echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
           echo "has_spotify_tokens=${has_spotify_tokens}" >> "$GITHUB_OUTPUT"
-          echo "has_x_bearer_token=${has_x_bearer_token}" >> "$GITHUB_OUTPUT"
+          echo "has_x_oauth1_tokens=${has_x_oauth1_tokens}" >> "$GITHUB_OUTPUT"
           if [ "${has_metrics_token}" != "true" ]; then
             echo "::notice::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
           fi
           if [ "${has_spotify_tokens}" != "true" ]; then
             echo "::notice::Spotify secrets are incomplete; music metrics are disabled."
           fi
-          if [ "${has_x_bearer_token}" != "true" ]; then
-            echo "::notice::X_BEARER_TOKEN is missing; latest posts metrics are disabled."
+          if [ "${has_x_oauth1_tokens}" != "true" ]; then
+            echo "::notice::X OAuth1 secrets are incomplete; latest posts metrics are disabled."
           fi
       - name: Back up existing metrics assets
         run: |
@@ -546,8 +555,6 @@ jobs:
           filename: .github/assets/img/metrics.svg
           token: ${{ secrets.METRICS_TOKEN || github.token }}
           committer_token: ${{ secrets.GITHUB_TOKEN }}
-          # Keep repositories probe-only until the full probe lane clears the
-          # inline "Insufficient token scopes" failure.
           base: header, activity, community, metadata
           # Disabled until upstream handles bot/system authors without throwing.
           plugin_lines: no
@@ -652,7 +659,10 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
           uv run python -m scripts.cli generate supplemental-metrics \

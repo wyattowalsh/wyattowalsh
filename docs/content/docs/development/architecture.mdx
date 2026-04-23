@@ -10,6 +10,7 @@ wyattowalsh/
 ├── scripts/
 │   ├── cli/                    # Typer CLI package
 │   │   ├── _app.py             # Root app, --version, sub-app registration
+│   │   ├── auth.py             # One-time auth helpers (Spotify refresh token)
 │   │   ├── generate.py         # Generate subcommands (banner, qr, word-cloud, …)
 │   │   ├── config_cmd.py       # Config subcommands (view, save, generate-default)
 │   │   ├── settings_cmd.py     # show-settings command
@@ -30,6 +31,7 @@ wyattowalsh/
 │   ├── fetch_metrics.py        # GitHub metrics fetcher
 │   ├── fetch_history.py        # GitHub history fetcher
 │   ├── _github_http.py         # Shared GitHub HTTP helpers
+│   ├── spotify_auth.py         # Spotify loopback auth-code helper for refresh tokens
 │   └── art/
 │       ├── shared.py           # seed_hash, _hex_slice, Noise2D
 │       ├── _dev_profiles.py    # Mock profiles for local testing
@@ -56,6 +58,7 @@ wyattowalsh/
 ```text
 cli/
   ├── _app.py
+  │   ├── auth.py (auth sub-app)
   │   ├── generate.py (generate sub-app)
   │   ├── config_cmd.py (config sub-app)
   │   ├── dev.py (dev sub-app)

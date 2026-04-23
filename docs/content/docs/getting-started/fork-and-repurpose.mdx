@@ -91,11 +91,14 @@ For the canonical `wyattowalsh/wyattowalsh` repo, configure the full metrics sec
 | Secret | Required | Purpose |
 |---|---|---|
 | `GITHUB_TOKEN` | Yes (automatic) | Built-in token — no setup needed |
-| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | Classic GitHub PAT for richer GitHub reads (`read:user`, `repo`, `read:org`; add `gist` if you want gist-aware surfaces later). The historical `repositories` block still needs the probe lane to clear before it should return to production. |
+| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | Classic GitHub PAT for repository-aware metrics (`read:user`, `repo`, `read:org`; add `gist` if you want gist-aware surfaces later) |
 | `SPOTIFY_CLIENT_ID` | Canonical repo: optional / forks: optional | Spotify OAuth client ID for the repo-owned `metrics-music.svg` supplemental card |
 | `SPOTIFY_CLIENT_SECRET` | Canonical repo: optional / forks: optional | Spotify OAuth client secret for the repo-owned `metrics-music.svg` supplemental card |
-| `SPOTIFY_REFRESH_TOKEN` | Canonical repo: optional / forks: optional | Spotify OAuth refresh token for the repo-owned `metrics-music.svg` supplemental card |
-| `X_BEARER_TOKEN` | Canonical repo: optional / forks: optional | X bearer token for the repo-owned `metrics-posts.svg` supplemental card |
+| `SPOTIFY_REFRESH_TOKEN` | Canonical repo: optional / forks: optional | Spotify OAuth refresh token for the repo-owned `metrics-music.svg` supplemental card. Mint it locally with `uv run readme auth spotify-refresh-token`, then store it as a repo secret. |
+| `X_API_KEY` | Canonical repo: optional / forks: optional | X API key for the repo-owned `metrics-posts.svg` supplemental card via OAuth 1.0a user-context |
+| `X_API_KEY_SECRET` | Canonical repo: optional / forks: optional | X API key secret for the repo-owned `metrics-posts.svg` supplemental card |
+| `X_ACCESS_TOKEN` | Canonical repo: optional / forks: optional | X access token for the repo-owned `metrics-posts.svg` supplemental card |
+| `X_ACCESS_TOKEN_SECRET` | Canonical repo: optional / forks: optional | X access token secret for the repo-owned `metrics-posts.svg` supplemental card |
 | `WAKATIME_API_KEY` | Optional | WakaTime coding stats |
 
 The workflow uses `github.repository_owner` dynamically, so **no username edits are needed** in the workflow file itself.
