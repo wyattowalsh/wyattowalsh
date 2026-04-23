@@ -43,8 +43,8 @@
 <rect x="1074" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
 <text class="card-badge" x="1105.0" y="27" text-anchor="middle">Custom</text>
 <text class="card-title" x="56" y="40">Coding habits</text>
-<text class="card-line" x="56" y="62">30-day activity: 650 contributions across 25 active days</text>
-<text class="card-line" x="56" y="82">Current streak: 0d | longest streak: 10d</text>
+<text class="card-line" x="56" y="62">30-day activity: 652 contributions across 26 active days</text>
+<text class="card-line" x="56" y="82">Current streak: 7d | longest streak: 10d</text>
 <text class="card-line" x="56" y="102">Peak hour: 06:00 UTC | focus: riso, proxywhirl | langs: JetBrains MPS, …</text>
 <text class="card-meta" x="56" y="162">Reviews 4 · Repos 170 · Busiest day 125</text>
 </g>
