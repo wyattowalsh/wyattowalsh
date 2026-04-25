@@ -11,6 +11,8 @@ pytest.importorskip("numpy", reason="scripts.art.shared requires numpy")
 
 from scripts.art import daily_snapshots as daily_snapshots_module  # noqa: E402
 from scripts.art.daily_snapshots import (
+    EVOLUTION_STATE_MAPPING_KEYS,  # noqa: E402
+    EVOLUTION_STATE_SCALAR_KEYS,  # noqa: E402
     build_daily_snapshots,  # noqa: E402
     sample_frames,  # noqa: E402
 )
@@ -531,6 +533,74 @@ def test_build_daily_snapshots_render_state_channels_never_regress(
         for snap in snaps
     ]
     assert velocity_series == sorted(velocity_series)
+
+
+def test_build_daily_snapshots_exposes_monotonic_evolution_state(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+    final_metrics = snaps[-1].metrics_dict
+    evolution_state = final_metrics["evolution_state"]
+
+    assert evolution_state["evolution_state"] is True
+    assert evolution_state["source_contract"] == "evolution_state"
+    assert evolution_state["repo_visual_order"] == final_metrics["repo_visual_order"]
+    assert set(evolution_state["atmosphere_weights"]) == {
+        "clear",
+        "cloud",
+        "rain",
+        "storm",
+    }
+    assert set(evolution_state["season_weights"]) == {
+        "spring",
+        "summer",
+        "autumn",
+        "winter",
+    }
+    assert set(evolution_state["repo_identity"]) == {
+        repo["name"] for repo in final_metrics["repos"]
+    }
+
+
+def test_build_daily_snapshots_evolution_state_channels_never_regress(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(18, anchor_day=anchor_day)
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+
+    snaps = build_daily_snapshots(history, metrics)
+
+    for key in EVOLUTION_STATE_SCALAR_KEYS:
+        series = [snap.metrics_dict["evolution_state"][key] for snap in snaps]
+        assert series == sorted(series), f"{key} regressed: {series}"
+
+    for key in EVOLUTION_STATE_MAPPING_KEYS:
+        previous: dict[str, float] = {}
+        for snap in snaps:
+            current = snap.metrics_dict["evolution_state"][key]
+            for item_key in set(previous.keys()) | set(current.keys()):
+                assert float(current.get(item_key, 0) or 0) >= float(
+                    previous.get(item_key, 0) or 0
+                )
+            previous = current
+
+    previous_identity: dict[str, dict] = {}
+    for snap in snaps:
+        current_identity = snap.metrics_dict["evolution_state"]["repo_identity"]
+        for repo_name in previous_identity.keys() & current_identity.keys():
+            for key in ("visual_index", "language", "archetype"):
+                assert (
+                    current_identity[repo_name][key]
+                    == previous_identity[repo_name][key]
+                )
+        previous_identity = current_identity
 
 
 def test_build_daily_snapshots_monotonic_cumulative_channels_never_regress(

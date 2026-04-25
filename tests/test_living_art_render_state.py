@@ -176,6 +176,61 @@ def _wrapped_metrics(render_state: dict) -> dict:
     return raw
 
 
+def _evolution_state(render_state: dict, *, weather: float = 0.4) -> dict:
+    evolution = copy.deepcopy(render_state)
+    evolution.update(
+        {
+            "evolution_state": True,
+            "source_contract": "evolution_state",
+            "maturity": min(1.0, render_state["public_repos"] / 8.0),
+            "repo_density": min(1.0, render_state["public_repos"] / 8.0),
+            "repo_age_maturity": min(1.0, render_state["public_repos"] / 6.0),
+            "language_diversity_signal": min(1.0, render_state["language_count"] / 6.0),
+            "topic_diversity_signal": min(
+                1.0,
+                len(render_state["topic_clusters"]) / 6.0,
+            ),
+            "release_pressure": min(1.0, render_state["release_count"] / 6.0),
+            "collaboration_pressure": min(1.0, render_state["total_prs"] / 60.0),
+            "activity_pressure": min(1.0, render_state["total_commits"] / 360.0),
+            "issue_pressure": min(1.0, render_state["open_issues_count"] / 12.0),
+            "star_pressure": min(1.0, render_state["stars"] / 60.0),
+            "atmosphere_weights": {
+                "clear": 0.5,
+                "cloud": weather,
+                "rain": weather,
+                "storm": weather,
+            },
+            "season_weights": {
+                "spring": 0.2,
+                "summer": 0.4,
+                "autumn": 0.4,
+                "winter": weather,
+            },
+            "feature_ramps": {
+                "structure": min(1.0, render_state["public_repos"] / 8.0),
+                "texture": min(1.0, render_state["public_repos"] / 6.0),
+                "network": min(1.0, render_state["total_prs"] / 60.0),
+                "flora": min(1.0, render_state["language_count"] / 6.0),
+                "release": min(1.0, render_state["release_count"] / 6.0),
+                "weather": weather,
+            },
+            "repo_identity": {
+                repo["name"]: {
+                    "visual_index": index,
+                    "language": repo.get("language"),
+                    "archetype": index % 8,
+                    "star_rank_signal": min(1.0, repo.get("stars", 0) / 60.0),
+                    "age_signal": min(1.0, repo.get("age_months", 0) / 24.0),
+                    "topic_count_signal": min(1.0, len(repo.get("topics", [])) / 6.0),
+                }
+                for index, repo in enumerate(render_state["repos"])
+            },
+        }
+    )
+    return evolution
+
+
 _STYLE_CASES: list[tuple[str, Generator, Marker]] = [
     ("inkgarden", generate_ink_garden, lambda svg: svg.count('class="repo-tree"')),
     ("topo", generate_topography, lambda svg: svg.count('class="repo-peak"')),
@@ -215,6 +270,32 @@ def test_generators_prefer_render_state(
     )
 
     assert svg_from_wrapper == svg_from_render_state
+    assert marker(svg_from_wrapper) > 0
+
+
+@pytest.mark.parametrize(("style", "generator", "marker"), _STYLE_CASES)
+def test_generators_prefer_evolution_state_over_render_state(
+    style: str,
+    generator: Generator,
+    marker: Marker,
+) -> None:
+    render_state = _render_state(repo_count=1, stars=6)
+    evolution_state = _evolution_state(_render_state(repo_count=3, stars=30))
+    wrapped = _wrapped_metrics(render_state)
+    wrapped["evolution_state"] = copy.deepcopy(evolution_state)
+
+    svg_from_wrapper = generator(
+        wrapped,
+        seed=f"{style}-evolution-state",
+        timeline=False,
+    )
+    svg_from_evolution_state = generator(
+        copy.deepcopy(evolution_state),
+        seed=f"{style}-evolution-state",
+        timeline=False,
+    )
+
+    assert svg_from_wrapper == svg_from_evolution_state
     assert marker(svg_from_wrapper) > 0
 
 

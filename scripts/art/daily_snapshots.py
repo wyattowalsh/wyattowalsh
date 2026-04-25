@@ -78,6 +78,23 @@ RENDER_STATE_MAPPING_KEYS: tuple[str, ...] = (
     "repo_recency_bands",
     "commit_hour_distribution",
 )
+EVOLUTION_STATE_SCALAR_KEYS: tuple[str, ...] = (
+    "maturity",
+    "repo_density",
+    "repo_age_maturity",
+    "language_diversity_signal",
+    "topic_diversity_signal",
+    "release_pressure",
+    "collaboration_pressure",
+    "activity_pressure",
+    "issue_pressure",
+    "star_pressure",
+)
+EVOLUTION_STATE_MAPPING_KEYS: tuple[str, ...] = (
+    "atmosphere_weights",
+    "season_weights",
+    "feature_ramps",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -509,6 +526,174 @@ def _build_render_state(
         },
         "cumulative_state": cumulative_state,
     }
+
+
+def _clamp01(value: int | float) -> float:
+    return max(0.0, min(1.0, float(value or 0.0)))
+
+
+def _log_signal(value: int | float, *, ceiling: int | float) -> float:
+    value_f = max(0.0, float(value or 0.0))
+    ceiling_f = max(1.0, float(ceiling or 1.0))
+    return _clamp01(math.log1p(value_f) / math.log1p(ceiling_f))
+
+
+def _repo_identity_map(render_state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Return stable per-repo identity metadata for timelapse rendering."""
+    identities: dict[str, dict[str, Any]] = {}
+    visual_order = {
+        str(name): index
+        for index, name in enumerate(render_state.get("repo_visual_order", []) or [])
+        if str(name)
+    }
+    repos = render_state.get("repos", []) or []
+    max_age = max(
+        (
+            int(repo.get("age_months", 0) or 0)
+            for repo in repos
+            if isinstance(repo, dict)
+        ),
+        default=1,
+    )
+    for fallback_index, repo in enumerate(repos):
+        if not isinstance(repo, dict):
+            continue
+        name = str(repo.get("name") or "")
+        if not name:
+            continue
+        order = visual_order.get(name, fallback_index)
+        stars = int(repo.get("stars", 0) or 0)
+        age_months = int(repo.get("age_months", 0) or 0)
+        topics = repo.get("topics", []) if isinstance(repo.get("topics"), list) else []
+        identities[name] = {
+            "visual_index": order,
+            "language": repo.get("language"),
+            "archetype": order % 8,
+            "star_rank_signal": _log_signal(stars, ceiling=500),
+            "age_signal": _clamp01(age_months / max(1, max_age)),
+            "topic_count_signal": _clamp01(len(topics) / 6.0),
+        }
+    return identities
+
+
+def _mapping_max(
+    current: dict[str, float],
+    previous: dict[str, Any] | None,
+) -> dict[str, float]:
+    previous = previous or {}
+    return {
+        key: round(max(float(value), float(previous.get(key, 0.0) or 0.0)), 4)
+        for key, value in current.items()
+    }
+
+
+def _build_evolution_state(
+    render_state: dict[str, Any],
+    *,
+    maturity: float,
+    previous_evolution_state: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Build a smoothed monotonic art envelope from the raw render contract."""
+    previous_evolution_state = previous_evolution_state or {}
+    repo_count = len(render_state.get("repos", []) or [])
+    max_age = max(
+        (
+            int(repo.get("age_months", 0) or 0)
+            for repo in render_state.get("repos", []) or []
+            if isinstance(repo, dict)
+        ),
+        default=0,
+    )
+    topic_clusters = render_state.get("topic_clusters", {})
+    topic_count = len(topic_clusters) if isinstance(topic_clusters, dict) else 0
+    total_commits = int(render_state.get("total_commits", 0) or 0)
+    total_prs = int(render_state.get("total_prs", 0) or 0)
+    merged_prs = int(render_state.get("merged_pr_count", 0) or 0)
+    review_count = int(render_state.get("pr_review_count", 0) or 0)
+    forks = int(render_state.get("forks", 0) or 0)
+    stars = int(render_state.get("stars", 0) or 0)
+    releases = int(render_state.get("release_count", 0) or 0)
+    total_issues = int(render_state.get("total_issues", 0) or 0)
+    open_issues = int(render_state.get("open_issues_count", 0) or 0)
+    contributions = int(render_state.get("contributions_to_date", 0) or 0)
+
+    scalars = {
+        "maturity": _clamp01(maturity),
+        "repo_density": _log_signal(repo_count, ceiling=80),
+        "repo_age_maturity": _clamp01(max_age / 72.0),
+        "language_diversity_signal": max(
+            _clamp01(float(render_state.get("language_count", 0) or 0) / 12.0),
+            _clamp01(float(render_state.get("language_diversity", 0.0) or 0.0)),
+        ),
+        "topic_diversity_signal": _clamp01(topic_count / 24.0),
+        "release_pressure": _log_signal(releases, ceiling=32),
+        "collaboration_pressure": _log_signal(
+            total_prs + merged_prs + review_count + forks,
+            ceiling=1000,
+        ),
+        "activity_pressure": _log_signal(total_commits + contributions, ceiling=20000),
+        "issue_pressure": _clamp01(open_issues / max(1, total_issues)),
+        "star_pressure": _log_signal(stars, ceiling=5000),
+    }
+    scalars = {
+        key: round(max(value, float(previous_evolution_state.get(key, 0.0) or 0.0)), 4)
+        for key, value in scalars.items()
+    }
+
+    atmosphere_weights = _mapping_max(
+        {
+            "clear": max(scalars["star_pressure"], scalars["activity_pressure"] * 0.55),
+            "cloud": max(scalars["repo_density"], scalars["issue_pressure"] * 0.65),
+            "rain": max(
+                scalars["collaboration_pressure"] * 0.7,
+                scalars["release_pressure"],
+            ),
+            "storm": max(
+                scalars["issue_pressure"],
+                scalars["activity_pressure"] * 0.35,
+            ),
+        },
+        previous_evolution_state.get("atmosphere_weights")
+        if isinstance(previous_evolution_state.get("atmosphere_weights"), dict)
+        else {},
+    )
+    season_weights = _mapping_max(
+        {
+            "spring": scalars["repo_density"],
+            "summer": max(
+                scalars["activity_pressure"],
+                scalars["language_diversity_signal"],
+            ),
+            "autumn": max(scalars["release_pressure"], scalars["repo_age_maturity"]),
+            "winter": max(scalars["issue_pressure"], scalars["star_pressure"] * 0.4),
+        },
+        previous_evolution_state.get("season_weights")
+        if isinstance(previous_evolution_state.get("season_weights"), dict)
+        else {},
+    )
+    feature_ramps = _mapping_max(
+        {
+            "structure": scalars["maturity"],
+            "texture": max(scalars["repo_age_maturity"], scalars["activity_pressure"]),
+            "network": scalars["collaboration_pressure"],
+            "flora": max(scalars["repo_density"], scalars["language_diversity_signal"]),
+            "release": scalars["release_pressure"],
+            "weather": max(atmosphere_weights.values(), default=0.0),
+        },
+        previous_evolution_state.get("feature_ramps")
+        if isinstance(previous_evolution_state.get("feature_ramps"), dict)
+        else {},
+    )
+
+    evolution_state = dict(render_state)
+    evolution_state.update(scalars)
+    evolution_state["evolution_state"] = True
+    evolution_state["source_contract"] = "evolution_state"
+    evolution_state["atmosphere_weights"] = atmosphere_weights
+    evolution_state["season_weights"] = season_weights
+    evolution_state["feature_ramps"] = feature_ramps
+    evolution_state["repo_identity"] = _repo_identity_map(render_state)
+    return evolution_state
 
 
 def _language_distribution_at_day(
@@ -949,6 +1134,7 @@ def build_daily_snapshots(
     previous_maturity = 0.0
     previous_cumulative_state: dict[str, int] = {}
     previous_render_state: dict[str, Any] = {}
+    previous_evolution_state: dict[str, Any] = {}
     cumulative_commit_hours: dict[int, int] = {}
 
     snapshots: list[DailySnapshot] = []
@@ -1212,7 +1398,13 @@ def build_daily_snapshots(
 
         # Timelapse frames should never regress once cumulative signals have appeared.
         maturity = max(previous_maturity, compute_maturity(render_state))
-        world_state = compute_world_state(render_state)
+        evolution_state = _build_evolution_state(
+            render_state,
+            maturity=maturity,
+            previous_evolution_state=previous_evolution_state,
+        )
+        metrics_dict["evolution_state"] = evolution_state
+        world_state = compute_world_state(evolution_state)
 
         snapshots.append(
             DailySnapshot(
@@ -1230,6 +1422,7 @@ def build_daily_snapshots(
         previous_maturity = maturity
         previous_cumulative_state = cumulative_state.copy()
         previous_render_state = render_state
+        previous_evolution_state = evolution_state
 
     logger.info(
         "Built {} snapshots; maturity range {:.3f} → {:.3f}",
@@ -1339,6 +1532,61 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                             f"Render-state repo {repo_name!r} key {repo_key!r} regressed on "
                             f"{current.day.isoformat()}: {previous_value} -> {current_value}"
                         )
+
+        previous_evolution_state = cast(
+            "dict[str, Any]",
+            previous.metrics_dict.get("evolution_state", {}),
+        )
+        current_evolution_state = cast(
+            "dict[str, Any]",
+            current.metrics_dict.get("evolution_state", {}),
+        )
+        if previous_evolution_state and current_evolution_state:
+            for key in EVOLUTION_STATE_SCALAR_KEYS:
+                current_value = float(current_evolution_state.get(key, 0) or 0)
+                previous_value = float(previous_evolution_state.get(key, 0) or 0)
+                if current_value < previous_value:
+                    raise ValueError(
+                        f"Evolution-state scalar {key!r} regressed on "
+                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                    )
+
+            for key in EVOLUTION_STATE_MAPPING_KEYS:
+                current_mapping = cast(
+                    "dict[str, int | float]",
+                    current_evolution_state.get(key, {}),
+                )
+                previous_mapping = cast(
+                    "dict[str, int | float]",
+                    previous_evolution_state.get(key, {}),
+                )
+                for item_key in set(current_mapping.keys()) | set(previous_mapping.keys()):
+                    current_value = float(current_mapping.get(item_key, 0) or 0)
+                    previous_value = float(previous_mapping.get(item_key, 0) or 0)
+                    if current_value < previous_value:
+                        raise ValueError(
+                            f"Evolution-state mapping {key!r}[{item_key!r}] regressed on "
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                        )
+
+            previous_identity = cast(
+                "dict[str, dict[str, Any]]",
+                previous_evolution_state.get("repo_identity", {}),
+            )
+            current_identity = cast(
+                "dict[str, dict[str, Any]]",
+                current_evolution_state.get("repo_identity", {}),
+            )
+            for repo_name in previous_identity.keys() & current_identity.keys():
+                for identity_key in ("visual_index", "language", "archetype"):
+                    if (
+                        current_identity[repo_name].get(identity_key)
+                        != previous_identity[repo_name].get(identity_key)
+                    ):
+                        raise ValueError(
+                            f"Evolution-state repo identity {repo_name!r} key "
+                            f"{identity_key!r} changed on {current.day.isoformat()}"
+                        )
         previous = current
         previous_cumulative = current_cumulative
 
@@ -1349,6 +1597,9 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
 
 
 def _sampling_metrics(snapshot: DailySnapshot) -> dict[str, Any]:
+    evolution_state = snapshot.metrics_dict.get("evolution_state")
+    if isinstance(evolution_state, dict):
+        return evolution_state
     render_state = snapshot.metrics_dict.get("render_state")
     if isinstance(render_state, dict):
         return render_state

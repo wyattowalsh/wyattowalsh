@@ -382,6 +382,12 @@ def compute_maturity(m: dict) -> float:
     Uses a smoothstep (Hermite ease-in-out) curve so that newcomers see
     visible growth quickly and prolific accounts asymptote gracefully.
     """
+    if m.get("source_contract") == "evolution_state" and "maturity" in m:
+        try:
+            return max(0.0, min(1.0, float(m.get("maturity", 0.0) or 0.0)))
+        except (TypeError, ValueError):
+            pass
+
     def _log(val: float, lo: float, hi: float) -> float:
         val = max(lo, min(hi, val))
         return math.log(val / lo) / math.log(hi / lo)
@@ -485,20 +491,14 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
     else:
         time_of_day = "day"
 
-    # ── Weather (from issue stats) ───────────────────────────────
-    open_issues = metrics.get("open_issues_count", 0) or 0
-    issue_stats = metrics.get("issue_stats") or {}
-    closed_issues = issue_stats.get("closed_count", 0) or 0
-    total_issues = open_issues + closed_issues
-
-    if total_issues == 0:
-        weather = "clear"
-        weather_severity = 0.0
-    else:
-        open_ratio = open_issues / total_issues
-        issue_volume = min(1.0, total_issues / 40.0)
+    # ── Weather (from issue stats or timelapse atmosphere envelope) ─
+    atmosphere_weights = metrics.get("atmosphere_weights")
+    if isinstance(atmosphere_weights, Mapping) and atmosphere_weights:
+        cloud = max(0.0, float(atmosphere_weights.get("cloud", 0.0) or 0.0))
+        rain = max(0.0, float(atmosphere_weights.get("rain", 0.0) or 0.0))
+        storm = max(0.0, float(atmosphere_weights.get("storm", 0.0) or 0.0))
         weather_severity = round(
-            min(1.0, open_ratio * (0.6 + 0.4 * issue_volume)),
+            min(1.0, cloud * 0.25 + rain * 0.55 + storm * 0.85),
             4,
         )
         if weather_severity < 0.15:
@@ -509,23 +509,57 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
             weather = "rainy"
         else:
             weather = "stormy"
+    else:
+        open_issues = metrics.get("open_issues_count", 0) or 0
+        issue_stats = metrics.get("issue_stats") or {}
+        closed_issues = issue_stats.get("closed_count", 0) or 0
+        total_issues = open_issues + closed_issues
+
+        if total_issues == 0:
+            weather = "clear"
+            weather_severity = 0.0
+        else:
+            open_ratio = open_issues / total_issues
+            issue_volume = min(1.0, total_issues / 40.0)
+            weather_severity = round(
+                min(1.0, open_ratio * (0.6 + 0.4 * issue_volume)),
+                4,
+            )
+            if weather_severity < 0.15:
+                weather = "clear"
+            elif weather_severity < 0.35:
+                weather = "cloudy"
+            elif weather_severity < 0.6:
+                weather = "rainy"
+            else:
+                weather = "stormy"
 
     # ── Season (from dominant language family) ────────────────────
-    lang_bytes = metrics.get("languages") or {}
-    if lang_bytes and isinstance(lang_bytes, dict):
-        # Weight each language's season by byte count
-        season_weight: dict[str, float] = defaultdict(float)
-        for lang, byte_count in lang_bytes.items():
-            s = _LANG_SEASON.get(lang, "summer")
-            try:
-                season_weight[s] += max(0.0, float(byte_count))
-            except (TypeError, ValueError):
-                continue
-        season_transition_weights = _normalize_season_weights(season_weight)
+    season_envelope = metrics.get("season_weights")
+    if isinstance(season_envelope, Mapping) and season_envelope:
+        season_transition_weights = _normalize_season_weights(
+            {
+                str(season): max(0.0, float(weight or 0.0))
+                for season, weight in season_envelope.items()
+            }
+        )
         season = max(season_transition_weights, key=season_transition_weights.get)
     else:
-        season = "summer"
-        season_transition_weights = _normalize_season_weights(None)
+        lang_bytes = metrics.get("languages") or {}
+        if lang_bytes and isinstance(lang_bytes, dict):
+            # Weight each language's season by byte count
+            season_weight: dict[str, float] = defaultdict(float)
+            for lang, byte_count in lang_bytes.items():
+                s = _LANG_SEASON.get(lang, "summer")
+                try:
+                    season_weight[s] += max(0.0, float(byte_count))
+                except (TypeError, ValueError):
+                    continue
+            season_transition_weights = _normalize_season_weights(season_weight)
+            season = max(season_transition_weights, key=season_transition_weights.get)
+        else:
+            season = "summer"
+            season_transition_weights = _normalize_season_weights(None)
 
     # ── Energy (from star velocity) ──────────────────────────────
     star_vel = metrics.get("star_velocity") or {}
@@ -814,10 +848,17 @@ def validate_live_history_payload(history: Mapping[str, Any]) -> dict[str, Any]:
 def resolve_render_metrics(metrics: Mapping[str, Any]) -> dict[str, Any]:
     """Prefer the timelapse render contract when present.
 
-    ``render_state`` is an internal monotonic envelope used by canonical
-    living-art timelapse rendering.  Generators should read from it when
-    available, but retain access to stable metadata from the outer payload.
+    ``evolution_state`` is the smoothed artistic envelope layered over
+    ``render_state`` for canonical timelapse output.  ``render_state`` remains
+    the raw monotonic data contract and the fallback for older snapshots.
+    Generators retain access to stable metadata from the outer payload.
     """
+    evolution_state = metrics.get("evolution_state")
+    if isinstance(evolution_state, Mapping):
+        resolved = dict(metrics)
+        resolved.update(dict(evolution_state))
+        return resolved
+
     render_state = metrics.get("render_state")
     if not isinstance(render_state, Mapping):
         return dict(metrics)
