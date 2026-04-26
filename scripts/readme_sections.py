@@ -66,6 +66,10 @@ _GENERIC_DESCRIPTION_RE = re.compile(
 _METRICS_SECTION_RE = re.compile(
     r"(?ms)^## Metrics\n.*?(?=^## Word Clouds\n)",
 )
+_WORD_CLOUDS_SECTION_RE = re.compile(
+    r"(?ms)^## Word Clouds\n.*?(?=^<details>\n"
+    r"<summary><strong>WakaTime Stats</strong></summary>)",
+)
 _WAKATIME_SECTION_RE = re.compile(
     r"(?ms)(<!--START_SECTION:waka-->)(.*?)(<!--END_SECTION:waka-->)",
 )
@@ -719,17 +723,23 @@ class ReadmeSectionGenerator:
 
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
         content = self._rewrite_metrics_section(content, readme_path=readme_path)
+        content = self._rewrite_word_clouds_section(content)
         return self._rewrite_wakatime_section(content)
 
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
         metrics_dir = readme_path.parent / ".github" / "assets" / "img"
         body_lines = [
-            "<table><tbody>",
-            "<tr>",
-            '<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>',
-            '<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/></td>',
-            "</tr>",
-            "</tbody></table>",
+            '<p align="center">',
+            '<img src=".github/assets/img/metrics.svg" '
+            'alt="GitHub metrics: contributions, languages, topics, '
+            'and community signals" width="100%" loading="lazy"/>',
+            "</p>",
+            "",
+            '<p align="center">',
+            '<img src=".github/assets/img/metrics.additional.svg" '
+            'alt="Additional metrics: featured repositories, recently starred '
+            'repositories, and stargazers" width="100%" loading="lazy"/>',
+            "</p>",
         ]
 
         valid_supplemental_assets = [
@@ -738,20 +748,16 @@ class ReadmeSectionGenerator:
             if validate_svg_file(metrics_dir / filename).is_valid
         ]
         if valid_supplemental_assets:
-            body_lines.extend(["", "<table><tbody>"])
-            for index in range(0, len(valid_supplemental_assets), 2):
-                pair = valid_supplemental_assets[index : index + 2]
-                body_lines.append("<tr>")
-                for filename, alt_text in pair:
-                    body_lines.append(
-                        '<td valign="top" width="50%"><img '
-                        f'src=".github/assets/img/{filename}" '
-                        f'alt="{escape(alt_text)}" width="100%" loading="lazy"/></td>'
-                    )
-                if len(pair) == 1:
-                    body_lines.append('<td valign="top" width="50%"></td>')
-                body_lines.append("</tr>")
-            body_lines.extend(["</tbody></table>"])
+            for filename, alt_text in valid_supplemental_assets:
+                body_lines.extend(
+                    [
+                        "",
+                        '<p align="center">',
+                        f'<img src=".github/assets/img/{filename}" '
+                        f'alt="{escape(alt_text)}" width="100%" loading="lazy"/>',
+                        "</p>",
+                    ]
+                )
 
         body = "\n".join(body_lines)
         replacement = f"## Metrics\n\n{body}\n\n"
@@ -759,6 +765,35 @@ class ReadmeSectionGenerator:
             logger.warning("Metrics section heading not found in README.")
             return content
         return _METRICS_SECTION_RE.sub(replacement, content, count=1)
+
+    def _rewrite_word_clouds_section(self, content: str) -> str:
+        body_lines = [
+            "## Word Clouds",
+            "",
+            '<p align="center">',
+            '  <img src=".github/assets/img/'
+            'wordcloud_metaheuristic-anim_by_topics.svg" '
+            'alt="Animated word cloud of GitHub topics with every parsed '
+            'topic term preserved" width="100%"/>',
+            "</p>",
+            "",
+            '<p align="center">',
+            '  <img src=".github/assets/img/'
+            'wordcloud_metaheuristic-anim_by_languages.svg" '
+            'alt="Animated word cloud of GitHub languages with every parsed '
+            'language term preserved" width="100%"/>',
+            "</p>",
+            "",
+            "<sub>Animated topic and language clouds generated from the full "
+            "parsed source lists; word size follows frequency and the layouts "
+            "cycle through metaheuristic placements.</sub>",
+            "",
+        ]
+        replacement = "\n".join(body_lines)
+        if not _WORD_CLOUDS_SECTION_RE.search(content):
+            logger.warning("Word Clouds section heading not found in README.")
+            return content
+        return _WORD_CLOUDS_SECTION_RE.sub(replacement, content, count=1)
 
     def _rewrite_wakatime_section(self, content: str) -> str:
         match = _WAKATIME_SECTION_RE.search(content)
@@ -788,8 +823,8 @@ class ReadmeSectionGenerator:
 
         replacement = (
             f"{match.group(1)}\n"
-            "> WakaTime stats are temporarily unavailable right now. "
-            f"{detail}\n"
+            "<!-- WakaTime stats hidden until a fresh generated section is "
+            f"available. {detail} -->\n"
             f"{match.group(3)}"
         )
         return content[: match.start()] + replacement + content[match.end() :]
@@ -855,7 +890,7 @@ class ReadmeSectionGenerator:
             )
             svg_cards.append(card)
         # Render per-card SVGs
-        card_embeds: list[tuple[str, str]] = []
+        card_embeds: list[tuple[str, str, str]] = []
 
         if self._svg_section_enabled("top_contact"):
             writer = SvgAssetWriter(
@@ -877,17 +912,17 @@ class ReadmeSectionGenerator:
                     ),
                 )
                 src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
-                card_embeds.append((card.url or "#", src))
+                card_embeds.append((card.url or "#", src, card.title))
 
         result: list[str] = []
         if card_embeds:
             imgs = []
-            for url, src in card_embeds:
+            for url, src, label in card_embeds:
                 imgs.append(
                     f'<a href="{escape(url)}" target="_blank"'
                     ' rel="noopener noreferrer">'
                     f'<img src="{escape(src)}" width="140"'
-                    f' loading="lazy"/></a>'
+                    f' alt="{escape(label)}" loading="lazy"/></a>'
                 )
             result.append('<p align="center">' + "\n".join(imgs) + "</p>")
         return "\n".join(result)
@@ -1444,31 +1479,22 @@ class ReadmeSectionGenerator:
         columns: int,
         section_label: str | None = None,
     ) -> str:
+        del columns
         if not artifacts:
             return ""
-        column_width = f"{100 / columns:.2f}%"
         lines: list[str] = []
         if section_label:
             lines.append(f'<p align="center"><sub>{escape(section_label)}</sub></p>')
-        lines.append("<table><tbody>")
-        for row_start in range(0, len(artifacts), columns):
-            lines.append("<tr>")
-            for offset in range(columns):
-                idx = row_start + offset
-                if idx >= len(artifacts):
-                    lines.append(f'<td width="{column_width}"></td>')
-                    continue
-                artifact = artifacts[idx]
-                lines.append(
-                    f'<td valign="top" width="{column_width}">'
-                    f'<a href="{escape(artifact.card.url or "#")}"'
-                    f' target="_blank" rel="noopener noreferrer">'
-                    f'<img src="{escape(artifact.asset_src)}" width="100%"'
-                    f' alt="{escape(artifact.alt_text)}"'
-                    f' loading="lazy"/></a></td>'
-                )
-            lines.append("</tr>")
-        lines.append("</tbody></table>")
+        lines.append('<p align="center">')
+        for artifact in artifacts:
+            lines.append(
+                f'<a href="{escape(artifact.card.url or "#")}"'
+                f' target="_blank" rel="noopener noreferrer">'
+                f'<img src="{escape(artifact.asset_src)}" width="360"'
+                f' alt="{escape(artifact.alt_text)}"'
+                f' loading="lazy"/></a>'
+            )
+        lines.append("</p>")
         return "\n".join(lines)
 
     def _render_featured_projects(self) -> str:
@@ -1787,7 +1813,7 @@ class ReadmeSectionGenerator:
             if meta_bits:
                 line += f" — {escape(' · '.join(meta_bits))}"
             fallback_lines.append(line)
-        card_embeds: list[tuple[str, str]] = []
+        card_embeds: list[tuple[str, str, str]] = []
 
         if self._svg_section_enabled("blog_posts"):
             writer = SvgAssetWriter(
@@ -1811,16 +1837,17 @@ class ReadmeSectionGenerator:
                     ),
                 )
                 src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
-                card_embeds.append((card.url or "#", src))
+                card_embeds.append((card.url or "#", src, card.title))
 
         result: list[str] = []
         if card_embeds:
             imgs = []
-            for url, src in card_embeds:
+            for url, src, label in card_embeds:
                 imgs.append(
-                    f'<a href="{escape(url)}" target="_blank" rel="noopener noreferrer">'
+                    f'<a href="{escape(url)}" target="_blank" '
+                    'rel="noopener noreferrer">'
                     f'<img src="{escape(src)}" width="500"'
-                    f' loading="lazy"/></a>'
+                    f' alt="{escape(label)}" loading="lazy"/></a>'
                 )
             result.append('<p align="center">' + "\n".join(imgs) + "</p>")
         result.append(

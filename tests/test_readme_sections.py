@@ -320,10 +320,10 @@ class TestRendering:
         assert "sparkline-group" in svg
         # Multi-language bar rendered
         assert "lang-bar-clip" in svg
-        # HTML uses a single-column hero layout with descriptive alt/rel attrs
-        assert "<table>" in html
+        # HTML uses a mobile-readable peer card flow with descriptive alt/rel attrs
+        assert "<table>" not in html
         assert "featured-card-wyattowalsh-riso.svg" in html
-        assert 'width="100.00%"' in html
+        assert 'width="360"' in html
         assert 'rel="noopener noreferrer"' in html
         assert (
             'alt="Featured project card for riso: Composable scaffolding framework"'
@@ -506,11 +506,11 @@ class TestRendering:
 
         html = generator._render_featured_projects()
 
-        assert html.count("<tr>") == 2
-        assert html.count('width="50.00%"') == 4
-        assert html.count('width="100%"') == 4
+        assert "<table>" not in html
+        assert html.count('width="360"') == 4
+        assert html.count("featured-card-wyattowalsh-") == 4
 
-    def test_featured_projects_render_three_columns_for_six_primary_cards(
+    def test_featured_projects_render_mobile_readable_flow_for_six_peer_cards(
         self, tmp_path: Path
     ) -> None:
         repos = [
@@ -542,8 +542,8 @@ class TestRendering:
 
         html = generator._render_featured_projects()
 
-        assert html.count("<tr>") == 2
-        assert html.count('width="33.33%"') == 6
+        assert "<table>" not in html
+        assert html.count('width="360"') == 6
         assert "More Featured Projects" not in html
 
     def test_featured_projects_keep_one_card_variety_for_larger_sets(
@@ -614,7 +614,8 @@ class TestRendering:
         )
 
         assert "More Featured Projects" not in html
-        assert html.count("<tr>") == 3
+        assert "<table>" not in html
+        assert html.count('width="360"') == 7
         assert len(manifest["projects"]) == 7
         assert [project["full_name"] for project in manifest["projects"]] == [
             repo.full_name for repo in repos
@@ -891,7 +892,8 @@ class TestRendering:
         metrics_dir.mkdir(parents=True)
         placeholder = dedent(
             """\
-            <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 role="img" aria-label="Metrics unavailable">
               <text x="12" y="40">Metrics temporarily unavailable</text>
               <text x="12" y="64">Check workflow logs for details</text>
             </svg>
@@ -938,10 +940,14 @@ class TestRendering:
         )
         metrics_dir = tmp_path / ".github" / "assets" / "img"
         metrics_dir.mkdir(parents=True)
-        valid_svg = '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="20">Healthy metrics</text></svg>'
+        valid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Healthy metrics</text></svg>'
+        )
         placeholder = dedent(
             """\
-            <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Metrics unavailable">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 role="img" aria-label="Metrics unavailable">
               <text x="12" y="40">Metrics temporarily unavailable</text>
               <text x="12" y="64">Check workflow logs for details</text>
             </svg>
@@ -1029,6 +1035,7 @@ class TestRendering:
 
         assert ".github/assets/img/metrics-habits.svg" in rendered
         assert ".github/assets/img/metrics-activity.svg" in rendered
+        assert "<td" not in rendered
 
     def test_generate_hides_invalid_supplemental_metrics_assets(
         self,
@@ -1075,7 +1082,62 @@ class TestRendering:
 
         assert ".github/assets/img/metrics-posts.svg" not in rendered
 
-    def test_generate_replaces_stale_wakatime_block_with_fallback(
+    def test_generate_rewrites_word_clouds_as_equal_full_width_blocks(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+
+                stale word clouds
+
+                <details>
+                <summary><strong>WakaTime Stats</strong></summary>
+
+                <!--START_SECTION:waka-->
+                Last Updated on 27/04/2025 18:43:21 UTC
+                <!--END_SECTION:waka-->
+
+                </details>
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        valid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Healthy metrics</text></svg>'
+        )
+        (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "stale word clouds" not in rendered
+        assert rendered.count('width="100%"') >= 4
+        assert "wordcloud_metaheuristic-anim_by_topics.svg" in rendered
+        assert "wordcloud_metaheuristic-anim_by_languages.svg" in rendered
+        assert "full parsed source lists" in rendered
+
+    def test_generate_hides_stale_wakatime_block_until_fresh_output_exists(
         self,
         tmp_path: Path,
     ) -> None:
@@ -1114,7 +1176,11 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
-        assert "WakaTime stats are temporarily unavailable right now." in rendered
+        assert (
+            "WakaTime stats hidden until a fresh generated section is available."
+            in rendered
+        )
+        assert "WakaTime stats are temporarily unavailable right now." not in rendered
         assert "outside the freshness window" in rendered
 
     def test_featured_project_card_builds_with_icon_data_uri(

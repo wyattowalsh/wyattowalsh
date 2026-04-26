@@ -21,7 +21,7 @@ from typing import Any, Final
 
 from .fetch_metrics import collect as collect_github_metrics
 from .metrics_svg import validate_svg_file
-from .readme_svg import ReadmeSvgAssetBuilder, SvgBlock, SvgCard
+from .readme_svg import ReadmeSvgAssetBuilder, SvgBlock, SvgBlockRenderer, SvgCard
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -628,7 +628,10 @@ def generate_supplemental_metrics(
     """Generate the supplemental metrics cards and return their manifest."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    builder = ReadmeSvgAssetBuilder(output_dir)
+    builder = ReadmeSvgAssetBuilder(
+        output_dir,
+        renderer=SvgBlockRenderer(width=1200, card_height=208, padding=28),
+    )
 
     github_token = (
         os.getenv("METRICS_TOKEN")

@@ -1,42 +1,32 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner.svg">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner-dark.svg">
     <img src=".github/assets/img/banner.svg" alt="Banner" width="100%"/>
   </picture>
 </p>
 
 <!-- README:TOP_BADGES:START -->
-<p align="center"><a href="https://w4w.dev" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-w4w-dev.svg" width="140" loading="lazy"/></a>
-<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" loading="lazy"/></a>
-<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" loading="lazy"/></a>
-<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" loading="lazy"/></a></p>
+<p align="center"><a href="https://w4w.dev" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-w4w-dev.svg" width="140" alt="w4w.dev" loading="lazy"/></a>
+<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" alt="LinkedIn" loading="lazy"/></a>
+<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" alt="Kaggle" loading="lazy"/></a>
+<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" alt="X.com" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
-<table><tbody>
-<tr>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="100%" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="100%" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="100%" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a></td>
-</tr>
-<tr>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="100%" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="100%" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="100%" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a></td>
-</tr>
-<tr>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="100%" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="100%" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a></td>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="100%" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a></td>
-</tr>
-<tr>
-<td valign="top" width="33.33%"><a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="100%" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a></td>
-<td width="33.33%"></td>
-<td width="33.33%"></td>
-</tr>
-</tbody></table>
+<p align="center">
+<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
+</p>
 <!-- README:FEATURED_PROJECTS:END -->
 
 
@@ -342,38 +332,42 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 
 ## Metrics
 
-<table><tbody>
-<tr>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/></td>
-</tr>
-</tbody></table>
+<p align="center">
+<img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/>
+</p>
 
-<table><tbody>
-<tr>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/></td>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/></td>
-</tr>
-<tr>
-<td valign="top" width="50%"><img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/></td>
-<td valign="top" width="50%"></td>
-</tr>
-</tbody></table>
+<p align="center">
+<img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
+</p>
 
 ## Word Clouds
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg" alt="Animated word cloud of topics, each frame placed by a different metaheuristic algorithm" width="49%"/>
-  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of languages, each frame placed by a different metaheuristic algorithm" width="49%"/>
+  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg" alt="Animated word cloud of GitHub topics with every parsed topic term preserved" width="100%"/>
 </p>
 
-<sub>Animated word clouds of my GitHub topics and languages — each frame is a different algorithmic layout, cycling through 25 metaheuristic placement strategies. Word size reflects frequency; color drifts via OKLCH hue shifts between frames.</sub>
+<p align="center">
+  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of GitHub languages with every parsed language term preserved" width="100%"/>
+</p>
 
+<sub>Animated topic and language clouds generated from the full parsed source lists; word size follows frequency and the layouts cycle through metaheuristic placements.</sub>
 <details>
 <summary><strong>WakaTime Stats</strong></summary>
 
 <!--START_SECTION:waka-->
-> WakaTime stats are temporarily unavailable right now. No fresh WakaTime timestamp was found in the generated section.
+<!-- WakaTime stats hidden until a fresh generated section is available. No fresh WakaTime timestamp was found in the generated section. -->
 <!--END_SECTION:waka-->
 
 </details>
@@ -382,11 +376,11 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="500" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="500" loading="lazy"/></a></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" alt="ProxyWhirl" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="500" alt="Personal Web App v6" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="500" alt="Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
