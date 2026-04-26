@@ -1761,6 +1761,52 @@ def _transition_score(previous: DailySnapshot, current: DailySnapshot) -> float:
     return score
 
 
+def _sample_gap_score(
+    snapshots: list[DailySnapshot],
+    *,
+    left: int,
+    right: int,
+) -> float:
+    """Score a sampled gap by visual jump first, elapsed time second."""
+    if right <= left + 1:
+        return -1.0
+    span = right - left
+    visual_jump = _transition_score(snapshots[left], snapshots[right])
+    temporal_jump = span / max(1, len(snapshots) - 1)
+    return visual_jump + temporal_jump * 2.0
+
+
+def _best_gap_split_index(
+    snapshots: list[DailySnapshot],
+    transition_scores: list[float],
+    *,
+    left: int,
+    right: int,
+) -> int | None:
+    """Pick the real day that best halves a sampled visual-state jump."""
+    if right <= left + 1:
+        return None
+
+    midpoint = (left + right) / 2.0
+    candidates = range(left + 1, right)
+    return min(
+        candidates,
+        key=lambda index: (
+            max(
+                _transition_score(snapshots[left], snapshots[index]),
+                _transition_score(snapshots[index], snapshots[right]),
+            ),
+            abs(
+                _transition_score(snapshots[left], snapshots[index])
+                - _transition_score(snapshots[index], snapshots[right])
+            ),
+            -transition_scores[index],
+            abs(index - midpoint),
+            index,
+        ),
+    )
+
+
 def sample_frames(
     snapshots: list[DailySnapshot],
     *,
@@ -1770,11 +1816,9 @@ def sample_frames(
 
     Strategy:
     1. Always include the first and last day.
-    2. Partition the interior timeline into budget-sized temporal buckets.
-    3. Within each bucket, prefer the day with the largest cumulative,
-       structural, or ecological transition.
-    4. Break ties toward later days so quiet cumulative growth still reads
-       forward instead of flattening into early-bucket states.
+    2. Reserve a bounded set of real high-transition days so events survive.
+    3. Spend the remaining budget splitting the largest adjacent visual jump.
+    4. Fall back to calendar-balanced splits when the visual state is flat.
     """
     if not snapshots or max_frames <= 0:
         return []
@@ -1795,18 +1839,12 @@ def sample_frames(
 
     interior_slots = max_frames - 2
     interior_count = n - 2
-    anchor_slots = interior_slots // 2
-    transition_slots = interior_slots - anchor_slots
     selected_indices: set[int] = {0, n - 1}
 
-    if anchor_slots > 0:
-        total_anchor_count = anchor_slots + 2
-        for anchor_step in range(1, total_anchor_count - 1):
-            anchor_index = int(
-                round(anchor_step * (n - 1) / max(1, total_anchor_count - 1))
-            )
-            anchor_index = max(1, min(n - 2, anchor_index))
-            selected_indices.add(anchor_index)
+    transition_slots = min(
+        interior_slots,
+        max(1, math.ceil(interior_slots * 0.5)),
+    )
 
     if transition_slots > 0:
         for slot_index in range(transition_slots):
@@ -1817,13 +1855,15 @@ def sample_frames(
             bucket_span = max(1, stop - start)
             bucket_indices = range(start, stop)
             bucket_reference = snapshots[start - 1]
+            bucket_midpoint = start + (bucket_span - 1) / 2.0
             best_index = max(
                 bucket_indices,
                 key=lambda index: (
                     transition_scores[index]
                     + _transition_score(bucket_reference, snapshots[index])
-                    + 0.15 * ((index - start + 1) / bucket_span),
-                    index,
+                    + 0.05 * (1.0 - abs(index - bucket_midpoint) / bucket_span),
+                    -abs(index - bucket_midpoint),
+                    -index,
                 ),
             )
             selected_indices.add(best_index)
@@ -1831,29 +1871,25 @@ def sample_frames(
     while len(selected_indices) < max_frames:
         ordered = sorted(selected_indices)
         best_gap: tuple[int, int] | None = None
-        best_span = 0
+        best_score = -1.0
         for left, right in zip(ordered, ordered[1:]):
-            span = right - left
-            if span > best_span:
+            score = _sample_gap_score(snapshots, left=left, right=right)
+            if score > best_score:
                 best_gap = (left, right)
-                best_span = span
-        if best_gap is None or best_span <= 1:
+                best_score = score
+        if best_gap is None or best_score < 0:
             break
 
         left, right = best_gap
-        midpoint = left + (best_span // 2)
-        if midpoint in selected_indices:
-            midpoint = min(
-                (
-                    index
-                    for index in range(left + 1, right)
-                    if index not in selected_indices
-                ),
-                default=midpoint,
-            )
-        if midpoint in selected_indices:
+        split_index = _best_gap_split_index(
+            snapshots,
+            transition_scores,
+            left=left,
+            right=right,
+        )
+        if split_index is None or split_index in selected_indices:
             break
-        selected_indices.add(midpoint)
+        selected_indices.add(split_index)
 
     ordered_indices = sorted(selected_indices)
     if len(ordered_indices) > max_frames:

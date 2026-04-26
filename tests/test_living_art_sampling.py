@@ -8,7 +8,11 @@ import pytest
 
 pytest.importorskip("numpy", reason="scripts.art.shared requires numpy")
 
-from scripts.art.daily_snapshots import DailySnapshot, sample_frames  # noqa: E402
+from scripts.art.daily_snapshots import (  # noqa: E402
+    DailySnapshot,
+    _transition_score,
+    sample_frames,
+)
 from scripts.art.shared import WorldState  # noqa: E402
 
 
@@ -208,3 +212,40 @@ def test_sample_frames_fills_remaining_budget_from_largest_gaps() -> None:
 
     assert len(sampled) == 6
     assert max(gaps) <= 13
+
+
+def test_sample_frames_splits_largest_visual_jumps() -> None:
+    snaps = []
+    for idx in range(80):
+        if idx < 30:
+            repo_count = 1
+        elif idx <= 50:
+            repo_count = 1 + (idx - 29) // 3
+        else:
+            repo_count = 8
+        snaps.append(
+            _snapshot(
+                idx=idx,
+                maturity=min(1.0, repo_count / 12.0),
+                stars=10 + repo_count * 2,
+                repo_count=repo_count,
+            )
+        )
+
+    sampled = sample_frames(snaps, max_frames=8)
+    sampled_indices = [snap.day_index for snap in sampled]
+    sparse_indices = [0, 13, 26, 39, 52, 65, 78, 79]
+    sparse_sample = [snaps[index] for index in sparse_indices]
+
+    sampled_jump = max(
+        _transition_score(left, right)
+        for left, right in zip(sampled, sampled[1:])
+    )
+    sparse_jump = max(
+        _transition_score(left, right)
+        for left, right in zip(sparse_sample, sparse_sample[1:])
+    )
+
+    assert len(sampled) == 8
+    assert sampled_jump < sparse_jump
+    assert sum(30 <= index <= 50 for index in sampled_indices) >= 3
