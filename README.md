@@ -351,14 +351,14 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ## Word Clouds
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg" alt="Animated word cloud of GitHub topics with every parsed topic term preserved" width="100%"/>
+  <img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Typographic word cloud of GitHub topics with every parsed topic term preserved" width="100%"/>
 </p>
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg" alt="Animated word cloud of GitHub languages with every parsed language term preserved" width="100%"/>
+  <img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Typographic word cloud of GitHub languages with every parsed language term preserved" width="100%"/>
 </p>
 
-<sub>Animated topic and language clouds generated from the full parsed source lists; word size follows frequency and the layouts cycle through metaheuristic placements.</sub>
+<sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub>
 <details>
 <summary><strong>WakaTime Stats</strong></summary>
 

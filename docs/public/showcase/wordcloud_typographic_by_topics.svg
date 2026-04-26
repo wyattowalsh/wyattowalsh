@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <filter id="wc-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="glow1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="glow2" />
+      <feMerge>
+        <feMergeNode in="glow1" />
+        <feMergeNode in="glow2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="wc-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#00000020" />
+    </filter>
+    <radialGradient id="wc-bg-grad" cx="50%" cy="50%" r="75%">
+      <stop stop-color="#fafbfc" stop-opacity="1" offset="0%" />
+      <stop stop-color="#f0f1f3" stop-opacity="1" offset="100%" />
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#wc-bg-grad)" />
+  <text x="146.8" y="71.2" font-size="72.0" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.4">python</text>
+  <text x="337.9" y="71.2" font-size="66.0" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central" opacity="0.97" filter="url(#wc-glow)" letter-spacing="1.3">ai</text>
+  <text x="459.2" y="71.2" font-size="63.1" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central" opacity="0.96" filter="url(#wc-glow)" letter-spacing="1.3">llm</text>
+  <text x="591.9" y="71.2" font-size="59.7" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="central" opacity="0.95" filter="url(#wc-glow)" letter-spacing="1.2">mcp</text>
+  <text x="743.0" y="71.2" font-size="52.3" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.91" filter="url(#wc-glow)" letter-spacing="1.0">react</text>
+  <text x="250.1" y="192.2" font-size="50.5" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.90" filter="url(#wc-glow)" letter-spacing="1.0">machine-learning</text>
+  <text x="633.5" y="192.2" font-size="49.5" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.90" filter="url(#wc-glow)" letter-spacing="1.0">javascript</text>
+  <text x="969.5" y="192.2" font-size="49.0" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.90" filter="url(#wc-glow)">hacktoberfest</text>
+  <text x="159.0" y="277.0" font-size="47.6" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.89" filter="url(#wc-glow)">typescript</text>
+  <text x="404.7" y="277.0" font-size="47.2" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.89" filter="url(#wc-glow)">awesome</text>
+  <text x="672.9" y="277.0" font-size="46.6" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.89" filter="url(#wc-glow)">awesome-list</text>
+  <text x="921.4" y="277.0" font-size="43.3" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.87" filter="url(#wc-glow)">openai</text>
+  <text x="110.3" y="357.0" font-size="42.8" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" opacity="0.87" filter="url(#wc-glow)">chatgpt</text>
+  <text x="307.0" y="357.0" font-size="42.2" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.86" filter="url(#wc-shadow)">markdown</text>
+  <text x="567.4" y="357.0" font-size="41.0" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.86" filter="url(#wc-shadow)">deep-learning</text>
+  <text x="868.3" y="357.0" font-size="40.6" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.86" filter="url(#wc-shadow)">data-science</text>
+  <text x="1077.2" y="357.0" font-size="39.8" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.85" filter="url(#wc-shadow)">agent</text>
+  <text x="81.1" y="428.9" font-size="38.6" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.85" filter="url(#wc-shadow)">macos</text>
+  <text x="183.7" y="428.9" font-size="36.5" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.84" filter="url(#wc-shadow)">rag</text>
+  <text x="319.8" y="428.9" font-size="35.4" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.83">ai-agents</text>
+  <text x="453.6" y="428.9" font-size="34.4" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.83">cli</text>
+  <text x="555.6" y="428.9" font-size="34.3" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.82">nodejs</text>
+  <text x="732.2" y="428.9" font-size="34.0" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.82">obsidian-md</text>
+  <text x="240.0" y="493.8" font-size="33.5" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.82">artificial-intelligence</text>
+  <text x="568.6" y="493.8" font-size="33.0" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.82">claude-code</text>
+  <text x="739.0" y="493.8" font-size="32.8" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.82">nextjs</text>
+  <text x="907.3" y="493.8" font-size="32.4" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">open-source</text>
+  <text x="1056.9" y="493.8" font-size="32.2" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">rust</text>
+  <text x="159.9" y="550.1" font-size="32.0" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">developer-tools</text>
+  <text x="333.9" y="550.1" font-size="31.7" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">nlp</text>
+  <text x="445.0" y="550.1" font-size="31.4" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">obsidian</text>
+  <text x="659.6" y="550.1" font-size="31.4" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">obsidian-plugin</text>
+  <text x="856.4" y="550.1" font-size="31.2" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">github</text>
+  <text x="991.0" y="550.1" font-size="30.7" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.81">database</text>
+  <text x="86.6" y="603.8" font-size="30.5" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">pytorch</text>
+  <text x="266.9" y="603.8" font-size="29.7" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">documentation</text>
+  <text x="533.9" y="603.8" font-size="29.5" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">prompt-engineering</text>
+  <text x="799.1" y="603.8" font-size="29.3" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">generative-ai</text>
+  <text x="950.8" y="603.8" font-size="29.3" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">html</text>
+  <text x="1077.4" y="603.8" font-size="29.0" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">automation</text>
+  <text x="51.9" y="655.0" font-size="29.0" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">css</text>
+  <text x="130.2" y="655.0" font-size="29.0" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">linux</text>
+  <text x="311.6" y="655.0" font-size="28.9" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">chrome-extension</text>
+  <text x="532.3" y="655.0" font-size="28.9" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">postgresql</text>
+  <text x="649.8" y="655.0" font-size="28.7" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">api</text>
+  <text x="727.2" y="655.0" font-size="28.7" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.80">music</text>
+  <text x="804.5" y="655.0" font-size="28.4" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.79">sql</text>
+  <text x="941.4" y="655.0" font-size="27.8" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" opacity="0.79">visualization</text>
+  <text x="1099.8" y="655.0" font-size="27.4" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.79">docker</text>
+  <text x="79.9" y="703.7" font-size="26.9" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.79">windows</text>
+  <text x="204.1" y="703.7" font-size="26.8" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.79">ethereum</text>
+  <text x="341.9" y="703.7" font-size="26.4" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">framework</text>
+  <text x="471.2" y="703.7" font-size="26.3" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">chatbot</text>
+  <text x="614.3" y="703.7" font-size="26.3" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">self-hosted</text>
+  <text x="900.7" y="703.7" font-size="26.1" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">natural-language-processing</text>
+  <text x="114.1" y="749.0" font-size="26.1" fill="#4F46E5" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">productivity</text>
+  <text x="277.0" y="749.0" font-size="25.7" fill="#2563EB" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">analytics</text>
+  <text x="481.1" y="749.0" font-size="25.7" fill="#059669" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">data-visualization</text>
+  <text x="677.7" y="749.0" font-size="25.6" fill="#D97706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">electron</text>
+  <text x="837.5" y="749.0" font-size="25.4" fill="#7C3AED" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">data-analysis</text>
+  <text x="954.9" y="749.0" font-size="25.4" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">go</text>
+  <text x="1016.5" y="749.0" font-size="25.4" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">swift</text>
+  <text x="1084.9" y="749.0" font-size="25.2" fill="#BE185D" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" opacity="0.78">ios</text>
+</svg>

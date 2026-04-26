@@ -77,7 +77,7 @@ def test_config_generate_default(runner: CliRunner, tmp_path: Path) -> None:
         assert "qr_code_settings" in content
 
 
-def test_wc_from_topics_uses_metaheuristic_renderer_with_stable_filename(
+def test_wc_from_topics_uses_typographic_renderer_with_stable_filename(
     tmp_path: Path,
 ) -> None:
     topics_md = tmp_path / "topics.md"
@@ -92,9 +92,9 @@ def test_wc_from_topics_uses_metaheuristic_renderer_with_stable_filename(
 
     result = _wc_from_topics(wc, None, [], 10, LayoutReadabilitySettings())
 
-    assert result == tmp_path / "wordcloud_metaheuristic-anim_by_topics.svg"
+    assert result == tmp_path / "wordcloud_typographic_by_topics.svg"
     assert _CapturingWordCloudGenerator.last_settings is not None
-    assert _CapturingWordCloudGenerator.last_settings.renderer == "metaheuristic-anim"
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "typographic"
     assert _CapturingWordCloudGenerator.last_settings.max_words == 2
     assert _CapturingWordCloudGenerator.last_kwargs is not None
     assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {
@@ -104,7 +104,7 @@ def test_wc_from_topics_uses_metaheuristic_renderer_with_stable_filename(
     assert _CapturingWordCloudGenerator.last_kwargs["color_func_name"] == "ocean"
 
 
-def test_wc_from_languages_uses_metaheuristic_renderer_with_stable_filename(
+def test_wc_from_languages_uses_typographic_renderer_with_stable_filename(
     tmp_path: Path,
 ) -> None:
     languages_md = tmp_path / "languages.md"
@@ -119,9 +119,9 @@ def test_wc_from_languages_uses_metaheuristic_renderer_with_stable_filename(
 
     result = _wc_from_languages(wc, None, [], 10, LayoutReadabilitySettings())
 
-    assert result == tmp_path / "wordcloud_metaheuristic-anim_by_languages.svg"
+    assert result == tmp_path / "wordcloud_typographic_by_languages.svg"
     assert _CapturingWordCloudGenerator.last_settings is not None
-    assert _CapturingWordCloudGenerator.last_settings.renderer == "metaheuristic-anim"
+    assert _CapturingWordCloudGenerator.last_settings.renderer == "typographic"
     assert _CapturingWordCloudGenerator.last_settings.max_words == 2
     assert _CapturingWordCloudGenerator.last_kwargs is not None
     assert _CapturingWordCloudGenerator.last_kwargs["frequencies"] == {

@@ -52,13 +52,13 @@ These are updated nightly by the `update-starred-lists` workflow job.
 uv run python -m scripts.cli generate word-cloud \
   --config-path ./config.yaml \
   --from-topics-md \
-  --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg
+  --output-path .github/assets/img/wordcloud_typographic_by_topics.svg
 
 # Languages word cloud
 uv run python -m scripts.cli generate word-cloud \
   --config-path ./config.yaml \
   --from-languages-md \
-  --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
+  --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 ```
 
 ## Configuration
@@ -96,12 +96,12 @@ Key knobs:
 
 | File | Description |
 |---|---|
-| `wordcloud_metaheuristic-anim_by_topics.svg` | Animated topics cloud using 25 metaheuristic solver frames |
-| `wordcloud_metaheuristic-anim_by_languages.svg` | Animated languages cloud using 25 metaheuristic solver frames |
+| `wordcloud_typographic_by_topics.svg` | Static topics cloud preserving every parsed topic in a readable typographic layout |
+| `wordcloud_typographic_by_languages.svg` | Static languages cloud preserving every parsed language in a readable typographic layout |
 
 ## Rendering backends
 
-The `scripts/word_clouds/` subpackage provides several SVG renderers. The CI pipeline and README use the animated metaheuristic renderer:
+The `scripts/word_clouds/` subpackage provides several SVG renderers. The CI pipeline and README use the typographic renderer:
 
 | Renderer | Strategy |
 |---|---|

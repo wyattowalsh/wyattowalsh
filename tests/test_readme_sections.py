@@ -1173,8 +1173,9 @@ class TestRendering:
 
         assert "stale word clouds" not in rendered
         assert rendered.count('width="100%"') >= 4
-        assert "wordcloud_metaheuristic-anim_by_topics.svg" in rendered
-        assert "wordcloud_metaheuristic-anim_by_languages.svg" in rendered
+        assert "wordcloud_typographic_by_topics.svg" in rendered
+        assert "wordcloud_typographic_by_languages.svg" in rendered
+        assert "stable typographic" in rendered
         assert "full parsed source lists" in rendered
 
     def test_generate_hides_stale_wakatime_block_until_fresh_output_exists(

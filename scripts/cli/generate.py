@@ -588,11 +588,11 @@ def _wc_from_markdown(
     out_filename = (
         output_path.name
         if output_path
-        else f"wordcloud_metaheuristic-anim_by_{source}.svg"
+        else f"wordcloud_typographic_by_{source}.svg"
     )
 
     settings = wc.WordCloudSettings(
-        renderer="metaheuristic-anim",
+        renderer="typographic",
         width=1200,
         height=800,
         max_words=effective_max_words,
@@ -1653,7 +1653,9 @@ def all_assets(
     results: list[tuple[str, str]] = []  # (name, status)
     repo_name = Path.cwd().name
     supplemental_output_dir = (
-        output_path if output_path and output_path.is_dir() else Path(".github/assets/img")
+        output_path
+        if output_path and output_path.is_dir()
+        else Path(".github/assets/img")
     )
     supplemental_manifest_path = (
         supplemental_output_dir / "metrics-supplemental.manifest.json"

@@ -367,24 +367,18 @@ jobs:
         run: uv run python -m scripts.cli generate qr --config-path config.yaml
 
       - name: Generate Word Cloud by Topic
-        env:
-          WORDCLOUD_MAX_SOLVERS: "12"
-          WORDCLOUD_MAX_ITER: "200"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-topics-md \
-            --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_topics.svg
+            --output-path .github/assets/img/wordcloud_typographic_by_topics.svg
 
       - name: Generate Word Cloud by Language
-        env:
-          WORDCLOUD_MAX_SOLVERS: "12"
-          WORDCLOUD_MAX_ITER: "200"
         run: |
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-languages-md \
-            --output-path .github/assets/img/wordcloud_metaheuristic-anim_by_languages.svg
+            --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 
       - name: Commit generated assets
         env:

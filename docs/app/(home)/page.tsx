@@ -341,15 +341,15 @@ export default function HomePage() {
             </div>
             <div className="feature-card overflow-hidden p-0">
               <Image
-                src="/showcase/wordcloud_metaheuristic-anim_by_topics.svg"
-                alt="Animated word cloud of topics with one frame per metaheuristic solver"
+                src="/showcase/wordcloud_typographic_by_topics.svg"
+                alt="Typographic word cloud of topics with every parsed term preserved"
                 width={600}
                 height={400}
                 className="w-full h-auto"
               />
               <div className="p-4">
-                <h3 className="font-semibold text-fd-foreground">Animated Word Cloud</h3>
-                <p className="text-fd-muted-foreground text-sm">25 metaheuristic layouts sequenced into a single SVG</p>
+                <h3 className="font-semibold text-fd-foreground">Typographic Word Cloud</h3>
+                <p className="text-fd-muted-foreground text-sm">Stable readable layout generated from every parsed topic</p>
               </div>
             </div>
           </div>
