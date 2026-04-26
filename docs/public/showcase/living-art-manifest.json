@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-25T23:42:24.398652+00:00",
+  "generated_at": "2026-04-26T00:35:30.587734+00:00",
   "output_dir": "docs/public/showcase",
   "total_assets": 6,
   "counts": {
@@ -30,7 +30,7 @@
       "style_label": "Genetic Landscape",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 1745856
+      "bytes": 1588185
     },
     {
       "name": "living-inkgarden.gif",
@@ -39,7 +39,7 @@
       "style_label": "Ink Garden",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 5271190
+      "bytes": 5340192
     },
     {
       "name": "living-lenia.gif",
@@ -66,7 +66,7 @@
       "style_label": "Topography",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 9832653
+      "bytes": 8736427
     }
   ]
 }
