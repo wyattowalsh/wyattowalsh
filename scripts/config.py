@@ -5,8 +5,8 @@ import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from .word_clouds.readability import LayoutReadabilitySettings
 from .utils import get_logger
+from .word_clouds.readability import LayoutReadabilitySettings
 
 # Lines broken for length where necessary.
 
@@ -104,6 +104,29 @@ class SkillEntry(BaseModel):
         None,
         description="Path to local SVG for custom logo (base64-encoded into badge URL)",
     )
+    logo_source: str | None = Field(
+        None,
+        description=(
+            "Human-readable source category for local logo assets "
+            "(for example simple-icons, devicon, iconify, official-brand, "
+            "open-svg-catalog, or local-original)."
+        ),
+    )
+    logo_source_url: str | None = Field(
+        None,
+        description="Source URL for the local logo asset or source collection.",
+    )
+    logo_license: str | None = Field(
+        None,
+        description="License or usage note for the local logo asset.",
+    )
+    logo_style: str | None = Field(
+        None,
+        description=(
+            "Style classification for local logo assets, such as "
+            "custom-retro, custom-generic, custom-brand, or sourced-brand."
+        ),
+    )
     color: str = Field(
         "555555", description="Hex color without # prefix"
     )
@@ -139,6 +162,17 @@ class SkillEntry(BaseModel):
         if not v.lower().startswith(("http://", "https://")):
             raise ValueError(
                 f"url must use http:// or https:// scheme: {v}"
+            )
+        return v
+
+    @field_validator("logo_source_url")
+    @classmethod
+    def validate_logo_source_url_scheme(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        if not v.lower().startswith(("http://", "https://")):
+            raise ValueError(
+                f"logo_source_url must use http:// or https:// scheme: {v}"
             )
         return v
 
@@ -461,7 +495,10 @@ if __name__ == "__main__":
                 "Could not serialize current config to YAML for display: {e}",
                 e=e_display,
             )
-            logger.debug("Config JSON: {json}", json=initial_cfg.model_dump_json(indent=2))
+            logger.debug(
+                "Config JSON: {json}",
+                json=initial_cfg.model_dump_json(indent=2),
+            )
 
         initial_cfg.project_name = "Updated Project Name via Test Script"
         if initial_cfg.banner_settings:

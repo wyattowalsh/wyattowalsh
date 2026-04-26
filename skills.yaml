@@ -11,6 +11,10 @@ categories:
     color: 3776AB
   - name: Structured Query Language (SQL)
     logo_path: .github/assets/skill-icons/sql.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-generic
     color: 4479A1
   - name: JavaScript
     slug: javascript
@@ -23,6 +27,10 @@ categories:
     color: E34F26
   - name: CSS3
     logo_path: .github/assets/skill-icons/css3.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-retro
     color: 1572B6
   - name: R
     slug: r
@@ -32,6 +40,10 @@ categories:
     color: '000000'
   - name: Matlab
     logo_path: .github/assets/skill-icons/matlab.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 0076A8
   - name: Ruby
     slug: ruby
@@ -51,11 +63,19 @@ categories:
   - name: PowerShell
     slug: powershell
     logo_path: .github/assets/skill-icons/powershell.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/powershell/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 5391FE
 - name: AI & LLMs
   skills:
   - name: OpenAI
     logo_path: .github/assets/skill-icons/openai.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: '412991'
   - name: LangChain
     slug: langchain
@@ -65,6 +85,10 @@ categories:
     color: 1C3C3C
   - name: LlamaIndex
     logo_path: .github/assets/skill-icons/llamaindex.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 5A29E4
   - name: Anthropic
     slug: anthropic
@@ -75,6 +99,10 @@ categories:
     logo_color: black
   - name: Weights & Biases
     logo_path: .github/assets/skill-icons/weights-and-biases.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: FFBE00
     logo_color: black
   - name: spaCy
@@ -86,18 +114,34 @@ categories:
     skills:
     - name: Web Scraping
       logo_path: .github/assets/skill-icons/web-scraping.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-generic
       color: 43853D
     - name: Scrapy
       slug: scrapy
       color: 60A839
     - name: APIs
       logo_path: .github/assets/skill-icons/apis.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-generic
       color: 009688
     - name: ETL
       logo_path: .github/assets/skill-icons/etl.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-generic
       color: 4A90D9
     - name: ELT
       logo_path: .github/assets/skill-icons/elt.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-generic
       color: 7B68EE
   - name: Storage
     skills:
@@ -127,6 +171,10 @@ categories:
     skills:
     - name: Matplotlib
       logo_path: .github/assets/skill-icons/matplotlib.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-brand
       color: 11557C
     - name: Plotly
       slug: plotly
@@ -137,6 +185,10 @@ categories:
     - name: Tableau
       slug: tableau
       logo_path: .github/assets/skill-icons/tableau.svg
+      logo_source: iconify:logos
+      logo_source_url: https://icon-sets.iconify.design/logos/tableau/
+      logo_license: CC0-1.0
+      logo_style: sourced-brand
       color: 1F457E
   - name: Processing
     skills:
@@ -148,6 +200,10 @@ categories:
       color: 017CEE
     - name: Multiprocessing
       logo_path: .github/assets/skill-icons/multiprocessing.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-generic
       color: 3776AB
     - name: Pandas
       slug: pandas
@@ -157,6 +213,10 @@ categories:
       color: '013243'
     - name: Apache Arrow
       logo_path: .github/assets/skill-icons/apache-arrow.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-brand
       color: D22128
     - name: Apache Kafka
       slug: apachekafka
@@ -172,6 +232,10 @@ categories:
       color: FFC900
     - name: dagster
       logo_path: .github/assets/skill-icons/dagster.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-brand
       color: 4F43DD
   - name: Modeling
     skills:
@@ -180,6 +244,10 @@ categories:
       color: F7931E
     - name: PyCaret
       logo_path: .github/assets/skill-icons/pycaret.svg
+      logo_source: local-original
+      logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+      logo_license: MIT
+      logo_style: custom-brand
       color: 2496ED
     - name: Keras
       slug: keras
@@ -214,6 +282,11 @@ categories:
   skills:
   - name: Amazon AWS
     slug: amazonwebservices
+    logo_path: .github/assets/skill-icons/aws.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/amazonwebservices/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 232F3E
   - name: Google Cloud
     slug: googlecloud
@@ -221,6 +294,10 @@ categories:
   - name: Microsoft Azure
     slug: microsoftazure
     logo_path: .github/assets/skill-icons/azure.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/azure/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 0078D4
   - name: Supabase
     slug: supabase
@@ -246,6 +323,10 @@ categories:
     color: FC6D26
   - name: DagsHub
     logo_path: .github/assets/skill-icons/dagshub.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 6B57FF
 - name: Workflow Tools
   skills:
@@ -278,10 +359,18 @@ categories:
     color: 0A9EDC
   - name: Python Hypothesis
     logo_path: .github/assets/skill-icons/python-hypothesis.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: BD1C2B
   - name: Visual Studio Code
     slug: visualstudiocode
     logo_path: .github/assets/skill-icons/vscode.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/vscode/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 007ACC
   - name: Sublime Text
     slug: sublimetext
@@ -314,21 +403,41 @@ categories:
   skills:
   - name: AMPL
     logo_path: .github/assets/skill-icons/ampl.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: E95420
   - name: IBM CPLEX
     logo_path: .github/assets/skill-icons/ibm-cplex.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 052FAD
   - name: Gurobi
     slug: gurobi
     color: EE3524
   - name: PuLP
     logo_path: .github/assets/skill-icons/pulp.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: FFA500
   - name: Metaheuristics
     logo_path: .github/assets/skill-icons/metaheuristics.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-generic
     color: 8B5CF6
   - name: Reinforcement Learning
     logo_path: .github/assets/skill-icons/reinforcement-learning.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-generic
     color: FF6F00
 - name: Web Development
   skills:
@@ -389,6 +498,10 @@ categories:
   - name: Playwright
     slug: playwright
     logo_path: .github/assets/skill-icons/playwright.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/playwright/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 2EAD33
   - name: shadcn/ui
     slug: shadcnui
@@ -433,6 +546,11 @@ categories:
     color: F24E1E
   - name: Canva
     slug: canva
+    logo_path: .github/assets/skill-icons/canva.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/canva/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 00C4CC
   - name: Notion
     slug: notion
@@ -475,12 +593,24 @@ categories:
     color: 3584E3
   - name: Pylint
     logo_path: .github/assets/skill-icons/pylint.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 2A6DB2
   - name: autoflake
     logo_path: .github/assets/skill-icons/autoflake.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 1C1C1C
   - name: Pylama
     logo_path: .github/assets/skill-icons/pylama.svg
+    logo_source: local-original
+    logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
+    logo_license: MIT
+    logo_style: custom-brand
     color: 009485
   - name: Homebrew
     slug: homebrew

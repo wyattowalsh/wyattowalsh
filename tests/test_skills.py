@@ -1,6 +1,7 @@
 """Tests for skills badge generation."""
 
 import base64
+from collections.abc import Iterable
 from pathlib import Path
 from urllib.parse import quote
 
@@ -15,6 +16,27 @@ from scripts.config import (
     load_skills,
 )
 from scripts.skills import SkillsBadgeGenerator
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SIMPLE_ICON_SLUGS_USED = (
+    REPO_ROOT / "tests" / "fixtures" / "simple_icons_slugs_used.txt"
+)
+
+
+def iter_skills(settings: SkillsSettings) -> Iterable[SkillEntry]:
+    """Yield every configured skill, including subcategory entries."""
+    for cat in settings.categories:
+        yield from cat.skills
+        for sub in cat.subcategories:
+            yield from sub.skills
+
+
+def load_known_simple_icon_slugs() -> set[str]:
+    return {
+        line.strip()
+        for line in SIMPLE_ICON_SLUGS_USED.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    }
 
 # ---------------------------------------------------------------------------
 # Model tests
@@ -38,6 +60,21 @@ class TestSkillEntry:
             name="SQL", logo_path=".github/assets/skill-icons/sql.svg", color="4479A1"
         )
         assert e.logo_path == ".github/assets/skill-icons/sql.svg"
+
+    def test_logo_source_metadata_fields(self):
+        e = SkillEntry(
+            name="SQL",
+            logo_path=".github/assets/skill-icons/sql.svg",
+            logo_source="local-original",
+            logo_source_url="https://example.com/icons/sql.svg",
+            logo_license="MIT",
+            logo_style="custom-generic",
+            color="4479A1",
+        )
+        assert e.logo_source == "local-original"
+        assert e.logo_source_url == "https://example.com/icons/sql.svg"
+        assert e.logo_license == "MIT"
+        assert e.logo_style == "custom-generic"
 
 
 class TestSkillsSettings:
@@ -84,6 +121,15 @@ class TestSkillEntryValidators:
     def test_url_rejects_no_scheme(self):
         with pytest.raises(ValidationError):
             SkillEntry(name="X", color="000", url="//example.com")
+
+    def test_logo_source_url_rejects_no_scheme(self):
+        with pytest.raises(ValidationError, match="logo_source_url"):
+            SkillEntry(
+                name="X",
+                logo_path=".github/assets/test.svg",
+                logo_source_url="//example.com/icon.svg",
+                color="000",
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -354,17 +400,57 @@ class TestReadmeInjection:
 class TestIntegration:
     def test_skills_yaml_logo_paths_all_exist(self, monkeypatch):
         """All logo_path entries in skills.yaml must point to real files."""
-        monkeypatch.chdir(Path(__file__).resolve().parent.parent)
+        monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
-        for cat in settings.categories:
-            for skill in cat.skills:
-                if skill.logo_path:
-                    assert Path(skill.logo_path).exists(), (
-                        f"Missing icon for '{skill.name}': {skill.logo_path}"
-                    )
-            for sub in cat.subcategories:
-                for skill in sub.skills:
-                    if skill.logo_path:
-                        assert Path(skill.logo_path).exists(), (
-                            f"Missing icon for '{skill.name}': {skill.logo_path}"
-                        )
+        for skill in iter_skills(settings):
+            if skill.logo_path:
+                assert Path(skill.logo_path).exists(), (
+                    f"Missing icon for '{skill.name}': {skill.logo_path}"
+                )
+
+    def test_skills_yaml_every_badge_renders_a_logo(self, monkeypatch):
+        """Every published Tech Stack badge must include a rendered logo."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        for skill in iter_skills(settings):
+            url = gen._build_badge_url(skill)
+            assert "logo=" in url, f"Badge has no logo: {skill.name}"
+
+    def test_skills_yaml_logo_paths_are_svg_with_provenance(self, monkeypatch):
+        """Local SVGs need source metadata so bespoke icons stay auditable."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        for skill in iter_skills(settings):
+            if not skill.logo_path:
+                continue
+
+            path = Path(skill.logo_path)
+            assert path.suffix == ".svg", (
+                f"Local logo must be SVG for '{skill.name}': {skill.logo_path}"
+            )
+            content = path.read_text(encoding="utf-8")
+            assert "<svg" in content, f"Local logo is not SVG: {skill.logo_path}"
+            assert skill.logo_source, f"Missing logo_source for '{skill.name}'"
+            assert skill.logo_source_url, (
+                f"Missing logo_source_url for '{skill.name}'"
+            )
+            assert skill.logo_license, f"Missing logo_license for '{skill.name}'"
+            assert skill.logo_style, f"Missing logo_style for '{skill.name}'"
+
+            url = gen._build_badge_url(skill)
+            assert "logo=data:image/svg%2Bxml;base64," in url
+            if skill.slug:
+                assert f"logo={quote(skill.slug, safe='')}" not in url
+
+    def test_skills_yaml_simple_icon_slugs_are_known_good(self, monkeypatch):
+        """Simple Icons slugs used directly must be audited, current slugs."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        known_slugs = load_known_simple_icon_slugs()
+        for skill in iter_skills(settings):
+            if skill.slug and not skill.logo_path:
+                assert skill.slug in known_slugs, (
+                    f"Unknown Simple Icons slug for '{skill.name}': {skill.slug}"
+                )
