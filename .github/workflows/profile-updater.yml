@@ -259,7 +259,21 @@ jobs:
 
   update-starred-lists:
     name: Update Starred Repository Lists (MD Files)
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -341,7 +355,23 @@ jobs:
     name: Generate Profile Assets (QR, WordClouds, Banner)
     runs-on: ubuntu-latest
     needs: update-starred-lists # Depends on the md files being up-to-date
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' && always() && !cancelled() }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        always() &&
+        !cancelled() &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     timeout-minutes: 60
     permissions:
       contents: write # To commit generated image assets
@@ -421,7 +451,23 @@ jobs:
     name: Update README - WakaTime Stats
     runs-on: ubuntu-latest
     needs: generate-event-art
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' && always() && !cancelled() && (github.event_name != 'push' || github.event.head_commit.message != 'Updated with Dev Metrics') }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        always() &&
+        !cancelled() &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     timeout-minutes: 15
     permissions:
       contents: write
@@ -465,7 +511,21 @@ jobs:
 
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -761,7 +821,23 @@ jobs:
     name: Generate Event-Driven Artwork
     runs-on: ubuntu-latest
     needs: update-starred-lists
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' && always() && !cancelled() }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        always() &&
+        !cancelled() &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     timeout-minutes: 45
     permissions:
       contents: write
@@ -977,7 +1053,24 @@ jobs:
     needs:
       - update-readme-wakatime
       - generate-profile-metrics
-    if: ${{ github.event.inputs.metrics_probe_mode != 'true' && !cancelled() && needs.update-readme-wakatime.result == 'success' && needs.generate-profile-metrics.result == 'success' }}
+    if: >-
+      ${{
+        github.event.inputs.metrics_probe_mode != 'true' &&
+        !cancelled() &&
+        needs.update-readme-wakatime.result == 'success' &&
+        needs.generate-profile-metrics.result == 'success' &&
+        (
+          github.event_name != 'push' ||
+          (
+            github.event.head_commit.message != 'Updated with Dev Metrics' &&
+            github.event.head_commit.message != 'chore(metrics): update generated metrics assets' &&
+            github.event.head_commit.message != 'chore(data): update awesome-stars lists (languages.md, topics.md)' &&
+            github.event.head_commit.message != 'chore(assets): update generated profile assets' &&
+            github.event.head_commit.message != 'art: regenerate living-art assets' &&
+            github.event.head_commit.message != 'chore(readme): update dynamic sections and skills badges'
+          )
+        )
+      }}
     timeout-minutes: 20
     permissions:
       contents: write
