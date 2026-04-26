@@ -1763,6 +1763,7 @@ def _transition_score(previous: DailySnapshot, current: DailySnapshot) -> float:
 
 def _sample_gap_score(
     snapshots: list[DailySnapshot],
+    transition_scores: list[float],
     *,
     left: int,
     right: int,
@@ -1772,8 +1773,9 @@ def _sample_gap_score(
         return -1.0
     span = right - left
     visual_jump = _transition_score(snapshots[left], snapshots[right])
+    interior_peak = max(transition_scores[left + 1 : right], default=0.0)
     temporal_jump = span / max(1, len(snapshots) - 1)
-    return visual_jump + temporal_jump * 2.0
+    return max(visual_jump, interior_peak) + temporal_jump * 2.0
 
 
 def _best_gap_split_index(
@@ -1816,9 +1818,10 @@ def sample_frames(
 
     Strategy:
     1. Always include the first and last day.
-    2. Reserve a bounded set of real high-transition days so events survive.
-    3. Spend the remaining budget splitting the largest adjacent visual jump.
-    4. Fall back to calendar-balanced splits when the visual state is flat.
+    2. Reserve chronological real-day anchors first so the render cost and
+       narrative stay distributed across the whole account history.
+    3. Reserve a bounded set of high-transition days so events survive.
+    4. Spend remaining slots splitting the largest adjacent visual jump.
     """
     if not snapshots or max_frames <= 0:
         return []
@@ -1841,10 +1844,31 @@ def sample_frames(
     interior_count = n - 2
     selected_indices: set[int] = {0, n - 1}
 
-    transition_slots = min(
-        interior_slots,
-        max(1, math.ceil(interior_slots * 0.5)),
-    )
+    if interior_slots <= 3:
+        anchor_slots = 0
+        transition_slots = min(
+            interior_slots,
+            max(1, math.ceil(interior_slots * 0.67)),
+        )
+    else:
+        anchor_slots = min(
+            interior_slots,
+            max(1, round(interior_slots * 0.45)),
+        )
+        remaining_after_anchors = max(0, interior_slots - anchor_slots)
+        transition_slots = min(
+            remaining_after_anchors,
+            max(1, round(interior_slots * 0.30)) if remaining_after_anchors else 0,
+        )
+
+    if anchor_slots > 0:
+        total_anchor_count = anchor_slots + 2
+        for anchor_step in range(1, total_anchor_count - 1):
+            anchor_index = int(
+                round(anchor_step * (n - 1) / max(1, total_anchor_count - 1))
+            )
+            anchor_index = max(1, min(n - 2, anchor_index))
+            selected_indices.add(anchor_index)
 
     if transition_slots > 0:
         for slot_index in range(transition_slots):
@@ -1873,7 +1897,12 @@ def sample_frames(
         best_gap: tuple[int, int] | None = None
         best_score = -1.0
         for left, right in zip(ordered, ordered[1:]):
-            score = _sample_gap_score(snapshots, left=left, right=right)
+            score = _sample_gap_score(
+                snapshots,
+                transition_scores,
+                left=left,
+                right=right,
+            )
             if score > best_score:
                 best_gap = (left, right)
                 best_score = score
