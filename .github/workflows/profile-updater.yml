@@ -766,7 +766,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: update-starred-lists
     if: ${{ github.event.inputs.metrics_probe_mode != 'true' && always() && !cancelled() }}
-    timeout-minutes: 25
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
