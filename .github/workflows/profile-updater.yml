@@ -303,7 +303,7 @@ jobs:
         run: |
           set -euo pipefail
           temp_file="$RUNNER_TEMP/languages.md"
-          uv run starred --username "${USERNAME}" --sort > "$temp_file"
+          uv run starred --username "${USERNAME}" --token "${GITHUB_TOKEN}" --sort > "$temp_file"
           mv "$temp_file" ./.github/assets/languages.md
 
       - name: Update repo category by topic
@@ -313,7 +313,7 @@ jobs:
         run: |
           set -euo pipefail
           temp_file="$RUNNER_TEMP/topics.md"
-          uv run starred --username "${USERNAME}" --sort \
+          uv run starred --username "${USERNAME}" --token "${GITHUB_TOKEN}" --sort \
             --topic --topic_limit 500 > "$temp_file"
           mv "$temp_file" ./.github/assets/topics.md
 
