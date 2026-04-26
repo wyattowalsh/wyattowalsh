@@ -376,11 +376,11 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" alt="ProxyWhirl" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/w4w-v6" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-web-app-v6.svg" width="500" alt="Personal Web App v6" loading="lazy"/></a>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" width="500" alt="Personal Website" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" width="500" alt="Agents" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" alt="ProxyWhirl" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt1" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-basics-of-linear-regression-modeling-and.svg" width="500" alt="Basics of Linear Regression Modeling and Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
