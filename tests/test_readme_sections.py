@@ -870,6 +870,46 @@ class TestRendering:
             re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name) for name in svg_files
         )
         assert all(name in html for name in svg_files)
+        assert 'width="360"' in html
+        assert 'width="500"' not in html
+
+    def test_generate_rewrites_living_art_as_equal_full_width_blocks(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Living Art
+
+                <table><tbody><tr><td>stale living art grid</td></tr></tbody></table>
+
+                ## Tech Stack
+
+                existing stack
+                """
+            ),
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "stale living art grid" not in rendered
+        assert "<table" not in rendered
+        assert rendered.count('src=".github/assets/img/living-') == 6
+        assert rendered.count('width="100%"') == 6
+        assert "## Tech Stack" in rendered
 
     def test_generate_keeps_metrics_image_table_when_assets_are_placeholders(
         self,
@@ -1182,6 +1222,57 @@ class TestRendering:
         )
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
         assert "outside the freshness window" in rendered
+
+    def test_generate_preserves_healthy_wakatime_output_without_timestamp(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                stale metrics block
+
+                ## Word Clouds
+
+                <details>
+                <summary><strong>WakaTime Stats</strong></summary>
+
+                <!--START_SECTION:waka-->
+                **This Week I Spent My Time On**
+
+                ```text
+                Programming Languages:
+                Python 10 hrs
+
+                Editors:
+                VS Code 8 hrs
+                ```
+                <!--END_SECTION:waka-->
+
+                </details>
+                """
+            ),
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "This Week I Spent My Time On" in rendered
+        assert "Programming Languages:" in rendered
+        assert "WakaTime stats hidden" not in rendered
 
     def test_featured_project_card_builds_with_icon_data_uri(
         self, tmp_path: Path, monkeypatch

@@ -725,7 +725,7 @@ def generate(
             if resolved_repo_when is not None:
                 repo_for_recency["date"] = resolved_repo_when
         repos_for_recency.append(repo_for_recency)
-    repo_timeline_window = normalize_timeline_window(
+    repo_recency_window = normalize_timeline_window(
         [
             {"date": _repo_date(repo, fallback_end=repo_age_anchor)}
             for repo in repos
@@ -740,8 +740,18 @@ def generate(
         fallback_days=365,
         now=deterministic_history_now,
     )
+    repo_timeline_window = normalize_timeline_window(
+        [
+            {"date": _repo_date(repo, fallback_end=repo_age_anchor)}
+            for repo in repos
+            if isinstance(repo, dict) and _repo_date(repo, fallback_end=repo_age_anchor)
+        ],
+        {},
+        fallback_days=365,
+        now=deterministic_history_now,
+    )
     repo_recency_profile = _repo_recency_landscape_profile(
-        repos_for_recency, repo_timeline_window
+        repos_for_recency, repo_recency_window
     )
     contour_roughness = min(
         1.0,

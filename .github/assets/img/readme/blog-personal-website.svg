@@ -35,8 +35,8 @@
 <text class="blog-title" x="20" y="34">Personal Website</text>
 <text class="blog-desc" x="20" y="62">How my Next.js 16 personal site turns MDX</text>
 <text class="blog-desc" x="20" y="78">posts into search, feeds, metadata,</text>
-<text class="blog-desc" x="20" y="94">homepage updates, admin checks, and a</text>
-<text class="blog-desc" x="20" y="110">theme-aware particle UI.</text>
+<text class="blog-desc" x="20" y="94">homepage updates, Admin Intelligence, and</text>
+<text class="blog-desc" x="20" y="110">a theme-aware particle UI.</text>
 <rect x="20" y="122" width="80" height="1.5" rx="0.5" fill="url(#footer-div-grad)" />
 <text class="blog-meta" x="20" y="138">Published 2026-04-26 · w4w.dev</text>
 </svg>

@@ -32,59 +32,55 @@
 
 ## Living Art
 
-Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
+Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
 
-<table role="presentation">
-<tr>
-<td width="50%" align="center">
+<p align="center">
   <a href=".github/assets/img/living-inkgarden.gif">
-    <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden — botanical timelapse where each tree is a repository"/>
+    <img src=".github/assets/img/living-inkgarden.gif" width="100%" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/>
   </a>
   <br/>
-  <sub><b>Ink Garden</b> — each tree is a repository; blossoms grow with stars, species vary by language.</sub>
-</td>
-<td width="50%" align="center">
-  <a href=".github/assets/img/living-topo.gif">
-    <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography — cartographic timelapse where terrain emerges with activity"/>
-  </a>
-  <br/>
-  <sub><b>Topography</b> — repos become survey anchors; stars raise peaks, activity thickens contours.</sub>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center">
-  <a href=".github/assets/img/living-genetic.gif">
-    <img src=".github/assets/img/living-genetic.gif" width="100%" alt="Genetic Landscape — evolutionary timelapse where repositories become adaptive peaks"/>
-  </a>
-  <br/>
-  <sub><b>Genetic Landscape</b> — repos define a fitness surface; populations evolve toward star-weighted peaks.</sub>
-</td>
-<td width="50%" align="center">
-  <a href=".github/assets/img/living-physarum.gif">
-    <img src=".github/assets/img/living-physarum.gif" width="100%" alt="Physarum — slime-mold timelapse grown from repository nutrient nodes"/>
-  </a>
-  <br/>
-  <sub><b>Physarum</b> — repos act as nutrient nodes; slime-mold agents grow an efficient transport network.</sub>
-</td>
-</tr>
-<tr>
-<td width="50%" align="center">
-  <a href=".github/assets/img/living-lenia.gif">
-    <img src=".github/assets/img/living-lenia.gif" width="100%" alt="Lenia — continuous cellular automata timelapse where each repository seeds a digital organism"/>
-  </a>
-  <br/>
-  <sub><b>Lenia</b> — repos seed organisms in a continuous cellular-automata field; activity drives growth.</sub>
-</td>
-<td width="50%" align="center">
-  <a href=".github/assets/img/living-ferrofluid.gif">
-    <img src=".github/assets/img/living-ferrofluid.gif" width="100%" alt="Ferrofluid — magnetic spike timelapse shaped by repository fields"/>
-  </a>
-  <br/>
-  <sub><b>Ferrofluid</b> — repos place magnetic dipoles; stars amplify spikes, languages tint the sheen.</sub>
-</td>
-</tr>
-</table>
+  <sub><b>Ink Garden</b> - Each tree is a repository; blossoms grow with stars, species vary by language.</sub>
+</p>
 
+<p align="center">
+  <a href=".github/assets/img/living-topo.gif">
+    <img src=".github/assets/img/living-topo.gif" width="100%" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/>
+  </a>
+  <br/>
+  <sub><b>Topography</b> - Repos become survey anchors; stars raise peaks, activity thickens contours.</sub>
+</p>
+
+<p align="center">
+  <a href=".github/assets/img/living-genetic.gif">
+    <img src=".github/assets/img/living-genetic.gif" width="100%" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/>
+  </a>
+  <br/>
+  <sub><b>Genetic Landscape</b> - Repos define a fitness surface; populations evolve toward star-weighted peaks.</sub>
+</p>
+
+<p align="center">
+  <a href=".github/assets/img/living-physarum.gif">
+    <img src=".github/assets/img/living-physarum.gif" width="100%" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/>
+  </a>
+  <br/>
+  <sub><b>Physarum</b> - Repos act as nutrient nodes; agents grow an efficient transport network.</sub>
+</p>
+
+<p align="center">
+  <a href=".github/assets/img/living-lenia.gif">
+    <img src=".github/assets/img/living-lenia.gif" width="100%" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/>
+  </a>
+  <br/>
+  <sub><b>Lenia</b> - Repos seed organisms in a continuous cellular-automata field.</sub>
+</p>
+
+<p align="center">
+  <a href=".github/assets/img/living-ferrofluid.gif">
+    <img src=".github/assets/img/living-ferrofluid.gif" width="100%" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/>
+  </a>
+  <br/>
+  <sub><b>Ferrofluid</b> - Repos place magnetic dipoles; stars amplify spikes, languages tint the sheen.</sub>
+</p>
 ## Tech Stack
 
 <p align="center">
@@ -376,11 +372,11 @@ Each GIF is a cumulative daily timelapse — frame *t* is rendered from the GitH
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" width="500" alt="Personal Website" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" width="500" alt="Agents" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="500" alt="ProxyWhirl" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="500" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="500" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" width="360" alt="Personal Website" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" width="360" alt="Agents" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="360" alt="ProxyWhirl" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="360" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="360" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
 <p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 

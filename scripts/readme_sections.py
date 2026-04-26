@@ -66,6 +66,9 @@ _GENERIC_DESCRIPTION_RE = re.compile(
 _METRICS_SECTION_RE = re.compile(
     r"(?ms)^## Metrics\n.*?(?=^## Word Clouds\n)",
 )
+_LIVING_ART_SECTION_RE = re.compile(
+    r"(?ms)^## Living Art\n.*?(?=^## Tech Stack\n)",
+)
 _WORD_CLOUDS_SECTION_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?=^<details>\n"
     r"<summary><strong>WakaTime Stats</strong></summary>)",
@@ -75,6 +78,13 @@ _WAKATIME_SECTION_RE = re.compile(
 )
 _WAKATIME_UPDATED_RE = re.compile(
     r"Last Updated on (\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} UTC)",
+)
+_WAKATIME_HEALTHY_MARKERS = (
+    "This Week I Spent My Time On",
+    "Programming Languages",
+    "Editors:",
+    "Projects:",
+    "My Github Data",
 )
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
     (
@@ -722,9 +732,83 @@ class ReadmeSectionGenerator:
         return content[: match.start()] + replacement + content[match.end() :]
 
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
+        content = self._rewrite_living_art_section(content)
         content = self._rewrite_metrics_section(content, readme_path=readme_path)
         content = self._rewrite_word_clouds_section(content)
         return self._rewrite_wakatime_section(content)
+
+    def _rewrite_living_art_section(self, content: str) -> str:
+        items = [
+            (
+                "Ink Garden",
+                "living-inkgarden.gif",
+                "botanical timelapse where each tree is a repository",
+                "Each tree is a repository; blossoms grow with stars, "
+                "species vary by language.",
+            ),
+            (
+                "Topography",
+                "living-topo.gif",
+                "cartographic timelapse where terrain emerges with activity",
+                "Repos become survey anchors; stars raise peaks, activity "
+                "thickens contours.",
+            ),
+            (
+                "Genetic Landscape",
+                "living-genetic.gif",
+                "evolutionary timelapse where repositories become adaptive peaks",
+                "Repos define a fitness surface; populations evolve toward "
+                "star-weighted peaks.",
+            ),
+            (
+                "Physarum",
+                "living-physarum.gif",
+                "slime-mold timelapse grown from repository nutrient nodes",
+                "Repos act as nutrient nodes; agents grow an efficient "
+                "transport network.",
+            ),
+            (
+                "Lenia",
+                "living-lenia.gif",
+                "continuous cellular automata timelapse seeded by repositories",
+                "Repos seed organisms in a continuous cellular-automata field.",
+            ),
+            (
+                "Ferrofluid",
+                "living-ferrofluid.gif",
+                "magnetic spike timelapse shaped by repository fields",
+                "Repos place magnetic dipoles; stars amplify spikes, "
+                "languages tint the sheen.",
+            ),
+        ]
+        body_lines = [
+            "## Living Art",
+            "",
+            "Each GIF is a cumulative daily timelapse: frame *t* is rendered "
+            "from the GitHub state available through day *t*, so repositories, "
+            "stars, releases, and contribution history accrete over time.",
+        ]
+        for title, filename, alt_suffix, caption in items:
+            body_lines.extend(
+                [
+                    "",
+                    '<p align="center">',
+                    f'  <a href=".github/assets/img/{filename}">',
+                    f'    <img src=".github/assets/img/{filename}" width="100%" '
+                    f'alt="{escape(title)} - {escape(alt_suffix)}" '
+                    'loading="lazy"/>',
+                    "  </a>",
+                    "  <br/>",
+                    f"  <sub><b>{escape(title)}</b> - {escape(caption)}</sub>",
+                    "</p>",
+                ]
+            )
+        body_lines.append("")
+        replacement = "\n".join(body_lines)
+        if not _LIVING_ART_SECTION_RE.search(content):
+            logger.warning("Living Art section heading not found in README.")
+            return content
+        return _LIVING_ART_SECTION_RE.sub(replacement, content, count=1)
 
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
         metrics_dir = readme_path.parent / ".github" / "assets" / "img"
@@ -819,6 +903,8 @@ class ReadmeSectionGenerator:
             else:
                 detail = "The latest WakaTime timestamp could not be parsed."
         else:
+            if any(marker in inner for marker in _WAKATIME_HEALTHY_MARKERS):
+                return content
             detail = "No fresh WakaTime timestamp was found in the generated section."
 
         replacement = (
@@ -1846,7 +1932,7 @@ class ReadmeSectionGenerator:
                 imgs.append(
                     f'<a href="{escape(url)}" target="_blank" '
                     'rel="noopener noreferrer">'
-                    f'<img src="{escape(src)}" width="500"'
+                    f'<img src="{escape(src)}" width="360"'
                     f' alt="{escape(label)}" loading="lazy"/></a>'
                 )
             result.append('<p align="center">' + "\n".join(imgs) + "</p>")
