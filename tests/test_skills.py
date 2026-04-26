@@ -21,6 +21,12 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SIMPLE_ICON_SLUGS_USED = (
     REPO_ROOT / "tests" / "fixtures" / "simple_icons_slugs_used.txt"
 )
+MAX_LOCAL_LOGO_BYTES = 4096
+OVERSIZED_LOCAL_LOGO_ALLOWLIST = {
+    # Tableau's compact recognizable source mark is still larger than the
+    # target, but it keeps the badge materially better than the monochrome slug.
+    "Tableau",
+}
 
 
 def iter_skills(settings: SkillsSettings) -> Iterable[SkillEntry]:
@@ -432,6 +438,11 @@ class TestIntegration:
             )
             content = path.read_text(encoding="utf-8")
             assert "<svg" in content, f"Local logo is not SVG: {skill.logo_path}"
+            if skill.name not in OVERSIZED_LOCAL_LOGO_ALLOWLIST:
+                assert path.stat().st_size <= MAX_LOCAL_LOGO_BYTES, (
+                    f"Local logo is too large for a badge URL: {skill.name} "
+                    f"({path.stat().st_size} bytes)"
+                )
             assert skill.logo_source, f"Missing logo_source for '{skill.name}'"
             assert skill.logo_source_url, (
                 f"Missing logo_source_url for '{skill.name}'"
@@ -443,6 +454,36 @@ class TestIntegration:
             assert "logo=data:image/svg%2Bxml;base64," in url
             if skill.slug:
                 assert f"logo={quote(skill.slug, safe='')}" not in url
+
+    def test_skills_yaml_local_svgs_are_safe_for_badges(self, monkeypatch):
+        """Vendored badge SVGs must stay self-contained and inert."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        for skill in iter_skills(settings):
+            if not skill.logo_path:
+                continue
+
+            path = Path(skill.logo_path)
+            content = path.read_text(encoding="utf-8")
+            lowered = content.lower()
+            assert "<script" not in lowered, (
+                f"Local logo must not include scripts: {skill.logo_path}"
+            )
+            assert "javascript:" not in lowered, (
+                f"Local logo must not include javascript URLs: {skill.logo_path}"
+            )
+            assert "href=\"http" not in lowered, (
+                f"Local logo must be self-contained: {skill.logo_path}"
+            )
+            assert "href='http" not in lowered, (
+                f"Local logo must be self-contained: {skill.logo_path}"
+            )
+            assert "data:image/png" not in lowered, (
+                f"Local logo must not embed raster PNGs: {skill.logo_path}"
+            )
+            assert "data:image/jpeg" not in lowered, (
+                f"Local logo must not embed raster JPEGs: {skill.logo_path}"
+            )
 
     def test_skills_yaml_simple_icon_slugs_are_known_good(self, monkeypatch):
         """Simple Icons slugs used directly must be audited, current slugs."""

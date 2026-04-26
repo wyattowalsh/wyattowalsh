@@ -8,6 +8,11 @@ categories:
   skills:
   - name: Python
     slug: python
+    logo_path: .github/assets/skill-icons/python.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/python/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 3776AB
   - name: Structured Query Language (SQL)
     logo_path: .github/assets/skill-icons/sql.svg
@@ -18,12 +23,27 @@ categories:
     color: 4479A1
   - name: JavaScript
     slug: javascript
+    logo_path: .github/assets/skill-icons/javascript.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/javascript/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: F7DF1E
   - name: TypeScript
     slug: typescript
+    logo_path: .github/assets/skill-icons/typescript.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/typescript/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 3178C6
   - name: HTML5
     slug: html5
+    logo_path: .github/assets/skill-icons/html5.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/html5/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: E34F26
   - name: CSS3
     logo_path: .github/assets/skill-icons/css3.svg
@@ -34,9 +54,19 @@ categories:
     color: 1572B6
   - name: R
     slug: r
+    logo_path: .github/assets/skill-icons/r.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/r/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 276DC3
   - name: Java
     slug: openjdk
+    logo_path: .github/assets/skill-icons/java.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/java/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '000000'
   - name: Matlab
     logo_path: .github/assets/skill-icons/matlab.svg
@@ -50,15 +80,35 @@ categories:
     color: CC342D
   - name: C++
     slug: cplusplus
+    logo_path: .github/assets/skill-icons/cplusplus.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/cplusplus/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 00599C
   - name: Go
     slug: go
+    logo_path: .github/assets/skill-icons/go.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/go/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 00ADD8
   - name: Sass
     slug: sass
+    logo_path: .github/assets/skill-icons/sass.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/sass/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: CC6699
   - name: MDX
     slug: mdx
+    logo_path: .github/assets/skill-icons/mdx.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/mdx/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 1B1F24
   - name: PowerShell
     slug: powershell
@@ -92,6 +142,11 @@ categories:
     color: 5A29E4
   - name: Anthropic
     slug: anthropic
+    logo_path: .github/assets/skill-icons/anthropic.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/anthropic-icon/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: '191919'
   - name: Hugging Face
     slug: huggingface
@@ -147,25 +202,55 @@ categories:
     skills:
     - name: Neo4j
       slug: neo4j
+      logo_path: .github/assets/skill-icons/neo4j.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/neo4j/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 4581C3
     - name: SQLite
       slug: sqlite
+      logo_path: .github/assets/skill-icons/sqlite.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/sqlite/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 003B57
     - name: MySQL
       slug: mysql
+      logo_path: .github/assets/skill-icons/mysql.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/mysql/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 4479A1
     - name: PostgreSQL
       slug: postgresql
       color: 4169E1
     - name: Redis
       slug: redis
+      logo_path: .github/assets/skill-icons/redis.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/redis/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: FF4438
     - name: DuckDB
       slug: duckdb
+      logo_path: .github/assets/skill-icons/duckdb.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/duckdb/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: FFF000
       logo_color: black
     - name: InfluxDB
       slug: influxdb
+      logo_path: .github/assets/skill-icons/influxdb.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/influxdb/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 22ADF6
   - name: Visualization
     skills:
@@ -181,6 +266,11 @@ categories:
       color: 3F4F75
     - name: D3.js
       slug: d3
+      logo_path: .github/assets/skill-icons/d3js.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/d3js/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: F9A03C
     - name: Tableau
       slug: tableau
@@ -194,9 +284,19 @@ categories:
     skills:
     - name: Apache Spark
       slug: apachespark
+      logo_path: .github/assets/skill-icons/apache-spark.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/apachespark/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: E25A1C
     - name: Apache Airflow
       slug: apacheairflow
+      logo_path: .github/assets/skill-icons/apache-airflow.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/apacheairflow/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 017CEE
     - name: Multiprocessing
       logo_path: .github/assets/skill-icons/multiprocessing.svg
@@ -207,9 +307,19 @@ categories:
       color: 3776AB
     - name: Pandas
       slug: pandas
+      logo_path: .github/assets/skill-icons/pandas.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/pandas/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: '150458'
     - name: NumPy
       slug: numpy
+      logo_path: .github/assets/skill-icons/numpy.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/numpy/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: '013243'
     - name: Apache Arrow
       logo_path: .github/assets/skill-icons/apache-arrow.svg
@@ -220,12 +330,22 @@ categories:
       color: D22128
     - name: Apache Kafka
       slug: apachekafka
+      logo_path: .github/assets/skill-icons/apache-kafka.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/apachekafka/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 231F20
     - name: Dask
       slug: dask
       color: FC6E6B
     - name: SQLAlchemy
       slug: sqlalchemy
+      logo_path: .github/assets/skill-icons/sqlalchemy.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/sqlalchemy/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: D71F00
     - name: Kedro
       slug: kedro
@@ -251,18 +371,38 @@ categories:
       color: 2496ED
     - name: Keras
       slug: keras
+      logo_path: .github/assets/skill-icons/keras.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/keras/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: D00000
     - name: Tensorflow
       slug: tensorflow
+      logo_path: .github/assets/skill-icons/tensorflow.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/tensorflow/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: FF6F00
     - name: PyTorch
       slug: pytorch
+      logo_path: .github/assets/skill-icons/pytorch.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/pytorch/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: EE4C2C
     - name: SciPy
       slug: scipy
       color: 8CAAE6
     - name: OpenCV
       slug: opencv
+      logo_path: .github/assets/skill-icons/opencv.svg
+      logo_source: iconify:devicon
+      logo_source_url: https://icon-sets.iconify.design/devicon/opencv/
+      logo_license: MIT
+      logo_style: sourced-brand
       color: 5C3EE8
     - name: OpenAI Gym
       slug: openaigym
@@ -274,6 +414,11 @@ categories:
     skills:
     - name: FastAPI
       slug: fastapi
+      logo_path: .github/assets/skill-icons/fastapi.svg
+      logo_source: iconify:logos
+      logo_source_url: https://icon-sets.iconify.design/logos/fastapi-icon/
+      logo_license: CC0-1.0
+      logo_style: sourced-brand
       color: '009688'
     - name: Prefect
       slug: prefect
@@ -290,6 +435,11 @@ categories:
     color: 232F3E
   - name: Google Cloud
     slug: googlecloud
+    logo_path: .github/assets/skill-icons/google-cloud.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/googlecloud/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 4285F4
   - name: Microsoft Azure
     slug: microsoftazure
@@ -301,14 +451,29 @@ categories:
     color: 0078D4
   - name: Supabase
     slug: supabase
+    logo_path: .github/assets/skill-icons/supabase.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/supabase-icon/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 3FCF8E
   - name: Terraform
     slug: terraform
+    logo_path: .github/assets/skill-icons/terraform.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/terraform/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 844FBA
 - name: CI/CD Platforms
   skills:
   - name: GitHub Actions
     slug: githubactions
+    logo_path: .github/assets/skill-icons/github-actions.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/githubactions/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 2088FF
   - name: Travis CI
     slug: travisci
@@ -320,6 +485,11 @@ categories:
     color: '181717'
   - name: GitLab
     slug: gitlab
+    logo_path: .github/assets/skill-icons/gitlab.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/gitlab/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: FC6D26
   - name: DagsHub
     logo_path: .github/assets/skill-icons/dagshub.svg
@@ -332,30 +502,60 @@ categories:
   skills:
   - name: Git
     slug: git
+    logo_path: .github/assets/skill-icons/git.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/git/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: F05032
   - name: Linux
     slug: linux
     color: FCC624
   - name: Shell Script
     slug: gnubash
+    logo_path: .github/assets/skill-icons/bash.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/bash/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 4EAA25
   - name: Bash
     slug: gnubash
+    logo_path: .github/assets/skill-icons/bash.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/bash/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 4EAA25
   - name: Zsh
     slug: zsh
     color: F15A24
   - name: Jupyter
     slug: jupyter
+    logo_path: .github/assets/skill-icons/jupyter.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/jupyter/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: F37626
   - name: Docker
     slug: docker
+    logo_path: .github/assets/skill-icons/docker.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/docker-icon/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 2496ED
   - name: Kubernetes
     slug: kubernetes
     color: 326CE5
   - name: Pytest
     slug: pytest
+    logo_path: .github/assets/skill-icons/pytest.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/pytest/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 0A9EDC
   - name: Python Hypothesis
     logo_path: .github/assets/skill-icons/python-hypothesis.svg
@@ -374,18 +574,38 @@ categories:
     color: 007ACC
   - name: Sublime Text
     slug: sublimetext
+    logo_path: .github/assets/skill-icons/sublime-text.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/sublimetext-icon/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: FF9800
   - name: GNU Make
     slug: make
     color: 6D00CC
   - name: uv
     slug: uv
+    logo_path: .github/assets/skill-icons/uv.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/uv/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: DE5FE9
   - name: pnpm
     slug: pnpm
+    logo_path: .github/assets/skill-icons/pnpm.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/pnpm/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: F69220
   - name: CMake
     slug: cmake
+    logo_path: .github/assets/skill-icons/cmake.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/cmake/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 064F8C
   - name: Pre-commit
     slug: precommit
@@ -397,6 +617,11 @@ categories:
     logo_color: black
   - name: Prettier
     slug: prettier
+    logo_path: .github/assets/skill-icons/prettier.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/prettier/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: F7B93E
     logo_color: black
 - name: Optimization Tools
@@ -443,42 +668,102 @@ categories:
   skills:
   - name: React
     slug: react
+    logo_path: .github/assets/skill-icons/react.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/react/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 61DAFB
   - name: Next.js
     slug: nextdotjs
+    logo_path: .github/assets/skill-icons/nextjs.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/nextjs/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '000000'
   - name: Gatsby
     slug: gatsby
+    logo_path: .github/assets/skill-icons/gatsby.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/gatsby/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '663399'
   - name: Tailwind CSS
     slug: tailwindcss
+    logo_path: .github/assets/skill-icons/tailwindcss.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/tailwindcss/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 06B6D4
   - name: Material User Interface (MUI)
     slug: mui
+    logo_path: .github/assets/skill-icons/mui.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/materialui/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 007FFF
   - name: Chakra UI
     slug: chakraui
     color: '319795'
   - name: GraphQL
     slug: graphql
+    logo_path: .github/assets/skill-icons/graphql.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/graphql/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: E10098
   - name: ESLint
     slug: eslint
+    logo_path: .github/assets/skill-icons/eslint.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/eslint/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 4B32C3
   - name: npm
     slug: npm
+    logo_path: .github/assets/skill-icons/npm.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/npm/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: CB3837
   - name: Yarn
     slug: yarn
+    logo_path: .github/assets/skill-icons/yarn.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/yarn/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 2C8EBB
   - name: Jest
     slug: jest
+    logo_path: .github/assets/skill-icons/jest.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/jest/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: C21325
   - name: Cypress
     slug: cypress
+    logo_path: .github/assets/skill-icons/cypress.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/cypress-icon/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 69D3A7
   - name: Storybook
     slug: storybook
+    logo_path: .github/assets/skill-icons/storybook.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/storybook/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: FF4785
   - name: Vercel
     slug: vercel
@@ -491,9 +776,19 @@ categories:
     color: E37400
   - name: Vite
     slug: vite
+    logo_path: .github/assets/skill-icons/vite.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/vite/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 646CFF
   - name: Vitest
     slug: vitest
+    logo_path: .github/assets/skill-icons/vitest.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/vitest/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 6E9F18
   - name: Playwright
     slug: playwright
@@ -511,9 +806,19 @@ categories:
     color: '161618'
   - name: Three.js
     slug: threedotjs
+    logo_path: .github/assets/skill-icons/threejs.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/threejs/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '000000'
   - name: Electron
     slug: electron
+    logo_path: .github/assets/skill-icons/electron.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/electron/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 47848F
   - name: Zod
     slug: zod
@@ -529,6 +834,11 @@ categories:
     color: '000000'
   - name: Express
     slug: express
+    logo_path: .github/assets/skill-icons/express.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/express/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '000000'
 - name: Miscellaneous
   skills:
@@ -543,6 +853,11 @@ categories:
     color: 0A507A
   - name: Figma
     slug: figma
+    logo_path: .github/assets/skill-icons/figma.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/figma/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: F24E1E
   - name: Canva
     slug: canva
@@ -560,6 +875,11 @@ categories:
     color: F06A6A
   - name: Obsidian
     slug: obsidian
+    logo_path: .github/assets/skill-icons/obsidian.svg
+    logo_source: iconify:logos
+    logo_source_url: https://icon-sets.iconify.design/logos/obsidian/
+    logo_license: CC0-1.0
+    logo_style: sourced-brand
     color: 7C3AED
   - name: Mermaid.js
     slug: mermaid
@@ -572,9 +892,19 @@ categories:
     color: F26207
   - name: Markdown
     slug: markdown
+    logo_path: .github/assets/skill-icons/markdown.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/markdown/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: '000000'
   - name: LaTeX
     slug: latex
+    logo_path: .github/assets/skill-icons/latex.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/latex/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 008080
   - name: Overleaf
     slug: overleaf
@@ -584,6 +914,11 @@ categories:
     color: A22846
   - name: Arduino
     slug: arduino
+    logo_path: .github/assets/skill-icons/arduino.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/arduino/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 00878F
   - name: Autodesk
     slug: autodesk
@@ -617,16 +952,31 @@ categories:
     color: FBB040
   - name: Prometheus
     slug: prometheus
+    logo_path: .github/assets/skill-icons/prometheus.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/prometheus/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: E6522C
   - name: Grafana
     slug: grafana
     color: F46800
   - name: Sentry
     slug: sentry
+    logo_path: .github/assets/skill-icons/sentry.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/sentry/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 362D59
   - name: OpenTelemetry
     slug: opentelemetry
     color: '000000'
   - name: Kaggle
     slug: kaggle
+    logo_path: .github/assets/skill-icons/kaggle.svg
+    logo_source: iconify:devicon
+    logo_source_url: https://icon-sets.iconify.design/devicon/kaggle/
+    logo_license: MIT
+    logo_style: sourced-brand
     color: 20BEFF
