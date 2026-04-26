@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="224" viewBox="0 0 1200 224" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="264" viewBox="0 0 1200 264" role="img">
 <defs>
 <style>
 :root {
@@ -35,17 +35,17 @@
 .lang-label { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
 </style>
 </defs>
-<g class="card" transform="translate(24,24)">
-<rect width="1152" height="176" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
+<g class="card" transform="translate(28,28)">
+<rect width="1144" height="208" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
 <circle cx="34" cy="28" r="14" fill="#1f883d" fill-opacity="0.15" stroke="#1f883d" stroke-opacity="0.40" stroke-width="1" />
 <text class="card-icon" x="34" y="32" text-anchor="middle">GH</text>
 <text class="card-kicker" x="56" y="20">GitHub feed for wyattowalsh</text>
-<rect x="1074" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
-<text class="card-badge" x="1105.0" y="27" text-anchor="middle">Custom</text>
+<rect x="1066" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
+<text class="card-badge" x="1097.0" y="27" text-anchor="middle">Custom</text>
 <text class="card-title" x="56" y="40">Recent activity</text>
-<text class="card-line" x="56" y="62">12m ago | Pushed 1 commit to wyattowalsh/personal-website</text>
-<text class="card-line" x="56" y="82">24m ago | Pushed 1 commit to wyattowalsh/wyattowalsh</text>
-<text class="card-line" x="56" y="102">50m ago | Pushed 1 commit to wyattowalsh/wyattowalsh</text>
-<text class="card-meta" x="56" y="162">GitHub · Items 3</text>
+<text class="card-line" x="56" y="62">12m ago | Pushed 1 commit to wyattowalsh/wyattowalsh</text>
+<text class="card-line" x="56" y="82">28m ago | Pushed 1 commit to wyattowalsh/agents</text>
+<text class="card-line" x="56" y="102">40m ago | Pushed 1 commit to wyattowalsh/ai-web-feeds</text>
+<text class="card-meta" x="56" y="194">GitHub · Items 3</text>
 </g>
 </svg>
