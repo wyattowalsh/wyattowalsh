@@ -43,9 +43,9 @@
 <rect x="1066" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
 <text class="card-badge" x="1097.0" y="27" text-anchor="middle">Custom</text>
 <text class="card-title" x="56" y="40">Recent activity</text>
-<text class="card-line" x="56" y="62">29m ago | Starred michaelshimeles/ralphy</text>
-<text class="card-line" x="56" y="82">29m ago | Starred alvinunreal/oh-my-opencode-slim</text>
-<text class="card-line" x="56" y="102">30m ago | Starred opencode-ai/opencode</text>
+<text class="card-line" x="56" y="62">4h ago | Pushed 1 commit to wyattowalsh/NYC-recs</text>
+<text class="card-line" x="56" y="82">5h ago | Pushed 1 commit to wyattowalsh/NYC-recs</text>
+<text class="card-line" x="56" y="102">5h ago | Pushed 1 commit to wyattowalsh/NYC-recs</text>
 <text class="card-meta" x="56" y="194">GitHub · Items 3</text>
 </g>
 </svg>
