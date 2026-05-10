@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="256" viewBox="0 0 1000 256" role="img">
+<defs>
+<style>
+:root {
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #d0d7de;
+  --title-color: #1f2328;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+  --link-color: #0969da;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --canvas-bg: #0d1117;
+  --card-bg: #0d1117;
+  --card-border: #30363d;
+  --title-color: #e6edf3;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+  --link-color: #58a6ff;
+}}
+.rc-bg { fill: var(--card-bg); }
+.rc-border { stroke: var(--card-border); }
+.section-title { fill: var(--title-color); font: 700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-title { fill: var(--title-color); font: 700 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-line { fill: var(--text-color); font: 400 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-meta { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-kicker { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-icon { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-badge { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.01em; }
+.sparkline { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.88; }
+.lang-dot { stroke: var(--card-border); stroke-width: 1; }
+.lang-label { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+</style>
+</defs>
+<g class="card" transform="translate(28,28)">
+<a href="https://w4w.dev/feed.xml" target="_blank" rel="noopener noreferrer">
+<rect width="944" height="200" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
+<text class="card-title" x="16" y="32"><tspan x="16">No recent posts available.</tspan></text>
+<text class="card-line" x="16" y="54">https://w4w.dev/feed.xml</text>
+<text class="card-meta" x="16" y="186">RSS feed</text>
+</a>
+</g>
+</svg>
