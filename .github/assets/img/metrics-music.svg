@@ -43,9 +43,9 @@
 <rect x="1066" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
 <text class="card-badge" x="1097.0" y="27" text-anchor="middle">Custom</text>
 <text class="card-title" x="56" y="40">Recently played</text>
-<text class="card-line" x="56" y="62">Zoning - Sylence</text>
-<text class="card-line" x="56" y="82">What I Need - Aktive, Aleya Mae</text>
-<text class="card-line" x="56" y="102">Visions - Culture Shock</text>
-<text class="card-meta" x="56" y="194">Spotify · 10h ago</text>
+<text class="card-line" x="56" y="62">Launchpad - Subsonic, Aleya Mae</text>
+<text class="card-line" x="56" y="82">Universal Language (Cyber Remix) - Radio Version - Coone</text>
+<text class="card-line" x="56" y="102">Zoning - Sylence</text>
+<text class="card-meta" x="56" y="194">Spotify · 2h ago</text>
 </g>
 </svg>

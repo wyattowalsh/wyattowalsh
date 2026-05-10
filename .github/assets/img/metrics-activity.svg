@@ -43,9 +43,9 @@
 <rect x="1066" y="12" width="62" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
 <text class="card-badge" x="1097.0" y="27" text-anchor="middle">Custom</text>
 <text class="card-title" x="56" y="40">Recent activity</text>
-<text class="card-line" x="56" y="62">1m ago | Starred aannoo/hcom</text>
-<text class="card-line" x="56" y="82">18m ago | Starred floze-the-genius/opencode-multi-auth-codex</text>
-<text class="card-line" x="56" y="102">21m ago | Starred iam-brain/opencode-codex-auth</text>
+<text class="card-line" x="56" y="62">3h ago | Starred direnv/direnv-vscode</text>
+<text class="card-line" x="56" y="82">4h ago | Pushed 1 commit to wyattowalsh/resume</text>
+<text class="card-line" x="56" y="102">5h ago | Starred tobymao/sqlglot</text>
 <text class="card-meta" x="56" y="194">GitHub · Items 3</text>
 </g>
 </svg>
