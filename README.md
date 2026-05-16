@@ -455,16 +455,12 @@ JavaScript               2 repos             █░░░░░░░░░░�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts cards" width="1000" loading="lazy"/></p>
-<details>
-<summary><strong>Latest posts (auto-updated)</strong></summary>
-
-<!-- BLOG-POST-LIST:START -->
-- No recent posts available. [RSS feed](https://w4w.dev/feed.xml)
-<!-- BLOG-POST-LIST:END -->
-
-</details>
-<p align="center"><sub>📡 Source: <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" width="360" alt="Personal Website" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" width="360" alt="Agents" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="360" alt="ProxyWhirl" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="360" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="360" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
+<p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
 </details>
