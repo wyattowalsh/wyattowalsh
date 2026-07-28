@@ -363,7 +363,7 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <summary><strong>WakaTime Stats</strong></summary>
 
 <!--START_SECTION:waka-->
-![Profile Views](http://img.shields.io/badge/Profile%20Views-79-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-82-blue)
 
 ![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-3.1%20million%20lines%20of%20code-blue)
 
@@ -408,28 +408,28 @@ Sunday       343 commits    █████░░░░░░░░░░░░�
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other                    9 hrs 26 mins       ████████████████████░░░░░   83.19% 
-Python                   1 hr 33 mins        ███░░░░░░░░░░░░░░░░░░░░░░   13.67% 
-Markdown                 12 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   1.86% 
+Other                    9 hrs 21 mins       ████████████████████░░░░░   83.08% 
+Python                   1 hr 33 mins        ███░░░░░░░░░░░░░░░░░░░░░░   13.76% 
+Markdown                 12 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   1.87% 
 Bash                     4 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   0.63% 
 JSON                     3 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   0.57%
 
 🔥 Editors: 
-Chrome                   8 hrs 11 mins       ██████████████████░░░░░░░   72.23% 
-IINA                     1 hr 7 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   9.87% 
-Codex CLI                1 hr 5 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   9.69% 
-Cursor                   44 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   6.57% 
-SystemSettings           7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   1.06%
+Chrome                   8 hrs 7 mins        ██████████████████░░░░░░░   72.05% 
+IINA                     1 hr 7 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   9.94% 
+Codex CLI                1 hr 5 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   9.75% 
+Cursor                   44 mins             █░░░░░░░░░░░░░░░░░░░░░░░░   6.61% 
+SystemSettings           7 mins              ░░░░░░░░░░░░░░░░░░░░░░░░░   1.07%
 
 🐱‍💻 Projects: 
-Maccy                    5 hrs 45 mins       ████████████░░░░░░░░░░░░░   50.73% 
-supawald                 2 hrs 36 mins       █████░░░░░░░░░░░░░░░░░░░░   22.93% 
-agents                   1 hr 48 mins        ████░░░░░░░░░░░░░░░░░░░░░   15.99% 
-paul-graham-essay-feeds  1 hr 8 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   10.02% 
+Maccy                    5 hrs 45 mins       ████████████░░░░░░░░░░░░░   51.06% 
+supawald                 2 hrs 31 mins       █████░░░░░░░░░░░░░░░░░░░░   22.43% 
+agents                   1 hr 48 mins        ████░░░░░░░░░░░░░░░░░░░░░   16.09% 
+paul-graham-essay-feeds  1 hr 8 mins         ██░░░░░░░░░░░░░░░░░░░░░░░   10.08% 
 skills                   0 secs              ░░░░░░░░░░░░░░░░░░░░░░░░░   0.15%
 
 💻 Operating System: 
-Mac                      11 hrs 20 mins      █████████████████████████   100.0%
+Mac                      11 hrs 16 mins      █████████████████████████   100.0%
 
 ```
 
@@ -446,7 +446,7 @@ Jupyter Notebook         2 repos             █░░░░░░░░░░�
 
 
 
- Last Updated on 27/07/2026
+ Last Updated on 28/07/2026
 <!--END_SECTION:waka-->
 
 </details>
