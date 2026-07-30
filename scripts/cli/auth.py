@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -19,6 +20,18 @@ auth_app = typer.Typer(
     no_args_is_help=True,
     add_completion=False,
 )
+
+DEFAULT_REFRESH_TOKEN_OUTPUT = Path("spotify_refresh_token.txt")
+
+
+def mask_secret(value: str, *, visible_prefix: int = 4, visible_suffix: int = 4) -> str:
+    """Return a masked representation safe for console/log output."""
+    secret = value.strip()
+    if not secret:
+        return "***"
+    if len(secret) <= visible_prefix + visible_suffix:
+        return "*" * len(secret)
+    return f"{secret[:visible_prefix]}…{secret[-visible_suffix:]}"
 
 
 @auth_app.command(
@@ -73,8 +86,18 @@ def spotify_refresh_token(
             help="Open the authorize URL in the system browser automatically.",
         ),
     ] = True,
+    output_path: Annotated[
+        Path,
+        typer.Option(
+            "--output",
+            "-o",
+            help="Write the refresh token to this file (never printed to the console).",
+            writable=True,
+            path_type=Path,
+        ),
+    ] = DEFAULT_REFRESH_TOKEN_OUTPUT,
 ) -> None:
-    """Run the Spotify authorization-code flow and print a refresh token."""
+    """Run the Spotify authorization-code flow and write the refresh token to a file."""
 
     resolved_client_id = (client_id or "").strip()
     resolved_client_secret = (client_secret or "").strip()
@@ -96,6 +119,15 @@ def spotify_refresh_token(
     if not open_browser:
         typer.echo("Open this URL in your browser to authorize Spotify:")
         typer.echo(authorize_url)
-    typer.echo("Spotify refresh token:")
-    typer.echo(refresh_token)
-    typer.echo("Store this value as the SPOTIFY_REFRESH_TOKEN GitHub Actions secret.")
+
+    destination = output_path.expanduser()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(f"{refresh_token}\n", encoding="utf-8")
+    destination.chmod(0o600)
+
+    typer.echo(f"Spotify refresh token written to {destination}")
+    typer.echo(f"Masked preview: {mask_secret(refresh_token)}")
+    typer.echo(
+        "Store the file contents as the SPOTIFY_REFRESH_TOKEN GitHub Actions secret, "
+        "then delete the local file."
+    )

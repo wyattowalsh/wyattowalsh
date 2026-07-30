@@ -6,6 +6,7 @@ import urllib.parse
 
 import pytest
 
+from scripts.cli.auth import mask_secret
 from scripts.spotify_auth import (
     build_spotify_authorize_url,
     exchange_spotify_authorization_code,
@@ -78,3 +79,18 @@ def test_mint_spotify_refresh_token_raises_cleanly_on_callback_failure(monkeypat
             client_secret="client-secret",
             open_browser=False,
         )
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("", "***"),
+        ("short", "*****"),
+        ("refresh-token-12345", "refr…2345"),
+    ],
+)
+def test_mask_secret_never_returns_full_long_token(value: str, expected: str) -> None:
+    assert mask_secret(value) == expected
+    if len(value.strip()) > 8:
+        assert value not in mask_secret(value)
+

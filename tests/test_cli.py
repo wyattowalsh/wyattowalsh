@@ -152,14 +152,16 @@ def test_config_view_generated_default(runner: CliRunner, tmp_path: Path) -> Non
 
 
 @patch("scripts.cli.auth.mint_spotify_refresh_token")
-def test_auth_spotify_refresh_token_prints_refresh_token(
+def test_auth_spotify_refresh_token_writes_file_without_echoing_secret(
     mock_mint_refresh_token: MagicMock,
     runner: CliRunner,
+    tmp_path: Path,
 ) -> None:
     mock_mint_refresh_token.return_value = (
-        "refresh-token-123",
+        "refresh-token-12345",
         "https://accounts.spotify.com/authorize?...",
     )
+    output_path = tmp_path / "spotify_refresh_token.txt"
 
     result = runner.invoke(
         app,
@@ -171,12 +173,16 @@ def test_auth_spotify_refresh_token_prints_refresh_token(
             "--client-secret",
             "client-secret",
             "--no-open-browser",
+            "--output",
+            str(output_path),
         ],
     )
 
     assert result.exit_code == 0
-    assert "Spotify refresh token:" in result.stdout
-    assert "refresh-token-123" in result.stdout
+    assert output_path.read_text(encoding="utf-8") == "refresh-token-12345\n"
+    assert "refresh-token-12345" not in result.stdout
+    assert "Masked preview:" in result.stdout
+    assert str(output_path) in result.stdout
 
 
 def test_config_view_non_existent(runner: CliRunner, tmp_path: Path) -> None:
