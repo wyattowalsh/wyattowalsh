@@ -14,6 +14,7 @@ from scripts.config import (
     QRCodeSettings,
     ReadmeSectionsSettings,
     ReadmeSvgSettings,
+    SkillEntry,
     VCardDataModel,
     WordCloudSettingsModel,
     load_config,
@@ -442,3 +443,34 @@ class TestDefaultConfigPathContract:
         assert absolute != DEFAULT_CONFIG_PATH
         with pytest.raises(FileNotFoundError):
             load_config(absolute)
+
+
+# ---------------------------------------------------------------------------
+# SkillEntry.logo_path jail (repo-relative only)
+# ---------------------------------------------------------------------------
+
+
+class TestSkillEntryLogoPathJail:
+    def test_accepts_repo_relative(self):
+        entry = SkillEntry(
+            name="Python",
+            logo_path=".github/assets/skill-icons/python.svg",
+            color="3776AB",
+        )
+        assert entry.logo_path == ".github/assets/skill-icons/python.svg"
+
+    def test_rejects_absolute(self):
+        with pytest.raises(ValidationError, match="repo-relative"):
+            SkillEntry(name="X", logo_path="/etc/passwd", color="000")
+
+    def test_rejects_traversal(self):
+        with pytest.raises(ValidationError, match="must not contain"):
+            SkillEntry(name="X", logo_path="../secrets.svg", color="000")
+
+    def test_rejects_url_as_path(self):
+        with pytest.raises(ValidationError, match="not a URL"):
+            SkillEntry(
+                name="X",
+                logo_path="https://cdn.example.com/icon.svg",
+                color="000",
+            )

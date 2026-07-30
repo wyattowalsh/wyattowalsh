@@ -144,11 +144,29 @@ class SkillEntry(BaseModel):
     @field_validator("logo_path")
     @classmethod
     def validate_logo_path(cls, v: str | None) -> str | None:
+        """Require repo-relative file paths (no absolutes, traversal, or URLs)."""
         if v is None:
             return v
         if not v:
             raise ValueError("logo_path must not be empty")
-        if ".." in Path(v).parts:
+        lowered = v.lower()
+        if "://" in v or lowered.startswith(("file:", "data:")):
+            raise ValueError(
+                f"logo_path must be a repo-relative file path, not a URL: {v}"
+            )
+        if v.startswith("~"):
+            raise ValueError(
+                f"logo_path must be repo-relative, not home-expanded: {v}"
+            )
+        path = Path(v)
+        # Catch POSIX/Windows absolute forms before they escape the repo.
+        if path.is_absolute() or v.startswith(("/", "\\")) or (
+            len(v) >= 2 and v[1] == ":"
+        ):
+            raise ValueError(
+                f"logo_path must be repo-relative, not absolute: {v}"
+            )
+        if ".." in path.parts:
             raise ValueError(
                 f"logo_path must not contain '..': {v}"
             )

@@ -20,6 +20,25 @@ from .utils import get_logger
 
 logger = get_logger(module=__name__)
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _resolve_repo_logo_path(logo_path: str) -> Path:
+    """Resolve a validated repo-relative logo_path under the repository root.
+
+    Raises:
+        ValueError: if the resolved path escapes the repository root.
+        OSError: if the path cannot be resolved on disk.
+    """
+    candidate = (_REPO_ROOT / logo_path).resolve(strict=False)
+    try:
+        candidate.relative_to(_REPO_ROOT)
+    except ValueError as exc:
+        raise ValueError(
+            f"logo_path escapes repository root: {logo_path}"
+        ) from exc
+    return candidate
+
 
 class SkillsBadgeGenerator:
     """Generates shields.io badge HTML from skills configuration."""
@@ -55,8 +74,8 @@ class SkillsBadgeGenerator:
             f"?style={self.settings.style}"
         )
         if skill.logo_path:
-            svg_path = Path(skill.logo_path)
             try:
+                svg_path = _resolve_repo_logo_path(skill.logo_path)
                 svg_b64 = base64.b64encode(
                     svg_path.read_bytes()
                 ).decode()
@@ -65,7 +84,7 @@ class SkillsBadgeGenerator:
                     f"&logo=data:image/svg%2Bxml;base64,"
                     f"{quote(svg_b64, safe='')}"
                 )
-            except OSError as exc:
+            except (OSError, ValueError) as exc:
                 logger.warning(
                     f"logo_path '{skill.logo_path}' could not be read "
                     f"for '{skill.name}': {exc}"

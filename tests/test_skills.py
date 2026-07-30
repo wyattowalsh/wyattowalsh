@@ -104,6 +104,26 @@ class TestSkillEntryValidators:
         with pytest.raises(ValidationError, match="must not contain"):
             SkillEntry(name="X", logo_path="foo/../../etc/passwd", color="000")
 
+    def test_logo_path_rejects_absolute(self):
+        with pytest.raises(ValidationError, match="repo-relative"):
+            SkillEntry(name="X", logo_path="/etc/passwd", color="000")
+
+    def test_logo_path_rejects_home_prefix(self):
+        with pytest.raises(ValidationError, match="repo-relative"):
+            SkillEntry(name="X", logo_path="~/.ssh/id_rsa", color="000")
+
+    def test_logo_path_rejects_url(self):
+        with pytest.raises(ValidationError, match="not a URL"):
+            SkillEntry(
+                name="X",
+                logo_path="https://example.com/icon.svg",
+                color="000",
+            )
+
+    def test_logo_path_rejects_file_url(self):
+        with pytest.raises(ValidationError, match="not a URL"):
+            SkillEntry(name="X", logo_path="file:///tmp/x.svg", color="000")
+
     def test_logo_path_accepts_normal(self):
         e = SkillEntry(name="X", logo_path=".github/assets/test.svg", color="000")
         assert e.logo_path == ".github/assets/test.svg"
@@ -189,68 +209,83 @@ class TestBadgeUrl:
         url = gen._build_badge_url(skill)
         assert "style=flat-square" in url
 
-    def test_logo_path_base64(self, tmp_path):
-        svg_file = tmp_path / "test.svg"
+    def test_logo_path_base64(self):
+        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_base64.svg")
+        svg_path = REPO_ROOT / rel
         svg_content = (
             b'<svg xmlns="http://www.w3.org/2000/svg">'
             b'<circle r="5" fill="white"/>'
             b"</svg>"
         )
-        svg_file.write_bytes(svg_content)
+        svg_path.write_bytes(svg_content)
+        try:
+            skill = SkillEntry(
+                name="TestSkill",
+                logo_path=rel.as_posix(),
+                color="FF0000",
+            )
+            url = self.gen._build_badge_url(skill)
+            expected_b64 = quote(
+                base64.b64encode(svg_content).decode(), safe=""
+            )
+            assert f"logo=data:image/svg%2Bxml;base64,{expected_b64}" in url
+            assert "logo=TestSkill" not in url
+        finally:
+            svg_path.unlink(missing_ok=True)
 
-        skill = SkillEntry(
-            name="TestSkill", logo_path=str(svg_file), color="FF0000"
-        )
-        url = self.gen._build_badge_url(skill)
-        expected_b64 = quote(
-            base64.b64encode(svg_content).decode(), safe=""
-        )
-        assert f"logo=data:image/svg%2Bxml;base64,{expected_b64}" in url
-        assert "logo=TestSkill" not in url
-
-    def test_logo_path_base64_urlencodes_plus(self, tmp_path):
+    def test_logo_path_base64_urlencodes_plus(self):
         """Base64 +/= chars must be percent-encoded for URL safety."""
-        svg_file = tmp_path / "test.svg"
+        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_plus.svg")
+        svg_path = REPO_ROOT / rel
         # Content that produces + in base64 (0xfb byte → +)
-        svg_content = b'\xfb\xef\xbe'
-        svg_file.write_bytes(svg_content)
+        svg_content = b"\xfb\xef\xbe"
+        svg_path.write_bytes(svg_content)
+        try:
+            skill = SkillEntry(
+                name="Test", logo_path=rel.as_posix(), color="000000"
+            )
+            url = self.gen._build_badge_url(skill)
+            b64_section = url.split("base64,")[1].split("&")[0]
+            assert "+" not in b64_section, "raw + in URL would be decoded as space"
+            assert "%2B" in b64_section or "%2b" in b64_section
+        finally:
+            svg_path.unlink(missing_ok=True)
 
-        skill = SkillEntry(
-            name="Test", logo_path=str(svg_file), color="000000"
-        )
-        url = self.gen._build_badge_url(skill)
-        b64_section = url.split("base64,")[1].split("&")[0]
-        assert "+" not in b64_section, "raw + in URL would be decoded as space"
-        assert "%2B" in b64_section or "%2b" in b64_section
-
-    def test_logo_path_base64_urlencodes_slash_and_equals(self, tmp_path):
+    def test_logo_path_base64_urlencodes_slash_and_equals(self):
         """Base64 / and = chars must be percent-encoded for URL safety."""
-        svg_file = tmp_path / "test.svg"
+        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_slash.svg")
+        svg_path = REPO_ROOT / rel
         # b'\xff' produces /w== in base64 (contains both / and =)
-        svg_file.write_bytes(b'\xff')
-        skill = SkillEntry(
-            name="Test", logo_path=str(svg_file), color="000000"
-        )
-        url = self.gen._build_badge_url(skill)
-        b64_section = url.split("base64,")[1].split("&")[0]
-        assert "/" not in b64_section, "raw / would break URL path"
-        assert "=" not in b64_section, "raw = would break query parsing"
-        assert "%2F" in b64_section
-        assert "%3D" in b64_section
+        svg_path.write_bytes(b"\xff")
+        try:
+            skill = SkillEntry(
+                name="Test", logo_path=rel.as_posix(), color="000000"
+            )
+            url = self.gen._build_badge_url(skill)
+            b64_section = url.split("base64,")[1].split("&")[0]
+            assert "/" not in b64_section, "raw / would break URL path"
+            assert "=" not in b64_section, "raw = would break query parsing"
+            assert "%2F" in b64_section
+            assert "%3D" in b64_section
+        finally:
+            svg_path.unlink(missing_ok=True)
 
-    def test_logo_path_priority_over_slug(self, tmp_path):
-        svg_file = tmp_path / "custom.svg"
-        svg_file.write_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>')
-
-        skill = SkillEntry(
-            name="PowerShell",
-            slug="powershell",
-            logo_path=str(svg_file),
-            color="5391FE",
-        )
-        url = self.gen._build_badge_url(skill)
-        assert "logo=data:image/svg%2Bxml;base64," in url
-        assert "logo=powershell" not in url
+    def test_logo_path_priority_over_slug(self):
+        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_priority.svg")
+        svg_path = REPO_ROOT / rel
+        svg_path.write_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>')
+        try:
+            skill = SkillEntry(
+                name="PowerShell",
+                slug="powershell",
+                logo_path=rel.as_posix(),
+                color="5391FE",
+            )
+            url = self.gen._build_badge_url(skill)
+            assert "logo=data:image/svg%2Bxml;base64," in url
+            assert "logo=powershell" not in url
+        finally:
+            svg_path.unlink(missing_ok=True)
 
     def test_logo_path_fallback_to_slug_when_missing(self, captured_warnings):
         skill = SkillEntry(
