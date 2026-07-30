@@ -518,6 +518,14 @@ class TestSvgRepoCardRenderer:
         assert "--stat-color:" in svg
         assert "--spark-stroke:" in svg
         assert "@media (prefers-color-scheme: dark)" in svg
+        assert "--shadow-filter: url(#shadow);" in svg
+        assert "--shadow-filter: url(#shadow-dark);" in svg
+        assert "--glass-fill: url(#glass-grad);" in svg
+        assert "--glass-fill: url(#glass-grad-dark);" in svg
+        assert "--rim-stroke: #ffffff;" in svg
+        assert "--rim-stroke: #f0f6fc;" in svg
+        assert "--rim-opacity: 0.12;" in svg
+        assert "--rim-opacity: 0.08;" in svg
 
     def test_language_color_in_footer(self) -> None:
         renderer = SvgRepoCardRenderer()
@@ -826,3 +834,36 @@ class TestSvgRepoCardRenderer:
 
         assert "--card-bg: #ffffff" in svg
         assert "--card-bg: #0d1117" in svg
+
+    def test_gh_card_chrome_uses_media_tokens_not_picture(self) -> None:
+        """Q5: dark polish is SVG @media tokens only — no dual <picture>."""
+        renderer = SvgRepoCardRenderer()
+        svg = renderer.render_card(SvgCard(title="repo"))
+
+        assert 'id="shadow"' in svg
+        assert 'id="shadow-dark"' in svg
+        assert 'id="glass-grad"' in svg
+        assert 'id="glass-grad-dark"' in svg
+        assert 'class="rc-glass"' in svg
+        assert 'class="rc-rim"' in svg
+        assert "filter: var(--shadow-filter)" in svg
+        assert "fill: var(--glass-fill)" in svg
+        assert 'stroke="#ffffff"' not in svg
+        assert "<picture" not in svg
+        assert 'media="(prefers-color-scheme: dark)"' not in svg  # HTML picture source
+        assert "@media (prefers-color-scheme: dark)" in svg
+
+    def test_blog_and_connect_cards_share_dark_chrome_tokens(self) -> None:
+        blog_svg = SvgBlogCardRenderer().render_card(
+            SvgCard(title="Post", lines=("summary",), meta=("Jan 1",))
+        )
+        connect_svg = SvgConnectCardRenderer().render_card(
+            SvgCard(title="GitHub", url="https://github.com/wyattowalsh")
+        )
+
+        for svg in (blog_svg, connect_svg):
+            assert "--shadow-filter: url(#shadow-dark);" in svg
+            assert "--rim-opacity: 0.08;" in svg
+            assert 'id="shadow-dark"' in svg
+            assert "<picture" not in svg
+            assert "@media (prefers-color-scheme: dark)" in svg

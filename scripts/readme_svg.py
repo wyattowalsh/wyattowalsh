@@ -204,20 +204,62 @@ def _chars_for_width(width_px: int, font_size: int, factor: float) -> int:
 
 
 def _shadow_filter_defs() -> str:
-    """Return SVG ``<filter>`` and ``<linearGradient>`` defs for the shared
-    drop-shadow + glass-gradient treatment used by all gh-card renderers."""
+    """Return SVG ``<filter>`` / ``<linearGradient>`` defs for gh-card chrome.
+
+    Light and dark variants are selected via CSS custom properties
+    (``--shadow-filter``, ``--glass-fill``) inside ``@media
+    (prefers-color-scheme: dark)`` — no dual ``<picture>`` assets.
+    """
     return (
         '<filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">'
         '<feDropShadow dx="0" dy="4" stdDeviation="5"'
-        ' flood-color="#000000" flood-opacity="0.06"/>'
+        ' flood-color="#000000" flood-opacity="0.08"/>'
         '<feDropShadow dx="0" dy="1" stdDeviation="2"'
-        ' flood-color="#000000" flood-opacity="0.04"/>'
+        ' flood-color="#000000" flood-opacity="0.05"/>'
+        "</filter>"
+        '<filter id="shadow-dark" x="-5%" y="-5%" width="110%" height="110%">'
+        '<feDropShadow dx="0" dy="4" stdDeviation="6"'
+        ' flood-color="#010409" flood-opacity="0.55"/>'
+        '<feDropShadow dx="0" dy="1" stdDeviation="2"'
+        ' flood-color="#010409" flood-opacity="0.35"/>'
         "</filter>"
         '<linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">'
-        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.04" />'
+        '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.05" />'
         '<stop offset="100%" stop-color="#ffffff" stop-opacity="0" />'
         "</linearGradient>"
+        '<linearGradient id="glass-grad-dark" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="#f0f6fc" stop-opacity="0.06" />'
+        '<stop offset="100%" stop-color="#f0f6fc" stop-opacity="0" />'
+        "</linearGradient>"
     )
+
+
+def _chrome_token_lines(*, dark: bool) -> list[str]:
+    """CSS custom-property lines for gh-card shell chrome (light or dark)."""
+    if dark:
+        return [
+            "  --shadow-filter: url(#shadow-dark);",
+            "  --glass-fill: url(#glass-grad-dark);",
+            "  --rim-stroke: #f0f6fc;",
+            "  --rim-opacity: 0.08;",
+        ]
+    return [
+        "  --shadow-filter: url(#shadow);",
+        "  --glass-fill: url(#glass-grad);",
+        "  --rim-stroke: #ffffff;",
+        "  --rim-opacity: 0.12;",
+    ]
+
+
+def _chrome_class_rules() -> list[str]:
+    """Shared class rules binding shell elements to chrome CSS tokens."""
+    return [
+        ".rc-bg { fill: var(--card-bg); filter: var(--shadow-filter); }",
+        ".rc-border { stroke: var(--card-border); }",
+        ".rc-glass { fill: var(--glass-fill); }",
+        ".rc-rim { fill: none; stroke: var(--rim-stroke);"
+        " stroke-opacity: var(--rim-opacity); stroke-width: 1; }",
+    ]
 
 
 def _card_shell(
@@ -231,15 +273,13 @@ def _card_shell(
     background with shadow, glass overlay, border, inner rim, accent bar."""
     inner_rx = max(rx - 1, 0)
     return [
-        f'<rect class="rc-bg" width="{w}" height="{h}" rx="{rx}"'
-        ' fill="var(--card-bg)" filter="url(#shadow)" />',
-        f'<rect width="{w}" height="{h}" rx="{rx}" fill="url(#glass-grad)" />',
+        f'<rect class="rc-bg" width="{w}" height="{h}" rx="{rx}" />',
+        f'<rect class="rc-glass" width="{w}" height="{h}" rx="{rx}" />',
         f'<rect class="rc-border" x="0.5" y="0.5" width="{w - 1}" height="{h - 1}"'
         f' rx="{rx}" fill="none"'
         ' stroke-width="1" />',
-        f'<rect x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
-        f' rx="{inner_rx}" fill="none"'
-        ' stroke="#ffffff" stroke-opacity="0.1" stroke-width="1" />',
+        f'<rect class="rc-rim" x="1.5" y="1.5" width="{w - 3}" height="{h - 3}"'
+        f' rx="{inner_rx}" />',
         f'<rect x="0" y="0" width="{w}" height="3"'
         f' fill="{accent_fill}"'
         f' clip-path="url(#{clip_id})" />',
@@ -1014,6 +1054,7 @@ class SvgRepoCardRenderer:
                 f"  --stat-color: {lt.meta_color};",
                 f"  --accent: {light_accent};",
                 f"  --spark-stroke: {light_accent};",
+                *_chrome_token_lines(dark=False),
                 "}",
                 "@media (prefers-color-scheme: dark) { :root {",
                 f"  --card-bg: {dk.bg};",
@@ -1024,9 +1065,9 @@ class SvgRepoCardRenderer:
                 f"  --stat-color: {dk.meta_color};",
                 f"  --accent: {dark_accent};",
                 f"  --spark-stroke: {dark_accent};",
+                *_chrome_token_lines(dark=True),
                 "}}",
-                ".rc-bg { fill: var(--card-bg); }",
-                ".rc-border { stroke: var(--card-border); }",
+                *_chrome_class_rules(),
                 ".rc-title { fill: var(--title-color);"
                 f" font: 600 17px {FONT_FAMILY}; }}",
                 ".rc-desc { fill: var(--text-color);"
@@ -1496,6 +1537,7 @@ class SvgBlogCardRenderer:
                 f"  --text-color: {lt.text_color};",
                 f"  --meta-color: {lt.meta_color};",
                 f"  --accent: {lt.accent};",
+                *_chrome_token_lines(dark=False),
                 "}",
                 "@media (prefers-color-scheme: dark) { :root {",
                 f"  --card-bg: {dk.bg};",
@@ -1504,9 +1546,9 @@ class SvgBlogCardRenderer:
                 f"  --text-color: {dk.text_color};",
                 f"  --meta-color: {dk.meta_color};",
                 f"  --accent: {dk.accent};",
+                *_chrome_token_lines(dark=True),
                 "}}",
-                ".rc-bg { fill: var(--card-bg); }",
-                ".rc-border { stroke: var(--card-border); }",
+                *_chrome_class_rules(),
                 f".blog-title {{ fill: var(--title-color);"
                 f" font: 600 16px {FONT_FAMILY}; }}",
                 f".blog-desc {{ fill: var(--text-color);"
@@ -1637,6 +1679,7 @@ class SvgConnectCardRenderer:
                 f"  --text-color: {lt.text_color};",
                 f"  --meta-color: {lt.meta_color};",
                 f"  --accent: {lt.accent};",
+                *_chrome_token_lines(dark=False),
                 "}",
                 "@media (prefers-color-scheme: dark) { :root {",
                 f"  --card-bg: {dk.bg};",
@@ -1645,9 +1688,9 @@ class SvgConnectCardRenderer:
                 f"  --text-color: {dk.text_color};",
                 f"  --meta-color: {dk.meta_color};",
                 f"  --accent: {dk.accent};",
+                *_chrome_token_lines(dark=True),
                 "}}",
-                ".rc-bg { fill: var(--card-bg); }",
-                ".rc-border { stroke: var(--card-border); }",
+                *_chrome_class_rules(),
                 f".con-title {{ fill: var(--title-color);"
                 f" font: 600 14px {FONT_FAMILY}; }}",
             ]
