@@ -28,7 +28,7 @@ Before you start working on an issue, please leave a comment to let others know 
 3.  **Set up the Python environment using `uv` (CLI-first workflow):**
     Use `uv` exclusively, then run project commands through the `readme` CLI:
     ```bash
-    uv sync --all-groups
+    uv sync --locked --all-extras
     uv run readme --help
     # optional convenience wrappers:
     # make install

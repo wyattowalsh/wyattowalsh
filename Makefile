@@ -4,8 +4,8 @@
 UV = uv
 CLI = $(UV) run -- readme
 OUTPUT_DIR = .github/assets/img
-WORDCLOUD_TOPIC_OUTPUT = $(OUTPUT_DIR)/wordcloud_wordle_by_topics.svg
-WORDCLOUD_LANG_OUTPUT = $(OUTPUT_DIR)/wordcloud_wordle_by_languages.svg
+WORDCLOUD_TOPIC_OUTPUT = $(OUTPUT_DIR)/wordcloud_typographic_by_topics.svg
+WORDCLOUD_LANG_OUTPUT = $(OUTPUT_DIR)/wordcloud_typographic_by_languages.svg
 
 # Ensure uv is available
 _ := $(shell command -v $(UV) >/dev/null 2>&1 || (echo "Error: uv is not installed or not in PATH. Install: https://github.com/astral-sh/uv" && exit 1))
@@ -20,7 +20,7 @@ all: lint test generate ## Run linting, tests, and generation targets
 # ------------------------------------------------------------------------------
 .PHONY: install
 install: ## Sync dependencies from uv.lock
-	$(UV) sync --all-extras
+	$(UV) sync --locked --all-extras
 
 .PHONY: format
 format: ## Format code via Ruff (CLI wrapper)
