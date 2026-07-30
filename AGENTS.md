@@ -6,7 +6,7 @@
 
 | Task | Command |
 |------|---------|
-| Install all deps | `uv sync --all-extras` |
+| Install all deps | `uv sync --locked --all-extras` |
 | Format | `uv run readme dev format` |
 | Lint | `uv run readme dev lint` |
 | Test | `uv run readme dev test` |
@@ -64,35 +64,40 @@ wyattowalsh/
 │   ├── fetch_history.py # GitHub commit history collector
 │   ├── _github_http.py  # Shared GitHub API HTTP helpers
 │   ├── techs.py         # Parse techs.md → Technology objects
-│   └── art/             # Generative art subpackage
+│   └── art/             # Generative / living-art subpackage
 │       ├── shared.py    # Noise, color, math utilities
 │       ├── ink_garden.py # Procedural botanical SVG garden
-│       ├── _dev_profiles.py # Mock profiles for local animation testing
+│       ├── topography.py # Topographic contour art
+│       ├── timelapse.py # Living-art style registry + GIF driver
+│       ├── artifacts.py # Manifest / gallery / docs-showcase sync
 │       ├── animate.py   # Multi-frame animation driver
-│       └── topography.py # Topographic contour art
+│       └── _dev_profiles.py # Mock profiles for local animation testing
 ├── tests/               # pytest suite (→ tests/AGENTS.md)
 ├── docs/                # Fumadocs (Next.js 15) dev docs site
 ├── .github/
 │   ├── workflows/profile-updater.yml  # Single unified CI workflow
-│   └── assets/img/      # Generated: banner.svg, qr.png, wordcloud_*.svg
+│   └── assets/img/      # Generated: banner*.svg, qr*.png, wordcloud_*.svg, living-*.gif
 ├── config.yaml          # Edit this to configure generation params
 ├── skills.yaml          # Skills badge definitions
 └── pyproject.toml       # Metadata, deps, tool configs
 ```
 
-**Asset pipeline** (CI: daily 1AM UTC, push to main/master, manual dispatch):
+**Asset pipeline** (CI: `.github/workflows/profile-updater.yml` — daily 1AM UTC, push to `main`/`master`/`dev`, manual dispatch):
 
-1. `uv run starred` CLI → `.github/assets/languages.md` + `.github/assets/topics.md`
-2. `readme generate word-cloud --techs-path topics.md` → `wordcloud_by_topic.svg`
-3. `readme generate word-cloud --techs-path languages.md` → `wordcloud_by_language.svg`
-4. `readme generate qr` → `qr.png`
-5. `readme generate banner` → `banner.svg`
-6. `readme generate skills` → skills badges in README
-7. `stefanzweifel/git-auto-commit-action@v5` auto-commits changed assets
+Jobs (not a single linear 7-step script; each job commits its own owned files):
+
+1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → `.github/assets/languages.md` + `.github/assets/topics.md`
+2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs *(banner light+dark are produced by `readme generate banner` locally; CI does not currently invoke banner generation)*
+3. **`generate-event-art`** (needs starred) — `uv sync --all-groups` + `librsvg2-bin` → fetch metrics/history → `generate living-art` → commits living-art GIFs/manifest/preview
+4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery)
+5. **`update-readme-wakatime`** (needs event-art) — WakaTime README block
+6. **`update-skills`** (needs wakatime + metrics) — `generate readme-sections` → `generate skills` → commits `README.md` + readme SVG cards
+
+Living-art style map (SSOT): `scripts/art/timelapse.py` (`_STYLE_REGISTRY` / `ALL_STYLES`) · human-readable matrix: [`docs/content/docs/scripts/living-art-modes.mdx`](docs/content/docs/scripts/living-art-modes.mdx)
 
 ## Core Conventions
 
-- **Package manager:** `uv` only. `uv add <pkg>` to add; `uv sync --all-extras` to install all extras; never `pip`.
+- **Package manager:** `uv` only. `uv add <pkg>` to add; `uv sync --locked --all-extras` to install all extras; never `pip`.
 - **Logging:** `from .utils import get_logger; logger = get_logger(module=__name__)` — never `print()` or stdlib `logging`.
 - **Imports:** relative within `scripts/` (`from .config import ProjectConfig`, not `from config import ...`).
 - **Types:** Pydantic v2 models for all config/data. Use `ty` for type checking.
@@ -129,10 +134,10 @@ CI secrets (GitHub Actions only — not needed locally):
 
 | ID | File | Issue | Priority |
 |----|------|-------|----------|
-| HR-02 | `tests/test_techs.py`, `tests/test_word_clouds.py` | Both empty — zero coverage for `techs.py` and `word_clouds.py` | P1 |
+| HR-02 | techs + word-cloud tests | **Closed** — `tests/test_techs.py` and word-cloud test modules have real coverage for `techs` + `scripts/word_clouds/` | — |
 | HR-03 | `scripts/banner.py` | Monolithic (1700+ lines) — refactor candidate | P2 |
-| HR-05 | `scripts/config.py` vs `scripts/word_clouds.py` | Two word-cloud config models: `WordCloudSettingsModel` (config.py) and `WordCloudSettings` (word_clouds.py, strict `extra="forbid"`) — easy to confuse | P2 |
-| HR-08 | repo root | No `.env.example` for local dev vars or CI secrets | P2 |
+| HR-05 | `scripts/config.py` vs `scripts/word_clouds/` | Two word-cloud config models: `WordCloudSettingsModel` (`config.py`) and `WordCloudSettings` (`word_clouds/generate.py`, strict `extra="forbid"`) — easy to confuse | P2 |
+| HR-08 | `.env.example` | **Closed** — root `.env.example` documents local + CI secret placeholders | — |
 | HR-10 | `scripts/banner.py` | `BannerConfig.output_path` defaults to `./assets/img/banner.svg`, not `.github/assets/img/banner.svg` — always override via `config.yaml` | P3 |
 
 ### Strategic Improvements (P3 — Future Work)
@@ -154,6 +159,7 @@ CI secrets (GitHub Actions only — not needed locally):
 |------|-------------|----------|
 | [`scripts/AGENTS.md`](scripts/AGENTS.md) | When editing any script module | Module map, Pydantic patterns, per-generator reference, CLI extension guide |
 | [`tests/AGENTS.md`](tests/AGENTS.md) | When writing or running tests | Run commands, coverage status, test patterns, writing guide |
+| [`docs/content/docs/scripts/living-art-modes.mdx`](docs/content/docs/scripts/living-art-modes.mdx) | Living-art styles / artifact contract | Mode matrix; pairs with `scripts/art/timelapse.py` `_STYLE_REGISTRY` |
 | [`docs/`](docs/) | When editing dev documentation | Fumadocs (Next.js 15) site; `cd docs && pnpm dev` to preview |
 
 ## Common Failure Modes
@@ -161,10 +167,14 @@ CI secrets (GitHub Actions only — not needed locally):
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `FileNotFoundError: Default background SVG not found` | `icon.svg` missing | Background is optional (default=None); only set `background_svg` in config if you want a custom background |
-| `ImportError: No module named 'segno'` | QR extras not installed | `uv sync --extra qr` |
-| `ImportError: No module named 'wordcloud'` | word-clouds extras not installed | `uv sync --extra word-clouds` |
-| `ValidationError` from `WordCloudSettings` | Extra keys on strict model | Remove unknown fields — `extra="forbid"` in `WordCloudSettings` |
+| `ImportError: No module named 'segno'` | QR extras not installed | `uv sync --locked --extra qr` (or `--locked --all-extras`) |
+| `ImportError: No module named 'wordcloud'` | word-clouds extras not installed | `uv sync --locked --extra word-clouds` (or `--locked --all-extras`) |
+| `ValidationError` from `WordCloudSettings` | Extra keys on strict model | Remove unknown fields — `extra="forbid"` in `WordCloudSettings` (`word_clouds/generate.py`) |
 | `load_config()` returns defaults silently | `config.yaml` missing or empty | Auto-creates with defaults; edit the created file |
-| `generate qr` Cairo error | Cairo not in dyld path (macOS) | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |
+| `generate qr` Cairo error (macOS) | Cairo not in dyld path | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |
+| `generate qr` Cairo / cairocffi error (Linux CI) | System Cairo libs missing | `sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev` (plus pkg-config as needed) |
+| Dark banner missing / yellow warning only | `banner-dark.svg` generation failed after light succeeded | Re-run `uv run readme generate banner`; check `BannerConfig` / SVGO; light `banner.svg` is still valid |
+| `uv sync --locked` fails / resolver conflict | `uv.lock` out of date vs `pyproject.toml` | Update lock with `uv lock` (then commit both), or temporarily `uv sync --all-extras` for local-only exploration |
+| Living-art GIF rasterization fails | `rsvg-convert` / librsvg missing | `sudo apt-get install -y librsvg2-bin` (matches CI `generate-event-art`) |
 | `noise` module warning but continues | `noise` package absent | Expected — `NoiseHandler` falls back to trig automatically |
-| `starred` command not found | script-tools not installed or command not run through `uv` | `uv sync --extra script-tools` then `uv run starred ...` |
+| `starred` command not found | script-tools not installed or command not run through `uv` | `uv sync --locked --extra script-tools` then `uv run starred ...` |

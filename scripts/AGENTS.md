@@ -86,7 +86,7 @@ cfg.model_dump_json(indent=2)           # JSON string (for display)
 
 ⚠️ **Two distinct word-cloud config models — do not confuse:**
 - `WordCloudSettingsModel` in `config.py` — top-level YAML config, part of `ProjectConfig`
-- `WordCloudSettings` in `word_clouds.py` — internal generator config, `extra="forbid"`
+- `WordCloudSettings` in `word_clouds/generate.py` — internal generator config, `extra="forbid"`
 
 ## Logging Pattern
 
@@ -164,7 +164,7 @@ export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH
 4. Returns `Path` to generated PNG
 - Valid error correction: `"L"`, `"M"`, `"Q"`, `"H"`
 
-## Word Clouds (`word_clouds.py`)
+## Word Clouds (`word_clouds/`)
 
 Entry: `uv run readme generate word-cloud --from-topics-md` / `--from-languages-md`
 
@@ -210,10 +210,10 @@ Parses structured `techs.md` with proficiency levels 1–5.
 uv add <package>
 
 # Edit pyproject.toml [project.optional-dependencies] then sync
-uv sync --all-extras
+uv sync --locked --all-extras
 
-# Install single extra locally (bypasses lockfile — dev only)
-uv pip install -e ".[qr]"
+# Single extra (still prefer --locked)
+uv sync --locked --extra qr
 
 # Never use:
 pip install <package>

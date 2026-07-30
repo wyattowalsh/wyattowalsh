@@ -1,0 +1,11 @@
+---
+description: 
+globs: .github/workflows/**
+alwaysApply: false
+---
+
+# GitHub Actions Automation (`.github/workflows/`)
+
+This project heavily utilizes GitHub Actions for automation. The primary workflow is:
+
+*   **Profile Updater (metrics, assets, README):** `[profile-updater.yml](mdc:.github/workflows/profile-updater.yml)`
