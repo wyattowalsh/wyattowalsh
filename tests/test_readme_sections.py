@@ -2,9 +2,14 @@
 
 import json
 import re
+import socket
 from datetime import UTC, datetime
 from pathlib import Path
 from textwrap import dedent
+from urllib.error import URLError
+from urllib.request import Request
+
+import pytest
 
 from scripts.config import (
     ReadmeFeaturedRepo,
@@ -19,6 +24,9 @@ from scripts.readme_sections import (
     ReadmeSectionGenerator,
     RepoMetadata,
     StarHistoryClient,
+    _SafeRedirectHandler,
+    _is_safe_remote_url,
+    _safe_urlopen,
 )
 
 
@@ -223,7 +231,7 @@ class TestRendering:
         def failing_urlopen(request, timeout=10.0):  # noqa: ARG001
             raise RuntimeError("network disabled for test")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", failing_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", failing_urlopen)
 
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
@@ -264,7 +272,7 @@ class TestRendering:
         def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
             return FakeResponse(b"mock-image-bytes")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
@@ -566,7 +574,7 @@ class TestRendering:
         def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
             return FakeResponse(b"mock-image-bytes")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         repos = [
             ReadmeFeaturedRepo(full_name=f"wyattowalsh/repo-{index}")
@@ -1416,7 +1424,7 @@ class TestRemoteFetchSafety:
             called = True
             raise RuntimeError("urlopen should not be called for blocked URLs")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         posts = client.fetch_latest_posts("ftp://example.com/feed.xml", limit=2)
 
@@ -1432,7 +1440,7 @@ class TestRemoteFetchSafety:
             called = True
             raise RuntimeError("urlopen should not be called for blocked URLs")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         posts = client.fetch_latest_posts("http://127.0.0.1/feed.xml", limit=2)
 
@@ -1448,7 +1456,7 @@ class TestRemoteFetchSafety:
             called = True
             raise RuntimeError("urlopen should not be called for blocked URLs")
 
-        monkeypatch.setattr("scripts.readme_sections.urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         metadata = client.fetch_metadata("http://localhost/blog/post")
 
@@ -1459,6 +1467,124 @@ class TestRemoteFetchSafety:
             "host": "localhost",
         }
         assert not called
+
+    @staticmethod
+    def _addrinfo_for(ip: str) -> list[tuple]:
+        family = socket.AF_INET6 if ":" in ip else socket.AF_INET
+        sockaddr = (ip, 0, 0, 0) if family == socket.AF_INET6 else (ip, 0)
+        return [(family, socket.SOCK_STREAM, 0, "", sockaddr)]
+
+    def test_ssrf_blocks_dns_resolved_private_ip(self, monkeypatch) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_sections.socket.getaddrinfo",
+            lambda *args, **kwargs: self._addrinfo_for("10.0.0.5"),
+        )
+        assert not _is_safe_remote_url("https://public-looking.example/path")
+
+        client = BlogFeedClient()
+        called = False
+
+        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
+            nonlocal called
+            called = True
+            raise RuntimeError("urlopen should not be called for blocked URLs")
+
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
+        posts = client.fetch_latest_posts(
+            "https://public-looking.example/feed.xml",
+            limit=2,
+        )
+        assert posts == []
+        assert not called
+
+    def test_ssrf_blocks_dns_resolved_link_local_metadata(self, monkeypatch) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_sections.socket.getaddrinfo",
+            lambda *args, **kwargs: self._addrinfo_for("169.254.169.254"),
+        )
+        assert not _is_safe_remote_url("http://imds.example/latest/meta-data")
+
+    def test_ssrf_blocks_literal_private_and_metadata_ips(self) -> None:
+        assert not _is_safe_remote_url("http://192.168.1.10/")
+        assert not _is_safe_remote_url("http://10.1.2.3/")
+        assert not _is_safe_remote_url("http://172.16.0.1/")
+        assert not _is_safe_remote_url("http://169.254.169.254/")
+        assert not _is_safe_remote_url("http://[::1]/")
+        assert not _is_safe_remote_url("http://[fc00::1]/")
+        assert not _is_safe_remote_url("http://[::ffff:127.0.0.1]/")
+
+    def test_ssrf_fails_closed_on_dns_error(self, monkeypatch) -> None:
+        def boom(*args, **kwargs):  # noqa: ARG001
+            raise socket.gaierror("name resolution failed")
+
+        monkeypatch.setattr("scripts.readme_sections.socket.getaddrinfo", boom)
+        assert not _is_safe_remote_url("https://unresolvable.example/")
+
+    def test_ssrf_allows_public_dns(self, monkeypatch) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_sections.socket.getaddrinfo",
+            lambda *args, **kwargs: self._addrinfo_for("93.184.216.34"),
+        )
+        assert _is_safe_remote_url("https://example.com/feed.xml")
+
+    def test_ssrf_redirect_revalidates_private_target(self, monkeypatch) -> None:
+        def fake_getaddrinfo(host, *args, **kwargs):  # noqa: ARG001
+            if host == "safe.example":
+                return self._addrinfo_for("93.184.216.34")
+            if host == "evil.example":
+                return self._addrinfo_for("127.0.0.1")
+            raise socket.gaierror(host)
+
+        monkeypatch.setattr(
+            "scripts.readme_sections.socket.getaddrinfo",
+            fake_getaddrinfo,
+        )
+        handler = _SafeRedirectHandler()
+        req = Request("https://safe.example/start")
+        with pytest.raises(URLError, match="Blocked unsafe redirect"):
+            handler.redirect_request(
+                req,
+                None,
+                302,
+                "Found",
+                {},
+                "https://evil.example/secret",
+            )
+
+    def test_ssrf_redirect_allows_public_target(self, monkeypatch) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_sections.socket.getaddrinfo",
+            lambda *args, **kwargs: self._addrinfo_for("93.184.216.34"),
+        )
+        handler = _SafeRedirectHandler()
+        req = Request("https://safe.example/start")
+        redirected = handler.redirect_request(
+            req,
+            None,
+            302,
+            "Found",
+            {},
+            "https://cdn.example/asset.png",
+        )
+        assert redirected is not None
+        assert redirected.full_url == "https://cdn.example/asset.png"
+
+    def test_ssrf_safe_urlopen_rejects_unsafe_request(self, monkeypatch) -> None:
+        opened = False
+
+        class BoomOpener:
+            def open(self, *args, **kwargs):  # noqa: ARG002
+                nonlocal opened
+                opened = True
+                raise AssertionError("opener should not run for blocked URLs")
+
+        monkeypatch.setattr(
+            "scripts.readme_sections.build_opener",
+            lambda *args, **kwargs: BoomOpener(),
+        )
+        with pytest.raises(URLError, match="Blocked unsafe URL"):
+            _safe_urlopen(Request("http://127.0.0.1/secret"), timeout=1.0)
+        assert not opened
 
 
 class TestReadmeInjection:
@@ -2160,7 +2286,7 @@ class TestStarHistoryClient:
                 return json.dumps(response_payload).encode("utf-8")
 
         monkeypatch.setattr(
-            "scripts.readme_sections.urlopen",
+            "scripts.readme_sections._safe_urlopen",
             lambda request, timeout=10.0: _StubResponse(),
         )
         monkeypatch.setattr(

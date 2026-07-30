@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shutil
+import socket
 import time
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,9 +17,13 @@ from datetime import UTC, datetime, timedelta
 from html import escape
 from pathlib import Path
 from typing import cast
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlparse
-from urllib.request import Request, urlopen
+from urllib.request import (
+    HTTPRedirectHandler,
+    Request,
+    build_opener,
+)
 from xml.etree.ElementTree import Element
 
 import defusedxml.ElementTree as DefusedET
@@ -146,11 +151,74 @@ class FeaturedProjectArtifact:
     thumbnail_present: bool
 
 
+_MAX_SAFE_REDIRECTS = 5
+_METADATA_HOSTNAMES = frozenset(
+    {
+        "localhost",
+        "localhost.localdomain",
+        "metadata",
+        "metadata.google.internal",
+    }
+)
+
+
+def _is_blocked_ip_address(
+    ip: ipaddress.IPv4Address | ipaddress.IPv6Address,
+) -> bool:
+    """Return True for private, loopback, link-local, metadata, and reserved IPs."""
+    if isinstance(ip, ipaddress.IPv6Address) and ip.ipv4_mapped is not None:
+        return _is_blocked_ip_address(ip.ipv4_mapped)
+    return bool(
+        ip.is_private
+        or ip.is_loopback
+        or ip.is_link_local
+        or ip.is_multicast
+        or ip.is_reserved
+        or ip.is_unspecified
+    )
+
+
+def _resolved_addresses_are_public(host: str) -> bool:
+    """Resolve *host* and require every A/AAAA to be publicly routable.
+
+    Fail closed on resolution errors or empty results (SSRF / DNS rebinding).
+    """
+    try:
+        literal = ipaddress.ip_address(host)
+    except ValueError:
+        literal = None
+    if literal is not None:
+        return not _is_blocked_ip_address(literal)
+
+    try:
+        addr_infos = socket.getaddrinfo(
+            host,
+            None,
+            family=socket.AF_UNSPEC,
+            type=socket.SOCK_STREAM,
+        )
+    except OSError:
+        return False
+
+    seen_address = False
+    for addr_info in addr_infos:
+        sockaddr = addr_info[4]
+        address = sockaddr[0]
+        try:
+            ip = ipaddress.ip_address(address)
+        except ValueError:
+            return False
+        seen_address = True
+        if _is_blocked_ip_address(ip):
+            return False
+    return seen_address
+
+
 def _is_public_remote_host(host: str) -> bool:
     normalized_host = host.strip().lower().rstrip(".")
     if not normalized_host:
         return False
-    if normalized_host in {"localhost", "localhost.localdomain"}:
+    if normalized_host in _METADATA_HOSTNAMES:
         return False
     if normalized_host.endswith(
         (
@@ -168,16 +236,11 @@ def _is_public_remote_host(host: str) -> bool:
     try:
         ip = ipaddress.ip_address(normalized_host)
     except ValueError:
-        return "." in normalized_host
+        if "." not in normalized_host:
+            return False
+        return _resolved_addresses_are_public(normalized_host)
 
-    return not (
-        ip.is_private
-        or ip.is_loopback
-        or ip.is_link_local
-        or ip.is_multicast
-        or ip.is_reserved
-        or ip.is_unspecified
-    )
+    return not _is_blocked_ip_address(ip)
 
 
 def _is_safe_remote_url(url: str) -> bool:
@@ -189,7 +252,29 @@ def _is_safe_remote_url(url: str) -> bool:
         return False
     if parsed.hostname is None:
         return False
+    if parsed.username is not None or parsed.password is not None:
+        return False
     return _is_public_remote_host(parsed.hostname)
+
+
+class _SafeRedirectHandler(HTTPRedirectHandler):
+    """Revalidate each redirect hop against SSRF DNS/IP rules."""
+
+    max_redirections = _MAX_SAFE_REDIRECTS
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ANN001
+        if not _is_safe_remote_url(newurl):
+            raise URLError(f"Blocked unsafe redirect to {newurl}")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _safe_urlopen(request: Request, timeout: float = 10.0):
+    """Open a remote URL with redirect-hop SSRF revalidation."""
+    target = request.full_url
+    if not _is_safe_remote_url(target):
+        raise URLError(f"Blocked unsafe URL {target}")
+    opener = build_opener(_SafeRedirectHandler)
+    return opener.open(request, timeout=timeout)
 
 
 def _build_remote_get_request(
@@ -254,7 +339,7 @@ class GitHubRepoClient:
         if request is None:
             return None
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with _safe_urlopen(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
             logger.warning(f"Failed to fetch repo metadata for {full_name}: {exc}")
@@ -297,7 +382,7 @@ class GitHubRepoClient:
         if request is None:
             return None
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with _safe_urlopen(request, timeout=self.timeout) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except Exception as exc:  # pragma: no cover - network path
             logger.warning(
@@ -337,7 +422,7 @@ class BlogFeedClient:
         if request is None:
             return []
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with _safe_urlopen(request, timeout=self.timeout) as response:
                 body = response.read()
         except Exception as exc:  # pragma: no cover - network path
             logger.warning(
@@ -464,7 +549,7 @@ class StarHistoryClient:
             )
 
             try:
-                with urlopen(request, timeout=self.timeout) as response:
+                with _safe_urlopen(request, timeout=self.timeout) as response:
                     payload = json.loads(response.read().decode("utf-8"))
             except Exception as exc:  # pragma: no cover - network path
                 logger.warning(
@@ -589,7 +674,7 @@ class BlogMetadataClient:
         if request is None:
             return fallback
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with _safe_urlopen(request, timeout=self.timeout) as response:
                 html = response.read().decode("utf-8", errors="ignore")
         except Exception as exc:  # pragma: no cover - network path
             logger.warning("Failed to fetch blog metadata for %s: %s", url, exc)
@@ -1099,7 +1184,7 @@ class ReadmeSectionGenerator:
         if request is None:
             return None
         try:
-            with urlopen(request, timeout=10.0) as response:
+            with _safe_urlopen(request, timeout=10.0) as response:
                 svg_bytes = response.read()
         except Exception as exc:  # pragma: no cover - network path
             logger.warning("Failed to fetch Simple Icon %s: %s", slug, exc)
@@ -2208,7 +2293,7 @@ class ReadmeSectionGenerator:
         if request is None:
             return None
         try:
-            with urlopen(request, timeout=10.0) as response:
+            with _safe_urlopen(request, timeout=10.0) as response:
                 html = response.read().decode("utf-8", errors="ignore")
         except Exception as exc:
             logger.warning(
@@ -2265,7 +2350,7 @@ class ReadmeSectionGenerator:
         content_type = "image/png"
         for attempt in range(max_retries + 1):
             try:
-                with urlopen(request, timeout=10.0) as response:
+                with _safe_urlopen(request, timeout=10.0) as response:
                     image_bytes = response.read()
                     content_type = (
                         response.headers.get("Content-Type", "")
