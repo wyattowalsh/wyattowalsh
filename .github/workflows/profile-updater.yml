@@ -679,8 +679,8 @@ jobs:
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
-          # Keep this card on stable GitHub-native panels; spotify currently breaks
-          # the action build before rendering completes.
+          # Keep this card on stable GitHub-native panels; music/activity stay
+          # off — supplemental cards own those surfaces.
           plugin_music: no
           plugin_activity: no
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
@@ -688,7 +688,19 @@ jobs:
           plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
           plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds"
+          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
+          plugin_people: yes
+          plugin_people_limit: 12
+          plugin_people_size: 24
+          plugin_people_types: followers, following
+          plugin_reactions: yes
+          plugin_reactions_limit: 100
+          plugin_reactions_display: relative
+          plugin_followup: yes
+          plugin_followup_sections: repositories
+          plugin_tweets: no
+          plugin_gists: no
+          plugin_habits: no
 
       - name: Collect additional metrics output
         id: collect_additional_metrics
