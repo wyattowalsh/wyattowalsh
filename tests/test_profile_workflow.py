@@ -44,3 +44,44 @@ def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
     assert BANNER_DARK.is_file(), f"missing required asset: {BANNER_DARK}"
     assert BANNER_LIGHT.stat().st_size > 0, f"empty asset: {BANNER_LIGHT}"
     assert BANNER_DARK.stat().st_size > 0, f"empty asset: {BANNER_DARK}"
+
+
+def test_uv_sync_requires_locked_and_forbids_all_groups() -> None:
+    workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+
+    assert "--all-groups" not in workflow
+    sync_lines = [
+        line.strip()
+        for line in workflow.splitlines()
+        if "uv sync" in line
+    ]
+    assert sync_lines, "expected at least one uv sync invocation"
+    for line in sync_lines:
+        assert "--locked" in line, f"missing --locked: {line}"
+
+
+def test_generate_assets_installs_cairo_apt_deps() -> None:
+    workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+    cairo_apt = (
+        "sudo apt-get update && sudo apt-get install -y "
+        "libcairo2 libcairo2-dev pkg-config libffi-dev"
+    )
+    assert cairo_apt in workflow
+
+
+def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
+    workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+    assert "uv sync --locked --extra qr --extra word-clouds" in workflow
+    assert "uv sync --locked --extra script-tools" in workflow
+
+
+def test_update_skills_needs_generate_assets_fail_closed() -> None:
+    workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
+
+    skills_idx = workflow.index("  update-skills:")
+    next_job = workflow.find("\n  ", skills_idx + 1)
+    skills_block = workflow[skills_idx : next_job if next_job != -1 else None]
+
+    assert "- generate-assets" in skills_block
+    assert "needs.generate-assets.result == 'success'" in skills_block
+    assert "needs.update-starred-lists.result == 'success'" in workflow
