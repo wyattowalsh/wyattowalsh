@@ -881,7 +881,7 @@ class TestRendering:
         assert 'width="360"' in html
         assert 'width="500"' not in html
 
-    def test_generate_rewrites_living_art_as_equal_full_width_blocks(
+    def test_generate_rewrites_living_art_as_wrap_flow_grid(
         self,
         tmp_path: Path,
     ) -> None:
@@ -895,7 +895,19 @@ class TestRendering:
 
                 ## Tech Stack
 
-                existing stack
+                <p align="center">
+                  <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge&amp;logo=openai&amp;logoColor=white"/>
+                  <img alt="Data Engineering" src="https://img.shields.io/badge/Data%20Engineering-4169E1?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"/>
+                </p>
+
+                <details>
+                <summary><strong>View full stack (200+ technologies)</strong></summary>
+
+                <!-- SKILLS:START -->
+                kept skills
+                <!-- SKILLS:END -->
+
+                </details>
                 """
             ),
             encoding="utf-8",
@@ -912,12 +924,78 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
+        living_art = rendered.split("## Tech Stack", 1)[0]
 
         assert "stale living art grid" not in rendered
-        assert "<table" not in rendered
-        assert rendered.count('src=".github/assets/img/living-') == 6
-        assert rendered.count('width="100%"') == 6
+        assert "<table" not in living_art
+        assert "display: grid" not in living_art.lower()
+        assert "grid-template" not in living_art.lower()
+        assert "<details" not in living_art
+        assert living_art.count('src=".github/assets/img/living-') == 6
+        assert living_art.count('width="360"') == 6
+        assert living_art.count('width="100%"') == 0
+        assert living_art.count('<p align="center">') == 1
         assert "## Tech Stack" in rendered
+        assert 'alt="AI/ML"' not in rendered
+        assert 'alt="Data Engineering"' not in rendered
+        assert "<!-- SKILLS:START -->" in rendered
+        assert "kept skills" in rendered
+        assert '<summary><strong>View full stack (200+ technologies)</strong></summary>' in (
+            rendered
+        )
+
+    def test_generate_drops_tech_stack_teaser_shields(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Living Art
+
+                placeholder
+
+                ## Tech Stack
+
+                <p align="center">
+                  <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge"/>
+                  <img alt="Full-Stack" src="https://img.shields.io/badge/Full--Stack-61DAFB?style=for-the-badge"/>
+                  <img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-181717?style=for-the-badge"/>
+                </p>
+
+                <details>
+                <summary><strong>View full stack (200+ technologies)</strong></summary>
+
+                <!-- SKILLS:START -->
+                full stack body
+                <!-- SKILLS:END -->
+
+                </details>
+                """
+            ),
+            encoding="utf-8",
+        )
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+        tech_stack = rendered.split("## Tech Stack", 1)[1]
+
+        assert 'alt="AI/ML"' not in tech_stack
+        assert 'alt="Full-Stack"' not in tech_stack
+        assert 'alt="Open Source"' not in tech_stack
+        assert tech_stack.lstrip().startswith("<details>")
+        assert "full stack body" in tech_stack
+        assert "<!-- SKILLS:START -->" in tech_stack
 
     def test_generate_keeps_metrics_image_table_when_assets_are_placeholders(
         self,
