@@ -67,11 +67,11 @@ def mock_graphql():
 
 class TestCollectLanguages:
     def test_aggregates_bytes_across_repos(self, mock_get: MagicMock) -> None:
-        from scripts.fetch_metrics import _collect_languages
+        from scripts.fetch_metrics import _BASE, _collect_languages
 
         repos = [
-            _make_repo("a", languages_url="http://lang/a"),
-            _make_repo("b", languages_url="http://lang/b"),
+            _make_repo("a", languages_url="http://evil.example/a"),
+            _make_repo("b", languages_url="http://evil.example/b"),
         ]
         mock_get.side_effect = [
             ({"Python": 100, "Go": 50}, {}),  # languages for repo a
@@ -79,13 +79,18 @@ class TestCollectLanguages:
         ]
         result = _collect_languages(repos, "tok")
         assert result == {"Python": 300, "Go": 50, "Rust": 30}
+        called_urls = {call.args[0] for call in mock_get.call_args_list}
+        assert called_urls == {
+            f"{_BASE}/repos/owner/a/languages",
+            f"{_BASE}/repos/owner/b/languages",
+        }
 
     def test_skips_forks(self, mock_get: MagicMock) -> None:
-        from scripts.fetch_metrics import _collect_languages
+        from scripts.fetch_metrics import _BASE, _collect_languages
 
         repos = [
-            _make_repo("mine", languages_url="http://lang/mine"),
-            _make_repo("forked", fork=True, languages_url="http://lang/forked"),
+            _make_repo("mine", languages_url="http://evil.example/mine"),
+            _make_repo("forked", fork=True, languages_url="http://evil.example/forked"),
         ]
         mock_get.side_effect = [
             ({"Python": 100}, {}),
@@ -95,16 +100,31 @@ class TestCollectLanguages:
         # Should not have fetched languages for the fork
         # (only 1 call — no repos list fetch).
         assert mock_get.call_count == 1
+        assert mock_get.call_args.args[0] == f"{_BASE}/repos/owner/mine/languages"
 
     def test_handles_language_fetch_error(self, mock_get: MagicMock) -> None:
         from scripts.fetch_metrics import _collect_languages
 
-        repos = [_make_repo("a", languages_url="http://lang/a")]
+        repos = [_make_repo("a", languages_url="http://evil.example/a")]
         mock_get.side_effect = [
             Exception("network error"),
         ]
         result = _collect_languages(repos, "tok")
         assert result == {}
+
+    def test_ignores_user_controlled_languages_url_host(
+        self, mock_get: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _BASE, _collect_languages, _repo_languages_url
+
+        repo = _make_repo(
+            "alpha",
+            languages_url="https://attacker.example/steal",
+        )
+        assert _repo_languages_url(repo) == f"{_BASE}/repos/owner/alpha/languages"
+        mock_get.return_value = ({"Python": 1}, {})
+        _collect_languages([repo], "tok")
+        assert mock_get.call_args.args[0] == f"{_BASE}/repos/owner/alpha/languages"
 
 
 # ---------------------------------------------------------------------------
@@ -699,13 +719,13 @@ class TestCollectIntegration:
                 "alpha",
                 stars=5,
                 language="Python",
-                languages_url="http://lang/alpha",
+                languages_url="https://evil.example/alpha",
             ),
             _make_repo(
                 "beta",
                 stars=2,
                 language="Go",
-                languages_url="http://lang/beta",
+                languages_url="https://evil.example/beta",
             ),
         ]
 

@@ -30,6 +30,21 @@ def _json(url: str, token: str | None, **kw: Any) -> Any:
     return data
 
 
+def _repo_languages_url(repo: dict[str, Any]) -> str:
+    """Build languages URL on api.github.com (never trust API-provided hosts)."""
+    full_name = str(repo.get("full_name") or "").strip()
+    if "/" not in full_name:
+        owner = str((repo.get("owner") or {}).get("login") or "").strip()
+        name  = str(repo.get("name") or "").strip()
+        if not owner or not name:
+            raise ValueError(f"Cannot build languages URL for repo: {repo!r}")
+        full_name = f"{owner}/{name}"
+    owner, _, name = full_name.partition("/")
+    if not owner or not name or "/" in name:
+        raise ValueError(f"Invalid repo full_name for languages URL: {full_name!r}")
+    return f"{_BASE}/repos/{owner}/{name}/languages"
+
+
 def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
     """Aggregate language bytes across all non-fork repos (parallel fetches)."""
     non_forks = [r for r in repos if not r.get("fork")]
@@ -38,7 +53,7 @@ def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
     totals: dict[str, int] = {}
 
     def _fetch_lang(repo: dict) -> dict[str, int]:
-        data, _ = _get(repo["languages_url"], token)
+        data, _ = _get(_repo_languages_url(repo), token)
         return data
 
     with ThreadPoolExecutor(max_workers=min(16, len(non_forks))) as pool:
