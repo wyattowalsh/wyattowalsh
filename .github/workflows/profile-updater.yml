@@ -358,8 +358,8 @@ jobs:
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
-        always() &&
         !cancelled() &&
+        needs.update-starred-lists.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
@@ -460,8 +460,8 @@ jobs:
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
-        always() &&
         !cancelled() &&
+        needs.generate-event-art.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
@@ -830,8 +830,8 @@ jobs:
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
-        always() &&
         !cancelled() &&
+        needs.update-starred-lists.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
@@ -1059,12 +1059,14 @@ jobs:
     needs:
       - update-readme-wakatime
       - generate-profile-metrics
+      - generate-assets
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
         needs.update-readme-wakatime.result == 'success' &&
         needs.generate-profile-metrics.result == 'success' &&
+        needs.generate-assets.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
