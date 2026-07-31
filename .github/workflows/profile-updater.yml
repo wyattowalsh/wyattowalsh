@@ -542,8 +542,14 @@ jobs:
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
           set -euo pipefail
-          # Secret setup guidance:
-          # - METRICS_TOKEN: GitHub PAT (classic) with at least read:user, public_repo (add read:org for org/collab visibility).
+          # Secret setup guidance (see .github/SECURITY.md):
+          # - METRICS_TOKEN: prefer a fine-grained PAT (Metadata/Contents/Profile: Read;
+          #   org membership Read only if needed). Classic fallback: read:user, public_repo
+          #   (+ read:org). Never grant write/admin/workflow. Used only as lowlighter
+          #   `token:` / first-party GraphQL reads — never as a catch-all PAT.
+          # - Spotify / X secrets: first-party supplemental cards only (env: on the
+          #   generate supplemental-metrics run step). Never pass them into
+          #   lowlighter/metrics (or any metrics fork) `with:` inputs.
           has_metrics_token=false
           [ -n "${METRICS_TOKEN:-}" ] && has_metrics_token=true
           has_spotify_tokens=false
@@ -558,13 +564,13 @@ jobs:
           echo "has_spotify_tokens=${has_spotify_tokens}" >> "$GITHUB_OUTPUT"
           echo "has_x_oauth1_tokens=${has_x_oauth1_tokens}" >> "$GITHUB_OUTPUT"
           if [ "${has_metrics_token}" != "true" ]; then
-            echo "::notice::METRICS_TOKEN is missing; repositories-sensitive metrics are disabled."
+            echo "::notice::METRICS_TOKEN is missing; repositories-sensitive lowlighter plugins are disabled."
           fi
           if [ "${has_spotify_tokens}" != "true" ]; then
-            echo "::notice::Spotify secrets are incomplete; music metrics are disabled."
+            echo "::notice::Spotify secrets are incomplete; first-party metrics-music.svg supplemental card is disabled."
           fi
           if [ "${has_x_oauth1_tokens}" != "true" ]; then
-            echo "::notice::X OAuth1 secrets are incomplete; latest posts metrics are disabled."
+            echo "::notice::X OAuth1 secrets are incomplete; first-party metrics-posts.svg supplemental card is disabled."
           fi
       - name: Back up existing metrics assets
         run: |
@@ -588,6 +594,8 @@ jobs:
           backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
           backup_metric ./.github/assets/img/metrics.extra.svg "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
           rm -f ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.extra.svg
+      # Third-party lowlighter only: read-scoped METRICS_TOKEN (or github.token).
+      # No Spotify / X / write PATs in `with:` — plugin_music stays no.
       - name: Personal metrics
         id: lowlighter_metrics_primary
         continue-on-error: true
@@ -754,6 +762,7 @@ jobs:
             ./.github/assets/img/metrics.extra.svg \
             --previous "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
 
+      # First-party only: Spotify/X via env: on this run step (never lowlighter with:).
       - name: Generate supplemental metrics cards
         id: generate_supplemental_metrics
         env:

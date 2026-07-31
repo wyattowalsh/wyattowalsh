@@ -58,14 +58,18 @@ supports the needed permissions. Rotate tokens periodically and revoke unused on
 ### `METRICS_TOKEN`
 
 Used by `.github/workflows/profile-updater.yml` for GitHub metrics / GraphQL reads
-(and as the metrics action token when present).
+and as the `lowlighter/metrics` `token:` input when present. Prefer a
+**fine-grained PAT** with read-only surface; keep classic PATs as fallback only.
 
 | Token type | Minimum scopes / permissions |
 | ---------- | ---------------------------- |
-| Fine-grained PAT | Repository access for this profile repo (and any private repos you want reflected): **Metadata: Read**, **Contents: Read**. Account permissions: **Profile: Read**. Add **Organization membership / members: Read** only if you need org/collab visibility. |
+| Fine-grained PAT (preferred) | Repository access for this profile repo (and any private repos you want reflected): **Metadata: Read**, **Contents: Read**. Account permissions: **Profile: Read**. Add **Organization membership / members: Read** only if you need org/collab visibility. |
 | Classic PAT (fallback) | `read:user`, `public_repo` (add `read:org` when org/collab visibility is required). |
 
-Do not grant write, admin, or workflow scopes to `METRICS_TOKEN`.
+Do not grant write, admin, or workflow scopes to `METRICS_TOKEN`. Do not reuse it
+as a catch-all Actions secret, and never pass Spotify / X credentials into
+third-party metrics Actions (`lowlighter/metrics` or forks such as
+`felipecrs/metrics` — this workflow pins `lowlighter/metrics` only).
 
 ### `GH_TOKEN`
 
