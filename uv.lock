@@ -1483,7 +1483,6 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pyyaml" },
     { name = "rich" },
-    { name = "svgwrite" },
     { name = "typer" },
 ]
 
@@ -1512,6 +1511,7 @@ dev = [
     { name = "ruff" },
     { name = "scipy" },
     { name = "segno" },
+    { name = "syrupy" },
     { name = "ty" },
     { name = "wordcloud" },
 ]
@@ -1568,6 +1568,7 @@ test = [
     { name = "qrcode-artistic" },
     { name = "scipy" },
     { name = "segno" },
+    { name = "syrupy" },
     { name = "wordcloud" },
 ]
 word-clouds = [
@@ -1623,7 +1624,7 @@ requires-dist = [
     { name = "scipy", marker = "extra == 'science'", specifier = ">=1.16.3" },
     { name = "segno", marker = "extra == 'qr'", specifier = ">=1.6.6" },
     { name = "starred", marker = "extra == 'script-tools'", specifier = ">=4.3.0" },
-    { name = "svgwrite", specifier = ">=1.4.3" },
+    { name = "syrupy", marker = "extra == 'test'", specifier = ">=5.5.3" },
     { name = "ty", marker = "extra == 'lint'", specifier = ">=0.0.29" },
     { name = "typer", specifier = ">=0.24.1" },
     { name = "wordcloud", marker = "extra == 'word-clouds'", specifier = ">=1.9.6" },
@@ -1805,12 +1806,15 @@ wheels = [
 ]
 
 [[package]]
-name = "svgwrite"
-version = "1.4.3"
+name = "syrupy"
+version = "5.5.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/16/c1/263d4e93b543390d86d8eb4fc23d9ce8a8d6efd146f9427364109004fa9b/svgwrite-1.4.3.zip", hash = "sha256:a8fbdfd4443302a6619a7f76bc937fc683daf2628d9b737c891ec08b8ce524c3", size = 189516, upload-time = "2022-07-14T14:05:26.107Z" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e7/39/17dde9f0c76cc5abcdeef1b2243791bb850d498f784147b8e460dd23abe8/syrupy-5.5.3.tar.gz", hash = "sha256:fa21e4ae77c89ec5abfca513338d8a7eb916da6618ca0f8db301476e0768e57a", size = 91614, upload-time = "2026-07-11T15:54:31.46Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/15/640e399579024a6875918839454025bb1d5f850bb70d96a11eabb644d11c/svgwrite-1.4.3-py3-none-any.whl", hash = "sha256:bb6b2b5450f1edbfa597d924f9ac2dd099e625562e492021d7dd614f65f8a22d", size = 67122, upload-time = "2022-07-14T14:05:24.459Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/f9/617a194c1a4203279998e1859426cf2635042533a99a93d63d3ee1fb967e/syrupy-5.5.3-py3-none-any.whl", hash = "sha256:0b260a0c9dad55e1fb83818973dc36fbc1aea3fd5381592f442a986686c4171a", size = 54959, upload-time = "2026-07-11T15:54:29.836Z" },
 ]
 
 [[package]]

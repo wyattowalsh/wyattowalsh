@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="172" viewBox="0 0 640 172" role="img">
+<defs>
+<style>
+:root {
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #d0d7de;
+  --title-color: #1f2328;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+  --link-color: #0969da;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --canvas-bg: #0d1117;
+  --card-bg: #0d1117;
+  --card-border: #30363d;
+  --title-color: #e6edf3;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+  --link-color: #58a6ff;
+}}
+.rc-bg { fill: var(--card-bg); }
+.rc-border { stroke: var(--card-border); }
+.section-title { fill: var(--title-color); font: 700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-title { fill: var(--title-color); font: 700 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-line { fill: var(--text-color); font: 400 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-meta { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-kicker { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-icon { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-badge { fill: var(--title-color); font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.01em; }
+.sparkline { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.88; }
+.lang-dot { stroke: var(--card-border); stroke-width: 1; }
+.lang-label { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+</style>
+</defs>
+<g class="card" transform="translate(16,16)">
+<a href="https://github.com/wyattowalsh" target="_blank" rel="noopener noreferrer">
+<rect width="296" height="140" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
+<circle cx="34" cy="28" r="14" fill="#181717" fill-opacity="0.15" stroke="#181717" stroke-opacity="0.40" stroke-width="1" />
+<text class="card-icon" x="34" y="32" text-anchor="middle">GH</text>
+<rect x="211" y="12" width="69" height="22" rx="11" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-opacity="0.30" stroke-width="1" />
+<text class="card-badge" x="245.5" y="27" text-anchor="middle">builder</text>
+<text class="card-title" x="56" y="32">GitHub</text>
+<text class="card-line" x="56" y="54">https://github.com/wyattowalsh</text>
+<text class="card-meta" x="56" y="126">badge #181717</text>
+</a>
+</g>
+<g class="card" transform="translate(328,16)">
+<rect width="296" height="140" rx="6" fill="var(--card-bg)" stroke="var(--card-border)" stroke-width="1" />
+<text class="card-title" x="16" y="32">LinkedIn</text>
+<text class="card-line" x="16" y="54">https://linkedin.com/in/wyattowalsh</text>
+<text class="card-meta" x="16" y="126">badge #0A66C2</text>
+</g>
+</svg>

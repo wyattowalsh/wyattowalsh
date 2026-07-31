@@ -2,6 +2,7 @@
 
 import pytest
 from loguru import logger
+from syrupy.extensions.image import SVGImageSnapshotExtension
 
 
 @pytest.fixture
@@ -14,3 +15,9 @@ def captured_warnings():
     )
     yield messages
     logger.remove(sink_id)
+
+
+@pytest.fixture
+def snapshot_svg(snapshot):
+    """SVG-friendly syrupy assertion (one ``.svg`` file per snapshot)."""
+    return snapshot.with_defaults(extension_class=SVGImageSnapshotExtension)

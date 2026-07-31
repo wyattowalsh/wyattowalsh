@@ -14,7 +14,6 @@ dependencies = [
     "pydantic-settings>=2.13.1",
     "pyyaml>=6.0.3",
     "rich>=14.3.3",
-    "svgwrite>=1.4.3",
     "typer>=0.24.1",
     "defusedxml>=0.7.1",
 ]
@@ -60,6 +59,7 @@ test = [
     "pytest-xdist>=3.8.0",
     "readme[qr]",
     "readme[word-clouds]",
+    "syrupy>=5.5.3",
 ]
 word-clouds = [
     "beautifulsoup4>=4.14.3",
