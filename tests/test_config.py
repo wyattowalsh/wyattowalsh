@@ -17,6 +17,7 @@ from scripts.config import (
     SkillEntry,
     VCardDataModel,
     WordCloudSettingsModel,
+    _running_in_ci,
     load_config,
     save_config,
 )
@@ -365,6 +366,8 @@ class TestLoadConfigMissingAndEmptyDefault:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
         assert not Path("./config.yaml").exists()
         cfg = load_config()
         assert isinstance(cfg, ProjectConfig)
@@ -379,6 +382,8 @@ class TestLoadConfigMissingAndEmptyDefault:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
         Path("./config.yaml").write_text("", encoding="utf-8")
         cfg = load_config(DEFAULT_CONFIG_PATH)
         assert isinstance(cfg, ProjectConfig)
@@ -399,12 +404,55 @@ class TestLoadConfigMissingAndEmptyDefault:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
         with patch(
             "scripts.config.save_config",
             side_effect=OSError("disk full"),
         ):
             with pytest.raises(FileNotFoundError, match="Attempt to create"):
                 load_config(DEFAULT_CONFIG_PATH)
+
+    def test_ci_missing_default_fails_closed(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("CI", "true")
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+        assert not Path("./config.yaml").exists()
+        with pytest.raises(FileNotFoundError, match="Refusing to auto-create"):
+            load_config()
+        assert not Path("./config.yaml").exists()
+
+    def test_github_actions_missing_default_fails_closed(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.setenv("GITHUB_ACTIONS", "true")
+        with pytest.raises(FileNotFoundError, match="Refusing to auto-create"):
+            load_config(DEFAULT_CONFIG_PATH)
+        assert not Path("./config.yaml").exists()
+
+    def test_ci_empty_default_fails_closed(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("GITHUB_ACTIONS", "1")
+        Path("./config.yaml").write_text("", encoding="utf-8")
+        with pytest.raises(FileNotFoundError, match="empty"):
+            load_config(DEFAULT_CONFIG_PATH)
+        assert Path("./config.yaml").read_text(encoding="utf-8") == ""
+
+    def test_running_in_ci_env_detection(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+        assert _running_in_ci() is False
+        monkeypatch.setenv("CI", "true")
+        assert _running_in_ci() is True
+        monkeypatch.delenv("CI", raising=False)
+        monkeypatch.setenv("GITHUB_ACTIONS", "yes")
+        assert _running_in_ci() is True
 
 
 # ---------------------------------------------------------------------------

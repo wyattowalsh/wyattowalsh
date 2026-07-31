@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Literal
+import os
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -11,6 +12,15 @@ from .word_clouds.readability import LayoutReadabilitySettings
 # Lines broken for length where necessary.
 
 logger = get_logger(module=__name__)
+
+
+def _running_in_ci() -> bool:
+    """Return True when executing under CI (GitHub Actions or generic CI)."""
+    for key in ("GITHUB_ACTIONS", "CI"):
+        value = os.environ.get(key, "").strip().lower()
+        if value in {"1", "true", "yes", "on"}:
+            return True
+    return False
 
 
 class Settings(BaseSettings):
@@ -433,8 +443,12 @@ DEFAULT_CONFIG_PATH = Path("./config.yaml")
 
 
 def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
-    """Loads project config from YAML. Creates default if missing/empty
-    at default path."""
+    """Load project config from YAML.
+
+    Locally, a missing/empty *default* ``config.yaml`` is bootstrapped with
+    defaults. In CI (``CI`` / ``GITHUB_ACTIONS``), missing or empty default
+    config fails closed — no silent create.
+    """
     if path.exists():
         try:
             with open(path, encoding="utf-8") as f:
@@ -442,6 +456,11 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
 
             if data is None:  # File is empty or only comments/whitespace
                 if path == DEFAULT_CONFIG_PATH:
+                    if _running_in_ci():
+                        raise FileNotFoundError(
+                            f"Config file {path} is empty. "
+                            "Refusing to auto-create defaults in CI."
+                        )
                     # Empty default config file, so create and save defaults
                     logger.info(
                         "Default config file {path!r} is empty. "
@@ -459,11 +478,18 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
             raise ValueError(f"Invalid YAML in {path}: {e}") from e
         except ValidationError as e:
             raise ValueError(f"Invalid config data in {path}:\\n{e}") from e
+        except FileNotFoundError:
+            raise
         except Exception as e:
             raise OSError(f"Error loading config from {path}: {e}") from e
     else:
         # File does not exist
         if path == DEFAULT_CONFIG_PATH:
+            if _running_in_ci():
+                raise FileNotFoundError(
+                    f"Config file not found: {path}. "
+                    "Refusing to auto-create defaults in CI."
+                )
             # Default config file does not exist, so create and save defaults
             try:
                 logger.info(

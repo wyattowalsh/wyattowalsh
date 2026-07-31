@@ -173,7 +173,7 @@ CI secrets (GitHub Actions only — not needed locally):
 | `ImportError: No module named 'wordcloud'` | word-clouds extras not installed | `uv sync --locked --extra word-clouds` (or `--locked --all-extras`) |
 | `ImportError: No module named 'mealpy'` / `scipy` / `matplotlib` | science extras not installed | `uv sync --locked --extra science` (pulled by `word-clouds`; or `--locked --all-extras` for living-art CI) |
 | `ValidationError` from `WordCloudSettings` | Extra keys on strict model | Remove unknown fields — `extra="forbid"` in `WordCloudSettings` (`word_clouds/generate.py`) |
-| `load_config()` returns defaults silently | `config.yaml` missing or empty | Auto-creates with defaults; edit the created file |
+| `load_config()` returns defaults silently | `config.yaml` missing or empty **locally** | Auto-creates with defaults; edit the created file. In CI (`CI` / `GITHUB_ACTIONS`) this fails closed instead |
 | `generate qr` Cairo error (macOS) | Cairo not in dyld path | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |
 | `generate qr` Cairo / cairocffi error (Linux CI) | System Cairo libs missing | `sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev` (plus pkg-config as needed) |
 | Dark banner missing / yellow warning only | `banner-dark.svg` generation failed after light succeeded | Re-run `uv run readme generate banner`; check `BannerConfig` / SVGO; light `banner.svg` is still valid |
