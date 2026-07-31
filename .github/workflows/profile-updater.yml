@@ -413,6 +413,9 @@ jobs:
             --from-languages-md \
             --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 
+      - name: Generate light and dark banners
+        run: uv run python -m scripts.cli generate banner --config-path config.yaml
+
       - name: Commit generated assets
         env:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
