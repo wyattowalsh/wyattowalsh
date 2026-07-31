@@ -23,10 +23,9 @@ import json
 import math
 from pathlib import Path
 
-import svgwrite
-
 from .art.shared import _hex_slice, _seed_hash, flow_field_lines, phyllotaxis_points
 from .banner import draw_clifford
+from .svg_drawing import Drawing
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -81,7 +80,7 @@ def generate_community_art(
     )
 
     bg = "#0d1117" if dark_mode else "#ffffff"
-    dwg = svgwrite.Drawing(
+    dwg = Drawing(
         filename=str(out),
         size=(f"{_WIDTH}px", f"{_HEIGHT}px"),
         profile="full",
@@ -150,7 +149,7 @@ def generate_activity_art(
     )
 
     bg = "#0d1117" if dark_mode else "#ffffff"
-    dwg = svgwrite.Drawing(
+    dwg = Drawing(
         filename=str(out),
         size=(f"{_WIDTH}px", f"{_HEIGHT}px"),
         profile="full",

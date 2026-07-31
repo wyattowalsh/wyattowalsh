@@ -6,9 +6,9 @@ This module provides functionality to create dynamic, visually rich SVG banners.
 The generation process is highly configurable through Pydantic models,
 allowing for detailed control over dimensions, color palettes, typography,
 visual effects, layout, and specific parameters for each generative pattern.
-The `svgwrite` library is used for the underlying SVG creation, while `numpy`
-and an optional `noise` module (with a fallback) assist in mathematical
-operations and Perlin noise generation.
+SVG markup is built via :mod:`scripts.svg_drawing` (string builders with an
+svgwrite-compatible Drawing API). ``numpy`` and an optional ``noise`` module
+(with a fallback) assist in mathematical operations and Perlin noise generation.
 
 Key Features:
 - Customizable banner dimensions, title, and subtitle.
@@ -39,12 +39,16 @@ import subprocess
 from typing import Any, TypeAlias
 
 import numpy as np
-import svgwrite  # type: ignore
 from pydantic import BaseModel, Field  # Field is used in Pydantic models later
-from svgwrite import filters, gradients, path, shapes  # type: ignore
-from svgwrite.container import Group  # type: ignore
-from svgwrite.drawing import Drawing  # type: ignore # Specific import
 
+from .svg_drawing import (
+    Drawing,
+    Group,
+    filters,
+    gradients,
+    path,
+    shapes,
+)
 from .utils import get_logger
 
 # Initialize logger for the module
@@ -73,7 +77,7 @@ ColorStop: TypeAlias = tuple[str, float]
 # Enumerations
 # ------------------------------------------------------------------------------
 # PatternType lives in its own lightweight module (banner_patterns.py) so
-# callers that don't need svgwrite/numpy can import it without heavy deps.
+# callers that don't need svg_drawing/numpy can import it without heavy deps.
 
 
 # ------------------------------------------------------------------------------
@@ -1710,7 +1714,7 @@ def generate_banner(
     _rng = random.Random(seed if seed is not None else cfg.seed)
 
     cfg.apply_dark_mode()
-    dwg = svgwrite.Drawing(
+    dwg = Drawing(
         filename=cfg.output_path,
         size=(f"{cfg.width}px", f"{cfg.height}px"),
         profile="full",

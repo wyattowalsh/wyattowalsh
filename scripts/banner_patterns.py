@@ -5,7 +5,7 @@ This module contains the ``PatternType`` enum, which enumerates every
 generative-art variant that the banner system knows about.  It is kept
 separate from ``banner.py`` so that lightweight callers (CLI argument
 parsers, tests, configuration validators) can import the enum without
-pulling in the heavy ``svgwrite`` / ``numpy`` dependencies that the rest
+pulling in the heavy ``svg_drawing`` / ``numpy`` dependencies that the rest
 of ``banner.py`` requires.
 
 Active members

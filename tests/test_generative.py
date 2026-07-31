@@ -43,8 +43,8 @@ def _activity_metrics(**overrides: object) -> dict:
     return base
 
 
-def _mock_drawing(mocker_target: str = "scripts.generative.svgwrite.Drawing"):
-    """Patch svgwrite.Drawing with a saveable MagicMock hierarchy."""
+def _mock_drawing(mocker_target: str = "scripts.generative.Drawing"):
+    """Patch Drawing with a saveable MagicMock hierarchy."""
     mock_dwg = MagicMock()
     mock_group = MagicMock()
     mock_dwg.g.return_value = mock_group

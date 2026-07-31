@@ -10,10 +10,8 @@ from unittest.mock import ANY, MagicMock, patch
 
 import numpy as np
 import pytest  # type: ignore
-import svgwrite  # type: ignore
-
-# Import the real svgwrite to help with mocking its structure
-import svgwrite.base  # type: ignore # Make sure BaseElement is available
+from scripts import svg_drawing
+from scripts.svg_drawing import Drawing, Element
 
 # Modules to test
 from scripts.banner import (
@@ -71,35 +69,35 @@ def custom_banner_config() -> BannerConfig:
 
 @pytest.fixture
 def mock_svgwrite_drawing(mocker: MagicMock) -> MagicMock:
-    """Mocks svgwrite.Drawing and its chained methods."""
-    mock_dwg = MagicMock(spec=svgwrite.Drawing)
+    """Mocks svg_drawing.Drawing and its chained methods."""
+    mock_dwg = MagicMock(spec=Drawing)
 
     # Mock attributes that are themselves mockable (like defs)
-    mock_dwg.defs = MagicMock(spec=svgwrite.container.Defs)
+    mock_dwg.defs = MagicMock(spec=svg_drawing.Defs)
     # Make defs.add return the first argument passed to it (the element being added)
     mock_dwg.defs.add = MagicMock(side_effect=lambda el: el)
     # .g is an attribute, not a method
-    mock_dwg.g = MagicMock(spec=svgwrite.container.Group)
+    mock_dwg.g = MagicMock(spec=svg_drawing.Group)
 
-    # Mock methods that return specific svgwrite objects
+    # Mock methods that return specific svg_drawing objects
     mock_dwg.linearGradient = MagicMock(
-        return_value=MagicMock(spec=svgwrite.gradients.LinearGradient)
+        return_value=MagicMock(spec=svg_drawing.LinearGradient)
     )
     mock_dwg.radialGradient = MagicMock(
-        return_value=MagicMock(spec=svgwrite.gradients.RadialGradient)
+        return_value=MagicMock(spec=svg_drawing.RadialGradient)
     )
     mock_dwg.clipPath = MagicMock(
-        return_value=MagicMock(spec=svgwrite.masking.ClipPath)
+        return_value=MagicMock(spec=svg_drawing.ClipPath)
     )
-    mock_dwg.rect = MagicMock(return_value=MagicMock(spec=svgwrite.shapes.Rect))
-    mock_dwg.filter = MagicMock(return_value=MagicMock(spec=svgwrite.filters.Filter))
-    mock_dwg.image = MagicMock(return_value=MagicMock(spec=svgwrite.image.Image))
-    mock_dwg.text = MagicMock(return_value=MagicMock(spec=svgwrite.text.Text))
-    mock_dwg.animate = MagicMock(return_value=MagicMock(spec=svgwrite.animate.Animate))
+    mock_dwg.rect = MagicMock(return_value=MagicMock(spec=svg_drawing.Rect))
+    mock_dwg.filter = MagicMock(return_value=MagicMock(spec=svg_drawing.Filter))
+    mock_dwg.image = MagicMock(return_value=MagicMock(spec=svg_drawing.Image))
+    mock_dwg.text = MagicMock(return_value=MagicMock(spec=svg_drawing.Text))
+    mock_dwg.animate = MagicMock(return_value=MagicMock(spec=svg_drawing.Animate))
     # For path.Path, patch separately, e.g.:
     # mocker.patch(
-    #     'svgwrite.path.Path',
-    #     return_value=MagicMock(spec=svgwrite.path.Path)
+    #     'svg_drawing.Path',
+    #     return_value=MagicMock(spec=svg_drawing.Path)
     # )
 
     # Ensure return values of factory methods also have their relevant methods mocked
@@ -132,7 +130,7 @@ def mock_svgwrite_drawing(mocker: MagicMock) -> MagicMock:
 
     # For feRadialGradient when it's a filter element (rare, usually a def)
     # spec corrected for feRadialGradient's return mock
-    fe_radial_gradient_element_mock = MagicMock(spec=svgwrite.base.BaseElement)
+    fe_radial_gradient_element_mock = MagicMock(spec=Element)
     fe_radial_gradient_element_mock.add_stop_color = MagicMock()
     filter_return_mock.feRadialGradient = MagicMock(
         return_value=fe_radial_gradient_element_mock
@@ -499,21 +497,21 @@ def test_color_palette_with_custom_primary() -> None:
 # More tests for Phase 4, 5 will follow.
 
 # ------------------------------------------------------------------------------
-# Phase 4: SVG Element Generation Function Tests (Mocking svgwrite)
+# Phase 4: SVG Element Generation Function Tests (Mocking svg_drawing)
 # ------------------------------------------------------------------------------
 
-# Import the real svgwrite to help with type hinting for mocks if needed.
+# svg_drawing provides the Drawing API surface under test.
 # The mock_svgwrite_drawing fixture should provide comprehensive mocks.
 
 
-@patch("svgwrite.shapes.Rect")  # Patch the Rect constructor directly
+@patch("scripts.banner.shapes.Rect")  # Patch the Rect constructor directly
 def test_define_background_calls(
     mock_shapes_rect_constructor: MagicMock,  # This is the mock for the Rect class
     default_banner_config: BannerConfig,
     mock_svgwrite_drawing: MagicMock,  # Use the fixture
     mocker: MagicMock,
 ) -> None:
-    """Test that define_background makes the expected svgwrite calls."""
+    """Test that define_background makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing
 
     # Configure the mock Rect constructor's return value
@@ -524,19 +522,19 @@ def test_define_background_calls(
         mock_rect_instance  # Make constructor return it
     )
 
-    # Mock other necessary svgwrite elements that are accessed as attributes or methods
+    # Mock other necessary svg_drawing elements that are accessed as attributes or methods
     # of mock_dwg_instance or its defs.
     # Ensure defs and its add method are properly mocked if not already by the fixture.
     if not hasattr(mock_dwg_instance, "defs") or not isinstance(
         mock_dwg_instance.defs, MagicMock
     ):
-        mock_dwg_instance.defs = MagicMock(spec=svgwrite.container.Defs)
+        mock_dwg_instance.defs = MagicMock(spec=svg_drawing.Defs)
 
     # Ensure defs.add returns the element passed to it for chaining or direct use
     mock_dwg_instance.defs.add = MagicMock(side_effect=lambda el: el)
 
     # Mock specific filter types if they are constructed and added
-    mock_filter_instance = MagicMock(spec=svgwrite.filters.Filter)
+    mock_filter_instance = MagicMock(spec=svg_drawing.Filter)
     mock_filter_instance.feTurbulence = MagicMock()
     mock_filter_instance.feComposite = MagicMock()
     mock_filter_instance.feColorMatrix = MagicMock()
@@ -546,9 +544,9 @@ def test_define_background_calls(
         mock_dwg_instance.linearGradient, MagicMock
     ):
         mock_dwg_instance.linearGradient = MagicMock(
-            spec=svgwrite.gradients.LinearGradient
+            spec=svg_drawing.LinearGradient
         )
-    mock_gradient_instance = MagicMock(spec=svgwrite.gradients.LinearGradient)
+    mock_gradient_instance = MagicMock(spec=svg_drawing.LinearGradient)
     mock_gradient_instance.add_stop_color = MagicMock()
     mock_dwg_instance.linearGradient.return_value = mock_gradient_instance
 
@@ -556,9 +554,9 @@ def test_define_background_calls(
         mock_dwg_instance.radialGradient, MagicMock
     ):
         mock_dwg_instance.radialGradient = MagicMock(
-            spec=svgwrite.gradients.RadialGradient
+            spec=svg_drawing.RadialGradient
         )
-    mock_vignette_gradient_instance = MagicMock(spec=svgwrite.gradients.RadialGradient)
+    mock_vignette_gradient_instance = MagicMock(spec=svg_drawing.RadialGradient)
     mock_vignette_gradient_instance.add_stop_color = MagicMock()
     mock_dwg_instance.radialGradient.return_value = mock_vignette_gradient_instance
 
@@ -567,7 +565,7 @@ def test_define_background_calls(
         mock_dwg_instance.defs.clipPath, MagicMock
     ):
         # If clipPath is a method of defs that creates and adds a clipPath element
-        mock_clip_path_obj_instance = MagicMock(spec=svgwrite.masking.ClipPath)
+        mock_clip_path_obj_instance = MagicMock(spec=svg_drawing.ClipPath)
         mock_clip_path_obj_instance.add = (
             MagicMock()
         )  # e.g. if rect is added to clip path
@@ -661,7 +659,7 @@ def test_define_background_calls(
     # For now, we assume the bg_rect is one of them and gets the clip-path.
     # A more direct way: check the calls on the *specific* mock_rect_instance for the background
 
-    # Re-think: We patch svgwrite.shapes.Rect.
+    # Re-think: We patch svg_drawing.Rect.
     # When define_background calls shapes.Rect(...), our mock_shapes_rect_constructor is called.
     # It returns mock_rect_instance.
     # So, bg_rect becomes mock_rect_instance.
@@ -803,7 +801,7 @@ def test_define_background_calls(
 def test_add_glassmorphism_effect_calls(
     default_banner_config: BannerConfig, mock_svgwrite_drawing: MagicMock
 ) -> None:  # Use fixture
-    """Test that add_glassmorphism_effect makes the expected svgwrite calls."""
+    """Test that add_glassmorphism_effect makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing  # Use fixture
 
     # Call the function under test
@@ -861,7 +859,7 @@ def test_draw_flow_patterns_calls(
     if not hasattr(mock_dwg_instance, "defs") or not isinstance(
         mock_dwg_instance.defs, MagicMock
     ):
-        mock_dwg_instance.defs = MagicMock(spec=svgwrite.container.Defs)
+        mock_dwg_instance.defs = MagicMock(spec=svg_drawing.Defs)
     mock_dwg_instance.defs.add = MagicMock(side_effect=lambda el: el)
 
     # Mock for linearGradient used for flowFieldGradient
@@ -871,10 +869,10 @@ def test_draw_flow_patterns_calls(
     mock_flow_gradient_instance.reset_mock()
     mock_flow_gradient_instance.add_stop_color = MagicMock()
 
-    mock_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_group_instance = MagicMock(spec=svg_drawing.Group)
     mock_group_instance.add = MagicMock()
 
-    mock_path_instance = MagicMock(spec=svgwrite.path.Path)
+    mock_path_instance = MagicMock(spec=svg_drawing.Path)
     mock_path_instance.__setitem__ = MagicMock()  # For filter attribute
     # Patch scripts.banner.path.Path
     path_constructor_mock = mocker.patch(
@@ -956,13 +954,13 @@ def test_draw_lorenz_calls(
     mock_svgwrite_drawing: MagicMock,
     mocker: MagicMock,
 ) -> None:
-    """Test that draw_lorenz makes the expected svgwrite calls."""
+    """Test that draw_lorenz makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing
 
     if not hasattr(mock_dwg_instance, "defs") or not isinstance(
         mock_dwg_instance.defs, MagicMock
     ):
-        mock_dwg_instance.defs = MagicMock(spec=svgwrite.container.Defs)
+        mock_dwg_instance.defs = MagicMock(spec=svg_drawing.Defs)
     mock_dwg_instance.defs.add = MagicMock(side_effect=lambda el: el)
 
     mock_gradient_return_value = mock_dwg_instance.linearGradient.return_value
@@ -972,17 +970,17 @@ def test_draw_lorenz_calls(
     if not hasattr(mock_dwg_instance, "animate") or not isinstance(
         mock_dwg_instance.animate, MagicMock
     ):
-        mock_dwg_instance.animate = MagicMock(spec=svgwrite.animate.Animate)
+        mock_dwg_instance.animate = MagicMock(spec=svg_drawing.Animate)
     mock_animate_return_value = mock_dwg_instance.animate.return_value
 
-    mock_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_group_instance = MagicMock(spec=svg_drawing.Group)
     mock_group_instance.add = MagicMock()
 
     # Create a list of mock Path instances to be returned by side_effect
     num_layers = 3
     mock_path_instances = []
     for _ in range(num_layers):
-        mp_instance = MagicMock(spec=svgwrite.path.Path)
+        mp_instance = MagicMock(spec=svg_drawing.Path)
         mp_instance.push = MagicMock()
         mp_instance.add = MagicMock()  # For animate child
         mp_instance.__setitem__ = MagicMock()  # For attribute setting
@@ -1095,17 +1093,17 @@ def test_draw_aizawa_calls(
     mock_svgwrite_drawing: MagicMock,  # Use fixture
     mocker: MagicMock,
 ) -> None:
-    """Test that draw_aizawa makes the expected svgwrite calls."""
+    """Test that draw_aizawa makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing
 
     if not hasattr(mock_dwg_instance, "defs") or not isinstance(
         mock_dwg_instance.defs, MagicMock
     ):
-        mock_dwg_instance.defs = MagicMock(spec=svgwrite.container.Defs)
+        mock_dwg_instance.defs = MagicMock(spec=svg_drawing.Defs)
     mock_dwg_instance.defs.add = MagicMock(side_effect=lambda el: el)
 
     # Mock for the LinearGradient constructor used in draw_aizawa
-    mock_aizawa_gradient_instance = MagicMock(spec=svgwrite.gradients.LinearGradient)
+    mock_aizawa_gradient_instance = MagicMock(spec=svg_drawing.LinearGradient)
     mock_aizawa_gradient_instance.add_stop_color = MagicMock()
     gradients_lg_constructor_mock = mocker.patch(
         "scripts.banner.gradients.LinearGradient",
@@ -1113,7 +1111,7 @@ def test_draw_aizawa_calls(
     )
 
     # Mock for Filter constructor and its methods
-    mock_filter_instance = MagicMock(spec=svgwrite.filters.Filter)
+    mock_filter_instance = MagicMock(spec=svg_drawing.Filter)
     mock_filter_instance.feGaussianBlur = MagicMock()
     mock_filter_instance.feColorMatrix = MagicMock()
     filters_constructor_mock = mocker.patch(
@@ -1121,16 +1119,16 @@ def test_draw_aizawa_calls(
     )
 
     # draw_aizawa uses path.Path, not dwg.circle. Removed circle mock setup.
-    # Mock svgwrite.path.Path constructor
-    mock_path_instance = MagicMock(spec=svgwrite.path.Path)
+    # Mock svg_drawing.Path constructor
+    mock_path_instance = MagicMock(spec=svg_drawing.Path)
     mock_path_instance.add = MagicMock()  # For animate if added
     path_constructor_mock = mocker.patch(
-        "svgwrite.path.Path",  # Patching the class directly
+        "scripts.banner.path.Path",  # Patching the class used by draw_aizawa
         return_value=mock_path_instance,
     )
 
     # Mock the dwg.animate method that is used by draw_aizawa
-    mock_animate_instance = MagicMock(spec=svgwrite.animate.Animate)
+    mock_animate_instance = MagicMock(spec=svg_drawing.Animate)
     mock_dwg_instance.animate = MagicMock(return_value=mock_animate_instance)
 
     # Mock the generate_aizawa utility if it's complex
@@ -1209,11 +1207,11 @@ def test_add_micro_details_calls(
     default_banner_config: BannerConfig,
     mock_svgwrite_drawing: MagicMock,
 ) -> None:
-    """Test that add_micro_details makes the expected svgwrite calls."""
+    """Test that add_micro_details makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing  # Use fixture
-    mock_dwg_instance.circle = MagicMock(spec=svgwrite.shapes.Circle)
-    mock_dwg_instance.line = MagicMock(spec=svgwrite.shapes.Line)
-    mock_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_dwg_instance.circle = MagicMock(spec=svg_drawing.Circle)
+    mock_dwg_instance.line = MagicMock(spec=svg_drawing.Line)
+    mock_group_instance = MagicMock(spec=svg_drawing.Group)
 
     import scripts.banner as _banner_mod
 
@@ -1295,9 +1293,9 @@ def test_add_octocat_calls(
     mock_svgwrite_drawing: MagicMock,  # Use fixture
     mocker: MagicMock,
 ) -> None:
-    """Test that add_octocat makes the expected svgwrite calls."""
+    """Test that add_octocat makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing  # Use fixture
-    mock_fg_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_fg_group_instance = MagicMock(spec=svg_drawing.Group)
 
     mock_isfile.return_value = True
     mock_octo_svg_content = "<svg>octocat</svg>"
@@ -1361,7 +1359,7 @@ def test_add_octocat_file_not_found(
 ) -> None:  # caplog might not be needed if explicitly mocking logger
     """Test add_octocat behavior when Octocat SVG file is not found."""
     mock_dwg_instance = mock_svgwrite_drawing  # Use fixture
-    mock_fg_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_fg_group_instance = MagicMock(spec=svg_drawing.Group)
 
     mock_isfile.return_value = False
 
@@ -1383,9 +1381,9 @@ def test_add_title_and_subtitle_calls(
     mock_svgwrite_drawing: MagicMock,  # Use fixture
     mocker: MagicMock,
 ) -> None:
-    """Test that add_title_and_subtitle makes the expected svgwrite calls."""
+    """Test that add_title_and_subtitle makes the expected svg_drawing calls."""
     mock_dwg_instance = mock_svgwrite_drawing  # Use fixture
-    mock_fg_group_instance = MagicMock(spec=svgwrite.container.Group)
+    mock_fg_group_instance = MagicMock(spec=svg_drawing.Group)
 
     cfg = default_banner_config
     add_title_and_subtitle(cfg, mock_fg_group_instance, mock_dwg_instance)
@@ -1429,7 +1427,7 @@ def test_add_title_and_subtitle_calls(
     # For this to work reliably, dwg.text needs to return a *new* MagicMock each time it's called,
     # or the test needs to iterate through text_calls[i].return_value if that's how it's set up.
     # The mock_svgwrite_drawing fixture has:
-    # mock_dwg.text = MagicMock(return_value=MagicMock(spec=svgwrite.text.Text))
+    # mock_dwg.text = MagicMock(return_value=MagicMock(spec=svg_drawing.Text))
     # This means it returns the *same* MagicMock instance for `return_value` always.
     # We need to assert calls on *that specific mock object*.
     mock_text_element_instance = mock_dwg_instance.text.return_value
