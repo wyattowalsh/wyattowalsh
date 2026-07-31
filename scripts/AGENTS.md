@@ -8,6 +8,7 @@
 |------|-------|---------------|-------------|
 | `_github_http.py` | 39 | Shared GitHub API HTTP helpers (no heavy deps) | `_headers()`, `_graphql()` |
 | `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `NoiseHandler`, `ColorPalette` |
+| `svg_drawing.py` | ~430 | svgwrite-compatible SVG string builders (Drawing/Path/Filter/…) | `Drawing`, `Group`, `Path`, `shapes`, `path`, `filters`, `gradients` |
 | `banner_patterns.py` | 46 | `PatternType` enum extracted from `banner.py` (zero heavy deps) | `PatternType` |
 | `cli/` | — | Typer CLI package (see submodules below) | `app`, `DEFAULT_CONFIG_PATH` |
 | `cli/__init__.py` | 9 | Package init; re-exports `app` and `DEFAULT_CONFIG_PATH` | `app`, `DEFAULT_CONFIG_PATH` |
@@ -17,7 +18,7 @@
 | `cli/_display.py` | 55 | Shared display helpers: `OutputFormat` enum, `display_config()` | `OutputFormat`, `display_config()` |
 | `cli/config_cmd.py` | 165 | Config subcommands: `view`, `save`, `generate-default` | `config_app` |
 | `cli/settings_cmd.py` | 45 | `show-settings` command | `show_settings()` |
-| `cli/generate.py` | 1334 | Generate subcommands: `banner`, `qr`, `word-cloud`, `skills`, `generative`, `animated`, `readme-sections`, `all` | `generate_app` |
+| `cli/generate/` | — | Generate subcommands package split by domain (`banner`, `qr`, `word_cloud`, `art`, `readme_cmd`, `all_cmd`) | `generate_app` |
 | `cli/dev.py` | 185 | Dev tools (replaces Makefile): `install`, `format`, `lint`, `test`, `clean`, `docs`, `update-deps` | `dev_app` |
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
 | `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
@@ -29,6 +30,7 @@
 | `readme_svg.py` | 1740 | Reusable SVG rendering helpers for README components (cards, charts, blocks); dark via `@media` tokens | `SvgCard`, `SvgBlock`, `SvgBlockRenderer`, `SvgRepoCardRenderer`, `SvgBlogCardRenderer`, `SvgConnectCardRenderer`, `ReadmeSvgAssetBuilder`, `SvgAssetWriter` |
 | `spotify_auth.py` | ~220 | Spotify loopback authorization-code helper for minting refresh tokens | `build_spotify_authorize_url()`, `exchange_spotify_authorization_code()`, `mint_spotify_refresh_token()` |
 | `skills.py` | 153 | shields.io badge HTML generator from `SkillsSettings`; injects between README comment markers | `SkillsBadgeGenerator` |
+| `wakatime_readme.py` | — | First-party WakaTime README section collector/generator (artifact + marker apply) | `generate_waka_section()`, `apply_waka_section()`, `main()` |
 | `techs.py` | 315 | Parse techs.md proficiency data | `Technology`, `load_technologies()`, `parse_technology_line()`, `display_technologies()` |
 | `utils.py` | 172 | Loguru + Rich setup | `get_logger()`, `create_progress()`, `console` |
 | `word_clouds/` | — | Word cloud subpackage — generation pipeline + SVG renderers | — |
@@ -42,7 +44,11 @@
 | `word_clouds/typographic.py` | 93 | Editorial baseline-grid layout | `TypographicRenderer` |
 | `word_clouds/shaped.py` | 319 | Shape-constrained placement | `ShapedRenderer` |
 | `word_clouds/metaheuristic.py` | 499 | 180-frame animated renderer (one frame per mealpy solver) + registry | `MetaheuristicAnimRenderer`, `RENDERERS`, `get_renderer()` |
-| `art/shared.py` | ~276 | Shared noise/color/math utilities for generative art | `Noise2D`, `oklch()`, `seed_hash()`, `compute_maturity()`, `make_radial_gradient()`, `make_linear_gradient()`, `parse_cli_args()` |
+| `art/shared/` | — | Living-art shared utilities package (see [`art/AGENTS.md`](art/AGENTS.md)); `__init__.py` re-exports the public API | `Noise2D`, `oklch()`, `seed_hash()`, `WorldState`, `compute_world_state()`, `normalize_live_metrics()`, … |
+| `art/shared/constants.py` | — | Canvas + language hue constants | `WIDTH`, `HEIGHT`, `LANG_HUES`, `MAX_REPOS` |
+| `art/shared/world_state.py` | — | Maturity + shared atmospheric model | `WorldState`, `compute_maturity()`, `compute_world_state()` |
+| `art/shared/metrics.py` | — | Live metrics/history contracts + normalization | `normalize_live_metrics()`, `validate_live_metrics_payload()` |
+| `art/shared/color.py` | — | OKLCH / contrast helpers | `oklch()`, `wcag_contrast_ratio()`, `ensure_contrast()` |
 | `art/ink_garden.py` | 2027 | Procedural botanical SVG garden — species-classified trees, leaves, blooms, insects, webs | `generate(metrics, *, seed, maturity) -> str` |
 | `art/_dev_profiles.py` | 64 | Mock GitHub profiles for local animation testing | `PROFILES` |
 | `art/animate.py` | — | Multi-frame animation driver; calls `ink_garden.generate()` per maturity step | (see module docstring) |
@@ -112,19 +118,19 @@ To add a new generator (e.g., `readme generate my-asset`):
 
 1. Add a config model in `config.py` and attach it to `ProjectConfig`.
 
-2. Add a new command function in `cli/generate.py`:
+2. Add a new command function in the matching `cli/generate/` domain module (or a new domain module imported from `cli/generate/__init__.py`):
    ```python
    @generate_app.command(name="my-asset", help="Generate my asset.")
    def my_asset(
        config_path: Annotated[Optional[Path], typer.Option("--config-path", ...)] = None,
    ) -> None:
-       from ..my_module import MyGenerator
+       from ...my_module import MyGenerator
        proj_config = _load_project_config(config_path)
        gen = MyGenerator(proj_config.my_asset_settings)
        gen.generate()
    ```
 
-3. Optionally add the call to the `all_assets()` command in `cli/generate.py`.
+3. Optionally add the call to the `all_assets()` command in `cli/generate/all_cmd.py`.
 
 To add a dev tool, add a command to `cli/dev.py`.
 

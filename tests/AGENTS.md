@@ -74,7 +74,7 @@ Key `addopts` flags decoded:
 ### `test_banner.py`
 - Fixture: `default_banner_config: BannerConfig`
 - Imports from `scripts.banner`: all generation functions + `BannerConfig`, `ColorPalette`, `NoiseHandler`, `PatternType`, `Point3DModel`
-- Pattern: patches `svgwrite.Drawing` with `MagicMock`; uses `tmp_path` for file output tests
+- Pattern: patches `scripts.svg_drawing.Drawing` with `MagicMock`; uses `tmp_path` for file output tests
 
 ### `test_qr.py`
 - Fixtures: `mock_project_root(tmp_path)` — creates `.github/assets/img/icon.svg`; `default_vcard_data: VCardDataModel`; `qr_generator: QRCodeGenerator`

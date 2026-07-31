@@ -5,7 +5,7 @@ description: Procedural botanical SVG garden whose species composition and densi
 
 ## Module
 
-`scripts/art/ink_garden.py` — ~2027 lines. Shared utilities in `scripts/art/shared.py`.
+`scripts/art/ink_garden.py` — ~2027 lines. Shared utilities in `scripts/art/shared/` (import as `scripts.art.shared`).
 
 ## What it generates
 
@@ -81,6 +81,6 @@ uv run python -m pytest tests/test_ink_garden.py -v
 
 ## Related
 
-- [Generative Art](/docs/scripts/generative-art) — Lorenz/neural/flow-field art (same `shared.py` utilities)
+- [Generative Art](/docs/scripts/generative-art) — Lorenz/neural/flow-field art (same `scripts.art.shared` utilities)
 - [Animated Art](/docs/scripts/animated-art) — CSS-animated SVGs that can use ink garden frames
 - [Topography](/docs/scripts/generative-art) — Topographic contour art (`art/topography.py`)
