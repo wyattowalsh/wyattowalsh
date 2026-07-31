@@ -294,7 +294,7 @@ jobs:
         uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
 
       - name: Install script-tools dependencies
-        run: uv sync --extra script-tools
+        run: uv sync --locked --extra script-tools
 
       - name: Update repo category by language
         env:
@@ -394,7 +394,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev
 
       - name: Install asset generation dependencies
-        run: uv sync --extra qr --extra word-clouds
+        run: uv sync --locked --extra qr --extra word-clouds
 
       - name: Generate QR Code
         run: uv run python -m scripts.cli generate qr --config-path config.yaml
@@ -859,7 +859,7 @@ jobs:
         uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --locked --all-extras
 
       - name: Install librsvg for GIF rasterization
         run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
@@ -1093,7 +1093,7 @@ jobs:
         uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
 
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --locked --all-extras
 
       - name: Generate README Sections
         run: uv run python -m scripts.cli generate readme-sections --config-path config.yaml
