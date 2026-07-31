@@ -889,20 +889,40 @@ class ReadmeSectionGenerator:
             return content
         return _TECH_STACK_TEASER_RE.sub("## Tech Stack\n\n", content, count=1)
 
+    @staticmethod
+    def _gfm_img_tag(*, src: str, alt: str, width: str | int) -> str:
+        """Build a GFM-safe lazy-loaded image with consistent attribute order."""
+        return (
+            f'<img src="{escape(src)}" alt="{escape(alt)}" '
+            f'width="{width}" loading="lazy"/>'
+        )
+
+    @staticmethod
+    def _gfm_centered_img(*, src: str, alt: str, width: str | int) -> str:
+        """Wrap a single image in a centered GFM paragraph."""
+        img = ReadmeSectionGenerator._gfm_img_tag(src=src, alt=alt, width=width)
+        return f'<p align="center">\n{img}\n</p>'
+
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
         metrics_dir = readme_path.parent / ".github" / "assets" / "img"
         body_lines = [
-            '<p align="center">',
-            '<img src=".github/assets/img/metrics.svg" '
-            'alt="GitHub metrics: contributions, languages, topics, '
-            'and community signals" width="100%" loading="lazy"/>',
-            "</p>",
+            self._gfm_centered_img(
+                src=".github/assets/img/metrics.svg",
+                alt=(
+                    "GitHub metrics: contributions, languages, topics, "
+                    "and community signals"
+                ),
+                width="100%",
+            ),
             "",
-            '<p align="center">',
-            '<img src=".github/assets/img/metrics.additional.svg" '
-            'alt="Additional metrics: featured repositories, recently starred '
-            'repositories, and stargazers" width="100%" loading="lazy"/>',
-            "</p>",
+            self._gfm_centered_img(
+                src=".github/assets/img/metrics.additional.svg",
+                alt=(
+                    "Additional metrics: featured repositories, recently starred "
+                    "repositories, and stargazers"
+                ),
+                width="100%",
+            ),
         ]
 
         valid_supplemental_assets = [
@@ -915,10 +935,11 @@ class ReadmeSectionGenerator:
                 body_lines.extend(
                     [
                         "",
-                        '<p align="center">',
-                        f'<img src=".github/assets/img/{filename}" '
-                        f'alt="{escape(alt_text)}" width="100%" loading="lazy"/>',
-                        "</p>",
+                        self._gfm_centered_img(
+                            src=f".github/assets/img/{filename}",
+                            alt=alt_text,
+                            width="100%",
+                        ),
                     ]
                 )
 
@@ -933,23 +954,29 @@ class ReadmeSectionGenerator:
         body_lines = [
             "## Word Clouds",
             "",
-            '<p align="center">',
-            '  <img src=".github/assets/img/'
-            'wordcloud_typographic_by_topics.svg" '
-            'alt="Typographic word cloud of GitHub topics with every parsed '
-            'topic term preserved" width="100%"/>',
-            "</p>",
+            self._gfm_centered_img(
+                src=".github/assets/img/wordcloud_typographic_by_topics.svg",
+                alt=(
+                    "Typographic word cloud of GitHub topics with every parsed "
+                    "topic term preserved"
+                ),
+                width="100%",
+            ),
             "",
-            '<p align="center">',
-            '  <img src=".github/assets/img/'
-            'wordcloud_typographic_by_languages.svg" '
-            'alt="Typographic word cloud of GitHub languages with every parsed '
-            'language term preserved" width="100%"/>',
-            "</p>",
+            self._gfm_centered_img(
+                src=".github/assets/img/wordcloud_typographic_by_languages.svg",
+                alt=(
+                    "Typographic word cloud of GitHub languages with every parsed "
+                    "language term preserved"
+                ),
+                width="100%",
+            ),
             "",
-            "<sub>Topic and language clouds generated from the full parsed "
-            "source lists; every term is preserved in a stable typographic "
-            "layout sized by frequency.</sub>",
+            (
+                '<p align="center"><sub>Topic and language clouds generated from '
+                "the full parsed source lists; every term is preserved in a "
+                "stable typographic layout sized by frequency.</sub></p>"
+            ),
             "",
         ]
         replacement = "\n".join(body_lines)
@@ -1896,7 +1923,7 @@ class ReadmeSectionGenerator:
                 asset_name="blog-posts",
                 block=block,
                 renderer=renderer,
-                alt_text="Latest blog posts cards",
+                alt_text="Latest blog posts",
             )
             fallback_lines.append(
                 f"- No recent posts available. [RSS feed]({feed_url_raw})"
@@ -1904,7 +1931,7 @@ class ReadmeSectionGenerator:
             lines = [
                 self._wrap_blog_post_list_markers(fallback_lines),
                 (
-                    f'<p align="center"><sub>📡 Source: '
+                    f'<p align="center"><sub>Source: '
                     f'<a href="{feed_url}">RSS feed</a></sub></p>'
                 ),
             ]
@@ -2008,15 +2035,18 @@ class ReadmeSectionGenerator:
         if card_embeds:
             imgs = []
             for url, src, label in card_embeds:
+                img = self._gfm_img_tag(
+                    src=src,
+                    alt=f"Blog post card: {label}",
+                    width=360,
+                )
                 imgs.append(
                     f'<a href="{escape(url)}" target="_blank" '
-                    'rel="noopener noreferrer">'
-                    f'<img src="{escape(src)}" width="360"'
-                    f' alt="{escape(label)}" loading="lazy"/></a>'
+                    f'rel="noopener noreferrer">{img}</a>'
                 )
             result.append('<p align="center">' + "\n".join(imgs) + "</p>")
         result.append(
-            f'<p align="center"><sub>📡 Auto-updated from '
+            f'<p align="center"><sub>Auto-updated from '
             f'<a href="{feed_url}">RSS feed</a></sub></p>'
         )
         return "\n".join(result)

@@ -840,8 +840,12 @@ class TestRendering:
         assert "<img" in html
         assert "blog-first-post.svg" in html
         assert "blog-second-post.svg" in html
+        assert 'alt="Blog post card: First Post"' in html
+        assert 'alt="Blog post card: Second Post"' in html
+        assert 'loading="lazy"' in html
         assert "<svg" not in html
         assert "Auto-updated from" in html
+        assert "📡" not in html
         assert "https://w4w.dev/feed.xml" in html
         assert 'target="_blank" rel="noopener noreferrer"' in html
 
@@ -1046,6 +1050,9 @@ class TestRendering:
         assert ".github/assets/img/metrics.svg" in rendered
         assert ".github/assets/img/metrics.additional.svg" in rendered
         assert "Metrics temporarily unavailable" not in rendered
+        assert 'alt="GitHub metrics: contributions, languages, topics, and community signals"' in rendered
+        assert 'loading="lazy"' in rendered
+        assert "<td" not in rendered
 
     def test_generate_keeps_metrics_image_table_when_only_one_asset_is_valid(
         self,
@@ -1161,7 +1168,15 @@ class TestRendering:
 
         assert ".github/assets/img/metrics-habits.svg" in rendered
         assert ".github/assets/img/metrics-activity.svg" in rendered
+        assert (
+            'alt="Supplemental metrics: coding habits and recent GitHub focus"'
+            in rendered
+        )
+        assert (
+            'alt="Supplemental metrics: recent GitHub activity feed"' in rendered
+        )
         assert "<td" not in rendered
+        assert rendered.count('loading="lazy"') >= 4
 
     def test_generate_hides_invalid_supplemental_metrics_assets(
         self,
@@ -1261,8 +1276,26 @@ class TestRendering:
         assert rendered.count('width="100%"') >= 4
         assert "wordcloud_typographic_by_topics.svg" in rendered
         assert "wordcloud_typographic_by_languages.svg" in rendered
+        assert (
+            'alt="Typographic word cloud of GitHub topics with every parsed '
+            'topic term preserved"'
+        ) in rendered
+        assert (
+            'alt="Typographic word cloud of GitHub languages with every parsed '
+            'language term preserved"'
+        ) in rendered
+        assert 'loading="lazy"' in rendered
+        topics_idx = rendered.index("wordcloud_typographic_by_topics.svg")
+        languages_idx = rendered.index("wordcloud_typographic_by_languages.svg")
+        assert 'loading="lazy"' in rendered[topics_idx : topics_idx + 220]
+        assert 'loading="lazy"' in rendered[languages_idx : languages_idx + 220]
         assert "stable typographic" in rendered
         assert "full parsed source lists" in rendered
+        assert (
+            '<p align="center"><sub>Topic and language clouds generated'
+            in rendered
+        )
+        assert "<td" not in rendered
 
     def test_generate_hides_stale_wakatime_block_until_fresh_output_exists(
         self,
