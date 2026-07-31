@@ -635,6 +635,13 @@ jobs:
           plugin_topics_sort: stars
           plugin_topics_limit: 15
           plugin_music: no
+          # Compact GitHub-native panels promoted from probe (height-safe for primary).
+          plugin_achievements: yes
+          plugin_achievements_display: compact
+          plugin_achievements_threshold: C
+          plugin_achievements_limit: 12
+          plugin_calendar: yes
+          plugin_calendar_limit: 1
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
