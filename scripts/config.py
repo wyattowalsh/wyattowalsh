@@ -4,7 +4,12 @@ import os
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+    YamlConfigSettingsSource,
+)
 
 from .utils import get_logger
 from .word_clouds.readability import LayoutReadabilitySettings
@@ -433,9 +438,49 @@ class ProjectConfig(BaseSettings):
         default_factory=ReadmeSectionsSettings
     )
 
-    # ProjectConfig is intended to be loaded from a file,
-    # not env vars directly.
-    model_config = SettingsConfigDict(extra="ignore")
+    # YAML / init only — not environment variables (see Settings for env).
+    model_config = SettingsConfigDict(
+        extra="ignore",
+        yaml_file_encoding="utf-8",
+    )
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ) -> tuple[PydanticBaseSettingsSource, ...]:
+        """Prefer init kwargs, then optional ``yaml_file``; skip env/dotenv."""
+        del env_settings, dotenv_settings, file_secret_settings
+        sources: list[PydanticBaseSettingsSource] = [init_settings]
+        yaml_file = settings_cls.model_config.get("yaml_file")
+        if yaml_file is not None:
+            sources.append(
+                YamlConfigSettingsSource(
+                    settings_cls,
+                    yaml_file=yaml_file,
+                    yaml_file_encoding=settings_cls.model_config.get(
+                        "yaml_file_encoding", "utf-8"
+                    ),
+                )
+            )
+        return tuple(sources)
+
+    @classmethod
+    def from_yaml_file(cls, path: Path) -> "ProjectConfig":
+        """Load config from *path* via :class:`YamlConfigSettingsSource`."""
+
+        class _Loaded(cls):  # type: ignore[valid-type,misc]
+            model_config = SettingsConfigDict(
+                extra="ignore",
+                yaml_file=path,
+                yaml_file_encoding="utf-8",
+            )
+
+        return _Loaded()
 
 
 # Changed default config path to ./config.yaml
@@ -448,9 +493,14 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
     Locally, a missing/empty *default* ``config.yaml`` is bootstrapped with
     defaults. In CI (``CI`` / ``GITHUB_ACTIONS``), missing or empty default
     config fails closed — no silent create.
+
+    Non-empty files are loaded through pydantic-settings
+    :class:`YamlConfigSettingsSource` (via :meth:`ProjectConfig.from_yaml_file`).
     """
     if path.exists():
         try:
+            # Empty detection must run before YamlConfigSettingsSource, which
+            # treats empty / comment-only YAML as ``{}`` (silent defaults).
             with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
 
@@ -473,7 +523,12 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
                 else:
                     # Non-default config file is empty, which is an issue
                     raise ValueError(f"YAML file is empty: {path}")
-            return ProjectConfig(**data)
+            if not isinstance(data, dict):
+                raise ValueError(
+                    f"Invalid config data in {path}: expected a mapping, "
+                    f"got {type(data).__name__}"
+                )
+            return ProjectConfig.from_yaml_file(path)
         except yaml.YAMLError as e:
             raise ValueError(f"Invalid YAML in {path}: {e}") from e
         except ValidationError as e:
