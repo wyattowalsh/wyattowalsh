@@ -150,7 +150,7 @@ CI secrets (GitHub Actions only — not needed locally):
 | ST-02 | Asset pipeline | Add SVG optimization post-processing via `scour` (~48% size reduction) or `npx svgo --multipass` |
 | ST-03 | Testing | Add `syrupy` snapshot testing with `SVGImageSnapshotExtension` for visual regression safety |
 | ST-04 | CLI | Add local preview command (`cli preview <generator>`) for faster creative iteration |
-| ST-05 | README | Add light/dark mode SVG variants using `<picture>` + `prefers-color-scheme` |
+| ST-05 | README | Cards: SVG `@media (prefers-color-scheme: dark)` (shipped). Banner keeps `<picture>`. Dual-file card `<picture>` only if media-query QA fails (F7) |
 | ST-06 | `scripts/config.py` | Switch to native `YamlConfigSettingsSource` from `pydantic-settings` |
 | ST-07 | `scripts/config.py` | Use Pydantic v2 discriminated unions for type-safe generator config dispatch |
 | ST-08 | `scripts/` | Sub-package restructure: `generators/`, `data/`, `core/` |

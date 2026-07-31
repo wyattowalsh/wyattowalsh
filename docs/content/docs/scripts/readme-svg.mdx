@@ -1,11 +1,11 @@
 ---
 title: README SVG Helpers
-description: Reusable SVG rendering and writing helpers for README dynamic sections — cards, blocks, and asset builders.
+description: Reusable SVG card/block helpers for README sections — single-file assets with embedded @media dark tokens.
 ---
 
 ## Module
 
-`scripts/readme_svg.py` — ~1330 lines. Used by `readme_sections.py` to render GitHub-style SVG cards for the README.
+`scripts/readme_svg.py` — ~1740 lines. Used by `readme_sections.py` to render GitHub-style SVG cards for the README.
 
 ## Architecture
 
@@ -67,7 +67,7 @@ Renders social/connect link cards with icon badges.
 
 ### `ReadmeSvgAssetBuilder`
 
-Orchestrates all renderers to produce the full set of README SVG assets (repos, blog, connect sections) in both light and dark themes.
+Orchestrates all renderers to produce the full set of README SVG assets (repos, blog, connect sections). Each card is a **single** SVG that embeds both light and dark tokens.
 
 ### `SvgAssetWriter`
 
@@ -88,4 +88,11 @@ writer.write_all(assets)
 
 ## Theme support
 
-Both light and dark themes are built-in. The builder generates separate SVG files for each theme, which are then referenced in the README using GitHub's `<picture>` / `<source>` media query pattern for automatic dark mode switching.
+Connect, featured, and blog cards use **SVG-internal** dark mode — not dual files:
+
+- One asset per card under `.github/assets/img/readme/` (for example `featured-card-*.svg`, `blog-*.svg`, `connect-*.svg`)
+- Light defaults live in `:root` CSS custom properties (`--card-bg`, `--shadow-filter`, `--glass-fill`, …)
+- Dark tokens override those properties inside `@media (prefers-color-scheme: dark)`
+- README embeds are plain `<img src="…/*.svg">` — **no** per-card `<picture>` / light+dark file pairs
+
+The hero **banner** is different: it still uses dual files (`banner.svg` / `banner-dark.svg`) with a README `<picture>` switch. Dual-file `<picture>` cards are reserved as an optional F7 fallback only if media-query contrast fails visual QA.

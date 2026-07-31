@@ -419,9 +419,7 @@ C++                      1 repo              ░░░░░░░░░░░�
 </details>
 
 <p align="center">
-  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation left" width="170" loading="lazy"/>
-  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200"/>
-  <img src=".github/assets/img/gh.gif" alt="Octocat coding animation right" width="170" loading="lazy"/>
+  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>
 </p>
 
 ---

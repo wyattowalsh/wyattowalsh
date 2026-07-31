@@ -5,7 +5,7 @@ description: Assembles all dynamic README sections using marker blocks and SVG c
 
 ## Module
 
-`scripts/readme_sections.py` — ~1548 lines.
+`scripts/readme_sections.py` — ~2495 lines.
 
 `ReadmeSectionGenerator` is the main class. It reads `config.yaml` from the `readme_sections_settings` key, fetches data, and writes sections back into `README.md` between HTML comment markers.
 
@@ -38,7 +38,7 @@ readme_sections_settings:
 
 | Variant | Description |
 |---|---|
-| `gh-card` | GitHub-style card via gh-readme-stats |
+| `gh-card` | GitHub-style card SVG with chrome + `@media` dark tokens |
 | `legacy` | Custom SVG card renderer |
 
 ## Social links
