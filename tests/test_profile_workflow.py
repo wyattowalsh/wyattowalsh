@@ -4,11 +4,27 @@ import re
 from pathlib import Path
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
+README_PATH = Path("README.md")
 BANNER_LIGHT = Path(".github/assets/img/banner.svg")
 BANNER_DARK = Path(".github/assets/img/banner-dark.svg")
 
 LOWLIGHTER_METRICS_PIN = (
     "lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6"
+)
+
+GENERATOR_JOBS = (
+    "update-starred-lists",
+    "generate-assets",
+    "generate-event-art",
+    "generate-profile-metrics",
+)
+
+FINALIZE_NEEDS = (
+    "update-starred-lists",
+    "generate-assets",
+    "generate-event-art",
+    "generate-profile-metrics",
+    "update-readme-wakatime",
 )
 
 
@@ -113,13 +129,82 @@ def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
     assert "uv sync --locked --extra script-tools" in workflow
 
 
-def test_update_skills_needs_generate_assets_fail_closed() -> None:
+def test_finalize_needs_generators_and_waka_fail_closed() -> None:
     workflow = _workflow_text()
-    skills_block = _job_block(workflow, "update-skills")
+    finalize = _job_block(workflow, "finalize")
 
-    assert "- generate-assets" in skills_block
-    assert "needs.generate-assets.result == 'success'" in skills_block
-    assert "needs.update-starred-lists.result == 'success'" in workflow
+    for dep in FINALIZE_NEEDS:
+        assert f"- {dep}" in finalize
+        assert f"needs.{dep}.result == 'success'" in finalize
+
+    assert "needs.update-starred-lists.result == 'success'" in finalize
+    assert "generate readme-sections --config-path config.yaml" in finalize
+    assert "generate skills --skills-path skills.yaml" in finalize
+
+
+def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
+    """Only the finalize job performs first-party git commit/push."""
+    workflow = _workflow_text()
+    real_jobs = (
+        "probe-full-metrics",
+        *GENERATOR_JOBS,
+        "update-readme-wakatime",
+        "finalize",
+    )
+    for job_id in real_jobs:
+        block = _job_block(workflow, job_id)
+        if job_id == "finalize":
+            assert "git commit" in block
+            assert "git push" in block
+            assert "contents: write" in block
+        else:
+            assert "git commit" not in block, f"{job_id} must not git commit"
+            assert "git push" not in block, f"{job_id} must not git push"
+
+    # Until F9, third-party Waka may still write via GH_TOKEN, but not via
+    # first-party git commit/push steps in this workflow file.
+    waka = _job_block(workflow, "update-readme-wakatime")
+    assert "anmol098/waka-readme-stats@" in waka
+    assert "git commit" not in waka
+    assert "git push" not in waka
+
+    assert workflow.count("git push") == 1
+    assert "update-skills:" not in workflow
+
+
+def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
+    workflow = _workflow_text()
+
+    starred = _job_block(workflow, "update-starred-lists")
+    assert "starred-lists-${{ github.run_id }}" in starred
+    assert "upload-artifact@" in starred
+    assert "contents: read" in starred
+
+    assets = _job_block(workflow, "generate-assets")
+    assert "profile-assets-${{ github.run_id }}" in assets
+    assert "download-artifact@" in assets
+    assert "upload-artifact@" in assets
+    assert "contents: read" in assets
+
+    art = _job_block(workflow, "generate-event-art")
+    assert "living-art-stage-${{ github.run_id }}" in art
+    assert "upload-artifact@" in art
+    assert "contents: read" in art
+
+    metrics = _job_block(workflow, "generate-profile-metrics")
+    assert "profile-metrics-${{ github.run_id }}" in metrics
+    assert "upload-artifact@" in metrics
+    assert "contents: read" in metrics
+
+    finalize = _job_block(workflow, "finalize")
+    for artifact in (
+        "starred-lists-${{ github.run_id }}",
+        "profile-assets-${{ github.run_id }}",
+        "living-art-stage-${{ github.run_id }}",
+        "profile-metrics-${{ github.run_id }}",
+    ):
+        assert artifact in finalize
+    assert finalize.count("download-artifact@") >= 4
 
 
 def test_metrics_probe_and_prod_share_lowlighter_pin_without_felipecrs() -> None:
@@ -181,9 +266,10 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_habits: no" in extra
 
 
-def test_metrics_extra_svg_has_validate_recover_and_commit_paths() -> None:
+def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
     workflow = _workflow_text()
     prod = _job_block(workflow, "generate-profile-metrics")
+    finalize = _job_block(workflow, "finalize")
 
     assert "metrics-backups/metrics.extra.svg" in prod
     assert (
@@ -194,5 +280,53 @@ def test_metrics_extra_svg_has_validate_recover_and_commit_paths() -> None:
         "uv run python -m scripts.metrics_svg recover \\\n"
         "            ./.github/assets/img/metrics.extra.svg \\"
     ) in prod
-    assert "./.github/assets/img/metrics.extra.svg" in prod
+    assert ".github/assets/img/metrics.extra.svg" in prod
+    assert "./.github/assets/img/metrics.extra.svg" in finalize
+    assert 'chore(metrics): update generated metrics assets' in finalize
     assert Path(".github/assets/img/metrics.extra.svg").is_file()
+
+
+def test_readme_beautify_invariants_hold_with_finalize_pipeline() -> None:
+    """Wave R wrap-flow README invariants remain intact under finalize serialization."""
+    finalize = _job_block(_workflow_text(), "finalize")
+    assert "generate readme-sections --config-path config.yaml" in finalize
+    assert "generate skills --skills-path skills.yaml" in finalize
+    assert "chore(readme): update dynamic sections and skills badges" in finalize
+
+    readme = README_PATH.read_text(encoding="utf-8")
+    living_match = re.search(
+        r"(?ms)^## Living Art\n.*?(?=^## Tech Stack\n)",
+        readme,
+    )
+    assert living_match is not None, "Living Art section missing before Tech Stack"
+    living = living_match.group(0)
+
+    assert living.count('<p align="center">') == 1
+    assert living.count('width="360"') == 6
+    assert living.count('loading="lazy"') == 6
+    assert "<table" not in living.lower()
+    assert "<details" not in living.lower()
+    assert "display: grid" not in living.lower()
+
+    tech_match = re.search(r"(?ms)^## Tech Stack\n.*?(?=^## Metrics\n)", readme)
+    assert tech_match is not None
+    tech = tech_match.group(0)
+    assert "<!-- SKILLS:START -->" in tech
+    for teaser in ("AI/ML", "Full-Stack", "Data Engineering", "Open Source"):
+        assert f'alt="{teaser}"' not in tech
+
+    headings = (
+        "## Featured Projects",
+        "## Living Art",
+        "## Tech Stack",
+        "## Metrics",
+        "## Word Clouds",
+    )
+    positions = [readme.index(heading) for heading in headings]
+    assert positions == sorted(positions)
+
+    banner_idx = readme.index('alt="Banner"')
+    badges_start = readme.index("<!-- README:TOP_BADGES:START -->")
+    featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
+    living_start = readme.index("## Living Art")
+    assert banner_idx < badges_start < featured_start < living_start
