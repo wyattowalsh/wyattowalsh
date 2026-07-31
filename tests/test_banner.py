@@ -157,7 +157,7 @@ def test_banner_config_default_instantiation(
     assert default_banner_config.width == 1600  # Default value
     assert default_banner_config.height == 480  # Default value
     assert default_banner_config.title == "Hey, GitHub! 👋"
-    assert default_banner_config.output_path == "./assets/img/banner.svg"
+    assert default_banner_config.output_path == ".github/assets/img/banner.svg"
     assert default_banner_config.optimize_with_svgo is True  # Default
 
 

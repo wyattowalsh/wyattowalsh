@@ -132,15 +132,16 @@ To add a dev tool, add a command to `cli/dev.py`.
 Entry: `uv run readme generate banner` → `cli/generate.py:banner()` → `generate_banner(BannerConfig)`
 
 **Key classes:**
-- `BannerConfig` — top-level config aggregating `ColorPalette`, `Typography`, `VisualEffects`, plus `title`, `subtitle`, `width` (1200), `height` (630), `output_path`, `optimize_with_svgo`
-- `PatternType` enum — **active:** `LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`, `CLIFFORD` · **dead (no draw fn):** `REACTION`, `FLAME`, `PDJ`, `IKEDA`
+- `BannerConfig` — top-level config aggregating `ColorPalette`, `Typography`, `VisualEffects`, plus `title`, `subtitle`, `width`, `height`, `output_path`, `optimize_with_svgo`, `seed`
+- `BannerSettings.to_banner_config()` / `BannerConfig.from_banner_settings()` — YAML→runtime adapter
+- `PatternType` enum — **active:** `LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`, `CLIFFORD`
 - `NoiseHandler` — lazy Perlin noise; auto-falls-back to trig if `noise` package absent
 - `ColorPalette` — primary/secondary/accent/dark-mode palette generation
 
 **Generation sequence:**
 `define_background()` → `add_glassmorphism_effect()` → `draw_lorenz()` → `draw_aizawa()` → `draw_flow_patterns()` → `draw_neural_network()` → `add_micro_details()` → `add_octocat()` → `add_title_and_subtitle()` → optional `optimize_with_svgo()` (requires `svgo` binary)
 
-⚠️ `BannerConfig.output_path` defaults to `"./assets/img/banner.svg"` — always override via `config.yaml` to `.github/assets/img/banner.svg`.
+`BannerConfig.output_path` defaults to `.github/assets/img/banner.svg` (aligned with `BannerSettings`).
 
 ## QR Code (`qr.py`)
 

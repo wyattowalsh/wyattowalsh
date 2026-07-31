@@ -280,7 +280,7 @@ def banner(
     proj_config = _load_project_config(config_path)
 
     try:
-        from ..banner import BannerConfig, generate_banner
+        from ..banner import generate_banner
     except ImportError:
         logger.error(
             "Banner dependencies/script components are missing. "
@@ -290,31 +290,21 @@ def banner(
         console.print("[bold red]Error:[/bold red] Banner components missing.")
         raise typer.Exit(code=1)
 
-    cfg_banner_settings_defaults = ConfigBannerSettings()
-    banner_data = cfg_banner_settings_defaults.model_dump()
-
-    if proj_config.banner_settings:
-        banner_data.update(proj_config.banner_settings.model_dump(exclude_unset=True))
-
-    if output_path:
-        banner_data["output_path"] = str(output_path)
-    if title is not None:
-        banner_data["title"] = title
-    if subtitle is not None:
-        banner_data["subtitle"] = subtitle
-    if width is not None:
-        banner_data["width"] = width
-    if height is not None:
-        banner_data["height"] = height
-    if optimize_banner is not None:
-        banner_data["optimize_with_svgo"] = optimize_banner
-    if seed is not None:
-        banner_data["seed"] = seed
+    banner_settings = proj_config.banner_settings or ConfigBannerSettings()
+    cli_overrides = {
+        "output_path": str(output_path) if output_path else None,
+        "title": title,
+        "subtitle": subtitle,
+        "width": width,
+        "height": height,
+        "optimize_with_svgo": optimize_banner,
+        "seed": seed,
+    }
 
     from pydantic import ValidationError  # lazy import
 
     try:
-        final_banner_config = BannerConfig(**banner_data)
+        final_banner_config = banner_settings.to_banner_config(**cli_overrides)
         logger.info(
             "Generating banner with config: "
             f"{final_banner_config.model_dump_json(indent=2)}"
@@ -325,13 +315,15 @@ def banner(
         )
         # Generate dark variant — failure does not affect the primary banner
         try:
-            dark_banner_data = banner_data.copy()
-            dark_banner_data["dark_mode"] = True
             dark_output = Path(final_banner_config.output_path)
-            dark_banner_data["output_path"] = str(
-                dark_output.parent / f"{dark_output.stem}-dark{dark_output.suffix}"
+            dark_banner_config = banner_settings.to_banner_config(
+                **cli_overrides,
+                dark_mode=True,
+                output_path=str(
+                    dark_output.parent
+                    / f"{dark_output.stem}-dark{dark_output.suffix}"
+                ),
             )
-            dark_banner_config = BannerConfig(**dark_banner_data)
             generate_banner(cfg=dark_banner_config)
             console.print(
                 "[bold green]Dark SVG banner generated: "

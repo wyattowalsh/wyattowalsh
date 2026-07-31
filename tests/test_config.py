@@ -62,6 +62,35 @@ class TestProjectConfigDefaults:
         assert cfg.banner_settings.height == 400
         assert cfg.banner_settings.optimize_with_svgo is False
         assert cfg.banner_settings.seed == 0
+        assert cfg.banner_settings.output_path == ".github/assets/img/banner.svg"
+
+    def test_banner_settings_to_banner_config_adapter(self):
+        from scripts.banner import BannerConfig
+
+        settings = BannerSettings(
+            title="Adapted",
+            subtitle="Via adapter",
+            width=900,
+            height=400,
+            seed=7,
+        )
+        cfg = settings.to_banner_config()
+        assert isinstance(cfg, BannerConfig)
+        assert cfg.title == "Adapted"
+        assert cfg.subtitle == "Via adapter"
+        assert cfg.width == 900
+        assert cfg.height == 400
+        assert cfg.seed == 7
+        assert cfg.output_path == ".github/assets/img/banner.svg"
+
+        overridden = settings.to_banner_config(title="CLI Title", seed=99)
+        assert overridden.title == "CLI Title"
+        assert overridden.seed == 99
+        assert overridden.subtitle == "Via adapter"
+
+        via_classmethod = BannerConfig.from_banner_settings(settings, dark_mode=True)
+        assert via_classmethod.dark_mode is True
+        assert via_classmethod.title == "Adapted"
 
     def test_nested_word_cloud_layout_readability(self):
         cfg = ProjectConfig(

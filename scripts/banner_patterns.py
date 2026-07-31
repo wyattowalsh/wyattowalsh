@@ -8,19 +8,11 @@ parsers, tests, configuration validators) can import the enum without
 pulling in the heavy ``svgwrite`` / ``numpy`` dependencies that the rest
 of ``banner.py`` requires.
 
-Dead variants
--------------
-The following enum members are defined for forward-compatibility or
-historical reasons but have **no corresponding draw call** in
-``generate_banner()`` and are not reachable via the CLI:
-
-* ``REACTION``
-* ``FLAME``
-* ``PDJ``
-* ``IKEDA``
-
-``CLIFFORD`` is **active** — ``draw_clifford()`` in ``banner.py`` is
-called by ``generative.py``.
+Active members
+--------------
+* ``LORENZ`` / ``NEURAL`` / ``FLOW`` / ``MICRO`` / ``AIZAWA`` — used by
+  ``generate_banner()`` in ``banner.py``
+* ``CLIFFORD`` — ``draw_clifford()`` is called by ``generative.py``
 """
 
 from __future__ import annotations
@@ -39,9 +31,4 @@ class PatternType(enum.Enum):
     FLOW = "flow"
     MICRO = "micro"
     AIZAWA = "aizawa"
-    # Dead variants — no draw function implemented; CLI dispatch will skip these
-    REACTION = "reaction"  # Note: REACTION is defined but not used
-    CLIFFORD = "clifford"  # Active: draw_clifford() used by generative.py
-    FLAME = "flame"  # Note: FLAME is defined but not used
-    PDJ = "pdj"  # Note: PDJ is defined but not used
-    IKEDA = "ikeda"  # Note: IKEDA is defined but not used
+    CLIFFORD = "clifford"

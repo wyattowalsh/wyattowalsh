@@ -520,12 +520,30 @@ class BannerConfig(BaseModel):
 
     make_responsive: bool = True  # Changed to True
     optimize_with_svgo: bool = True
-    output_path: str = "./assets/img/banner.svg"
+    output_path: str = ".github/assets/img/banner.svg"
     dark_mode: bool = False
     seed: int | None = Field(
-        default=None,
+        default=0,
         description="Random seed for deterministic output",
     )
+
+    @classmethod
+    def from_banner_settings(
+        cls,
+        settings: "BannerSettings | None" = None,
+        **overrides: object,
+    ) -> "BannerConfig":
+        """Build a runtime ``BannerConfig`` from YAML ``BannerSettings``.
+
+        Shared fields (title, subtitle, dimensions, output path, SVGO, seed)
+        are copied from *settings*; any non-``None`` keyword overrides win.
+        Remaining ``BannerConfig`` fields keep their model defaults.
+        """
+        from .config import BannerSettings
+
+        base = (settings or BannerSettings()).model_dump()
+        base.update({k: v for k, v in overrides.items() if v is not None})
+        return cls(**base)
 
     def apply_dark_mode(self) -> None:
         """Override color palette and typography for dark mode."""

@@ -35,6 +35,11 @@ class Settings(BaseSettings):
 
 
 class BannerSettings(BaseModel):
+    """YAML-facing banner settings (``ProjectConfig.banner_settings``).
+
+    Adapt to the runtime generator model via :meth:`to_banner_config`.
+    """
+
     title: str = "Your Name"
     subtitle: str = "Software Engineer & AI Enthusiast"
     output_path: str = ".github/assets/img/banner.svg"
@@ -42,6 +47,15 @@ class BannerSettings(BaseModel):
     height: int = 630
     optimize_with_svgo: bool = True
     seed: int = 0
+
+    def to_banner_config(self, **overrides: object):
+        """Adapt these YAML settings into a runtime ``BannerConfig``.
+
+        Non-``None`` *overrides* (typically CLI flags) take precedence.
+        """
+        from .banner import BannerConfig
+
+        return BannerConfig.from_banner_settings(self, **overrides)
 
 
 class TypedUrl(BaseModel):
