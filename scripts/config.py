@@ -41,6 +41,7 @@ class BannerSettings(BaseModel):
     width: int = 1200
     height: int = 630
     optimize_with_svgo: bool = True
+    seed: int = 0
 
 
 class TypedUrl(BaseModel):

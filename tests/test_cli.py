@@ -279,6 +279,41 @@ def test_generate_banner_basic(
     banner_config_arg = first_call_kwargs["cfg"]
     assert str(banner_config_arg.output_path) == str(output_svg_path)
     assert banner_config_arg.title == "Test Banner"  # From dummy_config
+    assert banner_config_arg.seed == 0  # BannerSettings default
+
+
+@patch("scripts.banner.generate_banner")  # patch at the source module
+@patch("scripts.cli.generate.load_config")
+def test_generate_banner_cli_seed_override(
+    mock_load_config: MagicMock,
+    mock_generate_banner_func: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """Test `generate banner --seed` overrides config default."""
+    test_config_path = tmp_path / "banner_seed_cfg.yaml"
+    dummy_config = ProjectConfig(banner_settings={"title": "Seeded", "seed": 0})
+    with open(test_config_path, "w") as f:
+        yaml.dump(dummy_config.model_dump(mode="json"), f)
+    mock_load_config.return_value = dummy_config
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "banner",
+            "--config-path",
+            str(test_config_path),
+            "--output-path",
+            str(tmp_path / "seeded.svg"),
+            "--seed",
+            "42",
+        ],
+    )
+
+    assert result.exit_code == 0
+    first_call_kwargs = mock_generate_banner_func.call_args_list[0].kwargs
+    assert first_call_kwargs["cfg"].seed == 42
 
 
 @patch("scripts.banner.generate_banner")  # patch at the source module

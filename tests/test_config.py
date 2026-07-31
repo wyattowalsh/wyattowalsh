@@ -34,6 +34,7 @@ class TestProjectConfigDefaults:
         assert cfg.author_email is None
         assert cfg.version == "0.1.0"
         assert isinstance(cfg.banner_settings, BannerSettings)
+        assert cfg.banner_settings.seed == 0
         assert isinstance(cfg.v_card_data, VCardDataModel)
         assert isinstance(cfg.qr_code_settings, QRCodeSettings)
         assert isinstance(cfg.word_cloud_settings, WordCloudSettingsModel)
@@ -60,6 +61,7 @@ class TestProjectConfigDefaults:
         assert cfg.banner_settings.width == 800
         assert cfg.banner_settings.height == 400
         assert cfg.banner_settings.optimize_with_svgo is False
+        assert cfg.banner_settings.seed == 0
 
     def test_nested_word_cloud_layout_readability(self):
         cfg = ProjectConfig(

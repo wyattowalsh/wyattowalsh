@@ -265,6 +265,14 @@ def banner(
             rich_help_panel="Banner Options",
         ),
     ] = None,
+    seed: Annotated[
+        int | None,
+        typer.Option(
+            "--seed",
+            help="Random seed for deterministic banner output.",
+            rich_help_panel="Banner Options",
+        ),
+    ] = None,
 ) -> None:
     """Generate SVG profile banner with light and dark variants."""
     from ..config import BannerSettings as ConfigBannerSettings  # lazy import
@@ -300,6 +308,8 @@ def banner(
         banner_data["height"] = height
     if optimize_banner is not None:
         banner_data["optimize_with_svgo"] = optimize_banner
+    if seed is not None:
+        banner_data["seed"] = seed
 
     try:
         final_banner_config = BannerConfig(**banner_data)
