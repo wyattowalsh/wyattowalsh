@@ -76,12 +76,23 @@ def test_generated_commit_pushes_skip_generator_jobs() -> None:
     assert workflow.count("github.event.head_commit.message !=") >= 6 * 6
 
 
-def test_wakatime_action_avoids_known_bad_inputs_and_loc_chart() -> None:
+def test_wakatime_job_is_first_party_artifact_only() -> None:
+    """F9: first-party Waka generates an artifact; no anmol098 Action."""
     workflow = _workflow_text()
+    waka = _job_block(workflow, "update-readme-wakatime")
 
+    assert "anmol098/waka-readme-stats" not in workflow
+    assert "anmol098" not in workflow
+    assert "generate wakatime" in waka
+    assert "waka-readme-${{ github.run_id }}" in waka
+    assert "upload-artifact@" in waka
+    assert "contents: read" in waka
+    assert "git commit" not in waka
+    assert "git push" not in waka
+    assert "GH_TOKEN" not in waka
+    assert "SHOW_LOC_CHART" not in workflow
     assert "PULL_BRANCH_NAME" not in workflow
     assert "PUSH_BRANCH_NAME" not in workflow
-    assert 'SHOW_LOC_CHART: "False"' in workflow
 
 
 def test_generate_assets_runs_banner_step() -> None:
@@ -160,13 +171,15 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
         else:
             assert "git commit" not in block, f"{job_id} must not git commit"
             assert "git push" not in block, f"{job_id} must not git push"
+            assert "contents: write" not in block, f"{job_id} must not request write"
 
-    # Until F9, third-party Waka may still write via GH_TOKEN, but not via
-    # first-party git commit/push steps in this workflow file.
     waka = _job_block(workflow, "update-readme-wakatime")
-    assert "anmol098/waka-readme-stats@" in waka
-    assert "git commit" not in waka
-    assert "git push" not in waka
+    assert "anmol098/waka-readme-stats" not in waka
+    assert "generate wakatime" in waka
+
+    finalize = _job_block(workflow, "finalize")
+    assert "waka-readme-${{ github.run_id }}" in finalize
+    assert "scripts.wakatime_readme apply" in finalize
 
     assert workflow.count("git push") == 1
     assert "update-skills:" not in workflow
@@ -196,15 +209,21 @@ def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
     assert "upload-artifact@" in metrics
     assert "contents: read" in metrics
 
+    waka = _job_block(workflow, "update-readme-wakatime")
+    assert "waka-readme-${{ github.run_id }}" in waka
+    assert "upload-artifact@" in waka
+    assert "contents: read" in waka
+
     finalize = _job_block(workflow, "finalize")
     for artifact in (
         "starred-lists-${{ github.run_id }}",
         "profile-assets-${{ github.run_id }}",
         "living-art-stage-${{ github.run_id }}",
         "profile-metrics-${{ github.run_id }}",
+        "waka-readme-${{ github.run_id }}",
     ):
         assert artifact in finalize
-    assert finalize.count("download-artifact@") >= 4
+    assert finalize.count("download-artifact@") >= 5
 
 
 def test_metrics_probe_and_prod_share_lowlighter_pin_without_felipecrs() -> None:
@@ -286,7 +305,14 @@ def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
     assert Path(".github/assets/img/metrics.extra.svg").is_file()
 
 
-def test_readme_beautify_invariants_hold_with_finalize_pipeline() -> None:
+def test_finalize_applies_waka_before_readme_sections() -> None:
+    """Finalize must apply the Waka artifact before readme-sections/skills."""
+    finalize = _job_block(_workflow_text(), "finalize")
+    apply_idx = finalize.index("scripts.wakatime_readme apply")
+    sections_idx = finalize.index("generate readme-sections --config-path config.yaml")
+    skills_idx = finalize.index("generate skills --skills-path skills.yaml")
+    assert apply_idx < sections_idx < skills_idx
+
     """Wave R wrap-flow README invariants remain intact under finalize serialization."""
     finalize = _job_block(_workflow_text(), "finalize")
     assert "generate readme-sections --config-path config.yaml" in finalize

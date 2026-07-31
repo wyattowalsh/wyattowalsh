@@ -1615,6 +1615,102 @@ def readme_sections(
 
 
 # ---------------------------------------------------------------------------
+# wakatime — first-party WakaTime README section artifact
+# ---------------------------------------------------------------------------
+
+
+@generate_app.command(
+    name="wakatime",
+    help=(
+        "Generate first-party WakaTime README section artifact "
+        "(waka-section.md). Finalize applies markers."
+    ),
+)
+def wakatime(
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory for waka-section.md artifact.",
+            rich_help_panel="Configuration",
+        ),
+    ] = Path("."),
+    output: Annotated[
+        Path | None,
+        typer.Option(
+            "--output",
+            help="Explicit artifact path (defaults to OUTPUT_DIR/waka-section.md).",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
+    github_login: Annotated[
+        str | None,
+        typer.Option(
+            "--github-login",
+            help="Optional GitHub login for short-info enrichment.",
+            rich_help_panel="Data",
+        ),
+    ] = None,
+    no_github: Annotated[
+        bool,
+        typer.Option(
+            "--no-github",
+            help="Skip optional GitHub short-info enrichment.",
+            rich_help_panel="Data",
+        ),
+    ] = False,
+    allow_missing_key: Annotated[
+        bool,
+        typer.Option(
+            "--allow-missing-key",
+            help="Exit 0 and write skip marker when WAKATIME_API_KEY is absent.",
+            rich_help_panel="Configuration",
+        ),
+    ] = False,
+) -> None:
+    """Fetch WakaTime stats and write the README section artifact for CI."""
+    from ..wakatime_readme import (
+        DEFAULT_ARTIFACT_NAME,
+        generate_waka_section,
+        write_skip_artifact,
+        write_waka_artifact,
+    )
+
+    api_key = (os.environ.get("WAKATIME_API_KEY") or "").strip()
+    output_path = output or (output_dir / DEFAULT_ARTIFACT_NAME)
+
+    if not api_key:
+        if allow_missing_key:
+            skip_dir = output_dir if output is None else output_path.parent
+            write_skip_artifact(
+                skip_dir,
+                "WAKATIME_API_KEY missing; skipped first-party Waka generation",
+            )
+            console.print(
+                "[yellow]WAKATIME_API_KEY missing; wrote skip marker.[/]"
+            )
+            return
+        console.print(
+            "[bold red]Error:[/bold red] WAKATIME_API_KEY is required "
+            "(or pass --allow-missing-key)."
+        )
+        raise typer.Exit(code=1)
+
+    try:
+        body = generate_waka_section(
+            api_key=api_key,
+            github_login=github_login,
+            include_github=not no_github,
+        )
+        write_waka_artifact(body, output_path)
+    except (OSError, ValueError, RuntimeError) as exc:
+        console.print(f"[bold red]Error:[/bold red] WakaTime generation failed: {exc}")
+        raise typer.Exit(code=1) from exc
+
+    console.print(f"[bold green]WakaTime section artifact:[/] {output_path}")
+
+
+# ---------------------------------------------------------------------------
 # all  — run every generator in sequence
 # ---------------------------------------------------------------------------
 

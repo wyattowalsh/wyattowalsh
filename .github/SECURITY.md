@@ -73,15 +73,13 @@ third-party metrics Actions (`lowlighter/metrics` or forks such as
 
 ### `GH_TOKEN`
 
-Used by the WakaTime README stats job (`anmol098/waka-readme-stats`) to push
-generated README section updates.
-
-| Token type | Minimum scopes / permissions |
-| ---------- | ---------------------------- |
-| Fine-grained PAT | This repository only: **Contents: Read and write**, **Metadata: Read**. |
-| Classic PAT (fallback) | `public_repo` (or `repo` if the repository is private). |
-
-Do not reuse a broad org-admin or `workflow`-scoped token for `GH_TOKEN`.
+> [!NOTE]
+> **Retired for WakaTime.** The third-party `anmol098/waka-readme-stats` Action
+> was removed. Waka README updates are first-party (`scripts/wakatime_readme.py`)
+> and committed only by the workflow `finalize` job via built-in `GITHUB_TOKEN`.
+> `GH_TOKEN` is no longer required for the profile updater. If the secret still
+> exists in the repository, rotate/delete it when convenient — do not pass it
+> into any Action `with:` inputs.
 
 ### Other Actions secrets (names only)
 
@@ -90,7 +88,7 @@ them as Actions secrets; do not document or paste values here:
 
 | Secret | Purpose (high level) |
 | ------ | -------------------- |
-| `WAKATIME_API_KEY` | WakaTime API auth for coding-stats README sections |
+| `WAKATIME_API_KEY` | First-party WakaTime API auth for the README `<!--START_SECTION:waka-->` zone (`env:` on `generate wakatime` only) |
 | `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` / `SPOTIFY_REFRESH_TOKEN` | First-party repo-owned `metrics-music.svg` supplemental card only |
 | `X_API_KEY` / `X_API_KEY_SECRET` / `X_ACCESS_TOKEN` / `X_ACCESS_TOKEN_SECRET` | First-party repo-owned `metrics-posts.svg` supplemental card only |
 
@@ -101,10 +99,11 @@ is not a repository secret you create.
 
 > [!IMPORTANT]
 > **Never** pass PATs, Spotify credentials (especially refresh tokens), X OAuth
-> secrets, or other broad/long-lived secrets into third-party Actions via
-> `with:` inputs. That includes `lowlighter/metrics`, metrics forks (for example
-> `felipecrs/metrics`), music plugins (`plugin_music_token`, and similar), and
-> any other community Action that is not this repository’s own `run:` scripts.
+> secrets, WakaTime API keys, or other broad/long-lived secrets into third-party
+> Actions via `with:` inputs. That includes `lowlighter/metrics`, metrics forks
+> (for example `felipecrs/metrics`), music plugins (`plugin_music_token`, and
+> similar), retired Waka Actions such as `anmol098/waka-readme-stats`, and any
+> other community Action that is not this repository’s own `run:` scripts.
 
 Prefer **fine-grained PATs** with the minimum read/write surface documented
 above. Prefer pinning third-party Actions to full commit SHAs.
@@ -116,9 +115,9 @@ above. Prefer pinning third-party Actions to full commit SHAs.
 | `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` / `SPOTIFY_REFRESH_TOKEN` | **First-party only** | `env:` on repo-owned `run:` steps (for example `uv run … generate supplemental-metrics`) | Pass into any third-party Action `with:` (metrics music plugins, forks, etc.) |
 | `X_API_KEY` / `X_API_KEY_SECRET` / `X_ACCESS_TOKEN` / `X_ACCESS_TOKEN_SECRET` | **First-party only** | `env:` on repo-owned supplemental-metrics steps | Pass into third-party Action `with:` |
 | `METRICS_TOKEN` | Shared (narrow GitHub read) | First-party `env:` for GraphQL collectors; third-party metrics `token:` only when a read-scoped PAT is required | Grant write/admin/workflow scopes; reuse as a catch-all PAT |
-| `GH_TOKEN` | Third-party WakaTime job | `anmol098/waka-readme-stats` `with: GH_TOKEN` only (contents write for this repo) | Reuse org-admin / `workflow` tokens; pass to metrics Actions |
-| `WAKATIME_API_KEY` | Third-party WakaTime job | `anmol098/waka-readme-stats` `with: WAKATIME_API_KEY` only | Pass to metrics or unrelated Actions |
-| `GITHUB_TOKEN` | Built-in | Job `permissions` + first-party `env:` / metrics `committer_token` as needed | Substitute for Spotify/X secrets or broad PATs |
+| `WAKATIME_API_KEY` | **First-party only** | `env:` on repo-owned `generate wakatime` / `scripts.wakatime_readme` steps | Pass into any third-party Action `with:` (including retired `anmol098/waka-readme-stats`) |
+| `GH_TOKEN` | **Retired** | Not used by the profile updater | Reintroduce for third-party Waka writers; pass to metrics Actions |
+| `GITHUB_TOKEN` | Built-in | Job `permissions` + first-party `env:` / metrics `committer_token` / finalize push as needed | Substitute for Spotify/X/WakaTime secrets or broad PATs |
 
 #### Explicit: no Spotify on lowlighter metrics
 

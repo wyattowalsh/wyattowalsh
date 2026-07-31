@@ -16,6 +16,7 @@
 | Generate all assets | `uv run readme generate all` |
 | Generate skills badges | `uv run readme generate skills` |
 | Generate supplemental metrics cards | `uv run readme generate supplemental-metrics` |
+| Generate WakaTime README section | `uv run readme generate wakatime` |
 | Mint Spotify refresh token | `uv run readme auth spotify-refresh-token` |
 | Generate README sections | `uv run readme generate readme-sections` |
 | Serve docs locally (Fumadocs) | `uv run readme dev docs` |
@@ -35,7 +36,7 @@ wyattowalsh/
 │   ├── cli/             # Typer CLI package — `readme` entry point
 │   │   ├── _app.py      # Root app, --version, sub-app registration
 │   │   ├── auth.py      # Auth helpers (Spotify refresh token bootstrap)
-│   │   ├── generate.py  # Generate subcommands (banner, qr, word-cloud, …)
+│   │   ├── generate/    # Generate subcommands by domain (banner, qr, wc, …)
 │   │   ├── config_cmd.py # Config subcommands (view, save, generate-default)
 │   │   ├── settings_cmd.py # show-settings command
 │   │   └── dev.py       # Dev tools (format, lint, test, clean, docs)
@@ -57,6 +58,7 @@ wyattowalsh/
 │   ├── readme_sections.py # README dynamic section assembler
 │   ├── readme_svg.py    # SVG rendering helpers for README components
 │   ├── supplemental_metrics.py # Repo-owned supplemental metrics cards
+│   ├── wakatime_readme.py # First-party WakaTime README section collector/generator
 │   ├── spotify_auth.py  # Spotify loopback auth-code helper
 │   ├── skills.py        # shields.io badge generator from skills.yaml
 │   ├── generative.py    # Static generative art (Clifford/Phyllotaxis)
@@ -64,8 +66,8 @@ wyattowalsh/
 │   ├── fetch_history.py # GitHub commit history collector
 │   ├── _github_http.py  # Shared GitHub API HTTP helpers
 │   ├── techs.py         # Parse techs.md → Technology objects
-│   └── art/             # Generative / living-art subpackage
-│       ├── shared.py    # Noise, color, math utilities
+│   └── art/             # Generative / living-art subpackage (→ scripts/art/AGENTS.md)
+│       ├── shared/      # Focused shared utils (compat re-export package)
 │       ├── ink_garden.py # Procedural botanical SVG garden
 │       ├── topography.py # Topographic contour art
 │       ├── timelapse.py # Living-art style registry + GIF driver
@@ -84,14 +86,14 @@ wyattowalsh/
 
 **Asset pipeline** (CI: `.github/workflows/profile-updater.yml` — daily 1AM UTC, push to `main`/`master`/`dev`, manual dispatch):
 
-Jobs (not a single linear script; each job commits its own owned files). Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
+Jobs upload artifacts; a single **`finalize`** job is the sole first-party git writer. Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
 
-1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → commits `.github/assets/languages.md` + `.github/assets/topics.md`
-2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` (word-clouds pulls `science`: mealpy/scipy/matplotlib) → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs. **Intended CI (C1a):** also run `uv run python -m scripts.cli generate banner --config-path config.yaml` so light+dark banners are produced in-job (today that step is still local-only / pending wire-up).
-3. **`generate-event-art`** (needs starred) — `uv sync --locked --all-extras` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → commits living-art GIFs/manifest/preview (+ docs showcase mirrors)
-4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (`metrics.svg` / `metrics.additional.svg` / `metrics.extra.svg`, + validation/recovery) → repo-owned supplemental metrics cards (habits/activity/music/posts; never Spotify on lowlighter `with:`)
-5. **`update-readme-wakatime`** (needs event-art) — WakaTime README block
-6. **`update-skills`** (needs wakatime + metrics) — `uv sync --locked` → `generate readme-sections` → `generate skills` → commits `README.md` + `.github/assets/img/readme/*.svg`
+1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → artifact `languages.md` + `topics.md`
+2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` / typographic word clouds / `generate banner` → artifact `qr*.png`, `wordcloud_*.svg`, `banner*.svg`
+3. **`generate-event-art`** (needs starred) — `uv sync --locked --all-extras` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → living-art staging artifact
+4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery) → repo-owned supplemental metrics cards (habits/activity/music/posts; never Spotify on lowlighter `with:`) → metrics artifact
+5. **`update-readme-wakatime`** — first-party `generate wakatime` (no `anmol098/waka-readme-stats`) → `waka-readme` artifact (`waka-section.md`); `contents: read` only
+6. **`finalize`** (needs assets ∥ art ∥ metrics ∥ waka) — download artifacts → apply Waka markers → `generate readme-sections` → `generate skills` → ordered commits + one push
 
 Optional manual lane: **`probe-full-metrics`** (workflow_dispatch `metrics_probe_mode=true` only) — same lowlighter pin as prod; probe-only habits/activity diagnostics; `plugin_music: no`; does not update the profile.
 
@@ -130,7 +132,7 @@ cfg = load_config()  # auto-creates defaults if missing
 | `DEBUG_MODE` | No (default: `false`) | Verbose debug output |
 
 CI secrets (GitHub Actions only — not needed locally):
-`WAKATIME_API_KEY` · `GH_TOKEN` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `X_API_KEY` · `X_API_KEY_SECRET` · `X_ACCESS_TOKEN` · `X_ACCESS_TOKEN_SECRET`
+`WAKATIME_API_KEY` · `METRICS_TOKEN` · `SPOTIFY_CLIENT_ID` · `SPOTIFY_CLIENT_SECRET` · `SPOTIFY_REFRESH_TOKEN` · `X_API_KEY` · `X_API_KEY_SECRET` · `X_ACCESS_TOKEN` · `X_ACCESS_TOKEN_SECRET`
 
 ## Known Issues
 
@@ -146,7 +148,7 @@ CI secrets (GitHub Actions only — not needed locally):
 
 | ID | Area | Description |
 |----|------|-------------|
-| ST-01 | `scripts/banner.py`, `scripts/readme_svg.py` | Plan migration from `svgwrite` (UNMAINTAINED) to `svg.py` (type-safe, actively maintained) |
+| ST-01 | `scripts/banner.py`, `scripts/readme_svg.py` | **Closed** — banner/generative use `scripts/svg_drawing.py` string builders (svgwrite removed); readme_svg already string-based | — |
 | ST-02 | Asset pipeline | Add SVG optimization post-processing via `scour` (~48% size reduction) or `npx svgo --multipass` |
 | ST-03 | Testing | Add `syrupy` snapshot testing with `SVGImageSnapshotExtension` for visual regression safety |
 | ST-04 | CLI | Add local preview command (`cli preview <generator>`) for faster creative iteration |
