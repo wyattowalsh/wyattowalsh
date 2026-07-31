@@ -1,5 +1,6 @@
 """Workflow contract tests for the profile updater."""
 
+import re
 from pathlib import Path
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
@@ -77,10 +78,12 @@ def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
 
 def test_update_skills_needs_generate_assets_fail_closed() -> None:
     workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
-
-    skills_idx = workflow.index("  update-skills:")
-    next_job = workflow.find("\n  ", skills_idx + 1)
-    skills_block = workflow[skills_idx : next_job if next_job != -1 else None]
+    match = re.search(
+        r"(?ms)^  update-skills:\n.*?(?=^  [a-z][a-z0-9-]*:\n|\Z)",
+        workflow,
+    )
+    assert match is not None, "update-skills job not found"
+    skills_block = match.group(0)
 
     assert "- generate-assets" in skills_block
     assert "needs.generate-assets.result == 'success'" in skills_block
