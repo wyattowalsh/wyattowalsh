@@ -158,8 +158,6 @@ jobs:
           plugin_stars_limit: 3
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
-          plugin_reactions: yes
-          plugin_followup: yes
           plugin_tweets: no
 
       - name: Collect full additional metrics output
@@ -169,6 +167,32 @@ jobs:
           set -euo pipefail
           cp /metrics_renders/.github/assets/img/metrics.probe.additional.svg ./.github/assets/img/metrics.probe.additional.svg
 
+      - name: Probe full extra metrics
+        id: probe_extra
+        continue-on-error: true
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        with:
+          output_action: none
+          filename: .github/assets/img/metrics.probe.extra.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          base: ""
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+          plugin_music: no
+          plugin_reactions: yes
+          plugin_reactions_limit: 100
+          plugin_reactions_display: relative
+          plugin_followup: yes
+          plugin_followup_sections: repositories
+
+      - name: Collect full extra metrics output
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cp /metrics_renders/.github/assets/img/metrics.probe.extra.svg ./.github/assets/img/metrics.probe.extra.svg
+
       - name: Validate probe outputs
         id: validate_probe_outputs
         if: ${{ always() }}
@@ -177,6 +201,7 @@ jobs:
           set -euo pipefail
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.probe.primary.svg
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.probe.additional.svg
+          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.probe.extra.svg
 
       - name: Summarize probe output markers
         if: ${{ always() }}
@@ -225,6 +250,9 @@ jobs:
             "Featured repositories" \
             "Recently starred repositories" \
             "Stargazers" \
+            "Unexpected error"
+
+          summarize_markers ./.github/assets/img/metrics.probe.extra.svg \
             "Reactions" \
             "Follow-up" \
             "Unexpected error"
@@ -237,6 +265,7 @@ jobs:
           path: |
             .github/assets/img/metrics.probe.primary.svg
             .github/assets/img/metrics.probe.additional.svg
+            .github/assets/img/metrics.probe.extra.svg
           if-no-files-found: warn
           retention-days: 7
 
@@ -246,6 +275,7 @@ jobs:
           set -euo pipefail
           [ "${{ steps.probe_primary.outcome }}" = "success" ]
           [ "${{ steps.probe_additional.outcome }}" = "success" ]
+          [ "${{ steps.probe_extra.outcome }}" = "success" ]
           [ "${{ steps.validate_probe_outputs.outcome }}" = "success" ]
 
   update-starred-lists:
@@ -598,7 +628,8 @@ jobs:
 
           backup_metric ./.github/assets/img/metrics.svg "$RUNNER_TEMP/metrics-backups/metrics.svg"
           backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
-          rm -f ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg
+          backup_metric ./.github/assets/img/metrics.extra.svg "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
+          rm -f ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.extra.svg
       - name: Personal metrics
         id: lowlighter_metrics_primary
         continue-on-error: true
@@ -693,11 +724,6 @@ jobs:
           plugin_people_limit: 12
           plugin_people_size: 24
           plugin_people_types: followers, following
-          plugin_reactions: yes
-          plugin_reactions_limit: 100
-          plugin_reactions_display: relative
-          plugin_followup: yes
-          plugin_followup_sections: repositories
           plugin_tweets: no
           plugin_gists: no
           plugin_habits: no
@@ -723,6 +749,52 @@ jobs:
           uv run python -m scripts.metrics_svg recover \
             ./.github/assets/img/metrics.additional.svg \
             --previous "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
+
+      - name: Personal metrics (extra / overflow)
+        id: lowlighter_metrics_extra
+        continue-on-error: true
+        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
+        with:
+          output_action: none
+          filename: .github/assets/img/metrics.extra.svg
+          token: ${{ secrets.METRICS_TOKEN || github.token }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          base: ""
+          config_timezone: America/Los_Angeles
+          config_padding: 10%
+          plugin_music: no
+          plugin_activity: no
+          plugin_habits: no
+          plugin_gists: no
+          plugin_tweets: no
+          # Overflow panels split out to keep primary/additional README height manageable.
+          plugin_reactions: yes
+          plugin_reactions_limit: 100
+          plugin_reactions_display: relative
+          plugin_followup: yes
+          plugin_followup_sections: repositories
+
+      - name: Collect extra metrics output
+        id: collect_extra_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          cp /metrics_renders/.github/assets/img/metrics.extra.svg ./.github/assets/img/metrics.extra.svg
+
+      - name: Validate extra metrics output
+        id: validate_extra_metrics
+        if: ${{ always() }}
+        continue-on-error: true
+        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.extra.svg
+
+      - name: Recover extra metrics output
+        id: recover_extra_metrics
+        if: ${{ always() }}
+        run: |
+          uv run python -m scripts.metrics_svg recover \
+            ./.github/assets/img/metrics.extra.svg \
+            --previous "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
 
       - name: Generate supplemental metrics cards
         id: generate_supplemental_metrics
@@ -762,6 +834,7 @@ jobs:
           set -euo pipefail
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
           uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
+          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.extra.svg
           uv run python -m scripts.supplemental_metrics validate \
             --output-dir .github/assets/img \
             --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
@@ -776,6 +849,7 @@ jobs:
           for asset_name in (
               "metrics.svg",
               "metrics.additional.svg",
+              "metrics.extra.svg",
               "metrics-habits.svg",
               "metrics-activity.svg",
               "metrics-music.svg",
@@ -800,6 +874,7 @@ jobs:
           owned_files=(
             ./.github/assets/img/metrics.svg
             ./.github/assets/img/metrics.additional.svg
+            ./.github/assets/img/metrics.extra.svg
             ./.github/assets/img/metrics-habits.svg
             ./.github/assets/img/metrics-activity.svg
             ./.github/assets/img/metrics-music.svg
