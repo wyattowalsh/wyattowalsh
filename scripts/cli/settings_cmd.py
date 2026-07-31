@@ -32,7 +32,7 @@ def show_settings(
     except ValidationError as e:
         logger.error("Settings validation error: {e}", e=e)
         raise typer.Exit(code=1)
-    except Exception as e:
-        logger.error("An unexpected error occurred: {e}", e=e)
+    except (OSError, TypeError, ValueError) as e:
+        logger.error("Failed to load or display settings: {e}", e=e)
         logger.exception("Traceback:")
         raise typer.Exit(code=1)

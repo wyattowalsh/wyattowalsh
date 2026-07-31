@@ -36,7 +36,7 @@ def display_config(
         if yaml is None:
             logger.error(
                 "PyYAML is not installed. Cannot display config as YAML. "
-                "Falling back to JSON. Install with: uv add PyYAML"
+                "Falling back to JSON. Install with: uv sync --locked"
             )
             console.print("PyYAML is not installed. Falling back to JSON.")
             display_config(config_data, OutputFormat.JSON)
@@ -48,6 +48,6 @@ def display_config(
                     yaml_str, "yaml", theme="monokai", line_numbers=True
                 )
                 console.print(syntax)
-            except Exception as e:
+            except (yaml.YAMLError, TypeError, ValueError) as e:
                 logger.error("Error converting config to YAML: {e}", e=e)
                 display_config(config_data, OutputFormat.JSON)

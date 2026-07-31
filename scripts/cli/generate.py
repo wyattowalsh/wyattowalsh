@@ -285,7 +285,7 @@ def banner(
         logger.error(
             "Banner dependencies/script components are missing. "
             "Ensure banner.py is correct and dependencies installed: "
-            "uv pip install wyattowalsh[banner]"
+            "uv sync --locked"
         )
         console.print("[bold red]Error:[/bold red] Banner components missing.")
         raise typer.Exit(code=1)
@@ -311,6 +311,8 @@ def banner(
     if seed is not None:
         banner_data["seed"] = seed
 
+    from pydantic import ValidationError  # lazy import
+
     try:
         final_banner_config = BannerConfig(**banner_data)
         logger.info(
@@ -335,7 +337,7 @@ def banner(
                 "[bold green]Dark SVG banner generated: "
                 f"{dark_banner_config.output_path}[/]"
             )
-        except Exception as dark_err:
+        except (ValidationError, OSError, ValueError, TypeError, RuntimeError) as dark_err:
             logger.warning(
                 f"Dark banner generation failed (light banner succeeded): {dark_err}",
                 exc_info=True,
@@ -343,7 +345,7 @@ def banner(
             console.print(
                 "[yellow]Dark banner generation failed — light banner was saved.[/]"
             )
-    except Exception as e:
+    except (ValidationError, OSError, ValueError, TypeError, RuntimeError) as e:
         logger.error("Banner generation failed: {e}", e=e, exc_info=True)
         console.print(f"[bold red]Error:[/bold red] Banner generation failed: {e}")
         raise typer.Exit(code=1)
@@ -409,7 +411,7 @@ def qr(
         logger.error(
             "QR code dependencies/script components are missing. "
             "Ensure qr.py is correct and dependencies installed: "
-            "uv pip install wyattowalsh[qr]"
+            "uv sync --locked --extra qr"
         )
         console.print("[bold red]Error:[/bold red] QR code components missing.")
         raise typer.Exit(code=1)
@@ -508,7 +510,7 @@ def qr(
         )
         console.print(f"[bold red]Value Error:[/bold red] {val_error}")
         raise typer.Exit(code=1)
-    except Exception as e:
+    except (OSError, AttributeError, TypeError, RuntimeError) as e:
         logger.error("QR generation failed: {e}", e=e, exc_info=True)
         console.print(f"[bold red]Error:[/bold red] QR generation failed: {e}")
         raise typer.Exit(code=1)
@@ -550,7 +552,7 @@ def _wc_import():
         logger.error("Detailed import error: {e}", e=e_import, exc_info=True)
         logger.error(
             "Word cloud/techs components missing. Install dependencies: "
-            "uv pip install readme[word-clouds]"
+            "uv sync --locked --extra word-clouds"
         )
         console.print("[bold red]Error:[/bold red] Word cloud components missing.")
         raise typer.Exit(code=1)
@@ -930,7 +932,8 @@ def generative_art(
     except ImportError:
         logger.error(
             "Generative art dependencies/script components are missing. "
-            "Ensure generative.py is correct."
+            "Ensure generative.py is correct and dependencies installed: "
+            "uv sync --locked"
         )
         console.print("[bold red]Error:[/bold red] Generative art components missing.")
         raise typer.Exit(code=1)
