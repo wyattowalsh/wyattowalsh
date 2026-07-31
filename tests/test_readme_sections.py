@@ -1034,6 +1034,10 @@ class TestRendering:
             placeholder,
             encoding="utf-8",
         )
+        (metrics_dir / "metrics.extra.svg").write_text(
+            placeholder,
+            encoding="utf-8",
+        )
 
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
@@ -1049,6 +1053,7 @@ class TestRendering:
 
         assert ".github/assets/img/metrics.svg" in rendered
         assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" in rendered
         assert "Metrics temporarily unavailable" not in rendered
         assert 'alt="GitHub metrics: contributions, languages, topics, and community signals"' in rendered
         assert 'loading="lazy"' in rendered
@@ -1091,6 +1096,10 @@ class TestRendering:
             placeholder,
             encoding="utf-8",
         )
+        (metrics_dir / "metrics.extra.svg").write_text(
+            placeholder,
+            encoding="utf-8",
+        )
 
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
@@ -1106,6 +1115,7 @@ class TestRendering:
 
         assert ".github/assets/img/metrics.svg" in rendered
         assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" in rendered
         assert "placeholder output" not in rendered
 
     def test_generate_adds_valid_supplemental_metrics_assets(
@@ -1145,6 +1155,7 @@ class TestRendering:
         )
         (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics-habits.svg").write_text(
             supplemental_svg,
             encoding="utf-8",
@@ -1168,6 +1179,11 @@ class TestRendering:
 
         assert ".github/assets/img/metrics-habits.svg" in rendered
         assert ".github/assets/img/metrics-activity.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" in rendered
+        assert (
+            'alt="Extra metrics: comment reactions and issue/PR follow-up"'
+            in rendered
+        )
         assert (
             'alt="Supplemental metrics: coding habits and recent GitHub focus"'
             in rendered
@@ -1207,6 +1223,7 @@ class TestRendering:
         )
         (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics-posts.svg").write_text(invalid_svg, encoding="utf-8")
 
         generator = ReadmeSectionGenerator(
@@ -1259,6 +1276,7 @@ class TestRendering:
         )
         (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
 
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
@@ -1276,6 +1294,7 @@ class TestRendering:
         assert rendered.count('width="100%"') >= 4
         assert "wordcloud_typographic_by_topics.svg" in rendered
         assert "wordcloud_typographic_by_languages.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" in rendered
         assert (
             'alt="Typographic word cloud of GitHub topics with every parsed '
             'topic term preserved"'

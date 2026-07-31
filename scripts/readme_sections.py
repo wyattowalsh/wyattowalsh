@@ -919,7 +919,15 @@ class ReadmeSectionGenerator:
                 src=".github/assets/img/metrics.additional.svg",
                 alt=(
                     "Additional metrics: featured repositories, recently starred "
-                    "repositories, and stargazers"
+                    "repositories, stargazers, and people"
+                ),
+                width="100%",
+            ),
+            "",
+            self._gfm_centered_img(
+                src=".github/assets/img/metrics.extra.svg",
+                alt=(
+                    "Extra metrics: comment reactions and issue/PR follow-up"
                 ),
                 width="100%",
             ),

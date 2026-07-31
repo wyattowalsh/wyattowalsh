@@ -286,7 +286,11 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 </p>
 
 <p align="center">
-<img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, and stargazers" width="100%" loading="lazy"/>
+<img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, stargazers, and people" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics.extra.svg" alt="Extra metrics: comment reactions and issue/PR follow-up" width="100%" loading="lazy"/>
 </p>
 
 <p align="center">
