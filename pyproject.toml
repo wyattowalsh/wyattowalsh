@@ -7,13 +7,10 @@ requires-python = ">=3.13"
 dependencies = [
     "email-validator>=2.3.0",
     "loguru>=0.7.3",
-    "matplotlib>=3.10.8",
     "noise>=1.2.2",
     "numpy>=2.2.6",
-    "mealpy>=3.0.1",
     "pillow>=12.1.1",
     "pydantic>=2.12.5",
-    "scipy>=1.16.3",
     "pydantic-settings>=2.13.1",
     "pyyaml>=6.0.3",
     "rich>=14.3.3",
@@ -41,6 +38,13 @@ qr = [
     "qrcode-artistic>=3.0.2",
     "segno>=1.6.6",
 ]
+# Heavy numeric / optimization stack: living-art (scipy) + mealpy word-cloud solvers.
+# Install via `uv sync --extra science` or `--all-extras` (CI living-art / lint-test).
+science = [
+    "matplotlib>=3.10.8",
+    "mealpy>=3.0.1",
+    "scipy>=1.16.3",
+]
 test = [
     "hypothesis>=6.151.10",
     "pytest>=9.0.2",
@@ -61,6 +65,7 @@ word-clouds = [
     "beautifulsoup4>=4.14.3",
     "fonttools>=4.62.1",
     "markdown>=3.10.2",
+    "readme[science]",
     "wordcloud>=1.9.6",
 ]
 script-tools = [

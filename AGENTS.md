@@ -87,8 +87,8 @@ wyattowalsh/
 Jobs (not a single linear script; each job commits its own owned files). Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
 
 1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → commits `.github/assets/languages.md` + `.github/assets/topics.md`
-2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs. **Intended CI (C1a):** also run `uv run python -m scripts.cli generate banner --config-path config.yaml` so light+dark banners are produced in-job (today that step is still local-only / pending wire-up).
-3. **`generate-event-art`** (needs starred) — `uv sync --locked` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → commits living-art GIFs/manifest/preview (+ docs showcase mirrors)
+2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` (word-clouds pulls `science`: mealpy/scipy/matplotlib) → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs. **Intended CI (C1a):** also run `uv run python -m scripts.cli generate banner --config-path config.yaml` so light+dark banners are produced in-job (today that step is still local-only / pending wire-up).
+3. **`generate-event-art`** (needs starred) — `uv sync --locked --all-extras` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → commits living-art GIFs/manifest/preview (+ docs showcase mirrors)
 4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (`metrics.svg` / `metrics.additional.svg` / `metrics.extra.svg`, + validation/recovery) → repo-owned supplemental metrics cards (habits/activity/music/posts; never Spotify on lowlighter `with:`)
 5. **`update-readme-wakatime`** (needs event-art) — WakaTime README block
 6. **`update-skills`** (needs wakatime + metrics) — `uv sync --locked` → `generate readme-sections` → `generate skills` → commits `README.md` + `.github/assets/img/readme/*.svg`
@@ -171,6 +171,7 @@ CI secrets (GitHub Actions only — not needed locally):
 | `FileNotFoundError: Default background SVG not found` | `icon.svg` missing | Background is optional (default=None); only set `background_svg` in config if you want a custom background |
 | `ImportError: No module named 'segno'` | QR extras not installed | `uv sync --locked --extra qr` (or `--locked --all-extras`) |
 | `ImportError: No module named 'wordcloud'` | word-clouds extras not installed | `uv sync --locked --extra word-clouds` (or `--locked --all-extras`) |
+| `ImportError: No module named 'mealpy'` / `scipy` / `matplotlib` | science extras not installed | `uv sync --locked --extra science` (pulled by `word-clouds`; or `--locked --all-extras` for living-art CI) |
 | `ValidationError` from `WordCloudSettings` | Extra keys on strict model | Remove unknown fields — `extra="forbid"` in `WordCloudSettings` (`word_clouds/generate.py`) |
 | `load_config()` returns defaults silently | `config.yaml` missing or empty | Auto-creates with defaults; edit the created file |
 | `generate qr` Cairo error (macOS) | Cairo not in dyld path | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |

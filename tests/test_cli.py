@@ -476,6 +476,13 @@ def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
     assert "readme[word-clouds]" in optional_deps["lint"]
     assert "readme[qr]" in optional_deps["test"]
     assert "readme[word-clouds]" in optional_deps["test"]
+    assert "mealpy>=3.0.1" in optional_deps["science"]
+    assert "matplotlib>=3.10.8" in optional_deps["science"]
+    assert "scipy>=1.16.3" in optional_deps["science"]
+    assert "readme[science]" in optional_deps["word-clouds"]
+    assert "matplotlib" not in pyproject["project"]["dependencies"]
+    assert "mealpy" not in pyproject["project"]["dependencies"]
+    assert "scipy" not in pyproject["project"]["dependencies"]
 
 
 @patch("scripts.cli.dev.subprocess")

@@ -1476,8 +1476,6 @@ dependencies = [
     { name = "defusedxml" },
     { name = "email-validator" },
     { name = "loguru" },
-    { name = "matplotlib" },
-    { name = "mealpy" },
     { name = "noise" },
     { name = "numpy" },
     { name = "pillow" },
@@ -1485,7 +1483,6 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pyyaml" },
     { name = "rich" },
-    { name = "scipy" },
     { name = "svgwrite" },
     { name = "typer" },
 ]
@@ -1497,6 +1494,8 @@ dev = [
     { name = "fonttools" },
     { name = "hypothesis" },
     { name = "markdown" },
+    { name = "matplotlib" },
+    { name = "mealpy" },
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
@@ -1511,6 +1510,7 @@ dev = [
     { name = "pytest-xdist" },
     { name = "qrcode-artistic" },
     { name = "ruff" },
+    { name = "scipy" },
     { name = "segno" },
     { name = "ty" },
     { name = "wordcloud" },
@@ -1523,9 +1523,12 @@ lint = [
     { name = "cairosvg" },
     { name = "fonttools" },
     { name = "markdown" },
+    { name = "matplotlib" },
+    { name = "mealpy" },
     { name = "pylint" },
     { name = "qrcode-artistic" },
     { name = "ruff" },
+    { name = "scipy" },
     { name = "segno" },
     { name = "ty" },
     { name = "wordcloud" },
@@ -1534,6 +1537,11 @@ qr = [
     { name = "cairosvg" },
     { name = "qrcode-artistic" },
     { name = "segno" },
+]
+science = [
+    { name = "matplotlib" },
+    { name = "mealpy" },
+    { name = "scipy" },
 ]
 script-tools = [
     { name = "starred" },
@@ -1544,6 +1552,8 @@ test = [
     { name = "fonttools" },
     { name = "hypothesis" },
     { name = "markdown" },
+    { name = "matplotlib" },
+    { name = "mealpy" },
     { name = "pytest" },
     { name = "pytest-benchmark" },
     { name = "pytest-cov" },
@@ -1556,6 +1566,7 @@ test = [
     { name = "pytest-timeout" },
     { name = "pytest-xdist" },
     { name = "qrcode-artistic" },
+    { name = "scipy" },
     { name = "segno" },
     { name = "wordcloud" },
 ]
@@ -1563,6 +1574,9 @@ word-clouds = [
     { name = "beautifulsoup4" },
     { name = "fonttools" },
     { name = "markdown" },
+    { name = "matplotlib" },
+    { name = "mealpy" },
+    { name = "scipy" },
     { name = "wordcloud" },
 ]
 
@@ -1576,8 +1590,8 @@ requires-dist = [
     { name = "hypothesis", marker = "extra == 'test'", specifier = ">=6.151.10" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "markdown", marker = "extra == 'word-clouds'", specifier = ">=3.10.2" },
-    { name = "matplotlib", specifier = ">=3.10.8" },
-    { name = "mealpy", specifier = ">=3.0.1" },
+    { name = "matplotlib", marker = "extra == 'science'", specifier = ">=3.10.8" },
+    { name = "mealpy", marker = "extra == 'science'", specifier = ">=3.0.1" },
     { name = "noise", specifier = ">=1.2.2" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "pillow", specifier = ">=12.1.1" },
@@ -1600,12 +1614,13 @@ requires-dist = [
     { name = "readme", extras = ["format", "lint", "test"], marker = "extra == 'dev'" },
     { name = "readme", extras = ["qr"], marker = "extra == 'lint'" },
     { name = "readme", extras = ["qr"], marker = "extra == 'test'" },
+    { name = "readme", extras = ["science"], marker = "extra == 'word-clouds'" },
     { name = "readme", extras = ["word-clouds"], marker = "extra == 'lint'" },
     { name = "readme", extras = ["word-clouds"], marker = "extra == 'test'" },
     { name = "rich", specifier = ">=14.3.3" },
     { name = "ruff", marker = "extra == 'format'", specifier = ">=0.15.8" },
     { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.15.8" },
-    { name = "scipy", specifier = ">=1.16.3" },
+    { name = "scipy", marker = "extra == 'science'", specifier = ">=1.16.3" },
     { name = "segno", marker = "extra == 'qr'", specifier = ">=1.6.6" },
     { name = "starred", marker = "extra == 'script-tools'", specifier = ">=4.3.0" },
     { name = "svgwrite", specifier = ">=1.4.3" },
@@ -1613,7 +1628,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.24.1" },
     { name = "wordcloud", marker = "extra == 'word-clouds'", specifier = ">=1.9.6" },
 ]
-provides-extras = ["format", "lint", "qr", "test", "word-clouds", "script-tools", "dev"]
+provides-extras = ["format", "lint", "qr", "science", "test", "word-clouds", "script-tools", "dev"]
 
 [[package]]
 name = "requests"
