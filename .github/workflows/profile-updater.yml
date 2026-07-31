@@ -298,7 +298,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write # To commit languages.md and topics.md
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -338,39 +338,15 @@ jobs:
             --topic --topic_limit 500 > "$temp_file"
           mv "$temp_file" ./.github/assets/topics.md
 
-      - name: Commit updated starred lists
-        id: commit_starred_lists
-        env:
-          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
-        run: |
-          set -euo pipefail
-
-          owned_files=(./.github/assets/languages.md ./.github/assets/topics.md)
-          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-            echo "No starred list changes to commit."
-            echo "changes_detected=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "changes_detected=true" >> "$GITHUB_OUTPUT"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- "${owned_files[@]}"
-          git commit -m "chore(data): update awesome-stars lists (languages.md, topics.md)"
-
-          for attempt in 1 2 3; do
-            if git push origin "HEAD:${TARGET_BRANCH}"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -eq 3 ]; then
-              echo "::error::Failed to push starred list commit after ${attempt} attempts."
-              exit 1
-            fi
-
-            git fetch origin "${TARGET_BRANCH}"
-            git rebase "origin/${TARGET_BRANCH}"
-          done
+      - name: Upload starred lists artifact
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        with:
+          name: starred-lists-${{ github.run_id }}
+          path: |
+            .github/assets/languages.md
+            .github/assets/topics.md
+          if-no-files-found: error
+          retention-days: 7
 
   generate-assets:
     name: Generate Profile Assets (QR, WordClouds, Banner)
@@ -395,13 +371,19 @@ jobs:
       }}
     timeout-minutes: 60
     permissions:
-      contents: write # To commit generated image assets
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-        with: # Ensure we fetch the commit made by update-starred-lists if it ran
+        with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
+
+      - name: Download starred lists artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: starred-lists-${{ github.run_id }}
+          path: .
 
       - name: Set up Python 3.13
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -437,44 +419,20 @@ jobs:
       - name: Generate light and dark banners
         run: uv run python -m scripts.cli generate banner --config-path config.yaml
 
-      - name: Commit generated assets
-        env:
-          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-
-          owned_files=(.github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg .github/assets/img/banner*.svg)
-          if [ "${#owned_files[@]}" -eq 0 ]; then
-            echo "::error::No generated asset files matched expected patterns."
-            exit 1
-          fi
-
-          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-            echo "No generated asset changes to commit."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- "${owned_files[@]}"
-          git commit -m "chore(assets): update generated profile assets"
-
-          for attempt in 1 2 3; do
-            if git push origin "HEAD:${TARGET_BRANCH}"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -eq 3 ]; then
-              echo "::error::Failed to push generated asset commit after ${attempt} attempts."
-              exit 1
-            fi
-
-            git fetch origin "${TARGET_BRANCH}"
-            git rebase "origin/${TARGET_BRANCH}"
-          done
+      - name: Upload profile assets artifact
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        with:
+          name: profile-assets-${{ github.run_id }}
+          path: |
+            .github/assets/img/qr*.png
+            .github/assets/img/wordcloud_*.svg
+            .github/assets/img/banner*.svg
+          if-no-files-found: error
+          retention-days: 7
 
   update-readme-wakatime:
+    # Until F9 (first-party Waka), this third-party action may still commit README
+    # markers via GH_TOKEN. It must finish before finalize so writers stay serialized.
     name: Update README - WakaTime Stats
     runs-on: ubuntu-latest
     needs: generate-event-art
@@ -556,7 +514,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -864,50 +822,21 @@ jobs:
                   print(f"::error::{asset_name} is in degraded state ({result.status.value}).")
           PY
 
-      - name: Commit metrics outputs
+      - name: Upload profile metrics artifact
         if: ${{ success() && steps.validate_final_metrics.outcome == 'success' }}
-        env:
-          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
-        run: |
-          set -euo pipefail
-
-          owned_files=(
-            ./.github/assets/img/metrics.svg
-            ./.github/assets/img/metrics.additional.svg
-            ./.github/assets/img/metrics.extra.svg
-            ./.github/assets/img/metrics-habits.svg
-            ./.github/assets/img/metrics-activity.svg
-            ./.github/assets/img/metrics-music.svg
-            ./.github/assets/img/metrics-posts.svg
-          )
-
-          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-            echo "No metrics asset changes to commit."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          for file in "${owned_files[@]}"; do
-            if [ -e "$file" ] || git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-              git add -A -- "$file"
-            fi
-          done
-          git commit -m "chore(metrics): update generated metrics assets"
-
-          for attempt in 1 2 3; do
-            if git push origin "HEAD:${TARGET_BRANCH}"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -eq 3 ]; then
-              echo "::error::Failed to push metrics commit after ${attempt} attempts."
-              exit 1
-            fi
-
-            git fetch origin "${TARGET_BRANCH}"
-            git rebase "origin/${TARGET_BRANCH}"
-          done
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        with:
+          name: profile-metrics-${{ github.run_id }}
+          path: |
+            .github/assets/img/metrics.svg
+            .github/assets/img/metrics.additional.svg
+            .github/assets/img/metrics.extra.svg
+            .github/assets/img/metrics-habits.svg
+            .github/assets/img/metrics-activity.svg
+            .github/assets/img/metrics-music.svg
+            .github/assets/img/metrics-posts.svg
+          if-no-files-found: error
+          retention-days: 7
 
   generate-event-art:
     name: Generate Event-Driven Artwork
@@ -932,7 +861,7 @@ jobs:
       }}
     timeout-minutes: 45
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
@@ -1100,59 +1029,27 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Commit generated art outputs
-        env:
-          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
 
-          owned_files=(
-            .github/assets/img/living-*.gif
-            .github/assets/img/living-art-manifest.json
-            .github/assets/img/living-art-preview.html
-            docs/public/showcase/living-*.gif
-            docs/public/showcase/living-art-manifest.json
-            docs/public/showcase/living-art-preview.html
-          )
-          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-            echo "No living-art changes to commit."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- "${owned_files[@]}"
-          git commit -m "art: regenerate living-art assets"
-
-          for attempt in 1 2 3; do
-            if git push origin "HEAD:${TARGET_BRANCH}"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -eq 3 ]; then
-              echo "::error::Failed to push living-art commit after ${attempt} attempts."
-              exit 1
-            fi
-
-            git fetch origin "${TARGET_BRANCH}"
-            git rebase "origin/${TARGET_BRANCH}"
-          done
-
-  update-skills:
-    name: Finalize README Sections
+  finalize:
+    # Single first-party git writer: downloads generator artifacts and commits/pushes.
+    # Graph: assets ∥ art ∥ metrics → (waka) → finalize
+    name: Finalize Profile Asset Commits
     runs-on: ubuntu-latest
     needs:
-      - update-readme-wakatime
-      - generate-profile-metrics
+      - update-starred-lists
       - generate-assets
+      - generate-event-art
+      - generate-profile-metrics
+      - update-readme-wakatime
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
-        needs.update-readme-wakatime.result == 'success' &&
-        needs.generate-profile-metrics.result == 'success' &&
+        needs.update-starred-lists.result == 'success' &&
         needs.generate-assets.result == 'success' &&
+        needs.generate-event-art.result == 'success' &&
+        needs.generate-profile-metrics.result == 'success' &&
+        needs.update-readme-wakatime.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
@@ -1165,15 +1062,65 @@ jobs:
           )
         )
       }}
-    timeout-minutes: 20
+    timeout-minutes: 25
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
+          # Prefer tip of branch so any serialized Waka README push is visible.
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
+
+      - name: Download starred lists artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: starred-lists-${{ github.run_id }}
+          path: .
+
+      - name: Download profile assets artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: profile-assets-${{ github.run_id }}
+          path: .
+
+      - name: Download living-art staging artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: living-art-stage-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-stage
+
+      - name: Apply living-art outputs from staging artifact
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          stage="${{ runner.temp }}/living-art-stage"
+          mkdir -p .github/assets/img docs/public/showcase
+          for file in "$stage"/outputs/timelapse/living-*.gif; do
+            cp "$file" .github/assets/img/
+          done
+          for file in "$stage"/outputs/index/living-art-manifest.json \
+                      "$stage"/outputs/index/living-art-preview.html; do
+            if [[ -f "$file" ]]; then
+              cp "$file" .github/assets/img/
+            fi
+          done
+          for file in "$stage"/outputs/docs-showcase/living-*.gif; do
+            cp "$file" docs/public/showcase/
+          done
+          for file in "$stage"/outputs/docs-showcase/living-art-manifest.json \
+                      "$stage"/outputs/docs-showcase/living-art-preview.html; do
+            if [[ -f "$file" ]]; then
+              cp "$file" docs/public/showcase/
+            fi
+          done
+
+      - name: Download profile metrics artifact
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        with:
+          name: profile-metrics-${{ github.run_id }}
+          path: .
 
       - name: Set up Python 3.13
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -1192,23 +1139,86 @@ jobs:
       - name: Generate Skills Badges
         run: uv run python -m scripts.cli generate skills --skills-path skills.yaml
 
-      - name: Commit README updates
+      - name: Commit and push owned profile artifacts
         env:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -euo pipefail
           shopt -s nullglob
 
-          owned_files=(README.md .github/assets/img/readme/*.svg)
-          if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-            echo "No README changes to commit."
-            exit 0
-          fi
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -- "${owned_files[@]}"
-          git commit -m "chore(readme): update dynamic sections and skills badges"
+
+          commit_group() {
+            local message="$1"
+            shift
+            local owned_files=("$@")
+            if [ "${#owned_files[@]}" -eq 0 ]; then
+              echo "Skipping empty group for: ${message}"
+              return 0
+            fi
+            if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
+              echo "No changes for: ${message}"
+              return 0
+            fi
+            git add -- "${owned_files[@]}"
+            git commit -m "${message}"
+          }
+
+          commit_group "chore(data): update awesome-stars lists (languages.md, topics.md)" \
+            ./.github/assets/languages.md \
+            ./.github/assets/topics.md
+
+          asset_files=(.github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg .github/assets/img/banner*.svg)
+          commit_group "chore(assets): update generated profile assets" "${asset_files[@]}"
+
+          art_files=(
+            .github/assets/img/living-*.gif
+            .github/assets/img/living-art-manifest.json
+            .github/assets/img/living-art-preview.html
+            docs/public/showcase/living-*.gif
+            docs/public/showcase/living-art-manifest.json
+            docs/public/showcase/living-art-preview.html
+          )
+          commit_group "art: regenerate living-art assets" "${art_files[@]}"
+
+          metrics_files=(
+            ./.github/assets/img/metrics.svg
+            ./.github/assets/img/metrics.additional.svg
+            ./.github/assets/img/metrics.extra.svg
+            ./.github/assets/img/metrics-habits.svg
+            ./.github/assets/img/metrics-activity.svg
+            ./.github/assets/img/metrics-music.svg
+            ./.github/assets/img/metrics-posts.svg
+          )
+          # Only add paths that exist or are tracked.
+          metrics_existing=()
+          for file in "${metrics_files[@]}"; do
+            if [ -e "$file" ] || git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+              metrics_existing+=("$file")
+            fi
+          done
+          if [ "${#metrics_existing[@]}" -gt 0 ]; then
+            if [ -n "$(git status --porcelain --untracked-files=all -- "${metrics_existing[@]}")" ]; then
+              git add -A -- "${metrics_existing[@]}"
+              git commit -m "chore(metrics): update generated metrics assets"
+            else
+              echo "No changes for: chore(metrics): update generated metrics assets"
+            fi
+          fi
+
+          readme_files=(README.md .github/assets/img/readme/*.svg)
+          commit_group "chore(readme): update dynamic sections and skills badges" "${readme_files[@]}"
+
+          if git rev-parse --verify "origin/${TARGET_BRANCH}" >/dev/null 2>&1; then
+            ahead="$(git rev-list --count "origin/${TARGET_BRANCH}..HEAD" || echo 0)"
+          else
+            ahead="$(git rev-list --count HEAD)"
+          fi
+          if [ "${ahead}" = "0" ]; then
+            echo "No finalize commits to push."
+            exit 0
+          fi
 
           for attempt in 1 2 3; do
             if git push origin "HEAD:${TARGET_BRANCH}"; then
@@ -1216,7 +1226,7 @@ jobs:
             fi
 
             if [ "$attempt" -eq 3 ]; then
-              echo "::error::Failed to push README update commit after ${attempt} attempts."
+              echo "::error::Failed to push finalize commits after ${attempt} attempts."
               exit 1
             fi
 
