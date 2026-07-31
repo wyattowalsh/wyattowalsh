@@ -1,4 +1,7 @@
+import { isAdminPasswordVerifier } from '@/lib/server/admin-password';
+
 export type DocsServerConfig = {
+  /** scrypt verifier from DOCS_ADMIN_PASSWORD — never plaintext. */
   adminPassword: string;
   sessionSecret: string;
   telemetryStorePath: string;
@@ -35,7 +38,10 @@ export function getDocsServerConfig(): DocsServerConfig {
 }
 
 export function isAdminConfigured(config = getDocsServerConfig()): boolean {
-  return config.adminPassword.length > 0 && config.sessionSecret.length >= 16;
+  return (
+    isAdminPasswordVerifier(config.adminPassword) &&
+    config.sessionSecret.length >= 16
+  );
 }
 
 export function getTelemetryStorageDescription(

@@ -49,8 +49,9 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
           <div className="admin-alert admin-alert-warning">
             <strong>Missing configuration.</strong>
             <span>
-              Set <code>DOCS_ADMIN_PASSWORD</code> and <code>DOCS_ADMIN_SESSION_SECRET</code>
-              before using the admin panel.
+              Set a scrypt verifier in <code>DOCS_ADMIN_PASSWORD</code> and a long
+              secret in <code>DOCS_ADMIN_SESSION_SECRET</code> before using the admin
+              panel.
             </span>
           </div>
         ) : null}

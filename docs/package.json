@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --experimental-strip-types lib/server/admin-password.test.ts"
   },
   "dependencies": {
     "fumadocs-core": "^15.8.5",
