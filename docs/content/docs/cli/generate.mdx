@@ -162,16 +162,19 @@ This command also refreshes the featured-project card contract:
 - `docs/public/showcase/featured-projects/featured-card-*.svg` when the docs app exists
 - `docs/public/showcase/featured-projects.manifest.json` when the docs app exists
 
-It also renders the additive Metrics section from whichever validated assets are present:
+It also renders the additive Metrics section from the lowlighter stack plus
+whichever validated supplemental assets are present:
 
-- `metrics.svg`
-- `metrics.additional.svg`
-- `metrics-habits.svg`
-- `metrics-activity.svg`
-- `metrics-music.svg`
-- `metrics-posts.svg`
+- `metrics.svg` (primary lowlighter)
+- `metrics.additional.svg` (additional lowlighter)
+- `metrics.extra.svg` (overflow lowlighter: reactions / followup)
+- `metrics-habits.svg` (supplemental)
+- `metrics-activity.svg` (supplemental)
+- `metrics-music.svg` (supplemental; Spotify)
+- `metrics-posts.svg` (supplemental; X)
 
 Optional supplemental cards are omitted automatically when their assets are missing or invalid.
+Lowlighter habits/activity/music stay off — those surfaces are supplemental-owned only.
 
 ## `generate supplemental-metrics`
 

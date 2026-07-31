@@ -9,7 +9,7 @@ description: The Unified Profile Updater workflow runs every generator job on a 
 
 **Triggers:** `push` to `main`/`master`/`dev`, daily at 01:00 UTC, `workflow_dispatch`.
 
-Manual dispatch also exposes `metrics_probe_mode`, which runs only the probe lane for the full historical `lowlighter/metrics` surface.
+Manual dispatch also exposes `metrics_probe_mode`, which runs only the probe lane for the fuller `lowlighter/metrics` surface (same pin as production; no Spotify on Action `with:`).
 
 ## Job graph
 
@@ -59,37 +59,45 @@ Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stat
 
 ### `generate-profile-metrics`
 
-Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) pinned to the `v3.34` release SHA `65836723097537a54cd8eb90f61839426b4266b6` for the stable GitHub-native cards:
+Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) pinned to the `v3.34` release SHA `65836723097537a54cd8eb90f61839426b4266b6` for the stable GitHub-native cards. Plugins are split across three SVGs so README height stays manageable:
 
-- `metrics.svg` — personal metrics (header, activity, community, metadata, languages, notable, topics)
-- `metrics.additional.svg` — stable GitHub-native secondary panels (featured repositories, recently starred repositories, stargazers)
+| Asset | Ownership | Plugins / contents |
+|---|---|---|
+| `metrics.svg` | lowlighter (primary) | `base` (header/activity/community/metadata), `isocalendar`, `languages*`, `notable`, `topics`, `traffic` (token-gated), `achievements` (compact), `calendar` (current year) |
+| `metrics.additional.svg` | lowlighter (additional) | `repositories` (+ featured list aligned to `config.yaml`), `stargazers`/`stars` (token-gated), `people` |
+| `metrics.extra.svg` | lowlighter (overflow) | `reactions`, `followup` |
 
-The same job also generates repo-owned supplemental cards that replace the upstream-brittle or deprecated panels:
+**Kept OFF on every lowlighter step** (owned by supplemental cards or out of scope): `habits`, `activity`, `music`, `gists`, `tweets`. Every lowlighter `with:` sets `plugin_music: no`. **Never** pass Spotify credentials into lowlighter/`felipecrs` (or any metrics fork) via `with:`.
 
-- `metrics-habits.svg` — custom GitHub-backed coding habits card
-- `metrics-activity.svg` — custom GitHub-backed recent activity card
-- `metrics-music.svg` — custom Spotify-backed recently played card
-- `metrics-posts.svg` — custom X-backed latest posts card
+Repo-owned supplemental cards replace the upstream-brittle / third-party panels:
 
-The intended steady state for the canonical repo is a stable two-card `lowlighter` surface plus the validated supplemental cards below it in the README.
+| Asset | Ownership | Source |
+|---|---|---|
+| `metrics-habits.svg` | first-party supplemental | GitHub-backed coding habits |
+| `metrics-activity.svg` | first-party supplemental | GitHub-backed recent activity |
+| `metrics-music.svg` | first-party supplemental | Spotify via step `env:` only (`scripts/supplemental_metrics.py`) |
+| `metrics-posts.svg` | first-party supplemental | X OAuth1 via step `env:` only |
 
-The job now hardens metrics updates with `scripts.metrics_svg`:
-- backs up the previously committed metrics SVGs before regeneration
+The intended steady state is the three-card `lowlighter` stack plus validated supplemental cards below it in the README.
+
+The job hardens metrics updates with `scripts.metrics_svg`:
+- backs up the previously committed metrics SVGs (`metrics.svg`, `metrics.additional.svg`, `metrics.extra.svg`) before regeneration
 - validates each render and rejects known degraded payloads
 - validates supplemental assets against a manifest of required markers
 - restores the previous valid `lowlighter` asset if a new SVG is malformed, contains a known error payload, or matches the placeholder SVG
-- commits only after both stable cards plus all enabled supplemental cards pass validation
+- commits only after all three stable cards plus all enabled supplemental cards pass validation
 
 Placeholder metrics SVGs are treated as invalid recovery artifacts, not the desired output, and are never the intended steady state.
 
 ### `probe-full-metrics`
 
-Manual diagnostics lane for the legacy fuller `lowlighter/metrics` surface. It exists to answer questions like:
+Manual diagnostics lane for the fuller `lowlighter/metrics` surface (same pin as production — **not** `felipecrs`). It exists to answer questions like:
 
 - does the current `METRICS_TOKEN` satisfy the repositories block?
-- is the Spotify refresh token healthy?
-- are the X OAuth1 credentials present?
-- do upstream `habits` or `activity` panels still render degraded payloads?
+- do upstream `habits` / `activity` panels still render degraded payloads? (probe-only; production keeps them off)
+- do promote-set plugins (`achievements`, `calendar`, `people`, `reactions`, `followup`) render cleanly?
+
+Probe renders three SVGs (`metrics.probe.primary.svg`, `.additional.svg`, `.extra.svg`), always with `plugin_music: no` and **no** Spotify secrets in Action `with:` inputs. Spotify health belongs to the supplemental-metrics path only.
 
 It uploads probe SVG artifacts and fails closed if the probe renders or validation fail.
 
@@ -129,9 +137,9 @@ Commits:
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
 | `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for repo-aware metrics (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but repository-aware sections will be reduced and recovery may preserve the last valid asset. |
 | `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
-| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
-| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card |
-| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional for the repo-owned `metrics-music.svg` supplemental card; mint it with `uv run readme auth spotify-refresh-token` and store it as a repo secret |
+| `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
+| `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
+| `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card; mint it with `uv run readme auth spotify-refresh-token` and store it as a repo secret |
 | `X_API_KEY` | `generate-profile-metrics`, `probe-full-metrics` | Optional X API key for the repo-owned `metrics-posts.svg` supplemental card via OAuth 1.0a user-context |
 | `X_API_KEY_SECRET` | `generate-profile-metrics`, `probe-full-metrics` | Optional X API key secret for the repo-owned `metrics-posts.svg` supplemental card |
 | `X_ACCESS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Optional X access token for the repo-owned `metrics-posts.svg` supplemental card |
