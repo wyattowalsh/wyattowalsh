@@ -323,7 +323,11 @@ parse_markdown_for_word_cloud_frequencies = parse_frequencies_from_md
 
 
 class WordCloudSettings(BaseModel):
-    """Settings for word cloud generation."""
+    """Runtime settings for word cloud generation.
+
+    Prefer constructing from YAML via :meth:`from_yaml_model` rather than
+    hand-copying overlapping fields from ``WordCloudSettingsModel``.
+    """
 
     model_config = ConfigDict(extra="forbid")
     renderer: str = DEFAULT_RENDERER
@@ -334,6 +338,42 @@ class WordCloudSettings(BaseModel):
     layout_readability: LayoutReadabilitySettings = LayoutReadabilitySettings()
     max_solvers: int | None = None
     max_iter: int | None = None
+
+    @classmethod
+    def from_yaml_model(
+        cls,
+        model: Any | None = None,
+        **overrides: object,
+    ) -> WordCloudSettings:
+        """Build runtime settings from YAML ``WordCloudSettingsModel``.
+
+        Shared fields: ``output_dir``, ``max_words``, ``layout_readability``.
+        YAML-only fields (``prompt``, ``stopwords``, ``output_filename``) are
+        ignored here. Non-``None`` *overrides* take precedence.
+        """
+        data: dict[str, Any] = {}
+        if model is not None:
+            data["output_dir"] = model.output_dir
+            data["max_words"] = model.max_words
+            data["layout_readability"] = model.layout_readability
+        data.update({k: v for k, v in overrides.items() if v is not None})
+        return cls(**data)
+
+    def to_yaml_model(self, **yaml_only: object) -> Any:
+        """Project runtime settings back onto YAML ``WordCloudSettingsModel``.
+
+        Generator-only fields (``renderer``, ``width``, ``height``, …) are
+        dropped. Pass YAML-only extras (``prompt``, ``stopwords``, …) as kwargs.
+        """
+        from ..config import WordCloudSettingsModel
+
+        data: dict[str, Any] = {
+            "output_dir": self.output_dir,
+            "max_words": self.max_words,
+            "layout_readability": self.layout_readability,
+        }
+        data.update({k: v for k, v in yaml_only.items() if v is not None})
+        return WordCloudSettingsModel(**data)
 
 
 class WordCloudGenerator:

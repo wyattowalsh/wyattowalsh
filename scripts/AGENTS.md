@@ -84,9 +84,10 @@ cfg.model_dump(exclude_unset=True)      # Only user-set fields (for merging)
 cfg.model_dump_json(indent=2)           # JSON string (for display)
 ```
 
-⚠️ **Two distinct word-cloud config models — do not confuse:**
-- `WordCloudSettingsModel` in `config.py` — top-level YAML config, part of `ProjectConfig`
-- `WordCloudSettings` in `word_clouds/generate.py` — internal generator config, `extra="forbid"`
+⚠️ **Two word-cloud config models — bridge via adapter (HR-05 closed):**
+- `WordCloudSettingsModel` in `config.py` — YAML / `ProjectConfig` (includes `prompt`, `stopwords`, `output_filename`)
+- `WordCloudSettings` in `word_clouds/generate.py` — strict generator config (`extra="forbid"`)
+- Map with `WordCloudSettingsModel.to_word_cloud_settings()` ↔ `WordCloudSettings.from_yaml_model()` / `to_yaml_model()` (shared: `output_dir`, `max_words`, `layout_readability`)
 
 ## Logging Pattern
 

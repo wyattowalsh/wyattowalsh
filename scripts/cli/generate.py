@@ -559,6 +559,7 @@ def _wc_from_markdown(
     stopwords_list: list[str],
     max_words: int,
     layout_readability=None,
+    yaml_settings=None,
 ) -> Path | None:
     """Generate word cloud from a markdown file with source-specific overrides."""
     logger.info("Generating word cloud from {}: {}", source, md_path)
@@ -595,7 +596,8 @@ def _wc_from_markdown(
         else f"wordcloud_typographic_by_{source}.svg"
     )
 
-    settings = wc.WordCloudSettings(
+    settings = wc.WordCloudSettings.from_yaml_model(
+        yaml_settings,
         renderer="typographic",
         width=1200,
         height=800,
@@ -618,6 +620,7 @@ def _wc_from_topics(
     stopwords_list: list[str],
     max_words: int,
     layout_readability=None,
+    yaml_settings=None,
 ) -> Path | None:
     """Generate word cloud from topics.md with topic-specific overrides."""
     return _wc_from_markdown(
@@ -629,6 +632,7 @@ def _wc_from_topics(
         stopwords_list,
         max_words,
         layout_readability,
+        yaml_settings=yaml_settings,
     )
 
 
@@ -638,6 +642,7 @@ def _wc_from_languages(
     stopwords_list: list[str],
     max_words: int,
     layout_readability=None,
+    yaml_settings=None,
 ) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
     return _wc_from_markdown(
@@ -649,6 +654,7 @@ def _wc_from_languages(
         stopwords_list,
         max_words,
         layout_readability,
+        yaml_settings=yaml_settings,
     )
 
 
@@ -659,6 +665,7 @@ def _wc_from_techs(
     stopwords_list: list[str],
     max_words: int,
     layout_readability=None,
+    yaml_settings=None,
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(f"Loading technologies from specified path: {techs_path}")
@@ -680,11 +687,16 @@ def _wc_from_techs(
     out_dir = (
         Path(output_path.parent)
         if output_path
-        else Path(wc.WordCloudSettings().output_dir)
+        else Path(
+            yaml_settings.output_dir
+            if yaml_settings is not None
+            else wc.WordCloudSettings().output_dir
+        )
     )
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    settings = wc.WordCloudSettings(
+    settings = wc.WordCloudSettings.from_yaml_model(
+        yaml_settings,
         output_dir=str(out_dir),
         max_words=max_words,
         layout_readability=layout_readability,
@@ -706,6 +718,7 @@ def _wc_from_prompt(
     stopwords_list: list[str],
     max_words: int,
     layout_readability=None,
+    yaml_settings=None,
 ) -> Path | None:
     """Generate word cloud from a text prompt."""
     logger.info("Generating word cloud from text (prompt).")
@@ -718,11 +731,16 @@ def _wc_from_prompt(
     out_dir = (
         Path(output_path.parent)
         if output_path
-        else Path(wc.WordCloudSettings().output_dir)
+        else Path(
+            yaml_settings.output_dir
+            if yaml_settings is not None
+            else wc.WordCloudSettings().output_dir
+        )
     )
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    settings = wc.WordCloudSettings(
+    settings = wc.WordCloudSettings.from_yaml_model(
+        yaml_settings,
         output_dir=str(out_dir),
         max_words=max_words,
         layout_readability=layout_readability,
@@ -813,13 +831,12 @@ def word_cloud(
     stopwords_list: list[str] = []
     if config_wc_model and config_wc_model.stopwords:
         stopwords_list.extend(config_wc_model.stopwords)
-    max_words = max(
-        1,
-        int(getattr(config_wc_model, "max_words", wc.DEFAULT_MAX_WORDS)),
-    )
+    # Prefer adapter-derived max_words so YAML↔runtime stay aligned (HR-05).
+    runtime_defaults = config_wc_model.to_word_cloud_settings()
+    max_words = max(1, int(runtime_defaults.max_words))
 
     generated_path: Path | None = None
-    layout_readability = getattr(config_wc_model, "layout_readability", None)
+    layout_readability = runtime_defaults.layout_readability
 
     if from_topics_md:
         generated_path = _wc_from_topics(
@@ -828,6 +845,7 @@ def word_cloud(
             stopwords_list,
             max_words,
             layout_readability=layout_readability,
+            yaml_settings=config_wc_model,
         )
 
     elif from_languages_md:
@@ -837,6 +855,7 @@ def word_cloud(
             stopwords_list,
             max_words,
             layout_readability=layout_readability,
+            yaml_settings=config_wc_model,
         )
 
     elif techs_path and techs_path.exists():
@@ -847,6 +866,7 @@ def word_cloud(
             stopwords_list,
             max_words,
             layout_readability=layout_readability,
+            yaml_settings=config_wc_model,
         )
 
     else:
@@ -867,6 +887,7 @@ def word_cloud(
                 stopwords_list,
                 max_words,
                 layout_readability=layout_readability,
+                yaml_settings=config_wc_model,
             )
         else:
             logger.error(

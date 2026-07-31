@@ -138,7 +138,7 @@ CI secrets (GitHub Actions only — not needed locally):
 |----|------|-------|----------|
 | HR-02 | techs + word-cloud tests | **Closed** — `tests/test_techs.py` and word-cloud test modules have real coverage for `techs` + `scripts/word_clouds/` | — |
 | HR-03 | `scripts/banner.py` | Monolithic (1700+ lines) — refactor candidate | P2 |
-| HR-05 | `scripts/config.py` vs `scripts/word_clouds/generate.py` | Two WC config models — do not mix: YAML/`ProjectConfig` uses `WordCloudSettingsModel` (`scripts/config.py`); generator/CLI uses strict `WordCloudSettings` (`scripts/word_clouds/generate.py`, `extra="forbid"`) | P2 |
+| HR-05 | `scripts/config.py` vs `scripts/word_clouds/generate.py` | **Closed** — dual models remain (YAML vs strict runtime) but bridge via `WordCloudSettingsModel.to_word_cloud_settings()` / `WordCloudSettings.from_yaml_model()` / `to_yaml_model()` | — |
 | HR-08 | `.env.example` | **Closed** — root `.env.example` documents local + CI secret placeholders | — |
 | HR-10 | `scripts/banner.py` | **Closed** — `BannerConfig.output_path` defaults to `.github/assets/img/banner.svg`; YAML `BannerSettings` adapts via `to_banner_config()` / `BannerConfig.from_banner_settings()` | — |
 

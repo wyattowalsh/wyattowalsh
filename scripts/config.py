@@ -87,6 +87,14 @@ class QRCodeSettings(BaseModel):
 
 
 class WordCloudSettingsModel(BaseModel):
+    """YAML-facing word-cloud settings (``ProjectConfig.word_cloud_settings``).
+
+    Adapt to the runtime generator model via :meth:`to_word_cloud_settings`.
+    YAML-only fields (``prompt``, ``stopwords``, ``output_filename``) stay here;
+    generator-only fields (``renderer``, ``width``, ``height``, …) are supplied
+    as overrides when adapting.
+    """
+
     output_dir: str = ".github/assets/img"
     output_filename: str = "word_cloud.png"
     max_words: int = Field(
@@ -106,6 +114,22 @@ class WordCloudSettingsModel(BaseModel):
         default_factory=LayoutReadabilitySettings,
         description="Shared readability/orientation tuning for word-cloud layouts.",
     )
+
+    # Fields shared with runtime ``WordCloudSettings`` (HR-05 bridge).
+    _GENERATOR_SHARED_FIELDS: frozenset[str] = frozenset(
+        {"output_dir", "max_words", "layout_readability"}
+    )
+
+    def to_word_cloud_settings(self, **overrides: object):
+        """Adapt these YAML settings into runtime ``WordCloudSettings``.
+
+        Copies shared fields; non-``None`` *overrides* (renderer, size, …) win.
+        YAML-only keys (``prompt``, ``stopwords``, ``output_filename``) are not
+        forwarded — the generator model forbids unknown fields.
+        """
+        from .word_clouds.generate import WordCloudSettings
+
+        return WordCloudSettings.from_yaml_model(self, **overrides)
 
 
 class SkillEntry(BaseModel):

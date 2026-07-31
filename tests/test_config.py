@@ -119,6 +119,42 @@ class TestProjectConfigDefaults:
         assert lr.standard_rotations == [0.0, 90.0]
         assert lr.large_word_rotations == [0.0]
 
+    def test_word_cloud_settings_yaml_runtime_adapter(self):
+        from scripts.word_clouds.generate import WordCloudSettings
+
+        yaml_model = WordCloudSettingsModel(
+            output_dir=".github/assets/img",
+            max_words=42,
+            prompt="Python, Rust",
+            stopwords=["the"],
+            layout_readability={"fallback_rotation": 12.0},
+        )
+        runtime = yaml_model.to_word_cloud_settings(renderer="typographic", width=1200)
+        assert isinstance(runtime, WordCloudSettings)
+        assert runtime.max_words == 42
+        assert runtime.output_dir == ".github/assets/img"
+        assert runtime.renderer == "typographic"
+        assert runtime.width == 1200
+        assert runtime.layout_readability.fallback_rotation == 12.0
+        # YAML-only fields must not leak onto the strict generator model
+        assert not hasattr(runtime, "prompt")
+        assert not hasattr(runtime, "stopwords")
+
+        round_trip = runtime.to_yaml_model(prompt="kept", stopwords=["a"])
+        assert isinstance(round_trip, WordCloudSettingsModel)
+        assert round_trip.max_words == 42
+        assert round_trip.output_dir == ".github/assets/img"
+        assert round_trip.prompt == "kept"
+        assert round_trip.stopwords == ["a"]
+        assert round_trip.layout_readability.fallback_rotation == 12.0
+
+        via_classmethod = WordCloudSettings.from_yaml_model(
+            yaml_model, max_words=10, height=500
+        )
+        assert via_classmethod.max_words == 10
+        assert via_classmethod.height == 500
+        assert via_classmethod.output_dir == yaml_model.output_dir
+
     def test_nested_readme_sections_svg_card_styles(self):
         cfg = ProjectConfig(
             readme_sections_settings={
