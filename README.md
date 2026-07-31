@@ -304,14 +304,14 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ## Word Clouds
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Typographic word cloud of GitHub topics with every parsed topic term preserved" width="100%"/>
+<img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Typographic word cloud of GitHub topics with every parsed topic term preserved" width="100%" loading="lazy"/>
 </p>
 
 <p align="center">
-  <img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Typographic word cloud of GitHub languages with every parsed language term preserved" width="100%"/>
+<img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Typographic word cloud of GitHub languages with every parsed language term preserved" width="100%" loading="lazy"/>
 </p>
 
-<sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub>
+<p align="center"><sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub></p>
 <details>
 <summary><strong>WakaTime Stats</strong></summary>
 
@@ -408,12 +408,12 @@ C++                      1 repo              ░░░░░░░░░░░�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" width="360" alt="Personal Website" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" width="360" alt="Agents" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" width="360" alt="ProxyWhirl" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" width="360" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" width="360" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" loading="lazy"/></a></p>
-<p align="center"><sub>📡 Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Blog post card: Personal Website" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Blog post card: Agents" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="Blog post card: ProxyWhirl" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Blog post card: Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Blog post card: Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" width="360" loading="lazy"/></a></p>
+<p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
 </details>

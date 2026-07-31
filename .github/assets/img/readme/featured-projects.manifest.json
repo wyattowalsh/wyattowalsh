@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-26T12:27:37.375513+00:00",
+  "generated_at": "2026-07-31T20:05:36.000187+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -8,7 +8,7 @@
       "forks": 1,
       "full_name": "wyattowalsh/agents",
       "license": "MIT",
-      "stars": 2,
+      "stars": 4,
       "summary": "AI agent artifacts, configs, skills, tools, and more",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-agents.svg",
       "thumbnail_present": true,
@@ -17,15 +17,15 @@
         "Python",
         "HTML"
       ],
-      "updated_label": "Updated 37m ago",
+      "updated_label": "Updated 39m ago",
       "url": "https://github.com/wyattowalsh/agents"
     },
     {
       "alt_text": "Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
-      "forks": 14,
+      "forks": 19,
       "full_name": "wyattowalsh/nbadb",
       "license": "MIT",
-      "stars": 61,
+      "stars": 70,
       "summary": "Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-nbadb.svg",
       "thumbnail_present": true,
@@ -34,29 +34,29 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 15h ago",
+      "updated_label": "Updated 1d ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
       "alt_text": "Featured project card for proxywhirl: rotating proxy system",
-      "forks": 1,
+      "forks": 7,
       "full_name": "wyattowalsh/proxywhirl",
       "license": "MIT",
-      "stars": 2,
+      "stars": 22,
       "summary": "rotating proxy system",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-proxywhirl.svg",
       "thumbnail_present": true,
       "title": "proxywhirl",
       "top_languages": [
-        "HTML",
-        "Python"
+        "Python",
+        "TypeScript"
       ],
-      "updated_label": "Updated 2h ago",
+      "updated_label": "Updated 1h ago",
       "url": "https://github.com/wyattowalsh/proxywhirl"
     },
     {
       "alt_text": "Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
-      "forks": null,
+      "forks": 2,
       "full_name": "wyattowalsh/mcp-crawl4ai",
       "license": "MIT",
       "stars": 0,
@@ -68,7 +68,7 @@
         "Python",
         "Dockerfile"
       ],
-      "updated_label": "Updated 1w ago",
+      "updated_label": "Updated 3mo ago",
       "url": "https://github.com/wyattowalsh/mcp-crawl4ai"
     },
     {
@@ -102,7 +102,7 @@
         "TypeScript",
         "JavaScript"
       ],
-      "updated_label": "Updated 3d ago",
+      "updated_label": "Updated 3mo ago",
       "url": "https://github.com/wyattowalsh/listentropy"
     },
     {
@@ -110,7 +110,7 @@
       "forks": null,
       "full_name": "wyattowalsh/personal-website",
       "license": null,
-      "stars": 3,
+      "stars": 4,
       "summary": "Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! \ud83d\udc68\u200d\ud83d\udcbb",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-personal-website.svg",
       "thumbnail_present": true,
@@ -119,7 +119,7 @@
         "TypeScript",
         "CSS"
       ],
-      "updated_label": "Updated 48m ago",
+      "updated_label": "Updated 1mo ago",
       "url": "https://github.com/wyattowalsh/personal-website"
     },
     {
@@ -136,7 +136,7 @@
         "TypeScript",
         "MDX"
       ],
-      "updated_label": "Updated 3w ago",
+      "updated_label": "Updated 1mo ago",
       "url": "https://github.com/wyattowalsh/mdxpad"
     },
     {
@@ -153,15 +153,15 @@
         "TypeScript",
         "Python"
       ],
-      "updated_label": "Updated 5h ago",
+      "updated_label": "Updated 4d ago",
       "url": "https://github.com/wyattowalsh/ai-web-feeds"
     },
     {
       "alt_text": "Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player",
-      "forks": 1,
+      "forks": null,
       "full_name": "wyattowalsh/iina-plugin-bookmarks",
       "license": "MIT",
-      "stars": 7,
+      "stars": 16,
       "summary": "media bookmark manager plugin for the iina video player",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-iina-plugin-bookmarks.svg",
       "thumbnail_present": true,
@@ -170,7 +170,7 @@
         "TypeScript",
         "SCSS"
       ],
-      "updated_label": "Updated 1w ago",
+      "updated_label": "Updated 3mo ago",
       "url": "https://github.com/wyattowalsh/iina-plugin-bookmarks"
     }
   ],
