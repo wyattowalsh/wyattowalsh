@@ -390,6 +390,9 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
 
+      - name: Install Cairo system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev
+
       - name: Install asset generation dependencies
         run: uv sync --extra qr --extra word-clouds
 
