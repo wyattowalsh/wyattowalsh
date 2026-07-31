@@ -84,14 +84,16 @@ wyattowalsh/
 
 **Asset pipeline** (CI: `.github/workflows/profile-updater.yml` — daily 1AM UTC, push to `main`/`master`/`dev`, manual dispatch):
 
-Jobs (not a single linear 7-step script; each job commits its own owned files):
+Jobs (not a single linear script; each job commits its own owned files). Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
 
-1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → `.github/assets/languages.md` + `.github/assets/topics.md`
-2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs *(banner light+dark are produced by `readme generate banner` locally; CI does not currently invoke banner generation)*
-3. **`generate-event-art`** (needs starred) — `uv sync --all-groups` + `librsvg2-bin` → fetch metrics/history → `generate living-art` → commits living-art GIFs/manifest/preview
-4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery)
+1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → commits `.github/assets/languages.md` + `.github/assets/topics.md`
+2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` → typographic word clouds (`--from-topics-md`, `--from-languages-md`) → commits `qr*.png`, `wordcloud_*.svg`, `banner*.svg` globs. **Intended CI (C1a):** also run `uv run python -m scripts.cli generate banner --config-path config.yaml` so light+dark banners are produced in-job (today that step is still local-only / pending wire-up).
+3. **`generate-event-art`** (needs starred) — `uv sync --locked` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → commits living-art GIFs/manifest/preview (+ docs showcase mirrors)
+4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery) → repo-owned supplemental metrics cards
 5. **`update-readme-wakatime`** (needs event-art) — WakaTime README block
-6. **`update-skills`** (needs wakatime + metrics) — `generate readme-sections` → `generate skills` → commits `README.md` + readme SVG cards
+6. **`update-skills`** (needs wakatime + metrics) — `uv sync --locked` → `generate readme-sections` → `generate skills` → commits `README.md` + `.github/assets/img/readme/*.svg`
+
+Optional manual lane: **`probe-full-metrics`** (workflow_dispatch `metrics_probe_mode=true` only) — auth/probe of full metrics surface; does not update the profile.
 
 Living-art style map (SSOT): `scripts/art/timelapse.py` (`_STYLE_REGISTRY` / `ALL_STYLES`) · human-readable matrix: [`docs/content/docs/scripts/living-art-modes.mdx`](docs/content/docs/scripts/living-art-modes.mdx)
 
@@ -136,7 +138,7 @@ CI secrets (GitHub Actions only — not needed locally):
 |----|------|-------|----------|
 | HR-02 | techs + word-cloud tests | **Closed** — `tests/test_techs.py` and word-cloud test modules have real coverage for `techs` + `scripts/word_clouds/` | — |
 | HR-03 | `scripts/banner.py` | Monolithic (1700+ lines) — refactor candidate | P2 |
-| HR-05 | `scripts/config.py` vs `scripts/word_clouds/` | Two word-cloud config models: `WordCloudSettingsModel` (`config.py`) and `WordCloudSettings` (`word_clouds/generate.py`, strict `extra="forbid"`) — easy to confuse | P2 |
+| HR-05 | `scripts/config.py` vs `scripts/word_clouds/generate.py` | Two WC config models — do not mix: YAML/`ProjectConfig` uses `WordCloudSettingsModel` (`scripts/config.py`); generator/CLI uses strict `WordCloudSettings` (`scripts/word_clouds/generate.py`, `extra="forbid"`) | P2 |
 | HR-08 | `.env.example` | **Closed** — root `.env.example` documents local + CI secret placeholders | — |
 | HR-10 | `scripts/banner.py` | `BannerConfig.output_path` defaults to `./assets/img/banner.svg`, not `.github/assets/img/banner.svg` — always override via `config.yaml` | P3 |
 

@@ -57,7 +57,7 @@ Key `addopts` flags decoded:
 | `scripts/utils.py` | 172 | `test_utils.py` | ✅ Covered |
 | `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
 | `scripts/techs.py` | 315 | `test_techs.py` | ✅ Covered — model, parser, file-loading, and Hypothesis tests |
-| `scripts/word_clouds.py` | 1585 | `test_word_clouds.py` | ✅ Covered — markdown parsing, font resolution, filtering, and layout tests |
+| `scripts/word_clouds/` | — | `test_word_clouds.py` | ✅ Covered — markdown parsing, font resolution, filtering, and layout tests |
 | `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ✅ Smoke + golden file regression tests |
 | `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
 | `scripts/metrics_svg.py` | — | `test_metrics_svg.py` | ✅ Focused coverage — validation, placeholder detection, CLI exit codes, and previous-asset recovery |
