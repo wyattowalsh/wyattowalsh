@@ -11,6 +11,7 @@ from .auth import auth_app
 from .config_cmd import config_app
 from .dev import dev_app
 from .generate import generate_app
+from .preview import preview
 from .settings_cmd import show_settings
 
 app = typer.Typer(
@@ -62,3 +63,7 @@ app.command(
     name="show-settings",
     help="Display current global application settings from environment/dotenv.",
 )(show_settings)
+app.command(
+    name="preview",
+    help="Preview a generator into a disposable local directory.",
+)(preview)
