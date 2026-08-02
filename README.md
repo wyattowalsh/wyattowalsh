@@ -371,7 +371,7 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 
 > 🏆 3,665 Contributions in the Year 2026
  > 
-> 📦 10.1 MB Used in Github's Storage 
+> 📦 10.2 MB Used in Github's Storage 
  > 
 > 💼 Opted to Hire
  > 
@@ -382,22 +382,22 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 **I'm a Night 🦉** 
 
 ```text
-🌞 Morning    318 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.55% 
-🌆 Daytime    433 commits    █████░░░░░░░░░░░░░░░░░░░░   22.53% 
-🌃 Evening    649 commits    ████████░░░░░░░░░░░░░░░░░   33.77% 
-🌙 Night      522 commits    ██████░░░░░░░░░░░░░░░░░░░   27.16%
+🌞 Morning    316 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.5% 
+🌆 Daytime    432 commits    █████░░░░░░░░░░░░░░░░░░░░   22.56% 
+🌃 Evening    646 commits    ████████░░░░░░░░░░░░░░░░░   33.73% 
+🌙 Night      521 commits    ██████░░░░░░░░░░░░░░░░░░░   27.21%
 
 ```
 📅 **I'm Most Productive on Sunday** 
 
 ```text
-Monday       296 commits    ███░░░░░░░░░░░░░░░░░░░░░░   15.4% 
-Tuesday      266 commits    ███░░░░░░░░░░░░░░░░░░░░░░   13.84% 
-Wednesday    249 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.96% 
-Thursday     306 commits    ████░░░░░░░░░░░░░░░░░░░░░   15.92% 
-Friday       179 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.31% 
-Saturday     240 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.49% 
-Sunday       386 commits    █████░░░░░░░░░░░░░░░░░░░░   20.08%
+Monday       296 commits    ███░░░░░░░░░░░░░░░░░░░░░░   15.46% 
+Tuesday      262 commits    ███░░░░░░░░░░░░░░░░░░░░░░   13.68% 
+Wednesday    246 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.85% 
+Thursday     306 commits    ████░░░░░░░░░░░░░░░░░░░░░   15.98% 
+Friday       179 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.35% 
+Saturday     240 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.53% 
+Sunday       386 commits    █████░░░░░░░░░░░░░░░░░░░░   20.16%
 
 ```
 
@@ -408,28 +408,28 @@ Sunday       386 commits    █████░░░░░░░░░░░░�
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other                    23 hrs 7 mins       █████████████░░░░░░░░░░░░   52.09% 
-Python                   10 hrs 40 mins      ██████░░░░░░░░░░░░░░░░░░░   24.04% 
-Markdown                 4 hrs 47 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   10.8% 
-Text                     1 hr 49 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.1% 
-JSON                     1 hr 9 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   2.61%
+Other                    30 hrs 37 mins      ████████████░░░░░░░░░░░░░   48.67% 
+Python                   15 hrs 22 mins      ██████░░░░░░░░░░░░░░░░░░░   24.44% 
+Markdown                 8 hrs 51 mins       ███░░░░░░░░░░░░░░░░░░░░░░   14.07% 
+Text                     2 hrs 28 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   3.94% 
+JSON                     1 hr 48 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   2.86%
 
 🔥 Editors: 
-Chrome                   27 hrs 19 mins      ███████████████░░░░░░░░░░   61.52% 
-Cursor                   6 hrs 20 mins       ███░░░░░░░░░░░░░░░░░░░░░░   14.28% 
-IINA                     2 hrs 38 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.96% 
-Codex CLI                2 hrs 28 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.56% 
-Ghostty                  2 hrs 13 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.02%
+Chrome                   39 hrs 43 mins      ███████████████░░░░░░░░░░   63.14% 
+Cursor                   7 hrs               ██░░░░░░░░░░░░░░░░░░░░░░░   11.13% 
+VS Code                  4 hrs 6 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   6.54% 
+Ghostty                  3 hrs 55 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.24% 
+IINA                     2 hrs 41 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   4.27%
 
 🐱‍💻 Projects: 
-Maccy                    11 hrs 23 mins      ██████░░░░░░░░░░░░░░░░░░░   25.66% 
-paul-graham-essay-feeds  7 hrs 59 mins       ████░░░░░░░░░░░░░░░░░░░░░   17.99% 
-agents                   7 hrs 6 mins        ████░░░░░░░░░░░░░░░░░░░░░   16.01% 
-nbadb                    6 hrs 22 mins       ███░░░░░░░░░░░░░░░░░░░░░░   14.37% 
-supawald                 2 hrs 23 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.38%
+Maccy                    11 hrs 23 mins      ████░░░░░░░░░░░░░░░░░░░░░   18.11% 
+paul-graham-essay-feeds  10 hrs 26 mins      ████░░░░░░░░░░░░░░░░░░░░░   16.6% 
+nbadb                    8 hrs 27 mins       ███░░░░░░░░░░░░░░░░░░░░░░   13.44% 
+agents                   7 hrs 41 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.21% 
+python-goose             5 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   8.5%
 
 💻 Operating System: 
-Mac                      44 hrs 24 mins      █████████████████████████   100.0%
+Mac                      62 hrs 55 mins      █████████████████████████   100.0%
 
 ```
 
@@ -446,7 +446,7 @@ Jupyter Notebook         2 repos             █░░░░░░░░░░�
 
 
 
- Last Updated on 31/07/2026
+ Last Updated on 02/08/2026
 <!--END_SECTION:waka-->
 
 </details>
