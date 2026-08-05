@@ -522,7 +522,8 @@ jobs:
         )
       }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # lowlighter personal + additional can exceed 20m under API load; keep headroom.
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
