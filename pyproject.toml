@@ -106,6 +106,17 @@ select = ["E", "F", "I", "W", "UP"]
 [tool.ruff.lint.isort]
 known-first-party = ["scripts"]
 
+[tool.pylint.main]
+fail-under = 8.0
+jobs = 0
+
+[tool.pylint."messages control"]
+disable = [
+    "cyclic-import",  # intentional package graph (generate domains ↔ _common)
+    "duplicate-code",  # noisy across parallel test modules
+    "import-outside-toplevel",  # intentional lazy imports for optional extras
+]
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"

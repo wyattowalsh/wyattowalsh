@@ -68,7 +68,6 @@ from .shared import (
     select_palette_for_world,
     select_primary_repos,
     topic_affinity_matrix,
-    visual_complexity,
     volumetric_glow_filter,
 )
 
