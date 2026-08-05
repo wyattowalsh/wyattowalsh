@@ -272,7 +272,9 @@ def test_generate_banner_basic(
 
     assert result.exit_code == 0
     assert "SVG banner generated:" in result.stdout
-    assert output_svg_path.name in result.stdout
+    # Rich may soft-wrap long absolute paths; compare on the unwrapped stream.
+    stdout_unwrapped = result.stdout.replace("\n", "")
+    assert output_svg_path.name in stdout_unwrapped
     assert mock_generate_banner_func.called  # called once for light + once for dark
     # Check that BannerConfig was passed with correct output_path on the first call
     first_call_kwargs = mock_generate_banner_func.call_args_list[0].kwargs
@@ -527,7 +529,7 @@ def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
-    """Test `dev lint` runs ruff, pylint, ty."""
+    """Test `dev lint` runs ruff, pylint (score-gated), and ty (report-only)."""
     mock_subprocess.run.return_value = MagicMock(returncode=0)
     result = runner.invoke(app, ["dev", "lint"])
     assert result.exit_code == 0
@@ -539,7 +541,17 @@ def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
             cwd=None,
         ),
         call(
-            ["uv", "run", "--", "python", "-m", "pylint", "scripts", "tests"],
+            [
+                "uv",
+                "run",
+                "--",
+                "python",
+                "-m",
+                "pylint",
+                "--fail-under=8.0",
+                "scripts",
+                "tests",
+            ],
             cwd=None,
         ),
         call(
@@ -651,7 +663,7 @@ def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint_ty_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
-    """Test `dev lint` exits if ty fails."""
+    """ty diagnostics are report-only; lint still passes when ty exits non-zero."""
     mock_subprocess.run.side_effect = [
         MagicMock(returncode=0),
         MagicMock(returncode=0),
@@ -659,8 +671,10 @@ def test_dev_lint_ty_failure(mock_subprocess: MagicMock, runner: CliRunner) -> N
         MagicMock(returncode=1),
     ]
     result = runner.invoke(app, ["dev", "lint"])
-    assert result.exit_code == 1
-    assert "Command failed" in result.stdout
+    assert result.exit_code == 0
+    assert "All linters passed" in result.stdout
+    assert "ty check exited 1" in result.stdout
+    assert "report-only" in result.stdout
     assert mock_subprocess.run.call_args_list[-1] == call(
         ["uv", "run", "--", "ty", "check", "scripts", "tests"],
         cwd=None,

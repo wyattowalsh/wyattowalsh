@@ -7,6 +7,7 @@ readme SVG helpers are pure/deterministic given fixed card inputs.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from unittest.mock import patch
 
@@ -22,6 +23,20 @@ from scripts.readme_svg import (
 )
 
 BANNER_SNAPSHOT_SEED = 42
+
+# Platform float noise (macOS vs Linux) can perturb long path coordinates by
+# ~1e-9 while structure stays identical. Normalize before snapshot compare.
+_FLOAT_RE = re.compile(r"(-?\d+\.\d{6,})")
+
+
+def _normalize_svg_floats(svg: str, *, digits: int = 6) -> str:
+    """Round long decimal literals so cross-platform banner snapshots stay stable."""
+
+    def _round(match: re.Match[str]) -> str:
+        value = float(match.group(1))
+        return f"{value:.{digits}f}".rstrip("0").rstrip(".") or "0"
+
+    return _FLOAT_RE.sub(_round, svg)
 
 
 def _write_drawing_via_tostring(
@@ -77,14 +92,15 @@ class TestBannerSvgSnapshots:
             tmp_path / "banner.svg", seed=BANNER_SNAPSHOT_SEED
         )
         assert svg.lstrip().startswith("<?xml") or svg.lstrip().startswith("<svg")
-        assert svg == snapshot_svg
+        # Compare normalized form so macOS/Linux float noise does not flake CI.
+        assert _normalize_svg_floats(svg) == snapshot_svg
 
     def test_seeded_banner_is_deterministic(self, tmp_path: Path) -> None:
         first = _render_seeded_banner_svg(tmp_path / "a.svg", seed=BANNER_SNAPSHOT_SEED)
         second = _render_seeded_banner_svg(
             tmp_path / "b.svg", seed=BANNER_SNAPSHOT_SEED
         )
-        assert first == second
+        assert _normalize_svg_floats(first) == _normalize_svg_floats(second)
 
 
 class TestReadmeSvgSnapshots:

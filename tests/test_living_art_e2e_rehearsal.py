@@ -12,6 +12,8 @@ pytest.importorskip(
 )
 
 import scripts.cli.generate as generate_cmd  # noqa: E402
+import scripts.cli.generate.art as generate_art  # noqa: E402
+import scripts.cli.generate._common as generate_common  # noqa: E402
 from scripts.art.artifacts import LIVING_ART_STYLE_KEYS  # noqa: E402
 from scripts.cli import app  # noqa: E402
 
@@ -19,6 +21,23 @@ from scripts.cli import app  # noqa: E402
 @pytest.fixture
 def runner() -> CliRunner:
     return CliRunner()
+
+
+def _stub_load_project_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Bypass config lookup on every bound ``_load_project_config`` import site.
+
+    Domain modules import the helper by name, so package-level patching alone
+    does not reach ``art.living_art`` / ``art.timelapse`` after the F2 split.
+    """
+
+    def _noop(*_args, **_kwargs):  # noqa: ANN001
+        return None
+
+    monkeypatch.setattr(generate_cmd, "_load_project_config", _noop)
+    monkeypatch.setattr(generate_common, "_load_project_config", _noop)
+    monkeypatch.setattr(generate_art, "_load_project_config", _noop)
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -80,11 +99,7 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     monkeypatch.chdir(tmp_path)
     docs_showcase = tmp_path / "docs" / "public" / "showcase"
     docs_showcase.mkdir(parents=True)
-    monkeypatch.setattr(
-        generate_cmd,
-        "_load_project_config",
-        lambda *_args, **_kwargs: None,
-    )
+    _stub_load_project_config(monkeypatch)
 
     history_path = tmp_path / "history.json"
     metrics_path = tmp_path / "metrics.json"
@@ -173,11 +188,7 @@ def test_living_art_only_forwards_selected_style_to_renderer(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(
-        generate_cmd,
-        "_load_project_config",
-        lambda *_args, **_kwargs: None,
-    )
+    _stub_load_project_config(monkeypatch)
 
     history_path = tmp_path / "history.json"
     metrics_path = tmp_path / "metrics.json"
@@ -247,11 +258,7 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
     runner: CliRunner, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(
-        generate_cmd,
-        "_load_project_config",
-        lambda *_args, **_kwargs: None,
-    )
+    _stub_load_project_config(monkeypatch)
 
     history_path = tmp_path / "history.json"
     metrics_path = tmp_path / "metrics.json"
