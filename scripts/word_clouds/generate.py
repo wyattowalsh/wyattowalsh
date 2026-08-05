@@ -173,7 +173,11 @@ def _generate_svg(
         **renderer_kwargs,
     )
     svg_content = renderer.generate(dict(frequencies))
-    Path(output_path).write_text(svg_content, encoding="utf-8")
+    out = Path(output_path)
+    out.write_text(svg_content, encoding="utf-8")
+    from ..svg_optimize import optimize_with_svgo
+
+    optimize_with_svgo(out)
 
 
 def _default_output_filename(source: str, renderer: str) -> str:
@@ -430,10 +434,13 @@ class WordCloudGenerator:
                 )
             else:
                 extra_kwargs = {}
-                if getattr(self.settings, 'max_solvers', None) is not None:
-                    extra_kwargs['max_solvers'] = self.settings.max_solvers
-                if getattr(self.settings, 'max_iter', None) is not None:
-                    extra_kwargs['max_iter'] = self.settings.max_iter
+                if getattr(self.settings, "max_solvers", None) is not None:
+                    extra_kwargs["max_solvers"] = self.settings.max_solvers
+                if getattr(self.settings, "max_iter", None) is not None:
+                    extra_kwargs["max_iter"] = self.settings.max_iter
+                for font_key in ("min_font_size", "max_font_size", "padding"):
+                    if font_key in kwargs and kwargs[font_key] is not None:
+                        extra_kwargs[font_key] = kwargs[font_key]
                 _generate_svg(
                     renderer,
                     normalized_frequencies,

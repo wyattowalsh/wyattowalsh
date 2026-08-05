@@ -1714,6 +1714,9 @@ class SvgAssetWriter:
         output_path = self.output_dir / f"{filename}.svg"
         output_path.write_text(svg_content, encoding="utf-8")
         logger.debug("Wrote README SVG asset to {path}", path=output_path)
+        # Intentionally no SVGO here: card SVGs rely on CSS classes/vars that
+        # aggressive SVGO presets may strip. Banner/generative/word-clouds use
+        # the shared soft-fail helper instead.
         return output_path
 
     def _sanitize_filename(self, asset_name: str) -> str:

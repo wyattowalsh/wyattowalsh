@@ -106,6 +106,9 @@ def generate_community_art(
     )
 
     dwg.save(pretty=False)
+    from .svg_optimize import optimize_with_svgo
+
+    optimize_with_svgo(out)
     logger.info("Community art saved to {path}", path=out)
     return out
 
@@ -237,6 +240,9 @@ def generate_activity_art(
             spiral_group.add(circle)
 
     dwg.save(pretty=False)
+    from .svg_optimize import optimize_with_svgo
+
+    optimize_with_svgo(out)
     logger.info("Activity art saved to {path}", path=out)
     return out
 

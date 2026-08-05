@@ -282,6 +282,46 @@ def test_generate_banner_basic(
     assert banner_config_arg.seed == 0  # BannerSettings default
 
 
+@patch("scripts.banner.generate_banner")
+@patch("scripts.cli.generate.load_config")
+def test_generate_banner_dark_variant_succeeds_with_output_path(
+    mock_load_config: MagicMock,
+    mock_generate_banner_func: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """Dark banner must succeed when CLI provides --output-path (no double-kwarg)."""
+    test_config_path = tmp_path / "banner_dark_cfg.yaml"
+    dummy_config = ProjectConfig(banner_settings={"title": "Dark Pair"})
+    with open(test_config_path, "w") as f:
+        yaml.dump(dummy_config.model_dump(mode="json"), f)
+    mock_load_config.return_value = dummy_config
+
+    output_svg_path = tmp_path / "pair_banner.svg"
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "banner",
+            "--config-path",
+            str(test_config_path),
+            "--output-path",
+            str(output_svg_path),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "Dark SVG banner generated:" in result.stdout
+    assert "Dark banner generation failed" not in result.stdout
+    assert mock_generate_banner_func.call_count == 2
+    light_cfg = mock_generate_banner_func.call_args_list[0].kwargs["cfg"]
+    dark_cfg = mock_generate_banner_func.call_args_list[1].kwargs["cfg"]
+    assert str(light_cfg.output_path) == str(output_svg_path)
+    assert str(dark_cfg.output_path) == str(tmp_path / "pair_banner-dark.svg")
+    assert dark_cfg.dark_mode is True
+    assert light_cfg.dark_mode is False
+
+
 @patch("scripts.banner.generate_banner")  # patch at the source module
 @patch("scripts.cli.generate.load_config")
 def test_generate_banner_cli_seed_override(

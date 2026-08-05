@@ -234,21 +234,10 @@ _noise_handler_instance = NoiseHandler()
 # SVG and Color Utility Functions
 # ------------------------------------------------------------------------------
 def optimize_with_svgo(svg_path: str) -> None:
-    """
-    Optimizes an SVG file using the SVGO CLI tool.
+    """Optimize an SVG via the shared soft-fail SVGO helper."""
+    from .svg_optimize import optimize_with_svgo as _shared_optimize
 
-    If SVGO is not found or an error occurs, a warning is logged.
-
-    Args:
-        svg_path: The path to the SVG file to optimize.
-    """
-    try:
-        subprocess.run(["svgo", svg_path], check=True, capture_output=True, text=True)
-        logger.info("SVG optimized with SVGO: {svg_path}", svg_path=svg_path)
-    except subprocess.CalledProcessError as e:
-        logger.warning("SVGO optimization failed with error: {stderr}", stderr=e.stderr)
-    except FileNotFoundError:
-        logger.warning("SVGO command not found. Skipping SVG optimization.")
+    _shared_optimize(svg_path)
 
 
 def parse_rgba_color(rgba: str) -> tuple[str, float]:
