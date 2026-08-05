@@ -12,8 +12,8 @@ pytest.importorskip(
 )
 
 import scripts.cli.generate as generate_cmd  # noqa: E402
-import scripts.cli.generate.art as generate_art  # noqa: E402
 import scripts.cli.generate._common as generate_common  # noqa: E402
+import scripts.cli.generate.art as generate_art  # noqa: E402
 from scripts.art.artifacts import LIVING_ART_STYLE_KEYS  # noqa: E402
 from scripts.cli import app  # noqa: E402
 
