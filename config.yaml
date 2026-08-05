@@ -39,6 +39,13 @@ word_cloud_settings:
 readme_sections_settings:
   readme_path: README.md
   badge_style: for-the-badge
+  # Winner: 01-proof-first (composition experiment)
+  section_order:
+    - Featured Projects
+    - Metrics
+    - Living Art
+    - Tech Stack
+    - Word Clouds
   social_links:
     - label: w4w.dev
       url: https://w4w.dev

@@ -320,11 +320,12 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     assert "chore(readme): update dynamic sections and skills badges" in finalize
 
     readme = README_PATH.read_text(encoding="utf-8")
-    living_match = re.search(
-        r"(?ms)^## Living Art\n.*?(?=^## Tech Stack\n)",
-        readme,
-    )
-    assert living_match is not None, "Living Art section missing before Tech Stack"
+    from scripts.config import load_config
+    from scripts.readme_sections import compile_section_body_re, section_order_from_settings
+
+    order = section_order_from_settings(load_config().readme_sections_settings)
+    living_match = compile_section_body_re("Living Art", order).search(readme)
+    assert living_match is not None, "Living Art section missing"
     living = living_match.group(0)
 
     assert living.count('<p align="center">') == 1
@@ -334,20 +335,14 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     assert "<details" not in living.lower()
     assert "display: grid" not in living.lower()
 
-    tech_match = re.search(r"(?ms)^## Tech Stack\n.*?(?=^## Metrics\n)", readme)
+    tech_match = compile_section_body_re("Tech Stack", order).search(readme)
     assert tech_match is not None
     tech = tech_match.group(0)
     assert "<!-- SKILLS:START -->" in tech
     for teaser in ("AI/ML", "Full-Stack", "Data Engineering", "Open Source"):
         assert f'alt="{teaser}"' not in tech
 
-    headings = (
-        "## Featured Projects",
-        "## Living Art",
-        "## Tech Stack",
-        "## Metrics",
-        "## Word Clouds",
-    )
+    headings = tuple(f"## {title}" for title in order)
     positions = [readme.index(heading) for heading in headings]
     assert positions == sorted(positions)
 

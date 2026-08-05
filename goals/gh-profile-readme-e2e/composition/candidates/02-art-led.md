@@ -12,6 +12,19 @@
 <a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" alt="X.com" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
+## Living Art
+
+Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
+
+<p align="center">
+<a href=".github/assets/img/living-inkgarden.gif"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
+<a href=".github/assets/img/living-topo.gif"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
+<a href=".github/assets/img/living-genetic.gif"><img src=".github/assets/img/living-genetic.gif" width="360" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/></a>
+<a href=".github/assets/img/living-physarum.gif"><img src=".github/assets/img/living-physarum.gif" width="360" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/></a>
+<a href=".github/assets/img/living-lenia.gif"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
+<a href=".github/assets/img/living-ferrofluid.gif"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
+</p>
+
 ## Featured Projects
 
 <!-- README:FEATURED_PROJECTS:START -->
@@ -28,45 +41,6 @@
 <a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
-
-## Metrics
-
-<p align="center">
-<img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, stargazers, and people" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/metrics.extra.svg" alt="Extra metrics: comment reactions and issue/PR follow-up" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
-</p>
-
-## Living Art
-
-Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
-
-<p align="center">
-<a href=".github/assets/img/living-inkgarden.gif"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
-<a href=".github/assets/img/living-topo.gif"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
-<a href=".github/assets/img/living-genetic.gif"><img src=".github/assets/img/living-genetic.gif" width="360" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/></a>
-<a href=".github/assets/img/living-physarum.gif"><img src=".github/assets/img/living-physarum.gif" width="360" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/></a>
-<a href=".github/assets/img/living-lenia.gif"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
-<a href=".github/assets/img/living-ferrofluid.gif"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
-</p>
 
 ## Tech Stack
 
@@ -304,6 +278,32 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <!-- SKILLS:END -->
 
 </details>
+
+## Metrics
+
+<p align="center">
+<img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: featured repositories, recently starred repositories, stargazers, and people" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics.extra.svg" alt="Extra metrics: comment reactions and issue/PR follow-up" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-activity.svg" alt="Supplemental metrics: recent GitHub activity feed" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
+</p>
 
 ## Word Clouds
 

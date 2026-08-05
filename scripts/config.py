@@ -412,6 +412,19 @@ class ReadmeSectionsSettings(BaseModel):
     blog_post_limit: int = Field(
         5, ge=1, le=10, description="Number of latest blog posts to render"
     )
+    section_order: list[str] = Field(
+        default_factory=lambda: [
+            "Featured Projects",
+            "Living Art",
+            "Tech Stack",
+            "Metrics",
+            "Word Clouds",
+        ],
+        description=(
+            "Ordered H2 titles below Connect for README composition. "
+            "Rewrite end-anchors follow neighbors from this list."
+        ),
+    )
     svg: ReadmeSvgSettings = Field(default_factory=ReadmeSvgSettings)
 
 

@@ -1,0 +1,179 @@
+{
+  "stage": "interview",
+  "title": "GitHub profile README e2e — finalize",
+  "goalSlug": "gh-profile-readme-e2e",
+  "questions": [
+    {
+      "id": "goal-confirm",
+      "prompt": "Confirm the goal in one line.",
+      "description": "Inferred from your request + grill. Edit only if wrong.",
+      "answerMode": "text",
+      "recommendedAnswer": "Maximally enhance, refine, finalize, and assure the GitHub profile README end-to-end: residual structure (F2 domain CLI split, shared SVGO), push-after-Wave-0, remote CI green, multi-variant section reorder experiment scored by rubric+heuristics, then durable order implementation.",
+      "required": true
+    },
+    {
+      "id": "audience",
+      "prompt": "Who is the primary audience for the live profile README?",
+      "description": "Affects composition scoring weights (recruiters vs peers vs personal brand).",
+      "answerMode": "single-custom",
+      "recommendedAnswer": "Mixed professional + technical peers (default scoring balances clarity for outsiders and depth for engineers).",
+      "recommendedOptionIds": ["mixed"],
+      "options": [
+        { "id": "mixed", "label": "Mixed: recruiters/collaborators + technical peers" },
+        { "id": "tech", "label": "Technical peers / open-source first" },
+        { "id": "pro", "label": "Professional / hiring first" },
+        { "id": "self", "label": "Personal brand / portfolio-first" }
+      ],
+      "required": true
+    },
+    {
+      "id": "locked-scope",
+      "prompt": "Which scope items are definitely IN (from grill)?",
+      "description": "Pre-selected from grill locks. Deselect only if you want to reopen a decision.",
+      "answerMode": "multi-custom",
+      "recommendedAnswer": "All preselected grill locks.",
+      "recommendedOptionIds": [
+        "wave0",
+        "push-first",
+        "f2-domains",
+        "svgo-helper",
+        "reorder-experiment",
+        "rubric-heuristics",
+        "hybrid-order",
+        "local-remote-green",
+        "fleet-locks"
+      ],
+      "options": [
+        { "id": "wave0", "label": "Wave 0 PAT hard gate before any push" },
+        { "id": "push-first", "label": "Push-then-build after Wave 0 (53+ local commits)" },
+        { "id": "f2-domains", "label": "F2: split generate CLI into domain packages" },
+        { "id": "svgo-helper", "label": "Shared SVGO helper on SVG-owning generators" },
+        { "id": "reorder-experiment", "label": "Multi-variant section reorder experiment" },
+        { "id": "rubric-heuristics", "label": "Score reorders with rubric + heuristics" },
+        { "id": "hybrid-order", "label": "Skeletons for scoring, durable order/anchors for winner" },
+        { "id": "local-remote-green", "label": "Done requires local suite + remote CI green" },
+        { "id": "fleet-locks", "label": "Keep fleet locks: 10 featured, 6 wrap-flow art, SVG media dark, no tech teaser" }
+      ],
+      "required": true
+    },
+    {
+      "id": "out-of-scope",
+      "prompt": "What should stay OUT of this goal?",
+      "description": "Recommended non-goals so we don't explode scope.",
+      "answerMode": "multi-custom",
+      "recommendedAnswer": "Full creative redesign-first; dual-file card <picture> unless media-query QA fails; remove lowlighter; third-party Waka return; force-push/history rewrite; pasting secrets in chat.",
+      "recommendedOptionIds": [
+        "no-full-redesign",
+        "no-dual-picture-default",
+        "keep-lowlighter",
+        "no-third-party-waka",
+        "no-force-push",
+        "no-secrets-chat"
+      ],
+      "options": [
+        { "id": "no-full-redesign", "label": "No full redesign-first / new section types unless experiment winner needs it" },
+        { "id": "no-dual-picture-default", "label": "No dual-file card <picture> unless dark QA fails (F7)" },
+        { "id": "keep-lowlighter", "label": "Do not remove lowlighter metrics (keep+enrich already landed)" },
+        { "id": "no-third-party-waka", "label": "Do not reintroduce anmol098/waka-readme-stats" },
+        { "id": "no-force-push", "label": "No force-push / history rewrite" },
+        { "id": "no-secrets-chat", "label": "Never paste live tokens/secrets into chat" }
+      ],
+      "required": true
+    },
+    {
+      "id": "dark-banner-bug",
+      "prompt": "Is fixing dark banner generation (`to_banner_config` output_path double-kwarg) in scope?",
+      "description": "Observed during preview smoke: light banner OK, dark path failed.",
+      "answerMode": "single",
+      "recommendedAnswer": "Yes — blocks dual banner CI/assert path and first-fold dark UX.",
+      "recommendedOptionIds": ["yes"],
+      "options": [
+        { "id": "yes", "label": "Yes — fix as part of structure/assure" },
+        { "id": "no", "label": "No — leave for later" },
+        { "id": "investigate", "label": "Investigate only; fix if small" }
+      ],
+      "required": true
+    },
+    {
+      "id": "reorder-candidate-count",
+      "prompt": "How many section-order candidates should the experiment generate?",
+      "description": "Affects experiment effort before rubric scoring.",
+      "answerMode": "single-custom",
+      "recommendedAnswer": "6–8 candidates covering first-fold variants (Featured/Living Art/Metrics early vs late) without touching banner/connect header block.",
+      "recommendedOptionIds": ["6-8"],
+      "options": [
+        { "id": "4", "label": "4 candidates (fast)" },
+        { "id": "6-8", "label": "6–8 candidates (recommended)" },
+        { "id": "10+", "label": "10+ candidates (exhaustive)" }
+      ],
+      "required": true
+    },
+    {
+      "id": "immutable-header",
+      "prompt": "Is the top block fixed for all reorder experiments?",
+      "description": "Banner + connect badges as first viewport.",
+      "answerMode": "single",
+      "recommendedAnswer": "Yes — always Banner then Connect; only reorder sections below.",
+      "recommendedOptionIds": ["banner-connect-fixed"],
+      "options": [
+        { "id": "banner-connect-fixed", "label": "Yes — Banner → Connect fixed; reorder below" },
+        { "id": "connect-movable", "label": "Connect may move (e.g. after Featured)" },
+        { "id": "fully-free", "label": "Any section including banner may move" }
+      ],
+      "required": true
+    },
+    {
+      "id": "success",
+      "prompt": "What does success look like when this goal is done?",
+      "description": "Testable outcomes.",
+      "answerMode": "multi-custom",
+      "recommendedAnswer": "Pushed fleet green; F2+SVGO landed; dark banner fixed; reorder winner durable; README assurable by tests+CI; ask-before-push honored throughout.",
+      "recommendedOptionIds": [
+        "pushed-green",
+        "structure-landed",
+        "dark-banner",
+        "winner-shipped",
+        "contracts-green",
+        "git-discipline"
+      ],
+      "options": [
+        { "id": "pushed-green", "label": "53+ fleet commits pushed after Wave 0; profile-updater/ci green" },
+        { "id": "structure-landed", "label": "F2 domain packages + shared SVGO helper merged" },
+        { "id": "dark-banner", "label": "Dark banner generates reliably with light (if in scope)" },
+        { "id": "winner-shipped", "label": "Best measured section order live in README with durable rewrites" },
+        { "id": "contracts-green", "label": "GFM + workflow + generator contracts green" },
+        { "id": "git-discipline", "label": "Atomic conventional commits; no PRs unless requested; ask before push" }
+      ],
+      "required": true
+    },
+    {
+      "id": "edge-cases",
+      "prompt": "Which edge cases must the plan explicitly handle?",
+      "answerMode": "multi-custom",
+      "recommendedAnswer": "Missing WAKATIME_API_KEY skip path; finalize sole writer; section regex end-anchors after reorder; svgo missing soft-fail; CI without secrets still fail-closed correctly.",
+      "recommendedOptionIds": [
+        "waka-skip",
+        "finalize-only",
+        "regex-anchors",
+        "svgo-missing",
+        "ci-secrets"
+      ],
+      "options": [
+        { "id": "waka-skip", "label": "Waka: allow-missing-key / skip artifact when no API key" },
+        { "id": "finalize-only", "label": "Only finalize job writes/pushes profile git changes" },
+        { "id": "regex-anchors", "label": "Section rewrite anchors must follow chosen order" },
+        { "id": "svgo-missing", "label": "SVGO absent → warn/skip, do not fail local generate" },
+        { "id": "ci-secrets", "label": "Jobs without secrets skip gracefully; contracts still hold" }
+      ],
+      "required": true
+    },
+    {
+      "id": "open-notes",
+      "prompt": "Anything else we must respect (constraints, tastes, hard no's)?",
+      "description": "Freeform. Skip if none.",
+      "answerMode": "text",
+      "recommendedAnswer": "GFM-safe only (no tables as required UX). Prefer store/path conventions already in AGENTS.md. Do not mass-delete quarantine without ask.",
+      "required": false
+    }
+  ]
+}

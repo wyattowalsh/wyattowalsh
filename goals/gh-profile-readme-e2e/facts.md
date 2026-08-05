@@ -1,0 +1,23 @@
+# Facts
+
+- The goal maximizes enhance/refine/finalize/assure of the live GitHub profile README end-to-end (generators, CI/finalize, assets, composition, verification).
+- Primary audience is mixed: recruiters/collaborators and technical peers; composition scoring balances outsider clarity and engineer depth.
+- No git push occurs until the maintainer attests Wave 0 PAT eradicate (rotate/scrub); secrets are never pasted into chat.
+- After Wave 0, the existing local fleet train is pushed first so remote CI can smoke, then residual structure and composition work continue.
+- scripts/cli/generate.py is split into domain packages under scripts/cli/generate/ (banner, qr, word_cloud, art, readme, all_cmd); public CLI remains `readme generate …`.
+- A shared SVGO helper is used by SVG-owning generators (banner, generative/living static SVGs, README cards); missing svgo soft-fails with a warning and does not fail generation.
+- Dark banner generation succeeds whenever light banner succeeds (fix to_banner_config output_path double-kwarg); CI contracts require both banner.svg and banner-dark.svg.
+- For all reorder experiments and the shipped layout, the first viewport remains Banner then Connect badges; only sections below Connect are reordered.
+- Fleet composition locks hold: 10 featured cards, all 6 Living Art GIFs in wrap-flow (no details collapse), card dark via SVG @media only (dual picture only if QA fails), no Tech Stack teaser shields.
+- The composition experiment evaluates 6–8 section-order candidates below the fixed header.
+- Candidates are scored with scripted heuristics (fold/weight/H2 density) plus a human rubric; top 2–3 are visually confirmed; maintainer picks the final winner.
+- Reorder experiments use manual README skeletons for scoring; the winning order is implemented with durable section-order config and rewrite end-anchors that follow neighbors.
+- The winning section order is live in README.md and survives regenerate readme-sections / finalize without reordering regressions.
+- README remains GFM-safe: no tables as required UX; GFM/workflow/generator contract tests stay green.
+- First-party Waka remains: no anmol098/waka-readme-stats; missing WAKATIME_API_KEY uses allow-missing-key / skip artifact path.
+- Only the finalize job is the first-party git writer/pusher for profile assets; generator jobs upload artifacts only.
+- lowlighter metrics stays; Spotify is never passed into third-party metrics action inputs.
+- Done requires local full test suite green and remote CI (ci.yml + profile-updater smoke after push) green for relevant jobs.
+- Work uses atomic conventional commits; no PRs unless requested; ask before every push; no force-push/history rewrite.
+- Out of scope: full redesign-first / new section types unless winner needs them; dual-file card picture unless dark QA fails; removing lowlighter; reintroducing third-party Waka; mass quarantine deletes without ask.
+- Implementation follows AGENTS.md package/path/logging conventions and prefers existing store/path patterns.

@@ -1,0 +1,133 @@
+{
+  "winner": "01-proof-first",
+  "ranking": [
+    {
+      "score": 106.0,
+      "h2": [
+        "Featured Projects",
+        "Metrics",
+        "Living Art",
+        "Tech Stack",
+        "Word Clouds"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 15,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "01-proof-first"
+    },
+    {
+      "score": 106.0,
+      "h2": [
+        "Featured Projects",
+        "Metrics",
+        "Word Clouds",
+        "Living Art",
+        "Tech Stack"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 15,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "04-signal-dense"
+    },
+    {
+      "score": 102.0,
+      "h2": [
+        "Featured Projects",
+        "Living Art",
+        "Metrics",
+        "Word Clouds",
+        "Tech Stack"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 21,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "06-peer-portfolio"
+    },
+    {
+      "score": 97.0,
+      "h2": [
+        "Featured Projects",
+        "Living Art",
+        "Tech Stack",
+        "Metrics",
+        "Word Clouds"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 172,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "00-baseline"
+    },
+    {
+      "score": 97.0,
+      "h2": [
+        "Featured Projects",
+        "Tech Stack",
+        "Living Art",
+        "Metrics",
+        "Word Clouds"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 172,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "03-depth-first"
+    },
+    {
+      "score": 93.0,
+      "h2": [
+        "Featured Projects",
+        "Tech Stack",
+        "Metrics",
+        "Word Clouds",
+        "Living Art"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 166,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "05-quiet-scan"
+    },
+    {
+      "score": 88.0,
+      "h2": [
+        "Featured Projects",
+        "Tech Stack",
+        "Word Clouds",
+        "Metrics",
+        "Living Art"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 176,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "07-recruiter-quick"
+    },
+    {
+      "score": 75.0,
+      "h2": [
+        "Living Art",
+        "Featured Projects",
+        "Tech Stack",
+        "Metrics",
+        "Word Clouds"
+      ],
+      "featured_cards": 10,
+      "living_styles": 6,
+      "img_before_metrics": 172,
+      "banner_connect": true,
+      "teaser_ok": true,
+      "id": "02-art-led"
+    }
+  ]
+}

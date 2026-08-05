@@ -29,6 +29,19 @@
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
+## Living Art
+
+Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
+
+<p align="center">
+<a href=".github/assets/img/living-inkgarden.gif"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
+<a href=".github/assets/img/living-topo.gif"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
+<a href=".github/assets/img/living-genetic.gif"><img src=".github/assets/img/living-genetic.gif" width="360" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/></a>
+<a href=".github/assets/img/living-physarum.gif"><img src=".github/assets/img/living-physarum.gif" width="360" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/></a>
+<a href=".github/assets/img/living-lenia.gif"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
+<a href=".github/assets/img/living-ferrofluid.gif"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
+</p>
+
 ## Metrics
 
 <p align="center">
@@ -55,19 +68,136 @@
 <img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
 </p>
 
-## Living Art
-
-Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
+## Word Clouds
 
 <p align="center">
-<a href=".github/assets/img/living-inkgarden.gif"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
-<a href=".github/assets/img/living-topo.gif"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
-<a href=".github/assets/img/living-genetic.gif"><img src=".github/assets/img/living-genetic.gif" width="360" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/></a>
-<a href=".github/assets/img/living-physarum.gif"><img src=".github/assets/img/living-physarum.gif" width="360" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/></a>
-<a href=".github/assets/img/living-lenia.gif"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
-<a href=".github/assets/img/living-ferrofluid.gif"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
+<img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Typographic word cloud of GitHub topics with every parsed topic term preserved" width="100%" loading="lazy"/>
 </p>
 
+<p align="center">
+<img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Typographic word cloud of GitHub languages with every parsed language term preserved" width="100%" loading="lazy"/>
+</p>
+
+<p align="center"><sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub></p>
+
+<details>
+<summary><strong>WakaTime Stats</strong></summary>
+
+<!--START_SECTION:waka-->
+![Profile Views](http://img.shields.io/badge/Profile%20Views-120-blue)
+
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-2.6%20million%20lines%20of%20code-blue)
+
+**🐱 My Github Data** 
+
+> 🏆 1,800 Contributions in the Year 2026
+ > 
+> 📦 9.9 MB Used in Github's Storage 
+ > 
+> 💼 Opted to Hire
+ > 
+> 📜 170 Public Repositories 
+ > 
+> 🔑 92 Private Repositories  
+ > 
+**I'm a Night 🦉** 
+
+```text
+🌞 Morning    169 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.63% 
+🌆 Daytime    302 commits    ██████░░░░░░░░░░░░░░░░░░░   26.15% 
+🌃 Evening    387 commits    ████████░░░░░░░░░░░░░░░░░   33.51% 
+🌙 Night      297 commits    ██████░░░░░░░░░░░░░░░░░░░   25.71%
+
+```
+📅 **I'm Most Productive on Sunday** 
+
+```text
+Monday       117 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   10.13% 
+Tuesday      168 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.55% 
+Wednesday    192 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.62% 
+Thursday     132 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   11.43% 
+Friday       107 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.26% 
+Saturday     172 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.89% 
+Sunday       267 commits    █████░░░░░░░░░░░░░░░░░░░░   23.12%
+
+```
+
+
+📊 **This Week I Spent My Time On** 
+
+```text
+⌚︎ Time Zone: America/New_York
+
+💬 Programming Languages: 
+Other                    21 hrs 8 mins       █████████░░░░░░░░░░░░░░░░   37.1% 
+Python                   13 hrs 46 mins      ██████░░░░░░░░░░░░░░░░░░░   24.18% 
+YAML                     6 hrs 13 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   10.94% 
+TypeScript               5 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.38% 
+Markdown                 3 hrs 18 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.8%
+
+🔥 Editors: 
+Chrome                   35 hrs 58 mins      ███████████████░░░░░░░░░░   63.12% 
+VS Code                  9 hrs 24 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.5% 
+DockerDesktop            6 hrs 16 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   11.01% 
+Messages                 4 hrs 27 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   7.82% 
+SystemSettings           38 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   1.13%
+
+🐱‍💻 Projects: 
+agents                   12 hrs 59 mins      █████░░░░░░░░░░░░░░░░░░░░   22.78% 
+wyattowalsh              10 hrs 18 mins      ████░░░░░░░░░░░░░░░░░░░░░   18.09% 
+nbadb                    9 hrs 23 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.49% 
+siggy                    3 hrs 36 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.32% 
+proxywhirl               3 hrs 27 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.06%
+
+💻 Operating System: 
+Mac                      56 hrs 59 mins      █████████████████████████   100.0%
+
+```
+
+**I Mostly Code in Python** 
+
+```text
+Python                   15 repos            █████████░░░░░░░░░░░░░░░░   39.47% 
+TypeScript               14 repos            █████████░░░░░░░░░░░░░░░░   36.84% 
+HTML                     3 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   7.89% 
+Shell                    2 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   5.26% 
+C++                      1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   2.63%
+
+```
+
+
+
+ Last Updated on 26/04/2026
+<!--END_SECTION:waka-->
+
+</details>
+
+<details>
+<summary><strong>Latest Blog Posts</strong></summary>
+
+<!-- README:BLOG_POSTS:START -->
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Blog post card: Personal Website" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Blog post card: Agents" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="Blog post card: ProxyWhirl" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Blog post card: Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Blog post card: Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" width="360" loading="lazy"/></a></p>
+<p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
+<!-- README:BLOG_POSTS:END -->
+
+</details>
+
+<p align="center">
+  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>
+</p>
+
+---
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=flat-square&label=Profile+Views" alt="Profile Views"/>
+  <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
+    <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
+  </a>
+</p>
 ## Tech Stack
 
 <details>
@@ -305,133 +435,3 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 
 </details>
 
-## Word Clouds
-
-<p align="center">
-<img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Typographic word cloud of GitHub topics with every parsed topic term preserved" width="100%" loading="lazy"/>
-</p>
-
-<p align="center">
-<img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Typographic word cloud of GitHub languages with every parsed language term preserved" width="100%" loading="lazy"/>
-</p>
-
-<p align="center"><sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub></p>
-
-<details>
-<summary><strong>WakaTime Stats</strong></summary>
-
-<!--START_SECTION:waka-->
-![Profile Views](http://img.shields.io/badge/Profile%20Views-120-blue)
-
-![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-2.6%20million%20lines%20of%20code-blue)
-
-**🐱 My Github Data** 
-
-> 🏆 1,800 Contributions in the Year 2026
- > 
-> 📦 9.9 MB Used in Github's Storage 
- > 
-> 💼 Opted to Hire
- > 
-> 📜 170 Public Repositories 
- > 
-> 🔑 92 Private Repositories  
- > 
-**I'm a Night 🦉** 
-
-```text
-🌞 Morning    169 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.63% 
-🌆 Daytime    302 commits    ██████░░░░░░░░░░░░░░░░░░░   26.15% 
-🌃 Evening    387 commits    ████████░░░░░░░░░░░░░░░░░   33.51% 
-🌙 Night      297 commits    ██████░░░░░░░░░░░░░░░░░░░   25.71%
-
-```
-📅 **I'm Most Productive on Sunday** 
-
-```text
-Monday       117 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   10.13% 
-Tuesday      168 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.55% 
-Wednesday    192 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.62% 
-Thursday     132 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   11.43% 
-Friday       107 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.26% 
-Saturday     172 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.89% 
-Sunday       267 commits    █████░░░░░░░░░░░░░░░░░░░░   23.12%
-
-```
-
-
-📊 **This Week I Spent My Time On** 
-
-```text
-⌚︎ Time Zone: America/New_York
-
-💬 Programming Languages: 
-Other                    21 hrs 8 mins       █████████░░░░░░░░░░░░░░░░   37.1% 
-Python                   13 hrs 46 mins      ██████░░░░░░░░░░░░░░░░░░░   24.18% 
-YAML                     6 hrs 13 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   10.94% 
-TypeScript               5 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.38% 
-Markdown                 3 hrs 18 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.8%
-
-🔥 Editors: 
-Chrome                   35 hrs 58 mins      ███████████████░░░░░░░░░░   63.12% 
-VS Code                  9 hrs 24 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.5% 
-DockerDesktop            6 hrs 16 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   11.01% 
-Messages                 4 hrs 27 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   7.82% 
-SystemSettings           38 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   1.13%
-
-🐱‍💻 Projects: 
-agents                   12 hrs 59 mins      █████░░░░░░░░░░░░░░░░░░░░   22.78% 
-wyattowalsh              10 hrs 18 mins      ████░░░░░░░░░░░░░░░░░░░░░   18.09% 
-nbadb                    9 hrs 23 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.49% 
-siggy                    3 hrs 36 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.32% 
-proxywhirl               3 hrs 27 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.06%
-
-💻 Operating System: 
-Mac                      56 hrs 59 mins      █████████████████████████   100.0%
-
-```
-
-**I Mostly Code in Python** 
-
-```text
-Python                   15 repos            █████████░░░░░░░░░░░░░░░░   39.47% 
-TypeScript               14 repos            █████████░░░░░░░░░░░░░░░░   36.84% 
-HTML                     3 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   7.89% 
-Shell                    2 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   5.26% 
-C++                      1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   2.63%
-
-```
-
-
-
- Last Updated on 26/04/2026
-<!--END_SECTION:waka-->
-
-</details>
-
-<details>
-<summary><strong>Latest Blog Posts</strong></summary>
-
-<!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Blog post card: Personal Website" width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Blog post card: Agents" width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="Blog post card: ProxyWhirl" width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Blog post card: Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Blog post card: Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" width="360" loading="lazy"/></a></p>
-<p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
-<!-- README:BLOG_POSTS:END -->
-
-</details>
-
-<p align="center">
-  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>
-</p>
-
----
-
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=flat-square&label=Profile+Views" alt="Profile Views"/>
-  <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
-    <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
-  </a>
-</p>

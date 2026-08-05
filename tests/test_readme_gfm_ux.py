@@ -13,30 +13,40 @@ from pathlib import Path
 from textwrap import dedent
 
 from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
-from scripts.config import ReadmeSectionsSettings
-from scripts.readme_sections import ReadmeSectionGenerator
+from scripts.config import ReadmeSectionsSettings, load_config
+from scripts.readme_sections import (
+    ReadmeSectionGenerator,
+    compile_section_body_re,
+    section_order_from_settings,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPO_ROOT / "README.md"
 
-_LIVING_ART_RE = re.compile(r"(?ms)^## Living Art\n.*?(?=^## Tech Stack\n)")
 _FEATURED_RE = re.compile(
     r"(?ms)<!-- README:FEATURED_PROJECTS:START -->\n"
     r".*?"
     r"<!-- README:FEATURED_PROJECTS:END -->"
 )
-_TECH_STACK_RE = re.compile(r"(?ms)^## Tech Stack\n.*?(?=^## Metrics\n)")
 
 # Category teaser shields that used to sit above the full-stack <details>.
 _TEASER_ALTS = ("AI/ML", "Full-Stack", "Data Engineering", "Open Source")
 
 _SECTION_HEADINGS = (
     "## Featured Projects",
+    "## Metrics",
     "## Living Art",
     "## Tech Stack",
-    "## Metrics",
     "## Word Clouds",
 )
+
+
+def _order() -> tuple[str, ...]:
+    try:
+        settings = load_config().readme_sections_settings
+    except Exception:  # noqa: BLE001 — fall back for isolated unit runs
+        settings = ReadmeSectionsSettings()
+    return section_order_from_settings(settings)
 
 
 def _read_readme() -> str:
@@ -44,8 +54,8 @@ def _read_readme() -> str:
 
 
 def _living_art_section(readme: str) -> str:
-    match = _LIVING_ART_RE.search(readme)
-    assert match is not None, "Living Art section missing before ## Tech Stack"
+    match = compile_section_body_re("Living Art", _order()).search(readme)
+    assert match is not None, "Living Art section missing"
     return match.group(0)
 
 
@@ -56,8 +66,8 @@ def _featured_block(readme: str) -> str:
 
 
 def _tech_stack_section(readme: str) -> str:
-    match = _TECH_STACK_RE.search(readme)
-    assert match is not None, "Tech Stack section missing before ## Metrics"
+    match = compile_section_body_re("Tech Stack", _order()).search(readme)
+    assert match is not None, "Tech Stack section missing"
     return match.group(0)
 
 

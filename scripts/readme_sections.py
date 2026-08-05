@@ -68,17 +68,63 @@ _GENERIC_DESCRIPTION_RE = re.compile(
     r")\.?$",
     flags=re.IGNORECASE,
 )
-_METRICS_SECTION_RE = re.compile(
-    r"(?ms)^## Metrics\n.*?(?=^## Word Clouds\n)",
+# H2 sections that may be reordered below Connect. First-viewport locks
+# (banner / connect badges) are outside this list.
+DEFAULT_SECTION_ORDER: tuple[str, ...] = (
+    "Featured Projects",
+    "Living Art",
+    "Tech Stack",
+    "Metrics",
+    "Word Clouds",
 )
-_LIVING_ART_SECTION_RE = re.compile(
-    r"(?ms)^## Living Art\n.*?(?=^## Tech Stack\n)",
-)
+
+
+def section_order_from_settings(
+    settings: ReadmeSectionsSettings | None = None,
+) -> tuple[str, ...]:
+    """Return durable section order, falling back to the default fleet order."""
+    if settings is None:
+        return DEFAULT_SECTION_ORDER
+    custom = getattr(settings, "section_order", None) or []
+    cleaned = tuple(str(item).strip() for item in custom if str(item).strip())
+    if not cleaned:
+        return DEFAULT_SECTION_ORDER
+    # Preserve unknown titles after known defaults for forward compatibility.
+    known = {title for title in DEFAULT_SECTION_ORDER}
+    ordered_known = [t for t in cleaned if t in known]
+    missing = [t for t in DEFAULT_SECTION_ORDER if t not in ordered_known]
+    return tuple(ordered_known + missing)
+
+
+def _neighbor_lookahead(order: Sequence[str], title: str) -> str:
+    """Build a regex lookahead for the end of *title* given *order*."""
+    try:
+        index = list(order).index(title)
+    except ValueError:
+        following: list[str] = []
+    else:
+        following = list(order[index + 1 :])
+    parts = [rf"^## {re.escape(name)}\n" for name in following]
+    # Always allow any subsequent H2 or EOF as a safety end-anchor so rewrites
+    # do not run away if order config drifts from the live README.
+    parts.append(r"^## ")
+    parts.append(r"\Z")
+    return "(?:" + "|".join(parts) + ")"
+
+
+def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]:
+    """Match ``## Title`` through (not including) the next ordered neighbor."""
+    end = _neighbor_lookahead(order, title)
+    return re.compile(rf"(?ms)^## {re.escape(title)}\n.*?(?={end})")
+
+
+# Tech stack teaser strip is anchored to the full-stack details block, not H2 order.
 _TECH_STACK_TEASER_RE = re.compile(
     r"(?ms)^## Tech Stack\n.*?(?=^<details>\n"
     r"<summary><strong>View full stack)",
 )
-_WORD_CLOUDS_SECTION_RE = re.compile(
+# Word clouds typically end at the WakaTime details disclosure when present.
+_WORD_CLOUDS_WAKA_END_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?=^<details>\n"
     r"<summary><strong>WakaTime Stats</strong></summary>)",
 )
@@ -820,6 +866,9 @@ class ReadmeSectionGenerator:
         replacement = f"{marker_start}\n{rendered}\n{marker_end}"
         return content[: match.start()] + replacement + content[match.end() :]
 
+    def _section_order(self) -> tuple[str, ...]:
+        return section_order_from_settings(self.settings)
+
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
         content = self._rewrite_living_art_section(content)
         content = self._rewrite_tech_stack_teaser(content)
@@ -878,10 +927,11 @@ class ReadmeSectionGenerator:
             )
         body_lines.extend(["</p>", ""])
         replacement = "\n".join(body_lines)
-        if not _LIVING_ART_SECTION_RE.search(content):
+        living_re = compile_section_body_re("Living Art", self._section_order())
+        if not living_re.search(content):
             logger.warning("Living Art section heading not found in README.")
             return content
-        return _LIVING_ART_SECTION_RE.sub(replacement, content, count=1)
+        return living_re.sub(replacement, content, count=1)
 
     def _rewrite_tech_stack_teaser(self, content: str) -> str:
         """Drop category teaser shields; keep the collapsible full stack."""
@@ -953,10 +1003,11 @@ class ReadmeSectionGenerator:
 
         body = "\n".join(body_lines)
         replacement = f"## Metrics\n\n{body}\n\n"
-        if not _METRICS_SECTION_RE.search(content):
+        metrics_re = compile_section_body_re("Metrics", self._section_order())
+        if not metrics_re.search(content):
             logger.warning("Metrics section heading not found in README.")
             return content
-        return _METRICS_SECTION_RE.sub(replacement, content, count=1)
+        return metrics_re.sub(replacement, content, count=1)
 
     def _rewrite_word_clouds_section(self, content: str) -> str:
         body_lines = [
@@ -988,10 +1039,16 @@ class ReadmeSectionGenerator:
             "",
         ]
         replacement = "\n".join(body_lines)
-        if not _WORD_CLOUDS_SECTION_RE.search(content):
+        # Prefer Waka details end-anchor when present; else neighbor H2 order.
+        word_re = (
+            _WORD_CLOUDS_WAKA_END_RE
+            if _WORD_CLOUDS_WAKA_END_RE.search(content)
+            else compile_section_body_re("Word Clouds", self._section_order())
+        )
+        if not word_re.search(content):
             logger.warning("Word Clouds section heading not found in README.")
             return content
-        return _WORD_CLOUDS_SECTION_RE.sub(replacement, content, count=1)
+        return word_re.sub(replacement, content, count=1)
 
     def _rewrite_wakatime_section(self, content: str) -> str:
         match = _WAKATIME_SECTION_RE.search(content)
