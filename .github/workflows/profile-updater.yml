@@ -523,7 +523,7 @@ jobs:
       }}
     runs-on: ubuntu-latest
     # lowlighter personal + additional can exceed 20m under API load; keep headroom.
-    timeout-minutes: 45
+    timeout-minutes: 60  # lowlighter personal+additional+extra routinely exceeds 45m under load
     permissions:
       contents: read
     steps:
