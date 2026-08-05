@@ -5,6 +5,10 @@ import math
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from .color import oklch
+from .constants import LANG_HUES
+
+
 def make_radial_gradient(gid: str, cx: str, cy: str, r: str,
                          stops: list[tuple[str, str, float]]) -> str:
     """Build SVG radialGradient element. stops: [(offset, color, opacity), ...]"""
