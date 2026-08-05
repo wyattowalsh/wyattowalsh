@@ -200,7 +200,7 @@ def test_generate_banner_output_existence(
     assert content.strip().endswith("</svg>")
 
 
-@patch("subprocess.run")
+@patch("scripts.svg_optimize.subprocess.run")
 def test_generate_banner_with_svgo_optimization(
     mock_subprocess_run: MagicMock, tmp_path: Path, default_banner_config: BannerConfig
 ) -> None:
@@ -229,7 +229,7 @@ def test_generate_banner_with_svgo_optimization(
     )
 
 
-@patch("subprocess.run")
+@patch("scripts.svg_optimize.subprocess.run")
 def test_generate_banner_svgo_optimization_disabled(
     mock_subprocess_run: MagicMock, tmp_path: Path, default_banner_config: BannerConfig
 ) -> None:
@@ -256,7 +256,7 @@ def test_generate_banner_svgo_optimization_disabled(
     mock_subprocess_run.assert_not_called()
 
 
-@patch("subprocess.run")
+@patch("scripts.svg_optimize.subprocess.run")
 def test_optimize_with_svgo_success(
     mock_subprocess_run: MagicMock, tmp_path: Path
 ) -> None:
@@ -270,17 +270,13 @@ def test_optimize_with_svgo_success(
     mock_subprocess_run.assert_called_once_with(
         ["svgo", str(svg_file)], check=True, capture_output=True, text=True
     )
-    # Check logger call - this assumes logger.info or logger.debug is called on success
-    # For this, you might need to patch the logger used within optimize_with_svgo
-    # e.g. @patch('scripts.banner.logger')
-    # For now, we'll assume the primary check is the subprocess call.
 
 
 @patch(
-    "subprocess.run",
+    "scripts.svg_optimize.subprocess.run",
     side_effect=subprocess.CalledProcessError(1, "svgo", stderr="SVGO error"),
 )
-@patch("scripts.banner.logger")  # Patch the logger
+@patch("scripts.svg_optimize.logger")
 def test_optimize_with_svgo_called_process_error(
     mock_logger: MagicMock, mock_subprocess_run: MagicMock, tmp_path: Path, caplog
 ) -> None:
@@ -288,14 +284,15 @@ def test_optimize_with_svgo_called_process_error(
     svg_file = tmp_path / "dummy_error.svg"
     svg_file.write_text("<svg></svg>")
     optimize_with_svgo(str(svg_file))
-    # Check that the logger's error method was called with the expected message
-    # mock_logger.error.assert_called_once() # Temporarily commented out
-    # assert "SVGO optimization failed" in mock_logger.error.call_args[0][0] # Temporarily commented out
-    # assert "SVGO error" in mock_logger.error.call_args[0][0] # Temporarily commented out
+    mock_logger.warning.assert_called()
+    assert "SVGO optimization failed" in mock_logger.warning.call_args[0][0]
 
 
-@patch("subprocess.run", side_effect=FileNotFoundError("SVGO not found"))
-@patch("scripts.banner.logger")  # Patch the logger
+@patch(
+    "scripts.svg_optimize.subprocess.run",
+    side_effect=FileNotFoundError("SVGO not found"),
+)
+@patch("scripts.svg_optimize.logger")
 def test_optimize_with_svgo_file_not_found_error(
     mock_logger: MagicMock, mock_subprocess_run: MagicMock, tmp_path: Path, caplog
 ) -> None:
