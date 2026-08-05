@@ -121,6 +121,46 @@ def _request_json(
         return json.loads(response.read().decode("utf-8"))
 
 
+def _probe_github_token(token: str) -> bool:
+    """Return True when *token* can call the GitHub API (cheap user probe)."""
+    try:
+        _request_json(
+            f"{GITHUB_API_BASE}/user",
+            headers=_github_headers(token),
+        )
+        return True
+    except (
+        urllib.error.HTTPError,
+        urllib.error.URLError,
+        TimeoutError,
+        OSError,
+        json.JSONDecodeError,
+    ):
+        return False
+
+
+def _resolve_github_token() -> str | None:
+    """Pick a usable GitHub token for supplemental generation.
+
+    Prefer ``METRICS_TOKEN`` when it authenticates, otherwise fall back to the
+    Actions ``GITHUB_TOKEN`` / ``GH_TOKEN``. An expired METRICS_TOKEN must not
+    block generation when a working default token is available.
+    """
+    candidates = [
+        os.getenv("METRICS_TOKEN", "").strip(),
+        os.getenv("GITHUB_TOKEN", "").strip(),
+        os.getenv("GH_TOKEN", "").strip(),
+    ]
+    non_empty = [token for token in candidates if token]
+    if not non_empty:
+        return None
+    for token in non_empty:
+        if _probe_github_token(token):
+            return token
+    # Last resort: return first candidate so callers can still surface 401s.
+    return non_empty[0]
+
+
 def _parse_iso8601(value: str | None) -> datetime | None:
     if not value:
         return None
@@ -443,7 +483,21 @@ def _fetch_recent_activity(
     limit: int = 3,
 ) -> list[dict[str, str]]:
     url = f"{GITHUB_API_BASE}/users/{owner}/events/public?per_page=30"
-    data = _request_json(url, headers=_github_headers(token))
+    try:
+        data = _request_json(url, headers=_github_headers(token))
+    except (
+        urllib.error.HTTPError,
+        urllib.error.URLError,
+        TimeoutError,
+        OSError,
+        json.JSONDecodeError,
+    ) as exc:
+        logger.warning(
+            "Failed to fetch recent activity for {}: {}",
+            owner,
+            exc,
+        )
+        return []
     events: list[dict[str, str]] = []
     for item in data if isinstance(data, list) else []:
         summarized = _summarize_github_event(item)
@@ -641,9 +695,7 @@ def generate_supplemental_metrics(
         renderer=SvgBlockRenderer(width=1200, card_height=208, padding=28),
     )
 
-    github_token = (
-        os.getenv("METRICS_TOKEN") or os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
-    )
+    github_token = _resolve_github_token()
     if not github_token:
         raise RuntimeError(
             "A GitHub token is required to generate supplemental metrics"
