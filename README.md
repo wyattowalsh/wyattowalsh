@@ -321,41 +321,41 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <summary><strong>WakaTime Stats</strong></summary>
 
 <!--START_SECTION:waka-->
-![Profile Views](http://img.shields.io/badge/Profile%20Views-120-blue)
+![Profile Views](http://img.shields.io/badge/Profile%20Views-70-blue)
 
-![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-2.6%20million%20lines%20of%20code-blue)
+![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I%27ve%20Written-4.7%20million%20lines%20of%20code-blue)
 
 **🐱 My Github Data** 
 
-> 🏆 1,800 Contributions in the Year 2026
+> 🏆 3,665 Contributions in the Year 2026
  > 
-> 📦 9.9 MB Used in Github's Storage 
+> 📦 10.2 MB Used in Github's Storage 
  > 
 > 💼 Opted to Hire
  > 
-> 📜 170 Public Repositories 
+> 📜 188 Public Repositories 
  > 
-> 🔑 92 Private Repositories  
+> 🔑 97 Private Repositories  
  > 
 **I'm a Night 🦉** 
 
 ```text
-🌞 Morning    169 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.63% 
-🌆 Daytime    302 commits    ██████░░░░░░░░░░░░░░░░░░░   26.15% 
-🌃 Evening    387 commits    ████████░░░░░░░░░░░░░░░░░   33.51% 
-🌙 Night      297 commits    ██████░░░░░░░░░░░░░░░░░░░   25.71%
+🌞 Morning    316 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.51% 
+🌆 Daytime    432 commits    █████░░░░░░░░░░░░░░░░░░░░   22.57% 
+🌃 Evening    646 commits    ████████░░░░░░░░░░░░░░░░░   33.75% 
+🌙 Night      520 commits    ██████░░░░░░░░░░░░░░░░░░░   27.17%
 
 ```
 📅 **I'm Most Productive on Sunday** 
 
 ```text
-Monday       117 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   10.13% 
-Tuesday      168 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.55% 
-Wednesday    192 commits    ████░░░░░░░░░░░░░░░░░░░░░   16.62% 
-Thursday     132 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   11.43% 
-Friday       107 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.26% 
-Saturday     172 commits    ███░░░░░░░░░░░░░░░░░░░░░░   14.89% 
-Sunday       267 commits    █████░░░░░░░░░░░░░░░░░░░░   23.12%
+Monday       296 commits    ███░░░░░░░░░░░░░░░░░░░░░░   15.46% 
+Tuesday      262 commits    ███░░░░░░░░░░░░░░░░░░░░░░   13.69% 
+Wednesday    246 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.85% 
+Thursday     306 commits    ████░░░░░░░░░░░░░░░░░░░░░   15.99% 
+Friday       179 commits    ██░░░░░░░░░░░░░░░░░░░░░░░   9.35% 
+Saturday     239 commits    ███░░░░░░░░░░░░░░░░░░░░░░   12.49% 
+Sunday       386 commits    █████░░░░░░░░░░░░░░░░░░░░   20.17%
 
 ```
 
@@ -366,45 +366,45 @@ Sunday       267 commits    █████░░░░░░░░░░░░�
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other                    21 hrs 8 mins       █████████░░░░░░░░░░░░░░░░   37.1% 
-Python                   13 hrs 46 mins      ██████░░░░░░░░░░░░░░░░░░░   24.18% 
-YAML                     6 hrs 13 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   10.94% 
-TypeScript               5 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.38% 
-Markdown                 3 hrs 18 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   5.8%
+Other                    23 hrs              ██████████░░░░░░░░░░░░░░░   42.13% 
+Python                   14 hrs 15 mins      ██████░░░░░░░░░░░░░░░░░░░   26.1% 
+Markdown                 8 hrs 59 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.47% 
+Text                     2 hrs 28 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   4.53% 
+JSON                     1 hr 44 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   3.2%
 
 🔥 Editors: 
-Chrome                   35 hrs 58 mins      ███████████████░░░░░░░░░░   63.12% 
-VS Code                  9 hrs 24 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.5% 
-DockerDesktop            6 hrs 16 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   11.01% 
-Messages                 4 hrs 27 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   7.82% 
-SystemSettings           38 mins             ░░░░░░░░░░░░░░░░░░░░░░░░░   1.13%
+Chrome                   33 hrs 38 mins      ███████████████░░░░░░░░░░   61.61% 
+Cursor                   6 hrs 18 mins       ███░░░░░░░░░░░░░░░░░░░░░░   11.54% 
+VS Code                  4 hrs 34 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   8.38% 
+Ghostty                  4 hrs 9 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   7.62% 
+IINA                     1 hr 38 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   2.99%
 
 🐱‍💻 Projects: 
-agents                   12 hrs 59 mins      █████░░░░░░░░░░░░░░░░░░░░   22.78% 
-wyattowalsh              10 hrs 18 mins      ████░░░░░░░░░░░░░░░░░░░░░   18.09% 
-nbadb                    9 hrs 23 mins       ████░░░░░░░░░░░░░░░░░░░░░   16.49% 
-siggy                    3 hrs 36 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.32% 
-proxywhirl               3 hrs 27 mins       █░░░░░░░░░░░░░░░░░░░░░░░░   6.06%
+paul-graham-essay-feeds  9 hrs 18 mins       ████░░░░░░░░░░░░░░░░░░░░░   17.05% 
+nbadb                    8 hrs 31 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.61% 
+agents                   6 hrs 38 mins       ███░░░░░░░░░░░░░░░░░░░░░░   12.17% 
+Maccy                    5 hrs 22 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.85% 
+python-goose             5 hrs 20 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.79%
 
 💻 Operating System: 
-Mac                      56 hrs 59 mins      █████████████████████████   100.0%
+Mac                      54 hrs 36 mins      █████████████████████████   100.0%
 
 ```
 
 **I Mostly Code in Python** 
 
 ```text
-Python                   15 repos            █████████░░░░░░░░░░░░░░░░   39.47% 
-TypeScript               14 repos            █████████░░░░░░░░░░░░░░░░   36.84% 
-HTML                     3 repos             ██░░░░░░░░░░░░░░░░░░░░░░░   7.89% 
-Shell                    2 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   5.26% 
-C++                      1 repo              ░░░░░░░░░░░░░░░░░░░░░░░░░   2.63%
+Python                   19 repos            ██████████░░░░░░░░░░░░░░░   43.18% 
+TypeScript               14 repos            ████████░░░░░░░░░░░░░░░░░   31.82% 
+HTML                     3 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   6.82% 
+Shell                    2 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   4.55% 
+Jupyter Notebook         2 repos             █░░░░░░░░░░░░░░░░░░░░░░░░   4.55%
 
 ```
 
 
 
- Last Updated on 26/04/2026
+ Last Updated on 05/08/2026
 <!--END_SECTION:waka-->
 
 </details>
