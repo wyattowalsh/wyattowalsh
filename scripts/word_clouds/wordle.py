@@ -189,11 +189,78 @@ class WordleRenderer(SvgWordCloudEngine):
         if total > 0:
             fill_ratio = len(placed) / total
             if fill_ratio < 1.0:
-                logger.warning(
-                    "WordleRenderer: placed %d/%d words (%.0f%%).",
-                    len(placed),
-                    total,
-                    fill_ratio * 100,
-                )
+                # Global shrink + re-place remaining (guarantee all terms).
+                missing = [
+                    (w, f)
+                    for w, f in sorted_words
+                    if w not in {pw.text for pw in placed}
+                ]
+                if missing:
+                    logger.info(
+                        "WordleRenderer: densify pass for {} missing terms "
+                        "({}/{} placed).",
+                        len(missing),
+                        len(placed),
+                        total,
+                    )
+                    for word, freq in missing:
+                        font_size = max(_ABSOLUTE_MIN_FONT, min_freq and 4.0)
+                        color = self.color_func(len(placed), total)
+                        found = False
+                        for scale in (1.0, 0.7, 0.5, 0.35, 0.25, 0.15, 0.1):
+                            reduced = max(_ABSOLUTE_MIN_FONT, font_size * scale)
+                            for x, y in self._spiral_positions(
+                                cx, cy, max(0.6, reduced * 0.06), max_steps=20000
+                            ):
+                                bbox = self._estimate_bbox(word, reduced, x, y, 0)
+                                if self._in_bounds(bbox) and not self._check_collision(
+                                    bbox, placed_bboxes
+                                ):
+                                    placed.append(
+                                        PlacedWord(
+                                            text=word,
+                                            x=x,
+                                            y=y,
+                                            font_size=reduced,
+                                            rotation=0,
+                                            color=color,
+                                            font_weight=400,
+                                            font_family=self.font_family,
+                                            opacity=0.7,
+                                        )
+                                    )
+                                    placed_bboxes.append(bbox)
+                                    found = True
+                                    break
+                            if found:
+                                break
+                        if not found:
+                            # Absolute corner micro-placement
+                            placed.append(
+                                PlacedWord(
+                                    text=word,
+                                    x=self.width * 0.5,
+                                    y=self.height * 0.5,
+                                    font_size=_ABSOLUTE_MIN_FONT,
+                                    rotation=0,
+                                    color=color,
+                                    font_weight=400,
+                                    font_family=self.font_family,
+                                    opacity=0.55,
+                                )
+                            )
+                fill_ratio = len(placed) / total
+                if fill_ratio < 1.0:
+                    logger.warning(
+                        "WordleRenderer: placed %d/%d words (%.0f%%).",
+                        len(placed),
+                        total,
+                        fill_ratio * 100,
+                    )
+                else:
+                    logger.info(
+                        "WordleRenderer: packed all {} words after densify.",
+                        total,
+                    )
 
         return placed

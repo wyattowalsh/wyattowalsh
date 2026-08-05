@@ -237,6 +237,22 @@ def test_typographic_renderer_keeps_horizontal_layout() -> None:
     assert all(word.rotation == 0 for word in placed)
 
 
+def test_typographic_places_every_term_large_vocab() -> None:
+    """Fit-all packer must surface the full vocabulary (topics-scale)."""
+    words = {f"topic-{i:03d}": float(max(1, 400 - i)) for i in range(322)}
+    renderer = TypographicRenderer(
+        width=1680,
+        height=1050,
+        min_font_size=5.0,
+        max_font_size=42.0,
+        require_all=True,
+    )
+    placed = renderer.place_words(words)
+    assert {pw.text for pw in placed} == set(words.keys())
+    assert all(pw.rotation == 0 for pw in placed)
+    assert all(pw.font_size >= 3.5 for pw in placed)
+
+
 def test_metaheuristic_place_words_passes_word_sizes_to_readability_config(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
