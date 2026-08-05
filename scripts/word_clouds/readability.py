@@ -7,7 +7,6 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
 DEFAULT_STANDARD_ROTATIONS = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 90.0, -6.0, 6.0)
 DEFAULT_LARGE_WORD_ROTATIONS = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 90.0)
 
@@ -27,17 +26,30 @@ class LayoutReadabilityPolicy:
     @property
     def valid_rotations(self) -> tuple[float, ...]:
         seen: list[float] = []
-        for rotation in (*self.standard_rotations, *self.large_word_rotations, self.fallback_rotation):
+        for rotation in (
+            *self.standard_rotations,
+            *self.large_word_rotations,
+            self.fallback_rotation,
+        ):
             if rotation not in seen:
                 seen.append(rotation)
         return tuple(seen)
 
-    def is_large_word(self, font_size: float, min_font_size: float, max_font_size: float) -> bool:
-        cutoff = min_font_size + (max_font_size - min_font_size) * self.large_word_threshold_ratio
+    def is_large_word(
+        self, font_size: float, min_font_size: float, max_font_size: float
+    ) -> bool:
+        cutoff = (
+            min_font_size
+            + (max_font_size - min_font_size) * self.large_word_threshold_ratio
+        )
         return font_size >= cutoff
 
-    def choose_rotation(self, rng: random.Random, *, is_large_word: bool = False) -> float:
-        choices = self.large_word_rotations if is_large_word else self.standard_rotations
+    def choose_rotation(
+        self, rng: random.Random, *, is_large_word: bool = False
+    ) -> float:
+        choices = (
+            self.large_word_rotations if is_large_word else self.standard_rotations
+        )
         if not choices:
             return self.fallback_rotation
         return float(rng.choice(choices))
@@ -80,7 +92,10 @@ DEFAULT_LAYOUT_READABILITY_POLICY = LayoutReadabilityPolicy()
 
 
 def coerce_layout_readability_policy(
-    value: LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None,
+    value: LayoutReadabilityPolicy
+    | LayoutReadabilitySettings
+    | dict[str, object]
+    | None,
 ) -> LayoutReadabilityPolicy:
     """Normalize settings-like readability input to a runtime policy."""
 

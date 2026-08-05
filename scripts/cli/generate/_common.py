@@ -3,14 +3,11 @@
 from __future__ import annotations
 
 import json
-import os
 import re
-import sys
 from collections.abc import Mapping
 from enum import StrEnum
 from pathlib import Path
-from types import SimpleNamespace
-from typing import Annotated, Any
+from typing import Any
 
 import typer
 
@@ -22,10 +19,10 @@ from ...art.artifacts import (
 from ...art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 from ...config import (
     DEFAULT_CONFIG_PATH,
-    DEFAULT_SKILLS_PATH,
+    DEFAULT_SKILLS_PATH,  # noqa: F401 - re-export for domain modules
     ProjectConfig,
     load_config,
-    load_skills,
+    load_skills,  # noqa: F401 - re-export for domain modules
 )
 from ...utils import console, get_logger
 
@@ -47,9 +44,10 @@ class ReadmeCardVariant(StrEnum):
     GH_CARD = "gh-card"
     LEGACY = "legacy"
 
+
 def _load_project_config(config_path: Path | None) -> ProjectConfig:
     """Load project config with consistent error handling."""
-    # Prefer package-level load_config so tests can patch scripts.cli.generate.load_config
+    # Prefer package-level load_config so tests can patch scripts.cli.generate.load_config  # noqa: E501
     try:
         from scripts.cli import generate as generate_pkg
 
@@ -211,5 +209,3 @@ def _prompt_to_frequencies(text: str, stopwords_list: list[str]) -> dict[str, fl
 # ---------------------------------------------------------------------------
 # banner
 # ---------------------------------------------------------------------------
-
-

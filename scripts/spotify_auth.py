@@ -78,9 +78,7 @@ def exchange_spotify_authorization_code(
 ) -> dict[str, Any]:
     """Exchange an authorization code for Spotify tokens."""
 
-    auth = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8")).decode(
-        "ascii"
-    )
+    auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode("ascii")
     body = urllib.parse.urlencode(
         {
             "grant_type": "authorization_code",
@@ -98,7 +96,9 @@ def exchange_spotify_authorization_code(
         data=body,
     )
     if not isinstance(payload, dict):
-        raise RuntimeError("Spotify authorization exchange returned a non-object payload")
+        raise RuntimeError(
+            "Spotify authorization exchange returned a non-object payload"
+        )
     return payload
 
 
@@ -139,7 +139,7 @@ def _wait_for_spotify_authorization_code(
                 "Spotify metrics auth</title></head><body><pre>"
                 f"{message}"
                 "</pre></body></html>"
-            ).encode("utf-8")
+            ).encode()
             self.send_response(status_code)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -164,7 +164,7 @@ def _wait_for_spotify_authorization_code(
                 callback_result["error"] = (query.get("error") or ["unknown_error"])[0]
                 self._finish(
                     400,
-                    "Spotify authorization returned an error. You can close this window.",
+                    "Spotify authorization returned an error. You can close this window.",  # noqa: E501
                 )
                 return
 
@@ -175,7 +175,9 @@ def _wait_for_spotify_authorization_code(
                 return
 
             callback_result["code"] = code
-            self._finish(200, "Spotify authorization complete. You can close this window.")
+            self._finish(
+                200, "Spotify authorization complete. You can close this window."
+            )
 
         def log_message(self, _format: str, *_args: object) -> None:
             return
@@ -200,7 +202,7 @@ def _wait_for_spotify_authorization_code(
         raise RuntimeError(f"Spotify authorization failed: {callback_result['error']}")
     if "code" not in callback_result:
         raise TimeoutError(
-            f"Timed out waiting for Spotify authorization callback after {timeout_seconds}s"
+            f"Timed out waiting for Spotify authorization callback after {timeout_seconds}s"  # noqa: E501
         )
     return callback_result["code"]
 

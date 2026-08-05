@@ -8,9 +8,7 @@ README_PATH = Path("README.md")
 BANNER_LIGHT = Path(".github/assets/img/banner.svg")
 BANNER_DARK = Path(".github/assets/img/banner-dark.svg")
 
-LOWLIGHTER_METRICS_PIN = (
-    "lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6"
-)
+LOWLIGHTER_METRICS_PIN = "lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6"
 
 GENERATOR_JOBS = (
     "update-starred-lists",
@@ -115,11 +113,7 @@ def test_uv_sync_requires_locked_and_forbids_all_groups() -> None:
     workflow = _workflow_text()
 
     assert "--all-groups" not in workflow
-    sync_lines = [
-        line.strip()
-        for line in workflow.splitlines()
-        if "uv sync" in line
-    ]
+    sync_lines = [line.strip() for line in workflow.splitlines() if "uv sync" in line]
     assert sync_lines, "expected at least one uv sync invocation"
     for line in sync_lines:
         assert "--locked" in line, f"missing --locked: {line}"
@@ -301,7 +295,7 @@ def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
     ) in prod
     assert ".github/assets/img/metrics.extra.svg" in prod
     assert "./.github/assets/img/metrics.extra.svg" in finalize
-    assert 'chore(metrics): update generated metrics assets' in finalize
+    assert "chore(metrics): update generated metrics assets" in finalize
     assert Path(".github/assets/img/metrics.extra.svg").is_file()
 
 
@@ -321,7 +315,10 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
 
     readme = README_PATH.read_text(encoding="utf-8")
     from scripts.config import load_config
-    from scripts.readme_sections import compile_section_body_re, section_order_from_settings
+    from scripts.readme_sections import (
+        compile_section_body_re,
+        section_order_from_settings,
+    )
 
     order = section_order_from_settings(load_config().readme_sections_settings)
     living_match = compile_section_body_re("Living Art", order).search(readme)

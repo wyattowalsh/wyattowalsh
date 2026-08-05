@@ -82,7 +82,7 @@ def test_living_art_wrap_flow_shows_all_six_gifs() -> None:
     assert living.count('loading="lazy"') == 6
 
     for style in LIVING_ART_STYLE_KEYS:
-        src = f'.github/assets/img/living-{style}.gif'
+        src = f".github/assets/img/living-{style}.gif"
         assert living.count(f'src="{src}"') == 1
         assert living.count(f'href="{src}"') == 1
 

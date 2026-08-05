@@ -20,7 +20,6 @@ from scripts.art.lenia import generate as generate_lenia  # noqa: E402
 from scripts.art.physarum import generate as generate_physarum  # noqa: E402
 from scripts.art.topography import generate as generate_topography  # noqa: E402
 
-
 Generator = Callable[..., str]
 Marker = Callable[[str], int]
 

@@ -10,8 +10,8 @@ from unittest.mock import ANY, MagicMock, patch
 
 import numpy as np
 import pytest  # type: ignore
+
 from scripts import svg_drawing
-from scripts.svg_drawing import Drawing, Element
 
 # Modules to test
 from scripts.banner import (
@@ -38,6 +38,7 @@ from scripts.banner import (
     optimize_with_svgo,
     parse_rgba_color,
 )
+from scripts.svg_drawing import Drawing, Element
 from scripts.utils import get_logger  # Assuming this is used or can be mocked
 
 # Initialize logger for tests (or mock it if preferred)
@@ -86,9 +87,7 @@ def mock_svgwrite_drawing(mocker: MagicMock) -> MagicMock:
     mock_dwg.radialGradient = MagicMock(
         return_value=MagicMock(spec=svg_drawing.RadialGradient)
     )
-    mock_dwg.clipPath = MagicMock(
-        return_value=MagicMock(spec=svg_drawing.ClipPath)
-    )
+    mock_dwg.clipPath = MagicMock(return_value=MagicMock(spec=svg_drawing.ClipPath))
     mock_dwg.rect = MagicMock(return_value=MagicMock(spec=svg_drawing.Rect))
     mock_dwg.filter = MagicMock(return_value=MagicMock(spec=svg_drawing.Filter))
     mock_dwg.image = MagicMock(return_value=MagicMock(spec=svg_drawing.Image))
@@ -396,7 +395,7 @@ def test_noise_handler_pnoise2_fallback(mocker) -> None:
     assert value2 == pytest.approx(expected_value2)
 
 
-# Test case for when noise module IS available (optional, might be harder to set up CI for)
+# Test case for when noise module IS available (optional, might be harder to set up CI for)  # noqa: E501
 # This test would typically run if the 'noise' module is actually installed.
 # You might need to conditionally skip it if 'noise' is not in the test environment.
 @pytest.mark.skipif(
@@ -519,7 +518,7 @@ def test_define_background_calls(
         mock_rect_instance  # Make constructor return it
     )
 
-    # Mock other necessary svg_drawing elements that are accessed as attributes or methods
+    # Mock other necessary svg_drawing elements that are accessed as attributes or methods  # noqa: E501
     # of mock_dwg_instance or its defs.
     # Ensure defs and its add method are properly mocked if not already by the fixture.
     if not hasattr(mock_dwg_instance, "defs") or not isinstance(
@@ -540,9 +539,7 @@ def test_define_background_calls(
     if not hasattr(mock_dwg_instance, "linearGradient") or not isinstance(
         mock_dwg_instance.linearGradient, MagicMock
     ):
-        mock_dwg_instance.linearGradient = MagicMock(
-            spec=svg_drawing.LinearGradient
-        )
+        mock_dwg_instance.linearGradient = MagicMock(spec=svg_drawing.LinearGradient)
     mock_gradient_instance = MagicMock(spec=svg_drawing.LinearGradient)
     mock_gradient_instance.add_stop_color = MagicMock()
     mock_dwg_instance.linearGradient.return_value = mock_gradient_instance
@@ -550,9 +547,7 @@ def test_define_background_calls(
     if not hasattr(mock_dwg_instance, "radialGradient") or not isinstance(
         mock_dwg_instance.radialGradient, MagicMock
     ):
-        mock_dwg_instance.radialGradient = MagicMock(
-            spec=svg_drawing.RadialGradient
-        )
+        mock_dwg_instance.radialGradient = MagicMock(spec=svg_drawing.RadialGradient)
     mock_vignette_gradient_instance = MagicMock(spec=svg_drawing.RadialGradient)
     mock_vignette_gradient_instance.add_stop_color = MagicMock()
     mock_dwg_instance.radialGradient.return_value = mock_vignette_gradient_instance
@@ -612,8 +607,8 @@ def test_define_background_calls(
     # We need to ensure dwg.clipPath is mocked on dwg.defs if it's not already.
     # The fixture sets up dwg.clipPath on dwg, not dwg.defs.clipPath
 
-    # Let's assume clipPath is created like: `clip_path_obj = dwg.defs.add(dwg.clipPath(id="cornerClip"))`
-    # This means `dwg.clipPath` (from fixture) should be called, and its result passed to `dwg.defs.add`.
+    # Let's assume clipPath is created like: `clip_path_obj = dwg.defs.add(dwg.clipPath(id="cornerClip"))`  # noqa: E501
+    # This means `dwg.clipPath` (from fixture) should be called, and its result passed to `dwg.defs.add`.  # noqa: E501
 
     # Correcting clipPath assertion logic
     mock_dwg_instance.clipPath.assert_called_once_with(
@@ -623,9 +618,9 @@ def test_define_background_calls(
     mock_dwg_instance.defs.add.assert_any_call(created_clip_path_mock)
 
     # Check that a rect was added to this created clip path mock
-    # clip_path_obj.add(dwg.rect(...)) -> created_clip_path_mock.add(mock_dwg_instance.rect())
+    # clip_path_obj.add(dwg.rect(...)) -> created_clip_path_mock.add(mock_dwg_instance.rect())  # noqa: E501
     # The mock_svgwrite_drawing fixture mocks dwg.rect.
-    # So, mock_dwg_instance.rect should be called, and its result passed to created_clip_path_mock.add
+    # So, mock_dwg_instance.rect should be called, and its result passed to created_clip_path_mock.add  # noqa: E501
     mock_dwg_instance.rect.assert_any_call(
         insert=(0, 0),
         size=(default_banner_config.width, default_banner_config.height),
@@ -652,24 +647,24 @@ def test_define_background_calls(
     ) in mock_shapes_rect_constructor.return_value.__setitem__.call_args_list:
         if call_args == mocker.call("clip-path", "url(#cornerClip)"):
             break
-    # This assertion needs to be more robust if multiple Rects are created by mock_shapes_rect_constructor
+    # This assertion needs to be more robust if multiple Rects are created by mock_shapes_rect_constructor  # noqa: E501
     # For now, we assume the bg_rect is one of them and gets the clip-path.
-    # A more direct way: check the calls on the *specific* mock_rect_instance for the background
+    # A more direct way: check the calls on the *specific* mock_rect_instance for the background  # noqa: E501
 
     # Re-think: We patch svg_drawing.Rect.
-    # When define_background calls shapes.Rect(...), our mock_shapes_rect_constructor is called.
+    # When define_background calls shapes.Rect(...), our mock_shapes_rect_constructor is called.  # noqa: E501
     # It returns mock_rect_instance.
     # So, bg_rect becomes mock_rect_instance.
     # Then, mock_rect_instance["clip-path"] is set.
 
-    # We need to find which call to mock_shapes_rect_constructor was for the main bg_rect
+    # We need to find which call to mock_shapes_rect_constructor was for the main bg_rect  # noqa: E501
     # A bit tricky if multiple rects are made. Let's assume it's one of them.
-    # The first call to shapes.Rect in define_background is for the clip path's internal rect,
-    # the *second* (if not using dwg.rect for clip path) or one of the dwg.add(shapes.Rect) is the main one.
+    # The first call to shapes.Rect in define_background is for the clip path's internal rect,  # noqa: E501
+    # the *second* (if not using dwg.rect for clip path) or one of the dwg.add(shapes.Rect) is the main one.  # noqa: E501
 
     # The structure of define_background:
     # 1. dwg.defs.add(dwg.clipPath(id="cornerClip"))
-    #    clip_path_obj.add(dwg.rect(...)) -> dwg.rect is mocked by fixture, not shapes.Rect
+    #    clip_path_obj.add(dwg.rect(...)) -> dwg.rect is mocked by fixture, not shapes.Rect  # noqa: E501
     # 2. bg_rect = shapes.Rect(...) -> THIS IS THE ONE.
     #    bg_rect["clip-path"] = "url(#cornerClip)"
     #    dwg.add(bg_rect)
@@ -688,7 +683,7 @@ def test_define_background_calls(
 
     # Check calls on the *returned instance* from the specific call for bg_rect
     # This is hard if the mock constructor always returns the *same* instance mock.
-    # A better way: mock_shapes_rect_constructor.side_effect to return *new* mocks each time.
+    # A better way: mock_shapes_rect_constructor.side_effect to return *new* mocks each time.  # noqa: E501
 
     mock_bg_rect_instance = MagicMock()
     mock_noise_rect_instance = MagicMock()
@@ -739,10 +734,10 @@ def test_define_background_calls(
         in_="SourceGraphic", in2="turbulence", operator="in", result="comp"
     )
     mock_filter_instance.feColorMatrix.assert_any_call(
-        type="matrix", values=("1 0 0 0 0 " "0 1 0 0 0 " "0 0 1 0 0 " "0 0 0 0.07 0")
+        type="matrix", values=("1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.07 0")
     )
     # Check that this filter object was added to defs
-    # mock_dwg_instance.defs.add.assert_any_call(mock_filter_instance) # This mock_filter_instance is generic
+    # mock_dwg_instance.defs.add.assert_any_call(mock_filter_instance) # This mock_filter_instance is generic  # noqa: E501
 
     # Assertions for vignette filter
     mock_dwg_instance.radialGradient.assert_called_with(
@@ -834,9 +829,9 @@ def test_add_glassmorphism_effect_calls(
     # The colorize feColorMatrix is the last one in the chain
     # It seems the original test was missing one feColorMatrix or feBlend
     # Based on the function structure, after displace there's a feColorMatrix
-    returned_filter.feColorMatrix.assert_called_once_with(  # This is the one that was called
+    returned_filter.feColorMatrix.assert_called_once_with(  # This is the one that was called  # noqa: E501
         type="matrix",
-        values="1 0 0 0 0.03 0 1 0 0 0.03 0 0 1 0 0.03 0 0 0 0.7 0",  # Check values carefully
+        values="1 0 0 0 0.03 0 1 0 0 0.03 0 0 1 0 0.03 0 0 0 0.7 0",  # Check values carefully  # noqa: E501
         result="colorize",  # The actual function has this as the last result
     )
 
@@ -844,8 +839,8 @@ def test_add_glassmorphism_effect_calls(
 @patch("scripts.banner.generate_flow_field")
 @patch("scripts.banner._create_basic_glow_filter")
 def test_draw_flow_patterns_calls(
-    mock_create_basic_glow_filter: MagicMock,  # Corresponds to @patch('..._create_basic_glow_filter')
-    mock_generate_flow_field: MagicMock,  # Corresponds to @patch('...generate_flow_field')
+    mock_create_basic_glow_filter: MagicMock,  # Corresponds to @patch('..._create_basic_glow_filter')  # noqa: E501
+    mock_generate_flow_field: MagicMock,  # Corresponds to @patch('...generate_flow_field')  # noqa: E501
     default_banner_config: BannerConfig,
     mock_svgwrite_drawing: MagicMock,  # Use fixture
     mocker: MagicMock,
@@ -1049,7 +1044,7 @@ def test_draw_lorenz_calls(
         assert kwargs_for_constructor["stroke_linecap"] == "round"
         assert kwargs_for_constructor["stroke_linejoin"] == "round"
         assert kwargs_for_constructor["opacity"] == (0.8 - i * 0.15)
-        # assert isinstance(kwargs_for_constructor['d'], str)  # Path data string # Removed this line
+        # assert isinstance(kwargs_for_constructor['d'], str)  # Path data string # Removed this line  # noqa: E501
         # assert kwargs_for_constructor['d'].startswith("M") # Removed this line
 
         # Check filter attribute set on this specific path instance
@@ -1064,7 +1059,7 @@ def test_draw_lorenz_calls(
             first_layer_opacity = 0.8 - 0 * 0.15
             mock_dwg_instance.animate.assert_called_once_with(
                 attributeName="stroke-opacity",
-                values=f"{first_layer_opacity};{first_layer_opacity * 1.2};{first_layer_opacity}",
+                values=f"{first_layer_opacity};{first_layer_opacity * 1.2};{first_layer_opacity}",  # noqa: E501
                 dur="4s",
                 repeatCount="indefinite",
                 calcMode="spline",
@@ -1075,7 +1070,7 @@ def test_draw_lorenz_calls(
                 mock_animate_return_value
             )
         else:
-            current_mock_path_instance.add.assert_not_called()  # No animation for other layers
+            current_mock_path_instance.add.assert_not_called()  # No animation for other layers  # noqa: E501
 
     # Overall check that group.add was called num_layers times
     assert mock_group_instance.add.call_count == num_layers
@@ -1111,9 +1106,7 @@ def test_draw_aizawa_calls(
     mock_filter_instance = MagicMock(spec=svg_drawing.Filter)
     mock_filter_instance.feGaussianBlur = MagicMock()
     mock_filter_instance.feColorMatrix = MagicMock()
-    filters_constructor_mock = mocker.patch(
-        "scripts.banner.filters.Filter", return_value=mock_filter_instance
-    )
+    mocker.patch("scripts.banner.filters.Filter", return_value=mock_filter_instance)
 
     # draw_aizawa uses path.Path, not dwg.circle. Removed circle mock setup.
     # Mock svg_drawing.Path constructor
@@ -1136,7 +1129,7 @@ def test_draw_aizawa_calls(
     mock_generate_aizawa.return_value = mock_aizawa_points
 
     # Call the function under test
-    # Assuming the group is obtained via mock_dwg_instance.g().return_value from the fixture setup
+    # Assuming the group is obtained via mock_dwg_instance.g().return_value from the fixture setup  # noqa: E501
     pattern_group_mock = mock_dwg_instance.g.return_value
     draw_aizawa(mock_dwg_instance, default_banner_config, pattern_group_mock)
 
@@ -1175,8 +1168,8 @@ def test_draw_aizawa_calls(
     # We assert that these attributes were set at some point on this instance.
     mock_path_instance.__setitem__.assert_any_call("stroke", "url(#aizawaGradient)")
     mock_path_instance.__setitem__.assert_any_call("fill", "none")
-    # stroke-width and stroke-opacity vary per layer, so checking for ANY call is more robust
-    # if we don't want to iterate through each layer's specific path mock (if they were distinct)
+    # stroke-width and stroke-opacity vary per layer, so checking for ANY call is more robust  # noqa: E501
+    # if we don't want to iterate through each layer's specific path mock (if they were distinct)  # noqa: E501
     mock_path_instance.__setitem__.assert_any_call("stroke-width", ANY)
     mock_path_instance.__setitem__.assert_any_call("stroke-opacity", ANY)
     mock_path_instance.__setitem__.assert_any_call("filter", "url(#aizawaGlow)")
@@ -1421,8 +1414,8 @@ def test_add_title_and_subtitle_calls(
     # Assuming the fixture correctly sets up dwg.text to return a mock that
     # can capture __setitem__ calls. If not, the fixture might need adjustment.
     # We get the specific mock object returned by *each* call to dwg.text()
-    # For this to work reliably, dwg.text needs to return a *new* MagicMock each time it's called,
-    # or the test needs to iterate through text_calls[i].return_value if that's how it's set up.
+    # For this to work reliably, dwg.text needs to return a *new* MagicMock each time it's called,  # noqa: E501
+    # or the test needs to iterate through text_calls[i].return_value if that's how it's set up.  # noqa: E501
     # The mock_svgwrite_drawing fixture has:
     # mock_dwg.text = MagicMock(return_value=MagicMock(spec=svg_drawing.Text))
     # This means it returns the *same* MagicMock instance for `return_value` always.
@@ -1452,8 +1445,8 @@ def test_add_title_and_subtitle_calls(
 
     # Assert __setitem__ calls on the mock text element instance for title attributes
     # We need to ensure these calls are for the first text element (title)
-    # If mock_text_element_instance is shared, we check for *any* call for these attributes.
-    # To be precise, one would typically reset the mock or check call_args_list portions.
+    # If mock_text_element_instance is shared, we check for *any* call for these attributes.  # noqa: E501
+    # To be precise, one would typically reset the mock or check call_args_list portions.  # noqa: E501
     mock_text_element_instance.__setitem__.assert_any_call(
         "fill", "url(#titleGradient)"
     )
@@ -1490,7 +1483,7 @@ def test_add_title_and_subtitle_calls(
     # This relies on the order of operations in the SUT or needs more specific mocking.
     mock_text_element_instance.__setitem__.assert_any_call("fill", "#ffffff")
     # Filter is already checked by the title, it's the same filter.
-    # mock_text_element_instance.__setitem__.assert_any_call("filter", "url(#textEffects)")
+    # mock_text_element_instance.__setitem__.assert_any_call("filter", "url(#textEffects)")  # noqa: E501
     mock_text_element_instance.__setitem__.assert_any_call(
         "stroke", "#000000"
     )  # Stroke is checked again, could be specific
@@ -1619,7 +1612,7 @@ def test_create_basic_glow_filter(mock_svgwrite_drawing: MagicMock) -> None:
     dwg.filter.reset_mock()
     dwg.defs.add.reset_mock()
     # The filter_obj_cm is the same mock instance as dwg.filter.return_value
-    # so its method mocks also need reset if we are to check call counts precisely for the next scenario
+    # so its method mocks also need reset if we are to check call counts precisely for the next scenario  # noqa: E501
     filter_obj_cm.feGaussianBlur.reset_mock()
     filter_obj_cm.feColorMatrix.reset_mock()
     filter_obj_cm.feMerge.reset_mock()
@@ -1634,7 +1627,7 @@ def test_create_basic_glow_filter(mock_svgwrite_drawing: MagicMock) -> None:
         in_="SourceGraphic", stdDeviation=std_dev, result="blur"
     )
     filter_obj_no_cm.feColorMatrix.assert_not_called()  # Should not be called
-    filter_obj_no_cm.feMerge.assert_not_called()  # Should not be called if no color matrix
+    filter_obj_no_cm.feMerge.assert_not_called()  # Should not be called if no color matrix  # noqa: E501
     dwg.defs.add.assert_any_call(filter_obj_no_cm)
 
 

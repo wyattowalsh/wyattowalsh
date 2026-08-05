@@ -13,10 +13,19 @@ import sys
 import textwrap
 from pathlib import Path
 
-
 SKIP_DIRS = {
-    "node_modules", ".git", "__pycache__", ".venv", "venv",
-    "dist", "build", ".next", ".astro", "coverage", "tests", "test",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "dist",
+    "build",
+    ".next",
+    ".astro",
+    "coverage",
+    "tests",
+    "test",
 }
 
 
@@ -91,7 +100,8 @@ def extract_python_exports(filepath: str) -> list[dict]:
                         explicit_all = {
                             elt.value
                             for elt in node.value.elts
-                            if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+                            if isinstance(elt, ast.Constant)
+                            and isinstance(elt.value, str)
                         }
 
     exports = []
@@ -102,13 +112,19 @@ def extract_python_exports(filepath: str) -> list[dict]:
             if explicit_all and node.name not in explicit_all:
                 continue
             docstring = ast.get_docstring(node) or ""
-            exports.append({
-                "name": node.name,
-                "type": "async function" if isinstance(node, ast.AsyncFunctionDef) else "function",
-                "signature": format_signature(node),
-                "docstring": textwrap.shorten(docstring, width=300, placeholder="..."),
-                "line": node.lineno,
-            })
+            exports.append(
+                {
+                    "name": node.name,
+                    "type": "async function"
+                    if isinstance(node, ast.AsyncFunctionDef)
+                    else "function",
+                    "signature": format_signature(node),
+                    "docstring": textwrap.shorten(
+                        docstring, width=300, placeholder="..."
+                    ),
+                    "line": node.lineno,
+                }
+            )
         elif isinstance(node, ast.ClassDef):
             if node.name.startswith("_"):
                 continue
@@ -121,13 +137,17 @@ def extract_python_exports(filepath: str) -> list[dict]:
                 if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     if item.name.startswith("_") and item.name != "__init__":
                         continue
-                    methods.append({
-                        "name": item.name,
-                        "signature": format_signature(item),
-                        "docstring": textwrap.shorten(
-                            ast.get_docstring(item) or "", width=200, placeholder="..."
-                        ),
-                    })
+                    methods.append(
+                        {
+                            "name": item.name,
+                            "signature": format_signature(item),
+                            "docstring": textwrap.shorten(
+                                ast.get_docstring(item) or "",
+                                width=200,
+                                placeholder="...",
+                            ),
+                        }
+                    )
             entry = {
                 "name": node.name,
                 "type": "class",
@@ -164,7 +184,9 @@ def extract_js_ts_exports(filepath: str) -> list[dict]:
         end_pos = m.end()
         end_line = content[:end_pos].count("\n") + 1
         doc_text = re.sub(r"\n\s*\*\s?", " ", m.group(1)).strip()
-        jsdoc_by_line[end_line] = textwrap.shorten(doc_text, width=300, placeholder="...")
+        jsdoc_by_line[end_line] = textwrap.shorten(
+            doc_text, width=300, placeholder="..."
+        )
 
     for i, line in enumerate(lines):
         m = export_pattern.search(line)
@@ -174,13 +196,15 @@ def extract_js_ts_exports(filepath: str) -> list[dict]:
             sig_rest = m.group(3).strip().rstrip("{").rstrip(";").strip()
             signature = f"{kind} {name}{sig_rest}" if sig_rest else f"{kind} {name}"
             docstring = jsdoc_by_line.get(i, jsdoc_by_line.get(i + 1, ""))
-            exports.append({
-                "name": name,
-                "type": kind,
-                "signature": signature,
-                "docstring": docstring,
-                "line": i + 1,
-            })
+            exports.append(
+                {
+                    "name": name,
+                    "type": kind,
+                    "signature": signature,
+                    "docstring": docstring,
+                    "line": i + 1,
+                }
+            )
 
     return exports
 
@@ -207,11 +231,13 @@ def scan_modules(root: str, extensions: set | None = None) -> list[dict]:
                 full = os.path.join(dirpath, fname)
                 exports = EXTRACTORS[ext](full)
                 if exports:
-                    modules.append({
-                        "name": os.path.splitext(fname)[0],
-                        "path": full,
-                        "exports": exports,
-                    })
+                    modules.append(
+                        {
+                            "name": os.path.splitext(fname)[0],
+                            "path": full,
+                            "exports": exports,
+                        }
+                    )
 
     return modules
 
@@ -233,11 +259,15 @@ def main():
         ext = target.suffix
         if ext in EXTRACTORS:
             exports = EXTRACTORS[ext](str(target))
-            result = {"modules": [{
-                "name": target.stem,
-                "path": str(target),
-                "exports": exports,
-            }]}
+            result = {
+                "modules": [
+                    {
+                        "name": target.stem,
+                        "path": str(target),
+                        "exports": exports,
+                    }
+                ]
+            }
         else:
             print(f"Unsupported file type: {ext}", file=sys.stderr)
             sys.exit(1)

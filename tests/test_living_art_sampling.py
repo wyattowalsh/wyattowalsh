@@ -183,7 +183,9 @@ def test_sample_frames_keeps_repo_visual_order_shift_without_count_change() -> N
     )
 
 
-def test_sample_frames_preserves_even_real_day_anchors_when_transitions_are_flat() -> None:
+def test_sample_frames_preserves_even_real_day_anchors_when_transitions_are_flat() -> (
+    None
+):
     snaps = [_snapshot(idx=i, repo_names=("foundation",)) for i in range(40)]
 
     sampled = sample_frames(snaps, max_frames=6)
@@ -238,8 +240,7 @@ def test_sample_frames_splits_largest_visual_jumps() -> None:
     sparse_sample = [snaps[index] for index in sparse_indices]
 
     sampled_jump = max(
-        _transition_score(left, right)
-        for left, right in zip(sampled, sampled[1:])
+        _transition_score(left, right) for left, right in zip(sampled, sampled[1:])
     )
     sparse_jump = max(
         _transition_score(left, right)

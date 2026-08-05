@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Heuristic scorer for README composition skeletons."""
+
 from __future__ import annotations
 
 import re
@@ -19,7 +20,9 @@ def h2_order(text: str) -> list[str]:
 
 def score(text: str) -> dict:
     order = h2_order(text)
-    featured_i = order.index("Featured Projects") if "Featured Projects" in order else 99
+    featured_i = (
+        order.index("Featured Projects") if "Featured Projects" in order else 99
+    )
     metrics_i = order.index("Metrics") if "Metrics" in order else 99
     living_i = order.index("Living Art") if "Living Art" in order else 99
     # first-fold: content before first ## after connect is not used; use Featured early bonus
@@ -29,7 +32,11 @@ def score(text: str) -> dict:
         img_before_metrics = before.count("<img")
     featured_cards = text.count("featured-card-")
     living = len(set(re.findall(r"living-([a-z]+)\.gif", text)))
-    no_teaser = "AI/ML" not in text.split("## Tech Stack", 1)[-1][:400] if "## Tech Stack" in text else True
+    (
+        "AI/ML" not in text.split("## Tech Stack", 1)[-1][:400]
+        if "## Tech Stack" in text
+        else True
+    )
     # rough: teaser shields gone if View full stack is first after Tech Stack heading
     tech_body = ""
     if "## Tech Stack" in text:

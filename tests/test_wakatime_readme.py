@@ -9,9 +9,9 @@ from textwrap import dedent
 import pytest
 
 from scripts.wakatime_readme import (
-    GitHubShortInfo,
     MARKER_END,
     MARKER_START,
+    GitHubShortInfo,
     WakaStatEntry,
     WakaWeekStats,
     apply_waka_artifact_to_readme,
@@ -172,9 +172,7 @@ def test_apply_waka_section_rewrites_only_marker_zone(tmp_path: Path) -> None:
     body = render_waka_section(
         WakaWeekStats(
             timezone="UTC",
-            languages=(
-                WakaStatEntry("Python", 3600, 100.0, "1 hrs"),
-            ),
+            languages=(WakaStatEntry("Python", 3600, 100.0, "1 hrs"),),
             editors=(),
             projects=(),
             operating_systems=(),
@@ -203,14 +201,18 @@ def test_apply_waka_artifact_to_readme_noop_when_missing(tmp_path: Path) -> None
 
 
 def test_write_and_apply_artifact_roundtrip(tmp_path: Path) -> None:
-    artifact = write_waka_artifact("📊 **This Week I Spent My Time On**\n", tmp_path / "waka-section.md")
+    artifact = write_waka_artifact(
+        "📊 **This Week I Spent My Time On**\n", tmp_path / "waka-section.md"
+    )
     readme = tmp_path / "README.md"
     readme.write_text(f"{MARKER_START}\n\n{MARKER_END}\n", encoding="utf-8")
     assert apply_waka_artifact_to_readme(artifact, readme) is True
     assert "This Week I Spent My Time On" in readme.read_text(encoding="utf-8")
 
 
-def test_main_generate_allow_missing_key_writes_skip(tmp_path: Path, monkeypatch) -> None:
+def test_main_generate_allow_missing_key_writes_skip(
+    tmp_path: Path, monkeypatch
+) -> None:
     monkeypatch.delenv("WAKATIME_API_KEY", raising=False)
     out = tmp_path / "out"
     assert main(["generate", "--output-dir", str(out), "--allow-missing-key"]) == 0

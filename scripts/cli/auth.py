@@ -59,7 +59,7 @@ def spotify_refresh_token(
         str,
         typer.Option(
             "--callback-host",
-            help="Loopback callback host. Must match a Spotify redirect URI allowlist entry.",
+            help="Loopback callback host. Must match a Spotify redirect URI allowlist entry.",  # noqa: E501
         ),
     ] = DEFAULT_CALLBACK_HOST,
     callback_port: Annotated[
@@ -68,7 +68,7 @@ def spotify_refresh_token(
             "--callback-port",
             min=1,
             max=65535,
-            help="Loopback callback port. Must match a Spotify redirect URI allowlist entry.",
+            help="Loopback callback port. Must match a Spotify redirect URI allowlist entry.",  # noqa: E501
         ),
     ] = DEFAULT_CALLBACK_PORT,
     timeout_seconds: Annotated[

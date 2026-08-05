@@ -31,8 +31,6 @@ def test_normalize_timeline_window_fallback_without_dates() -> None:
     assert end == now
 
 
-
-
 def test_normalize_timeline_window_uses_contributions_daily_dates() -> None:
     history = {"contributions_daily": {"2024-05-20": 3}}
 
@@ -46,7 +44,10 @@ def test_map_date_to_loop_delay_with_clamp_and_easing() -> None:
     window = (dt_date(2020, 1, 1), dt_date(2020, 1, 11))
     assert map_date_to_loop_delay("2019-01-01", window, duration=30.0) == 0.0
     assert map_date_to_loop_delay("2020-01-11", window, duration=30.0) == 27.9
-    assert map_date_to_loop_delay("2020-01-06", window, duration=30.0, easing_power=2.0) == 6.975
+    assert (
+        map_date_to_loop_delay("2020-01-06", window, duration=30.0, easing_power=2.0)
+        == 6.975
+    )
 
 
 def test_map_date_to_loop_delay_orders_early_mid_late_inside_window() -> None:
@@ -83,7 +84,9 @@ def test_normalize_timeline_window_accepts_datetime_objects() -> None:
 
 def test_map_date_to_loop_delay_accepts_datetime_object() -> None:
     window = (dt_date(2020, 1, 1), dt_date(2020, 1, 11))
-    result = map_date_to_loop_delay(datetime(2020, 1, 6, 12, 0, 0), window, duration=30.0)
+    result = map_date_to_loop_delay(
+        datetime(2020, 1, 6, 12, 0, 0), window, duration=30.0
+    )
     assert result == 13.95
 
 
@@ -98,7 +101,9 @@ def test_contributions_monthly_to_daily_series_with_full_month_keys() -> None:
 
 
 def test_contributions_monthly_to_daily_series_handles_month_only_history() -> None:
-    series = contributions_monthly_to_daily_series({"01": 31, "03": 31}, reference_year=2025)
+    series = contributions_monthly_to_daily_series(
+        {"01": 31, "03": 31}, reference_year=2025
+    )
     assert "2025-01-01" in series
     assert "2025-03-31" in series
     feb = [v for k, v in series.items() if k.startswith("2025-02-")]

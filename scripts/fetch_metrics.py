@@ -35,7 +35,7 @@ def _repo_languages_url(repo: dict[str, Any]) -> str:
     full_name = str(repo.get("full_name") or "").strip()
     if "/" not in full_name:
         owner = str((repo.get("owner") or {}).get("login") or "").strip()
-        name  = str(repo.get("name") or "").strip()
+        name = str(repo.get("name") or "").strip()
         if not owner or not name:
             raise ValueError(f"Cannot build languages URL for repo: {repo!r}")
         full_name = f"{owner}/{name}"
@@ -140,9 +140,8 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
             if errors:
                 logger.warning("GraphQL errors fetching merged PRs: {}", errors)
                 return []
-            pull_requests = (
-                ((resp.get("data") or {}).get("user") or {})
-                .get("pullRequests", {})
+            pull_requests = ((resp.get("data") or {}).get("user") or {}).get(
+                "pullRequests", {}
             )
             nodes = pull_requests.get("nodes", [])
             for node in nodes:
@@ -284,7 +283,7 @@ def _collect_releases(
         repo_sources = [{"name": repo, "full_name": f"{owner}/{repo}"}]
 
     def _fetch_repo_releases(
-        repo_data: dict[str, Any]
+        repo_data: dict[str, Any],
     ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         repo_name = str(repo_data.get("name") or repo)
         full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
@@ -427,8 +426,14 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
 
     # -- GraphQL: contributions ------------------------------------------
     # Set GraphQL field defaults (overwritten on success)
-    for _k in ("contributions_last_year", "total_commits", "total_prs",
-               "total_issues", "total_repos_contributed", "pr_review_count"):
+    for _k in (
+        "contributions_last_year",
+        "total_commits",
+        "total_prs",
+        "total_issues",
+        "total_repos_contributed",
+        "pr_review_count",
+    ):
         metrics[_k] = None
     metrics["contributions_calendar"] = []
 
@@ -463,10 +468,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
             if errors:
                 logger.warning("GraphQL returned errors: {e}", e=errors)
             raw = gql_resp.get("data") or {}
-            contrib_coll = (
-                raw.get("viewer", {})
-                .get("contributionsCollection", {})
-            )
+            contrib_coll = raw.get("viewer", {}).get("contributionsCollection", {})
             cal = contrib_coll.get("contributionCalendar", {})
             metrics["contributions_last_year"] = cal.get("totalContributions", 0)
             metrics["total_commits"] = contrib_coll.get("totalCommitContributions", 0)

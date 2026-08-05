@@ -225,8 +225,7 @@ def is_placeholder_svg(svg_text: str) -> bool:
         root = xml_etree.fromstring(svg_text)
     except xml_etree.ParseError:
         return all(
-            marker.casefold() in normalized
-            for marker in PLACEHOLDER_TEXT_MARKERS
+            marker.casefold() in normalized for marker in PLACEHOLDER_TEXT_MARKERS
         )
 
     visible_text = _extract_visible_svg_text(root).casefold()
@@ -327,10 +326,7 @@ def _has_rendered_attributes(
         return (
             (element.attrib.get("x1") != element.attrib.get("x2"))
             or (element.attrib.get("y1") != element.attrib.get("y2"))
-        ) and all(
-            key in element.attrib
-            for key in ("x1", "x2", "y1", "y2")
-        )
+        ) and all(key in element.attrib for key in ("x1", "x2", "y1", "y2"))
 
     return bool(element.attrib)
 

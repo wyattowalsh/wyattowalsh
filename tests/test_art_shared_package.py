@@ -19,7 +19,6 @@ from scripts.art.shared import (  # noqa: E402
     seed_hash,
 )
 
-
 _EXPECTED_SUBMODULES = (
     "constants",
     "timeline",

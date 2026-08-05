@@ -44,9 +44,11 @@ def load_known_simple_icon_slugs() -> set[str]:
         if line.strip()
     }
 
+
 # ---------------------------------------------------------------------------
 # Model tests
 # ---------------------------------------------------------------------------
+
 
 class TestSkillEntry:
     def test_minimal(self):
@@ -94,6 +96,7 @@ class TestSkillsSettings:
 # ---------------------------------------------------------------------------
 # Validator tests
 # ---------------------------------------------------------------------------
+
 
 class TestSkillEntryValidators:
     def test_logo_path_rejects_traversal(self):
@@ -162,6 +165,7 @@ class TestSkillEntryValidators:
 # Badge URL construction
 # ---------------------------------------------------------------------------
 
+
 class TestBadgeUrl:
     def setup_method(self):
         self.gen = SkillsBadgeGenerator(settings=SkillsSettings())
@@ -202,9 +206,7 @@ class TestBadgeUrl:
         assert "logoColor=black" in url
 
     def test_style_override(self):
-        gen = SkillsBadgeGenerator(
-            settings=SkillsSettings(style="flat-square")
-        )
+        gen = SkillsBadgeGenerator(settings=SkillsSettings(style="flat-square"))
         skill = SkillEntry(name="Test", color="000000")
         url = gen._build_badge_url(skill)
         assert "style=flat-square" in url
@@ -225,9 +227,7 @@ class TestBadgeUrl:
                 color="FF0000",
             )
             url = self.gen._build_badge_url(skill)
-            expected_b64 = quote(
-                base64.b64encode(svg_content).decode(), safe=""
-            )
+            expected_b64 = quote(base64.b64encode(svg_content).decode(), safe="")
             assert f"logo=data:image/svg%2Bxml;base64,{expected_b64}" in url
             assert "logo=TestSkill" not in url
         finally:
@@ -241,9 +241,7 @@ class TestBadgeUrl:
         svg_content = b"\xfb\xef\xbe"
         svg_path.write_bytes(svg_content)
         try:
-            skill = SkillEntry(
-                name="Test", logo_path=rel.as_posix(), color="000000"
-            )
+            skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
             url = self.gen._build_badge_url(skill)
             b64_section = url.split("base64,")[1].split("&")[0]
             assert "+" not in b64_section, "raw + in URL would be decoded as space"
@@ -258,9 +256,7 @@ class TestBadgeUrl:
         # b'\xff' produces /w== in base64 (contains both / and =)
         svg_path.write_bytes(b"\xff")
         try:
-            skill = SkillEntry(
-                name="Test", logo_path=rel.as_posix(), color="000000"
-            )
+            skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
             url = self.gen._build_badge_url(skill)
             b64_section = url.split("base64,")[1].split("&")[0]
             assert "/" not in b64_section, "raw / would break URL path"
@@ -297,9 +293,9 @@ class TestBadgeUrl:
         url = self.gen._build_badge_url(skill)
         assert "logo=fallback" in url
         assert "base64" not in url
-        assert any(
-            "nonexistent/path.svg" in w for w in captured_warnings
-        ), f"Expected warning about missing logo_path, got: {captured_warnings}"
+        assert any("nonexistent/path.svg" in w for w in captured_warnings), (
+            f"Expected warning about missing logo_path, got: {captured_warnings}"
+        )
 
     def test_logo_path_missing_no_slug(self):
         skill = SkillEntry(
@@ -315,12 +311,12 @@ class TestBadgeUrl:
 # HTML rendering
 # ---------------------------------------------------------------------------
 
+
 class TestRendering:
     def test_render_badge_with_url(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
         skill = SkillEntry(
-            name="Python", slug="python", color="3776AB",
-            url="https://python.org"
+            name="Python", slug="python", color="3776AB", url="https://python.org"
         )
         html = gen._render_badge(skill)
         assert '<a href="https://python.org">' in html
@@ -379,15 +375,12 @@ class TestRendering:
 # README injection
 # ---------------------------------------------------------------------------
 
+
 class TestReadmeInjection:
     def test_replaces_between_markers(self, tmp_path):
         readme = tmp_path / "README.md"
         readme.write_text(
-            "before\n"
-            "<!-- SKILLS:START -->\n"
-            "old content\n"
-            "<!-- SKILLS:END -->\n"
-            "after\n"
+            "before\n<!-- SKILLS:START -->\nold content\n<!-- SKILLS:END -->\nafter\n"
         )
         settings = SkillsSettings(
             readme_path=str(readme),
@@ -438,6 +431,7 @@ class TestReadmeInjection:
 # Integration tests
 # ---------------------------------------------------------------------------
 
+
 class TestIntegration:
     def test_skills_yaml_logo_paths_all_exist(self, monkeypatch):
         """All logo_path entries in skills.yaml must point to real files."""
@@ -479,9 +473,7 @@ class TestIntegration:
                     f"({path.stat().st_size} bytes)"
                 )
             assert skill.logo_source, f"Missing logo_source for '{skill.name}'"
-            assert skill.logo_source_url, (
-                f"Missing logo_source_url for '{skill.name}'"
-            )
+            assert skill.logo_source_url, f"Missing logo_source_url for '{skill.name}'"
             assert skill.logo_license, f"Missing logo_license for '{skill.name}'"
             assert skill.logo_style, f"Missing logo_style for '{skill.name}'"
 
@@ -507,7 +499,7 @@ class TestIntegration:
             assert "javascript:" not in lowered, (
                 f"Local logo must not include javascript URLs: {skill.logo_path}"
             )
-            assert "href=\"http" not in lowered, (
+            assert 'href="http' not in lowered, (
                 f"Local logo must be self-contained: {skill.logo_path}"
             )
             assert "href='http" not in lowered, (

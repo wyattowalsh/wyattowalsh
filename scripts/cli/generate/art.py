@@ -2,34 +2,24 @@
 
 from __future__ import annotations
 
+import json
+import os
+import sys
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
 from ._common import (
-    Annotated,
-    Any,
-    DEFAULT_PUBLIC_SURFACE_DIR,
-    LIVING_ART_STYLE_KEYS,
-    Path,
     _LIVING_ART_DEFAULT_MAX_FRAMES,
     _LIVING_ART_STYLE_HELP,
-    _format_style_help,
     _generate_living_art_timelapse,
     _load_project_config,
-    _load_required_json,
-    _refresh_living_art_artifacts,
-    _selected_living_art_styles,
     console,
     generate_app,
-    json,
     logger,
-    os,
-    sync_living_art_artifacts,
-    sys,
-    typer,
 )
+
 
 @generate_app.command(
     name="generative",
@@ -406,6 +396,3 @@ def timelapse(
 # ---------------------------------------------------------------------------
 # skills
 # ---------------------------------------------------------------------------
-
-
-

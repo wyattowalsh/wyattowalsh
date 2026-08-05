@@ -1,4 +1,5 @@
 """Live metrics / history contracts and normalization for living-art."""
+
 from __future__ import annotations
 
 import math
@@ -169,17 +170,13 @@ def _build_repo_recency_bands(
 def validate_live_metrics_payload(raw: Mapping[str, Any]) -> dict[str, Any]:
     """Validate and normalize the metrics payload used by living-art generators."""
     contract = MetricsSnapshotContract.model_validate(raw)
-    return contract.model_dump(
-        mode="python", exclude_none=True, exclude_unset=True
-    )
+    return contract.model_dump(mode="python", exclude_none=True, exclude_unset=True)
 
 
 def validate_live_history_payload(history: Mapping[str, Any]) -> dict[str, Any]:
     """Validate and normalize the history payload used by living-art generators."""
     contract = HistorySnapshotContract.model_validate(history)
-    return contract.model_dump(
-        mode="python", exclude_none=True, exclude_unset=True
-    )
+    return contract.model_dump(mode="python", exclude_none=True, exclude_unset=True)
 
 
 def resolve_render_metrics(metrics: Mapping[str, Any]) -> dict[str, Any]:
@@ -238,10 +235,20 @@ def normalize_live_metrics(
 
     # 0. Coerce None numeric fields to 0 (GraphQL fields are None without a token)
     _NUMERIC_KEYS = (
-        "stars", "forks", "watchers", "followers", "following",
-        "public_repos", "orgs_count", "contributions_last_year",
-        "total_commits", "total_prs", "total_issues",
-        "total_repos_contributed", "open_issues_count", "network_count",
+        "stars",
+        "forks",
+        "watchers",
+        "followers",
+        "following",
+        "public_repos",
+        "orgs_count",
+        "contributions_last_year",
+        "total_commits",
+        "total_prs",
+        "total_issues",
+        "total_repos_contributed",
+        "open_issues_count",
+        "network_count",
         "pr_review_count",
     )
     for k in _NUMERIC_KEYS:
@@ -321,9 +328,7 @@ def normalize_live_metrics(
         if "account_created" not in metrics and "account_created" in validated_history:
             metrics["account_created"] = validated_history["account_created"]
         if validated_history.get("contributions_daily"):
-            metrics["contributions_daily"] = validated_history[
-                "contributions_daily"
-            ]
+            metrics["contributions_daily"] = validated_history["contributions_daily"]
         # Prefer history's multi-year contributions_monthly over single-year calendar
         if validated_history.get("contributions_monthly"):
             metrics["contributions_monthly"] = validated_history[
@@ -368,17 +373,22 @@ def normalize_live_metrics(
 
     # 7. Pass through new fields from fetch_metrics and fetch_history
     _PASSTHROUGH_KEYS = (
-        "recent_merged_prs", "issue_stats", "pr_review_count",
+        "recent_merged_prs",
+        "issue_stats",
+        "pr_review_count",
         "commit_hour_distribution",
         "commit_hour_distribution_scope",
         "commit_hour_distribution_sample_size",
         "releases",
         "releases_scope",
         "releases_repo_count",
-        "star_velocity", "contribution_streaks",
+        "star_velocity",
+        "contribution_streaks",
         "public_gists",
-        "traffic_views_14d", "traffic_unique_visitors_14d",
-        "traffic_clones_14d", "traffic_unique_cloners_14d",
+        "traffic_views_14d",
+        "traffic_unique_visitors_14d",
+        "traffic_clones_14d",
+        "traffic_unique_cloners_14d",
         "traffic_top_referrers",
     )
     if validated_history:

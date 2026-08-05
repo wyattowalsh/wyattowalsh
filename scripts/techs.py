@@ -78,13 +78,11 @@ PREDEFINED_CATEGORIES = [
 ]
 
 
-def parse_technology_line(
-    line: str, current_category: str | None
-) -> Technology | None:
+def parse_technology_line(line: str, current_category: str | None) -> Technology | None:
     """
     Parses a single line of Markdown to extract technology information.
 
-    Expected format: "- Technology Name (Level: X)" or "- Technology Name (Level: X) - Notes"
+    Expected format: "- Name (Level: X)" or "- Name (Level: X) - Notes"
 
     Args:
         line: The Markdown line to parse.
@@ -121,7 +119,9 @@ def parse_technology_line(
             )
             return None
         except ValidationError as e:
-            logger.warning("Validation error for {name!r}: {e}. Skipping.", name=name, e=e)
+            logger.warning(
+                "Validation error for {name!r}: {e}. Skipping.", name=name, e=e
+            )
             return None
     return None
 
@@ -140,7 +140,9 @@ def load_technologies(md_file_path: Path) -> list[Technology]:
         A list of Technology objects.
     """
     if not md_file_path.exists():
-        logger.error("Technologies file not found: {md_file_path}", md_file_path=md_file_path)
+        logger.error(
+            "Technologies file not found: {md_file_path}", md_file_path=md_file_path
+        )
         return []
 
     technologies = []
@@ -166,10 +168,10 @@ def load_technologies(md_file_path: Path) -> list[Technology]:
                     and not line_stripped.startswith("#")
                     and not current_category
                 ):
-                    # This case handles lines that might be technologies but are not under a category
+                    # This case handles lines that might be technologies but are not under a category  # noqa: E501
                     # This could happen if the MD file is not well-formed
                     logger.debug(
-                        f"Line '{line_num}' ('{line_stripped}') not under a category. Attempting parse without category."
+                        f"Line '{line_num}' ('{line_stripped}') not under a category. Attempting parse without category."  # noqa: E501
                     )
                     tech = parse_technology_line(line_stripped, "Uncategorized")
                     if tech:
@@ -178,7 +180,12 @@ def load_technologies(md_file_path: Path) -> list[Technology]:
         logger.error("File not found: {md_file_path}", md_file_path=md_file_path)
         return []
     except Exception as e:
-        logger.error("Error reading or parsing {md_file_path}: {e}", md_file_path=md_file_path, e=e, exc_info=True)
+        logger.error(
+            "Error reading or parsing {md_file_path}: {e}",
+            md_file_path=md_file_path,
+            e=e,
+            exc_info=True,
+        )
         return []
 
     logger.info(
@@ -256,7 +263,10 @@ if __name__ == "__main__":
     # Define the path to your technologies.md file
     # Assumes the script is in a 'scripts' directory, and 'techs.md' is one level up.
     tech_file_path = Path(__file__).parent.parent / "techs.md"
-    logger.info("Attempting to load technologies from: {tech_file_path}", tech_file_path=tech_file_path)
+    logger.info(
+        "Attempting to load technologies from: {tech_file_path}",
+        tech_file_path=tech_file_path,
+    )
 
     if not tech_file_path.exists():
         logger.error(
@@ -278,7 +288,7 @@ Create it with your technology list."
             logger.warning("No technologies were loaded. Check the file format.")
             console.print("[yellow]No technologies loaded from the file.[/yellow]")
 
-    # --- Example of generating a simple Markdown output (not part of CLI by default) ---
+    # --- Example of generating a simple Markdown output (not part of CLI by default) ---  # noqa: E501
     # This is a conceptual example. A more robust version would use a template engine.
     # def generate_tech_markdown_section(technologies: List[Technology]) -> str:
     #     markdown_output = "## My Tech Stack\n"
@@ -304,7 +314,7 @@ Create it with your technology list."
     #         with open(output_md_path, "w", encoding="utf-8") as f_out:
     #             f_out.write(md_section)
     #         logger.info(f"Generated tech stack markdown at: {output_md_path}")
-    #         console.print(f"[green]Generated Markdown section to {output_md_path}[/green]")
+    #         console.print(f"[green]Generated Markdown section to {output_md_path}[/green]")  # noqa: E501
     #     except Exception as e_write:
     #         logger.error(f"Could not write markdown output: {e_write}")
     #         console.print(f"[red]Error writing markdown: {e_write}[/red]")

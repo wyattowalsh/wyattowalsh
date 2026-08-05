@@ -8,8 +8,9 @@ while preserving the imperative Drawing API surface those modules already use
 from __future__ import annotations
 
 import html
+from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path as FsPath
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Any
 
 
 def _xml_escape(value: object) -> str:
@@ -79,9 +80,7 @@ class Element:
 
         if pretty:
             inner = nl.join(children)
-            return (
-                f"{pad}<{self.tag}{attrs}>{nl}{inner}{nl}{pad}</{self.tag}>"
-            )
+            return f"{pad}<{self.tag}{attrs}>{nl}{inner}{nl}{pad}</{self.tag}>"
         return f"<{self.tag}{attrs}>{''.join(children)}</{self.tag}>"
 
 

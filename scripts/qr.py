@@ -67,18 +67,14 @@ class QRCodeGenerator:
         if self.default_background_path is not None:
             if not self.default_background_path.is_file():
                 msg = (
-                    f"Default background SVG not found: "
-                    f"{self.default_background_path}"
+                    f"Default background SVG not found: {self.default_background_path}"
                 )
                 logger.error(msg)
                 raise FileNotFoundError(msg)
         try:
             self.default_output_dir.mkdir(parents=True, exist_ok=True)
         except OSError as e:
-            msg = (
-                f"Could not create output directory "
-                f"{self.default_output_dir}: {e}"
-            )
+            msg = f"Could not create output directory {self.default_output_dir}: {e}"
             logger.error(msg)
             raise
 
@@ -132,8 +128,7 @@ class QRCodeGenerator:
             vcard_lines = [
                 "BEGIN:VCARD",
                 "VERSION:3.0",
-                f"N:{vcard_details.n_familyname};"
-                f"{vcard_details.n_givenname};;;",
+                f"N:{vcard_details.n_familyname};{vcard_details.n_givenname};;;",
                 f"FN:{vcard_details.fn}",
                 f"DISPLAYNAME:{vcard_details.displayname}",
             ]
@@ -154,19 +149,15 @@ class QRCodeGenerator:
                 for i, typed_url_item in enumerate(vcard_details.url_work):
                     # For Apple compatibility and general labeling,
                     # use itemX.URL and itemX.X-ABLabel
-                    vcard_lines.append(f"item{i+1}.URL:{typed_url_item.url}")
-                    vcard_lines.append(
-                        f"item{i+1}.X-ABLabel:{typed_url_item.label}"
-                    )
+                    vcard_lines.append(f"item{i + 1}.URL:{typed_url_item.url}")
+                    vcard_lines.append(f"item{i + 1}.X-ABLabel:{typed_url_item.label}")
 
             # Add other fields as necessary, e.g., PHOTO, ADR
 
             vcard_lines.append("END:VCARD")
             card_payload = "\n".join(vcard_lines)
 
-            qrcode = segno.make(
-                card_payload, error=error_correction, micro=False
-            )
+            qrcode = segno.make(card_payload, error=error_correction, micro=False)
 
             logger.info(
                 f"Generating artistic QR code to {output_path} "
@@ -197,8 +188,7 @@ class QRCodeGenerator:
                 # Fallback or error if .to_artistic is not available
                 # as expected
                 logger.error(
-                    "qrcode object does not have a callable 'to_artistic' "
-                    "method."
+                    "qrcode object does not have a callable 'to_artistic' method."
                 )
                 # As a simple fallback, save as standard PNG, though this loses
                 # artistry:
@@ -207,12 +197,12 @@ class QRCodeGenerator:
                 # Or, raise an error if artistic rendering is critical:
                 raise AttributeError("Artistic QR rendering not available.")
 
-            logger.info("Successfully generated QR code: {output_path}", output_path=output_path)
+            logger.info(
+                "Successfully generated QR code: {output_path}", output_path=output_path
+            )
             return output_path
         except FileNotFoundError:  # Should be caught by earlier check
-            logger.error(
-                "File operation failed: Background or target path issue."
-            )
+            logger.error("File operation failed: Background or target path issue.")
             raise
         except ValueError as ve:  # For invalid error_correction/segno issues
             logger.error("Value error during QR generation: {ve}", ve=ve)
@@ -237,9 +227,7 @@ if __name__ == "__main__":
     try:
         project_root = Path(__file__).resolve().parent.parent
         default_bg_svg_path = None  # icon.svg removed; background is optional
-        default_output_directory = (
-            project_root / ".github" / "assets" / "img"
-        )
+        default_output_directory = project_root / ".github" / "assets" / "img"
 
         # Initialize the QR code generator
         qr_gen = QRCodeGenerator(
@@ -249,14 +237,15 @@ if __name__ == "__main__":
         )
 
         logger.info(
-            "Skipping direct QR generation in __main__ block of qr.py. "
-            "Use CLI."
+            "Skipping direct QR generation in __main__ block of qr.py. Use CLI."
         )
 
     except FileNotFoundError as fnf_error:
         logger.error("Setup or file error: {fnf_error}", fnf_error=fnf_error)
     except ValueError as val_error:
-        logger.error("Data validation or configuration error: {val_error}", val_error=val_error)
+        logger.error(
+            "Data validation or configuration error: {val_error}", val_error=val_error
+        )
     except Exception as e_main:
         logger.error(
             f"An unexpected error occurred in the main execution block: {e_main}",

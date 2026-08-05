@@ -22,7 +22,6 @@ from scripts.art.optimize import (
     star_layout_cost,
 )
 
-
 # ---------------------------------------------------------------------------
 # Cost / scoring helpers
 # ---------------------------------------------------------------------------
@@ -239,7 +238,9 @@ class TestOptimizePlacement:
     def test_auto_grey_wolf_band(self) -> None:
         # n in [8, 50) → grey_wolf path
         n = 10
-        initial = [(float(i * 15 % 180 + 20), float(i * 11 % 180 + 20)) for i in range(n)]
+        initial = [
+            (float(i * 15 % 180 + 20), float(i * 11 % 180 + 20)) for i in range(n)
+        ]
         weights = [1.0] * n
         result = optimize_placement(
             initial,

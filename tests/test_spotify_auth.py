@@ -65,7 +65,9 @@ def test_extract_spotify_refresh_token_raises_when_missing() -> None:
         extract_spotify_refresh_token({"access_token": "access"})
 
 
-def test_mint_spotify_refresh_token_raises_cleanly_on_callback_failure(monkeypatch) -> None:
+def test_mint_spotify_refresh_token_raises_cleanly_on_callback_failure(
+    monkeypatch,
+) -> None:
     monkeypatch.setattr(
         "scripts.spotify_auth._wait_for_spotify_authorization_code",
         lambda **kwargs: (_ for _ in ()).throw(
@@ -93,4 +95,3 @@ def test_mask_secret_never_returns_full_long_token(value: str, expected: str) ->
     assert mask_secret(value) == expected
     if len(value.strip()) > 8:
         assert value not in mask_secret(value)
-

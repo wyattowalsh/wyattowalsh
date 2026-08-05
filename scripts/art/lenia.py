@@ -785,9 +785,9 @@ def _fade_ramp(growth_mat: float, field_value: float) -> float:
         min(1.0, (growth_mat - threshold) / max(0.001, 1.0 - threshold)),
     )
     low_maturity_gain = min(1.0, growth_mat * 28.0)
-    residue_floor = (
-        0.20 + 0.18 * low_maturity_gain + 0.14 * growth_mat
-    ) * (1.0 - 0.35 * field_value)
+    residue_floor = (0.20 + 0.18 * low_maturity_gain + 0.14 * growth_mat) * (
+        1.0 - 0.35 * field_value
+    )
     return max(reveal, min(0.50, max(0.12, residue_floor)))
 
 

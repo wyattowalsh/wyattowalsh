@@ -386,8 +386,9 @@ def test_genetic_landscape_static_frames_keep_all_snapshot_repo_peaks() -> None:
     assert root.attrib["data-peak-count"] == "3"
 
 
-def test_genetic_landscape_dense_repo_snapshots_add_micro_colonies_without_omission(
-) -> None:
+def test_genetic_landscape_dense_repo_snapshots_add_micro_colonies_without_omission() -> (  # noqa: E501
+    None
+):
     metrics = _sample_metrics()
     metrics["repos"] = [
         {

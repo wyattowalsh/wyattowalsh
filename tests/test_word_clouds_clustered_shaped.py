@@ -6,11 +6,10 @@ from scripts.word_clouds.clustered import ClusteredRenderer
 from scripts.word_clouds.colors import CLUSTER_PALETTES, _classify_word
 from scripts.word_clouds.core import BBox
 from scripts.word_clouds.shaped import (
-    ShapedRenderer,
     _SHAPE_POLYGONS,
+    ShapedRenderer,
     _point_in_polygon,
 )
-
 
 # ---------------------------------------------------------------------------
 # Domain classification helpers

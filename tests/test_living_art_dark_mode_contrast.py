@@ -56,8 +56,7 @@ def _raw_metrics() -> dict:
         ],
         "commit_hour_distribution": {"23": 18, "0": 12, "1": 8},
         "recent_merged_prs": [
-            {"date": f"2025-03-{day:02d}T12:00:00Z"}
-            for day in range(1, 8)
+            {"date": f"2025-03-{day:02d}T12:00:00Z"} for day in range(1, 8)
         ],
         "issue_stats": {"closed_count": 1},
         "star_velocity": {"recent_rate": 9.5, "peak_rate": 14.0, "trend": "rising"},
@@ -83,8 +82,7 @@ def _history() -> dict:
         "forks": [{"date": "2024-06-01T00:00:00Z"}],
         "contributions_monthly": {"2025-01": 22, "2025-02": 31, "2025-03": 37},
         "recent_merged_prs": [
-            {"date": f"2025-03-{day:02d}T12:00:00Z"}
-            for day in range(1, 8)
+            {"date": f"2025-03-{day:02d}T12:00:00Z"} for day in range(1, 8)
         ],
         "issue_stats": {"closed_count": 1},
         "commit_hour_distribution": {"23": 18, "0": 12, "1": 8},

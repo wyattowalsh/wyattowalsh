@@ -7,10 +7,10 @@ import random
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 
-from .colors import COLOR_FUNCS, primary_color_func
-from .core import BBox, FONT_STACK, PlacedWord
-from .readability import coerce_layout_readability_policy
 from ..utils import get_logger
+from .colors import COLOR_FUNCS, primary_color_func
+from .core import FONT_STACK, BBox, PlacedWord
+from .readability import coerce_layout_readability_policy
 
 logger = get_logger(module=__name__)
 

@@ -82,7 +82,7 @@ class TestOklchLerp:
     def test_same_color_returns_similar(self) -> None:
         result = oklch_lerp("#abcdef", "#abcdef", 0.5)
         # Allow small drift from OKLCH round-trip precision
-        r1, g1, b1 = 0xab, 0xcd, 0xef
+        r1, g1, b1 = 0xAB, 0xCD, 0xEF
         r2, g2, b2 = int(result[1:3], 16), int(result[3:5], 16), int(result[5:7], 16)
         assert abs(r1 - r2) <= 4 and abs(g1 - g2) <= 4 and abs(b1 - b2) <= 8
 

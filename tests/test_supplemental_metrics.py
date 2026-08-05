@@ -57,8 +57,16 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
         lambda owner, token, limit=3: [
-            {"summary": "Pushed 2 commits to wyattowalsh/agents", "age": "2h ago", "created_at": "2026-04-22T12:00:00Z"},
-            {"summary": "Starred wyattowalsh/nbadb", "age": "1d ago", "created_at": "2026-04-21T12:00:00Z"},
+            {
+                "summary": "Pushed 2 commits to wyattowalsh/agents",
+                "age": "2h ago",
+                "created_at": "2026-04-22T12:00:00Z",
+            },
+            {
+                "summary": "Starred wyattowalsh/nbadb",
+                "age": "1d ago",
+                "created_at": "2026-04-21T12:00:00Z",
+            },
         ],
     )
 
@@ -89,7 +97,7 @@ def test_validate_supplemental_metrics_rejects_missing_required_marker(
     manifest_path = tmp_path / "metrics-supplemental.json"
 
     (output_dir / "metrics-habits.svg").write_text(
-        '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="20">Wrong title</text></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="20">Wrong title</text></svg>',  # noqa: E501
         encoding="utf-8",
     )
     manifest_path.write_text(
@@ -117,7 +125,9 @@ def test_validate_supplemental_metrics_rejects_missing_required_marker(
     assert errors == ["metrics-habits.svg: missing required marker 'Coding habits'"]
 
 
-def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(monkeypatch) -> None:
+def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(
+    monkeypatch,
+) -> None:
     calls: list[str] = []
 
     def fake_request_json(url: str, **_: object) -> dict:
@@ -176,7 +186,9 @@ def test_fetch_authenticated_x_user_uses_oauth1_headers(monkeypatch) -> None:
 
     def fake_request_json(url: str, **kwargs: object) -> dict:
         captured["url"] = url
-        captured["authorization"] = str((kwargs.get("headers") or {}).get("Authorization"))
+        captured["authorization"] = str(
+            (kwargs.get("headers") or {}).get("Authorization")
+        )
         return {"data": {"id": "12345", "username": "wyattowalsh", "name": "Wyatt"}}
 
     monkeypatch.setattr(
@@ -209,7 +221,7 @@ def test_fetch_latest_posts_uses_authenticated_user_and_trims_text(monkeypatch) 
         lambda url, credentials: {
             "data": [
                 {
-                    "text": "A longish post about metrics recovery and CI validation that should still be trimmed nicely for the card output.",
+                    "text": "A longish post about metrics recovery and CI validation that should still be trimmed nicely for the card output.",  # noqa: E501
                     "created_at": "2026-04-22T12:00:00Z",
                     "public_metrics": {"like_count": 3},
                 }

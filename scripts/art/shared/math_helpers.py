@@ -1,4 +1,5 @@
 """Generative-art math helpers (phyllotaxis, flow fields)."""
+
 from __future__ import annotations
 
 import math
@@ -8,6 +9,7 @@ import numpy as np
 # ---------------------------------------------------------------------------
 # Generative-art math helpers (shared by generative.py + animated_art.py)
 # ---------------------------------------------------------------------------
+
 
 def phyllotaxis_points(
     n: int,

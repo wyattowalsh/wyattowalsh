@@ -3,27 +3,20 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, Any
+from types import SimpleNamespace
+from typing import Annotated
 
 import typer
 
 from ._common import (
-    Annotated,
-    Any,
-    Mapping,
-    Path,
-    SimpleNamespace,
     _apply_stopword_filter,
     _load_project_config,
     _prompt_to_frequencies,
     console,
     generate_app,
-    json,
     logger,
-    os,
-    re,
-    typer,
 )
+
 
 def _wc_import():
     """Lazy-import word cloud and techs modules, raising typer.Exit on failure."""
@@ -104,9 +97,7 @@ def _wc_from_markdown(
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
     out_filename = (
-        output_path.name
-        if output_path
-        else f"wordcloud_typographic_by_{source}.svg"
+        output_path.name if output_path else f"wordcloud_typographic_by_{source}.svg"
     )
 
     # Larger canvas + slightly smaller max font so dense vocabularies (300+ topics)
@@ -427,6 +418,3 @@ def word_cloud(
 # ---------------------------------------------------------------------------
 # generative
 # ---------------------------------------------------------------------------
-
-
-

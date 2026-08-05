@@ -572,8 +572,15 @@ def test_mealpy_solve_produces_valid_placement() -> None:
     rng = random.Random(42)
 
     result = _mealpy_solve(
-        OriginalPSO, n_words, sizes, canvas_w, canvas_h,
-        max_iter=20, rng=rng, texts=texts, pop_size=10,
+        OriginalPSO,
+        n_words,
+        sizes,
+        canvas_w,
+        canvas_h,
+        max_iter=20,
+        rng=rng,
+        texts=texts,
+        pop_size=10,
     )
 
     assert len(result) == n_words
@@ -601,8 +608,13 @@ def test_mealpy_solve_fallback_on_bad_optimizer() -> None:
 
     rng = random.Random(99)
     result = _mealpy_solve(
-        _BrokenOptimizer, 3, [20.0, 15.0, 10.0], 400.0, 300.0,
-        max_iter=10, rng=rng,
+        _BrokenOptimizer,
+        3,
+        [20.0, 15.0, 10.0],
+        400.0,
+        300.0,
+        max_iter=10,
+        rng=rng,
     )
     # Should get a valid random fallback, not an exception
     assert len(result) == 3

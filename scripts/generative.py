@@ -39,6 +39,7 @@ _HEIGHT = 800
 # Community Art — Clifford Strange Attractor
 # ---------------------------------------------------------------------------
 
+
 def generate_community_art(
     metrics: dict,
     dark_mode: bool = False,
@@ -51,7 +52,10 @@ def generate_community_art(
     visual pattern deterministically unique for every combination of stars,
     forks, watchers, issues, and latest actors.
     """
-    out = Path(output_path or f".github/assets/img/generative-community{'-dark' if dark_mode else ''}.svg")
+    out = Path(
+        output_path
+        or f".github/assets/img/generative-community{'-dark' if dark_mode else ''}.svg"
+    )
     out.parent.mkdir(parents=True, exist_ok=True)
 
     seed_str = (
@@ -71,12 +75,19 @@ def generate_community_art(
     grid_sz = 150
     iters = 1_000_000 + (metrics.get("network_count") or 0) * 50_000
     iters = min(iters, grid_sz * grid_sz * 60)
-    hue_shift = float((metrics.get("forks", 0) * 37 + int(h[16:20], 16) % 60) % 360) / 360.0
+    hue_shift = (
+        float((metrics.get("forks", 0) * 37 + int(h[16:20], 16) % 60) % 360) / 360.0
+    )
 
     logger.info(
         "Community art: a={a:.3f} b={b:.3f} c={c:.3f} d={d:.3f} "
         "iters={iters} hue_shift={hue_shift}",
-        a=a, b=b, c=c, d=d, iters=iters, hue_shift=hue_shift,
+        a=a,
+        b=b,
+        c=c,
+        d=d,
+        iters=iters,
+        hue_shift=hue_shift,
     )
 
     bg = "#0d1117" if dark_mode else "#ffffff"
@@ -117,6 +128,7 @@ def generate_community_art(
 # Activity Art — Golden-angle Phyllotaxis + Flow Field
 # ---------------------------------------------------------------------------
 
+
 def generate_activity_art(
     metrics: dict,
     dark_mode: bool = False,
@@ -128,12 +140,15 @@ def generate_activity_art(
     phyllotaxis spiral.  A flow field background adds organic texture,
     its parameters derived from follower count, org count, and commits.
     """
-    out = Path(output_path or f".github/assets/img/generative-activity{'-dark' if dark_mode else ''}.svg")
+    out = Path(
+        output_path
+        or f".github/assets/img/generative-activity{'-dark' if dark_mode else ''}.svg"
+    )
     out.parent.mkdir(parents=True, exist_ok=True)
 
     seed_str = (
         f"{metrics.get('public_repos') or 0}-{metrics.get('followers') or 0}"
-        f"-{metrics.get('orgs_count') or 0}-{metrics.get('contributions_last_year') or 0}"
+        f"-{metrics.get('orgs_count') or 0}-{metrics.get('contributions_last_year') or 0}"  # noqa: E501
         f"-{metrics.get('total_commits') or 0}-{metrics.get('following') or 0}"
     )
     h = _seed_hash(seed_str)
@@ -148,7 +163,11 @@ def generate_activity_art(
     logger.info(
         "Activity art: n_points={n} octaves={o} flow_mag={m:.2f} "
         "flow_freq={f:.4f} lines={l}",
-        n=n_points, o=octaves, m=flow_mag, f=flow_freq, l=line_count,
+        n=n_points,
+        o=octaves,
+        m=flow_mag,
+        f=flow_freq,
+        l=line_count,
     )
 
     bg = "#0d1117" if dark_mode else "#ffffff"
@@ -165,7 +184,8 @@ def generate_activity_art(
 
     flow_seed = int(h[20:28], 16) % (2**31)
     lines = flow_field_lines(
-        _WIDTH, _HEIGHT,
+        _WIDTH,
+        _HEIGHT,
         num_lines=line_count,
         freq=flow_freq,
         octaves=octaves,
@@ -184,15 +204,17 @@ def generate_activity_art(
 
         alpha = 0.4 + 0.3 * bg_intensity
         r, g, b = colorsys.hls_to_rgb(flow_hue / 360.0, 0.5, 0.4)
-        color = f"rgb({int(r*255)},{int(g*255)},{int(b*255)})"
+        color = f"rgb({int(r * 255)},{int(g * 255)},{int(b * 255)})"
 
-        flow_group.add(dwg.path(
-            d=path_d,
-            stroke=color,
-            fill="none",
-            stroke_width=0.8,
-            opacity=alpha,
-        ))
+        flow_group.add(
+            dwg.path(
+                d=path_d,
+                stroke=color,
+                fill="none",
+                stroke_width=0.8,
+                opacity=alpha,
+            )
+        )
 
     # --- Foreground: phyllotaxis spiral ---
     spiral_group = dwg.g(id="phyllotaxisGroup")
@@ -224,7 +246,7 @@ def generate_activity_art(
         sat = 0.7
         lightness = 0.55 if not dark_mode else 0.65
         r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, sat)
-        color = f"rgb({int(r*255)},{int(g*255)},{int(b*255)})"
+        color = f"rgb({int(r * 255)},{int(g * 255)},{int(b * 255)})"
 
         circle = dwg.circle(
             center=(px, py),
@@ -250,6 +272,7 @@ def generate_activity_art(
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """CLI for standalone generative art generation."""

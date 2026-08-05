@@ -53,14 +53,32 @@ _SOLVER_FAMILIES: dict[str, str] = _build_family_map()
 
 def _run_solver(args):
     """Worker function for parallel solver execution (top-level for pickling)."""
-    (name, n_words, sizes, canvas_w, canvas_h, max_iter, pop_size, seed,
-     texts, layout_readability, cost_weights) = args
+    (
+        name,
+        n_words,
+        sizes,
+        canvas_w,
+        canvas_h,
+        max_iter,
+        pop_size,
+        seed,
+        texts,
+        layout_readability,
+        cost_weights,
+    ) = args
     configure_layout_readability(layout_readability, word_sizes=sizes)
     solver_fn = _META_SOLVERS[name]
     rng = random.Random(seed)
     placements = solver_fn(
-        n_words, sizes, canvas_w, canvas_h, max_iter, rng, texts,
-        pop_size=pop_size, cost_weights=cost_weights,
+        n_words,
+        sizes,
+        canvas_w,
+        canvas_h,
+        max_iter,
+        rng,
+        texts,
+        pop_size=pop_size,
+        cost_weights=cost_weights,
     )
     return name, placements
 
@@ -147,13 +165,19 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             env_max = os.environ.get("WORDCLOUD_MAX_SOLVERS")
             if env_max is not None:
                 effective_max_solvers = int(env_max)
-        if effective_max_solvers is not None and effective_max_solvers < len(solver_names):
+        if effective_max_solvers is not None and effective_max_solvers < len(
+            solver_names
+        ):
             weight_rng_seed = self.seed if self.seed else 42
             subset_rng = random.Random(weight_rng_seed)
-            solver_names = sorted(subset_rng.sample(solver_names, effective_max_solvers))
+            solver_names = sorted(
+                subset_rng.sample(solver_names, effective_max_solvers)
+            )
             logger.info(
                 "Using {n}/{total} solvers (max_solvers={m})",
-                n=len(solver_names), total=len(_META_SOLVERS), m=effective_max_solvers,
+                n=len(solver_names),
+                total=len(_META_SOLVERS),
+                m=effective_max_solvers,
             )
 
         # Support WORDCLOUD_MAX_ITER env var override
@@ -165,8 +189,12 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         # Per-solver weight perturbation: Gaussian noise on soft cost components
         # to produce diverse layouts exploring the aesthetic Pareto front.
         DEFAULT_WEIGHTS = {
-            "packing": 3.0, "balance": 2.0, "uniformity": 2.0,
-            "reading_flow": 2.25, "landscape": 1.0, "size_gradient": 1.0,
+            "packing": 3.0,
+            "balance": 2.0,
+            "uniformity": 2.0,
+            "reading_flow": 2.25,
+            "landscape": 1.0,
+            "size_gradient": 1.0,
         }
         weight_rng = random.Random(self.seed if self.seed else 42)
         solver_weights: list[dict[str, float]] = []
@@ -246,9 +274,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             )
 
         results = [
-            results_by_name[name]
-            for name in _META_SOLVERS
-            if name in results_by_name
+            results_by_name[name] for name in _META_SOLVERS if name in results_by_name
         ]
         if not results:
             raise RuntimeError("All metaheuristic solvers failed")
@@ -389,23 +415,21 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
                     "visibility: hidden; }"
                 )
                 css_lines.append(
-                    f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; "
-                    "visibility: hidden; }"
+                    f"  {100 - fade_in_pct:.2f}% {{ opacity: 0; visibility: hidden; }}"
                 )
                 css_lines.append("  100% { opacity: 1; }")
             else:
                 if start_pct > 0:
                     css_lines.append("  0% { opacity: 0; visibility: hidden; }")
                     css_lines.append(
-                        f"  {start_pct:.2f}% {{ opacity: 0; "
-                        "visibility: hidden; }"
+                        f"  {start_pct:.2f}% {{ opacity: 0; visibility: hidden; }}"
                     )
                 css_lines.append(
                     f"  {min(visible_start, 99.99):.2f}% {{ opacity: 1; "
                     "visibility: visible; }"
                 )
                 css_lines.append(f"  {min(visible_end, 99.99):.2f}% {{ opacity: 1; }}")
-                # NOTE: The `}}` above is correct — it's inside an f-string, escaping to `}`
+                # NOTE: The `}}` above is correct — it's inside an f-string, escaping to `}`  # noqa: E501
                 if end_pct < 100:
                     css_lines.append(
                         f"  {min(end_pct, 99.99):.2f}% {{ opacity: 0; "
@@ -423,11 +447,10 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         css_lines.append("@media (prefers-color-scheme: light) {")
         css_lines.append("  .wc-bg { fill: url(#wc-bg-grad-light); }")
         css_lines.append(
-            "  .algo-label rect { fill: white; fill-opacity: 0.88; "
-            "stroke: #c0c0c0; }"
+            "  .algo-label rect { fill: white; fill-opacity: 0.88; stroke: #c0c0c0; }"
         )
         css_lines.append("  .algo-label text { fill: #333; }")
-        css_lines.append("}") 
+        css_lines.append("}")
 
         css = "\n".join(css_lines)
 
@@ -459,7 +482,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             '  <filter id="wc-shadow" x="-10%" y="-10%" width="120%" height="120%">'
         )
         svg_parts.append(
-            "    <feDropShadow dx=\"0\" dy=\"1\" stdDeviation=\"1.0\" "
+            '    <feDropShadow dx="0" dy="1" stdDeviation="1.0" '
             'flood-color="#ffffff18"/>'
         )
         svg_parts.append("  </filter>")
@@ -474,7 +497,9 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         )
         svg_parts.append("  </radialGradient>")
         # Light-mode override gradient
-        svg_parts.append('  <radialGradient id="wc-bg-grad-light" cx="50%" cy="50%" r="75%">')
+        svg_parts.append(
+            '  <radialGradient id="wc-bg-grad-light" cx="50%" cy="50%" r="75%">'
+        )
         svg_parts.append(
             '    <stop offset="0%" stop-color="#fafbfc" stop-opacity="1"/>'
         )

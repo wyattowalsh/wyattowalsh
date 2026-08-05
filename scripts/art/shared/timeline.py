@@ -1,4 +1,5 @@
 """Timeline and contribution-series helpers for living-art."""
+
 from __future__ import annotations
 
 import calendar
@@ -115,7 +116,9 @@ def map_date_to_loop_delay(
     return round(eased * reveal_end, 3)
 
 
-def _iter_months(start_year: int, start_month: int, end_year: int, end_month: int) -> list[tuple[int, int]]:
+def _iter_months(
+    start_year: int, start_month: int, end_year: int, end_month: int
+) -> list[tuple[int, int]]:
     """Yield (year, month) inclusive between start and end."""
     out: list[tuple[int, int]] = []
     year, month = start_year, start_month
@@ -185,7 +188,9 @@ def contributions_monthly_to_daily_series(
     (end_y, end_m) = max(month_counts.keys())
     daily: dict[str, int] = {}
     for year, month in _iter_months(start_y, start_m, end_y, end_m):
-        distributed = _distribute_monthly_count(year, month, month_counts.get((year, month), 0))
+        distributed = _distribute_monthly_count(
+            year, month, month_counts.get((year, month), 0)
+        )
         for day, count in enumerate(distributed, start=1):
             iso = dt_date(year, month, day).isoformat()
             daily[iso] = count

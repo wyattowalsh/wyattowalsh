@@ -1,16 +1,22 @@
 """Deterministic seed hashing and lightweight CLI arg parsing."""
+
 from __future__ import annotations
 
 import hashlib
 
 
-def parse_cli_args(argv: list[str], extra_keys: dict[str, type] | None = None) -> dict[str, str | int | bool | None]:
+def parse_cli_args(
+    argv: list[str], extra_keys: dict[str, type] | None = None
+) -> dict[str, str | int | bool | None]:
     """Parse common CLI args: --profile, --only, plus extras.
 
     Boolean flags (type=bool) are standalone (no value argument).
     """
     result: dict[str, str | int | bool | None] = {"profile": None, "only": None}
-    keys: dict[str, tuple[str, type]] = {"--profile": ("profile", str), "--only": ("only", str)}
+    keys: dict[str, tuple[str, type]] = {
+        "--profile": ("profile", str),
+        "--only": ("only", str),
+    }
     if extra_keys:
         keys.update({f"--{k.replace('_', '-')}": (k, v) for k, v in extra_keys.items()})
     i = 0
@@ -25,7 +31,10 @@ def parse_cli_args(argv: list[str], extra_keys: dict[str, type] | None = None) -
                 i += 2
             else:
                 import sys
-                print(f"Warning: flag {argv[i]} has no value, ignoring", file=sys.stderr)
+
+                print(
+                    f"Warning: flag {argv[i]} has no value, ignoring", file=sys.stderr
+                )
                 i += 1
         else:
             i += 1

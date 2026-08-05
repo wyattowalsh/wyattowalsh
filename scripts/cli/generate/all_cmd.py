@@ -2,21 +2,13 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
-import os
-
-from ._common import (
-    Annotated,
-    Path,
-    console,
-    generate_app,
-    logger,
-    typer,
-)
+from ._common import console, generate_app
 
 
 def _cmds():
@@ -240,4 +232,3 @@ def all_assets(
             border_style="cyan",
         )
     )
-

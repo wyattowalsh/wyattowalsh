@@ -1,28 +1,23 @@
-"""Generate readme_cmd commands."""
+"""Generate readme domain commands."""
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Annotated, Any
 
 import typer
 
 from ._common import (
-    Annotated,
-    Any,
-    DEFAULT_CONFIG_PATH,
     DEFAULT_SKILLS_PATH,
-    Path,
-    ProjectConfig,
     ReadmeCardVariant,
     _load_project_config,
     console,
     generate_app,
-    json,
     load_skills,
     logger,
-    typer,
 )
+
 
 @generate_app.command(
     help="Generate shields.io technology badges and inject into README."
@@ -426,9 +421,7 @@ def wakatime(
                 skip_dir,
                 "WAKATIME_API_KEY missing; skipped first-party Waka generation",
             )
-            console.print(
-                "[yellow]WAKATIME_API_KEY missing; wrote skip marker.[/]"
-            )
+            console.print("[yellow]WAKATIME_API_KEY missing; wrote skip marker.[/]")
             return
         console.print(
             "[bold red]Error:[/bold red] WAKATIME_API_KEY is required "
@@ -453,6 +446,3 @@ def wakatime(
 # ---------------------------------------------------------------------------
 # all  — run every generator in sequence
 # ---------------------------------------------------------------------------
-
-
-

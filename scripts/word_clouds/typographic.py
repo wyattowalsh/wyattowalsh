@@ -214,9 +214,7 @@ class TypographicRenderer(SvgWordCloudEngine):
             best: list[PlacedWord] | None = None
             for _ in range(self.scale_passes):
                 mid = (lo + hi) / 2
-                attempt = self._place_at_scale(
-                    sorted_words, min_freq, max_freq, mid
-                )
+                attempt = self._place_at_scale(sorted_words, min_freq, max_freq, mid)
                 if attempt is not None:
                     best = attempt
                     lo = mid
@@ -245,9 +243,7 @@ class TypographicRenderer(SvgWordCloudEngine):
 
             if not self.require_all:
                 # Partial pack at small scale for legacy behavior.
-                partial = self._place_at_scale(
-                    sorted_words, min_freq, max_freq, 0.25
-                )
+                partial = self._place_at_scale(sorted_words, min_freq, max_freq, 0.25)
                 return partial or []
 
             logger.warning(

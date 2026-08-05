@@ -770,7 +770,9 @@ class TestSvgRepoCardRenderer:
             int(match)
             for match in re.findall(r'<text class="rc-desc" x="20" y="(\d+)"', svg)
         ]
-        stats_y_match = re.search(r'<text class="rc-meta" x="[^"]+" y="(\d+)">6d ago</text>', svg)
+        stats_y_match = re.search(
+            r'<text class="rc-meta" x="[^"]+" y="(\d+)">6d ago</text>', svg
+        )
         sparkline_y_match = re.search(
             r'<g transform="translate\(20,(\d+)\)" class="sparkline-group">',
             svg,

@@ -24,7 +24,9 @@ from scripts.readme_svg import (
 BANNER_SNAPSHOT_SEED = 42
 
 
-def _write_drawing_via_tostring(self, pretty: bool = False, filename: str | Path | None = None) -> None:
+def _write_drawing_via_tostring(
+    self, pretty: bool = False, filename: str | Path | None = None
+) -> None:
     """``Drawing.save`` workaround: ``svg_drawing.Path`` shadows ``pathlib.Path``."""
     from pathlib import Path as FsPath
 
@@ -33,7 +35,9 @@ def _write_drawing_via_tostring(self, pretty: bool = False, filename: str | Path
     target.write_text(self.tostring(pretty=pretty), encoding="utf-8")
 
 
-def _render_seeded_banner_svg(output_path: Path, *, seed: int = BANNER_SNAPSHOT_SEED) -> str:
+def _render_seeded_banner_svg(
+    output_path: Path, *, seed: int = BANNER_SNAPSHOT_SEED
+) -> str:
     """Render a compact, seeded banner SVG suitable for snapshotting."""
     cfg = BannerConfig(
         title="Snapshot",
@@ -68,16 +72,18 @@ def _render_seeded_banner_svg(output_path: Path, *, seed: int = BANNER_SNAPSHOT_
 
 
 class TestBannerSvgSnapshots:
-    def test_seeded_banner_matches_snapshot(
-        self, snapshot_svg, tmp_path: Path
-    ) -> None:
-        svg = _render_seeded_banner_svg(tmp_path / "banner.svg", seed=BANNER_SNAPSHOT_SEED)
+    def test_seeded_banner_matches_snapshot(self, snapshot_svg, tmp_path: Path) -> None:
+        svg = _render_seeded_banner_svg(
+            tmp_path / "banner.svg", seed=BANNER_SNAPSHOT_SEED
+        )
         assert svg.lstrip().startswith("<?xml") or svg.lstrip().startswith("<svg")
         assert svg == snapshot_svg
 
     def test_seeded_banner_is_deterministic(self, tmp_path: Path) -> None:
         first = _render_seeded_banner_svg(tmp_path / "a.svg", seed=BANNER_SNAPSHOT_SEED)
-        second = _render_seeded_banner_svg(tmp_path / "b.svg", seed=BANNER_SNAPSHOT_SEED)
+        second = _render_seeded_banner_svg(
+            tmp_path / "b.svg", seed=BANNER_SNAPSHOT_SEED
+        )
         assert first == second
 
 

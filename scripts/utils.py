@@ -17,6 +17,7 @@ try:
     from loguru import logger as loguru_logger
     from loguru._logger import Logger as LoguruLoggerType
 except Exception:  # pragma: no cover - fallback for test environments
+
     class _FallbackLogger:
         def bind(self, **extra):
             return self
@@ -51,6 +52,7 @@ try:
     from rich.logging import RichHandler
     from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 except Exception:  # pragma: no cover - fallback minimal console/progress
+
     class Console:  # very small fallback
         def __init__(self, *a, **k):
             pass
@@ -72,6 +74,7 @@ except Exception:  # pragma: no cover - fallback minimal console/progress
 
     class TimeRemainingColumn:
         pass
+
 
 def _load_app_settings() -> tuple[Any | None, str | None]:
     """Load logging settings without importing scripts.config during bootstrap.
@@ -121,10 +124,7 @@ loguru_logger.add(  # Use the imported loguru_logger
         show_path=False,  # Default: False, set True to show module path
     ),
     level=LOG_LEVEL_STR,
-    format=(
-        "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | "
-        "{level.icon} {level:<8} | {message}"
-    ),
+    format=("[{time:YYYY-MM-DD HH:mm:ss.SSS}] | {level.icon} {level:<8} | {message}"),
     enqueue=True,  # For thread-safe logging
 )
 
@@ -232,6 +232,4 @@ if __name__ == "__main__":  # pragma: no cover
                 progress.advance(task_id)
                 log.debug("Tick…")  # Example debug message
     else:
-        log.warning(
-            "Skipping progress bar demo as AppSettings are not available."
-        )
+        log.warning("Skipping progress bar demo as AppSettings are not available.")

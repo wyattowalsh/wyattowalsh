@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import math
-import random
 
 from ..utils import get_logger
-from .colors import COLOR_FUNCS
 from .core import BBox, PlacedWord
 from .engine import SvgWordCloudEngine
 

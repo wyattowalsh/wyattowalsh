@@ -36,6 +36,7 @@ logger = get_logger(module=__name__)
 # Data collectors
 # ---------------------------------------------------------------------------
 
+
 def _fetch_account_created(owner: str, token: str) -> str | None:
     """Return ``user.createdAt`` via GraphQL."""
     query = """
@@ -106,7 +107,7 @@ def _fetch_repo_timeline(
     token: str | None,
 ) -> list[dict[str, str]]:
     """Paginate user repos sorted by creation date ascending (REST)."""
-    url = f"{_BASE}/users/{owner}/repos?type=owner&sort=created&direction=asc&per_page=100"
+    url = f"{_BASE}/users/{owner}/repos?type=owner&sort=created&direction=asc&per_page=100"  # noqa: E501
     logger.info("Fetching repo timeline for {}", owner)
     try:
         raw = _paginate_rest(url, token)
@@ -166,10 +167,14 @@ def _fetch_contributions(
         }
         """
         try:
-            resp = _graphql(query, token, variables={"login": owner, "from": from_dt, "to": to_dt})
+            resp = _graphql(
+                query, token, variables={"login": owner, "from": from_dt, "to": to_dt}
+            )
             errors = resp.get("errors")
             if errors:
-                logger.warning("GraphQL errors for contributions year {}: {}", year, errors)
+                logger.warning(
+                    "GraphQL errors for contributions year {}: {}", year, errors
+                )
                 continue
             calendar = (
                 (resp.get("data") or {})
@@ -253,13 +258,19 @@ def compute_star_velocity(stars_timeline: list[dict]) -> dict[str, Any]:
     }
 
 
-def compute_contribution_streaks(contributions_monthly: dict[str, int]) -> dict[str, Any]:
+def compute_contribution_streaks(
+    contributions_monthly: dict[str, int],
+) -> dict[str, Any]:
     """Analyse consecutive months with nonzero contributions.
 
     Returns ``{longest_streak_months, current_streak_months, streak_active}``.
     """
     if not contributions_monthly:
-        return {"longest_streak_months": 0, "current_streak_months": 0, "streak_active": False}
+        return {
+            "longest_streak_months": 0,
+            "current_streak_months": 0,
+            "streak_active": False,
+        }
 
     sorted_months = sorted(contributions_monthly.keys())
     nonzero = {m for m, c in contributions_monthly.items() if c > 0}
@@ -288,6 +299,7 @@ def compute_contribution_streaks(contributions_monthly: dict[str, int]) -> dict[
 # Orchestrator
 # ---------------------------------------------------------------------------
 
+
 def collect_history(
     owner: str,
     repo: str,
@@ -300,7 +312,9 @@ def collect_history(
     if token:
         account_created = _fetch_account_created(owner, token)
     else:
-        logger.info("No GITHUB_TOKEN -- skipping account creation date (requires GraphQL)")
+        logger.info(
+            "No GITHUB_TOKEN -- skipping account creation date (requires GraphQL)"
+        )
         account_created = None
     result["account_created"] = account_created
 
@@ -316,12 +330,16 @@ def collect_history(
     # 5. Contribution calendar (GraphQL, year-by-year)
     if token:
         contributions_daily, contributions_monthly = _fetch_contributions(
-            owner, token, account_created,
+            owner,
+            token,
+            account_created,
         )
         result["contributions_daily"] = contributions_daily
         result["contributions_monthly"] = contributions_monthly
     else:
-        logger.info("No GITHUB_TOKEN -- skipping contribution calendar (requires GraphQL)")
+        logger.info(
+            "No GITHUB_TOKEN -- skipping contribution calendar (requires GraphQL)"
+        )
         result["contributions_daily"] = {}
         result["contributions_monthly"] = {}
 
@@ -330,7 +348,9 @@ def collect_history(
 
     # 7. Derived signals
     result["star_velocity"] = compute_star_velocity(result.get("stars", []))
-    result["contribution_streaks"] = compute_contribution_streaks(result.get("contributions_monthly", {}))
+    result["contribution_streaks"] = compute_contribution_streaks(
+        result.get("contributions_monthly", {})
+    )
 
     return result
 
@@ -338,6 +358,7 @@ def collect_history(
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """CLI entry-point: parse args, collect history, write JSON."""

@@ -11,6 +11,7 @@ import pytest
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 def _make_repo(
     name: str,
     *,
@@ -31,8 +32,7 @@ def _make_repo(
         "forks_count": forks,
         "language": language,
         "languages_url": (
-            languages_url
-            or f"https://api.github.com/repos/owner/{name}/languages"
+            languages_url or f"https://api.github.com/repos/owner/{name}/languages"
         ),
         "description": f"Description of {name}",
         "topics": ["topic-a"],
@@ -64,6 +64,7 @@ def mock_graphql():
 # ---------------------------------------------------------------------------
 # _collect_languages
 # ---------------------------------------------------------------------------
+
 
 class TestCollectLanguages:
     def test_aggregates_bytes_across_repos(self, mock_get: MagicMock) -> None:
@@ -131,6 +132,7 @@ class TestCollectLanguages:
 # _collect_traffic
 # ---------------------------------------------------------------------------
 
+
 class TestCollectTraffic:
     def test_returns_empty_without_token(self) -> None:
         from scripts.fetch_metrics import _collect_traffic
@@ -168,6 +170,7 @@ class TestCollectTraffic:
 # ---------------------------------------------------------------------------
 # _collect_recent_merged_prs
 # ---------------------------------------------------------------------------
+
 
 class TestCollectRecentMergedPrs:
     def test_paginates_and_preserves_repo_identity(
@@ -240,8 +243,7 @@ class TestCollectRecentMergedPrs:
         assert result[0]["repo_name"] == "alpha"
         assert mock_graphql.call_count == 2
         assert (
-            mock_graphql.call_args_list[1].kwargs["variables"]["cursor"]
-            == "cursor-1"
+            mock_graphql.call_args_list[1].kwargs["variables"]["cursor"] == "cursor-1"
         )
 
     def test_returns_empty_without_token(self) -> None:
@@ -253,6 +255,7 @@ class TestCollectRecentMergedPrs:
 # ---------------------------------------------------------------------------
 # _collect_commit_hour_distribution
 # ---------------------------------------------------------------------------
+
 
 class TestCollectCommitHourDistribution:
     def test_uses_all_visible_event_pages_and_weights_commit_counts(
@@ -297,6 +300,7 @@ class TestCollectCommitHourDistribution:
 # ---------------------------------------------------------------------------
 # _collect_releases
 # ---------------------------------------------------------------------------
+
 
 class TestCollectReleases:
     def test_aggregates_owned_repo_releases_and_skips_unpublished(
@@ -434,6 +438,7 @@ class TestCollectReleases:
 # _collect_top_repos
 # ---------------------------------------------------------------------------
 
+
 class TestCollectTopRepos:
     def test_filters_forks_and_respects_limit(self) -> None:
         from scripts.fetch_metrics import _collect_top_repos
@@ -473,6 +478,7 @@ class TestCollectTopRepos:
 # ---------------------------------------------------------------------------
 # GraphQL expanded fields
 # ---------------------------------------------------------------------------
+
 
 class TestGraphQLExpanded:
     def test_parses_all_new_fields(
@@ -553,6 +559,7 @@ class TestGraphQLExpanded:
 # collect() integration — all keys present
 # ---------------------------------------------------------------------------
 
+
 class TestCollectIntegration:
     def test_collect_returns_all_expected_keys(
         self,
@@ -581,10 +588,10 @@ class TestCollectIntegration:
         forks_data = [{"owner": {"login": "bob"}}]
 
         mock_get.side_effect = [
-            (repo_data, {}),   # 1. repo stats
-            (user_data, {}),   # 2. user stats
-            (orgs, {}),        # 3. orgs
-            (stars, {}),       # 4. latest stargazer
+            (repo_data, {}),  # 1. repo stats
+            (user_data, {}),  # 2. user stats
+            (orgs, {}),  # 3. orgs
+            (stars, {}),  # 4. latest stargazer
             (forks_data, {}),  # 5. latest fork
             ({"count": 10, "uniques": 5}, {}),  # 6. traffic views
             ({"count": 3, "uniques": 2}, {}),  # 7. traffic clones

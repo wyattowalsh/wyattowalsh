@@ -16,7 +16,7 @@ logger = get_logger(module=__name__)
 
 config_app = typer.Typer(
     name="config",
-    help="[bold]Manage project configuration[/bold] — view, save, or generate defaults.",
+    help="[bold]Manage project configuration[/bold] — view, save, or generate defaults.",  # noqa: E501
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
@@ -46,8 +46,7 @@ def view(
     try:
         config_obj = load_config(effective_path)
         console.print(
-            f"[bold green]Current project configuration from "
-            f"{effective_path}:[/]"
+            f"[bold green]Current project configuration from {effective_path}:[/]"
         )
         display_config(config_obj, output_format)
     except FileNotFoundError:
@@ -61,13 +60,8 @@ def view(
         )
         raise typer.Exit(code=1)
     except (OSError, ValueError) as e:
-        logger.error(
-            f"Failed to load/display config from {effective_path}: {e}"
-        )
-        console.print(
-            f"[bold red]Error:[/bold red] Failed to load configuration: "
-            f"{e}"
-        )
+        logger.error(f"Failed to load/display config from {effective_path}: {e}")
+        console.print(f"[bold red]Error:[/bold red] Failed to load configuration: {e}")
         raise typer.Exit(code=1)
 
 
@@ -88,8 +82,7 @@ def save(
         try:
             config_to_save = load_config(effective_path)
             logger.info(
-                f"Loaded existing config from {effective_path} "
-                "to re-save/update."
+                f"Loaded existing config from {effective_path} to re-save/update."
             )
         except FileNotFoundError:
             logger.info(
@@ -100,22 +93,18 @@ def save(
 
         save_config(config_to_save, effective_path)
         console.print(
-            f"[bold green]Configuration successfully saved to "
-            f"{effective_path}[/]"
+            f"[bold green]Configuration successfully saved to {effective_path}[/]"
         )
         display_config(config_to_save, OutputFormat.JSON)
     except (OSError, ValueError) as e:
-        logger.error(
-            f"Failed to save configuration to {effective_path}: {e}"
-        )
-        console.print(
-            f"[bold red]Error:[/bold red] Failed to save configuration: "
-            f"{e}"
-        )
+        logger.error(f"Failed to save configuration to {effective_path}: {e}")
+        console.print(f"[bold red]Error:[/bold red] Failed to save configuration: {e}")
         raise typer.Exit(code=1)
 
 
-@config_app.command(name="generate-default", help="Generate a default configuration file.")
+@config_app.command(
+    name="generate-default", help="Generate a default configuration file."
+)
 def generate_default(
     path: Annotated[
         Path | None,
@@ -153,11 +142,8 @@ def generate_default(
         logger.info("Default config generation aborted by user.")
         console.print("Aborted. No changes made.")
     except OSError as e:
-        logger.error(
-            f"Failed to gen/save default config at {effective_path}: {e}"
-        )
+        logger.error(f"Failed to gen/save default config at {effective_path}: {e}")
         console.print(
-            f"[bold red]Error:[/bold red] Could not gen/save default "
-            f"config: {e}"
+            f"[bold red]Error:[/bold red] Could not gen/save default config: {e}"
         )
         raise typer.Exit(code=1)

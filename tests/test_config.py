@@ -22,7 +22,6 @@ from scripts.config import (
     save_config,
 )
 
-
 # ---------------------------------------------------------------------------
 # ProjectConfig / nested model defaults & construction
 # ---------------------------------------------------------------------------
@@ -335,7 +334,9 @@ class TestLoadConfigHappyPath:
         assert cfg.word_cloud_settings.layout_readability.fallback_rotation == 5.0
         assert cfg.word_cloud_settings.layout_readability.target_aspect_ratio == 1.5
         assert cfg.readme_sections_settings is not None
-        assert cfg.readme_sections_settings.blog_feed_url == "https://example.com/feed.xml"
+        assert (
+            cfg.readme_sections_settings.blog_feed_url == "https://example.com/feed.xml"
+        )
         assert cfg.readme_sections_settings.blog_post_limit == 7
         assert cfg.readme_sections_settings.svg.enabled is True
         assert cfg.qr_code_settings is not None

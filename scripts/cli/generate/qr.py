@@ -3,19 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
-from ._common import (
-    Annotated,
-    Path,
-    _load_project_config,
-    console,
-    generate_app,
-    logger,
-    typer,
-)
+from ._common import _load_project_config, console, generate_app, logger
+
 
 @generate_app.command(help="Generate artistic vCard QR code.")
 def qr(
@@ -180,6 +173,3 @@ def qr(
 # ---------------------------------------------------------------------------
 # word-cloud helpers
 # ---------------------------------------------------------------------------
-
-
-

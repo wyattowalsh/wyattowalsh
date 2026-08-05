@@ -1,4 +1,5 @@
 """Ecosystem maturity and shared WorldState atmospherics."""
+
 from __future__ import annotations
 
 import math
@@ -23,6 +24,7 @@ _DAYLIGHT_HUE_DRIFT_ANCHORS = (
 # ---------------------------------------------------------------------------
 # Ecosystem maturity score
 # ---------------------------------------------------------------------------
+
 
 def _smoothstep(t: float) -> float:
     """Hermite ease-in-out: slow start, accelerate in middle, slow finish."""
@@ -242,10 +244,19 @@ class WorldState:
 
 # Language family groupings for season derivation
 _LANG_SEASON: dict[str, str] = {
-    "Python": "summer", "Jupyter Notebook": "summer",
-    "JavaScript": "autumn", "TypeScript": "autumn", "HTML": "autumn", "CSS": "autumn",
-    "Rust": "winter", "C": "winter", "C++": "winter", "Go": "winter",
-    "Ruby": "spring", "Shell": "spring", "Java": "spring",
+    "Python": "summer",
+    "Jupyter Notebook": "summer",
+    "JavaScript": "autumn",
+    "TypeScript": "autumn",
+    "HTML": "autumn",
+    "CSS": "autumn",
+    "Rust": "winter",
+    "C": "winter",
+    "C++": "winter",
+    "Go": "winter",
+    "Ruby": "spring",
+    "Shell": "spring",
+    "Java": "spring",
 }
 
 
@@ -355,9 +366,7 @@ def compute_world_state(metrics: dict[str, Any]) -> WorldState:
     # ── Vitality (from contribution streaks) ─────────────────────
     streaks = metrics.get("contribution_streaks") or {}
     streak_months = (
-        streaks.get("current_streak_months", 0)
-        if isinstance(streaks, dict)
-        else 0
+        streaks.get("current_streak_months", 0) if isinstance(streaks, dict) else 0
     )
     streak_active = (
         streaks.get("streak_active", False) if isinstance(streaks, dict) else False

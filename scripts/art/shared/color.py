@@ -1,4 +1,5 @@
 """OKLCH / HSL color science and contrast helpers."""
+
 from __future__ import annotations
 
 import math
@@ -6,6 +7,7 @@ import math
 # ---------------------------------------------------------------------------
 # OKLCH color science (pure Python, no deps)
 # ---------------------------------------------------------------------------
+
 
 def _linear_to_srgb(c: float) -> float:
     return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
@@ -18,9 +20,9 @@ def oklch(L: float, C: float, H: float) -> str:
     lc = L + 0.3963377774 * a + 0.2158037573 * b
     mc = L - 0.1055613458 * a - 0.0638541728 * b
     sc = L - 0.0894841775 * a - 1.2914855480 * b
-    l_ = lc ** 3
-    m_ = mc ** 3
-    s_ = sc ** 3
+    l_ = lc**3
+    m_ = mc**3
+    s_ = sc**3
     r = max(0, 4.0767416621 * l_ - 3.3077115913 * m_ + 0.2309699292 * s_)
     g = max(0, -1.2684380046 * l_ + 2.6097574011 * m_ - 0.3413193965 * s_)
     bv = max(0, -0.0041960863 * l_ - 0.7034186147 * m_ + 1.7076147010 * s_)
@@ -33,6 +35,7 @@ def oklch(L: float, C: float, H: float) -> str:
 def hsl_to_hex(h: float, s: float, lightness: float) -> str:
     """Convert HSL (all 0..1) to hex colour string."""
     import colorsys
+
     r, g, b = colorsys.hls_to_rgb(h, lightness, s)
     return f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
 
@@ -44,7 +47,9 @@ def lerp_color(hex1: str, hex2: str, t: float) -> str:
     r = int(r1 + (r2 - r1) * t)
     g = int(g1 + (g2 - g1) * t)
     b = int(b1 + (b2 - b1) * t)
-    return f"#{max(0, min(255, r)):02x}{max(0, min(255, g)):02x}{max(0, min(255, b)):02x}"
+    return (
+        f"#{max(0, min(255, r)):02x}{max(0, min(255, g)):02x}{max(0, min(255, b)):02x}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -89,8 +94,8 @@ def oklch_gamut_map(L: float, C: float, H: float) -> tuple[float, float, float]:
     Binary-search: halves C until all RGB channels in [0, 1].
     Preserves hue and lightness — only chroma is reduced.
     """
-    a = C * math.cos(math.radians(H))
-    b = C * math.sin(math.radians(H))
+    C * math.cos(math.radians(H))
+    C * math.sin(math.radians(H))
 
     def _in_gamut(c_val: float) -> bool:
         ca = c_val * math.cos(math.radians(H))
@@ -98,14 +103,21 @@ def oklch_gamut_map(L: float, C: float, H: float) -> tuple[float, float, float]:
         lc = L + 0.3963377774 * ca + 0.2158037573 * cb
         mc = L - 0.1055613458 * ca - 0.0638541728 * cb
         sc = L - 0.0894841775 * ca - 1.2914855480 * cb
-        l3 = lc ** 3
-        m3 = mc ** 3
-        s3 = sc ** 3
+        l3 = lc**3
+        m3 = mc**3
+        s3 = sc**3
         r = 4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3
         g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3
         bv = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3
         eps = -0.001
-        return r >= eps and g >= eps and bv >= eps and r <= 1.001 and g <= 1.001 and bv <= 1.001
+        return (
+            r >= eps
+            and g >= eps
+            and bv >= eps
+            and r <= 1.001
+            and g <= 1.001
+            and bv <= 1.001
+        )
 
     if _in_gamut(C):
         return L, C, H
@@ -171,11 +183,13 @@ def oklch_gradient(anchors: list[tuple[float, float, float]], n: int) -> list[st
 
 def wcag_contrast_ratio(hex_fg: str, hex_bg: str) -> float:
     """WCAG 2.1 contrast ratio between two hex colors. Range [1, 21]."""
+
     def _rel_lum(h: str) -> float:
         r = _srgb_to_linear(int(h[1:3], 16) / 255.0)
         g = _srgb_to_linear(int(h[3:5], 16) / 255.0)
         b = _srgb_to_linear(int(h[5:7], 16) / 255.0)
         return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
     l1 = _rel_lum(hex_fg)
     l2 = _rel_lum(hex_bg)
     lighter = max(l1, l2)

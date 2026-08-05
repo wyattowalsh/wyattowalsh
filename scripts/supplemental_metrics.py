@@ -192,7 +192,9 @@ def _build_x_oauth1_authorization_header(
     """Create an OAuth 1.0a Authorization header for an X API request."""
 
     parsed = urllib.parse.urlsplit(url)
-    base_url = urllib.parse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+    base_url = urllib.parse.urlunsplit(
+        (parsed.scheme, parsed.netloc, parsed.path, "", "")
+    )
     oauth_params = {
         "oauth_consumer_key": credentials.api_key,
         "oauth_nonce": nonce or secrets.token_hex(16),
@@ -313,9 +315,9 @@ def _contribution_stats(
         parsed_date = _parse_iso8601(entry.get("date"))
         if parsed_date is None:
             try:
-                parsed_date = datetime.strptime(entry.get("date", ""), "%Y-%m-%d").replace(
-                    tzinfo=UTC
-                )
+                parsed_date = datetime.strptime(
+                    entry.get("date", ""), "%Y-%m-%d"
+                ).replace(tzinfo=UTC)
             except ValueError:
                 continue
         daily_counts[parsed_date.date()] = int(entry.get("count", 0) or 0)
@@ -385,9 +387,9 @@ def _render_habits_card(metrics: dict[str, Any]) -> SvgBlock:
         title=ASSET_SPECS["habits"].title,
         kicker="GitHub last 30 days",
         lines=(
-            f"30-day activity: {stats['total']} contributions across {stats['active_days']} active days",
-            f"Current streak: {stats['current_streak']}d | longest streak: {stats['longest_streak']}d",
-            f"Peak hour: {peak_hour} UTC | focus: {focus_repos} | langs: {top_languages}",
+            f"30-day activity: {stats['total']} contributions across {stats['active_days']} active days",  # noqa: E501
+            f"Current streak: {stats['current_streak']}d | longest streak: {stats['longest_streak']}d",  # noqa: E501
+            f"Peak hour: {peak_hour} UTC | focus: {focus_repos} | langs: {top_languages}",  # noqa: E501
         ),
         meta=(
             f"Reviews {int(metrics.get('pr_review_count') or 0)}",
@@ -414,7 +416,11 @@ def _summarize_github_event(event: dict[str, Any]) -> tuple[str, str] | None:
     if event_type == "WatchEvent":
         return f"Starred {repo}", created_at
     if event_type == "PullRequestEvent":
-        pr = payload.get("pull_request") if isinstance(payload.get("pull_request"), dict) else {}
+        pr = (
+            payload.get("pull_request")
+            if isinstance(payload.get("pull_request"), dict)
+            else {}
+        )
         if pr.get("merged_at"):
             return f"Merged PR in {repo}", created_at
         action = str(payload.get("action") or "updated").replace("_", " ")
@@ -479,9 +485,7 @@ def _spotify_access_token(
     client_secret: str,
     refresh_token: str,
 ) -> str:
-    auth = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8")).decode(
-        "ascii"
-    )
+    auth = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode("ascii")
     body = urllib.parse.urlencode(
         {
             "grant_type": "refresh_token",
@@ -589,7 +593,11 @@ def _fetch_latest_posts(
     )
     posts: list[dict[str, str]] = []
     for item in payload.get("data", []) if isinstance(payload, dict) else []:
-        metrics = item.get("public_metrics") if isinstance(item.get("public_metrics"), dict) else {}
+        metrics = (
+            item.get("public_metrics")
+            if isinstance(item.get("public_metrics"), dict)
+            else {}
+        )
         posts.append(
             {
                 "text": _truncate(str(item.get("text") or "").replace("\n", " "), 84),
@@ -634,12 +642,12 @@ def generate_supplemental_metrics(
     )
 
     github_token = (
-        os.getenv("METRICS_TOKEN")
-        or os.getenv("GITHUB_TOKEN")
-        or os.getenv("GH_TOKEN")
+        os.getenv("METRICS_TOKEN") or os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN")
     )
     if not github_token:
-        raise RuntimeError("A GitHub token is required to generate supplemental metrics")
+        raise RuntimeError(
+            "A GitHub token is required to generate supplemental metrics"
+        )
 
     x_credentials = _load_x_oauth1_credentials_from_env()
     spotify_client_id = os.getenv("SPOTIFY_CLIENT_ID", "").strip()
@@ -713,7 +721,7 @@ def generate_supplemental_metrics(
         actual_handle = x_user["username"]
         if expected_x_handle and actual_handle.lower() != expected_x_handle.lower():
             raise RuntimeError(
-                f"X OAuth user mismatch: expected @{expected_x_handle}, got @{actual_handle}"
+                f"X OAuth user mismatch: expected @{expected_x_handle}, got @{actual_handle}"  # noqa: E501
             )
         builder.render_and_write(
             ASSET_SPECS["posts"].asset_name,

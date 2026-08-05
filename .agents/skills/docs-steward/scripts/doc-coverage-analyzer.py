@@ -34,21 +34,26 @@ def analyze_python_file(filepath: str) -> dict:
                 if node.body
                 else False
             )
-            items.append({
-                "name": node.name,
-                "type": "class" if isinstance(node, ast.ClassDef) else "function",
-                "line": node.lineno,
-                "documented": has_doc,
-            })
+            items.append(
+                {
+                    "name": node.name,
+                    "type": "class" if isinstance(node, ast.ClassDef) else "function",
+                    "line": node.lineno,
+                    "documented": has_doc,
+                }
+            )
 
     # Check module-level docstring
     module_doc = ast.get_docstring(tree) is not None
-    items.insert(0, {
-        "name": os.path.basename(filepath),
-        "type": "module",
-        "line": 1,
-        "documented": module_doc,
-    })
+    items.insert(
+        0,
+        {
+            "name": os.path.basename(filepath),
+            "type": "module",
+            "line": 1,
+            "documented": module_doc,
+        },
+    )
 
     return {"path": filepath, "items": items}
 
@@ -74,14 +79,20 @@ def analyze_js_ts_file(filepath: str) -> dict:
             continue
         m = export_pattern.match(line)
         if m:
-            items.append({
-                "name": m.group(1),
-                "type": "export",
-                "line": i + 1,
-                "documented": has_jsdoc_above,
-            })
+            items.append(
+                {
+                    "name": m.group(1),
+                    "type": "export",
+                    "line": i + 1,
+                    "documented": has_jsdoc_above,
+                }
+            )
             has_jsdoc_above = False
-        elif line.strip() and not line.strip().startswith("*") and not line.strip().startswith("*/"):
+        elif (
+            line.strip()
+            and not line.strip().startswith("*")
+            and not line.strip().startswith("*/")
+        ):
             has_jsdoc_above = False
 
     return {"path": filepath, "items": items}
@@ -96,8 +107,16 @@ LANG_EXTENSIONS = {
 }
 
 SKIP_DIRS = {
-    "node_modules", ".git", "__pycache__", ".venv", "venv",
-    "dist", "build", ".next", ".astro", "coverage",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "dist",
+    "build",
+    ".next",
+    ".astro",
+    "coverage",
 }
 
 
@@ -129,12 +148,14 @@ def compute_summary(modules: list[dict]) -> dict:
             if item["documented"]:
                 documented += 1
             else:
-                undocumented.append({
-                    "file": mod["path"],
-                    "name": item["name"],
-                    "type": item["type"],
-                    "line": item["line"],
-                })
+                undocumented.append(
+                    {
+                        "file": mod["path"],
+                        "name": item["name"],
+                        "type": item["type"],
+                        "line": item["line"],
+                    }
+                )
 
     pct = round((documented / total) * 100, 1) if total > 0 else 0.0
     return {

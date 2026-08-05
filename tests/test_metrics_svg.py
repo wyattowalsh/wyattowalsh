@@ -75,9 +75,7 @@ DEGENERATE_TEXT_SVG = (
 DEGENERATE_RECT_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg"><rect width="0" height="0"/></svg>'
 )
-DEGENERATE_PATH_SVG = (
-    '<svg xmlns="http://www.w3.org/2000/svg"><path d=""/></svg>'
-)
+DEGENERATE_PATH_SVG = '<svg xmlns="http://www.w3.org/2000/svg"><path d=""/></svg>'
 SPLIT_ERROR_SVG = dedent(
     """\
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80">

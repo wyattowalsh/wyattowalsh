@@ -3,6 +3,7 @@ _github_http.py
 ~~~~~~~~~~~~~~~
 Shared GitHub API HTTP helpers used by fetch_metrics and fetch_history.
 """
+
 from __future__ import annotations
 
 import json
@@ -39,9 +40,7 @@ def _assert_allowed_url(url: str) -> None:
 
     host = (parsed.hostname or "").lower()
     if not host or host not in _ALLOWED_HOSTS:
-        raise ValueError(
-            f"Blocked non-allowlisted host for GitHub API request: {url}"
-        )
+        raise ValueError(f"Blocked non-allowlisted host for GitHub API request: {url}")
 
 
 class _AllowedHostRedirectHandler(HTTPRedirectHandler):

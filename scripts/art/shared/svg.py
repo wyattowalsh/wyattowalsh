@@ -1,4 +1,5 @@
 """SVG markup helpers, filters, weather overlays, and SMIL utilities."""
+
 from __future__ import annotations
 
 import math
@@ -7,29 +8,46 @@ from typing import Any
 
 from .color import oklch
 from .constants import LANG_HUES
+from .world_state import WorldState
 
 
-def make_radial_gradient(gid: str, cx: str, cy: str, r: str,
-                         stops: list[tuple[str, str, float]]) -> str:
+def make_radial_gradient(
+    gid: str, cx: str, cy: str, r: str, stops: list[tuple[str, str, float]]
+) -> str:
     """Build SVG radialGradient element. stops: [(offset, color, opacity), ...]"""
-    s = "".join(f'<stop offset="{o}" stop-color="{c}" stop-opacity="{a:.3f}"/>' for o, c, a in stops)
-    return f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r="{r}">{s}</radialGradient>'
+    s = "".join(
+        f'<stop offset="{o}" stop-color="{c}" stop-opacity="{a:.3f}"/>'
+        for o, c, a in stops
+    )
+    return (
+        f'<radialGradient id="{gid}" cx="{cx}" cy="{cy}" r="{r}">{s}</radialGradient>'
+    )
 
 
-def make_linear_gradient(gid: str, x1: str, y1: str, x2: str, y2: str,
-                         stops: list[tuple[str, str, float]]) -> str:
+def make_linear_gradient(
+    gid: str, x1: str, y1: str, x2: str, y2: str, stops: list[tuple[str, str, float]]
+) -> str:
     """Build SVG linearGradient element. stops: [(offset, color, opacity), ...]"""
-    s = "".join(f'<stop offset="{o}" stop-color="{c}" stop-opacity="{a:.3f}"/>' for o, c, a in stops)
-    return f'<linearGradient id="{gid}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}">{s}</linearGradient>'
+    s = "".join(
+        f'<stop offset="{o}" stop-color="{c}" stop-opacity="{a:.3f}"/>'
+        for o, c, a in stops
+    )
+    return f'<linearGradient id="{gid}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}">{s}</linearGradient>'  # noqa: E501
 
 
 # ---------------------------------------------------------------------------
 # SVG helpers (shared by animated art modules)
 # ---------------------------------------------------------------------------
 
+
 def xml_escape(s: str) -> str:
     """Escape XML special characters."""
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+    return (
+        s.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
 
 
 def svg_header(width: int, height: int) -> str:
@@ -61,9 +79,7 @@ def annotation_tooltip_metadata(
         detail_text = str(detail).strip()
         if detail_text:
             tooltip_parts.append(detail_text)
-    tag_text = ", ".join(
-        str(tag).strip() for tag in (tags or []) if str(tag).strip()
-    )
+    tag_text = ", ".join(str(tag).strip() for tag in (tags or []) if str(tag).strip())
     if tag_text:
         tooltip_parts.append(f"tags: {tag_text}")
 
@@ -137,14 +153,8 @@ def sparkline_svg(
         if label
         else {}
     )
-    attrs = "".join(
-        f' {key}="{xml_escape(value)}"' for key, value in metadata.items()
-    )
-    title = (
-        f"<title>{xml_escape(metadata['data-tooltip'])}</title>"
-        if metadata
-        else ""
-    )
+    attrs = "".join(f' {key}="{xml_escape(value)}"' for key, value in metadata.items())
+    title = f"<title>{xml_escape(metadata['data-tooltip'])}</title>" if metadata else ""
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
         f'width="{width}" height="{height}"{attrs}>'
@@ -154,7 +164,6 @@ def sparkline_svg(
         f'points="{" ".join(points)}"/>'
         f"</svg>"
     )
-
 
 
 # ---------------------------------------------------------------------------
@@ -174,7 +183,7 @@ def atmospheric_haze_filter(filter_id: str, intensity: float = 0.5) -> str:
         f'<filter id="{filter_id}" x="-5%" y="-5%" width="110%" height="110%">'
         f'<feGaussianBlur in="SourceGraphic" stdDeviation="{blur}" result="blur"/>'
         f'<feColorMatrix in="blur" type="saturate" values="{desat}"/>'
-        f'</filter>'
+        f"</filter>"
     )
 
 
@@ -185,9 +194,9 @@ def volumetric_glow_filter(filter_id: str, radius: float = 3.0) -> str:
     """
     return (
         f'<filter id="{filter_id}" x="-20%" y="-20%" width="140%" height="140%">'
-        f'<feGaussianBlur in="SourceGraphic" stdDeviation="{radius:.1f}" result="glow"/>'
+        f'<feGaussianBlur in="SourceGraphic" stdDeviation="{radius:.1f}" result="glow"/>'  # noqa: E501
         f'<feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>'
-        f'</filter>'
+        f"</filter>"
     )
 
 
@@ -201,7 +210,7 @@ def aurora_filter(filter_id: str) -> str:
         f'<feGaussianBlur in="SourceGraphic" stdDeviation="4 8" result="soft"/>'
         f'<feColorMatrix in="soft" type="saturate" values="1.3" result="vivid"/>'
         f'<feMerge><feMergeNode in="vivid"/><feMergeNode in="SourceGraphic"/></feMerge>'
-        f'</filter>'
+        f"</filter>"
     )
 
 
@@ -216,15 +225,15 @@ def rain_pattern(pattern_id: str, intensity: float = 0.5, seed: int = 0) -> str:
     drops: list[str] = []
     n_drops = max(2, min(8, int(3 + intensity * 5)))
     for i in range(n_drops):
-        x = ((rng_val + i * 137) % pw)
-        y = ((rng_val + i * 211) % ph)
+        x = (rng_val + i * 137) % pw
+        y = (rng_val + i * 211) % ph
         length = round(4 + intensity * 6, 1)
         drops.append(
             f'<line x1="{x}" y1="{y}" x2="{x - 1.5}" y2="{y + length}" '
-            f'stroke="#8ab4d0" stroke-width="0.4" opacity="{opacity}" stroke-linecap="round"/>'
+            f'stroke="#8ab4d0" stroke-width="0.4" opacity="{opacity}" stroke-linecap="round"/>'  # noqa: E501
         )
     return (
-        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'
+        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'  # noqa: E501
         + "".join(drops)
         + "</pattern>"
     )
@@ -240,15 +249,15 @@ def snow_pattern(pattern_id: str, density: float = 0.5, seed: int = 0) -> str:
     flakes: list[str] = []
     n_flakes = max(2, min(10, int(3 + density * 7)))
     for i in range(n_flakes):
-        x = ((rng_val + i * 173) % pw)
-        y = ((rng_val + i * 251) % ph)
+        x = (rng_val + i * 173) % pw
+        y = (rng_val + i * 251) % ph
         r = round(0.5 + (i % 3) * 0.3, 2)
         opacity = round(0.3 + (i % 4) * 0.1, 2)
         flakes.append(
             f'<circle cx="{x}" cy="{y}" r="{r}" fill="#e8f0ff" opacity="{opacity}"/>'
         )
     return (
-        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'
+        f'<pattern id="{pattern_id}" width="{pw}" height="{ph}" patternUnits="userSpaceOnUse">'  # noqa: E501
         + "".join(flakes)
         + "</pattern>"
     )
@@ -265,7 +274,7 @@ def lightning_path(x: float, y: float, length: float, seed: int = 0) -> str:
     segments = max(3, min(8, int(length / 15)))
     seg_len = length / segments
     for i in range(segments):
-        dx = ((rng_val + i * 137) % 20 - 10)
+        dx = (rng_val + i * 137) % 20 - 10
         cy += seg_len
         cx += dx
         pts.append((cx, cy))
@@ -312,7 +321,7 @@ def weather_overlay_elements(
         parts.append(rain_pattern("weatherRain", intensity=intensity, seed=seed))
         rain_opacity = round(0.3 + intensity * 0.3, 3)
         parts.append(
-            f'<rect width="{width}" height="{height}" fill="url(#weatherRain)" opacity="{rain_opacity}"/>'
+            f'<rect width="{width}" height="{height}" fill="url(#weatherRain)" opacity="{rain_opacity}"/>'  # noqa: E501
         )
 
     if world.weather == "stormy":
@@ -322,7 +331,9 @@ def weather_overlay_elements(
 
     if world.weather in ("cloudy", "rainy", "stormy"):
         # Cloud wash — darken sky slightly
-        cloud_opacity = {"cloudy": 0.08, "rainy": 0.15, "stormy": 0.25}.get(world.weather, 0.1)
+        cloud_opacity = {"cloudy": 0.08, "rainy": 0.15, "stormy": 0.25}.get(
+            world.weather, 0.1
+        )
         parts.append(
             f'<rect width="{width}" height="{height * 0.45}" '
             f'fill="#7a7a8a" opacity="{cloud_opacity}" rx="40"/>'
@@ -402,14 +413,13 @@ def firefly_elements(
         opacity = round(0.3 + (i % 5) * 0.1, 2)
         color = oklch(0.78, 0.16, 95 + (i % 4) * 10)  # warm gold-green
         parts.append(
-            f'<circle cx="{x}" cy="{y}" r="{glow_r}" fill="{color}" opacity="{opacity * 0.3:.3f}"/>'
+            f'<circle cx="{x}" cy="{y}" r="{glow_r}" fill="{color}" opacity="{opacity * 0.3:.3f}"/>'  # noqa: E501
         )
         parts.append(
             f'<circle cx="{x}" cy="{y}" r="{r}" fill="{color}" opacity="{opacity}"/>'
         )
 
     return parts
-
 
 
 # ---------------------------------------------------------------------------
@@ -444,7 +454,7 @@ def organic_texture_filter(
         f'numOctaves="{octaves}" seed="{seed}" result="tex"/>'
         f'<feDisplacementMap in="SourceGraphic" in2="tex" '
         f'scale="{scale}" xChannelSelector="R" yChannelSelector="G"/>'
-        f'</filter>'
+        f"</filter>"
     )
 
 
@@ -453,7 +463,7 @@ def blend_mode_filter(filter_id: str, mode: str = "multiply") -> str:
     return (
         f'<filter id="{filter_id}">'
         f'<feBlend in="SourceGraphic" in2="BackgroundImage" mode="{mode}"/>'
-        f'</filter>'
+        f"</filter>"
     )
 
 

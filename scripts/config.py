@@ -1,6 +1,6 @@
+import os
 from pathlib import Path
 from typing import Literal
-import os
 
 import yaml  # type: ignore
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -88,8 +88,7 @@ class VCardDataModel(BaseModel):
     tel_work_voice: str = ""
     email_internet: str = ""
     url_work: list[TypedUrl] | None = Field(
-        default=[],
-        description="Work-related URLs with labels."
+        default=[], description="Work-related URLs with labels."
     )
 
 
@@ -119,11 +118,11 @@ class WordCloudSettingsModel(BaseModel):
     )
     prompt: str | None = Field(
         default="My Tech Skills: Python, JavaScript, Cloud, AI, DevOps, SQL, React",
-        description="Default prompt for word cloud generation."
+        description="Default prompt for word cloud generation.",
     )
     stopwords: list[str] | None = Field(
         default_factory=list,  # type: ignore
-        description="List of stopwords for word clouds."
+        description="List of stopwords for word clouds.",
     )
     layout_readability: LayoutReadabilitySettings = Field(
         default_factory=LayoutReadabilitySettings,
@@ -151,9 +150,7 @@ class SkillEntry(BaseModel):
     """A single technology/skill badge."""
 
     name: str = Field(..., description="Display name for the badge")
-    slug: str | None = Field(
-        None, description="Simple Icons slug for logo"
-    )
+    slug: str | None = Field(None, description="Simple Icons slug for logo")
     logo_path: str | None = Field(
         None,
         description="Path to local SVG for custom logo (base64-encoded into badge URL)",
@@ -181,9 +178,7 @@ class SkillEntry(BaseModel):
             "custom-retro, custom-generic, custom-brand, or sourced-brand."
         ),
     )
-    color: str = Field(
-        "555555", description="Hex color without # prefix"
-    )
+    color: str = Field("555555", description="Hex color without # prefix")
     logo_color: str | None = Field(
         None,
         description=(
@@ -191,9 +186,7 @@ class SkillEntry(BaseModel):
             "slug (Simple Icons); ignored when logo_path is set."
         ),
     )
-    url: str | None = Field(
-        None, description="Click-through link URL"
-    )
+    url: str | None = Field(None, description="Click-through link URL")
 
     @field_validator("logo_path")
     @classmethod
@@ -209,21 +202,17 @@ class SkillEntry(BaseModel):
                 f"logo_path must be a repo-relative file path, not a URL: {v}"
             )
         if v.startswith("~"):
-            raise ValueError(
-                f"logo_path must be repo-relative, not home-expanded: {v}"
-            )
+            raise ValueError(f"logo_path must be repo-relative, not home-expanded: {v}")
         path = Path(v)
         # Catch POSIX/Windows absolute forms before they escape the repo.
-        if path.is_absolute() or v.startswith(("/", "\\")) or (
-            len(v) >= 2 and v[1] == ":"
+        if (
+            path.is_absolute()
+            or v.startswith(("/", "\\"))
+            or (len(v) >= 2 and v[1] == ":")
         ):
-            raise ValueError(
-                f"logo_path must be repo-relative, not absolute: {v}"
-            )
+            raise ValueError(f"logo_path must be repo-relative, not absolute: {v}")
         if ".." in path.parts:
-            raise ValueError(
-                f"logo_path must not contain '..': {v}"
-            )
+            raise ValueError(f"logo_path must not contain '..': {v}")
         return v
 
     @field_validator("url")
@@ -232,9 +221,7 @@ class SkillEntry(BaseModel):
         if v is None:
             return v
         if not v.lower().startswith(("http://", "https://")):
-            raise ValueError(
-                f"url must use http:// or https:// scheme: {v}"
-            )
+            raise ValueError(f"url must use http:// or https:// scheme: {v}")
         return v
 
     @field_validator("logo_source_url")
@@ -267,15 +254,9 @@ class SkillCategory(BaseModel):
 class SkillsSettings(BaseModel):
     """Configuration for skills/tech stack badge generation."""
 
-    style: str = Field(
-        "for-the-badge", description="shields.io badge style"
-    )
-    logo_color: str = Field(
-        "white", description="Default logoColor for all badges"
-    )
-    readme_path: str = Field(
-        "README.md", description="Path to README for injection"
-    )
+    style: str = Field("for-the-badge", description="shields.io badge style")
+    logo_color: str = Field("white", description="Default logoColor for all badges")
+    readme_path: str = Field("README.md", description="Path to README for injection")
     section_title: str = Field(
         "Tech Stack",
         description=(
@@ -285,9 +266,7 @@ class SkillsSettings(BaseModel):
             "outside the <!-- SKILLS:START/END --> markers."
         ),
     )
-    collapsible: bool = Field(
-        False, description="Wrap in <details> tag"
-    )
+    collapsible: bool = Field(False, description="Wrap in <details> tag")
     categories: list[SkillCategory] = Field(default_factory=list)
 
 
@@ -297,27 +276,21 @@ class ReadmeSocialLink(BaseModel):
     label: str = Field(..., description="Badge label text")
     url: str = Field(..., description="Destination URL")
     color: str = Field("555555", description="Badge color hex (without #)")
-    logo: str | None = Field(
-        None, description="Simple Icons slug for shields.io logo"
-    )
+    logo: str | None = Field(None, description="Simple Icons slug for shields.io logo")
     logo_color: str = Field("white", description="Badge logo color")
 
     @field_validator("url")
     @classmethod
     def validate_url_scheme(cls, v: str) -> str:
         if not v.lower().startswith(("http://", "https://", "mailto:")):
-            raise ValueError(
-                f"url must use http://, https://, or mailto: scheme: {v}"
-            )
+            raise ValueError(f"url must use http://, https://, or mailto: scheme: {v}")
         return v
 
 
 class ReadmeFeaturedRepo(BaseModel):
     """Repository to feature in README card section."""
 
-    full_name: str = Field(
-        ..., description="GitHub repository full name (owner/repo)"
-    )
+    full_name: str = Field(..., description="GitHub repository full name (owner/repo)")
 
 
 class ReadmeSvgCardStyleSettings(BaseModel):
@@ -340,8 +313,7 @@ class ReadmeSvgCardStyleSettings(BaseModel):
     show_title: bool = Field(
         False,
         description=(
-            "When variant='legacy', render section title text above each "
-            "per-card SVG."
+            "When variant='legacy', render section title text above each per-card SVG."
         ),
     )
 
@@ -358,17 +330,13 @@ class ReadmeSvgFamilyCardStyles(BaseModel):
     featured: ReadmeSvgCardStyleSettings = Field(
         default_factory=ReadmeSvgCardStyleSettings
     )
-    blog: ReadmeSvgCardStyleSettings = Field(
-        default_factory=ReadmeSvgCardStyleSettings
-    )
+    blog: ReadmeSvgCardStyleSettings = Field(default_factory=ReadmeSvgCardStyleSettings)
 
 
 class ReadmeSvgSettings(BaseModel):
     """Settings for optional SVG assets used by README dynamic sections."""
 
-    enabled: bool = Field(
-        False, description="Enable generation of SVG section assets."
-    )
+    enabled: bool = Field(False, description="Enable generation of SVG section assets.")
     output_dir: str = Field(
         ".github/assets/img/readme",
         description="Directory where README SVG assets are written.",
@@ -385,8 +353,7 @@ class ReadmeSvgSettings(BaseModel):
     card_styles: ReadmeSvgFamilyCardStyles = Field(
         default_factory=ReadmeSvgFamilyCardStyles,
         description=(
-            "Family-specific per-card style switches used by README SVG "
-            "rendering."
+            "Family-specific per-card style switches used by README SVG rendering."
         ),
     )
 
@@ -400,15 +367,9 @@ class ReadmeSectionsSettings(BaseModel):
     badge_style: str = Field(
         "for-the-badge", description="shields.io style for social badges"
     )
-    social_links: list[ReadmeSocialLink] = Field(
-        default_factory=list
-    )
-    featured_repos: list[ReadmeFeaturedRepo] = Field(
-        default_factory=list
-    )
-    blog_feed_url: str = Field(
-        "", description="RSS/Atom feed URL for blog posts"
-    )
+    social_links: list[ReadmeSocialLink] = Field(default_factory=list)
+    featured_repos: list[ReadmeFeaturedRepo] = Field(default_factory=list)
+    blog_feed_url: str = Field("", description="RSS/Atom feed URL for blog posts")
     blog_post_limit: int = Field(
         5, ge=1, le=10, description="Number of latest blog posts to render"
     )
@@ -435,15 +396,9 @@ class ProjectConfig(BaseSettings):
     author_email: str | None = None
     version: str = "0.1.0"
 
-    banner_settings: BannerSettings | None = Field(
-        default_factory=BannerSettings
-    )
-    v_card_data: VCardDataModel | None = Field(
-        default_factory=VCardDataModel
-    )
-    qr_code_settings: QRCodeSettings | None = Field(
-        default_factory=QRCodeSettings
-    )
+    banner_settings: BannerSettings | None = Field(default_factory=BannerSettings)
+    v_card_data: VCardDataModel | None = Field(default_factory=VCardDataModel)
+    qr_code_settings: QRCodeSettings | None = Field(default_factory=QRCodeSettings)
     word_cloud_settings: WordCloudSettingsModel | None = Field(
         default_factory=WordCloudSettingsModel
     )
@@ -561,8 +516,7 @@ def load_config(path: Path = DEFAULT_CONFIG_PATH) -> ProjectConfig:
             # Default config file does not exist, so create and save defaults
             try:
                 logger.info(
-                    "Default config file {path!r} not found. "
-                    "Creating with defaults.",
+                    "Default config file {path!r} not found. Creating with defaults.",
                     path=path,
                 )
                 default_cfg = ProjectConfig()
@@ -596,9 +550,7 @@ def load_skills(path: Path = DEFAULT_SKILLS_PATH) -> SkillsSettings:
         raise ValueError(f"Invalid skills data in {path}:\n{e}") from e
 
 
-def save_config(
-    config: ProjectConfig, path: Path = DEFAULT_CONFIG_PATH
-) -> None:
+def save_config(config: ProjectConfig, path: Path = DEFAULT_CONFIG_PATH) -> None:
     """Saves project config to YAML. Raises errors on failure."""
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -653,9 +605,7 @@ if __name__ == "__main__":
 
         initial_cfg.project_name = "Updated Project Name via Test Script"
         if initial_cfg.banner_settings:
-            initial_cfg.banner_settings.title = (
-                "Updated Banner Title via Test Script"
-            )
+            initial_cfg.banner_settings.title = "Updated Banner Title via Test Script"
 
         logger.info("Attempting to save modified config...")
         try:

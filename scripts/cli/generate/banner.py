@@ -3,21 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 import typer
 
-from ._common import (
-    Annotated,
-    Path,
-    ProjectConfig,
-    _load_project_config,
-    console,
-    generate_app,
-    load_config,
-    logger,
-    typer,
-)
+from ._common import _load_project_config, console, generate_app, logger
+
 
 @generate_app.command(help="Generate SVG profile banner (light + dark variants).")
 def banner(
@@ -144,7 +135,13 @@ def banner(
                 "[bold green]Dark SVG banner generated: "
                 f"{dark_banner_config.output_path}[/]"
             )
-        except (ValidationError, OSError, ValueError, TypeError, RuntimeError) as dark_err:
+        except (
+            ValidationError,
+            OSError,
+            ValueError,
+            TypeError,
+            RuntimeError,
+        ) as dark_err:
             logger.warning(
                 f"Dark banner generation failed (light banner succeeded): {dark_err}",
                 exc_info=True,
@@ -161,6 +158,3 @@ def banner(
 # ---------------------------------------------------------------------------
 # qr
 # ---------------------------------------------------------------------------
-
-
-

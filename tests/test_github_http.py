@@ -174,9 +174,7 @@ class TestGetAndGraphql:
         assert captured["url"] == "https://api.github.com/graphql"
         assert captured["method"] == "POST"
 
-    def test_urlopen_rejects_blocked_url(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_urlopen_rejects_blocked_url(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(
             "scripts._github_http.urllib.request.build_opener",
             MagicMock(side_effect=AssertionError("must not open")),
@@ -191,9 +189,7 @@ class TestPaginateRestAllowlist:
     ) -> None:
         calls: list[str] = []
 
-        def fake_get(
-            url: str, token: str | None, *, accept: str | None = None
-        ):
+        def fake_get(url: str, token: str | None, *, accept: str | None = None):
             del token, accept
             calls.append(url)
             if "evil" in url:
@@ -202,9 +198,7 @@ class TestPaginateRestAllowlist:
                 )
             return (
                 [{"id": 1}],
-                _FakeHeaders(
-                    {"Link": '<https://evil.example/page2>; rel="next"'}
-                ),
+                _FakeHeaders({"Link": '<https://evil.example/page2>; rel="next"'}),
             )
 
         monkeypatch.setattr("scripts._github_http._get", fake_get)

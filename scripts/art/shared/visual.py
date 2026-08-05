@@ -1,4 +1,5 @@
 """Repo layout, derived metrics, and visual-parameter helpers."""
+
 from __future__ import annotations
 
 import hashlib
@@ -64,7 +65,6 @@ def activity_tempo(contributions_monthly: dict[str, int] | None) -> float:
     variance = sum((c - mean) ** 2 for c in counts) / len(counts)
     cv = math.sqrt(variance) / mean
     return min(1.0, cv / 2.0)
-
 
 
 def stable_repo_visual_order(

@@ -24,9 +24,9 @@ from scripts.readme_sections import (
     ReadmeSectionGenerator,
     RepoMetadata,
     StarHistoryClient,
-    _SafeRedirectHandler,
     _is_safe_remote_url,
     _safe_urlopen,
+    _SafeRedirectHandler,
 )
 
 
@@ -429,9 +429,7 @@ class TestRendering:
     ) -> None:
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(),
-            star_history_client=StubStarHistoryClient(
-                {"wyattowalsh/demo": [0, 1, 2]}
-            ),
+            star_history_client=StubStarHistoryClient({"wyattowalsh/demo": [0, 1, 2]}),
         )
 
         points = generator._build_star_history_points(
@@ -944,8 +942,9 @@ class TestRendering:
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
         assert "kept skills" in rendered
-        assert '<summary><strong>View full stack (200+ technologies)</strong></summary>' in (
-            rendered
+        assert (
+            "<summary><strong>View full stack (200+ technologies)</strong></summary>"
+            in (rendered)
         )
 
     def test_generate_drops_tech_stack_teaser_shields(
@@ -1055,7 +1054,10 @@ class TestRendering:
         assert ".github/assets/img/metrics.additional.svg" in rendered
         assert ".github/assets/img/metrics.extra.svg" in rendered
         assert "Metrics temporarily unavailable" not in rendered
-        assert 'alt="GitHub metrics: contributions, languages, topics, and community signals"' in rendered
+        assert (
+            'alt="GitHub metrics: contributions, languages, topics, and community signals"'  # noqa: E501
+            in rendered
+        )
         assert 'loading="lazy"' in rendered
         assert "<td" not in rendered
 
@@ -1181,16 +1183,13 @@ class TestRendering:
         assert ".github/assets/img/metrics-activity.svg" in rendered
         assert ".github/assets/img/metrics.extra.svg" in rendered
         assert (
-            'alt="Extra metrics: comment reactions and issue/PR follow-up"'
-            in rendered
+            'alt="Extra metrics: comment reactions and issue/PR follow-up"' in rendered
         )
         assert (
             'alt="Supplemental metrics: coding habits and recent GitHub focus"'
             in rendered
         )
-        assert (
-            'alt="Supplemental metrics: recent GitHub activity feed"' in rendered
-        )
+        assert 'alt="Supplemental metrics: recent GitHub activity feed"' in rendered
         assert "<td" not in rendered
         assert rendered.count('loading="lazy"') >= 4
 
@@ -1310,10 +1309,7 @@ class TestRendering:
         assert 'loading="lazy"' in rendered[languages_idx : languages_idx + 220]
         assert "stable typographic" in rendered
         assert "full parsed source lists" in rendered
-        assert (
-            '<p align="center"><sub>Topic and language clouds generated'
-            in rendered
-        )
+        assert '<p align="center"><sub>Topic and language clouds generated' in rendered
         assert "<td" not in rendered
 
     def test_generate_hides_stale_wakatime_block_until_fresh_output_exists(

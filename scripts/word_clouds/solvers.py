@@ -15,6 +15,7 @@ from collections.abc import Callable
 import numpy as np
 from mealpy import FloatVar
 
+from ..utils import get_logger
 from .core import BBox
 from .readability import (
     DEFAULT_LAYOUT_READABILITY_POLICY,
@@ -22,14 +23,15 @@ from .readability import (
     LayoutReadabilitySettings,
     coerce_layout_readability_policy,
 )
-from ..utils import get_logger
 
 # Suppress ALL mealpy console logging
 logging.getLogger("mealpy").setLevel(logging.CRITICAL)
 
 logger = get_logger(module=__name__)
 
-LayoutReadabilityConfig = LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
+LayoutReadabilityConfig = (
+    LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
+)
 
 # ---------------------------------------------------------------------------
 # Metaheuristic aesthetic cost function
@@ -109,14 +111,21 @@ def _rotation_readability_penalty(rotation: float) -> float:
     return min(1.0, abs_rotation / 90.0)
 
 
-def _landscape_aspect_penalty(hull_w: float, hull_h: float, target_aspect_ratio: float, landscape_bias_weight: float) -> float:
+def _landscape_aspect_penalty(
+    hull_w: float,
+    hull_h: float,
+    target_aspect_ratio: float,
+    landscape_bias_weight: float,
+) -> float:
     """Prefer broader, landscape-friendly hulls instead of portrait stacks."""
 
     if hull_w <= 0 or hull_h <= 0:
         return 1.0
 
     aspect = hull_w / hull_h
-    target_penalty = min(1.0, abs(aspect - target_aspect_ratio) / max(target_aspect_ratio, 1.0))
+    target_penalty = min(
+        1.0, abs(aspect - target_aspect_ratio) / max(target_aspect_ratio, 1.0)
+    )
     if aspect >= 1.0:
         return target_penalty
 
@@ -125,7 +134,11 @@ def _landscape_aspect_penalty(hull_w: float, hull_h: float, target_aspect_ratio:
 
 
 def _estimate_word_bbox(
-    text: str, font_size: float, x: float, y: float, rotation: float,
+    text: str,
+    font_size: float,
+    x: float,
+    y: float,
+    rotation: float,
     padding: float = 2.0,
 ) -> BBox:
     """Estimate AABB for a word at (x, y) with given rotation."""
@@ -246,7 +259,12 @@ def _aesthetic_cost(
                         continue
                     _seen.add(pair)
                     # AABB overlap test (inlined for speed)
-                    if bx2[i] > bx[j] and bx2[j] > bx[i] and by2[i] > by[j] and by2[j] > by[i]:
+                    if (
+                        bx2[i] > bx[j]
+                        and bx2[j] > bx[i]
+                        and by2[i] > by[j]
+                        and by2[j] > by[i]
+                    ):
                         ox = min(bx2[i], bx2[j]) - max(bx[i], bx[j])
                         oy = min(by2[i], by2[j]) - max(by[i], by[j])
                         if ox > 0 and oy > 0:
@@ -299,7 +317,11 @@ def _aesthetic_cost(
     else:
         centroid_x, centroid_y = canvas_w / 2, canvas_h / 2
     max_d = math.hypot(canvas_w / 2, canvas_h / 2)
-    balance = min(1.0, math.hypot(centroid_x - canvas_w / 2, centroid_y - canvas_h / 2) / max(max_d, 1.0))
+    balance = min(
+        1.0,
+        math.hypot(centroid_x - canvas_w / 2, centroid_y - canvas_h / 2)
+        / max(max_d, 1.0),
+    )
 
     # 4. Whitespace uniformity via grid-based approximate NN (O(n) amortized)
     nn_dists: list[float] = []
@@ -330,7 +352,7 @@ def _aesthetic_cost(
     if len(nn_dists) > 1:
         mean_nn = sum(nn_dists) / len(nn_dists)
         var_nn = sum((d - mean_nn) ** 2 for d in nn_dists) / len(nn_dists)
-        uniformity = min(1.0, var_nn / max(mean_nn ** 2, 1.0))
+        uniformity = min(1.0, var_nn / max(mean_nn**2, 1.0))
     else:
         uniformity = 0.0
 
@@ -384,8 +406,12 @@ def _aesthetic_cost(
 # Metaheuristic solver helpers
 # ---------------------------------------------------------------------------
 
+
 def _random_solution(
-    n: int, canvas_w: float, canvas_h: float, rng: random.Random,
+    n: int,
+    canvas_w: float,
+    canvas_h: float,
+    rng: random.Random,
 ) -> list[tuple[float, float, float]]:
     """Generate a random placement solution."""
     margin_x = canvas_w * 0.15
@@ -405,7 +431,9 @@ def _random_solution(
 
 
 def _clamp_solution(
-    sol: list[tuple[float, float, float]], canvas_w: float, canvas_h: float,
+    sol: list[tuple[float, float, float]],
+    canvas_w: float,
+    canvas_h: float,
 ) -> list[tuple[float, float, float]]:
     """Clamp positions to canvas bounds and rotations to valid set."""
     mx, my = canvas_w * 0.15, canvas_h * 0.15
@@ -428,12 +456,15 @@ def _eval_fitness(
     cost_weights: dict[str, float] | None = None,
 ) -> float:
     """Return fitness (higher is better) = negative cost."""
-    return -_aesthetic_cost(sol, sizes, canvas_w, canvas_h, texts, layout_readability, cost_weights)
+    return -_aesthetic_cost(
+        sol, sizes, canvas_w, canvas_h, texts, layout_readability, cost_weights
+    )
 
 
 # ---------------------------------------------------------------------------
 # Generic mealpy solver wrapper
 # ---------------------------------------------------------------------------
+
 
 def _mealpy_solve(
     optimizer_class: type,
@@ -478,11 +509,17 @@ def _mealpy_solve(
     def obj_func(solution: np.ndarray) -> float:
         sol_tuples: list[tuple[float, float, float]] = []
         for i in range(0, dim, 3):
-            x, y, rot = float(solution[i]), float(solution[i + 1]), float(solution[i + 2])
+            x, y, rot = (
+                float(solution[i]),
+                float(solution[i + 1]),
+                float(solution[i + 2]),
+            )
             rot = _ACTIVE_LAYOUT_READABILITY.snap_rotation(rot)
             sol_tuples.append((x, y, rot))
         sol_tuples = _clamp_solution(sol_tuples, canvas_w, canvas_h)
-        return _aesthetic_cost(sol_tuples, sizes, canvas_w, canvas_h, texts, cost_weights=cost_weights)
+        return _aesthetic_cost(
+            sol_tuples, sizes, canvas_w, canvas_h, texts, cost_weights=cost_weights
+        )
 
     problem = {
         "bounds": bounds,
@@ -500,12 +537,15 @@ def _mealpy_solve(
         best_vec = result.solution
         sol_tuples: list[tuple[float, float, float]] = []
         for i in range(0, dim, 3):
-            sol_tuples.append((float(best_vec[i]), float(best_vec[i + 1]), float(best_vec[i + 2])))
+            sol_tuples.append(
+                (float(best_vec[i]), float(best_vec[i + 1]), float(best_vec[i + 2]))
+            )
         return _clamp_solution(sol_tuples, canvas_w, canvas_h)
     except (RuntimeError, ValueError, TypeError) as exc:
         logger.debug(
             "Solver {} failed, falling back to random: {}",
-            optimizer_class.__name__, exc,
+            optimizer_class.__name__,
+            exc,
         )
         return _random_solution(n_words, canvas_w, canvas_h, rng)
 
@@ -514,7 +554,10 @@ def _mealpy_solve(
 # Solver factory and registry
 # ---------------------------------------------------------------------------
 
-def _make_mealpy_solver(optimizer_class: type) -> Callable[..., list[tuple[float, float, float]]]:
+
+def _make_mealpy_solver(
+    optimizer_class: type,
+) -> Callable[..., list[tuple[float, float, float]]]:
     """Create a solver function wrapping a specific mealpy optimizer class."""
 
     def solver(
@@ -529,8 +572,16 @@ def _make_mealpy_solver(optimizer_class: type) -> Callable[..., list[tuple[float
         cost_weights: dict[str, float] | None = None,
     ) -> list[tuple[float, float, float]]:
         return _mealpy_solve(
-            optimizer_class, n_words, sizes, canvas_w, canvas_h,
-            max_iter, rng, texts, pop_size, cost_weights,
+            optimizer_class,
+            n_words,
+            sizes,
+            canvas_w,
+            canvas_h,
+            max_iter,
+            rng,
+            texts,
+            pop_size,
+            cost_weights,
         )
 
     solver.__name__ = f"_solve_{optimizer_class.__name__}"
@@ -541,25 +592,54 @@ def _make_mealpy_solver(optimizer_class: type) -> Callable[..., list[tuple[float
 # Optimizers excluded via empirical benchmarking on word-cloud placement.
 # These either crash (triggering random fallback), produce degenerate layouts,
 # or consistently rank in the bottom 15% across problem sizes.
-_EXCLUDED_OPTIMIZERS: frozenset[str] = frozenset({
-    # Fallback-only (0ms, cost=random): solver errors caught internally
-    "DevCHIO", "DevSARO", "ImprovedBSO", "ImprovedTLO", "OCRO",
-    "OriginalBSA", "OriginalBSO", "OriginalCEM", "OriginalCHIO",
-    "OriginalEHO", "OriginalIWO", "OriginalMA", "OriginalSARO", "SwarmHC",
-    # Degenerate layouts (cost >= 16): worst possible quality
-    "BaseGA", "DevGSKA", "MultiGA", "OppoTWO", "OriginalBFO",
-    "OriginalGSKA", "SingleGA",
-    # Poor performers (cost 7-12): well below median
-    "DevFOA", "OriginalFOA", "OriginalHBO", "OriginalSBO", "WhaleFOA",
-    # Bottom of viable range with better alternatives in same family
-    "OriginalBMO", "OriginalCA", "OriginalCDO", "OriginalFOX",
-    "OriginalPFA", "OriginalSSDO", "SwarmSA",
-})
+_EXCLUDED_OPTIMIZERS: frozenset[str] = frozenset(
+    {
+        # Fallback-only (0ms, cost=random): solver errors caught internally
+        "DevCHIO",
+        "DevSARO",
+        "ImprovedBSO",
+        "ImprovedTLO",
+        "OCRO",
+        "OriginalBSA",
+        "OriginalBSO",
+        "OriginalCEM",
+        "OriginalCHIO",
+        "OriginalEHO",
+        "OriginalIWO",
+        "OriginalMA",
+        "OriginalSARO",
+        "SwarmHC",
+        # Degenerate layouts (cost >= 16): worst possible quality
+        "BaseGA",
+        "DevGSKA",
+        "MultiGA",
+        "OppoTWO",
+        "OriginalBFO",
+        "OriginalGSKA",
+        "SingleGA",
+        # Poor performers (cost 7-12): well below median
+        "DevFOA",
+        "OriginalFOA",
+        "OriginalHBO",
+        "OriginalSBO",
+        "WhaleFOA",
+        # Bottom of viable range with better alternatives in same family
+        "OriginalBMO",
+        "OriginalCA",
+        "OriginalCDO",
+        "OriginalFOX",
+        "OriginalPFA",
+        "OriginalSSDO",
+        "SwarmSA",
+    }
+)
 
 
 # Build the registry dynamically from all mealpy optimizers.
 # Suppress stdout during get_all_optimizers() as it prints a line per optimizer.
-def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float, float]]]]:
+def _build_solver_registry() -> dict[
+    str, Callable[..., list[tuple[float, float, float]]]
+]:
     from mealpy import get_all_optimizers
 
     all_optimizers = get_all_optimizers(verbose=False)
@@ -571,4 +651,6 @@ def _build_solver_registry() -> dict[str, Callable[..., list[tuple[float, float,
     return registry
 
 
-_META_SOLVERS: dict[str, Callable[..., list[tuple[float, float, float]]]] = _build_solver_registry()
+_META_SOLVERS: dict[str, Callable[..., list[tuple[float, float, float]]]] = (
+    _build_solver_registry()
+)

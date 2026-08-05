@@ -15,6 +15,7 @@ Implementation lives in focused sibling modules:
 - ``palette`` — named art palettes + extended world palettes
 - ``visual`` — repo layout, derived metrics, element budgets
 """
+
 from __future__ import annotations
 
 from .color import (

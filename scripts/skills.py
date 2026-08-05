@@ -34,9 +34,7 @@ def _resolve_repo_logo_path(logo_path: str) -> Path:
     try:
         candidate.relative_to(_REPO_ROOT)
     except ValueError as exc:
-        raise ValueError(
-            f"logo_path escapes repository root: {logo_path}"
-        ) from exc
+        raise ValueError(f"logo_path escapes repository root: {logo_path}") from exc
     return candidate
 
 
@@ -58,32 +56,26 @@ class SkillsBadgeGenerator:
         html = self._render_all()
         readme_path = Path(self.settings.readme_path)
         self._inject_readme(html, readme_path)
-        logger.info("Skills badges injected into {readme_path}", readme_path=readme_path)
+        logger.info(
+            "Skills badges injected into {readme_path}", readme_path=readme_path
+        )
         return readme_path
 
     def _build_badge_url(self, skill: SkillEntry) -> str:
         """Construct a shields.io badge URL for a skill."""
-        label = quote(
-            skill.name.replace("-", "--"), safe=""
-        )
+        label = quote(skill.name.replace("-", "--"), safe="")
         color = skill.color.lstrip("#")
         logo_color = skill.logo_color or self.settings.logo_color
 
         url = (
-            f"https://img.shields.io/badge/{label}-{color}"
-            f"?style={self.settings.style}"
+            f"https://img.shields.io/badge/{label}-{color}?style={self.settings.style}"
         )
         if skill.logo_path:
             try:
                 svg_path = _resolve_repo_logo_path(skill.logo_path)
-                svg_b64 = base64.b64encode(
-                    svg_path.read_bytes()
-                ).decode()
+                svg_b64 = base64.b64encode(svg_path.read_bytes()).decode()
                 # safe='' ensures +, /, = in base64 are percent-encoded
-                url += (
-                    f"&logo=data:image/svg%2Bxml;base64,"
-                    f"{quote(svg_b64, safe='')}"
-                )
+                url += f"&logo=data:image/svg%2Bxml;base64,{quote(svg_b64, safe='')}"
             except (OSError, ValueError) as exc:
                 logger.warning(
                     f"logo_path '{skill.logo_path}' could not be read "
@@ -150,7 +142,10 @@ class SkillsBadgeGenerator:
     def _inject_readme(self, html: str, readme_path: Path) -> None:
         """Replace content between SKILLS markers in README."""
         if not readme_path.exists():
-            logger.warning("README not found at {readme_path}, skipping injection", readme_path=readme_path)
+            logger.warning(
+                "README not found at {readme_path}, skipping injection",
+                readme_path=readme_path,
+            )
             return
 
         content = readme_path.read_text(encoding="utf-8")

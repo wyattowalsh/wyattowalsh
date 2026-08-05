@@ -1,4 +1,5 @@
 """Tests for scripts.techs — technology proficiency parser."""
+
 from __future__ import annotations
 
 import pytest

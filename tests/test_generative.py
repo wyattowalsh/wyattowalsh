@@ -10,7 +10,6 @@ import pytest
 
 from scripts import generative
 
-
 # ---------------------------------------------------------------------------
 # Fixtures / helpers
 # ---------------------------------------------------------------------------
@@ -86,7 +85,9 @@ class TestGenerateCommunityArt:
         assert 0.8 <= kwargs["a"] <= 2.0
         assert kwargs["iterations"] >= 1_000_000
 
-    def test_dark_mode_default_path_suffix(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_dark_mode_default_path_suffix(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.chdir(tmp_path)
         drawing_patch, mock_dwg = _mock_drawing()
         with (
@@ -118,7 +119,10 @@ class TestGenerateCommunityArt:
 
         drawing_patch, _ = _mock_drawing()
         metrics = _community_metrics(stars=99, forks=7)
-        with drawing_patch, patch("scripts.generative.draw_clifford", side_effect=capture_clifford):
+        with (
+            drawing_patch,
+            patch("scripts.generative.draw_clifford", side_effect=capture_clifford),
+        ):
             generative.generate_community_art(metrics, output_path=tmp_path / "a.svg")
             generative.generate_community_art(metrics, output_path=tmp_path / "b.svg")
         assert captured[0] == captured[1]
@@ -154,8 +158,12 @@ class TestGenerateActivityArt:
         fake_points = [(100.0, 100.0), (120.0, 130.0), (140.0, 110.0)]
         with (
             drawing_patch,
-            patch("scripts.generative.flow_field_lines", return_value=fake_lines) as mock_flow,
-            patch("scripts.generative.phyllotaxis_points", return_value=fake_points) as mock_phy,
+            patch(
+                "scripts.generative.flow_field_lines", return_value=fake_lines
+            ) as mock_flow,
+            patch(
+                "scripts.generative.phyllotaxis_points", return_value=fake_points
+            ) as mock_phy,
         ):
             result = generative.generate_activity_art(
                 _activity_metrics(public_repos=3),
@@ -171,7 +179,9 @@ class TestGenerateActivityArt:
         assert mock_dwg.path.call_count == 1
         assert mock_dwg.circle.call_count == len(fake_points)
 
-    def test_dark_mode_default_path(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_dark_mode_default_path(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.chdir(tmp_path)
         drawing_patch, _ = _mock_drawing()
         with (
@@ -233,7 +243,9 @@ class TestGenerateActivityArt:
 class TestGenerativeMain:
     def test_all_types(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         metrics_path = tmp_path / "metrics.json"
-        metrics_path.write_text(json.dumps(_community_metrics(**_activity_metrics())), encoding="utf-8")
+        metrics_path.write_text(
+            json.dumps(_community_metrics(**_activity_metrics())), encoding="utf-8"
+        )
         calls: list[str] = []
 
         monkeypatch.setattr(

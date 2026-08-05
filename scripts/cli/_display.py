@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from ..config import ProjectConfig
 from ..config import Settings as AppSettings
@@ -16,7 +16,7 @@ except ImportError:
     yaml = None  # type: ignore
 
 
-class OutputFormat(str, Enum):
+class OutputFormat(StrEnum):
     JSON = "json"
     YAML = "yaml"
 
@@ -44,9 +44,7 @@ def display_config(
             try:
                 config_dict = config_data.model_dump(mode="python")
                 yaml_str = yaml.dump(config_dict, indent=2, sort_keys=False)
-                syntax = Syntax(
-                    yaml_str, "yaml", theme="monokai", line_numbers=True
-                )
+                syntax = Syntax(yaml_str, "yaml", theme="monokai", line_numbers=True)
                 console.print(syntax)
             except (yaml.YAMLError, TypeError, ValueError) as e:
                 logger.error("Error converting config to YAML: {e}", e=e)

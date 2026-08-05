@@ -55,9 +55,7 @@ def test_readme_svg_writer_does_not_call_optimize(tmp_path: Path) -> None:
     from scripts.readme_svg import SvgAssetWriter
 
     with patch("scripts.svg_optimize.optimize_with_svgo") as shared:
-        path = SvgAssetWriter(tmp_path).write(
-            "card", '<svg class="section-title"/>'
-        )
+        path = SvgAssetWriter(tmp_path).write("card", '<svg class="section-title"/>')
         assert path.is_file()
         assert 'class="section-title"' in path.read_text(encoding="utf-8")
         shared.assert_not_called()

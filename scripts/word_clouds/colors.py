@@ -457,9 +457,9 @@ def _hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
     gl = _srgb_to_linear(g)
     bl = _srgb_to_linear(b)
     # Linear RGB → LMS (cube-root space)
-    l_ = (0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl)
-    m_ = (0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl)
-    s_ = (0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl)
+    l_ = 0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl
+    m_ = 0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl
+    s_ = 0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl
     lc = l_ ** (1 / 3) if l_ >= 0 else 0.0
     mc = m_ ** (1 / 3) if m_ >= 0 else 0.0
     sc = s_ ** (1 / 3) if s_ >= 0 else 0.0

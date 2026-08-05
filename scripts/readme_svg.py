@@ -814,14 +814,17 @@ class SvgRepoCardRenderer:
         thumb_w = 0
         thumb_h = 0
         layout: tuple[list[str], list[str], int, int] | None = None
-        best_candidate: tuple[
-            tuple[list[str], list[str], int, int],
-            int,
-            bool,
-            bool,
-            int,
-            int,
-        ] | None = None
+        best_candidate: (
+            tuple[
+                tuple[list[str], list[str], int, int],
+                int,
+                bool,
+                bool,
+                int,
+                int,
+            ]
+            | None
+        ) = None
         thumb_trials = (
             [True, False] if card.background_image and not compact else [False]
         )
@@ -1121,7 +1124,7 @@ class SvgRepoCardRenderer:
         *,
         compact: bool,
     ) -> int:
-        """Render footer metadata, with compact cards surfacing language + star + recency."""
+        """Render footer metadata, with compact cards surfacing language + star + recency."""  # noqa: E501
         x = start_x
         esc = escape
 

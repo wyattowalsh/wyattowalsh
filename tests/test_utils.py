@@ -26,8 +26,7 @@ except ImportError as e:
     # module loading.
     utils_module = None
     print(
-        f"Initial import of scripts.utils failed: {e}. "
-        "Will attempt re-import in tests."
+        f"Initial import of scripts.utils failed: {e}. Will attempt re-import in tests."
     )
 
 
@@ -146,9 +145,9 @@ def test_get_logger_returns_logger_instance(mocker: MockerFixture):
     """Test that get_logger returns a Loguru Logger instance."""
     current_utils = reload_utils_module(mocker)
     logger_instance = current_utils.get_logger()
-    assert isinstance(
-        logger_instance, LoguruLoggerType
-    ), "get_logger should return a Logger instance"
+    assert isinstance(logger_instance, LoguruLoggerType), (
+        "get_logger should return a Logger instance"
+    )
 
 
 def test_get_logger_binds_extra_kwargs(mocker: MockerFixture):
@@ -190,9 +189,9 @@ def test_initial_logger_remove_call(mocker: MockerFixture):
 def test_utils_console_instance(mocker: MockerFixture, mock_rich_console_instance):
     """Test that utils.py's global `console` is the mocked one."""
     current_utils = reload_utils_module(mocker)
-    assert (
-        current_utils.console is mock_rich_console_instance
-    ), "The global `console` in utils.py was not the mocked instance."
+    assert current_utils.console is mock_rich_console_instance, (
+        "The global `console` in utils.py was not the mocked instance."
+    )
 
 
 def test_create_progress_returns_progress_instance(
@@ -201,12 +200,12 @@ def test_create_progress_returns_progress_instance(
     """Test create_progress returns Progress instance using mocked console."""
     current_utils = reload_utils_module(mocker)
     progress_instance = current_utils.create_progress()
-    assert isinstance(
-        progress_instance, Progress
-    ), "create_progress should return a Progress instance"
-    assert (
-        progress_instance.console is mock_rich_console_instance
-    ), "Progress instance not created with the mocked console instance."
+    assert isinstance(progress_instance, Progress), (
+        "create_progress should return a Progress instance"
+    )
+    assert progress_instance.console is mock_rich_console_instance, (
+        "Progress instance not created with the mocked console instance."
+    )
 
 
 def test_create_progress_task_description_handling(
@@ -244,30 +243,30 @@ def test_create_progress_column_types(
     progress_instance = current_utils.create_progress()
 
     actual_columns = progress_instance.columns
-    assert (
-        len(actual_columns) == 4
-    ), f"Expected 4 progress columns, got {len(actual_columns)}"
+    assert len(actual_columns) == 4, (
+        f"Expected 4 progress columns, got {len(actual_columns)}"
+    )
 
-    assert isinstance(
-        actual_columns[0], TextColumn
-    ), "First column should be TextColumn"
-    assert (
-        actual_columns[0].text_format == "[bold blue]{task.description}"
-    ), "Incorrect format for task description column"
+    assert isinstance(actual_columns[0], TextColumn), (
+        "First column should be TextColumn"
+    )
+    assert actual_columns[0].text_format == "[bold blue]{task.description}", (
+        "Incorrect format for task description column"
+    )
 
     assert isinstance(actual_columns[1], BarColumn), "Second column should be BarColumn"
 
-    assert isinstance(
-        actual_columns[2], str
-    ), "Third column (percentage) should be a string format"
+    assert isinstance(actual_columns[2], str), (
+        "Third column (percentage) should be a string format"
+    )
     expected_perc_fmt = "[progress.percentage]{task.percentage:>3.0f}%"
-    assert (
-        actual_columns[2] == expected_perc_fmt
-    ), "Incorrect format for percentage column"
+    assert actual_columns[2] == expected_perc_fmt, (
+        "Incorrect format for percentage column"
+    )
 
-    assert isinstance(
-        actual_columns[3], TimeRemainingColumn
-    ), "Fourth column should be TimeRemainingColumn"
+    assert isinstance(actual_columns[3], TimeRemainingColumn), (
+        "Fourth column should be TimeRemainingColumn"
+    )
 
 
 def test_rich_handler_instantiation_parameters(
@@ -310,9 +309,9 @@ def test_logging_setup_with_settings(
     mock_path_mkdir.assert_has_calls(expected_mkdir_calls, any_order=True)
     assert mock_path_mkdir.call_count == 2
 
-    assert (
-        mock_add_global.call_count == 3
-    ), f"Expected 3 calls to logger.add, got {mock_add_global.call_count}"
+    assert mock_add_global.call_count == 3, (
+        f"Expected 3 calls to logger.add, got {mock_add_global.call_count}"
+    )
 
     rich_handler_call = None
     text_log_call_found = None
@@ -337,19 +336,17 @@ def test_logging_setup_with_settings(
     assert json_log_call_found is not None, "JSON log sink not found"
 
     actual_rich_handler_instance = _get_sink_from_add_call(rich_handler_call)
-    assert (
-        actual_rich_handler_instance.console is mock_rich_console_instance
-    ), "RichHandler console mismatch"
+    assert actual_rich_handler_instance.console is mock_rich_console_instance, (
+        "RichHandler console mismatch"
+    )
     assert rich_handler_call.kwargs["level"] == mock_settings.log_level
     expected_rich_format = (
-        "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | " "{level.icon} {level:<8} | {message}"
+        "[{time:YYYY-MM-DD HH:mm:ss.SSS}] | {level.icon} {level:<8} | {message}"
     )
     assert rich_handler_call.kwargs["format"] == expected_rich_format
     assert rich_handler_call.kwargs["enqueue"] is True
 
-    expected_text_log_path = (
-        mock_settings.log_text_dir / "{time:YYYY-MM-DD}.log"
-    )
+    expected_text_log_path = mock_settings.log_text_dir / "{time:YYYY-MM-DD}.log"
     assert _get_sink_from_add_call(text_log_call_found) == expected_text_log_path
     assert text_log_call_found.kwargs["rotation"] == mock_settings.log_rotation
     assert text_log_call_found.kwargs["retention"] == mock_settings.log_retention
@@ -362,9 +359,7 @@ def test_logging_setup_with_settings(
     assert expected_text_format in text_log_call_found.kwargs["format"]
     assert text_log_call_found.kwargs["enqueue"] is True
 
-    expected_json_log_path = (
-        mock_settings.log_json_dir / "{time:YYYY-MM-DD}.json"
-    )
+    expected_json_log_path = mock_settings.log_json_dir / "{time:YYYY-MM-DD}.json"
     assert _get_sink_from_add_call(json_log_call_found) == expected_json_log_path
     assert json_log_call_found.kwargs["rotation"] == mock_settings.log_rotation
     assert json_log_call_found.kwargs["retention"] == mock_settings.log_retention
@@ -400,19 +395,19 @@ def test_logging_setup_no_settings_or_import_error(
     reload_utils_module(mocker, fail_config_import=True)
 
     mock_path_mkdir.assert_not_called()
-    assert (
-        mock_add_global.call_count == 1
-    ), "Expected 1 logger.add call for RichHandler (ImportError)"
+    assert mock_add_global.call_count == 1, (
+        "Expected 1 logger.add call for RichHandler (ImportError)"
+    )
 
     rich_handler_call_ie = mock_add_global.mock_calls[0]
     actual_rich_handler_instance_ie = _get_sink_from_add_call(rich_handler_call_ie)
     assert isinstance(actual_rich_handler_instance_ie, RichHandler)
-    assert actual_rich_handler_instance_ie.console is (
-        mock_rich_console_instance
-    ), "RichHandler (ImportError) not using mocked console"
-    assert (
-        rich_handler_call_ie.kwargs["level"] == "INFO"
-    ), "Default log level (ImportError) incorrect"
+    assert actual_rich_handler_instance_ie.console is (mock_rich_console_instance), (
+        "RichHandler (ImportError) not using mocked console"
+    )
+    assert rich_handler_call_ie.kwargs["level"] == "INFO", (
+        "Default log level (ImportError) incorrect"
+    )
 
     assert any(
         "`config` module not found" in message for message in captured_messages
@@ -434,18 +429,18 @@ def test_logging_setup_no_settings_or_import_error(
     reload_utils_module(mocker)
 
     mock_path_mkdir.assert_not_called()
-    assert (
-        mock_add_global.call_count == 1
-    ), "Expected 1 logger.add call for RichHandler (settings None)"
+    assert mock_add_global.call_count == 1, (
+        "Expected 1 logger.add call for RichHandler (settings None)"
+    )
     rich_handler_call_sn = mock_add_global.mock_calls[0]
     actual_rich_handler_instance_sn = _get_sink_from_add_call(rich_handler_call_sn)
     assert isinstance(actual_rich_handler_instance_sn, RichHandler)
-    assert actual_rich_handler_instance_sn.console is (
-        mock_rich_console_instance
-    ), "RichHandler (settings None) not using mocked console"
-    assert (
-        rich_handler_call_sn.kwargs["level"] == "INFO"
-    ), "Default log level (settings None) incorrect"
+    assert actual_rich_handler_instance_sn.console is (mock_rich_console_instance), (
+        "RichHandler (settings None) not using mocked console"
+    )
+    assert rich_handler_call_sn.kwargs["level"] == "INFO", (
+        "Default log level (settings None) incorrect"
+    )
 
     assert not any(
         "`config` module not found" in message for message in captured_messages

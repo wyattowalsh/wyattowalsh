@@ -50,8 +50,8 @@ from .shared import (
     oklch_gradient,
     oklch_lerp,
     order_repos_for_visual_plan,
-    resolve_render_metrics,
     repo_visibility_score,
+    resolve_render_metrics,
     seed_hash,
     select_palette_for_world,
     select_primary_repos,
@@ -597,7 +597,9 @@ def _build_repo_ecology_plan(
 
         if age_months >= 20 and ecology_signal >= 0.48:
             stratum = "canopy"
-        elif age_months >= 6 or ecology_signal >= 0.24 or stars >= 6 or topic_count >= 2:
+        elif (
+            age_months >= 6 or ecology_signal >= 0.24 or stars >= 6 or topic_count >= 2
+        ):
             stratum = "understory"
         else:
             stratum = "groundcover"
@@ -640,7 +642,8 @@ def _build_repo_ecology_plan(
                 "x": max(60.0, min(WIDTH - 60.0, x)),
                 "ground_offset": ground_offset,
                 "size_scale": cfg["size_base"] + ecology_signal * cfg["size_gain"],
-                "branch_scale": cfg["branch_base"] + ecology_signal * cfg["branch_gain"],
+                "branch_scale": cfg["branch_base"]
+                + ecology_signal * cfg["branch_gain"],
                 "bloom_scale": cfg["bloom_base"] + ecology_signal * cfg["bloom_gain"],
                 "max_depth": cfg["max_depth"],
                 "depth_plane": cfg["depth_plane"],
@@ -1275,9 +1278,11 @@ def generate(
         return max(0.0, min(1.0, day_offset / timeline_span_days))
 
     repo_visual_order = metrics.get("repo_visual_order")
-    use_accretive_layout = bool(repo_visual_order) or bool(
-        metrics.get("canonical_primary_repo_names")
-    ) or len(repos) > MAX_REPOS
+    use_accretive_layout = (
+        bool(repo_visual_order)
+        or bool(metrics.get("canonical_primary_repo_names"))
+        or len(repos) > MAX_REPOS
+    )
 
     has_explicit_repo_recency = total_repos_contributed > 0
     repo_recency_days_by_name: dict[str, int] = {}
@@ -1772,11 +1777,12 @@ def generate(
 
         topic_annotation = _repo_topic_annotation(
             repo,
-            max_topics=1 if layout_plan and layout_plan["stratum"] == "groundcover" else 2,
+            max_topics=1
+            if layout_plan and layout_plan["stratum"] == "groundcover"
+            else 2,
         )
-        if (
-            main_length >= (20 if chronological_growth else 5)
-            and (layout_plan is None or bool(layout_plan["show_label"]))
+        if main_length >= (20 if chronological_growth else 5) and (
+            layout_plan is None or bool(layout_plan["show_label"])
         ):
             labels.append(
                 (
@@ -1816,7 +1822,9 @@ def generate(
                 "tree_t": tree_t,
                 "bloom_gate": bloom_growth_gate,
                 "late_detail_gate": late_detail_growth_gate,
-                "stratum": layout_plan["stratum"] if layout_plan is not None else "midstory",
+                "stratum": layout_plan["stratum"]
+                if layout_plan is not None
+                else "midstory",
             }
         )
 
@@ -4707,9 +4715,21 @@ def generate(
         panel_stroke = oklch_lerp(pal["border"], pal["muted"], 0.25)
         panel_title = oklch_lerp(pal["text_secondary"], pal["border"], 0.25)
         strata_rows = [
-            ("Canopy", strata_counts["canopy"], oklch_lerp(pal["border"], pal["muted"], 0.30)),
-            ("Understory", strata_counts["understory"], oklch_lerp(pal["accent"], pal["highlight"], 0.35)),
-            ("Groundcover", strata_counts["groundcover"], oklch_lerp(pal["accent"], pal["ground"], 0.42)),
+            (
+                "Canopy",
+                strata_counts["canopy"],
+                oklch_lerp(pal["border"], pal["muted"], 0.30),
+            ),
+            (
+                "Understory",
+                strata_counts["understory"],
+                oklch_lerp(pal["accent"], pal["highlight"], 0.35),
+            ),
+            (
+                "Groundcover",
+                strata_counts["groundcover"],
+                oklch_lerp(pal["accent"], pal["ground"], 0.42),
+            ),
         ]
 
         P.append('<g id="ecology-strata">')

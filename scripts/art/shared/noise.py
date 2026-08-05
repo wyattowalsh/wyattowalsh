@@ -1,4 +1,5 @@
 """Gradient noise (Perlin-like) and named presets."""
+
 from __future__ import annotations
 
 import math
@@ -8,6 +9,7 @@ import numpy as np
 # ---------------------------------------------------------------------------
 # Gradient noise (Perlin-like)
 # ---------------------------------------------------------------------------
+
 
 class Noise2D:
     """2D gradient noise with fBm support."""
@@ -37,8 +39,12 @@ class Noise2D:
         gb = self.grads[ab % 256]
         gc = self.grads[ba % 256]
         gd = self.grads[bb % 256]
-        x1 = (ga[0] * xf + ga[1] * yf) + u * ((gc[0] * (xf - 1) + gc[1] * yf) - (ga[0] * xf + ga[1] * yf))
-        x2 = (gb[0] * xf + gb[1] * (yf - 1)) + u * ((gd[0] * (xf - 1) + gd[1] * (yf - 1)) - (gb[0] * xf + gb[1] * (yf - 1)))
+        x1 = (ga[0] * xf + ga[1] * yf) + u * (
+            (gc[0] * (xf - 1) + gc[1] * yf) - (ga[0] * xf + ga[1] * yf)
+        )
+        x2 = (gb[0] * xf + gb[1] * (yf - 1)) + u * (
+            (gd[0] * (xf - 1) + gd[1] * (yf - 1)) - (gb[0] * xf + gb[1] * (yf - 1))
+        )
         return x1 + v * (x2 - x1)
 
     def fbm(self, x: float, y: float, octaves: int = 4) -> float:

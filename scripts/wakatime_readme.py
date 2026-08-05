@@ -115,7 +115,9 @@ def fetch_wakatime_stats(
     return payload
 
 
-def _parse_entries(raw: Any, *, limit: int = DEFAULT_TOP_N) -> tuple[WakaStatEntry, ...]:
+def _parse_entries(
+    raw: Any, *, limit: int = DEFAULT_TOP_N
+) -> tuple[WakaStatEntry, ...]:
     if not isinstance(raw, list):
         return ()
     entries: list[WakaStatEntry] = []
@@ -182,9 +184,9 @@ def _fetch_contributions_this_year(token: str, login: str) -> tuple[int, int] | 
         },
     )
     user = (payload.get("data") or {}).get("user") or {}
-    calendar = (
-        (user.get("contributionsCollection") or {}).get("contributionCalendar") or {}
-    )
+    calendar = (user.get("contributionsCollection") or {}).get(
+        "contributionCalendar"
+    ) or {}
     total = calendar.get("totalContributions")
     if total is None:
         return None
@@ -220,7 +222,13 @@ def fetch_github_short_info(
             result = _fetch_contributions_this_year(token, username)
             if result is not None:
                 contributions, year = result
-        except (urllib.error.URLError, TimeoutError, ValueError, TypeError, KeyError) as exc:
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ValueError,
+            TypeError,
+            KeyError,
+        ) as exc:
             logger.warning("GitHub contributions lookup skipped: {exc}", exc=exc)
 
     private_repos = user.get("total_private_repos")
@@ -301,7 +309,7 @@ def render_waka_section(
             parts.append(" > ")
         if github.disk_usage_bytes is not None:
             parts.append(
-                f"> 📦 {_format_bytes(github.disk_usage_bytes)} Used in Github's Storage "
+                f"> 📦 {_format_bytes(github.disk_usage_bytes)} Used in Github's Storage "  # noqa: E501
             )
             parts.append(" > ")
         if github.hireable is True:
@@ -314,7 +322,9 @@ def render_waka_section(
             "Public Repository" if github.public_repos == 1 else "Public Repositories"
         )
         private_label = (
-            "Private Repository" if github.private_repos == 1 else "Private Repositories"
+            "Private Repository"
+            if github.private_repos == 1
+            else "Private Repositories"
         )
         parts.append(f"> 📜 {github.public_repos} {public_label} ")
         parts.append(" > ")
@@ -352,8 +362,7 @@ def apply_waka_section(readme_path: Path, section_body: str) -> bool:
     match = SECTION_RE.search(content)
     if match is None:
         raise ValueError(
-            f"Waka markers not found in {readme_path}: "
-            f"{MARKER_START} … {MARKER_END}"
+            f"Waka markers not found in {readme_path}: {MARKER_START} … {MARKER_END}"
         )
     body = section_body.strip("\n")
     replacement = f"{match.group(1)}\n{body}\n{match.group(3)}"
@@ -369,7 +378,10 @@ def apply_waka_section(readme_path: Path, section_body: str) -> bool:
 def write_waka_artifact(section_body: str, output_path: Path) -> Path:
     """Write the generated section body to an artifact path."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(section_body if section_body.endswith("\n") else f"{section_body}\n", encoding="utf-8")
+    output_path.write_text(
+        section_body if section_body.endswith("\n") else f"{section_body}\n",
+        encoding="utf-8",
+    )
     logger.info("Wrote Waka artifact to {path}", path=output_path)
     return output_path
 
@@ -434,7 +446,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    generate = sub.add_parser("generate", help="Fetch WakaTime stats and write artifact")
+    generate = sub.add_parser(
+        "generate", help="Fetch WakaTime stats and write artifact"
+    )
     generate.add_argument(
         "--output-dir",
         type=Path,
@@ -490,7 +504,9 @@ def main(argv: list[str] | None = None) -> int:
                     "WAKATIME_API_KEY missing; skipped first-party Waka generation",
                 )
                 return 0
-            raise SystemExit("WAKATIME_API_KEY is required (or pass --allow-missing-key)")
+            raise SystemExit(
+                "WAKATIME_API_KEY is required (or pass --allow-missing-key)"
+            )
         body = generate_waka_section(
             api_key=api_key,
             github_login=args.github_login,

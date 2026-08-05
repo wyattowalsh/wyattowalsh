@@ -471,7 +471,9 @@ def _build_render_state(
         "total_commits": cumulative_state.get(
             "total_commits", metrics_dict.get("total_commits", 0)
         ),
-        "total_prs": cumulative_state.get("total_prs", metrics_dict.get("total_prs", 0)),
+        "total_prs": cumulative_state.get(
+            "total_prs", metrics_dict.get("total_prs", 0)
+        ),
         "total_issues": cumulative_state.get(
             "total_issues", metrics_dict.get("total_issues", 0)
         ),
@@ -518,7 +520,7 @@ def _build_render_state(
             "current_streak_months": streak_envelope,
             "streak_active": streak_envelope > 0,
         },
-        # Treat issue burden as a monotonic envelope instead of a shrinking current-state estimate.
+        # Treat issue burden as a monotonic envelope instead of a shrinking current-state estimate.  # noqa: E501
         "open_issues_count": open_issue_envelope,
         "issue_stats": {
             "open_count": open_issue_envelope,
@@ -1483,7 +1485,7 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                 if current_value < previous_value:
                     raise ValueError(
                         f"Render-state scalar {key!r} regressed on "
-                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"  # noqa: E501
                     )
 
             for key in RENDER_STATE_MAPPING_KEYS:
@@ -1495,13 +1497,15 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                     "dict[str | int, int | float]",
                     previous_render_state.get(key, {}),
                 )
-                for item_key in set(current_mapping.keys()) | set(previous_mapping.keys()):
+                for item_key in set(current_mapping.keys()) | set(
+                    previous_mapping.keys()
+                ):
                     current_value = float(current_mapping.get(item_key, 0) or 0)
                     previous_value = float(previous_mapping.get(item_key, 0) or 0)
                     if current_value < previous_value:
                         raise ValueError(
                             f"Render-state mapping {key!r}[{item_key!r}] regressed on "
-                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"  # noqa: E501
                         )
 
             for key in ("releases", "recent_merged_prs", "repos"):
@@ -1526,11 +1530,13 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
             for repo_name in previous_repos.keys() & current_repos.keys():
                 for repo_key in ("stars", "forks", "age_months"):
                     current_value = int(current_repos[repo_name].get(repo_key, 0) or 0)
-                    previous_value = int(previous_repos[repo_name].get(repo_key, 0) or 0)
+                    previous_value = int(
+                        previous_repos[repo_name].get(repo_key, 0) or 0
+                    )
                     if current_value < previous_value:
                         raise ValueError(
-                            f"Render-state repo {repo_name!r} key {repo_key!r} regressed on "
-                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                            f"Render-state repo {repo_name!r} key {repo_key!r} regressed on "  # noqa: E501
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"  # noqa: E501
                         )
 
         previous_evolution_state = cast(
@@ -1548,7 +1554,7 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                 if current_value < previous_value:
                     raise ValueError(
                         f"Evolution-state scalar {key!r} regressed on "
-                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                        f"{current.day.isoformat()}: {previous_value} -> {current_value}"  # noqa: E501
                     )
 
             for key in EVOLUTION_STATE_MAPPING_KEYS:
@@ -1560,13 +1566,15 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
                     "dict[str, int | float]",
                     previous_evolution_state.get(key, {}),
                 )
-                for item_key in set(current_mapping.keys()) | set(previous_mapping.keys()):
+                for item_key in set(current_mapping.keys()) | set(
+                    previous_mapping.keys()
+                ):
                     current_value = float(current_mapping.get(item_key, 0) or 0)
                     previous_value = float(previous_mapping.get(item_key, 0) or 0)
                     if current_value < previous_value:
                         raise ValueError(
-                            f"Evolution-state mapping {key!r}[{item_key!r}] regressed on "
-                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"
+                            f"Evolution-state mapping {key!r}[{item_key!r}] regressed on "  # noqa: E501
+                            f"{current.day.isoformat()}: {previous_value} -> {current_value}"  # noqa: E501
                         )
 
             previous_identity = cast(
@@ -1579,10 +1587,9 @@ def validate_snapshot_monotonic_contract(snapshots: list[DailySnapshot]) -> None
             )
             for repo_name in previous_identity.keys() & current_identity.keys():
                 for identity_key in ("visual_index", "language", "archetype"):
-                    if (
-                        current_identity[repo_name].get(identity_key)
-                        != previous_identity[repo_name].get(identity_key)
-                    ):
+                    if current_identity[repo_name].get(
+                        identity_key
+                    ) != previous_identity[repo_name].get(identity_key):
                         raise ValueError(
                             f"Evolution-state repo identity {repo_name!r} key "
                             f"{identity_key!r} changed on {current.day.isoformat()}"
@@ -1931,7 +1938,7 @@ def sample_frames(
             key=lambda index: (transition_scores[index], index),
             reverse=True,
         )
-        keep_interior = sorted(ranked_interior[: interior_slots])
+        keep_interior = sorted(ranked_interior[:interior_slots])
         ordered_indices = [0, *keep_interior, n - 1]
 
     result = [snapshots[index] for index in ordered_indices]

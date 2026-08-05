@@ -16,10 +16,6 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Any
-
-from .shared import oklch
-
 
 # ---------------------------------------------------------------------------
 # Cost functions
@@ -416,7 +412,9 @@ _MARGIN_FRAC = 0.08
 
 
 def _clamp_art(
-    positions: list[tuple[float, float]], canvas_w: float, canvas_h: float,
+    positions: list[tuple[float, float]],
+    canvas_w: float,
+    canvas_h: float,
 ) -> list[tuple[float, float]]:
     """Clamp positions to canvas with margin."""
     mx = canvas_w * _MARGIN_FRAC
@@ -436,7 +434,9 @@ def _pos_to_vec(positions: list[tuple[float, float]]) -> list[float]:
 
 
 def _vec_to_pos(
-    v: list[float], canvas_w: float, canvas_h: float,
+    v: list[float],
+    canvas_w: float,
+    canvas_h: float,
 ) -> list[tuple[float, float]]:
     """Unflatten vector to (x, y) list, clamped to canvas margins."""
     positions: list[tuple[float, float]] = []
@@ -446,12 +446,18 @@ def _vec_to_pos(
 
 
 def _random_art_positions(
-    n: int, canvas_w: float, canvas_h: float, rng: random.Random,
+    n: int,
+    canvas_w: float,
+    canvas_h: float,
+    rng: random.Random,
 ) -> list[tuple[float, float]]:
     """Generate random positions within canvas margins."""
     mx = canvas_w * _MARGIN_FRAC
     my = canvas_h * _MARGIN_FRAC
-    return [(rng.uniform(mx, canvas_w - mx), rng.uniform(my, canvas_h - my)) for _ in range(n)]
+    return [
+        (rng.uniform(mx, canvas_w - mx), rng.uniform(my, canvas_h - my))
+        for _ in range(n)
+    ]
 
 
 def _art_fitness(
@@ -463,7 +469,11 @@ def _art_fitness(
 ) -> float:
     """Fitness wrapper: negate cost so higher is better."""
     return -art_layout_cost(
-        _vec_to_pos(v, canvas_w, canvas_h), weights, canvas_w, canvas_h, min_spacing,
+        _vec_to_pos(v, canvas_w, canvas_h),
+        weights,
+        canvas_w,
+        canvas_h,
+        min_spacing,
     )
 
 
@@ -601,7 +611,8 @@ def _art_solve_whale(
                 for d in range(dim):
                     D_prime = abs(best_pos[d] - whales[i][d])
                     new_pos.append(
-                        D_prime * math.exp(b_spiral * l_param)
+                        D_prime
+                        * math.exp(b_spiral * l_param)
                         * math.cos(2 * math.pi * l_param)
                         + best_pos[d]
                     )
@@ -661,14 +672,17 @@ def _art_solve_firefly(
                     )
                     beta = beta0 * math.exp(-gamma * r_sq)
                     for d in range(dim):
-                        fireflies[i][d] += (
-                            beta * (fireflies[j][d] - fireflies[i][d])
-                            + alpha_fa * rng.gauss(0, 1)
-                        )
+                        fireflies[i][d] += beta * (
+                            fireflies[j][d] - fireflies[i][d]
+                        ) + alpha_fa * rng.gauss(0, 1)
                     clamped = _vec_to_pos(fireflies[i], canvas_w, canvas_h)
                     fireflies[i] = _pos_to_vec(clamped)
                     brightness[i] = _art_fitness(
-                        fireflies[i], weights, canvas_w, canvas_h, min_spacing,
+                        fireflies[i],
+                        weights,
+                        canvas_w,
+                        canvas_h,
+                        min_spacing,
                     )
 
     best_idx = max(range(pop_size), key=lambda k: brightness[k])
@@ -702,7 +716,8 @@ def _art_solve_flower_pollination(
     dim = n * 2
 
     sigma_u = (
-        math.gamma(1 + beta_levy) * math.sin(math.pi * beta_levy / 2)
+        math.gamma(1 + beta_levy)
+        * math.sin(math.pi * beta_levy / 2)
         / (math.gamma((1 + beta_levy) / 2) * beta_levy * 2 ** ((beta_levy - 1) / 2))
     ) ** (1 / beta_levy)
 
@@ -794,7 +809,9 @@ def _art_solve_differential_evolution(
             ]
             clamped = _vec_to_pos(trial, canvas_w, canvas_h)
             trial_vec = _pos_to_vec(clamped)
-            trial_fit = _art_fitness(trial_vec, weights, canvas_w, canvas_h, min_spacing)
+            trial_fit = _art_fitness(
+                trial_vec, weights, canvas_w, canvas_h, min_spacing
+            )
             if trial_fit >= pop_fit[i]:
                 pop[i] = trial_vec
                 pop_fit[i] = trial_fit
@@ -843,8 +860,9 @@ def constellation_layout_cost(
     intra_spacing: float = 30.0,
     inter_spacing: float = 80.0,
 ) -> float:
-    """Cost for constellation placement: reward intra-cluster cohesion, penalize inter-cluster overlap.
+    """Cost for constellation placement.
 
+    Reward intra-cluster cohesion; penalize inter-cluster overlap.
     Elements sharing the same ``cluster_id`` are attracted (penalized if
     farther than ``intra_spacing``). Elements in different clusters are
     repelled (penalized if closer than ``inter_spacing``).
@@ -955,16 +973,31 @@ def optimize_placement(
     # Map generic param names to solver-specific ones
     if solver == "sa":
         return fn(
-            initial_positions, weights, canvas_w, canvas_h,
-            min_spacing=min_spacing, iterations=max_iter, seed=seed,
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            iterations=max_iter,
+            seed=seed,
         )
     if solver == "pso":
         return fn(
-            initial_positions, weights, canvas_w, canvas_h,
-            min_spacing=min_spacing, iterations=max_iter, seed=seed,
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            iterations=max_iter,
+            seed=seed,
         )
     # All ported solvers share the same signature
     return fn(
-        initial_positions, weights, canvas_w, canvas_h,
-        min_spacing=min_spacing, max_iter=max_iter, seed=seed,
+        initial_positions,
+        weights,
+        canvas_w,
+        canvas_h,
+        min_spacing=min_spacing,
+        max_iter=max_iter,
+        seed=seed,
     )

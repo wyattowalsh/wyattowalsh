@@ -1,7 +1,9 @@
 """
 SVG Banner Generator for GitHub Profiles and Web Applications.
 
-This module provides functionality to create dynamic, visually rich SVG banners. It features various generative art patterns, including chaotic attractors (Lorenz, Aizawa), flow fields, and neural network-like structures. These patterns are combined with customizable text, colors, and advanced visual effects such as glassmorphism, glows, and shadows.
+This module creates dynamic, visually rich SVG banners with generative art
+patterns (Lorenz/Aizawa attractors, flow fields, neural-like structures),
+customizable text/colors, and effects (glassmorphism, glows, shadows).
 
 The generation process is highly configurable through Pydantic models,
 allowing for detailed control over dimensions, color palettes, typography,
@@ -35,8 +37,7 @@ import colorsys
 import math
 import os
 import random
-import subprocess
-from typing import Any, TypeAlias
+from typing import Any
 
 import numpy as np
 from pydantic import BaseModel, Field  # Field is used in Pydantic models later
@@ -60,16 +61,16 @@ _rng: random.Random = random.Random()
 # ------------------------------------------------------------------------------
 # Constants and Type Aliases
 # ------------------------------------------------------------------------------
-NodePosition: TypeAlias = tuple[float, float]
+type NodePosition = tuple[float, float]
 """Type alias for a 2D node position (x, y)."""
 
-Point2D: TypeAlias = tuple[float, float]
+type Point2D = tuple[float, float]
 """Type alias for a 2D point (x, y)."""
 
-Point3D: TypeAlias = tuple[float, float, float]
+type Point3D = tuple[float, float, float]
 """Type alias for a 3D point (x, y, z)."""
 
-ColorStop: TypeAlias = tuple[str, float]
+type ColorStop = tuple[str, float]
 """Type alias for a color stop (color string, position as float 0.0-1.0)."""
 
 
@@ -280,7 +281,10 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
         A new hex color string with the adjusted hue.
     """
     if not hex_color.startswith("#") or len(hex_color) not in (4, 7):
-        logger.warning("Invalid hex color format for hue adjustment: {hex_color}", hex_color=hex_color)
+        logger.warning(
+            "Invalid hex color format for hue adjustment: {hex_color}",
+            hex_color=hex_color,
+        )
         return hex_color
 
     h = hex_color.lstrip("#")
@@ -290,7 +294,9 @@ def adjust_hue(hex_color: str, degrees: float) -> str:
     try:
         r, g, b = (int(h[i : i + 2], 16) for i in (0, 2, 4))
     except ValueError:
-        logger.warning("Cannot parse RGB components from hex: {hex_color}", hex_color=hex_color)
+        logger.warning(
+            "Cannot parse RGB components from hex: {hex_color}", hex_color=hex_color
+        )
         return hex_color
 
     h_val, s_val, v_val = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
@@ -330,7 +336,10 @@ def create_linear_gradient(
     if opacities is None:
         opacities = [1.0] * len(colors)
     elif len(opacities) != len(colors):
-        logger.warning("Mismatch between colors and opacities in gradient {id_name}", id_name=id_name)
+        logger.warning(
+            "Mismatch between colors and opacities in gradient {id_name}",
+            id_name=id_name,
+        )
         # Extend opacities or truncate to match colors length
         if len(opacities) < len(colors):
             opacities.extend([1.0] * (len(colors) - len(opacities)))
@@ -390,7 +399,13 @@ class ColorPalette(BaseModel):
         if not self.extra_accents:
             self.extra_accents = ["#ffd3ec", "#ffe8c4"]
         if not self.gradient_stops:
-            self.gradient_stops = ["#6a9fb5", "#83b7ca", "#9bd0df", "#cfeff6", "#ffffff"]
+            self.gradient_stops = [
+                "#6a9fb5",
+                "#83b7ca",
+                "#9bd0df",
+                "#cfeff6",
+                "#ffffff",
+            ]
         if not self.dark_mode_palette:
             self.dark_mode_palette = {
                 "primary": "#3a4b52",
@@ -523,7 +538,7 @@ class BannerConfig(BaseModel):
     @classmethod
     def from_banner_settings(
         cls,
-        settings: "BannerSettings | None" = None,
+        settings: object | None = None,
         **overrides: object,
     ) -> "BannerConfig":
         """Build a runtime ``BannerConfig`` from YAML ``BannerSettings``.
@@ -546,9 +561,18 @@ class BannerConfig(BaseModel):
         self.colors.primary = dm.get("primary", "#3a4b52")
         self.colors.secondary = ["#2a3b42", "#354850"]
         self.colors.accent = ["#2e4550", "#3a5560"]
-        self.colors.neutral = [dm.get("background", "#14181a"), dm.get("surface", "#1e2427")]
+        self.colors.neutral = [
+            dm.get("background", "#14181a"),
+            dm.get("surface", "#1e2427"),
+        ]
         self.colors.extra_accents = ["#4a2040", "#3a2820"]
-        self.colors.gradient_stops = ["#3a4b52", "#2a3b42", "#1e2427", "#14181a", "#0a0c0d"]
+        self.colors.gradient_stops = [
+            "#3a4b52",
+            "#2a3b42",
+            "#1e2427",
+            "#14181a",
+            "#0a0c0d",
+        ]
         self.typography.text_shadow_color = "rgba(255,255,255,0.08)"
         self.typography.text_outline_color = "rgba(255,255,255,0.15)"
         self.typography.glow_color = "rgba(255,255,255,0.15)"
@@ -563,7 +587,7 @@ def _create_basic_glow_filter(
     std_deviation: str | float,
     color_matrix_values: str | None = None,
 ) -> filters.Filter:
-    """Helper to create a basic glow filter with GaussianBlur and optional ColorMatrix."""
+    """Helper to create a basic glow filter with GaussianBlur and optional ColorMatrix."""  # noqa: E501
     glow_filter = dwg.defs.add(dwg.filter(id=filter_id))
     glow_filter.feGaussianBlur(
         in_="SourceGraphic", stdDeviation=str(std_deviation), result="blur"
@@ -576,8 +600,8 @@ def _create_basic_glow_filter(
             layernames=["matrix", "SourceGraphic"]
         )  # Ensure matrix applies
     else:  # If no color matrix, just use the blur
-        # This part might need adjustment based on how feGaussianBlur alone should appear
-        # Often, a simple blur is not merged this way unless it's part of a larger effect.
+        # This part might need adjustment based on how feGaussianBlur alone should appear  # noqa: E501
+        # Often, a simple blur is not merged this way unless it's part of a larger effect.  # noqa: E501
         # For a simple glow, often the blurred SourceAlpha is colored and then merged.
         pass  # Simplification: Let caller handle merge if more complex.
     return glow_filter
@@ -623,7 +647,7 @@ def _create_complex_glow_filter(
     glow_filter.feColorMatrix(
         type="matrix", values=color_matrix_values, result="matrix1"
     )
-    # Merge effects: colored outer glow, then color-adjusted main graphic, then original graphic
+    # Merge effects: colored outer glow, then color-adjusted main graphic, then original graphic  # noqa: E501
     glow_filter.feMerge(layernames=["comp1", "matrix1", "SourceGraphic"])
     return glow_filter
 
@@ -679,7 +703,7 @@ def define_background(dwg: Drawing, cfg: BannerConfig) -> None:
         in_="SourceGraphic", in2="turbulence", operator="in", result="comp"
     )
     noise_filter_def.feColorMatrix(
-        type="matrix", values=("1 0 0 0 0 " "0 1 0 0 0 " "0 0 1 0 0 " "0 0 0 0.07 0")
+        type="matrix", values=("1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.07 0")
     )  # Low alpha from turbulence
 
     # Vignette gradient definition
@@ -1543,7 +1567,10 @@ def add_octocat(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> None:
     """
     octo_svg_path = "./assets/img/octocat.svg"
     if not os.path.isfile(octo_svg_path):
-        logger.warning("Octocat SVG not found at {octo_svg_path}, skipping.", octo_svg_path=octo_svg_path)
+        logger.warning(
+            "Octocat SVG not found at {octo_svg_path}, skipping.",
+            octo_svg_path=octo_svg_path,
+        )
         return
 
     with open(octo_svg_path, encoding="utf-8") as f:
@@ -1684,9 +1711,7 @@ def add_title_and_subtitle(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> 
 # ------------------------------------------------------------------------------
 # Main Banner Generation Orchestration
 # ------------------------------------------------------------------------------
-def generate_banner(
-    cfg: BannerConfig, *, seed: int | None = None
-) -> None:
+def generate_banner(cfg: BannerConfig, *, seed: int | None = None) -> None:
     """
     Orchestrates the generation of all SVG banner elements.
 
@@ -1777,7 +1802,9 @@ def generate_banner(
     # Save the SVG file
     try:
         dwg.save(pretty=False)  # pretty=False for smaller file size
-        logger.info("Banner successfully saved to {output_path}", output_path=cfg.output_path)
+        logger.info(
+            "Banner successfully saved to {output_path}", output_path=cfg.output_path
+        )
     except Exception as e:
         logger.error("Error saving SVG file: {e}", e=e)
         return  # Exit if saving failed

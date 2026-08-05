@@ -655,7 +655,9 @@ def _ambient_ripple_specs(
             else float(LANG_HUES.get(lang, 155))
         )
         raw_strength = anchor.get("strength", 0.22)
-        strength = float(raw_strength) if isinstance(raw_strength, int | float) else 0.22
+        strength = (
+            float(raw_strength) if isinstance(raw_strength, int | float) else 0.22
+        )
         identity = str(
             anchor.get("identity") or anchor.get("name") or f"ambient-{owner_index}"
         )

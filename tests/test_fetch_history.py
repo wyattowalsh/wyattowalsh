@@ -11,7 +11,6 @@ import pytest
 
 from scripts import fetch_history
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -130,7 +129,10 @@ class TestFetchAccountCreated:
             "_graphql",
             lambda *_a, **_k: {"data": {"user": {"createdAt": "2020-05-01T00:00:00Z"}}},
         )
-        assert fetch_history._fetch_account_created("owner", "tok") == "2020-05-01T00:00:00Z"
+        assert (
+            fetch_history._fetch_account_created("owner", "tok")
+            == "2020-05-01T00:00:00Z"
+        )
 
     def test_returns_none_on_errors(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(
@@ -238,9 +240,18 @@ class TestFetchContributions:
                                 "weeks": [
                                     {
                                         "contributionDays": [
-                                            {"date": "2024-01-01", "contributionCount": 2},
-                                            {"date": "2024-01-02", "contributionCount": 0},
-                                            {"date": "2024-02-01", "contributionCount": 3},
+                                            {
+                                                "date": "2024-01-01",
+                                                "contributionCount": 2,
+                                            },
+                                            {
+                                                "date": "2024-01-02",
+                                                "contributionCount": 0,
+                                            },
+                                            {
+                                                "date": "2024-02-01",
+                                                "contributionCount": 3,
+                                            },
                                         ]
                                     }
                                 ]
@@ -257,7 +268,10 @@ class TestFetchContributions:
                                 "weeks": [
                                     {
                                         "contributionDays": [
-                                            {"date": "2025-01-10", "contributionCount": 4},
+                                            {
+                                                "date": "2025-01-10",
+                                                "contributionCount": 4,
+                                            },
                                         ]
                                     }
                                 ]
@@ -299,7 +313,15 @@ class TestFetchContributions:
 
         def fake_graphql(query: str, token: str, variables: dict) -> dict:
             calls.append(variables)
-            return {"data": {"user": {"contributionsCollection": {"contributionCalendar": {"weeks": []}}}}}
+            return {
+                "data": {
+                    "user": {
+                        "contributionsCollection": {
+                            "contributionCalendar": {"weeks": []}
+                        }
+                    }
+                }
+            }
 
         monkeypatch.setattr(fetch_history, "_graphql", fake_graphql)
         daily, monthly = fetch_history._fetch_contributions("o", "tok", "not-a-year")
@@ -308,7 +330,9 @@ class TestFetchContributions:
         assert len(calls) == 1
         assert calls[0]["from"].startswith("2025-")
 
-    def test_skips_year_on_graphql_errors(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_skips_year_on_graphql_errors(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         _freeze_now(monkeypatch, year=2024)
         monkeypatch.setattr(
             fetch_history,
@@ -357,7 +381,9 @@ class TestFetchCurrentMetrics:
 
 
 class TestCollectHistory:
-    def test_includes_contributions_daily(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_includes_contributions_daily(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         monkeypatch.setattr(
             fetch_history,
             "_fetch_account_created",
@@ -368,7 +394,9 @@ class TestCollectHistory:
             "_fetch_star_timeline",
             lambda owner, repo, token: [{"date": "2024-01-01T00:00:00Z", "user": "a"}],
         )
-        monkeypatch.setattr(fetch_history, "_fetch_fork_timeline", lambda owner, repo, token: [])
+        monkeypatch.setattr(
+            fetch_history, "_fetch_fork_timeline", lambda owner, repo, token: []
+        )
         monkeypatch.setattr(
             fetch_history,
             "_fetch_repo_timeline",
@@ -382,9 +410,13 @@ class TestCollectHistory:
                 {"2024-01": 2},
             ),
         )
-        monkeypatch.setattr(fetch_history, "_fetch_current_metrics", lambda owner, repo, token: {})
+        monkeypatch.setattr(
+            fetch_history, "_fetch_current_metrics", lambda owner, repo, token: {}
+        )
 
-        result = fetch_history.collect_history("wyattowalsh", "wyattowalsh", token="tok")
+        result = fetch_history.collect_history(
+            "wyattowalsh", "wyattowalsh", token="tok"
+        )
 
         assert result["contributions_daily"] == {"2024-01-01": 2, "2024-01-02": 0}
         assert result["contributions_monthly"] == {"2024-01": 2}
@@ -398,8 +430,12 @@ class TestCollectHistory:
             "_fetch_star_timeline",
             lambda owner, repo, token: [],
         )
-        monkeypatch.setattr(fetch_history, "_fetch_fork_timeline", lambda owner, repo, token: [])
-        monkeypatch.setattr(fetch_history, "_fetch_repo_timeline", lambda owner, token: [])
+        monkeypatch.setattr(
+            fetch_history, "_fetch_fork_timeline", lambda owner, repo, token: []
+        )
+        monkeypatch.setattr(
+            fetch_history, "_fetch_repo_timeline", lambda owner, token: []
+        )
         monkeypatch.setattr(
             fetch_history,
             "_fetch_current_metrics",
@@ -460,7 +496,9 @@ class TestMain:
         assert written["stars"] == []
         assert written["star_velocity"]["trend"] == "stable"
 
-    def test_warns_without_token(self, tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_warns_without_token(
+        self, tmp_path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         out = tmp_path / "history.json"
         monkeypatch.delenv("GITHUB_TOKEN", raising=False)
         monkeypatch.setattr(
@@ -474,7 +512,11 @@ class TestMain:
                 "contributions_daily": {},
                 "contributions_monthly": {},
                 "current_metrics": {},
-                "star_velocity": {"recent_rate": 0.0, "peak_rate": 0.0, "trend": "stable"},
+                "star_velocity": {
+                    "recent_rate": 0.0,
+                    "peak_rate": 0.0,
+                    "trend": "stable",
+                },
                 "contribution_streaks": {
                     "longest_streak_months": 0,
                     "current_streak_months": 0,

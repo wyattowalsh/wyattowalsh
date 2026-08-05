@@ -1,11 +1,11 @@
 """Neighbor-aware section order helpers."""
 
+from scripts.config import ReadmeSectionsSettings
 from scripts.readme_sections import (
     DEFAULT_SECTION_ORDER,
     compile_section_body_re,
     section_order_from_settings,
 )
-from scripts.config import ReadmeSectionsSettings
 
 
 def test_default_section_order() -> None:
