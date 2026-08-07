@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     18 hrs 56 mins  █████████░░░░░░░░░░░░░░░░   36.98% 
-Python    14 hrs 10 mins  ███████░░░░░░░░░░░░░░░░░░   27.67% 
-Markdown  9 hrs 18 mins   █████░░░░░░░░░░░░░░░░░░░░   18.18% 
-Text      2 hrs 29 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.86% 
-JSON      1 hr 41 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   3.29% 
+Other     12 hrs 10 mins  ███████████░░░░░░░░░░░░░░   42.77% 
+Python    6 hrs 45 mins   ██████░░░░░░░░░░░░░░░░░░░   23.72% 
+Markdown  5 hrs 37 mins   █████░░░░░░░░░░░░░░░░░░░░   19.74% 
+YAML      1 hr 2 mins     █░░░░░░░░░░░░░░░░░░░░░░░░   3.67% 
+JSON      44 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   2.6% 
 
 🔥 Editors: 
-Chrome      29 hrs 25 mins  ██████████████░░░░░░░░░░░   57.45% 
-Cursor      6 hrs 6 mins    ███░░░░░░░░░░░░░░░░░░░░░░   11.92% 
-VS Code     4 hrs 34 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.94% 
-Ghostty     3 hrs 51 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.54% 
-Grok Build  2 hrs 26 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.76% 
+Chrome      17 hrs 42 mins  ████████████████░░░░░░░░░   62.15% 
+VS Code     2 hrs 58 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.46% 
+Ghostty     2 hrs 49 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.9% 
+Grok Build  2 hrs 19 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.14% 
+Cursor      1 hr 4 mins     █░░░░░░░░░░░░░░░░░░░░░░░░   3.78% 
 
 🐱‍💻 Projects: 
-nbadb                    9 hrs 50 mins  █████░░░░░░░░░░░░░░░░░░░░   19.22% 
-paul-graham-essay-feeds  7 hrs 14 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.13% 
-agents                   6 hrs 45 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.2% 
-python-goose             5 hrs 20 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.44% 
-amazon-scraper           2 hrs 51 mins  █░░░░░░░░░░░░░░░░░░░░░░░░   5.58% 
+python-goose             5 hrs 20 mins  █████░░░░░░░░░░░░░░░░░░░░   18.77% 
+nbadb                    3 hrs 36 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.67% 
+paul-graham-essay-feeds  3 hrs 20 mins  ███░░░░░░░░░░░░░░░░░░░░░░   11.75% 
+amazon-scraper           2 hrs 51 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.03% 
+moxie                    2 hrs 19 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   8.18% 
 
 💻 Operating System: 
-Mac  51 hrs 13 mins  █████████████████████████   100% 
+Mac  28 hrs 28 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 06/08/2026 01:33:52 UTC
+ Last Updated on 07/08/2026 01:48:26 UTC
 <!--END_SECTION:waka-->
 
 </details>
