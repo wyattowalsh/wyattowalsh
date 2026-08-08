@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     12 hrs 10 mins  ███████████░░░░░░░░░░░░░░   42.77% 
-Python    6 hrs 45 mins   ██████░░░░░░░░░░░░░░░░░░░   23.72% 
-Markdown  5 hrs 37 mins   █████░░░░░░░░░░░░░░░░░░░░   19.74% 
-YAML      1 hr 2 mins     █░░░░░░░░░░░░░░░░░░░░░░░░   3.67% 
-JSON      44 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   2.6% 
+Other     8 hrs 36 mins  ███████████░░░░░░░░░░░░░░   44.42% 
+Python    4 hrs 47 mins  ██████░░░░░░░░░░░░░░░░░░░   24.73% 
+Markdown  3 hrs 14 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.73% 
+YAML      1 hr 2 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   5.35% 
+Text      23 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   2.04% 
 
 🔥 Editors: 
-Chrome      17 hrs 42 mins  ████████████████░░░░░░░░░   62.15% 
-VS Code     2 hrs 58 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.46% 
-Ghostty     2 hrs 49 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.9% 
-Grok Build  2 hrs 19 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.14% 
-Cursor      1 hr 4 mins     █░░░░░░░░░░░░░░░░░░░░░░░░   3.78% 
+Chrome      10 hrs 49 mins  ██████████████░░░░░░░░░░░   55.79% 
+Ghostty     2 hrs 37 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.52% 
+Grok Build  2 hrs 14 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.54% 
+VS Code     1 hr 28 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   7.63% 
+Cursor      1 hr 1 min      █░░░░░░░░░░░░░░░░░░░░░░░░   5.28% 
 
 🐱‍💻 Projects: 
-python-goose             5 hrs 20 mins  █████░░░░░░░░░░░░░░░░░░░░   18.77% 
-nbadb                    3 hrs 36 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.67% 
-paul-graham-essay-feeds  3 hrs 20 mins  ███░░░░░░░░░░░░░░░░░░░░░░   11.75% 
-amazon-scraper           2 hrs 51 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.03% 
-moxie                    2 hrs 19 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   8.18% 
+paul-graham-essay-feeds  2 hrs 59 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.39% 
+amazon-scraper           2 hrs 51 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.72% 
+moxie                    2 hrs 19 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12% 
+agents                   2 hrs 3 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.64% 
+nbadb                    1 hr 35 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.17% 
 
 💻 Operating System: 
-Mac  28 hrs 28 mins  █████████████████████████   100% 
+Mac  19 hrs 23 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 07/08/2026 01:48:26 UTC
+ Last Updated on 08/08/2026 01:31:42 UTC
 <!--END_SECTION:waka-->
 
 </details>
