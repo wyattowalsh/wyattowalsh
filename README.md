@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     8 hrs 36 mins  ███████████░░░░░░░░░░░░░░   44.42% 
-Python    4 hrs 47 mins  ██████░░░░░░░░░░░░░░░░░░░   24.73% 
-Markdown  3 hrs 14 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.73% 
-YAML      1 hr 2 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   5.35% 
-Text      23 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   2.04% 
+Other       5 hrs 2 mins  █████████████░░░░░░░░░░░░   50.91% 
+Python      1 hr 45 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.79% 
+Markdown    1 hr 37 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.34% 
+YAML        49 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   8.29% 
+TypeScript  10 mins       ░░░░░░░░░░░░░░░░░░░░░░░░░   1.82% 
 
 🔥 Editors: 
-Chrome      10 hrs 49 mins  ██████████████░░░░░░░░░░░   55.79% 
-Ghostty     2 hrs 37 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.52% 
-Grok Build  2 hrs 14 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.54% 
-VS Code     1 hr 28 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   7.63% 
-Cursor      1 hr 1 min      █░░░░░░░░░░░░░░░░░░░░░░░░   5.28% 
+Chrome      5 hrs 42 mins  ██████████████░░░░░░░░░░░   57.49% 
+Grok Build  1 hr 44 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.5% 
+Ghostty     1 hr 7 mins    ███░░░░░░░░░░░░░░░░░░░░░░   11.29% 
+Codex CLI   41 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   6.97% 
+Cursor      24 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.16% 
 
 🐱‍💻 Projects: 
-paul-graham-essay-feeds  2 hrs 59 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.39% 
-amazon-scraper           2 hrs 51 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.72% 
-moxie                    2 hrs 19 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12% 
-agents                   2 hrs 3 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.64% 
-nbadb                    1 hr 35 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.17% 
+amazon-scraper  1 hr 39 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.79% 
+agents          1 hr 36 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.22% 
+nbadb           1 hr 31 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.31% 
+saleor          1 hr 22 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.86% 
+alda.io         1 hr 18 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.19% 
 
 💻 Operating System: 
-Mac  19 hrs 23 mins  █████████████████████████   100% 
+Mac  9 hrs 55 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 08/08/2026 01:31:42 UTC
+ Last Updated on 09/08/2026 01:32:13 UTC
 <!--END_SECTION:waka-->
 
 </details>
