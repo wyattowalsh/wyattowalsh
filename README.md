@@ -16,16 +16,16 @@
 
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
-<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: Live stats are temporarily unavailable." loading="lazy"/></a>
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other       5 hrs 2 mins  █████████████░░░░░░░░░░░░   50.91% 
-Python      1 hr 45 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.79% 
-Markdown    1 hr 37 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.34% 
-YAML        49 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   8.29% 
-TypeScript  10 mins       ░░░░░░░░░░░░░░░░░░░░░░░░░   1.82% 
+Other       3 hrs 22 mins  ███████████░░░░░░░░░░░░░░   45.29% 
+Python      1 hr 37 mins   █████░░░░░░░░░░░░░░░░░░░░   21.9% 
+Markdown    1 hr 12 mins   ████░░░░░░░░░░░░░░░░░░░░░   16.27% 
+YAML        37 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   8.29% 
+TypeScript  10 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   2.42% 
 
 🔥 Editors: 
-Chrome      5 hrs 42 mins  ██████████████░░░░░░░░░░░   57.49% 
-Grok Build  1 hr 44 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.5% 
-Ghostty     1 hr 7 mins    ███░░░░░░░░░░░░░░░░░░░░░░   11.29% 
-Codex CLI   41 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   6.97% 
-Cursor      24 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.16% 
+Chrome      3 hrs 46 mins  █████████████░░░░░░░░░░░░   50.83% 
+Grok Build  1 hr 41 mins   ██████░░░░░░░░░░░░░░░░░░░   22.71% 
+Ghostty     51 mins        ███░░░░░░░░░░░░░░░░░░░░░░   11.6% 
+Codex CLI   39 mins        ██░░░░░░░░░░░░░░░░░░░░░░░   8.95% 
+Cursor      20 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.54% 
 
 🐱‍💻 Projects: 
-amazon-scraper  1 hr 39 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.79% 
-agents          1 hr 36 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.22% 
-nbadb           1 hr 31 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.31% 
-saleor          1 hr 22 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.86% 
-alda.io         1 hr 18 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.19% 
+nbadb                    1 hr 27 mins  █████░░░░░░░░░░░░░░░░░░░░   19.64% 
+saleor                   1 hr 22 mins  █████░░░░░░░░░░░░░░░░░░░░   18.47% 
+alda.io                  1 hr 18 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.58% 
+paul-graham-essay-feeds  1 hr 15 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.01% 
+agents                   1 hr          ███░░░░░░░░░░░░░░░░░░░░░░   13.63% 
 
 💻 Operating System: 
-Mac  9 hrs 55 mins  █████████████████████████   100% 
+Mac  7 hrs 26 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 09/08/2026 01:32:13 UTC
+ Last Updated on 10/08/2026 01:32:10 UTC
 <!--END_SECTION:waka-->
 
 </details>
