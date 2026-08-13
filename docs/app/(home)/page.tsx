@@ -1,7 +1,6 @@
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
 import Link from 'next/link';
 import Image from 'next/image';
+import featuredProjectsManifest from '@/public/showcase/featured-projects.manifest.json';
 
 type FeaturedProject = {
   title: string;
@@ -24,50 +23,29 @@ function stringField(
 }
 
 function loadFeaturedProjectsManifest(): FeaturedProject[] {
-  const manifestCandidates = [
-    path.join(
-      process.cwd(),
-      'docs/public/showcase/featured-projects.manifest.json',
-    ),
-    path.join(
-      process.cwd(),
-      '.github/assets/img/readme/featured-projects.manifest.json',
-    ),
-  ];
-
-  for (const manifestPath of manifestCandidates) {
-    try {
-      const manifest = JSON.parse(
-        readFileSync(manifestPath, 'utf8'),
-      ) as FeaturedProjectManifest;
-      return (manifest.projects ?? []).flatMap((project) => {
-        const title = stringField(project, 'title');
-        const summary = stringField(project, 'summary');
-        const url = stringField(project, 'url');
-        const svgAssetPath =
-          stringField(project, 'svg_asset_path') ??
-          `/showcase/featured-projects/${stringField(project, 'asset_name') ?? ''}`;
-        if (!title || !summary || !url || !svgAssetPath.trim()) {
-          return [];
-        }
-        return [
-          {
-            title,
-            summary,
-            url,
-            svgAssetPath,
-            altText:
-              stringField(project, 'alt_text') ??
-              `Featured project card for ${title}`,
-          },
-        ];
-      });
-    } catch {
-      continue;
+  const manifest = featuredProjectsManifest as FeaturedProjectManifest;
+  return (manifest.projects ?? []).flatMap((project) => {
+    const title = stringField(project, 'title');
+    const summary = stringField(project, 'summary');
+    const url = stringField(project, 'url');
+    const svgAssetPath =
+      stringField(project, 'svg_asset_path') ??
+      `/showcase/featured-projects/${stringField(project, 'asset_name') ?? ''}`;
+    if (!title || !summary || !url || !svgAssetPath.trim()) {
+      return [];
     }
-  }
-
-  return [];
+    return [
+      {
+        title,
+        summary,
+        url,
+        svgAssetPath,
+        altText:
+          stringField(project, 'alt_text') ??
+          `Featured project card for ${title}`,
+      },
+    ];
+  });
 }
 
 const features = [

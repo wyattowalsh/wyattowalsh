@@ -1,0 +1,148 @@
+---
+title: Docs telemetry and admin
+description: Configure first-party docs telemetry and the fail-closed admin dashboard safely.
+---
+
+The docs application has a small first-party telemetry service and a protected
+admin dashboard. Both are optional. Their defaults favor local development and
+fail closed in production.
+
+<Callout type="warn" title="Production admin is intentionally unavailable">
+Setting admin credentials is not enough to enable production login. The current
+implementation has only a bounded, process-local development limiter. Production
+login stays unavailable until an approved distributed rate limiter is implemented
+and injected. The Redis telemetry variables do not provide that limiter.
+</Callout>
+
+## Telemetry modes
+
+`DOCS_TELEMETRY_BACKEND` accepts `disabled`, `filesystem`, or `redis`. An unset
+value selects `filesystem` outside production and `disabled` when
+`NODE_ENV=production`. An invalid value fails closed to an unavailable,
+disabled configuration.
+
+| Mode | Availability | Behavior |
+|---|---|---|
+| `disabled` | Available as a no-storage mode | Valid batches are normalized and acknowledged, but no events are stored. The browser telemetry provider is not mounted. This is the production default. |
+| `filesystem` | Development only | Events are stored in a local JSON file with retention and count limits. This is the development default and is rejected when `NODE_ENV=production`. |
+| `redis` | Declared but unavailable | The configuration shape and adapter interface exist, but no Redis adapter is injected by the application. Writes fail as unavailable and the dashboard returns an unavailable snapshot. |
+
+Selecting `redis` and supplying credentials does not activate collection. A Redis
+adapter must first be separately reviewed, implemented, and injected with atomic
+batch, retention, and event-cap behavior.
+
+### Filesystem state guarantees
+
+Filesystem mode defaults to `.telemetry/store.json`, resolved from the server's
+working directory. The `.telemetry/` directory is ignored by Git.
+
+The store:
+
+- serializes writes within one server process;
+- writes a temporary file and atomically renames it into place;
+- recovers the write queue after a failed operation, so one failure does not
+  poison later writes;
+- treats only a missing file (`ENOENT`) as an empty store;
+- reports malformed JSON, an invalid schema, or other I/O failures as an
+  unavailable backend instead of silently discarding them; and
+- retains 30 days and at most 2,500 events by default.
+
+Filesystem mode is designed for local, single-process development. It does not
+provide cross-process locking or durable storage for a horizontally scaled
+deployment.
+
+## Strict ingestion and best-effort observations
+
+The application deliberately separates telemetry ingestion from secondary
+observations.
+
+| Path | Contract |
+|---|---|
+| `POST /api/telemetry/events` | Strict. The endpoint streams at most 32 KiB, accepts at most 20 client events per request, and allows only `page_view`, `cta_click`, and `outbound_click`. Invalid JSON, event names, future timestamps, or field types return `400`. A storage failure returns `503`; accepted input returns `202`. |
+| Search, login, logout, and API observations | Best effort. Telemetry failures are contained and never replace the primary search, authentication, session-clearing, or API response. |
+
+Event normalization bounds and sanitizes stored strings, strips query and
+fragment data from paths/referrers/links, validates metadata, status codes,
+durations, and timestamps, and applies retention to both existing and incoming
+events. Do not send secrets, credentials, request bodies, or sensitive user data
+as telemetry fields.
+
+## Admin authentication and sessions
+
+Development admin login requires both of these values:
+
+- `DOCS_ADMIN_PASSWORD`: a supported scrypt verifier, never the plaintext
+  password;
+- `DOCS_ADMIN_SESSION_SECRET`: a secret at least 16 characters long.
+
+The verifier format is:
+
+```text
+scrypt$<N>$<r>$<p>$<salt_b64url>$<hash_b64url>
+```
+
+Use `hashAdminPassword()` from `docs/lib/server/admin-password.ts` to mint the
+verifier locally with a supported Node runtime (`>=24 <27`) declared by
+`docs/package.json`; CI uses Node 24. Keep the plaintext password, verifier, and
+session secret out of source control, shell history, logs, screenshots, and
+telemetry.
+
+In development, login attempts use a bounded in-memory limiter: five attempts
+per client key per minute, with at most 1,000 tracked keys. This state is local
+to one process and is intentionally rejected for production use.
+
+Successful sessions are HMAC-SHA-256 signed and last at most 12 hours. The
+session cookie is HTTP-only, uses `SameSite=Lax`, covers `/`, and is marked
+`Secure` in production. Invalid signatures, future issuance times, reversed or
+expired lifetimes, and lifetimes over 12 hours are rejected.
+
+### Login response contract
+
+The password form submits `application/x-www-form-urlencoded` credentials to
+`POST /api/admin/login`, with the already-sanitized `/admin` return path encoded
+in the action URL. Response representation is selected explicitly from
+`Accept`:
+
+| Client preference | Success | Invalid or unavailable |
+|---|---|---|
+| Explicit `text/html` or `application/xhtml+xml` | `303` to the sanitized same-origin `/admin` destination with the session cookie | `303` back to the login page with a bounded error code; rate-limit redirects retain `Retry-After` |
+| JSON, wildcard-only, absent, malformed, or zero-quality HTML | `200` with `{ ok: true, redirect }` and the session cookie | Truthful `400`, `401`, `429`, `500`, or `503` with a bounded `{ ok: false, code, error }` body |
+
+Both representations send `Cache-Control: no-store` and `Vary: Accept`.
+Absolute, protocol-relative, backslash, encoded-separator, oversized, and
+non-admin return values reduce to `/admin`. Telemetry records the finalized
+response status and is best-effort, so an observation failure cannot alter the
+status, body, headers, redirect, or cookie.
+
+## Environment reference
+
+The root `.env.example` contains placeholders only. Supply real secrets through
+the local process or the deployment's secret manager; never commit them.
+
+| Variable | Purpose | Default or requirement |
+|---|---|---|
+| `NODE_ENV` | Selects production-safe defaults | Only the exact value `production` selects production behavior. |
+| `DOCS_TELEMETRY_BACKEND` | Telemetry mode | Unset: `filesystem` in development, `disabled` in production. |
+| `DOCS_TELEMETRY_STORE_PATH` | Filesystem JSON path | `.telemetry/store.json` |
+| `DOCS_TELEMETRY_RETENTION_DAYS` | Retention window | Positive integer; otherwise `30`. |
+| `DOCS_TELEMETRY_MAX_EVENTS` | Retained event cap | Positive integer; otherwise `2500`. |
+| `DOCS_TELEMETRY_REDIS_REST_URL` | Reserved Redis endpoint | No default; does not activate an adapter. |
+| `DOCS_TELEMETRY_REDIS_REST_TOKEN` | Reserved Redis credential | Secret; no default; does not activate an adapter. |
+| `DOCS_TELEMETRY_REDIS_KEY` | Reserved Redis event key | `docs:telemetry:events` |
+| `DOCS_ADMIN_PASSWORD` | Admin password verifier | Valid scrypt verifier; plaintext is rejected. |
+| `DOCS_ADMIN_SESSION_SECRET` | HMAC session secret | At least 16 characters. |
+
+## Verification
+
+Run the docs assurance lane after changing runtime configuration or this page:
+
+```bash
+pnpm --dir docs install --frozen-lockfile
+pnpm --dir docs test
+pnpm --dir docs typecheck
+pnpm --dir docs build
+```
+
+The docs package declares its supported Node and pnpm versions in
+`docs/package.json`; use those package policies rather than an arbitrary global
+toolchain.

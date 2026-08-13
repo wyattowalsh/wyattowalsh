@@ -1,9 +1,19 @@
 import 'server-only';
 
-import { recordTelemetryEvent } from '@/lib/server/telemetry-store';
+import { writeTelemetryObservationsBestEffort } from '@/lib/server/public-telemetry-observation';
+import {
+  recordTelemetryEvents,
+  type TelemetryEventInput,
+} from '@/lib/server/telemetry-store';
 
 export function getRequestId(request: Request): string {
   return request.headers.get('x-request-id') ?? crypto.randomUUID();
+}
+
+export async function recordTelemetryObservations(
+  inputs: readonly TelemetryEventInput[],
+): Promise<void> {
+  await writeTelemetryObservationsBestEffort(recordTelemetryEvents, inputs);
 }
 
 export async function recordApiObservation(input: {
@@ -15,20 +25,22 @@ export async function recordApiObservation(input: {
   errorMessage?: string;
   sessionId?: string;
 }): Promise<void> {
-  await recordTelemetryEvent({
-    name: 'api_request',
-    source: 'server',
-    route: input.route,
-    method: input.method,
-    statusCode: input.statusCode,
-    durationMs: input.durationMs,
-    requestId: input.requestId,
-    sessionId: input.sessionId,
-    outcome: input.statusCode >= 500 ? 'error' : 'success',
-  });
+  const events: TelemetryEventInput[] = [
+    {
+      name: 'api_request',
+      source: 'server',
+      route: input.route,
+      method: input.method,
+      statusCode: input.statusCode,
+      durationMs: input.durationMs,
+      requestId: input.requestId,
+      sessionId: input.sessionId,
+      outcome: input.statusCode >= 400 ? 'error' : 'success',
+    },
+  ];
 
   if (input.statusCode >= 400 || input.errorMessage) {
-    await recordTelemetryEvent({
+    events.push({
       name: 'api_error',
       source: 'server',
       route: input.route,
@@ -41,6 +53,8 @@ export async function recordApiObservation(input: {
       outcome: 'error',
     });
   }
+
+  await recordTelemetryObservations(events);
 }
 
 export async function recordAdminAuthResult(input: {
@@ -48,13 +62,15 @@ export async function recordAdminAuthResult(input: {
   requestId: string;
   errorMessage?: string;
 }): Promise<void> {
-  await recordTelemetryEvent({
-    name: input.success ? 'admin_auth_success' : 'admin_auth_failure',
-    source: 'server',
-    route: '/admin/login',
-    method: 'POST',
-    requestId: input.requestId,
-    outcome: input.success ? 'success' : 'denied',
-    errorMessage: input.errorMessage,
-  });
+  await recordTelemetryObservations([
+    {
+      name: input.success ? 'admin_auth_success' : 'admin_auth_failure',
+      source: 'server',
+      route: '/admin/login',
+      method: 'POST',
+      requestId: input.requestId,
+      outcome: input.success ? 'success' : 'denied',
+      errorMessage: input.errorMessage,
+    },
+  ]);
 }

@@ -16,35 +16,47 @@ type ClientTelemetryEvent = {
 const TELEMETRY_SESSION_KEY = 'docs-telemetry-session-id';
 
 function getClientSessionId(): string {
-  const storedValue = window.localStorage.getItem(TELEMETRY_SESSION_KEY);
-  if (storedValue) {
-    return storedValue;
+  try {
+    const storedValue = window.localStorage.getItem(TELEMETRY_SESSION_KEY);
+    if (storedValue) {
+      return storedValue;
+    }
+  } catch {
+    // Storage can be unavailable in privacy-restricted browser contexts.
   }
 
   const nextValue = crypto.randomUUID();
-  window.localStorage.setItem(TELEMETRY_SESSION_KEY, nextValue);
+  try {
+    window.localStorage.setItem(TELEMETRY_SESSION_KEY, nextValue);
+  } catch {
+    // The in-memory value remains valid for this individual observation.
+  }
   return nextValue;
 }
 
-export function TelemetryProvider() {
+export function TelemetryProvider({ enabled }: { enabled: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchKey = searchParams.toString();
 
   const dispatchTelemetry = useCallback((events: ClientTelemetryEvent[]) => {
-    if (events.length === 0) {
+    if (!enabled || events.length === 0) {
       return;
     }
 
     const payload = JSON.stringify({ events });
-    if (navigator.sendBeacon) {
-      const accepted = navigator.sendBeacon(
-        '/api/telemetry/events',
-        new Blob([payload], { type: 'application/json' }),
-      );
-      if (accepted) {
-        return;
+    try {
+      if (navigator.sendBeacon) {
+        const accepted = navigator.sendBeacon(
+          '/api/telemetry/events',
+          new Blob([payload], { type: 'application/json' }),
+        );
+        if (accepted) {
+          return;
+        }
       }
+    } catch {
+      // Fall back to keepalive fetch below.
     }
 
     void fetch('/api/telemetry/events', {
@@ -54,8 +66,8 @@ export function TelemetryProvider() {
       },
       body: payload,
       keepalive: true,
-    });
-  }, []);
+    }).catch(() => undefined);
+  }, [enabled]);
 
   const buildBaseEvent = useCallback(
     (name: ClientTelemetryEvent['name']): ClientTelemetryEvent => ({
@@ -69,16 +81,16 @@ export function TelemetryProvider() {
   );
 
   useEffect(() => {
-    if (!pathname || pathname.startsWith('/admin')) {
+    if (!enabled || !pathname || pathname.startsWith('/admin')) {
       return;
     }
 
     dispatchTelemetry([buildBaseEvent('page_view')]);
-  }, [buildBaseEvent, dispatchTelemetry, pathname, searchKey]);
+  }, [buildBaseEvent, dispatchTelemetry, enabled, pathname, searchKey]);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
-      if (!pathname || pathname.startsWith('/admin')) {
+      if (!enabled || !pathname || pathname.startsWith('/admin')) {
         return;
       }
 
@@ -129,7 +141,7 @@ export function TelemetryProvider() {
     return () => {
       document.removeEventListener('click', handleClick, { capture: true });
     };
-  }, [buildBaseEvent, dispatchTelemetry, pathname]);
+  }, [buildBaseEvent, dispatchTelemetry, enabled, pathname]);
 
   return null;
 }

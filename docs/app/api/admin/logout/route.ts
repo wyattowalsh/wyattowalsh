@@ -18,13 +18,16 @@ export async function POST(request: Request) {
     clearedCookie.options,
   );
 
-  await recordApiObservation({
-    route: '/api/admin/logout',
-    method: 'POST',
-    statusCode: 303,
-    durationMs: performance.now() - startedAt,
-    requestId,
-  });
+  // A telemetry backend failure must not prevent the cookie from being cleared.
+  await Promise.allSettled([
+    recordApiObservation({
+      route: '/api/admin/logout',
+      method: 'POST',
+      statusCode: 303,
+      durationMs: performance.now() - startedAt,
+      requestId,
+    }),
+  ]);
 
   return response;
 }

@@ -1,5 +1,9 @@
-import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
+import {
+  randomBytes,
+  scrypt,
+  timingSafeEqual,
+  type ScryptOptions,
+} from 'node:crypto';
 
 /**
  * DOCS_ADMIN_PASSWORD must store a scrypt verifier — never a plaintext password.
@@ -7,13 +11,15 @@ import { promisify } from 'node:util';
  * Format: scrypt$<N>$<r>$<p>$<salt_b64url>$<hash_b64url>
  * Example mint: `await hashAdminPassword('your-password')` (Node/runtime only).
  */
-const scryptAsync = promisify(scrypt);
-
 export const ADMIN_PASSWORD_KDF = 'scrypt' as const;
 
 const DEFAULT_N = 16_384;
 const DEFAULT_R = 8;
 const DEFAULT_P = 1;
+const MIN_N = 1_024;
+const MAX_N = 1_048_576;
+const MAX_R = 32;
+const MAX_P = 16;
 const KEY_LENGTH = 64;
 const SALT_BYTES = 16;
 /** 128 * N * r for default params is 16 MiB; leave headroom above Node's 32 MiB default. */
@@ -21,6 +27,46 @@ const MAX_MEM = 64 * 1024 * 1024;
 
 const VERIFIER_PATTERN =
   /^scrypt\$(\d+)\$(\d+)\$(\d+)\$([A-Za-z0-9_-]+)\$([A-Za-z0-9_-]+)$/;
+
+function hasSafeScryptParams(N: number, r: number, p: number): boolean {
+  if (
+    !Number.isInteger(N) ||
+    !Number.isInteger(r) ||
+    !Number.isInteger(p) ||
+    N < MIN_N ||
+    N > MAX_N ||
+    (N & (N - 1)) !== 0 ||
+    r < 1 ||
+    r > MAX_R ||
+    p < 1 ||
+    p > MAX_P
+  ) {
+    return false;
+  }
+
+  // Node bounds scrypt with maxmem and documents the dominant cost as
+  // approximately 128 * N * r. Include parallelization and block overhead so
+  // invalid verifier parameters are rejected before entering OpenSSL.
+  const estimatedMemory = 128 * N * r + 128 * r * p + 256 * r;
+  return Number.isSafeInteger(estimatedMemory) && estimatedMemory < MAX_MEM;
+}
+
+function deriveScrypt(
+  password: string,
+  salt: Buffer,
+  keyLength: number,
+  options: ScryptOptions,
+): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    scrypt(password, salt, keyLength, options, (error, derivedKey) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(derivedKey);
+    });
+  });
+}
 
 export function isAdminPasswordVerifier(value: string): boolean {
   if (!VERIFIER_PATTERN.test(value)) {
@@ -46,22 +92,14 @@ function parseAdminPasswordVerifier(value: string): {
   const N = Number(match[1]);
   const r = Number(match[2]);
   const p = Number(match[3]);
-  if (
-    !Number.isInteger(N) ||
-    !Number.isInteger(r) ||
-    !Number.isInteger(p) ||
-    N < 2 ||
-    (N & (N - 1)) !== 0 ||
-    r < 1 ||
-    p < 1
-  ) {
+  if (!hasSafeScryptParams(N, r, p)) {
     return null;
   }
 
   try {
     const salt = Buffer.from(match[4], 'base64url');
     const hash = Buffer.from(match[5], 'base64url');
-    if (salt.length < 16 || hash.length < 16) {
+    if (salt.length !== SALT_BYTES || hash.length !== KEY_LENGTH) {
       return null;
     }
     return { N, r, p, salt, hash };
@@ -81,13 +119,17 @@ export async function hashAdminPassword(
   const N = options?.N ?? DEFAULT_N;
   const r = options?.r ?? DEFAULT_R;
   const p = options?.p ?? DEFAULT_P;
+  if (!hasSafeScryptParams(N, r, p)) {
+    throw new RangeError('Invalid or unsafe scrypt parameters.');
+  }
+
   const salt = randomBytes(SALT_BYTES);
-  const derived = (await scryptAsync(password, salt, KEY_LENGTH, {
+  const derived = await deriveScrypt(password, salt, KEY_LENGTH, {
     N,
     r,
     p,
     maxmem: MAX_MEM,
-  })) as Buffer;
+  });
 
   return [
     ADMIN_PASSWORD_KDF,
@@ -108,12 +150,12 @@ export async function verifyAdminPassword(
     return false;
   }
 
-  const derived = (await scryptAsync(password, parsed.salt, parsed.hash.length, {
+  const derived = await deriveScrypt(password, parsed.salt, parsed.hash.length, {
     N: parsed.N,
     r: parsed.r,
     p: parsed.p,
     maxmem: MAX_MEM,
-  })) as Buffer;
+  });
 
   if (derived.length !== parsed.hash.length) {
     return false;

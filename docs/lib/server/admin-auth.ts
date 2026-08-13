@@ -6,28 +6,42 @@ import {
   isAdminPasswordVerifier,
   verifyAdminPassword,
 } from '@/lib/server/admin-password';
-import { getDocsServerConfig, isAdminConfigured } from '@/lib/server/config';
+import {
+  getAdminReadiness,
+  getDocsServerConfig,
+  hasAdminCredentials,
+} from '@/lib/server/config';
 import {
   ADMIN_SESSION_COOKIE,
+  ADMIN_SESSION_MAX_LIFETIME_MS,
   buildAdminSessionCookieOptions,
   createAdminSessionToken,
   verifyAdminSessionToken,
 } from '@/lib/server/session';
 
-const ADMIN_SESSION_LIFETIME_MS = 1000 * 60 * 60 * 12;
+export type AdminAuthenticationResult =
+  | { ok: true }
+  | {
+      ok: false;
+      reason:
+        | 'invalid'
+        | 'credentials_missing'
+        | 'distributed_limiter_missing'
+        | 'redis_configuration_invalid';
+    };
 
-export async function authenticateAdminPassword(password: string): Promise<{
-  ok: boolean;
-  reason?: 'invalid' | 'misconfigured';
-}> {
+export async function authenticateAdminPassword(
+  password: string,
+): Promise<AdminAuthenticationResult> {
   const config = getDocsServerConfig();
-  if (!isAdminConfigured(config)) {
-    return { ok: false, reason: 'misconfigured' };
+  const readiness = getAdminReadiness(config);
+  if (!readiness.available) {
+    return { ok: false, reason: readiness.reason };
   }
 
   // DOCS_ADMIN_PASSWORD holds a scrypt verifier (see admin-password.ts), not plaintext.
   if (!isAdminPasswordVerifier(config.adminPassword)) {
-    return { ok: false, reason: 'misconfigured' };
+    return { ok: false, reason: 'credentials_missing' };
   }
 
   const ok = await verifyAdminPassword(password, config.adminPassword);
@@ -36,7 +50,7 @@ export async function authenticateAdminPassword(password: string): Promise<{
 
 export async function getValidatedAdminSession() {
   const config = getDocsServerConfig();
-  if (!isAdminConfigured(config)) {
+  if (!hasAdminCredentials(config) || !getAdminReadiness(config).available) {
     return null;
   }
 
@@ -60,9 +74,12 @@ export async function requireAdminSession() {
 
 export async function createAdminSessionCookie() {
   const config = getDocsServerConfig();
+  if (!getAdminReadiness(config).available) {
+    throw new Error('Admin login is unavailable.');
+  }
   const { token, expiresAt } = await createAdminSessionToken(
     config.sessionSecret,
-    ADMIN_SESSION_LIFETIME_MS,
+    ADMIN_SESSION_MAX_LIFETIME_MS,
   );
 
   return {

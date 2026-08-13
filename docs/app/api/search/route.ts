@@ -1,7 +1,10 @@
 import { source } from '@/lib/source';
 import { createSearchAPI } from 'fumadocs-core/search/server';
-import { getRequestId, recordApiObservation } from '@/lib/server/telemetry';
-import { recordTelemetryEvent } from '@/lib/server/telemetry-store';
+import {
+  getRequestId,
+  recordApiObservation,
+  recordTelemetryObservations,
+} from '@/lib/server/telemetry';
 
 const { GET: handleSearch } = createSearchAPI('simple', {
   indexes: source.getPages().map((page) => ({
@@ -25,18 +28,20 @@ export async function GET(request: Request) {
     const searchQuery = url.searchParams.get('query') ?? url.searchParams.get('q');
 
     if (searchQuery) {
-      await recordTelemetryEvent({
-        name: 'docs_search',
-        source: 'server',
-        pathname: '/docs',
-        route: '/api/search',
-        method: 'GET',
-        searchQuery,
-        statusCode: response.status,
-        durationMs: performance.now() - startedAt,
-        requestId,
-        outcome: response.ok ? 'success' : 'error',
-      });
+      await recordTelemetryObservations([
+        {
+          name: 'docs_search',
+          source: 'server',
+          pathname: '/docs',
+          route: '/api/search',
+          method: 'GET',
+          searchQuery,
+          statusCode: response.status,
+          durationMs: performance.now() - startedAt,
+          requestId,
+          outcome: response.ok ? 'success' : 'error',
+        },
+      ]);
     }
 
     await recordApiObservation({
@@ -56,8 +61,7 @@ export async function GET(request: Request) {
       statusCode: 500,
       durationMs: performance.now() - startedAt,
       requestId,
-      errorMessage:
-        error instanceof Error ? error.message : 'Unknown docs search failure.',
+      errorMessage: 'Docs search operation failed.',
     });
 
     throw error;

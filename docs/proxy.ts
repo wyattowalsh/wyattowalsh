@@ -1,27 +1,36 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getDocsServerConfig, isAdminConfigured } from '@/lib/server/config';
+import { parseAdminDestination } from '@/lib/server/admin-destination';
+import { getAdminReadiness, getDocsServerConfig } from '@/lib/server/config';
 import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from '@/lib/server/session';
 
 function isPublicAdminPath(pathname: string): boolean {
   return pathname === '/admin/login' || pathname === '/api/admin/login';
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (isPublicAdminPath(pathname) || pathname === '/api/admin/logout') {
     return NextResponse.next();
   }
 
   const config = getDocsServerConfig();
-  if (!isAdminConfigured(config)) {
+  const readiness = getAdminReadiness(config);
+  if (!readiness.available) {
+    const credentialsMissing = readiness.reason === 'credentials_missing';
+    const errorCode = credentialsMissing ? 'config' : 'limiter';
+    const errorMessage = credentialsMissing
+      ? 'Admin access is not configured.'
+      : 'A production-safe distributed login limiter is unavailable.';
     if (pathname.startsWith('/api/admin/')) {
       return NextResponse.json(
-        { ok: false, error: 'Admin access is not configured.' },
+        { ok: false, code: errorCode, error: errorMessage },
         { status: 503 },
       );
     }
 
-    return NextResponse.redirect(new URL('/admin/login?error=config', request.url));
+    const loginUrl = new URL('/admin/login', request.url);
+    loginUrl.searchParams.set('error', errorCode);
+    return NextResponse.redirect(loginUrl);
   }
 
   const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
@@ -41,7 +50,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const loginUrl = new URL('/admin/login', request.url);
-  loginUrl.searchParams.set('next', pathname);
+  loginUrl.searchParams.set(
+    'next',
+    parseAdminDestination(`${pathname}${request.nextUrl.search}`),
+  );
   return NextResponse.redirect(loginUrl);
 }
 

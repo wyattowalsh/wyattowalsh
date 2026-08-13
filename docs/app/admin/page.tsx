@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { unstable_noStore as noStore } from 'next/cache';
+import { connection } from 'next/server';
 import { requireAdminSession } from '@/lib/server/admin-auth';
+import { getDocsServerConfig } from '@/lib/server/config';
 import { getTelemetryDashboardSnapshot } from '@/lib/server/telemetry-store';
 
 type AdminPageProps = {
@@ -20,7 +21,7 @@ function formatEventDetail(value?: string | number) {
 }
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
-  noStore();
+  await connection();
   await requireAdminSession();
 
   const params = await searchParams;
@@ -28,6 +29,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const windowDays = WINDOW_OPTIONS.includes(selectedWindow as 1 | 7 | 30)
     ? selectedWindow
     : 7;
+  const config = getDocsServerConfig();
   const snapshot = await getTelemetryDashboardSnapshot(windowDays);
 
   return (
@@ -58,6 +60,21 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           </form>
         </div>
       </section>
+
+      {snapshot.availability !== 'available' ? (
+        <section className="admin-alert admin-alert-warning">
+          <strong>
+            {snapshot.availability === 'disabled'
+              ? 'Telemetry collection is disabled.'
+              : 'Telemetry is unavailable.'}
+          </strong>
+          <span>
+            {snapshot.availability === 'disabled'
+              ? 'The dashboard remains accessible, but no events are being collected.'
+              : 'The configured telemetry backend cannot currently provide dashboard data.'}
+          </span>
+        </section>
+      ) : null}
 
       <section className="admin-summary-grid">
         <article className="admin-metric-card">
@@ -275,9 +292,15 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
       </section>
 
       <section className="admin-footer-note">
-        <span>Store adapter: {snapshot.adapter}</span>
+        <span>
+          {config.isProduction
+            ? `Telemetry: ${snapshot.availability}`
+            : `Store adapter: ${snapshot.adapter}`}
+        </span>
         <span>Retained events: {snapshot.totalRetainedEvents}</span>
-        <span>Storage target: {snapshot.storageTarget}</span>
+        {!config.isProduction ? (
+          <span>Storage target: {snapshot.storageTarget}</span>
+        ) : null}
       </section>
     </main>
   );

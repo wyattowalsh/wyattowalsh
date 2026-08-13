@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation';
 import { getValidatedAdminSession } from '@/lib/server/admin-auth';
+import { parseAdminDestination } from '@/lib/server/admin-destination';
+import { buildAdminLoginAction } from '@/lib/server/admin-login-handler';
 import {
+  getAdminReadiness,
   getDocsServerConfig,
   getTelemetryStorageDescription,
-  isAdminConfigured,
 } from '@/lib/server/config';
 
 type LoginPageProps = {
@@ -14,9 +16,13 @@ type LoginPageProps = {
 };
 
 const ERROR_COPY: Record<string, string> = {
+  invalid_request: 'The login request was malformed. Try submitting the form again.',
   invalid: 'That password was rejected.',
   config: 'Admin access is not configured yet. Set the docs admin env vars first.',
-  server: 'The login request failed unexpectedly. Check the admin telemetry log.',
+  limiter:
+    'Admin sign-in is unavailable because a production-safe distributed limiter is not configured.',
+  rate: 'Too many sign-in attempts. Wait a minute before trying again.',
+  server: 'The login request failed unexpectedly. Review the server logs.',
 };
 
 export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
@@ -30,10 +36,19 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
   }
 
   const config = getDocsServerConfig();
-  const isConfigured = isAdminConfigured(config);
+  const readiness = getAdminReadiness(config);
   const storage = getTelemetryStorageDescription(config);
   const errorCopy = params.error ? ERROR_COPY[params.error] : undefined;
-  const nextPath = params.next?.startsWith('/') && !params.next.startsWith('//') ? params.next : '/admin';
+  const nextPath = parseAdminDestination(params.next);
+  const loginAction = buildAdminLoginAction(nextPath);
+  const telemetryCopy =
+    storage.availability === 'disabled'
+      ? 'Telemetry collection is disabled for this deployment.'
+      : storage.availability === 'unavailable'
+        ? `Telemetry is unavailable: ${storage.target}.`
+        : config.isProduction
+          ? 'First-party telemetry is enabled for this deployment.'
+          : `Development telemetry target: ${storage.target}.`;
 
   return (
     <main className="admin-login-page">
@@ -42,17 +57,30 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         <h1 className="admin-title">Telemetry explorer</h1>
         <p className="admin-copy">
           Sign in with the shared password to explore page traffic, searches,
-          clicks, and recent telemetry from the docs app.
+          clicks, and recent first-party telemetry when collection is enabled.
         </p>
 
-        {!isConfigured ? (
+        {!readiness.available ? (
           <div className="admin-alert admin-alert-warning">
-            <strong>Missing configuration.</strong>
-            <span>
-              Set a scrypt verifier in <code>DOCS_ADMIN_PASSWORD</code> and a long
-              secret in <code>DOCS_ADMIN_SESSION_SECRET</code> before using the admin
-              panel.
-            </span>
+            {readiness.reason === 'credentials_missing' ? (
+              <>
+                <strong>Missing credentials.</strong>
+                <span>
+                  Set a scrypt verifier in <code>DOCS_ADMIN_PASSWORD</code> and a
+                  long secret in <code>DOCS_ADMIN_SESSION_SECRET</code> before
+                  using the admin panel.
+                </span>
+              </>
+            ) : (
+              <>
+                <strong>Production sign-in is disabled.</strong>
+                <span>
+                  {readiness.reason === 'redis_configuration_invalid'
+                    ? 'The Redis configuration is incomplete, and no approved distributed login limiter is available.'
+                    : 'No approved distributed login limiter is configured. The development-only memory limiter never runs in production.'}
+                </span>
+              </>
+            )}
           </div>
         ) : null}
 
@@ -60,8 +88,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
           <div className="admin-alert admin-alert-error">{errorCopy}</div>
         ) : null}
 
-        <form className="admin-form" action="/api/admin/login" method="post">
-          <input type="hidden" name="next" value={nextPath} />
+        <form className="admin-form" action={loginAction} method="post">
           <label className="admin-field">
             <span>Password</span>
             <input
@@ -72,15 +99,16 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               required
             />
           </label>
-          <button type="submit" className="admin-button" disabled={!isConfigured}>
+          <button
+            type="submit"
+            className="admin-button"
+            disabled={!readiness.available}
+          >
             Sign in
           </button>
         </form>
 
-        <p className="admin-footnote">
-          Telemetry stays first-party in a local store. Current target:{' '}
-          <code>{storage.target}</code>.
-        </p>
+        <p className="admin-footnote">{telemetryCopy}</p>
       </section>
     </main>
   );

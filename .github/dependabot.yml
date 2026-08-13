@@ -29,3 +29,17 @@ updates:
       python-uv:
         patterns:
           - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "docs"
+    groups:
+      docs-npm:
+        patterns:
+          - "*"

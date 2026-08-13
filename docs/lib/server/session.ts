@@ -1,4 +1,5 @@
 export const ADMIN_SESSION_COOKIE = 'docs-admin-session';
+export const ADMIN_SESSION_MAX_LIFETIME_MS = 1000 * 60 * 60 * 12;
 
 type AdminSessionPayload = {
   role: 'admin';
@@ -49,6 +50,14 @@ export async function createAdminSessionToken(
   secret: string,
   lifetimeMs: number,
 ): Promise<{ token: string; expiresAt: number }> {
+  if (
+    !Number.isSafeInteger(lifetimeMs) ||
+    lifetimeMs <= 0 ||
+    lifetimeMs > ADMIN_SESSION_MAX_LIFETIME_MS
+  ) {
+    throw new RangeError('Admin session lifetime is outside the allowed range.');
+  }
+
   const issuedAt = Date.now();
   const expiresAt = issuedAt + lifetimeMs;
   const payload: AdminSessionPayload = {
@@ -85,17 +94,24 @@ export async function verifyAdminSessionToken(
     const payload = JSON.parse(
       decodeURIComponent(encodedPayload),
     ) as Partial<AdminSessionPayload>;
+    const now = Date.now();
+    const { issuedAt, expiresAt } = payload;
 
     if (
       payload.role !== 'admin' ||
-      typeof payload.issuedAt !== 'number' ||
-      typeof payload.expiresAt !== 'number' ||
-      payload.expiresAt <= Date.now()
+      typeof issuedAt !== 'number' ||
+      typeof expiresAt !== 'number' ||
+      !Number.isSafeInteger(issuedAt) ||
+      !Number.isSafeInteger(expiresAt) ||
+      issuedAt > now ||
+      expiresAt <= issuedAt ||
+      expiresAt - issuedAt > ADMIN_SESSION_MAX_LIFETIME_MS ||
+      expiresAt <= now
     ) {
       return null;
     }
 
-    return payload as AdminSessionPayload;
+    return { role: 'admin', issuedAt, expiresAt };
   } catch {
     return null;
   }

@@ -3,6 +3,10 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import { Suspense, type ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { TelemetryProvider } from '@/components/telemetry-provider';
+import {
+  getDocsServerConfig,
+  getTelemetryStorageDescription,
+} from '@/lib/server/config';
 import './global.css';
 
 const inter = Inter({
@@ -30,6 +34,10 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const telemetryConfig = getDocsServerConfig();
+  const telemetryEnabled =
+    getTelemetryStorageDescription(telemetryConfig).availability === 'available';
+
   return (
     <html
       lang="en"
@@ -38,9 +46,11 @@ export default function Layout({ children }: { children: ReactNode }) {
     >
       <body className="flex flex-col min-h-screen">
         <RootProvider>
-          <Suspense fallback={null}>
-            <TelemetryProvider />
-          </Suspense>
+          {telemetryEnabled ? (
+            <Suspense fallback={null}>
+              <TelemetryProvider enabled={telemetryEnabled} />
+            </Suspense>
+          ) : null}
           {children}
         </RootProvider>
       </body>

@@ -2,27 +2,34 @@
   "name": "wyattowalsh-docs",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=24 <27"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types lib/server/admin-password.test.ts"
+    "typegen": "fumadocs-mdx && next typegen",
+    "typecheck": "pnpm typegen && tsc --noEmit --incremental false",
+    "test": "node --test --experimental-strip-types proxy.test.ts lib/server/*.test.ts"
   },
   "dependencies": {
-    "fumadocs-core": "^15.8.5",
-    "fumadocs-mdx": "^14.2.11",
-    "fumadocs-ui": "^15.8.5",
-    "next": "^15.3.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "fumadocs-core": "16.14.3",
+    "fumadocs-mdx": "15.2.3",
+    "fumadocs-ui": "16.14.3",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
     "@types/mdx": "^2.0.13",
     "@types/node": "^22.15.3",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.8.3"
   }
