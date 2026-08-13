@@ -208,18 +208,26 @@ def test_topic_vs_language_output_style_distinct(tmp_path):
 
     assert 'id="wordcloud-topic"' in topic_svg, "Expected topic-style id in SVG"
     assert 'id="wordcloud-language"' in lang_svg, "Expected language-style id in SVG"
+
+    def normalize_hex_color(value: str) -> str:
+        """Compare equivalent SVG short and long hexadecimal colors portably."""
+        normalized = value.lower()
+        if len(normalized) == 4 and normalized.startswith("#"):
+            return "#" + "".join(channel * 2 for channel in normalized[1:])
+        return normalized
+
     topic_colors = {
-        element.attrib["fill"].lower()
+        normalize_hex_color(element.attrib["fill"])
         for element in ET.fromstring(topic_svg).iter()
         if element.tag.endswith("text")
     }
     lang_colors = {
-        element.attrib["fill"].lower()
+        normalize_hex_color(element.attrib["fill"])
         for element in ET.fromstring(lang_svg).iter()
         if element.tag.endswith("text")
     }
-    assert topic_colors <= {"#111", "#1a1a1a", "#222"}
-    assert lang_colors <= {"#aaa", "#b2b2b2", "#bbb"}
+    assert topic_colors <= {"#111111", "#1a1a1a", "#222222"}
+    assert lang_colors <= {"#aaaaaa", "#b2b2b2", "#bbbbbb"}
     assert topic_colors.isdisjoint(lang_colors)
     assert gen.settings.style_variant == "default"
     assert gen.settings.color_palette_override is None
