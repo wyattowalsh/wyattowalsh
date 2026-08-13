@@ -667,13 +667,7 @@ jobs:
           set -euo pipefail
           cp /metrics_renders/.github/assets/img/metrics.svg ./.github/assets/img/metrics.svg
 
-      - name: Validate personal metrics output
-        id: validate_personal_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
-
-      - name: Recover personal metrics output
+      - name: Validate and recover personal metrics output
         id: recover_personal_metrics
         if: ${{ always() }}
         run: |
@@ -718,13 +712,7 @@ jobs:
           set -euo pipefail
           cp /metrics_renders/.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.additional.svg
 
-      - name: Validate additional metrics output
-        id: validate_additional_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
-
-      - name: Recover additional metrics output
+      - name: Validate and recover additional metrics output
         id: recover_additional_metrics
         if: ${{ always() }}
         run: |
@@ -763,13 +751,7 @@ jobs:
           set -euo pipefail
           cp /metrics_renders/.github/assets/img/metrics.extra.svg ./.github/assets/img/metrics.extra.svg
 
-      - name: Validate extra metrics output
-        id: validate_extra_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.extra.svg
-
-      - name: Recover extra metrics output
+      - name: Validate and recover extra metrics output
         id: recover_extra_metrics
         if: ${{ always() }}
         run: |

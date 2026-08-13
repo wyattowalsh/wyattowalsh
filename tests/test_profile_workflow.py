@@ -524,10 +524,6 @@ def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
 
     assert "metrics-backups/metrics.extra.svg" in prod
     assert (
-        "uv run python -m scripts.metrics_svg validate "
-        "./.github/assets/img/metrics.extra.svg"
-    ) in prod
-    assert (
         "uv run python -m scripts.metrics_svg recover \\\n"
         "            ./.github/assets/img/metrics.extra.svg \\"
     ) in prod
@@ -535,6 +531,27 @@ def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
     assert "./.github/assets/img/metrics.extra.svg" in finalize
     assert "chore(metrics): update generated metrics assets" in finalize
     assert Path(".github/assets/img/metrics.extra.svg").is_file()
+
+
+def test_metrics_recovery_does_not_create_expected_failure_annotations() -> None:
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+
+    for label, asset in (
+        ("personal", "metrics.svg"),
+        ("additional", "metrics.additional.svg"),
+        ("extra", "metrics.extra.svg"),
+    ):
+        assert f"name: Validate and recover {label} metrics output" in prod
+        assert (
+            "uv run python -m scripts.metrics_svg recover \\\n"
+            f"            ./.github/assets/img/{asset} \\"
+        ) in prod
+
+    intentionally_failed_validation = (
+        "continue-on-error: true\n"
+        "        run: uv run python -m scripts.metrics_svg validate"
+    )
+    assert intentionally_failed_validation not in prod
 
 
 def test_finalize_applies_waka_before_readme_sections() -> None:

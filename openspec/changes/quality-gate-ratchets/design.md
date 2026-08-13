@@ -21,6 +21,9 @@ The Python suite appends coverage into a persistent file, configuration emits re
 7. Exercise renderer limits through their real `max_elements` contract and
    semantic SVG roles. Tests must not change behavior by inspecting production
    source line numbers or by substituting equally brittle call ordinals.
+8. Treat metrics validation and last-known-good recovery as one fail-closed
+   operation. Expected recovery remains visible at info level without modeling
+   the accepted fallback as a failed `continue-on-error` step.
 
 ## Risks / Trade-offs
 

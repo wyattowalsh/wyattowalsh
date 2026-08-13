@@ -538,7 +538,7 @@ def main(argv: list[str] | None = None) -> int:
     recovery = recover_svg_file(args.svg_path, previous_path=args.previous)
     if recovery.final.is_valid:
         if recovery.recovered:
-            logger.warning(
+            logger.info(
                 "{path}: {detail}",
                 path=recovery.final.path,
                 detail=recovery.detail,

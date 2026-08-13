@@ -83,3 +83,16 @@ inspection, or hard-coded call order.
 #### Scenario: Harmless source movement
 - **WHEN** production statements move without changing behavior
 - **THEN** the coverage contract SHALL continue to exercise and verify the same observable behavior
+
+### Requirement: Expected metrics recovery is annotation-clean
+The profile updater SHALL validate and recover each third-party metrics SVG in
+one fail-closed step. An invalid new SVG with a valid previous asset SHALL be an
+informational recovery outcome, not an intentionally failed validation step.
+
+#### Scenario: Invalid third-party render with valid previous asset
+- **WHEN** a generated metrics SVG contains a known error payload and the previous SVG is valid
+- **THEN** the workflow SHALL restore the previous asset without creating a GitHub warning or failure annotation
+
+#### Scenario: Invalid third-party render without a valid previous asset
+- **WHEN** neither the generated nor previous metrics SVG is valid
+- **THEN** recovery SHALL fail the producer job before its artifact is uploaded

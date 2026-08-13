@@ -33,3 +33,8 @@
 - [x] 6.1 Remove source-line and caller-frame renderer branch forcing
 - [x] 6.2 Add real element-budget state and semantic renderer tests
 - [x] 6.3 Reproduce the full coverage floor twice on one frozen fingerprint
+
+## 7. Workflow Annotation Hygiene
+
+- [x] 7.1 Collapse third-party metrics validation and recovery into one fail-closed step
+- [x] 7.2 Prove an accepted last-known-good recovery does not create an intentional failed step

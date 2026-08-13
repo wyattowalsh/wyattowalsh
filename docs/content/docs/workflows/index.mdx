@@ -79,6 +79,7 @@ The job hardens metrics updates with `scripts.metrics_svg`:
 - validates each render and rejects known degraded payloads
 - validates supplemental assets against a manifest of required markers
 - restores the previous valid `lowlighter` asset if a new SVG is malformed, contains a known error payload, or matches the placeholder SVG
+- treats an accepted last-known-good recovery as an informational outcome instead of an intentionally failed validation step, keeping expected fallback paths free of warning/failure annotations
 - uploads only after all three stable cards plus all enabled supplemental cards pass validation; the finalizer owns any resulting commit
 
 Placeholder metrics SVGs are treated as invalid recovery artifacts, not the desired output, and are never the intended steady state.
