@@ -37,7 +37,7 @@ import colorsys
 import math
 import os
 import random
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from pydantic import BaseModel, Field  # Field is used in Pydantic models later
@@ -51,6 +51,9 @@ from .svg_drawing import (
     shapes,
 )
 from .utils import get_logger
+
+if TYPE_CHECKING:
+    from .config import BannerSettings
 
 # Initialize logger for the module
 logger = get_logger(module=__name__)
@@ -168,7 +171,7 @@ class NoiseHandler:
         """
         if cls._actual_noise_module is None and not cls._initialized_flag:
             try:
-                import noise  # type: ignore # External library
+                import noise  # External library
 
                 cls._actual_noise_module = noise
                 cls._noise_module_available = True
@@ -538,7 +541,7 @@ class BannerConfig(BaseModel):
     @classmethod
     def from_banner_settings(
         cls,
-        settings: object | None = None,
+        settings: "BannerSettings | None" = None,
         **overrides: object,
     ) -> "BannerConfig":
         """Build a runtime ``BannerConfig`` from YAML ``BannerSettings``.
@@ -549,7 +552,8 @@ class BannerConfig(BaseModel):
         """
         from .config import BannerSettings
 
-        base = (settings or BannerSettings()).model_dump()
+        resolved_settings = settings if settings is not None else BannerSettings()
+        base = resolved_settings.model_dump()
         base.update({k: v for k, v in overrides.items() if v is not None})
         return cls(**base)
 

@@ -179,7 +179,8 @@ def _wait_for_spotify_authorization_code(
                 200, "Spotify authorization complete. You can close this window."
             )
 
-        def log_message(self, _format: str, *_args: object) -> None:
+        def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
+            del format, args
             return
 
     with _SpotifyCallbackServer(

@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
+
+import pytest
 
 from scripts.supplemental_metrics import (
     XOAuth1Credentials,
@@ -156,6 +159,28 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(
     assert any("api/token" in url for url in calls)
 
 
+def test_fetch_recent_tracks_rejects_malformed_artist_payload(monkeypatch) -> None:
+    def fake_request_json(url: str, **_: object) -> dict:
+        if "api/token" in url:
+            return {"access_token": "spotify-access"}
+        return {
+            "items": [
+                {
+                    "played_at": "2026-04-22T12:00:00Z",
+                    "track": {"name": "Song A", "artists": "Artist A"},
+                }
+            ]
+        }
+
+    monkeypatch.setattr("scripts.supplemental_metrics._request_json", fake_request_json)
+
+    with pytest.raises(
+        RuntimeError,
+        match="Spotify recently played item 0 artists must be a JSON array",
+    ):
+        _fetch_recent_tracks("client-id", "client-secret", "refresh-token")
+
+
 def test_build_x_oauth1_authorization_header_contains_signature() -> None:
     credentials = XOAuth1Credentials(
         api_key="api-key",
@@ -186,9 +211,10 @@ def test_fetch_authenticated_x_user_uses_oauth1_headers(monkeypatch) -> None:
 
     def fake_request_json(url: str, **kwargs: object) -> dict:
         captured["url"] = url
-        captured["authorization"] = str(
-            (kwargs.get("headers") or {}).get("Authorization")
-        )
+        headers = kwargs.get("headers")
+        assert isinstance(headers, dict)
+        typed_headers = cast(dict[str, object], headers)
+        captured["authorization"] = str(typed_headers.get("Authorization"))
         return {"data": {"id": "12345", "username": "wyattowalsh", "name": "Wyatt"}}
 
     monkeypatch.setattr(

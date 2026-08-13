@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
+import uuid
 from pathlib import Path
 from typing import Annotated
 
@@ -24,14 +26,21 @@ SRC_DIRS = ["scripts", "tests"]
 
 
 def _run(
-    cmd: list[str], *, cwd: str | None = None, check: bool = True
+    cmd: list[str],
+    *,
+    cwd: str | None = None,
+    check: bool = True,
+    env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[bytes]:
     """Run a subprocess, streaming output.
 
     Raises typer.Exit on failure when *check* is True.
     """
     console.print(f"[dim]$ {' '.join(cmd)}[/dim]")
-    result = subprocess.run(cmd, cwd=cwd)
+    if env is None:
+        result = subprocess.run(cmd, cwd=cwd)
+    else:
+        result = subprocess.run(cmd, cwd=cwd, env=env)
     if check and result.returncode != 0:
         console.print(f"[bold red]Command failed (exit {result.returncode})[/bold red]")
         raise typer.Exit(code=result.returncode)
@@ -40,7 +49,7 @@ def _run(
 
 def _sync_optional_dependencies(*extras: str, all_extras: bool = False) -> None:
     """Sync optional dependency extras using the project's uv extras contract."""
-    cmd = ["uv", "sync"]
+    cmd = ["uv", "sync", "--locked"]
     if all_extras:
         cmd.append("--all-extras")
     else:
@@ -48,6 +57,13 @@ def _sync_optional_dependencies(*extras: str, all_extras: bool = False) -> None:
         for extra in extras:
             cmd.extend(["--extra", extra])
     _run(cmd)
+
+
+def _new_test_report_dir() -> Path:
+    """Create a collision-free report root for one pytest invocation."""
+    report_dir = Path("logs") / "runs" / uuid.uuid4().hex
+    report_dir.mkdir(parents=True, exist_ok=False)
+    return report_dir
 
 
 # ---------------------------------------------------------------------------
@@ -95,15 +111,9 @@ def lint() -> None:
             *SRC_DIRS,
         ]
     )
-    # ty is still useful as a report, but the repo has a large base of pre-existing
-    # invalid-argument-type diagnostics under all=error; do not fail the CI lint
-    # gate solely on that backlog.
-    ty_result = _run(["uv", "run", "--", "ty", "check", *SRC_DIRS], check=False)
-    if ty_result.returncode != 0:
-        console.print(
-            f"[yellow]ty check exited {ty_result.returncode} "
-            "(pre-existing diagnostics retained as report-only).[/yellow]"
-        )
+    # The structured ratchet rejects every configured error plus any new path/rule
+    # warning or count increase, while allowing the checked-in debt to decrease.
+    _run(["uv", "run", "--", "python", "-m", "scripts.quality.ty_ratchet"])
     console.print("[bold green]All linters passed.[/bold green]")
 
 
@@ -121,17 +131,48 @@ def test(
         str | None,
         typer.Option("-m", help="pytest -m marker expression."),
     ] = None,
+    report_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--report-dir",
+            help="Directory for this run's isolated coverage, HTML, JUnit, and logs.",
+        ),
+    ] = None,
 ) -> None:
     """Run pytest."""
     _sync_optional_dependencies("test")
+    resolved_report_dir = report_dir or _new_test_report_dir()
+    resolved_report_dir.mkdir(parents=True, exist_ok=True)
     cmd = ["uv", "run", "--", "python", "-m", "pytest"]
     if not coverage:
         cmd.append("--no-cov")
+    else:
+        cmd.extend(
+            [
+                "--cov-report",
+                "term",
+                "--cov-report",
+                f"html:{resolved_report_dir / 'coverage'}",
+            ]
+        )
+    cmd.extend(
+        [
+            "--html",
+            str(resolved_report_dir / "report.html"),
+            "--self-contained-html",
+            "--junitxml",
+            str(resolved_report_dir / "junit.xml"),
+            "--log-file",
+            str(resolved_report_dir / "pytest.log"),
+        ]
+    )
     if filter_expr:
         cmd.extend(["-k", filter_expr])
     if marker:
         cmd.extend(["-m", marker])
-    _run(cmd)
+    test_environment = os.environ.copy()
+    test_environment["COVERAGE_FILE"] = str(resolved_report_dir / ".coverage")
+    _run(cmd, env=test_environment)
 
 
 @dev_app.command(help="Remove caches, build artifacts, and generated files.")

@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock, patch
 
 import numpy as np
-import pytest  # type: ignore
+import pytest
 
 from scripts import svg_drawing
 

@@ -4,8 +4,10 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import HttpUrl
 
 # import pytest # Pytest is a framework, not a library to import here
+from scripts.config import TypedUrl
 from scripts.config import VCardDataModel as ConfigVCardDataModel
 from scripts.qr import QRCodeGenerator
 from scripts.qr import logger as qr_logger
@@ -15,7 +17,7 @@ from scripts.qr import logger as qr_logger
 # truly available
 cairo_library_available = False
 try:
-    import cairocffi  # type: ignore
+    import cairocffi
 
     # Accessing version string is a good check if cairocffi itself can load
     # and interact with libcairo
@@ -25,7 +27,7 @@ except (ImportError, OSError):
     # ImportError if cairocffi not installed, OSError if libcairo missing
     # If basic import/version check fails, try a more involved operation
     try:
-        from cairocffi import FORMAT_ARGB32, Context, ImageSurface  # type: ignore
+        from cairocffi import FORMAT_ARGB32, Context, ImageSurface
 
         surface = ImageSurface(FORMAT_ARGB32, 1, 1)
         # This operation would fail if libcairo not loadable
@@ -60,8 +62,8 @@ def default_vcard_data() -> ConfigVCardDataModel:
         email_internet="john.doe@example.com",
         tel_work_voice="1234567890",
         url_work=[
-            {"url": "http://example.com", "label": "Website"},
-            {"url": "http://johndoe.dev", "label": "DevSite"},
+            TypedUrl(url=HttpUrl("http://example.com"), label="Website"),
+            TypedUrl(url=HttpUrl("http://johndoe.dev"), label="DevSite"),
         ],
         org="Example Corp",
         title="Tester",
@@ -218,7 +220,7 @@ def test_generate_artistic_vcard_qr_success_defaults(
     assert kwargs["error"] == "H"
     assert not kwargs["micro"]
 
-    mock_qr_object.to_artistic.assert_called_once_with(  # type: ignore
+    mock_qr_object.to_artistic.assert_called_once_with(
         background=str(qr_generator_instance.default_background_path),
         target=str(expected_output_path),
         scale=qr_generator_instance.default_scale,
@@ -278,7 +280,7 @@ def test_generate_artistic_vcard_qr_custom_settings(
     _, kwargs = mock_segno_make.call_args
     assert kwargs["error"] == custom_error_correction
 
-    mock_qr_object.to_artistic.assert_called_once_with(  # type: ignore
+    mock_qr_object.to_artistic.assert_called_once_with(
         background=str(custom_bg_path),
         target=str(expected_output_path),
         scale=custom_scale,
@@ -522,8 +524,8 @@ def test_vcard_payload_construction_multiple_urls(
         fn="Url Test FN",
         displayname="Url Test Display",
         url_work=[
-            {"url": "http://url1.example.com", "label": "URL1"},
-            {"url": "https://url2.example.org/path", "label": "URL2"},
+            TypedUrl(url=HttpUrl("http://url1.example.com"), label="URL1"),
+            TypedUrl(url=HttpUrl("https://url2.example.org/path"), label="URL2"),
         ],
         email_internet="",
         tel_work_voice="",

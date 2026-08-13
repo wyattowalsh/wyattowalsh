@@ -10,7 +10,7 @@ from __future__ import annotations
 import html
 from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path as FsPath
-from typing import Any
+from typing import Any, overload
 
 
 def _xml_escape(value: object) -> str:
@@ -50,6 +50,12 @@ class Element:
 
     def get(self, key: str, default: str | None = None) -> str | None:
         return self.attribs.get(_normalize_attr_name(key), default)
+
+    @overload
+    def add[ElementT: Element](self, element: ElementT) -> ElementT: ...
+
+    @overload
+    def add(self, element: str) -> str: ...
 
     def add(self, element: Element | str) -> Element | str:
         self.elements.append(element)
@@ -296,32 +302,32 @@ class Filter(Element):
     tag = "filter"
 
     def feGaussianBlur(self, **kwargs: Any) -> FeGaussianBlur:
-        return self.add(FeGaussianBlur(**kwargs))  # type: ignore[return-value]
+        return self.add(FeGaussianBlur(**kwargs))
 
     def feColorMatrix(self, **kwargs: Any) -> FeColorMatrix:
-        return self.add(FeColorMatrix(**kwargs))  # type: ignore[return-value]
+        return self.add(FeColorMatrix(**kwargs))
 
     def feTurbulence(self, **kwargs: Any) -> FeTurbulence:
-        return self.add(FeTurbulence(**kwargs))  # type: ignore[return-value]
+        return self.add(FeTurbulence(**kwargs))
 
     def feComposite(self, **kwargs: Any) -> FeComposite:
-        return self.add(FeComposite(**kwargs))  # type: ignore[return-value]
+        return self.add(FeComposite(**kwargs))
 
     def feFlood(self, **kwargs: Any) -> FeFlood:
-        return self.add(FeFlood(**kwargs))  # type: ignore[return-value]
+        return self.add(FeFlood(**kwargs))
 
     def feOffset(self, **kwargs: Any) -> FeOffset:
-        return self.add(FeOffset(**kwargs))  # type: ignore[return-value]
+        return self.add(FeOffset(**kwargs))
 
     def feDisplacementMap(self, **kwargs: Any) -> FeDisplacementMap:
-        return self.add(FeDisplacementMap(**kwargs))  # type: ignore[return-value]
+        return self.add(FeDisplacementMap(**kwargs))
 
     def feMerge(
         self,
         layernames: Iterable[str] | None = None,
         **kwargs: Any,
     ) -> FeMerge:
-        return self.add(FeMerge(layernames=layernames, **kwargs))  # type: ignore[return-value]
+        return self.add(FeMerge(layernames=layernames, **kwargs))
 
 
 class shapes:  # noqa: N801 — svgwrite-compatible namespace

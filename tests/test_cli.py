@@ -5,10 +5,16 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+import typer
 import yaml
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
+from PIL import Image
 from typer.testing import CliRunner
 
 import scripts.cli.generate as generate_cmd
+import scripts.cli.generate._common as generate_common
+from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
 from scripts.cli import app
 from scripts.cli.generate import _wc_from_languages, _wc_from_topics, _wc_import
 from scripts.config import ProjectConfig
@@ -22,6 +28,18 @@ def runner() -> CliRunner:
     return CliRunner()
 
 
+def _requirements_by_name(requirements: list[str]) -> dict[str, set[str]]:
+    """Return normalized requirement names mapped to their aggregated extras."""
+    result: dict[str, set[str]] = {}
+    for requirement_text in requirements:
+        requirement = Requirement(requirement_text)
+        name = str(canonicalize_name(requirement.name))
+        result.setdefault(name, set()).update(
+            str(canonicalize_name(extra)) for extra in requirement.extras
+        )
+    return result
+
+
 def test_refresh_living_art_artifacts_mirrors_docs_showcase(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -31,17 +49,112 @@ def test_refresh_living_art_artifacts_mirrors_docs_showcase(
     output_dir.mkdir(parents=True)
     showcase_dir.mkdir(parents=True)
 
-    for style in ("inkgarden", "topo"):
-        (output_dir / f"living-{style}.gif").write_bytes(b"GIF89a")
+    for style in LIVING_ART_STYLE_KEYS:
+        frames = [
+            Image.new("RGB", (400, 400), color=(20, 40, 60)),
+            Image.new("RGB", (400, 400), color=(60, 40, 20)),
+        ]
+        frames[0].save(
+            output_dir / f"living-{style}.gif",
+            format="GIF",
+            save_all=True,
+            append_images=frames[1:],
+            duration=[12_000, 12_000],
+            loop=0,
+        )
 
     generate_cmd._refresh_living_art_artifacts(output_dir)
 
     assert (output_dir / "living-art-manifest.json").exists()
     assert (output_dir / "living-art-preview.html").exists()
-    assert (showcase_dir / "living-inkgarden.gif").exists()
-    assert (showcase_dir / "living-topo.gif").exists()
+    for style in LIVING_ART_STYLE_KEYS:
+        assert (showcase_dir / f"living-{style}.gif").exists()
     assert (showcase_dir / "living-art-manifest.json").exists()
     assert (showcase_dir / "living-art-preview.html").exists()
+
+
+def _living_art_input_paths(tmp_path: Path) -> tuple[Path, Path]:
+    metrics_path = tmp_path / "metrics.json"
+    history_path = tmp_path / "history.json"
+    metrics_path.write_text("{}", encoding="utf-8")
+    history_path.write_text("{}", encoding="utf-8")
+    return metrics_path, history_path
+
+
+def _run_living_art_generation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    outputs: list[Path],
+) -> None:
+    metrics_path, history_path = _living_art_input_paths(tmp_path)
+    monkeypatch.setattr(
+        "scripts.art.timelapse.render_timelapse",
+        lambda *_args, **_kwargs: outputs,
+    )
+    monkeypatch.setattr(
+        generate_common,
+        "_refresh_living_art_artifacts",
+        MagicMock(),
+    )
+
+    generate_common._generate_living_art_timelapse(
+        profile="wyattowalsh",
+        metrics_path=metrics_path,
+        history_path=history_path,
+        only=None,
+        max_frames=120,
+        size=400,
+        workers=1,
+    )
+
+
+def test_living_art_generation_fails_when_a_requested_style_is_skipped(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_dir = tmp_path / "img"
+    output_dir.mkdir()
+    outputs = []
+    for style in LIVING_ART_STYLE_KEYS[:-1]:
+        output = output_dir / f"living-{style}.gif"
+        output.write_bytes(b"fresh")
+        outputs.append(output)
+
+    with pytest.raises(typer.Exit) as error:
+        _run_living_art_generation(tmp_path, monkeypatch, outputs)
+
+    assert error.value.exit_code == 1
+
+
+def test_living_art_generation_fails_when_no_frames_are_rendered(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with pytest.raises(typer.Exit) as error:
+        _run_living_art_generation(tmp_path, monkeypatch, [])
+
+    assert error.value.exit_code == 1
+
+
+def test_preexisting_stale_living_art_cannot_mask_a_skipped_style(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_dir = tmp_path / "img"
+    output_dir.mkdir()
+    stale_outputs = []
+    for style in LIVING_ART_STYLE_KEYS:
+        output = output_dir / f"living-{style}.gif"
+        output.write_bytes(b"stale")
+        stale_outputs.append(output)
+
+    returned_outputs = stale_outputs[:-1]
+    returned_outputs[0].write_bytes(b"fresh")
+
+    with pytest.raises(typer.Exit) as error:
+        _run_living_art_generation(tmp_path, monkeypatch, returned_outputs)
+
+    assert error.value.exit_code == 1
 
 
 class _CapturingWordCloudGenerator:
@@ -504,7 +617,7 @@ def test_dev_install(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     assert "Dependencies synced" in result.stdout
     mock_subprocess.run.assert_called_once()
     cmd = mock_subprocess.run.call_args[0][0]
-    assert cmd == ["uv", "sync", "--all-extras"]
+    assert cmd == ["uv", "sync", "--locked", "--all-extras"]
 
 
 def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
@@ -512,30 +625,45 @@ def test_dev_extra_contract_covers_lint_and_test_targets() -> None:
     pyproject = tomllib.loads(
         (Path(__file__).resolve().parents[1] / "pyproject.toml").read_text()
     )
-    optional_deps = pyproject["project"]["optional-dependencies"]
+    project = pyproject["project"]
+    optional_deps = project["optional-dependencies"]
+    core = _requirements_by_name(project["dependencies"])
+    lint = _requirements_by_name(optional_deps["lint"])
+    test = _requirements_by_name(optional_deps["test"])
+    science = _requirements_by_name(optional_deps["science"])
+    word_clouds = _requirements_by_name(optional_deps["word-clouds"])
 
-    assert "readme[qr]" in optional_deps["lint"]
-    assert "readme[word-clouds]" in optional_deps["lint"]
-    assert "readme[qr]" in optional_deps["test"]
-    assert "readme[word-clouds]" in optional_deps["test"]
-    assert "mealpy>=3.0.1" in optional_deps["science"]
-    assert "matplotlib>=3.10.8" in optional_deps["science"]
-    assert "scipy>=1.16.3" in optional_deps["science"]
-    assert "readme[science]" in optional_deps["word-clouds"]
-    assert "matplotlib" not in pyproject["project"]["dependencies"]
-    assert "mealpy" not in pyproject["project"]["dependencies"]
-    assert "scipy" not in pyproject["project"]["dependencies"]
+    assert {"qr", "word-clouds"} <= lint["readme"]
+    assert {"qr", "word-clouds"} <= test["readme"]
+    assert {"matplotlib", "mealpy", "scipy"} <= science.keys()
+    assert "science" in word_clouds["readme"]
+    assert {"matplotlib", "mealpy", "scipy"}.isdisjoint(core)
+
+
+@patch("scripts.cli.dev.subprocess")
+def test_dev_update_deps_is_only_upgrade_path(
+    mock_subprocess: MagicMock, runner: CliRunner
+) -> None:
+    """Test `dev update-deps` upgrades the lock rather than doing a sync."""
+    mock_subprocess.run.return_value = MagicMock(returncode=0)
+    result = runner.invoke(app, ["dev", "update-deps"])
+    assert result.exit_code == 0
+    assert "Lockfile updated" in result.stdout
+    mock_subprocess.run.assert_called_once_with(
+        ["uv", "lock", "--upgrade"],
+        cwd=None,
+    )
 
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
-    """Test `dev lint` runs ruff, pylint (score-gated), and ty (report-only)."""
+    """Test `dev lint` runs ruff, pylint (score-gated), and gated ty."""
     mock_subprocess.run.return_value = MagicMock(returncode=0)
     result = runner.invoke(app, ["dev", "lint"])
     assert result.exit_code == 0
     assert "All linters passed" in result.stdout
     assert mock_subprocess.run.call_args_list == [
-        call(["uv", "sync", "--inexact", "--extra", "lint"], cwd=None),
+        call(["uv", "sync", "--locked", "--inexact", "--extra", "lint"], cwd=None),
         call(
             ["uv", "run", "--", "python", "-m", "ruff", "check", "scripts", "tests"],
             cwd=None,
@@ -555,7 +683,7 @@ def test_dev_lint(mock_subprocess: MagicMock, runner: CliRunner) -> None:
             cwd=None,
         ),
         call(
-            ["uv", "run", "--", "ty", "check", "scripts", "tests"],
+            ["uv", "run", "--", "python", "-m", "scripts.quality.ty_ratchet"],
             cwd=None,
         ),
     ]
@@ -569,7 +697,10 @@ def test_dev_format(mock_subprocess: MagicMock, runner: CliRunner) -> None:
     assert result.exit_code == 0
     assert "Formatting complete" in result.stdout
     assert mock_subprocess.run.call_args_list == [
-        call(["uv", "sync", "--inexact", "--extra", "format"], cwd=None),
+        call(
+            ["uv", "sync", "--locked", "--inexact", "--extra", "format"],
+            cwd=None,
+        ),
         call(
             [
                 "uv",
@@ -593,47 +724,87 @@ def test_dev_format(mock_subprocess: MagicMock, runner: CliRunner) -> None:
 
 
 @patch("scripts.cli.dev.subprocess")
-def test_dev_test(mock_subprocess: MagicMock, runner: CliRunner) -> None:
+def test_dev_test(
+    mock_subprocess: MagicMock, runner: CliRunner, tmp_path: Path
+) -> None:
     """Test `dev test` installs test deps then runs pytest."""
     mock_subprocess.run.return_value = MagicMock(returncode=0)
-    result = runner.invoke(app, ["dev", "test"])
+    report_dir = tmp_path / "reports"
+    result = runner.invoke(app, ["dev", "test", "--report-dir", str(report_dir)])
     assert result.exit_code == 0
-    assert mock_subprocess.run.call_args_list == [
-        call(["uv", "sync", "--inexact", "--extra", "test"], cwd=None),
-        call(["uv", "run", "--", "python", "-m", "pytest"], cwd=None),
+    assert mock_subprocess.run.call_args_list[0] == call(
+        ["uv", "sync", "--locked", "--inexact", "--extra", "test"], cwd=None
+    )
+    pytest_call = mock_subprocess.run.call_args_list[1]
+    assert pytest_call.args[0] == [
+        "uv",
+        "run",
+        "--",
+        "python",
+        "-m",
+        "pytest",
+        "--cov-report",
+        "term",
+        "--cov-report",
+        f"html:{report_dir / 'coverage'}",
+        "--html",
+        str(report_dir / "report.html"),
+        "--self-contained-html",
+        "--junitxml",
+        str(report_dir / "junit.xml"),
+        "--log-file",
+        str(report_dir / "pytest.log"),
     ]
+    assert pytest_call.kwargs["cwd"] is None
+    assert pytest_call.kwargs["env"]["COVERAGE_FILE"] == str(report_dir / ".coverage")
 
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_test_option_passthrough(
-    mock_subprocess: MagicMock, runner: CliRunner
+    mock_subprocess: MagicMock, runner: CliRunner, tmp_path: Path
 ) -> None:
     """Test `dev test` forwards pytest selection flags."""
     mock_subprocess.run.return_value = MagicMock(returncode=0)
     result = runner.invoke(
         app,
-        ["dev", "test", "--no-coverage", "-k", "dev", "-m", "slow"],
+        [
+            "dev",
+            "test",
+            "--no-coverage",
+            "-k",
+            "dev",
+            "-m",
+            "slow",
+            "--report-dir",
+            str(tmp_path),
+        ],
     )
     assert result.exit_code == 0
-    assert mock_subprocess.run.call_args_list == [
-        call(["uv", "sync", "--inexact", "--extra", "test"], cwd=None),
-        call(
-            [
-                "uv",
-                "run",
-                "--",
-                "python",
-                "-m",
-                "pytest",
-                "--no-cov",
-                "-k",
-                "dev",
-                "-m",
-                "slow",
-            ],
-            cwd=None,
-        ),
+    assert mock_subprocess.run.call_args_list[0] == call(
+        ["uv", "sync", "--locked", "--inexact", "--extra", "test"], cwd=None
+    )
+    pytest_call = mock_subprocess.run.call_args_list[1]
+    assert pytest_call.args[0] == [
+        "uv",
+        "run",
+        "--",
+        "python",
+        "-m",
+        "pytest",
+        "--no-cov",
+        "--html",
+        str(tmp_path / "report.html"),
+        "--self-contained-html",
+        "--junitxml",
+        str(tmp_path / "junit.xml"),
+        "--log-file",
+        str(tmp_path / "pytest.log"),
+        "-k",
+        "dev",
+        "-m",
+        "slow",
     ]
+    assert pytest_call.kwargs["env"]["COVERAGE_FILE"] == str(tmp_path / ".coverage")
 
 
 @patch("scripts.cli.dev.subprocess")
@@ -644,7 +815,7 @@ def test_dev_test_sync_failure(mock_subprocess: MagicMock, runner: CliRunner) ->
     assert result.exit_code == 2
     assert "Command failed" in result.stdout
     mock_subprocess.run.assert_called_once_with(
-        ["uv", "sync", "--inexact", "--extra", "test"],
+        ["uv", "sync", "--locked", "--inexact", "--extra", "test"],
         cwd=None,
     )
 
@@ -663,7 +834,7 @@ def test_dev_lint_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None
 
 @patch("scripts.cli.dev.subprocess")
 def test_dev_lint_ty_failure(mock_subprocess: MagicMock, runner: CliRunner) -> None:
-    """ty diagnostics are report-only; lint still passes when ty exits non-zero."""
+    """A configured ty error fails the lint gate."""
     mock_subprocess.run.side_effect = [
         MagicMock(returncode=0),
         MagicMock(returncode=0),
@@ -671,12 +842,11 @@ def test_dev_lint_ty_failure(mock_subprocess: MagicMock, runner: CliRunner) -> N
         MagicMock(returncode=1),
     ]
     result = runner.invoke(app, ["dev", "lint"])
-    assert result.exit_code == 0
-    assert "All linters passed" in result.stdout
-    assert "ty check exited 1" in result.stdout
-    assert "report-only" in result.stdout
+    assert result.exit_code == 1
+    assert "Command failed" in result.stdout
+    assert "All linters passed" not in result.stdout
     assert mock_subprocess.run.call_args_list[-1] == call(
-        ["uv", "run", "--", "ty", "check", "scripts", "tests"],
+        ["uv", "run", "--", "python", "-m", "scripts.quality.ty_ratchet"],
         cwd=None,
     )
 

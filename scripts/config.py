@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Literal
 
-import yaml  # type: ignore
+import yaml
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
 from pydantic_settings import (
     BaseSettings,
@@ -121,7 +121,7 @@ class WordCloudSettingsModel(BaseModel):
         description="Default prompt for word cloud generation.",
     )
     stopwords: list[str] | None = Field(
-        default_factory=list,  # type: ignore
+        default_factory=list,
         description="List of stopwords for word clouds.",
     )
     layout_readability: LayoutReadabilitySettings = Field(
@@ -406,11 +406,9 @@ class ProjectConfig(BaseSettings):
         default_factory=ReadmeSectionsSettings
     )
 
-    # YAML / init only — not environment variables (see Settings for env).
-    model_config = SettingsConfigDict(
-        extra="ignore",
-        yaml_file_encoding="utf-8",
-    )
+    # Direct construction uses init values only; YAML-specific configuration is
+    # attached by ``from_yaml_file`` when the YAML settings source is present.
+    model_config = SettingsConfigDict(extra="ignore")
 
     @classmethod
     def settings_customise_sources(
@@ -440,15 +438,12 @@ class ProjectConfig(BaseSettings):
     @classmethod
     def from_yaml_file(cls, path: Path) -> "ProjectConfig":
         """Load config from *path* via :class:`YamlConfigSettingsSource`."""
-
-        class _Loaded(cls):  # type: ignore[valid-type,misc]
-            model_config = SettingsConfigDict(
-                extra="ignore",
-                yaml_file=path,
-                yaml_file_encoding="utf-8",
-            )
-
-        return _Loaded()
+        yaml_source = YamlConfigSettingsSource(
+            cls,
+            yaml_file=path,
+            yaml_file_encoding="utf-8",
+        )
+        return cls(**yaml_source())
 
 
 # Changed default config path to ./config.yaml

@@ -41,12 +41,12 @@ def reset_loguru_handlers():
 
 
 @pytest.fixture
-def mock_settings(mocker: MockerFixture):
+def mock_settings(tmp_path: Path):
     """Fixture to mock the settings object."""
     return SimpleNamespace(
         log_level="DEBUG",
-        log_text_dir=Path("logs/test_text_logs"),
-        log_json_dir=Path("logs/test_json_logs"),
+        log_text_dir=tmp_path / "text_logs",
+        log_json_dir=tmp_path / "json_logs",
         log_rotation="1 day",
         log_retention="7 days",
         log_compression="zip",

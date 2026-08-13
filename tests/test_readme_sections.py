@@ -4,9 +4,10 @@ import json
 import re
 import socket
 from datetime import UTC, datetime
+from email.message import Message
 from pathlib import Path
 from textwrap import dedent
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import Request
 
 import pytest
@@ -2210,6 +2211,59 @@ class TestProjectCardMeta:
 
 class TestRepoBackgroundImage:
     """Verify _repo_background_image prefers API OG image over HTML scrape."""
+
+    def test_remote_image_retries_rate_limit_deterministically(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        class FakeResponse:
+            headers = {"Content-Type": "image/png"}
+
+            def __enter__(self) -> "FakeResponse":
+                return self
+
+            def __exit__(self, exc_type, exc, tb) -> None:  # noqa: ANN001
+                return None
+
+            @staticmethod
+            def read() -> bytes:
+                return b"image-bytes"
+
+        responses: list[HTTPError | FakeResponse] = [
+            HTTPError(
+                "https://example.test/image.png",
+                429,
+                "rate limited",
+                Message(),
+                None,
+            ),
+            FakeResponse(),
+        ]
+        delays: list[int] = []
+
+        def fake_urlopen(request, timeout=10.0):  # noqa: ANN001, ARG001
+            response = responses.pop(0)
+            if isinstance(response, HTTPError):
+                raise response
+            return response
+
+        monkeypatch.setattr(
+            "scripts.readme_sections._build_remote_get_request",
+            lambda **_kwargs: Request("https://example.test/image.png"),
+        )
+        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
+        monkeypatch.setattr("scripts.readme_sections.time.sleep", delays.append)
+
+        generator = ReadmeSectionGenerator(settings=ReadmeSectionsSettings())
+
+        result = generator._fetch_remote_image_data_uri(
+            "https://example.test/image.png",
+            "rate-limit regression",
+        )
+
+        assert result == "data:image/png;base64,aW1hZ2UtYnl0ZXM="
+        assert delays == [1]
+        assert responses == []
 
     def test_api_og_image_used_before_html_scrape(
         self, tmp_path: Path, monkeypatch

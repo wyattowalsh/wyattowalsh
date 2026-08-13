@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import urllib.parse
+from typing import cast
 
 import pytest
 
@@ -54,8 +55,13 @@ def test_exchange_spotify_authorization_code_posts_expected_form(monkeypatch) ->
     assert payload["refresh_token"] == "refresh"
     assert captured["url"] == "https://accounts.spotify.com/api/token"
     assert captured["method"] == "POST"
-    assert str((captured["headers"] or {}).get("Authorization")).startswith("Basic ")
-    form = urllib.parse.parse_qs((captured["data"] or b"").decode("utf-8"))
+    raw_headers = captured["headers"]
+    assert isinstance(raw_headers, dict)
+    headers = cast(dict[str, str], raw_headers)
+    assert str(headers.get("Authorization")).startswith("Basic ")
+    data = captured["data"]
+    assert isinstance(data, bytes)
+    form = urllib.parse.parse_qs(data.decode("utf-8"))
     assert form["grant_type"] == ["authorization_code"]
     assert form["code"] == ["code-123"]
 

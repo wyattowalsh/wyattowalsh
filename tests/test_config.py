@@ -1,5 +1,6 @@
 """Tests for ProjectConfig validation and load_config behavior."""
 
+import warnings
 from pathlib import Path
 from unittest.mock import patch
 
@@ -22,6 +23,12 @@ from scripts.config import (
     save_config,
 )
 
+
+def _validate_project_config(**values: object) -> ProjectConfig:
+    """Validate untyped configuration payloads through Pydantic's data boundary."""
+    return ProjectConfig.model_validate(values)
+
+
 # ---------------------------------------------------------------------------
 # ProjectConfig / nested model defaults & construction
 # ---------------------------------------------------------------------------
@@ -40,13 +47,20 @@ class TestProjectConfigDefaults:
         assert isinstance(cfg.word_cloud_settings, WordCloudSettingsModel)
         assert isinstance(cfg.readme_sections_settings, ReadmeSectionsSettings)
 
+    def test_direct_construction_emits_no_settings_source_warnings(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            cfg = ProjectConfig(project_name="Warning Free")
+
+        assert cfg.project_name == "Warning Free"
+
     def test_extra_fields_ignored(self):
-        cfg = ProjectConfig(project_name="X", unknown_top_level="drop-me")
+        cfg = _validate_project_config(project_name="X", unknown_top_level="drop-me")
         assert cfg.project_name == "X"
         assert not hasattr(cfg, "unknown_top_level")
 
     def test_nested_banner_settings(self):
-        cfg = ProjectConfig(
+        cfg = _validate_project_config(
             banner_settings={
                 "title": "Hello",
                 "subtitle": "World",
@@ -93,7 +107,7 @@ class TestProjectConfigDefaults:
         assert via_classmethod.title == "Adapted"
 
     def test_nested_word_cloud_layout_readability(self):
-        cfg = ProjectConfig(
+        cfg = _validate_project_config(
             word_cloud_settings={
                 "max_words": 50,
                 "prompt": "Python, Rust",
@@ -122,12 +136,14 @@ class TestProjectConfigDefaults:
     def test_word_cloud_settings_yaml_runtime_adapter(self):
         from scripts.word_clouds.generate import WordCloudSettings
 
-        yaml_model = WordCloudSettingsModel(
-            output_dir=".github/assets/img",
-            max_words=42,
-            prompt="Python, Rust",
-            stopwords=["the"],
-            layout_readability={"fallback_rotation": 12.0},
+        yaml_model = WordCloudSettingsModel.model_validate(
+            {
+                "output_dir": ".github/assets/img",
+                "max_words": 42,
+                "prompt": "Python, Rust",
+                "stopwords": ["the"],
+                "layout_readability": {"fallback_rotation": 12.0},
+            }
         )
         runtime = yaml_model.to_word_cloud_settings(renderer="typographic", width=1200)
         assert isinstance(runtime, WordCloudSettings)
@@ -156,7 +172,7 @@ class TestProjectConfigDefaults:
         assert via_classmethod.output_dir == yaml_model.output_dir
 
     def test_nested_readme_sections_svg_card_styles(self):
-        cfg = ProjectConfig(
+        cfg = _validate_project_config(
             readme_sections_settings={
                 "blog_post_limit": 3,
                 "social_links": [
@@ -195,7 +211,7 @@ class TestProjectConfigDefaults:
         assert featured.show_title is True
 
     def test_nested_vcard_typed_urls(self):
-        cfg = ProjectConfig(
+        cfg = _validate_project_config(
             v_card_data={
                 "displayname": "Ada Lovelace",
                 "url_work": [
@@ -214,25 +230,25 @@ class TestProjectConfigDefaults:
 class TestProjectConfigTypeErrors:
     def test_invalid_version_type(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(version=123)
+            _validate_project_config(version=123)
 
     def test_banner_width_must_be_int(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(banner_settings={"width": "wide"})
+            _validate_project_config(banner_settings={"width": "wide"})
 
     def test_word_cloud_max_words_ge_one(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(word_cloud_settings={"max_words": 0})
+            _validate_project_config(word_cloud_settings={"max_words": 0})
 
     def test_blog_post_limit_bounds(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(readme_sections_settings={"blog_post_limit": 0})
+            _validate_project_config(readme_sections_settings={"blog_post_limit": 0})
         with pytest.raises(ValidationError):
-            ProjectConfig(readme_sections_settings={"blog_post_limit": 11})
+            _validate_project_config(readme_sections_settings={"blog_post_limit": 11})
 
     def test_social_link_rejects_bad_url_scheme(self):
         with pytest.raises(ValidationError, match="http"):
-            ProjectConfig(
+            _validate_project_config(
                 readme_sections_settings={
                     "social_links": [
                         {"label": "X", "url": "javascript:alert(1)"},
@@ -242,7 +258,7 @@ class TestProjectConfigTypeErrors:
 
     def test_svg_variant_literal(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(
+            _validate_project_config(
                 readme_sections_settings={
                     "svg": {
                         "card_styles": {
@@ -254,7 +270,7 @@ class TestProjectConfigTypeErrors:
 
     def test_layout_readability_ratio_bounds(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(
+            _validate_project_config(
                 word_cloud_settings={
                     "layout_readability": {
                         "large_word_threshold_ratio": 1.5,
@@ -264,7 +280,7 @@ class TestProjectConfigTypeErrors:
 
     def test_vcard_invalid_url(self):
         with pytest.raises(ValidationError):
-            ProjectConfig(
+            _validate_project_config(
                 v_card_data={
                     "url_work": [{"url": "not-a-url", "label": "Bad"}],
                 }
@@ -277,6 +293,16 @@ class TestProjectConfigTypeErrors:
 
 
 class TestLoadConfigHappyPath:
+    def test_yaml_load_emits_no_settings_source_warnings(self, tmp_path: Path):
+        path = tmp_path / "utf8-config.yaml"
+        path.write_text("project_name: Café\n", encoding="utf-8")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            cfg = load_config(path)
+
+        assert cfg.project_name == "Café"
+
     def test_loads_valid_yaml(self, tmp_path: Path):
         path = tmp_path / "config.yaml"
         path.write_text(

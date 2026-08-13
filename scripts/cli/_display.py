@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Protocol, cast
 
 from ..config import ProjectConfig
 from ..config import Settings as AppSettings
@@ -11,9 +12,19 @@ from ..utils import console, get_logger
 logger = get_logger(module=__name__)
 
 try:
-    import yaml  # type: ignore
+    import yaml
 except ImportError:
     yaml = None  # type: ignore
+
+
+class _ConsolePrinter(Protocol):
+    def print(self, *objects: object, **kwargs: object) -> None: ...
+
+
+def _print(value: object) -> None:
+    """Print through either Rich or the minimal console fallback."""
+    console_printer = cast(_ConsolePrinter, console)
+    console_printer.print(value)
 
 
 class OutputFormat(StrEnum):
@@ -31,21 +42,21 @@ def display_config(
     if output_format == OutputFormat.JSON:
         config_str = config_data.model_dump_json(indent=2)
         syntax = Syntax(config_str, "json", theme="monokai", line_numbers=True)
-        console.print(syntax)
+        _print(syntax)
     elif output_format == OutputFormat.YAML:
         if yaml is None:
             logger.error(
                 "PyYAML is not installed. Cannot display config as YAML. "
                 "Falling back to JSON. Install with: uv sync --locked"
             )
-            console.print("PyYAML is not installed. Falling back to JSON.")
+            _print("PyYAML is not installed. Falling back to JSON.")
             display_config(config_data, OutputFormat.JSON)
         else:
             try:
                 config_dict = config_data.model_dump(mode="python")
                 yaml_str = yaml.dump(config_dict, indent=2, sort_keys=False)
                 syntax = Syntax(yaml_str, "yaml", theme="monokai", line_numbers=True)
-                console.print(syntax)
+                _print(syntax)
             except (yaml.YAMLError, TypeError, ValueError) as e:
                 logger.error("Error converting config to YAML: {e}", e=e)
                 display_config(config_data, OutputFormat.JSON)

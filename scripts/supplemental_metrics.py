@@ -17,7 +17,7 @@ import urllib.request
 from dataclasses import asdict, dataclass
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Final
+from typing import Any, Final, TypeGuard
 
 from .fetch_metrics import collect as collect_github_metrics
 from .metrics_svg import validate_svg_file
@@ -32,6 +32,36 @@ SPOTIFY_RECENT_TRACKS_URL: Final[str] = (
     "https://api.spotify.com/v1/me/player/recently-played?limit=3"
 )
 X_API_BASE: Final[str] = "https://api.x.com/2"
+
+
+def _is_json_object(value: object) -> TypeGuard[dict[str, Any]]:
+    """Return whether *value* is a JSON object with string keys."""
+
+    return isinstance(value, dict) and all(isinstance(key, str) for key in value)
+
+
+def _require_json_object(value: object, *, context: str) -> dict[str, Any]:
+    """Narrow an untrusted decoded value to a JSON object or fail closed."""
+
+    if not _is_json_object(value):
+        raise RuntimeError(f"{context} must be a JSON object")
+    return value
+
+
+def _require_json_array(value: object, *, context: str) -> list[Any]:
+    """Narrow an untrusted decoded value to a JSON array or fail closed."""
+
+    if not isinstance(value, list):
+        raise RuntimeError(f"{context} must be a JSON array")
+    return value
+
+
+def _optional_json_object(value: object, *, context: str) -> dict[str, Any]:
+    """Return an absent optional object as empty, rejecting wrong shapes."""
+
+    if value is None:
+        return {}
+    return _require_json_object(value, context=context)
 
 
 @dataclass(frozen=True)
@@ -445,21 +475,38 @@ def _render_habits_card(metrics: dict[str, Any]) -> SvgBlock:
 
 def _summarize_github_event(event: dict[str, Any]) -> tuple[str, str] | None:
     event_type = str(event.get("type") or "")
-    repo = str((event.get("repo") or {}).get("name") or "").strip()
+    repo_payload = _optional_json_object(
+        event.get("repo"),
+        context="GitHub event repo",
+    )
+    repo = str(repo_payload.get("name") or "").strip()
     created_at = str(event.get("created_at") or "")
-    payload = event.get("payload") if isinstance(event.get("payload"), dict) else {}
+    payload = _optional_json_object(
+        event.get("payload"),
+        context=f"GitHub {event_type or 'unknown'} payload",
+    )
 
     if event_type == "PushEvent":
-        size = int(payload.get("size") or len(payload.get("commits") or []) or 1)
+        commits = payload.get("commits")
+        commit_count = (
+            len(
+                _require_json_array(
+                    commits,
+                    context="GitHub PushEvent commits",
+                )
+            )
+            if commits is not None
+            else 0
+        )
+        size = int(payload.get("size") or commit_count or 1)
         noun = "commit" if size == 1 else "commits"
         return f"Pushed {size} {noun} to {repo}", created_at
     if event_type == "WatchEvent":
         return f"Starred {repo}", created_at
     if event_type == "PullRequestEvent":
-        pr = (
-            payload.get("pull_request")
-            if isinstance(payload.get("pull_request"), dict)
-            else {}
+        pr = _optional_json_object(
+            payload.get("pull_request"),
+            context="GitHub PullRequestEvent pull_request",
         )
         if pr.get("merged_at"):
             return f"Merged PR in {repo}", created_at
@@ -498,8 +545,13 @@ def _fetch_recent_activity(
             exc,
         )
         return []
+    decoded_events = _require_json_array(data, context="GitHub events response")
     events: list[dict[str, str]] = []
-    for item in data if isinstance(data, list) else []:
+    for index, raw_item in enumerate(decoded_events):
+        item = _require_json_object(
+            raw_item,
+            context=f"GitHub event {index}",
+        )
         summarized = _summarize_github_event(item)
         if summarized is None:
             continue
@@ -546,14 +598,17 @@ def _spotify_access_token(
             "refresh_token": refresh_token,
         }
     ).encode("utf-8")
-    payload = _request_json(
-        SPOTIFY_TOKEN_URL,
-        headers={
-            "Authorization": f"Basic {auth}",
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        method="POST",
-        data=body,
+    payload = _require_json_object(
+        _request_json(
+            SPOTIFY_TOKEN_URL,
+            headers={
+                "Authorization": f"Basic {auth}",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method="POST",
+            data=body,
+        ),
+        context="Spotify token response",
     )
     token = str(payload.get("access_token") or "").strip()
     if not token:
@@ -567,19 +622,43 @@ def _fetch_recent_tracks(
     refresh_token: str,
 ) -> list[dict[str, str]]:
     access_token = _spotify_access_token(client_id, client_secret, refresh_token)
-    payload = _request_json(
-        SPOTIFY_RECENT_TRACKS_URL,
-        headers={"Authorization": f"Bearer {access_token}"},
+    payload = _require_json_object(
+        _request_json(
+            SPOTIFY_RECENT_TRACKS_URL,
+            headers={"Authorization": f"Bearer {access_token}"},
+        ),
+        context="Spotify recently played response",
+    )
+    items = _require_json_array(
+        payload.get("items"),
+        context="Spotify recently played items",
     )
     tracks: list[dict[str, str]] = []
-    for item in payload.get("items", []) if isinstance(payload, dict) else []:
-        track = item.get("track") if isinstance(item.get("track"), dict) else {}
-        artists = track.get("artists") if isinstance(track.get("artists"), list) else []
-        artist_names = ", ".join(
-            str(artist.get("name") or "").strip()
-            for artist in artists
-            if isinstance(artist, dict) and str(artist.get("name") or "").strip()
+    for item_index, raw_item in enumerate(items):
+        item = _require_json_object(
+            raw_item,
+            context=f"Spotify recently played item {item_index}",
         )
+        track = _require_json_object(
+            item.get("track"),
+            context=f"Spotify recently played item {item_index} track",
+        )
+        artists = _require_json_array(
+            track.get("artists"),
+            context=f"Spotify recently played item {item_index} artists",
+        )
+        artist_names_list: list[str] = []
+        for artist_index, raw_artist in enumerate(artists):
+            artist = _require_json_object(
+                raw_artist,
+                context=(
+                    f"Spotify recently played item {item_index} artist {artist_index}"
+                ),
+            )
+            artist_name = str(artist.get("name") or "").strip()
+            if artist_name:
+                artist_names_list.append(artist_name)
+        artist_names = ", ".join(artist_names_list)
         tracks.append(
             {
                 "name": str(track.get("name") or "").strip(),
@@ -612,11 +691,17 @@ def _render_music_card(tracks: list[dict[str, str]]) -> SvgBlock:
 def _fetch_authenticated_x_user(
     credentials: XOAuth1Credentials,
 ) -> dict[str, str]:
-    payload = _x_request_json(
-        f"{X_API_BASE}/users/me?user.fields=username,name",
-        credentials,
+    payload = _require_json_object(
+        _x_request_json(
+            f"{X_API_BASE}/users/me?user.fields=username,name",
+            credentials,
+        ),
+        context="X authenticated user response",
     )
-    user = payload.get("data") if isinstance(payload, dict) else {}
+    user = _require_json_object(
+        payload.get("data"),
+        context="X authenticated user data",
+    )
     user_id = str(user.get("id") or "").strip()
     username = str(user.get("username") or "").strip()
     if not user_id or not username:
@@ -641,16 +726,28 @@ def _fetch_latest_posts(
             "tweet.fields": "created_at,public_metrics,text",
         }
     )
-    payload = _x_request_json(
-        f"{X_API_BASE}/users/{user['id']}/tweets?{params}",
-        credentials,
+    payload = _require_json_object(
+        _x_request_json(
+            f"{X_API_BASE}/users/{user['id']}/tweets?{params}",
+            credentials,
+        ),
+        context="X posts response",
     )
     posts: list[dict[str, str]] = []
-    for item in payload.get("data", []) if isinstance(payload, dict) else []:
-        metrics = (
-            item.get("public_metrics")
-            if isinstance(item.get("public_metrics"), dict)
-            else {}
+    raw_posts = payload.get("data")
+    decoded_posts = (
+        _require_json_array(raw_posts, context="X posts data")
+        if raw_posts is not None
+        else []
+    )
+    for item_index, raw_item in enumerate(decoded_posts):
+        item = _require_json_object(
+            raw_item,
+            context=f"X post {item_index}",
+        )
+        metrics = _optional_json_object(
+            item.get("public_metrics"),
+            context=f"X post {item_index} public_metrics",
         )
         posts.append(
             {

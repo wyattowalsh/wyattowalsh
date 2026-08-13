@@ -25,7 +25,7 @@ Key improvements:
 
 from pathlib import Path
 
-import segno  # type: ignore
+import segno
 
 # Import VCardDataModel from config.py
 from .config import VCardDataModel

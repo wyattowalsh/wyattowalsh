@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,8 +16,8 @@ from scripts import generative
 # ---------------------------------------------------------------------------
 
 
-def _community_metrics(**overrides: object) -> dict:
-    base = {
+def _community_metrics(**overrides: object) -> dict[str, object]:
+    base: dict[str, object] = {
         "stars": 12,
         "forks": 3,
         "watchers": 5,
@@ -29,8 +30,8 @@ def _community_metrics(**overrides: object) -> dict:
     return base
 
 
-def _activity_metrics(**overrides: object) -> dict:
-    base = {
+def _activity_metrics(**overrides: object) -> dict[str, object]:
+    base: dict[str, object] = {
         "public_repos": 20,
         "followers": 40,
         "orgs_count": 2,
@@ -307,4 +308,5 @@ class TestGenerativeMain:
         generative.main()
         assert captured["dark_mode"] is True
         assert captured["output_path"] == out
-        assert captured["metrics"]["stars"] == 12
+        metrics = cast(dict[str, object], captured["metrics"])
+        assert metrics["stars"] == 12
