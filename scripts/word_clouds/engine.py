@@ -6,11 +6,16 @@ import math
 import random
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 
 from ..utils import get_logger
-from .colors import COLOR_FUNCS, primary_color_func
+from .colors import PaletteTokenization, resolve_color_func
 from .core import FONT_STACK, BBox, PlacedWord
-from .readability import coerce_layout_readability_policy
+from .readability import (
+    LayoutReadabilityPolicy,
+    LayoutReadabilitySettings,
+    coerce_layout_readability_policy,
+)
 
 logger = get_logger(module=__name__)
 
@@ -28,13 +33,26 @@ class SvgWordCloudEngine(ABC):
         padding: float = 2.0,
         min_font_size: float = 7.0,
         max_font_size: float = 72.0,
-        layout_readability: object | None = None,
+        layout_readability: LayoutReadabilityPolicy
+        | LayoutReadabilitySettings
+        | dict[str, object]
+        | None = None,
+        palette_tokenization: PaletteTokenization = "coarse",
+        color_palette_override: Sequence[str] | None = None,
     ) -> None:
         self.width = width
         self.height = height
         self.font_family = font_family
-        self.color_func = COLOR_FUNCS.get(color_func_name, primary_color_func)
+        self.color_func = resolve_color_func(
+            color_func_name,
+            tokenization=palette_tokenization,
+            palette_override=color_palette_override,
+        )
         self.color_func_name = color_func_name
+        self.palette_tokenization = palette_tokenization
+        self.color_palette_override = (
+            tuple(color_palette_override) if color_palette_override else None
+        )
         self.seed = seed
         self.padding = padding
         self.min_font_size = min_font_size

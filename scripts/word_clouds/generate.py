@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+import xml.etree.ElementTree as ET
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Literal, cast
@@ -22,9 +23,10 @@ from typing import Any, Literal, cast
 import markdown
 from bs4 import BeautifulSoup
 from bs4.element import Tag
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..utils import get_logger
+from .colors import COLOR_FUNCS, PaletteTokenization, normalize_color_func_name
 from .readability import LayoutReadabilitySettings
 
 logger = get_logger(module=__name__)
@@ -161,6 +163,7 @@ def _generate_svg(
     output_path: str | Path,
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
+    style_variant: Literal["default", "topic", "language"] = "default",
     **renderer_kwargs,
 ) -> None:
     """Generate an SVG word cloud using one of the SVG-native renderers."""
@@ -178,6 +181,24 @@ def _generate_svg(
     from ..svg_optimize import optimize_with_svgo
 
     optimize_with_svgo(out)
+    if style_variant != "default":
+        _set_svg_style_variant(out, style_variant)
+
+
+def _set_svg_style_variant(
+    output_path: Path,
+    style_variant: Literal["topic", "language"],
+) -> None:
+    """Attach a stable semantic identifier to an SVG root element."""
+
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
+    tree = ET.parse(output_path)
+    root = tree.getroot()
+    if root.tag.rsplit("}", 1)[-1] != "svg":
+        raise ValueError(f"Expected SVG root element in {output_path}")
+    root.set("id", f"wordcloud-{style_variant}")
+    root.set("data-style-variant", style_variant)
+    tree.write(output_path, encoding="unicode", xml_declaration=False)
 
 
 def _default_output_filename(source: str, renderer: str) -> str:
@@ -210,6 +231,9 @@ def generate_word_cloud(
     output_dir: str | Path | None = None,
     color_func_name: str | None = None,
     layout_readability: LayoutReadabilitySettings | dict[str, object] | None = None,
+    palette_tokenization: PaletteTokenization = "coarse",
+    color_palette_override: list[str] | None = None,
+    style_variant: Literal["default", "topic", "language"] = "default",
 ) -> Path:
     """Generate a word cloud for the given source and renderer.
 
@@ -218,7 +242,7 @@ def generate_word_cloud(
     color_func_name:
         Name of the OKLCH color palette to use (e.g. "sunset", "neon",
         "gradient").  When *None*, a sensible default is chosen based on
-        *source*: ``"sunset"`` for topics, ``"neon"`` for languages.
+        *source*: ``"ocean"`` for topics, ``"aurora"`` for languages.
 
     Returns the path to the generated file.
     """
@@ -226,10 +250,6 @@ def generate_word_cloud(
         output_dir = _ASSETS_DIR
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-
-    # Pick source-appropriate palette when caller doesn't specify
-    if color_func_name is None:
-        color_func_name = _SOURCE_COLOR_DEFAULTS.get(source, "gradient")
 
     # Resolve input file
     md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
@@ -243,6 +263,17 @@ def generate_word_cloud(
     out = output_dir / _default_output_filename(source, renderer)
 
     if renderer == "classic":
+        if (
+            style_variant != "default"
+            or color_palette_override is not None
+            or palette_tokenization != "coarse"
+            or color_func_name is not None
+            or layout_readability is not None
+        ):
+            raise ValueError(
+                "style, color, palette tokenization, and layout readability "
+                "controls require an SVG-native renderer"
+            )
         _generate_classic(
             frequencies,
             out,
@@ -251,6 +282,8 @@ def generate_word_cloud(
             max_words=max_words,
         )
     else:
+        if color_func_name is None:
+            color_func_name = _SOURCE_COLOR_DEFAULTS.get(source, "gradient")
         _generate_svg(
             renderer,
             frequencies,
@@ -259,6 +292,9 @@ def generate_word_cloud(
             height=height,
             color_func_name=color_func_name,
             layout_readability=layout_readability,
+            palette_tokenization=palette_tokenization,
+            color_palette_override=color_palette_override,
+            style_variant=style_variant,
         )
 
     return out
@@ -338,10 +374,42 @@ class WordCloudSettings(BaseModel):
     width: int = DEFAULT_WIDTH
     height: int = DEFAULT_HEIGHT
     max_words: int = DEFAULT_MAX_WORDS
-    output_dir: str = str(PROFILE_IMG_OUTPUT_DIR)
+    output_dir: str | Path = str(PROFILE_IMG_OUTPUT_DIR)
     layout_readability: LayoutReadabilitySettings = LayoutReadabilitySettings()
+    palette_tokenization: PaletteTokenization = "coarse"
+    style_variant: Literal["default", "topic", "language"] = "default"
+    custom_color_func_name: str | None = None
+    color_palette_override: list[str] | None = Field(default=None, min_length=1)
     max_solvers: int | None = None
     max_iter: int | None = None
+
+    @field_validator("custom_color_func_name")
+    @classmethod
+    def _validate_custom_color_func_name(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = normalize_color_func_name(value)
+        if normalized not in COLOR_FUNCS:
+            supported = ", ".join(sorted(COLOR_FUNCS))
+            raise ValueError(
+                f"Unknown color function {value!r}; choose one of: {supported}"
+            )
+        return value
+
+    @field_validator("color_palette_override")
+    @classmethod
+    def _validate_color_palette_override(
+        cls,
+        value: list[str] | None,
+    ) -> list[str] | None:
+        if value is None:
+            return None
+        invalid = [
+            color for color in value if not re.fullmatch(r"#[0-9a-fA-F]{6}", color)
+        ]
+        if invalid:
+            raise ValueError("color_palette_override entries must use #RRGGBB syntax")
+        return value
 
     @classmethod
     def from_yaml_model(
@@ -393,20 +461,40 @@ class WordCloudGenerator:
         frequencies: Mapping[str, int | float] | None = None,
         output_path: str | Path | None = None,
         source: str = "topics",
+        override_settings_dict: Mapping[str, object] | None = None,
         **kwargs,
     ) -> Path:
-        renderer = kwargs.get(
-            "renderer", getattr(self.settings, "renderer", DEFAULT_RENDERER)
+        override_data = dict(override_settings_dict or {})
+        output_filename_value = override_data.pop("output_filename", None)
+        if output_filename_value is not None and not isinstance(
+            output_filename_value, str
+        ):
+            raise TypeError("output_filename override must be a string")
+
+        active_settings = WordCloudSettings.model_validate(
+            {**self.settings.model_dump(), **override_data}
         )
-        width = getattr(self.settings, "width", DEFAULT_WIDTH)
-        height = getattr(self.settings, "height", DEFAULT_HEIGHT)
-        max_words = kwargs.get(
-            "max_words", getattr(self.settings, "max_words", DEFAULT_MAX_WORDS)
+        renderer_explicit = "renderer" in override_data or "renderer" in kwargs
+        color_func_explicit = (
+            "color_func_name" in kwargs
+            or active_settings.custom_color_func_name is not None
         )
-        color_func_name = kwargs.get("color_func_name")
+        layout_readability_explicit = (
+            "layout_readability" in kwargs or "layout_readability" in override_data
+        )
+        renderer = kwargs.get("renderer", active_settings.renderer)
+        width = active_settings.width
+        height = active_settings.height
+        max_words = kwargs.get("max_words", active_settings.max_words)
+        color_func_name = kwargs.get(
+            "color_func_name",
+            active_settings.custom_color_func_name,
+        )
+        if color_func_name is None:
+            color_func_name = _SOURCE_COLOR_DEFAULTS.get(source, "gradient")
         layout_readability = kwargs.get(
             "layout_readability",
-            getattr(self.settings, "layout_readability", None),
+            active_settings.layout_readability,
         )
 
         explicit_output = Path(output_path) if output_path is not None else None
@@ -414,12 +502,41 @@ class WordCloudGenerator:
             out_file = explicit_output
             out_dir = out_file.parent
         else:
-            out_dir = explicit_output or Path(self.settings.output_dir)
-            out_file = out_dir / _default_output_filename(source, renderer)
+            out_dir = explicit_output or Path(active_settings.output_dir)
+            if output_filename_value is None:
+                out_file = out_dir / _default_output_filename(source, renderer)
+            else:
+                requested_filename = Path(output_filename_value)
+                if requested_filename.name != output_filename_value:
+                    raise ValueError("output_filename override must be a bare filename")
+                out_file = out_dir / requested_filename
+
+        if out_file.suffix.lower() == ".svg" and renderer == "classic":
+            if renderer_explicit:
+                raise ValueError("The classic renderer cannot write SVG output")
+            renderer = "wordle"
+        elif out_file.suffix.lower() == ".png" and renderer != "classic":
+            if renderer_explicit:
+                raise ValueError("SVG-native renderers cannot write PNG output")
+            renderer = "classic"
+        elif out_file.suffix.lower() not in {".png", ".svg"}:
+            raise ValueError("Word-cloud output filename must end in .png or .svg")
+
+        if renderer == "classic" and (
+            active_settings.style_variant != "default"
+            or active_settings.color_palette_override is not None
+            or active_settings.palette_tokenization != "coarse"
+            or color_func_explicit
+            or layout_readability_explicit
+        ):
+            raise ValueError(
+                "style, color, palette tokenization, and layout readability "
+                "controls require an SVG-native renderer"
+            )
 
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        if frequencies:
+        if frequencies is not None:
             normalized_frequencies = _limit_frequencies(
                 _filter_others(frequencies),
                 max_words,
@@ -434,10 +551,10 @@ class WordCloudGenerator:
                 )
             else:
                 extra_kwargs = {}
-                if getattr(self.settings, "max_solvers", None) is not None:
-                    extra_kwargs["max_solvers"] = self.settings.max_solvers
-                if getattr(self.settings, "max_iter", None) is not None:
-                    extra_kwargs["max_iter"] = self.settings.max_iter
+                if active_settings.max_solvers is not None:
+                    extra_kwargs["max_solvers"] = active_settings.max_solvers
+                if active_settings.max_iter is not None:
+                    extra_kwargs["max_iter"] = active_settings.max_iter
                 for font_key in ("min_font_size", "max_font_size", "padding"):
                     if font_key in kwargs and kwargs[font_key] is not None:
                         extra_kwargs[font_key] = kwargs[font_key]
@@ -449,18 +566,35 @@ class WordCloudGenerator:
                     height=height,
                     color_func_name=color_func_name,
                     layout_readability=layout_readability,
+                    palette_tokenization=active_settings.palette_tokenization,
+                    color_palette_override=active_settings.color_palette_override,
+                    style_variant=active_settings.style_variant,
                     **extra_kwargs,
                 )
             return out_file
         else:
-            # Fall back to reading from markdown
-            return generate_word_cloud(
+            md_file = _PROJECT_ROOT / ".github" / "assets" / f"{source}.md"
+            if not md_file.exists():
+                md_file = _PROJECT_ROOT / f"{source}.md"
+            parsed_frequencies = _limit_frequencies(
+                _filter_others(parse_frequencies_from_md(md_file)),
+                max_words,
+            )
+            fallback_kwargs: dict[str, object] = {}
+            if renderer != "classic":
+                fallback_kwargs = {
+                    "color_func_name": color_func_name,
+                    "layout_readability": layout_readability,
+                }
+            return self.generate(
+                frequencies=parsed_frequencies,
+                output_path=out_file,
                 source=source,
-                renderer=renderer,
-                max_words=max_words,
-                output_dir=str(out_dir),
-                color_func_name=color_func_name,
-                layout_readability=layout_readability,
+                override_settings_dict={
+                    **override_data,
+                    "renderer": renderer,
+                },
+                **fallback_kwargs,
             )
 
 

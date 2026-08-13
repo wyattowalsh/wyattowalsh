@@ -4,7 +4,17 @@ from __future__ import annotations
 
 import colorsys
 import math
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
+from typing import Literal
+
+PaletteTokenization = Literal["none", "coarse", "strong"]
+WordColorFunc = Callable[[int, int], str]
+
+_TOKEN_COUNTS: dict[PaletteTokenization, int | None] = {
+    "none": None,
+    "coarse": 8,
+    "strong": 4,
+}
 
 _DEFAULT_HUE = 210  # blue
 
@@ -101,7 +111,7 @@ def neon_on_dark_func(index: int, total: int) -> str:
 
     Designed for dark backgrounds -- high chroma, high lightness.
     """
-    neon_anchors = [
+    neon_anchors: list[tuple[float, float, float]] = [
         (250, 0.28, 0.72),  # electric blue
         (330, 0.30, 0.70),  # hot pink
         (155, 0.28, 0.78),  # cyber green
@@ -118,7 +128,7 @@ def sunset_color_func(index: int, total: int) -> str:
     Rich, warm palette inspired by golden-hour sky colors with smooth
     five-stop interpolation for nuance.
     """
-    sunset_anchors = [
+    sunset_anchors: list[tuple[float, float, float]] = [
         (310, 0.22, 0.48),  # deep plum
         (340, 0.26, 0.58),  # magenta rose
         (15, 0.24, 0.65),  # warm coral
@@ -147,7 +157,7 @@ def ocean_color_func(index: int, total: int) -> str:
 
     Cool-toned, sophisticated palette with high contrast against white.
     """
-    ocean_anchors = [
+    ocean_anchors: list[tuple[float, float, float]] = [
         (255, 0.18, 0.38),  # deep navy
         (240, 0.22, 0.48),  # sapphire
         (220, 0.20, 0.56),  # cerulean
@@ -164,7 +174,7 @@ def flora_color_func(index: int, total: int) -> str:
 
     Earthy, natural tones with enough contrast for readability.
     """
-    flora_anchors = [
+    flora_anchors: list[tuple[float, float, float]] = [
         (155, 0.14, 0.52),  # sage
         (145, 0.20, 0.56),  # emerald
         (120, 0.22, 0.62),  # chartreuse
@@ -181,7 +191,7 @@ def aurora_color_func(index: int, total: int) -> str:
 
     Ethereal, luminous colors inspired by aurora borealis.
     """
-    aurora_anchors = [
+    aurora_anchors: list[tuple[float, float, float]] = [
         (290, 0.22, 0.55),  # violet
         (200, 0.20, 0.65),  # cyan
         (150, 0.22, 0.60),  # green
@@ -198,7 +208,7 @@ def ember_color_func(index: int, total: int) -> str:
 
     Rich, warm tones with depth, suitable for topics/skills emphasis.
     """
-    ember_anchors = [
+    ember_anchors: list[tuple[float, float, float]] = [
         (15, 0.24, 0.48),  # crimson
         (30, 0.22, 0.56),  # burnt orange
         (45, 0.20, 0.62),  # copper
@@ -224,6 +234,91 @@ COLOR_FUNCS = {
     "aurora": aurora_color_func,
     "ember": ember_color_func,
 }
+
+
+def normalize_color_func_name(name: str) -> str:
+    """Return the registry key for a public palette or function name.
+
+    Historical callers use names such as ``primary_color_func`` while the
+    renderer registry uses the shorter ``primary`` key.  Normalizing at the
+    boundary keeps both spellings deterministic without duplicating entries in
+    :data:`COLOR_FUNCS`.
+    """
+
+    suffix = "_color_func"
+    return name[: -len(suffix)] if name.endswith(suffix) else name
+
+
+def _tokenized_index(index: int, total: int, token_count: int) -> tuple[int, int]:
+    """Map a word index onto a bounded, evenly-spaced palette token set."""
+
+    effective_count = max(1, min(token_count, total))
+    if effective_count == 1 or total <= 1:
+        return 0, effective_count
+    ratio = max(0.0, min(1.0, index / (total - 1)))
+    return round(ratio * (effective_count - 1)), effective_count
+
+
+def _interpolate_hex_palette(palette: Sequence[str], index: int, total: int) -> str:
+    """Interpolate an RGB color between validated ``#RRGGBB`` anchors."""
+
+    if len(palette) == 1 or total <= 1:
+        return palette[0]
+
+    ratio = max(0.0, min(1.0, index / (total - 1)))
+    position = ratio * (len(palette) - 1)
+    lower = int(position)
+    upper = min(lower + 1, len(palette) - 1)
+    fraction = position - lower
+    lower_rgb = tuple(
+        int(palette[lower][offset : offset + 2], 16) for offset in (1, 3, 5)
+    )
+    upper_rgb = tuple(
+        int(palette[upper][offset : offset + 2], 16) for offset in (1, 3, 5)
+    )
+    channels = tuple(
+        round(start + fraction * (end - start))
+        for start, end in zip(lower_rgb, upper_rgb, strict=True)
+    )
+    return f"#{channels[0]:02x}{channels[1]:02x}{channels[2]:02x}"
+
+
+def resolve_color_func(
+    name: str,
+    *,
+    tokenization: PaletteTokenization = "coarse",
+    palette_override: Sequence[str] | None = None,
+) -> WordColorFunc:
+    """Resolve a deterministic renderer color function.
+
+    ``none`` retains the palette's continuous progression. ``coarse`` samples
+    at most eight recurring color tokens, while ``strong`` samples at most
+    four.  An explicit palette is treated as interpolation anchors for
+    ``none`` and as the authoritative token set for the discrete modes.
+    """
+
+    token_count = _TOKEN_COUNTS[tokenization]
+    if palette_override:
+        palette = tuple(palette_override)
+
+        def explicit_palette(index: int, total: int) -> str:
+            if token_count is None:
+                return _interpolate_hex_palette(palette, index, total)
+            token_index, effective_count = _tokenized_index(index, total, token_count)
+            return _interpolate_hex_palette(palette, token_index, effective_count)
+
+        return explicit_palette
+
+    base_func = COLOR_FUNCS.get(normalize_color_func_name(name), primary_color_func)
+    if token_count is None:
+        return base_func
+
+    def tokenized_palette(index: int, total: int) -> str:
+        token_index, effective_count = _tokenized_index(index, total, token_count)
+        return base_func(token_index, effective_count)
+
+    return tokenized_palette
+
 
 TYPOGRAPHIC_PALETTE = [
     "#2563EB",  # royal blue
