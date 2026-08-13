@@ -298,3 +298,29 @@ def test_main_validate_returns_expected_exit_codes(tmp_path: Path) -> None:
 
     assert main(["validate", str(valid_asset)]) == 0
     assert main(["validate", str(invalid_asset)]) == 1
+
+
+def test_main_recover_logs_accepted_fallback_without_warning(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    current_asset = tmp_path / "metrics.svg"
+    previous_asset = tmp_path / "metrics.previous.svg"
+    current_asset.write_text(_svg_with_text("Bad credentials"), encoding="utf-8")
+    previous_asset.write_text(VALID_SVG, encoding="utf-8")
+
+    with caplog.at_level("INFO"):
+        assert (
+            main(
+                [
+                    "recover",
+                    str(current_asset),
+                    "--previous",
+                    str(previous_asset),
+                ]
+            )
+            == 0
+        )
+
+    assert current_asset.read_text(encoding="utf-8") == VALID_SVG
+    assert not [record for record in caplog.records if record.levelname == "WARNING"]
