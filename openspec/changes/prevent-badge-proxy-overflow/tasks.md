@@ -16,5 +16,5 @@
 
 ## 3. Publication Assurance
 
-- [ ] 3.1 After merging upstream generated content, regenerate `README.md` and prove the full skills marker zone matches the current renderer
+- [x] 3.1 After merging upstream generated content, regenerate `README.md` and prove the full skills marker zone matches the current renderer
 - [ ] 3.2 After push, audit the rendered GitHub profile and Camo requests and confirm that every badge loads without a broken request or missing intended logo
