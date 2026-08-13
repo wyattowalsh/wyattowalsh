@@ -269,10 +269,9 @@ categories:
             logo_style: sourced-brand
             color: F9A03C
           - name: Tableau
-            slug: tableau
             logo_path: .github/assets/skill-icons/tableau.svg
             logo_source: iconify:logos
-            logo_source_url: https://icon-sets.iconify.design/logos/tableau/
+            logo_source_url: https://icon-sets.iconify.design/logos/tableau-icon/
             logo_license: CC0-1.0
             logo_style: sourced-brand
             color: 1F457E
@@ -422,10 +421,9 @@ categories:
   - name: Cloud Technologies
     skills:
       - name: Amazon AWS
-        slug: amazonwebservices
         logo_path: .github/assets/skill-icons/aws.svg
-        logo_source: iconify:devicon
-        logo_source_url: https://icon-sets.iconify.design/devicon/amazonwebservices/
+        logo_source: iconify:tabler
+        logo_source_url: https://icon-sets.iconify.design/tabler/brand-aws/
         logo_license: MIT
         logo_style: sourced-brand
         color: 232F3E
@@ -557,10 +555,9 @@ categories:
         slug: hypothesis
         color: BD1C2B
       - name: Visual Studio Code
-        slug: visualstudiocode
         logo_path: .github/assets/skill-icons/vscode.svg
-        logo_source: iconify:devicon
-        logo_source_url: https://icon-sets.iconify.design/devicon/vscode/
+        logo_source: iconify:devicon-plain
+        logo_source_url: https://icon-sets.iconify.design/devicon-plain/vscode/
         logo_license: MIT
         logo_style: sourced-brand
         color: 007ACC
@@ -783,10 +780,9 @@ categories:
         logo_style: sourced-brand
         color: 6E9F18
       - name: Playwright
-        slug: playwright
         logo_path: .github/assets/skill-icons/playwright.svg
-        logo_source: iconify:devicon
-        logo_source_url: https://icon-sets.iconify.design/devicon/playwright/
+        logo_source: iconify:devicon-plain
+        logo_source_url: https://icon-sets.iconify.design/devicon-plain/playwright/
         logo_license: MIT
         logo_style: sourced-brand
         color: 2EAD33
@@ -852,10 +848,9 @@ categories:
         logo_style: sourced-brand
         color: F24E1E
       - name: Canva
-        slug: canva
         logo_path: .github/assets/skill-icons/canva.svg
-        logo_source: iconify:devicon
-        logo_source_url: https://icon-sets.iconify.design/devicon/canva/
+        logo_source: iconify:bxl
+        logo_source_url: https://icon-sets.iconify.design/bxl/canva/
         logo_license: MIT
         logo_style: sourced-brand
         color: 00C4CC

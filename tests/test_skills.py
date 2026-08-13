@@ -15,17 +15,51 @@ from scripts.config import (
     SkillSubcategory,
     load_skills,
 )
-from scripts.skills import SkillsBadgeGenerator
+from scripts.skills import MAX_SHIELDS_BADGE_URL_LENGTH, SkillsBadgeGenerator
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SIMPLE_ICON_SLUGS_USED = (
     REPO_ROOT / "tests" / "fixtures" / "simple_icons_slugs_used.txt"
 )
-MAX_LOCAL_LOGO_BYTES = 4096
-OVERSIZED_LOCAL_LOGO_ALLOWLIST = {
-    # Tableau's compact recognizable source mark is still larger than the
-    # target, but it keeps the badge materially better than the monochrome slug.
-    "Tableau",
+EXPECTED_LOCAL_LOGO_SLUG_FALLBACKS = {
+    "D3.js": "d3",
+    "Jest": "jest",
+    "Obsidian": "obsidian",
+    "Prettier": "prettier",
+    "Sass": "sass",
+}
+EXPECTED_COMPACT_LOCAL_LOGO_EMBEDS = {
+    "Amazon AWS": (
+        "iconify:tabler",
+        "https://icon-sets.iconify.design/tabler/brand-aws/",
+        "MIT",
+    ),
+    "Canva": (
+        "iconify:bxl",
+        "https://icon-sets.iconify.design/bxl/canva/",
+        "MIT",
+    ),
+    "Playwright": (
+        "iconify:devicon-plain",
+        "https://icon-sets.iconify.design/devicon-plain/playwright/",
+        "MIT",
+    ),
+    "Tableau": (
+        "iconify:logos",
+        "https://icon-sets.iconify.design/logos/tableau-icon/",
+        "CC0-1.0",
+    ),
+    "Visual Studio Code": (
+        "iconify:devicon-plain",
+        "https://icon-sets.iconify.design/devicon-plain/vscode/",
+        "MIT",
+    ),
+}
+EXPECTED_MONOCHROME_LOCAL_LOGO_PAINT = {
+    "Amazon AWS": 'stroke="white"',
+    "Canva": 'fill="white"',
+    "Playwright": 'fill="white"',
+    "Visual Studio Code": 'fill="white"',
 }
 
 
@@ -43,6 +77,15 @@ def load_known_simple_icon_slugs() -> set[str]:
         for line in SIMPLE_ICON_SLUGS_USED.read_text(encoding="utf-8").splitlines()
         if line.strip()
     }
+
+
+def load_known_simple_icon_slug_lines() -> list[str]:
+    """Load non-empty fixture lines without discarding order or duplicates."""
+    return [
+        line.strip()
+        for line in SIMPLE_ICON_SLUGS_USED.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -211,79 +254,148 @@ class TestBadgeUrl:
         url = gen._build_badge_url(skill)
         assert "style=flat-square" in url
 
-    def test_logo_path_base64(self):
-        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_base64.svg")
-        svg_path = REPO_ROOT / rel
+    def test_logo_path_base64(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/logo.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
         svg_content = (
             b'<svg xmlns="http://www.w3.org/2000/svg">'
             b'<circle r="5" fill="white"/>'
             b"</svg>"
         )
         svg_path.write_bytes(svg_content)
-        try:
-            skill = SkillEntry(
-                name="TestSkill",
-                logo_path=rel.as_posix(),
-                color="FF0000",
-            )
-            url = self.gen._build_badge_url(skill)
-            expected_b64 = quote(base64.b64encode(svg_content).decode(), safe="")
-            assert f"logo=data:image/svg%2Bxml;base64,{expected_b64}" in url
-            assert "logo=TestSkill" not in url
-        finally:
-            svg_path.unlink(missing_ok=True)
 
-    def test_logo_path_base64_urlencodes_plus(self):
+        skill = SkillEntry(
+            name="TestSkill",
+            logo_path=rel.as_posix(),
+            color="FF0000",
+        )
+        url = self.gen._build_badge_url(skill)
+        expected_b64 = quote(base64.b64encode(svg_content).decode(), safe="")
+        assert f"logo=data:image/svg%2Bxml;base64,{expected_b64}" in url
+        assert "logo=TestSkill" not in url
+
+    def test_logo_path_base64_urlencodes_plus(self, tmp_path, monkeypatch):
         """Base64 +/= chars must be percent-encoded for URL safety."""
-        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_plus.svg")
-        svg_path = REPO_ROOT / rel
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/plus.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
         # Content that produces + in base64 (0xfb byte → +)
         svg_content = b"\xfb\xef\xbe"
         svg_path.write_bytes(svg_content)
-        try:
-            skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
-            url = self.gen._build_badge_url(skill)
-            b64_section = url.split("base64,")[1].split("&")[0]
-            assert "+" not in b64_section, "raw + in URL would be decoded as space"
-            assert "%2B" in b64_section or "%2b" in b64_section
-        finally:
-            svg_path.unlink(missing_ok=True)
 
-    def test_logo_path_base64_urlencodes_slash_and_equals(self):
+        skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
+        url = self.gen._build_badge_url(skill)
+        b64_section = url.split("base64,")[1].split("&")[0]
+        assert "+" not in b64_section, "raw + in URL would be decoded as space"
+        assert "%2B" in b64_section or "%2b" in b64_section
+
+    def test_logo_path_base64_urlencodes_slash_and_equals(self, tmp_path, monkeypatch):
         """Base64 / and = chars must be percent-encoded for URL safety."""
-        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_slash.svg")
-        svg_path = REPO_ROOT / rel
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/slash.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
         # b'\xff' produces /w== in base64 (contains both / and =)
         svg_path.write_bytes(b"\xff")
-        try:
-            skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
-            url = self.gen._build_badge_url(skill)
-            b64_section = url.split("base64,")[1].split("&")[0]
-            assert "/" not in b64_section, "raw / would break URL path"
-            assert "=" not in b64_section, "raw = would break query parsing"
-            assert "%2F" in b64_section
-            assert "%3D" in b64_section
-        finally:
-            svg_path.unlink(missing_ok=True)
 
-    def test_logo_path_priority_over_slug(self):
-        rel = Path(".github/assets/skill-icons/_pytest_logo_jail_priority.svg")
-        svg_path = REPO_ROOT / rel
+        skill = SkillEntry(name="Test", logo_path=rel.as_posix(), color="000000")
+        url = self.gen._build_badge_url(skill)
+        b64_section = url.split("base64,")[1].split("&")[0]
+        assert "/" not in b64_section, "raw / would break URL path"
+        assert "=" not in b64_section, "raw = would break query parsing"
+        assert "%2F" in b64_section
+        assert "%3D" in b64_section
+
+    def test_logo_path_priority_over_slug(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/priority.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
         svg_path.write_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>')
-        try:
-            skill = SkillEntry(
-                name="PowerShell",
-                slug="powershell",
-                logo_path=rel.as_posix(),
-                color="5391FE",
-            )
-            url = self.gen._build_badge_url(skill)
-            assert "logo=data:image/svg%2Bxml;base64," in url
-            assert "logo=powershell" not in url
-        finally:
-            svg_path.unlink(missing_ok=True)
 
-    def test_logo_path_fallback_to_slug_when_missing(self, captured_warnings):
+        skill = SkillEntry(
+            name="PowerShell",
+            slug="powershell",
+            logo_path=rel.as_posix(),
+            color="5391FE",
+        )
+        url = self.gen._build_badge_url(skill)
+        assert "logo=data:image/svg%2Bxml;base64," in url
+        assert "logo=powershell" not in url
+
+    def test_oversized_logo_path_falls_back_to_slug(
+        self, tmp_path, monkeypatch, mocker
+    ):
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        info = mocker.patch("scripts.skills.logger.info")
+        warning = mocker.patch("scripts.skills.logger.warning")
+        rel = Path("assets/oversized.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
+        svg_path.write_bytes(b"x" * MAX_SHIELDS_BADGE_URL_LENGTH)
+
+        skill = SkillEntry(
+            name="Oversized",
+            slug="python",
+            logo_path=rel.as_posix(),
+            color="3776AB",
+        )
+        url = self.gen._build_badge_url(skill)
+
+        assert "logo=python" in url
+        assert "logo=data:image" not in url
+        assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
+        info.assert_called_once()
+        warning.assert_not_called()
+
+    def test_oversized_logo_path_without_slug_uses_no_logo(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/oversized.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
+        svg_path.write_bytes(b"x" * MAX_SHIELDS_BADGE_URL_LENGTH)
+
+        skill = SkillEntry(
+            name="Oversized",
+            logo_path=rel.as_posix(),
+            color="3776AB",
+        )
+        url = self.gen._build_badge_url(skill)
+
+        assert url == (
+            "https://img.shields.io/badge/Oversized-3776AB?style=for-the-badge"
+        )
+        assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
+
+    def test_encoded_url_length_controls_custom_logo_fallback(
+        self, tmp_path, monkeypatch
+    ):
+        monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
+        rel = Path("assets/encoded.svg")
+        svg_path = tmp_path / rel
+        svg_path.parent.mkdir()
+        # 0xff encodes as /w==, so URL quoting expands every base64 character.
+        svg_path.write_bytes(b"\xff" * 1_000)
+
+        skill = SkillEntry(
+            name="Encoded",
+            slug="python",
+            logo_path=rel.as_posix(),
+            color="3776AB",
+        )
+        encoded = quote(base64.b64encode(svg_path.read_bytes()).decode(), safe="")
+        assert len(encoded) > len(svg_path.read_bytes())
+
+        url = self.gen._build_badge_url(skill)
+        assert "logo=python" in url
+        assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
+
+    def test_logo_path_fallback_to_slug_when_missing(self, mocker):
+        info = mocker.patch("scripts.skills.logger.info")
+        warning = mocker.patch("scripts.skills.logger.warning")
         skill = SkillEntry(
             name="Missing",
             slug="fallback",
@@ -293,9 +405,8 @@ class TestBadgeUrl:
         url = self.gen._build_badge_url(skill)
         assert "logo=fallback" in url
         assert "base64" not in url
-        assert any("nonexistent/path.svg" in w for w in captured_warnings), (
-            f"Expected warning about missing logo_path, got: {captured_warnings}"
-        )
+        info.assert_called_once()
+        warning.assert_not_called()
 
     def test_logo_path_missing_no_slug(self):
         skill = SkillEntry(
@@ -304,7 +415,37 @@ class TestBadgeUrl:
             color="000000",
         )
         url = self.gen._build_badge_url(skill)
+        assert url == "https://img.shields.io/badge/NoLogo-000000?style=for-the-badge"
+
+    def test_whitespace_slug_uses_complete_no_logo_badge(self):
+        skill = SkillEntry(name="NoLogo", slug="   ", color="000000")
+
+        url = self.gen._build_badge_url(skill)
+
+        assert url == "https://img.shields.io/badge/NoLogo-000000?style=for-the-badge"
+
+    def test_oversized_slug_uses_complete_no_logo_badge(self, mocker):
+        info = mocker.patch("scripts.skills.logger.info")
+        prefix = "https://img.shields.io/badge/"
+        suffix = "-000000?style=for-the-badge"
+        name = "x" * (MAX_SHIELDS_BADGE_URL_LENGTH - len(prefix) - len(suffix))
+        skill = SkillEntry(name=name, slug="python", color="000000")
+
+        url = self.gen._build_badge_url(skill)
+
+        assert url == f"{prefix}{name}{suffix}"
+        assert len(url) == MAX_SHIELDS_BADGE_URL_LENGTH
         assert "logo=" not in url
+        info.assert_called_once()
+
+    def test_base_badge_over_limit_fails_instead_of_truncating(self):
+        skill = SkillEntry(
+            name="x" * MAX_SHIELDS_BADGE_URL_LENGTH,
+            color="000000",
+        )
+
+        with pytest.raises(ValueError, match="exceeds 4000 characters"):
+            self.gen._build_badge_url(skill)
 
 
 # ---------------------------------------------------------------------------
@@ -443,14 +584,27 @@ class TestIntegration:
                     f"Missing icon for '{skill.name}': {skill.logo_path}"
                 )
 
-    def test_skills_yaml_every_badge_renders_a_logo(self, monkeypatch):
-        """Every published Tech Stack badge must include a rendered logo."""
+    def test_skills_yaml_badge_logo_outcomes_are_supported(self, monkeypatch):
+        """Slug-backed logos must be known; intentional no-logo badges are exact."""
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
         gen = SkillsBadgeGenerator(settings=settings)
+        known_slugs = load_known_simple_icon_slugs()
+        no_logo_badges: set[str] = set()
+
         for skill in iter_skills(settings):
             url = gen._build_badge_url(skill)
-            assert "logo=" in url, f"Badge has no logo: {skill.name}"
+            if "logo=data:image/svg%2Bxml;base64," in url:
+                continue
+            if "&logo=" in url:
+                assert skill.slug in known_slugs, (
+                    f"Unsupported rendered Simple Icons slug for '{skill.name}': "
+                    f"{skill.slug}"
+                )
+                continue
+            no_logo_badges.add(skill.name)
+
+        assert no_logo_badges == set()
 
     def test_skills_yaml_logo_paths_are_svg_with_provenance(self, monkeypatch):
         """Local SVGs need source metadata so bespoke icons stay auditable."""
@@ -467,20 +621,59 @@ class TestIntegration:
             )
             content = path.read_text(encoding="utf-8")
             assert "<svg" in content, f"Local logo is not SVG: {skill.logo_path}"
-            if skill.name not in OVERSIZED_LOCAL_LOGO_ALLOWLIST:
-                assert path.stat().st_size <= MAX_LOCAL_LOGO_BYTES, (
-                    f"Local logo is too large for a badge URL: {skill.name} "
-                    f"({path.stat().st_size} bytes)"
-                )
             assert skill.logo_source, f"Missing logo_source for '{skill.name}'"
             assert skill.logo_source_url, f"Missing logo_source_url for '{skill.name}'"
             assert skill.logo_license, f"Missing logo_license for '{skill.name}'"
             assert skill.logo_style, f"Missing logo_style for '{skill.name}'"
 
             url = gen._build_badge_url(skill)
-            assert "logo=data:image/svg%2Bxml;base64," in url
+            assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
+            if "logo=data:image/svg%2Bxml;base64," not in url:
+                if skill.slug:
+                    assert f"logo={quote(skill.slug, safe='')}" in url
+                else:
+                    assert "&logo=" not in url
+
+    def test_skills_yaml_local_logo_fallbacks_are_expected(self, monkeypatch):
+        """Only the audited overlong local logos may use slug fallbacks."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        known_slugs = load_known_simple_icon_slugs()
+        fallbacks: dict[str, str] = {}
+        no_logo_fallbacks: set[str] = set()
+        compact_embeds: set[str] = set()
+
+        for skill in iter_skills(settings):
+            if not skill.logo_path:
+                continue
+
+            url = gen._build_badge_url(skill)
+            if "logo=data:image/svg%2Bxml;base64," in url:
+                if skill.name in EXPECTED_COMPACT_LOCAL_LOGO_EMBEDS:
+                    expected_provenance = EXPECTED_COMPACT_LOCAL_LOGO_EMBEDS[skill.name]
+                    assert (
+                        skill.logo_source,
+                        skill.logo_source_url,
+                        skill.logo_license,
+                    ) == expected_provenance
+                    compact_embeds.add(skill.name)
+                continue
+
             if skill.slug:
-                assert f"logo={quote(skill.slug, safe='')}" not in url
+                assert skill.slug in known_slugs, (
+                    f"Unsupported local-logo fallback slug for '{skill.name}': "
+                    f"{skill.slug}"
+                )
+                assert f"logo={quote(skill.slug, safe='')}" in url
+                fallbacks[skill.name] = skill.slug
+            else:
+                assert "&logo=" not in url
+                no_logo_fallbacks.add(skill.name)
+
+        assert fallbacks == EXPECTED_LOCAL_LOGO_SLUG_FALLBACKS
+        assert no_logo_fallbacks == set()
+        assert compact_embeds == set(EXPECTED_COMPACT_LOCAL_LOGO_EMBEDS)
 
     def test_skills_yaml_local_svgs_are_safe_for_badges(self, monkeypatch):
         """Vendored badge SVGs must stay self-contained and inert."""
@@ -495,6 +688,10 @@ class TestIntegration:
             lowered = content.lower()
             assert "<script" not in lowered, (
                 f"Local logo must not include scripts: {skill.logo_path}"
+            )
+            assert "currentcolor" not in lowered, (
+                f"Local logo paint must not depend on inherited currentColor: "
+                f"{skill.logo_path}"
             )
             assert "javascript:" not in lowered, (
                 f"Local logo must not include javascript URLs: {skill.logo_path}"
@@ -511,14 +708,46 @@ class TestIntegration:
             assert "data:image/jpeg" not in lowered, (
                 f"Local logo must not embed raster JPEGs: {skill.logo_path}"
             )
+            expected_paint = EXPECTED_MONOCHROME_LOCAL_LOGO_PAINT.get(skill.name)
+            if expected_paint:
+                assert expected_paint in lowered, (
+                    f"Compact monochrome logo needs explicit high-contrast paint: "
+                    f"{skill.logo_path}"
+                )
+            if skill.name == "Tableau":
+                assert 'fill="#' in lowered, (
+                    "Compact Tableau logo must preserve explicit brand-color fills"
+                )
 
     def test_skills_yaml_simple_icon_slugs_are_known_good(self, monkeypatch):
         """Simple Icons slugs used directly must be audited, current slugs."""
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
         known_slugs = load_known_simple_icon_slugs()
+        gen = SkillsBadgeGenerator(settings=settings)
         for skill in iter_skills(settings):
-            if skill.slug and not skill.logo_path:
+            url = gen._build_badge_url(skill)
+            if "&logo=" in url and "logo=data:image/svg%2Bxml;base64," not in url:
+                assert skill.slug
                 assert skill.slug in known_slugs, (
                     f"Unknown Simple Icons slug for '{skill.name}': {skill.slug}"
                 )
+
+    def test_simple_icon_slug_fixture_is_sorted_and_unique(self):
+        """Keep the audited slug fixture deterministic and duplicate-free."""
+        slug_lines = load_known_simple_icon_slug_lines()
+
+        assert slug_lines == sorted(set(slug_lines))
+
+    def test_skills_yaml_badge_urls_fit_github_image_proxy(self, monkeypatch):
+        """Every published source URL must fit the GitHub/Camo-safe budget."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+
+        for skill in iter_skills(settings):
+            url = gen._build_badge_url(skill)
+            assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH, (
+                f"Badge URL exceeds {MAX_SHIELDS_BADGE_URL_LENGTH} characters: "
+                f"{skill.name} ({len(url)})"
+            )

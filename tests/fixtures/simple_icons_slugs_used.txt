@@ -3,6 +3,7 @@ autodesk
 boxysvg
 chakraui
 confluence
+d3
 dask
 flask
 framer
@@ -15,6 +16,7 @@ gurobi
 homebrew
 huggingface
 hypothesis
+jest
 jira
 kedro
 kubernetes
@@ -23,6 +25,7 @@ linux
 make
 mermaid
 notion
+obsidian
 openaigym
 opentelemetry
 overleaf
@@ -30,6 +33,7 @@ plotly
 postgresql
 precommit
 prefect
+prettier
 puppeteer
 pydantic
 radixui
@@ -37,6 +41,7 @@ raspberrypi
 replit
 ruby
 ruff
+sass
 scikitlearn
 scipy
 scrapy

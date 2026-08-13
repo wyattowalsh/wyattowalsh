@@ -22,6 +22,11 @@ logger = get_logger(module=__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# Keep generated Shields source URLs comfortably below the request sizes that
+# GitHub's image proxy rejects.  This is a public generation contract: callers
+# may use it when validating rendered badge URLs before publishing a README.
+MAX_SHIELDS_BADGE_URL_LENGTH = 4_000
+
 
 def _resolve_repo_logo_path(logo_path: str) -> Path:
     """Resolve a validated repo-relative logo_path under the repository root.
@@ -62,32 +67,71 @@ class SkillsBadgeGenerator:
         return readme_path
 
     def _build_badge_url(self, skill: SkillEntry) -> str:
-        """Construct a shields.io badge URL for a skill."""
+        """Construct a GitHub-proxy-safe shields.io badge URL for a skill.
+
+        Local SVG logos are preferred while their fully encoded source URL
+        fits :data:`MAX_SHIELDS_BADGE_URL_LENGTH`.  An oversized or unreadable
+        custom logo falls back to the configured Simple Icons slug, then to a
+        no-logo badge when no usable slug can fit.  Base badge URLs that cannot
+        satisfy the contract fail instead of being truncated.
+        """
         label = quote(skill.name.replace("-", "--"), safe="")
         color = skill.color.lstrip("#")
         logo_color = skill.logo_color or self.settings.logo_color
 
-        url = (
+        base_url = (
             f"https://img.shields.io/badge/{label}-{color}?style={self.settings.style}"
         )
+        if len(base_url) > MAX_SHIELDS_BADGE_URL_LENGTH:
+            raise ValueError(
+                f"Badge URL for '{skill.name}' exceeds "
+                f"{MAX_SHIELDS_BADGE_URL_LENGTH} characters without a logo"
+            )
+
         if skill.logo_path:
             try:
                 svg_path = _resolve_repo_logo_path(skill.logo_path)
                 svg_b64 = base64.b64encode(svg_path.read_bytes()).decode()
                 # safe='' ensures +, /, = in base64 are percent-encoded
-                url += f"&logo=data:image/svg%2Bxml;base64,{quote(svg_b64, safe='')}"
-            except (OSError, ValueError) as exc:
-                logger.warning(
-                    f"logo_path '{skill.logo_path}' could not be read "
-                    f"for '{skill.name}': {exc}"
+                custom_logo_url = (
+                    f"{base_url}&logo=data:image/svg%2Bxml;base64,"
+                    f"{quote(svg_b64, safe='')}"
                 )
-                if skill.slug:
-                    url += f"&logo={quote(skill.slug, safe='')}"
-                    url += f"&logoColor={logo_color}"
-        elif skill.slug:
-            url += f"&logo={quote(skill.slug, safe='')}"
-            url += f"&logoColor={logo_color}"
-        return url
+                if len(custom_logo_url) <= MAX_SHIELDS_BADGE_URL_LENGTH:
+                    return custom_logo_url
+
+                logger.info(
+                    "Custom badge logo for {skill_name} produces a {url_length}-"
+                    "character URL; applying the {limit}-character fallback policy",
+                    skill_name=skill.name,
+                    url_length=len(custom_logo_url),
+                    limit=MAX_SHIELDS_BADGE_URL_LENGTH,
+                )
+            except (OSError, ValueError) as exc:
+                logger.info(
+                    "Custom badge logo at {logo_path} could not be read for "
+                    "{skill_name}; applying the fallback policy ({error_type})",
+                    logo_path=skill.logo_path,
+                    skill_name=skill.name,
+                    error_type=type(exc).__name__,
+                )
+
+        slug = skill.slug.strip() if skill.slug else ""
+        if slug:
+            slug_url = (
+                f"{base_url}&logo={quote(slug, safe='')}"
+                f"&logoColor={quote(logo_color, safe='')}"
+            )
+            if len(slug_url) <= MAX_SHIELDS_BADGE_URL_LENGTH:
+                return slug_url
+            logger.info(
+                "Simple Icons badge URL for {skill_name} exceeds {limit} "
+                "characters; using a no-logo badge",
+                skill_name=skill.name,
+                limit=MAX_SHIELDS_BADGE_URL_LENGTH,
+            )
+
+        return base_url
 
     def _render_badge(self, skill: SkillEntry) -> str:
         """Render a single badge as an HTML img tag, optionally linked."""

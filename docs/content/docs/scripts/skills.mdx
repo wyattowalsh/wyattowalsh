@@ -32,11 +32,15 @@ categories:
 | Field | Required | Notes |
 |---|---|---|
 | `name` | Yes | Display label on badge |
-| `slug` | No | shields.io slug (inferred from name if omitted) |
-| `logo_path` | No | Local SVG path for custom logo |
-| `color` | Yes | Hex color without `#` |
-| `logo_color` | No | Badge logo color |
-| `url` | No | Click-through URL |
+| `slug` | No | Current, audited Simple Icons slug used directly or as the custom-logo fallback |
+| `logo_path` | No | Repo-relative local SVG path, embedded when the encoded badge URL fits the public limit |
+| `logo_source` | No | Human-readable provenance category for a local logo |
+| `logo_source_url` | No | HTTP(S) source URL for a local logo or its source collection |
+| `logo_license` | No | License or usage note for a local logo |
+| `logo_style` | No | Style classification for a local logo |
+| `color` | No | Hex color without `#`; defaults to `555555` |
+| `logo_color` | No | Logo color for Simple Icons slugs; ignored for embedded local logos |
+| `url` | No | HTTP(S) click-through URL |
 
 ## SkillCategory / SkillSubcategory
 
@@ -61,19 +65,36 @@ uv run python -m scripts.cli generate skills --skills-path skills.yaml
 Generates shields.io badge HTML rows and injects them into `README.md` between managed marker blocks:
 
 ```html
-<!-- skills:start -->
+<!-- SKILLS:START -->
 ...badges...
-<!-- skills:end -->
+<!-- SKILLS:END -->
 ```
+
+## Badge URL safety
+
+Generated Shields source URLs have a public maximum length of **4,000
+characters** (`MAX_SHIELDS_BADGE_URL_LENGTH`). This leaves headroom for
+GitHub's Camo image proxy, which can reject very large data-logo requests.
+
+The generator evaluates the final percent-encoded URL, not the raw SVG file
+size. It prefers `logo_path` while that encoded URL fits the limit. If the
+custom logo would exceed the limit or cannot be read, generation falls back to
+the entry's configured `slug`. Catalog tests require every emitted slug to be
+present in the audited Simple Icons fixture; Shields can silently omit unknown
+logos even when the URL contains a `logo` parameter. When no supported slug is
+available, omit `slug` and the generator renders a complete badge without a
+logo. URLs are never truncated, so each emitted badge URL remains
+syntactically complete.
 
 ## SkillsSettings
 
-Configured under `skills_settings` in `config.yaml` or directly in `skills.yaml`:
+Loaded directly from `skills.yaml`:
 
 | Field | Default | Notes |
 |---|---|---|
-| `style` | `"flat"` | Badge style |
+| `style` | `"for-the-badge"` | Badge style |
 | `logo_color` | `"white"` | Default logo color |
 | `readme_path` | `"README.md"` | Target README |
-| `section_title` | `"Skills"` | H2 heading |
+| `section_title` | `"Tech Stack"` | Summary heading when `collapsible` is enabled |
 | `collapsible` | `False` | Wrap in `<details>` |
+| `categories` | `[]` | Top-level skill categories |
