@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "generated_at": "2026-08-13T06:48:43.078159+00:00",
+  "generated_at": "2026-08-13T21:39:28.645129+00:00",
   "output_dir": ".github/assets/img",
   "total_assets": 6,
-  "total_bytes": 20665377,
+  "total_bytes": 21379075,
   "counts": {
     "timelapse_gif": 6
   },
@@ -246,8 +246,8 @@
       "variant": "default",
       "backend": "repo",
       "media_type": "image/gif",
-      "bytes": 5125965,
-      "sha256": "c607b7513acfa42f557c579b371f303996c4407d9b48483923f3a6b40cca0680",
+      "bytes": 5449067,
+      "sha256": "bd511cf1f4fb765fc333064c3551bc042d04311cb699cab8e2b0cfc1e316eb21",
       "width": 400,
       "height": 400,
       "frames": 98,
@@ -605,8 +605,8 @@
       "variant": "default",
       "backend": "repo",
       "media_type": "image/gif",
-      "bytes": 7774615,
-      "sha256": "a51051dff0952eb6dd38396874cb510f9f885d6c5df85280f35560f7a123af63",
+      "bytes": 8165211,
+      "sha256": "a96302ce46ca2ba6a49b9da679bb85df312df25ffb1d7c17cc76e4c93cecc49b",
       "width": 400,
       "height": 400,
       "frames": 118,
