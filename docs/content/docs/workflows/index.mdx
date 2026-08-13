@@ -16,17 +16,11 @@ Manual dispatch also exposes `metrics_probe_mode`, which runs only the probe lan
 ```text
 probe-full-metrics (manual only)
 
-update-starred-lists
-        ▼
-generate-assets
-        ▼
-generate-profile-metrics
-        ▼
-generate-event-art
-        ▼
-update-readme-wakatime
-        ▼
-update-skills
+update-starred-lists ──▶ generate-assets ─┐
+update-starred-lists ─────────────────────┤
+generate-profile-metrics ────────────────┤
+update-starred-lists ──▶ generate-event-art ────────┼──▶ finalize (sole git writer)
+update-readme-wakatime ──────────────────┘
 ```
 
 ## Job details
@@ -42,7 +36,7 @@ uv run starred --username wyattowalsh --sort --topic --topic_limit 500 \
   --filename .github/assets/topics.md
 ```
 
-Commits both files with `chore(data): update awesome-stars lists`.
+Uploads both files for the `finalize` job, which commits them with `chore(data): update awesome-stars lists`.
 
 ### `generate-assets`
 
@@ -51,11 +45,11 @@ Depends on `update-starred-lists`. Generates:
 - Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_typographic_by_topics.svg`
 - Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_typographic_by_languages.svg`
 
-Commits to `.github/assets/img/`.
+Uploads the generated files for the `finalize` job; this worker never commits or pushes.
 
 ### `update-readme-wakatime`
 
-Uses [`anmol098/waka-readme-stats`](https://github.com/anmol098/waka-readme-stats) to inject WakaTime coding stats. Requires `WAKATIME_API_KEY` secret.
+Runs the first-party `generate wakatime` collector and uploads `waka-section.md` for the finalizer. The job has read-only repository permission, never invokes `anmol098/waka-readme-stats`, and skips cleanly when `WAKATIME_API_KEY` is absent.
 
 ### `generate-profile-metrics`
 
@@ -85,7 +79,7 @@ The job hardens metrics updates with `scripts.metrics_svg`:
 - validates each render and rejects known degraded payloads
 - validates supplemental assets against a manifest of required markers
 - restores the previous valid `lowlighter` asset if a new SVG is malformed, contains a known error payload, or matches the placeholder SVG
-- commits only after all three stable cards plus all enabled supplemental cards pass validation
+- uploads only after all three stable cards plus all enabled supplemental cards pass validation; the finalizer owns any resulting commit
 
 Placeholder metrics SVGs are treated as invalid recovery artifacts, not the desired output, and are never the intended steady state.
 
@@ -105,30 +99,33 @@ It uploads probe SVG artifacts and fails closed if the probe renders or validati
 
 Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the canonical living-art timelapse surface.
 
-The job stages and commits:
+The job validates the generated surface, then stages and uploads a media-only
+artifact containing exactly the six canonical `.github/assets/img/living-*.gif`
+files. Manifests, galleries, the docs mirror, and fetched inputs deliberately do
+not cross the job boundary as a second authority. Missing, unexpected, corrupt,
+over-budget, wrong-size, or non-looping media makes staging fail closed.
 
-- `.github/assets/img/living-*.gif`
-- `.github/assets/img/living-art-manifest.json`
-- `.github/assets/img/living-art-preview.html`
-- `docs/public/showcase/living-*.gif`
-- `docs/public/showcase/living-art-manifest.json`
-- `docs/public/showcase/living-art-preview.html`
+### `finalize`
 
-The uploaded staging bundle also includes the fetched `metrics.json` and `history.json` inputs plus the mirrored docs showcase surface for review.
-
-### `update-skills`
-
-Depends on `update-readme-wakatime`. Runs:
+Depends on every required producer and is the workflow's sole first-party git
+writer. It prevalidates the downloaded exact-six living-art fleet before
+mutating either destination, publishes the GIFs, regenerates both
+manifest/gallery surfaces and the docs mirror, then re-reads persisted
+manifests, galleries, byte budgets, and media hashes before any `git add`.
+After applying the other isolated artifacts and WakaTime markers, it runs:
 - `generate readme-sections` — assembles all dynamic README sections
 - `generate skills` — re-renders skills badges
 
-Commits:
+It creates ordered commits for these owned groups:
 
-- `README.md`
-- `.github/assets/img/readme/featured-card-*.svg`
-- `.github/assets/img/readme/featured-projects.manifest.json`
-- mirrored docs showcase assets under `docs/public/showcase/featured-projects/`
-- `docs/public/showcase/featured-projects.manifest.json`
+1. starred-list data: `.github/assets/languages.md` and `.github/assets/topics.md`;
+2. generated profile assets: `.github/assets/img/qr*.png`,
+   `.github/assets/img/wordcloud_*.svg`, and `.github/assets/img/banner*.svg`;
+3. living art: the exact six primary GIFs, their manifest/gallery, and the
+   corresponding six-GIF docs-showcase mirror plus its manifest/gallery;
+4. profile metrics: the three lowlighter SVGs and the four repo-owned
+   supplemental SVGs; and
+5. dynamic README output: `README.md` and `.github/assets/img/readme/*.svg`.
 
 ## Secrets used by the workflow
 

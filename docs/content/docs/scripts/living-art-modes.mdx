@@ -5,7 +5,22 @@ description: Current timelapse-only artifact contract across the living-art gene
 
 ## Current contract
 
-The public living-art contract is now timelapse-only: the generators publish canonical GIFs named `living-<style>.gif`, then rebuild `living-art-manifest.json` and `living-art-preview.html` from the files that exist in the output directory. When `docs/public/showcase/` exists, the same canonical files are mirrored there for the docs home page and direct preview links.
+The public living-art contract is now timelapse-only: the generators publish canonical GIFs named `living-<style>.gif`. Once all six canonical GIFs exist, generation rebuilds `living-art-manifest.json` and `living-art-preview.html` from that complete fleet. When `docs/public/showcase/` exists, the same canonical files are mirrored there for the docs home page and direct preview links. A partial `--only` run deliberately leaves the prior index surfaces untouched instead of publishing an incomplete manifest.
+
+The generated manifest uses schema version `2`. Each canonical GIF descriptor records its style, variant, repository backend, MIME type, bytes, SHA-256 digest, dimensions, frame count, ordered per-frame durations, aggregate duration, and loop setting. The repository path remains the default public URL contract; external object storage is not required for forks or local generation.
+
+Before publication, `gifsicle -O3` may replace a generated GIF only when the
+result is smaller and a pixel-exact verifier confirms identical dimensions,
+frame count, per-frame durations, loop behavior, and composited RGBA frames.
+Missing or failed optimization is a safe no-op; the byte-budget gate still runs.
+
+Repository-owned writers of the same output coordinate through a stable
+per-output advisory lock on one host. Each writer renders into a unique private
+same-directory stage, verifies the target revision, validates the complete GIF,
+and only then performs the single public replacement. Body failures, invalid
+stages, optimizer failures, lock timeouts, and detected intervening writes leave
+the prior public GIF intact. This contract does not claim cross-host/NFS
+exclusion or power-loss durability.
 
 Legacy growth SVG/GIF filenames such as `inkgarden-growth-animated.svg` or `topo-growth.gif` may still exist in the repository as checked-in showcase art, but they are not the current CLI/workflow artifact contract.
 
@@ -26,7 +41,7 @@ Legacy growth SVG/GIF filenames such as `inkgarden-growth-animated.svg` or `topo
 
 Generates canonical living-art timelapse GIFs. This command currently shares its implementation and artifact contract with `generate timelapse`.
 
-Use `--only inkgarden`, `--only topo`, `--only genetic`, `--only physarum`, `--only lenia`, or `--only ferrofluid` when you want to regenerate just one style.
+Use `--only inkgarden`, `--only topo`, `--only genetic`, `--only physarum`, `--only lenia`, or `--only ferrofluid` when you want to regenerate just one style. If the other five canonical files are absent in that output directory, the command reports the missing styles and skips manifest/gallery refresh.
 
 ```bash
 uv run python -m scripts.cli generate living-art \
@@ -57,10 +72,25 @@ Document `generate all` as conditional only. The living-art portion is skipped u
 
 | Constraint | Consequence |
 |---|---|
-| `living-art-manifest.json` and `living-art-preview.html` are regenerated from discovered `living-*.gif` files | Stage and review the GIFs and the index files together |
+| `living-art-manifest.json` and `living-art-preview.html` are regenerated only from a complete six-style canonical fleet | Treat exactly the six canonical GIFs as the only cross-job authority. The producer stages a media-only fleet; the sole finalizer revalidates inventory, animation runtime, media, and budgets before destination mutation, then regenerates and verifies both index surfaces from those GIF bytes |
 | `docs/public/showcase/` exists in this repository | Mirror the canonical `living-*.gif` files plus the regenerated manifest/gallery there so docs surfaces stay aligned |
 | `generate living-art` and `generate timelapse` currently share the same implementation | Do not document separate growth-vs-timelapse output contracts |
+| A canonical GIF or aggregate fleet exceeds the reviewed byte budget | Artifact indexing stops before a new manifest or gallery is written; inspect the named file and observed budget before publishing |
+| A requested style is skipped, times out, or produces no valid frames | The command fails before index refresh; pre-existing GIFs cannot satisfy the current generation request or mask a stale style |
 | Legacy `*-growth*` assets may still be checked in | Treat them as showcase collateral, not current generated workflow outputs |
+
+## Failure and rollback behavior
+
+Repository delivery is transactional at the workflow boundary: generated media
+must contain every requested canonical output and pass animation-runtime,
+manifest, and byte-budget validation before the sole `finalize` writer stages
+it. A mutation-phase publication failure restores both managed surfaces to
+their byte-for-byte pre-call state while preserving unmanaged files. A failed
+generation or validation leaves the checked-in fleet unchanged. For a shipped regression,
+restore or revert the previous tracked six-GIF fleet together with both manifest
+and preview surfaces; no external object migration or credential is involved.
+The optional external-delivery proposal has not been activated, so there is no
+remote object rollback path to operate today.
 
 <Callout type="idea" title="Recommended release review">
 Inspect the canonical timelapse GIFs and the generated preview gallery together. If the GIFs render but the gallery/index contract is stale or misleading, treat that as a release blocker.

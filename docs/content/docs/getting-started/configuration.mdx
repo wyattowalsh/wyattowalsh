@@ -66,7 +66,7 @@ readme_sections_settings:  # ReadmeSectionsSettings
 | `stopwords` | `list[str]\|null` | `[]` | Additional stopwords |
 
 <Callout type="warn" title="Two word-cloud config models">
-`WordCloudSettingsModel` in `config.py` is the top-level YAML config. `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Don't confuse them — the first accepts unknown keys, the second rejects them.
+`WordCloudSettingsModel` in `config.py` is the top-level YAML config. `WordCloudSettings` in `scripts/word_clouds/generate.py` is the internal runtime generator config with `extra="forbid"`. Don't confuse them — runtime-only palette tokenization, style variants, and palette overrides are not persisted YAML fields.
 </Callout>
 
 ## ReadmeSectionsSettings

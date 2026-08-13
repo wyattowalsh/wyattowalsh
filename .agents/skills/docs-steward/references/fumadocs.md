@@ -1,12 +1,14 @@
 # Fumadocs Reference
 
-## 1. Version Snapshot (2026-03-05)
+## 1. Version Snapshot (2026-08-13)
 
-- `fumadocs-core`: `16.6.9`
-- `fumadocs-ui`: `16.6.9`
-- `fumadocs-mdx`: `14.2.9`
-- `fumadocs-openapi`: `10.3.15`
-- `next`: `16.1.6`
+- `fumadocs-core`: `16.14.3`
+- `fumadocs-ui`: `16.14.3`
+- `fumadocs-mdx`: `15.2.3`
+- `fumadocs-openapi`: `11.2.3`
+- `next`: `16.3.0`
+
+Source: live npm registry (`pnpm view <package> version`) on 2026-08-13.
 
 Re-check before claiming "latest": see `version-refresh.md`.
 

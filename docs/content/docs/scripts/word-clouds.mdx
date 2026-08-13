@@ -9,7 +9,7 @@ description: OKLCH-palettized word clouds generated from your GitHub starred-rep
 - `scripts/word_clouds/metaheuristic.py` — animated SVG renderer that sequences 25 solver layouts into one asset
 
 <Callout type="warn" title="Two config models">
-`WordCloudSettingsModel` in `config.py` is the top-level YAML config (part of `ProjectConfig`). `WordCloudSettings` in `word_clouds.py` is the internal generator config with `extra="forbid"`. Extra keys silently pass in the first, raise `ValidationError` in the second.
+`WordCloudSettingsModel` in `config.py` is the top-level YAML config (part of `ProjectConfig`). `WordCloudSettings` in `scripts/word_clouds/generate.py` is the strict runtime generator config with `extra="forbid"`. Extra keys silently pass in the first, raise `ValidationError` in the second.
 </Callout>
 
 ## What it generates
@@ -91,6 +91,23 @@ Key knobs:
 - `reading_flow_weight` increases or relaxes the cost of difficult rotations
 - `target_aspect_ratio` and `landscape_bias_weight` steer the solver toward wider layouts
 - `prompt` is tokenized from comma/newline separated tags or free text when you generate directly from text
+
+### Runtime SVG style controls
+
+Programmatic `WordCloudSettings` and `override_settings_dict` calls additionally
+support:
+
+| Field | Default | Behavior |
+|---|---|---|
+| `palette_tokenization` | `coarse` | `none` keeps continuous interpolation, `coarse` uses up to eight colors, and `strong` uses up to four |
+| `style_variant` | `default` | `topic` and `language` add stable semantic IDs to the SVG root |
+| `custom_color_func_name` | — | Selects a registered color function; unknown names fail validation |
+| `color_palette_override` | — | Uses one or more explicit `#RRGGBB` interpolation anchors |
+
+These controls are runtime-only; they are not fields in the persisted YAML
+model. They require an SVG-native renderer. The classic PNG renderer rejects
+them instead of silently ignoring them. Per-call overrides are validated in a
+temporary settings model and never mutate the generator's base settings.
 
 ## Output files
 

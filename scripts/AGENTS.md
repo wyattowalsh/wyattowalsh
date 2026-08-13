@@ -20,6 +20,8 @@
 | `cli/settings_cmd.py` | 45 | `show-settings` command | `show_settings()` |
 | `cli/generate/` | — | Generate subcommands package split by domain (`banner`, `qr`, `word_cloud`, `art`, `readme_cmd`, `all_cmd`) | `generate_app` |
 | `cli/dev.py` | 185 | Dev tools (replaces Makefile): `install`, `format`, `lint`, `test`, `clean`, `docs`, `update-deps` | `dev_app` |
+| `quality/ty_ratchet.py` | — | Structured type-diagnostic non-regression gate | `evaluate_warning_ratchet()`, `main()` |
+| `quality/ty_warning_baseline.json` | — | Exact per-path/per-rule warning ceilings; reductions pass, increases fail | — |
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
 | `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
 | `fetch_metrics.py` | 283 | GitHub REST + GraphQL metrics collector; outputs flat JSON dict | `collect()` |

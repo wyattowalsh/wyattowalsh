@@ -40,6 +40,7 @@ wyattowalsh/
 │   │   ├── config_cmd.py # Config subcommands (view, save, generate-default)
 │   │   ├── settings_cmd.py # show-settings command
 │   │   └── dev.py       # Dev tools (format, lint, test, clean, docs)
+│   ├── quality/         # Structured quality-gate helpers + ty warning baseline
 │   ├── config.py        # Pydantic models + load_config() / save_config()
 │   ├── utils.py         # get_logger(), create_progress(), console
 │   ├── banner.py        # SVG banner — Lorenz attractor, flow fields
@@ -75,7 +76,7 @@ wyattowalsh/
 │       ├── animate.py   # Multi-frame animation driver
 │       └── _dev_profiles.py # Mock profiles for local animation testing
 ├── tests/               # pytest suite (→ tests/AGENTS.md)
-├── docs/                # Fumadocs (Next.js 15) dev docs site
+├── docs/                # Fumadocs 16 on Next.js 16 dev docs site
 ├── .github/
 │   ├── workflows/profile-updater.yml  # Single unified CI workflow
 │   └── assets/img/      # Generated: banner*.svg, qr*.png, wordcloud_*.svg, living-*.gif
@@ -149,11 +150,11 @@ CI secrets (GitHub Actions only — not needed locally):
 | ID | Area | Description |
 |----|------|-------------|
 | ST-01 | `scripts/banner.py`, `scripts/readme_svg.py` | **Closed** — banner/generative use `scripts/svg_drawing.py` string builders (svgwrite removed); readme_svg already string-based | — |
-| ST-02 | Asset pipeline | Add SVG optimization post-processing via `scour` (~48% size reduction) or `npx svgo --multipass` |
+| ST-02 | Asset pipeline | **Closed** — banner SVG optimization uses the shared SVGO helper; README cards intentionally bypass it to preserve CSS media rules |
 | ST-03 | Testing | Add `syrupy` snapshot testing with `SVGImageSnapshotExtension` for visual regression safety |
 | ST-04 | CLI | Add local preview command (`cli preview <generator>`) for faster creative iteration |
 | ST-05 | README | Cards: SVG `@media (prefers-color-scheme: dark)` (shipped). Banner keeps `<picture>`. Dual-file card `<picture>` only if media-query QA fails (F7) |
-| ST-06 | `scripts/config.py` | Switch to native `YamlConfigSettingsSource` from `pydantic-settings` |
+| ST-06 | `scripts/config.py` | **Closed** — native `YamlConfigSettingsSource` now loads UTF-8 YAML while direct construction remains warning-free |
 | ST-07 | `scripts/config.py` | Use Pydantic v2 discriminated unions for type-safe generator config dispatch |
 | ST-08 | `scripts/` | Sub-package restructure: `generators/`, `data/`, `core/` |
 
@@ -164,7 +165,7 @@ CI secrets (GitHub Actions only — not needed locally):
 | [`scripts/AGENTS.md`](scripts/AGENTS.md) | When editing any script module | Module map, Pydantic patterns, per-generator reference, CLI extension guide |
 | [`tests/AGENTS.md`](tests/AGENTS.md) | When writing or running tests | Run commands, coverage status, test patterns, writing guide |
 | [`docs/content/docs/scripts/living-art-modes.mdx`](docs/content/docs/scripts/living-art-modes.mdx) | Living-art styles / artifact contract | Mode matrix; pairs with `scripts/art/timelapse.py` `_STYLE_REGISTRY` |
-| [`docs/`](docs/) | When editing dev documentation | Fumadocs (Next.js 15) site; `cd docs && pnpm dev` to preview |
+| [`docs/`](docs/) | When editing dev documentation | Fumadocs 16 on Next.js 16; `cd docs && pnpm dev` to preview |
 
 ## Common Failure Modes
 

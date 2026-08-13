@@ -8,7 +8,7 @@
 # Full suite (parallel, all plugins from pyproject.toml)
 uv run readme dev test
 
-# Direct equivalent
+# Direct test selection, without the CLI wrapper's isolated report bundle
 uv run python -m pytest
 
 # No parallelism (for debugging failures)
@@ -27,7 +27,11 @@ uv run python -m pytest --cov=./scripts --cov-report=term-missing
 uv run python -m pytest -m "not integration"
 ```
 
-**Output locations:** `logs/report.html` (HTML report) · `logs/coverage/` (coverage HTML) · `logs/.coverage` (data) · `logs/pytest-logs.txt` (log file)
+**Output locations:** `uv run readme dev test` creates one unique
+`logs/runs/<id>/` directory containing `report.html`, `junit.xml`,
+`pytest.log`, `.coverage`, and `coverage/`. Pass `--report-dir <path>` for a
+stable explicit destination. Direct pytest invocations do not add this report
+bundle; set `COVERAGE_FILE` yourself when running them concurrently.
 
 ## pytest Config (from `pyproject.toml`)
 
@@ -38,12 +42,14 @@ Key `addopts` flags decoded:
 | `-n auto` | Parallel via pytest-xdist (all CPU cores) |
 | `--verbose` | Full test names |
 | `--hypothesis-show-statistics` | Hypothesis strategy stats after run |
-| `--html=logs/report.html --self-contained-html` | Standalone HTML report |
 | `--emoji` | Emoji pass/fail indicators |
 | `--instafail` | Print failures immediately |
-| `--cov=./scripts --cov-append` | Coverage for `scripts/` |
-| `--cov-report html:logs/coverage` | HTML coverage report |
+| `--cov=./scripts` | Fresh coverage for `scripts/`; concurrent shards must use unique `COVERAGE_FILE` values |
+| `--cov-fail-under=95.0` | Fail authoritative coverage runs below the twice-reproduced 95.0% floor |
 | `timeout = 500` | 500s per test (for Cairo/image integration tests) |
+
+The CLI wrapper adds self-contained HTML, JUnit, log-file, terminal coverage,
+and HTML coverage options with paths beneath its isolated report directory.
 
 `required_plugins`: pytest-sugar, pytest-html, pytest-emoji, pytest-icdiff, pytest-instafail, pytest-timeout, pytest-benchmark, pytest-cov (all must be installed or pytest refuses to run).
 
@@ -55,19 +61,19 @@ Key `addopts` flags decoded:
 | `scripts/qr.py` | 253 | `test_qr.py` | ✅ Covered |
 | `scripts/cli/` | — | `test_cli.py` | ✅ Covered (CLI refactored to package) |
 | `scripts/utils.py` | 172 | `test_utils.py` | ✅ Covered |
-| `scripts/config.py` | 257 | (indirect via CLI + QR tests) | ⚠️ Indirect only |
+| `scripts/config.py` | 257 | `test_config.py` | ✅ Direct model, YAML-source, and warning-as-error coverage |
 | `scripts/techs.py` | 315 | `test_techs.py` | ✅ Covered — model, parser, file-loading, and Hypothesis tests |
 | `scripts/word_clouds/` | — | `test_word_clouds.py` | ✅ Covered — markdown parsing, font resolution, filtering, and layout tests |
 | `scripts/art/ink_garden.py` | 2027 | `test_ink_garden.py` | ✅ Smoke + golden file regression tests |
 | `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
 | `scripts/metrics_svg.py` | — | `test_metrics_svg.py` | ✅ Focused coverage — validation, placeholder detection, CLI exit codes, and previous-asset recovery |
-| Living art media outputs | — | `test_living_art_media.py` | ⏭️ Skipped — requires pre-generated artifacts |
+| Living art media outputs | — | `test_living_art_media.py` | ✅ Manifest v2 metadata, mirroring, and byte-budget contracts use temporary GIFs |
 | Blog card contracts | — | `test_card_contracts_blog_red.py` | 🔴 RED — unimplemented features |
 | README GFM UX | — | `test_readme_gfm_ux.py` | ⏭️ Skipped — requires full pipeline |
 | `scripts/readme_sections.py` | — | `test_readme_sections.py` | ✅ Covered |
 | `scripts/readme_svg.py` | — | `test_readme_svg.py` | ✅ Covered |
 | `scripts/skills.py` | — | `test_skills.py` | ✅ Covered |
-| Word cloud features | — | `test_word_clouds_red.py` | 🔴 RED — unimplemented (xfail) |
+| Word cloud features | — | `test_word_clouds_red.py` | Palette/style/override contracts (implemented) |
 
 ## Test File Patterns
 

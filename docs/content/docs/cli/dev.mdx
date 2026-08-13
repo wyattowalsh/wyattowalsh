@@ -13,7 +13,7 @@ uv run readme dev [COMMAND] [OPTIONS]
 
 | Command | Purpose |
 |---|---|
-| `install` | Sync all dependencies from the lockfile (`uv sync --all-extras`) |
+| `install` | Sync all dependencies from the lockfile (`uv sync --locked --all-extras`) |
 | `format` | Format code with `ruff check --fix` and `ruff format` |
 | `lint` | Lint with ruff, pylint, and ty |
 | `test` | Run the pytest suite |
@@ -27,7 +27,7 @@ uv run readme dev [COMMAND] [OPTIONS]
 uv run readme dev install
 ```
 
-Runs `uv sync --all-extras` to install all dependency extras from the lockfile.
+Runs `uv sync --locked --all-extras` to install all dependency extras from the committed lockfile.
 
 ## `dev format`
 
@@ -48,7 +48,10 @@ uv run readme dev lint
 Runs three linters in sequence:
 1. `ruff check` — fast linting
 2. `pylint` — deep analysis
-3. `ty check` — type checking
+3. `scripts.quality.ty_ratchet` — runs `ty check` with structured output;
+   configured errors, tool failures, new path/rule warning pairs, and increases
+   above the checked-in per-pair ceilings fail. Existing warning debt remains
+   visible and can only decrease without a deliberate baseline review.
 
 ## `dev test`
 
@@ -64,6 +67,9 @@ uv run readme dev test -k "test_banner"
 
 # Filter by marker
 uv run readme dev test -m "not integration"
+
+# Place this run's reports at an explicit isolated path
+uv run readme dev test --report-dir logs/manual-assurance
 ```
 
 | Option | Default | Notes |
@@ -71,6 +77,10 @@ uv run readme dev test -m "not integration"
 | `--coverage/--no-coverage` | `--coverage` | Enable/disable coverage reporting |
 | `-k` | — | pytest `-k` filter expression |
 | `-m` | — | pytest `-m` marker expression |
+| `--report-dir` | unique `logs/runs/<id>/` | Isolates coverage data, HTML, JUnit, and debug logs for one run |
+
+Every CLI test invocation uses its own report directory and `COVERAGE_FILE`, so
+parallel independent runs cannot append to or corrupt one shared coverage DB.
 
 ## `dev clean`
 
