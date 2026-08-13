@@ -88,6 +88,36 @@ def test_physarum_output_is_deterministic_for_same_seed() -> None:
     assert svg_1 == svg_2
 
 
+def test_physarum_simulation_supports_zero_sensor_angle() -> None:
+    config = physarum.PhysarumConfig(sensor_angle=0.0, sensor_distance=3.0)
+    simulation_kwargs = {
+        "grid": 20,
+        "food_sources": [(5, 5, 2.0), (14, 13, 3.0)],
+        "n_agents": 32,
+        "steps": 4,
+        "config": config,
+        "evaporation_rate": 0.05,
+        "speed_mult": 1.0,
+        "deposit_amount": 2.0,
+    }
+
+    first = physarum._run_simulation(
+        **simulation_kwargs,
+        rng=np.random.default_rng(17),
+    )
+    second = physarum._run_simulation(
+        **simulation_kwargs,
+        rng=np.random.default_rng(17),
+    )
+
+    assert first.shape == (20, 20)
+    assert np.isfinite(first).all()
+    assert np.all(first >= -1e-12)
+    assert np.count_nonzero(first > 1e-6) > len(simulation_kwargs["food_sources"])
+    assert float(first.sum()) > 0.0
+    assert np.array_equal(first, second)
+
+
 def test_physarum_snapshot_signals_modulate_simulation_parameters(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

@@ -27,6 +27,7 @@ from typing import Any
 from pydantic import ValidationError
 
 from ..utils import get_logger
+from ._gif_optimize import _gif_output_transaction, _optimize_gif_with_gifsicle
 from .daily_snapshots import (
     DEFAULT_PUBLISHED_MAX_FRAMES as SNAPSHOT_PUBLISHED_MAX_FRAMES,
 )
@@ -224,87 +225,104 @@ def _assemble_gif(
 ) -> Path:
     """Assemble PNG frames into an optimized GIF.
 
-    Performs progressive quality degradation if file exceeds max_size_mb.
+    Performs progressive quality degradation if the private stage exceeds
+    ``max_size_mb``. All repository-owned writers of the same logical output
+    serialize through ``_gif_output_transaction``; the public path changes only
+    once, after the complete stage passes optimization and GIF validation.
     """
     import io
 
     from PIL import Image
 
-    images = [Image.open(io.BytesIO(f)).convert("RGB") for f in png_frames]
+    with _gif_output_transaction(output_path) as stage_path:
+        images = [Image.open(io.BytesIO(frame)).convert("RGB") for frame in png_frames]
 
-    # Quantize
-    palettized = [
-        img.quantize(
-            colors=max_colors,
-            method=Image.Quantize.MEDIANCUT,
-            dither=Image.Dither.FLOYDSTEINBERG,
+        # Quantize
+        palettized = [
+            img.quantize(
+                colors=max_colors,
+                method=Image.Quantize.MEDIANCUT,
+                dither=Image.Dither.FLOYDSTEINBERG,
+            )
+            for img in images
+        ]
+        palettized[0].save(
+            str(stage_path),
+            format="GIF",
+            save_all=True,
+            append_images=palettized[1:],
+            duration=durations,
+            loop=0,
+            optimize=True,
         )
-        for img in images
-    ]
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    palettized[0].save(
-        str(output_path),
-        save_all=True,
-        append_images=palettized[1:],
-        duration=durations,
-        loop=0,
-        optimize=True,
-    )
-
-    size_mb = output_path.stat().st_size / (1024 * 1024)
-    logger.info("{}: {:.1f} MB ({} frames)", output_path.name, size_mb, len(png_frames))
-
-    # Progressive degradation if too large
-    if size_mb > max_size_mb and max_colors > 128:
-        logger.warning(
-            "{} exceeds {}MB, re-quantizing with fewer colors",
+        size_mb = stage_path.stat().st_size / (1024 * 1024)
+        logger.info(
+            "{}: {:.1f} MB ({} frames)",
             output_path.name,
-            max_size_mb,
+            size_mb,
+            len(png_frames),
         )
-        palettized = [
-            img.quantize(
-                colors=128,
-                method=Image.Quantize.MEDIANCUT,
-                dither=Image.Dither.FLOYDSTEINBERG,
-            )
-            for img in images
-        ]
-        palettized[0].save(
-            str(output_path),
-            save_all=True,
-            append_images=palettized[1:],
-            duration=durations,
-            loop=0,
-            optimize=True,
-        )
-        size_mb = output_path.stat().st_size / (1024 * 1024)
-        logger.info("{}: reduced to {:.1f} MB", output_path.name, size_mb)
 
-    if size_mb > max_size_mb:
-        logger.warning(
-            "{} still exceeds {}MB, halving resolution", output_path.name, max_size_mb
-        )
-        half_images = [
-            img.resize((img.width // 2, img.height // 2), Image.Resampling.LANCZOS)
-            for img in images
-        ]
-        palettized = [
-            img.quantize(
-                colors=128,
-                method=Image.Quantize.MEDIANCUT,
-                dither=Image.Dither.FLOYDSTEINBERG,
+        # Progressive degradation if too large
+        if size_mb > max_size_mb and max_colors > 128:
+            logger.warning(
+                "{} exceeds {}MB, re-quantizing with fewer colors",
+                output_path.name,
+                max_size_mb,
             )
-            for img in half_images
-        ]
-        palettized[0].save(
-            str(output_path),
-            save_all=True,
-            append_images=palettized[1:],
-            duration=durations,
-            loop=0,
-            optimize=True,
-        )
+            palettized = [
+                img.quantize(
+                    colors=128,
+                    method=Image.Quantize.MEDIANCUT,
+                    dither=Image.Dither.FLOYDSTEINBERG,
+                )
+                for img in images
+            ]
+            palettized[0].save(
+                str(stage_path),
+                format="GIF",
+                save_all=True,
+                append_images=palettized[1:],
+                duration=durations,
+                loop=0,
+                optimize=True,
+            )
+            size_mb = stage_path.stat().st_size / (1024 * 1024)
+            logger.info("{}: reduced to {:.1f} MB", output_path.name, size_mb)
+
+        if size_mb > max_size_mb:
+            logger.warning(
+                "{} still exceeds {}MB, halving resolution",
+                output_path.name,
+                max_size_mb,
+            )
+            half_images = [
+                img.resize(
+                    (img.width // 2, img.height // 2),
+                    Image.Resampling.LANCZOS,
+                )
+                for img in images
+            ]
+            palettized = [
+                img.quantize(
+                    colors=128,
+                    method=Image.Quantize.MEDIANCUT,
+                    dither=Image.Dither.FLOYDSTEINBERG,
+                )
+                for img in half_images
+            ]
+            palettized[0].save(
+                str(stage_path),
+                format="GIF",
+                save_all=True,
+                append_images=palettized[1:],
+                duration=durations,
+                loop=0,
+                optimize=True,
+            )
+
+        _optimize_gif_with_gifsicle(stage_path)
 
     return output_path
 

@@ -6,7 +6,35 @@ from datetime import date, timedelta
 import pytest
 from defusedxml import ElementTree
 
+import scripts.art.topography as topography_module
 from scripts.art.topography import _choose_label_anchor, generate
+
+# These tests validate structural contracts, not production raster density.
+_FAST_TOPOGRAPHY_GRID_SIZE = 48
+
+
+def test_topography_production_grid_size_remains_high_fidelity() -> None:
+    assert topography_module.TOPOGRAPHY_GRID_SIZE == 200
+
+
+@pytest.fixture(autouse=True)
+def _use_fast_grid_for_structural_topography_tests(
+    request: pytest.FixtureRequest,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Keep the production-default invariant completely outside the test seam. If
+    # the test is renamed without updating this exemption, its 200 assertion
+    # sees the fast value and fails instead of silently weakening the contract.
+    if (
+        request.node.name
+        == "test_topography_production_grid_size_remains_high_fidelity"
+    ):
+        return
+    monkeypatch.setattr(
+        topography_module,
+        "TOPOGRAPHY_GRID_SIZE",
+        _FAST_TOPOGRAPHY_GRID_SIZE,
+    )
 
 
 def _sample_metrics() -> dict:

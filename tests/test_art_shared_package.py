@@ -12,6 +12,7 @@ from scripts.art import shared as shared_pkg  # noqa: E402
 from scripts.art.shared import (  # noqa: E402
     ART_PALETTE_ANCHORS,
     MAX_REPOS,
+    ElementBudget,
     Noise2D,
     WorldState,
     compute_world_state,
@@ -62,3 +63,25 @@ def test_basic_shared_behaviors_still_work() -> None:
     assert isinstance(ws, WorldState)
     assert "sunset" in ART_PALETTE_ANCHORS
     assert MAX_REPOS == 10
+
+
+def test_element_budget_reports_truthful_state_at_and_beyond_limit() -> None:
+    budget = ElementBudget(2)
+    assert budget.count == 0
+    assert budget.remaining == 2
+    assert budget.ok() is True
+
+    budget.add()
+    assert budget.count == 1
+    assert budget.remaining == 1
+    assert budget.ok() is True
+
+    budget.add()
+    assert budget.count == 2
+    assert budget.remaining == 0
+    assert budget.ok() is False
+
+    budget.add(3)
+    assert budget.count == 5
+    assert budget.remaining == 0
+    assert budget.ok() is False

@@ -33,23 +33,24 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install metrics helper dependencies
         run: uv sync --locked
 
       - name: Probe metrics credentials and upstream availability
+        id: metrics_auth
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           X_API_KEY: ${{ secrets.X_API_KEY }}
@@ -59,16 +60,18 @@ jobs:
         run: |
           set -euo pipefail
 
-          github_scope_header="missing"
+          has_valid_metrics_token=false
           if [ -n "${METRICS_TOKEN:-}" ]; then
-            github_scope_header=$(curl -sS -D - -o /dev/null \
+            metrics_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              --connect-timeout 5 \
+              --max-time 15 \
               -H "Authorization: Bearer ${METRICS_TOKEN}" \
-              https://api.github.com/user \
-              | tr -d '\r' \
-              | awk -F': ' 'tolower($1) == "x-oauth-scopes" {print $2}' \
-              | tail -n 1)
-            [ -n "${github_scope_header}" ] || github_scope_header="present-but-empty"
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/user || true)
+            [ "${metrics_status}" = "200" ] && has_valid_metrics_token=true
           fi
+          echo "has_valid_metrics_token=${has_valid_metrics_token}" >> "$GITHUB_OUTPUT"
 
           x_oauth1_status="missing"
           if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
@@ -78,7 +81,7 @@ jobs:
           {
             echo "### Metrics probe auth summary"
             echo
-            echo "- GitHub token scopes: ${github_scope_header}"
+            echo "- Valid METRICS_TOKEN: ${has_valid_metrics_token}"
             echo "- X OAuth1 credentials: ${x_oauth1_status}"
             echo "- Spotify on lowlighter: never (plugin_music=no; supplemental owns music)"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -90,12 +93,11 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.probe.primary.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: header, activity, community, metadata
           plugin_lines: no
           plugin_isocalendar: yes
-          plugin_traffic: yes
+          plugin_traffic: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_languages: yes
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
@@ -110,7 +112,7 @@ jobs:
           plugin_habits_languages_limit: 8
           plugin_habits_languages_threshold: "0%"
           plugin_notable: yes
-          plugin_notable_repositories: yes
+          plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_gists: no
           plugin_topics: yes
           plugin_topics_sort: stars
@@ -141,8 +143,7 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.probe.additional.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
@@ -152,10 +153,10 @@ jobs:
           plugin_activity_limit: 5
           plugin_activity_days: 14
           plugin_activity_filter: all
-          plugin_stargazers: yes
+          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
-          plugin_stars: yes
-          plugin_stars_limit: 3
+          plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '3' || '0' }}
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
           plugin_tweets: no
@@ -174,8 +175,7 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.probe.extra.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
@@ -259,7 +259,7 @@ jobs:
 
       - name: Upload full metrics probe artifacts
         if: ${{ always() }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: metrics-probe-${{ github.run_id }}
           path: |
@@ -301,18 +301,18 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install script-tools dependencies
         run: uv sync --locked --extra script-tools
@@ -339,7 +339,7 @@ jobs:
           mv "$temp_file" ./.github/assets/topics.md
 
       - name: Upload starred lists artifact
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: starred-lists-${{ github.run_id }}
           path: |
@@ -374,24 +374,24 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
 
       - name: Download starred lists artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: starred-lists-${{ github.run_id }}
           path: .
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install Cairo system dependencies
         run: sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev
@@ -420,7 +420,7 @@ jobs:
         run: uv run python -m scripts.cli generate banner --config-path config.yaml
 
       - name: Upload profile assets artifact
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: profile-assets-${{ github.run_id }}
           path: |
@@ -455,18 +455,18 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install dependencies
         run: uv sync --locked
@@ -497,7 +497,7 @@ jobs:
             --allow-missing-key
 
       - name: Upload WakaTime README section artifact
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: waka-readme-${{ github.run_id }}
           path: ${{ runner.temp }}/waka-readme
@@ -528,16 +528,16 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
       - name: Install metrics helper dependencies
         run: uv sync --locked
       - name: Preflight metrics auth gates
@@ -561,8 +561,17 @@ jobs:
           # - Spotify / X secrets: first-party supplemental cards only (env: on the
           #   generate supplemental-metrics run step). Never pass them into
           #   lowlighter/metrics (or any metrics fork) `with:` inputs.
-          has_metrics_token=false
-          [ -n "${METRICS_TOKEN:-}" ] && has_metrics_token=true
+          has_valid_metrics_token=false
+          if [ -n "${METRICS_TOKEN:-}" ]; then
+            metrics_status=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+              --connect-timeout 5 \
+              --max-time 15 \
+              -H "Authorization: Bearer ${METRICS_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/user || true)
+            [ "${metrics_status}" = "200" ] && has_valid_metrics_token=true
+          fi
           has_spotify_tokens=false
           if [ -n "${SPOTIFY_CLIENT_ID:-}" ] && [ -n "${SPOTIFY_CLIENT_SECRET:-}" ] && [ -n "${SPOTIFY_REFRESH_TOKEN:-}" ]; then
             has_spotify_tokens=true
@@ -571,11 +580,9 @@ jobs:
           if [ -n "${X_API_KEY:-}" ] && [ -n "${X_API_KEY_SECRET:-}" ] && [ -n "${X_ACCESS_TOKEN:-}" ] && [ -n "${X_ACCESS_TOKEN_SECRET:-}" ]; then
             has_x_oauth1_tokens=true
           fi
-          echo "has_metrics_token=${has_metrics_token}" >> "$GITHUB_OUTPUT"
-          echo "has_spotify_tokens=${has_spotify_tokens}" >> "$GITHUB_OUTPUT"
-          echo "has_x_oauth1_tokens=${has_x_oauth1_tokens}" >> "$GITHUB_OUTPUT"
-          if [ "${has_metrics_token}" != "true" ]; then
-            echo "::notice::METRICS_TOKEN is missing; repositories-sensitive lowlighter plugins are disabled."
+          echo "has_valid_metrics_token=${has_valid_metrics_token}" >> "$GITHUB_OUTPUT"
+          if [ "${has_valid_metrics_token}" != "true" ]; then
+            echo "::notice::METRICS_TOKEN is missing or invalid; repositories-sensitive lowlighter plugins are disabled."
           fi
           if [ "${has_spotify_tokens}" != "true" ]; then
             echo "::notice::Spotify secrets are incomplete; first-party metrics-music.svg supplemental card is disabled."
@@ -614,13 +621,12 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: header, activity, community, metadata
           # Disabled until upstream handles bot/system authors without throwing.
           plugin_lines: no
           plugin_isocalendar: yes
-          plugin_traffic: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_traffic: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_languages: yes
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
@@ -636,7 +642,7 @@ jobs:
           plugin_habits_languages_limit: 8
           plugin_habits_languages_threshold: "0%"
           plugin_notable: yes
-          plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           # GitHub Actions tokens cannot read gists reliably for this account.
           plugin_gists: no
           plugin_topics: yes
@@ -682,8 +688,7 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.additional.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
@@ -691,10 +696,10 @@ jobs:
           # off — supplemental cards own those surfaces.
           plugin_music: no
           plugin_activity: no
-          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
-          plugin_stars: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_metrics_token == 'true' && '3' || '0' }}
+          plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
+          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '3' || '0' }}
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
           plugin_people: yes
@@ -734,8 +739,7 @@ jobs:
         with:
           output_action: none
           filename: .github/assets/img/metrics.extra.svg
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           base: ""
           config_timezone: America/Los_Angeles
           config_padding: 10%
@@ -777,8 +781,7 @@ jobs:
       - name: Generate supplemental metrics cards
         id: generate_supplemental_metrics
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
@@ -844,7 +847,7 @@ jobs:
 
       - name: Upload profile metrics artifact
         if: ${{ success() && steps.validate_final_metrics.outcome == 'success' }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: profile-metrics-${{ github.run_id }}
           path: |
@@ -884,28 +887,23 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install dependencies
         run: uv sync --locked --all-extras
 
-      - name: Install librsvg for GIF rasterization
-        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin
-
-      - name: Prepare living-art staging directory
-        run: |
-          mkdir -p "$RUNNER_TEMP/living-art-stage/inputs"
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs"
+      - name: Install living-art media tools
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin gifsicle
 
       - name: Fetch metrics
         env:
@@ -917,7 +915,6 @@ jobs:
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
             --output "$RUNNER_TEMP/metrics.json"
-          cp "$RUNNER_TEMP/metrics.json" "$RUNNER_TEMP/living-art-stage/inputs/metrics.json"
 
       - name: Fetch historical data
         env:
@@ -929,7 +926,6 @@ jobs:
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
             --output "$RUNNER_TEMP/history.json"
-          cp "$RUNNER_TEMP/history.json" "$RUNNER_TEMP/living-art-stage/inputs/history.json"
 
       - name: Resolve living-art runtime contract constants
         run: |
@@ -961,12 +957,20 @@ jobs:
           import os
           from pathlib import Path
           from PIL import Image, ImageSequence
+          from scripts.art.artifacts import LIVING_ART_BYTE_BUDGETS
 
           max_frames = int(os.environ["LIVING_ART_MAX_FRAMES"])
           min_runtime_ms = int(os.environ["LIVING_ART_MIN_RUNTIME_MS"])
-          gif_paths = sorted(Path(".github/assets/img").glob("living-*.gif"))
-          if not gif_paths:
-              raise SystemExit("No living-art GIF outputs found for contract validation")
+          output_dir = Path(".github/assets/img")
+          expected_names = set(LIVING_ART_BYTE_BUDGETS)
+          observed_names = {path.name for path in output_dir.glob("living-*.gif")}
+          if observed_names != expected_names:
+              raise SystemExit(
+                  "Living-art GIF inventory mismatch: "
+                  f"missing={sorted(expected_names - observed_names)}, "
+                  f"unexpected={sorted(observed_names - expected_names)}"
+              )
+          gif_paths = [output_dir / name for name in sorted(expected_names)]
 
           print("Living-art runtime contract summary:")
           for gif_path in gif_paths:
@@ -996,57 +1000,43 @@ jobs:
                   )
           PY
 
-      - name: Stage living-art timelapse outputs and index
-        if: ${{ always() }}
+      - name: Stage exact-six living-art artifact
         run: |
-          shopt -s nullglob
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/timelapse"
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/index"
-          mkdir -p "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase"
-          for file in .github/assets/img/living-*.gif; do
-            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/timelapse/"
-          done
-          for file in .github/assets/img/living-art-manifest.json .github/assets/img/living-art-preview.html; do
-            if [[ -f "$file" ]]; then
-              cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/index/"
-            fi
-          done
-          for file in docs/public/showcase/living-*.gif; do
-            cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase/"
-          done
-          for file in docs/public/showcase/living-art-manifest.json docs/public/showcase/living-art-preview.html; do
-            if [[ -f "$file" ]]; then
-              cp "$file" "$RUNNER_TEMP/living-art-stage/outputs/docs-showcase/"
-            fi
-          done
+          uv run python - <<'PY'
+          import os
+          from pathlib import Path
 
-      - name: Stage living-art outputs and manifest
-        if: ${{ always() }}
+          from scripts.art.artifacts import stage_living_art_fleet
+
+          manifest = stage_living_art_fleet(
+              Path(".github/assets/img"),
+              Path(os.environ["RUNNER_TEMP"]) / "living-art-stage",
+          )
+          print(
+              "Staged exact living-art fleet: "
+              f"{manifest['total_assets']} assets, "
+              f"{manifest['total_bytes']} bytes"
+          )
+          PY
+
+      - name: Summarize exact-six living-art artifact
         run: |
           {
             echo "# Living-art artifact summary"
             echo
-            echo "## Inputs"
-            find "$RUNNER_TEMP/living-art-stage/inputs" -type f | sort | while read -r file; do
+            echo "## Canonical primary GIFs"
+            while IFS= read -r file; do
               size=$(wc -c < "$file")
               echo "- $(basename "$file") (${size} bytes)"
-            done
-            echo
-            echo "## Outputs"
-            find "$RUNNER_TEMP/living-art-stage/outputs" -type f | sort | while read -r file; do
-              size=$(wc -c < "$file")
-              rel=${file#"$RUNNER_TEMP/living-art-stage/"}
-              echo "- ${rel} (${size} bytes)"
-            done
-          } | tee "$RUNNER_TEMP/living-art-stage/manifest.md" >> "$GITHUB_STEP_SUMMARY"
+            done < <(find "$RUNNER_TEMP/living-art-stage" -maxdepth 1 -type f | sort)
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload living-art staging bundle
-        if: ${{ always() }}
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: living-art-stage-${{ github.run_id }}
           path: ${{ runner.temp }}/living-art-stage
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 7
 
 
@@ -1087,76 +1077,114 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref || github.ref }}
           fetch-depth: 0
 
       - name: Download starred lists artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: starred-lists-${{ github.run_id }}
           path: .
 
       - name: Download profile assets artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: profile-assets-${{ github.run_id }}
           path: .
 
       - name: Download living-art staging artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: living-art-stage-${{ github.run_id }}
           path: ${{ runner.temp }}/living-art-stage
 
-      - name: Apply living-art outputs from staging artifact
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          stage="${{ runner.temp }}/living-art-stage"
-          mkdir -p .github/assets/img docs/public/showcase
-          for file in "$stage"/outputs/timelapse/living-*.gif; do
-            cp "$file" .github/assets/img/
-          done
-          for file in "$stage"/outputs/index/living-art-manifest.json \
-                      "$stage"/outputs/index/living-art-preview.html; do
-            if [[ -f "$file" ]]; then
-              cp "$file" .github/assets/img/
-            fi
-          done
-          for file in "$stage"/outputs/docs-showcase/living-*.gif; do
-            cp "$file" docs/public/showcase/
-          done
-          for file in "$stage"/outputs/docs-showcase/living-art-manifest.json \
-                      "$stage"/outputs/docs-showcase/living-art-preview.html; do
-            if [[ -f "$file" ]]; then
-              cp "$file" docs/public/showcase/
-            fi
-          done
-
       - name: Download profile metrics artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: profile-metrics-${{ github.run_id }}
           path: .
 
       - name: Download WakaTime README section artifact
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: waka-readme-${{ github.run_id }}
           path: ${{ runner.temp }}/waka-readme
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
 
       - name: Install uv
-        uses: astral-sh/setup-uv@e4db8464a088ece1b920f60402e813ea4de65b8f # v4
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
 
       - name: Install dependencies
         run: uv sync --locked --all-extras
+
+      - name: Publish and validate living-art artifact
+        run: |
+          uv run python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          from scripts.art.artifacts import (
+              LIVING_ART_BYTE_BUDGETS,
+              publish_living_art_fleet,
+              validate_living_art_byte_budgets,
+          )
+
+          stage_dir = Path(os.environ["RUNNER_TEMP"]) / "living-art-stage"
+          output_dir = Path(".github/assets/img")
+          public_dir = Path("docs/public/showcase")
+          manifest_path, gallery_path, manifest = publish_living_art_fleet(
+              stage_dir,
+              output_dir,
+              public_surface_dir=public_dir,
+          )
+
+          primary_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          public_manifest = json.loads(
+              (public_dir / manifest_path.name).read_text(encoding="utf-8")
+          )
+          if primary_manifest != manifest:
+              raise SystemExit(
+                  "Persisted primary living-art manifest differs from generated object"
+              )
+
+          def stable_payload(payload: dict[str, object]) -> dict[str, object]:
+              return {
+                  key: value
+                  for key, value in payload.items()
+                  if key not in {"generated_at", "output_dir"}
+              }
+
+          if stable_payload(primary_manifest) != stable_payload(public_manifest):
+              raise SystemExit(
+                  "Persisted primary/public living-art manifest payloads differ"
+              )
+          if gallery_path.read_bytes() != (
+              public_dir / gallery_path.name
+          ).read_bytes():
+              raise SystemExit("Persisted primary/public living-art galleries differ")
+
+          validate_living_art_byte_budgets(primary_manifest)
+          validate_living_art_byte_budgets(public_manifest)
+          for name in sorted(LIVING_ART_BYTE_BUDGETS):
+              primary_hash = hashlib.sha256((output_dir / name).read_bytes()).digest()
+              public_hash = hashlib.sha256((public_dir / name).read_bytes()).digest()
+              if primary_hash != public_hash:
+                  raise SystemExit(f"Persisted living-art GIF hashes differ: {name}")
+
+          print(
+              "Living-art publication validation passed: "
+              f"{manifest['total_assets']} assets, "
+              f"{manifest['total_bytes']} bytes"
+          )
+          PY
 
       - name: Apply WakaTime README section
         run: |
@@ -1176,7 +1204,6 @@ jobs:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -euo pipefail
-          shopt -s nullglob
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -1193,7 +1220,7 @@ jobs:
               echo "No changes for: ${message}"
               return 0
             fi
-            git add -- "${owned_files[@]}"
+            git add -A -- "${owned_files[@]}"
             git commit -m "${message}"
           }
 
@@ -1201,14 +1228,18 @@ jobs:
             ./.github/assets/languages.md \
             ./.github/assets/topics.md
 
-          asset_files=(.github/assets/img/qr*.png .github/assets/img/wordcloud_*.svg .github/assets/img/banner*.svg)
+          asset_files=(
+            ':(glob).github/assets/img/qr*.png'
+            ':(glob).github/assets/img/wordcloud_*.svg'
+            ':(glob).github/assets/img/banner*.svg'
+          )
           commit_group "chore(assets): update generated profile assets" "${asset_files[@]}"
 
           art_files=(
-            .github/assets/img/living-*.gif
+            ':(glob).github/assets/img/living-*.gif'
             .github/assets/img/living-art-manifest.json
             .github/assets/img/living-art-preview.html
-            docs/public/showcase/living-*.gif
+            ':(glob)docs/public/showcase/living-*.gif'
             docs/public/showcase/living-art-manifest.json
             docs/public/showcase/living-art-preview.html
           )
@@ -1239,7 +1270,10 @@ jobs:
             fi
           fi
 
-          readme_files=(README.md .github/assets/img/readme/*.svg)
+          readme_files=(
+            README.md
+            ':(glob).github/assets/img/readme/*.svg'
+          )
           commit_group "chore(readme): update dynamic sections and skills badges" "${readme_files[@]}"
 
           if git rev-parse --verify "origin/${TARGET_BRANCH}" >/dev/null 2>&1; then

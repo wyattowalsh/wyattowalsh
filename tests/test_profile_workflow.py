@@ -1,6 +1,8 @@
 """Workflow contract tests for the profile updater."""
 
 import re
+import shlex
+import subprocess
 from pathlib import Path
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
@@ -9,6 +11,38 @@ BANNER_LIGHT = Path(".github/assets/img/banner.svg")
 BANNER_DARK = Path(".github/assets/img/banner-dark.svg")
 
 LOWLIGHTER_METRICS_PIN = "lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6"
+
+EXPECTED_ACTION_PINS = {
+    "actions/checkout": (
+        "3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "v7.0.1",
+    ),
+    "actions/download-artifact": (
+        "3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",
+        "v8.0.1",
+    ),
+    "actions/setup-python": (
+        "5fda3b95a4ea91299a34e894583c3862153e4b97",
+        "v7.0.0",
+    ),
+    "actions/upload-artifact": (
+        "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+        "v7.0.1",
+    ),
+    "astral-sh/setup-uv": (
+        "ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d",
+        "v10.0.0",
+    ),
+    "lowlighter/metrics": (
+        "65836723097537a54cd8eb90f61839426b4266b6",
+        "v3.34",
+    ),
+}
+
+USES_LINE_RE = re.compile(
+    r"^\s*uses:\s+(?P<action>[^@\s]+)@(?P<sha>[0-9a-f]{40})"
+    r"\s+#\s+(?P<version>v\d+(?:\.\d+){0,2})\s*$"
+)
 
 GENERATOR_JOBS = (
     "update-starred-lists",
@@ -57,6 +91,54 @@ def _lowlighter_with_blocks(job_text: str) -> list[str]:
         blocks.append(with_match.group(1))
     assert blocks, "expected at least one lowlighter/metrics with: block"
     return blocks
+
+
+def _shell_array(job_text: str, name: str) -> tuple[str, ...]:
+    match = re.search(
+        rf"(?ms)^          {re.escape(name)}=\(\n"
+        rf"(?P<body>.*?)^          \)$",
+        job_text,
+    )
+    assert match is not None, f"{name} shell array not found"
+    values: list[str] = []
+    for line in match.group("body").splitlines():
+        parts = shlex.split(line.strip())
+        assert len(parts) == 1, f"unexpected {name} entry: {line}"
+        values.append(parts[0])
+    return tuple(values)
+
+
+def _run_git(repo: Path, *args: str) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
+
+
+def test_profile_actions_use_exact_immutable_release_pins() -> None:
+    workflow = _workflow_text()
+    uses_lines = [
+        line for line in workflow.splitlines() if line.lstrip().startswith("uses:")
+    ]
+    observed_actions: set[str] = set()
+
+    for line in uses_lines:
+        match = USES_LINE_RE.fullmatch(line)
+        assert match is not None, (
+            f"action must use a full SHA and version comment: {line}"
+        )
+        action = match.group("action")
+        assert action in EXPECTED_ACTION_PINS, f"unexpected profile action: {action}"
+        assert (match.group("sha"), match.group("version")) == EXPECTED_ACTION_PINS[
+            action
+        ]
+        observed_actions.add(action)
+
+    assert observed_actions == set(EXPECTED_ACTION_PINS)
 
 
 def test_generated_commit_pushes_skip_generator_jobs() -> None:
@@ -126,6 +208,31 @@ def test_generate_assets_installs_cairo_apt_deps() -> None:
         "libcairo2 libcairo2-dev pkg-config libffi-dev"
     )
     assert cairo_apt in workflow
+
+
+def test_generate_event_art_installs_lossless_gif_optimizer() -> None:
+    art = _job_block(_workflow_text(), "generate-event-art")
+
+    assert "apt-get install -y librsvg2-bin gifsicle" in art
+
+
+def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
+    workflow = _workflow_text()
+    producer = _job_block(workflow, "generate-event-art")
+    finalize = _job_block(workflow, "finalize")
+
+    assert "stage_living_art_fleet(" in producer
+    assert "publish_living_art_fleet(" in finalize
+    assert "living-art-stage/outputs" not in workflow
+    assert "outputs/docs-showcase" not in workflow
+    assert "outputs/index" not in workflow
+    assert "if-no-files-found: error" in producer
+    assert '.glob("living-*.gif")' in workflow  # inventory only; equality-checked
+    assert "for file in .github/assets/img/living-*.gif" not in workflow
+    assert 'for file in "$stage"/outputs/timelapse/living-*.gif' not in workflow
+    assert "':(glob).github/assets/img/living-*.gif'" in finalize
+    assert "':(glob)docs/public/showcase/living-*.gif'" in finalize
+    assert 'git add -A -- "${owned_files[@]}"' in finalize
 
 
 def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
@@ -220,6 +327,78 @@ def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
     assert finalize.count("download-artifact@") >= 5
 
 
+def test_finalize_publishes_and_validates_living_art_before_git_staging() -> None:
+    """Untrusted living art must fail before the sole writer runs git add."""
+    finalize = _job_block(_workflow_text(), "finalize")
+    publication = "publish_living_art_fleet("
+
+    assert publication in finalize
+    assert "validate_living_art_byte_budgets(primary_manifest)" in finalize
+    assert "validate_living_art_byte_budgets(public_manifest)" in finalize
+    assert "stable_payload(primary_manifest)" in finalize
+    assert "Persisted living-art GIF hashes differ" in finalize
+    assert finalize.index(publication) < finalize.index("git add -A --")
+
+
+def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
+    finalize = _job_block(_workflow_text(), "finalize")
+
+    assert "shopt -s nullglob" not in finalize
+    assert _shell_array(finalize, "asset_files") == (
+        ":(glob).github/assets/img/qr*.png",
+        ":(glob).github/assets/img/wordcloud_*.svg",
+        ":(glob).github/assets/img/banner*.svg",
+    )
+    assert _shell_array(finalize, "readme_files") == (
+        "README.md",
+        ":(glob).github/assets/img/readme/*.svg",
+    )
+    assert 'git add -A -- "${owned_files[@]}"' in finalize
+
+
+def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
+    tmp_path: Path,
+) -> None:
+    finalize = _job_block(_workflow_text(), "finalize")
+    cases = {
+        "asset_files": (
+            ".github/assets/img/qr-obsolete.png",
+            ".github/assets/img/wordcloud_obsolete.svg",
+            ".github/assets/img/banner-obsolete.svg",
+        ),
+        "readme_files": (".github/assets/img/readme/obsolete.svg",),
+    }
+
+    for array_name, deleted_paths in cases.items():
+        repo = tmp_path / array_name
+        repo.mkdir()
+        _run_git(repo, "init", "--quiet")
+        outside_path = ".github/assets/img/outside-owned-namespaces.svg"
+        for relative_path in (*deleted_paths, outside_path, "README.md"):
+            path = repo / relative_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"fixture for {relative_path}\n", encoding="utf-8")
+        _run_git(repo, "add", "--", ".")
+        _run_git(
+            repo,
+            "-c",
+            "user.name=Workflow Contract Test",
+            "-c",
+            "user.email=workflow-contract@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            "baseline",
+        )
+
+        for relative_path in (*deleted_paths, outside_path):
+            (repo / relative_path).unlink()
+
+        _run_git(repo, "add", "-A", "--", *_shell_array(finalize, array_name))
+        staged = set(_run_git(repo, "diff", "--cached", "--name-status").splitlines())
+        assert staged == {f"D\t{path}" for path in deleted_paths}
+
+
 def test_metrics_probe_and_prod_share_lowlighter_pin_without_felipecrs() -> None:
     workflow = _workflow_text()
     probe = _job_block(workflow, "probe-full-metrics")
@@ -242,6 +421,65 @@ def test_metrics_third_party_actions_forbid_spotify_secrets_in_with() -> None:
             assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", with_block), (
                 f"{job_id} lowlighter step missing plugin_music: no"
             )
+
+
+def test_lowlighter_runner_only_steps_omit_committer_token() -> None:
+    workflow = _workflow_text()
+    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
+        for with_block in _lowlighter_with_blocks(_job_block(workflow, job_id)):
+            assert re.search(r"(?m)^\s*output_action:\s*none\s*$", with_block)
+            assert "committer_token" not in with_block
+
+
+def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
+    workflow = _workflow_text()
+    selected_token = (
+        "${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && "
+        "secrets.METRICS_TOKEN || github.token }}"
+    )
+
+    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
+        job = _job_block(workflow, job_id)
+        assert "id: metrics_auth" in job
+        assert "has_valid_metrics_token=false" in job
+        assert "https://api.github.com/user" in job
+        assert "--silent --output /dev/null --write-out '%{http_code}'" in job
+        assert '[ "${metrics_status}" = "200" ]' in job
+        assert (
+            'echo "has_valid_metrics_token=${has_valid_metrics_token}" '
+            '>> "$GITHUB_OUTPUT"'
+        ) in job
+        assert job.count(f"token: {selected_token}") == 3
+        assert "token: ${{ secrets.METRICS_TOKEN || github.token }}" not in job
+        assert "::warning::" not in job
+        assert "::error::" not in job.split("      - name: Back up", maxsplit=1)[0]
+
+    prod = _job_block(workflow, "generate-profile-metrics")
+    assert f"GITHUB_TOKEN: {selected_token}" in prod
+    assert (
+        "METRICS_TOKEN:"
+        not in prod.split(
+            "      - name: Generate supplemental metrics cards", maxsplit=1
+        )[1].split("      - name:", maxsplit=1)[0]
+    )
+
+
+def test_invalid_metrics_token_disables_elevated_scope_plugins() -> None:
+    valid_gate = "steps.metrics_auth.outputs.has_valid_metrics_token == 'true'"
+
+    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
+        job = _job_block(_workflow_text(), job_id)
+        for plugin in (
+            "plugin_traffic",
+            "plugin_notable_repositories",
+            "plugin_stargazers",
+            "plugin_stars",
+            "plugin_stars_limit",
+        ):
+            line = next(
+                line for line in job.splitlines() if line.strip().startswith(plugin)
+            )
+            assert valid_gate in line, f"{plugin} is not guarded in {job_id}"
 
 
 def test_metrics_production_plugins_match_relevance_matrix() -> None:

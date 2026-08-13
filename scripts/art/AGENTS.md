@@ -22,6 +22,7 @@ scripts/art/
 ├── timelapse.py            # Style registry + GIF driver (SSOT for ALL_STYLES)
 ├── daily_snapshots.py      # Day-by-day snapshot evolution
 ├── artifacts.py            # Manifest / gallery / docs-showcase sync
+├── _gif_optimize.py         # Pixel-exact, smaller-only GIF post-processing
 ├── animate.py              # Multi-frame maturity animation driver
 ├── optimize.py             # Aesthetic cost helpers
 ├── _dev_profiles.py        # Mock profiles for local testing
@@ -55,6 +56,28 @@ Do **not** reintroduce a monolithic `shared.py` beside this package — `scripts
 Canonical style names and GIF filenames live in `timelapse.py` (`_STYLE_REGISTRY` / `ALL_STYLES`).
 Human-readable matrix: [`docs/content/docs/scripts/living-art-modes.mdx`](../../docs/content/docs/scripts/living-art-modes.mdx).
 Shared atmosphere semantics: [`docs/content/docs/scripts/world-state.mdx`](../../docs/content/docs/scripts/world-state.mdx).
+
+Published timelapses are optionally post-processed by `_gif_optimize.py`. A
+candidate replaces its source only when it is smaller and preserves dimensions,
+frame count, per-frame duration, loop behavior, and every composited RGBA frame.
+CI installs `gifsicle`; local generation safely retains the source when the tool
+is unavailable or any contract check fails.
+
+Repository-owned writers use a stable same-host advisory lock plus a unique
+private same-directory stage. The public GIF changes once only after the staged
+candidate passes complete validation. This does not claim cross-host/NFS
+serialization or power-loss durability.
+
+`artifacts.stage_living_art_fleet()` creates the exact-six, media-only workflow
+handoff. `artifacts.publish_living_art_fleet()` treats that stage as untrusted,
+validates inventory, animation runtime, media, and budgets before destination
+mutation, regenerates both manifest/gallery surfaces and the docs mirror, and
+then verifies persisted parity. If a mutation-phase write fails, it restores
+both managed surfaces to their pre-call state while preserving unmanaged files.
+Never transfer manifests or galleries between jobs as an independent authority.
+Manifest v2 descriptors retain ordered positive per-frame durations as well as
+their frame count and aggregate runtime so the finalizer can re-prove the same
+animation contract after artifact transfer.
 
 ## Generator contract
 

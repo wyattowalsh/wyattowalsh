@@ -21,13 +21,16 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any, cast
 
 from pydantic import ValidationError
 
 from ..utils import get_logger
 from . import ferrofluid, genetic_landscape, ink_garden, lenia, physarum, topography
 from ._dev_profiles import PROFILES
+from ._gif_optimize import _gif_output_transaction
 from .shared import compute_maturity, normalize_live_metrics, parse_cli_args, seed_hash
 
 logger = get_logger(module=__name__)
@@ -233,6 +236,97 @@ def svg_to_png(svg_str: str, size: int, frame_id: str = ""):
 # ---------------------------------------------------------------------------
 
 
+def _fallback_profile(
+    profile: str,
+    *,
+    metrics_requested: bool,
+) -> dict[str, Any] | None:
+    """Return a development profile or log why no fallback is available."""
+    target = PROFILES.get(profile)
+    if target is not None:
+        return target
+
+    if metrics_requested:
+        logger.error(
+            "No valid metrics and unknown profile: {}. Available: {}",
+            profile,
+            list(PROFILES.keys()),
+        )
+    else:
+        logger.error(
+            "Unknown profile: {} and no --metrics-path given. Available: {}",
+            profile,
+            list(PROFILES.keys()),
+        )
+    return None
+
+
+def _resolve_target(
+    *,
+    profile: str,
+    metrics_file: str | None,
+    history_file: str | None,
+) -> dict[str, Any] | None:
+    """Resolve live metrics, falling back to a named development profile."""
+    if metrics_file is None:
+        return _fallback_profile(profile, metrics_requested=False)
+
+    import json
+
+    try:
+        raw = json.loads(Path(metrics_file).read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        logger.warning(
+            "Failed to load metrics from {}: {}. Falling back to mock profiles.",
+            metrics_file,
+            exc,
+        )
+        return _fallback_profile(profile, metrics_requested=True)
+
+    if raw is None:
+        return _fallback_profile(profile, metrics_requested=True)
+
+    history = None
+    if history_file:
+        try:
+            history = json.loads(Path(history_file).read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError, ValidationError) as exc:
+            logger.warning("Failed to load history from {}: {}", history_file, exc)
+
+    try:
+        target = normalize_live_metrics(raw, owner=profile, history=history)
+    except ValidationError as exc:
+        logger.warning(
+            "Failed to validate metrics from {}: {}. Falling back to mock profiles.",
+            metrics_file,
+            exc,
+        )
+        return _fallback_profile(profile, metrics_requested=True)
+
+    logger.info("Loaded live metrics from {}", metrics_file)
+    return target
+
+
+def _publish_growth_gif(
+    frames: list[Any],
+    durations: list[int],
+    output_path: Path,
+) -> int:
+    """Publish one legacy growth GIF through the shared output transaction."""
+    with _gif_output_transaction(output_path) as stage_path:
+        frames[0].save(
+            stage_path,
+            format="GIF",
+            save_all=True,
+            append_images=frames[1:],
+            duration=durations,
+            loop=0,
+            optimize=True,
+        )
+        size_kb = stage_path.stat().st_size // 1024
+    return size_kb
+
+
 def main() -> None:
     opts = parse_cli_args(
         sys.argv[1:],
@@ -244,76 +338,19 @@ def main() -> None:
             "history_path": str,
         },
     )
-    profile = opts["profile"] or "wyatt"
-    n_frames = opts.get("frames") or 24
-    size = opts.get("size") or 400
-    only = opts["only"]
+    profile = cast(str, opts["profile"] or "wyatt")
+    n_frames = cast(int, opts.get("frames") or 24)
+    size = cast(int, opts.get("size") or 400)
+    only = cast(str | None, opts["only"])
 
-    metrics_file = opts.get("metrics_path")
-    history_file = opts.get("history_path")
-
-    if metrics_file:
-        import json
-
-        try:
-            raw = json.loads(Path(str(metrics_file)).read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError) as exc:
-            logger.warning(
-                "Failed to load metrics from {}: {}. Falling back to mock profiles.",
-                metrics_file,
-                exc,
-            )
-            raw = None
-
-        if raw is not None:
-            history = None
-            if history_file:
-                try:
-                    history = json.loads(
-                        Path(str(history_file)).read_text(encoding="utf-8")
-                    )
-                except (json.JSONDecodeError, OSError, ValidationError) as exc:
-                    logger.warning(
-                        "Failed to load history from {}: {}", history_file, exc
-                    )
-            try:
-                target = normalize_live_metrics(
-                    raw, owner=str(profile), history=history
-                )
-                logger.info("Loaded live metrics from {}", metrics_file)
-            except ValidationError as exc:
-                logger.warning(
-                    "Failed to validate metrics from {}: {}. Falling back to mock profiles.",  # noqa: E501
-                    metrics_file,
-                    exc,
-                )
-                raw = None
-        else:
-            if profile not in PROFILES:
-                logger.error(
-                    "No valid metrics and unknown profile: {}. Available: {}",
-                    profile,
-                    list(PROFILES.keys()),
-                )
-                return
-            target = PROFILES[profile]
-        if raw is None:
-            if profile not in PROFILES:
-                logger.error(
-                    "No valid metrics and unknown profile: {}. Available: {}",
-                    profile,
-                    list(PROFILES.keys()),
-                )
-                return
-            target = PROFILES[profile]
-    elif profile in PROFILES:
-        target = PROFILES[profile]
-    else:
-        logger.error(
-            "Unknown profile: {} and no --metrics-path given. Available: {}",
-            profile,
-            list(PROFILES.keys()),
-        )
+    metrics_file = cast(str | None, opts.get("metrics_path") or None)
+    history_file = cast(str | None, opts.get("history_path"))
+    target = _resolve_target(
+        profile=profile,
+        metrics_file=metrics_file,
+        history_file=history_file,
+    )
+    if target is None:
         return
 
     fixed_seed = seed_hash(target)
@@ -321,7 +358,7 @@ def main() -> None:
     out_dir = Path(".github/assets/img")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    all_generators = {
+    all_generators: dict[str, tuple[str, Callable[..., str]]] = {
         "inkgarden": ("inkgarden-growth", ink_garden.generate),
         "topo": ("topo-growth", topography.generate),
         "genetic": ("genetic-growth", genetic_landscape.generate),
@@ -341,7 +378,7 @@ def main() -> None:
 
     # ── Animated SVG mode (multi-frame stacking) ──────────────
     if opts.get("svg"):
-        svg_frames = opts.get("frames") or 7
+        svg_frames = cast(int, opts.get("frames") or 7)
         total_dur = 60.0
         logger.info(
             "SVG mode: profile={}  target_mat={:.3f}  frames={}",
@@ -451,15 +488,7 @@ def main() -> None:
         durations[-1] = 2000  # Hold final frame
 
         out_path = out_dir / f"{slug}.gif"
-        pal_imgs[0].save(
-            out_path,
-            save_all=True,
-            append_images=pal_imgs[1:],
-            duration=durations,
-            loop=0,
-            optimize=True,
-        )
-        size_kb = out_path.stat().st_size // 1024
+        size_kb = _publish_growth_gif(pal_imgs, durations, out_path)
         logger.info("{}: {} KB -> {}", slug, size_kb, out_path)
 
     logger.info("Done")

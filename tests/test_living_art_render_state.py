@@ -22,6 +22,19 @@ from scripts.art.topography import generate as generate_topography  # noqa: E402
 
 Generator = Callable[..., str]
 Marker = Callable[[str], int]
+# These tests validate structural contracts, not production raster density.
+_FAST_TOPOGRAPHY_GRID_SIZE = 48
+
+
+@pytest.fixture(autouse=True)
+def _use_fast_grid_for_structural_topography_tests(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        topography_module,
+        "TOPOGRAPHY_GRID_SIZE",
+        _FAST_TOPOGRAPHY_GRID_SIZE,
+    )
 
 
 def _repo_xy(svg: str, *, role: str, repo_name: str) -> tuple[float, float]:

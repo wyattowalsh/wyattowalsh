@@ -50,6 +50,7 @@ MAP_L, MAP_T = 60, 60
 MAP_R, MAP_B = WIDTH - 60, HEIGHT - 110
 MAP_W = MAP_R - MAP_L
 MAP_H = MAP_B - MAP_T
+TOPOGRAPHY_GRID_SIZE = 200
 
 # Language → terrain character: (noise_freq, amplitude_multiplier)
 LANG_TERRAIN: dict[str | None, tuple[float, float]] = {
@@ -914,7 +915,7 @@ def generate(
         or central_peak_day
     )
 
-    grid = 200
+    grid = TOPOGRAPHY_GRID_SIZE
     elevation = np.zeros((grid, grid))
     base_birth_weight = 0.035
     terrain_birth_mass = np.full((grid, grid), base_birth_weight, dtype=float)

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
 
@@ -353,6 +354,21 @@ class TestGenerate:
         result = generate(RICH_METRICS, maturity=1.0)
         assert result.lstrip().startswith("<svg")
         assert result.rstrip().endswith("</svg>")
+
+    def test_each_bud_renders_exactly_two_sepals(self) -> None:
+        """Every rendered bud keeps its two protective sepals."""
+        svg = generate(
+            RICH_METRICS,
+            seed="0123456789abcdef" * 4,
+            maturity=1.0,
+        )
+        root = ET.fromstring(svg)
+        buds = [node for node in root.iter() if node.get("data-role") == "bud"]
+
+        assert buds
+        for bud in buds:
+            assert sum(child.get("data-role") == "bud-sepal" for child in bud) == 2
+            assert sum(child.get("data-role") == "bud-body" for child in bud) == 1
 
     def test_empty_repos_does_not_crash(self) -> None:
         """generate() handles metrics with an empty repos list."""

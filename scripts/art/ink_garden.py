@@ -1286,8 +1286,8 @@ def generate(
 
     has_explicit_repo_recency = total_repos_contributed > 0
     repo_recency_days_by_name: dict[str, int] = {}
+    explicit_age_days: list[int] = []
     if has_explicit_repo_recency:
-        explicit_age_days: list[int] = []
         for repo in raw_repos:
             if not isinstance(repo, dict):
                 continue
@@ -1304,7 +1304,7 @@ def generate(
             and (len(explicit_age_days) / max(1, len(raw_repos))) >= 0.5
         )
 
-    if has_explicit_repo_recency:
+    if has_explicit_repo_recency and explicit_age_days:
         portfolio_breadth = max(len(raw_repos), int(total_repos_contributed or 0))
         breadth_factor = min(1.0, portfolio_breadth / 14.0)
         fresh_repo_share = sum(age <= 120 for age in explicit_age_days) / len(
@@ -3986,20 +3986,24 @@ def generate(
         bud_rot = rng.uniform(-30, 30)
         bud_c = oklch(0.58, 0.18, bh)
         sepal_c = oklch(0.42, 0.14, (bh + 120) % 360)
+        P.append('<g data-role="bud">')
         # Sepals — small protective leaves wrapping the bud
         for si_s in range(2):
             sa_s = bud_rot + (si_s - 0.5) * 40
-        P.append(
-            f'<ellipse cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" '
-            f'fill="{sepal_c}" {_timeline_style(when, 0.3)} '
-            f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>'
-        )
+            P.append(
+                f'<ellipse data-role="bud-sepal" cx="{bx:.1f}" cy="{by + bs * 0.3:.1f}" '
+                f'rx="{bs * 0.35:.1f}" ry="{bs * 0.6:.1f}" fill="{sepal_c}" '
+                f"{_timeline_style(when, 0.3)} "
+                f'transform="rotate({sa_s:.0f},{bx:.1f},{by:.1f})"/>'
+            )
         # Bud body
         P.append(
-            f'<ellipse cx="{bx:.1f}" cy="{by:.1f}" rx="{bs * 0.4:.1f}" ry="{bs:.1f}" '
+            f'<ellipse data-role="bud-body" cx="{bx:.1f}" cy="{by:.1f}" '
+            f'rx="{bs * 0.4:.1f}" ry="{bs:.1f}" '
             f'fill="{bud_c}" {_timeline_style(when, 0.5)} stroke="{oklch(0.45, 0.14, bh)}" stroke-width="0.2" '
             f'transform="rotate({bud_rot:.0f},{bx:.1f},{by:.1f})"/>'
         )
+        P.append("</g>")
 
     # PASS 6: Multi-layer blooms with species-specific types (capped)
     for bloom_tuple in blooms[:MAX_BLOOMS]:

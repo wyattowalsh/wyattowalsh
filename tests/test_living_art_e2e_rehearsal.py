@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from PIL import Image
 from typer.testing import CliRunner
 
 pytest.importorskip(
@@ -90,7 +91,18 @@ def _write_svg(path: Path) -> None:
 
 def _write_gif(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(b"GIF89a")
+    frames = [
+        Image.new("RGB", (400, 400), color=(20, 40, 60)),
+        Image.new("RGB", (400, 400), color=(60, 40, 20)),
+    ]
+    frames[0].save(
+        path,
+        format="GIF",
+        save_all=True,
+        append_images=frames[1:],
+        duration=[12_000, 12_000],
+        loop=0,
+    )
 
 
 def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
@@ -252,6 +264,9 @@ def test_living_art_only_forwards_selected_style_to_renderer(
     assert captured["size"] == 96
     assert captured["owner"] == "rehearsal"
     assert captured["workers"] == 2
+    assert not (
+        tmp_path / ".github" / "assets" / "img" / "living-art-manifest.json"
+    ).exists()
 
 
 def test_timelapse_only_forwards_selected_style_to_renderer(
@@ -284,7 +299,9 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
         captured["size"] = size
         captured["owner"] = owner
         captured["workers"] = workers
-        return []
+        output = tmp_path / ".github" / "assets" / "img" / "living-inkgarden.gif"
+        _write_gif(output)
+        return [output]
 
     monkeypatch.setattr(
         "scripts.art.timelapse.render_timelapse",

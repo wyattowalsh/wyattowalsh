@@ -737,23 +737,26 @@ def _run_simulation(
             if 0 <= fx < grid and 0 <= fy < grid:
                 trail[fy, fx] += conc * 0.5
 
-        # 2. Sense: read pheromone at 3 sensor positions per agent
-        for sensor_dir, result_array in [
-            (-sa, np.empty(n_agents)),
-            (0.0, np.empty(n_agents)),
-            (sa, np.empty(n_agents)),
-        ]:
-            sx = pos_x + np.cos(headings + sensor_dir) * sd
-            sy = pos_y + np.sin(headings + sensor_dir) * sd
-            six = np.clip(sx.astype(np.int32), 0, grid - 1)
-            siy = np.clip(sy.astype(np.int32), 0, grid - 1)
-            result_array[:] = trail[siy, six]
-            if sensor_dir == -sa:
-                sense_left = result_array.copy()
-            elif sensor_dir == 0.0:
-                sense_center = result_array.copy()
-            else:
-                sense_right = result_array.copy()
+        # 2. Sense: read pheromone at 3 sensor positions per agent.  Keep each
+        # sample explicit because the offsets can coincide (for example, when
+        # sensor_angle is zero) and therefore cannot safely identify slots.
+        left_x = pos_x + np.cos(headings - sa) * sd
+        left_y = pos_y + np.sin(headings - sa) * sd
+        left_ix = np.clip(left_x.astype(np.int32), 0, grid - 1)
+        left_iy = np.clip(left_y.astype(np.int32), 0, grid - 1)
+        sense_left = trail[left_iy, left_ix]
+
+        center_x = pos_x + np.cos(headings) * sd
+        center_y = pos_y + np.sin(headings) * sd
+        center_ix = np.clip(center_x.astype(np.int32), 0, grid - 1)
+        center_iy = np.clip(center_y.astype(np.int32), 0, grid - 1)
+        sense_center = trail[center_iy, center_ix]
+
+        right_x = pos_x + np.cos(headings + sa) * sd
+        right_y = pos_y + np.sin(headings + sa) * sd
+        right_ix = np.clip(right_x.astype(np.int32), 0, grid - 1)
+        right_iy = np.clip(right_y.astype(np.int32), 0, grid - 1)
+        sense_right = trail[right_iy, right_ix]
 
         # 3. Turn: steer toward strongest signal
         turn_left = sense_left > sense_center

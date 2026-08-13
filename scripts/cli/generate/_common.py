@@ -156,14 +156,59 @@ def _generate_living_art_timelapse(
         workers=workers,
     )
 
+    expected_output_names = {f"living-{style}.gif" for style in active_styles}
+    observed_output_names = [path.name for path in outputs]
+    observed_output_name_set = set(observed_output_names)
+    missing_output_names = sorted(expected_output_names - observed_output_name_set)
+    unexpected_output_names = sorted(observed_output_name_set - expected_output_names)
+    duplicate_output_names = sorted(
+        name
+        for name in observed_output_name_set
+        if observed_output_names.count(name) > 1
+    )
+    missing_output_files = sorted(str(path) for path in outputs if not path.is_file())
+
+    generation_issues: list[str] = []
+    if missing_output_names:
+        generation_issues.append(
+            f"missing requested outputs: {', '.join(missing_output_names)}"
+        )
+    if unexpected_output_names:
+        generation_issues.append(
+            f"unexpected outputs: {', '.join(unexpected_output_names)}"
+        )
+    if duplicate_output_names:
+        generation_issues.append(
+            f"duplicate outputs: {', '.join(duplicate_output_names)}"
+        )
+    if missing_output_files:
+        generation_issues.append(
+            f"returned paths do not exist: {', '.join(missing_output_files)}"
+        )
+    if generation_issues:
+        console.print(
+            "[bold red]Error:[/bold red] Living-art generation was incomplete; "
+            + "; ".join(generation_issues)
+        )
+        raise typer.Exit(code=1)
+
     for path in outputs:
         size_mb = path.stat().st_size / (1024 * 1024)
         console.print(f"[bold green]Generated:[/] {path} ({size_mb:.1f} MB)")
 
-    if not outputs:
-        console.print("[yellow]No timelapse GIFs generated.[/yellow]")
+    output_dir = outputs[0].parent
+    missing_styles = [
+        style
+        for style in LIVING_ART_STYLE_KEYS
+        if not (output_dir / f"living-{style}.gif").is_file()
+    ]
+    if missing_styles:
+        console.print(
+            "[yellow]Skipped living-art index refresh until the canonical "
+            f"fleet is complete; missing: {', '.join(missing_styles)}.[/yellow]"
+        )
     else:
-        _refresh_living_art_artifacts(outputs[0].parent)
+        _refresh_living_art_artifacts(output_dir)
 
     return outputs
 
