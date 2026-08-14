@@ -1553,13 +1553,19 @@ jobs:
 
           art_files=(
             ':(glob).github/assets/img/living-*.gif'
-            ':(glob).github/assets/img/living-*.mp4'
             .github/assets/img/living-art-manifest.json
             .github/assets/img/living-art-preview.html
             ':(glob)docs/public/showcase/living-*.gif'
             docs/public/showcase/living-art-manifest.json
             docs/public/showcase/living-art-preview.html
           )
+          # Optional MP4 siblings: only stage paths that exist so an empty
+          # glob cannot fail `git add` (pathspec must match at least one file).
+          shopt -s nullglob
+          for mp4 in .github/assets/img/living-*.mp4; do
+            art_files+=("$mp4")
+          done
+          shopt -u nullglob
           commit_group "art: regenerate living-art assets" "${art_files[@]}"
 
           metrics_files=(
