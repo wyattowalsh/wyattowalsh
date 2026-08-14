@@ -14,6 +14,7 @@
 
 <p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="Featured Projects" width="100%" loading="lazy"/></p>
 <!-- ## Featured Projects -->
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -31,6 +32,7 @@
 
 <p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="Metrics" width="100%" loading="lazy"/></p>
 <!-- ## Metrics -->
+
 
 <table><tr>
 <td width="50%" valign="top"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>
@@ -61,6 +63,7 @@
 <p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="Living Art" width="100%" loading="lazy"/></p>
 <!-- ## Living Art -->
 
+
 <p align="center">
 <a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
 <a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
@@ -71,6 +74,7 @@
 </p>
 <p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="Tech Stack" width="100%" loading="lazy"/></p>
 <!-- ## Tech Stack -->
+
 <details>
 <summary><strong>Tech Stack</strong></summary>
 
@@ -309,12 +313,14 @@
 <p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="Word Clouds" width="100%" loading="lazy"/></p>
 <!-- ## Word Clouds -->
 
+
 <table><tr>
 <td width="50%" valign="top"><img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Fractal word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/></td>
 <td width="50%" valign="top"><img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Fractal word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/></td>
 </tr></table>
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="Latest Blog Posts" width="100%" loading="lazy"/></p>
 <!-- ## Latest Blog Posts -->
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
