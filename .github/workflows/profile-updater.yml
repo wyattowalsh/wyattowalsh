@@ -446,6 +446,7 @@ jobs:
           set -euo pipefail
           # Header banners are pinned to origin/main bytes. Do not regenerate.
           uv run python - <<'PY'
+          import subprocess
           from pathlib import Path
 
           asset_dir = Path(".github/assets/img")
@@ -453,7 +454,14 @@ jobs:
               path = asset_dir / name
               if not path.is_file() or path.stat().st_size == 0:
                   raise SystemExit(f"Pinned banner missing or empty: {path}")
-          print("Pinned banner pair present.")
+              spec = f"origin/main:.github/assets/img/{name}"
+              shown = subprocess.run(["git", "show", spec], capture_output=True)
+              if shown.returncode != 0:
+                  detail = shown.stderr.decode("utf-8", errors="replace").strip()
+                  raise SystemExit(f"Unable to read pinned banner from {spec}: {detail}")
+              if path.read_bytes() != shown.stdout:
+                  raise SystemExit(f"Pinned banner drifted from origin/main: {path}")
+          print("Pinned banner pair matches origin/main.")
           PY
 
       - name: Validate exact profile asset inventory
@@ -743,8 +751,10 @@ jobs:
           plugin_gists: no
           plugin_topics: yes
           plugin_topics_sort: stars
-          plugin_topics_limit: 30
+          plugin_topics_limit: 20
           plugin_music: no
+          plugin_activity: no
+          plugin_tweets: no
           # Disabled: upstream still queries retired Projects (classic) fields
           # and embeds an error payload for this account.
           plugin_achievements: no

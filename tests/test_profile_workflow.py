@@ -134,6 +134,17 @@ def _run_git(repo: Path, *args: str) -> str:
     return result.stdout
 
 
+def _git_show_bytes(spec: str) -> bytes | None:
+    result = subprocess.run(
+        ["git", "show", spec],
+        cwd=Path.cwd(),
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout
+
+
 def _marked_shell_block(workflow: str, start: str, end: str) -> str:
     match = re.search(
         rf"(?ms)^          # BEGIN {re.escape(start)}\n"
@@ -310,9 +321,11 @@ def test_generate_assets_skips_banner_generation() -> None:
     workflow = _workflow_text()
     assets = _job_block(workflow, "generate-assets")
 
-    assert "generate banner" not in assets
+    assert "generate banner" not in workflow
     assert "Verify pinned light and dark banners" in assets
     assert "banner*.svg" in assets
+    assert "origin/main:.github/assets/img/" in assets
+    assert "Pinned banner drifted from origin/main" in assets
 
 
 def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
@@ -324,7 +337,7 @@ def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
 
 
 def test_pinned_banners_match_origin_main_bytes() -> None:
-    """Header pair must stay byte-identical to origin/main."""
+    """Header pair must stay byte-identical to origin/main when files exist."""
     expected = {
         BANNER_LIGHT: (
             "a5e8d08ffb218924a322e423318219af5909f9ff4923891103842a8f7f408649"
@@ -334,8 +347,19 @@ def test_pinned_banners_match_origin_main_bytes() -> None:
         ),
     }
     for path, digest in expected.items():
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        if not path.is_file():
+            continue
+        actual_bytes = path.read_bytes()
+        actual = hashlib.sha256(actual_bytes).hexdigest()
         assert actual == digest, f"{path} hash {actual} != pinned main {digest}"
+        origin = _git_show_bytes(f"origin/main:{path.as_posix()}")
+        if origin is None:
+            continue
+        origin_digest = hashlib.sha256(origin).hexdigest()
+        assert origin_digest == digest, (
+            f"origin/main:{path.as_posix()} hash {origin_digest} != pinned main {digest}"
+        )
+        assert actual_bytes == origin, f"{path} drifted from origin/main"
 
 
 def test_uv_sync_requires_locked_and_forbids_all_groups() -> None:
@@ -520,6 +544,23 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
 
     assert workflow.count("git push") == 1
     assert "update-skills:" not in workflow
+
+
+def test_finalize_push_follows_ref_name_not_hardcoded_main() -> None:
+    """fact-ship-dev: finalize publishes to TARGET_BRANCH / github.ref_name."""
+    finalize = _job_block(_workflow_text(), "finalize")
+    push_script = _marked_shell_block(
+        _workflow_text(),
+        "trigger-consistent-push",
+        "trigger-consistent-push",
+    )
+
+    assert "TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}" in finalize
+    assert 'origin "HEAD:refs/heads/${TARGET_BRANCH}"' in push_script
+    assert '--force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}"' in push_script
+    assert "HEAD:refs/heads/main" not in push_script
+    assert "origin main" not in push_script
+    assert re.search(r"git push\s+origin\s+HEAD:main\b", push_script) is None
 
 
 def test_finalize_never_rebases_generated_outputs_across_trigger_revisions(
@@ -939,7 +980,7 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert 'plugin_languages_threshold: "0%"' in primary
     assert "plugin_notable: yes" in primary
     assert "plugin_topics: yes" in primary
-    assert "plugin_topics_limit: 30" in primary
+    assert "plugin_topics_limit: 20" in primary
     assert "plugin_achievements: no" in primary
     assert "plugin_achievements_display" not in primary
     assert "plugin_achievements_threshold" not in primary
@@ -950,10 +991,16 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_gists: no" in primary
     assert "plugin_lines: no" in primary
     assert "plugin_music: no" in primary
+    assert "plugin_activity: no" in primary
+    assert "plugin_tweets: no" in primary
 
     assert "plugin_repositories: yes" in additional
     assert "plugin_people: yes" in additional
     assert "plugin_people_limit: 36" in additional
+    assert (
+        "plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
+        "== 'true' && 'yes' || 'no' }}"
+    ) in additional
     assert (
         "plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
         "== 'true' && '16' || '0' }}"
@@ -973,6 +1020,29 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_gists: no" in extra
     assert "plugin_lines:" not in extra
     assert "plugin_achievements:" not in extra
+
+
+def test_fact_lowlighter_maximal_production_raises_topics_stars_people() -> None:
+    """fact-lowlighter-maximal: production (not probe) raises topics/stars/people."""
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    probe = _job_block(_workflow_text(), "probe-full-metrics")
+    primary, additional, _extra = _lowlighter_with_blocks(prod)
+
+    assert "plugin_topics: yes" in primary
+    assert "plugin_topics_limit: 20" in primary
+    assert 'plugin_languages_threshold: "0%"' in primary
+    assert "plugin_calendar_limit: 0" in primary
+    assert "plugin_stars:" in additional
+    assert "plugin_stars_limit:" in additional
+    assert "'16'" in additional
+    assert "plugin_people: yes" in additional
+    assert "plugin_people_limit: 36" in additional
+
+    assert "plugin_topics_limit: 15" in probe
+    assert "plugin_people_limit: 12" in probe
+    assert "'3'" in probe
+    assert "plugin_stars:" in probe
+    assert "plugin_people:" in probe
 
 
 def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:

@@ -414,3 +414,33 @@ def test_main_validate_rejects_401_byte_stub(tmp_path: Path) -> None:
     stub_asset.write_text(REGEN_STUB_SVG, encoding="utf-8")
 
     assert main(["validate", str(stub_asset)]) == 1
+
+
+COMMITTED_LOWLIGHTER_SVGS = (
+    Path(".github/assets/img/metrics.svg"),
+    Path(".github/assets/img/metrics.additional.svg"),
+    Path(".github/assets/img/metrics.extra.svg"),
+)
+
+
+def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
+    """fact-lowlighter-audit: shipped production SVGs are real cards, not stubs."""
+    primary, additional, extra = COMMITTED_LOWLIGHTER_SVGS
+    for path in COMMITTED_LOWLIGHTER_SVGS:
+        assert path.is_file(), f"missing production lowlighter SVG: {path}"
+        text = path.read_text(encoding="utf-8")
+        lowered = text.lower()
+        assert "will be regenerated" not in lowered
+        assert path.stat().st_size > STUB_SVG_MAX_BYTES
+        result = validate_svg_file(path)
+        assert result.is_valid is True, f"{path}: {result.status} {result.detail}"
+        assert result.status == SvgValidationStatus.VALID
+
+    primary_text = primary.read_text(encoding="utf-8")
+    extra_text = extra.read_text(encoding="utf-8")
+    additional_text = additional.read_text(encoding="utf-8")
+    assert "Most used languages" in primary_text
+    assert "Featured repositories" in additional_text
+    assert 'class="people"' in additional_text
+    assert "Overall issues and pull requests status" in extra_text
+    assert "followup" in extra_text.lower()
