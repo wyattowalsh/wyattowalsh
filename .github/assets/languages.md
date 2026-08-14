@@ -2825,7 +2825,6 @@
 - [jbmusso/awesome-graph](https://github.com/jbmusso/awesome-graph) - A curated list of resources for graph databases and graph computing tools
 - [jesse-ai/awesome-jesse](https://github.com/jesse-ai/awesome-jesse) - A curated list of awesome Jesse strategies and tools.
 - [JGoyd/iOS18.6.2-Persistent-Automation-Exploit-in-Siri-Shortcuts-and-Apple-SWC](https://github.com/JGoyd/iOS18.6.2-Persistent-Automation-Exploit-in-Siri-Shortcuts-and-Apple-SWC) - This repo documents a vulnerability in Siri Shortcuts and Shared Web Credentials (SWC) allowing malformed payloads to persistently execute, trigger retry storms, bypass TLS validation, and request una
-- [jherrodthomas/automotive-skills-suite](https://github.com/jherrodthomas/automotive-skills-suite) - 100+ installable Claude skills covering Engineering areas such as, ISO 26262 functional safety, ISO/SAE 21434 cybersecurity, ISO 21448 SOTIF, AIAG-VDA quality (APQP/PPAP/FMEA), Automotive SPICE, and c
 - [JiangWay/openspec-schemas](https://github.com/JiangWay/openspec-schemas) - Community-contributed OpenSpec schemas. First bridge: superpowers-bridge (OpenSpec + obra/superpowers integration with retrospective artifact).
 - [JingwenTian/awesome-frontend](https://github.com/JingwenTian/awesome-frontend) - A curated list of amazingly awesome frontend libraries, resources and shiny things.
 - [jlevy/the-art-of-command-line](https://github.com/jlevy/the-art-of-command-line) - Master the command line, in one page
@@ -4285,6 +4284,7 @@
 - [jgraph/drawio-libs](https://github.com/jgraph/drawio-libs) - Libraries for draw.io
 - [jgravelle/AutoGroq](https://github.com/jgravelle/AutoGroq) - AutoGroq is a groundbreaking tool that revolutionizes the way users interact with Autogen™ and other AI assistants. By dynamically generating tailored teams of AI agents based on your project requirem
 - [jhao104/proxy_pool](https://github.com/jhao104/proxy_pool) - Python ProxyPool for web spider
+- [jherrodthomas/automotive-skills-suite](https://github.com/jherrodthomas/automotive-skills-suite) - 100+ installable Claude skills covering Engineering areas such as, ISO 26262 functional safety, ISO/SAE 21434 cybersecurity, ISO 21448 SOTIF, AIAG-VDA quality (APQP/PPAP/FMEA), Automotive SPICE, and c
 - [JIA-Lab-research/LongLoRA](https://github.com/JIA-Lab-research/LongLoRA) - Code and documents of LongLoRA and LongAlpaca (ICLR 2024 Oral)
 - [jiaaro/pydub](https://github.com/jiaaro/pydub) - Manipulate audio with a simple and easy high level interface
 - [jiangguochaoGG/P-ICL](https://github.com/jiangguochaoGG/P-ICL)
@@ -6343,7 +6343,7 @@
 - [anis-dr/opencode-mermaid-renderer](https://github.com/anis-dr/opencode-mermaid-renderer) - Render mermaid diagrams as beautiful ASCII art in OpenCode
 - [anomalyco/openauth](https://github.com/anomalyco/openauth) - ▦ Universal, standards-based auth provider.
 - [anomalyco/opencode](https://github.com/anomalyco/opencode) - The open source coding agent.
-- [anomalyco/opentui](https://github.com/anomalyco/opentui) - OpenTUI is a library for building terminal user interfaces (TUIs)
+- [anomalyco/opentui](https://github.com/anomalyco/opentui) - OpenTUI is a library to build terminal user interfaces (TUI)
 - [anoncam/linear-mcp](https://github.com/anoncam/linear-mcp) - A Linear MCP implementation that handles all Linear resource types.
 - [AnotiaWang/deep-research-web-ui](https://github.com/AnotiaWang/deep-research-web-ui) - (Supports DeepSeek R1) An AI-powered research assistant that performs iterative, deep research on any topic by combining search engines, web scraping, and large language models.
 - [ansh/jiffyreader-public-archive](https://github.com/ansh/jiffyreader-public-archive) - A Browser Extension for faster reading on ANY website!

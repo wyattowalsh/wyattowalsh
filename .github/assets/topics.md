@@ -18823,7 +18823,7 @@
 ## tui
 
 - [1jehuang/jcode](https://github.com/1jehuang/jcode) - The most RAM efficient harness
-- [anomalyco/opentui](https://github.com/anomalyco/opentui) - OpenTUI is a library for building terminal user interfaces (TUIs)
+- [anomalyco/opentui](https://github.com/anomalyco/opentui) - OpenTUI is a library to build terminal user interfaces (TUI)
 - [bahdotsh/feedr](https://github.com/bahdotsh/feedr) - A feature-rich terminal-based RSS/Atom feed reader written in Rust.
 - [charmbracelet/bubbletea](https://github.com/charmbracelet/bubbletea) - A powerful little TUI framework 🏗
 - [ClementTsang/bottom](https://github.com/ClementTsang/bottom) - Yet another cross-platform graphical process/system monitor.
