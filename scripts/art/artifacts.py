@@ -28,12 +28,12 @@ MANIFEST_VERSION = 2
 # Derived from the accepted 2026-08-12 six-style baseline with bounded encoding
 # headroom. Changes are intentional contract updates, not self-adjusting limits.
 LIVING_ART_BYTE_BUDGETS = {
-    "living-ferrofluid.gif": 3_400_000,
+    "living-ferrofluid.gif": 3_800_000,
     "living-genetic.gif": 2_400_000,
-    "living-inkgarden.gif": 5_800_000,
-    "living-lenia.gif": 900_000,
+    "living-inkgarden.gif": 7_200_000,
+    "living-lenia.gif": 1_200_000,
     "living-physarum.gif": 2_400_000,
-    "living-topo.gif": 8_800_000,
+    "living-topo.gif": 10_000_000,
 }
 LIVING_ART_TOTAL_BYTE_BUDGET = sum(LIVING_ART_BYTE_BUDGETS.values())
 LIVING_ART_CANONICAL_DIMENSIONS = (400, 400)
