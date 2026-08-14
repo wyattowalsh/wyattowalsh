@@ -1196,9 +1196,12 @@ jobs:
 
           parts = Path(os.environ["RUNNER_TEMP"]) / "living-art-parts"
           stage = Path(os.environ["RUNNER_TEMP"]) / "living-art-stage"
+          mp4_dir = Path(os.environ["RUNNER_TEMP"]) / "living-art-mp4"
           manifest = stage_living_art_fleet(parts, stage)
+          # Keep exact-six stage GIF-only. Optional MP4s travel in a sibling dir.
+          mp4_dir.mkdir(parents=True, exist_ok=True)
           for mp4 in parts.rglob("living-*.mp4"):
-              shutil.copy2(mp4, stage / mp4.name)
+              shutil.copy2(mp4, mp4_dir / mp4.name)
           print(
               "Staged exact living-art fleet: "
               f"{manifest['total_assets']} assets, "
@@ -1224,6 +1227,16 @@ jobs:
           name: living-art-stage-${{ github.run_id }}
           path: ${{ runner.temp }}/living-art-stage
           if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: true
+
+      - name: Upload living-art MP4 siblings
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: living-art-mp4-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-mp4
+          if-no-files-found: ignore
           retention-days: 7
           compression-level: 0
           overwrite: true
@@ -1298,6 +1311,16 @@ jobs:
         with:
           name: living-art-stage-${{ github.run_id }}
           path: ${{ runner.temp }}/living-art-stage
+
+      - name: Download living-art MP4 siblings
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        continue-on-error: true
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
+        with:
+          name: living-art-mp4-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-mp4
 
       - name: Download profile metrics artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -1475,8 +1498,10 @@ jobs:
           ).read_bytes():
               raise SystemExit("Persisted primary/public living-art galleries differ")
 
-          for mp4 in stage_dir.glob("living-*.mp4"):
-              shutil.copy2(mp4, output_dir / mp4.name)
+          mp4_dir = Path(os.environ["RUNNER_TEMP"]) / "living-art-mp4"
+          if mp4_dir.is_dir():
+              for mp4 in mp4_dir.glob("living-*.mp4"):
+                  shutil.copy2(mp4, output_dir / mp4.name)
 
           validate_living_art_byte_budgets(primary_manifest)
           validate_living_art_byte_budgets(public_manifest)

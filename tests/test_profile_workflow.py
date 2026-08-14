@@ -260,7 +260,7 @@ def test_download_artifact_dep0005_suppression_is_step_local() -> None:
             if str(step.get("uses", "")).startswith("actions/download-artifact@")
         )
 
-    assert len(download_steps) == 8
+    assert len(download_steps) == 9
     for job_name, step in download_steps:
         assert step.get("env") == {"NODE_OPTIONS": "--disable-warning=DEP0005"}, (
             f"{job_name} must suppress only upstream download-artifact DEP0005"
@@ -286,7 +286,7 @@ def test_every_uploaded_artifact_is_idempotent_for_same_run_reruns() -> None:
             if str(step.get("uses", "")).startswith("actions/upload-artifact@")
         )
 
-    assert len(upload_steps) == 8
+    assert len(upload_steps) == 9
     for job_name, step in upload_steps:
         assert step.get("with", {}).get("overwrite") is True, (
             f"{job_name} artifact upload must support reruns of the same run_id"
