@@ -1,9 +1,13 @@
 """Workflow contract tests for the profile updater."""
 
+import os
 import re
 import shlex
 import subprocess
 from pathlib import Path
+from typing import Any, cast
+
+import yaml
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
 README_PATH = Path("README.md")
@@ -47,14 +51,16 @@ USES_LINE_RE = re.compile(
 GENERATOR_JOBS = (
     "update-starred-lists",
     "generate-assets",
+    "prepare-event-art-inputs",
     "generate-event-art",
+    "assemble-event-art",
     "generate-profile-metrics",
 )
 
 FINALIZE_NEEDS = (
     "update-starred-lists",
     "generate-assets",
-    "generate-event-art",
+    "assemble-event-art",
     "generate-profile-metrics",
     "update-readme-wakatime",
 )
@@ -62,6 +68,14 @@ FINALIZE_NEEDS = (
 
 def _workflow_text() -> str:
     return WORKFLOW_PATH.read_text(encoding="utf-8")
+
+
+def _workflow_jobs() -> dict[str, dict[str, Any]]:
+    workflow = yaml.safe_load(_workflow_text())
+    assert isinstance(workflow, dict)
+    jobs = workflow.get("jobs")
+    assert isinstance(jobs, dict)
+    return cast(dict[str, dict[str, Any]], jobs)
 
 
 def _job_block(workflow: str, job_id: str) -> str:
@@ -119,6 +133,18 @@ def _run_git(repo: Path, *args: str) -> str:
     return result.stdout
 
 
+def _marked_shell_block(workflow: str, start: str, end: str) -> str:
+    match = re.search(
+        rf"(?ms)^          # BEGIN {re.escape(start)}\n"
+        rf"(?P<body>.*?)^          # END {re.escape(end)}$",
+        workflow,
+    )
+    assert match is not None, f"shell block not found: {start}...{end}"
+    return "\n".join(
+        line.removeprefix("          ") for line in match.group("body").splitlines()
+    )
+
+
 def test_profile_actions_use_exact_immutable_release_pins() -> None:
     workflow = _workflow_text()
     uses_lines = [
@@ -139,6 +165,90 @@ def test_profile_actions_use_exact_immutable_release_pins() -> None:
         observed_actions.add(action)
 
     assert observed_actions == set(EXPECTED_ACTION_PINS)
+
+
+def test_every_checkout_uses_the_immutable_trigger_sha() -> None:
+    jobs = _workflow_jobs()
+    checkout_steps: list[tuple[str, dict[str, Any]]] = []
+    for job_name, job in jobs.items():
+        steps = cast(list[dict[str, Any]], job.get("steps", []))
+        checkout_steps.extend(
+            (job_name, step)
+            for step in steps
+            if str(step.get("uses", "")).startswith("actions/checkout@")
+        )
+
+    assert len(checkout_steps) == 9
+    for job_name, step in checkout_steps:
+        assert step.get("with", {}).get("ref") == "${{ github.sha }}", (
+            f"{job_name} checkout must remain pinned to the trigger revision"
+        )
+
+    for line in _workflow_text().splitlines():
+        if line.lstrip().startswith("ref:"):
+            assert "github.head_ref" not in line
+
+
+def test_every_setup_uv_step_disables_cache_for_annotation_clean_parallelism() -> None:
+    jobs = _workflow_jobs()
+    setup_steps: list[tuple[str, dict[str, Any]]] = []
+    for job_name, job in jobs.items():
+        steps = cast(list[dict[str, Any]], job.get("steps", []))
+        setup_steps.extend(
+            (job_name, step)
+            for step in steps
+            if str(step.get("uses", "")).startswith("astral-sh/setup-uv@")
+        )
+
+    assert setup_steps
+    for job_name, step in setup_steps:
+        assert step.get("with") == {"enable-cache": False}, (
+            f"{job_name} setup-uv must disable its shared cache"
+        )
+
+
+def test_download_artifact_dep0005_suppression_is_step_local() -> None:
+    jobs = _workflow_jobs()
+    download_steps: list[tuple[str, dict[str, Any]]] = []
+    for job_name, job in jobs.items():
+        steps = cast(list[dict[str, Any]], job.get("steps", []))
+        download_steps.extend(
+            (job_name, step)
+            for step in steps
+            if str(step.get("uses", "")).startswith("actions/download-artifact@")
+        )
+
+    assert len(download_steps) == 8
+    for job_name, step in download_steps:
+        assert step.get("env") == {"NODE_OPTIONS": "--disable-warning=DEP0005"}, (
+            f"{job_name} must suppress only upstream download-artifact DEP0005"
+        )
+
+    workflow = _workflow_text()
+    assert workflow.count("NODE_OPTIONS: --disable-warning=DEP0005") == len(
+        download_steps
+    )
+    assert "--no-deprecation" not in workflow
+    assert "NODE_NO_WARNINGS" not in workflow
+    assert "--disable-warning=DeprecationWarning" not in workflow
+
+
+def test_every_uploaded_artifact_is_idempotent_for_same_run_reruns() -> None:
+    jobs = _workflow_jobs()
+    upload_steps: list[tuple[str, dict[str, Any]]] = []
+    for job_name, job in jobs.items():
+        steps = cast(list[dict[str, Any]], job.get("steps", []))
+        upload_steps.extend(
+            (job_name, step)
+            for step in steps
+            if str(step.get("uses", "")).startswith("actions/upload-artifact@")
+        )
+
+    assert len(upload_steps) == 8
+    for job_name, step in upload_steps:
+        assert step.get("with", {}).get("overwrite") is True, (
+            f"{job_name} artifact upload must support reruns of the same run_id"
+        )
 
 
 def test_generated_commit_pushes_skip_generator_jobs() -> None:
@@ -210,24 +320,85 @@ def test_generate_assets_installs_cairo_apt_deps() -> None:
     assert cairo_apt in workflow
 
 
+def test_generate_assets_installs_exact_svgo_release() -> None:
+    assets = _job_block(_workflow_text(), "generate-assets")
+
+    assert "npm install --global --no-audit --no-fund svgo@4.0.2" in assets
+    assert assets.index("Install SVG optimizer") < assets.index(
+        "Generate light and dark banners"
+    )
+
+
 def test_generate_event_art_installs_lossless_gif_optimizer() -> None:
     art = _job_block(_workflow_text(), "generate-event-art")
 
     assert "apt-get install -y librsvg2-bin gifsicle" in art
 
 
+def test_living_art_uses_dynamic_six_way_matrix_and_fresh_outputs() -> None:
+    jobs = _workflow_jobs()
+    prepare = jobs["prepare-event-art-inputs"]
+    producer = jobs["generate-event-art"]
+    assembler = jobs["assemble-event-art"]
+
+    assert "needs" not in prepare
+    assert prepare["timeout-minutes"] == 15
+    assert prepare["permissions"] == {"contents": "read"}
+    assert prepare["outputs"] == {
+        "styles": "${{ steps.contract.outputs.styles }}",
+        "max_frames": "${{ steps.contract.outputs.max_frames }}",
+    }
+    prepare_text = _job_block(_workflow_text(), "prepare-event-art-inputs")
+    assert "from scripts.art.artifacts import LIVING_ART_STYLE_KEYS" in prepare_text
+    assert "living-art-inputs-${{ github.run_id }}" in prepare_text
+    assert "overwrite: true" in prepare_text
+
+    assert producer["needs"] == "prepare-event-art-inputs"
+    assert producer["timeout-minutes"] == 45
+    assert producer["permissions"] == {"contents": "read"}
+    strategy = cast(dict[str, Any], producer["strategy"])
+    assert strategy["fail-fast"] is False
+    assert strategy["max-parallel"] == 6
+    assert strategy["matrix"] == {
+        "style": "${{ fromJSON(needs.prepare-event-art-inputs.outputs.styles) }}"
+    }
+    producer_text = _job_block(_workflow_text(), "generate-event-art")
+    assert '--only "$LIVING_ART_STYLE"' in producer_text
+    assert '--max-frames "$LIVING_ART_MAX_FRAMES"' in producer_text
+    assert "--size 400" in producer_text
+    assert "--workers 4" in producer_text
+    assert '--output-dir "$LIVING_ART_OUTPUT_DIR"' in producer_text
+    assert "living-art-output-${{ matrix.style }}" in producer_text
+    assert "living-art-style-${{ github.run_id }}-${{ matrix.style }}" in producer_text
+    assert "compression-level: 0" in producer_text
+    assert "overwrite: true" in producer_text
+    assert "continue-on-error" not in producer_text
+
+    assert assembler["needs"] == "generate-event-art"
+    assert assembler["timeout-minutes"] == 15
+    assert assembler["permissions"] == {"contents": "read"}
+    assembler_text = _job_block(_workflow_text(), "assemble-event-art")
+    assert "pattern: living-art-style-${{ github.run_id }}-*" in assembler_text
+    assert "merge-multiple: true" in assembler_text
+    assert "stage_living_art_fleet(" in assembler_text
+    assert "living-art-stage-${{ github.run_id }}" in assembler_text
+
+
 def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
     workflow = _workflow_text()
     producer = _job_block(workflow, "generate-event-art")
+    assembler = _job_block(workflow, "assemble-event-art")
     finalize = _job_block(workflow, "finalize")
 
-    assert "stage_living_art_fleet(" in producer
+    assert "stage_living_art_fleet(" not in producer
+    assert "stage_living_art_fleet(" in assembler
     assert "publish_living_art_fleet(" in finalize
     assert "living-art-stage/outputs" not in workflow
     assert "outputs/docs-showcase" not in workflow
     assert "outputs/index" not in workflow
     assert "if-no-files-found: error" in producer
-    assert '.glob("living-*.gif")' in workflow  # inventory only; equality-checked
+    assert "if-no-files-found: error" in assembler
+    assert "validate_living_art_byte_budgets(" in producer
     assert "for file in .github/assets/img/living-*.gif" not in workflow
     assert 'for file in "$stage"/outputs/timelapse/living-*.gif' not in workflow
     assert "':(glob).github/assets/img/living-*.gif'" in finalize
@@ -237,8 +408,34 @@ def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
 
 def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
     workflow = _workflow_text()
+    jobs = _workflow_jobs()
     assert "uv sync --locked --extra qr --extra word-clouds" in workflow
-    assert "uv sync --locked --extra script-tools" in workflow
+    starred = _job_block(workflow, "update-starred-lists")
+    assert "uv sync --locked" in starred
+    assert "scripts.starred_lists" in starred
+    assert "uv run starred" not in workflow
+    assert "--token" not in starred
+    assert "--topic-threshold 500" in starred
+    assert "Validate starred-list consumer contract" in starred
+    assert 'line.startswith("Error:")' in starred
+
+    for job_name in ("generate-assets", "finalize"):
+        steps = cast(list[dict[str, Any]], jobs[job_name]["steps"])
+        starred_download = next(
+            step
+            for step in steps
+            if step.get("name") == "Download starred lists artifact"
+        )
+        assert starred_download["with"]["path"] == ".github/assets"
+
+    finalize_steps = cast(list[dict[str, Any]], jobs["finalize"]["steps"])
+    expected_download_paths = {
+        "Download profile assets artifact": "${{ runner.temp }}/profile-assets",
+        "Download profile metrics artifact": ".github/assets/img",
+    }
+    for step_name, expected_path in expected_download_paths.items():
+        step = next(step for step in finalize_steps if step.get("name") == step_name)
+        assert step["with"]["path"] == expected_path
 
 
 def test_finalize_needs_generators_and_waka_fail_closed() -> None:
@@ -286,6 +483,127 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
     assert "update-skills:" not in workflow
 
 
+def test_finalize_never_rebases_generated_outputs_across_trigger_revisions(
+    tmp_path: Path,
+) -> None:
+    script = _marked_shell_block(
+        _workflow_text(),
+        "trigger-consistent-push",
+        "trigger-consistent-push",
+    )
+    assert "git rebase" not in script
+    assert "TRIGGER_SHA" in script
+    assert '--force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}"' in script
+    assert 'git merge-base --is-ancestor "${TRIGGER_SHA}" HEAD' in script
+
+    remote = tmp_path / "remote.git"
+    source = tmp_path / "source"
+    worker = tmp_path / "worker"
+    _run_git(tmp_path, "init", "--bare", "--quiet", str(remote))
+    _run_git(tmp_path, "clone", "--quiet", str(remote), str(source))
+    _run_git(source, "config", "user.name", "Test")
+    _run_git(source, "config", "user.email", "test@example.com")
+    (source / "source.txt").write_text("trigger A\n", encoding="utf-8")
+    _run_git(source, "add", "source.txt")
+    _run_git(source, "commit", "--quiet", "-m", "source A")
+    _run_git(source, "branch", "-M", "dev")
+    _run_git(source, "push", "--quiet", "-u", "origin", "dev")
+    trigger_sha = _run_git(source, "rev-parse", "HEAD").strip()
+
+    _run_git(tmp_path, "clone", "--quiet", "--branch", "dev", str(remote), str(worker))
+    _run_git(worker, "config", "user.name", "Test")
+    _run_git(worker, "config", "user.email", "test@example.com")
+    (worker / "generated.txt").write_text("generated from A\n", encoding="utf-8")
+    _run_git(worker, "add", "generated.txt")
+    _run_git(worker, "commit", "--quiet", "-m", "generated from A")
+
+    (source / "source.txt").write_text("source B\n", encoding="utf-8")
+    _run_git(source, "add", "source.txt")
+    _run_git(source, "commit", "--quiet", "-m", "source B")
+    _run_git(source, "push", "--quiet", "origin", "dev")
+    advanced_sha = _run_git(source, "rev-parse", "HEAD").strip()
+
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", script],
+        cwd=worker,
+        env={
+            "PATH": os.environ["PATH"],
+            "TARGET_BRANCH": "dev",
+            "TRIGGER_REF_TYPE": "branch",
+            "TRIGGER_SHA": trigger_sha,
+        },
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "advanced beyond this run's trigger revision" in result.stdout
+    remote_sha = _run_git(source, "ls-remote", "origin", "refs/heads/dev").split()[0]
+    assert remote_sha == advanced_sha
+    remote_log = _run_git(source, "log", "--format=%s", "origin/dev")
+    assert "generated from A" not in remote_log
+
+
+def test_finalize_force_refreshes_remote_tracking_ref_before_revision_check(
+    tmp_path: Path,
+) -> None:
+    script = _marked_shell_block(
+        _workflow_text(),
+        "trigger-consistent-push",
+        "trigger-consistent-push",
+    )
+    assert "+refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}" in script
+    assert "Failed to refresh" in script
+
+    remote = tmp_path / "remote.git"
+    source = tmp_path / "source"
+    worker = tmp_path / "worker"
+    _run_git(tmp_path, "init", "--bare", "--quiet", str(remote))
+    _run_git(tmp_path, "clone", "--quiet", str(remote), str(source))
+    _run_git(source, "config", "user.name", "Test")
+    _run_git(source, "config", "user.email", "test@example.com")
+    (source / "source.txt").write_text("base\n", encoding="utf-8")
+    _run_git(source, "add", "source.txt")
+    _run_git(source, "commit", "--quiet", "-m", "base")
+    _run_git(source, "branch", "-M", "dev")
+    _run_git(source, "push", "--quiet", "-u", "origin", "dev")
+    base_sha = _run_git(source, "rev-parse", "HEAD").strip()
+    (source / "source.txt").write_text("trigger A\n", encoding="utf-8")
+    _run_git(source, "commit", "--quiet", "-am", "trigger A")
+    _run_git(source, "push", "--quiet", "origin", "dev")
+    trigger_sha = _run_git(source, "rev-parse", "HEAD").strip()
+
+    _run_git(tmp_path, "clone", "--quiet", "--branch", "dev", str(remote), str(worker))
+    _run_git(worker, "config", "user.name", "Test")
+    _run_git(worker, "config", "user.email", "test@example.com")
+    (worker / "generated.txt").write_text("generated from A\n", encoding="utf-8")
+    _run_git(worker, "add", "generated.txt")
+    _run_git(worker, "commit", "--quiet", "-m", "generated from A")
+
+    _run_git(source, "reset", "--hard", base_sha)
+    _run_git(source, "push", "--quiet", "--force", "origin", "HEAD:dev")
+
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", script],
+        cwd=worker,
+        env={
+            "PATH": os.environ["PATH"],
+            "TARGET_BRANCH": "dev",
+            "TRIGGER_REF_TYPE": "branch",
+            "TRIGGER_SHA": trigger_sha,
+        },
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "advanced beyond this run's trigger revision" in result.stdout
+    remote_sha = _run_git(source, "ls-remote", "origin", "refs/heads/dev").split()[0]
+    assert remote_sha == base_sha
+
+
 def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
     workflow = _workflow_text()
 
@@ -301,9 +619,20 @@ def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
     assert "contents: read" in assets
 
     art = _job_block(workflow, "generate-event-art")
-    assert "living-art-stage-${{ github.run_id }}" in art
+    assert "living-art-style-${{ github.run_id }}-${{ matrix.style }}" in art
     assert "upload-artifact@" in art
     assert "contents: read" in art
+
+    art_inputs = _job_block(workflow, "prepare-event-art-inputs")
+    assert "living-art-inputs-${{ github.run_id }}" in art_inputs
+    assert "upload-artifact@" in art_inputs
+    assert "contents: read" in art_inputs
+
+    art_assembler = _job_block(workflow, "assemble-event-art")
+    assert "living-art-stage-${{ github.run_id }}" in art_assembler
+    assert "download-artifact@" in art_assembler
+    assert "upload-artifact@" in art_assembler
+    assert "contents: read" in art_assembler
 
     metrics = _job_block(workflow, "generate-profile-metrics")
     assert "profile-metrics-${{ github.run_id }}" in metrics
@@ -325,6 +654,82 @@ def test_generator_jobs_upload_artifacts_without_git_writers() -> None:
     ):
         assert artifact in finalize
     assert finalize.count("download-artifact@") >= 5
+
+
+def test_profile_asset_artifact_is_structurally_validated_and_exact() -> None:
+    """The upload boundary must not inherit stale wildcard matches."""
+    assets = _job_block(_workflow_text(), "generate-assets")
+    jobs = _workflow_jobs()
+    steps = jobs["generate-assets"]["steps"]
+    assert isinstance(steps, list)
+
+    validate_step = next(
+        step
+        for step in steps
+        if isinstance(step, dict)
+        and step.get("name") == "Validate exact profile asset inventory"
+    )
+    validation = validate_step.get("run")
+    assert isinstance(validation, str)
+    for contract in (
+        'asset_dir / "banner-dark.svg"',
+        'asset_dir / "banner.svg"',
+        'asset_dir / "qr.png"',
+        'asset_dir / "wordcloud_typographic_by_languages.svg"',
+        'asset_dir / "wordcloud_typographic_by_topics.svg"',
+        "observed != expected",
+        "stat.S_ISREG",
+        "ET.parse(path)",
+        "image.verify()",
+        'image.format != "PNG"',
+    ):
+        assert contract in validation
+
+    upload_step = next(
+        step
+        for step in steps
+        if isinstance(step, dict)
+        and step.get("name") == "Upload profile assets artifact"
+    )
+    upload_with = upload_step.get("with")
+    assert isinstance(upload_with, dict)
+    paths = upload_with.get("path")
+    assert isinstance(paths, str)
+    assert paths.splitlines() == [
+        ".github/assets/img/banner-dark.svg",
+        ".github/assets/img/banner.svg",
+        ".github/assets/img/qr.png",
+        ".github/assets/img/wordcloud_typographic_by_languages.svg",
+        ".github/assets/img/wordcloud_typographic_by_topics.svg",
+    ]
+    assert "*." not in paths
+    assert assets.index("Validate exact profile asset inventory") < assets.index(
+        "Upload profile assets artifact"
+    )
+
+    finalize_steps = jobs["finalize"]["steps"]
+    assert isinstance(finalize_steps, list)
+    publish_step = next(
+        step
+        for step in finalize_steps
+        if isinstance(step, dict)
+        and step.get("name") == "Publish and validate exact profile asset inventory"
+    )
+    publication = publish_step.get("run")
+    assert isinstance(publication, str)
+    for contract in (
+        'stage_dir = Path(os.environ["RUNNER_TEMP"]) / "profile-assets"',
+        "validate(stage_dir, exact_directory=True)",
+        "path.name not in expected_names",
+        "os.replace(temporary_path, output_dir / name)",
+        "validate(output_dir, exact_directory=False)",
+    ):
+        assert contract in publication
+
+    finalize = _job_block(_workflow_text(), "finalize")
+    assert finalize.index(
+        "Publish and validate exact profile asset inventory"
+    ) < finalize.index("git add -A --")
 
 
 def test_finalize_publishes_and_validates_living_art_before_git_staging() -> None:
@@ -494,8 +899,10 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_languages: yes" in primary
     assert "plugin_notable: yes" in primary
     assert "plugin_topics: yes" in primary
-    assert "plugin_achievements: yes" in primary
-    assert "plugin_achievements_display: compact" in primary
+    assert "plugin_achievements: no" in primary
+    assert "plugin_achievements_display" not in primary
+    assert "plugin_achievements_threshold" not in primary
+    assert "plugin_achievements_limit" not in primary
     assert "plugin_calendar: yes" in primary
     assert "plugin_calendar_limit: 1" in primary
     assert "plugin_habits: no" in primary

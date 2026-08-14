@@ -23,15 +23,100 @@ Key improvements:
 -   Enhanced type hinting and docstrings for better maintainability.
 """
 
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+from stat import S_ISREG
 
 import segno
+from PIL import PngImagePlugin
 
 # Import VCardDataModel from config.py
 from .config import VCardDataModel
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
+
+
+def _validate_output_filename(output_filename: str) -> str:
+    """Return a safe, bare PNG filename before any output-path mutation."""
+    output_path = Path(output_filename)
+    windows_path = PureWindowsPath(output_filename)
+    if (
+        not output_filename
+        or output_filename in {".", ".."}
+        or "/" in output_filename
+        or "\\" in output_filename
+        or output_path.is_absolute()
+        or windows_path.is_absolute()
+        or bool(windows_path.drive)
+        or output_path.name != output_filename
+        or output_path.suffix != ".png"
+    ):
+        raise ValueError(
+            "QR output filename must be a bare .png filename without path "
+            f"separators or parent components: {output_filename!r}"
+        )
+    return output_filename
+
+
+def _remove_output_target(output_path: Path) -> None:
+    """Remove exactly one prior QR output without traversing directories."""
+    try:
+        output_path.unlink()
+    except FileNotFoundError:
+        return
+
+
+def _cleanup_output_target(output_path: Path) -> None:
+    """Best-effort cleanup for failed QR rendering without recursion."""
+    try:
+        _remove_output_target(output_path)
+    except OSError:
+        try:
+            if not output_path.is_symlink() and output_path.is_dir():
+                output_path.rmdir()
+        except OSError:
+            pass
+
+
+def _validate_png_output(output_path: Path) -> None:
+    """Require a freshly rendered, regular PNG file at ``output_path``."""
+    try:
+        output_stat = output_path.lstat()
+    except FileNotFoundError as exc:
+        raise RuntimeError(
+            f"QR renderer did not create an output: {output_path}"
+        ) from exc
+
+    if not S_ISREG(output_stat.st_mode):
+        raise RuntimeError(f"QR renderer did not create a regular file: {output_path}")
+    if output_stat.st_size == 0:
+        raise RuntimeError(f"QR renderer did not create a non-empty PNG: {output_path}")
+
+    try:
+        with output_path.open("rb") as generated_file:
+            # Pillow emits chunk-level DEBUG records through stdlib logging.
+            # Suppress only this module while verifying: pytest's live logging
+            # can otherwise bind a Click-isolated stream that is already closed.
+            png_logger_was_disabled = PngImagePlugin.logger.disabled
+            PngImagePlugin.logger.disabled = True
+            try:
+                generated_image = PngImagePlugin.PngImageFile(generated_file)
+                generated_image.verify()
+            finally:
+                PngImagePlugin.logger.disabled = png_logger_was_disabled
+    except (OSError, SyntaxError, ValueError) as exc:
+        raise RuntimeError(
+            f"QR renderer created an invalid PNG: {output_path}"
+        ) from exc
+
+
+def _validate_or_remove_png_output(output_path: Path) -> None:
+    """Validate a QR output and remove any invalid file-like artifact."""
+    try:
+        _validate_png_output(output_path)
+    except (OSError, RuntimeError):
+        _cleanup_output_target(output_path)
+        raise
 
 
 class QRCodeGenerator:
@@ -109,7 +194,12 @@ class QRCodeGenerator:
         """
         bg_path = background_path or self.default_background_path
         current_scale = scale or self.default_scale
-        output_path = self.default_output_dir / output_filename
+        validated_output_filename = _validate_output_filename(output_filename)
+        output_path = self.default_output_dir / validated_output_filename
+
+        # Clear the exact target before validating inputs so every invocation is
+        # fail-closed with respect to stale output bytes.
+        _remove_output_target(output_path)
 
         if bg_path is not None and not bg_path.is_file():
             msg = f"Background SVG for QR code not found: {bg_path}"
@@ -123,6 +213,7 @@ class QRCodeGenerator:
                 "Error correction level must be one of 'L', 'M', 'Q', 'H'."
             )
 
+        generation_complete = False
         try:
             # Manually construct vCard 3.0 string
             vcard_lines = [
@@ -197,6 +288,8 @@ class QRCodeGenerator:
                 # Or, raise an error if artistic rendering is critical:
                 raise AttributeError("Artistic QR rendering not available.")
 
+            _validate_or_remove_png_output(output_path)
+            generation_complete = True
             logger.info(
                 "Successfully generated QR code: {output_path}", output_path=output_path
             )
@@ -213,6 +306,9 @@ class QRCodeGenerator:
                 exc_info=True,  # exc_info=True logs the full traceback
             )
             raise
+        finally:
+            if not generation_complete:
+                _cleanup_output_target(output_path)
 
 
 # Part 2: Specific Logic and Instantiation

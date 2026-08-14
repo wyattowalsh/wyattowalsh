@@ -1,5 +1,6 @@
 import json
 import tomllib
+from io import BytesIO
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, call, patch
@@ -17,9 +18,18 @@ import scripts.cli.generate._common as generate_common
 from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
 from scripts.cli import app
 from scripts.cli.generate import _wc_from_languages, _wc_from_topics, _wc_import
-from scripts.config import ProjectConfig
+from scripts.config import ProjectConfig, QRCodeSettings
 from scripts.word_clouds import WordCloudSettings
 from scripts.word_clouds.readability import LayoutReadabilitySettings
+
+
+def _make_valid_png() -> bytes:
+    output = BytesIO()
+    Image.new("RGB", (2, 2), color=(15, 90, 180)).save(output, format="PNG")
+    return output.getvalue()
+
+
+_VALID_PNG = _make_valid_png()
 
 
 # Fixture for CliRunner
@@ -38,6 +48,13 @@ def _requirements_by_name(requirements: list[str]) -> dict[str, set[str]]:
             str(canonicalize_name(extra)) for extra in requirement.extras
         )
     return result
+
+
+def _write_mock_banner(*, cfg: object) -> None:
+    """Emulate the banner generator's successful file-publication contract."""
+    output = Path(str(getattr(cfg, "output_path")))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text("<svg/>", encoding="utf-8")
 
 
 def test_refresh_living_art_artifacts_mirrors_docs_showcase(
@@ -105,6 +122,7 @@ def _run_living_art_generation(
         max_frames=120,
         size=400,
         workers=1,
+        output_dir=outputs[0].parent if outputs else tmp_path / "img",
     )
 
 
@@ -157,6 +175,280 @@ def test_preexisting_stale_living_art_cannot_mask_a_skipped_style(
     assert error.value.exit_code == 1
 
 
+def test_partial_living_art_generation_never_refreshes_stale_fleet_index(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A one-style shard must not publish an index from stale peer GIFs."""
+    output_dir = tmp_path / "isolated-style"
+    output_dir.mkdir()
+    for style in LIVING_ART_STYLE_KEYS:
+        (output_dir / f"living-{style}.gif").write_bytes(b"stale")
+    selected_output = output_dir / "living-topo.gif"
+    selected_output.write_bytes(b"fresh")
+    metrics_path, history_path = _living_art_input_paths(tmp_path)
+    captured: dict[str, object] = {}
+
+    def _render(*_args: object, **kwargs: object) -> list[Path]:
+        captured.update(kwargs)
+        return [selected_output]
+
+    refresh = MagicMock()
+    monkeypatch.setattr("scripts.art.timelapse.render_timelapse", _render)
+    monkeypatch.setattr(generate_common, "_refresh_living_art_artifacts", refresh)
+
+    outputs = generate_common._generate_living_art_timelapse(
+        profile="wyattowalsh",
+        metrics_path=metrics_path,
+        history_path=history_path,
+        only="topo",
+        max_frames=120,
+        size=400,
+        workers=2,
+        output_dir=output_dir,
+    )
+
+    assert outputs == [selected_output]
+    assert captured["output_dir"] == output_dir
+    assert captured["styles"] == ["topo"]
+    refresh.assert_not_called()
+
+
+def test_full_living_art_generation_refreshes_requested_output_directory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output_dir = tmp_path / "canonical-fleet"
+    output_dir.mkdir()
+    outputs = []
+    for style in LIVING_ART_STYLE_KEYS:
+        output = output_dir / f"living-{style}.gif"
+        output.write_bytes(b"fresh")
+        outputs.append(output)
+    metrics_path, history_path = _living_art_input_paths(tmp_path)
+    monkeypatch.setattr(
+        "scripts.art.timelapse.render_timelapse",
+        lambda *_args, **_kwargs: outputs,
+    )
+    refresh = MagicMock()
+    monkeypatch.setattr(generate_common, "_refresh_living_art_artifacts", refresh)
+
+    generate_common._generate_living_art_timelapse(
+        profile="wyattowalsh",
+        metrics_path=metrics_path,
+        history_path=history_path,
+        only=None,
+        max_frames=120,
+        size=400,
+        workers=2,
+        output_dir=output_dir,
+    )
+
+    refresh.assert_called_once_with(output_dir)
+
+
+@pytest.mark.parametrize("command", ["living-art", "timelapse"])
+def test_living_art_commands_forward_custom_output_directory(
+    command: str,
+    runner: CliRunner,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, object] = {}
+    monkeypatch.setattr(
+        "scripts.cli.generate.art._load_project_config",
+        lambda _path: ProjectConfig(),
+    )
+    monkeypatch.setattr(
+        "scripts.cli.generate.art._generate_living_art_timelapse",
+        lambda **kwargs: captured.update(kwargs),
+    )
+    output_dir = tmp_path / command
+
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            command,
+            "--metrics-path",
+            str(tmp_path / "metrics.json"),
+            "--history-path",
+            str(tmp_path / "history.json"),
+            "--output-dir",
+            str(output_dir),
+        ],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert captured["output_dir"] == output_dir
+
+
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_requires_fresh_valid_png(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """The QR command reports success only after validating the exact target."""
+    mock_load_config.return_value = ProjectConfig()
+    output_path = tmp_path / "fresh.png"
+
+    def _generate(**_kwargs: object) -> Path:
+        output_path.write_bytes(_VALID_PNG)
+        return output_path
+
+    mock_qr_generator.return_value.generate_artistic_vcard_qr.side_effect = _generate
+
+    result = runner.invoke(
+        app,
+        ["generate", "qr", "--output-path", str(output_path)],
+    )
+
+    assert result.exit_code == 0, result.stdout
+    assert "QR code generated:" in result.stdout
+    assert output_path.name in result.stdout
+    assert output_path.read_bytes() == _VALID_PNG
+
+
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_noop_cannot_reuse_stale_png(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """A mocked/no-op renderer cannot make a prior QR appear successful."""
+    mock_load_config.return_value = ProjectConfig()
+    output_path = tmp_path / "stale.png"
+    output_path.write_bytes(_VALID_PNG)
+    mock_qr_generator.return_value.generate_artistic_vcard_qr.return_value = output_path
+
+    result = runner.invoke(
+        app,
+        ["generate", "qr", "--output-path", str(output_path)],
+    )
+
+    assert result.exit_code == 1
+    assert "QR renderer did not create an output" in result.stdout
+    assert "QR code generated:" not in result.stdout
+    assert not output_path.exists()
+
+
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_failure_removes_partial_target(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """The command cleans partial bytes left by a failing renderer backend."""
+    mock_load_config.return_value = ProjectConfig()
+    output_path = tmp_path / "partial.png"
+
+    def _generate(**_kwargs: object) -> Path:
+        output_path.write_bytes(b"partial")
+        raise OSError("save failed")
+
+    mock_qr_generator.return_value.generate_artistic_vcard_qr.side_effect = _generate
+
+    result = runner.invoke(
+        app,
+        ["generate", "qr", "--output-path", str(output_path)],
+    )
+
+    assert result.exit_code == 1
+    assert "QR generation failed: save failed" in result.stdout
+    assert "QR code generated:" not in result.stdout
+    assert not output_path.exists()
+
+
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_rejects_signature_only_png(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    mock_load_config.return_value = ProjectConfig()
+    output_path = tmp_path / "invalid.png"
+
+    def _generate(**_kwargs: object) -> Path:
+        output_path.write_bytes(b"\x89PNG\r\n\x1a\nnot-a-real-png")
+        return output_path
+
+    mock_qr_generator.return_value.generate_artistic_vcard_qr.side_effect = _generate
+
+    result = runner.invoke(
+        app,
+        ["generate", "qr", "--output-path", str(output_path)],
+    )
+
+    assert result.exit_code == 1
+    assert "created an invalid PNG" in result.stdout
+    assert "QR code generated:" not in result.stdout
+    assert not output_path.exists()
+
+
+@pytest.mark.parametrize(
+    "unsafe_filename",
+    ["../victim.png", "nested/victim.png", r"..\victim.png", "victim.jpg"],
+)
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_rejects_unsafe_config_filename_before_mutation(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+    unsafe_filename: str,
+) -> None:
+    output_dir = tmp_path / "outputs"
+    output_dir.mkdir()
+    victim = tmp_path / "victim.png"
+    victim.write_bytes(b"preserve me")
+    mock_load_config.return_value = ProjectConfig(
+        qr_code_settings=QRCodeSettings(
+            output_dir=str(output_dir),
+            output_filename=unsafe_filename,
+        )
+    )
+
+    result = runner.invoke(app, ["generate", "qr"])
+
+    assert result.exit_code == 1
+    assert "must be a bare .png filename" in result.stdout
+    assert victim.read_bytes() == b"preserve me"
+    mock_qr_generator.assert_not_called()
+
+
+@patch("scripts.qr.QRCodeGenerator")
+@patch("scripts.cli.generate.load_config")
+def test_generate_qr_cli_rejects_non_png_output_path_before_mutation(
+    mock_load_config: MagicMock,
+    mock_qr_generator: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    mock_load_config.return_value = ProjectConfig()
+    victim = tmp_path / "victim.txt"
+    victim.write_bytes(b"preserve me")
+
+    result = runner.invoke(
+        app,
+        ["generate", "qr", "--output-path", str(victim)],
+    )
+
+    assert result.exit_code == 1
+    assert "must be a bare .png filename" in result.stdout
+    assert victim.read_bytes() == b"preserve me"
+    mock_qr_generator.assert_not_called()
+
+
 class _CapturingWordCloudGenerator:
     last_settings: WordCloudSettings | None = None
     last_kwargs: dict[str, object] | None = None
@@ -166,7 +458,10 @@ class _CapturingWordCloudGenerator:
 
     def generate(self, **kwargs):
         type(self).last_kwargs = kwargs
-        return kwargs["output_path"]
+        output = Path(kwargs["output_path"])
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text("<svg/>", encoding="utf-8")
+        return output
 
 
 # ------------------------------------------------------------------------------
@@ -361,6 +656,7 @@ def test_generate_banner_basic(
     tmp_path: Path,
 ) -> None:
     """Test basic invocation of `generate banner`."""
+    mock_generate_banner_func.side_effect = _write_mock_banner
     test_config_path = tmp_path / "banner_gen_cfg.yaml"
 
     # Create a dummy config file or mock load_config effectively
@@ -406,6 +702,7 @@ def test_generate_banner_dark_variant_succeeds_with_output_path(
     tmp_path: Path,
 ) -> None:
     """Dark banner must succeed when CLI provides --output-path (no double-kwarg)."""
+    mock_generate_banner_func.side_effect = _write_mock_banner
     test_config_path = tmp_path / "banner_dark_cfg.yaml"
     dummy_config = ProjectConfig(banner_settings={"title": "Dark Pair"})
     with open(test_config_path, "w") as f:
@@ -446,6 +743,7 @@ def test_generate_banner_cli_seed_override(
     tmp_path: Path,
 ) -> None:
     """Test `generate banner --seed` overrides config default."""
+    mock_generate_banner_func.side_effect = _write_mock_banner
     test_config_path = tmp_path / "banner_seed_cfg.yaml"
     dummy_config = ProjectConfig(banner_settings={"title": "Seeded", "seed": 0})
     with open(test_config_path, "w") as f:
@@ -480,6 +778,7 @@ def test_generate_banner_cli_overrides(
     tmp_path: Path,
 ) -> None:
     """Test `generate banner` with CLI options overriding config."""
+    mock_generate_banner_func.side_effect = _write_mock_banner
     test_config_path = tmp_path / "override_cfg.yaml"
     dummy_config = ProjectConfig(
         banner_settings={
@@ -524,6 +823,104 @@ def test_generate_banner_cli_overrides(
     )  # CLI --output-path wins
     assert banner_config_arg.title == cli_title  # CLI --title wins
     assert banner_config_arg.width == cli_width  # CLI --width wins
+
+
+@patch("scripts.banner.generate_banner")
+@patch("scripts.cli.generate.load_config")
+def test_generate_banner_dark_variant_failure_exits_nonzero(
+    mock_load_config: MagicMock,
+    mock_generate_banner_func: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """The paired banner command fails when its required dark variant fails."""
+    mock_load_config.return_value = ProjectConfig()
+
+    def _generate_or_fail(*, cfg: object) -> None:
+        if getattr(cfg, "dark_mode"):
+            raise OSError("dark write failed")
+        _write_mock_banner(cfg=cfg)
+
+    mock_generate_banner_func.side_effect = _generate_or_fail
+    output = tmp_path / "pair.svg"
+
+    result = runner.invoke(app, ["generate", "banner", "--output-path", str(output)])
+
+    assert result.exit_code == 1
+    assert "Banner generation failed: dark write failed" in result.stdout
+    assert "Dark SVG banner generated:" not in result.stdout
+    assert mock_generate_banner_func.call_count == 2
+    assert not output.exists()
+
+
+@patch("scripts.banner.generate_banner")
+@patch("scripts.cli.generate.load_config")
+def test_generate_banner_stale_dark_output_cannot_mask_noop_generation(
+    mock_load_config: MagicMock,
+    mock_generate_banner_func: MagicMock,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """A stale dark SVG is removed and cannot satisfy post-generation checks."""
+    mock_load_config.return_value = ProjectConfig()
+    output = tmp_path / "pair.svg"
+    dark_output = tmp_path / "pair-dark.svg"
+    dark_output.write_text("stale", encoding="utf-8")
+
+    def _generate_light_only(*, cfg: object) -> None:
+        if not getattr(cfg, "dark_mode"):
+            _write_mock_banner(cfg=cfg)
+
+    mock_generate_banner_func.side_effect = _generate_light_only
+
+    result = runner.invoke(app, ["generate", "banner", "--output-path", str(output)])
+
+    assert result.exit_code == 1
+    assert "Banner generator did not create" in result.stdout
+    assert "did not create an output" in result.stdout
+    assert "Dark SVG banner generated:" not in result.stdout
+    assert not output.exists()
+    assert not dark_output.exists()
+
+
+@pytest.mark.parametrize("publication", ["malformed", "symlink", "directory"])
+@patch("scripts.banner.generate_banner")
+@patch("scripts.cli.generate.load_config")
+def test_generate_banner_cli_rejects_invalid_dark_publication(
+    mock_load_config: MagicMock,
+    mock_generate_banner_func: MagicMock,
+    publication: str,
+    runner: CliRunner,
+    tmp_path: Path,
+) -> None:
+    """Both paired targets are removed unless both are parseable SVG files."""
+    mock_load_config.return_value = ProjectConfig()
+    output = tmp_path / "pair.svg"
+    dark_output = tmp_path / "pair-dark.svg"
+    symlink_target = tmp_path / "actual.svg"
+    symlink_target.write_text("<svg/>", encoding="utf-8")
+
+    def _generate(*, cfg: object) -> None:
+        target = Path(str(getattr(cfg, "output_path")))
+        if not getattr(cfg, "dark_mode"):
+            target.write_text("<svg/>", encoding="utf-8")
+        elif publication == "malformed":
+            target.write_text("not svg", encoding="utf-8")
+        elif publication == "symlink":
+            target.symlink_to(symlink_target)
+        else:
+            target.mkdir()
+
+    mock_generate_banner_func.side_effect = _generate
+
+    result = runner.invoke(app, ["generate", "banner", "--output-path", str(output)])
+
+    assert result.exit_code == 1
+    assert "Banner generation failed" in result.stdout
+    assert "Dark SVG banner generated:" not in result.stdout
+    assert not output.exists()
+    assert not dark_output.exists()
+    assert symlink_target.read_text(encoding="utf-8") == "<svg/>"
 
 
 # ------------------------------------------------------------------------------

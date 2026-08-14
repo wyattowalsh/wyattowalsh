@@ -5,19 +5,21 @@ description: Procedural SVG banner with chaos-attractor backgrounds, SVGO optimi
 
 ## Module
 
-`scripts/banner.py` — ~1878 lines. Heavy dependency on `svgwrite` and `numpy`.
+`scripts/banner.py` — ~1900 lines. Uses `numpy` plus the repository-owned,
+string-based `scripts.svg_drawing` compatibility API; `svgwrite` is not a
+dependency.
 
 `scripts/banner_patterns.py` — `PatternType` enum extracted for zero-dep import.
 
 ## Entry point
 
 ```python
-from scripts.banner import generate_banner, BannerConfig
+from scripts.banner import BannerConfig, generate_banner
 
 cfg = BannerConfig(
     title="Wyatt Walsh",
     subtitle="Software Engineer & AI Enthusiast",
-    output_path=Path(".github/assets/img/banner.svg"),
+    output_path=".github/assets/img/banner.svg",
     width=1200,
     height=630,
     optimize_with_svgo=True,
@@ -28,13 +30,19 @@ generate_banner(cfg=cfg)
 
 `generate_banner` is called **twice** by the CLI: once for `dark_mode=False` (light), once for `dark_mode=True` (dark). The dark output path is derived automatically by inserting `-dark` before the extension.
 
+Each generator call removes its exact prior target, validates a regular,
+non-empty, well-formed SVG after rendering and again after optional SVGO, and
+cleans partial output on failure. The CLI requires the fresh light/dark pair;
+if either variant fails or is absent, the command exits nonzero and does not
+report stale checked-out bytes as success.
+
 ## BannerConfig fields
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `title` | `str` | `"Wyatt Walsh"` | Main heading |
 | `subtitle` | `str` | `"Software Engineer & AI Enthusiast"` | |
-| `output_path` | `Path` | `.github/assets/img/banner.svg` | |
+| `output_path` | `str` | `.github/assets/img/banner.svg` | |
 | `width` | `int` | `1200` | Canvas width (px) |
 | `height` | `int` | `630` | Canvas height (px) |
 | `optimize_with_svgo` | `bool` | `True` | Run SVGO after writing |
@@ -55,15 +63,21 @@ Defined in `scripts/banner_patterns.py`. Live variants:
 | `MICRO` | Micro-geometry lattice |
 | `AIZAWA` | Aizawa attractor |
 
-Dead variants (draw functions not yet implemented): `REACTION`, `CLIFFORD`, `FLAME`, `PDJ`, `IKEDA`.
+The shared enum also exposes `CLIFFORD`, which is implemented by
+`scripts/generative.py` rather than the banner pipeline.
 
 <Callout type="info">
-The active pattern is chosen automatically based on the metrics hash. All five live patterns may appear in generated output.
+The banner pipeline renders all five banner pattern groups. Its deterministic
+seed and configuration control their geometry.
 </Callout>
 
 ## SVGO optimization
 
-If `optimize_with_svgo=True` and `svgo` is on `PATH`, the generated SVG is piped through SVGO to reduce file size. Falls back silently if SVGO is unavailable.
+If `optimize_with_svgo=True` and `svgo` is on `PATH`, the generated SVG is piped
+through SVGO to reduce file size and then validated again. The shared optimizer
+logs a warning and retains the already-valid SVG when SVGO is unavailable or
+fails; the updater installs its reviewed exact SVGO release so that production
+generation does not take that fallback.
 
 ## Output files
 

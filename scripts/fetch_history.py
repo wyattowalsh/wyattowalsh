@@ -25,8 +25,14 @@ from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError
 
-from ._github_http import _BASE, _graphql, _paginate_rest
+from ._github_http import (
+    _BASE,
+    _are_expected_optional_graphql_errors,
+    _graphql,
+    _paginate_rest,
+)
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -65,7 +71,12 @@ def _fetch_star_timeline(
     url = f"{_BASE}/repos/{owner}/{repo}/stargazers?per_page=100"
     logger.info("Fetching star timeline for {}/{}", owner, repo)
     try:
-        raw = _paginate_rest(url, token, accept="application/vnd.github.v3.star+json")
+        raw = _paginate_rest(
+            url,
+            token,
+            accept="application/vnd.github.v3.star+json",
+            optional_http_statuses=(403,),
+        )
     except Exception as exc:
         logger.warning("Star timeline collection failed: {}", exc)
         return []
@@ -172,9 +183,15 @@ def _fetch_contributions(
             )
             errors = resp.get("errors")
             if errors:
-                logger.warning(
-                    "GraphQL errors for contributions year {}: {}", year, errors
-                )
+                if _are_expected_optional_graphql_errors(errors):
+                    logger.info(
+                        "Optional GraphQL contributions unavailable for year {}",
+                        year,
+                    )
+                else:
+                    logger.warning(
+                        "GraphQL errors for contributions year {}: {}", year, errors
+                    )
                 continue
             calendar = (
                 (resp.get("data") or {})
@@ -192,7 +209,13 @@ def _fetch_contributions(
                     month_key = date_str[:7]  # "YYYY-MM"
                     monthly[month_key] += count
         except Exception as exc:
-            logger.warning("Contributions query failed for year {}: {}", year, exc)
+            if isinstance(exc, HTTPError) and exc.code == 403:
+                logger.info(
+                    "Optional contribution history unavailable for year {}: HTTP 403",
+                    year,
+                )
+            else:
+                logger.warning("Contributions query failed for year {}: {}", year, exc)
             continue
 
     return dict(sorted(daily.items())), dict(sorted(monthly.items()))

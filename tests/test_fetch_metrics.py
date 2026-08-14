@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
+from email.message import Message
 from typing import Any
 from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError
 
 import pytest
+
+
+def _http_error(code: int) -> HTTPError:
+    return HTTPError(
+        "https://api.github.com/test",
+        code,
+        "test response",
+        hdrs=Message(),
+        fp=None,
+    )
+
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -162,9 +175,127 @@ class TestCollectTraffic:
         from scripts.fetch_metrics import _collect_traffic
 
         mock_get.side_effect = Exception("forbidden")
-        result = _collect_traffic("owner", "repo", "tok")
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_traffic("owner", "repo", "tok")
         # Should not raise; returns partial or empty
         assert isinstance(result, dict)
+        mock_logger.warning.assert_called_once()
+
+    def test_treats_403_as_optional_capability_gap(self, mock_get: MagicMock) -> None:
+        from scripts.fetch_metrics import _collect_traffic
+
+        mock_get.side_effect = _http_error(403)
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_traffic("owner", "repo", "tok")
+
+        assert result == {}
+        mock_logger.info.assert_called_once_with(
+            "Optional traffic metrics unavailable for {}/{}: HTTP 403",
+            "owner",
+            "repo",
+        )
+        mock_logger.warning.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Optional latest-stargazer / contribution fields
+# ---------------------------------------------------------------------------
+
+
+class TestOptionalMetrics:
+    def test_latest_stargazer_uses_bounded_last_page(self, mock_get: MagicMock) -> None:
+        from scripts.fetch_metrics import _BASE, _collect_latest_stargazer
+
+        mock_get.return_value = (
+            [
+                {"user": {"login": "earlier"}},
+                {"user": {"login": "latest"}},
+            ],
+            {},
+        )
+
+        result = _collect_latest_stargazer("owner", "repo", 7_757, "tok")
+
+        assert result == "latest"
+        mock_get.assert_called_once_with(
+            f"{_BASE}/repos/owner/repo/stargazers?per_page=100&page=78",
+            "tok",
+            accept="application/vnd.github.v3.star+json",
+        )
+
+    def test_latest_stargazer_403_is_informational(self, mock_get: MagicMock) -> None:
+        from scripts.fetch_metrics import _collect_latest_stargazer
+
+        mock_get.side_effect = _http_error(403)
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_latest_stargazer("owner", "repo", 10, "tok")
+
+        assert result is None
+        mock_logger.info.assert_called_once_with(
+            "Optional latest stargazer unavailable: HTTP 403"
+        )
+        mock_logger.warning.assert_not_called()
+
+    def test_latest_stargazer_unexpected_failure_warns(
+        self, mock_get: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_latest_stargazer
+
+        mock_get.side_effect = TimeoutError("network down")
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_latest_stargazer("owner", "repo", 10, "tok")
+
+        assert result is None
+        mock_logger.warning.assert_called_once_with(
+            "Failed to fetch latest stargazer: {}", mock_get.side_effect
+        )
+
+    def test_graphql_errors_keep_contribution_fields_unknown_without_warning(
+        self, mock_graphql: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_contribution_stats
+
+        errors = [{"message": "Something went wrong", "type": "INTERNAL"}]
+        mock_graphql.return_value = {"data": None, "errors": errors}
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_contribution_stats("tok")
+
+        assert result["contributions_last_year"] is None
+        assert result["total_commits"] is None
+        assert result["contributions_calendar"] == []
+        mock_logger.info.assert_any_call(
+            "Optional GraphQL contribution fields unavailable"
+        )
+        mock_logger.warning.assert_not_called()
+
+    def test_graphql_exception_remains_actionable(
+        self, mock_graphql: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_contribution_stats
+
+        mock_graphql.side_effect = ConnectionError("network down")
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_contribution_stats("tok")
+
+        assert result["contributions_last_year"] is None
+        mock_logger.warning.assert_called_once_with(
+            "GraphQL contribution query failed: {}", mock_graphql.side_effect
+        )
+
+    def test_graphql_schema_error_remains_actionable(
+        self, mock_graphql: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_contribution_stats
+
+        errors = [{"message": "Field 'broken' doesn't exist on type 'Query'"}]
+        mock_graphql.return_value = {"data": None, "errors": errors}
+        with patch("scripts.fetch_metrics.logger") as mock_logger:
+            result = _collect_contribution_stats("tok")
+
+        assert result["contributions_last_year"] is None
+        mock_logger.warning.assert_called_once_with(
+            "GraphQL contribution errors: {e}", e=errors
+        )
 
 
 # ---------------------------------------------------------------------------

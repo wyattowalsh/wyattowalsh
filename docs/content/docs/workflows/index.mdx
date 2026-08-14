@@ -16,27 +16,58 @@ Manual dispatch also exposes `metrics_probe_mode`, which runs only the probe lan
 ```text
 probe-full-metrics (manual only)
 
-update-starred-lists ──▶ generate-assets ─┐
-update-starred-lists ─────────────────────┤
-generate-profile-metrics ────────────────┤
-update-starred-lists ──▶ generate-event-art ────────┼──▶ finalize (sole git writer)
-update-readme-wakatime ──────────────────┘
+prepare-event-art-inputs ─▶ generate-event-art [6 styles] ─▶ assemble-event-art ─┐
+update-starred-lists ─────▶ generate-assets ─────────────────────────────────────┤
+update-starred-lists ────────────────────────────────────────────────────────────┤
+generate-profile-metrics ────────────────────────────────────────────────────────┤
+update-readme-wakatime ──────────────────────────────────────────────────────────┘
+                                                                                  │
+                                                                                  ▼
+                                                                       finalize (sole git writer)
 ```
 
 ## Job details
 
 ### `update-starred-lists`
 
-Uses the `starred` CLI to rebuild `.github/assets/topics.md` and `.github/assets/languages.md` from your GitHub stars.
+Runs the repository-owned `scripts.starred_lists` module once to rebuild
+`.github/assets/topics.md` and `.github/assets/languages.md` from one complete,
+strictly validated GraphQL pagination pass over the account's stars.
 
 ```bash
-uv run starred --username wyattowalsh --sort \
-  --filename .github/assets/languages.md
-uv run starred --username wyattowalsh --sort --topic --topic_limit 500 \
-  --filename .github/assets/topics.md
+GITHUB_TOKEN="$GITHUB_TOKEN" uv run python -m scripts.starred_lists \
+  --owner wyattowalsh \
+  --languages-output .github/assets/languages.md \
+  --topics-output .github/assets/topics.md \
+  --topic-threshold 500
 ```
 
-Uploads both files for the `finalize` job, which commits them with `chore(data): update awesome-stars lists`.
+The token is read only from `GITHUB_TOKEN`, never from an argument. The module
+uses the shared HTTPS-only GitHub transport, rejects malformed pages, duplicate
+repositories, cursor cycles, count drift, and unsafe repository URLs, excludes
+private repositories by default, and renders deterministic primary-language
+and topic views. It stages both Markdown payloads before publication and rolls
+back the first replacement if the second fails and no noncooperating writer has
+changed it. Publication is not a two-file atomic visibility primitive: an
+unlocked local reader can briefly observe the first replacement before the
+second, and a hard process termination can leave that partial state. Workflow
+consumers remain isolated because upload starts only after both replacements
+and the consumer validation complete successfully.
+
+The job then validates that both files are non-empty, contain no error payload,
+include the expected contents section, and expose at least one public GitHub
+repository entry. Transient 429/502/503/504 and transport failures receive a
+bounded exponential retry inside the job's overall fetch deadline. A 403 is
+retried only when `Retry-After` or the zero-remaining/reset headers positively
+identify a rate limit. An HTTP-200 GraphQL response is retried only when every
+error has the exact `RATE_LIMITED` type; mixed, message-only, and generic errors
+remain one-shot failures. Authoritative waits must fit inside the 24-minute
+deadline, and exhaustion still leaves both prior files unchanged. Only that
+validated pair is uploaded at the artifact root and downloaded into
+`.github/assets` by `generate-assets` and `finalize`; any fetch, shape,
+publication, or consumer-contract failure stops the producer job. The finalizer
+commits successful updates with
+`chore(data): update awesome-stars lists`.
 
 ### `generate-assets`
 
@@ -45,7 +76,20 @@ Depends on `update-starred-lists`. Generates:
 - Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_typographic_by_topics.svg`
 - Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_typographic_by_languages.svg`
 
-Uploads the generated files for the `finalize` job; this worker never commits or pushes.
+The job installs the exact `svgo@4.0.2` release before banner generation so
+the configured SVG optimization path is deterministic instead of falling back
+with a missing-tool warning.
+
+Each explicitly requested Markdown-backed word cloud must produce its requested
+SVG. Missing/empty list data or an absent output makes the CLI exit nonzero, so
+the asset artifact cannot silently reuse a stale checked-out cloud.
+
+Before upload, the worker requires an exact five-file inventory: `qr.png`,
+`banner.svg`, `banner-dark.svg`, and the topic/language typographic SVGs. It
+parses the PNG and each SVG, rejects empty, malformed, non-regular, missing, or
+unexpected managed files, and uploads only those literal paths for the
+`finalize` job. The finalizer repeats the same validation after download before
+staging any profile-asset commit. This worker never commits or pushes.
 
 ### `update-readme-wakatime`
 
@@ -57,7 +101,7 @@ Uses [`lowlighter/metrics`](https://github.com/lowlighter/metrics) pinned to the
 
 | Asset | Ownership | Plugins / contents |
 |---|---|---|
-| `metrics.svg` | lowlighter (primary) | `base` (header/activity/community/metadata), `isocalendar`, `languages*`, `notable`, `topics`, `traffic` (token-gated), `achievements` (compact), `calendar` (current year) |
+| `metrics.svg` | lowlighter (primary) | `base` (header/activity/community/metadata), `isocalendar`, `languages*`, `notable`, `topics`, `traffic` (token-gated), `calendar` (current year) |
 | `metrics.additional.svg` | lowlighter (additional) | `repositories` (+ featured list aligned to `config.yaml`), `stargazers`/`stars` (token-gated), `people` |
 | `metrics.extra.svg` | lowlighter (overflow) | `reactions`, `followup` |
 
@@ -73,6 +117,11 @@ Repo-owned supplemental cards replace the upstream-brittle / third-party panels:
 | `metrics-posts.svg` | first-party supplemental | X OAuth1 via step `env:` only |
 
 The intended steady state is the three-card `lowlighter` stack plus validated supplemental cards below it in the README.
+
+The upstream `achievements` plugin is disabled in both production and the
+manual probe because its retired Projects (classic) query is known to embed an
+error payload for this account. This known-broken surface is not executed and
+then recovered; the stable card is generated without it.
 
 The job hardens metrics updates with `scripts.metrics_svg`:
 - backs up the previously committed metrics SVGs (`metrics.svg`, `metrics.additional.svg`, `metrics.extra.svg`) before regeneration
@@ -90,32 +139,86 @@ Manual diagnostics lane for the fuller `lowlighter/metrics` surface (same pin as
 
 - does the current `METRICS_TOKEN` satisfy the repositories block?
 - do upstream `habits` / `activity` panels still render degraded payloads? (probe-only; production keeps them off)
-- do promote-set plugins (`achievements`, `calendar`, `people`, `reactions`, `followup`) render cleanly?
+- do promote-set plugins (`calendar`, `people`, `reactions`, `followup`) render cleanly?
 
 Probe renders three SVGs (`metrics.probe.primary.svg`, `.additional.svg`, `.extra.svg`), always with `plugin_music: no` and **no** Spotify secrets in Action `with:` inputs. Spotify health belongs to the supplemental-metrics path only.
 
 It uploads probe SVG artifacts and fails closed if the probe renders or validation fail.
 
+### Annotation and fallback hygiene
+
+The workflow disables `setup-uv` caching in updater jobs to avoid cache-key
+reservation warnings between parallel producers. Expected, explicitly
+recognized GitHub capability gaps in optional metrics/history fields are
+bounded fallbacks logged at `INFO`; unexpected response shapes, HTTP failures,
+and unrecognized GraphQL errors remain warnings. Accepted last-known-good
+metrics recovery is also informational, while an invalid new render without a
+valid previous asset still fails before upload.
+
+Every job checks out the immutable trigger `github.sha`. GitHub preserves that
+SHA across rerun attempts, so a partial rerun cannot combine surviving
+artifacts from the original attempt with code or media from a newer branch
+head. Run-scoped artifacts support partial reruns while their seven-day
+retention is active; after that window, use **Re-run all jobs** so every
+prerequisite is regenerated from the same trigger revision.
+
+Full profile publication requires a branch ref. A tag-targeted manual dispatch
+fails closed before publication because the finalizer writes only to a branch;
+the probe-only dispatch remains read-only. Before each push, the finalizer
+force-refreshes the target branch, verifies that it still equals the immutable
+trigger SHA, and uses an atomic Git lease. If a newer workflow revision has
+advanced or rewound the branch, the older run is superseded and publishes
+nothing instead of rebasing stale generated output across revisions.
+
+The current reviewed `actions/download-artifact` pin carries an upstream
+Node 24 `DEP0005` warning in its extraction dependency. Each download step
+suppresses only that warning code through step-local `NODE_OPTIONS`; the scope
+does not hide warnings from checkout, setup, upload, or repository code and is
+removed when a reviewed upstream release resolves `actions/download-artifact#484`.
+
+### `prepare-event-art-inputs`
+
+Starts independently of the starred-list walk. It fetches live metrics and
+history exactly once via `scripts/fetch_metrics.py` and
+`scripts/fetch_history.py`, derives the style matrix from
+`LIVING_ART_STYLE_KEYS`, and uploads the shared JSON input bundle. Every style
+therefore renders the same upstream snapshot.
+
 ### `generate-event-art`
 
-Fetches live metrics + history via `scripts/fetch_metrics.py` and `scripts/fetch_history.py`, then runs `uv run python -m scripts.cli generate living-art` to refresh the canonical living-art timelapse surface.
+Expands the canonical registry into six isolated matrix children with
+`fail-fast: false` and at most six concurrent runners. Each child runs
+`generate living-art --only <style>` with the canonical 120-frame, 400-pixel,
+four-worker settings and a fresh runner-temp output directory. It validates and
+uploads exactly one run/style-qualified GIF artifact; no child writes git state.
 
-The job validates the generated surface, then stages and uploads a media-only
-artifact containing exactly the six canonical `.github/assets/img/living-*.gif`
-files. Manifests, galleries, the docs mirror, and fetched inputs deliberately do
-not cross the job boundary as a second authority. Missing, unexpected, corrupt,
-over-budget, wrong-size, or non-looping media makes staging fail closed.
+### `assemble-event-art`
+
+Downloads and merges the six disjoint GIF-only artifacts, applies
+`stage_living_art_fleet()` to the untrusted merged directory, and uploads the
+single media-only `living-art-stage` artifact consumed by the finalizer.
+Manifests, galleries, the docs mirror, and fetched inputs deliberately do not
+cross this boundary as a second media authority. A failed/timed-out shard or
+missing, unexpected, corrupt, over-budget, wrong-size, short-runtime, or
+non-looping asset prevents assembly and leaves the finalizer skipped.
 
 ### `finalize`
 
-Depends on every required producer and is the workflow's sole first-party git
-writer. It prevalidates the downloaded exact-six living-art fleet before
+Depends on every required producer, including `assemble-event-art`, and is the
+workflow's sole first-party git writer. It prevalidates the downloaded
+exact-six living-art fleet before
 mutating either destination, publishes the GIFs, regenerates both
 manifest/gallery surfaces and the docs mirror, then re-reads persisted
 manifests, galleries, byte budgets, and media hashes before any `git add`.
 After applying the other isolated artifacts and WakaTime markers, it runs:
 - `generate readme-sections` — assembles all dynamic README sections
 - `generate skills` — re-renders skills badges
+
+Upload artifacts contain only their least-common-root filenames. The finalizer
+therefore downloads starred lists into `.github/assets`, profile assets and
+metrics into `.github/assets/img`, and keeps living-art/Waka artifacts in their
+explicit runner-temp staging directories. This prevents root-level shadow
+files from bypassing the owned commit pathspecs.
 
 It creates ordered commits for these owned groups:
 

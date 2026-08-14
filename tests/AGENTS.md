@@ -68,8 +68,8 @@ and HTML coverage options with paths beneath its isolated report directory.
 | `scripts/fetch_metrics.py` | — | `test_fetch_metrics.py` | ✅ New — unit tests for metrics collection |
 | `scripts/metrics_svg.py` | — | `test_metrics_svg.py` | ✅ Focused coverage — validation, placeholder detection, CLI exit codes, and previous-asset recovery |
 | Living art media outputs | — | `test_living_art_media.py` | ✅ Manifest v2 metadata, mirroring, and byte-budget contracts use temporary GIFs |
-| Blog card contracts | — | `test_card_contracts_blog_red.py` | 🔴 RED — unimplemented features |
-| README GFM UX | — | `test_readme_gfm_ux.py` | ⏭️ Skipped — requires full pipeline |
+| Blog card contracts | — | `test_card_contracts_blog_red.py` | ✅ Passing — transparent surface, reduced clutter, wrapped copy, and hero-media contracts |
+| README GFM UX | — | `test_readme_gfm_ux.py` | ✅ Passing — committed README composition, wrap-flow, ordering, and managed-marker contracts |
 | `scripts/readme_sections.py` | — | `test_readme_sections.py` | ✅ Covered |
 | `scripts/readme_svg.py` | — | `test_readme_svg.py` | ✅ Covered |
 | `scripts/skills.py` | — | `test_skills.py` | ✅ Covered |
@@ -108,6 +108,13 @@ and HTML coverage options with paths beneath its isolated report directory.
 - Pure-function/unit style: prefer `validate_svg_content()` for fast failure classification checks
 - Use `tmp_path` only when exercising `recover_svg_file()` or other file-based helpers
 - Cover both workflow error payloads (`Insufficient token scopes`, `TypeError`, `invalid_grant`) and explicit placeholder SVG detection
+
+## Historical test filenames
+
+`test_card_contracts_blog_red.py` retains its original RED-phase filename, but
+its four contracts are ordinary passing tests. `test_readme_gfm_ux.py` also runs
+as an ordinary suite against the committed README and a temporary generated
+README; it is not skipped and does not require a separate full-pipeline run.
 
 ## Writing New Tests
 

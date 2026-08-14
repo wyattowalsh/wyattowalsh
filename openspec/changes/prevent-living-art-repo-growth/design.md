@@ -31,6 +31,12 @@ The six living-art GIFs change daily and reachable historical versions consume r
     publication transaction. Journal the pre-call managed state, restore it on
     a mutation-phase failure, and report a rollback failure rather than
     claiming that a partially restored fleet is safe.
+11. Fetch metrics and history once, export the matrix from
+    `LIVING_ART_STYLE_KEYS`, and render one style per isolated GitHub-hosted
+    runner with canonical 120-frame, 400-pixel, four-worker settings. Each
+    shard writes to a fresh directory and uploads one uniquely named GIF-only
+    artifact. A read-only assembler merges all six artifacts and applies
+    `stage_living_art_fleet()` before the existing sole writer can run.
 
 ## Risks / Trade-offs
 
@@ -45,6 +51,13 @@ The six living-art GIFs change daily and reachable historical versions consume r
   Validate the complete stage before mutation, journal both managed surfaces,
   restore them on mutation failure, and prove rollback with injected failures.
   The ephemeral CI checkout remains an additional containment boundary.
+- **A six-runner matrix consumes more concurrent runner capacity** -> Cap the
+  matrix at six jobs, keep each shard bounded to four frame workers and 45
+  minutes, retain workflow-level serialization per branch, and fail the fan-in
+  unless every non-experimental shard succeeds.
+- **Merged artifacts can overwrite colliding paths** -> Give every shard a
+  canonical disjoint filename and a run/style-qualified immutable artifact
+  name, then require the assembler's exact-six inventory and media validation.
 
 ## Migration Plan
 
@@ -52,8 +65,11 @@ The six living-art GIFs change daily and reachable historical versions consume r
 2. Tune and integrate per-style encoder winners; set non-regression budgets.
 3. Add the exact-six media-only handoff, sole-writer regeneration, persisted
    postconditions, and pre-staging workflow gate; prove the current updater.
-4. Stop here unless a public store/pilot is explicitly approved.
-5. If approved, execute the reader-first external rollout and retain rollback indefinitely.
+4. Split generation into shared-input preparation, six isolated style shards,
+   and a validated exact-six assembler; prove matrix and merged-artifact failure
+   behavior before the finalizer dependency changes.
+5. Stop here unless a public store/pilot is explicitly approved.
+6. If approved, execute the reader-first external rollout and retain rollback indefinitely.
 
 ## Open Questions
 

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+from email.message import Message
 from typing import Any
 from unittest.mock import MagicMock
+from urllib.error import HTTPError
 from urllib.request import Request
 
 import pytest
@@ -12,9 +14,11 @@ import pytest
 from scripts._github_http import (
     _ALLOWED_HOSTS,
     _AllowedHostRedirectHandler,
+    _are_expected_optional_graphql_errors,
     _assert_allowed_url,
     _get,
     _graphql,
+    _GraphQLResponse,
     _paginate_rest,
     _urlopen,
 )
@@ -54,8 +58,9 @@ class TestAssertAllowedUrl:
     def test_accepts_api_github_https(self) -> None:
         _assert_allowed_url("https://api.github.com/user")
 
-    def test_accepts_api_github_http(self) -> None:
-        _assert_allowed_url("http://api.github.com/user")
+    def test_rejects_api_github_http(self) -> None:
+        with pytest.raises(ValueError, match="Blocked URL scheme"):
+            _assert_allowed_url("http://api.github.com/user")
 
     def test_accepts_hostname_case_insensitive(self) -> None:
         _assert_allowed_url("https://API.GitHub.COM/graphql")
@@ -86,6 +91,30 @@ class TestAssertAllowedUrl:
 
     def test_allowed_hosts_is_api_only(self) -> None:
         assert _ALLOWED_HOSTS == frozenset({"api.github.com"})
+
+
+class TestOptionalGraphqlErrors:
+    @pytest.mark.parametrize(
+        "errors",
+        [
+            [{"message": "Something went wrong while executing your query"}],
+            [{"type": "FORBIDDEN", "message": "denied"}],
+            [{"message": "API rate limit exceeded"}],
+        ],
+    )
+    def test_recognizes_expected_capability_errors(self, errors: list[dict]) -> None:
+        assert _are_expected_optional_graphql_errors(errors)
+
+    @pytest.mark.parametrize(
+        "errors",
+        [
+            [],
+            [{"message": "Field 'broken' doesn't exist on type 'Query'"}],
+            ["not a structured error"],
+        ],
+    )
+    def test_rejects_unexpected_or_malformed_errors(self, errors: list) -> None:
+        assert not _are_expected_optional_graphql_errors(errors)
 
 
 # ---------------------------------------------------------------------------
@@ -119,6 +148,29 @@ class TestAllowedHostRedirectHandler:
                 msg="Found",
                 headers={},
                 newurl="https://attacker.example/capture",
+            )
+
+    @pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+    def test_rejects_https_to_http_redirect_before_forwarding_authorization(
+        self,
+        status: int,
+    ) -> None:
+        handler = _AllowedHostRedirectHandler()
+        request = Request(
+            "https://api.github.com/graphql",
+            data=b"{}",
+            headers={"Authorization": "Bearer sentinel"},
+            method="POST",
+        )
+
+        with pytest.raises(ValueError, match="Blocked URL scheme"):
+            handler.redirect_request(
+                request,
+                fp=None,
+                code=status,
+                msg="redirect",
+                headers={},
+                newurl="http://api.github.com/graphql",
             )
 
 
@@ -158,21 +210,43 @@ class TestGetAndGraphql:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         captured: dict[str, Any] = {}
+        response = _FakeResponse(
+            {"data": {"viewer": {"login": "u"}}},
+            {"Retry-After": "17"},
+        )
 
         class FakeOpener:
             def open(self, req: Request, timeout: float = 30) -> _FakeResponse:
                 captured["url"] = req.full_url
                 captured["method"] = req.get_method()
-                return _FakeResponse({"data": {"viewer": {"login": "u"}}})
+                return response
 
         monkeypatch.setattr(
             "scripts._github_http.urllib.request.build_opener",
             lambda *_a, **_k: FakeOpener(),
         )
         result = _graphql("{ viewer { login } }", "tok")
+        assert isinstance(result, _GraphQLResponse)
         assert result["data"]["viewer"]["login"] == "u"
+        response.headers["Retry-After"] = "99"
+        assert result.response_headers == {"retry-after": "17"}
         assert captured["url"] == "https://api.github.com/graphql"
         assert captured["method"] == "POST"
+
+    def test_graphql_rejects_non_object_json(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        class FakeOpener:
+            def open(self, req: Request, timeout: float = 30) -> _FakeResponse:
+                return _FakeResponse([])
+
+        monkeypatch.setattr(
+            "scripts._github_http.urllib.request.build_opener",
+            lambda *_a, **_k: FakeOpener(),
+        )
+
+        with pytest.raises(ValueError, match="JSON object"):
+            _graphql("{ viewer { login } }", "tok")
 
     def test_urlopen_rejects_blocked_url(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setattr(
@@ -208,6 +282,67 @@ class TestPaginateRestAllowlist:
             "https://api.github.com/page1",
             "https://evil.example/page2",
         ]
+
+    def test_optional_http_status_is_informational(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        error = HTTPError(
+            "https://api.github.com/optional",
+            403,
+            "Forbidden",
+            hdrs=Message(),
+            fp=None,
+        )
+        monkeypatch.setattr(
+            "scripts._github_http._get",
+            MagicMock(side_effect=error),
+        )
+        logger = MagicMock()
+        monkeypatch.setattr("scripts._github_http.logger", logger)
+
+        result = _paginate_rest(
+            "https://api.github.com/optional",
+            "tok",
+            optional_http_statuses=(403,),
+        )
+
+        assert result == []
+        logger.info.assert_called_once_with(
+            "Optional paginated endpoint unavailable ({}): HTTP {}",
+            "https://api.github.com/optional",
+            403,
+        )
+        logger.warning.assert_not_called()
+
+    def test_unexpected_http_status_still_warns(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        error = HTTPError(
+            "https://api.github.com/optional",
+            500,
+            "Server Error",
+            hdrs=Message(),
+            fp=None,
+        )
+        monkeypatch.setattr(
+            "scripts._github_http._get",
+            MagicMock(side_effect=error),
+        )
+        logger = MagicMock()
+        monkeypatch.setattr("scripts._github_http.logger", logger)
+
+        result = _paginate_rest(
+            "https://api.github.com/optional",
+            "tok",
+            optional_http_statuses=(403,),
+        )
+
+        assert result == []
+        logger.warning.assert_called_once_with(
+            "Pagination request failed ({}): {}",
+            "https://api.github.com/optional",
+            error,
+        )
 
 
 class TestRedirectIntegration:

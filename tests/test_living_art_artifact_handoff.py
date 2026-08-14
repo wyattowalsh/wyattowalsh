@@ -19,15 +19,19 @@ from PIL import Image
 from scripts.art.artifacts import (
     GALLERY_FILENAME,
     LIVING_ART_BYTE_BUDGETS,
+    LIVING_ART_STYLE_KEYS,
     MANIFEST_FILENAME,
     sync_living_art_artifacts,
 )
+from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml").resolve()
 PROJECT_ROOT = WORKFLOW_PATH.parents[2]
 CANONICAL_NAMES = tuple(sorted(LIVING_ART_BYTE_BUDGETS))
 STAGE_STEP = "Stage exact-six living-art artifact"
 PUBLISH_STEP = "Publish and validate living-art artifact"
+CONTRACT_STEP = "Resolve living-art runtime contract constants"
+SHARD_VALIDATE_STEP = "Validate isolated living-art GIF"
 
 
 def _workflow_jobs() -> dict[str, dict[str, Any]]:
@@ -75,6 +79,7 @@ def _run_inline_python(
     *,
     cwd: Path,
     runner_temp: Path,
+    extra_env: dict[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     cwd.mkdir(parents=True, exist_ok=True)
     runner_temp.mkdir(parents=True, exist_ok=True)
@@ -86,6 +91,8 @@ def _run_inline_python(
         if existing_pythonpath
         else str(PROJECT_ROOT)
     )
+    if extra_env is not None:
+        env.update(extra_env)
     return subprocess.run(
         [sys.executable, "-c", _inline_python_source(job_name, step_name)],
         cwd=cwd,
@@ -147,6 +154,28 @@ def _round_trip_artifact(stage: Path, destination: Path) -> Path:
     return downloaded
 
 
+def _fan_in_matrix_style_artifacts(source: Path, runner_temp: Path) -> Path:
+    """Approximate six immutable matrix uploads and one merged download."""
+    artifact_root = runner_temp / "matrix-artifacts"
+    merged = runner_temp / "living-art-parts"
+    merged.mkdir(parents=True)
+    for source_path in sorted(source.glob("living-*.gif")):
+        name = source_path.name
+        style = name.removeprefix("living-").removesuffix(".gif")
+        shard = artifact_root / f"living-art-style-test-run-{style}"
+        shard.mkdir(parents=True)
+        shutil.copy2(source_path, shard / name)
+        archive = Path(
+            shutil.make_archive(
+                str(shard),
+                "zip",
+                root_dir=shard,
+            )
+        )
+        shutil.unpack_archive(archive, merged)
+    return merged
+
+
 def _stable_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
     return {
         key: value
@@ -194,18 +223,82 @@ def _seed_stale_destinations(repo: Path) -> None:
         )
 
 
-def _stage_producer_fleet(
+def _stage_matrix_fleet(
     producer_repo: Path,
     producer_runner: Path,
 ) -> Path:
+    source = producer_repo / ".github" / "assets" / "img"
+    merged = _fan_in_matrix_style_artifacts(source, producer_runner)
+    assert {path.name for path in merged.iterdir()} == set(CANONICAL_NAMES)
     result = _run_inline_python(
-        "generate-event-art",
+        "assemble-event-art",
         STAGE_STEP,
         cwd=producer_repo,
         runner_temp=producer_runner,
     )
     assert result.returncode == 0, result.stderr
     return producer_runner / "living-art-stage"
+
+
+def test_prepare_job_exports_the_canonical_style_matrix(tmp_path: Path) -> None:
+    github_output = tmp_path / "github-output"
+    result = _run_inline_python(
+        "prepare-event-art-inputs",
+        CONTRACT_STEP,
+        cwd=tmp_path / "prepare-checkout",
+        runner_temp=tmp_path / "prepare-runner",
+        extra_env={"GITHUB_OUTPUT": str(github_output)},
+    )
+
+    assert result.returncode == 0, result.stderr
+    outputs = dict(
+        line.split("=", maxsplit=1)
+        for line in github_output.read_text(encoding="utf-8").splitlines()
+    )
+    assert json.loads(outputs["styles"]) == list(LIVING_ART_STYLE_KEYS)
+    assert int(outputs["max_frames"]) == DEFAULT_PUBLISHED_MAX_FRAMES == 120
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [None, "missing", "wrong-name", "corrupt", "wrong-size"],
+)
+def test_matrix_shard_validation_isolated_and_fail_closed(
+    tmp_path: Path,
+    failure: str | None,
+) -> None:
+    output_dir = tmp_path / "matrix-output"
+    expected = output_dir / "living-topo.gif"
+    if failure != "missing":
+        target = (
+            output_dir / "living-lenia.gif" if failure == "wrong-name" else expected
+        )
+        if failure == "corrupt":
+            target.parent.mkdir(parents=True)
+            target.write_bytes(b"not-a-gif")
+        else:
+            _write_test_gif(
+                target,
+                color_index=7,
+                size=(32, 32) if failure == "wrong-size" else (400, 400),
+            )
+
+    result = _run_inline_python(
+        "generate-event-art",
+        SHARD_VALIDATE_STEP,
+        cwd=tmp_path / "matrix-checkout",
+        runner_temp=tmp_path / "matrix-runner",
+        extra_env={
+            "LIVING_ART_OUTPUT_DIR": str(output_dir),
+            "LIVING_ART_STYLE": "topo",
+        },
+    )
+
+    if failure is None:
+        assert result.returncode == 0, result.stderr
+        assert "Validated living-topo.gif" in result.stdout
+    else:
+        assert result.returncode != 0
 
 
 def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
@@ -218,7 +311,7 @@ def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
     }
 
     producer_runner = tmp_path / "producer-runner"
-    stage = _stage_producer_fleet(producer_repo, producer_runner)
+    stage = _stage_matrix_fleet(producer_repo, producer_runner)
     assert {path.name for path in stage.iterdir()} == set(CANONICAL_NAMES)
     assert all(path.is_file() and not path.is_symlink() for path in stage.iterdir())
     assert MANIFEST_FILENAME not in {path.name for path in stage.iterdir()}
@@ -260,16 +353,17 @@ def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
     ).read_bytes()
 
 
-def test_producer_rejects_incomplete_fleet_without_materializing_artifact(
+def test_assembler_rejects_incomplete_fleet_without_materializing_artifact(
     tmp_path: Path,
 ) -> None:
     producer_repo = tmp_path / "producer-checkout"
     output_dir, _public_dir = _generate_fleet(producer_repo)
     (output_dir / "living-topo.gif").unlink()
     producer_runner = tmp_path / "producer-runner"
+    _fan_in_matrix_style_artifacts(output_dir, producer_runner)
 
     result = _run_inline_python(
-        "generate-event-art",
+        "assemble-event-art",
         STAGE_STEP,
         cwd=producer_repo,
         runner_temp=producer_runner,
@@ -291,7 +385,7 @@ def test_finalizer_rejects_invalid_stage_before_destination_mutation(
 ) -> None:
     producer_repo = tmp_path / "producer-checkout"
     _generate_fleet(producer_repo)
-    stage = _stage_producer_fleet(producer_repo, tmp_path / "producer-runner")
+    stage = _stage_matrix_fleet(producer_repo, tmp_path / "producer-runner")
     finalizer_runner = tmp_path / "finalizer-runner"
     downloaded = _round_trip_artifact(stage, finalizer_runner)
     target = downloaded / "living-lenia.gif"
@@ -327,9 +421,18 @@ def test_finalizer_rejects_invalid_stage_before_destination_mutation(
 
 def test_handoff_steps_precede_upload_and_the_sole_git_writer() -> None:
     jobs = _workflow_jobs()
-    producer_steps = cast(list[dict[str, Any]], jobs["generate-event-art"]["steps"])
-    producer_names = [step.get("name") for step in producer_steps]
-    assert producer_names.index(STAGE_STEP) < producer_names.index(
+    matrix_steps = cast(list[dict[str, Any]], jobs["generate-event-art"]["steps"])
+    matrix_names = [step.get("name") for step in matrix_steps]
+    assert matrix_names.index("Generate one canonical living-art GIF") < (
+        matrix_names.index("Upload isolated living-art GIF")
+    )
+
+    assembler_steps = cast(list[dict[str, Any]], jobs["assemble-event-art"]["steps"])
+    assembler_names = [step.get("name") for step in assembler_steps]
+    assert assembler_names.index("Download isolated living-art GIFs") < (
+        assembler_names.index(STAGE_STEP)
+    )
+    assert assembler_names.index(STAGE_STEP) < assembler_names.index(
         "Upload living-art staging bundle"
     )
 

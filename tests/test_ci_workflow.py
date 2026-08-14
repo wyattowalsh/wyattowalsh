@@ -109,6 +109,7 @@ def test_docs_ci_uses_pinned_runtime_frozen_install_and_full_assurance() -> None
         "Assert docs type generation starts clean",
         "Generate and typecheck docs",
         "Verify generated docs type surfaces",
+        "Initialize docs build cache",
         "Build docs",
     ]
     indices = [steps.index(named_steps[name]) for name in expected_order]
@@ -118,6 +119,7 @@ def test_docs_ci_uses_pinned_runtime_frozen_install_and_full_assurance() -> None
     )
     assert named_steps["Test docs server contracts"]["run"] == "pnpm test"
     assert named_steps["Generate and typecheck docs"]["run"] == "pnpm typecheck"
+    assert named_steps["Initialize docs build cache"]["run"] == ("mkdir -p .next/cache")
     assert named_steps["Build docs"]["run"] == "pnpm build"
     clean_state_command = _as_str(
         named_steps["Assert docs type generation starts clean"]["run"]

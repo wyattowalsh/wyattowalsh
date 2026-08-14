@@ -900,6 +900,180 @@ def test_cli_word_cloud_routes_all_sources_and_reports_results(
     model.prompt = "configured"
     cli_word_cloud.word_cloud(None, None, None, None, False, False)
     model.prompt = None
-    cli_word_cloud.word_cloud(None, None, None, None, False, False)
+    with pytest.raises(typer.Exit) as raised:
+        cli_word_cloud.word_cloud(None, None, None, None, False, False)
+    assert raised.value.exit_code == 1
 
     assert calls == ["topics", "languages", "techs", "prompt", "prompt"]
+
+
+def test_cli_word_cloud_fails_when_any_requested_output_is_missing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class ConfigModel:
+        stopwords: list[str] = []
+
+        def to_word_cloud_settings(self) -> object:
+            return SimpleNamespace(
+                max_words=10,
+                layout_readability=LayoutReadabilitySettings(),
+            )
+
+        def model_dump(self, **_kwargs: object) -> dict[str, object]:
+            return {}
+
+    monkeypatch.setattr(
+        cli_word_cloud,
+        "_load_project_config",
+        lambda _path: SimpleNamespace(word_cloud_settings=ConfigModel()),
+    )
+    monkeypatch.setattr(cli_word_cloud, "_wc_import", lambda: SimpleNamespace())
+    existing = tmp_path / "topics.svg"
+    existing.write_text("<svg/>", encoding="utf-8")
+    monkeypatch.setattr(
+        cli_word_cloud,
+        "_wc_from_topics",
+        lambda *_args, **_kwargs: existing,
+    )
+    monkeypatch.setattr(
+        cli_word_cloud,
+        "_wc_from_languages",
+        lambda *_args, **_kwargs: None,
+    )
+
+    with pytest.raises(typer.Exit) as raised:
+        cli_word_cloud.word_cloud(None, None, None, None, True, True)
+
+    assert raised.value.exit_code == 1
+    assert not existing.exists()
+
+
+def test_cli_word_cloud_removes_explicit_stale_target_when_input_is_missing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class ConfigModel:
+        stopwords: list[str] = []
+
+        def to_word_cloud_settings(self) -> object:
+            return SimpleNamespace(
+                max_words=10,
+                layout_readability=LayoutReadabilitySettings(),
+            )
+
+        def model_dump(self, **_kwargs: object) -> dict[str, object]:
+            return {}
+
+    monkeypatch.setattr(
+        cli_word_cloud,
+        "_load_project_config",
+        lambda _path: SimpleNamespace(word_cloud_settings=ConfigModel()),
+    )
+    monkeypatch.setattr(cli_word_cloud, "_wc_import", lambda: SimpleNamespace())
+    output = tmp_path / "requested.svg"
+    output.write_text("<svg id='stale'/>", encoding="utf-8")
+
+    with pytest.raises(typer.Exit) as raised:
+        cli_word_cloud.word_cloud(None, output, None, None, False, False)
+
+    assert raised.value.exit_code == 1
+    assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    "publication",
+    [
+        "malformed",
+        "wrong-root",
+        "empty",
+        "symlink",
+        "directory",
+        "wrong-path",
+    ],
+)
+def test_cli_word_cloud_rejects_invalid_exact_svg_publication(
+    tmp_path: Path,
+    publication: str,
+) -> None:
+    """An explicit SVG target must be freshly written and parseable."""
+    md = tmp_path / "topics.md"
+    md.write_text("ignored", encoding="utf-8")
+    output = tmp_path / "requested.svg"
+    stale_target = tmp_path / "stale.svg"
+    stale_target.write_text("<svg/>", encoding="utf-8")
+    output.write_text("<svg id='stale'/>", encoding="utf-8")
+
+    class Settings:
+        @classmethod
+        def from_yaml_model(cls, _model: object = None, **kwargs: object) -> object:
+            return SimpleNamespace(**kwargs)
+
+    class Generator:
+        def __init__(self, **_kwargs: object) -> None:
+            pass
+
+        def generate(self, **kwargs: object) -> Path:
+            target = Path(cast(str | Path, kwargs["output_path"]))
+            assert not target.exists()
+            if publication == "malformed":
+                target.write_text("not svg", encoding="utf-8")
+            elif publication == "wrong-root":
+                target.write_text("<html/>", encoding="utf-8")
+            elif publication == "empty":
+                target.touch()
+            elif publication == "symlink":
+                target.symlink_to(stale_target)
+            elif publication == "directory":
+                target.mkdir()
+            elif publication == "wrong-path":
+                target.write_text("<svg/>", encoding="utf-8")
+                return tmp_path / "different.svg"
+            return target
+
+    wc = SimpleNamespace(
+        TOPICS_MD_PATH=md,
+        PROFILE_IMG_OUTPUT_DIR=tmp_path,
+        parse_markdown_for_word_cloud_frequencies=lambda _path: {"python": 1},
+        WordCloudSettings=Settings,
+        WordCloudGenerator=Generator,
+    )
+
+    with pytest.raises(RuntimeError):
+        cli_word_cloud._wc_from_markdown(
+            wc,
+            md,
+            "topics",
+            "ocean",
+            output,
+            [],
+            10,
+        )
+
+    assert not output.exists()
+    assert stale_target.read_text(encoding="utf-8") == "<svg/>"
+
+
+def test_cli_word_cloud_rejects_signature_only_png(
+    tmp_path: Path,
+) -> None:
+    """Classic PNG targets require a complete Pillow-parseable image."""
+    output = tmp_path / "requested.png"
+    output.write_bytes(b"stale")
+
+    class Generator:
+        def generate(self, **kwargs: object) -> Path:
+            target = Path(cast(str | Path, kwargs["output_path"]))
+            assert not target.exists()
+            target.write_bytes(b"\x89PNG\r\n\x1a\nnot-a-real-png")
+            return target
+
+    with pytest.raises(RuntimeError, match="invalid PNG"):
+        cli_word_cloud._generate_word_cloud_to_target(
+            Generator(),
+            output,
+            frequencies={"python": 1},
+            source="prompt",
+        )
+
+    assert not output.exists()

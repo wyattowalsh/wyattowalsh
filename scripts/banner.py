@@ -37,7 +37,10 @@ import colorsys
 import math
 import os
 import random
+from pathlib import Path
+from stat import S_ISREG
 from typing import TYPE_CHECKING, Any
+from xml.etree import ElementTree as ET
 
 import numpy as np
 from pydantic import BaseModel, Field  # Field is used in Pydantic models later
@@ -60,6 +63,68 @@ logger = get_logger(module=__name__)
 
 # Module-level RNG instance; re-seeded by generate_banner() for determinism.
 _rng: random.Random = random.Random()
+
+
+def _remove_banner_output(output_path: Path) -> None:
+    """Remove exactly one prior banner target without following symlinks."""
+    try:
+        output_path.unlink()
+    except FileNotFoundError:
+        return
+
+
+def _cleanup_banner_output(output_path: Path) -> None:
+    """Best-effort cleanup for a failed render without recursive deletion."""
+    try:
+        _remove_banner_output(output_path)
+    except OSError:
+        # macOS reports EPERM rather than EISDIR for unlink(directory). Remove
+        # only an actual empty, non-symlink directory and never recurse.
+        try:
+            if not output_path.is_symlink() and output_path.is_dir():
+                output_path.rmdir()
+        except OSError:
+            pass
+
+
+def _validate_banner_svg(output_path: Path) -> None:
+    """Require a non-symlink regular file containing an SVG document."""
+    try:
+        output_stat = output_path.lstat()
+    except FileNotFoundError as exc:
+        raise RuntimeError(
+            f"Banner generator did not create an output: {output_path}"
+        ) from exc
+
+    if not S_ISREG(output_stat.st_mode):
+        raise RuntimeError(
+            f"Banner generator did not create a regular file: {output_path}"
+        )
+    if output_stat.st_size == 0:
+        raise RuntimeError(
+            f"Banner generator did not create a non-empty SVG: {output_path}"
+        )
+
+    try:
+        root = ET.parse(output_path).getroot()
+    except (ET.ParseError, OSError) as exc:
+        raise RuntimeError(
+            f"Banner generator created malformed SVG: {output_path}"
+        ) from exc
+    if root.tag.rsplit("}", 1)[-1] != "svg":
+        raise RuntimeError(
+            f"Banner generator created a non-SVG XML document: {output_path}"
+        )
+
+
+def _validate_or_remove_banner_svg(output_path: Path) -> None:
+    """Validate a banner output and discard any invalid artifact."""
+    try:
+        _validate_banner_svg(output_path)
+    except (OSError, RuntimeError):
+        _cleanup_banner_output(output_path)
+        raise
+
 
 # ------------------------------------------------------------------------------
 # Constants and Type Aliases
@@ -1571,7 +1636,7 @@ def add_octocat(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> None:
     """
     octo_svg_path = "./assets/img/octocat.svg"
     if not os.path.isfile(octo_svg_path):
-        logger.warning(
+        logger.info(
             "Octocat SVG not found at {octo_svg_path}, skipping.",
             octo_svg_path=octo_svg_path,
         )
@@ -1715,13 +1780,13 @@ def add_title_and_subtitle(cfg: BannerConfig, fg_group: Group, dwg: Drawing) -> 
 # ------------------------------------------------------------------------------
 # Main Banner Generation Orchestration
 # ------------------------------------------------------------------------------
-def generate_banner(cfg: BannerConfig, *, seed: int | None = None) -> None:
+def _render_banner_svg(cfg: BannerConfig, *, seed: int | None = None) -> None:
     """
     Orchestrates the generation of all SVG banner elements.
 
     This function initializes the SVG drawing, defines background and global effects,
     adds generative art patterns, and then renders foreground elements like the
-    Octocat and text. Finally, it saves the SVG and optionally optimizes it.
+    Octocat and text. Finally, it saves the unoptimized SVG.
 
     Args:
         cfg: The main banner configuration object.
@@ -1803,16 +1868,33 @@ def generate_banner(cfg: BannerConfig, *, seed: int | None = None) -> None:
     add_title_and_subtitle(cfg, fg_group, dwg)
     add_octocat(cfg, fg_group, dwg)
 
-    # Save the SVG file
+    # Saving is part of the generator contract. Re-raise write failures so callers
+    # cannot report success for a failed write.
     try:
         dwg.save(pretty=False)  # pretty=False for smaller file size
-        logger.info(
-            "Banner successfully saved to {output_path}", output_path=cfg.output_path
-        )
     except Exception as e:
-        logger.error("Error saving SVG file: {e}", e=e)
-        return  # Exit if saving failed
+        logger.error("Error saving SVG file: {e}", e=e, exc_info=True)
+        raise
+    logger.info(
+        "Banner successfully saved to {output_path}", output_path=cfg.output_path
+    )
 
-    # Optimize with SVGO if enabled
-    if cfg.optimize_with_svgo:
-        optimize_with_svgo(cfg.output_path)
+
+def generate_banner(cfg: BannerConfig, *, seed: int | None = None) -> None:
+    """Render and validate one fresh SVG banner, cleaning partial output."""
+    output_path = Path(cfg.output_path)
+    _remove_banner_output(output_path)
+    generation_complete = False
+    try:
+        _render_banner_svg(cfg, seed=seed)
+        _validate_or_remove_banner_svg(output_path)
+
+        if cfg.optimize_with_svgo:
+            optimize_with_svgo(cfg.output_path)
+            # The optimizer is another producer boundary and may replace or
+            # corrupt the file, so validate its final bytes too.
+            _validate_or_remove_banner_svg(output_path)
+        generation_complete = True
+    finally:
+        if not generation_complete:
+            _cleanup_banner_output(output_path)

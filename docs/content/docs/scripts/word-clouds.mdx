@@ -5,6 +5,7 @@ description: OKLCH-palettized word clouds generated from your GitHub starred-rep
 
 ## Modules
 
+- `scripts/starred_lists.py` — strict GitHub-star pagination plus deterministic, paired language/topic Markdown publication
 - `scripts/word_clouds/generate.py` — orchestration, file I/O, CLI-facing settings, and output dispatch
 - `scripts/word_clouds/metaheuristic.py` — animated SVG renderer that sequences 25 solver layouts into one asset
 
@@ -18,7 +19,9 @@ SVG word clouds where:
 - **Topics cloud** — keywords from repositories you've starred, sorted by topic frequency
 - **Languages cloud** — programming languages across your starred repos
 
-The README and CI pipeline default to animated SVGs where each frame is laid out by a different metaheuristic solver. Static renderers remain available for manual generation.
+The README and CI pipeline use deterministic static `TypographicRenderer`
+assets. The animated metaheuristic renderer remains available for manual
+generation when solver-to-solver motion is desired.
 
 ## Optimization model
 
@@ -36,14 +39,36 @@ The readability policy is active during solver sampling, not just final scoring.
 
 ## Input data
 
-The word cloud reads a markdown file produced by the `starred` CLI tool:
+The word cloud reads Markdown produced by the repository-owned
+`scripts.starred_lists` module:
 
 ```
 .github/assets/topics.md    ← topic-grouped starred repos
 .github/assets/languages.md ← language-grouped starred repos
 ```
 
-These are updated nightly by the `update-starred-lists` workflow job.
+The nightly `update-starred-lists` job traverses the starred-repository GraphQL
+connection once and derives both views from that same validated snapshot. The
+shared GitHub transport permits HTTPS requests only; private repositories are
+excluded by default. Categories and entries are sorted deterministically, and
+both files are staged before either destination is replaced.
+
+Generate both inputs locally with the token in the environment, not in command
+arguments:
+
+```bash
+export GITHUB_TOKEN="<token>"
+uv run python -m scripts.starred_lists \
+  --owner wyattowalsh \
+  --languages-output .github/assets/languages.md \
+  --topics-output .github/assets/topics.md \
+  --topic-threshold 500
+```
+
+Malformed/truncated pagination, cursor/count drift, an unsafe repository URL,
+or a partial publication fails nonzero without accepting a mismatched pair.
+The workflow adds a consumer validation gate before either file reaches the
+word-cloud job.
 
 ## CLI
 
@@ -60,6 +85,11 @@ uv run python -m scripts.cli generate word-cloud \
   --from-languages-md \
   --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 ```
+
+When a source is explicitly requested, success requires the corresponding
+output file to exist. Missing or empty Markdown, an empty parsed vocabulary, or
+an absent renderer output exits nonzero instead of reporting a successful run
+against a stale checked-out SVG.
 
 ## Configuration
 

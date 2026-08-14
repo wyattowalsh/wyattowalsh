@@ -34,6 +34,17 @@ Their frame counts are 89, 91, 98, 103, 98, and 118 (range 89-118); playback
 durations range from 29,660 ms to 29,730 ms. The repository and docs-showcase
 copies are byte-identical.
 
+## Sequential workflow runtime
+
+Dev workflow run `31747469378` rendered Ink Garden in 73.5 seconds and
+Topography in 1,149.8 seconds, then crossed the renderer's shared 1,200-second
+budget and correctly failed because the other four requested outputs were
+missing. Earlier run `31657889993` recorded a 1,410.7-second Topography render
+and only appeared successful because stale checked-out peer GIFs satisfied the
+older inventory check. These observations justify independent per-style
+timeout domains and a fresh-output exact-six fan-in; they do not change media
+quality, frame, dimension, or playback contracts.
+
 Reproduce the current measurement with:
 
 ```bash

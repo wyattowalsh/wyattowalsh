@@ -68,9 +68,6 @@ word-clouds = [
     "readme[science]",
     "wordcloud>=1.9.6",
 ]
-script-tools = [
-    "starred>=4.3.0",
-]
 dev = [
     "readme[format,lint,test]",
 ]

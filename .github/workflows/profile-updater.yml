@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
@@ -45,6 +45,8 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
       - name: Install metrics helper dependencies
         run: uv sync --locked
@@ -118,9 +120,9 @@ jobs:
           plugin_topics_sort: stars
           plugin_topics_limit: 15
           plugin_music: no
-          plugin_achievements: yes
-          plugin_achievements_display: compact
-          plugin_achievements_threshold: C
+          # Disabled: upstream still queries retired Projects (classic) fields
+          # and embeds an error payload for this account.
+          plugin_achievements: no
           plugin_calendar: yes
           plugin_calendar_limit: 1
           plugin_people: yes
@@ -239,7 +241,6 @@ jobs:
 
           summarize_markers ./.github/assets/img/metrics.probe.primary.svg \
             "Recent coding habits" \
-            "Achievements" \
             "Commit calendar" \
             "Followers" \
             "Insufficient token scopes" \
@@ -268,6 +269,7 @@ jobs:
             .github/assets/img/metrics.probe.extra.svg
           if-no-files-found: warn
           retention-days: 7
+          overwrite: true
 
       - name: Enforce probe success
         if: ${{ always() }}
@@ -296,14 +298,14 @@ jobs:
         )
       }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # starred language+topic walks can exceed 15m under rate limits
+    timeout-minutes: 30  # Full starred-repository pagination can exceed 15m.
     permissions:
       contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
@@ -313,30 +315,41 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
-      - name: Install script-tools dependencies
-        run: uv sync --locked --extra script-tools
+      - name: Install first-party list generator dependencies
+        run: uv sync --locked
 
-      - name: Update repo category by language
+      - name: Generate starred-repository language and topic lists
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
-          temp_file="$RUNNER_TEMP/languages.md"
-          uv run starred --username "${USERNAME}" --token "${GITHUB_TOKEN}" --sort > "$temp_file"
-          mv "$temp_file" ./.github/assets/languages.md
+          uv run python -m scripts.starred_lists \
+            --owner "$USERNAME" \
+            --languages-output .github/assets/languages.md \
+            --topics-output .github/assets/topics.md \
+            --topic-threshold 500
 
-      - name: Update repo category by topic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USERNAME: ${{ github.repository_owner }}
+      - name: Validate starred-list consumer contract
         run: |
           set -euo pipefail
-          temp_file="$RUNNER_TEMP/topics.md"
-          uv run starred --username "${USERNAME}" --token "${GITHUB_TOKEN}" --sort \
-            --topic --topic_limit 500 > "$temp_file"
-          mv "$temp_file" ./.github/assets/topics.md
+          uv run python - <<'PY'
+          from pathlib import Path
+
+          for filename in ("languages.md", "topics.md"):
+              path = Path(".github/assets") / filename
+              text = path.read_text(encoding="utf-8")
+              lines = text.splitlines()
+              if not text.strip() or any(line.startswith("Error:") for line in lines):
+                  raise SystemExit(f"{path} contains an error or is empty")
+              if "## Contents" not in lines:
+                  raise SystemExit(f"{path} is missing the contents heading")
+              if not any(line.startswith("- [") and "](https://github.com/") in line for line in lines):
+                  raise SystemExit(f"{path} contains no GitHub repository entries")
+          PY
 
       - name: Upload starred lists artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -347,6 +360,7 @@ jobs:
             .github/assets/topics.md
           if-no-files-found: error
           retention-days: 7
+          overwrite: true
 
   generate-assets:
     name: Generate Profile Assets (QR, WordClouds, Banner)
@@ -376,14 +390,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Download starred lists artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: starred-lists-${{ github.run_id }}
-          path: .
+          path: .github/assets
 
       - name: Set up Python 3.13
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -392,12 +409,17 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
       - name: Install Cairo system dependencies
         run: sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev pkg-config libffi-dev
 
       - name: Install asset generation dependencies
         run: uv sync --locked --extra qr --extra word-clouds
+
+      - name: Install SVG optimizer
+        run: npm install --global --no-audit --no-fund svgo@4.0.2
 
       - name: Generate QR Code
         run: uv run python -m scripts.cli generate qr --config-path config.yaml
@@ -419,16 +441,66 @@ jobs:
       - name: Generate light and dark banners
         run: uv run python -m scripts.cli generate banner --config-path config.yaml
 
+      - name: Validate exact profile asset inventory
+        run: |
+          uv run python - <<'PY'
+          import stat
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+
+          from PIL import Image
+
+          asset_dir = Path(".github/assets/img")
+          expected = {
+              asset_dir / "banner-dark.svg",
+              asset_dir / "banner.svg",
+              asset_dir / "qr.png",
+              asset_dir / "wordcloud_typographic_by_languages.svg",
+              asset_dir / "wordcloud_typographic_by_topics.svg",
+          }
+          observed = {
+              *asset_dir.glob("banner*.svg"),
+              *asset_dir.glob("qr*.png"),
+              *asset_dir.glob("wordcloud_*.svg"),
+          }
+          if observed != expected:
+              missing = sorted(str(path) for path in expected - observed)
+              unexpected = sorted(str(path) for path in observed - expected)
+              raise SystemExit(
+                  "Profile asset inventory mismatch: "
+                  f"missing={missing}, unexpected={unexpected}"
+              )
+
+          for path in sorted(expected):
+              metadata = path.lstat()
+              if not stat.S_ISREG(metadata.st_mode) or metadata.st_size == 0:
+                  raise SystemExit(f"Profile asset is not a non-empty regular file: {path}")
+              if path.suffix == ".svg":
+                  root = ET.parse(path).getroot()
+                  if root.tag.rsplit("}", 1)[-1] != "svg":
+                      raise SystemExit(f"Profile asset is not an SVG document: {path}")
+              else:
+                  with Image.open(path) as image:
+                      image.verify()
+                      if image.format != "PNG":
+                          raise SystemExit(f"Profile asset is not a PNG image: {path}")
+
+          print("Profile asset validation passed: 5 exact files")
+          PY
+
       - name: Upload profile assets artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: profile-assets-${{ github.run_id }}
           path: |
-            .github/assets/img/qr*.png
-            .github/assets/img/wordcloud_*.svg
-            .github/assets/img/banner*.svg
+            .github/assets/img/banner-dark.svg
+            .github/assets/img/banner.svg
+            .github/assets/img/qr.png
+            .github/assets/img/wordcloud_typographic_by_languages.svg
+            .github/assets/img/wordcloud_typographic_by_topics.svg
           if-no-files-found: error
           retention-days: 7
+          overwrite: true
 
   update-readme-wakatime:
     # First-party Waka: generate artifact only. Finalize applies the
@@ -457,7 +529,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Set up Python 3.13
@@ -467,6 +539,8 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
       - name: Install dependencies
         run: uv sync --locked
@@ -503,6 +577,7 @@ jobs:
           path: ${{ runner.temp }}/waka-readme
           if-no-files-found: error
           retention-days: 7
+          overwrite: true
 
   generate-profile-metrics:
     name: Generate Profile Metrics SVGs
@@ -530,7 +605,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - name: Set up Python 3.13
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -538,6 +613,8 @@ jobs:
           python-version: '3.13'
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
       - name: Install metrics helper dependencies
         run: uv sync --locked
       - name: Preflight metrics auth gates
@@ -649,11 +726,9 @@ jobs:
           plugin_topics_sort: stars
           plugin_topics_limit: 15
           plugin_music: no
-          # Compact GitHub-native panels promoted from probe (height-safe for primary).
-          plugin_achievements: yes
-          plugin_achievements_display: compact
-          plugin_achievements_threshold: C
-          plugin_achievements_limit: 12
+          # Disabled: upstream still queries retired Projects (classic) fields
+          # and embeds an error payload for this account.
+          plugin_achievements: no
           plugin_calendar: yes
           plugin_calendar_limit: 1
           config_timezone: America/Los_Angeles
@@ -842,16 +917,15 @@ jobs:
             .github/assets/img/metrics-posts.svg
           if-no-files-found: error
           retention-days: 7
+          overwrite: true
 
-  generate-event-art:
-    name: Generate Event-Driven Artwork
+  prepare-event-art-inputs:
+    name: Prepare Event-Art Inputs
     runs-on: ubuntu-latest
-    needs: update-starred-lists
     if: >-
       ${{
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
-        needs.update-starred-lists.result == 'success' &&
         (
           github.event_name != 'push' ||
           (
@@ -864,14 +938,17 @@ jobs:
           )
         )
       }}
-    timeout-minutes: 45
+    timeout-minutes: 15
     permissions:
       contents: read
+    outputs:
+      styles: ${{ steps.contract.outputs.styles }}
+      max_frames: ${{ steps.contract.outputs.max_frames }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
 
       - name: Set up Python 3.13
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -880,12 +957,11 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
       - name: Install dependencies
-        run: uv sync --locked --all-extras
-
-      - name: Install living-art media tools
-        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin gifsicle
+        run: uv sync --locked
 
       - name: Fetch metrics
         env:
@@ -893,10 +969,11 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
         run: |
+          mkdir -p "$RUNNER_TEMP/living-art-inputs"
           uv run python -m scripts.fetch_metrics \
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
-            --output "$RUNNER_TEMP/metrics.json"
+            --output "$RUNNER_TEMP/living-art-inputs/metrics.json"
 
       - name: Fetch historical data
         env:
@@ -907,80 +984,169 @@ jobs:
           uv run python -m scripts.fetch_history \
             --owner "$OWNER" \
             --repo "$REPO_NAME" \
-            --output "$RUNNER_TEMP/history.json"
+            --output "$RUNNER_TEMP/living-art-inputs/history.json"
 
       - name: Resolve living-art runtime contract constants
+        id: contract
         run: |
           uv run python - <<'PY'
+          import json
           import os
-          from scripts.art.timelapse import (
-              DEFAULT_PUBLISHED_MAX_FRAMES,
-              MIN_PUBLISHED_RUNTIME_MS,
-          )
+          from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
+          from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 
-          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
-              env_file.write(f"LIVING_ART_MAX_FRAMES={DEFAULT_PUBLISHED_MAX_FRAMES}\n")
-              env_file.write(f"LIVING_ART_MIN_RUNTIME_MS={MIN_PUBLISHED_RUNTIME_MS}\n")
+          styles = json.dumps(list(LIVING_ART_STYLE_KEYS), separators=(",", ":"))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"styles={styles}\n")
+              output.write(f"max_frames={DEFAULT_PUBLISHED_MAX_FRAMES}\n")
           PY
 
-      - name: Generate living-art outputs (canonical timelapse GIFs)
+      - name: Upload living-art input bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: living-art-inputs-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-inputs
+          if-no-files-found: error
+          retention-days: 7
+          overwrite: true
+
+  generate-event-art:
+    name: Generate Event-Driven Artwork (${{ matrix.style }})
+    runs-on: ubuntu-latest
+    needs: prepare-event-art-inputs
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        style: ${{ fromJSON(needs.prepare-event-art-inputs.outputs.styles) }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Download living-art input bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
+        with:
+          name: living-art-inputs-${{ github.run_id }}
+          path: ${{ runner.temp }}/living-art-inputs
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
+
+      - name: Install dependencies
+        run: uv sync --locked --all-extras
+
+      - name: Install living-art media tools
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin gifsicle
+
+      - name: Generate one canonical living-art GIF
         env:
           OWNER: ${{ github.repository_owner }}
+          LIVING_ART_MAX_FRAMES: ${{ needs.prepare-event-art-inputs.outputs.max_frames }}
+          LIVING_ART_OUTPUT_DIR: ${{ runner.temp }}/living-art-output-${{ matrix.style }}
+          LIVING_ART_STYLE: ${{ matrix.style }}
         run: |
           uv run python -m scripts.cli generate living-art \
             --profile "$OWNER" \
-            --metrics-path "$RUNNER_TEMP/metrics.json" \
-            --history-path "$RUNNER_TEMP/history.json" \
-            --max-frames "$LIVING_ART_MAX_FRAMES"
+            --metrics-path "$RUNNER_TEMP/living-art-inputs/metrics.json" \
+            --history-path "$RUNNER_TEMP/living-art-inputs/history.json" \
+            --only "$LIVING_ART_STYLE" \
+            --max-frames "$LIVING_ART_MAX_FRAMES" \
+            --size 400 \
+            --workers 4 \
+            --output-dir "$LIVING_ART_OUTPUT_DIR"
 
-      - name: Validate living-art runtime and frame contracts
+      - name: Validate isolated living-art GIF
+        env:
+          LIVING_ART_OUTPUT_DIR: ${{ runner.temp }}/living-art-output-${{ matrix.style }}
+          LIVING_ART_STYLE: ${{ matrix.style }}
         run: |
           uv run python - <<'PY'
           import os
           from pathlib import Path
-          from PIL import Image, ImageSequence
-          from scripts.art.artifacts import LIVING_ART_BYTE_BUDGETS
+          from scripts.art.artifacts import (
+              LIVING_ART_BYTE_BUDGETS,
+              build_living_art_manifest,
+              validate_living_art_byte_budgets,
+          )
 
-          max_frames = int(os.environ["LIVING_ART_MAX_FRAMES"])
-          min_runtime_ms = int(os.environ["LIVING_ART_MIN_RUNTIME_MS"])
-          output_dir = Path(".github/assets/img")
-          expected_names = set(LIVING_ART_BYTE_BUDGETS)
-          observed_names = {path.name for path in output_dir.glob("living-*.gif")}
-          if observed_names != expected_names:
-              raise SystemExit(
-                  "Living-art GIF inventory mismatch: "
-                  f"missing={sorted(expected_names - observed_names)}, "
-                  f"unexpected={sorted(observed_names - expected_names)}"
-              )
-          gif_paths = [output_dir / name for name in sorted(expected_names)]
-
-          print("Living-art runtime contract summary:")
-          for gif_path in gif_paths:
-              with Image.open(gif_path) as img:
-                  durations = []
-                  for frame_index, frame in enumerate(ImageSequence.Iterator(img)):
-                      raw_duration = frame.info.get("duration", 0)
-                      try:
-                          duration = int(raw_duration)
-                      except (TypeError, ValueError):
-                          duration = 0
-                      if duration <= 0:
-                          raise SystemExit(
-                              f"{gif_path.name} frame {frame_index} has invalid duration {raw_duration!r}"
-                          )
-                      durations.append(duration)
-              frame_count = len(durations)
-              runtime_ms = sum(durations)
-              print(f"- {gif_path.name}: frames={frame_count}, runtime_ms={runtime_ms}")
-              if frame_count > max_frames:
-                  raise SystemExit(
-                      f"{gif_path.name} has {frame_count} frames, exceeds max contract {max_frames}"
-                  )
-              if runtime_ms < min_runtime_ms:
-                  raise SystemExit(
-                      f"{gif_path.name} runtime {runtime_ms}ms below contract floor {min_runtime_ms}ms"
-                  )
+          style = os.environ["LIVING_ART_STYLE"]
+          expected_name = f"living-{style}.gif"
+          budget = LIVING_ART_BYTE_BUDGETS[expected_name]
+          manifest = build_living_art_manifest(
+              Path(os.environ["LIVING_ART_OUTPUT_DIR"])
+          )
+          validate_living_art_byte_budgets(
+              manifest,
+              budgets={expected_name: budget},
+              total_budget=budget,
+          )
+          asset = manifest["assets"][0]
+          print(
+              f"Validated {expected_name}: frames={asset['frames']}, "
+              f"runtime_ms={asset['duration_ms']}, bytes={asset['bytes']}"
+          )
           PY
+
+      - name: Upload isolated living-art GIF
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: living-art-style-${{ github.run_id }}-${{ matrix.style }}
+          path: ${{ runner.temp }}/living-art-output-${{ matrix.style }}/living-${{ matrix.style }}.gif
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          overwrite: true
+
+  assemble-event-art:
+    name: Assemble Event-Driven Artwork
+    runs-on: ubuntu-latest
+    needs: generate-event-art
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Download isolated living-art GIFs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
+        with:
+          pattern: living-art-style-${{ github.run_id }}-*
+          path: ${{ runner.temp }}/living-art-parts
+          merge-multiple: true
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
+
+      - name: Install dependencies
+        run: uv sync --locked
 
       - name: Stage exact-six living-art artifact
         run: |
@@ -991,7 +1157,7 @@ jobs:
           from scripts.art.artifacts import stage_living_art_fleet
 
           manifest = stage_living_art_fleet(
-              Path(".github/assets/img"),
+              Path(os.environ["RUNNER_TEMP"]) / "living-art-parts",
               Path(os.environ["RUNNER_TEMP"]) / "living-art-stage",
           )
           print(
@@ -1020,6 +1186,8 @@ jobs:
           path: ${{ runner.temp }}/living-art-stage
           if-no-files-found: error
           retention-days: 7
+          compression-level: 0
+          overwrite: true
 
 
   finalize:
@@ -1030,7 +1198,7 @@ jobs:
     needs:
       - update-starred-lists
       - generate-assets
-      - generate-event-art
+      - assemble-event-art
       - generate-profile-metrics
       - update-readme-wakatime
     if: >-
@@ -1039,7 +1207,7 @@ jobs:
         !cancelled() &&
         needs.update-starred-lists.result == 'success' &&
         needs.generate-assets.result == 'success' &&
-        needs.generate-event-art.result == 'success' &&
+        needs.assemble-event-art.result == 'success' &&
         needs.generate-profile-metrics.result == 'success' &&
         needs.update-readme-wakatime.result == 'success' &&
         (
@@ -1061,35 +1229,50 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.head_ref || github.ref }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Download starred lists artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: starred-lists-${{ github.run_id }}
-          path: .
+          path: .github/assets
 
       - name: Download profile assets artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: profile-assets-${{ github.run_id }}
-          path: .
+          path: ${{ runner.temp }}/profile-assets
 
       - name: Download living-art staging artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: living-art-stage-${{ github.run_id }}
           path: ${{ runner.temp }}/living-art-stage
 
       - name: Download profile metrics artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: profile-metrics-${{ github.run_id }}
-          path: .
+          path: .github/assets/img
 
       - name: Download WakaTime README section artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        env:
+          # Remove after actions/download-artifact#484 is fixed in a reviewed pin.
+          NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: waka-readme-${{ github.run_id }}
           path: ${{ runner.temp }}/waka-readme
@@ -1101,9 +1284,107 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          enable-cache: false
 
       - name: Install dependencies
         run: uv sync --locked --all-extras
+
+      - name: Publish and validate exact profile asset inventory
+        run: |
+          uv run python - <<'PY'
+          import os
+          import shutil
+          import stat
+          import tempfile
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+
+          from PIL import Image
+
+          expected_names = {
+              "banner-dark.svg",
+              "banner.svg",
+              "qr.png",
+              "wordcloud_typographic_by_languages.svg",
+              "wordcloud_typographic_by_topics.svg",
+          }
+          stage_dir = Path(os.environ["RUNNER_TEMP"]) / "profile-assets"
+          output_dir = Path(".github/assets/img")
+
+          def validate(directory: Path, *, exact_directory: bool) -> None:
+              if exact_directory:
+                  observed = {path.name for path in directory.iterdir()}
+              else:
+                  observed = {
+                      path.name
+                      for pattern in ("banner*.svg", "qr*.png", "wordcloud_*.svg")
+                      for path in directory.glob(pattern)
+                  }
+              if observed != expected_names:
+                  raise SystemExit(
+                      "Profile asset inventory mismatch: "
+                      f"missing={sorted(expected_names - observed)}, "
+                      f"unexpected={sorted(observed - expected_names)}"
+                  )
+
+              for name in sorted(expected_names):
+                  path = directory / name
+                  metadata = path.lstat()
+                  if not stat.S_ISREG(metadata.st_mode) or metadata.st_size == 0:
+                      raise SystemExit(
+                          f"Profile asset is not a non-empty regular file: {path}"
+                      )
+                  if path.suffix == ".svg":
+                      root = ET.parse(path).getroot()
+                      if root.tag.rsplit("}", 1)[-1] != "svg":
+                          raise SystemExit(
+                              f"Profile asset is not an SVG document: {path}"
+                          )
+                  else:
+                      with Image.open(path) as image:
+                          image.verify()
+                          if image.format != "PNG":
+                              raise SystemExit(
+                                  f"Profile asset is not a PNG image: {path}"
+                              )
+
+          validate(stage_dir, exact_directory=True)
+          output_dir.mkdir(parents=True, exist_ok=True)
+
+          managed_outputs = {
+              path
+              for pattern in ("banner*.svg", "qr*.png", "wordcloud_*.svg")
+              for path in output_dir.glob(pattern)
+          }
+          for path in sorted(managed_outputs):
+              metadata = path.lstat()
+              if not stat.S_ISREG(metadata.st_mode):
+                  raise SystemExit(
+                      f"Managed profile-asset destination is not a regular file: {path}"
+                  )
+              if path.name not in expected_names:
+                  path.unlink()
+
+          for name in sorted(expected_names):
+              source = stage_dir / name
+              file_descriptor, temporary_name = tempfile.mkstemp(
+                  dir=output_dir,
+                  prefix=f".{name}.",
+                  suffix=".tmp",
+              )
+              os.close(file_descriptor)
+              temporary_path = Path(temporary_name)
+              try:
+                  shutil.copyfile(source, temporary_path)
+                  os.chmod(temporary_path, source.stat().st_mode & 0o777)
+                  os.replace(temporary_path, output_dir / name)
+              finally:
+                  temporary_path.unlink(missing_ok=True)
+
+          validate(output_dir, exact_directory=False)
+          print("Profile asset publication validation passed: 5 exact files")
+          PY
 
       - name: Publish and validate living-art artifact
         run: |
@@ -1183,6 +1464,8 @@ jobs:
 
       - name: Commit and push owned profile artifacts
         env:
+          TRIGGER_REF_TYPE: ${{ github.ref_type }}
+          TRIGGER_SHA: ${{ github.sha }}
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           set -euo pipefail
@@ -1258,18 +1541,45 @@ jobs:
           )
           commit_group "chore(readme): update dynamic sections and skills badges" "${readme_files[@]}"
 
-          if git rev-parse --verify "origin/${TARGET_BRANCH}" >/dev/null 2>&1; then
-            ahead="$(git rev-list --count "origin/${TARGET_BRANCH}..HEAD" || echo 0)"
-          else
-            ahead="$(git rev-list --count HEAD)"
+          # BEGIN trigger-consistent-push
+          if [ "${TRIGGER_REF_TYPE}" != "branch" ]; then
+            echo "::error::Profile publication requires a branch trigger."
+            exit 1
           fi
+
+          trigger_is_current() {
+            if ! git fetch --no-tags origin \
+              "+refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}"; then
+              echo "::error::Failed to refresh ${TARGET_BRANCH} before profile publication."
+              return 2
+            fi
+            remote_target="$(git rev-parse "refs/remotes/origin/${TARGET_BRANCH}")"
+            [ "${remote_target}" = "${TRIGGER_SHA}" ]
+          }
+
+          if trigger_is_current; then
+            :
+          elif [ "$?" -eq 1 ]; then
+            echo "::notice::Skipping profile publication because ${TARGET_BRANCH} advanced beyond this run's trigger revision."
+            exit 0
+          else
+            exit 1
+          fi
+
+          ahead="$(git rev-list --count "refs/remotes/origin/${TARGET_BRANCH}..HEAD")"
           if [ "${ahead}" = "0" ]; then
             echo "No finalize commits to push."
             exit 0
           fi
+          if ! git merge-base --is-ancestor "${TRIGGER_SHA}" HEAD; then
+            echo "::error::Finalize commits are not based on the immutable trigger revision."
+            exit 1
+          fi
 
           for attempt in 1 2 3; do
-            if git push origin "HEAD:${TARGET_BRANCH}"; then
+            if git push \
+              --force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}" \
+              origin "HEAD:refs/heads/${TARGET_BRANCH}"; then
               exit 0
             fi
 
@@ -1278,6 +1588,13 @@ jobs:
               exit 1
             fi
 
-            git fetch origin "${TARGET_BRANCH}"
-            git rebase "origin/${TARGET_BRANCH}"
+            if trigger_is_current; then
+              :
+            elif [ "$?" -eq 1 ]; then
+              echo "::notice::Skipping profile publication because ${TARGET_BRANCH} advanced during push retries."
+              exit 0
+            else
+              exit 1
+            fi
           done
+          # END trigger-consistent-push

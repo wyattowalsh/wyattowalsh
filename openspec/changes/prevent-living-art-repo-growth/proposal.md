@@ -15,6 +15,11 @@ Daily living-art revisions dominate repository growth: reachable historical GIF 
   verify both manifests, both galleries, and the complete docs-showcase mirror
   from that single authoritative fleet. A failed multi-surface publication
   restores the pre-call managed state before finalization exits.
+- Fetch one immutable metrics/history input bundle, render the six styles in
+  isolated matrix jobs derived from the canonical style registry, and merge
+  their uniquely named GIF-only artifacts through an exact-six fan-in gate.
+  This removes the sequential renderer's shared timeout domain without adding
+  a writer or allowing a partial fleet to reach finalization.
 - Preserve repository publishing as the default for forks and daily six-style behavior unless separately approved.
 - Define, but do not automatically activate, an immutable content-addressed Blob pilot with dual-publish, reader-first cutover, and indefinite retention.
 

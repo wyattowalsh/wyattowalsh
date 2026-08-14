@@ -40,7 +40,11 @@ uv run python -m scripts.cli generate banner \
 | `--height` | Overrides `banner_settings.height` |
 | `--optimize-banner/--no-optimize-banner` | Toggle SVGO post-processing |
 
-CLI options take precedence over config values. Calls `generate_banner(cfg=BannerConfig(...))` twice — once for light, once for dark.
+CLI options take precedence over config values. The command calls
+`generate_banner(cfg=BannerConfig(...))` twice — once for light and once for
+dark — after removing each exact prior target. Both variants must materialize
+as fresh, non-empty, valid SVGs; either failure exits nonzero and cannot be
+masked by a stale checked-out banner.
 
 ## `generate qr`
 
@@ -56,6 +60,11 @@ uv run python -m scripts.cli generate qr \
 |---|---|
 | `--qr-scale` | Module size in pixels |
 | `--qr-background-path` | SVG to embed behind QR modules |
+
+The background is optional. Without one, the generator writes a standard QR
+PNG. The command removes the exact prior target and succeeds only when the
+renderer returns the requested path containing a fresh, valid PNG; no-op,
+partial, invalid, or redirected output fails nonzero and is cleaned up.
 
 ## `generate word-cloud`
 
@@ -98,6 +107,7 @@ uv run python -m scripts.cli generate living-art \
 | `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
 | `--metrics-path` | Required metrics JSON for live data |
 | `--history-path` | Required history JSON for chronology |
+| `--output-dir` | Output directory; partial `--only` runs do not refresh index surfaces |
 | `--workers` | Parallel render workers |
 
 ## `generate timelapse`
@@ -120,6 +130,7 @@ uv run python -m scripts.cli generate timelapse \
 | `--max-frames` | Upper bound on frames per GIF |
 | `--size` | Output frame size in px |
 | `--only` | Restrict to one style: `inkgarden`, `topo`, `genetic`, `physarum`, `lenia`, or `ferrofluid` |
+| `--output-dir` | Output directory; use a fresh directory for isolated style jobs |
 | `--workers` | Parallel render workers |
 
 <Callout type="info" title="`generate all` is conditional here">

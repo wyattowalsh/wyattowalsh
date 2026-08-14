@@ -62,6 +62,24 @@ before destination mutation, and regenerate every derived surface from it.
 - **WHEN** finalization reports successful living-art publication
 - **THEN** persisted manifests and galleries SHALL match their generated objects, primary and public GIF hashes SHALL match, and stable manifest payloads SHALL be identical apart from `generated_at` and `output_dir`
 
+### Requirement: Parallel generation has one input snapshot and fail-closed fan-in
+The updater SHALL fetch one metrics/history snapshot, derive its style matrix
+from the canonical registry, render each style into an isolated fresh output
+directory, and merge uniquely named GIF-only artifacts through the exact-six
+staging validator before finalization.
+
+#### Scenario: Six successful style shards
+- **WHEN** every canonical style renders with the approved frame, dimension, and worker settings
+- **THEN** the assembler SHALL receive six disjoint canonical GIF names, validate the complete fleet, and publish one media-only staging artifact for the sole writer
+
+#### Scenario: Missing or failed style shard
+- **WHEN** any matrix child fails, times out, omits its requested GIF, or uploads invalid media
+- **THEN** the assembler or its prerequisite SHALL fail and the finalizer SHALL remain skipped without mutating or staging a repository path
+
+#### Scenario: Shared source data
+- **WHEN** the six matrix children render one scheduled update
+- **THEN** every child SHALL consume the same uploaded metrics/history bundle rather than independently fetching mutable upstream data
+
 ### Requirement: Explicit budget mappings are authoritative
 Omitting a budget mapping SHALL select the canonical six-style defaults. An
 explicit mapping, including an empty mapping, SHALL define the exact expected

@@ -284,6 +284,14 @@ def living_art(
             rich_help_panel="Living Art Options",
         ),
     ] = 4,
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory for generated living-art GIFs.",
+            rich_help_panel="Living Art Options",
+        ),
+    ] = Path(".github/assets/img"),
 ) -> None:
     """Generate canonical living-art timelapse GIFs."""
     _load_project_config(config_path)  # validate config exists
@@ -295,6 +303,7 @@ def living_art(
         max_frames=max_frames,
         size=size,
         workers=workers,
+        output_dir=output_dir,
     )
 
 
@@ -379,6 +388,14 @@ def timelapse(
             rich_help_panel="Timelapse Options",
         ),
     ] = 4,
+    output_dir: Annotated[
+        Path,
+        typer.Option(
+            "--output-dir",
+            help="Directory for generated living-art GIFs.",
+            rich_help_panel="Timelapse Options",
+        ),
+    ] = Path(".github/assets/img"),
 ) -> None:
     """Generate timelapse GIFs showing day-by-day profile evolution."""
     _load_project_config(config_path)  # validate config exists
@@ -390,6 +407,7 @@ def timelapse(
         max_frames=max_frames,
         size=size,
         workers=workers,
+        output_dir=output_dir,
     )
 
 

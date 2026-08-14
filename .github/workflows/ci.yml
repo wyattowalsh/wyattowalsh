@@ -85,5 +85,8 @@ jobs:
           test -s .next/types/validator.ts
           test -s .source/server.ts
 
+      - name: Initialize docs build cache
+        run: mkdir -p .next/cache
+
       - name: Build docs
         run: pnpm build

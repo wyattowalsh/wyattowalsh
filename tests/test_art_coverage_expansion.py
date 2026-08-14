@@ -252,7 +252,7 @@ def test_draw_clifford_tiny_density_paths(monkeypatch: pytest.MonkeyPatch) -> No
     assert empty is None
 
 
-def test_generate_banner_soft_fails_when_save_fails(
+def test_generate_banner_fails_closed_when_save_fails(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     class FailingDrawing:
@@ -283,9 +283,10 @@ def test_generate_banner_soft_fails_when_save_fails(
         monkeypatch.setattr(banner, helper_name, lambda *args, **kwargs: None)
 
     output = tmp_path / "never-created.svg"
-    banner.generate_banner(
-        banner.BannerConfig(output_path=str(output), optimize_with_svgo=False)
-    )
+    with pytest.raises(OSError, match="intentional save failure"):
+        banner.generate_banner(
+            banner.BannerConfig(output_path=str(output), optimize_with_svgo=False)
+        )
     assert not output.exists()
 
 

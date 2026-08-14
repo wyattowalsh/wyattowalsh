@@ -139,6 +139,8 @@ def test_graphql_includes_variables(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, Any] = {}
 
     class Response:
+        headers: dict[str, str] = {}
+
         def __enter__(self) -> Response:
             return self
 

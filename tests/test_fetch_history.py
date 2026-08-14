@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from email.message import Message
 from typing import Any
 from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError
 
 import pytest
 
@@ -175,6 +177,20 @@ class TestFetchStarTimeline:
         )
         assert fetch_history._fetch_star_timeline("o", "r", None) == []
 
+    def test_marks_403_as_an_optional_pagination_status(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        paginate = MagicMock(return_value=[])
+        monkeypatch.setattr(fetch_history, "_paginate_rest", paginate)
+
+        assert fetch_history._fetch_star_timeline("o", "r", "tok") == []
+        paginate.assert_called_once_with(
+            f"{fetch_history._BASE}/repos/o/r/stargazers?per_page=100",
+            "tok",
+            accept="application/vnd.github.v3.star+json",
+            optional_http_statuses=(403,),
+        )
+
 
 class TestFetchForkTimeline:
     def test_parses_and_sorts(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -339,11 +355,38 @@ class TestFetchContributions:
             "_graphql",
             lambda *_a, **_k: {"errors": [{"message": "rate limited"}]},
         )
+        logger = MagicMock()
+        monkeypatch.setattr(fetch_history, "logger", logger)
         daily, monthly = fetch_history._fetch_contributions(
             "o", "tok", "2024-01-01T00:00:00Z"
         )
         assert daily == {}
         assert monthly == {}
+        logger.info.assert_called_once()
+        logger.warning.assert_not_called()
+
+    def test_unexpected_graphql_error_remains_actionable(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        _freeze_now(monkeypatch, year=2024)
+        errors = [{"message": "Field 'broken' doesn't exist on type 'Query'"}]
+        monkeypatch.setattr(
+            fetch_history,
+            "_graphql",
+            lambda *_args, **_kwargs: {"errors": errors},
+        )
+        logger = MagicMock()
+        monkeypatch.setattr(fetch_history, "logger", logger)
+
+        daily, monthly = fetch_history._fetch_contributions(
+            "o", "tok", "2024-01-01T00:00:00Z"
+        )
+
+        assert daily == {}
+        assert monthly == {}
+        logger.warning.assert_called_once_with(
+            "GraphQL errors for contributions year {}: {}", 2024, errors
+        )
 
     def test_skips_year_on_exception(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _freeze_now(monkeypatch, year=2024)
@@ -357,6 +400,37 @@ class TestFetchContributions:
         )
         assert daily == {}
         assert monthly == {}
+
+    def test_403_contribution_capability_gap_is_informational(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        _freeze_now(monkeypatch, year=2024)
+        error = HTTPError(
+            "https://api.github.com/graphql",
+            403,
+            "Forbidden",
+            hdrs=Message(),
+            fp=None,
+        )
+        monkeypatch.setattr(
+            fetch_history,
+            "_graphql",
+            MagicMock(side_effect=error),
+        )
+        logger = MagicMock()
+        monkeypatch.setattr(fetch_history, "logger", logger)
+
+        daily, monthly = fetch_history._fetch_contributions(
+            "o", "tok", "2024-01-01T00:00:00Z"
+        )
+
+        assert daily == {}
+        assert monthly == {}
+        logger.info.assert_called_once_with(
+            "Optional contribution history unavailable for year {}: HTTP 403",
+            2024,
+        )
+        logger.warning.assert_not_called()
 
 
 class TestFetchCurrentMetrics:

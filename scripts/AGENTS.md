@@ -7,7 +7,7 @@
 | File | Lines | Responsibility | Key Exports |
 |------|-------|---------------|-------------|
 | `_github_http.py` | 39 | Shared GitHub API HTTP helpers (no heavy deps) | `_headers()`, `_graphql()` |
-| `banner.py` | 1730 | SVG banner generator | `BannerConfig`, `generate_banner()`, `NoiseHandler`, `ColorPalette` |
+| `banner.py` | ~1900 | SVG banner generator | `BannerConfig`, `generate_banner()`, `NoiseHandler`, `ColorPalette` |
 | `svg_drawing.py` | ~430 | svgwrite-compatible SVG string builders (Drawing/Path/Filter/…) | `Drawing`, `Group`, `Path`, `shapes`, `path`, `filters`, `gradients` |
 | `banner_patterns.py` | 46 | `PatternType` enum extracted from `banner.py` (zero heavy deps) | `PatternType` |
 | `cli/` | — | Typer CLI package (see submodules below) | `app`, `DEFAULT_CONFIG_PATH` |
@@ -24,10 +24,11 @@
 | `quality/ty_warning_baseline.json` | — | Exact per-path/per-rule warning ceilings; reductions pass, increases fail | — |
 | `config.py` | 257 | Pydantic config models + YAML I/O | `ProjectConfig`, `load_config()`, `save_config()`, `BannerSettings`, `VCardDataModel`, `QRCodeSettings`, `WordCloudSettingsModel` |
 | `fetch_history.py` | 332 | GitHub contribution-history collector with Link-header pagination (REST + GraphQL) | `collect_history()` |
+| `starred_lists.py` | — | Strict first-party GitHub-star pagination, deterministic language/topic Markdown, and transactional paired publication | `fetch_starred_repositories()`, `render_starred_lists()`, `generate_starred_lists()` |
 | `fetch_metrics.py` | 283 | GitHub REST + GraphQL metrics collector; outputs flat JSON dict | `collect()` |
 | `metrics_svg.py` | 325 | Metrics SVG validation + recovery helper for workflow-safe asset preservation | `validate_svg_file()`, `recover_svg_file()`, `main()` |
 | `generative.py` | 277 | Static generative art (Clifford attractor + Phyllotaxis/flow-field) seeded by profile metrics | `generate_community_art()`, `generate_activity_art()` |
-| `qr.py` | 253 | Artistic vCard QR code | `QRCodeGenerator` |
+| `qr.py` | ~320 | Artistic vCard QR code | `QRCodeGenerator` |
 | `readme_sections.py` | 1548 | README dynamic section generators (badges, project cards, blog posts); orchestrates all section content | `generate_readme_sections()`, `ReadmeSectionsSettings` |
 | `readme_svg.py` | 1740 | Reusable SVG rendering helpers for README components (cards, charts, blocks); dark via `@media` tokens | `SvgCard`, `SvgBlock`, `SvgBlockRenderer`, `SvgRepoCardRenderer`, `SvgBlogCardRenderer`, `SvgConnectCardRenderer`, `ReadmeSvgAssetBuilder`, `SvgAssetWriter` |
 | `spotify_auth.py` | ~220 | Spotify loopback authorization-code helper for minting refresh tokens | `build_spotify_authorize_url()`, `exchange_spotify_authorization_code()`, `mint_spotify_refresh_token()` |
@@ -138,7 +139,7 @@ To add a dev tool, add a command to `cli/dev.py`.
 
 ## Banner (`banner.py`)
 
-Entry: `uv run readme generate banner` → `cli/generate.py:banner()` → `generate_banner(BannerConfig)`
+Entry: `uv run readme generate banner` → `cli/generate/banner.py:banner()` → `generate_banner(BannerConfig)`
 
 **Key classes:**
 - `BannerConfig` — top-level config aggregating `ColorPalette`, `Typography`, `VisualEffects`, plus `title`, `subtitle`, `width`, `height`, `output_path`, `optimize_with_svgo`, `seed`
@@ -152,27 +153,41 @@ Entry: `uv run readme generate banner` → `cli/generate.py:banner()` → `gener
 
 `BannerConfig.output_path` defaults to `.github/assets/img/banner.svg` (aligned with `BannerSettings`).
 
+`generate_banner()` removes the exact prior target before rendering, requires a
+regular, non-empty, well-formed SVG after both the renderer and optional SVGO
+step, and removes partial output on failure. The CLI applies that contract to
+both the light and derived dark target; either missing/invalid variant makes the
+paired command exit nonzero instead of accepting stale checked-out bytes.
+
 ## QR Code (`qr.py`)
 
-Entry: `uv run readme generate qr` → `cli/generate.py:qr()` → `QRCodeGenerator.generate_artistic_vcard_qr()`
+Entry: `uv run readme generate qr` → `cli/generate/qr.py:qr()` → `QRCodeGenerator.generate_artistic_vcard_qr()`
 
-**System Cairo required** (macOS: `brew install cairo`). Set before running:
+**System Cairo is required for SVG-background artistic rendering** (macOS:
+`brew install cairo`). Plain QR generation with no background does not use that
+path. Set this before a background-backed run:
 
 ```bash
 export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH
 ```
 
 **`QRCodeGenerator.__init__(default_background_path, default_output_dir, default_scale)`:**
-- Raises `FileNotFoundError` if background SVG does not exist
-- Default background: `.github/assets/img/icon.svg` (must exist before generation)
+- Raises `FileNotFoundError` only when an explicitly configured background SVG does not exist
+- Default background: `None`; without one, Segno writes a standard PNG
 - Raises `OSError` if output directory cannot be created
 
 **`generate_artistic_vcard_qr(vcard_details, output_filename, error_correction, scale, background_path)`:**
+0. Requires `output_filename` to be a bare lowercase `.png` filename and rejects path components before any target mutation
 1. Builds vCard 3.0 string from `VCardDataModel` (supports `X-ABLabel` for URL items)
 2. `segno.make(payload, error=error_correction, micro=False)`
-3. `qrcode.to_artistic(background=str(bg_path), target=str(output_path), scale=scale)`
-4. Returns `Path` to generated PNG
+3. With a background, calls `qrcode.to_artistic(...)`; without one, calls `qrcode.save(..., kind="png")`
+4. Removes the exact prior target, validates a freshly written regular PNG with Pillow, and removes partial/invalid output on failure
+5. Returns `Path` to the validated generated PNG
 - Valid error correction: `"L"`, `"M"`, `"Q"`, `"H"`
+
+The CLI additionally requires the returned path to equal the requested target
+and exits nonzero if generation is a no-op, writes invalid bytes, returns a
+different path, or raises after leaving a partial file.
 
 ## Word Clouds (`word_clouds/`)
 
@@ -211,7 +226,7 @@ Parses structured `techs.md` with proficiency levels 1–5.
 
 **API:** `load_technologies(path) -> List[Technology]` · `parse_technology_line(line, category) -> Optional[Technology]` · `display_technologies(techs)` → Rich Table
 
-⚠️ `topics.md` and `languages.md` (generated by `starred`) use a **different Markdown format** — parsed by `parse_markdown_for_word_cloud_frequencies()`, not `load_technologies()`.
+⚠️ `topics.md` and `languages.md` (generated by `scripts.starred_lists`) use a **different Markdown format** — parsed by `parse_markdown_for_word_cloud_frequencies()`, not `load_technologies()`.
 
 ## Adding Dependencies
 

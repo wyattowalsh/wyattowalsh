@@ -17,8 +17,15 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError
 
-from ._github_http import _BASE, _get, _graphql, _paginate_rest
+from ._github_http import (
+    _BASE,
+    _are_expected_optional_graphql_errors,
+    _get,
+    _graphql,
+    _paginate_rest,
+)
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -92,8 +99,128 @@ def _collect_traffic(owner: str, repo: str, token: str | None) -> dict[str, Any]
         )
         result["traffic_top_referrers"] = [r["referrer"] for r in referrers]
     except Exception as exc:
-        logger.warning("Failed to fetch traffic stats: {}", exc)
+        if isinstance(exc, HTTPError) and exc.code == 403:
+            logger.info(
+                "Optional traffic metrics unavailable for {}/{}: HTTP 403",
+                owner,
+                repo,
+            )
+        else:
+            logger.warning("Failed to fetch traffic stats: {}", exc)
 
+    return result
+
+
+def _collect_latest_stargazer(
+    owner: str,
+    repo: str,
+    star_count: int,
+    token: str | None,
+) -> str | None:
+    """Return the latest visible stargazer, or ``None`` when unavailable."""
+    if star_count <= 0:
+        return None
+
+    try:
+        # GitHub allows up to 100 stargazers per page. Request the bounded
+        # final page instead of using one result per page, which makes a
+        # popular repository ask for an inaccessible page in the thousands.
+        per_page = 100
+        last_page = ((star_count - 1) // per_page) + 1
+        stars = _json(
+            f"{_BASE}/repos/{owner}/{repo}/stargazers"
+            f"?per_page={per_page}&page={last_page}",
+            token,
+            accept="application/vnd.github.v3.star+json",
+        )
+        if isinstance(stars, list) and stars:
+            return (stars[-1].get("user") or {}).get("login")
+    except Exception as exc:
+        if isinstance(exc, HTTPError) and exc.code == 403:
+            logger.info("Optional latest stargazer unavailable: HTTP 403")
+        else:
+            logger.warning("Failed to fetch latest stargazer: {}", exc)
+    return None
+
+
+def _collect_contribution_stats(token: str | None) -> dict[str, Any]:
+    """Collect optional viewer contribution fields with explicit unknowns."""
+    result: dict[str, Any] = {
+        "contributions_last_year": None,
+        "total_commits": None,
+        "total_prs": None,
+        "total_issues": None,
+        "total_repos_contributed": None,
+        "pr_review_count": None,
+        "contributions_calendar": [],
+    }
+    if not token:
+        logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
+        return result
+
+    logger.info("Fetching contribution stats via GraphQL")
+    query = """
+    {
+      viewer {
+        contributionsCollection {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+                color
+              }
+            }
+          }
+          totalCommitContributions
+          totalPullRequestContributions
+          totalPullRequestReviewContributions
+          totalIssueContributions
+          totalRepositoryContributions
+        }
+      }
+    }
+    """
+    try:
+        gql_resp = _graphql(query, token)
+        errors = gql_resp.get("errors")
+        if errors:
+            if _are_expected_optional_graphql_errors(errors):
+                logger.info("Optional GraphQL contribution fields unavailable")
+            else:
+                logger.warning("GraphQL contribution errors: {e}", e=errors)
+        raw = gql_resp.get("data") or {}
+        viewer = raw.get("viewer") or {}
+        contrib_coll = viewer.get("contributionsCollection") or {}
+        if not contrib_coll:
+            return result
+        cal = contrib_coll.get("contributionCalendar") or {}
+        result.update(
+            {
+                "contributions_last_year": cal.get("totalContributions", 0),
+                "total_commits": contrib_coll.get("totalCommitContributions", 0),
+                "total_prs": contrib_coll.get("totalPullRequestContributions"),
+                "total_issues": contrib_coll.get("totalIssueContributions"),
+                "total_repos_contributed": contrib_coll.get(
+                    "totalRepositoryContributions"
+                ),
+                "pr_review_count": contrib_coll.get(
+                    "totalPullRequestReviewContributions", 0
+                ),
+                "contributions_calendar": [
+                    {
+                        "date": day["date"],
+                        "count": day["contributionCount"],
+                        "color": day["color"],
+                    }
+                    for week in cal.get("weeks", [])
+                    for day in week.get("contributionDays", [])
+                ],
+            }
+        )
+    except Exception as exc:
+        logger.warning("GraphQL contribution query failed: {}", exc)
     return result
 
 
@@ -392,23 +519,12 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         metrics["orgs_count"] = 0
 
     # -- REST: latest stargazer ------------------------------------------
-    try:
-        star_count = metrics.get("stars", 0)
-        if star_count > 0:
-            stars = _json(
-                f"{_BASE}/repos/{owner}/{repo}/stargazers?per_page=1&page={star_count}",
-                token,
-                accept="application/vnd.github.v3.star+json",
-            )
-        else:
-            stars = []
-        if stars and isinstance(stars, list) and len(stars) > 0:
-            metrics["latest_stargazer"] = stars[0].get("user", {}).get("login")
-        else:
-            metrics["latest_stargazer"] = None
-    except Exception as exc:
-        logger.warning("Failed to fetch latest stargazer: {}", exc)
-        metrics["latest_stargazer"] = None
+    metrics["latest_stargazer"] = _collect_latest_stargazer(
+        owner,
+        repo,
+        int(metrics.get("stars", 0) or 0),
+        token,
+    )
 
     # -- REST: latest fork owner -----------------------------------------
     try:
@@ -425,75 +541,7 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         metrics["latest_fork_owner"] = None
 
     # -- GraphQL: contributions ------------------------------------------
-    # Set GraphQL field defaults (overwritten on success)
-    for _k in (
-        "contributions_last_year",
-        "total_commits",
-        "total_prs",
-        "total_issues",
-        "total_repos_contributed",
-        "pr_review_count",
-    ):
-        metrics[_k] = None
-    metrics["contributions_calendar"] = []
-
-    if token:
-        logger.info("Fetching contribution stats via GraphQL")
-        query = """
-        {
-          viewer {
-            contributionsCollection {
-              contributionCalendar {
-                totalContributions
-                weeks {
-                  contributionDays {
-                    date
-                    contributionCount
-                    color
-                  }
-                }
-              }
-              totalCommitContributions
-              totalPullRequestContributions
-              totalPullRequestReviewContributions
-              totalIssueContributions
-              totalRepositoryContributions
-            }
-          }
-        }
-        """
-        try:
-            gql_resp = _graphql(query, token)
-            errors = gql_resp.get("errors")
-            if errors:
-                logger.warning("GraphQL returned errors: {e}", e=errors)
-            raw = gql_resp.get("data") or {}
-            contrib_coll = raw.get("viewer", {}).get("contributionsCollection", {})
-            cal = contrib_coll.get("contributionCalendar", {})
-            metrics["contributions_last_year"] = cal.get("totalContributions", 0)
-            metrics["total_commits"] = contrib_coll.get("totalCommitContributions", 0)
-            metrics["total_prs"] = contrib_coll.get("totalPullRequestContributions")
-            metrics["total_issues"] = contrib_coll.get("totalIssueContributions")
-            metrics["total_repos_contributed"] = contrib_coll.get(
-                "totalRepositoryContributions"
-            )
-            metrics["pr_review_count"] = contrib_coll.get(
-                "totalPullRequestReviewContributions",
-                0,
-            )
-            metrics["contributions_calendar"] = [
-                {
-                    "date": d["date"],
-                    "count": d["contributionCount"],
-                    "color": d["color"],
-                }
-                for week in cal.get("weeks", [])
-                for d in week.get("contributionDays", [])
-            ]
-        except Exception as exc:
-            logger.warning("GraphQL query failed: {}", exc)
-    else:
-        logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
+    metrics.update(_collect_contribution_stats(token))
 
     # -- REST: languages, top repos, traffic -----------------------------
     try:

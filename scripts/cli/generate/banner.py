@@ -83,7 +83,12 @@ def banner(
     proj_config = _load_project_config(config_path)
 
     try:
-        from ...banner import generate_banner
+        from ...banner import (
+            _cleanup_banner_output,
+            _remove_banner_output,
+            _validate_or_remove_banner_svg,
+            generate_banner,
+        )
     except ImportError:
         logger.error(
             "Banner dependencies/script components are missing. "
@@ -106,53 +111,50 @@ def banner(
 
     from pydantic import ValidationError  # lazy import
 
+    generated_outputs: tuple[Path, ...] = ()
+    generation_complete = False
     try:
         final_banner_config = banner_settings.to_banner_config(**cli_overrides)
         logger.info(
             "Generating banner with config: "
             f"{final_banner_config.model_dump_json(indent=2)}"
         )
-        generate_banner(cfg=final_banner_config)
-        console.print(
-            f"[bold green]SVG banner generated: {final_banner_config.output_path}[/]"
+        light_output = Path(final_banner_config.output_path)
+        dark_output = light_output.with_name(
+            f"{light_output.stem}-dark{light_output.suffix}"
         )
-        # Generate dark variant — failure does not affect the primary banner.
-        # Merge overrides into one dict so output_path is not passed twice
-        # (cli_overrides already may include output_path).
-        try:
-            dark_output = Path(final_banner_config.output_path)
-            dark_path = str(
-                dark_output.parent / f"{dark_output.stem}-dark{dark_output.suffix}"
-            )
-            dark_overrides = {
-                **cli_overrides,
-                "dark_mode": True,
-                "output_path": dark_path,
-            }
-            dark_banner_config = banner_settings.to_banner_config(**dark_overrides)
-            generate_banner(cfg=dark_banner_config)
-            console.print(
-                "[bold green]Dark SVG banner generated: "
-                f"{dark_banner_config.output_path}[/]"
-            )
-        except (
-            ValidationError,
-            OSError,
-            ValueError,
-            TypeError,
-            RuntimeError,
-        ) as dark_err:
-            logger.warning(
-                f"Dark banner generation failed (light banner succeeded): {dark_err}",
-                exc_info=True,
-            )
-            console.print(
-                "[yellow]Dark banner generation failed — light banner was saved.[/]"
-            )
+        dark_overrides = {
+            **cli_overrides,
+            "dark_mode": True,
+            "output_path": str(dark_output),
+        }
+        dark_banner_config = banner_settings.to_banner_config(**dark_overrides)
+
+        generated_variants = (
+            ("SVG banner", final_banner_config, light_output),
+            ("Dark SVG banner", dark_banner_config, dark_output),
+        )
+        generated_outputs = (light_output, dark_output)
+        # The command publishes a matched pair. Clear both exact targets before
+        # either render so an old peer can never survive a partial attempt.
+        for _label, _variant_config, variant_output in generated_variants:
+            _remove_banner_output(variant_output)
+
+        for _label, variant_config, variant_output in generated_variants:
+            generate_banner(cfg=variant_config)
+            _validate_or_remove_banner_svg(variant_output)
+
+        for label, _variant_config, variant_output in generated_variants:
+            console.print(f"[bold green]{label} generated: {variant_output}[/]")
+        generation_complete = True
     except (ValidationError, OSError, ValueError, TypeError, RuntimeError) as e:
         logger.error("Banner generation failed: {e}", e=e, exc_info=True)
         console.print(f"[bold red]Error:[/bold red] Banner generation failed: {e}")
         raise typer.Exit(code=1)
+    finally:
+        if not generation_complete:
+            for variant_output in generated_outputs:
+                _cleanup_banner_output(variant_output)
 
 
 # ---------------------------------------------------------------------------

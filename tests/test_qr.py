@@ -1,9 +1,11 @@
 from collections.abc import Generator
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from PIL import Image
 from pydantic import HttpUrl
 
 # import pytest # Pytest is a framework, not a library to import here
@@ -11,6 +13,33 @@ from scripts.config import TypedUrl
 from scripts.config import VCardDataModel as ConfigVCardDataModel
 from scripts.qr import QRCodeGenerator
 from scripts.qr import logger as qr_logger
+
+
+def _make_valid_png() -> bytes:
+    output = BytesIO()
+    Image.new("RGB", (2, 2), color=(15, 90, 180)).save(output, format="PNG")
+    return output.getvalue()
+
+
+_VALID_PNG = _make_valid_png()
+
+
+def _write_mock_png(
+    *args: object, target: str | None = None, **_kwargs: object
+) -> None:
+    """Emulate Segno writing a PNG for mocked success paths."""
+    output_path = Path(target if target is not None else str(args[0]))
+    output_path.write_bytes(_VALID_PNG)
+
+
+def _mock_successful_qr(mock_segno_make: MagicMock) -> MagicMock:
+    """Configure a Segno QR mock to honor the renderer's file contract."""
+    mock_qr_object = MagicMock()
+    mock_qr_object.to_artistic.side_effect = _write_mock_png
+    mock_qr_object.save.side_effect = _write_mock_png
+    mock_segno_make.return_value = mock_qr_object
+    return mock_qr_object
+
 
 # Cairo (system dependency) check for integration test
 # Try to import cairocffi and perform a basic operation to see if libcairo is
@@ -192,8 +221,7 @@ def test_generate_artistic_vcard_qr_success_defaults(
     caplog: Any,
 ) -> None:
     """Test successful generation with default settings."""
-    mock_qr_object = MagicMock()
-    mock_segno_make.return_value = mock_qr_object
+    mock_qr_object = _mock_successful_qr(mock_segno_make)
 
     output_filename = "test_qr.png"
     expected_output_path = qr_generator_instance.default_output_dir / output_filename
@@ -253,8 +281,7 @@ def test_generate_artistic_vcard_qr_custom_settings(
     Test successful generation with custom scale, background, and error
     correction.
     """
-    mock_qr_object = MagicMock()
-    mock_segno_make.return_value = mock_qr_object
+    mock_qr_object = _mock_successful_qr(mock_segno_make)
 
     custom_bg_filename = "custom_bg.svg"
     custom_bg_path = (
@@ -356,6 +383,64 @@ def test_generate_artistic_vcard_qr_invalid_error_correction(
     assert f"Invalid QR error correction level: {invalid_error_level}" in caplog.text
 
 
+@pytest.mark.parametrize(
+    "unsafe_filename",
+    [
+        "../victim.png",
+        "nested/victim.png",
+        r"..\victim.png",
+        r"nested\victim.png",
+        "C:victim.png",
+        "victim.PNG",
+        "victim.jpg",
+    ],
+)
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_unsafe_filename_before_unlink(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+    unsafe_filename: str,
+    tmp_path: Path,
+) -> None:
+    """Unsafe filenames fail before they can remove an existing file."""
+    victim = tmp_path / "victim.png"
+    victim.write_bytes(_VALID_PNG)
+    output_dir = qr_generator_instance.default_output_dir
+    parent_victim = output_dir.parent / "victim.png"
+    parent_victim.write_bytes(_VALID_PNG)
+
+    with pytest.raises(ValueError, match=r"must be a bare \.png filename"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=unsafe_filename,
+        )
+
+    assert victim.read_bytes() == _VALID_PNG
+    assert parent_victim.read_bytes() == _VALID_PNG
+    mock_segno_make.assert_not_called()
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_absolute_filename_before_unlink(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+    tmp_path: Path,
+) -> None:
+    victim = tmp_path / "absolute-victim.png"
+    victim.write_bytes(_VALID_PNG)
+
+    with pytest.raises(ValueError, match=r"must be a bare \.png filename"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=str(victim),
+        )
+
+    assert victim.read_bytes() == _VALID_PNG
+    mock_segno_make.assert_not_called()
+
+
 @patch("segno.make")
 def test_generate_artistic_vcard_qr_segno_make_exception(
     mock_segno_make: MagicMock,
@@ -365,10 +450,13 @@ def test_generate_artistic_vcard_qr_segno_make_exception(
 ) -> None:
     """Test handling of exceptions from segno.make()."""
     mock_segno_make.side_effect = ValueError("Segno internal error")
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+    output_path.write_bytes(_VALID_PNG)
     with pytest.raises(ValueError, match="Segno internal error"):
         qr_generator_instance.generate_artistic_vcard_qr(
             vcard_details=default_vcard_data, output_filename="test.png"
         )
+    assert not output_path.exists()
     assert "Value error during QR generation: Segno internal error" in caplog.text
 
 
@@ -381,13 +469,23 @@ def test_generate_artistic_vcard_qr_to_artistic_exception(
 ) -> None:
     """Test handling of exceptions from qrcode.to_artistic()."""
     mock_qr_object = MagicMock()
-    mock_qr_object.to_artistic.side_effect = Exception("Artistic render failed")
+
+    def _write_partial_then_fail(
+        *_args: object, target: str, **_kwargs: object
+    ) -> None:
+        Path(target).write_bytes(b"partial")
+        raise RuntimeError("Artistic render failed")
+
+    mock_qr_object.to_artistic.side_effect = _write_partial_then_fail
     mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+    output_path.write_bytes(b"stale")
 
     with pytest.raises(Exception, match="Artistic render failed"):
         qr_generator_instance.generate_artistic_vcard_qr(
             vcard_details=default_vcard_data, output_filename="test.png"
         )
+    assert not output_path.exists()
     # assert (
     #     "Artistic render failed" in caplog.text
     # )
@@ -424,6 +522,187 @@ def test_generate_artistic_vcard_qr_to_artistic_not_callable(
     ) in caplog.text
 
 
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_noop_cannot_reuse_stale_png(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+) -> None:
+    """A renderer that returns without writing must not accept stale bytes."""
+    mock_segno_make.return_value = MagicMock()
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+    output_path.write_bytes(_VALID_PNG)
+
+    with pytest.raises(RuntimeError, match="did not create an output"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_and_removes_invalid_png(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+) -> None:
+    """A renderer must publish a parseable PNG, not arbitrary bytes."""
+    mock_qr_object = MagicMock()
+
+    def _write_invalid(*_args: object, target: str, **_kwargs: object) -> None:
+        Path(target).write_bytes(b"not-a-png")
+
+    mock_qr_object.to_artistic.side_effect = _write_invalid
+    mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+
+    with pytest.raises(RuntimeError, match="created an invalid PNG"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_signature_only_png(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+) -> None:
+    """The PNG magic bytes alone are not sufficient publication evidence."""
+    mock_qr_object = MagicMock()
+
+    def _write_signature_only(*_args: object, target: str, **_kwargs: object) -> None:
+        Path(target).write_bytes(b"\x89PNG\r\n\x1a\nnot-a-real-png")
+
+    mock_qr_object.to_artistic.side_effect = _write_signature_only
+    mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+
+    with pytest.raises(RuntimeError, match="created an invalid PNG"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_and_removes_empty_png(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+) -> None:
+    """A zero-byte renderer target is not a successful PNG publication."""
+    mock_qr_object = MagicMock()
+
+    def _write_empty(*_args: object, target: str, **_kwargs: object) -> None:
+        Path(target).touch()
+
+    mock_qr_object.to_artistic.side_effect = _write_empty
+    mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+
+    with pytest.raises(RuntimeError, match="did not create a non-empty PNG"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_symlink_output(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+    tmp_path: Path,
+) -> None:
+    """The renderer's published target must itself be a regular file."""
+    actual_png = tmp_path / "actual.png"
+    actual_png.write_bytes(_VALID_PNG)
+    mock_qr_object = MagicMock()
+
+    def _write_symlink(*_args: object, target: str, **_kwargs: object) -> None:
+        Path(target).symlink_to(actual_png)
+
+    mock_qr_object.to_artistic.side_effect = _write_symlink
+    mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+
+    with pytest.raises(RuntimeError, match="did not create a regular file"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+    assert actual_png.read_bytes() == _VALID_PNG
+
+
+@patch("segno.make")
+def test_generate_artistic_vcard_qr_rejects_directory_output(
+    mock_segno_make: MagicMock,
+    qr_generator_instance: QRCodeGenerator,
+    default_vcard_data: ConfigVCardDataModel,
+) -> None:
+    """A renderer-created directory is rejected and removed without recursion."""
+    mock_qr_object = MagicMock()
+
+    def _write_directory(*_args: object, target: str, **_kwargs: object) -> None:
+        Path(target).mkdir()
+
+    mock_qr_object.to_artistic.side_effect = _write_directory
+    mock_segno_make.return_value = mock_qr_object
+    output_path = qr_generator_instance.default_output_dir / "test.png"
+
+    with pytest.raises(RuntimeError, match="did not create a regular file"):
+        qr_generator_instance.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
+@patch("segno.make")
+def test_generate_plain_vcard_qr_save_failure_removes_stale_png(
+    mock_segno_make: MagicMock,
+    default_vcard_data: ConfigVCardDataModel,
+    tmp_path: Path,
+) -> None:
+    """A plain-QR save failure cannot leave the prior target behind."""
+    generator = QRCodeGenerator(
+        default_background_path=None,
+        default_output_dir=tmp_path,
+        default_scale=10,
+    )
+    mock_qr_object = MagicMock()
+
+    def _write_partial_then_fail(target: str, **_kwargs: object) -> None:
+        Path(target).write_bytes(b"partial")
+        raise OSError("save failed")
+
+    mock_qr_object.save.side_effect = _write_partial_then_fail
+    mock_segno_make.return_value = mock_qr_object
+    output_path = tmp_path / "plain.png"
+    output_path.write_bytes(_VALID_PNG)
+
+    with pytest.raises(OSError, match="save failed"):
+        generator.generate_artistic_vcard_qr(
+            vcard_details=default_vcard_data,
+            output_filename=output_path.name,
+        )
+
+    assert not output_path.exists()
+
+
 @patch("segno.helpers.make_vcard_data")
 @patch("segno.make")
 def test_vcard_payload_construction_all_fields(
@@ -435,6 +714,7 @@ def test_vcard_payload_construction_all_fields(
     """
     Test that all VCardDataModel fields are passed to segno's make_vcard_data.
     """
+    _mock_successful_qr(mock_segno_make)
     qr_generator_instance.generate_artistic_vcard_qr(
         vcard_details=default_vcard_data, output_filename="payload_test.png"
     )
@@ -486,6 +766,7 @@ def test_vcard_payload_construction_minimal_fields(
         title="",
     )
 
+    _mock_successful_qr(mock_segno_make)
     qr_generator_instance.generate_artistic_vcard_qr(
         vcard_details=minimal_vcard_details, output_filename="minimal_payload_test.png"
     )
@@ -532,6 +813,7 @@ def test_vcard_payload_construction_multiple_urls(
         org="",
         title="",
     )
+    _mock_successful_qr(mock_segno_make)
     qr_generator_instance.generate_artistic_vcard_qr(
         vcard_details=multi_url_vcard_details, output_filename="multiurl_test.png"
     )

@@ -255,6 +255,107 @@ def test_generate_banner_svgo_optimization_disabled(
     mock_subprocess_run.assert_not_called()
 
 
+def test_generate_banner_propagates_svg_save_failure(
+    tmp_path: Path, default_banner_config: BannerConfig
+) -> None:
+    """A failed SVG write must prevent callers from reporting stale success."""
+    config = default_banner_config
+    config.output_path = str(tmp_path / "unwritable.svg")
+    config.optimize_with_svgo = True
+
+    with (
+        patch("scripts.banner.define_background"),
+        patch("scripts.banner.add_glassmorphism_effect"),
+        patch("scripts.banner.draw_flow_patterns"),
+        patch("scripts.banner.draw_neural_network"),
+        patch("scripts.banner.draw_lorenz"),
+        patch("scripts.banner.draw_aizawa"),
+        patch("scripts.banner.add_micro_details"),
+        patch("scripts.banner.add_title_and_subtitle"),
+        patch("scripts.banner.add_octocat"),
+        patch("scripts.banner.Drawing.save", side_effect=OSError("disk full")),
+        patch("scripts.banner.optimize_with_svgo") as mock_optimize,
+        pytest.raises(OSError, match="disk full"),
+    ):
+        generate_banner(config)
+
+    mock_optimize.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    ("published", "error"),
+    [
+        (b"", "non-empty SVG"),
+        (b"not svg", "malformed SVG"),
+        (b"<html/>", "non-SVG XML document"),
+    ],
+)
+def test_generate_banner_rejects_invalid_svg_and_cleans_target(
+    tmp_path: Path,
+    default_banner_config: BannerConfig,
+    published: bytes,
+    error: str,
+) -> None:
+    output = tmp_path / "invalid.svg"
+    config = default_banner_config
+    config.output_path = str(output)
+    config.optimize_with_svgo = False
+
+    def _publish_invalid(*_args: object, **_kwargs: object) -> None:
+        output.write_bytes(published)
+
+    with (
+        patch("scripts.banner._render_banner_svg", side_effect=_publish_invalid),
+        pytest.raises(RuntimeError, match=error),
+    ):
+        generate_banner(config)
+
+    assert not output.exists()
+
+
+def test_generate_banner_rejects_symlink_without_touching_target(
+    tmp_path: Path, default_banner_config: BannerConfig
+) -> None:
+    output = tmp_path / "linked.svg"
+    actual = tmp_path / "actual.svg"
+    actual.write_text("<svg/>", encoding="utf-8")
+    config = default_banner_config
+    config.output_path = str(output)
+    config.optimize_with_svgo = False
+
+    def _publish_symlink(*_args: object, **_kwargs: object) -> None:
+        output.symlink_to(actual)
+
+    with (
+        patch("scripts.banner._render_banner_svg", side_effect=_publish_symlink),
+        pytest.raises(RuntimeError, match="regular file"),
+    ):
+        generate_banner(config)
+
+    assert not output.exists()
+    assert actual.read_text(encoding="utf-8") == "<svg/>"
+
+
+def test_generate_banner_rejects_directory_output(
+    tmp_path: Path, default_banner_config: BannerConfig
+) -> None:
+    output = tmp_path / "directory.svg"
+    config = default_banner_config
+    config.output_path = str(output)
+    config.optimize_with_svgo = False
+
+    def _publish_directory(*_args: object, **_kwargs: object) -> None:
+        output.mkdir()
+
+    with (
+        patch("scripts.banner._render_banner_svg", side_effect=_publish_directory),
+        pytest.raises(RuntimeError, match="regular file"),
+    ):
+        generate_banner(config)
+
+    assert not output.exists()
+
+
 @patch("scripts.svg_optimize.subprocess.run")
 def test_optimize_with_svgo_success(
     mock_subprocess_run: MagicMock, tmp_path: Path
@@ -1359,11 +1460,12 @@ def test_add_octocat_file_not_found(
     mock_isfile.assert_called_once_with(octo_svg_path)
     mock_dwg_instance.image.assert_not_called()  # image factory method
     mock_fg_group_instance.add.assert_not_called()
-    # Assert logger warning (structured logging style)
-    mock_logger.warning.assert_called_once_with(
+    # The decorative Octocat is optional, so its absence is informational.
+    mock_logger.info.assert_called_once_with(
         "Octocat SVG not found at {octo_svg_path}, skipping.",
         octo_svg_path=octo_svg_path,
     )
+    mock_logger.warning.assert_not_called()
 
 
 def test_add_title_and_subtitle_calls(

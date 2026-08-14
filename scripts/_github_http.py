@@ -10,7 +10,9 @@ import json
 import re
 import ssl
 import urllib.request
+from collections.abc import Collection, Mapping
 from typing import Any
+from urllib.error import HTTPError
 from urllib.parse import urlparse
 from urllib.request import HTTPRedirectHandler, Request
 
@@ -21,7 +23,54 @@ logger = get_logger(module=__name__)
 _BASE = "https://api.github.com"
 _GRAPHQL_URL = "https://api.github.com/graphql"
 _ALLOWED_HOSTS = frozenset({"api.github.com"})
-_ALLOWED_SCHEMES = frozenset({"http", "https"})
+_ALLOWED_SCHEMES = frozenset({"https"})
+_EXPECTED_OPTIONAL_GRAPHQL_ERROR_TYPES = frozenset(
+    {"FORBIDDEN", "INTERNAL", "RATE_LIMITED", "SERVICE_UNAVAILABLE"}
+)
+_EXPECTED_OPTIONAL_GRAPHQL_ERROR_MESSAGES = (
+    "something went wrong while executing your query",
+    "resource not accessible by integration",
+    "insufficient scope",
+    "rate limit",
+)
+
+
+class _GraphQLResponse(dict[str, Any]):
+    """GraphQL JSON object with a detached, case-normalized header snapshot."""
+
+    def __init__(
+        self,
+        payload: Mapping[str, Any],
+        *,
+        response_headers: Any,
+    ) -> None:
+        super().__init__(payload)
+        items = getattr(response_headers, "items", None)
+        self.response_headers: dict[str, str] = (
+            {str(name).casefold(): str(value) for name, value in items()}
+            if callable(items)
+            else {}
+        )
+
+
+def _are_expected_optional_graphql_errors(errors: Any) -> bool:
+    """Return whether every GraphQL error is an expected capability gap."""
+    if not isinstance(errors, list) or not errors:
+        return False
+    for error in errors:
+        if not isinstance(error, dict):
+            return False
+        error_type = str(error.get("type") or "").upper()
+        message = str(error.get("message") or "").casefold()
+        if error_type in _EXPECTED_OPTIONAL_GRAPHQL_ERROR_TYPES:
+            continue
+        if any(
+            fragment in message
+            for fragment in _EXPECTED_OPTIONAL_GRAPHQL_ERROR_MESSAGES
+        ):
+            continue
+        return False
+    return True
 
 
 def _assert_allowed_url(url: str) -> None:
@@ -98,7 +147,10 @@ def _graphql(
         method="POST",
     )
     with _urlopen(req) as resp:
-        return json.loads(resp.read().decode())
+        payload = json.loads(resp.read().decode())
+        if not isinstance(payload, dict):
+            raise ValueError("GitHub GraphQL response was not a JSON object")
+        return _GraphQLResponse(payload, response_headers=resp.headers)
 
 
 # ---------------------------------------------------------------------------
@@ -114,8 +166,15 @@ def _paginate_rest(
     *,
     accept: str | None = None,
     max_pages: int = 100,
+    optional_http_statuses: Collection[int] = (),
 ) -> list[Any]:
-    """Follow ``Link: <...>; rel="next"`` headers to collect all pages."""
+    """Follow ``Link`` headers and collect pages from a REST endpoint.
+
+    ``optional_http_statuses`` identifies capability-related response codes for
+    a specific caller. Those codes stop pagination at INFO while all other
+    request failures remain warnings. Callers must opt in explicitly; the
+    default behavior is unchanged.
+    """
     results: list[Any] = []
     next_url: str | None = url
     page_count = 0
@@ -127,7 +186,14 @@ def _paginate_rest(
         try:
             data, headers = _get(next_url, token, accept=accept)
         except Exception as exc:
-            logger.warning("Pagination request failed ({}): {}", next_url, exc)
+            if isinstance(exc, HTTPError) and exc.code in optional_http_statuses:
+                logger.info(
+                    "Optional paginated endpoint unavailable ({}): HTTP {}",
+                    next_url,
+                    exc.code,
+                )
+            else:
+                logger.warning("Pagination request failed ({}): {}", next_url, exc)
             break
         if isinstance(data, list):
             results.extend(data)

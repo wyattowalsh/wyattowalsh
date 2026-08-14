@@ -89,12 +89,12 @@ wyattowalsh/
 
 Jobs upload artifacts; a single **`finalize`** job is the sole first-party git writer. Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
 
-1. **`update-starred-lists`** — `uv sync --extra script-tools` → `uv run starred` → artifact `languages.md` + `topics.md`
-2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` / typographic word clouds / `generate banner` → artifact `qr*.png`, `wordcloud_*.svg`, `banner*.svg`
-3. **`generate-event-art`** (needs starred) — `uv sync --locked --all-extras` + `librsvg2-bin` → `fetch_metrics` / `fetch_history` → `generate living-art` → living-art staging artifact
+1. **`update-starred-lists`** — `uv sync --locked` → first-party `python -m scripts.starred_lists` (one strict GraphQL traversal, transactional language/topic publication) → validated artifact `languages.md` + `topics.md`
+2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` / typographic word clouds / `generate banner` → structurally validate and upload exactly `qr.png`, the two typographic word-cloud SVGs, and the light/dark banner pair
+3. **Living-art lane** — `prepare-event-art-inputs` fetches one metrics/history bundle and exports `LIVING_ART_STYLE_KEYS`; six read-only `generate-event-art` matrix children render isolated canonical GIFs; `assemble-event-art` validates the merged exact-six fleet and uploads the living-art staging artifact
 4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery) → repo-owned supplemental metrics cards (habits/activity/music/posts; never Spotify on lowlighter `with:`) → metrics artifact
 5. **`update-readme-wakatime`** — first-party `generate wakatime` (no `anmol098/waka-readme-stats`) → `waka-readme` artifact (`waka-section.md`); `contents: read` only
-6. **`finalize`** (needs assets ∥ art ∥ metrics ∥ waka) — download artifacts → apply Waka markers → `generate readme-sections` → `generate skills` → ordered commits + one push
+6. **`finalize`** (needs assets ∥ assembled art ∥ metrics ∥ waka) — download artifacts → apply Waka markers → `generate readme-sections` → `generate skills` → ordered commits + one push
 
 Optional manual lane: **`probe-full-metrics`** (workflow_dispatch `metrics_probe_mode=true` only) — same lowlighter pin as prod; probe-only habits/activity diagnostics; `plugin_music: no`; does not update the profile.
 
@@ -179,8 +179,8 @@ CI secrets (GitHub Actions only — not needed locally):
 | `load_config()` returns defaults silently | `config.yaml` missing or empty **locally** | Auto-creates with defaults; edit the created file. In CI (`CI` / `GITHUB_ACTIONS`) this fails closed instead |
 | `generate qr` Cairo error (macOS) | Cairo not in dyld path | `export DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` |
 | `generate qr` Cairo / cairocffi error (Linux CI) | System Cairo libs missing | `sudo apt-get update && sudo apt-get install -y libcairo2 libcairo2-dev` (plus pkg-config as needed) |
-| Dark banner missing / yellow warning only | `banner-dark.svg` generation failed after light succeeded | Re-run `uv run readme generate banner`; check `BannerConfig` / SVGO; light `banner.svg` is still valid |
+| Banner generation exits nonzero | Either the light or dark SVG failed to materialize as a non-empty file | Check `BannerConfig` / SVGO and rerun `uv run readme generate banner`; the command requires a fresh matched pair |
 | `uv sync --locked` fails / resolver conflict | `uv.lock` out of date vs `pyproject.toml` | Update lock with `uv lock` (then commit both), or temporarily `uv sync --all-extras` for local-only exploration |
 | Living-art GIF rasterization fails | `rsvg-convert` / librsvg missing | `sudo apt-get install -y librsvg2-bin` (matches CI `generate-event-art`) |
 | `noise` module warning but continues | `noise` package absent | Expected — `NoiseHandler` falls back to trig automatically |
-| `starred` command not found | script-tools not installed or command not run through `uv` | `uv sync --locked --extra script-tools` then `uv run starred ...` |
+| Starred-list generation fails | GitHub token, GraphQL shape, pagination, or output validation failed | Export `GITHUB_TOKEN`, then run `uv run python -m scripts.starred_lists --owner <owner> --languages-output .github/assets/languages.md --topics-output .github/assets/topics.md` and inspect the bounded error |

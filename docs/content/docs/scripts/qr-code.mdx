@@ -5,17 +5,21 @@ description: Generates a styled QR code PNG with an embedded SVG background, vCa
 
 ## Module
 
-`scripts/qr.py` — uses `segno`, `Pillow`, and `cairosvg` for SVG rasterization.
+`scripts/qr.py` — uses `segno`, `qrcode-artistic`, and Pillow. CairoSVG and the
+system Cairo libraries support artistic SVG-background rendering.
 
 <Callout type="warn" title="System dependency">
-Requires Cairo (macOS: `brew install cairo`). Set `DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` before running.
+Artistic SVG-background rendering requires Cairo (macOS: `brew install cairo`).
+Set `DYLD_LIBRARY_PATH=$(brew --prefix cairo)/lib:$DYLD_LIBRARY_PATH` before a
+background-backed run. Plain QR generation with no background does not use that
+rendering path.
 </Callout>
 
 ## What it generates
 
 A PNG file containing:
 1. A QR code encoding your **vCard** contact data (`VCardDataModel` from config)
-2. An optional **SVG background** (typically your profile icon) composited behind the QR modules
+2. An optional **SVG background** composited behind the QR modules; with no background, Segno writes a standard QR PNG
 3. Configurable **error correction level** (H = 30% recovery)
 
 ## Configuration
@@ -40,6 +44,18 @@ uv run python -m scripts.cli generate qr \
   --qr-scale 25 \
   --qr-background-path .github/assets/img/icon.svg
 ```
+
+The generator removes the exact prior target before rendering and accepts only
+a freshly written regular PNG that Pillow can verify. The CLI also requires the
+renderer to return the requested path. A no-op renderer, invalid/partial image,
+unexpected path, or save failure exits nonzero and cleans the target instead of
+reusing stale bytes.
+
+The configured `output_filename` is a bare, lowercase `.png` filename: it
+cannot contain a directory, parent component, absolute path, or Windows drive.
+Use CLI `--output-path` when selecting a different output directory; its final
+filename is subject to the same `.png` rule. Validation happens before any
+existing target is removed.
 
 ## vCard encoding
 

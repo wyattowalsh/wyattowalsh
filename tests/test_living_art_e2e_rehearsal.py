@@ -127,10 +127,12 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
         size: int = 400,
         owner: str = "wyattowalsh",
         workers: int = 4,
+        output_dir: Path = Path(".github/assets/img"),
     ) -> list[Path]:
         del history, metrics, styles, max_frames, size, owner, workers
-        out_dir = tmp_path / ".github" / "assets" / "img"
-        outputs = [out_dir / f"living-{style}.gif" for style in LIVING_ART_STYLE_KEYS]
+        outputs = [
+            output_dir / f"living-{style}.gif" for style in LIVING_ART_STYLE_KEYS
+        ]
         for path in outputs:
             _write_gif(path)
         return outputs
@@ -218,6 +220,7 @@ def test_living_art_only_forwards_selected_style_to_renderer(
         size: int = 400,
         owner: str = "wyattowalsh",
         workers: int = 4,
+        output_dir: Path = Path(".github/assets/img"),
     ) -> list[Path]:
         captured["history"] = history
         captured["metrics"] = metrics
@@ -226,8 +229,8 @@ def test_living_art_only_forwards_selected_style_to_renderer(
         captured["size"] = size
         captured["owner"] = owner
         captured["workers"] = workers
-        out_dir = tmp_path / ".github" / "assets" / "img"
-        output = out_dir / "living-topo.gif"
+        captured["output_dir"] = output_dir
+        output = output_dir / "living-topo.gif"
         _write_gif(output)
         return [output]
 
@@ -264,6 +267,7 @@ def test_living_art_only_forwards_selected_style_to_renderer(
     assert captured["size"] == 96
     assert captured["owner"] == "rehearsal"
     assert captured["workers"] == 2
+    assert captured["output_dir"] == Path(".github/assets/img")
     assert not (
         tmp_path / ".github" / "assets" / "img" / "living-art-manifest.json"
     ).exists()
@@ -291,6 +295,7 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
         size: int = 400,
         owner: str = "wyattowalsh",
         workers: int = 4,
+        output_dir: Path = Path(".github/assets/img"),
     ) -> list[Path]:
         captured["history"] = history
         captured["metrics"] = metrics
@@ -299,7 +304,8 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
         captured["size"] = size
         captured["owner"] = owner
         captured["workers"] = workers
-        output = tmp_path / ".github" / "assets" / "img" / "living-inkgarden.gif"
+        captured["output_dir"] = output_dir
+        output = output_dir / "living-inkgarden.gif"
         _write_gif(output)
         return [output]
 
@@ -336,3 +342,4 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
     assert captured["size"] == 96
     assert captured["owner"] == "rehearsal"
     assert captured["workers"] == 2
+    assert captured["output_dir"] == Path(".github/assets/img")

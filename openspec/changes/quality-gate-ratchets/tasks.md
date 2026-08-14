@@ -38,3 +38,20 @@
 
 - [x] 7.1 Collapse third-party metrics validation and recovery into one fail-closed step
 - [x] 7.2 Prove an accepted last-known-good recovery does not create an intentional failed step
+
+## 8. Starred-List and Generated-Asset Integrity
+
+- [x] 8.1 Replace the third-party starred-list CLI with one strict first-party GraphQL traversal using the shared HTTPS-only transport and environment-only token handling
+- [x] 8.2 Render deterministic public-repository language/topic views and publish the pair transactionally with rollback coverage
+- [x] 8.3 Validate both Markdown consumers before artifact upload and make every explicitly requested word-cloud output fail nonzero when absent
+- [x] 8.4 Require fresh validated QR and light/dark banner outputs, with stale-target removal and fail-closed CLI coverage
+- [x] 8.5 Require the exact five-file profile-asset fleet and parse its PNG/SVG media at producer and finalizer boundaries
+- [x] 8.6 Reject configured QR filenames that can escape the output directory before any target mutation
+
+## 9. Updater Log and Annotation Hygiene
+
+- [x] 9.1 Disable the known-broken achievements plugin in production and probe configurations instead of recovering its error payload
+- [x] 9.2 Downgrade only recognized optional GitHub capability gaps to bounded informational fallbacks while retaining warnings for unexpected failures
+- [x] 9.3 Add bounded transient and positively identified rate-limit retry for the first-party starred traversal, exact artifact extraction destinations, and step-local suppression for the reviewed upstream `download-artifact` DEP0005 defect
+- [x] 9.4 Pin every updater checkout to the immutable trigger SHA and prove the contract across all jobs
+- [ ] 9.5 Prove the integrated remote updater run completes without GitHub warning/failure annotations or application warning/error fallbacks

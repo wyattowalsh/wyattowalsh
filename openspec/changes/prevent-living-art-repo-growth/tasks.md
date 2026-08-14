@@ -21,6 +21,7 @@
 - [x] 3.7 Regenerate and verify every persisted primary/public companion before git staging
 - [x] 3.8 Route every public repository GIF writer through the locked private-stage transaction
 - [x] 3.9 Revalidate animation/runtime constraints and restore the full managed fleet on publication failure
+- [x] 3.10 Replace sequential six-style rendering with one shared-input job, a six-way isolated matrix, and an exact-six read-only assembler
 
 ## 4. Optional Immutable Delivery
 
@@ -35,3 +36,4 @@
 - [x] 5.1 Run all living-art, workflow, README, docs-showcase, size, and snapshot tests
 - [x] 5.2 Update public artifact, rollback, and fork behavior documentation
 - [x] 5.3 Re-run focused handoff/concurrency tests and two identical-fingerprint full coverage gates
+- [x] 5.4 Rehearse matrix artifact fan-in, dependency failure closure, and the unchanged sole-writer boundary

@@ -14,6 +14,7 @@ from typing import Any, cast
 
 import pytest
 import typer
+from PIL import Image
 
 import scripts.cli.generate as generate_package
 import scripts.cli.generate._common as common_cmd
@@ -462,7 +463,7 @@ def test_qr_command_success_defaults_and_errors(
                 kwargs["output_filename"]
             )
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(b"png")
+            Image.new("RGB", (2, 2), color="navy").save(path, format="PNG")
             return path
 
     monkeypatch.setattr("scripts.qr.QRCodeGenerator", FakeGenerator)

@@ -138,6 +138,7 @@ def _generate_living_art_timelapse(
     max_frames: int,
     size: int,
     workers: int,
+    output_dir: Path,
 ) -> list[Path]:
     """Render canonical living-art timelapse GIF outputs."""
     metrics = _load_required_json("--metrics-path", metrics_path)
@@ -152,6 +153,7 @@ def _generate_living_art_timelapse(
         styles=list(active_styles),
         max_frames=max_frames,
         size=size,
+        output_dir=output_dir,
         owner=profile,
         workers=workers,
     )
@@ -167,6 +169,10 @@ def _generate_living_art_timelapse(
         if observed_output_names.count(name) > 1
     )
     missing_output_files = sorted(str(path) for path in outputs if not path.is_file())
+    expected_output_parent = output_dir.resolve()
+    unexpected_output_locations = sorted(
+        str(path) for path in outputs if path.resolve().parent != expected_output_parent
+    )
 
     generation_issues: list[str] = []
     if missing_output_names:
@@ -185,6 +191,11 @@ def _generate_living_art_timelapse(
         generation_issues.append(
             f"returned paths do not exist: {', '.join(missing_output_files)}"
         )
+    if unexpected_output_locations:
+        generation_issues.append(
+            "outputs escaped the requested directory: "
+            + ", ".join(unexpected_output_locations)
+        )
     if generation_issues:
         console.print(
             "[bold red]Error:[/bold red] Living-art generation was incomplete; "
@@ -196,16 +207,10 @@ def _generate_living_art_timelapse(
         size_mb = path.stat().st_size / (1024 * 1024)
         console.print(f"[bold green]Generated:[/] {path} ({size_mb:.1f} MB)")
 
-    output_dir = outputs[0].parent
-    missing_styles = [
-        style
-        for style in LIVING_ART_STYLE_KEYS
-        if not (output_dir / f"living-{style}.gif").is_file()
-    ]
-    if missing_styles:
+    if active_styles != tuple(LIVING_ART_STYLE_KEYS):
         console.print(
-            "[yellow]Skipped living-art index refresh until the canonical "
-            f"fleet is complete; missing: {', '.join(missing_styles)}.[/yellow]"
+            "[yellow]Skipped living-art index refresh for a partial style "
+            "invocation.[/yellow]"
         )
     else:
         _refresh_living_art_artifacts(output_dir)

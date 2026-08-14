@@ -51,6 +51,11 @@ MAP_R, MAP_B = WIDTH - 60, HEIGHT - 110
 MAP_W = MAP_R - MAP_L
 MAP_H = MAP_B - MAP_T
 TOPOGRAPHY_GRID_SIZE = 200
+_CONTOUR_JOIN_RADIUS = 8.0
+
+_ContourPoint = tuple[float, float]
+_ContourSegment = tuple[_ContourPoint, _ContourPoint]
+_ContourEndpointRef = tuple[int, int]
 
 # Language → terrain character: (noise_freq, amplitude_multiplier)
 LANG_TERRAIN: dict[str | None, tuple[float, float]] = {
@@ -127,8 +132,90 @@ def _topo_color(e: float) -> str:
     return stops[-1][1]
 
 
+def _contour_endpoint_distance(first: _ContourPoint, second: _ContourPoint) -> float:
+    return math.sqrt((second[0] - first[0]) ** 2 + (second[1] - first[1]) ** 2)
+
+
+def _build_contour_endpoint_index(
+    segments: list[_ContourSegment],
+) -> dict[tuple[int, int], list[_ContourEndpointRef]]:
+    endpoint_index: dict[tuple[int, int], list[_ContourEndpointRef]] = {}
+    for segment_index, segment in enumerate(segments):
+        for endpoint_index_in_segment, point in enumerate(segment):
+            bucket = (
+                math.floor(point[0] / _CONTOUR_JOIN_RADIUS),
+                math.floor(point[1] / _CONTOUR_JOIN_RADIUS),
+            )
+            endpoint_index.setdefault(bucket, []).append(
+                (segment_index, endpoint_index_in_segment)
+            )
+    return endpoint_index
+
+
+def _nearby_contour_endpoints(
+    point: _ContourPoint,
+    endpoint_index: dict[tuple[int, int], list[_ContourEndpointRef]],
+    used: list[bool],
+) -> list[_ContourEndpointRef]:
+    bucket_x = math.floor(point[0] / _CONTOUR_JOIN_RADIUS)
+    bucket_y = math.floor(point[1] / _CONTOUR_JOIN_RADIUS)
+    candidates = [
+        endpoint
+        for x_offset in (-1, 0, 1)
+        for y_offset in (-1, 0, 1)
+        for endpoint in endpoint_index.get(
+            (bucket_x + x_offset, bucket_y + y_offset), ()
+        )
+        if not used[endpoint[0]]
+    ]
+    # The legacy stitcher considered segment index first, then endpoint 0/1.
+    # Retaining that order is required because equal distances keep the first
+    # candidate under the strict ``d < best_d`` comparison below.
+    candidates.sort()
+    return candidates
+
+
+def _stitch_contour_segments(
+    segments: list[_ContourSegment],
+) -> list[list[_ContourPoint]]:
+    if not segments:
+        return []
+
+    endpoint_index = _build_contour_endpoint_index(segments)
+    used = [False] * len(segments)
+    chains: list[list[_ContourPoint]] = []
+    for start_i in range(len(segments)):
+        if used[start_i]:
+            continue
+        used[start_i] = True
+        chain = [segments[start_i][0], segments[start_i][1]]
+        while True:
+            last = chain[-1]
+            best_d, best_j, best_end = _CONTOUR_JOIN_RADIUS, -1, 0
+            for segment_index, endpoint_index_in_segment in _nearby_contour_endpoints(
+                last,
+                endpoint_index,
+                used,
+            ):
+                candidate = segments[segment_index][endpoint_index_in_segment]
+                distance = _contour_endpoint_distance(last, candidate)
+                if distance < best_d:
+                    best_d = distance
+                    best_j = segment_index
+                    best_end = endpoint_index_in_segment
+            if best_j < 0:
+                break
+            used[best_j] = True
+            chain.append(
+                segments[best_j][1 - best_end] if best_end == 0 else segments[best_j][0]
+            )
+        if len(chain) >= 3:
+            chains.append(chain)
+    return chains
+
+
 def _extract_contours(elevation, grid, level, cell_w, cell_h):
-    seg_list = []
+    seg_list: list[_ContourSegment] = []
     for gy in range(grid - 1):
         for gx in range(grid - 1):
             tl = elevation[gy, gx]
@@ -151,40 +238,7 @@ def _extract_contours(elevation, grid, level, cell_w, cell_h):
             if len(edges) >= 2:
                 seg_list.append((edges[0], edges[1]))
 
-    if not seg_list:
-        return []
-
-    used = [False] * len(seg_list)
-    chains = []
-    for start_i in range(len(seg_list)):
-        if used[start_i]:
-            continue
-        used[start_i] = True
-        chain = [seg_list[start_i][0], seg_list[start_i][1]]
-        changed = True
-        while changed:
-            changed = False
-            last = chain[-1]
-            best_d, best_j, best_end = 8.0, -1, 0
-            for j in range(len(seg_list)):
-                if used[j]:
-                    continue
-                for end_idx in [0, 1]:
-                    pt = seg_list[j][end_idx]
-                    d = math.sqrt((pt[0] - last[0]) ** 2 + (pt[1] - last[1]) ** 2)
-                    if d < best_d:
-                        best_d, best_j, best_end = d, j, end_idx
-            if best_j >= 0:
-                used[best_j] = True
-                chain.append(
-                    seg_list[best_j][1 - best_end]
-                    if best_end == 0
-                    else seg_list[best_j][0]
-                )
-                changed = True
-        if len(chain) >= 3:
-            chains.append(chain)
-    return chains
+    return _stitch_contour_segments(seg_list)
 
 
 def _point_to_segment_distance(px: float, py: float, p1: tuple, p2: tuple) -> float:

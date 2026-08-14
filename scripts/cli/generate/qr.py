@@ -60,7 +60,13 @@ def qr(
     proj_config = _load_project_config(config_path)
 
     try:
-        from ...qr import QRCodeGenerator
+        from ...qr import (
+            QRCodeGenerator,
+            _cleanup_output_target,
+            _remove_output_target,
+            _validate_or_remove_png_output,
+            _validate_output_filename,
+        )
     except ImportError:
         logger.error(
             "QR code dependencies/script components are missing. "
@@ -101,13 +107,19 @@ def qr(
         else qr_settings_data.get("output_dir") or ".github/assets/img"
     )
 
-    final_output_filename = (
+    output_filename_candidate = (
         output_path.name
         if output_path
         else qr_settings_data.get("output_filename") or "qr.png"
     )
-
+    expected_output_path: Path | None = None
+    generation_complete = False
     try:
+        final_output_filename = _validate_output_filename(output_filename_candidate)
+        expected_output_path = Path(default_output_dir_str) / final_output_filename
+        # Fail closed at the command boundary as well as inside the renderer:
+        # a stale target must not survive a no-op or failed generation attempt.
+        _remove_output_target(expected_output_path)
         qr_gen = QRCodeGenerator(
             default_background_path=(
                 Path(default_bg_path_str) if default_bg_path_str else None
@@ -149,6 +161,13 @@ def qr(
             output_filename=final_output_filename,
             error_correction=error_correction,
         )
+        if generated_qr_path != expected_output_path:
+            raise RuntimeError(
+                "QR generator returned an unexpected output path: "
+                f"{generated_qr_path} (expected {expected_output_path})"
+            )
+        _validate_or_remove_png_output(expected_output_path)
+        generation_complete = True
         console.print(f"[bold green]QR code generated: {generated_qr_path}[/]")
     except FileNotFoundError as fnf_error:
         logger.error(
@@ -168,6 +187,9 @@ def qr(
         logger.error("QR generation failed: {e}", e=e, exc_info=True)
         console.print(f"[bold red]Error:[/bold red] QR generation failed: {e}")
         raise typer.Exit(code=1)
+    finally:
+        if not generation_complete and expected_output_path is not None:
+            _cleanup_output_target(expected_output_path)
 
 
 # ---------------------------------------------------------------------------

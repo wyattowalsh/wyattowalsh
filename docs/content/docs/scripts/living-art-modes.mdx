@@ -24,6 +24,14 @@ exclusion or power-loss durability.
 
 Legacy growth SVG/GIF filenames such as `inkgarden-growth-animated.svg` or `topo-growth.gif` may still exist in the repository as checked-in showcase art, but they are not the current CLI/workflow artifact contract.
 
+In GitHub Actions, one preparation job fetches a shared metrics/history bundle
+and exports the canonical style registry as a six-way matrix. Each style renders
+on an isolated runner into a fresh `--output-dir` using 120 frames, 400 x 400
+pixels, and four frame workers. A read-only assembler merges the six uniquely
+named GIF artifacts and runs the same exact-six media validator before the sole
+git-writing finalizer can publish any surface. Matrix failures do not permit a
+partial or stale checkout fleet to reach finalization.
+
 ## Output matrix
 
 | Surface | Canonical artifact | Indexed companion files | Notes |
@@ -77,6 +85,8 @@ Document `generate all` as conditional only. The living-art portion is skipped u
 | `generate living-art` and `generate timelapse` currently share the same implementation | Do not document separate growth-vs-timelapse output contracts |
 | A canonical GIF or aggregate fleet exceeds the reviewed byte budget | Artifact indexing stops before a new manifest or gallery is written; inspect the named file and observed budget before publishing |
 | A requested style is skipped, times out, or produces no valid frames | The command fails before index refresh; pre-existing GIFs cannot satisfy the current generation request or mask a stale style |
+| One workflow matrix child fails or omits its GIF | The exact-six assembler cannot succeed, so the finalizer remains skipped and the checked-in fleet is unchanged |
+| Matrix children observe different upstream data | Treat as a workflow defect: every child must download the single preparation artifact for its run |
 | Legacy `*-growth*` assets may still be checked in | Treat them as showcase collateral, not current generated workflow outputs |
 
 ## Failure and rollback behavior
