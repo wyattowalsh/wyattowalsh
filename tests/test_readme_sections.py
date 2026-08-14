@@ -5,12 +5,14 @@ import re
 import socket
 from datetime import UTC, datetime
 from email.message import Message
+from io import BytesIO
 from pathlib import Path
 from textwrap import dedent
 from urllib.error import HTTPError, URLError
 from urllib.request import Request
 
 import pytest
+from loguru import logger as loguru_logger
 
 from scripts.config import (
     ReadmeFeaturedRepo,
@@ -2437,6 +2439,109 @@ class TestStarHistoryClient:
         headers = StarHistoryClient()._headers()
 
         assert headers["Authorization"] == "Bearer test-run-scoped-token"
+
+    def test_integration_stargazer_capability_gap_is_informational(
+        self,
+        monkeypatch,
+        captured_warnings,
+    ) -> None:
+        payload = {
+            "errors": [
+                {
+                    "type": "FORBIDDEN",
+                    "message": "Resource not accessible by integration",
+                    "path": ["repository", "stargazers"],
+                    "extensions": {"saml_failure": False},
+                    "locations": [{"line": 1, "column": 98}],
+                }
+            ]
+        }
+        monkeypatch.setattr(
+            "scripts.readme_sections._safe_urlopen",
+            lambda request, timeout=10.0: BytesIO(json.dumps(payload).encode()),
+        )
+        records: list[tuple[str, str]] = []
+        sink_id = loguru_logger.add(
+            lambda message: records.append(
+                (message.record["level"].name, message.record["message"])
+            ),
+            level="INFO",
+        )
+        try:
+            sampled = StarHistoryClient().fetch_star_history("wyattowalsh/agents")
+        finally:
+            loguru_logger.remove(sink_id)
+
+        assert sampled is None
+        assert captured_warnings == []
+        assert (
+            "INFO",
+            "Star history unavailable for wyattowalsh/agents: GitHub integration "
+            "token cannot access repository.stargazers",
+        ) in records
+
+    @pytest.mark.parametrize(
+        "errors",
+        [
+            [
+                {
+                    "type": "FORBIDDEN",
+                    "message": "Resource not accessible by integration",
+                    "path": ["repository", "issues"],
+                }
+            ],
+            [
+                {
+                    "type": "FORBIDDEN",
+                    "message": "Different upstream denial",
+                    "path": ["repository", "stargazers"],
+                    "extensions": {"saml_failure": False},
+                }
+            ],
+            [
+                {
+                    "type": "FORBIDDEN",
+                    "message": "Resource not accessible by integration",
+                    "path": ["repository", "stargazers"],
+                    "extensions": {"saml_failure": True},
+                }
+            ],
+            [
+                {
+                    "type": "FORBIDDEN",
+                    "message": "Resource not accessible by integration",
+                    "path": ["repository", "stargazers"],
+                    "extensions": {"saml_failure": False},
+                },
+                {
+                    "type": "RATE_LIMITED",
+                    "message": "API rate limit exceeded",
+                    "path": ["repository", "stargazers"],
+                },
+            ],
+            {"type": "FORBIDDEN"},
+            ["malformed-error"],
+        ],
+    )
+    def test_unrecognized_star_history_graphql_errors_remain_warnings(
+        self,
+        monkeypatch,
+        captured_warnings,
+        errors,
+    ) -> None:
+        payload = {"errors": errors}
+        monkeypatch.setattr(
+            "scripts.readme_sections._safe_urlopen",
+            lambda request, timeout=10.0: BytesIO(json.dumps(payload).encode()),
+        )
+
+        sampled = StarHistoryClient().fetch_star_history("wyattowalsh/agents")
+
+        assert sampled is None
+        assert len(captured_warnings) == 1
+        assert captured_warnings[0].startswith(
+            "GraphQL errors fetching star history for wyattowalsh/agents:"
+        )
 
     def test_fetch_star_history_uses_repo_creation_time_for_low_star_repos(
         self,

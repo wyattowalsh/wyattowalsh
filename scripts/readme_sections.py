@@ -557,6 +557,28 @@ class StarHistoryClient:
     def __init__(self, timeout: float = 10.0) -> None:
         self.timeout = timeout
 
+    @staticmethod
+    def _is_integration_stargazer_capability_error(errors: object) -> bool:
+        """Recognize the run-token denial of featured-repo star timestamps."""
+        if not isinstance(errors, list) or not errors:
+            return False
+        for raw_error in errors:
+            if not isinstance(raw_error, dict):
+                return False
+            error = cast("dict[str, object]", raw_error)
+            extensions = error.get("extensions")
+            if not isinstance(extensions, dict):
+                return False
+            extension_fields = cast("dict[str, object]", extensions)
+            if not (
+                error.get("type") == "FORBIDDEN"
+                and error.get("message") == "Resource not accessible by integration"
+                and error.get("path") == ["repository", "stargazers"]
+                and extension_fields.get("saml_failure") is False
+            ):
+                return False
+        return True
+
     def fetch_star_history(
         self,
         full_name: str,
@@ -611,6 +633,13 @@ class StarHistoryClient:
 
             errors = payload.get("errors")
             if errors:
+                if self._is_integration_stargazer_capability_error(errors):
+                    logger.info(
+                        "Star history unavailable for {full_name}: GitHub "
+                        "integration token cannot access repository.stargazers",
+                        full_name=full_name,
+                    )
+                    return None
                 logger.warning(
                     "GraphQL errors fetching star history for {full_name}: {errors}",
                     full_name=full_name,

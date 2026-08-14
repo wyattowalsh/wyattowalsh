@@ -213,8 +213,12 @@ manifests, galleries, byte budgets, and media hashes before any `git add`.
 After applying the other isolated artifacts and WakaTime markers, it runs:
 - `generate readme-sections` — assembles all dynamic README sections; the step
   supplies the run-scoped `github.token` only through `GITHUB_TOKEN` so its
-  GraphQL star-history enrichment is authenticated without exposing a token in
-  the command line
+  GraphQL star-history request is authenticated without exposing a token in
+  the command line. This workflow token is scoped to the profile repository, so
+  GitHub denies its `repository.stargazers` timestamp request for featured
+  repositories outside that scope. That exact capability response is an
+  informational no-sparkline fallback, while every other GraphQL error remains
+  a warning.
 - `generate skills` — re-renders skills badges
 
 Upload artifacts contain only their least-common-root filenames. The finalizer

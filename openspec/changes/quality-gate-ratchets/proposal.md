@@ -22,7 +22,8 @@ Authoritative assurance is currently weakened by appended stale coverage, repeat
   or failed renderer cannot upload stale checked-out profile assets.
 - Keep updater annotations and logs actionable by disabling the exact
   known-broken achievements integration and classifying only recognized,
-  optional capability gaps as informational fallbacks.
+  optional capability gaps as informational fallbacks, including the exact
+  run-scoped token denial of out-of-scope featured-project stargazer timestamps.
 - Bound transient and positively identified rate-limit retries for the
   starred-list traversal, extract flattened artifacts into their owned
   destinations, require an exact structurally valid profile-asset fleet at

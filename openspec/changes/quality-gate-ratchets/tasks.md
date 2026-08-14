@@ -56,3 +56,4 @@
 - [x] 9.4 Pin every updater checkout to the immutable trigger SHA and prove the contract across all jobs
 - [ ] 9.5 Prove the integrated remote updater run completes without GitHub warning/failure annotations or application warning/error fallbacks
 - [x] 9.6 Authenticate finalizer README star-history enrichment with the run-scoped token and keep genuine failure logs actionable
+- [x] 9.7 Classify only the exact GitHub App `repository.stargazers` timestamp denial as an informational no-sparkline capability fallback

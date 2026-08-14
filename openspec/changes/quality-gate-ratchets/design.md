@@ -43,7 +43,11 @@ the profile finalizer.
     achievements in production and probe configurations. Log only narrowly
     recognized optional HTTP/GraphQL capability gaps at info level. Preserve
     warnings for unexpected request failures, response shapes, pagination
-    limits, and unrecognized GraphQL errors.
+    limits, and unrecognized GraphQL errors. Treat only an all-errors match of
+    `FORBIDDEN` + `Resource not accessible by integration` at
+    `repository.stargazers` with `saml_failure=false` as the run-token timestamp
+    capability gap; omit the optional sparkline without logging the raw
+    response.
 11. Retry transient starred-list transport failures and positively identified
     GitHub rate limits with bounded delays inside a job-contained deadline.
     Treat artifact contents as flattened least-common-root files and download

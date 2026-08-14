@@ -202,3 +202,7 @@ warning or failure behavior.
 #### Scenario: README star-history enrichment
 - **WHEN** the finalizer regenerates dynamic README sections that query GitHub GraphQL star history
 - **THEN** the step SHALL authenticate with the run-scoped `github.token` through `GITHUB_TOKEN`, SHALL NOT place the token in the argument vector, and SHALL retain actionable repository/error fields for genuine failures
+
+#### Scenario: Run-token stargazer timestamp capability gap
+- **WHEN** every GraphQL error is exactly `FORBIDDEN` with `Resource not accessible by integration` at `repository.stargazers` and `saml_failure=false`
+- **THEN** the generator SHALL omit the optional sparkline, log one bounded informational message naming the public repository and capability, and SHALL keep mixed, malformed, or otherwise unrecognized errors on the warning path
