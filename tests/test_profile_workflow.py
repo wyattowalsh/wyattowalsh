@@ -988,6 +988,7 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_calendar: yes" in primary
     assert "plugin_calendar_limit: 0" in primary
     assert "plugin_habits: yes" in primary
+    assert "plugin_habits_from: 100" in primary
     assert "plugin_gists: no" in primary
     assert "plugin_lines: no" in primary
     assert "plugin_music: no" in primary

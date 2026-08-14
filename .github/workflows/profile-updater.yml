@@ -738,7 +738,9 @@ jobs:
           plugin_languages_threshold: "0%"
           # Native habits facts/charts/languages; first-party card owns the rest.
           plugin_habits: yes
-          plugin_habits_from: 1000
+          # 1000-event windows hit a lowlighter habits TypeError
+          # (undefined payload.commits). One page is enough for facts/charts.
+          plugin_habits_from: 100
           plugin_habits_days: 30
           plugin_habits_facts: yes
           plugin_habits_charts: yes
