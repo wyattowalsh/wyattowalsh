@@ -8,6 +8,7 @@ from textwrap import dedent
 import pytest
 
 from scripts.metrics_svg import (
+    STUB_SVG_MAX_BYTES,
     SvgRecoveryAction,
     SvgValidationStatus,
     is_placeholder_svg,
@@ -121,6 +122,33 @@ TAIL_SPLIT_PLACEHOLDER_SVG = dedent(
     </svg>
     """
 )
+TINY_PLACEHOLDER_BAR_SVG = (
+    '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="13">'
+    '<rect width="480" height="13" fill="#000000"/>'
+    "</svg>"
+)
+
+
+def _lowlighter_regen_stub(*, target_bytes: int = 401) -> str:
+    """Build a compact lowlighter 'will be regenerated' stub of *target_bytes*."""
+
+    if target_bytes < 1:
+        raise ValueError("target_bytes must be positive")
+
+    prefix = (
+        '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="13">'
+        '<rect width="100%" height="100%" fill="#000000"/>'
+        "<text>"
+    )
+    marker = "This metrics instance will be regenerated automatically in a few moments"
+    suffix = "</text></svg>"
+    pad = target_bytes - len((prefix + marker + suffix).encode("utf-8"))
+    if pad < 0:
+        raise ValueError(f"target_bytes={target_bytes} is smaller than the stub core")
+    return f"{prefix}{marker}{' ' * pad}{suffix}"
+
+
+REGEN_STUB_SVG = _lowlighter_regen_stub(target_bytes=401)
 
 
 def test_validate_svg_content_accepts_valid_svg() -> None:
@@ -172,6 +200,10 @@ def test_validate_svg_content_rejects_empty_or_malformed(
         ("Invalid refresh token", "Invalid refresh token"),
         ("API returned 400 (Invalid refresh token)", "Invalid refresh token"),
         ("Tweets unavailable", "Tweets unavailable"),
+        (
+            "This metrics instance will be regenerated automatically",
+            "will be regenerated",
+        ),
     ],
 )
 def test_validate_svg_content_rejects_known_error_payloads(
@@ -324,3 +356,61 @@ def test_main_recover_logs_accepted_fallback_without_warning(
 
     assert current_asset.read_text(encoding="utf-8") == VALID_SVG
     assert not [record for record in caplog.records if record.levelname == "WARNING"]
+
+
+def test_lowlighter_regen_stub_is_exactly_401_bytes() -> None:
+    assert len(REGEN_STUB_SVG.encode("utf-8")) == 401
+    assert 401 <= STUB_SVG_MAX_BYTES
+
+
+def test_validate_svg_content_rejects_will_be_regenerated_stub() -> None:
+    result = validate_svg_content(REGEN_STUB_SVG)
+
+    assert result.is_valid is False
+    assert result.status == SvgValidationStatus.ERROR_PAYLOAD
+    assert "will-be-regenerated" in result.detail
+
+
+def test_validate_svg_content_rejects_tiny_placeholder_bar() -> None:
+    result = validate_svg_content(TINY_PLACEHOLDER_BAR_SVG)
+
+    assert result.is_valid is False
+    assert result.status == SvgValidationStatus.PLACEHOLDER
+    assert "placeholder bar" in result.detail
+
+
+def test_recover_svg_file_rejects_401_byte_stub_without_previous(
+    tmp_path: Path,
+) -> None:
+    new_asset = tmp_path / "metrics.extra.svg"
+    new_asset.write_text(REGEN_STUB_SVG, encoding="utf-8")
+
+    result = recover_svg_file(new_asset)
+
+    assert result.action == SvgRecoveryAction.REJECTED
+    assert result.current.status == SvgValidationStatus.ERROR_PAYLOAD
+    assert result.final.is_valid is False
+    assert new_asset.read_text(encoding="utf-8") == REGEN_STUB_SVG
+
+
+def test_recover_svg_file_replaces_401_byte_stub_with_previous(
+    tmp_path: Path,
+) -> None:
+    new_asset = tmp_path / "metrics.extra.svg"
+    previous_asset = tmp_path / "metrics.extra.previous.svg"
+    new_asset.write_text(REGEN_STUB_SVG, encoding="utf-8")
+    previous_asset.write_text(VALID_SVG, encoding="utf-8")
+
+    result = recover_svg_file(new_asset, previous_asset)
+
+    assert result.action == SvgRecoveryAction.PRESERVED_PREVIOUS
+    assert result.current.status == SvgValidationStatus.ERROR_PAYLOAD
+    assert result.final.status == SvgValidationStatus.VALID
+    assert new_asset.read_text(encoding="utf-8") == VALID_SVG
+
+
+def test_main_validate_rejects_401_byte_stub(tmp_path: Path) -> None:
+    stub_asset = tmp_path / "metrics.extra.svg"
+    stub_asset.write_text(REGEN_STUB_SVG, encoding="utf-8")
+
+    assert main(["validate", str(stub_asset)]) == 1

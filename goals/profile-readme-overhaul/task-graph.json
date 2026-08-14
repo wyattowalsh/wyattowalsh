@@ -1,0 +1,1616 @@
+{
+  "goalSlug": "profile-readme-overhaul",
+  "version": 2,
+  "criticalPath": [
+    "I99",
+    "B2",
+    "R1",
+    "R3",
+    "R5",
+    "W1M",
+    "L2",
+    "L3",
+    "H1",
+    "WK2",
+    "WK3",
+    "W2M",
+    "S1",
+    "BL1",
+    "AR2",
+    "W3M",
+    "T1",
+    "G-DEV",
+    "P1",
+    "P2"
+  ],
+  "locks": {
+    "L-WF": [
+      ".github/workflows/profile-updater.yml"
+    ],
+    "L-RS": [
+      "scripts/readme_sections.py"
+    ],
+    "L-SM": [
+      "scripts/supplemental_metrics.py"
+    ],
+    "L-SK": [
+      "scripts/skills.py",
+      "skills.yaml"
+    ],
+    "L-WC": [
+      "scripts/word_clouds/**"
+    ],
+    "L-ART": [
+      "scripts/art/**"
+    ],
+    "L-WAKA": [
+      "scripts/wakatime_readme.py",
+      "scripts/wakatime_svg.py"
+    ],
+    "L-MSVG": [
+      "scripts/metrics_svg.py"
+    ],
+    "L-BAN-ASSET": [
+      ".github/assets/img/banner.svg",
+      ".github/assets/img/banner-dark.svg"
+    ],
+    "L-README": [
+      "README.md"
+    ],
+    "L-GIT": [
+      ".git"
+    ]
+  },
+  "teams": {
+    "INV": "parallel explore wave \u2014 no writes",
+    "BAN": "banner pin (assets then workflow)",
+    "RM": "README contract deletes (feed + 200+)",
+    "LL": "lowlighter maximality + stub rejection",
+    "HAB": "first-party habits redesign",
+    "SPOT": "Spotify hero (after HAB; same L-SM)",
+    "WAKA": "Waka collector + SVG + visible embed",
+    "BDG": "tech-stack shields",
+    "WC": "word-cloud bake-off",
+    "BLOG": "visible RSS strip (after WAKA on L-RS)",
+    "ART": "living-art encodings",
+    "VW": "view-counter restyle",
+    "TST": "tests",
+    "REV": "review",
+    "CAP": "merge / git / ship-dev-only"
+  },
+  "nodes": [
+    {
+      "id": "I01",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map generate-assets banner + finalize allowlist"
+    },
+    {
+      "id": "I02",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Hash origin/main banner.svg + banner-dark.svg"
+    },
+    {
+      "id": "I03",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map production lowlighter plugin matrix vs probe"
+    },
+    {
+      "id": "I04",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Trace metrics_svg validate/recover stub markers"
+    },
+    {
+      "id": "I05",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map _SUPPLEMENTAL_METRICS_ASSETS + workflow artifact lists"
+    },
+    {
+      "id": "I06",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map tech-stack summary regex + test fixtures for 200+"
+    },
+    {
+      "id": "I07",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map SkillEntry.url coverage in skills.yaml"
+    },
+    {
+      "id": "I08",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map word-cloud renderers + starred count parser"
+    },
+    {
+      "id": "I09",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map Waka API ranges actually called today"
+    },
+    {
+      "id": "I10",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map blog RSS \u2192 SVG card fields"
+    },
+    {
+      "id": "I11",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map daily_snapshots monotonic contract + style registry"
+    },
+    {
+      "id": "I12",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map komarev footer vs generated README"
+    },
+    {
+      "id": "I13",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "List METRICS_TOKEN gates (boolean only)"
+    },
+    {
+      "id": "I99",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06",
+        "I07",
+        "I08",
+        "I09",
+        "I10",
+        "I11",
+        "I12",
+        "I13"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Inventory merge / lock assignment"
+    },
+    {
+      "id": "B1",
+      "lane": "BAN",
+      "type": "write",
+      "deps": [
+        "I02",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": "L-BAN-ASSET",
+      "agent": "general-purpose",
+      "title": "Copy origin/main banner pair bytes onto dev",
+      "files": [
+        ".github/assets/img/banner.svg",
+        ".github/assets/img/banner-dark.svg"
+      ],
+      "verify": "sha256 match origin/main"
+    },
+    {
+      "id": "B2",
+      "lane": "BAN",
+      "type": "write",
+      "deps": [
+        "I01",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": "L-WF",
+      "agent": "general-purpose",
+      "title": "Stop CI generate banner; pin pair in generate-assets",
+      "files": [
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "rg generate banner empty in generate-assets"
+    },
+    {
+      "id": "B3",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "B2"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Tests: no CI banner regen; hash pin",
+      "files": [
+        "tests/test_profile_workflow.py"
+      ],
+      "verify": "pytest -k banner"
+    },
+    {
+      "id": "R1",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "I05",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "Drop metrics-activity from supplemental asset table + README emit",
+      "files": [
+        "scripts/readme_sections.py"
+      ],
+      "verify": "no activity embed helper"
+    },
+    {
+      "id": "R2",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "R1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-SM",
+      "agent": "general-purpose",
+      "title": "Stop generating metrics-activity.svg",
+      "files": [
+        "scripts/supplemental_metrics.py",
+        "scripts/cli/generate/readme_cmd.py"
+      ],
+      "verify": "no activity writer"
+    },
+    {
+      "id": "R3",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "I06",
+        "R1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "Bare Tech Stack <summary>; delete 200+ copy",
+      "files": [
+        "scripts/readme_sections.py"
+      ],
+      "verify": "no 200+ in generator"
+    },
+    {
+      "id": "R4",
+      "lane": "WF",
+      "type": "write",
+      "deps": [
+        "B2",
+        "R2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-WF",
+      "agent": "general-purpose",
+      "title": "Remove activity from updater artifact/finalize lists",
+      "files": [
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "rg metrics-activity only tests/docs history"
+    },
+    {
+      "id": "R5",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "R3",
+        "R4"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Update README/GFM/workflow tests for feed removal + bare summary",
+      "files": [
+        "tests/test_readme_sections.py",
+        "tests/test_readme_gfm_ux.py",
+        "tests/test_profile_workflow.py",
+        "tests/test_supplemental_metrics.py"
+      ],
+      "verify": "pytest those modules"
+    },
+    {
+      "id": "K1",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit each skill: url, logo_style, icon fitness"
+    },
+    {
+      "id": "C1",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": null,
+      "agent": "explore",
+      "title": "Star-count fidelity of each renderer"
+    },
+    {
+      "id": "A1",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": null,
+      "agent": "explore",
+      "title": "Export sequential frame contact sheets per style"
+    },
+    {
+      "id": "L1",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I04",
+        "I99"
+      ],
+      "parallelGroup": "W1",
+      "lock": null,
+      "agent": "explore",
+      "title": "Classify each plugin: on / raise-limit / retry-isolate / keep-off"
+    },
+    {
+      "id": "W1M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "B3",
+        "R5",
+        "K1",
+        "C1",
+        "A1",
+        "L1"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Wave 1 merge"
+    },
+    {
+      "id": "L2",
+      "lane": "LL",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "L1"
+      ],
+      "parallelGroup": "W2",
+      "lock": "L-WF",
+      "agent": "general-purpose",
+      "title": "Production primary: habits on, raise calendar/languages/topics/stars/people",
+      "files": [
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "workflow asserts"
+    },
+    {
+      "id": "L3",
+      "lane": "LL",
+      "type": "write",
+      "deps": [
+        "L2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-MSVG",
+      "agent": "general-purpose",
+      "title": "Fail extra/primary validate on stub/error-bar markers",
+      "files": [
+        "scripts/metrics_svg.py"
+      ],
+      "verify": "stub rejected"
+    },
+    {
+      "id": "L4",
+      "lane": "LL",
+      "type": "write",
+      "deps": [
+        "L3"
+      ],
+      "parallelGroup": null,
+      "lock": "L-WF",
+      "agent": "general-purpose",
+      "title": "Optional isolated retry of lines/achievements/gists if validate passes",
+      "files": [
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "retry only if clean"
+    },
+    {
+      "id": "L5",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "L3"
+      ],
+      "parallelGroup": "W2",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Workflow + metrics_svg tests for maximal clean matrix",
+      "files": [
+        "tests/test_profile_workflow.py",
+        "tests/test_metrics_svg.py"
+      ],
+      "verify": "pytest"
+    },
+    {
+      "id": "H1",
+      "lane": "HAB",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "R2"
+      ],
+      "parallelGroup": "W2",
+      "lock": "L-SM",
+      "agent": "general-purpose",
+      "title": "Redesign first-party habits card (non-overlapping job)",
+      "files": [
+        "scripts/supplemental_metrics.py",
+        "scripts/readme_svg.py"
+      ],
+      "verify": "unique fields present"
+    },
+    {
+      "id": "H2",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "H1"
+      ],
+      "parallelGroup": "W2",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Habits tests + dark media",
+      "files": [
+        "tests/test_supplemental_metrics.py"
+      ],
+      "verify": "pytest"
+    },
+    {
+      "id": "K2",
+      "lane": "BDG",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "K1"
+      ],
+      "parallelGroup": "W2",
+      "lock": "L-SK",
+      "agent": "general-purpose",
+      "title": "Fill homepage urls; pick modern camo-safe stack; prefer retro icons",
+      "files": [
+        "skills.yaml",
+        "scripts/skills.py"
+      ],
+      "verify": "every skill has url"
+    },
+    {
+      "id": "K3",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "K2"
+      ],
+      "parallelGroup": "W2",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Badge URL-length + href + render fixtures",
+      "files": [
+        "tests/"
+      ],
+      "verify": "pytest -k skill"
+    },
+    {
+      "id": "WK1",
+      "lane": "WAKA",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "I09"
+      ],
+      "parallelGroup": "W2",
+      "lock": "L-WAKA",
+      "agent": "general-purpose",
+      "title": "Extend Waka collector: yearly/all-time/categories/heatmap + privacy filter",
+      "files": [
+        "scripts/wakatime_readme.py"
+      ],
+      "verify": "filter tests"
+    },
+    {
+      "id": "WK2",
+      "lane": "WAKA",
+      "type": "write",
+      "deps": [
+        "WK1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-WAKA",
+      "agent": "general-purpose",
+      "title": "Render first-party Waka SVG",
+      "files": [
+        "scripts/wakatime_svg.py",
+        "scripts/readme_svg.py"
+      ],
+      "verify": "svg markers"
+    },
+    {
+      "id": "WK3",
+      "lane": "WAKA",
+      "type": "write",
+      "deps": [
+        "WK2",
+        "R3"
+      ],
+      "parallelGroup": null,
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "Embed visible Waka <img>; drop details wrapper",
+      "files": [
+        "scripts/readme_sections.py",
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "no Waka details"
+    },
+    {
+      "id": "WK4",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "WK3"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Waka privacy + SVG + workflow tests",
+      "files": [
+        "tests/"
+      ],
+      "verify": "pytest -k waka"
+    },
+    {
+      "id": "C2",
+      "lane": "WC",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "C1"
+      ],
+      "parallelGroup": "W2",
+      "lock": "L-WC",
+      "agent": "general-purpose",
+      "title": "Bake-off harness: two clouds \u00d7 engines + volume score",
+      "files": [
+        "scripts/word_clouds/"
+      ],
+      "verify": "scores written"
+    },
+    {
+      "id": "C3",
+      "lane": "WC",
+      "type": "write",
+      "deps": [
+        "C2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-WC",
+      "agent": "general-purpose",
+      "title": "Ship two winning SVGs; wire CI",
+      "files": [
+        "scripts/word_clouds/generate.py",
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "exactly two artifacts"
+    },
+    {
+      "id": "W2M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "L5",
+        "H2",
+        "K3",
+        "WK4",
+        "C3"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Wave 2 merge"
+    },
+    {
+      "id": "S1",
+      "lane": "SPOT",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "H2"
+      ],
+      "parallelGroup": "W3",
+      "lock": "L-SM",
+      "agent": "general-purpose",
+      "title": "Spotify hero + optional compact extras",
+      "files": [
+        "scripts/supplemental_metrics.py"
+      ],
+      "verify": "hero required; extras optional"
+    },
+    {
+      "id": "S2",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "S1"
+      ],
+      "parallelGroup": "W3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Spotify tests; plugin_music still no",
+      "files": [
+        "tests/"
+      ],
+      "verify": "pytest"
+    },
+    {
+      "id": "BL1",
+      "lane": "BLOG",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "WK3"
+      ],
+      "parallelGroup": "W3",
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "Visible 4\u20135 RSS cards with date + hook",
+      "files": [
+        "scripts/readme_sections.py",
+        "scripts/readme_svg.py"
+      ],
+      "verify": "no blog details"
+    },
+    {
+      "id": "BL2",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "BL1"
+      ],
+      "parallelGroup": "W3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Blog card field tests",
+      "files": [
+        "tests/test_readme_sections.py"
+      ],
+      "verify": "pytest"
+    },
+    {
+      "id": "V1",
+      "lane": "VW",
+      "type": "write",
+      "deps": [
+        "W2M"
+      ],
+      "parallelGroup": "W3",
+      "lock": "L-README",
+      "agent": "general-purpose",
+      "title": "Restyle komarev/view chip; no new backend",
+      "files": [
+        "scripts/readme_sections.py",
+        "README.md"
+      ],
+      "verify": "count URL remains"
+    },
+    {
+      "id": "AR2",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "A1"
+      ],
+      "parallelGroup": "W3",
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign style encodings for readable accretion",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic tests"
+    },
+    {
+      "id": "AR3",
+      "lane": "ART",
+      "type": "verify",
+      "deps": [
+        "AR2.ferrofluid"
+      ],
+      "parallelGroup": "W3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Human sequential-frame inspection per style",
+      "verify": "contact sheet signed in goal dir"
+    },
+    {
+      "id": "AR4",
+      "lane": "TST",
+      "type": "verify",
+      "deps": [
+        "AR2.ferrofluid"
+      ],
+      "parallelGroup": "W3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Living-art contract tests exact-six",
+      "files": [
+        "tests/test_living_art_media.py"
+      ],
+      "verify": "pytest"
+    },
+    {
+      "id": "W3M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "S2",
+        "BL2",
+        "V1",
+        "AR3",
+        "AR4"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Wave 3 merge"
+    },
+    {
+      "id": "Q1",
+      "lane": "REV",
+      "type": "read",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "W4",
+      "lock": null,
+      "agent": "code-reviewer",
+      "title": "Review workflow + metrics_svg"
+    },
+    {
+      "id": "Q2",
+      "lane": "REV",
+      "type": "read",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "W4",
+      "lock": null,
+      "agent": "code-reviewer",
+      "title": "Review first-party SVG surfaces"
+    },
+    {
+      "id": "Q3",
+      "lane": "REV",
+      "type": "read",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "W4",
+      "lock": null,
+      "agent": "code-reviewer",
+      "title": "Review art + word-cloud + badges"
+    },
+    {
+      "id": "T1",
+      "lane": "TST",
+      "type": "verify",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "W4",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Focused pytest union of touched modules",
+      "verify": "pass"
+    },
+    {
+      "id": "T2",
+      "lane": "TST",
+      "type": "verify",
+      "deps": [
+        "T1"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Optional full suite if focused green",
+      "verify": "pass or documented skip"
+    },
+    {
+      "id": "P1",
+      "lane": "CAP",
+      "type": "write",
+      "deps": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "T1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-GIT",
+      "agent": "cap",
+      "title": "Atomic conventional commits on dev",
+      "verify": "status clean"
+    },
+    {
+      "id": "P2",
+      "lane": "CAP",
+      "type": "write",
+      "deps": [
+        "P1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-GIT",
+      "agent": "cap",
+      "title": "Push origin/dev only (ask first at /goal time)",
+      "verify": "origin/dev == HEAD; main untouched"
+    },
+    {
+      "id": "P3",
+      "lane": "CAP",
+      "type": "verify",
+      "deps": [
+        "P2"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "explore",
+      "title": "Visual QA blob/dev/README.md + shield render sample",
+      "verify": "checklist"
+    },
+    {
+      "id": "L1.habits",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin habits: on",
+      "verify": "on"
+    },
+    {
+      "id": "L1.languages",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin languages: raise-limit",
+      "verify": "raise-limit"
+    },
+    {
+      "id": "L1.calendar",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin calendar: raise-limit",
+      "verify": "raise-limit"
+    },
+    {
+      "id": "L1.topics",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin topics: raise-limit",
+      "verify": "raise-limit"
+    },
+    {
+      "id": "L1.stars",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin stars: raise-limit",
+      "verify": "raise-limit"
+    },
+    {
+      "id": "L1.people",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin people: raise-limit",
+      "verify": "raise-limit"
+    },
+    {
+      "id": "L1.isocalendar",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin isocalendar: keep-on",
+      "verify": "keep-on"
+    },
+    {
+      "id": "L1.traffic",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin traffic: token-gated",
+      "verify": "token-gated"
+    },
+    {
+      "id": "L1.notable",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin notable: token-gated",
+      "verify": "token-gated"
+    },
+    {
+      "id": "L1.stargazers",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin stargazers: token-gated",
+      "verify": "token-gated"
+    },
+    {
+      "id": "L1.repositories",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin repositories: keep-on",
+      "verify": "keep-on"
+    },
+    {
+      "id": "L1.reactions",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin reactions: keep-on",
+      "verify": "keep-on"
+    },
+    {
+      "id": "L1.followup",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin followup: keep-on",
+      "verify": "keep-on"
+    },
+    {
+      "id": "L1.lines",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin lines: retry-isolate",
+      "verify": "retry-isolate"
+    },
+    {
+      "id": "L1.achievements",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin achievements: retry-isolate",
+      "verify": "retry-isolate"
+    },
+    {
+      "id": "L1.gists",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin gists: retry-isolate",
+      "verify": "retry-isolate"
+    },
+    {
+      "id": "L1.music",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin music: keep-off",
+      "verify": "keep-off"
+    },
+    {
+      "id": "L1.tweets",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin tweets: keep-off",
+      "verify": "keep-off"
+    },
+    {
+      "id": "L1.activity",
+      "lane": "LL",
+      "type": "read",
+      "deps": [
+        "I03",
+        "I99"
+      ],
+      "parallelGroup": "L1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Plugin activity: keep-off",
+      "verify": "keep-off"
+    },
+    {
+      "id": "C1.wordle.topics",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score wordle topics vs star volume"
+    },
+    {
+      "id": "C1.wordle.langs",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score wordle langs vs star volume"
+    },
+    {
+      "id": "C1.clustered.topics",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score clustered topics vs star volume"
+    },
+    {
+      "id": "C1.clustered.langs",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score clustered langs vs star volume"
+    },
+    {
+      "id": "C1.typographic.topics",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score typographic topics vs star volume"
+    },
+    {
+      "id": "C1.typographic.langs",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score typographic langs vs star volume"
+    },
+    {
+      "id": "C1.shaped.topics",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score shaped topics vs star volume"
+    },
+    {
+      "id": "C1.shaped.langs",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score shaped langs vs star volume"
+    },
+    {
+      "id": "C1.metaheuristic-anim.topics",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score metaheuristic-anim topics vs star volume"
+    },
+    {
+      "id": "C1.metaheuristic-anim.langs",
+      "lane": "WC",
+      "type": "read",
+      "deps": [
+        "I08",
+        "I99"
+      ],
+      "parallelGroup": "C1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Score metaheuristic-anim langs vs star volume"
+    },
+    {
+      "id": "A1.inkgarden",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: inkgarden"
+    },
+    {
+      "id": "AR2.inkgarden",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.inkgarden",
+        "W2M"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign inkgarden accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "A1.topo",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: topo"
+    },
+    {
+      "id": "AR2.topo",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.topo",
+        "AR2.inkgarden"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign topo accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "A1.genetic",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: genetic"
+    },
+    {
+      "id": "AR2.genetic",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.genetic",
+        "AR2.topo"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign genetic accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "A1.physarum",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: physarum"
+    },
+    {
+      "id": "AR2.physarum",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.physarum",
+        "AR2.genetic"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign physarum accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "A1.lenia",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: lenia"
+    },
+    {
+      "id": "AR2.lenia",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.lenia",
+        "AR2.physarum"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign lenia accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "A1.ferrofluid",
+      "lane": "ART",
+      "type": "read",
+      "deps": [
+        "I11",
+        "I99"
+      ],
+      "parallelGroup": "A1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Sample sequential frames: ferrofluid"
+    },
+    {
+      "id": "AR2.ferrofluid",
+      "lane": "ART",
+      "type": "write",
+      "deps": [
+        "A1.ferrofluid",
+        "AR2.lenia"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ART",
+      "agent": "general-purpose",
+      "title": "Redesign ferrofluid accretion encoding",
+      "files": [
+        "scripts/art/"
+      ],
+      "verify": "monotonic + readable"
+    },
+    {
+      "id": "K1.b1",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 1/6 (url+icon)"
+    },
+    {
+      "id": "K1.b2",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 2/6 (url+icon)"
+    },
+    {
+      "id": "K1.b3",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 3/6 (url+icon)"
+    },
+    {
+      "id": "K1.b4",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 4/6 (url+icon)"
+    },
+    {
+      "id": "K1.b5",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 5/6 (url+icon)"
+    },
+    {
+      "id": "K1.b6",
+      "lane": "BDG",
+      "type": "read",
+      "deps": [
+        "I07",
+        "I99"
+      ],
+      "parallelGroup": "K1p",
+      "lock": null,
+      "agent": "explore",
+      "title": "Audit skills.yaml batch 6/6 (url+icon)"
+    },
+    {
+      "id": "G-DEV",
+      "lane": "CAP",
+      "type": "gate",
+      "deps": [
+        "W3M",
+        "T1"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "human",
+      "title": "Explicit origin/dev push OK",
+      "verify": "chat allow"
+    }
+  ]
+}

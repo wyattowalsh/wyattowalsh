@@ -18,7 +18,8 @@ scripts/art/
 │   ├── math_helpers.py     # Phyllotaxis / flow-field geometry
 │   ├── svg.py              # SVG markup, filters, weather, SMIL
 │   ├── palette.py          # ART_PALETTE_ANCHORS + extended palettes
-│   └── visual.py           # Repo layout, DerivedMetrics, ElementBudget
+│   ├── visual.py           # Repo layout, DerivedMetrics, ElementBudget
+│   └── accretion.py        # Shared daily-spine channels + style dialects
 ├── timelapse.py            # Style registry + GIF driver (SSOT for ALL_STYLES)
 ├── daily_snapshots.py      # Day-by-day snapshot evolution
 ├── artifacts.py            # Manifest / gallery / docs-showcase sync

@@ -332,6 +332,7 @@ def test_art_optimizer_auto_selects_large_pso(monkeypatch: pytest.MonkeyPatch) -
         seen["kwargs"] = kwargs
         return positions
 
+    monkeypatch.setattr(optimize, "optimize_layout_pso", fake_pso)
     monkeypatch.setitem(optimize._SOLVER_MAP, "pso", fake_pso)
 
     assert (

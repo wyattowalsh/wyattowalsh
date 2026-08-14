@@ -32,6 +32,7 @@ _EXPECTED_SUBMODULES = (
     "svg",
     "palette",
     "visual",
+    "accretion",
 )
 
 
@@ -63,6 +64,41 @@ def test_basic_shared_behaviors_still_work() -> None:
     assert isinstance(ws, WorldState)
     assert "sunset" in ART_PALETTE_ANCHORS
     assert MAX_REPOS == 10
+
+
+def test_accretion_channels_and_style_dialects_stay_distinct() -> None:
+    from scripts.art.shared import (
+        STYLE_DIALECTS,
+        build_style_dialect,
+        extract_accretion_channels,
+    )
+    from scripts.art.timelapse import ALL_STYLES
+
+    metrics = {
+        "repos": [{"name": "alpha"}, {"name": "beta"}],
+        "stars": 24,
+        "total_commits": 400,
+        "followers": 18,
+    }
+    channels = extract_accretion_channels(metrics)
+
+    assert channels.repos == 2
+    assert channels.stars == 24
+    assert channels.commits == 400
+    assert channels.followers == 18
+    assert 0.0 < channels.star_scale < 1.0
+    assert set(STYLE_DIALECTS) == set(ALL_STYLES)
+    assert ALL_STYLES == [
+        "inkgarden",
+        "topo",
+        "genetic",
+        "physarum",
+        "lenia",
+        "ferrofluid",
+    ]
+    families = {build_style_dialect(style, metrics).family for style in ALL_STYLES}
+    assert families == set(STYLE_DIALECTS.values())
+    assert len(families) == 6
 
 
 def test_element_budget_reports_truthful_state_at_and_beyond_limit() -> None:

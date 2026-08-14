@@ -75,7 +75,7 @@ class StubStarHistoryClient:
 
 
 class StubBlogMetadataClient:
-    def __init__(self, metadata: dict[str, dict[str, str]]) -> None:
+    def __init__(self, metadata: dict[str, dict[str, str | None]]) -> None:
         self.metadata = metadata
 
     def fetch_metadata(self, url: str) -> dict[str, str | None]:
@@ -836,19 +836,66 @@ class TestRendering:
         html = generator._render_blog_posts()
 
         # Per-card blog SVGs should exist
-        assert (tmp_path / "svg" / "blog-first-post.svg").exists()
-        assert (tmp_path / "svg" / "blog-second-post.svg").exists()
+        first_svg = (tmp_path / "svg" / "blog-first-post.svg").read_text(
+            encoding="utf-8"
+        )
+        second_svg = (tmp_path / "svg" / "blog-second-post.svg").read_text(
+            encoding="utf-8"
+        )
         assert "<img" in html
         assert "blog-first-post.svg" in html
         assert "blog-second-post.svg" in html
-        assert 'alt="Blog post card: First Post"' in html
-        assert 'alt="Blog post card: Second Post"' in html
+        assert "2026-02-20" in html
+        assert "2026-02-19" in html
+        assert "A deep dive into data art." in html
+        assert "Another deep dive." in html
+        assert "https://w4w.dev/blog/first" in html
+        assert "<details" not in html
+        assert "Published 2026-02-20" in first_svg
+        assert "A deep dive into data art." in first_svg
+        assert "Published 2026-02-19" in second_svg
+        assert "Another deep dive." in second_svg
         assert 'loading="lazy"' in html
         assert "<svg" not in html
         assert "Auto-updated from" in html
         assert "📡" not in html
         assert "https://w4w.dev/feed.xml" in html
         assert 'target="_blank" rel="noopener noreferrer"' in html
+
+    def test_blog_posts_use_rss_date_and_summary_when_metadata_missing(
+        self, tmp_path: Path
+    ) -> None:
+        settings = ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=1,
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings,
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title="RSS Only",
+                        url="https://w4w.dev/blog/rss-only",
+                        published="2026-05-01",
+                        summary="Hook from the feed.",
+                    )
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient({}),
+        )
+
+        html = generator._render_blog_posts()
+        svg = (tmp_path / "svg" / "blog-rss-only.svg").read_text(encoding="utf-8")
+
+        assert "2026-05-01" in html
+        assert "Hook from the feed." in html
+        assert "<details" not in html
+        assert "Published 2026-05-01" in svg
+        assert "Hook from the feed." in svg
 
     def test_blog_posts_deduplicate_colliding_svg_names(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -945,10 +992,9 @@ class TestRendering:
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
         assert "kept skills" in rendered
-        assert (
-            "<summary><strong>View full stack (200+ technologies)</strong></summary>"
-            in (rendered)
-        )
+        assert "<summary><strong>Tech Stack</strong></summary>" in rendered
+        assert "View full stack" not in rendered
+        assert "200+" not in rendered
 
     def test_generate_drops_tech_stack_teaser_shields(
         self,
@@ -1000,6 +1046,9 @@ class TestRendering:
         assert 'alt="Full-Stack"' not in tech_stack
         assert 'alt="Open Source"' not in tech_stack
         assert tech_stack.lstrip().startswith("<details>")
+        assert "<summary><strong>Tech Stack</strong></summary>" in tech_stack
+        assert "View full stack" not in tech_stack
+        assert "200+" not in tech_stack
         assert "full stack body" in tech_stack
         assert "<!-- SKILLS:START -->" in tech_stack
 
@@ -1183,7 +1232,7 @@ class TestRendering:
         rendered = readme.read_text(encoding="utf-8")
 
         assert ".github/assets/img/metrics-habits.svg" in rendered
-        assert ".github/assets/img/metrics-activity.svg" in rendered
+        assert ".github/assets/img/metrics-activity.svg" not in rendered
         assert ".github/assets/img/metrics.extra.svg" in rendered
         assert (
             'alt="Extra metrics: comment reactions and issue/PR follow-up"' in rendered
@@ -1192,7 +1241,7 @@ class TestRendering:
             'alt="Supplemental metrics: coding habits and recent GitHub focus"'
             in rendered
         )
-        assert 'alt="Supplemental metrics: recent GitHub activity feed"' in rendered
+        assert 'alt="Supplemental metrics: recent GitHub activity feed"' not in rendered
         assert "<td" not in rendered
         assert rendered.count('loading="lazy"') >= 4
 
@@ -1360,6 +1409,9 @@ class TestRendering:
         )
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
         assert "outside the freshness window" in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' in rendered
+        assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
+        assert "<details" not in rendered
 
     def test_generate_preserves_healthy_wakatime_output_without_timestamp(
         self,
@@ -1411,6 +1463,78 @@ class TestRendering:
         assert "This Week I Spent My Time On" in rendered
         assert "Programming Languages:" in rendered
         assert "WakaTime stats hidden" not in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' in rendered
+        assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
+        assert "<details" not in rendered
+
+    def test_generate_unwraps_blog_and_restyles_view_counter(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        stale_views = (
+            "https://komarev.com/ghpvc/?username=wyattowalsh"
+            "&color=6366F1&style=flat-square&label=Profile+Views"
+        )
+        readme.write_text(
+            dedent(
+                """\
+                <!-- README:TOP_BADGES:START -->
+                old top
+                <!-- README:TOP_BADGES:END -->
+                <!-- README:FEATURED_PROJECTS:START -->
+                old projects
+                <!-- README:FEATURED_PROJECTS:END -->
+                <details>
+                <summary><strong>Latest Blog Posts</strong></summary>
+
+                <!-- README:BLOG_POSTS:START -->
+                old posts
+                <!-- README:BLOG_POSTS:END -->
+
+                </details>
+
+                <img src="{stale_views}" alt="Profile Views"/>
+                """
+            ).format(stale_views=stale_views),
+            encoding="utf-8",
+        )
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+                svg=ReadmeSvgSettings(
+                    enabled=True,
+                    output_dir=str(tmp_path / "svg"),
+                ),
+                blog_feed_url="https://w4w.dev/feed.xml",
+                blog_post_limit=1,
+            ),
+            blog_client=StubBlogClient(
+                [
+                    BlogPost(
+                        title="Visible Post",
+                        url="https://w4w.dev/blog/visible",
+                        published="2026-06-02",
+                        summary="An open-flow hook.",
+                    )
+                ]
+            ),
+            blog_metadata_client=StubBlogMetadataClient({}),
+        )
+
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+
+        assert "<summary><strong>Latest Blog Posts</strong></summary>" not in rendered
+        assert "## Latest Blog Posts" in rendered
+        assert "2026-06-02" in rendered
+        assert "An open-flow hook." in rendered
+        assert "style=for-the-badge" in rendered
+        assert "label=Views" in rendered
+        assert "flat-square" not in rendered
+        assert "komarev.com/ghpvc/?username=wyattowalsh" in rendered
 
     def test_featured_project_card_builds_with_icon_data_uri(
         self, tmp_path: Path, monkeypatch
@@ -1560,6 +1684,45 @@ class TestRemoteFetchSafety:
         assert posts == []
         assert not called
 
+    def test_blog_feed_parses_rss_date_and_description(self, monkeypatch) -> None:
+        xml = (
+            b'<?xml version="1.0"?>'
+            b"<rss><channel>"
+            b"<item>"
+            b"<title>Feed Post</title>"
+            b"<link>https://w4w.dev/blog/feed-post</link>"
+            b"<pubDate>Mon, 26 Apr 2026 12:00:00 +0000</pubDate>"
+            b"<description>A one-line hook from RSS.</description>"
+            b"</item>"
+            b"</channel></rss>"
+        )
+
+        class FakeResponse:
+            def read(self) -> bytes:
+                return xml
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args: object) -> bool:
+                return False
+
+        monkeypatch.setattr(
+            "scripts.readme_sections._is_safe_remote_url",
+            lambda _url: True,
+        )
+        monkeypatch.setattr(
+            "scripts.readme_sections._safe_urlopen",
+            lambda request, timeout=10.0: FakeResponse(),
+        )
+
+        posts = BlogFeedClient().fetch_latest_posts("https://w4w.dev/feed.xml", limit=1)
+
+        assert len(posts) == 1
+        assert posts[0].title == "Feed Post"
+        assert posts[0].published == "2026-04-26"
+        assert posts[0].summary == "A one-line hook from RSS."
+
     def test_blog_feed_client_blocks_unsafe_url(self, monkeypatch) -> None:
         client = BlogFeedClient()
         called = False
@@ -1598,7 +1761,7 @@ class TestRemoteFetchSafety:
         assert not called
 
     @staticmethod
-    def _addrinfo_for(ip: str) -> list[tuple]:
+    def _addrinfo_for(ip: str) -> list[tuple[object, ...]]:
         family = socket.AF_INET6 if ":" in ip else socket.AF_INET
         sockaddr = (ip, 0, 0, 0) if family == socket.AF_INET6 else (ip, 0)
         return [(family, socket.SOCK_STREAM, 0, "", sockaddr)]

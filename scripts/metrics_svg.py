@@ -96,6 +96,10 @@ ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
             re.IGNORECASE,
         ),
     ),
+    (
+        "will-be-regenerated",
+        re.compile(r"will be regenerated", re.IGNORECASE),
+    ),
 )
 
 PLACEHOLDER_TEXT_MARKERS: Final[tuple[str, ...]] = (
@@ -103,6 +107,8 @@ PLACEHOLDER_TEXT_MARKERS: Final[tuple[str, ...]] = (
     "Check workflow logs for details",
 )
 PLACEHOLDER_ARIA_LABEL: Final[str] = "metrics unavailable"
+STUB_BAR_MAX_HEIGHT_PX: Final[float] = 24.0
+STUB_SVG_MAX_BYTES: Final[int] = 512
 MEMORY_PATH: Final[Path] = Path("<memory>")
 NON_RENDERED_SVG_TAGS: Final[frozenset[str]] = frozenset(
     {
@@ -275,17 +281,24 @@ def _extract_visible_svg_text(root: xml_etree.Element[str]) -> str:
     return _normalize_text(" ".join(_extract_svg_text_fragments(root)))
 
 
-def _has_positive_length(value: str | None) -> bool:
-    """Return whether an SVG length-like attribute is present and positive."""
+def _parse_numeric_length(value: str | None) -> float | None:
+    """Return the first numeric length in *value*, or ``None`` when absent."""
 
     if value is None:
-        return False
+        return None
 
     match = LENGTH_VALUE_PATTERN.search(value.strip())
     if match is None:
-        return False
+        return None
 
-    return float(match.group(0)) > 0
+    return float(match.group(0))
+
+
+def _has_positive_length(value: str | None) -> bool:
+    """Return whether an SVG length-like attribute is present and positive."""
+
+    parsed = _parse_numeric_length(value)
+    return parsed is not None and parsed > 0
 
 
 def _has_rendered_attributes(
@@ -329,6 +342,24 @@ def _has_rendered_attributes(
         ) and all(key in element.attrib for key in ("x1", "x2", "y1", "y2"))
 
     return bool(element.attrib)
+
+
+def _is_tiny_placeholder_bar(root: xml_etree.Element[str]) -> bool:
+    """Return whether *root* is a lowlighter black-bar / undersized stub card."""
+
+    root_height = _parse_numeric_length(root.attrib.get("height"))
+    if root_height is None or not (0 < root_height <= STUB_BAR_MAX_HEIGHT_PX):
+        return False
+
+    for element in root.iter():
+        if element is root:
+            continue
+        if _local_name(element.tag).casefold() != "rect":
+            continue
+        if _has_rendered_attributes(element, "rect"):
+            return True
+
+    return False
 
 
 def _has_meaningful_svg_content(root: xml_etree.Element[str]) -> bool:
@@ -402,6 +433,13 @@ def validate_svg_content(
                 f"SVG contains known metrics failure signal "
                 f"{signal_name!r}: {matched_text!r}."
             ),
+        )
+
+    if _is_tiny_placeholder_bar(root):
+        return SvgValidationResult(
+            path=path,
+            status=SvgValidationStatus.PLACEHOLDER,
+            detail="SVG matches a tiny lowlighter placeholder bar.",
         )
 
     if not _has_meaningful_svg_content(root):

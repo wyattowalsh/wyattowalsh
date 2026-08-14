@@ -14,9 +14,10 @@ from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from html import escape
+from email.utils import parsedate_to_datetime
+from html import escape, unescape
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast, override
 from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlparse
 from urllib.request import (
@@ -120,17 +121,39 @@ def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]
 
 # Tech stack teaser strip is anchored to the full-stack details block, not H2 order.
 _TECH_STACK_TEASER_RE = re.compile(
-    r"(?ms)^## Tech Stack\n.*?(?=^<details>\n"
-    r"<summary><strong>View full stack)",
+    r"(?ms)^## Tech Stack\n.*?(?=^<details>\n<summary>)",
 )
-# Word clouds typically end at the WakaTime details disclosure when present.
+_TECH_STACK_SUMMARY_RE = re.compile(
+    r"(?m)(^<details>\n)<summary><strong>.*?</strong></summary>",
+)
+_TECH_STACK_BARE_SUMMARY = "<summary><strong>Tech Stack</strong></summary>"
+# Word clouds end at the open WakaTime image, markers, or a legacy details wrap.
 _WORD_CLOUDS_WAKA_END_RE = re.compile(
-    r"(?ms)^## Word Clouds\n.*?(?=^<details>\n"
-    r"<summary><strong>WakaTime Stats</strong></summary>)",
+    r"(?ms)^## Word Clouds\n.*?(?="
+    r"(?:^<p align=\"center\">\n<img src=\"\.github/assets/img/wakatime\.svg\")"
+    r"|(?:^<!--START_SECTION:waka-->)"
+    r"|(?:^<details>\n<summary><strong>WakaTime Stats</strong></summary>)"
+    r")",
 )
 _WAKATIME_SECTION_RE = re.compile(
     r"(?ms)(<!--START_SECTION:waka-->)(.*?)(<!--END_SECTION:waka-->)",
 )
+_WAKA_DETAILS_PREFIX_RE = re.compile(
+    r"(?s)<details>\s*\n<summary><strong>WakaTime Stats</strong></summary>\s*\n*$"
+)
+_WAKA_DETAILS_SUFFIX_RE = re.compile(r"(?s)^\s*</details>")
+_BLOG_DETAILS_RE = re.compile(
+    r"(?ms)^<details>\s*\n"
+    r"<summary><strong>Latest Blog Posts</strong></summary>\s*\n+"
+    r"(<!-- README:BLOG_POSTS:START -->.*?<!-- README:BLOG_POSTS:END -->)\s*\n+"
+    r"</details>"
+)
+_GHPVC_URL_RE = re.compile(r"https://komarev\.com/ghpvc/\?[^\"'\s>]+")
+_GHPVC_URL = (
+    "https://komarev.com/ghpvc/?username=wyattowalsh"
+    "&color=6366F1&style=for-the-badge&label=Views"
+)
+_WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _WAKATIME_UPDATED_RE = re.compile(
     r"Last Updated on (\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} UTC)",
 )
@@ -145,10 +168,6 @@ _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
     (
         "metrics-habits.svg",
         "Supplemental metrics: coding habits and recent GitHub focus",
-    ),
-    (
-        "metrics-activity.svg",
-        "Supplemental metrics: recent GitHub activity feed",
     ),
     (
         "metrics-music.svg",
@@ -312,6 +331,7 @@ class _SafeRedirectHandler(HTTPRedirectHandler):
 
     max_redirections = _MAX_SAFE_REDIRECTS
 
+    @override
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ANN001
         if not _is_safe_remote_url(newurl):
             raise URLError(f"Blocked unsafe redirect to {newurl}")
@@ -364,6 +384,53 @@ class RepoMetadata:
     license_spdx: str | None = None
 
 
+def _element_local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _first_child_text(parent: Element, *local_names: str) -> str | None:
+    wanted = set(local_names)
+    for child in parent:
+        if _element_local_name(child.tag) not in wanted:
+            continue
+        text = "".join(child.itertext()).strip()
+        if text:
+            return text
+    return None
+
+
+def _one_line_hook(text: str | None) -> str | None:
+    """Collapse HTML/RSS copy into a single-line card hook."""
+    if not text:
+        return None
+    cleaned = unescape(re.sub(r"<[^>]+>", " ", text))
+    cleaned = _WHITESPACE_RE.sub(" ", cleaned).strip()
+    return cleaned or None
+
+
+def _normalize_blog_date(value: str | None) -> str | None:
+    """Normalize RSS/Atom/HTML dates to YYYY-MM-DD."""
+    if not value:
+        return None
+    stripped = value.strip()
+    if not stripped:
+        return None
+    if re.match(r"^\d{4}-\d{2}-\d{2}", stripped):
+        return stripped[:10]
+    try:
+        parsed = parsedate_to_datetime(stripped)
+    except (TypeError, ValueError, IndexError):
+        parsed = None
+    if parsed is None:
+        try:
+            parsed = datetime.fromisoformat(stripped.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=UTC)
+    return parsed.date().isoformat()
+
+
 @dataclass(frozen=True)
 class BlogPost:
     """A single blog post item from RSS/Atom."""
@@ -371,6 +438,8 @@ class BlogPost:
     title: str
     url: str
     image_url: str | None = None
+    published: str | None = None
+    summary: str | None = None
 
 
 class GitHubRepoClient:
@@ -516,6 +585,12 @@ class BlogFeedClient:
                     title=title,
                     url=link,
                     image_url=image_url,
+                    published=_normalize_blog_date(
+                        _first_child_text(item, "pubDate", "published", "date")
+                    ),
+                    summary=_one_line_hook(
+                        _first_child_text(item, "description", "encoded", "summary")
+                    ),
                 )
             )
         return posts
@@ -533,7 +608,18 @@ class BlogFeedClient:
             link = (link_elem.get("href") if link_elem is not None else "") or ""
             link = link.strip()
             if title and link:
-                posts.append(BlogPost(title=title, url=link))
+                posts.append(
+                    BlogPost(
+                        title=title,
+                        url=link,
+                        published=_normalize_blog_date(
+                            _first_child_text(entry, "published", "updated")
+                        ),
+                        summary=_one_line_hook(
+                            _first_child_text(entry, "summary", "content")
+                        ),
+                    )
+                )
         return posts
 
 
@@ -815,6 +901,37 @@ class BlogMetadataClient:
         return None
 
 
+class RepoMetadataSource(Protocol):
+    """Repository metadata lookup used by featured-project cards."""
+
+    def fetch_repo_metadata(self, full_name: str) -> RepoMetadata | None: ...
+
+    def fetch_repo_languages(self, full_name: str) -> dict[str, int] | None: ...
+
+
+class StarHistorySource(Protocol):
+    """Cumulative star-history lookup used by featured-project sparklines."""
+
+    def fetch_star_history(
+        self,
+        full_name: str,
+        sample: int = 24,
+        series_start: datetime | None = None,
+    ) -> list[int] | None: ...
+
+
+class BlogPostSource(Protocol):
+    """RSS/Atom lookup used by the latest-posts strip."""
+
+    def fetch_latest_posts(self, feed_url: str, limit: int) -> list[BlogPost]: ...
+
+
+class BlogMetadataSource(Protocol):
+    """Per-post metadata lookup used by blog cards."""
+
+    def fetch_metadata(self, url: str) -> dict[str, str | None]: ...
+
+
 class ReadmeSectionGenerator:
     """Renders and injects dynamic README sections between markers."""
 
@@ -829,10 +946,10 @@ class ReadmeSectionGenerator:
     def __init__(
         self,
         settings: ReadmeSectionsSettings,
-        repo_client: GitHubRepoClient | None = None,
-        blog_client: BlogFeedClient | None = None,
-        star_history_client: StarHistoryClient | None = None,
-        blog_metadata_client: BlogMetadataClient | None = None,
+        repo_client: RepoMetadataSource | None = None,
+        blog_client: BlogPostSource | None = None,
+        star_history_client: StarHistorySource | None = None,
+        blog_metadata_client: BlogMetadataSource | None = None,
     ) -> None:
         self.settings = settings
         self.repo_client = repo_client or GitHubRepoClient()
@@ -906,7 +1023,9 @@ class ReadmeSectionGenerator:
         content = self._rewrite_tech_stack_teaser(content)
         content = self._rewrite_metrics_section(content, readme_path=readme_path)
         content = self._rewrite_word_clouds_section(content)
-        return self._rewrite_wakatime_section(content)
+        content = self._rewrite_wakatime_section(content)
+        content = self._rewrite_blog_disclosure(content)
+        return self._rewrite_view_counter(content)
 
     def _rewrite_living_art_section(self, content: str) -> str:
         items = [
@@ -966,10 +1085,21 @@ class ReadmeSectionGenerator:
         return living_re.sub(replacement, content, count=1)
 
     def _rewrite_tech_stack_teaser(self, content: str) -> str:
-        """Drop category teaser shields; keep the collapsible full stack."""
-        if not _TECH_STACK_TEASER_RE.search(content):
+        """Drop category teaser shields; keep a bare-label collapsible stack."""
+        if _TECH_STACK_TEASER_RE.search(content):
+            content = _TECH_STACK_TEASER_RE.sub("## Tech Stack\n\n", content, count=1)
+        tech_re = compile_section_body_re("Tech Stack", self._section_order())
+        match = tech_re.search(content)
+        if not match:
             return content
-        return _TECH_STACK_TEASER_RE.sub("## Tech Stack\n\n", content, count=1)
+        rewritten = _TECH_STACK_SUMMARY_RE.sub(
+            rf"\1{_TECH_STACK_BARE_SUMMARY}",
+            match.group(0),
+            count=1,
+        )
+        if rewritten == match.group(0):
+            return content
+        return content[: match.start()] + rewritten + content[match.end() :]
 
     @staticmethod
     def _gfm_img_tag(*, src: str, alt: str, width: str | int) -> str:
@@ -1080,11 +1210,14 @@ class ReadmeSectionGenerator:
             return content
         return word_re.sub(replacement, content, count=1)
 
-    def _rewrite_wakatime_section(self, content: str) -> str:
-        match = _WAKATIME_SECTION_RE.search(content)
-        if not match:
-            return content
-        inner = match.group(2)
+    def _wakatime_open_img(self) -> str:
+        return self._gfm_centered_img(
+            src=_WAKATIME_ASSET_SRC,
+            alt="WakaTime coding activity",
+            width="100%",
+        )
+
+    def _wakatime_marker_inner(self, inner: str) -> str:
         updated_match = _WAKATIME_UPDATED_RE.search(inner)
         if updated_match is not None:
             try:
@@ -1096,7 +1229,7 @@ class ReadmeSectionGenerator:
                 updated_at = None
             if updated_at is not None:
                 if datetime.now(UTC) - updated_at <= _WAKATIME_FRESHNESS_WINDOW:
-                    return content
+                    return inner
                 detail = (
                     f"Latest available update was {updated_match.group(1)}, which is "
                     "outside the freshness window."
@@ -1105,16 +1238,53 @@ class ReadmeSectionGenerator:
                 detail = "The latest WakaTime timestamp could not be parsed."
         else:
             if any(marker in inner for marker in _WAKATIME_HEALTHY_MARKERS):
-                return content
+                return inner
             detail = "No fresh WakaTime timestamp was found in the generated section."
-
-        replacement = (
-            f"{match.group(1)}\n"
-            "<!-- WakaTime stats hidden until a fresh generated section is "
+        return (
+            "\n<!-- WakaTime stats hidden until a fresh generated section is "
             f"available. {detail} -->\n"
+        )
+
+    def _rewrite_wakatime_section(self, content: str) -> str:
+        match = _WAKATIME_SECTION_RE.search(content)
+        if not match:
+            return content
+        markers = (
+            f"{match.group(1)}"
+            f"{self._wakatime_marker_inner(match.group(2))}"
             f"{match.group(3)}"
         )
-        return content[: match.start()] + replacement + content[match.end() :]
+        prefix = content[: match.start()]
+        suffix = content[match.end() :]
+        if _WAKA_DETAILS_PREFIX_RE.search(prefix) and _WAKA_DETAILS_SUFFIX_RE.search(
+            suffix
+        ):
+            prefix = _WAKA_DETAILS_PREFIX_RE.sub("", prefix)
+            suffix = _WAKA_DETAILS_SUFFIX_RE.sub("", suffix)
+        if _WAKATIME_ASSET_SRC not in prefix[-500:]:
+            markers = f"{self._wakatime_open_img()}\n\n{markers}"
+        return prefix + markers + suffix
+
+    def _rewrite_blog_disclosure(self, content: str) -> str:
+        """Keep Latest Blog Posts visible — never wrap the strip in <details>."""
+        if _BLOG_DETAILS_RE.search(content):
+            content = _BLOG_DETAILS_RE.sub(
+                r"## Latest Blog Posts\n\n\1",
+                content,
+                count=1,
+            )
+        if self.BLOG_START in content and "## Latest Blog Posts" not in content:
+            content = content.replace(
+                self.BLOG_START,
+                f"## Latest Blog Posts\n\n{self.BLOG_START}",
+                1,
+            )
+        return content
+
+    def _rewrite_view_counter(self, content: str) -> str:
+        if "komarev.com/ghpvc/" not in content:
+            return content
+        return _GHPVC_URL_RE.sub(_GHPVC_URL, content)
 
     def _render_top_badges(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -2060,13 +2230,19 @@ class ReadmeSectionGenerator:
         for post in posts:
             metadata = metadata_by_url.get(post.url, {})
             host = metadata.get("host") or urlparse(post.url).netloc.replace("www.", "")
-            summary = metadata.get("summary") or "Tap to read the full story."
-            published = metadata.get("published")
+            summary = (
+                _one_line_hook(metadata.get("summary"))
+                or post.summary
+                or "Tap to read the full story."
+            )
+            published = _normalize_blog_date(
+                metadata.get("published") or post.published
+            )
             # Sanitize title — strip trailing "update" noise (anchored)
             clean_title = sanitize_blog_title(post.title)
             card_meta: list[str] = []
             if published:
-                card_meta.append(f"Published {published[:10]}")
+                card_meta.append(f"Published {published}")
             if host:
                 card_meta.append(host)
             # Simplified accent — single muted tone for all blog cards
@@ -2124,7 +2300,21 @@ class ReadmeSectionGenerator:
                     ),
                 )
                 src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
-                card_embeds.append((card.url or "#", src, card.title))
+                published_label = next(
+                    (
+                        bit.removeprefix("Published ").strip()
+                        for bit in (card.meta or ())
+                        if bit.startswith("Published ")
+                    ),
+                    None,
+                )
+                hook = next(iter(card.lines), None)
+                alt_parts = [card.title]
+                if published_label:
+                    alt_parts.append(published_label)
+                if hook:
+                    alt_parts.append(hook)
+                card_embeds.append((card.url or "#", src, " · ".join(alt_parts)))
 
         result: list[str] = []
         if card_embeds:
@@ -2573,18 +2763,6 @@ class ReadmeSectionGenerator:
         return parsed.astimezone(UTC)
 
     def _wrap_blog_post_list_markers(self, lines: Sequence[str]) -> str:
-        """Wrap blog post list in manager markers and a GFM <details> disclosure.
-
-        This preserves the HTML comment markers used by the injection engine
-        while also providing a GitHub-friendly collapsible UX and a safe
-        fallback list for non-HTML consumers.
-        """
+        """Wrap the fallback blog list in manager markers (never <details>)."""
         inner = "\n".join(lines)
-        return (
-            "<details>\n"
-            "<summary><strong>Latest posts (auto-updated)</strong></summary>\n\n"
-            "<!-- BLOG-POST-LIST:START -->\n"
-            f"{inner}\n"
-            "<!-- BLOG-POST-LIST:END -->\n\n"
-            "</details>"
-        )
+        return f"<!-- BLOG-POST-LIST:START -->\n{inner}\n<!-- BLOG-POST-LIST:END -->"

@@ -137,8 +137,9 @@ class SkillsBadgeGenerator:
         """Render a single badge as an HTML img tag, optionally linked."""
         badge_url = self._build_badge_url(skill)
         img = f'<img alt="{escape(skill.name)}" src="{escape(badge_url)}"/>'
-        if skill.url:
-            return f'<a href="{escape(skill.url)}">{img}</a>'
+        homepage = skill.url.strip() if skill.url else ""
+        if homepage:
+            return f'<a href="{escape(homepage, quote=True)}">{img}</a>'
         return img
 
     def _render_skills(self, skills: list[SkillEntry]) -> str:

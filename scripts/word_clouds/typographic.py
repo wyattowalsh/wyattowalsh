@@ -8,6 +8,7 @@ canvas, with a densified grid fallback as last resort.
 from __future__ import annotations
 
 import math
+from typing import override
 
 from ..utils import get_logger
 from .colors import TYPOGRAPHIC_PALETTE
@@ -38,7 +39,12 @@ class TypographicRenderer(SvgWordCloudEngine):
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
-        self.palette = palette or list(TYPOGRAPHIC_PALETTE)
+        if palette is not None:
+            self.palette = list(palette)
+        elif self.color_palette_override:
+            self.palette = list(self.color_palette_override)
+        else:
+            self.palette = list(TYPOGRAPHIC_PALETTE)
         self.line_spacing = line_spacing
         self.margin = margin
         self.word_gap_ratio = word_gap_ratio
@@ -56,13 +62,14 @@ class TypographicRenderer(SvgWordCloudEngine):
         raw = self.weight_range[0] + t * (self.weight_range[1] - self.weight_range[0])
         return int(round(raw / 100)) * 100
 
+    @override
     def _frequency_to_size(
         self,
         freq: float,
         min_freq: float,
         max_freq: float,
     ) -> float:
-        """Power-law size with softer floor so long tails stay legible."""
+        """Map starred-repo count to font size (monotonic in *freq*)."""
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
@@ -186,6 +193,7 @@ class TypographicRenderer(SvgWordCloudEngine):
             )
         return placed
 
+    @override
     def place_words(
         self,
         frequencies: dict[str, float],

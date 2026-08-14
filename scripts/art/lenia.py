@@ -15,6 +15,7 @@ import math
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import date as dt_date
+from typing import Any
 
 import numpy as np
 
@@ -48,13 +49,17 @@ from .shared import (
     DerivedMetrics,
     ElementBudget,
     Noise2D,
+    StyleDialect,
     WorldState,
     _build_world_palette_extended,
     blend_mode_filter,
+    build_style_dialect,
     compute_derived_metrics,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
+    extract_accretion_channels,
     hex_frac,
     map_date_to_loop_delay,
     normalize_timeline_window,
@@ -372,7 +377,7 @@ def _build_lenia_palette(
     world: WorldState,
     *,
     language_mix: dict[str, float],
-    repos: list[dict],
+    repos: list[dict[str, Any]],
     dynamics: LeniaDynamics,
     h: str,
 ) -> _LeniaPalette:
@@ -552,6 +557,7 @@ def _render_svg(
     loop_duration: float,
     reveal_fraction: float,
     growth_mat: float,
+    dialect: StyleDialect | None = None,
 ) -> str:
     """Render the Lenia field as an SVG of glowing circles."""
     N = config.grid_resolution
@@ -561,9 +567,10 @@ def _render_svg(
     P: list[str] = []
 
     # ── SVG header ────────────────────────────────────────────────
+    dialect_attrs = dialect.svg_attrs() if dialect is not None else ""
     P.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '
-        f'width="{WIDTH}" height="{HEIGHT}">'
+        f'width="{WIDTH}" height="{HEIGHT}" {dialect_attrs}>'
     )
 
     # ── Defs: glow filter ─────────────────────────────────────────
@@ -610,8 +617,12 @@ def _render_svg(
             cy = (spec.gy + 0.5) * cell_size
             if spec.kind == "repo":
                 seed_color = repo_seed_color
+                halo_boost = dialect.knobs["halo_scale"] if dialect is not None else 1.0
                 halo_radius = cell_size * (
-                    0.18 + 0.22 * spec.radius + 0.12 * spec.visibility
+                    0.18
+                    + 0.22 * spec.radius
+                    + 0.12 * spec.visibility
+                    + 0.16 * max(0.0, halo_boost - 0.75)
                 )
                 halo_opacity = (
                     0.06 + 0.06 * spec.visibility + 0.05 * spec.amplitude
@@ -769,6 +780,8 @@ def _render_svg(
         budget.add(1)
     P.append("</g>")
 
+    if dialect is not None:
+        P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)
 
@@ -795,8 +808,10 @@ def _fade_ramp(growth_mat: float, field_value: float) -> float:
 # ---------------------------------------------------------------------------
 
 
-def _signal_date(entry: dict, *keys: str) -> str | None:
+def _signal_date(entry: object, *keys: str) -> str | None:
     """Return the first usable ISO date string from *entry*."""
+    if not isinstance(entry, dict):
+        return None
     for key in keys:
         value = entry.get(key)
         if isinstance(value, str) and value.strip():
@@ -805,7 +820,7 @@ def _signal_date(entry: dict, *keys: str) -> str | None:
 
 
 def _extract_language_mix(
-    repos: list[dict],
+    repos: list[dict[str, Any]],
     language_bytes: dict[str, int] | None = None,
 ) -> dict[str, float]:
     """Build a normalized language → fraction mapping from bytes or repos."""
@@ -838,7 +853,7 @@ def _extract_language_mix(
 
 
 def _normalized_language_diversity(
-    metrics: dict,
+    metrics: dict[str, Any],
     language_mix: dict[str, float],
 ) -> float:
     """Normalize language diversity into a stable 0-1 band."""
@@ -858,7 +873,7 @@ def _normalized_language_diversity(
 
 
 def _daily_contribution_series(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     reference_year: int,
 ) -> dict[str, int]:
@@ -886,7 +901,7 @@ def _recent_contribution_load(daily_series: dict[str, int], *, days: int = 45) -
     return sum(max(0, int(value or 0)) for _day, value in recent_days)
 
 
-def _recency_signal(metrics: dict, repos: list[dict]) -> float:
+def _recency_signal(metrics: dict[str, Any], repos: list[dict[str, Any]]) -> float:
     """Return how much the current repo set skews toward fresh work."""
     raw_bands = metrics.get("repo_recency_bands") or {}
     if isinstance(raw_bands, dict) and raw_bands:
@@ -918,6 +933,10 @@ def _normalize_hour_distribution(commit_hours: object) -> dict[int, float]:
     if not isinstance(commit_hours, dict):
         return hours
     for raw_hour, raw_count in commit_hours.items():
+        if isinstance(raw_hour, bool) or not isinstance(raw_hour, (int, float, str)):
+            continue
+        if isinstance(raw_count, bool) or not isinstance(raw_count, (int, float, str)):
+            continue
         try:
             hour = int(raw_hour)
             count = float(raw_count)
@@ -975,8 +994,10 @@ def _summarize_merged_pr_cadence(
         except ValueError:
             continue
 
-        additions = max(0, int(pr.get("additions", 0) or 0))
-        deletions = max(0, int(pr.get("deletions", 0) or 0))
+        raw_additions = pr.get("additions", 0)
+        raw_deletions = pr.get("deletions", 0)
+        additions = max(0, int(str(raw_additions or 0)))
+        deletions = max(0, int(str(raw_deletions or 0)))
         change_scale = min(1.0, math.log1p(additions + deletions) / math.log1p(600.0))
         parsed.append((merged_day, change_scale))
 
@@ -1013,18 +1034,18 @@ def _summarize_merged_pr_cadence(
 
 
 def _augment_primary_repos(
-    primary_repos: list[dict],
-    all_repos: list[dict],
+    primary_repos: list[dict[str, Any]],
+    all_repos: list[dict[str, Any]],
     *,
     merged_repo_names: frozenset[str],
     limit: int,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """Promote merged or fresh repos without truncating the full seed pool."""
     if not all_repos:
         return primary_repos
     _ = limit
 
-    def _priority(repo: dict) -> tuple[int, int, float, float, int, str]:
+    def _priority(repo: dict[str, Any]) -> tuple[int, int, float, float, int, str]:
         name = str(repo.get("name") or "").strip()
         age_months = int(repo.get("age_months", 0) or 0)
         is_recent = age_months > 0 and age_months <= 12
@@ -1042,7 +1063,7 @@ def _augment_primary_repos(
         repo for repo in boosted if _priority(repo)[0] > 0 or _priority(repo)[1] > 0
     ]
     seen: set[str] = set()
-    selected: list[dict] = []
+    selected: list[dict[str, Any]] = []
     for repo in active_candidates + primary_repos:
         name = str(repo.get("name") or "").strip()
         key = name or f"repo-{len(selected)}"
@@ -1061,7 +1082,7 @@ def _augment_primary_repos(
 
 
 def _semantic_repo_positions(
-    repos: list[dict],
+    repos: list[dict[str, Any]],
     *,
     h: str,
     dynamics: LeniaDynamics,
@@ -1189,12 +1210,12 @@ def _semantic_repo_positions(
 
 
 def _derive_dynamics(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     config: LeniaConfig,
     maturity: float,
     language_mix: dict[str, float],
-    repos: list[dict],
+    repos: list[dict[str, Any]],
     h: str,
 ) -> LeniaDynamics:
     """Resolve simulation knobs from current and recent GitHub signals."""
@@ -1299,10 +1320,12 @@ def _derive_dynamics(
         metrics.get("recent_merged_prs")
     )
     recency_mix = _recency_signal(metrics, repos)
+    accretion = extract_accretion_channels(metrics)
 
     mu_drive = min(
         1.0,
-        0.34 * math.tanh(int(metrics.get("stars", 0) or 0) / 60.0)
+        0.26 * accretion.star_scale
+        + 0.14 * math.tanh(int(metrics.get("stars", 0) or 0) / 60.0)
         + 0.16 * velocity
         + 0.12 * traffic_heat
         + 0.10 * language_diversity
@@ -1356,6 +1379,7 @@ def _derive_dynamics(
         + 8 * pr_density
         + 4 * velocity
         + 4 * commit_focus
+        + 10 * accretion.commit_scale
     )
     sim_steps = max(config.sim_steps_base // 2, min(140, sim_steps))
 
@@ -1369,7 +1393,13 @@ def _derive_dynamics(
         int(round(math.cos(commit_angle) * drift_strength)),
         int(round(math.sin(commit_angle) * drift_strength)),
     )
-    satellite_count = int(round(max(pr_burst, recency_mix) * 2.0 + pr_density))
+    satellite_count = int(
+        round(
+            max(pr_burst, recency_mix) * 2.0
+            + pr_density
+            + 3.0 * accretion.follower_scale
+        )
+    )
 
     return LeniaDynamics(
         mu=mu,
@@ -1397,7 +1427,7 @@ def _derive_dynamics(
 
 
 def _build_seed_specs(
-    repos: list[dict],
+    repos: list[dict[str, Any]],
     daily_series: dict[str, int],
     *,
     config: LeniaConfig,
@@ -1667,7 +1697,7 @@ def _build_timeline_lookup(
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -1698,6 +1728,7 @@ def generate(
         Complete SVG document as a string.
     """
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("lenia", metrics)
     config = CFG
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -1881,4 +1912,5 @@ def generate(
         loop_duration=loop_duration,
         reveal_fraction=reveal_fraction,
         growth_mat=growth_mat,
+        dialect=dialect,
     )

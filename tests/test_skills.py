@@ -1,7 +1,9 @@
 """Tests for skills badge generation."""
 
 import base64
+import re
 from collections.abc import Iterable
+from html import escape, unescape
 from pathlib import Path
 from urllib.parse import quote
 
@@ -463,6 +465,18 @@ class TestRendering:
         assert '<a href="https://python.org">' in html
         assert 'alt="Python"' in html
 
+    def test_render_badge_strips_homepage_whitespace(self):
+        gen = SkillsBadgeGenerator(settings=SkillsSettings())
+        skill = SkillEntry(
+            name="Python",
+            slug="python",
+            color="3776AB",
+            url="https://www.python.org  ",
+        )
+        html = gen._render_badge(skill)
+        assert '<a href="https://www.python.org">' in html
+        assert 'href="https://www.python.org  "' not in html
+
     def test_render_badge_without_url(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
         skill = SkillEntry(name="SQL", color="4479A1")
@@ -750,4 +764,39 @@ class TestIntegration:
             assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH, (
                 f"Badge URL exceeds {MAX_SHIELDS_BADGE_URL_LENGTH} characters: "
                 f"{skill.name} ({len(url)})"
+            )
+
+    def test_skills_yaml_badges_have_https_hrefs_and_camo_safe_urls(self, monkeypatch):
+        """Every catalog badge must have an https homepage and a Camo-safe src."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        html = gen._render_all()
+        catalog = list(iter_skills(settings))
+
+        assert catalog
+        hrefs = re.findall(r"<a href=\"([^\"]+)\">", html)
+        images = re.findall(r"<img alt=\"([^\"]+)\" src=\"([^\"]+)\"/>", html)
+        assert len(hrefs) == len(catalog)
+        assert len(images) == len(catalog)
+        assert html.count("<a href=") == html.count("<img ")
+
+        css3 = next(skill for skill in catalog if skill.name == "CSS3")
+        assert css3.logo_style == "custom-retro"
+
+        for skill, href, (alt, src) in zip(catalog, hrefs, images, strict=True):
+            assert skill.url, f"Missing homepage url for '{skill.name}'"
+            homepage = skill.url.strip()
+            assert homepage.startswith("https://"), (
+                f"Homepage for '{skill.name}' must be https: {skill.url}"
+            )
+            assert href == escape(homepage, quote=True)
+            assert unescape(href).startswith("https://")
+            assert unescape(href).strip()
+            assert alt == escape(skill.name, quote=True)
+            assert src.startswith("https://img.shields.io/badge/")
+            assert len(src) < 4000
+            assert len(src) <= MAX_SHIELDS_BADGE_URL_LENGTH, (
+                f"Badge URL exceeds {MAX_SHIELDS_BADGE_URL_LENGTH} characters: "
+                f"{skill.name} ({len(src)})"
             )

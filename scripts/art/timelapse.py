@@ -395,6 +395,7 @@ def render_timelapse(
         return []
 
     # Sample frames
+    # One shared daily spine: each frame is one sampled end-of-day snapshot.
     sampled = sample_frames(snapshots, max_frames=max_frames)
     if not sampled:
         logger.warning("No frames after sampling")

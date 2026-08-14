@@ -1,0 +1,26 @@
+# Facts
+
+- This goal overhauls the GitHub profile README as a designed surface: maximal data in a visual hierarchy, previewed on origin/dev only until the maintainer asks to touch main.
+- Success is the origin/dev README preview. main is not updated in this goal unless the maintainer later asks.
+- The header uses the exact remote main banner.svg and banner-dark.svg bytes. This goal does not regenerate those header images.
+- Production lowlighter is configured to show every GitHub-native plugin that can render cleanly, with long windows and high limits (calendar toward all years, language threshold 0, more topics/stars/people).
+- lowlighter plugin_music, plugin_tweets, and plugin_activity stay off. Spotify, X posts, and the GitHub activity feed are not lowlighter panels.
+- plugin_lines, plugin_achievements, and plugin_gists are retried only when they can be isolated into a clean render. A stub or error bar is not an accepted extra-metrics card.
+- Every production lowlighter SVG (metrics.svg, metrics.additional.svg, metrics.extra.svg) is audited: languages and extra metrics work; no black “will be regenerated” bar ships.
+- Coding habits appear twice on purpose: lowlighter plugin_habits is on in the production primary card, and first-party metrics-habits.svg is redesigned end to end.
+- The two habits surfaces split by job. Lowlighter shows all of its native habits facts/charts/languages. The first-party card shows everything else (focus repos, peak hour, designed streaks, richer layout), not a restyle of the same recap.
+- The first-party GitHub feed widget (metrics-activity.svg) is removed from the README. GitHub already shows a similar feed below the profile README.
+- The first-party Spotify widget is a striking recent-listens hero plus a compact extras row only if those extras stay beautiful. Spotify is never passed into lowlighter.
+- Each of the six living-art GIFs uses one shared daily spine from GitHub account creation to now. Frame t is the cumulative end-of-day world through day t.
+- The six styles stay visually distinct and may use whichever encoding best depicts that day’s cumulative account evolution. Sequential frames are sampled and inspected; the GIFs are redesigned until accretion is readable.
+- The string “200+ technologies” is gone. The tech-stack <details> summary has no count and no replacement blurb.
+- The tech-stack shield wall stays inside <details>. The WakaTime SVG is visible in the open flow with the other metric cards.
+- Tech-stack shields keep GitHub-camo-safe delivery, use the best modern badge stack that still renders on github.com, prefer retro/throwback icons when they read at badge size, and every shield links to that tech’s homepage.
+- Every tech-stack shield is checked on the GitHub website: it renders, and it has a proper well-fitting icon for that tech.
+- Exactly two word clouds ship: starred topics and starred languages. Size/intensity follows that topic or language’s share of starred repos.
+- The cloud engines are chosen by bake-off of the existing SVG renderers plus a new candidate if none encode volume well. Winners must be readable on GitHub in light and dark.
+- WakaTime is a first-party SVG (not anmol098) showing public-safe maximal data: languages, professional editors, Mac/iOS/watch platforms, coding categories, weekly/yearly/all-time totals, and a heatmap if the API allows.
+- WakaTime does not show file paths, heartbeats, private project names, or leisure/social/health/shopping/entertainment app rows. Project names appear only when they match a public repo or an allowlist.
+- Latest blog posts are a visible designed strip (not <details>) of 4–5 RSS cards from w4w.dev, each with title, date, one-line hook, and a link.
+- The profile view counter keeps an incrementing public count and is restyled to match the new footer/badge look. No new view-counter backend is stood up unless an existing host makes a one-file drop-in trivial.
+- Maximal data, designed hierarchy: unused capability is a bug; a wall of undifferentiated charts is also a bug. First-party widgets stay visually striking.

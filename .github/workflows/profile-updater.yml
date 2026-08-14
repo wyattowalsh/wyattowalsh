@@ -104,7 +104,7 @@ jobs:
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
           plugin_languages_threshold: "2%"
-          # Probe-only diagnostics for upstream habits degradation; production keeps this off.
+          # Probe-only habits diagnostics (production primary also enables plugin_habits).
           plugin_habits: yes
           plugin_habits_from: 1000
           plugin_habits_days: 30
@@ -441,8 +441,20 @@ jobs:
             --from-languages-md \
             --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 
-      - name: Generate light and dark banners
-        run: uv run python -m scripts.cli generate banner --config-path config.yaml
+      - name: Verify pinned light and dark banners
+        run: |
+          set -euo pipefail
+          # Header banners are pinned to origin/main bytes. Do not regenerate.
+          uv run python - <<'PY'
+          from pathlib import Path
+
+          asset_dir = Path(".github/assets/img")
+          for name in ("banner.svg", "banner-dark.svg"):
+              path = asset_dir / name
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise SystemExit(f"Pinned banner missing or empty: {path}")
+          print("Pinned banner pair present.")
+          PY
 
       - name: Validate exact profile asset inventory
         run: |
@@ -571,6 +583,7 @@ jobs:
           uv run python -m scripts.cli generate wakatime \
             --output-dir "$RUNNER_TEMP/waka-readme" \
             --github-login "${{ github.repository_owner }}" \
+            --svg-output "$RUNNER_TEMP/waka-readme/wakatime.svg" \
             --allow-missing-key
 
       - name: Upload WakaTime README section artifact
@@ -710,10 +723,9 @@ jobs:
           plugin_languages: yes
           plugin_languages_ignored: "jupyter%20notebook"
           plugin_languages_details: "bytes-size, percentage"
-          plugin_languages_threshold: "2%"
-          # The habits panel still emits inline errors in upstream renders; use
-          # the repo-owned supplemental card instead.
-          plugin_habits: no
+          plugin_languages_threshold: "0%"
+          # Native habits facts/charts/languages; first-party card owns the rest.
+          plugin_habits: yes
           plugin_habits_from: 1000
           plugin_habits_days: 30
           plugin_habits_facts: yes
@@ -727,13 +739,14 @@ jobs:
           plugin_gists: no
           plugin_topics: yes
           plugin_topics_sort: stars
-          plugin_topics_limit: 15
+          plugin_topics_limit: 30
           plugin_music: no
           # Disabled: upstream still queries retired Projects (classic) fields
           # and embeds an error payload for this account.
           plugin_achievements: no
           plugin_calendar: yes
-          plugin_calendar_limit: 1
+          # 0 = all years from GitHub registration (lowlighter full-history mode).
+          plugin_calendar_limit: 0
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
@@ -771,11 +784,11 @@ jobs:
           plugin_stargazers: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '3' || '0' }}
+          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '16' || '0' }}
           plugin_repositories: yes
           plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
           plugin_people: yes
-          plugin_people_limit: 12
+          plugin_people_limit: 36
           plugin_people_size: 24
           plugin_people_types: followers, following
           plugin_tweets: no
@@ -892,7 +905,6 @@ jobs:
               "metrics.additional.svg",
               "metrics.extra.svg",
               "metrics-habits.svg",
-              "metrics-activity.svg",
               "metrics-music.svg",
               "metrics-posts.svg",
           ):
@@ -915,7 +927,6 @@ jobs:
             .github/assets/img/metrics.additional.svg
             .github/assets/img/metrics.extra.svg
             .github/assets/img/metrics-habits.svg
-            .github/assets/img/metrics-activity.svg
             .github/assets/img/metrics-music.svg
             .github/assets/img/metrics-posts.svg
           if-no-files-found: error
@@ -1458,6 +1469,11 @@ jobs:
           uv run python -m scripts.wakatime_readme apply \
             --artifact "${{ runner.temp }}/waka-readme/waka-section.md" \
             --readme README.md
+          if [ -f "${{ runner.temp }}/waka-readme/wakatime.svg" ]; then
+            mkdir -p .github/assets/img
+            cp "${{ runner.temp }}/waka-readme/wakatime.svg" \
+              .github/assets/img/wakatime.svg
+          fi
 
       - name: Generate README Sections
         env:
@@ -1520,9 +1536,9 @@ jobs:
             ./.github/assets/img/metrics.additional.svg
             ./.github/assets/img/metrics.extra.svg
             ./.github/assets/img/metrics-habits.svg
-            ./.github/assets/img/metrics-activity.svg
             ./.github/assets/img/metrics-music.svg
             ./.github/assets/img/metrics-posts.svg
+            ./.github/assets/img/wakatime.svg
           )
           # Only add paths that exist or are tracked.
           metrics_existing=()

@@ -1,19 +1,24 @@
+import math
 import random
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+import scripts.word_clouds.generate as generate_module
 import scripts.word_clouds.metaheuristic as metaheuristic_module
 from scripts.word_clouds import (
+    DEFAULT_RENDERER,
     LayoutReadabilitySettings,
     WordCloudGenerator,
     WordCloudSettings,
     _filter_others,
     parse_markdown_for_word_cloud_frequencies,
 )
+from scripts.word_clouds.clustered import ClusteredRenderer
 from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
-from scripts.word_clouds.metaheuristic import MetaheuristicAnimRenderer
+from scripts.word_clouds.metaheuristic import RENDERERS, MetaheuristicAnimRenderer
+from scripts.word_clouds.shaped import ShapedRenderer
 from scripts.word_clouds.solvers import (
     _aesthetic_cost,
     _mealpy_solve,
@@ -620,3 +625,240 @@ def test_mealpy_solve_fallback_on_bad_optimizer() -> None:
     assert len(result) == 3
     for x, y, rot in result:
         assert isinstance(x, float)
+
+
+def test_parse_starred_markdown_maps_names_to_repo_counts(tmp_path: Path) -> None:
+    """Contents labels pair with per-section starred-repo list lengths."""
+    markdown_file = tmp_path / "languages.md"
+    markdown_file.write_text(
+        """
+## Contents
+- [C](#c)
+- [C#](#c-1)
+- [Python](#python)
+- [Others](#others)
+
+## C
+- [org/libc](https://example.com/libc)
+- [org/kernel](https://example.com/kernel)
+
+## C#
+- [org/runtime](https://example.com/runtime)
+
+## Python
+- [org/cpython](https://example.com/cpython)
+- [org/django](https://example.com/django)
+- [org/flask](https://example.com/flask)
+
+## Others
+- [org/misc](https://example.com/misc)
+
+## License
+- leftover list must not become a category
+""".strip(),
+        encoding="utf-8",
+    )
+
+    frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
+    assert frequencies == {"C": 2, "C#": 1, "Python": 3, "Others": 1}
+    filtered = _filter_others(frequencies)
+    assert filtered == {"C": 2, "C#": 1, "Python": 3}
+    assert filtered["Python"] > filtered["C"] > filtered["C#"]
+
+
+def test_parse_starred_markdown_empty_section_does_not_shift_counts(
+    tmp_path: Path,
+) -> None:
+    markdown_file = tmp_path / "topics.md"
+    markdown_file.write_text(
+        """
+## Contents
+- [python](#python)
+- [go](#go)
+- [rust](#rust)
+
+## python
+- [org/one](https://example.com/one)
+
+## go
+
+## rust
+- [org/two](https://example.com/two)
+- [org/three](https://example.com/three)
+""".strip(),
+        encoding="utf-8",
+    )
+
+    frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
+    assert frequencies == {"python": 1, "go": 0, "rust": 2}
+
+
+def test_checked_in_starred_lists_parse_as_repo_volume() -> None:
+    topics_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "topics.md"
+    languages_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "languages.md"
+    if not topics_md.is_file() or not languages_md.is_file():
+        pytest.skip("checked-in starred lists are not present")
+
+    topics = _filter_others(parse_markdown_for_word_cloud_frequencies(topics_md))
+    languages = _filter_others(parse_markdown_for_word_cloud_frequencies(languages_md))
+
+    assert topics
+    assert languages
+    assert all(isinstance(count, int) and count >= 1 for count in topics.values())
+    assert all(isinstance(count, int) and count >= 1 for count in languages.values())
+    assert "others" not in {name.casefold() for name in topics}
+    assert "other" not in {name.casefold() for name in languages}
+    assert max(topics.values()) > min(topics.values())
+    assert max(languages.values()) > min(languages.values())
+    assert topics["python"] > topics["zig"]
+    assert languages["Python"] > languages["Zig"]
+
+
+def test_default_renderer_ships_typographic_filenames(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    assert DEFAULT_RENDERER == "typographic"
+    assert WordCloudSettings().renderer == "typographic"
+    assert (
+        generate_module._default_output_filename("topics", DEFAULT_RENDERER)
+        == "wordcloud_typographic_by_topics.svg"
+    )
+    assert (
+        generate_module._default_output_filename("languages", DEFAULT_RENDERER)
+        == "wordcloud_typographic_by_languages.svg"
+    )
+
+    captured: dict[str, object] = {}
+
+    def fake_generate_svg(
+        renderer_name: str,
+        frequencies: dict[str, int | float],
+        output_path: str | Path,
+        width: int = 0,
+        height: int = 0,
+        **kwargs,
+    ) -> None:
+        captured["renderer"] = renderer_name
+        captured["output_path"] = Path(output_path)
+        Path(output_path).write_text("<svg />", encoding="utf-8")
+
+    monkeypatch.setattr(generate_module, "_generate_svg", fake_generate_svg)
+    result = WordCloudGenerator(
+        base_settings=WordCloudSettings(output_dir=str(tmp_path))
+    ).generate(frequencies={"Python": 4, "Go": 1}, source="topics")
+
+    expected = tmp_path / "wordcloud_typographic_by_topics.svg"
+    assert result == expected
+    assert captured["renderer"] == "typographic"
+    assert captured["output_path"] == expected
+
+
+def test_typographic_higher_count_is_larger_or_heavier() -> None:
+    frequencies = {"High": 50.0, "Mid": 12.0, "Low": 1.0}
+    placed = TypographicRenderer(
+        width=420,
+        height=240,
+        min_font_size=8.0,
+        max_font_size=48.0,
+        require_all=True,
+    ).place_words(frequencies)
+    by_text = {word.text: word for word in placed}
+    assert set(by_text) == set(frequencies)
+
+    high, mid, low = by_text["High"], by_text["Mid"], by_text["Low"]
+    assert high.font_size > mid.font_size > low.font_size
+    assert high.font_weight >= mid.font_weight >= low.font_weight
+    assert high.opacity >= mid.opacity >= low.opacity
+    assert high.rotation == mid.rotation == low.rotation == 0
+
+
+def _spearman(xs: list[float], ys: list[float]) -> float:
+    def ranks(values: list[float]) -> list[float]:
+        order = sorted(range(len(values)), key=lambda index: values[index])
+        result = [0.0] * len(values)
+        index = 0
+        while index < len(values):
+            end = index
+            while (
+                end + 1 < len(values) and values[order[end + 1]] == values[order[index]]
+            ):
+                end += 1
+            average = (index + end) / 2 + 1
+            for tied in range(index, end + 1):
+                result[order[tied]] = average
+            index = end + 1
+        return result
+
+    rx, ry = ranks(xs), ranks(ys)
+    n = len(xs)
+    mean_x = sum(rx) / n
+    mean_y = sum(ry) / n
+    num = sum((a - mean_x) * (b - mean_y) for a, b in zip(rx, ry, strict=True))
+    den_x = math.sqrt(sum((a - mean_x) ** 2 for a in rx))
+    den_y = math.sqrt(sum((b - mean_y) ** 2 for b in ry))
+    if den_x == 0.0 or den_y == 0.0:
+        return 0.0
+    return num / (den_x * den_y)
+
+
+def test_svg_engine_bakeoff_typographic_best_encodes_volume() -> None:
+    """Typographic wins (or ties) volume fidelity among fast SVG engines."""
+    frequencies = {
+        "Python": 100.0,
+        "TypeScript": 64.0,
+        "Go": 36.0,
+        "Rust": 16.0,
+        "Zig": 9.0,
+        "Nim": 4.0,
+        "Haml": 2.0,
+        "Tcl": 1.0,
+    }
+    engines = {
+        "wordle": WordleRenderer(
+            width=400,
+            height=260,
+            min_font_size=8.0,
+            max_font_size=48.0,
+            seed=42,
+        ),
+        "clustered": ClusteredRenderer(
+            width=400,
+            height=260,
+            min_font_size=8.0,
+            max_font_size=48.0,
+            seed=42,
+            show_cluster_labels=False,
+        ),
+        "typographic": TypographicRenderer(
+            width=400,
+            height=260,
+            min_font_size=8.0,
+            max_font_size=48.0,
+            seed=42,
+        ),
+        "shaped": ShapedRenderer(
+            width=400,
+            height=260,
+            min_font_size=8.0,
+            max_font_size=48.0,
+            seed=42,
+            shape="circle",
+        ),
+    }
+    assert set(engines).issubset(RENDERERS)
+
+    scores: dict[str, float] = {}
+    for name, renderer in engines.items():
+        placed = {word.text: word for word in renderer.place_words(frequencies)}
+        assert set(placed) == set(frequencies)
+        labels = list(frequencies)
+        scores[name] = _spearman(
+            [frequencies[label] for label in labels],
+            [placed[label].font_size for label in labels],
+        )
+
+    winner_score = max(scores.values())
+    assert scores["typographic"] == winner_score
+    assert scores["typographic"] >= 0.99
+    typographic_placed = engines["typographic"].place_words(frequencies)
+    assert all(word.rotation == 0 for word in typographic_placed)

@@ -16,12 +16,19 @@ import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass
 from datetime import UTC, date, datetime, timedelta
+from html import escape
 from pathlib import Path
 from typing import Any, Final, TypeGuard
 
 from .fetch_metrics import collect as collect_github_metrics
 from .metrics_svg import validate_svg_file
-from .readme_svg import ReadmeSvgAssetBuilder, SvgBlock, SvgBlockRenderer, SvgCard
+from .readme_svg import (
+    FONT_FAMILY,
+    ReadmeSvgAssetBuilder,
+    SvgBlock,
+    SvgBlockRenderer,
+    SvgCard,
+)
 from .utils import get_logger
 
 logger = get_logger(module=__name__)
@@ -101,7 +108,7 @@ ASSET_SPECS: Final[dict[str, SupplementalAssetSpec]] = {
     "habits": SupplementalAssetSpec(
         asset_name="metrics-habits",
         title="Coding habits",
-        required_markers=("Coding habits", "30-day activity"),
+        required_markers=("Coding habits", "Focus", "Peak hour"),
     ),
     "activity": SupplementalAssetSpec(
         asset_name="metrics-activity",
@@ -149,6 +156,25 @@ def _request_json(
     context = ssl.create_default_context()
     with urllib.request.urlopen(request, context=context, timeout=30) as response:
         return json.loads(response.read().decode("utf-8"))
+
+
+def _request_bytes(
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    timeout: int = 15,
+    max_bytes: int = 120_000,
+) -> tuple[bytes, str]:
+    """Fetch a bounded binary payload and its Content-Type."""
+
+    request = urllib.request.Request(url, headers=headers or {}, method="GET")
+    context = ssl.create_default_context()
+    with urllib.request.urlopen(request, context=context, timeout=timeout) as response:
+        payload = response.read(max_bytes + 1)
+        content_type = str(response.headers.get("Content-Type") or "")
+    if len(payload) > max_bytes:
+        raise RuntimeError(f"Remote payload exceeded {max_bytes} bytes")
+    return payload, content_type.split(";", 1)[0].strip().lower()
 
 
 def _probe_github_token(token: str) -> bool:
@@ -374,11 +400,7 @@ def _streaks_from_daily_counts(
     return current, longest
 
 
-def _contribution_stats(
-    metrics: dict[str, Any],
-    *,
-    window_days: int = 30,
-) -> dict[str, Any]:
+def _calendar_daily_counts(metrics: dict[str, Any]) -> dict[date, int]:
     raw_calendar = metrics.get("contributions_calendar") or []
     daily_counts: dict[date, int] = {}
     for entry in raw_calendar:
@@ -391,7 +413,15 @@ def _contribution_stats(
             except ValueError:
                 continue
         daily_counts[parsed_date.date()] = int(entry.get("count", 0) or 0)
+    return daily_counts
 
+
+def _contribution_stats(
+    metrics: dict[str, Any],
+    *,
+    window_days: int = 30,
+) -> dict[str, Any]:
+    daily_counts = _calendar_daily_counts(metrics)
     today = max(daily_counts.keys(), default=datetime.now(UTC).date())
     cutoff = today - timedelta(days=window_days - 1)
     recent_counts = {
@@ -413,6 +443,15 @@ def _contribution_stats(
     }
 
 
+def _cadence_series(metrics: dict[str, Any], *, days: int = 30) -> list[int]:
+    daily_counts = _calendar_daily_counts(metrics)
+    today = max(daily_counts.keys(), default=datetime.now(UTC).date())
+    return [
+        daily_counts.get(today - timedelta(days=offset), 0)
+        for offset in range(days - 1, -1, -1)
+    ]
+
+
 def _top_languages(metrics: dict[str, Any], *, limit: int = 3) -> tuple[str, ...]:
     languages = metrics.get("languages") or {}
     ranked = sorted(
@@ -427,7 +466,11 @@ def _top_languages(metrics: dict[str, Any], *, limit: int = 3) -> tuple[str, ...
     return tuple(name for name, _ in ranked[:limit])
 
 
-def _focus_repositories(metrics: dict[str, Any], *, limit: int = 2) -> tuple[str, ...]:
+def _focus_repository_counts(
+    metrics: dict[str, Any],
+    *,
+    limit: int = 3,
+) -> tuple[tuple[str, int], ...]:
     recent_prs = metrics.get("recent_merged_prs") or []
     counts: dict[str, int] = {}
     for pr in recent_prs:
@@ -436,39 +479,437 @@ def _focus_repositories(metrics: dict[str, Any], *, limit: int = 2) -> tuple[str
             continue
         counts[repo_name] = counts.get(repo_name, 0) + 1
     ranked = sorted(counts.items(), key=lambda item: item[1], reverse=True)
-    return tuple(name for name, _ in ranked[:limit])
+    return tuple((name, count) for name, count in ranked[:limit])
+
+
+def _focus_repositories(metrics: dict[str, Any], *, limit: int = 2) -> tuple[str, ...]:
+    return tuple(name for name, _ in _focus_repository_counts(metrics, limit=limit))
+
+
+def _hour_buckets(metrics: dict[str, Any]) -> list[int]:
+    distribution = metrics.get("commit_hour_distribution") or {}
+    buckets = [0] * 24
+    if not isinstance(distribution, dict):
+        return buckets
+    for raw_hour, raw_count in distribution.items():
+        try:
+            hour = int(raw_hour)
+            count = int(raw_count or 0)
+        except (TypeError, ValueError):
+            continue
+        if 0 <= hour <= 23 and count > 0:
+            buckets[hour] += count
+    return buckets
 
 
 def _peak_commit_hour(metrics: dict[str, Any]) -> str:
-    distribution = metrics.get("commit_hour_distribution") or {}
-    if not distribution:
+    buckets = _hour_buckets(metrics)
+    if not any(buckets):
         return "n/a"
-    hour = max(distribution.items(), key=lambda item: int(item[1] or 0))[0]
-    return f"{int(hour):02d}:00"
+    hour = max(range(24), key=lambda item: (buckets[item], -item))
+    return f"{hour:02d}:00"
+
+
+def _svg_text(value: str) -> str:
+    return escape(value, quote=True)
+
+
+def _svg_num(value: float) -> str:
+    return f"{value:.1f}".rstrip("0").rstrip(".")
+
+
+def _label_swatch(label: str) -> str:
+    digest = hashlib.sha256(label.encode("utf-8")).digest()
+    palette = (
+        "#1db954",
+        "#0969da",
+        "#8250df",
+        "#bf4b8a",
+        "#d4a72c",
+        "#1a7f37",
+        "#cf222e",
+        "#218bff",
+    )
+    return palette[digest[0] % len(palette)]
+
+
+def _supplemental_svg_css(*, accent: str, accent_dark: str) -> str:
+    return "\n".join(
+        (
+            ":root {",
+            "  --canvas-bg: #ffffff;",
+            "  --card-bg: #ffffff;",
+            "  --panel-bg: #f6f8fa;",
+            "  --card-border: #d0d7de;",
+            "  --title-color: #1f2328;",
+            "  --text-color: #656d76;",
+            "  --meta-color: #656d76;",
+            f"  --accent: {accent};",
+            "  --focus: #8250df;",
+            "  --peak: #1a7f37;",
+            "  --streak: #bf4b8a;",
+            "}",
+            "@media (prefers-color-scheme: dark) { :root {",
+            "  --canvas-bg: #0d1117;",
+            "  --card-bg: #0d1117;",
+            "  --panel-bg: #161b22;",
+            "  --card-border: #30363d;",
+            "  --title-color: #e6edf3;",
+            "  --text-color: #8b949e;",
+            "  --meta-color: #8b949e;",
+            f"  --accent: {accent_dark};",
+            "  --focus: #a371f7;",
+            "  --peak: #3fb950;",
+            "  --streak: #db61a2;",
+            "}}",
+            f".title {{ fill: var(--title-color); font: 700 22px {FONT_FAMILY}; }}",
+            f".kicker {{ fill: var(--meta-color); font: 700 11px {FONT_FAMILY};",
+            " letter-spacing: 0.08em; text-transform: uppercase; }",
+            f".label {{ fill: var(--meta-color); font: 700 11px {FONT_FAMILY};",
+            " letter-spacing: 0.08em; text-transform: uppercase; }",
+            f".value {{ fill: var(--title-color); font: 700 28px {FONT_FAMILY}; }}",
+            f".body {{ fill: var(--title-color); font: 600 14px {FONT_FAMILY}; }}",
+            f".muted {{ fill: var(--text-color); font: 400 12px {FONT_FAMILY}; }}",
+            f".meta {{ fill: var(--meta-color); font: 400 12px {FONT_FAMILY}; }}",
+            (
+                ".hero-title { fill: var(--title-color); "
+                f"font: 700 28px {FONT_FAMILY}; }}"
+            ),
+            (
+                ".hero-artist { fill: var(--title-color); "
+                f"font: 600 16px {FONT_FAMILY}; }}"
+            ),
+            (
+                ".extra-title { fill: var(--title-color); "
+                f"font: 600 13px {FONT_FAMILY}; }}"
+            ),
+            ".panel { fill: var(--panel-bg); }",
+            ".panel-stroke { fill: none; stroke: var(--card-border); }",
+            ".card-bg { fill: var(--card-bg); }",
+            ".card-stroke { fill: none; stroke: var(--card-border); }",
+            ".focus-bar { fill: var(--focus); }",
+            ".peak-tick { fill: var(--card-border); }",
+            ".peak-tick-on { fill: var(--peak); fill-opacity: 0.55; }",
+            ".peak-tick-max { fill: var(--peak); }",
+            ".streak-fill { fill: var(--streak); }",
+            ".streak-empty { fill: var(--card-border); }",
+            ".cadence { fill: var(--streak); }",
+        )
+    )
+
+
+def _wrap_supplemental_svg(
+    *,
+    width: int,
+    height: int,
+    aria_label: str,
+    accent: str,
+    accent_dark: str,
+    body: list[str],
+    extra_defs: list[str] | None = None,
+) -> str:
+    lines = [
+        (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
+            f'height="{height}" viewBox="0 0 {width} {height}" role="img" '
+            f'aria-label="{_svg_text(aria_label)}">'
+        ),
+        "<defs>",
+        "<style>",
+        _supplemental_svg_css(accent=accent, accent_dark=accent_dark),
+        "</style>",
+    ]
+    if extra_defs:
+        lines.extend(extra_defs)
+    lines.extend(
+        (
+            "</defs>",
+            f'<rect class="card-bg" width="{width}" height="{height}" rx="12" />',
+            (
+                f'<rect class="card-stroke" x="0.5" y="0.5" width="{width - 1}" '
+                f'height="{height - 1}" rx="12" stroke-width="1" />'
+            ),
+            f'<rect width="{width}" height="3" fill="var(--accent)" />',
+            *body,
+            "</svg>",
+        )
+    )
+    return "\n".join(lines)
+
+
+def _render_habits_focus_panel(
+    repos: tuple[tuple[str, int], ...],
+    *,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+) -> list[str]:
+    lines = [
+        f'<g class="habits-focus" transform="translate({x},{y})">',
+        f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
+        f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
+        '<text class="label" x="16" y="24">Focus</text>',
+        '<text class="meta" x="16" y="42">Merged PRs by repo</text>',
+    ]
+    if not repos:
+        lines.extend(
+            (
+                '<text class="body" x="16" y="88">profile-wide work</text>',
+                (
+                    '<text class="muted" x="16" y="110">'
+                    "No recent merged-PR focus yet</text>"
+                ),
+                "</g>",
+            )
+        )
+        return lines
+
+    max_count = max(count for _, count in repos)
+    row_top = 58
+    row_height = 34
+    bar_width = width - 32
+    for index, (name, count) in enumerate(repos[:3]):
+        row_y = row_top + index * row_height
+        filled = 8 if max_count <= 0 else max(8, int(bar_width * (count / max_count)))
+        lines.extend(
+            (
+                (
+                    f'<text class="body" x="16" y="{row_y}">'
+                    f"{_svg_text(_truncate(name, 22))}</text>"
+                ),
+                (
+                    f'<text class="meta" x="{width - 16}" y="{row_y}" '
+                    f'text-anchor="end">×{count}</text>'
+                ),
+                (
+                    f'<rect x="16" y="{row_y + 6}" width="{bar_width}" height="6" '
+                    'rx="3" fill="var(--card-border)" fill-opacity="0.45" />'
+                ),
+                (
+                    f'<rect class="focus-bar" x="16" y="{row_y + 6}" '
+                    f'width="{filled}" height="6" rx="3" />'
+                ),
+            )
+        )
+    lines.append("</g>")
+    return lines
+
+
+def _render_habits_peak_panel(
+    buckets: list[int],
+    peak_hour: str,
+    *,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+) -> list[str]:
+    max_count = max(buckets) if buckets else 0
+    peak_index = next(
+        (index for index, count in enumerate(buckets) if count == max_count and count),
+        None,
+    )
+    lines = [
+        f'<g class="habits-peak" transform="translate({x},{y})">',
+        f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
+        f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
+        '<text class="label" x="16" y="24">Peak hour</text>',
+        '<text class="meta" x="16" y="42">Recent pushes · UTC</text>',
+        f'<text class="value" x="16" y="86">{_svg_text(peak_hour)}</text>',
+    ]
+    chart_x = 16
+    chart_width = width - 32
+    gap = 3
+    bar_width = max(4, int((chart_width - gap * 23) / 24))
+    baseline = 150
+    for hour, count in enumerate(buckets):
+        bar_x = chart_x + hour * (bar_width + gap)
+        bar_h = 6 if count <= 0 else max(8, int(44 * (count / max_count)))
+        css = "peak-tick"
+        if count > 0:
+            css = "peak-tick-on"
+        if peak_index is not None and hour == peak_index:
+            css = "peak-tick-max"
+        lines.append(
+            f'<rect class="{css}" x="{bar_x}" y="{baseline - bar_h}" '
+            f'width="{bar_width}" height="{bar_h}" rx="2" />'
+        )
+    lines.extend(
+        (
+            '<text class="meta" x="16" y="166">00</text>',
+            (
+                f'<text class="meta" x="{width // 2}" y="166" '
+                'text-anchor="middle">12</text>'
+            ),
+            f'<text class="meta" x="{width - 16}" y="166" text-anchor="end">23</text>',
+            "</g>",
+        )
+    )
+    return lines
+
+
+def _render_habits_streaks_panel(
+    current: int,
+    longest: int,
+    *,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+) -> list[str]:
+    bead_count = 12
+    filled = 0 if current <= 0 else min(current, bead_count)
+    bead_r = 5
+    usable = width - 32
+    step = usable / max(bead_count - 1, 1)
+    track_width = usable
+    current_fill = (
+        0
+        if current <= 0
+        else max(10, int(track_width * (current / max(longest, current, 1))))
+    )
+    lines = [
+        f'<g class="habits-streaks" transform="translate({x},{y})">',
+        f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
+        f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
+        '<text class="label" x="16" y="24">Streaks</text>',
+        f'<text class="value" x="16" y="70">{current}d</text>',
+        '<text class="meta" x="16" y="90">current</text>',
+    ]
+    for index in range(bead_count):
+        bead_x = 16 + index * step
+        css = "streak-fill" if index < filled else "streak-empty"
+        lines.append(
+            f'<circle class="{css}" cx="{_svg_num(bead_x)}" cy="112" r="{bead_r}" />'
+        )
+    if current > bead_count:
+        lines.append(
+            f'<text class="meta" x="{width - 16}" y="116" text-anchor="end">'
+            f"+{current - bead_count}</text>"
+        )
+    lines.extend(
+        (
+            f'<rect x="16" y="136" width="{track_width}" height="8" rx="4" '
+            'class="streak-empty" fill-opacity="0.55" />',
+            f'<rect class="streak-fill" x="16" y="136" width="{current_fill}" '
+            'height="8" rx="4" />',
+            f'<text class="meta" x="16" y="162">{longest}d longest</text>',
+            "</g>",
+        )
+    )
+    return lines
+
+
+def _render_habits_cadence(
+    series: list[int],
+    *,
+    x: int,
+    y: int,
+    width: int,
+) -> list[str]:
+    lines = [
+        f'<g class="habits-cadence" transform="translate({x},{y})">',
+        '<text class="label" x="0" y="12">Cadence</text>',
+    ]
+    if not series:
+        lines.extend(
+            (
+                '<text class="muted" x="72" y="12">no recent days</text>',
+                "</g>",
+            )
+        )
+        return lines
+    max_count = max(series) or 1
+    bar_gap = 4
+    bar_width = max(4, int((width - (len(series) - 1) * bar_gap) / len(series)))
+    for index, count in enumerate(series):
+        bar_x = index * (bar_width + bar_gap)
+        bar_h = 4 if count <= 0 else max(6, int(18 * (count / max_count)))
+        opacity = 0.22 if count <= 0 else 0.35 + 0.65 * (count / max_count)
+        lines.append(
+            f'<rect class="cadence" x="{bar_x}" y="{38 - bar_h}" width="{bar_width}" '
+            f'height="{bar_h}" rx="2" fill-opacity="{opacity:.2f}" />'
+        )
+    lines.append("</g>")
+    return lines
+
+
+def _render_habits_svg(metrics: dict[str, Any]) -> str:
+    stats = _contribution_stats(metrics)
+    repos = _focus_repository_counts(metrics, limit=3)
+    buckets = _hour_buckets(metrics)
+    peak_hour = _peak_commit_hour(metrics)
+    cadence = _cadence_series(metrics, days=30)
+    width, height = 1200, 312
+    panel_y, panel_h, panel_w = 58, 176, 376
+    body = [
+        (
+            f'<text class="title" x="28" y="40">'
+            f"{_svg_text(ASSET_SPECS['habits'].title)}</text>"
+        ),
+        '<text class="kicker" x="1172" y="38" text-anchor="end">'
+        "Focus · Peak hour · Streaks</text>",
+        *_render_habits_focus_panel(
+            repos,
+            x=20,
+            y=panel_y,
+            width=panel_w,
+            height=panel_h,
+        ),
+        *_render_habits_peak_panel(
+            buckets,
+            peak_hour,
+            x=412,
+            y=panel_y,
+            width=panel_w,
+            height=panel_h,
+        ),
+        *_render_habits_streaks_panel(
+            int(stats["current_streak"]),
+            int(stats["longest_streak"]),
+            x=804,
+            y=panel_y,
+            width=panel_w,
+            height=panel_h,
+        ),
+        *_render_habits_cadence(cadence, x=28, y=246, width=1144),
+    ]
+    return _wrap_supplemental_svg(
+        width=width,
+        height=height,
+        aria_label=ASSET_SPECS["habits"].title,
+        accent="#8250df",
+        accent_dark="#a371f7",
+        body=body,
+    )
 
 
 def _render_habits_card(metrics: dict[str, Any]) -> SvgBlock:
     stats = _contribution_stats(metrics)
-    top_languages = ", ".join(_top_languages(metrics)) or "none yet"
-    focus_repos = ", ".join(_focus_repositories(metrics)) or "profile-wide work"
+    focus_repos = (
+        ", ".join(_focus_repositories(metrics, limit=3)) or "profile-wide work"
+    )
     peak_hour = _peak_commit_hour(metrics)
-
     card = SvgCard(
         title=ASSET_SPECS["habits"].title,
-        kicker="GitHub last 30 days",
+        kicker="Focus · Peak hour · Streaks",
         lines=(
-            f"30-day activity: {stats['total']} contributions across {stats['active_days']} active days",  # noqa: E501
-            f"Current streak: {stats['current_streak']}d | longest streak: {stats['longest_streak']}d",  # noqa: E501
-            f"Peak hour: {peak_hour} UTC | focus: {focus_repos} | langs: {top_languages}",  # noqa: E501
+            f"Focus: {focus_repos}",
+            f"Peak hour: {peak_hour} UTC",
+            (
+                f"Current streak {stats['current_streak']}d · "
+                f"longest {stats['longest_streak']}d"
+            ),
         ),
         meta=(
-            f"Reviews {int(metrics.get('pr_review_count') or 0)}",
-            f"Repos {int(metrics.get('public_repos') or 0)}",
-            f"Busiest day {stats['busiest_day']}",
+            f"Current {stats['current_streak']}d",
+            f"Longest {stats['longest_streak']}d",
+            f"Peak {peak_hour}",
         ),
         icon="GH",
-        badge="Custom",
-        accent="#0969da",
+        badge="Focus",
+        accent="#8250df",
     )
     return SvgBlock(title=card.title, cards=(card,))
 
@@ -659,14 +1100,262 @@ def _fetch_recent_tracks(
             if artist_name:
                 artist_names_list.append(artist_name)
         artist_names = ", ".join(artist_names_list)
+        album = _optional_json_object(
+            track.get("album"),
+            context=f"Spotify recently played item {item_index} album",
+        )
+        image_url = ""
+        raw_images = album.get("images")
+        if raw_images is not None:
+            image_url = _best_spotify_image_url(
+                _require_json_array(
+                    raw_images,
+                    context=f"Spotify recently played item {item_index} album images",
+                ),
+                context=f"Spotify recently played item {item_index} album image",
+            )
         tracks.append(
             {
-                "name": str(track.get("name") or "").strip(),
+                "name": str(track.get("name") or "").strip() or "Untitled track",
                 "artists": artist_names or "Unknown artist",
                 "played_at": str(item.get("played_at") or "").strip(),
+                "album": str(album.get("name") or "").strip(),
+                "image_url": image_url,
             }
         )
     return tracks
+
+
+def _best_spotify_image_url(images: list[Any], *, context: str) -> str:
+    ranked: list[tuple[int, str]] = []
+    for image_index, raw_image in enumerate(images):
+        image = _require_json_object(
+            raw_image,
+            context=f"{context} {image_index}",
+        )
+        url = str(image.get("url") or "").strip()
+        if not url:
+            continue
+        try:
+            width = int(image.get("width") or 0)
+        except (TypeError, ValueError):
+            width = 0
+        ranked.append((width, url))
+    if not ranked:
+        return ""
+    ranked.sort(key=lambda item: abs(item[0] - 300) if item[0] else 10_000)
+    return ranked[0][1]
+
+
+def _sniff_image_media_type(payload: bytes, content_type: str) -> str | None:
+    if payload.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if payload.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if payload.startswith(b"RIFF") and payload[8:12] == b"WEBP":
+        return "image/webp"
+    if content_type in {"image/png", "image/jpeg", "image/webp", "image/jpg"}:
+        return "image/jpeg" if content_type == "image/jpg" else content_type
+    return None
+
+
+def _fetch_image_data_uri(url: str, *, max_bytes: int = 80_000) -> str | None:
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        return None
+    try:
+        payload, content_type = _request_bytes(url, max_bytes=max_bytes)
+    except (
+        urllib.error.HTTPError,
+        urllib.error.URLError,
+        TimeoutError,
+        OSError,
+        RuntimeError,
+    ) as exc:
+        logger.info("Skipping album artwork from {}: {}", url, exc)
+        return None
+    media_type = _sniff_image_media_type(payload, content_type)
+    if media_type is None or not payload:
+        return None
+    encoded = base64.b64encode(payload).decode("ascii")
+    return f"data:{media_type};base64,{encoded}"
+
+
+def _with_track_artwork(tracks: list[dict[str, str]]) -> list[dict[str, str]]:
+    enriched: list[dict[str, str]] = []
+    for track in tracks:
+        item = dict(track)
+        image_url = item.get("image_url") or ""
+        if image_url and not item.get("image_data_uri"):
+            data_uri = _fetch_image_data_uri(image_url)
+            if data_uri:
+                item["image_data_uri"] = data_uri
+        enriched.append(item)
+    return enriched
+
+
+def _music_sleeve(
+    track: dict[str, str],
+    *,
+    x: int,
+    y: int,
+    size: int,
+    clip_id: str,
+) -> tuple[list[str], list[str]]:
+    fill = _label_swatch(track.get("album") or track.get("name") or "track")
+    monogram = _truncate(
+        "".join(part[0] for part in (track.get("artists") or "S").split()[:2]).upper()
+        or "SP",
+        2,
+    )
+    defs = [
+        f'<clipPath id="{clip_id}">'
+        f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" />'
+        "</clipPath>"
+    ]
+    body = [
+        f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" fill="{fill}" />'
+    ]
+    data_uri = track.get("image_data_uri") or ""
+    if data_uri:
+        body.append(
+            f'<image href="{_svg_text(data_uri)}" x="{x}" y="{y}" width="{size}" '
+            f'height="{size}" preserveAspectRatio="xMidYMid slice" '
+            f'clip-path="url(#{clip_id})" />'
+        )
+    else:
+        mid_x = x + size / 2
+        mid_y = y + size / 2 + 6
+        body.append(
+            f'<text class="hero-artist" x="{mid_x:.0f}" y="{mid_y:.0f}" '
+            f'text-anchor="middle" fill="#ffffff">{_svg_text(monogram)}</text>'
+        )
+    body.append(
+        f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" fill="none" '
+        'stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />'
+    )
+    return defs, body
+
+
+def _render_music_extras(
+    tracks: list[dict[str, str]],
+    *,
+    y: int,
+) -> tuple[list[str], list[str]]:
+    extras = tracks[1:3]
+    if not extras:
+        return [], []
+    defs: list[str] = []
+    body: list[str] = [f'<g class="music-extras" transform="translate(28,{y})">']
+    tile_w = 564
+    for index, track in enumerate(extras):
+        tile_x = index * (tile_w + 16)
+        clip_id = f"music-extra-{index}"
+        sleeve_defs, sleeve_body = _music_sleeve(
+            track,
+            x=tile_x + 12,
+            y=10,
+            size=44,
+            clip_id=clip_id,
+        )
+        defs.extend(sleeve_defs)
+        album = track.get("album") or ""
+        meta = _relative_label(track.get("played_at"))
+        if album:
+            meta = f"{_truncate(album, 28)} · {meta}"
+        extra_artists = _truncate(
+            track.get("artists") or "Unknown artist",
+            36,
+        )
+        body.extend(
+            (
+                (
+                    f'<rect class="panel" x="{tile_x}" y="0" '
+                    f'width="{tile_w}" height="64" rx="10" />'
+                ),
+                (
+                    f'<rect class="panel-stroke" x="{tile_x}" y="0" width="{tile_w}" '
+                    'height="64" rx="10" />'
+                ),
+                *sleeve_body,
+                (
+                    f'<text class="extra-title" x="{tile_x + 68}" y="28">'
+                    f"{_svg_text(_truncate(track.get('name') or 'Untitled track', 42))}"
+                    "</text>"
+                ),
+                (
+                    f'<text class="muted" x="{tile_x + 68}" y="46">'
+                    f"{_svg_text(extra_artists)} · {_svg_text(meta)}</text>"
+                ),
+            )
+        )
+    body.append("</g>")
+    return defs, body
+
+
+def _render_music_svg(tracks: list[dict[str, str]]) -> str:
+    hydrated = _with_track_artwork(tracks[:3])
+    extras = hydrated[1:3]
+    height = 328 if extras else 236
+    defs: list[str] = []
+    body = [
+        (
+            f'<text class="kicker" x="28" y="36">'
+            f"{_svg_text(ASSET_SPECS['music'].title)}</text>"
+        ),
+        '<text class="kicker" x="1172" y="36" text-anchor="end">Spotify</text>',
+        '<g class="music-hero">',
+    ]
+    if not hydrated:
+        body.extend(
+            (
+                '<text class="hero-title" x="28" y="120">'
+                "No recent Spotify tracks were available.</text>",
+                "</g>",
+            )
+        )
+    else:
+        hero = hydrated[0]
+        sleeve_defs, sleeve_body = _music_sleeve(
+            hero,
+            x=28,
+            y=56,
+            size=132,
+            clip_id="music-hero-art",
+        )
+        defs.extend(sleeve_defs)
+        album = hero.get("album") or ""
+        played = _relative_label(hero.get("played_at"))
+        hero_meta = played if not album else f"{_truncate(album, 48)} · {played}"
+        hero_artists = _truncate(hero.get("artists") or "Unknown artist", 44)
+        body.extend(
+            (
+                *sleeve_body,
+                (
+                    f'<text class="hero-title" x="180" y="104">'
+                    f"{_svg_text(_truncate(hero.get('name') or 'Untitled track', 40))}"
+                    "</text>"
+                ),
+                (
+                    f'<text class="hero-artist" x="180" y="136">'
+                    f"{_svg_text(hero_artists)}</text>"
+                ),
+                f'<text class="muted" x="180" y="164">{_svg_text(hero_meta)}</text>',
+                "</g>",
+            )
+        )
+        extra_defs, extra_body = _render_music_extras(hydrated, y=208)
+        defs.extend(extra_defs)
+        body.extend(extra_body)
+    return _wrap_supplemental_svg(
+        width=1200,
+        height=height,
+        aria_label=ASSET_SPECS["music"].title,
+        accent="#1db954",
+        accent_dark="#1ed760",
+        body=body,
+        extra_defs=defs,
+    )
 
 
 def _render_music_card(tracks: list[dict[str, str]]) -> SvgBlock:
@@ -682,8 +1371,9 @@ def _render_music_card(tracks: list[dict[str, str]]) -> SvgBlock:
         lines=lines,
         meta=("Spotify", _relative_label(latest_played)),
         icon="SP",
-        badge="Custom",
+        badge="Spotify",
         accent="#1db954",
+        background_image=(tracks[0].get("image_data_uri") if tracks else None),
     )
     return SvgBlock(title=card.title, cards=(card,))
 
@@ -776,6 +1466,18 @@ def _render_posts_card(handle: str, posts: list[dict[str, str]]) -> SvgBlock:
     return SvgBlock(title=card.title, cards=(card,))
 
 
+def _write_supplemental_asset(
+    builder: ReadmeSvgAssetBuilder,
+    asset_name: str,
+    block: SvgBlock,
+    svg: str,
+) -> None:
+    builder.render_and_write(asset_name, block)
+    write_raw = getattr(builder, "write_raw", None)
+    if callable(write_raw):
+        write_raw(asset_name, svg)
+
+
 def generate_supplemental_metrics(
     *,
     owner: str,
@@ -805,16 +1507,15 @@ def generate_supplemental_metrics(
     expected_x_handle = (x_handle or owner).strip().lstrip("@")
 
     metrics = collect_github_metrics(owner, repo, github_token)
-    events = _fetch_recent_activity(owner, github_token)
 
-    builder.render_and_write(
+    _write_supplemental_asset(
+        builder,
         ASSET_SPECS["habits"].asset_name,
         _render_habits_card(metrics),
+        _render_habits_svg(metrics),
     )
-    builder.render_and_write(
-        ASSET_SPECS["activity"].asset_name,
-        _render_activity_card(owner, events),
-    )
+    # GitHub already renders a native activity feed below the profile README.
+    _remove_asset_if_present(output_dir, ASSET_SPECS["activity"].asset_name)
 
     statuses: dict[str, SupplementalAssetStatus] = {
         "habits": SupplementalAssetStatus(
@@ -828,10 +1529,11 @@ def generate_supplemental_metrics(
         "activity": SupplementalAssetStatus(
             asset_name=ASSET_SPECS["activity"].asset_name,
             filename=f"{ASSET_SPECS['activity'].asset_name}.svg",
-            enabled=True,
-            optional=False,
+            enabled=False,
+            optional=True,
             title=ASSET_SPECS["activity"].title,
             required_markers=ASSET_SPECS["activity"].required_markers,
+            reason="removed-duplicate-github-feed",
         ),
     }
 
@@ -841,9 +1543,11 @@ def generate_supplemental_metrics(
             spotify_client_secret,
             spotify_refresh_token,
         )
-        builder.render_and_write(
+        _write_supplemental_asset(
+            builder,
             ASSET_SPECS["music"].asset_name,
             _render_music_card(tracks),
+            _render_music_svg(tracks),
         )
         statuses["music"] = SupplementalAssetStatus(
             asset_name=ASSET_SPECS["music"].asset_name,

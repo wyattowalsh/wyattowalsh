@@ -7,6 +7,7 @@ categories:
   - name: Programming Languages
     skills:
       - name: Python
+        url: https://www.python.org
         slug: python
         logo_path: .github/assets/skill-icons/python.svg
         logo_source: iconify:devicon
@@ -15,6 +16,7 @@ categories:
         logo_style: sourced-brand
         color: 3776AB
       - name: Structured Query Language (SQL)
+        url: https://en.wikipedia.org/wiki/SQL
         logo_path: .github/assets/skill-icons/sql.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -22,6 +24,7 @@ categories:
         logo_style: custom-generic
         color: 4479A1
       - name: JavaScript
+        url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
         slug: javascript
         logo_path: .github/assets/skill-icons/javascript.svg
         logo_source: iconify:devicon
@@ -30,6 +33,7 @@ categories:
         logo_style: sourced-brand
         color: F7DF1E
       - name: TypeScript
+        url: https://www.typescriptlang.org
         slug: typescript
         logo_path: .github/assets/skill-icons/typescript.svg
         logo_source: iconify:devicon
@@ -38,6 +42,7 @@ categories:
         logo_style: sourced-brand
         color: 3178C6
       - name: HTML5
+        url: https://html.spec.whatwg.org/multipage/
         slug: html5
         logo_path: .github/assets/skill-icons/html5.svg
         logo_source: iconify:devicon
@@ -46,6 +51,7 @@ categories:
         logo_style: sourced-brand
         color: E34F26
       - name: CSS3
+        url: https://www.w3.org/Style/CSS/
         logo_path: .github/assets/skill-icons/css3.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -53,6 +59,7 @@ categories:
         logo_style: custom-retro
         color: 1572B6
       - name: R
+        url: https://www.r-project.org
         slug: r
         logo_path: .github/assets/skill-icons/r.svg
         logo_source: iconify:devicon
@@ -61,6 +68,7 @@ categories:
         logo_style: sourced-brand
         color: 276DC3
       - name: Java
+        url: https://dev.java
         slug: openjdk
         logo_path: .github/assets/skill-icons/java.svg
         logo_source: iconify:devicon
@@ -69,6 +77,7 @@ categories:
         logo_style: sourced-brand
         color: "000000"
       - name: Matlab
+        url: https://www.mathworks.com/products/matlab.html
         logo_path: .github/assets/skill-icons/matlab.svg
         logo_source: iconify:devicon
         logo_source_url: https://icon-sets.iconify.design/devicon/matlab/
@@ -76,9 +85,11 @@ categories:
         logo_style: sourced-brand
         color: 0076A8
       - name: Ruby
+        url: https://www.ruby-lang.org
         slug: ruby
         color: CC342D
       - name: C++
+        url: https://isocpp.org
         slug: cplusplus
         logo_path: .github/assets/skill-icons/cplusplus.svg
         logo_source: iconify:devicon
@@ -87,6 +98,7 @@ categories:
         logo_style: sourced-brand
         color: 00599C
       - name: Go
+        url: https://go.dev
         slug: go
         logo_path: .github/assets/skill-icons/go.svg
         logo_source: iconify:logos
@@ -95,6 +107,7 @@ categories:
         logo_style: sourced-brand
         color: 00ADD8
       - name: Sass
+        url: https://sass-lang.com
         slug: sass
         logo_path: .github/assets/skill-icons/sass.svg
         logo_source: iconify:logos
@@ -103,6 +116,7 @@ categories:
         logo_style: sourced-brand
         color: CC6699
       - name: MDX
+        url: https://mdxjs.com
         slug: mdx
         logo_path: .github/assets/skill-icons/mdx.svg
         logo_source: iconify:logos
@@ -111,6 +125,7 @@ categories:
         logo_style: sourced-brand
         color: 1B1F24
       - name: PowerShell
+        url: https://learn.microsoft.com/powershell/
         slug: powershell
         logo_path: .github/assets/skill-icons/powershell.svg
         logo_source: iconify:devicon
@@ -121,6 +136,7 @@ categories:
   - name: AI & LLMs
     skills:
       - name: OpenAI
+        url: https://openai.com
         logo_path: .github/assets/skill-icons/openai.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -128,12 +144,15 @@ categories:
         logo_style: custom-brand
         color: "412991"
       - name: LangChain
+        url: https://www.langchain.com
         slug: langchain
         color: 1C3C3C
       - name: LangGraph
+        url: https://www.langchain.com/langgraph
         slug: langchain
         color: 1C3C3C
       - name: LlamaIndex
+        url: https://www.llamaindex.ai
         logo_path: .github/assets/skill-icons/llamaindex.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -141,6 +160,7 @@ categories:
         logo_style: custom-brand
         color: 5A29E4
       - name: Anthropic
+        url: https://www.anthropic.com
         slug: anthropic
         logo_path: .github/assets/skill-icons/anthropic.svg
         logo_source: iconify:logos
@@ -149,14 +169,17 @@ categories:
         logo_style: sourced-brand
         color: "191919"
       - name: Hugging Face
+        url: https://huggingface.co
         slug: huggingface
         color: FFD21E
         logo_color: black
       - name: Weights & Biases
+        url: https://wandb.ai
         slug: weightsandbiases
         color: FFBE00
         logo_color: black
       - name: spaCy
+        url: https://spacy.io
         slug: spacy
         color: 09A3D5
   - name: Data
@@ -164,6 +187,7 @@ categories:
       - name: Collection
         skills:
           - name: Web Scraping
+            url: https://en.wikipedia.org/wiki/Web_scraping
             logo_path: .github/assets/skill-icons/web-scraping.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -171,9 +195,11 @@ categories:
             logo_style: custom-generic
             color: 43853D
           - name: Scrapy
+            url: https://scrapy.org
             slug: scrapy
             color: 60A839
           - name: APIs
+            url: https://en.wikipedia.org/wiki/API
             logo_path: .github/assets/skill-icons/apis.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -181,6 +207,7 @@ categories:
             logo_style: custom-generic
             color: 009688
           - name: ETL
+            url: https://en.wikipedia.org/wiki/Extract,_transform,_load
             logo_path: .github/assets/skill-icons/etl.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -188,6 +215,7 @@ categories:
             logo_style: custom-generic
             color: 4A90D9
           - name: ELT
+            url: https://en.wikipedia.org/wiki/Extract,_load,_transform
             logo_path: .github/assets/skill-icons/elt.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -197,6 +225,7 @@ categories:
       - name: Storage
         skills:
           - name: Neo4j
+            url: https://neo4j.com
             slug: neo4j
             logo_path: .github/assets/skill-icons/neo4j.svg
             logo_source: iconify:devicon
@@ -205,6 +234,7 @@ categories:
             logo_style: sourced-brand
             color: 4581C3
           - name: SQLite
+            url: https://www.sqlite.org
             slug: sqlite
             logo_path: .github/assets/skill-icons/sqlite.svg
             logo_source: iconify:devicon
@@ -213,6 +243,7 @@ categories:
             logo_style: sourced-brand
             color: 003B57
           - name: MySQL
+            url: https://www.mysql.com
             slug: mysql
             logo_path: .github/assets/skill-icons/mysql.svg
             logo_source: iconify:devicon
@@ -221,9 +252,11 @@ categories:
             logo_style: sourced-brand
             color: 4479A1
           - name: PostgreSQL
+            url: https://www.postgresql.org
             slug: postgresql
             color: 4169E1
           - name: Redis
+            url: https://redis.io
             slug: redis
             logo_path: .github/assets/skill-icons/redis.svg
             logo_source: iconify:devicon
@@ -232,6 +265,7 @@ categories:
             logo_style: sourced-brand
             color: FF4438
           - name: DuckDB
+            url: https://duckdb.org
             slug: duckdb
             logo_path: .github/assets/skill-icons/duckdb.svg
             logo_source: iconify:devicon
@@ -241,6 +275,7 @@ categories:
             color: FFF000
             logo_color: black
           - name: InfluxDB
+            url: https://www.influxdata.com
             slug: influxdb
             logo_path: .github/assets/skill-icons/influxdb.svg
             logo_source: iconify:devicon
@@ -251,6 +286,7 @@ categories:
       - name: Visualization
         skills:
           - name: Matplotlib
+            url: https://matplotlib.org
             logo_path: .github/assets/skill-icons/matplotlib.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -258,9 +294,11 @@ categories:
             logo_style: custom-brand
             color: 11557C
           - name: Plotly
+            url: https://plotly.com
             slug: plotly
             color: 3F4F75
           - name: D3.js
+            url: https://d3js.org
             slug: d3
             logo_path: .github/assets/skill-icons/d3js.svg
             logo_source: iconify:devicon
@@ -269,6 +307,7 @@ categories:
             logo_style: sourced-brand
             color: F9A03C
           - name: Tableau
+            url: https://www.tableau.com
             logo_path: .github/assets/skill-icons/tableau.svg
             logo_source: iconify:logos
             logo_source_url: https://icon-sets.iconify.design/logos/tableau-icon/
@@ -278,6 +317,7 @@ categories:
       - name: Processing
         skills:
           - name: Apache Spark
+            url: https://spark.apache.org
             slug: apachespark
             logo_path: .github/assets/skill-icons/apache-spark.svg
             logo_source: iconify:devicon
@@ -286,6 +326,7 @@ categories:
             logo_style: sourced-brand
             color: E25A1C
           - name: Apache Airflow
+            url: https://airflow.apache.org
             slug: apacheairflow
             logo_path: .github/assets/skill-icons/apache-airflow.svg
             logo_source: iconify:devicon
@@ -294,6 +335,7 @@ categories:
             logo_style: sourced-brand
             color: 017CEE
           - name: Multiprocessing
+            url: https://docs.python.org/3/library/multiprocessing.html
             logo_path: .github/assets/skill-icons/multiprocessing.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -301,6 +343,7 @@ categories:
             logo_style: custom-generic
             color: 3776AB
           - name: Pandas
+            url: https://pandas.pydata.org
             slug: pandas
             logo_path: .github/assets/skill-icons/pandas.svg
             logo_source: iconify:devicon
@@ -309,6 +352,7 @@ categories:
             logo_style: sourced-brand
             color: "150458"
           - name: NumPy
+            url: https://numpy.org
             slug: numpy
             logo_path: .github/assets/skill-icons/numpy.svg
             logo_source: iconify:devicon
@@ -317,6 +361,7 @@ categories:
             logo_style: sourced-brand
             color: "013243"
           - name: Apache Arrow
+            url: https://arrow.apache.org
             logo_path: .github/assets/skill-icons/apache-arrow.svg
             logo_source: apache/arrow-site
             logo_source_url: https://raw.githubusercontent.com/apache/arrow-site/main/img/arrow-logo_chevrons_white-txt_transparent-bg.svg
@@ -324,6 +369,7 @@ categories:
             logo_style: sourced-brand
             color: D22128
           - name: Apache Kafka
+            url: https://kafka.apache.org
             slug: apachekafka
             logo_path: .github/assets/skill-icons/apache-kafka.svg
             logo_source: iconify:devicon
@@ -332,9 +378,11 @@ categories:
             logo_style: sourced-brand
             color: 231F20
           - name: Dask
+            url: https://www.dask.org
             slug: dask
             color: FC6E6B
           - name: SQLAlchemy
+            url: https://www.sqlalchemy.org
             slug: sqlalchemy
             logo_path: .github/assets/skill-icons/sqlalchemy.svg
             logo_source: iconify:devicon
@@ -343,9 +391,11 @@ categories:
             logo_style: sourced-brand
             color: D71F00
           - name: Kedro
+            url: https://kedro.org
             slug: kedro
             color: FFC900
           - name: dagster
+            url: https://dagster.io
             logo_path: .github/assets/skill-icons/dagster.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -355,9 +405,11 @@ categories:
       - name: Modeling
         skills:
           - name: scikit-learn
+            url: https://scikit-learn.org
             slug: scikitlearn
             color: F7931E
           - name: PyCaret
+            url: https://pycaret.org
             logo_path: .github/assets/skill-icons/pycaret.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -365,6 +417,7 @@ categories:
             logo_style: custom-brand
             color: 2496ED
           - name: Keras
+            url: https://keras.io
             slug: keras
             logo_path: .github/assets/skill-icons/keras.svg
             logo_source: iconify:devicon
@@ -373,6 +426,7 @@ categories:
             logo_style: sourced-brand
             color: D00000
           - name: Tensorflow
+            url: https://www.tensorflow.org
             slug: tensorflow
             logo_path: .github/assets/skill-icons/tensorflow.svg
             logo_source: iconify:devicon
@@ -381,6 +435,7 @@ categories:
             logo_style: sourced-brand
             color: FF6F00
           - name: PyTorch
+            url: https://pytorch.org
             slug: pytorch
             logo_path: .github/assets/skill-icons/pytorch.svg
             logo_source: iconify:devicon
@@ -389,9 +444,11 @@ categories:
             logo_style: sourced-brand
             color: EE4C2C
           - name: SciPy
+            url: https://scipy.org
             slug: scipy
             color: 8CAAE6
           - name: OpenCV
+            url: https://opencv.org
             slug: opencv
             logo_path: .github/assets/skill-icons/opencv.svg
             logo_source: iconify:devicon
@@ -400,14 +457,17 @@ categories:
             logo_style: sourced-brand
             color: 5C3EE8
           - name: OpenAI Gym
+            url: https://www.gymlibrary.dev
             slug: openaigym
             color: 0081A5
           - name: Pydantic
+            url: https://docs.pydantic.dev
             slug: pydantic
             color: E92063
       - name: Deployment
         skills:
           - name: FastAPI
+            url: https://fastapi.tiangolo.com
             slug: fastapi
             logo_path: .github/assets/skill-icons/fastapi.svg
             logo_source: iconify:logos
@@ -416,11 +476,13 @@ categories:
             logo_style: sourced-brand
             color: "009688"
           - name: Prefect
+            url: https://www.prefect.io
             slug: prefect
             color: 070E10
   - name: Cloud Technologies
     skills:
       - name: Amazon AWS
+        url: https://aws.amazon.com
         logo_path: .github/assets/skill-icons/aws.svg
         logo_source: iconify:tabler
         logo_source_url: https://icon-sets.iconify.design/tabler/brand-aws/
@@ -428,6 +490,7 @@ categories:
         logo_style: sourced-brand
         color: 232F3E
       - name: Google Cloud
+        url: https://cloud.google.com
         slug: googlecloud
         logo_path: .github/assets/skill-icons/google-cloud.svg
         logo_source: iconify:devicon
@@ -436,6 +499,7 @@ categories:
         logo_style: sourced-brand
         color: 4285F4
       - name: Microsoft Azure
+        url: https://azure.microsoft.com
         slug: microsoftazure
         logo_path: .github/assets/skill-icons/azure.svg
         logo_source: iconify:devicon
@@ -444,6 +508,7 @@ categories:
         logo_style: sourced-brand
         color: 0078D4
       - name: Supabase
+        url: https://supabase.com
         slug: supabase
         logo_path: .github/assets/skill-icons/supabase.svg
         logo_source: iconify:logos
@@ -452,6 +517,7 @@ categories:
         logo_style: sourced-brand
         color: 3FCF8E
       - name: Terraform
+        url: https://www.terraform.io
         slug: terraform
         logo_path: .github/assets/skill-icons/terraform.svg
         logo_source: iconify:devicon
@@ -462,6 +528,7 @@ categories:
   - name: CI/CD Platforms
     skills:
       - name: GitHub Actions
+        url: https://github.com/features/actions
         slug: githubactions
         logo_path: .github/assets/skill-icons/github-actions.svg
         logo_source: iconify:devicon
@@ -470,14 +537,17 @@ categories:
         logo_style: sourced-brand
         color: 2088FF
       - name: Travis CI
+        url: https://www.travis-ci.com
         slug: travisci
         color: 3EAAAF
   - name: Version Control Platforms
     skills:
       - name: GitHub
+        url: https://github.com
         slug: github
         color: "181717"
       - name: GitLab
+        url: https://about.gitlab.com
         slug: gitlab
         logo_path: .github/assets/skill-icons/gitlab.svg
         logo_source: iconify:devicon
@@ -486,6 +556,7 @@ categories:
         logo_style: sourced-brand
         color: FC6D26
       - name: DagsHub
+        url: https://dagshub.com
         logo_path: .github/assets/skill-icons/dagshub.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -495,6 +566,7 @@ categories:
   - name: Workflow Tools
     skills:
       - name: Git
+        url: https://git-scm.com
         slug: git
         logo_path: .github/assets/skill-icons/git.svg
         logo_source: iconify:devicon
@@ -503,9 +575,11 @@ categories:
         logo_style: sourced-brand
         color: F05032
       - name: Linux
+        url: https://www.kernel.org
         slug: linux
         color: FCC624
       - name: Shell Script
+        url: https://www.gnu.org/software/bash/
         slug: gnubash
         logo_path: .github/assets/skill-icons/bash.svg
         logo_source: iconify:devicon
@@ -514,6 +588,7 @@ categories:
         logo_style: sourced-brand
         color: 4EAA25
       - name: Bash
+        url: https://www.gnu.org/software/bash/
         slug: gnubash
         logo_path: .github/assets/skill-icons/bash.svg
         logo_source: iconify:devicon
@@ -522,9 +597,11 @@ categories:
         logo_style: sourced-brand
         color: 4EAA25
       - name: Zsh
+        url: https://www.zsh.org
         slug: zsh
         color: F15A24
       - name: Jupyter
+        url: https://jupyter.org
         slug: jupyter
         logo_path: .github/assets/skill-icons/jupyter.svg
         logo_source: iconify:devicon
@@ -533,6 +610,7 @@ categories:
         logo_style: sourced-brand
         color: F37626
       - name: Docker
+        url: https://www.docker.com
         slug: docker
         logo_path: .github/assets/skill-icons/docker.svg
         logo_source: iconify:logos
@@ -541,9 +619,11 @@ categories:
         logo_style: sourced-brand
         color: 2496ED
       - name: Kubernetes
+        url: https://kubernetes.io
         slug: kubernetes
         color: 326CE5
       - name: Pytest
+        url: https://docs.pytest.org
         slug: pytest
         logo_path: .github/assets/skill-icons/pytest.svg
         logo_source: iconify:devicon
@@ -552,9 +632,11 @@ categories:
         logo_style: sourced-brand
         color: 0A9EDC
       - name: Python Hypothesis
+        url: https://hypothesis.works
         slug: hypothesis
         color: BD1C2B
       - name: Visual Studio Code
+        url: https://code.visualstudio.com
         logo_path: .github/assets/skill-icons/vscode.svg
         logo_source: iconify:devicon-plain
         logo_source_url: https://icon-sets.iconify.design/devicon-plain/vscode/
@@ -562,6 +644,7 @@ categories:
         logo_style: sourced-brand
         color: 007ACC
       - name: Sublime Text
+        url: https://www.sublimetext.com
         slug: sublimetext
         logo_path: .github/assets/skill-icons/sublime-text.svg
         logo_source: iconify:logos
@@ -570,9 +653,11 @@ categories:
         logo_style: sourced-brand
         color: FF9800
       - name: GNU Make
+        url: https://www.gnu.org/software/make/
         slug: make
         color: 6D00CC
       - name: uv
+        url: https://docs.astral.sh/uv/
         slug: uv
         logo_path: .github/assets/skill-icons/uv.svg
         logo_source: iconify:devicon
@@ -581,6 +666,7 @@ categories:
         logo_style: sourced-brand
         color: DE5FE9
       - name: pnpm
+        url: https://pnpm.io
         slug: pnpm
         logo_path: .github/assets/skill-icons/pnpm.svg
         logo_source: iconify:devicon
@@ -589,6 +675,7 @@ categories:
         logo_style: sourced-brand
         color: F69220
       - name: CMake
+        url: https://cmake.org
         slug: cmake
         logo_path: .github/assets/skill-icons/cmake.svg
         logo_source: iconify:devicon
@@ -597,14 +684,17 @@ categories:
         logo_style: sourced-brand
         color: 064F8C
       - name: Pre-commit
+        url: https://pre-commit.com
         slug: precommit
         color: FAB040
         logo_color: black
       - name: Ruff
+        url: https://docs.astral.sh/ruff/
         slug: ruff
         color: D7FF64
         logo_color: black
       - name: Prettier
+        url: https://prettier.io
         slug: prettier
         logo_path: .github/assets/skill-icons/prettier.svg
         logo_source: iconify:logos
@@ -616,6 +706,7 @@ categories:
   - name: Optimization Tools
     skills:
       - name: AMPL
+        url: https://ampl.com
         logo_path: .github/assets/skill-icons/ampl.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -623,6 +714,7 @@ categories:
         logo_style: custom-brand
         color: E95420
       - name: IBM CPLEX
+        url: https://www.ibm.com/products/ilog-cplex-optimization-studio
         logo_path: .github/assets/skill-icons/ibm-cplex.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -630,9 +722,11 @@ categories:
         logo_style: custom-brand
         color: 052FAD
       - name: Gurobi
+        url: https://www.gurobi.com
         slug: gurobi
         color: EE3524
       - name: PuLP
+        url: https://coin-or.github.io/pulp/
         logo_path: .github/assets/skill-icons/pulp.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -640,6 +734,7 @@ categories:
         logo_style: custom-brand
         color: FFA500
       - name: Metaheuristics
+        url: https://en.wikipedia.org/wiki/Metaheuristic
         logo_path: .github/assets/skill-icons/metaheuristics.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -647,6 +742,7 @@ categories:
         logo_style: custom-generic
         color: 8B5CF6
       - name: Reinforcement Learning
+        url: https://en.wikipedia.org/wiki/Reinforcement_learning
         logo_path: .github/assets/skill-icons/reinforcement-learning.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -656,6 +752,7 @@ categories:
   - name: Web Development
     skills:
       - name: React
+        url: https://react.dev
         slug: react
         logo_path: .github/assets/skill-icons/react.svg
         logo_source: iconify:devicon
@@ -664,6 +761,7 @@ categories:
         logo_style: sourced-brand
         color: 61DAFB
       - name: Next.js
+        url: https://nextjs.org
         slug: nextdotjs
         logo_path: .github/assets/skill-icons/nextjs.svg
         logo_source: iconify:devicon
@@ -672,6 +770,7 @@ categories:
         logo_style: sourced-brand
         color: "000000"
       - name: Gatsby
+        url: https://www.gatsbyjs.com
         slug: gatsby
         logo_path: .github/assets/skill-icons/gatsby.svg
         logo_source: iconify:devicon
@@ -680,6 +779,7 @@ categories:
         logo_style: sourced-brand
         color: "663399"
       - name: Tailwind CSS
+        url: https://tailwindcss.com
         slug: tailwindcss
         logo_path: .github/assets/skill-icons/tailwindcss.svg
         logo_source: iconify:devicon
@@ -688,6 +788,7 @@ categories:
         logo_style: sourced-brand
         color: 06B6D4
       - name: Material User Interface (MUI)
+        url: https://mui.com
         slug: mui
         logo_path: .github/assets/skill-icons/mui.svg
         logo_source: iconify:devicon
@@ -696,9 +797,11 @@ categories:
         logo_style: sourced-brand
         color: 007FFF
       - name: Chakra UI
+        url: https://chakra-ui.com
         slug: chakraui
         color: "319795"
       - name: GraphQL
+        url: https://graphql.org
         slug: graphql
         logo_path: .github/assets/skill-icons/graphql.svg
         logo_source: iconify:logos
@@ -707,6 +810,7 @@ categories:
         logo_style: sourced-brand
         color: E10098
       - name: ESLint
+        url: https://eslint.org
         slug: eslint
         logo_path: .github/assets/skill-icons/eslint.svg
         logo_source: iconify:devicon
@@ -715,6 +819,7 @@ categories:
         logo_style: sourced-brand
         color: 4B32C3
       - name: npm
+        url: https://www.npmjs.com
         slug: npm
         logo_path: .github/assets/skill-icons/npm.svg
         logo_source: iconify:devicon
@@ -723,6 +828,7 @@ categories:
         logo_style: sourced-brand
         color: CB3837
       - name: Yarn
+        url: https://yarnpkg.com
         slug: yarn
         logo_path: .github/assets/skill-icons/yarn.svg
         logo_source: iconify:devicon
@@ -731,6 +837,7 @@ categories:
         logo_style: sourced-brand
         color: 2C8EBB
       - name: Jest
+        url: https://jestjs.io
         slug: jest
         logo_path: .github/assets/skill-icons/jest.svg
         logo_source: iconify:logos
@@ -739,6 +846,7 @@ categories:
         logo_style: sourced-brand
         color: C21325
       - name: Cypress
+        url: https://www.cypress.io
         slug: cypress
         logo_path: .github/assets/skill-icons/cypress.svg
         logo_source: iconify:logos
@@ -747,6 +855,7 @@ categories:
         logo_style: sourced-brand
         color: 69D3A7
       - name: Storybook
+        url: https://storybook.js.org
         slug: storybook
         logo_path: .github/assets/skill-icons/storybook.svg
         logo_source: iconify:devicon
@@ -755,15 +864,19 @@ categories:
         logo_style: sourced-brand
         color: FF4785
       - name: Vercel
+        url: https://vercel.com
         slug: vercel
         color: "000000"
       - name: Google Search Console
+        url: https://search.google.com/search-console
         slug: googlesearchconsole
         color: 458CF5
       - name: Google Analytics
+        url: https://marketingplatform.google.com/about/analytics/
         slug: googleanalytics
         color: E37400
       - name: Vite
+        url: https://vite.dev
         slug: vite
         logo_path: .github/assets/skill-icons/vite.svg
         logo_source: iconify:devicon
@@ -772,6 +885,7 @@ categories:
         logo_style: sourced-brand
         color: 646CFF
       - name: Vitest
+        url: https://vitest.dev
         slug: vitest
         logo_path: .github/assets/skill-icons/vitest.svg
         logo_source: iconify:devicon
@@ -780,6 +894,7 @@ categories:
         logo_style: sourced-brand
         color: 6E9F18
       - name: Playwright
+        url: https://playwright.dev
         logo_path: .github/assets/skill-icons/playwright.svg
         logo_source: iconify:devicon-plain
         logo_source_url: https://icon-sets.iconify.design/devicon-plain/playwright/
@@ -787,12 +902,15 @@ categories:
         logo_style: sourced-brand
         color: 2EAD33
       - name: shadcn/ui
+        url: https://ui.shadcn.com
         slug: shadcnui
         color: "000000"
       - name: Radix UI
+        url: https://www.radix-ui.com
         slug: radixui
         color: "161618"
       - name: Three.js
+        url: https://threejs.org
         slug: threedotjs
         logo_path: .github/assets/skill-icons/threejs.svg
         logo_source: iconify:devicon
@@ -801,6 +919,7 @@ categories:
         logo_style: sourced-brand
         color: "000000"
       - name: Electron
+        url: https://www.electronjs.org
         slug: electron
         logo_path: .github/assets/skill-icons/electron.svg
         logo_source: iconify:devicon
@@ -809,18 +928,23 @@ categories:
         logo_style: sourced-brand
         color: 47848F
       - name: Zod
+        url: https://zod.dev
         slug: zod
         color: 3E67B1
       - name: Framer Motion
+        url: https://motion.dev
         slug: framer
         color: 0055FF
       - name: Puppeteer
+        url: https://pptr.dev
         slug: puppeteer
         color: 40B5A4
       - name: Flask
+        url: https://flask.palletsprojects.com
         slug: flask
         color: "000000"
       - name: Express
+        url: https://expressjs.com
         slug: express
         logo_path: .github/assets/skill-icons/express.svg
         logo_source: iconify:devicon
@@ -831,15 +955,19 @@ categories:
   - name: Miscellaneous
     skills:
       - name: Jira
+        url: https://www.atlassian.com/software/jira
         slug: jira
         color: 0052CC
       - name: Confluence
+        url: https://www.atlassian.com/software/confluence
         slug: confluence
         color: 172B4D
       - name: Sphinx Docs
+        url: https://www.sphinx-doc.org
         slug: sphinx
         color: 0A507A
       - name: Figma
+        url: https://www.figma.com
         slug: figma
         logo_path: .github/assets/skill-icons/figma.svg
         logo_source: iconify:devicon
@@ -848,6 +976,7 @@ categories:
         logo_style: sourced-brand
         color: F24E1E
       - name: Canva
+        url: https://www.canva.com
         logo_path: .github/assets/skill-icons/canva.svg
         logo_source: iconify:bxl
         logo_source_url: https://icon-sets.iconify.design/bxl/canva/
@@ -855,12 +984,15 @@ categories:
         logo_style: sourced-brand
         color: 00C4CC
       - name: Notion
+        url: https://www.notion.com
         slug: notion
         color: "000000"
       - name: Asana
+        url: https://asana.com
         slug: asana
         color: F06A6A
       - name: Obsidian
+        url: https://obsidian.md
         slug: obsidian
         logo_path: .github/assets/skill-icons/obsidian.svg
         logo_source: iconify:logos
@@ -869,15 +1001,19 @@ categories:
         logo_style: sourced-brand
         color: 7C3AED
       - name: Mermaid.js
+        url: https://mermaid.js.org
         slug: mermaid
         color: FF3670
       - name: Google Colab
+        url: https://colab.research.google.com
         slug: googlecolab
         color: F9AB00
       - name: Replit
+        url: https://replit.com
         slug: replit
         color: F26207
       - name: Markdown
+        url: https://daringfireball.net/projects/markdown/
         slug: markdown
         logo_path: .github/assets/skill-icons/markdown.svg
         logo_source: iconify:devicon
@@ -886,6 +1022,7 @@ categories:
         logo_style: sourced-brand
         color: "000000"
       - name: LaTeX
+        url: https://www.latex-project.org
         slug: latex
         logo_path: .github/assets/skill-icons/latex.svg
         logo_source: iconify:devicon
@@ -894,12 +1031,15 @@ categories:
         logo_style: sourced-brand
         color: 008080
       - name: Overleaf
+        url: https://www.overleaf.com
         slug: overleaf
         color: 47A141
       - name: Raspberry Pi
+        url: https://www.raspberrypi.com
         slug: raspberrypi
         color: A22846
       - name: Arduino
+        url: https://www.arduino.cc
         slug: arduino
         logo_path: .github/assets/skill-icons/arduino.svg
         logo_source: iconify:devicon
@@ -908,12 +1048,15 @@ categories:
         logo_style: sourced-brand
         color: 00878F
       - name: Autodesk
+        url: https://www.autodesk.com
         slug: autodesk
         color: "000000"
       - name: Boxy SVG
+        url: https://boxy-svg.com
         slug: boxysvg
         color: 3584E3
       - name: Pylint
+        url: https://pylint.readthedocs.io
         logo_path: .github/assets/skill-icons/pylint.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -921,6 +1064,7 @@ categories:
         logo_style: custom-brand
         color: 2A6DB2
       - name: autoflake
+        url: https://github.com/PyCQA/autoflake
         logo_path: .github/assets/skill-icons/autoflake.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -928,6 +1072,7 @@ categories:
         logo_style: custom-brand
         color: 1C1C1C
       - name: Pylama
+        url: https://github.com/klen/pylama
         logo_path: .github/assets/skill-icons/pylama.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -935,9 +1080,11 @@ categories:
         logo_style: custom-brand
         color: 009485
       - name: Homebrew
+        url: https://brew.sh
         slug: homebrew
         color: FBB040
       - name: Prometheus
+        url: https://prometheus.io
         slug: prometheus
         logo_path: .github/assets/skill-icons/prometheus.svg
         logo_source: iconify:devicon
@@ -946,9 +1093,11 @@ categories:
         logo_style: sourced-brand
         color: E6522C
       - name: Grafana
+        url: https://grafana.com
         slug: grafana
         color: F46800
       - name: Sentry
+        url: https://sentry.io
         slug: sentry
         logo_path: .github/assets/skill-icons/sentry.svg
         logo_source: iconify:devicon
@@ -957,9 +1106,11 @@ categories:
         logo_style: sourced-brand
         color: 362D59
       - name: OpenTelemetry
+        url: https://opentelemetry.io
         slug: opentelemetry
         color: "000000"
       - name: Kaggle
+        url: https://www.kaggle.com
         slug: kaggle
         logo_path: .github/assets/skill-icons/kaggle.svg
         logo_source: iconify:devicon

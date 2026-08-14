@@ -14,6 +14,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from datetime import date
+from typing import Any
 
 import numpy as np
 
@@ -23,9 +24,12 @@ from .shared import (
     WIDTH,
     ElementBudget,
     WorldState,
+    build_style_dialect,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
+    extract_accretion_channels,
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
@@ -157,7 +161,7 @@ def _norm_log(value: float, scale: float) -> float:
     return min(1.0, math.log1p(safe_value) / math.log1p(safe_scale))
 
 
-def _daily_contribution_series(metrics: dict) -> dict[str, int]:
+def _daily_contribution_series(metrics: dict[str, Any]) -> dict[str, int]:
     """Return deterministic per-day contribution counts when available."""
     daily = metrics.get("contributions_daily")
     if isinstance(daily, dict) and daily:
@@ -170,7 +174,7 @@ def _daily_contribution_series(metrics: dict) -> dict[str, int]:
     return {}
 
 
-def _recent_contribution_volume(metrics: dict, *, days: int = 45) -> int:
+def _recent_contribution_volume(metrics: dict[str, Any], *, days: int = 45) -> int:
     """Rolling contribution sum used to express recent magnetic agitation."""
     daily = _daily_contribution_series(metrics)
     if not daily:
@@ -202,7 +206,7 @@ def _event_dates(events: object, *keys: str) -> list[date]:
 
 
 def _compute_ferrofluid_signals(
-    metrics: dict,
+    metrics: dict[str, Any],
     world: WorldState,
     *,
     repo_count: int,
@@ -285,10 +289,12 @@ def _compute_ferrofluid_signals(
         else False
     )
 
+    accretion = extract_accretion_channels(metrics)
     social_pull = _norm_log(
         stars + 1.4 * forks + 0.8 * followers + 0.6 * watchers + 0.5 * network,
         2200.0,
     )
+    social_pull = min(1.0, 0.62 * social_pull + 0.38 * accretion.star_scale)
     build_volume = _norm_log(
         total_commits
         + 2.0 * total_prs
@@ -297,6 +303,7 @@ def _compute_ferrofluid_signals(
         + 1.5 * public_gists,
         14000.0,
     )
+    build_volume = min(1.0, 0.70 * build_volume + 0.30 * accretion.commit_scale)
     base_collaboration = _norm_log(
         len(releases) * 3 + len(recent_merged_prs) + pr_review_count * 0.5,
         80.0,
@@ -370,7 +377,9 @@ def _compute_ferrofluid_signals(
             + 0.05 * release_charge
             + 0.05 * traffic_heat
             + 0.04 * world.energy
-            + 0.03 * max(0.0, min(1.0, maturity_hint)),
+            + 0.03 * max(0.0, min(1.0, maturity_hint))
+            + 0.14 * accretion.follower_scale
+            + 0.08 * accretion.star_scale,
         ),
     )
     fluid_response = min(
@@ -428,6 +437,8 @@ def _compute_ferrofluid_signals(
                 + 35 * star_velocity_pull
                 + 26 * traffic_heat
                 + 22 * merge_cadence
+                + 36 * accretion.star_scale
+                + 18 * accretion.follower_scale
             ),
         ),
     )
@@ -727,7 +738,7 @@ def _ambient_ripple_specs(
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -737,6 +748,7 @@ def generate(
 ) -> str:
     """Render a ferrofluid magnetism sculpture as an SVG string."""
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("ferrofluid", metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     maturity_hint = 1.0 if timeline_enabled else mat
@@ -761,8 +773,13 @@ def generate(
     # ── Extract metrics ───────────────────────────────────────────
     raw_repos = metrics.get("repos") or metrics.get("top_repos") or []
     preferred_repo_names = metrics.get("repo_visual_order")
+    repo_candidates = (
+        [repo for repo in raw_repos if isinstance(repo, dict)]
+        if isinstance(raw_repos, list)
+        else []
+    )
     repos = order_repos_for_visual_plan(
-        list(raw_repos) if isinstance(raw_repos, list) else [],
+        repo_candidates,
         preferred_names=(
             preferred_repo_names
             if isinstance(preferred_repo_names, (list, tuple))
@@ -785,7 +802,7 @@ def generate(
     )
 
     # ── Timeline window ───────────────────────────────────────────
-    def _repo_date(repo: dict) -> str | None:
+    def _repo_date(repo: dict[str, Any]) -> str | None:
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
             val = repo.get(key)
             if isinstance(val, str) and val.strip():
@@ -843,7 +860,7 @@ def generate(
     surface_tension = signals.surface_tension
 
     dipoles: list[tuple[float, float, float]] = []
-    spike_meta: list[dict] = []  # per-repo metadata for timeline
+    spike_meta: list[dict[str, Any]] = []  # per-repo metadata for timeline
     for index, repo in enumerate(top_repos):
         rx, ry = repo_to_canvas_position(
             repo, visual_seed, WIDTH, pool_y * 0.9, strategy="language_cluster"
@@ -935,7 +952,7 @@ def generate(
         WIDTH,
         HEIGHT,
         pool_y,
-        maturity_ramp=signals.field_gain,
+        maturity_ramp=signals.field_gain * dialect.knobs["field_gain"],
     )
 
     # ── Find spikes ───────────────────────────────────────────────
@@ -953,6 +970,7 @@ def generate(
         + 0.08 * signals.merge_cadence
         + 0.06 * signals.release_charge
     )
+    spike_heights *= dialect.knobs["spike_scale"]
 
     # ── Lighting angle from time of day ───────────────────────────
     tod_angles = {"dawn": 20.0, "day": 70.0, "golden": 150.0, "night": 250.0}
@@ -969,7 +987,8 @@ def generate(
         f'width="{WIDTH}" height="{HEIGHT}" '
         f'data-surface-tension="{surface_tension:.3f}" '
         f'data-highlight-density="{signals.highlight_density:.3f}" '
-        f'data-dipole-lift="{signals.dipole_lift:.3f}">'
+        f'data-dipole-lift="{signals.dipole_lift:.3f}" '
+        f"{dialect.svg_attrs()}>"
     )
 
     if timeline_enabled:
@@ -1345,5 +1364,6 @@ def generate(
         )
         budget.add(1)
 
+    P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)

@@ -575,8 +575,15 @@ def test_wakatime_cli_command_branches(
     monkeypatch.setenv("WAKATIME_API_KEY", "key")
     monkeypatch.setattr(wakatime, "generate_waka_section", lambda **_kwargs: "body")
     output = tmp_path / "waka.md"
-    readme_cmd.wakatime(output=output, no_github=True)
+    svg = tmp_path / "wakatime.svg"
+    monkeypatch.setattr(
+        "scripts.wakatime_svg.generate_wakatime_svg",
+        lambda **kwargs: kwargs["output_path"].write_text("<svg/>\n", encoding="utf-8")
+        or kwargs["output_path"],
+    )
+    readme_cmd.wakatime(output=output, no_github=True, svg_output=svg)
     assert output.read_text(encoding="utf-8") == "body\n"
+    assert svg.read_text(encoding="utf-8") == "<svg/>\n"
     monkeypatch.setattr(
         wakatime,
         "generate_waka_section",
@@ -767,10 +774,12 @@ def test_supplemental_full_generation_optional_paths(
         output_dir=tmp_path / "img",
         manifest_path=tmp_path / "manifest.json",
     )
-    assert all(status.enabled for status in statuses.values())
+    assert statuses["habits"].enabled is True
+    assert statuses["activity"].enabled is False
+    assert statuses["music"].enabled is True
+    assert statuses["posts"].enabled is True
     assert set(written) == {
         "metrics-habits",
-        "metrics-activity",
         "metrics-music",
         "metrics-posts",
     }

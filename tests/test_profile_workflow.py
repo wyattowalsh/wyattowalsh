@@ -1,5 +1,6 @@
 """Workflow contract tests for the profile updater."""
 
+import hashlib
 import os
 import re
 import shlex
@@ -293,6 +294,8 @@ def test_wakatime_job_is_first_party_artifact_only() -> None:
     assert "anmol098/waka-readme-stats" not in workflow
     assert "anmol098" not in workflow
     assert "generate wakatime" in waka
+    assert "--svg-output" in waka
+    assert "wakatime.svg" in waka
     assert "waka-readme-${{ github.run_id }}" in waka
     assert "upload-artifact@" in waka
     assert "contents: read" in waka
@@ -304,12 +307,13 @@ def test_wakatime_job_is_first_party_artifact_only() -> None:
     assert "PUSH_BRANCH_NAME" not in workflow
 
 
-def test_generate_assets_runs_banner_step() -> None:
+def test_generate_assets_skips_banner_generation() -> None:
     workflow = _workflow_text()
+    assets = _job_block(workflow, "generate-assets")
 
-    assert "generate banner --config-path config.yaml" in workflow
-    assert "Generate light and dark banners" in workflow
-    assert "banner*.svg" in workflow
+    assert "generate banner" not in assets
+    assert "Verify pinned light and dark banners" in assets
+    assert "banner*.svg" in assets
 
 
 def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
@@ -318,6 +322,21 @@ def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
     assert BANNER_DARK.is_file(), f"missing required asset: {BANNER_DARK}"
     assert BANNER_LIGHT.stat().st_size > 0, f"empty asset: {BANNER_LIGHT}"
     assert BANNER_DARK.stat().st_size > 0, f"empty asset: {BANNER_DARK}"
+
+
+def test_pinned_banners_match_origin_main_bytes() -> None:
+    """Header pair must stay byte-identical to origin/main."""
+    expected = {
+        BANNER_LIGHT: (
+            "a5e8d08ffb218924a322e423318219af5909f9ff4923891103842a8f7f408649"
+        ),
+        BANNER_DARK: (
+            "6aaf135ac987e66ddf0594722ed9980c46c374b8a4db09ea05db56cff588f9b7"
+        ),
+    }
+    for path, digest in expected.items():
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        assert actual == digest, f"{path} hash {actual} != pinned main {digest}"
 
 
 def test_uv_sync_requires_locked_and_forbids_all_groups() -> None:
@@ -344,7 +363,7 @@ def test_generate_assets_installs_exact_svgo_release() -> None:
 
     assert "npm install --global --no-audit --no-fund svgo@4.0.2" in assets
     assert assets.index("Install SVG optimizer") < assets.index(
-        "Generate light and dark banners"
+        "Verify pinned light and dark banners"
     )
 
 
@@ -497,6 +516,8 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
     finalize = _job_block(workflow, "finalize")
     assert "waka-readme-${{ github.run_id }}" in finalize
     assert "scripts.wakatime_readme apply" in finalize
+    assert ".github/assets/img/wakatime.svg" in finalize
+    assert "metrics-activity.svg" not in finalize
 
     assert workflow.count("git push") == 1
     assert "update-skills:" not in workflow
@@ -916,19 +937,28 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
 
     assert "plugin_isocalendar: yes" in primary
     assert "plugin_languages: yes" in primary
+    assert 'plugin_languages_threshold: "0%"' in primary
     assert "plugin_notable: yes" in primary
     assert "plugin_topics: yes" in primary
+    assert "plugin_topics_limit: 30" in primary
     assert "plugin_achievements: no" in primary
     assert "plugin_achievements_display" not in primary
     assert "plugin_achievements_threshold" not in primary
     assert "plugin_achievements_limit" not in primary
     assert "plugin_calendar: yes" in primary
-    assert "plugin_calendar_limit: 1" in primary
-    assert "plugin_habits: no" in primary
+    assert "plugin_calendar_limit: 0" in primary
+    assert "plugin_habits: yes" in primary
     assert "plugin_gists: no" in primary
+    assert "plugin_lines: no" in primary
+    assert "plugin_music: no" in primary
 
     assert "plugin_repositories: yes" in additional
     assert "plugin_people: yes" in additional
+    assert "plugin_people_limit: 36" in additional
+    assert (
+        "plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
+        "== 'true' && '16' || '0' }}"
+    ) in additional
     assert "plugin_activity: no" in additional
     assert "plugin_habits: no" in additional
     assert "plugin_music: no" in additional
@@ -941,6 +971,9 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_music: no" in extra
     assert "plugin_activity: no" in extra
     assert "plugin_habits: no" in extra
+    assert "plugin_gists: no" in extra
+    assert "plugin_lines:" not in extra
+    assert "plugin_achievements:" not in extra
 
 
 def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:

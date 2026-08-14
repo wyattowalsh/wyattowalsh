@@ -27,10 +27,12 @@ from .shared import (
     WorldState,
     _build_world_palette_extended,
     activity_tempo,
+    build_style_dialect,
     compute_derived_metrics,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
@@ -495,10 +497,15 @@ def _commit_hour_focus(commit_hours: object) -> tuple[float, float]:
 
     hours: dict[int, float] = {}
     for raw_hour, raw_count in commit_hours.items():
-        try:
-            hour = int(raw_hour)
+        hour = _coerce_nonnegative_int(raw_hour)
+        if isinstance(raw_count, bool):
             count = float(raw_count)
-        except (TypeError, ValueError):
+        elif isinstance(raw_count, (int, float, str)):
+            try:
+                count = float(raw_count)
+            except (TypeError, ValueError):
+                continue
+        else:
             continue
         if 0 <= hour <= 23 and count > 0:
             hours[hour] = hours.get(hour, 0.0) + count
@@ -813,7 +820,7 @@ def _path_d(points: list[tuple[float, float]]) -> str:
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -837,6 +844,7 @@ def generate(
     str : complete SVG markup.
     """
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("physarum", metrics)
     config = CFG
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -949,7 +957,7 @@ def generate(
     )
 
     # ── Timeline window ───────────────────────────────────────────
-    def _repo_date(repo: dict) -> str | None:
+    def _repo_date(repo: dict[str, Any]) -> str | None:
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
             val = repo.get(key)
             if isinstance(val, str) and val.strip():
@@ -1156,6 +1164,7 @@ def generate(
             * recency_mult
             * activity_mult
             * (0.52 + 0.70 * visibility)
+            * dialect.knobs["nutrient_scale"]
         )
         gx = int(min(grid - 1, max(0, cx / cell_w)))
         gy = int(min(grid - 1, max(0, cy / cell_h)))
@@ -1239,7 +1248,10 @@ def generate(
         * (1.0 + 0.18 * streak_signal + 0.12 * pr_burst + 0.08 * fresh_share),
     )
     min_agents = 12 if activity_total <= 3 and repo_count == 0 else 24
-    n_agents = max(min_agents, min(2000, n_agents))
+    n_agents = max(
+        min_agents,
+        min(2000, n_agents + int(round(36 * dialect.knobs["vein_gain"]))),
+    )
 
     # Evaporation: high energy = slow evaporation = thicker network
     stability_signal = min(
@@ -1313,7 +1325,9 @@ def generate(
             + 0.06 * min(topic_diversity, 6),
         ),
     )
-    deposit_amount = config.deposit_amount * deposit_scale
+    deposit_amount = (
+        config.deposit_amount * deposit_scale * dialect.knobs["trail_scale"]
+    )
 
     # ── Run simulation ────────────────────────────────────────────
     trail = _run_simulation(
@@ -1367,7 +1381,8 @@ def generate(
 
     P.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" '
-        f'viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">'
+        f'viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}" '
+        f"{dialect.svg_attrs()}>"
     )
 
     # ── Timeline CSS ──────────────────────────────────────────────
@@ -1581,5 +1596,6 @@ def generate(
             )
             budget.add(1)
 
+    P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)

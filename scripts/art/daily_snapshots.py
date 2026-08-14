@@ -4,7 +4,7 @@ daily_snapshots.py — Historical daily state reconstruction
 Reconstructs what a GitHub profile looked like on each calendar day
 from account creation through a configurable terminal day,
 producing DailySnapshot objects
-that all 4 art generators can consume for timelapse GIF rendering.
+that all six living-art styles consume from one shared daily spine.
 
 Public API::
 
@@ -406,15 +406,13 @@ def _build_render_state(
         else 0,
     )
 
-    current_issue_stats = (
-        metrics_dict.get("issue_stats")
-        if isinstance(metrics_dict.get("issue_stats"), dict)
-        else {}
+    raw_current_issue_stats = metrics_dict.get("issue_stats")
+    current_issue_stats: dict[str, Any] = (
+        raw_current_issue_stats if isinstance(raw_current_issue_stats, dict) else {}
     )
-    previous_issue_stats = (
-        previous_render_state.get("issue_stats")
-        if isinstance(previous_render_state.get("issue_stats"), dict)
-        else {}
+    raw_previous_issue_stats = previous_render_state.get("issue_stats")
+    previous_issue_stats: dict[str, Any] = (
+        raw_previous_issue_stats if isinstance(raw_previous_issue_stats, dict) else {}
     )
     open_issue_envelope = max(
         int(metrics_dict.get("open_issues_count", 0) or 0),
@@ -978,7 +976,10 @@ def build_daily_snapshots(
     owner: str = "",
     include_today: bool = False,
 ) -> list[DailySnapshot]:
-    """Build one DailySnapshot per day from account creation to terminal day.
+    """Build one DailySnapshot per calendar day from account creation to now.
+
+    This is the shared living-art spine: every style samples the same
+    end-of-day cumulative world. The clock stays one frame per sampled day.
 
     Parameters
     ----------

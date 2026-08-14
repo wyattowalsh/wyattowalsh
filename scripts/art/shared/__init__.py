@@ -14,10 +14,22 @@ Implementation lives in focused sibling modules:
 - ``svg`` — SVG markup, filters, weather overlays, SMIL
 - ``palette`` — named art palettes + extended world palettes
 - ``visual`` — repo layout, derived metrics, element budgets
+- ``accretion`` — shared daily-spine channels + per-style dialects
 """
 
 from __future__ import annotations
 
+from .accretion import (
+    ACCRETION_CHANNELS,
+    STYLE_DIALECTS,
+    AccretionChannels,
+    StyleDialect,
+    accretion_log_scale,
+    build_style_dialect,
+    channel_mark_count,
+    dialect_group_markup,
+    extract_accretion_channels,
+)
 from .color import (
     ensure_contrast,
     hex_to_oklch,
@@ -102,6 +114,8 @@ from .world_state import (
 )
 
 __all__ = [
+    "ACCRETION_CHANNELS",
+    "AccretionChannels",
     "ART_PALETTE_ANCHORS",
     "CLUSTER_PALETTES",
     "CX",
@@ -119,7 +133,9 @@ __all__ = [
     "NOISE_PRESETS",
     "Noise2D",
     "RepoSignalEntry",
+    "STYLE_DIALECTS",
     "StarVelocitySignal",
+    "StyleDialect",
     "TimelineEventEntry",
     "WIDTH",
     "WorldState",
@@ -127,17 +143,22 @@ __all__ = [
     "_build_world_palette_extended",
     "_hex_slice",
     "_seed_hash",
+    "accretion_log_scale",
     "activity_tempo",
     "annotation_tooltip_metadata",
     "atmospheric_haze_filter",
     "aurora_band_elements",
     "aurora_filter",
     "blend_mode_filter",
+    "build_style_dialect",
+    "channel_mark_count",
     "compute_derived_metrics",
     "compute_maturity",
     "compute_world_state",
     "contributions_monthly_to_daily_series",
+    "dialect_group_markup",
     "ensure_contrast",
+    "extract_accretion_channels",
     "firefly_elements",
     "flow_field_lines",
     "hex_frac",

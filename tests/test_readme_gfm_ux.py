@@ -108,10 +108,9 @@ def test_tech_stack_has_no_teaser_shields() -> None:
     body = tech.split("## Tech Stack", 1)[1].lstrip()
 
     assert body.startswith("<details>")
-    assert (
-        "<summary><strong>View full stack (200+ technologies)</strong></summary>"
-        in tech
-    )
+    assert "<summary><strong>Tech Stack</strong></summary>" in tech
+    assert "View full stack" not in tech
+    assert "200+" not in tech
     assert "<!-- SKILLS:START -->" in tech
     assert "<!-- SKILLS:END -->" in tech
 
@@ -160,16 +159,33 @@ def test_readme_section_order_and_managed_markers() -> None:
     assert banner_idx < badges_start < featured_start < living_start
 
 
-def test_waka_and_blog_remain_in_details_disclosures() -> None:
-    """Secondary surfaces stay collapsible; Living Art stays outside them."""
+def test_waka_and_blog_are_visible_not_details() -> None:
+    """WakaTime and blog are open-flow surfaces; only Tech Stack stays collapsed."""
     readme = _read_readme()
     living = _living_art_section(readme)
 
-    assert "<summary><strong>WakaTime Stats</strong></summary>" in readme
-    assert "<summary><strong>Latest Blog Posts</strong></summary>" in readme
+    assert "<summary><strong>WakaTime Stats</strong></summary>" not in readme
+    assert "<summary><strong>Latest Blog Posts</strong></summary>" not in readme
+    assert 'src=".github/assets/img/wakatime.svg"' in readme
     assert "<!--START_SECTION:waka-->" in readme
     assert "<!--END_SECTION:waka-->" in readme
+    assert "## Latest Blog Posts" in readme
     assert "<!-- README:BLOG_POSTS:START -->" in readme
+    assert "metrics-activity.svg" not in readme
+    assert "200+" not in readme
+    assert "komarev.com/ghpvc/" in readme
+    assert "style=for-the-badge" in readme
+    assert "style=flat-square" not in readme
+
+    blog = readme[
+        readme.index("<!-- README:BLOG_POSTS:START -->") : readme.index(
+            "<!-- README:BLOG_POSTS:END -->"
+        )
+    ]
+    assert blog.count('alt="Blog post card:') >= 4
+    assert re.search(r"20\d{2}-\d{2}-\d{2}", blog)
+    assert " · " in blog
+    assert "<details" not in blog.lower()
 
     # Living Art GIFs must not be nested inside any details block.
     for match in re.finditer(
@@ -179,6 +195,8 @@ def test_waka_and_blog_remain_in_details_disclosures() -> None:
         block = match.group(0)
         assert "living-" not in block
         assert "## Living Art" not in block
+        assert "wakatime.svg" not in block
+        assert "README:BLOG_POSTS" not in block
 
     assert "<details" not in living
 
@@ -225,4 +243,7 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     assert 'alt="AI/ML"' not in tech
     assert 'alt="Open Source"' not in tech
     assert tech.lstrip().startswith("<details>")
+    assert "<summary><strong>Tech Stack</strong></summary>" in tech
+    assert "View full stack" not in tech
+    assert "200+" not in tech
     assert "kept" in tech

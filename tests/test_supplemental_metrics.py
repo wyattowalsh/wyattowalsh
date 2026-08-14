@@ -12,14 +12,17 @@ from scripts.supplemental_metrics import (
     XOAuth1Credentials,
     _build_x_oauth1_authorization_header,
     _fetch_authenticated_x_user,
+    _fetch_image_data_uri,
     _fetch_latest_posts,
     _fetch_recent_tracks,
+    _render_habits_svg,
+    _render_music_svg,
     generate_supplemental_metrics,
     validate_supplemental_metrics,
 )
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, object]:
     return {
         "contributions_calendar": [
             {"date": "2026-04-20", "count": 5, "color": "#1f6feb"},
@@ -81,14 +84,33 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     )
 
     assert (output_dir / "metrics-habits.svg").exists()
-    assert (output_dir / "metrics-activity.svg").exists()
+    assert not (output_dir / "metrics-activity.svg").exists()
     assert not (output_dir / "metrics-music.svg").exists()
     assert not (output_dir / "metrics-posts.svg").exists()
     assert statuses["music"].enabled is False
     assert statuses["posts"].enabled is False
 
+    habits_svg = (output_dir / "metrics-habits.svg").read_text(encoding="utf-8")
+    assert "Coding habits" in habits_svg
+    assert "Focus" in habits_svg
+    assert "Peak hour" in habits_svg
+    assert "agents" in habits_svg
+    assert "14:00" in habits_svg
+    assert "habits-focus" in habits_svg
+    assert "habits-peak" in habits_svg
+    assert "habits-streaks" in habits_svg
+    assert "prefers-color-scheme: dark" in habits_svg
+    assert "30-day activity" not in habits_svg
+    assert "langs:" not in habits_svg
+    assert "uppercase; }}" not in habits_svg
+
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["habits"]["enabled"] is True
+    assert manifest["habits"]["required_markers"] == [
+        "Coding habits",
+        "Focus",
+        "Peak hour",
+    ]
     assert manifest["music"]["enabled"] is False
 
 
@@ -133,7 +155,7 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(
 ) -> None:
     calls: list[str] = []
 
-    def fake_request_json(url: str, **_: object) -> dict:
+    def fake_request_json(url: str, **_: object) -> dict[str, object]:
         calls.append(url)
         if "api/token" in url:
             return {"access_token": "spotify-access"}
@@ -144,6 +166,19 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(
                     "track": {
                         "name": "Song A",
                         "artists": [{"name": "Artist A"}, {"name": "Artist B"}],
+                        "album": {
+                            "name": "Album A",
+                            "images": [
+                                {
+                                    "url": "https://i.scdn.co/image/large",
+                                    "width": 640,
+                                },
+                                {
+                                    "url": "https://i.scdn.co/image/mid",
+                                    "width": 300,
+                                },
+                            ],
+                        },
                     },
                 }
             ]
@@ -156,11 +191,13 @@ def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(
     assert len(tracks) == 1
     assert tracks[0]["name"] == "Song A"
     assert tracks[0]["artists"] == "Artist A, Artist B"
+    assert tracks[0]["album"] == "Album A"
+    assert tracks[0]["image_url"] == "https://i.scdn.co/image/mid"
     assert any("api/token" in url for url in calls)
 
 
 def test_fetch_recent_tracks_rejects_malformed_artist_payload(monkeypatch) -> None:
-    def fake_request_json(url: str, **_: object) -> dict:
+    def fake_request_json(url: str, **_: object) -> dict[str, object]:
         if "api/token" in url:
             return {"access_token": "spotify-access"}
         return {
@@ -209,7 +246,7 @@ def test_build_x_oauth1_authorization_header_contains_signature() -> None:
 def test_fetch_authenticated_x_user_uses_oauth1_headers(monkeypatch) -> None:
     captured: dict[str, str] = {}
 
-    def fake_request_json(url: str, **kwargs: object) -> dict:
+    def fake_request_json(url: str, **kwargs: object) -> dict[str, object]:
         captured["url"] = url
         headers = kwargs.get("headers")
         assert isinstance(headers, dict)
@@ -319,3 +356,152 @@ def test_generate_supplemental_metrics_enables_x_posts_from_oauth1_secret_quarte
 
     assert captured["api_key"] == "api-key"
     assert statuses["posts"].enabled is True
+
+
+def _sample_tracks() -> list[dict[str, str]]:
+    return [
+        {
+            "name": "Surreality",
+            "artists": "Scope DJ",
+            "played_at": "2026-04-22T12:00:00Z",
+            "album": "Hardstyle Nights",
+            "image_url": "https://i.scdn.co/image/hero",
+        },
+        {
+            "name": "Melancholia",
+            "artists": "Wasted Penguinz",
+            "played_at": "2026-04-22T11:00:00Z",
+            "album": "Melancholia",
+            "image_url": "",
+        },
+        {
+            "name": "Traveling",
+            "artists": "Coone, Scope DJ",
+            "played_at": "2026-04-22T10:00:00Z",
+            "album": "",
+            "image_url": "",
+        },
+    ]
+
+
+def test_render_habits_svg_is_designed_dashboard_not_four_line_recap() -> None:
+    svg = _render_habits_svg(_sample_metrics())
+
+    assert svg.count("<rect") > 20
+    assert "habits-cadence" in svg
+    assert "current" in svg
+    assert "longest" in svg
+    assert "Coding habits" in svg
+
+
+def test_render_music_svg_hero_includes_extras_only_when_data_exists(
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_image_data_uri",
+        lambda url, **_: f"data:image/jpeg;base64,abc{url[-4:]}",
+    )
+
+    hero_and_extras = _render_music_svg(_sample_tracks())
+    assert "Recently played" in hero_and_extras
+    assert "Spotify" in hero_and_extras
+    assert "music-hero" in hero_and_extras
+    assert "Surreality" in hero_and_extras
+    assert "Scope DJ" in hero_and_extras
+    assert "Hardstyle Nights" in hero_and_extras
+    assert "music-extras" in hero_and_extras
+    assert "Melancholia" in hero_and_extras
+    assert "prefers-color-scheme: dark" in hero_and_extras
+
+    hero_only = _render_music_svg(_sample_tracks()[:1])
+    assert "music-hero" in hero_only
+    assert "Surreality" in hero_only
+    assert "music-extras" not in hero_only
+    assert "Melancholia" not in hero_only
+
+
+def test_render_music_svg_survives_missing_artwork(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_image_data_uri",
+        lambda *_args, **_kwargs: None,
+    )
+
+    svg = _render_music_svg(_sample_tracks()[:1])
+    assert "Surreality" in svg
+    assert "<image " not in svg
+
+
+def test_fetch_image_data_uri_rejects_non_http_and_non_image(monkeypatch) -> None:
+    assert _fetch_image_data_uri("file:///tmp/art.jpg") is None
+
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._request_bytes",
+        lambda *_args, **_kwargs: (b"not-an-image", "text/plain"),
+    )
+    assert _fetch_image_data_uri("https://i.scdn.co/image/x") is None
+
+    png = (
+        b"\x89PNG\r\n\x1a\n"
+        b"\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+        b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x00IEND\xaeB`\x82"
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._request_bytes",
+        lambda *_args, **_kwargs: (png, "image/png"),
+    )
+    uri = _fetch_image_data_uri("https://i.scdn.co/image/x")
+    assert uri is not None
+    assert uri.startswith("data:image/png;base64,")
+
+
+def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    output_dir = tmp_path / "img"
+    manifest_path = tmp_path / "metrics-supplemental.json"
+
+    monkeypatch.setenv("GITHUB_TOKEN", "test-token")
+    monkeypatch.setenv("SPOTIFY_CLIENT_ID", "client")
+    monkeypatch.setenv("SPOTIFY_CLIENT_SECRET", "secret")
+    monkeypatch.setenv("SPOTIFY_REFRESH_TOKEN", "refresh")
+    monkeypatch.delenv("X_API_KEY", raising=False)
+    monkeypatch.delenv("X_API_KEY_SECRET", raising=False)
+    monkeypatch.delenv("X_ACCESS_TOKEN", raising=False)
+    monkeypatch.delenv("X_ACCESS_TOKEN_SECRET", raising=False)
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics.collect_github_metrics",
+        lambda owner, repo, token: _sample_metrics(),
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_recent_activity",
+        lambda owner, token, limit=3: [],
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_recent_tracks",
+        lambda *_args: _sample_tracks(),
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_image_data_uri",
+        lambda *_args, **_kwargs: None,
+    )
+
+    statuses = generate_supplemental_metrics(
+        owner="wyattowalsh",
+        repo="wyattowalsh",
+        output_dir=output_dir,
+        manifest_path=manifest_path,
+    )
+
+    assert statuses["music"].enabled is True
+    music_svg = (output_dir / "metrics-music.svg").read_text(encoding="utf-8")
+    assert "Recently played" in music_svg
+    assert "Spotify" in music_svg
+    assert "Surreality" in music_svg
+    assert "music-hero" in music_svg
+    assert "music-extras" in music_svg
+    errors = validate_supplemental_metrics(
+        output_dir=output_dir,
+        manifest_path=manifest_path,
+    )
+    assert errors == []

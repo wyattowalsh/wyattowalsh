@@ -28,9 +28,12 @@ from .shared import (
     _build_world_palette_extended,
     activity_tempo,
     atmospheric_haze_filter,
+    build_style_dialect,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
+    extract_accretion_channels,
     hex_frac,
     is_monotonic_timelapse_metrics,
     map_date_to_loop_delay,
@@ -305,12 +308,14 @@ def _derive_landscape_dynamics(
     stability_parts = [issue_resolution, release_signal, 1.0 - legacy_share]
     stability_signal = sum(stability_parts) / len(stability_parts)
 
+    accretion = extract_accretion_channels(metrics)
     base_generations = max(1, int(maturity * 20))
     generations = max(
         1,
         int(
             round(
                 base_generations * (1.0 + activity_signal + contribution_signal * 0.35)
+                + 8 * accretion.commit_scale
             )
         ),
     )
@@ -329,7 +334,12 @@ def _derive_landscape_dynamics(
         )
         / 6.0
     )
-    pop_count = max(6, int(round(base_pop_count * (1.0 + pop_signal))))
+    pop_count = max(
+        6,
+        int(
+            round(base_pop_count * (1.0 + pop_signal + 0.55 * accretion.follower_scale))
+        ),
+    )
 
     base_mutation = max(0.1, 1.0 - maturity * 0.6) * (0.5 + tempo * 0.5)
     mutation_rate = max(
@@ -573,7 +583,7 @@ def _simulate_population(
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -600,6 +610,7 @@ def generate(
     """
     timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("genetic", metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     growth_mat = 1.0 if timeline_enabled else mat
@@ -626,8 +637,13 @@ def generate(
 
     raw_repos = metrics.get("repos", [])
     preferred_repo_names = metrics.get("repo_visual_order")
+    repo_candidates = (
+        [repo for repo in raw_repos if isinstance(repo, dict)]
+        if isinstance(raw_repos, list)
+        else []
+    )
     repos = order_repos_for_visual_plan(
-        list(raw_repos) if isinstance(raw_repos, list) else [],
+        repo_candidates,
         preferred_names=(
             preferred_repo_names
             if isinstance(preferred_repo_names, (list, tuple))
@@ -657,7 +673,7 @@ def generate(
     )
 
     # ── Timeline window ───────────────────────────────────────────
-    def _repo_date(repo: dict) -> str | None:
+    def _repo_date(repo: dict[str, Any]) -> str | None:
         for key in ("date", "created_at", "pushed_at", "updated_at"):
             val = repo.get(key)
             if isinstance(val, str) and len(val) >= 10:
@@ -749,7 +765,12 @@ def generate(
     )
     terrain_oct = max(
         2,
-        min(5, 2 + max(total_commits // 16000, activity_total // 900)),
+        min(
+            5,
+            2
+            + max(total_commits // 4000, activity_total // 900)
+            + int(round(2.0 * dialect.knobs["generation_gain"])),
+        ),
     )
     terrain_amp = 0.018 + min(
         0.028,
@@ -800,7 +821,7 @@ def generate(
 
     # Add Gaussian peaks to elevation
     peaks: list[
-        tuple[float, float, float, str, dict]
+        tuple[float, float, float, str, dict[str, Any]]
     ] = []  # (cx, cy, height, color, repo)
     micro_colonies: list[dict[str, Any]] = []
     repo_count_visible = len(primary_repos)
@@ -841,7 +862,7 @@ def generate(
             max_repo_age=max_repo_age,
         )
         visibility = visibility_norms[ri] if ri < len(visibility_norms) else 1.0
-        peak_h *= 0.58 + 0.72 * visibility
+        peak_h *= (0.58 + 0.72 * visibility) * dialect.knobs["peak_scale"]
         sigma_grid = max(
             1.6,
             sigma_grid * (0.74 + 0.42 * visibility) * (crowding_scale**0.45),
@@ -1042,7 +1063,8 @@ def generate(
         f'data-peak-count="{len(peaks)}" data-population="{pop_count}" '
         f'data-generations="{generations}" data-activity-midpoint="{activity_midpoint}" '
         f'data-activity-signal="{static_contour_signal:.3f}" '
-        f'data-population-signal="{static_population_signal:.3f}">'
+        f'data-population-signal="{static_population_signal:.3f}" '
+        f"{dialect.svg_attrs()}>"
     )
 
     if timeline_enabled:
@@ -1276,5 +1298,6 @@ def generate(
                 )
                 budget.add(1)
 
+    P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)

@@ -1,4 +1,6 @@
 import json
+import re
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -170,7 +172,7 @@ def test_main_svg_mode_disables_topography_timeline_for_static_frames(
     monkeypatch.setattr(
         animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
-    topo_calls: list[dict] = []
+    topo_calls: list[dict[str, Any]] = []
 
     def _capture_topo(*_args, **kwargs):
         topo_calls.append(kwargs)
@@ -244,7 +246,7 @@ def test_main_gif_mode_disables_topography_timeline(
     monkeypatch.setattr(
         animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
     )
-    topo_calls: list[dict] = []
+    topo_calls: list[dict[str, Any]] = []
 
     def _capture_topo(*_args, **kwargs):
         topo_calls.append(kwargs)
@@ -1137,3 +1139,269 @@ def test_main_svg_mode_propagates_generator_failure(
 
     with pytest.raises(RuntimeError, match="Simulated generator failure"):
         animate.main()
+
+
+def _accretion_metrics(
+    *,
+    repos: int,
+    stars: int,
+    commits: int,
+    followers: int,
+) -> dict[str, Any]:
+    repo_entries = []
+    languages: dict[str, int] = {}
+    for index in range(repos):
+        language = "Python" if index % 2 == 0 else "Go"
+        repo_entries.append(
+            {
+                "name": f"repo-{index}",
+                "language": language,
+                "stars": max(1, stars // max(1, repos - index)),
+                "forks": 1 + index,
+                "topics": ["ai" if index % 2 == 0 else "cli"],
+                "description": f"Repo {index}",
+                "age_months": 4 + index * 3,
+                "date": f"2024-01-{index + 1:02d}T12:00:00Z",
+            }
+        )
+        languages[language] = languages.get(language, 0) + 800 * (index + 1)
+    return {
+        "label": "Dialect Accretion",
+        "account_created": "2023-01-01T00:00:00Z",
+        "repos": repo_entries,
+        "repo_visual_order": [repo["name"] for repo in repo_entries],
+        "stars": stars,
+        "forks": repos,
+        "followers": followers,
+        "watchers": repos * 2,
+        "public_repos": repos,
+        "network_count": repos * 2,
+        "total_commits": commits,
+        "total_prs": max(1, repos * 3),
+        "total_issues": repos * 2,
+        "total_repos_contributed": repos,
+        "public_gists": repos,
+        "pr_review_count": repos,
+        "contributions_last_year": max(8, commits // 4),
+        "contributions_monthly": {"2024-01": max(4, commits // 20)},
+        "contributions_daily": {
+            f"2024-01-{day:02d}": 1 + (day % 3) for day in range(1, 6)
+        },
+        "languages": languages,
+        "language_count": len(languages),
+        "language_diversity": 0.4 + repos * 0.1,
+        "topic_clusters": {"ai": max(1, repos // 2), "cli": max(0, repos // 2)},
+        "repo_recency_bands": {"fresh": 1, "recent": max(0, repos - 1)},
+        "releases": [],
+        "recent_merged_prs": [],
+        "commit_hour_distribution": {12: 4, 18: 2},
+        "star_velocity": {
+            "recent_rate": max(0.2, stars / 20.0),
+            "peak_rate": max(0.4, stars / 12.0),
+            "trend": "rising",
+        },
+        "contribution_streaks": {
+            "current_streak_months": 1,
+            "longest_streak_months": 2,
+            "streak_active": True,
+        },
+        "issue_stats": {"open_count": 1, "closed_count": 3},
+        "open_issues_count": 1,
+    }
+
+
+def _dialect_attrs(svg: str) -> dict[str, Any]:
+    match = re.search(r'<g id="accretion-dialect"([^>]*)>', svg)
+    assert match, "Missing accretion dialect register"
+    attrs = match.group(1)
+
+    def _attr(name: str) -> str:
+        found = re.search(rf'{re.escape(name)}="([^"]*)"', attrs)
+        assert found, f"Missing {name} on accretion dialect"
+        return found.group(1)
+
+    return {
+        "family": _attr("data-dialect"),
+        "style": _attr("data-style"),
+        "repos": int(_attr("data-accretion-repos")),
+        "stars": int(_attr("data-accretion-stars")),
+        "commits": int(_attr("data-accretion-commits")),
+        "followers": int(_attr("data-accretion-followers")),
+        "star_scale": float(_attr("data-accretion-star-scale")),
+        "commit_scale": float(_attr("data-accretion-commit-scale")),
+        "follower_scale": float(_attr("data-accretion-follower-scale")),
+        "repo_scale": float(_attr("data-accretion-repo-scale")),
+    }
+
+
+def _channel_marks(svg: str, channel: str) -> int:
+    match = re.search(
+        rf'data-channel="{re.escape(channel)}"[^>]*data-mark-count="(\d+)"',
+        svg,
+    )
+    assert match, f"Missing {channel} accretion marks"
+    return int(match.group(1))
+
+
+def test_shared_daily_spine_from_account_creation_enforces_monotonic_contract(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from scripts.art import daily_snapshots as daily_snapshots_module
+    from scripts.art.daily_snapshots import (
+        build_daily_snapshots,
+        sample_frames,
+        validate_snapshot_monotonic_contract,
+    )
+    from scripts.art.timelapse import ALL_STYLES
+
+    account_created = date(2024, 1, 1)
+    terminal_day = date(2024, 1, 20)
+    monkeypatch.setattr(
+        daily_snapshots_module,
+        "_timeline_end_day",
+        lambda *, include_today: terminal_day,
+    )
+    history = {
+        "account_created": f"{account_created.isoformat()}T00:00:00Z",
+        "repos": [
+            {"date": "2024-01-01", "name": "seed"},
+            {"date": "2024-01-10", "name": "growth"},
+        ],
+        "stars": [
+            {"date": "2024-01-04T10:00:00Z", "user": "a"},
+            {"date": "2024-01-14T10:00:00Z", "user": "b"},
+        ],
+        "forks": [],
+        "contributions_daily": {
+            (account_created + timedelta(days=offset)).isoformat(): 2
+            for offset in range(20)
+        },
+        "contributions_monthly": {"2024-01": 40},
+    }
+    metrics = {
+        "followers": 24,
+        "total_commits": 180,
+        "languages": {"Python": 400},
+        "top_repos": [
+            {"name": "seed", "language": "Python", "stars": 8},
+            {"name": "growth", "language": "Python", "stars": 5},
+        ],
+        "releases": [],
+        "recent_merged_prs": [],
+    }
+
+    snapshots = build_daily_snapshots(history, metrics, include_today=True)
+    expected_days = [
+        account_created + timedelta(days=offset)
+        for offset in range((terminal_day - account_created).days + 1)
+    ]
+
+    assert [snap.day for snap in snapshots] == expected_days
+    assert snapshots[0].day == account_created
+    assert snapshots[-1].day == terminal_day
+    validate_snapshot_monotonic_contract(snapshots)
+
+    sampled = sample_frames(snapshots, max_frames=8)
+    validate_snapshot_monotonic_contract(sampled)
+    sampled_days = [snap.day for snap in sampled]
+    assert sampled[0].day == snapshots[0].day
+    assert sampled[-1].day == snapshots[-1].day
+    assert sampled_days == sorted(set(sampled_days))
+    assert ALL_STYLES == [
+        "inkgarden",
+        "topo",
+        "genetic",
+        "physarum",
+        "lenia",
+        "ferrofluid",
+    ]
+
+
+@pytest.mark.parametrize(
+    "style",
+    ["inkgarden", "topo", "genetic", "physarum", "lenia", "ferrofluid"],
+)
+def test_style_dialects_make_accretion_readable(
+    style: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import scripts.art.topography as topography_module
+    from scripts.art.ferrofluid import generate as generate_ferrofluid
+    from scripts.art.genetic_landscape import generate as generate_genetic
+    from scripts.art.ink_garden import generate as generate_ink_garden
+    from scripts.art.lenia import generate as generate_lenia
+    from scripts.art.physarum import generate as generate_physarum
+    from scripts.art.shared import STYLE_DIALECTS
+    from scripts.art.topography import generate as generate_topography
+
+    monkeypatch.setattr(topography_module, "TOPOGRAPHY_GRID_SIZE", 48)
+    generators = {
+        "inkgarden": generate_ink_garden,
+        "topo": generate_topography,
+        "genetic": generate_genetic,
+        "physarum": generate_physarum,
+        "lenia": generate_lenia,
+        "ferrofluid": generate_ferrofluid,
+    }
+    frames = (
+        _accretion_metrics(repos=1, stars=2, commits=20, followers=1),
+        _accretion_metrics(repos=2, stars=24, commits=400, followers=18),
+        _accretion_metrics(repos=4, stars=120, commits=2400, followers=80),
+    )
+    svgs = [
+        generators[style](metrics, seed=f"{style}-dialect", timeline=False)
+        for metrics in frames
+    ]
+    parsed = [_dialect_attrs(svg) for svg in svgs]
+
+    assert [row["style"] for row in parsed] == [style, style, style]
+    assert [row["family"] for row in parsed] == [STYLE_DIALECTS[style]] * 3
+    assert [row["repos"] for row in parsed] == [1, 2, 4]
+    assert [row["stars"] for row in parsed] == [2, 24, 120]
+    assert [row["commits"] for row in parsed] == [20, 400, 2400]
+    assert [row["followers"] for row in parsed] == [1, 18, 80]
+    for channel in ("repos", "stars", "commits", "followers"):
+        marks = [_channel_marks(svg, channel) for svg in svgs]
+        assert marks == sorted(marks), f"{style} {channel} marks {marks}"
+        assert marks[-1] > marks[0]
+    assert parsed[0]["star_scale"] < parsed[1]["star_scale"] < parsed[2]["star_scale"]
+    assert (
+        parsed[0]["commit_scale"]
+        < parsed[1]["commit_scale"]
+        < parsed[2]["commit_scale"]
+    )
+    assert (
+        parsed[0]["follower_scale"]
+        < parsed[1]["follower_scale"]
+        < parsed[2]["follower_scale"]
+    )
+
+
+def test_living_art_dialects_remain_visually_distinct(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import scripts.art.topography as topography_module
+    from scripts.art.ferrofluid import generate as generate_ferrofluid
+    from scripts.art.genetic_landscape import generate as generate_genetic
+    from scripts.art.ink_garden import generate as generate_ink_garden
+    from scripts.art.lenia import generate as generate_lenia
+    from scripts.art.physarum import generate as generate_physarum
+    from scripts.art.shared import STYLE_DIALECTS
+    from scripts.art.topography import generate as generate_topography
+
+    monkeypatch.setattr(topography_module, "TOPOGRAPHY_GRID_SIZE", 48)
+    metrics = _accretion_metrics(repos=3, stars=40, commits=600, followers=22)
+    generators = {
+        "inkgarden": generate_ink_garden,
+        "topo": generate_topography,
+        "genetic": generate_genetic,
+        "physarum": generate_physarum,
+        "lenia": generate_lenia,
+        "ferrofluid": generate_ferrofluid,
+    }
+    families = {
+        style: _dialect_attrs(generator(metrics, seed=style, timeline=False))["family"]
+        for style, generator in generators.items()
+    }
+    assert families == STYLE_DIALECTS
+    assert len(set(families.values())) == 6

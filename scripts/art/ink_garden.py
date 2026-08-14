@@ -19,7 +19,7 @@ from __future__ import annotations
 import math
 from collections import defaultdict
 from datetime import date, datetime, timedelta
-from typing import Any
+from typing import Any, NotRequired, TypedDict
 
 import numpy as np
 
@@ -37,9 +37,11 @@ from .shared import (
     atmospheric_haze_filter,
     aurora_band_elements,
     aurora_filter,
+    build_style_dialect,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
     firefly_elements,
     is_monotonic_timelapse_metrics,
     make_linear_gradient,
@@ -68,8 +70,22 @@ MAX_LEAVES = 600
 MAX_BLOOMS = 80
 MAX_ELEMENTS = 25000  # total SVG elements budget
 
+class SpeciesStyle(TypedDict):
+    branch_prob: float
+    fork_range: tuple[int, int]
+    length_decay: tuple[float, float]
+    width_decay: float
+    noise_strength: float
+    leaf_prob: float
+    leaf_shape: str
+    bloom_type: str
+    min_trunk_ratio: float
+    base_angle_spread: float
+    branch_angle_range: NotRequired[tuple[float, float]]
+
+
 # ── Species style parameters ──────────────────────────────────────────
-SPECIES = {
+SPECIES: dict[str, SpeciesStyle] = {
     "oak": {
         "branch_prob": 0.45,
         "fork_range": (2, 5),
@@ -158,7 +174,9 @@ SPECIES = {
 }
 
 
-def _classify_species(repo: dict, *, species_threshold_mult: float = 1.0) -> str:
+def _classify_species(
+    repo: dict[str, Any], *, species_threshold_mult: float = 1.0
+) -> str:
     """Classify a repo into a plant species based on its metrics.
 
     Parameters
@@ -362,9 +380,15 @@ def _extract_dated_entries(events: object, *keys: str) -> list[dict[str, Any]]:
     return extracted
 
 
+class _MergedPrCadence(TypedDict):
+    entries: list[dict[str, str | float]]
+    tempo: float
+    burst: float
+
+
 def _summarize_merged_pr_cadence(
-    recent_merged_prs: list[dict],
-) -> dict[str, list[dict[str, str | float]] | float]:
+    recent_merged_prs: list[dict[str, Any]],
+) -> _MergedPrCadence:
     parsed: list[tuple[datetime, dict[str, str | float]]] = []
     for pr in recent_merged_prs:
         if not isinstance(pr, dict):
@@ -477,7 +501,7 @@ def _repo_emergence_dates(
     }
 
 
-def _repo_topic_annotation(repo: dict, *, max_topics: int = 2) -> str:
+def _repo_topic_annotation(repo: dict[str, Any], *, max_topics: int = 2) -> str:
     """Build a compact specimen-note label from repo topics."""
     cleaned: list[str] = []
     seen: set[str] = set()
@@ -1067,7 +1091,7 @@ def _draw_bloom(
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -1077,6 +1101,7 @@ def generate(
 ) -> str:
     timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("inkgarden", metrics)
     base_mat = maturity if maturity is not None else compute_maturity(metrics)
     timeline_enabled = bool(timeline and loop_duration > 0)
     mat = 1.0 if timeline_enabled else base_mat
@@ -1206,7 +1231,7 @@ def generate(
         time_of_day = "day"
         sky_gradient = [(0.90, 0.03, 210), (0.85, 0.02, 200)]  # light blue
 
-    def _repo_date(repo: dict) -> str | None:
+    def _repo_date(repo: dict[str, Any]) -> str | None:
         for key in ("date", "created_at", "created", "pushed_at", "updated_at"):
             val = repo.get(key)
             if isinstance(val, str) and val.strip():
@@ -1449,8 +1474,10 @@ def generate(
     buds = []  # (x,y,size,hue,when)
     berries = []  # (x,y,size,hue,when)
     tendrils = []  # list of point-lists
-    mushrooms_list = []  # (x,y,size,hue)
-    insects = []  # (x, y, type, size, hue, when, beat, role)
+    mushrooms_list: list[tuple[float, float, float, float]] = []
+    insects: list[
+        tuple[float, float, str, float, float, str | None, float, str | None]
+    ] = []
     webs = []  # (cx,cy,radius,n_spokes)
     dew_drops = []  # (x,y,size)
     seeds = []  # (x,y,angle,size)
@@ -1488,7 +1515,7 @@ def generate(
     else:
         tree_x_positions = [WIDTH / 2]
 
-    repo_hues = [LANG_HUES.get(repo.get("language"), 155) for repo in repos]
+    repo_hues = [float(LANG_HUES.get(repo.get("language"), 155)) for repo in repos]
     if len(repo_hues) >= 2 and not timelapse_contract:
         repo_hues = optimize_palette_hues(
             repo_hues,
@@ -1708,8 +1735,8 @@ def generate(
             angle_spread = 0.3
 
         base_angle = -math.pi / 2 + rng.uniform(-angle_spread, angle_spread)
-        # Data mapping: commits -> trunk height, total_commits scales globally
-        commit_factor = min(1.5, 1.0 + math.log1p(total_commits) / 20.0)
+        # Commits thicken/lengthen trunks; log band stays readable early.
+        commit_factor = dialect.knobs["trunk_scale"]
         if chronological_growth:
             main_length = max(
                 14.0,
@@ -1773,7 +1800,13 @@ def generate(
             )
         else:
             bloom_boost = min(2.0, 1.0 + stars_total / 200.0) * vigor_multiplier
-        bloom_boost = max(0.35, min(2.4, bloom_boost * repo_bloom_scale))
+        bloom_boost = max(
+            0.35,
+            min(
+                2.8,
+                bloom_boost * repo_bloom_scale * dialect.knobs["bloom_scale"] / 1.4,
+            ),
+        )
 
         topic_annotation = _repo_topic_annotation(
             repo,
@@ -2012,7 +2045,7 @@ def generate(
 
         # ── Seedling (small version of wildflower style) ──────────
         elif species == "seedling":
-            seedling_style = {
+            seedling_style: SpeciesStyle = {
                 "branch_prob": 0.15,
                 "fork_range": (1, 2),
                 "length_decay": (0.3, 0.5),
@@ -2034,7 +2067,7 @@ def generate(
                 depth,
                 length,
                 sw,
-                style_d=seedling_style,
+                style_d: SpeciesStyle = seedling_style,
                 max_d=short_depth,
             ):
                 if depth > max_d or length < 5 or len(all_segs) >= MAX_SEGS:
@@ -2202,6 +2235,7 @@ def generate(
 
         # ── Standard species-driven growth (oak, birch, conifer, shrub, wildflower) ──
         elif style is not None:
+            growth_style: SpeciesStyle = style
 
             def _grow(
                 x,
@@ -2210,7 +2244,7 @@ def generate(
                 depth,
                 length,
                 sw,
-                style_d=style,
+                style_d: SpeciesStyle = growth_style,
                 max_d=max_depth,
                 seg_idx=0,
             ):
@@ -2537,7 +2571,7 @@ def generate(
                 mx,
                 ground_y_at(mx) + rng.uniform(-3, 5),
                 4 + rng.uniform(0, 6),
-                30 + rng.integers(0, 40),
+                float(30 + int(rng.integers(0, 40))),
             )
         )
 
@@ -2573,7 +2607,7 @@ def generate(
                 max(38, min(GROUND_Y - 24, iy)),
                 "butterfly",
                 rng.uniform(8, 16) * delta_scale,
-                hue,
+                float(hue),
                 when,
                 pollinator_beat_scale * delta_scale,
                 "merged-pr",
@@ -2586,7 +2620,7 @@ def generate(
                 rng.uniform(40, GROUND_Y - 20),
                 "butterfly",
                 rng.uniform(8, 16),
-                rng.integers(0, 360),
+                float(int(rng.integers(0, 360))),
                 None,
                 1.0,
                 None,
@@ -2599,7 +2633,7 @@ def generate(
                 rng.uniform(60, GROUND_Y - 40),
                 "bee",
                 rng.uniform(4, 8),
-                45,
+                45.0,
                 None,
                 1.0,
                 None,
@@ -2612,7 +2646,7 @@ def generate(
                 rng.uniform(30, GROUND_Y - 50),
                 "dragonfly",
                 rng.uniform(10, 18),
-                rng.integers(0, 360),
+                float(int(rng.integers(0, 360))),
                 None,
                 1.0,
                 None,
@@ -2625,7 +2659,7 @@ def generate(
                 rng.uniform(GROUND_Y - 15, GROUND_Y + 5),
                 "ladybug",
                 rng.uniform(3, 5),
-                0,
+                0.0,
                 None,
                 1.0,
                 None,
@@ -2672,7 +2706,7 @@ def generate(
                     max(42, hy),
                     "hummingbird",
                     9.5 + hi * 1.4,
-                    (int(anchor[3]) + 25) % 360,
+                    float((int(anchor[3]) + 25) % 360),
                     when,
                     1.05 + min(0.40, followers_count / 500.0) + cadence_burst * 0.20,
                     "rare-fauna",
@@ -2721,7 +2755,8 @@ def generate(
     # ══════════════════════════════════════════════════════════════
     P = []  # parts list
     P.append(
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}">'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '
+        f'width="{WIDTH}" height="{HEIGHT}" {dialect.svg_attrs()}>'
     )
     if timeline_enabled:
         P.append(
@@ -3526,8 +3561,8 @@ def generate(
                 f'stroke="{stem_dark}" stroke-width="0.15" opacity="0.15"/>'
             )
         # Cap — dome shape
-        cap_c = oklch(0.55, 0.12, mh)
-        cap_dark = oklch(0.45, 0.10, mh)
+        cap_c = oklch(0.55, 0.12, float(mh))
+        cap_dark = oklch(0.45, 0.10, float(mh))
         cap_top = my - ms
         P.append(
             f'<ellipse cx="{mx:.1f}" cy="{cap_top:.1f}" rx="{ms * 0.6:.1f}" ry="{ms * 0.4:.1f}" '
@@ -4260,7 +4295,8 @@ def generate(
     # ── Fireflies (star velocity driven) ─────────────────────────
     star_vel = metrics.get("star_velocity", {})
     star_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
-    n_fireflies = min(12, max(0, int(star_rate * 2)))
+    follower_glints = int(round(dialect.knobs["glint_count"]))
+    n_fireflies = min(16, max(int(star_rate * 2), follower_glints))
     if n_fireflies > 0:
         P.append('<g id="fireflies">')
         for fi in range(n_fireflies):
@@ -4348,9 +4384,9 @@ def generate(
                 f'<ellipse cx="{ix:.0f}" cy="{iy:.0f}" rx="1" ry="{isz * 0.3:.1f}" '
                 f'fill="{_insect_body}" opacity="0.6"/>'
             )
-            wc1 = oklch(0.62, 0.22, ihue)
-            wc2 = oklch(0.55, 0.18, (ihue + 30) % 360)
-            wc_vein = oklch(0.40, 0.10, ihue)
+            wc1 = oklch(0.62, 0.22, float(ihue))
+            wc2 = oklch(0.55, 0.18, float((ihue + 30) % 360))
+            wc_vein = oklch(0.40, 0.10, float(ihue))
             for side in [-1, 1]:
                 # Upper wings — natural Bezier outline
                 uwx = ix + side * isz * 0.5
@@ -4463,10 +4499,10 @@ def generate(
                 f'fill="{_df_head}" opacity="0.5"/>'
             )
         elif itype == "hummingbird":
-            hb_body = oklch(0.50, 0.12, ihue)
-            hb_wing = oklch(0.80, 0.05, (ihue + 20) % 360)
-            hb_tail = oklch(0.46, 0.08, (ihue + 8) % 360)
-            hb_throat = oklch(0.66, 0.18, (ihue + 70) % 360)
+            hb_body = oklch(0.50, 0.12, float(ihue))
+            hb_wing = oklch(0.80, 0.05, float((ihue + 20) % 360))
+            hb_tail = oklch(0.46, 0.08, float((ihue + 8) % 360))
+            hb_throat = oklch(0.66, 0.18, float((ihue + 70) % 360))
             wing_span = isz * (0.90 + min(0.25, max(0.0, ibeat - 1.0) * 0.4))
             trail_len = isz * (1.8 + min(0.9, max(0.0, ibeat - 1.0)))
             P.append(
@@ -5240,5 +5276,6 @@ def generate(
         P.append("</g>")
         P.append("</g>")
 
+    P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)

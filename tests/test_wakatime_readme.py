@@ -2,22 +2,37 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from textwrap import dedent
+from typing import Any
 
 import pytest
 
 from scripts.wakatime_readme import (
     MARKER_END,
     MARKER_START,
+    WAKA_STATS_RANGES,
     GitHubShortInfo,
+    WakaDayTotal,
     WakaStatEntry,
     WakaWeekStats,
     apply_waka_artifact_to_readme,
     apply_waka_section,
+    collect_wakatime_stats,
+    fetch_public_repo_names,
+    fetch_wakatime_daily_totals,
+    filter_waka_stats,
     generate_waka_section,
+    is_leisure_or_unprofessional,
+    is_professional_editor,
+    is_publishable_project,
+    looks_like_file_path,
+    looks_like_heartbeat_entity,
     main,
+    parse_all_time_since_today,
+    parse_daily_totals_from_insights,
+    parse_daily_totals_from_summaries,
     parse_wakatime_stats,
     render_waka_section,
     write_skip_artifact,
@@ -25,7 +40,7 @@ from scripts.wakatime_readme import (
 )
 
 
-def _sample_waka_payload() -> dict:
+def _sample_waka_payload() -> dict[str, Any]:
     return {
         "data": {
             "timezone": "America/New_York",
@@ -67,6 +82,14 @@ def _sample_waka_payload() -> dict:
                     "text": "56 hrs 59 mins",
                 }
             ],
+            "categories": [
+                {
+                    "name": "Coding",
+                    "total_seconds": 40000,
+                    "percent": 80.0,
+                    "text": "11 hrs 6 mins",
+                }
+            ],
         }
     }
 
@@ -78,6 +101,7 @@ def test_parse_wakatime_stats_extracts_top_entries() -> None:
     assert week.editors[0].name == "VS Code"
     assert week.projects[0].name == "wyattowalsh"
     assert week.operating_systems[0].percent == 100.0
+    assert week.categories[0].name == "Coding"
 
 
 def test_render_waka_section_includes_healthy_markers() -> None:
@@ -114,7 +138,7 @@ def test_generate_waka_section_uses_mocked_waka_api(monkeypatch) -> None:
 
     calls: list[str] = []
 
-    def fake_fetch(api_key: str, *, range_name: str = "last_7_days") -> dict:
+    def fake_fetch(api_key: str, *, range_name: str = "last_7_days") -> dict[str, Any]:
         calls.append(f"{api_key}:{range_name}")
         return _sample_waka_payload()
 
@@ -124,9 +148,14 @@ def test_generate_waka_section_uses_mocked_waka_api(monkeypatch) -> None:
     )
 
     body = generate_waka_section(include_github=False)
-    assert calls == ["test-waka-key:last_7_days"]
+    assert calls == [
+        "test-waka-key:last_7_days",
+        "test-waka-key:last_year",
+        "test-waka-key:all_time",
+    ]
     assert "This Week I Spent My Time On" in body
     assert "America/New_York" in body
+    assert "anmol098" not in body
 
 
 def test_generate_waka_section_enriches_github_when_token_present(monkeypatch) -> None:
@@ -147,6 +176,10 @@ def test_generate_waka_section_enriches_github_when_token_present(monkeypatch) -
             contributions_this_year=42,
             year=2026,
         ),
+    )
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_public_repo_names",
+        lambda token, *, login=None: frozenset({"wyattowalsh"}),
     )
 
     body = generate_waka_section(github_login="wyattowalsh")
@@ -255,3 +288,313 @@ def test_write_skip_artifact(tmp_path: Path) -> None:
     path = write_skip_artifact(tmp_path, "skipped for test")
     assert path.name == "waka-section.skipped"
     assert "skipped for test" in path.read_text(encoding="utf-8")
+
+
+def test_privacy_helpers_reject_paths_heartbeats_and_leisure() -> None:
+    assert looks_like_file_path("/Users/ww/dev/secret.py")
+    assert looks_like_file_path("~/Documents/notes.md")
+    assert looks_like_file_path(r"C:\Users\ww\app.py")
+    assert looks_like_heartbeat_entity("heartbeat")
+    assert not looks_like_file_path("wyattowalsh")
+    assert is_leisure_or_unprofessional("Games")
+    assert is_leisure_or_unprofessional("Social Media")
+    assert is_leisure_or_unprofessional("Shopping")
+    assert is_leisure_or_unprofessional("Health")
+    assert is_leisure_or_unprofessional("Entertainment")
+    assert is_leisure_or_unprofessional("Dating")
+    assert is_leisure_or_unprofessional("Messages")
+    assert is_leisure_or_unprofessional("Photos")
+    assert is_leisure_or_unprofessional("Spotify")
+    assert is_leisure_or_unprofessional("Apple Music")
+    assert is_professional_editor("Cursor")
+    assert is_professional_editor("VS Code")
+    assert is_professional_editor("Xcode")
+    assert not is_professional_editor("Spotify")
+    assert not is_professional_editor("Messages")
+    assert not is_publishable_project("secret-client")
+    assert not is_publishable_project("/Users/ww/dev/secret.py")
+    assert is_publishable_project(
+        "wyattowalsh",
+        public_repo_names=("wyattowalsh/wyattowalsh",),
+    )
+    assert is_publishable_project(
+        "wyattowalsh/agents",
+        project_allowlist=("agents",),
+    )
+
+
+def test_filter_waka_stats_drops_private_and_leisure_rows() -> None:
+    week = WakaWeekStats(
+        timezone="UTC",
+        languages=(
+            WakaStatEntry("Python", 3600, 90.0, "1 hrs"),
+            WakaStatEntry("/Users/ww/secret.py", 100, 10.0, "1 mins"),
+        ),
+        editors=(
+            WakaStatEntry("Cursor", 3000, 80.0, "50 mins"),
+            WakaStatEntry("Spotify", 400, 10.0, "6 mins"),
+            WakaStatEntry("Messages", 200, 5.0, "3 mins"),
+        ),
+        projects=(
+            WakaStatEntry("wyattowalsh", 2000, 50.0, "33 mins"),
+            WakaStatEntry("secret-client", 1500, 40.0, "25 mins"),
+            WakaStatEntry("/home/ww/heartbeat.py", 100, 5.0, "1 mins"),
+        ),
+        operating_systems=(
+            WakaStatEntry("Mac", 2000, 50.0, "33 mins"),
+            WakaStatEntry("iOS", 1200, 30.0, "20 mins"),
+            WakaStatEntry("watchOS", 800, 20.0, "13 mins"),
+        ),
+        categories=(
+            WakaStatEntry("Coding", 3000, 70.0, "50 mins"),
+            WakaStatEntry("Debugging", 800, 20.0, "13 mins"),
+            WakaStatEntry("Entertainment", 200, 5.0, "3 mins"),
+            WakaStatEntry("Games", 100, 2.0, "1 mins"),
+        ),
+    )
+    filtered = filter_waka_stats(
+        week,
+        public_repo_names=("wyattowalsh",),
+    )
+    assert [entry.name for entry in filtered.languages] == ["Python"]
+    assert [entry.name for entry in filtered.editors] == ["Cursor"]
+    assert [entry.name for entry in filtered.projects] == ["wyattowalsh"]
+    assert [entry.name for entry in filtered.operating_systems] == [
+        "Mac",
+        "iOS",
+        "watchOS",
+    ]
+    assert [entry.name for entry in filtered.categories] == ["Coding", "Debugging"]
+
+
+def test_collect_wakatime_stats_fetches_documented_ranges(monkeypatch) -> None:
+    calls: list[str] = []
+
+    def fake_fetch(api_key: str, *, range_name: str = "last_7_days") -> dict[str, Any]:
+        calls.append(range_name)
+        payload = _sample_waka_payload()
+        payload["data"] = {
+            **payload["data"],
+            "range": range_name,
+            "human_readable_total": f"{range_name} total",
+            "total_seconds": 1000.0,
+        }
+        return payload
+
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_stats",
+        fake_fetch,
+    )
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_all_time_since_today",
+        lambda api_key: {
+            "data": {
+                "text": "4,500 hrs 12 mins",
+                "total_seconds": 16_200_720,
+                "is_up_to_date": True,
+                "range": {"start_date": "2018-01-01"},
+            }
+        },
+    )
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_daily_totals",
+        lambda api_key, *, range_name="last_year": (
+            WakaDayTotal(day=date(2026, 8, 1), total_seconds=1200),
+        ),
+    )
+
+    collection = collect_wakatime_stats("key")
+    assert calls == list(WAKA_STATS_RANGES)
+    assert collection.week.range_name == "last_7_days"
+    assert collection.year is not None
+    assert collection.all_time is not None
+    assert collection.all_time_since_today is not None
+    assert collection.all_time_since_today.text == "4,500 hrs 12 mins"
+    assert collection.daily[0].total_seconds == 1200
+    assert collection.fetched_ranges == WAKA_STATS_RANGES
+
+
+def test_collect_wakatime_stats_skips_optional_ranges(monkeypatch) -> None:
+    def fake_fetch(api_key: str, *, range_name: str = "last_7_days") -> dict[str, Any]:
+        if range_name != "last_7_days":
+            raise ValueError(f"{range_name} unavailable")
+        return _sample_waka_payload()
+
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_stats",
+        fake_fetch,
+    )
+    collection = collect_wakatime_stats(
+        "key",
+        include_daily=False,
+        include_all_time_since_today=False,
+    )
+    assert collection.year is None
+    assert collection.all_time is None
+    assert collection.fetched_ranges == ("last_7_days",)
+
+
+def test_parse_daily_totals_ignore_entities() -> None:
+    insights = parse_daily_totals_from_insights(
+        {
+            "data": {
+                "days": [
+                    {"date": "2026-08-01", "total_seconds": 100, "text": "1 min"},
+                    {
+                        "date": "2026-08-02",
+                        "total": 200,
+                        "entities": [{"name": "/Users/ww/secret.py"}],
+                    },
+                ]
+            }
+        }
+    )
+    assert [item.day.isoformat() for item in insights] == [
+        "2026-08-01",
+        "2026-08-02",
+    ]
+    summaries = parse_daily_totals_from_summaries(
+        {
+            "data": [
+                {
+                    "grand_total": {"total_seconds": 300, "text": "5 mins"},
+                    "range": {"date": "2026-08-03"},
+                    "entities": [{"name": "/private/var/heartbeat.py"}],
+                }
+            ]
+        }
+    )
+    assert summaries[0].total_seconds == 300
+    assert summaries[0].text == "5 mins"
+    lifetime = parse_all_time_since_today(
+        {"data": {"total_seconds": 3600, "text": "1 hr", "is_up_to_date": True}}
+    )
+    assert lifetime.total_seconds == 3600
+    assert lifetime.text == "1 hr"
+    mapped = parse_daily_totals_from_insights(
+        {"data": {"days": {"2026-08-04": 90, "2026-08-05": {"total_seconds": 45}}}}
+    )
+    assert [item.day.isoformat() for item in mapped] == ["2026-08-04", "2026-08-05"]
+
+
+def test_fetch_wakatime_daily_totals_falls_back_to_summaries(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_insights",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(ValueError("stale")),
+    )
+
+    def fake_summaries(api_key: str, *, range_label: str | None = None, **_kwargs):
+        if range_label != "Last 7 Days":
+            raise ValueError(range_label)
+        return {
+            "data": [
+                {
+                    "grand_total": {"total_seconds": 42, "text": "42 secs"},
+                    "range": {"date": "2026-08-10"},
+                    "entities": [{"name": "/tmp/secret.py"}],
+                }
+            ]
+        }
+
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_summaries",
+        fake_summaries,
+    )
+    days = fetch_wakatime_daily_totals("key")
+    assert len(days) == 1
+    assert days[0].total_seconds == 42
+    assert days[0].text == "42 secs"
+
+
+def test_fetch_public_repo_names_skips_private(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "scripts._github_http._paginate_rest",
+        lambda *_args, **_kwargs: [
+            {"name": "agents", "full_name": "wyattowalsh/agents", "private": False},
+            {"name": "secret", "full_name": "wyattowalsh/secret", "private": True},
+            "not-a-repo",
+        ],
+    )
+    names = fetch_public_repo_names("token", login="wyattowalsh")
+    assert "agents" in names
+    assert "wyattowalsh/agents" in names
+    assert "secret" not in names
+
+
+def test_generate_waka_section_hides_private_projects(monkeypatch) -> None:
+    monkeypatch.setenv("WAKATIME_API_KEY", "key")
+    payload = _sample_waka_payload()
+    payload["data"]["projects"] = [
+        {
+            "name": "secret-client",
+            "total_seconds": 9000,
+            "percent": 80.0,
+            "text": "2 hrs 30 mins",
+        },
+        {
+            "name": "wyattowalsh",
+            "total_seconds": 1000,
+            "percent": 20.0,
+            "text": "16 mins",
+        },
+    ]
+    payload["data"]["editors"].append(
+        {
+            "name": "Spotify",
+            "total_seconds": 400,
+            "percent": 5.0,
+            "text": "6 mins",
+        }
+    )
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_stats",
+        lambda api_key, *, range_name="last_7_days": payload,
+    )
+    body = generate_waka_section(
+        include_github=False,
+        project_allowlist=("wyattowalsh",),
+    )
+    assert "wyattowalsh" in body
+    assert "secret-client" not in body
+    assert "Spotify" not in body
+    assert "VS Code" in body
+
+
+def test_main_generate_writes_svg_when_requested(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("WAKATIME_API_KEY", "key")
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_stats",
+        lambda api_key, *, range_name="last_7_days": _sample_waka_payload(),
+    )
+    written: list[Path] = []
+
+    def fake_svg(**kwargs):
+        path = kwargs["output_path"]
+        path.write_text("<svg>waka</svg>\n", encoding="utf-8")
+        written.append(path)
+        return path
+
+    monkeypatch.setattr("scripts.wakatime_svg.generate_wakatime_svg", fake_svg)
+    markdown = tmp_path / "waka-section.md"
+    svg = tmp_path / "wakatime.svg"
+    assert (
+        main(
+            [
+                "generate",
+                "--output",
+                str(markdown),
+                "--svg-output",
+                str(svg),
+                "--no-github",
+                "--project-allowlist",
+                "wyattowalsh",
+            ]
+        )
+        == 0
+    )
+    assert "Programming Languages" in markdown.read_text(encoding="utf-8")
+    assert written == [svg]
+    assert svg.read_text(encoding="utf-8").startswith("<svg>")

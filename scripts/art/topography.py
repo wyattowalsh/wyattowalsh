@@ -13,7 +13,9 @@ Light theme on cream paper.
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from datetime import date, timedelta
+from typing import Any, TypedDict, cast
 
 import numpy as np
 
@@ -26,9 +28,11 @@ from .shared import (
     WorldState,
     _build_world_palette_extended,
     atmospheric_haze_filter,
+    build_style_dialect,
     compute_maturity,
     compute_world_state,
     contributions_monthly_to_daily_series,
+    dialect_group_markup,
     hex_frac,
     is_monotonic_timelapse_metrics,
     make_radial_gradient,
@@ -55,7 +59,52 @@ _CONTOUR_JOIN_RADIUS = 8.0
 
 _ContourPoint = tuple[float, float]
 _ContourSegment = tuple[_ContourPoint, _ContourPoint]
+
+
+class _TopicFeatureSpec(TypedDict):
+    topic: str
+    count: int
+    rank: int
+    matched_topic: bool
+    rcx: float
+    rcy: float
+    repo: dict[str, Any]
+    elev: float
+
+
 _ContourEndpointRef = tuple[int, int]
+
+
+def _as_int(value: object, default: int = 0) -> int:
+    """Coerce JSON-ish values to int without trusting unknown dict types."""
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, (int, float, str)):
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
+    return default
+
+
+def _as_float(value: object, default: float = 0.0) -> float:
+    """Coerce JSON-ish values to float without trusting unknown dict types."""
+    if isinstance(value, bool):
+        return float(value)
+    if isinstance(value, (int, float, str)):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return default
+    return default
+
+
+def _as_repo(value: object) -> dict[str, Any]:
+    """Coerce a topic-host repo payload to a string-keyed dict."""
+    if isinstance(value, dict):
+        return cast(dict[str, Any], value)
+    return {}
+
 
 # Language → terrain character: (noise_freq, amplitude_multiplier)
 LANG_TERRAIN: dict[str | None, tuple[float, float]] = {
@@ -214,7 +263,13 @@ def _stitch_contour_segments(
     return chains
 
 
-def _extract_contours(elevation, grid, level, cell_w, cell_h):
+def _extract_contours(
+    elevation: Any,
+    grid: int,
+    level: float,
+    cell_w: float,
+    cell_h: float,
+) -> list[list[_ContourPoint]]:
     seg_list: list[_ContourSegment] = []
     for gy in range(grid - 1):
         for gx in range(grid - 1):
@@ -241,7 +296,9 @@ def _extract_contours(elevation, grid, level, cell_w, cell_h):
     return _stitch_contour_segments(seg_list)
 
 
-def _point_to_segment_distance(px: float, py: float, p1: tuple, p2: tuple) -> float:
+def _point_to_segment_distance(
+    px: float, py: float, p1: tuple[float, float], p2: tuple[float, float]
+) -> float:
     """Compute the minimum distance from point (px, py) to line segment p1-p2."""
     x1, y1 = p1
     x2, y2 = p2
@@ -257,12 +314,14 @@ def _point_to_segment_distance(px: float, py: float, p1: tuple, p2: tuple) -> fl
 
 
 def _chaikin_smooth(
-    points: list[tuple[float, float]], iterations: int = 1, closed: bool = False
+    points: Sequence[tuple[float, float]],
+    iterations: int = 1,
+    closed: bool = False,
 ) -> list[tuple[float, float]]:
     """Deterministic polyline smoothing for less angular contour and river curves."""
-    if len(points) < 3 or iterations <= 0:
-        return points
-    smoothed = points[:]
+    smoothed: list[tuple[float, float]] = [(float(x), float(y)) for x, y in points]
+    if len(smoothed) < 3 or iterations <= 0:
+        return smoothed
     for _ in range(iterations):
         if len(smoothed) < 3:
             break
@@ -290,6 +349,10 @@ def _normalize_hour_distribution(commit_hours: object) -> dict[int, float]:
     if not isinstance(commit_hours, dict):
         return hours
     for raw_hour, raw_count in commit_hours.items():
+        if not isinstance(raw_hour, (int, str)):
+            continue
+        if not isinstance(raw_count, (int, float)):
+            continue
         try:
             hour = int(raw_hour)
             count = float(raw_count)
@@ -367,12 +430,24 @@ def _river_flow_profile(star_velocity: object) -> dict[str, str | float]:
     peak_rate = 0.0
     trend = "steady"
     if isinstance(star_velocity, dict):
+        raw_recent = star_velocity.get("recent_rate", 0.0)
+        raw_peak = star_velocity.get("peak_rate", 0.0)
         try:
-            recent_rate = max(0.0, float(star_velocity.get("recent_rate", 0.0) or 0.0))
+            recent_rate = (
+                max(0.0, float(raw_recent))
+                if isinstance(raw_recent, (int, float, str))
+                and not isinstance(raw_recent, bool)
+                else 0.0
+            )
         except (TypeError, ValueError):
             recent_rate = 0.0
         try:
-            peak_rate = max(0.0, float(star_velocity.get("peak_rate", 0.0) or 0.0))
+            peak_rate = (
+                max(0.0, float(raw_peak))
+                if isinstance(raw_peak, (int, float, str))
+                and not isinstance(raw_peak, bool)
+                else 0.0
+            )
         except (TypeError, ValueError):
             peak_rate = 0.0
         trend = str(star_velocity.get("trend", "steady") or "steady").lower()
@@ -437,8 +512,14 @@ def _repo_recency_landscape_profile(
                 break
 
         if repo_day is None:
+            raw_age = repo.get("age_months", 0)
             try:
-                age_months = float(repo.get("age_months", 0) or 0.0)
+                age_months = (
+                    float(raw_age)
+                    if isinstance(raw_age, (int, float, str))
+                    and not isinstance(raw_age, bool)
+                    else 0.0
+                )
             except (TypeError, ValueError):
                 age_months = 0.0
             if age_months > 0:
@@ -485,7 +566,7 @@ def _repo_recency_landscape_profile(
 
 
 def _polyline_distance(
-    px: float, py: float, points: list[tuple[float, float]]
+    px: float, py: float, points: Sequence[tuple[float, float]]
 ) -> float:
     if len(points) < 2:
         return float("inf")
@@ -498,7 +579,7 @@ def _polyline_distance(
 def _choose_label_anchor(
     anchor_x: float,
     anchor_y: float,
-    candidates: list[tuple[float, float]],
+    candidates: Sequence[tuple[float, float]],
     blocked_paths: list[list[tuple[float, float]]],
 ) -> tuple[float, float, float]:
     best_choice: tuple[float, float, float] | None = None
@@ -536,7 +617,7 @@ def _choose_label_anchor(
 
 
 def generate(
-    metrics: dict,
+    metrics: dict[str, Any],
     *,
     seed: str | None = None,
     maturity: float | None = None,
@@ -547,6 +628,7 @@ def generate(
 ) -> str:
     timelapse_contract = is_monotonic_timelapse_metrics(metrics)
     metrics = resolve_render_metrics(metrics)
+    dialect = build_style_dialect("topo", metrics)
     mat = maturity if maturity is not None else compute_maturity(metrics)
     chrome_mat = chrome_maturity if chrome_maturity is not None else mat
     timeline_enabled = bool(timeline and loop_duration > 0)
@@ -647,7 +729,9 @@ def generate(
 
     repo_day_cache: dict[tuple[int, int | None], date | None] = {}
 
-    def _repo_day(repo: dict, *, fallback_end: date | None = None) -> date | None:
+    def _repo_day(
+        repo: dict[str, Any], *, fallback_end: date | None = None
+    ) -> date | None:
         cache_key = (
             id(repo),
             fallback_end.toordinal() if fallback_end is not None else None,
@@ -663,7 +747,13 @@ def generate(
 
         if repo_day is None and fallback_end is not None:
             try:
-                age_months = float(repo.get("age_months", 0) or 0.0)
+                raw_age = repo.get("age_months", 0)
+                age_months = (
+                    float(raw_age)
+                    if isinstance(raw_age, (int, float, str))
+                    and not isinstance(raw_age, bool)
+                    else 0.0
+                )
             except (TypeError, ValueError):
                 age_months = 0.0
             if age_months > 0:
@@ -672,7 +762,9 @@ def generate(
         repo_day_cache[cache_key] = repo_day
         return repo_day
 
-    def _repo_date(repo: dict, *, fallback_end: date | None = None) -> str | None:
+    def _repo_date(
+        repo: dict[str, Any], *, fallback_end: date | None = None
+    ) -> str | None:
         repo_day = _repo_day(repo, fallback_end=fallback_end)
         return repo_day.isoformat() if repo_day is not None else None
 
@@ -849,9 +941,7 @@ def generate(
             if parsed_day is None:
                 continue
             try:
-                parsed_daily_series[parsed_day.isoformat()] = max(
-                    0, int(raw_count or 0)
-                )
+                parsed_daily_series[parsed_day.isoformat()] = max(0, _as_int(raw_count))
             except (TypeError, ValueError):
                 continue
     if parsed_daily_series:
@@ -918,21 +1008,24 @@ def generate(
         return base_signal + (1.0 - base_signal) * eased
 
     def _timeline_style(
-        when: str,
+        when: str | None,
         opacity: float,
         cls: str = "tl-reveal",
         *,
         window: tuple[date, date] | None = None,
     ) -> str:
         active_window = window or timeline_window
+        resolved_when = when or active_window[0].isoformat()
         if not timeline_enabled:
-            static_signal = _static_accretion_signal(when, window=active_window)
+            static_signal = _static_accretion_signal(
+                resolved_when, window=active_window
+            )
             return (
                 f'opacity="{max(0.03, opacity * static_signal):.3f}" '
                 f'data-static-accretion="{static_signal:.3f}"'
             )
         delay = map_date_to_loop_delay(
-            when,
+            resolved_when,
             active_window,
             duration=loop_duration,
             reveal_fraction=reveal_fraction,
@@ -940,10 +1033,11 @@ def generate(
         return (
             f'class="{cls}" '
             f'style="--delay:{delay:.3f}s;--to:{max(0.0, min(1.0, opacity)):.3f};'
-            f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" data-when="{when}"'
+            f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" '
+            f'data-when="{resolved_when}"'
         )
 
-    def _repo_when(repo: dict) -> str | None:
+    def _repo_when(repo: dict[str, Any]) -> str | None:
         return _repo_date(repo, fallback_end=repo_age_anchor)
 
     def _later_when(*when_values: object) -> str:
@@ -983,7 +1077,13 @@ def generate(
     terrain_birth_latest = np.full((grid, grid), float(timeline_start_ord), dtype=float)
 
     # ── 1. Subtle base terrain noise ───────────────────────────────
-    terrain_oct = max(3, min(7, 3 + total_commits // 6000))
+    terrain_oct = max(
+        3,
+        min(
+            7,
+            3 + total_commits // 2500 + int(round(2.0 * dialect.knobs["contour_gain"])),
+        ),
+    )
     for gy in range(grid):
         for gx in range(grid):
             base_terrain = noise.fbm(gx / grid * 6, gy / grid * 6, terrain_oct) * 0.08
@@ -1190,15 +1290,17 @@ def generate(
             .replace(">", "&gt;")
         )
 
-    def _repo_topic_keys(repo: dict) -> set[str]:
+    def _repo_topic_keys(repo: dict[str, Any]) -> set[str]:
         return {
             topic_text.casefold()
             for raw_topic in repo.get("topics") or []
             if (topic_text := str(raw_topic).strip())
         }
 
-    repo_terrain_points: list[tuple[float, float, dict, float]] = []
-    topic_repo_positions: dict[str, list[tuple[float, float, dict, float]]] = {}
+    repo_terrain_points: list[tuple[float, float, dict[str, Any], float]] = []
+    topic_repo_positions: dict[
+        str, list[tuple[float, float, dict[str, Any], float]]
+    ] = {}
     for rcx, rcy, repo in repo_positions:
         gx_i = min(grid - 1, max(0, int(rcx * grid)))
         gy_i = min(grid - 1, max(0, int(rcy * grid)))
@@ -1210,7 +1312,7 @@ def generate(
 
     def _pick_topic_host(
         topic: str, rank: int
-    ) -> tuple[tuple[float, float, dict, float] | None, bool]:
+    ) -> tuple[tuple[float, float, dict[str, Any], float] | None, bool]:
         direct_candidates = topic_repo_positions.get(str(topic).strip().casefold(), [])
         candidates = direct_candidates or repo_terrain_points
         if not candidates:
@@ -1253,7 +1355,7 @@ def generate(
             )
         return selected, bool(direct_candidates)
 
-    topic_feature_specs: list[dict[str, object]] = []
+    topic_feature_specs: list[_TopicFeatureSpec] = []
     for topic_rank, (topic, topic_count) in enumerate(top_topic_entries):
         host, matched_topic = _pick_topic_host(topic, topic_rank)
         if host is None:
@@ -1650,7 +1752,8 @@ def generate(
         f'data-central-rise-date="{central_peak_day.isoformat()}" '
         f'data-river-carve-date="{river_carve_day.isoformat()}" '
         f'data-timeline-start="{timeline_start_day.isoformat()}" '
-        f'data-timeline-end="{timeline_end_day.isoformat()}">'
+        f'data-timeline-end="{timeline_end_day.isoformat()}" '
+        f"{dialect.svg_attrs()}>"
     )
     if timeline_enabled:
         P.append(
@@ -2081,7 +2184,13 @@ def generate(
 
     # ── Contour lines (warm brown, Swiss style — OKLCH gradient) ──
     # Scale contour density by visual complexity
-    _base_n_levels = max(24, min(40, 18 + followers // 6))
+    _base_n_levels = max(
+        10,
+        min(
+            44,
+            10 + int(round(18 * dialect.knobs["contour_gain"])) + int(followers // 10),
+        ),
+    )
     n_levels = int(_base_n_levels * (0.8 + 0.4 * complexity))
     # OKLCH-derived contour colors from palette
     _contour_index_c = oklch_lerp(pal["accent"], pal["text_primary"], 0.6)
@@ -2133,7 +2242,11 @@ def generate(
         # Elevation labels on index contours showing meters
         clabel_fade = _fade(0.10, 0.30)
         if is_index and chains and clabel_fade > 0:
-            longest = _chaikin_smooth(max(chains, key=len), iterations=1)
+            longest_chain = chains[0]
+            for candidate_chain in chains[1:]:
+                if len(candidate_chain) > len(longest_chain):
+                    longest_chain = candidate_chain
+            longest = _chaikin_smooth(longest_chain, iterations=1)
             mid_i = len(longest) // 2
             mid = longest[mid_i]
             # Compute rotation angle along contour for label
@@ -2392,8 +2505,10 @@ def generate(
             )
             segment_repo_index = min(wi + 1, len(chrono) - 1) if chrono else 0
             segment_when = (
-                _repo_when(chrono[segment_repo_index][2]) if chrono else trail_when
-            ) or trail_when
+                (_repo_when(chrono[segment_repo_index][2]) if chrono else trail_when)
+                or trail_when
+                or timeline_window[0].isoformat()
+            )
             if chrono and wi >= len(chrono) - 1:
                 segment_when = _later_when(segment_when, central_peak_day.isoformat())
             P.append(
@@ -2459,12 +2574,12 @@ def generate(
         rank: int,
         rcx: float,
         rcy: float,
-        repo: dict,
+        repo: dict[str, Any],
         elev_val: float,
         matched_topic: bool,
         place_name: str,
         feature_kind: str,
-        candidates: list[tuple[float, float]],
+        candidates: Sequence[tuple[float, float]],
         label_size: float,
         note_size: float,
         label_color: str,
@@ -2477,7 +2592,7 @@ def generate(
         topic_x, topic_y, clearance = _choose_label_anchor(
             mx_tp,
             my_tp,
-            candidates,
+            list(candidates),
             label_obstacles,
         )
         topic_anchor = "middle"
@@ -2623,13 +2738,17 @@ def generate(
         )
         P.append(f"<title>{_tt_text}</title>")
         if star_frac > 0.7:
-            bs = (4 + int(star_frac * 4)) * marker_scale
+            bs = (
+                3.2 + int(star_frac * 4) + 2.4 * dialect.knobs["prominence_scale"]
+            ) * marker_scale
             P.append(
                 f'<rect x="{lx - bs:.1f}" y="{ly - bs:.1f}" width="{bs * 2:.1f}" height="{bs * 2:.1f}" '
                 f'fill="{mc}" {_timeline_style(repo_when, 0.5, window=repo_timeline_window)} stroke="#3a2a1a" stroke-width="0.4"/>'
             )
         else:
-            mr = (2.5 + star_frac * 5) * marker_scale
+            mr = (
+                2.2 + star_frac * 4.2 + 3.4 * dialect.knobs["prominence_scale"]
+            ) * marker_scale
             P.append(
                 f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65, window=repo_timeline_window)} stroke="#fff" stroke-width="0.5"/>'
             )
@@ -2664,21 +2783,21 @@ def generate(
 
     # ── Topic place names ──────────────────────────────────────
     for topic_spec in topic_feature_specs[promoted_topic_limit:]:
-        topic_rank = int(topic_spec["rank"])
+        topic_rank = _as_int(topic_spec["rank"])
+        topic_name = str(topic_spec["topic"])
+        topic_elev = _as_float(topic_spec["elev"])
         secondary_rank = max(0, topic_rank - promoted_topic_limit)
         _render_topic_feature(
-            topic=str(topic_spec["topic"]),
-            topic_count=int(topic_spec["count"]),
+            topic=topic_name,
+            topic_count=_as_int(topic_spec["count"], default=1),
             rank=topic_rank,
-            rcx=float(topic_spec["rcx"]),
-            rcy=float(topic_spec["rcy"]),
-            repo=topic_spec["repo"],
-            elev_val=float(topic_spec["elev"]),
+            rcx=_as_float(topic_spec["rcx"]),
+            rcy=_as_float(topic_spec["rcy"]),
+            repo=_as_repo(topic_spec["repo"]),
+            elev_val=topic_elev,
             matched_topic=bool(topic_spec["matched_topic"]),
-            place_name=_topic_to_place_name(
-                str(topic_spec["topic"]), float(topic_spec["elev"])
-            ),
-            feature_kind=_feature_kind_from_elevation(float(topic_spec["elev"])),
+            place_name=_topic_to_place_name(topic_name, topic_elev),
+            feature_kind=_feature_kind_from_elevation(topic_elev),
             candidates=[
                 (0, -24),
                 (24, -18),
@@ -2784,17 +2903,18 @@ def generate(
                 note_size,
                 label_color,
                 note_color,
-            ) = promoted_feature_specs[int(topic_spec["rank"])]
+            ) = promoted_feature_specs[_as_int(topic_spec["rank"])]
+            topic_name = str(topic_spec["topic"])
             _render_topic_feature(
-                topic=str(topic_spec["topic"]),
-                topic_count=int(topic_spec["count"]),
-                rank=int(topic_spec["rank"]),
-                rcx=float(topic_spec["rcx"]),
-                rcy=float(topic_spec["rcy"]),
-                repo=topic_spec["repo"],
-                elev_val=float(topic_spec["elev"]),
+                topic=topic_name,
+                topic_count=_as_int(topic_spec["count"], default=1),
+                rank=_as_int(topic_spec["rank"]),
+                rcx=_as_float(topic_spec["rcx"]),
+                rcy=_as_float(topic_spec["rcy"]),
+                repo=_as_repo(topic_spec["repo"]),
+                elev_val=_as_float(topic_spec["elev"]),
                 matched_topic=bool(topic_spec["matched_topic"]),
-                place_name=feature_label(str(topic_spec["topic"])),
+                place_name=feature_label(topic_name),
                 feature_kind=feature_kind,
                 candidates=candidates,
                 label_size=label_size,
@@ -3694,11 +3814,10 @@ def generate(
     _commit_hours = metrics.get("commit_hour_distribution", {})
     if isinstance(_commit_hours, dict) and len(_commit_hours) > 0:
         # Determine peak commit hour
-        _peak_hour = max(_commit_hours, key=lambda k: _commit_hours.get(k, 0))
-        try:
-            _peak_h_int = int(_peak_hour)
-        except (ValueError, TypeError):
-            _peak_h_int = 12
+        _peak_hour = max(
+            _commit_hours, key=lambda k: _as_float(_commit_hours.get(k, 0))
+        )
+        _peak_h_int = _as_int(_peak_hour, default=12)
         # Position in upper-right area of legend box
         _sun_moon_x = leg_x + leg_w - 14
         _sun_moon_y = leg_y + 10
@@ -3739,9 +3858,9 @@ def generate(
             max(2, int(_total_prs) // 20 + len(repo_positions) // 12),
         )
         _merged_pr_dates = sorted(
-            _merged_pr_date(pr)
+            date_str
             for pr in _recent_merged_prs
-            if _merged_pr_date(pr) is not None
+            if (date_str := _merged_pr_date(pr)) is not None
         )
         # Find settlement position (same logic as settlement symbol)
         _settle_rp = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
@@ -3961,5 +4080,6 @@ def generate(
 
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#vigTopo)"/>')
 
+    P.append(dialect_group_markup(dialect))
     P.append("</svg>")
     return "\n".join(P)

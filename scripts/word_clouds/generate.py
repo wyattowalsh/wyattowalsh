@@ -1,11 +1,12 @@
 """Word cloud generation with multiple renderer backends.
 
 Supports two modes:
-  - "classic": bitmap PNG via the ``wordcloud`` library (original behavior)
-  - "wordle" | "clustered" | "typographic" | "shaped": SVG-native renderers
+  - "typographic" (default): fit-all SVG sized by starred-repo volume
+  - "classic": bitmap PNG via the ``wordcloud`` library (legacy)
+  - "wordle" | "clustered" | "shaped" | "metaheuristic-anim": other SVG engines
 
 Usage:
-    python -m scripts.word_clouds                          # classic PNG
+    python -m scripts.word_clouds                          # typographic SVG
     python -m scripts.word_clouds --renderer wordle        # SVG wordle
     python -m scripts.word_clouds --renderer all           # every renderer
 """
@@ -64,7 +65,9 @@ RENDERER_CHOICES: list[str] = [
     "all",
 ]
 
-DEFAULT_RENDERER: RendererName = "classic"
+# Shipped profile clouds: CI `generate word-cloud --from-*-md` inherits this
+# via WordCloudSettings / generate_word_cloud unless a renderer is overridden.
+DEFAULT_RENDERER: RendererName = "typographic"
 DEFAULT_WIDTH = 1600
 DEFAULT_HEIGHT = 1000
 DEFAULT_MAX_WORDS = 1000
@@ -80,8 +83,34 @@ _ASSETS_DIR = _PROJECT_ROOT / ".github" / "assets" / "img"
 # ---------------------------------------------------------------------------
 
 
+# Awesome-stars meta headings that are not language/topic categories.
+_NON_CATEGORY_HEADINGS = frozenset({"contents", "license"})
+
+
+def _first_list_after_heading(heading: Tag) -> Tag | None:
+    """Return the first ``ul`` in *heading*'s section, before the next ``h2``."""
+    sibling = heading.next_sibling
+    while sibling is not None:
+        if isinstance(sibling, Tag):
+            if sibling.name == "h2":
+                return None
+            if sibling.name == "ul":
+                return sibling
+        sibling = sibling.next_sibling
+    return None
+
+
 def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
-    """Parse a starred-topics/languages markdown file into {name: count}."""
+    """Parse starred-topics/languages markdown into ``{name: starred-repo-count}``.
+
+    The ``scripts.starred_lists`` format starts with a Contents list of
+    category names (link text preserves labels such as ``C#`` / ``Q#``),
+    then one ``## Category`` section per name whose list items are starred
+    repositories. Values are those per-section repo counts — relative
+    volume for font size/weight. Trailing meta headings such as License
+    are ignored. An empty category section counts as ``0`` so later
+    sections do not shift.
+    """
     with open(md_path, encoding="utf-8") as f:
         text = f.read()
     html = markdown.markdown(text)
@@ -89,10 +118,23 @@ def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
     first_ul = soup.find("ul")
     if not isinstance(first_ul, Tag):
         return {}
-    topics = [a.text for a in first_ul.find_all("a")]
-    all_uls = [node for node in soup.find_all("ul") if isinstance(node, Tag)][1:]
-    entries = [len(ul.find_all("li")) for ul in all_uls]
-    return dict(zip(topics, entries))
+    topics = [a.get_text(strip=True) for a in first_ul.find_all("a")]
+    if not topics:
+        return {}
+
+    section_counts: list[int] = []
+    for heading in soup.find_all("h2"):
+        if not isinstance(heading, Tag):
+            continue
+        title = heading.get_text(strip=True)
+        if title.casefold() in _NON_CATEGORY_HEADINGS:
+            continue
+        section_ul = _first_list_after_heading(heading)
+        if section_ul is None:
+            section_counts.append(0)
+            continue
+        section_counts.append(len(section_ul.find_all("li")))
+    return dict(zip(topics, section_counts, strict=False))
 
 
 _OTHERS_RE = re.compile(r"^\s*others?\s*$", re.IGNORECASE)
@@ -604,7 +646,7 @@ def main() -> None:
         "--renderer",
         choices=RENDERER_CHOICES,
         default=DEFAULT_RENDERER,
-        help="Renderer backend (default: classic)",
+        help="Renderer backend (default: typographic)",
     )
     parser.add_argument(
         "--source",

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Sequence
 
 # ---------------------------------------------------------------------------
 # Cost functions
@@ -211,7 +212,7 @@ def color_harmony_score(hues: list[float]) -> float:
 
 
 def optimize_palette_hues(
-    base_hues: list[float],
+    base_hues: Sequence[float],
     *,
     max_shift: float = 15.0,
     iterations: int = 200,
@@ -964,15 +965,15 @@ def optimize_placement(
         else:
             solver = "pso"
 
-    fn = _SOLVER_MAP.get(solver)
-    if fn is None:
+    if solver not in _SOLVER_MAP:
         raise ValueError(
             f"Unknown solver {solver!r}. Choose from: {', '.join(sorted(_SOLVER_MAP))}"
         )
 
-    # Map generic param names to solver-specific ones
+    # Call each solver directly so ty sees the matching keyword names
+    # (`iterations` vs `max_iter`) instead of a union of signatures.
     if solver == "sa":
-        return fn(
+        return optimize_layout_sa(
             initial_positions,
             weights,
             canvas_w,
@@ -982,7 +983,7 @@ def optimize_placement(
             seed=seed,
         )
     if solver == "pso":
-        return fn(
+        return optimize_layout_pso(
             initial_positions,
             weights,
             canvas_w,
@@ -991,8 +992,47 @@ def optimize_placement(
             iterations=max_iter,
             seed=seed,
         )
-    # All ported solvers share the same signature
-    return fn(
+    if solver == "grey_wolf":
+        return _art_solve_grey_wolf(
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            max_iter=max_iter,
+            seed=seed,
+        )
+    if solver == "whale":
+        return _art_solve_whale(
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            max_iter=max_iter,
+            seed=seed,
+        )
+    if solver == "firefly":
+        return _art_solve_firefly(
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            max_iter=max_iter,
+            seed=seed,
+        )
+    if solver == "flower":
+        return _art_solve_flower_pollination(
+            initial_positions,
+            weights,
+            canvas_w,
+            canvas_h,
+            min_spacing=min_spacing,
+            max_iter=max_iter,
+            seed=seed,
+        )
+    return _art_solve_differential_evolution(
         initial_positions,
         weights,
         canvas_w,
