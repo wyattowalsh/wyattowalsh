@@ -1563,7 +1563,7 @@
 - [Fincept-Corporation/FinceptTerminal](https://github.com/Fincept-Corporation/FinceptTerminal) - FinceptTerminal is a modern finance application offering advanced market analytics, investment research, and economic data tools, designed for interactive exploration and data-driven decision-making i
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - The context API to search, scrape, and interact with the web at scale. 🔥
 - [FlineDev/ContextKit](https://github.com/FlineDev/ContextKit) - Claude Code context engineering &amp; planning system for individual AI development workflows
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Open-source runtime for AI workflows that must prove they finished.
+- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - AI said it finished. Flyto2 shows the proof.
 - [Forward-Future/loopy](https://github.com/Forward-Future/loopy) - A library of practical AI-agent loops and an installable skill for finding, adapting, and designing repeatable agent workflows.
 - [frankbria/ralph-claude-code](https://github.com/frankbria/ralph-claude-code) - Autonomous AI development loop for Claude Code with intelligent exit detection
 - [gabrielbacha/MCP-Manager-GUI](https://github.com/gabrielbacha/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.

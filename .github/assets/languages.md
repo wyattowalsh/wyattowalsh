@@ -4010,7 +4010,7 @@
 - [flairNLP/fundus](https://github.com/flairNLP/fundus) - A very simple news crawler with a funny name
 - [FloridSleeves/LLMDebugger](https://github.com/FloridSleeves/LLMDebugger) - LDB: A Large Language Model Debugger via Verifying Runtime Execution Step by Step (ACL&#x27;24)
 - [flowtyone/ComfyUI-Flowty-LDSR](https://github.com/flowtyone/ComfyUI-Flowty-LDSR) - LDSR custom node for ComfyUI
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Open-source runtime for AI workflows that must prove they finished.
+- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - AI said it finished. Flyto2 shows the proof.
 - [fnnx-ai/scikit-llm](https://github.com/fnnx-ai/scikit-llm) - Seamlessly integrate LLMs into scikit-learn.
 - [Forethought-Technologies/AutoChain](https://github.com/Forethought-Technologies/AutoChain) - AutoChain: Build lightweight, extensible, and testable LLM Agents
 - [ForgeCAD/forgecad-public-kit](https://github.com/ForgeCAD/forgecad-public-kit) - Public companion kit for ForgeCAD: examples, agent skills, docs links, and issue tracking. The hosted CAD app and core source live elsewhere.
