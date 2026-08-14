@@ -112,7 +112,7 @@
 <text class="body" x="250" y="164">MDX</text>
 <rect x="400" y="154" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
 <rect x="400" y="154" width="6" height="8" rx="4" fill="#d4a72c" />
-<text class="meta" x="934" y="164" text-anchor="end">0.0% · 646.8 KB bytes</text>
+<text class="meta" x="934" y="164" text-anchor="end">0.0% · 647 KB bytes</text>
 <text class="body" x="250" y="181">CSS</text>
 <rect x="400" y="171" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
 <rect x="400" y="171" width="6" height="8" rx="4" fill="#1a7f37" />
