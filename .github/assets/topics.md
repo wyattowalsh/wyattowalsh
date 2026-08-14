@@ -92,6 +92,7 @@
 - [documentation](#documentation)
 - [dotfiles](#dotfiles)
 - [dotnet](#dotnet)
+- [dsh-plugin](#dsh-plugin)
 - [education](#education)
 - [electron](#electron)
 - [elixir](#elixir)
@@ -1562,7 +1563,7 @@
 - [Fincept-Corporation/FinceptTerminal](https://github.com/Fincept-Corporation/FinceptTerminal) - FinceptTerminal is a modern finance application offering advanced market analytics, investment research, and economic data tools, designed for interactive exploration and data-driven decision-making i
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - The context API to search, scrape, and interact with the web at scale. 🔥
 - [FlineDev/ContextKit](https://github.com/FlineDev/ContextKit) - Claude Code context engineering &amp; planning system for individual AI development workflows
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
+- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Open-source runtime for AI workflows that must prove they finished.
 - [Forward-Future/loopy](https://github.com/Forward-Future/loopy) - A library of practical AI-agent loops and an installable skill for finding, adapting, and designing repeatable agent workflows.
 - [frankbria/ralph-claude-code](https://github.com/frankbria/ralph-claude-code) - Autonomous AI development loop for Claude Code with intelligent exit detection
 - [gabrielbacha/MCP-Manager-GUI](https://github.com/gabrielbacha/MCP-Manager-GUI) - MCP Toggle is a simple GUI tool to help you manage MCP servers across clients seamlessly.
@@ -2159,7 +2160,6 @@
 - [extratone/jelly](https://github.com/extratone/jelly) - My personal repo for Jellycuts experiments. (Originally forked from the docs repo.)
 - [extratone/jellycuts](https://github.com/extratone/jellycuts) - Shortcuts development in the .jelly language.
 - [feder-cr/Jobs_Applier_AI_Agent_AIHawk](https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk) - Open source AI job application bot in Python: auto apply to jobs, with a tailored resume and cover letter for each posting.
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [Forward-Future/loopy](https://github.com/Forward-Future/loopy) - A library of practical AI-agent loops and an installable skill for finding, adapting, and designing repeatable agent workflows.
 - [frappe/flow_client](https://github.com/frappe/flow_client) - Frappe Flow — native AI agents, tools, and triggers for Frappe
 - [frappe/frappectl](https://github.com/frappe/frappectl) - Dumb CLI for smart agents
@@ -4888,7 +4888,7 @@
 - [pracdata/awesome-open-source-data-engineering](https://github.com/pracdata/awesome-open-source-data-engineering) - A curated list of open source tools used in analytics platforms and data engineering ecosystem
 - [PrefectHQ/prefect](https://github.com/PrefectHQ/prefect) - Prefect is a workflow orchestration framework for building resilient data pipelines in Python.
 - [ruc-datalab/DeepAnalyze](https://github.com/ruc-datalab/DeepAnalyze) - DeepAnalyze is the first agentic LLM for autonomous data science. 🎈你的AI数据分析师，自动分析大量数据，一键生成专业分析报告！
-- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. Low-code visual data pipelines or SQL: 364 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
+- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. No-Code/Low-code visual data pipelines or SQL: 385 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
 - [sodadata/soda-core](https://github.com/sodadata/soda-core) - Data Contracts engine for the modern data stack. https://www.soda.io
 - [ssp-data/practical-data-engineering](https://github.com/ssp-data/practical-data-engineering) - Practical Data Engineering: A Hands-On Real-Estate Project Guide
 - [treeverse/lakeFS](https://github.com/treeverse/lakeFS) - lakeFS - Data version control for your data lake | Git for data
@@ -6037,6 +6037,11 @@
 - [SeleniumHQ/selenium](https://github.com/SeleniumHQ/selenium) - A browser automation framework and ecosystem.
 - [Tyrrrz/YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) - Abstraction layer over YouTube&#x27;s internal API
 
+## dsh-plugin
+
+- [nexu-io/open-design](https://github.com/nexu-io/open-design) - 🎨 The open-source Claude Design alternative. 🖥️ Local-first desktop app. 🖼️ Your coding agent becomes the design engine: prototypes, landing pages, dashboards, slides, images &amp; video — real files, HTM
+- [tt-a1i/archify](https://github.com/tt-a1i/archify) - Agent skill for beautiful, verifiable architecture, workflow, sequence, data-flow, and lifecycle diagrams—self-contained HTML with motion and crisp export.
+
 ## education
 
 - [anu0012/awesome-computer-science-opportunities](https://github.com/anu0012/awesome-computer-science-opportunities) - An awesome list of events and fellowship opportunities for Computer Science students
@@ -6057,7 +6062,7 @@
 
 ## electron
 
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [agalwood/Motrix](https://github.com/agalwood/Motrix) - A full-featured download manager.
 - [AI-QL/chat-mcp](https://github.com/AI-QL/chat-mcp) - A Desktop Chat App that leverages MCP(Model Context Protocol) to interface with other LLMs.
 - [atom/atom](https://github.com/atom/atom) - :atom: The hackable text editor
@@ -6631,7 +6636,6 @@
 - [miurla/morphic](https://github.com/miurla/morphic) - An AI-powered search engine with a generative UI
 - [Netflix/metaflow](https://github.com/Netflix/metaflow) - Build, Manage and Deploy AI/ML Systems
 - [nexu-io/html-anything](https://github.com/nexu-io/html-anything) - ✨ The agentic HTML editor — your local AI agent writes the HTML, you ship it. 🚀 75 Skills × 9 Surfaces (magazine · deck · poster · XHS / tweet · prototype · data report · Hyperframes) 🛡️ Sandboxed pre
-- [nexu-io/open-design](https://github.com/nexu-io/open-design) - 🎨 The open-source Claude Design alternative. 🖥️ Local-first desktop app. 🖼️ Your coding agent becomes the design engine: prototypes, landing pages, dashboards, slides, images &amp; video — real files, HTM
 - [NirDiamant/agents-towards-production](https://github.com/NirDiamant/agents-towards-production) - End-to-end, code-first tutorials for building production-grade GenAI agents. From prototype to enterprise deployment.
 - [NirDiamant/GenAI_Agents](https://github.com/NirDiamant/GenAI_Agents) - 50+ tutorials and implementations for Generative AI Agent techniques, from basic conversational bots to complex multi-agent systems.
 - [NirDiamant/Prompt_Engineering](https://github.com/NirDiamant/Prompt_Engineering) - 22 prompt engineering techniques with hands-on Jupyter Notebook tutorials, from fundamental concepts to advanced strategies for leveraging LLMs.
@@ -7934,7 +7938,7 @@
 ## javascript
 
 - [11ty/buildawesome](https://github.com/11ty/buildawesome) - A simpler site generator. Transforms a directory of templates (of varying types) into HTML.
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [adobe-webplatform/Snap.svg](https://github.com/adobe-webplatform/Snap.svg) - The JavaScript library for modern SVG graphics.
 - [adrai/flowchart.js](https://github.com/adrai/flowchart.js) - Draws simple SVG flow chart diagrams from textual representation of the diagram
 - [agi-inc/agent-protocol](https://github.com/agi-inc/agent-protocol) - Common interface for interacting with AI agents. The protocol is tech stack agnostic - you can use it with any framework for building agents.
@@ -8601,7 +8605,7 @@
 - [0PandaDEV/Qopy](https://github.com/0PandaDEV/Qopy) - The fixed clipboard manager for Windows, macOS &amp; Linux
 - [0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui) - Yet another WebUI for Nginx
 - [720kb/ndm](https://github.com/720kb/ndm) - :computer: npm desktop manager https://720kb.github.io/ndm
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [adi1090x/dynamic-wallpaper](https://github.com/adi1090x/dynamic-wallpaper) - A simple bash script to set wallpapers according to current time, using cron job scheduler.
 - [agalwood/Motrix](https://github.com/agalwood/Motrix) - A full-featured download manager.
 - [alacritty/alacritty](https://github.com/alacritty/alacritty) - A cross-platform, OpenGL terminal emulator.
@@ -8841,7 +8845,6 @@
 - [filipecalegario/awesome-generative-ai](https://github.com/filipecalegario/awesome-generative-ai) - A curated list of Generative AI tools, works, models, and references
 - [firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) - The context API to search, scrape, and interact with the web at scale. 🔥
 - [firecrawl/firecrawl-py](https://github.com/firecrawl/firecrawl-py) - Crawl and convert any website into clean markdown
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [fnnx-ai/scikit-llm](https://github.com/fnnx-ai/scikit-llm) - Seamlessly integrate LLMs into scikit-learn.
 - [FoundationAgents/MetaGPT](https://github.com/FoundationAgents/MetaGPT) - 🌟 The Multi-Agent Framework: First AI Software Company, Towards Natural Language Programming
 - [fr0gger/Awesome-GPT-Agents](https://github.com/fr0gger/Awesome-GPT-Agents) - A curated list of GPT agents for cybersecurity
@@ -9253,7 +9256,6 @@
 - [clientIO/joint](https://github.com/clientIO/joint) - A proven SVG-based JavaScript diagramming library powering exceptional UIs
 - [dtyq/magic](https://github.com/dtyq/magic) - Magicrew. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)
 - [FlowiseAI/Flowise](https://github.com/FlowiseAI/Flowise) - Build AI Agents, Visually
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [frappe/builder](https://github.com/frappe/builder) - Craft beautiful websites effortlessly with an intuitive visual builder and publish them instantly
 - [iflytek/astron-agent](https://github.com/iflytek/astron-agent) - Enterprise-grade, commercial-friendly agentic workflow platform for building next-generation SuperAgents.
 - [illacloud/illa-builder](https://github.com/illacloud/illa-builder) - Low-code platform allows you to build business apps, enables you to quickly create internal tools such as dashboard, crud app, admin panel, crm, cms, etc. Supports PostgreSQL, MySQL, Supabase, GraphQL
@@ -9271,7 +9273,7 @@
 - [roboflow/supervision](https://github.com/roboflow/supervision) - We write your reusable computer vision tools. 💜
 - [rulego/rulego](https://github.com/rulego/rulego) - ⛓️RuleGo is a lightweight, high-performance, embedded, next-generation component orchestration rule engine framework for Go.
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Sim is the collaborative workspace to build, deploy, and monitor AI agents and workflows. Used by 100,000+ builders.
-- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. Low-code visual data pipelines or SQL: 364 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
+- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. No-Code/Low-code visual data pipelines or SQL: 385 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
 - [StreetLamb/tribe](https://github.com/StreetLamb/tribe) - Low code tool to rapidly build and coordinate multi-agent teams
 - [teableio/teable](https://github.com/teableio/teable) - ✨ AI Spreadsheet for Business
 - [ToolJet/ToolJet](https://github.com/ToolJet/ToolJet) - ToolJet is the open-source foundation of ToolJet AI - the enterprise app generation platform for building internal tools, dashboard, business applications, workflows and AI agents 🚀
@@ -9638,7 +9640,7 @@
 
 - [0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui) - Yet another WebUI for Nginx
 - [720kb/ndm](https://github.com/720kb/ndm) - :computer: npm desktop manager https://720kb.github.io/ndm
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [agalwood/Motrix](https://github.com/agalwood/Motrix) - A full-featured download manager.
 - [alacritty/alacritty](https://github.com/alacritty/alacritty) - A cross-platform, OpenGL terminal emulator.
 - [alexrozanski/LlamaChat](https://github.com/alexrozanski/LlamaChat) - Chat with your favourite LLaMA models in a native macOS app
@@ -10247,7 +10249,6 @@
 - [f/mcptools](https://github.com/f/mcptools) - A command-line interface for interacting with MCP (Model Context Protocol) servers using both stdio and HTTP transport.
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch) - A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build &amp; Hermes Agent. Only official website: ccswitch.io
 - [firecrawl/firecrawl-mcp-server](https://github.com/firecrawl/firecrawl-mcp-server) - 🔥 Official Firecrawl MCP Server - Adds powerful web scraping and search to Cursor, Claude and any other LLM clients.
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [formulahendry/mcp-server-spec-driven-development](https://github.com/formulahendry/mcp-server-spec-driven-development) - Spec-Driven Development MCP Server, not just Vibe Coding
 - [FradSer/mcp-server-mas-sequential-thinking](https://github.com/FradSer/mcp-server-mas-sequential-thinking) - An advanced sequential thinking process using a Multi-Agent System (MAS) built with the Agno framework and served via MCP.
 - [frappe/mcp](https://github.com/frappe/mcp) - Frappe MCP allows Frappe apps to function as MCP servers
@@ -11208,7 +11209,7 @@
 - [puckeditor/puck](https://github.com/puckeditor/puck) - The visual editor for React.
 - [r3-team/r3](https://github.com/r3-team/r3) - REI3 - Free and open low code
 - [simstudioai/sim](https://github.com/simstudioai/sim) - Sim is the collaborative workspace to build, deploy, and monitor AI agents and workflows. Used by 100,000+ builders.
-- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. Low-code visual data pipelines or SQL: 364 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
+- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. No-Code/Low-code visual data pipelines or SQL: 385 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
 - [strapi/strapi](https://github.com/strapi/strapi) - 🚀 Strapi is the leading open-source headless CMS. It’s 100% JavaScript/TypeScript, fully customizable, and developer-first.
 - [StreetLamb/tribe](https://github.com/StreetLamb/tribe) - Low code tool to rapidly build and coordinate multi-agent teams
 - [strnad/CrewAI-Studio](https://github.com/strnad/CrewAI-Studio) - A user-friendly, multi-platform GUI for managing and running CrewAI agents and tasks. Supports Conda and virtual environments, no coding needed.
@@ -11253,7 +11254,7 @@
 
 ## nodejs
 
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [AlaeddineMessadi/opencode-mcp](https://github.com/AlaeddineMessadi/opencode-mcp) - MCP server for OpenCode AI — 70 tools, 10 resources, 5 prompts. Use npx opencode-mcp with Claude Desktop, Claude Code, Cursor, Windsurf, or any MCP client.
 - [Anil-matcha/awesome-openclaw](https://github.com/Anil-matcha/awesome-openclaw) - A curated list of OpenClaw resources, tools, skills, tutorials &amp; articles. OpenClaw (formerly Moltbot / Clawdbot) — open-source self-hosted AI agent for WhatsApp, Telegram, Discord &amp; 50+ integrations.
 - [apify/crawlee](https://github.com/apify/crawlee) - Crawlee—A web scraping and browser automation library for Node.js to build reliable crawlers. In JavaScript and TypeScript. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and o
@@ -11599,7 +11600,6 @@
 - [chetachiezikeuzor/Highlightr-Plugin](https://github.com/chetachiezikeuzor/Highlightr-Plugin) - A minimal and aesthetically pleasing highlighting menu that makes color-coded highlighting much easier 🎨.
 - [chetachiezikeuzor/Obsidian-Snippets](https://github.com/chetachiezikeuzor/Obsidian-Snippets) - A repo full of my snippets for Obsidian.md. Use them to customize your workspace and/or add to a theme! 🪄
 - [chhoumann/quickadd](https://github.com/chhoumann/quickadd) - QuickAdd for Obsidian
-- [CIMSTA/obsidiosaurus](https://github.com/CIMSTA/obsidiosaurus) - Obsidian -&gt; Docusaurus Converter
 - [community-archive/obsidian-hub](https://github.com/community-archive/obsidian-hub) - Resource hub for Obsidian resources.
 - [community-archive/obsidian-kanban](https://github.com/community-archive/obsidian-kanban) - Create markdown-backed Kanban boards in Obsidian.
 - [community-archive/obsidian-zotero-integration](https://github.com/community-archive/obsidian-zotero-integration) - Insert and import citations, bibliographies, notes, and PDF annotations from Zotero into Obsidian.
@@ -11642,6 +11642,7 @@
 - [liamcain/obsidian-periodic-notes](https://github.com/liamcain/obsidian-periodic-notes) - Create/manage your daily, weekly, and monthly notes in Obsidian
 - [LostPaul/obsidian-folder-notes](https://github.com/LostPaul/obsidian-folder-notes) - Create notes within folders that can be accessed without collapsing the folder, similar to the functionality offered in Notion.
 - [lucagrippa/obsidian-ai-tagger](https://github.com/lucagrippa/obsidian-ai-tagger) - Simplify tagging in Obsidian. Instantly analyze and tag your document with one click for efficient note organization.
+- [lupinum-dev/obsidiosaurus](https://github.com/lupinum-dev/obsidiosaurus) - Obsidian -&gt; Docusaurus Converter
 - [Make-md/makemd](https://github.com/Make-md/makemd)
 - [marcjulianschwarz/obsidian-file-link](https://github.com/marcjulianschwarz/obsidian-file-link) - A plugin for the note taking app Obsidian to add better external file links to your notes.
 - [masonlr/obsidian-starter-templates](https://github.com/masonlr/obsidian-starter-templates) - :rocket: Starter templates for Obsidian.md
@@ -11848,7 +11849,6 @@
 - [facebook/docusaurus](https://github.com/facebook/docusaurus) - Easy to maintain open source documentation websites.
 - [farion1231/cc-switch](https://github.com/farion1231/cc-switch) - A cross-platform desktop All-in-One assistant for Claude Code, Codex, OpenCode, OpenClaw, Grok Build &amp; Hermes Agent. Only official website: ccswitch.io
 - [firecracker-microvm/firecracker](https://github.com/firecracker-microvm/firecracker) - Secure and fast microVMs for serverless computing.
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [fontsource/fontsource](https://github.com/fontsource/fontsource) - Self-host Open Source fonts in neatly bundled NPM packages.
 - [forem/forem](https://github.com/forem/forem) - For empowering community 🌱
 - [frappe/crm](https://github.com/frappe/crm) - Fully featured, open source CRM
@@ -15985,7 +15985,6 @@
 - [firmai/industry-machine-learning](https://github.com/firmai/industry-machine-learning) - A curated list of applied machine learning and data science notebooks and libraries across different industries (by @firmai)
 - [flairNLP/fundus](https://github.com/flairNLP/fundus) - A very simple news crawler with a funny name
 - [flypythoncom/python](https://github.com/flypythoncom/python) - python is all you need !
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [franckferman/MetaDetective](https://github.com/franckferman/MetaDetective) - Unleash Metadata Intelligence with MetaDetective. Your Assistant Beyond Metagoofil.
 - [frappe/crm](https://github.com/frappe/crm) - Fully featured, open source CRM
 - [frappe/erpnext](https://github.com/frappe/erpnext) - Free and Open Source Enterprise Resource Planning (ERP)
@@ -17771,7 +17770,6 @@
 - [edoardottt/cariddi](https://github.com/edoardottt/cariddi) - Take a list of domains, crawl urls and scan for endpoints, secrets, api keys, file extensions, tokens and more
 - [eosphoros-ai/DB-GPT](https://github.com/eosphoros-ai/DB-GPT) - open-source agentic AI data assistant for the next generation of AI + Data products.
 - [Extravi/araa-search](https://github.com/Extravi/araa-search) - A privacy-respecting, ad-free, self-hosted Google metasearch engine with strong security that offers full API support and utilizes Qwant for images, and DuckDuckGo for auto-complete.
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
 - [frishtik/osint-tools-mcp-server](https://github.com/frishtik/osint-tools-mcp-server) - MCP server exposing multiple OSINT tools for AI assistants like Claude
 - [gitleaks/gitleaks](https://github.com/gitleaks/gitleaks) - Find secrets with Gitleaks 🔑
 - [google/timesketch](https://github.com/google/timesketch) - Collaborative forensic timeline analysis
@@ -19237,7 +19235,7 @@
 
 ## ubuntu
 
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [adi1090x/dynamic-wallpaper](https://github.com/adi1090x/dynamic-wallpaper) - A simple bash script to set wallpapers according to current time, using cron job scheduler.
 - [GetPublii/Publii](https://github.com/GetPublii/Publii) - The most intuitive Static Site CMS designed for SEO-optimized and privacy-focused websites.
 - [GopeedLab/gopeed](https://github.com/GopeedLab/gopeed) - A fast, modern download manager for HTTP, BitTorrent, Magnet, and ed2k. Cross-platform, built with Golang and Flutter.
@@ -19326,7 +19324,7 @@
 
 ## video
 
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [AAndyProgram/SCrawler](https://github.com/AAndyProgram/SCrawler) - 🏳️‍🌈 Media downloader from any sites, including Twitter, Reddit, Instagram, BlueSky, TikTok, Threads, Facebook, OnlyFans, YouTube, Pinterest, PornHub, XHamster, XVIDEOS, ThisVid etc.
 - [AaronFeng753/Waifu2x-Extension-GUI](https://github.com/AaronFeng753/Waifu2x-Extension-GUI) - Video, Image and GIF upscale/enlarge(Super-Resolution) and Video frame interpolation. Achieved with Waifu2x, Real-ESRGAN, Real-CUGAN, RTX Video Super Resolution VSR, SRMD, RealSR, Anime4K, RIFE, IFRNe
 - [abhiTronix/vidgear](https://github.com/abhiTronix/vidgear) - A High-performance cross-platform Video Processing Python framework powerpacked with unique trailblazing features :fire:
@@ -19770,7 +19768,7 @@
 - [0PandaDEV/Qopy](https://github.com/0PandaDEV/Qopy) - The fixed clipboard manager for Windows, macOS &amp; Linux
 - [0xJacky/nginx-ui](https://github.com/0xJacky/nginx-ui) - Yet another WebUI for Nginx
 - [720kb/ndm](https://github.com/720kb/ndm) - :computer: npm desktop manager https://720kb.github.io/ndm
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [agalwood/Motrix](https://github.com/agalwood/Motrix) - A full-featured download manager.
 - [alacritty/alacritty](https://github.com/alacritty/alacritty) - A cross-platform, OpenGL terminal emulator.
 - [AmberSahdev/Open-Interface](https://github.com/AmberSahdev/Open-Interface) - Control Any Computer Using LLMs.
@@ -19920,7 +19918,7 @@
 
 ## youtube
 
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [AAndyProgram/SCrawler](https://github.com/AAndyProgram/SCrawler) - 🏳️‍🌈 Media downloader from any sites, including Twitter, Reddit, Instagram, BlueSky, TikTok, Threads, Facebook, OnlyFans, YouTube, Pinterest, PornHub, XHamster, XVIDEOS, ThisVid etc.
 - [abhiTronix/vidgear](https://github.com/abhiTronix/vidgear) - A High-performance cross-platform Video Processing Python framework powerpacked with unique trailblazing features :fire:
 - [Affitor/affiliate-skills](https://github.com/Affitor/affiliate-skills) - 50 AI agent skills for affiliate marketing. Research trending content, write data-backed posts, generate infographics, build landing pages, deploy — full flywheel with social intelligence. Works with

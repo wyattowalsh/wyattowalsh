@@ -1126,7 +1126,7 @@
 - [702573N/Obsidian-Tasks-Calendar](https://github.com/702573N/Obsidian-Tasks-Calendar) - A custom view build with Obsidian-Dataview to display tasks from Obsidian-Tasks and from your daily notes in a highly customisable calendar with a wide variety of views
 - [702573N/Obsidian-Tasks-Timeline](https://github.com/702573N/Obsidian-Tasks-Timeline) - A custom view build with Obsidian-Dataview to display tasks from Obsidian-Tasks and from your daily notes in a highly customisable timeline
 - [720kb/ndm](https://github.com/720kb/ndm) - :computer: npm desktop manager https://720kb.github.io/ndm
-- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop video downloader supporting thousands of sites. CA: HBbDPYzpidbTVUuRwLeWGAAJbGir7NvejvbWNCRdpump
+- [aandrew-me/ytDownloader](https://github.com/aandrew-me/ytDownloader) - Desktop app to download audio/video from hundreds of sites
 - [aaronsb/think-strategies](https://github.com/aaronsb/think-strategies) - An MCP server that provides structured thinking strategies for breaking down complex problems into manageable steps with support for revisions, branching, and multiple reasoning approaches
 - [ABSphreak/readme-jokes](https://github.com/ABSphreak/readme-jokes) - 😄 Jokes for your GitHub READMEs
 - [accordproject/concerto](https://github.com/accordproject/concerto) - Business schema language and runtime
@@ -1261,6 +1261,7 @@
 - [ccnn2509/app-seo-ai](https://github.com/ccnn2509/app-seo-ai) - Application for SEO automation and AI-powered optimization
 - [ccplugins/awesome-claude-code-plugins](https://github.com/ccplugins/awesome-claude-code-plugins) - Awesome Claude Code plugins — a curated list of slash commands, subagents, MCP servers, and hooks for Claude Code
 - [cesarhuret/docGPT](https://github.com/cesarhuret/docGPT) - ChatGPT directly within Google Docs as an Editor Add-on 📑
+- [cfour-hi/gitstars](https://github.com/cfour-hi/gitstars) - Github Starred Repositories Manager
 - [Chalarangelo/30-seconds-of-code](https://github.com/Chalarangelo/30-seconds-of-code) - Coding articles to level up your development skills
 - [chalk/chalk](https://github.com/chalk/chalk) - 🖍 Terminal string styling done right
 - [chaozh/awesome-blockchain-cn](https://github.com/chaozh/awesome-blockchain-cn) - 收集所有区块链(BlockChain)技术开发相关资料，包括Fabric和Ethereum开发资料
@@ -4010,7 +4011,7 @@
 - [flairNLP/fundus](https://github.com/flairNLP/fundus) - A very simple news crawler with a funny name
 - [FloridSleeves/LLMDebugger](https://github.com/FloridSleeves/LLMDebugger) - LDB: A Large Language Model Debugger via Verifying Runtime Execution Step by Step (ACL&#x27;24)
 - [flowtyone/ComfyUI-Flowty-LDSR](https://github.com/flowtyone/ComfyUI-Flowty-LDSR) - LDSR custom node for ComfyUI
-- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Flyto2 Core is the open-source execution kernel for automation and AI-agent workflows: 452 registry-backed modules, MCP-native transport, YAML recipes, evidence capture, replay, triggers, queue, versi
+- [flytohub/flyto-core](https://github.com/flytohub/flyto-core) - Open-source runtime for AI workflows that must prove they finished.
 - [fnnx-ai/scikit-llm](https://github.com/fnnx-ai/scikit-llm) - Seamlessly integrate LLMs into scikit-learn.
 - [Forethought-Technologies/AutoChain](https://github.com/Forethought-Technologies/AutoChain) - AutoChain: Build lightweight, extensible, and testable LLM Agents
 - [ForgeCAD/forgecad-public-kit](https://github.com/ForgeCAD/forgecad-public-kit) - Public companion kit for ForgeCAD: examples, agent skills, docs links, and issue tracking. The hosted CAD app and core source live elsewhere.
@@ -5846,7 +5847,7 @@
 - [Siriusmart/youtube-tui](https://github.com/Siriusmart/youtube-tui) - An aesthetically pleasing YouTube TUI written in Rust
 - [sirupsen/napkin-math](https://github.com/sirupsen/napkin-math) - Techniques and numbers for estimating system&#x27;s performance from first-principles
 - [slint-ui/slint](https://github.com/slint-ui/slint) - Slint is an open-source declarative GUI toolkit to build native user interfaces for Rust, C++, JavaScript, or Python apps.
-- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. Low-code visual data pipelines or SQL: 364 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
+- [slothflowlabs/duckle](https://github.com/slothflowlabs/duckle) - Open-source ETL and ELT tool on DuckDB. No-Code/Low-code visual data pipelines or SQL: 385 components, dbt, CDC, data quality, reverse ETL, lineage, MCP for AI agents.
 - [solana-foundation/txtx](https://github.com/solana-foundation/txtx) - Terraform for web3. Reproducible deployments and secure operations for Bitcoin, Ethereum and Solana.
 - [solana-labs/solana](https://github.com/solana-labs/solana) - Web-Scale Blockchain for fast, secure, scalable, decentralized apps and marketplaces.
 - [spacedriveapp/spacedrive](https://github.com/spacedriveapp/spacedrive) - Spacedrive is an open source cross-platform file explorer, powered by a virtual distributed filesystem written in Rust.
@@ -6521,7 +6522,6 @@
 - [chriswritescode-dev/opencode-memory](https://github.com/chriswritescode-dev/opencode-memory) - AI-powered memory management plugin for OpenCode - Iterative loops, sandbox execution, semantic search and persistent knowledge storage
 - [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) - Chrome DevTools for coding agents
 - [ChromeDevTools/devtools-frontend](https://github.com/ChromeDevTools/devtools-frontend) - The Chrome DevTools UI
-- [CIMSTA/obsidiosaurus](https://github.com/CIMSTA/obsidiosaurus) - Obsidian -&gt; Docusaurus Converter
 - [civitai/civitai](https://github.com/civitai/civitai) - A repository of models, textual inversions, and more
 - [clauderic/dnd-kit](https://github.com/clauderic/dnd-kit) - The modern toolkit for building drag and drop interfaces
 - [clay-good/OpenLore](https://github.com/clay-good/OpenLore) - Deterministic, local-first memory and guardrails for AI coding agents with no LLM in the hot path.
@@ -7151,6 +7151,7 @@
 - [lukasbach/react-complex-tree](https://github.com/lukasbach/react-complex-tree) - Unopinionated Accessible Tree Component with Multi-Select and Drag-And-Drop
 - [lukilabs/beautiful-mermaid](https://github.com/lukilabs/beautiful-mermaid)
 - [Lumiaqian/openspec-mcp](https://github.com/Lumiaqian/openspec-mcp) - MCP server for OpenSpec - spec-driven development with dashboard and approval workflow
+- [lupinum-dev/obsidiosaurus](https://github.com/lupinum-dev/obsidiosaurus) - Obsidian -&gt; Docusaurus Converter
 - [lynchjames/obsidian-mind-map](https://github.com/lynchjames/obsidian-mind-map) - An Obsidian plugin for displaying markdown notes as mind maps using Markmap.
 - [m-siles/branch-thinking](https://github.com/m-siles/branch-thinking) - MCP tool to allow multiple chains of thought
 - [m1guelpf/mirror-next](https://github.com/m1guelpf/mirror-next) - A Next.js-powered frontend for your Mirror publication
@@ -8052,7 +8053,6 @@
 - [andrewsbarbaro/for-the-badge](https://github.com/andrewsbarbaro/for-the-badge) - It all started because of an obsession with two words: “build passing”. It all ended with this: badges, for badges’ sake.
 - [antonreshetov/mysigmail](https://github.com/antonreshetov/mysigmail) - A free and open-source email signature generator for Gmail, Outlook, Apple Mail, etc.
 - [AutomaApp/automa](https://github.com/AutomaApp/automa) - A browser extension for automating your browser by connecting blocks
-- [cfour-hi/gitstars](https://github.com/cfour-hi/gitstars) - Github Starred Repositories Manager
 - [CorentinTh/it-tools](https://github.com/CorentinTh/it-tools) - Collection of handy online tools for developers, with great UX.
 - [dockeron/dockeron](https://github.com/dockeron/dockeron) - 🤖🤖🤖 Electron + Vue.js for Docker
 - [electrikmilk/shortcuts-glyph-search](https://github.com/electrikmilk/shortcuts-glyph-search) - Siri Shortcuts Icon Builder for Cherri and Jelly 🔣
