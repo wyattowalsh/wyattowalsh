@@ -1403,12 +1403,12 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
+        assert "This Week I Spent My Time On" not in rendered
+        assert "WakaTime stats are temporarily unavailable right now." not in rendered
         assert (
-            "WakaTime stats hidden until a fresh generated section is available."
+            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
             in rendered
         )
-        assert "WakaTime stats are temporarily unavailable right now." not in rendered
-        assert "outside the freshness window" in rendered
         assert 'src=".github/assets/img/wakatime.svg"' in rendered
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
         assert "<details" not in rendered
@@ -1460,9 +1460,12 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
-        assert "This Week I Spent My Time On" in rendered
-        assert "Programming Languages:" in rendered
-        assert "WakaTime stats hidden" not in rendered
+        assert "This Week I Spent My Time On" not in rendered
+        assert "Programming Languages:" not in rendered
+        assert (
+            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
+            in rendered
+        )
         assert 'src=".github/assets/img/wakatime.svg"' in rendered
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
         assert "<details" not in rendered

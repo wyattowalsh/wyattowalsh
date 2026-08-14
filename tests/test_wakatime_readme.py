@@ -10,6 +10,7 @@ from typing import Any
 import pytest
 
 from scripts.wakatime_readme import (
+    DEFAULT_WAKATIME_SVG_PATH,
     MARKER_END,
     MARKER_START,
     WAKA_STATS_RANGES,
@@ -19,6 +20,7 @@ from scripts.wakatime_readme import (
     WakaWeekStats,
     apply_waka_artifact_to_readme,
     apply_waka_section,
+    apply_wakatime_svg,
     collect_wakatime_stats,
     fetch_public_repo_names,
     fetch_wakatime_daily_totals,
@@ -596,5 +598,55 @@ def test_main_generate_writes_svg_when_requested(
         == 0
     )
     assert "Programming Languages" in markdown.read_text(encoding="utf-8")
+    assert "This Week I Spent My Time On" in markdown.read_text(encoding="utf-8")
     assert written == [svg]
     assert svg.read_text(encoding="utf-8").startswith("<svg>")
+    assert "anmol098" not in markdown.read_text(encoding="utf-8")
+
+
+def test_apply_wakatime_svg_copies_committed_card(tmp_path: Path) -> None:
+    """SVG apply copies wakatime.svg; markdown dump is not the sole ship artifact."""
+    source = tmp_path / "artifact" / "wakatime.svg"
+    dest = tmp_path / "img" / "wakatime.svg"
+    source.parent.mkdir()
+    source.write_text(
+        "<svg xmlns='http://www.w3.org/2000/svg'>Languages Editors</svg>",
+        encoding="utf-8",
+    )
+    assert apply_wakatime_svg(source, dest) is True
+    assert dest.read_text(encoding="utf-8").startswith("<svg")
+    assert apply_wakatime_svg(source, dest) is False
+    assert apply_wakatime_svg(tmp_path / "missing.svg", dest) is False
+    junk = tmp_path / "not-an.svg"
+    junk.write_text("not svg", encoding="utf-8")
+    assert apply_wakatime_svg(junk, dest) is False
+    assert dest.read_text(encoding="utf-8").startswith("<svg")
+
+
+def test_main_apply_copies_svg_artifact(tmp_path: Path) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text(f"{MARKER_START}\nold\n{MARKER_END}\n", encoding="utf-8")
+    markdown = tmp_path / "waka-section.md"
+    markdown.write_text("📊 **This Week I Spent My Time On**\n", encoding="utf-8")
+    svg_src = tmp_path / "wakatime.svg"
+    svg_src.write_text("<svg>Languages</svg>\n", encoding="utf-8")
+    dest = tmp_path / "committed.svg"
+    assert (
+        main(
+            [
+                "apply",
+                "--artifact",
+                str(markdown),
+                "--readme",
+                str(readme),
+                "--svg-artifact",
+                str(svg_src),
+                "--svg-dest",
+                str(dest),
+            ]
+        )
+        == 0
+    )
+    assert "This Week I Spent My Time On" in readme.read_text(encoding="utf-8")
+    assert dest.read_text(encoding="utf-8") == "<svg>Languages</svg>\n"
+    assert dest != DEFAULT_WAKATIME_SVG_PATH

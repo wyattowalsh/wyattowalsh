@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from scripts.wakatime_readme import (
+    DEFAULT_WAKATIME_SVG_PATH,
     WakaAllTimeTotal,
     WakaCollection,
     WakaDayTotal,
@@ -20,6 +21,18 @@ from scripts.wakatime_svg import (
     main,
     render_wakatime_svg,
     write_wakatime_svg,
+)
+
+COMMITTED_WAKATIME_SVG = Path(".github/assets/img/wakatime.svg")
+_PRIVATE_AND_LEISURE = (
+    "/Users/ww/private.py",
+    "secret-client",
+    "Spotify",
+    "Messages",
+    "Games",
+    "Entertainment",
+    "heartbeat",
+    "anmol098",
 )
 
 
@@ -60,6 +73,76 @@ def _week() -> WakaWeekStats:
         human_readable_total="24 hrs 50 mins",
         human_readable_daily_average="3 hrs 32 mins",
         range_name="last_7_days",
+    )
+
+
+def public_safe_waka_collection() -> WakaCollection:
+    """Public-safe fixture used to bake the committed README card."""
+    week = WakaWeekStats(
+        timezone="America/New_York",
+        languages=(
+            _entry("Python", 49600, 55.5, "13 hrs 46 mins"),
+            _entry("TypeScript", 19200, 21.5, "5 hrs 20 mins"),
+            _entry("Rust", 8000, 9.0, "2 hrs 13 mins"),
+        ),
+        editors=(
+            _entry("Cursor", 33840, 60.0, "9 hrs 24 mins"),
+            _entry("VS Code", 10000, 20.0, "2 hrs 46 mins"),
+            _entry("Xcode", 5000, 10.0, "1 hr 23 mins"),
+        ),
+        projects=(_entry("wyattowalsh", 37080, 100.0, "10 hrs 18 mins"),),
+        operating_systems=(
+            _entry("Mac", 150000, 70.0, "41 hrs 40 mins"),
+            _entry("iOS", 40000, 20.0, "11 hrs 6 mins"),
+            _entry("watchOS", 15140, 10.0, "4 hrs 12 mins"),
+        ),
+        categories=(
+            _entry("Coding", 40000, 70.0, "11 hrs 6 mins"),
+            _entry("Debugging", 8000, 15.0, "2 hrs 13 mins"),
+        ),
+        total_seconds=89400,
+        human_readable_total="24 hrs 50 mins",
+        human_readable_daily_average="3 hrs 32 mins",
+        range_name="last_7_days",
+    )
+    return WakaCollection(
+        week=week,
+        year=WakaWeekStats(
+            timezone="America/New_York",
+            languages=week.languages,
+            editors=week.editors,
+            projects=week.projects,
+            operating_systems=week.operating_systems,
+            categories=week.categories,
+            total_seconds=3_600_000,
+            human_readable_total="1,000 hrs",
+            range_name="last_year",
+        ),
+        all_time=WakaWeekStats(
+            timezone="America/New_York",
+            languages=(),
+            editors=(),
+            projects=(),
+            operating_systems=(),
+            total_seconds=16_200_000,
+            human_readable_total="4,500 hrs",
+            range_name="all_time",
+        ),
+        all_time_since_today=WakaAllTimeTotal(
+            total_seconds=16_200_000,
+            text="4,500 hrs 0 mins",
+        ),
+        daily=(
+            WakaDayTotal(day=date(2026, 8, 8), total_seconds=1800, text="30 mins"),
+            WakaDayTotal(day=date(2026, 8, 9), total_seconds=3600, text="1 hr"),
+            WakaDayTotal(day=date(2026, 8, 10), total_seconds=7200, text="2 hrs"),
+            WakaDayTotal(day=date(2026, 8, 11), total_seconds=900, text="15 mins"),
+            WakaDayTotal(day=date(2026, 8, 12), total_seconds=5400, text="1 hr 30 mins"),
+            WakaDayTotal(day=date(2026, 8, 13), total_seconds=2400, text="40 mins"),
+            WakaDayTotal(day=date(2026, 8, 14), total_seconds=4800, text="1 hr 20 mins"),
+        ),
+        fetched_ranges=("last_7_days", "last_year", "all_time"),
+        public_repo_names=("wyattowalsh",),
     )
 
 
@@ -147,6 +230,37 @@ def test_render_wakatime_svg_includes_public_safe_sections() -> None:
     assert "Entertainment" not in svg
     assert "/Users/ww/private.py" not in svg
     assert "heartbeat" not in svg.lower()
+    for banned in _PRIVATE_AND_LEISURE:
+        assert banned not in svg
+
+
+def test_committed_wakatime_svg_exists_and_is_public_safe() -> None:
+    """README embeds this path; the committed card must stay public-safe."""
+    assert COMMITTED_WAKATIME_SVG == DEFAULT_WAKATIME_SVG_PATH
+    assert COMMITTED_WAKATIME_SVG.is_file()
+    svg = COMMITTED_WAKATIME_SVG.read_text(encoding="utf-8")
+    assert svg.startswith("<svg")
+    assert "@media (prefers-color-scheme: dark)" in svg
+    assert "Languages" in svg
+    assert "Editors" in svg
+    assert "Platforms" in svg
+    assert "Categories" in svg
+    assert "Python" in svg
+    assert "Cursor" in svg
+    assert "Mac" in svg
+    assert "iOS" in svg
+    assert "watchOS" in svg
+    assert "Coding" in svg
+    assert "wyattowalsh" in svg
+    assert "This week" in svg
+    assert "Last year" in svg
+    assert "All time" in svg
+    assert "Coding heatmap" in svg
+    for banned in _PRIVATE_AND_LEISURE:
+        assert banned not in svg
+    assert "/Users/" not in svg
+    assert "~/" not in svg
+    assert "C:\\" not in svg
 
 
 def test_render_wakatime_svg_omits_heatmap_without_daily_data() -> None:

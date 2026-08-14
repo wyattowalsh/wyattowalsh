@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-label="WakaTime coding activity">
+<defs>
+<style>
+:root {
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #d0d7de;
+  --title-color: #1f2328;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+  --bar-track: #eaeef2;
+  --hm-0: #ebedf0;
+  --hm-1: #9be9a8;
+  --hm-2: #40c463;
+  --hm-3: #30a14e;
+  --hm-4: #216e39;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --canvas-bg: #0d1117;
+  --card-bg: #0d1117;
+  --card-border: #30363d;
+  --title-color: #e6edf3;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+  --bar-track: #21262d;
+  --hm-0: #161b22;
+  --hm-1: #0e4429;
+  --hm-2: #006d32;
+  --hm-3: #26a641;
+  --hm-4: #39d353;
+}}
+.rc-bg { fill: var(--card-bg); }
+.rc-border { stroke: var(--card-border); }
+.card-title { fill: var(--title-color); font: 700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-kicker { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.card-line { fill: var(--text-color); font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.card-meta { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.stat-name { fill: var(--title-color); font: 600 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.stat-time { fill: var(--meta-color); font: 400 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.total-label { fill: var(--meta-color); font: 600 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+.total-value { fill: var(--title-color); font: 700 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.bar-track { fill: var(--bar-track); }
+.hm-0 { fill: var(--hm-0); }
+.hm-1 { fill: var(--hm-1); }
+.hm-2 { fill: var(--hm-2); }
+.hm-3 { fill: var(--hm-3); }
+.hm-4 { fill: var(--hm-4); }
+</style>
+</defs>
+<g class="card" transform="translate(28,28)">
+<rect class="rc-bg" width="1144" height="544" rx="10" />
+<rect class="rc-border" x="0.5" y="0.5" width="1143" height="543" rx="10" fill="none" stroke-width="1" />
+<rect x="0" y="0" width="1144" height="3" fill="var(--accent)" clip-path="inset(0 round 10px 10px 0 0)" />
+</g>
+<text class="card-kicker" x="52.0" y="50.0">WakaTime</text>
+<text class="card-title" x="52.0" y="72.0">Coding activity</text>
+<text class="card-meta" x="52.0" y="88.0">America/New_York · public-safe stats</text>
+<text class="total-label" x="52.0" y="116.0">This week</text>
+<text class="total-value" x="52.0" y="136.0">24 hrs 50 mins</text>
+<text class="total-label" x="417.3" y="116.0">Last year</text>
+<text class="total-value" x="417.3" y="136.0">1,000 hrs</text>
+<text class="total-label" x="782.7" y="116.0">All time</text>
+<text class="total-value" x="782.7" y="136.0">4,500 hrs</text>
+<text class="card-kicker" x="52.0" y="164.0">Languages</text>
+<text class="card-kicker" x="614.0" y="164.0">Editors</text>
+<text class="stat-name" x="52.0" y="182.0">Python</text>
+<rect class="bar-track" x="170.0" y="173.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="173.0" width="185.4" height="8" rx="4" fill="#3572A5" />
+<text class="stat-time" x="512.0" y="182.0">13 hrs 46 mins</text>
+<text class="stat-name" x="52.0" y="204.0">TypeScript</text>
+<rect class="bar-track" x="170.0" y="195.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="195.0" width="71.8" height="8" rx="4" fill="#3178c6" />
+<text class="stat-time" x="512.0" y="204.0">5 hrs 20 mins</text>
+<text class="stat-name" x="52.0" y="226.0">Rust</text>
+<rect class="bar-track" x="170.0" y="217.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="217.0" width="30.1" height="8" rx="4" fill="#dea584" />
+<text class="stat-time" x="512.0" y="226.0">2 hrs 13 mins</text>
+<text class="stat-name" x="614.0" y="182.0">Cursor</text>
+<rect class="bar-track" x="732.0" y="173.0" width="334.0" height="8" rx="4" />
+<rect x="732.0" y="173.0" width="200.4" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="182.0">9 hrs 24 mins</text>
+<text class="stat-name" x="614.0" y="204.0">VS Code</text>
+<rect class="bar-track" x="732.0" y="195.0" width="334.0" height="8" rx="4" />
+<rect x="732.0" y="195.0" width="66.8" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1074.0" y="204.0">2 hrs 46 mins</text>
+<text class="stat-name" x="614.0" y="226.0">Xcode</text>
+<rect class="bar-track" x="732.0" y="217.0" width="334.0" height="8" rx="4" />
+<rect x="732.0" y="217.0" width="33.4" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1074.0" y="226.0">1 hr 23 mins</text>
+<text class="card-kicker" x="52.0" y="264.0">Platforms</text>
+<text class="card-kicker" x="614.0" y="264.0">Categories</text>
+<text class="stat-name" x="52.0" y="282.0">Mac</text>
+<rect class="bar-track" x="170.0" y="273.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="273.0" width="233.8" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="512.0" y="282.0">41 hrs 40 mins</text>
+<text class="stat-name" x="52.0" y="304.0">iOS</text>
+<rect class="bar-track" x="170.0" y="295.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="295.0" width="66.8" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="512.0" y="304.0">11 hrs 6 mins</text>
+<text class="stat-name" x="52.0" y="326.0">watchOS</text>
+<rect class="bar-track" x="170.0" y="317.0" width="334.0" height="8" rx="4" />
+<rect x="170.0" y="317.0" width="33.4" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="512.0" y="326.0">4 hrs 12 mins</text>
+<text class="stat-name" x="614.0" y="282.0">Coding</text>
+<rect class="bar-track" x="732.0" y="273.0" width="334.0" height="8" rx="4" />
+<rect x="732.0" y="273.0" width="233.8" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="282.0">11 hrs 6 mins</text>
+<text class="stat-name" x="614.0" y="304.0">Debugging</text>
+<rect class="bar-track" x="732.0" y="295.0" width="334.0" height="8" rx="4" />
+<rect x="732.0" y="295.0" width="50.1" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1074.0" y="304.0">2 hrs 13 mins</text>
+<text class="card-kicker" x="52.0" y="360.0">Public projects</text>
+<text class="stat-name" x="52.0" y="378.0">wyattowalsh</text>
+<rect class="bar-track" x="170.0" y="369.0" width="896.0" height="8" rx="4" />
+<rect x="170.0" y="369.0" width="896.0" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="378.0">10 hrs 18 mins</text>
+<text class="card-kicker" x="52.0" y="412.0">Coding heatmap</text>
+<text class="card-meta" x="52.0" y="435.0">S</text>
+<text class="card-meta" x="52.0" y="463.0">T</text>
+<text class="card-meta" x="52.0" y="491.0">T</text>
+<text class="card-meta" x="52.0" y="519.0">S</text>
+<rect class="hm-0" x="68.0" y="426.0" width="11" height="11" rx="2"><title>2026-08-02</title></rect>
+<rect class="hm-0" x="68.0" y="440.0" width="11" height="11" rx="2"><title>2026-08-03</title></rect>
+<rect class="hm-0" x="68.0" y="454.0" width="11" height="11" rx="2"><title>2026-08-04</title></rect>
+<rect class="hm-0" x="68.0" y="468.0" width="11" height="11" rx="2"><title>2026-08-05</title></rect>
+<rect class="hm-0" x="68.0" y="482.0" width="11" height="11" rx="2"><title>2026-08-06</title></rect>
+<rect class="hm-0" x="68.0" y="496.0" width="11" height="11" rx="2"><title>2026-08-07</title></rect>
+<rect class="hm-2" x="68.0" y="510.0" width="11" height="11" rx="2"><title>2026-08-08: 30 mins</title></rect>
+<rect class="hm-3" x="82.0" y="426.0" width="11" height="11" rx="2"><title>2026-08-09: 1 hr</title></rect>
+<rect class="hm-4" x="82.0" y="440.0" width="11" height="11" rx="2"><title>2026-08-10: 2 hrs</title></rect>
+<rect class="hm-1" x="82.0" y="454.0" width="11" height="11" rx="2"><title>2026-08-11: 15 mins</title></rect>
+<rect class="hm-4" x="82.0" y="468.0" width="11" height="11" rx="2"><title>2026-08-12: 1 hr 30 mins</title></rect>
+<rect class="hm-2" x="82.0" y="482.0" width="11" height="11" rx="2"><title>2026-08-13: 40 mins</title></rect>
+<rect class="hm-3" x="82.0" y="496.0" width="11" height="11" rx="2"><title>2026-08-14: 1 hr 20 mins</title></rect>
+<text class="card-meta" x="52.0" y="540.0">Updated 2026-08-14 12:00 UTC</text>
+</svg>

@@ -13,7 +13,7 @@ import time
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from html import escape, unescape
 from pathlib import Path
@@ -154,16 +154,6 @@ _GHPVC_URL = (
     "&color=6366F1&style=for-the-badge&label=Views"
 )
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
-_WAKATIME_UPDATED_RE = re.compile(
-    r"Last Updated on (\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} UTC)",
-)
-_WAKATIME_HEALTHY_MARKERS = (
-    "This Week I Spent My Time On",
-    "Programming Languages",
-    "Editors:",
-    "Projects:",
-    "My Github Data",
-)
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
     (
         "metrics-habits.svg",
@@ -178,8 +168,6 @@ _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
         "Supplemental metrics: latest posts from X",
     ),
 )
-_WAKATIME_TIMESTAMP_FORMAT = "%d/%m/%Y %H:%M:%S UTC"
-_WAKATIME_FRESHNESS_WINDOW = timedelta(days=3)
 _ACRONYM_REPLACEMENTS = {
     "ai": "AI",
     "api": "API",
@@ -1218,31 +1206,11 @@ class ReadmeSectionGenerator:
         )
 
     def _wakatime_marker_inner(self, inner: str) -> str:
-        updated_match = _WAKATIME_UPDATED_RE.search(inner)
-        if updated_match is not None:
-            try:
-                updated_at = datetime.strptime(
-                    updated_match.group(1),
-                    _WAKATIME_TIMESTAMP_FORMAT,
-                ).replace(tzinfo=UTC)
-            except ValueError:
-                updated_at = None
-            if updated_at is not None:
-                if datetime.now(UTC) - updated_at <= _WAKATIME_FRESHNESS_WINDOW:
-                    return inner
-                detail = (
-                    f"Latest available update was {updated_match.group(1)}, which is "
-                    "outside the freshness window."
-                )
-            else:
-                detail = "The latest WakaTime timestamp could not be parsed."
-        else:
-            if any(marker in inner for marker in _WAKATIME_HEALTHY_MARKERS):
-                return inner
-            detail = "No fresh WakaTime timestamp was found in the generated section."
+        """Keep markers as a pointer at the first-party SVG, never a text dump."""
+        del inner
         return (
-            "\n<!-- WakaTime stats hidden until a fresh generated section is "
-            f"available. {detail} -->\n"
+            "\n<!-- WakaTime SVG is rendered from "
+            f"{_WAKATIME_ASSET_SRC} -->\n"
         )
 
     def _rewrite_wakatime_section(self, content: str) -> str:

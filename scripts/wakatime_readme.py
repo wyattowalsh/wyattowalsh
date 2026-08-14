@@ -1278,6 +1278,32 @@ def apply_waka_artifact_to_readme(
     return apply_waka_section(readme_path, body)
 
 
+def apply_wakatime_svg(
+    source_path: Path,
+    dest_path: Path | None = None,
+) -> bool:
+    """Copy a generated ``wakatime.svg`` onto the committed README asset path."""
+    dest = dest_path or DEFAULT_WAKATIME_SVG_PATH
+    if not source_path.is_file():
+        logger.info(
+            "No WakaTime SVG artifact at {path}; leaving committed SVG unchanged",
+            path=source_path,
+        )
+        return False
+    svg = source_path.read_text(encoding="utf-8")
+    if "<svg" not in svg:
+        logger.info("WakaTime SVG artifact is not an SVG; skip copy")
+        return False
+    text = svg if svg.endswith("\n") else f"{svg}\n"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.is_file() and dest.read_text(encoding="utf-8") == text:
+        logger.info("WakaTime SVG already up to date at {path}", path=dest)
+        return False
+    dest.write_text(text, encoding="utf-8")
+    logger.info("Copied WakaTime SVG to {path}", path=dest)
+    return True
+
+
 def _parse_allowlist_arg(raw: str | None) -> tuple[str, ...]:
     if not raw:
         return ()
@@ -1310,7 +1336,10 @@ def main(argv: list[str] | None = None) -> int:
         "--svg-output",
         type=Path,
         default=None,
-        help="Optional path for the first-party wakatime.svg card",
+        help=(
+            "Optional path for the first-party wakatime.svg card "
+            "(README ship artifact; markdown dump stays for markers)"
+        ),
     )
     generate.add_argument(
         "--github-login",
@@ -1333,7 +1362,10 @@ def main(argv: list[str] | None = None) -> int:
         help="Exit 0 and write skip marker when WAKATIME_API_KEY is absent",
     )
 
-    apply = sub.add_parser("apply", help="Apply artifact into README waka markers")
+    apply = sub.add_parser(
+        "apply",
+        help="Apply markdown markers; optionally copy wakatime.svg",
+    )
     apply.add_argument(
         "--artifact",
         type=Path,
@@ -1345,6 +1377,18 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         default=Path("README.md"),
         help="README path containing waka markers",
+    )
+    apply.add_argument(
+        "--svg-artifact",
+        type=Path,
+        default=None,
+        help="Optional wakatime.svg to copy onto --svg-dest",
+    )
+    apply.add_argument(
+        "--svg-dest",
+        type=Path,
+        default=DEFAULT_WAKATIME_SVG_PATH,
+        help="Committed WakaTime SVG path",
     )
 
     args = parser.parse_args(argv)
@@ -1384,7 +1428,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "apply":
+        # Markdown markers stay for CI health checks; the open README
+        # surface is .github/assets/img/wakatime.svg (copied when present).
         changed = apply_waka_artifact_to_readme(args.artifact, args.readme)
+        if args.svg_artifact is not None:
+            apply_wakatime_svg(args.svg_artifact, args.svg_dest)
         logger.info("Waka apply changed={changed}", changed=changed)
         return 0
 
