@@ -5,7 +5,9 @@ import re
 from collections.abc import Iterable
 from html import escape, unescape
 from pathlib import Path
-from urllib.parse import quote
+from urllib.error import HTTPError, URLError
+from urllib.parse import parse_qsl, quote, unquote, urlparse
+from urllib.request import Request, urlopen
 
 import pytest
 from pydantic import ValidationError
@@ -63,6 +65,8 @@ EXPECTED_MONOCHROME_LOCAL_LOGO_PAINT = {
     "Playwright": 'fill="white"',
     "Visual Studio Code": 'fill="white"',
 }
+RENDER_QA_HEAD_SAMPLE_SIZE = 5
+RENDER_QA_HEAD_TIMEOUT_SECONDS = 8.0
 
 
 def iter_skills(settings: SkillsSettings) -> Iterable[SkillEntry]:
@@ -88,6 +92,105 @@ def load_known_simple_icon_slug_lines() -> list[str]:
         for line in SIMPLE_ICON_SLUGS_USED.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+
+
+def _badge_logo_value(src: str) -> str | None:
+    """Return the decoded shields ``logo`` query value, if present."""
+    for key, value in parse_qsl(urlparse(unescape(src)).query, keep_blank_values=True):
+        if key == "logo":
+            return value
+    return None
+
+
+def _data_uri_svg_is_well_formed(logo: str) -> bool:
+    """Return True when a data-URI logo starts as SVG or decodes to ``<svg``."""
+    if not logo.startswith("data:"):
+        return logo.lstrip().lower().startswith(("svg", "<svg"))
+    metadata, separator, payload = logo.partition(",")
+    if not separator:
+        stripped = logo.lstrip()
+        return stripped.lower().startswith(("svg", "<svg"))
+    if "base64" in metadata.lower():
+        try:
+            text = base64.b64decode(payload).decode("utf-8")
+        except (ValueError, UnicodeDecodeError):
+            return False
+    else:
+        text = unquote(payload)
+    stripped = text.lstrip("\ufeff \t\r\n")
+    return stripped.startswith("<svg") or stripped.lower().startswith("svg")
+
+
+def _evenly_spaced_sample(items: list[str], count: int) -> list[str]:
+    """Return a deterministic, order-preserving subset of ``items``."""
+    if count <= 0 or not items:
+        return []
+    if len(items) <= count:
+        return list(items)
+    if count == 1:
+        return [items[0]]
+    last = len(items) - 1
+    chosen: list[str] = []
+    seen: set[int] = set()
+    for step in range(count):
+        index = round(step * last / (count - 1))
+        if index in seen:
+            continue
+        seen.add(index)
+        chosen.append(items[index])
+    return chosen
+
+
+def _select_render_qa_head_sample(srcs: list[str]) -> list[str]:
+    """Pick a small mix of data-URI and Simple Icons badge sources."""
+    decoded = [unescape(src) for src in srcs]
+    data_uris = [src for src in decoded if "logo=data:" in src]
+    slugs = [src for src in decoded if "logo=" in src and "logo=data:" not in src]
+    picked: list[str] = []
+    for candidate in (
+        *data_uris[:1],
+        *slugs[:1],
+        *_evenly_spaced_sample(decoded, RENDER_QA_HEAD_SAMPLE_SIZE),
+    ):
+        if candidate not in picked:
+            picked.append(candidate)
+        if len(picked) >= RENDER_QA_HEAD_SAMPLE_SIZE:
+            break
+    return picked
+
+
+def _request_badge_source_status(src: str) -> int:
+    """HEAD a shields.io URL, falling back to GET when HEAD is rejected."""
+    headers = {"User-Agent": "wyattowalsh-skills-badge-qa"}
+    request = Request(src, method="HEAD", headers=headers)
+    try:
+        with urlopen(request, timeout=RENDER_QA_HEAD_TIMEOUT_SECONDS) as response:
+            return int(getattr(response, "status", None) or response.getcode())
+    except HTTPError as exc:
+        if exc.code != 405:
+            raise
+        get_request = Request(src, method="GET", headers=headers)
+        with urlopen(get_request, timeout=RENDER_QA_HEAD_TIMEOUT_SECONDS) as response:
+            return int(getattr(response, "status", None) or response.getcode())
+
+
+def _head_shields_sample_or_skip(srcs: list[str]) -> None:
+    """HEAD a few live badge sources; skip when shields.io is unreachable."""
+    sample = _select_render_qa_head_sample(srcs)
+    if not sample:
+        pytest.skip("no badge sources available to HEAD")
+    try:
+        for src in sample:
+            status = _request_badge_source_status(src)
+            assert 200 <= status < 400, (
+                f"Badge source returned HTTP {status}: {src[:96]}"
+            )
+    except HTTPError as exc:
+        raise AssertionError(
+            f"Badge source returned HTTP {exc.code}: {exc.url}"
+        ) from exc
+    except (URLError, TimeoutError, OSError) as exc:
+        pytest.skip(f"shields.io unreachable for render QA: {exc}")
 
 
 # ---------------------------------------------------------------------------
@@ -800,3 +903,44 @@ class TestIntegration:
                 f"Badge URL exceeds {MAX_SHIELDS_BADGE_URL_LENGTH} characters: "
                 f"{skill.name} ({len(src)})"
             )
+
+    def test_skills_badges_have_well_fitting_icons_and_renderable_sources(
+        self, monkeypatch
+    ):
+        """Every badge has an https homepage, camo-safe src, and a real icon."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        catalog = list(iter_skills(settings))
+        html = gen._render_all()
+
+        assert catalog
+        hrefs = re.findall(r"<a href=\"([^\"]+)\">", html)
+        images = re.findall(r"<img alt=\"([^\"]+)\" src=\"([^\"]+)\"/>", html)
+        assert len(hrefs) == len(catalog)
+        assert len(images) == len(catalog)
+
+        srcs: list[str] = []
+        for skill, href, (_alt, src) in zip(catalog, hrefs, images, strict=True):
+            homepage = unescape(href).strip()
+            assert homepage, f"Empty homepage href for '{skill.name}'"
+            assert homepage.startswith("https://"), (
+                f"Homepage for '{skill.name}' must be https: {href}"
+            )
+            assert src.startswith("https://img.shields.io"), (
+                f"Badge src for '{skill.name}' must be https img.shields.io: {src}"
+            )
+            srcs.append(src)
+
+            logo = _badge_logo_value(src)
+            assert logo is not None and logo.strip(), (
+                f"Missing well-fitting icon for '{skill.name}'"
+            )
+            if logo.startswith("data:"):
+                assert _data_uri_svg_is_well_formed(logo), (
+                    f"Malformed SVG data-URI logo for '{skill.name}'"
+                )
+            else:
+                assert logo.strip(), f"Empty Simple Icons slug for '{skill.name}'"
+
+        _head_shields_sample_or_skip(srcs)
