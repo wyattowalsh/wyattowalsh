@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -21,9 +22,6 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, Literal, cast
 
-import markdown
-from bs4 import BeautifulSoup
-from bs4.element import Tag
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..utils import get_logger
@@ -68,6 +66,7 @@ RENDERER_CHOICES: list[str] = [
 # Shipped profile clouds: CI `generate word-cloud --from-*-md` inherits this
 # via WordCloudSettings / generate_word_cloud unless a renderer is overridden.
 DEFAULT_RENDERER: RendererName = "typographic"
+SHIPPED_WORD_CLOUD_SOURCES: tuple[str, str] = ("topics", "languages")
 DEFAULT_WIDTH = 1600
 DEFAULT_HEIGHT = 1000
 DEFAULT_MAX_WORDS = 1000
@@ -85,19 +84,11 @@ _ASSETS_DIR = _PROJECT_ROOT / ".github" / "assets" / "img"
 
 # Awesome-stars meta headings that are not language/topic categories.
 _NON_CATEGORY_HEADINGS = frozenset({"contents", "license"})
-
-
-def _first_list_after_heading(heading: Tag) -> Tag | None:
-    """Return the first ``ul`` in *heading*'s section, before the next ``h2``."""
-    sibling = heading.next_sibling
-    while sibling is not None:
-        if isinstance(sibling, Tag):
-            if sibling.name == "h2":
-                return None
-            if sibling.name == "ul":
-                return sibling
-        sibling = sibling.next_sibling
-    return None
+# Raw ATX ``##`` only. Do not walk rendered HTML: CommonMark treats a
+# trailing ``#`` as a closer, so ``## C#`` / ``## Q#`` become ``C`` / ``Q``.
+_ATX_H2_RE = re.compile(r"^##(?!#)\s+(.+?)\s*$")
+_TOC_LINK_RE = re.compile(r"^-\s+\[([^\]]+)\]\([^)]+\)")
+_LIST_ITEM_RE = re.compile(r"^-\s+")
 
 
 def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
@@ -106,35 +97,46 @@ def parse_frequencies_from_md(md_path: str | Path) -> dict[str, int]:
     The ``scripts.starred_lists`` format starts with a Contents list of
     category names (link text preserves labels such as ``C#`` / ``Q#``),
     then one ``## Category`` section per name whose list items are starred
-    repositories. Values are those per-section repo counts — relative
-    volume for font size/weight. Trailing meta headings such as License
-    are ignored. An empty category section counts as ``0`` so later
-    sections do not shift.
+    repositories. Counts use exact heading-line equality on the source
+    (not ``startswith``, not rendered HTML) so prefix-related names stay
+    distinct. Values are those per-section repo counts — relative volume
+    for font size/weight. Trailing meta headings such as License are
+    ignored. An empty category section counts as ``0``.
     """
-    with open(md_path, encoding="utf-8") as f:
-        text = f.read()
-    html = markdown.markdown(text)
-    soup = BeautifulSoup(html, "html.parser")
-    first_ul = soup.find("ul")
-    if not isinstance(first_ul, Tag):
-        return {}
-    topics = [a.get_text(strip=True) for a in first_ul.find_all("a")]
-    if not topics:
-        return {}
+    text = Path(md_path).read_text(encoding="utf-8")
+    toc_names: list[str] = []
+    section_counts: dict[str, int] = {}
+    current: str | None = None
+    in_contents = False
+    saw_contents = False
 
-    section_counts: list[int] = []
-    for heading in soup.find_all("h2"):
-        if not isinstance(heading, Tag):
+    for line in text.splitlines():
+        heading_match = _ATX_H2_RE.match(line)
+        if heading_match is not None:
+            title = html.unescape(heading_match.group(1).strip())
+            folded = title.casefold()
+            if folded in _NON_CATEGORY_HEADINGS:
+                current = None
+                in_contents = folded == "contents"
+                saw_contents = saw_contents or in_contents
+                continue
+            in_contents = False
+            current = title
+            section_counts[current] = 0
             continue
-        title = heading.get_text(strip=True)
-        if title.casefold() in _NON_CATEGORY_HEADINGS:
+
+        if in_contents:
+            toc_match = _TOC_LINK_RE.match(line)
+            if toc_match is not None:
+                toc_names.append(html.unescape(toc_match.group(1)))
             continue
-        section_ul = _first_list_after_heading(heading)
-        if section_ul is None:
-            section_counts.append(0)
-            continue
-        section_counts.append(len(section_ul.find_all("li")))
-    return dict(zip(topics, section_counts, strict=False))
+
+        if current is not None and _LIST_ITEM_RE.match(line):
+            section_counts[current] += 1
+
+    if saw_contents:
+        return {name: section_counts.get(name, 0) for name in toc_names}
+    return dict(section_counts)
 
 
 _OTHERS_RE = re.compile(r"^\s*others?\s*$", re.IGNORECASE)
@@ -348,10 +350,10 @@ def generate_all(
     height: int = DEFAULT_HEIGHT,
     output_dir: str | Path | None = None,
 ) -> list[Path]:
-    """Generate word clouds for both topics and languages.
+    """Generate the shipped topics + languages clouds.
 
-    If renderer is "all", generates every renderer variant.
-    Returns list of output paths.
+    The public default is exactly two SVGs (typographic × those sources).
+    If renderer is ``"all"``, also writes every local renderer variant.
     """
     renderers = (
         [
@@ -368,7 +370,7 @@ def generate_all(
 
     outputs: list[Path] = []
     for r in renderers:
-        for source in ("topics", "languages"):
+        for source in SHIPPED_WORD_CLOUD_SOURCES:
             out = generate_word_cloud(
                 source=source,
                 renderer=r,

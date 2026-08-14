@@ -1,5 +1,6 @@
 import math
 import random
+import re
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -16,6 +17,7 @@ from scripts.word_clouds import (
     parse_markdown_for_word_cloud_frequencies,
 )
 from scripts.word_clouds.clustered import ClusteredRenderer
+from scripts.word_clouds.colors import TYPOGRAPHIC_PALETTE
 from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
 from scripts.word_clouds.metaheuristic import RENDERERS, MetaheuristicAnimRenderer
 from scripts.word_clouds.shaped import ShapedRenderer
@@ -693,6 +695,60 @@ def test_parse_starred_markdown_empty_section_does_not_shift_counts(
     assert frequencies == {"python": 1, "go": 0, "rust": 2}
 
 
+def _raw_heading_item_count(markdown: str, heading: str) -> int:
+    """Count list items under an exact ``## heading`` line (not a prefix)."""
+    marker = f"## {heading}"
+    count = 0
+    in_section = False
+    for line in markdown.splitlines():
+        if line.startswith("## "):
+            in_section = line == marker
+            continue
+        if in_section and line.startswith("- "):
+            count += 1
+    return count
+
+
+def test_parse_starred_markdown_uses_exact_heading_not_prefix(
+    tmp_path: Path,
+) -> None:
+    """C / C# / C++ / Q# stay distinct even when section order != TOC order."""
+    markdown_file = tmp_path / "languages.md"
+    markdown_file.write_text(
+        """
+## Contents
+- [C](#c)
+- [C#](#c-1)
+- [C++](#c-2)
+- [Q#](#q)
+
+## Q#
+- [org/qsharp](https://example.com/q)
+
+## C++
+- [org/cpp-one](https://example.com/cpp-one)
+- [org/cpp-two](https://example.com/cpp-two)
+- [org/cpp-three](https://example.com/cpp-three)
+
+## C#
+- [org/csharp](https://example.com/csharp)
+
+## C
+- [org/c-one](https://example.com/c-one)
+- [org/c-two](https://example.com/c-two)
+
+## License
+- leftover list must not become a category
+""".strip(),
+        encoding="utf-8",
+    )
+
+    frequencies = parse_markdown_for_word_cloud_frequencies(markdown_file)
+    assert frequencies == {"C": 2, "C#": 1, "C++": 3, "Q#": 1}
+    assert frequencies["C"] != frequencies["C#"]
+    assert "Q" not in frequencies
+
+
 def test_checked_in_starred_lists_parse_as_repo_volume() -> None:
     topics_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "topics.md"
     languages_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "languages.md"
@@ -712,6 +768,13 @@ def test_checked_in_starred_lists_parse_as_repo_volume() -> None:
     assert max(languages.values()) > min(languages.values())
     assert topics["python"] > topics["zig"]
     assert languages["Python"] > languages["Zig"]
+
+    language_source = languages_md.read_text(encoding="utf-8")
+    for heading in ("C", "C#", "C++", "Q#"):
+        assert heading in languages
+        assert languages[heading] == _raw_heading_item_count(language_source, heading)
+    assert languages["C"] != languages["C#"]
+    assert languages["Q#"] != languages.get("Q", 0)
 
 
 def test_default_renderer_ships_typographic_filenames(
@@ -751,6 +814,32 @@ def test_default_renderer_ships_typographic_filenames(
     assert result == expected
     assert captured["renderer"] == "typographic"
     assert captured["output_path"] == expected
+
+
+def test_default_generate_all_ships_exact_two_typographic_svgs(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    assert generate_module.SHIPPED_WORD_CLOUD_SOURCES == ("topics", "languages")
+    emitted: list[tuple[str, str]] = []
+
+    def fake_generate_word_cloud(
+        source: str,
+        renderer: str = DEFAULT_RENDERER,
+        **_kwargs: object,
+    ) -> Path:
+        emitted.append((source, renderer))
+        path = tmp_path / generate_module._default_output_filename(source, renderer)
+        path.write_text("<svg />", encoding="utf-8")
+        return path
+
+    monkeypatch.setattr(generate_module, "generate_word_cloud", fake_generate_word_cloud)
+    outputs = generate_module.generate_all(output_dir=tmp_path)
+    assert [path.name for path in outputs] == [
+        "wordcloud_typographic_by_topics.svg",
+        "wordcloud_typographic_by_languages.svg",
+    ]
+    assert emitted == [("topics", "typographic"), ("languages", "typographic")]
+    assert len(outputs) == 2
 
 
 def test_typographic_higher_count_is_larger_or_heavier() -> None:
@@ -862,3 +951,69 @@ def test_svg_engine_bakeoff_typographic_best_encodes_volume() -> None:
     assert scores["typographic"] >= 0.99
     typographic_placed = engines["typographic"].place_words(frequencies)
     assert all(word.rotation == 0 for word in typographic_placed)
+
+
+_GITHUB_LIGHT_BG = "#ffffff"
+_GITHUB_DARK_BG = "#0d1117"
+_AA_LARGE_CONTRAST = 3.0
+_SHIPPED_TYPOGRAPHIC_CLOUDS = (
+    Path(".github/assets/img/wordcloud_typographic_by_topics.svg"),
+    Path(".github/assets/img/wordcloud_typographic_by_languages.svg"),
+)
+
+
+def _hex_to_rgb(color: str) -> tuple[float, float, float]:
+    value = color.removeprefix("#")
+    if len(value) == 3:
+        value = "".join(channel * 2 for channel in value)
+    red = int(value[0:2], 16) / 255
+    green = int(value[2:4], 16) / 255
+    blue = int(value[4:6], 16) / 255
+    return (red, green, blue)
+
+
+def _relative_luminance(color: str) -> float:
+    def _channel(component: float) -> float:
+        return (
+            component / 12.92
+            if component <= 0.04045
+            else ((component + 0.055) / 1.055) ** 2.4
+        )
+
+    red, green, blue = (_channel(component) for component in _hex_to_rgb(color))
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+
+def _contrast_ratio(foreground: str, background: str) -> float:
+    lighter, darker = sorted(
+        (_relative_luminance(foreground), _relative_luminance(background)),
+        reverse=True,
+    )
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() -> None:
+    """fact-wordcloud-bakeoff: shipped typographic winners stay readable on GitHub."""
+    palette = {color.casefold() for color in TYPOGRAPHIC_PALETTE}
+    for background in (_GITHUB_LIGHT_BG, _GITHUB_DARK_BG):
+        for color in TYPOGRAPHIC_PALETTE:
+            assert _contrast_ratio(color, background) >= _AA_LARGE_CONTRAST, (
+                f"{color} vs {background} is below WCAG AA large-text contrast"
+            )
+
+    for path in _SHIPPED_TYPOGRAPHIC_CLOUDS:
+        assert path.is_file(), f"missing shipped typographic cloud: {path}"
+        svg = path.read_text(encoding="utf-8")
+        assert "rotate(" not in svg
+        assert 'stop-color="#fafbfc"' in svg
+        assert 'stop-color="#f0f1f3"' in svg
+        assert 'fill="url(#a)"' in svg
+        fills = {
+            match.casefold()
+            for match in re.findall(r'fill="(#[0-9A-Fa-f]{6})"', svg)
+        }
+        assert fills
+        assert fills <= palette
+        opacities = [float(value) for value in re.findall(r'opacity="([0-9.]+)"', svg)]
+        assert opacities
+        assert min(opacities) >= 0.6
