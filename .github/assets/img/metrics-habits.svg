@@ -66,72 +66,84 @@
 <rect class="panel" x="0" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="0" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="14" y="20">30d commits</text>
-<text class="chip-value" x="14" y="44">15</text>
+<text class="chip-value" x="14" y="44">0</text>
 <rect class="panel" x="192" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="192" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="206" y="20">Active days</text>
-<text class="chip-value" x="206" y="44">3</text>
+<text class="chip-value" x="206" y="44">0</text>
 <rect class="panel" x="384" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="384" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="398" y="20">Streak</text>
-<text class="chip-value" x="398" y="44">3d</text>
+<text class="chip-value" x="398" y="44">0d</text>
 <rect class="panel" x="576" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="576" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="590" y="20">Busiest</text>
-<text class="chip-value" x="590" y="44">7</text>
+<text class="chip-value" x="590" y="44">0</text>
 <rect class="panel" x="768" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="768" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="782" y="20">Reviews</text>
-<text class="chip-value" x="782" y="44">11</text>
+<text class="chip-value" x="782" y="44">0</text>
 <rect class="panel" x="960" y="0" width="180" height="56" rx="10" />
 <rect class="panel-stroke" x="960" y="0" width="180" height="56" rx="10" />
 <text class="chip-label" x="974" y="20">Public repos</text>
-<text class="chip-value" x="974" y="44">42</text>
+<text class="chip-value" x="974" y="44">190</text>
 </g>
 <g class="habits-focus" transform="translate(20,132)">
 <rect class="panel" width="376" height="200" rx="10" />
 <rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Focus</text>
 <text class="meta" x="16" y="42">Merged PRs by repo</text>
-<text class="body" x="16" y="58">agents</text>
-<text class="meta" x="360" y="58" text-anchor="end">×2</text>
+<text class="body" x="16" y="58">riso</text>
+<text class="meta" x="360" y="58" text-anchor="end">×20</text>
 <rect x="16" y="64" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
 <rect class="focus-bar" x="16" y="64" width="344" height="5" rx="3" />
-<text class="body" x="16" y="86">nbadb</text>
-<text class="meta" x="360" y="86" text-anchor="end">×1</text>
+<text class="body" x="16" y="86">ai-web-feeds</text>
+<text class="meta" x="360" y="86" text-anchor="end">×16</text>
 <rect x="16" y="92" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
-<rect class="focus-bar" x="16" y="92" width="172" height="5" rx="3" />
+<rect class="focus-bar" x="16" y="92" width="275" height="5" rx="3" />
+<text class="body" x="16" y="114">proxywhirl</text>
+<text class="meta" x="360" y="114" text-anchor="end">×12</text>
+<rect x="16" y="120" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
+<rect class="focus-bar" x="16" y="120" width="206" height="5" rx="3" />
+<text class="body" x="16" y="142">atlas-chat-exporter</text>
+<text class="meta" x="360" y="142" text-anchor="end">×8</text>
+<rect x="16" y="148" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
+<rect class="focus-bar" x="16" y="148" width="137" height="5" rx="3" />
+<text class="body" x="16" y="170">iina-plugin-bookmarks</text>
+<text class="meta" x="360" y="170" text-anchor="end">×5</text>
+<rect x="16" y="176" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
+<rect class="focus-bar" x="16" y="176" width="86" height="5" rx="3" />
 </g>
 <g class="habits-peak" transform="translate(412,132)">
 <rect class="panel" width="376" height="200" rx="10" />
 <rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Peak hour</text>
 <text class="meta" x="16" y="42">Recent pushes · UTC</text>
-<text class="value" x="16" y="86">14:00</text>
-<rect class="peak-tick" x="16" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="30" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="44" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="58" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="72" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="86" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="100" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="114" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="128" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="142" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="156" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="170" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="184" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick-on" x="198" y="131" width="11" height="19" rx="2" />
-<rect class="peak-tick-max" x="212" y="106" width="11" height="44" rx="2" />
-<rect class="peak-tick-on" x="226" y="141" width="11" height="9" rx="2" />
-<rect class="peak-tick" x="240" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="254" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="268" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="282" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="296" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="310" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="324" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="338" y="144" width="11" height="6" rx="2" />
+<text class="value" x="16" y="86">02:00</text>
+<rect class="peak-tick-on" x="16" y="135" width="11" height="15" rx="2" />
+<rect class="peak-tick-on" x="30" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-max" x="44" y="106" width="11" height="44" rx="2" />
+<rect class="peak-tick-on" x="58" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="72" y="139" width="11" height="11" rx="2" />
+<rect class="peak-tick-on" x="86" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="100" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="114" y="137" width="11" height="13" rx="2" />
+<rect class="peak-tick-on" x="128" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="142" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="156" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="170" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="184" y="137" width="11" height="13" rx="2" />
+<rect class="peak-tick-on" x="198" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="212" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick" x="226" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick-on" x="240" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="254" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="268" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="282" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="296" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="310" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="324" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="338" y="142" width="11" height="8" rx="2" />
 <text class="meta" x="16" y="166">00</text>
 <text class="meta" x="188" y="166" text-anchor="middle">12</text>
 <text class="meta" x="360" y="166" text-anchor="end">23</text>
@@ -140,11 +152,11 @@
 <rect class="panel" width="376" height="200" rx="10" />
 <rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Streaks</text>
-<text class="value" x="16" y="64">3d</text>
+<text class="value" x="16" y="64">0d</text>
 <text class="meta" x="16" y="82">current</text>
-<circle class="streak-fill" cx="16" cy="100" r="5" />
-<circle class="streak-fill" cx="47.3" cy="100" r="5" />
-<circle class="streak-fill" cx="78.5" cy="100" r="5" />
+<circle class="streak-empty" cx="16" cy="100" r="5" />
+<circle class="streak-empty" cx="47.3" cy="100" r="5" />
+<circle class="streak-empty" cx="78.5" cy="100" r="5" />
 <circle class="streak-empty" cx="109.8" cy="100" r="5" />
 <circle class="streak-empty" cx="141.1" cy="100" r="5" />
 <circle class="streak-empty" cx="172.4" cy="100" r="5" />
@@ -155,13 +167,13 @@
 <circle class="streak-empty" cx="328.7" cy="100" r="5" />
 <circle class="streak-empty" cx="360" cy="100" r="5" />
 <rect x="16" y="118" width="344" height="7" rx="4" class="streak-empty" fill-opacity="0.55" />
-<rect class="streak-fill" x="16" y="118" width="344" height="7" rx="4" />
-<text class="meta" x="16" y="140">3d longest</text>
-<rect class="cadence" x="16" y="158" width="44" height="20" rx="2" />
+<rect class="streak-fill" x="16" y="118" width="0" height="7" rx="4" />
+<text class="meta" x="16" y="140">0d longest</text>
+<rect class="cadence" x="16" y="172" width="44" height="6" rx="2" />
 <text class="meta" x="38" y="192" text-anchor="middle">M</text>
-<rect class="cadence" x="66" y="166" width="44" height="12" rx="2" />
+<rect class="cadence" x="66" y="172" width="44" height="6" rx="2" />
 <text class="meta" x="88" y="192" text-anchor="middle">T</text>
-<rect class="cadence" x="116" y="150" width="44" height="28" rx="2" />
+<rect class="cadence" x="116" y="172" width="44" height="6" rx="2" />
 <text class="meta" x="138" y="192" text-anchor="middle">W</text>
 <rect class="cadence" x="166" y="172" width="44" height="6" rx="2" />
 <text class="meta" x="188" y="192" text-anchor="middle">T</text>
@@ -174,15 +186,24 @@
 </g>
 <g class="habits-langs" transform="translate(28,348)">
 <text class="label" x="0" y="12">Language mix</text>
-<rect x="0.0" y="22" width="672.9" height="10" fill="#1db954" />
-<rect x="672.9" y="22" width="336.5" height="10" fill="#1a7f37" />
-<rect x="1009.4" y="22" width="134.6" height="10" fill="#218bff" />
-<rect x="0.0" y="40" width="8" height="8" rx="2" fill="#1db954" />
-<text class="meta" x="14.0" y="48">Python 59%</text>
-<rect x="381.3" y="40" width="8" height="8" rx="2" fill="#1a7f37" />
-<text class="meta" x="395.3" y="48">TypeScript 29%</text>
-<rect x="762.7" y="40" width="8" height="8" rx="2" fill="#218bff" />
-<text class="meta" x="776.7" y="48">HTML 12%</text>
+<rect x="0.0" y="22" width="1030.9" height="10" fill="#d4a72c" />
+<rect x="1030.9" y="22" width="59.0" height="10" fill="#0969da" />
+<rect x="1089.9" y="22" width="30.9" height="10" fill="#1db954" />
+<rect x="1120.8" y="22" width="11.7" height="10" fill="#1a7f37" />
+<rect x="1132.5" y="22" width="8.0" height="10" fill="#8250df" />
+<rect x="1140.5" y="22" width="8.0" height="10" fill="#d4a72c" />
+<rect x="0.0" y="40" width="8" height="8" rx="2" fill="#d4a72c" />
+<text class="meta" x="14.0" y="48">JetBrains MPS 90%</text>
+<rect x="381.3" y="40" width="8" height="8" rx="2" fill="#0969da" />
+<text class="meta" x="395.3" y="48">Jupyter Notebook 5%</text>
+<rect x="762.7" y="40" width="8" height="8" rx="2" fill="#1db954" />
+<text class="meta" x="776.7" y="48">Python 3%</text>
+<rect x="0.0" y="56" width="8" height="8" rx="2" fill="#1a7f37" />
+<text class="meta" x="14.0" y="64">TypeScript 1%</text>
+<rect x="381.3" y="56" width="8" height="8" rx="2" fill="#8250df" />
+<text class="meta" x="395.3" y="64">JavaScript 1%</text>
+<rect x="762.7" y="56" width="8" height="8" rx="2" fill="#d4a72c" />
+<text class="meta" x="776.7" y="64">Jinja 0%</text>
 </g>
 <g class="habits-cadence" transform="translate(28,430)">
 <text class="label" x="0" y="12">Cadence</text>
@@ -273,8 +294,8 @@
 <rect class="cadence" x="1008" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1020" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1032" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1044" y="26" width="8" height="12" rx="2" fill-opacity="0.81" />
-<rect class="cadence" x="1056" y="31" width="8" height="7" rx="2" fill-opacity="0.63" />
-<rect class="cadence" x="1068" y="20" width="8" height="18" rx="2" fill-opacity="1.00" />
+<rect class="cadence" x="1044" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1056" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1068" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 </g>
 </svg>

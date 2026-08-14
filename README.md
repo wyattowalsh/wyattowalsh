@@ -55,6 +55,14 @@
 <img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
 </p>
 
+<p align="center">
+<img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+</p>
+
+<!--START_SECTION:waka-->
+<!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
+<!--END_SECTION:waka-->
+
 ## Living Art
 
 Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
@@ -139,19 +147,11 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 </p>
 
 <p align="center"><sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub></p>
-<p align="center">
-<img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
-</p>
-
-<!--START_SECTION:waka-->
-<!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
-<!--END_SECTION:waka-->
-
 ## Latest Blog Posts
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts: Personal Website · Agents · ProxyWhirl · Implementing Pathwise Coordinate Descent For The Lasso · Using Ridge Regression to Overcome Drawbacks of OLS" width="100%" loading="lazy"/></a></p>
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer">Personal Website — 2026-04-26</a> · <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer">Agents — 2026-04-26</a> · <a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">ProxyWhirl — 2026-02-13</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">Implementing Pathwise Coordinate Descent For The Lasso — 2021-01-15</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">Using Ridge Regression to Overcome Drawbacks of OLS — 2021-01-14</a></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts: Personal Website · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI. · Agents · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling. · ProxyWhirl · Production-ready Python proxy rotation with auto-fetching from 114+ sources, 9 selection strategies, self-healing circuit breakers, and five interfaces. · Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms · Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy" width="100%" loading="lazy"/></a></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer">Personal Website — 2026-04-26</a> · <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer">Agents — 2026-04-26</a> · <a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">ProxyWhirl — 2026-02-13</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy — 2021-01-15</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) — 2021-01-14</a></p>
 <p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 

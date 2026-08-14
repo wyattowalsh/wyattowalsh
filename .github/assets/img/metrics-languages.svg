@@ -65,22 +65,57 @@
 <g class="languages-board" transform="translate(28,64)">
 <rect class="panel" width="1144" height="204" rx="10" />
 <rect class="panel-stroke" width="1144" height="204" rx="10" />
-<path class="lang-slice" d="M 130 104 L 130.0 32.0 A 72 72 0 1 1 92.1 165.2 Z" fill="#1db954" />
-<path class="lang-slice" d="M 130 104 L 92.1 165.2 A 72 72 0 0 1 81.5 50.8 Z" fill="#1a7f37" />
-<path class="lang-slice" d="M 130 104 L 81.5 50.8 A 72 72 0 0 1 130.0 32.0 Z" fill="#218bff" />
+<path class="lang-slice" d="M 130 104 L 130.0 32.0 A 72 72 0 1 1 88.1 45.5 Z" fill="#d4a72c" />
+<path class="lang-slice" d="M 130 104 L 88.1 45.5 A 72 72 0 0 1 108.9 35.2 Z" fill="#0969da" />
+<path class="lang-slice" d="M 130 104 L 108.9 35.2 A 72 72 0 0 1 120.9 32.6 Z" fill="#1db954" />
+<path class="lang-slice" d="M 130 104 L 120.9 32.6 A 72 72 0 0 1 125.5 32.1 Z" fill="#1a7f37" />
+<path class="lang-slice" d="M 130 104 L 125.5 32.1 A 72 72 0 0 1 128.0 32.0 Z" fill="#8250df" />
+<path class="lang-slice" d="M 130 104 L 128.0 32.0 A 72 72 0 0 1 128.7 32.0 Z" fill="#d4a72c" />
+<path class="lang-slice" d="M 130 104 L 128.7 32.0 A 72 72 0 0 1 129.3 32.0 Z" fill="#218bff" />
+<path class="lang-slice" d="M 130 104 L 129.3 32.0 A 72 72 0 0 1 129.5 32.0 Z" fill="#218bff" />
+<path class="lang-slice" d="M 130 104 L 129.5 32.0 A 72 72 0 0 1 129.7 32.0 Z" fill="#d4a72c" />
+<path class="lang-slice" d="M 130 104 L 129.7 32.0 A 72 72 0 0 1 129.9 32.0 Z" fill="#1a7f37" />
 <circle cx="130" cy="104" r="38" fill="var(--card-bg)" />
-<text class="chip-value" x="130" y="110" text-anchor="middle">3</text>
-<text class="body" x="250" y="28">Python</text>
+<text class="chip-value" x="130" y="110" text-anchor="middle">10</text>
+<text class="body" x="250" y="28">JetBrains MPS</text>
 <rect x="400" y="18" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
-<rect x="400" y="18" width="305" height="8" rx="4" fill="#1db954" />
-<text class="meta" x="934" y="28" text-anchor="end">58.8% · 1000 B bytes</text>
-<text class="body" x="250" y="45">TypeScript</text>
+<rect x="400" y="18" width="468" height="8" rx="4" fill="#d4a72c" />
+<text class="meta" x="934" y="28" text-anchor="end">90.1% · 1.4 GB bytes</text>
+<text class="body" x="250" y="45">Jupyter Notebook</text>
 <rect x="400" y="35" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
-<rect x="400" y="35" width="152" height="8" rx="4" fill="#1a7f37" />
-<text class="meta" x="934" y="45" text-anchor="end">29.4% · 500 B bytes</text>
-<text class="body" x="250" y="62">HTML</text>
+<rect x="400" y="35" width="26" height="8" rx="4" fill="#0969da" />
+<text class="meta" x="934" y="45" text-anchor="end">5.2% · 83 MB bytes</text>
+<text class="body" x="250" y="62">Python</text>
 <rect x="400" y="52" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
-<rect x="400" y="52" width="61" height="8" rx="4" fill="#218bff" />
-<text class="meta" x="934" y="62" text-anchor="end">11.8% · 200 B bytes</text>
+<rect x="400" y="52" width="14" height="8" rx="4" fill="#1db954" />
+<text class="meta" x="934" y="62" text-anchor="end">2.7% · 43.5 MB bytes</text>
+<text class="body" x="250" y="79">TypeScript</text>
+<rect x="400" y="69" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="69" width="6" height="8" rx="4" fill="#1a7f37" />
+<text class="meta" x="934" y="79" text-anchor="end">1.0% · 16.4 MB bytes</text>
+<text class="body" x="250" y="96">JavaScript</text>
+<rect x="400" y="86" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="86" width="6" height="8" rx="4" fill="#8250df" />
+<text class="meta" x="934" y="96" text-anchor="end">0.6% · 8.9 MB bytes</text>
+<text class="body" x="250" y="113">Jinja</text>
+<rect x="400" y="103" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="103" width="6" height="8" rx="4" fill="#d4a72c" />
+<text class="meta" x="934" y="113" text-anchor="end">0.2% · 2.8 MB bytes</text>
+<text class="body" x="250" y="130">HTML</text>
+<rect x="400" y="120" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="120" width="6" height="8" rx="4" fill="#218bff" />
+<text class="meta" x="934" y="130" text-anchor="end">0.1% · 1.9 MB bytes</text>
+<text class="body" x="250" y="147">Shell</text>
+<rect x="400" y="137" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="137" width="6" height="8" rx="4" fill="#218bff" />
+<text class="meta" x="934" y="147" text-anchor="end">0.1% · 934.9 KB bytes</text>
+<text class="body" x="250" y="164">MDX</text>
+<rect x="400" y="154" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="154" width="6" height="8" rx="4" fill="#d4a72c" />
+<text class="meta" x="934" y="164" text-anchor="end">0.0% · 646.8 KB bytes</text>
+<text class="body" x="250" y="181">CSS</text>
+<rect x="400" y="171" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="171" width="6" height="8" rx="4" fill="#1a7f37" />
+<text class="meta" x="934" y="181" text-anchor="end">0.0% · 609.1 KB bytes</text>
 </g>
 </svg>
