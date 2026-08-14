@@ -402,14 +402,6 @@ def wakatime(
             rich_help_panel="Configuration",
         ),
     ] = False,
-    svg_output: Annotated[
-        Path | None,
-        typer.Option(
-            "--svg-output",
-            help="Optional path for the first-party wakatime.svg card.",
-            rich_help_panel="Configuration",
-        ),
-    ] = None,
 ) -> None:
     """Fetch WakaTime stats and write the README section artifact for CI."""
     from ...wakatime_readme import (
@@ -444,22 +436,11 @@ def wakatime(
             include_github=not no_github,
         )
         write_waka_artifact(body, output_path)
-        if svg_output is not None:
-            from ...wakatime_svg import generate_wakatime_svg
-
-            generate_wakatime_svg(
-                api_key=api_key,
-                output_path=svg_output,
-                github_login=github_login,
-                include_github=not no_github,
-            )
     except (OSError, ValueError, RuntimeError) as exc:
         console.print(f"[bold red]Error:[/bold red] WakaTime generation failed: {exc}")
         raise typer.Exit(code=1) from exc
 
     console.print(f"[bold green]WakaTime section artifact:[/] {output_path}")
-    if svg_output is not None:
-        console.print(f"[bold green]WakaTime SVG:[/] {svg_output}")
 
 
 # ---------------------------------------------------------------------------

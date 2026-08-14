@@ -583,6 +583,10 @@ jobs:
           uv run python -m scripts.cli generate wakatime \
             --output-dir "$RUNNER_TEMP/waka-readme" \
             --github-login "${{ github.repository_owner }}" \
+            --allow-missing-key
+          uv run python -m scripts.wakatime_readme generate \
+            --output-dir "$RUNNER_TEMP/waka-readme" \
+            --github-login "${{ github.repository_owner }}" \
             --svg-output "$RUNNER_TEMP/waka-readme/wakatime.svg" \
             --allow-missing-key
 

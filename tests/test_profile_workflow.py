@@ -294,7 +294,6 @@ def test_wakatime_job_is_first_party_artifact_only() -> None:
     assert "anmol098/waka-readme-stats" not in workflow
     assert "anmol098" not in workflow
     assert "generate wakatime" in waka
-    assert "--svg-output" in waka
     assert "wakatime.svg" in waka
     assert "waka-readme-${{ github.run_id }}" in waka
     assert "upload-artifact@" in waka

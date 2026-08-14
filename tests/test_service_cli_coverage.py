@@ -575,15 +575,8 @@ def test_wakatime_cli_command_branches(
     monkeypatch.setenv("WAKATIME_API_KEY", "key")
     monkeypatch.setattr(wakatime, "generate_waka_section", lambda **_kwargs: "body")
     output = tmp_path / "waka.md"
-    svg = tmp_path / "wakatime.svg"
-    monkeypatch.setattr(
-        "scripts.wakatime_svg.generate_wakatime_svg",
-        lambda **kwargs: kwargs["output_path"].write_text("<svg/>\n", encoding="utf-8")
-        or kwargs["output_path"],
-    )
-    readme_cmd.wakatime(output=output, no_github=True, svg_output=svg)
+    readme_cmd.wakatime(output=output, no_github=True)
     assert output.read_text(encoding="utf-8") == "body\n"
-    assert svg.read_text(encoding="utf-8") == "<svg/>\n"
     monkeypatch.setattr(
         wakatime,
         "generate_waka_section",
