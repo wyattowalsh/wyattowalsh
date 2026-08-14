@@ -772,6 +772,7 @@ def test_supplemental_full_generation_optional_paths(
     assert statuses["music"].enabled is True
     assert statuses["posts"].enabled is True
     assert set(written) == {
+        "metrics-languages",
         "metrics-habits",
         "metrics-music",
         "metrics-posts",

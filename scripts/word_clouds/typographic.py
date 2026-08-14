@@ -78,6 +78,10 @@ class TypographicRenderer(SvgWordCloudEngine):
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     def _word_color(self, word: str, idx: int) -> str:
+        if self.color_palette_override:
+            return self.palette[
+                int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
+            ]
         cluster = _classify_word(word)
         cluster_palette = CLUSTER_PALETTES.get(cluster)
         if cluster_palette:
