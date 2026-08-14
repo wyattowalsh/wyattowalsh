@@ -357,7 +357,8 @@ def test_pinned_banners_match_origin_main_bytes() -> None:
             continue
         origin_digest = hashlib.sha256(origin).hexdigest()
         assert origin_digest == digest, (
-            f"origin/main:{path.as_posix()} hash {origin_digest} != pinned main {digest}"
+            f"origin/main:{path.as_posix()} hash "
+            f"{origin_digest} != pinned main {digest}"
         )
         assert actual_bytes == origin, f"{path} drifted from origin/main"
 
@@ -557,7 +558,8 @@ def test_finalize_push_follows_ref_name_not_hardcoded_main() -> None:
 
     assert "TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}" in finalize
     assert 'origin "HEAD:refs/heads/${TARGET_BRANCH}"' in push_script
-    assert '--force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}"' in push_script
+    lease = '--force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}"'
+    assert lease in push_script
     assert "HEAD:refs/heads/main" not in push_script
     assert "origin main" not in push_script
     assert re.search(r"git push\s+origin\s+HEAD:main\b", push_script) is None

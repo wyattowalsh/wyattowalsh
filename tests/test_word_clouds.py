@@ -832,7 +832,11 @@ def test_default_generate_all_ships_exact_two_typographic_svgs(
         path.write_text("<svg />", encoding="utf-8")
         return path
 
-    monkeypatch.setattr(generate_module, "generate_word_cloud", fake_generate_word_cloud)
+    monkeypatch.setattr(
+        generate_module,
+        "generate_word_cloud",
+        fake_generate_word_cloud,
+    )
     outputs = generate_module.generate_all(output_dir=tmp_path)
     assert [path.name for path in outputs] == [
         "wordcloud_typographic_by_topics.svg",

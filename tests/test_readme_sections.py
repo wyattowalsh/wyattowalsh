@@ -1504,7 +1504,9 @@ class TestRendering:
                 </p>
 
                 <p align="center">
-                <img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+                <img src=".github/assets/img/wakatime.svg"
+                     alt="WakaTime coding activity"
+                     width="100%" loading="lazy"/>
                 </p>
 
                 <!--START_SECTION:waka-->

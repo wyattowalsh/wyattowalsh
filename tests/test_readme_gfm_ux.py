@@ -216,7 +216,8 @@ def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
         stale word clouds
 
         <p align="center">
-        <img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+        <img src=".github/assets/img/wakatime.svg"
+             alt="WakaTime coding activity" width="100%" loading="lazy"/>
         </p>
 
         <details>
