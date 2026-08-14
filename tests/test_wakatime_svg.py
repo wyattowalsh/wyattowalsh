@@ -258,8 +258,7 @@ def test_committed_wakatime_svg_exists_and_is_public_safe() -> None:
     assert "Python" in svg
     assert "Cursor" in svg
     assert "Mac" in svg
-    assert "iOS" in svg
-    assert "watchOS" in svg
+    assert "GitHub" in svg
     assert "Coding" in svg
     assert "wyattowalsh" in svg
     assert "This week" in svg

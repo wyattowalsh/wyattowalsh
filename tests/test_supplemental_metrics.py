@@ -64,7 +64,7 @@ def _assert_habits_is_designed(svg: str) -> None:
     assert "Coding habits" in svg
     assert "30-day activity" not in svg
     assert "langs:" not in svg
-    assert "JetBrains MPS" not in svg
+    assert "Language mix" in svg
     assert "card-line" not in svg
     assert "uppercase; }}" not in svg
 

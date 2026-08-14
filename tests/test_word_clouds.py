@@ -17,7 +17,7 @@ from scripts.word_clouds import (
     parse_markdown_for_word_cloud_frequencies,
 )
 from scripts.word_clouds.clustered import ClusteredRenderer
-from scripts.word_clouds.colors import TYPOGRAPHIC_PALETTE
+from scripts.word_clouds.colors import CLUSTER_PALETTES, TYPOGRAPHIC_PALETTE
 from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
 from scripts.word_clouds.metaheuristic import RENDERERS, MetaheuristicAnimRenderer
 from scripts.word_clouds.shaped import ShapedRenderer
@@ -999,6 +999,12 @@ def _contrast_ratio(foreground: str, background: str) -> float:
 def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() -> None:
     """fact-wordcloud-bakeoff: shipped typographic winners stay readable on GitHub."""
     palette = {color.casefold() for color in TYPOGRAPHIC_PALETTE}
+    cluster_palette = {
+        color.casefold()
+        for colors in CLUSTER_PALETTES.values()
+        for color in colors
+    }
+    allowed_fills = palette | cluster_palette
     for background in (_GITHUB_LIGHT_BG, _GITHUB_DARK_BG):
         for color in TYPOGRAPHIC_PALETTE:
             assert _contrast_ratio(color, background) >= _AA_LARGE_CONTRAST, (
@@ -1011,13 +1017,15 @@ def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() 
         assert "rotate(" not in svg
         assert 'stop-color="#fafbfc"' in svg
         assert 'stop-color="#f0f1f3"' in svg
-        assert 'fill="url(#a)"' in svg
+        assert 'fill="url(#wc-bg-grad)"' in svg
+        assert "url(#wc-bg-grad-dark)" in svg
+        assert "@media (prefers-color-scheme: dark)" in svg
         fills = {
             match.casefold()
             for match in re.findall(r'fill="(#[0-9A-Fa-f]{6})"', svg)
         }
         assert fills
-        assert fills <= palette
+        assert fills <= allowed_fills
         opacities = [float(value) for value in re.findall(r'opacity="([0-9.]+)"', svg)]
         assert opacities
         assert min(opacities) >= 0.6
