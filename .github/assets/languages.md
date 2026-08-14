@@ -1002,6 +1002,7 @@
 - [stripe/stripe.github.io](https://github.com/stripe/stripe.github.io) - A landing page for Stripe&#x27;s GitHub organization
 - [swyxio/ai-notes](https://github.com/swyxio/ai-notes) - notes for software engineers getting up to speed on new AI developments. Serves as datastore for https://latent.space writing, and product brainstorming, but has cleaned up canonical references under
 - [sxin0/docsify-termynal](https://github.com/sxin0/docsify-termynal) - docsify 动画终端插件
+- [SyndiShanX/Spotify-Dark](https://github.com/SyndiShanX/Spotify-Dark) - Github Dark for Spotify using Spicetify (https://github.com/khanhas/spicetify-cli)
 - [tc39/ecma402](https://github.com/tc39/ecma402) - Status, process, and documents for ECMA 402
 - [tenelabs/docsify-sitemap](https://github.com/tenelabs/docsify-sitemap) - Generate a sitemap for docsify project.
 - [terkelg/awesome-creative-coding](https://github.com/terkelg/awesome-creative-coding) - Creative Coding: Generative Art, Data visualization, Interaction Design, Resources.
@@ -3513,7 +3514,7 @@
 - [ApeWorX/project-template](https://github.com/ApeWorX/project-template) - Plugin project template for the Ape Framework
 - [ApeWorX/py-tokenlists](https://github.com/ApeWorX/py-tokenlists) - Uniswap Token Lists implementation in Python.
 - [ApeWorX/walletconnect-py](https://github.com/ApeWorX/walletconnect-py) - WalletConnect implementation in Python
-- [apify/agent-skills](https://github.com/apify/agent-skills) - Collection of Apify Agent Skills
+- [apify/agent-skills](https://github.com/apify/agent-skills) - Collection of Apify agent skills
 - [apify/crawlee-python](https://github.com/apify/crawlee-python) - Crawlee—A web scraping and browser automation library for Python to build reliable crawlers. Extract data for AI, LLMs, RAG, or GPTs. Download HTML, PDF, JPG, PNG, and other files from websites. Works
 - [apirrone/Memento](https://github.com/apirrone/Memento) - Memento is a Python app that records everything you do on your computer and lets you go back in time, search, and chat with a LLM (Large Language Model) to find back information about what you did.
 - [apple/ml-stable-diffusion](https://github.com/apple/ml-stable-diffusion) - Stable Diffusion with Core ML on Apple Silicon
