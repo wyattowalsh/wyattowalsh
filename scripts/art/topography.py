@@ -708,6 +708,15 @@ def generate(
     )
     river_flow_profile = _river_flow_profile(metrics.get("star_velocity", {}))
     settlement_tier, settlement_title = _settlement_scale_tier(followers)
+    settlement_gain = float(dialect.knobs["settlement_gain"])
+    settlement_scale = 0.70 + 1.20 * settlement_gain
+    try:
+        settlement_followers = max(0, int(followers or 0))
+    except (TypeError, ValueError):
+        settlement_followers = 0
+    settlement_mark_count = (
+        0 if settlement_followers <= 0 else 1 + int(round(4.0 * settlement_gain))
+    )
     metrics.get("network_count", 0)
     try:
         issue_pressure = min(1.0, max(0.0, float(total_issues_raw or 0.0) / 36.0))
@@ -1748,6 +1757,9 @@ def generate(
         f'data-sun-altitude="{commit_hour_profile["sun_altitude"]:.1f}" '
         f'data-flow-tier="{river_flow_profile["tier"]}" '
         f'data-settlement-tier="{settlement_tier}" '
+        f'data-settlement-gain="{settlement_gain:.3f}" '
+        f'data-settlement-scale="{settlement_scale:.3f}" '
+        f'data-settlement-count="{settlement_mark_count}" '
         f'data-activity-series="{activity_series_mode}" '
         f'data-central-rise-date="{central_peak_day.isoformat()}" '
         f'data-river-carve-date="{river_carve_day.isoformat()}" '
@@ -2935,12 +2947,14 @@ def generate(
         settlement_when = _repo_when(best[2]) or _date_for_activity_fraction(0.42)
         P.append(
             f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}" '
+            f'data-settlement-gain="{settlement_gain:.3f}" data-settlement-scale="{settlement_scale:.3f}" '
+            f'data-settlement-count="{settlement_mark_count}" '
             f"{_timeline_style(settlement_when, 0.95, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
         )
 
         if settlement_tier == "capital":
             # Capital: 5-point star symbol
-            _star_r_out, _star_r_in = 7, 3.2
+            _star_r_out, _star_r_in = 7 * settlement_scale, 3.2 * settlement_scale
             _star_pts = []
             for _si in range(10):
                 _a = math.radians(-90 + _si * 36)
@@ -2954,32 +2968,54 @@ def generate(
         elif settlement_tier == "city":
             # City: double circle
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="5" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{5 * settlement_scale:.1f}" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>'
             )
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="2.5" fill="{settle_color}" opacity="0.5"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{2.5 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.5"/>'
             )
         elif settlement_tier == "town":
             # Town: filled circle
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="3" fill="{settle_color}" opacity="0.5"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{3 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.5"/>'
             )
         elif settlement_tier == "village":
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="2.4" fill="{settle_color}" opacity="0.45"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{2.4 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.45"/>'
             )
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="4.2" fill="none" stroke="{settle_color}" stroke-width="0.5" opacity="0.35"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{4.2 * settlement_scale:.1f}" fill="none" stroke="{settle_color}" stroke-width="0.5" opacity="0.35"/>'
             )
         elif settlement_tier == "hamlet":
             # Hamlet: small dot
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="1.5" fill="{settle_color}" opacity="0.4"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{1.5 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.4"/>'
             )
         else:
             # Outpost: faint dot
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="1" fill="{settle_color}" opacity="0.3"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{1 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.3"/>'
+            )
+
+        extra_marks = max(0, settlement_mark_count - 1)
+        other_sites = sorted(
+            (rp for rp in repo_positions if rp is not best),
+            key=lambda rp: rp[2].get("stars", 0),
+            reverse=True,
+        )
+        for mark_idx in range(extra_marks):
+            if mark_idx < len(other_sites):
+                site = other_sites[mark_idx]
+                mark_x = MAP_L + site[0] * MAP_W
+                mark_y = MAP_T + site[1] * MAP_H + 12.0
+            else:
+                angle = (mark_idx + 1) * 2.15
+                mark_x = sx_s + math.cos(angle) * (16.0 + 7.0 * mark_idx)
+                mark_y = settle_cy + math.sin(angle) * (12.0 + 5.0 * mark_idx)
+            mark_r = (1.05 + 1.35 * settlement_gain) * (0.72 + 0.18 * (mark_idx % 3))
+            P.append(
+                f'<circle data-role="topo-settlement-mark" data-mark-index="{mark_idx}" '
+                f'cx="{mark_x:.1f}" cy="{mark_y:.1f}" r="{mark_r:.1f}" '
+                f'fill="{settle_color}" opacity="{0.28 + 0.18 * settlement_gain:.2f}"/>'
             )
 
         if settlement_tier in {"capital", "city", "town", "village"}:

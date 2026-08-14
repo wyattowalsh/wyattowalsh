@@ -633,6 +633,7 @@ def _ambient_ripple_specs(
     pool_y: float,
     visual_seed: str,
     fallback_when: str = "",
+    ripple_gain: float = 0.0,
 ) -> list[dict[str, float | int | str]]:
     """Return deterministic surface ripple specs anchored to dipoles."""
     anchors = dipole_meta
@@ -682,8 +683,11 @@ def _ambient_ripple_specs(
         ring_count = 1 + int(strength > 0.42)
         if signals.traffic_heat + signals.release_charge > 0.72:
             ring_count += 1
+        if ripple_gain > 0:
+            ring_count += 1 + int(round(3.0 * ripple_gain))
         if not dipole_meta:
-            ring_count = min(ring_count, 2)
+            ring_count = min(ring_count, 2 + int(round(2.0 * ripple_gain)))
+        ring_count = min(6, ring_count)
 
         for ring_idx in range(ring_count):
             lateral = (
@@ -695,12 +699,17 @@ def _ambient_ripple_specs(
             cx = max(50.0, min(WIDTH - 50.0, anchor_x + lateral))
             cy = pool_y + vertical
             rx = (
-                16.0 + 10.0 * ring_idx + 12.0 * strength + 12.0 * signals.release_charge
+                16.0
+                + 10.0 * ring_idx
+                + 12.0 * strength
+                + 12.0 * signals.release_charge
+                + 14.0 * ripple_gain
             )
             opacity = min(
-                0.16,
+                0.22,
                 0.03
                 + 0.04 * signals.field_gain
+                + 0.05 * ripple_gain
                 + 0.03 * signals.traffic_heat
                 + 0.02 * signals.release_charge
                 + 0.03 * strength,
@@ -988,6 +997,7 @@ def generate(
         f'data-surface-tension="{surface_tension:.3f}" '
         f'data-highlight-density="{signals.highlight_density:.3f}" '
         f'data-dipole-lift="{signals.dipole_lift:.3f}" '
+        f'data-ripple-gain="{dialect.knobs["ripple_gain"]:.3f}" '
         f"{dialect.svg_attrs()}>"
     )
 
@@ -1312,26 +1322,33 @@ def generate(
         )
         budget.add(1)
 
-    # ── Sparse-history: ambient ripples when the field is still nascent ──────
-    if signals.field_gain < 0.5:
-        for ripple in _ambient_ripple_specs(
-            spike_meta,
-            signals,
-            pool_y=pool_y,
-            visual_seed=visual_seed,
-            fallback_when=fallback_when,
-        ):
-            if not budget.ok():
-                break
-            P.append(
-                f'<ellipse data-role="ferro-ripple" '
-                f'data-owner-index="{int(ripple["owner_index"])}" data-lang="{ripple["lang"]}" '
-                f'cx="{float(ripple["cx"]):.1f}" cy="{float(ripple["cy"]):.1f}" '
-                f'rx="{float(ripple["rx"]):.1f}" ry="{float(ripple["ry"]):.1f}" '
-                f'fill="none" stroke="{ripple["stroke"]}" stroke-width="0.5" '
-                f"{_timeline_style(str(ripple['when']), float(ripple['opacity']), 'ferro-ripple tl-reveal tl-soft')}/>"
-            )
-            budget.add(1)
+    # ── Commit-accreting surface ripples (kept as the field strengthens) ──
+    ripple_gain = float(dialect.knobs["ripple_gain"])
+    ripple_specs = _ambient_ripple_specs(
+        spike_meta,
+        signals,
+        pool_y=pool_y,
+        visual_seed=visual_seed,
+        fallback_when=fallback_when,
+        ripple_gain=ripple_gain,
+    )
+    P.append(
+        f'<g id="ferro-ripples" data-ripple-gain="{ripple_gain:.3f}" '
+        f'data-ripple-count="{len(ripple_specs)}">'
+    )
+    for ripple in ripple_specs:
+        if not budget.ok():
+            break
+        P.append(
+            f'<ellipse data-role="ferro-ripple" '
+            f'data-owner-index="{int(ripple["owner_index"])}" data-lang="{ripple["lang"]}" '
+            f'cx="{float(ripple["cx"]):.1f}" cy="{float(ripple["cy"]):.1f}" '
+            f'rx="{float(ripple["rx"]):.1f}" ry="{float(ripple["ry"]):.1f}" '
+            f'fill="none" stroke="{ripple["stroke"]}" stroke-width="0.5" '
+            f"{_timeline_style(str(ripple['when']), float(ripple['opacity']), 'ferro-ripple tl-reveal tl-soft')}/>"
+        )
+        budget.add(1)
+    P.append("</g>")
 
     # ── Dipole markers (subtle glow at each repo position) ────────
     for dm in spike_meta:

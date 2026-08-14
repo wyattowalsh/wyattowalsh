@@ -59,7 +59,6 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     dialect_group_markup,
-    extract_accretion_channels,
     hex_frac,
     map_date_to_loop_delay,
     normalize_timeline_window,
@@ -558,6 +557,10 @@ def _render_svg(
     reveal_fraction: float,
     growth_mat: float,
     dialect: StyleDialect | None = None,
+    field_gain: float = 0.0,
+    extent_gain: float = 0.0,
+    simulation_mix: float = 0.0,
+    sim_steps: int = 0,
 ) -> str:
     """Render the Lenia field as an SVG of glowing circles."""
     N = config.grid_resolution
@@ -570,7 +573,11 @@ def _render_svg(
     dialect_attrs = dialect.svg_attrs() if dialect is not None else ""
     P.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '
-        f'width="{WIDTH}" height="{HEIGHT}" {dialect_attrs}>'
+        f'width="{WIDTH}" height="{HEIGHT}" {dialect_attrs} '
+        f'data-field-gain="{field_gain:.3f}" data-extent-gain="{extent_gain:.3f}" '
+        f'data-simulation-mix="{simulation_mix:.3f}" data-sim-steps="{sim_steps}" '
+        f'data-halo-scale="{(dialect.knobs["halo_scale"] if dialect is not None else 1.0):.3f}" '
+        f'data-satellite-count="{sum(1 for spec in seed_specs if spec.kind == "satellite")}">'
     )
 
     # ── Defs: glow filter ─────────────────────────────────────────
@@ -618,19 +625,20 @@ def _render_svg(
             if spec.kind == "repo":
                 seed_color = repo_seed_color
                 halo_boost = dialect.knobs["halo_scale"] if dialect is not None else 1.0
-                halo_radius = cell_size * (
-                    0.18
-                    + 0.22 * spec.radius
-                    + 0.12 * spec.visibility
-                    + 0.16 * max(0.0, halo_boost - 0.75)
+                halo_radius = (
+                    cell_size
+                    * (0.22 + 0.24 * spec.radius + 0.14 * spec.visibility)
+                    * halo_boost
                 )
                 halo_opacity = (
                     0.06 + 0.06 * spec.visibility + 0.05 * spec.amplitude
                 ) * _fade_ramp(growth_mat, 0.55 + 0.25 * spec.visibility)
             elif spec.kind == "satellite":
                 seed_color = satellite_seed_color
-                halo_radius = cell_size * (
-                    0.12 + 0.16 * spec.radius + 0.10 * spec.visibility
+                halo_radius = (
+                    cell_size
+                    * (0.12 + 0.16 * spec.radius + 0.10 * spec.visibility)
+                    * (0.90 + 0.55 * extent_gain)
                 )
                 halo_opacity = (
                     0.05 + 0.05 * spec.visibility + 0.04 * spec.amplitude
@@ -658,8 +666,14 @@ def _render_svg(
                 )
             else:
                 halo_attrs = f'opacity="{halo_opacity:.3f}"'
+            halo_scale_attr = (
+                f' data-halo-scale="{dialect.knobs["halo_scale"]:.3f}"'
+                if spec.kind == "repo" and dialect is not None
+                else ""
+            )
             P.append(
-                f'<circle data-role="lenia-seed-halo" data-kind="{spec.kind}" '
+                f'<circle data-role="lenia-seed-halo" data-kind="{spec.kind}"'
+                f"{halo_scale_attr} "
                 f'cx="{cx:.1f}" cy="{cy:.1f}" r="{halo_radius:.1f}" '
                 f'fill="{seed_color}" {halo_attrs}/>'
             )
@@ -1320,11 +1334,11 @@ def _derive_dynamics(
         metrics.get("recent_merged_prs")
     )
     recency_mix = _recency_signal(metrics, repos)
-    accretion = extract_accretion_channels(metrics)
+    dialect = build_style_dialect("lenia", metrics)
 
     mu_drive = min(
         1.0,
-        0.26 * accretion.star_scale
+        0.26 * dialect.channels.star_scale
         + 0.14 * math.tanh(int(metrics.get("stars", 0) or 0) / 60.0)
         + 0.16 * velocity
         + 0.12 * traffic_heat
@@ -1379,7 +1393,7 @@ def _derive_dynamics(
         + 8 * pr_density
         + 4 * velocity
         + 4 * commit_focus
-        + 10 * accretion.commit_scale
+        + 10 * dialect.knobs["field_gain"]
     )
     sim_steps = max(config.sim_steps_base // 2, min(140, sim_steps))
 
@@ -1397,7 +1411,7 @@ def _derive_dynamics(
         round(
             max(pr_burst, recency_mix) * 2.0
             + pr_density
-            + 3.0 * accretion.follower_scale
+            + 3.0 * dialect.knobs["extent_gain"]
         )
     )
 
@@ -1434,6 +1448,7 @@ def _build_seed_specs(
     h: str,
     timeline_window: tuple[dt_date, dt_date],
     dynamics: LeniaDynamics,
+    extent_gain: float = 0.0,
 ) -> list[_SeedSpec]:
     """Build deterministic organism and nutrient seeds from cumulative signals."""
     N = config.grid_resolution
@@ -1548,14 +1563,18 @@ def _build_seed_specs(
             sat_angle = commit_angle + (
                 math.pi / 3.0 if satellite_budget % 2 == 0 else -math.pi / 3.0
             )
+            extent_radius = 1.0 if extent_gain <= 0 else 0.85 + 1.10 * extent_gain
             sat_distance = max(
                 1,
                 int(
                     round(
-                        1.0
-                        + 2.0 * dynamics.pr_burst
-                        + 1.5 * dynamics.recency_mix
-                        + 1.0 * (1.0 - visibility)
+                        (
+                            1.0
+                            + 2.0 * dynamics.pr_burst
+                            + 1.5 * dynamics.recency_mix
+                            + 1.0 * (1.0 - visibility)
+                        )
+                        * extent_radius
                     )
                 ),
             )
@@ -1583,6 +1602,38 @@ def _build_seed_specs(
                     or timeline_start,
                     kind="satellite",
                     visibility=max(0.22, visibility * 0.88),
+                )
+            )
+
+    if extent_gain > 0 and repos:
+        forced_count = 1 + int(round(3.0 * extent_gain))
+        extent_radius = 0.85 + 1.10 * extent_gain
+        for extra_idx in range(forced_count):
+            host_index = extra_idx % len(repos)
+            host = repos[host_index]
+            host_x, host_y = semantic_positions[host_index]
+            host_gx = int(host_x / WIDTH * N) % N
+            host_gy = int(host_y / HEIGHT * N) % N
+            sat_angle = commit_angle + extra_idx * (math.tau / max(3, forced_count))
+            sat_distance = max(2, int(round((2.2 + extra_idx) * extent_radius)))
+            specs.append(
+                _SeedSpec(
+                    gx=(host_gx + int(round(math.cos(sat_angle) * sat_distance))) % N,
+                    gy=(host_gy + int(round(math.sin(sat_angle) * sat_distance))) % N,
+                    radius=max(1, 1 + extra_idx % 2),
+                    amplitude=min(0.82, 0.28 + 0.18 * extent_gain),
+                    softness=0.72,
+                    when=_signal_date(
+                        host,
+                        "date",
+                        "created_at",
+                        "created",
+                        "pushed_at",
+                        "updated_at",
+                    )
+                    or timeline_start,
+                    kind="satellite",
+                    visibility=max(0.22, 0.34 + 0.40 * extent_gain),
                 )
             )
 
@@ -1618,13 +1669,14 @@ def _build_seed_specs(
                     + hex_frac(day_hash, 0, 4)
                 )
             )
+            orbit_scale = 1.0 if extent_gain <= 0 else 0.90 + 0.70 * extent_gain
             orbit = (
                 0.08
                 + 0.30 * math.sqrt(frac)
                 + 0.07 * dynamics.recency_mix
                 + 0.05 * dynamics.commit_focus
                 + 0.08 * hex_frac(day_hash, 4, 8)
-            )
+            ) * orbit_scale
             cx = WIDTH * 0.5 + math.cos(angle) * WIDTH * orbit
             cy = HEIGHT * 0.5 + math.sin(angle) * HEIGHT * orbit
             gx = int(cx / WIDTH * N) % N
@@ -1807,6 +1859,8 @@ def generate(
         reference_year=timeline_window[1].year,
     )
 
+    field_gain = float(dialect.knobs["field_gain"])
+    extent_gain = float(dialect.knobs["extent_gain"])
     dynamics = _derive_dynamics(
         metrics,
         config=config,
@@ -1844,6 +1898,7 @@ def generate(
         h=h,
         timeline_window=timeline_window,
         dynamics=dynamics,
+        extent_gain=extent_gain,
     )
     timeline_lookup = _build_timeline_lookup(
         seed_specs,
@@ -1866,12 +1921,16 @@ def generate(
         + 0.14 * dynamics.recent_flux
         + 0.08 * dynamics.traffic_heat,
     )
+    sim_steps = max(
+        config.sim_steps_base // 2,
+        min(140, dynamics.sim_steps + int(round(16 * field_gain))),
+    )
     field = _simulate(
         field,
         kernel,
         dynamics.mu,
         dynamics.sigma,
-        dynamics.sim_steps,
+        sim_steps,
         config.dt,
         sim_energy,
     )
@@ -1884,11 +1943,12 @@ def generate(
     )
     seed_residue = np.clip(seed_field * residue_gain, 0.0, 1.0)
     simulation_mix = min(
-        0.18,
+        0.34,
         0.05
         + 0.10 * dynamics.activity_drive
         + 0.04 * dynamics.recent_flux
-        + 0.03 * dynamics.release_energy,
+        + 0.03 * dynamics.release_energy
+        + 0.16 * field_gain,
     )
     field = np.maximum(seed_residue, np.clip(field * simulation_mix, 0.0, 1.0))
 
@@ -1913,4 +1973,8 @@ def generate(
         reveal_fraction=reveal_fraction,
         growth_mat=growth_mat,
         dialect=dialect,
+        field_gain=field_gain,
+        extent_gain=extent_gain,
+        simulation_mix=simulation_mix,
+        sim_steps=sim_steps,
     )

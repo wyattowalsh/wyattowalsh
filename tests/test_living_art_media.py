@@ -1405,3 +1405,116 @@ def test_living_art_dialects_remain_visually_distinct(
     }
     assert families == STYLE_DIALECTS
     assert len(set(families.values())) == 6
+
+
+def _svg_root_attr(svg: str, name: str) -> str:
+    match = re.search(rf"<svg\b[^>]*\b{re.escape(name)}=\"([^\"]*)\"", svg)
+    assert match, f"Missing {name} on svg root"
+    return match.group(1)
+
+
+def _max_halo_radius(svg: str) -> float:
+    radii = [
+        float(radius)
+        for radius in re.findall(
+            r'data-role="lenia-seed-halo"[^>]*data-kind="repo"[^>]* r="([0-9.]+)"',
+            svg,
+        )
+    ]
+    if not radii:
+        radii = [
+            float(radius)
+            for radius in re.findall(
+                r'data-kind="repo"[^>]*data-role="lenia-seed-halo"[^>]* r="([0-9.]+)"',
+                svg,
+            )
+        ]
+    assert radii, "Missing repo Lenia halos"
+    return max(radii)
+
+
+def test_leased_style_knobs_track_isolated_channels(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import scripts.art.topography as topography_module
+    from scripts.art.ferrofluid import generate as generate_ferrofluid
+    from scripts.art.genetic_landscape import generate as generate_genetic
+    from scripts.art.lenia import generate as generate_lenia
+    from scripts.art.topography import generate as generate_topography
+
+    monkeypatch.setattr(topography_module, "TOPOGRAPHY_GRID_SIZE", 48)
+
+    def _render(generator, **counts: int) -> str:
+        return generator(
+            _accretion_metrics(**counts),
+            seed="isolated-knobs",
+            timeline=False,
+        )
+
+    base = {"repos": 2, "stars": 8, "commits": 40, "followers": 1}
+    more_followers = {**base, "followers": 90}
+    more_commits = {**base, "commits": 3200}
+    more_stars = {**base, "stars": 180}
+
+    topo_low = _render(generate_topography, **base)
+    topo_high = _render(generate_topography, **more_followers)
+    assert float(_svg_root_attr(topo_high, "data-settlement-scale")) > float(
+        _svg_root_attr(topo_low, "data-settlement-scale")
+    )
+    assert int(_svg_root_attr(topo_high, "data-settlement-count")) > int(
+        _svg_root_attr(topo_low, "data-settlement-count")
+    )
+    assert float(_svg_root_attr(topo_high, "data-settlement-gain")) > float(
+        _svg_root_attr(topo_low, "data-settlement-gain")
+    )
+
+    genetic_low = _render(generate_genetic, **base)
+    genetic_followers = _render(generate_genetic, **more_followers)
+    genetic_commits = _render(generate_genetic, **more_commits)
+    assert int(_svg_root_attr(genetic_followers, "data-colony-count")) > int(
+        _svg_root_attr(genetic_low, "data-colony-count")
+    )
+    assert float(_svg_root_attr(genetic_followers, "data-colony-gain")) > float(
+        _svg_root_attr(genetic_low, "data-colony-gain")
+    )
+    assert int(_svg_root_attr(genetic_commits, "data-generations")) > int(
+        _svg_root_attr(genetic_low, "data-generations")
+    )
+
+    lenia_low = _render(generate_lenia, **base)
+    lenia_stars = _render(generate_lenia, **more_stars)
+    lenia_commits = _render(generate_lenia, **more_commits)
+    lenia_followers = _render(generate_lenia, **more_followers)
+    assert _max_halo_radius(lenia_stars) > _max_halo_radius(lenia_low)
+    assert float(_svg_root_attr(lenia_stars, "data-halo-scale")) > float(
+        _svg_root_attr(lenia_low, "data-halo-scale")
+    )
+    assert float(_svg_root_attr(lenia_commits, "data-field-gain")) > float(
+        _svg_root_attr(lenia_low, "data-field-gain")
+    )
+    assert float(_svg_root_attr(lenia_commits, "data-simulation-mix")) > float(
+        _svg_root_attr(lenia_low, "data-simulation-mix")
+    )
+    assert int(_svg_root_attr(lenia_commits, "data-sim-steps")) > int(
+        _svg_root_attr(lenia_low, "data-sim-steps")
+    )
+    assert int(_svg_root_attr(lenia_followers, "data-satellite-count")) > int(
+        _svg_root_attr(lenia_low, "data-satellite-count")
+    )
+    assert float(_svg_root_attr(lenia_followers, "data-extent-gain")) > float(
+        _svg_root_attr(lenia_low, "data-extent-gain")
+    )
+
+    ferro_low = _render(generate_ferrofluid, **base)
+    ferro_high = _render(generate_ferrofluid, **more_commits)
+    ferro_low_match = re.search(r'data-ripple-count="(\d+)"', ferro_low)
+    ferro_high_match = re.search(r'data-ripple-count="(\d+)"', ferro_high)
+    assert ferro_low_match and ferro_high_match
+    assert int(ferro_high_match.group(1)) > int(ferro_low_match.group(1))
+    assert ferro_low.count('data-role="ferro-ripple"') > 0
+    assert ferro_high.count('data-role="ferro-ripple"') > ferro_low.count(
+        'data-role="ferro-ripple"'
+    )
+    assert float(_svg_root_attr(ferro_high, "data-ripple-gain")) > float(
+        _svg_root_attr(ferro_low, "data-ripple-gain")
+    )

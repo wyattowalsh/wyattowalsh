@@ -33,7 +33,6 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     dialect_group_markup,
-    extract_accretion_channels,
     hex_frac,
     is_monotonic_timelapse_metrics,
     map_date_to_loop_delay,
@@ -308,14 +307,14 @@ def _derive_landscape_dynamics(
     stability_parts = [issue_resolution, release_signal, 1.0 - legacy_share]
     stability_signal = sum(stability_parts) / len(stability_parts)
 
-    accretion = extract_accretion_channels(metrics)
+    dialect = build_style_dialect("genetic", metrics)
     base_generations = max(1, int(maturity * 20))
     generations = max(
         1,
         int(
             round(
                 base_generations * (1.0 + activity_signal + contribution_signal * 0.35)
-                + 8 * accretion.commit_scale
+                + 8 * dialect.knobs["generation_gain"]
             )
         ),
     )
@@ -337,7 +336,10 @@ def _derive_landscape_dynamics(
     pop_count = max(
         6,
         int(
-            round(base_pop_count * (1.0 + pop_signal + 0.55 * accretion.follower_scale))
+            round(
+                base_pop_count
+                * (1.0 + pop_signal + 0.55 * dialect.channels.follower_scale)
+            )
         ),
     )
 
@@ -895,11 +897,14 @@ def generate(
         colony_hash = seed_hash(
             {"seed": h, "repo": repo.get("name", ""), "layer": "gl-micro-colony"}
         )
+        colony_gain = dialect.knobs["colony_gain"]
+        extra_colonies = 0 if colony_gain <= 0 else int(round(3.0 * colony_gain))
         colony_count = min(
-            3,
+            6,
             1
             + int(visibility < 0.72)
-            + int(visibility < 0.42 or repo_density_signal > 0.7),
+            + int(visibility < 0.42 or repo_density_signal > 0.7)
+            + extra_colonies,
         )
         for colony_idx in range(colony_count):
             angle = (
@@ -925,9 +930,15 @@ def generate(
                 min(_MAP_B - 8.0, py + math.sin(angle) * offset),
             )
             colony_height = (
-                peak_h * (0.10 + 0.08 * (1.0 - visibility)) * (1.0 - 0.14 * colony_idx)
+                peak_h
+                * (0.10 + 0.08 * (1.0 - visibility))
+                * (1.0 - 0.14 * colony_idx)
+                * (0.80 + 0.90 * colony_gain)
             )
-            colony_sigma = max(1.1, sigma_grid * (0.32 + 0.08 * colony_idx))
+            colony_sigma = max(
+                1.1,
+                sigma_grid * (0.32 + 0.08 * colony_idx) * (0.86 + 0.40 * colony_gain),
+            )
             colony_gpx = (colony_x - _MAP_L) / cell_w
             colony_gpy = (colony_y - _MAP_T) / cell_h
             for gy in range(grid):
@@ -1062,6 +1073,8 @@ def generate(
         f'data-maturity="{mat:.3f}" data-tempo="{tempo:.3f}" '
         f'data-peak-count="{len(peaks)}" data-population="{pop_count}" '
         f'data-generations="{generations}" data-activity-midpoint="{activity_midpoint}" '
+        f'data-colony-gain="{dialect.knobs["colony_gain"]:.3f}" '
+        f'data-colony-count="{len(micro_colonies)}" '
         f'data-activity-signal="{static_contour_signal:.3f}" '
         f'data-population-signal="{static_population_signal:.3f}" '
         f"{dialect.svg_attrs()}>"
@@ -1143,7 +1156,9 @@ def generate(
                 break
             colony_when = _repo_date(colony["repo"]) or start_date
             colony_visibility = float(colony["visibility"])
-            colony_radius = 1.3 + 2.2 * colony_visibility
+            colony_radius = (1.3 + 2.2 * colony_visibility) * (
+                0.85 + 0.90 * dialect.knobs["colony_gain"]
+            )
             colony_opacity = (0.10 + 0.18 * colony_visibility) * colony_fade
             P.append(
                 f'<circle data-role="gl-micro-colony" '
