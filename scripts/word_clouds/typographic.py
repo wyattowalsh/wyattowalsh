@@ -52,6 +52,17 @@ class TypographicRenderer(SvgWordCloudEngine):
         self.require_all = require_all
         self.scale_passes = scale_passes
 
+    @override
+    def _frequency_to_opacity(
+        self,
+        freq: float,
+        min_freq: float,
+        max_freq: float,
+    ) -> float:
+        """Keep fills fully opaque so volume stays in size/weight, not washout."""
+        del freq, min_freq, max_freq
+        return 1.0
+
     def _freq_to_weight(self, freq: float, min_freq: float, max_freq: float) -> int:
         """Map frequency to font-weight (100-900 in steps of 100)."""
         if max_freq == min_freq:
@@ -155,9 +166,7 @@ class TypographicRenderer(SvgWordCloudEngine):
             (self.margin, col_w),
             (self.margin + col_w + gutter, col_w),
         )
-        cursors = [
-            [left, headline_bottom + 18.0, 0.0] for left, _width in columns
-        ]
+        cursors = [[left, headline_bottom + 18.0, 0.0] for left, _width in columns]
         col = 0
         for idx, (word, freq) in enumerate(sorted_words[start_idx:], start=start_idx):
             font_size = self._frequency_to_size(freq, min_freq, max_freq) * scale

@@ -320,6 +320,10 @@ def resolve_color_func(
     return tokenized_palette
 
 
+GITHUB_LIGHT_BG = "#ffffff"
+GITHUB_DARK_BG = "#0d1117"
+AA_LARGE_TEXT_CONTRAST = 3.0
+
 TYPOGRAPHIC_PALETTE = [
     "#2563EB",  # royal blue
     "#059669",  # emerald
@@ -331,15 +335,16 @@ TYPOGRAPHIC_PALETTE = [
     "#4F46E5",  # indigo
 ]
 
+# Mid-tone fills that keep WCAG AA large-text contrast on both GitHub canvases.
 CLUSTER_PALETTES: dict[str, list[str]] = {
-    "AI/ML": ["#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#5B21B6"],
-    "Web": ["#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#1E40AF"],
-    "Data": ["#047857", "#059669", "#10B981", "#34D399", "#065F46"],
-    "DevOps": ["#B45309", "#D97706", "#F59E0B", "#FBBF24", "#92400E"],
-    "Languages": ["#B91C1C", "#DC2626", "#EF4444", "#F87171", "#991B1B"],
-    "Tools": ["#0E7490", "#0891B2", "#06B6D4", "#22D3EE", "#155E75"],
-    "Security": ["#9D174D", "#BE185D", "#EC4899", "#F472B6", "#831843"],
-    "Other": ["#374151", "#4B5563", "#6B7280", "#9CA3AF", "#1F2937"],
+    "AI/ML": ["#7C3AED", "#8B5CF6", "#6366F1", "#A855F7", "#9333EA"],
+    "Web": ["#2563EB", "#3B82F6", "#0284C7", "#4F46E5", "#0891B2"],
+    "Data": ["#047857", "#059669", "#0F766E", "#0D9488", "#0E7490"],
+    "DevOps": ["#B45309", "#D97706", "#C2410C", "#EA580C", "#A16207"],
+    "Languages": ["#DC2626", "#EF4444", "#E11D48", "#F43F5E", "#BE185D"],
+    "Tools": ["#0E7490", "#0891B2", "#0284C7", "#0F766E", "#0D9488"],
+    "Security": ["#BE185D", "#EC4899", "#DB2777", "#E11D48", "#C026D3"],
+    "Other": ["#6B7280", "#71717A", "#64748B", "#78716C", "#737373"],
 }
 
 DOMAIN_CLUSTERS: dict[str, set[str]] = {
@@ -605,6 +610,90 @@ def _classify_word(word: str) -> str:
     return "Other"
 
 
+def _hex_to_srgb(color: str) -> tuple[float, float, float]:
+    """Parse ``#rgb`` / ``#rrggbb`` into 0-1 sRGB channels."""
+    value = color.removeprefix("#")
+    if len(value) == 3:
+        value = "".join(channel * 2 for channel in value)
+    if len(value) != 6:
+        raise ValueError(f"Unsupported hex color: {color}")
+    red = int(value[0:2], 16) / 255
+    green = int(value[2:4], 16) / 255
+    blue = int(value[4:6], 16) / 255
+    return (red, green, blue)
+
+
+def relative_luminance(color: str) -> float:
+    """WCAG relative luminance of a hex color."""
+
+    def _channel(component: float) -> float:
+        return (
+            component / 12.92
+            if component <= 0.04045
+            else ((component + 0.055) / 1.055) ** 2.4
+        )
+
+    red, green, blue = (_channel(component) for component in _hex_to_srgb(color))
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+
+
+def contrast_ratio(foreground: str, background: str) -> float:
+    """WCAG contrast ratio between two hex colors."""
+    lighter, darker = sorted(
+        (relative_luminance(foreground), relative_luminance(background)),
+        reverse=True,
+    )
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def composite_hex(foreground: str, background: str, opacity: float) -> str:
+    """Alpha-composite ``foreground`` over ``background`` and return hex."""
+    clamped = max(0.0, min(1.0, float(opacity)))
+    fg_red, fg_green, fg_blue = _hex_to_srgb(foreground)
+    bg_red, bg_green, bg_blue = _hex_to_srgb(background)
+    red = fg_red * clamped + bg_red * (1.0 - clamped)
+    green = fg_green * clamped + bg_green * (1.0 - clamped)
+    blue = fg_blue * clamped + bg_blue * (1.0 - clamped)
+    return (
+        f"#{int(round(red * 255)):02X}"
+        f"{int(round(green * 255)):02X}"
+        f"{int(round(blue * 255)):02X}"
+    )
+
+
+def github_dual_surface_contrast(color: str, *, opacity: float = 1.0) -> float:
+    """Worst-case contrast of ``color`` on GitHub light and dark canvases."""
+    light = composite_hex(color, GITHUB_LIGHT_BG, opacity)
+    dark = composite_hex(color, GITHUB_DARK_BG, opacity)
+    return min(
+        contrast_ratio(light, GITHUB_LIGHT_BG),
+        contrast_ratio(dark, GITHUB_DARK_BG),
+    )
+
+
+def is_github_dual_surface_readable(
+    color: str,
+    *,
+    opacity: float = 1.0,
+    minimum: float = AA_LARGE_TEXT_CONTRAST,
+) -> bool:
+    """True when ``color`` meets large-text AA on both GitHub backgrounds."""
+    return github_dual_surface_contrast(color, opacity=opacity) >= minimum
+
+
+def github_readable_fills() -> tuple[str, ...]:
+    """Typographic + cluster fills used by the shipped bake-off winner."""
+    seen: list[str] = []
+    for color in (
+        *TYPOGRAPHIC_PALETTE,
+        *(color for colors in CLUSTER_PALETTES.values() for color in colors),
+    ):
+        normalized = f"#{color.removeprefix('#').upper()}"
+        if normalized not in seen:
+            seen.append(normalized)
+    return tuple(seen)
+
+
 __all__ = [
     "_DEFAULT_HUE",
     "_hsl_to_css",
@@ -624,10 +713,20 @@ __all__ = [
     "aurora_color_func",
     "ember_color_func",
     "COLOR_FUNCS",
+    "GITHUB_LIGHT_BG",
+    "GITHUB_DARK_BG",
+    "AA_LARGE_TEXT_CONTRAST",
     "TYPOGRAPHIC_PALETTE",
     "CLUSTER_PALETTES",
     "DOMAIN_CLUSTERS",
     "_classify_word",
+    "_hex_to_srgb",
+    "relative_luminance",
+    "contrast_ratio",
+    "composite_hex",
+    "github_dual_surface_contrast",
+    "is_github_dual_surface_readable",
+    "github_readable_fills",
     "_srgb_to_linear",
     "_hex_to_oklch",
     "make_shifted_color_func",
