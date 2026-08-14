@@ -1,6 +1,6 @@
 ---
 title: Living Art Modes
-description: Current timelapse-only artifact contract across the living-art generators.
+description: Shared daily spine, per-style accretion dialects, and the timelapse-only artifact contract.
 ---
 
 ## Current contract
@@ -31,6 +31,54 @@ pixels, and four frame workers. A read-only assembler merges the six uniquely
 named GIF artifacts and runs the same exact-six media validator before the sole
 git-writing finalizer can publish any surface. Matrix failures do not permit a
 partial or stale checkout fleet to reach finalization.
+
+## Daily spine
+
+All six styles consume one shared calendar spine from GitHub account creation
+through the generation day's terminal snapshot. `scripts/art/daily_snapshots.py`
+builds one `DailySnapshot` per calendar day. Frame *t* is the cumulative
+end-of-day world through that day — not a separate clock per style.
+
+`scripts/art/timelapse.py` builds that spine once, samples it once, then hands
+the same sampled list to every registered style in `_STYLE_REGISTRY` /
+`ALL_STYLES`:
+
+1. `build_daily_snapshots(history, current_metrics, include_today=True)` —
+   one snapshot per day from `history["account_created"]` through today.
+   Published GIFs include today's partial day as the last snapshot.
+2. `sample_frames(snapshots, max_frames=…)` — representative sequential days.
+   For the published `--max-frames 120` contract (`max_frames >= 2`), first
+   and last day are always kept. The published clock stays **one frame per
+   sampled day**; sampled days are sequential but not necessarily adjacent
+   when the account history is longer than `--max-frames`.
+3. `validate_snapshot_monotonic_contract(sampled)` — cumulative channels and
+   maturity must not regress across the sampled frames.
+
+If history omits `account_created`, the builder falls back to one year before
+today and logs a warning. Atmosphere still comes from the shared
+[world-state](/docs/scripts/world-state) model; the spine only decides *which
+day's cumulative totals* each frame sees.
+
+## Accretion dialects
+
+The clock is shared; the visual encodings are not. `scripts/art/shared/accretion.py`
+extracts the same four cumulative channels (`repos`, `stars`, `commits`,
+`followers`) from each snapshot, log-normalizes them (`accretion_log_scale`),
+and maps them onto a style-specific dialect via `build_style_dialect`. Styles
+stay visually distinct; they do not use different clocks.
+
+| Style | Family | Knobs |
+|---|---|---|
+| `inkgarden` | botanical | `bloom_scale` (stars), `trunk_scale` (commits), `glint_count` (followers; `0` until the first follower) |
+| `topo` | cartographic | `prominence_scale` (stars), `contour_gain` (commits), `settlement_gain` (followers) |
+| `genetic` | fitness | `peak_scale` (stars), `generation_gain` (commits), `colony_gain` (followers) |
+| `physarum` | mycelial | `nutrient_scale` (stars), `trail_scale` (commits), `vein_gain` (followers) |
+| `lenia` | morphogenetic | `halo_scale` (stars), `field_gain` (commits), `extent_gain` (followers) |
+| `ferrofluid` | magnetic | `spike_scale` (stars), `ripple_gain` (commits), `field_gain` (followers) |
+
+Repo count is still a shared channel (and appears in the on-frame accretion
+register) even though the three named knobs above are driven by stars, commits,
+and followers.
 
 ## Output matrix
 
