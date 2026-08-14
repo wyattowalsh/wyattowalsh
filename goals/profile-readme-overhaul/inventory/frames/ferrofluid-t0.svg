@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" data-surface-tension="1.014" data-highlight-density="0.200" data-dipole-lift="0.130" data-ripple-gain="0.339" data-dialect="magnetic" data-style="ferrofluid" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116">
+<defs>
+<filter id="ferroTexture" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="turbulence" baseFrequency="0.03 0.01" numOctaves="2" seed="0" result="tex"/><feDisplacementMap in="SourceGraphic" in2="tex" scale="1.75" xChannelSelector="R" yChannelSelector="G"/></filter>
+<filter id="reflBlur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
+<linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#000105"/><stop offset="55%" stop-color="#000002"/><stop offset="100%" stop-color="#000000"/></linearGradient>
+<linearGradient id="sg0" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg1" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg2" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg3" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg4" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg5" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg6" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg7" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg8" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg9" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg10" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg11" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg12" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg13" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg14" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00689b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg15" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699e"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg16" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000818"/><stop offset="45%" stop-color="#5187e2"/><stop offset="100%" stop-color="#00172c"/></linearGradient>
+</defs>
+<rect width="800" height="800" fill="url(#bgGrad)"/>
+<rect class="ferro-surface-ripple" x="0" y="425" width="800" height="30" fill="#0d1623" opacity="0.07" filter="url(#ferroTexture)"/>
+<line x1="0" y1="440.0" x2="800" y2="440.0" stroke="#052436" stroke-width="0.8" opacity="0.5"/>
+<g opacity="0.25">
+<polygon points="106.2,440.0 108.1,444.0 108.8,444.0 110.7,440.0" fill="url(#sg0)" opacity="0.04" filter="url(#reflBlur)" />
+<polygon points="119.6,440.0 121.7,447.2 122.4,447.2 124.5,440.0" fill="url(#sg1)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="106.0,440.0 108.1,447.4 108.8,447.4 110.9,440.0" fill="url(#sg2)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="119.5,440.0 121.6,449.1 122.4,449.1 124.6,440.0" fill="url(#sg3)" opacity="0.08" filter="url(#reflBlur)" />
+<polygon points="92.3,440.0 94.5,450.0 95.3,450.0 97.5,440.0" fill="url(#sg4)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="92.1,440.0 94.5,452.1 95.3,452.1 97.7,440.0" fill="url(#sg5)" opacity="0.11" filter="url(#reflBlur)" />
+<polygon points="119.0,440.0 121.6,454.7 122.5,454.7 125.1,440.0" fill="url(#sg6)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="118.8,440.0 121.6,456.1 122.5,456.1 125.3,440.0" fill="url(#sg7)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="105.2,440.0 108.0,457.0 109.0,457.0 111.8,440.0" fill="url(#sg8)" opacity="0.15" filter="url(#reflBlur)" />
+<polygon points="118.5,440.0 121.5,458.7 122.6,458.7 125.5,440.0" fill="url(#sg9)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="91.4,440.0 94.4,459.0 95.4,459.0 98.5,440.0" fill="url(#sg10)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="104.8,440.0 107.9,460.4 109.0,460.4 112.2,440.0" fill="url(#sg11)" opacity="0.18" filter="url(#reflBlur)" />
+<polygon points="91.1,440.0 94.3,460.9 95.5,460.9 98.7,440.0" fill="url(#sg12)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="90.6,440.0 94.3,465.0 95.6,465.0 99.2,440.0" fill="url(#sg13)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="102.2,440.0 107.5,479.6 109.4,479.6 114.7,440.0" fill="url(#sg14)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="100.7,440.0 107.3,490.5 109.6,490.5 116.2,440.0" fill="url(#sg15)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="75.4,440.0 103.5,663.4 113.4,663.4 141.5,440.0" fill="url(#sg16)" opacity="0.25" filter="url(#reflBlur)" />
+</g>
+<polygon data-role="ferro-spike" points="106.2,440.0 108.1,434.2 108.8,434.2 110.7,440.0" fill="url(#sg0)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.6,440.0 121.7,429.8 122.4,429.8 124.5,440.0" fill="url(#sg1)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="106.0,440.0 108.1,429.5 108.8,429.5 110.9,440.0" fill="url(#sg2)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.5,440.0 121.6,426.9 122.4,426.9 124.6,440.0" fill="url(#sg3)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.3,440.0 94.5,425.7 95.3,425.7 97.5,440.0" fill="url(#sg4)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.1,440.0 94.5,422.7 95.3,422.7 97.7,440.0" fill="url(#sg5)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.0,440.0 121.6,419.0 122.5,419.0 125.1,440.0" fill="url(#sg6)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.8,440.0 121.6,417.1 122.5,417.1 125.3,440.0" fill="url(#sg7)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.2,440.0 108.0,415.8 109.0,415.8 111.8,440.0" fill="url(#sg8)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.5,440.0 121.5,413.3 122.6,413.3 125.5,440.0" fill="url(#sg9)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="91.4,440.0 94.4,412.8 95.4,412.8 98.5,440.0" fill="url(#sg10)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.8,440.0 107.9,410.9 109.0,410.9 112.2,440.0" fill="url(#sg11)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="91.1,440.0 94.3,410.1 95.5,410.1 98.7,440.0" fill="url(#sg12)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.6,440.0 94.3,404.3 95.6,404.3 99.2,440.0" fill="url(#sg13)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="102.2,440.0 107.5,383.4 109.4,383.4 114.7,440.0" fill="url(#sg14)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="100.7,440.0 107.3,367.8 109.6,367.8 116.2,440.0" fill="url(#sg15)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="75.4,440.0 103.5,120.8 113.4,120.8 141.5,440.0" fill="url(#sg16)" opacity="0.95"/>
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="94.9" cy="420.6" rx="1.2" ry="3.6" fill="#76abb6" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="94.9" cy="416.8" rx="1.4" ry="4.3" fill="#76acb6" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="403.2" rx="2.3" ry="6.8" fill="#79adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="393.1" rx="2.9" ry="8.7" fill="#7aafbb" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="232.5" rx="12.8" ry="38.3" fill="#99c4de" opacity="0.31" />
+<g id="ferro-ripples" data-ripple-gain="0.339" data-ripple-count="4">
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="109.9" cy="440.5" rx="30.9" ry="9.3" fill="none" stroke="#0c2028" stroke-width="0.5" opacity="0.09"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="107.7" cy="440.0" rx="40.9" ry="12.3" fill="none" stroke="#0e2029" stroke-width="0.5" opacity="0.09"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="107.3" cy="440.3" rx="50.9" ry="15.3" fill="none" stroke="#101f2a" stroke-width="0.5" opacity="0.09"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="94.2" cy="437.8" rx="60.9" ry="18.3" fill="none" stroke="#121e2b" stroke-width="0.5" opacity="0.09"/>
+</g>
+<ellipse cx="107.1" cy="440.0" rx="23.8" ry="4.7" fill="#00374c" opacity="0.07" />
+<circle data-role="ferro-dipole" data-lang="Python" cx="107.1" cy="440.0" r="7.8" fill="#00374c" opacity="0.23" data-moment="503.8" data-depth="202.2" />
+<g id="accretion-dialect" data-dialect="magnetic" data-style="ferrofluid" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116" data-role="accretion-dialect"><rect x="516.0" y="742.0" width="248.0" height="28.0" rx="3.5" fill="#0a0c14" opacity="0.78" stroke="#8ec8ff" stroke-width="0.45"/><text x="524.0" y="751.5" font-family="Georgia,serif" font-size="5.2" fill="#8ec8ff" opacity="0.7" letter-spacing="0.8">magnetic</text><g data-channel="repos" data-mark-count="2" data-channel-value="1"><circle cx="528.2" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><circle cx="530.5" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><text x="546.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">1</text></g><g data-channel="stars" data-mark-count="2" data-channel-value="2"><path d="M589.9,764.1 L592.0,759.7 L594.1,764.1" fill="#8ec8ff" opacity="0.72"/><text x="604.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">2</text></g><g data-channel="commits" data-mark-count="3" data-channel-value="20"><ellipse cx="650.0" cy="760.5" rx="2.0" ry="0.7" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="2.9" ry="1.0" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="3.8" ry="1.3" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><text x="662.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">20</text></g><g data-channel="followers" data-mark-count="2" data-channel-value="1"><path d="M704.4,760.5 A3.6,1.6 0 0 1 711.6,760.5" fill="none" stroke="#8ec8ff" stroke-width="0.55"/><text x="720.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">1</text></g></g>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" data-dialect="morphogenetic" data-style="lenia" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116" data-field-gain="0.339" data-extent-gain="0.116" data-simulation-mix="0.110" data-sim-steps="73" data-halo-scale="0.874" data-satellite-count="2">
+<defs>
+<filter id="lenia-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="6.0" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="lenia-halo" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="800" height="800" fill="#677c7c"/>
+<g filter="url(#lenia-glow)">
+<circle data-role="lenia-seed-halo" data-kind="repo" data-halo-scale="0.874" cx="152.0" cy="296.0" r="18.5" fill="#d48100" opacity="0.031"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="repo" cx="152.0" cy="296.0" rx="33.2" ry="20.6" fill="none" stroke="#d48100" stroke-width="0.7" opacity="0.014"/>
+<circle data-role="lenia-seed-halo" data-kind="satellite" cx="136.0" cy="328.0" r="13.1" fill="#ba414c" opacity="0.024"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="satellite" cx="136.0" cy="328.0" rx="23.8" ry="11.4" fill="none" stroke="#ba414c" stroke-width="0.7" opacity="0.009"/>
+<circle data-role="lenia-seed-halo" data-kind="satellite" cx="136.0" cy="296.0" r="4.9" fill="#ba414c" opacity="0.020"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="satellite" cx="136.0" cy="296.0" rx="9.4" ry="4.5" fill="none" stroke="#ba414c" stroke-width="0.7" opacity="0.007"/>
+<circle data-role="lenia-seed-halo" data-kind="nutrient" cx="312.0" cy="120.0" r="3.5" fill="#cb5799" opacity="0.013"/>
+</g>
+<g filter="url(#lenia-glow)">
+<circle cx="136.0" cy="280.0" r="3.6" fill="#758000" opacity="0.107"/>
+<circle cx="136.0" cy="312.0" r="3.7" fill="#837c00" opacity="0.112"/>
+<circle cx="168.0" cy="312.0" r="3.7" fill="#857c00" opacity="0.113"/>
+<circle cx="168.0" cy="280.0" r="3.7" fill="#8e7900" opacity="0.117"/>
+<circle cx="152.0" cy="280.0" r="3.8" fill="#a37000" opacity="0.127"/>
+<circle cx="168.0" cy="296.0" r="3.9" fill="#b06a00" opacity="0.134"/>
+<circle cx="152.0" cy="312.0" r="3.9" fill="#b96400" opacity="0.140"/>
+<circle cx="136.0" cy="296.0" r="4.0" fill="#ba6400" opacity="0.140"/>
+<circle cx="152.0" cy="296.0" r="4.1" fill="#c85a00" opacity="0.152"/>
+</g>
+<g filter="url(#lenia-halo)">
+</g>
+<g id="accretion-dialect" data-dialect="morphogenetic" data-style="lenia" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116" data-role="accretion-dialect"><rect x="516.0" y="36.0" width="248.0" height="28.0" rx="3.5" fill="#0c1020" opacity="0.78" stroke="#7ee0c0" stroke-width="0.45"/><text x="524.0" y="45.5" font-family="Georgia,serif" font-size="5.2" fill="#7ee0c0" opacity="0.7" letter-spacing="0.8">morphogenetic</text><g data-channel="repos" data-mark-count="2" data-channel-value="1"><circle cx="528.2" cy="54.5" r="1.35" fill="#7ee0c0" opacity="0.55"/><circle cx="530.5" cy="54.5" r="1.35" fill="#7ee0c0" opacity="0.55"/><text x="546.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">1</text></g><g data-channel="stars" data-mark-count="2" data-channel-value="2"><circle cx="592.0" cy="54.5" r="3.1" fill="none" stroke="#7ee0c0" stroke-width="0.55"/><circle cx="592.0" cy="54.5" r="1.4" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><text x="604.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">2</text></g><g data-channel="commits" data-mark-count="3" data-channel-value="20"><circle cx="650.0" cy="57.9" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><circle cx="650.0" cy="56.7" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><circle cx="650.0" cy="55.5" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><text x="662.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">20</text></g><g data-channel="followers" data-mark-count="2" data-channel-value="1"><circle cx="708.0" cy="54.5" r="3.4" fill="none" stroke="#7ee0c0" stroke-width="0.45" opacity="0.7"/><text x="720.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">1</text></g></g>
+</svg>

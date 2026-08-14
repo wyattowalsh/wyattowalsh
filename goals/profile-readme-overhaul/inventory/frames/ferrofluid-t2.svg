@@ -1,0 +1,927 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" data-surface-tension="0.735" data-highlight-density="0.200" data-dipole-lift="0.130" data-ripple-gain="0.866" data-dialect="magnetic" data-style="ferrofluid" data-accretion-repos="4" data-accretion-stars="120" data-accretion-commits="2400" data-accretion-followers="80" data-accretion-repo-scale="0.446" data-accretion-star-scale="0.771" data-accretion-commit-scale="0.866" data-accretion-follower-scale="0.733">
+<defs>
+<filter id="ferroTexture" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="turbulence" baseFrequency="0.03 0.01" numOctaves="2" seed="0" result="tex"/><feDisplacementMap in="SourceGraphic" in2="tex" scale="1.75" xChannelSelector="R" yChannelSelector="G"/></filter>
+<filter id="reflBlur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="3.5"/></filter>
+<linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#000105"/><stop offset="55%" stop-color="#000002"/><stop offset="100%" stop-color="#000000"/></linearGradient>
+<linearGradient id="sg0" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg1" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg2" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg3" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg4" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg5" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg6" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg7" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg8" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg9" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg10" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg11" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg12" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg13" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg14" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg15" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg16" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg17" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg18" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg19" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg20" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg21" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg22" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg23" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg24" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg25" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg26" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg27" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg28" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg29" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg30" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg31" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg32" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg33" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg34" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698e"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg35" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg36" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg37" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg38" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg39" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg40" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg41" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg42" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg43" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg44" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg45" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg46" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg47" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg48" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg49" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg50" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg51" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg52" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg53" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg54" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg55" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg56" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#00698f"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg57" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg58" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg59" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg60" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg61" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg62" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg63" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg64" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg65" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg66" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg67" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg68" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg69" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg70" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg71" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg72" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg73" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg74" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg75" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg76" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg77" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg78" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg79" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg80" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg81" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg82" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg83" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg84" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg85" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg86" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg87" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg88" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006990"/><stop offset="100%" stop-color="#001110"/></linearGradient>
+<linearGradient id="sg89" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg90" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg91" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg92" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg93" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg94" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg95" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg96" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg97" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg98" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg99" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg100" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg101" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg102" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg103" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg104" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg105" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg106" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006991"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg107" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg108" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg109" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg110" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg111" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg112" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg113" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg114" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg115" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg116" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg117" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg118" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg119" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg120" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg121" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg122" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg123" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg124" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg125" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg126" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg127" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg128" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg129" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg130" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg131" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg132" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg133" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg134" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg135" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg136" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg137" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg138" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg139" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg140" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006992"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg141" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg142" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg143" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg144" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg145" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000406"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg146" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg147" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg148" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg149" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg150" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg151" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg152" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006993"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg153" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg154" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg155" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg156" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg157" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006894"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg158" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg159" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg160" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sg161" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg162" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg163" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg164" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg165" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg166" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg167" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg168" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg169" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg170" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg171" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006994"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg172" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006995"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg173" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg174" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg175" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg176" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg177" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006995"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg178" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg179" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg180" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006895"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg181" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg182" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg183" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg184" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg185" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg186" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg187" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg188" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg189" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006995"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg190" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg191" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg192" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg193" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg194" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg195" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg196" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006896"/><stop offset="100%" stop-color="#001112"/></linearGradient>
+<linearGradient id="sg197" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006996"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg198" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg199" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006996"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg200" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006996"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg201" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg202" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg203" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg204" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg205" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg206" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg207" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg208" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006997"/><stop offset="100%" stop-color="#001212"/></linearGradient>
+<linearGradient id="sg209" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg210" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg211" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg212" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg213" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg214" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg215" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg216" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg217" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg218" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg219" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg220" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg221" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg222" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg223" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg224" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg225" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg226" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg227" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg228" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg229" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg230" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006998"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg231" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699a"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg232" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#006999"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg233" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699a"/><stop offset="100%" stop-color="#001213"/></linearGradient>
+<linearGradient id="sg234" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699a"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg235" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg236" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg237" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg238" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg239" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg240" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699b"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg241" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699c"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg242" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699c"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg243" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000408"/><stop offset="45%" stop-color="#00699c"/><stop offset="100%" stop-color="#001214"/></linearGradient>
+<linearGradient id="sg244" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699d"/><stop offset="100%" stop-color="#001215"/></linearGradient>
+<linearGradient id="sg245" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699d"/><stop offset="100%" stop-color="#001215"/></linearGradient>
+<linearGradient id="sg246" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699e"/><stop offset="100%" stop-color="#001215"/></linearGradient>
+<linearGradient id="sg247" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699e"/><stop offset="100%" stop-color="#001315"/></linearGradient>
+<linearGradient id="sg248" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699e"/><stop offset="100%" stop-color="#001315"/></linearGradient>
+<linearGradient id="sg249" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699e"/><stop offset="100%" stop-color="#001315"/></linearGradient>
+<linearGradient id="sg250" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#00699f"/><stop offset="100%" stop-color="#001315"/></linearGradient>
+<linearGradient id="sg251" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#006aa0"/><stop offset="100%" stop-color="#001316"/></linearGradient>
+<linearGradient id="sg252" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#006aa0"/><stop offset="100%" stop-color="#001316"/></linearGradient>
+<linearGradient id="sg253" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000409"/><stop offset="45%" stop-color="#006aa0"/><stop offset="100%" stop-color="#001316"/></linearGradient>
+<linearGradient id="sg254" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040a"/><stop offset="45%" stop-color="#006aa2"/><stop offset="100%" stop-color="#001316"/></linearGradient>
+<linearGradient id="sg255" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040a"/><stop offset="45%" stop-color="#006aa2"/><stop offset="100%" stop-color="#001316"/></linearGradient>
+<linearGradient id="sg256" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040a"/><stop offset="45%" stop-color="#006aa3"/><stop offset="100%" stop-color="#001317"/></linearGradient>
+<linearGradient id="sg257" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040a"/><stop offset="45%" stop-color="#006aa3"/><stop offset="100%" stop-color="#001317"/></linearGradient>
+<linearGradient id="sg258" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040a"/><stop offset="45%" stop-color="#006ba3"/><stop offset="100%" stop-color="#001317"/></linearGradient>
+<linearGradient id="sg259" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040b"/><stop offset="45%" stop-color="#006ba6"/><stop offset="100%" stop-color="#001418"/></linearGradient>
+<linearGradient id="sg260" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040b"/><stop offset="45%" stop-color="#006ba7"/><stop offset="100%" stop-color="#001418"/></linearGradient>
+<linearGradient id="sg261" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040b"/><stop offset="45%" stop-color="#006ca9"/><stop offset="100%" stop-color="#001419"/></linearGradient>
+<linearGradient id="sg262" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00040c"/><stop offset="45%" stop-color="#006ead"/><stop offset="100%" stop-color="#00141a"/></linearGradient>
+<linearGradient id="sg263" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00050c"/><stop offset="45%" stop-color="#006ead"/><stop offset="100%" stop-color="#00141a"/></linearGradient>
+<linearGradient id="sg264" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#00050d"/><stop offset="45%" stop-color="#006fb0"/><stop offset="100%" stop-color="#00151b"/></linearGradient>
+<linearGradient id="sg265" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000510"/><stop offset="45%" stop-color="#0074bc"/><stop offset="100%" stop-color="#00161f"/></linearGradient>
+<linearGradient id="sg266" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000818"/><stop offset="45%" stop-color="#5187e2"/><stop offset="100%" stop-color="#00172c"/></linearGradient>
+<linearGradient id="sgc0_0" data-owner-index="0" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006898"/><stop offset="100%" stop-color="#001011"/></linearGradient>
+<linearGradient id="sgc1_0" data-owner-index="1" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sgc2_0" data-owner-index="2" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006897"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+<linearGradient id="sgc3_0" data-owner-index="3" data-lang="Python" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#000407"/><stop offset="45%" stop-color="#006997"/><stop offset="100%" stop-color="#001111"/></linearGradient>
+</defs>
+<rect width="800" height="800" fill="url(#bgGrad)"/>
+<rect class="ferro-surface-ripple" x="0" y="425" width="800" height="30" fill="#0d1623" opacity="0.08" filter="url(#ferroTexture)"/>
+<line x1="0" y1="440.0" x2="800" y2="440.0" stroke="#052436" stroke-width="0.8" opacity="0.5"/>
+<g opacity="0.25">
+<polygon points="38.4,440.0 40.3,443.4 41.0,443.4 43.0,440.0" fill="url(#sg1)" opacity="0.03" filter="url(#reflBlur)" />
+<polygon points="268.9,440.0 270.8,443.9 271.5,443.9 273.5,440.0" fill="url(#sg2)" opacity="0.03" filter="url(#reflBlur)" />
+<polygon points="51.9,440.0 53.9,444.1 54.6,444.1 56.6,440.0" fill="url(#sg3)" opacity="0.04" filter="url(#reflBlur)" />
+<polygon points="146.8,440.0 148.8,445.0 149.5,445.0 151.5,440.0" fill="url(#sg4)" opacity="0.05" filter="url(#reflBlur)" />
+<polygon points="160.4,440.0 162.4,445.5 163.1,445.5 165.0,440.0" fill="url(#sg5)" opacity="0.05" filter="url(#reflBlur)" />
+<polygon points="133.2,440.0 135.2,446.3 135.9,446.3 137.9,440.0" fill="url(#sg6)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="133.2,440.0 135.2,446.7 135.9,446.7 137.9,440.0" fill="url(#sg7)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="38.3,440.0 40.3,447.0 41.0,447.0 43.0,440.0" fill="url(#sg8)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="173.9,440.0 175.9,447.3 176.6,447.3 178.6,440.0" fill="url(#sg9)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="160.4,440.0 162.4,447.4 163.1,447.4 165.1,440.0" fill="url(#sg10)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="268.8,440.0 270.8,447.7 271.5,447.7 273.5,440.0" fill="url(#sg11)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="106.1,440.0 108.1,447.7 108.8,447.7 110.8,440.0" fill="url(#sg12)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="187.5,440.0 189.5,448.6 190.2,448.6 192.2,440.0" fill="url(#sg13)" opacity="0.08" filter="url(#reflBlur)" />
+<polygon points="119.7,440.0 121.7,448.8 122.4,448.8 124.4,440.0" fill="url(#sg14)" opacity="0.08" filter="url(#reflBlur)" />
+<polygon points="92.5,440.0 94.6,449.0 95.3,449.0 97.3,440.0" fill="url(#sg15)" opacity="0.08" filter="url(#reflBlur)" />
+<polygon points="38.3,440.0 40.3,449.4 41.0,449.4 43.1,440.0" fill="url(#sg16)" opacity="0.08" filter="url(#reflBlur)" />
+<polygon points="173.9,440.0 175.9,449.8 176.6,449.8 178.7,440.0" fill="url(#sg17)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="187.4,440.0 189.5,450.0 190.2,450.0 192.2,440.0" fill="url(#sg18)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="106.1,440.0 108.1,450.3 108.8,450.3 110.9,440.0" fill="url(#sg19)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="214.5,440.0 216.6,450.4 217.3,450.4 219.4,440.0" fill="url(#sg20)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="51.8,440.0 53.9,450.5 54.6,450.5 56.6,440.0" fill="url(#sg21)" opacity="0.09" filter="url(#reflBlur)" />
+<polygon points="201.0,440.0 203.0,450.7 203.8,450.7 205.8,440.0" fill="url(#sg22)" opacity="0.10" filter="url(#reflBlur)" />
+<polygon points="65.4,440.0 67.4,451.3 68.2,451.3 70.2,440.0" fill="url(#sg23)" opacity="0.10" filter="url(#reflBlur)" />
+<polygon points="65.4,440.0 67.4,451.3 68.2,451.3 70.2,440.0" fill="url(#sg24)" opacity="0.10" filter="url(#reflBlur)" />
+<polygon points="201.0,440.0 203.0,451.9 203.8,451.9 205.8,440.0" fill="url(#sg25)" opacity="0.11" filter="url(#reflBlur)" />
+<polygon points="51.8,440.0 53.9,452.0 54.6,452.0 56.7,440.0" fill="url(#sg26)" opacity="0.11" filter="url(#reflBlur)" />
+<polygon points="38.2,440.0 40.3,453.3 41.0,453.3 43.1,440.0" fill="url(#sg27)" opacity="0.12" filter="url(#reflBlur)" />
+<polygon points="241.6,440.0 243.7,453.3 244.4,453.3 246.5,440.0" fill="url(#sg28)" opacity="0.12" filter="url(#reflBlur)" />
+<polygon points="173.8,440.0 175.9,453.6 176.6,453.6 178.7,440.0" fill="url(#sg29)" opacity="0.12" filter="url(#reflBlur)" />
+<polygon points="160.2,440.0 162.3,453.8 163.1,453.8 165.2,440.0" fill="url(#sg30)" opacity="0.12" filter="url(#reflBlur)" />
+<polygon points="146.7,440.0 148.8,454.2 149.5,454.2 151.6,440.0" fill="url(#sg31)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="38.2,440.0 40.3,454.2 41.1,454.2 43.2,440.0" fill="url(#sg32)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="146.7,440.0 148.8,454.6 149.5,454.6 151.6,440.0" fill="url(#sg33)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="173.8,440.0 175.9,454.8 176.6,454.8 178.8,440.0" fill="url(#sg34)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="187.3,440.0 189.5,455.0 190.2,455.0 192.3,440.0" fill="url(#sg35)" opacity="0.13" filter="url(#reflBlur)" />
+<polygon points="187.3,440.0 189.5,455.1 190.2,455.1 192.3,440.0" fill="url(#sg36)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="78.8,440.0 81.0,455.3 81.7,455.3 83.9,440.0" fill="url(#sg37)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="160.2,440.0 162.3,455.4 163.1,455.4 165.2,440.0" fill="url(#sg38)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="51.7,440.0 53.9,455.7 54.6,455.7 56.8,440.0" fill="url(#sg39)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="92.4,440.0 94.5,455.7 95.3,455.7 97.4,440.0" fill="url(#sg40)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="133.1,440.0 135.2,455.8 136.0,455.8 138.1,440.0" fill="url(#sg41)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="228.0,440.0 230.1,455.8 230.9,455.8 233.0,440.0" fill="url(#sg42)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="268.7,440.0 270.8,455.9 271.6,455.9 273.7,440.0" fill="url(#sg43)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="214.4,440.0 216.6,456.1 217.3,456.1 219.5,440.0" fill="url(#sg44)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="255.1,440.0 257.2,456.2 258.0,456.2 260.2,440.0" fill="url(#sg45)" opacity="0.14" filter="url(#reflBlur)" />
+<polygon points="38.1,440.0 40.3,456.4 41.1,456.4 43.2,440.0" fill="url(#sg46)" opacity="0.15" filter="url(#reflBlur)" />
+<polygon points="241.5,440.0 243.7,456.7 244.4,456.7 246.6,440.0" fill="url(#sg47)" opacity="0.15" filter="url(#reflBlur)" />
+<polygon points="268.6,440.0 270.8,457.1 271.6,457.1 273.7,440.0" fill="url(#sg48)" opacity="0.15" filter="url(#reflBlur)" />
+<polygon points="78.8,440.0 81.0,457.2 81.7,457.2 83.9,440.0" fill="url(#sg49)" opacity="0.15" filter="url(#reflBlur)" />
+<polygon points="173.7,440.0 175.9,457.6 176.7,457.6 178.8,440.0" fill="url(#sg50)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="38.1,440.0 40.3,457.7 41.1,457.7 43.3,440.0" fill="url(#sg51)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="51.7,440.0 53.9,457.9 54.6,457.9 56.8,440.0" fill="url(#sg52)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="119.4,440.0 121.6,458.0 122.4,458.0 124.6,440.0" fill="url(#sg53)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="133.0,440.0 135.2,458.1 136.0,458.1 138.2,440.0" fill="url(#sg54)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="119.4,440.0 121.6,458.2 122.4,458.2 124.6,440.0" fill="url(#sg55)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="173.7,440.0 175.9,458.3 176.7,458.3 178.9,440.0" fill="url(#sg56)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="200.8,440.0 203.0,458.3 203.8,458.3 206.0,440.0" fill="url(#sg57)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="38.1,440.0 40.3,458.4 41.1,458.4 43.3,440.0" fill="url(#sg58)" opacity="0.16" filter="url(#reflBlur)" />
+<polygon points="187.2,440.0 189.4,458.5 190.2,458.5 192.4,440.0" fill="url(#sg59)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="255.0,440.0 257.2,458.5 258.0,458.5 260.2,440.0" fill="url(#sg60)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="38.1,440.0 40.3,459.0 41.1,459.0 43.3,440.0" fill="url(#sg61)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="187.2,440.0 189.4,459.2 190.2,459.2 192.5,440.0" fill="url(#sg62)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="160.1,440.0 162.3,459.4 163.1,459.4 165.3,440.0" fill="url(#sg63)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="227.9,440.0 230.1,459.5 230.9,459.5 233.1,440.0" fill="url(#sg64)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="51.6,440.0 53.8,459.5 54.6,459.5 56.9,440.0" fill="url(#sg65)" opacity="0.17" filter="url(#reflBlur)" />
+<polygon points="105.8,440.0 108.1,459.7 108.9,459.7 111.1,440.0" fill="url(#sg66)" opacity="0.18" filter="url(#reflBlur)" />
+<polygon points="173.6,440.0 175.9,460.4 176.7,460.4 178.9,440.0" fill="url(#sg67)" opacity="0.18" filter="url(#reflBlur)" />
+<polygon points="65.1,440.0 67.4,460.4 68.2,460.4 70.5,440.0" fill="url(#sg68)" opacity="0.18" filter="url(#reflBlur)" />
+<polygon points="173.6,440.0 175.9,460.7 176.7,460.7 178.9,440.0" fill="url(#sg69)" opacity="0.18" filter="url(#reflBlur)" />
+<polygon points="200.7,440.0 203.0,460.8 203.8,460.8 206.1,440.0" fill="url(#sg70)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="187.2,440.0 189.4,461.0 190.2,461.0 192.5,440.0" fill="url(#sg71)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="51.6,440.0 53.8,461.1 54.6,461.1 56.9,440.0" fill="url(#sg72)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="160.0,440.0 162.3,461.1 163.1,461.1 165.4,440.0" fill="url(#sg73)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="146.5,440.0 148.8,461.2 149.6,461.2 151.8,440.0" fill="url(#sg74)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="146.5,440.0 148.7,461.4 149.6,461.4 151.8,440.0" fill="url(#sg75)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="51.5,440.0 53.8,461.4 54.6,461.4 56.9,440.0" fill="url(#sg76)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="187.1,440.0 189.4,461.7 190.2,461.7 192.5,440.0" fill="url(#sg77)" opacity="0.19" filter="url(#reflBlur)" />
+<polygon points="268.5,440.0 270.8,461.9 271.6,461.9 273.9,440.0" fill="url(#sg78)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="173.6,440.0 175.9,462.1 176.7,462.1 179.0,440.0" fill="url(#sg79)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="173.6,440.0 175.9,462.2 176.7,462.2 179.0,440.0" fill="url(#sg80)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="132.9,440.0 135.2,462.4 136.0,462.4 138.3,440.0" fill="url(#sg81)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="187.1,440.0 189.4,462.5 190.2,462.5 192.6,440.0" fill="url(#sg82)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="268.5,440.0 270.8,462.6 271.6,462.6 273.9,440.0" fill="url(#sg83)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="173.5,440.0 175.9,462.7 176.7,462.7 179.0,440.0" fill="url(#sg84)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="187.1,440.0 189.4,462.8 190.2,462.8 192.6,440.0" fill="url(#sg85)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="214.2,440.0 216.5,462.9 217.4,462.9 219.7,440.0" fill="url(#sg86)" opacity="0.20" filter="url(#reflBlur)" />
+<polygon points="92.2,440.0 94.5,463.0 95.3,463.0 97.7,440.0" fill="url(#sg87)" opacity="0.21" filter="url(#reflBlur)" />
+<polygon points="51.5,440.0 53.8,463.3 54.7,463.3 57.0,440.0" fill="url(#sg88)" opacity="0.21" filter="url(#reflBlur)" />
+<polygon points="105.7,440.0 108.1,463.6 108.9,463.6 111.2,440.0" fill="url(#sg89)" opacity="0.21" filter="url(#reflBlur)" />
+<polygon points="159.9,440.0 162.3,464.2 163.1,464.2 165.5,440.0" fill="url(#sg90)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="65.0,440.0 67.4,464.3 68.2,464.3 70.6,440.0" fill="url(#sg91)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="200.6,440.0 203.0,464.6 203.8,464.6 206.2,440.0" fill="url(#sg92)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="268.4,440.0 270.8,465.0 271.6,465.0 274.0,440.0" fill="url(#sg93)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="119.2,440.0 121.6,465.2 122.5,465.2 124.9,440.0" fill="url(#sg94)" opacity="0.22" filter="url(#reflBlur)" />
+<polygon points="268.4,440.0 270.8,465.3 271.6,465.3 274.0,440.0" fill="url(#sg95)" opacity="0.23" filter="url(#reflBlur)" />
+<polygon points="159.9,440.0 162.3,466.1 163.1,466.1 165.6,440.0" fill="url(#sg96)" opacity="0.23" filter="url(#reflBlur)" />
+<polygon points="214.1,440.0 216.5,466.2 217.4,466.2 219.8,440.0" fill="url(#sg97)" opacity="0.23" filter="url(#reflBlur)" />
+<polygon points="132.7,440.0 135.2,466.3 136.0,466.3 138.5,440.0" fill="url(#sg98)" opacity="0.23" filter="url(#reflBlur)" />
+<polygon points="78.5,440.0 80.9,466.5 81.8,466.5 84.2,440.0" fill="url(#sg99)" opacity="0.24" filter="url(#reflBlur)" />
+<polygon points="51.4,440.0 53.8,466.6 54.7,466.6 57.1,440.0" fill="url(#sg100)" opacity="0.24" filter="url(#reflBlur)" />
+<polygon points="64.9,440.0 67.4,467.2 68.2,467.2 70.7,440.0" fill="url(#sg101)" opacity="0.24" filter="url(#reflBlur)" />
+<polygon points="241.2,440.0 243.6,467.4 244.5,467.4 247.0,440.0" fill="url(#sg102)" opacity="0.24" filter="url(#reflBlur)" />
+<polygon points="92.0,440.0 94.5,467.6 95.4,467.6 97.8,440.0" fill="url(#sg103)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.5,440.0 203.0,467.7 203.8,467.7 206.3,440.0" fill="url(#sg104)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="146.2,440.0 148.7,467.7 149.6,467.7 152.1,440.0" fill="url(#sg105)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="146.2,440.0 148.7,467.7 149.6,467.7 152.1,440.0" fill="url(#sg106)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="254.7,440.0 257.2,467.9 258.1,467.9 260.6,440.0" fill="url(#sg107)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="119.1,440.0 121.6,468.5 122.5,468.5 125.0,440.0" fill="url(#sg108)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.8,440.0 162.3,468.7 163.2,468.7 165.7,440.0" fill="url(#sg109)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="132.6,440.0 135.1,468.7 136.0,468.7 138.5,440.0" fill="url(#sg110)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="105.5,440.0 108.0,469.0 108.9,469.0 111.4,440.0" fill="url(#sg111)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="227.5,440.0 230.1,469.4 231.0,469.4 233.5,440.0" fill="url(#sg112)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="254.6,440.0 257.2,469.6 258.1,469.6 260.6,440.0" fill="url(#sg113)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="241.1,440.0 243.6,469.7 244.5,469.7 247.1,440.0" fill="url(#sg114)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="51.2,440.0 53.8,470.0 54.7,470.0 57.2,440.0" fill="url(#sg115)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="78.3,440.0 80.9,470.1 81.8,470.1 84.4,440.0" fill="url(#sg116)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.4,440.0 202.9,470.2 203.8,470.2 206.4,440.0" fill="url(#sg117)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.7,440.0 162.3,470.4 163.2,470.4 165.7,440.0" fill="url(#sg118)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="51.2,440.0 53.8,470.9 54.7,470.9 57.3,440.0" fill="url(#sg119)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="119.0,440.0 121.6,471.2 122.5,471.2 125.1,440.0" fill="url(#sg120)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="227.4,440.0 230.0,472.0 231.0,472.0 233.6,440.0" fill="url(#sg121)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.7,440.0 67.3,472.3 68.3,472.3 70.9,440.0" fill="url(#sg122)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.6,440.0 162.2,472.4 163.2,472.4 165.8,440.0" fill="url(#sg123)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.2,440.0 202.9,473.1 203.9,473.1 206.5,440.0" fill="url(#sg124)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="132.4,440.0 135.1,473.7 136.1,473.7 138.8,440.0" fill="url(#sg125)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.5,440.0 162.2,473.7 163.2,473.7 165.9,440.0" fill="url(#sg126)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="146.0,440.0 148.7,474.1 149.6,474.1 152.3,440.0" fill="url(#sg127)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="213.8,440.0 216.5,474.2 217.4,474.2 220.1,440.0" fill="url(#sg128)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.2,440.0 202.9,474.6 203.9,474.6 206.6,440.0" fill="url(#sg129)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.5,440.0 162.2,474.9 163.2,474.9 165.9,440.0" fill="url(#sg130)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="145.9,440.0 148.7,474.9 149.6,474.9 152.4,440.0" fill="url(#sg131)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.6,440.0 67.3,475.1 68.3,475.1 71.0,440.0" fill="url(#sg132)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.6,440.0 67.3,475.2 68.3,475.2 71.0,440.0" fill="url(#sg133)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="159.5,440.0 162.2,475.4 163.2,475.4 166.0,440.0" fill="url(#sg134)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.5,440.0 67.3,475.6 68.3,475.6 71.0,440.0" fill="url(#sg135)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="132.3,440.0 135.1,476.0 136.1,476.0 138.9,440.0" fill="url(#sg136)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="51.0,440.0 53.7,476.0 54.7,476.0 57.5,440.0" fill="url(#sg137)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="91.6,440.0 94.4,476.0 95.4,476.0 98.2,440.0" fill="url(#sg138)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.5,440.0 67.3,476.0 68.3,476.0 71.1,440.0" fill="url(#sg139)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.5,440.0 67.3,476.2 68.3,476.2 71.1,440.0" fill="url(#sg140)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="105.2,440.0 108.0,476.3 109.0,476.3 111.8,440.0" fill="url(#sg141)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.1,440.0 202.9,476.5 203.9,476.5 206.7,440.0" fill="url(#sg142)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="213.6,440.0 216.5,476.7 217.4,476.7 220.3,440.0" fill="url(#sg143)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.5,440.0 67.3,476.8 68.3,476.8 71.1,440.0" fill="url(#sg144)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="118.7,440.0 121.5,477.0 122.5,477.0 125.3,440.0" fill="url(#sg145)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="200.1,440.0 202.9,477.0 203.9,477.0 206.7,440.0" fill="url(#sg146)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="50.9,440.0 53.7,477.3 54.7,477.3 57.6,440.0" fill="url(#sg147)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="78.0,440.0 80.9,477.6 81.9,477.6 84.7,440.0" fill="url(#sg148)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="105.1,440.0 108.0,477.9 109.0,477.9 111.8,440.0" fill="url(#sg149)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="254.2,440.0 257.1,479.1 258.1,479.1 261.0,440.0" fill="url(#sg150)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="118.6,440.0 121.5,479.2 122.5,479.2 125.5,440.0" fill="url(#sg151)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.3,440.0 67.3,479.9 68.3,479.9 71.2,440.0" fill="url(#sg152)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="91.4,440.0 94.4,480.3 95.4,480.3 98.4,440.0" fill="url(#sg153)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="254.1,440.0 257.1,480.7 258.2,480.7 261.1,440.0" fill="url(#sg154)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="50.7,440.0 53.7,480.7 54.8,480.7 57.7,440.0" fill="url(#sg155)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="132.1,440.0 135.1,480.8 136.1,480.8 139.1,440.0" fill="url(#sg156)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="145.6,440.0 148.6,481.3 149.7,481.3 152.7,440.0" fill="url(#sg157)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="50.7,440.0 53.7,482.2 54.8,482.2 57.8,440.0" fill="url(#sg158)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="240.5,440.0 243.5,482.5 244.6,482.5 247.6,440.0" fill="url(#sg159)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="118.4,440.0 121.5,483.0 122.6,483.0 125.6,440.0" fill="url(#sg160)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="50.6,440.0 53.7,483.3 54.8,483.3 57.9,440.0" fill="url(#sg161)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="145.5,440.0 148.6,483.6 149.7,483.6 152.8,440.0" fill="url(#sg162)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="240.4,440.0 243.5,484.9 244.6,484.9 247.8,440.0" fill="url(#sg163)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="226.8,440.0 230.0,485.0 231.1,485.0 234.2,440.0" fill="url(#sg164)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.6,440.0 80.8,485.3 81.9,485.3 85.1,440.0" fill="url(#sg165)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="131.8,440.0 135.0,485.8 136.2,485.8 139.3,440.0" fill="url(#sg166)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.7,440.0 107.9,486.3 109.0,486.3 112.2,440.0" fill="url(#sg167)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="213.2,440.0 216.4,486.7 217.5,486.7 220.7,440.0" fill="url(#sg168)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="64.0,440.0 67.2,487.3 68.4,487.3 71.6,440.0" fill="url(#sg169)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="226.7,440.0 229.9,487.7 231.1,487.7 234.4,440.0" fill="url(#sg170)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.5,440.0 80.8,488.0 81.9,488.0 85.2,440.0" fill="url(#sg171)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="131.7,440.0 135.0,488.3 136.2,488.3 139.5,440.0" fill="url(#sg172)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="213.0,440.0 216.4,488.9 217.5,488.9 220.9,440.0" fill="url(#sg173)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.4,440.0 80.8,489.7 81.9,489.7 85.3,440.0" fill="url(#sg174)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="145.2,440.0 148.6,489.8 149.7,489.8 153.1,440.0" fill="url(#sg175)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="253.7,440.0 257.0,490.0 258.2,490.0 261.6,440.0" fill="url(#sg176)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.4,440.0 80.8,490.1 82.0,490.1 85.3,440.0" fill="url(#sg177)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="118.0,440.0 121.4,490.8 122.6,490.8 126.0,440.0" fill="url(#sg178)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.4,440.0 80.8,490.8 82.0,490.8 85.4,440.0" fill="url(#sg179)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="118.0,440.0 121.4,491.1 122.6,491.1 126.1,440.0" fill="url(#sg180)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="253.6,440.0 257.0,491.3 258.2,491.3 261.7,440.0" fill="url(#sg181)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="63.7,440.0 67.2,491.9 68.4,491.9 71.9,440.0" fill="url(#sg182)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.4,440.0 107.9,492.7 109.1,492.7 112.6,440.0" fill="url(#sg183)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.8,440.0 94.3,492.9 95.5,492.9 99.0,440.0" fill="url(#sg184)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.4,440.0 107.9,493.0 109.1,493.0 112.6,440.0" fill="url(#sg185)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="145.0,440.0 148.5,493.4 149.8,493.4 153.3,440.0" fill="url(#sg186)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.2,440.0 107.8,496.5 109.1,496.5 112.8,440.0" fill="url(#sg187)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.6,440.0 94.3,496.6 95.6,496.6 99.2,440.0" fill="url(#sg188)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.6,440.0 94.3,496.8 95.6,496.8 99.2,440.0" fill="url(#sg189)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="77.0,440.0 80.7,497.4 82.0,497.4 85.7,440.0" fill="url(#sg190)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.1,440.0 107.8,497.8 109.1,497.8 112.9,440.0" fill="url(#sg191)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="253.2,440.0 257.0,497.8 258.3,497.8 262.0,440.0" fill="url(#sg192)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="253.2,440.0 257.0,498.4 258.3,498.4 262.0,440.0" fill="url(#sg193)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="131.2,440.0 134.9,498.4 136.3,498.4 140.0,440.0" fill="url(#sg194)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="144.7,440.0 148.5,498.9 149.8,498.9 153.6,440.0" fill="url(#sg195)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="76.9,440.0 80.7,499.0 82.0,499.0 85.8,440.0" fill="url(#sg196)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.5,440.0 94.2,499.1 95.6,499.1 99.4,440.0" fill="url(#sg197)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="63.3,440.0 67.1,499.7 68.5,499.7 72.3,440.0" fill="url(#sg198)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="104.0,440.0 107.8,499.7 109.1,499.7 113.0,440.0" fill="url(#sg199)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.4,440.0 94.2,499.8 95.6,499.8 99.4,440.0" fill="url(#sg200)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="212.4,440.0 216.3,500.4 217.6,500.4 221.5,440.0" fill="url(#sg201)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="76.8,440.0 80.7,501.4 82.0,501.4 85.9,440.0" fill="url(#sg202)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="131.0,440.0 134.9,501.4 136.3,501.4 140.2,440.0" fill="url(#sg203)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="144.5,440.0 148.5,502.2 149.8,502.2 153.8,440.0" fill="url(#sg204)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="117.4,440.0 121.3,502.2 122.7,502.2 126.7,440.0" fill="url(#sg205)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="212.3,440.0 216.3,502.3 217.6,502.3 221.6,440.0" fill="url(#sg206)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="239.4,440.0 243.4,503.5 244.8,503.5 248.8,440.0" fill="url(#sg207)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="103.7,440.0 107.8,504.4 109.2,504.4 113.2,440.0" fill="url(#sg208)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="117.3,440.0 121.3,504.6 122.7,504.6 126.8,440.0" fill="url(#sg209)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="144.4,440.0 148.4,504.6 149.9,504.6 153.9,440.0" fill="url(#sg210)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="76.6,440.0 80.6,505.1 82.1,505.1 86.1,440.0" fill="url(#sg211)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="239.2,440.0 243.3,506.8 244.8,506.8 248.9,440.0" fill="url(#sg212)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="76.4,440.0 80.6,507.8 82.1,507.8 86.3,440.0" fill="url(#sg213)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="90.0,440.0 94.2,508.0 95.7,508.0 99.9,440.0" fill="url(#sg214)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="225.5,440.0 229.8,508.3 231.3,508.3 235.5,440.0" fill="url(#sg215)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="76.4,440.0 80.6,508.5 82.1,508.5 86.3,440.0" fill="url(#sg216)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="89.9,440.0 94.2,509.6 95.7,509.6 100.0,440.0" fill="url(#sg217)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="116.9,440.0 121.3,510.6 122.8,510.6 127.1,440.0" fill="url(#sg218)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="103.4,440.0 107.7,510.8 109.2,510.8 113.6,440.0" fill="url(#sg219)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="62.7,440.0 67.0,511.2 68.6,511.2 72.9,440.0" fill="url(#sg220)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="211.8,440.0 216.2,511.5 217.7,511.5 222.1,440.0" fill="url(#sg221)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="225.3,440.0 229.7,512.2 231.3,512.2 235.7,440.0" fill="url(#sg222)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="211.8,440.0 216.2,512.4 217.7,512.4 222.1,440.0" fill="url(#sg223)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="116.7,440.0 121.2,515.4 122.8,515.4 127.4,440.0" fill="url(#sg224)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="103.1,440.0 107.7,515.4 109.3,515.4 113.8,440.0" fill="url(#sg225)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="130.1,440.0 134.8,516.6 136.4,516.6 141.0,440.0" fill="url(#sg226)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="62.3,440.0 67.0,517.5 68.6,517.5 73.3,440.0" fill="url(#sg227)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="102.9,440.0 107.6,518.1 109.3,518.1 114.0,440.0" fill="url(#sg228)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="89.3,440.0 94.1,519.0 95.8,519.0 100.5,440.0" fill="url(#sg229)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="102.9,440.0 107.6,519.4 109.3,519.4 114.1,440.0" fill="url(#sg230)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="89.3,440.0 94.1,520.2 95.8,520.2 100.6,440.0" fill="url(#sg231)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="75.7,440.0 80.5,520.2 82.2,520.2 87.0,440.0" fill="url(#sg232)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="116.1,440.0 121.1,525.3 122.9,525.3 128.0,440.0" fill="url(#sg233)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="88.8,440.0 94.0,528.4 95.8,528.4 101.1,440.0" fill="url(#sg234)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="129.3,440.0 134.7,530.8 136.5,530.8 141.9,440.0" fill="url(#sg235)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="61.5,440.0 66.9,530.8 68.7,530.8 74.1,440.0" fill="url(#sg236)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="88.6,440.0 94.0,530.9 95.9,530.9 101.2,440.0" fill="url(#sg237)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="115.7,440.0 121.1,531.0 123.0,531.0 128.3,440.0" fill="url(#sg238)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="102.0,440.0 107.5,534.0 109.4,534.0 114.9,440.0" fill="url(#sg239)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="61.3,440.0 66.8,534.0 68.8,534.0 74.3,440.0" fill="url(#sg240)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="237.3,440.0 243.1,538.4 245.1,538.4 250.8,440.0" fill="url(#sg241)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="237.0,440.0 243.0,544.0 245.1,544.0 251.1,440.0" fill="url(#sg242)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="87.8,440.0 93.8,544.6 96.0,544.6 102.0,440.0" fill="url(#sg243)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="87.5,440.0 93.8,549.4 96.0,549.4 102.3,440.0" fill="url(#sg244)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="222.9,440.0 229.4,552.5 231.6,552.5 238.1,440.0" fill="url(#sg245)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="73.5,440.0 80.2,556.0 82.5,556.0 89.2,440.0" fill="url(#sg246)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="114.2,440.0 120.9,556.9 123.2,556.9 129.9,440.0" fill="url(#sg247)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="127.7,440.0 134.4,557.5 136.8,557.5 143.5,440.0" fill="url(#sg248)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="222.4,440.0 229.3,560.5 231.7,560.5 238.6,440.0" fill="url(#sg249)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="100.1,440.0 107.2,565.1 109.7,565.1 116.8,440.0" fill="url(#sg250)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="85.8,440.0 93.6,576.4 96.3,576.4 104.0,440.0" fill="url(#sg251)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="72.3,440.0 80.0,576.6 82.7,576.6 90.4,440.0" fill="url(#sg252)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="99.4,440.0 107.1,576.8 109.8,576.8 117.6,440.0" fill="url(#sg253)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="112.4,440.0 120.6,585.7 123.5,585.7 131.7,440.0" fill="url(#sg254)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="85.0,440.0 93.4,589.2 96.4,589.2 104.8,440.0" fill="url(#sg255)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="233.8,440.0 242.5,594.9 245.6,594.9 254.3,440.0" fill="url(#sg256)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="125.3,440.0 134.1,595.4 137.1,595.4 145.9,440.0" fill="url(#sg257)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="233.4,440.0 242.5,601.2 245.7,601.2 254.7,440.0" fill="url(#sg258)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="110.4,440.0 120.3,617.8 123.8,617.8 133.7,440.0" fill="url(#sg259)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="96.5,440.0 106.7,622.5 110.3,622.5 120.4,440.0" fill="url(#sg260)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="122.6,440.0 133.6,638.3 137.5,638.3 148.6,440.0" fill="url(#sg261)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="216.1,440.0 228.3,661.7 232.7,661.7 245.0,440.0" fill="url(#sg262)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="80.2,440.0 92.7,666.0 97.1,666.0 109.6,440.0" fill="url(#sg263)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="214.9,440.0 228.2,680.4 232.9,680.4 246.1,440.0" fill="url(#sg264)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="61.5,440.0 78.4,746.8 84.3,746.8 101.2,440.0" fill="url(#sg265)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="51.1,440.0 76.8,909.6 85.9,909.6 111.7,440.0" fill="url(#sg266)" opacity="0.25" filter="url(#reflBlur)" />
+<polygon points="127.3,440.0 129.6,446.5 130.4,446.5 132.7,440.0" fill="url(#sgc0_0)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="100.1,440.0 102.4,447.2 103.3,447.2 105.6,440.0" fill="url(#sgc1_0)" opacity="0.06" filter="url(#reflBlur)" />
+<polygon points="77.4,440.0 79.8,448.0 80.6,448.0 82.9,440.0" fill="url(#sgc2_0)" opacity="0.07" filter="url(#reflBlur)" />
+<polygon points="235.6,440.0 238.0,448.7 238.9,448.7 241.3,440.0" fill="url(#sgc3_0)" opacity="0.08" filter="url(#reflBlur)" />
+</g>
+<polygon data-role="ferro-spike" points="228.2,440.0 230.2,438.6 230.9,438.6 232.8,440.0" fill="url(#sg0)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.4,440.0 40.3,435.2 41.0,435.2 43.0,440.0" fill="url(#sg1)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.9,440.0 270.8,434.5 271.5,434.5 273.5,440.0" fill="url(#sg2)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.9,440.0 53.9,434.1 54.6,434.1 56.6,440.0" fill="url(#sg3)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.8,440.0 148.8,432.8 149.5,432.8 151.5,440.0" fill="url(#sg4)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.4,440.0 162.4,432.1 163.1,432.1 165.0,440.0" fill="url(#sg5)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="133.2,440.0 135.2,431.0 135.9,431.0 137.9,440.0" fill="url(#sg6)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="133.2,440.0 135.2,430.4 135.9,430.4 137.9,440.0" fill="url(#sg7)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.3,440.0 40.3,430.0 41.0,430.0 43.0,440.0" fill="url(#sg8)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.9,440.0 175.9,429.6 176.6,429.6 178.6,440.0" fill="url(#sg9)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.4,440.0 162.4,429.4 163.1,429.4 165.1,440.0" fill="url(#sg10)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.8,440.0 270.8,429.1 271.5,429.1 273.5,440.0" fill="url(#sg11)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="106.1,440.0 108.1,429.0 108.8,429.0 110.8,440.0" fill="url(#sg12)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.5,440.0 189.5,427.8 190.2,427.8 192.2,440.0" fill="url(#sg13)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.7,440.0 121.7,427.4 122.4,427.4 124.4,440.0" fill="url(#sg14)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.5,440.0 94.6,427.2 95.3,427.2 97.3,440.0" fill="url(#sg15)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.3,440.0 40.3,426.6 41.0,426.6 43.1,440.0" fill="url(#sg16)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.9,440.0 175.9,426.0 176.6,426.0 178.7,440.0" fill="url(#sg17)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.4,440.0 189.5,425.7 190.2,425.7 192.2,440.0" fill="url(#sg18)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="106.1,440.0 108.1,425.3 108.8,425.3 110.9,440.0" fill="url(#sg19)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="214.5,440.0 216.6,425.2 217.3,425.2 219.4,440.0" fill="url(#sg20)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.8,440.0 53.9,425.0 54.6,425.0 56.6,440.0" fill="url(#sg21)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="201.0,440.0 203.0,424.7 203.8,424.7 205.8,440.0" fill="url(#sg22)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="65.4,440.0 67.4,423.9 68.2,423.9 70.2,440.0" fill="url(#sg23)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="65.4,440.0 67.4,423.9 68.2,423.9 70.2,440.0" fill="url(#sg24)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="201.0,440.0 203.0,422.9 203.8,422.9 205.8,440.0" fill="url(#sg25)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.8,440.0 53.9,422.9 54.6,422.9 56.7,440.0" fill="url(#sg26)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.2,440.0 40.3,421.0 41.0,421.0 43.1,440.0" fill="url(#sg27)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="241.6,440.0 243.7,421.0 244.4,421.0 246.5,440.0" fill="url(#sg28)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.8,440.0 175.9,420.5 176.6,420.5 178.7,440.0" fill="url(#sg29)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.2,440.0 162.3,420.3 163.1,420.3 165.2,440.0" fill="url(#sg30)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.7,440.0 148.8,419.7 149.5,419.7 151.6,440.0" fill="url(#sg31)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.2,440.0 40.3,419.7 41.1,419.7 43.2,440.0" fill="url(#sg32)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.7,440.0 148.8,419.2 149.5,419.2 151.6,440.0" fill="url(#sg33)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.8,440.0 175.9,418.8 176.6,418.8 178.8,440.0" fill="url(#sg34)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.3,440.0 189.5,418.6 190.2,418.6 192.3,440.0" fill="url(#sg35)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.3,440.0 189.5,418.4 190.2,418.4 192.3,440.0" fill="url(#sg36)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="78.8,440.0 81.0,418.2 81.7,418.2 83.9,440.0" fill="url(#sg37)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.2,440.0 162.3,418.0 163.1,418.0 165.2,440.0" fill="url(#sg38)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.7,440.0 53.9,417.6 54.6,417.6 56.8,440.0" fill="url(#sg39)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.4,440.0 94.5,417.5 95.3,417.5 97.4,440.0" fill="url(#sg40)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="133.1,440.0 135.2,417.4 136.0,417.4 138.1,440.0" fill="url(#sg41)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="228.0,440.0 230.1,417.4 230.9,417.4 233.0,440.0" fill="url(#sg42)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.7,440.0 270.8,417.3 271.6,417.3 273.7,440.0" fill="url(#sg43)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="214.4,440.0 216.6,417.0 217.3,417.0 219.5,440.0" fill="url(#sg44)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="255.1,440.0 257.2,416.8 258.0,416.8 260.2,440.0" fill="url(#sg45)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.1,440.0 40.3,416.6 41.1,416.6 43.2,440.0" fill="url(#sg46)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="241.5,440.0 243.7,416.1 244.4,416.1 246.6,440.0" fill="url(#sg47)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.6,440.0 270.8,415.5 271.6,415.5 273.7,440.0" fill="url(#sg48)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="78.8,440.0 81.0,415.4 81.7,415.4 83.9,440.0" fill="url(#sg49)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.7,440.0 175.9,414.8 176.7,414.8 178.8,440.0" fill="url(#sg50)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.1,440.0 40.3,414.7 41.1,414.7 43.3,440.0" fill="url(#sg51)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.7,440.0 53.9,414.4 54.6,414.4 56.8,440.0" fill="url(#sg52)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.4,440.0 121.6,414.3 122.4,414.3 124.6,440.0" fill="url(#sg53)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="133.0,440.0 135.2,414.2 136.0,414.2 138.2,440.0" fill="url(#sg54)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.4,440.0 121.6,414.0 122.4,414.0 124.6,440.0" fill="url(#sg55)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.7,440.0 175.9,413.9 176.7,413.9 178.9,440.0" fill="url(#sg56)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.8,440.0 203.0,413.8 203.8,413.8 206.0,440.0" fill="url(#sg57)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.1,440.0 40.3,413.7 41.1,413.7 43.3,440.0" fill="url(#sg58)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.2,440.0 189.4,413.6 190.2,413.6 192.4,440.0" fill="url(#sg59)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="255.0,440.0 257.2,413.5 258.0,413.5 260.2,440.0" fill="url(#sg60)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="38.1,440.0 40.3,412.8 41.1,412.8 43.3,440.0" fill="url(#sg61)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.2,440.0 189.4,412.5 190.2,412.5 192.5,440.0" fill="url(#sg62)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.1,440.0 162.3,412.3 163.1,412.3 165.3,440.0" fill="url(#sg63)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="227.9,440.0 230.1,412.2 230.9,412.2 233.1,440.0" fill="url(#sg64)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.6,440.0 53.8,412.2 54.6,412.2 56.9,440.0" fill="url(#sg65)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.8,440.0 108.1,411.8 108.9,411.8 111.1,440.0" fill="url(#sg66)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.6,440.0 175.9,410.8 176.7,410.8 178.9,440.0" fill="url(#sg67)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="65.1,440.0 67.4,410.8 68.2,410.8 70.5,440.0" fill="url(#sg68)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.6,440.0 175.9,410.4 176.7,410.4 178.9,440.0" fill="url(#sg69)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.7,440.0 203.0,410.4 203.8,410.4 206.1,440.0" fill="url(#sg70)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.2,440.0 189.4,410.0 190.2,410.0 192.5,440.0" fill="url(#sg71)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.6,440.0 53.8,409.9 54.6,409.9 56.9,440.0" fill="url(#sg72)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="160.0,440.0 162.3,409.8 163.1,409.8 165.4,440.0" fill="url(#sg73)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.5,440.0 148.8,409.7 149.6,409.7 151.8,440.0" fill="url(#sg74)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.5,440.0 148.7,409.4 149.6,409.4 151.8,440.0" fill="url(#sg75)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.5,440.0 53.8,409.4 54.6,409.4 56.9,440.0" fill="url(#sg76)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.1,440.0 189.4,409.0 190.2,409.0 192.5,440.0" fill="url(#sg77)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.5,440.0 270.8,408.7 271.6,408.7 273.9,440.0" fill="url(#sg78)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.6,440.0 175.9,408.4 176.7,408.4 179.0,440.0" fill="url(#sg79)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.6,440.0 175.9,408.3 176.7,408.3 179.0,440.0" fill="url(#sg80)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.9,440.0 135.2,408.1 136.0,408.1 138.3,440.0" fill="url(#sg81)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.1,440.0 189.4,407.9 190.2,407.9 192.6,440.0" fill="url(#sg82)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.5,440.0 270.8,407.8 271.6,407.8 273.9,440.0" fill="url(#sg83)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="173.5,440.0 175.9,407.6 176.7,407.6 179.0,440.0" fill="url(#sg84)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="187.1,440.0 189.4,407.5 190.2,407.5 192.6,440.0" fill="url(#sg85)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="214.2,440.0 216.5,407.3 217.4,407.3 219.7,440.0" fill="url(#sg86)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.2,440.0 94.5,407.1 95.3,407.1 97.7,440.0" fill="url(#sg87)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.5,440.0 53.8,406.7 54.7,406.7 57.0,440.0" fill="url(#sg88)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.7,440.0 108.1,406.2 108.9,406.2 111.2,440.0" fill="url(#sg89)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.9,440.0 162.3,405.4 163.1,405.4 165.5,440.0" fill="url(#sg90)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="65.0,440.0 67.4,405.2 68.2,405.2 70.6,440.0" fill="url(#sg91)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.6,440.0 203.0,404.9 203.8,404.9 206.2,440.0" fill="url(#sg92)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.4,440.0 270.8,404.2 271.6,404.2 274.0,440.0" fill="url(#sg93)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.2,440.0 121.6,404.1 122.5,404.1 124.9,440.0" fill="url(#sg94)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="268.4,440.0 270.8,403.9 271.6,403.9 274.0,440.0" fill="url(#sg95)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.9,440.0 162.3,402.7 163.1,402.7 165.6,440.0" fill="url(#sg96)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="214.1,440.0 216.5,402.6 217.4,402.6 219.8,440.0" fill="url(#sg97)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.7,440.0 135.2,402.5 136.0,402.5 138.5,440.0" fill="url(#sg98)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="78.5,440.0 80.9,402.1 81.8,402.1 84.2,440.0" fill="url(#sg99)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.4,440.0 53.8,402.1 54.7,402.1 57.1,440.0" fill="url(#sg100)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.9,440.0 67.4,401.1 68.2,401.1 70.7,440.0" fill="url(#sg101)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="241.2,440.0 243.6,400.8 244.5,400.8 247.0,440.0" fill="url(#sg102)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="92.0,440.0 94.5,400.5 95.4,400.5 97.8,440.0" fill="url(#sg103)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.5,440.0 203.0,400.5 203.8,400.5 206.3,440.0" fill="url(#sg104)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.2,440.0 148.7,400.5 149.6,400.5 152.1,440.0" fill="url(#sg105)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.2,440.0 148.7,400.4 149.6,400.4 152.1,440.0" fill="url(#sg106)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="254.7,440.0 257.2,400.1 258.1,400.1 260.6,440.0" fill="url(#sg107)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.1,440.0 121.6,399.2 122.5,399.2 125.0,440.0" fill="url(#sg108)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.8,440.0 162.3,399.0 163.2,399.0 165.7,440.0" fill="url(#sg109)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.6,440.0 135.1,399.0 136.0,399.0 138.5,440.0" fill="url(#sg110)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.5,440.0 108.0,398.6 108.9,398.6 111.4,440.0" fill="url(#sg111)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="227.5,440.0 230.1,398.0 231.0,398.0 233.5,440.0" fill="url(#sg112)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="254.6,440.0 257.2,397.7 258.1,397.7 260.6,440.0" fill="url(#sg113)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="241.1,440.0 243.6,397.5 244.5,397.5 247.1,440.0" fill="url(#sg114)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.2,440.0 53.8,397.1 54.7,397.1 57.2,440.0" fill="url(#sg115)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="78.3,440.0 80.9,396.9 81.8,396.9 84.4,440.0" fill="url(#sg116)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.4,440.0 202.9,396.9 203.8,396.9 206.4,440.0" fill="url(#sg117)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.7,440.0 162.3,396.6 163.2,396.6 165.7,440.0" fill="url(#sg118)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.2,440.0 53.8,395.9 54.7,395.9 57.3,440.0" fill="url(#sg119)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="119.0,440.0 121.6,395.4 122.5,395.4 125.1,440.0" fill="url(#sg120)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="227.4,440.0 230.0,394.2 231.0,394.2 233.6,440.0" fill="url(#sg121)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.7,440.0 67.3,393.9 68.3,393.9 70.9,440.0" fill="url(#sg122)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.6,440.0 162.2,393.7 163.2,393.7 165.8,440.0" fill="url(#sg123)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.2,440.0 202.9,392.7 203.9,392.7 206.5,440.0" fill="url(#sg124)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.4,440.0 135.1,391.9 136.1,391.9 138.8,440.0" fill="url(#sg125)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.5,440.0 162.2,391.8 163.2,391.8 165.9,440.0" fill="url(#sg126)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="146.0,440.0 148.7,391.3 149.6,391.3 152.3,440.0" fill="url(#sg127)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="213.8,440.0 216.5,391.2 217.4,391.2 220.1,440.0" fill="url(#sg128)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.2,440.0 202.9,390.6 203.9,390.6 206.6,440.0" fill="url(#sg129)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.5,440.0 162.2,390.2 163.2,390.2 165.9,440.0" fill="url(#sg130)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="145.9,440.0 148.7,390.1 149.6,390.1 152.4,440.0" fill="url(#sg131)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.6,440.0 67.3,389.8 68.3,389.8 71.0,440.0" fill="url(#sg132)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.6,440.0 67.3,389.7 68.3,389.7 71.0,440.0" fill="url(#sg133)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="159.5,440.0 162.2,389.4 163.2,389.4 166.0,440.0" fill="url(#sg134)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.5,440.0 67.3,389.2 68.3,389.2 71.0,440.0" fill="url(#sg135)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.3,440.0 135.1,388.6 136.1,388.6 138.9,440.0" fill="url(#sg136)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.0,440.0 53.7,388.6 54.7,388.6 57.5,440.0" fill="url(#sg137)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="91.6,440.0 94.4,388.5 95.4,388.5 98.2,440.0" fill="url(#sg138)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.5,440.0 67.3,388.5 68.3,388.5 71.1,440.0" fill="url(#sg139)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.5,440.0 67.3,388.3 68.3,388.3 71.1,440.0" fill="url(#sg140)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.2,440.0 108.0,388.1 109.0,388.1 111.8,440.0" fill="url(#sg141)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.1,440.0 202.9,387.9 203.9,387.9 206.7,440.0" fill="url(#sg142)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="213.6,440.0 216.5,387.6 217.4,387.6 220.3,440.0" fill="url(#sg143)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.5,440.0 67.3,387.4 68.3,387.4 71.1,440.0" fill="url(#sg144)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.7,440.0 121.5,387.2 122.5,387.2 125.3,440.0" fill="url(#sg145)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="200.1,440.0 202.9,387.2 203.9,387.2 206.7,440.0" fill="url(#sg146)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="50.9,440.0 53.7,386.7 54.7,386.7 57.6,440.0" fill="url(#sg147)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="78.0,440.0 80.9,386.2 81.9,386.2 84.7,440.0" fill="url(#sg148)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="105.1,440.0 108.0,385.9 109.0,385.9 111.8,440.0" fill="url(#sg149)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="254.2,440.0 257.1,384.1 258.1,384.1 261.0,440.0" fill="url(#sg150)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.6,440.0 121.5,384.0 122.5,384.0 125.5,440.0" fill="url(#sg151)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.3,440.0 67.3,383.0 68.3,383.0 71.2,440.0" fill="url(#sg152)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="91.4,440.0 94.4,382.4 95.4,382.4 98.4,440.0" fill="url(#sg153)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="254.1,440.0 257.1,381.9 258.2,381.9 261.1,440.0" fill="url(#sg154)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="50.7,440.0 53.7,381.8 54.8,381.8 57.7,440.0" fill="url(#sg155)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="132.1,440.0 135.1,381.7 136.1,381.7 139.1,440.0" fill="url(#sg156)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="145.6,440.0 148.6,381.1 149.7,381.1 152.7,440.0" fill="url(#sg157)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="50.7,440.0 53.7,379.7 54.8,379.7 57.8,440.0" fill="url(#sg158)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="240.5,440.0 243.5,379.3 244.6,379.3 247.6,440.0" fill="url(#sg159)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.4,440.0 121.5,378.6 122.6,378.6 125.6,440.0" fill="url(#sg160)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="50.6,440.0 53.7,378.1 54.8,378.1 57.9,440.0" fill="url(#sg161)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="145.5,440.0 148.6,377.8 149.7,377.8 152.8,440.0" fill="url(#sg162)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="240.4,440.0 243.5,375.8 244.6,375.8 247.8,440.0" fill="url(#sg163)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="226.8,440.0 230.0,375.7 231.1,375.7 234.2,440.0" fill="url(#sg164)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.6,440.0 80.8,375.2 81.9,375.2 85.1,440.0" fill="url(#sg165)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="131.8,440.0 135.0,374.6 136.2,374.6 139.3,440.0" fill="url(#sg166)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.7,440.0 107.9,373.9 109.0,373.9 112.2,440.0" fill="url(#sg167)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="213.2,440.0 216.4,373.3 217.5,373.3 220.7,440.0" fill="url(#sg168)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="64.0,440.0 67.2,372.5 68.4,372.5 71.6,440.0" fill="url(#sg169)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="226.7,440.0 229.9,371.8 231.1,371.8 234.4,440.0" fill="url(#sg170)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.5,440.0 80.8,371.4 81.9,371.4 85.2,440.0" fill="url(#sg171)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="131.7,440.0 135.0,371.0 136.2,371.0 139.5,440.0" fill="url(#sg172)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="213.0,440.0 216.4,370.2 217.5,370.2 220.9,440.0" fill="url(#sg173)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.4,440.0 80.8,369.0 81.9,369.0 85.3,440.0" fill="url(#sg174)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="145.2,440.0 148.6,368.8 149.7,368.8 153.1,440.0" fill="url(#sg175)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="253.7,440.0 257.0,368.6 258.2,368.6 261.6,440.0" fill="url(#sg176)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.4,440.0 80.8,368.4 82.0,368.4 85.3,440.0" fill="url(#sg177)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.0,440.0 121.4,367.4 122.6,367.4 126.0,440.0" fill="url(#sg178)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.4,440.0 80.8,367.4 82.0,367.4 85.4,440.0" fill="url(#sg179)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="118.0,440.0 121.4,367.0 122.6,367.0 126.1,440.0" fill="url(#sg180)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="253.6,440.0 257.0,366.8 258.2,366.8 261.7,440.0" fill="url(#sg181)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="63.7,440.0 67.2,365.8 68.4,365.8 71.9,440.0" fill="url(#sg182)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.4,440.0 107.9,364.7 109.1,364.7 112.6,440.0" fill="url(#sg183)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.8,440.0 94.3,364.4 95.5,364.4 99.0,440.0" fill="url(#sg184)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.4,440.0 107.9,364.3 109.1,364.3 112.6,440.0" fill="url(#sg185)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="145.0,440.0 148.5,363.7 149.8,363.7 153.3,440.0" fill="url(#sg186)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.2,440.0 107.8,359.2 109.1,359.2 112.8,440.0" fill="url(#sg187)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.6,440.0 94.3,359.2 95.6,359.2 99.2,440.0" fill="url(#sg188)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.6,440.0 94.3,358.8 95.6,358.8 99.2,440.0" fill="url(#sg189)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="77.0,440.0 80.7,358.1 82.0,358.1 85.7,440.0" fill="url(#sg190)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.1,440.0 107.8,357.4 109.1,357.4 112.9,440.0" fill="url(#sg191)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="253.2,440.0 257.0,357.4 258.3,357.4 262.0,440.0" fill="url(#sg192)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="253.2,440.0 257.0,356.6 258.3,356.6 262.0,440.0" fill="url(#sg193)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="131.2,440.0 134.9,356.6 136.3,356.6 140.0,440.0" fill="url(#sg194)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="144.7,440.0 148.5,355.8 149.8,355.8 153.6,440.0" fill="url(#sg195)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="76.9,440.0 80.7,355.8 82.0,355.8 85.8,440.0" fill="url(#sg196)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.5,440.0 94.2,355.6 95.6,355.6 99.4,440.0" fill="url(#sg197)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="63.3,440.0 67.1,354.8 68.5,354.8 72.3,440.0" fill="url(#sg198)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="104.0,440.0 107.8,354.7 109.1,354.7 113.0,440.0" fill="url(#sg199)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.4,440.0 94.2,354.6 95.6,354.6 99.4,440.0" fill="url(#sg200)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="212.4,440.0 216.3,353.7 217.6,353.7 221.5,440.0" fill="url(#sg201)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="76.8,440.0 80.7,352.3 82.0,352.3 85.9,440.0" fill="url(#sg202)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="131.0,440.0 134.9,352.3 136.3,352.3 140.2,440.0" fill="url(#sg203)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="144.5,440.0 148.5,351.1 149.8,351.1 153.8,440.0" fill="url(#sg204)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="117.4,440.0 121.3,351.1 122.7,351.1 126.7,440.0" fill="url(#sg205)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="212.3,440.0 216.3,351.0 217.6,351.0 221.6,440.0" fill="url(#sg206)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="239.4,440.0 243.4,349.3 244.8,349.3 248.8,440.0" fill="url(#sg207)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="103.7,440.0 107.8,348.0 109.2,348.0 113.2,440.0" fill="url(#sg208)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="117.3,440.0 121.3,347.7 122.7,347.7 126.8,440.0" fill="url(#sg209)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="144.4,440.0 148.4,347.7 149.9,347.7 153.9,440.0" fill="url(#sg210)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="76.6,440.0 80.6,347.0 82.1,347.0 86.1,440.0" fill="url(#sg211)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="239.2,440.0 243.3,344.5 244.8,344.5 248.9,440.0" fill="url(#sg212)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="76.4,440.0 80.6,343.1 82.1,343.1 86.3,440.0" fill="url(#sg213)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="90.0,440.0 94.2,342.8 95.7,342.8 99.9,440.0" fill="url(#sg214)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="225.5,440.0 229.8,342.5 231.3,342.5 235.5,440.0" fill="url(#sg215)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="76.4,440.0 80.6,342.2 82.1,342.2 86.3,440.0" fill="url(#sg216)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="89.9,440.0 94.2,340.6 95.7,340.6 100.0,440.0" fill="url(#sg217)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="116.9,440.0 121.3,339.1 122.8,339.1 127.1,440.0" fill="url(#sg218)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="103.4,440.0 107.7,338.8 109.2,338.8 113.6,440.0" fill="url(#sg219)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="62.7,440.0 67.0,338.3 68.6,338.3 72.9,440.0" fill="url(#sg220)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="211.8,440.0 216.2,337.8 217.7,337.8 222.1,440.0" fill="url(#sg221)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="225.3,440.0 229.7,336.9 231.3,336.9 235.7,440.0" fill="url(#sg222)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="211.8,440.0 216.2,336.6 217.7,336.6 222.1,440.0" fill="url(#sg223)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="116.7,440.0 121.2,332.3 122.8,332.3 127.4,440.0" fill="url(#sg224)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="103.1,440.0 107.7,332.3 109.3,332.3 113.8,440.0" fill="url(#sg225)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="130.1,440.0 134.8,330.5 136.4,330.5 141.0,440.0" fill="url(#sg226)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="62.3,440.0 67.0,329.2 68.6,329.2 73.3,440.0" fill="url(#sg227)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="102.9,440.0 107.6,328.4 109.3,328.4 114.0,440.0" fill="url(#sg228)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="89.3,440.0 94.1,327.2 95.8,327.2 100.5,440.0" fill="url(#sg229)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="102.9,440.0 107.6,326.5 109.3,326.5 114.1,440.0" fill="url(#sg230)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="89.3,440.0 94.1,325.4 95.8,325.4 100.6,440.0" fill="url(#sg231)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="75.7,440.0 80.5,325.4 82.2,325.4 87.0,440.0" fill="url(#sg232)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="116.1,440.0 121.1,318.1 122.9,318.1 128.0,440.0" fill="url(#sg233)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="88.8,440.0 94.0,313.7 95.8,313.7 101.1,440.0" fill="url(#sg234)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="129.3,440.0 134.7,310.3 136.5,310.3 141.9,440.0" fill="url(#sg235)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="61.5,440.0 66.9,310.2 68.7,310.2 74.1,440.0" fill="url(#sg236)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="88.6,440.0 94.0,310.2 95.9,310.2 101.2,440.0" fill="url(#sg237)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="115.7,440.0 121.1,310.1 123.0,310.1 128.3,440.0" fill="url(#sg238)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="102.0,440.0 107.5,305.8 109.4,305.8 114.9,440.0" fill="url(#sg239)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="61.3,440.0 66.8,305.6 68.8,305.6 74.3,440.0" fill="url(#sg240)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="237.3,440.0 243.1,299.5 245.1,299.5 250.8,440.0" fill="url(#sg241)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="237.0,440.0 243.0,291.5 245.1,291.5 251.1,440.0" fill="url(#sg242)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="87.8,440.0 93.8,290.5 96.0,290.5 102.0,440.0" fill="url(#sg243)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="87.5,440.0 93.8,283.6 96.0,283.6 102.3,440.0" fill="url(#sg244)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="222.9,440.0 229.4,279.3 231.6,279.3 238.1,440.0" fill="url(#sg245)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="73.5,440.0 80.2,274.3 82.5,274.3 89.2,440.0" fill="url(#sg246)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="114.2,440.0 120.9,273.0 123.2,273.0 129.9,440.0" fill="url(#sg247)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="127.7,440.0 134.4,272.1 136.8,272.1 143.5,440.0" fill="url(#sg248)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="222.4,440.0 229.3,267.8 231.7,267.8 238.6,440.0" fill="url(#sg249)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="100.1,440.0 107.2,261.3 109.7,261.3 116.8,440.0" fill="url(#sg250)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="85.8,440.0 93.6,245.1 96.3,245.1 104.0,440.0" fill="url(#sg251)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="72.3,440.0 80.0,244.9 82.7,244.9 90.4,440.0" fill="url(#sg252)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="99.4,440.0 107.1,244.6 109.8,244.6 117.6,440.0" fill="url(#sg253)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="112.4,440.0 120.6,231.9 123.5,231.9 131.7,440.0" fill="url(#sg254)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="85.0,440.0 93.4,226.9 96.4,226.9 104.8,440.0" fill="url(#sg255)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="233.8,440.0 242.5,218.7 245.6,218.7 254.3,440.0" fill="url(#sg256)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="125.3,440.0 134.1,218.0 137.1,218.0 145.9,440.0" fill="url(#sg257)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="233.4,440.0 242.5,209.7 245.7,209.7 254.7,440.0" fill="url(#sg258)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="110.4,440.0 120.3,186.0 123.8,186.0 133.7,440.0" fill="url(#sg259)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="96.5,440.0 106.7,179.3 110.3,179.3 120.4,440.0" fill="url(#sg260)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="122.6,440.0 133.6,156.7 137.5,156.7 148.6,440.0" fill="url(#sg261)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="216.1,440.0 228.3,123.3 232.7,123.3 245.0,440.0" fill="url(#sg262)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="80.2,440.0 92.7,117.1 97.1,117.1 109.6,440.0" fill="url(#sg263)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="214.9,440.0 228.2,96.6 232.9,96.6 246.1,440.0" fill="url(#sg264)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="61.5,440.0 78.4,1.7 84.3,1.7 101.2,440.0" fill="url(#sg265)" opacity="0.95"/>
+<polygon data-role="ferro-spike" points="51.1,440.0 76.8,-230.8 85.9,-230.8 111.7,440.0" fill="url(#sg266)" opacity="0.95"/>
+<polygon data-role="ferro-capillary" points="127.3,440.0 129.6,430.7 130.4,430.7 132.7,440.0" fill="url(#sgc0_0)" opacity="0.95"/>
+<polygon data-role="ferro-capillary" points="100.1,440.0 102.4,429.7 103.3,429.7 105.6,440.0" fill="url(#sgc1_0)" opacity="0.95"/>
+<polygon data-role="ferro-capillary" points="77.4,440.0 79.8,428.6 80.6,428.6 82.9,440.0" fill="url(#sgc2_0)" opacity="0.95"/>
+<polygon data-role="ferro-capillary" points="235.6,440.0 238.0,427.6 238.9,427.6 241.3,440.0" fill="url(#sgc3_0)" opacity="0.95"/>
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="384.6" rx="3.4" ry="10.2" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="384.5" rx="3.4" ry="10.2" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="216.9" cy="383.9" rx="3.5" ry="10.4" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="81.4" cy="383.0" rx="3.5" ry="10.5" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="383.0" rx="3.5" ry="10.5" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="149.2" cy="382.2" rx="3.6" ry="10.7" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="122.0" cy="382.2" rx="3.6" ry="10.7" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="216.9" cy="382.2" rx="3.6" ry="10.7" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="381.0" rx="3.6" ry="10.9" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="380.2" rx="3.7" ry="11.0" fill="#77acb7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="380.0" rx="3.7" ry="11.1" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="149.2" cy="380.0" rx="3.7" ry="11.1" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="81.4" cy="379.6" rx="3.7" ry="11.2" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="377.9" rx="3.8" ry="11.5" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="81.4" cy="377.0" rx="3.9" ry="11.6" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="376.8" rx="3.9" ry="11.7" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="376.6" rx="3.9" ry="11.7" fill="#77acb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="376.4" rx="3.9" ry="11.7" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="375.4" rx="4.0" ry="11.9" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="122.0" cy="374.4" rx="4.0" ry="12.1" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="374.2" rx="4.0" ry="12.1" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="67.8" cy="373.9" rx="4.1" ry="12.2" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="216.9" cy="373.6" rx="4.1" ry="12.3" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="373.0" rx="4.1" ry="12.4" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="216.9" cy="372.8" rx="4.1" ry="12.4" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="122.0" cy="370.0" rx="4.3" ry="12.9" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="370.0" rx="4.3" ry="12.9" fill="#78adb8" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="368.8" rx="4.4" ry="13.1" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="67.8" cy="368.0" rx="4.4" ry="13.3" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="108.5" cy="367.4" rx="4.5" ry="13.4" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="366.7" rx="4.5" ry="13.5" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="108.5" cy="366.3" rx="4.5" ry="13.6" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="365.5" rx="4.6" ry="13.8" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="365.5" rx="4.6" ry="13.8" fill="#78adb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="360.8" rx="4.9" ry="14.6" fill="#79aeb9" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="357.9" rx="5.1" ry="15.2" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="355.7" rx="5.2" ry="15.6" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="67.8" cy="355.6" rx="5.2" ry="15.6" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="355.6" rx="5.2" ry="15.6" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="355.5" rx="5.2" ry="15.6" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="108.5" cy="352.7" rx="5.4" ry="16.1" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="67.8" cy="352.7" rx="5.4" ry="16.1" fill="#79aeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="348.7" rx="5.6" ry="16.9" fill="#7aaeba" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="343.5" rx="5.9" ry="17.8" fill="#7aafbb" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="342.9" rx="6.0" ry="17.9" fill="#7aafbb" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="94.9" cy="338.4" rx="6.3" ry="18.8" fill="#7aafbb" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="335.6" rx="6.4" ry="19.3" fill="#7bafbc" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="332.3" rx="6.6" ry="19.9" fill="#7bafbc" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="331.4" rx="6.7" ry="20.0" fill="#7bb0bc" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="330.8" rx="6.7" ry="20.2" fill="#7bb0bc" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="328.1" rx="6.9" ry="20.7" fill="#7bb0bc" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="108.5" cy="323.8" rx="7.1" ry="21.4" fill="#7cb0bd" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="313.3" rx="7.8" ry="23.4" fill="#7cb1be" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="313.2" rx="7.8" ry="23.4" fill="#7cb1be" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="108.5" cy="313.0" rx="7.8" ry="23.4" fill="#7cb1be" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="304.7" rx="8.3" ry="25.0" fill="#7db1be" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="301.5" rx="8.5" ry="25.6" fill="#7db2bf" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="296.2" rx="8.9" ry="26.6" fill="#7eb2bf" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="295.7" rx="8.9" ry="26.6" fill="#7eb2bf" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="244.1" cy="290.3" rx="9.2" ry="27.6" fill="#7eb2c0" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="122.0" cy="274.9" rx="10.2" ry="30.5" fill="#7fb3c1" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="108.5" cy="270.6" rx="10.4" ry="31.3" fill="#80b4c2" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="0" data-lang="Python" cx="135.6" cy="255.9" rx="11.3" ry="34.0" fill="#81b5c3" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="234.2" rx="12.7" ry="38.0" fill="#83b6c5" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="1" data-lang="Python" cx="94.9" cy="230.1" rx="12.9" ry="38.7" fill="#83b6c6" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="3" data-lang="Python" cx="230.5" cy="216.8" rx="13.7" ry="41.2" fill="#84b7c7" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="155.1" rx="17.5" ry="52.6" fill="#8abbcd" opacity="0.31" />
+<ellipse data-role="ferro-highlight" data-owner-index="2" data-lang="Python" cx="81.4" cy="4.0" rx="26.8" ry="80.5" fill="#99c4de" opacity="0.31" />
+<g id="ferro-ripples" data-ripple-gain="0.866" data-ripple-count="24">
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="137.3" cy="442.4" rx="34.6" ry="10.4" fill="none" stroke="#091d25" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="125.7" cy="440.8" rx="44.6" ry="13.4" fill="none" stroke="#0b1d26" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="110.7" cy="441.3" rx="54.6" ry="16.4" fill="none" stroke="#0d1c27" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="105.7" cy="441.5" rx="64.6" ry="19.4" fill="none" stroke="#0f1b28" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="90.9" cy="443.4" rx="74.6" ry="22.4" fill="none" stroke="#111b28" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="0" data-lang="Python" cx="159.1" cy="437.8" rx="84.6" ry="25.4" fill="none" stroke="#141a29" stroke-width="0.5" opacity="0.12"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="106.5" cy="440.8" rx="36.1" ry="10.8" fill="none" stroke="#0a1f26" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="106.7" cy="437.6" rx="46.1" ry="13.8" fill="none" stroke="#0c1e27" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="113.4" cy="444.0" rx="56.1" ry="16.8" fill="none" stroke="#0e1d28" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="67.9" cy="438.6" rx="66.1" ry="19.8" fill="none" stroke="#101d29" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="80.4" cy="440.5" rx="76.1" ry="22.8" fill="none" stroke="#131c2a" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="1" data-lang="Python" cx="136.3" cy="439.5" rx="86.1" ry="25.8" fill="none" stroke="#151b2a" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="73.3" cy="438.0" rx="37.7" ry="11.3" fill="none" stroke="#0c2028" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="71.0" cy="442.1" rx="47.7" ry="14.3" fill="none" stroke="#0d1f29" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="72.5" cy="439.6" rx="57.7" ry="17.3" fill="none" stroke="#0f1f2a" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="60.0" cy="444.0" rx="67.7" ry="20.3" fill="none" stroke="#121e2a" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="66.5" cy="440.9" rx="77.7" ry="23.3" fill="none" stroke="#141d2b" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="2" data-lang="Python" cx="62.6" cy="436.2" rx="87.7" ry="26.3" fill="none" stroke="#161d2b" stroke-width="0.5" opacity="0.13"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="227.6" cy="439.1" rx="39.3" ry="11.8" fill="none" stroke="#0d2129" stroke-width="0.5" opacity="0.14"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="227.0" cy="442.1" rx="49.3" ry="14.8" fill="none" stroke="#0f212a" stroke-width="0.5" opacity="0.14"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="227.9" cy="443.3" rx="59.3" ry="17.8" fill="none" stroke="#11202b" stroke-width="0.5" opacity="0.14"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="218.2" cy="439.0" rx="69.3" ry="20.8" fill="none" stroke="#131f2c" stroke-width="0.5" opacity="0.14"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="246.7" cy="437.5" rx="79.3" ry="23.8" fill="none" stroke="#151f2c" stroke-width="0.5" opacity="0.14"/>
+<ellipse data-role="ferro-ripple" data-owner-index="3" data-lang="Python" cx="285.2" cy="436.1" rx="89.3" ry="26.8" fill="none" stroke="#171e2c" stroke-width="0.5" opacity="0.14"/>
+</g>
+<ellipse cx="129.3" cy="440.0" rx="19.5" ry="6.1" fill="#00374c" opacity="0.06" />
+<circle data-role="ferro-dipole" data-lang="Python" cx="129.3" cy="440.0" r="6.4" fill="#00374c" opacity="0.23" data-moment="605.9" data-depth="169.6" />
+<ellipse cx="100.9" cy="440.0" rx="21.3" ry="6.1" fill="#00374c" opacity="0.06" />
+<circle data-role="ferro-dipole" data-lang="Python" cx="100.9" cy="440.0" r="7.0" fill="#00374c" opacity="0.25" data-moment="663.9" data-depth="200.9" />
+<ellipse cx="82.2" cy="440.0" rx="23.2" ry="6.1" fill="#00374c" opacity="0.06" />
+<circle data-role="ferro-dipole" data-lang="Python" cx="82.2" cy="440.0" r="7.6" fill="#00374c" opacity="0.26" data-moment="722.0" data-depth="131.3" />
+<ellipse cx="235.7" cy="440.0" rx="25.0" ry="6.1" fill="#00374c" opacity="0.07" />
+<circle data-role="ferro-dipole" data-lang="Python" cx="235.7" cy="440.0" r="8.2" fill="#00374c" opacity="0.28" data-moment="780.0" data-depth="145.9" />
+<g id="accretion-dialect" data-dialect="magnetic" data-style="ferrofluid" data-accretion-repos="4" data-accretion-stars="120" data-accretion-commits="2400" data-accretion-followers="80" data-accretion-repo-scale="0.446" data-accretion-star-scale="0.771" data-accretion-commit-scale="0.866" data-accretion-follower-scale="0.733" data-role="accretion-dialect"><rect x="516.0" y="742.0" width="248.0" height="28.0" rx="3.5" fill="#0a0c14" opacity="0.78" stroke="#8ec8ff" stroke-width="0.45"/><text x="524.0" y="751.5" font-family="Georgia,serif" font-size="5.2" fill="#8ec8ff" opacity="0.7" letter-spacing="0.8">magnetic</text><g data-channel="repos" data-mark-count="4" data-channel-value="4"><circle cx="528.2" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><circle cx="530.5" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><circle cx="532.8" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><circle cx="535.1" cy="760.5" r="1.2" fill="#8ec8ff" opacity="0.6"/><text x="546.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">4</text></g><g data-channel="stars" data-mark-count="6" data-channel-value="120"><path d="M589.9,764.1 L592.0,755.7 L594.1,764.1" fill="#8ec8ff" opacity="0.72"/><text x="604.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">120</text></g><g data-channel="commits" data-mark-count="7" data-channel-value="2400"><ellipse cx="650.0" cy="760.5" rx="2.0" ry="0.7" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="2.9" ry="1.0" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="3.8" ry="1.3" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="4.7" ry="1.6" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="5.6" ry="2.0" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><ellipse cx="650.0" cy="760.5" rx="6.5" ry="2.3" fill="none" stroke="#8ec8ff" stroke-width="0.4"/><text x="662.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">2400</text></g><g data-channel="followers" data-mark-count="6" data-channel-value="80"><path d="M702.0,760.5 A6.0,2.7 0 0 1 714.0,760.5" fill="none" stroke="#8ec8ff" stroke-width="0.55"/><text x="720.0" y="763.5" font-family="monospace" font-size="5" fill="#8ec8ff" opacity="0.72">80</text></g></g>
+</svg>
