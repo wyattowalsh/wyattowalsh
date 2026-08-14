@@ -51,6 +51,14 @@
 <img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
 </p>
 
+<p align="center">
+<img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+</p>
+
+<!--START_SECTION:waka-->
+<!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
+<!--END_SECTION:waka-->
+
 ## Living Art
 
 Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub state available through day *t*, so repositories, stars, releases, and contribution history accrete over time.
@@ -311,63 +319,6 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 </p>
 
 <p align="center"><sub>Topic and language clouds generated from the full parsed source lists; every term is preserved in a stable typographic layout sized by frequency.</sub></p>
-<p align="center">
-<img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
-</p>
-
-<!--START_SECTION:waka-->
-**🐱 My Github Data** 
-
-> 🏆 3,703 Contributions in the Year 2026
- > 
-> 💼 Opted to Hire
- > 
-> 📜 190 Public Repositories 
- > 
-> 🔑 0 Private Repositories  
- > 
-
-📊 **This Week I Spent My Time On** 
-
-
-```text
-⌚︎ Time Zone: America/New_York
-⏳ This Week: 22 hrs 8 mins
-📅 Last Year: 2,145 hrs 12 mins
-∞ All Time: 5,246 hrs 12 mins
-
-💬 Programming Languages: 
-Other     5 hrs 8 mins   ██████░░░░░░░░░░░░░░░░░░░   23.24% 
-Markdown  4 hrs 42 mins  █████░░░░░░░░░░░░░░░░░░░░   21.23% 
-Python    4 hrs 28 mins  █████░░░░░░░░░░░░░░░░░░░░   20.2% 
-YAML      1 hr 43 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.77% 
-Bash      1 hr 34 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.09% 
-
-🔥 Editors: 
-Codex CLI  10 hrs 43 mins  ████████████░░░░░░░░░░░░░   48.4% 
-Cursor     2 hrs 34 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.66% 
-
-🧠 Categories: 
-AI Coding  17 hrs 1 min   ███████████████████░░░░░░   76.89% 
-Browsing   4 hrs 50 mins  █████░░░░░░░░░░░░░░░░░░░░   21.87% 
-Coding     16 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   1.24% 
-
-🐱‍💻 Projects: 
-dotfiles     6 hrs 9 mins   ███████░░░░░░░░░░░░░░░░░░   27.82% 
-nbadb        5 hrs 5 mins   ██████░░░░░░░░░░░░░░░░░░░   22.98% 
-prompts      3 hrs 8 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.15% 
-agents       2 hrs 54 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.12% 
-wyattowalsh  2 hrs 5 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.41% 
-
-💻 Operating System: 
-Mac  22 hrs 8 mins  █████████████████████████   100% 
-
-```
-
-
- Last Updated on 14/08/2026 11:48:14 UTC
-<!--END_SECTION:waka-->
-
 ## Latest Blog Posts
 
 <!-- README:BLOG_POSTS:START -->
