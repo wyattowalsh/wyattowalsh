@@ -10,6 +10,17 @@ from typing import Any, cast
 
 import yaml
 
+from scripts.config import load_config
+from scripts.readme_sections import (
+    compile_section_body_re,
+    section_order_from_settings,
+)
+from tests.test_readme_gfm_ux import (
+    assert_visible_or_comment_heading,
+    heading_index,
+    living_art_wrap,
+)
+
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
 README_PATH = Path("README.md")
 BANNER_LIGHT = Path(".github/assets/img/banner.svg")
@@ -1124,18 +1135,6 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     assert "chore(readme): update dynamic sections and skills badges" in finalize
 
     readme = README_PATH.read_text(encoding="utf-8")
-    from scripts.config import load_config
-    from scripts.readme_sections import (
-        compile_section_body_re,
-        section_order_from_settings,
-    )
-
-    from tests.test_readme_gfm_ux import (
-        assert_visible_or_comment_heading,
-        heading_index,
-        living_art_wrap,
-    )
-
     order = section_order_from_settings(load_config().readme_sections_settings)
     assert compile_section_body_re("Living Art", order).search(readme) is not None
     wrap = living_art_wrap(readme)
