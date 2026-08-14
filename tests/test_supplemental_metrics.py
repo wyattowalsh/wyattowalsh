@@ -103,6 +103,8 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     assert "30-day activity" not in habits_svg
     assert "langs:" not in habits_svg
     assert "uppercase; }}" not in habits_svg
+    # Dark media closes :root + @media with `}}`; class rules must not.
+    assert habits_svg.count("}}") == 1
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["habits"]["enabled"] is True
@@ -505,3 +507,30 @@ def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
         manifest_path=manifest_path,
     )
     assert errors == []
+
+
+def test_committed_habits_and_music_svgs_use_designed_layouts() -> None:
+    """fact-habits-split / fact-spotify: shipped cards are designed, not recaps."""
+    assets = Path(__file__).resolve().parents[1] / ".github" / "assets" / "img"
+    habits = (assets / "metrics-habits.svg").read_text(encoding="utf-8")
+    music = (assets / "metrics-music.svg").read_text(encoding="utf-8")
+
+    assert "habits-streaks" in habits
+    assert "habits-focus" in habits
+    assert "habits-peak" in habits
+    assert "habits-cadence" in habits
+    assert "Peak hour" in habits
+    assert "Coding habits" in habits
+    assert "30-day activity" not in habits
+    assert "langs:" not in habits
+    assert "JetBrains MPS" not in habits
+    assert "card-line" not in habits
+
+    assert "music-hero" in music
+    assert "music-extras" in music
+    assert "Recently played" in music
+    assert "Surreality" in music
+    assert "Scope DJ" in music
+    assert "Utta Wanka" not in music
+    assert "card-line" not in music
+    assert "uppercase; }}" not in music

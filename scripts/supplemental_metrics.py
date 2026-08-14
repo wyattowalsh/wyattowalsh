@@ -110,6 +110,8 @@ ASSET_SPECS: Final[dict[str, SupplementalAssetSpec]] = {
         title="Coding habits",
         required_markers=("Coding habits", "Focus", "Peak hour"),
     ),
+    # Unused for README emit. Kept so coverage and CLI tests can still
+    # exercise the GitHub-event helpers; generate never writes this file.
     "activity": SupplementalAssetSpec(
         asset_name="metrics-activity",
         title="Recent activity",
@@ -573,15 +575,18 @@ def _supplemental_svg_css(*, accent: str, accent_dark: str) -> str:
             f".meta {{ fill: var(--meta-color); font: 400 12px {FONT_FAMILY}; }}",
             (
                 ".hero-title { fill: var(--title-color); "
-                f"font: 700 28px {FONT_FAMILY}; }}"
+                f"font: 700 28px {FONT_FAMILY}; "
+                "}"
             ),
             (
                 ".hero-artist { fill: var(--title-color); "
-                f"font: 600 16px {FONT_FAMILY}; }}"
+                f"font: 600 16px {FONT_FAMILY}; "
+                "}"
             ),
             (
                 ".extra-title { fill: var(--title-color); "
-                f"font: 600 13px {FONT_FAMILY}; }}"
+                f"font: 600 13px {FONT_FAMILY}; "
+                "}"
             ),
             ".panel { fill: var(--panel-bg); }",
             ".panel-stroke { fill: none; stroke: var(--card-border); }",
@@ -970,6 +975,8 @@ def _fetch_recent_activity(
     *,
     limit: int = 3,
 ) -> list[dict[str, str]]:
+    # Unused for README emit. GitHub already shows a native activity feed;
+    # this helper remains for tests and local inspection only.
     url = f"{GITHUB_API_BASE}/users/{owner}/events/public?per_page=30"
     try:
         data = _request_json(url, headers=_github_headers(token))
@@ -1010,6 +1017,7 @@ def _fetch_recent_activity(
 
 
 def _render_activity_card(owner: str, events: list[dict[str, str]]) -> SvgBlock:
+    # Unused for README emit. Retained because coverage tests still call it.
     lines = tuple(
         _truncate(f"{event['age']} | {event['summary']}", 84) for event in events[:3]
     )
