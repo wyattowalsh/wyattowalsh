@@ -78,7 +78,7 @@
 <rect x="28" y="56" width="132" height="132" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="hero-title" x="180" y="96">Believe</text>
 <text class="hero-artist" x="180" y="128">Metrik</text>
-<text class="muted" x="180" y="156">Universal Language · 2h ago</text>
+<text class="muted" x="180" y="156">Universal Language · 3h ago</text>
 <g class="music-eq">
 <rect class="eq-bar" x="180" y="176" width="4" height="10" rx="2" fill-opacity="0.85" />
 <rect class="eq-bar" x="188" y="164" width="4" height="22" rx="2" fill-opacity="0.85" />
@@ -99,7 +99,7 @@
 <rect x="12" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="24">02</text>
 <text class="queue-title extra-title" x="88" y="24">Break The Cycle</text>
-<text class="muted" x="88" y="42">Grafix · Break The Cycle [UKF10] · 2h ago</text>
+<text class="muted" x="88" y="42">Grafix · Break The Cycle [UKF10] · 3h ago</text>
 <rect class="panel" x="580" y="0" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="0" width="564" height="58" rx="10" />
 <rect x="592" y="8" width="42" height="42" rx="10" fill="#8250df" />
@@ -108,7 +108,7 @@
 <rect x="592" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="24">03</text>
 <text class="queue-title extra-title" x="668" y="24">Refuge</text>
-<text class="muted" x="668" y="42">Grafix, Ruth Royall · Refuge · 2h ago</text>
+<text class="muted" x="668" y="42">Grafix, Ruth Royall · Refuge · 3h ago</text>
 <rect class="panel" x="0" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="68" width="564" height="58" rx="10" />
 <rect x="12" y="76" width="42" height="42" rx="10" fill="#1a7f37" />
@@ -117,7 +117,7 @@
 <rect x="12" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="92">04</text>
 <text class="queue-title extra-title" x="88" y="92">Closer</text>
-<text class="muted" x="88" y="110">Metrik · Ex Machina · 2h ago</text>
+<text class="muted" x="88" y="110">Metrik · Ex Machina · 3h ago</text>
 <rect class="panel" x="580" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="68" width="564" height="58" rx="10" />
 <rect x="592" y="76" width="42" height="42" rx="10" fill="#8250df" />
@@ -126,7 +126,7 @@
 <rect x="592" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="92">05</text>
 <text class="queue-title extra-title" x="668" y="92">Fatso - VIP</text>
-<text class="muted" x="668" y="110">Metrik · Hospitality in the Park · 2h ago</text>
+<text class="muted" x="668" y="110">Metrik · Hospitality in the Park · 3h ago</text>
 <rect class="panel" x="0" y="136" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="136" width="564" height="58" rx="10" />
 <rect x="12" y="144" width="42" height="42" rx="10" fill="#1a7f37" />

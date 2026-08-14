@@ -135,7 +135,7 @@
 <rect class="peak-tick-on" x="184" y="137" width="11" height="13" rx="2" />
 <rect class="peak-tick-on" x="198" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="212" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick" x="226" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick-on" x="226" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="240" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="254" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="268" y="142" width="11" height="8" rx="2" />
