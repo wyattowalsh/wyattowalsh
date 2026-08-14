@@ -127,7 +127,7 @@ _TECH_STACK_SUMMARY_RE = re.compile(
     r"(?m)(^<details>\n)<summary><strong>.*?</strong></summary>",
 )
 _TECH_STACK_BARE_SUMMARY = "<summary><strong>Tech Stack</strong></summary>"
-# Word clouds end at the open WakaTime image, markers, or a legacy details wrap.
+# Word clouds end at a leftover WakaTime image, markers, or a legacy details wrap.
 _WORD_CLOUDS_WAKA_END_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?="
     r"(?:^<p align=\"center\">\n<img src=\"\.github/assets/img/wakatime\.svg\")"
@@ -138,10 +138,16 @@ _WORD_CLOUDS_WAKA_END_RE = re.compile(
 _WAKATIME_SECTION_RE = re.compile(
     r"(?ms)(<!--START_SECTION:waka-->)(.*?)(<!--END_SECTION:waka-->)",
 )
-_WAKA_DETAILS_PREFIX_RE = re.compile(
-    r"(?s)<details>\s*\n<summary><strong>WakaTime Stats</strong></summary>\s*\n*$"
+_WAKA_IMG_BLOCK_RE = re.compile(
+    r"(?ms)^<p align=\"center\">\s*\n"
+    r"<img src=\"\.github/assets/img/wakatime\.svg\"[^>]*>\s*\n"
+    r"</p>[ \t]*\n?"
 )
-_WAKA_DETAILS_SUFFIX_RE = re.compile(r"(?s)^\s*</details>")
+_WAKA_EMPTY_DETAILS_RE = re.compile(
+    r"(?ms)^<details>\s*\n"
+    r"<summary><strong>WakaTime Stats</strong></summary>\s*\n*"
+    r"</details>[ \t]*\n?"
+)
 _BLOG_DETAILS_RE = re.compile(
     r"(?ms)^<details>\s*\n"
     r"<summary><strong>Latest Blog Posts</strong></summary>\s*\n+"
@@ -1009,9 +1015,12 @@ class ReadmeSectionGenerator:
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
         content = self._rewrite_living_art_section(content)
         content = self._rewrite_tech_stack_teaser(content)
+        # Pull Waka markers out before Metrics rewrite so they are not wiped.
+        content, waka_markers = self._extract_wakatime_markers(content)
+        content = self._strip_wakatime_chrome(content)
         content = self._rewrite_metrics_section(content, readme_path=readme_path)
         content = self._rewrite_word_clouds_section(content)
-        content = self._rewrite_wakatime_section(content)
+        content = self._place_wakatime_in_metrics(content, waka_markers)
         content = self._rewrite_blog_disclosure(content)
         return self._rewrite_view_counter(content)
 
@@ -1213,25 +1222,57 @@ class ReadmeSectionGenerator:
             f"{_WAKATIME_ASSET_SRC} -->\n"
         )
 
-    def _rewrite_wakatime_section(self, content: str) -> str:
-        match = _WAKATIME_SECTION_RE.search(content)
-        if not match:
-            return content
+    def _extract_wakatime_markers(self, content: str) -> tuple[str, str | None]:
+        """Remove Waka marker pairs and return one dump-free pair, if any."""
+        matches = list(_WAKATIME_SECTION_RE.finditer(content))
+        if not matches:
+            return content, None
+        first = matches[0]
         markers = (
-            f"{match.group(1)}"
-            f"{self._wakatime_marker_inner(match.group(2))}"
-            f"{match.group(3)}"
+            f"{first.group(1)}"
+            f"{self._wakatime_marker_inner(first.group(2))}"
+            f"{first.group(3)}"
         )
-        prefix = content[: match.start()]
-        suffix = content[match.end() :]
-        if _WAKA_DETAILS_PREFIX_RE.search(prefix) and _WAKA_DETAILS_SUFFIX_RE.search(
-            suffix
-        ):
-            prefix = _WAKA_DETAILS_PREFIX_RE.sub("", prefix)
-            suffix = _WAKA_DETAILS_SUFFIX_RE.sub("", suffix)
-        if _WAKATIME_ASSET_SRC not in prefix[-500:]:
-            markers = f"{self._wakatime_open_img()}\n\n{markers}"
-        return prefix + markers + suffix
+        for match in reversed(matches):
+            content = content[: match.start()] + content[match.end() :]
+        return content, markers
+
+    def _strip_wakatime_chrome(self, content: str) -> str:
+        """Drop leftover Waka images and empty WakaTime <details> wrappers."""
+        content = _WAKA_IMG_BLOCK_RE.sub("", content)
+        return _WAKA_EMPTY_DETAILS_RE.sub("", content)
+
+    def _place_wakatime_in_metrics(
+        self,
+        content: str,
+        markers: str | None,
+    ) -> str:
+        """Park the open Waka SVG + markers with the other metric cards."""
+        if not markers:
+            return content
+        block = f"{self._wakatime_open_img()}\n\n{markers}\n"
+        metrics_re = compile_section_body_re("Metrics", self._section_order())
+        metrics_match = metrics_re.search(content)
+        if metrics_match:
+            inserted = f"{metrics_match.group(0).rstrip()}\n\n{block}\n"
+            return (
+                content[: metrics_match.start()]
+                + inserted
+                + content[metrics_match.end() :]
+            )
+        word_re = compile_section_body_re("Word Clouds", self._section_order())
+        word_match = word_re.search(content)
+        if word_match:
+            return (
+                f"{content[: word_match.end()].rstrip()}\n\n{block}\n"
+                f"{content[word_match.end() :]}"
+            )
+        return f"{content.rstrip()}\n\n{block}"
+
+    def _rewrite_wakatime_section(self, content: str) -> str:
+        content, markers = self._extract_wakatime_markers(content)
+        content = self._strip_wakatime_chrome(content)
+        return self._place_wakatime_in_metrics(content, markers)
 
     def _rewrite_blog_disclosure(self, content: str) -> str:
         """Keep Latest Blog Posts visible — never wrap the strip in <details>."""

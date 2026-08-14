@@ -201,6 +201,62 @@ def test_waka_and_blog_are_visible_not_details() -> None:
     assert "<details" not in living
 
 
+def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
+    """WakaTime SVG + markers move into Metrics; the markdown dump is dropped."""
+    stale = dedent(
+        """\
+        ## Metrics
+
+        <p align="center">
+        <img src=".github/assets/img/metrics.svg" alt="metrics" width="100%"/>
+        </p>
+
+        ## Word Clouds
+
+        stale word clouds
+
+        <p align="center">
+        <img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+        </p>
+
+        <details>
+        <summary><strong>WakaTime Stats</strong></summary>
+
+        <!--START_SECTION:waka-->
+        **This Week I Spent My Time On**
+        <!--END_SECTION:waka-->
+
+        </details>
+        """
+    )
+    generator = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(
+            featured_repos=[],
+            social_links=[],
+            section_order=[
+                "Featured Projects",
+                "Metrics",
+                "Living Art",
+                "Tech Stack",
+                "Word Clouds",
+            ],
+        ),
+    )
+    rendered = generator._rewrite_wakatime_section(stale)
+    metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
+    word_clouds = rendered.split("## Word Clouds", 1)[1]
+
+    assert "This Week I Spent My Time On" not in rendered
+    assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
+    assert "<details" not in rendered
+    assert 'src=".github/assets/img/wakatime.svg"' in metrics
+    assert "<!--START_SECTION:waka-->" in metrics
+    assert "<!--END_SECTION:waka-->" in metrics
+    assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
+    assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
+    assert "## Waka" not in rendered
+
+
 def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     """Generator rewrites emit wrap-flow Living Art and strip tech teasers."""
     stale = dedent(

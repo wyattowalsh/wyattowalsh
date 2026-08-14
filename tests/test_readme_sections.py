@@ -1363,6 +1363,11 @@ class TestRendering:
         assert "full parsed source lists" in rendered
         assert '<p align="center"><sub>Topic and language clouds generated' in rendered
         assert "<td" not in rendered
+        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
+        word_clouds = rendered.split("## Word Clouds", 1)[1]
+        assert 'src=".github/assets/img/wakatime.svg"' in metrics
+        assert "<!--START_SECTION:waka-->" in metrics
+        assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
 
     def test_generate_hides_stale_wakatime_block_until_fresh_output_exists(
         self,
@@ -1402,6 +1407,8 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
+        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
+        word_clouds = rendered.split("## Word Clouds", 1)[1]
 
         assert "This Week I Spent My Time On" not in rendered
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
@@ -1409,9 +1416,14 @@ class TestRendering:
             "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
             in rendered
         )
-        assert 'src=".github/assets/img/wakatime.svg"' in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' in metrics
+        assert "<!--START_SECTION:waka-->" in metrics
+        assert "<!--END_SECTION:waka-->" in metrics
+        assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
+        assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
         assert "<details" not in rendered
+        assert "## Waka" not in rendered
 
     def test_generate_preserves_healthy_wakatime_output_without_timestamp(
         self,
@@ -1459,6 +1471,8 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
+        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
+        word_clouds = rendered.split("## Word Clouds", 1)[1]
 
         assert "This Week I Spent My Time On" not in rendered
         assert "Programming Languages:" not in rendered
@@ -1466,9 +1480,86 @@ class TestRendering:
             "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
             in rendered
         )
-        assert 'src=".github/assets/img/wakatime.svg"' in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' in metrics
+        assert "<!--START_SECTION:waka-->" in metrics
+        assert "<!--END_SECTION:waka-->" in metrics
+        assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
+        assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
         assert "<details" not in rendered
+        assert "## Waka" not in rendered
+
+    def test_generate_keeps_wakatime_grouped_with_metrics_cards(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Metrics
+
+                <p align="center">
+                <img src=".github/assets/img/metrics.svg" alt="metrics" width="100%"/>
+                </p>
+
+                <p align="center">
+                <img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
+                </p>
+
+                <!--START_SECTION:waka-->
+                **This Week I Spent My Time On**
+                <!--END_SECTION:waka-->
+
+                ## Word Clouds
+
+                stale word clouds
+                """
+            ),
+            encoding="utf-8",
+        )
+        metrics_dir = tmp_path / ".github" / "assets" / "img"
+        metrics_dir.mkdir(parents=True)
+        valid_svg = (
+            '<svg xmlns="http://www.w3.org/2000/svg">'
+            '<text x="1" y="20">Healthy metrics</text></svg>'
+        )
+        (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
+
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+                section_order=[
+                    "Featured Projects",
+                    "Metrics",
+                    "Living Art",
+                    "Tech Stack",
+                    "Word Clouds",
+                ],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+
+        generator.generate()
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
+        word_clouds = rendered.split("## Word Clouds", 1)[1]
+
+        assert "This Week I Spent My Time On" not in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' in metrics
+        assert "<!--START_SECTION:waka-->" in metrics
+        assert "<!--END_SECTION:waka-->" in metrics
+        assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
+        assert rendered.count("<!--START_SECTION:waka-->") == 1
+        assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
+        assert metrics.index(".github/assets/img/metrics.svg") < metrics.index(
+            ".github/assets/img/wakatime.svg"
+        )
 
     def test_generate_unwraps_blog_and_restyles_view_counter(
         self,
