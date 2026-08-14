@@ -19,6 +19,7 @@ Usage::
 from __future__ import annotations
 
 import os
+import subprocess
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -327,6 +328,59 @@ def _assemble_gif(
     return output_path
 
 
+def _export_mp4(gif_path: Path) -> Path | None:
+    """Write a sibling H.264 MP4 when ``ffmpeg`` is on PATH.
+
+    Uses yuv420p, ``+faststart``, and CRF 23. Missing ffmpeg or encoder
+    failures are logged and skipped so the GIF contract is unchanged.
+    """
+    mp4_path = gif_path.with_suffix(".mp4")
+    command = [
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        str(gif_path),
+        "-an",
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        "-crf",
+        "23",
+        "-vf",
+        "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        "-movflags",
+        "+faststart",
+        str(mp4_path),
+    ]
+    try:
+        subprocess.run(command, check=True, capture_output=True, timeout=180)
+    except FileNotFoundError:
+        logger.info("ffmpeg not on PATH; skipping MP4 export for {}", gif_path.name)
+        return None
+    except subprocess.CalledProcessError as exc:
+        logger.warning(
+            "ffmpeg failed for {} (exit {}); skipping MP4",
+            gif_path.name,
+            exc.returncode,
+        )
+        mp4_path.unlink(missing_ok=True)
+        return None
+    except subprocess.TimeoutExpired:
+        logger.warning("ffmpeg timed out for {}; skipping MP4", gif_path.name)
+        mp4_path.unlink(missing_ok=True)
+        return None
+    if not mp4_path.is_file() or mp4_path.stat().st_size == 0:
+        logger.warning("ffmpeg produced no MP4 for {}; skipping", gif_path.name)
+        mp4_path.unlink(missing_ok=True)
+        return None
+    logger.info("Wrote {}", mp4_path.name)
+    return mp4_path
+
+
 # ---------------------------------------------------------------------------
 # Main orchestrator
 # ---------------------------------------------------------------------------
@@ -474,10 +528,11 @@ def render_timelapse(
             logger.error("No valid frames rendered for {}", style)
             continue
 
-        # Assemble GIF
+        # Assemble GIF (exact-six contract). Optional MP4 sibling never fails the GIF.
         gif_path = out_dir / f"living-{style}.gif"
         _assemble_gif(valid_frames, valid_durations, gif_path)
         outputs.append(gif_path)
+        _export_mp4(gif_path)
 
         style_elapsed = time.monotonic() - style_start
         logger.info("{} completed in {:.1f}s", style, style_elapsed)

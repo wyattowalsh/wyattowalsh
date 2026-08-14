@@ -31,12 +31,12 @@ import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .metrics_svg import validate_svg_file
+from .readme_separators import generate_separators
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
     SvgBlock,
     SvgBlockRenderer,
-    SvgBlogBoardRenderer,
     SvgBlogCardRenderer,
     SvgCard,
     SvgCardFamily,
@@ -107,17 +107,32 @@ def _neighbor_lookahead(order: Sequence[str], title: str) -> str:
     else:
         following = list(order[index + 1 :])
     parts = [rf"^## {re.escape(name)}\n" for name in following]
+    parts.extend(rf"^<!-- ## {re.escape(name)} -->\n" for name in following)
     # Always allow any subsequent H2 or EOF as a safety end-anchor so rewrites
     # do not run away if order config drifts from the live README.
     parts.append(r"^## ")
+    parts.append(r"^<!-- ## ")
     parts.append(r"\Z")
     return "(?:" + "|".join(parts) + ")"
 
 
 def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]:
-    """Match ``## Title`` through (not including) the next ordered neighbor."""
+    """Match ``## Title`` or a comment stand-in through the next neighbor."""
     end = _neighbor_lookahead(order, title)
-    return re.compile(rf"(?ms)^## {re.escape(title)}\n.*?(?={end})")
+    heading = (
+        rf"(?:^## {re.escape(title)}\n|"
+        rf"^<!-- ## {re.escape(title)} -->\n)"
+    )
+    return re.compile(rf"(?ms){heading}.*?(?={end})")
+
+
+def section_separator_block(title: str, filename: str) -> str:
+    """Visible unique SVG rule plus a comment heading the rewriter can find."""
+    return (
+        f'<p align="center"><img src=".github/assets/img/readme/{filename}" '
+        f'alt="{escape(title)}" width="100%" loading="lazy"/></p>\n'
+        f"<!-- ## {title} -->\n"
+    )
 
 
 # Tech stack teaser strip is anchored to the full-stack details block, not H2 order.
@@ -991,6 +1006,7 @@ class ReadmeSectionGenerator:
             self._render_blog_posts(),
         )
         content = self._postprocess_static_sections(content, readme_path=readme_path)
+        generate_separators()
         readme_path.write_text(content, encoding="utf-8")
         return readme_path
 
@@ -1027,7 +1043,36 @@ class ReadmeSectionGenerator:
         content = self._rewrite_word_clouds_section(content)
         content = self._place_wakatime_in_metrics(content, waka_markers)
         content = self._rewrite_blog_disclosure(content)
+        content = self._normalize_section_separators(content)
         return self._rewrite_view_counter(content)
+
+    def _normalize_section_separators(self, content: str) -> str:
+        """Keep one unique SVG separator plus a comment heading per section."""
+        mapping = (
+            ("Featured Projects", "sep-featured.svg"),
+            ("Metrics", "sep-metrics.svg"),
+            ("Living Art", "sep-living.svg"),
+            ("Tech Stack", "sep-tech.svg"),
+            ("Word Clouds", "sep-clouds.svg"),
+            ("Latest Blog Posts", "sep-blog.svg"),
+        )
+        leading_seps = (
+            r'(?:<p align="center"><img src="\.github/assets/img/readme/'
+            r'sep-[a-z]+\.svg"[^>]*></p>\s*)*'
+        )
+        for title, filename in mapping:
+            heading = (
+                rf"^(?:## {re.escape(title)}\s*|"
+                rf"<!-- ## {re.escape(title)} -->)"
+            )
+            content = re.sub(
+                rf"{leading_seps}{heading}",
+                section_separator_block(title, filename),
+                content,
+                count=1,
+                flags=re.M,
+            )
+        return content
 
     def _rewrite_living_art_section(self, content: str) -> str:
         items = [
@@ -1063,18 +1108,16 @@ class ReadmeSectionGenerator:
             ),
         ]
         body_lines = [
-            "## Living Art",
-            "",
-            "Each GIF is a cumulative daily timelapse: frame *t* is rendered "
-            "from the GitHub state available through day *t*, so repositories, "
-            "stars, releases, and contribution history accrete over time.",
-            "",
+            section_separator_block("Living Art", "sep-living.svg"),
             '<p align="center">',
         ]
         for title, filename, alt_suffix in items:
+            stem = filename.removesuffix(".gif")
+            poster = f".github/assets/img/{filename}"
+            film = f".github/assets/img/{stem}.mp4"
             body_lines.append(
-                f'<a href=".github/assets/img/{filename}">'
-                f'<img src=".github/assets/img/{filename}" width="360" '
+                f'<a href="{film}">'
+                f'<img src="{poster}" width="360" '
                 f'alt="{escape(title)} - {escape(alt_suffix)}" '
                 f'loading="lazy"/></a>'
             )
@@ -1089,7 +1132,11 @@ class ReadmeSectionGenerator:
     def _rewrite_tech_stack_teaser(self, content: str) -> str:
         """Drop category teaser shields; keep a bare-label collapsible stack."""
         if _TECH_STACK_TEASER_RE.search(content):
-            content = _TECH_STACK_TEASER_RE.sub("## Tech Stack\n\n", content, count=1)
+            content = _TECH_STACK_TEASER_RE.sub(
+                section_separator_block("Tech Stack", "sep-tech.svg") + "\n",
+                content,
+                count=1,
+            )
         tech_re = compile_section_body_re("Tech Stack", self._section_order())
         match = tech_re.search(content)
         if not match:
@@ -1117,31 +1164,46 @@ class ReadmeSectionGenerator:
         img = ReadmeSectionGenerator._gfm_img_tag(src=src, alt=alt, width=width)
         return f'<p align="center">\n{img}\n</p>'
 
+    @staticmethod
+    def _gfm_two_col_imgs(
+        left: tuple[str, str],
+        right: tuple[str, str],
+    ) -> str:
+        """Render two images at half page width (zoomed-out pair)."""
+        left_img = ReadmeSectionGenerator._gfm_img_tag(
+            src=left[0], alt=left[1], width="100%"
+        )
+        right_img = ReadmeSectionGenerator._gfm_img_tag(
+            src=right[0], alt=right[1], width="100%"
+        )
+        return (
+            "<table><tr>\n"
+            f'<td width="50%" valign="top">{left_img}</td>\n'
+            f'<td width="50%" valign="top">{right_img}</td>\n'
+            "</tr></table>"
+        )
+
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
         metrics_dir = readme_path.parent / ".github" / "assets" / "img"
         body_lines = [
-            self._gfm_centered_img(
-                src=".github/assets/img/metrics.svg",
-                alt=(
+            section_separator_block("Metrics", "sep-metrics.svg"),
+            self._gfm_two_col_imgs(
+                (
+                    ".github/assets/img/metrics.svg",
                     "GitHub metrics: contributions, languages, topics, "
-                    "and community signals"
+                    "and community signals",
                 ),
-                width="100%",
-            ),
-            "",
-            self._gfm_centered_img(
-                src=".github/assets/img/metrics.additional.svg",
-                alt=(
-                    "Additional metrics: featured repositories, recently starred "
-                    "repositories, stargazers, and people"
+                (
+                    ".github/assets/img/metrics.additional.svg",
+                    "Additional metrics: recently starred repositories, "
+                    "stargazers, and people",
                 ),
-                width="100%",
             ),
             "",
             self._gfm_centered_img(
                 src=".github/assets/img/metrics.extra.svg",
                 alt=("Extra metrics: comment reactions and issue/PR follow-up"),
-                width="100%",
+                width="49%",
             ),
         ]
 
@@ -1151,20 +1213,37 @@ class ReadmeSectionGenerator:
             if validate_svg_file(metrics_dir / filename).is_valid
         ]
         if valid_supplemental_assets:
-            for filename, alt_text in valid_supplemental_assets:
-                body_lines.extend(
-                    [
-                        "",
-                        self._gfm_centered_img(
-                            src=f".github/assets/img/{filename}",
-                            alt=alt_text,
-                            width="100%",
-                        ),
-                    ]
-                )
+            paired = list(valid_supplemental_assets)
+            index = 0
+            while index < len(paired):
+                left_name, left_alt = paired[index]
+                if index + 1 < len(paired):
+                    right_name, right_alt = paired[index + 1]
+                    body_lines.extend(
+                        [
+                            "",
+                            self._gfm_two_col_imgs(
+                                (f".github/assets/img/{left_name}", left_alt),
+                                (f".github/assets/img/{right_name}", right_alt),
+                            ),
+                        ]
+                    )
+                    index += 2
+                else:
+                    body_lines.extend(
+                        [
+                            "",
+                            self._gfm_centered_img(
+                                src=f".github/assets/img/{left_name}",
+                                alt=left_alt,
+                                width="49%",
+                            ),
+                        ]
+                    )
+                    index += 1
 
         body = "\n".join(body_lines)
-        replacement = f"## Metrics\n\n{body}\n\n"
+        replacement = f"{body}\n\n"
         metrics_re = compile_section_body_re("Metrics", self._section_order())
         if not metrics_re.search(content):
             logger.warning("Metrics section heading not found in README.")
@@ -1173,33 +1252,39 @@ class ReadmeSectionGenerator:
 
     def _rewrite_word_clouds_section(self, content: str) -> str:
         body_lines = [
-            "## Word Clouds",
-            "",
-            self._gfm_centered_img(
-                src=".github/assets/img/wordcloud_typographic_by_topics.svg",
-                alt=(
-                    "Typographic word cloud of GitHub topics with every parsed "
-                    "topic term preserved"
+            section_separator_block("Word Clouds", "sep-clouds.svg"),
+            self._gfm_two_col_imgs(
+                (
+                    ".github/assets/img/wordcloud_typographic_by_topics.svg",
+                    "Fractal word cloud of GitHub topics sized by starred-repo share",
                 ),
-                width="100%",
-            ),
-            "",
-            self._gfm_centered_img(
-                src=".github/assets/img/wordcloud_typographic_by_languages.svg",
-                alt=(
-                    "Typographic word cloud of GitHub languages with every parsed "
-                    "language term preserved"
+                (
+                    ".github/assets/img/wordcloud_typographic_by_languages.svg",
+                    (
+                        "Fractal word cloud of GitHub languages "
+                        "sized by starred-repo share"
+                    ),
                 ),
-                width="100%",
-            ),
-            "",
-            (
-                '<p align="center"><sub>Topic and language clouds generated from '
-                "the full parsed source lists; every term is preserved in a "
-                "stable typographic layout sized by frequency.</sub></p>"
             ),
             "",
         ]
+        reel = Path(".github/assets/img/wordcloud_fractal_reel.mp4")
+        readme_root = Path(self.settings.readme_path).expanduser().resolve().parent
+        if reel.is_file() or (readme_root / reel).is_file():
+            topics_src = ".github/assets/img/wordcloud_typographic_by_topics.svg"
+            reel_href = ".github/assets/img/wordcloud_fractal_reel.mp4"
+            body_lines.extend(
+                [
+                    (
+                        '<p align="center">'
+                        f'<a href="{reel_href}">'
+                        f'<img src="{topics_src}" '
+                        'alt="Slow slideshow of fractal topic and language clouds" '
+                        'width="72%" loading="lazy"/></a></p>'
+                    ),
+                    "",
+                ]
+            )
         replacement = "\n".join(body_lines)
         # Prefer Waka details end-anchor when present; else neighbor H2 order.
         word_re = (
@@ -1287,10 +1372,16 @@ class ReadmeSectionGenerator:
                 content,
                 count=1,
             )
-        if self.BLOG_START in content and "## Latest Blog Posts" not in content:
+        has_blog_heading = bool(
+            re.search(
+                r"(?m)^(?:## Latest Blog Posts\s*|<!-- ## Latest Blog Posts -->)\s*$",
+                content,
+            )
+        )
+        if self.BLOG_START in content and not has_blog_heading:
             content = content.replace(
                 self.BLOG_START,
-                f"## Latest Blog Posts\n\n{self.BLOG_START}",
+                f"<!-- ## Latest Blog Posts -->\n{self.BLOG_START}",
                 1,
             )
         return content
@@ -2285,50 +2376,58 @@ class ReadmeSectionGenerator:
                 accent=accent,
             )
             svg_cards.append(card)
-            meta_bits = [bit for bit in card_meta if bit]
+            extras = [bit for bit in (published, summary) if bit]
             line = f"- [{escape(clean_title)}]({escape(post.url)})"
-            if meta_bits:
-                line += f" — {escape(' · '.join(meta_bits))}"
+            if extras:
+                line += f" — {escape(' · '.join(extras))}"
             fallback_lines.append(line)
         result: list[str] = []
         if self._svg_section_enabled("blog_posts") and svg_cards:
             writer = SvgAssetWriter(
                 output_dir=self.settings.svg.output_dir,
             )
-            board = SvgBlogBoardRenderer().render_board(svg_cards)
-            writer.write(asset_name="blog-posts", svg_content=board)
-            src = (Path(self.settings.svg.output_dir) / "blog-posts.svg").as_posix()
-            featured_url = svg_cards[0].url or feed_url_raw
-            alt_bits: list[str] = []
-            for card in svg_cards[:5]:
-                hook = next(iter(card.lines), "")
-                alt_bits.append(
-                    f"{card.title} · {hook}" if hook else card.title
+            used_assets: set[str] = set()
+            card_embeds: list[tuple[str, str, SvgCard]] = []
+            for index, card in enumerate(svg_cards, start=1):
+                asset = self._make_blog_asset_name(
+                    card=card,
+                    index=index,
+                    used_assets=used_assets,
                 )
-            alt = "Latest blog posts: " + " · ".join(alt_bits)
-            img = self._gfm_img_tag(src=src, alt=alt, width="100%")
-            result.append(
-                f'<p align="center"><a href="{escape(featured_url)}" '
-                f'target="_blank" rel="noopener noreferrer">{img}</a></p>'
-            )
-            link_bits = []
-            for card in svg_cards:
-                title = escape(card.title)
-                url = escape(card.url or "#")
-                published = next(
-                    (
-                        bit.removeprefix("Published ").strip()
-                        for bit in (card.meta or ())
-                        if bit.startswith("Published ")
+                writer.write(
+                    asset_name=asset,
+                    svg_content=self._render_card_svg_asset(
+                        family="blog",
+                        card=card,
+                        width=360,
+                        height=150,
+                        section_title="Latest Blog Posts",
                     ),
-                    "",
                 )
-                label = title if not published else f"{title} — {escape(published)}"
+                src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
+                card_embeds.append((card.url or feed_url_raw, src, card))
+            result.append('<p align="center">')
+            for url, src, card in card_embeds:
+                img = self._gfm_img_tag(
+                    src=src,
+                    alt=self._blog_card_caption(card),
+                    width="360",
+                )
+                result.append(
+                    f'<a href="{escape(url)}" target="_blank" '
+                    f'rel="noopener noreferrer">{img}</a>'
+                )
+            result.append("</p>")
+            link_bits = []
+            for url, _src, card in card_embeds:
                 link_bits.append(
-                    f'<a href="{url}" target="_blank" '
-                    f'rel="noopener noreferrer">{label}</a>'
+                    f'<a href="{escape(url)}" target="_blank" '
+                    f'rel="noopener noreferrer">'
+                    f"{escape(self._blog_card_caption(card))}</a>"
                 )
             result.append('<p align="center">' + " · ".join(link_bits) + "</p>")
+        elif fallback_lines:
+            result.append(self._wrap_blog_post_list_markers(fallback_lines))
         result.append(
             f'<p align="center"><sub>Auto-updated from '
             f'<a href="{feed_url}">RSS feed</a></sub></p>'
@@ -2765,3 +2864,26 @@ class ReadmeSectionGenerator:
         """Wrap the fallback blog list in manager markers (never <details>)."""
         inner = "\n".join(lines)
         return f"<!-- BLOG-POST-LIST:START -->\n{inner}\n<!-- BLOG-POST-LIST:END -->"
+
+    @staticmethod
+    def _blog_published(card: SvgCard) -> str:
+        return next(
+            (
+                bit.removeprefix("Published ").strip()
+                for bit in (card.meta or ())
+                if bit.startswith("Published ")
+            ),
+            "",
+        )
+
+    @staticmethod
+    def _blog_card_caption(card: SvgCard) -> str:
+        """Visible title + date + hook used for alt text and the link row."""
+        parts = [card.title]
+        published = ReadmeSectionGenerator._blog_published(card)
+        if published:
+            parts.append(published)
+        hook = next(iter(card.lines), "")
+        if hook:
+            parts.append(hook)
+        return " · ".join(parts)

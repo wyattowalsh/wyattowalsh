@@ -35,7 +35,13 @@ logger = get_logger(module=__name__)
 # ---------------------------------------------------------------------------
 
 RendererName = Literal[
-    "classic", "wordle", "clustered", "typographic", "shaped", "metaheuristic-anim"
+    "classic",
+    "wordle",
+    "clustered",
+    "typographic",
+    "shaped",
+    "fractal",
+    "metaheuristic-anim",
 ]
 
 # Default paths used by CLI (restored for backwards compat)
@@ -59,6 +65,7 @@ RENDERER_CHOICES: list[str] = [
     "clustered",
     "typographic",
     "shaped",
+    "fractal",
     "metaheuristic-anim",
     "all",
 ]
@@ -330,6 +337,9 @@ def generate_word_cloud(
     else:
         if color_func_name is None:
             color_func_name = _SOURCE_COLOR_DEFAULTS.get(source, "gradient")
+        extra: dict[str, object] = {}
+        if renderer == "fractal":
+            extra["shape"] = "koch" if source == "topics" else "dragon"
         _generate_svg(
             renderer,
             frequencies,
@@ -341,6 +351,7 @@ def generate_word_cloud(
             palette_tokenization=palette_tokenization,
             color_palette_override=color_palette_override,
             style_variant=style_variant,
+            **extra,
         )
 
     return out

@@ -1,8 +1,8 @@
 """Fact-id named checks for profile-readme-overhaul automatedVerification facts.
 
-These lock the automatable subset. Residuals (github.com/camo, live Waka API,
-habits panel missing from metrics.svg, G-DEV) are recorded in
-goals/profile-readme-overhaul/inventory/I99.md — they are not claimed here.
+These lock the automatable subset. Residual tests below record the current
+origin/dev preview holes (they are not a claim that the fact holds). Full
+prose is in goals/profile-readme-overhaul/inventory/I99.md.
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ from scripts.readme_sections import (
     _SUPPLEMENTAL_METRICS_ASSETS,
     _WAKATIME_ASSET_SRC,
 )
+from scripts.skills import MAX_SHIELDS_BADGE_URL_LENGTH
 from scripts.wakatime_readme import (
     DEFAULT_WAKATIME_SVG_PATH,
     is_leisure_or_unprofessional,
@@ -38,6 +39,10 @@ from tests.test_profile_workflow import (
     _job_block,
     _lowlighter_with_blocks,
     _workflow_text,
+)
+from tests.test_readme_gfm_ux import (
+    assert_visible_or_comment_heading,
+    slice_between_headings,
 )
 from tests.test_skills import iter_skills
 from tests.test_wakatime_svg import _PRIVATE_AND_LEISURE
@@ -204,13 +209,12 @@ def test_fact_no_200_copy_readme_summary_is_bare() -> None:
 
 
 def test_fact_tech_details_stack_collapsed_waka_visible() -> None:
-    """fact-tech-details: stack in <details>; Waka <img> is open-flow.
-
-    Does not require the SVG to sit inside ## Metrics (current README places
-    it after ## Word Clouds).
-    """
+    """fact-tech-details: stack in <details>; Waka <img> is open-flow in Metrics."""
     readme = _readme()
-    assert f'src="{_WAKATIME_ASSET_SRC}"' in readme
+    assert_visible_or_comment_heading(readme, "Metrics")
+    metrics = slice_between_headings(readme, "Metrics", "Living Art")
+    assert f'src="{_WAKATIME_ASSET_SRC}"' in metrics
+    assert "This Week I Spent My Time On" not in readme
     details_blocks = _DETAILS_RE.findall(readme)
     assert details_blocks
     assert any("<!-- SKILLS:START -->" in block for block in details_blocks)
@@ -231,7 +235,7 @@ def test_fact_badges_stack_https_homepages_and_camo_safe_srcs() -> None:
 
 
 def test_fact_badges_qa_readme_hrefs_zip_catalog_and_src_lengths() -> None:
-    """fact-badges-qa: first-party boards name every catalog skill."""
+    """fact-badges-qa: README shields name every catalog skill with camo-safe srcs."""
     catalog = list(iter_skills(load_skills()))
     block = _skills_block(_readme())
     images = re.findall(r'<img alt="([^"]+)" src="([^"]+)"', block)
@@ -241,9 +245,8 @@ def test_fact_badges_qa_readme_hrefs_zip_catalog_and_src_lengths() -> None:
         assert skill.name in joined_alts
     for _alt, src in images:
         decoded = unescape(src)
-        assert decoded.startswith(".github/assets/img/readme/tech-")
-        assert decoded.endswith(".svg")
-        assert Path(decoded).is_file()
+        assert decoded.startswith("https://img.shields.io/badge/")
+        assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
 
 
 def test_fact_wordclouds_exactly_two_typographic_volume_sources() -> None:
@@ -255,10 +258,12 @@ def test_fact_wordclouds_exactly_two_typographic_volume_sources() -> None:
         r'src="(\.github/assets/img/wordcloud_[^"]+)"',
         readme,
     )
-    assert cloud_srcs == [
+    expected = (
         ".github/assets/img/wordcloud_typographic_by_topics.svg",
         ".github/assets/img/wordcloud_typographic_by_languages.svg",
-    ]
+    )
+    assert list(dict.fromkeys(cloud_srcs)) == list(expected)
+    assert set(cloud_srcs) <= set(expected)
     for path in _SHIPPED_CLOUDS:
         assert path.is_file()
         assert path.stat().st_size > 0
@@ -315,8 +320,8 @@ def test_fact_blog_visible_rss_strip_not_details() -> None:
     blog = readme[start:end]
     assert "<details" not in blog.lower()
     assert "<summary><strong>Latest Blog Posts</strong></summary>" not in readme
-    assert "## Latest Blog Posts" in readme
-    assert "blog-posts.svg" in blog
+    assert_visible_or_comment_heading(readme, "Latest Blog Posts")
+    assert re.search(r"blog-(?:posts|[a-z0-9-]+)\.svg", blog)
     hrefs = re.findall(r'<a href="([^"]+)"', blog)
     assert len(hrefs) >= 4
     for href in hrefs:
@@ -335,3 +340,110 @@ def test_fact_views_komarev_for_the_badge() -> None:
     workflow = _workflow_text()
     assert "view-counter" not in workflow
     assert "ghpvc" not in _job_block(workflow, "generate-profile-metrics")
+
+
+def test_fact_ship_dev_on_push_is_dev_and_finalize_refuses_main() -> None:
+    """fact-ship-dev: on.push is dev-only; finalize refuses non-dev."""
+    text = _workflow_text()
+    push_match = re.search(
+        r"(?ms)^  push:\n    branches:\n((?:      - [^\n]+\n)+)",
+        text,
+    )
+    assert push_match is not None
+    push_branches = re.findall(r"- (\S+)", push_match.group(1))
+    assert push_branches == ["dev"]
+    assert "main" not in push_branches
+    finalize = _job_block(text, "finalize")
+    assert "TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}" in finalize
+    assert 'if [ "${TARGET_BRANCH}" != "dev" ]; then' in finalize
+    assert "Profile publication is restricted to refs/heads/dev" in finalize
+    assert "github.ref == 'refs/heads/dev'" in finalize
+    assert re.search(r'(?m)^\s*-\s*cron:\s*"0 1 \* \* \*"', text)
+
+
+def test_fact_habits_both_primary_metrics_svg_lacks_habits_panel() -> None:
+    """fact-habits-both residual: committed metrics.svg has no plugin_habits panel."""
+    primary = Path(".github/assets/img/metrics.svg").read_text(encoding="utf-8")
+    lowered = primary.lower()
+    assert "recent coding habits" not in lowered
+    assert "plugin_habits" not in lowered
+    assert not re.search(r"\bhabits?\b", lowered)
+
+
+def test_fact_lowlighter_maximal_committed_preview_residuals() -> None:
+    """fact-lowlighter-maximal residual: committed SVGs are not YAML-maximal."""
+    primary = Path(".github/assets/img/metrics.svg").read_text(encoding="utf-8")
+    additional = Path(".github/assets/img/metrics.additional.svg").read_text(
+        encoding="utf-8"
+    )
+    assert "2 Languages" in primary
+    assert "Python" in primary
+    assert "100%" in primary
+    assert 'viewBox="0,0 795,130"' in primary
+    assert ">2026</text>" in primary
+    assert "No recent contributions matching filters found" in primary
+    assert "Recently starred" not in additional
+    assert "Stargazers" not in additional
+    assert "Featured repositories" in additional
+    assert 'class="people"' in additional
+
+
+def test_fact_lowlighter_audit_extra_followup_has_nan_bars() -> None:
+    """fact-lowlighter-audit residual: extra is live, but followup bars are NaN."""
+    extra = Path(".github/assets/img/metrics.extra.svg").read_text(encoding="utf-8")
+    assert "Overall issues and pull requests status" in extra
+    assert 'x="NaN"' in extra
+    assert "will be regenerated" not in extra.lower()
+
+
+def test_fact_badges_stack_readme_shields_link_https_homepages() -> None:
+    """fact-badges-stack: shipped SKILLS block wraps each shield in a homepage href."""
+    catalog = list(iter_skills(load_skills()))
+    assert len(catalog) == 151
+    block = _skills_block(_readme())
+    hrefs = [unescape(href) for href in re.findall(r'<a href="([^"]+)"', block)]
+    assert hrefs
+    for href in hrefs:
+        assert href.startswith("https://")
+    for skill in catalog:
+        homepage = (skill.url or "").strip()
+        assert homepage.startswith("https://"), skill.name
+        assert homepage in block
+    images = re.findall(r'<img alt="([^"]+)" src="([^"]+)"', block)
+    wrapped = re.findall(
+        r'<a href="(https://[^"]+)"><img alt="([^"]+)" src="([^"]+)"',
+        block,
+    )
+    assert images
+    assert wrapped
+    assert len(wrapped) == len(images)
+
+
+def test_fact_waka_svg_committed_platforms_are_mac_only() -> None:
+    """fact-waka-svg residual: committed Platforms row is Mac only (no iOS/watchOS)."""
+    svg = Path(".github/assets/img/wakatime.svg").read_text(encoding="utf-8")
+    assert "Platforms" in svg
+    assert ">Mac</text>" in svg
+    assert "iOS" not in svg
+    assert "watchOS" not in svg
+
+
+def test_fact_blog_committed_readme_is_linked_cards_with_hooks() -> None:
+    """fact-blog: 4–5 homepage-linked cards, each with a date and hook."""
+    readme = _readme()
+    start = readme.index("<!-- README:BLOG_POSTS:START -->")
+    end = readme.index("<!-- README:BLOG_POSTS:END -->")
+    blog = readme[start:end]
+    assert "<details" not in blog.lower()
+    wraps = re.findall(
+        r'<a href="([^"]+)"[^>]*>\s*<img src="([^"]+)"',
+        blog,
+    )
+    assert len(wraps) >= 4
+    for href, src in wraps:
+        assert "w4w.dev/blog" in unescape(href)
+        assert src.startswith(".github/assets/img/readme/blog-")
+        assert src.endswith(".svg")
+        assert Path(src).is_file()
+    assert len(re.findall(r"20\d{2}-\d{2}-\d{2}", blog)) >= 4
+    assert " · " in blog

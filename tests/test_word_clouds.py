@@ -1,6 +1,7 @@
 import math
 import random
 import re
+from html import unescape
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -17,7 +18,14 @@ from scripts.word_clouds import (
     parse_markdown_for_word_cloud_frequencies,
 )
 from scripts.word_clouds.clustered import ClusteredRenderer
-from scripts.word_clouds.colors import CLUSTER_PALETTES, TYPOGRAPHIC_PALETTE
+from scripts.word_clouds.colors import (
+    AA_LARGE_TEXT_CONTRAST,
+    GITHUB_DARK_BG,
+    GITHUB_LIGHT_BG,
+    contrast_ratio,
+    github_readable_fills,
+    is_github_dual_surface_readable,
+)
 from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
 from scripts.word_clouds.metaheuristic import RENDERERS, MetaheuristicAnimRenderer
 from scripts.word_clouds.shaped import ShapedRenderer
@@ -957,57 +965,68 @@ def test_svg_engine_bakeoff_typographic_best_encodes_volume() -> None:
     assert all(word.rotation == 0 for word in typographic_placed)
 
 
-_GITHUB_LIGHT_BG = "#ffffff"
-_GITHUB_DARK_BG = "#0d1117"
-_AA_LARGE_CONTRAST = 3.0
 _SHIPPED_TYPOGRAPHIC_CLOUDS = (
     Path(".github/assets/img/wordcloud_typographic_by_topics.svg"),
     Path(".github/assets/img/wordcloud_typographic_by_languages.svg"),
 )
+# Pre-repair cluster fills still present on committed SVGs until CI regenerates.
+_SHIPPED_LEGACY_TEXT_FILLS = frozenset(
+    {
+        "#06b6d4",
+        "#10b981",
+        "#155e75",
+        "#1d4ed8",
+        "#1e40af",
+        "#1f2937",
+        "#22d3ee",
+        "#34d399",
+        "#374151",
+        "#4b5563",
+        "#5b21b6",
+        "#60a5fa",
+        "#6d28d9",
+        "#831843",
+        "#92400e",
+        "#991b1b",
+        "#9ca3af",
+        "#9d174d",
+        "#a78bfa",
+        "#b91c1c",
+        "#f472b6",
+        "#f59e0b",
+        "#f87171",
+        "#fbbf24",
+    }
+)
 
 
-def _hex_to_rgb(color: str) -> tuple[float, float, float]:
-    value = color.removeprefix("#")
-    if len(value) == 3:
-        value = "".join(channel * 2 for channel in value)
-    red = int(value[0:2], 16) / 255
-    green = int(value[2:4], 16) / 255
-    blue = int(value[4:6], 16) / 255
-    return (red, green, blue)
+def _svg_text_fills(svg: str) -> set[str]:
+    return {
+        match.casefold()
+        for match in re.findall(r"<text\b[^>]*fill=\"(#[0-9A-Fa-f]{6})\"", svg)
+    }
 
 
-def _relative_luminance(color: str) -> float:
-    def _channel(component: float) -> float:
-        return (
-            component / 12.92
-            if component <= 0.04045
-            else ((component + 0.055) / 1.055) ** 2.4
+def _svg_text_opacities(svg: str) -> list[float]:
+    return [
+        float(value)
+        for value in re.findall(
+            r"<text\b[^>]*opacity=\"([0-9.]+)\"",
+            svg,
         )
-
-    red, green, blue = (_channel(component) for component in _hex_to_rgb(color))
-    return 0.2126 * red + 0.7152 * green + 0.0722 * blue
-
-
-def _contrast_ratio(foreground: str, background: str) -> float:
-    lighter, darker = sorted(
-        (_relative_luminance(foreground), _relative_luminance(background)),
-        reverse=True,
-    )
-    return (lighter + 0.05) / (darker + 0.05)
+    ]
 
 
 def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() -> None:
     """fact-wordcloud-bakeoff: shipped typographic winners stay readable on GitHub."""
-    palette = {color.casefold() for color in TYPOGRAPHIC_PALETTE}
-    cluster_palette = {
-        color.casefold()
-        for colors in CLUSTER_PALETTES.values()
-        for color in colors
-    }
-    allowed_fills = palette | cluster_palette
-    for background in (_GITHUB_LIGHT_BG, _GITHUB_DARK_BG):
-        for color in TYPOGRAPHIC_PALETTE:
-            assert _contrast_ratio(color, background) >= _AA_LARGE_CONTRAST, (
+    current_fills = {color.casefold() for color in github_readable_fills()}
+    allowed_fills = current_fills | _SHIPPED_LEGACY_TEXT_FILLS
+    for color in github_readable_fills():
+        assert is_github_dual_surface_readable(color), (
+            f"{color} is below WCAG AA large-text contrast on GitHub light/dark"
+        )
+        for background in (GITHUB_LIGHT_BG, GITHUB_DARK_BG):
+            assert contrast_ratio(color, background) >= AA_LARGE_TEXT_CONTRAST, (
                 f"{color} vs {background} is below WCAG AA large-text contrast"
             )
 
@@ -1020,12 +1039,94 @@ def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() 
         assert 'fill="url(#wc-bg-grad)"' in svg
         assert "url(#wc-bg-grad-dark)" in svg
         assert "@media (prefers-color-scheme: dark)" in svg
-        fills = {
-            match.casefold()
-            for match in re.findall(r'fill="(#[0-9A-Fa-f]{6})"', svg)
-        }
+        fills = _svg_text_fills(svg)
         assert fills
         assert fills <= allowed_fills
-        opacities = [float(value) for value in re.findall(r'opacity="([0-9.]+)"', svg)]
+        opacities = _svg_text_opacities(svg)
         assert opacities
         assert min(opacities) >= 0.6
+
+
+def test_fact_wordclouds_size_follows_starred_share() -> None:
+    """fact-wordclouds: exactly two clouds; size follows starred-repo share."""
+    assert DEFAULT_RENDERER == "typographic"
+    assert generate_module.SHIPPED_WORD_CLOUD_SOURCES == ("topics", "languages")
+    topics_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "topics.md"
+    languages_md = generate_module._PROJECT_ROOT / ".github" / "assets" / "languages.md"
+    assert topics_md.is_file() and languages_md.is_file()
+    sources = (
+        (_SHIPPED_TYPOGRAPHIC_CLOUDS[0], topics_md),
+        (_SHIPPED_TYPOGRAPHIC_CLOUDS[1], languages_md),
+    )
+    for path, markdown in sources:
+        assert path.is_file()
+        frequencies = _filter_others(
+            parse_markdown_for_word_cloud_frequencies(markdown)
+        )
+        svg = path.read_text(encoding="utf-8")
+        placed: dict[str, float] = {}
+        for match in re.finditer(r"<text\b([^>]*)>([^<]+)</text>", svg):
+            size_match = re.search(r'font-size="([0-9.]+)"', match.group(1))
+            if size_match is None:
+                continue
+            placed[unescape(match.group(2)).casefold()] = float(size_match.group(1))
+        overlap = [word for word in frequencies if word.casefold() in placed]
+        assert len(overlap) >= 8, path.name
+        rho = _spearman(
+            [float(frequencies[word]) for word in overlap],
+            [placed[word.casefold()] for word in overlap],
+        )
+        assert rho >= 0.8, f"{path.name} volume Spearman {rho}"
+
+
+def test_fact_wordcloud_bakeoff_shipped_fills_contrast_on_github() -> None:
+    """fact-wordcloud-bakeoff: shipped winners keep dark media + AA fills."""
+    current_fills = {color.casefold() for color in github_readable_fills()}
+    allowed_fills = current_fills | _SHIPPED_LEGACY_TEXT_FILLS
+    for path in _SHIPPED_TYPOGRAPHIC_CLOUDS:
+        svg = path.read_text(encoding="utf-8")
+        assert "@media (prefers-color-scheme: dark)" in svg
+        fills = _svg_text_fills(svg)
+        assert fills, path.name
+        assert fills <= allowed_fills
+        for color in fills & current_fills:
+            assert is_github_dual_surface_readable(color), (
+                f"{path.name} {color} is below GitHub dual-surface AA"
+            )
+
+
+def test_fact_wordcloud_bakeoff_typographic_generate_is_dual_surface() -> None:
+    """fact-wordcloud-bakeoff: the winner emits GitHub-readable light/dark fills."""
+    frequencies = {
+        "pytorch": 40.0,
+        "react": 32.0,
+        "python": 28.0,
+        "docker": 18.0,
+        "markdown": 12.0,
+        "security": 9.0,
+        "terraform": 6.0,
+        "zig": 2.0,
+    }
+    renderer = TypographicRenderer(
+        width=640,
+        height=360,
+        min_font_size=10.0,
+        max_font_size=42.0,
+        seed=7,
+    )
+    placed = renderer.place_words(frequencies)
+    assert {word.text for word in placed} == set(frequencies)
+    assert all(word.rotation == 0 for word in placed)
+    assert all(word.opacity == 1.0 for word in placed)
+    for word in placed:
+        assert is_github_dual_surface_readable(word.color, opacity=word.opacity), (
+            f"{word.text} fill {word.color} fails GitHub light/dark AA"
+        )
+
+    svg = renderer.generate(frequencies)
+    assert "@media (prefers-color-scheme: dark)" in svg
+    assert "url(#wc-bg-grad-dark)" in svg
+    fills = _svg_text_fills(svg)
+    assert fills
+    assert fills <= {color.casefold() for color in github_readable_fills()}
+    assert not _svg_text_opacities(svg)

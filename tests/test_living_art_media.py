@@ -1638,3 +1638,36 @@ def test_ink_and_physarum_knobs_track_stars_and_followers() -> None:
         _accretion_metrics(**more_stars), seed="phys-knobs", timeline=False
     )
     assert _max_physarum_node_radius(phys_stars) > _max_physarum_node_radius(phys_low)
+
+
+def test_fact_living_art_spine_shared_daily_end_of_day_frames() -> None:
+    """fact-living-art-spine: six GIFs share one daily spine; frame t is cumulative."""
+    import inspect
+
+    from scripts.art.daily_snapshots import validate_snapshot_monotonic_contract
+    from scripts.art.timelapse import ALL_STYLES, render_timelapse
+
+    assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
+    source = inspect.getsource(render_timelapse)
+    assert "build_daily_snapshots" in source
+    assert "sample_frames" in source
+    assert "validate_snapshot_monotonic_contract" in source
+    assert callable(validate_snapshot_monotonic_contract)
+    for style in ALL_STYLES:
+        path = Path(f".github/assets/img/living-{style}.gif")
+        assert path.is_file(), path
+        assert path.stat().st_size > 0
+        with Image.open(path) as image:
+            assert getattr(image, "n_frames", 1) > 1
+
+
+def test_fact_living_art_exact_six_excludes_legacy_growth_collateral() -> None:
+    """fact-living-art-dialects: leftover *-growth.* stay off the exact-six fleet."""
+    img_dir = Path(".github/assets/img")
+    living = {path.name for path in img_dir.glob("living-*.gif")}
+    expected = {f"living-{style}.gif" for style in LIVING_ART_STYLE_KEYS}
+    assert living == expected
+    assert set(LIVING_ART_BYTE_BUDGETS) == expected
+    leftovers = {path.name for path in img_dir.glob("*-growth.gif")}
+    leftovers.update(path.name for path in img_dir.glob("*-growth-animated.svg"))
+    assert leftovers.isdisjoint(expected)

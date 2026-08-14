@@ -21,17 +21,94 @@ from .utils import get_logger
 logger = get_logger(module=__name__)
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_BOARD_DIR = _REPO_ROOT / ".github" / "assets" / "img" / "readme"
-_BOARD_FONT = (
-    "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',"
-    " Helvetica, Arial, sans-serif"
-)
 
 # Keep generated Shields source URLs comfortably below the request sizes that
 # GitHub's image proxy rejects.  This is a public generation contract: callers
 # may use it when validating rendered badge URLs before publishing a README.
 MAX_SHIELDS_BADGE_URL_LENGTH = 4_000
+_DEFAULT_BADGE_COLOR = "555555"
 _WIKIPEDIA_HOST = "wikipedia.org"
+
+# Offline Simple Icons brand hexes (no '#'). Applied only when a skill still
+# uses the default gray badge color. Never fetched at generation time.
+_SIMPLE_ICON_BRAND_HEX: dict[str, str] = {
+    "amazonaws": "232F3E",
+    "apacheairflow": "017CEE",
+    "apachekafka": "231F20",
+    "apachespark": "E25A1C",
+    "cplusplus": "00599C",
+    "cypress": "69D3A7",
+    "docker": "2496ED",
+    "electron": "47848F",
+    "eslint": "4B32C3",
+    "express": "000000",
+    "fastapi": "009688",
+    "figma": "F24E1E",
+    "flask": "000000",
+    "gatsby": "663399",
+    "git": "F05032",
+    "github": "181717",
+    "githubactions": "2088FF",
+    "gitlab": "FC6D26",
+    "go": "00ADD8",
+    "googlecloud": "4285F4",
+    "grafana": "F46800",
+    "graphql": "E10098",
+    "html5": "E34F26",
+    "huggingface": "FFD21E",
+    "javascript": "F7DF1E",
+    "jest": "C21325",
+    "jupyter": "F37626",
+    "keras": "D00000",
+    "kubernetes": "326CE5",
+    "langchain": "1C3C3C",
+    "linux": "FCC624",
+    "markdown": "000000",
+    "microsoftazure": "0078D4",
+    "mui": "007FFF",
+    "mysql": "4479A1",
+    "neo4j": "4581C3",
+    "nextdotjs": "000000",
+    "nodedotjs": "5FA04E",
+    "notion": "000000",
+    "npm": "CB3837",
+    "numpy": "013243",
+    "opencv": "5C3EE8",
+    "openjdk": "000000",
+    "pandas": "150458",
+    "postgresql": "4169E1",
+    "prometheus": "E6522C",
+    "pydantic": "E92063",
+    "pytest": "0A9EDC",
+    "pytorch": "EE4C2C",
+    "python": "3776AB",
+    "r": "276DC3",
+    "react": "61DAFB",
+    "redis": "FF4438",
+    "ruby": "CC342D",
+    "sass": "CC6699",
+    "scikitlearn": "F7931E",
+    "sqlite": "003B57",
+    "storybook": "FF4785",
+    "supabase": "3FCF8E",
+    "tailwindcss": "06B6D4",
+    "tensorflow": "FF6F00",
+    "terraform": "844FBA",
+    "typescript": "3178C6",
+    "vercel": "000000",
+    "vite": "646CFF",
+    "yarn": "2C8EBB",
+}
+
+
+def _resolved_badge_color(skill: SkillEntry) -> str:
+    """Return the shields hex, using a slug brand color when still default gray."""
+    raw = skill.color.strip() if skill.color else ""
+    color = raw.lstrip("#")
+    if color.casefold() not in {"", _DEFAULT_BADGE_COLOR}:
+        return color
+    slug = skill.slug.strip().casefold() if skill.slug else ""
+    return _SIMPLE_ICON_BRAND_HEX.get(slug, color or _DEFAULT_BADGE_COLOR)
 
 
 def _resolve_repo_logo_path(logo_path: str) -> Path:
@@ -57,7 +134,6 @@ class SkillsBadgeGenerator:
 
     def __init__(self, settings: SkillsSettings) -> None:
         self.settings = settings
-        self._persist_boards = False
 
     def generate(self) -> Path:
         """Generate badge HTML and inject into README.
@@ -65,7 +141,6 @@ class SkillsBadgeGenerator:
         Returns:
             Path to the README that was modified.
         """
-        self._persist_boards = True
         html = self._render_all()
         readme_path = Path(self.settings.readme_path)
         self._inject_readme(html, readme_path)
@@ -77,14 +152,19 @@ class SkillsBadgeGenerator:
     def _build_badge_url(self, skill: SkillEntry) -> str:
         """Construct a GitHub-proxy-safe shields.io badge URL for a skill.
 
-        Local SVG logos are preferred while their fully encoded source URL
-        fits :data:`MAX_SHIELDS_BADGE_URL_LENGTH`.  An oversized or unreadable
-        custom logo falls back to the configured Simple Icons slug, then to a
-        no-logo badge when no usable slug can fit.  Base badge URLs that cannot
+        Simple Icons slugs are preferred: they stay well under GitHub Camo's
+        URL budget.  A local SVG ``logo_path`` is used only when no usable
+        slug exists and the fully encoded data-URI still fits
+        :data:`MAX_SHIELDS_BADGE_URL_LENGTH`.  Oversized or unreadable custom
+        logos fall back to a no-logo badge.  Base badge URLs that cannot
         satisfy the contract fail instead of being truncated.
+
+        A missing or default gray (``555555``) badge color is replaced with a
+        known Simple Icons brand hex when the skill slug is in the offline
+        map.  Explicit colors and homepage wrapping are left unchanged.
         """
         label = quote(skill.name.replace("-", "--"), safe="")
-        color = skill.color.lstrip("#")
+        color = _resolved_badge_color(skill)
         logo_color = skill.logo_color or self.settings.logo_color
 
         base_url = (
@@ -94,6 +174,21 @@ class SkillsBadgeGenerator:
             raise ValueError(
                 f"Badge URL for '{skill.name}' exceeds "
                 f"{MAX_SHIELDS_BADGE_URL_LENGTH} characters without a logo"
+            )
+
+        slug = skill.slug.strip() if skill.slug else ""
+        if slug:
+            slug_url = (
+                f"{base_url}&logo={quote(slug, safe='')}"
+                f"&logoColor={quote(logo_color, safe='')}"
+            )
+            if len(slug_url) <= MAX_SHIELDS_BADGE_URL_LENGTH:
+                return slug_url
+            logger.info(
+                "Simple Icons badge URL for {skill_name} exceeds {limit} "
+                "characters; applying the custom-logo / no-logo fallback",
+                skill_name=skill.name,
+                limit=MAX_SHIELDS_BADGE_URL_LENGTH,
             )
 
         if skill.logo_path:
@@ -124,34 +219,22 @@ class SkillsBadgeGenerator:
                     error_type=type(exc).__name__,
                 )
 
-        slug = skill.slug.strip() if skill.slug else ""
-        if slug:
-            slug_url = (
-                f"{base_url}&logo={quote(slug, safe='')}"
-                f"&logoColor={quote(logo_color, safe='')}"
-            )
-            if len(slug_url) <= MAX_SHIELDS_BADGE_URL_LENGTH:
-                return slug_url
-            logger.info(
-                "Simple Icons badge URL for {skill_name} exceeds {limit} "
-                "characters; using a no-logo badge",
-                skill_name=skill.name,
-                limit=MAX_SHIELDS_BADGE_URL_LENGTH,
-            )
-
         return base_url
 
-    def _homepage_href(self, skill: SkillEntry) -> str | None:
-        """Return a GitHub-safe https tech homepage, or None when unlinked.
+    def _homepage_href(self, skill: SkillEntry) -> str:
+        """Return the GitHub-safe https tech homepage for a published shield.
 
         Wikipedia is not a homepage. ``http://`` is accepted by the config
-        model but is never wrapped — catalog badges must use ``https://``.
+        model but is rejected here — every rendered badge must wrap
+        ``https://``.
         """
         homepage = skill.url.strip() if skill.url else ""
         if not homepage:
-            return None
+            raise ValueError(f"Homepage url is required for '{skill.name}'")
         if not homepage.lower().startswith("https://"):
-            return None
+            raise ValueError(
+                f"Homepage for '{skill.name}' must be https://: {skill.url}"
+            )
         host = urlparse(homepage).netloc.lower().removeprefix("www.")
         if host == _WIKIPEDIA_HOST or host.endswith(f".{_WIKIPEDIA_HOST}"):
             raise ValueError(
@@ -161,138 +244,40 @@ class SkillsBadgeGenerator:
         return homepage
 
     def _render_badge(self, skill: SkillEntry) -> str:
-        """Render a single badge as an HTML img tag, optionally linked."""
+        """Render a single linked shields.io badge."""
         badge_url = self._build_badge_url(skill)
         img = f'<img alt="{escape(skill.name)}" src="{escape(badge_url)}"/>'
         homepage = self._homepage_href(skill)
-        if homepage:
-            return f'<a href="{escape(homepage, quote=True)}">{img}</a>'
-        return img
-
-    def _iter_category_groups(
-        self, cat: SkillCategory
-    ) -> list[tuple[str, list[SkillEntry]]]:
-        groups: list[tuple[str, list[SkillEntry]]] = []
-        if cat.skills:
-            groups.append(("", cat.skills))
-        for sub in cat.subcategories:
-            if sub.skills:
-                groups.append((sub.name, sub.skills))
-        return groups
-
-    def _chip_width(self, name: str) -> int:
-        return max(72, min(220, 22 + int(len(name) * 7.2)))
-
-    def _render_board_svg(
-        self,
-        title: str,
-        groups: list[tuple[str, list[SkillEntry]]],
-    ) -> str:
-        width = 1200
-        x = 16
-        y = 18
-        row_h = 34
-        chips: list[str] = []
-        names: list[str] = []
-        for group_name, skills in groups:
-            if group_name:
-                if x > 16:
-                    x = 16
-                    y += row_h + 8
-                chips.append(
-                    f'<text class="group" x="16" y="{y + 18}">'
-                    f"{escape(group_name)}</text>"
-                )
-                y += 26
-            for skill in skills:
-                chip_w = self._chip_width(skill.name)
-                if x + chip_w > width - 16:
-                    x = 16
-                    y += row_h + 8
-                fill = f"#{skill.color.lstrip('#')}"
-                chips.append(
-                    f'<rect x="{x}" y="{y}" width="{chip_w}" height="30" '
-                    f'rx="8" fill="{fill}" />'
-                )
-                chips.append(
-                    f'<text class="chip" x="{x + chip_w / 2:.0f}" y="{y + 20}" '
-                    f'text-anchor="middle">{escape(skill.name)}</text>'
-                )
-                names.append(skill.name)
-                x += chip_w + 8
-            x = 16
-            y += row_h + 12
-        height = y + 8
-        css = (
-            ":root { color-scheme: light dark; }\n"
-            f".chip {{ fill: #ffffff; font: 700 12px {_BOARD_FONT}; }}\n"
-            f".group {{ fill: #656d76; font: 700 11px {_BOARD_FONT}; "
-            "letter-spacing: 0.06em; text-transform: uppercase; }\n"
-            "@media (prefers-color-scheme: dark) {\n"
-            "  .group { fill: #8b949e; }\n"
-            "}\n"
-        )
-        return "\n".join(
-            [
-                (
-                    f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" '
-                    f'height="{height}" viewBox="0 0 {width} {height}" '
-                    f'role="img" aria-label="{escape(title, quote=True)}">'
-                ),
-                f"<title>{escape(title)}</title>",
-                f"<desc>{escape(', '.join(names))}</desc>",
-                f"<style>{css}</style>",
-                f'<rect width="{width}" height="{height}" rx="12" '
-                'fill="transparent" />',
-                *chips,
-                "</svg>",
-            ]
-        )
-
-    def _write_category_board(self, cat: SkillCategory) -> Path:
-        slug = re.sub(r"[^a-z0-9]+", "-", cat.name.lower()).strip("-")
-        path = _BOARD_DIR / f"tech-{slug}.svg"
-        if self._persist_boards:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(
-                self._render_board_svg(cat.name, self._iter_category_groups(cat)),
-                encoding="utf-8",
-            )
-        return path
+        return f'<a href="{escape(homepage, quote=True)}">{img}</a>'
 
     def _render_skills(self, skills: list[SkillEntry]) -> str:
-        """Render a list of skills as a <p> block of badges."""
+        """Render a list of skills as a <p> block of linked badges."""
         if not skills:
             return ""
         badges = "\n  ".join(self._render_badge(s) for s in skills)
         return f"<p>\n  {badges}\n</p>"
 
     def _render_subcategory(self, sub: SkillSubcategory) -> str:
-        """Render a subcategory heading used by board fallbacks."""
-        lines = [f"#### {sub.name}", ""]
-        names = ", ".join(skill.name for skill in sub.skills)
-        if names:
-            lines.append(names)
-        return "\n".join(lines)
+        """Render a subcategory heading plus its linked shields.
+
+        Empty skill lists produce no heading.
+        """
+        rendered = self._render_skills(sub.skills)
+        if not rendered:
+            return ""
+        return f"#### {sub.name}\n\n{rendered}"
 
     def _render_category(self, cat: SkillCategory) -> str:
-        """Render a category heading plus a first-party chip board."""
-        groups = self._iter_category_groups(cat)
-        names = [skill.name for _, skills in groups for skill in skills]
-        board = self._write_category_board(cat)
-        rel = board.relative_to(_REPO_ROOT).as_posix()
-        alt = f"{cat.name}: {', '.join(names)}" if names else cat.name
-        lines = [
-            f"### {cat.name}",
-            "",
-            (
-                f'<p align="center"><img alt="{escape(alt)}" '
-                f'src="{escape(rel)}" width="100%" loading="lazy"/></p>'
-            ),
-        ]
+        """Render a category heading plus per-skill homepage-linked shields."""
+        lines = [f"### {cat.name}", ""]
+        if cat.skills:
+            lines.append(self._render_skills(cat.skills))
         for sub in cat.subcategories:
-            if sub.skills:
-                lines.extend(["", f"#### {sub.name}"])
+            if not sub.skills:
+                continue
+            if lines[-1] != "":
+                lines.append("")
+            lines.append(self._render_subcategory(sub))
         return "\n".join(lines).rstrip()
 
     def _render_all(self) -> str:

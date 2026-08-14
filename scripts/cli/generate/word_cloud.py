@@ -27,6 +27,13 @@ class _WordCloudGeneratorProtocol(Protocol):
     def generate(self, **kwargs: object) -> str | Path: ...
 
 
+class _TechEntry(Protocol):
+    """Structural type for technology rows used as word-cloud weights."""
+
+    name: str
+    level: int
+
+
 def _remove_word_cloud_output(output_path: Path) -> None:
     """Remove exactly one previous word-cloud target without following links."""
     try:
@@ -194,6 +201,7 @@ def _wc_from_markdown(
     max_words: int,
     layout_readability=None,
     yaml_settings=None,
+    renderer: str = "typographic",
 ) -> Path | None:
     """Generate word cloud from a markdown file with source-specific overrides."""
     logger.info("Generating word cloud from {}: {}", source, md_path)
@@ -234,7 +242,7 @@ def _wc_from_markdown(
     canvas_w, canvas_h = (1680, 1050) if num_terms > 100 else (1400, 900)
     settings = wc.WordCloudSettings.from_yaml_model(
         yaml_settings,
-        renderer="typographic",
+        renderer=renderer,
         width=canvas_w,
         height=canvas_h,
         max_words=effective_max_words,
@@ -261,6 +269,7 @@ def _wc_from_topics(
     max_words: int,
     layout_readability=None,
     yaml_settings=None,
+    renderer: str = "typographic",
 ) -> Path | None:
     """Generate word cloud from topics.md with topic-specific overrides."""
     return _wc_from_markdown(
@@ -273,6 +282,7 @@ def _wc_from_topics(
         max_words,
         layout_readability,
         yaml_settings=yaml_settings,
+        renderer=renderer,
     )
 
 
@@ -283,6 +293,7 @@ def _wc_from_languages(
     max_words: int,
     layout_readability=None,
     yaml_settings=None,
+    renderer: str = "typographic",
 ) -> Path | None:
     """Generate word cloud from languages.md with language-specific overrides."""
     return _wc_from_markdown(
@@ -295,6 +306,7 @@ def _wc_from_languages(
         max_words,
         layout_readability,
         yaml_settings=yaml_settings,
+        renderer=renderer,
     )
 
 
@@ -309,7 +321,7 @@ def _wc_from_techs(
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(f"Loading technologies from specified path: {techs_path}")
-    loaded_techs_list: list = wc.load_technologies(techs_path)
+    loaded_techs_list: list[_TechEntry] = wc.load_technologies(techs_path)
     if not loaded_techs_list:
         logger.warning(f"load_technologies returned no data from {techs_path}.")
         return None
@@ -455,6 +467,14 @@ def word_cloud(
             rich_help_panel="Word Cloud Options",
         ),
     ] = False,
+    renderer: Annotated[
+        str,
+        typer.Option(
+            "--renderer",
+            help="SVG renderer (typographic, fractal, shaped, ...).",
+            rich_help_panel="Word Cloud Options",
+        ),
+    ] = "typographic",
 ) -> None:
     """Generate a word cloud from topics, languages, or custom text.
 
@@ -497,6 +517,7 @@ def word_cloud(
             max_words,
             layout_readability=layout_readability,
             yaml_settings=config_wc_model,
+            renderer=renderer,
         )
         generation_results.append(generated_path)
         ran_source = True
@@ -509,6 +530,7 @@ def word_cloud(
             max_words,
             layout_readability=layout_readability,
             yaml_settings=config_wc_model,
+            renderer=renderer,
         )
         generation_results.append(generated_path)
         ran_source = True

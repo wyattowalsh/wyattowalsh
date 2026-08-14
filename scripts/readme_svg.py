@@ -1570,8 +1570,20 @@ class SvgBlogBoardRenderer:
         self.height = height
 
     def render_board(self, cards: list[SvgCard]) -> str:
-        w, h = self.width, self.height
+        w = self.width
+        content_top = 84
+        item_stride = 88
+        item_h = 80
+        feature_h = 308
+        bottom_pad = 28
         featured, rest = (cards[0], cards[1:5]) if cards else (None, [])
+        if rest:
+            stack_h = (len(rest) - 1) * item_stride + item_h
+            feature_h = max(feature_h, stack_h)
+        h = self.height
+        if featured is not None:
+            h = max(h, content_top + feature_h + bottom_pad)
+        feature_meta_y = content_top + feature_h - 32
         lines = [
             (
                 f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" '
@@ -1600,30 +1612,35 @@ class SvgBlogBoardRenderer:
             meta = " · ".join(bit for bit in (featured.meta or ()) if bit)
             lines.extend(
                 (
-                    '<rect class="feature" x="28" y="84" width="560" '
-                    'height="308" rx="12" />',
+                    f'<rect class="feature" x="28" y="{content_top}" width="560" '
+                    f'height="{feature_h}" rx="12" />',
                     f'<text class="feature-title" x="48" y="130">'
                     f"{escape(title[:72])}</text>",
                     f'<text class="feature-hook" x="48" y="168">'
                     f"{escape(hook[:110])}</text>",
-                    f'<text class="board-meta" x="48" y="360">'
+                    f'<text class="board-meta" x="48" y="{feature_meta_y}">'
                     f"{escape(meta)}</text>",
                 )
             )
             for index, card in enumerate(rest):
-                row_y = 84 + index * 76
+                row_y = content_top + index * item_stride
                 item_title = sanitize_blog_title(card.title)
+                item_hook = next(iter(card.lines), "") or ""
                 item_meta = " · ".join(bit for bit in (card.meta or ()) if bit)
                 lines.extend(
                     (
                         f'<rect class="item" x="612" y="{row_y}" width="560" '
-                        'height="68" rx="10" />',
+                        f'height="{item_h}" rx="10" />',
                         (
-                            f'<text class="item-title" x="632" y="{row_y + 28}">'
+                            f'<text class="item-title" x="632" y="{row_y + 24}">'
                             f"{escape(item_title[:64])}</text>"
                         ),
                         (
-                            f'<text class="board-meta" x="632" y="{row_y + 50}">'
+                            f'<text class="item-hook" x="632" y="{row_y + 44}">'
+                            f"{escape(item_hook[:70])}</text>"
+                        ),
+                        (
+                            f'<text class="board-meta" x="632" y="{row_y + 66}">'
                             f"{escape(item_meta)}</text>"
                         ),
                     )
@@ -1663,6 +1680,7 @@ class SvgBlogBoardRenderer:
                 ),
                 f".feature-hook {{ fill: var(--text); font: 400 14px {FONT_FAMILY}; }}",
                 f".item-title {{ fill: var(--title); font: 600 14px {FONT_FAMILY}; }}",
+                f".item-hook {{ fill: var(--text); font: 400 12px {FONT_FAMILY}; }}",
                 f".board-meta {{ fill: var(--text); font: 400 12px {FONT_FAMILY}; }}",
             ]
         )

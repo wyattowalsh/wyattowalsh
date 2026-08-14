@@ -12,8 +12,6 @@ on:
     - cron: "0 1 * * *" # Run once a day at 1 AM UTC
   push:
     branches:
-      - master
-      - main
       - dev
 
 concurrency:
@@ -159,8 +157,7 @@ jobs:
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '3' || '0' }}
-          plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
+          plugin_repositories: no
           plugin_tweets: no
 
       - name: Collect full additional metrics output
@@ -248,7 +245,6 @@ jobs:
 
           summarize_markers ./.github/assets/img/metrics.probe.additional.svg \
             "Recent activity" \
-            "Featured repositories" \
             "Recently starred repositories" \
             "Stargazers" \
             "Unexpected error"
@@ -284,6 +280,7 @@ jobs:
     name: Update Starred Repository Lists (MD Files)
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         (
           github.event_name != 'push' ||
@@ -371,6 +368,7 @@ jobs:
     needs: update-starred-lists # Depends on the md files being up-to-date
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
         needs.update-starred-lists.result == 'success' &&
@@ -432,6 +430,7 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-topics-md \
+            --renderer fractal \
             --output-path .github/assets/img/wordcloud_typographic_by_topics.svg
 
       - name: Generate Word Cloud by Language
@@ -439,6 +438,7 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-languages-md \
+            --renderer fractal \
             --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 
       - name: Verify pinned light and dark banners
@@ -532,6 +532,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         (
           github.event_name != 'push' ||
@@ -611,6 +612,7 @@ jobs:
     name: Generate Profile Metrics SVGs
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         (
           github.event_name != 'push' ||
@@ -801,8 +803,7 @@ jobs:
           plugin_stargazers_charts: yes
           plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '16' || '0' }}
-          plugin_repositories: yes
-          plugin_repositories_featured: "wyattowalsh/agents, wyattowalsh/nbadb, wyattowalsh/proxywhirl, wyattowalsh/mcp-crawl4ai, wyattowalsh/fl-mcp, wyattowalsh/listentropy, wyattowalsh/personal-website, wyattowalsh/mdxpad, wyattowalsh/ai-web-feeds, wyattowalsh/iina-plugin-bookmarks"
+          plugin_repositories: no
           plugin_people: yes
           plugin_people_limit: 36
           plugin_people_size: 24
@@ -956,6 +957,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
         (
@@ -1083,7 +1085,7 @@ jobs:
         run: uv sync --locked --all-extras
 
       - name: Install living-art media tools
-        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin gifsicle
+        run: sudo apt-get update && sudo apt-get install -y librsvg2-bin gifsicle ffmpeg
 
       - name: Generate one canonical living-art GIF
         env:
@@ -1138,7 +1140,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: living-art-style-${{ github.run_id }}-${{ matrix.style }}
-          path: ${{ runner.temp }}/living-art-output-${{ matrix.style }}/living-${{ matrix.style }}.gif
+          path: |
+            ${{ runner.temp }}/living-art-output-${{ matrix.style }}/living-${{ matrix.style }}.gif
+            ${{ runner.temp }}/living-art-output-${{ matrix.style }}/living-${{ matrix.style }}.mp4
           if-no-files-found: error
           retention-days: 7
           compression-level: 0
@@ -1186,12 +1190,15 @@ jobs:
           import os
           from pathlib import Path
 
+          import shutil
+
           from scripts.art.artifacts import stage_living_art_fleet
 
-          manifest = stage_living_art_fleet(
-              Path(os.environ["RUNNER_TEMP"]) / "living-art-parts",
-              Path(os.environ["RUNNER_TEMP"]) / "living-art-stage",
-          )
+          parts = Path(os.environ["RUNNER_TEMP"]) / "living-art-parts"
+          stage = Path(os.environ["RUNNER_TEMP"]) / "living-art-stage"
+          manifest = stage_living_art_fleet(parts, stage)
+          for mp4 in parts.rglob("living-*.mp4"):
+              shutil.copy2(mp4, stage / mp4.name)
           print(
               "Staged exact living-art fleet: "
               f"{manifest['total_assets']} assets, "
@@ -1235,6 +1242,7 @@ jobs:
       - update-readme-wakatime
     if: >-
       ${{
+        github.ref == 'refs/heads/dev' &&
         github.event.inputs.metrics_probe_mode != 'true' &&
         !cancelled() &&
         needs.update-starred-lists.result == 'success' &&
@@ -1424,6 +1432,7 @@ jobs:
           import hashlib
           import json
           import os
+          import shutil
           from pathlib import Path
 
           from scripts.art.artifacts import (
@@ -1465,6 +1474,9 @@ jobs:
               public_dir / gallery_path.name
           ).read_bytes():
               raise SystemExit("Persisted primary/public living-art galleries differ")
+
+          for mp4 in stage_dir.glob("living-*.mp4"):
+              shutil.copy2(mp4, output_dir / mp4.name)
 
           validate_living_art_byte_budgets(primary_manifest)
           validate_living_art_byte_budgets(public_manifest)
@@ -1541,6 +1553,7 @@ jobs:
 
           art_files=(
             ':(glob).github/assets/img/living-*.gif'
+            ':(glob).github/assets/img/living-*.mp4'
             .github/assets/img/living-art-manifest.json
             .github/assets/img/living-art-preview.html
             ':(glob)docs/public/showcase/living-*.gif'
@@ -1584,6 +1597,10 @@ jobs:
           # BEGIN trigger-consistent-push
           if [ "${TRIGGER_REF_TYPE}" != "branch" ]; then
             echo "::error::Profile publication requires a branch trigger."
+            exit 1
+          fi
+          if [ "${TARGET_BRANCH}" != "dev" ]; then
+            echo "::error::Profile publication is restricted to refs/heads/dev (got ${TARGET_BRANCH})."
             exit 1
           fi
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T20:05:36.000187+00:00",
+  "generated_at": "2026-08-14T20:17:02.319917+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -8,7 +8,7 @@
       "forks": 1,
       "full_name": "wyattowalsh/agents",
       "license": "MIT",
-      "stars": 4,
+      "stars": 5,
       "summary": "AI agent artifacts, configs, skills, tools, and more",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-agents.svg",
       "thumbnail_present": true,
@@ -17,12 +17,12 @@
         "Python",
         "HTML"
       ],
-      "updated_label": "Updated 39m ago",
+      "updated_label": "Updated 1w ago",
       "url": "https://github.com/wyattowalsh/agents"
     },
     {
       "alt_text": "Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
-      "forks": 19,
+      "forks": 21,
       "full_name": "wyattowalsh/nbadb",
       "license": "MIT",
       "stars": 70,
@@ -34,7 +34,7 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 1d ago",
+      "updated_label": "Updated 9h ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
@@ -136,7 +136,7 @@
         "TypeScript",
         "MDX"
       ],
-      "updated_label": "Updated 1mo ago",
+      "updated_label": "Updated 2mo ago",
       "url": "https://github.com/wyattowalsh/mdxpad"
     },
     {

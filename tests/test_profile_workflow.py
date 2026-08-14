@@ -337,7 +337,7 @@ def test_banner_and_banner_dark_required_by_ci_contracts() -> None:
 
 
 def test_pinned_banners_match_origin_main_bytes() -> None:
-    """Header pair must stay byte-identical to origin/main when files exist."""
+    """Header pair must stay byte-identical to origin/main (fail closed)."""
     expected = {
         BANNER_LIGHT: (
             "a5e8d08ffb218924a322e423318219af5909f9ff4923891103842a8f7f408649"
@@ -346,15 +346,20 @@ def test_pinned_banners_match_origin_main_bytes() -> None:
             "6aaf135ac987e66ddf0594722ed9980c46c374b8a4db09ea05db56cff588f9b7"
         ),
     }
+    origin_main = subprocess.run(
+        ["git", "rev-parse", "--verify", "origin/main"],
+        cwd=Path.cwd(),
+        capture_output=True,
+        text=True,
+    )
+    assert origin_main.returncode == 0, "origin/main is required to pin header banners"
     for path, digest in expected.items():
-        if not path.is_file():
-            continue
+        assert path.is_file(), f"missing required asset: {path}"
         actual_bytes = path.read_bytes()
         actual = hashlib.sha256(actual_bytes).hexdigest()
         assert actual == digest, f"{path} hash {actual} != pinned main {digest}"
         origin = _git_show_bytes(f"origin/main:{path.as_posix()}")
-        if origin is None:
-            continue
+        assert origin is not None, f"git show origin/main:{path.as_posix()} failed"
         origin_digest = hashlib.sha256(origin).hexdigest()
         assert origin_digest == digest, (
             f"origin/main:{path.as_posix()} hash "
@@ -464,8 +469,25 @@ def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
     assert "for file in .github/assets/img/living-*.gif" not in workflow
     assert 'for file in "$stage"/outputs/timelapse/living-*.gif' not in workflow
     assert "':(glob).github/assets/img/living-*.gif'" in finalize
+    assert "':(glob).github/assets/img/living-*.mp4'" in finalize
     assert "':(glob)docs/public/showcase/living-*.gif'" in finalize
     assert 'git add -A -- "${owned_files[@]}"' in finalize
+
+
+def test_generate_assets_word_clouds_use_fractal_renderer() -> None:
+    """CI may override DEFAULT_RENDERER but must keep the public filenames."""
+    assets = _job_block(_workflow_text(), "generate-assets")
+    assert assets.count("--renderer fractal") == 2
+    assert "--from-topics-md" in assets
+    assert "--from-languages-md" in assets
+    assert (
+        "--output-path .github/assets/img/wordcloud_typographic_by_topics.svg"
+        in assets
+    )
+    assert (
+        "--output-path .github/assets/img/wordcloud_typographic_by_languages.svg"
+        in assets
+    )
 
 
 def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
@@ -556,10 +578,12 @@ def test_finalize_push_follows_ref_name_not_hardcoded_main() -> None:
         "trigger-consistent-push",
     )
 
+    assert "github.ref == 'refs/heads/dev'" in finalize
     assert "TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}" in finalize
     assert 'origin "HEAD:refs/heads/${TARGET_BRANCH}"' in push_script
     lease = '--force-with-lease="refs/heads/${TARGET_BRANCH}:${TRIGGER_SHA}"'
     assert lease in push_script
+    assert '[ "${TARGET_BRANCH}" != "dev" ]' in push_script
     assert "HEAD:refs/heads/main" not in push_script
     assert "origin main" not in push_script
     assert re.search(r"git push\s+origin\s+HEAD:main\b", push_script) is None
@@ -997,7 +1021,8 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_activity: no" in primary
     assert "plugin_tweets: no" in primary
 
-    assert "plugin_repositories: yes" in additional
+    assert "plugin_repositories: no" in additional
+    assert "plugin_repositories_featured" not in additional
     assert "plugin_people: yes" in additional
     assert "plugin_people_limit: 36" in additional
     assert (
@@ -1012,7 +1037,6 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
     assert "plugin_habits: no" in additional
     assert "plugin_music: no" in additional
     assert "plugin_tweets: no" in additional
-    assert "iina-plugin-bookmarks" in additional
 
     assert "metrics.extra.svg" in prod
     assert "plugin_reactions: yes" in extra
@@ -1106,17 +1130,22 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
         section_order_from_settings,
     )
 
-    order = section_order_from_settings(load_config().readme_sections_settings)
-    living_match = compile_section_body_re("Living Art", order).search(readme)
-    assert living_match is not None, "Living Art section missing"
-    living = living_match.group(0)
+    from tests.test_readme_gfm_ux import (
+        assert_visible_or_comment_heading,
+        heading_index,
+        living_art_wrap,
+    )
 
-    assert living.count('<p align="center">') == 1
-    assert living.count('width="360"') == 6
-    assert living.count('loading="lazy"') == 6
-    assert "<table" not in living.lower()
-    assert "<details" not in living.lower()
-    assert "display: grid" not in living.lower()
+    order = section_order_from_settings(load_config().readme_sections_settings)
+    assert compile_section_body_re("Living Art", order).search(readme) is not None
+    wrap = living_art_wrap(readme)
+
+    assert wrap.count('<p align="center">') == 1
+    assert wrap.count('width="360"') == 6
+    assert wrap.count('loading="lazy"') == 6
+    assert "<table" not in wrap.lower()
+    assert "<details" not in wrap.lower()
+    assert "display: grid" not in wrap.lower()
 
     tech_match = compile_section_body_re("Tech Stack", order).search(readme)
     assert tech_match is not None
@@ -1125,14 +1154,15 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     for teaser in ("AI/ML", "Full-Stack", "Data Engineering", "Open Source"):
         assert f'alt="{teaser}"' not in tech
 
-    headings = tuple(f"## {title}" for title in order)
-    positions = [readme.index(heading) for heading in headings]
+    for title in order:
+        assert_visible_or_comment_heading(readme, title)
+    positions = [heading_index(readme, title) for title in order]
     assert positions == sorted(positions)
 
     banner_idx = readme.index('alt="Banner"')
     badges_start = readme.index("<!-- README:TOP_BADGES:START -->")
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
-    living_start = readme.index("## Living Art")
+    living_start = heading_index(readme, "Living Art")
     assert banner_idx < badges_start < featured_start < living_start
 
 
@@ -1148,3 +1178,131 @@ def test_finalize_authenticates_readme_star_history_without_argv_token() -> None
     run = str(sections_step["run"])
     assert "GITHUB_TOKEN" not in run
     assert "github.token" not in run
+
+
+def test_fact_ship_dev_main_is_not_a_publication_target() -> None:
+    """fact-ship-dev: publication is refs/heads/dev only; main is not a target."""
+    text = _workflow_text()
+    push_match = re.search(
+        r"(?ms)^  push:\n    branches:\n((?:      - [^\n]+\n)+)",
+        text,
+    )
+    assert push_match is not None
+    push_branches = re.findall(r"- (\S+)", push_match.group(1))
+    assert push_branches == ["dev"]
+    assert "main" not in push_branches
+    assert "master" not in push_branches
+
+    for job_id in (
+        "update-starred-lists",
+        "generate-assets",
+        "update-readme-wakatime",
+        "generate-profile-metrics",
+        "prepare-event-art-inputs",
+        "finalize",
+    ):
+        assert "github.ref == 'refs/heads/dev'" in _job_block(text, job_id)
+
+    finalize = _job_block(text, "finalize")
+    assert "TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}" in finalize
+    push_script = _marked_shell_block(
+        text,
+        "trigger-consistent-push",
+        "trigger-consistent-push",
+    )
+    assert 'origin "HEAD:refs/heads/${TARGET_BRANCH}"' in push_script
+    assert '[ "${TARGET_BRANCH}" != "dev" ]' in push_script
+    assert "restricted to refs/heads/dev" in push_script
+    assert "HEAD:refs/heads/main" not in push_script
+    assert re.search(r"git push\s+origin\s+HEAD:main\b", push_script) is None
+
+
+def test_fact_banner_pin_ci_byte_compares_origin_main() -> None:
+    """fact-banner-pin: CI verify fails closed if origin/main cannot be read."""
+    workflow = _workflow_text()
+    assets = _job_block(workflow, "generate-assets")
+    assert "generate banner" not in workflow
+    assert "origin/main:.github/assets/img/" in assets
+    assert "Unable to read pinned banner from" in assets
+    assert "Pinned banner drifted from origin/main" in assets
+
+
+def test_finalize_push_refuses_non_dev_target_branch(tmp_path: Path) -> None:
+    """fact-ship-dev: the push script refuses TARGET_BRANCH=main."""
+    script = _marked_shell_block(
+        _workflow_text(),
+        "trigger-consistent-push",
+        "trigger-consistent-push",
+    )
+    result = subprocess.run(
+        ["bash", "-euo", "pipefail", "-c", script],
+        cwd=tmp_path,
+        env={
+            "PATH": os.environ["PATH"],
+            "TARGET_BRANCH": "main",
+            "TRIGGER_REF_TYPE": "branch",
+            "TRIGGER_SHA": "deadbeef",
+        },
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0
+    combined = f"{result.stdout}\n{result.stderr}"
+    assert "restricted to refs/heads/dev" in combined
+    assert "got main" in combined
+
+
+def test_fact_lowlighter_off_production_music_tweets_activity_stay_no() -> None:
+    """fact-lowlighter-off: music/tweets/activity stay off; no Spotify in with:."""
+    workflow = _workflow_text()
+    prod = _job_block(workflow, "generate-profile-metrics")
+    for block in _lowlighter_with_blocks(prod):
+        assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", block)
+        assert re.search(r"(?m)^\s*plugin_tweets:\s*no\s*$", block)
+        assert re.search(r"(?m)^\s*plugin_activity:\s*no\s*$", block)
+        assert "SPOTIFY_" not in block
+        assert "plugin_music_token" not in block
+        assert "plugin_music_provider" not in block
+    assert "anmol098/waka-readme-stats" not in workflow
+
+
+def test_fact_lowlighter_retry_lines_achievements_gists_isolated_off() -> None:
+    """fact-lowlighter-retry: unclean plugins stay off; no stub isolate-retry card."""
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    primary, _additional, extra = _lowlighter_with_blocks(prod)
+    assert "plugin_lines: no" in primary
+    assert "plugin_achievements: no" in primary
+    assert "plugin_gists: no" in primary
+    assert "plugin_gists: no" in extra
+    assert "plugin_lines:" not in extra
+    assert "plugin_achievements:" not in extra
+    assert "plugin_lines: yes" not in prod
+    assert "plugin_achievements: yes" not in prod
+    assert "plugin_gists: yes" not in prod
+    extra_svg = Path(".github/assets/img/metrics.extra.svg")
+    assert extra_svg.is_file()
+    extra_text = extra_svg.read_text(encoding="utf-8").lower()
+    assert "will be regenerated" not in extra_text
+    assert "an error occur" not in extra_text
+
+
+def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:
+    """fact-habits-both: plugin_habits on primary and first-party card redesigned."""
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    primary, additional, extra = _lowlighter_with_blocks(prod)
+    assert "plugin_habits: yes" in primary
+    assert "plugin_habits_facts: yes" in primary
+    assert "plugin_habits_charts: yes" in primary
+    assert "plugin_habits: no" in additional
+    assert "plugin_habits: no" in extra
+    habits = Path(".github/assets/img/metrics-habits.svg")
+    assert habits.is_file()
+    text = habits.read_text(encoding="utf-8")
+    assert "Coding habits" in text
+    assert "habits-focus" in text
+    assert "habits-peak" in text
+    assert "habits-streaks" in text
+    assert 'src=".github/assets/img/metrics-habits.svg"' in README_PATH.read_text(
+        encoding="utf-8"
+    )

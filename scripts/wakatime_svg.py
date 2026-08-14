@@ -9,6 +9,7 @@ daily heatmap when data is available. Dark mode uses
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import urllib.error
 from collections.abc import Iterable
@@ -80,6 +81,30 @@ CELL_GAP: Final[int] = 3
 
 def _esc(value: str) -> str:
     return escape(value, quote=True)
+
+
+def _union_entries(*groups: Iterable[WakaStatEntry]) -> tuple[WakaStatEntry, ...]:
+    """Keep each platform/name once, preferring the longest duration."""
+    merged: dict[str, WakaStatEntry] = {}
+    for group in groups:
+        for entry in group:
+            current = merged.get(entry.name)
+            if current is None or entry.total_seconds > current.total_seconds:
+                merged[entry.name] = entry
+    return tuple(
+        sorted(merged.values(), key=lambda item: item.total_seconds, reverse=True)
+    )
+
+
+def _platforms_from_collection(
+    collection: WakaCollection,
+) -> tuple[WakaStatEntry, ...]:
+    groups: list[tuple[WakaStatEntry, ...]] = [collection.week.operating_systems]
+    if collection.year is not None:
+        groups.append(collection.year.operating_systems)
+    if collection.all_time is not None:
+        groups.append(collection.all_time.operating_systems)
+    return _union_entries(*groups)
 
 
 def _language_color(name: str, index: int) -> str:
@@ -360,6 +385,37 @@ def _daily_bars(
     return lines, base + 28
 
 
+def _exotic_waka_metrics(
+    collection: WakaCollection,
+) -> list[tuple[str, str]]:
+    """Uncommon but readable derivatives from the public-safe collection."""
+    week = collection.week
+    lang_seconds = [max(0, int(entry.total_seconds)) for entry in week.languages]
+    editor_seconds = [max(0, int(entry.total_seconds)) for entry in week.editors]
+    cat_map = {
+        entry.name.casefold(): max(0, int(entry.total_seconds))
+        for entry in week.categories
+    }
+    lang_total = sum(lang_seconds) or 1
+    editor_total = sum(editor_seconds) or 1
+    cat_total = sum(cat_map.values()) or 1
+    shares = [sec / lang_total for sec in lang_seconds if sec > 0]
+    shannon = 0.0
+    if shares:
+        shannon = -sum(share * math.log(share, 2) for share in shares)
+    loyalty = max(editor_seconds) / editor_total if editor_seconds else 0.0
+    coding = cat_map.get("coding", 0) + cat_map.get("ai coding", 0)
+    browsing = cat_map.get("browsing", 0)
+    deep = coding / cat_total if cat_total else 0.0
+    browse = browsing / cat_total if cat_total else 0.0
+    return [
+        ("Lang entropy", f"{shannon:.2f} bits"),
+        ("Editor loyalty", f"{loyalty * 100:.0f}%"),
+        ("Deep-work", f"{deep * 100:.0f}%"),
+        ("Browse leak", f"{browse * 100:.0f}%"),
+    ]
+
+
 def render_wakatime_svg(
     collection: WakaCollection,
     *,
@@ -442,7 +498,7 @@ def render_wakatime_svg(
     y = max(lang_bottom, editor_bottom) + 16
 
     os_lines, os_bottom = _stat_rows(
-        week.operating_systems,
+        _platforms_from_collection(collection),
         x=left_x,
         y=y + 18,
         width=col_w,
@@ -460,6 +516,23 @@ def render_wakatime_svg(
     parts.extend(os_lines)
     parts.extend(cat_lines)
     y = max(os_bottom, cat_bottom) + 12
+
+    exotic = _exotic_waka_metrics(collection)
+    if exotic:
+        parts.append(_section_heading("Derived", left_x, y))
+        y += 18
+        chip_w = content_w / len(exotic)
+        for index, (label, value) in enumerate(exotic):
+            cx = left_x + index * chip_w
+            parts.append(
+                f'<text class="total-label" x="{cx:.1f}" y="{y:.1f}">'
+                f"{_esc(label)}</text>"
+            )
+            parts.append(
+                f'<text class="total-value" x="{cx:.1f}" y="{y + 18:.1f}">'
+                f"{_esc(value)}</text>"
+            )
+        y += 44
 
     if week.projects:
         proj_lines, proj_bottom = _stat_rows(

@@ -32,13 +32,70 @@ _FEATURED_RE = re.compile(
 # Category teaser shields that used to sit above the full-stack <details>.
 _TEASER_ALTS = ("AI/ML", "Full-Stack", "Data Engineering", "Open Source")
 
-_SECTION_HEADINGS = (
-    "## Featured Projects",
-    "## Metrics",
-    "## Living Art",
-    "## Tech Stack",
-    "## Word Clouds",
+_SECTION_TITLES = (
+    "Featured Projects",
+    "Metrics",
+    "Living Art",
+    "Tech Stack",
+    "Word Clouds",
 )
+SECTION_SEPARATORS = {
+    "Featured Projects": "sep-featured.svg",
+    "Metrics": "sep-metrics.svg",
+    "Living Art": "sep-living.svg",
+    "Tech Stack": "sep-tech.svg",
+    "Word Clouds": "sep-clouds.svg",
+    "Latest Blog Posts": "sep-blog.svg",
+}
+_LIVING_WRAP_RE = re.compile(
+    r'<p align="center">\s*'
+    r'(?:<a href="[^"]+">\s*<img src="\.github/assets/img/living-[^"]+"'
+    r"[^>]*>\s*</a>\s*){6}</p>",
+    re.S,
+)
+
+
+def heading_line_re(title: str) -> re.Pattern[str]:
+    return re.compile(
+        rf"(?m)^(?:## {re.escape(title)}\s*|<!-- ## {re.escape(title)} -->)\s*$"
+    )
+
+
+def assert_visible_or_comment_heading(text: str, title: str) -> None:
+    """Accept a visible H2 or the SVG separator plus comment stand-in."""
+    visible = re.search(rf"(?m)^## {re.escape(title)}\s*$", text)
+    comment = re.search(rf"(?m)^<!-- ## {re.escape(title)} -->\s*$", text)
+    assert visible or comment, f"missing {title} heading"
+    if comment is not None and visible is None:
+        sep = SECTION_SEPARATORS[title]
+        assert f".github/assets/img/readme/{sep}" in text, (
+            f"comment heading {title} requires {sep}"
+        )
+
+
+def heading_index(text: str, title: str) -> int:
+    match = heading_line_re(title).search(text)
+    assert match is not None, f"missing heading {title}"
+    return match.start()
+
+
+def after_heading(text: str, title: str) -> str:
+    match = heading_line_re(title).search(text)
+    assert match is not None, f"missing heading {title}"
+    return text[match.end() :]
+
+
+def slice_between_headings(text: str, start: str, end: str) -> str:
+    rest = after_heading(text, start)
+    end_match = heading_line_re(end).search(rest)
+    assert end_match is not None, f"missing heading {end}"
+    return rest[: end_match.start()]
+
+
+def living_art_wrap(text: str) -> str:
+    match = _LIVING_WRAP_RE.search(text)
+    assert match is not None, "living-art wrap-flow paragraph missing"
+    return match.group(0)
 
 
 def _order() -> tuple[str, ...]:
@@ -73,18 +130,21 @@ def _tech_stack_section(readme: str) -> str:
 
 def test_living_art_wrap_flow_shows_all_six_gifs() -> None:
     """All six living-art GIFs are inline at width 360 inside one centered wrap."""
-    living = _living_art_section(_read_readme())
+    readme = _read_readme()
+    assert_visible_or_comment_heading(readme, "Living Art")
+    wrap = living_art_wrap(readme)
 
-    assert living.count('<p align="center">') == 1
-    assert living.count("</p>") == 1
-    assert living.count('width="360"') == 6
-    assert living.count('width="100%"') == 0
-    assert living.count('loading="lazy"') == 6
+    assert wrap.count('<p align="center">') == 1
+    assert wrap.count("</p>") == 1
+    assert wrap.count('width="360"') == 6
+    assert wrap.count('width="100%"') == 0
+    assert wrap.count('loading="lazy"') == 6
 
     for style in LIVING_ART_STYLE_KEYS:
-        src = f".github/assets/img/living-{style}.gif"
-        assert living.count(f'src="{src}"') == 1
-        assert living.count(f'href="{src}"') == 1
+        poster = f".github/assets/img/living-{style}.gif"
+        film = f".github/assets/img/living-{style}.mp4"
+        assert wrap.count(f'src="{poster}"') == 1
+        assert wrap.count(f'href="{film}"') == 1
 
 
 def test_living_art_has_no_table_css_grid_or_details() -> None:
@@ -104,8 +164,10 @@ def test_living_art_has_no_table_css_grid_or_details() -> None:
 
 def test_tech_stack_has_no_teaser_shields() -> None:
     """Tech Stack opens on the full-stack details; category teasers are gone."""
-    tech = _tech_stack_section(_read_readme())
-    body = tech.split("## Tech Stack", 1)[1].lstrip()
+    readme = _read_readme()
+    assert_visible_or_comment_heading(readme, "Tech Stack")
+    tech = _tech_stack_section(readme)
+    body = after_heading(tech, "Tech Stack").lstrip()
 
     assert body.startswith("<details>")
     assert "<summary><strong>Tech Stack</strong></summary>" in tech
@@ -136,7 +198,9 @@ def test_readme_section_order_and_managed_markers() -> None:
     """Major sections and injection markers stay ordered for GFM composition."""
     readme = _read_readme()
 
-    positions = [readme.index(heading) for heading in _SECTION_HEADINGS]
+    for title in _SECTION_TITLES:
+        assert_visible_or_comment_heading(readme, title)
+    positions = [heading_index(readme, title) for title in _SECTION_TITLES]
     assert positions == sorted(positions)
 
     assert "<!-- README:TOP_BADGES:START -->" in readme
@@ -155,7 +219,7 @@ def test_readme_section_order_and_managed_markers() -> None:
     banner_idx = readme.index('alt="Banner"')
     badges_start = readme.index("<!-- README:TOP_BADGES:START -->")
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
-    living_start = readme.index("## Living Art")
+    living_start = heading_index(readme, "Living Art")
     assert banner_idx < badges_start < featured_start < living_start
 
 
@@ -169,7 +233,7 @@ def test_waka_and_blog_are_visible_not_details() -> None:
     assert 'src=".github/assets/img/wakatime.svg"' in readme
     assert "<!--START_SECTION:waka-->" in readme
     assert "<!--END_SECTION:waka-->" in readme
-    assert "## Latest Blog Posts" in readme
+    assert_visible_or_comment_heading(readme, "Latest Blog Posts")
     assert "<!-- README:BLOG_POSTS:START -->" in readme
     assert "metrics-activity.svg" not in readme
     assert "200+" not in readme
@@ -182,7 +246,7 @@ def test_waka_and_blog_are_visible_not_details() -> None:
             "<!-- README:BLOG_POSTS:END -->"
         )
     ]
-    assert "blog-posts.svg" in blog
+    assert re.search(r"blog-(?:posts|[a-z0-9-]+)\.svg", blog)
     assert blog.count("w4w.dev/blog") >= 4
     assert re.search(r"20\d{2}-\d{2}-\d{2}", blog)
     assert " · " in blog
@@ -245,8 +309,9 @@ def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
         ),
     )
     rendered = generator._rewrite_wakatime_section(stale)
-    metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
-    word_clouds = rendered.split("## Word Clouds", 1)[1]
+    assert_visible_or_comment_heading(rendered, "Metrics")
+    metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
+    word_clouds = after_heading(rendered, "Word Clouds")
 
     assert "This Week I Spent My Time On" not in rendered
     assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
@@ -290,8 +355,10 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     )
     rendered = generator._rewrite_living_art_section(stale)
     rendered = generator._rewrite_tech_stack_teaser(rendered)
-    living = _living_art_section(rendered)
-    tech = rendered.split("## Tech Stack", 1)[1]
+    assert_visible_or_comment_heading(rendered, "Living Art")
+    assert_visible_or_comment_heading(rendered, "Tech Stack")
+    living = living_art_wrap(rendered)
+    tech = after_heading(rendered, "Tech Stack")
 
     assert living.count('src=".github/assets/img/living-') == 6
     assert living.count('width="360"') == 6
@@ -305,3 +372,40 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     assert "View full stack" not in tech
     assert "200+" not in tech
     assert "kept" in tech
+
+
+def test_fact_no_200_copy_summary_has_no_count_or_blurb() -> None:
+    """fact-no-200-copy: tech-stack summary is a bare label with no count."""
+    readme = _read_readme()
+    tech = _tech_stack_section(readme)
+    assert "200+" not in readme
+    assert "View full stack" not in readme
+    assert "<summary><strong>Tech Stack</strong></summary>" in tech
+
+
+def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
+    """fact-tech-details: shield wall stays in details; Waka sits with metric cards."""
+    readme = _read_readme()
+    assert_visible_or_comment_heading(readme, "Metrics")
+    metrics = slice_between_headings(readme, "Metrics", "Living Art")
+    tech = _tech_stack_section(readme)
+    assert 'src=".github/assets/img/wakatime.svg"' in metrics
+    assert "<details>" in tech
+    assert "<summary><strong>Tech Stack</strong></summary>" in tech
+    assert "<!-- SKILLS:START -->" in tech
+    assert "wakatime.svg" not in tech
+    assert "<!--START_SECTION:waka-->" in metrics
+
+
+def test_fact_views_komarev_for_the_badge() -> None:
+    """fact-views: incrementing komarev chip restyled to for-the-badge."""
+    readme = _read_readme()
+    assert "komarev.com/ghpvc/?username=wyattowalsh" in readme
+    assert "style=for-the-badge" in readme
+    assert "label=Views" in readme
+    assert "style=flat-square" not in readme
+
+
+def test_fact_remove_feed_readme_omits_activity_card() -> None:
+    """fact-remove-feed: committed README has no first-party activity widget."""
+    assert "metrics-activity.svg" not in _read_readme()

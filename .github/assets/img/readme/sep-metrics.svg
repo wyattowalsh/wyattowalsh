@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Metrics">
+<defs>
+<style>:root { color-scheme: light dark; } .spark { fill: none; stroke: #1a7f37; stroke-width: 1.8; stroke-linejoin: round; } @media (prefers-color-scheme: dark) { .spark { stroke: #3fb950; } .base { stroke: #30363d; } }</style>
+<line class="base" x1="24" y1="30" x2="1176" y2="30" stroke="#d0d7de" stroke-width="1"/>
+<polyline class="spark" points="24,28 80,10 140,22 210,8 280,20 360,6 440,18 520,9 600,16 680,7 760,19 840,8 920,21 1000,11 1080,24 1176,14"/>
+</defs>
+</svg>

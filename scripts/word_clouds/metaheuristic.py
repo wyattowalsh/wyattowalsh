@@ -6,6 +6,7 @@ import math
 import os
 import random
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import override
 
 from ..utils import get_logger
 from .clustered import ClusteredRenderer
@@ -13,7 +14,7 @@ from .colors import COLOR_FUNCS, make_shifted_color_func
 from .core import PlacedWord
 from .engine import SvgWordCloudEngine
 from .readability import LayoutReadabilityPolicy, LayoutReadabilitySettings
-from .shaped import ShapedRenderer
+from .shaped import FractalRenderer, ShapedRenderer
 from .solvers import (
     _META_SOLVERS,
     _clamp_solution,
@@ -27,6 +28,19 @@ logger = get_logger(module=__name__)
 LayoutReadabilityConfig = (
     LayoutReadabilityPolicy | LayoutReadabilitySettings | dict[str, object] | None
 )
+_SolverWorkerArgs = tuple[
+    str,
+    int,
+    list[float],
+    float,
+    float,
+    int,
+    int,
+    int | None,
+    list[str],
+    LayoutReadabilityConfig,
+    dict[str, float],
+]
 
 
 def _build_family_map() -> dict[str, str]:
@@ -206,7 +220,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             solver_weights.append(w)
 
         # Build args for each solver (top-level worker for pickling)
-        solver_args = [
+        solver_args: list[_SolverWorkerArgs] = [
             (
                 name,
                 n_words,
@@ -231,7 +245,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         )
 
         results_by_name: dict[str, tuple[str, list[tuple[float, float, float]]]] = {}
-        failed_args: list[tuple] = []
+        failed_args: list[_SolverWorkerArgs] = []
 
         with ProcessPoolExecutor(max_workers=n_workers) as executor:
             future_to_args = {
@@ -525,6 +539,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         svg_parts.append("</svg>")
         return "\n".join(svg_parts)
 
+    @override
     def place_words(
         self,
         frequencies: dict[str, float],
@@ -555,6 +570,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             first_name, positions, texts, sizes, colors, weights, opacities
         )
 
+    @override
     def generate(
         self,
         frequencies: dict[str, float],
@@ -851,6 +867,7 @@ RENDERERS: dict[str, type[SvgWordCloudEngine]] = {
     "clustered": ClusteredRenderer,
     "typographic": TypographicRenderer,
     "shaped": ShapedRenderer,
+    "fractal": FractalRenderer,
     "metaheuristic-anim": MetaheuristicAnimRenderer,
 }
 

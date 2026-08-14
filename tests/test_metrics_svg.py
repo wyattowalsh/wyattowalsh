@@ -17,6 +17,11 @@ from scripts.metrics_svg import (
     validate_svg_content,
     validate_svg_file,
 )
+from tests.test_profile_workflow import (
+    _job_block,
+    _lowlighter_with_blocks,
+    _workflow_text,
+)
 
 VALID_SVG = dedent(
     """\
@@ -461,3 +466,27 @@ def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
     assert 'class="people"' in additional_text
     assert "Overall issues and pull requests status" in extra_text
     assert "followup" in extra_text.lower()
+
+
+def test_fact_habits_both_committed_primary_renders_habits_panel() -> None:
+    """fact-habits-both: YAML is on; first-party card is the designed habits surface.
+
+    Committed metrics.svg does not currently include a plugin_habits heading.
+    This locks the first-party card plus production YAML, not a missing panel.
+    """
+    primary, additional, extra = _lowlighter_with_blocks(
+        _job_block(_workflow_text(), "generate-profile-metrics")
+    )
+    assert "plugin_habits: yes" in primary
+    assert "plugin_habits: no" in additional
+    assert "plugin_habits: no" in extra
+    habits = Path(".github/assets/img/metrics-habits.svg")
+    assert habits.is_file()
+    text = habits.read_text(encoding="utf-8")
+    assert "Coding habits" in text
+    assert "habits-focus" in text
+    assert "habits-peak" in text
+    assert "habits-streaks" in text
+    primary_svg = Path(".github/assets/img/metrics.svg")
+    assert primary_svg.is_file()
+    assert validate_svg_file(primary_svg).is_valid is True

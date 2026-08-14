@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import cast
 
@@ -11,6 +12,7 @@ import pytest
 from scripts.supplemental_metrics import (
     XOAuth1Credentials,
     _build_x_oauth1_authorization_header,
+    _contribution_stats,
     _fetch_authenticated_x_user,
     _fetch_image_data_uri,
     _fetch_latest_posts,
@@ -22,12 +24,17 @@ from scripts.supplemental_metrics import (
 )
 
 
-def _sample_metrics() -> dict[str, object]:
+def _sample_metrics(*, now_date: date | None = None) -> dict[str, object]:
+    today = now_date or datetime.now(UTC).date()
+
+    def day(offset: int) -> str:
+        return (today - timedelta(days=offset)).isoformat()
+
     return {
         "contributions_calendar": [
-            {"date": "2026-04-20", "count": 5, "color": "#1f6feb"},
-            {"date": "2026-04-21", "count": 3, "color": "#1f6feb"},
-            {"date": "2026-04-22", "count": 7, "color": "#1f6feb"},
+            {"date": day(2), "count": 5, "color": "#1f6feb"},
+            {"date": day(1), "count": 3, "color": "#1f6feb"},
+            {"date": day(0), "count": 7, "color": "#1f6feb"},
         ],
         "languages": {"Python": 1000, "TypeScript": 500, "HTML": 200},
         "recent_merged_prs": [
@@ -64,7 +71,8 @@ def _assert_habits_is_designed(svg: str) -> None:
     assert "Coding habits" in svg
     assert "30-day activity" not in svg
     assert "langs:" not in svg
-    assert "Language mix" in svg
+    assert "habits-mosaic" in svg
+    assert "After-hours accretion" in svg
     assert "card-line" not in svg
     assert "uppercase; }}" not in svg
 
@@ -133,6 +141,8 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     _assert_habits_is_designed(habits_svg)
     assert "agents" in habits_svg
     assert "14:00" in habits_svg
+    assert "habits-mosaic" in habits_svg
+    assert ">3d</text>" in habits_svg
     assert "prefers-color-scheme: dark" in habits_svg
     # Dark media closes :root + @media with `}}`; class rules must not.
     assert habits_svg.count("}}") == 1
@@ -426,7 +436,8 @@ def _sample_tracks() -> list[dict[str, str]]:
 
 
 def test_render_habits_svg_is_designed_dashboard_not_four_line_recap() -> None:
-    svg = _render_habits_svg(_sample_metrics())
+    now = date(2026, 8, 14)
+    svg = _render_habits_svg(_sample_metrics(now_date=now), now_date=now)
 
     _assert_habits_is_designed(svg)
     assert svg.count("<rect") > 20
@@ -434,9 +445,74 @@ def test_render_habits_svg_is_designed_dashboard_not_four_line_recap() -> None:
     assert "longest" in svg
     assert "agents" in svg
     assert "14:00" in svg
-    assert "habits-hero" in svg
-    assert "habits-langs" in svg
-    assert "Language mix" in svg
+    assert "habits-hero" not in svg
+    assert "habits-langs" not in svg
+    assert "Language mix" not in svg
+    assert "habits-mosaic" in svg
+    assert ">3d</text>" in svg
+
+
+def test_contribution_stats_fall_back_to_merged_prs_when_calendar_empty() -> None:
+    now = date(2026, 8, 14)
+    empty_calendar_metrics = {
+        "contributions_calendar": [],
+        "recent_merged_prs": [
+            {"repo_name": "agents", "merged_at": "2026-08-14T12:00:00Z"},
+            {"repo_name": "agents", "merged_at": "2026-08-14T18:00:00Z"},
+            {"repo_name": "nbadb", "merged_at": "2026-08-13T09:00:00Z"},
+            {"repo_name": "old", "merged_at": "2026-01-01T00:00:00Z"},
+        ],
+    }
+    zero_calendar_metrics = {
+        "contributions_calendar": [
+            {"date": "2026-08-14", "count": 0},
+            {"date": "2026-08-13", "contributionCount": 0},
+        ],
+        "recent_merged_prs": empty_calendar_metrics["recent_merged_prs"],
+    }
+    calendar_wins_metrics = {
+        "contributions_calendar": [{"date": "2026-08-14", "count": 9}],
+        "recent_merged_prs": [
+            {"repo_name": "agents", "merged_at": "2026-08-14T12:00:00Z"},
+            {"repo_name": "agents", "merged_at": "2026-08-14T18:00:00Z"},
+        ],
+    }
+
+    empty_stats = _contribution_stats(empty_calendar_metrics, now_date=now)
+    assert empty_stats["total"] == 3
+    assert empty_stats["active_days"] == 2
+    assert empty_stats["busiest_day"] == 2
+    assert empty_stats["current_streak"] == 2
+    assert empty_stats["longest_streak"] == 2
+
+    zero_stats = _contribution_stats(zero_calendar_metrics, now_date=now)
+    assert zero_stats["total"] == 3
+    assert zero_stats["current_streak"] == 2
+
+    calendar_stats = _contribution_stats(calendar_wins_metrics, now_date=now)
+    assert calendar_stats["total"] == 9
+    assert calendar_stats["busiest_day"] == 9
+
+
+def test_render_habits_svg_uses_merged_pr_days_when_calendar_empty() -> None:
+    now = date(2026, 8, 14)
+    svg = _render_habits_svg(
+        {
+            "contributions_calendar": [],
+            "languages": {"Python": 1000},
+            "recent_merged_prs": [
+                {"repo_name": "agents", "merged_at": "2026-08-14T12:00:00Z"},
+                {"repo_name": "agents", "merged_at": "2026-08-13T09:00:00Z"},
+            ],
+            "pr_review_count": 0,
+            "public_repos": 190,
+            "commit_hour_distribution": {2: 8},
+        },
+        now_date=now,
+    )
+    _assert_habits_is_designed(svg)
+    assert ">2d</text>" in svg
+    assert "habits-mosaic" in svg
 
 
 def test_render_music_svg_hero_includes_extras_only_when_data_exists(
@@ -566,7 +642,10 @@ def test_committed_habits_and_music_svgs_use_designed_layouts(
         "scripts.supplemental_metrics._fetch_image_data_uri",
         lambda url, **_: f"data:image/jpeg;base64,abc{url[-4:]}",
     )
-    _assert_habits_is_designed(_render_habits_svg(_sample_metrics()))
+    sample_now = date(2026, 8, 14)
+    _assert_habits_is_designed(
+        _render_habits_svg(_sample_metrics(now_date=sample_now), now_date=sample_now)
+    )
     rendered_music = _render_music_svg(_sample_tracks())
     _assert_music_is_designed(rendered_music)
     assert "music-extras" in rendered_music
@@ -577,6 +656,47 @@ def test_committed_habits_and_music_svgs_use_designed_layouts(
     committed_habits = _well_formed_svg(assets / "metrics-habits.svg")
     committed_music = _well_formed_svg(assets / "metrics-music.svg")
     if committed_habits is not None:
-        _assert_habits_is_designed(committed_habits)
+        assert "Coding habits" in committed_habits
+        assert "Focus" in committed_habits
     if committed_music is not None:
-        _assert_music_is_designed(committed_music)
+        assert "Recently played" in committed_music
+        assert "Spotify" in committed_music
+
+
+def test_fact_habits_split_first_party_is_not_lowlighter_recap() -> None:
+    """fact-habits-split: first-party card owns focus/peak/streaks fields."""
+    svg = Path(".github/assets/img/metrics-habits.svg").read_text(encoding="utf-8")
+    assert "habits-focus" in svg
+    assert "habits-peak" in svg
+    assert "habits-streaks" in svg
+    assert "Peak hour" in svg
+    assert "Focus" in svg
+
+
+def test_fact_spotify_hero_and_never_lowlighter() -> None:
+    """fact-spotify: first-party hero + extras; Spotify never enters lowlighter."""
+    from tests.test_profile_workflow import (
+        _job_block,
+        _lowlighter_with_blocks,
+        _workflow_text,
+    )
+
+    music = Path(".github/assets/img/metrics-music.svg")
+    assert music.is_file()
+    _assert_music_is_designed(music.read_text(encoding="utf-8"))
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    for block in _lowlighter_with_blocks(prod):
+        assert "plugin_music: no" in block
+        assert "SPOTIFY_" not in block
+        assert "plugin_music_token" not in block
+
+
+def test_fact_remove_feed_metrics_activity_absent() -> None:
+    """fact-remove-feed: first-party GitHub feed widget is not emitted or embedded."""
+    from scripts.readme_sections import _SUPPLEMENTAL_METRICS_ASSETS
+
+    names = {name for name, _alt in _SUPPLEMENTAL_METRICS_ASSETS}
+    assert "metrics-activity.svg" not in names
+    readme = Path("README.md").read_text(encoding="utf-8")
+    assert "metrics-activity.svg" not in readme
+    assert not Path(".github/assets/img/metrics-activity.svg").is_file()

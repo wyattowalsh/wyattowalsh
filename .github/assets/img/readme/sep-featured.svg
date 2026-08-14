@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Featured projects">
+<defs>
+<style>:root { color-scheme: light dark; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } }</style>
+<line class="rail" x1="24" y1="18" x2="1176" y2="18" stroke="#d0d7de" stroke-width="1"/>
+<circle cx="600" cy="18" r="5" fill="none" stroke="#6366f1" stroke-width="1.6"/>
+<rect x="40" y="15.0" width="2.2" height="6.0" rx="1" fill="#6366f1"/>
+<rect x="110" y="12.5" width="2.2" height="11.0" rx="1" fill="#6366f1"/>
+<rect x="180" y="10.0" width="2.2" height="16.0" rx="1" fill="#6366f1"/>
+<rect x="250" y="14.5" width="2.2" height="7.0" rx="1" fill="#6366f1"/>
+<rect x="320" y="12.0" width="2.2" height="12.0" rx="1" fill="#6366f1"/>
+<rect x="390" y="9.5" width="2.2" height="17.0" rx="1" fill="#6366f1"/>
+<rect x="460" y="14.0" width="2.2" height="8.0" rx="1" fill="#6366f1"/>
+<rect x="530" y="11.5" width="2.2" height="13.0" rx="1" fill="#6366f1"/>
+<rect x="600" y="9.0" width="2.2" height="18.0" rx="1" fill="#6366f1"/>
+<rect x="670" y="13.5" width="2.2" height="9.0" rx="1" fill="#6366f1"/>
+<rect x="740" y="11.0" width="2.2" height="14.0" rx="1" fill="#6366f1"/>
+<rect x="810" y="8.5" width="2.2" height="19.0" rx="1" fill="#6366f1"/>
+<rect x="880" y="13.0" width="2.2" height="10.0" rx="1" fill="#6366f1"/>
+<rect x="950" y="10.5" width="2.2" height="15.0" rx="1" fill="#6366f1"/>
+<rect x="1020" y="15.0" width="2.2" height="6.0" rx="1" fill="#6366f1"/>
+<rect x="1090" y="12.5" width="2.2" height="11.0" rx="1" fill="#6366f1"/>
+<rect x="1160" y="10.0" width="2.2" height="16.0" rx="1" fill="#6366f1"/>
+</defs>
+</svg>

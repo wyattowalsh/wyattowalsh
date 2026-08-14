@@ -316,6 +316,8 @@ def test_generate_wakatime_svg_uses_collection_without_api(tmp_path: Path) -> No
     text = path.read_text(encoding="utf-8")
     assert path == output
     assert "Python" in text
+    assert "iOS" in text
+    assert "watchOS" in text
     assert "secret-client" not in text
     assert "prefers-color-scheme: dark" in text
 
@@ -335,7 +337,10 @@ def test_generate_wakatime_svg_collects_when_needed(
         include_github=False,
         project_allowlist=("wyattowalsh",),
     )
-    assert "Cursor" in output.read_text(encoding="utf-8")
+    text = output.read_text(encoding="utf-8")
+    assert "Cursor" in text
+    assert "iOS" in text
+    assert "watchOS" in text
 
 
 def test_generate_wakatime_svg_requires_key_without_collection() -> None:
@@ -343,10 +348,10 @@ def test_generate_wakatime_svg_requires_key_without_collection() -> None:
         generate_wakatime_svg(include_github=False)
 
 
-def test_main_requires_key_without_allow(monkeypatch) -> None:
+def test_main_requires_key_without_allow(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.delenv("WAKATIME_API_KEY", raising=False)
     with pytest.raises(SystemExit):
-        main(["--output", "wakatime.svg"])
+        main(["--output", str(tmp_path / "wakatime.svg")])
 
 
 def test_main_allow_missing_key(tmp_path: Path, monkeypatch) -> None:
@@ -378,3 +383,67 @@ def test_main_writes_svg(tmp_path: Path, monkeypatch) -> None:
         == 0
     )
     assert "Coding activity" in output.read_text(encoding="utf-8")
+
+
+def test_fact_waka_svg_renderer_shows_mac_ios_watch() -> None:
+    """fact-waka-svg: renderer shows public-safe maximal data including platforms."""
+    svg = render_wakatime_svg(public_safe_waka_collection())
+    assert "anmol098" not in svg
+    for needle in (
+        "Languages",
+        "Editors",
+        "Platforms",
+        "Categories",
+        "This week",
+        "Last year",
+        "All time",
+        "Coding heatmap",
+        "Mac",
+        "iOS",
+        "watchOS",
+    ):
+        assert needle in svg
+
+
+def test_fact_waka_svg_platforms_union_all_ranges() -> None:
+    """fact-waka-svg: platforms union week + year + all-time (not week-only)."""
+    week = WakaWeekStats(
+        timezone="UTC",
+        languages=(),
+        editors=(),
+        projects=(),
+        operating_systems=(_entry("Mac", 3600, 100.0, "1 hrs"),),
+        categories=(),
+    )
+    year = WakaWeekStats(
+        timezone="UTC",
+        languages=(),
+        editors=(),
+        projects=(),
+        operating_systems=(_entry("iOS", 1800, 100.0, "30 mins"),),
+        categories=(),
+        range_name="last_year",
+    )
+    all_time = WakaWeekStats(
+        timezone="UTC",
+        languages=(),
+        editors=(),
+        projects=(),
+        operating_systems=(_entry("watchOS", 900, 100.0, "15 mins"),),
+        categories=(),
+        range_name="all_time",
+    )
+    svg = render_wakatime_svg(WakaCollection(week=week, year=year, all_time=all_time))
+    assert "Mac" in svg
+    assert "iOS" in svg
+    assert "watchOS" in svg
+
+
+def test_fact_waka_privacy_committed_svg_omits_banned_rows() -> None:
+    """fact-waka-privacy: committed SVG omits paths, heartbeats, and leisure rows."""
+    svg = COMMITTED_WAKATIME_SVG.read_text(encoding="utf-8")
+    for banned in _PRIVATE_AND_LEISURE:
+        assert banned not in svg
+    assert "/Users/" not in svg
+    assert "~/" not in svg
+    assert "C:\\" not in svg

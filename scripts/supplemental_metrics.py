@@ -39,6 +39,12 @@ SPOTIFY_TOKEN_URL: Final[str] = "https://accounts.spotify.com/api/token"
 SPOTIFY_RECENT_TRACKS_URL: Final[str] = (
     "https://api.spotify.com/v1/me/player/recently-played?limit=20"
 )
+SPOTIFY_TOP_ARTISTS_URL: Final[str] = (
+    "https://api.spotify.com/v1/me/top/artists?time_range=long_term&limit=8"
+)
+SPOTIFY_TOP_TRACKS_URL: Final[str] = (
+    "https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=5"
+)
 MUSIC_QUEUE_LIMIT: Final[int] = 8
 X_API_BASE: Final[str] = "https://api.x.com/2"
 
@@ -235,6 +241,24 @@ def _parse_iso8601(value: str | None) -> datetime | None:
         return None
 
 
+def _parse_calendar_day(value: str | None) -> date | None:
+    """Parse a GitHub calendar day or merge timestamp as a calendar date.
+
+    Date-only strings are taken as written. Applying ``astimezone`` to a naive
+    midnight would shift the day in UTC+ locales and zero the 30-day window.
+    """
+    if not value:
+        return None
+    raw = str(value).strip()
+    if len(raw) >= 10:
+        try:
+            return date.fromisoformat(raw[:10])
+        except ValueError:
+            pass
+    parsed = _parse_iso8601(raw)
+    return None if parsed is None else parsed.date()
+
+
 def _relative_label(value: str | None, *, now: datetime | None = None) -> str:
     dt = _parse_iso8601(value)
     if dt is None:
@@ -400,29 +424,63 @@ def _streaks_from_daily_counts(
 
     longest = 0
     running = 0
-    for day in sorted(daily_counts):
-        if daily_counts.get(day, 0) > 0:
+    previous: date | None = None
+    for day in sorted(day for day, count in daily_counts.items() if count > 0):
+        if previous is not None and day == previous + timedelta(days=1):
             running += 1
-            longest = max(longest, running)
         else:
-            running = 0
+            running = 1
+        longest = max(longest, running)
+        previous = day
     return current, longest
+
+
+def _calendar_from_merged_prs(metrics: dict[str, Any]) -> dict[date, int]:
+    """Build a day histogram from merged-PR timestamps.
+
+    Used when the GraphQL contribution calendar is empty or all zeros so the
+    first-party habits hero/streaks/cadence still reflect owner-scoped work.
+    """
+    raw_prs = metrics.get("recent_merged_prs") or []
+    if not isinstance(raw_prs, list):
+        return {}
+    daily_counts: dict[date, int] = {}
+    for pr in raw_prs:
+        if not isinstance(pr, dict):
+            continue
+        merged_at = pr.get("merged_at")
+        day = _parse_calendar_day(merged_at if isinstance(merged_at, str) else None)
+        if day is None:
+            continue
+        daily_counts[day] = daily_counts.get(day, 0) + 1
+    return daily_counts
 
 
 def _calendar_daily_counts(metrics: dict[str, Any]) -> dict[date, int]:
     raw_calendar = metrics.get("contributions_calendar") or []
     daily_counts: dict[date, int] = {}
-    for entry in raw_calendar:
-        parsed_date = _parse_iso8601(entry.get("date"))
-        if parsed_date is None:
-            try:
-                parsed_date = datetime.strptime(
-                    entry.get("date", ""), "%Y-%m-%d"
-                ).replace(tzinfo=UTC)
-            except ValueError:
+    if isinstance(raw_calendar, list):
+        for entry in raw_calendar:
+            if not isinstance(entry, dict):
                 continue
-        daily_counts[parsed_date.date()] = int(entry.get("count", 0) or 0)
-    return daily_counts
+            parsed_date = _parse_calendar_day(entry.get("date"))
+            if parsed_date is None:
+                continue
+            raw_count = entry.get("count", entry.get("contributionCount", 0))
+            try:
+                count = int(raw_count or 0)
+            except (TypeError, ValueError):
+                continue
+            daily_counts[parsed_date] = count
+    if any(count > 0 for count in daily_counts.values()):
+        return daily_counts
+    fallback = _calendar_from_merged_prs(metrics)
+    if fallback:
+        logger.info(
+            "Contribution calendar empty; using {} merged-PR days for habits",
+            len(fallback),
+        )
+    return fallback
 
 
 def _contribution_stats(
@@ -535,6 +593,18 @@ def _weekday_counts(metrics: dict[str, Any]) -> list[int]:
     return counts
 
 
+_EXCLUDED_LANGUAGE_NAMES = frozenset(
+    {
+        "jetbrains mps",
+        "mps",
+    }
+)
+
+
+def _is_excluded_language(name: str) -> bool:
+    return name.strip().casefold() in _EXCLUDED_LANGUAGE_NAMES
+
+
 def _language_shares(
     metrics: dict[str, Any],
     *,
@@ -546,7 +616,7 @@ def _language_shares(
         (
             (str(name), int(size or 0))
             for name, size in languages.items()
-            if int(size or 0) > 0
+            if int(size or 0) > 0 and not _is_excluded_language(str(name))
         ),
         key=lambda item: item[1],
         reverse=True,
@@ -1023,24 +1093,91 @@ def _render_habits_langs(
     return lines
 
 
-def _render_habits_svg(metrics: dict[str, Any]) -> str:
-    stats = _contribution_stats(metrics)
+def _nocturnal_index(metrics: dict[str, Any]) -> float:
+    """Share of push-hour mass between 23:00 and 05:59 UTC."""
+    buckets = _hour_buckets(metrics)
+    total = sum(buckets) or 1
+    night = buckets[23] + sum(buckets[:6])
+    return night / total
+
+
+def _focus_herfindahl(repos: tuple[tuple[str, int], ...]) -> float:
+    """Herfindahl-Hirschman index of merged-PR focus (1 = monoculture)."""
+    total = sum(count for _, count in repos) or 1
+    return sum((count / total) ** 2 for _, count in repos)
+
+
+def _render_habits_mosaic_panel(
+    nocturnal: float,
+    herfindahl: float,
+    *,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+) -> list[str]:
+    night_w = max(8, int((width - 40) * nocturnal))
+    mosaic_w = max(8, int((width - 40) * herfindahl))
+    night_pct = f"{nocturnal * 100:.0f}%"
+    mosaic_pct = f"{herfindahl * 100:.0f}%"
+    return [
+        f'<g class="habits-mosaic" transform="translate({x},{y})">',
+        f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
+        f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
+        '<text class="label" x="16" y="24">After-hours accretion</text>',
+        (
+            '<text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share '
+            "· uncommon but readable night-owl index</text>"
+        ),
+        f'<text class="body" x="16" y="72">{_svg_text(night_pct)} nocturnal</text>',
+        (
+            f'<rect x="16" y="82" width="{width - 32}" height="8" rx="4" '
+            'fill="var(--card-border)" fill-opacity="0.45"/>'
+        ),
+        (
+            f'<rect class="focus-bar" x="16" y="82" width="{night_w}" '
+            'height="8" rx="4"/>'
+        ),
+        '<text class="label" x="16" y="118">Focus monoculture</text>',
+        (
+            '<text class="meta" x="16" y="136">Herfindahl of merged-PR repos '
+            "(100% = one repo ate the month)</text>"
+        ),
+        f'<text class="body" x="16" y="166">{_svg_text(mosaic_pct)} HHI</text>',
+        (
+            f'<rect x="16" y="176" width="{width - 32}" height="8" rx="4" '
+            'fill="var(--card-border)" fill-opacity="0.45"/>'
+        ),
+        (
+            f'<rect class="streak-fill" x="16" y="176" width="{mosaic_w}" '
+            'height="8" rx="4"/>'
+        ),
+        "</g>",
+    ]
+
+
+def _render_habits_svg(
+    metrics: dict[str, Any],
+    *,
+    now_date: date | None = None,
+) -> str:
+    stats = _contribution_stats(metrics, now_date=now_date)
     repos = _focus_repository_counts(metrics, limit=5)
     buckets = _hour_buckets(metrics)
     peak_hour = _peak_commit_hour(metrics)
-    cadence = _cadence_series(metrics, days=90)
+    cadence = _cadence_series(metrics, days=90, now_date=now_date)
     weekdays = _weekday_counts(metrics)
-    shares = _language_shares(metrics, limit=6)
-    width, height = 1200, 548
-    panel_y, panel_h, panel_w = 132, 200, 376
+    nocturnal = _nocturnal_index(metrics)
+    herfindahl = _focus_herfindahl(repos)
+    width, height = 1200, 580
+    panel_y, panel_h, panel_w = 58, 200, 376
     body = [
         (
-            f'<text class="title" x="28" y="40">'
+            f'<text class="title" x="28" y="36">'
             f"{_svg_text(ASSET_SPECS['habits'].title)}</text>"
         ),
-        '<text class="kicker" x="1172" y="38" text-anchor="end">'
-        "Focus · Peak hour · Streaks</text>",
-        *_render_habits_hero(stats, metrics, x=20, y=58),
+        '<text class="kicker" x="1172" y="34" text-anchor="end">'
+        "Focus · Circadian · Mosaic</text>",
         *_render_habits_focus_panel(
             repos,
             x=20,
@@ -1056,17 +1193,24 @@ def _render_habits_svg(metrics: dict[str, Any]) -> str:
             width=panel_w,
             height=panel_h,
         ),
-        *_render_habits_streaks_panel(
-            int(stats["current_streak"]),
-            int(stats["longest_streak"]),
-            weekdays,
+        *_render_habits_mosaic_panel(
+            nocturnal,
+            herfindahl,
             x=804,
             y=panel_y,
             width=panel_w,
             height=panel_h,
         ),
-        *_render_habits_langs(shares, x=28, y=348, width=1144),
-        *_render_habits_cadence(cadence, x=28, y=430, width=1144),
+        *_render_habits_cadence(cadence, x=28, y=274, width=1144),
+        *_render_habits_streaks_panel(
+            int(stats["current_streak"]),
+            int(stats["longest_streak"]),
+            weekdays,
+            x=20,
+            y=352,
+            width=1160,
+            height=208,
+        ),
     ]
     return _wrap_supplemental_svg(
         width=width,
@@ -1078,19 +1222,61 @@ def _render_habits_svg(metrics: dict[str, Any]) -> str:
     )
 
 
+def _language_year_flows(
+    metrics: dict[str, Any],
+    *,
+    lang_limit: int = 8,
+) -> tuple[list[int], list[str], dict[tuple[int, str], int]]:
+    """Primary-language counts by repo creation year (JetBrains MPS excluded)."""
+    allowed = {
+        name for name, _size, _pct in _language_shares(metrics, limit=lang_limit)
+    }
+    flows: dict[tuple[int, str], int] = {}
+    years: set[int] = set()
+    langs: set[str] = set()
+    for repo in metrics.get("repos") or []:
+        if not isinstance(repo, dict) or repo.get("fork"):
+            continue
+        lang = str(repo.get("language") or "").strip()
+        if not lang or _is_excluded_language(lang):
+            continue
+        if allowed and lang not in allowed:
+            continue
+        created = str(repo.get("created_at") or "")[:4]
+        if not created.isdigit():
+            continue
+        year = int(created)
+        years.add(year)
+        langs.add(lang)
+        key = (year, lang)
+        flows[key] = flows.get(key, 0) + 1
+    year_list = sorted(years)
+    def _lang_weight(lang_name: str) -> tuple[int, str]:
+        mass = sum(
+            count
+            for (year, flow_lang), count in flows.items()
+            if flow_lang == lang_name
+        )
+        return (-mass, lang_name)
+
+    lang_list = sorted(langs, key=_lang_weight)
+    return year_list, lang_list, flows
+
+
 def _render_languages_svg(metrics: dict[str, Any]) -> str:
-    shares = _language_shares(metrics, limit=10)
-    width, height = 1200, 292
+    shares = _language_shares(metrics, limit=8)
+    years, langs, flows = _language_year_flows(metrics, lang_limit=8)
+    width, height = 1200, 420
     body = [
         (
-            f'<text class="title" x="28" y="40">'
+            f'<text class="title" x="28" y="36">'
             f"{_svg_text(ASSET_SPECS['languages'].title)}</text>"
         ),
-        '<text class="kicker" x="1172" y="38" text-anchor="end">'
-        "Repo language bytes</text>",
-        '<g class="languages-board" transform="translate(28,64)">',
-        '<rect class="panel" width="1144" height="204" rx="10" />',
-        '<rect class="panel-stroke" width="1144" height="204" rx="10" />',
+        '<text class="kicker" x="1172" y="34" text-anchor="end">'
+        "Year → language · current bytes</text>",
+        '<g class="languages-sankey" transform="translate(28,56)">',
+        '<rect class="panel" width="1144" height="340" rx="10" />',
+        '<rect class="panel-stroke" width="1144" height="340" rx="10" />',
     ]
     if not shares:
         body.extend(
@@ -1099,61 +1285,58 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
                 "</g>",
             )
         )
-    else:
-        cx, cy, radius = 130, 104, 72
-        acc = 0.0
-        for name, size, percent in shares:
-            sweep = max(0.0, min(360.0, percent * 3.6))
-            start = acc
-            acc += sweep
-            fill = _label_swatch(name)
-            if sweep >= 359.9:
-                body.append(
-                    f'<circle class="lang-slice" cx="{cx}" cy="{cy}" '
-                    f'r="{radius}" fill="{fill}" />'
-                )
-                continue
-            start_rad = math.radians(start - 90)
-            end_rad = math.radians(start + sweep - 90)
-            x1 = cx + radius * math.cos(start_rad)
-            y1 = cy + radius * math.sin(start_rad)
-            x2 = cx + radius * math.cos(end_rad)
-            y2 = cy + radius * math.sin(end_rad)
-            large = 1 if sweep > 180 else 0
-            body.append(
-                f'<path class="lang-slice" d="M {cx} {cy} L {x1:.1f} {y1:.1f} '
-                f'A {radius} {radius} 0 {large} 1 {x2:.1f} {y2:.1f} Z" '
-                f'fill="{fill}" />'
-            )
-        body.append(f'<circle cx="{cx}" cy="{cy}" r="38" fill="var(--card-bg)" />')
-        body.append(
-            f'<text class="chip-value" x="{cx}" y="{cy + 6}" '
-            f'text-anchor="middle">{len(shares)}</text>'
-        )
-        bar_x = 250
+    elif not years or not langs:
         for index, (name, size, percent) in enumerate(shares):
-            row_y = 28 + index * 17
             fill = _label_swatch(name)
-            bar_w = max(6, int(520 * (percent / 100.0)))
+            row_y = 36 + index * 28
             body.extend(
                 (
+                    f'<rect x="24" y="{row_y - 12}" width="8" height="8" '
+                    f'rx="2" fill="{fill}"/>',
                     (
-                        f'<text class="body" x="{bar_x}" y="{row_y}">'
-                        f"{_svg_text(_truncate(name, 16))}</text>"
-                    ),
-                    (
-                        f'<rect x="{bar_x + 150}" y="{row_y - 10}" width="520" '
-                        'height="8" rx="4" fill="var(--card-border)" '
-                        'fill-opacity="0.35" />'
-                    ),
-                    (
-                        f'<rect x="{bar_x + 150}" y="{row_y - 10}" '
-                        f'width="{bar_w}" height="8" rx="4" fill="{fill}" />'
-                    ),
-                    (
-                        f'<text class="meta" x="{bar_x + 684}" y="{row_y}" '
-                        f'text-anchor="end">{percent:.1f}% · '
+                        f'<text class="body" x="40" y="{row_y}">'
+                        f"{_svg_text(name)} {percent:.0f}% · "
                         f"{_svg_text(_format_bytes_short(size))} bytes</text>"
+                    ),
+                )
+            )
+        body.append("</g>")
+    else:
+        left_x, right_x = 36, 980
+        row_h = min(36, 280 / max(len(years), len(langs), 1))
+        year_y = {
+            year: 36 + index * row_h for index, year in enumerate(years)
+        }
+        lang_y = {
+            lang: 36 + index * row_h for index, lang in enumerate(langs)
+        }
+        max_flow = max(flows.values()) if flows else 1
+        for (year, lang), count in flows.items():
+            y1 = year_y[year]
+            y2 = lang_y[lang]
+            stroke_w = max(1.2, 8.0 * (count / max_flow))
+            fill = _label_swatch(lang)
+            body.append(
+                f'<path d="M {left_x + 70} {y1:.1f} C 360 {y1:.1f}, '
+                f'720 {y2:.1f}, {right_x} {y2:.1f}" fill="none" '
+                f'stroke="{fill}" stroke-opacity="0.45" '
+                f'stroke-width="{stroke_w:.1f}"/>'
+            )
+        for year, y in year_y.items():
+            body.append(
+                f'<text class="body" x="{left_x}" y="{y + 4:.1f}">'
+                f"{year}</text>"
+            )
+        for lang, y in lang_y.items():
+            fill = _label_swatch(lang)
+            share = next((pct for name, _sz, pct in shares if name == lang), 0.0)
+            body.extend(
+                (
+                    f'<rect x="{right_x + 8}" y="{y - 7:.1f}" width="8" '
+                    f'height="8" rx="2" fill="{fill}"/>',
+                    (
+                        f'<text class="body" x="{right_x + 22}" y="{y + 4:.1f}">'
+                        f"{_svg_text(_truncate(lang, 16))} {share:.0f}%</text>"
                     ),
                 )
             )
@@ -1433,6 +1616,49 @@ def _fetch_recent_tracks(
     return tracks
 
 
+def _fetch_spotify_catalog(
+    client_id: str,
+    client_secret: str,
+    refresh_token: str,
+) -> dict[str, list[dict[str, str]]]:
+    """All-time-ish Spotify taste: long-term top artists and tracks."""
+    access_token = _spotify_access_token(client_id, client_secret, refresh_token)
+    headers = {"Authorization": f"Bearer {access_token}"}
+    artists_payload = _require_json_object(
+        _request_json(SPOTIFY_TOP_ARTISTS_URL, headers=headers),
+        context="Spotify top artists",
+    )
+    tracks_payload = _require_json_object(
+        _request_json(SPOTIFY_TOP_TRACKS_URL, headers=headers),
+        context="Spotify top tracks",
+    )
+    artists: list[dict[str, str]] = []
+    for raw in _require_json_array(
+        artists_payload.get("items"), context="Spotify top artists items"
+    ):
+        item = _require_json_object(raw, context="Spotify top artist")
+        genres = _require_json_array(
+            item.get("genres") or [], context="Spotify top artist genres"
+        )
+        artists.append(
+            {
+                "name": str(item.get("name") or "").strip() or "Unknown artist",
+                "genre": str(genres[0]) if genres else "",
+            }
+        )
+    tracks: list[dict[str, str]] = []
+    for raw in _require_json_array(
+        tracks_payload.get("items"), context="Spotify top tracks items"
+    ):
+        item = _require_json_object(raw, context="Spotify top track")
+        tracks.append(
+            {
+                "name": str(item.get("name") or "").strip() or "Untitled track",
+            }
+        )
+    return {"artists": artists, "tracks": tracks}
+
+
 def _best_spotify_image_url(images: list[Any], *, context: str) -> str:
     ranked: list[tuple[int, str]] = []
     for image_index, raw_image in enumerate(images):
@@ -1641,12 +1867,18 @@ def _render_music_extras(
     return defs, body
 
 
-def _render_music_svg(tracks: list[dict[str, str]]) -> str:
+def _render_music_svg(
+    tracks: list[dict[str, str]],
+    catalog: dict[str, list[dict[str, str]]] | None = None,
+) -> str:
     unique = _dedupe_tracks(tracks)
     hydrated = _with_track_artwork(unique[: 1 + MUSIC_QUEUE_LIMIT])
     extras = hydrated[1:]
     rows = math.ceil(len(extras) / 2) if extras else 0
-    height = 236 + (rows * 68 if extras else 0)
+    catalog = catalog or {}
+    artists = catalog.get("artists") or []
+    catalog_h = 92 if artists else 0
+    height = 236 + (rows * 68 if extras else 0) + catalog_h
     defs: list[str] = []
     body = [
         (
@@ -1698,6 +1930,35 @@ def _render_music_svg(tracks: list[dict[str, str]]) -> str:
         extra_defs, extra_body = _render_music_extras(hydrated, y=208)
         defs.extend(extra_defs)
         body.extend(extra_body)
+    if artists:
+        band_y = height - 84
+        body.append(
+            f'<g class="music-catalog" transform="translate(28,{band_y})">'
+        )
+        body.append(
+            '<text class="label" x="0" y="14">'
+            "All-time taste (long-term top artists)</text>"
+        )
+        chip_w = min(136, 1144 / max(len(artists), 1) - 8)
+        for index, artist in enumerate(artists[:8]):
+            ax = index * (chip_w + 8)
+            fill = _label_swatch(artist["name"])
+            body.extend(
+                (
+                    f'<rect x="{ax:.1f}" y="24" width="{chip_w:.1f}" '
+                    f'height="44" rx="10" fill="{fill}" fill-opacity="0.18"/>',
+                    (
+                        f'<text class="body" x="{ax + 10:.1f}" y="42">'
+                        f"{_svg_text(_truncate(artist['name'], 14))}</text>"
+                    ),
+                    (
+                        f'<text class="muted" x="{ax + 10:.1f}" y="58">'
+                        f"{_svg_text(_truncate(artist.get('genre') or 'eclectic', 16))}"
+                        "</text>"
+                    ),
+                )
+            )
+        body.append("</g>")
     return _wrap_supplemental_svg(
         width=1200,
         height=height,
@@ -1909,11 +2170,26 @@ def generate_supplemental_metrics(
             spotify_client_secret,
             spotify_refresh_token,
         )
+        try:
+            catalog = _fetch_spotify_catalog(
+                spotify_client_id,
+                spotify_client_secret,
+                spotify_refresh_token,
+            )
+        except (
+            urllib.error.HTTPError,
+            urllib.error.URLError,
+            TimeoutError,
+            OSError,
+            ValueError,
+        ) as exc:
+            logger.warning("Spotify catalog unavailable: {}", exc)
+            catalog = {"artists": [], "tracks": []}
         _write_supplemental_asset(
             builder,
             ASSET_SPECS["music"].asset_name,
             _render_music_card(tracks),
-            _render_music_svg(tracks),
+            _render_music_svg(tracks, catalog=catalog),
         )
         statuses["music"] = SupplementalAssetStatus(
             asset_name=ASSET_SPECS["music"].asset_name,

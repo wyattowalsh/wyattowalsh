@@ -76,6 +76,48 @@ _SHAPE_POLYGONS: dict[str, list[tuple[float, float]]] = {
         (0.0, 0.35),
         (0.4, 0.35),
     ],
+    "koch": [
+        (0.50, 0.02),
+        (0.62, 0.14),
+        (0.78, 0.10),
+        (0.72, 0.26),
+        (0.90, 0.34),
+        (0.74, 0.42),
+        (0.78, 0.58),
+        (0.62, 0.52),
+        (0.56, 0.70),
+        (0.50, 0.56),
+        (0.44, 0.70),
+        (0.38, 0.52),
+        (0.22, 0.58),
+        (0.26, 0.42),
+        (0.10, 0.34),
+        (0.28, 0.26),
+        (0.22, 0.10),
+        (0.38, 0.14),
+    ],
+    "dragon": [
+        (0.12, 0.48),
+        (0.22, 0.28),
+        (0.38, 0.18),
+        (0.55, 0.12),
+        (0.72, 0.20),
+        (0.86, 0.34),
+        (0.90, 0.52),
+        (0.82, 0.70),
+        (0.66, 0.82),
+        (0.48, 0.86),
+        (0.32, 0.78),
+        (0.22, 0.64),
+        (0.28, 0.50),
+        (0.42, 0.42),
+        (0.58, 0.46),
+        (0.66, 0.58),
+        (0.58, 0.68),
+        (0.44, 0.66),
+        (0.38, 0.56),
+        (0.18, 0.56),
+    ],
 }
 
 
@@ -97,7 +139,7 @@ class ShapedRenderer(SvgWordCloudEngine):
     """Words packed inside a shape boundary.
 
     Largest words go at the center; smaller words fill the edges.
-    Shape options: hexagon, circle, rounded-rect, diamond, star.
+    Shape options: hexagon, circle, rounded-rect, diamond, star, koch, dragon.
     """
 
     def __init__(
@@ -289,3 +331,12 @@ class ShapedRenderer(SvgWordCloudEngine):
             theta = i * 0.1
             r = b * theta
             yield cx + r * math.cos(theta), cy + r * math.sin(theta)
+
+
+class FractalRenderer(ShapedRenderer):
+    """Words packed into a Koch or dragon fractal silhouette."""
+
+    def __init__(self, *, shape: str | None = None, **kwargs) -> None:
+        kwargs.setdefault("show_shape_outline", True)
+        kwargs.setdefault("outline_color", "#8250df")
+        super().__init__(shape=shape or "koch", **kwargs)

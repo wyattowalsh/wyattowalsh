@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Tech stack">
+<defs>
+<style>:root { color-scheme: light dark; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } }</style>
+<line class="rail" x1="24" y1="18" x2="1176" y2="18" stroke="#d0d7de" stroke-width="1"/>
+<rect x="60" y="10" width="54" height="16" rx="8" fill="#3776ab"/>
+<rect x="180" y="10" width="54" height="16" rx="8" fill="#f7df1e"/>
+<rect x="320" y="10" width="54" height="16" rx="8" fill="#3178c6"/>
+<rect x="470" y="10" width="54" height="16" rx="8" fill="#e34f26"/>
+<rect x="620" y="10" width="54" height="16" rx="8" fill="#2496ed"/>
+<rect x="760" y="10" width="54" height="16" rx="8" fill="#000000"/>
+<rect x="900" y="10" width="54" height="16" rx="8" fill="#ff6c37"/>
+<rect x="1040" y="10" width="54" height="16" rx="8" fill="#0969da"/>
+</defs>
+</svg>

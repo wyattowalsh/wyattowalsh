@@ -31,6 +31,12 @@ from scripts.readme_sections import (
     _safe_urlopen,
     _SafeRedirectHandler,
 )
+from tests.test_readme_gfm_ux import (
+    after_heading,
+    assert_visible_or_comment_heading,
+    living_art_wrap,
+    slice_between_headings,
+)
 
 
 class StubRepoClient:
@@ -835,18 +841,33 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        board = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
+        first = (tmp_path / "svg" / "blog-first-post.svg").read_text(encoding="utf-8")
+        second = (tmp_path / "svg" / "blog-second-post.svg").read_text(encoding="utf-8")
+        img_links = re.findall(
+            r'<a href="([^"]+)"[^>]*>\s*<img src="([^"]+)"',
+            html,
+        )
         assert "<img" in html
-        assert "blog-posts.svg" in html
+        assert "blog-posts.svg" not in html
+        assert not (tmp_path / "svg" / "blog-posts.svg").exists()
         assert "2026-02-20" in html
         assert "2026-02-19" in html
         assert "A deep dive into data art." in html
         assert "Another deep dive." in html
         assert "https://w4w.dev/blog/first" in html
         assert "<details" not in html
-        assert "First Post" in board
-        assert "Second Post" in board
-        assert "Latest Blog Posts" in board
+        first_src = (tmp_path / "svg" / "blog-first-post.svg").as_posix()
+        second_src = (tmp_path / "svg" / "blog-second-post.svg").as_posix()
+        assert img_links == [
+            ("https://w4w.dev/blog/first", first_src),
+            ("https://w4w.dev/blog/second", second_src),
+        ]
+        assert "First Post" in first
+        assert "A deep dive into data art." in first
+        assert "2026-02-20" in first
+        assert "Second Post" in second
+        assert "Another deep dive." in second
+        assert "2026-02-19" in second
         assert 'loading="lazy"' in html
         assert "<svg" not in html
         assert "Auto-updated from" in html
@@ -881,13 +902,19 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
-        svg = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
+        svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
+        assert len(svg_files) == 1
+        svg = svg_files[0].read_text(encoding="utf-8")
 
         assert "2026-05-01" in html
         assert "Hook from the feed." in html
         assert "<details" not in html
+        assert "blog-posts.svg" not in html
         assert "RSS Only" in svg
         assert "Hook from the feed." in svg
+        assert "2026-05-01" in svg
+        assert '<a href="https://w4w.dev/blog/rss-only"' in html
+        assert f'src="{svg_files[0].as_posix()}"' in html
 
     def test_blog_posts_deduplicate_colliding_svg_names(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
@@ -915,12 +942,19 @@ class TestRendering:
         html = generator._render_blog_posts()
 
         svg_files = sorted(path.name for path in (tmp_path / "svg").glob("blog-*.svg"))
-        assert svg_files == ["blog-posts.svg"]
-        assert "blog-posts.svg" in html
-        board = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
-        assert board.count("Weekly Update") >= 2
-        assert 'width="100%"' in html
+        assert len(svg_files) == 2
+        assert len(set(svg_files)) == 2
+        assert "blog-posts.svg" not in svg_files
+        assert all(name.startswith("blog-weekly-update") for name in svg_files)
+        designed = "\n".join(
+            (tmp_path / "svg" / name).read_text(encoding="utf-8") for name in svg_files
+        )
+        assert designed.count("Weekly Update") >= 2
+        assert html.count('href="https://w4w.dev/blog/weekly-update-1"') >= 1
+        assert html.count('href="https://w4w.dev/blog/weekly-update-2"') >= 1
+        assert 'width="360"' in html
         assert 'width="500"' not in html
+        assert 'width="100%"' not in html
 
     def test_generate_rewrites_living_art_as_wrap_flow_grid(
         self,
@@ -965,7 +999,9 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        living_art = rendered.split("## Tech Stack", 1)[0]
+        assert_visible_or_comment_heading(rendered, "Living Art")
+        assert_visible_or_comment_heading(rendered, "Tech Stack")
+        living_art = living_art_wrap(rendered)
 
         assert "stale living art grid" not in rendered
         assert "<table" not in living_art
@@ -976,7 +1012,6 @@ class TestRendering:
         assert living_art.count('width="360"') == 6
         assert living_art.count('width="100%"') == 0
         assert living_art.count('<p align="center">') == 1
-        assert "## Tech Stack" in rendered
         assert 'alt="AI/ML"' not in rendered
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
@@ -1029,7 +1064,8 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        tech_stack = rendered.split("## Tech Stack", 1)[1]
+        assert_visible_or_comment_heading(rendered, "Tech Stack")
+        tech_stack = after_heading(rendered, "Tech Stack")
 
         assert 'alt="AI/ML"' not in tech_stack
         assert 'alt="Full-Stack"' not in tech_stack
@@ -1100,7 +1136,10 @@ class TestRendering:
             in rendered
         )
         assert 'loading="lazy"' in rendered
-        assert "<td" not in rendered
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        assert ".github/assets/img/readme/sep-metrics.svg" in rendered
+        assert "<td" in rendered
+        assert 'width="50%"' in rendered
 
     def test_generate_keeps_metrics_image_table_when_only_one_asset_is_valid(
         self,
@@ -1231,7 +1270,10 @@ class TestRendering:
             in rendered
         )
         assert 'alt="Supplemental metrics: recent GitHub activity feed"' not in rendered
-        assert "<td" not in rendered
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        assert ".github/assets/img/readme/sep-metrics.svg" in rendered
+        assert "<td" in rendered
+        assert 'width="50%"' in rendered
         assert rendered.count('loading="lazy"') >= 4
 
     def test_generate_hides_invalid_supplemental_metrics_assets(
@@ -1317,6 +1359,7 @@ class TestRendering:
         (metrics_dir / "metrics.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
+        (metrics_dir / "wordcloud_fractal_reel.mp4").write_bytes(b"\x00\x00")
 
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
@@ -1334,26 +1377,26 @@ class TestRendering:
         assert rendered.count('width="100%"') >= 4
         assert "wordcloud_typographic_by_topics.svg" in rendered
         assert "wordcloud_typographic_by_languages.svg" in rendered
+        assert "wordcloud_fractal_reel.mp4" in rendered
         assert ".github/assets/img/metrics.extra.svg" in rendered
         assert (
-            'alt="Typographic word cloud of GitHub topics with every parsed '
-            'topic term preserved"'
+            'alt="Fractal word cloud of GitHub topics sized by starred-repo share"'
         ) in rendered
         assert (
-            'alt="Typographic word cloud of GitHub languages with every parsed '
-            'language term preserved"'
+            'alt="Fractal word cloud of GitHub languages sized by starred-repo share"'
         ) in rendered
         assert 'loading="lazy"' in rendered
         topics_idx = rendered.index("wordcloud_typographic_by_topics.svg")
         languages_idx = rendered.index("wordcloud_typographic_by_languages.svg")
-        assert 'loading="lazy"' in rendered[topics_idx : topics_idx + 220]
-        assert 'loading="lazy"' in rendered[languages_idx : languages_idx + 220]
-        assert "stable typographic" in rendered
-        assert "full parsed source lists" in rendered
-        assert '<p align="center"><sub>Topic and language clouds generated' in rendered
-        assert "<td" not in rendered
-        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
-        word_clouds = rendered.split("## Word Clouds", 1)[1]
+        assert 'loading="lazy"' in rendered[topics_idx : topics_idx + 280]
+        assert 'loading="lazy"' in rendered[languages_idx : languages_idx + 280]
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        assert_visible_or_comment_heading(rendered, "Word Clouds")
+        assert ".github/assets/img/readme/sep-clouds.svg" in rendered
+        assert "<td" in rendered
+        assert 'width="50%"' in rendered
+        metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
+        word_clouds = after_heading(rendered, "Word Clouds")
         assert 'src=".github/assets/img/wakatime.svg"' in metrics
         assert "<!--START_SECTION:waka-->" in metrics
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
@@ -1396,8 +1439,9 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
-        word_clouds = rendered.split("## Word Clouds", 1)[1]
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
+        word_clouds = after_heading(rendered, "Word Clouds")
 
         assert "This Week I Spent My Time On" not in rendered
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
@@ -1460,8 +1504,9 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
-        word_clouds = rendered.split("## Word Clouds", 1)[1]
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
+        word_clouds = after_heading(rendered, "Word Clouds")
 
         assert "This Week I Spent My Time On" not in rendered
         assert "Programming Languages:" not in rendered
@@ -1538,8 +1583,9 @@ class TestRendering:
         generator.generate()
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        metrics = rendered.split("## Metrics", 1)[1].split("## Word Clouds", 1)[0]
-        word_clouds = rendered.split("## Word Clouds", 1)[1]
+        assert_visible_or_comment_heading(rendered, "Metrics")
+        metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
+        word_clouds = after_heading(rendered, "Word Clouds")
 
         assert "This Week I Spent My Time On" not in rendered
         assert 'src=".github/assets/img/wakatime.svg"' in metrics
@@ -1613,7 +1659,7 @@ class TestRendering:
         rendered = readme.read_text(encoding="utf-8")
 
         assert "<summary><strong>Latest Blog Posts</strong></summary>" not in rendered
-        assert "## Latest Blog Posts" in rendered
+        assert_visible_or_comment_heading(rendered, "Latest Blog Posts")
         assert "2026-06-02" in rendered
         assert "An open-flow hook." in rendered
         assert "style=for-the-badge" in rendered
@@ -1690,11 +1736,12 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        svg_path = tmp_path / "svg" / "blog-posts.svg"
-        assert svg_path.exists()
-        svg = svg_path.read_text(encoding="utf-8")
+        svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
+        assert len(svg_files) == 1
+        svg = svg_files[0].read_text(encoding="utf-8")
         assert "data:image" not in svg
-        assert "blog-posts.svg" in html
+        assert svg_files[0].name in html
+        assert "blog-posts.svg" not in html
         assert "GitHub Changelog" in svg
 
     def test_featured_projects_support_legacy_card_variant(
@@ -2043,7 +2090,9 @@ class TestReadmeInjection:
         assert "<!-- README:BLOG_POSTS:END -->" in content
         assert "connect-github.svg" in content
         assert "featured-card-wyattowalsh-riso.svg" in content
-        assert "blog-posts.svg" in content
+        assert "blog-first-post.svg" in content
+        assert "blog-second-post.svg" in content
+        assert "blog-posts.svg" not in content
         assert ".github/assets/img/gh.gif" not in content
         assert ".github/assets/img/animated-community.gif" not in content
         assert "github.com/wyattowalsh" in content
@@ -2111,8 +2160,9 @@ class TestReadmeInjection:
             flags=re.DOTALL,
         )
 
-        assert "blog-posts.svg" in generated
-        assert "blog-posts.svg" in refreshed
+        assert "blog-first-post.svg" in generated
+        assert "blog-first-post.svg" in refreshed
+        assert "blog-posts.svg" not in generated
 
     def test_generate_respects_svg_feature_toggles(self, tmp_path: Path) -> None:
         readme_path = tmp_path / "README.md"
@@ -2184,6 +2234,7 @@ class TestReadmeInjection:
         assert not (svg_dir / "top-contact.svg").exists()
         assert (svg_dir / "featured-card-wyattowalsh-riso.svg").exists()
         assert not (svg_dir / "blog-posts.svg").exists()
+        assert not list(svg_dir.glob("blog-*.svg"))
         assert "top-contact.svg" not in content
         assert "blog-posts.svg" not in content
         assert "featured-card-wyattowalsh-riso.svg" in content
@@ -2309,7 +2360,8 @@ class TestReadmeInjection:
 
         # The trailing "update" should be stripped from the title in the SVG
         # The title in SVG should not end with " update"
-        assert "feature-title" in svg
+        assert "blog-title" in svg
+        assert "feature-title" not in svg
         assert "Long post" in svg
 
     def test_card_generators_are_bespoke_per_family(
@@ -2853,3 +2905,59 @@ class TestStarHistoryClient:
         assert sampled[0] == 0
         assert sampled[-1] == 2
         assert len(set(sampled)) > 1
+
+
+def test_fact_blog_each_card_has_title_date_hook_and_link(tmp_path: Path) -> None:
+    """fact-blog: 4–5 visible w4w.dev cards, each with title, date, hook, link."""
+    posts = [
+        BlogPost(
+            title=f"Card {index}",
+            url=f"https://w4w.dev/blog/card-{index}",
+            published=f"2026-03-0{index}",
+            summary=f"One-line hook {index}.",
+        )
+        for index in range(1, 6)
+    ]
+    generator = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(
+            svg=ReadmeSvgSettings(
+                enabled=True,
+                output_dir=str(tmp_path / "svg"),
+            ),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=5,
+        ),
+        blog_client=StubBlogClient(posts),
+        blog_metadata_client=StubBlogMetadataClient({}),
+    )
+
+    html = generator._render_blog_posts()
+    assert "<details" not in html.lower()
+    hrefs = re.findall(r'<a href="(https://w4w\.dev/blog/[^"]+)"', html)
+    assert 4 <= len(set(hrefs)) <= 5
+    assert {post.url for post in posts} <= set(hrefs)
+
+    svg_paths = list((tmp_path / "svg").glob("blog-*.svg"))
+    assert not (tmp_path / "svg" / "blog-posts.svg").exists()
+    assert 4 <= len(svg_paths) <= 5
+    img_links = re.findall(
+        r'<a href="(https://w4w\.dev/blog/[^"]+)"[^>]*>\s*<img src="([^"]+)"',
+        html,
+    )
+    assert len(img_links) == 5
+    assert {url for url, _src in img_links} == {post.url for post in posts}
+    for post in posts:
+        published = post.published
+        summary = post.summary
+        assert published is not None
+        assert summary is not None
+        assert post.url in html
+        assert post.title in html
+        assert published in html
+        assert summary in html
+        matching = [src for url, src in img_links if url == post.url]
+        assert matching
+        svg = Path(matching[0]).read_text(encoding="utf-8")
+        assert post.title in svg
+        assert published in svg
+        assert summary in svg

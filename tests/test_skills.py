@@ -187,6 +187,16 @@ def _fetch_github_dev_readme_html_or_skip() -> str:
         pytest.skip(f"GitHub README HTML unreachable: {exc}")
 
 
+def _alt_covers_catalog(alt: str, catalog_names: set[str]) -> bool:
+    """True when *alt* is a skill name or a category board listing catalog names."""
+    if alt in catalog_names:
+        return True
+    if ": " not in alt:
+        return False
+    listed = {part.strip() for part in alt.split(":", 1)[1].split(",")}
+    return bool(listed & catalog_names)
+
+
 def _camo_images_from_html(html: str) -> list[tuple[str, str]]:
     """Return ``(alt, camo_src)`` pairs from GitHub-rendered README HTML."""
     found: list[tuple[str, str]] = []
@@ -438,14 +448,13 @@ class TestBadgeUrl:
             color="5391FE",
         )
         url = self.gen._build_badge_url(skill)
-        assert "logo=data:image/svg%2Bxml;base64," in url
-        assert "logo=powershell" not in url
+        assert "logo=powershell" in url
+        assert "logo=data:image" not in url
 
     def test_oversized_logo_path_falls_back_to_slug(
         self, tmp_path, monkeypatch, mocker
     ):
         monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
-        info = mocker.patch("scripts.skills.logger.info")
         warning = mocker.patch("scripts.skills.logger.warning")
         rel = Path("assets/oversized.svg")
         svg_path = tmp_path / rel
@@ -463,7 +472,6 @@ class TestBadgeUrl:
         assert "logo=python" in url
         assert "logo=data:image" not in url
         assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
-        info.assert_called_once()
         warning.assert_not_called()
 
     def test_oversized_logo_path_without_slug_uses_no_logo(self, tmp_path, monkeypatch):
@@ -509,7 +517,6 @@ class TestBadgeUrl:
         assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
 
     def test_logo_path_fallback_to_slug_when_missing(self, mocker):
-        info = mocker.patch("scripts.skills.logger.info")
         warning = mocker.patch("scripts.skills.logger.warning")
         skill = SkillEntry(
             name="Missing",
@@ -520,7 +527,6 @@ class TestBadgeUrl:
         url = self.gen._build_badge_url(skill)
         assert "logo=fallback" in url
         assert "base64" not in url
-        info.assert_called_once()
         warning.assert_not_called()
 
     def test_logo_path_missing_no_slug(self):
@@ -593,9 +599,8 @@ class TestRendering:
     def test_render_badge_without_url(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
         skill = SkillEntry(name="SQL", color="4479A1")
-        html = gen._render_badge(skill)
-        assert "<a " not in html
-        assert "<img " in html
+        with pytest.raises(ValueError, match="required"):
+            gen._render_badge(skill)
 
     def test_render_badge_rejects_wikipedia_homepage(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
@@ -607,22 +612,29 @@ class TestRendering:
         with pytest.raises(ValueError, match="not Wikipedia"):
             gen._render_badge(skill)
 
-    def test_render_badge_does_not_link_http_homepage(self):
+    def test_render_badge_rejects_http_homepage(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
         skill = SkillEntry(name="X", color="000000", url="http://example.com")
-        html = gen._render_badge(skill)
-        assert "<a " not in html
-        assert "<img " in html
+        with pytest.raises(ValueError, match="must be https"):
+            gen._render_badge(skill)
 
     def test_render_category(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
         cat = SkillCategory(
             name="Languages",
-            skills=[SkillEntry(name="Python", color="3776AB")],
+            skills=[
+                SkillEntry(
+                    name="Python",
+                    color="3776AB",
+                    url="https://www.python.org",
+                )
+            ],
         )
         html = gen._render_category(cat)
         assert "### Languages" in html
         assert "Python" in html
+        assert '<a href="https://www.python.org">' in html
+        assert "https://img.shields.io/badge/" in html
 
     def test_render_subcategory(self):
         gen = SkillsBadgeGenerator(settings=SkillsSettings())
@@ -631,7 +643,13 @@ class TestRendering:
             subcategories=[
                 SkillSubcategory(
                     name="Storage",
-                    skills=[SkillEntry(name="PostgreSQL", color="4169E1")],
+                    skills=[
+                        SkillEntry(
+                            name="PostgreSQL",
+                            color="4169E1",
+                            url="https://www.postgresql.org",
+                        )
+                    ],
                 )
             ],
         )
@@ -639,6 +657,7 @@ class TestRendering:
         assert "### Data" in html
         assert "#### Storage" in html
         assert "PostgreSQL" in html
+        assert '<a href="https://www.postgresql.org">' in html
 
     def test_collapsible(self):
         settings = SkillsSettings(
@@ -646,7 +665,13 @@ class TestRendering:
             categories=[
                 SkillCategory(
                     name="Test",
-                    skills=[SkillEntry(name="X", color="000000")],
+                    skills=[
+                        SkillEntry(
+                            name="X",
+                            color="000000",
+                            url="https://example.com",
+                        )
+                    ],
                 )
             ],
         )
@@ -654,6 +679,7 @@ class TestRendering:
         html = gen._render_all()
         assert "<details>" in html
         assert "</details>" in html
+        assert '<a href="https://example.com">' in html
 
 
 # ---------------------------------------------------------------------------
@@ -672,7 +698,13 @@ class TestReadmeInjection:
             categories=[
                 SkillCategory(
                     name="Test",
-                    skills=[SkillEntry(name="Python", color="3776AB")],
+                    skills=[
+                        SkillEntry(
+                            name="Python",
+                            color="3776AB",
+                            url="https://www.python.org",
+                        )
+                    ],
                 )
             ],
         )
@@ -692,7 +724,13 @@ class TestReadmeInjection:
             categories=[
                 SkillCategory(
                     name="Test",
-                    skills=[SkillEntry(name="X", color="000")],
+                    skills=[
+                        SkillEntry(
+                            name="X",
+                            color="000",
+                            url="https://example.com",
+                        )
+                    ],
                 )
             ],
         )
@@ -815,9 +853,15 @@ class TestIntegration:
                 assert "&logo=" not in url
                 no_logo_fallbacks.add(skill.name)
 
-        assert fallbacks == EXPECTED_LOCAL_LOGO_SLUG_FALLBACKS
+        expected_slug_first = {
+            skill.name: skill.slug
+            for skill in iter_skills(settings)
+            if skill.logo_path and (skill.slug or "").strip()
+        }
+        assert fallbacks == expected_slug_first
         assert no_logo_fallbacks == set()
         assert compact_embeds == set(EXPECTED_COMPACT_LOCAL_LOGO_EMBEDS)
+        assert set(EXPECTED_LOCAL_LOGO_SLUG_FALLBACKS).issubset(fallbacks)
 
     def test_skills_yaml_local_svgs_are_safe_for_badges(self, monkeypatch):
         """Vendored badge SVGs must stay self-contained and inert."""
@@ -903,32 +947,35 @@ class TestIntegration:
         gen = SkillsBadgeGenerator(settings=settings)
         html = gen._render_all()
         catalog = list(iter_skills(settings))
+        badges = re.findall(
+            r'<a href="([^"]+)"><img alt="([^"]+)" src="([^"]+)"/></a>',
+            html,
+        )
 
         assert catalog
-        images = re.findall(r"<img alt=\"([^\"]+)\" src=\"([^\"]+)\"", html)
-        assert images
-        joined_alts = unescape(" ".join(alt for alt, _src in images))
-        for skill in catalog:
-            assert skill.name in joined_alts
-            assert skill.url, f"Missing homepage url for '{skill.name}'"
-            homepage = skill.url.strip()
-            assert homepage.startswith("https://"), (
-                f"Homepage for '{skill.name}' must be https: {skill.url}"
-            )
-            host = urlparse(homepage).netloc.lower().removeprefix("www.")
-            assert host != "wikipedia.org" and not host.endswith(".wikipedia.org"), (
-                f"Homepage for '{skill.name}' must not be Wikipedia: {homepage}"
-            )
+        assert len(badges) == len(catalog)
         css3 = next(skill for skill in catalog if skill.name == "CSS3")
         assert css3.logo_style == "custom-retro"
         by_name = {skill.name: skill.url for skill in catalog}
         assert by_name["Shell Script"] != by_name["Bash"]
         assert "gnu.org/software/bash" not in (by_name["Shell Script"] or "")
         assert "gnu.org/software/bash" in (by_name["Bash"] or "")
-        for _alt, src in images:
+        for skill, (href, alt, src) in zip(catalog, badges, strict=True):
+            assert unescape(alt) == skill.name
+            assert skill.url, f"Missing homepage url for '{skill.name}'"
+            homepage = skill.url.strip()
+            assert homepage.startswith("https://"), (
+                f"Homepage for '{skill.name}' must be https: {skill.url}"
+            )
+            assert unescape(href) == homepage
+            host = urlparse(homepage).netloc.lower().removeprefix("www.")
+            assert host != "wikipedia.org" and not host.endswith(".wikipedia.org"), (
+                f"Homepage for '{skill.name}' must not be Wikipedia: {homepage}"
+            )
             decoded = unescape(src)
-            assert decoded.startswith(".github/assets/img/readme/tech-")
-            assert decoded.endswith(".svg")
+            assert decoded == gen._build_badge_url(skill)
+            assert decoded.startswith("https://img.shields.io/badge/")
+            assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
 
     def test_skills_badges_have_well_fitting_icons_and_renderable_sources(
         self, monkeypatch
@@ -939,25 +986,22 @@ class TestIntegration:
         gen = SkillsBadgeGenerator(settings=settings)
         catalog = list(iter_skills(settings))
         html = gen._render_all()
+        badges = re.findall(
+            r'<a href="([^"]+)"><img alt="([^"]+)" src="([^"]+)"/></a>',
+            html,
+        )
 
         assert catalog
-        images = re.findall(r"<img alt=\"([^\"]+)\" src=\"([^\"]+)\"", html)
-        assert images
-        joined_alts = unescape(" ".join(alt for alt, _src in images))
-        for skill in catalog:
-            assert skill.name in joined_alts
-            url = gen._build_badge_url(skill)
-            assert url.startswith("https://img.shields.io/badge/")
-            logo = _badge_logo_value(url)
+        assert len(badges) == len(catalog)
+        for skill, (href, alt, src) in zip(catalog, badges, strict=True):
+            assert unescape(alt) == skill.name
+            assert unescape(href) == (skill.url or "").strip()
+            decoded = unescape(src)
+            assert decoded.startswith("https://img.shields.io/badge/")
+            logo = _badge_logo_value(decoded)
             assert logo is not None and logo.strip(), (
                 f"Missing well-fitting icon for '{skill.name}'"
             )
-        for _alt, src in images:
-            path = REPO_ROOT / unescape(src)
-            assert path.is_file(), src
-            svg = path.read_text(encoding="utf-8")
-            assert svg.startswith("<svg")
-            assert "prefers-color-scheme: dark" in svg
 
     def test_committed_readme_skill_srcs_fit_github_image_proxy(self):
         """Every committed README skill src stays under the Camo URL budget."""
@@ -970,23 +1014,79 @@ class TestIntegration:
         assert srcs
         for src in srcs:
             decoded = unescape(src)
-            assert decoded.startswith(".github/assets/img/readme/tech-"), decoded[:96]
-            assert decoded.endswith(".svg")
-            assert (REPO_ROOT / decoded).is_file()
+            assert decoded.startswith("https://img.shields.io/badge/"), decoded[:96]
+            assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
 
     def test_github_dev_readme_camo_renders_skill_icons(self, monkeypatch):
         """Every skill icon on blob/dev README must render through GitHub Camo."""
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
-        catalog_names = {skill.name for skill in iter_skills(settings)}
+        catalog = list(iter_skills(settings))
+        catalog_names = {skill.name for skill in catalog}
         html = _fetch_github_dev_readme_html_or_skip()
         camo = [
             (alt, src)
             for alt, src in _camo_images_from_html(html)
-            if alt in catalog_names
+            if _alt_covers_catalog(alt, catalog_names)
         ]
-        if not camo:
-            pytest.skip(
-                "origin/dev README HTML has no GitHub Camo skill images to inspect"
-            )
-        _head_all_or_skip([src for _alt, src in camo], label="github.com/camo")
+        if camo:
+            _head_all_or_skip([src for _alt, src in camo], label="github.com/camo")
+            return
+        gen = SkillsBadgeGenerator(settings=settings)
+        _head_all_or_skip(
+            [gen._build_badge_url(skill) for skill in catalog],
+            label="img.shields.io",
+        )
+
+    def test_fact_badges_stack_every_shield_links_homepage(self, monkeypatch):
+        """fact-badges-stack: every rendered shield wraps its https homepage."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        html = gen._render_all()
+        catalog = list(iter_skills(settings))
+        badges = re.findall(
+            r'<a href="([^"]+)"><img alt="([^"]+)" src="([^"]+)"/></a>',
+            html,
+        )
+        assert catalog
+        assert len(badges) == len(catalog)
+        for skill, (href, alt, src) in zip(catalog, badges, strict=True):
+            homepage = (skill.url or "").strip()
+            assert homepage.startswith("https://"), skill.name
+            assert unescape(alt) == skill.name
+            assert unescape(href) == homepage
+            decoded = unescape(src)
+            assert decoded.startswith("https://img.shields.io/badge/")
+            assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
+            assert skill.slug or skill.logo_path, skill.name
+
+    def test_fact_badges_qa_shipped_shields_have_well_fitting_icons(self, monkeypatch):
+        """fact-badges-qa: every rendered shield src has a well-fitting icon."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        html = gen._render_all()
+        catalog = list(iter_skills(settings))
+        badges = re.findall(
+            r'<a href="([^"]+)"><img alt="([^"]+)" src="([^"]+)"/></a>',
+            html,
+        )
+        assert badges
+        assert len(badges) == len(catalog)
+        for skill, (_href, alt, src) in zip(catalog, badges, strict=True):
+            assert unescape(alt) == skill.name
+            decoded = unescape(src)
+            assert decoded.startswith("https://img.shields.io/badge/")
+            logo = _badge_logo_value(decoded)
+            assert logo is not None and logo.strip(), skill.name
+            assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
+
+    def test_fact_badges_qa_every_shield_source_renders(self, monkeypatch):
+        """fact-badges-qa: HEAD every generated shields.io source URL."""
+        monkeypatch.chdir(REPO_ROOT)
+        settings = load_skills()
+        gen = SkillsBadgeGenerator(settings=settings)
+        srcs = [gen._build_badge_url(skill) for skill in iter_skills(settings)]
+        assert len(srcs) == 151
+        _head_all_or_skip(srcs, label="img.shields.io")
