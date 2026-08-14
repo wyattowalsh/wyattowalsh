@@ -321,7 +321,7 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <!--START_SECTION:waka-->
 **🐱 My Github Data** 
 
-> 🏆 3,687 Contributions in the Year 2026
+> 🏆 3,697 Contributions in the Year 2026
  > 
 > 💼 Opted to Hire
  > 
@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     1 hr 33 mins  ██████████████░░░░░░░░░░░   55.11% 
-Python    47 mins       ███████░░░░░░░░░░░░░░░░░░   27.68% 
-Markdown  10 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   6.27% 
-Bash      6 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   3.9% 
-YAML      6 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   3.88% 
+Other     4 hrs 49 mins  ████████░░░░░░░░░░░░░░░░░   31.67% 
+Python    2 hrs 44 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.95% 
+Markdown  2 hrs 22 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.54% 
+YAML      1 hr 36 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.55% 
+Bash      1 hr 32 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.15% 
 
 🔥 Editors: 
-Chrome      1 hr 51 mins  ████████████████░░░░░░░░░   65.3% 
-Grok Build  26 mins       ████░░░░░░░░░░░░░░░░░░░░░   15.38% 
-Ghostty     15 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   9.27% 
-Codex CLI   13 mins       ██░░░░░░░░░░░░░░░░░░░░░░░   7.92% 
-Agent       3 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   2.13% 
+Codex CLI   4 hrs 48 mins  ████████░░░░░░░░░░░░░░░░░   31.52% 
+Chrome      4 hrs 24 mins  ███████░░░░░░░░░░░░░░░░░░   28.89% 
+Grok Build  3 hrs 35 mins  ██████░░░░░░░░░░░░░░░░░░░   23.53% 
+Cursor      2 hrs 16 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.92% 
+Agent       10 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   1.14% 
 
 🐱‍💻 Projects: 
-paul-graham-essay-feeds  1 hr 33 mins  ██████████████░░░░░░░░░░░   54.8% 
-dotfiles                 35 mins       █████░░░░░░░░░░░░░░░░░░░░   20.97% 
-skills                   18 mins       ███░░░░░░░░░░░░░░░░░░░░░░   10.66% 
-nbadb                    8 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   5.07% 
-wyattowalsh              6 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   3.84% 
+dotfiles                 6 hrs 9 mins   ██████████░░░░░░░░░░░░░░░   40.39% 
+nbadb                    4 hrs 28 mins  ███████░░░░░░░░░░░░░░░░░░   29.32% 
+agents                   2 hrs 13 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.54% 
+paul-graham-essay-feeds  52 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   5.7% 
+prompts                  42 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.65% 
 
 💻 Operating System: 
-Mac  2 hrs 50 mins  █████████████████████████   100% 
+Mac  15 hrs 14 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 13/08/2026 01:32:38 UTC
+ Last Updated on 14/08/2026 01:10:35 UTC
 <!--END_SECTION:waka-->
 
 </details>
