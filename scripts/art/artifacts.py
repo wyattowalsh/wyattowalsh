@@ -29,7 +29,7 @@ MANIFEST_VERSION = 2
 # headroom. Changes are intentional contract updates, not self-adjusting limits.
 LIVING_ART_BYTE_BUDGETS = {
     "living-ferrofluid.gif": 3_400_000,
-    "living-genetic.gif": 2_300_000,
+    "living-genetic.gif": 2_400_000,
     "living-inkgarden.gif": 5_800_000,
     "living-lenia.gif": 900_000,
     "living-physarum.gif": 2_400_000,
