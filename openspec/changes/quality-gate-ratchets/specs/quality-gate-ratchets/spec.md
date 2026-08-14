@@ -198,3 +198,7 @@ warning or failure behavior.
 #### Scenario: Unexpected upstream failure
 - **WHEN** an HTTP status, response shape, pagination condition, or GraphQL error does not match the recognized optional capability contract
 - **THEN** the condition SHALL remain a warning or hard failure according to the existing collector/workflow boundary
+
+#### Scenario: README star-history enrichment
+- **WHEN** the finalizer regenerates dynamic README sections that query GitHub GraphQL star history
+- **THEN** the step SHALL authenticate with the run-scoped `github.token` through `GITHUB_TOKEN`, SHALL NOT place the token in the argument vector, and SHALL retain actionable repository/error fields for genuine failures

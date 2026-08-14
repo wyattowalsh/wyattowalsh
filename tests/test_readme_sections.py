@@ -2430,6 +2430,14 @@ class TestDeadCodeRemoval:
 
 
 class TestStarHistoryClient:
+    def test_headers_use_environment_token(self, monkeypatch) -> None:
+        monkeypatch.delenv("GH_TOKEN", raising=False)
+        monkeypatch.setenv("GITHUB_TOKEN", "test-run-scoped-token")
+
+        headers = StarHistoryClient()._headers()
+
+        assert headers["Authorization"] == "Bearer test-run-scoped-token"
+
     def test_fetch_star_history_uses_repo_creation_time_for_low_star_repos(
         self,
         monkeypatch,

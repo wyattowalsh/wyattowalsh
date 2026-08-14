@@ -1029,3 +1029,17 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
     living_start = readme.index("## Living Art")
     assert banner_idx < badges_start < featured_start < living_start
+
+
+def test_finalize_authenticates_readme_star_history_without_argv_token() -> None:
+    """README GraphQL enrichment receives only the run-scoped token environment."""
+    finalize = _workflow_jobs()["finalize"]
+    steps = cast(list[dict[str, Any]], finalize["steps"])
+    sections_step = next(
+        step for step in steps if step.get("name") == "Generate README Sections"
+    )
+
+    assert sections_step.get("env") == {"GITHUB_TOKEN": "${{ github.token }}"}
+    run = str(sections_step["run"])
+    assert "GITHUB_TOKEN" not in run
+    assert "github.token" not in run

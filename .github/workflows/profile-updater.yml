@@ -1460,6 +1460,8 @@ jobs:
             --readme README.md
 
       - name: Generate README Sections
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: uv run python -m scripts.cli generate readme-sections --config-path config.yaml
 
       - name: Generate Skills Badges

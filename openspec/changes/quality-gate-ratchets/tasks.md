@@ -55,3 +55,4 @@
 - [x] 9.3 Add bounded transient and positively identified rate-limit retry for the first-party starred traversal, exact artifact extraction destinations, and step-local suppression for the reviewed upstream `download-artifact` DEP0005 defect
 - [x] 9.4 Pin every updater checkout to the immutable trigger SHA and prove the contract across all jobs
 - [ ] 9.5 Prove the integrated remote updater run completes without GitHub warning/failure annotations or application warning/error fallbacks
+- [x] 9.6 Authenticate finalizer README star-history enrichment with the run-scoped token and keep genuine failure logs actionable

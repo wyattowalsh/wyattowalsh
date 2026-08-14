@@ -566,7 +566,7 @@ class StarHistoryClient:
         """Return cumulative star counts sampled to *sample* time bins."""
         parts = full_name.split("/", 1)
         if len(parts) != 2:
-            logger.warning("Invalid repo full_name: %s", full_name)
+            logger.warning("Invalid repo full_name: {full_name}", full_name=full_name)
             return None
 
         owner, name = parts
@@ -579,8 +579,8 @@ class StarHistoryClient:
             page_count += 1
             if page_count > max_pages:
                 logger.warning(
-                    "Star history pagination limit reached (%d pages)",
-                    max_pages,
+                    "Star history pagination limit reached ({max_pages} pages)",
+                    max_pages=max_pages,
                 )
                 break
 
@@ -603,23 +603,26 @@ class StarHistoryClient:
                     payload = json.loads(response.read().decode("utf-8"))
             except Exception as exc:  # pragma: no cover - network path
                 logger.warning(
-                    "Failed to fetch star history for %s: %s", full_name, exc
+                    "Failed to fetch star history for {full_name}: {exc}",
+                    full_name=full_name,
+                    exc=exc,
                 )
                 return None
 
             errors = payload.get("errors")
             if errors:
                 logger.warning(
-                    "GraphQL errors fetching star history for %s: %s",
-                    full_name,
-                    errors,
+                    "GraphQL errors fetching star history for {full_name}: {errors}",
+                    full_name=full_name,
+                    errors=errors,
                 )
                 return None
 
             repo_data = (payload.get("data") or {}).get("repository")
             if repo_data is None:
                 logger.warning(
-                    "Repository not found in GraphQL response for %s", full_name
+                    "Repository not found in GraphQL response for {full_name}",
+                    full_name=full_name,
                 )
                 return None
 

@@ -211,7 +211,10 @@ mutating either destination, publishes the GIFs, regenerates both
 manifest/gallery surfaces and the docs mirror, then re-reads persisted
 manifests, galleries, byte budgets, and media hashes before any `git add`.
 After applying the other isolated artifacts and WakaTime markers, it runs:
-- `generate readme-sections` — assembles all dynamic README sections
+- `generate readme-sections` — assembles all dynamic README sections; the step
+  supplies the run-scoped `github.token` only through `GITHUB_TOKEN` so its
+  GraphQL star-history enrichment is authenticated without exposing a token in
+  the command line
 - `generate skills` — re-renders skills badges
 
 Upload artifacts contain only their least-common-root filenames. The finalizer
