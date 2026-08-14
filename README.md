@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     4 hrs 49 mins  ████████░░░░░░░░░░░░░░░░░   31.67% 
-Python    2 hrs 44 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.95% 
-Markdown  2 hrs 22 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.54% 
-YAML      1 hr 36 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.55% 
-Bash      1 hr 32 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.15% 
+Other     5 hrs 8 mins   ██████░░░░░░░░░░░░░░░░░░░   23.24% 
+Markdown  4 hrs 42 mins  █████░░░░░░░░░░░░░░░░░░░░   21.23% 
+Python    4 hrs 28 mins  █████░░░░░░░░░░░░░░░░░░░░   20.2% 
+YAML      1 hr 43 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.77% 
+Bash      1 hr 34 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.09% 
 
 🔥 Editors: 
-Codex CLI   4 hrs 48 mins  ████████░░░░░░░░░░░░░░░░░   31.52% 
-Chrome      4 hrs 24 mins  ███████░░░░░░░░░░░░░░░░░░   28.89% 
-Grok Build  3 hrs 35 mins  ██████░░░░░░░░░░░░░░░░░░░   23.53% 
-Cursor      2 hrs 16 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.92% 
-Agent       10 mins        ░░░░░░░░░░░░░░░░░░░░░░░░░   1.14% 
+Codex CLI   10 hrs 43 mins  ████████████░░░░░░░░░░░░░   48.4% 
+Chrome      4 hrs 50 mins   █████░░░░░░░░░░░░░░░░░░░░   21.87% 
+Grok Build  3 hrs 49 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.29% 
+Cursor      2 hrs 34 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.66% 
+Agent       10 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.78% 
 
 🐱‍💻 Projects: 
-dotfiles                 6 hrs 9 mins   ██████████░░░░░░░░░░░░░░░   40.39% 
-nbadb                    4 hrs 28 mins  ███████░░░░░░░░░░░░░░░░░░   29.32% 
-agents                   2 hrs 13 mins  ████░░░░░░░░░░░░░░░░░░░░░   14.54% 
-paul-graham-essay-feeds  52 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   5.7% 
-prompts                  42 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.65% 
+dotfiles     6 hrs 9 mins   ███████░░░░░░░░░░░░░░░░░░   27.82% 
+nbadb        5 hrs 5 mins   ██████░░░░░░░░░░░░░░░░░░░   22.98% 
+prompts      3 hrs 8 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.15% 
+agents       2 hrs 54 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.12% 
+wyattowalsh  2 hrs 5 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.41% 
 
 💻 Operating System: 
-Mac  15 hrs 14 mins  █████████████████████████   100% 
+Mac  22 hrs 8 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 14/08/2026 02:33:30 UTC
+ Last Updated on 14/08/2026 09:51:40 UTC
 <!--END_SECTION:waka-->
 
 </details>
