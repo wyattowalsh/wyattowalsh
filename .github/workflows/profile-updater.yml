@@ -920,6 +920,7 @@ jobs:
               "metrics.svg",
               "metrics.additional.svg",
               "metrics.extra.svg",
+              "metrics-languages.svg",
               "metrics-habits.svg",
               "metrics-music.svg",
               "metrics-posts.svg",
@@ -942,6 +943,7 @@ jobs:
             .github/assets/img/metrics.svg
             .github/assets/img/metrics.additional.svg
             .github/assets/img/metrics.extra.svg
+            .github/assets/img/metrics-languages.svg
             .github/assets/img/metrics-habits.svg
             .github/assets/img/metrics-music.svg
             .github/assets/img/metrics-posts.svg
@@ -1551,6 +1553,7 @@ jobs:
             ./.github/assets/img/metrics.svg
             ./.github/assets/img/metrics.additional.svg
             ./.github/assets/img/metrics.extra.svg
+            ./.github/assets/img/metrics-languages.svg
             ./.github/assets/img/metrics-habits.svg
             ./.github/assets/img/metrics-music.svg
             ./.github/assets/img/metrics-posts.svg

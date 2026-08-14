@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="458" viewBox="0 0 1200 458" role="img" aria-label="Data">
+<title>Data</title>
+<desc>Web Scraping, Scrapy, APIs, ETL, ELT, Neo4j, SQLite, MySQL, PostgreSQL, Redis, DuckDB, InfluxDB, Matplotlib, Plotly, D3.js, Tableau, Apache Spark, Apache Airflow, Multiprocessing, Pandas, NumPy, Apache Arrow, Apache Kafka, Dask, SQLAlchemy, Kedro, dagster, scikit-learn, PyCaret, Keras, Tensorflow, PyTorch, SciPy, OpenCV, OpenAI Gym, Pydantic, FastAPI, Prefect</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="458" rx="12" fill="transparent" />
+<text class="group" x="16" y="36">Collection</text>
+<rect x="16" y="44" width="108" height="30" rx="8" fill="#43853D" />
+<text class="chip" x="70" y="64" text-anchor="middle">Web Scraping</text>
+<rect x="132" y="44" width="72" height="30" rx="8" fill="#60A839" />
+<text class="chip" x="168" y="64" text-anchor="middle">Scrapy</text>
+<rect x="212" y="44" width="72" height="30" rx="8" fill="#009688" />
+<text class="chip" x="248" y="64" text-anchor="middle">APIs</text>
+<rect x="292" y="44" width="72" height="30" rx="8" fill="#4A90D9" />
+<text class="chip" x="328" y="64" text-anchor="middle">ETL</text>
+<rect x="372" y="44" width="72" height="30" rx="8" fill="#7B68EE" />
+<text class="chip" x="408" y="64" text-anchor="middle">ELT</text>
+<text class="group" x="16" y="108">Storage</text>
+<rect x="16" y="116" width="72" height="30" rx="8" fill="#4581C3" />
+<text class="chip" x="52" y="136" text-anchor="middle">Neo4j</text>
+<rect x="96" y="116" width="72" height="30" rx="8" fill="#003B57" />
+<text class="chip" x="132" y="136" text-anchor="middle">SQLite</text>
+<rect x="176" y="116" width="72" height="30" rx="8" fill="#4479A1" />
+<text class="chip" x="212" y="136" text-anchor="middle">MySQL</text>
+<rect x="256" y="116" width="94" height="30" rx="8" fill="#4169E1" />
+<text class="chip" x="303" y="136" text-anchor="middle">PostgreSQL</text>
+<rect x="358" y="116" width="72" height="30" rx="8" fill="#FF4438" />
+<text class="chip" x="394" y="136" text-anchor="middle">Redis</text>
+<rect x="438" y="116" width="72" height="30" rx="8" fill="#FFF000" />
+<text class="chip" x="474" y="136" text-anchor="middle">DuckDB</text>
+<rect x="518" y="116" width="79" height="30" rx="8" fill="#22ADF6" />
+<text class="chip" x="558" y="136" text-anchor="middle">InfluxDB</text>
+<text class="group" x="16" y="180">Visualization</text>
+<rect x="16" y="188" width="94" height="30" rx="8" fill="#11557C" />
+<text class="chip" x="63" y="208" text-anchor="middle">Matplotlib</text>
+<rect x="118" y="188" width="72" height="30" rx="8" fill="#3F4F75" />
+<text class="chip" x="154" y="208" text-anchor="middle">Plotly</text>
+<rect x="198" y="188" width="72" height="30" rx="8" fill="#F9A03C" />
+<text class="chip" x="234" y="208" text-anchor="middle">D3.js</text>
+<rect x="278" y="188" width="72" height="30" rx="8" fill="#1F457E" />
+<text class="chip" x="314" y="208" text-anchor="middle">Tableau</text>
+<text class="group" x="16" y="252">Processing</text>
+<rect x="16" y="260" width="108" height="30" rx="8" fill="#E25A1C" />
+<text class="chip" x="70" y="280" text-anchor="middle">Apache Spark</text>
+<rect x="132" y="260" width="122" height="30" rx="8" fill="#017CEE" />
+<text class="chip" x="193" y="280" text-anchor="middle">Apache Airflow</text>
+<rect x="262" y="260" width="130" height="30" rx="8" fill="#3776AB" />
+<text class="chip" x="327" y="280" text-anchor="middle">Multiprocessing</text>
+<rect x="400" y="260" width="72" height="30" rx="8" fill="#150458" />
+<text class="chip" x="436" y="280" text-anchor="middle">Pandas</text>
+<rect x="480" y="260" width="72" height="30" rx="8" fill="#013243" />
+<text class="chip" x="516" y="280" text-anchor="middle">NumPy</text>
+<rect x="560" y="260" width="108" height="30" rx="8" fill="#D22128" />
+<text class="chip" x="614" y="280" text-anchor="middle">Apache Arrow</text>
+<rect x="676" y="260" width="108" height="30" rx="8" fill="#231F20" />
+<text class="chip" x="730" y="280" text-anchor="middle">Apache Kafka</text>
+<rect x="792" y="260" width="72" height="30" rx="8" fill="#FC6E6B" />
+<text class="chip" x="828" y="280" text-anchor="middle">Dask</text>
+<rect x="872" y="260" width="94" height="30" rx="8" fill="#D71F00" />
+<text class="chip" x="919" y="280" text-anchor="middle">SQLAlchemy</text>
+<rect x="974" y="260" width="72" height="30" rx="8" fill="#FFC900" />
+<text class="chip" x="1010" y="280" text-anchor="middle">Kedro</text>
+<rect x="1054" y="260" width="72" height="30" rx="8" fill="#4F43DD" />
+<text class="chip" x="1090" y="280" text-anchor="middle">dagster</text>
+<text class="group" x="16" y="324">Modeling</text>
+<rect x="16" y="332" width="108" height="30" rx="8" fill="#F7931E" />
+<text class="chip" x="70" y="352" text-anchor="middle">scikit-learn</text>
+<rect x="132" y="332" width="72" height="30" rx="8" fill="#2496ED" />
+<text class="chip" x="168" y="352" text-anchor="middle">PyCaret</text>
+<rect x="212" y="332" width="72" height="30" rx="8" fill="#D00000" />
+<text class="chip" x="248" y="352" text-anchor="middle">Keras</text>
+<rect x="292" y="332" width="94" height="30" rx="8" fill="#FF6F00" />
+<text class="chip" x="339" y="352" text-anchor="middle">Tensorflow</text>
+<rect x="394" y="332" width="72" height="30" rx="8" fill="#EE4C2C" />
+<text class="chip" x="430" y="352" text-anchor="middle">PyTorch</text>
+<rect x="474" y="332" width="72" height="30" rx="8" fill="#8CAAE6" />
+<text class="chip" x="510" y="352" text-anchor="middle">SciPy</text>
+<rect x="554" y="332" width="72" height="30" rx="8" fill="#5C3EE8" />
+<text class="chip" x="590" y="352" text-anchor="middle">OpenCV</text>
+<rect x="634" y="332" width="94" height="30" rx="8" fill="#0081A5" />
+<text class="chip" x="681" y="352" text-anchor="middle">OpenAI Gym</text>
+<rect x="736" y="332" width="79" height="30" rx="8" fill="#E92063" />
+<text class="chip" x="776" y="352" text-anchor="middle">Pydantic</text>
+<text class="group" x="16" y="396">Deployment</text>
+<rect x="16" y="404" width="72" height="30" rx="8" fill="#009688" />
+<text class="chip" x="52" y="424" text-anchor="middle">FastAPI</text>
+<rect x="96" y="404" width="72" height="30" rx="8" fill="#070E10" />
+<text class="chip" x="132" y="424" text-anchor="middle">Prefect</text>
+</svg>

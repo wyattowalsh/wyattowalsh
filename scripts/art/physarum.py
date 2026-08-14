@@ -1492,6 +1492,9 @@ def generate(
 
     # ── Food source nodes ─────────────────────────────────────────
     node_fade = _fade(0.10, 0.40)
+    # Snapshot / GIF frames use timeline=False; existing repos stay visible.
+    if not timeline_enabled:
+        node_fade = max(node_fade, 0.64)
     if node_fade > 0:
         for index, node in enumerate(food_canvas):
             if not budget.ok():

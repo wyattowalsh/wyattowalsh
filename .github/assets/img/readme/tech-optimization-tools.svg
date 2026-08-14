@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="72" viewBox="0 0 1200 72" role="img" aria-label="Optimization Tools">
+<title>Optimization Tools</title>
+<desc>AMPL, IBM CPLEX, Gurobi, PuLP, Metaheuristics, Reinforcement Learning</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="72" rx="12" fill="transparent" />
+<rect x="16" y="18" width="72" height="30" rx="8" fill="#E95420" />
+<text class="chip" x="52" y="38" text-anchor="middle">AMPL</text>
+<rect x="96" y="18" width="86" height="30" rx="8" fill="#052FAD" />
+<text class="chip" x="139" y="38" text-anchor="middle">IBM CPLEX</text>
+<rect x="190" y="18" width="72" height="30" rx="8" fill="#EE3524" />
+<text class="chip" x="226" y="38" text-anchor="middle">Gurobi</text>
+<rect x="270" y="18" width="72" height="30" rx="8" fill="#FFA500" />
+<text class="chip" x="306" y="38" text-anchor="middle">PuLP</text>
+<rect x="350" y="18" width="122" height="30" rx="8" fill="#8B5CF6" />
+<text class="chip" x="411" y="38" text-anchor="middle">Metaheuristics</text>
+<rect x="480" y="18" width="180" height="30" rx="8" fill="#FF6F00" />
+<text class="chip" x="570" y="38" text-anchor="middle">Reinforcement Learning</text>
+</svg>

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from typing import Any
 
 
 def parse_cli_args(
@@ -41,7 +42,7 @@ def parse_cli_args(
     return result
 
 
-def seed_hash(m: dict) -> str:
+def seed_hash(m: dict[str, Any]) -> str:
     """Deterministic SHA-256 hex digest from metrics dict."""
     s = "-".join(
         str(m.get(k, 0))
@@ -49,6 +50,23 @@ def seed_hash(m: dict) -> str:
         if k not in ("label", "repos", "contributions_monthly")
     )
     return hashlib.sha256(s.encode()).hexdigest()
+
+
+def repo_identity_seed(base_seed: int, repo: dict[str, Any] | str) -> int:
+    """Stable per-repo RNG seed so later frames warm-start in place.
+
+    Positions and growth must follow the repo identity, not the current
+    list index. New repos can appear without reshuffling existing ones.
+    """
+    if isinstance(repo, str):
+        name = repo.strip()
+        created = ""
+    else:
+        name = str(repo.get("name") or repo.get("full_name") or "").strip()
+        created = str(repo.get("created_at") or repo.get("created") or "").strip()
+    digest = hashlib.sha256(f"{name}|{created}".encode()).hexdigest()
+    ident = int(digest[:16], 16) & 0xFFFFFFFF
+    return (int(base_seed) ^ ident ^ 0x9E3779B9) & 0xFFFFFFFF
 
 
 def hex_frac(h: str, a: int, b: int) -> float:

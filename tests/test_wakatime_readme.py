@@ -14,6 +14,7 @@ from scripts.wakatime_readme import (
     MARKER_END,
     MARKER_START,
     WAKA_STATS_RANGES,
+    WAKA_SVG_POINTER,
     GitHubShortInfo,
     WakaDayTotal,
     WakaStatEntry,
@@ -106,7 +107,7 @@ def test_parse_wakatime_stats_extracts_top_entries() -> None:
     assert week.categories[0].name == "Coding"
 
 
-def test_render_waka_section_includes_healthy_markers() -> None:
+def test_render_waka_section_is_svg_pointer_not_text_dump() -> None:
     week = parse_wakatime_stats(_sample_waka_payload())
     github = GitHubShortInfo(
         public_repos=170,
@@ -122,16 +123,14 @@ def test_render_waka_section_includes_healthy_markers() -> None:
         updated_at=datetime(2026, 7, 31, 12, 0, 0, tzinfo=UTC),
     )
 
-    assert "My Github Data" in rendered
-    assert "This Week I Spent My Time On" in rendered
-    assert "Programming Languages" in rendered
-    assert "Editors:" in rendered
-    assert "Projects:" in rendered
-    assert "Operating System:" in rendered
-    assert "Python" in rendered
-    assert "Last Updated on 31/07/2026 12:00:00 UTC" in rendered
+    assert WAKA_SVG_POINTER in rendered
+    assert DEFAULT_WAKATIME_SVG_PATH.as_posix() in rendered
+    assert "This Week I Spent My Time On" not in rendered
+    assert "My Github Data" not in rendered
+    assert "Programming Languages" not in rendered
     assert MARKER_START not in rendered
     assert MARKER_END not in rendered
+    assert "anmol098" not in rendered
 
 
 def test_generate_waka_section_uses_mocked_waka_api(monkeypatch) -> None:
@@ -155,39 +154,37 @@ def test_generate_waka_section_uses_mocked_waka_api(monkeypatch) -> None:
         "test-waka-key:last_year",
         "test-waka-key:all_time",
     ]
-    assert "This Week I Spent My Time On" in body
-    assert "America/New_York" in body
+    assert WAKA_SVG_POINTER in body
+    assert DEFAULT_WAKATIME_SVG_PATH.as_posix() in body
+    assert "This Week I Spent My Time On" not in body
     assert "anmol098" not in body
 
 
-def test_generate_waka_section_enriches_github_when_token_present(monkeypatch) -> None:
+def test_generate_waka_section_uses_public_repos_without_dump(monkeypatch) -> None:
     monkeypatch.setenv("WAKATIME_API_KEY", "waka")
     monkeypatch.setenv("GITHUB_TOKEN", "gh")
+    looked_up: list[str | None] = []
+
+    def fake_public_repos(token: str, *, login: str | None = None) -> frozenset[str]:
+        del token
+        looked_up.append(login)
+        return frozenset({"wyattowalsh"})
 
     monkeypatch.setattr(
         "scripts.wakatime_readme.fetch_wakatime_stats",
         lambda api_key, *, range_name="last_7_days": _sample_waka_payload(),
     )
     monkeypatch.setattr(
-        "scripts.wakatime_readme.fetch_github_short_info",
-        lambda token, *, login=None: GitHubShortInfo(
-            public_repos=10,
-            private_repos=2,
-            disk_usage_bytes=2048,
-            hireable=False,
-            contributions_this_year=42,
-            year=2026,
-        ),
-    )
-    monkeypatch.setattr(
         "scripts.wakatime_readme.fetch_public_repo_names",
-        lambda token, *, login=None: frozenset({"wyattowalsh"}),
+        fake_public_repos,
     )
 
     body = generate_waka_section(github_login="wyattowalsh")
-    assert "My Github Data" in body
-    assert "42 Contributions in the Year 2026" in body
-    assert "Not Opted to Hire" in body
+    assert looked_up == ["wyattowalsh"]
+    assert WAKA_SVG_POINTER in body
+    assert "This Week I Spent My Time On" not in body
+    assert "My Github Data" not in body
+    assert "secret-client" not in body
 
 
 def test_apply_waka_section_rewrites_only_marker_zone(tmp_path: Path) -> None:
@@ -221,8 +218,11 @@ def test_apply_waka_section_rewrites_only_marker_zone(tmp_path: Path) -> None:
     assert MARKER_START in text
     assert MARKER_END in text
     assert "stale" not in text
-    assert "This Week I Spent My Time On" in text
-    assert text.index(MARKER_START) < text.index("Python") < text.index(MARKER_END)
+    assert WAKA_SVG_POINTER in text
+    assert "This Week I Spent My Time On" not in text
+    assert text.index(MARKER_START) < text.index(WAKA_SVG_POINTER) < text.index(
+        MARKER_END
+    )
 
 
 def test_apply_waka_artifact_to_readme_noop_when_missing(tmp_path: Path) -> None:
@@ -237,12 +237,14 @@ def test_apply_waka_artifact_to_readme_noop_when_missing(tmp_path: Path) -> None
 
 def test_write_and_apply_artifact_roundtrip(tmp_path: Path) -> None:
     artifact = write_waka_artifact(
-        "📊 **This Week I Spent My Time On**\n", tmp_path / "waka-section.md"
+        f"{WAKA_SVG_POINTER}\n", tmp_path / "waka-section.md"
     )
     readme = tmp_path / "README.md"
     readme.write_text(f"{MARKER_START}\n\n{MARKER_END}\n", encoding="utf-8")
     assert apply_waka_artifact_to_readme(artifact, readme) is True
-    assert "This Week I Spent My Time On" in readme.read_text(encoding="utf-8")
+    applied = readme.read_text(encoding="utf-8")
+    assert WAKA_SVG_POINTER in applied
+    assert "This Week I Spent My Time On" not in applied
 
 
 def test_main_generate_allow_missing_key_writes_skip(
@@ -283,7 +285,10 @@ def test_main_generate_writes_artifact_with_mocked_api(
         )
         == 0
     )
-    assert "Programming Languages" in out.read_text(encoding="utf-8")
+    artifact = out.read_text(encoding="utf-8")
+    assert WAKA_SVG_POINTER in artifact
+    assert "This Week I Spent My Time On" not in artifact
+    assert "Programming Languages" not in artifact
 
 
 def test_write_skip_artifact(tmp_path: Path) -> None:
@@ -308,6 +313,11 @@ def test_privacy_helpers_reject_paths_heartbeats_and_leisure() -> None:
     assert is_leisure_or_unprofessional("Photos")
     assert is_leisure_or_unprofessional("Spotify")
     assert is_leisure_or_unprofessional("Apple Music")
+    assert is_leisure_or_unprofessional("Safari")
+    assert is_leisure_or_unprofessional("Mail")
+    assert is_leisure_or_unprofessional("Workout")
+    assert is_leisure_or_unprofessional("Mindfulness")
+    assert is_leisure_or_unprofessional("Heart Rate")
     assert is_professional_editor("Cursor")
     assert is_professional_editor("VS Code")
     assert is_professional_editor("Xcode")
@@ -336,6 +346,8 @@ def test_filter_waka_stats_drops_private_and_leisure_rows() -> None:
             WakaStatEntry("Cursor", 3000, 80.0, "50 mins"),
             WakaStatEntry("Spotify", 400, 10.0, "6 mins"),
             WakaStatEntry("Messages", 200, 5.0, "3 mins"),
+            WakaStatEntry("Safari", 180, 4.0, "3 mins"),
+            WakaStatEntry("Mail", 90, 2.0, "1 mins"),
         ),
         projects=(
             WakaStatEntry("wyattowalsh", 2000, 50.0, "33 mins"),
@@ -346,12 +358,15 @@ def test_filter_waka_stats_drops_private_and_leisure_rows() -> None:
             WakaStatEntry("Mac", 2000, 50.0, "33 mins"),
             WakaStatEntry("iOS", 1200, 30.0, "20 mins"),
             WakaStatEntry("watchOS", 800, 20.0, "13 mins"),
+            WakaStatEntry("Instagram", 40, 1.0, "1 mins"),
         ),
         categories=(
             WakaStatEntry("Coding", 3000, 70.0, "50 mins"),
             WakaStatEntry("Debugging", 800, 20.0, "13 mins"),
             WakaStatEntry("Entertainment", 200, 5.0, "3 mins"),
             WakaStatEntry("Games", 100, 2.0, "1 mins"),
+            WakaStatEntry("Workout", 80, 2.0, "1 mins"),
+            WakaStatEntry("Mindfulness", 40, 1.0, "1 mins"),
         ),
     )
     filtered = filter_waka_stats(
@@ -367,6 +382,11 @@ def test_filter_waka_stats_drops_private_and_leisure_rows() -> None:
         "watchOS",
     ]
     assert [entry.name for entry in filtered.categories] == ["Coding", "Debugging"]
+    assert "Safari" not in {entry.name for entry in filtered.editors}
+    assert "Mail" not in {entry.name for entry in filtered.editors}
+    assert "Instagram" not in {entry.name for entry in filtered.operating_systems}
+    assert "Workout" not in {entry.name for entry in filtered.categories}
+    assert "Mindfulness" not in {entry.name for entry in filtered.categories}
 
 
 def test_collect_wakatime_stats_fetches_documented_ranges(monkeypatch) -> None:
@@ -556,10 +576,10 @@ def test_generate_waka_section_hides_private_projects(monkeypatch) -> None:
         include_github=False,
         project_allowlist=("wyattowalsh",),
     )
-    assert "wyattowalsh" in body
+    assert WAKA_SVG_POINTER in body
     assert "secret-client" not in body
     assert "Spotify" not in body
-    assert "VS Code" in body
+    assert "This Week I Spent My Time On" not in body
 
 
 def test_main_generate_writes_svg_when_requested(
@@ -597,11 +617,13 @@ def test_main_generate_writes_svg_when_requested(
         )
         == 0
     )
-    assert "Programming Languages" in markdown.read_text(encoding="utf-8")
-    assert "This Week I Spent My Time On" in markdown.read_text(encoding="utf-8")
+    markdown_text = markdown.read_text(encoding="utf-8")
+    assert WAKA_SVG_POINTER in markdown_text
+    assert "This Week I Spent My Time On" not in markdown_text
+    assert "Programming Languages" not in markdown_text
     assert written == [svg]
     assert svg.read_text(encoding="utf-8").startswith("<svg>")
-    assert "anmol098" not in markdown.read_text(encoding="utf-8")
+    assert "anmol098" not in markdown_text
 
 
 def test_apply_wakatime_svg_copies_committed_card(tmp_path: Path) -> None:
@@ -627,7 +649,7 @@ def test_main_apply_copies_svg_artifact(tmp_path: Path) -> None:
     readme = tmp_path / "README.md"
     readme.write_text(f"{MARKER_START}\nold\n{MARKER_END}\n", encoding="utf-8")
     markdown = tmp_path / "waka-section.md"
-    markdown.write_text("📊 **This Week I Spent My Time On**\n", encoding="utf-8")
+    markdown.write_text(f"{WAKA_SVG_POINTER}\n", encoding="utf-8")
     svg_src = tmp_path / "wakatime.svg"
     svg_src.write_text("<svg>Languages</svg>\n", encoding="utf-8")
     dest = tmp_path / "committed.svg"
@@ -647,6 +669,8 @@ def test_main_apply_copies_svg_artifact(tmp_path: Path) -> None:
         )
         == 0
     )
-    assert "This Week I Spent My Time On" in readme.read_text(encoding="utf-8")
+    applied = readme.read_text(encoding="utf-8")
+    assert WAKA_SVG_POINTER in applied
+    assert "This Week I Spent My Time On" not in applied
     assert dest.read_text(encoding="utf-8") == "<svg>Languages</svg>\n"
     assert dest != DEFAULT_WAKATIME_SVG_PATH

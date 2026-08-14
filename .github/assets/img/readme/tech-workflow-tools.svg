@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="114" viewBox="0 0 1200 114" role="img" aria-label="Workflow Tools">
+<title>Workflow Tools</title>
+<desc>Git, Linux, Shell Script, Bash, Zsh, Jupyter, Docker, Kubernetes, Pytest, Python Hypothesis, Visual Studio Code, Sublime Text, GNU Make, uv, pnpm, CMake, Pre-commit, Ruff, Prettier</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="114" rx="12" fill="transparent" />
+<rect x="16" y="18" width="72" height="30" rx="8" fill="#F05032" />
+<text class="chip" x="52" y="38" text-anchor="middle">Git</text>
+<rect x="96" y="18" width="72" height="30" rx="8" fill="#FCC624" />
+<text class="chip" x="132" y="38" text-anchor="middle">Linux</text>
+<rect x="176" y="18" width="108" height="30" rx="8" fill="#4EAA25" />
+<text class="chip" x="230" y="38" text-anchor="middle">Shell Script</text>
+<rect x="292" y="18" width="72" height="30" rx="8" fill="#4EAA25" />
+<text class="chip" x="328" y="38" text-anchor="middle">Bash</text>
+<rect x="372" y="18" width="72" height="30" rx="8" fill="#F15A24" />
+<text class="chip" x="408" y="38" text-anchor="middle">Zsh</text>
+<rect x="452" y="18" width="72" height="30" rx="8" fill="#F37626" />
+<text class="chip" x="488" y="38" text-anchor="middle">Jupyter</text>
+<rect x="532" y="18" width="72" height="30" rx="8" fill="#2496ED" />
+<text class="chip" x="568" y="38" text-anchor="middle">Docker</text>
+<rect x="612" y="18" width="94" height="30" rx="8" fill="#326CE5" />
+<text class="chip" x="659" y="38" text-anchor="middle">Kubernetes</text>
+<rect x="714" y="18" width="72" height="30" rx="8" fill="#0A9EDC" />
+<text class="chip" x="750" y="38" text-anchor="middle">Pytest</text>
+<rect x="794" y="18" width="144" height="30" rx="8" fill="#BD1C2B" />
+<text class="chip" x="866" y="38" text-anchor="middle">Python Hypothesis</text>
+<rect x="946" y="18" width="151" height="30" rx="8" fill="#007ACC" />
+<text class="chip" x="1022" y="38" text-anchor="middle">Visual Studio Code</text>
+<rect x="16" y="60" width="108" height="30" rx="8" fill="#FF9800" />
+<text class="chip" x="70" y="80" text-anchor="middle">Sublime Text</text>
+<rect x="132" y="60" width="79" height="30" rx="8" fill="#6D00CC" />
+<text class="chip" x="172" y="80" text-anchor="middle">GNU Make</text>
+<rect x="219" y="60" width="72" height="30" rx="8" fill="#DE5FE9" />
+<text class="chip" x="255" y="80" text-anchor="middle">uv</text>
+<rect x="299" y="60" width="72" height="30" rx="8" fill="#F69220" />
+<text class="chip" x="335" y="80" text-anchor="middle">pnpm</text>
+<rect x="379" y="60" width="72" height="30" rx="8" fill="#064F8C" />
+<text class="chip" x="415" y="80" text-anchor="middle">CMake</text>
+<rect x="459" y="60" width="94" height="30" rx="8" fill="#FAB040" />
+<text class="chip" x="506" y="80" text-anchor="middle">Pre-commit</text>
+<rect x="561" y="60" width="72" height="30" rx="8" fill="#D7FF64" />
+<text class="chip" x="597" y="80" text-anchor="middle">Ruff</text>
+<rect x="641" y="60" width="79" height="30" rx="8" fill="#F7B93E" />
+<text class="chip" x="680" y="80" text-anchor="middle">Prettier</text>
+</svg>

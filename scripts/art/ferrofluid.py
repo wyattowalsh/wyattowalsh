@@ -64,6 +64,43 @@ class FerrofluidConfig:
 
 CFG = FerrofluidConfig()
 
+_DIPOLE_MIN_GAP = 44.0
+
+
+def _spread_positions(
+    values: list[float],
+    *,
+    min_gap: float,
+    low: float,
+    high: float,
+) -> list[float]:
+    """Push clustered 1D positions apart without changing their order."""
+    if len(values) <= 1:
+        return list(values)
+    span = max(0.0, high - low)
+    if span <= 0.0:
+        return [low for _ in values]
+    order = sorted(range(len(values)), key=lambda index: (values[index], index))
+    placed = [values[index] for index in order]
+    for index in range(1, len(placed)):
+        placed[index] = max(placed[index], placed[index - 1] + min_gap)
+    if placed[-1] > high:
+        overflow = placed[-1] - high
+        last = max(1, len(placed) - 1)
+        placed = [
+            value - overflow * (index / last) for index, value in enumerate(placed)
+        ]
+        placed[0] = max(low, min(placed[0], high))
+        for index in range(1, len(placed)):
+            placed[index] = max(placed[index], placed[index - 1] + min_gap)
+    if placed[-1] > high or placed[0] < low:
+        step = span / max(1, len(placed) - 1)
+        placed = [low + index * step for index in range(len(placed))]
+    result = [0.0] * len(values)
+    for slot, index in enumerate(order):
+        result[index] = max(low, min(high, placed[slot]))
+    return result
+
 
 def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
     """Return a soft density signal that continues rising past the baseline."""
@@ -953,6 +990,20 @@ def generate(
                 ),
             }
         )
+
+    if dipoles:
+        separated_x = _spread_positions(
+            [dipole[0] for dipole in dipoles],
+            min_gap=max(_DIPOLE_MIN_GAP, WIDTH * 0.055),
+            low=WIDTH * 0.08,
+            high=WIDTH * 0.92,
+        )
+        dipoles = [
+            (separated_x[index], dipole[1], dipole[2])
+            for index, dipole in enumerate(dipoles)
+        ]
+        for index, meta in enumerate(spike_meta):
+            meta["x"] = separated_x[index]
 
     # ── Compute magnetic field ────────────────────────────────────
     field, gx, gy = _compute_field(

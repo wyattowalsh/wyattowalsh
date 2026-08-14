@@ -11,7 +11,7 @@ import math
 from typing import override
 
 from ..utils import get_logger
-from .colors import TYPOGRAPHIC_PALETTE
+from .colors import CLUSTER_PALETTES, TYPOGRAPHIC_PALETTE, _classify_word
 from .core import PlacedWord
 from .engine import SvgWordCloudEngine
 
@@ -77,6 +77,15 @@ class TypographicRenderer(SvgWordCloudEngine):
         t_scaled = t**0.42
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
+    def _word_color(self, word: str, idx: int) -> str:
+        cluster = _classify_word(word)
+        cluster_palette = CLUSTER_PALETTES.get(cluster)
+        if cluster_palette:
+            return cluster_palette[idx % len(cluster_palette)]
+        return self.palette[
+            int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
+        ]
+
     def _place_at_scale(
         self,
         sorted_words: list[tuple[str, float]],
@@ -87,51 +96,94 @@ class TypographicRenderer(SvgWordCloudEngine):
         line_spacing: float | None = None,
         gap_ratio: float | None = None,
     ) -> list[PlacedWord] | None:
-        """Single-pass pack at *scale*. Return list if all fit, else None."""
+        """Magazine pack: headline + two ragged columns. All terms kept."""
         line_sp = self.line_spacing if line_spacing is None else line_spacing
         gap_r = self.word_gap_ratio if gap_ratio is None else gap_ratio
         placed: list[PlacedWord] = []
-        cursor_x = self.margin
-        cursor_y = self.margin + self.max_font_size * scale * 0.55
-        line_max_h = 0.0
         total = len(sorted_words)
+        gutter = 28.0
+        col_w = (self.width - 2 * self.margin - gutter) / 2
+        headline_bottom = self.margin
 
-        for idx, (word, freq) in enumerate(sorted_words):
+        def _append(
+            word: str,
+            freq: float,
+            idx: int,
+            x: float,
+            y: float,
+            font_size: float,
+        ) -> PlacedWord:
+            return PlacedWord(
+                text=word,
+                x=x,
+                y=y,
+                font_size=font_size,
+                rotation=0,
+                color=self._word_color(word, idx),
+                font_weight=self._freq_to_weight(freq, min_freq, max_freq),
+                font_family=self.font_family,
+                opacity=self._frequency_to_opacity(freq, min_freq, max_freq),
+            )
+
+        start_idx = 0
+        if sorted_words:
+            word, freq = sorted_words[0]
+            font_size = self._frequency_to_size(freq, min_freq, max_freq) * scale
+            font_size = max(self.min_font_size, font_size)
+            word_w = self._estimate_text_width(word, font_size)
+            if word_w + 2 * self.margin <= self.width:
+                word_h = self._estimate_text_height(font_size)
+                y = self.margin + word_h * 0.72
+                placed.append(
+                    _append(
+                        word,
+                        freq,
+                        0,
+                        self.margin + word_w / 2,
+                        y,
+                        font_size,
+                    )
+                )
+                headline_bottom = y + word_h * 0.45
+                start_idx = 1
+
+        columns = (
+            (self.margin, col_w),
+            (self.margin + col_w + gutter, col_w),
+        )
+        cursors = [
+            [left, headline_bottom + 18.0, 0.0] for left, _width in columns
+        ]
+        col = 0
+        for idx, (word, freq) in enumerate(sorted_words[start_idx:], start=start_idx):
             font_size = self._frequency_to_size(freq, min_freq, max_freq) * scale
             font_size = max(self.min_font_size * 0.85, font_size)
-            weight = self._freq_to_weight(freq, min_freq, max_freq)
-            opacity = self._frequency_to_opacity(freq, min_freq, max_freq)
-            # Golden-angle palette walk for vivid but non-clashing progression.
-            color = self.palette[
-                int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
-            ]
             word_w = self._estimate_text_width(word, font_size)
             word_h = self._estimate_text_height(font_size) * line_sp
             gap = font_size * gap_r
-
-            if cursor_x + word_w + self.margin > self.width:
-                cursor_x = self.margin
+            left, width = columns[col]
+            cursor_x, cursor_y, line_max_h = cursors[col]
+            rag = 10.0 if int(cursor_y / max(word_h, 1.0)) % 2 else 0.0
+            if cursor_x + word_w + self.margin > left + width:
+                cursor_x = left + rag
                 cursor_y += line_max_h
                 line_max_h = 0.0
-
+            if cursor_y + word_h / 2 > self.height - self.margin:
+                col += 1
+                if col >= len(columns):
+                    return None
+                left, width = columns[col]
+                cursor_x, cursor_y, line_max_h = cursors[col]
+                rag = 10.0 if int(cursor_y / max(word_h, 1.0)) % 2 else 0.0
+                cursor_x = left + rag
             if cursor_y + word_h / 2 > self.height - self.margin:
                 return None
-
             line_max_h = max(line_max_h, word_h)
             placed.append(
-                PlacedWord(
-                    text=word,
-                    x=cursor_x + word_w / 2,
-                    y=cursor_y,
-                    font_size=font_size,
-                    rotation=0,
-                    color=color,
-                    font_weight=weight,
-                    font_family=self.font_family,
-                    opacity=opacity,
-                )
+                _append(word, freq, idx, cursor_x + word_w / 2, cursor_y, font_size)
             )
             cursor_x += word_w + gap
+            cursors[col] = [cursor_x, cursor_y, line_max_h]
 
         if len(placed) != total:
             return None

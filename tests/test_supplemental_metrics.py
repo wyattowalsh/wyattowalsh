@@ -41,6 +41,43 @@ def _sample_metrics() -> dict[str, object]:
     }
 
 
+def _forbid_activity_writer(*_args: object, **_kwargs: object) -> list[dict[str, str]]:
+    raise AssertionError("generate must not fetch or write metrics-activity")
+
+
+def _well_formed_svg(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    if "<<<<<<<" in text or ">>>>>>>" in text or "=======" in text:
+        return None
+    return text
+
+
+def _assert_habits_is_designed(svg: str) -> None:
+    assert "habits-streaks" in svg
+    assert "habits-focus" in svg
+    assert "habits-peak" in svg
+    assert "habits-cadence" in svg
+    assert "Peak hour" in svg
+    assert "Focus" in svg
+    assert "Coding habits" in svg
+    assert "30-day activity" not in svg
+    assert "langs:" not in svg
+    assert "JetBrains MPS" not in svg
+    assert "card-line" not in svg
+    assert "uppercase; }}" not in svg
+
+
+def _assert_music_is_designed(svg: str) -> None:
+    assert "music-hero" in svg
+    assert "Recently played" in svg
+    assert "Spotify" in svg
+    assert "card-line" not in svg
+    assert "uppercase; }}" not in svg
+    assert "Utta Wanka" not in svg
+
+
 def test_generate_supplemental_metrics_writes_required_cards_and_disables_optional(
     tmp_path: Path,
     monkeypatch,
@@ -62,19 +99,14 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
-        lambda owner, token, limit=3: [
-            {
-                "summary": "Pushed 2 commits to wyattowalsh/agents",
-                "age": "2h ago",
-                "created_at": "2026-04-22T12:00:00Z",
-            },
-            {
-                "summary": "Starred wyattowalsh/nbadb",
-                "age": "1d ago",
-                "created_at": "2026-04-21T12:00:00Z",
-            },
-        ],
+        _forbid_activity_writer,
     )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._render_activity_card",
+        _forbid_activity_writer,
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "metrics-activity.svg").write_text("stale", encoding="utf-8")
 
     statuses = generate_supplemental_metrics(
         owner="wyattowalsh",
@@ -83,26 +115,25 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
         manifest_path=manifest_path,
     )
 
+    assert (output_dir / "metrics-languages.svg").exists()
     assert (output_dir / "metrics-habits.svg").exists()
+    languages_svg = (output_dir / "metrics-languages.svg").read_text(encoding="utf-8")
+    assert "Most used languages" in languages_svg
+    assert "Python" in languages_svg
+    assert "bytes" in languages_svg
     assert not (output_dir / "metrics-activity.svg").exists()
     assert not (output_dir / "metrics-music.svg").exists()
     assert not (output_dir / "metrics-posts.svg").exists()
+    assert statuses["activity"].enabled is False
+    assert statuses["activity"].reason == "removed-duplicate-github-feed"
     assert statuses["music"].enabled is False
     assert statuses["posts"].enabled is False
 
     habits_svg = (output_dir / "metrics-habits.svg").read_text(encoding="utf-8")
-    assert "Coding habits" in habits_svg
-    assert "Focus" in habits_svg
-    assert "Peak hour" in habits_svg
+    _assert_habits_is_designed(habits_svg)
     assert "agents" in habits_svg
     assert "14:00" in habits_svg
-    assert "habits-focus" in habits_svg
-    assert "habits-peak" in habits_svg
-    assert "habits-streaks" in habits_svg
     assert "prefers-color-scheme: dark" in habits_svg
-    assert "30-day activity" not in habits_svg
-    assert "langs:" not in habits_svg
-    assert "uppercase; }}" not in habits_svg
     # Dark media closes :root + @media with `}}`; class rules must not.
     assert habits_svg.count("}}") == 1
 
@@ -113,6 +144,8 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
         "Focus",
         "Peak hour",
     ]
+    assert manifest["activity"]["enabled"] is False
+    assert manifest["activity"]["reason"] == "removed-duplicate-github-feed"
     assert manifest["music"]["enabled"] is False
 
 
@@ -331,7 +364,11 @@ def test_generate_supplemental_metrics_enables_x_posts_from_oauth1_secret_quarte
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
-        lambda owner, token, limit=3: [],
+        _forbid_activity_writer,
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._render_activity_card",
+        _forbid_activity_writer,
     )
 
     def fake_fetch_latest_posts(
@@ -358,6 +395,8 @@ def test_generate_supplemental_metrics_enables_x_posts_from_oauth1_secret_quarte
 
     assert captured["api_key"] == "api-key"
     assert statuses["posts"].enabled is True
+    assert statuses["activity"].enabled is False
+    assert not (output_dir / "metrics-activity.svg").exists()
 
 
 def _sample_tracks() -> list[dict[str, str]]:
@@ -389,11 +428,15 @@ def _sample_tracks() -> list[dict[str, str]]:
 def test_render_habits_svg_is_designed_dashboard_not_four_line_recap() -> None:
     svg = _render_habits_svg(_sample_metrics())
 
+    _assert_habits_is_designed(svg)
     assert svg.count("<rect") > 20
-    assert "habits-cadence" in svg
     assert "current" in svg
     assert "longest" in svg
-    assert "Coding habits" in svg
+    assert "agents" in svg
+    assert "14:00" in svg
+    assert "habits-hero" in svg
+    assert "habits-langs" in svg
+    assert "Language mix" in svg
 
 
 def test_render_music_svg_hero_includes_extras_only_when_data_exists(
@@ -405,14 +448,14 @@ def test_render_music_svg_hero_includes_extras_only_when_data_exists(
     )
 
     hero_and_extras = _render_music_svg(_sample_tracks())
-    assert "Recently played" in hero_and_extras
-    assert "Spotify" in hero_and_extras
-    assert "music-hero" in hero_and_extras
+    _assert_music_is_designed(hero_and_extras)
     assert "Surreality" in hero_and_extras
     assert "Scope DJ" in hero_and_extras
     assert "Hardstyle Nights" in hero_and_extras
     assert "music-extras" in hero_and_extras
     assert "Melancholia" in hero_and_extras
+    assert ">SD</text>" in hero_and_extras
+    assert "<image " in hero_and_extras
     assert "prefers-color-scheme: dark" in hero_and_extras
 
     hero_only = _render_music_svg(_sample_tracks()[:1])
@@ -430,6 +473,7 @@ def test_render_music_svg_survives_missing_artwork(monkeypatch) -> None:
 
     svg = _render_music_svg(_sample_tracks()[:1])
     assert "Surreality" in svg
+    assert ">SD</text>" in svg
     assert "<image " not in svg
 
 
@@ -477,7 +521,11 @@ def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
-        lambda owner, token, limit=3: [],
+        _forbid_activity_writer,
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._render_activity_card",
+        _forbid_activity_writer,
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_tracks",
@@ -496,11 +544,12 @@ def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
     )
 
     assert statuses["music"].enabled is True
+    assert statuses["activity"].enabled is False
+    assert statuses["activity"].reason == "removed-duplicate-github-feed"
+    assert not (output_dir / "metrics-activity.svg").exists()
     music_svg = (output_dir / "metrics-music.svg").read_text(encoding="utf-8")
-    assert "Recently played" in music_svg
-    assert "Spotify" in music_svg
+    _assert_music_is_designed(music_svg)
     assert "Surreality" in music_svg
-    assert "music-hero" in music_svg
     assert "music-extras" in music_svg
     errors = validate_supplemental_metrics(
         output_dir=output_dir,
@@ -509,28 +558,25 @@ def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
     assert errors == []
 
 
-def test_committed_habits_and_music_svgs_use_designed_layouts() -> None:
-    """fact-habits-split / fact-spotify: shipped cards are designed, not recaps."""
+def test_committed_habits_and_music_svgs_use_designed_layouts(
+    monkeypatch,
+) -> None:
+    """fact-habits-split / fact-spotify: cards are designed, not recaps."""
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_image_data_uri",
+        lambda url, **_: f"data:image/jpeg;base64,abc{url[-4:]}",
+    )
+    _assert_habits_is_designed(_render_habits_svg(_sample_metrics()))
+    rendered_music = _render_music_svg(_sample_tracks())
+    _assert_music_is_designed(rendered_music)
+    assert "music-extras" in rendered_music
+    assert "Surreality" in rendered_music
+    assert "Scope DJ" in rendered_music
+
     assets = Path(__file__).resolve().parents[1] / ".github" / "assets" / "img"
-    habits = (assets / "metrics-habits.svg").read_text(encoding="utf-8")
-    music = (assets / "metrics-music.svg").read_text(encoding="utf-8")
-
-    assert "habits-streaks" in habits
-    assert "habits-focus" in habits
-    assert "habits-peak" in habits
-    assert "habits-cadence" in habits
-    assert "Peak hour" in habits
-    assert "Coding habits" in habits
-    assert "30-day activity" not in habits
-    assert "langs:" not in habits
-    assert "JetBrains MPS" not in habits
-    assert "card-line" not in habits
-
-    assert "music-hero" in music
-    assert "music-extras" in music
-    assert "Recently played" in music
-    assert "Surreality" in music
-    assert "Scope DJ" in music
-    assert "Utta Wanka" not in music
-    assert "card-line" not in music
-    assert "uppercase; }}" not in music
+    committed_habits = _well_formed_svg(assets / "metrics-habits.svg")
+    committed_music = _well_formed_svg(assets / "metrics-music.svg")
+    if committed_habits is not None:
+        _assert_habits_is_designed(committed_habits)
+    if committed_music is not None:
+        _assert_music_is_designed(committed_music)

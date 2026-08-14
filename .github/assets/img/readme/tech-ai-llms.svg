@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="72" viewBox="0 0 1200 72" role="img" aria-label="AI &amp; LLMs">
+<title>AI &amp; LLMs</title>
+<desc>OpenAI, LangChain, LangGraph, LlamaIndex, Anthropic, Hugging Face, Weights &amp; Biases, spaCy</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="72" rx="12" fill="transparent" />
+<rect x="16" y="18" width="72" height="30" rx="8" fill="#412991" />
+<text class="chip" x="52" y="38" text-anchor="middle">OpenAI</text>
+<rect x="96" y="18" width="86" height="30" rx="8" fill="#1C3C3C" />
+<text class="chip" x="139" y="38" text-anchor="middle">LangChain</text>
+<rect x="190" y="18" width="86" height="30" rx="8" fill="#1C3C3C" />
+<text class="chip" x="233" y="38" text-anchor="middle">LangGraph</text>
+<rect x="284" y="18" width="94" height="30" rx="8" fill="#5A29E4" />
+<text class="chip" x="331" y="38" text-anchor="middle">LlamaIndex</text>
+<rect x="386" y="18" width="86" height="30" rx="8" fill="#191919" />
+<text class="chip" x="429" y="38" text-anchor="middle">Anthropic</text>
+<rect x="480" y="18" width="108" height="30" rx="8" fill="#FFD21E" />
+<text class="chip" x="534" y="38" text-anchor="middle">Hugging Face</text>
+<rect x="596" y="18" width="137" height="30" rx="8" fill="#FFBE00" />
+<text class="chip" x="664" y="38" text-anchor="middle">Weights &amp; Biases</text>
+<rect x="741" y="18" width="72" height="30" rx="8" fill="#09A3D5" />
+<text class="chip" x="777" y="38" text-anchor="middle">spaCy</text>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="72" viewBox="0 0 1200 72" role="img" aria-label="Cloud Technologies">
+<title>Cloud Technologies</title>
+<desc>Amazon AWS, Google Cloud, Microsoft Azure, Supabase, Terraform</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="72" rx="12" fill="transparent" />
+<rect x="16" y="18" width="94" height="30" rx="8" fill="#232F3E" />
+<text class="chip" x="63" y="38" text-anchor="middle">Amazon AWS</text>
+<rect x="118" y="18" width="108" height="30" rx="8" fill="#4285F4" />
+<text class="chip" x="172" y="38" text-anchor="middle">Google Cloud</text>
+<rect x="234" y="18" width="130" height="30" rx="8" fill="#0078D4" />
+<text class="chip" x="299" y="38" text-anchor="middle">Microsoft Azure</text>
+<rect x="372" y="18" width="79" height="30" rx="8" fill="#3FCF8E" />
+<text class="chip" x="412" y="38" text-anchor="middle">Supabase</text>
+<rect x="459" y="18" width="86" height="30" rx="8" fill="#844FBA" />
+<text class="chip" x="502" y="38" text-anchor="middle">Terraform</text>
+</svg>

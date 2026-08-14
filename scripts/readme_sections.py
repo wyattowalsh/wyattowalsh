@@ -36,6 +36,7 @@ from .readme_svg import (
     SvgAssetWriter,
     SvgBlock,
     SvgBlockRenderer,
+    SvgBlogBoardRenderer,
     SvgBlogCardRenderer,
     SvgCard,
     SvgCardFamily,
@@ -161,6 +162,10 @@ _GHPVC_URL = (
 )
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
+    (
+        "metrics-languages.svg",
+        "Most used languages from repository language bytes",
+    ),
     (
         "metrics-habits.svg",
         "Supplemental metrics: coding habits and recent GitHub focus",
@@ -2285,60 +2290,45 @@ class ReadmeSectionGenerator:
             if meta_bits:
                 line += f" — {escape(' · '.join(meta_bits))}"
             fallback_lines.append(line)
-        card_embeds: list[tuple[str, str, str]] = []
-
-        if self._svg_section_enabled("blog_posts"):
+        result: list[str] = []
+        if self._svg_section_enabled("blog_posts") and svg_cards:
             writer = SvgAssetWriter(
                 output_dir=self.settings.svg.output_dir,
             )
-            used_assets: set[str] = set()
-            for idx, card in enumerate(svg_cards):
-                asset = self._make_blog_asset_name(
-                    card=card,
-                    index=idx,
-                    used_assets=used_assets,
+            board = SvgBlogBoardRenderer().render_board(svg_cards)
+            writer.write(asset_name="blog-posts", svg_content=board)
+            src = (Path(self.settings.svg.output_dir) / "blog-posts.svg").as_posix()
+            featured_url = svg_cards[0].url or feed_url_raw
+            alt_bits: list[str] = []
+            for card in svg_cards[:5]:
+                hook = next(iter(card.lines), "")
+                alt_bits.append(
+                    f"{card.title} · {hook}" if hook else card.title
                 )
-                writer.write(
-                    asset_name=asset,
-                    svg_content=self._render_card_svg_asset(
-                        family="blog",
-                        card=card,
-                        width=480,
-                        height=150,
-                        section_title="Latest Blog Posts",
-                    ),
-                )
-                src = (Path(self.settings.svg.output_dir) / f"{asset}.svg").as_posix()
-                published_label = next(
+            alt = "Latest blog posts: " + " · ".join(alt_bits)
+            img = self._gfm_img_tag(src=src, alt=alt, width="100%")
+            result.append(
+                f'<p align="center"><a href="{escape(featured_url)}" '
+                f'target="_blank" rel="noopener noreferrer">{img}</a></p>'
+            )
+            link_bits = []
+            for card in svg_cards:
+                title = escape(card.title)
+                url = escape(card.url or "#")
+                published = next(
                     (
                         bit.removeprefix("Published ").strip()
                         for bit in (card.meta or ())
                         if bit.startswith("Published ")
                     ),
-                    None,
+                    "",
                 )
-                hook = next(iter(card.lines), None)
-                alt_parts = [card.title]
-                if published_label:
-                    alt_parts.append(published_label)
-                if hook:
-                    alt_parts.append(hook)
-                card_embeds.append((card.url or "#", src, " · ".join(alt_parts)))
-
-        result: list[str] = []
-        if card_embeds:
-            imgs = []
-            for url, src, label in card_embeds:
-                img = self._gfm_img_tag(
-                    src=src,
-                    alt=f"Blog post card: {label}",
-                    width=360,
+                label = title if not published else f"{title} — {escape(published)}"
+                link_bits.append(
+                    f'<a href="{url}" target="_blank" '
+                    f'rel="noopener noreferrer">{label}</a>'
                 )
-                imgs.append(
-                    f'<a href="{escape(url)}" target="_blank" '
-                    f'rel="noopener noreferrer">{img}</a>'
-                )
-            result.append('<p align="center">' + "\n".join(imgs) + "</p>")
+            result.append('<p align="center">' + " · ".join(link_bits) + "</p>")
         result.append(
             f'<p align="center"><sub>Auto-updated from '
             f'<a href="{feed_url}">RSS feed</a></sub></p>'

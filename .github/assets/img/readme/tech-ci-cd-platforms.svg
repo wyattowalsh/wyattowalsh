@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="72" viewBox="0 0 1200 72" role="img" aria-label="CI/CD Platforms">
+<title>CI/CD Platforms</title>
+<desc>GitHub Actions, Travis CI</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="72" rx="12" fill="transparent" />
+<rect x="16" y="18" width="122" height="30" rx="8" fill="#2088FF" />
+<text class="chip" x="77" y="38" text-anchor="middle">GitHub Actions</text>
+<rect x="146" y="18" width="86" height="30" rx="8" fill="#3EAAAF" />
+<text class="chip" x="189" y="38" text-anchor="middle">Travis CI</text>
+</svg>

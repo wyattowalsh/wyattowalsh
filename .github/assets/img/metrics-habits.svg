@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="312" viewBox="0 0 1200 312" role="img" aria-label="Coding habits">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="548" viewBox="0 0 1200 548" role="img" aria-label="Coding habits">
 <defs>
 <style>
 :root {
@@ -39,6 +39,9 @@
 .hero-title { fill: var(--title-color); font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
 .hero-artist { fill: var(--title-color); font: 600 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
 .extra-title { fill: var(--title-color); font: 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.chip-label { fill: var(--meta-color); font: 700 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+.chip-value { fill: var(--title-color); font: 700 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.queue-title { fill: var(--title-color); font: 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
 .panel { fill: var(--panel-bg); }
 .panel-stroke { fill: none; stroke: var(--card-border); }
 .card-bg { fill: var(--card-bg); }
@@ -50,118 +53,228 @@
 .streak-fill { fill: var(--streak); }
 .streak-empty { fill: var(--card-border); }
 .cadence { fill: var(--streak); }
+.eq-bar { fill: var(--accent); }
+.lang-slice { stroke: var(--card-bg); stroke-width: 1.5; }
 </style>
 </defs>
-<rect class="card-bg" width="1200" height="312" rx="12" />
-<rect class="card-stroke" x="0.5" y="0.5" width="1199" height="311" rx="12" stroke-width="1" />
+<rect class="card-bg" width="1200" height="548" rx="12" />
+<rect class="card-stroke" x="0.5" y="0.5" width="1199" height="547" rx="12" stroke-width="1" />
 <rect width="1200" height="3" fill="var(--accent)" />
 <text class="title" x="28" y="40">Coding habits</text>
 <text class="kicker" x="1172" y="38" text-anchor="end">Focus · Peak hour · Streaks</text>
-<g class="habits-focus" transform="translate(20,58)">
-<rect class="panel" width="376" height="176" rx="10" />
-<rect class="panel-stroke" width="376" height="176" rx="10" />
+<g class="habits-hero" transform="translate(20,58)">
+<rect class="panel" x="0" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="0" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="14" y="20">30d commits</text>
+<text class="chip-value" x="14" y="44">15</text>
+<rect class="panel" x="192" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="192" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="206" y="20">Active days</text>
+<text class="chip-value" x="206" y="44">3</text>
+<rect class="panel" x="384" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="384" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="398" y="20">Streak</text>
+<text class="chip-value" x="398" y="44">3d</text>
+<rect class="panel" x="576" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="576" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="590" y="20">Busiest</text>
+<text class="chip-value" x="590" y="44">7</text>
+<rect class="panel" x="768" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="768" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="782" y="20">Reviews</text>
+<text class="chip-value" x="782" y="44">11</text>
+<rect class="panel" x="960" y="0" width="180" height="56" rx="10" />
+<rect class="panel-stroke" x="960" y="0" width="180" height="56" rx="10" />
+<text class="chip-label" x="974" y="20">Public repos</text>
+<text class="chip-value" x="974" y="44">42</text>
+</g>
+<g class="habits-focus" transform="translate(20,132)">
+<rect class="panel" width="376" height="200" rx="10" />
+<rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Focus</text>
 <text class="meta" x="16" y="42">Merged PRs by repo</text>
-<text class="body" x="16" y="58">riso</text>
-<text class="meta" x="360" y="58" text-anchor="end">×20</text>
-<rect x="16" y="64" width="344" height="6" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
-<rect class="focus-bar" x="16" y="64" width="344" height="6" rx="3" />
-<text class="body" x="16" y="92">ai-web-feeds</text>
-<text class="meta" x="360" y="92" text-anchor="end">×16</text>
-<rect x="16" y="98" width="344" height="6" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
-<rect class="focus-bar" x="16" y="98" width="275" height="6" rx="3" />
-<text class="body" x="16" y="126">proxywhirl</text>
-<text class="meta" x="360" y="126" text-anchor="end">×12</text>
-<rect x="16" y="132" width="344" height="6" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
-<rect class="focus-bar" x="16" y="132" width="206" height="6" rx="3" />
+<text class="body" x="16" y="58">agents</text>
+<text class="meta" x="360" y="58" text-anchor="end">×2</text>
+<rect x="16" y="64" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
+<rect class="focus-bar" x="16" y="64" width="344" height="5" rx="3" />
+<text class="body" x="16" y="86">nbadb</text>
+<text class="meta" x="360" y="86" text-anchor="end">×1</text>
+<rect x="16" y="92" width="344" height="5" rx="3" fill="var(--card-border)" fill-opacity="0.45" />
+<rect class="focus-bar" x="16" y="92" width="172" height="5" rx="3" />
 </g>
-<g class="habits-peak" transform="translate(412,58)">
-<rect class="panel" width="376" height="176" rx="10" />
-<rect class="panel-stroke" width="376" height="176" rx="10" />
+<g class="habits-peak" transform="translate(412,132)">
+<rect class="panel" width="376" height="200" rx="10" />
+<rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Peak hour</text>
 <text class="meta" x="16" y="42">Recent pushes · UTC</text>
-<text class="value" x="16" y="86">02:00</text>
-<rect class="peak-tick-on" x="16" y="135" width="11" height="15" rx="2" />
-<rect class="peak-tick-on" x="30" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-max" x="44" y="106" width="11" height="44" rx="2" />
-<rect class="peak-tick-on" x="58" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="72" y="139" width="11" height="11" rx="2" />
-<rect class="peak-tick-on" x="86" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="100" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="114" y="137" width="11" height="13" rx="2" />
-<rect class="peak-tick-on" x="128" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="142" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="156" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="170" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="184" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick" x="198" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="212" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick" x="226" y="144" width="11" height="6" rx="2" />
-<rect class="peak-tick-on" x="240" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="254" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="268" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="282" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="296" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="310" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="324" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="338" y="142" width="11" height="8" rx="2" />
+<text class="value" x="16" y="86">14:00</text>
+<rect class="peak-tick" x="16" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="30" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="44" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="58" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="72" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="86" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="100" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="114" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="128" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="142" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="156" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="170" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="184" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick-on" x="198" y="131" width="11" height="19" rx="2" />
+<rect class="peak-tick-max" x="212" y="106" width="11" height="44" rx="2" />
+<rect class="peak-tick-on" x="226" y="141" width="11" height="9" rx="2" />
+<rect class="peak-tick" x="240" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="254" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="268" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="282" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="296" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="310" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="324" y="144" width="11" height="6" rx="2" />
+<rect class="peak-tick" x="338" y="144" width="11" height="6" rx="2" />
 <text class="meta" x="16" y="166">00</text>
 <text class="meta" x="188" y="166" text-anchor="middle">12</text>
 <text class="meta" x="360" y="166" text-anchor="end">23</text>
 </g>
-<g class="habits-streaks" transform="translate(804,58)">
-<rect class="panel" width="376" height="176" rx="10" />
-<rect class="panel-stroke" width="376" height="176" rx="10" />
+<g class="habits-streaks" transform="translate(804,132)">
+<rect class="panel" width="376" height="200" rx="10" />
+<rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">Streaks</text>
-<text class="value" x="16" y="70">0d</text>
-<text class="meta" x="16" y="90">current</text>
-<circle class="streak-empty" cx="16" cy="112" r="5" />
-<circle class="streak-empty" cx="47.3" cy="112" r="5" />
-<circle class="streak-empty" cx="78.5" cy="112" r="5" />
-<circle class="streak-empty" cx="109.8" cy="112" r="5" />
-<circle class="streak-empty" cx="141.1" cy="112" r="5" />
-<circle class="streak-empty" cx="172.4" cy="112" r="5" />
-<circle class="streak-empty" cx="203.6" cy="112" r="5" />
-<circle class="streak-empty" cx="234.9" cy="112" r="5" />
-<circle class="streak-empty" cx="266.2" cy="112" r="5" />
-<circle class="streak-empty" cx="297.5" cy="112" r="5" />
-<circle class="streak-empty" cx="328.7" cy="112" r="5" />
-<circle class="streak-empty" cx="360" cy="112" r="5" />
-<rect x="16" y="136" width="344" height="8" rx="4" class="streak-empty" fill-opacity="0.55" />
-<rect class="streak-fill" x="16" y="136" width="0" height="8" rx="4" />
-<text class="meta" x="16" y="162">0d longest</text>
+<text class="value" x="16" y="64">3d</text>
+<text class="meta" x="16" y="82">current</text>
+<circle class="streak-fill" cx="16" cy="100" r="5" />
+<circle class="streak-fill" cx="47.3" cy="100" r="5" />
+<circle class="streak-fill" cx="78.5" cy="100" r="5" />
+<circle class="streak-empty" cx="109.8" cy="100" r="5" />
+<circle class="streak-empty" cx="141.1" cy="100" r="5" />
+<circle class="streak-empty" cx="172.4" cy="100" r="5" />
+<circle class="streak-empty" cx="203.6" cy="100" r="5" />
+<circle class="streak-empty" cx="234.9" cy="100" r="5" />
+<circle class="streak-empty" cx="266.2" cy="100" r="5" />
+<circle class="streak-empty" cx="297.5" cy="100" r="5" />
+<circle class="streak-empty" cx="328.7" cy="100" r="5" />
+<circle class="streak-empty" cx="360" cy="100" r="5" />
+<rect x="16" y="118" width="344" height="7" rx="4" class="streak-empty" fill-opacity="0.55" />
+<rect class="streak-fill" x="16" y="118" width="344" height="7" rx="4" />
+<text class="meta" x="16" y="140">3d longest</text>
+<rect class="cadence" x="16" y="158" width="44" height="20" rx="2" />
+<text class="meta" x="38" y="192" text-anchor="middle">M</text>
+<rect class="cadence" x="66" y="166" width="44" height="12" rx="2" />
+<text class="meta" x="88" y="192" text-anchor="middle">T</text>
+<rect class="cadence" x="116" y="150" width="44" height="28" rx="2" />
+<text class="meta" x="138" y="192" text-anchor="middle">W</text>
+<rect class="cadence" x="166" y="172" width="44" height="6" rx="2" />
+<text class="meta" x="188" y="192" text-anchor="middle">T</text>
+<rect class="cadence" x="216" y="172" width="44" height="6" rx="2" />
+<text class="meta" x="238" y="192" text-anchor="middle">F</text>
+<rect class="cadence" x="266" y="172" width="44" height="6" rx="2" />
+<text class="meta" x="288" y="192" text-anchor="middle">S</text>
+<rect class="cadence" x="316" y="172" width="44" height="6" rx="2" />
+<text class="meta" x="338" y="192" text-anchor="middle">S</text>
 </g>
-<g class="habits-cadence" transform="translate(28,246)">
+<g class="habits-langs" transform="translate(28,348)">
+<text class="label" x="0" y="12">Language mix</text>
+<rect x="0.0" y="22" width="672.9" height="10" fill="#1db954" />
+<rect x="672.9" y="22" width="336.5" height="10" fill="#1a7f37" />
+<rect x="1009.4" y="22" width="134.6" height="10" fill="#218bff" />
+<rect x="0.0" y="40" width="8" height="8" rx="2" fill="#1db954" />
+<text class="meta" x="14.0" y="48">Python 59%</text>
+<rect x="381.3" y="40" width="8" height="8" rx="2" fill="#1a7f37" />
+<text class="meta" x="395.3" y="48">TypeScript 29%</text>
+<rect x="762.7" y="40" width="8" height="8" rx="2" fill="#218bff" />
+<text class="meta" x="776.7" y="48">HTML 12%</text>
+</g>
+<g class="habits-cadence" transform="translate(28,430)">
 <text class="label" x="0" y="12">Cadence</text>
-<rect class="cadence" x="0" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="38" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="76" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="114" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="152" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="190" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="228" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="266" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="304" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="342" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="380" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="418" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="456" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="494" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="532" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="570" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="608" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="646" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="684" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="722" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="760" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="798" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="836" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="874" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="912" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="950" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="988" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1026" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1064" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1102" y="34" width="34" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="0" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="12" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="24" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="36" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="48" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="60" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="72" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="84" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="96" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="108" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="120" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="132" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="144" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="156" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="168" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="180" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="192" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="204" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="216" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="228" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="240" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="252" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="264" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="276" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="288" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="300" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="312" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="324" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="336" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="348" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="360" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="372" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="384" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="396" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="408" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="420" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="432" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="444" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="456" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="468" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="480" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="492" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="504" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="516" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="528" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="540" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="552" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="564" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="576" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="588" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="600" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="612" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="624" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="636" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="648" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="660" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="672" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="684" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="696" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="708" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="720" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="732" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="744" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="756" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="768" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="780" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="792" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="804" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="816" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="828" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="840" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="852" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="864" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="876" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="888" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="900" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="912" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="924" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="936" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="948" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="960" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="972" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="984" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="996" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1008" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1020" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1032" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1044" y="26" width="8" height="12" rx="2" fill-opacity="0.81" />
+<rect class="cadence" x="1056" y="31" width="8" height="7" rx="2" fill-opacity="0.63" />
+<rect class="cadence" x="1068" y="20" width="8" height="18" rx="2" fill-opacity="1.00" />
 </g>
 </svg>

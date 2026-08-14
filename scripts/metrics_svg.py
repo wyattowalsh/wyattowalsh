@@ -71,6 +71,13 @@ ERROR_SIGNAL_PATTERNS: Final[tuple[tuple[str, re.Pattern[str]], ...]] = (
         ),
     ),
     (
+        "an-error-occured",
+        re.compile(
+            r"(?:^|[\s:>-])An error occurr?ed(?:$|[.!()])",
+            re.IGNORECASE,
+        ),
+    ),
+    (
         "type-error",
         re.compile(r"(?:^|[\s:>-])TypeError(?:$|[:.!()]|\s+[A-Z])"),
     ),

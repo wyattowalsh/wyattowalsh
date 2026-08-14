@@ -65,7 +65,14 @@ from .palette import (
     _build_world_palette_extended,
     select_palette_for_world,
 )
-from .seeds import _hex_slice, _seed_hash, hex_frac, parse_cli_args, seed_hash
+from .seeds import (
+    _hex_slice,
+    _seed_hash,
+    hex_frac,
+    parse_cli_args,
+    repo_identity_seed,
+    seed_hash,
+)
 from .svg import (
     annotation_tooltip_metadata,
     atmospheric_haze_filter,
@@ -185,6 +192,7 @@ __all__ = [
     "repo_visibility_score",
     "resolve_noise_preset",
     "resolve_render_metrics",
+    "repo_identity_seed",
     "seed_hash",
     "select_palette_for_world",
     "select_primary_repos",

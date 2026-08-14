@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import xml.etree.ElementTree as ET
+from typing import override
 
 from ..utils import get_logger
 from .core import BBox, PlacedWord
@@ -131,6 +132,7 @@ class ShapedRenderer(SvgWordCloudEngine):
                 return False
         return True
 
+    @override
     def place_words(
         self,
         frequencies: dict[str, float],
@@ -209,6 +211,7 @@ class ShapedRenderer(SvgWordCloudEngine):
 
         return placed
 
+    @override
     def render_svg(self, placed_words: list[PlacedWord]) -> str:
         """Override to optionally include the shape outline and glow filter."""
         if not self.show_shape_outline:
@@ -223,39 +226,8 @@ class ShapedRenderer(SvgWordCloudEngine):
         )
 
         defs = self._add_glow_filter(root)
-        radial = ET.SubElement(
-            defs,
-            "radialGradient",
-            id="wc-bg-grad",
-            cx="50%",
-            cy="50%",
-            r="75%",
-        )
-        ET.SubElement(
-            radial,
-            "stop",
-            offset="0%",
-            attrib={
-                "stop-color": "#fafbfc",
-                "stop-opacity": "1",
-            },
-        )
-        ET.SubElement(
-            radial,
-            "stop",
-            offset="100%",
-            attrib={
-                "stop-color": "#f0f1f3",
-                "stop-opacity": "1",
-            },
-        )
-        ET.SubElement(
-            root,
-            "rect",
-            width=str(self.width),
-            height=str(self.height),
-            fill="url(#wc-bg-grad)",
-        )
+        self._add_background_gradients(defs)
+        self._add_canvas_background(root)
 
         glow_threshold = self._glow_size_threshold(placed_words)
 

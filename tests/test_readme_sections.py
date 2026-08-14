@@ -835,26 +835,18 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        # Per-card blog SVGs should exist
-        first_svg = (tmp_path / "svg" / "blog-first-post.svg").read_text(
-            encoding="utf-8"
-        )
-        second_svg = (tmp_path / "svg" / "blog-second-post.svg").read_text(
-            encoding="utf-8"
-        )
+        board = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
         assert "<img" in html
-        assert "blog-first-post.svg" in html
-        assert "blog-second-post.svg" in html
+        assert "blog-posts.svg" in html
         assert "2026-02-20" in html
         assert "2026-02-19" in html
         assert "A deep dive into data art." in html
         assert "Another deep dive." in html
         assert "https://w4w.dev/blog/first" in html
         assert "<details" not in html
-        assert "Published 2026-02-20" in first_svg
-        assert "A deep dive into data art." in first_svg
-        assert "Published 2026-02-19" in second_svg
-        assert "Another deep dive." in second_svg
+        assert "First Post" in board
+        assert "Second Post" in board
+        assert "Latest Blog Posts" in board
         assert 'loading="lazy"' in html
         assert "<svg" not in html
         assert "Auto-updated from" in html
@@ -889,12 +881,12 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
-        svg = (tmp_path / "svg" / "blog-rss-only.svg").read_text(encoding="utf-8")
+        svg = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
 
         assert "2026-05-01" in html
         assert "Hook from the feed." in html
         assert "<details" not in html
-        assert "Published 2026-05-01" in svg
+        assert "RSS Only" in svg
         assert "Hook from the feed." in svg
 
     def test_blog_posts_deduplicate_colliding_svg_names(self, tmp_path: Path) -> None:
@@ -923,14 +915,11 @@ class TestRendering:
         html = generator._render_blog_posts()
 
         svg_files = sorted(path.name for path in (tmp_path / "svg").glob("blog-*.svg"))
-        assert len(svg_files) == 2
-        assert len(set(svg_files)) == 2
-        assert all(name.startswith("blog-weekly-update") for name in svg_files)
-        assert any(
-            re.fullmatch(r"blog-.*-[0-9a-f]{8}\.svg", name) for name in svg_files
-        )
-        assert all(name in html for name in svg_files)
-        assert 'width="360"' in html
+        assert svg_files == ["blog-posts.svg"]
+        assert "blog-posts.svg" in html
+        board = (tmp_path / "svg" / "blog-posts.svg").read_text(encoding="utf-8")
+        assert board.count("Weekly Update") >= 2
+        assert 'width="100%"' in html
         assert 'width="500"' not in html
 
     def test_generate_rewrites_living_art_as_wrap_flow_grid(
@@ -1701,12 +1690,12 @@ class TestRendering:
 
         html = generator._render_blog_posts()
 
-        # Per-card SVG should exist
-        svg_path = tmp_path / "svg" / "blog-github-changelog.svg"
+        svg_path = tmp_path / "svg" / "blog-posts.svg"
         assert svg_path.exists()
         svg = svg_path.read_text(encoding="utf-8")
         assert "data:image" not in svg
-        assert "blog-github-changelog.svg" in html
+        assert "blog-posts.svg" in html
+        assert "GitHub Changelog" in svg
 
     def test_featured_projects_support_legacy_card_variant(
         self, tmp_path: Path
@@ -2054,7 +2043,7 @@ class TestReadmeInjection:
         assert "<!-- README:BLOG_POSTS:END -->" in content
         assert "connect-github.svg" in content
         assert "featured-card-wyattowalsh-riso.svg" in content
-        assert "blog-first-post.svg" in content
+        assert "blog-posts.svg" in content
         assert ".github/assets/img/gh.gif" not in content
         assert ".github/assets/img/animated-community.gif" not in content
         assert "github.com/wyattowalsh" in content
@@ -2122,8 +2111,8 @@ class TestReadmeInjection:
             flags=re.DOTALL,
         )
 
-        assert "blog-first-post.svg" in generated
-        assert "blog-first-post.svg" in refreshed
+        assert "blog-posts.svg" in generated
+        assert "blog-posts.svg" in refreshed
 
     def test_generate_respects_svg_feature_toggles(self, tmp_path: Path) -> None:
         readme_path = tmp_path / "README.md"
@@ -2320,8 +2309,7 @@ class TestReadmeInjection:
 
         # The trailing "update" should be stripped from the title in the SVG
         # The title in SVG should not end with " update"
-        assert "blog-title" in svg
-        # The blog-desc should contain the summary
+        assert "feature-title" in svg
         assert "Long post" in svg
 
     def test_card_generators_are_bespoke_per_family(

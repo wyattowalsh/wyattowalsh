@@ -182,7 +182,8 @@ def test_waka_and_blog_are_visible_not_details() -> None:
             "<!-- README:BLOG_POSTS:END -->"
         )
     ]
-    assert blog.count('alt="Blog post card:') >= 4
+    assert "blog-posts.svg" in blog
+    assert blog.count("w4w.dev/blog") >= 4
     assert re.search(r"20\d{2}-\d{2}-\d{2}", blog)
     assert " · " in blog
     assert "<details" not in blog.lower()

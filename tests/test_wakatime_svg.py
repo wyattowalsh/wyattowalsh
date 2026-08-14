@@ -9,6 +9,7 @@ import pytest
 
 from scripts.wakatime_readme import (
     DEFAULT_WAKATIME_SVG_PATH,
+    GitHubShortInfo,
     WakaAllTimeTotal,
     WakaCollection,
     WakaDayTotal,
@@ -227,6 +228,7 @@ def test_render_wakatime_svg_includes_public_safe_sections() -> None:
     assert "1,000 hrs" in svg
     assert "4,500 hrs" in svg
     assert "Coding heatmap" in svg
+    assert "Last 14 days" in svg
     assert 'class="hm-0"' in svg or 'class="hm-1"' in svg or 'class="hm-4"' in svg
     assert "2026-08-01" in svg
     assert "wyattowalsh" in svg
@@ -276,6 +278,24 @@ def test_render_wakatime_svg_omits_heatmap_without_daily_data() -> None:
     svg = render_wakatime_svg(filter_waka_collection(collection))
     assert "Coding heatmap" not in svg
     assert "Languages" in svg
+
+
+def test_render_wakatime_svg_includes_github_chips() -> None:
+    svg = render_wakatime_svg(
+        filter_waka_collection(_collection()),
+        github=GitHubShortInfo(
+            public_repos=190,
+            private_repos=0,
+            disk_usage_bytes=None,
+            hireable=True,
+            contributions_this_year=3703,
+            year=2026,
+        ),
+    )
+    assert "GitHub" in svg
+    assert "3,703" in svg
+    assert "190" in svg
+    assert "Open" in svg
 
 
 def test_write_wakatime_svg_creates_asset(tmp_path: Path) -> None:

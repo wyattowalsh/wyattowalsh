@@ -1,12 +1,14 @@
 """First-party WakaTime README section collector and generator.
 
-Fetches WakaTime (and optionally GitHub) stats, renders markdown for the
-``<!--START_SECTION:waka-->`` … ``<!--END_SECTION:waka-->`` zone, and can
-write an artifact for finalize to apply — no third-party Actions required.
+Fetches public-safe WakaTime stats, writes a marker-zone pointer at the
+first-party SVG, and can copy ``wakatime.svg`` for finalize — no
+third-party Actions required.
 
 Public-safe collection never requests heartbeats, durations, or file
 entities. Project names are published only when they match a public repo
-or an explicit allowlist. Leisure / unprofessional app rows are dropped.
+or an explicit allowlist. Leisure / unprofessional / consumer iOS and
+watch app rows are dropped. The open README surface is the SVG card, not
+a markdown dump.
 """
 
 from __future__ import annotations
@@ -50,6 +52,10 @@ SVG_TOP_N: Final[int] = 8
 DEFAULT_ARTIFACT_NAME: Final[str] = "waka-section.md"
 SKIP_MARKER_NAME: Final[str] = "waka-section.skipped"
 DEFAULT_WAKATIME_SVG_PATH: Final[Path] = Path(".github/assets/img/wakatime.svg")
+WAKA_SVG_POINTER: Final[str] = (
+    "<!-- WakaTime SVG is rendered from "
+    f"{DEFAULT_WAKATIME_SVG_PATH.as_posix()} -->"
+)
 
 _OPTIONAL_FETCH_ERRORS: Final[tuple[type[BaseException], ...]] = (
     urllib.error.HTTPError,
@@ -97,6 +103,9 @@ LEISURE_CATEGORY_DENYLIST: Final[frozenset[str]] = frozenset(
         "social media",
         "social networking",
         "wellness",
+        "mindfulness",
+        "sleep",
+        "workout",
     }
 )
 LEISURE_NAME_TOKENS: Final[frozenset[str]] = frozenset(
@@ -119,6 +128,9 @@ LEISURE_NAME_TOKENS: Final[frozenset[str]] = frozenset(
         "social",
         "tinder",
         "wellness",
+        "mindfulness",
+        "safari",
+        "workout",
     }
 )
 LEISURE_APP_DENYLIST: Final[frozenset[str]] = frozenset(
@@ -154,6 +166,21 @@ LEISURE_APP_DENYLIST: Final[frozenset[str]] = frozenset(
         "whatsapp",
         "youtube",
         "youtube music",
+        "app store",
+        "breathe",
+        "camera",
+        "discord",
+        "heart rate",
+        "mail",
+        "maps",
+        "mindfulness",
+        "pinterest",
+        "reddit",
+        "safari",
+        "sleep",
+        "snapchat",
+        "weather",
+        "workout",
     }
 )
 PROFESSIONAL_EDITORS: Final[frozenset[str]] = frozenset(
@@ -473,7 +500,7 @@ def filter_waka_stats(
     def keep_language(name: str) -> bool:
         return not looks_like_file_path(name) and not looks_like_heartbeat_entity(name)
 
-    def keep_category(name: str) -> bool:
+    def keep_public_surface(name: str) -> bool:
         return keep_language(name) and not is_leisure_or_unprofessional(name)
 
     def keep_project(name: str) -> bool:
@@ -485,13 +512,13 @@ def filter_waka_stats(
 
     filtered = replace(
         stats,
-        languages=_filter_named_entries(stats.languages, keep=keep_language),
+        languages=_filter_named_entries(stats.languages, keep=keep_public_surface),
         editors=_filter_named_entries(stats.editors, keep=is_professional_editor),
         projects=_filter_named_entries(stats.projects, keep=keep_project),
-        categories=_filter_named_entries(stats.categories, keep=keep_category),
+        categories=_filter_named_entries(stats.categories, keep=keep_public_surface),
         operating_systems=_filter_named_entries(
             stats.operating_systems,
-            keep=keep_language,
+            keep=keep_public_surface,
         ),
     )
     if top_n is None:
@@ -1073,86 +1100,12 @@ def _format_stat_rows(entries: tuple[WakaStatEntry, ...]) -> str:
 
 
 def render_waka_section(
-    week: WakaWeekStats,
-    *,
-    github: GitHubShortInfo | None = None,
-    updated_at: datetime | None = None,
-    year: WakaWeekStats | None = None,
-    all_time: WakaWeekStats | None = None,
-    all_time_since_today: WakaAllTimeTotal | None = None,
+    week: WakaWeekStats | None = None,
+    **_: object,
 ) -> str:
-    """Render the inner markdown for the Waka README markers (no markers)."""
-    stamp = (updated_at or datetime.now(UTC)).astimezone(UTC)
-    parts: list[str] = []
-
-    if github is not None:
-        parts.append("**🐱 My Github Data** \n")
-        if github.contributions_this_year is not None and github.year is not None:
-            contrib = f"{github.contributions_this_year:,}"
-            parts.append(f"> 🏆 {contrib} Contributions in the Year {github.year}")
-            parts.append(" > ")
-        if github.disk_usage_bytes is not None:
-            parts.append(
-                f"> 📦 {_format_bytes(github.disk_usage_bytes)} Used in Github's Storage "  # noqa: E501
-            )
-            parts.append(" > ")
-        if github.hireable is True:
-            parts.append("> 💼 Opted to Hire")
-            parts.append(" > ")
-        elif github.hireable is False:
-            parts.append("> 🚫 Not Opted to Hire")
-            parts.append(" > ")
-        public_label = (
-            "Public Repository" if github.public_repos == 1 else "Public Repositories"
-        )
-        private_label = (
-            "Private Repository"
-            if github.private_repos == 1
-            else "Private Repositories"
-        )
-        parts.append(f"> 📜 {github.public_repos} {public_label} ")
-        parts.append(" > ")
-        parts.append(f"> 🔑 {github.private_repos} {private_label}  ")
-        parts.append(" > ")
-        parts.append("")
-
-    parts.append("📊 **This Week I Spent My Time On** \n")
-    parts.append("")
-    parts.append("```text")
-    parts.append(f"⌚︎ Time Zone: {week.timezone}")
-    if week.human_readable_total:
-        parts.append(f"⏳ This Week: {week.human_readable_total}")
-    if year is not None and year.human_readable_total:
-        parts.append(f"📅 Last Year: {year.human_readable_total}")
-    lifetime = ""
-    if all_time is not None and all_time.human_readable_total:
-        lifetime = all_time.human_readable_total
-    elif all_time_since_today is not None:
-        lifetime = all_time_since_today.text
-    if lifetime:
-        parts.append(f"∞ All Time: {lifetime}")
-    parts.append("")
-    parts.append("💬 Programming Languages: ")
-    parts.append(_format_stat_rows(week.languages).rstrip("\n"))
-    parts.append("")
-    parts.append("🔥 Editors: ")
-    parts.append(_format_stat_rows(week.editors).rstrip("\n"))
-    if week.categories:
-        parts.append("")
-        parts.append("🧠 Categories: ")
-        parts.append(_format_stat_rows(week.categories).rstrip("\n"))
-    parts.append("")
-    parts.append("🐱‍💻 Projects: ")
-    parts.append(_format_stat_rows(week.projects).rstrip("\n"))
-    parts.append("")
-    parts.append("💻 Operating System: ")
-    parts.append(_format_stat_rows(week.operating_systems).rstrip("\n"))
-    parts.append("")
-    parts.append("```")
-    parts.append("")
-    parts.append("")
-    parts.append(f" Last Updated on {stamp.strftime(TIMESTAMP_FORMAT)}")
-    return "\n".join(parts) + "\n"
+    """Render the Waka marker inner body: SVG pointer, never a text dump."""
+    del week
+    return f"{WAKA_SVG_POINTER}\n"
 
 
 def apply_waka_section(readme_path: Path, section_body: str) -> bool:
@@ -1243,21 +1196,7 @@ def generate_waka_section(
         project_allowlist=project_allowlist,
         top_n=DEFAULT_TOP_N,
     )
-
-    github_info: GitHubShortInfo | None = None
-    if include_github and token:
-        try:
-            github_info = fetch_github_short_info(token, login=github_login)
-        except (urllib.error.URLError, TimeoutError, ValueError) as exc:
-            logger.warning("Skipping GitHub short info: {exc}", exc=exc)
-
-    return render_waka_section(
-        filtered.week,
-        github=github_info,
-        year=filtered.year,
-        all_time=filtered.all_time,
-        all_time_since_today=filtered.all_time_since_today,
-    )
+    return render_waka_section(filtered.week)
 
 
 def apply_waka_artifact_to_readme(
@@ -1338,7 +1277,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help=(
             "Optional path for the first-party wakatime.svg card "
-            "(README ship artifact; markdown dump stays for markers)"
+            "(README ship artifact; markers stay a pointer at this SVG)"
         ),
     )
     generate.add_argument(
@@ -1428,7 +1367,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "apply":
-        # Markdown markers stay for CI health checks; the open README
+        # Markers stay a pointer at the first-party SVG; the open README
         # surface is .github/assets/img/wakatime.svg (copied when present).
         changed = apply_waka_artifact_to_readme(args.artifact, args.readme)
         if args.svg_artifact is not None:

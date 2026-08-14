@@ -204,6 +204,8 @@ def test_validate_svg_content_rejects_empty_or_malformed(
             "This metrics instance will be regenerated automatically",
             "will be regenerated",
         ),
+        ("An error occured!", "An error occured"),
+        ("An error occurred!", "An error occurred"),
     ],
 )
 def test_validate_svg_content_rejects_known_error_payloads(
@@ -256,6 +258,17 @@ def test_validate_svg_content_rejects_embedded_scope_error_panel() -> None:
 
     assert result.status == SvgValidationStatus.ERROR_PAYLOAD
     assert result.is_valid is False
+
+
+def test_validate_svg_content_rejects_embedded_occured_error_panel() -> None:
+    """Lowlighter inline plugin failures use the historical 'occured' typo."""
+    result = validate_svg_content(
+        _svg_with_text("Recent coding habits An error occured! Starred topics"),
+    )
+
+    assert result.status == SvgValidationStatus.ERROR_PAYLOAD
+    assert result.is_valid is False
+    assert "an-error-occured" in result.detail
 
 
 def test_placeholder_svg_is_detected_and_rejected() -> None:
@@ -431,6 +444,7 @@ def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
         text = path.read_text(encoding="utf-8")
         lowered = text.lower()
         assert "will be regenerated" not in lowered
+        assert "an error occur" not in lowered
         assert path.stat().st_size > STUB_SVG_MAX_BYTES
         result = validate_svg_file(path)
         assert result.is_valid is True, f"{path}: {result.status} {result.detail}"
@@ -440,6 +454,9 @@ def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
     extra_text = extra.read_text(encoding="utf-8")
     additional_text = additional.read_text(encoding="utf-8")
     assert "Most used languages" in primary_text
+    assert "Notable contributions" in primary_text
+    assert "Contributions calendar" in primary_text
+    assert "an error occur" not in primary_text.lower()
     assert "Featured repositories" in additional_text
     assert 'class="people"' in additional_text
     assert "Overall issues and pull requests status" in extra_text

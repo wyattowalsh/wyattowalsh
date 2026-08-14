@@ -52,6 +52,7 @@ from .shared import (
     oklch_gradient,
     oklch_lerp,
     order_repos_for_visual_plan,
+    repo_identity_seed,
     repo_visibility_score,
     resolve_render_metrics,
     seed_hash,
@@ -1555,7 +1556,7 @@ def generate(
 
         # Per-repo RNG — each tree is fully deterministic regardless
         # of how many other trees are visible (stable across frames)
-        rng = np.random.default_rng(base_seed ^ ((ri + 1) * 0x9E3779B9))
+        rng = np.random.default_rng(repo_identity_seed(base_seed, repo))
 
         lang = repo.get("language")
         hue = repo_hues[ri] if ri < len(repo_hues) else LANG_HUES.get(lang, 160)
@@ -1599,11 +1600,16 @@ def generate(
             else RAMP
         )
         tree_t = max(0.0, min(1.0, (mat - tree_start) / tree_ramp))
-
-        if tree_t <= 0:
-            continue  # not yet sprouted
-        if chronological_growth and tree_t < 0.05:
-            continue  # too new to show a visible specimen yet
+        oldest_rank = min(repo_growth_order.values(), default=0.0)
+        is_oldest = abs(repo_growth_order.get(ri, 0.0) - oldest_rank) < 1e-12
+        # Snapshot worlds (daily spine / computed maturity) keep existing
+        # repos visible; explicit maturity staging still hides later trees.
+        show_existing_world = timelapse_contract or maturity is None
+        if tree_t <= 0.0 or (chronological_growth and tree_t < 0.05):
+            if show_existing_world or is_oldest:
+                tree_t = max(tree_t, 0.34)
+            else:
+                continue
 
         trunk_when = repo_date
         if chronological_growth and repo_frac is not None:

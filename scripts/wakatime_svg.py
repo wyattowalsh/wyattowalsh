@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import urllib.error
 from collections.abc import Iterable
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
@@ -20,12 +21,14 @@ from typing import Final
 from .utils import get_logger
 from .wakatime_readme import (
     DEFAULT_WAKATIME_SVG_PATH,
+    GitHubShortInfo,
     WakaCollection,
     WakaDayTotal,
     WakaStatEntry,
     _parse_allowlist_arg,
     _resolve_public_repo_names,
     collect_wakatime_stats,
+    fetch_github_short_info,
     filter_waka_collection,
     write_skip_artifact,
 )
@@ -130,7 +133,10 @@ def _css() -> str:
             " letter-spacing: 0.04em; text-transform: uppercase; }",
             f".total-value {{ fill: var(--title-color);"
             f" font: 700 16px {FONT_FAMILY}; }}",
+            f".gh-chip {{ fill: var(--title-color);"
+            f" font: 700 13px {FONT_FAMILY}; }}",
             ".bar-track { fill: var(--bar-track); }",
+            ".day-bar { fill: var(--accent); }",
             ".hm-0 { fill: var(--hm-0); }",
             ".hm-1 { fill: var(--hm-1); }",
             ".hm-2 { fill: var(--hm-2); }",
@@ -304,10 +310,61 @@ def _totals(collection: WakaCollection) -> tuple[tuple[str, str], ...]:
     )
 
 
+def _github_chips(github: GitHubShortInfo | None) -> tuple[tuple[str, str], ...]:
+    if github is None:
+        return ()
+    chips: list[tuple[str, str]] = []
+    if github.contributions_this_year is not None and github.year is not None:
+        chips.append(
+            (f"{github.year} contribs", f"{github.contributions_this_year:,}")
+        )
+    chips.append(("Public repos", str(github.public_repos)))
+    chips.append(("Private repos", str(github.private_repos)))
+    if github.hireable is True:
+        chips.append(("Hiring", "Open"))
+    elif github.hireable is False:
+        chips.append(("Hiring", "Closed"))
+    return tuple(chips)
+
+
+def _daily_bars(
+    daily: tuple[WakaDayTotal, ...],
+    *,
+    x: float,
+    y: float,
+    width: float,
+) -> tuple[list[str], float]:
+    if not daily:
+        return [], y
+    recent = daily[-14:]
+    peak = max((item.total_seconds for item in recent), default=0.0)
+    lines = [_section_heading("Last 14 days", x, y)]
+    bar_gap = 6.0
+    bar_w = max(8.0, (width - bar_gap * (len(recent) - 1)) / len(recent))
+    base = y + 86
+    for index, item in enumerate(recent):
+        bx = x + index * (bar_w + bar_gap)
+        ratio = 0.0 if peak <= 0 else item.total_seconds / peak
+        bar_h = 6.0 if item.total_seconds <= 0 else max(8.0, 56.0 * ratio)
+        lines.append(
+            f'<rect class="day-bar" x="{bx:.1f}" y="{base - bar_h:.1f}" '
+            f'width="{bar_w:.1f}" height="{bar_h:.1f}" rx="3">'
+            f"<title>{_esc(item.day.isoformat())}: {_esc(item.text)}</title>"
+            "</rect>"
+        )
+    avg = sum(item.total_seconds for item in recent) / max(1, len(recent))
+    lines.append(
+        f'<text class="card-meta" x="{x:.1f}" y="{base + 18:.1f}">'
+        f"avg {_esc(_duration_label(avg))}/day</text>"
+    )
+    return lines, base + 28
+
+
 def render_wakatime_svg(
     collection: WakaCollection,
     *,
     updated_at: datetime | None = None,
+    github: GitHubShortInfo | None = None,
 ) -> str:
     """Render a public-safe WakaTime card (no anmol098, no file paths)."""
     stamp = (updated_at or datetime.now(UTC)).astimezone(UTC)
@@ -318,7 +375,9 @@ def render_wakatime_svg(
     left_x = float(PADDING + INNER_PAD)
     right_x = left_x + col_w + 28
 
-    totals = _totals(collection)
+    totals = list(_totals(collection))
+    if week.human_readable_daily_average:
+        totals.append(("Daily avg", week.human_readable_daily_average))
     y = float(PADDING + 22)
     parts: list[str] = []
     parts.append(_section_heading("WakaTime", left_x, y))
@@ -333,7 +392,7 @@ def render_wakatime_svg(
         f"{_esc(week.timezone)} · public-safe stats</text>"
     )
     y += 28
-    chip_w = content_w / 3
+    chip_w = content_w / max(1, len(totals))
     for index, (label, value) in enumerate(totals):
         cx = left_x + index * chip_w
         parts.append(
@@ -345,6 +404,22 @@ def render_wakatime_svg(
             f"{_esc(value)}</text>"
         )
     y += 48
+    github_chips = _github_chips(github)
+    if github_chips:
+        parts.append(_section_heading("GitHub", left_x, y))
+        y += 18
+        gh_w = content_w / len(github_chips)
+        for index, (label, value) in enumerate(github_chips):
+            cx = left_x + index * gh_w
+            parts.append(
+                f'<text class="total-label" x="{cx:.1f}" y="{y:.1f}">'
+                f"{_esc(label)}</text>"
+            )
+            parts.append(
+                f'<text class="gh-chip" x="{cx:.1f}" y="{y + 18:.1f}">'
+                f"{_esc(value)}</text>"
+            )
+        y += 40
 
     lang_lines, lang_bottom = _stat_rows(
         week.languages,
@@ -397,6 +472,16 @@ def render_wakatime_svg(
         parts.append(_section_heading("Public projects", left_x, y))
         parts.extend(proj_lines)
         y = proj_bottom + 12
+
+    day_lines, day_bottom = _daily_bars(
+        collection.daily,
+        x=left_x,
+        y=y,
+        width=content_w,
+    )
+    if day_lines:
+        parts.extend(day_lines)
+        y = day_bottom + 10
 
     heat_lines, heat_bottom = _render_heatmap(
         collection.daily,
@@ -496,7 +581,23 @@ def generate_wakatime_svg(
         public_repo_names=names,
         project_allowlist=project_allowlist,
     )
-    svg = render_wakatime_svg(filtered, updated_at=updated_at)
+    github_info: GitHubShortInfo | None = None
+    if include_github and token:
+        try:
+            github_info = fetch_github_short_info(token, login=github_login)
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            ValueError,
+            TypeError,
+            OSError,
+        ) as exc:
+            logger.warning("Skipping GitHub short info for Waka SVG: {exc}", exc=exc)
+    svg = render_wakatime_svg(
+        filtered,
+        updated_at=updated_at,
+        github=github_info,
+    )
     return write_wakatime_svg(svg, output_path)
 
 

@@ -222,9 +222,11 @@ def _generate_svg(
     svg_content = renderer.generate(dict(frequencies))
     out = Path(output_path)
     out.write_text(svg_content, encoding="utf-8")
-    from ..svg_optimize import optimize_with_svgo
+    # Default SVGO inlines the light fill and drops prefers-color-scheme rules.
+    if "prefers-color-scheme" not in svg_content:
+        from ..svg_optimize import optimize_with_svgo
 
-    optimize_with_svgo(out)
+        optimize_with_svgo(out)
     if style_variant != "default":
         _set_svg_style_variant(out, style_variant)
 

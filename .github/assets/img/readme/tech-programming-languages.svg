@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="114" viewBox="0 0 1200 114" role="img" aria-label="Programming Languages">
+<title>Programming Languages</title>
+<desc>Python, Structured Query Language (SQL), JavaScript, TypeScript, HTML5, CSS3, R, Java, Matlab, Ruby, C++, Go, Sass, MDX, PowerShell</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="114" rx="12" fill="transparent" />
+<rect x="16" y="18" width="72" height="30" rx="8" fill="#3776AB" />
+<text class="chip" x="52" y="38" text-anchor="middle">Python</text>
+<rect x="96" y="18" width="220" height="30" rx="8" fill="#4479A1" />
+<text class="chip" x="206" y="38" text-anchor="middle">Structured Query Language (SQL)</text>
+<rect x="324" y="18" width="94" height="30" rx="8" fill="#F7DF1E" />
+<text class="chip" x="371" y="38" text-anchor="middle">JavaScript</text>
+<rect x="426" y="18" width="94" height="30" rx="8" fill="#3178C6" />
+<text class="chip" x="473" y="38" text-anchor="middle">TypeScript</text>
+<rect x="528" y="18" width="72" height="30" rx="8" fill="#E34F26" />
+<text class="chip" x="564" y="38" text-anchor="middle">HTML5</text>
+<rect x="608" y="18" width="72" height="30" rx="8" fill="#1572B6" />
+<text class="chip" x="644" y="38" text-anchor="middle">CSS3</text>
+<rect x="688" y="18" width="72" height="30" rx="8" fill="#276DC3" />
+<text class="chip" x="724" y="38" text-anchor="middle">R</text>
+<rect x="768" y="18" width="72" height="30" rx="8" fill="#000000" />
+<text class="chip" x="804" y="38" text-anchor="middle">Java</text>
+<rect x="848" y="18" width="72" height="30" rx="8" fill="#0076A8" />
+<text class="chip" x="884" y="38" text-anchor="middle">Matlab</text>
+<rect x="928" y="18" width="72" height="30" rx="8" fill="#CC342D" />
+<text class="chip" x="964" y="38" text-anchor="middle">Ruby</text>
+<rect x="1008" y="18" width="72" height="30" rx="8" fill="#00599C" />
+<text class="chip" x="1044" y="38" text-anchor="middle">C++</text>
+<rect x="1088" y="18" width="72" height="30" rx="8" fill="#00ADD8" />
+<text class="chip" x="1124" y="38" text-anchor="middle">Go</text>
+<rect x="16" y="60" width="72" height="30" rx="8" fill="#CC6699" />
+<text class="chip" x="52" y="80" text-anchor="middle">Sass</text>
+<rect x="96" y="60" width="72" height="30" rx="8" fill="#1B1F24" />
+<text class="chip" x="132" y="80" text-anchor="middle">MDX</text>
+<rect x="176" y="60" width="94" height="30" rx="8" fill="#5391FE" />
+<text class="chip" x="223" y="80" text-anchor="middle">PowerShell</text>
+</svg>

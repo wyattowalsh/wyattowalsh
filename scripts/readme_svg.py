@@ -1562,6 +1562,112 @@ class SvgBlogCardRenderer:
         )
 
 
+class SvgBlogBoardRenderer:
+    """Render the latest posts as one magazine-style board."""
+
+    def __init__(self, width: int = 1200, height: int = 420) -> None:
+        self.width = width
+        self.height = height
+
+    def render_board(self, cards: list[SvgCard]) -> str:
+        w, h = self.width, self.height
+        featured, rest = (cards[0], cards[1:5]) if cards else (None, [])
+        lines = [
+            (
+                f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" '
+                f'height="{h}" viewBox="0 0 {w} {h}" role="img" '
+                'aria-label="Latest blog posts">'
+            ),
+            "<defs><style>",
+            self._css(),
+            "</style></defs>",
+            f'<rect class="board-bg" width="{w}" height="{h}" rx="14" />',
+            (
+                f'<rect class="board-stroke" x="0.5" y="0.5" width="{w - 1}" '
+                f'height="{h - 1}" rx="14" />'
+            ),
+            '<text class="board-kicker" x="28" y="36">Latest writing</text>',
+            '<text class="board-title" x="28" y="64">Latest Blog Posts</text>',
+        ]
+        if featured is None:
+            lines.append(
+                '<text class="board-meta" x="28" y="110">'
+                "No recent posts available.</text>"
+            )
+        else:
+            title = sanitize_blog_title(featured.title)
+            hook = next(iter(featured.lines), "") or ""
+            meta = " · ".join(bit for bit in (featured.meta or ()) if bit)
+            lines.extend(
+                (
+                    '<rect class="feature" x="28" y="84" width="560" '
+                    'height="308" rx="12" />',
+                    f'<text class="feature-title" x="48" y="130">'
+                    f"{escape(title[:72])}</text>",
+                    f'<text class="feature-hook" x="48" y="168">'
+                    f"{escape(hook[:110])}</text>",
+                    f'<text class="board-meta" x="48" y="360">'
+                    f"{escape(meta)}</text>",
+                )
+            )
+            for index, card in enumerate(rest):
+                row_y = 84 + index * 76
+                item_title = sanitize_blog_title(card.title)
+                item_meta = " · ".join(bit for bit in (card.meta or ()) if bit)
+                lines.extend(
+                    (
+                        f'<rect class="item" x="612" y="{row_y}" width="560" '
+                        'height="68" rx="10" />',
+                        (
+                            f'<text class="item-title" x="632" y="{row_y + 28}">'
+                            f"{escape(item_title[:64])}</text>"
+                        ),
+                        (
+                            f'<text class="board-meta" x="632" y="{row_y + 50}">'
+                            f"{escape(item_meta)}</text>"
+                        ),
+                    )
+                )
+        lines.append("</svg>")
+        return "\n".join(lines)
+
+    def _css(self) -> str:
+        return "\n".join(
+            [
+                ":root {",
+                "  --board-bg: #ffffff;",
+                "  --board-border: #d0d7de;",
+                "  --title: #1f2328;",
+                "  --text: #656d76;",
+                "  --accent: #8250df;",
+                "  --panel: #f6f8fa;",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                "  --board-bg: #0d1117;",
+                "  --board-border: #30363d;",
+                "  --title: #e6edf3;",
+                "  --text: #8b949e;",
+                "  --accent: #a371f7;",
+                "  --panel: #161b22;",
+                "}}",
+                ".board-bg { fill: var(--board-bg); }",
+                ".board-stroke { fill: none; stroke: var(--board-border); }",
+                ".feature { fill: var(--panel); }",
+                ".item { fill: var(--panel); }",
+                f".board-kicker {{ fill: var(--text); font: 700 11px {FONT_FAMILY};"
+                " letter-spacing: 0.08em; text-transform: uppercase; }",
+                f".board-title {{ fill: var(--title); font: 700 22px {FONT_FAMILY}; }}",
+                (
+                    f".feature-title {{ fill: var(--title); "
+                    f"font: 700 22px {FONT_FAMILY}; }}"
+                ),
+                f".feature-hook {{ fill: var(--text); font: 400 14px {FONT_FAMILY}; }}",
+                f".item-title {{ fill: var(--title); font: 600 14px {FONT_FAMILY}; }}",
+                f".board-meta {{ fill: var(--text); font: 400 12px {FONT_FAMILY}; }}",
+            ]
+        )
+
+
 # ---------------------------------------------------------------------------
 # Connect / social card renderer
 # ---------------------------------------------------------------------------

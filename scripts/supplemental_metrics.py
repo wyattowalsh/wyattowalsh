@@ -7,6 +7,7 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import os
 import secrets
 import ssl
@@ -36,8 +37,9 @@ logger = get_logger(module=__name__)
 GITHUB_API_BASE: Final[str] = "https://api.github.com"
 SPOTIFY_TOKEN_URL: Final[str] = "https://accounts.spotify.com/api/token"
 SPOTIFY_RECENT_TRACKS_URL: Final[str] = (
-    "https://api.spotify.com/v1/me/player/recently-played?limit=3"
+    "https://api.spotify.com/v1/me/player/recently-played?limit=20"
 )
+MUSIC_QUEUE_LIMIT: Final[int] = 8
 X_API_BASE: Final[str] = "https://api.x.com/2"
 
 
@@ -105,6 +107,11 @@ class XOAuth1Credentials:
 
 
 ASSET_SPECS: Final[dict[str, SupplementalAssetSpec]] = {
+    "languages": SupplementalAssetSpec(
+        asset_name="metrics-languages",
+        title="Most used languages",
+        required_markers=("Most used languages", "bytes"),
+    ),
     "habits": SupplementalAssetSpec(
         asset_name="metrics-habits",
         title="Coding habits",
@@ -512,6 +519,48 @@ def _peak_commit_hour(metrics: dict[str, Any]) -> str:
     return f"{hour:02d}:00"
 
 
+def _weekday_counts(metrics: dict[str, Any]) -> list[int]:
+    """Return Mon–Sun contribution totals from the calendar."""
+    counts = [0] * 7
+    for day, value in _calendar_daily_counts(metrics).items():
+        counts[day.weekday()] += int(value or 0)
+    return counts
+
+
+def _language_shares(
+    metrics: dict[str, Any],
+    *,
+    limit: int = 8,
+) -> list[tuple[str, int, float]]:
+    """Return `(name, bytes, percent)` rows for the first-party language board."""
+    languages = metrics.get("languages") or {}
+    ranked = sorted(
+        (
+            (str(name), int(size or 0))
+            for name, size in languages.items()
+            if int(size or 0) > 0
+        ),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+    total = sum(size for _, size in ranked) or 1
+    return [
+        (name, size, 100.0 * size / total) for name, size in ranked[:limit]
+    ]
+
+
+def _format_bytes_short(num_bytes: int) -> str:
+    value = float(max(0, num_bytes))
+    for unit in ("B", "KB", "MB", "GB"):
+        if value < 1024.0 or unit == "GB":
+            if unit == "B":
+                return f"{int(value)} B"
+            pretty = f"{value:.1f}".rstrip("0").rstrip(".")
+            return f"{pretty} {unit}"
+        value /= 1024.0
+    return f"{num_bytes} B"
+
+
 def _svg_text(value: str) -> str:
     return escape(value, quote=True)
 
@@ -588,6 +637,21 @@ def _supplemental_svg_css(*, accent: str, accent_dark: str) -> str:
                 f"font: 600 13px {FONT_FAMILY}; "
                 "}"
             ),
+            (
+                ".chip-label { fill: var(--meta-color); "
+                f"font: 700 10px {FONT_FAMILY}; "
+                "letter-spacing: 0.06em; text-transform: uppercase; }"
+            ),
+            (
+                ".chip-value { fill: var(--title-color); "
+                f"font: 700 20px {FONT_FAMILY}; "
+                "}"
+            ),
+            (
+                ".queue-title { fill: var(--title-color); "
+                f"font: 600 13px {FONT_FAMILY}; "
+                "}"
+            ),
             ".panel { fill: var(--panel-bg); }",
             ".panel-stroke { fill: none; stroke: var(--card-border); }",
             ".card-bg { fill: var(--card-bg); }",
@@ -599,6 +663,8 @@ def _supplemental_svg_css(*, accent: str, accent_dark: str) -> str:
             ".streak-fill { fill: var(--streak); }",
             ".streak-empty { fill: var(--card-border); }",
             ".cadence { fill: var(--streak); }",
+            ".eq-bar { fill: var(--accent); }",
+            ".lang-slice { stroke: var(--card-bg); stroke-width: 1.5; }",
         )
     )
 
@@ -642,6 +708,50 @@ def _wrap_supplemental_svg(
     return "\n".join(lines)
 
 
+def _render_habits_hero(
+    stats: dict[str, Any],
+    metrics: dict[str, Any],
+    *,
+    x: int,
+    y: int,
+) -> list[str]:
+    chips = (
+        ("30d commits", str(int(stats["total"]))),
+        ("Active days", str(int(stats["active_days"]))),
+        ("Streak", f"{int(stats['current_streak'])}d"),
+        ("Busiest", str(int(stats["busiest_day"]))),
+        ("Reviews", str(int(metrics.get("pr_review_count") or 0))),
+        ("Public repos", str(int(metrics.get("public_repos") or 0))),
+    )
+    chip_w = 180
+    gap = 12
+    lines = [f'<g class="habits-hero" transform="translate({x},{y})">']
+    for index, (label, value) in enumerate(chips):
+        chip_x = index * (chip_w + gap)
+        lines.extend(
+            (
+                (
+                    f'<rect class="panel" x="{chip_x}" y="0" width="{chip_w}" '
+                    'height="56" rx="10" />'
+                ),
+                (
+                    f'<rect class="panel-stroke" x="{chip_x}" y="0" '
+                    f'width="{chip_w}" height="56" rx="10" />'
+                ),
+                (
+                    f'<text class="chip-label" x="{chip_x + 14}" y="20">'
+                    f"{_svg_text(label)}</text>"
+                ),
+                (
+                    f'<text class="chip-value" x="{chip_x + 14}" y="44">'
+                    f"{_svg_text(value)}</text>"
+                ),
+            )
+        )
+    lines.append("</g>")
+    return lines
+
+
 def _render_habits_focus_panel(
     repos: tuple[tuple[str, int], ...],
     *,
@@ -672,9 +782,9 @@ def _render_habits_focus_panel(
 
     max_count = max(count for _, count in repos)
     row_top = 58
-    row_height = 34
+    row_height = 28
     bar_width = width - 32
-    for index, (name, count) in enumerate(repos[:3]):
+    for index, (name, count) in enumerate(repos[:5]):
         row_y = row_top + index * row_height
         filled = 8 if max_count <= 0 else max(8, int(bar_width * (count / max_count)))
         lines.extend(
@@ -688,12 +798,12 @@ def _render_habits_focus_panel(
                     f'text-anchor="end">×{count}</text>'
                 ),
                 (
-                    f'<rect x="16" y="{row_y + 6}" width="{bar_width}" height="6" '
+                    f'<rect x="16" y="{row_y + 6}" width="{bar_width}" height="5" '
                     'rx="3" fill="var(--card-border)" fill-opacity="0.45" />'
                 ),
                 (
                     f'<rect class="focus-bar" x="16" y="{row_y + 6}" '
-                    f'width="{filled}" height="6" rx="3" />'
+                    f'width="{filled}" height="5" rx="3" />'
                 ),
             )
         )
@@ -757,6 +867,7 @@ def _render_habits_peak_panel(
 def _render_habits_streaks_panel(
     current: int,
     longest: int,
+    weekdays: list[int],
     *,
     x: int,
     y: int,
@@ -779,30 +890,48 @@ def _render_habits_streaks_panel(
         f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
         f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
         '<text class="label" x="16" y="24">Streaks</text>',
-        f'<text class="value" x="16" y="70">{current}d</text>',
-        '<text class="meta" x="16" y="90">current</text>',
+        f'<text class="value" x="16" y="64">{current}d</text>',
+        '<text class="meta" x="16" y="82">current</text>',
     ]
     for index in range(bead_count):
         bead_x = 16 + index * step
         css = "streak-fill" if index < filled else "streak-empty"
         lines.append(
-            f'<circle class="{css}" cx="{_svg_num(bead_x)}" cy="112" r="{bead_r}" />'
+            f'<circle class="{css}" cx="{_svg_num(bead_x)}" cy="100" r="{bead_r}" />'
         )
     if current > bead_count:
         lines.append(
-            f'<text class="meta" x="{width - 16}" y="116" text-anchor="end">'
+            f'<text class="meta" x="{width - 16}" y="104" text-anchor="end">'
             f"+{current - bead_count}</text>"
         )
     lines.extend(
         (
-            f'<rect x="16" y="136" width="{track_width}" height="8" rx="4" '
+            f'<rect x="16" y="118" width="{track_width}" height="7" rx="4" '
             'class="streak-empty" fill-opacity="0.55" />',
-            f'<rect class="streak-fill" x="16" y="136" width="{current_fill}" '
-            'height="8" rx="4" />',
-            f'<text class="meta" x="16" y="162">{longest}d longest</text>',
-            "</g>",
+            f'<rect class="streak-fill" x="16" y="118" width="{current_fill}" '
+            'height="7" rx="4" />',
+            f'<text class="meta" x="16" y="140">{longest}d longest</text>',
         )
     )
+    labels = ("M", "T", "W", "T", "F", "S", "S")
+    peak = max(weekdays) if any(weekdays) else 1
+    bar_w = max(8, int((usable - 6 * 6) / 7))
+    for index, (label, count) in enumerate(zip(labels, weekdays, strict=True)):
+        bar_x = 16 + index * (bar_w + 6)
+        bar_h = 6 if count <= 0 else max(8, int(28 * (count / peak)))
+        lines.extend(
+            (
+                (
+                    f'<rect class="cadence" x="{bar_x}" y="{178 - bar_h}" '
+                    f'width="{bar_w}" height="{bar_h}" rx="2" />'
+                ),
+                (
+                    f'<text class="meta" x="{bar_x + bar_w / 2:.0f}" y="192" '
+                    f'text-anchor="middle">{label}</text>'
+                ),
+            )
+        )
+    lines.append("</g>")
     return lines
 
 
@@ -840,14 +969,64 @@ def _render_habits_cadence(
     return lines
 
 
+def _render_habits_langs(
+    shares: list[tuple[str, int, float]],
+    *,
+    x: int,
+    y: int,
+    width: int,
+) -> list[str]:
+    lines = [
+        f'<g class="habits-langs" transform="translate({x},{y})">',
+        '<text class="label" x="0" y="12">Language mix</text>',
+    ]
+    if not shares:
+        lines.extend(
+            (
+                '<text class="muted" x="110" y="12">no language bytes yet</text>',
+                "</g>",
+            )
+        )
+        return lines
+    track_y = 22
+    cursor = 0.0
+    for name, _size, percent in shares:
+        fill = _label_swatch(name)
+        slice_w = max(8.0, (width * percent) / 100.0)
+        lines.append(
+            f'<rect x="{cursor:.1f}" y="{track_y}" width="{slice_w:.1f}" '
+            f'height="10" fill="{fill}" />'
+        )
+        cursor += slice_w
+    legend_y = 48
+    for index, (name, _size, percent) in enumerate(shares[:6]):
+        lx = (index % 3) * (width / 3)
+        ly = legend_y + (index // 3) * 16
+        fill = _label_swatch(name)
+        lines.extend(
+            (
+                f'<rect x="{lx:.1f}" y="{ly - 8}" width="8" height="8" '
+                f'rx="2" fill="{fill}" />',
+                (
+                    f'<text class="meta" x="{lx + 14:.1f}" y="{ly}">'
+                    f"{_svg_text(name)} {percent:.0f}%</text>"
+                ),
+            )
+        )
+    lines.append("</g>")
+    return lines
+
+
 def _render_habits_svg(metrics: dict[str, Any]) -> str:
     stats = _contribution_stats(metrics)
-    repos = _focus_repository_counts(metrics, limit=3)
+    repos = _focus_repository_counts(metrics, limit=5)
     buckets = _hour_buckets(metrics)
     peak_hour = _peak_commit_hour(metrics)
-    cadence = _cadence_series(metrics, days=30)
-    width, height = 1200, 312
-    panel_y, panel_h, panel_w = 58, 176, 376
+    cadence = _cadence_series(metrics, days=90)
+    weekdays = _weekday_counts(metrics)
+    shares = _language_shares(metrics, limit=6)
+    width, height = 1200, 548
+    panel_y, panel_h, panel_w = 132, 200, 376
     body = [
         (
             f'<text class="title" x="28" y="40">'
@@ -855,6 +1034,7 @@ def _render_habits_svg(metrics: dict[str, Any]) -> str:
         ),
         '<text class="kicker" x="1172" y="38" text-anchor="end">'
         "Focus · Peak hour · Streaks</text>",
+        *_render_habits_hero(stats, metrics, x=20, y=58),
         *_render_habits_focus_panel(
             repos,
             x=20,
@@ -873,12 +1053,14 @@ def _render_habits_svg(metrics: dict[str, Any]) -> str:
         *_render_habits_streaks_panel(
             int(stats["current_streak"]),
             int(stats["longest_streak"]),
+            weekdays,
             x=804,
             y=panel_y,
             width=panel_w,
             height=panel_h,
         ),
-        *_render_habits_cadence(cadence, x=28, y=246, width=1144),
+        *_render_habits_langs(shares, x=28, y=348, width=1144),
+        *_render_habits_cadence(cadence, x=28, y=430, width=1144),
     ]
     return _wrap_supplemental_svg(
         width=width,
@@ -888,6 +1070,119 @@ def _render_habits_svg(metrics: dict[str, Any]) -> str:
         accent_dark="#a371f7",
         body=body,
     )
+
+
+def _render_languages_svg(metrics: dict[str, Any]) -> str:
+    shares = _language_shares(metrics, limit=10)
+    width, height = 1200, 292
+    body = [
+        (
+            f'<text class="title" x="28" y="40">'
+            f"{_svg_text(ASSET_SPECS['languages'].title)}</text>"
+        ),
+        '<text class="kicker" x="1172" y="38" text-anchor="end">'
+        "Repo language bytes</text>",
+        '<g class="languages-board" transform="translate(28,64)">',
+        '<rect class="panel" width="1144" height="204" rx="10" />',
+        '<rect class="panel-stroke" width="1144" height="204" rx="10" />',
+    ]
+    if not shares:
+        body.extend(
+            (
+                '<text class="body" x="24" y="48">No language bytes yet</text>',
+                "</g>",
+            )
+        )
+    else:
+        cx, cy, radius = 130, 104, 72
+        acc = 0.0
+        for name, size, percent in shares:
+            sweep = max(0.0, min(360.0, percent * 3.6))
+            start = acc
+            acc += sweep
+            fill = _label_swatch(name)
+            if sweep >= 359.9:
+                body.append(
+                    f'<circle class="lang-slice" cx="{cx}" cy="{cy}" '
+                    f'r="{radius}" fill="{fill}" />'
+                )
+                continue
+            start_rad = math.radians(start - 90)
+            end_rad = math.radians(start + sweep - 90)
+            x1 = cx + radius * math.cos(start_rad)
+            y1 = cy + radius * math.sin(start_rad)
+            x2 = cx + radius * math.cos(end_rad)
+            y2 = cy + radius * math.sin(end_rad)
+            large = 1 if sweep > 180 else 0
+            body.append(
+                f'<path class="lang-slice" d="M {cx} {cy} L {x1:.1f} {y1:.1f} '
+                f"A {radius} {radius} 0 {large} 1 {x2:.1f} {y2:.1f} Z\" "
+                f'fill="{fill}" />'
+            )
+        body.append(
+            f'<circle cx="{cx}" cy="{cy}" r="38" fill="var(--card-bg)" />'
+        )
+        body.append(
+            f'<text class="chip-value" x="{cx}" y="{cy + 6}" '
+            f'text-anchor="middle">{len(shares)}</text>'
+        )
+        bar_x = 250
+        for index, (name, size, percent) in enumerate(shares):
+            row_y = 28 + index * 17
+            fill = _label_swatch(name)
+            bar_w = max(6, int(520 * (percent / 100.0)))
+            body.extend(
+                (
+                    (
+                        f'<text class="body" x="{bar_x}" y="{row_y}">'
+                        f"{_svg_text(_truncate(name, 16))}</text>"
+                    ),
+                    (
+                        f'<rect x="{bar_x + 150}" y="{row_y - 10}" width="520" '
+                        'height="8" rx="4" fill="var(--card-border)" '
+                        'fill-opacity="0.35" />'
+                    ),
+                    (
+                        f'<rect x="{bar_x + 150}" y="{row_y - 10}" '
+                        f'width="{bar_w}" height="8" rx="4" fill="{fill}" />'
+                    ),
+                    (
+                        f'<text class="meta" x="{bar_x + 684}" y="{row_y}" '
+                        f'text-anchor="end">{percent:.1f}% · '
+                        f"{_svg_text(_format_bytes_short(size))} bytes</text>"
+                    ),
+                )
+            )
+        body.append("</g>")
+    return _wrap_supplemental_svg(
+        width=width,
+        height=height,
+        aria_label=ASSET_SPECS["languages"].title,
+        accent="#0969da",
+        accent_dark="#58a6ff",
+        body=body,
+    )
+
+
+def _render_languages_card(metrics: dict[str, Any]) -> SvgBlock:
+    shares = _language_shares(metrics, limit=5)
+    if shares:
+        lines = tuple(
+            f"{name} {percent:.0f}% · {_format_bytes_short(size)}"
+            for name, size, percent in shares
+        )
+    else:
+        lines = ("No language bytes yet",)
+    card = SvgCard(
+        title=ASSET_SPECS["languages"].title,
+        kicker="Repo language bytes",
+        lines=lines,
+        meta=("GitHub", f"{len(shares)} languages"),
+        icon="LG",
+        badge="Languages",
+        accent="#0969da",
+    )
+    return SvgBlock(title=card.title, cards=(card,))
 
 
 def _render_habits_card(metrics: dict[str, Any]) -> SvgBlock:
@@ -1221,22 +1516,26 @@ def _music_sleeve(
         f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" />'
         "</clipPath>"
     ]
+    mid_x = x + size / 2
+    mid_y = y + size / 2 + 6
     body = [
-        f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" fill="{fill}" />'
+        (
+            f'<rect x="{x}" y="{y}" width="{size}" height="{size}" '
+            f'rx="10" fill="{fill}" />'
+        ),
+        (
+            f'<text class="hero-artist" x="{mid_x:.0f}" y="{mid_y:.0f}" '
+            f'text-anchor="middle" fill="#ffffff">{_svg_text(monogram)}</text>'
+        ),
     ]
     data_uri = track.get("image_data_uri") or ""
     if data_uri:
+        # GitHub camo strips many SVG <image href="data:…"> payloads. Keep the
+        # monogram underneath so the sleeve still reads when artwork vanishes.
         body.append(
             f'<image href="{_svg_text(data_uri)}" x="{x}" y="{y}" width="{size}" '
             f'height="{size}" preserveAspectRatio="xMidYMid slice" '
             f'clip-path="url(#{clip_id})" />'
-        )
-    else:
-        mid_x = x + size / 2
-        mid_y = y + size / 2 + 6
-        body.append(
-            f'<text class="hero-artist" x="{mid_x:.0f}" y="{mid_y:.0f}" '
-            f'text-anchor="middle" fill="#ffffff">{_svg_text(monogram)}</text>'
         )
     body.append(
         f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="10" fill="none" '
@@ -1245,54 +1544,91 @@ def _music_sleeve(
     return defs, body
 
 
+def _dedupe_tracks(tracks: list[dict[str, str]]) -> list[dict[str, str]]:
+    seen: set[tuple[str, str]] = set()
+    unique: list[dict[str, str]] = []
+    for track in tracks:
+        key = (
+            (track.get("name") or "").strip().lower(),
+            (track.get("artists") or "").strip().lower(),
+        )
+        if not key[0] or key in seen:
+            continue
+        seen.add(key)
+        unique.append(track)
+    return unique
+
+
+def _eq_bars(*, x: int, y: int) -> list[str]:
+    heights = (10, 22, 16, 28, 14, 24, 12, 20)
+    bars: list[str] = ['<g class="music-eq">']
+    for index, height in enumerate(heights):
+        bars.append(
+            f'<rect class="eq-bar" x="{x + index * 8}" y="{y - height}" '
+            f'width="4" height="{height}" rx="2" fill-opacity="0.85" />'
+        )
+    bars.append("</g>")
+    return bars
+
+
 def _render_music_extras(
     tracks: list[dict[str, str]],
     *,
     y: int,
 ) -> tuple[list[str], list[str]]:
-    extras = tracks[1:3]
+    extras = tracks[1 : 1 + MUSIC_QUEUE_LIMIT]
     if not extras:
         return [], []
     defs: list[str] = []
     body: list[str] = [f'<g class="music-extras" transform="translate(28,{y})">']
     tile_w = 564
+    tile_h = 58
     for index, track in enumerate(extras):
-        tile_x = index * (tile_w + 16)
+        col = index % 2
+        row = index // 2
+        tile_x = col * (tile_w + 16)
+        tile_y = row * (tile_h + 10)
         clip_id = f"music-extra-{index}"
         sleeve_defs, sleeve_body = _music_sleeve(
             track,
             x=tile_x + 12,
-            y=10,
-            size=44,
+            y=tile_y + 8,
+            size=42,
             clip_id=clip_id,
         )
         defs.extend(sleeve_defs)
         album = track.get("album") or ""
         meta = _relative_label(track.get("played_at"))
         if album:
-            meta = f"{_truncate(album, 28)} · {meta}"
+            meta = f"{_truncate(album, 24)} · {meta}"
         extra_artists = _truncate(
             track.get("artists") or "Unknown artist",
-            36,
+            32,
         )
+        rank = index + 2
         body.extend(
             (
                 (
-                    f'<rect class="panel" x="{tile_x}" y="0" '
-                    f'width="{tile_w}" height="64" rx="10" />'
+                    f'<rect class="panel" x="{tile_x}" y="{tile_y}" '
+                    f'width="{tile_w}" height="{tile_h}" rx="10" />'
                 ),
                 (
-                    f'<rect class="panel-stroke" x="{tile_x}" y="0" width="{tile_w}" '
-                    'height="64" rx="10" />'
+                    f'<rect class="panel-stroke" x="{tile_x}" y="{tile_y}" '
+                    f'width="{tile_w}" height="{tile_h}" rx="10" />'
                 ),
                 *sleeve_body,
                 (
-                    f'<text class="extra-title" x="{tile_x + 68}" y="28">'
-                    f"{_svg_text(_truncate(track.get('name') or 'Untitled track', 42))}"
+                    f'<text class="muted" x="{tile_x + 64}" y="{tile_y + 24}">'
+                    f"{rank:02d}</text>"
+                ),
+                (
+                    f'<text class="queue-title extra-title" x="{tile_x + 88}" '
+                    f'y="{tile_y + 24}">'
+                    f"{_svg_text(_truncate(track.get('name') or 'Untitled track', 36))}"
                     "</text>"
                 ),
                 (
-                    f'<text class="muted" x="{tile_x + 68}" y="46">'
+                    f'<text class="muted" x="{tile_x + 88}" y="{tile_y + 42}">'
                     f"{_svg_text(extra_artists)} · {_svg_text(meta)}</text>"
                 ),
             )
@@ -1302,9 +1638,11 @@ def _render_music_extras(
 
 
 def _render_music_svg(tracks: list[dict[str, str]]) -> str:
-    hydrated = _with_track_artwork(tracks[:3])
-    extras = hydrated[1:3]
-    height = 328 if extras else 236
+    unique = _dedupe_tracks(tracks)
+    hydrated = _with_track_artwork(unique[: 1 + MUSIC_QUEUE_LIMIT])
+    extras = hydrated[1:]
+    rows = math.ceil(len(extras) / 2) if extras else 0
+    height = 236 + (rows * 68 if extras else 0)
     defs: list[str] = []
     body = [
         (
@@ -1340,15 +1678,16 @@ def _render_music_svg(tracks: list[dict[str, str]]) -> str:
             (
                 *sleeve_body,
                 (
-                    f'<text class="hero-title" x="180" y="104">'
+                    f'<text class="hero-title" x="180" y="96">'
                     f"{_svg_text(_truncate(hero.get('name') or 'Untitled track', 40))}"
                     "</text>"
                 ),
                 (
-                    f'<text class="hero-artist" x="180" y="136">'
+                    f'<text class="hero-artist" x="180" y="128">'
                     f"{_svg_text(hero_artists)}</text>"
                 ),
-                f'<text class="muted" x="180" y="164">{_svg_text(hero_meta)}</text>',
+                f'<text class="muted" x="180" y="156">{_svg_text(hero_meta)}</text>',
+                *_eq_bars(x=180, y=186),
                 "</g>",
             )
         )
@@ -1368,7 +1707,8 @@ def _render_music_svg(tracks: list[dict[str, str]]) -> str:
 
 def _render_music_card(tracks: list[dict[str, str]]) -> SvgBlock:
     lines = tuple(
-        _truncate(f"{track['name']} - {track['artists']}", 84) for track in tracks[:3]
+        _truncate(f"{track['name']} - {track['artists']}", 84)
+        for track in _dedupe_tracks(tracks)[:5]
     )
     if not lines:
         lines = ("No recent Spotify tracks were available.",)
@@ -1518,6 +1858,12 @@ def generate_supplemental_metrics(
 
     _write_supplemental_asset(
         builder,
+        ASSET_SPECS["languages"].asset_name,
+        _render_languages_card(metrics),
+        _render_languages_svg(metrics),
+    )
+    _write_supplemental_asset(
+        builder,
         ASSET_SPECS["habits"].asset_name,
         _render_habits_card(metrics),
         _render_habits_svg(metrics),
@@ -1526,6 +1872,14 @@ def generate_supplemental_metrics(
     _remove_asset_if_present(output_dir, ASSET_SPECS["activity"].asset_name)
 
     statuses: dict[str, SupplementalAssetStatus] = {
+        "languages": SupplementalAssetStatus(
+            asset_name=ASSET_SPECS["languages"].asset_name,
+            filename=f"{ASSET_SPECS['languages'].asset_name}.svg",
+            enabled=True,
+            optional=False,
+            title=ASSET_SPECS["languages"].title,
+            required_markers=ASSET_SPECS["languages"].required_markers,
+        ),
         "habits": SupplementalAssetStatus(
             asset_name=ASSET_SPECS["habits"].asset_name,
             filename=f"{ASSET_SPECS['habits'].asset_name}.svg",

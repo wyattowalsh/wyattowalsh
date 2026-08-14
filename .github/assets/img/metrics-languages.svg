@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="292" viewBox="0 0 1200 292" role="img" aria-label="Most used languages">
+<defs>
+<style>
+:root {
+  --canvas-bg: #ffffff;
+  --card-bg: #ffffff;
+  --panel-bg: #f6f8fa;
+  --card-border: #d0d7de;
+  --title-color: #1f2328;
+  --text-color: #656d76;
+  --meta-color: #656d76;
+  --accent: #0969da;
+  --focus: #8250df;
+  --peak: #1a7f37;
+  --streak: #bf4b8a;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --canvas-bg: #0d1117;
+  --card-bg: #0d1117;
+  --panel-bg: #161b22;
+  --card-border: #30363d;
+  --title-color: #e6edf3;
+  --text-color: #8b949e;
+  --meta-color: #8b949e;
+  --accent: #58a6ff;
+  --focus: #a371f7;
+  --peak: #3fb950;
+  --streak: #db61a2;
+}}
+.title { fill: var(--title-color); font: 700 22px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.kicker { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+ letter-spacing: 0.08em; text-transform: uppercase; }
+.label { fill: var(--meta-color); font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+ letter-spacing: 0.08em; text-transform: uppercase; }
+.value { fill: var(--title-color); font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.body { fill: var(--title-color); font: 600 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.muted { fill: var(--text-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.meta { fill: var(--meta-color); font: 400 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.hero-title { fill: var(--title-color); font: 700 28px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.hero-artist { fill: var(--title-color); font: 600 16px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.extra-title { fill: var(--title-color); font: 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.chip-label { fill: var(--meta-color); font: 700 10px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+.chip-value { fill: var(--title-color); font: 700 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.queue-title { fill: var(--title-color); font: 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.panel { fill: var(--panel-bg); }
+.panel-stroke { fill: none; stroke: var(--card-border); }
+.card-bg { fill: var(--card-bg); }
+.card-stroke { fill: none; stroke: var(--card-border); }
+.focus-bar { fill: var(--focus); }
+.peak-tick { fill: var(--card-border); }
+.peak-tick-on { fill: var(--peak); fill-opacity: 0.55; }
+.peak-tick-max { fill: var(--peak); }
+.streak-fill { fill: var(--streak); }
+.streak-empty { fill: var(--card-border); }
+.cadence { fill: var(--streak); }
+.eq-bar { fill: var(--accent); }
+.lang-slice { stroke: var(--card-bg); stroke-width: 1.5; }
+</style>
+</defs>
+<rect class="card-bg" width="1200" height="292" rx="12" />
+<rect class="card-stroke" x="0.5" y="0.5" width="1199" height="291" rx="12" stroke-width="1" />
+<rect width="1200" height="3" fill="var(--accent)" />
+<text class="title" x="28" y="40">Most used languages</text>
+<text class="kicker" x="1172" y="38" text-anchor="end">Repo language bytes</text>
+<g class="languages-board" transform="translate(28,64)">
+<rect class="panel" width="1144" height="204" rx="10" />
+<rect class="panel-stroke" width="1144" height="204" rx="10" />
+<path class="lang-slice" d="M 130 104 L 130.0 32.0 A 72 72 0 1 1 92.1 165.2 Z" fill="#1db954" />
+<path class="lang-slice" d="M 130 104 L 92.1 165.2 A 72 72 0 0 1 81.5 50.8 Z" fill="#1a7f37" />
+<path class="lang-slice" d="M 130 104 L 81.5 50.8 A 72 72 0 0 1 130.0 32.0 Z" fill="#218bff" />
+<circle cx="130" cy="104" r="38" fill="var(--card-bg)" />
+<text class="chip-value" x="130" y="110" text-anchor="middle">3</text>
+<text class="body" x="250" y="28">Python</text>
+<rect x="400" y="18" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="18" width="305" height="8" rx="4" fill="#1db954" />
+<text class="meta" x="934" y="28" text-anchor="end">58.8% · 1000 B bytes</text>
+<text class="body" x="250" y="45">TypeScript</text>
+<rect x="400" y="35" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="35" width="152" height="8" rx="4" fill="#1a7f37" />
+<text class="meta" x="934" y="45" text-anchor="end">29.4% · 500 B bytes</text>
+<text class="body" x="250" y="62">HTML</text>
+<rect x="400" y="52" width="520" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.35" />
+<rect x="400" y="52" width="61" height="8" rx="4" fill="#218bff" />
+<text class="meta" x="934" y="62" text-anchor="end">11.8% · 200 B bytes</text>
+</g>
+</svg>

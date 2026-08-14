@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="72" viewBox="0 0 1200 72" role="img" aria-label="Version Control Platforms">
+<title>Version Control Platforms</title>
+<desc>GitHub, GitLab, DagsHub</desc>
+<style>:root { color-scheme: light dark; }
+.chip { fill: #ffffff; font: 700 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; }
+.group { fill: #656d76; font: 700 11px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+@media (prefers-color-scheme: dark) {
+  .group { fill: #8b949e; }
+}
+</style>
+<rect width="1200" height="72" rx="12" fill="transparent" />
+<rect x="16" y="18" width="72" height="30" rx="8" fill="#181717" />
+<text class="chip" x="52" y="38" text-anchor="middle">GitHub</text>
+<rect x="96" y="18" width="72" height="30" rx="8" fill="#FC6D26" />
+<text class="chip" x="132" y="38" text-anchor="middle">GitLab</text>
+<rect x="176" y="18" width="72" height="30" rx="8" fill="#6B57FF" />
+<text class="chip" x="212" y="38" text-anchor="middle">DagsHub</text>
+</svg>

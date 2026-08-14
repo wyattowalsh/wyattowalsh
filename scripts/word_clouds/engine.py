@@ -244,6 +244,75 @@ class SvgWordCloudEngine(ABC):
 
         return defs
 
+    @staticmethod
+    def _color_scheme_css() -> str:
+        """GitHub light/dark readability for SVG-as-image clouds."""
+        return (
+            ":root { color-scheme: light dark; }\n"
+            "@media (prefers-color-scheme: dark) {\n"
+            "  .wc-bg { fill: url(#wc-bg-grad-dark); }\n"
+            "}\n"
+        )
+
+    @staticmethod
+    def _add_background_gradients(defs: ET.Element) -> None:
+        """Light canvas plus a dark-mode twin for GitHub theme switching."""
+        light = ET.SubElement(
+            defs,
+            "radialGradient",
+            id="wc-bg-grad",
+            cx="50%",
+            cy="50%",
+            r="75%",
+        )
+        ET.SubElement(
+            light,
+            "stop",
+            offset="0%",
+            attrib={"stop-color": "#fafbfc", "stop-opacity": "1"},
+        )
+        ET.SubElement(
+            light,
+            "stop",
+            offset="100%",
+            attrib={"stop-color": "#f0f1f3", "stop-opacity": "1"},
+        )
+        dark = ET.SubElement(
+            defs,
+            "radialGradient",
+            id="wc-bg-grad-dark",
+            cx="50%",
+            cy="50%",
+            r="75%",
+        )
+        ET.SubElement(
+            dark,
+            "stop",
+            offset="0%",
+            attrib={"stop-color": "#161b22", "stop-opacity": "1"},
+        )
+        ET.SubElement(
+            dark,
+            "stop",
+            offset="100%",
+            attrib={"stop-color": "#0d1117", "stop-opacity": "1"},
+        )
+
+    def _add_canvas_background(self, root: ET.Element) -> None:
+        """Paint the canvas and attach prefers-color-scheme dark fill."""
+        style = ET.SubElement(root, "style")
+        style.text = self._color_scheme_css()
+        ET.SubElement(
+            root,
+            "rect",
+            attrib={
+                "class": "wc-bg",
+                "width": str(self.width),
+                "height": str(self.height),
+                "fill": "url(#wc-bg-grad)",
+            },
+        )
+
     def _glow_size_threshold(self, placed_words: list[PlacedWord]) -> float:
         """Return the font size threshold above which glow is applied (top 20%)."""
         if not placed_words:
@@ -269,47 +338,10 @@ class SvgWordCloudEngine(ABC):
             viewBox=f"0 0 {self.width} {self.height}",
         )
 
-        # Add filter definitions
+        # Add filter definitions and a light/dark GitHub-readable canvas.
         defs = self._add_glow_filter(root)
-
-        # Soft radial vignette background -- white center fading to a very
-        # faint cool gray at the edges, providing subtle depth without
-        # competing with the words.
-        radial = ET.SubElement(
-            defs,
-            "radialGradient",
-            id="wc-bg-grad",
-            cx="50%",
-            cy="50%",
-            r="75%",
-        )
-        ET.SubElement(
-            radial,
-            "stop",
-            offset="0%",
-            attrib={
-                "stop-color": "#fafbfc",
-                "stop-opacity": "1",
-            },
-        )
-        ET.SubElement(
-            radial,
-            "stop",
-            offset="100%",
-            attrib={
-                "stop-color": "#f0f1f3",
-                "stop-opacity": "1",
-            },
-        )
-
-        # Background rect
-        ET.SubElement(
-            root,
-            "rect",
-            width=str(self.width),
-            height=str(self.height),
-            fill="url(#wc-bg-grad)",
-        )
+        self._add_background_gradients(defs)
+        self._add_canvas_background(root)
 
         # Compute tier thresholds from placed word sizes
         glow_threshold = self._glow_size_threshold(placed_words)

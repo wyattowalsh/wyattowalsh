@@ -16,7 +16,7 @@ categories:
         logo_style: sourced-brand
         color: 3776AB
       - name: Structured Query Language (SQL)
-        url: https://en.wikipedia.org/wiki/SQL
+        url: https://www.iso.org/standard/76583.html
         logo_path: .github/assets/skill-icons/sql.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -187,7 +187,7 @@ categories:
       - name: Collection
         skills:
           - name: Web Scraping
-            url: https://en.wikipedia.org/wiki/Web_scraping
+            url: https://www.zyte.com/learn/what-is-web-scraping/
             logo_path: .github/assets/skill-icons/web-scraping.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -199,7 +199,7 @@ categories:
             slug: scrapy
             color: 60A839
           - name: APIs
-            url: https://en.wikipedia.org/wiki/API
+            url: https://www.openapis.org
             logo_path: .github/assets/skill-icons/apis.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -207,7 +207,7 @@ categories:
             logo_style: custom-generic
             color: 009688
           - name: ETL
-            url: https://en.wikipedia.org/wiki/Extract,_transform,_load
+            url: https://www.ibm.com/think/topics/etl
             logo_path: .github/assets/skill-icons/etl.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -215,7 +215,7 @@ categories:
             logo_style: custom-generic
             color: 4A90D9
           - name: ELT
-            url: https://en.wikipedia.org/wiki/Extract,_load,_transform
+            url: https://www.getdbt.com
             logo_path: .github/assets/skill-icons/elt.svg
             logo_source: local-original
             logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -579,7 +579,7 @@ categories:
         slug: linux
         color: FCC624
       - name: Shell Script
-        url: https://www.gnu.org/software/bash/
+        url: https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
         slug: gnubash
         logo_path: .github/assets/skill-icons/bash.svg
         logo_source: iconify:devicon
@@ -734,7 +734,7 @@ categories:
         logo_style: custom-brand
         color: FFA500
       - name: Metaheuristics
-        url: https://en.wikipedia.org/wiki/Metaheuristic
+        url: https://mealpy.readthedocs.io/en/latest/
         logo_path: .github/assets/skill-icons/metaheuristics.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons
@@ -742,7 +742,7 @@ categories:
         logo_style: custom-generic
         color: 8B5CF6
       - name: Reinforcement Learning
-        url: https://en.wikipedia.org/wiki/Reinforcement_learning
+        url: https://spinningup.openai.com/en/latest/
         logo_path: .github/assets/skill-icons/reinforcement-learning.svg
         logo_source: local-original
         logo_source_url: https://github.com/wyattowalsh/wyattowalsh/tree/main/.github/assets/skill-icons

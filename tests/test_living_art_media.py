@@ -1243,6 +1243,23 @@ def _channel_marks(svg: str, channel: str) -> int:
     return int(match.group(1))
 
 
+def test_repo_identity_seed_is_stable_when_list_order_changes() -> None:
+    from scripts.art.shared.seeds import repo_identity_seed
+
+    older = {"name": "agents", "created_at": "2024-01-01"}
+    newer = {"name": "nbadb", "created_at": "2025-06-01"}
+    first = repo_identity_seed(42, older)
+    assert first == repo_identity_seed(
+        42,
+        {"name": "agents", "created_at": "2024-01-01"},
+    )
+    assert first != repo_identity_seed(42, newer)
+    assert repo_identity_seed(42, older) == repo_identity_seed(
+        42,
+        {"name": "agents", "created_at": "2024-01-01", "stars": 99},
+    )
+
+
 def test_shared_daily_spine_from_account_creation_enforces_monotonic_contract(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -1518,3 +1535,106 @@ def test_leased_style_knobs_track_isolated_channels(
     assert float(_svg_root_attr(ferro_high, "data-ripple-gain")) > float(
         _svg_root_attr(ferro_low, "data-ripple-gain")
     )
+
+
+def _count_inkgarden_plants(svg: str) -> int:
+    return len(re.findall(r'<g class="repo-tree">', svg))
+
+
+def _count_physarum_food_nodes(svg: str) -> int:
+    return svg.count('data-role="physarum-node-core"')
+
+
+def _ferro_dipole_xs(svg: str) -> list[float]:
+    return [
+        float(value)
+        for value in re.findall(
+            r'data-role="ferro-dipole"[^>]*\scx="([0-9.]+)"',
+            svg,
+        )
+    ]
+
+
+def _max_physarum_node_radius(svg: str) -> float:
+    radii = [
+        float(value)
+        for value in re.findall(
+            r'data-role="physarum-node-core"[^>]*\sr="([0-9.]+)"',
+            svg,
+        )
+    ]
+    assert radii, "Missing physarum food nodes"
+    return max(radii)
+
+
+def _count_inkgarden_fireflies(svg: str) -> int:
+    match = re.search(r'<g id="fireflies">(.*?)</g>', svg, flags=re.DOTALL)
+    if match is None:
+        return 0
+    return match.group(1).count("<circle")
+
+
+def test_early_spine_dialects_keep_repo_accretion_readable() -> None:
+    from scripts.art.ferrofluid import generate as generate_ferrofluid
+    from scripts.art.ink_garden import generate as generate_ink_garden
+    from scripts.art.physarum import generate as generate_physarum
+
+    frames = (
+        _accretion_metrics(repos=1, stars=2, commits=20, followers=1),
+        _accretion_metrics(repos=2, stars=24, commits=400, followers=18),
+        _accretion_metrics(repos=4, stars=120, commits=2400, followers=80),
+    )
+    ink_svgs = [
+        generate_ink_garden(metrics, seed="ink-accretion", timeline=False)
+        for metrics in frames
+    ]
+    phys_svgs = [
+        generate_physarum(metrics, seed="phys-accretion", timeline=False)
+        for metrics in frames
+    ]
+    ferro_svgs = [
+        generate_ferrofluid(metrics, seed="ferro-accretion", timeline=False)
+        for metrics in frames
+    ]
+
+    ink_plants = [_count_inkgarden_plants(svg) for svg in ink_svgs]
+    phys_nodes = [_count_physarum_food_nodes(svg) for svg in phys_svgs]
+    assert ink_plants[0] >= 1
+    assert phys_nodes[0] >= 1
+    assert ink_plants == sorted(ink_plants)
+    assert phys_nodes == sorted(phys_nodes)
+    assert ink_plants[-1] > ink_plants[0]
+    assert phys_nodes[-1] > phys_nodes[0]
+
+    t2_xs = _ferro_dipole_xs(ferro_svgs[-1])
+    assert len(t2_xs) == 4
+    ordered = sorted(t2_xs)
+    gaps = [right - left for left, right in zip(ordered, ordered[1:])]
+    assert min(gaps) >= 36.0
+
+
+def test_ink_and_physarum_knobs_track_stars_and_followers() -> None:
+    from scripts.art.ink_garden import generate as generate_ink_garden
+    from scripts.art.physarum import generate as generate_physarum
+
+    base = {"repos": 2, "stars": 8, "commits": 40, "followers": 1}
+    more_followers = {**base, "followers": 90}
+    more_stars = {**base, "stars": 180}
+
+    ink_low = generate_ink_garden(
+        _accretion_metrics(**base), seed="ink-knobs", timeline=False
+    )
+    ink_followers = generate_ink_garden(
+        _accretion_metrics(**more_followers), seed="ink-knobs", timeline=False
+    )
+    assert _count_inkgarden_fireflies(ink_followers) > _count_inkgarden_fireflies(
+        ink_low
+    )
+
+    phys_low = generate_physarum(
+        _accretion_metrics(**base), seed="phys-knobs", timeline=False
+    )
+    phys_stars = generate_physarum(
+        _accretion_metrics(**more_stars), seed="phys-knobs", timeline=False
+    )
+    assert _max_physarum_node_radius(phys_stars) > _max_physarum_node_radius(phys_low)
