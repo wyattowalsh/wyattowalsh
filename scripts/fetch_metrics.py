@@ -143,8 +143,13 @@ def _collect_latest_stargazer(
     return None
 
 
-def _collect_contribution_stats(token: str | None) -> dict[str, Any]:
-    """Collect optional viewer contribution fields with explicit unknowns."""
+def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]:
+    """Collect public contribution fields for *owner*, not the token viewer.
+
+    Habits hero chips (30d commits, active days, streak, reviews) read this
+    calendar. Querying ``viewer`` hydrates the Actions app / PAT identity and
+    ships zeros while REST ``/users/{owner}`` still shows public_repos.
+    """
     result: dict[str, Any] = {
         "contributions_last_year": None,
         "total_commits": None,
@@ -154,14 +159,18 @@ def _collect_contribution_stats(token: str | None) -> dict[str, Any]:
         "pr_review_count": None,
         "contributions_calendar": [],
     }
+    login = owner.strip()
     if not token:
         logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
         return result
+    if not login:
+        logger.info("No owner login — skipping GraphQL contribution stats")
+        return result
 
-    logger.info("Fetching contribution stats via GraphQL")
+    logger.info("Fetching contribution stats via GraphQL for {}", login)
     query = """
-    {
-      viewer {
+    query($login: String!) {
+      user(login: $login) {
         contributionsCollection {
           contributionCalendar {
             totalContributions
@@ -183,7 +192,7 @@ def _collect_contribution_stats(token: str | None) -> dict[str, Any]:
     }
     """
     try:
-        gql_resp = _graphql(query, token)
+        gql_resp = _graphql(query, token, variables={"login": login})
         errors = gql_resp.get("errors")
         if errors:
             if _are_expected_optional_graphql_errors(errors):
@@ -191,8 +200,8 @@ def _collect_contribution_stats(token: str | None) -> dict[str, Any]:
             else:
                 logger.warning("GraphQL contribution errors: {e}", e=errors)
         raw = gql_resp.get("data") or {}
-        viewer = raw.get("viewer") or {}
-        contrib_coll = viewer.get("contributionsCollection") or {}
+        user = raw.get("user") or {}
+        contrib_coll = user.get("contributionsCollection") or {}
         if not contrib_coll:
             return result
         cal = contrib_coll.get("contributionCalendar") or {}
@@ -540,8 +549,8 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         logger.warning("Failed to fetch latest fork: {}", exc)
         metrics["latest_fork_owner"] = None
 
-    # -- GraphQL: contributions ------------------------------------------
-    metrics.update(_collect_contribution_stats(token))
+    # -- GraphQL: contributions for the profile owner, not the token viewer
+    metrics.update(_collect_contribution_stats(owner, token))
 
     # -- REST: languages, top repos, traffic -----------------------------
     try:
@@ -579,6 +588,14 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         logger.warning("Failed to collect commit hour distribution: {}", exc)
         metrics["commit_hour_distribution"] = {}
         metrics["commit_hour_distribution_sample_size"] = 0
+
+    if not metrics.get("contributions_calendar") and (
+        metrics.get("recent_merged_prs") or metrics.get("commit_hour_distribution")
+    ):
+        logger.warning(
+            "Contribution calendar empty for {} while owner-scoped activity exists",
+            owner,
+        )
 
     try:
         (

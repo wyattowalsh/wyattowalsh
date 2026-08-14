@@ -10,7 +10,7 @@ import xml.etree.ElementTree as xml_etree
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, cast
+from typing import Any, cast, override
 
 import pytest
 import typer
@@ -484,6 +484,7 @@ def test_qr_command_success_defaults_and_errors(
     monkeypatch.setattr(qr_cmd, "_load_project_config", lambda _path: project)
 
     class FailingGenerator(FakeGenerator):
+        @override
         def generate_artistic_vcard_qr(self, **kwargs: Any) -> Path:
             raise ValueError("invalid qr")
 
@@ -686,8 +687,24 @@ def test_supplemental_statistics_cards_and_optional_credentials(
     assert supplemental._streaks_from_daily_counts(
         daily_counts, now_date=date(2026, 8, 11)
     ) == (2, 2)
-    stats = supplemental._contribution_stats({"contributions_calendar": calendar})
+    stats = supplemental._contribution_stats(
+        {"contributions_calendar": calendar},
+        now_date=date(2026, 8, 11),
+    )
     assert stats["total"] == 9 and stats["busiest_day"] == 4
+    future_padded = [
+        *calendar,
+        {"date": "2026-08-12", "count": 0},
+        {"date": "2026-08-13", "count": 0},
+        {"date": "2026-08-14", "count": 0},
+        {"date": "2026-08-15", "count": 0},
+    ]
+    padded_stats = supplemental._contribution_stats(
+        {"contributions_calendar": future_padded},
+        now_date=date(2026, 8, 11),
+    )
+    assert padded_stats["current_streak"] == 2
+    assert padded_stats["total"] == 9
     assert supplemental._top_languages({"languages": {"Python": 9, "Rust": 3}}) == (
         "Python",
         "Rust",
@@ -1057,7 +1074,7 @@ def test_fetch_metrics_collection_success_and_fallbacks(
         "_graphql",
         lambda *_args, **_kwargs: {
             "data": {
-                "viewer": {
+                "user": {
                     "contributionsCollection": {
                         "contributionCalendar": {
                             "totalContributions": 7,

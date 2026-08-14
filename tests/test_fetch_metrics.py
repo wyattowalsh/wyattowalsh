@@ -258,7 +258,7 @@ class TestOptionalMetrics:
         errors = [{"message": "Something went wrong", "type": "INTERNAL"}]
         mock_graphql.return_value = {"data": None, "errors": errors}
         with patch("scripts.fetch_metrics.logger") as mock_logger:
-            result = _collect_contribution_stats("tok")
+            result = _collect_contribution_stats("owner", "tok")
 
         assert result["contributions_last_year"] is None
         assert result["total_commits"] is None
@@ -275,7 +275,7 @@ class TestOptionalMetrics:
 
         mock_graphql.side_effect = ConnectionError("network down")
         with patch("scripts.fetch_metrics.logger") as mock_logger:
-            result = _collect_contribution_stats("tok")
+            result = _collect_contribution_stats("owner", "tok")
 
         assert result["contributions_last_year"] is None
         mock_logger.warning.assert_called_once_with(
@@ -290,12 +290,46 @@ class TestOptionalMetrics:
         errors = [{"message": "Field 'broken' doesn't exist on type 'Query'"}]
         mock_graphql.return_value = {"data": None, "errors": errors}
         with patch("scripts.fetch_metrics.logger") as mock_logger:
-            result = _collect_contribution_stats("tok")
+            result = _collect_contribution_stats("owner", "tok")
 
         assert result["contributions_last_year"] is None
         mock_logger.warning.assert_called_once_with(
             "GraphQL contribution errors: {e}", e=errors
         )
+
+    def test_contribution_stats_query_profile_user_not_viewer(
+        self, mock_graphql: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_contribution_stats
+
+        mock_graphql.return_value = {
+            "data": {
+                "user": {
+                    "contributionsCollection": {
+                        "contributionCalendar": {
+                            "totalContributions": 2,
+                            "weeks": [],
+                        },
+                        "totalCommitContributions": 1,
+                        "totalPullRequestContributions": 0,
+                        "totalPullRequestReviewContributions": 0,
+                        "totalIssueContributions": 0,
+                        "totalRepositoryContributions": 0,
+                    }
+                }
+            }
+        }
+        result = _collect_contribution_stats("wyattowalsh", "tok")
+
+        mock_graphql.assert_called_once_with(
+            mock_graphql.call_args.args[0],
+            "tok",
+            variables={"login": "wyattowalsh"},
+        )
+        query = mock_graphql.call_args.args[0]
+        assert "viewer" not in query
+        assert "user(login: $login)" in query
+        assert result["contributions_last_year"] == 2
 
 
 # ---------------------------------------------------------------------------
@@ -626,7 +660,7 @@ class TestGraphQLExpanded:
 
         mock_graphql.return_value = {
             "data": {
-                "viewer": {
+                "user": {
                     "contributionsCollection": {
                         "contributionCalendar": {
                             "totalContributions": 1234,
@@ -735,11 +769,13 @@ class TestCollectIntegration:
             query: str, token: str, *, variables: dict[str, Any] | None = None
         ) -> dict[str, Any]:
             assert token == "tok"
-            del variables
-            if "viewer" in query and "contributionsCollection" in query:
+            if "contributionsCollection" in query:
+                assert variables == {"login": "owner"}
+                assert "user(login: $login)" in query
+                assert "viewer" not in query
                 return {
                     "data": {
-                        "viewer": {
+                        "user": {
                             "contributionsCollection": {
                                 "contributionCalendar": {
                                     "totalContributions": 100,

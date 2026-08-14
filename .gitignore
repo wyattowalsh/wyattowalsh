@@ -1,4 +1,5 @@
 .cursor/mcp.json
+.codex/
 .vscode/
 .playwright-mcp/
 .env

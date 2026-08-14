@@ -429,9 +429,12 @@ def _contribution_stats(
     metrics: dict[str, Any],
     *,
     window_days: int = 30,
+    now_date: date | None = None,
 ) -> dict[str, Any]:
     daily_counts = _calendar_daily_counts(metrics)
-    today = max(daily_counts.keys(), default=datetime.now(UTC).date())
+    # GitHub calendars pad the current week with future count=0 days.
+    # Anchoring to max(keys) makes "today" a future zero and zeros the streak.
+    today = now_date or datetime.now(UTC).date()
     cutoff = today - timedelta(days=window_days - 1)
     recent_counts = {
         day: count for day, count in daily_counts.items() if cutoff <= day <= today
@@ -452,9 +455,14 @@ def _contribution_stats(
     }
 
 
-def _cadence_series(metrics: dict[str, Any], *, days: int = 30) -> list[int]:
+def _cadence_series(
+    metrics: dict[str, Any],
+    *,
+    days: int = 30,
+    now_date: date | None = None,
+) -> list[int]:
     daily_counts = _calendar_daily_counts(metrics)
-    today = max(daily_counts.keys(), default=datetime.now(UTC).date())
+    today = now_date or datetime.now(UTC).date()
     return [
         daily_counts.get(today - timedelta(days=offset), 0)
         for offset in range(days - 1, -1, -1)
@@ -544,9 +552,7 @@ def _language_shares(
         reverse=True,
     )
     total = sum(size for _, size in ranked) or 1
-    return [
-        (name, size, 100.0 * size / total) for name, size in ranked[:limit]
-    ]
+    return [(name, size, 100.0 * size / total) for name, size in ranked[:limit]]
 
 
 def _format_bytes_short(num_bytes: int) -> str:
@@ -1116,12 +1122,10 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
             large = 1 if sweep > 180 else 0
             body.append(
                 f'<path class="lang-slice" d="M {cx} {cy} L {x1:.1f} {y1:.1f} '
-                f"A {radius} {radius} 0 {large} 1 {x2:.1f} {y2:.1f} Z\" "
+                f'A {radius} {radius} 0 {large} 1 {x2:.1f} {y2:.1f} Z" '
                 f'fill="{fill}" />'
             )
-        body.append(
-            f'<circle cx="{cx}" cy="{cy}" r="38" fill="var(--card-bg)" />'
-        )
+        body.append(f'<circle cx="{cx}" cy="{cy}" r="38" fill="var(--card-bg)" />')
         body.append(
             f'<text class="chip-value" x="{cx}" y="{cy + 6}" '
             f'text-anchor="middle">{len(shares)}</text>'
