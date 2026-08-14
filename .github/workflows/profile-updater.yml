@@ -347,7 +347,10 @@ jobs:
                   raise SystemExit(f"{path} contains an error or is empty")
               if "## Contents" not in lines:
                   raise SystemExit(f"{path} is missing the contents heading")
-              if not any(line.startswith("- [") and "](https://github.com/") in line for line in lines):
+              if not any(
+                  line.startswith("- [") and "](https://github.com/" in line
+                  for line in lines
+              ):
                   raise SystemExit(f"{path} contains no GitHub repository entries")
           PY
 

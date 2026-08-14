@@ -308,7 +308,7 @@ def test_generate_qr_cli_requires_fresh_valid_png(
 
     assert result.exit_code == 0, result.stdout
     assert "QR code generated:" in result.stdout
-    assert output_path.name in result.stdout
+    assert output_path.name in "".join(result.stdout.split())
     assert output_path.read_bytes() == _VALID_PNG
 
 

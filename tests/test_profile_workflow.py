@@ -145,6 +145,25 @@ def _marked_shell_block(workflow: str, start: str, end: str) -> str:
     )
 
 
+def test_every_inline_python_heredoc_compiles() -> None:
+    """Keep embedded workflow validators subject to Python syntax checking."""
+    heredoc_pattern = re.compile(r"(?ms)^uv run python - <<'PY'\n(?P<source>.*?)^PY$")
+    inline_sources: list[tuple[str, str, str]] = []
+    for job_name, job in _workflow_jobs().items():
+        for step in cast(list[dict[str, Any]], job.get("steps", [])):
+            run = step.get("run")
+            if not isinstance(run, str):
+                continue
+            inline_sources.extend(
+                (job_name, str(step.get("name", "unnamed")), match.group("source"))
+                for match in heredoc_pattern.finditer(run)
+            )
+
+    assert inline_sources, "expected embedded Python workflow validators"
+    for job_name, step_name, source in inline_sources:
+        compile(source, f"{job_name}/{step_name}", "exec")
+
+
 def test_profile_actions_use_exact_immutable_release_pins() -> None:
     workflow = _workflow_text()
     uses_lines = [
