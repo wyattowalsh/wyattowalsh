@@ -1,5 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Featured projects">
-<defs>
 <style>:root { color-scheme: light dark; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } }</style>
 <line class="rail" x1="24" y1="18" x2="1176" y2="18" stroke="#d0d7de" stroke-width="1"/>
 <circle cx="600" cy="18" r="5" fill="none" stroke="#6366f1" stroke-width="1.6"/>
@@ -20,5 +19,4 @@
 <rect x="1020" y="15.0" width="2.2" height="6.0" rx="1" fill="#6366f1"/>
 <rect x="1090" y="12.5" width="2.2" height="11.0" rx="1" fill="#6366f1"/>
 <rect x="1160" y="10.0" width="2.2" height="16.0" rx="1" fill="#6366f1"/>
-</defs>
 </svg>

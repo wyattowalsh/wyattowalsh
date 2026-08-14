@@ -47,6 +47,16 @@ SECTION_SEPARATORS = {
     "Word Clouds": "sep-clouds.svg",
     "Latest Blog Posts": "sep-blog.svg",
 }
+
+
+def test_section_separators_paint_outside_defs() -> None:
+    """Separator strokes must render; wrapping them in <defs> hides them."""
+    for filename in SECTION_SEPARATORS.values():
+        svg = (REPO_ROOT / ".github/assets/img/readme" / filename).read_text(
+            encoding="utf-8"
+        )
+        after_defs = re.sub(r"<defs>.*?</defs>", "", svg, flags=re.S)
+        assert re.search(r"<(line|rect|circle|path|polyline)\b", after_defs), filename
 _LIVING_WRAP_RE = re.compile(
     r'<p align="center">\s*'
     r'(?:<a href="[^"]+">\s*<img src="\.github/assets/img/living-[^"]+"'

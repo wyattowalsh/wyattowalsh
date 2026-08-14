@@ -31,9 +31,7 @@ def _svg(body: str, *, aria: str) -> str:
             '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" '
             'viewBox="0 0 1200 36" role="img" '
             f'aria-label="{aria}">',
-            "<defs>",
             body,
-            "</defs>",
             "</svg>",
             "",
         )
