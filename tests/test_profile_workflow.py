@@ -476,7 +476,7 @@ def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
     assert 'for file in "$stage"/outputs/timelapse/living-*.gif' not in workflow
     assert "':(glob).github/assets/img/living-*.gif'" in finalize
     assert "':(glob).github/assets/img/living-*.mp4'" not in finalize
-    assert "for mp4 in .github/assets/img/living-*.mp4" in finalize
+    assert "mp4s=(.github/assets/img/living-*.mp4)" in finalize
     assert "':(glob)docs/public/showcase/living-*.gif'" in finalize
     assert 'git add -A -- "${owned_files[@]}"' in finalize
 
