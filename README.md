@@ -17,6 +17,7 @@
 
 
 
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -36,12 +37,8 @@
 
 <table><tr>
 <td width="50%" valign="top"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>
-<td width="50%" valign="top"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: recently starred repositories, stargazers, and people" width="100%" loading="lazy"/></td>
+<td width="50%" valign="top"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: recently starred repositories and stargazers" width="100%" loading="lazy"/></td>
 </tr></table>
-
-<p align="center">
-<img src=".github/assets/img/metrics.extra.svg" alt="Extra metrics: comment reactions and issue/PR follow-up" width="49%" loading="lazy"/>
-</p>
 
 <p align="center">
 <img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/>
@@ -330,6 +327,7 @@
 
 
 
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
@@ -341,6 +339,9 @@
 <p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
+<p align="center"><img src=".github/assets/img/readme/sep-qr.svg" alt="Connect" width="100%" loading="lazy"/></p>
+<!-- ## Connect -->
+
 <p align="center">
   <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>
 </p>
@@ -348,8 +349,10 @@
 ---
 
 <p align="center">
-  <img src=".github/assets/img/readme/views-peek.svg" alt="You found the cookie jar" width="280" loading="lazy"/>
-  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=C2410C&style=for-the-badge&label=peek-a-boos" alt="Profile Views"/>
+  <img src=".github/assets/img/readme/views-peek.svg" alt="You found the cookie jar" height="72" loading="lazy"/>
+  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=F59E0B&style=for-the-badge&label=peek-a-boo" alt="Profile peek-a-boo count"/>
+</p>
+<p align="center">
   <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
     <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
   </a>

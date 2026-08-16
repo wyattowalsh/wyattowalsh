@@ -123,9 +123,7 @@ jobs:
           plugin_achievements: no
           plugin_calendar: yes
           plugin_calendar_limit: 1
-          plugin_people: yes
-          plugin_people_limit: 12
-          plugin_people_types: followers, following
+          plugin_people: no
           config_timezone: America/Los_Angeles
           config_padding: 10%
 
@@ -182,8 +180,7 @@ jobs:
           plugin_reactions: yes
           plugin_reactions_limit: 100
           plugin_reactions_display: relative
-          plugin_followup: yes
-          plugin_followup_sections: repositories
+          plugin_followup: no
 
       - name: Collect full extra metrics output
         if: ${{ always() }}
@@ -804,10 +801,7 @@ jobs:
           plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
           plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '16' || '0' }}
           plugin_repositories: no
-          plugin_people: yes
-          plugin_people_limit: 36
-          plugin_people_size: 24
-          plugin_people_types: followers, following
+          plugin_people: no
           plugin_tweets: no
           plugin_gists: no
           plugin_habits: no
@@ -848,8 +842,7 @@ jobs:
           plugin_reactions: yes
           plugin_reactions_limit: 100
           plugin_reactions_display: relative
-          plugin_followup: yes
-          plugin_followup_sections: repositories
+          plugin_followup: no
 
       - name: Collect extra metrics output
         id: collect_extra_metrics

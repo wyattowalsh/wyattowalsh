@@ -1129,7 +1129,7 @@ class TestRendering:
 
         assert ".github/assets/img/metrics.svg" in rendered
         assert ".github/assets/img/metrics.additional.svg" in rendered
-        assert ".github/assets/img/metrics.extra.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert "Metrics temporarily unavailable" not in rendered
         assert (
             'alt="GitHub metrics: contributions, languages, topics, and community signals"'  # noqa: E501
@@ -1197,7 +1197,7 @@ class TestRendering:
 
         assert ".github/assets/img/metrics.svg" in rendered
         assert ".github/assets/img/metrics.additional.svg" in rendered
-        assert ".github/assets/img/metrics.extra.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert "placeholder output" not in rendered
 
     def test_generate_adds_valid_supplemental_metrics_assets(
@@ -1261,9 +1261,10 @@ class TestRendering:
 
         assert ".github/assets/img/metrics-habits.svg" in rendered
         assert ".github/assets/img/metrics-activity.svg" not in rendered
-        assert ".github/assets/img/metrics.extra.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert (
-            'alt="Extra metrics: comment reactions and issue/PR follow-up"' in rendered
+            'alt="Extra metrics: comment reactions and issue/PR follow-up"'
+            not in rendered
         )
         assert (
             'alt="Supplemental metrics: coding habits and recent GitHub focus"'
@@ -1378,7 +1379,7 @@ class TestRendering:
         assert "wordcloud_typographic_by_topics.svg" in rendered
         assert "wordcloud_typographic_by_languages.svg" in rendered
         assert "wordcloud_fractal_reel.mp4" in rendered
-        assert ".github/assets/img/metrics.extra.svg" in rendered
+        assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert (
             'alt="Word cloud of GitHub topics sized by starred-repo share"'
         ) in rendered
@@ -1663,7 +1664,7 @@ class TestRendering:
         assert "2026-06-02" in rendered
         assert "An open-flow hook." in rendered
         assert "style=for-the-badge" in rendered
-        assert "label=peek-a-boos" in rendered
+        assert "label=peek-a-boo" in rendered
         assert "flat-square" not in rendered
         assert "komarev.com/ghpvc/?username=wyattowalsh" in rendered
 

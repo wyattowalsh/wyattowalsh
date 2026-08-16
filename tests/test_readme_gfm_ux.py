@@ -47,6 +47,7 @@ SECTION_SEPARATORS = {
     "My Tech Stack": "sep-tech.svg",
     "Word Clouds": "sep-clouds.svg",
     "Latest Blog Posts": "sep-blog.svg",
+    "Connect": "sep-qr.svg",
 }
 
 
@@ -460,7 +461,7 @@ def test_fact_views_komarev_for_the_badge() -> None:
     readme = _read_readme()
     assert "komarev.com/ghpvc/?username=wyattowalsh" in readme
     assert "style=for-the-badge" in readme
-    assert "label=peek-a-boos" in readme
+    assert "label=peek-a-boo" in readme
     assert "views-peek.svg" in readme
     assert "style=flat-square" not in readme
 

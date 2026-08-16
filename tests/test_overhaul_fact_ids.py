@@ -335,7 +335,7 @@ def test_fact_views_komarev_for_the_badge() -> None:
     assert _GHPVC_URL in readme
     assert "komarev.com/ghpvc/?username=wyattowalsh" in readme
     assert "style=for-the-badge" in readme
-    assert "label=peek-a-boos" in readme
+    assert "label=peek-a-boo" in readme
     assert "style=flat-square" not in readme
     workflow = _workflow_text()
     assert "view-counter" not in workflow
@@ -385,7 +385,6 @@ def test_fact_lowlighter_maximal_committed_preview_residuals() -> None:
     assert "Recently starred" not in additional
     assert "Stargazers" not in additional
     assert "Featured repositories" not in additional
-    assert 'class="people"' in additional
 
 
 def test_fact_lowlighter_audit_extra_followup_has_nan_bars() -> None:

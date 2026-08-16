@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="52" viewBox="0 0 1200 52" role="img" aria-label="Connect">
+<style>:root { color-scheme: light dark; } .rail { stroke: #0969da; fill: none; } .mod { fill: #0969da; } .finder { fill: none; stroke: #0969da; } @media (prefers-color-scheme: dark) { .rail { stroke: #58a6ff; } .mod { fill: #58a6ff; } .finder { stroke: #58a6ff; } }</style>
+<line class="rail" x1="20" y1="26" x2="520" y2="26" stroke-width="1.15" stroke-dasharray="3 7"/>
+<line class="rail" x1="680" y1="26" x2="1180" y2="26" stroke-width="1.15" stroke-dasharray="3 7"/>
+<path class="finder" d="M582 8 H618 V44 H582 Z" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="finder" d="M587 13 H613 V39 H587 Z" fill="none" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+<rect class="mod" x="596" y="22" width="8" height="8"/>
+<rect class="mod" x="572" y="18" width="3.2" height="3.2"/>
+<rect class="mod" x="578" y="32" width="2.2" height="2.2"/>
+<rect class="mod" x="622" y="16" width="3.2" height="3.2"/>
+<rect class="mod" x="628" y="30" width="2.2" height="2.2"/>
+<rect class="mod" x="592" y="42" width="3.2" height="3.2"/>
+<rect class="mod" x="610" y="10" width="2.2" height="2.2"/>
+</svg>

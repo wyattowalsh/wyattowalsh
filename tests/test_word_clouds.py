@@ -265,6 +265,7 @@ def test_typographic_phyllotaxis_is_not_a_two_column_magazine() -> None:
     left = sum(1 for x in xs if x < mid)
     right = len(xs) - left
     assert min(left, right) >= 4
+    assert any(abs(word.rotation) >= 8 for word in placed)
 
 
 def test_typographic_snaps_unreadable_cluster_fill(
@@ -1131,7 +1132,7 @@ def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() 
     for path in _SHIPPED_TYPOGRAPHIC_CLOUDS:
         assert path.is_file(), f"missing shipped typographic cloud: {path}"
         svg = path.read_text(encoding="utf-8")
-        assert "rotate(" not in svg
+        assert "rotate(" in svg
         assert 'stop-color="#fafbfc"' in svg
         assert 'stop-color="#f0f1f3"' in svg
         assert 'fill="url(#wc-bg-grad)"' in svg

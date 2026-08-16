@@ -463,7 +463,6 @@ def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
     assert "Contributions calendar" in primary_text
     assert "an error occur" not in primary_text.lower()
     assert "Featured repositories" not in additional_text
-    assert 'class="people"' in additional_text
     assert "Overall issues and pull requests status" in extra_text
     assert "followup" in extra_text.lower()
 

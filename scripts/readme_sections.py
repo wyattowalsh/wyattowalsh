@@ -174,7 +174,7 @@ _BLOG_DETAILS_RE = re.compile(
 _GHPVC_URL_RE = re.compile(r"https://komarev\.com/ghpvc/\?[^\"'\s>]+")
 _GHPVC_URL = (
     "https://komarev.com/ghpvc/?username=wyattowalsh"
-    "&color=C2410C&style=for-the-badge&label=peek-a-boos"
+    "&color=F59E0B&style=for-the-badge&label=peek-a-boo"
 )
 _VIEWS_PEEK_SRC = ".github/assets/img/readme/views-peek.svg"
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
@@ -1048,6 +1048,7 @@ class ReadmeSectionGenerator:
         content = self._place_wakatime_in_metrics(content, waka_markers)
         content = self._rewrite_blog_disclosure(content)
         content = self._normalize_section_separators(content)
+        content = self._rewrite_qr_block(content)
         return self._rewrite_view_counter(content)
 
     def _normalize_section_separators(self, content: str) -> str:
@@ -1059,6 +1060,7 @@ class ReadmeSectionGenerator:
             ("My Tech Stack", "sep-tech.svg"),
             ("Word Clouds", "sep-clouds.svg"),
             ("Latest Blog Posts", "sep-blog.svg"),
+            ("Connect", "sep-qr.svg"),
         )
         leading_seps = (
             r'(?:<p align="center"><img src="\.github/assets/img/readme/'
@@ -1215,15 +1217,9 @@ class ReadmeSectionGenerator:
                 ),
                 (
                     ".github/assets/img/metrics.additional.svg",
-                    "Additional metrics: recently starred repositories, "
-                    "stargazers, and people",
+                    "Additional metrics: recently starred repositories "
+                    "and stargazers",
                 ),
-            ),
-            "",
-            self._gfm_centered_img(
-                src=".github/assets/img/metrics.extra.svg",
-                alt=("Extra metrics: comment reactions and issue/PR follow-up"),
-                width="49%",
             ),
         ]
 
@@ -1384,21 +1380,65 @@ class ReadmeSectionGenerator:
             )
         return content
 
+    def _rewrite_qr_block(self, content: str) -> str:
+        """Keep a unique separator immediately above the vCard QR."""
+        sep = section_separator_block("Connect", "sep-qr.svg")
+        qr = (
+            '<p align="center">\n'
+            '  <img src=".github/assets/img/qr.png" alt="vCard QR Code" '
+            'width="200" loading="lazy"/>\n'
+            "</p>"
+        )
+        pattern = re.compile(
+            r'(?:<p align="center"><img src="\.github/assets/img/readme/'
+            r'sep-qr\.svg"[^>]*></p>\s*'
+            r"(?:<!-- ## Connect -->\s*)?)?"
+            r'<p align="center">\s*'
+            r'<img src="\.github/assets/img/qr\.png"[^>]*>\s*</p>',
+            re.M,
+        )
+        if pattern.search(content):
+            return pattern.sub(sep + "\n" + qr, content, count=1)
+        return content
+
     def _rewrite_view_counter(self, content: str) -> str:
         if "komarev.com/ghpvc/" not in content:
             return content
         content = _GHPVC_URL_RE.sub(_GHPVC_URL, content)
-        peek = (
-            f'<img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
-            'width="280" loading="lazy"/>'
+        footer = (
+            '<p align="center">\n'
+            f'  <img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
+            'height="72" loading="lazy"/>\n'
+            f'  <img src="{_GHPVC_URL}" alt="Profile peek-a-boo count"/>\n'
+            "</p>\n"
+            '<p align="center">\n'
+            "  <a href="
+            '"https://github.com/wyattowalsh/wyattowalsh/actions/'
+            'workflows/profile-updater.yml">\n'
+            "    <img src="
+            '"https://github.com/wyattowalsh/wyattowalsh/actions/'
+            'workflows/profile-updater.yml/badge.svg" '
+            'alt="Profile Updater"/>\n'
+            "  </a>\n"
+            "</p>"
         )
-        if _VIEWS_PEEK_SRC in content:
-            return content
-        content = content.replace(
-            f'<img src="{_GHPVC_URL}"',
-            f'{peek}\n  <img src="{_GHPVC_URL}"',
-            1,
+        footer_re = re.compile(
+            r'<p align="center">\s*'
+            r"(?:<img[^>\n]*views-peek\.svg[^>]*>\s*)?"
+            r'(?:<img src="https://komarev\.com/ghpvc/[^"]+"[^>]*>\s*)'
+            r"(?:<a href=\"[^\"]*profile-updater\.yml\">.*?</a>\s*)?"
+            r"</p>",
+            re.S,
         )
+        if footer_re.search(content):
+            return footer_re.sub(footer, content, count=1)
+        if _VIEWS_PEEK_SRC not in content:
+            content = content.replace(
+                f'<img src="{_GHPVC_URL}"',
+                f'<img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
+                f'height="72" loading="lazy"/>\n  <img src="{_GHPVC_URL}"',
+                1,
+            )
         return content
 
     def _render_top_badges(self) -> str:

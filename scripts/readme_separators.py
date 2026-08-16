@@ -28,6 +28,7 @@ SEPARATOR_SPECS: tuple[tuple[str, str], ...] = (
     ("sep-tech.svg", "tech"),
     ("sep-clouds.svg", "clouds"),
     ("sep-blog.svg", "blog"),
+    ("sep-qr.svg", "qr"),
 )
 
 # Assembler titles the section "My Tech Stack".
@@ -818,6 +819,60 @@ def _blog() -> str:
     return _svg(parts, aria="Latest blog posts")
 
 
+def _qr() -> str:
+    """Finder-square rail — a contact-card motif, not a badge row."""
+    parts: list[str] = [
+        _style(
+            ".rail { stroke: #0969da; fill: none; } "
+            ".mod { fill: #0969da; } "
+            ".finder { fill: none; stroke: #0969da; }",
+            ".rail { stroke: #58a6ff; } "
+            ".mod { fill: #58a6ff; } "
+            ".finder { stroke: #58a6ff; }",
+        ),
+        _line(
+            20, 26, 520, 26, class_="rail", sw=1.15, extra='stroke-dasharray="3 7"'
+        ),
+        _line(
+            680, 26, 1180, 26, class_="rail", sw=1.15, extra='stroke-dasharray="3 7"'
+        ),
+    ]
+    cx, cy, s = 600.0, 26.0, 18.0
+    parts.append(
+        _path(
+            f"M{_n(cx - s)} {_n(cy - s)} H{_n(cx + s)} V{_n(cy + s)} "
+            f"H{_n(cx - s)} Z",
+            class_="finder",
+            sw=1.6,
+        )
+    )
+    parts.append(
+        _path(
+            f"M{_n(cx - s + 5)} {_n(cy - s + 5)} H{_n(cx + s - 5)} "
+            f"V{_n(cy + s - 5)} H{_n(cx - s + 5)} Z",
+            class_="finder",
+            sw=1.1,
+        )
+    )
+    parts.append(
+        _el("rect", class_="mod", x=_n(cx - 4), y=_n(cy - 4), width="8", height="8")
+    )
+    modules = ((-28, -8), (-22, 6), (22, -10), (28, 4), (-8, 16), (10, -16))
+    for i, (dx, dy) in enumerate(modules):
+        size = 3.2 if i % 2 == 0 else 2.2
+        parts.append(
+            _el(
+                "rect",
+                class_="mod",
+                x=_n(cx + dx),
+                y=_n(cy + dy),
+                width=_n(size),
+                height=_n(size),
+            )
+        )
+    return _svg(parts, aria="Connect")
+
+
 _BUILDERS = {
     "featured": _featured,
     "metrics": _metrics,
@@ -825,6 +880,7 @@ _BUILDERS = {
     "tech": _tech,
     "clouds": _clouds,
     "blog": _blog,
+    "qr": _qr,
 }
 
 
@@ -891,9 +947,8 @@ def render_views_peek_svg() -> str:
 
 def generate_views_peek(*, output_dir: Path | None = None) -> Path:
     """Write the cute view-counter frame next to the live komarev chip."""
+    from .readme_svg import write_views_peek_frame
+
     dest = output_dir or _OUT_DIR
     dest.mkdir(parents=True, exist_ok=True)
-    peek = dest / "views-peek.svg"
-    peek.write_text(render_views_peek_svg(), encoding="utf-8")
-    logger.info("Wrote README view-counter frame {}", peek)
-    return peek
+    return write_views_peek_frame(dest)

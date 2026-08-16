@@ -1031,8 +1031,8 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
 
     assert "plugin_repositories: no" in additional
     assert "plugin_repositories_featured" not in additional
-    assert "plugin_people: yes" in additional
-    assert "plugin_people_limit: 36" in additional
+    assert "plugin_people: no" in additional
+    assert "plugin_people_limit" not in additional
     assert (
         "plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
         "== 'true' && 'yes' || 'no' }}"
@@ -1048,7 +1048,7 @@ def test_metrics_production_plugins_match_relevance_matrix() -> None:
 
     assert "metrics.extra.svg" in prod
     assert "plugin_reactions: yes" in extra
-    assert "plugin_followup: yes" in extra
+    assert "plugin_followup: no" in extra
     assert "plugin_music: no" in extra
     assert "plugin_activity: no" in extra
     assert "plugin_habits: no" in extra
@@ -1070,11 +1070,11 @@ def test_fact_lowlighter_maximal_production_raises_topics_stars_people() -> None
     assert "plugin_stars:" in additional
     assert "plugin_stars_limit:" in additional
     assert "'16'" in additional
-    assert "plugin_people: yes" in additional
-    assert "plugin_people_limit: 36" in additional
+    assert "plugin_people: no" in additional
+    assert "plugin_people_limit" not in additional
 
     assert "plugin_topics_limit: 15" in probe
-    assert "plugin_people_limit: 12" in probe
+    assert "plugin_people: no" in probe
     assert "'3'" in probe
     assert "plugin_stars:" in probe
     assert "plugin_people:" in probe

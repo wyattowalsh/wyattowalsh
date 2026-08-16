@@ -141,13 +141,15 @@ class TypographicRenderer(SvgWordCloudEngine):
         font_size: float,
         min_freq: float,
         max_freq: float,
+        *,
+        rotation: float = 0.0,
     ) -> PlacedWord:
         return PlacedWord(
             text=word,
             x=x,
             y=y,
             font_size=font_size,
-            rotation=0,
+            rotation=rotation,
             color=self._word_color(word, idx),
             font_weight=self._freq_to_weight(freq, min_freq, max_freq),
             font_family=self.font_family,
@@ -240,6 +242,13 @@ class TypographicRenderer(SvgWordCloudEngine):
             free.append((cursor, right))
         return [(start, end) for start, end in free if end - start > 4.0]
 
+    def _word_rotation(self, idx: int, font_size: float) -> float:
+        """Tilt mid/small words; keep headline terms flat for reading."""
+        if font_size >= self.max_font_size * 0.55:
+            return 0.0
+        angles = (-16.0, 12.0, -9.0, 15.0, 8.0, -13.0)
+        return angles[idx % len(angles)]
+
     def _try_anchor(
         self,
         word: str,
@@ -247,8 +256,10 @@ class TypographicRenderer(SvgWordCloudEngine):
         x: float,
         y: float,
         boxes: list[BBox],
+        *,
+        rotation: float = 0.0,
     ) -> BBox | None:
-        bbox = self._estimate_bbox(word, font_size, x, y)
+        bbox = self._estimate_bbox(word, font_size, x, y, rotation)
         if self._in_bounds(bbox) and not self._check_collision(bbox, boxes):
             return bbox
         return None
@@ -282,13 +293,16 @@ class TypographicRenderer(SvgWordCloudEngine):
         used_slots: set[int] = set()
         for idx, (word, freq) in enumerate(constellation):
             font_size = self._word_font_size(freq, min_freq, max_freq, scale)
+            rotation = self._word_rotation(idx, font_size)
             settled: tuple[float, float, BBox] | None = None
             preferred = list(range(idx, len(slots))) + list(range(idx))
             for slot_i in preferred:
                 if slot_i in used_slots:
                     continue
                 x, y = slots[slot_i]
-                bbox = self._try_anchor(word, font_size, x, y, boxes)
+                bbox = self._try_anchor(
+                    word, font_size, x, y, boxes, rotation=rotation
+                )
                 if bbox is not None:
                     settled = (x, y, bbox)
                     used_slots.add(slot_i)
@@ -298,7 +312,9 @@ class TypographicRenderer(SvgWordCloudEngine):
                 for x, y in self._archimedean_positions(
                     cx, cy, walk_step, max_steps=900, aspect=aspect
                 ):
-                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    bbox = self._try_anchor(
+                        word, font_size, x, y, boxes, rotation=rotation
+                    )
                     if bbox is not None:
                         settled = (x, y, bbox)
                         break
@@ -307,7 +323,10 @@ class TypographicRenderer(SvgWordCloudEngine):
             x, y, bbox = settled
             boxes.append(bbox)
             placed.append(
-                self._make_word(word, freq, idx, x, y, font_size, min_freq, max_freq)
+                self._make_word(
+                    word, freq, idx, x, y, font_size, min_freq, max_freq,
+                    rotation=rotation,
+                )
             )
         return placed, boxes
 
@@ -343,6 +362,7 @@ class TypographicRenderer(SvgWordCloudEngine):
         max_y = self.height - self.margin
 
         for idx, word, freq, font_size, word_w, word_h in items:
+            rotation = self._word_rotation(idx, font_size)
             gap = font_size * gap_ratio
             need = word_w + gap + self.padding
             settled: tuple[float, float, BBox] | None = None
@@ -353,7 +373,9 @@ class TypographicRenderer(SvgWordCloudEngine):
                     if right - left < need:
                         continue
                     x = left + word_w / 2.0 + 1.0
-                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    bbox = self._try_anchor(
+                        word, font_size, x, y, boxes, rotation=rotation
+                    )
                     if bbox is not None:
                         settled = (x, y, bbox)
                         break
@@ -365,7 +387,9 @@ class TypographicRenderer(SvgWordCloudEngine):
                 for x, y in self._archimedean_positions(
                     cx, cy, walk_step, max_steps=1600, aspect=aspect
                 ):
-                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    bbox = self._try_anchor(
+                        word, font_size, x, y, boxes, rotation=rotation
+                    )
                     if bbox is not None:
                         settled = (x, y, bbox)
                         break
@@ -374,7 +398,10 @@ class TypographicRenderer(SvgWordCloudEngine):
             x, y, bbox = settled
             boxes.append(bbox)
             placed.append(
-                self._make_word(word, freq, idx, x, y, font_size, min_freq, max_freq)
+                self._make_word(
+                    word, freq, idx, x, y, font_size, min_freq, max_freq,
+                    rotation=rotation,
+                )
             )
         return placed
 
