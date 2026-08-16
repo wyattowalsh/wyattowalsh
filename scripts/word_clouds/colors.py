@@ -322,28 +322,31 @@ def resolve_color_func(
 
 GITHUB_LIGHT_BG = "#ffffff"
 GITHUB_DARK_BG = "#0d1117"
+# Actual typographic canvas stops (engine.py wc-bg-grad / wc-bg-grad-dark).
+WORDCLOUD_LIGHT_CANVAS_STOPS = ("#ffffff", "#fafbfc", "#f0f1f3")
+WORDCLOUD_DARK_CANVAS_STOPS = ("#0d1117", "#161b22")
 AA_LARGE_TEXT_CONTRAST = 3.0
 
 TYPOGRAPHIC_PALETTE = [
     "#2563EB",  # royal blue
     "#059669",  # emerald
-    "#D97706",  # amber
+    "#B45309",  # amber (darkened for #f0f1f3 canvas edge)
     "#7C3AED",  # violet
     "#DC2626",  # crimson
     "#0891B2",  # cyan
-    "#BE185D",  # rose
-    "#4F46E5",  # indigo
+    "#DB2777",  # rose (lifted for #161b22 canvas)
+    "#6366F1",  # indigo (lifted for #161b22 canvas)
 ]
 
 # Mid-tone fills that keep WCAG AA large-text contrast on both GitHub canvases.
 CLUSTER_PALETTES: dict[str, list[str]] = {
     "AI/ML": ["#7C3AED", "#8B5CF6", "#6366F1", "#A855F7", "#9333EA"],
-    "Web": ["#2563EB", "#3B82F6", "#0284C7", "#4F46E5", "#0891B2"],
+    "Web": ["#2563EB", "#3B82F6", "#0284C7", "#6366F1", "#0891B2"],
     "Data": ["#047857", "#059669", "#0F766E", "#0D9488", "#0E7490"],
-    "DevOps": ["#B45309", "#D97706", "#C2410C", "#EA580C", "#A16207"],
-    "Languages": ["#DC2626", "#EF4444", "#E11D48", "#F43F5E", "#BE185D"],
+    "DevOps": ["#B45309", "#A16207", "#C2410C", "#EA580C", "#B45309"],
+    "Languages": ["#DC2626", "#EF4444", "#E11D48", "#F43F5E", "#DB2777"],
     "Tools": ["#0E7490", "#0891B2", "#0284C7", "#0F766E", "#0D9488"],
-    "Security": ["#BE185D", "#EC4899", "#DB2777", "#E11D48", "#C026D3"],
+    "Security": ["#DB2777", "#EC4899", "#DB2777", "#E11D48", "#C026D3"],
     "Other": ["#6B7280", "#71717A", "#64748B", "#78716C", "#737373"],
 }
 
@@ -662,12 +665,11 @@ def composite_hex(foreground: str, background: str, opacity: float) -> str:
 
 
 def github_dual_surface_contrast(color: str, *, opacity: float = 1.0) -> float:
-    """Worst-case contrast of ``color`` on GitHub light and dark canvases."""
-    light = composite_hex(color, GITHUB_LIGHT_BG, opacity)
-    dark = composite_hex(color, GITHUB_DARK_BG, opacity)
+    """Worst-case contrast of ``color`` on GitHub + word-cloud canvas stops."""
+    backgrounds = (*WORDCLOUD_LIGHT_CANVAS_STOPS, *WORDCLOUD_DARK_CANVAS_STOPS)
     return min(
-        contrast_ratio(light, GITHUB_LIGHT_BG),
-        contrast_ratio(dark, GITHUB_DARK_BG),
+        contrast_ratio(composite_hex(color, background, opacity), background)
+        for background in backgrounds
     )
 
 
@@ -715,6 +717,8 @@ __all__ = [
     "COLOR_FUNCS",
     "GITHUB_LIGHT_BG",
     "GITHUB_DARK_BG",
+    "WORDCLOUD_LIGHT_CANVAS_STOPS",
+    "WORDCLOUD_DARK_CANVAS_STOPS",
     "AA_LARGE_TEXT_CONTRAST",
     "TYPOGRAPHIC_PALETTE",
     "CLUSTER_PALETTES",

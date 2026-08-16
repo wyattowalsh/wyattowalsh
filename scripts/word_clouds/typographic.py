@@ -1,43 +1,63 @@
-"""Typographic baseline-grid word cloud renderer.
+"""Typographic word-cloud renderer: phyllotaxis core + packed remainder.
 
-Fits **every** input term using multi-pass adaptive scaling:
-binary-search a global size scale until the full vocabulary packs onto the
-canvas, with a densified grid fallback as last resort.
+Fits **every** input term using multi-pass adaptive scaling. The
+highest-frequency words form an elliptical sunflower (golden-angle
+phyllotaxis) constellation; everything else packs into the leftover
+banner space. Horizontal only. Never drops terms when ``require_all``
+is True (default). Last-resort grid exists only for tiny canvases.
 """
 
 from __future__ import annotations
 
 import math
+from collections.abc import Iterator
 from typing import override
 
 from ..utils import get_logger
-from .colors import CLUSTER_PALETTES, TYPOGRAPHIC_PALETTE, _classify_word
-from .core import PlacedWord
+from .colors import (
+    CLUSTER_PALETTES,
+    TYPOGRAPHIC_PALETTE,
+    _classify_word,
+    github_readable_fills,
+    is_github_dual_surface_readable,
+)
+from .core import BBox, PlacedWord
 from .engine import SvgWordCloudEngine
 
 logger = get_logger(module=__name__)
 
+# Golden angle 2π/φ² — sunflower phyllotaxis.
+_GOLDEN_ANGLE = math.pi * (3.0 - math.sqrt(5.0))
+_PUBLIC_WIDTH = 1600
+_PUBLIC_HEIGHT = 520
+_PUBLIC_MIN_FONT = 8.0
+_PUBLIC_MAX_FONT = 56.0
+
 
 class TypographicRenderer(SvgWordCloudEngine):
-    """Editorial baseline-grid typography with complete vocabulary packing.
+    """Phyllotaxis constellation plus a packed remainder on a wide canvas.
 
-    Words flow left-to-right on a baseline grid with variable font weights.
-    Horizontal only (no rotation) for maximum readability. Never drops terms
-    when ``require_all`` is True (default).
+    Top-frequency terms sit on a golden-angle spiral (stretched to the
+    banner aspect). The rest fill leftover intervals. Horizontal only.
+    Never drops terms when ``require_all`` is True (default).
     """
 
     def __init__(
         self,
         *,
         palette: list[str] | None = None,
-        line_spacing: float = 1.22,
-        margin: float = 20.0,
-        word_gap_ratio: float = 0.42,
+        line_spacing: float = 1.18,
+        margin: float = 16.0,
+        word_gap_ratio: float = 0.34,
         weight_range: tuple[int, int] = (300, 800),
         require_all: bool = True,
         scale_passes: int = 14,
         **kwargs,
     ) -> None:
+        kwargs.setdefault("width", _PUBLIC_WIDTH)
+        kwargs.setdefault("height", _PUBLIC_HEIGHT)
+        kwargs.setdefault("min_font_size", _PUBLIC_MIN_FONT)
+        kwargs.setdefault("max_font_size", _PUBLIC_MAX_FONT)
         super().__init__(**kwargs)
         if palette is not None:
             self.palette = list(palette)
@@ -90,16 +110,271 @@ class TypographicRenderer(SvgWordCloudEngine):
 
     def _word_color(self, word: str, idx: int) -> str:
         if self.color_palette_override:
-            return self.palette[
+            candidate = self.palette[
                 int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
             ]
-        cluster = _classify_word(word)
-        cluster_palette = CLUSTER_PALETTES.get(cluster)
-        if cluster_palette:
-            return cluster_palette[idx % len(cluster_palette)]
-        return self.palette[
-            int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
-        ]
+        else:
+            cluster = _classify_word(word)
+            cluster_palette = CLUSTER_PALETTES.get(cluster)
+            if cluster_palette:
+                candidate = cluster_palette[idx % len(cluster_palette)]
+            else:
+                candidate = self.palette[
+                    int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
+                ]
+        if is_github_dual_surface_readable(candidate):
+            return candidate
+        for fill in github_readable_fills():
+            if is_github_dual_surface_readable(fill):
+                return fill
+        return "#2563EB"
+
+    def _make_word(
+        self,
+        word: str,
+        freq: float,
+        idx: int,
+        x: float,
+        y: float,
+        font_size: float,
+        min_freq: float,
+        max_freq: float,
+    ) -> PlacedWord:
+        return PlacedWord(
+            text=word,
+            x=x,
+            y=y,
+            font_size=font_size,
+            rotation=0,
+            color=self._word_color(word, idx),
+            font_weight=self._freq_to_weight(freq, min_freq, max_freq),
+            font_family=self.font_family,
+            opacity=self._frequency_to_opacity(freq, min_freq, max_freq),
+        )
+
+    def _constellation_count(self, n: int) -> int:
+        """How many top-frequency terms sit on the sunflower spiral."""
+        if n <= 1:
+            return n
+        return max(1, min(n, min(20, max(6, round(n * 0.18)))))
+
+    def _phyllotaxis_positions(
+        self,
+        count: int,
+        cx: float,
+        cy: float,
+        scale: float,
+        *,
+        aspect: float = 1.0,
+    ) -> list[tuple[float, float]]:
+        """Yield *count* golden-angle sunflower slots, optionally stretched."""
+        points: list[tuple[float, float]] = []
+        for index in range(max(0, count)):
+            radius = scale * math.sqrt(index + 0.35)
+            theta = index * _GOLDEN_ANGLE
+            points.append(
+                (cx + radius * math.cos(theta) * aspect, cy + radius * math.sin(theta))
+            )
+        return points
+
+    def _archimedean_positions(
+        self,
+        cx: float,
+        cy: float,
+        step: float,
+        max_steps: int = 2400,
+        *,
+        aspect: float = 1.0,
+    ) -> Iterator[tuple[float, float]]:
+        """Yield positions along an elliptical Archimedean spiral."""
+        angular_step = 0.18
+        for index in range(max_steps):
+            theta = index * angular_step
+            radius = step * theta
+            yield cx + radius * math.cos(theta) * aspect, cy + radius * math.sin(theta)
+
+    def _word_font_size(
+        self,
+        freq: float,
+        min_freq: float,
+        max_freq: float,
+        scale: float,
+    ) -> float:
+        return max(
+            self.min_font_size,
+            self._frequency_to_size(freq, min_freq, max_freq) * scale,
+        )
+
+    def _free_x_intervals(
+        self,
+        y: float,
+        height: float,
+        boxes: list[BBox],
+    ) -> list[tuple[float, float]]:
+        """Open horizontal spans at *y* that do not hit *boxes*."""
+        top = y - height / 2
+        bottom = y + height / 2
+        blockers: list[tuple[float, float]] = []
+        for box in boxes:
+            if box.y2 <= top or box.y >= bottom:
+                continue
+            blockers.append((box.x, box.x2))
+        blockers.sort()
+        merged: list[tuple[float, float]] = []
+        for start, end in blockers:
+            if merged and start <= merged[-1][1] + 1.0:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+            else:
+                merged.append((start, end))
+        left = self.margin
+        right = self.width - self.margin
+        free: list[tuple[float, float]] = []
+        cursor = left
+        for start, end in merged:
+            if start > cursor:
+                free.append((cursor, min(start, right)))
+            cursor = max(cursor, end)
+        if cursor < right:
+            free.append((cursor, right))
+        return [(start, end) for start, end in free if end - start > 4.0]
+
+    def _try_anchor(
+        self,
+        word: str,
+        font_size: float,
+        x: float,
+        y: float,
+        boxes: list[BBox],
+    ) -> BBox | None:
+        bbox = self._estimate_bbox(word, font_size, x, y)
+        if self._in_bounds(bbox) and not self._check_collision(bbox, boxes):
+            return bbox
+        return None
+
+    def _place_constellation(
+        self,
+        constellation: list[tuple[str, float]],
+        min_freq: float,
+        max_freq: float,
+        scale: float,
+    ) -> tuple[list[PlacedWord], list[BBox]] | None:
+        """Park the top-frequency terms on an elliptical sunflower spiral."""
+        count = len(constellation)
+        if count == 0:
+            return [], []
+        aspect = self.width / max(float(self.height), 1.0)
+        usable_y = self.height / 2.0 - self.margin
+        usable_x = self.width / 2.0 - self.margin
+        outer = math.sqrt(count + 0.35)
+        slot_scale = min(usable_x / (outer * aspect), usable_y / outer) * 0.86
+        cx, cy = self.width / 2.0, self.height / 2.0
+        slots = self._phyllotaxis_positions(
+            count * 5 + 24,
+            cx,
+            cy,
+            slot_scale,
+            aspect=aspect,
+        )
+        placed: list[PlacedWord] = []
+        boxes: list[BBox] = []
+        used_slots: set[int] = set()
+        for idx, (word, freq) in enumerate(constellation):
+            font_size = self._word_font_size(freq, min_freq, max_freq, scale)
+            settled: tuple[float, float, BBox] | None = None
+            preferred = list(range(idx, len(slots))) + list(range(idx))
+            for slot_i in preferred:
+                if slot_i in used_slots:
+                    continue
+                x, y = slots[slot_i]
+                bbox = self._try_anchor(word, font_size, x, y, boxes)
+                if bbox is not None:
+                    settled = (x, y, bbox)
+                    used_slots.add(slot_i)
+                    break
+            if settled is None:
+                walk_step = max(3.0, font_size * 0.22)
+                for x, y in self._archimedean_positions(
+                    cx, cy, walk_step, max_steps=900, aspect=aspect
+                ):
+                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    if bbox is not None:
+                        settled = (x, y, bbox)
+                        break
+            if settled is None:
+                return None
+            x, y, bbox = settled
+            boxes.append(bbox)
+            placed.append(
+                self._make_word(word, freq, idx, x, y, font_size, min_freq, max_freq)
+            )
+        return placed, boxes
+
+    def _place_remainder(
+        self,
+        remainder: list[tuple[str, float]],
+        start_idx: int,
+        min_freq: float,
+        max_freq: float,
+        scale: float,
+        occupied: list[BBox],
+        *,
+        line_spacing: float,
+        gap_ratio: float,
+    ) -> list[PlacedWord] | None:
+        """Dense first-fit packer that flows around the constellation."""
+        if not remainder:
+            return []
+        items: list[tuple[int, str, float, float, float, float]] = []
+        for offset, (word, freq) in enumerate(remainder):
+            idx = start_idx + offset
+            font_size = self._word_font_size(freq, min_freq, max_freq, scale)
+            width = self._estimate_text_width(word, font_size)
+            height = self._estimate_text_height(font_size) * line_spacing
+            items.append((idx, word, freq, font_size, width, height))
+        # Largest first: leftover holes take the small labels.
+        items.sort(key=lambda item: item[3], reverse=True)
+
+        placed: list[PlacedWord] = []
+        boxes = list(occupied)
+        aspect = self.width / max(float(self.height), 1.0)
+        cx, cy = self.width / 2.0, self.height / 2.0
+        max_y = self.height - self.margin
+
+        for idx, word, freq, font_size, word_w, word_h in items:
+            gap = font_size * gap_ratio
+            need = word_w + gap + self.padding
+            settled: tuple[float, float, BBox] | None = None
+            y = self.margin + word_h * 0.5
+            y_step = max(2.0, word_h * 0.28)
+            while y + word_h * 0.5 <= max_y + 1e-6:
+                for left, right in self._free_x_intervals(y, word_h, boxes):
+                    if right - left < need:
+                        continue
+                    x = left + word_w / 2.0 + 1.0
+                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    if bbox is not None:
+                        settled = (x, y, bbox)
+                        break
+                if settled is not None:
+                    break
+                y += y_step
+            if settled is None:
+                walk_step = max(2.5, font_size * 0.16)
+                for x, y in self._archimedean_positions(
+                    cx, cy, walk_step, max_steps=1600, aspect=aspect
+                ):
+                    bbox = self._try_anchor(word, font_size, x, y, boxes)
+                    if bbox is not None:
+                        settled = (x, y, bbox)
+                        break
+            if settled is None:
+                return None
+            x, y, bbox = settled
+            boxes.append(bbox)
+            placed.append(
+                self._make_word(word, freq, idx, x, y, font_size, min_freq, max_freq)
+            )
+        return placed
 
     def _place_at_scale(
         self,
@@ -111,96 +386,34 @@ class TypographicRenderer(SvgWordCloudEngine):
         line_spacing: float | None = None,
         gap_ratio: float | None = None,
     ) -> list[PlacedWord] | None:
-        """Magazine pack: headline + two ragged columns. All terms kept."""
+        """Phyllotaxis constellation for the head, packed remainder for the tail."""
+        if not sorted_words:
+            return []
         line_sp = self.line_spacing if line_spacing is None else line_spacing
         gap_r = self.word_gap_ratio if gap_ratio is None else gap_ratio
-        placed: list[PlacedWord] = []
-        total = len(sorted_words)
-        gutter = 28.0
-        col_w = (self.width - 2 * self.margin - gutter) / 2
-        headline_bottom = self.margin
-
-        def _append(
-            word: str,
-            freq: float,
-            idx: int,
-            x: float,
-            y: float,
-            font_size: float,
-        ) -> PlacedWord:
-            return PlacedWord(
-                text=word,
-                x=x,
-                y=y,
-                font_size=font_size,
-                rotation=0,
-                color=self._word_color(word, idx),
-                font_weight=self._freq_to_weight(freq, min_freq, max_freq),
-                font_family=self.font_family,
-                opacity=self._frequency_to_opacity(freq, min_freq, max_freq),
-            )
-
-        start_idx = 0
-        if sorted_words:
-            word, freq = sorted_words[0]
-            font_size = self._frequency_to_size(freq, min_freq, max_freq) * scale
-            font_size = max(self.min_font_size, font_size)
-            word_w = self._estimate_text_width(word, font_size)
-            if word_w + 2 * self.margin <= self.width:
-                word_h = self._estimate_text_height(font_size)
-                y = self.margin + word_h * 0.72
-                placed.append(
-                    _append(
-                        word,
-                        freq,
-                        0,
-                        self.margin + word_w / 2,
-                        y,
-                        font_size,
-                    )
-                )
-                headline_bottom = y + word_h * 0.45
-                start_idx = 1
-
-        columns = (
-            (self.margin, col_w),
-            (self.margin + col_w + gutter, col_w),
-        )
-        cursors = [[left, headline_bottom + 18.0, 0.0] for left, _width in columns]
-        col = 0
-        for idx, (word, freq) in enumerate(sorted_words[start_idx:], start=start_idx):
-            font_size = self._frequency_to_size(freq, min_freq, max_freq) * scale
-            font_size = max(self.min_font_size * 0.85, font_size)
-            word_w = self._estimate_text_width(word, font_size)
-            word_h = self._estimate_text_height(font_size) * line_sp
-            gap = font_size * gap_r
-            left, width = columns[col]
-            cursor_x, cursor_y, line_max_h = cursors[col]
-            rag = 10.0 if int(cursor_y / max(word_h, 1.0)) % 2 else 0.0
-            if cursor_x + word_w + self.margin > left + width:
-                cursor_x = left + rag
-                cursor_y += line_max_h
-                line_max_h = 0.0
-            if cursor_y + word_h / 2 > self.height - self.margin:
-                col += 1
-                if col >= len(columns):
-                    return None
-                left, width = columns[col]
-                cursor_x, cursor_y, line_max_h = cursors[col]
-                rag = 10.0 if int(cursor_y / max(word_h, 1.0)) % 2 else 0.0
-                cursor_x = left + rag
-            if cursor_y + word_h / 2 > self.height - self.margin:
-                return None
-            line_max_h = max(line_max_h, word_h)
-            placed.append(
-                _append(word, freq, idx, cursor_x + word_w / 2, cursor_y, font_size)
-            )
-            cursor_x += word_w + gap
-            cursors[col] = [cursor_x, cursor_y, line_max_h]
-
-        if len(placed) != total:
+        split = self._constellation_count(len(sorted_words))
+        head = sorted_words[:split]
+        tail = sorted_words[split:]
+        core = self._place_constellation(head, min_freq, max_freq, scale)
+        if core is None:
             return None
-        return placed
+        placed, boxes = core
+        remainder = self._place_remainder(
+            tail,
+            split,
+            min_freq,
+            max_freq,
+            scale,
+            boxes,
+            line_spacing=line_sp,
+            gap_ratio=gap_r,
+        )
+        if remainder is None:
+            return None
+        packed = placed + remainder
+        if len(packed) != len(sorted_words):
+            return None
+        return packed
 
     def _grid_force_all(
         self,
@@ -271,15 +484,13 @@ class TypographicRenderer(SvgWordCloudEngine):
         max_freq = max(frequencies.values())
         n = len(sorted_words)
 
-        # Auto-soften max font when vocabulary is large so more terms share space.
+        # Soften only the *max* so a public min of 8 stays readable.
         original_max = self.max_font_size
         original_min = self.min_font_size
         if n > 80:
-            self.max_font_size = min(original_max, max(28.0, 96.0 - n * 0.08))
-            self.min_font_size = min(original_min, max(5.0, 9.0 - n * 0.005))
+            self.max_font_size = min(original_max, max(28.0, 72.0 - n * 0.08))
         if n > 200:
-            self.max_font_size = min(self.max_font_size, 36.0)
-            self.min_font_size = min(self.min_font_size, 5.5)
+            self.max_font_size = min(self.max_font_size, 34.0)
 
         try:
             # Binary search largest scale that still packs every word.
@@ -302,12 +513,13 @@ class TypographicRenderer(SvgWordCloudEngine):
                     max_freq,
                     lo,
                     line_spacing=max(1.05, self.line_spacing * 0.92),
-                    gap_ratio=max(0.22, self.word_gap_ratio * 0.85),
+                    gap_ratio=max(0.20, self.word_gap_ratio * 0.85),
                 )
                 if denser is not None:
                     best = denser
                 logger.info(
-                    "TypographicRenderer: packed {}/{} words at scale={:.3f}",
+                    "TypographicRenderer: packed {}/{} words at scale={:.3f} "
+                    "(phyllotaxis constellation + packed remainder)",
                     len(best),
                     n,
                     lo,

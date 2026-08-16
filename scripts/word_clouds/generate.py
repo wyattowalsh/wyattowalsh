@@ -75,7 +75,7 @@ RENDERER_CHOICES: list[str] = [
 DEFAULT_RENDERER: RendererName = "typographic"
 SHIPPED_WORD_CLOUD_SOURCES: tuple[str, str] = ("topics", "languages")
 DEFAULT_WIDTH = 1600
-DEFAULT_HEIGHT = 1000
+DEFAULT_HEIGHT = 520
 DEFAULT_MAX_WORDS = 1000
 
 # Resolve project root relative to this script

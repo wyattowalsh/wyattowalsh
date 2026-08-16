@@ -244,6 +244,28 @@ def test_random_solution_uses_large_word_rotation_policy() -> None:
     assert solution[1][2] == 90.0
 
 
+def test_typographic_phyllotaxis_is_not_a_two_column_magazine() -> None:
+    """Exotic packer fans words around a spiral, not two ragged columns."""
+    frequencies = {f"term-{i:02d}": float(40 - i) for i in range(18)}
+    placed = TypographicRenderer(
+        width=800,
+        height=500,
+        min_font_size=10.0,
+        max_font_size=36.0,
+        seed=3,
+    ).place_words(frequencies)
+    assert {word.text for word in placed} == set(frequencies)
+    xs = [word.x for word in placed]
+    ys = [word.y for word in placed]
+    assert max(xs) - min(xs) > 120
+    assert max(ys) - min(ys) > 80
+    # A two-column magazine pack clusters x around two gutters.
+    mid = 400.0
+    left = sum(1 for x in xs if x < mid)
+    right = len(xs) - left
+    assert min(left, right) >= 4
+
+
 def test_typographic_renderer_keeps_horizontal_layout() -> None:
     renderer = TypographicRenderer(width=1200, height=800)
     placed = renderer.place_words({"Python": 5.0, "Go": 3.0, "Docker": 2.0})
@@ -253,19 +275,73 @@ def test_typographic_renderer_keeps_horizontal_layout() -> None:
 
 
 def test_typographic_places_every_term_large_vocab() -> None:
-    """Fit-all packer must surface the full vocabulary (topics-scale)."""
+    """Fit-all packer must surface the full vocabulary on the public canvas."""
     words = {f"topic-{i:03d}": float(max(1, 400 - i)) for i in range(322)}
     renderer = TypographicRenderer(
-        width=1680,
-        height=1050,
-        min_font_size=5.0,
+        width=1600,
+        height=520,
+        min_font_size=8.0,
         max_font_size=42.0,
         require_all=True,
     )
     placed = renderer.place_words(words)
     assert {pw.text for pw in placed} == set(words.keys())
     assert all(pw.rotation == 0 for pw in placed)
-    assert all(pw.font_size >= 3.5 for pw in placed)
+    assert all(pw.opacity == 1.0 for pw in placed)
+    assert all(pw.font_size >= 8.0 for pw in placed)
+
+
+def test_typographic_default_canvas_is_wide_landscape() -> None:
+    """Public typographic clouds should read as stacked README banners."""
+    renderer = TypographicRenderer()
+    assert renderer.width == 1600
+    assert renderer.height == 520
+    assert renderer.width / renderer.height >= 2.5
+    assert renderer.min_font_size >= 8.0
+    assert generate_module.DEFAULT_WIDTH == 1600
+    assert generate_module.DEFAULT_HEIGHT == 520
+
+
+def test_typographic_constellation_uses_phyllotaxis_not_columns() -> None:
+    """Top-frequency terms sit on a sunflower spiral, not a two-column grid."""
+    renderer = TypographicRenderer(
+        width=1600,
+        height=520,
+        min_font_size=8.0,
+        max_font_size=48.0,
+        seed=7,
+    )
+    frequencies = {f"Term{index:02d}": float(90 - index * 4) for index in range(18)}
+    placed = renderer.place_words(frequencies)
+    assert {word.text for word in placed} == set(frequencies)
+    assert all(word.rotation == 0 for word in placed)
+    assert all(word.opacity == 1.0 for word in placed)
+    assert all(word.font_size >= 8.0 for word in placed)
+
+    slots = renderer._phyllotaxis_positions(12, 800.0, 260.0, 18.0)
+    assert len(slots) == 12
+    origin_radius = math.hypot(slots[0][0] - 800.0, slots[0][1] - 260.0)
+    outer_radius = math.hypot(slots[-1][0] - 800.0, slots[-1][1] - 260.0)
+    assert origin_radius < outer_radius
+
+    arch = list(renderer._archimedean_positions(100.0, 50.0, step=4.0, max_steps=6))
+    assert arch[0] == pytest.approx((100.0, 50.0))
+    assert math.hypot(arch[-1][0] - 100.0, arch[-1][1] - 50.0) > 0.0
+
+    split = renderer._constellation_count(len(frequencies))
+    top = sorted(placed, key=lambda word: word.font_size, reverse=True)[:split]
+    xs = [word.x for word in top]
+    ys = [word.y for word in top]
+    assert max(xs) - min(xs) > renderer.width * 0.12
+    assert max(ys) - min(ys) > renderer.height * 0.10
+    x_buckets = {round(x / 48.0) for x in xs}
+    assert len(x_buckets) >= 3
+
+    fills = {word.color.casefold() for word in placed}
+    allowed = {color.casefold() for color in github_readable_fills()}
+    assert fills <= allowed
+    for word in placed:
+        assert is_github_dual_surface_readable(word.color, opacity=word.opacity)
 
 
 def test_metaheuristic_place_words_passes_word_sizes_to_readability_config(
@@ -1043,8 +1119,8 @@ def test_fact_wordcloud_bakeoff_typographic_readable_on_github_light_and_dark() 
         assert fills
         assert fills <= allowed_fills
         opacities = _svg_text_opacities(svg)
-        assert opacities
-        assert min(opacities) >= 0.6
+        if opacities:
+            assert min(opacities) >= 0.6
 
 
 def test_fact_wordclouds_size_follows_starred_share() -> None:

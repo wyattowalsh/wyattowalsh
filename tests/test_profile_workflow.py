@@ -481,10 +481,11 @@ def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
     assert 'git add -A -- "${owned_files[@]}"' in finalize
 
 
-def test_generate_assets_word_clouds_use_fractal_renderer() -> None:
-    """CI may override DEFAULT_RENDERER but must keep the public filenames."""
+def test_generate_assets_word_clouds_use_typographic_renderer() -> None:
+    """CI ships the exotic typographic packer under the public filenames."""
     assets = _job_block(_workflow_text(), "generate-assets")
-    assert assets.count("--renderer fractal") == 2
+    assert assets.count("--renderer typographic") == 2
+    assert "--renderer fractal" not in assets
     assert "--from-topics-md" in assets
     assert "--from-languages-md" in assets
     assert (
@@ -1142,7 +1143,7 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     assert "<details" not in wrap.lower()
     assert "display: grid" not in wrap.lower()
 
-    tech_match = compile_section_body_re("Tech Stack", order).search(readme)
+    tech_match = compile_section_body_re("My Tech Stack", order).search(readme)
     assert tech_match is not None
     tech = tech_match.group(0)
     assert "<!-- SKILLS:START -->" in tech

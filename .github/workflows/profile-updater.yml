@@ -430,7 +430,7 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-topics-md \
-            --renderer fractal \
+            --renderer typographic \
             --output-path .github/assets/img/wordcloud_typographic_by_topics.svg
 
       - name: Generate Word Cloud by Language
@@ -438,7 +438,7 @@ jobs:
           uv run python -m scripts.cli generate word-cloud \
             --config-path config.yaml \
             --from-languages-md \
-            --renderer fractal \
+            --renderer typographic \
             --output-path .github/assets/img/wordcloud_typographic_by_languages.svg
 
       - name: Verify pinned light and dark banners

@@ -790,8 +790,12 @@ def test_cli_markdown_helper_missing_empty_and_dense(
     assert result == output
     assert output.exists()
     call = generated[-1]
-    assert call["min_font_size"] == 5.0
-    assert call["max_font_size"] == 42.0
+    assert call["min_font_size"] == 8.0
+    assert call["max_font_size"] == 46.0
+    init_kwargs = cast(dict[str, object], generated[0]["init"])
+    init_settings = cast(SimpleNamespace, init_kwargs["base_settings"])
+    assert init_settings.width == 1600
+    assert init_settings.height == 520
 
 
 def test_cli_tech_and_prompt_helpers(

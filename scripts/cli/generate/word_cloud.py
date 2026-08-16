@@ -237,9 +237,8 @@ def _wc_from_markdown(
         output_path.name if output_path else f"wordcloud_typographic_by_{source}.svg"
     )
 
-    # Larger canvas + slightly smaller max font so dense vocabularies (300+ topics)
-    # remain fully legible under the fit-all typographic packer.
-    canvas_w, canvas_h = (1680, 1050) if num_terms > 100 else (1400, 900)
+    # Wide landscape banners so stacked README imgs read as full-width art.
+    canvas_w, canvas_h = 1600, 520
     settings = wc.WordCloudSettings.from_yaml_model(
         yaml_settings,
         renderer=renderer,
@@ -257,8 +256,8 @@ def _wc_from_markdown(
         frequencies=frequencies,
         source=source,
         color_func_name=color_func_name,
-        min_font_size=5.0 if num_terms > 100 else 7.0,
-        max_font_size=42.0 if num_terms > 100 else 64.0,
+        min_font_size=8.0,
+        max_font_size=46.0 if num_terms > 100 else 64.0,
     )
 
 
