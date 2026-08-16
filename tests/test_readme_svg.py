@@ -10,7 +10,6 @@ from scripts.readme_svg import (
     LIGHT_THEME,
     VIEWS_PEEK_ASSET_NAME,
     VIEWS_PEEK_BUBBLE,
-    VIEWS_PEEK_KICKER,
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
     SvgBlock,
@@ -892,17 +891,15 @@ _SECRET_NEEDLES = (
 class TestSvgViewsPeekFrame:
     """Cute first-party chrome around the live komarev incrementer."""
 
-    def test_render_outputs_speech_bubble_cookie_jar_peek(self) -> None:
+    def test_render_outputs_abstract_bezel(self) -> None:
         svg = render_views_peek_frame()
 
         assert svg.startswith("<svg")
         assert 'role="img"' in svg
-        assert 'class="vp-bubble"' in svg
-        assert 'class="vp-jar"' in svg
-        assert 'class="vp-peek"' in svg
+        assert 'class="vp-bezel"' in svg
         assert VIEWS_PEEK_BUBBLE in svg
-        assert VIEWS_PEEK_KICKER in svg
-        assert "cookie" in svg.lower()
+        assert "cookie" not in svg.lower()
+        assert "jar" not in svg.lower()
 
     def test_frame_does_not_replace_komarev_incrementer(self) -> None:
         svg = render_views_peek_frame()
@@ -928,6 +925,7 @@ class TestSvgViewsPeekFrame:
         assert "@media (prefers-color-scheme: dark)" in svg
         assert "--vp-peek: #6366f1;" in svg
         assert "--vp-peek: #818cf8;" in svg
+        assert "vp-bezel" in svg
 
     def test_write_uses_views_peek_filename(self, tmp_path: Path) -> None:
         path = write_views_peek_frame(tmp_path)
@@ -943,7 +941,8 @@ class TestSvgViewsPeekFrame:
         path = builder.write_views_peek()
 
         assert path == tmp_path / "views-peek.svg"
-        assert VIEWS_PEEK_BUBBLE in path.read_text(encoding="utf-8")
+        assert "vp-bezel" in path.read_text(encoding="utf-8")
+        assert "cookie" not in path.read_text(encoding="utf-8").lower()
 
     def test_escapes_custom_bubble_copy(self) -> None:
         svg = SvgViewsPeekRenderer().render(

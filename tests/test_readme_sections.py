@@ -1664,7 +1664,8 @@ class TestRendering:
         assert "2026-06-02" in rendered
         assert "An open-flow hook." in rendered
         assert "style=for-the-badge" in rendered
-        assert "label=peek-a-boo" in rendered
+        assert "label=views" in rendered
+        assert "views-peek.svg" not in rendered
         assert "flat-square" not in rendered
         assert "komarev.com/ghpvc/?username=wyattowalsh" in rendered
 

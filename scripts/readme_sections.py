@@ -31,7 +31,7 @@ import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .metrics_svg import validate_svg_file
-from .readme_separators import generate_separators, generate_views_peek
+from .readme_separators import generate_separators
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -174,9 +174,8 @@ _BLOG_DETAILS_RE = re.compile(
 _GHPVC_URL_RE = re.compile(r"https://komarev\.com/ghpvc/\?[^\"'\s>]+")
 _GHPVC_URL = (
     "https://komarev.com/ghpvc/?username=wyattowalsh"
-    "&color=F59E0B&style=for-the-badge&label=peek-a-boo"
+    "&color=6366F1&style=for-the-badge&label=views"
 )
-_VIEWS_PEEK_SRC = ".github/assets/img/readme/views-peek.svg"
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
     (
@@ -1009,7 +1008,6 @@ class ReadmeSectionGenerator:
         )
         content = self._postprocess_static_sections(content, readme_path=readme_path)
         generate_separators()
-        generate_views_peek()
         readme_path.write_text(content, encoding="utf-8")
         return readme_path
 
@@ -1405,11 +1403,14 @@ class ReadmeSectionGenerator:
         if "komarev.com/ghpvc/" not in content:
             return content
         content = _GHPVC_URL_RE.sub(_GHPVC_URL, content)
+        content = re.sub(
+            r'[ \t]*<img src="[^"]*views-peek\.svg"[^>]*>\s*',
+            "",
+            content,
+        )
         footer = (
             '<p align="center">\n'
-            f'  <img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
-            'height="72" loading="lazy"/>\n'
-            f'  <img src="{_GHPVC_URL}" alt="Profile peek-a-boo count"/>\n'
+            f'  <img src="{_GHPVC_URL}" alt="Profile views"/>\n'
             "</p>\n"
             '<p align="center">\n'
             "  <a href="
@@ -1424,21 +1425,39 @@ class ReadmeSectionGenerator:
         )
         footer_re = re.compile(
             r'<p align="center">\s*'
-            r"(?:<img[^>\n]*views-peek\.svg[^>]*>\s*)?"
             r'(?:<img src="https://komarev\.com/ghpvc/[^"]+"[^>]*>\s*)'
             r"(?:<a href=\"[^\"]*profile-updater\.yml\">.*?</a>\s*)?"
             r"</p>",
             re.S,
         )
         if footer_re.search(content):
-            return footer_re.sub(footer, content, count=1)
-        if _VIEWS_PEEK_SRC not in content:
-            content = content.replace(
-                f'<img src="{_GHPVC_URL}"',
-                f'<img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
-                f'height="72" loading="lazy"/>\n  <img src="{_GHPVC_URL}"',
-                1,
-            )
+            content = footer_re.sub(footer, content, count=1)
+        updater_p = (
+            r'(?:<p align="center">\s*'
+            r'<a href="https://github\.com/wyattowalsh/wyattowalsh/actions/'
+            r'workflows/profile-updater\.yml">\s*'
+            r"<img src="
+            r'"https://github\.com/wyattowalsh/wyattowalsh/actions/'
+            r'workflows/profile-updater\.yml/badge\.svg" '
+            r'alt="Profile Updater"/>\s*</a>\s*</p>\s*)+'
+        )
+        content = re.sub(
+            updater_p,
+            (
+                '<p align="center">\n'
+                "  <a href="
+                '"https://github.com/wyattowalsh/wyattowalsh/actions/'
+                'workflows/profile-updater.yml">\n'
+                "    <img src="
+                '"https://github.com/wyattowalsh/wyattowalsh/actions/'
+                'workflows/profile-updater.yml/badge.svg" '
+                'alt="Profile Updater"/>\n'
+                "  </a>\n"
+                "</p>\n"
+            ),
+            content,
+            count=1,
+        )
         return content
 
     def _render_top_badges(self) -> str:

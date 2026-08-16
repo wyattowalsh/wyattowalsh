@@ -19,6 +19,8 @@
 
 
 
+
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -330,6 +332,8 @@
 
 
 
+
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
@@ -351,13 +355,7 @@
 ---
 
 <p align="center">
-  <img src=".github/assets/img/readme/views-peek.svg" alt="You found the cookie jar" height="72" loading="lazy"/>
-  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=F59E0B&style=for-the-badge&label=peek-a-boo" alt="Profile peek-a-boo count"/>
-</p>
-<p align="center">
-  <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
-    <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
-  </a>
+  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=for-the-badge&label=views" alt="Profile views"/>
 </p>
 <p align="center">
   <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
