@@ -94,7 +94,7 @@
 <text class="label" x="16" y="24">Peak hour</text>
 <text class="meta" x="16" y="42">Recent pushes · UTC</text>
 <text class="value" x="16" y="86">02:00</text>
-<rect class="peak-tick-on" x="16" y="135" width="11" height="15" rx="2" />
+<rect class="peak-tick-on" x="16" y="134" width="11" height="16" rx="2" />
 <rect class="peak-tick-on" x="30" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-max" x="44" y="106" width="11" height="44" rx="2" />
 <rect class="peak-tick-on" x="58" y="142" width="11" height="8" rx="2" />
@@ -104,19 +104,19 @@
 <rect class="peak-tick-on" x="114" y="137" width="11" height="13" rx="2" />
 <rect class="peak-tick-on" x="128" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="142" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="156" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="156" y="141" width="11" height="9" rx="2" />
 <rect class="peak-tick-on" x="170" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="184" y="137" width="11" height="13" rx="2" />
 <rect class="peak-tick-on" x="198" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="212" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="226" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="240" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="240" y="141" width="11" height="9" rx="2" />
 <rect class="peak-tick-on" x="254" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="268" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="282" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="296" y="131" width="11" height="19" rx="2" />
-<rect class="peak-tick-on" x="310" y="133" width="11" height="17" rx="2" />
-<rect class="peak-tick-on" x="324" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="296" y="130" width="11" height="20" rx="2" />
+<rect class="peak-tick-on" x="310" y="132" width="11" height="18" rx="2" />
+<rect class="peak-tick-on" x="324" y="141" width="11" height="9" rx="2" />
 <rect class="peak-tick-on" x="338" y="142" width="11" height="8" rx="2" />
 <text class="meta" x="16" y="166">00</text>
 <text class="meta" x="188" y="166" text-anchor="middle">12</text>
@@ -127,9 +127,9 @@
 <rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">After-hours accretion</text>
 <text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share · uncommon but readable night-owl index</text>
-<text class="body" x="16" y="72">39% nocturnal</text>
+<text class="body" x="16" y="72">37% nocturnal</text>
 <rect x="16" y="82" width="344" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.45"/>
-<rect class="focus-bar" x="16" y="82" width="129" height="8" rx="4"/>
+<rect class="focus-bar" x="16" y="82" width="124" height="8" rx="4"/>
 <text class="label" x="16" y="118">Focus monoculture</text>
 <text class="meta" x="16" y="136">Herfindahl of merged-PR repos (100% = one repo ate the month)</text>
 <text class="body" x="16" y="166">24% HHI</text>
