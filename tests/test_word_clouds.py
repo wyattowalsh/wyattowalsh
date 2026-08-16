@@ -9,6 +9,7 @@ import pytest
 
 import scripts.word_clouds.generate as generate_module
 import scripts.word_clouds.metaheuristic as metaheuristic_module
+import scripts.word_clouds.typographic as typographic_module
 from scripts.word_clouds import (
     DEFAULT_RENDERER,
     LayoutReadabilitySettings,
@@ -35,7 +36,6 @@ from scripts.word_clouds.solvers import (
     _random_solution,
     configure_layout_readability,
 )
-import scripts.word_clouds.typographic as typographic_module
 from scripts.word_clouds.typographic import TypographicRenderer
 from scripts.word_clouds.wordle import WordleRenderer
 
