@@ -379,6 +379,30 @@ class TestLoadConfigHappyPath:
 
 
 # ---------------------------------------------------------------------------
+# Repo config.yaml — featured project card set
+# ---------------------------------------------------------------------------
+
+_FEATURED_REPO_FULL_NAMES = [
+    "wyattowalsh/agents",
+    "wyattowalsh/nbadb",
+    "wyattowalsh/proxywhirl",
+    "wyattowalsh/mcp-crawl4ai",
+    "wyattowalsh/fl-mcp",
+    "wyattowalsh/personal-website",
+    "wyattowalsh/ai-web-feeds",
+    "wyattowalsh/iina-plugin-bookmarks",
+]
+
+
+class TestRepoFeaturedReposContract:
+    def test_load_config_featured_repos_names_match_named_eight(self):
+        settings = load_config().readme_sections_settings
+        assert settings is not None
+        names = [repo.full_name for repo in settings.featured_repos]
+        assert names == _FEATURED_REPO_FULL_NAMES
+
+
+# ---------------------------------------------------------------------------
 # load_config — missing / empty default path auto-create
 # ---------------------------------------------------------------------------
 

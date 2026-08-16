@@ -14,6 +14,8 @@
 
 <p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="Featured Projects" width="100%" loading="lazy"/></p>
 <!-- ## Featured Projects -->
+
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -21,9 +23,7 @@
 <a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
 <a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
 <a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a>
 <a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a>
 <a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
 <a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
 </p>
@@ -31,6 +31,7 @@
 
 <p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="Metrics" width="100%" loading="lazy"/></p>
 <!-- ## Metrics -->
+
 
 <table><tr>
 <td width="50%" valign="top"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>
@@ -41,13 +42,16 @@
 <img src=".github/assets/img/metrics.extra.svg" alt="Extra metrics: comment reactions and issue/PR follow-up" width="49%" loading="lazy"/>
 </p>
 
-<table><tr>
-<td width="50%" valign="top"><img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/></td>
-<td width="50%" valign="top"><img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/></td>
-</tr></table>
+<p align="center">
+<img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/>
+</p>
 
 <p align="center">
-<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="49%" loading="lazy"/>
+<img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
 </p>
 
 <p align="center">
@@ -61,6 +65,7 @@
 <p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="Living Art" width="100%" loading="lazy"/></p>
 <!-- ## Living Art -->
 
+
 <p align="center">
 <a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
 <a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
@@ -69,10 +74,12 @@
 <a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
 <a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
 </p>
-<p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="Tech Stack" width="100%" loading="lazy"/></p>
-<!-- ## Tech Stack -->
+<p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="My Tech Stack" width="100%" loading="lazy"/></p>
+<!-- ## My Tech Stack -->
+
+
 <details>
-<summary><strong>Tech Stack</strong></summary>
+<summary><strong>My Tech Stack</strong></summary>
 
 <!-- SKILLS:START -->
 ### Programming Languages
@@ -309,12 +316,18 @@
 <p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="Word Clouds" width="100%" loading="lazy"/></p>
 <!-- ## Word Clouds -->
 
-<table><tr>
-<td width="50%" valign="top"><img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Fractal word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/></td>
-<td width="50%" valign="top"><img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Fractal word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/></td>
-</tr></table>
+
+<p align="center">
+<img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/>
+</p>
+
+<p align="center">
+<img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/>
+</p>
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="Latest Blog Posts" width="100%" loading="lazy"/></p>
 <!-- ## Latest Blog Posts -->
+
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
@@ -323,7 +336,6 @@
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · 2021-01-15 · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms" width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · 2021-01-14 · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy" width="360" loading="lazy"/></a>
 </p>
-<p align="center"><a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer">Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI.</a> · <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer">Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling.</a> · <a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer">ProxyWhirl · 2026-02-13 · Production-ready Python proxy rotation with auto-fetching from 114+ sources, 9 selection strategies, self-healing circuit breakers, and five interfaces.</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer">Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · 2021-01-15 · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms</a> · <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer">Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · 2021-01-14 · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy</a></p>
 <p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
@@ -334,7 +346,8 @@
 ---
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=for-the-badge&label=Views" alt="Profile Views"/>
+  <img src=".github/assets/img/readme/views-peek.svg" alt="You found the cookie jar" width="280" loading="lazy"/>
+  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=C2410C&style=for-the-badge&label=peek-a-boos" alt="Profile Views"/>
   <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
     <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
   </a>

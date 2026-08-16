@@ -1,22 +1,270 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Featured projects">
-<style>:root { color-scheme: light dark; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } }</style>
-<line class="rail" x1="24" y1="18" x2="1176" y2="18" stroke="#d0d7de" stroke-width="1"/>
-<circle cx="600" cy="18" r="5" fill="none" stroke="#6366f1" stroke-width="1.6"/>
-<rect x="40" y="15.0" width="2.2" height="6.0" rx="1" fill="#6366f1"/>
-<rect x="110" y="12.5" width="2.2" height="11.0" rx="1" fill="#6366f1"/>
-<rect x="180" y="10.0" width="2.2" height="16.0" rx="1" fill="#6366f1"/>
-<rect x="250" y="14.5" width="2.2" height="7.0" rx="1" fill="#6366f1"/>
-<rect x="320" y="12.0" width="2.2" height="12.0" rx="1" fill="#6366f1"/>
-<rect x="390" y="9.5" width="2.2" height="17.0" rx="1" fill="#6366f1"/>
-<rect x="460" y="14.0" width="2.2" height="8.0" rx="1" fill="#6366f1"/>
-<rect x="530" y="11.5" width="2.2" height="13.0" rx="1" fill="#6366f1"/>
-<rect x="600" y="9.0" width="2.2" height="18.0" rx="1" fill="#6366f1"/>
-<rect x="670" y="13.5" width="2.2" height="9.0" rx="1" fill="#6366f1"/>
-<rect x="740" y="11.0" width="2.2" height="14.0" rx="1" fill="#6366f1"/>
-<rect x="810" y="8.5" width="2.2" height="19.0" rx="1" fill="#6366f1"/>
-<rect x="880" y="13.0" width="2.2" height="10.0" rx="1" fill="#6366f1"/>
-<rect x="950" y="10.5" width="2.2" height="15.0" rx="1" fill="#6366f1"/>
-<rect x="1020" y="15.0" width="2.2" height="6.0" rx="1" fill="#6366f1"/>
-<rect x="1090" y="12.5" width="2.2" height="11.0" rx="1" fill="#6366f1"/>
-<rect x="1160" y="10.0" width="2.2" height="16.0" rx="1" fill="#6366f1"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="52" viewBox="0 0 1200 52" role="img" aria-label="Featured projects">
+<style>:root { color-scheme: light dark; } .rail { stroke: #d0d7de; fill: none; } .under { stroke: #6366f1; fill: none; opacity: 0.22; } .filigree { stroke: #6366f1; fill: none; } .jewel { stroke: #4f46e5; fill: #6366f1; } .rose { stroke: #4f46e5; fill: none; } .rose-fill { fill: #6366f1; stroke: none; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } .under { stroke: #818cf8; } .filigree { stroke: #818cf8; } .jewel { stroke: #a5b4fc; fill: #818cf8; } .rose { stroke: #a5b4fc; } .rose-fill { fill: #818cf8; } }</style>
+<line class="rail" x1="18" y1="10" x2="1182" y2="10" stroke-width="0.6"/>
+<line class="rail" x1="18" y1="26" x2="1182" y2="26" stroke-width="1.05"/>
+<line class="rail" x1="18" y1="42" x2="1182" y2="42" stroke-width="0.6"/>
+<line class="filigree" x1="36" y1="10" x2="36" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M36 21.4 L39.2 26 L36 30.6 L32.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="54" y1="10" x2="54" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="54" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="72" y1="10" x2="72" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M72 21.4 L75.2 26 L72 30.6 L68.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="90" y1="10" x2="90" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="90" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="108" y1="10" x2="108" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M108 21.4 L111.2 26 L108 30.6 L104.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="126" y1="10" x2="126" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="126" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="144" y1="10" x2="144" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M144 21.4 L147.2 26 L144 30.6 L140.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="162" y1="10" x2="162" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="162" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="180" y1="10" x2="180" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M180 21.4 L183.2 26 L180 30.6 L176.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="198" y1="10" x2="198" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="198" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="216" y1="10" x2="216" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M216 21.4 L219.2 26 L216 30.6 L212.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="234" y1="10" x2="234" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="234" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="252" y1="10" x2="252" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M252 21.4 L255.2 26 L252 30.6 L248.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="270" y1="10" x2="270" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="270" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="288" y1="10" x2="288" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M288 21.4 L291.2 26 L288 30.6 L284.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="306" y1="10" x2="306" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="306" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="324" y1="10" x2="324" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M324 21.4 L327.2 26 L324 30.6 L320.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="342" y1="10" x2="342" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="342" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="360" y1="10" x2="360" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M360 21.4 L363.2 26 L360 30.6 L356.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="378" y1="10" x2="378" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="378" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="396" y1="10" x2="396" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M396 21.4 L399.2 26 L396 30.6 L392.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="414" y1="10" x2="414" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="414" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="432" y1="10" x2="432" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M432 21.4 L435.2 26 L432 30.6 L428.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="450" y1="10" x2="450" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="450" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="468" y1="10" x2="468" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M468 21.4 L471.2 26 L468 30.6 L464.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="486" y1="10" x2="486" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="486" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="504" y1="10" x2="504" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M504 21.4 L507.2 26 L504 30.6 L500.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="522" y1="10" x2="522" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="522" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="684" y1="10" x2="684" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M684 21.4 L687.2 26 L684 30.6 L680.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="702" y1="10" x2="702" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="702" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="720" y1="10" x2="720" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M720 21.4 L723.2 26 L720 30.6 L716.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="738" y1="10" x2="738" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="738" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="756" y1="10" x2="756" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M756 21.4 L759.2 26 L756 30.6 L752.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="774" y1="10" x2="774" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="774" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="792" y1="10" x2="792" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M792 21.4 L795.2 26 L792 30.6 L788.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="810" y1="10" x2="810" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="810" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="828" y1="10" x2="828" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M828 21.4 L831.2 26 L828 30.6 L824.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="846" y1="10" x2="846" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="846" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="864" y1="10" x2="864" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M864 21.4 L867.2 26 L864 30.6 L860.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="882" y1="10" x2="882" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="882" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="900" y1="10" x2="900" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M900 21.4 L903.2 26 L900 30.6 L896.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="918" y1="10" x2="918" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="918" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="936" y1="10" x2="936" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M936 21.4 L939.2 26 L936 30.6 L932.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="954" y1="10" x2="954" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="954" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="972" y1="10" x2="972" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M972 21.4 L975.2 26 L972 30.6 L968.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="990" y1="10" x2="990" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="990" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="1008" y1="10" x2="1008" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M1008 21.4 L1011.2 26 L1008 30.6 L1004.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="1026" y1="10" x2="1026" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="1026" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="1044" y1="10" x2="1044" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M1044 21.4 L1047.2 26 L1044 30.6 L1040.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="1062" y1="10" x2="1062" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="1062" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="1080" y1="10" x2="1080" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M1080 21.4 L1083.2 26 L1080 30.6 L1076.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="1098" y1="10" x2="1098" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="1098" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="1116" y1="10" x2="1116" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M1116 21.4 L1119.2 26 L1116 30.6 L1112.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="1134" y1="10" x2="1134" y2="42" stroke-width="0.45"/>
+<circle class="jewel" cx="1134" cy="26" r="1.15" fill="#6366f1"/>
+<line class="filigree" x1="1152" y1="10" x2="1152" y2="42" stroke-width="0.45"/>
+<path class="jewel" d="M1152 21.4 L1155.2 26 L1152 30.6 L1148.8 26 Z" fill="#6366f1" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M38 26 L46 14 Q54 6 62 14 L70 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M38 26 L46 14 Q54 6 62 14 L70 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M44 26 L49 17 Q54 11 59 17 L64 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M54 14.8 L56.1 18 L54 21.2 L51.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M74 26 L82 14 Q90 6 98 14 L106 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M74 26 L82 14 Q90 6 98 14 L106 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M80 26 L85 17 Q90 11 95 17 L100 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M90 14.8 L92.1 18 L90 21.2 L87.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M110 26 L118 14 Q126 6 134 14 L142 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M110 26 L118 14 Q126 6 134 14 L142 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M116 26 L121 17 Q126 11 131 17 L136 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M126 14.8 L128.1 18 L126 21.2 L123.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M146 26 L154 14 Q162 6 170 14 L178 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M146 26 L154 14 Q162 6 170 14 L178 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M152 26 L157 17 Q162 11 167 17 L172 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M162 14.8 L164.1 18 L162 21.2 L159.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M182 26 L190 14 Q198 6 206 14 L214 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M182 26 L190 14 Q198 6 206 14 L214 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M188 26 L193 17 Q198 11 203 17 L208 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M198 14.8 L200.1 18 L198 21.2 L195.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M218 26 L226 14 Q234 6 242 14 L250 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M218 26 L226 14 Q234 6 242 14 L250 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M224 26 L229 17 Q234 11 239 17 L244 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M234 14.8 L236.1 18 L234 21.2 L231.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M254 26 L262 14 Q270 6 278 14 L286 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M254 26 L262 14 Q270 6 278 14 L286 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M260 26 L265 17 Q270 11 275 17 L280 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M270 14.8 L272.1 18 L270 21.2 L267.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M290 26 L298 14 Q306 6 314 14 L322 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M290 26 L298 14 Q306 6 314 14 L322 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M296 26 L301 17 Q306 11 311 17 L316 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M306 14.8 L308.1 18 L306 21.2 L303.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M326 26 L334 14 Q342 6 350 14 L358 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M326 26 L334 14 Q342 6 350 14 L358 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M332 26 L337 17 Q342 11 347 17 L352 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M342 14.8 L344.1 18 L342 21.2 L339.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M362 26 L370 14 Q378 6 386 14 L394 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M362 26 L370 14 Q378 6 386 14 L394 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M368 26 L373 17 Q378 11 383 17 L388 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M378 14.8 L380.1 18 L378 21.2 L375.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M398 26 L406 14 Q414 6 422 14 L430 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M398 26 L406 14 Q414 6 422 14 L430 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M404 26 L409 17 Q414 11 419 17 L424 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M414 14.8 L416.1 18 L414 21.2 L411.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M434 26 L442 14 Q450 6 458 14 L466 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M434 26 L442 14 Q450 6 458 14 L466 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M440 26 L445 17 Q450 11 455 17 L460 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M450 14.8 L452.1 18 L450 21.2 L447.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M470 26 L478 14 Q486 6 494 14 L502 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M470 26 L478 14 Q486 6 494 14 L502 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M476 26 L481 17 Q486 11 491 17 L496 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M486 14.8 L488.1 18 L486 21.2 L483.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M506 26 L514 14 Q522 6 530 14 L538 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M506 26 L514 14 Q522 6 530 14 L538 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M512 26 L517 17 Q522 11 527 17 L532 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M522 14.8 L524.1 18 L522 21.2 L519.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M686 26 L694 14 Q702 6 710 14 L718 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M686 26 L694 14 Q702 6 710 14 L718 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M692 26 L697 17 Q702 11 707 17 L712 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M702 14.8 L704.1 18 L702 21.2 L699.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M722 26 L730 14 Q738 6 746 14 L754 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M722 26 L730 14 Q738 6 746 14 L754 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M728 26 L733 17 Q738 11 743 17 L748 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M738 14.8 L740.1 18 L738 21.2 L735.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M758 26 L766 14 Q774 6 782 14 L790 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M758 26 L766 14 Q774 6 782 14 L790 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M764 26 L769 17 Q774 11 779 17 L784 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M774 14.8 L776.1 18 L774 21.2 L771.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M794 26 L802 14 Q810 6 818 14 L826 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M794 26 L802 14 Q810 6 818 14 L826 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M800 26 L805 17 Q810 11 815 17 L820 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M810 14.8 L812.1 18 L810 21.2 L807.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M830 26 L838 14 Q846 6 854 14 L862 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M830 26 L838 14 Q846 6 854 14 L862 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M836 26 L841 17 Q846 11 851 17 L856 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M846 14.8 L848.1 18 L846 21.2 L843.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M866 26 L874 14 Q882 6 890 14 L898 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M866 26 L874 14 Q882 6 890 14 L898 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M872 26 L877 17 Q882 11 887 17 L892 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M882 14.8 L884.1 18 L882 21.2 L879.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M902 26 L910 14 Q918 6 926 14 L934 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M902 26 L910 14 Q918 6 926 14 L934 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M908 26 L913 17 Q918 11 923 17 L928 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M918 14.8 L920.1 18 L918 21.2 L915.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M938 26 L946 14 Q954 6 962 14 L970 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M938 26 L946 14 Q954 6 962 14 L970 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M944 26 L949 17 Q954 11 959 17 L964 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M954 14.8 L956.1 18 L954 21.2 L951.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M974 26 L982 14 Q990 6 998 14 L1006 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M974 26 L982 14 Q990 6 998 14 L1006 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M980 26 L985 17 Q990 11 995 17 L1000 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M990 14.8 L992.1 18 L990 21.2 L987.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M1010 26 L1018 14 Q1026 6 1034 14 L1042 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1010 26 L1018 14 Q1026 6 1034 14 L1042 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1016 26 L1021 17 Q1026 11 1031 17 L1036 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M1026 14.8 L1028.1 18 L1026 21.2 L1023.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M1046 26 L1054 14 Q1062 6 1070 14 L1078 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1046 26 L1054 14 Q1062 6 1070 14 L1078 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1052 26 L1057 17 Q1062 11 1067 17 L1072 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M1062 14.8 L1064.1 18 L1062 21.2 L1059.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M1082 26 L1090 14 Q1098 6 1106 14 L1114 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1082 26 L1090 14 Q1098 6 1106 14 L1114 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1088 26 L1093 17 Q1098 11 1103 17 L1108 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M1098 14.8 L1100.1 18 L1098 21.2 L1095.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="under" d="M1118 26 L1126 14 Q1134 6 1142 14 L1150 26" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1118 26 L1126 14 Q1134 6 1142 14 L1150 26" fill="none" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1124 26 L1129 17 Q1134 11 1139 17 L1144 26" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="jewel" d="M1134 14.8 L1136.1 18 L1134 21.2 L1131.9 18 Z" fill="#6366f1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M38 8 L22 8 L22 24" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M38 44 L22 44 L22 28" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M38 13 L27 13 L27 24" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M38 39 L27 39 L27 28" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1162 8 L1178 8 L1178 24" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1162 44 L1178 44 L1178 28" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1162 13 L1173 13 L1173 24" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="filigree" d="M1162 39 L1173 39 L1173 28" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<circle class="rose" cx="600" cy="26" r="21" fill="none" stroke-width="1.5"/>
+<circle class="rose" cx="600" cy="26" r="15.5" fill="none" stroke-width="0.9"/>
+<circle class="rose" cx="600" cy="26" r="9.5" fill="none" stroke-width="1.1"/>
+<circle class="rose" cx="600" cy="26" r="5.2" fill="none" stroke-width="0.8"/>
+<line class="filigree" x1="600" y1="26" x2="600" y2="5.5" stroke-width="0.55"/>
+<path class="filigree" d="M598.39 17.15 L600 5 L601.61 17.15" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="610.25" y2="8.25" stroke-width="0.55"/>
+<path class="filigree" d="M603.03 17.53 L610.5 7.81 L605.82 19.14" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="617.75" y2="15.75" stroke-width="0.55"/>
+<path class="filigree" d="M606.86 20.18 L618.19 15.5 L608.47 22.97" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="620.5" y2="26" stroke-width="0.55"/>
+<path class="filigree" d="M608.85 24.39 L621 26 L608.85 27.61" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="617.75" y2="36.25" stroke-width="0.55"/>
+<path class="filigree" d="M608.47 29.03 L618.19 36.5 L606.86 31.82" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="610.25" y2="43.75" stroke-width="0.55"/>
+<path class="filigree" d="M605.82 32.86 L610.5 44.19 L603.03 34.47" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="600" y2="46.5" stroke-width="0.55"/>
+<path class="filigree" d="M601.61 34.85 L600 47 L598.39 34.85" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="589.75" y2="43.75" stroke-width="0.55"/>
+<path class="filigree" d="M596.97 34.47 L589.5 44.19 L594.18 32.86" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="582.25" y2="36.25" stroke-width="0.55"/>
+<path class="filigree" d="M593.14 31.82 L581.81 36.5 L591.53 29.03" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="579.5" y2="26" stroke-width="0.55"/>
+<path class="filigree" d="M591.15 27.61 L579 26 L591.15 24.39" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="582.25" y2="15.75" stroke-width="0.55"/>
+<path class="filigree" d="M591.53 22.97 L581.81 15.5 L593.14 20.18" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="filigree" x1="600" y1="26" x2="589.75" y2="8.25" stroke-width="0.55"/>
+<path class="filigree" d="M594.18 19.14 L589.5 7.81 L596.97 17.53" fill="none" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon class="jewel" points="600,17.8 601.3,22.86 605.8,20.2 603.14,24.7 608.2,26 603.14,27.3 605.8,31.8 601.3,29.14 600,34.2 598.7,29.14 594.2,31.8 596.86,27.3 591.8,26 596.86,24.7 594.2,20.2 598.7,22.86" stroke-width="0.7"/>
+<circle class="rose-fill" cx="600" cy="26" r="2.1" fill="#6366f1"/>
+<circle class="rose-fill" cx="611.27" cy="30.67" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="604.67" cy="37.27" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="595.33" cy="37.27" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="588.73" cy="30.67" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="588.73" cy="21.33" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="595.33" cy="14.73" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="604.67" cy="14.73" r="1.05" fill="#6366f1"/>
+<circle class="rose-fill" cx="611.27" cy="21.33" r="1.05" fill="#6366f1"/>
 </svg>

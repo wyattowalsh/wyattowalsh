@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T20:17:02.319917+00:00",
+  "generated_at": "2026-08-16T19:39:00.330449+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -17,7 +17,7 @@
         "Python",
         "HTML"
       ],
-      "updated_label": "Updated 1w ago",
+      "updated_label": "Updated 1h ago",
       "url": "https://github.com/wyattowalsh/agents"
     },
     {
@@ -34,7 +34,7 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 9h ago",
+      "updated_label": "Updated 2d ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
@@ -89,23 +89,6 @@
       "url": "https://github.com/wyattowalsh/fl-mcp"
     },
     {
-      "alt_text": "Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards",
-      "forks": null,
-      "full_name": "wyattowalsh/listentropy",
-      "license": "MIT",
-      "stars": 0,
-      "summary": "Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-listentropy.svg",
-      "thumbnail_present": true,
-      "title": "listentropy",
-      "top_languages": [
-        "TypeScript",
-        "JavaScript"
-      ],
-      "updated_label": "Updated 3mo ago",
-      "url": "https://github.com/wyattowalsh/listentropy"
-    },
-    {
       "alt_text": "Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! \ud83d\udc68\u200d\ud83d\udcbb",
       "forks": null,
       "full_name": "wyattowalsh/personal-website",
@@ -123,23 +106,6 @@
       "url": "https://github.com/wyattowalsh/personal-website"
     },
     {
-      "alt_text": "Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools",
-      "forks": null,
-      "full_name": "wyattowalsh/mdxpad",
-      "license": null,
-      "stars": 0,
-      "summary": "macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-mdxpad.svg",
-      "thumbnail_present": true,
-      "title": "mdxpad",
-      "top_languages": [
-        "TypeScript",
-        "MDX"
-      ],
-      "updated_label": "Updated 2mo ago",
-      "url": "https://github.com/wyattowalsh/mdxpad"
-    },
-    {
       "alt_text": "Featured project card for ai-web-feeds: AI/ML web feeds",
       "forks": null,
       "full_name": "wyattowalsh/ai-web-feeds",
@@ -153,7 +119,7 @@
         "TypeScript",
         "Python"
       ],
-      "updated_label": "Updated 4d ago",
+      "updated_label": "Updated 6d ago",
       "url": "https://github.com/wyattowalsh/ai-web-feeds"
     },
     {

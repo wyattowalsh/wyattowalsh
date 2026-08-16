@@ -18,7 +18,7 @@ def test_custom_section_order_preserves_known_titles() -> None:
             "Featured Projects",
             "Metrics",
             "Living Art",
-            "Tech Stack",
+            "My Tech Stack",
             "Word Clouds",
         ]
     )
@@ -30,13 +30,13 @@ def test_compile_section_body_uses_neighbor() -> None:
         "Featured Projects",
         "Metrics",
         "Living Art",
-        "Tech Stack",
+        "My Tech Stack",
         "Word Clouds",
     )
     text = (
         "## Metrics\n\nmetrics body\n\n"
         "## Living Art\n\nliving body\n\n"
-        "## Tech Stack\n\ntech body\n"
+        "## My Tech Stack\n\ntech body\n"
     )
     match = compile_section_body_re("Living Art", order).search(text)
     assert match is not None

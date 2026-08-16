@@ -1825,6 +1825,187 @@ class SvgConnectCardRenderer:
 
 
 # ---------------------------------------------------------------------------
+# Views-peek frame (decorative chrome around the live komarev incrementer)
+# ---------------------------------------------------------------------------
+
+VIEWS_PEEK_ASSET_NAME = "views-peek"
+VIEWS_PEEK_BUBBLE = "you found the cookie jar"
+VIEWS_PEEK_KICKER = "peek-a-boo"
+# Documented pairing for the assembler. The incrementer is *not* this SVG.
+KOMAREV_GHPVC_USERNAME = "wyattowalsh"
+
+
+class SvgViewsPeekRenderer:
+    """Cute speech-bubble / peeking cookie-jar chrome for the view counter.
+
+    This renderer never embeds or replaces the live komarev.com/ghpvc
+    incrementer. Footer markup should keep
+    ``username=wyattowalsh`` on the komarev URL and place this asset beside
+    it.
+    """
+
+    width = 300
+    height = 96
+
+    def render(
+        self,
+        *,
+        bubble: str = VIEWS_PEEK_BUBBLE,
+        kicker: str = VIEWS_PEEK_KICKER,
+    ) -> str:
+        esc = escape
+        w, h = self.width, self.height
+        return "\n".join(
+            [
+                (
+                    f'<svg xmlns="http://www.w3.org/2000/svg" '
+                    f'width="{w}" height="{h}" viewBox="0 0 {w} {h}" '
+                    'role="img" '
+                    f'aria-label="{esc(self._aria(bubble, kicker), quote=True)}" '
+                    'data-incrementer="komarev" '
+                    f'data-username="{esc(KOMAREV_GHPVC_USERNAME, quote=True)}">'
+                ),
+                "<defs>",
+                "<style>",
+                self._css(),
+                "</style>",
+                '<filter id="vp-shadow" x="-8%" y="-10%" width="120%" height="130%">',
+                '<feDropShadow dx="0" dy="2" stdDeviation="2.4" '
+                'flood-color="#000000" flood-opacity="0.12"/>',
+                "</filter>",
+                "</defs>",
+                *self._bubble(bubble, kicker),
+                *self._cookie_jar(),
+                *self._peeking_critter(),
+                "</svg>",
+            ]
+        )
+
+    def _aria(self, bubble: str, kicker: str) -> str:  # noqa: PLR6301
+        return f"Cute views frame — {kicker}: {bubble}"
+
+    def _css(self) -> str:  # noqa: PLR6301
+        return "\n".join(
+            [
+                ":root {",
+                "  color-scheme: light dark;",
+                "  --vp-bubble: #ffffff;",
+                "  --vp-bubble-stroke: #d0d7de;",
+                "  --vp-text: #1f2328;",
+                "  --vp-kicker: #656d76;",
+                "  --vp-jar: #f5c84c;",
+                "  --vp-jar-deep: #d4a017;",
+                "  --vp-jar-stroke: #b45309;",
+                "  --vp-cookie: #c2410c;",
+                "  --vp-chip: #431407;",
+                "  --vp-lid: #f59e0b;",
+                "  --vp-peek: #6366f1;",
+                "  --vp-eye: #1f2328;",
+                "  --vp-sclera: #ffffff;",
+                "}",
+                "@media (prefers-color-scheme: dark) { :root {",
+                "  --vp-bubble: #0d1117;",
+                "  --vp-bubble-stroke: #30363d;",
+                "  --vp-text: #e6edf3;",
+                "  --vp-kicker: #8b949e;",
+                "  --vp-jar: #ca8a04;",
+                "  --vp-jar-deep: #854d0e;",
+                "  --vp-jar-stroke: #fbbf24;",
+                "  --vp-cookie: #fdba74;",
+                "  --vp-chip: #7c2d12;",
+                "  --vp-lid: #eab308;",
+                "  --vp-peek: #818cf8;",
+                "  --vp-eye: #0d1117;",
+                "  --vp-sclera: #f0f6fc;",
+                "}}",
+                ".vp-bubble { fill: var(--vp-bubble); stroke: var(--vp-bubble-stroke);",
+                " stroke-width: 1.4; filter: url(#vp-shadow); }",
+                ".vp-tail { fill: var(--vp-bubble); stroke: var(--vp-bubble-stroke);",
+                " stroke-width: 1.2; }",
+                f".vp-copy {{ fill: var(--vp-text); font: 700 13px {FONT_FAMILY}; }}",
+                f".vp-kicker {{ fill: var(--vp-kicker); font: 700 9px {FONT_FAMILY};",
+                " letter-spacing: 0.12em; text-transform: uppercase; }",
+                ".vp-jar-body { fill: var(--vp-jar); stroke: var(--vp-jar-stroke);",
+                " stroke-width: 1.5; }",
+                ".vp-jar-deep { fill: var(--vp-jar-deep); opacity: 0.35; }",
+                ".vp-lid { fill: var(--vp-lid); stroke: var(--vp-jar-stroke);",
+                " stroke-width: 1.4; }",
+                ".vp-cookie { fill: var(--vp-cookie); }",
+                ".vp-chip { fill: var(--vp-chip); }",
+                ".vp-peek { fill: var(--vp-peek); }",
+                ".vp-sclera { fill: var(--vp-sclera); }",
+                ".vp-pupil { fill: var(--vp-eye); }",
+                ".vp-smile { fill: none; stroke: var(--vp-eye); stroke-width: 1.3;",
+                " stroke-linecap: round; }",
+            ]
+        )
+
+    def _bubble(self, bubble: str, kicker: str) -> list[str]:  # noqa: PLR6301
+        esc = escape
+        return [
+            '<g class="vp-speech">',
+            '<rect class="vp-bubble" x="8" y="16" width="196" height="50" rx="16"/>',
+            '<path class="vp-tail" d="M174 58 L202 76 L164 64 Z"/>',
+            (f'<text class="vp-kicker" x="24" y="34">{esc(kicker, quote=True)}</text>'),
+            (f'<text class="vp-copy" x="24" y="54">{esc(bubble, quote=True)}</text>'),
+            "</g>",
+        ]
+
+    def _cookie_jar(self) -> list[str]:  # noqa: PLR6301
+        return [
+            '<g class="vp-jar" transform="translate(206,34)">',
+            '<path class="vp-jar-body" d="M12 20 C12 15 18 13 24 13 H62 '
+            'C68 13 74 15 74 20 L70 56 C70 62 63 66 43 66 C23 66 16 62 16 56 Z"/>',
+            '<ellipse class="vp-jar-deep" cx="43" cy="44" rx="22" ry="14"/>',
+            '<ellipse class="vp-cookie" cx="32" cy="38" rx="9" ry="6"/>',
+            '<ellipse class="vp-cookie" cx="52" cy="42" rx="8" ry="5.5"/>',
+            '<circle class="vp-chip" cx="29" cy="37" r="1.15"/>',
+            '<circle class="vp-chip" cx="35" cy="39.5" r="1"/>',
+            '<circle class="vp-chip" cx="50" cy="41" r="1.1"/>',
+            '<circle class="vp-chip" cx="55" cy="43.5" r="0.9"/>',
+            '<ellipse class="vp-lid" cx="43" cy="18" rx="33" ry="7"/>',
+            '<ellipse class="vp-lid" cx="50" cy="8" rx="27" ry="6" '
+            'transform="rotate(-16 50 8)"/>',
+            "</g>",
+        ]
+
+    def _peeking_critter(self) -> list[str]:  # noqa: PLR6301
+        return [
+            '<g class="vp-peek-group" transform="translate(236,16)">',
+            '<ellipse class="vp-peek" cx="16" cy="24" rx="16" ry="14"/>',
+            '<circle class="vp-peek" cx="3" cy="12" r="5"/>',
+            '<circle class="vp-peek" cx="28" cy="11" r="5.4"/>',
+            '<ellipse class="vp-sclera" cx="10" cy="22" rx="4.3" ry="5"/>',
+            '<ellipse class="vp-sclera" cx="23" cy="22" rx="4.3" ry="5"/>',
+            '<circle class="vp-pupil" cx="11.2" cy="23" r="1.8"/>',
+            '<circle class="vp-pupil" cx="24.2" cy="23" r="1.8"/>',
+            '<path class="vp-smile" d="M12 28.5 Q16.5 32 21 28.5"/>',
+            '<ellipse class="vp-peek" cx="5" cy="36" rx="5" ry="3"/>',
+            '<ellipse class="vp-peek" cx="27" cy="36" rx="5" ry="3"/>',
+            "</g>",
+        ]
+
+
+def render_views_peek_frame(
+    *,
+    bubble: str = VIEWS_PEEK_BUBBLE,
+    kicker: str = VIEWS_PEEK_KICKER,
+) -> str:
+    """Return the views-peek SVG string (chrome only; no live count)."""
+    return SvgViewsPeekRenderer().render(bubble=bubble, kicker=kicker)
+
+
+def write_views_peek_frame(output_dir: Path | str) -> Path:
+    """Write ``views-peek.svg`` into *output_dir* via :class:`SvgAssetWriter`."""
+    path = SvgAssetWriter(output_dir).write(
+        VIEWS_PEEK_ASSET_NAME,
+        render_views_peek_frame(),
+    )
+    logger.info("Wrote views peek frame to {path}", path=path)
+    return path
+
+
+# ---------------------------------------------------------------------------
 # Asset writer and builder (public API — unchanged)
 # ---------------------------------------------------------------------------
 
@@ -1868,3 +2049,10 @@ class ReadmeSvgAssetBuilder:
 
     def write_raw(self, asset_name: str, svg_content: str) -> Path:
         return self.writer.write(asset_name=asset_name, svg_content=svg_content)
+
+    def write_views_peek(self) -> Path:
+        """Write cute views-peek chrome. Does not increment or replace komarev."""
+        return self.write_raw(
+            asset_name=VIEWS_PEEK_ASSET_NAME,
+            svg_content=render_views_peek_frame(),
+        )

@@ -5,8 +5,12 @@ from pathlib import Path
 
 from scripts.readme_svg import (
     DARK_THEME,
+    KOMAREV_GHPVC_USERNAME,
     LANGUAGE_COLORS,
     LIGHT_THEME,
+    VIEWS_PEEK_ASSET_NAME,
+    VIEWS_PEEK_BUBBLE,
+    VIEWS_PEEK_KICKER,
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
     SvgBlock,
@@ -17,7 +21,10 @@ from scripts.readme_svg import (
     SvgCardTheme,
     SvgConnectCardRenderer,
     SvgRepoCardRenderer,
+    SvgViewsPeekRenderer,
     _word_wrap,
+    render_views_peek_frame,
+    write_views_peek_frame,
 )
 
 
@@ -869,3 +876,83 @@ class TestSvgRepoCardRenderer:
             assert 'id="shadow-dark"' in svg
             assert "<picture" not in svg
             assert "@media (prefers-color-scheme: dark)" in svg
+
+
+_SECRET_NEEDLES = (
+    "api_key",
+    "secret",
+    "password",
+    "bearer ",
+    "ghp_",
+    "github_pat_",
+    "-----begin ",
+)
+
+
+class TestSvgViewsPeekFrame:
+    """Cute first-party chrome around the live komarev incrementer."""
+
+    def test_render_outputs_speech_bubble_cookie_jar_peek(self) -> None:
+        svg = render_views_peek_frame()
+
+        assert svg.startswith("<svg")
+        assert 'role="img"' in svg
+        assert 'class="vp-bubble"' in svg
+        assert 'class="vp-jar"' in svg
+        assert 'class="vp-peek"' in svg
+        assert VIEWS_PEEK_BUBBLE in svg
+        assert VIEWS_PEEK_KICKER in svg
+        assert "cookie" in svg.lower()
+
+    def test_frame_does_not_replace_komarev_incrementer(self) -> None:
+        svg = render_views_peek_frame()
+
+        assert KOMAREV_GHPVC_USERNAME == "wyattowalsh"
+        assert 'data-incrementer="komarev"' in svg
+        assert f'data-username="{KOMAREV_GHPVC_USERNAME}"' in svg
+        assert "komarev.com" not in svg
+        assert "ghpvc" not in svg
+        assert "<image" not in svg
+
+    def test_frame_does_not_embed_secrets(self) -> None:
+        svg = render_views_peek_frame()
+        lowered = svg.lower()
+
+        for needle in _SECRET_NEEDLES:
+            assert needle not in lowered
+        assert re.search(r"(sk|xox[baprs])-[A-Za-z0-9]", svg) is None
+
+    def test_dark_mode_media_query(self) -> None:
+        svg = render_views_peek_frame()
+
+        assert "@media (prefers-color-scheme: dark)" in svg
+        assert "--vp-peek: #6366f1;" in svg
+        assert "--vp-peek: #818cf8;" in svg
+
+    def test_write_uses_views_peek_filename(self, tmp_path: Path) -> None:
+        path = write_views_peek_frame(tmp_path)
+
+        assert path == tmp_path / f"{VIEWS_PEEK_ASSET_NAME}.svg"
+        content = path.read_text(encoding="utf-8")
+        assert content == render_views_peek_frame()
+        assert "komarev.com/ghpvc" not in content
+
+    def test_builder_write_views_peek(self, tmp_path: Path) -> None:
+        builder = ReadmeSvgAssetBuilder(output_dir=tmp_path)
+
+        path = builder.write_views_peek()
+
+        assert path == tmp_path / "views-peek.svg"
+        assert VIEWS_PEEK_BUBBLE in path.read_text(encoding="utf-8")
+
+    def test_escapes_custom_bubble_copy(self) -> None:
+        svg = SvgViewsPeekRenderer().render(
+            bubble='<jar>&"chips"',
+            kicker="peek & boom",
+        )
+
+        assert "<jar>" not in svg
+        assert "&lt;jar&gt;" in svg
+        assert "&amp;" in svg
+        assert "peek &amp; boom" in svg
+        assert 'data-username="wyattowalsh"' in svg

@@ -1,7 +1,7 @@
 style: for-the-badge
 logo_color: white
 readme_path: README.md
-section_title: Tech Stack
+section_title: My Tech Stack
 collapsible: false
 categories:
   - name: Programming Languages

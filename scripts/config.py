@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Literal
+from typing import Literal, override
 
 import yaml
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
@@ -258,7 +258,7 @@ class SkillsSettings(BaseModel):
     logo_color: str = Field("white", description="Default logoColor for all badges")
     readme_path: str = Field("README.md", description="Path to README for injection")
     section_title: str = Field(
-        "Tech Stack",
+        "My Tech Stack",
         description=(
             "Section heading used only when collapsible=True "
             "(rendered as <summary> text). For collapsible=False "
@@ -377,7 +377,7 @@ class ReadmeSectionsSettings(BaseModel):
         default_factory=lambda: [
             "Featured Projects",
             "Living Art",
-            "Tech Stack",
+            "My Tech Stack",
             "Metrics",
             "Word Clouds",
         ],
@@ -411,6 +411,7 @@ class ProjectConfig(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
 
     @classmethod
+    @override
     def settings_customise_sources(
         cls,
         settings_cls: type[BaseSettings],

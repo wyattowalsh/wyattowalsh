@@ -968,7 +968,7 @@ class TestRendering:
 
                 <table><tbody><tr><td>stale living art grid</td></tr></tbody></table>
 
-                ## Tech Stack
+                ## My Tech Stack
 
                 <p align="center">
                   <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge&amp;logo=openai&amp;logoColor=white"/>
@@ -1000,7 +1000,7 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
         assert_visible_or_comment_heading(rendered, "Living Art")
-        assert_visible_or_comment_heading(rendered, "Tech Stack")
+        assert_visible_or_comment_heading(rendered, "My Tech Stack")
         living_art = living_art_wrap(rendered)
 
         assert "stale living art grid" not in rendered
@@ -1016,7 +1016,7 @@ class TestRendering:
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
         assert "kept skills" in rendered
-        assert "<summary><strong>Tech Stack</strong></summary>" in rendered
+        assert "<summary><strong>My Tech Stack</strong></summary>" in rendered
         assert "View full stack" not in rendered
         assert "200+" not in rendered
 
@@ -1032,7 +1032,7 @@ class TestRendering:
 
                 placeholder
 
-                ## Tech Stack
+                ## My Tech Stack
 
                 <p align="center">
                   <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge"/>
@@ -1064,14 +1064,14 @@ class TestRendering:
 
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        assert_visible_or_comment_heading(rendered, "Tech Stack")
-        tech_stack = after_heading(rendered, "Tech Stack")
+        assert_visible_or_comment_heading(rendered, "My Tech Stack")
+        tech_stack = after_heading(rendered, "My Tech Stack")
 
         assert 'alt="AI/ML"' not in tech_stack
         assert 'alt="Full-Stack"' not in tech_stack
         assert 'alt="Open Source"' not in tech_stack
         assert tech_stack.lstrip().startswith("<details>")
-        assert "<summary><strong>Tech Stack</strong></summary>" in tech_stack
+        assert "<summary><strong>My Tech Stack</strong></summary>" in tech_stack
         assert "View full stack" not in tech_stack
         assert "200+" not in tech_stack
         assert "full stack body" in tech_stack
@@ -1380,10 +1380,10 @@ class TestRendering:
         assert "wordcloud_fractal_reel.mp4" in rendered
         assert ".github/assets/img/metrics.extra.svg" in rendered
         assert (
-            'alt="Fractal word cloud of GitHub topics sized by starred-repo share"'
+            'alt="Word cloud of GitHub topics sized by starred-repo share"'
         ) in rendered
         assert (
-            'alt="Fractal word cloud of GitHub languages sized by starred-repo share"'
+            'alt="Word cloud of GitHub languages sized by starred-repo share"'
         ) in rendered
         assert 'loading="lazy"' in rendered
         topics_idx = rendered.index("wordcloud_typographic_by_topics.svg")
@@ -1573,7 +1573,7 @@ class TestRendering:
                     "Featured Projects",
                     "Metrics",
                     "Living Art",
-                    "Tech Stack",
+                    "My Tech Stack",
                     "Word Clouds",
                 ],
             ),
@@ -1663,7 +1663,7 @@ class TestRendering:
         assert "2026-06-02" in rendered
         assert "An open-flow hook." in rendered
         assert "style=for-the-badge" in rendered
-        assert "label=Views" in rendered
+        assert "label=peek-a-boos" in rendered
         assert "flat-square" not in rendered
         assert "komarev.com/ghpvc/?username=wyattowalsh" in rendered
 

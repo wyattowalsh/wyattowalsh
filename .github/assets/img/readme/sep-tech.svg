@@ -1,12 +1,123 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Tech stack">
-<style>:root { color-scheme: light dark; } @media (prefers-color-scheme: dark) { .rail { stroke: #30363d; } }</style>
-<line class="rail" x1="24" y1="18" x2="1176" y2="18" stroke="#d0d7de" stroke-width="1"/>
-<rect x="60" y="10" width="54" height="16" rx="8" fill="#3776ab"/>
-<rect x="180" y="10" width="54" height="16" rx="8" fill="#f7df1e"/>
-<rect x="320" y="10" width="54" height="16" rx="8" fill="#3178c6"/>
-<rect x="470" y="10" width="54" height="16" rx="8" fill="#e34f26"/>
-<rect x="620" y="10" width="54" height="16" rx="8" fill="#2496ed"/>
-<rect x="760" y="10" width="54" height="16" rx="8" fill="#000000"/>
-<rect x="900" y="10" width="54" height="16" rx="8" fill="#ff6c37"/>
-<rect x="1040" y="10" width="54" height="16" rx="8" fill="#0969da"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="52" viewBox="0 0 1200 52" role="img" aria-label="My Tech Stack">
+<style>:root { color-scheme: light dark; } .trace { stroke: #8b949e; fill: none; } .trace-hi { stroke: #0969da; fill: none; } .via { stroke: #656d76; fill: #ffffff; } .chip { fill: #1f2328; stroke: #656d76; } .pin { stroke: #8b949e; fill: #d0d7de; } .silk { stroke: #8b949e; fill: none; } .pad { stroke: #1f2328; } @media (prefers-color-scheme: dark) { .trace { stroke: #6e7681; } .trace-hi { stroke: #58a6ff; } .via { stroke: #8b949e; fill: #0d1117; } .chip { fill: #21262d; stroke: #8b949e; } .pin { stroke: #8b949e; fill: #30363d; } .silk { stroke: #8b949e; } .pad { stroke: #c9d1d9; } }</style>
+<line class="trace" x1="20" y1="16" x2="1180" y2="16" stroke-width="1.35"/>
+<line class="trace" x1="20" y1="19.2" x2="1180" y2="19.2" stroke-width="0.6"/>
+<line class="trace" x1="20" y1="36" x2="1180" y2="36" stroke-width="1.35"/>
+<line class="trace" x1="20" y1="39.2" x2="1180" y2="39.2" stroke-width="0.6"/>
+<line class="trace" x1="20" y1="16" x2="20" y2="39.2" stroke-width="1.1"/>
+<line class="trace" x1="1180" y1="16" x2="1180" y2="39.2" stroke-width="1.1"/>
+<line class="trace-hi" x1="70" y1="16" x2="70" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="70" y1="26" x2="80" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="70" cy="16" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M81 26 L75.5 35.53 L64.5 35.53 L59 26 L64.5 16.47 L75.5 16.47 Z" fill="#3776ab" stroke-width="1.05"/>
+<circle class="via" cx="70" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<path class="silk" d="M86 16 L90 12 L94 16 L98 12 L102 16" fill="none" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="trace-hi" x1="190" y1="36" x2="190" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="190" y1="26" x2="200" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="190" cy="36" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M201 26 L195.5 35.53 L184.5 35.53 L179 26 L184.5 16.47 L195.5 16.47 Z" fill="#f7df1e" stroke-width="1.05"/>
+<circle class="via" cx="190" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<line class="trace-hi" x1="310" y1="16" x2="310" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="310" y1="26" x2="320" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="310" cy="16" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M321 26 L315.5 35.53 L304.5 35.53 L299 26 L304.5 16.47 L315.5 16.47 Z" fill="#3178c6" stroke-width="1.05"/>
+<circle class="via" cx="310" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<path class="silk" d="M326 16 L330 12 L334 16 L338 12 L342 16" fill="none" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="trace-hi" x1="430" y1="36" x2="430" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="430" y1="26" x2="440" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="430" cy="36" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M441 26 L435.5 35.53 L424.5 35.53 L419 26 L424.5 16.47 L435.5 16.47 Z" fill="#e34f26" stroke-width="1.05"/>
+<circle class="via" cx="430" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<line class="trace-hi" x1="770" y1="16" x2="770" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="770" y1="26" x2="760" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="770" cy="16" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M781 26 L775.5 35.53 L764.5 35.53 L759 26 L764.5 16.47 L775.5 16.47 Z" fill="#2496ed" stroke-width="1.05"/>
+<circle class="via" cx="770" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<path class="silk" d="M786 16 L790 12 L794 16 L798 12 L802 16" fill="none" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="trace-hi" x1="890" y1="36" x2="890" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="890" y1="26" x2="880" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="890" cy="36" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M901 26 L895.5 35.53 L884.5 35.53 L879 26 L884.5 16.47 L895.5 16.47 Z" fill="#24292f" stroke-width="1.05"/>
+<circle class="via" cx="890" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<line class="trace-hi" x1="1010" y1="16" x2="1010" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="1010" y1="26" x2="1000" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="1010" cy="16" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M1021 26 L1015.5 35.53 L1004.5 35.53 L999 26 L1004.5 16.47 L1015.5 16.47 Z" fill="#ff6c37" stroke-width="1.05"/>
+<circle class="via" cx="1010" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<path class="silk" d="M1026 16 L1030 12 L1034 16 L1038 12 L1042 16" fill="none" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="trace-hi" x1="1130" y1="36" x2="1130" y2="26" stroke-width="1.2"/>
+<line class="trace-hi" x1="1130" y1="26" x2="1120" y2="26" stroke-width="1.2"/>
+<circle class="via" cx="1130" cy="36" r="2.4" fill="#ffffff" stroke-width="0.8"/>
+<path class="pad" d="M1141 26 L1135.5 35.53 L1124.5 35.53 L1119 26 L1124.5 16.47 L1135.5 16.47 Z" fill="#0969da" stroke-width="1.05"/>
+<circle class="via" cx="1130" cy="26" r="3.1" fill="#ffffff" stroke-width="0.7"/>
+<circle class="via" cx="40" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="40" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="120" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="120" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="160" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="160" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="240" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="240" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="280" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="280" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="360" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="360" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="400" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="400" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="480" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="480" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="520" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="520" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="680" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="680" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="720" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="720" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="800" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="800" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="840" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="840" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="920" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="920" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="960" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="960" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1040" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1040" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1080" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1080" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1160" cy="16" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<circle class="via" cx="1160" cy="36" r="1.5" fill="#ffffff" stroke-width="0.6"/>
+<rect class="chip" x="561" y="12" width="78" height="28" rx="3" stroke-width="1.15"/>
+<path class="silk" d="M561 21 A5 5 0 0 1 561 31" fill="none" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+<circle class="silk" cx="570" cy="19" r="1.6" fill="none" stroke-width="0.7"/>
+<rect class="pin" x="568.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="568.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="570" y1="6" x2="570" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="570" y1="46" x2="570" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="578.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="578.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="580" y1="6" x2="580" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="580" y1="46" x2="580" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="588.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="588.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="590" y1="6" x2="590" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="590" y1="46" x2="590" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="598.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="598.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="600" y1="6" x2="600" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="600" y1="46" x2="600" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="608.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="608.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="610" y1="6" x2="610" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="610" y1="46" x2="610" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="618.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="618.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="620" y1="6" x2="620" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="620" y1="46" x2="620" y2="36" stroke-width="0.85"/>
+<rect class="pin" x="628.6" y="6" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<rect class="pin" x="628.6" y="40" width="2.8" height="6" rx="0.6" stroke-width="0.6"/>
+<line class="trace-hi" x1="630" y1="6" x2="630" y2="16" stroke-width="0.85"/>
+<line class="trace-hi" x1="630" y1="46" x2="630" y2="36" stroke-width="0.85"/>
+<line class="silk" x1="576" y1="26" x2="592" y2="26" stroke-width="0.6"/>
+<line class="silk" x1="592" y1="26" x2="608" y2="26" stroke-width="0.6"/>
+<line class="silk" x1="608" y1="26" x2="624" y2="26" stroke-width="0.6"/>
 </svg>

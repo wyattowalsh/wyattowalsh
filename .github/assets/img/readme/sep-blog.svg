@@ -1,9 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="36" viewBox="0 0 1200 36" role="img" aria-label="Latest blog posts">
-<style>:root { color-scheme: light dark; } .rule { stroke: #8250df; } @media (prefers-color-scheme: dark) { .rule { stroke: #a371f7; } .page { fill: #0d1117; stroke: #30363d; } }</style>
-<line class="rule" x1="24" y1="18" x2="520" y2="18" stroke-width="1.4"/>
-<rect class="page" x="568" y="6" width="64" height="24" rx="3" fill="#ffffff" stroke="#d0d7de"/>
-<line x1="578" y1="13" x2="622" y2="13" stroke="#656d76" stroke-width="1"/>
-<line x1="578" y1="18" x2="614" y2="18" stroke="#656d76" stroke-width="1"/>
-<line x1="578" y1="23" x2="618" y2="23" stroke="#656d76" stroke-width="1"/>
-<line class="rule" x1="680" y1="18" x2="1176" y2="18" stroke-width="1.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="52" viewBox="0 0 1200 52" role="img" aria-label="Latest blog posts">
+<style>:root { color-scheme: light dark; } .rule { stroke: #8250df; fill: none; } .rule-thin { stroke: #8250df; fill: none; opacity: 0.55; } .fleuron { fill: #8250df; stroke: #6e40c9; } .page { fill: #ffffff; stroke: #d0d7de; } .ink { stroke: #656d76; fill: none; } .ribbon { fill: #bf4b8a; stroke: none; } .quill { stroke: #8250df; fill: #ddc7ff; } @media (prefers-color-scheme: dark) { .rule { stroke: #a371f7; } .rule-thin { stroke: #a371f7; } .fleuron { fill: #a371f7; stroke: #d2a8ff; } .page { fill: #0d1117; stroke: #30363d; } .ink { stroke: #8b949e; } .ribbon { fill: #f778ba; } .quill { stroke: #a371f7; fill: #2d1b4e; } }</style>
+<line class="rule" x1="20" y1="22" x2="528" y2="22" stroke-width="2.15"/>
+<line class="rule" x1="672" y1="22" x2="1180" y2="22" stroke-width="2.15"/>
+<line class="rule-thin" x1="20" y1="26" x2="528" y2="26" stroke-width="0.7"/>
+<line class="rule-thin" x1="672" y1="26" x2="1180" y2="26" stroke-width="0.7"/>
+<line class="rule" x1="20" y1="30" x2="528" y2="30" stroke-width="2.15"/>
+<line class="rule" x1="672" y1="30" x2="1180" y2="30" stroke-width="2.15"/>
+<line class="rule" x1="20" y1="18" x2="20" y2="34" stroke-width="1.2"/>
+<line class="rule" x1="1180" y1="18" x2="1180" y2="34" stroke-width="1.2"/>
+<path class="fleuron" d="M48 26 C52.6 15.88 59.96 19.56 56.28 26 C59.96 32.44 52.6 36.12 48 26 C43.4 15.88 36.04 19.56 39.72 26 C36.04 32.44 43.4 36.12 48 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M48 23.2 L50 26 L48 28.8 L46 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M116 26 C120.6 15.88 127.96 19.56 124.28 26 C127.96 32.44 120.6 36.12 116 26 C111.4 15.88 104.04 19.56 107.72 26 C104.04 32.44 111.4 36.12 116 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M116 23.2 L118 26 L116 28.8 L114 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M184 26 C188.6 15.88 195.96 19.56 192.28 26 C195.96 32.44 188.6 36.12 184 26 C179.4 15.88 172.04 19.56 175.72 26 C172.04 32.44 179.4 36.12 184 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M184 23.2 L186 26 L184 28.8 L182 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M252 26 C256.6 15.88 263.96 19.56 260.28 26 C263.96 32.44 256.6 36.12 252 26 C247.4 15.88 240.04 19.56 243.72 26 C240.04 32.44 247.4 36.12 252 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M252 23.2 L254 26 L252 28.8 L250 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M320 26 C324.6 15.88 331.96 19.56 328.28 26 C331.96 32.44 324.6 36.12 320 26 C315.4 15.88 308.04 19.56 311.72 26 C308.04 32.44 315.4 36.12 320 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M320 23.2 L322 26 L320 28.8 L318 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M388 26 C392.6 15.88 399.96 19.56 396.28 26 C399.96 32.44 392.6 36.12 388 26 C383.4 15.88 376.04 19.56 379.72 26 C376.04 32.44 383.4 36.12 388 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M388 23.2 L390 26 L388 28.8 L386 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M456 26 C460.6 15.88 467.96 19.56 464.28 26 C467.96 32.44 460.6 36.12 456 26 C451.4 15.88 444.04 19.56 447.72 26 C444.04 32.44 451.4 36.12 456 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M456 23.2 L458 26 L456 28.8 L454 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M708 26 C712.6 15.88 719.96 19.56 716.28 26 C719.96 32.44 712.6 36.12 708 26 C703.4 15.88 696.04 19.56 699.72 26 C696.04 32.44 703.4 36.12 708 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M708 23.2 L710 26 L708 28.8 L706 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M776 26 C780.6 15.88 787.96 19.56 784.28 26 C787.96 32.44 780.6 36.12 776 26 C771.4 15.88 764.04 19.56 767.72 26 C764.04 32.44 771.4 36.12 776 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M776 23.2 L778 26 L776 28.8 L774 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M844 26 C848.6 15.88 855.96 19.56 852.28 26 C855.96 32.44 848.6 36.12 844 26 C839.4 15.88 832.04 19.56 835.72 26 C832.04 32.44 839.4 36.12 844 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M844 23.2 L846 26 L844 28.8 L842 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M912 26 C916.6 15.88 923.96 19.56 920.28 26 C923.96 32.44 916.6 36.12 912 26 C907.4 15.88 900.04 19.56 903.72 26 C900.04 32.44 907.4 36.12 912 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M912 23.2 L914 26 L912 28.8 L910 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M980 26 C984.6 15.88 991.96 19.56 988.28 26 C991.96 32.44 984.6 36.12 980 26 C975.4 15.88 968.04 19.56 971.72 26 C968.04 32.44 975.4 36.12 980 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M980 23.2 L982 26 L980 28.8 L978 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M1048 26 C1052.6 15.88 1059.96 19.56 1056.28 26 C1059.96 32.44 1052.6 36.12 1048 26 C1043.4 15.88 1036.04 19.56 1039.72 26 C1036.04 32.44 1043.4 36.12 1048 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M1048 23.2 L1050 26 L1048 28.8 L1046 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M1116 26 C1120.6 15.88 1127.96 19.56 1124.28 26 C1127.96 32.44 1120.6 36.12 1116 26 C1111.4 15.88 1104.04 19.56 1107.72 26 C1104.04 32.44 1111.4 36.12 1116 26 Z" fill="#8250df" stroke-width="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M1116 23.2 L1118 26 L1116 28.8 L1114 26 Z" fill="#8250df" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M24 20.8 L27.4 26 L24 31.2 L20.6 26 Z" fill="#8250df" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M516 20.8 L519.4 26 L516 31.2 L512.6 26 Z" fill="#8250df" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M684 20.8 L687.4 26 L684 31.2 L680.6 26 Z" fill="#8250df" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fleuron" d="M1176 20.8 L1179.4 26 L1176 31.2 L1172.6 26 Z" fill="#8250df" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+<rect class="page" x="554" y="8" width="44" height="36" rx="2.5" stroke-width="1.15"/>
+<rect class="page" x="602" y="8" width="44" height="36" rx="2.5" stroke-width="1.15"/>
+<line class="ink" x1="600" y1="8" x2="600" y2="44" stroke-width="1.25"/>
+<line class="ink" x1="592" y1="15" x2="564" y2="15" stroke-width="0.7"/>
+<line class="ink" x1="592" y1="20.2" x2="564" y2="20.2" stroke-width="0.7"/>
+<line class="ink" x1="592" y1="25.4" x2="564" y2="25.4" stroke-width="0.7"/>
+<line class="ink" x1="592" y1="30.6" x2="564" y2="30.6" stroke-width="0.7"/>
+<line class="ink" x1="592" y1="35.8" x2="564" y2="35.8" stroke-width="0.7"/>
+<line class="ink" x1="608" y1="15" x2="636" y2="15" stroke-width="0.7"/>
+<line class="ink" x1="608" y1="20.2" x2="636" y2="20.2" stroke-width="0.7"/>
+<line class="ink" x1="608" y1="25.4" x2="636" y2="25.4" stroke-width="0.7"/>
+<line class="ink" x1="608" y1="30.6" x2="636" y2="30.6" stroke-width="0.7"/>
+<line class="ink" x1="608" y1="35.8" x2="636" y2="35.8" stroke-width="0.7"/>
+<path class="ribbon" d="M610 44 L616 44 L616 50 L613 47.5 L610 50 Z"/>
+<path class="rule" d="M590 8 Q600 4 610 8" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="quill" d="M458 40 L492 14" fill="none" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line class="quill" x1="467.52" y1="32.72" x2="460.52" y2="26.72" stroke-width="0.7"/>
+<line class="quill" x1="472.96" y1="28.56" x2="465.96" y2="22.56" stroke-width="0.7"/>
+<line class="quill" x1="478.4" y1="24.4" x2="471.4" y2="18.4" stroke-width="0.7"/>
+<line class="quill" x1="483.84" y1="20.24" x2="476.84" y2="14.24" stroke-width="0.7"/>
+<path class="quill" d="M458 40 L454 45 L461 41 Z" fill="#ddc7ff" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

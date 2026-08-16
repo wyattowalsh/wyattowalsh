@@ -31,7 +31,7 @@ import defusedxml.ElementTree as DefusedET
 
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .metrics_svg import validate_svg_file
-from .readme_separators import generate_separators
+from .readme_separators import generate_separators, generate_views_peek
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
     SvgAssetWriter,
@@ -75,7 +75,7 @@ _GENERIC_DESCRIPTION_RE = re.compile(
 DEFAULT_SECTION_ORDER: tuple[str, ...] = (
     "Featured Projects",
     "Living Art",
-    "Tech Stack",
+    "My Tech Stack",
     "Metrics",
     "Word Clouds",
 )
@@ -137,12 +137,13 @@ def section_separator_block(title: str, filename: str) -> str:
 
 # Tech stack teaser strip is anchored to the full-stack details block, not H2 order.
 _TECH_STACK_TEASER_RE = re.compile(
-    r"(?ms)^## Tech Stack\n.*?(?=^<details>\n<summary>)",
+    r"(?ms)^(?:## (?:My )?Tech Stack\n|<!-- ## (?:My )?Tech Stack -->\n)"
+    r".*?(?=^<details>\n<summary>)",
 )
 _TECH_STACK_SUMMARY_RE = re.compile(
     r"(?m)(^<details>\n)<summary><strong>.*?</strong></summary>",
 )
-_TECH_STACK_BARE_SUMMARY = "<summary><strong>Tech Stack</strong></summary>"
+_TECH_STACK_BARE_SUMMARY = "<summary><strong>My Tech Stack</strong></summary>"
 # Word clouds end at a leftover WakaTime image, markers, or a legacy details wrap.
 _WORD_CLOUDS_WAKA_END_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?="
@@ -173,8 +174,9 @@ _BLOG_DETAILS_RE = re.compile(
 _GHPVC_URL_RE = re.compile(r"https://komarev\.com/ghpvc/\?[^\"'\s>]+")
 _GHPVC_URL = (
     "https://komarev.com/ghpvc/?username=wyattowalsh"
-    "&color=6366F1&style=for-the-badge&label=Views"
+    "&color=C2410C&style=for-the-badge&label=peek-a-boos"
 )
+_VIEWS_PEEK_SRC = ".github/assets/img/readme/views-peek.svg"
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
     (
@@ -1007,6 +1009,7 @@ class ReadmeSectionGenerator:
         )
         content = self._postprocess_static_sections(content, readme_path=readme_path)
         generate_separators()
+        generate_views_peek()
         readme_path.write_text(content, encoding="utf-8")
         return readme_path
 
@@ -1035,6 +1038,7 @@ class ReadmeSectionGenerator:
 
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
         content = self._rewrite_living_art_section(content)
+        content = self._rename_tech_stack_title(content)
         content = self._rewrite_tech_stack_teaser(content)
         # Pull Waka markers out before Metrics rewrite so they are not wiped.
         content, waka_markers = self._extract_wakatime_markers(content)
@@ -1052,7 +1056,7 @@ class ReadmeSectionGenerator:
             ("Featured Projects", "sep-featured.svg"),
             ("Metrics", "sep-metrics.svg"),
             ("Living Art", "sep-living.svg"),
-            ("Tech Stack", "sep-tech.svg"),
+            ("My Tech Stack", "sep-tech.svg"),
             ("Word Clouds", "sep-clouds.svg"),
             ("Latest Blog Posts", "sep-blog.svg"),
         )
@@ -1129,15 +1133,31 @@ class ReadmeSectionGenerator:
             return content
         return living_re.sub(replacement, content, count=1)
 
+    @staticmethod
+    def _rename_tech_stack_title(content: str) -> str:
+        """Fold the legacy Tech Stack title into My Tech Stack."""
+        replacements = (
+            ("<!-- ## Tech Stack -->", "<!-- ## My Tech Stack -->"),
+            ("## Tech Stack\n", "## My Tech Stack\n"),
+            (
+                "<summary><strong>Tech Stack</strong></summary>",
+                _TECH_STACK_BARE_SUMMARY,
+            ),
+            ('alt="Tech Stack"', 'alt="My Tech Stack"'),
+        )
+        for old, new in replacements:
+            content = content.replace(old, new)
+        return content
+
     def _rewrite_tech_stack_teaser(self, content: str) -> str:
         """Drop category teaser shields; keep a bare-label collapsible stack."""
         if _TECH_STACK_TEASER_RE.search(content):
             content = _TECH_STACK_TEASER_RE.sub(
-                section_separator_block("Tech Stack", "sep-tech.svg") + "\n",
+                section_separator_block("My Tech Stack", "sep-tech.svg") + "\n",
                 content,
                 count=1,
             )
-        tech_re = compile_section_body_re("Tech Stack", self._section_order())
+        tech_re = compile_section_body_re("My Tech Stack", self._section_order())
         match = tech_re.search(content)
         if not match:
             return content
@@ -1213,34 +1233,17 @@ class ReadmeSectionGenerator:
             if validate_svg_file(metrics_dir / filename).is_valid
         ]
         if valid_supplemental_assets:
-            paired = list(valid_supplemental_assets)
-            index = 0
-            while index < len(paired):
-                left_name, left_alt = paired[index]
-                if index + 1 < len(paired):
-                    right_name, right_alt = paired[index + 1]
-                    body_lines.extend(
-                        [
-                            "",
-                            self._gfm_two_col_imgs(
-                                (f".github/assets/img/{left_name}", left_alt),
-                                (f".github/assets/img/{right_name}", right_alt),
-                            ),
-                        ]
-                    )
-                    index += 2
-                else:
-                    body_lines.extend(
-                        [
-                            "",
-                            self._gfm_centered_img(
-                                src=f".github/assets/img/{left_name}",
-                                alt=left_alt,
-                                width="49%",
-                            ),
-                        ]
-                    )
-                    index += 1
+            for filename, alt_text in valid_supplemental_assets:
+                body_lines.extend(
+                    [
+                        "",
+                        self._gfm_centered_img(
+                            src=f".github/assets/img/{filename}",
+                            alt=alt_text,
+                            width="100%",
+                        ),
+                    ]
+                )
 
         body = "\n".join(body_lines)
         replacement = f"{body}\n\n"
@@ -1251,40 +1254,35 @@ class ReadmeSectionGenerator:
         return metrics_re.sub(replacement, content, count=1)
 
     def _rewrite_word_clouds_section(self, content: str) -> str:
+        topics_src = ".github/assets/img/wordcloud_typographic_by_topics.svg"
+        languages_src = ".github/assets/img/wordcloud_typographic_by_languages.svg"
+        topics_alt = "Word cloud of GitHub topics sized by starred-repo share"
+        languages_alt = "Word cloud of GitHub languages sized by starred-repo share"
+        reel = Path(".github/assets/img/wordcloud_fractal_reel.mp4")
+        readme_root = Path(self.settings.readme_path).expanduser().resolve().parent
+        has_reel = reel.is_file() or (readme_root / reel).is_file()
+        topics_img = self._gfm_img_tag(src=topics_src, alt=topics_alt, width="100%")
+        if has_reel:
+            topics_block = (
+                '<p align="center">\n'
+                '<a href=".github/assets/img/wordcloud_fractal_reel.mp4">'
+                f"{topics_img}</a>\n</p>"
+            )
+        else:
+            topics_block = self._gfm_centered_img(
+                src=topics_src, alt=topics_alt, width="100%"
+            )
         body_lines = [
             section_separator_block("Word Clouds", "sep-clouds.svg"),
-            self._gfm_two_col_imgs(
-                (
-                    ".github/assets/img/wordcloud_typographic_by_topics.svg",
-                    "Fractal word cloud of GitHub topics sized by starred-repo share",
-                ),
-                (
-                    ".github/assets/img/wordcloud_typographic_by_languages.svg",
-                    (
-                        "Fractal word cloud of GitHub languages "
-                        "sized by starred-repo share"
-                    ),
-                ),
+            topics_block,
+            "",
+            self._gfm_centered_img(
+                src=languages_src,
+                alt=languages_alt,
+                width="100%",
             ),
             "",
         ]
-        reel = Path(".github/assets/img/wordcloud_fractal_reel.mp4")
-        readme_root = Path(self.settings.readme_path).expanduser().resolve().parent
-        if reel.is_file() or (readme_root / reel).is_file():
-            topics_src = ".github/assets/img/wordcloud_typographic_by_topics.svg"
-            reel_href = ".github/assets/img/wordcloud_fractal_reel.mp4"
-            body_lines.extend(
-                [
-                    (
-                        '<p align="center">'
-                        f'<a href="{reel_href}">'
-                        f'<img src="{topics_src}" '
-                        'alt="Slow slideshow of fractal topic and language clouds" '
-                        'width="72%" loading="lazy"/></a></p>'
-                    ),
-                    "",
-                ]
-            )
         replacement = "\n".join(body_lines)
         # Prefer Waka details end-anchor when present; else neighbor H2 order.
         word_re = (
@@ -1389,7 +1387,19 @@ class ReadmeSectionGenerator:
     def _rewrite_view_counter(self, content: str) -> str:
         if "komarev.com/ghpvc/" not in content:
             return content
-        return _GHPVC_URL_RE.sub(_GHPVC_URL, content)
+        content = _GHPVC_URL_RE.sub(_GHPVC_URL, content)
+        peek = (
+            f'<img src="{_VIEWS_PEEK_SRC}" alt="You found the cookie jar" '
+            'width="280" loading="lazy"/>'
+        )
+        if _VIEWS_PEEK_SRC in content:
+            return content
+        content = content.replace(
+            f'<img src="{_GHPVC_URL}"',
+            f'{peek}\n  <img src="{_GHPVC_URL}"',
+            1,
+        )
+        return content
 
     def _render_top_badges(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -2418,14 +2428,6 @@ class ReadmeSectionGenerator:
                     f'rel="noopener noreferrer">{img}</a>'
                 )
             result.append("</p>")
-            link_bits = []
-            for url, _src, card in card_embeds:
-                link_bits.append(
-                    f'<a href="{escape(url)}" target="_blank" '
-                    f'rel="noopener noreferrer">'
-                    f"{escape(self._blog_card_caption(card))}</a>"
-                )
-            result.append('<p align="center">' + " · ".join(link_bits) + "</p>")
         elif fallback_lines:
             result.append(self._wrap_blog_post_list_markers(fallback_lines))
         result.append(
