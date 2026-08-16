@@ -29,7 +29,7 @@ def test_build_spotify_authorize_url_includes_scope_and_show_dialog() -> None:
     assert parsed.netloc == "accounts.spotify.com"
     assert query["client_id"] == ["client-id"]
     assert query["response_type"] == ["code"]
-    assert query["scope"] == ["user-read-recently-played"]
+    assert query["scope"] == ["user-read-recently-played user-top-read"]
     assert query["show_dialog"] == ["true"]
 
 

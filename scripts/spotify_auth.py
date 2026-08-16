@@ -11,11 +11,14 @@ import urllib.parse
 import urllib.request
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from typing import Any, Protocol
+from typing import Any, Protocol, override
 
 SPOTIFY_AUTHORIZE_URL = "https://accounts.spotify.com/authorize"
 SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_RECENTLY_PLAYED_SCOPE = "user-read-recently-played"
+SPOTIFY_TOP_READ_SCOPE = "user-top-read"
+# long_term catalog (top artists/tracks) needs user-top-read in addition to recents.
+SPOTIFY_DEFAULT_SCOPES = f"{SPOTIFY_RECENTLY_PLAYED_SCOPE} {SPOTIFY_TOP_READ_SCOPE}"
 SPOTIFY_CALLBACK_PATH = "/callback"
 DEFAULT_CALLBACK_HOST = "127.0.0.1"
 DEFAULT_CALLBACK_PORT = 8888
@@ -51,7 +54,7 @@ def build_spotify_authorize_url(
     client_id: str,
     redirect_uri: str,
     state: str,
-    scope: str = SPOTIFY_RECENTLY_PLAYED_SCOPE,
+    scope: str = SPOTIFY_DEFAULT_SCOPES,
     show_dialog: bool = True,
 ) -> str:
     """Build the Spotify authorization URL for a loopback callback flow."""
@@ -179,6 +182,7 @@ def _wait_for_spotify_authorization_code(
                 200, "Spotify authorization complete. You can close this window."
             )
 
+        @override
         def log_message(self, format: str, *args: Any) -> None:  # noqa: A002
             del format, args
             return
