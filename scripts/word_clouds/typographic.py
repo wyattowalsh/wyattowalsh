@@ -122,6 +122,8 @@ class TypographicRenderer(SvgWordCloudEngine):
                 candidate = self.palette[
                     int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
                 ]
+        if self.color_palette_override:
+            return candidate
         if is_github_dual_surface_readable(candidate):
             return candidate
         for fill in github_readable_fills():

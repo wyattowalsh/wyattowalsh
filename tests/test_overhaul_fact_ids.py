@@ -384,7 +384,7 @@ def test_fact_lowlighter_maximal_committed_preview_residuals() -> None:
     assert "No recent contributions matching filters found" in primary
     assert "Recently starred" not in additional
     assert "Stargazers" not in additional
-    assert "Featured repositories" in additional
+    assert "Featured repositories" not in additional
     assert 'class="people"' in additional
 
 

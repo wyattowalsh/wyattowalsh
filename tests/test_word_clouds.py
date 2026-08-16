@@ -35,6 +35,7 @@ from scripts.word_clouds.solvers import (
     _random_solution,
     configure_layout_readability,
 )
+import scripts.word_clouds.typographic as typographic_module
 from scripts.word_clouds.typographic import TypographicRenderer
 from scripts.word_clouds.wordle import WordleRenderer
 
@@ -264,6 +265,27 @@ def test_typographic_phyllotaxis_is_not_a_two_column_magazine() -> None:
     left = sum(1 for x in xs if x < mid)
     right = len(xs) - left
     assert min(left, right) >= 4
+
+
+def test_typographic_snaps_unreadable_cluster_fill(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Default palettes that miss canvas AA are replaced with a readable fill."""
+    monkeypatch.setitem(
+        typographic_module.CLUSTER_PALETTES,
+        "Other",
+        ["#EEEEEE"],
+    )
+    placed = TypographicRenderer(
+        width=400,
+        height=240,
+        min_font_size=10.0,
+        max_font_size=20.0,
+        seed=1,
+    ).place_words({"zzzz-unknown": 4.0})
+    assert placed
+    assert placed[0].color != "#EEEEEE"
+    assert is_github_dual_surface_readable(placed[0].color)
 
 
 def test_typographic_renderer_keeps_horizontal_layout() -> None:
