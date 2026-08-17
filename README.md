@@ -22,6 +22,7 @@
 
 
 
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -336,6 +337,7 @@
 
 
 
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
@@ -357,7 +359,7 @@
 ---
 
 <p align="center">
-  <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fwyattowalsh%2Fwyattowalsh&label=Views&icon=stars&color=%236366f1&style=for-the-badge&tz=America%2FLos_Angeles" alt="Profile views"/>
+  <img src="https://custom-icon-badges.demolab.com/badge/dynamic/json?url=https%3A%2F%2Fhitscounter.dev%2Fapi%2Fhit%3Furl%3Dhttps%253A%252F%252Fgithub.com%252Fwyattowalsh%252Fwyattowalsh%26output%3Djson&query=%24.total_hits&label=views&style=for-the-badge&color=7c3aed&labelColor=161b22&logo=telescope&logoColor=white" alt="Profile views"/>
 </p>
 <p align="center">
   <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">

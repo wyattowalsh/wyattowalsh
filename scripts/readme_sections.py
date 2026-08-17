@@ -172,18 +172,23 @@ _BLOG_DETAILS_RE = re.compile(
     r"</details>"
 )
 _VIEWS_BADGE_URL = (
-    "https://hitscounter.dev/api/hit?"
-    "url=https%3A%2F%2Fgithub.com%2Fwyattowalsh%2Fwyattowalsh"
-    "&label=Views"
-    "&icon=stars"
-    "&color=%236366f1"
+    "https://custom-icon-badges.demolab.com/badge/dynamic/json?"
+    "url=https%3A%2F%2Fhitscounter.dev%2Fapi%2Fhit%3Furl%3D"
+    "https%253A%252F%252Fgithub.com%252Fwyattowalsh%252Fwyattowalsh"
+    "%26output%3Djson"
+    "&query=%24.total_hits"
+    "&label=views"
     "&style=for-the-badge"
-    "&tz=America%2FLos_Angeles"
+    "&color=7c3aed"
+    "&labelColor=161b22"
+    "&logo=telescope"
+    "&logoColor=white"
 )
 # Back-compat alias for tests that still import the old name.
 _GHPVC_URL = _VIEWS_BADGE_URL
 _GHPVC_URL_RE = re.compile(
-    r"https://(?:komarev\.com/ghpvc/\?|hitscounter\.dev/api/hit\?)[^\"'\s>]+"
+    r"https://(?:komarev\.com/ghpvc/\?|hitscounter\.dev/api/hit\?"
+    r"|custom-icon-badges\.demolab\.com/badge/)[^\"'\s>]+"
 )
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
@@ -1412,6 +1417,7 @@ class ReadmeSectionGenerator:
         if (
             "komarev.com/ghpvc/" not in content
             and "hitscounter.dev/api/hit" not in content
+            and "custom-icon-badges.demolab.com/badge/" not in content
         ):
             return content
         content = _GHPVC_URL_RE.sub(_VIEWS_BADGE_URL, content)
@@ -1437,7 +1443,8 @@ class ReadmeSectionGenerator:
         )
         footer_re = re.compile(
             r'<p align="center">\s*'
-            r'(?:<img src="https://(?:komarev\.com/ghpvc/|hitscounter\.dev/api/hit)[^"]+"[^>]*>\s*)'
+            r'(?:<img src="https://(?:komarev\.com/ghpvc/|hitscounter\.dev/api/hit|'
+            r'custom-icon-badges\.demolab\.com/badge/)[^"]+"[^>]*>\s*)'
             r"(?:<a href=\"[^\"]*profile-updater\.yml\">.*?</a>\s*)?"
             r"</p>",
             re.S,
