@@ -171,10 +171,19 @@ _BLOG_DETAILS_RE = re.compile(
     r"(<!-- README:BLOG_POSTS:START -->.*?<!-- README:BLOG_POSTS:END -->)\s*\n+"
     r"</details>"
 )
-_GHPVC_URL_RE = re.compile(r"https://komarev\.com/ghpvc/\?[^\"'\s>]+")
-_GHPVC_URL = (
-    "https://komarev.com/ghpvc/?username=wyattowalsh"
-    "&color=6366F1&style=for-the-badge&label=views"
+_VIEWS_BADGE_URL = (
+    "https://hitscounter.dev/api/hit?"
+    "url=https%3A%2F%2Fgithub.com%2Fwyattowalsh%2Fwyattowalsh"
+    "&label=Views"
+    "&icon=stars"
+    "&color=%236366f1"
+    "&style=for-the-badge"
+    "&tz=America%2FLos_Angeles"
+)
+# Back-compat alias for tests that still import the old name.
+_GHPVC_URL = _VIEWS_BADGE_URL
+_GHPVC_URL_RE = re.compile(
+    r"https://(?:komarev\.com/ghpvc/\?|hitscounter\.dev/api/hit\?)[^\"'\s>]+"
 )
 _WAKATIME_ASSET_SRC = ".github/assets/img/wakatime.svg"
 _SUPPLEMENTAL_METRICS_ASSETS: tuple[tuple[str, str], ...] = (
@@ -1400,9 +1409,12 @@ class ReadmeSectionGenerator:
         return content
 
     def _rewrite_view_counter(self, content: str) -> str:
-        if "komarev.com/ghpvc/" not in content:
+        if (
+            "komarev.com/ghpvc/" not in content
+            and "hitscounter.dev/api/hit" not in content
+        ):
             return content
-        content = _GHPVC_URL_RE.sub(_GHPVC_URL, content)
+        content = _GHPVC_URL_RE.sub(_VIEWS_BADGE_URL, content)
         content = re.sub(
             r'[ \t]*<img src="[^"]*views-peek\.svg"[^>]*>\s*',
             "",
@@ -1410,7 +1422,7 @@ class ReadmeSectionGenerator:
         )
         footer = (
             '<p align="center">\n'
-            f'  <img src="{_GHPVC_URL}" alt="Profile views"/>\n'
+            f'  <img src="{_VIEWS_BADGE_URL}" alt="Profile views"/>\n'
             "</p>\n"
             '<p align="center">\n'
             "  <a href="
@@ -1425,7 +1437,7 @@ class ReadmeSectionGenerator:
         )
         footer_re = re.compile(
             r'<p align="center">\s*'
-            r'(?:<img src="https://komarev\.com/ghpvc/[^"]+"[^>]*>\s*)'
+            r'(?:<img src="https://(?:komarev\.com/ghpvc/|hitscounter\.dev/api/hit)[^"]+"[^>]*>\s*)'
             r"(?:<a href=\"[^\"]*profile-updater\.yml\">.*?</a>\s*)?"
             r"</p>",
             re.S,

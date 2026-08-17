@@ -1664,10 +1664,12 @@ class TestRendering:
         assert "2026-06-02" in rendered
         assert "An open-flow hook." in rendered
         assert "style=for-the-badge" in rendered
-        assert "label=views" in rendered
+        assert "label=Views" in rendered
+        assert "icon=stars" in rendered
         assert "views-peek.svg" not in rendered
         assert "flat-square" not in rendered
-        assert "komarev.com/ghpvc/?username=wyattowalsh" in rendered
+        assert "hitscounter.dev/api/hit" in rendered
+        assert "komarev.com/ghpvc" not in rendered
 
     def test_featured_project_card_builds_with_icon_data_uri(
         self, tmp_path: Path, monkeypatch

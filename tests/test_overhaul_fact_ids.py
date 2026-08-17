@@ -333,10 +333,12 @@ def test_fact_views_komarev_for_the_badge() -> None:
     """fact-views: incrementing komarev ghpvc restyled to for-the-badge."""
     readme = _readme()
     assert _GHPVC_URL in readme
-    assert "komarev.com/ghpvc/?username=wyattowalsh" in readme
+    assert "hitscounter.dev/api/hit" in readme
+    assert "icon=stars" in readme
     assert "style=for-the-badge" in readme
-    assert "label=views" in readme
+    assert "label=Views" in readme
     assert "views-peek.svg" not in readme
+    assert "komarev.com/ghpvc" not in readme
     assert "style=flat-square" not in readme
     workflow = _workflow_text()
     assert "view-counter" not in workflow

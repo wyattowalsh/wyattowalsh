@@ -296,7 +296,7 @@ def test_waka_and_blog_are_visible_not_details() -> None:
     assert "<!-- README:BLOG_POSTS:START -->" in readme
     assert "metrics-activity.svg" not in readme
     assert "200+" not in readme
-    assert "komarev.com/ghpvc/" in readme
+    assert "hitscounter.dev/api/hit" in readme
     assert "style=for-the-badge" in readme
     assert "style=flat-square" not in readme
 
@@ -459,10 +459,12 @@ def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
 def test_fact_views_komarev_for_the_badge() -> None:
     """fact-views: incrementing komarev chip restyled to for-the-badge."""
     readme = _read_readme()
-    assert "komarev.com/ghpvc/?username=wyattowalsh" in readme
+    assert "hitscounter.dev/api/hit" in readme
+    assert "icon=stars" in readme
     assert "style=for-the-badge" in readme
-    assert "label=views" in readme
+    assert "label=Views" in readme
     assert "views-peek.svg" not in readme
+    assert "komarev.com/ghpvc" not in readme
     assert "style=flat-square" not in readme
 
 

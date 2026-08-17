@@ -21,6 +21,7 @@
 
 
 
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
@@ -334,10 +335,11 @@
 
 
 
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
-<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="ProxyWhirl · 2026-02-13 · Production-ready Python proxy rotation with auto-fetching from 114+ sources, 9 selection strategies, self-healing circuit breakers, and five interfaces." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · 2021-01-15 · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms" width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · 2021-01-14 · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy" width="360" loading="lazy"/></a>
@@ -355,7 +357,7 @@
 ---
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=wyattowalsh&color=6366F1&style=for-the-badge&label=views" alt="Profile views"/>
+  <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fwyattowalsh%2Fwyattowalsh&label=Views&icon=stars&color=%236366f1&style=for-the-badge&tz=America%2FLos_Angeles" alt="Profile views"/>
 </p>
 <p align="center">
   <a href="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml">
