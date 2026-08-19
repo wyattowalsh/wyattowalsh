@@ -16,16 +16,16 @@
 
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
-<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: Live stats are temporarily unavailable." loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: Live stats are temporarily unavailable." loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/listentropy" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-listentropy.svg" width="360" alt="Featured project card for listentropy: Privacy-first Spotify listening explorer for Extended Streaming History with local-first analytics and share cards" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mdxpad" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mdxpad.svg" width="360" alt="Featured project card for mdxpad: macOS-first MDX editor with live preview, native file workflows, and AI-assisted writing tools" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
@@ -321,11 +321,11 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <!--START_SECTION:waka-->
 **🐱 My Github Data** 
 
-> 🏆 3,719 Contributions in the Year 2026
+> 🏆 4,265 Contributions in the Year 2026
  > 
 > 💼 Opted to Hire
  > 
-> 📜 191 Public Repositories 
+> 📜 193 Public Repositories 
  > 
 > 🔑 0 Private Repositories  
  > 
@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Markdown    8 hrs 3 mins   ██████░░░░░░░░░░░░░░░░░░░   23.53% 
-Other       7 hrs 43 mins  ██████░░░░░░░░░░░░░░░░░░░   22.54% 
-Python      7 hrs 23 mins  █████░░░░░░░░░░░░░░░░░░░░   21.59% 
-TypeScript  2 hrs          █░░░░░░░░░░░░░░░░░░░░░░░░   5.87% 
-YAML        1 hr 48 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.27% 
+Markdown    11 hrs 50 mins  ██████░░░░░░░░░░░░░░░░░░░   24.32% 
+Python      10 hrs 18 mins  █████░░░░░░░░░░░░░░░░░░░░   21.17% 
+Other       8 hrs 47 mins   █████░░░░░░░░░░░░░░░░░░░░   18.05% 
+TypeScript  6 hrs 31 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.4% 
+JSON        2 hrs 14 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.6% 
 
 🔥 Editors: 
-Codex CLI   10 hrs 43 mins  ████████░░░░░░░░░░░░░░░░░   31.28% 
-Grok Build  8 hrs 35 mins   ██████░░░░░░░░░░░░░░░░░░░   25.06% 
-Chrome      7 hrs 29 mins   █████░░░░░░░░░░░░░░░░░░░░   21.88% 
-Cursor      6 hrs 28 mins   █████░░░░░░░░░░░░░░░░░░░░   18.88% 
-Agent       59 mins         █░░░░░░░░░░░░░░░░░░░░░░░░   2.9% 
+Cursor      13 hrs 26 mins  ███████░░░░░░░░░░░░░░░░░░   27.58% 
+Grok Build  12 hrs 57 mins  ███████░░░░░░░░░░░░░░░░░░   26.61% 
+Codex CLI   10 hrs 43 mins  ██████░░░░░░░░░░░░░░░░░░░   22% 
+Chrome      8 hrs 26 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.33% 
+Agent       3 hrs 9 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   6.48% 
 
 🐱‍💻 Projects: 
-dotfiles     6 hrs 17 mins  █████░░░░░░░░░░░░░░░░░░░░   18.38% 
-nbadb        6 hrs 6 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.84% 
-mtnstack     6 hrs 2 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.61% 
-wyattowalsh  4 hrs 7 mins   ███░░░░░░░░░░░░░░░░░░░░░░   12.03% 
-prompts      3 hrs 8 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.15% 
+nbadb        8 hrs 56 mins  █████░░░░░░░░░░░░░░░░░░░░   18.34% 
+mtnstack     7 hrs 35 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.58% 
+dotfiles     6 hrs 17 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.93% 
+wyattowalsh  4 hrs 46 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   9.79% 
+prompts      3 hrs 44 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   7.69% 
 
 💻 Operating System: 
-Mac  34 hrs 15 mins  █████████████████████████   100% 
+Mac  48 hrs 42 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 17/08/2026 01:31:35 UTC
+ Last Updated on 19/08/2026 01:31:02 UTC
 <!--END_SECTION:waka-->
 
 </details>
