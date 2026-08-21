@@ -41,7 +41,6 @@ from .shared import (
     oklch_gradient,
     order_repos_for_visual_plan,
     organic_texture_filter,
-    repo_to_canvas_position,
     repo_visibility_score,
     resolve_render_metrics,
     seed_hash,
@@ -58,6 +57,16 @@ _MAP_R, _MAP_B = WIDTH - _PAD, HEIGHT - _PAD
 _MAP_W = _MAP_R - _MAP_L
 _MAP_H = _MAP_B - _MAP_T
 
+# Fitness overlay is 248×28 at (44, 44) — on the map. Dodge it locally.
+_OVERLAY_X      = 44.0
+_OVERLAY_Y      = 44.0
+_OVERLAY_W      = 248.0
+_OVERLAY_H      = 28.0
+_OVERLAY_CLEAR  = 36.0
+
+# Dge4: one designed ground. No day/night flip, no living-genetic-dark pair.
+_DESIGNED_GROUND = oklch(0.16, 0.028, 248)
+
 
 # ── Config ───────────────────────────────────────────────────────────────
 
@@ -71,7 +80,7 @@ class GeneticLandscapeConfig:
     grid_resolution: int = 60
     contour_levels: int = 12
     peak_scale: float = 8.0
-    pop_base: int = 30
+    pop_base: int = 0
     pop_scale: float = 15.0
     speciation_scale: float = 0.5
     trail_opacity: float = 0.3
@@ -309,12 +318,14 @@ def _derive_landscape_dynamics(
 
     dialect = build_style_dialect("genetic", metrics)
     base_generations = max(1, int(maturity * 20))
+    generation_gain = dialect.knobs["generation_gain"]
     generations = max(
         1,
         int(
             round(
-                base_generations * (1.0 + activity_signal + contribution_signal * 0.35)
-                + 8 * dialect.knobs["generation_gain"]
+                base_generations
+                * (1.0 + activity_signal + contribution_signal * 0.35)
+                + 8 * generation_gain
             )
         ),
     )
@@ -333,14 +344,15 @@ def _derive_landscape_dynamics(
         )
         / 6.0
     )
+    # Organisms wait on commits. Followers must not inflate the swarm.
+    commit_pop = (
+        0.0
+        if generation_gain <= 0.36
+        else min(1.0, (generation_gain - 0.36) / 0.64)
+    )
     pop_count = max(
-        6,
-        int(
-            round(
-                base_pop_count
-                * (1.0 + pop_signal + 0.55 * dialect.channels.follower_scale)
-            )
-        ),
+        0,
+        int(round(base_pop_count * (1.0 + pop_signal) * commit_pop)),
     )
 
     base_mutation = max(0.1, 1.0 - maturity * 0.6) * (0.5 + tempo * 0.5)
@@ -388,6 +400,80 @@ def _gaussian(x: float, y: float, cx: float, cy: float, sigma: float) -> float:
     dx = x - cx
     dy = y - cy
     return math.exp(-(dx * dx + dy * dy) / (2.0 * sigma * sigma))
+
+
+def _point_hits_overlay(x: float, y: float) -> bool:
+    """True when a peak would sit under the on-map fitness register."""
+    return (
+        (_OVERLAY_X - _OVERLAY_CLEAR) <= x <= (_OVERLAY_X + _OVERLAY_W + _OVERLAY_CLEAR)
+        and (_OVERLAY_Y - _OVERLAY_CLEAR)
+        <= y
+        <= (_OVERLAY_Y + _OVERLAY_H + _OVERLAY_CLEAR)
+    )
+
+
+def _clamp_peak_xy(x: float, y: float) -> tuple[float, float]:
+    """Keep a peak inside the map and south of the overlay strip."""
+    x = max(_MAP_L + 28.0, min(_MAP_R - 28.0, x))
+    y = max(_MAP_T + 96.0, min(_MAP_B - 28.0, y))
+    if _point_hits_overlay(x, y):
+        y = min(_MAP_B - 28.0, _OVERLAY_Y + _OVERLAY_H + _OVERLAY_CLEAR + 16.0)
+    return x, y
+
+
+def _stable_peak_positions(
+    repos: list[dict[str, Any]],
+    seed: str,
+    *,
+    min_spacing: float,
+) -> list[tuple[float, float]]:
+    """Place peaks in visual order on reserved golden-angle slots.
+
+    Later repos never move earlier ones. Language-quadrant packing is not used.
+    ``optimize_placement`` must stay skipped on the timelapse contract.
+    """
+    positions: list[tuple[float, float]] = []
+    if not repos:
+        return positions
+
+    cx      = _MAP_L + _MAP_W * 0.54
+    cy      = _MAP_T + _MAP_H * 0.58
+    golden  = math.pi * (3.0 - math.sqrt(5.0))
+    spacing = max(56.0, float(min_spacing))
+
+    for index, repo in enumerate(repos):
+        name   = str(repo.get("name") or f"repo-{index}")
+        digest = seed_hash(
+            {"seed": seed, "repo": name, "layer": "genetic-peak-slot"}
+        )
+        jitter = (hex_frac(digest, 0, 8) - 0.5) * 0.22
+        radius = spacing * math.sqrt(index + 1.0)
+        theta  = (index + 1) * golden + jitter * math.pi
+        x      = cx + math.cos(theta) * radius
+        y      = cy + math.sin(theta) * radius
+        x, y   = _clamp_peak_xy(x, y)
+
+        for attempt in range(18):
+            pushed = False
+            for px, py in positions:
+                dx   = x - px
+                dy   = y - py
+                dist = math.hypot(dx, dy)
+                if dist >= spacing:
+                    continue
+                pushed = True
+                if dist < 1e-6:
+                    x += math.cos(theta + attempt) * spacing
+                    y += math.sin(theta + attempt) * spacing
+                else:
+                    scale = spacing / dist
+                    x     = px + dx * scale
+                    y     = py + dy * scale
+                x, y = _clamp_peak_xy(x, y)
+            if not pushed:
+                break
+        positions.append((x, y))
+    return positions
 
 
 # ── Marching squares contour extraction ──────────────────────────────────
@@ -628,6 +714,7 @@ def generate(
         world.season,
         world.energy,
     )
+    pal["bg_primary"] = _DESIGNED_GROUND
 
     def _fade(start: float, full: float) -> float:
         """Smooth 0-1 ramp between start and full maturity."""
@@ -769,9 +856,7 @@ def generate(
         2,
         min(
             5,
-            2
-            + max(total_commits // 4000, activity_total // 900)
-            + int(round(2.0 * dialect.knobs["generation_gain"])),
+            2 + max(total_commits // 4000, activity_total // 900),
         ),
     )
     terrain_amp = 0.018 + min(
@@ -785,15 +870,13 @@ def generate(
             )
 
     # ── Repo peaks ────────────────────────────────────────────────
-    # Get initial positions via shared utility
-    initial_positions = [
-        repo_to_canvas_position(
-            r, h, _MAP_W, _MAP_H, strategy="language_cluster", jitter=0.2
-        )
-        for r in primary_repos
-    ]
-    # Remap from (0..MAP_W, 0..MAP_H) to canvas coords
-    initial_positions = [(_MAP_L + x, _MAP_T + y) for x, y in initial_positions]
+    # Stable reserved slots in visual order. Do not pack by language quadrant.
+    min_peak_spacing = max(64.0, 92.0 * crowding_scale)
+    initial_positions = _stable_peak_positions(
+        primary_repos,
+        h,
+        min_spacing=min_peak_spacing,
+    )
     weights = [
         math.log1p(max(1, _as_non_negative_int(r.get("stars", 0))))
         + 0.9
@@ -801,14 +884,14 @@ def generate(
         for index, r in enumerate(primary_repos)
     ]
 
-    # Optimize placement to avoid overlap
+    # Optimize placement to avoid overlap — never on the timelapse/GIF contract.
     if len(initial_positions) >= 2 and not timelapse_contract:
         optimized_positions = optimize_placement(
             initial_positions,
             weights,
             float(WIDTH),
             float(HEIGHT),
-            min_spacing=70.0 * crowding_scale,
+            min_spacing=min_peak_spacing,
             seed=int(h[:8], 16),
         )
     else:
@@ -866,16 +949,26 @@ def generate(
         visibility = visibility_norms[ri] if ri < len(visibility_norms) else 1.0
         peak_h *= (0.58 + 0.72 * visibility) * dialect.knobs["peak_scale"]
         sigma_grid = max(
-            1.6,
-            sigma_grid * (0.74 + 0.42 * visibility) * (crowding_scale**0.45),
+            1.35,
+            min(
+                3.6,
+                sigma_grid
+                * (0.52 + 0.22 * visibility)
+                * (crowding_scale**0.55),
+            ),
         )
-        terrace_height *= 0.62 + 0.74 * visibility
+        terrace_height *= 0.28 + 0.22 * visibility
         terrace_sigma = max(
-            1.8,
-            terrace_sigma * (0.82 + 0.30 * (1.0 - visibility)) * (crowding_scale**0.25),
+            1.6,
+            min(
+                5.0,
+                terrace_sigma
+                * (0.48 + 0.18 * (1.0 - visibility))
+                * (crowding_scale**0.30),
+            ),
         )
         hue = opt_hues[ri] if ri < len(opt_hues) else 155.0
-        color = oklch(0.65, 0.14, hue)
+        color = oklch(0.84, 0.15, hue)
 
         # Convert canvas position to grid position
         gpx = (px - _MAP_L) / cell_w
@@ -899,13 +992,8 @@ def generate(
         )
         colony_gain = dialect.knobs["colony_gain"]
         extra_colonies = 0 if colony_gain <= 0 else int(round(3.0 * colony_gain))
-        colony_count = min(
-            6,
-            1
-            + int(visibility < 0.72)
-            + int(visibility < 0.42 or repo_density_signal > 0.7)
-            + extra_colonies,
-        )
+        # Followers only. Zero followers → zero colonies. No visibility floor.
+        colony_count = 0 if colony_gain <= 0 else min(6, 1 + extra_colonies)
         for colony_idx in range(colony_count):
             angle = (
                 2.0
@@ -916,10 +1004,10 @@ def generate(
                 )
             )
             offset = (
-                12.0
-                + 10.0 * colony_idx
-                + 18.0 * (1.0 - visibility)
-                + 10.0 * repo_density_signal
+                18.0
+                + 11.0 * colony_idx
+                + 8.0 * (1.0 - visibility)
+                + 6.0 * repo_density_signal
             ) * crowding_scale
             colony_x = max(
                 _MAP_L + 8.0,
@@ -929,32 +1017,12 @@ def generate(
                 _MAP_T + 8.0,
                 min(_MAP_B - 8.0, py + math.sin(angle) * offset),
             )
-            colony_height = (
-                peak_h
-                * (0.10 + 0.08 * (1.0 - visibility))
-                * (1.0 - 0.14 * colony_idx)
-                * (0.80 + 0.90 * colony_gain)
-            )
-            colony_sigma = max(
-                1.1,
-                sigma_grid * (0.32 + 0.08 * colony_idx) * (0.86 + 0.40 * colony_gain),
-            )
-            colony_gpx = (colony_x - _MAP_L) / cell_w
-            colony_gpy = (colony_y - _MAP_T) / cell_h
-            for gy in range(grid):
-                for gx in range(grid):
-                    elevation[gy, gx] += colony_height * _gaussian(
-                        gx,
-                        gy,
-                        colony_gpx,
-                        colony_gpy,
-                        colony_sigma,
-                    )
+            # Marks only — do not stamp elevation that fills saddles.
             micro_colonies.append(
                 {
                     "x": colony_x,
                     "y": colony_y,
-                    "height": colony_height,
+                    "height": peak_h * (0.10 + 0.08 * (1.0 - visibility)),
                     "color": color,
                     "repo": repo,
                     "owner_index": ri,
@@ -990,18 +1058,21 @@ def generate(
             ridge_h = (
                 min(p1[2], p2[2])
                 * affinity
-                * 0.3
+                * 0.045
                 * ridge_fade
-                * dynamics.ridge_intensity
+                * min(1.15, dynamics.ridge_intensity)
                 * (0.72 + 0.28 * ((visibility_norms[i] + visibility_norms[j]) * 0.5))
             )
             ridge_sigma = max(
-                5.0,
-                8.0
-                * (
-                    0.72
-                    + 0.18 * repo_density_signal
-                    + 0.10 * (1.0 - min(visibility_norms[i], visibility_norms[j]))
+                2.2,
+                min(
+                    4.2,
+                    3.2
+                    * (
+                        0.72
+                        + 0.10 * repo_density_signal
+                        + 0.08 * (1.0 - min(visibility_norms[i], visibility_norms[j]))
+                    ),
                 ),
             )
             for gy in range(grid):
@@ -1061,8 +1132,17 @@ def generate(
     )
     static_population_signal = min(
         1.0,
-        (pop_count / max(1.0, CFG.pop_base + CFG.pop_scale * 2.0)) * 0.6
+        (pop_count / max(1.0, CFG.pop_scale * 2.0)) * 0.6
         + (generations / 40.0) * 0.4,
+    )
+    generation_gain = dialect.knobs["generation_gain"]
+    peak_scale_knob = dialect.knobs["peak_scale"]
+    star_scale_vis = min(1.0, max(0.0, (peak_scale_knob - 0.72) / 0.70))
+    generation_marks = (
+        0 if generation_gain <= 0 else 1 + int(round(4.0 * generation_gain))
+    )
+    contour_index_every = (
+        4 if generation_gain < 0.50 else 3 if generation_gain < 0.78 else 2
     )
 
     # ── SVG output ────────────────────────────────────────────────
@@ -1073,6 +1153,8 @@ def generate(
         f'data-maturity="{mat:.3f}" data-tempo="{tempo:.3f}" '
         f'data-peak-count="{len(peaks)}" data-population="{pop_count}" '
         f'data-generations="{generations}" data-activity-midpoint="{activity_midpoint}" '
+        f'data-peak-scale="{peak_scale_knob:.3f}" '
+        f'data-generation-marks="{generation_marks}" '
         f'data-colony-gain="{dialect.knobs["colony_gain"]:.3f}" '
         f'data-colony-count="{len(micro_colonies)}" '
         f'data-activity-signal="{static_contour_signal:.3f}" '
@@ -1097,24 +1179,24 @@ def generate(
     P.append("</defs>")
 
     # ── Background ────────────────────────────────────────────────
-    bg = pal.get("bg_primary", pal.get("sky_top", "#1a1a2e"))
+    bg = _DESIGNED_GROUND
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{bg}"/>')
     budget.add(1)
 
     # Subtle texture overlay
     P.append(
-        f'<rect width="{WIDTH}" height="{HEIGHT}" filter="url(#glTexture)" opacity="0.08"/>'
+        f'<rect width="{WIDTH}" height="{HEIGHT}" filter="url(#glTexture)" opacity="0.06"/>'
     )
     budget.add(1)
 
     # ── Contour lines ─────────────────────────────────────────────
     contour_colors = oklch_gradient(
-        [(0.35, 0.04, 220), (0.50, 0.06, 180), (0.65, 0.08, 140), (0.80, 0.10, 80)],
+        [(0.46, 0.04, 220), (0.58, 0.055, 200), (0.70, 0.07, 185), (0.82, 0.08, 165)],
         CFG.contour_levels,
     )
 
     contour_fade = (
-        _fade(0.05, 0.4) if timeline_enabled else max(0.18, static_contour_signal)
+        _fade(0.05, 0.4) if timeline_enabled else max(0.42, static_contour_signal)
     )
     start_date = timeline_window[0].isoformat()
     for li in range(CFG.contour_levels):
@@ -1122,10 +1204,10 @@ def generate(
             break
         level = e_min + (li + 1) * e_range / (CFG.contour_levels + 1)
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
-        is_index = li % 4 == 3
-        sw = 1.0 if is_index else 0.4
+        is_index = li % contour_index_every == (contour_index_every - 1)
+        sw = 1.35 if is_index else 0.55
         color = contour_colors[li % len(contour_colors)]
-        opacity = (0.6 if is_index else 0.35) * contour_fade
+        opacity = (0.52 if is_index else 0.16) * contour_fade
 
         contour_frac = (li + 1) / (CFG.contour_levels + 1)
         contour_when = _date_for_activity_fraction(contour_frac)
@@ -1138,28 +1220,29 @@ def generate(
             d = f"M{chain[0][0]:.1f},{chain[0][1]:.1f}"
             for pt in chain[1:]:
                 d += f"L{pt[0]:.1f},{pt[1]:.1f}"
+            role = (
+                "genetic-generation-contour" if is_index else "genetic-contour"
+            )
             P.append(
                 f'<path d="{d}" fill="none" stroke="{color}" '
+                f'data-role="{role}" data-contour-index="{li}" '
                 f'stroke-width="{sw:.2f}" stroke-linecap="round" stroke-linejoin="round" '
                 f"{_timeline_style(contour_when, opacity)}/>"
             )
             budget.add(1)
 
     # ── Peak markers & glow ───────────────────────────────────────
-    peak_fade = _fade(0.15, 0.6) if timeline_enabled else max(0.25, static_peak_signal)
-    colony_fade = (
-        _fade(0.10, 0.55) if timeline_enabled else max(0.16, static_peak_signal * 0.72)
-    )
+    peak_fade = _fade(0.15, 0.6) if timeline_enabled else 1.0
+    colony_fade = _fade(0.10, 0.55) if timeline_enabled else 1.0
+    colony_gain = dialect.knobs["colony_gain"]
     if colony_fade > 0:
         for colony in micro_colonies:
             if not budget.ok():
                 break
             colony_when = _repo_date(colony["repo"]) or start_date
             colony_visibility = float(colony["visibility"])
-            colony_radius = (1.3 + 2.2 * colony_visibility) * (
-                0.85 + 0.90 * dialect.knobs["colony_gain"]
-            )
-            colony_opacity = (0.10 + 0.18 * colony_visibility) * colony_fade
+            colony_radius = 5.8 + 6.6 * colony_gain + 1.1 * colony_visibility
+            colony_opacity = (0.62 + 0.32 * colony_gain) * colony_fade
             P.append(
                 f'<circle data-role="gl-micro-colony" '
                 f'data-owner-index="{int(colony["owner_index"])}" '
@@ -1174,8 +1257,26 @@ def generate(
             break
         peak_when = _repo_date(repo) or start_date
         peak_visibility = visibility_norms[pi] if pi < len(visibility_norms) else 1.0
-        r_glow = max(5.5, min(40.0, ph * (1.05 + 0.40 * peak_visibility)))
-        r_core = max(2.2, min(12.0, ph * (0.28 + 0.22 * peak_visibility)))
+        r_glow = max(
+            16.0,
+            min(
+                54.0,
+                ph
+                * (1.22 + 0.42 * peak_visibility)
+                * (0.88 + 0.42 * star_scale_vis),
+            ),
+        )
+        r_core = max(
+            10.0,
+            min(
+                22.0,
+                ph
+                * (0.44 + 0.24 * peak_visibility)
+                * (0.82 + 0.50 * star_scale_vis),
+            ),
+        )
+        glow_opacity = min(0.58, (0.32 + 0.26 * star_scale_vis) * peak_fade)
+        core_opacity = min(1.0, (0.88 + 0.12 * star_scale_vis) * peak_fade)
 
         # Glow
         P.append(
@@ -1183,23 +1284,45 @@ def generate(
             f'data-role="genetic-peak-glow" data-repo="{repo.get("name", "")}" '
             f'data-x="{px:.1f}" data-y="{py:.1f}" '
             f'fill="{color}" filter="url(#glHaze)" '
-            f"{_timeline_style(peak_when, (0.12 + 0.18 * peak_visibility) * peak_fade)}/>"
+            f"{_timeline_style(peak_when, glow_opacity)}/>"
         )
         budget.add(1)
 
-        # Core
+        for ring_idx in range(generation_marks):
+            if not budget.ok():
+                break
+            ring_r = r_core * (1.38 + 0.46 * ring_idx)
+            ring_op = (
+                (0.24 + 0.50 * generation_gain)
+                * (1.0 - 0.11 * ring_idx)
+                * peak_fade
+            )
+            P.append(
+                f'<circle data-role="genetic-generation-ring" '
+                f'data-generation="{ring_idx + 1}" '
+                f'data-repo="{repo.get("name", "")}" '
+                f'cx="{px:.1f}" cy="{py:.1f}" r="{ring_r:.1f}" '
+                f'fill="none" stroke="{color}" '
+                f'stroke-width="{1.15 + 0.12 * ring_idx:.2f}" '
+                f"{_timeline_style(peak_when, ring_op)}/>"
+            )
+            budget.add(1)
+
+        # Core stays on top — t0 primary mark
         P.append(
             f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_core:.1f}" '
             f'data-role="genetic-peak-core" data-repo="{repo.get("name", "")}" '
             f'data-x="{px:.1f}" data-y="{py:.1f}" '
             f'fill="{color}" '
-            f"{_timeline_style(peak_when, (0.45 + 0.35 * peak_visibility) * peak_fade)}/>"
+            f"{_timeline_style(peak_when, core_opacity)}/>"
         )
         budget.add(1)
 
     # ── Organism trails ───────────────────────────────────────────
     trail_fade = (
-        _fade(0.3, 0.8) if timeline_enabled else max(0.12, static_population_signal)
+        _fade(0.3, 0.8)
+        if timeline_enabled
+        else min(0.16, max(0.0, static_population_signal * 0.45))
     )
     if trail_fade > 0 and organisms:
         # Assign organisms to nearest peak for coloring
@@ -1230,7 +1353,9 @@ def generate(
 
     # ── Organism dots ─────────────────────────────────────────────
     org_fade = (
-        _fade(0.15, 0.5) if timeline_enabled else max(0.18, static_population_signal)
+        _fade(0.15, 0.5)
+        if timeline_enabled
+        else min(0.20, max(0.0, static_population_signal * 0.35))
     )
     if org_fade > 0 and organisms:
         mid_date = activity_midpoint
@@ -1248,11 +1373,12 @@ def generate(
                     best_pi = pi
 
             dot_color = peaks[best_pi][3] if peaks else "#aaaaaa"
-            r = 1.2 + rng.uniform(0, 0.8)
+            r = 0.9 + rng.uniform(0, 0.45)
             P.append(
                 f'<circle cx="{ox:.1f}" cy="{oy:.1f}" r="{r:.1f}" '
+                f'data-role="genetic-organism" '
                 f'fill="{dot_color}" '
-                f"{_timeline_style(mid_date, 0.7 * org_fade, 'tl-reveal tl-soft')}/>"
+                f"{_timeline_style(mid_date, 0.42 * org_fade, 'tl-reveal tl-soft')}/>"
             )
             budget.add(1)
 
@@ -1263,7 +1389,7 @@ def generate(
         else max(0.0, min(1.0, static_peak_signal * 0.85 - 0.2))
     )
     if label_fade > 0:
-        text_color = pal.get("text_primary", pal.get("accent", "#cccccc"))
+        text_color = oklch(0.86, 0.04, 210)
         for pi, (px, py, ph, color, repo) in enumerate(peaks):
             if not budget.ok():
                 break

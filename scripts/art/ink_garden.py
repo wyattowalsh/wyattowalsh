@@ -42,7 +42,6 @@ from .shared import (
     compute_world_state,
     contributions_monthly_to_daily_series,
     dialect_group_markup,
-    firefly_elements,
     is_monotonic_timelapse_metrics,
     make_linear_gradient,
     make_radial_gradient,
@@ -70,6 +69,45 @@ MAX_ROOTS = 800
 MAX_LEAVES = 600
 MAX_BLOOMS = 80
 MAX_ELEMENTS = 25000  # total SVG elements budget
+
+# Dig4: one parchment look. Ink on aged paper, never night-cosmic ground.
+_PARCHMENT_BG = "#f5f0e6"
+_PARCHMENT_LIT = "#f8f3ea"
+# Dig1: rescued / oldest snapshot plants must clear the dated bloom gate (0.48).
+_SNAPSHOT_CANOPY_T = 0.56
+
+
+def _paper_palette_name(name: str) -> str:
+    """Keep stain/wash anchors on parchment; cosmic is a second designed world."""
+    if name == "cosmic":
+        return "flora"
+    return name if name in ART_PALETTE_ANCHORS else "flora"
+
+
+def _bloom_mark_size(repo_stars: int, bloom_scale: float) -> float:
+    """Stars drive bloom size so isolation stays readable at 400×400."""
+    return max(
+        8.0,
+        min(
+            36.0,
+            6.0 + min(16.0, max(0, repo_stars) * 0.4) + 10.0 * float(bloom_scale),
+        ),
+    )
+
+
+def _bloom_mark_count(
+    *,
+    stars_total: int,
+    bloom_scale: float,
+    ensure_mark: bool,
+) -> int:
+    if stars_total <= 0:
+        return 0
+    scaled = max(1, int(round(float(bloom_scale) * 2.5)))
+    if ensure_mark:
+        return max(1, scaled)
+    return scaled
+
 
 class SpeciesStyle(TypedDict):
     branch_prob: float
@@ -1162,13 +1200,17 @@ def generate(
     world = compute_world_state(metrics)
 
     # ── OKLCH palette & complexity (Phase 4c) ─────────────────────
-    palette_name = select_palette_for_world(world)
+    # One parchment look: night hours may tint a wash, never cosmic paper.
+    palette_name = _paper_palette_name(select_palette_for_world(world))
+    paper_tod = "day" if world.time_of_day == "night" else world.time_of_day
     pal = _build_world_palette_extended(
-        world.time_of_day,
+        paper_tod,
         world.weather,
         world.season,
         world.energy,
     )
+    pal["bg_primary"] = _PARCHMENT_BG
+    pal["bg_secondary"] = _PARCHMENT_LIT
     complexity = visual_complexity(metrics)
     # Seasonal ground cover gradient via OKLCH pipeline
     ground_colors = oklch_gradient(ART_PALETTE_ANCHORS[palette_name], 5)
@@ -1227,7 +1269,8 @@ def generate(
         sky_gradient = [(0.82, 0.10, 60), (0.70, 0.08, 45)]  # warm amber
     elif peak_hour >= 21 or peak_hour <= 4:
         time_of_day = "night"
-        sky_gradient = [(0.20, 0.05, 250), (0.15, 0.03, 270)]  # deep blue
+        # Cool dusk wash on parchment — not a second near-black sky.
+        sky_gradient = [(0.78, 0.04, 250), (0.82, 0.03, 235)]
     else:
         time_of_day = "day"
         sky_gradient = [(0.90, 0.03, 210), (0.85, 0.02, 200)]  # light blue
@@ -1605,9 +1648,11 @@ def generate(
         # Snapshot worlds (daily spine / computed maturity) keep existing
         # repos visible; explicit maturity staging still hides later trees.
         show_existing_world = timelapse_contract or maturity is None
+        was_rescued = False
         if tree_t <= 0.0 or (chronological_growth and tree_t < 0.05):
             if show_existing_world or is_oldest:
-                tree_t = max(tree_t, 0.34)
+                tree_t = max(tree_t, _SNAPSHOT_CANOPY_T)
+                was_rescued = True
             else:
                 continue
 
@@ -1673,6 +1718,13 @@ def generate(
                 bloom_growth_gate + 0.08,
                 late_detail_growth_gate - float(layout_plan["detail_gate_shift"]),
             )
+
+        snapshot_canopy = is_oldest or was_rescued
+        if snapshot_canopy:
+            # First named repo (and GIF-rescued plants) must show stem + canopy.
+            tree_t = max(tree_t, _SNAPSHOT_CANOPY_T)
+            leaf_growth_gate = 0.0
+            bloom_growth_gate = min(bloom_growth_gate, tree_t)
 
         species = _classify_species(repo, species_threshold_mult=species_threshold_mult)
         repo_canopy_scale = 1.0
@@ -1789,6 +1841,12 @@ def generate(
                 min(1.1, 0.48 + float(layout_plan["size_scale"]) * 0.55),
             )
         stem_sw *= vigor_multiplier
+        # Commits → trunk stroke via trunk_scale (GIF-visible, not a 0.5px band).
+        stem_sw *= commit_factor
+        if snapshot_canopy:
+            main_length = max(main_length, 52.0 * max(1.0, repo_canopy_scale))
+            stem_sw = max(stem_sw, 2.4 * commit_factor)
+            max_depth = max(max_depth, 2)
         # Data mapping: age -> bark maturity factor (drives bark texture density)
         bark_maturity = min(1.0, age / 60.0)
         # Data mapping: stars -> bloom density multiplier (vigor boosts blooms)
@@ -1812,6 +1870,15 @@ def generate(
                 2.8,
                 bloom_boost * repo_bloom_scale * dialect.knobs["bloom_scale"] / 1.4,
             ),
+        )
+        star_bloom_quota = _bloom_mark_count(
+            stars_total=int(stars_total or 0),
+            bloom_scale=float(dialect.knobs["bloom_scale"]),
+            ensure_mark=snapshot_canopy and tree_t >= bloom_growth_gate,
+        )
+        bloom_mark_size = _bloom_mark_size(
+            int(repo_stars or 0),
+            float(dialect.knobs["bloom_scale"]),
         )
 
         topic_annotation = _repo_topic_annotation(
@@ -1866,6 +1933,8 @@ def generate(
                 else "midstory",
             }
         )
+        plant_bloom_at = len(blooms)
+        plant_leaf_at = len(leaves)
 
         # ── Fern growth (special algorithm) ───────────────────────
         if species == "fern":
@@ -2205,7 +2274,7 @@ def generate(
                     and rng.random() < min(0.85, 0.6 * bloom_boost)
                 ):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
+                    bloom_size = bloom_mark_size
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append(
                         (
@@ -2397,7 +2466,7 @@ def generate(
                     and rng.random() < min(0.85, 0.6 * bloom_boost)
                 ):
                     n_petals = max(4, min(12, 4 + repo_stars // 2))
-                    bloom_size = max(12, 7 + min(22, repo_stars * 1.0))
+                    bloom_size = bloom_mark_size
                     petal_layers = 1 + min(3, repo_stars // 5)
                     blooms.append(
                         (
@@ -2430,6 +2499,66 @@ def generate(
                         )
 
             _grow(base_x, gy, base_angle, 0, main_length, stem_sw)
+
+        if species == "fern":
+            bloom_kind = "radial_petal"
+            leaf_kind = "pinnate"
+        elif species == "bamboo":
+            bloom_kind = "radial_petal"
+            leaf_kind = "narrow_blade"
+        elif species == "seedling":
+            bloom_kind = "radial_petal"
+            leaf_kind = "teardrop"
+        elif style is not None:
+            bloom_kind = style["bloom_type"]
+            leaf_kind = style["leaf_shape"]
+        else:
+            bloom_kind = "radial_petal"
+            leaf_kind = "teardrop"
+        crown_y = gy - main_length
+        plant_bloom_n = len(blooms) - plant_bloom_at
+        while (
+            plant_bloom_n < star_bloom_quota
+            and tree_t >= bloom_growth_gate
+            and len(blooms) < MAX_BLOOMS
+        ):
+            extra_i = plant_bloom_n
+            spread = 0.28 * extra_i
+            blooms.append(
+                (
+                    base_x + 14.0 * math.sin(spread + extra_i * 0.7),
+                    crown_y + 6.0 * extra_i,
+                    bloom_mark_size,
+                    (hue + bloom_hue_shift) % 360,
+                    max(4, min(12, 4 + int(repo_stars or 0) // 2)),
+                    1 + min(3, int(repo_stars or 0) // 5),
+                    bloom_kind,
+                    bloom_when,
+                )
+            )
+            plant_bloom_n += 1
+        if (
+            snapshot_canopy
+            and tree_t >= leaf_growth_gate
+            and (len(leaves) - plant_leaf_at) < 4
+            and len(leaves) < MAX_LEAVES
+        ):
+            for leaf_i in range(4):
+                if len(leaves) >= MAX_LEAVES:
+                    break
+                la = -math.pi / 2 + (leaf_i - 1.5) * 0.45
+                leaves.append(
+                    (
+                        base_x + 12.0 * math.cos(la),
+                        crown_y + 8.0 * math.sin(la + 0.4),
+                        la,
+                        10.0 + 4.0 * tree_t,
+                        (hue + 25 + leaf_hue_shift) % 360,
+                        True,
+                        leaf_kind,
+                        leaf_when,
+                    )
+                )
 
         # ── Root system (scales with tree growth; forks -> root spread) ─
         # Data mapping: forks -> wider root spread angle and more root count
@@ -2762,7 +2891,10 @@ def generate(
     P = []  # parts list
     P.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {WIDTH} {HEIGHT}" '
-        f'width="{WIDTH}" height="{HEIGHT}" {dialect.svg_attrs()}>'
+        f'width="{WIDTH}" height="{HEIGHT}" {dialect.svg_attrs()} '
+        f'data-bloom-scale="{dialect.knobs["bloom_scale"]:.3f}" '
+        f'data-trunk-scale="{dialect.knobs["trunk_scale"]:.3f}" '
+        f'data-glint-count="{dialect.knobs["glint_count"]:.3f}">'
     )
     if timeline_enabled:
         P.append(
@@ -2814,7 +2946,7 @@ def generate(
     # Sky gradient — derived from circadian cycle (commit peak hour)
     sky_top = oklch(*sky_gradient[0])
     sky_mid = oklch(*sky_gradient[1])
-    sky_top_opacity = 0.85 if time_of_day == "night" else 0.6
+    sky_top_opacity = 0.28 if time_of_day == "night" else 0.6
     P.append(
         make_linear_gradient(
             "skyGrad",
@@ -3643,25 +3775,7 @@ def generate(
             f'transform="rotate({rng.uniform(-10, 10):.0f},{awx:.0f},{awy:.0f})"/>'
         )
 
-    # ── Circadian sky elements (stars, moon, dawn glow) ──────────
-    if time_of_day == "night":
-        # Night sky stars
-        for _ in range(30):
-            sx = rng.uniform(20, WIDTH - 20)
-            sy = rng.uniform(10, GROUND_Y * 0.4)
-            sr = rng.uniform(0.5, 1.5)
-            P.append(
-                f'<circle cx="{sx:.0f}" cy="{sy:.0f}" r="{sr:.1f}" fill="white" opacity="{rng.uniform(0.3, 0.7):.2f}"/>'
-            )
-        # Moon
-        mx, my = WIDTH * 0.75, HEIGHT * 0.12
-        P.append(
-            f'<circle cx="{mx:.0f}" cy="{my:.0f}" r="18" fill="{oklch(0.92, 0.02, 80)}" opacity="0.8"/>'
-        )
-        P.append(
-            f'<circle cx="{mx + 5:.0f}" cy="{my - 3:.0f}" r="16" fill="{oklch(0.20, 0.05, 250)}"/>'
-        )
-
+    # ── Circadian sky elements (dawn glow only; night is a parchment wash) ──
     if time_of_day == "dawn":
         # Dawn sun glow near horizon
         P.append(
@@ -3841,6 +3955,7 @@ def generate(
             P.append(
                 f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
                 f'fill="none" stroke="{oklch(0.22, 0.07, hue)}" stroke-width="{sw:.1f}" '
+                f'data-role="ink-trunk" '
                 f'{_timeline_style(when, 0.9)} stroke-linecap="round"/>'
             )
             # Core layer (current color, narrower)
@@ -3853,6 +3968,7 @@ def generate(
             P.append(
                 f'<path d="M{x1:.1f},{y1:.1f} Q{mx:.1f},{my:.1f} {x2:.1f},{y2:.1f}" '
                 f'fill="none" stroke="{color}" stroke-width="{sw:.1f}" '
+                f'data-role="ink-trunk" '
                 f'{_timeline_style(when, 0.85)} stroke-linecap="round"/>'
             )
         # Highlight edge — subtle lighter line on one side
@@ -4009,7 +4125,8 @@ def generate(
                 f"{_timeline_style(leaf_when, 0.07, delay_offset_frac=-0.015, duration_scale=1.2, ease='linear')}/>"
             )
         P.append(
-            f"<g {_timeline_style(leaf_when, 1.0, delay_offset_frac=0.004 * math.sin(la), duration_scale=0.95)}>"
+            f'<g data-role="ink-canopy" '
+            f"{_timeline_style(leaf_when, 1.0, delay_offset_frac=0.004 * math.sin(la), duration_scale=0.95)}>"
         )
         _draw_leaf(P, lx, ly, la, ls, lh, has_vein, leaf_shape, rng, budget_ok, oklch)
         if has_vein and ls > 5 and budget_ok():
@@ -4056,7 +4173,8 @@ def generate(
             f'fill="#61563a" {_timeline_style(when, 0.08, delay_offset_frac=-0.012, duration_scale=1.25, ease="linear")}/>'
         )
         P.append(
-            f"<g {_timeline_style(when, 1.0, delay_offset_frac=0.008, duration_scale=0.9)}>"
+            f'<g data-role="ink-bloom" data-bloom-size="{bs:.1f}" '
+            f"{_timeline_style(when, 1.0, delay_offset_frac=0.008, duration_scale=0.9)}>"
         )
         _draw_bloom(
             P, bx, by, bs, bh, n_petals, petal_layers, bloom_type, rng, budget_ok, oklch
@@ -4298,17 +4416,15 @@ def generate(
             f'<circle cx="{dx:.1f}" cy="{dy:.1f}" r="{ds:.1f}" fill="url(#dewGrad)" filter="url(#dew)"/>'
         )
 
-    # ── Fireflies (star velocity driven) ─────────────────────────
-    star_vel = metrics.get("star_velocity", {})
-    star_rate = star_vel.get("recent_rate", 0) if isinstance(star_vel, dict) else 0
+    # ── Fireflies (followers → glints; star velocity must not light the garden) ─
     follower_glints = int(round(dialect.knobs["glint_count"]))
-    n_fireflies = min(16, max(int(star_rate * 2), follower_glints))
+    n_fireflies = min(16, max(0, follower_glints))
     if n_fireflies > 0:
-        P.append('<g id="fireflies">')
+        P.append('<g id="fireflies" filter="url(#fireflyGlow)">')
         for fi in range(n_fireflies):
             fx = rng.uniform(60, WIDTH - 60)
             fy = rng.uniform(GROUND_Y - 200, GROUND_Y - 30)
-            glow_r = 3 + star_rate * 0.3
+            glow_r = 3.2 + min(2.4, follower_glints * 0.18)
             pulse_dur = rng.uniform(2.0, 4.0)
             delay = rng.uniform(0, 6)
             glow_color = oklch(0.85, 0.15, 85)
@@ -4316,31 +4432,17 @@ def generate(
                 when = _date_for_activity_fraction(0.7 + fi * 0.02)
                 P.append(
                     f'<circle cx="{fx:.0f}" cy="{fy:.0f}" r="{glow_r:.1f}" '
-                    f'fill="{glow_color}" filter="url(#dew)" '
+                    f'data-role="ink-glint" fill="{glow_color}" filter="url(#dew)" '
                     f"{_timeline_style(when, 0.6)}/>"
                 )
             else:
                 P.append(
                     f'<circle cx="{fx:.0f}" cy="{fy:.0f}" r="{glow_r:.1f}" '
-                    f'fill="{glow_color}" filter="url(#dew)" opacity="0">'
+                    f'data-role="ink-glint" fill="{glow_color}" filter="url(#dew)" opacity="0">'
                     f'<animate attributeName="opacity" values="0;0.7;0.7;0" '
                     f'dur="{pulse_dur:.1f}s" begin="{delay:.1f}s" repeatCount="indefinite"/>'
                     f"</circle>"
                 )
-        P.append("</g>")
-
-    # ── Bioluminescent firefly layer (shared library, glow-filtered) ─
-    fly_els = firefly_elements(
-        metrics.get("star_velocity"),
-        width=WIDTH,
-        height=HEIGHT,
-        y_min=0.3,
-        y_max=0.85,
-        seed=base_seed,
-    )
-    if fly_els:
-        P.append('<g filter="url(#fireflyGlow)">')
-        P.extend(fly_els)
         P.append("</g>")
 
     # ── Insects (detailed, naturalist style) ──────────────────────

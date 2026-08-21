@@ -41,7 +41,6 @@ except ImportError:  # pragma: no cover — scipy optional
 
 
 from .shared import (
-    ART_PALETTE_ANCHORS,
     HEIGHT,
     LANG_HUES,
     MAX_REPOS,
@@ -69,7 +68,6 @@ from .shared import (
     repo_visibility_score,
     resolve_render_metrics,
     seed_hash,
-    select_palette_for_world,
     select_primary_repos,
     topic_affinity_matrix,
     volumetric_glow_filter,
@@ -186,6 +184,79 @@ def _circular_hue_average(
     if total <= 0 or (abs(x) < 1e-9 and abs(y) < 1e-9):
         return fallback % 360.0
     return math.degrees(math.atan2(y, x)) % 360.0
+
+
+def _signed_hue_delta(source: float, target: float) -> float:
+    """Return the signed shortest hue delta from *target* toward *source*."""
+    return ((source - target + 540.0) % 360.0) - 180.0
+
+
+def _place_satellite_cell(
+    gx: int,
+    gy: int,
+    *,
+    angle: float,
+    distance: float,
+    grid: int,
+) -> tuple[int, int]:
+    """Offset a satellite without toroidal wrap so SVG extent stays readable."""
+    dx = int(round(math.cos(angle) * distance))
+    dy = int(round(math.sin(angle) * distance))
+    sat_gx = gx + dx
+    sat_gy = gy + dy
+    if not (0 <= sat_gx < grid and 0 <= sat_gy < grid):
+        sat_gx = gx - dx
+        sat_gy = gy - dy
+    last = max(0, grid - 1)
+    return (min(last, max(0, sat_gx)), min(last, max(0, sat_gy)))
+
+
+def _extent_distance_cells(
+    extent_gain: float,
+    *,
+    extra_idx: int = 0,
+    burst: float = 0.0,
+    recency: float = 0.0,
+    visibility: float = 1.0,
+) -> int:
+    """Satellite offset in grid cells (8 px on the 400 GIF)."""
+    if extent_gain <= 0:
+        return max(2, int(round(1.6 + extra_idx + 1.4 * burst + 0.8 * recency)))
+    span = (
+        5.2
+        + 11.0 * extent_gain
+        + extra_idx * (1.8 + 2.6 * extent_gain)
+        + 1.4 * burst
+        + 1.0 * recency
+        + 0.8 * (1.0 - visibility)
+    )
+    return max(5, int(round(span)))
+
+
+def _select_organism_cells(
+    cells: list[tuple[float, int, int]],
+    *,
+    cap: int,
+) -> list[tuple[float, int, int]]:
+    """Keep the brightest field cells with spatial coverage under a draw cap."""
+    if cap <= 0:
+        return []
+    if len(cells) <= cap:
+        return cells
+    ranked = sorted(cells, key=lambda item: item[0], reverse=True)
+    stride = max(1, int(math.ceil(math.sqrt(len(cells) / cap))))
+    kept: list[tuple[float, int, int]] = []
+    occupied: set[tuple[int, int]] = set()
+    for value, gx, gy in ranked:
+        bucket = (gx // stride, gy // stride)
+        if bucket in occupied and value < 0.52:
+            continue
+        occupied.add(bucket)
+        kept.append((value, gx, gy))
+        if len(kept) >= cap:
+            break
+    kept.sort(key=lambda item: item[0])
+    return kept
 
 
 def _clamp_canvas_position(x: float, y: float) -> tuple[float, float]:
@@ -380,44 +451,20 @@ def _build_lenia_palette(
     dynamics: LeniaDynamics,
     h: str,
 ) -> _LeniaPalette:
-    """Resolve a snapshot-specific palette from world, language, and repo signals."""
-    palette = world.palette
-    if "bg_secondary" not in palette or "highlight" not in palette:
-        palette = _build_world_palette_extended(
-            world.time_of_day,
-            world.weather,
-            world.season,
-            world.energy,
-            daylight_hue_drift=world.daylight_hue_drift,
-            weather_severity=world.weather_severity,
-            season_transition_weights=world.season_transition_weights,
-            activity_pressure=world.activity_pressure,
-        )
-
-    palette_name = select_palette_for_world(world)
-    anchor_defs = ART_PALETTE_ANCHORS.get(palette_name, ART_PALETTE_ANCHORS["aurora"])
-    anchor_colors = [oklch(L, C, H) for L, C, H in anchor_defs]
-    fallback_hue = anchor_defs[min(2, len(anchor_defs) - 1)][2]
-
+    """Resolve one dark morphogenetic look from language and activity signals."""
     language_entries = sorted(
         ((lang, float(weight)) for lang, weight in language_mix.items() if weight > 0),
         key=lambda item: (item[1], item[0]),
         reverse=True,
     )[:4]
     hue_entries = [
-        (
-            float(LANG_HUES.get(lang, anchor_defs[index % len(anchor_defs)][2])),
-            weight,
-        )
-        for index, (lang, weight) in enumerate(language_entries)
+        (float(LANG_HUES.get(lang, 260.0)), weight) for lang, weight in language_entries
     ]
-    dominant_hue = _circular_hue_average(hue_entries, fallback=fallback_hue)
-    secondary_hue = _circular_hue_average(
-        hue_entries[1:] or hue_entries,
-        fallback=anchor_defs[-1][2],
-    )
+    dominant_hue = _circular_hue_average(hue_entries, fallback=260.0)
     dominant_share = language_entries[0][1] if language_entries else 1.0
     language_diversity = min(1.0, len(language_entries) / 4.0)
+    hue_nudge = _signed_hue_delta(dominant_hue, 280.0)
+    seed_jitter = hex_frac(h, 16, 20)
 
     repo_count = max(1, len(repos))
     recent_repo_share = (
@@ -429,110 +476,78 @@ def _build_lenia_palette(
         sum(len(repo.get("topics") or []) for repo in repos)
         / max(1.0, repo_count * 4.0),
     )
-    repo_visibility = min(
-        1.0,
-        sum(math.log1p(max(0, int(repo.get("stars", 0) or 0)) + 1) for repo in repos)
-        / max(1.0, repo_count * 2.4),
-    )
     glow_mix = min(
         1.0,
-        0.32 * world.energy
-        + 0.18 * world.aurora_intensity
-        + 0.14 * dynamics.pr_burst
-        + 0.14 * dynamics.recency_mix
-        + 0.12 * repo_visibility
-        + 0.10 * topic_signal,
+        0.34 * world.energy
+        + 0.16 * world.aurora_intensity
+        + 0.16 * dynamics.pr_burst
+        + 0.16 * dynamics.recency_mix
+        + 0.10 * dynamics.activity_drive
+        + 0.08 * topic_signal,
     )
 
-    dominant_lang_color = oklch(
-        0.50 + 0.12 * world.energy + 0.05 * recent_repo_share,
-        0.12 + 0.05 * dominant_share + 0.03 * topic_signal,
-        dominant_hue,
+    bg_hue = (
+        280.0 + 0.14 * hue_nudge + 10.0 * dynamics.recency_mix + 6.0 * seed_jitter
+    ) % 360.0
+    bg_light = (
+        0.072
+        + 0.018 * world.energy
+        + 0.012 * dynamics.activity_drive
+        + 0.008 * recent_repo_share
     )
-    secondary_lang_color = oklch(
-        0.62 + 0.08 * dynamics.recency_mix + 0.06 * world.activity_pressure,
-        0.10 + 0.04 * language_diversity + 0.03 * dynamics.pr_burst,
-        secondary_hue,
-    )
-
+    bg_chroma = 0.036 + 0.014 * dominant_share + 0.008 * world.activity_pressure
     background = oklch_lerp(
-        palette["bg_secondary"],
-        oklch(
-            0.12 + 0.06 * world.energy + 0.03 * recent_repo_share,
-            0.03 + 0.02 * world.activity_pressure,
-            dominant_hue,
-        ),
+        _BG_COLOR,
+        oklch(bg_light, bg_chroma, bg_hue),
         min(
-            0.62,
-            0.22
-            + 0.16 * recent_repo_share
-            + 0.10 * dynamics.traffic_heat
-            + 0.08 * dominant_share,
+            0.32,
+            0.10
+            + 0.12 * dominant_share
+            + 0.08 * dynamics.activity_drive
+            + 0.06 * glow_mix,
         ),
-    )
-    low_color = oklch_lerp(
-        oklch_lerp(
-            anchor_colors[0], palette["accent"], 0.30 + 0.16 * world.activity_pressure
-        ),
-        dominant_lang_color,
-        0.24 + 0.22 * dominant_share,
-    )
-    mid_color = oklch_lerp(
-        oklch_lerp(
-            anchor_colors[min(2, len(anchor_colors) - 1)],
-            dominant_lang_color,
-            0.40 + 0.18 * language_diversity,
-        ),
-        palette["highlight"],
-        0.16 + 0.14 * dynamics.commit_focus,
-    )
-    high_color = oklch_lerp(
-        oklch_lerp(anchor_colors[-2], secondary_lang_color, 0.34 + 0.16 * topic_signal),
-        palette["glow"],
-        0.22 + 0.18 * dynamics.recency_mix + 0.08 * world.aurora_intensity,
-    )
-    peak_color = oklch_lerp(
-        oklch_lerp(anchor_colors[-1], palette["highlight"], 0.24 + 0.22 * glow_mix),
-        dominant_lang_color,
-        0.10 + 0.10 * dynamics.pr_density,
-    )
-    core = oklch_lerp(
-        peak_color,
-        palette["highlight"],
-        0.52 + 0.18 * glow_mix + 0.10 * repo_visibility,
     )
 
-    ramp = (
-        (0.20, low_color),
-        (
-            min(
-                0.50,
-                0.38 + 0.04 * world.activity_pressure + 0.03 * dynamics.commit_focus,
-            ),
-            mid_color,
+    lang_lean = 0.16 + 0.12 * dominant_share
+    energy_lift = 0.06 * world.energy + 0.05 * dynamics.recency_mix + 0.04 * glow_mix
+    stops: list[tuple[float, str]] = []
+    for _band_lo, field_hi, light, chroma, hue in _BIO_RAMP:
+        if light <= 0.0 and chroma <= 0.0:
+            continue
+        mixed_hue = (hue + lang_lean * hue_nudge) % 360.0
+        mixed_light = min(0.94, light + energy_lift)
+        mixed_chroma = max(0.05, chroma * (0.90 + 0.12 * language_diversity))
+        color = oklch(mixed_light, mixed_chroma, mixed_hue)
+        if not stops:
+            stops.append((0.05, color))
+        stops.append((field_hi, color))
+
+    peak = stops[-1][1] if stops else oklch(0.85, 0.12, 140.0)
+    core = oklch_lerp(
+        peak,
+        oklch(
+            min(0.92, 0.82 + 0.08 * glow_mix + 0.04 * recent_repo_share),
+            0.10 + 0.04 * language_diversity,
+            (140.0 + 0.20 * hue_nudge) % 360.0,
         ),
-        (
-            min(0.74, 0.58 + 0.05 * dynamics.recency_mix + 0.03 * topic_signal),
-            high_color,
-        ),
-        (
-            min(0.90, 0.80 + 0.04 * dominant_share + 0.02 * world.energy),
-            peak_color,
-        ),
-        (1.0, core),
+        0.28 + 0.22 * glow_mix,
     )
+    if stops:
+        last_cutoff, _ = stops[-1]
+        stops[-1] = (last_cutoff, core)
+    ramp = tuple(stops) if stops else ((1.0, core),)
     return _LeniaPalette(background=background, ramp=ramp, core=core)
 
 
 def _field_to_color(value: float, palette: _LeniaPalette) -> tuple[str, float]:
-    """Map a field value to (hex color, opacity) via the resolved snapshot ramp."""
+    """Map a field value to (hex color, opacity) via the bioluminescent ramp."""
     if not palette.ramp or value < palette.ramp[0][0]:
-        return "#000000", 0.0
+        return _BG_COLOR, 0.0
     prev_cutoff, prev_color = palette.ramp[0]
     for cutoff, color in palette.ramp[1:]:
         if value <= cutoff:
             t = (value - prev_cutoff) / max(0.001, cutoff - prev_cutoff)
-            opacity = max(0.0, min(1.0, 0.28 + 0.72 * (0.45 * t + 0.55 * value)))
+            opacity = max(0.0, min(1.0, 0.50 + 0.50 * (0.35 * t + 0.65 * value)))
             return oklch_lerp(prev_color, color, t), opacity
         prev_cutoff, prev_color = cutoff, color
     return palette.ramp[-1][1], 1.0
@@ -627,28 +642,48 @@ def _render_svg(
                 halo_boost = dialect.knobs["halo_scale"] if dialect is not None else 1.0
                 halo_radius = (
                     cell_size
-                    * (0.22 + 0.24 * spec.radius + 0.14 * spec.visibility)
+                    * (0.34 + 0.28 * spec.radius + 0.16 * spec.visibility)
                     * halo_boost
                 )
-                halo_opacity = (
-                    0.06 + 0.06 * spec.visibility + 0.05 * spec.amplitude
-                ) * _fade_ramp(growth_mat, 0.55 + 0.25 * spec.visibility)
+                star_ink = 0.70 + 0.30 * max(0.0, min(1.0, (halo_boost - 0.75) / 0.70))
+                halo_opacity = min(
+                    0.90,
+                    (0.36 + 0.16 * spec.visibility + 0.10 * spec.amplitude)
+                    * star_ink
+                    * _visible_mark_fade(
+                        growth_mat,
+                        0.55 + 0.25 * spec.visibility,
+                        floor=0.60,
+                    ),
+                )
             elif spec.kind == "satellite":
                 seed_color = satellite_seed_color
                 halo_radius = (
                     cell_size
-                    * (0.12 + 0.16 * spec.radius + 0.10 * spec.visibility)
-                    * (0.90 + 0.55 * extent_gain)
+                    * (0.42 + 0.20 * spec.radius + 0.12 * spec.visibility)
+                    * (1.05 + 0.90 * extent_gain)
                 )
-                halo_opacity = (
-                    0.05 + 0.05 * spec.visibility + 0.04 * spec.amplitude
-                ) * _fade_ramp(growth_mat, 0.45 + 0.20 * spec.visibility)
+                halo_opacity = min(
+                    0.78,
+                    (0.30 + 0.14 * spec.visibility + 0.10 * spec.amplitude)
+                    * _visible_mark_fade(
+                        growth_mat,
+                        0.45 + 0.20 * spec.visibility,
+                        floor=0.58,
+                    ),
+                )
             else:
                 seed_color = nutrient_seed_color
-                halo_radius = cell_size * (0.10 + 0.12 * spec.radius)
-                halo_opacity = (
-                    0.03 + 0.05 * spec.visibility + 0.03 * spec.amplitude
-                ) * _fade_ramp(growth_mat, 0.30 + 0.18 * spec.visibility)
+                halo_radius = cell_size * (0.16 + 0.14 * spec.radius)
+                halo_opacity = min(
+                    0.42,
+                    (0.14 + 0.08 * spec.visibility + 0.06 * spec.amplitude)
+                    * _visible_mark_fade(
+                        growth_mat,
+                        0.30 + 0.18 * spec.visibility,
+                        floor=0.50,
+                    ),
+                )
             if halo_opacity < 0.01:
                 continue
             if timeline:
@@ -671,8 +706,11 @@ def _render_svg(
                 if spec.kind == "repo" and dialect is not None
                 else ""
             )
+            halo_role = (
+                "lenia-seed-halo" if spec.kind != "nutrient" else "lenia-nutrient-halo"
+            )
             P.append(
-                f'<circle data-role="lenia-seed-halo" data-kind="{spec.kind}"'
+                f'<circle data-role="{halo_role}" data-kind="{spec.kind}"'
                 f"{halo_scale_attr} "
                 f'cx="{cx:.1f}" cy="{cy:.1f}" r="{halo_radius:.1f}" '
                 f'fill="{seed_color}" {halo_attrs}/>'
@@ -706,7 +744,7 @@ def _render_svg(
         P.append("</g>")
 
     # ── Organism circles ──────────────────────────────────────────
-    P.append('<g filter="url(#lenia-glow)">')
+    P.append('<g data-role="lenia-field" filter="url(#lenia-glow)">')
 
     # Collect cells above threshold, sort by value for layering
     cells: list[tuple[float, int, int]] = []
@@ -716,8 +754,9 @@ def _render_svg(
             if v > field_threshold:
                 cells.append((v, gx, gy))
     cells.sort(key=lambda c: c[0])
+    drawn_cells = _select_organism_cells(cells, cap=min(320, max(0, budget.remaining)))
 
-    for v, gx, gy in cells:
+    for v, gx, gy in drawn_cells:
         if not budget.ok():
             break
 
@@ -727,10 +766,14 @@ def _render_svg(
 
         cx = (gx + 0.5) * cell_size
         cy = (gy + 0.5) * cell_size
-        r = cell_size * 0.5 * (0.3 + 0.7 * v)
+        r = cell_size * 0.5 * (0.58 + 0.82 * v) * (0.92 + 0.30 * field_gain)
 
-        # Maturity fade: early maturity dims the field
-        mat_opacity = opacity * _fade_ramp(growth_mat, v)
+        mat_opacity = min(
+            0.96,
+            opacity
+            * _visible_mark_fade(growth_mat, v, floor=0.52)
+            * (0.88 + 0.28 * field_gain),
+        )
 
         style_parts: list[str] = []
         if timeline:
@@ -752,7 +795,7 @@ def _render_svg(
             style_parts.append(f'opacity="{mat_opacity:.3f}"')
 
         P.append(
-            f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
+            f'<circle data-role="lenia-organism" cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
             f'fill="{color}" {" ".join(style_parts)}/>'
         )
         budget.add(1)
@@ -760,15 +803,24 @@ def _render_svg(
     P.append("</g>")
 
     # ── Bright core highlights for high-value cells ───────────────
-    P.append('<g filter="url(#lenia-halo)">')
-    for v, gx, gy in cells:
-        if v < 0.65 or not budget.ok():
+    core_lo = max(0.40, 0.58 - 0.18 * field_gain)
+    core_candidates = [cell for cell in drawn_cells if cell[0] >= core_lo]
+    core_candidates.sort(key=lambda item: item[0], reverse=True)
+    core_cells = core_candidates[:48]
+    P.append('<g data-role="lenia-field-core" filter="url(#lenia-halo)">')
+    for v, gx, gy in core_cells:
+        if v < core_lo or not budget.ok():
             continue
         cx = (gx + 0.5) * cell_size
         cy = (gy + 0.5) * cell_size
-        r = cell_size * 0.25 * v
+        r = cell_size * 0.28 * v * (0.90 + 0.20 * field_gain)
         core_color = palette.core
-        core_opacity = 0.3 * (v - 0.65) / 0.35 * _fade_ramp(growth_mat, v)
+        core_opacity = (
+            0.38
+            * (v - core_lo)
+            / max(0.08, 1.0 - core_lo)
+            * _visible_mark_fade(growth_mat, v, floor=0.48)
+        )
         if core_opacity < 0.01:
             continue
         if timeline:
@@ -780,16 +832,16 @@ def _render_svg(
                 reveal_fraction=reveal_fraction,
             )
             P.append(
-                f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
-                f'fill="{core_color}" class="tl-reveal" '
+                f'<circle data-role="lenia-organism-core" cx="{cx:.1f}" cy="{cy:.1f}" '
+                f'r="{r:.1f}" fill="{core_color}" class="tl-reveal" '
                 f'style="opacity:{core_opacity:.3f};--delay:{delay:.3f}s;'
                 f'--to:{core_opacity:.3f};--dur:{loop_duration:.2f}s" '
                 f'data-delay="{delay:.3f}" data-when="{when}"/>'
             )
         else:
             P.append(
-                f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r:.1f}" '
-                f'fill="{core_color}" opacity="{core_opacity:.3f}"/>'
+                f'<circle data-role="lenia-organism-core" cx="{cx:.1f}" cy="{cy:.1f}" '
+                f'r="{r:.1f}" fill="{core_color}" opacity="{core_opacity:.3f}"/>'
             )
         budget.add(1)
     P.append("</g>")
@@ -815,6 +867,11 @@ def _fade_ramp(growth_mat: float, field_value: float) -> float:
         1.0 - 0.35 * field_value
     )
     return max(reveal, min(0.50, max(0.12, residue_floor)))
+
+
+def _visible_mark_fade(growth_mat: float, field_value: float, *, floor: float) -> float:
+    """Lift GIF-scale marks above the residue floor without flattening maturity."""
+    return min(1.0, floor + (1.0 - floor) * _fade_ramp(growth_mat, field_value))
 
 
 # ---------------------------------------------------------------------------
@@ -1563,23 +1620,19 @@ def _build_seed_specs(
             sat_angle = commit_angle + (
                 math.pi / 3.0 if satellite_budget % 2 == 0 else -math.pi / 3.0
             )
-            extent_radius = 1.0 if extent_gain <= 0 else 0.85 + 1.10 * extent_gain
-            sat_distance = max(
-                1,
-                int(
-                    round(
-                        (
-                            1.0
-                            + 2.0 * dynamics.pr_burst
-                            + 1.5 * dynamics.recency_mix
-                            + 1.0 * (1.0 - visibility)
-                        )
-                        * extent_radius
-                    )
-                ),
+            sat_distance = _extent_distance_cells(
+                extent_gain,
+                burst=dynamics.pr_burst,
+                recency=dynamics.recency_mix,
+                visibility=visibility,
             )
-            sat_gx = (gx + int(round(math.cos(sat_angle) * sat_distance))) % N
-            sat_gy = (gy + int(round(math.sin(sat_angle) * sat_distance))) % N
+            sat_gx, sat_gy = _place_satellite_cell(
+                gx,
+                gy,
+                angle=sat_angle,
+                distance=float(sat_distance),
+                grid=N,
+            )
             specs.append(
                 _SeedSpec(
                     gx=sat_gx,
@@ -1605,21 +1658,30 @@ def _build_seed_specs(
                 )
             )
 
-    if extent_gain > 0 and repos:
+    repo_hosts = [spec for spec in specs if spec.kind == "repo"]
+    if extent_gain > 0 and repo_hosts:
         forced_count = 1 + int(round(3.0 * extent_gain))
-        extent_radius = 0.85 + 1.10 * extent_gain
         for extra_idx in range(forced_count):
-            host_index = extra_idx % len(repos)
-            host = repos[host_index]
-            host_x, host_y = semantic_positions[host_index]
-            host_gx = int(host_x / WIDTH * N) % N
-            host_gy = int(host_y / HEIGHT * N) % N
+            host_spec = repo_hosts[extra_idx % len(repo_hosts)]
+            host = repos[extra_idx % len(repos)]
             sat_angle = commit_angle + extra_idx * (math.tau / max(3, forced_count))
-            sat_distance = max(2, int(round((2.2 + extra_idx) * extent_radius)))
+            sat_distance = _extent_distance_cells(
+                extent_gain,
+                extra_idx=extra_idx,
+                burst=dynamics.pr_burst,
+                recency=dynamics.recency_mix,
+            )
+            sat_gx, sat_gy = _place_satellite_cell(
+                host_spec.gx,
+                host_spec.gy,
+                angle=sat_angle,
+                distance=float(sat_distance),
+                grid=N,
+            )
             specs.append(
                 _SeedSpec(
-                    gx=(host_gx + int(round(math.cos(sat_angle) * sat_distance))) % N,
-                    gy=(host_gy + int(round(math.sin(sat_angle) * sat_distance))) % N,
+                    gx=sat_gx,
+                    gy=sat_gy,
                     radius=max(1, 1 + extra_idx % 2),
                     amplitude=min(0.82, 0.28 + 0.18 * extent_gain),
                     softness=0.72,
@@ -1936,29 +1998,35 @@ def generate(
     )
     residue_gain = min(
         1.0,
-        0.55
-        + 0.35 * dynamics.activity_drive
-        + 0.15 * dynamics.repo_density
-        + 0.10 * dynamics.release_energy,
+        0.58
+        + 0.28 * dynamics.activity_drive
+        + 0.10 * dynamics.repo_density
+        + 0.08 * dynamics.release_energy,
     )
     seed_residue = np.clip(seed_field * residue_gain, 0.0, 1.0)
     simulation_mix = min(
-        0.34,
-        0.05
-        + 0.10 * dynamics.activity_drive
-        + 0.04 * dynamics.recent_flux
-        + 0.03 * dynamics.release_energy
-        + 0.16 * field_gain,
+        1.0,
+        0.16
+        + 0.74 * field_gain
+        + 0.06 * dynamics.activity_drive
+        + 0.04 * dynamics.recent_flux,
     )
-    field = np.maximum(seed_residue, np.clip(field * simulation_mix, 0.0, 1.0))
+    field_ca = np.clip(field, 0.0, 1.0)
+    residue_weight = max(1.0 - simulation_mix, 0.45)
+    field = np.clip(
+        field_ca * simulation_mix + seed_residue * residue_weight,
+        0.0,
+        1.0,
+    )
 
     # ── Render ────────────────────────────────────────────────────
     field_render_threshold = max(
-        0.04,
+        0.035,
         config.field_threshold
-        - 0.10 * dynamics.activity_drive
-        - 0.05 * max(dynamics.pr_burst, dynamics.recent_flux)
-        - 0.03 * dynamics.streak_strength,
+        - 0.08 * field_gain
+        - 0.08 * dynamics.activity_drive
+        - 0.04 * max(dynamics.pr_burst, dynamics.recent_flux)
+        - 0.02 * dynamics.streak_strength,
     )
     return _render_svg(
         field,

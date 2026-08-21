@@ -819,6 +819,120 @@ def _path_d(points: list[tuple[float, float]]) -> str:
     return "".join(parts)
 
 
+def _hash_frac(payload: dict[str, Any]) -> float:
+    """Deterministic unit interval from a seed payload."""
+    return int(seed_hash(payload)[:8], 16) / 0xFFFFFFFF
+
+
+def _clamp_canvas(x: float, y: float, *, margin: float = 16.0) -> tuple[float, float]:
+    """Keep a canvas point inside the drawable frame."""
+    return (
+        max(margin, min(float(WIDTH) - margin, x)),
+        max(margin, min(float(HEIGHT) - margin, y)),
+    )
+
+
+def _unit_vector(dx: float, dy: float) -> tuple[float, float]:
+    mag = math.hypot(dx, dy)
+    if mag < 1e-9:
+        return 1.0, 0.0
+    return dx / mag, dy / mag
+
+
+def _visible_hypha_start(
+    origin: tuple[float, float],
+    dest: tuple[float, float],
+    *,
+    heading: float,
+    min_length: float = 68.0,
+) -> tuple[float, float]:
+    """Return a start point that keeps spore→food hyphae visible at GIF scale."""
+    dx = dest[0] - origin[0]
+    dy = dest[1] - origin[1]
+    if math.hypot(dx, dy) >= min_length:
+        return origin
+    return _clamp_canvas(
+        dest[0] - math.cos(heading) * min_length,
+        dest[1] - math.sin(heading) * min_length,
+    )
+
+
+def _transport_hypha_points(
+    start: tuple[float, float],
+    end: tuple[float, float],
+    *,
+    bow: float,
+    samples: int = 7,
+) -> list[tuple[float, float]]:
+    """Build a bowed inbound hypha polyline."""
+    count = max(3, samples)
+    x0, y0 = start
+    x1, y1 = end
+    dx = x1 - x0
+    dy = y1 - y0
+    nx, ny = _unit_vector(-dy, dx)
+    points: list[tuple[float, float]] = []
+    for index in range(count):
+        t = index / (count - 1)
+        wobble = math.sin(t * math.pi) * bow
+        points.append(
+            _clamp_canvas(x0 + dx * t + nx * wobble, y0 + dy * t + ny * wobble)
+        )
+    return points
+
+
+def _offshoot_hypha_points(
+    trunk: list[tuple[float, float]],
+    *,
+    t: float,
+    length: float,
+    heading: float,
+) -> list[tuple[float, float]]:
+    """Branch a short hypha off a trunk polyline."""
+    if len(trunk) < 2 or length <= 1.0:
+        return []
+    span = len(trunk) - 1
+    clamped_t = max(0.0, min(1.0, t))
+    idx = min(span - 1, max(0, int(round(clamped_t * span))))
+    x0, y0 = trunk[idx]
+    x1, y1 = trunk[idx + 1]
+    tx, ty = _unit_vector(x1 - x0, y1 - y0)
+    nx, ny = -ty, tx
+    ux, uy = _unit_vector(
+        nx * math.cos(heading) + tx * math.sin(heading),
+        ny * math.cos(heading) + ty * math.sin(heading),
+    )
+    mid = _clamp_canvas(
+        x0 + ux * length * 0.55 - uy * length * 0.16,
+        y0 + uy * length * 0.55 + ux * length * 0.16,
+    )
+    end = _clamp_canvas(x0 + ux * length, y0 + uy * length)
+    return [(x0, y0), mid, end]
+
+
+def _vein_path_markup(
+    points: list[tuple[float, float]],
+    *,
+    role: str,
+    color: str,
+    stroke_width: float,
+    style_attrs: str,
+    glow: bool,
+) -> str:
+    """Tagged mycelial path; endpoints stay as x1/y1 for isolation helpers."""
+    if len(points) < 2:
+        return ""
+    x1, y1 = points[0]
+    x2, y2 = points[-1]
+    filt = ' filter="url(#veinGlow)"' if glow else ""
+    return (
+        f'<path data-role="{role}" x1="{x1:.1f}" y1="{y1:.1f}" '
+        f'x2="{x2:.1f}" y2="{y2:.1f}" d="{_path_d(points)}" fill="none" '
+        f'stroke="{color}" stroke-width="{stroke_width:.2f}" '
+        f'stroke-linecap="round" stroke-linejoin="round"{filt} {style_attrs}/>'
+    )
+
+
 def generate(
     metrics: dict[str, Any],
     *,
@@ -1248,10 +1362,7 @@ def generate(
         * (1.0 + 0.18 * streak_signal + 0.12 * pr_burst + 0.08 * fresh_share),
     )
     min_agents = 12 if activity_total <= 3 and repo_count == 0 else 24
-    n_agents = max(
-        min_agents,
-        min(2000, n_agents + int(round(36 * dialect.knobs["vein_gain"]))),
-    )
+    n_agents = max(min_agents, min(2000, n_agents))
 
     # Evaporation: high energy = slow evaporation = thicker network
     stability_signal = min(
@@ -1399,8 +1510,8 @@ def generate(
 
     # ── Defs: filters ─────────────────────────────────────────────
     P.append("<defs>")
-    P.append(volumetric_glow_filter("veinGlow", radius=4.0))
-    P.append(volumetric_glow_filter("nodeGlow", radius=6.0))
+    P.append(volumetric_glow_filter("veinGlow", radius=5.4))
+    P.append(volumetric_glow_filter("nodeGlow", radius=7.2))
     P.append("</defs>")
 
     # ── Background substrate ──────────────────────────────────────
@@ -1418,23 +1529,60 @@ def generate(
                 min(0.70, 0.32 + 0.28 * origin_identity_strength),
             )
         spore_when = _date_for_activity_fraction(0.0)
+        spore_opacity = max(0.36, 0.42 + 0.40 * spore_fade)
         P.append(
             '<circle data-role="physarum-spore" '
             f'cx="{origin.x:.1f}" cy="{origin.y:.1f}" '
-            f'r="{2 + spore_fade * 3:.1f}" '
+            f'r="{3.2 + spore_fade * 2.8:.1f}" '
             f'fill="{spore_color}" filter="url(#nodeGlow)" '
-            f"{_timeline_style(spore_when, 0.8 * spore_fade, 'tl-reveal tl-soft')}/>"
+            f"{_timeline_style(spore_when, spore_opacity, 'tl-reveal tl-soft')}/>"
         )
         budget.add(1)
 
     # ── Ghost traces of pruned paths (maturity > 0.7) ─────────────
     ghost_fade = _fade(0.70, 1.0)
     ghost_color = oklch(0.20, 0.04, 250)
+    has_food = bool(food_canvas)
+    trail_weight = float(dialect.knobs["trail_scale"])
+    vein_gain = float(dialect.knobs["vein_gain"])
+    nutrient = float(dialect.knobs["nutrient_scale"])
+    gold_vein = vein_colors[-1] if vein_colors else oklch(0.78, 0.16, 52)
 
-    # ── Vein contours ─────────────────────────────────────────────
-    vein_fade = _fade(0.05, 0.50)
-    if vein_fade > 0 and t_max > 0:
-        # Compute contour thresholds spread across the trail range
+    def _append_vein(
+        points: list[tuple[float, float]],
+        *,
+        role: str,
+        color: str,
+        opacity: float,
+        stroke_width: float,
+        when: str,
+        glow: bool,
+        cls: str = "tl-reveal tl-crisp",
+    ) -> None:
+        if len(points) < 2 or not budget.ok():
+            return
+        smoothed = _chaikin_smooth(points, iterations=1) if len(points) >= 3 else points
+        markup = _vein_path_markup(
+            smoothed,
+            role=role,
+            color=color,
+            stroke_width=stroke_width,
+            style_attrs=_timeline_style(when, opacity, cls),
+            glow=glow,
+        )
+        if markup:
+            P.append(markup)
+            budget.add(1)
+
+    # ── Vein contours + first-repo transport hyphae ───────────────
+    contour_fade = _fade(0.05, 0.50)
+    vein_fade = contour_fade
+    if has_food:
+        if timeline_enabled:
+            vein_fade = max(contour_fade, _fade(0.0, 0.50), 0.18)
+        else:
+            vein_fade = max(contour_fade, 0.82)
+    if contour_fade > 0 and t_max > 0:
         levels = [(i + 1) / (contour_levels + 1) for i in range(contour_levels)]
 
         for li, level in enumerate(levels):
@@ -1443,37 +1591,33 @@ def generate(
 
             chains = _extract_contours(trail, grid, level, cell_w, cell_h)
 
-            # Stroke width: thick for high concentration, thin for low
-            base_sw = 0.5 + (level * 3.5) * vein_fade
+            base_sw = (0.85 + (level * 3.2) * contour_fade) * trail_weight
             color = vein_colors[li]
-            opacity = 0.3 + level * 0.55
+            opacity = 0.42 + level * 0.48
 
-            # Ghost traces: faint contours at lowest levels when mature
             is_ghost = li < 2 and ghost_fade > 0
             if is_ghost:
                 draw_color = oklch_lerp(ghost_color, color, 0.3)
                 draw_opacity = opacity * 0.25 * ghost_fade
                 draw_sw = base_sw * 0.6
+                vein_role = "physarum-vein-ghost"
             else:
                 draw_color = color
-                draw_opacity = opacity * vein_fade
+                draw_opacity = min(0.96, opacity * contour_fade)
                 draw_sw = base_sw
+                vein_role = "physarum-vein"
 
-            filt = ' filter="url(#veinGlow)"' if li >= contour_levels // 2 else ""
+            glow = li >= contour_levels // 2
             frac_for_level = 0.1 + li * 0.12
             when = _date_for_activity_fraction(min(1.0, frac_for_level))
 
             for chain in chains:
-                if not budget.ok():
-                    break
-                smoothed = _chaikin_smooth(chain, iterations=1)
-                pd = _path_d(smoothed)
                 chain_color = draw_color
                 chain_opacity = draw_opacity
                 chain_sw = draw_sw
                 if not is_ghost:
                     chain_color, identity_visibility = _resolve_vein_style(
-                        smoothed,
+                        chain,
                         chain_color,
                         identity_nodes,
                     )
@@ -1482,20 +1626,127 @@ def generate(
                         chain_opacity * (1.0 + 0.18 * identity_visibility),
                     )
                     chain_sw *= 1.0 + 0.10 * identity_visibility
-                P.append(
-                    f'<path d="{pd}" fill="none" stroke="{chain_color}" '
-                    f'stroke-width="{chain_sw:.2f}" stroke-linecap="round" '
-                    f'stroke-linejoin="round"{filt} '
-                    f"{_timeline_style(when, chain_opacity, 'tl-reveal tl-crisp')}/>"
+                _append_vein(
+                    chain,
+                    role=vein_role,
+                    color=chain_color,
+                    opacity=chain_opacity,
+                    stroke_width=chain_sw,
+                    when=when,
+                    glow=glow,
                 )
-                budget.add(1)
+
+    if has_food and vein_fade > 0:
+        extra_count = 0 if vein_gain <= 0 else max(1, int(round(1.0 + 9.0 * vein_gain)))
+        offshoot_len = 36.0 + 78.0 * vein_gain
+        fork_len = 28.0 + 36.0 * vein_gain
+        trunk_sw = (2.45 + 1.90 * max(0.0, trail_weight - 0.72)) * (
+            0.94 + 0.08 * vein_fade
+        )
+        branch_sw = trunk_sw * 0.72
+        trunk_op = min(0.96, 0.72 + 0.20 * vein_fade + 0.08 * trail_weight)
+        branch_op = trunk_op * 0.88
+        hypha_when = _date_for_activity_fraction(0.12)
+        for index, node in enumerate(food_canvas):
+            dest = (float(node["cx"]), float(node["cy"]))
+            repo = node["repo"]
+            repo_name = str(repo.get("name", "") if isinstance(repo, dict) else "")
+            heading = (
+                _hash_frac({"seed": h, "repo": repo_name, "hypha": "in"})
+                * 2.0
+                * math.pi
+            )
+            start = _visible_hypha_start((origin.x, origin.y), dest, heading=heading)
+            bow = 14.0 + 16.0 * _hash_frac(
+                {"seed": h, "repo": repo_name, "hypha": "bow"}
+            )
+            trunk = _transport_hypha_points(start, dest, bow=bow)
+            tint, vis = _resolve_vein_style(trunk, gold_vein, identity_nodes)
+            node_when = (
+                _repo_date(repo) if isinstance(repo, dict) else None
+            ) or hypha_when
+            _append_vein(
+                trunk,
+                role="physarum-vein",
+                color=tint,
+                opacity=min(0.96, trunk_op * (1.0 + 0.12 * vis)),
+                stroke_width=trunk_sw * (1.0 + 0.08 * vis),
+                when=node_when,
+                glow=True,
+            )
+            fork_heading = (
+                (0.45 + 1.1 * _hash_frac({"seed": h, "repo": repo_name, "fork": 1}))
+                * math.pi
+                * (1.0 if index % 2 == 0 else -1.0)
+            )
+            fork = _offshoot_hypha_points(
+                trunk, t=0.62, length=fork_len, heading=fork_heading
+            )
+            if len(fork) >= 2:
+                fork = list(reversed(fork))
+            fork_tint, fork_vis = _resolve_vein_style(fork, gold_vein, identity_nodes)
+            _append_vein(
+                fork,
+                role="physarum-vein",
+                color=fork_tint,
+                opacity=min(0.94, branch_op * (1.0 + 0.10 * fork_vis)),
+                stroke_width=branch_sw,
+                when=node_when,
+                glow=True,
+            )
+        for index in range(len(food_canvas) - 1):
+            left = food_canvas[index]
+            right = food_canvas[index + 1]
+            link = _transport_hypha_points(
+                (float(left["cx"]), float(left["cy"])),
+                (float(right["cx"]), float(right["cy"])),
+                bow=10.0,
+                samples=5,
+            )
+            link_tint, link_vis = _resolve_vein_style(link, gold_vein, identity_nodes)
+            _append_vein(
+                link,
+                role="physarum-vein",
+                color=link_tint,
+                opacity=min(0.94, trunk_op * 0.90 * (1.0 + 0.10 * link_vis)),
+                stroke_width=trunk_sw * 0.82,
+                when=hypha_when,
+                glow=True,
+            )
+        for extra_i in range(extra_count):
+            host = food_canvas[extra_i % len(food_canvas)]
+            dest = (float(host["cx"]), float(host["cy"]))
+            ang = 2.0 * math.pi * extra_i / max(1, extra_count) + 0.35 * _hash_frac(
+                {"seed": h, "off": extra_i, "a": 1}
+            )
+            length = offshoot_len * (
+                0.88 + 0.22 * _hash_frac({"seed": h, "off": extra_i, "l": 1})
+            )
+            end = _clamp_canvas(
+                dest[0] + math.cos(ang) * length,
+                dest[1] + math.sin(ang) * length,
+            )
+            shoot = _transport_hypha_points(end, dest, bow=8.0, samples=5)
+            shoot_tint, shoot_vis = _resolve_vein_style(
+                shoot, gold_vein, identity_nodes
+            )
+            _append_vein(
+                shoot,
+                role="physarum-vein",
+                color=shoot_tint,
+                opacity=min(0.92, branch_op * (1.0 + 0.08 * shoot_vis)),
+                stroke_width=branch_sw * 0.90,
+                when=hypha_when,
+                glow=True,
+            )
 
     # ── Food source nodes ─────────────────────────────────────────
     node_fade = _fade(0.10, 0.40)
     # Snapshot / GIF frames use timeline=False; existing repos stay visible.
     if not timeline_enabled:
-        node_fade = max(node_fade, 0.64)
+        node_fade = max(node_fade, 0.84)
     if node_fade > 0:
+        nutrient_ink = 0.90 + 0.28 * min(1.0, max(0.0, nutrient - 0.70) / 0.80)
         for index, node in enumerate(food_canvas):
             if not budget.ok():
                 break
@@ -1510,22 +1761,34 @@ def generate(
                 0.45 * node_identity.topic_signal
                 + 0.20 * min(1.0, math.log1p(conc) / 4.0),
             )
-            r = 2.7 + math.log1p(conc) * (
-                1.10 + 0.28 * identity_visibility + 0.16 * visibility
+            r = 6.4 + math.log1p(conc) * (
+                1.18
+                + 0.28 * identity_visibility
+                + 0.16 * visibility
+                + 0.34 * max(0.0, nutrient - 0.70)
             )
             node_when = _repo_date(repo) or _date_for_activity_fraction(0.3)
             language = node_identity.language or "unknown"
-            halo_opacity = (
-                0.18 + 0.18 * identity_visibility + 0.08 * visibility
-            ) * node_fade
-            core_opacity = (
-                0.66 + 0.18 * identity_visibility + 0.10 * visibility
-            ) * node_fade
-            shell_opacity = (
-                0.26 + 0.16 * identity_visibility + 0.08 * visibility
-            ) * node_fade
+            halo_opacity = min(
+                0.72,
+                (0.26 + 0.20 * identity_visibility + 0.10 * visibility)
+                * node_fade
+                * nutrient_ink,
+            )
+            core_opacity = min(
+                0.98,
+                (0.78 + 0.14 * identity_visibility + 0.08 * visibility)
+                * node_fade
+                * nutrient_ink,
+            )
+            shell_opacity = min(
+                0.88,
+                (0.36 + 0.16 * identity_visibility + 0.08 * visibility)
+                * node_fade
+                * nutrient_ink,
+            )
             halo_radius = r * (1.85 + 0.18 * node_identity.topic_signal)
-            shell_width = 0.8 + 0.5 * node_identity.topic_signal
+            shell_width = (1.20 + 0.55 * node_identity.topic_signal) * nutrient_ink
             # Outer glow ring
             P.append(
                 f'<circle data-role="physarum-node-halo" data-language="{language}" '

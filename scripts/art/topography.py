@@ -56,6 +56,13 @@ MAP_W = MAP_R - MAP_L
 MAP_H = MAP_B - MAP_T
 TOPOGRAPHY_GRID_SIZE = 200
 _CONTOUR_JOIN_RADIUS = 8.0
+# Absolute relief span so prominence_scale still moves summit height after
+# hypsometric mapping. Min-max stretch would erase a global stars gain.
+_RELIEF_CEILING = 1.22
+_LANDMARK_INK_FLOOR = 0.48
+_SETTLEMENT_INK_FLOOR = 0.82
+_PEAK_STROKE = oklch(0.22, 0.08, 55)
+_SETTLEMENT_INK = oklch(0.24, 0.06, 40)
 
 _ContourPoint = tuple[float, float]
 _ContourSegment = tuple[_ContourPoint, _ContourPoint]
@@ -708,6 +715,8 @@ def generate(
     )
     river_flow_profile = _river_flow_profile(metrics.get("star_velocity", {}))
     settlement_tier, settlement_title = _settlement_scale_tier(followers)
+    prominence_scale = float(dialect.knobs["prominence_scale"])
+    contour_gain = float(dialect.knobs["contour_gain"])
     settlement_gain = float(dialect.knobs["settlement_gain"])
     settlement_scale = 0.70 + 1.20 * settlement_gain
     try:
@@ -1046,6 +1055,37 @@ def generate(
             f'data-when="{resolved_when}"'
         )
 
+    def _landmark_style(
+        when: str | None,
+        opacity: float,
+        cls: str = "tl-reveal",
+        *,
+        window: tuple[date, date] | None = None,
+        ink_floor: float = _LANDMARK_INK_FLOOR,
+    ) -> str:
+        """Keep peaks/settlements readable at 400×400; chronology stays in data-*."""
+        active_window = window or timeline_window
+        resolved_when = when or active_window[0].isoformat()
+        if not timeline_enabled:
+            static_signal = _static_accretion_signal(
+                resolved_when, window=active_window
+            )
+            drawn = max(ink_floor, opacity * max(ink_floor, static_signal))
+            return f'opacity="{drawn:.3f}" data-static-accretion="{static_signal:.3f}"'
+        delay = map_date_to_loop_delay(
+            resolved_when,
+            active_window,
+            duration=loop_duration,
+            reveal_fraction=reveal_fraction,
+        )
+        to_opacity = max(ink_floor, max(0.0, min(1.0, opacity)))
+        return (
+            f'class="{cls}" '
+            f'style="--delay:{delay:.3f}s;--to:{to_opacity:.3f};'
+            f'--dur:{loop_duration:.2f}s" data-delay="{delay:.3f}" '
+            f'data-when="{resolved_when}"'
+        )
+
     def _repo_when(repo: dict[str, Any]) -> str | None:
         return _repo_date(repo, fallback_end=repo_age_anchor)
 
@@ -1183,6 +1223,7 @@ def generate(
         )
 
     # ── 2d. Apply elevation from optimized positions ──
+    repo_peak_heights: list[float] = []
     for ri, (rcx, rcy, repo) in enumerate(repo_positions):
         repo_stars = repo.get("stars", 0)
         age = repo.get("age_months", 6)
@@ -1191,13 +1232,14 @@ def generate(
         )
         repo_when_ord = repo_when_day.toordinal()
 
-        # Stars -> peak height RELATIVE to this profile's range
+        # Stars -> peak height: in-frame rank * leased prominence (total stars).
         star_frac = (
             (repo_stars - min_stars) / max(1, max_stars - min_stars)
             if max_stars > min_stars
             else 0.5
         )
-        peak_h = 0.15 + star_frac * 0.6
+        peak_h = (0.20 + star_frac * 0.50) * prominence_scale
+        repo_peak_heights.append(peak_h)
 
         # Age -> hill width RELATIVE to this profile's range
         age_frac = (
@@ -1429,30 +1471,30 @@ def generate(
                             terrain_birth_latest[gy, gx], float(ridge_ord)
                         )
 
-    # ── 4. Central peak (always prominent, scaled to profile) ──────
-    # Central peak is always the tallest — height relative to repo count
-    central_height = 0.45 + 0.25 * min(1.0, len(repos) / max(1, len(repos) + 2))
-    central_sigma = 0.06 + 0.04 * min(1.0, len(repos) / 12)
-    central_peak_ord = central_peak_day.toordinal()
-    for gy in range(grid):
-        for gx in range(grid):
-            fx, fy = gx / grid, gy / grid
-            dx, dy = fx - 0.5, fy - 0.5
-            central_contribution = central_height * math.exp(
-                -(dx * dx + dy * dy) / (2 * central_sigma * central_sigma)
-            )
-            elevation[gy, gx] += central_contribution
-            if central_contribution > 1e-6:
-                central_birth_weight = central_contribution * 0.82
-                terrain_birth_mass[gy, gx] += central_birth_weight
-                terrain_birth_ord[gy, gx] += central_birth_weight * central_peak_ord
-                terrain_feature_mass[gy, gx] += central_birth_weight
-                terrain_birth_first[gy, gx] = min(
-                    terrain_birth_first[gy, gx], float(central_peak_ord)
+    # ── 4. Quiet empty-map swell only. Named hills own the landform. ─
+    if not repos:
+        central_height = 0.10
+        central_sigma = 0.07
+        central_peak_ord = central_peak_day.toordinal()
+        for gy in range(grid):
+            for gx in range(grid):
+                fx, fy = gx / grid, gy / grid
+                dx, dy = fx - 0.5, fy - 0.5
+                central_contribution = central_height * math.exp(
+                    -(dx * dx + dy * dy) / (2 * central_sigma * central_sigma)
                 )
-                terrain_birth_latest[gy, gx] = max(
-                    terrain_birth_latest[gy, gx], float(central_peak_ord)
-                )
+                elevation[gy, gx] += central_contribution
+                if central_contribution > 1e-6:
+                    central_birth_weight = central_contribution * 0.82
+                    terrain_birth_mass[gy, gx] += central_birth_weight
+                    terrain_birth_ord[gy, gx] += central_birth_weight * central_peak_ord
+                    terrain_feature_mass[gy, gx] += central_birth_weight
+                    terrain_birth_first[gy, gx] = min(
+                        terrain_birth_first[gy, gx], float(central_peak_ord)
+                    )
+                    terrain_birth_latest[gy, gx] = max(
+                        terrain_birth_latest[gy, gx], float(central_peak_ord)
+                    )
 
     # ── 5. River valleys from saddle points between major peaks ────
     n_rivers = max(2, min(10, 2 + forks // 4 + len(repo_positions) // 10))
@@ -1586,10 +1628,13 @@ def generate(
                 tpts.append((brx, bry))
             river_paths.append(_chaikin_smooth(tpts, iterations=1))
 
-    # Normalize
-    e_min, e_max = elevation.min(), elevation.max()
-    if e_max > e_min:
-        elevation = (elevation - e_min) / (e_max - e_min)
+    # Anchor to a fixed relief ceiling so a global prominence_scale still
+    # raises summits in the hypsometric ramp. Min-max stretch would map
+    # every tallest hill to 1.0 and erase the stars channel.
+    e_min, e_max = float(elevation.min()), float(elevation.max())
+    relief_span = max(_RELIEF_CEILING, e_max) - e_min
+    if relief_span > 1e-9:
+        elevation = (elevation - e_min) / relief_span
 
     # Domain warp for organic contour feel
     warp_noise = Noise2D(seed=int(h[24:32], 16))
@@ -1650,6 +1695,8 @@ def generate(
     terrain_feature_mass = warped_feature_mass
     terrain_birth_first = warped_birth_first
     terrain_birth_latest = warped_birth_latest
+
+    map_center_elev = float(elevation[grid // 2, grid // 2])
 
     cell_w = MAP_W / grid
     cell_h = MAP_H / grid
@@ -1760,6 +1807,9 @@ def generate(
         f'data-settlement-gain="{settlement_gain:.3f}" '
         f'data-settlement-scale="{settlement_scale:.3f}" '
         f'data-settlement-count="{settlement_mark_count}" '
+        f'data-prominence-scale="{prominence_scale:.3f}" '
+        f'data-contour-gain="{contour_gain:.3f}" '
+        f'data-map-center-elev="{map_center_elev:.3f}" '
         f'data-activity-series="{activity_series_mode}" '
         f'data-central-rise-date="{central_peak_day.isoformat()}" '
         f'data-river-carve-date="{river_carve_day.isoformat()}" '
@@ -2195,12 +2245,12 @@ def generate(
         P.append("</g>")
 
     # ── Contour lines (warm brown, Swiss style — OKLCH gradient) ──
-    # Scale contour density by visual complexity
+    # Commits → contour mass / index hierarchy. Followers must not leak here.
     _base_n_levels = max(
-        10,
+        8,
         min(
-            44,
-            10 + int(round(18 * dialect.knobs["contour_gain"])) + int(followers // 10),
+            28,
+            8 + int(round(16 * contour_gain)),
         ),
     )
     n_levels = int(_base_n_levels * (0.8 + 0.4 * complexity))
@@ -2216,18 +2266,24 @@ def generate(
         f'data-contour-smoothing-index="{contour_smooth_index}" '
         f'data-foothill-density="{foothill_density:.3f}" '
         f'data-foothill-count="{foothill_count}" '
-        f'data-issue-pressure="{issue_pressure:.3f}">'
+        f'data-issue-pressure="{issue_pressure:.3f}" '
+        f'data-contour-gain="{contour_gain:.3f}" '
+        f'data-n-levels="{n_levels}">'
     )
     for li, level in enumerate(levels):
         is_index = li % 5 == 0
-        contour_fade = 1.0 if is_index else _fade(0.03, 0.15)
+        if is_index:
+            contour_fade = 0.50 + 0.50 * contour_gain
+            sw = 0.42 + 0.70 * contour_gain
+            op = (0.26 + 0.34 * contour_gain) * contour_fade
+        else:
+            contour_fade = _fade(0.03, 0.15)
+            sw = 0.32 + 0.22 * contour_gain
+            op = (0.16 + 0.20 * contour_gain) * contour_fade
         if contour_fade <= 0:
             continue
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
-        # Contour hierarchy: every 5th level (index) gets heavier stroke
-        sw = 1.2 if is_index else 0.5
         sc = _contour_index_c if is_index else _contour_normal_c
-        op = (0.7 if is_index else 0.35) * contour_fade
         for chain in chains:
             if len(chain) < 2:
                 continue
@@ -2246,7 +2302,7 @@ def generate(
                 f'<path d="{pd}" fill="none" stroke="{sc}" stroke-width="{sw}" {_timeline_style(contour_when, op)} '
                 f'stroke-linecap="round" stroke-linejoin="round"/>'
             )
-            if is_index:
+            if is_index and contour_gain >= 0.78:
                 P.append(
                     f'<path d="{pd}" fill="none" stroke="{oklch_lerp(_contour_index_c, pal["text_primary"], 0.5)}" stroke-width="{max(0.4, sw * 0.55):.2f}" '
                     f'{_timeline_style(contour_when, op * 0.45, "tl-reveal tl-crisp")} stroke-linecap="round" stroke-linejoin="round"/>'
@@ -2695,12 +2751,17 @@ def generate(
             if idx_rp < len(terrain_hues)
             else LANG_HUES.get(repo.get("language"), 160)
         )
-        mc = oklch(0.45, 0.18, hue)
+        mc = oklch(0.30, 0.16, hue)
         # Relative marker size: top-star repo gets biggest marker
         star_frac = (
             (repo_stars - min_stars) / max(1, max_stars - min_stars)
             if max_stars > min_stars
             else 0.5
+        )
+        peak_h = (
+            repo_peak_heights[idx_rp]
+            if idx_rp < len(repo_peak_heights)
+            else (0.20 + star_frac * 0.50) * prominence_scale
         )
         # Lookup elevation at repo position for tooltip
         _gxi = min(grid - 1, max(0, int(rcx * grid)))
@@ -2738,36 +2799,33 @@ def generate(
         elif label_x < lx - 2:
             label_anchor = "end"
         detail_dir = -1 if label_y < ly else 1
-        marker_scale = 0.62 + 0.38 * repo_signal
+        marker_scale = 0.90 + 0.10 * repo_signal
         label_size = max(4.9, 6.5 - max(0, len(repo_positions) - 12) * 0.08)
-        label_size *= 0.82 + 0.18 * repo_signal
+        label_size *= 0.88 + 0.12 * repo_signal
         detail_size = max(4.0, label_size - 1.5)
         P.append(
             f'<g class="repo-peak" data-role="repo-peak" data-repo="{_escape_attr(name)}" '
             f'data-visual-order="{idx_rp}" data-reveal-date="{repo_when}" '
-            f'data-static-signal="{repo_signal:.3f}" data-x="{lx:.1f}" '
+            f'data-static-signal="{repo_signal:.3f}" data-peak-height="{peak_h:.3f}" '
+            f'data-summit-elev="{_elev:.3f}" data-x="{lx:.1f}" '
             f'data-y="{ly:.1f}">'
         )
         P.append(f"<title>{_tt_text}</title>")
         if star_frac > 0.7:
-            bs = (
-                3.2 + int(star_frac * 4) + 2.4 * dialect.knobs["prominence_scale"]
-            ) * marker_scale
+            bs = (5.0 + int(star_frac * 3) + 2.2 * prominence_scale) * marker_scale
             P.append(
                 f'<rect x="{lx - bs:.1f}" y="{ly - bs:.1f}" width="{bs * 2:.1f}" height="{bs * 2:.1f}" '
-                f'fill="{mc}" {_timeline_style(repo_when, 0.5, window=repo_timeline_window)} stroke="#3a2a1a" stroke-width="0.4"/>'
+                f'fill="{mc}" {_landmark_style(repo_when, 0.90, window=repo_timeline_window)} stroke="{_PEAK_STROKE}" stroke-width="1.15"/>'
             )
         else:
-            mr = (
-                2.2 + star_frac * 4.2 + 3.4 * dialect.knobs["prominence_scale"]
-            ) * marker_scale
+            mr = (5.6 + star_frac * 3.0 + 2.6 * prominence_scale) * marker_scale
             P.append(
-                f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_timeline_style(repo_when, 0.65, window=repo_timeline_window)} stroke="#fff" stroke-width="0.5"/>'
+                f'<circle cx="{lx:.0f}" cy="{ly:.0f}" r="{mr:.1f}" fill="{mc}" {_landmark_style(repo_when, 0.92, window=repo_timeline_window)} stroke="{_PEAK_STROKE}" stroke-width="1.15"/>'
             )
         P.append(
             f'<text x="{label_x:.0f}" y="{label_y:.0f}" font-family="Georgia,serif" font-size="{label_size:.2f}" '
-            f'fill="#2c1a0e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.65, window=repo_timeline_window)} font-weight="bold" '
-            f'stroke="rgba(245,240,232,0.75)" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke fill">{name}</text>'
+            f'fill="#2c1a0e" text-anchor="{label_anchor}" {_landmark_style(repo_when, 0.88, window=repo_timeline_window)} font-weight="bold" '
+            f'stroke="rgba(245,240,232,0.85)" stroke-width="2.8" stroke-linejoin="round" paint-order="stroke fill">{name}</text>'
         )
         label_obstacles.append(
             _label_span_points(str(name), label_x, label_y, label_anchor, label_size)
@@ -2778,8 +2836,8 @@ def generate(
         if show_detail_note:
             P.append(
                 f'<text x="{label_x:.0f}" y="{label_y + 7 * detail_dir:.0f}" font-family="Georgia,serif" font-size="{detail_size:.2f}" '
-                f'fill="#5c3a1e" text-anchor="{label_anchor}" {_timeline_style(repo_when, 0.45, window=repo_timeline_window)} font-variant="small-caps" '
-                f'stroke="rgba(245,240,232,0.6)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
+                f'fill="#5c3a1e" text-anchor="{label_anchor}" {_landmark_style(repo_when, 0.72, window=repo_timeline_window)} font-variant="small-caps" '
+                f'stroke="rgba(245,240,232,0.75)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill"'
                 f">{repo_stars} stars</text>"
             )
             label_obstacles.append(
@@ -2939,22 +2997,34 @@ def generate(
     # ── Settlement symbol (followers-driven cartographic markers) ──
     followers_count = metrics.get("followers", 0) or 0
     if followers_count > 0 and repo_positions:
-        # Place settlement near center of map at the most prominent repo
+        # Place near the starriest repo, but never inherit that peak's fade.
         best = max(repo_positions, key=lambda rp: rp[2].get("stars", 0))
         sx_s, sy_s = MAP_L + best[0] * MAP_W, MAP_T + best[1] * MAP_H
-        settle_cy = sy_s + 15
-        settle_color = pal["text_secondary"]
-        settlement_when = _repo_when(best[2]) or _date_for_activity_fraction(0.42)
+        settle_cy = sy_s + 16
+        settle_color = _SETTLEMENT_INK
+        settle_fill_op = 0.86 + 0.12 * settlement_gain
+        settle_r = {
+            "capital": 9.2 + 5.0 * settlement_gain,
+            "city": 8.4 + 5.0 * settlement_gain,
+            "town": 7.6 + 5.2 * settlement_gain,
+            "village": 7.0 + 5.4 * settlement_gain,
+            "hamlet": 6.6 + 5.6 * settlement_gain,
+            "outpost": 6.4 + 6.0 * settlement_gain,
+        }.get(settlement_tier, 6.4 + 6.0 * settlement_gain)
+        settlement_when = _date_for_activity_fraction(0.18)
         P.append(
             f'<g id="settlement-symbol" data-tier="{settlement_tier}" data-followers="{int(followers_count)}" '
             f'data-settlement-gain="{settlement_gain:.3f}" data-settlement-scale="{settlement_scale:.3f}" '
             f'data-settlement-count="{settlement_mark_count}" '
-            f"{_timeline_style(settlement_when, 0.95, 'tl-reveal tl-soft', window=repo_timeline_window)}>"
+            f"{_landmark_style(settlement_when, 0.94, 'tl-reveal tl-soft', window=timeline_window, ink_floor=_SETTLEMENT_INK_FLOOR)}>"
         )
 
+        mark_attrs = (
+            'data-role="topo-settlement-mark" data-mark-index="0" '
+            f'cx="{sx_s:.0f}" cy="{settle_cy:.0f}"'
+        )
         if settlement_tier == "capital":
-            # Capital: 5-point star symbol
-            _star_r_out, _star_r_in = 7 * settlement_scale, 3.2 * settlement_scale
+            _star_r_out, _star_r_in = settle_r, settle_r * 0.44
             _star_pts = []
             for _si in range(10):
                 _a = math.radians(-90 + _si * 36)
@@ -2963,59 +3033,48 @@ def generate(
                     f"{sx_s + _r * math.cos(_a):.1f},{settle_cy + _r * math.sin(_a):.1f}"
                 )
             P.append(
-                f'<polygon points="{" ".join(_star_pts)}" fill="{settle_color}" opacity="0.6"/>'
+                f'<polygon data-role="topo-settlement-mark" data-mark-index="0" '
+                f'points="{" ".join(_star_pts)}" fill="{settle_color}" '
+                f'opacity="{settle_fill_op:.2f}" stroke="{_PEAK_STROKE}" stroke-width="1.1"/>'
             )
         elif settlement_tier == "city":
-            # City: double circle
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{5 * settlement_scale:.1f}" fill="none" stroke="{settle_color}" stroke-width="1" opacity="0.5"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{settle_r:.1f}" fill="none" '
+                f'stroke="{settle_color}" stroke-width="1.6" opacity="{settle_fill_op:.2f}"/>'
             )
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{2.5 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.5"/>'
-            )
-        elif settlement_tier == "town":
-            # Town: filled circle
-            P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{3 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.5"/>'
+                f'<circle {mark_attrs} r="{settle_r * 0.48:.1f}" '
+                f'fill="{settle_color}" opacity="{settle_fill_op:.2f}" '
+                f'stroke="{_PEAK_STROKE}" stroke-width="1.05"/>'
             )
         elif settlement_tier == "village":
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{2.4 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.45"/>'
+                f'<circle {mark_attrs} r="{settle_r:.1f}" fill="{settle_color}" '
+                f'opacity="{settle_fill_op:.2f}" stroke="{_PEAK_STROKE}" stroke-width="1.1"/>'
             )
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{4.2 * settlement_scale:.1f}" fill="none" stroke="{settle_color}" stroke-width="0.5" opacity="0.35"/>'
-            )
-        elif settlement_tier == "hamlet":
-            # Hamlet: small dot
-            P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{1.5 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.4"/>'
+                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{settle_r * 1.45:.1f}" '
+                f'fill="none" stroke="{settle_color}" stroke-width="1.0" '
+                f'opacity="{0.55 + 0.20 * settlement_gain:.2f}"/>'
             )
         else:
-            # Outpost: faint dot
             P.append(
-                f'<circle cx="{sx_s:.0f}" cy="{settle_cy:.0f}" r="{1 * settlement_scale:.1f}" fill="{settle_color}" opacity="0.3"/>'
+                f'<circle {mark_attrs} r="{settle_r:.1f}" fill="{settle_color}" '
+                f'opacity="{settle_fill_op:.2f}" stroke="{_PEAK_STROKE}" stroke-width="1.15"/>'
             )
 
         extra_marks = max(0, settlement_mark_count - 1)
-        other_sites = sorted(
-            (rp for rp in repo_positions if rp is not best),
-            key=lambda rp: rp[2].get("stars", 0),
-            reverse=True,
-        )
         for mark_idx in range(extra_marks):
-            if mark_idx < len(other_sites):
-                site = other_sites[mark_idx]
-                mark_x = MAP_L + site[0] * MAP_W
-                mark_y = MAP_T + site[1] * MAP_H + 12.0
-            else:
-                angle = (mark_idx + 1) * 2.15
-                mark_x = sx_s + math.cos(angle) * (16.0 + 7.0 * mark_idx)
-                mark_y = settle_cy + math.sin(angle) * (12.0 + 5.0 * mark_idx)
-            mark_r = (1.05 + 1.35 * settlement_gain) * (0.72 + 0.18 * (mark_idx % 3))
+            angle = (mark_idx + 1) * 2.15 + 0.28 * settlement_gain
+            orbit = 16.0 + 12.0 * settlement_gain + 7.0 * mark_idx
+            mark_x = sx_s + math.cos(angle) * orbit
+            mark_y = settle_cy + math.sin(angle) * orbit * 0.78
+            mark_r = (4.4 + 4.8 * settlement_gain) * (0.88 + 0.08 * (mark_idx % 3))
             P.append(
-                f'<circle data-role="topo-settlement-mark" data-mark-index="{mark_idx}" '
+                f'<circle data-role="topo-settlement-mark" data-mark-index="{mark_idx + 1}" '
                 f'cx="{mark_x:.1f}" cy="{mark_y:.1f}" r="{mark_r:.1f}" '
-                f'fill="{settle_color}" opacity="{0.28 + 0.18 * settlement_gain:.2f}"/>'
+                f'fill="{settle_color}" opacity="{0.74 + 0.18 * settlement_gain:.2f}" '
+                f'stroke="{_PEAK_STROKE}" stroke-width="0.95"/>'
             )
 
         if settlement_tier in {"capital", "city", "town", "village"}:
@@ -3032,8 +3091,8 @@ def generate(
                 settle_anchor = "end"
             P.append(
                 f'<text x="{settle_x:.0f}" y="{settle_y:.0f}" font-family="Georgia, serif" font-size="6.2" '
-                f'font-weight="bold" fill="{settle_color}" text-anchor="{settle_anchor}" opacity="0.55" '
-                f'stroke="rgba(245,240,232,0.7)" stroke-width="2" stroke-linejoin="round" paint-order="stroke fill">{metrics.get("label", "")}</text>'
+                f'font-weight="bold" fill="{settle_color}" text-anchor="{settle_anchor}" opacity="0.82" '
+                f'stroke="rgba(245,240,232,0.85)" stroke-width="2.4" stroke-linejoin="round" paint-order="stroke fill">{metrics.get("label", "")}</text>'
             )
         P.append("</g>")
 

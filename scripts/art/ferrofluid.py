@@ -35,7 +35,6 @@ from .shared import (
     oklch,
     order_repos_for_visual_plan,
     organic_texture_filter,
-    repo_to_canvas_position,
     repo_visibility_score,
     resolve_render_metrics,
     seed_hash,
@@ -100,6 +99,19 @@ def _spread_positions(
     for slot, index in enumerate(order):
         result[index] = max(low, min(high, placed[slot]))
     return result
+
+
+def _even_column_xs(count: int) -> list[float]:
+    """Place N towers at even pool stations: ``WIDTH * (i + 1) / (n + 1)``."""
+    if count <= 0:
+        return []
+    return [WIDTH * (index + 1) / (count + 1) for index in range(count)]
+
+
+def _column_half_width(count: int) -> float:
+    """Half-width that keeps spike mass inside one tower, not a welded ridge."""
+    stations = max(1, count)
+    return 0.38 * WIDTH / (stations + 1)
 
 
 def _dense_repo_signal(repo_count: int, *, baseline: int) -> float:
@@ -169,6 +181,20 @@ def _reflected_polygon(
         f"{cx - half_tip:.1f},{pool_y + height:.1f} "
         f"{cx + half_tip:.1f},{pool_y + height:.1f} "
         f"{cx + half_b:.1f},{pool_y:.1f}"
+    )
+
+
+def _record_base_width(
+    record: dict[str, float | int | str],
+    *,
+    field_val: float,
+    b_crit: float,
+) -> float:
+    """Prefer an explicit tower width, else scale the field cell base."""
+    if "base_width" in record:
+        return float(record["base_width"])
+    return CFG.spike_base_width * math.sqrt(
+        max(0.3, field_val / max(b_crit * 3, 1))
     )
 
 
@@ -628,18 +654,18 @@ def _spike_gradient_palette(
         + (height_ratio - 0.5) * 18.0
     )
     dark = oklch(
-        0.09 + 0.04 * field_norm,
-        0.03 + 0.02 * (1.0 - owner_distance),
+        0.18 + 0.06 * field_norm,
+        0.05 + 0.02 * (1.0 - owner_distance),
         _wrap_hue(base_hue - 8.0),
     )
     bright = oklch(
-        0.47 + 0.16 * field_norm,
-        0.10 + 0.05 * (1.0 - owner_distance),
+        0.64 + 0.16 * field_norm,
+        0.12 + 0.05 * (1.0 - owner_distance),
         _wrap_hue(base_hue + 12.0),
     )
     tip = oklch(
-        0.15 + 0.04 * height_ratio,
-        0.05 + 0.02 * field_norm,
+        0.48 + 0.10 * height_ratio,
+        0.08 + 0.03 * field_norm,
         _wrap_hue(base_hue - 18.0),
     )
     return dark, bright, tip
@@ -657,10 +683,79 @@ def _highlight_fill(
         lang_hue * 0.78 + 195.0 * 0.22 + 14.0 * field_norm + 10.0 * height_ratio
     )
     return oklch(
-        0.70 + 0.10 * height_ratio,
-        0.05 + 0.04 * highlight_density,
+        0.78 + 0.10 * height_ratio,
+        0.06 + 0.04 * highlight_density,
         hue,
     )
+
+
+def _spike_record_and_gradient(
+    *,
+    grad_id: str,
+    sx: float,
+    sy: float,
+    height: float,
+    field_val: float,
+    owner: dict[str, Any],
+    owner_index: int,
+    selected_field_max: float,
+    selected_height_max: float,
+    light_angle: float,
+    iridescence: float,
+    role: str,
+    yi: int = -1,
+    xi: int = -1,
+    base_width: float | None = None,
+    kind: str = "",
+) -> tuple[str, dict[str, float | int | str]]:
+    """Build one owned spike gradient + draw record."""
+    owner_distance = min(
+        1.0,
+        math.hypot(
+            sx - float(owner.get("x", sx)),
+            sy - float(owner.get("y", sy)),
+        )
+        / max(WIDTH * 0.22, 1.0),
+    )
+    field_norm = min(1.0, field_val / max(selected_field_max, 1e-6))
+    height_ratio = min(1.0, height / max(selected_height_max, 1e-6))
+    lang_hue = float(owner.get("lang_hue", LANG_HUES.get(None, 155)))
+    dark, bright, tip = _spike_gradient_palette(
+        lang_hue=lang_hue,
+        field_norm=field_norm,
+        owner_distance=owner_distance,
+        height_ratio=height_ratio,
+        light_angle=light_angle,
+        iridescence=iridescence,
+    )
+    lang_label = str(owner.get("lang") or "unknown")
+    gradient = _make_spike_gradient(
+        grad_id,
+        dark,
+        bright,
+        tip,
+        extra_attrs=(f'data-owner-index="{owner_index}" data-lang="{lang_label}"'),
+    )
+    record: dict[str, float | int | str] = {
+        "grad_id": grad_id,
+        "yi": yi,
+        "xi": xi,
+        "sx": sx,
+        "sy": sy,
+        "height": height,
+        "field": field_val,
+        "when": str(owner.get("date") or ""),
+        "owner_index": owner_index,
+        "lang": lang_label,
+        "lang_hue": lang_hue,
+        "field_norm": field_norm,
+        "height_ratio": height_ratio,
+        "role": role,
+        "kind": kind,
+    }
+    if base_width is not None:
+        record["base_width"] = float(base_width)
+    return gradient, record
 
 
 def _ambient_ripple_specs(
@@ -736,24 +831,23 @@ def _ambient_ripple_specs(
             cx = max(50.0, min(WIDTH - 50.0, anchor_x + lateral))
             cy = pool_y + vertical
             rx = (
-                16.0
-                + 10.0 * ring_idx
-                + 12.0 * strength
+                18.0
+                + 12.0 * ring_idx
+                + 14.0 * strength
                 + 12.0 * signals.release_charge
-                + 14.0 * ripple_gain
+                + 22.0 * ripple_gain
             )
             opacity = min(
-                0.22,
-                0.03
-                + 0.04 * signals.field_gain
-                + 0.05 * ripple_gain
+                0.58,
+                0.12
+                + 0.32 * ripple_gain
+                + 0.04 * strength
                 + 0.03 * signals.traffic_heat
-                + 0.02 * signals.release_charge
-                + 0.03 * strength,
+                + 0.02 * signals.release_charge,
             )
             stroke = oklch(
-                0.20 + 0.04 * strength,
-                0.03 + 0.02 * signals.traffic_heat,
+                0.46 + 0.14 * ripple_gain + 0.06 * strength,
+                0.06 + 0.02 * signals.traffic_heat,
                 _wrap_hue(lang_hue * 0.70 + 250.0 * 0.30 + ring_idx * 8.0),
             )
             specs.append(
@@ -763,9 +857,10 @@ def _ambient_ripple_specs(
                     "cx": cx,
                     "cy": cy,
                     "rx": rx,
-                    "ry": rx * 0.3,
+                    "ry": rx * 0.32,
                     "opacity": opacity,
                     "stroke": stroke,
+                    "stroke_width": 1.35 + 2.35 * ripple_gain,
                     "when": when,
                 }
             )
@@ -907,10 +1002,8 @@ def generate(
 
     dipoles: list[tuple[float, float, float]] = []
     spike_meta: list[dict[str, Any]] = []  # per-repo metadata for timeline
+    column_xs = _even_column_xs(len(top_repos))
     for index, repo in enumerate(top_repos):
-        rx, ry = repo_to_canvas_position(
-            repo, visual_seed, WIDTH, pool_y * 0.9, strategy="language_cluster"
-        )
         repo_name = str(repo.get("name", "") or "")
         repo_lang = repo.get("language")
         repo_lang_hue = float(LANG_HUES.get(repo_lang, 155))
@@ -929,14 +1022,9 @@ def generate(
             0.20 + 0.48 * relative_visibility + 0.32 * repo_prominence,
         )
         repo_identity = f"{repo_name}:{repo_lang or 'unknown'}"
-        repo_bias = _stable_fraction(visual_seed, repo_identity, "dipole-bias") - 0.5
-        rx = max(
-            WIDTH * 0.08,
-            min(
-                WIDTH * 0.92,
-                rx + repo_bias * WIDTH * 0.035 * (0.4 + signals.traffic_heat),
-            ),
-        )
+        rx = column_xs[index]
+        y_frac = 0.16 + 0.70 * _stable_fraction(visual_seed, repo_identity, "dipole-y")
+        ry = pool_y * y_frac
         ry = max(
             pool_y * 0.08,
             min(
@@ -992,11 +1080,13 @@ def generate(
         )
 
     if dipoles:
+        column_count = len(dipoles)
+        station_gap = WIDTH / (column_count + 1)
         separated_x = _spread_positions(
             [dipole[0] for dipole in dipoles],
-            min_gap=max(_DIPOLE_MIN_GAP, WIDTH * 0.055),
-            low=WIDTH * 0.08,
-            high=WIDTH * 0.92,
+            min_gap=max(_DIPOLE_MIN_GAP, station_gap * 0.85),
+            low=station_gap,
+            high=WIDTH * column_count / (column_count + 1),
         )
         dipoles = [
             (separated_x[index], dipole[1], dipole[2])
@@ -1005,6 +1095,11 @@ def generate(
         for index, meta in enumerate(spike_meta):
             meta["x"] = separated_x[index]
 
+    spike_scale_knob = float(dialect.knobs["spike_scale"])
+    lease_field = float(dialect.knobs["field_gain"])
+    lease_span = max(0.0, min(1.0, (lease_field - 0.82) / 0.30))
+    mesh_ramp = signals.field_gain
+
     # ── Compute magnetic field ────────────────────────────────────
     field, gx, gy = _compute_field(
         dipoles,
@@ -1012,7 +1107,7 @@ def generate(
         WIDTH,
         HEIGHT,
         pool_y,
-        maturity_ramp=signals.field_gain * dialect.knobs["field_gain"],
+        maturity_ramp=mesh_ramp,
     )
 
     # ── Find spikes ───────────────────────────────────────────────
@@ -1049,6 +1144,8 @@ def generate(
         f'data-highlight-density="{signals.highlight_density:.3f}" '
         f'data-dipole-lift="{signals.dipole_lift:.3f}" '
         f'data-ripple-gain="{dialect.knobs["ripple_gain"]:.3f}" '
+        f'data-spike-scale="{spike_scale_knob:.3f}" '
+        f'data-field-gain="{lease_field:.3f}" '
         f"{dialect.svg_attrs()}>"
     )
 
@@ -1097,86 +1194,133 @@ def generate(
     dipole_xy = (
         np.array([(d[0], d[1]) for d in dipoles]) if dipoles else np.empty((0, 2))
     )
-    selected_field_max = max(
-        (float(field[yi, xi]) for yi, xi in spike_indices),
-        default=max(b_crit, 1.0),
-    )
-    selected_height_max = max(
-        (float(spike_heights[yi, xi]) for yi, xi in spike_indices),
-        default=1.0,
-    )
+    column_half = _column_half_width(len(spike_meta))
+    fallback_when = timeline_window[0].isoformat()
+    tower_heights = [
+        (
+            CFG.spike_scale
+            * spike_scale_knob
+            * (0.88 + 0.28 * float(owner["strength"]))
+            * (0.84 + 0.16 * fluid_response)
+        )
+        for owner in spike_meta
+    ]
+    selected_field_max = max(b_crit, 1.0)
+    for yi, xi in spike_indices:
+        owner_index = _nearest_dipole_index(
+            float(gx[yi, xi]),
+            float(gy[yi, xi]),
+            dipole_xy,
+        )
+        if owner_index < 0 or owner_index >= len(spike_meta):
+            continue
+        if abs(float(gx[yi, xi]) - float(spike_meta[owner_index]["x"])) > column_half:
+            continue
+        selected_field_max = max(selected_field_max, float(field[yi, xi]))
+    selected_height_max = 1.0
+    if tower_heights:
+        selected_height_max = max(selected_height_max, max(tower_heights))
+    if spike_indices:
+        selected_height_max = max(
+            selected_height_max,
+            max(float(spike_heights[yi, xi]) for yi, xi in spike_indices),
+        )
 
     spike_records: list[dict[str, float | int | str]] = []
     grad_defs: list[str] = []
-    fallback_when = timeline_window[0].isoformat()
-    for si, (yi, xi) in enumerate(spike_indices):
+    si = 0
+    for owner_index, owner in enumerate(spike_meta):
+        owner_strength = float(owner["strength"])
+        tower_h = tower_heights[owner_index]
+        tower_field = max(
+            b_crit * (1.8 + 0.6 * owner_strength),
+            selected_field_max * (0.55 + 0.45 * owner_strength),
+        )
+        primary_width = CFG.spike_base_width * (1.55 + 0.35 * owner_strength)
+        gradient, record = _spike_record_and_gradient(
+            grad_id=f"sg{si}",
+            sx=float(owner["x"]),
+            sy=float(owner["y"]),
+            height=tower_h,
+            field_val=tower_field,
+            owner=owner,
+            owner_index=owner_index,
+            selected_field_max=max(selected_field_max, tower_field),
+            selected_height_max=selected_height_max,
+            light_angle=light_angle,
+            iridescence=signals.iridescence,
+            role="ferro-spike",
+            base_width=primary_width,
+            kind="tower",
+        )
+        record["when"] = str(owner.get("date") or fallback_when)
+        grad_defs.append(gradient)
+        spike_records.append(record)
+        si += 1
+        flank_count = (
+            1
+            + int(spike_scale_knob > 0.95)
+            + int(spike_scale_knob > 1.15)
+            + int(owner_strength > 0.58)
+            + int(owner_strength > 0.82)
+        )
+        for flank_index in range(flank_count):
+            side = -1.0 if flank_index % 2 == 0 else 1.0
+            offset = side * min(column_half * 0.45, 5.0 + 3.2 * flank_index)
+            flank_h = tower_h * (0.62 - 0.10 * flank_index)
+            gradient, record = _spike_record_and_gradient(
+                grad_id=f"sg{si}",
+                sx=float(owner["x"]) + offset,
+                sy=float(owner["y"]),
+                height=flank_h,
+                field_val=tower_field * 0.72,
+                owner=owner,
+                owner_index=owner_index,
+                selected_field_max=max(selected_field_max, tower_field),
+                selected_height_max=selected_height_max,
+                light_angle=light_angle,
+                iridescence=signals.iridescence,
+                role="ferro-spike",
+                base_width=primary_width * 0.62,
+                kind="tower-flank",
+            )
+            record["when"] = str(owner["date"])
+            grad_defs.append(gradient)
+            spike_records.append(record)
+            si += 1
+
+    for yi, xi in spike_indices:
         sx = float(gx[yi, xi])
         sy = float(gy[yi, xi])
         sh = float(spike_heights[yi, xi])
         field_val = float(field[yi, xi])
         owner_index = _nearest_dipole_index(sx, sy, dipole_xy)
-        owner = (
-            spike_meta[owner_index]
-            if 0 <= owner_index < len(spike_meta)
-            else {
-                "x": sx,
-                "y": sy,
-                "date": fallback_when,
-                "lang": None,
-                "lang_hue": float(LANG_HUES.get(None, 155)),
-                "strength": 0.0,
-            }
-        )
-        owner_distance = min(
-            1.0,
-            math.hypot(
-                sx - float(owner["x"]),
-                sy - float(owner["y"]),
-            )
-            / max(WIDTH * 0.22, 1.0),
-        )
-        field_norm = min(1.0, field_val / max(selected_field_max, 1e-6))
-        height_ratio = min(1.0, sh / max(selected_height_max, 1e-6))
-        lang_hue = float(owner["lang_hue"])
-        dark, bright, tip = _spike_gradient_palette(
-            lang_hue=lang_hue,
-            field_norm=field_norm,
-            owner_distance=owner_distance,
-            height_ratio=height_ratio,
+        if owner_index < 0 or owner_index >= len(spike_meta):
+            continue
+        owner = spike_meta[owner_index]
+        if abs(sx - float(owner["x"])) > column_half:
+            continue
+        gradient, record = _spike_record_and_gradient(
+            grad_id=f"sg{si}",
+            sx=sx,
+            sy=sy,
+            height=sh,
+            field_val=field_val,
+            owner=owner,
+            owner_index=owner_index,
+            selected_field_max=selected_field_max,
+            selected_height_max=selected_height_max,
             light_angle=light_angle,
             iridescence=signals.iridescence,
+            role="ferro-spike",
+            yi=yi,
+            xi=xi,
+            kind="field",
         )
-        lang_label = str(owner.get("lang") or "unknown")
-        grad_id = f"sg{si}"
-        grad_defs.append(
-            _make_spike_gradient(
-                grad_id,
-                dark,
-                bright,
-                tip,
-                extra_attrs=(
-                    f'data-owner-index="{owner_index}" data-lang="{lang_label}"'
-                ),
-            )
-        )
-        spike_records.append(
-            {
-                "grad_id": grad_id,
-                "yi": yi,
-                "xi": xi,
-                "sx": sx,
-                "sy": sy,
-                "height": sh,
-                "field": field_val,
-                "when": str(owner["date"]),
-                "owner_index": owner_index,
-                "lang": lang_label,
-                "lang_hue": lang_hue,
-                "field_norm": field_norm,
-                "height_ratio": height_ratio,
-                "role": "ferro-spike",
-            }
-        )
+        record["when"] = str(owner.get("date") or fallback_when)
+        grad_defs.append(gradient)
+        spike_records.append(record)
+        si += 1
 
     covered_owner_indices = {
         int(record["owner_index"])
@@ -1199,7 +1343,7 @@ def generate(
                     capillary_index,
                 )
                 - 0.5
-            ) * (18.0 + 8.0 * capillary_index)
+            ) * (9.0 + 4.0 * capillary_index)
             sx = max(
                 WIDTH * 0.06,
                 min(WIDTH * 0.94, float(owner["x"]) + lateral),
@@ -1218,52 +1362,24 @@ def generate(
                 b_crit
                 * (1.12 + 0.38 * owner_strength + 0.18 * signals.collaboration_heat),
             )
-            owner_distance = min(
-                1.0,
-                abs(lateral) / max(WIDTH * 0.12, 1.0),
-            )
-            field_norm = min(1.0, field_val / max(selected_field_max, field_val, 1e-6))
-            height_ratio = min(1.0, sh / max(selected_height_max, sh, 1e-6))
-            lang_hue = float(owner["lang_hue"])
-            dark, bright, tip = _spike_gradient_palette(
-                lang_hue=lang_hue,
-                field_norm=field_norm,
-                owner_distance=owner_distance,
-                height_ratio=height_ratio,
+            gradient, record = _spike_record_and_gradient(
+                grad_id=f"sgc{owner_index}_{capillary_index}",
+                sx=sx,
+                sy=sy,
+                height=sh,
+                field_val=field_val,
+                owner=owner,
+                owner_index=owner_index,
+                selected_field_max=max(selected_field_max, field_val),
+                selected_height_max=max(selected_height_max, sh),
                 light_angle=light_angle,
                 iridescence=signals.iridescence,
+                role="ferro-capillary",
+                kind="capillary",
             )
-            lang_label = str(owner.get("lang") or "unknown")
-            grad_id = f"sgc{owner_index}_{capillary_index}"
-            grad_defs.append(
-                _make_spike_gradient(
-                    grad_id,
-                    dark,
-                    bright,
-                    tip,
-                    extra_attrs=(
-                        f'data-owner-index="{owner_index}" data-lang="{lang_label}"'
-                    ),
-                )
-            )
-            spike_records.append(
-                {
-                    "grad_id": grad_id,
-                    "yi": -1,
-                    "xi": -1,
-                    "sx": sx,
-                    "sy": sy,
-                    "height": sh,
-                    "field": field_val,
-                    "when": str(owner["date"]),
-                    "owner_index": owner_index,
-                    "lang": lang_label,
-                    "lang_hue": lang_hue,
-                    "field_norm": field_norm,
-                    "height_ratio": height_ratio,
-                    "role": "ferro-capillary",
-                }
-            )
+            record["when"] = str(owner.get("date") or fallback_when)
+            grad_defs.append(gradient)
+            spike_records.append(record)
 
     for gd in grad_defs:
         P.append(gd)
@@ -1277,26 +1393,65 @@ def generate(
 
     # ── Subtle liquid surface ripples ─────────────────────────────
     ripple_opacity = min(
-        0.18,
-        0.05
-        + 0.04 * min(1.0, fluid_response)
-        + 0.03 * signals.traffic_heat
-        + 0.02 * signals.release_charge,
+        0.28,
+        0.08
+        + 0.06 * min(1.0, fluid_response)
+        + 0.04 * signals.traffic_heat
+        + 0.03 * signals.release_charge,
     )
     P.append(
         f'<rect class="ferro-surface-ripple" x="0" y="{pool_y - 15:.0f}" width="{WIDTH}" height="30" '
-        f'fill="{oklch(0.20, 0.03, 260)}" opacity="{ripple_opacity:.2f}" '
+        f'fill="{oklch(0.28, 0.04, 260)}" opacity="{ripple_opacity:.2f}" '
         f'filter="url(#ferroTexture)"/>'
     )
     budget.add(1)
 
     # ── Pool surface line ─────────────────────────────────────────
-    surface_color = oklch(0.25, 0.05, 240)
+    surface_color = oklch(0.42, 0.06, 240)
     P.append(
         f'<line x1="0" y1="{pool_y:.1f}" x2="{WIDTH}" y2="{pool_y:.1f}" '
-        f'stroke="{surface_color}" stroke-width="0.8" opacity="0.5"/>'
+        f'stroke="{surface_color}" stroke-width="1.4" opacity="0.72"/>'
     )
     budget.add(1)
+
+    # ── Followers: leased field mark (extent, not magnet count) ───
+    if spike_meta and budget.ok():
+        field_fill = oklch(0.42, 0.08, 250)
+        field_stroke = oklch(0.62, 0.10, 255)
+        field_cx = WIDTH * 0.5
+        field_rx = 70.0 + 210.0 * lease_span + 36.0 * lease_field
+        field_ry = 9.0 + 22.0 * lease_span + 8.0 * lease_field
+        field_op = min(0.42, 0.10 + 0.28 * lease_span + 0.08 * lease_field)
+        line_reach = 90.0 + 160.0 * lease_span + 40.0 * lease_field
+        P.append(
+            f'<ellipse data-role="ferro-field" data-field-gain="{lease_field:.3f}" '
+            f'cx="{field_cx:.1f}" cy="{pool_y:.1f}" '
+            f'rx="{field_rx:.1f}" ry="{field_ry:.1f}" '
+            f'fill="{field_fill}" opacity="{field_op:.2f}"/>'
+        )
+        budget.add(1)
+        if budget.ok():
+            P.append(
+                f'<path data-role="ferro-field" data-field-gain="{lease_field:.3f}" '
+                f'd="M{field_cx - line_reach:.1f},{pool_y:.1f} '
+                f'C{field_cx - line_reach * 0.45:.1f},{pool_y - 18.0 - 22.0 * lease_span:.1f} '
+                f'{field_cx + line_reach * 0.45:.1f},{pool_y - 18.0 - 22.0 * lease_span:.1f} '
+                f'{field_cx + line_reach:.1f},{pool_y:.1f}" '
+                f'fill="none" stroke="{field_stroke}" stroke-width="{1.2 + 1.6 * lease_span:.2f}" '
+                f'opacity="{min(0.55, 0.18 + 0.32 * lease_span):.2f}"/>'
+            )
+            budget.add(1)
+        if budget.ok():
+            P.append(
+                f'<path data-role="ferro-field" data-field-gain="{lease_field:.3f}" '
+                f'd="M{field_cx - line_reach * 0.72:.1f},{pool_y:.1f} '
+                f'C{field_cx - line_reach * 0.30:.1f},{pool_y + 12.0 + 14.0 * lease_span:.1f} '
+                f'{field_cx + line_reach * 0.30:.1f},{pool_y + 12.0 + 14.0 * lease_span:.1f} '
+                f'{field_cx + line_reach * 0.72:.1f},{pool_y:.1f}" '
+                f'fill="none" stroke="{field_stroke}" stroke-width="{0.9 + 1.2 * lease_span:.2f}" '
+                f'opacity="{min(0.42, 0.12 + 0.24 * lease_span):.2f}"/>'
+            )
+            budget.add(1)
 
     # ── Render reflections first (behind spikes) ──────────────────
     refl_group: list[str] = []
@@ -1308,7 +1463,7 @@ def generate(
         if sh < 1.5:
             continue
         field_val = float(record["field"])
-        bw = CFG.spike_base_width * math.sqrt(max(0.3, field_val / max(b_crit * 3, 1)))
+        bw = _record_base_width(record, field_val=field_val, b_crit=b_crit)
         refl_h = sh * 0.7
         refl_pts = _reflected_polygon(sx, pool_y, bw, refl_h)
         refl_op = CFG.reflection_opacity * min(1.0, sh / 40.0)
@@ -1329,26 +1484,33 @@ def generate(
         if not budget.ok():
             break
         sx = float(record["sx"])
-        sy = float(record["sy"])
         sh = float(record["height"])
         if sh < 1.0:
             continue
         field_val = float(record["field"])
-        bw = CFG.spike_base_width * math.sqrt(max(0.3, field_val / max(b_crit * 3, 1)))
+        bw = _record_base_width(record, field_val=field_val, b_crit=b_crit)
         pts = _spike_polygon(sx, pool_y, bw, sh)
         role = str(record.get("role") or "ferro-spike")
+        kind = str(record.get("kind") or "")
+        kind_attr = f' data-kind="{kind}"' if kind else ""
         P.append(
-            f'<polygon data-role="{role}" points="{pts}" fill="url(#{record["grad_id"]})" '
+            f'<polygon data-role="{role}"{kind_attr} data-owner-index="{int(record["owner_index"])}" '
+            f'data-lang="{record["lang"]}" points="{pts}" fill="url(#{record["grad_id"]})" '
             f"{_timeline_style(str(record['when']), 0.95, 'tl-reveal')}/>"
         )
         budget.add(1)
 
     # ── Specular highlight on tallest spikes ──────────────────────
     highlight_percentile = max(42.0, 82.0 - signals.highlight_density * 36.0)
+    tower_and_field_heights = [
+        float(record["height"])
+        for record in spike_records
+        if str(record.get("role") or "") == "ferro-spike"
+    ]
     highlight_thresh = (
-        np.percentile(spike_heights[spike_mask], highlight_percentile)
-        if spike_mask.any()
-        else 999
+        float(np.percentile(tower_and_field_heights, highlight_percentile))
+        if tower_and_field_heights
+        else 999.0
     )
     for record in spike_records:
         if not budget.ok():
@@ -1395,7 +1557,8 @@ def generate(
             f'data-owner-index="{int(ripple["owner_index"])}" data-lang="{ripple["lang"]}" '
             f'cx="{float(ripple["cx"]):.1f}" cy="{float(ripple["cy"]):.1f}" '
             f'rx="{float(ripple["rx"]):.1f}" ry="{float(ripple["ry"]):.1f}" '
-            f'fill="none" stroke="{ripple["stroke"]}" stroke-width="0.5" '
+            f'fill="none" stroke="{ripple["stroke"]}" '
+            f'stroke-width="{float(ripple.get("stroke_width", 1.4)):.2f}" '
             f"{_timeline_style(str(ripple['when']), float(ripple['opacity']), 'ferro-ripple tl-reveal tl-soft')}/>"
         )
         budget.add(1)
@@ -1406,14 +1569,31 @@ def generate(
         if not budget.ok():
             break
         lang_hue = float(dm["lang_hue"])
-        glow_color = oklch(0.30, 0.10, lang_hue)
-        marker_radius = 4.0 + 4.5 * dm["strength"] + 2.0 * signals.collaboration_heat
-        halo_rx = 12.0 + 14.0 * dm["strength"] + 8.0 * signals.diversity
-        halo_ry = 3.0 + 4.5 * min(1.0, fluid_response)
-        halo_op = 0.04 + 0.06 * (
-            0.5 * dm["strength"] + 0.5 * signals.collaboration_heat
+        glow_color = oklch(0.58 + 0.10 * lease_span, 0.12, lang_hue)
+        marker_radius = (
+            5.6
+            + 4.8 * dm["strength"]
+            + 2.0 * signals.collaboration_heat
+            + 4.2 * lease_span
         )
-        glow_op = 0.10 + 0.12 * dm["strength"] + 0.08 * signals.build_volume
+        halo_rx = (
+            16.0
+            + 16.0 * dm["strength"]
+            + 8.0 * signals.diversity
+            + 18.0 * lease_span
+        )
+        halo_ry = 4.2 + 5.0 * min(1.0, fluid_response) + 3.5 * lease_span
+        halo_op = min(
+            0.36,
+            0.10 + 0.10 * dm["strength"] + 0.08 * signals.collaboration_heat + 0.12 * lease_span,
+        )
+        glow_op = min(
+            0.84,
+            0.42
+            + 0.16 * dm["strength"]
+            + 0.08 * signals.build_volume
+            + 0.22 * lease_span,
+        )
         P.append(
             f'<ellipse cx="{dm["x"]:.1f}" cy="{pool_y:.1f}" '
             f'rx="{halo_rx:.1f}" ry="{halo_ry:.1f}" fill="{glow_color}" '
