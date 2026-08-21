@@ -35,3 +35,20 @@ Smoke only (art visible vs empty slots). Not CAP C3. Decision remains **gif-fall
 - `Watch … (MP4)` links: **6**. Rendered `<video>`: **0**.
 - `<details>`: **6** living-art titles (art **outside** details). Article also has one Tech Stack `<details>` (7 total) — out of scope.
 - External hosts: none (no YouTube / Cloudinary / user-attachments / iframe / vimeo in Living Art HTML). GIF `src` is repo `raw/dev/.github/assets/img/living-*.gif`; MP4 `href` is blob `living-*.mp4`.
+
+## Preview smoke 2026-08-21
+
+Smoke only (art visible vs empty slots). Not CAP C3. Decision remains **gif-fallback**. No `accepted[]`.
+
+- When: 2026-08-21, logged-out desktop Playwright, blob **Preview** (pressed), `https://github.com/wyattowalsh/wyattowalsh/blob/dev/README.md` (not profile overview).
+- README commit on the blob: `6738308` (`chore(readme): update dynamic sections and skills badges`). Prior note (`2026-08-20` / `cac367b`) is stale.
+- **PASS.** gif-fallback still shows.
+
+| Check | Count / result |
+|---|---|
+| Visible full-width living-art GIFs | **6** (Ink Garden, Topography, Genetic Landscape, Physarum, Lenia, Ferrofluid). Painted **766×766** = 100% of `article` (766px). GitHub `<animated-image>` still adds hidden player copies (12 GIF nodes total); counted 6 visible slots. |
+| `Watch … (MP4)` links | **6** |
+| Rendered `<video>` | **0** |
+| Living-art `<details>` | **6** (art **outside** details; each details imgCount=0) |
+| Empty center slots | **0** (no empty `<p align="center">`) |
+| YouTube / Cloudinary | **0** (also no iframe / user-attachments / vimeo in Living Art HTML) |
