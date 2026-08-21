@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" data-dialect="morphogenetic" data-style="lenia" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116" data-field-gain="0.339" data-extent-gain="0.116" data-simulation-mix="0.423" data-sim-steps="81" data-halo-scale="0.874" data-satellite-count="2">
+<defs>
+<filter id="lenia-glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="6.0" result="glow"/><feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="lenia-halo" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="800" height="800" fill="#01000c"/>
+<g filter="url(#lenia-glow)">
+<circle data-role="lenia-seed-halo" data-kind="repo" data-halo-scale="0.874" cx="248.0" cy="184.0" r="22.6" fill="#cdec84" opacity="0.290"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="repo" cx="248.0" cy="184.0" rx="40.8" ry="25.3" fill="none" stroke="#cdec84" stroke-width="0.7" opacity="0.127"/>
+<circle data-role="lenia-seed-halo" data-kind="satellite" cx="152.0" cy="248.0" r="24.5" fill="#00927c" opacity="0.297"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="satellite" cx="152.0" cy="248.0" rx="44.6" ry="21.4" fill="none" stroke="#00927c" stroke-width="0.7" opacity="0.107"/>
+<circle data-role="lenia-seed-halo" data-kind="satellite" cx="152.0" cy="136.0" r="12.3" fill="#00927c" opacity="0.257"/>
+<ellipse data-role="lenia-seed-orbit" data-kind="satellite" cx="152.0" cy="136.0" rx="23.7" ry="11.4" fill="none" stroke="#00927c" stroke-width="0.7" opacity="0.093"/>
+<circle data-role="lenia-nutrient-halo" data-kind="nutrient" cx="8.0" cy="216.0" r="7.0" fill="#003363" opacity="0.109"/>
+<circle data-role="lenia-nutrient-halo" data-kind="nutrient" cx="648.0" cy="712.0" r="7.0" fill="#003363" opacity="0.113"/>
+<circle data-role="lenia-nutrient-halo" data-kind="nutrient" cx="8.0" cy="264.0" r="7.0" fill="#003363" opacity="0.109"/>
+<circle data-role="lenia-nutrient-halo" data-kind="nutrient" cx="376.0" cy="776.0" r="7.0" fill="#003363" opacity="0.113"/>
+</g>
+<g data-role="lenia-field" filter="url(#lenia-glow)">
+<circle data-role="lenia-organism" cx="616.0" cy="24.0" r="5.5" fill="#003362" opacity="0.355"/>
+<circle data-role="lenia-organism" cx="264.0" cy="200.0" r="5.5" fill="#003362" opacity="0.358"/>
+<circle data-role="lenia-organism" cx="152.0" cy="248.0" r="5.7" fill="#003362" opacity="0.368"/>
+<circle data-role="lenia-organism" cx="776.0" cy="72.0" r="5.7" fill="#003362" opacity="0.368"/>
+<circle data-role="lenia-organism" cx="264.0" cy="184.0" r="5.7" fill="#003362" opacity="0.370"/>
+<circle data-role="lenia-organism" cx="248.0" cy="200.0" r="5.8" fill="#003362" opacity="0.374"/>
+<circle data-role="lenia-organism" cx="792.0" cy="504.0" r="5.9" fill="#003362" opacity="0.386"/>
+<circle data-role="lenia-organism" cx="248.0" cy="184.0" r="5.9" fill="#003362" opacity="0.387"/>
+<circle data-role="lenia-organism" cx="616.0" cy="792.0" r="6.2" fill="#003362" opacity="0.405"/>
+<circle data-role="lenia-organism" cx="72.0" cy="360.0" r="6.3" fill="#003362" opacity="0.413"/>
+<circle data-role="lenia-organism" cx="792.0" cy="568.0" r="6.3" fill="#003362" opacity="0.413"/>
+<circle data-role="lenia-organism" cx="24.0" cy="72.0" r="6.4" fill="#003362" opacity="0.420"/>
+<circle data-role="lenia-organism" cx="488.0" cy="472.0" r="6.5" fill="#003362" opacity="0.429"/>
+<circle data-role="lenia-organism" cx="40.0" cy="696.0" r="6.6" fill="#003362" opacity="0.432"/>
+<circle data-role="lenia-organism" cx="40.0" cy="72.0" r="6.8" fill="#003362" opacity="0.449"/>
+<circle data-role="lenia-organism" cx="24.0" cy="696.0" r="7.0" fill="#003362" opacity="0.462"/>
+<circle data-role="lenia-organism" cx="584.0" cy="392.0" r="7.0" fill="#003362" opacity="0.467"/>
+<circle data-role="lenia-organism" cx="8.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="72.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="424.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="536.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="8.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="24.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="56.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="72.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="408.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="424.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="536.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="600.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="40.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="568.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="72.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="328.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="472.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="488.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="616.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="648.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="168.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="184.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="312.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="328.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="456.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="504.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="616.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="648.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="200.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="328.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="456.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="488.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="632.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="648.0" cy="232.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="328.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="328.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="328.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="536.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="344.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="536.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="360.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="392.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="408.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="168.0" cy="424.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="216.0" cy="424.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="424.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="456.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="456.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="488.0" cy="488.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="616.0" cy="488.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="648.0" cy="488.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="600.0" cy="504.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="600.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="648.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="520.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="72.0" cy="536.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="536.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="616.0" cy="536.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="536.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="56.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="72.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="328.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="616.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="552.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="568.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="568.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="760.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="584.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="504.0" cy="600.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="520.0" cy="600.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="168.0" cy="616.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="216.0" cy="616.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="616.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="488.0" cy="616.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="520.0" cy="616.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="488.0" cy="648.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="520.0" cy="648.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="664.0" cy="664.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="712.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="712.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="360.0" cy="712.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="728.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="392.0" cy="728.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="728.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="728.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="184.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="200.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="344.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="744.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="760.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="536.0" cy="760.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="760.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="760.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="8.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="168.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="232.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="520.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="552.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="584.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="728.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="744.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="776.0" cy="776.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="216.0" cy="792.0" r="7.6" fill="#003e69" opacity="0.402"/>
+<circle data-role="lenia-organism" cx="40.0" cy="216.0" r="7.6" fill="#003f6a" opacity="0.404"/>
+<circle data-role="lenia-organism" cx="8.0" cy="184.0" r="7.6" fill="#003f6a" opacity="0.404"/>
+<circle data-role="lenia-organism" cx="376.0" cy="8.0" r="7.6" fill="#003f6a" opacity="0.404"/>
+<circle data-role="lenia-organism" cx="344.0" cy="776.0" r="7.6" fill="#003f6a" opacity="0.404"/>
+<circle data-role="lenia-organism" cx="312.0" cy="184.0" r="7.6" fill="#00436c" opacity="0.409"/>
+<circle data-role="lenia-organism" cx="792.0" cy="232.0" r="7.6" fill="#00436d" opacity="0.410"/>
+<circle data-role="lenia-organism" cx="360.0" cy="760.0" r="7.7" fill="#00446d" opacity="0.410"/>
+<circle data-role="lenia-organism" cx="200.0" cy="264.0" r="7.7" fill="#00446d" opacity="0.410"/>
+<circle data-role="lenia-organism" cx="392.0" cy="760.0" r="7.7" fill="#00446d" opacity="0.410"/>
+<circle data-role="lenia-organism" cx="216.0" cy="232.0" r="7.7" fill="#00466e" opacity="0.414"/>
+<circle data-role="lenia-organism" cx="792.0" cy="216.0" r="7.7" fill="#00486f" opacity="0.416"/>
+<circle data-role="lenia-organism" cx="8.0" cy="232.0" r="7.7" fill="#00496f" opacity="0.417"/>
+<circle data-role="lenia-organism" cx="392.0" cy="776.0" r="7.7" fill="#004a70" opacity="0.419"/>
+<circle data-role="lenia-organism" cx="200.0" cy="200.0" r="7.7" fill="#004b70" opacity="0.420"/>
+<circle data-role="lenia-organism" cx="168.0" cy="216.0" r="7.8" fill="#004e72" opacity="0.424"/>
+<circle data-role="lenia-organism" cx="8.0" cy="216.0" r="7.8" fill="#005173" opacity="0.429"/>
+<circle data-role="lenia-organism" cx="376.0" cy="776.0" r="7.9" fill="#005574" opacity="0.434"/>
+<circle data-role="lenia-organism" cx="168.0" cy="264.0" r="8.0" fill="#005c77" opacity="0.444"/>
+<circle data-role="lenia-organism" cx="168.0" cy="248.0" r="8.0" fill="#006178" opacity="0.451"/>
+</g>
+<g data-role="lenia-field-core" filter="url(#lenia-halo)">
+</g>
+<g id="accretion-dialect" data-dialect="morphogenetic" data-style="lenia" data-accretion-repos="1" data-accretion-stars="2" data-accretion-commits="20" data-accretion-followers="1" data-accretion-repo-scale="0.192" data-accretion-star-scale="0.177" data-accretion-commit-scale="0.339" data-accretion-follower-scale="0.116" data-role="accretion-dialect"><rect x="516.0" y="36.0" width="248.0" height="28.0" rx="3.5" fill="#0c1020" opacity="0.78" stroke="#7ee0c0" stroke-width="0.45"/><text x="524.0" y="45.5" font-family="Georgia,serif" font-size="5.2" fill="#7ee0c0" opacity="0.7" letter-spacing="0.8">morphogenetic</text><g data-channel="repos" data-mark-count="2" data-channel-value="1"><circle cx="528.2" cy="54.5" r="1.35" fill="#7ee0c0" opacity="0.55"/><circle cx="530.5" cy="54.5" r="1.35" fill="#7ee0c0" opacity="0.55"/><text x="546.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">1</text></g><g data-channel="stars" data-mark-count="2" data-channel-value="2"><circle cx="592.0" cy="54.5" r="3.1" fill="none" stroke="#7ee0c0" stroke-width="0.55"/><circle cx="592.0" cy="54.5" r="1.4" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><text x="604.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">2</text></g><g data-channel="commits" data-mark-count="3" data-channel-value="20"><circle cx="650.0" cy="57.9" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><circle cx="650.0" cy="56.7" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><circle cx="650.0" cy="55.5" r="1.15" fill="none" stroke="#7ee0c0" stroke-width="0.4"/><text x="662.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">20</text></g><g data-channel="followers" data-mark-count="2" data-channel-value="1"><circle cx="708.0" cy="54.5" r="3.4" fill="none" stroke="#7ee0c0" stroke-width="0.45" opacity="0.7"/><text x="720.0" y="57.5" font-family="monospace" font-size="5" fill="#7ee0c0" opacity="0.72">1</text></g></g>
+</svg>
