@@ -123,19 +123,6 @@ _STYLE_KNOBS: dict[str, tuple[str, str, str]] = {
     "ferrofluid": ("spike_scale", "ripple_gain", "field_gain"),
 }
 
-_XFAIL_UNTIL_DSTAR1 = pytest.mark.xfail(
-    reason="until D*1 on-canvas dialects",
-    strict=False,
-)
-
-
-def _styles_xfail(*leftover: str) -> tuple[Any, ...]:
-    marked = set(leftover)
-    return tuple(
-        pytest.param(style, marks=_XFAIL_UNTIL_DSTAR1) if style in marked else style
-        for style in STYLE_DIALECTS
-    )
-
 _A1_SEED = "a1-isolation"
 _A1_MATURITY = 0.01
 _OPEN_G = re.compile(r"<g\b", re.IGNORECASE)
@@ -300,7 +287,7 @@ def test_inkgarden_glint_count_is_zero_at_zero_followers() -> None:
 
 
 # ---------------------------------------------------------------------------
-# A1 layer 2 — on-canvas isolation (xfail leftovers until D*1)
+# A1 layer 2 — on-canvas isolation
 # ---------------------------------------------------------------------------
 
 
@@ -547,19 +534,28 @@ def _attr(tag: str, name: str, default: str = "") -> str:
 
 def _genetic_peak_brighter_than_organisms(svg: str) -> bool:
     cores = re.findall(r"<circle\b[^>]*data-role=\"genetic-peak-core\"[^>]*>", svg)
-    organisms = [
-        tag
-        for tag in re.findall(r"<circle\b[^>]*>", svg)
-        if "data-role=" not in tag
-    ]
-    if not cores or not organisms:
+    organisms = re.findall(
+        r"<circle\b[^>]*data-role=\"genetic-organism\"[^>]*>",
+        svg,
+    )
+    if not cores:
         return False
 
     def _ink(tag: str) -> float:
         opacity = float(_attr(tag, "opacity", "1") or 1)
         return _hex_luminance(_attr(tag, "fill", "#000000")) * opacity
 
-    return min(_ink(tag) for tag in cores) > max(_ink(tag) for tag in organisms)
+    core_ink = min(_ink(tag) for tag in cores)
+    if not organisms:
+        return core_ink > 0.0 and _max_tagged_radius(svg, "genetic-peak-core") > 0.0
+    return core_ink > max(_ink(tag) for tag in organisms)
+
+
+def _genetic_generation_mark_count(svg: str) -> int:
+    return _count(r'data-role="genetic-generation-ring"', svg) + _count(
+        r'data-role="genetic-generation-contour"',
+        svg,
+    )
 
 
 def _max_tagged_radius(svg: str, role: str) -> float:
@@ -706,7 +702,7 @@ def test_on_canvas_t0_primary_repo_marks(
         assert _ellipse_count(svg) >= 1 or "<path" in svg
 
 
-@pytest.mark.parametrize("style", _styles_xfail("inkgarden"))
+@pytest.mark.parametrize("style", tuple(STYLE_DIALECTS))
 def test_on_canvas_repos_isolation_moves_primary_mark_count(
     style: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -763,10 +759,7 @@ def test_on_canvas_stars_isolation_picture(
         assert _max_ferro_spike_height(high) > _max_ferro_spike_height(low)
 
 
-@pytest.mark.parametrize(
-    "style",
-    _styles_xfail("genetic"),
-)
+@pytest.mark.parametrize("style", tuple(STYLE_DIALECTS))
 def test_on_canvas_commits_isolation_picture(
     style: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -795,12 +788,9 @@ def test_on_canvas_commits_isolation_picture(
         )
         assert _topo_contour_signature(followers_only) == low_sig
     elif style == "genetic":
-        high_paths = _count(r"<path\b", high)
-        low_paths = _count(r"<path\b", low)
-        high_dots = _count(r"<circle\b", high)
-        low_dots = _count(r"<circle\b", low)
-        assert high_paths > low_paths
-        assert high_dots - low_dots < high_paths - low_paths
+        assert _genetic_generation_mark_count(high) > _genetic_generation_mark_count(
+            low
+        )
     elif style == "physarum":
         assert _physarum_vein_mass(high) > _physarum_vein_mass(low)
     elif style == "lenia":
@@ -811,10 +801,7 @@ def test_on_canvas_commits_isolation_picture(
         )
 
 
-@pytest.mark.parametrize(
-    "style",
-    _styles_xfail("genetic"),
-)
+@pytest.mark.parametrize("style", tuple(STYLE_DIALECTS))
 def test_on_canvas_followers_isolation_picture(
     style: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -852,7 +839,6 @@ def test_on_canvas_followers_isolation_picture(
         )
 
 
-@_XFAIL_UNTIL_DSTAR1
 def test_on_canvas_ferrofluid_same_language_repos_form_columns(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -870,8 +856,8 @@ def test_on_canvas_ferrofluid_same_language_repos_form_columns(
         )
     )
     xs = sorted(_ferro_dipole_xs(svg))
-    assert len(xs) == 4
-    gaps = [right - left for left, right in zip(xs, xs[1:], strict=True)]
+    assert xs == pytest.approx([160.0, 320.0, 480.0, 640.0], abs=1.0)
+    gaps = [right - left for left, right in zip(xs, xs[1:])]
     assert min(gaps) >= 48.0
 
 
