@@ -60,18 +60,18 @@
 <text class="card-title" x="52.0" y="72.0">Coding activity</text>
 <text class="card-meta" x="52.0" y="88.0">America/New_York · public-safe stats</text>
 <text class="total-label" x="52.0" y="116.0">This week</text>
-<text class="total-value" x="52.0" y="136.0">34 hrs 15 mins</text>
+<text class="total-value" x="52.0" y="136.0">51 hrs</text>
 <text class="total-label" x="326.0" y="116.0">Last year</text>
-<text class="total-value" x="326.0" y="136.0">2,150 hrs 34 mins</text>
+<text class="total-value" x="326.0" y="136.0">2,170 hrs 7 mins</text>
 <text class="total-label" x="600.0" y="116.0">All time</text>
-<text class="total-value" x="600.0" y="136.0">5,262 hrs 36 mins</text>
+<text class="total-value" x="600.0" y="136.0">5,296 hrs 43 mins</text>
 <text class="total-label" x="874.0" y="116.0">Daily avg</text>
-<text class="total-value" x="874.0" y="136.0">5 hrs 42 mins</text>
+<text class="total-value" x="874.0" y="136.0">7 hrs 17 mins</text>
 <text class="card-kicker" x="52.0" y="164.0">GitHub</text>
 <text class="total-label" x="52.0" y="182.0">2026 contribs</text>
-<text class="gh-chip" x="52.0" y="200.0">3,719</text>
+<text class="gh-chip" x="52.0" y="200.0">4,386</text>
 <text class="total-label" x="326.0" y="182.0">Public repos</text>
-<text class="gh-chip" x="326.0" y="200.0">191</text>
+<text class="gh-chip" x="326.0" y="200.0">193</text>
 <text class="total-label" x="600.0" y="182.0">Private repos</text>
 <text class="gh-chip" x="600.0" y="200.0">0</text>
 <text class="total-label" x="874.0" y="182.0">Hiring</text>
@@ -80,50 +80,53 @@
 <text class="card-kicker" x="614.0" y="222.0">Editors</text>
 <text class="stat-name" x="52.0" y="240.0">Markdown</text>
 <rect class="bar-track" x="170.0" y="231.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="231.0" width="78.6" height="8" rx="4" fill="#083fa1" />
-<text class="stat-time" x="512.0" y="240.0">8 hrs 3 mins</text>
-<text class="stat-name" x="52.0" y="262.0">Other</text>
+<rect x="170.0" y="231.0" width="113.9" height="8" rx="4" fill="#083fa1" />
+<text class="stat-time" x="512.0" y="240.0">17 hrs 23 mins</text>
+<text class="stat-name" x="52.0" y="262.0">TypeScript</text>
 <rect class="bar-track" x="170.0" y="253.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="253.0" width="75.3" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="512.0" y="262.0">7 hrs 43 mins</text>
+<rect x="170.0" y="253.0" width="60.4" height="8" rx="4" fill="#3178c6" />
+<text class="stat-time" x="512.0" y="262.0">9 hrs 13 mins</text>
 <text class="stat-name" x="52.0" y="284.0">Python</text>
 <rect class="bar-track" x="170.0" y="275.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="275.0" width="72.1" height="8" rx="4" fill="#3572A5" />
-<text class="stat-time" x="512.0" y="284.0">7 hrs 23 mins</text>
-<text class="stat-name" x="52.0" y="306.0">TypeScript</text>
+<rect x="170.0" y="275.0" width="56.5" height="8" rx="4" fill="#3572A5" />
+<text class="stat-time" x="512.0" y="284.0">8 hrs 38 mins</text>
+<text class="stat-name" x="52.0" y="306.0">Other</text>
 <rect class="bar-track" x="170.0" y="297.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="297.0" width="19.6" height="8" rx="4" fill="#3178c6" />
-<text class="stat-time" x="512.0" y="306.0">2 hrs</text>
-<text class="stat-name" x="52.0" y="328.0">YAML</text>
+<rect x="170.0" y="297.0" width="44.3" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="512.0" y="306.0">6 hrs 45 mins</text>
+<text class="stat-name" x="52.0" y="328.0">JSON</text>
 <rect class="bar-track" x="170.0" y="319.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="319.0" width="17.6" height="8" rx="4" fill="#cb171e" />
-<text class="stat-time" x="512.0" y="328.0">1 hr 48 mins</text>
-<text class="stat-name" x="52.0" y="350.0">Bash</text>
+<rect x="170.0" y="319.0" width="15.7" height="8" rx="4" fill="#292929" />
+<text class="stat-time" x="512.0" y="328.0">2 hrs 24 mins</text>
+<text class="stat-name" x="52.0" y="350.0">JavaScript</text>
 <rect class="bar-track" x="170.0" y="341.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="341.0" width="17.0" height="8" rx="4" fill="#9a6700" />
-<text class="stat-time" x="512.0" y="350.0">1 hr 44 mins</text>
-<text class="stat-name" x="52.0" y="372.0">JSON</text>
+<rect x="170.0" y="341.0" width="11.6" height="8" rx="4" fill="#f1e05a" />
+<text class="stat-time" x="512.0" y="350.0">1 hr 45 mins</text>
+<text class="stat-name" x="52.0" y="372.0">Jinja</text>
 <rect class="bar-track" x="170.0" y="363.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="363.0" width="16.3" height="8" rx="4" fill="#292929" />
-<text class="stat-time" x="512.0" y="372.0">1 hr 40 mins</text>
-<text class="stat-name" x="52.0" y="394.0">JavaScript</text>
+<rect x="170.0" y="363.0" width="9.0" height="8" rx="4" fill="#1b7c83" />
+<text class="stat-time" x="512.0" y="372.0">1 hr 22 mins</text>
+<text class="stat-name" x="52.0" y="394.0">Text</text>
 <rect class="bar-track" x="170.0" y="385.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="385.0" width="16.1" height="8" rx="4" fill="#f1e05a" />
-<text class="stat-time" x="512.0" y="394.0">1 hr 39 mins</text>
-<text class="stat-name" x="614.0" y="240.0">Codex CLI</text>
+<rect x="170.0" y="385.0" width="5.8" height="8" rx="4" fill="#cf222e" />
+<text class="stat-time" x="512.0" y="394.0">53 mins</text>
+<text class="stat-name" x="614.0" y="240.0">Cursor</text>
 <rect class="bar-track" x="732.0" y="231.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="231.0" width="104.5" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="240.0">10 hrs 43 mins</text>
-<text class="stat-name" x="614.0" y="262.0">Cursor</text>
+<rect x="732.0" y="231.0" width="123.6" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="240.0">18 hrs 52 mins</text>
+<text class="stat-name" x="614.0" y="262.0">Codex Vscode</text>
 <rect class="bar-track" x="732.0" y="253.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="253.0" width="63.1" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="262.0">6 hrs 28 mins</text>
+<rect x="732.0" y="253.0" width="23.6" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1074.0" y="262.0">3 hrs 36 mins</text>
+<text class="stat-name" x="614.0" y="284.0">Codex CLI</text>
+<rect class="bar-track" x="732.0" y="275.0" width="334.0" height="8" rx="4" />
+<text class="stat-time" x="1074.0" y="284.0">0 secs</text>
 <text class="card-kicker" x="52.0" y="432.0">Platforms</text>
 <text class="card-kicker" x="614.0" y="432.0">Categories</text>
 <text class="stat-name" x="52.0" y="450.0">Mac</text>
 <rect class="bar-track" x="170.0" y="441.0" width="334.0" height="8" rx="4" />
 <rect x="170.0" y="441.0" width="333.6" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="512.0" y="450.0">5,255 hrs 36 mins</text>
+<text class="stat-time" x="512.0" y="450.0">5,289 hrs 43 mins</text>
 <text class="stat-name" x="52.0" y="472.0">Linux</text>
 <rect class="bar-track" x="170.0" y="463.0" width="334.0" height="8" rx="4" />
 <rect x="170.0" y="463.0" width="0.4" height="8" rx="4" fill="#1f883d" />
@@ -134,80 +137,80 @@
 <text class="stat-time" x="512.0" y="494.0">1 hr 8 mins</text>
 <text class="stat-name" x="614.0" y="450.0">AI Coding</text>
 <rect class="bar-track" x="732.0" y="441.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="441.0" width="257.2" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="450.0">26 hrs 22 mins</text>
+<rect x="732.0" y="441.0" width="288.6" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="450.0">44 hrs 4 mins</text>
 <text class="stat-name" x="614.0" y="472.0">Browsing</text>
 <rect class="bar-track" x="732.0" y="463.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="463.0" width="73.1" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="472.0">7 hrs 29 mins</text>
-<text class="stat-name" x="614.0" y="494.0">Coding</text>
+<rect x="732.0" y="463.0" width="44.5" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1074.0" y="472.0">6 hrs 47 mins</text>
+<text class="stat-name" x="614.0" y="494.0">Writing Docs</text>
 <rect class="bar-track" x="732.0" y="485.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="485.0" width="2.7" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="1074.0" y="494.0">16 mins</text>
-<text class="stat-name" x="614.0" y="516.0">Writing Docs</text>
+<rect x="732.0" y="485.0" width="0.8" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1074.0" y="494.0">7 mins</text>
+<text class="stat-name" x="614.0" y="516.0">Coding</text>
 <rect class="bar-track" x="732.0" y="507.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="507.0" width="1.0" height="8" rx="4" fill="#bf3989" />
-<text class="stat-time" x="1074.0" y="516.0">6 mins</text>
+<rect x="732.0" y="507.0" width="0.1" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="1074.0" y="516.0">0 secs</text>
 <text class="card-kicker" x="52.0" y="550.0">Derived</text>
 <text class="total-label" x="52.0" y="568.0">Lang entropy</text>
-<text class="total-value" x="52.0" y="586.0">2.64 bits</text>
+<text class="total-value" x="52.0" y="586.0">2.47 bits</text>
 <text class="total-label" x="326.0" y="568.0">Editor loyalty</text>
-<text class="total-value" x="326.0" y="586.0">62%</text>
+<text class="total-value" x="326.0" y="586.0">84%</text>
 <text class="total-label" x="600.0" y="568.0">Deep-work</text>
-<text class="total-value" x="600.0" y="586.0">78%</text>
+<text class="total-value" x="600.0" y="586.0">86%</text>
 <text class="total-label" x="874.0" y="568.0">Browse leak</text>
-<text class="total-value" x="874.0" y="586.0">22%</text>
+<text class="total-value" x="874.0" y="586.0">13%</text>
 <text class="card-kicker" x="52.0" y="612.0">Public projects</text>
-<text class="stat-name" x="52.0" y="630.0">dotfiles</text>
+<text class="stat-name" x="52.0" y="630.0">profile-bits</text>
 <rect class="bar-track" x="170.0" y="621.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="621.0" width="164.7" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="630.0">6 hrs 17 mins</text>
+<rect x="170.0" y="621.0" width="135.0" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1074.0" y="630.0">7 hrs 41 mins</text>
 <text class="stat-name" x="52.0" y="652.0">nbadb</text>
 <rect class="bar-track" x="170.0" y="643.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="643.0" width="159.8" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="652.0">6 hrs 6 mins</text>
-<text class="stat-name" x="52.0" y="674.0">wyattowalsh</text>
+<rect x="170.0" y="643.0" width="84.9" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1074.0" y="652.0">4 hrs 49 mins</text>
+<text class="stat-name" x="52.0" y="674.0">riso</text>
 <rect class="bar-track" x="170.0" y="665.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="665.0" width="107.8" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="1074.0" y="674.0">4 hrs 7 mins</text>
-<text class="stat-name" x="52.0" y="696.0">prompts</text>
+<rect x="170.0" y="665.0" width="77.3" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1074.0" y="674.0">4 hrs 24 mins</text>
+<text class="stat-name" x="52.0" y="696.0">wyattowalsh</text>
 <rect class="bar-track" x="170.0" y="687.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="687.0" width="82.0" height="8" rx="4" fill="#bf3989" />
-<text class="stat-time" x="1074.0" y="696.0">3 hrs 8 mins</text>
-<text class="stat-name" x="52.0" y="718.0">agents</text>
+<rect x="170.0" y="687.0" width="57.8" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="1074.0" y="696.0">3 hrs 17 mins</text>
+<text class="stat-name" x="52.0" y="718.0">personal-website</text>
 <rect class="bar-track" x="170.0" y="709.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="709.0" width="78.0" height="8" rx="4" fill="#d1242f" />
-<text class="stat-time" x="1074.0" y="718.0">2 hrs 58 mins</text>
-<text class="stat-name" x="52.0" y="740.0">openopps</text>
+<rect x="170.0" y="709.0" width="50.1" height="8" rx="4" fill="#d1242f" />
+<text class="stat-time" x="1074.0" y="718.0">2 hrs 51 mins</text>
+<text class="stat-name" x="52.0" y="740.0">cwa</text>
 <rect class="bar-track" x="170.0" y="731.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="731.0" width="41.8" height="8" rx="4" fill="#9a6700" />
-<text class="stat-time" x="1074.0" y="740.0">1 hr 35 mins</text>
+<rect x="170.0" y="731.0" width="37.9" height="8" rx="4" fill="#9a6700" />
+<text class="stat-time" x="1074.0" y="740.0">2 hrs 9 mins</text>
 <text class="card-kicker" x="52.0" y="774.0">Last 14 days</text>
-<rect class="day-bar" x="52.0" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-03: </title></rect>
-<rect class="day-bar" x="130.7" y="837.0" width="72.7" height="23.0" rx="3"><title>2026-08-04: </title></rect>
-<rect class="day-bar" x="209.4" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-05: </title></rect>
-<rect class="day-bar" x="288.1" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-06: </title></rect>
-<rect class="day-bar" x="366.9" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-07: </title></rect>
-<rect class="day-bar" x="445.6" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-08: </title></rect>
-<rect class="day-bar" x="524.3" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-09: </title></rect>
-<rect class="day-bar" x="603.0" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-10: </title></rect>
-<rect class="day-bar" x="681.7" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-11: </title></rect>
-<rect class="day-bar" x="760.4" y="804.0" width="72.7" height="56.0" rx="3"><title>2026-08-12: </title></rect>
-<rect class="day-bar" x="839.1" y="831.8" width="72.7" height="28.2" rx="3"><title>2026-08-13: </title></rect>
-<rect class="day-bar" x="917.9" y="810.4" width="72.7" height="49.6" rx="3"><title>2026-08-14: </title></rect>
-<rect class="day-bar" x="996.6" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-15: </title></rect>
-<rect class="day-bar" x="1075.3" y="832.5" width="72.7" height="27.5" rx="3"><title>2026-08-16: </title></rect>
-<text class="card-meta" x="52.0" y="878.0">avg 3h 26m/day</text>
+<rect class="day-bar" x="52.0" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-08: </title></rect>
+<rect class="day-bar" x="130.7" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-09: </title></rect>
+<rect class="day-bar" x="209.4" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-10: </title></rect>
+<rect class="day-bar" x="288.1" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-11: </title></rect>
+<rect class="day-bar" x="366.9" y="804.0" width="72.7" height="56.0" rx="3"><title>2026-08-12: </title></rect>
+<rect class="day-bar" x="445.6" y="831.8" width="72.7" height="28.2" rx="3"><title>2026-08-13: </title></rect>
+<rect class="day-bar" x="524.3" y="810.4" width="72.7" height="49.6" rx="3"><title>2026-08-14: </title></rect>
+<rect class="day-bar" x="603.0" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-15: </title></rect>
+<rect class="day-bar" x="681.7" y="816.7" width="72.7" height="43.3" rx="3"><title>2026-08-16: </title></rect>
+<rect class="day-bar" x="760.4" y="844.0" width="72.7" height="16.0" rx="3"><title>2026-08-17: </title></rect>
+<rect class="day-bar" x="839.1" y="805.1" width="72.7" height="54.9" rx="3"><title>2026-08-18: </title></rect>
+<rect class="day-bar" x="917.9" y="844.2" width="72.7" height="15.8" rx="3"><title>2026-08-19: </title></rect>
+<rect class="day-bar" x="996.6" y="850.2" width="72.7" height="9.8" rx="3"><title>2026-08-20: </title></rect>
+<rect class="day-bar" x="1075.3" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-21: </title></rect>
+<text class="card-meta" x="52.0" y="878.0">avg 4h 53m/day</text>
 <text class="card-kicker" x="52.0" y="898.0">Coding heatmap</text>
 <text class="card-meta" x="52.0" y="921.0">S</text>
 <text class="card-meta" x="52.0" y="949.0">T</text>
 <text class="card-meta" x="52.0" y="977.0">T</text>
 <text class="card-meta" x="52.0" y="1005.0">S</text>
-<rect class="hm-1" x="68.0" y="912.0" width="11" height="11" rx="2"><title>2025-08-17: 145s</title></rect>
-<rect class="hm-1" x="68.0" y="926.0" width="11" height="11" rx="2"><title>2025-08-18: 32s</title></rect>
-<rect class="hm-1" x="68.0" y="940.0" width="11" height="11" rx="2"><title>2025-08-19: 53s</title></rect>
-<rect class="hm-2" x="68.0" y="954.0" width="11" height="11" rx="2"><title>2025-08-20: 35357s</title></rect>
-<rect class="hm-1" x="68.0" y="968.0" width="11" height="11" rx="2"><title>2025-08-21: 1098s</title></rect>
+<rect class="hm-0" x="68.0" y="912.0" width="11" height="11" rx="2"><title>2025-08-17</title></rect>
+<rect class="hm-0" x="68.0" y="926.0" width="11" height="11" rx="2"><title>2025-08-18</title></rect>
+<rect class="hm-0" x="68.0" y="940.0" width="11" height="11" rx="2"><title>2025-08-19</title></rect>
+<rect class="hm-0" x="68.0" y="954.0" width="11" height="11" rx="2"><title>2025-08-20</title></rect>
+<rect class="hm-0" x="68.0" y="968.0" width="11" height="11" rx="2"><title>2025-08-21</title></rect>
 <rect class="hm-1" x="68.0" y="982.0" width="11" height="11" rx="2"><title>2025-08-22: 2467s</title></rect>
 <rect class="hm-1" x="68.0" y="996.0" width="11" height="11" rx="2"><title>2025-08-23: 366s</title></rect>
 <rect class="hm-2" x="82.0" y="912.0" width="11" height="11" rx="2"><title>2025-08-24: 42027s</title></rect>
@@ -567,6 +570,11 @@
 <rect class="hm-2" x="782.0" y="968.0" width="11" height="11" rx="2"><title>2026-08-13: 24814s</title></rect>
 <rect class="hm-3" x="782.0" y="982.0" width="11" height="11" rx="2"><title>2026-08-14: 43616s</title></rect>
 <rect class="hm-1" x="782.0" y="996.0" width="11" height="11" rx="2"><title>2026-08-15: 1360s</title></rect>
-<rect class="hm-2" x="796.0" y="912.0" width="11" height="11" rx="2"><title>2026-08-16: 24172s</title></rect>
-<text class="card-meta" x="52.0" y="1026.0">Updated 2026-08-16 23:05 UTC</text>
+<rect class="hm-2" x="796.0" y="912.0" width="11" height="11" rx="2"><title>2026-08-16: 38032s</title></rect>
+<rect class="hm-1" x="796.0" y="926.0" width="11" height="11" rx="2"><title>2026-08-17: 14076s</title></rect>
+<rect class="hm-3" x="796.0" y="940.0" width="11" height="11" rx="2"><title>2026-08-18: 48224s</title></rect>
+<rect class="hm-1" x="796.0" y="954.0" width="11" height="11" rx="2"><title>2026-08-19: 13892s</title></rect>
+<rect class="hm-1" x="796.0" y="968.0" width="11" height="11" rx="2"><title>2026-08-20: 8589s</title></rect>
+<rect class="hm-1" x="796.0" y="982.0" width="11" height="11" rx="2"><title>2026-08-21: 135s</title></rect>
+<text class="card-meta" x="52.0" y="1026.0">Updated 2026-08-21 04:29 UTC</text>
 </svg>
