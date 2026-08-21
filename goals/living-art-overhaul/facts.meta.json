@@ -1,0 +1,138 @@
+{
+  "goalSlug": "living-art-overhaul",
+  "facts": [
+    {
+      "id": "fact-goal",
+      "text": "This goal redesigns the living artworks and the Living Art README section so each shipped piece is a striking, data-informed timelapse with a learnable explanation. Success is the origin/dev profile README.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    },
+    {
+      "id": "fact-ship-dev",
+      "text": "Success is the origin/dev README preview. main is not updated in this goal.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    },
+    {
+      "id": "fact-count",
+      "text": "The README Living Art section shows a curated gallery of 4 to 6 pieces. It never shows more than six.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-candidates",
+      "text": "Ink Garden, Topography, Genetic Landscape, Physarum, Lenia, and Ferrofluid are the starting candidates. The set is open: a style may be added, retired, or replaced after the bake-off.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    },
+    {
+      "id": "fact-intro",
+      "text": "A short sentence at the top of Living Art says these are daily timelapses of this GitHub account from creation to now, each a different visual world. It does not list the four-signal spine.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-full-width",
+      "text": "The gallery is a full-width stack: one artwork per row at maximum size, then that piece’s dropdown. Not a wrap, thumb strip, or even table.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-visible-art",
+      "text": "Each shipped artwork is always visible. The GIF or video is not hidden inside <details>.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-per-piece-details",
+      "text": "Directly under each artwork is a collapsed <details> for that piece only. There is no single shared “how to read these” dropdown.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-dropdown-copy",
+      "text": "Each dropdown has the piece title, one or two sentences of metaphor, then the mapping of repos, stars, commits, and followers in that world. No essay. No second metrics dashboard.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-video-primary",
+      "text": "Video is the primary README media. The goal tries native README video markup and checks it on github.com for origin/dev.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-video-fallback",
+      "text": "If github.com strips the video or it does not autoplay, the allowed form is a visible GIF with an obvious click-through to the in-repo MP4. No YouTube, Cloudinary, or other external video host.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-one-look",
+      "text": "Each shipped style has one designed look that still reads on GitHub light and dark. This goal does not ship dual light/dark media pairs unless a bake-off piece is unreadable on one theme.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    },
+    {
+      "id": "fact-frame-t",
+      "text": "Frame t is the cumulative end-of-day world from account creation through that day. Pretty motion that ignores the account’s growth cannot win a slot.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-encoding",
+      "text": "Each shipped piece has a real visual mapping for repos, stars, commits, and followers. Not every signal must scream in every style, but each of the four exists in the design.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-learnable",
+      "text": "A careful viewer who opens the dropdown can then see the account grow in the timelapse. Instantly-obvious-with-zero-text is not required. Mood-only is not enough.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    },
+    {
+      "id": "fact-bakeoff",
+      "text": "Winners are chosen by a scored bake-off on four equal axes: striking, readable growth, distinct, and GitHub-fit. I propose the 4–6 from those scores. You may veto or override. Close scores go to taste.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-ci-roster",
+      "text": "After the jury, daily CI, tests, and the artifact contract generate only the shipped 4–6. Retired styles leave the daily matrix. This goal does not run an experiment farm.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-docs-contract",
+      "text": "docs living-art-modes and the living-art artifact contract match the shipped roster: names, files, and legends. The docs home showcase and living-art-preview.html are not redesigned as a second gallery.",
+      "comment": null,
+      "recommendedAutomatedVerification": true,
+      "automatedVerification": true
+    },
+    {
+      "id": "fact-out-scope",
+      "text": "Out of scope: prevent-living-art-repo-growth (media budgets / pack size), changing main, a new standalone gallery page, and restyling the rest of the profile README.",
+      "comment": null,
+      "recommendedAutomatedVerification": false,
+      "automatedVerification": false
+    }
+  ]
+}

@@ -37,6 +37,7 @@ from .daily_snapshots import (
     sample_frames,
     validate_snapshot_monotonic_contract,
 )
+from .roster import CANDIDATE_STYLE_KEYS
 from .shared import (
     seed_hash,
     validate_live_history_payload,
@@ -54,8 +55,12 @@ MIN_PUBLISHED_RUNTIME_MS = 24_000
 # Frame rendering
 # ---------------------------------------------------------------------------
 
-# Style name → (module_path, function_name)
-_STYLE_REGISTRY: dict[str, tuple[str, str]] = {
+# ALL_STYLES / _STYLE_REGISTRY = candidate generators / module ``--only``
+# allowlist for this renderer. SHIPPED_STYLE_KEYS (roster) = README / CI /
+# default generate / artifact inventory (wired in R2). Until K2 they are the
+# same six; S1 shrinks shipped only. Module ``--only`` remains lax (unknown
+# styles skipped with a warning in render_timelapse); Typer ``--only`` is R4.
+_GENERATOR_IMPLS: dict[str, tuple[str, str]] = {
     "inkgarden": ("scripts.art.ink_garden", "generate"),
     "topo": ("scripts.art.topography", "generate"),
     "genetic": ("scripts.art.genetic_landscape", "generate"),
@@ -64,7 +69,19 @@ _STYLE_REGISTRY: dict[str, tuple[str, str]] = {
     "ferrofluid": ("scripts.art.ferrofluid", "generate"),
 }
 
-ALL_STYLES = list(_STYLE_REGISTRY.keys())
+_missing_generators = [
+    key for key in CANDIDATE_STYLE_KEYS if key not in _GENERATOR_IMPLS
+]
+if _missing_generators:
+    raise ValueError(
+        f"Candidate styles missing generator entries: {_missing_generators!r}"
+    )
+
+_STYLE_REGISTRY: dict[str, tuple[str, str]] = {
+    key: _GENERATOR_IMPLS[key] for key in CANDIDATE_STYLE_KEYS
+}
+
+ALL_STYLES = list(CANDIDATE_STYLE_KEYS)
 
 
 def _render_single_frame(
@@ -528,7 +545,8 @@ def render_timelapse(
             logger.error("No valid frames rendered for {}", style)
             continue
 
-        # Assemble GIF (exact-six contract). Optional MP4 sibling never fails the GIF.
+        # Assemble the published GIF for this candidate style. Optional MP4
+        # sibling never fails the GIF.
         gif_path = out_dir / f"living-{style}.gif"
         _assemble_gif(valid_frames, valid_durations, gif_path)
         outputs.append(gif_path)
@@ -567,8 +585,9 @@ def main() -> None:
         "--only",
         default=None,
         help=(
-            "Restrict to one style: inkgarden, topo, genetic, physarum, "
-            "lenia, or ferrofluid"
+            "Restrict to one candidate style "
+            f"({', '.join(CANDIDATE_STYLE_KEYS)}). "
+            "Unknown styles are skipped with a warning"
         ),
     )
     parser.add_argument("--workers", type=int, default=None, help="Parallel workers")

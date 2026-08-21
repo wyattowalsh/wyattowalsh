@@ -15,6 +15,7 @@ from pathlib import Path
 
 from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
 from scripts.art.daily_snapshots import validate_snapshot_monotonic_contract
+from scripts.art.roster import CANDIDATE_STYLE_KEYS, SHIPPED_STYLE_KEYS
 from scripts.art.timelapse import ALL_STYLES
 from scripts.config import load_skills
 from scripts.readme_sections import (
@@ -182,17 +183,13 @@ def test_fact_remove_feed_metrics_activity_absent() -> None:
 
 def test_fact_living_art_spine_exact_six_and_monotonic_helper() -> None:
     """fact-living-art-spine: one registry, six living-*.gif, monotonic helper."""
-    assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
-    assert ALL_STYLES == [
-        "inkgarden",
-        "topo",
-        "genetic",
-        "physarum",
-        "lenia",
-        "ferrofluid",
-    ]
+    assert set(SHIPPED_STYLE_KEYS) <= set(CANDIDATE_STYLE_KEYS)
+    assert tuple(ALL_STYLES) == CANDIDATE_STYLE_KEYS
+    assert LIVING_ART_STYLE_KEYS == SHIPPED_STYLE_KEYS
+    if SHIPPED_STYLE_KEYS == CANDIDATE_STYLE_KEYS:
+        assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
     readme = _readme()
-    for style in ALL_STYLES:
+    for style in LIVING_ART_STYLE_KEYS:
         path = Path(f".github/assets/img/living-{style}.gif")
         assert path.is_file(), f"missing {path}"
         assert path.stat().st_size > 0

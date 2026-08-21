@@ -1,0 +1,1832 @@
+{
+  "goalSlug": "living-art-overhaul",
+  "version": 3,
+  "criticalPath": [
+    "I99",
+    "R1",
+    "R2",
+    "R5",
+    "W1M",
+    "A1",
+    "A2",
+    "A3",
+    "Dig1",
+    "M1",
+    "M2",
+    "M3",
+    "M6",
+    "W2M",
+    "G1ig",
+    "G1",
+    "P0",
+    "V2",
+    "V4",
+    "G2",
+    "W3M",
+    "K1ig",
+    "K1",
+    "K2",
+    "S1",
+    "S2",
+    "S14",
+    "W4M",
+    "C2",
+    "C3L",
+    "C3",
+    "C4"
+  ],
+  "locks": {
+    "L-ROS": [
+      "scripts/art/roster.py"
+    ],
+    "L-ARTF": [
+      "scripts/art/artifacts.py"
+    ],
+    "L-TL": [
+      "scripts/art/timelapse.py"
+    ],
+    "L-ACC": [
+      "scripts/art/shared/accretion.py"
+    ],
+    "L-IG": [
+      "scripts/art/ink_garden.py"
+    ],
+    "L-TO": [
+      "scripts/art/topography.py"
+    ],
+    "L-GE": [
+      "scripts/art/genetic_landscape.py"
+    ],
+    "L-PH": [
+      "scripts/art/physarum.py"
+    ],
+    "L-LE": [
+      "scripts/art/lenia.py"
+    ],
+    "L-FE": [
+      "scripts/art/ferrofluid.py"
+    ],
+    "L-CLI": [
+      "scripts/cli/generate/_common.py",
+      "scripts/cli/generate/art.py"
+    ],
+    "L-RS": [
+      "scripts/readme_sections.py"
+    ],
+    "L-README": [
+      "README.md"
+    ],
+    "L-WF": [
+      ".github/workflows/profile-updater.yml"
+    ],
+    "L-ASSETS": [
+      ".github/assets/img/living-*.gif",
+      ".github/assets/img/living-*.mp4"
+    ],
+    "L-T-GFM": [
+      "tests/test_readme_gfm_ux.py"
+    ],
+    "L-T-MEDIA": [
+      "tests/test_living_art_media.py"
+    ],
+    "L-T-HAND": [
+      "tests/test_living_art_artifact_handoff.py"
+    ],
+    "L-T-CON": [
+      "tests/test_living_art_contracts.py"
+    ],
+    "L-T-E2E": [
+      "tests/test_living_art_e2e_rehearsal.py"
+    ],
+    "L-T-CLI": [
+      "tests/test_cli.py"
+    ],
+    "L-T-WF": [
+      "tests/test_profile_workflow.py"
+    ],
+    "L-T-ACC": [
+      "tests/test_art_shared_package.py"
+    ],
+    "L-T-IDS": [
+      "tests/test_overhaul_fact_ids.py"
+    ],
+    "L-DOCS-MODES": [
+      "docs/content/docs/scripts/living-art-modes.mdx"
+    ],
+    "L-DOCS-WF": [
+      "AGENTS.md",
+      "docs/content/docs/workflows/index.mdx"
+    ],
+    "L-BAKE": [
+      "goals/living-art-overhaul/bakeoff.json"
+    ],
+    "L-VID": [
+      "goals/living-art-overhaul/video-check.md"
+    ],
+    "L-GIT": [
+      ".git"
+    ],
+    "L-ASSET-IG": [
+      ".github/assets/img/living-inkgarden.gif",
+      ".github/assets/img/living-inkgarden.mp4"
+    ],
+    "L-ASSET-TO": [
+      ".github/assets/img/living-topo.gif",
+      ".github/assets/img/living-topo.mp4"
+    ],
+    "L-ASSET-GE": [
+      ".github/assets/img/living-genetic.gif",
+      ".github/assets/img/living-genetic.mp4"
+    ],
+    "L-ASSET-PH": [
+      ".github/assets/img/living-physarum.gif",
+      ".github/assets/img/living-physarum.mp4"
+    ],
+    "L-ASSET-LE": [
+      ".github/assets/img/living-lenia.gif",
+      ".github/assets/img/living-lenia.mp4"
+    ],
+    "L-ASSET-FE": [
+      ".github/assets/img/living-ferrofluid.gif",
+      ".github/assets/img/living-ferrofluid.mp4"
+    ]
+  },
+  "teams": {
+    "INV": "parallel explore \u2014 no writes",
+    "ROS": "candidate vs shipped roster SSOT",
+    "RM": "README stack + GFM tests",
+    "VID": "github.com video check + fallback",
+    "ACC": "shared accretion tests/knobs",
+    "DIG": "Ink Garden dialect",
+    "DTO": "Topography dialect",
+    "DGE": "Genetic Landscape dialect",
+    "DPH": "Physarum dialect",
+    "DLE": "Lenia dialect",
+    "DFE": "Ferrofluid dialect",
+    "GEN": "regenerate GIF/MP4 fleet",
+    "BAK": "scored bake-off + human veto",
+    "SHR": "contract shrink to shipped 4-6",
+    "CAP": "merge / git / origin/dev QA",
+    "TST": "shared test edits"
+  },
+  "nodes": [
+    {
+      "id": "I01",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map README _rewrite_living_art_section + GFM living-art tests"
+    },
+    {
+      "id": "I02",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map ALL_STYLES / LIVING_ART_STYLE_KEYS / STYLE_DIALECTS / CLI style picker"
+    },
+    {
+      "id": "I03",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map artifacts inventory/stage/publish/byte budgets"
+    },
+    {
+      "id": "I04",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map workflow prepare/generate/assemble/finalize living-art"
+    },
+    {
+      "id": "I05",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map test_profile_workflow + artifact_handoff exact-six assertions"
+    },
+    {
+      "id": "I06",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map test_cli living-art matrix"
+    },
+    {
+      "id": "I07",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map test_living_art_media/contracts/e2e rehearsal"
+    },
+    {
+      "id": "I08",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map accretion knobs + A1 unreadability leftovers"
+    },
+    {
+      "id": "I09",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map ink_garden generate + t0 maturity gate"
+    },
+    {
+      "id": "I10",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map topography generate + settlement/stars"
+    },
+    {
+      "id": "I11",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map genetic_landscape generate + colonies"
+    },
+    {
+      "id": "I12",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map physarum generate + t0 spore path"
+    },
+    {
+      "id": "I13",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map lenia generate + field/extent"
+    },
+    {
+      "id": "I14",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map ferrofluid generate + dipole clustering"
+    },
+    {
+      "id": "I15",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map timelapse render + _export_mp4 + published frame contract"
+    },
+    {
+      "id": "I16",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map living-art-modes + AGENTS + workflows docs exact-six copy"
+    },
+    {
+      "id": "I17",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Record GitHub README video constraint (try then GIF fallback)"
+    },
+    {
+      "id": "I18",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Map finalize GIF pathspec vs MP4 commit block"
+    },
+    {
+      "id": "I19",
+      "lane": "INV",
+      "type": "read",
+      "deps": [],
+      "parallelGroup": "I",
+      "lock": null,
+      "agent": "explore",
+      "title": "Confirm openspec prevent-living-art-repo-growth stays untouched"
+    },
+    {
+      "id": "I99",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06",
+        "I07",
+        "I08",
+        "I09",
+        "I10",
+        "I11",
+        "I12",
+        "I13",
+        "I14",
+        "I15",
+        "I16",
+        "I17",
+        "I18",
+        "I19"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Inventory merge / lock assignment"
+    },
+    {
+      "id": "R1",
+      "lane": "ROS",
+      "type": "write",
+      "deps": [
+        "I02",
+        "I99"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ROS",
+      "agent": "general-purpose",
+      "title": "Add roster.py: CANDIDATE_STYLE_KEYS vs SHIPPED_STYLE_KEYS + legend copy",
+      "files": [
+        "scripts/art/roster.py"
+      ],
+      "verify": "SHIPPED == current six; legends have title/metaphor/mapping"
+    },
+    {
+      "id": "R2",
+      "lane": "ROS",
+      "type": "write",
+      "deps": [
+        "R1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ARTF",
+      "agent": "general-purpose",
+      "title": "Point artifacts LIVING_ART_STYLE_KEYS / budgets / labels at SHIPPED",
+      "files": [
+        "scripts/art/artifacts.py"
+      ],
+      "verify": "LIVING_ART_STYLE_KEYS == roster.SHIPPED"
+    },
+    {
+      "id": "R3",
+      "lane": "ROS",
+      "type": "write",
+      "deps": [
+        "R1"
+      ],
+      "parallelGroup": "R23",
+      "lock": "L-TL",
+      "agent": "general-purpose",
+      "title": "Keep _STYLE_REGISTRY as candidate generators; document vs SHIPPED",
+      "files": [
+        "scripts/art/timelapse.py"
+      ],
+      "verify": "ALL_STYLES is candidates; render --only still works"
+    },
+    {
+      "id": "R4",
+      "lane": "ROS",
+      "type": "write",
+      "deps": [
+        "R2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-CLI",
+      "agent": "general-purpose",
+      "title": "CLI style picker uses CANDIDATE for --only, default generate uses SHIPPED",
+      "files": [
+        "scripts/cli/generate/_common.py",
+        "scripts/cli/generate/art.py"
+      ],
+      "verify": "unknown style still exits 1; default list == SHIPPED"
+    },
+    {
+      "id": "R5",
+      "lane": "TST",
+      "type": "write",
+      "deps": [
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-MEDIA",
+      "agent": "general-purpose",
+      "title": "Relax ALL_STYLES == LIVING_ART_STYLE_KEYS only where shipped==candidates",
+      "files": [
+        "tests/test_living_art_media.py",
+        "tests/test_art_shared_package.py",
+        "tests/test_overhaul_fact_ids.py"
+      ],
+      "verify": "pytest -q those modules still green on six"
+    },
+    {
+      "id": "W1M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "R5"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Roster split accepted; shipped still six"
+    },
+    {
+      "id": "M1",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "I01"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ROS",
+      "agent": "general-purpose",
+      "title": "Fill per-style legend copy (title, 1-2s metaphor, four-signal mapping)",
+      "files": [
+        "scripts/art/roster.py"
+      ],
+      "verify": "each of six has title+metaphor+repos/stars/commits/followers text"
+    },
+    {
+      "id": "M2",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "M1",
+        "I17"
+      ],
+      "parallelGroup": null,
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "Rewrite Living Art: intro + full-width stack + video-or-fallback + details",
+      "files": [
+        "scripts/readme_sections.py"
+      ],
+      "verify": "no table; art outside details; width=100%; one details per piece"
+    },
+    {
+      "id": "M3",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "M2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-README",
+      "agent": "general-purpose",
+      "title": "Regenerate README Living Art section",
+      "files": [
+        "README.md"
+      ],
+      "verify": "rg intro + details + 100% on README"
+    },
+    {
+      "id": "M4",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "M3"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-GFM",
+      "agent": "general-purpose",
+      "title": "Replace wrap/360/no-details GFM tests with stack/details/count facts",
+      "files": [
+        "tests/test_readme_gfm_ux.py"
+      ],
+      "verify": "pytest -q tests/test_readme_gfm_ux.py -k living_art"
+    },
+    {
+      "id": "M5",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "M4"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-GFM",
+      "agent": "general-purpose",
+      "title": "Add intro-has-no-spine-list + dropdown-copy + no-external-host tests",
+      "files": [
+        "tests/test_readme_gfm_ux.py"
+      ],
+      "verify": "facts intro/dropdown/video-fallback automated"
+    },
+    {
+      "id": "M6",
+      "lane": "RM",
+      "type": "write",
+      "deps": [
+        "M5"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-GFM",
+      "agent": "general-purpose",
+      "title": "Allow both <video src=mp4> and GIF+href MP4 as legal README forms",
+      "files": [
+        "tests/test_readme_gfm_ux.py"
+      ],
+      "verify": "either form passes; youtube/cloudinary fail"
+    },
+    {
+      "id": "A1",
+      "lane": "ACC",
+      "type": "write",
+      "deps": [
+        "W1M",
+        "I08"
+      ],
+      "parallelGroup": "RM-ACC",
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Red tests: each dialect knob moves when each of 4 channels increases",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "new tests fail or skip until dialects ship"
+    },
+    {
+      "id": "A2",
+      "lane": "ACC",
+      "type": "write",
+      "deps": [
+        "A1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Red tests: t0 frame contains style primary mark (not empty field)",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "t0 plant/contour/peak/vein/creature/spike asserted"
+    },
+    {
+      "id": "A3",
+      "lane": "ACC",
+      "type": "write",
+      "deps": [
+        "A2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ACC",
+      "agent": "general-purpose",
+      "title": "Adjust shared knobs/ceilings only if all six need the same clock change",
+      "files": [
+        "scripts/art/shared/accretion.py"
+      ],
+      "verify": "monotonic contract + extract_accretion_channels still hold"
+    },
+    {
+      "id": "Dig1",
+      "lane": "DIG",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I09"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-IG",
+      "agent": "general-purpose",
+      "title": "Ink Garden: redesign on-canvas dialect (t0 garden empty \u2014 plants from first repo)",
+      "files": [
+        "scripts/art/ink_garden.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dig2",
+      "lane": "DIG",
+      "type": "write",
+      "deps": [
+        "Dig1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Ink Garden: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k inkgarden"
+    },
+    {
+      "id": "Dig3",
+      "lane": "DIG",
+      "type": "write",
+      "deps": [
+        "Dig1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Ink Garden: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/inkgarden-t0.svg",
+        "goals/living-art-overhaul/bakeoff/inkgarden-t1.svg",
+        "goals/living-art-overhaul/bakeoff/inkgarden-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dig4",
+      "lane": "DIG",
+      "type": "write",
+      "deps": [
+        "Dig1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-IG",
+      "agent": "general-purpose",
+      "title": "Ink Garden: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/ink_garden.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "Dto1",
+      "lane": "DTO",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I10"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-TO",
+      "agent": "general-purpose",
+      "title": "Topography: redesign on-canvas dialect (stars weaker than contours \u2014 readable peaks)",
+      "files": [
+        "scripts/art/topography.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dto2",
+      "lane": "DTO",
+      "type": "write",
+      "deps": [
+        "Dto1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Topography: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k topo"
+    },
+    {
+      "id": "Dto3",
+      "lane": "DTO",
+      "type": "write",
+      "deps": [
+        "Dto1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Topography: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/topo-t0.svg",
+        "goals/living-art-overhaul/bakeoff/topo-t1.svg",
+        "goals/living-art-overhaul/bakeoff/topo-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dto4",
+      "lane": "DTO",
+      "type": "write",
+      "deps": [
+        "Dto1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-TO",
+      "agent": "general-purpose",
+      "title": "Topography: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/topography.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "Dge1",
+      "lane": "DGE",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I11"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-GE",
+      "agent": "general-purpose",
+      "title": "Genetic Landscape: redesign on-canvas dialect (keep distinct peaks; colonies=followers)",
+      "files": [
+        "scripts/art/genetic_landscape.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dge2",
+      "lane": "DGE",
+      "type": "write",
+      "deps": [
+        "Dge1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Genetic Landscape: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k genetic"
+    },
+    {
+      "id": "Dge3",
+      "lane": "DGE",
+      "type": "write",
+      "deps": [
+        "Dge1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Genetic Landscape: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/genetic-t0.svg",
+        "goals/living-art-overhaul/bakeoff/genetic-t1.svg",
+        "goals/living-art-overhaul/bakeoff/genetic-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dge4",
+      "lane": "DGE",
+      "type": "write",
+      "deps": [
+        "Dge1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-GE",
+      "agent": "general-purpose",
+      "title": "Genetic Landscape: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/genetic_landscape.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "Dph1",
+      "lane": "DPH",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I12"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-PH",
+      "agent": "general-purpose",
+      "title": "Physarum: redesign on-canvas dialect (t0 spore-only \u2014 network from first repo)",
+      "files": [
+        "scripts/art/physarum.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dph2",
+      "lane": "DPH",
+      "type": "write",
+      "deps": [
+        "Dph1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Physarum: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k physarum"
+    },
+    {
+      "id": "Dph3",
+      "lane": "DPH",
+      "type": "write",
+      "deps": [
+        "Dph1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Physarum: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/physarum-t0.svg",
+        "goals/living-art-overhaul/bakeoff/physarum-t1.svg",
+        "goals/living-art-overhaul/bakeoff/physarum-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dph4",
+      "lane": "DPH",
+      "type": "write",
+      "deps": [
+        "Dph1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-PH",
+      "agent": "general-purpose",
+      "title": "Physarum: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/physarum.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "Dle1",
+      "lane": "DLE",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I13"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-LE",
+      "agent": "general-purpose",
+      "title": "Lenia: redesign on-canvas dialect (field/extent readable without caption)",
+      "files": [
+        "scripts/art/lenia.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dle2",
+      "lane": "DLE",
+      "type": "write",
+      "deps": [
+        "Dle1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Lenia: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k lenia"
+    },
+    {
+      "id": "Dle3",
+      "lane": "DLE",
+      "type": "write",
+      "deps": [
+        "Dle1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Lenia: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/lenia-t0.svg",
+        "goals/living-art-overhaul/bakeoff/lenia-t1.svg",
+        "goals/living-art-overhaul/bakeoff/lenia-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dle4",
+      "lane": "DLE",
+      "type": "write",
+      "deps": [
+        "Dle1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-LE",
+      "agent": "general-purpose",
+      "title": "Lenia: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/lenia.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "Dfe1",
+      "lane": "DFE",
+      "type": "write",
+      "deps": [
+        "A3",
+        "I14"
+      ],
+      "parallelGroup": "DIAL",
+      "lock": "L-FE",
+      "agent": "general-purpose",
+      "title": "Ferrofluid: redesign on-canvas dialect (break dipole clustering; towers per repo)",
+      "files": [
+        "scripts/art/ferrofluid.py"
+      ],
+      "verify": "t0 primary mark + four-channel motion"
+    },
+    {
+      "id": "Dfe2",
+      "lane": "DFE",
+      "type": "write",
+      "deps": [
+        "Dfe1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-ACC",
+      "agent": "general-purpose",
+      "title": "Ferrofluid: make t0 + channel isolation tests green",
+      "files": [
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "pytest -k ferrofluid"
+    },
+    {
+      "id": "Dfe3",
+      "lane": "DFE",
+      "type": "write",
+      "deps": [
+        "Dfe1"
+      ],
+      "parallelGroup": "STILL",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Ferrofluid: export t0/t1/t2 stills for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/ferrofluid-t0.svg",
+        "goals/living-art-overhaul/bakeoff/ferrofluid-t1.svg",
+        "goals/living-art-overhaul/bakeoff/ferrofluid-t2.svg"
+      ],
+      "verify": "three stills + data-accretion attrs increase"
+    },
+    {
+      "id": "Dfe4",
+      "lane": "DFE",
+      "type": "write",
+      "deps": [
+        "Dfe1"
+      ],
+      "parallelGroup": "LOOK",
+      "lock": "L-FE",
+      "agent": "general-purpose",
+      "title": "Ferrofluid: one look contrast for GitHub light and dark",
+      "files": [
+        "scripts/art/ferrofluid.py"
+      ],
+      "verify": "no dual -dark pair unless unreadable"
+    },
+    {
+      "id": "W2M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "M6",
+        "A3",
+        "Dig2",
+        "Dto2",
+        "Dge2",
+        "Dph2",
+        "Dle2",
+        "Dfe2",
+        "Dig3",
+        "Dto3",
+        "Dge3",
+        "Dph3",
+        "Dle3",
+        "Dfe3",
+        "Dig4",
+        "Dto4",
+        "Dge4",
+        "Dph4",
+        "Dle4",
+        "Dfe4"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "README stack + six redesigned dialects ready"
+    },
+    {
+      "id": "V1",
+      "lane": "VID",
+      "type": "write",
+      "deps": [
+        "M3",
+        "I17"
+      ],
+      "parallelGroup": "VID",
+      "lock": "L-VID",
+      "agent": "general-purpose",
+      "title": "Write video-check.md template + expected GitHub strip outcome",
+      "files": [
+        "goals/living-art-overhaul/video-check.md"
+      ],
+      "verify": "template lists play / strip / no-autoplay"
+    },
+    {
+      "id": "P0",
+      "lane": "CAP",
+      "type": "write",
+      "deps": [
+        "M6"
+      ],
+      "parallelGroup": null,
+      "lock": "L-GIT",
+      "agent": "cap",
+      "title": "Push README presentation to origin/dev for the video check",
+      "files": [
+        ".git"
+      ],
+      "verify": "blob/dev/README.md has Living Art stack"
+    },
+    {
+      "id": "V2",
+      "lane": "VID",
+      "type": "read",
+      "deps": [
+        "P0",
+        "V1"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Check github.com origin/dev README: does <video> play/autoplay?",
+      "verify": "recorded outcome"
+    },
+    {
+      "id": "V3",
+      "lane": "VID",
+      "type": "write",
+      "deps": [
+        "V2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-VID",
+      "agent": "general-purpose",
+      "title": "Write video-check.md result",
+      "files": [
+        "goals/living-art-overhaul/video-check.md"
+      ],
+      "verify": "decision = native or gif-fallback"
+    },
+    {
+      "id": "V4",
+      "lane": "VID",
+      "type": "write",
+      "deps": [
+        "V3"
+      ],
+      "parallelGroup": null,
+      "lock": "L-RS",
+      "agent": "general-purpose",
+      "title": "If stripped, switch assembler to visible GIF + obvious MP4 click",
+      "files": [
+        "scripts/readme_sections.py",
+        "README.md"
+      ],
+      "verify": "legal form matches video-check.md; tests still pass"
+    },
+    {
+      "id": "G1ig",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-IG",
+      "agent": "general-purpose",
+      "title": "Render living-inkgarden.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-inkgarden.gif",
+        ".github/assets/img/living-inkgarden.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1to",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-TO",
+      "agent": "general-purpose",
+      "title": "Render living-topo.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-topo.gif",
+        ".github/assets/img/living-topo.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1ge",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-GE",
+      "agent": "general-purpose",
+      "title": "Render living-genetic.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-genetic.gif",
+        ".github/assets/img/living-genetic.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1ph",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-PH",
+      "agent": "general-purpose",
+      "title": "Render living-physarum.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-physarum.gif",
+        ".github/assets/img/living-physarum.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1le",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-LE",
+      "agent": "general-purpose",
+      "title": "Render living-lenia.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-lenia.gif",
+        ".github/assets/img/living-lenia.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1fe",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "W2M",
+        "I15"
+      ],
+      "parallelGroup": "GEN1",
+      "lock": "L-ASSET-FE",
+      "agent": "general-purpose",
+      "title": "Render living-ferrofluid.gif + .mp4 only",
+      "files": [
+        ".github/assets/img/living-ferrofluid.gif",
+        ".github/assets/img/living-ferrofluid.mp4"
+      ],
+      "verify": "400x400; sibling mp4; under that style budget"
+    },
+    {
+      "id": "G1",
+      "lane": "GEN",
+      "type": "merge",
+      "deps": [
+        "G1ig",
+        "G1to",
+        "G1ge",
+        "G1ph",
+        "G1le",
+        "G1fe"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "All six candidate GIF+MP4 pairs exist",
+      "verify": "six gif+mp4 pairs"
+    },
+    {
+      "id": "G2",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "G1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-MEDIA",
+      "agent": "general-purpose",
+      "title": "Validate regenerated fleet against byte budgets and inventory",
+      "files": [
+        "tests/test_living_art_media.py"
+      ],
+      "verify": "pytest -q tests/test_living_art_media.py"
+    },
+    {
+      "id": "G3",
+      "lane": "GEN",
+      "type": "write",
+      "deps": [
+        "G1"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Build GIF contact sheet (first/mid/last frame) for bake-off",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/gif-sheet.md"
+      ],
+      "verify": "six styles \u00d7 3 frames referenced"
+    },
+    {
+      "id": "W3M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "V4",
+        "G2",
+        "G3"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Media + video form frozen; ready to score"
+    },
+    {
+      "id": "K1ig",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score inkgarden on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/inkgarden.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1to",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score topo on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/topo.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1ge",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score genetic on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/genetic.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1ph",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score physarum on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/physarum.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1le",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score lenia on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/lenia.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1fe",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "W3M"
+      ],
+      "parallelGroup": "K1",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Score ferrofluid on striking/growth/distinct/GitHub-fit",
+      "files": [
+        "goals/living-art-overhaul/bakeoff/ferrofluid.score.json"
+      ],
+      "verify": "four axes 1-5"
+    },
+    {
+      "id": "K1",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "K1ig",
+        "K1to",
+        "K1ge",
+        "K1ph",
+        "K1le",
+        "K1fe"
+      ],
+      "parallelGroup": null,
+      "lock": "L-BAKE",
+      "agent": "general-purpose",
+      "title": "Merge scores; propose 4-6 in bakeoff.json",
+      "files": [
+        "goals/living-art-overhaul/bakeoff.json"
+      ],
+      "verify": "four axes each; proposed length 4-6"
+    },
+    {
+      "id": "K2",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "K1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-BAKE",
+      "agent": "cap",
+      "title": "HUMAN GATE: veto/override; write accepted[]",
+      "files": [
+        "goals/living-art-overhaul/bakeoff.json"
+      ],
+      "verify": "accepted is 4-6 style keys"
+    },
+    {
+      "id": "K3",
+      "lane": "BAK",
+      "type": "write",
+      "deps": [
+        "K2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-T-GFM",
+      "agent": "general-purpose",
+      "title": "Test: README shipped keys == bakeoff accepted (red until shrink)",
+      "files": [
+        "tests/test_readme_gfm_ux.py"
+      ],
+      "verify": "fails until S14"
+    },
+    {
+      "id": "S1",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "K2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ROS",
+      "agent": "general-purpose",
+      "title": "Set SHIPPED_STYLE_KEYS = bakeoff accepted",
+      "files": [
+        "scripts/art/roster.py"
+      ],
+      "verify": "len 4-6; subset of candidates"
+    },
+    {
+      "id": "S2",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ARTF",
+      "agent": "general-purpose",
+      "title": "Drop retired byte budgets; inventory expects SHIPPED names only",
+      "files": [
+        "scripts/art/artifacts.py"
+      ],
+      "verify": "_canonical_living_art_names() == shipped gifs"
+    },
+    {
+      "id": "S3",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": null,
+      "lock": "L-WF",
+      "agent": "general-purpose",
+      "title": "Rename exact-six comments; max-parallel may equal len(shipped)",
+      "files": [
+        ".github/workflows/profile-updater.yml"
+      ],
+      "verify": "matrix still from LIVING_ART_STYLE_KEYS; no hardcoded 6 styles"
+    },
+    {
+      "id": "S4",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-MEDIA",
+      "agent": "general-purpose",
+      "title": "Rewrite exact-six media tests to exact-shipped",
+      "files": [
+        "tests/test_living_art_media.py"
+      ],
+      "verify": "pytest -q tests/test_living_art_media.py"
+    },
+    {
+      "id": "S5",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-HAND",
+      "agent": "general-purpose",
+      "title": "Rewrite artifact handoff exact-six tests",
+      "files": [
+        "tests/test_living_art_artifact_handoff.py"
+      ],
+      "verify": "pytest -q tests/test_living_art_artifact_handoff.py"
+    },
+    {
+      "id": "S6",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-CON",
+      "agent": "general-purpose",
+      "title": "Rewrite living-art contracts tests to shipped roster",
+      "files": [
+        "tests/test_living_art_contracts.py"
+      ],
+      "verify": "pytest -q tests/test_living_art_contracts.py"
+    },
+    {
+      "id": "S7",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-E2E",
+      "agent": "general-purpose",
+      "title": "Rewrite e2e rehearsal counts to len(SHIPPED)",
+      "files": [
+        "tests/test_living_art_e2e_rehearsal.py"
+      ],
+      "verify": "pytest -q tests/test_living_art_e2e_rehearsal.py"
+    },
+    {
+      "id": "S8",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S2"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-CLI",
+      "agent": "general-purpose",
+      "title": "Rewrite test_cli living-art loops to SHIPPED",
+      "files": [
+        "tests/test_cli.py"
+      ],
+      "verify": "pytest -q tests/test_cli.py -k living"
+    },
+    {
+      "id": "S9",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S3"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-WF",
+      "agent": "general-purpose",
+      "title": "Update test_profile_workflow exact-six handoff wording",
+      "files": [
+        "tests/test_profile_workflow.py"
+      ],
+      "verify": "pytest -q tests/test_profile_workflow.py -k living_art"
+    },
+    {
+      "id": "S10",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S1"
+      ],
+      "parallelGroup": "SHR-T",
+      "lock": "L-T-IDS",
+      "agent": "general-purpose",
+      "title": "Update overhaul fact-id + shared-package ALL_STYLES assertions",
+      "files": [
+        "tests/test_overhaul_fact_ids.py",
+        "tests/test_art_shared_package.py"
+      ],
+      "verify": "candidates may exceed shipped; spine still monotonic"
+    },
+    {
+      "id": "S11",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S1",
+        "M1"
+      ],
+      "parallelGroup": "SHR-DOC",
+      "lock": "L-DOCS-MODES",
+      "agent": "docs-writer",
+      "title": "living-art-modes.mdx matches shipped names/files/legends",
+      "files": [
+        "docs/content/docs/scripts/living-art-modes.mdx"
+      ],
+      "verify": "no leftover exact-six quota; legends match roster"
+    },
+    {
+      "id": "S12",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S3"
+      ],
+      "parallelGroup": "SHR-DOC",
+      "lock": "L-DOCS-WF",
+      "agent": "docs-writer",
+      "title": "AGENTS.md + workflows docs: matrix follows SHIPPED, not 'six'",
+      "files": [
+        "AGENTS.md",
+        "docs/content/docs/workflows/index.mdx"
+      ],
+      "verify": "rg exact-six only in historical openspec"
+    },
+    {
+      "id": "S13",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-ASSETS",
+      "agent": "general-purpose",
+      "title": "Stop generating retired living-*.gif/mp4; remove from img if present",
+      "files": [
+        ".github/assets/img"
+      ],
+      "verify": "img living-* stems == SHIPPED"
+    },
+    {
+      "id": "S14",
+      "lane": "SHR",
+      "type": "write",
+      "deps": [
+        "S1",
+        "V4"
+      ],
+      "parallelGroup": null,
+      "lock": "L-README",
+      "agent": "general-purpose",
+      "title": "Regenerate README from SHIPPED roster so K3 goes green",
+      "files": [
+        "README.md"
+      ],
+      "verify": "pytest -q tests/test_readme_gfm_ux.py -k living_art"
+    },
+    {
+      "id": "S15",
+      "lane": "SHR",
+      "type": "read",
+      "deps": [
+        "S12"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "explore",
+      "title": "Confirm openspec prevent-living-art-repo-growth was not edited",
+      "verify": "git diff -- openspec/changes/prevent-living-art-repo-growth empty"
+    },
+    {
+      "id": "W4M",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "S4",
+        "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "K3"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Shipped roster contracted everywhere that matters"
+    },
+    {
+      "id": "C1",
+      "lane": "CAP",
+      "type": "read",
+      "deps": [
+        "W4M"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "code-reviewer",
+      "title": "Review README + roster + dialect diffs"
+    },
+    {
+      "id": "C2",
+      "lane": "CAP",
+      "type": "write",
+      "deps": [
+        "C1"
+      ],
+      "parallelGroup": null,
+      "lock": "L-GIT",
+      "agent": "cap",
+      "title": "Push origin/dev only; do not touch main",
+      "files": [
+        ".git"
+      ],
+      "verify": "main Living Art unchanged"
+    },
+    {
+      "id": "C3L",
+      "lane": "CAP",
+      "type": "read",
+      "deps": [
+        "C2"
+      ],
+      "parallelGroup": "C3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Manual QA GitHub light mode on origin/dev Living Art"
+    },
+    {
+      "id": "C3D",
+      "lane": "CAP",
+      "type": "read",
+      "deps": [
+        "C2"
+      ],
+      "parallelGroup": "C3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Manual QA GitHub dark mode on origin/dev Living Art"
+    },
+    {
+      "id": "C3X",
+      "lane": "CAP",
+      "type": "read",
+      "deps": [
+        "C2"
+      ],
+      "parallelGroup": "C3",
+      "lock": null,
+      "agent": "general-purpose",
+      "title": "Manual QA: each details opens; legend matches the picture"
+    },
+    {
+      "id": "C3",
+      "lane": "CAP",
+      "type": "merge",
+      "deps": [
+        "C3L",
+        "C3D",
+        "C3X"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Manual fact-one-look + fact-learnable signed"
+    },
+    {
+      "id": "C4",
+      "lane": "CAP",
+      "type": "write",
+      "deps": [
+        "C3"
+      ],
+      "parallelGroup": null,
+      "lock": null,
+      "agent": "cap",
+      "title": "Close goal: facts.md all evidenced",
+      "files": [
+        "goals/living-art-overhaul/"
+      ],
+      "verify": "done condition in goal.md"
+    }
+  ]
+}

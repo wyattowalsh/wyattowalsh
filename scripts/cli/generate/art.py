@@ -15,6 +15,7 @@ from ._common import (
     _LIVING_ART_STYLE_HELP,
     _generate_living_art_timelapse,
     _load_project_config,
+    _selected_living_art_styles,
     console,
     generate_app,
     logger,
@@ -174,6 +175,9 @@ def animated(
     _load_project_config(config_path)
 
     from ...art import animate as animate_module
+
+    if only is not None:
+        _selected_living_art_styles(only)
 
     if output_path is not None:
         logger.info(

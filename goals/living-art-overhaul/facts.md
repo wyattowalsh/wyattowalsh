@@ -1,0 +1,21 @@
+# Facts
+
+- This goal redesigns the living artworks and the Living Art README section so each shipped piece is a striking, data-informed timelapse with a learnable explanation. Success is the origin/dev profile README.
+- Success is the origin/dev README preview. main is not updated in this goal.
+- The README Living Art section shows a curated gallery of 4 to 6 pieces. It never shows more than six.
+- Ink Garden, Topography, Genetic Landscape, Physarum, Lenia, and Ferrofluid are the starting candidates. The set is open: a style may be added, retired, or replaced after the bake-off.
+- A short sentence at the top of Living Art says these are daily timelapses of this GitHub account from creation to now, each a different visual world. It does not list the four-signal spine.
+- The gallery is a full-width stack: one artwork per row at maximum size, then that piece’s dropdown. Not a wrap, thumb strip, or even table.
+- Each shipped artwork is always visible. The GIF or video is not hidden inside `<details>`.
+- Directly under each artwork is a collapsed `<details>` for that piece only. There is no single shared “how to read these” dropdown.
+- Each dropdown has the piece title, one or two sentences of metaphor, then the mapping of repos, stars, commits, and followers in that world. No essay. No second metrics dashboard.
+- Video is the primary README media. The goal tries native README video markup and checks it on github.com for origin/dev.
+- If github.com strips the video or it does not autoplay, the allowed form is a visible GIF with an obvious click-through to the in-repo MP4. No YouTube, Cloudinary, or other external video host.
+- Each shipped style has one designed look that still reads on GitHub light and dark. This goal does not ship dual light/dark media pairs unless a bake-off piece is unreadable on one theme.
+- Frame t is the cumulative end-of-day world from account creation through that day. Pretty motion that ignores the account’s growth cannot win a slot.
+- Each shipped piece has a real visual mapping for repos, stars, commits, and followers. Not every signal must scream in every style, but each of the four exists in the design.
+- A careful viewer who opens the dropdown can then see the account grow in the timelapse. Instantly-obvious-with-zero-text is not required. Mood-only is not enough.
+- Winners are chosen by a scored bake-off on four equal axes: striking, readable growth, distinct, and GitHub-fit. I propose the 4–6 from those scores. You may veto or override. Close scores go to taste.
+- After the jury, daily CI, tests, and the artifact contract generate only the shipped 4–6. Retired styles leave the daily matrix. This goal does not run an experiment farm.
+- docs living-art-modes and the living-art artifact contract match the shipped roster: names, files, and legends. The docs home showcase and living-art-preview.html are not redesigned as a second gallery.
+- Out of scope: prevent-living-art-repo-growth (media budgets / pack size), changing main, a new standalone gallery page, and restyling the rest of the profile README.

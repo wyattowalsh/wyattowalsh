@@ -31,9 +31,30 @@ from ..utils import get_logger
 from . import ferrofluid, genetic_landscape, ink_garden, lenia, physarum, topography
 from ._dev_profiles import PROFILES
 from ._gif_optimize import _gif_output_transaction
+from .roster import CANDIDATE_STYLE_KEYS
 from .shared import compute_maturity, normalize_live_metrics, parse_cli_args, seed_hash
 
 logger = get_logger(module=__name__)
+
+# Legacy growth CLI: keys follow CANDIDATE_STYLE_KEYS. Output stems are
+# ``{style}-growth`` (not published ``living-*``). Unknown ``--only`` still
+# exits 1. SHIPPED_STYLE_KEYS (roster) is README / CI / artifact inventory.
+_GROWTH_GENERATORS: dict[str, Callable[..., str]] = {
+    "inkgarden": ink_garden.generate,
+    "topo": topography.generate,
+    "genetic": genetic_landscape.generate,
+    "physarum": physarum.generate,
+    "lenia": lenia.generate,
+    "ferrofluid": ferrofluid.generate,
+}
+
+_missing_growth_generators = [
+    key for key in CANDIDATE_STYLE_KEYS if key not in _GROWTH_GENERATORS
+]
+if _missing_growth_generators:
+    raise ValueError(
+        f"Candidate styles missing growth generators: {_missing_growth_generators!r}"
+    )
 
 # ---------------------------------------------------------------------------
 # Animation helpers
@@ -359,12 +380,8 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     all_generators: dict[str, tuple[str, Callable[..., str]]] = {
-        "inkgarden": ("inkgarden-growth", ink_garden.generate),
-        "topo": ("topo-growth", topography.generate),
-        "genetic": ("genetic-growth", genetic_landscape.generate),
-        "physarum": ("physarum-growth", physarum.generate),
-        "lenia": ("lenia-growth", lenia.generate),
-        "ferrofluid": ("ferrofluid-growth", ferrofluid.generate),
+        key: (f"{key}-growth", _GROWTH_GENERATORS[key])
+        for key in CANDIDATE_STYLE_KEYS
     }
     if only and only in all_generators:
         generators = {only: all_generators[only]}

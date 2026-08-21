@@ -23,6 +23,7 @@ from scripts.art.artifacts import (  # noqa: E402
     sync_living_art_artifacts,
     validate_living_art_byte_budgets,
 )
+from scripts.art.roster import CANDIDATE_STYLE_KEYS, SHIPPED_STYLE_KEYS  # noqa: E402
 
 
 def _write_test_gif(
@@ -84,6 +85,19 @@ def _stub_svg() -> str:
     )
 
 
+def _growth_stub(*_args: Any, **_kwargs: Any) -> str:
+    return _stub_svg()
+
+
+def _patch_growth_generators(
+    monkeypatch: pytest.MonkeyPatch,
+    **overrides: Any,
+) -> None:
+    generators = {key: _growth_stub for key in CANDIDATE_STYLE_KEYS}
+    generators.update(overrides)
+    monkeypatch.setattr(animate, "_GROWTH_GENERATORS", generators)  # noqa: SLF001
+
+
 def test_build_stacked_svg_has_narrative_css_and_frame_groups() -> None:
     svg = animate._build_stacked_svg(  # noqa: SLF001
         frame_svgs=[_stub_svg(), _stub_svg(), _stub_svg()],
@@ -112,24 +126,7 @@ def test_main_svg_mode_writes_expected_living_artifacts(
         {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
-    monkeypatch.setattr(
-        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.topography, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
+    _patch_growth_generators(monkeypatch)
     monkeypatch.setattr(
         animate.sys,
         "argv",
@@ -139,7 +136,7 @@ def test_main_svg_mode_writes_expected_living_artifacts(
     animate.main()
 
     output_dir = tmp_path / ".github" / "assets" / "img"
-    for style in LIVING_ART_STYLE_KEYS:
+    for style in CANDIDATE_STYLE_KEYS:
         path = output_dir / f"{style}-growth-animated.svg"
         assert path.is_file(), f"Missing expected animated artifact: {path}"
         svg_text = path.read_text(encoding="utf-8")
@@ -157,28 +154,13 @@ def test_main_svg_mode_disables_topography_timeline_for_static_frames(
         {"wyatt": {"label": "stub-profile", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _metrics: 0.5)
-    monkeypatch.setattr(
-        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
     topo_calls: list[dict[str, Any]] = []
 
-    def _capture_topo(*_args, **kwargs):
+    def _capture_topo(*_args: Any, **kwargs: Any) -> str:
         topo_calls.append(kwargs)
         return _stub_svg()
 
-    monkeypatch.setattr(animate.topography, "generate", _capture_topo)
+    _patch_growth_generators(monkeypatch, topo=_capture_topo)
     monkeypatch.setattr(
         animate.sys,
         "argv",
@@ -231,28 +213,13 @@ def test_main_gif_mode_disables_topography_timeline(
     monkeypatch.setattr(
         animate, "svg_to_png", lambda *_args, **_kwargs: _FakePalImage()
     )
-    monkeypatch.setattr(
-        animate.ink_garden, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.physarum, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.lenia, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
-    monkeypatch.setattr(
-        animate.ferrofluid, "generate", lambda *_args, **_kwargs: _stub_svg()
-    )
     topo_calls: list[dict[str, Any]] = []
 
-    def _capture_topo(*_args, **kwargs):
+    def _capture_topo(*_args: Any, **kwargs: Any) -> str:
         topo_calls.append(kwargs)
         return _stub_svg()
 
-    monkeypatch.setattr(animate.topography, "generate", _capture_topo)
+    _patch_growth_generators(monkeypatch, topo=_capture_topo)
     monkeypatch.setattr(
         animate.sys,
         "argv",
@@ -1119,18 +1086,11 @@ def test_main_svg_mode_propagates_generator_failure(
         {"wyatt": {"label": "stub", "repos": [], "contributions_monthly": {}}},
     )
     monkeypatch.setattr(animate, "compute_maturity", lambda _m: 0.5)
-    monkeypatch.setattr(animate.ink_garden, "generate", lambda *_a, **_kw: _stub_svg())
-    monkeypatch.setattr(
-        animate.genetic_landscape, "generate", lambda *_a, **_kw: _stub_svg()
-    )
-    monkeypatch.setattr(animate.physarum, "generate", lambda *_a, **_kw: _stub_svg())
-    monkeypatch.setattr(animate.lenia, "generate", lambda *_a, **_kw: _stub_svg())
-    monkeypatch.setattr(animate.ferrofluid, "generate", lambda *_a, **_kw: _stub_svg())
 
-    def _failing(*_a, **_kw):
+    def _failing(*_a: Any, **_kw: Any) -> str:
         raise RuntimeError("Simulated generator failure")
 
-    monkeypatch.setattr(animate.topography, "generate", _failing)
+    _patch_growth_generators(monkeypatch, topo=_failing)
     monkeypatch.setattr(
         animate.sys,
         "argv",
@@ -1324,14 +1284,7 @@ def test_shared_daily_spine_from_account_creation_enforces_monotonic_contract(
     assert sampled[0].day == snapshots[0].day
     assert sampled[-1].day == snapshots[-1].day
     assert sampled_days == sorted(set(sampled_days))
-    assert ALL_STYLES == [
-        "inkgarden",
-        "topo",
-        "genetic",
-        "physarum",
-        "lenia",
-        "ferrofluid",
-    ]
+    assert tuple(ALL_STYLES) == CANDIDATE_STYLE_KEYS
 
 
 @pytest.mark.parametrize(
@@ -1421,7 +1374,7 @@ def test_living_art_dialects_remain_visually_distinct(
         for style, generator in generators.items()
     }
     assert families == STYLE_DIALECTS
-    assert len(set(families.values())) == 6
+    assert len(set(families.values())) == len(CANDIDATE_STYLE_KEYS)
 
 
 def _svg_root_attr(svg: str, name: str) -> str:
@@ -1568,10 +1521,7 @@ def _max_physarum_node_radius(svg: str) -> float:
 
 
 def _count_inkgarden_fireflies(svg: str) -> int:
-    match = re.search(r'<g id="fireflies">(.*?)</g>', svg, flags=re.DOTALL)
-    if match is None:
-        return 0
-    return match.group(1).count("<circle")
+    return len(re.findall(r'data-role="ink-glint"', svg))
 
 
 def test_early_spine_dialects_keep_repo_accretion_readable() -> None:
@@ -1647,13 +1597,17 @@ def test_fact_living_art_spine_shared_daily_end_of_day_frames() -> None:
     from scripts.art.daily_snapshots import validate_snapshot_monotonic_contract
     from scripts.art.timelapse import ALL_STYLES, render_timelapse
 
-    assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
+    assert set(SHIPPED_STYLE_KEYS) <= set(CANDIDATE_STYLE_KEYS)
+    assert tuple(ALL_STYLES) == CANDIDATE_STYLE_KEYS
+    assert LIVING_ART_STYLE_KEYS == SHIPPED_STYLE_KEYS
+    if SHIPPED_STYLE_KEYS == CANDIDATE_STYLE_KEYS:
+        assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
     source = inspect.getsource(render_timelapse)
     assert "build_daily_snapshots" in source
     assert "sample_frames" in source
     assert "validate_snapshot_monotonic_contract" in source
     assert callable(validate_snapshot_monotonic_contract)
-    for style in ALL_STYLES:
+    for style in LIVING_ART_STYLE_KEYS:
         path = Path(f".github/assets/img/living-{style}.gif")
         assert path.is_file(), path
         assert path.stat().st_size > 0

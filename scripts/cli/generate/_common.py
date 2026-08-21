@@ -13,9 +13,9 @@ import typer
 
 from ...art.artifacts import (
     DEFAULT_PUBLIC_SURFACE_DIR,
-    LIVING_ART_STYLE_KEYS,
     sync_living_art_artifacts,
 )
+from ...art.roster import CANDIDATE_STYLE_KEYS, SHIPPED_STYLE_KEYS
 from ...art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 from ...config import (
     DEFAULT_CONFIG_PATH,
@@ -103,20 +103,20 @@ def _format_style_help(styles: tuple[str, ...]) -> str:
     return f"{', '.join(styles[:-1])}, or {styles[-1]}"
 
 
-_LIVING_ART_STYLE_HELP = _format_style_help(LIVING_ART_STYLE_KEYS)
+_LIVING_ART_STYLE_HELP = _format_style_help(CANDIDATE_STYLE_KEYS)
 
 
 def _selected_living_art_styles(only: str | None) -> tuple[str, ...]:
-    """Return the active living-art styles for this command invocation."""
+    """Return styles for this invocation: ``--only`` ∈ candidates, else shipped."""
     if only:
-        if only not in LIVING_ART_STYLE_KEYS:
+        if only not in CANDIDATE_STYLE_KEYS:
             console.print(
                 f"[bold red]Error:[/bold red] Unknown style [bold]{only}[/bold]. "
                 f"Choose from: {_LIVING_ART_STYLE_HELP}"
             )
             raise typer.Exit(code=1)
         return (only,)
-    return tuple(LIVING_ART_STYLE_KEYS)
+    return tuple(SHIPPED_STYLE_KEYS)
 
 
 def _load_required_json(option_name: str, path: Path | None) -> dict[str, Any]:
@@ -207,13 +207,13 @@ def _generate_living_art_timelapse(
         size_mb = path.stat().st_size / (1024 * 1024)
         console.print(f"[bold green]Generated:[/] {path} ({size_mb:.1f} MB)")
 
-    if active_styles != tuple(LIVING_ART_STYLE_KEYS):
+    if active_styles == tuple(SHIPPED_STYLE_KEYS):
+        _refresh_living_art_artifacts(output_dir)
+    else:
         console.print(
             "[yellow]Skipped living-art index refresh for a partial style "
             "invocation.[/yellow]"
         )
-    else:
-        _refresh_living_art_artifacts(output_dir)
 
     return outputs
 

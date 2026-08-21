@@ -19,6 +19,7 @@ from typing import Any
 
 from PIL import Image, ImageSequence
 
+from .roster import SHIPPED_STYLE_KEYS, STYLE_LEGENDS
 from .timelapse import DEFAULT_PUBLISHED_MAX_FRAMES, MIN_PUBLISHED_RUNTIME_MS
 
 MANIFEST_FILENAME = "living-art-manifest.json"
@@ -43,15 +44,12 @@ LIVING_ART_MAX_FRAME_COUNT = DEFAULT_PUBLISHED_MAX_FRAMES
 LIVING_ART_MIN_RUNTIME_MS = MIN_PUBLISHED_RUNTIME_MS
 _MANIFEST_RUN_SPECIFIC_FIELDS = frozenset({"generated_at", "output_dir"})
 
+# Published inventory follows SHIPPED (alias; not a local six-slug copy).
+# Byte budgets stay complete six until S2 drops retired rows.
+LIVING_ART_STYLE_KEYS = SHIPPED_STYLE_KEYS
 LIVING_ART_STYLE_LABELS = {
-    "inkgarden": "Ink Garden",
-    "topo": "Topography",
-    "genetic": "Genetic Landscape",
-    "physarum": "Physarum",
-    "lenia": "Lenia",
-    "ferrofluid": "Ferrofluid",
+    key: STYLE_LEGENDS[key].title for key in SHIPPED_STYLE_KEYS
 }
-LIVING_ART_STYLE_KEYS = tuple(LIVING_ART_STYLE_LABELS.keys())
 _CHANNEL_LABELS = {
     "timelapse_gif": "Timelapse GIFs",
 }
