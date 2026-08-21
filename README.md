@@ -69,14 +69,109 @@
 <!-- ## Living Art -->
 
 
+<p>These are daily timelapses of this GitHub account from creation to now, each a different visual world.</p>
+
 <p align="center">
-<a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" width="360" alt="Ink Garden - botanical timelapse where each tree is a repository" loading="lazy"/></a>
-<a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" width="360" alt="Topography - cartographic timelapse where terrain emerges with activity" loading="lazy"/></a>
-<a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" width="360" alt="Genetic Landscape - evolutionary timelapse where repositories become adaptive peaks" loading="lazy"/></a>
-<a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" width="360" alt="Physarum - slime-mold timelapse grown from repository nutrient nodes" loading="lazy"/></a>
-<a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" width="360" alt="Lenia - continuous cellular automata timelapse seeded by repositories" loading="lazy"/></a>
-<a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" width="360" alt="Ferrofluid - magnetic spike timelapse shaped by repository fields" loading="lazy"/></a>
+<video src=".github/assets/img/living-inkgarden.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-inkgarden.gif">
+<a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="100%" loading="lazy"/></a>
+</video>
 </p>
+<details>
+<summary><strong>Ink Garden</strong></summary>
+
+Each repository takes root as a tree, stem and canopy together. A day with no repos is bare soil.
+
+- **Repos:** plants — one tree per repository, stem and canopy
+- **Stars:** bloom — flowers on the trees
+- **Commits:** trunk — thicker, taller boles
+- **Followers:** glints among the leaves (none at zero followers)
+
+</details>
+
+<p align="center">
+<video src=".github/assets/img/living-topo.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-topo.gif">
+<a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="100%" loading="lazy"/></a>
+</video>
+</p>
+<details>
+<summary><strong>Topography</strong></summary>
+
+A hand-drawn survey of this account, with one hill for every repository. The map fills in as the years accrue.
+
+- **Repos:** peaks — one hill per repository
+- **Stars:** prominence — how tall each summit stands
+- **Commits:** contours — the lines that mark each hill
+- **Followers:** settlements on the map
+
+</details>
+
+<p align="center">
+<video src=".github/assets/img/living-genetic.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-genetic.gif">
+<a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="100%" loading="lazy"/></a>
+</video>
+</p>
+<details>
+<summary><strong>Genetic Landscape</strong></summary>
+
+A landscape of competing fitness peaks, one ridge per repository. Life gathers on the high ground as the account evolves.
+
+- **Repos:** fitness peaks — one peak per repository
+- **Stars:** peak height — how tall each summit stands
+- **Commits:** generations stacked across the landscape
+- **Followers:** colonies (none at zero followers)
+
+</details>
+
+<p align="center">
+<video src=".github/assets/img/living-physarum.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-physarum.gif">
+<a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="100%" loading="lazy"/></a>
+</video>
+</p>
+<details>
+<summary><strong>Physarum</strong></summary>
+
+A slime mold feeding in the dark, spinning a living network from the first repository. The organism is the veins, not a lone spore.
+
+- **Repos:** nutrient nodes — a network grown from the first repository
+- **Stars:** how rich each food node is
+- **Commits:** trail and vein growth
+- **Followers:** vein mass (not the spore)
+
+</details>
+
+<p align="center">
+<video src=".github/assets/img/living-lenia.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-lenia.gif">
+<a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="100%" loading="lazy"/></a>
+</video>
+</p>
+<details>
+<summary><strong>Lenia</strong></summary>
+
+A continuous living field, seeded with one creature for every repository. Soft bodies pulse and wander as the account grows.
+
+- **Repos:** seed organisms — one body per repository
+- **Stars:** halo — the glow around each creature
+- **Commits:** field occupancy — how much of the medium is alive
+- **Followers:** spatial extent — how far the field spreads
+
+</details>
+
+<p align="center">
+<video src=".github/assets/img/living-ferrofluid.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-ferrofluid.gif">
+<a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="100%" loading="lazy"/></a>
+</video>
+</p>
+<details>
+<summary><strong>Ferrofluid</strong></summary>
+
+Black magnetic fluid standing in towers, one column for every repository. The pool bristles, ripples, and holds a field of its own.
+
+- **Repos:** dipoles — one tower per repository
+- **Stars:** spike height — how far the fluid leaps
+- **Commits:** ripples in the pool
+- **Followers:** magnetic field around the towers
+
+</details>
 <p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="My Tech Stack" width="100%" loading="lazy"/></p>
 <!-- ## My Tech Stack -->
 
