@@ -1114,7 +1114,7 @@ class ReadmeSectionGenerator:
 
     @staticmethod
     def _living_art_piece_markup(style: str, legend: StyleLegend) -> list[str]:
-        """Full-width visible media, then a collapsed legend for one style."""
+        """Full-width GIF plus an obvious in-repo MP4 click, then a collapsed legend."""
         title = escape(legend.title)
         gif = f".github/assets/img/living-{style}.gif"
         mp4 = f".github/assets/img/living-{style}.mp4"
@@ -1126,13 +1126,9 @@ class ReadmeSectionGenerator:
         mapping = legend.mapping
         return [
             '<p align="center">',
-            (
-                f'<video src="{mp4}" width="100%" autoplay muted loop '
-                f'playsinline poster="{gif}">'
-            ),
             f'<a href="{mp4}">{poster}</a>',
-            "</video>",
             "</p>",
+            f'<p align="center"><a href="{mp4}">Watch {title} (MP4)</a></p>',
             "<details>",
             f"<summary><strong>{title}</strong></summary>",
             "",
