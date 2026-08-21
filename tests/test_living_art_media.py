@@ -1625,3 +1625,13 @@ def test_fact_living_art_exact_six_excludes_legacy_growth_collateral() -> None:
     leftovers = {path.name for path in img_dir.glob("*-growth.gif")}
     leftovers.update(path.name for path in img_dir.glob("*-growth-animated.svg"))
     assert leftovers.isdisjoint(expected)
+
+
+def test_committed_living_art_fleet_meets_byte_budgets_and_mp4_siblings() -> None:
+    """G2: committed GIFs must pass media/byte caps; each has a non-empty MP4."""
+    img_dir = Path(".github/assets/img")
+    validate_living_art_byte_budgets(build_living_art_manifest(img_dir))
+    for style in LIVING_ART_STYLE_KEYS:
+        mp4_path = img_dir / f"living-{style}.mp4"
+        assert mp4_path.is_file(), mp4_path
+        assert mp4_path.stat().st_size > 0, mp4_path
