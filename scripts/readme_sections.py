@@ -29,6 +29,7 @@ from xml.etree.ElementTree import Element
 
 import defusedxml.ElementTree as DefusedET
 
+from .art.roster import StyleLegend, shipped_legends
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .metrics_svg import validate_svg_file
 from .readme_separators import generate_separators
@@ -1093,59 +1094,57 @@ class ReadmeSectionGenerator:
         return content
 
     def _rewrite_living_art_section(self, content: str) -> str:
-        items = [
-            (
-                "Ink Garden",
-                "living-inkgarden.gif",
-                "botanical timelapse where each tree is a repository",
-            ),
-            (
-                "Topography",
-                "living-topo.gif",
-                "cartographic timelapse where terrain emerges with activity",
-            ),
-            (
-                "Genetic Landscape",
-                "living-genetic.gif",
-                "evolutionary timelapse where repositories become adaptive peaks",
-            ),
-            (
-                "Physarum",
-                "living-physarum.gif",
-                "slime-mold timelapse grown from repository nutrient nodes",
-            ),
-            (
-                "Lenia",
-                "living-lenia.gif",
-                "continuous cellular automata timelapse seeded by repositories",
-            ),
-            (
-                "Ferrofluid",
-                "living-ferrofluid.gif",
-                "magnetic spike timelapse shaped by repository fields",
-            ),
-        ]
         body_lines = [
             section_separator_block("Living Art", "sep-living.svg"),
-            '<p align="center">',
+            (
+                "<p>These are daily timelapses of this GitHub account from "
+                "creation to now, each a different visual world.</p>"
+            ),
         ]
-        for title, filename, alt_suffix in items:
-            stem = filename.removesuffix(".gif")
-            poster = f".github/assets/img/{filename}"
-            film = f".github/assets/img/{stem}.mp4"
-            body_lines.append(
-                f'<a href="{film}">'
-                f'<img src="{poster}" width="360" '
-                f'alt="{escape(title)} - {escape(alt_suffix)}" '
-                f'loading="lazy"/></a>'
-            )
-        body_lines.extend(["</p>", ""])
+        for style, legend in shipped_legends():
+            body_lines.append("")
+            body_lines.extend(self._living_art_piece_markup(style, legend))
+        body_lines.append("")
         replacement = "\n".join(body_lines)
         living_re = compile_section_body_re("Living Art", self._section_order())
         if not living_re.search(content):
             logger.warning("Living Art section heading not found in README.")
             return content
         return living_re.sub(replacement, content, count=1)
+
+    @staticmethod
+    def _living_art_piece_markup(style: str, legend: StyleLegend) -> list[str]:
+        """Full-width visible media, then a collapsed legend for one style."""
+        title = escape(legend.title)
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        poster = ReadmeSectionGenerator._gfm_img_tag(
+            src=gif,
+            alt=title,
+            width="100%",
+        )
+        mapping = legend.mapping
+        return [
+            '<p align="center">',
+            (
+                f'<video src="{mp4}" width="100%" autoplay muted loop '
+                f'playsinline poster="{gif}">'
+            ),
+            f'<a href="{mp4}">{poster}</a>',
+            "</video>",
+            "</p>",
+            "<details>",
+            f"<summary><strong>{title}</strong></summary>",
+            "",
+            escape(legend.metaphor),
+            "",
+            f"- **Repos:** {escape(mapping.repos)}",
+            f"- **Stars:** {escape(mapping.stars)}",
+            f"- **Commits:** {escape(mapping.commits)}",
+            f"- **Followers:** {escape(mapping.followers)}",
+            "",
+            "</details>",
+        ]
 
     @staticmethod
     def _rename_tech_stack_title(content: str) -> str:
