@@ -1645,9 +1645,16 @@ def generate(
         tree_t = max(0.0, min(1.0, (mat - tree_start) / tree_ramp))
         oldest_rank = min(repo_growth_order.values(), default=0.0)
         is_oldest = abs(repo_growth_order.get(ri, 0.0) - oldest_rank) < 1e-12
-        # Snapshot worlds (daily spine / computed maturity) keep existing
-        # repos visible; explicit maturity staging still hides later trees.
-        show_existing_world = timelapse_contract or maturity is None
+        # Snapshot worlds keep every named payload repo visible:
+        # daily GIF (timelapse envelope), A1 / GIF kwargs (timeline=False
+        # plus a visual plan), and computed maturity. Explicit-maturity
+        # animate staging without that plan may still hide later dated trees.
+        # Do not skip later plants just because tree_t < 0.05 on the GIF path.
+        show_existing_world = (
+            timelapse_contract
+            or maturity is None
+            or (not timeline_enabled and use_accretive_layout)
+        )
         was_rescued = False
         if tree_t <= 0.0 or (chronological_growth and tree_t < 0.05):
             if show_existing_world or is_oldest:
