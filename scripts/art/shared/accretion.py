@@ -16,6 +16,9 @@ from typing import Any
 ACCRETION_CHANNELS: tuple[str, ...] = ("repos", "stars", "commits", "followers")
 
 # Log ceilings keep early growth visible instead of saturating at tiny totals.
+# A3 is a documented no-op (2026-08-20): shared clock stays frozen; D*1 consumes
+# today's knobs. Do not retune these ceilings unless all six share a real-account
+# saturation (they do not — unreadability is on-canvas).
 _CHANNEL_CEILINGS: dict[str, float] = {
     "repos": 36.0,
     "stars": 500.0,
