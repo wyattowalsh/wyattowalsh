@@ -1408,17 +1408,17 @@ def generate(
     )
     contour_levels = int(
         max(
-            4,
+            3,
             min(
-                10,
-                config.contour_levels
+                6,
+                3
                 + round(
-                    commit_focus * 2.0
-                    + pr_burst * 1.8
-                    + fresh_share * 1.6
-                    + repo_density_signal * 1.4
-                    + streak_signal * 1.2
-                    - issue_pressure * 1.4,
+                    commit_focus * 1.2
+                    + pr_burst * 1.1
+                    + fresh_share * 0.9
+                    + repo_density_signal * 0.8
+                    + streak_signal * 0.7
+                    - issue_pressure * 1.0,
                 ),
             ),
         ),
@@ -1510,7 +1510,7 @@ def generate(
 
     # ── Defs: filters ─────────────────────────────────────────────
     P.append("<defs>")
-    P.append(volumetric_glow_filter("veinGlow", radius=5.4))
+    P.append(volumetric_glow_filter("veinGlow", radius=2.4))
     P.append(volumetric_glow_filter("nodeGlow", radius=7.2))
     P.append("</defs>")
 
@@ -1607,9 +1607,12 @@ def generate(
                 draw_sw = base_sw
                 vein_role = "physarum-vein"
 
-            glow = li >= contour_levels // 2
+            glow = False
             frac_for_level = 0.1 + li * 0.12
             when = _date_for_activity_fraction(min(1.0, frac_for_level))
+
+            if not timeline_enabled:
+                continue
 
             for chain in chains:
                 chain_color = draw_color
@@ -1640,7 +1643,7 @@ def generate(
         extra_count = 0 if vein_gain <= 0 else max(1, int(round(1.0 + 9.0 * vein_gain)))
         offshoot_len = 36.0 + 78.0 * vein_gain
         fork_len = 28.0 + 36.0 * vein_gain
-        trunk_sw = (2.45 + 1.90 * max(0.0, trail_weight - 0.72)) * (
+        trunk_sw = (2.85 + 2.20 * max(0.0, trail_weight - 0.72)) * (
             0.94 + 0.08 * vein_fade
         )
         branch_sw = trunk_sw * 0.72
@@ -1692,7 +1695,7 @@ def generate(
                 opacity=min(0.94, branch_op * (1.0 + 0.10 * fork_vis)),
                 stroke_width=branch_sw,
                 when=node_when,
-                glow=True,
+                glow=False,
             )
         for index in range(len(food_canvas) - 1):
             left = food_canvas[index]
@@ -1711,7 +1714,7 @@ def generate(
                 opacity=min(0.94, trunk_op * 0.90 * (1.0 + 0.10 * link_vis)),
                 stroke_width=trunk_sw * 0.82,
                 when=hypha_when,
-                glow=True,
+                glow=False,
             )
         for extra_i in range(extra_count):
             host = food_canvas[extra_i % len(food_canvas)]
@@ -1737,7 +1740,7 @@ def generate(
                 opacity=min(0.92, branch_op * (1.0 + 0.08 * shoot_vis)),
                 stroke_width=branch_sw * 0.90,
                 when=hypha_when,
-                glow=True,
+                glow=False,
             )
 
     # ── Food source nodes ─────────────────────────────────────────

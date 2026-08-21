@@ -27,7 +27,6 @@ from .shared import (
     WorldState,
     _build_world_palette_extended,
     activity_tempo,
-    atmospheric_haze_filter,
     build_style_dialect,
     compute_maturity,
     compute_world_state,
@@ -38,9 +37,7 @@ from .shared import (
     map_date_to_loop_delay,
     normalize_timeline_window,
     oklch,
-    oklch_gradient,
     order_repos_for_visual_plan,
-    organic_texture_filter,
     repo_visibility_score,
     resolve_render_metrics,
     seed_hash,
@@ -66,6 +63,13 @@ _OVERLAY_CLEAR  = 36.0
 
 # Dge4: one designed ground. No day/night flip, no living-genetic-dark pair.
 _DESIGNED_GROUND = oklch(0.16, 0.028, 248)
+# GIF path snaps language hues so Floyd–Steinberg does not explode unique inks.
+_GIF_HUE_STOPS = (135.0, 175.0, 210.0, 250.0)
+
+
+def _snap_hue(hue: float) -> float:
+    """Snap a language hue onto the four-stop GIF palette."""
+    return min(_GIF_HUE_STOPS, key=lambda stop: abs(stop - hue))
 
 
 # ── Config ───────────────────────────────────────────────────────────────
@@ -968,6 +972,8 @@ def generate(
             ),
         )
         hue = opt_hues[ri] if ri < len(opt_hues) else 155.0
+        if not timeline_enabled:
+            hue = _snap_hue(hue)
         color = oklch(0.84, 0.15, hue)
 
         # Convert canvas position to grid position
@@ -994,6 +1000,10 @@ def generate(
         extra_colonies = 0 if colony_gain <= 0 else int(round(3.0 * colony_gain))
         # Followers only. Zero followers → zero colonies. No visibility floor.
         colony_count = 0 if colony_gain <= 0 else min(6, 1 + extra_colonies)
+        if not timeline_enabled and ri > 0 and colony_gain > 0:
+            # GIF: one satellite per peak. Follower extras live on the first
+            # peak so isolation can move `data-colony-count` without 4× ink.
+            colony_count = 1
         for colony_idx in range(colony_count):
             angle = (
                 2.0
@@ -1172,10 +1182,6 @@ def generate(
         )
 
     P.append("<defs>")
-    P.append(atmospheric_haze_filter("glHaze", intensity=0.3))
-    P.append(
-        organic_texture_filter("glTexture", "cloud", intensity=0.2, seed=int(h[:4], 16))
-    )
     P.append("</defs>")
 
     # ── Background ────────────────────────────────────────────────
@@ -1183,33 +1189,29 @@ def generate(
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{bg}"/>')
     budget.add(1)
 
-    # Subtle texture overlay
-    P.append(
-        f'<rect width="{WIDTH}" height="{HEIGHT}" filter="url(#glTexture)" opacity="0.06"/>'
-    )
-    budget.add(1)
-
     # ── Contour lines ─────────────────────────────────────────────
-    contour_colors = oklch_gradient(
-        [(0.46, 0.04, 220), (0.58, 0.055, 200), (0.70, 0.07, 185), (0.82, 0.08, 165)],
-        CFG.contour_levels,
+    contour_colors = (
+        oklch(0.50, 0.05, 215),
+        oklch(0.62, 0.06, 195),
+        oklch(0.74, 0.07, 175),
     )
 
     contour_fade = (
         _fade(0.05, 0.4) if timeline_enabled else max(0.42, static_contour_signal)
     )
     start_date = timeline_window[0].isoformat()
-    for li in range(CFG.contour_levels):
+    drawn_contour_levels = CFG.contour_levels if timeline_enabled else 0
+    for li in range(drawn_contour_levels):
         if not budget.ok():
             break
-        level = e_min + (li + 1) * e_range / (CFG.contour_levels + 1)
+        level = e_min + (li + 1) * e_range / (drawn_contour_levels + 1)
         chains = _extract_contours(elevation, grid, level, cell_w, cell_h)
         is_index = li % contour_index_every == (contour_index_every - 1)
-        sw = 1.35 if is_index else 0.55
+        sw = 1.85 if is_index else 0.70
         color = contour_colors[li % len(contour_colors)]
-        opacity = (0.52 if is_index else 0.16) * contour_fade
+        opacity = (0.62 if is_index else 0.18) * contour_fade
 
-        contour_frac = (li + 1) / (CFG.contour_levels + 1)
+        contour_frac = (li + 1) / (drawn_contour_levels + 1)
         contour_when = _date_for_activity_fraction(contour_frac)
 
         for chain in chains:
@@ -1248,7 +1250,6 @@ def generate(
                 f'data-owner-index="{int(colony["owner_index"])}" '
                 f'cx="{float(colony["x"]):.1f}" cy="{float(colony["y"]):.1f}" '
                 f'r="{colony_radius:.1f}" fill="{colony["color"]}" '
-                f'filter="url(#glHaze)" '
                 f"{_timeline_style(colony_when, colony_opacity, 'tl-reveal tl-soft')}/>"
             )
             budget.add(1)
@@ -1258,11 +1259,11 @@ def generate(
         peak_when = _repo_date(repo) or start_date
         peak_visibility = visibility_norms[pi] if pi < len(visibility_norms) else 1.0
         r_glow = max(
-            16.0,
+            12.0,
             min(
-                54.0,
+                34.0,
                 ph
-                * (1.22 + 0.42 * peak_visibility)
+                * (1.05 + 0.32 * peak_visibility)
                 * (0.88 + 0.42 * star_scale_vis),
             ),
         )
@@ -1275,23 +1276,36 @@ def generate(
                 * (0.82 + 0.50 * star_scale_vis),
             ),
         )
-        glow_opacity = min(0.58, (0.32 + 0.26 * star_scale_vis) * peak_fade)
+        glow_opacity = min(0.40, (0.28 + 0.20 * star_scale_vis) * peak_fade)
         core_opacity = min(1.0, (0.88 + 0.12 * star_scale_vis) * peak_fade)
 
-        # Glow
-        P.append(
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_glow:.1f}" '
-            f'data-role="genetic-peak-glow" data-repo="{repo.get("name", "")}" '
-            f'data-x="{px:.1f}" data-y="{py:.1f}" '
-            f'fill="{color}" filter="url(#glHaze)" '
-            f"{_timeline_style(peak_when, glow_opacity)}/>"
-        )
+        # Glow: filled on timeline; stroke halo on GIF to cut dither fill.
+        if timeline_enabled:
+            P.append(
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_glow:.1f}" '
+                f'data-role="genetic-peak-glow" data-repo="{repo.get("name", "")}" '
+                f'data-x="{px:.1f}" data-y="{py:.1f}" '
+                f'fill="{color}" '
+                f"{_timeline_style(peak_when, glow_opacity)}/>"
+            )
+        else:
+            P.append(
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="{r_glow:.1f}" '
+                f'data-role="genetic-peak-glow" data-repo="{repo.get("name", "")}" '
+                f'data-x="{px:.1f}" data-y="{py:.1f}" '
+                f'fill="none" stroke="{color}" stroke-width="2.4" '
+                f"{_timeline_style(peak_when, min(0.92, glow_opacity * 2.4))}/>"
+            )
         budget.add(1)
 
-        for ring_idx in range(generation_marks):
+        drawn_generation_marks = (
+            generation_marks if timeline_enabled else min(3, generation_marks)
+        )
+        for ring_idx in range(drawn_generation_marks):
             if not budget.ok():
                 break
-            ring_r = r_core * (1.38 + 0.46 * ring_idx)
+            ring_span = 0.46 if timeline_enabled else 0.26
+            ring_r = r_core * (1.38 + ring_span * ring_idx)
             ring_op = (
                 (0.24 + 0.50 * generation_gain)
                 * (1.0 - 0.11 * ring_idx)
@@ -1322,7 +1336,7 @@ def generate(
     trail_fade = (
         _fade(0.3, 0.8)
         if timeline_enabled
-        else min(0.16, max(0.0, static_population_signal * 0.45))
+        else 0.0
     )
     if trail_fade > 0 and organisms:
         # Assign organisms to nearest peak for coloring
@@ -1355,12 +1369,13 @@ def generate(
     org_fade = (
         _fade(0.15, 0.5)
         if timeline_enabled
-        else min(0.20, max(0.0, static_population_signal * 0.35))
+        else min(0.14, max(0.0, static_population_signal * 0.22))
     )
-    if org_fade > 0 and organisms:
+    drawn_organisms = organisms[:8] if timeline_enabled else []
+    if org_fade > 0 and drawn_organisms:
         mid_date = activity_midpoint
 
-        for ox, oy, trail in organisms:
+        for ox, oy, trail in drawn_organisms:
             if not budget.ok():
                 break
             # Nearest peak for color
@@ -1388,7 +1403,7 @@ def generate(
         if timeline_enabled
         else max(0.0, min(1.0, static_peak_signal * 0.85 - 0.2))
     )
-    if label_fade > 0:
+    if timeline_enabled and label_fade > 0:
         text_color = oklch(0.86, 0.04, 210)
         for pi, (px, py, ph, color, repo) in enumerate(peaks):
             if not budget.ok():

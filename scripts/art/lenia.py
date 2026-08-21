@@ -540,7 +540,7 @@ def _build_lenia_palette(
 
 
 def _field_to_color(value: float, palette: _LeniaPalette) -> tuple[str, float]:
-    """Map a field value to (hex color, opacity) via the bioluminescent ramp."""
+    """Map a field value to a discrete ramp stop; keep a smooth opacity ramp."""
     if not palette.ramp or value < palette.ramp[0][0]:
         return _BG_COLOR, 0.0
     prev_cutoff, prev_color = palette.ramp[0]
@@ -548,7 +548,8 @@ def _field_to_color(value: float, palette: _LeniaPalette) -> tuple[str, float]:
         if value <= cutoff:
             t = (value - prev_cutoff) / max(0.001, cutoff - prev_cutoff)
             opacity = max(0.0, min(1.0, 0.50 + 0.50 * (0.35 * t + 0.65 * value)))
-            return oklch_lerp(prev_color, color, t), opacity
+            snapped = prev_color if t < 0.5 else color
+            return snapped, opacity
         prev_cutoff, prev_color = cutoff, color
     return palette.ramp[-1][1], 1.0
 
@@ -631,7 +632,7 @@ def _render_svg(
             if palette.ramp
             else palette.core
         )
-        P.append('<g filter="url(#lenia-glow)">')
+        P.append("<g>")
         for spec in seed_specs:
             if not budget.ok():
                 break
@@ -716,7 +717,7 @@ def _render_svg(
                 f'fill="{seed_color}" {halo_attrs}/>'
             )
             budget.add(1)
-            if spec.kind != "nutrient" and budget.ok():
+            if spec.kind != "nutrient" and budget.ok() and timeline:
                 orbit_opacity = halo_opacity * (0.44 if spec.kind == "repo" else 0.36)
                 orbit_rx = halo_radius * (1.8 + 0.2 * (1.0 - spec.visibility))
                 orbit_ry = orbit_rx * (0.62 if spec.kind == "repo" else 0.48)
@@ -744,7 +745,7 @@ def _render_svg(
         P.append("</g>")
 
     # ── Organism circles ──────────────────────────────────────────
-    P.append('<g data-role="lenia-field" filter="url(#lenia-glow)">')
+    P.append('<g data-role="lenia-field">')
 
     # Collect cells above threshold, sort by value for layering
     cells: list[tuple[float, int, int]] = []
@@ -754,7 +755,10 @@ def _render_svg(
             if v > field_threshold:
                 cells.append((v, gx, gy))
     cells.sort(key=lambda c: c[0])
-    drawn_cells = _select_organism_cells(cells, cap=min(320, max(0, budget.remaining)))
+    organism_cap = 16 + int(round(28.0 * max(0.0, min(1.5, field_gain))))
+    drawn_cells = _select_organism_cells(
+        cells, cap=min(organism_cap, max(0, budget.remaining))
+    )
 
     for v, gx, gy in drawn_cells:
         if not budget.ok():
@@ -766,7 +770,7 @@ def _render_svg(
 
         cx = (gx + 0.5) * cell_size
         cy = (gy + 0.5) * cell_size
-        r = cell_size * 0.5 * (0.58 + 0.82 * v) * (0.92 + 0.30 * field_gain)
+        r = cell_size * 0.70 * (0.68 + 0.62 * v) * (0.94 + 0.26 * field_gain)
 
         mat_opacity = min(
             0.96,
@@ -806,8 +810,8 @@ def _render_svg(
     core_lo = max(0.40, 0.58 - 0.18 * field_gain)
     core_candidates = [cell for cell in drawn_cells if cell[0] >= core_lo]
     core_candidates.sort(key=lambda item: item[0], reverse=True)
-    core_cells = core_candidates[:48]
-    P.append('<g data-role="lenia-field-core" filter="url(#lenia-halo)">')
+    core_cells = core_candidates[:16] if timeline else []
+    P.append('<g data-role="lenia-field-core">')
     for v, gx, gy in core_cells:
         if v < core_lo or not budget.ok():
             continue

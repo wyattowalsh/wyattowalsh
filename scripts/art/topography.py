@@ -178,13 +178,13 @@ _TOPO_STOPS = [
 
 
 def _topo_color(e: float) -> str:
-    # Swiss warm-humid hypsometric ramp (Imhof-inspired)
-    # Uses oklch_lerp for perceptually uniform interpolation between OKLCH-defined stops
+    # Discrete hypsometric bands (GIF-friendly). Peak height still selects
+    # a higher stop as prominence rises; do not lerp unique mid-ramp colors.
     stops = _TOPO_STOPS
     for i in range(len(stops) - 1):
         if e <= stops[i + 1][0]:
-            t = (e - stops[i][0]) / max(0.001, stops[i + 1][0] - stops[i][0])
-            return oklch_lerp(stops[i][1], stops[i + 1][1], t)
+            midpoint = (stops[i][0] + stops[i + 1][0]) / 2.0
+            return stops[i][1] if e < midpoint else stops[i + 1][1]
     return stops[-1][1]
 
 
@@ -1940,11 +1940,11 @@ def generate(
     # Background with paper texture
     P.append(f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}"/>')
     P.append(
-        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)" opacity="0.5"/>'
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="{pal["bg_primary"]}" filter="url(#paper)" opacity="0.12"/>'
     )
 
     # ── Elevation fill + hillshade ────────────────────────────────
-    fill_step = 2
+    fill_step = 4
     for gy in range(0, grid, fill_step):
         for gx in range(0, grid, fill_step):
             e = elevation[gy, gx]
@@ -1956,6 +1956,7 @@ def generate(
             sf = 0.30 + hs * 0.95
             rf = relief[min(gy, grid - 1), min(gx, grid - 1)]
             sf *= 0.94 + rf * 0.26
+            sf = round(sf * 6.0) / 6.0
             r_c = max(0, min(255, int(r_c * sf)))
             g_c = max(0, min(255, int(g_c * sf)))
             b_c = max(0, min(255, int(b_c * sf)))
@@ -2249,8 +2250,8 @@ def generate(
     _base_n_levels = max(
         8,
         min(
-            28,
-            8 + int(round(16 * contour_gain)),
+            20,
+            8 + int(round(14 * contour_gain)),
         ),
     )
     n_levels = int(_base_n_levels * (0.8 + 0.4 * complexity))
@@ -2302,11 +2303,6 @@ def generate(
                 f'<path d="{pd}" fill="none" stroke="{sc}" stroke-width="{sw}" {_timeline_style(contour_when, op)} '
                 f'stroke-linecap="round" stroke-linejoin="round"/>'
             )
-            if is_index and contour_gain >= 0.78:
-                P.append(
-                    f'<path d="{pd}" fill="none" stroke="{oklch_lerp(_contour_index_c, pal["text_primary"], 0.5)}" stroke-width="{max(0.4, sw * 0.55):.2f}" '
-                    f'{_timeline_style(contour_when, op * 0.45, "tl-reveal tl-crisp")} stroke-linecap="round" stroke-linejoin="round"/>'
-                )
         # Elevation labels on index contours showing meters
         clabel_fade = _fade(0.10, 0.30)
         if is_index and chains and clabel_fade > 0:
