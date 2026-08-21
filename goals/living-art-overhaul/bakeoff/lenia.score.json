@@ -1,0 +1,21 @@
+{
+  "style": "lenia",
+  "axes": {
+    "striking": {
+      "score": 4,
+      "rationale": "The designed look is lime/teal organisms on #01000c: GIF seek(60) is acid-green blobs plus teal satellites (gif-sheet mean 5.7/7.4/16.2); seek(119) holds denser lime occupancy (9.9/14.0/19.9) for 3s. DIAL t1–t2 stills add glow and orbits the GIF-path drops. seek(0) is overlay-only void (mean 1.1/0.2/11.2; 0 field pixels above lum 18 once the top-right register is masked), so the hit arrives mid-loop."
+    },
+    "readable_growth": {
+      "score": 3,
+      "rationale": "Commits as field occupancy are learnable: GIF field ink 0% (seek 0–20) → ~1% (30) → 5.5% (60) → 13.7% (119); stills navy #003e69 (t0, 202 cells, op ~0.40) → green #17a559 (t1, 320, op ~0.56) → lime #8dc900 (t2, 320, op ~0.65, r 7.5→12.0). Followers as satellite extent show on stills (2→4→6, spread x=152 cluster → 40–568). Stars as halo/glow fail on the published GIF (timeline=False: no glow/orbits; discrete subsample). Repos as one body per repo weld into overlapping circles. t1→t2 organism count is capped at 320, so late commits are luminance, not fill. Overlay ignored."
+    },
+    "distinct": {
+      "score": 4,
+      "rationale": "Once the field exists, this is a morphogenetic CA — overlapping discrete cells, lime occupancy, teal satellites — not a garden, cream-paper map, fitness rings, mycelial veins, or ferro towers. Dark-family overlap with genetic/physarum/ferro is real at seek 0 (shared navy void) and at GIF scale (shared fill-then-brighten). The petri-dish cell field remains the unique metaphor; glow/orbits live on the stills, not the GIF-path."
+    },
+    "github_fit": {
+      "score": 4,
+      "rationale": "One dark morphogenetic look, no living-lenia-dark. Canonical 400×400 / 120 / loop 0 / 29 660 ms; 856 KB under the 1.2 MB cap (gif-sheet 71%). Discrete cells survive GIF quantization. On GitHub light the filled hold is a black lime tile; DIAL t0 at 400×400 already shows a yellow-green host, teal satellites, and navy field. On GitHub dark, seek 0 vanishes into chrome like the other dark styles, then seek 60/119 read. Native 400 upscales full-width; the overlay strip is baked-in noise, not the picture."
+    }
+  }
+}

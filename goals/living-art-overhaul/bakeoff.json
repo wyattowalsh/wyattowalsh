@@ -1,0 +1,238 @@
+{
+  "node": "K1",
+  "lock": "L-BAKE",
+  "wave": "BAK",
+  "axes": [
+    "striking",
+    "readable_growth",
+    "distinct",
+    "github_fit"
+  ],
+  "axis_weights": {
+    "striking": 1,
+    "readable_growth": 1,
+    "distinct": 1,
+    "github_fit": 1
+  },
+  "score_range": [1, 5],
+  "candidates": [
+    "inkgarden",
+    "topo",
+    "genetic",
+    "physarum",
+    "lenia",
+    "ferrofluid"
+  ],
+  "sources": {
+    "scores": [
+      "goals/living-art-overhaul/bakeoff/inkgarden.score.json",
+      "goals/living-art-overhaul/bakeoff/topo.score.json",
+      "goals/living-art-overhaul/bakeoff/genetic.score.json",
+      "goals/living-art-overhaul/bakeoff/physarum.score.json",
+      "goals/living-art-overhaul/bakeoff/lenia.score.json",
+      "goals/living-art-overhaul/bakeoff/ferrofluid.score.json"
+    ],
+    "contact_sheet": "goals/living-art-overhaul/bakeoff/gif-sheet.md"
+  },
+  "styles": {
+    "inkgarden": {
+      "sum": 17,
+      "average": 4.25,
+      "axes": {
+        "striking": {
+          "score": 4,
+          "rationale": "GIF frames 60 and 119 are a lush ink-wash garden on aged paper: teal canopy, magenta specks, soil band, vignette. Frame 0 is almost empty parchment with punctuation-sized stems, so the loop opens quiet rather than immediately commanding."
+        },
+        "readable_growth": {
+          "score": 4,
+          "rationale": "Live GIF 0→60 fills the page (parchment ~58%→31%, foliage ~6%→24%, mean RGB 194→156); 60→119 holds a dense garden. DIAL stills add plants 1→2→4, bloom size 15.6→25.9→36, trunk strokes ~3→6. Followers/glints stay opacity-0 in stills and do not read as gold fireflies in the GIF; late frames fuse into a thicket, so repo-count is hard to tally without the legend."
+        },
+        "distinct": {
+          "score": 5,
+          "rationale": "Only botanical parchment world: stem+canopy plants, blooms, trunks, soil horizon, paper grain. Not a map, slime mold, CA, or ferrofluid."
+        },
+        "github_fit": {
+          "score": 4,
+          "rationale": "400×400 looping GIF, one parchment look that reads as paper on GitHub light and a cream card on dark; no -dark sibling. Fine ink dithers at README size, the ~7MB GIF is heavy, and the sparse first frame is a weak still if animation has not started."
+        }
+      }
+    },
+    "topo": {
+      "sum": 17,
+      "average": 4.25,
+      "axes": {
+        "striking": {
+          "score": 4,
+          "rationale": "Cream-paper survey chrome (grid, compass, title block, hypsometric greens) is a real poster once terrain exists: GIF seek(60) ~14% green / 83% cream; seek(119) highest edge energy with 76 coarse colors (gif-sheet mean 203/213/202). DIAL t1–t2 stills are the designed look — dark-brown settlements on land, not overlay. seek(0) and still t0 stay ~99.5% cream (gif-sheet 216/230/224) with almost no hill ink, so the film earns the map late rather than holding it for the full 30s."
+        },
+        "readable_growth": {
+          "score": 4,
+          "rationale": "Stills teach the identity caption-blind: one hill per repo (1→2→4; summit elev 0.444→0.748→0.834, map-center 0.178–0.307 below the first hill), stars as height (prominence 0.859→1.394), commits as contour mass (n_levels 14→18→20, contour_gain 0.570→0.913), followers as settlements (1→3→4 marks, r 7.1→9.3→11.0, village halo at t2). GIF 0→60 is empty mint → filled survey (green 0→14%, edge 1.3→4.1). 60→119 adds contour/label edge but green and dark fractions recede (14%→6%, 2.1%→0.7%), so stars/followers blur into commit ink at 400px. Overlay ignored."
+        },
+        "distinct": {
+          "score": 5,
+          "rationale": "Only cartographic cream-paper world in the six: one Gaussian hill per repo, stars as summit height, commits as contour mass, followers as brown settlements, plus survey furniture (compass, legend, graticule, Topographic Survey). Not a garden, fitness rings, hyphae, Lenia field, or ferro spikes. Parchment kinship with Ink Garden is real at a thumbnail glance; the map dialect stays unique."
+        },
+        "github_fit": {
+          "score": 4,
+          "rationale": "One cream-paper look, no living-topo-dark. Canonical 400×400 / 120 / loop 0 / 29 660 ms; 8.6 MB under the 10 MB cap (gif-sheet 86%). Cream card reads on GitHub dark and as a designed tile on light. Deduct from 5: seek(0) is pale-on-pale mint grid (title/chrome only); native 400 upscales full-width so last-frame contour+label clutter softens individual hills; newest-peak fill in stills is still ~0.48 opacity."
+        }
+      }
+    },
+    "genetic": {
+      "sum": 17,
+      "average": 4.25,
+      "axes": {
+        "striking": {
+          "score": 4,
+          "rationale": "Navy designed ground with cyan/lime cores, stroke-glow halos, and concentric generation rings is a strong neon-on-dark look. DIAL stills t1–t2 and GIF seek(119) stop the eye; seek(0) is almost only the fitness HUD on empty navy (mean RGB ~4/14/24), so the film earns the look late rather than holding it for the full 30s."
+        },
+        "readable_growth": {
+          "score": 4,
+          "rationale": "Stills (timeline-rich) teach the mapping caption-blind: peaks 1→2→4 (min pairwise ~132px), star height as core/glow radius (t1 r=10 vs r=22), generation rings 2→4 plus index contours, colonies 1→4→12 at 1/18/80 followers. Published GIF still grows (seek 30: first core; 60: ~15 separated nodes; 119: dense field) but is simplified—hue snap, stroke glow, ring cap 3, no contour layer—so commits are quieter and late frames weld cores. Colony isolation is now closed (0 followers → 0 colonies; 1 vs 90 → 2 vs 4); the regenerated film’s pixels match the prior look."
+        },
+        "distinct": {
+          "score": 5,
+          "rationale": "Fitness identity is unique in the six: one peak per repo, height as stars, stacked generation rings as commits, satellite colonies as followers. Nothing else is concentric rings around language-tinted cores on a single navy ground. Hue snap (cyan vs lime) even sharpens the dialect versus parchment topo, ink garden, gold physarum, lenia field, or ferro spikes."
+        },
+        "github_fit": {
+          "score": 4,
+          "rationale": "One designed look, no living-genetic-dark pair. 400×400 / 120 frames / 1,051,709 bytes (1.05 MB, 44% of 2.4 MB) with an MP4 click-through; overlay at (44,44) misses the t0 hill in stills. Dark card reads on GitHub dark and as a designed tile on light. Deduct from 5: native 400 upscales to full-width (~1006px); seek(0) is a near-black square with only the HUD, and seek(119) crowding softens individual peaks."
+        }
+      }
+    },
+    "physarum": {
+      "sum": 13,
+      "average": 3.25,
+      "axes": {
+        "striking": {
+          "score": 3,
+          "rationale": "The 3s last-hold is a dark-gold/teal mycelial web on #000514 (GIF seek 119: ~26% ink, gold+teal highlights, mean RGB 33/40/42). That climax is elegant, not punchy. seek 0–20 is a dead navy square (gif-sheet mean 0.3/5.2/20.0; 0 body pixels above the overlay). Identity gold is delayed: DIAL t0 veins are language-tinted #c592e2, not gold; gold-leaning strokes rise t1 (21/72) → t2 (50/86)."
+        },
+        "readable_growth": {
+          "score": 3,
+          "rationale": "DIAL stills carry the intended spine: tagged physarum-vein from the first repo (t0: 4 veins + 1 core, not spore-only) → t1 2 cores / 72 veins → t2 4 cores / 86 veins, thicker and more opaque. The published GIF does not: seek 0 has 0 ink above y=360 (overlay bar only); organism ink appears ~frame 30 and colonizes through 119. Account growth is visible as colonization, but repos/stars/commits/followers do not separate cleanly in the 400px raster."
+        },
+        "distinct": {
+          "score": 4,
+          "rationale": "Once ink exists, this is a transport network — tagged hyphae plus language-tinted food nodes — not plants, contours, fitness peaks, Lenia blobs, or ferrofluid towers. Dark-family overlap with genetic/lenia is real at GIF scale (shared navy fill-then-brighten), but the vein graph remains the unique metaphor. Spore is present and small; it is not the picture in the stills."
+        },
+        "github_fit": {
+          "score": 3,
+          "rationale": "One look: navy substrate, gold overlay, no living-physarum-dark. On GitHub light the filled hold reads as a dark gold tile; on GitHub dark, seek 0–20 vanishes into chrome and only the overlay strip remains. 400×400 also crushes DIAL t0 (800 SVG network → 0.53% raster ink). The designed dark-gold look works at the hold, not at first-repo."
+        }
+      }
+    },
+    "lenia": {
+      "sum": 15,
+      "average": 3.75,
+      "axes": {
+        "striking": {
+          "score": 4,
+          "rationale": "The designed look is lime/teal organisms on #01000c: GIF seek(60) is acid-green blobs plus teal satellites (gif-sheet mean 5.7/7.4/16.2); seek(119) holds denser lime occupancy (9.9/14.0/19.9) for 3s. DIAL t1–t2 stills add glow and orbits the GIF-path drops. seek(0) is overlay-only void (mean 1.1/0.2/11.2; 0 field pixels above lum 18 once the top-right register is masked), so the hit arrives mid-loop."
+        },
+        "readable_growth": {
+          "score": 3,
+          "rationale": "Commits as field occupancy are learnable: GIF field ink 0% (seek 0–20) → ~1% (30) → 5.5% (60) → 13.7% (119); stills navy #003e69 (t0, 202 cells, op ~0.40) → green #17a559 (t1, 320, op ~0.56) → lime #8dc900 (t2, 320, op ~0.65, r 7.5→12.0). Followers as satellite extent show on stills (2→4→6, spread x=152 cluster → 40–568). Stars as halo/glow fail on the published GIF (timeline=False: no glow/orbits; discrete subsample). Repos as one body per repo weld into overlapping circles. t1→t2 organism count is capped at 320, so late commits are luminance, not fill. Overlay ignored."
+        },
+        "distinct": {
+          "score": 4,
+          "rationale": "Once the field exists, this is a morphogenetic CA — overlapping discrete cells, lime occupancy, teal satellites — not a garden, cream-paper map, fitness rings, mycelial veins, or ferro towers. Dark-family overlap with genetic/physarum/ferro is real at seek 0 (shared navy void) and at GIF scale (shared fill-then-brighten). The petri-dish cell field remains the unique metaphor; glow/orbits live on the stills, not the GIF-path."
+        },
+        "github_fit": {
+          "score": 4,
+          "rationale": "One dark morphogenetic look, no living-lenia-dark. Canonical 400×400 / 120 / loop 0 / 29 660 ms; 856 KB under the 1.2 MB cap (gif-sheet 71%). Discrete cells survive GIF quantization. On GitHub light the filled hold is a black lime tile; DIAL t0 at 400×400 already shows a yellow-green host, teal satellites, and navy field. On GitHub dark, seek 0 vanishes into chrome like the other dark styles, then seek 60/119 read. Native 400 upscales full-width; the overlay strip is baked-in noise, not the picture."
+        }
+      }
+    },
+    "ferrofluid": {
+      "sum": 17,
+      "average": 4.25,
+      "axes": {
+        "striking": {
+          "score": 4,
+          "rationale": "The money shot is a near-black magnetic skyline: GIF seek 60 is a cyan/teal comb with language-tint gold (mean RGB 13.1/39.4/43.3); seek 119 holds brighter still (24.7/67.4/70.9) as a 3s ferrofluid city. DIAL t1/t2 stills are the same sculpture at isolation N — two then four metallic towers on #000105. Seek 0 is a dead square (gif-sheet 0.3/0.7/3.0; almost no body ink above the overlay), so the hit arrives mid-loop rather than on first frame."
+        },
+        "readable_growth": {
+          "score": 4,
+          "rationale": "Caption-blind stills match the identity: even stations WIDTH*(i+1)/(n+1) — t0 one tower at 400; t1 two at 266.7/533.3; t2 four at 160/320/480/640 (gaps 160, all Python, not a language-cluster hedge). Spike height tracks stars (max 92.5 → 271.8 → 691.3; data-spike-scale 0.841 → 1.114 → 1.317); ripples and the leased field ellipse also enlarge. The published GIF tells the same story as a rising skyline (void → many even columns by seek 60 → denser hold), but seek 0 has no visible first-repo tower and commits/followers stay secondary in the 400px raster."
+        },
+        "distinct": {
+          "score": 5,
+          "rationale": "This is a 1D magnetic skyline — one tower per repo on a pool line, with reflections and ferro-spikes — not a garden, contour map, fitness peaks, mycelial web, or Lenia blobs. Language tints the metal (GIF gold cluster) but does not own x. Dark-family overlap with genetic/physarum/lenia is real at seek 0 (shared navy void), but once the comb appears the metaphor is unique."
+        },
+        "github_fit": {
+          "score": 4,
+          "rationale": "One look: #000105→#000000 pool, no living-ferrofluid-dark. On GitHub light the filled hold is a black tile with cyan towers; DIAL t0 at 400×400 already shows a central tower (dipole opacity 0.61). On GitHub dark, seek 0 vanishes into chrome like the other dark styles, then the mid/last seeks read. Canonical 400×400 / 120 frames / 29.66s, 3.61 MB under the 3.8 MB cap (95%). Last-hold density is busy at README size; the designed sculpture still survives without a second theme."
+        }
+      }
+    }
+  },
+  "ranking": [
+    {
+      "style": "inkgarden",
+      "sum": 17,
+      "average": 4.25,
+      "striking": 4,
+      "readable_growth": 4,
+      "distinct": 5,
+      "github_fit": 4
+    },
+    {
+      "style": "topo",
+      "sum": 17,
+      "average": 4.25,
+      "striking": 4,
+      "readable_growth": 4,
+      "distinct": 5,
+      "github_fit": 4
+    },
+    {
+      "style": "genetic",
+      "sum": 17,
+      "average": 4.25,
+      "striking": 4,
+      "readable_growth": 4,
+      "distinct": 5,
+      "github_fit": 4
+    },
+    {
+      "style": "ferrofluid",
+      "sum": 17,
+      "average": 4.25,
+      "striking": 4,
+      "readable_growth": 4,
+      "distinct": 5,
+      "github_fit": 4
+    },
+    {
+      "style": "lenia",
+      "sum": 15,
+      "average": 3.75,
+      "striking": 4,
+      "readable_growth": 3,
+      "distinct": 4,
+      "github_fit": 4
+    },
+    {
+      "style": "physarum",
+      "sum": 13,
+      "average": 3.25,
+      "striking": 3,
+      "readable_growth": 3,
+      "distinct": 4,
+      "github_fit": 3
+    }
+  ],
+  "proposed": [
+    "inkgarden",
+    "topo",
+    "genetic",
+    "ferrofluid"
+  ],
+  "omitted": [
+    "lenia",
+    "physarum"
+  ],
+  "rationale": "Four equal axes; sums split 17 / 15 / 13. The four 17s share the vector striking 4, readable_growth 4, distinct 5, github_fit 4. Propose those four (length 4, the grill floor) in candidate order as the README stack. Omit lenia (15): striking 4 with readable_growth 3 — stars fail on the published GIF and repos weld; pretty CA motion without a readable four-signal spine cannot win. Omit physarum (13): lowest on striking, growth, and GitHub-fit; colonization is visible but repos/stars/commits/followers do not separate at 400px, and seek 0–20 is a dead navy square. Prefer fewer while both omitted metaphors stay unreadable on the published GIF. Close four-way tie at 17 stays in candidate order (parchment pair, then navy fitness, then ferro skyline); taste may reorder or restore a drop. This node is not K2."
+}

@@ -1,0 +1,21 @@
+{
+  "style": "physarum",
+  "axes": {
+    "striking": {
+      "score": 3,
+      "rationale": "The 3s last-hold is a dark-gold/teal mycelial web on #000514 (GIF seek 119: ~26% ink, gold+teal highlights, mean RGB 33/40/42). That climax is elegant, not punchy. seek 0–20 is a dead navy square (gif-sheet mean 0.3/5.2/20.0; 0 body pixels above the overlay). Identity gold is delayed: DIAL t0 veins are language-tinted #c592e2, not gold; gold-leaning strokes rise t1 (21/72) → t2 (50/86)."
+    },
+    "readable_growth": {
+      "score": 3,
+      "rationale": "DIAL stills carry the intended spine: tagged physarum-vein from the first repo (t0: 4 veins + 1 core, not spore-only) → t1 2 cores / 72 veins → t2 4 cores / 86 veins, thicker and more opaque. The published GIF does not: seek 0 has 0 ink above y=360 (overlay bar only); organism ink appears ~frame 30 and colonizes through 119. Account growth is visible as colonization, but repos/stars/commits/followers do not separate cleanly in the 400px raster."
+    },
+    "distinct": {
+      "score": 4,
+      "rationale": "Once ink exists, this is a transport network — tagged hyphae plus language-tinted food nodes — not plants, contours, fitness peaks, Lenia blobs, or ferrofluid towers. Dark-family overlap with genetic/lenia is real at GIF scale (shared navy fill-then-brighten), but the vein graph remains the unique metaphor. Spore is present and small; it is not the picture in the stills."
+    },
+    "github_fit": {
+      "score": 3,
+      "rationale": "One look: navy substrate, gold overlay, no living-physarum-dark. On GitHub light the filled hold reads as a dark gold tile; on GitHub dark, seek 0–20 vanishes into chrome and only the overlay strip remains. 400×400 also crushes DIAL t0 (800 SVG network → 0.53% raster ink). The designed dark-gold look works at the hold, not at first-repo."
+    }
+  }
+}

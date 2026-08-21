@@ -1,0 +1,21 @@
+{
+  "style": "genetic",
+  "axes": {
+    "striking": {
+      "score": 4,
+      "rationale": "Navy designed ground with cyan/lime cores, stroke-glow halos, and concentric generation rings is a strong neon-on-dark look. DIAL stills t1–t2 and GIF seek(119) stop the eye; seek(0) is almost only the fitness HUD on empty navy (mean RGB ~4/14/24), so the film earns the look late rather than holding it for the full 30s."
+    },
+    "readable_growth": {
+      "score": 4,
+      "rationale": "Stills (timeline-rich) teach the mapping caption-blind: peaks 1→2→4 (min pairwise ~132px), star height as core/glow radius (t1 r=10 vs r=22), generation rings 2→4 plus index contours, colonies 1→4→12 at 1/18/80 followers. Published GIF still grows (seek 30: first core; 60: ~15 separated nodes; 119: dense field) but is simplified—hue snap, stroke glow, ring cap 3, no contour layer—so commits are quieter and late frames weld cores. Colony isolation is now closed (0 followers → 0 colonies; 1 vs 90 → 2 vs 4); the regenerated film’s pixels match the prior look."
+    },
+    "distinct": {
+      "score": 5,
+      "rationale": "Fitness identity is unique in the six: one peak per repo, height as stars, stacked generation rings as commits, satellite colonies as followers. Nothing else is concentric rings around language-tinted cores on a single navy ground. Hue snap (cyan vs lime) even sharpens the dialect versus parchment topo, ink garden, gold physarum, lenia field, or ferro spikes."
+    },
+    "github_fit": {
+      "score": 4,
+      "rationale": "One designed look, no living-genetic-dark pair. 400×400 / 120 frames / 1,051,709 bytes (1.05 MB, 44% of 2.4 MB) with an MP4 click-through; overlay at (44,44) misses the t0 hill in stills. Dark card reads on GitHub dark and as a designed tile on light. Deduct from 5: native 400 upscales to full-width (~1006px); seek(0) is a near-black square with only the HUD, and seek(119) crowding softens individual peaks."
+    }
+  }
+}

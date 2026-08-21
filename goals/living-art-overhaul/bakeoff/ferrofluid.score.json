@@ -1,0 +1,21 @@
+{
+  "style": "ferrofluid",
+  "axes": {
+    "striking": {
+      "score": 4,
+      "rationale": "The money shot is a near-black magnetic skyline: GIF seek 60 is a cyan/teal comb with language-tint gold (mean RGB 13.1/39.4/43.3); seek 119 holds brighter still (24.7/67.4/70.9) as a 3s ferrofluid city. DIAL t1/t2 stills are the same sculpture at isolation N — two then four metallic towers on #000105. Seek 0 is a dead square (gif-sheet 0.3/0.7/3.0; almost no body ink above the overlay), so the hit arrives mid-loop rather than on first frame."
+    },
+    "readable_growth": {
+      "score": 4,
+      "rationale": "Caption-blind stills match the identity: even stations WIDTH*(i+1)/(n+1) — t0 one tower at 400; t1 two at 266.7/533.3; t2 four at 160/320/480/640 (gaps 160, all Python, not a language-cluster hedge). Spike height tracks stars (max 92.5 → 271.8 → 691.3; data-spike-scale 0.841 → 1.114 → 1.317); ripples and the leased field ellipse also enlarge. The published GIF tells the same story as a rising skyline (void → many even columns by seek 60 → denser hold), but seek 0 has no visible first-repo tower and commits/followers stay secondary in the 400px raster."
+    },
+    "distinct": {
+      "score": 5,
+      "rationale": "This is a 1D magnetic skyline — one tower per repo on a pool line, with reflections and ferro-spikes — not a garden, contour map, fitness peaks, mycelial web, or Lenia blobs. Language tints the metal (GIF gold cluster) but does not own x. Dark-family overlap with genetic/physarum/lenia is real at seek 0 (shared navy void), but once the comb appears the metaphor is unique."
+    },
+    "github_fit": {
+      "score": 4,
+      "rationale": "One look: #000105→#000000 pool, no living-ferrofluid-dark. On GitHub light the filled hold is a black tile with cyan towers; DIAL t0 at 400×400 already shows a central tower (dipole opacity 0.61). On GitHub dark, seek 0 vanishes into chrome like the other dark styles, then the mid/last seeks read. Canonical 400×400 / 120 frames / 29.66s, 3.61 MB under the 3.8 MB cap (95%). Last-hold density is busy at README size; the designed sculpture still survives without a second theme."
+    }
+  }
+}

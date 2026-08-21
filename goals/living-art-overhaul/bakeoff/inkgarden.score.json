@@ -1,0 +1,21 @@
+{
+  "style": "inkgarden",
+  "axes": {
+    "striking": {
+      "score": 4,
+      "rationale": "GIF frames 60 and 119 are a lush ink-wash garden on aged paper: teal canopy, magenta specks, soil band, vignette. Frame 0 is almost empty parchment with punctuation-sized stems, so the loop opens quiet rather than immediately commanding."
+    },
+    "readable_growth": {
+      "score": 4,
+      "rationale": "Live GIF 0→60 fills the page (parchment ~58%→31%, foliage ~6%→24%, mean RGB 194→156); 60→119 holds a dense garden. DIAL stills add plants 1→2→4, bloom size 15.6→25.9→36, trunk strokes ~3→6. Followers/glints stay opacity-0 in stills and do not read as gold fireflies in the GIF; late frames fuse into a thicket, so repo-count is hard to tally without the legend."
+    },
+    "distinct": {
+      "score": 5,
+      "rationale": "Only botanical parchment world: stem+canopy plants, blooms, trunks, soil horizon, paper grain. Not a map, slime mold, CA, or ferrofluid."
+    },
+    "github_fit": {
+      "score": 4,
+      "rationale": "400×400 looping GIF, one parchment look that reads as paper on GitHub light and a cream card on dark; no -dark sibling. Fine ink dithers at README size, the ~7MB GIF is heavy, and the sparse first frame is a weak still if animation has not started."
+    }
+  }
+}

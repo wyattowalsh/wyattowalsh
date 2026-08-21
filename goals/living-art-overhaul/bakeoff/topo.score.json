@@ -1,0 +1,21 @@
+{
+  "style": "topo",
+  "axes": {
+    "striking": {
+      "score": 4,
+      "rationale": "Cream-paper survey chrome (grid, compass, title block, hypsometric greens) is a real poster once terrain exists: GIF seek(60) ~14% green / 83% cream; seek(119) highest edge energy with 76 coarse colors (gif-sheet mean 203/213/202). DIAL t1–t2 stills are the designed look — dark-brown settlements on land, not overlay. seek(0) and still t0 stay ~99.5% cream (gif-sheet 216/230/224) with almost no hill ink, so the film earns the map late rather than holding it for the full 30s."
+    },
+    "readable_growth": {
+      "score": 4,
+      "rationale": "Stills teach the identity caption-blind: one hill per repo (1→2→4; summit elev 0.444→0.748→0.834, map-center 0.178–0.307 below the first hill), stars as height (prominence 0.859→1.394), commits as contour mass (n_levels 14→18→20, contour_gain 0.570→0.913), followers as settlements (1→3→4 marks, r 7.1→9.3→11.0, village halo at t2). GIF 0→60 is empty mint → filled survey (green 0→14%, edge 1.3→4.1). 60→119 adds contour/label edge but green and dark fractions recede (14%→6%, 2.1%→0.7%), so stars/followers blur into commit ink at 400px. Overlay ignored."
+    },
+    "distinct": {
+      "score": 5,
+      "rationale": "Only cartographic cream-paper world in the six: one Gaussian hill per repo, stars as summit height, commits as contour mass, followers as brown settlements, plus survey furniture (compass, legend, graticule, Topographic Survey). Not a garden, fitness rings, hyphae, Lenia field, or ferro spikes. Parchment kinship with Ink Garden is real at a thumbnail glance; the map dialect stays unique."
+    },
+    "github_fit": {
+      "score": 4,
+      "rationale": "One cream-paper look, no living-topo-dark. Canonical 400×400 / 120 / loop 0 / 29 660 ms; 8.6 MB under the 10 MB cap (gif-sheet 86%). Cream card reads on GitHub dark and as a designed tile on light. Deduct from 5: seek(0) is pale-on-pale mint grid (title/chrome only); native 400 upscales full-width so last-frame contour+label clutter softens individual hills; newest-peak fill in stills is still ~0.48 opacity."
+    }
+  }
+}
