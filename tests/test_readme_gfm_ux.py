@@ -1,9 +1,9 @@
-"""GFM UX contracts for the live profile README (post-R2 wrap-flow design).
+"""GFM UX contracts for the live profile README (full-width Living Art stack).
 
-These tests assert the committed README.md composition and the generator
-rewrites that keep Living Art / My Tech Stack aligned with that design.
-They intentionally avoid callouts, footnotes, and Living Art <details> —
-those are not part of the current GFM UX.
+These tests assert README composition and generator rewrites that keep
+Living Art / My Tech Stack aligned with that design. Living Art is a
+full-width stack with per-piece <details>; My Tech Stack stays collapsed.
+Featured projects remain a wrap-flow of 360 cards.
 """
 
 from __future__ import annotations
@@ -12,7 +12,9 @@ import re
 from pathlib import Path
 from textwrap import dedent
 
-from scripts.art.artifacts import LIVING_ART_STYLE_KEYS
+import pytest
+
+from scripts.art.roster import SHIPPED_STYLE_KEYS, shipped_legends
 from scripts.config import ReadmeSectionsSettings, load_config
 from scripts.readme_sections import (
     ReadmeSectionGenerator,
@@ -104,11 +106,38 @@ def test_generate_separators_writes_unique_themed_fleet(tmp_path: Path) -> None:
     assert 'aria-label="My Tech Stack"' in tech.read_text(encoding="utf-8")
 
 
-_LIVING_WRAP_RE = re.compile(
+# Inverse of the retired six-thumb wrap (one centered <p> of living-* posters).
+_FORBIDDEN_LIVING_WRAP_RE = re.compile(
     r'<p align="center">\s*'
     r'(?:<a href="[^"]+">\s*<img src="\.github/assets/img/living-[^"]+"'
     r"[^>]*>\s*</a>\s*){6}</p>",
     re.S,
+)
+_SPINE_IN_INTRO_RE = re.compile(
+    r"\b(repos?|stars?|commits?|followers?|four-signal spine)\b",
+    re.I,
+)
+_FORBIDDEN_HOST_RE = re.compile(
+    r"youtube\.com|youtu\.be|cloudinary|vimeo|"
+    r"user-images\.githubusercontent\.com|"
+    r"github\.com/\S+/assets/|"
+    r"github\.com/user-attachments/|"
+    r"<iframe\b",
+    re.I,
+)
+_ALLOWED_LIVING_MEDIA_RE = re.compile(
+    r"^\.github/assets/img/living-[a-z0-9-]+\.(gif|mp4)$"
+)
+_SEPARATOR_SRC_RE = re.compile(r"^\.github/assets/img/readme/sep-[a-z]+\.svg$")
+_MEDIA_URL_ATTR_RE = re.compile(
+    r"""\b(?:src|href|poster)=["']([^"']+)["']""",
+    re.I,
+)
+_DETAILS_RE = re.compile(r"(?is)<details\b.*?</details>")
+_TRAILING_SEP_RE = re.compile(
+    r'(?:\s*<p align="center">\s*<img src="\.github/assets/img/readme/'
+    r'sep-[a-z]+\.svg"[^>]*>\s*</p>\s*)+$',
+    re.I,
 )
 
 
@@ -149,12 +178,6 @@ def slice_between_headings(text: str, start: str, end: str) -> str:
     return rest[: end_match.start()]
 
 
-def living_art_wrap(text: str) -> str:
-    match = _LIVING_WRAP_RE.search(text)
-    assert match is not None, "living-art wrap-flow paragraph missing"
-    return match.group(0)
-
-
 def _order() -> tuple[str, ...]:
     try:
         settings = load_config().readme_sections_settings
@@ -167,10 +190,189 @@ def _read_readme() -> str:
     return README_PATH.read_text(encoding="utf-8")
 
 
-def _living_art_section(readme: str) -> str:
-    match = compile_section_body_re("Living Art", _order()).search(readme)
+def shipped_living_art_count() -> int:
+    n = len(SHIPPED_STYLE_KEYS)
+    assert 1 <= n <= 6, n
+    return n
+
+
+def living_art_section(text: str) -> str:
+    match = compile_section_body_re("Living Art", _order()).search(text)
     assert match is not None, "Living Art section missing"
-    return match.group(0)
+    return _TRAILING_SEP_RE.sub("", match.group(0)).rstrip() + "\n"
+
+
+def visible_living_art_and_details(living: str) -> tuple[str, list[str]]:
+    blocks = _DETAILS_RE.findall(living)
+    visible = _DETAILS_RE.sub("\n", living)
+    return visible, blocks
+
+
+def living_art_intro(living: str) -> str:
+    """First unaligned paragraph after the Living Art heading."""
+    match = re.search(r"(?s)<p>(.*?)</p>", living)
+    assert match is not None, "Living Art intro paragraph missing"
+    return match.group(1)
+
+
+def assert_living_art_not_wrapped(living: str) -> None:
+    assert _FORBIDDEN_LIVING_WRAP_RE.search(living) is None
+    assert 'width="360"' not in living
+    lowered = living.lower()
+    assert "<table" not in lowered
+    assert "</table>" not in lowered
+    assert "display: grid" not in lowered
+    assert "grid-template" not in lowered
+    assert "<br/>" not in lowered
+    assert "<sub>" not in lowered
+
+
+def assert_art_outside_details(living: str) -> None:
+    _visible, blocks = visible_living_art_and_details(living)
+    n = shipped_living_art_count()
+    assert len(blocks) == n
+    assert living.count("<details") == n
+    assert living.count("</details>") == n
+    assert re.search(r"<details\b[^>]*\bopen\b", living, flags=re.I) is None
+    for block in blocks:
+        assert "living-" not in block
+        assert "<video" not in block.lower()
+        assert re.search(r"<img\b", block, flags=re.I) is None
+
+
+def assert_full_width_media(living: str) -> None:
+    visible, _blocks = visible_living_art_and_details(living)
+    assert visible.count('width="100%"') >= shipped_living_art_count()
+    for style in SHIPPED_STYLE_KEYS:
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        video_hit = re.search(
+            rf'<video\b[^>]*src="{re.escape(mp4)}"[^>]*>',
+            visible,
+        )
+        img_hit = re.search(
+            rf'<img\b[^>]*src="{re.escape(gif)}"[^>]*>',
+            visible,
+        )
+        if video_hit is not None:
+            assert 'width="100%"' in video_hit.group(0)
+        if img_hit is not None:
+            assert 'width="100%"' in img_hit.group(0)
+            assert 'loading="lazy"' in img_hit.group(0)
+        assert video_hit is not None or img_hit is not None, style
+
+
+def assert_legal_media_forms(living: str) -> None:
+    visible, _blocks = visible_living_art_and_details(living)
+    for style in SHIPPED_STYLE_KEYS:
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        has_video = (
+            re.search(rf'<video\b[^>]*\bsrc="{re.escape(mp4)}"', visible) is not None
+        )
+        has_gif = f'src="{gif}"' in visible
+        has_href = f'href="{mp4}"' in visible
+        assert has_video or (has_gif and has_href), style
+
+
+def assert_living_art_hosts_allowed(living: str) -> None:
+    assert "<iframe" not in living.lower()
+    assert _FORBIDDEN_HOST_RE.search(living) is None
+    for url in _MEDIA_URL_ATTR_RE.findall(living):
+        if _SEPARATOR_SRC_RE.fullmatch(url):
+            continue
+        assert _ALLOWED_LIVING_MEDIA_RE.fullmatch(url), url
+
+
+def assert_living_art_intro_has_no_spine(living: str) -> None:
+    intro = living_art_intro(living)
+    lowered = intro.lower()
+    assert "daily timelapses" in lowered
+    assert "visual world" in lowered
+    assert _SPINE_IN_INTRO_RE.search(intro) is None
+
+
+def assert_living_art_dropdown_copy(living: str) -> None:
+    _visible, blocks = visible_living_art_and_details(living)
+    legends = dict(shipped_legends())
+    assert len(blocks) == len(SHIPPED_STYLE_KEYS)
+    titles: list[str] = []
+    for block in blocks:
+        summary = re.search(
+            r"<summary>\s*<strong>(.*?)</strong>\s*</summary>",
+            block,
+            flags=re.S,
+        )
+        assert summary is not None, block[:200]
+        titles.append(summary.group(1))
+    assert titles == [legends[key].title for key in SHIPPED_STYLE_KEYS]
+    assert "how to read" not in living.lower()
+    for style, block in zip(SHIPPED_STYLE_KEYS, blocks, strict=True):
+        legend = legends[style]
+        assert legend.metaphor in block
+        assert legend.mapping.repos in block
+        assert legend.mapping.stars in block
+        assert legend.mapping.commits in block
+        assert legend.mapping.followers in block
+        assert "**Repos:**" in block
+        assert "**Stars:**" in block
+        assert "**Commits:**" in block
+        assert "**Followers:**" in block
+
+
+def assert_living_art_stack_layout(living: str) -> None:
+    assert_living_art_not_wrapped(living)
+    assert_art_outside_details(living)
+    assert_full_width_media(living)
+    assert_legal_media_forms(living)
+
+
+def _synthetic_living_art_section(*, form: str) -> str:
+    pieces = [
+        "<!-- ## Living Art -->",
+        (
+            "<p>These are daily timelapses of this GitHub account from "
+            "creation to now, each a different visual world.</p>"
+        ),
+    ]
+    for style, legend in shipped_legends():
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        if form == "video":
+            media = (
+                f'<p align="center">\n<video src="{mp4}" width="100%"></video>\n</p>'
+            )
+        elif form == "gif-href":
+            media = (
+                f'<p align="center">\n'
+                f'<a href="{mp4}">'
+                f'<img src="{gif}" alt="{legend.title}" width="100%" '
+                f'loading="lazy"/></a>\n'
+                "</p>"
+            )
+        elif form == "both":
+            media = (
+                f'<p align="center">\n'
+                f'<video src="{mp4}" width="100%" poster="{gif}">\n'
+                f'<a href="{mp4}">'
+                f'<img src="{gif}" alt="{legend.title}" width="100%" '
+                f'loading="lazy"/></a>\n'
+                "</video>\n"
+                "</p>"
+            )
+        else:
+            raise ValueError(f"unknown living-art media form {form!r}")
+        details = (
+            f"<details>\n<summary><strong>{legend.title}</strong></summary>\n\n"
+            f"{legend.metaphor}\n\n"
+            f"- **Repos:** {legend.mapping.repos}\n"
+            f"- **Stars:** {legend.mapping.stars}\n"
+            f"- **Commits:** {legend.mapping.commits}\n"
+            f"- **Followers:** {legend.mapping.followers}\n\n"
+            "</details>"
+        )
+        pieces.extend(["", media, details])
+    return "\n".join(pieces)
 
 
 def _featured_block(readme: str) -> str:
@@ -185,38 +387,38 @@ def _tech_stack_section(readme: str) -> str:
     return match.group(0)
 
 
-def test_living_art_wrap_flow_shows_all_six_gifs() -> None:
-    """All six living-art GIFs are inline at width 360 inside one centered wrap."""
+def test_living_art_full_width_stack_shows_shipped_media() -> None:
+    """Shipped living-art media is full-width, one piece per row, not a 360 wrap."""
     readme = _read_readme()
     assert_visible_or_comment_heading(readme, "Living Art")
-    wrap = living_art_wrap(readme)
+    living = living_art_section(readme)
+    n = shipped_living_art_count()
+    visible, _blocks = visible_living_art_and_details(living)
+    lazy = len(
+        re.findall(
+            r'<img src="\.github/assets/img/living-[^"]+"[^>]*loading="lazy"',
+            visible,
+        )
+    )
 
-    assert wrap.count('<p align="center">') == 1
-    assert wrap.count("</p>") == 1
-    assert wrap.count('width="360"') == 6
-    assert wrap.count('width="100%"') == 0
-    assert wrap.count('loading="lazy"') == 6
+    assert_living_art_stack_layout(living)
+    assert living.count('width="100%"') >= n
+    assert living.count('width="360"') == 0
+    assert visible.count('<p align="center">') >= n
+    assert lazy == n
 
-    for style in LIVING_ART_STYLE_KEYS:
-        poster = f".github/assets/img/living-{style}.gif"
-        film = f".github/assets/img/living-{style}.mp4"
-        assert wrap.count(f'src="{poster}"') == 1
-        assert wrap.count(f'href="{film}"') == 1
+    for style in SHIPPED_STYLE_KEYS:
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        assert gif in visible or f'src="{mp4}"' in visible
+        assert f'src="{mp4}"' in visible or f'href="{mp4}"' in visible
 
 
-def test_living_art_has_no_table_css_grid_or_details() -> None:
-    """Wrap-flow Living Art must not use tables, CSS grid, or disclosures."""
-    living = _living_art_section(_read_readme())
-    lowered = living.lower()
-
-    assert "<table" not in lowered
-    assert "</table>" not in lowered
-    assert "<details" not in lowered
-    assert "</details>" not in lowered
-    assert "display: grid" not in lowered
-    assert "grid-template" not in lowered
-    assert "<br/>" not in lowered
-    assert "<sub>" not in lowered
+def test_living_art_has_no_table_or_css_grid_and_one_details_per_piece() -> None:
+    """Full-width Living Art has no table/grid and one details per shipped key."""
+    living = living_art_section(_read_readme())
+    assert_living_art_not_wrapped(living)
+    assert_art_outside_details(living)
 
 
 def test_tech_stack_has_no_teaser_shields() -> None:
@@ -283,9 +485,9 @@ def test_readme_section_order_and_managed_markers() -> None:
 
 
 def test_waka_and_blog_are_visible_not_details() -> None:
-    """WakaTime and blog are open-flow surfaces; only My Tech Stack stays collapsed."""
+    """WakaTime and blog stay open-flow; Living Art details do not wrap the media."""
     readme = _read_readme()
-    living = _living_art_section(readme)
+    living = living_art_section(readme)
 
     assert "<summary><strong>WakaTime Stats</strong></summary>" not in readme
     assert "<summary><strong>Latest Blog Posts</strong></summary>" not in readme
@@ -311,18 +513,15 @@ def test_waka_and_blog_are_visible_not_details() -> None:
     assert " · " in blog
     assert "<details" not in blog.lower()
 
-    # Living Art GIFs must not be nested inside any details block.
-    for match in re.finditer(
-        r"(?is)<details\b.*?</details>",
-        readme,
-    ):
+    # GIF/video must not be nested inside any details block (tech or living).
+    for match in _DETAILS_RE.finditer(readme):
         block = match.group(0)
         assert "living-" not in block
         assert "## Living Art" not in block
         assert "wakatime.svg" not in block
         assert "README:BLOG_POSTS" not in block
 
-    assert "<details" not in living
+    assert living.count("<details") == shipped_living_art_count()
 
 
 def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
@@ -384,7 +583,7 @@ def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
 
 
 def test_generator_rewrites_living_art_and_drops_teasers() -> None:
-    """Generator rewrites emit wrap-flow Living Art and strip tech teasers."""
+    """Generator rewrites emit the full-width Living Art stack and strip teasers."""
     stale = dedent(
         """\
         ## Living Art
@@ -416,14 +615,15 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     rendered = generator._rewrite_tech_stack_teaser(rendered)
     assert_visible_or_comment_heading(rendered, "Living Art")
     assert_visible_or_comment_heading(rendered, "My Tech Stack")
-    living = living_art_wrap(rendered)
+    living = living_art_section(rendered)
     tech = after_heading(rendered, "My Tech Stack")
 
-    assert living.count('src=".github/assets/img/living-') == 6
-    assert living.count('width="360"') == 6
-    assert "<table" not in living.lower()
-    assert "<details" not in living.lower()
-    assert living.count('<p align="center">') == 1
+    assert "stale" not in living
+    assert "hidden" not in living
+    assert_living_art_stack_layout(living)
+    assert_living_art_intro_has_no_spine(living)
+    assert_living_art_dropdown_copy(living)
+    assert_living_art_hosts_allowed(living)
     assert 'alt="AI/ML"' not in tech
     assert 'alt="Open Source"' not in tech
     assert tech.lstrip().startswith("<details>")
@@ -509,3 +709,106 @@ def test_blog_cards_are_links_without_extra_caption_row() -> None:
         blog,
     )
     assert caption_row is None
+
+
+def test_living_art_intro_does_not_list_the_four_signal_spine() -> None:
+    """Intro is the clock sentence; repos/stars/commits/followers stay in dropdowns."""
+    living = living_art_section(_read_readme())
+    assert_living_art_intro_has_no_spine(living)
+
+
+def test_living_art_dropdowns_match_shipped_legends() -> None:
+    """One collapsed details per shipped piece, with title, metaphor, and mapping."""
+    living = living_art_section(_read_readme())
+    assert_living_art_dropdown_copy(living)
+    assert "faq" not in living.lower()
+
+
+def test_living_art_media_hosts_are_in_repo_only() -> None:
+    """Living Art src/href/poster stay on relative in-repo gif/mp4 stems."""
+    living = living_art_section(_read_readme())
+    assert_living_art_hosts_allowed(living)
+
+
+def test_living_art_accepts_native_video_or_gif_href_mp4() -> None:
+    """Native <video src=mp4> and visible GIF+href MP4 are both legal forms."""
+    for form in ("video", "gif-href", "both"):
+        living = _synthetic_living_art_section(form=form)
+        assert_legal_media_forms(living)
+        assert_full_width_media(living)
+        assert_art_outside_details(living)
+        assert_living_art_hosts_allowed(living)
+        assert_living_art_not_wrapped(living)
+
+
+@pytest.mark.parametrize(
+    ("needle", "poison"),
+    [
+        (
+            ".github/assets/img/living-inkgarden.mp4",
+            "https://www.youtube.com/embed/x",
+        ),
+        (
+            ".github/assets/img/living-inkgarden.mp4",
+            "https://youtu.be/x",
+        ),
+        (
+            ".github/assets/img/living-topo.mp4",
+            "https://res.cloudinary.com/demo/video/upload/dog.mp4",
+        ),
+        (
+            ".github/assets/img/living-genetic.mp4",
+            "https://vimeo.com/123",
+        ),
+        (
+            ".github/assets/img/living-physarum.gif",
+            "https://user-images.githubusercontent.com/1/x.gif",
+        ),
+        (
+            ".github/assets/img/living-lenia.gif",
+            "https://github.com/wyattowalsh/assets/123",
+        ),
+        (
+            ".github/assets/img/living-ferrofluid.gif",
+            "https://github.com/user-attachments/assets/abc",
+        ),
+    ],
+)
+def test_living_art_external_hosts_fail(needle: str, poison: str) -> None:
+    """YouTube, Cloudinary, and other external hosts fail the living-art allowlist."""
+    legal = _synthetic_living_art_section(form="both")
+    assert_living_art_hosts_allowed(legal)
+    poisoned = legal.replace(needle, poison, 1)
+    with pytest.raises(AssertionError):
+        assert_living_art_hosts_allowed(poisoned)
+
+
+def test_living_art_iframe_fails_host_allowlist() -> None:
+    """Iframes are not a legal living-art media host."""
+    legal = _synthetic_living_art_section(form="gif-href")
+    poisoned = legal + '\n<iframe src="https://youtube.com/embed/x"></iframe>\n'
+    with pytest.raises(AssertionError):
+        assert_living_art_hosts_allowed(poisoned)
+
+
+def test_living_art_rejects_media_hidden_in_details() -> None:
+    """GIF/video nested in details fails visible-art even with in-repo paths."""
+    pieces = [
+        "<!-- ## Living Art -->",
+        (
+            "<p>These are daily timelapses of this GitHub account from "
+            "creation to now, each a different visual world.</p>"
+        ),
+    ]
+    for style, legend in shipped_legends():
+        gif = f".github/assets/img/living-{style}.gif"
+        pieces.append(
+            f"<details>\n<summary><strong>{legend.title}</strong></summary>\n"
+            f'<img src="{gif}" alt="{legend.title}" width="100%" '
+            f'loading="lazy"/>\n'
+            f"{legend.metaphor}\n"
+            "</details>"
+        )
+    hidden = "\n".join(pieces)
+    with pytest.raises(AssertionError):
+        assert_art_outside_details(hidden)

@@ -16,9 +16,10 @@ from scripts.readme_sections import (
     section_order_from_settings,
 )
 from tests.test_readme_gfm_ux import (
+    assert_living_art_stack_layout,
     assert_visible_or_comment_heading,
     heading_index,
-    living_art_wrap,
+    living_art_section,
 )
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
@@ -489,8 +490,7 @@ def test_generate_assets_word_clouds_use_typographic_renderer() -> None:
     assert "--from-topics-md" in assets
     assert "--from-languages-md" in assets
     assert (
-        "--output-path .github/assets/img/wordcloud_typographic_by_topics.svg"
-        in assets
+        "--output-path .github/assets/img/wordcloud_typographic_by_topics.svg" in assets
     )
     assert (
         "--output-path .github/assets/img/wordcloud_typographic_by_languages.svg"
@@ -1125,7 +1125,6 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     skills_idx = finalize.index("generate skills --skills-path skills.yaml")
     assert apply_idx < sections_idx < skills_idx
 
-    """Wave R wrap-flow README invariants remain intact under finalize serialization."""
     finalize = _job_block(_workflow_text(), "finalize")
     assert "generate readme-sections --config-path config.yaml" in finalize
     assert "generate skills --skills-path skills.yaml" in finalize
@@ -1134,14 +1133,6 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
     order = section_order_from_settings(load_config().readme_sections_settings)
     assert compile_section_body_re("Living Art", order).search(readme) is not None
-    wrap = living_art_wrap(readme)
-
-    assert wrap.count('<p align="center">') == 1
-    assert wrap.count('width="360"') == 6
-    assert wrap.count('loading="lazy"') == 6
-    assert "<table" not in wrap.lower()
-    assert "<details" not in wrap.lower()
-    assert "display: grid" not in wrap.lower()
 
     tech_match = compile_section_body_re("My Tech Stack", order).search(readme)
     assert tech_match is not None
@@ -1160,6 +1151,14 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
     living_start = heading_index(readme, "Living Art")
     assert banner_idx < badges_start < featured_start < living_start
+
+
+def test_finalize_readme_living_art_is_full_width_stack() -> None:
+    """Finalize serializes a README whose Living Art is the full-width stack."""
+    finalize = _job_block(_workflow_text(), "finalize")
+    assert "generate readme-sections --config-path config.yaml" in finalize
+    living = living_art_section(README_PATH.read_text(encoding="utf-8"))
+    assert_living_art_stack_layout(living)
 
 
 def test_finalize_authenticates_readme_star_history_without_argv_token() -> None:

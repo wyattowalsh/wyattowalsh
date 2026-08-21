@@ -33,8 +33,12 @@ from scripts.readme_sections import (
 )
 from tests.test_readme_gfm_ux import (
     after_heading,
+    assert_living_art_dropdown_copy,
+    assert_living_art_hosts_allowed,
+    assert_living_art_intro_has_no_spine,
+    assert_living_art_stack_layout,
     assert_visible_or_comment_heading,
-    living_art_wrap,
+    living_art_section,
     slice_between_headings,
 )
 
@@ -956,7 +960,7 @@ class TestRendering:
         assert 'width="500"' not in html
         assert 'width="100%"' not in html
 
-    def test_generate_rewrites_living_art_as_wrap_flow_grid(
+    def test_generate_rewrites_living_art_as_full_width_stack_with_details(
         self,
         tmp_path: Path,
     ) -> None:
@@ -1001,17 +1005,13 @@ class TestRendering:
         rendered = readme.read_text(encoding="utf-8")
         assert_visible_or_comment_heading(rendered, "Living Art")
         assert_visible_or_comment_heading(rendered, "My Tech Stack")
-        living_art = living_art_wrap(rendered)
+        living_art = living_art_section(rendered)
 
         assert "stale living art grid" not in rendered
-        assert "<table" not in living_art
-        assert "display: grid" not in living_art.lower()
-        assert "grid-template" not in living_art.lower()
-        assert "<details" not in living_art
-        assert living_art.count('src=".github/assets/img/living-') == 6
-        assert living_art.count('width="360"') == 6
-        assert living_art.count('width="100%"') == 0
-        assert living_art.count('<p align="center">') == 1
+        assert_living_art_stack_layout(living_art)
+        assert_living_art_intro_has_no_spine(living_art)
+        assert_living_art_dropdown_copy(living_art)
+        assert_living_art_hosts_allowed(living_art)
         assert 'alt="AI/ML"' not in rendered
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
@@ -1447,8 +1447,7 @@ class TestRendering:
         assert "This Week I Spent My Time On" not in rendered
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
         assert (
-            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
-            in rendered
+            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg" in rendered
         )
         assert 'src=".github/assets/img/wakatime.svg"' in metrics
         assert "<!--START_SECTION:waka-->" in metrics
@@ -1512,8 +1511,7 @@ class TestRendering:
         assert "This Week I Spent My Time On" not in rendered
         assert "Programming Languages:" not in rendered
         assert (
-            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg"
-            in rendered
+            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg" in rendered
         )
         assert 'src=".github/assets/img/wakatime.svg"' in metrics
         assert "<!--START_SECTION:waka-->" in metrics
