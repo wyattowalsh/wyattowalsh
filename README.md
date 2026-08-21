@@ -72,10 +72,9 @@
 <p>These are daily timelapses of this GitHub account from creation to now, each a different visual world.</p>
 
 <p align="center">
-<video src=".github/assets/img/living-inkgarden.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-inkgarden.gif">
 <a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-inkgarden.mp4">Watch Ink Garden (MP4)</a></p>
 <details>
 <summary><strong>Ink Garden</strong></summary>
 
@@ -89,10 +88,9 @@ Each repository takes root as a tree, stem and canopy together. A day with no re
 </details>
 
 <p align="center">
-<video src=".github/assets/img/living-topo.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-topo.gif">
 <a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-topo.mp4">Watch Topography (MP4)</a></p>
 <details>
 <summary><strong>Topography</strong></summary>
 
@@ -106,10 +104,9 @@ A hand-drawn survey of this account, with one hill for every repository. The map
 </details>
 
 <p align="center">
-<video src=".github/assets/img/living-genetic.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-genetic.gif">
 <a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-genetic.mp4">Watch Genetic Landscape (MP4)</a></p>
 <details>
 <summary><strong>Genetic Landscape</strong></summary>
 
@@ -123,10 +120,9 @@ A landscape of competing fitness peaks, one ridge per repository. Life gathers o
 </details>
 
 <p align="center">
-<video src=".github/assets/img/living-physarum.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-physarum.gif">
 <a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-physarum.mp4">Watch Physarum (MP4)</a></p>
 <details>
 <summary><strong>Physarum</strong></summary>
 
@@ -140,10 +136,9 @@ A slime mold feeding in the dark, spinning a living network from the first repos
 </details>
 
 <p align="center">
-<video src=".github/assets/img/living-lenia.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-lenia.gif">
 <a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-lenia.mp4">Watch Lenia (MP4)</a></p>
 <details>
 <summary><strong>Lenia</strong></summary>
 
@@ -157,10 +152,9 @@ A continuous living field, seeded with one creature for every repository. Soft b
 </details>
 
 <p align="center">
-<video src=".github/assets/img/living-ferrofluid.mp4" width="100%" autoplay muted loop playsinline poster=".github/assets/img/living-ferrofluid.gif">
 <a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="100%" loading="lazy"/></a>
-</video>
 </p>
+<p align="center"><a href=".github/assets/img/living-ferrofluid.mp4">Watch Ferrofluid (MP4)</a></p>
 <details>
 <summary><strong>Ferrofluid</strong></summary>
 
