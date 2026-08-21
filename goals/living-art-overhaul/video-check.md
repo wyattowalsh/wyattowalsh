@@ -23,3 +23,15 @@ Same pattern for `living-topo`, `living-genetic`, `living-physarum`, `living-len
 - Decision: gif-fallback
 - External hosts present: none (required). Living Art `src`/`href` in source are relative `.github/assets/img/living-*.{gif,mp4}` only. Rendered Living Art HTML has no youtube / cloudinary / user-attachments / iframe / vimeo.
 - Screenshot note: Preview tab, logged-out desktop, `blob/dev/README.md` (not the profile overview). After the Living Art separator and intro, the six films are blank gaps; Ink Garden / Topography / Genetic Landscape / Physarum / Lenia / Ferrofluid `<details>` still show. Inner GIF is **not** visible after strip. Code tab still shows the six `<video>` source tags — that is source, not rendered play.
+
+## Post-regen Preview
+
+Smoke only (art visible vs empty slots). Not CAP C3. Decision remains **gif-fallback**.
+
+- When: 2026-08-20, logged-out desktop Playwright, blob **Preview** (pressed), not profile overview / Issues.
+- README commit on the blob: `cac367b` (`feat(readme): ship Living Art as gif-fallback`). CDN matched; no stale `ed5dce9` video markup.
+- **PASS.** Six art slots show GIFs. Zero empty `<p align="center">` in the Living Art section (the prior strip failure mode).
+- Visible living-art `<img>` GIFs: **6** (Ink Garden, Topography, Genetic Landscape, Physarum, Lenia, Ferrofluid). GitHub wraps each in `<animated-image style="width: 100%">`; painted size **1006×1006** = 100% of `article.markdown-body` (full-width). Duplicate hidden player `<img>` copies exist in the DOM (12 nodes total) and were not counted as extra slots.
+- `Watch … (MP4)` links: **6**. Rendered `<video>`: **0**.
+- `<details>`: **6** living-art titles (art **outside** details). Article also has one Tech Stack `<details>` (7 total) — out of scope.
+- External hosts: none (no YouTube / Cloudinary / user-attachments / iframe / vimeo in Living Art HTML). GIF `src` is repo `raw/dev/.github/assets/img/living-*.gif`; MP4 `href` is blob `living-*.mp4`.
