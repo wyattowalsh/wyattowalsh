@@ -78,7 +78,7 @@
 <rect x="28" y="56" width="132" height="132" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="hero-title" x="180" y="96">0 To 100 / The Catch Up</text>
 <text class="hero-artist" x="180" y="128">Drake</text>
-<text class="muted" x="180" y="156">0 To 100 / The Catch Up · 3h ago</text>
+<text class="muted" x="180" y="156">0 To 100 / The Catch Up · 23h ago</text>
 <g class="music-eq">
 <rect class="eq-bar" x="180" y="176" width="4" height="10" rx="2" fill-opacity="0.85" />
 <rect class="eq-bar" x="188" y="164" width="4" height="22" rx="2" fill-opacity="0.85" />
@@ -99,7 +99,7 @@
 <rect x="12" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="24">02</text>
 <text class="queue-title extra-title" x="88" y="24">Clique</text>
-<text class="muted" x="88" y="42">Kanye West, JAŸ-Z, Big Sean · Kanye West Presents G... · 3h ago</text>
+<text class="muted" x="88" y="42">Kanye West, JAŸ-Z, Big Sean · Kanye West Presents G... · 23h ago</text>
 <rect class="panel" x="580" y="0" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="0" width="564" height="58" rx="10" />
 <rect x="592" y="8" width="42" height="42" rx="10" fill="#218bff" />
@@ -108,7 +108,7 @@
 <rect x="592" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="24">03</text>
 <text class="queue-title extra-title" x="668" y="24">Energy</text>
-<text class="muted" x="668" y="42">Drake · If You&#x27;re Reading Thi... · 3h ago</text>
+<text class="muted" x="668" y="42">Drake · If You&#x27;re Reading Thi... · 23h ago</text>
 <rect class="panel" x="0" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="68" width="564" height="58" rx="10" />
 <rect x="12" y="76" width="42" height="42" rx="10" fill="#bf4b8a" />
@@ -117,7 +117,7 @@
 <rect x="12" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="92">04</text>
 <text class="queue-title extra-title" x="88" y="92">Hold Your Head Up</text>
-<text class="muted" x="88" y="110">Macklemore · The Language of My World · 4h ago</text>
+<text class="muted" x="88" y="110">Macklemore · The Language of My World · 1d ago</text>
 <rect class="panel" x="580" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="68" width="564" height="58" rx="10" />
 <rect x="592" y="76" width="42" height="42" rx="10" fill="#cf222e" />
@@ -126,7 +126,7 @@
 <rect x="592" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="92">05</text>
 <text class="queue-title extra-title" x="668" y="92">Superstar (feat. Matthew Santos)</text>
-<text class="muted" x="668" y="110">Lupe Fiasco, Matthew Santos · Lupe Fiasco&#x27;s The Cool · 5h ago</text>
+<text class="muted" x="668" y="110">Lupe Fiasco, Matthew Santos · Lupe Fiasco&#x27;s The Cool · 1d ago</text>
 <rect class="panel" x="0" y="136" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="136" width="564" height="58" rx="10" />
 <rect x="12" y="144" width="42" height="42" rx="10" fill="#1db954" />
@@ -135,7 +135,7 @@
 <rect x="12" y="144" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="160">06</text>
 <text class="queue-title extra-title" x="88" y="160">The Show Goes On</text>
-<text class="muted" x="88" y="178">Lupe Fiasco · Lasers · 5h ago</text>
+<text class="muted" x="88" y="178">Lupe Fiasco · Lasers · 1d ago</text>
 <rect class="panel" x="580" y="136" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="136" width="564" height="58" rx="10" />
 <rect x="592" y="144" width="42" height="42" rx="10" fill="#bf4b8a" />
@@ -144,7 +144,7 @@
 <rect x="592" y="144" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="160">07</text>
 <text class="queue-title extra-title" x="668" y="160">Inhale Deep</text>
-<text class="muted" x="668" y="178">Macklemore · The Language of My World · 5h ago</text>
+<text class="muted" x="668" y="178">Macklemore · The Language of My World · 1d ago</text>
 <rect class="panel" x="0" y="204" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="204" width="564" height="58" rx="10" />
 <rect x="12" y="212" width="42" height="42" rx="10" fill="#bf4b8a" />
@@ -162,6 +162,6 @@
 <rect x="592" y="212" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="228">09</text>
 <text class="queue-title extra-title" x="668" y="228">That Acid - Yoshiko Remix</text>
-<text class="muted" x="668" y="246">Marie Vaunt, Yoshiko · That Acid (The Remixes) · 1d ago</text>
+<text class="muted" x="668" y="246">Marie Vaunt, Yoshiko · That Acid (The Remixes) · 2d ago</text>
 </g>
 </svg>

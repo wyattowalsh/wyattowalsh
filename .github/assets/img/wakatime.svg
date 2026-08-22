@@ -69,7 +69,7 @@
 <text class="total-value" x="874.0" y="136.0">7 hrs 17 mins</text>
 <text class="card-kicker" x="52.0" y="164.0">GitHub</text>
 <text class="total-label" x="52.0" y="182.0">2026 contribs</text>
-<text class="gh-chip" x="52.0" y="200.0">4,386</text>
+<text class="gh-chip" x="52.0" y="200.0">4,423</text>
 <text class="total-label" x="326.0" y="182.0">Public repos</text>
 <text class="gh-chip" x="326.0" y="200.0">193</text>
 <text class="total-label" x="600.0" y="182.0">Private repos</text>
@@ -186,21 +186,21 @@
 <rect x="170.0" y="731.0" width="37.9" height="8" rx="4" fill="#9a6700" />
 <text class="stat-time" x="1074.0" y="740.0">2 hrs 9 mins</text>
 <text class="card-kicker" x="52.0" y="774.0">Last 14 days</text>
-<rect class="day-bar" x="52.0" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-08: </title></rect>
-<rect class="day-bar" x="130.7" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-09: </title></rect>
-<rect class="day-bar" x="209.4" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-10: </title></rect>
-<rect class="day-bar" x="288.1" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-11: </title></rect>
-<rect class="day-bar" x="366.9" y="804.0" width="72.7" height="56.0" rx="3"><title>2026-08-12: </title></rect>
-<rect class="day-bar" x="445.6" y="831.8" width="72.7" height="28.2" rx="3"><title>2026-08-13: </title></rect>
-<rect class="day-bar" x="524.3" y="810.4" width="72.7" height="49.6" rx="3"><title>2026-08-14: </title></rect>
-<rect class="day-bar" x="603.0" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-15: </title></rect>
-<rect class="day-bar" x="681.7" y="816.7" width="72.7" height="43.3" rx="3"><title>2026-08-16: </title></rect>
-<rect class="day-bar" x="760.4" y="844.0" width="72.7" height="16.0" rx="3"><title>2026-08-17: </title></rect>
-<rect class="day-bar" x="839.1" y="805.1" width="72.7" height="54.9" rx="3"><title>2026-08-18: </title></rect>
-<rect class="day-bar" x="917.9" y="844.2" width="72.7" height="15.8" rx="3"><title>2026-08-19: </title></rect>
-<rect class="day-bar" x="996.6" y="850.2" width="72.7" height="9.8" rx="3"><title>2026-08-20: </title></rect>
-<rect class="day-bar" x="1075.3" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-21: </title></rect>
-<text class="card-meta" x="52.0" y="878.0">avg 4h 53m/day</text>
+<rect class="day-bar" x="52.0" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-07: </title></rect>
+<rect class="day-bar" x="130.7" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-08: </title></rect>
+<rect class="day-bar" x="209.4" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-09: </title></rect>
+<rect class="day-bar" x="288.1" y="854.0" width="72.7" height="6.0" rx="3"><title>2026-08-10: </title></rect>
+<rect class="day-bar" x="366.9" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-11: </title></rect>
+<rect class="day-bar" x="445.6" y="804.0" width="72.7" height="56.0" rx="3"><title>2026-08-12: </title></rect>
+<rect class="day-bar" x="524.3" y="831.8" width="72.7" height="28.2" rx="3"><title>2026-08-13: </title></rect>
+<rect class="day-bar" x="603.0" y="810.4" width="72.7" height="49.6" rx="3"><title>2026-08-14: </title></rect>
+<rect class="day-bar" x="681.7" y="852.0" width="72.7" height="8.0" rx="3"><title>2026-08-15: </title></rect>
+<rect class="day-bar" x="760.4" y="816.7" width="72.7" height="43.3" rx="3"><title>2026-08-16: </title></rect>
+<rect class="day-bar" x="839.1" y="844.0" width="72.7" height="16.0" rx="3"><title>2026-08-17: </title></rect>
+<rect class="day-bar" x="917.9" y="805.1" width="72.7" height="54.9" rx="3"><title>2026-08-18: </title></rect>
+<rect class="day-bar" x="996.6" y="844.2" width="72.7" height="15.8" rx="3"><title>2026-08-19: </title></rect>
+<rect class="day-bar" x="1075.3" y="850.2" width="72.7" height="9.8" rx="3"><title>2026-08-20: </title></rect>
+<text class="card-meta" x="52.0" y="878.0">avg 4h 54m/day</text>
 <text class="card-kicker" x="52.0" y="898.0">Coding heatmap</text>
 <text class="card-meta" x="52.0" y="921.0">S</text>
 <text class="card-meta" x="52.0" y="949.0">T</text>
@@ -210,7 +210,7 @@
 <rect class="hm-0" x="68.0" y="926.0" width="11" height="11" rx="2"><title>2025-08-18</title></rect>
 <rect class="hm-0" x="68.0" y="940.0" width="11" height="11" rx="2"><title>2025-08-19</title></rect>
 <rect class="hm-0" x="68.0" y="954.0" width="11" height="11" rx="2"><title>2025-08-20</title></rect>
-<rect class="hm-0" x="68.0" y="968.0" width="11" height="11" rx="2"><title>2025-08-21</title></rect>
+<rect class="hm-1" x="68.0" y="968.0" width="11" height="11" rx="2"><title>2025-08-21: 1098s</title></rect>
 <rect class="hm-1" x="68.0" y="982.0" width="11" height="11" rx="2"><title>2025-08-22: 2467s</title></rect>
 <rect class="hm-1" x="68.0" y="996.0" width="11" height="11" rx="2"><title>2025-08-23: 366s</title></rect>
 <rect class="hm-2" x="82.0" y="912.0" width="11" height="11" rx="2"><title>2025-08-24: 42027s</title></rect>
@@ -575,6 +575,5 @@
 <rect class="hm-3" x="796.0" y="940.0" width="11" height="11" rx="2"><title>2026-08-18: 48224s</title></rect>
 <rect class="hm-1" x="796.0" y="954.0" width="11" height="11" rx="2"><title>2026-08-19: 13892s</title></rect>
 <rect class="hm-1" x="796.0" y="968.0" width="11" height="11" rx="2"><title>2026-08-20: 8589s</title></rect>
-<rect class="hm-1" x="796.0" y="982.0" width="11" height="11" rx="2"><title>2026-08-21: 135s</title></rect>
-<text class="card-meta" x="52.0" y="1026.0">Updated 2026-08-21 04:29 UTC</text>
+<text class="card-meta" x="52.0" y="1026.0">Updated 2026-08-22 00:27 UTC</text>
 </svg>
