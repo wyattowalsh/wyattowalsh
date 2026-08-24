@@ -8,13 +8,13 @@ dependencies = [
     "email-validator>=2.3.0",
     "loguru>=0.7.3",
     "noise>=1.2.2",
-    "numpy>=2.2.6",
-    "pillow>=12.1.1",
-    "pydantic>=2.12.5",
-    "pydantic-settings>=2.13.1",
+    "numpy>=2.5.2",
+    "pillow>=12.3.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
     "pyyaml>=6.0.3",
-    "rich>=14.3.3",
-    "typer>=0.24.1",
+    "rich>=15.0.0",
+    "typer>=0.27.1",
     "defusedxml>=0.7.1",
 ]
 
@@ -23,14 +23,14 @@ readme = "scripts.cli:app"
 
 [project.optional-dependencies]
 format = [
-    "ruff>=0.15.8",
+    "ruff>=0.16.4",
 ]
 lint = [
-    "pylint>=4.0.5",
-    "ruff>=0.15.8",
+    "pylint>=4.0.7",
+    "ruff>=0.16.4",
     "readme[qr]",
     "readme[word-clouds]",
-    "ty>=0.0.29",
+    "ty>=0.0.73",
 ]
 qr = [
     "cairosvg>=2.9.0",
@@ -40,13 +40,13 @@ qr = [
 # Heavy numeric / optimization stack: living-art (scipy) + mealpy word-cloud solvers.
 # Install via `uv sync --extra science` or `--all-extras` (CI living-art / lint-test).
 science = [
-    "matplotlib>=3.10.8",
+    "matplotlib>=3.11.1",
     "mealpy>=3.0.1",
-    "scipy>=1.16.3",
+    "scipy>=1.18.0",
 ]
 test = [
-    "hypothesis>=6.151.10",
-    "pytest>=9.0.2",
+    "hypothesis>=6.165.10",
+    "pytest>=9.1.1",
     "pytest-benchmark>=5.2.3",
     "pytest-cov>=7.1.0",
     "pytest-emoji>=0.2.0",
@@ -62,9 +62,9 @@ test = [
     "syrupy>=5.5.3",
 ]
 word-clouds = [
-    "beautifulsoup4>=4.14.3",
-    "fonttools>=4.62.1",
-    "markdown>=3.10.2",
+    "beautifulsoup4>=4.15.0",
+    "fonttools>=4.63.0",
+    "markdown>=3.10.3",
     "readme[science]",
     "wordcloud>=1.9.6",
 ]
@@ -118,7 +118,7 @@ disable = [
 ]
 
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=84.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
