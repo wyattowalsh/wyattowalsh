@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Python      12 hrs 32 mins  ██████░░░░░░░░░░░░░░░░░░░   23.63% 
-Markdown    12 hrs 14 mins  ██████░░░░░░░░░░░░░░░░░░░   23.07% 
-JSON        9 hrs 53 mins   █████░░░░░░░░░░░░░░░░░░░░   18.64% 
-Other       7 hrs 29 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.13% 
-TypeScript  5 hrs 42 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.75% 
+Python      34 hrs 14 mins  █████████░░░░░░░░░░░░░░░░   37.19% 
+JSON        18 hrs 55 mins  █████░░░░░░░░░░░░░░░░░░░░   20.55% 
+Markdown    18 hrs 30 mins  █████░░░░░░░░░░░░░░░░░░░░   20.1% 
+TypeScript  7 hrs 9 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   7.77% 
+Other       4 hrs 48 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.22% 
 
 🔥 Editors: 
-Cursor        20 hrs 37 mins  ██████████░░░░░░░░░░░░░░░   38.9% 
-Codex Vscode  12 hrs 38 mins  ██████░░░░░░░░░░░░░░░░░░░   23.84% 
-Chrome        6 hrs 56 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.09% 
-Agent         5 hrs 27 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.28% 
-Grok Build    5 hrs 17 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.98% 
+Cursor        53 hrs 35 mins  ███████████████░░░░░░░░░░   58.22% 
+Codex Vscode  16 hrs 4 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.47% 
+Agent         10 hrs 23 mins  ███░░░░░░░░░░░░░░░░░░░░░░   11.29% 
+Grok Build    5 hrs 23 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.86% 
+Chrome        3 hrs 55 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.27% 
 
 🐱‍💻 Projects: 
-nbadb         17 hrs 7 mins  ████████░░░░░░░░░░░░░░░░░   32.28% 
-profile-bits  6 hrs 43 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.68% 
-riso          4 hrs          ██░░░░░░░░░░░░░░░░░░░░░░░   7.55% 
-proveplane    3 hrs 53 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   7.35% 
-prompts       2 hrs 44 mins  █░░░░░░░░░░░░░░░░░░░░░░░░   5.16% 
+nbadb         32 hrs 4 mins   █████████░░░░░░░░░░░░░░░░   34.85% 
+proveplane    22 hrs 15 mins  ██████░░░░░░░░░░░░░░░░░░░   24.18% 
+profile-bits  5 hrs 43 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.22% 
+dotfiles      5 hrs 10 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.63% 
+riso          3 hrs 58 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.31% 
 
 💻 Operating System: 
-Mac  53 hrs 2 mins  █████████████████████████   100% 
+Mac  92 hrs 2 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 25/08/2026 01:30:24 UTC
+ Last Updated on 26/08/2026 01:31:34 UTC
 <!--END_SECTION:waka-->
 
 </details>
