@@ -624,8 +624,8 @@ jobs:
         )
       }}
     runs-on: ubuntu-latest
-    # lowlighter personal + additional can exceed 20m under API load; keep headroom.
-    timeout-minutes: 60  # lowlighter personal+additional+extra routinely exceeds 45m under load
+    # First-party supplemental cards only (no lowlighter in production).
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -660,8 +660,9 @@ jobs:
           # Secret setup guidance (see .github/SECURITY.md):
           # - METRICS_TOKEN: prefer a fine-grained PAT (Metadata/Contents/Profile: Read;
           #   org membership Read only if needed). Classic fallback: read:user, public_repo
-          #   (+ read:org). Never grant write/admin/workflow. Used only as lowlighter
-          #   `token:` / first-party GraphQL reads — never as a catch-all PAT.
+          #   (+ read:org). Never grant write/admin/workflow. Used only as
+          #   first-party GraphQL reads for supplemental cards — never as a
+          #   catch-all PAT and never as a lowlighter `token:`.
           # - Spotify / X secrets: first-party supplemental cards only (env: on the
           #   generate supplemental-metrics run step). Never pass them into
           #   lowlighter/metrics (or any metrics fork) `with:` inputs.
@@ -686,7 +687,7 @@ jobs:
           fi
           echo "has_valid_metrics_token=${has_valid_metrics_token}" >> "$GITHUB_OUTPUT"
           if [ "${has_valid_metrics_token}" != "true" ]; then
-            echo "::notice::METRICS_TOKEN is missing or invalid; repositories-sensitive lowlighter plugins are disabled."
+            echo "::notice::METRICS_TOKEN is missing or invalid; first-party GraphQL-backed supplemental cards may be limited."
           fi
           if [ "${has_spotify_tokens}" != "true" ]; then
             echo "::notice::Spotify secrets are incomplete; first-party metrics-music.svg supplemental card is disabled."
@@ -694,172 +695,6 @@ jobs:
           if [ "${has_x_oauth1_tokens}" != "true" ]; then
             echo "::notice::X OAuth1 secrets are incomplete; first-party metrics-posts.svg supplemental card is disabled."
           fi
-      - name: Back up existing metrics assets
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/metrics-backups"
-
-          backup_metric() {
-            local source_path="$1"
-            local backup_path="$2"
-
-            if [ -f "$source_path" ]; then
-              cp "$source_path" "$backup_path"
-              echo "::notice::Backed up $(basename "$source_path") to ${backup_path}."
-            else
-              rm -f "$backup_path"
-              echo "::notice::No existing $(basename "$source_path") asset found to back up."
-            fi
-          }
-
-          backup_metric ./.github/assets/img/metrics.svg "$RUNNER_TEMP/metrics-backups/metrics.svg"
-          backup_metric ./.github/assets/img/metrics.additional.svg "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
-          backup_metric ./.github/assets/img/metrics.extra.svg "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
-          rm -f ./.github/assets/img/metrics.svg ./.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.extra.svg
-      # Third-party lowlighter only: read-scoped METRICS_TOKEN (or github.token).
-      # No Spotify / X / write PATs in `with:` — plugin_music stays no.
-      - name: Personal metrics
-        id: lowlighter_metrics_primary
-        continue-on-error: true
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
-        with:
-          output_action: none
-          filename: .github/assets/img/metrics.svg
-          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
-          base: header, activity, community, metadata
-          # Disabled until upstream handles bot/system authors without throwing.
-          plugin_lines: no
-          plugin_isocalendar: yes
-          plugin_traffic: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_languages: yes
-          plugin_languages_ignored: "jupyter%20notebook"
-          plugin_languages_details: "bytes-size, percentage"
-          plugin_languages_threshold: "0%"
-          # Native habits facts/charts/languages; first-party card owns the rest.
-          plugin_habits: yes
-          # 1000-event windows hit a lowlighter habits TypeError
-          # (undefined payload.commits). One page is enough for facts/charts.
-          plugin_habits_from: 100
-          plugin_habits_days: 30
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
-          plugin_habits_charts_type: classic
-          plugin_habits_languages_limit: 8
-          plugin_habits_languages_threshold: "0%"
-          plugin_notable: yes
-          plugin_notable_repositories: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
-          # GitHub Actions tokens cannot read gists reliably for this account.
-          plugin_gists: no
-          plugin_topics: yes
-          plugin_topics_sort: stars
-          plugin_topics_limit: 20
-          plugin_music: no
-          plugin_activity: no
-          plugin_tweets: no
-          # Disabled: upstream still queries retired Projects (classic) fields
-          # and embeds an error payload for this account.
-          plugin_achievements: no
-          plugin_calendar: yes
-          # 0 = all years from GitHub registration (lowlighter full-history mode).
-          plugin_calendar_limit: 0
-          config_timezone: America/Los_Angeles
-          config_padding: 10%
-
-      - name: Collect personal metrics output
-        id: collect_personal_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          cp /metrics_renders/.github/assets/img/metrics.svg ./.github/assets/img/metrics.svg
-
-      - name: Validate and recover personal metrics output
-        id: recover_personal_metrics
-        if: ${{ always() }}
-        run: |
-          uv run python -m scripts.metrics_svg recover \
-            ./.github/assets/img/metrics.svg \
-            --previous "$RUNNER_TEMP/metrics-backups/metrics.svg"
-
-      - name: Personal metrics (additional)
-        id: lowlighter_metrics_additional
-        continue-on-error: true
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
-        with:
-          output_action: none
-          filename: .github/assets/img/metrics.additional.svg
-          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
-          base: ""
-          config_timezone: America/Los_Angeles
-          config_padding: 10%
-          # Keep this card on stable GitHub-native panels; music/activity stay
-          # off — supplemental cards own those surfaces.
-          plugin_music: no
-          plugin_activity: no
-          plugin_stargazers: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stargazers_charts: yes
-          plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && 'yes' || 'no' }}
-          plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && '16' || '0' }}
-          plugin_repositories: no
-          plugin_people: no
-          plugin_tweets: no
-          plugin_gists: no
-          plugin_habits: no
-
-      - name: Collect additional metrics output
-        id: collect_additional_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          cp /metrics_renders/.github/assets/img/metrics.additional.svg ./.github/assets/img/metrics.additional.svg
-
-      - name: Validate and recover additional metrics output
-        id: recover_additional_metrics
-        if: ${{ always() }}
-        run: |
-          uv run python -m scripts.metrics_svg recover \
-            ./.github/assets/img/metrics.additional.svg \
-            --previous "$RUNNER_TEMP/metrics-backups/metrics.additional.svg"
-
-      - name: Personal metrics (extra / overflow)
-        id: lowlighter_metrics_extra
-        continue-on-error: true
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6 # v3.34
-        with:
-          output_action: none
-          filename: .github/assets/img/metrics.extra.svg
-          token: ${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && secrets.METRICS_TOKEN || github.token }}
-          base: ""
-          config_timezone: America/Los_Angeles
-          config_padding: 10%
-          plugin_music: no
-          plugin_activity: no
-          plugin_habits: no
-          plugin_gists: no
-          plugin_tweets: no
-          # Overflow panels split out to keep primary/additional README height manageable.
-          plugin_reactions: yes
-          plugin_reactions_limit: 100
-          plugin_reactions_display: relative
-          plugin_followup: no
-
-      - name: Collect extra metrics output
-        id: collect_extra_metrics
-        if: ${{ always() }}
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          cp /metrics_renders/.github/assets/img/metrics.extra.svg ./.github/assets/img/metrics.extra.svg
-
-      - name: Validate and recover extra metrics output
-        id: recover_extra_metrics
-        if: ${{ always() }}
-        run: |
-          uv run python -m scripts.metrics_svg recover \
-            ./.github/assets/img/metrics.extra.svg \
-            --previous "$RUNNER_TEMP/metrics-backups/metrics.extra.svg"
-
       # First-party only: Spotify/X via env: on this run step (never lowlighter with:).
       - name: Generate supplemental metrics cards
         id: generate_supplemental_metrics
@@ -891,18 +726,6 @@ jobs:
             --output-dir .github/assets/img \
             --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
 
-      - name: Validate final metrics assets
-        id: validate_final_metrics
-        if: ${{ always() }}
-        run: |
-          set -euo pipefail
-          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.svg
-          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.additional.svg
-          uv run python -m scripts.metrics_svg validate ./.github/assets/img/metrics.extra.svg
-          uv run python -m scripts.supplemental_metrics validate \
-            --output-dir .github/assets/img \
-            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
-
       - name: Summarize metrics asset health
         if: ${{ always() }}
         run: |
@@ -911,9 +734,6 @@ jobs:
           from scripts.metrics_svg import validate_svg_file
 
           for asset_name in (
-              "metrics.svg",
-              "metrics.additional.svg",
-              "metrics.extra.svg",
               "metrics-languages.svg",
               "metrics-habits.svg",
               "metrics-music.svg",
@@ -929,14 +749,11 @@ jobs:
           PY
 
       - name: Upload profile metrics artifact
-        if: ${{ success() && steps.validate_final_metrics.outcome == 'success' }}
+        if: ${{ success() && steps.validate_supplemental_metrics.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: profile-metrics-${{ github.run_id }}
           path: |
-            .github/assets/img/metrics.svg
-            .github/assets/img/metrics.additional.svg
-            .github/assets/img/metrics.extra.svg
             .github/assets/img/metrics-languages.svg
             .github/assets/img/metrics-habits.svg
             .github/assets/img/metrics-music.svg
@@ -1586,9 +1403,6 @@ jobs:
           commit_group "art: regenerate living-art assets" "${art_files[@]}"
 
           metrics_files=(
-            ./.github/assets/img/metrics.svg
-            ./.github/assets/img/metrics.additional.svg
-            ./.github/assets/img/metrics.extra.svg
             ./.github/assets/img/metrics-languages.svg
             ./.github/assets/img/metrics-habits.svg
             ./.github/assets/img/metrics-music.svg

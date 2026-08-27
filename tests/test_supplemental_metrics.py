@@ -685,7 +685,11 @@ def test_fact_spotify_hero_and_never_lowlighter() -> None:
     assert music.is_file()
     _assert_music_is_designed(music.read_text(encoding="utf-8"))
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
-    for block in _lowlighter_with_blocks(prod):
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_music:" not in prod
+    for block in _lowlighter_with_blocks(
+        _job_block(_workflow_text(), "probe-full-metrics")
+    ):
         assert "plugin_music: no" in block
         assert "SPOTIFY_" not in block
         assert "plugin_music_token" not in block

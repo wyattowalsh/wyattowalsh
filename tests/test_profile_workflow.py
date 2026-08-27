@@ -918,36 +918,40 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
         assert staged == {f"D\t{path}" for path in deleted_paths}
 
 
-def test_metrics_probe_and_prod_share_lowlighter_pin_without_felipecrs() -> None:
+def test_metrics_probe_keeps_lowlighter_pin_without_felipecrs() -> None:
     workflow = _workflow_text()
     probe = _job_block(workflow, "probe-full-metrics")
     prod = _job_block(workflow, "generate-profile-metrics")
 
     assert "felipecrs" not in workflow
     assert LOWLIGHTER_METRICS_PIN in probe
-    assert LOWLIGHTER_METRICS_PIN in prod
+    assert LOWLIGHTER_METRICS_PIN not in prod
     assert probe.count(LOWLIGHTER_METRICS_PIN) >= 3
-    assert prod.count(LOWLIGHTER_METRICS_PIN) >= 3
+    assert "uses: lowlighter/metrics@" not in prod
 
 
 def test_metrics_third_party_actions_forbid_spotify_secrets_in_with() -> None:
     workflow = _workflow_text()
-    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
-        for with_block in _lowlighter_with_blocks(_job_block(workflow, job_id)):
-            assert "SPOTIFY_" not in with_block
-            assert "plugin_music_token" not in with_block
-            assert "plugin_music_provider" not in with_block
-            assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", with_block), (
-                f"{job_id} lowlighter step missing plugin_music: no"
-            )
+    prod = _job_block(workflow, "generate-profile-metrics")
+    assert "uses: lowlighter/metrics@" not in prod
+    probe_blocks = _lowlighter_with_blocks(_job_block(workflow, "probe-full-metrics"))
+    for with_block in probe_blocks:
+        assert "SPOTIFY_" not in with_block
+        assert "plugin_music_token" not in with_block
+        assert "plugin_music_provider" not in with_block
+        assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", with_block), (
+            "probe-full-metrics lowlighter step missing plugin_music: no"
+        )
 
 
 def test_lowlighter_runner_only_steps_omit_committer_token() -> None:
     workflow = _workflow_text()
-    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
-        for with_block in _lowlighter_with_blocks(_job_block(workflow, job_id)):
-            assert re.search(r"(?m)^\s*output_action:\s*none\s*$", with_block)
-            assert "committer_token" not in with_block
+    prod = _job_block(workflow, "generate-profile-metrics")
+    assert "uses: lowlighter/metrics@" not in prod
+    probe_blocks = _lowlighter_with_blocks(_job_block(workflow, "probe-full-metrics"))
+    for with_block in probe_blocks:
+        assert re.search(r"(?m)^\s*output_action:\s*none\s*$", with_block)
+        assert "committer_token" not in with_block
 
 
 def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
@@ -957,8 +961,9 @@ def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
         "secrets.METRICS_TOKEN || github.token }}"
     )
 
-    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
-        job = _job_block(workflow, job_id)
+    probe = _job_block(workflow, "probe-full-metrics")
+    prod = _job_block(workflow, "generate-profile-metrics")
+    for job in (probe, prod):
         assert "id: metrics_auth" in job
         assert "has_valid_metrics_token=false" in job
         assert "https://api.github.com/user" in job
@@ -968,12 +973,17 @@ def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
             'echo "has_valid_metrics_token=${has_valid_metrics_token}" '
             '>> "$GITHUB_OUTPUT"'
         ) in job
-        assert job.count(f"token: {selected_token}") == 3
         assert "token: ${{ secrets.METRICS_TOKEN || github.token }}" not in job
         assert "::warning::" not in job
-        assert "::error::" not in job.split("      - name: Back up", maxsplit=1)[0]
+        assert (
+            "::error::"
+            not in job.split(
+                "      - name: Generate supplemental metrics cards", maxsplit=1
+            )[0]
+        )
 
-    prod = _job_block(workflow, "generate-profile-metrics")
+    assert probe.count(f"token: {selected_token}") == 3
+    assert prod.count(f"token: {selected_token}") == 0
     assert f"GITHUB_TOKEN: {selected_token}" in prod
     assert (
         "METRICS_TOKEN:"
@@ -986,92 +996,52 @@ def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
 def test_invalid_metrics_token_disables_elevated_scope_plugins() -> None:
     valid_gate = "steps.metrics_auth.outputs.has_valid_metrics_token == 'true'"
 
-    for job_id in ("probe-full-metrics", "generate-profile-metrics"):
-        job = _job_block(_workflow_text(), job_id)
-        for plugin in (
-            "plugin_traffic",
-            "plugin_notable_repositories",
-            "plugin_stargazers",
-            "plugin_stars",
-            "plugin_stars_limit",
-        ):
-            line = next(
-                line for line in job.splitlines() if line.strip().startswith(plugin)
-            )
-            assert valid_gate in line, f"{plugin} is not guarded in {job_id}"
+    job = _job_block(_workflow_text(), "probe-full-metrics")
+    for plugin in (
+        "plugin_traffic",
+        "plugin_notable_repositories",
+        "plugin_stargazers",
+        "plugin_stars",
+        "plugin_stars_limit",
+    ):
+        line = next(
+            line for line in job.splitlines() if line.strip().startswith(plugin)
+        )
+        assert valid_gate in line, f"{plugin} is not guarded in probe-full-metrics"
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    assert "plugin_traffic" not in prod
+    assert "uses: lowlighter/metrics@" not in prod
 
 
 def test_metrics_production_plugins_match_relevance_matrix() -> None:
     workflow = _workflow_text()
     prod = _job_block(workflow, "generate-profile-metrics")
-    blocks = _lowlighter_with_blocks(prod)
+    probe = _job_block(workflow, "probe-full-metrics")
+
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "metrics.extra.svg" not in prod
+    assert "generate supplemental-metrics" in prod
+    assert "metrics-languages.svg" in prod
+    assert "metrics-habits.svg" in prod
+    assert "metrics-music.svg" in prod
+    assert "metrics-posts.svg" in prod
+
+    blocks = _lowlighter_with_blocks(probe)
     assert len(blocks) >= 3
-
-    primary, additional, extra = blocks[0], blocks[1], blocks[2]
-
-    assert "plugin_isocalendar: yes" in primary
-    assert "plugin_languages: yes" in primary
-    assert 'plugin_languages_threshold: "0%"' in primary
-    assert "plugin_notable: yes" in primary
-    assert "plugin_topics: yes" in primary
-    assert "plugin_topics_limit: 20" in primary
-    assert "plugin_achievements: no" in primary
-    assert "plugin_achievements_display" not in primary
-    assert "plugin_achievements_threshold" not in primary
-    assert "plugin_achievements_limit" not in primary
-    assert "plugin_calendar: yes" in primary
-    assert "plugin_calendar_limit: 0" in primary
-    assert "plugin_habits: yes" in primary
-    assert "plugin_habits_from: 100" in primary
-    assert "plugin_gists: no" in primary
-    assert "plugin_lines: no" in primary
-    assert "plugin_music: no" in primary
-    assert "plugin_activity: no" in primary
-    assert "plugin_tweets: no" in primary
-
-    assert "plugin_repositories: no" in additional
-    assert "plugin_repositories_featured" not in additional
-    assert "plugin_people: no" in additional
-    assert "plugin_people_limit" not in additional
-    assert (
-        "plugin_stars: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
-        "== 'true' && 'yes' || 'no' }}"
-    ) in additional
-    assert (
-        "plugin_stars_limit: ${{ steps.metrics_auth.outputs.has_valid_metrics_token "
-        "== 'true' && '16' || '0' }}"
-    ) in additional
-    assert "plugin_activity: no" in additional
-    assert "plugin_habits: no" in additional
-    assert "plugin_music: no" in additional
-    assert "plugin_tweets: no" in additional
-
-    assert "metrics.extra.svg" in prod
-    assert "plugin_reactions: yes" in extra
-    assert "plugin_followup: no" in extra
-    assert "plugin_music: no" in extra
-    assert "plugin_activity: no" in extra
-    assert "plugin_habits: no" in extra
-    assert "plugin_gists: no" in extra
-    assert "plugin_lines:" not in extra
-    assert "plugin_achievements:" not in extra
+    for block in blocks:
+        assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", block)
+        assert "SPOTIFY_" not in block
 
 
 def test_fact_lowlighter_maximal_production_raises_topics_stars_people() -> None:
-    """fact-lowlighter-maximal: production (not probe) raises topics/stars/people."""
+    """fact-lowlighter-maximal: production dropped lowlighter; probe is diagnostic."""
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
     probe = _job_block(_workflow_text(), "probe-full-metrics")
-    primary, additional, _extra = _lowlighter_with_blocks(prod)
 
-    assert "plugin_topics: yes" in primary
-    assert "plugin_topics_limit: 20" in primary
-    assert 'plugin_languages_threshold: "0%"' in primary
-    assert "plugin_calendar_limit: 0" in primary
-    assert "plugin_stars:" in additional
-    assert "plugin_stars_limit:" in additional
-    assert "'16'" in additional
-    assert "plugin_people: no" in additional
-    assert "plugin_people_limit" not in additional
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_topics:" not in prod
+    assert "plugin_stars:" not in prod
+    assert "plugin_people:" not in prod
 
     assert "plugin_topics_limit: 15" in probe
     assert "plugin_people: no" in probe
@@ -1085,30 +1055,22 @@ def test_metrics_extra_svg_has_validate_recover_and_finalize_paths() -> None:
     prod = _job_block(workflow, "generate-profile-metrics")
     finalize = _job_block(workflow, "finalize")
 
-    assert "metrics-backups/metrics.extra.svg" in prod
-    assert (
-        "uv run python -m scripts.metrics_svg recover \\\n"
-        "            ./.github/assets/img/metrics.extra.svg \\"
-    ) in prod
-    assert ".github/assets/img/metrics.extra.svg" in prod
-    assert "./.github/assets/img/metrics.extra.svg" in finalize
+    assert "metrics-backups/metrics.extra.svg" not in prod
+    assert ".github/assets/img/metrics.extra.svg" not in prod
+    assert "./.github/assets/img/metrics.extra.svg" not in finalize
     assert "chore(metrics): update generated metrics assets" in finalize
-    assert Path(".github/assets/img/metrics.extra.svg").is_file()
+    assert "./.github/assets/img/metrics-habits.svg" in finalize
+    assert "./.github/assets/img/wakatime.svg" in finalize
 
 
 def test_metrics_recovery_does_not_create_expected_failure_annotations() -> None:
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
 
-    for label, asset in (
-        ("personal", "metrics.svg"),
-        ("additional", "metrics.additional.svg"),
-        ("extra", "metrics.extra.svg"),
-    ):
-        assert f"name: Validate and recover {label} metrics output" in prod
-        assert (
-            "uv run python -m scripts.metrics_svg recover \\\n"
-            f"            ./.github/assets/img/{asset} \\"
-        ) in prod
+    assert "Validate and recover" not in prod
+    assert "scripts.metrics_svg recover" not in prod
+    assert ".github/assets/img/metrics.svg" not in prod
+    assert ".github/assets/img/metrics.additional.svg" not in prod
+    assert ".github/assets/img/metrics.extra.svg" not in prod
 
     intentionally_failed_validation = (
         "continue-on-error: true\n"
@@ -1249,13 +1211,15 @@ def test_finalize_push_refuses_non_dev_target_branch(tmp_path: Path) -> None:
 
 
 def test_fact_lowlighter_off_production_music_tweets_activity_stay_no() -> None:
-    """fact-lowlighter-off: music/tweets/activity stay off; no Spotify in with:."""
+    """fact-lowlighter-off: production has no lowlighter; probe keeps music off."""
     workflow = _workflow_text()
     prod = _job_block(workflow, "generate-profile-metrics")
-    for block in _lowlighter_with_blocks(prod):
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_music:" not in prod
+    assert "plugin_tweets:" not in prod
+    assert "plugin_activity:" not in prod
+    for block in _lowlighter_with_blocks(_job_block(workflow, "probe-full-metrics")):
         assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", block)
-        assert re.search(r"(?m)^\s*plugin_tweets:\s*no\s*$", block)
-        assert re.search(r"(?m)^\s*plugin_activity:\s*no\s*$", block)
         assert "SPOTIFY_" not in block
         assert "plugin_music_token" not in block
         assert "plugin_music_provider" not in block
@@ -1263,18 +1227,12 @@ def test_fact_lowlighter_off_production_music_tweets_activity_stay_no() -> None:
 
 
 def test_fact_lowlighter_retry_lines_achievements_gists_isolated_off() -> None:
-    """fact-lowlighter-retry: unclean plugins stay off; no stub isolate-retry card."""
+    """fact-lowlighter-retry: production dropped lowlighter isolate-retry cards."""
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
-    primary, _additional, extra = _lowlighter_with_blocks(prod)
-    assert "plugin_lines: no" in primary
-    assert "plugin_achievements: no" in primary
-    assert "plugin_gists: no" in primary
-    assert "plugin_gists: no" in extra
-    assert "plugin_lines:" not in extra
-    assert "plugin_achievements:" not in extra
-    assert "plugin_lines: yes" not in prod
-    assert "plugin_achievements: yes" not in prod
-    assert "plugin_gists: yes" not in prod
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_lines:" not in prod
+    assert "plugin_achievements:" not in prod
+    assert "plugin_gists:" not in prod
     extra_svg = Path(".github/assets/img/metrics.extra.svg")
     assert extra_svg.is_file()
     extra_text = extra_svg.read_text(encoding="utf-8").lower()
@@ -1283,14 +1241,10 @@ def test_fact_lowlighter_retry_lines_achievements_gists_isolated_off() -> None:
 
 
 def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:
-    """fact-habits-both: plugin_habits on primary and first-party card redesigned."""
+    """fact-habits-both: production dropped lowlighter; first-party habits stays."""
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
-    primary, additional, extra = _lowlighter_with_blocks(prod)
-    assert "plugin_habits: yes" in primary
-    assert "plugin_habits_facts: yes" in primary
-    assert "plugin_habits_charts: yes" in primary
-    assert "plugin_habits: no" in additional
-    assert "plugin_habits: no" in extra
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_habits:" not in prod
     habits = Path(".github/assets/img/metrics-habits.svg")
     assert habits.is_file()
     text = habits.read_text(encoding="utf-8")

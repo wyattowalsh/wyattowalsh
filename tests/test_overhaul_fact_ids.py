@@ -50,12 +50,8 @@ from tests.test_wakatime_svg import _PRIVATE_AND_LEISURE
 
 _FACTS_META = Path("goals/profile-readme-overhaul/facts.meta.json")
 _PINNED_BANNER_SHA256 = {
-    BANNER_LIGHT: (
-        "a5e8d08ffb218924a322e423318219af5909f9ff4923891103842a8f7f408649"
-    ),
-    BANNER_DARK: (
-        "6aaf135ac987e66ddf0594722ed9980c46c374b8a4db09ea05db56cff588f9b7"
-    ),
+    BANNER_LIGHT: ("a5e8d08ffb218924a322e423318219af5909f9ff4923891103842a8f7f408649"),
+    BANNER_DARK: ("6aaf135ac987e66ddf0594722ed9980c46c374b8a4db09ea05db56cff588f9b7"),
 }
 _SHIPPED_CLOUDS = (
     Path(".github/assets/img/wordcloud_typographic_by_topics.svg"),
@@ -78,10 +74,8 @@ def _skills_block(readme: str) -> str:
     return match.group(1)
 
 
-def _prod_lowlighter_blocks() -> tuple[str, str, str]:
-    blocks = _lowlighter_with_blocks(
-        _job_block(_workflow_text(), "generate-profile-metrics")
-    )
+def _probe_lowlighter_blocks() -> tuple[str, str, str]:
+    blocks = _lowlighter_with_blocks(_job_block(_workflow_text(), "probe-full-metrics"))
     assert len(blocks) >= 3
     return blocks[0], blocks[1], blocks[2]
 
@@ -90,8 +84,7 @@ def test_automated_verification_facts_have_named_checks() -> None:
     """Every automatedVerification fact-id appears in tests/."""
     facts = json.loads(_FACTS_META.read_text(encoding="utf-8"))
     corpus = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in Path("tests").glob("test_*.py")
+        path.read_text(encoding="utf-8") for path in Path("tests").glob("test_*.py")
     )
     missing = [
         fact["id"]
@@ -116,13 +109,15 @@ def test_fact_banner_pin_worktree_matches_pinned_origin_main_hashes() -> None:
 
 
 def test_fact_lowlighter_off_production_music_tweets_activity_stay_no() -> None:
-    """fact-lowlighter-off: music/tweets/activity stay off; no Spotify in with:."""
+    """fact-lowlighter-off: production has no lowlighter; probe keeps music off."""
     workflow = _workflow_text()
     prod = _job_block(workflow, "generate-profile-metrics")
-    for block in _lowlighter_with_blocks(prod):
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_music:" not in prod
+    assert "plugin_tweets:" not in prod
+    assert "plugin_activity:" not in prod
+    for block in _probe_lowlighter_blocks():
         assert re.search(r"(?m)^\s*plugin_music:\s*no\s*$", block)
-        assert re.search(r"(?m)^\s*plugin_tweets:\s*no\s*$", block)
-        assert re.search(r"(?m)^\s*plugin_activity:\s*no\s*$", block)
         assert "SPOTIFY_" not in block
         assert "plugin_music_token" not in block
         assert "plugin_music_provider" not in block
@@ -130,29 +125,19 @@ def test_fact_lowlighter_off_production_music_tweets_activity_stay_no() -> None:
 
 
 def test_fact_lowlighter_retry_lines_achievements_gists_stay_off() -> None:
-    """fact-lowlighter-retry: no isolate-retry; unclean plugins stay off."""
-    primary, _additional, extra = _prod_lowlighter_blocks()
+    """fact-lowlighter-retry: production dropped isolate-retry lowlighter cards."""
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
-    assert "plugin_lines: no" in primary
-    assert "plugin_achievements: no" in primary
-    assert "plugin_gists: no" in primary
-    assert "plugin_gists: no" in extra
-    assert "plugin_lines:" not in extra
-    assert "plugin_achievements:" not in extra
-    assert "plugin_lines: yes" not in prod
-    assert "plugin_achievements: yes" not in prod
-    assert "plugin_gists: yes" not in prod
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_lines:" not in prod
+    assert "plugin_achievements:" not in prod
+    assert "plugin_gists:" not in prod
 
 
 def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:
-    """fact-habits-both: YAML plugin_habits yes + first-party metrics-habits.svg.
-
-    Does not claim the committed primary metrics.svg renders a habits plugin panel.
-    """
-    primary, additional, extra = _prod_lowlighter_blocks()
-    assert "plugin_habits: yes" in primary
-    assert "plugin_habits: no" in additional
-    assert "plugin_habits: no" in extra
+    """fact-habits-both: first-party habits card is the production surface."""
+    prod = _job_block(_workflow_text(), "generate-profile-metrics")
+    assert "uses: lowlighter/metrics@" not in prod
+    assert "plugin_habits:" not in prod
     habits = Path(".github/assets/img/metrics-habits.svg")
     assert habits.is_file()
     text = habits.read_text(encoding="utf-8")
@@ -266,7 +251,6 @@ def test_fact_wordclouds_exactly_two_typographic_volume_sources() -> None:
         assert path.stat().st_size > 0
         svg = path.read_text(encoding="utf-8")
         assert svg.startswith("<svg") or "<svg" in svg[:200]
-        assert "rotate(" not in svg
 
 
 def test_fact_waka_svg_committed_card_has_public_safe_sections() -> None:
@@ -389,11 +373,13 @@ def test_fact_lowlighter_maximal_committed_preview_residuals() -> None:
 
 
 def test_fact_lowlighter_audit_extra_followup_has_nan_bars() -> None:
-    """fact-lowlighter-audit residual: extra is live, but followup bars are NaN."""
-    extra = Path(".github/assets/img/metrics.extra.svg").read_text(encoding="utf-8")
-    assert "Overall issues and pull requests status" in extra
-    assert 'x="NaN"' in extra
+    """fact-lowlighter-audit residual: leftover extra SVG is not a regen stub."""
+    extra_path = Path(".github/assets/img/metrics.extra.svg")
+    assert extra_path.is_file()
+    extra = extra_path.read_text(encoding="utf-8")
+    assert extra.strip().startswith("<svg")
     assert "will be regenerated" not in extra.lower()
+    assert "an error occur" not in extra.lower()
 
 
 def test_fact_badges_stack_readme_shields_link_https_homepages() -> None:

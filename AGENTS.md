@@ -92,11 +92,11 @@ Jobs upload artifacts; a single **`finalize`** job is the sole first-party git w
 1. **`update-starred-lists`** — `uv sync --locked` → first-party `python -m scripts.starred_lists` (one strict GraphQL traversal, transactional language/topic publication) → validated artifact `languages.md` + `topics.md`
 2. **`generate-assets`** (needs starred) — `uv sync --extra qr --extra word-clouds` → `generate qr` / typographic word clouds → verify the pinned light/dark banner pair (do not regenerate) → structurally validate and upload exactly `qr.png`, the two typographic word-cloud SVGs, and the light/dark banner pair
 3. **Living-art lane** — `prepare-event-art-inputs` fetches one metrics/history bundle and exports `LIVING_ART_STYLE_KEYS`; six read-only `generate-event-art` matrix children render isolated canonical GIFs; `assemble-event-art` validates the merged exact-six fleet and uploads the living-art staging artifact
-4. **`generate-profile-metrics`** — `uv sync --locked` → lowlighter metrics SVGs (+ validation/recovery) → repo-owned supplemental metrics cards (habits/activity/music/posts; never Spotify on lowlighter `with:`) → metrics artifact
+4. **`generate-profile-metrics`** — `uv sync --locked` → repo-owned supplemental metrics cards (languages/habits/music/posts; no lowlighter in production; never Spotify on any Action `with:`) → metrics artifact
 5. **`update-readme-wakatime`** — first-party `generate wakatime` (no `anmol098/waka-readme-stats`) → `waka-readme` artifact (`waka-section.md`); `contents: read` only
 6. **`finalize`** (needs assets ∥ assembled art ∥ metrics ∥ waka) — download artifacts → apply Waka markers → `generate readme-sections` → `generate skills` → ordered commits + one push
 
-Optional manual lane: **`probe-full-metrics`** (workflow_dispatch `metrics_probe_mode=true` only) — same lowlighter pin as prod; probe-only habits/activity diagnostics; `plugin_music: no`; does not update the profile.
+Optional manual lane: **`probe-full-metrics`** (workflow_dispatch `metrics_probe_mode=true` only) — diagnostic `lowlighter/metrics` pin (`v3.34`); probe-only habits/activity diagnostics; `plugin_music: no`; does not update the profile.
 
 Living-art style map (SSOT): `scripts/art/timelapse.py` (`_STYLE_REGISTRY` / `ALL_STYLES`) · human-readable matrix: [`docs/content/docs/scripts/living-art-modes.mdx`](docs/content/docs/scripts/living-art-modes.mdx)
 
