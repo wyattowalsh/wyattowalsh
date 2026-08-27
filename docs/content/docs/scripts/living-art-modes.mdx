@@ -59,6 +59,13 @@ today and logs a warning. Atmosphere still comes from the shared
 [world-state](/docs/scripts/world-state) model; the spine only decides *which
 day's cumulative totals* each frame sees.
 
+The published visual world is lifetime-cumulative: frame *t* still holds every
+repo, star, commit, and follower that had appeared through that day.
+Trailing-year / present-tense diagnostics live in `recent_activity_state` and
+do not drive `render_state` or the generator-facing outer keys. History-only
+repos (deleted, archived, done, or otherwise pruned from current GitHub
+metrics) keep a slot.
+
 ## Accretion dialects
 
 The clock is shared; the visual encodings are not. `scripts/art/shared/accretion.py`

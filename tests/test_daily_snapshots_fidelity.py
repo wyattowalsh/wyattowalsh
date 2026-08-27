@@ -431,10 +431,27 @@ def test_build_daily_snapshots_clamps_maturity_when_rolling_signals_fade(
 
     snaps = build_daily_snapshots(history, metrics)
     maturities = [snap.maturity for snap in snaps]
+    final_metrics = snaps[-1].metrics_dict
 
-    assert any(snap.metrics_dict["contributions_last_year"] == 0 for snap in snaps)
+    assert any(
+        snap.metrics_dict["recent_activity_state"]["contributions_last_year"] == 0
+        for snap in snaps
+    )
     assert maturities == sorted(maturities)
     assert maturities[-1] == 0.85
+    assert (
+        final_metrics["contributions_last_year"]
+        == final_metrics["cumulative_state"]["contributions_to_date"]
+        > 0
+    )
+    assert (
+        final_metrics["render_state"]["contributions_last_year"]
+        == final_metrics["cumulative_state"]["contributions_to_date"]
+    )
+    assert (
+        final_metrics["recent_activity_state"]["contributions_last_year"]
+        != final_metrics["contributions_last_year"]
+    )
 
 
 def test_build_daily_snapshots_exposes_split_monotonic_and_recent_state(
@@ -454,8 +471,15 @@ def test_build_daily_snapshots_exposes_split_monotonic_and_recent_state(
         final_metrics["contributions_daily"].values()
     )
     assert (
-        final_metrics["recent_activity_state"]["contributions_last_year"]
-        == (final_metrics["contributions_last_year"])
+        final_metrics["contributions_last_year"]
+        == final_metrics["cumulative_state"]["contributions_to_date"]
+    )
+    assert (
+        final_metrics["render_state"]["contributions_last_year"]
+        == final_metrics["cumulative_state"]["contributions_to_date"]
+    )
+    assert isinstance(
+        final_metrics["recent_activity_state"]["contributions_last_year"], int
     )
 
 
@@ -613,9 +637,77 @@ def test_build_daily_snapshots_monotonic_cumulative_channels_never_regress(
 
     snaps = build_daily_snapshots(history, metrics)
 
-    for key in ("stars", "forks", "public_repos", "release_count", "merged_pr_count"):
+    for key in (
+        "stars",
+        "forks",
+        "public_repos",
+        "release_count",
+        "merged_pr_count",
+        "total_commits",
+        "contributions_to_date",
+    ):
         series = [snap.metrics_dict["cumulative_state"][key] for snap in snaps]
         assert series == sorted(series), f"{key} regressed: {series}"
+
+    occupancy = [len(snap.metrics_dict["render_state"]["repos"]) for snap in snaps]
+    assert occupancy == sorted(occupancy)
+    public_repos = [snap.metrics_dict["public_repos"] for snap in snaps]
+    assert public_repos == sorted(public_repos)
+
+
+def test_build_daily_snapshots_keeps_history_only_repos_as_pruned_slots(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    anchor_day = date(2025, 1, 15)
+    _freeze_timeline_end(monkeypatch, anchor_day=anchor_day)
+    history = _history_for_days(14, anchor_day=anchor_day)
+    start = date.fromisoformat(history["account_created"][:10])
+    gone_day = start + timedelta(days=4)
+    history["repos"].append(
+        {
+            "date": gone_day.isoformat(),
+            "name": "gone-repo",
+            "language": "Rust",
+            "stars": 4,
+            "topics": ["legacy"],
+        }
+    )
+    metrics = _metrics_for_history(anchor_day=anchor_day)
+    metrics["top_repos"] = [
+        repo for repo in metrics["top_repos"] if repo["name"] != "gone-repo"
+    ]
+
+    snaps = build_daily_snapshots(history, metrics)
+
+    appeared = False
+    previous_occupancy = 0
+    previous_public_repos = 0
+    for snap in snaps:
+        render_repos = snap.metrics_dict["render_state"]["repos"]
+        names = [repo["name"] for repo in render_repos]
+        occupancy = len(render_repos)
+        public_repos = snap.metrics_dict["public_repos"]
+        if "gone-repo" in names:
+            appeared = True
+        if appeared:
+            assert "gone-repo" in names
+            assert occupancy >= previous_occupancy
+            assert public_repos >= previous_public_repos
+        previous_occupancy = occupancy
+        previous_public_repos = public_repos
+
+    assert appeared
+    gone = next(
+        repo
+        for repo in snaps[-1].metrics_dict["render_state"]["repos"]
+        if repo["name"] == "gone-repo"
+    )
+    assert gone["status"] == "pruned"
+    assert gone["language"] == "Rust"
+    assert gone["topics"] == ["legacy"]
+    assert snaps[-1].metrics_dict["public_repos"] == len(
+        snaps[-1].metrics_dict["render_state"]["repos"]
+    )
 
 
 def test_sample_frames_default_matches_published_contract() -> None:

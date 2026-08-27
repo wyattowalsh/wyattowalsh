@@ -163,37 +163,105 @@ def _monotone_non_decreasing(current: int, previous: int) -> int:
     return max(previous, current)
 
 
+def _repo_creation_date(repo: dict[str, Any]) -> dt_date | None:
+    """Parse a repo creation day from common GitHub / metrics date keys."""
+    for key in ("created", "created_at", "date", "updated_at"):
+        value = repo.get(key)
+        if isinstance(value, datetime):
+            return value.date()
+        if isinstance(value, dt_date):
+            return value
+        if isinstance(value, str):
+            parsed = _parse_date(value)
+            if parsed is not None:
+                return parsed
+    return None
+
+
+def _lifetime_repo_slot(
+    *,
+    name: str,
+    source: dict[str, Any],
+    created: dt_date,
+    status: str,
+) -> dict[str, Any]:
+    """Build one lifetime occupancy slot from history or current details."""
+    topics = source.get("topics", [])
+    return {
+        "name": name,
+        "language": source.get("language"),
+        "stars": source.get("stars", 0),
+        "forks": source.get("forks", 0),
+        "topics": topics if isinstance(topics, list) else [],
+        "description": source.get("description", ""),
+        "created": created,
+        "status": status,
+    }
+
+
 def _repos_by_creation_date(
     history_repos: list[dict[str, Any]],
     current_repos: list[dict[str, Any]],
+    *,
+    fallback_day: dt_date | None = None,
 ) -> list[tuple[dt_date, dict[str, Any]]]:
-    """Merge history repo dates with current repo details, sorted by creation date."""
-    # Build detail lookup from current metrics
+    """Merge history and current repos into lifetime occupancy slots.
+
+    History names remain even when they have vanished from current metrics
+    (deleted / archived / done / pruned). Current-only names still join the
+    world, using a parseable created date or *fallback_day*.
+    """
     detail_by_name: dict[str, dict[str, Any]] = {}
-    for r in current_repos:
-        name = r.get("name", "")
+    for repo in current_repos:
+        name = str(repo.get("name", "") or "").strip()
         if name:
-            detail_by_name[name] = r
+            detail_by_name[name] = repo
 
     result: list[tuple[dt_date, dict[str, Any]]] = []
-    for hr in history_repos:
-        d = _parse_date(hr.get("date"))
-        name = hr.get("name", "")
-        if d is None:
+    seen: set[str] = set()
+    for history_repo in history_repos:
+        name = str(history_repo.get("name", "") or "").strip()
+        if not name or name in seen:
             continue
-        details = detail_by_name.get(name, {})
-        repo = {
-            "name": name,
-            "language": details.get("language"),
-            "stars": details.get("stars", 0),
-            "forks": details.get("forks", 0),
-            "topics": details.get("topics", []),
-            "description": details.get("description", ""),
-            "created": d,
-        }
-        result.append((d, repo))
+        created = _repo_creation_date(history_repo) or fallback_day
+        if created is None:
+            continue
+        present = name in detail_by_name
+        source = detail_by_name[name] if present else history_repo
+        result.append(
+            (
+                created,
+                _lifetime_repo_slot(
+                    name=name,
+                    source=source,
+                    created=created,
+                    status="active" if present else "pruned",
+                ),
+            )
+        )
+        seen.add(name)
 
-    result.sort(key=lambda x: x[0])
+    for current_repo in current_repos:
+        name = str(current_repo.get("name", "") or "").strip()
+        if not name or name in seen:
+            continue
+        created = _repo_creation_date(current_repo) or fallback_day
+        if created is None:
+            continue
+        result.append(
+            (
+                created,
+                _lifetime_repo_slot(
+                    name=name,
+                    source=current_repo,
+                    created=created,
+                    status="active",
+                ),
+            )
+        )
+        seen.add(name)
+
+    result.sort(key=lambda item: item[0])
     return result
 
 
@@ -349,6 +417,61 @@ def _allocate_histogram_delta(
     return updated
 
 
+def _envelope_render_repos(
+    current_repos: list[Any],
+    previous_repos: list[Any],
+    *,
+    preferred_names: list[str],
+) -> list[dict[str, Any]]:
+    """Union current and previous repo slots without dropping occupancy."""
+
+    def _as_repo_map(repos: list[Any]) -> dict[str, dict[str, Any]]:
+        mapped: dict[str, dict[str, Any]] = {}
+        for repo in repos:
+            if not isinstance(repo, dict):
+                continue
+            name = str(repo.get("name") or "").strip()
+            if not name or name in mapped:
+                continue
+            mapped[name] = dict(repo)
+        return mapped
+
+    current_by_name = _as_repo_map(current_repos)
+    previous_by_name = _as_repo_map(previous_repos)
+    merged: dict[str, dict[str, Any]] = {}
+
+    for name, previous in previous_by_name.items():
+        current = current_by_name.get(name)
+        if current is None:
+            pruned = dict(previous)
+            if not pruned.get("status"):
+                pruned["status"] = "pruned"
+            merged[name] = pruned
+            continue
+        enveloped = dict(current)
+        for repo_key in ("stars", "forks", "age_months"):
+            enveloped[repo_key] = max(
+                int(current.get(repo_key, 0) or 0),
+                int(previous.get(repo_key, 0) or 0),
+            )
+        if not enveloped.get("status"):
+            enveloped["status"] = previous.get("status") or "active"
+        merged[name] = enveloped
+
+    for name, current in current_by_name.items():
+        if name in merged:
+            continue
+        enveloped = dict(current)
+        if not enveloped.get("status"):
+            enveloped["status"] = "active"
+        merged[name] = enveloped
+
+    return order_repos_for_visual_plan(
+        list(merged.values()),
+        preferred_names=preferred_names,
+    )
+
+
 def _build_render_state(
     metrics_dict: dict[str, Any],
     *,
@@ -449,20 +572,56 @@ def _build_render_state(
         float(previous_render_state.get("language_diversity", 0.0) or 0.0),
     )
 
+    previous_repos_raw = previous_render_state.get("repos", []) or []
+    current_repos_raw = metrics_dict.get("repos", []) or []
+    preferred_order = [
+        str(name)
+        for name in list(metrics_dict.get("repo_visual_order", []) or [])
+        + list(previous_render_state.get("repo_visual_order", []) or [])
+        if isinstance(name, str) and name
+    ]
+    enveloped_repos = _envelope_render_repos(
+        current_repos_raw if isinstance(current_repos_raw, list) else [],
+        previous_repos_raw if isinstance(previous_repos_raw, list) else [],
+        preferred_names=preferred_order,
+    )
+    repo_visual_order = list(
+        dict.fromkeys(
+            [
+                *[
+                    str(name)
+                    for name in list(metrics_dict.get("repo_visual_order", []) or [])
+                    if isinstance(name, str) and name
+                ],
+                *[
+                    str(repo.get("name") or "").strip()
+                    for repo in enveloped_repos
+                    if str(repo.get("name") or "").strip()
+                ],
+            ]
+        )
+    )
+    public_repos = max(
+        int(
+            cumulative_state.get("public_repos", metrics_dict.get("public_repos", 0))
+            or 0
+        ),
+        len(enveloped_repos),
+        int(previous_render_state.get("public_repos", 0) or 0),
+    )
+
     return {
         "label": metrics_dict.get("label"),
         "account_created": metrics_dict.get("account_created"),
-        "repos": [dict(repo) for repo in metrics_dict.get("repos", [])],
-        "repo_visual_order": list(metrics_dict.get("repo_visual_order", []) or []),
+        "repos": enveloped_repos,
+        "repo_visual_order": repo_visual_order,
         "stars": cumulative_state.get("stars", metrics_dict.get("stars", 0)),
         "forks": cumulative_state.get("forks", metrics_dict.get("forks", 0)),
         "watchers": cumulative_state.get("watchers", metrics_dict.get("watchers", 0)),
         "followers": cumulative_state.get(
             "followers", metrics_dict.get("followers", 0)
         ),
-        "public_repos": cumulative_state.get(
-            "public_repos", metrics_dict.get("public_repos", 0)
-        ),
+        "public_repos": public_repos,
         "network_count": cumulative_state.get(
             "network_count", metrics_dict.get("network_count", 0)
         ),
@@ -1042,6 +1201,7 @@ def build_daily_snapshots(
     dated_repos = _repos_by_creation_date(
         history.get("repos", []),
         current_repos,
+        fallback_day=account_created,
     )
     preferred_repo_names_source = current_metrics.get("repo_visual_order")
     preferred_repo_names = (
@@ -1241,7 +1401,10 @@ def build_daily_snapshots(
                 _interpolate_scalar(curr_followers, progress),
                 previous_cumulative_state.get("followers", 0),
             ),
-            "public_repos": len(repos_so_far),
+            "public_repos": _monotone_non_decreasing(
+                len(repos_so_far),
+                previous_cumulative_state.get("public_repos", 0),
+            ),
             "orgs_count": _monotone_non_decreasing(
                 _interpolate_scalar(curr_orgs, progress),
                 previous_cumulative_state.get("orgs_count", 0),
@@ -1297,7 +1460,7 @@ def build_daily_snapshots(
             "following": _interpolate_scalar(curr_following, progress),
             "public_repos": cumulative_state["public_repos"],
             "orgs_count": cumulative_state["orgs_count"],
-            "contributions_last_year": contribs_last_year,
+            "contributions_last_year": cumulative_state["contributions_to_date"],
             "total_commits": cumulative_state["total_commits"],
             "total_prs": cumulative_state["total_prs"],
             "total_issues": cumulative_state["total_issues"],
@@ -1398,6 +1561,12 @@ def build_daily_snapshots(
             cumulative_commit_hours=cumulative_commit_hours,
         )
         metrics_dict["render_state"] = render_state
+        metrics_dict["repos"] = render_state["repos"]
+        metrics_dict["public_repos"] = render_state["public_repos"]
+        metrics_dict["contributions_last_year"] = render_state[
+            "contributions_last_year"
+        ]
+        cumulative_state["public_repos"] = int(render_state["public_repos"] or 0)
 
         # Timelapse frames should never regress once cumulative signals have appeared.
         maturity = max(previous_maturity, compute_maturity(render_state))
