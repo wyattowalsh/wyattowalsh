@@ -787,6 +787,7 @@ class SvgRepoCardRenderer:
     _CHAR_W = 6.8
     _TITLE_FONT_SIZES = (17, 16, 15, 14)
     _DESC_FONT_SIZES = (13, 12, 11)
+    _COMPACT_DESC_FONT_SIZES = (13, 12, 11, 10, 9, 8, 7)
 
     def __init__(
         self,
@@ -803,7 +804,8 @@ class SvgRepoCardRenderer:
         compact = self._is_compact_card()
         lang_name, lang_color = self._extract_language(card.meta)
         stats_items = self._collect_stats(card.meta, compact=compact)
-        px = 20  # left padding
+        px = 12 if compact else 20
+        right_px = px if compact else 20
         sparkline_data = (
             card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
         )
@@ -832,7 +834,7 @@ class SvgRepoCardRenderer:
         for try_thumb in thumb_trials:
             candidate_thumb_w, candidate_thumb_h = (80, 48) if try_thumb else (0, 0)
             text_px_w = (
-                (w - candidate_thumb_w - 36 - px) if try_thumb else (w - px - 20)
+                (w - candidate_thumb_w - 36 - px) if try_thumb else (w - px - right_px)
             )
             spark_trials = [True, False] if sparkline_data and not compact else [False]
             for try_sparkline in spark_trials:
@@ -849,6 +851,7 @@ class SvgRepoCardRenderer:
                     available_height=available_height,
                     max_desc_lines=None,
                     ellipsize_desc=False,
+                    compact=compact,
                 )
                 layout = candidate
                 if fits:
@@ -893,18 +896,22 @@ class SvgRepoCardRenderer:
                 thumb_w,
                 thumb_h,
             ) = best_candidate
-            h += overflow + 16
-            bar_y = h - 30
+            if not compact:
+                h += overflow + 16
+                bar_y = h - 30
         if layout is None:
             layout = ([card.title], [], 17, 13)
         title_lines, desc_lines, title_size, desc_size = layout
+        _, desc_leading, desc_gap = self._copy_metrics(compact=compact)
         title_x = px + 24
         title_y = 16 + title_size
         title_line_height = title_size + 4
         desc_y = (
-            title_y + (len(title_lines) * title_line_height) + (10 if desc_lines else 0)
+            title_y
+            + (len(title_lines) * title_line_height)
+            + (desc_gap if desc_lines else 0)
         )
-        desc_line_height = desc_size + 3
+        desc_line_height = desc_size + desc_leading
 
         lines: list[str] = [
             (
@@ -1259,6 +1266,11 @@ class SvgRepoCardRenderer:
                 return lang, color
         return None, None
 
+    def _copy_metrics(self, *, compact: bool) -> tuple[tuple[int, ...], int, int]:
+        if compact:
+            return self._COMPACT_DESC_FONT_SIZES, 2, 6
+        return self._DESC_FONT_SIZES, 3, 10
+
     def _fit_copy_layout(
         self,
         *,
@@ -1268,9 +1280,11 @@ class SvgRepoCardRenderer:
         available_height: int,
         max_desc_lines: int | None,
         ellipsize_desc: bool,
+        compact: bool = False,
     ) -> tuple[tuple[list[str], list[str], int, int], bool, int]:
         best: tuple[list[str], list[str], int, int] | None = None
         best_overflow: int | None = None
+        desc_sizes, desc_leading, desc_gap = self._copy_metrics(compact=compact)
 
         for title_size in self._TITLE_FONT_SIZES:
             title_width = _chars_for_width(text_px_w, title_size, 0.56)
@@ -1282,7 +1296,7 @@ class SvgRepoCardRenderer:
             )
             title_line_height = title_size + 4
             title_height = len(title_lines) * title_line_height
-            for desc_size in self._DESC_FONT_SIZES:
+            for desc_size in desc_sizes:
                 desc_width = _chars_for_width(text_px_w, desc_size, 0.58)
                 desc_lines = _word_wrap(
                     description,
@@ -1290,8 +1304,8 @@ class SvgRepoCardRenderer:
                     max_lines=max_desc_lines,
                     ellipsize=ellipsize_desc,
                 )
-                desc_line_height = desc_size + 3
-                gap = 10 if desc_lines else 0
+                desc_line_height = desc_size + desc_leading
+                gap = desc_gap if desc_lines else 0
                 total_height = title_height + gap + (len(desc_lines) * desc_line_height)
                 layout = (title_lines, desc_lines, title_size, desc_size)
                 if total_height <= available_height:

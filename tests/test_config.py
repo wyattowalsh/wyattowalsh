@@ -383,19 +383,29 @@ class TestLoadConfigHappyPath:
 # ---------------------------------------------------------------------------
 
 _FEATURED_REPO_FULL_NAMES = [
-    "wyattowalsh/agents",
     "wyattowalsh/nbadb",
     "wyattowalsh/proxywhirl",
-    "wyattowalsh/mcp-crawl4ai",
-    "wyattowalsh/fl-mcp",
-    "wyattowalsh/personal-website",
-    "wyattowalsh/ai-web-feeds",
+    "wyattowalsh/agents",
+    "wyattowalsh/profile-bits",
+    "wyattowalsh/riso",
+    "wyattowalsh/openopps",
+    "wyattowalsh/webmedia-dl",
     "wyattowalsh/iina-plugin-bookmarks",
+    "wyattowalsh/nbops",
+    "wyattowalsh/cwa",
+    "wyattowalsh/personal-website",
+    "wyattowalsh/prompts",
+    "wyattowalsh/ai-web-feeds",
+    "wyattowalsh/linkedin-profile-exporter",
+    "wyattowalsh/copy-to-gmail",
+    "wyattowalsh/wild-web-wrap-up",
+    "wyattowalsh/fl-mcp",
+    "wyattowalsh/mcp-crawl4ai",
 ]
 
 
 class TestRepoFeaturedReposContract:
-    def test_load_config_featured_repos_names_match_named_eight(self):
+    def test_load_config_featured_repos_names_match_named_eighteen(self):
         settings = load_config().readme_sections_settings
         assert settings is not None
         names = [repo.full_name for repo in settings.featured_repos]

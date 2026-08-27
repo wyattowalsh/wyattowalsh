@@ -618,7 +618,9 @@ class TestSvgRepoCardRenderer:
         assert "Processing" in svg
         assert "…" not in svg
 
-    def test_repo_card_expands_for_full_description_without_ellipsis(self) -> None:
+    def test_compact_cards_scale_desc_font_to_keep_full_copy(
+        self,
+    ) -> None:
         renderer = SvgRepoCardRenderer(width=320, height=162)
         card = SvgCard(
             title="repo",
@@ -631,10 +633,14 @@ class TestSvgRepoCardRenderer:
         )
 
         svg = renderer.render_card(card)
+        desc_fonts = re.findall(r'<text class="rc-desc"[^>]*font: 400 (\d+)px', svg)
 
+        assert 'width="320" height="162"' in svg
         assert "ellipsis." in svg
-        assert "…" not in svg
         assert "the tail behind an" in svg
+        assert "…" not in svg
+        assert desc_fonts
+        assert all(int(size) <= 13 for size in desc_fonts)
 
     def test_word_wrap_helper(self) -> None:
         lines = _word_wrap(
@@ -822,6 +828,38 @@ class TestSvgRepoCardRenderer:
         assert "123" in svg
         assert "2 days ago" in svg
         assert "M8 1.5a6.5" in svg
+
+    def test_compact_cards_keep_requested_height_when_copy_overflows(
+        self,
+    ) -> None:
+        renderer = SvgRepoCardRenderer(width=280, height=156)
+        card = SvgCard(
+            title="repo",
+            lines=(
+                "A very long repository description that would previously grow "
+                "the compact featured card canvas instead of ellipsizing the "
+                "copy into two description lines on the requested 156-pixel "
+                "height. Extra words keep overflowing the available text box.",
+            ),
+            meta=("lang:Python", "★ 123", "Updated 2 days ago"),
+            background_image="data:image/png;base64,iVBOR",
+            sparkline=(0.0, 2.0, 5.0, 8.0, 12.0),
+            languages={"Python": 8000, "Shell": 2000},
+            license_spdx="MIT",
+        )
+
+        svg = renderer.render_card(card)
+        desc_fonts = re.findall(r'<text class="rc-desc"[^>]*font: 400 (\d+)px', svg)
+
+        assert 'width="280" height="156"' in svg
+        assert 'viewBox="0 0 280 156"' in svg
+        assert "thumb-clip" not in svg
+        assert "sparkline-group" not in svg
+        assert "available text box." in svg
+        assert "…" not in svg
+        assert desc_fonts
+        assert max(int(size) for size in desc_fonts) <= 13
+        assert min(int(size) for size in desc_fonts) >= 7
 
     def test_language_bar_rendered(self) -> None:
         renderer = SvgRepoCardRenderer()

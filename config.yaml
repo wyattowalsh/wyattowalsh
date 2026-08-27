@@ -64,14 +64,24 @@ readme_sections_settings:
       color: '000000'
       logo: x
   featured_repos:
-    - full_name: wyattowalsh/agents
     - full_name: wyattowalsh/nbadb
     - full_name: wyattowalsh/proxywhirl
-    - full_name: wyattowalsh/mcp-crawl4ai
-    - full_name: wyattowalsh/fl-mcp
-    - full_name: wyattowalsh/personal-website
-    - full_name: wyattowalsh/ai-web-feeds
+    - full_name: wyattowalsh/agents
+    - full_name: wyattowalsh/profile-bits
+    - full_name: wyattowalsh/riso
+    - full_name: wyattowalsh/openopps
+    - full_name: wyattowalsh/webmedia-dl
     - full_name: wyattowalsh/iina-plugin-bookmarks
+    - full_name: wyattowalsh/nbops
+    - full_name: wyattowalsh/cwa
+    - full_name: wyattowalsh/personal-website
+    - full_name: wyattowalsh/prompts
+    - full_name: wyattowalsh/ai-web-feeds
+    - full_name: wyattowalsh/linkedin-profile-exporter
+    - full_name: wyattowalsh/copy-to-gmail
+    - full_name: wyattowalsh/wild-web-wrap-up
+    - full_name: wyattowalsh/fl-mcp
+    - full_name: wyattowalsh/mcp-crawl4ai
   blog_feed_url: https://w4w.dev/feed.xml
   blog_post_limit: 5
   svg:

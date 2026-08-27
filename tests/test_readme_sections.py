@@ -562,7 +562,7 @@ class TestRendering:
         html = generator._render_featured_projects()
 
         assert "<table>" not in html
-        assert html.count('width="360"') == 6
+        assert html.count('width="280"') == 6
         assert "More Featured Projects" not in html
 
     def test_featured_projects_keep_one_card_variety_for_larger_sets(
@@ -634,7 +634,7 @@ class TestRendering:
 
         assert "More Featured Projects" not in html
         assert "<table>" not in html
-        assert html.count('width="360"') == 7
+        assert html.count('width="280"') == 7
         assert len(manifest["projects"]) == 7
         assert [project["full_name"] for project in manifest["projects"]] == [
             repo.full_name for repo in repos
@@ -646,8 +646,8 @@ class TestRendering:
         later_svg = (
             tmp_path / "svg" / "featured-card-wyattowalsh-repo-6.svg"
         ).read_text(encoding="utf-8")
-        assert "sparkline-group" in later_svg
-        assert "thumb-clip" in later_svg
+        assert "sparkline-group" not in later_svg
+        assert "thumb-clip" not in later_svg
 
     def test_featured_projects_mirror_docs_showcase_surface(
         self, tmp_path: Path, monkeypatch

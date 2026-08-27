@@ -3,7 +3,7 @@
 These tests assert README composition and generator rewrites that keep
 Living Art / My Tech Stack aligned with that design. Living Art is a
 full-width stack with per-piece <details>; My Tech Stack stays collapsed.
-Featured projects remain a wrap-flow of 360 cards.
+Featured projects remain a wrap-flow of compact 280 cards.
 """
 
 from __future__ import annotations
@@ -447,9 +447,10 @@ def test_featured_projects_use_wrap_flow_cards() -> None:
     assert "More Featured Projects" not in featured
     assert "<details" not in featured.lower()
     assert featured.count('<p align="center">') == 1
-    assert featured.count('width="360"') == 8
-    assert featured.count("featured-card-") == 8
-    assert featured.count('loading="lazy"') == 8
+    assert featured.count('width="280"') == 18
+    assert featured.count('width="360"') == 0
+    assert featured.count("featured-card-") == 18
+    assert featured.count('loading="lazy"') == 18
     assert "listentropy" not in featured
     assert "mdxpad" not in featured
     assert 'alt="Featured project card for ' in featured

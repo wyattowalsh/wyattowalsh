@@ -1,25 +1,8 @@
 {
-  "generated_at": "2026-08-21T02:13:30.847816+00:00",
+  "generated_at": "2026-08-27T06:51:56.820372+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
-    {
-      "alt_text": "Featured project card for agents: AI agent artifacts, configs, skills, tools, and more",
-      "forks": 1,
-      "full_name": "wyattowalsh/agents",
-      "license": "MIT",
-      "stars": 5,
-      "summary": "AI agent artifacts, configs, skills, tools, and more",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-agents.svg",
-      "thumbnail_present": true,
-      "title": "agents",
-      "top_languages": [
-        "Python",
-        "HTML"
-      ],
-      "updated_label": "Updated 1d ago",
-      "url": "https://github.com/wyattowalsh/agents"
-    },
     {
       "alt_text": "Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle",
       "forks": 21,
@@ -34,7 +17,7 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 6d ago",
+      "updated_label": "Updated 1w ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
@@ -42,7 +25,7 @@
       "forks": 7,
       "full_name": "wyattowalsh/proxywhirl",
       "license": "MIT",
-      "stars": 23,
+      "stars": 24,
       "summary": "rotating proxy system",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-proxywhirl.svg",
       "thumbnail_present": true,
@@ -55,38 +38,140 @@
       "url": "https://github.com/wyattowalsh/proxywhirl"
     },
     {
-      "alt_text": "Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
-      "forks": 2,
-      "full_name": "wyattowalsh/mcp-crawl4ai",
+      "alt_text": "Featured project card for agents: AI agent artifacts, configs, skills, tools, and more",
+      "forks": 1,
+      "full_name": "wyattowalsh/agents",
       "license": "MIT",
-      "stars": 0,
-      "summary": "MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-mcp-crawl4ai.svg",
+      "stars": 5,
+      "summary": "AI agent artifacts, configs, skills, tools, and more",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-agents.svg",
       "thumbnail_present": true,
-      "title": "mcp-crawl4ai",
+      "title": "agents",
       "top_languages": [
         "Python",
-        "Dockerfile"
+        "HTML"
       ],
-      "updated_label": "Updated 3mo ago",
-      "url": "https://github.com/wyattowalsh/mcp-crawl4ai"
+      "updated_label": "Updated 5d ago",
+      "url": "https://github.com/wyattowalsh/agents"
     },
     {
-      "alt_text": "Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
+      "alt_text": "Featured project card for profile-bits: GitHub profile README widgets as dense GitHub-native stats cards \u2014 JSX in, PNG/SVG out",
       "forks": null,
-      "full_name": "wyattowalsh/fl-mcp",
+      "full_name": "wyattowalsh/profile-bits",
       "license": "MIT",
-      "stars": 1,
-      "summary": "Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-fl-mcp.svg",
+      "stars": 0,
+      "summary": "GitHub profile README widgets as dense GitHub-native stats cards \u2014 JSX in, PNG/SVG out",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-profile-bits.svg",
       "thumbnail_present": true,
-      "title": "fl-mcp",
+      "title": "profile-bits",
+      "top_languages": [
+        "TypeScript",
+        "Shell"
+      ],
+      "updated_label": "Updated 1d ago",
+      "url": "https://github.com/wyattowalsh/profile-bits"
+    },
+    {
+      "alt_text": "Featured project card for riso: Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling",
+      "forks": null,
+      "full_name": "wyattowalsh/riso",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-riso.svg",
+      "thumbnail_present": true,
+      "title": "riso",
+      "top_languages": [
+        "Jinja",
+        "Python"
+      ],
+      "updated_label": "Updated 2d ago",
+      "url": "https://github.com/wyattowalsh/riso"
+    },
+    {
+      "alt_text": "Featured project card for openopps: CLI and local ledger for discovering public hiring boards and syncing normalized job listings",
+      "forks": null,
+      "full_name": "wyattowalsh/openopps",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "CLI and local ledger for discovering public hiring boards and syncing normalized job listings",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-openopps.svg",
+      "thumbnail_present": true,
+      "title": "openopps",
+      "top_languages": [
+        "Python",
+        "TypeScript"
+      ],
+      "updated_label": "Updated 5m ago",
+      "url": "https://github.com/wyattowalsh/openopps"
+    },
+    {
+      "alt_text": "Featured project card for webmedia-dl: Local-first universal media acquisition and export for Apple devices and desktop browsers",
+      "forks": null,
+      "full_name": "wyattowalsh/webmedia-dl",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Local-first universal media acquisition and export for Apple devices and desktop browsers",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-webmedia-dl.svg",
+      "thumbnail_present": true,
+      "title": "webmedia-dl",
       "top_languages": [
         "Python",
         "Swift"
       ],
-      "updated_label": "Updated 1mo ago",
-      "url": "https://github.com/wyattowalsh/fl-mcp"
+      "updated_label": "Updated 6h ago",
+      "url": "https://github.com/wyattowalsh/webmedia-dl"
+    },
+    {
+      "alt_text": "Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player",
+      "forks": null,
+      "full_name": "wyattowalsh/iina-plugin-bookmarks",
+      "license": "MIT",
+      "stars": 16,
+      "summary": "media bookmark manager plugin for the iina video player",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-iina-plugin-bookmarks.svg",
+      "thumbnail_present": true,
+      "title": "iina-plugin-bookmarks",
+      "top_languages": [
+        "TypeScript",
+        "SCSS"
+      ],
+      "updated_label": "Updated 4mo ago",
+      "url": "https://github.com/wyattowalsh/iina-plugin-bookmarks"
+    },
+    {
+      "alt_text": "Featured project card for nbops: Local-first runtime observability for Python notebooks: CPU/memory sampling, SQLite runs, redacted HTML/Markdown reports",
+      "forks": null,
+      "full_name": "wyattowalsh/nbops",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Local-first runtime observability for Python notebooks: CPU/memory sampling, SQLite runs, redacted HTML/Markdown reports",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-nbops.svg",
+      "thumbnail_present": true,
+      "title": "nbops",
+      "top_languages": [
+        "Python",
+        "Jupyter Notebook"
+      ],
+      "updated_label": "Updated 6h ago",
+      "url": "https://github.com/wyattowalsh/nbops"
+    },
+    {
+      "alt_text": "Featured project card for cwa: Local macOS Pake wrapper around chatgpt.com with visible-thread Markdown/ZIP export",
+      "forks": null,
+      "full_name": "wyattowalsh/cwa",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Local macOS Pake wrapper around chatgpt.com with visible-thread Markdown/ZIP export",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-cwa.svg",
+      "thumbnail_present": true,
+      "title": "cwa",
+      "top_languages": [
+        "JavaScript",
+        "CSS"
+      ],
+      "updated_label": "Updated 4d ago",
+      "url": "https://github.com/wyattowalsh/cwa"
     },
     {
       "alt_text": "Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! \ud83d\udc68\u200d\ud83d\udcbb",
@@ -106,6 +191,23 @@
       "url": "https://github.com/wyattowalsh/personal-website"
     },
     {
+      "alt_text": "Featured project card for prompts: Research-backed prompt recipes you copy, adapt, and verify",
+      "forks": 2,
+      "full_name": "wyattowalsh/prompts",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Research-backed prompt recipes you copy, adapt, and verify",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-prompts.svg",
+      "thumbnail_present": true,
+      "title": "prompts",
+      "top_languages": [
+        "JavaScript",
+        "TypeScript"
+      ],
+      "updated_label": "Updated 1w ago",
+      "url": "https://github.com/wyattowalsh/prompts"
+    },
+    {
       "alt_text": "Featured project card for ai-web-feeds: AI/ML web feeds",
       "forks": null,
       "full_name": "wyattowalsh/ai-web-feeds",
@@ -119,25 +221,93 @@
         "TypeScript",
         "Python"
       ],
-      "updated_label": "Updated 3d ago",
+      "updated_label": "Updated 2d ago",
       "url": "https://github.com/wyattowalsh/ai-web-feeds"
     },
     {
-      "alt_text": "Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player",
+      "alt_text": "Featured project card for linkedin-profile-exporter: TypeScript tool for exporting LinkedIn profile data",
       "forks": null,
-      "full_name": "wyattowalsh/iina-plugin-bookmarks",
+      "full_name": "wyattowalsh/linkedin-profile-exporter",
       "license": "MIT",
-      "stars": 16,
-      "summary": "media bookmark manager plugin for the iina video player",
-      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-iina-plugin-bookmarks.svg",
+      "stars": 1,
+      "summary": "TypeScript tool for exporting LinkedIn profile data",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-linkedin-profile-exporter.svg",
       "thumbnail_present": true,
-      "title": "iina-plugin-bookmarks",
+      "title": "linkedin-profile-exporter",
       "top_languages": [
         "TypeScript",
-        "SCSS"
+        "MDX"
+      ],
+      "updated_label": "Updated 5d ago",
+      "url": "https://github.com/wyattowalsh/linkedin-profile-exporter"
+    },
+    {
+      "alt_text": "Featured project card for copy-to-gmail: Local Gmail-ready drafting studio for sanitized HTML/plain clipboard payloads",
+      "forks": null,
+      "full_name": "wyattowalsh/copy-to-gmail",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "Local Gmail-ready drafting studio for sanitized HTML/plain clipboard payloads",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-copy-to-gmail.svg",
+      "thumbnail_present": true,
+      "title": "copy-to-gmail",
+      "top_languages": [
+        "TypeScript",
+        "JavaScript"
+      ],
+      "updated_label": "Updated 2mo ago",
+      "url": "https://github.com/wyattowalsh/copy-to-gmail"
+    },
+    {
+      "alt_text": "Featured project card for wild-web-wrap-up: Next.js editorial wrap-up site",
+      "forks": null,
+      "full_name": "wyattowalsh/wild-web-wrap-up",
+      "license": null,
+      "stars": 0,
+      "summary": "Next.js editorial wrap-up site",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-wild-web-wrap-up.svg",
+      "thumbnail_present": true,
+      "title": "wild-web-wrap-up",
+      "top_languages": [
+        "TypeScript",
+        "JavaScript"
+      ],
+      "updated_label": "Updated 1w ago",
+      "url": "https://github.com/wyattowalsh/wild-web-wrap-up"
+    },
+    {
+      "alt_text": "Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
+      "forks": null,
+      "full_name": "wyattowalsh/fl-mcp",
+      "license": "MIT",
+      "stars": 1,
+      "summary": "Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-fl-mcp.svg",
+      "thumbnail_present": true,
+      "title": "fl-mcp",
+      "top_languages": [
+        "Python",
+        "Swift"
+      ],
+      "updated_label": "Updated 2mo ago",
+      "url": "https://github.com/wyattowalsh/fl-mcp"
+    },
+    {
+      "alt_text": "Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
+      "forks": 2,
+      "full_name": "wyattowalsh/mcp-crawl4ai",
+      "license": "MIT",
+      "stars": 0,
+      "summary": "MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python",
+      "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-mcp-crawl4ai.svg",
+      "thumbnail_present": true,
+      "title": "mcp-crawl4ai",
+      "top_languages": [
+        "Python",
+        "Dockerfile"
       ],
       "updated_label": "Updated 4mo ago",
-      "url": "https://github.com/wyattowalsh/iina-plugin-bookmarks"
+      "url": "https://github.com/wyattowalsh/mcp-crawl4ai"
     }
   ],
   "public_surface_dir": "docs/public/showcase/featured-projects"

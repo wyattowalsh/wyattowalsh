@@ -1224,8 +1224,7 @@ class ReadmeSectionGenerator:
                 ),
                 (
                     ".github/assets/img/metrics.additional.svg",
-                    "Additional metrics: recently starred repositories "
-                    "and stargazers",
+                    "Additional metrics: recently starred repositories and stargazers",
                 ),
             ),
         ]
@@ -1308,10 +1307,7 @@ class ReadmeSectionGenerator:
     def _wakatime_marker_inner(self, inner: str) -> str:
         """Keep markers as a pointer at the first-party SVG, never a text dump."""
         del inner
-        return (
-            "\n<!-- WakaTime SVG is rendered from "
-            f"{_WAKATIME_ASSET_SRC} -->\n"
-        )
+        return f"\n<!-- WakaTime SVG is rendered from {_WAKATIME_ASSET_SRC} -->\n"
 
     def _extract_wakatime_markers(self, content: str) -> tuple[str, str | None]:
         """Remove Waka marker pairs and return one dump-free pair, if any."""
@@ -1883,17 +1879,20 @@ class ReadmeSectionGenerator:
                 "columns": 1,
                 "width": 1100,
                 "height": 236,
+                "display_width": 360,
             }
         if repo_count <= 4:
             return {
                 "columns": 2,
                 "width": 540,
                 "height": 214,
+                "display_width": 360,
             }
         return {
             "columns": 3,
-            "width": 360,
-            "height": 216,
+            "width": 280,
+            "height": 156,
+            "display_width": 280,
         }
 
     def _featured_public_surface_dir(self) -> Path | None:
@@ -2122,6 +2121,7 @@ class ReadmeSectionGenerator:
         *,
         artifacts: Sequence[FeaturedProjectArtifact],
         columns: int,
+        display_width: int,
         section_label: str | None = None,
     ) -> str:
         del columns
@@ -2135,7 +2135,7 @@ class ReadmeSectionGenerator:
             lines.append(
                 f'<a href="{escape(artifact.card.url or "#")}"'
                 f' target="_blank" rel="noopener noreferrer">'
-                f'<img src="{escape(artifact.asset_src)}" width="360"'
+                f'<img src="{escape(artifact.asset_src)}" width="{display_width}"'
                 f' alt="{escape(artifact.alt_text)}"'
                 f' loading="lazy"/></a>'
             )
@@ -2274,6 +2274,7 @@ class ReadmeSectionGenerator:
         return self._render_featured_table(
             artifacts=artifacts,
             columns=layout["columns"],
+            display_width=layout["display_width"],
         )
 
     def _build_project_svg_card(
