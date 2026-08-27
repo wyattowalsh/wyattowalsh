@@ -129,7 +129,7 @@ class QRCodeGenerator:
         self,
         default_background_path: Path | None,
         default_output_dir: Path,
-        default_scale: int = 25,
+        default_scale: int = 42,
     ):
         """
         Initializes the QRCodeGenerator.
@@ -264,9 +264,9 @@ class QRCodeGenerator:
                     background=str(bg_path),
                     target=str(output_path),
                     scale=current_scale,
-                    # Additional artistic parameters can be specified here
-                    # E.g., kind='png' (default), border, dark module color,
-                    # etc.
+                    border=4,
+                    dark="#000000",
+                    quiet_zone="#FFFFFF",
                 )
             elif bg_path is None:
                 # No background provided — save a standard QR PNG
@@ -274,7 +274,14 @@ class QRCodeGenerator:
                     "No background path provided; saving plain QR code to "
                     f"{output_path}"
                 )
-                qrcode.save(str(output_path), scale=current_scale, kind="png")
+                qrcode.save(
+                    str(output_path),
+                    scale=current_scale,
+                    kind="png",
+                    border=4,
+                    dark="#000000",
+                    quiet_zone="#FFFFFF",
+                )
             else:
                 # Fallback or error if .to_artistic is not available
                 # as expected
@@ -329,7 +336,7 @@ if __name__ == "__main__":
         qr_gen = QRCodeGenerator(
             default_background_path=default_bg_svg_path,
             default_output_dir=default_output_directory,
-            default_scale=25,  # Default scale for the artistic QR code
+            default_scale=42,  # Default scale for the artistic QR code
         )
 
         logger.info(

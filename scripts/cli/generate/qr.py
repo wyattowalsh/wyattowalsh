@@ -128,7 +128,7 @@ def qr(
             default_scale=(
                 qr_scale
                 if qr_scale is not None
-                else int(qr_settings_data.get("default_scale", 25))
+                else int(qr_settings_data.get("default_scale", 42))
             ),
         )
 
@@ -151,7 +151,7 @@ def qr(
         )
         logger.debug(
             f"  QR Settings: scale="
-            f"{qr_scale or qr_settings_data.get('default_scale', 25)}, "
+            f"{qr_scale or qr_settings_data.get('default_scale', 42)}, "
             f"error_correction={error_correction}"
         )
         logger.debug("VCard Details: {cfg_vcard_data}", cfg_vcard_data=cfg_vcard_data)

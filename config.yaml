@@ -28,7 +28,7 @@ qr_code_settings:
   output_filename: qr.png
   output_dir: .github/assets/img
   default_background_path: .github/assets/img/icon.svg
-  default_scale: 25
+  default_scale: 42
   error_correction: H
 word_cloud_settings:
   output_dir: .github/assets/img

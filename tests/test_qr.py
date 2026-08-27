@@ -252,6 +252,9 @@ def test_generate_artistic_vcard_qr_success_defaults(
         background=str(qr_generator_instance.default_background_path),
         target=str(expected_output_path),
         scale=qr_generator_instance.default_scale,
+        border=4,
+        dark="#000000",
+        quiet_zone="#FFFFFF",
     )
     # log_text = caplog.text
     expected_log_msg_content = (
@@ -311,6 +314,9 @@ def test_generate_artistic_vcard_qr_custom_settings(
         background=str(custom_bg_path),
         target=str(expected_output_path),
         scale=custom_scale,
+        border=4,
+        dark="#000000",
+        quiet_zone="#FFFFFF",
     )
 
     # Ensure the vcard string is constructed correctly

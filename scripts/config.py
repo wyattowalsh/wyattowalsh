@@ -96,7 +96,7 @@ class QRCodeSettings(BaseModel):
     output_filename: str = "qr.png"
     output_dir: str = ".github/assets/img"
     default_background_path: str | None = None
-    default_scale: int = 25
+    default_scale: int = 42
     error_correction: str = "H"  # L, M, Q, H
 
 
