@@ -10,70 +10,88 @@ from __future__ import annotations
 
 import sys  # noqa: F401 -- ensures `sys` is available for `logger.add(..., format=...)`
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-# Prefer optional imports for loguru/rich so tests can run in minimal env
-try:
+# Type checkers see only the real loguru/rich APIs. Runtime still falls back
+# when those optional packages are missing so tests can run in a minimal env.
+if TYPE_CHECKING:
+    from loguru import Logger as LoguruLoggerType
     from loguru import logger as loguru_logger
-    from loguru._logger import Logger as LoguruLoggerType
-except Exception:  # pragma: no cover - fallback for test environments
-
-    class _FallbackLogger:
-        def bind(self, **extra):
-            return self
-
-        def info(self, *a, **k):
-            print("INFO:", *a)
-
-        def warning(self, *a, **k):
-            print("WARN:", *a)
-
-        def debug(self, *a, **k):
-            print("DEBUG:", *a)
-
-        def add(self, *a, **k):
-            return None
-
-        def remove(self, *a, **k):
-            return None
-
-        def __getattr__(self, name):
-            # return a no-op callable for any logging method used
-            def _noop(*a, **k):
-                return None
-
-            return _noop
-
-    loguru_logger = _FallbackLogger()
-    LoguruLoggerType = _FallbackLogger  # type: ignore
-
-try:
     from rich.console import Console
     from rich.logging import RichHandler
     from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
-except Exception:  # pragma: no cover - fallback minimal console/progress
+else:
+    try:
+        from loguru import logger as loguru_logger
+        from loguru._logger import Logger as LoguruLoggerType
+    except Exception:  # pragma: no cover - fallback for test environments
 
-    class Console:  # very small fallback
-        def __init__(self, *a, **k):
-            pass
+        class _FallbackLogger:
+            def bind(self, **extra):
+                return self
 
-    class RichHandler:
-        def __init__(self, *a, **k):
-            pass
+            def info(self, *a, **k):
+                print("INFO:", *a)
 
-    class BarColumn:
-        pass
+            def warning(self, *a, **k):
+                print("WARN:", *a)
 
-    class Progress:
-        def __init__(self, *a, **k):
-            pass
+            def debug(self, *a, **k):
+                print("DEBUG:", *a)
 
-    class TextColumn:
-        def __init__(self, *a, **k):
-            pass
+            def add(self, *a, **k):
+                return None
 
-    class TimeRemainingColumn:
-        pass
+            def remove(self, *a, **k):
+                return None
+
+            def __getattr__(self, name):
+                def _noop(*a, **k):
+                    return None
+
+                return _noop
+
+        loguru_logger = _FallbackLogger()
+        LoguruLoggerType = _FallbackLogger
+
+    try:
+        from rich.console import Console
+        from rich.logging import RichHandler
+        from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
+    except Exception:  # pragma: no cover - fallback minimal console/progress
+
+        class Console:  # very small fallback
+            def __init__(self, *a: object, **k: object) -> None:
+                pass
+
+            def print(
+                self,
+                *objects: object,
+                sep: str = " ",
+                end: str = "\n",
+                **k: object,
+            ) -> None:
+                sys.stdout.write(sep.join(str(item) for item in objects) + end)
+
+        class RichHandler:
+            def __init__(self, *a, **k):
+                pass
+
+        class BarColumn:
+            def __init__(self, *a: object, **k: object) -> None:
+                pass
+
+        class Progress:
+            def __init__(self, *a, **k):
+                pass
+
+        class TextColumn:
+            def __init__(self, *a, **k):
+                pass
+
+        class TimeRemainingColumn:
+            def __init__(self, *a: object, **k: object) -> None:
+                pass
 
 
 def _load_app_settings() -> tuple[Any | None, str | None]:
@@ -200,20 +218,14 @@ def create_progress(description: str = "Working…") -> Progress:
         # ...
     ```
     """
-    progress_kwargs = {
-        "console": console,
-        "transient": True,
-    }
-
-    if not hasattr(console, "_live_stack"):
-        progress_kwargs["disable"] = True
-
     return Progress(
         TextColumn("[bold blue]{task.description}"),
         BarColumn(bar_width=None),
         "[progress.percentage]{task.percentage:>3.0f}%",
         TimeRemainingColumn(),
-        **progress_kwargs,
+        console=console,
+        transient=True,
+        disable=not hasattr(console, "_live_stack"),
     )
 
 
