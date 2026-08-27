@@ -69,7 +69,6 @@
 <p align="center">
 <a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-inkgarden.mp4">Watch Ink Garden (MP4)</a></p>
 <details>
 <summary><strong>Ink Garden</strong></summary>
 
@@ -87,7 +86,6 @@ Each repository takes root as a tree, stem and canopy together. A day with no re
 <p align="center">
 <a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-topo.mp4">Watch Topography (MP4)</a></p>
 <details>
 <summary><strong>Topography</strong></summary>
 
@@ -105,7 +103,6 @@ A hand-drawn survey of this account, with one hill for every repository. The map
 <p align="center">
 <a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-genetic.mp4">Watch Genetic Landscape (MP4)</a></p>
 <details>
 <summary><strong>Genetic Landscape</strong></summary>
 
@@ -123,7 +120,6 @@ A landscape of competing fitness peaks, one ridge per repository. Life gathers o
 <p align="center">
 <a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-physarum.mp4">Watch Physarum (MP4)</a></p>
 <details>
 <summary><strong>Physarum</strong></summary>
 
@@ -141,7 +137,6 @@ A slime mold feeding in the dark, spinning a living network from the first repos
 <p align="center">
 <a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-lenia.mp4">Watch Lenia (MP4)</a></p>
 <details>
 <summary><strong>Lenia</strong></summary>
 
@@ -159,7 +154,6 @@ A continuous living field, seeded with one creature for every repository. Soft b
 <p align="center">
 <a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="70%" loading="lazy"/></a>
 </p>
-<p align="center"><a href=".github/assets/img/living-ferrofluid.mp4">Watch Ferrofluid (MP4)</a></p>
 <details>
 <summary><strong>Ferrofluid</strong></summary>
 
@@ -174,11 +168,15 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 <p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
 
+<!-- README:TECH_STACK:START -->
 <p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="" width="100%" loading="lazy"/></p>
 
-## My Tech Stack
 <details>
-<summary>Technologies</summary>
+<summary>
+
+## My Tech Stack
+
+</summary>
 
 <!-- SKILLS:START -->
 ### Programming Languages
@@ -412,16 +410,61 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 </details>
 
+
+
 <p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="" width="100%" loading="lazy"/></p>
 
 ## Word Clouds
+### Topics
+
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/>
 </p>
 
+### Languages
+
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/>
 </p>
+
+<details>
+<summary>Frequency tables</summary>
+
+**Topics** (top 12 by starred-repo count)
+
+| Topic | Starred repos |
+| --- | ---: |
+| python | 773 |
+| ai | 656 |
+| llm | 540 |
+| mcp | 515 |
+| react | 381 |
+| typescript | 341 |
+| javascript | 329 |
+| machine-learning | 309 |
+| hacktoberfest | 305 |
+| awesome-list | 287 |
+| awesome | 279 |
+| claude-code | 244 |
+
+**Languages** (top 12 by starred-repo count)
+
+| Language | Starred repos |
+| --- | ---: |
+| Python | 2268 |
+| TypeScript | 1789 |
+| JavaScript | 1023 |
+| Go | 239 |
+| Rust | 220 |
+| Jupyter Notebook | 219 |
+| C++ | 205 |
+| HTML | 174 |
+| Swift | 133 |
+| Shell | 129 |
+| PHP | 90 |
+| Java | 77 |
+
+</details>
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
 
 ## Latest Blog Posts
@@ -441,7 +484,7 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 ## Connect
 
 <p align="center">
-  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>
+  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="400" loading="lazy"/>
 </p>
 
 ---

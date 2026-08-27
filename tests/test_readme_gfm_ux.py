@@ -17,6 +17,8 @@ import pytest
 from scripts.art.roster import SHIPPED_STYLE_KEYS, shipped_legends
 from scripts.config import ReadmeSectionsSettings, load_config
 from scripts.readme_sections import (
+    TECH_STACK_H2_SUMMARY,
+    TECH_STACK_START,
     ReadmeSectionGenerator,
     compile_section_body_re,
     section_order_from_settings,
@@ -145,6 +147,47 @@ def heading_line_re(title: str) -> re.Pattern[str]:
     return re.compile(
         rf"(?m)^(?:## {re.escape(title)}\s*|<!-- ## {re.escape(title)} -->)\s*$"
     )
+
+
+def assert_tech_stack_dropdown_is_h2(text: str) -> None:
+    """My Tech Stack H2 lives in the details summary, not above the dropdown."""
+    assert TECH_STACK_START in text
+    assert TECH_STACK_H2_SUMMARY in text
+    assert text.count("## My Tech Stack") == 1
+    assert "<summary>Technologies</summary>" not in text
+    heading = heading_index(text, "My Tech Stack")
+    details = text.rfind("<details>", 0, heading)
+    assert details != -1
+    assert text.rfind("</details>", details, heading) == -1
+    assert text.index(TECH_STACK_START) < heading
+
+
+def assert_word_clouds_have_h3s_and_frequency_tables(clouds: str) -> None:
+    """Topics/Languages H3s plus one markdown frequency-table details."""
+    assert "### Topics" in clouds
+    assert "### Languages" in clouds
+    assert "<summary>Frequency tables</summary>" in clouds
+    assert "| Topic |" in clouds
+    assert "| Language |" in clouds
+    assert "<table" not in clouds.lower()
+    assert "</table>" not in clouds.lower()
+
+
+def assert_living_art_gif_href_has_no_watch_caption(living: str) -> None:
+    """Visible GIF stays inside <a href=mp4>; Watch … (MP4) captions are gone."""
+    visible, _blocks = visible_living_art_and_details(living)
+    assert "Watch " not in visible
+    assert "(MP4)" not in visible
+    for style in SHIPPED_STYLE_KEYS:
+        gif = f".github/assets/img/living-{style}.gif"
+        mp4 = f".github/assets/img/living-{style}.mp4"
+        assert f'href="{mp4}"' in visible
+        assert f'<a href="{mp4}">' in visible
+        assert f'src="{gif}"' in visible
+        assert (
+            f'<a href="{mp4}"><img src="{gif}"' in visible
+            or f'<a href="{mp4}">\n<img src="{gif}"' in visible
+        )
 
 
 def assert_visible_or_comment_heading(text: str, title: str) -> None:
@@ -389,9 +432,18 @@ def _featured_block(readme: str) -> str:
 
 
 def _tech_stack_section(readme: str) -> str:
-    match = compile_section_body_re("My Tech Stack", _order()).search(readme)
-    assert match is not None, "My Tech Stack section missing"
-    return match.group(0)
+    """Span from TECH_STACK_START (or the H2) through the next neighbor H2.
+
+    ``compile_section_body_re("My Tech Stack")`` stops at the in-summary H2
+    because the neighbor catch-all is ``^##(?!#)``. Skip that heading.
+    """
+    start_idx = readme.find(TECH_STACK_START)
+    if start_idx == -1:
+        start_idx = heading_index(readme, "My Tech Stack")
+    rest = readme[start_idx:]
+    neighbor = re.search(r"(?m)^## (?!My Tech Stack).+$", rest)
+    assert neighbor is not None, "My Tech Stack neighbor missing"
+    return rest[: neighbor.start()]
 
 
 def test_living_art_closes_with_separator_before_tech_stack() -> None:
@@ -475,10 +527,10 @@ def test_tech_stack_has_no_teaser_shields() -> None:
     readme = _read_readme()
     assert_visible_or_comment_heading(readme, "My Tech Stack")
     tech = _tech_stack_section(readme)
-    body = after_heading_body(tech, "My Tech Stack").lstrip()
+    assert_tech_stack_dropdown_is_h2(readme)
+    body = after_heading_body(readme, "My Tech Stack").lstrip()
 
-    assert body.startswith("<details>")
-    assert "<summary>Technologies</summary>" in tech
+    assert body.startswith("</summary>")
     assert "View full stack" not in tech
     assert "200+" not in tech
     assert "<!-- SKILLS:START -->" in tech
@@ -539,13 +591,24 @@ def test_section_headings_are_visible_h2_with_empty_alt_rules() -> None:
     readme = _read_readme()
     for title, filename in SECTION_SEPARATORS.items():
         assert_visible_or_comment_heading(readme, title)
-        match = re.search(
-            rf'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
-            rf'{re.escape(filename)}" alt="" width="100%" loading="lazy"/></p>'
-            rf"\n+## {re.escape(title)}\s*$",
-            readme,
+        sep = (
+            f'<p align="center"><img src=".github/assets/img/readme/'
+            f'{filename}" alt="" width="100%" loading="lazy"/></p>'
         )
-        assert match is not None, title
+        if title == "My Tech Stack":
+            assert_tech_stack_dropdown_is_h2(readme)
+            sep_idx = readme.index(sep)
+            heading_idx = heading_index(readme, title)
+            assert sep_idx < heading_idx
+            between = readme[sep_idx:heading_idx]
+            assert "<details>" in between
+            assert "<summary>" in between
+        else:
+            match = re.search(
+                rf"(?m)^{re.escape(sep)}\n+## {re.escape(title)}\s*$",
+                readme,
+            )
+            assert match is not None, title
         assert f"<!-- ## {title} -->" not in readme
 
 
@@ -652,6 +715,8 @@ def test_generator_groups_waka_with_metrics_and_strips_dump() -> None:
 
     assert "This Week I Spent My Time On" not in rendered
     assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
+    # Rewrite-only: WakaTime <details> are stripped and Word Clouds are not
+    # regenerated, so this fixture still has no <details> at all.
     assert "<details" not in rendered
     assert 'src=".github/assets/img/wakatime.svg"' in metrics
     assert "<!--START_SECTION:waka-->" in metrics
@@ -717,15 +782,16 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     assert "stale" not in living
     assert "hidden" not in living
     assert_living_art_stack_layout(living)
+    assert_living_art_gif_href_has_no_watch_caption(living)
     assert_living_art_intro_has_no_spine(living)
     assert_living_art_dropdown_copy(living)
     assert_living_art_hosts_allowed(living)
     assert 'alt="AI/ML"' not in tech
     assert 'alt="Open Source"' not in tech
+    assert_tech_stack_dropdown_is_h2(rendered)
     assert (
-        after_heading_body(rendered, "My Tech Stack").lstrip().startswith("<details>")
+        after_heading_body(rendered, "My Tech Stack").lstrip().startswith("</summary>")
     )
-    assert "<summary>Technologies</summary>" in tech
     assert "View full stack" not in tech
     assert "200+" not in tech
     assert "kept" in tech
@@ -737,7 +803,9 @@ def test_fact_no_200_copy_summary_has_no_count_or_blurb() -> None:
     tech = _tech_stack_section(readme)
     assert "200+" not in readme
     assert "View full stack" not in readme
-    assert "<summary>Technologies</summary>" in tech
+    assert "200+" not in tech
+    assert "View full stack" not in tech
+    assert_tech_stack_dropdown_is_h2(readme)
 
 
 def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
@@ -748,8 +816,12 @@ def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
     tech = _tech_stack_section(readme)
     assert 'src=".github/assets/img/wakatime.svg"' in metrics
     assert "<details>" in tech
-    assert "<summary>Technologies</summary>" in tech
+    assert_tech_stack_dropdown_is_h2(readme)
     assert "<!-- SKILLS:START -->" in tech
+    skills_start = tech.index("<!-- SKILLS:START -->")
+    details_start = tech.index("<details>")
+    details_end = tech.index("</details>")
+    assert details_start < skills_start < details_end
     assert "wakatime.svg" not in tech
     assert "<!--START_SECTION:waka-->" in metrics
 
@@ -788,7 +860,7 @@ def test_custom_widgets_are_full_width() -> None:
             readme,
         ), src
     clouds = slice_between_headings(readme, "Word Clouds", "Latest Blog Posts")
-    assert "<table" not in clouds.lower()
+    assert_word_clouds_have_h3s_and_frequency_tables(clouds)
     tech = slice_between_headings(readme, "My Tech Stack", "Word Clouds")
     assert "wordcloud_typographic" not in tech
 
@@ -837,6 +909,8 @@ def test_living_art_accepts_native_video_or_gif_href_mp4() -> None:
         assert_art_outside_details(living)
         assert_living_art_hosts_allowed(living)
         assert_living_art_not_wrapped(living)
+        if form == "gif-href":
+            assert_living_art_gif_href_has_no_watch_caption(living)
 
 
 @pytest.mark.parametrize(
@@ -910,3 +984,103 @@ def test_living_art_rejects_media_hidden_in_details() -> None:
     hidden = "\n".join(pieces)
     with pytest.raises(AssertionError):
         assert_art_outside_details(hidden)
+
+
+def test_generator_living_art_keeps_gif_href_without_watch_captions() -> None:
+    """Assembler GIF stack links to MP4; Watch … (MP4) caption paragraphs are gone."""
+    stale = dedent(
+        """\
+        ## Living Art
+
+        placeholder
+
+        ## My Tech Stack
+
+        <!-- SKILLS:START -->
+        <!-- SKILLS:END -->
+        """
+    )
+    generator = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(featured_repos=[], social_links=[]),
+    )
+    rendered = generator._rewrite_living_art_section(stale)
+    living = living_art_section(rendered)
+    assert_legal_media_forms(living)
+    assert_living_art_gif_href_has_no_watch_caption(living)
+    assert_art_outside_details(living)
+
+
+def test_generator_connect_qr_uses_width_400() -> None:
+    """Connect vCard QR is width 400, not the old 200 thumbnail."""
+    stale = dedent(
+        """\
+        ## Connect
+
+        <p align="center">
+          <img src=".github/assets/img/qr.png" alt="vCard QR Code"
+               width="200" loading="lazy"/>
+        </p>
+        """
+    )
+    generator = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(featured_repos=[], social_links=[]),
+    )
+    rendered = generator._rewrite_qr_block(stale)
+    tag = re.search(
+        r'<img src="\.github/assets/img/qr\.png"[^>]*>',
+        rendered,
+    )
+    assert tag is not None
+    assert 'width="400"' in tag.group(0)
+    assert 'width="200"' not in tag.group(0)
+    assert 'width="200"' not in rendered
+
+
+def test_compile_section_body_re_keeps_word_cloud_h3s() -> None:
+    """Neighbor catch-all is ^##(?!#) so ### Topics does not truncate Word Clouds."""
+    order = _order()
+    stub = "## Word Clouds\n\n### Topics\nbody\n\n## Latest Blog Posts\n"
+    match = compile_section_body_re("Word Clouds", order).search(stub)
+    assert match is not None
+    body = match.group(0)
+    assert "### Topics" in body
+    assert "body" in body
+    assert "Latest Blog Posts" not in body
+
+
+def test_generator_word_clouds_use_h3s_and_markdown_frequency_tables(
+    tmp_path: Path,
+) -> None:
+    """Word Clouds rewrite emits Topics/Languages H3s and pipe-table frequencies."""
+    assets = tmp_path / ".github" / "assets"
+    assets.mkdir(parents=True)
+    (assets / "topics.md").write_text(
+        "## Contents\n- [python](#python)\n\n## python\n"
+        "- [org/repo](https://example.com/repo)\n",
+        encoding="utf-8",
+    )
+    (assets / "languages.md").write_text(
+        "## Contents\n- [Python](#python)\n\n## Python\n"
+        "- [org/repo](https://example.com/repo)\n",
+        encoding="utf-8",
+    )
+    stale = "## Word Clouds\n\nstale clouds\n\n## Latest Blog Posts\n"
+    generator = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(featured_repos=[], social_links=[]),
+    )
+    rendered = generator._rewrite_word_clouds_section(
+        stale, readme_path=tmp_path / "README.md"
+    )
+    match = compile_section_body_re("Word Clouds", _order()).search(rendered)
+    assert match is not None
+    clouds = match.group(0)
+    assert re.search(
+        r'<img src="[^"]*wordcloud_typographic_by_topics\.svg"[^>]*width="100%"',
+        clouds,
+    )
+    assert re.search(
+        r'<img src="[^"]*wordcloud_typographic_by_languages\.svg"[^>]*width="100%"',
+        clouds,
+    )
+    assert_word_clouds_have_h3s_and_frequency_tables(clouds)
+    assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered

@@ -22,6 +22,8 @@ from scripts.config import (
     ReadmeSvgSettings,
 )
 from scripts.readme_sections import (
+    TECH_STACK_H2_SUMMARY,
+    TECH_STACK_START,
     BlogFeedClient,
     BlogMetadataClient,
     BlogPost,
@@ -37,9 +39,11 @@ from tests.test_readme_gfm_ux import (
     after_heading,
     after_heading_body,
     assert_living_art_dropdown_copy,
+    assert_living_art_gif_href_has_no_watch_caption,
     assert_living_art_hosts_allowed,
     assert_living_art_intro_has_no_spine,
     assert_living_art_stack_layout,
+    assert_tech_stack_dropdown_is_h2,
     assert_visible_or_comment_heading,
     living_art_section,
     slice_between_headings,
@@ -107,6 +111,29 @@ def assert_sanitizer_safe_section_embed(markup: str, expected_src: str) -> None:
     assert "<svg" not in markup
     assert "&lt;svg" not in markup
     assert "&lt;style&gt;" not in markup
+
+
+def assert_word_clouds_have_h3s_and_frequency_tables(clouds: str) -> None:
+    """Topics/Languages H3s plus frequency-table details (tables or italic fallback)."""
+    assert "### Topics" in clouds
+    assert "### Languages" in clouds
+    assert "Frequency tables" in clouds
+    has_tables = "| Topic |" in clouds and "| Language |" in clouds
+    has_fallback = "_No topic frequency data" in clouds
+    assert has_tables or has_fallback
+
+
+def assert_word_cloud_frequency_details_without_waka(rendered: str) -> None:
+    """Word Clouds may emit frequency <details>; WakaTime Stats must not."""
+    assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
+    assert "<summary>Frequency tables</summary>" in rendered
+    assert "_No topic frequency data" in rendered
+    blocks = re.findall(r"(?is)<details\b.*?</details>", rendered)
+    assert blocks
+    for block in blocks:
+        assert "Frequency tables" in block
+        assert "WakaTime Stats" not in block
+        assert "This Week I Spent My Time On" not in block
 
 
 class TestRendering:
@@ -1039,9 +1066,60 @@ class TestRendering:
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
         assert "kept skills" in rendered
-        assert "<summary>Technologies</summary>" in rendered
+        assert_tech_stack_dropdown_is_h2(rendered)
+        assert_living_art_gif_href_has_no_watch_caption(living_art)
         assert "View full stack" not in rendered
         assert "200+" not in rendered
+
+    def test_generate_wraps_unwrapped_tech_stack_without_eating_living_art(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Heading + skills (no details) must not steal the ferrofluid closer."""
+        readme = tmp_path / "README.md"
+        readme.write_text(
+            dedent(
+                """\
+                ## Living Art
+
+                placeholder
+
+                ## My Tech Stack
+
+                <!-- SKILLS:START -->
+                kept skills
+                <!-- SKILLS:END -->
+                """
+            ),
+            encoding="utf-8",
+        )
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                readme_path=str(readme),
+                featured_repos=[],
+                social_links=[],
+            ),
+            blog_client=StubBlogClient([]),
+        )
+        generator.generate()
+        rendered = readme.read_text(encoding="utf-8")
+        living_raw = compile_section_body_re(
+            "Living Art",
+            ("Living Art", "My Tech Stack"),
+        ).search(rendered)
+        assert living_raw is not None
+        living_body = living_raw.group(0)
+        assert living_body.count("sep-living.svg") == 1
+        assert living_body.rfind("living-ferrofluid.gif") < living_body.rfind(
+            "sep-living.svg"
+        )
+        assert "kept skills" not in living_body
+        assert "<!-- SKILLS:START -->" not in living_body
+        living_art = living_art_section(rendered)
+        assert "living-ferrofluid.gif" in living_art
+        assert rendered.count("## My Tech Stack") == 1
+        assert_tech_stack_dropdown_is_h2(rendered)
+        assert "kept skills" in rendered
 
     def test_generate_drops_tech_stack_teaser_shields(
         self,
@@ -1093,8 +1171,10 @@ class TestRendering:
         assert 'alt="AI/ML"' not in tech_stack
         assert 'alt="Full-Stack"' not in tech_stack
         assert 'alt="Open Source"' not in tech_stack
-        assert tech_stack.lstrip().startswith("<details>")
-        assert "<summary>Technologies</summary>" in tech_stack
+        assert tech_stack.lstrip().startswith("</summary>")
+        assert TECH_STACK_START in rendered
+        assert TECH_STACK_H2_SUMMARY in rendered
+        assert_tech_stack_dropdown_is_h2(rendered)
         assert "View full stack" not in tech_stack
         assert "200+" not in tech_stack
         assert "full stack body" in tech_stack
@@ -1403,6 +1483,9 @@ class TestRendering:
         assert rendered.count('width="100%"') >= 4
         assert "wordcloud_typographic_by_topics.svg" in rendered
         assert "wordcloud_typographic_by_languages.svg" in rendered
+        assert "### Topics" in rendered
+        assert "### Languages" in rendered
+        assert "Frequency tables" in rendered
         assert "wordcloud_fractal_reel.mp4" in rendered
         assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert (
@@ -1416,6 +1499,11 @@ class TestRendering:
         languages_idx = rendered.index("wordcloud_typographic_by_languages.svg")
         assert 'loading="lazy"' in rendered[topics_idx : topics_idx + 280]
         assert 'loading="lazy"' in rendered[languages_idx : languages_idx + 280]
+        assert_word_clouds_have_h3s_and_frequency_tables(
+            slice_between_headings(rendered, "Word Clouds", "Latest Blog Posts")
+            if "Latest Blog Posts" in rendered
+            else after_heading(rendered, "Word Clouds")
+        )
         assert_visible_or_comment_heading(rendered, "Metrics")
         assert_visible_or_comment_heading(rendered, "Word Clouds")
         assert ".github/assets/img/readme/sep-clouds.svg" in rendered
@@ -1480,7 +1568,8 @@ class TestRendering:
         assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
-        assert "<details" not in rendered
+        assert "<details" not in metrics
+        assert_word_cloud_frequency_details_without_waka(rendered)
         assert "## Waka" not in rendered
 
     def test_generate_preserves_healthy_wakatime_output_without_timestamp(
@@ -1544,7 +1633,8 @@ class TestRendering:
         assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
-        assert "<details" not in rendered
+        assert "<details" not in metrics
+        assert_word_cloud_frequency_details_without_waka(rendered)
         assert "## Waka" not in rendered
 
     def test_generate_keeps_wakatime_grouped_with_metrics_cards(

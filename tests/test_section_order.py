@@ -42,3 +42,31 @@ def test_compile_section_body_uses_neighbor() -> None:
     assert match is not None
     assert "living body" in match.group(0)
     assert "tech body" not in match.group(0)
+
+
+def test_compile_section_body_includes_word_cloud_h3s() -> None:
+    order = (
+        "Featured Projects",
+        "Metrics",
+        "Living Art",
+        "My Tech Stack",
+        "Word Clouds",
+    )
+    text = (
+        "## Word Clouds\n\n"
+        "### Topics\n\n"
+        "topics body\n\n"
+        "### Languages\n\n"
+        "languages body\n\n"
+        "## Latest Blog Posts\n\n"
+        "blog body\n"
+    )
+    match = compile_section_body_re("Word Clouds", order).search(text)
+    assert match is not None
+    body = match.group(0)
+    assert "### Topics" in body
+    assert "### Languages" in body
+    assert "topics body" in body
+    assert "languages body" in body
+    assert "Latest Blog Posts" not in body
+    assert "blog body" not in body

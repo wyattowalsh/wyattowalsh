@@ -42,6 +42,7 @@ from tests.test_profile_workflow import (
     _workflow_text,
 )
 from tests.test_readme_gfm_ux import (
+    assert_tech_stack_dropdown_is_h2,
     assert_visible_or_comment_heading,
     slice_between_headings,
 )
@@ -187,7 +188,7 @@ def test_fact_no_200_copy_readme_summary_is_bare() -> None:
     readme = _readme()
     assert "200+" not in readme
     assert "View full stack" not in readme
-    assert "<summary>Technologies</summary>" in readme
+    assert_tech_stack_dropdown_is_h2(readme)
 
 
 def test_fact_tech_details_stack_collapsed_waka_visible() -> None:

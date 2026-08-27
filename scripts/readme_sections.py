@@ -99,6 +99,11 @@ def section_order_from_settings(
     return tuple(ordered_known + missing)
 
 
+TECH_STACK_START = "<!-- README:TECH_STACK:START -->"
+TECH_STACK_H2_SUMMARY = "<summary>\n\n## My Tech Stack\n\n</summary>"
+_WORD_CLOUD_FREQ_HEAD = 12
+
+
 def _neighbor_lookahead(order: Sequence[str], title: str) -> str:
     """Build a regex lookahead for the end of *title* given *order*."""
     try:
@@ -107,11 +112,18 @@ def _neighbor_lookahead(order: Sequence[str], title: str) -> str:
         following: list[str] = []
     else:
         following = list(order[index + 1 :])
-    parts = [rf"^## {re.escape(name)}\n" for name in following]
-    parts.extend(rf"^<!-- ## {re.escape(name)} -->\n" for name in following)
+    parts: list[str] = []
+    for name in following:
+        if name == "My Tech Stack":
+            parts.append(rf"^{re.escape(TECH_STACK_START)}\n")
+        parts.append(rf"^## {re.escape(name)}\n")
+        parts.append(rf"^<!-- ## {re.escape(name)} -->\n")
     # Always allow any subsequent H2 or EOF as a safety end-anchor so rewrites
-    # do not run away if order config drifts from the live README.
-    parts.append(r"^## ")
+    # do not run away if order config drifts from the live README. ``(?!#)``
+    # keeps ``###`` subtitles from ending a section. Exclude *title* so a
+    # My Tech Stack H2 nested in ``<summary>`` does not end the section that
+    # started at ``TECH_STACK_START``.
+    parts.append(rf"^##(?!#)(?! {re.escape(title)}\s)")
     parts.append(r"^<!-- ## ")
     parts.append(r"\Z")
     return "(?:" + "|".join(parts) + ")"
@@ -120,32 +132,55 @@ def _neighbor_lookahead(order: Sequence[str], title: str) -> str:
 def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]:
     """Match ``## Title`` or a comment stand-in through the next neighbor."""
     end = _neighbor_lookahead(order, title)
-    heading = (
-        rf"(?:^## {re.escape(title)}\n|"
-        rf"^<!-- ## {re.escape(title)} -->\n)"
-    )
+    if title == "My Tech Stack":
+        heading = (
+            rf"(?:^{re.escape(TECH_STACK_START)}\n|"
+            rf"^## {re.escape(title)}\n|"
+            rf"^<!-- ## {re.escape(title)} -->\n)"
+        )
+    else:
+        heading = (
+            rf"(?:^## {re.escape(title)}\n|"
+            rf"^<!-- ## {re.escape(title)} -->\n)"
+        )
     return re.compile(rf"(?ms){heading}.*?(?={end})")
+
+
+def section_separator_image(filename: str) -> str:
+    """Centered decorative SVG rule (empty alt)."""
+    return (
+        f'<p align="center"><img src=".github/assets/img/readme/{filename}" '
+        f'alt="" width="100%" loading="lazy"/></p>\n'
+    )
 
 
 def section_separator_block(title: str, filename: str) -> str:
     """Decorative SVG rule immediately above the visible H2 (empty alt)."""
-    return (
-        f'<p align="center"><img src=".github/assets/img/readme/{filename}" '
-        f'alt="" width="100%" loading="lazy"/></p>\n'
-        f"\n"
-        f"## {title}\n"
-    )
+    return f"{section_separator_image(filename)}\n## {title}\n"
 
 
-# Tech stack teaser strip is anchored to the full-stack details block, not H2 order.
-_TECH_STACK_TEASER_RE = re.compile(
-    r"(?ms)^(?:## (?:My )?Tech Stack\n|<!-- ## (?:My )?Tech Stack -->\n)"
-    r".*?(?=^<details>\n<summary>)",
+_SKILLS_BLOCK_RE = re.compile(
+    r"<!-- SKILLS:START -->.*?<!-- SKILLS:END -->",
+    re.DOTALL,
 )
-_TECH_STACK_SUMMARY_RE = re.compile(
-    r"(?m)(^<details>\n)<summary>.*?</summary>",
+_TECH_STACK_PREFIX_RE = re.compile(
+    r"(?s)"
+    r"(?:"
+    rf"{re.escape(TECH_STACK_START)}\s*"
+    r"|"
+    r'<p align="center"><img src="\.github/assets/img/readme/'
+    r'sep-tech\.svg"[^>]*></p>\s*'
+    r"|"
+    r"## (?:My )?Tech Stack\s*"
+    r"|"
+    r"<!-- ## (?:My )?Tech Stack -->\s*"
+    r"|"
+    r'<p align="center">\s*'
+    r'(?:<img [^>]*alt="(?:AI/ML|Full-Stack|Data Engineering|Open Source)"'
+    r"[^>]*>\s*)+"
+    r"</p>\s*"
+    r")+\Z"
 )
-_TECH_STACK_BARE_SUMMARY = "<summary>Technologies</summary>"
 # Word clouds end at a leftover WakaTime image, markers, or a legacy details wrap.
 _WORD_CLOUDS_WAKA_END_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?="
@@ -1058,7 +1093,7 @@ class ReadmeSectionGenerator:
         content, waka_markers = self._extract_wakatime_markers(content)
         content = self._strip_wakatime_chrome(content)
         content = self._rewrite_metrics_section(content, readme_path=readme_path)
-        content = self._rewrite_word_clouds_section(content)
+        content = self._rewrite_word_clouds_section(content, readme_path=readme_path)
         content = self._place_wakatime_in_metrics(content, waka_markers)
         content = self._rewrite_blog_disclosure(content)
         content = self._normalize_section_separators(content)
@@ -1076,7 +1111,6 @@ class ReadmeSectionGenerator:
             ("Featured Projects", "sep-featured.svg"),
             ("Metrics", "sep-metrics.svg"),
             ("Living Art", "sep-living.svg"),
-            ("My Tech Stack", "sep-tech.svg"),
             ("Word Clouds", "sep-clouds.svg"),
             ("Latest Blog Posts", "sep-blog.svg"),
             ("Connect", "sep-qr.svg"),
@@ -1137,7 +1171,7 @@ class ReadmeSectionGenerator:
 
     @staticmethod
     def _living_art_piece_markup(style: str, legend: StyleLegend) -> list[str]:
-        """Full-width GIF plus an obvious in-repo MP4 click, then a collapsed legend."""
+        """Full-width GIF linked to the in-repo MP4, then a collapsed legend."""
         title = escape(legend.title)
         gif = f".github/assets/img/living-{style}.gif"
         mp4 = f".github/assets/img/living-{style}.mp4"
@@ -1151,7 +1185,6 @@ class ReadmeSectionGenerator:
             '<p align="center">',
             f'<a href="{mp4}">{poster}</a>',
             "</p>",
-            f'<p align="center"><a href="{mp4}">Watch {title} (MP4)</a></p>',
             "<details>",
             f"<summary><strong>{title}</strong></summary>",
             "",
@@ -1171,35 +1204,55 @@ class ReadmeSectionGenerator:
         replacements = (
             ("<!-- ## Tech Stack -->", "## My Tech Stack\n"),
             ("## Tech Stack\n", "## My Tech Stack\n"),
-            (
-                "<summary><strong>Tech Stack</strong></summary>",
-                _TECH_STACK_BARE_SUMMARY,
-            ),
         )
         for old, new in replacements:
             content = content.replace(old, new)
         return content
 
-    def _rewrite_tech_stack_teaser(self, content: str) -> str:
-        """Drop category teaser shields; keep a bare-label collapsible stack."""
-        if _TECH_STACK_TEASER_RE.search(content):
-            content = _TECH_STACK_TEASER_RE.sub(
-                section_separator_block("My Tech Stack", "sep-tech.svg") + "\n",
-                content,
-                count=1,
-            )
-        tech_re = compile_section_body_re("My Tech Stack", self._section_order())
-        match = tech_re.search(content)
-        if not match:
-            return content
-        rewritten = _TECH_STACK_SUMMARY_RE.sub(
-            rf"\1{_TECH_STACK_BARE_SUMMARY}",
-            match.group(0),
-            count=1,
+    @staticmethod
+    def _tech_stack_section_markup(skills_text: str) -> str:
+        """Sep + details whose summary is the My Tech Stack H2."""
+        return (
+            f"{TECH_STACK_START}\n"
+            f"{section_separator_image('sep-tech.svg')}\n"
+            "<details>\n"
+            f"{TECH_STACK_H2_SUMMARY}\n"
+            "\n"
+            f"{skills_text.rstrip()}\n"
+            "\n"
+            "</details>\n"
         )
-        if rewritten == match.group(0):
+
+    def _rewrite_tech_stack_teaser(self, content: str) -> str:
+        """Collapse My Tech Stack into a details dropdown headed by the H2."""
+        skills = _SKILLS_BLOCK_RE.search(content)
+        if skills is None:
             return content
-        return content[: match.start()] + rewritten + content[match.end() :]
+        skills_text = skills.group(0)
+        before = content[: skills.start()]
+        details_open = before.rfind("<details>")
+        details_close = before.rfind("</details>")
+        wrapped = details_open != -1 and details_open > details_close
+        if not wrapped:
+            chrome = _TECH_STACK_PREFIX_RE.search(before)
+            start = chrome.start() if chrome is not None else skills.start()
+            end = skills.end()
+            return (
+                content[:start]
+                + self._tech_stack_section_markup(skills_text)
+                + content[end:]
+            )
+        prefix = content[:details_open]
+        chrome = _TECH_STACK_PREFIX_RE.search(prefix)
+        start = chrome.start() if chrome is not None else details_open
+        after = content[skills.end() :]
+        close = re.search(r"</details>", after)
+        end = skills.end() + close.end() if close is not None else skills.end()
+        return (
+            content[:start]
+            + self._tech_stack_section_markup(skills_text)
+            + content[end:]
+        )
 
     @staticmethod
     def _gfm_img_tag(*, src: str, alt: str, width: str | int) -> str:
@@ -1247,13 +1300,13 @@ class ReadmeSectionGenerator:
             return content
         return metrics_re.sub(replacement, content, count=1)
 
-    def _rewrite_word_clouds_section(self, content: str) -> str:
+    def _rewrite_word_clouds_section(self, content: str, *, readme_path: Path) -> str:
         topics_src = ".github/assets/img/wordcloud_typographic_by_topics.svg"
         languages_src = ".github/assets/img/wordcloud_typographic_by_languages.svg"
         topics_alt = "Word cloud of GitHub topics sized by starred-repo share"
         languages_alt = "Word cloud of GitHub languages sized by starred-repo share"
         reel = Path(".github/assets/img/wordcloud_fractal_reel.mp4")
-        readme_root = Path(self.settings.readme_path).expanduser().resolve().parent
+        readme_root = Path(readme_path).expanduser().resolve().parent
         has_reel = reel.is_file() or (readme_root / reel).is_file()
         topics_img = self._gfm_img_tag(src=topics_src, alt=topics_alt, width="100%")
         if has_reel:
@@ -1266,15 +1319,33 @@ class ReadmeSectionGenerator:
             topics_block = self._gfm_centered_img(
                 src=topics_src, alt=topics_alt, width="100%"
             )
+        topics_table, languages_table = self._word_cloud_frequency_tables(readme_root)
         body_lines = [
             section_separator_block("Word Clouds", "sep-clouds.svg"),
+            "### Topics",
+            "",
             topics_block,
+            "",
+            "### Languages",
             "",
             self._gfm_centered_img(
                 src=languages_src,
                 alt=languages_alt,
                 width="100%",
             ),
+            "",
+            "<details>",
+            "<summary>Frequency tables</summary>",
+            "",
+            "**Topics** (top 12 by starred-repo count)",
+            "",
+            topics_table,
+            "",
+            "**Languages** (top 12 by starred-repo count)",
+            "",
+            languages_table,
+            "",
+            "</details>",
             "",
         ]
         replacement = "\n".join(body_lines)
@@ -1288,6 +1359,43 @@ class ReadmeSectionGenerator:
             logger.warning("Word Clouds section heading not found in README.")
             return content
         return word_re.sub(replacement, content, count=1)
+
+    @staticmethod
+    def _word_cloud_frequency_tables(readme_root: Path) -> tuple[str, str]:
+        assets = readme_root / ".github" / "assets"
+        return (
+            ReadmeSectionGenerator._frequency_head_markdown(
+                assets / "topics.md",
+                "Topic",
+            ),
+            ReadmeSectionGenerator._frequency_head_markdown(
+                assets / "languages.md",
+                "Language",
+            ),
+        )
+
+    @staticmethod
+    def _frequency_head_markdown(path: Path, noun: str) -> str:
+        """Render the top starred-repo counts as a GFM table."""
+        from .word_clouds.generate import _filter_others, parse_frequencies_from_md
+
+        if not path.is_file():
+            return f"_No {noun.lower()} frequency data found._"
+        try:
+            frequencies = _filter_others(parse_frequencies_from_md(path))
+        except OSError:
+            return f"_No {noun.lower()} frequency data found._"
+        rows = sorted(
+            frequencies.items(),
+            key=lambda item: (-float(item[1]), str(item[0]).casefold()),
+        )[:_WORD_CLOUD_FREQ_HEAD]
+        if not rows:
+            return f"_No {noun.lower()} frequency data found._"
+        lines = [f"| {noun} | Starred repos |", "| --- | ---: |"]
+        for name, count in rows:
+            cell = str(name).replace("|", "\\|")
+            lines.append(f"| {cell} | {int(count)} |")
+        return "\n".join(lines)
 
     def _wakatime_open_img(self) -> str:
         return self._gfm_centered_img(
@@ -1381,7 +1489,7 @@ class ReadmeSectionGenerator:
         qr = (
             '<p align="center">\n'
             '  <img src=".github/assets/img/qr.png" alt="vCard QR Code" '
-            'width="200" loading="lazy"/>\n'
+            'width="400" loading="lazy"/>\n'
             "</p>"
         )
         heading = r"(?:## Connect\s*\n|<!-- ## Connect -->\s*\n)"
