@@ -30,8 +30,10 @@ logger = get_logger(module=__name__)
 _GOLDEN_ANGLE = math.pi * (3.0 - math.sqrt(5.0))
 _PUBLIC_WIDTH = 1600
 _PUBLIC_HEIGHT = 560
+# Public banner: keep every term, but stretch size so volume is obvious.
 _PUBLIC_MIN_FONT = 8.0
-_PUBLIC_MAX_FONT = 56.0
+_PUBLIC_MAX_FONT = 64.0
+_FREQUENCY_CONTRAST_EXPONENT = 1.2
 
 
 class TypographicRenderer(SvgWordCloudEngine):
@@ -88,8 +90,7 @@ class TypographicRenderer(SvgWordCloudEngine):
         if max_freq == min_freq:
             return 500
         t = (freq - min_freq) / (max_freq - min_freq)
-        # Log-ish boost so mid-tier terms stay substantial on large vocabularies.
-        t = math.sqrt(max(0.0, min(1.0, t)))
+        t = max(0.0, min(1.0, t)) ** _FREQUENCY_CONTRAST_EXPONENT
         raw = self.weight_range[0] + t * (self.weight_range[1] - self.weight_range[0])
         return int(round(raw / 100)) * 100
 
@@ -104,8 +105,9 @@ class TypographicRenderer(SvgWordCloudEngine):
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
-        # Exponent 0.42 compresses the top end so many mid words keep presence.
-        t_scaled = t**0.42
+        # Exponent > 1 stretches the top end so relative frequency is obvious
+        # while min-frequency terms still render at min_font_size.
+        t_scaled = max(0.0, min(1.0, t)) ** _FREQUENCY_CONTRAST_EXPONENT
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     def _word_color(self, word: str, idx: int) -> str:
