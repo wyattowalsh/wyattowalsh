@@ -12,53 +12,35 @@
 <a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" alt="X.com" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
-<p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="Featured Projects" width="100%" loading="lazy"/></p>
-<!-- ## Featured Projects -->
-
-
-
-
-
-
-
-
-
-
-
-
+## Featured Projects
+<p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="" width="100%" loading="lazy"/></p>
 
 
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
-<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="280" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="280" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="280" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/profile-bits" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-profile-bits.svg" width="280" alt="Featured project card for profile-bits: GitHub profile README widgets as dense GitHub-native stats cards — JSX in, PNG/SVG out" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/riso" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-riso.svg" width="280" alt="Featured project card for riso: Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/openopps" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-openopps.svg" width="280" alt="Featured project card for openopps: CLI and local ledger for discovering public hiring boards and syncing normalized job listings" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/webmedia-dl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-webmedia-dl.svg" width="280" alt="Featured project card for webmedia-dl: Local-first universal media acquisition and export for Apple devices and desktop browsers" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="280" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/nbops" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbops.svg" width="280" alt="Featured project card for nbops: Local-first runtime observability for Python notebooks: CPU/memory sampling, SQLite runs, redacted HTML/Markdown reports" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/cwa" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-cwa.svg" width="280" alt="Featured project card for cwa: Local macOS Pake wrapper around chatgpt.com with visible-thread Markdown/ZIP export" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="280" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/prompts" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-prompts.svg" width="280" alt="Featured project card for prompts: Research-backed prompt recipes you copy, adapt, and verify" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="280" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/linkedin-profile-exporter" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-linkedin-profile-exporter.svg" width="280" alt="Featured project card for linkedin-profile-exporter: TypeScript tool for exporting LinkedIn profile data" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/copy-to-gmail" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-copy-to-gmail.svg" width="280" alt="Featured project card for copy-to-gmail: Local Gmail-ready drafting studio for sanitized HTML/plain clipboard payloads" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/wild-web-wrap-up" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-wild-web-wrap-up.svg" width="280" alt="Featured project card for wild-web-wrap-up: Next.js editorial wrap-up site" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="280" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="280" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/profile-bits" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-profile-bits.svg" width="360" alt="Featured project card for profile-bits: GitHub profile README widgets as dense GitHub-native stats cards — JSX in, PNG/SVG out" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/riso" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-riso.svg" width="360" alt="Featured project card for riso: Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/openopps" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-openopps.svg" width="360" alt="Featured project card for openopps: CLI and local ledger for discovering public hiring boards and syncing normalized job listings" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/webmedia-dl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-webmedia-dl.svg" width="360" alt="Featured project card for webmedia-dl: Local-first universal media acquisition and export for Apple devices and desktop browsers" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbops" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbops.svg" width="360" alt="Featured project card for nbops: Local-first runtime observability for Python notebooks: CPU/memory sampling, SQLite runs, redacted HTML/Markdown reports" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/cwa" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-cwa.svg" width="360" alt="Featured project card for cwa: Local macOS Pake wrapper around chatgpt.com with visible-thread Markdown/ZIP export" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/prompts" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-prompts.svg" width="360" alt="Featured project card for prompts: Research-backed prompt recipes you copy, adapt, and verify" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/linkedin-profile-exporter" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-linkedin-profile-exporter.svg" width="360" alt="Featured project card for linkedin-profile-exporter: TypeScript tool for exporting LinkedIn profile data" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/copy-to-gmail" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-copy-to-gmail.svg" width="360" alt="Featured project card for copy-to-gmail: Local Gmail-ready drafting studio for sanitized HTML/plain clipboard payloads" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/wild-web-wrap-up" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-wild-web-wrap-up.svg" width="360" alt="Featured project card for wild-web-wrap-up: Next.js editorial wrap-up site" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
-<p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="Metrics" width="100%" loading="lazy"/></p>
-<!-- ## Metrics -->
-
-
-<table><tr>
-<td width="50%" valign="top"><img src=".github/assets/img/metrics.svg" alt="GitHub metrics: contributions, languages, topics, and community signals" width="100%" loading="lazy"/></td>
-<td width="50%" valign="top"><img src=".github/assets/img/metrics.additional.svg" alt="Additional metrics: recently starred repositories and stargazers" width="100%" loading="lazy"/></td>
-</tr></table>
+## Metrics
+<p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="" width="100%" loading="lazy"/></p>
 
 <p align="center">
 <img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/>
@@ -80,14 +62,13 @@
 <!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
 <!--END_SECTION:waka-->
 
-<p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="Living Art" width="100%" loading="lazy"/></p>
-<!-- ## Living Art -->
-
+## Living Art
+<p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
 
 <p>These are daily timelapses of this GitHub account from creation to now, each a different visual world.</p>
 
 <p align="center">
-<a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-inkgarden.mp4">Watch Ink Garden (MP4)</a></p>
 <details>
@@ -103,7 +84,7 @@ Each repository takes root as a tree, stem and canopy together. A day with no re
 </details>
 
 <p align="center">
-<a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-topo.mp4">Watch Topography (MP4)</a></p>
 <details>
@@ -119,7 +100,7 @@ A hand-drawn survey of this account, with one hill for every repository. The map
 </details>
 
 <p align="center">
-<a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-genetic.mp4">Watch Genetic Landscape (MP4)</a></p>
 <details>
@@ -135,7 +116,7 @@ A landscape of competing fitness peaks, one ridge per repository. Life gathers o
 </details>
 
 <p align="center">
-<a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-physarum.mp4">Watch Physarum (MP4)</a></p>
 <details>
@@ -151,7 +132,7 @@ A slime mold feeding in the dark, spinning a living network from the first repos
 </details>
 
 <p align="center">
-<a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-lenia.mp4">Watch Lenia (MP4)</a></p>
 <details>
@@ -167,7 +148,7 @@ A continuous living field, seeded with one creature for every repository. Soft b
 </details>
 
 <p align="center">
-<a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="90%" loading="lazy"/></a>
+<a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="70%" loading="lazy"/></a>
 </p>
 <p align="center"><a href=".github/assets/img/living-ferrofluid.mp4">Watch Ferrofluid (MP4)</a></p>
 <details>
@@ -181,9 +162,8 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 - **Followers:** magnetic field around the towers
 
 </details>
-<p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="My Tech Stack" width="100%" loading="lazy"/></p>
-<!-- ## My Tech Stack -->
-
+## My Tech Stack
+<p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="" width="100%" loading="lazy"/></p>
 
 <details>
 <summary><strong>My Tech Stack</strong></summary>
@@ -420,9 +400,8 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 </details>
 
-<p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="Word Clouds" width="100%" loading="lazy"/></p>
-<!-- ## Word Clouds -->
-
+## Word Clouds
+<p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="" width="100%" loading="lazy"/></p>
 
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/>
@@ -431,20 +410,8 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/>
 </p>
-<p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="Latest Blog Posts" width="100%" loading="lazy"/></p>
-<!-- ## Latest Blog Posts -->
-
-
-
-
-
-
-
-
-
-
-
-
+## Latest Blog Posts
+<p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
 
 
 <!-- README:BLOG_POSTS:START -->
@@ -458,8 +425,8 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 <p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
-<p align="center"><img src=".github/assets/img/readme/sep-qr.svg" alt="Connect" width="100%" loading="lazy"/></p>
-<!-- ## Connect -->
+## Connect
+<p align="center"><img src=".github/assets/img/readme/sep-qr.svg" alt="" width="100%" loading="lazy"/></p>
 
 <p align="center">
   <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>

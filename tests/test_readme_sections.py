@@ -33,6 +33,7 @@ from scripts.readme_sections import (
 )
 from tests.test_readme_gfm_ux import (
     after_heading,
+    after_heading_body,
     assert_living_art_dropdown_copy,
     assert_living_art_hosts_allowed,
     assert_living_art_intro_has_no_spine,
@@ -562,7 +563,7 @@ class TestRendering:
         html = generator._render_featured_projects()
 
         assert "<table>" not in html
-        assert html.count('width="280"') == 6
+        assert html.count('width="360"') == 6
         assert "More Featured Projects" not in html
 
     def test_featured_projects_keep_one_card_variety_for_larger_sets(
@@ -634,7 +635,7 @@ class TestRendering:
 
         assert "More Featured Projects" not in html
         assert "<table>" not in html
-        assert html.count('width="280"') == 7
+        assert html.count('width="360"') == 7
         assert len(manifest["projects"]) == 7
         assert [project["full_name"] for project in manifest["projects"]] == [
             repo.full_name for repo in repos
@@ -646,8 +647,8 @@ class TestRendering:
         later_svg = (
             tmp_path / "svg" / "featured-card-wyattowalsh-repo-6.svg"
         ).read_text(encoding="utf-8")
-        assert "sparkline-group" not in later_svg
-        assert "thumb-clip" not in later_svg
+        assert "sparkline-group" in later_svg
+        assert "thumb-clip" in later_svg
 
     def test_featured_projects_mirror_docs_showcase_surface(
         self, tmp_path: Path, monkeypatch
@@ -1065,7 +1066,7 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
         assert_visible_or_comment_heading(rendered, "My Tech Stack")
-        tech_stack = after_heading(rendered, "My Tech Stack")
+        tech_stack = after_heading_body(rendered, "My Tech Stack")
 
         assert 'alt="AI/ML"' not in tech_stack
         assert 'alt="Full-Stack"' not in tech_stack
@@ -1077,7 +1078,7 @@ class TestRendering:
         assert "full stack body" in tech_stack
         assert "<!-- SKILLS:START -->" in tech_stack
 
-    def test_generate_keeps_metrics_image_table_when_assets_are_placeholders(
+    def test_generate_omits_lowlighter_metrics_when_assets_are_placeholders(
         self,
         tmp_path: Path,
     ) -> None:
@@ -1127,21 +1128,21 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
-        assert ".github/assets/img/metrics.svg" in rendered
-        assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert ".github/assets/img/metrics.svg" not in rendered
+        assert ".github/assets/img/metrics.additional.svg" not in rendered
         assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert "Metrics temporarily unavailable" not in rendered
         assert (
             'alt="GitHub metrics: contributions, languages, topics, and community signals"'  # noqa: E501
-            in rendered
+            not in rendered
         )
         assert 'loading="lazy"' in rendered
         assert_visible_or_comment_heading(rendered, "Metrics")
         assert ".github/assets/img/readme/sep-metrics.svg" in rendered
-        assert "<td" in rendered
-        assert 'width="50%"' in rendered
+        assert "<td" not in rendered
+        assert 'width="50%"' not in rendered
 
-    def test_generate_keeps_metrics_image_table_when_only_one_asset_is_valid(
+    def test_generate_omits_lowlighter_metrics_when_only_one_asset_is_valid(
         self,
         tmp_path: Path,
     ) -> None:
@@ -1195,8 +1196,8 @@ class TestRendering:
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
 
-        assert ".github/assets/img/metrics.svg" in rendered
-        assert ".github/assets/img/metrics.additional.svg" in rendered
+        assert ".github/assets/img/metrics.svg" not in rendered
+        assert ".github/assets/img/metrics.additional.svg" not in rendered
         assert ".github/assets/img/metrics.extra.svg" not in rendered
         assert "placeholder output" not in rendered
 
@@ -1273,9 +1274,11 @@ class TestRendering:
         assert 'alt="Supplemental metrics: recent GitHub activity feed"' not in rendered
         assert_visible_or_comment_heading(rendered, "Metrics")
         assert ".github/assets/img/readme/sep-metrics.svg" in rendered
-        assert "<td" in rendered
-        assert 'width="50%"' in rendered
-        assert rendered.count('loading="lazy"') >= 4
+        assert ".github/assets/img/metrics.svg" not in rendered
+        assert ".github/assets/img/metrics.additional.svg" not in rendered
+        assert "<td" not in rendered
+        assert 'width="50%"' not in rendered
+        assert rendered.count('loading="lazy"') >= 3
 
     def test_generate_hides_invalid_supplemental_metrics_assets(
         self,
@@ -1394,8 +1397,8 @@ class TestRendering:
         assert_visible_or_comment_heading(rendered, "Metrics")
         assert_visible_or_comment_heading(rendered, "Word Clouds")
         assert ".github/assets/img/readme/sep-clouds.svg" in rendered
-        assert "<td" in rendered
-        assert 'width="50%"' in rendered
+        assert "<td" not in rendered
+        assert 'width="50%"' not in rendered
         metrics = slice_between_headings(rendered, "Metrics", "Word Clouds")
         word_clouds = after_heading(rendered, "Word Clouds")
         assert 'src=".github/assets/img/wakatime.svg"' in metrics
@@ -1593,8 +1596,10 @@ class TestRendering:
         assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
         assert rendered.count("<!--START_SECTION:waka-->") == 1
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
-        assert metrics.index(".github/assets/img/metrics.svg") < metrics.index(
-            ".github/assets/img/wakatime.svg"
+        assert ".github/assets/img/metrics.svg" not in metrics
+        assert ".github/assets/img/metrics.additional.svg" not in metrics
+        assert metrics.index(".github/assets/img/wakatime.svg") > metrics.index(
+            ".github/assets/img/readme/sep-metrics.svg"
         )
 
     def test_generate_unwraps_blog_and_restyles_view_counter(

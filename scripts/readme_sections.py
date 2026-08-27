@@ -128,11 +128,11 @@ def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]
 
 
 def section_separator_block(title: str, filename: str) -> str:
-    """Visible unique SVG rule plus a comment heading the rewriter can find."""
+    """Visible H2 plus a decorative SVG rule (empty alt; the heading is the name)."""
     return (
+        f"## {title}\n"
         f'<p align="center"><img src=".github/assets/img/readme/{filename}" '
-        f'alt="{escape(title)}" width="100%" loading="lazy"/></p>\n'
-        f"<!-- ## {title} -->\n"
+        f'alt="" width="100%" loading="lazy"/></p>\n'
     )
 
 
@@ -1065,7 +1065,7 @@ class ReadmeSectionGenerator:
         return self._rewrite_view_counter(content)
 
     def _normalize_section_separators(self, content: str) -> str:
-        """Keep one unique SVG separator plus a comment heading per section."""
+        """Keep one visible H2 plus a unique decorative SVG rule per section."""
         mapping = (
             ("Featured Projects", "sep-featured.svg"),
             ("Metrics", "sep-metrics.svg"),
@@ -1075,23 +1075,28 @@ class ReadmeSectionGenerator:
             ("Latest Blog Posts", "sep-blog.svg"),
             ("Connect", "sep-qr.svg"),
         )
-        leading_seps = (
-            r'(?:<p align="center"><img src="\.github/assets/img/readme/'
-            r'sep-[a-z]+\.svg"[^>]*></p>\s*)*'
-        )
         for title, filename in mapping:
+            sep_p = (
+                rf'<p align="center"><img src="\.github/assets/img/readme/'
+                rf'{re.escape(filename)}"[^>]*></p>'
+            )
             heading = (
-                rf"^(?:## {re.escape(title)}\s*|"
+                rf"(?:## {re.escape(title)}\s*|"
                 rf"<!-- ## {re.escape(title)} -->)"
             )
             content = re.sub(
-                rf"{leading_seps}{heading}",
-                section_separator_block(title, filename),
+                rf"^(?:{sep_p}\s*)*{heading}(?:\s*{sep_p})?",
+                section_separator_block(title, filename).rstrip(),
                 content,
                 count=1,
                 flags=re.M,
             )
-        return content
+        return re.sub(
+            r'(<p align="center"><img src="\.github/assets/img/readme/'
+            r'sep-[a-z]+\.svg"[^>]*></p>)\n{3,}',
+            r"\1\n\n",
+            content,
+        )
 
     def _rewrite_living_art_section(self, content: str) -> str:
         body_lines = [
@@ -1121,7 +1126,7 @@ class ReadmeSectionGenerator:
         poster = ReadmeSectionGenerator._gfm_img_tag(
             src=gif,
             alt=title,
-            width="90%",
+            width="70%",
         )
         mapping = legend.mapping
         return [
@@ -1146,13 +1151,12 @@ class ReadmeSectionGenerator:
     def _rename_tech_stack_title(content: str) -> str:
         """Fold the legacy Tech Stack title into My Tech Stack."""
         replacements = (
-            ("<!-- ## Tech Stack -->", "<!-- ## My Tech Stack -->"),
+            ("<!-- ## Tech Stack -->", "## My Tech Stack\n"),
             ("## Tech Stack\n", "## My Tech Stack\n"),
             (
                 "<summary><strong>Tech Stack</strong></summary>",
                 _TECH_STACK_BARE_SUMMARY,
             ),
-            ('alt="Tech Stack"', 'alt="My Tech Stack"'),
         )
         for old, new in replacements:
             content = content.replace(old, new)
@@ -1193,40 +1197,10 @@ class ReadmeSectionGenerator:
         img = ReadmeSectionGenerator._gfm_img_tag(src=src, alt=alt, width=width)
         return f'<p align="center">\n{img}\n</p>'
 
-    @staticmethod
-    def _gfm_two_col_imgs(
-        left: tuple[str, str],
-        right: tuple[str, str],
-    ) -> str:
-        """Render two images at half page width (zoomed-out pair)."""
-        left_img = ReadmeSectionGenerator._gfm_img_tag(
-            src=left[0], alt=left[1], width="100%"
-        )
-        right_img = ReadmeSectionGenerator._gfm_img_tag(
-            src=right[0], alt=right[1], width="100%"
-        )
-        return (
-            "<table><tr>\n"
-            f'<td width="50%" valign="top">{left_img}</td>\n'
-            f'<td width="50%" valign="top">{right_img}</td>\n'
-            "</tr></table>"
-        )
-
     def _rewrite_metrics_section(self, content: str, *, readme_path: Path) -> str:
         metrics_dir = readme_path.parent / ".github" / "assets" / "img"
         body_lines = [
             section_separator_block("Metrics", "sep-metrics.svg"),
-            self._gfm_two_col_imgs(
-                (
-                    ".github/assets/img/metrics.svg",
-                    "GitHub metrics: contributions, languages, topics, "
-                    "and community signals",
-                ),
-                (
-                    ".github/assets/img/metrics.additional.svg",
-                    "Additional metrics: recently starred repositories and stargazers",
-                ),
-            ),
         ]
 
         valid_supplemental_assets = [
@@ -1378,7 +1352,7 @@ class ReadmeSectionGenerator:
         if self.BLOG_START in content and not has_blog_heading:
             content = content.replace(
                 self.BLOG_START,
-                f"<!-- ## Latest Blog Posts -->\n{self.BLOG_START}",
+                f"## Latest Blog Posts\n{self.BLOG_START}",
                 1,
             )
         return content
@@ -1392,10 +1366,13 @@ class ReadmeSectionGenerator:
             'width="200" loading="lazy"/>\n'
             "</p>"
         )
-        pattern = re.compile(
-            r'(?:<p align="center"><img src="\.github/assets/img/readme/'
+        heading = r"(?:## Connect\s*\n|<!-- ## Connect -->\s*\n)"
+        sep_p = (
+            r'<p align="center"><img src="\.github/assets/img/readme/'
             r'sep-qr\.svg"[^>]*></p>\s*'
-            r"(?:<!-- ## Connect -->\s*)?)?"
+        )
+        pattern = re.compile(
+            rf"(?:{heading})?(?:{sep_p})?(?:{heading})?"
             r'<p align="center">\s*'
             r'<img src="\.github/assets/img/qr\.png"[^>]*>\s*</p>',
             re.M,
@@ -1881,18 +1858,11 @@ class ReadmeSectionGenerator:
                 "height": 236,
                 "display_width": 360,
             }
-        if repo_count <= 4:
-            return {
-                "columns": 2,
-                "width": 540,
-                "height": 214,
-                "display_width": 360,
-            }
         return {
-            "columns": 3,
-            "width": 280,
-            "height": 156,
-            "display_width": 280,
+            "columns": 2,
+            "width": 360,
+            "height": 216,
+            "display_width": 360,
         }
 
     def _featured_public_surface_dir(self) -> Path | None:

@@ -3,7 +3,7 @@
 These tests assert README composition and generator rewrites that keep
 Living Art / My Tech Stack aligned with that design. Living Art is a
 full-width stack with per-piece <details>; My Tech Stack stays collapsed.
-Featured projects remain a wrap-flow of compact 280 cards.
+Featured projects remain a wrap-flow of 360 cards.
 """
 
 from __future__ import annotations
@@ -148,15 +148,11 @@ def heading_line_re(title: str) -> re.Pattern[str]:
 
 
 def assert_visible_or_comment_heading(text: str, title: str) -> None:
-    """Accept a visible H2 or the SVG separator plus comment stand-in."""
+    """Require a visible H2. Comment-only stand-ins are no longer accepted."""
     visible = re.search(rf"(?m)^## {re.escape(title)}\s*$", text)
     comment = re.search(rf"(?m)^<!-- ## {re.escape(title)} -->\s*$", text)
-    assert visible or comment, f"missing {title} heading"
-    if comment is not None and visible is None:
-        sep = SECTION_SEPARATORS[title]
-        assert f".github/assets/img/readme/{sep}" in text, (
-            f"comment heading {title} requires {sep}"
-        )
+    assert visible is not None, f"missing visible ## {title}"
+    assert comment is None, f"comment stand-in remains for {title}"
 
 
 def heading_index(text: str, title: str) -> int:
@@ -169,6 +165,18 @@ def after_heading(text: str, title: str) -> str:
     match = heading_line_re(title).search(text)
     assert match is not None, f"missing heading {title}"
     return text[match.end() :]
+
+
+def after_heading_body(text: str, title: str) -> str:
+    """Section body after the visible H2 and its decorative separator."""
+    rest = after_heading(text, title).lstrip()
+    return re.sub(
+        r'^<p align="center"><img src="\.github/assets/img/readme/'
+        r'sep-[a-z]+\.svg"[^>]*></p>\s*',
+        "",
+        rest,
+        count=1,
+    )
 
 
 def slice_between_headings(text: str, start: str, end: str) -> str:
@@ -241,9 +249,9 @@ def assert_art_outside_details(living: str) -> None:
 
 
 def assert_full_width_media(living: str) -> None:
-    """One piece per row with a 90% display gutter (not a 360 wrap)."""
+    """One piece per row with a 70% display gutter (not a 360 wrap)."""
     visible, _blocks = visible_living_art_and_details(living)
-    assert visible.count('width="90%"') >= shipped_living_art_count()
+    assert visible.count('width="70%"') >= shipped_living_art_count()
     for style in SHIPPED_STYLE_KEYS:
         gif = f".github/assets/img/living-{style}.gif"
         mp4 = f".github/assets/img/living-{style}.mp4"
@@ -256,9 +264,9 @@ def assert_full_width_media(living: str) -> None:
             visible,
         )
         if video_hit is not None:
-            assert 'width="90%"' in video_hit.group(0)
+            assert 'width="70%"' in video_hit.group(0)
         if img_hit is not None:
-            assert 'width="90%"' in img_hit.group(0)
+            assert 'width="70%"' in img_hit.group(0)
             assert 'loading="lazy"' in img_hit.group(0)
         assert video_hit is not None or img_hit is not None, style
 
@@ -340,23 +348,21 @@ def _synthetic_living_art_section(*, form: str) -> str:
         gif = f".github/assets/img/living-{style}.gif"
         mp4 = f".github/assets/img/living-{style}.mp4"
         if form == "video":
-            media = (
-                f'<p align="center">\n<video src="{mp4}" width="90%"></video>\n</p>'
-            )
+            media = f'<p align="center">\n<video src="{mp4}" width="70%"></video>\n</p>'
         elif form == "gif-href":
             media = (
                 f'<p align="center">\n'
                 f'<a href="{mp4}">'
-                f'<img src="{gif}" alt="{legend.title}" width="90%" '
+                f'<img src="{gif}" alt="{legend.title}" width="70%" '
                 f'loading="lazy"/></a>\n'
                 "</p>"
             )
         elif form == "both":
             media = (
                 f'<p align="center">\n'
-                f'<video src="{mp4}" width="90%" poster="{gif}">\n'
+                f'<video src="{mp4}" width="70%" poster="{gif}">\n'
                 f'<a href="{mp4}">'
-                f'<img src="{gif}" alt="{legend.title}" width="90%" '
+                f'<img src="{gif}" alt="{legend.title}" width="70%" '
                 f'loading="lazy"/></a>\n'
                 "</video>\n"
                 "</p>"
@@ -389,7 +395,7 @@ def _tech_stack_section(readme: str) -> str:
 
 
 def test_living_art_full_width_stack_shows_shipped_media() -> None:
-    """Shipped living-art media is an inset 90% stack, one piece per row."""
+    """Shipped living-art media is an inset 70% stack, one piece per row."""
     readme = _read_readme()
     assert_visible_or_comment_heading(readme, "Living Art")
     living = living_art_section(readme)
@@ -403,7 +409,7 @@ def test_living_art_full_width_stack_shows_shipped_media() -> None:
     )
 
     assert_living_art_stack_layout(living)
-    assert living.count('width="90%"') >= n
+    assert living.count('width="70%"') >= n
     assert living.count('width="360"') == 0
     assert visible.count('<p align="center">') >= n
     assert lazy == n
@@ -427,7 +433,7 @@ def test_tech_stack_has_no_teaser_shields() -> None:
     readme = _read_readme()
     assert_visible_or_comment_heading(readme, "My Tech Stack")
     tech = _tech_stack_section(readme)
-    body = after_heading(tech, "My Tech Stack").lstrip()
+    body = after_heading_body(tech, "My Tech Stack").lstrip()
 
     assert body.startswith("<details>")
     assert "<summary><strong>My Tech Stack</strong></summary>" in tech
@@ -448,8 +454,8 @@ def test_featured_projects_use_wrap_flow_cards() -> None:
     assert "More Featured Projects" not in featured
     assert "<details" not in featured.lower()
     assert featured.count('<p align="center">') == 1
-    assert featured.count('width="280"') == 18
-    assert featured.count('width="360"') == 0
+    assert featured.count('width="360"') == 18
+    assert featured.count('width="280"') == 0
     assert featured.count("featured-card-") == 18
     assert featured.count('loading="lazy"') == 18
     assert "listentropy" not in featured
@@ -484,6 +490,35 @@ def test_readme_section_order_and_managed_markers() -> None:
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
     living_start = heading_index(readme, "Living Art")
     assert banner_idx < badges_start < featured_start < living_start
+
+
+def test_section_headings_are_visible_h2_with_empty_alt_rules() -> None:
+    """Each managed section uses a visible H2; the SVG rule is decorative."""
+    readme = _read_readme()
+    for title, filename in SECTION_SEPARATORS.items():
+        assert_visible_or_comment_heading(readme, title)
+        match = re.search(
+            rf"(?ms)^## {re.escape(title)}\s*\n"
+            rf'<p align="center"><img src="\.github/assets/img/readme/'
+            rf'{re.escape(filename)}" alt="" width="100%" loading="lazy"/></p>',
+            readme,
+        )
+        assert match is not None, title
+        assert f"<!-- ## {title} -->" not in readme
+
+
+def test_readme_omits_lowlighter_metrics_cards() -> None:
+    """Production README ships first-party metrics only — no lowlighter pair."""
+    readme = _read_readme()
+    assert ".github/assets/img/metrics.svg" not in readme
+    assert ".github/assets/img/metrics.additional.svg" not in readme
+    assert ".github/assets/img/metrics.extra.svg" not in readme
+    metrics = slice_between_headings(readme, "Metrics", "Living Art")
+    assert "<table" not in metrics.lower()
+    assert 'width="50%"' not in metrics
+    assert ".github/assets/img/metrics-languages.svg" in metrics
+    assert ".github/assets/img/metrics-habits.svg" in metrics
+    assert 'src=".github/assets/img/wakatime.svg"' in metrics
 
 
 def test_waka_and_blog_are_visible_not_details() -> None:
@@ -628,7 +663,9 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     assert_living_art_hosts_allowed(living)
     assert 'alt="AI/ML"' not in tech
     assert 'alt="Open Source"' not in tech
-    assert tech.lstrip().startswith("<details>")
+    assert (
+        after_heading_body(rendered, "My Tech Stack").lstrip().startswith("<details>")
+    )
     assert "<summary><strong>My Tech Stack</strong></summary>" in tech
     assert "View full stack" not in tech
     assert "200+" not in tech
@@ -806,7 +843,7 @@ def test_living_art_rejects_media_hidden_in_details() -> None:
         gif = f".github/assets/img/living-{style}.gif"
         pieces.append(
             f"<details>\n<summary><strong>{legend.title}</strong></summary>\n"
-            f'<img src="{gif}" alt="{legend.title}" width="90%" '
+            f'<img src="{gif}" alt="{legend.title}" width="70%" '
             f'loading="lazy"/>\n'
             f"{legend.metaphor}\n"
             "</details>"
