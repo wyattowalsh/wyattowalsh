@@ -241,8 +241,9 @@ def assert_art_outside_details(living: str) -> None:
 
 
 def assert_full_width_media(living: str) -> None:
+    """One piece per row with a 90% display gutter (not a 360 wrap)."""
     visible, _blocks = visible_living_art_and_details(living)
-    assert visible.count('width="100%"') >= shipped_living_art_count()
+    assert visible.count('width="90%"') >= shipped_living_art_count()
     for style in SHIPPED_STYLE_KEYS:
         gif = f".github/assets/img/living-{style}.gif"
         mp4 = f".github/assets/img/living-{style}.mp4"
@@ -255,9 +256,9 @@ def assert_full_width_media(living: str) -> None:
             visible,
         )
         if video_hit is not None:
-            assert 'width="100%"' in video_hit.group(0)
+            assert 'width="90%"' in video_hit.group(0)
         if img_hit is not None:
-            assert 'width="100%"' in img_hit.group(0)
+            assert 'width="90%"' in img_hit.group(0)
             assert 'loading="lazy"' in img_hit.group(0)
         assert video_hit is not None or img_hit is not None, style
 
@@ -340,22 +341,22 @@ def _synthetic_living_art_section(*, form: str) -> str:
         mp4 = f".github/assets/img/living-{style}.mp4"
         if form == "video":
             media = (
-                f'<p align="center">\n<video src="{mp4}" width="100%"></video>\n</p>'
+                f'<p align="center">\n<video src="{mp4}" width="90%"></video>\n</p>'
             )
         elif form == "gif-href":
             media = (
                 f'<p align="center">\n'
                 f'<a href="{mp4}">'
-                f'<img src="{gif}" alt="{legend.title}" width="100%" '
+                f'<img src="{gif}" alt="{legend.title}" width="90%" '
                 f'loading="lazy"/></a>\n'
                 "</p>"
             )
         elif form == "both":
             media = (
                 f'<p align="center">\n'
-                f'<video src="{mp4}" width="100%" poster="{gif}">\n'
+                f'<video src="{mp4}" width="90%" poster="{gif}">\n'
                 f'<a href="{mp4}">'
-                f'<img src="{gif}" alt="{legend.title}" width="100%" '
+                f'<img src="{gif}" alt="{legend.title}" width="90%" '
                 f'loading="lazy"/></a>\n'
                 "</video>\n"
                 "</p>"
@@ -388,7 +389,7 @@ def _tech_stack_section(readme: str) -> str:
 
 
 def test_living_art_full_width_stack_shows_shipped_media() -> None:
-    """Shipped living-art media is full-width, one piece per row, not a 360 wrap."""
+    """Shipped living-art media is an inset 90% stack, one piece per row."""
     readme = _read_readme()
     assert_visible_or_comment_heading(readme, "Living Art")
     living = living_art_section(readme)
@@ -402,7 +403,7 @@ def test_living_art_full_width_stack_shows_shipped_media() -> None:
     )
 
     assert_living_art_stack_layout(living)
-    assert living.count('width="100%"') >= n
+    assert living.count('width="90%"') >= n
     assert living.count('width="360"') == 0
     assert visible.count('<p align="center">') >= n
     assert lazy == n
@@ -805,7 +806,7 @@ def test_living_art_rejects_media_hidden_in_details() -> None:
         gif = f".github/assets/img/living-{style}.gif"
         pieces.append(
             f"<details>\n<summary><strong>{legend.title}</strong></summary>\n"
-            f'<img src="{gif}" alt="{legend.title}" width="100%" '
+            f'<img src="{gif}" alt="{legend.title}" width="90%" '
             f'loading="lazy"/>\n'
             f"{legend.metaphor}\n"
             "</details>"

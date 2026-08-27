@@ -1121,7 +1121,7 @@ class ReadmeSectionGenerator:
         poster = ReadmeSectionGenerator._gfm_img_tag(
             src=gif,
             alt=title,
-            width="100%",
+            width="90%",
         )
         mapping = legend.mapping
         return [
