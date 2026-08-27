@@ -15,7 +15,6 @@
 ## Featured Projects
 <p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="" width="100%" loading="lazy"/></p>
 
-
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
@@ -413,11 +412,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 ## Latest Blog Posts
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
 
-
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
-<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="ProxyWhirl · 2026-02-13 · Production-ready Python proxy rotation with auto-fetching from 114+ sources, 9 selection strategies, self-healing circuit breakers, and five interfaces." width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · 2021-01-15 · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms" width="360" loading="lazy"/></a>
 <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · 2021-01-14 · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy" width="360" loading="lazy"/></a>
