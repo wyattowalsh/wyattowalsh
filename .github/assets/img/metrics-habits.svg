@@ -100,8 +100,8 @@
 <rect class="peak-tick-on" x="58" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="72" y="138" width="11" height="12" rx="2" />
 <rect class="peak-tick-on" x="86" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="100" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="114" y="136" width="11" height="14" rx="2" />
+<rect class="peak-tick-on" x="100" y="138" width="11" height="12" rx="2" />
+<rect class="peak-tick-on" x="114" y="134" width="11" height="16" rx="2" />
 <rect class="peak-tick-on" x="128" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="142" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="156" y="140" width="11" height="10" rx="2" />
@@ -129,7 +129,7 @@
 <text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share · uncommon but readable night-owl index</text>
 <text class="body" x="16" y="72">29% nocturnal</text>
 <rect x="16" y="82" width="344" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.45"/>
-<rect class="focus-bar" x="16" y="82" width="96" height="8" rx="4"/>
+<rect class="focus-bar" x="16" y="82" width="98" height="8" rx="4"/>
 <text class="label" x="16" y="118">Focus monoculture</text>
 <text class="meta" x="16" y="136">Herfindahl of merged-PR repos (100% = one repo ate the month)</text>
 <text class="body" x="16" y="166">24% HHI</text>
@@ -227,7 +227,7 @@
 <rect class="cadence" x="1032" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1044" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1056" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1068" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="1068" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
 </g>
 <g class="habits-streaks" transform="translate(20,352)">
 <rect class="panel" width="1160" height="208" rx="10" />

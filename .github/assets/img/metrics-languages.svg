@@ -76,6 +76,7 @@
 <path d="M 106 211.0 C 360 211.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 141.0 C 360 141.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 141.0 C 360 141.0, 720 141.0, 980 141.0" fill="none" stroke="#8250df" stroke-opacity="0.45" stroke-width="1.2"/>
+<path d="M 106 246.0 C 360 246.0, 720 281.0, 980 281.0" fill="none" stroke="#d4a72c" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 281.0 C 360 281.0, 720 211.0, 980 211.0" fill="none" stroke="#218bff" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 281.0 C 360 281.0, 720 176.0, 980 176.0" fill="none" stroke="#218bff" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 106.0 C 360 106.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
@@ -113,5 +114,7 @@
 <text class="body" x="1002" y="215.0">Shell 1%</text>
 <rect x="988" y="239.0" width="8" height="8" rx="2" fill="#d4a72c"/>
 <text class="body" x="1002" y="250.0">Jinja 2%</text>
+<rect x="988" y="274.0" width="8" height="8" rx="2" fill="#d4a72c"/>
+<text class="body" x="1002" y="285.0">MDX 0%</text>
 </g>
 </svg>
