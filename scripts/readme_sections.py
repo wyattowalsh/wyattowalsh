@@ -128,11 +128,12 @@ def compile_section_body_re(title: str, order: Sequence[str]) -> re.Pattern[str]
 
 
 def section_separator_block(title: str, filename: str) -> str:
-    """Visible H2 plus a decorative SVG rule (empty alt; the heading is the name)."""
+    """Decorative SVG rule immediately above the visible H2 (empty alt)."""
     return (
-        f"## {title}\n"
         f'<p align="center"><img src=".github/assets/img/readme/{filename}" '
         f'alt="" width="100%" loading="lazy"/></p>\n'
+        f"\n"
+        f"## {title}\n"
     )
 
 
@@ -142,9 +143,9 @@ _TECH_STACK_TEASER_RE = re.compile(
     r".*?(?=^<details>\n<summary>)",
 )
 _TECH_STACK_SUMMARY_RE = re.compile(
-    r"(?m)(^<details>\n)<summary><strong>.*?</strong></summary>",
+    r"(?m)(^<details>\n)<summary>.*?</summary>",
 )
-_TECH_STACK_BARE_SUMMARY = "<summary><strong>My Tech Stack</strong></summary>"
+_TECH_STACK_BARE_SUMMARY = "<summary>Technologies</summary>"
 # Word clouds end at a leftover WakaTime image, markers, or a legacy details wrap.
 _WORD_CLOUDS_WAKA_END_RE = re.compile(
     r"(?ms)^## Word Clouds\n.*?(?="
@@ -1065,7 +1066,12 @@ class ReadmeSectionGenerator:
         return self._rewrite_view_counter(content)
 
     def _normalize_section_separators(self, content: str) -> str:
-        """Keep one visible H2 plus a unique decorative SVG rule per section."""
+        """Rewrite either separator order to sep-then-H2.
+
+        Accepts H2-then-sep or sep-then-H2, including leftover duplicate seps.
+        ``count=1`` per title so the living-art closer ``sep-living.svg`` after
+        ferrofluid is not consumed.
+        """
         mapping = (
             ("Featured Projects", "sep-featured.svg"),
             ("Metrics", "sep-metrics.svg"),
@@ -1085,8 +1091,8 @@ class ReadmeSectionGenerator:
                 rf"<!-- ## {re.escape(title)} -->)"
             )
             content = re.sub(
-                rf"^(?:{sep_p}\s*)*{heading}(?:\s*{sep_p})?",
-                section_separator_block(title, filename).rstrip(),
+                rf"^(?:{sep_p}\s*)*{heading}(?:\s*{sep_p})*",
+                section_separator_block(title, filename).rstrip() + "\n",
                 content,
                 count=1,
                 flags=re.M,
@@ -1106,11 +1112,23 @@ class ReadmeSectionGenerator:
                 "creation to now, each a different visual world.</p>"
             ),
         ]
-        for style, legend in shipped_legends():
-            body_lines.append("")
+        legends = list(shipped_legends())
+        for index, (style, legend) in enumerate(legends):
+            if index:
+                body_lines.extend(["", "---", ""])
+            else:
+                body_lines.append("")
             body_lines.extend(self._living_art_piece_markup(style, legend))
-        body_lines.append("")
-        replacement = "\n".join(body_lines)
+        body_lines.extend(
+            [
+                "",
+                (
+                    '<p align="center"><img src=".github/assets/img/readme/'
+                    'sep-living.svg" alt="" width="100%" loading="lazy"/></p>'
+                ),
+            ]
+        )
+        replacement = "\n".join(body_lines).rstrip() + "\n\n"
         living_re = compile_section_body_re("Living Art", self._section_order())
         if not living_re.search(content):
             logger.warning("Living Art section heading not found in README.")
@@ -1358,7 +1376,7 @@ class ReadmeSectionGenerator:
         return content
 
     def _rewrite_qr_block(self, content: str) -> str:
-        """Keep a unique separator immediately above the vCard QR."""
+        """Keep sep-then-H2 immediately above the vCard QR."""
         sep = section_separator_block("Connect", "sep-qr.svg")
         qr = (
             '<p align="center">\n'
@@ -1372,7 +1390,7 @@ class ReadmeSectionGenerator:
             r'sep-qr\.svg"[^>]*></p>\s*'
         )
         pattern = re.compile(
-            rf"(?:{heading})?(?:{sep_p})?(?:{heading})?"
+            rf"(?:{sep_p})*(?:{heading})(?:{sep_p})*"
             r'<p align="center">\s*'
             r'<img src="\.github/assets/img/qr\.png"[^>]*>\s*</p>',
             re.M,

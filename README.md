@@ -12,9 +12,14 @@
 <a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" alt="X.com" loading="lazy"/></a></p>
 <!-- README:TOP_BADGES:END -->
 
-## Featured Projects
 <p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="" width="100%" loading="lazy"/></p>
 
+<<<<<<< HEAD
+||||||| parent of 89ca1eb0b (feat(readme): put section rules above headings)
+
+=======
+## Featured Projects
+>>>>>>> 89ca1eb0b (feat(readme): put section rules above headings)
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
@@ -38,9 +43,9 @@
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
-## Metrics
 <p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="" width="100%" loading="lazy"/></p>
 
+## Metrics
 <p align="center">
 <img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/>
 </p>
@@ -61,9 +66,9 @@
 <!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
 <!--END_SECTION:waka-->
 
-## Living Art
 <p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
 
+## Living Art
 <p>These are daily timelapses of this GitHub account from creation to now, each a different visual world.</p>
 
 <p align="center">
@@ -82,6 +87,8 @@ Each repository takes root as a tree, stem and canopy together. A day with no re
 
 </details>
 
+---
+
 <p align="center">
 <a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="70%" loading="lazy"/></a>
 </p>
@@ -97,6 +104,8 @@ A hand-drawn survey of this account, with one hill for every repository. The map
 - **Followers:** settlements on the map
 
 </details>
+
+---
 
 <p align="center">
 <a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="70%" loading="lazy"/></a>
@@ -114,6 +123,8 @@ A landscape of competing fitness peaks, one ridge per repository. Life gathers o
 
 </details>
 
+---
+
 <p align="center">
 <a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="70%" loading="lazy"/></a>
 </p>
@@ -129,6 +140,8 @@ A slime mold feeding in the dark, spinning a living network from the first repos
 - **Followers:** vein mass (not the spore)
 
 </details>
+
+---
 
 <p align="center">
 <a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="70%" loading="lazy"/></a>
@@ -146,6 +159,8 @@ A continuous living field, seeded with one creature for every repository. Soft b
 
 </details>
 
+---
+
 <p align="center">
 <a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="70%" loading="lazy"/></a>
 </p>
@@ -161,11 +176,14 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 - **Followers:** magnetic field around the towers
 
 </details>
-## My Tech Stack
+
+<p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
+
 <p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="" width="100%" loading="lazy"/></p>
 
+## My Tech Stack
 <details>
-<summary><strong>My Tech Stack</strong></summary>
+<summary>Technologies</summary>
 
 <!-- SKILLS:START -->
 ### Programming Languages
@@ -399,9 +417,9 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 </details>
 
-## Word Clouds
 <p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="" width="100%" loading="lazy"/></p>
 
+## Word Clouds
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/>
 </p>
@@ -409,9 +427,14 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 <p align="center">
 <img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/>
 </p>
-## Latest Blog Posts
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
 
+<<<<<<< HEAD
+||||||| parent of 89ca1eb0b (feat(readme): put section rules above headings)
+
+=======
+## Latest Blog Posts
+>>>>>>> 89ca1eb0b (feat(readme): put section rules above headings)
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
@@ -423,8 +446,9 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 <p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
-## Connect
 <p align="center"><img src=".github/assets/img/readme/sep-qr.svg" alt="" width="100%" loading="lazy"/></p>
+
+## Connect
 
 <p align="center">
   <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="200" loading="lazy"/>

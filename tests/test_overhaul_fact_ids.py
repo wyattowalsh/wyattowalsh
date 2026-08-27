@@ -187,7 +187,7 @@ def test_fact_no_200_copy_readme_summary_is_bare() -> None:
     readme = _readme()
     assert "200+" not in readme
     assert "View full stack" not in readme
-    assert "<summary><strong>My Tech Stack</strong></summary>" in readme
+    assert "<summary>Technologies</summary>" in readme
 
 
 def test_fact_tech_details_stack_collapsed_waka_visible() -> None:

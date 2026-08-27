@@ -14,6 +14,7 @@ from urllib.request import Request
 import pytest
 from loguru import logger as loguru_logger
 
+from scripts.art.roster import SHIPPED_STYLE_KEYS
 from scripts.config import (
     ReadmeFeaturedRepo,
     ReadmeSectionsSettings,
@@ -30,6 +31,7 @@ from scripts.readme_sections import (
     _is_safe_remote_url,
     _safe_urlopen,
     _SafeRedirectHandler,
+    compile_section_body_re,
 )
 from tests.test_readme_gfm_ux import (
     after_heading,
@@ -1006,6 +1008,26 @@ class TestRendering:
         rendered = readme.read_text(encoding="utf-8")
         assert_visible_or_comment_heading(rendered, "Living Art")
         assert_visible_or_comment_heading(rendered, "My Tech Stack")
+        living_raw = compile_section_body_re(
+            "Living Art",
+            ("Living Art", "My Tech Stack"),
+        ).search(rendered)
+        assert living_raw is not None
+        assert living_raw.group(0).count("sep-living.svg") == 1
+        assert living_raw.group(0).rfind("living-ferrofluid.gif") < living_raw.group(
+            0
+        ).rfind("sep-living.svg")
+        assert re.search(
+            r'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
+            r'sep-living\.svg" alt="" width="100%" loading="lazy"/></p>\n+'
+            r"## Living Art\s*$",
+            rendered,
+        )
+        living_body = living_raw.group(0)
+        assert len(re.findall(r"(?m)^---$", living_body)) == len(SHIPPED_STYLE_KEYS) - 1
+        ferro = living_body.rfind("living-ferrofluid.gif")
+        closer = living_body.rfind("sep-living.svg")
+        assert not re.search(r"(?m)^---$", living_body[ferro:closer])
         living_art = living_art_section(rendered)
 
         assert "stale living art grid" not in rendered
@@ -1017,7 +1039,7 @@ class TestRendering:
         assert 'alt="Data Engineering"' not in rendered
         assert "<!-- SKILLS:START -->" in rendered
         assert "kept skills" in rendered
-        assert "<summary><strong>My Tech Stack</strong></summary>" in rendered
+        assert "<summary>Technologies</summary>" in rendered
         assert "View full stack" not in rendered
         assert "200+" not in rendered
 
@@ -1072,7 +1094,7 @@ class TestRendering:
         assert 'alt="Full-Stack"' not in tech_stack
         assert 'alt="Open Source"' not in tech_stack
         assert tech_stack.lstrip().startswith("<details>")
-        assert "<summary><strong>My Tech Stack</strong></summary>" in tech_stack
+        assert "<summary>Technologies</summary>" in tech_stack
         assert "View full stack" not in tech_stack
         assert "200+" not in tech_stack
         assert "full stack body" in tech_stack
@@ -1598,8 +1620,11 @@ class TestRendering:
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert ".github/assets/img/metrics.svg" not in metrics
         assert ".github/assets/img/metrics.additional.svg" not in metrics
-        assert metrics.index(".github/assets/img/wakatime.svg") > metrics.index(
-            ".github/assets/img/readme/sep-metrics.svg"
+        assert rendered.index(".github/assets/img/readme/sep-metrics.svg") < (
+            rendered.index("## Metrics")
+        )
+        assert rendered.index("## Metrics") < rendered.index(
+            ".github/assets/img/wakatime.svg"
         )
 
     def test_generate_unwraps_blog_and_restyles_view_counter(

@@ -168,7 +168,7 @@ def after_heading(text: str, title: str) -> str:
 
 
 def after_heading_body(text: str, title: str) -> str:
-    """Section body after the visible H2 and its decorative separator."""
+    """Section body after the visible H2 (strips a leftover post-heading sep)."""
     rest = after_heading(text, title).lstrip()
     return re.sub(
         r'^<p align="center"><img src="\.github/assets/img/readme/'
@@ -394,6 +394,48 @@ def _tech_stack_section(readme: str) -> str:
     return match.group(0)
 
 
+def test_living_art_closes_with_separator_before_tech_stack() -> None:
+    """Last timelapse (ferrofluid) is followed by a living-art rule, then H2."""
+    readme = _read_readme()
+    match = compile_section_body_re("Living Art", _order()).search(readme)
+    assert match is not None
+    living = match.group(0)
+    assert living.count("sep-living.svg") == 1
+    ferro = living.rfind("living-ferrofluid.gif")
+    closer = living.rfind("sep-living.svg")
+    assert ferro != -1
+    assert closer > ferro
+    tech_heading = heading_index(readme, "My Tech Stack")
+    living_end = match.end()
+    assert living_end <= tech_heading
+    closer_abs = match.start() + closer
+    assert closer_abs < tech_heading
+    opening = re.search(
+        r'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
+        r'sep-living\.svg" alt="" width="100%" loading="lazy"/></p>\n+'
+        r"## Living Art\s*$",
+        readme,
+    )
+    assert opening is not None
+    assert opening.start() < match.start()
+    assert not re.search(r"(?m)^---$", living[ferro:closer])
+
+
+def test_living_art_thematic_breaks_between_pieces() -> None:
+    """Standalone --- rules sit between shipped pieces, not after ferrofluid."""
+    readme = _read_readme()
+    match = compile_section_body_re("Living Art", _order()).search(readme)
+    assert match is not None
+    living = match.group(0)
+    rules = re.findall(r"(?m)^---$", living)
+    assert len(rules) == len(SHIPPED_STYLE_KEYS) - 1
+    ferro = living.rfind("living-ferrofluid.gif")
+    closer = living.rfind("sep-living.svg")
+    assert ferro != -1
+    assert closer > ferro
+    assert not re.search(r"(?m)^---$", living[ferro:closer])
+
+
 def test_living_art_full_width_stack_shows_shipped_media() -> None:
     """Shipped living-art media is an inset 70% stack, one piece per row."""
     readme = _read_readme()
@@ -436,7 +478,7 @@ def test_tech_stack_has_no_teaser_shields() -> None:
     body = after_heading_body(tech, "My Tech Stack").lstrip()
 
     assert body.startswith("<details>")
-    assert "<summary><strong>My Tech Stack</strong></summary>" in tech
+    assert "<summary>Technologies</summary>" in tech
     assert "View full stack" not in tech
     assert "200+" not in tech
     assert "<!-- SKILLS:START -->" in tech
@@ -493,14 +535,14 @@ def test_readme_section_order_and_managed_markers() -> None:
 
 
 def test_section_headings_are_visible_h2_with_empty_alt_rules() -> None:
-    """Each managed section uses a visible H2; the SVG rule is decorative."""
+    """Each managed section uses a visible H2; the SVG rule sits immediately above."""
     readme = _read_readme()
     for title, filename in SECTION_SEPARATORS.items():
         assert_visible_or_comment_heading(readme, title)
         match = re.search(
-            rf"(?ms)^## {re.escape(title)}\s*\n"
-            rf'<p align="center"><img src="\.github/assets/img/readme/'
-            rf'{re.escape(filename)}" alt="" width="100%" loading="lazy"/></p>',
+            rf'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
+            rf'{re.escape(filename)}" alt="" width="100%" loading="lazy"/></p>'
+            rf"\n+## {re.escape(title)}\s*$",
             readme,
         )
         assert match is not None, title
@@ -652,6 +694,23 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     rendered = generator._rewrite_tech_stack_teaser(rendered)
     assert_visible_or_comment_heading(rendered, "Living Art")
     assert_visible_or_comment_heading(rendered, "My Tech Stack")
+    raw_living = compile_section_body_re("Living Art", _order()).search(rendered)
+    assert raw_living is not None
+    assert raw_living.group(0).count("sep-living.svg") == 1
+    assert raw_living.group(0).rfind("living-ferrofluid.gif") < raw_living.group(
+        0
+    ).rfind("sep-living.svg")
+    assert re.search(
+        r'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
+        r'sep-living\.svg" alt="" width="100%" loading="lazy"/></p>\n+'
+        r"## Living Art\s*$",
+        rendered,
+    )
+    living_body = raw_living.group(0)
+    assert len(re.findall(r"(?m)^---$", living_body)) == len(SHIPPED_STYLE_KEYS) - 1
+    ferro = living_body.rfind("living-ferrofluid.gif")
+    closer = living_body.rfind("sep-living.svg")
+    assert not re.search(r"(?m)^---$", living_body[ferro:closer])
     living = living_art_section(rendered)
     tech = after_heading(rendered, "My Tech Stack")
 
@@ -666,7 +725,7 @@ def test_generator_rewrites_living_art_and_drops_teasers() -> None:
     assert (
         after_heading_body(rendered, "My Tech Stack").lstrip().startswith("<details>")
     )
-    assert "<summary><strong>My Tech Stack</strong></summary>" in tech
+    assert "<summary>Technologies</summary>" in tech
     assert "View full stack" not in tech
     assert "200+" not in tech
     assert "kept" in tech
@@ -678,7 +737,7 @@ def test_fact_no_200_copy_summary_has_no_count_or_blurb() -> None:
     tech = _tech_stack_section(readme)
     assert "200+" not in readme
     assert "View full stack" not in readme
-    assert "<summary><strong>My Tech Stack</strong></summary>" in tech
+    assert "<summary>Technologies</summary>" in tech
 
 
 def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
@@ -689,7 +748,7 @@ def test_fact_tech_details_stack_in_details_waka_with_metrics() -> None:
     tech = _tech_stack_section(readme)
     assert 'src=".github/assets/img/wakatime.svg"' in metrics
     assert "<details>" in tech
-    assert "<summary><strong>My Tech Stack</strong></summary>" in tech
+    assert "<summary>Technologies</summary>" in tech
     assert "<!-- SKILLS:START -->" in tech
     assert "wakatime.svg" not in tech
     assert "<!--START_SECTION:waka-->" in metrics
