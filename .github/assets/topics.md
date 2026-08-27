@@ -12500,7 +12500,7 @@
 - [alibaba/alibaba.github.com](https://github.com/alibaba/alibaba.github.com) - The alibaba github homepage.
 - [alichtman/shallow-backup](https://github.com/alichtman/shallow-backup) - Git-integrated backup tool for macOS and Linux devs.
 - [alinaqi/mcp-linkedin-server](https://github.com/alinaqi/mcp-linkedin-server) - LinkedIn MCP Server for local automation
-- [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code) - Use Claude Code, Codex, Pi, and OpenCode for free (1.3B+ free tokens) from your terminal, app, IDE, or phone like OpenClaw (voice supported + ToS friendly)
+- [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code) - Use Claude Code, Codex, Pi, and OpenCode and more for free (1.3B+ free tokens) from your terminal, app, IDE, or phone like OpenClaw (voice supported + ToS friendly)
 - [alistairwalsh/mcp_pandas](https://github.com/alistairwalsh/mcp_pandas)
 - [all-contributors/allcontributors.org](https://github.com/all-contributors/allcontributors.org) - ✨ The all-contributors bot website and documentation. Recognize all contributors, not just the ones who push code ✨
 - [AllanChain/zotero-arxiv-workflow](https://github.com/AllanChain/zotero-arxiv-workflow) - Helper for managing arXiv papers in Zotero
