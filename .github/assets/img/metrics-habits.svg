@@ -129,7 +129,7 @@
 <text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share · uncommon but readable night-owl index</text>
 <text class="body" x="16" y="72">29% nocturnal</text>
 <rect x="16" y="82" width="344" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.45"/>
-<rect class="focus-bar" x="16" y="82" width="97" height="8" rx="4"/>
+<rect class="focus-bar" x="16" y="82" width="96" height="8" rx="4"/>
 <text class="label" x="16" y="118">Focus monoculture</text>
 <text class="meta" x="16" y="136">Herfindahl of merged-PR repos (100% = one repo ate the month)</text>
 <text class="body" x="16" y="166">24% HHI</text>

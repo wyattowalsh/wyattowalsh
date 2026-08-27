@@ -204,7 +204,7 @@
 <rect class="day-bar" x="839.1" y="851.4" width="72.7" height="30.6" rx="3"><title>2026-08-24: </title></rect>
 <rect class="day-bar" x="917.9" y="876.0" width="72.7" height="6.0" rx="3"><title>2026-08-25: </title></rect>
 <rect class="day-bar" x="996.6" y="868.3" width="72.7" height="13.7" rx="3"><title>2026-08-26: </title></rect>
-<rect class="day-bar" x="1075.3" y="864.5" width="72.7" height="17.5" rx="3"><title>2026-08-27: </title></rect>
+<rect class="day-bar" x="1075.3" y="864.1" width="72.7" height="17.9" rx="3"><title>2026-08-27: </title></rect>
 <text class="card-meta" x="52.0" y="900.0">avg 6h 39m/day</text>
 <text class="card-kicker" x="52.0" y="920.0">Coding heatmap</text>
 <text class="card-meta" x="52.0" y="943.0">S</text>
@@ -579,6 +579,6 @@
 <rect class="hm-2" x="796.0" y="948.0" width="11" height="11" rx="2"><title>2026-08-24: 30334s</title></rect>
 <rect class="hm-0" x="796.0" y="962.0" width="11" height="11" rx="2"><title>2026-08-25</title></rect>
 <rect class="hm-1" x="796.0" y="976.0" width="11" height="11" rx="2"><title>2026-08-26: 13566s</title></rect>
-<rect class="hm-1" x="796.0" y="990.0" width="11" height="11" rx="2"><title>2026-08-27: 17376s</title></rect>
-<text class="card-meta" x="52.0" y="1048.0">Updated 2026-08-27 10:48 UTC</text>
+<rect class="hm-1" x="796.0" y="990.0" width="11" height="11" rx="2"><title>2026-08-27: 17723s</title></rect>
+<text class="card-meta" x="52.0" y="1048.0">Updated 2026-08-27 11:53 UTC</text>
 </svg>
