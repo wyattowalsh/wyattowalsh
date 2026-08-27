@@ -65,7 +65,7 @@
 <g class="languages-sankey" transform="translate(28,56)">
 <rect class="panel" width="1144" height="340" rx="10" />
 <rect class="panel-stroke" width="1144" height="340" rx="10" />
-<path d="M 106 281.0 C 360 281.0, 720 36.0, 980 36.0" fill="none" stroke="#1db954" stroke-opacity="0.45" stroke-width="6.8"/>
+<path d="M 106 281.0 C 360 281.0, 720 36.0, 980 36.0" fill="none" stroke="#1db954" stroke-opacity="0.45" stroke-width="8.0"/>
 <path d="M 106 246.0 C 360 246.0, 720 71.0, 980 71.0" fill="none" stroke="#1a7f37" stroke-opacity="0.45" stroke-width="8.0"/>
 <path d="M 106 281.0 C 360 281.0, 720 71.0, 980 71.0" fill="none" stroke="#1a7f37" stroke-opacity="0.45" stroke-width="4.3"/>
 <path d="M 106 246.0 C 360 246.0, 720 36.0, 980 36.0" fill="none" stroke="#1db954" stroke-opacity="0.45" stroke-width="6.2"/>
@@ -76,7 +76,6 @@
 <path d="M 106 211.0 C 360 211.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 141.0 C 360 141.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 141.0 C 360 141.0, 720 141.0, 980 141.0" fill="none" stroke="#8250df" stroke-opacity="0.45" stroke-width="1.2"/>
-<path d="M 106 246.0 C 360 246.0, 720 281.0, 980 281.0" fill="none" stroke="#d4a72c" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 281.0 C 360 281.0, 720 211.0, 980 211.0" fill="none" stroke="#218bff" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 281.0 C 360 281.0, 720 176.0, 980 176.0" fill="none" stroke="#218bff" stroke-opacity="0.45" stroke-width="1.2"/>
 <path d="M 106 106.0 C 360 106.0, 720 106.0, 980 106.0" fill="none" stroke="#0969da" stroke-opacity="0.45" stroke-width="1.2"/>
@@ -101,11 +100,11 @@
 <text class="body" x="36" y="250.0">2025</text>
 <text class="body" x="36" y="285.0">2026</text>
 <rect x="988" y="29.0" width="8" height="8" rx="2" fill="#1db954"/>
-<text class="body" x="1002" y="40.0">Python 27%</text>
+<text class="body" x="1002" y="40.0">Python 28%</text>
 <rect x="988" y="64.0" width="8" height="8" rx="2" fill="#1a7f37"/>
 <text class="body" x="1002" y="75.0">TypeScript 11%</text>
 <rect x="988" y="99.0" width="8" height="8" rx="2" fill="#0969da"/>
-<text class="body" x="1002" y="110.0">Jupyter Notebook 51%</text>
+<text class="body" x="1002" y="110.0">Jupyter Notebook 50%</text>
 <rect x="988" y="134.0" width="8" height="8" rx="2" fill="#8250df"/>
 <text class="body" x="1002" y="145.0">JavaScript 6%</text>
 <rect x="988" y="169.0" width="8" height="8" rx="2" fill="#218bff"/>
@@ -114,7 +113,5 @@
 <text class="body" x="1002" y="215.0">Shell 1%</text>
 <rect x="988" y="239.0" width="8" height="8" rx="2" fill="#d4a72c"/>
 <text class="body" x="1002" y="250.0">Jinja 2%</text>
-<rect x="988" y="274.0" width="8" height="8" rx="2" fill="#d4a72c"/>
-<text class="body" x="1002" y="285.0">MDX 0%</text>
 </g>
 </svg>

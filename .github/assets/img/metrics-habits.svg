@@ -106,7 +106,7 @@
 <rect class="peak-tick-on" x="142" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="156" y="140" width="11" height="10" rx="2" />
 <rect class="peak-tick-on" x="170" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="184" y="138" width="11" height="12" rx="2" />
+<rect class="peak-tick-on" x="184" y="136" width="11" height="14" rx="2" />
 <rect class="peak-tick-max" x="198" y="106" width="11" height="44" rx="2" />
 <rect class="peak-tick-on" x="212" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="226" y="142" width="11" height="8" rx="2" />
@@ -114,10 +114,10 @@
 <rect class="peak-tick-on" x="254" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="268" y="142" width="11" height="8" rx="2" />
 <rect class="peak-tick-on" x="282" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="296" y="132" width="11" height="18" rx="2" />
-<rect class="peak-tick-on" x="310" y="132" width="11" height="18" rx="2" />
+<rect class="peak-tick-on" x="296" y="130" width="11" height="20" rx="2" />
+<rect class="peak-tick-on" x="310" y="130" width="11" height="20" rx="2" />
 <rect class="peak-tick-on" x="324" y="142" width="11" height="8" rx="2" />
-<rect class="peak-tick-on" x="338" y="142" width="11" height="8" rx="2" />
+<rect class="peak-tick-on" x="338" y="138" width="11" height="12" rx="2" />
 <text class="meta" x="16" y="166">00</text>
 <text class="meta" x="188" y="166" text-anchor="middle">12</text>
 <text class="meta" x="360" y="166" text-anchor="end">23</text>
@@ -127,9 +127,9 @@
 <rect class="panel-stroke" width="376" height="200" rx="10" />
 <text class="label" x="16" y="24">After-hours accretion</text>
 <text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share · uncommon but readable night-owl index</text>
-<text class="body" x="16" y="72">28% nocturnal</text>
+<text class="body" x="16" y="72">29% nocturnal</text>
 <rect x="16" y="82" width="344" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.45"/>
-<rect class="focus-bar" x="16" y="82" width="94" height="8" rx="4"/>
+<rect class="focus-bar" x="16" y="82" width="96" height="8" rx="4"/>
 <text class="label" x="16" y="118">Focus monoculture</text>
 <text class="meta" x="16" y="136">Herfindahl of merged-PR repos (100% = one repo ate the month)</text>
 <text class="body" x="16" y="166">24% HHI</text>
@@ -138,104 +138,104 @@
 </g>
 <g class="habits-cadence" transform="translate(28,274)">
 <text class="label" x="0" y="12">Cadence</text>
-<rect class="cadence" x="0" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
-<rect class="cadence" x="12" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
-<rect class="cadence" x="24" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="0" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="12" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="24" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="36" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="48" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="60" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="72" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="84" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="96" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="72" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
+<rect class="cadence" x="84" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
+<rect class="cadence" x="96" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
 <rect class="cadence" x="108" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="120" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="132" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
-<rect class="cadence" x="144" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
-<rect class="cadence" x="156" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="168" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="180" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="192" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="204" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="216" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
-<rect class="cadence" x="228" y="32" width="8" height="6" rx="2" fill-opacity="0.45" />
-<rect class="cadence" x="240" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
-<rect class="cadence" x="252" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
-<rect class="cadence" x="264" y="32" width="8" height="6" rx="2" fill-opacity="0.52" />
-<rect class="cadence" x="276" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="288" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="300" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="312" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
+<rect class="cadence" x="120" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="132" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="144" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="156" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
+<rect class="cadence" x="168" y="32" width="8" height="6" rx="2" fill-opacity="0.44" />
+<rect class="cadence" x="180" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
+<rect class="cadence" x="192" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
+<rect class="cadence" x="204" y="32" width="8" height="6" rx="2" fill-opacity="0.51" />
+<rect class="cadence" x="216" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="228" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="240" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="252" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
+<rect class="cadence" x="264" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="276" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
+<rect class="cadence" x="288" y="32" width="8" height="6" rx="2" fill-opacity="0.54" />
+<rect class="cadence" x="300" y="30" width="8" height="8" rx="2" fill-opacity="0.64" />
+<rect class="cadence" x="312" y="24" width="8" height="14" rx="2" fill-opacity="0.89" />
 <rect class="cadence" x="324" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="336" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
-<rect class="cadence" x="348" y="32" width="8" height="6" rx="2" fill-opacity="0.55" />
-<rect class="cadence" x="360" y="30" width="8" height="8" rx="2" fill-opacity="0.66" />
-<rect class="cadence" x="372" y="23" width="8" height="15" rx="2" fill-opacity="0.92" />
-<rect class="cadence" x="384" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="396" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="408" y="31" width="8" height="7" rx="2" fill-opacity="0.63" />
-<rect class="cadence" x="420" y="30" width="8" height="8" rx="2" fill-opacity="0.66" />
-<rect class="cadence" x="432" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="444" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="456" y="32" width="8" height="6" rx="2" fill-opacity="0.54" />
-<rect class="cadence" x="468" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
-<rect class="cadence" x="480" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
-<rect class="cadence" x="492" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
-<rect class="cadence" x="504" y="32" width="8" height="6" rx="2" fill-opacity="0.54" />
-<rect class="cadence" x="516" y="32" width="8" height="6" rx="2" fill-opacity="0.59" />
-<rect class="cadence" x="528" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="336" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="348" y="31" width="8" height="7" rx="2" fill-opacity="0.62" />
+<rect class="cadence" x="360" y="31" width="8" height="7" rx="2" fill-opacity="0.64" />
+<rect class="cadence" x="372" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="384" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="396" y="32" width="8" height="6" rx="2" fill-opacity="0.53" />
+<rect class="cadence" x="408" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
+<rect class="cadence" x="420" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
+<rect class="cadence" x="432" y="32" width="8" height="6" rx="2" fill-opacity="0.38" />
+<rect class="cadence" x="444" y="32" width="8" height="6" rx="2" fill-opacity="0.53" />
+<rect class="cadence" x="456" y="32" width="8" height="6" rx="2" fill-opacity="0.58" />
+<rect class="cadence" x="468" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="480" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="492" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="504" y="32" width="8" height="6" rx="2" fill-opacity="0.49" />
+<rect class="cadence" x="516" y="32" width="8" height="6" rx="2" fill-opacity="0.46" />
+<rect class="cadence" x="528" y="32" width="8" height="6" rx="2" fill-opacity="0.44" />
 <rect class="cadence" x="540" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="552" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="564" y="32" width="8" height="6" rx="2" fill-opacity="0.50" />
-<rect class="cadence" x="576" y="32" width="8" height="6" rx="2" fill-opacity="0.47" />
-<rect class="cadence" x="588" y="32" width="8" height="6" rx="2" fill-opacity="0.45" />
+<rect class="cadence" x="552" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="564" y="32" width="8" height="6" rx="2" fill-opacity="0.39" />
+<rect class="cadence" x="576" y="32" width="8" height="6" rx="2" fill-opacity="0.51" />
+<rect class="cadence" x="588" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="600" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="612" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="624" y="32" width="8" height="6" rx="2" fill-opacity="0.40" />
-<rect class="cadence" x="636" y="32" width="8" height="6" rx="2" fill-opacity="0.52" />
+<rect class="cadence" x="612" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="624" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="636" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="648" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="660" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="672" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="672" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
 <rect class="cadence" x="684" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="696" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="708" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="720" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="732" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
+<rect class="cadence" x="708" y="27" width="8" height="11" rx="2" fill-opacity="0.77" />
+<rect class="cadence" x="720" y="32" width="8" height="6" rx="2" fill-opacity="0.52" />
+<rect class="cadence" x="732" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
 <rect class="cadence" x="744" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="756" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="768" y="26" width="8" height="12" rx="2" fill-opacity="0.79" />
-<rect class="cadence" x="780" y="32" width="8" height="6" rx="2" fill-opacity="0.53" />
-<rect class="cadence" x="792" y="32" width="8" height="6" rx="2" fill-opacity="0.35" />
+<rect class="cadence" x="756" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="768" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="780" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="792" y="32" width="8" height="6" rx="2" fill-opacity="0.39" />
 <rect class="cadence" x="804" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="816" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="816" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="828" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="840" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="852" y="32" width="8" height="6" rx="2" fill-opacity="0.39" />
+<rect class="cadence" x="852" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="864" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="876" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="888" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="900" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="912" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="888" y="32" width="8" height="6" rx="2" fill-opacity="0.40" />
+<rect class="cadence" x="900" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="912" y="32" width="8" height="6" rx="2" fill-opacity="0.41" />
 <rect class="cadence" x="924" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="936" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="948" y="32" width="8" height="6" rx="2" fill-opacity="0.40" />
-<rect class="cadence" x="960" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
-<rect class="cadence" x="972" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
-<rect class="cadence" x="984" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="996" y="32" width="8" height="6" rx="2" fill-opacity="0.39" />
-<rect class="cadence" x="1008" y="32" width="8" height="6" rx="2" fill-opacity="0.47" />
-<rect class="cadence" x="1020" y="20" width="8" height="18" rx="2" fill-opacity="1.00" />
-<rect class="cadence" x="1032" y="32" width="8" height="6" rx="2" fill-opacity="0.50" />
-<rect class="cadence" x="1044" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
-<rect class="cadence" x="1056" y="32" width="8" height="6" rx="2" fill-opacity="0.45" />
-<rect class="cadence" x="1068" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="936" y="32" width="8" height="6" rx="2" fill-opacity="0.39" />
+<rect class="cadence" x="948" y="32" width="8" height="6" rx="2" fill-opacity="0.46" />
+<rect class="cadence" x="960" y="22" width="8" height="16" rx="2" fill-opacity="0.96" />
+<rect class="cadence" x="972" y="32" width="8" height="6" rx="2" fill-opacity="0.49" />
+<rect class="cadence" x="984" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="996" y="30" width="8" height="8" rx="2" fill-opacity="0.65" />
+<rect class="cadence" x="1008" y="20" width="8" height="18" rx="2" fill-opacity="1.00" />
+<rect class="cadence" x="1020" y="32" width="8" height="6" rx="2" fill-opacity="0.36" />
+<rect class="cadence" x="1032" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1044" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1056" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
+<rect class="cadence" x="1068" y="32" width="8" height="6" rx="2" fill-opacity="0.37" />
 </g>
 <g class="habits-streaks" transform="translate(20,352)">
 <rect class="panel" width="1160" height="208" rx="10" />
 <rect class="panel-stroke" width="1160" height="208" rx="10" />
 <text class="label" x="16" y="24">Streaks</text>
-<text class="value" x="16" y="64">0d</text>
+<text class="value" x="16" y="64">1d</text>
 <text class="meta" x="16" y="82">current</text>
-<circle class="streak-empty" cx="16" cy="100" r="5" />
+<circle class="streak-fill" cx="16" cy="100" r="5" />
 <circle class="streak-empty" cx="118.5" cy="100" r="5" />
 <circle class="streak-empty" cx="221.1" cy="100" r="5" />
 <circle class="streak-empty" cx="323.6" cy="100" r="5" />
@@ -248,7 +248,7 @@
 <circle class="streak-empty" cx="1041.5" cy="100" r="5" />
 <circle class="streak-empty" cx="1144" cy="100" r="5" />
 <rect x="16" y="118" width="1128" height="7" rx="4" class="streak-empty" fill-opacity="0.55" />
-<rect class="streak-fill" x="16" y="118" width="0" height="7" rx="4" />
+<rect class="streak-fill" x="16" y="118" width="102" height="7" rx="4" />
 <text class="meta" x="16" y="140">11d longest</text>
 <rect class="cadence" x="16" y="157" width="156" height="21" rx="2" />
 <text class="meta" x="94" y="192" text-anchor="middle">M</text>
@@ -258,9 +258,9 @@
 <text class="meta" x="418" y="192" text-anchor="middle">W</text>
 <rect class="cadence" x="502" y="157" width="156" height="21" rx="2" />
 <text class="meta" x="580" y="192" text-anchor="middle">T</text>
-<rect class="cadence" x="664" y="165" width="156" height="13" rx="2" />
+<rect class="cadence" x="664" y="163" width="156" height="15" rx="2" />
 <text class="meta" x="742" y="192" text-anchor="middle">F</text>
-<rect class="cadence" x="826" y="160" width="156" height="18" rx="2" />
+<rect class="cadence" x="826" y="154" width="156" height="24" rx="2" />
 <text class="meta" x="904" y="192" text-anchor="middle">S</text>
 <rect class="cadence" x="988" y="150" width="156" height="28" rx="2" />
 <text class="meta" x="1066" y="192" text-anchor="middle">S</text>
