@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-16T21:13:35.091899+00:00",
+  "generated_at": "2026-08-21T02:13:30.847816+00:00",
   "output_dir": ".github/assets/img/readme",
   "priority_contract": "featured_repos order is authoritative",
   "projects": [
@@ -17,7 +17,7 @@
         "Python",
         "HTML"
       ],
-      "updated_label": "Updated 3h ago",
+      "updated_label": "Updated 1d ago",
       "url": "https://github.com/wyattowalsh/agents"
     },
     {
@@ -34,7 +34,7 @@
         "Python",
         "Jupyter Notebook"
       ],
-      "updated_label": "Updated 2d ago",
+      "updated_label": "Updated 6d ago",
       "url": "https://github.com/wyattowalsh/nbadb"
     },
     {
@@ -42,7 +42,7 @@
       "forks": 7,
       "full_name": "wyattowalsh/proxywhirl",
       "license": "MIT",
-      "stars": 22,
+      "stars": 23,
       "summary": "rotating proxy system",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-proxywhirl.svg",
       "thumbnail_present": true,
@@ -51,7 +51,7 @@
         "Python",
         "TypeScript"
       ],
-      "updated_label": "Updated 2h ago",
+      "updated_label": "Updated 1h ago",
       "url": "https://github.com/wyattowalsh/proxywhirl"
     },
     {
@@ -76,7 +76,7 @@
       "forks": null,
       "full_name": "wyattowalsh/fl-mcp",
       "license": "MIT",
-      "stars": 0,
+      "stars": 1,
       "summary": "Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal",
       "svg_asset_path": "/showcase/featured-projects/featured-card-wyattowalsh-fl-mcp.svg",
       "thumbnail_present": true,
@@ -102,7 +102,7 @@
         "TypeScript",
         "CSS"
       ],
-      "updated_label": "Updated 1mo ago",
+      "updated_label": "Updated 2mo ago",
       "url": "https://github.com/wyattowalsh/personal-website"
     },
     {
@@ -119,7 +119,7 @@
         "TypeScript",
         "Python"
       ],
-      "updated_label": "Updated 6d ago",
+      "updated_label": "Updated 3d ago",
       "url": "https://github.com/wyattowalsh/ai-web-feeds"
     },
     {
@@ -136,7 +136,7 @@
         "TypeScript",
         "SCSS"
       ],
-      "updated_label": "Updated 3mo ago",
+      "updated_label": "Updated 4mo ago",
       "url": "https://github.com/wyattowalsh/iina-plugin-bookmarks"
     }
   ],
