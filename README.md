@@ -412,6 +412,7 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 
 
+
 <p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="" width="100%" loading="lazy"/></p>
 
 ## Word Clouds
@@ -434,7 +435,7 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 | Topic | Starred repos |
 | --- | ---: |
-| python | 773 |
+| python | 774 |
 | ai | 656 |
 | llm | 540 |
 | mcp | 515 |
@@ -451,15 +452,15 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 
 | Language | Starred repos |
 | --- | ---: |
-| Python | 2268 |
-| TypeScript | 1789 |
+| Python | 2269 |
+| TypeScript | 1790 |
 | JavaScript | 1023 |
-| Go | 239 |
+| Go | 240 |
 | Rust | 220 |
 | Jupyter Notebook | 219 |
 | C++ | 205 |
 | HTML | 174 |
-| Swift | 133 |
+| Swift | 134 |
 | Shell | 129 |
 | PHP | 90 |
 | Java | 77 |
