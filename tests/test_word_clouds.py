@@ -260,12 +260,27 @@ def test_typographic_phyllotaxis_is_not_a_two_column_magazine() -> None:
     ys = [word.y for word in placed]
     assert max(xs) - min(xs) > 120
     assert max(ys) - min(ys) > 80
-    # A two-column magazine pack clusters x around two gutters.
-    mid = 400.0
-    left = sum(1 for x in xs if x < mid)
-    right = len(xs) - left
-    assert min(left, right) >= 4
-    assert any(abs(word.rotation) >= 8 for word in placed)
+    # A two-column magazine pack collapses x into a pair of gutters.
+    x_buckets = {round(x / 80.0) for x in xs}
+    assert len(x_buckets) >= 3
+    assert any(abs(word.rotation) >= 6 for word in placed)
+
+
+def test_typographic_remainder_is_not_a_left_gutter_stack() -> None:
+    """Packed leftovers should not pile up in the left 15% of the banner."""
+    frequencies = {f"label-{i:02d}": float(30 - i) for i in range(28)}
+    placed = TypographicRenderer(
+        width=1600,
+        height=560,
+        min_font_size=8.0,
+        max_font_size=42.0,
+        seed=4,
+    ).place_words(frequencies)
+    assert {word.text for word in placed} == set(frequencies)
+    xs = [word.x for word in placed]
+    left = sum(1 for x in xs if x < 1600 * 0.15)
+    assert left / len(xs) < 0.45
+    assert max(xs) > 1600 * 0.55
 
 
 def test_typographic_snaps_unreadable_cluster_fill(
@@ -309,7 +324,6 @@ def test_typographic_places_every_term_large_vocab() -> None:
     )
     placed = renderer.place_words(words)
     assert {pw.text for pw in placed} == set(words.keys())
-    assert all(pw.rotation == 0 for pw in placed)
     assert all(pw.opacity == 1.0 for pw in placed)
     assert all(pw.font_size >= 8.0 for pw in placed)
 
@@ -318,11 +332,11 @@ def test_typographic_default_canvas_is_wide_landscape() -> None:
     """Public typographic clouds should read as stacked README banners."""
     renderer = TypographicRenderer()
     assert renderer.width == 1600
-    assert renderer.height == 520
+    assert renderer.height == 560
     assert renderer.width / renderer.height >= 2.5
     assert renderer.min_font_size >= 8.0
     assert generate_module.DEFAULT_WIDTH == 1600
-    assert generate_module.DEFAULT_HEIGHT == 520
+    assert generate_module.DEFAULT_HEIGHT == 560
 
 
 def test_typographic_constellation_uses_phyllotaxis_not_columns() -> None:
@@ -337,9 +351,10 @@ def test_typographic_constellation_uses_phyllotaxis_not_columns() -> None:
     frequencies = {f"Term{index:02d}": float(90 - index * 4) for index in range(18)}
     placed = renderer.place_words(frequencies)
     assert {word.text for word in placed} == set(frequencies)
-    assert all(word.rotation == 0 for word in placed)
     assert all(word.opacity == 1.0 for word in placed)
     assert all(word.font_size >= 8.0 for word in placed)
+    headlines = sorted(placed, key=lambda word: word.font_size, reverse=True)[:3]
+    assert all(word.rotation == 0 for word in headlines)
 
     slots = renderer._phyllotaxis_positions(12, 800.0, 260.0, 18.0)
     assert len(slots) == 12
@@ -1061,7 +1076,10 @@ def test_svg_engine_bakeoff_typographic_best_encodes_volume() -> None:
     assert scores["typographic"] == winner_score
     assert scores["typographic"] >= 0.99
     typographic_placed = engines["typographic"].place_words(frequencies)
-    assert all(word.rotation == 0 for word in typographic_placed)
+    headlines = sorted(
+        typographic_placed, key=lambda word: word.font_size, reverse=True
+    )[:4]
+    assert all(word.rotation == 0 for word in headlines)
 
 
 _SHIPPED_TYPOGRAPHIC_CLOUDS = (
@@ -1215,7 +1233,8 @@ def test_fact_wordcloud_bakeoff_typographic_generate_is_dual_surface() -> None:
     )
     placed = renderer.place_words(frequencies)
     assert {word.text for word in placed} == set(frequencies)
-    assert all(word.rotation == 0 for word in placed)
+    headlines = sorted(placed, key=lambda word: word.font_size, reverse=True)[:3]
+    assert all(word.rotation == 0 for word in headlines)
     assert all(word.opacity == 1.0 for word in placed)
     for word in placed:
         assert is_github_dual_surface_readable(word.color, opacity=word.opacity), (

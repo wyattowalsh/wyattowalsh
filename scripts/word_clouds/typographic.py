@@ -29,7 +29,7 @@ logger = get_logger(module=__name__)
 # Golden angle 2π/φ² — sunflower phyllotaxis.
 _GOLDEN_ANGLE = math.pi * (3.0 - math.sqrt(5.0))
 _PUBLIC_WIDTH = 1600
-_PUBLIC_HEIGHT = 520
+_PUBLIC_HEIGHT = 560
 _PUBLIC_MIN_FONT = 8.0
 _PUBLIC_MAX_FONT = 56.0
 
@@ -47,8 +47,8 @@ class TypographicRenderer(SvgWordCloudEngine):
         *,
         palette: list[str] | None = None,
         line_spacing: float = 1.18,
-        margin: float = 16.0,
-        word_gap_ratio: float = 0.34,
+        margin: float = 64.0,
+        word_gap_ratio: float = 0.46,
         weight_range: tuple[int, int] = (300, 800),
         require_all: bool = True,
         scale_passes: int = 14,
@@ -242,11 +242,21 @@ class TypographicRenderer(SvgWordCloudEngine):
             free.append((cursor, right))
         return [(start, end) for start, end in free if end - start > 4.0]
 
+    @override
+    def _in_bounds(self, bbox: BBox) -> bool:
+        """Keep glyphs inside the padded banner, not just the raw canvas."""
+        return (
+            bbox.x >= self.margin
+            and bbox.y >= self.margin
+            and bbox.x2 <= self.width - self.margin
+            and bbox.y2 <= self.height - self.margin
+        )
+
     def _word_rotation(self, idx: int, font_size: float) -> float:
         """Tilt mid/small words; keep headline terms flat for reading."""
         if font_size >= self.max_font_size * 0.55:
             return 0.0
-        angles = (-16.0, 12.0, -9.0, 15.0, 8.0, -13.0)
+        angles = (-10.0, 6.0, -7.0, 10.0, 6.0, -7.0)
         return angles[idx % len(angles)]
 
     def _try_anchor(
@@ -293,16 +303,14 @@ class TypographicRenderer(SvgWordCloudEngine):
         used_slots: set[int] = set()
         for idx, (word, freq) in enumerate(constellation):
             font_size = self._word_font_size(freq, min_freq, max_freq, scale)
-            rotation = self._word_rotation(idx, font_size)
+            rotation = 0.0
             settled: tuple[float, float, BBox] | None = None
             preferred = list(range(idx, len(slots))) + list(range(idx))
             for slot_i in preferred:
                 if slot_i in used_slots:
                     continue
                 x, y = slots[slot_i]
-                bbox = self._try_anchor(
-                    word, font_size, x, y, boxes, rotation=rotation
-                )
+                bbox = self._try_anchor(word, font_size, x, y, boxes, rotation=rotation)
                 if bbox is not None:
                     settled = (x, y, bbox)
                     used_slots.add(slot_i)
@@ -324,7 +332,14 @@ class TypographicRenderer(SvgWordCloudEngine):
             boxes.append(bbox)
             placed.append(
                 self._make_word(
-                    word, freq, idx, x, y, font_size, min_freq, max_freq,
+                    word,
+                    freq,
+                    idx,
+                    x,
+                    y,
+                    font_size,
+                    min_freq,
+                    max_freq,
                     rotation=rotation,
                 )
             )
@@ -369,10 +384,23 @@ class TypographicRenderer(SvgWordCloudEngine):
             y = self.margin + word_h * 0.5
             y_step = max(2.0, word_h * 0.28)
             while y + word_h * 0.5 <= max_y + 1e-6:
-                for left, right in self._free_x_intervals(y, word_h, boxes):
-                    if right - left < need:
-                        continue
-                    x = left + word_w / 2.0 + 1.0
+                intervals = [
+                    (left, right)
+                    for left, right in self._free_x_intervals(y, word_h, boxes)
+                    if right - left >= need
+                ]
+
+                def _interval_key(span: tuple[float, float]) -> tuple[float, int]:
+                    mid = (span[0] + span[1]) / 2.0
+                    same_side = sum(
+                        1 for box in boxes if (box.x + box.w / 2.0 < cx) == (mid < cx)
+                    )
+                    return (abs(mid - cx), same_side)
+
+                intervals.sort(key=_interval_key)
+                for left, right in intervals:
+                    half = word_w / 2.0 + 1.0
+                    x = min(max(cx, left + half), right - half)
                     bbox = self._try_anchor(
                         word, font_size, x, y, boxes, rotation=rotation
                     )
@@ -399,7 +427,14 @@ class TypographicRenderer(SvgWordCloudEngine):
             boxes.append(bbox)
             placed.append(
                 self._make_word(
-                    word, freq, idx, x, y, font_size, min_freq, max_freq,
+                    word,
+                    freq,
+                    idx,
+                    x,
+                    y,
+                    font_size,
+                    min_freq,
+                    max_freq,
                     rotation=rotation,
                 )
             )
@@ -459,16 +494,18 @@ class TypographicRenderer(SvgWordCloudEngine):
         avg_chars = sum(len(w) for w, _ in sorted_words) / n
         cell_w = max(font * avg_chars * 0.52 + 4.0, 28.0)
         cell_h = font * 1.35
-        cols = max(1, int((self.width - 2 * self.margin) // cell_w))
+        mx = min(self.margin, self.width * 0.08, max(self.width / 4.0, 1.0))
+        my = min(self.margin, self.height * 0.08, max(self.height / 4.0, 1.0))
+        cols = max(1, int((self.width - 2 * mx) // cell_w))
         rows_needed = math.ceil(n / cols)
         # Shrink until rows fit
-        usable_h = self.height - 2 * self.margin
+        usable_h = max(self.height - 2 * my, 1.0)
         if rows_needed * cell_h > usable_h:
             shrink = usable_h / (rows_needed * cell_h)
             font = max(3.5, font * shrink)
             cell_w = max(font * avg_chars * 0.52 + 3.0, 20.0)
             cell_h = font * 1.3
-            cols = max(1, int((self.width - 2 * self.margin) // cell_w))
+            cols = max(1, int((self.width - 2 * mx) // cell_w))
 
         placed: list[PlacedWord] = []
         for idx, (word, freq) in enumerate(sorted_words):
@@ -480,11 +517,10 @@ class TypographicRenderer(SvgWordCloudEngine):
                 * (font / self.max_font_size),
             )
             fs = min(fs, font * 1.6)
-            x = self.margin + col * cell_w + cell_w / 2
-            y = self.margin + row * cell_h + cell_h * 0.65
-            # Keep inside canvas
-            x = min(max(x, self.margin), self.width - self.margin)
-            y = min(max(y, self.margin), self.height - self.margin)
+            x = mx + col * cell_w + cell_w / 2
+            y = my + row * cell_h + cell_h * 0.65
+            x = min(max(x, 0.0), float(self.width))
+            y = min(max(y, 0.0), float(self.height))
             placed.append(
                 PlacedWord(
                     text=word,

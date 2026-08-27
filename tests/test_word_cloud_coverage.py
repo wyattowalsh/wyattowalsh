@@ -795,7 +795,7 @@ def test_cli_markdown_helper_missing_empty_and_dense(
     init_kwargs = cast(dict[str, object], generated[0]["init"])
     init_settings = cast(SimpleNamespace, init_kwargs["base_settings"])
     assert init_settings.width == 1600
-    assert init_settings.height == 520
+    assert init_settings.height == 560
 
 
 def test_cli_tech_and_prompt_helpers(

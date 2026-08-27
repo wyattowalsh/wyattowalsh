@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560">
   <defs>
     <filter id="wc-glow" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="glow1" />
-      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="glow2" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4.2" result="glow1" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="glow2" />
       <feMerge>
         <feMergeNode in="glow1" />
         <feMergeNode in="glow2" />
@@ -22,90 +22,149 @@
     </radialGradient>
   </defs>
   <style>:root { color-scheme: light dark; }
+.wc-ring { fill: none; stroke: #d0d7de; stroke-width: 1; stroke-opacity: 0.14; }
+.wc-speckle { fill: #d0d7de; fill-opacity: 0.14; }
 @media (prefers-color-scheme: dark) {
   .wc-bg { fill: url(#wc-bg-grad-dark); }
+  .wc-ring { stroke: #30363d; }
+  .wc-speckle { fill: #30363d; }
 }
 </style>
-  <rect class="wc-bg" width="1600" height="520" fill="url(#wc-bg-grad)" />
-  <text x="897.5" y="260.0" font-size="73.6" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.5">Python</text>
-  <text x="461.5" y="240.5" font-size="67.5" fill="#3B82F6" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.3">TypeScript</text>
-  <text x="822.1" y="178.2" font-size="55.3" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.1">JavaScript</text>
-  <text x="983.5" y="337.8" font-size="34.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,983.5,337.8)" filter="url(#wc-glow)" letter-spacing="0.7">Go</text>
-  <text x="1121.6" y="193.5" font-size="33.3" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,1121.6,193.5)" filter="url(#wc-glow)" letter-spacing="0.7">Rust</text>
-  <text x="692.2" y="390.3" font-size="33.3" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,692.2,390.3)" filter="url(#wc-glow)" letter-spacing="0.7">Jupyter Notebook</text>
-  <text x="594.1" y="131.1" font-size="32.6" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,594.1,131.1)" filter="url(#wc-glow)" letter-spacing="0.7">C++</text>
-  <text x="1247.3" y="313.1" font-size="31.1" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,1247.3,313.1)" filter="url(#wc-glow)" letter-spacing="0.6">HTML</text>
-  <text x="334.2" y="322.5" font-size="28.7" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,334.2,322.5)" filter="url(#wc-glow)" letter-spacing="0.6">Swift</text>
-  <text x="1024.7" y="103.9" font-size="28.5" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,1024.7,103.9)" filter="url(#wc-glow)">Shell</text>
-  <text x="966.2" y="432.2" font-size="25.7" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,966.2,432.2)" filter="url(#wc-glow)">PHP</text>
-  <text x="298.9" y="165.6" font-size="24.7" fill="#EF4444" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,298.9,165.6)" filter="url(#wc-glow)">Java</text>
-  <text x="1388.1" y="218.0" font-size="24.6" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,1388.1,218.0)" filter="url(#wc-glow)">CSS</text>
-  <text x="441.0" y="426.0" font-size="23.8" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,441.0,426.0)" filter="url(#wc-glow)">C</text>
-  <text x="717.0" y="51.9" font-size="22.3" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,717.0,51.9)" filter="url(#wc-glow)">Ruby</text>
-  <text x="33.8" y="29.3" font-size="20.4" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,33.8,29.3)" filter="url(#wc-glow)">Lua</text>
-  <text x="33.7" y="66.1" font-size="20.2" fill="#3B82F6" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,33.7,66.1)" filter="url(#wc-glow)">Vue</text>
-  <text x="27.7" y="99.3" font-size="19.4" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,27.7,99.3)" filter="url(#wc-shadow)">C#</text>
-  <text x="42.0" y="134.2" font-size="18.2" fill="#6366F1" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,42.0,134.2)" filter="url(#wc-shadow)">Astro</text>
-  <text x="71.5" y="179.0" font-size="18.0" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,71.5,179.0)" filter="url(#wc-shadow)">Objective-C</text>
-  <text x="31.6" y="220.6" font-size="17.6" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,31.6,220.6)" filter="url(#wc-shadow)">MDX</text>
-  <text x="31.6" y="252.8" font-size="17.6" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,31.6,252.8)" filter="url(#wc-shadow)">TeX</text>
-  <text x="36.0" y="285.1" font-size="17.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,36.0,285.1)" filter="url(#wc-shadow)">SCSS</text>
-  <text x="21.6" y="315.0" font-size="16.8" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,21.6,315.0)" filter="url(#wc-shadow)">R</text>
-  <text x="43.9" y="348.2" font-size="16.3" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,43.9,348.2)" filter="url(#wc-shadow)">Svelte</text>
-  <text x="43.5" y="384.0" font-size="16.1" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,43.5,384.0)">Kotlin</text>
-  <text x="52.4" y="419.2" font-size="16.1" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,52.4,419.2)">Markdown</text>
-  <text x="34.4" y="452.8" font-size="15.8" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,34.4,452.8)">Dart</text>
-  <text x="37.9" y="480.8" font-size="15.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,37.9,480.8)">Scala</text>
-  <text x="744.2" y="272.5" font-size="14.1" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,744.2,272.5)">Clojure</text>
-  <text x="701.4" y="234.5" font-size="14.1" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,701.4,234.5)">Makefile</text>
-  <text x="93.9" y="24.9" font-size="13.7" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,93.9,24.9)">Dockerfile</text>
-  <text x="684.0" y="268.7" font-size="13.7" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,684.0,268.7)">Elixir</text>
-  <text x="728.7" y="306.8" font-size="13.7" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,728.7,306.8)">Haskell</text>
-  <text x="161.7" y="24.9" font-size="13.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,161.7,24.9)">PLpgSQL</text>
-  <text x="229.6" y="24.9" font-size="13.7" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,229.6,24.9)">PowerShell</text>
-  <text x="883.1" y="319.9" font-size="13.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,883.1,319.9)">CMake</text>
-  <text x="671.6" y="314.2" font-size="13.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,671.6,314.2)">Jinja</text>
-  <text x="329.2" y="24.6" font-size="13.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,329.2,24.6)">Rich Text Format</text>
-  <text x="603.9" y="315.6" font-size="13.2" fill="#C026D3" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,603.9,315.6)">Solidity</text>
-  <text x="404.5" y="24.2" font-size="12.6" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,404.5,24.2)">Perl</text>
-  <text x="757.6" y="237.8" font-size="12.6" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,757.6,237.8)">Sass</text>
-  <text x="849.1" y="324.2" font-size="12.6" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,849.1,324.2)">Zig</text>
-  <text x="448.0" y="23.6" font-size="11.7" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,448.0,23.6)">Bikeshed</text>
-  <text x="500.2" y="23.6" font-size="11.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,500.2,23.6)">Crystal</text>
-  <text x="1041.5" y="266.6" font-size="11.7" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,1041.5,266.6)">Cython</text>
-  <text x="545.9" y="23.6" font-size="11.7" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,545.9,23.6)">Fluent</text>
-  <text x="938.0" y="327.5" font-size="11.7" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,938.0,327.5)">Less</text>
-  <text x="813.0" y="326.5" font-size="11.7" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,813.0,326.5)">Max</text>
-  <text x="601.2" y="23.6" font-size="11.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,601.2,23.6)">PostScript</text>
-  <text x="646.8" y="23.6" font-size="11.7" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,646.8,23.6)">QML</text>
-  <text x="774.2" y="32.1" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,774.2,32.1)">AppleScript</text>
-  <text x="675.6" y="22.0" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,675.6,22.0)">AutoIt</text>
-  <text x="717.2" y="22.0" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,717.2,22.0)">Batchfile</text>
-  <text x="835.8" y="22.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,835.8,22.0)">CoffeeScript</text>
-  <text x="879.6" y="22.0" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,879.6,22.0)">Cuda</text>
-  <text x="919.0" y="22.0" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,919.0,22.0)">Emacs Lisp</text>
-  <text x="965.6" y="22.0" font-size="9.2" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,965.6,22.0)">Fortran</text>
-  <text x="1014.9" y="22.0" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,1014.9,22.0)">Go Template</text>
-  <text x="1061.4" y="22.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,1061.4,22.0)">Groovy</text>
-  <text x="776.0" y="326.6" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,776.0,326.6)">Haml</text>
-  <text x="1088.0" y="22.0" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,1088.0,22.0)">HCL</text>
-  <text x="1132.5" y="22.0" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,1132.5,22.0)">JetBrains MPS</text>
-  <text x="1181.5" y="22.0" font-size="9.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,1181.5,22.0)">Julia</text>
-  <text x="1213.3" y="22.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,1213.3,22.0)">MATLAB</text>
-  <text x="1252.4" y="22.0" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,1252.4,22.0)">Mustache</text>
-  <text x="658.1" y="203.6" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,658.1,203.6)">Nim</text>
-  <text x="1296.6" y="22.0" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,1296.6,22.0)">Nunjucks</text>
-  <text x="1363.5" y="22.0" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,1363.5,22.0)">Open Policy Agent</text>
-  <text x="1440.2" y="22.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,1440.2,22.0)">OpenEdge ABL</text>
-  <text x="1489.1" y="22.0" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,1489.1,22.0)">Pascal</text>
-  <text x="1533.2" y="22.0" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,1533.2,22.0)">Processing</text>
-  <text x="1030.5" y="238.8" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,1030.5,238.8)">Pug</text>
-  <text x="661.4" y="288.9" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,661.4,288.9)">Q#</text>
-  <text x="670.5" y="38.8" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,670.5,38.8)">Roff</text>
-  <text x="997.9" y="193.9" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(15.0,997.9,193.9)">Slim</text>
-  <text x="889.8" y="42.1" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(8.0,889.8,42.1)">Starlark</text>
-  <text x="926.2" y="42.1" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-13.0,926.2,42.1)">Stata</text>
-  <text x="631.0" y="190.4" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-16.0,631.0,190.4)">SVG</text>
-  <text x="1569.7" y="22.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(12.0,1569.7,22.0)">Tcl</text>
-  <text x="985.8" y="48.8" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-9.0,985.8,48.8)">Visual Basic .NET</text>
+  <rect class="wc-bg" width="1600" height="560" fill="url(#wc-bg-grad)" />
+  <g class="wc-atmosphere" aria-hidden="true">
+    <circle class="wc-ring" cx="800.0" cy="280.0" r="65.0" />
+    <circle class="wc-ring" cx="800.0" cy="280.0" r="129.9" />
+    <circle class="wc-ring" cx="800.0" cy="280.0" r="194.9" />
+    <circle class="wc-ring" cx="800.0" cy="280.0" r="259.8" />
+    <circle class="wc-ring" cx="800.0" cy="280.0" r="324.8" />
+    <circle class="wc-speckle" cx="1358.4" cy="411.0" r="1.1" />
+    <circle class="wc-speckle" cx="1112.0" cy="96.3" r="1.1" />
+    <circle class="wc-speckle" cx="1544.0" cy="476.0" r="1.1" />
+    <circle class="wc-speckle" cx="286.4" cy="537.6" r="1.1" />
+    <circle class="wc-speckle" cx="1076.8" cy="406.6" r="1.1" />
+    <circle class="wc-speckle" cx="1176.0" cy="297.9" r="1.1" />
+    <circle class="wc-speckle" cx="148.8" cy="104.2" r="1.1" />
+    <circle class="wc-speckle" cx="1067.2" cy="318.1" r="1.1" />
+    <circle class="wc-speckle" cx="116.8" cy="357.3" r="1.1" />
+    <circle class="wc-speckle" cx="1521.6" cy="20.2" r="1.1" />
+    <circle class="wc-speckle" cx="596.8" cy="265.4" r="1.1" />
+    <circle class="wc-speckle" cx="1182.4" cy="134.4" r="1.1" />
+    <circle class="wc-speckle" cx="1243.2" cy="218.4" r="1.1" />
+    <circle class="wc-speckle" cx="753.6" cy="401.0" r="1.1" />
+    <circle class="wc-speckle" cx="212.8" cy="538.7" r="1.1" />
+    <circle class="wc-speckle" cx="708.8" cy="161.3" r="1.1" />
+    <circle class="wc-speckle" cx="936.0" cy="541.0" r="1.1" />
+    <circle class="wc-speckle" cx="113.6" cy="24.6" r="1.1" />
+    <circle class="wc-speckle" cx="673.6" cy="81.8" r="1.1" />
+    <circle class="wc-speckle" cx="107.2" cy="439.0" r="1.1" />
+    <circle class="wc-speckle" cx="808.0" cy="505.1" r="1.1" />
+    <circle class="wc-speckle" cx="1585.6" cy="508.5" r="1.1" />
+    <circle class="wc-speckle" cx="1416.0" cy="543.2" r="1.1" />
+    <circle class="wc-speckle" cx="452.8" cy="474.9" r="1.1" />
+    <circle class="wc-speckle" cx="1076.8" cy="245.3" r="1.1" />
+    <circle class="wc-speckle" cx="945.6" cy="535.4" r="1.1" />
+    <circle class="wc-speckle" cx="1352.0" cy="323.7" r="1.1" />
+    <circle class="wc-speckle" cx="977.6" cy="358.4" r="1.1" />
+    <circle class="wc-speckle" cx="360.0" cy="52.6" r="1.1" />
+    <circle class="wc-speckle" cx="702.4" cy="275.5" r="1.1" />
+    <circle class="wc-speckle" cx="1454.4" cy="5.6" r="1.1" />
+    <circle class="wc-speckle" cx="1515.2" cy="246.4" r="1.1" />
+    <circle class="wc-speckle" cx="1524.8" cy="84.0" r="1.1" />
+    <circle class="wc-speckle" cx="740.8" cy="374.1" r="1.1" />
+    <circle class="wc-speckle" cx="123.2" cy="386.4" r="1.1" />
+    <circle class="wc-speckle" cx="363.2" cy="345.0" r="1.1" />
+    <circle class="wc-speckle" cx="513.6" cy="236.3" r="1.1" />
+    <circle class="wc-speckle" cx="292.8" cy="262.1" r="1.1" />
+    <circle class="wc-speckle" cx="238.4" cy="283.4" r="1.1" />
+    <circle class="wc-speckle" cx="363.2" cy="309.1" r="1.1" />
+    <circle class="wc-speckle" cx="334.4" cy="464.8" r="1.1" />
+    <circle class="wc-speckle" cx="305.6" cy="127.7" r="1.1" />
+    <circle class="wc-speckle" cx="993.6" cy="216.2" r="1.1" />
+    <circle class="wc-speckle" cx="1156.8" cy="0.0" r="1.1" />
+    <circle class="wc-speckle" cx="1448.0" cy="249.8" r="1.1" />
+    <circle class="wc-speckle" cx="1316.8" cy="459.2" r="1.1" />
+    <circle class="wc-speckle" cx="763.2" cy="458.1" r="1.1" />
+    <circle class="wc-speckle" cx="696.0" cy="22.4" r="1.1" />
+  </g>
+  <text x="880.1" y="280.0" font-size="73.6" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.5">Python</text>
+  <text x="521.8" y="262.8" font-size="67.5" fill="#3B82F6" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="700" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.3">TypeScript</text>
+  <text x="711.4" y="395.4" font-size="55.3" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="600" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="1.1">JavaScript</text>
+  <text x="950.9" y="348.9" font-size="34.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.7">Go</text>
+  <text x="630.7" y="165.9" font-size="33.3" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.7">Jupyter Notebook</text>
+  <text x="1064.4" y="221.1" font-size="33.1" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.7">Rust</text>
+  <text x="1167.7" y="327.0" font-size="32.6" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="500" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.7">C++</text>
+  <text x="417.1" y="335.3" font-size="31.2" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.6">HTML</text>
+  <text x="984.7" y="141.8" font-size="28.7" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)" letter-spacing="0.6">Swift</text>
+  <text x="936.6" y="432.4" font-size="28.4" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-glow)">Shell</text>
+  <text x="388.1" y="196.5" font-size="25.7" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-shadow)">PHP</text>
+  <text x="1283.4" y="242.8" font-size="24.7" fill="#EF4444" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-shadow)">Java</text>
+  <text x="504.9" y="426.9" font-size="24.6" fill="#0284C7" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-shadow)">CSS</text>
+  <text x="731.8" y="95.8" font-size="23.8" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-shadow)">C</text>
+  <text x="1218.8" y="403.6" font-size="22.3" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" filter="url(#wc-shadow)">Ruby</text>
+  <text x="800.0" y="84.7" font-size="20.4" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,800.0,84.7)" filter="url(#wc-shadow)">Lua</text>
+  <text x="800.0" y="121.5" font-size="20.2" fill="#3B82F6" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,800.0,121.5)" filter="url(#wc-shadow)">Vue</text>
+  <text x="800.0" y="154.4" font-size="19.4" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="400" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,800.0,154.4)" filter="url(#wc-shadow)">C#</text>
+  <text x="800.0" y="208.8" font-size="18.2" fill="#6366F1" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,800.0,208.8)" filter="url(#wc-shadow)">Astro</text>
+  <text x="876.2" y="82.3" font-size="18.0" fill="#DB2777" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,876.2,82.3)" filter="url(#wc-shadow)">Objective-C</text>
+  <text x="800.0" y="339.5" font-size="17.7" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,800.0,339.5)" filter="url(#wc-shadow)">MDX</text>
+  <text x="800.0" y="449.0" font-size="17.7" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,800.0,449.0)" filter="url(#wc-shadow)">TeX</text>
+  <text x="953.8" y="81.7" font-size="17.5" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,953.8,81.7)" filter="url(#wc-shadow)">SCSS</text>
+  <text x="939.2" y="111.7" font-size="16.8" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,939.2,111.7)" filter="url(#wc-shadow)">R</text>
+  <text x="800.0" y="479.7" font-size="16.3" fill="#0891B2" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,800.0,479.7)" filter="url(#wc-shadow)">Svelte</text>
+  <text x="1012.4" y="80.3" font-size="16.1" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1012.4,80.3)">Markdown</text>
+  <text x="735.7" y="285.6" font-size="15.8" fill="#EF4444" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,735.7,285.6)">Dart</text>
+  <text x="709.2" y="322.7" font-size="15.8" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,709.2,322.7)">Kotlin</text>
+  <text x="1072.5" y="79.5" font-size="15.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1072.5,79.5)">Scala</text>
+  <text x="1129.2" y="78.8" font-size="14.5" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1129.2,78.8)">Makefile</text>
+  <text x="877.1" y="339.9" font-size="14.1" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,877.1,339.9)">Clojure</text>
+  <text x="1202.6" y="77.9" font-size="13.7" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1202.6,77.9)">Dockerfile</text>
+  <text x="1266.5" y="77.9" font-size="13.7" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1266.5,77.9)">Elixir</text>
+  <text x="883.1" y="210.2" font-size="13.7" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,883.1,210.2)">Haskell</text>
+  <text x="1319.3" y="77.9" font-size="13.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1319.3,77.9)">PLpgSQL</text>
+  <text x="1387.1" y="77.9" font-size="13.7" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1387.1,77.9)">PowerShell</text>
+  <text x="654.0" y="326.1" font-size="13.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,654.0,326.1)">CMake</text>
+  <text x="1446.6" y="77.4" font-size="13.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1446.6,77.4)">Jinja</text>
+  <text x="1085.1" y="120.7" font-size="13.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1085.1,120.7)">Rich Text Format</text>
+  <text x="1497.4" y="77.4" font-size="13.2" fill="#C026D3" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,1497.4,77.4)">Solidity</text>
+  <text x="1442.2" y="99.7" font-size="12.6" fill="#DC2626" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1442.2,99.7)">Perl</text>
+  <text x="1160.5" y="104.2" font-size="12.6" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1160.5,104.2)">Sass</text>
+  <text x="800.0" y="182.1" font-size="12.6" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,800.0,182.1)">Zig</text>
+  <text x="1203.9" y="105.8" font-size="11.7" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1203.9,105.8)">Bikeshed</text>
+  <text x="1255.8" y="105.8" font-size="11.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1255.8,105.8)">Crystal</text>
+  <text x="1301.3" y="101.5" font-size="11.7" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,1301.3,101.5)">Cython</text>
+  <text x="1479.1" y="101.5" font-size="11.7" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1479.1,101.5)">Fluent</text>
+  <text x="1337.4" y="101.5" font-size="11.7" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1337.4,101.5)">Less</text>
+  <text x="722.1" y="248.8" font-size="11.7" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,722.1,248.8)">Max</text>
+  <text x="1386.3" y="105.8" font-size="11.7" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1386.3,105.8)">PostScript</text>
+  <text x="1511.7" y="101.5" font-size="11.7" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1511.7,101.5)">QML</text>
+  <text x="975.9" y="106.9" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,975.9,106.9)">AppleScript</text>
+  <text x="836.1" y="110.3" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,836.1,110.3)">AutoIt</text>
+  <text x="877.5" y="110.3" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,877.5,110.3)">Batchfile</text>
+  <text x="1452.4" y="123.7" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,1452.4,123.7)">CoffeeScript</text>
+  <text x="913.9" y="110.3" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,913.9,110.3)">Cuda</text>
+  <text x="1172.0" y="127.0" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1172.0,127.0)">Emacs Lisp</text>
+  <text x="1504.0" y="123.7" font-size="9.2" fill="#E11D48" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,1504.0,123.7)">Fortran</text>
+  <text x="1228.6" y="127.0" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1228.6,127.0)">Go Template</text>
+  <text x="836.1" y="127.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,836.1,127.0)">Groovy</text>
+  <text x="1269.9" y="127.0" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,1269.9,127.0)">Haml</text>
+  <text x="1291.5" y="120.3" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1291.5,120.3)">HCL</text>
+  <text x="887.7" y="130.4" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,887.7,130.4)">JetBrains MPS</text>
+  <text x="1315.2" y="123.7" font-size="9.2" fill="#F43F5E" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,1315.2,123.7)">Julia</text>
+  <text x="1346.8" y="127.0" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1346.8,127.0)">MATLAB</text>
+  <text x="1385.7" y="127.0" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1385.7,127.0)">Mustache</text>
+  <text x="931.6" y="133.7" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,931.6,133.7)">Nim</text>
+  <text x="1047.4" y="147.2" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1047.4,147.2)">Nunjucks</text>
+  <text x="1114.1" y="150.5" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1114.1,150.5)">Open Policy Agent</text>
+  <text x="1190.8" y="150.5" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,1190.8,150.5)">OpenEdge ABL</text>
+  <text x="1299.0" y="140.5" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1299.0,140.5)">Pascal</text>
+  <text x="1249.9" y="147.2" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1249.9,147.2)">Processing</text>
+  <text x="1325.3" y="143.8" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,1325.3,143.8)">Pug</text>
+  <text x="1012.3" y="103.5" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1012.3,103.5)">Q#</text>
+  <text x="1346.9" y="143.8" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1346.9,143.8)">Roff</text>
+  <text x="825.1" y="147.2" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(10.0,825.1,147.2)">Slim</text>
+  <text x="1380.8" y="147.2" font-size="9.2" fill="#71717A" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1380.8,147.2)">Starlark</text>
+  <text x="1417.2" y="147.2" font-size="9.2" fill="#64748B" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,1417.2,147.2)">Stata</text>
+  <text x="1441.0" y="143.8" font-size="9.2" fill="#78716C" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-10.0,1441.0,143.8)">SVG</text>
+  <text x="1460.0" y="143.8" font-size="9.2" fill="#737373" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(6.0,1460.0,143.8)">Tcl</text>
+  <text x="882.0" y="153.9" font-size="9.2" fill="#6B7280" font-family="Inter, 'Segoe UI', system-ui, -apple-system, sans-serif" font-weight="300" text-anchor="middle" dominant-baseline="central" transform="rotate(-7.0,882.0,153.9)">Visual Basic .NET</text>
 </svg>

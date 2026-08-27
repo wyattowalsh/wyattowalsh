@@ -238,7 +238,7 @@ def _wc_from_markdown(
     )
 
     # Wide landscape banners so stacked README imgs read as full-width art.
-    canvas_w, canvas_h = 1600, 520
+    canvas_w, canvas_h = 1600, 560
     settings = wc.WordCloudSettings.from_yaml_model(
         yaml_settings,
         renderer=renderer,

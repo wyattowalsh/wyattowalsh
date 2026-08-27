@@ -208,13 +208,13 @@ class SvgWordCloudEngine(ABC):
         ET.SubElement(
             filt,
             "feGaussianBlur",
-            attrib={"in": "SourceGraphic", "stdDeviation": "2.5", "result": "glow1"},
+            attrib={"in": "SourceGraphic", "stdDeviation": "4.2", "result": "glow1"},
         )
         # Layer 2: tighter inner glow for crispness
         ET.SubElement(
             filt,
             "feGaussianBlur",
-            attrib={"in": "SourceGraphic", "stdDeviation": "0.8", "result": "glow2"},
+            attrib={"in": "SourceGraphic", "stdDeviation": "1.2", "result": "glow2"},
         )
         merge = ET.SubElement(filt, "feMerge")
         ET.SubElement(merge, "feMergeNode", attrib={"in": "glow1"})
@@ -249,8 +249,13 @@ class SvgWordCloudEngine(ABC):
         """GitHub light/dark readability for SVG-as-image clouds."""
         return (
             ":root { color-scheme: light dark; }\n"
+            ".wc-ring { fill: none; stroke: #d0d7de; stroke-width: 1;"
+            " stroke-opacity: 0.14; }\n"
+            ".wc-speckle { fill: #d0d7de; fill-opacity: 0.14; }\n"
             "@media (prefers-color-scheme: dark) {\n"
             "  .wc-bg { fill: url(#wc-bg-grad-dark); }\n"
+            "  .wc-ring { stroke: #30363d; }\n"
+            "  .wc-speckle { fill: #30363d; }\n"
             "}\n"
         )
 
@@ -312,13 +317,52 @@ class SvgWordCloudEngine(ABC):
                 "fill": "url(#wc-bg-grad)",
             },
         )
+        self._add_atmosphere(root)
+
+    def _add_atmosphere(self, root: ET.Element) -> None:
+        """Faint rings and speckles behind glyphs (light/dark via CSS classes)."""
+        cx = self.width / 2.0
+        cy = self.height / 2.0
+        layer = ET.SubElement(
+            root,
+            "g",
+            attrib={"class": "wc-atmosphere", "aria-hidden": "true"},
+        )
+        max_r = min(self.width, self.height) * 0.58
+        for index in range(1, 6):
+            ET.SubElement(
+                layer,
+                "circle",
+                attrib={
+                    "class": "wc-ring",
+                    "cx": f"{cx:.1f}",
+                    "cy": f"{cy:.1f}",
+                    "r": f"{max_r * index / 5.0:.1f}",
+                },
+            )
+        seed = int(self.width * 13 + self.height * 7)
+        for _ in range(48):
+            seed = (seed * 1_103_515_245 + 12_345) & 0x7FFFFFFF
+            x = self.width * ((seed % 1000) / 1000.0)
+            seed = (seed * 1_103_515_245 + 12_345) & 0x7FFFFFFF
+            y = self.height * ((seed % 1000) / 1000.0)
+            ET.SubElement(
+                layer,
+                "circle",
+                attrib={
+                    "class": "wc-speckle",
+                    "cx": f"{x:.1f}",
+                    "cy": f"{y:.1f}",
+                    "r": "1.1",
+                },
+            )
 
     def _glow_size_threshold(self, placed_words: list[PlacedWord]) -> float:
-        """Return the font size threshold above which glow is applied (top 20%)."""
+        """Return the font size threshold above which glow is applied (top 12%)."""
         if not placed_words:
             return float("inf")
         sizes = sorted((pw.font_size for pw in placed_words), reverse=True)
-        cutoff_idx = max(1, int(len(sizes) * 0.2))
+        cutoff_idx = max(1, int(len(sizes) * 0.12))
         return sizes[min(cutoff_idx, len(sizes) - 1)]
 
     def render_svg(self, placed_words: list[PlacedWord]) -> str:
