@@ -3,9 +3,9 @@
 **Date:** 2026-08-14  
 **Branch:** `dev` (`dev...origin/dev`)  
 **Write lease:** this file only  
-**Status:** pytest green; banner / production-plugin gates pass; `anmol098` literal not empty in `scripts/`
+**Status:** pytest exit 0 (399 passed, 1 skipped); banner / production-plugin gates pass; `anmol098` literal not empty in `scripts/`
 
-No test paths skipped. `tests/test_metrics_svg.py` exists and was included.
+No required test paths skipped as missing. `tests/test_metrics_svg.py` exists and was included.
 
 ---
 
@@ -18,7 +18,7 @@ uv run python -m pytest -q tests/test_profile_workflow.py tests/test_readme_sect
 | Field | Value |
 |---|---|
 | Exit code | **0** |
-| Result | `============================= 367 passed in 18.19s =============================` |
+| Result | `======================= 399 passed, 1 skipped in 29.76s ========================` |
 | Failures | none |
 | Platform | darwin, python 3.13.14 |
 | Workers | 10 (xdist LoadScheduling); pytest-benchmark auto-disabled |
@@ -35,6 +35,18 @@ Included modules (all present):
 - `tests/test_word_clouds.py`
 - `tests/test_living_art_media.py`
 - `tests/test_metrics_svg.py` (added because the file exists)
+
+Skipped (not a failure; live origin/`dev` README QA):
+
+```
+tests/test_skills.py::TestIntegration::test_github_dev_readme_camo_renders_skill_icons
+```
+
+Follow-up (`-rs`) on that node, exit **0**:
+
+```
+SKIPPED [1] tests/test_skills.py:989: origin/dev README HTML has no GitHub Camo skill images to inspect
+```
 
 ---
 
@@ -85,7 +97,7 @@ rg -n "uses:.*anmol098|anmol098/waka" scripts/ .github/workflows/profile-updater
 ### 2.3 `plugin_music: no` on production
 
 ```bash
-rg "plugin_music:" .github/workflows/profile-updater.yml
+rg -n "plugin_music:" .github/workflows/profile-updater.yml
 ```
 
 | Field | Value |
@@ -93,28 +105,28 @@ rg "plugin_music:" .github/workflows/profile-updater.yml
 | Exit code | **0** |
 | Hits | 6, every one is `plugin_music: no` |
 
-Production (`generate-profile-metrics`):
+Production job `generate-profile-metrics`:
 
 | Step | Line | Value |
 |---|---|---|
-| Personal metrics | 755 | `plugin_music: no` |
-| Personal metrics (additional) | 796 | `plugin_music: no` |
-| Personal metrics (extra / overflow) | 839 | `plugin_music: no` |
+| Personal metrics | 757 | `plugin_music: no` |
+| Personal metrics (additional) | 798 | `plugin_music: no` |
+| Personal metrics (extra / overflow) | 841 | `plugin_music: no` |
 
-Probe-only job (`Probe Full Metrics Surface`) also sets `plugin_music: no` at lines 122, 152, 184.
+Probe-only job (`Probe Full Metrics Surface`, `metrics_probe_mode=true` only) also sets `plugin_music: no` at lines 122, 152, 184.
 
 Verdict: **PASS** — no production (or probe) lowlighter `with:` enables music.
 
 ### 2.4 Related production plugin locks (same file)
 
 ```bash
-rg "plugin_tweets:" .github/workflows/profile-updater.yml
+rg -n "plugin_tweets:" .github/workflows/profile-updater.yml
 ```
 
-Exit **0** — four hits, all `plugin_tweets: no` (probe 164; production 757, 808, 843).
+Exit **0** — four hits, all `plugin_tweets: no` (probe 164; production 759, 810, 845).
 
 ```bash
-rg "plugin_activity:" .github/workflows/profile-updater.yml
+rg -n "plugin_activity:" .github/workflows/profile-updater.yml
 ```
 
 Exit **0** — four hits:
@@ -122,9 +134,9 @@ Exit **0** — four hits:
 | Step | Line | Value |
 |---|---|---|
 | Probe full additional metrics | 154 | `plugin_activity: yes` (probe-only; comment: production stays off) |
-| Personal metrics | 756 | `plugin_activity: no` |
-| Personal metrics (additional) | 797 | `plugin_activity: no` |
-| Personal metrics (extra / overflow) | 840 | `plugin_activity: no` |
+| Personal metrics | 758 | `plugin_activity: no` |
+| Personal metrics (additional) | 799 | `plugin_activity: no` |
+| Personal metrics (extra / overflow) | 842 | `plugin_activity: no` |
 
 Verdict: **PASS** — production `plugin_activity` stays `no`.
 
@@ -134,7 +146,7 @@ Verdict: **PASS** — production `plugin_activity` stays `no`.
 
 | Check | Exit | Result |
 |---|---|---|
-| Focused pytest (10 modules, 367 tests) | 0 | PASS |
+| Focused pytest (10 modules, 399 passed + 1 skipped) | 0 | PASS (skip is live camo QA, not a fail) |
 | `rg "generate banner"` updater | 1 (empty) | PASS |
 | `rg "anmol098" scripts/` | 0 (2 comment hits) | STRING PRESENT |
 | `rg` anmol098 Action / `uses:` | 1 (empty) | PASS (no usage) |
