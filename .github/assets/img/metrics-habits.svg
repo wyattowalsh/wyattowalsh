@@ -129,7 +129,7 @@
 <text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share · uncommon but readable night-owl index</text>
 <text class="body" x="16" y="72">29% nocturnal</text>
 <rect x="16" y="82" width="344" height="8" rx="4" fill="var(--card-border)" fill-opacity="0.45"/>
-<rect class="focus-bar" x="16" y="82" width="96" height="8" rx="4"/>
+<rect class="focus-bar" x="16" y="82" width="98" height="8" rx="4"/>
 <text class="label" x="16" y="118">Focus monoculture</text>
 <text class="meta" x="16" y="136">Herfindahl of merged-PR repos (100% = one repo ate the month)</text>
 <text class="body" x="16" y="166">24% HHI</text>
@@ -227,7 +227,7 @@
 <rect class="cadence" x="1032" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1044" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
 <rect class="cadence" x="1056" y="34" width="8" height="4" rx="2" fill-opacity="0.22" />
-<rect class="cadence" x="1068" y="32" width="8" height="6" rx="2" fill-opacity="0.42" />
+<rect class="cadence" x="1068" y="32" width="8" height="6" rx="2" fill-opacity="0.46" />
 </g>
 <g class="habits-streaks" transform="translate(20,352)">
 <rect class="panel" width="1160" height="208" rx="10" />
@@ -256,7 +256,7 @@
 <text class="meta" x="256" y="192" text-anchor="middle">T</text>
 <rect class="cadence" x="340" y="157" width="156" height="21" rx="2" />
 <text class="meta" x="418" y="192" text-anchor="middle">W</text>
-<rect class="cadence" x="502" y="157" width="156" height="21" rx="2" />
+<rect class="cadence" x="502" y="156" width="156" height="22" rx="2" />
 <text class="meta" x="580" y="192" text-anchor="middle">T</text>
 <rect class="cadence" x="664" y="163" width="156" height="15" rx="2" />
 <text class="meta" x="742" y="192" text-anchor="middle">F</text>
