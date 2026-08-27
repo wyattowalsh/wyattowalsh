@@ -78,7 +78,7 @@
 <rect x="28" y="56" width="132" height="132" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="hero-title" x="180" y="96">Better Off Alone</text>
 <text class="hero-artist" x="180" y="128">ECLPSE</text>
-<text class="muted" x="180" y="156">Better Off Alone · 6h ago</text>
+<text class="muted" x="180" y="156">Better Off Alone · 8h ago</text>
 <g class="music-eq">
 <rect class="eq-bar" x="180" y="176" width="4" height="10" rx="2" fill-opacity="0.85" />
 <rect class="eq-bar" x="188" y="164" width="4" height="22" rx="2" fill-opacity="0.85" />
@@ -99,7 +99,7 @@
 <rect x="12" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="24">02</text>
 <text class="queue-title extra-title" x="88" y="24">Trance Defence</text>
-<text class="muted" x="88" y="42">Kogol · Trance Defence · 7h ago</text>
+<text class="muted" x="88" y="42">Kogol · Trance Defence · 9h ago</text>
 <rect class="panel" x="580" y="0" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="0" width="564" height="58" rx="10" />
 <rect x="592" y="8" width="42" height="42" rx="10" fill="#218bff" />
@@ -108,7 +108,7 @@
 <rect x="592" y="8" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="24">03</text>
 <text class="queue-title extra-title" x="668" y="24">The Otherside - AVIO Live Edit</text>
-<text class="muted" x="668" y="42">Alphaverb · The Lost Hardstyle Cl... · 7h ago</text>
+<text class="muted" x="668" y="42">Alphaverb · The Lost Hardstyle Cl... · 9h ago</text>
 <rect class="panel" x="0" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="68" width="564" height="58" rx="10" />
 <rect x="12" y="76" width="42" height="42" rx="10" fill="#cf222e" />
@@ -117,7 +117,7 @@
 <rect x="12" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="92">04</text>
 <text class="queue-title extra-title" x="88" y="92">Underground - Alphaverb Remix Rad...</text>
-<text class="muted" x="88" y="110">Dj Thera, Alphaverb · Theracords 3 (2010 -... · 7h ago</text>
+<text class="muted" x="88" y="110">Dj Thera, Alphaverb · Theracords 3 (2010 -... · 9h ago</text>
 <rect class="panel" x="580" y="68" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="68" width="564" height="58" rx="10" />
 <rect x="592" y="76" width="42" height="42" rx="10" fill="#1a7f37" />
@@ -126,7 +126,7 @@
 <rect x="592" y="76" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="92">05</text>
 <text class="queue-title extra-title" x="668" y="92">The Greatest Show On Earth - Alph...</text>
-<text class="muted" x="668" y="110">Jon The Baptist, DJ Chuck-E · Greatest Show On Earth · 7h ago</text>
+<text class="muted" x="668" y="110">Jon The Baptist, DJ Chuck-E · Greatest Show On Earth · 9h ago</text>
 <rect class="panel" x="0" y="136" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="136" width="564" height="58" rx="10" />
 <rect x="12" y="144" width="42" height="42" rx="10" fill="#1db954" />
@@ -135,7 +135,7 @@
 <rect x="12" y="144" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="160">06</text>
 <text class="queue-title extra-title" x="88" y="160">Never Before - Radio Edit</text>
-<text class="muted" x="88" y="178">Proto Bytez · Never Before (Radio E... · 7h ago</text>
+<text class="muted" x="88" y="178">Proto Bytez · Never Before (Radio E... · 9h ago</text>
 <rect class="panel" x="580" y="136" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="136" width="564" height="58" rx="10" />
 <rect x="592" y="144" width="42" height="42" rx="10" fill="#cf222e" />
@@ -144,7 +144,7 @@
 <rect x="592" y="144" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="160">07</text>
 <text class="queue-title extra-title" x="668" y="160">Realization of a Nightmare - Intr...</text>
-<text class="muted" x="668" y="178">Alphaverb · Realization of a Dream · 7h ago</text>
+<text class="muted" x="668" y="178">Alphaverb · Realization of a Dream · 9h ago</text>
 <rect class="panel" x="0" y="204" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="0" y="204" width="564" height="58" rx="10" />
 <rect x="12" y="212" width="42" height="42" rx="10" fill="#218bff" />
@@ -153,7 +153,7 @@
 <rect x="12" y="212" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="64" y="228">08</text>
 <text class="queue-title extra-title" x="88" y="228">Trauma</text>
-<text class="muted" x="88" y="246">Alphaverb, Intractable One · The Untitled EP · 7h ago</text>
+<text class="muted" x="88" y="246">Alphaverb, Intractable One · The Untitled EP · 10h ago</text>
 <rect class="panel" x="580" y="204" width="564" height="58" rx="10" />
 <rect class="panel-stroke" x="580" y="204" width="564" height="58" rx="10" />
 <rect x="592" y="212" width="42" height="42" rx="10" fill="#218bff" />
@@ -162,6 +162,6 @@
 <rect x="592" y="212" width="42" height="42" rx="10" fill="none" stroke="var(--accent)" stroke-opacity="0.45" stroke-width="1.5" />
 <text class="muted" x="644" y="228">09</text>
 <text class="queue-title extra-title" x="668" y="228">The People Want More - 2004 Version</text>
-<text class="muted" x="668" y="246">Alphaverb, Intractable One · The Lost Hardstyle Cl... · 7h ago</text>
+<text class="muted" x="668" y="246">Alphaverb, Intractable One · The Lost Hardstyle Cl... · 10h ago</text>
 </g>
 </svg>
