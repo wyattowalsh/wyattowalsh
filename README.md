@@ -27,6 +27,7 @@
 
 
 
+
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="280" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
@@ -432,6 +433,7 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 </p>
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="Latest Blog Posts" width="100%" loading="lazy"/></p>
 <!-- ## Latest Blog Posts -->
+
 
 
 
