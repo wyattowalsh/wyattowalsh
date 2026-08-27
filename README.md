@@ -14,12 +14,7 @@
 
 <p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="" width="100%" loading="lazy"/></p>
 
-<<<<<<< HEAD
-||||||| parent of 89ca1eb0b (feat(readme): put section rules above headings)
-
-=======
 ## Featured Projects
->>>>>>> 89ca1eb0b (feat(readme): put section rules above headings)
 <!-- README:FEATURED_PROJECTS:START -->
 <p align="center">
 <a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
@@ -429,12 +424,7 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 </p>
 <p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
 
-<<<<<<< HEAD
-||||||| parent of 89ca1eb0b (feat(readme): put section rules above headings)
-
-=======
 ## Latest Blog Posts
->>>>>>> 89ca1eb0b (feat(readme): put section rules above headings)
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
 <a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
