@@ -321,11 +321,11 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <!--START_SECTION:waka-->
 **🐱 My Github Data** 
 
-> 🏆 4,921 Contributions in the Year 2026
+> 🏆 4,931 Contributions in the Year 2026
  > 
 > 💼 Opted to Hire
  > 
-> 📜 196 Public Repositories 
+> 📜 197 Public Repositories 
  > 
 > 🔑 0 Private Repositories  
  > 
@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Python      13 hrs 43 mins  ████████░░░░░░░░░░░░░░░░░   30.22% 
-Other       10 hrs 56 mins  ██████░░░░░░░░░░░░░░░░░░░   24.07% 
-Markdown    10 hrs 3 mins   ██████░░░░░░░░░░░░░░░░░░░   22.13% 
-TypeScript  2 hrs 1 min     █░░░░░░░░░░░░░░░░░░░░░░░░   4.44% 
-JSON        1 hr 55 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   4.23% 
+Python      20 hrs 13 mins  ████████░░░░░░░░░░░░░░░░░   33.17% 
+Markdown    13 hrs 12 mins  █████░░░░░░░░░░░░░░░░░░░░   21.65% 
+Other       12 hrs 1 min    █████░░░░░░░░░░░░░░░░░░░░   19.72% 
+JSON        3 hrs 43 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.11% 
+TypeScript  3 hrs 9 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   5.18% 
 
 🔥 Editors: 
-Claude Code   19 hrs 13 mins  ███████████░░░░░░░░░░░░░░   42.32% 
-Cursor        13 hrs 45 mins  ████████░░░░░░░░░░░░░░░░░   30.27% 
-Chrome        9 hrs 8 mins    █████░░░░░░░░░░░░░░░░░░░░   20.12% 
-Agent         1 hr 32 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   3.38% 
-Codex Vscode  41 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.52% 
+Claude Code   35 hrs 39 mins  ███████████████░░░░░░░░░░   58.49% 
+Cursor        13 hrs 20 mins  █████░░░░░░░░░░░░░░░░░░░░   21.88% 
+Chrome        9 hrs 42 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.91% 
+Agent         1 hr 3 mins     ░░░░░░░░░░░░░░░░░░░░░░░░░   1.73% 
+Codex Vscode  41 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.13% 
 
 🐱‍💻 Projects: 
-agents       18 hrs 22 mins  ██████████░░░░░░░░░░░░░░░   40.46% 
-openopps     6 hrs 28 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.24% 
-nbadb        4 hrs 59 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.98% 
-prompts      3 hrs 37 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.99% 
-webmedia-dl  3 hrs 11 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.04% 
+agents    24 hrs 37 mins  ██████████░░░░░░░░░░░░░░░   40.39% 
+nbadb     7 hrs 29 mins   ███░░░░░░░░░░░░░░░░░░░░░░   12.28% 
+openopps  6 hrs 13 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.21% 
+dotfiles  4 hrs 49 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.9% 
+prompts   3 hrs 29 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.72% 
 
 💻 Operating System: 
-Mac  45 hrs 26 mins  █████████████████████████   100% 
+Mac  60 hrs 58 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 13/09/2026 01:20:48 UTC
+ Last Updated on 14/09/2026 01:29:44 UTC
 <!--END_SECTION:waka-->
 
 </details>
