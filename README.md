@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Python      20 hrs 13 mins  ████████░░░░░░░░░░░░░░░░░   33.17% 
-Markdown    13 hrs 12 mins  █████░░░░░░░░░░░░░░░░░░░░   21.65% 
-Other       12 hrs 1 min    █████░░░░░░░░░░░░░░░░░░░░   19.72% 
-JSON        3 hrs 43 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.11% 
-TypeScript  3 hrs 9 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   5.18% 
+Python      32 hrs 49 mins  ██████████░░░░░░░░░░░░░░░   38.77% 
+Markdown    12 hrs 2 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.22% 
+Other       10 hrs 47 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.75% 
+JavaScript  10 hrs 43 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.66% 
+Bash        5 hrs 17 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.24% 
 
 🔥 Editors: 
-Claude Code   35 hrs 39 mins  ███████████████░░░░░░░░░░   58.49% 
-Cursor        13 hrs 20 mins  █████░░░░░░░░░░░░░░░░░░░░   21.88% 
-Chrome        9 hrs 42 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.91% 
-Agent         1 hr 3 mins     ░░░░░░░░░░░░░░░░░░░░░░░░░   1.73% 
-Codex Vscode  41 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.13% 
+Claude Code  62 hrs 51 mins  ███████████████████░░░░░░   74.22% 
+Cursor       11 hrs 1 min    ███░░░░░░░░░░░░░░░░░░░░░░   13.02% 
+Chrome       8 hrs 57 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.58% 
+Agent        54 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.08% 
+Copilot CLI  30 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.6% 
 
 🐱‍💻 Projects: 
-agents    24 hrs 37 mins  ██████████░░░░░░░░░░░░░░░   40.39% 
-nbadb     7 hrs 29 mins   ███░░░░░░░░░░░░░░░░░░░░░░   12.28% 
-openopps  6 hrs 13 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.21% 
-dotfiles  4 hrs 49 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.9% 
-prompts   3 hrs 29 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.72% 
+agents    50 hrs 47 mins  ███████████████░░░░░░░░░░   59.97% 
+dotfiles  7 hrs 11 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.5% 
+nbadb     6 hrs 21 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.5% 
+openopps  5 hrs 59 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.08% 
+umbral    3 hrs 2 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   3.6% 
 
 💻 Operating System: 
-Mac  60 hrs 58 mins  █████████████████████████   100% 
+Mac  84 hrs 41 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 14/09/2026 01:29:44 UTC
+ Last Updated on 15/09/2026 01:19:21 UTC
 <!--END_SECTION:waka-->
 
 </details>
