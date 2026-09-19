@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Python      17 hrs 23 mins  ████████░░░░░░░░░░░░░░░░░   30.38% 
-Other       13 hrs 35 mins  ██████░░░░░░░░░░░░░░░░░░░   23.76% 
-Markdown    12 hrs 5 mins   █████░░░░░░░░░░░░░░░░░░░░   21.12% 
-JSON        3 hrs 59 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.97% 
-TypeScript  2 hrs 44 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.79% 
+Python      20 hrs 41 mins  ███████░░░░░░░░░░░░░░░░░░   26.87% 
+Markdown    18 hrs 59 mins  ██████░░░░░░░░░░░░░░░░░░░   24.67% 
+Other       17 hrs 9 mins   ██████░░░░░░░░░░░░░░░░░░░   22.28% 
+JSON        6 hrs 12 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.05% 
+TypeScript  2 hrs 53 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   3.76% 
 
 🔥 Editors: 
-Claude Code  32 hrs 5 mins   ██████████████░░░░░░░░░░░   56.09% 
-Chrome       13 hrs 16 mins  ██████░░░░░░░░░░░░░░░░░░░   23.2% 
-Cursor       9 hrs 28 mins   ████░░░░░░░░░░░░░░░░░░░░░   16.55% 
-Agent        58 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.7% 
-Copilot CLI  30 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.89% 
+Claude Code      42 hrs 29 mins  ██████████████░░░░░░░░░░░   55.2% 
+Cursor           15 hrs 30 mins  █████░░░░░░░░░░░░░░░░░░░░   20.14% 
+Chrome           14 hrs 28 mins  █████░░░░░░░░░░░░░░░░░░░░   18.8% 
+Agent            2 hrs 30 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   3.26% 
+Antigravity CLI  1 hr 4 mins     ░░░░░░░░░░░░░░░░░░░░░░░░░   1.39% 
 
 🐱‍💻 Projects: 
-agents    16 hrs 10 mins  ███████░░░░░░░░░░░░░░░░░░   28.26% 
-nbadb     8 hrs 21 mins   ████░░░░░░░░░░░░░░░░░░░░░   14.62% 
-umbral    6 hrs 26 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.26% 
-dotfiles  5 hrs 56 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.37% 
-openopps  4 hrs 52 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.52% 
+agents        25 hrs 41 mins  ████████░░░░░░░░░░░░░░░░░   33.37% 
+nbadb         9 hrs 6 mins    ███░░░░░░░░░░░░░░░░░░░░░░   11.83% 
+dotfiles      8 hrs 27 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.99% 
+umbral        6 hrs 26 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.37% 
+awesome-iina  5 hrs 57 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.73% 
 
 💻 Operating System: 
-Mac  57 hrs 13 mins  █████████████████████████   100% 
+Mac  76 hrs 59 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 18/09/2026 01:17:38 UTC
+ Last Updated on 19/09/2026 01:15:41 UTC
 <!--END_SECTION:waka-->
 
 </details>
@@ -372,16 +372,12 @@ Mac  57 hrs 13 mins  ███████████████████�
 <summary><strong>Latest Blog Posts</strong></summary>
 
 <!-- README:BLOG_POSTS:START -->
-<p align="center"><img src=".github/assets/img/readme/blog-posts.svg" alt="Latest blog posts" width="1000" loading="lazy"/></p>
-<details>
-<summary><strong>Latest posts (auto-updated)</strong></summary>
-
-<!-- BLOG-POST-LIST:START -->
-- No recent posts available. [RSS feed](https://w4w.dev/feed.xml)
-<!-- BLOG-POST-LIST:END -->
-
-</details>
-<p align="center"><sub>Source: <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
+<p align="center"><a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Blog post card: Agents" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Blog post card: Personal Website" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="Blog post card: ProxyWhirl" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Blog post card: Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Blog post card: Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)" width="360" loading="lazy"/></a></p>
+<p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
 <!-- README:BLOG_POSTS:END -->
 
 </details>
