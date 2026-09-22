@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T01:42:43.364059+00:00",
+  "generated_at": "2026-09-22T01:49:22.053333+00:00",
   "output_dir": ".github/assets/img",
   "total_assets": 6,
   "counts": {
@@ -21,7 +21,7 @@
       "style_label": "Ferrofluid",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 2648585
+      "bytes": 2846213
     },
     {
       "name": "living-genetic.gif",
@@ -30,7 +30,7 @@
       "style_label": "Genetic Landscape",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 1993338
+      "bytes": 1910604
     },
     {
       "name": "living-inkgarden.gif",
@@ -39,7 +39,7 @@
       "style_label": "Ink Garden",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 5301704
+      "bytes": 5283586
     },
     {
       "name": "living-lenia.gif",
@@ -48,7 +48,7 @@
       "style_label": "Lenia",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 707915
+      "bytes": 726743
     },
     {
       "name": "living-physarum.gif",
@@ -57,7 +57,7 @@
       "style_label": "Physarum",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 2235791
+      "bytes": 2206376
     },
     {
       "name": "living-topo.gif",
@@ -66,7 +66,7 @@
       "style_label": "Topography",
       "channel": "timelapse_gif",
       "variant": "default",
-      "bytes": 7499695
+      "bytes": 7773640
     }
   ]
 }
