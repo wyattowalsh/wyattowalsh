@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other       9 hrs 52 mins  ████████░░░░░░░░░░░░░░░░░   33.54% 
-Markdown    5 hrs 56 mins  █████░░░░░░░░░░░░░░░░░░░░   20.18% 
-Python      5 hrs 25 mins  █████░░░░░░░░░░░░░░░░░░░░   18.4% 
-TypeScript  2 hrs 6 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   7.14% 
-JSON        1 hr 29 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.08% 
+Other       11 hrs 3 mins  ████████░░░░░░░░░░░░░░░░░   33.39% 
+Markdown    7 hrs 12 mins  █████░░░░░░░░░░░░░░░░░░░░   21.77% 
+Python      6 hrs 6 mins   █████░░░░░░░░░░░░░░░░░░░░   18.44% 
+TypeScript  2 hrs 6 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.36% 
+JSON        1 hr 41 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.11% 
 
 🔥 Editors: 
-Claude Code  10 hrs 6 mins  █████████░░░░░░░░░░░░░░░░   34.28% 
-Chrome       6 hrs 38 mins  ██████░░░░░░░░░░░░░░░░░░░   22.51% 
-Cursor       6 hrs 3 mins   █████░░░░░░░░░░░░░░░░░░░░   20.58% 
-Bot          5 hrs 11 mins  ████░░░░░░░░░░░░░░░░░░░░░   17.64% 
-Agent        1 hr 28 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.99% 
+Claude Code  12 hrs 38 mins  ██████████░░░░░░░░░░░░░░░   38.19% 
+Chrome       7 hrs 42 mins   ██████░░░░░░░░░░░░░░░░░░░   23.28% 
+Cursor       6 hrs 3 mins    █████░░░░░░░░░░░░░░░░░░░░   18.33% 
+Bot          5 hrs 13 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.76% 
+Agent        1 hr 28 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   4.44% 
 
 🐱‍💻 Projects: 
-agents            9 hrs 1 min    ████████░░░░░░░░░░░░░░░░░   30.62% 
-dotfiles          6 hrs 43 mins  ██████░░░░░░░░░░░░░░░░░░░   22.8% 
-awesome-iina      2 hrs 59 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.15% 
-personal-website  2 hrs 56 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   9.95% 
-openopps          2 hrs 16 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   7.7% 
+agents            10 hrs 57 mins  ████████░░░░░░░░░░░░░░░░░   33.09% 
+dotfiles          6 hrs 54 mins   █████░░░░░░░░░░░░░░░░░░░░   20.87% 
+openopps          3 hrs 43 mins   ███░░░░░░░░░░░░░░░░░░░░░░   11.26% 
+awesome-iina      2 hrs 59 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.04% 
+personal-website  2 hrs 59 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.03% 
 
 💻 Operating System: 
-Mac  29 hrs 28 mins  █████████████████████████   100% 
+Mac  33 hrs 5 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 30/09/2026 01:26:49 UTC
+ Last Updated on 01/10/2026 01:36:16 UTC
 <!--END_SECTION:waka-->
 
 </details>
