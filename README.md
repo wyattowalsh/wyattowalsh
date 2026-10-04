@@ -337,33 +337,33 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Python      18 hrs 5 mins  ███████████░░░░░░░░░░░░░░   42.26% 
-Markdown    8 hrs 6 mins   █████░░░░░░░░░░░░░░░░░░░░   18.92% 
-Other       4 hrs 44 mins  ███░░░░░░░░░░░░░░░░░░░░░░   11.06% 
-JSON        3 hrs 35 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   8.4% 
-JavaScript  2 hrs 5 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   4.9% 
+Python      21 hrs 50 mins  █████████░░░░░░░░░░░░░░░░   37.5% 
+Markdown    13 hrs 17 mins  ██████░░░░░░░░░░░░░░░░░░░   22.82% 
+Other       7 hrs 58 mins   ███░░░░░░░░░░░░░░░░░░░░░░   13.7% 
+JSON        5 hrs 45 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.9% 
+JavaScript  2 hrs 18 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   3.97% 
 
 🔥 Editors: 
-Claude Code  34 hrs 34 mins  ████████████████████░░░░░   80.74% 
-Bot          3 hrs 37 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.47% 
-Chrome       2 hrs 36 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.11% 
-Cursor       1 hr 28 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   3.46% 
-Grok Build   26 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.03% 
+Claude Code  48 hrs 17 mins  █████████████████████░░░░   82.94% 
+Chrome       4 hrs 41 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.04% 
+Bot          3 hrs 28 mins   █░░░░░░░░░░░░░░░░░░░░░░░░   5.96% 
+Cursor       1 hr 16 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   2.2% 
+Grok Build   26 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.76% 
 
 🐱‍💻 Projects: 
-agents            15 hrs 19 mins  █████████░░░░░░░░░░░░░░░░   35.77% 
-nbadb             9 hrs 36 mins   ██████░░░░░░░░░░░░░░░░░░░   22.42% 
-openopps          6 hrs 30 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.18% 
-dotfiles          5 hrs 19 mins   ███░░░░░░░░░░░░░░░░░░░░░░   12.43% 
-personal-website  2 hrs 37 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   6.14% 
+agents        22 hrs 50 mins  ██████████░░░░░░░░░░░░░░░   39.23% 
+nbadb         11 hrs 16 mins  █████░░░░░░░░░░░░░░░░░░░░   19.36% 
+openopps      8 hrs 56 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.37% 
+dotfiles      5 hrs 41 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.78% 
+awesome-iina  4 hrs 59 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   8.58% 
 
 💻 Operating System: 
-Mac  42 hrs 49 mins  █████████████████████████   100% 
+Mac  58 hrs 14 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 03/10/2026 01:19:26 UTC
+ Last Updated on 04/10/2026 02:04:39 UTC
 <!--END_SECTION:waka-->
 
 </details>
