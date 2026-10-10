@@ -57,19 +57,9 @@
 <text class="rc-desc" x="20" y="80" style="font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">live preview, native file</text>
 <text class="rc-desc" x="20" y="96" style="font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">workflows, and AI-assisted</text>
 <text class="rc-desc" x="20" y="112" style="font: 400 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;">writing tools</text>
-<clipPath id="lang-bar-clip"><rect x="20" y="186" width="320" height="4" rx="2" /></clipPath>
-<g clip-path="url(#lang-bar-clip)">
-<rect x="20.0" y="186" width="309.8" height="4" fill="#3178c6" />
-<rect x="329.8" y="186" width="5.0" height="4" fill="#8b949e" />
-<rect x="334.8" y="186" width="2.3" height="4" fill="#89e051" />
-<rect x="337.1" y="186" width="2.1" height="4" fill="#563d7c" />
-<rect x="339.1" y="186" width="1.0" height="4" fill="#f1e05a" />
-<rect x="340.1" y="186" width="1.0" height="4" fill="#e34c26" />
-</g>
-<circle class="rc-lang-dot" cx="24" cy="198" r="4" fill="#3178c6" />
-<text class="rc-meta" x="32" y="202">TypeScript 97%</text>
-<circle class="rc-lang-dot" cx="163" cy="198" r="4" fill="#8b949e" />
-<text class="rc-meta" x="171" y="202">MDX 2%</text>
+<rect x="20" y="186" width="320" height="3" rx="1.5" fill="#3178c6" fill-opacity="0.5" />
+<circle class="rc-lang-dot" cx="25" cy="198" r="5" fill="#3178c6" />
+<text class="rc-lang-label" x="35" y="202">TypeScript</text>
 <text class="rc-meta" x="291" y="176">4mo ago</text>
 <svg x="273" y="164" width="16" height="16" viewBox="0 0 16 16" fill="var(--meta-color)"><path d="M8 1.5a6.5 6.5 0 1 1 0 13a6.5 6.5 0 0 1 0-13Zm0 1.5a5 5 0 1 0 0 10A5 5 0 0 0 8 3Zm.75 1.75a.75.75 0 0 0-1.5 0v3.19c0 .2.08.39.22.53l1.75 1.75a.75.75 0 1 0 1.06-1.06l-1.53-1.53Z" /></svg>
 <text class="rc-meta" x="254" y="176">0</text>
