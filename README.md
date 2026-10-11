@@ -337,32 +337,22 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other       5 hrs 33 mins  ████████░░░░░░░░░░░░░░░░░   30.89% 
-Markdown    5 hrs 6 mins   ███████░░░░░░░░░░░░░░░░░░   28.36% 
-Python      3 hrs 47 mins  █████░░░░░░░░░░░░░░░░░░░░   21.07% 
-JSON        2 hrs 12 mins  ███░░░░░░░░░░░░░░░░░░░░░░   12.25% 
-JavaScript  23 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   2.14% 
+Other  2 hrs 11 mins  █████████████████████████   100% 
 
 🔥 Editors: 
-Claude Code  13 hrs 42 mins  ███████████████████░░░░░░   76.24% 
-Chrome       4 hrs 8 mins    ██████░░░░░░░░░░░░░░░░░░░   23% 
-Cursor       7 mins          ░░░░░░░░░░░░░░░░░░░░░░░░░   0.73% 
-Grok Build   0 secs          ░░░░░░░░░░░░░░░░░░░░░░░░░   0.03% 
+Chrome  2 hrs 3 mins  █████████████████████████   99.94% 
+Cursor  0 secs        ░░░░░░░░░░░░░░░░░░░░░░░░░   0.06% 
 
 🐱‍💻 Projects: 
-agents        7 hrs 35 mins  ███████████░░░░░░░░░░░░░░   42.19% 
-nbadb         3 hrs 41 mins  █████░░░░░░░░░░░░░░░░░░░░   20.54% 
-awesome-iina  2 hrs 43 mins  ████░░░░░░░░░░░░░░░░░░░░░   15.15% 
-openopps      2 hrs 26 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.61% 
-ww            1 hr 6 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   6.17% 
+nbadb  2 hrs 3 mins  █████████████████████████   100% 
 
 💻 Operating System: 
-Mac  17 hrs 59 mins  █████████████████████████   100% 
+Mac  2 hrs 3 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 10/10/2026 01:25:42 UTC
+ Last Updated on 11/10/2026 01:30:29 UTC
 <!--END_SECTION:waka-->
 
 </details>
