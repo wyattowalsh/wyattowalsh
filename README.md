@@ -321,7 +321,7 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 <!--START_SECTION:waka-->
 **🐱 My Github Data** 
 
-> 🏆 5,154 Contributions in the Year 2026
+> 🏆 5,156 Contributions in the Year 2026
  > 
 > 💼 Opted to Hire
  > 
@@ -337,22 +337,32 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other  2 hrs 11 mins  █████████████████████████   100% 
+Other     8 hrs 40 mins  ██████████░░░░░░░░░░░░░░░   40.71% 
+Markdown  6 hrs 4 mins   ███████░░░░░░░░░░░░░░░░░░   28.49% 
+Python    2 hrs 13 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.46% 
+JSON      59 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.67% 
+Shell     55 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   4.33% 
 
 🔥 Editors: 
-Chrome  2 hrs 3 mins  █████████████████████████   99.94% 
-Cursor  0 secs        ░░░░░░░░░░░░░░░░░░░░░░░░░   0.06% 
+Claude Code  13 hrs 31 mins  ████████████████░░░░░░░░░   63.85% 
+Chrome       7 hrs 25 mins   █████████░░░░░░░░░░░░░░░░   35.04% 
+Cursor       11 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.9% 
+Bot          2 mins          ░░░░░░░░░░░░░░░░░░░░░░░░░   0.21% 
 
 🐱‍💻 Projects: 
-nbadb  2 hrs 3 mins  █████████████████████████   100% 
+awesome-iina  7 hrs 10 mins  ████████░░░░░░░░░░░░░░░░░   33.88% 
+agents        6 hrs 48 mins  ████████░░░░░░░░░░░░░░░░░   32.11% 
+nbadb         3 hrs 29 mins  ████░░░░░░░░░░░░░░░░░░░░░   16.5% 
+dotfiles      2 hrs 51 mins  ███░░░░░░░░░░░░░░░░░░░░░░   13.46% 
+openopps      49 mins        █░░░░░░░░░░░░░░░░░░░░░░░░   3.93% 
 
 💻 Operating System: 
-Mac  2 hrs 3 mins  █████████████████████████   100% 
+Mac  21 hrs 11 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 11/10/2026 01:30:29 UTC
+ Last Updated on 12/10/2026 01:36:39 UTC
 <!--END_SECTION:waka-->
 
 </details>
