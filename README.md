@@ -337,32 +337,32 @@ Each GIF is a cumulative daily timelapse: frame *t* is rendered from the GitHub 
 ⌚︎ Time Zone: America/New_York
 
 💬 Programming Languages: 
-Other     21 hrs 9 mins  ████████████░░░░░░░░░░░░░   48.59% 
-Markdown  8 hrs 4 mins   █████░░░░░░░░░░░░░░░░░░░░   18.53% 
-Python    4 hrs 27 mins  ███░░░░░░░░░░░░░░░░░░░░░░   10.24% 
-Shell     3 hrs 28 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   7.97% 
-JSON      3 hrs 10 mins  ██░░░░░░░░░░░░░░░░░░░░░░░   7.27% 
+Other     21 hrs 26 mins  █████████████░░░░░░░░░░░░   51.09% 
+Markdown  8 hrs 3 mins    █████░░░░░░░░░░░░░░░░░░░░   19.21% 
+Python    4 hrs 27 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.63% 
+JSON      3 hrs 9 mins    ██░░░░░░░░░░░░░░░░░░░░░░░   7.54% 
+Shell     1 hr 41 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   4.01% 
 
 🔥 Editors: 
-Claude Code  23 hrs 52 mins  ██████████████░░░░░░░░░░░   54.8% 
-Chrome       17 hrs 50 mins  ██████████░░░░░░░░░░░░░░░   40.98% 
-Bot          1 hr 36 mins    █░░░░░░░░░░░░░░░░░░░░░░░░   3.69% 
-Cursor       13 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.53% 
+Claude Code  21 hrs 51 mins  █████████████░░░░░░░░░░░░   52.05% 
+Chrome       19 hrs 20 mins  ████████████░░░░░░░░░░░░░   46.09% 
+Bot          33 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   1.31% 
+Cursor       13 mins         ░░░░░░░░░░░░░░░░░░░░░░░░░   0.55% 
 
 🐱‍💻 Projects: 
-dotfiles      13 hrs 58 mins  ████████░░░░░░░░░░░░░░░░░   32.09% 
-awesome-iina  8 hrs 12 mins   █████░░░░░░░░░░░░░░░░░░░░   18.85% 
-agents        7 hrs 43 mins   ████░░░░░░░░░░░░░░░░░░░░░   17.74% 
-HSBTVBrowser  6 hrs 39 mins   ████░░░░░░░░░░░░░░░░░░░░░   15.31% 
-nbadb         4 hrs 17 mins   ██░░░░░░░░░░░░░░░░░░░░░░░   9.86% 
+dotfiles      11 hrs 35 mins  ███████░░░░░░░░░░░░░░░░░░   27.63% 
+awesome-iina  8 hrs 12 mins   █████░░░░░░░░░░░░░░░░░░░░   19.56% 
+HSBTVBrowser  8 hrs 10 mins   █████░░░░░░░░░░░░░░░░░░░░   19.48% 
+agents        7 hrs 43 mins   █████░░░░░░░░░░░░░░░░░░░░   18.41% 
+nbadb         4 hrs 16 mins   ███░░░░░░░░░░░░░░░░░░░░░░   10.2% 
 
 💻 Operating System: 
-Mac  43 hrs 33 mins  █████████████████████████   100% 
+Mac  41 hrs 58 mins  █████████████████████████   100% 
 
 ```
 
 
- Last Updated on 15/10/2026 01:15:49 UTC
+ Last Updated on 16/10/2026 01:15:27 UTC
 <!--END_SECTION:waka-->
 
 </details>
