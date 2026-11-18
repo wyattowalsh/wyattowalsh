@@ -138,3 +138,54 @@ def test_six_styles_and_no_accepted_key() -> None:
         (REPO / "goals/living-art-overhaul/bakeoff.json").read_text()
     )
     assert "accepted" not in bakeoff
+
+
+def test_blog_fetch_failure_keeps_the_existing_block(tmp_path: Path) -> None:
+    from scripts.config import ReadmeSectionsSettings
+    from scripts.readme_sections import ReadmeSectionGenerator
+
+    class FailedFeed:
+        def fetch_latest_posts(self, feed_url: str, limit: int) -> None:
+            return None
+
+    class EmptyFeed:
+        def fetch_latest_posts(self, feed_url: str, limit: int) -> list[object]:
+            return []
+
+    readme = tmp_path / "README.md"
+    block = (
+        "<!-- README:BLOG_POSTS:START -->\nkeep me\n"
+        "<!-- README:BLOG_POSTS:END -->"
+    )
+    readme.write_text(block, encoding="utf-8")
+    failed = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(readme_path=str(readme)),
+        blog_client=FailedFeed(),
+    )
+    assert failed._render_blog_posts() is None
+    assert "keep me" in failed._inject_block(
+        block,
+        failed.BLOG_START,
+        failed.BLOG_END,
+        None,
+    )
+    empty = ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(readme_path=str(readme)),
+        blog_client=EmptyFeed(),
+    )
+    rendered = empty._render_blog_posts()
+    assert rendered is not None
+    assert "No recent posts available." in rendered
+
+
+def test_animated_unknown_profile_exits_nonzero(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+
+    from scripts.art import animate
+
+    monkeypatch.setattr(sys, "argv", ["animate", "--profile", "wyattowalsh"])
+    with pytest.raises(SystemExit) as exc:
+        animate.main()
+    assert exc.value.code == 1
