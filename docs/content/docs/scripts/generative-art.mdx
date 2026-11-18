@@ -1,13 +1,12 @@
 ---
 title: Generative Art
-description: Lorenz / neural / flow-field SVG art seeded deterministically from GitHub metrics.
+description: Clifford and phyllotaxis SVG art seeded deterministically from GitHub metrics.
 ---
 
 ## Modules
 
-- `scripts/generative.py` — top-level orchestrator
-- `scripts/art/shared/` — `seed_hash()`, `_hex_slice()`, `Noise2D` (package; stable import `scripts.art.shared`)
-- `scripts/banner_patterns.py` — `PatternType` enum (shared with banner)
+- `scripts/generative.py` — Clifford community art and phyllotaxis/flow activity art
+- `scripts/art/shared/` — `seed_hash()`, `Noise2D` (package; stable import `scripts.art.shared`)
 
 ## How it works
 
@@ -48,9 +47,9 @@ uv run python -m scripts.cli generate generative \
 | `.github/assets/img/generative-community.svg` | Community-seeded attractor (light) |
 | `.github/assets/img/generative-community-dark.svg` | Community-seeded attractor (dark) |
 
-## PatternType selection
+## What the generator draws
 
-The active pattern is chosen based on metrics hash characteristics — callers don't select it manually. All five live `PatternType` values (`LORENZ`, `NEURAL`, `FLOW`, `MICRO`, `AIZAWA`) may appear.
+Community art is a Clifford attractor. Activity art is phyllotaxis with a flow field. Banner `PatternType` values stay in `scripts/banner.py` and `scripts/banner_patterns.py`.
 
 ## Related art modules
 

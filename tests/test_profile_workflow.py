@@ -35,16 +35,16 @@ EXPECTED_ACTION_PINS = {
         "v7.0.1",
     ),
     "actions/download-artifact": (
-        "3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",
-        "v8.0.1",
+        "9000827ccba6bdab643e8b6fd33ac0654aef8333",
+        "v8.0.2",
     ),
     "actions/setup-python": (
         "5fda3b95a4ea91299a34e894583c3862153e4b97",
         "v7.0.0",
     ),
     "actions/upload-artifact": (
-        "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
-        "v7.0.1",
+        "cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+        "v7.0.2",
     ),
     "astral-sh/setup-uv": (
         "ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d",
@@ -982,7 +982,12 @@ def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
             )[0]
         )
 
-    assert probe.count(f"token: {selected_token}") == 3
+    assert probe.count(f"token: {selected_token}") == 0
+    assert probe.count("token: ${{ github.token }}") == 3
+    assert "metrics-probe-" not in probe
+    assert "secrets.METRICS_TOKEN" not in "\n".join(
+        _lowlighter_with_blocks(probe)
+    )
     assert prod.count(f"token: {selected_token}") == 0
     assert f"GITHUB_TOKEN: {selected_token}" in prod
     assert (
@@ -1234,10 +1239,7 @@ def test_fact_lowlighter_retry_lines_achievements_gists_isolated_off() -> None:
     assert "plugin_achievements:" not in prod
     assert "plugin_gists:" not in prod
     extra_svg = Path(".github/assets/img/metrics.extra.svg")
-    assert extra_svg.is_file()
-    extra_text = extra_svg.read_text(encoding="utf-8").lower()
-    assert "will be regenerated" not in extra_text
-    assert "an error occur" not in extra_text
+    assert not extra_svg.is_file()
 
 
 def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:

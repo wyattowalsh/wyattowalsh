@@ -372,7 +372,7 @@ def main() -> None:
         history_file=history_file,
     )
     if target is None:
-        return
+        raise SystemExit(1)
 
     fixed_seed = seed_hash(target)
     target_mat = compute_maturity(target)
@@ -428,10 +428,13 @@ def main() -> None:
                     _frame_act(delay, total_dur),
                 )
 
-                kw: dict[str, object] = {"seed": fixed_seed, "maturity": mat}
+                kw: dict[str, object] = {
+                    "seed": fixed_seed,
+                    "maturity": mat,
+                    "timeline": False,
+                }
                 if key == "topo":
                     kw["chrome_maturity"] = target_mat
-                    kw["timeline"] = False
                 frame_svgs.append(gen_fn(target, **kw))
                 delays.append(delay)
 
@@ -466,10 +469,13 @@ def main() -> None:
         logger.info("Frame {:2d}/{}  t={:.3f}  mat={:.3f}", fi + 1, n_frames, t, mat)
 
         for key, (slug, gen_fn) in generators.items():
-            kw: dict[str, object] = {"seed": fixed_seed, "maturity": mat}
+            kw: dict[str, object] = {
+                "seed": fixed_seed,
+                "maturity": mat,
+                "timeline": False,
+            }
             if key == "topo":
                 kw["chrome_maturity"] = target_mat  # chrome always full
-                kw["timeline"] = False
             svg = gen_fn(target, **kw)
             img = svg_to_png(svg, size, frame_id=f"{slug}-f{fi:02d}")
             if img is not None:

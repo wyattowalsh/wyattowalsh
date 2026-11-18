@@ -7,50 +7,21 @@ description: Codebase layout, module dependencies, and design decisions.
 
 ```text
 wyattowalsh/
-├── scripts/
-│   ├── cli/                    # Typer CLI package
-│   │   ├── _app.py             # Root app, --version, sub-app registration
-│   │   ├── auth.py             # One-time auth helpers (Spotify refresh token)
-│   │   ├── generate.py         # Generate subcommands (banner, qr, word-cloud, …)
-│   │   ├── config_cmd.py       # Config subcommands (view, save, generate-default)
-│   │   ├── settings_cmd.py     # show-settings command
-│   │   └── dev.py              # Dev tools (format, lint, test, clean, docs)
-│   ├── config.py               # Pydantic config models + load/save
-│   ├── utils.py                # Logger (Loguru), Rich console
-│   ├── banner.py               # SVG banner (~1730 lines)
-│   ├── banner_patterns.py      # PatternType enum (zero-dep)
-│   ├── qr.py                   # QR code generator
-│   ├── word_clouds.py          # Word cloud orchestrator
-│   ├── word_cloud_renderers.py # Pure-SVG rendering backends
-│   ├── techs.py                # Technology parser
-│   ├── readme_sections.py      # README assembler (~1548 lines)
-│   ├── readme_svg.py           # SVG card helpers (@media light/dark tokens)
-│   ├── skills.py               # Skills badge generator
-│   ├── generative.py           # Generative art entry
-│   ├── animated_art.py         # Animated art CLI compatibility shim over scripts/art/*
-│   ├── fetch_metrics.py        # GitHub metrics fetcher
-│   ├── fetch_history.py        # GitHub history fetcher
-│   ├── _github_http.py         # Shared GitHub HTTP helpers
-│   ├── spotify_auth.py         # Spotify loopback auth-code helper for refresh tokens
-│   └── art/
-│       ├── shared.py           # seed_hash, _hex_slice, Noise2D
-│       ├── _dev_profiles.py    # Mock profiles for local testing
-│       ├── ink_garden.py       # Ink garden SVG (~2027 lines)
-│       ├── topography.py       # Topographic contour art (~1170 lines)
-│       └── animate.py          # Animation primitives
+├── scripts/                    # See scripts/AGENTS.md for the live module map
+│   ├── cli/                    # Typer `readme` entry (`cli/generate/` by domain)
+│   ├── word_clouds/            # Typographic + clustered/shaped/metaheuristic
+│   ├── art/                    # Living-art fleet (timelapse, roster, dialects)
+│   ├── config.py               # YAML ProjectConfig; skills load via load_skills()
+│   ├── banner.py / qr.py / techs.py / readme_sections.py / skills.py
+│   ├── supplemental_metrics.py / wakatime_readme.py / starred_lists.py
+│   └── fetch_metrics.py / fetch_history.py
 ├── tests/
-│   └── fixtures/
-│       └── ink_garden/         # Golden SVG files
 ├── .github/
-│   ├── assets/
-│   │   ├── img/                # Generated SVGs/PNGs
-│   │   ├── topics.md           # Starred-repo topics (auto-updated)
-│   │   └── languages.md        # Starred-repo languages (auto-updated)
-│   └── workflows/
-│       └── profile-updater.yml # Main CI workflow
-├── docs/                       # This Fumadocs site
-├── config.yaml                 # ProjectConfig (edit this)
-└── skills.yaml                 # Skills badge definitions
+│   ├── assets/img/             # Canonical living-*.gif, pinned banners, QR, cards
+│   └── workflows/              # profile-updater.yml (publish) + ci.yml (lint/test/docs)
+├── docs/                       # Fumadocs 16 on Next.js 16
+├── config.yaml
+└── skills.yaml
 ```
 
 ## Module dependency graph
@@ -59,23 +30,16 @@ wyattowalsh/
 cli/
   ├── _app.py
   │   ├── auth.py (auth sub-app)
-  │   ├── generate.py (generate sub-app)
+  │   ├── generate/ (domain subcommands)
   │   ├── config_cmd.py (config sub-app)
   │   ├── dev.py (dev sub-app)
   │   └── settings_cmd.py (show-settings)
-  └── generate.py
-      ├── banner.py (lazy — imported inside command body)
-      ├── qr.py (lazy)
-      ├── word_clouds.py (lazy)
-      ├── techs.py (lazy)
-      ├── readme_sections.py (lazy)
-      ├── skills.py (lazy)
-      ├── generative.py (lazy)
-      └── animated_art.py (lazy compatibility shim over scripts/art/*)
+  └── generate/*.py
+      └── lazy imports of banner, qr, word_clouds, readme_sections, skills, art
 
 banner.py
   ├── banner_patterns.py (PatternType)
-  ├── svgwrite
+  ├── svg_drawing.py (string builders; svgwrite removed)
   └── numpy
 
 ink_garden.py / topography.py
@@ -87,7 +51,7 @@ fetch_metrics.py + fetch_history.py
 ```
 
 <Callout type="idea" title="Lazy imports">
-All heavy domain modules (banner, qr, word_clouds, art) are lazily imported inside CLI command function bodies in `cli/generate.py`. This keeps `import scripts.cli` fast even when optional extras aren't installed.
+All heavy domain modules (banner, qr, word_clouds, art) are lazily imported inside CLI command function bodies in `cli/generate/`. This keeps `import scripts.cli` fast even when optional extras aren't installed.
 </Callout>
 
 ## Configuration flow
@@ -117,9 +81,9 @@ The five largest modules are intentionally monolithic — empirical co-change an
 
 | Module | Lines | Rationale |
 |---|---|---|
-| `art/ink_garden.py` | ~2027 | Garden growth simulation |
-| `banner.py` | ~1730 | Single rendering pipeline |
-| `readme_sections.py` | ~2495 | One coherent assembler |
-| `readme_svg.py` | ~1740 | SVG card helpers (`@media` light/dark tokens) |
-| `word_cloud_renderers.py` | ~1230 | Tightly coupled rendering variants |
-| `art/topography.py` | ~1170 | Topographic contour map art |
+| `art/ink_garden.py` | ~5396 | Garden growth simulation |
+| `banner.py` | ~1900 | Single rendering pipeline |
+| `readme_sections.py` | ~3100 | One coherent assembler |
+| `readme_svg.py` | ~1992 | SVG card helpers (`@media` light/dark tokens) |
+| `word_clouds/` | — | SVG word-cloud renderers |
+| `art/topography.py` | ~4176 | Topographic contour map art |

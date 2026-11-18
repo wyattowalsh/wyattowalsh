@@ -441,29 +441,9 @@ COMMITTED_LOWLIGHTER_SVGS = (
 
 
 def test_fact_lowlighter_audit_committed_svgs_reject_regen_bar() -> None:
-    """fact-lowlighter-audit: shipped production SVGs are real cards, not stubs."""
-    primary, additional, extra = COMMITTED_LOWLIGHTER_SVGS
+    """fact-lowlighter-audit: production no longer ships leftover lowlighter SVGs."""
     for path in COMMITTED_LOWLIGHTER_SVGS:
-        assert path.is_file(), f"missing production lowlighter SVG: {path}"
-        text = path.read_text(encoding="utf-8")
-        lowered = text.lower()
-        assert "will be regenerated" not in lowered
-        assert "an error occur" not in lowered
-        assert path.stat().st_size > STUB_SVG_MAX_BYTES
-        result = validate_svg_file(path)
-        assert result.is_valid is True, f"{path}: {result.status} {result.detail}"
-        assert result.status == SvgValidationStatus.VALID
-
-    primary_text = primary.read_text(encoding="utf-8")
-    extra_text = extra.read_text(encoding="utf-8")
-    additional_text = additional.read_text(encoding="utf-8")
-    assert "Most used languages" in primary_text
-    assert "Notable contributions" in primary_text
-    assert "Contributions calendar" in primary_text
-    assert "an error occur" not in primary_text.lower()
-    assert "Featured repositories" not in additional_text
-    assert extra_text.strip().startswith("<svg")
-    assert "will be regenerated" not in extra_text.lower()
+        assert not path.is_file(), f"leftover lowlighter SVG still committed: {path}"
 
 
 def test_fact_habits_both_committed_primary_renders_habits_panel() -> None:

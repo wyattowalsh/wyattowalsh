@@ -2120,6 +2120,15 @@ def generate_supplemental_metrics(
     expected_x_handle = (x_handle or owner).strip().lstrip("@")
 
     metrics = collect_github_metrics(owner, repo, github_token)
+    collection_failures = set(metrics.get("collection_failures") or [])
+    if "languages" in collection_failures:
+        raise RuntimeError(
+            "Language totals are missing because GitHub collection failed"
+        )
+    if "contributions_calendar" in collection_failures:
+        raise RuntimeError(
+            "Contribution calendar is missing because GitHub collection failed"
+        )
 
     _write_supplemental_asset(
         builder,

@@ -348,39 +348,19 @@ def test_fact_ship_dev_on_push_is_dev_and_finalize_refuses_main() -> None:
 
 
 def test_fact_habits_both_primary_metrics_svg_lacks_habits_panel() -> None:
-    """fact-habits-both residual: committed metrics.svg has no plugin_habits panel."""
-    primary = Path(".github/assets/img/metrics.svg").read_text(encoding="utf-8")
-    lowered = primary.lower()
-    assert "recent coding habits" not in lowered
-    assert "plugin_habits" not in lowered
-    assert not re.search(r"\bhabits?\b", lowered)
+    """fact-habits-both residual: leftover lowlighter metrics.svg is not committed."""
+    assert not Path(".github/assets/img/metrics.svg").is_file()
 
 
 def test_fact_lowlighter_maximal_committed_preview_residuals() -> None:
-    """fact-lowlighter-maximal residual: committed SVGs are not YAML-maximal."""
-    primary = Path(".github/assets/img/metrics.svg").read_text(encoding="utf-8")
-    additional = Path(".github/assets/img/metrics.additional.svg").read_text(
-        encoding="utf-8"
-    )
-    assert "2 Languages" in primary
-    assert "Python" in primary
-    assert "100%" in primary
-    assert 'viewBox="0,0 795,130"' in primary
-    assert ">2026</text>" in primary
-    assert "No recent contributions matching filters found" in primary
-    assert "Recently starred" not in additional
-    assert "Stargazers" not in additional
-    assert "Featured repositories" not in additional
+    """fact-lowlighter-maximal residual: leftover lowlighter SVGs are not committed."""
+    assert not Path(".github/assets/img/metrics.svg").is_file()
+    assert not Path(".github/assets/img/metrics.additional.svg").is_file()
 
 
 def test_fact_lowlighter_audit_extra_followup_has_nan_bars() -> None:
-    """fact-lowlighter-audit residual: leftover extra SVG is not a regen stub."""
-    extra_path = Path(".github/assets/img/metrics.extra.svg")
-    assert extra_path.is_file()
-    extra = extra_path.read_text(encoding="utf-8")
-    assert extra.strip().startswith("<svg")
-    assert "will be regenerated" not in extra.lower()
-    assert "an error occur" not in extra.lower()
+    """fact-lowlighter-audit residual: leftover extra SVG is not committed."""
+    assert not Path(".github/assets/img/metrics.extra.svg").is_file()
 
 
 def test_fact_badges_stack_readme_shields_link_https_homepages() -> None:

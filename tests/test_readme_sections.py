@@ -1936,7 +1936,7 @@ class TestRemoteFetchSafety:
 
         posts = client.fetch_latest_posts("ftp://example.com/feed.xml", limit=2)
 
-        assert posts == []
+        assert posts is None
         assert not called
 
     def test_blog_feed_parses_rss_date_and_description(self, monkeypatch) -> None:
@@ -1991,7 +1991,7 @@ class TestRemoteFetchSafety:
 
         posts = client.fetch_latest_posts("http://127.0.0.1/feed.xml", limit=2)
 
-        assert posts == []
+        assert posts is None
         assert not called
 
     def test_blog_metadata_client_blocks_unsafe_url(self, monkeypatch) -> None:
@@ -2041,7 +2041,7 @@ class TestRemoteFetchSafety:
             "https://public-looking.example/feed.xml",
             limit=2,
         )
-        assert posts == []
+        assert posts is None
         assert not called
 
     def test_ssrf_blocks_dns_resolved_link_local_metadata(self, monkeypatch) -> None:

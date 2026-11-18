@@ -3,6 +3,7 @@
 .vscode/
 .playwright-mcp/
 .env
+spotify_refresh_token.txt
 
 ### Generated outputs — never commit ###
 logs/json/
@@ -283,3 +284,7 @@ skills-lock.json
 # Local development artifacts
 logs/
 .benchmarks/
+
+# Local experiments — never commit (finalize glob would publish readme/*.svg)
+.github/assets/img/banner.png
+.github/assets/img/readme/tech-test.svg

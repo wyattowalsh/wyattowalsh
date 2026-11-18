@@ -9,7 +9,7 @@ description: Generate any profile asset — banner, QR, word cloud, art, skills,
 uv run python -m scripts.cli generate ENTITY_TYPE [OPTIONS]
 ```
 
-`ENTITY_TYPE` is case-insensitive.
+Command names are lowercase.
 
 ## Common options
 
@@ -187,7 +187,7 @@ Production no longer embeds `lowlighter/metrics` cards (`metrics.svg`,
 
 ## `generate supplemental-metrics`
 
-Generates the repo-owned supplemental metrics cards that replace the upstream-brittle `habits`, `activity`, `music`, and `tweets` panels.
+Generates the repo-owned supplemental metrics cards that replace the upstream-brittle `habits`, `music`, and `tweets` panels.
 
 ```bash
 uv run python -m scripts.cli generate supplemental-metrics \
@@ -200,11 +200,13 @@ uv run python -m scripts.cli generate supplemental-metrics \
 
 Produces:
 
+- `.github/assets/img/metrics-languages.svg`
 - `.github/assets/img/metrics-habits.svg`
-- `.github/assets/img/metrics-activity.svg`
 - `.github/assets/img/metrics-music.svg` when Spotify secrets are complete and valid
 - `.github/assets/img/metrics-posts.svg` when the full X OAuth 1.0a secret quartet is set and valid
 - `.github/assets/img/metrics-supplemental.manifest.json`
+
+The `activity` spec (`metrics-activity.svg`) is kept for tests and CLI coverage only; generate never writes that file.
 
 Required runtime secrets:
 

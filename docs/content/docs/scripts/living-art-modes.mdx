@@ -39,9 +39,7 @@ through the generation day's terminal snapshot. `scripts/art/daily_snapshots.py`
 builds one `DailySnapshot` per calendar day. Frame *t* is the cumulative
 end-of-day world through that day — not a separate clock per style.
 
-`scripts/art/timelapse.py` builds that spine once, samples it once, then hands
-the same sampled list to every registered style in `_STYLE_REGISTRY` /
-`ALL_STYLES`:
+`scripts/art/roster.py` owns `CANDIDATE_STYLE_KEYS`. `scripts/art/timelapse.py` builds `_STYLE_REGISTRY` / `ALL_STYLES` from that tuple and, when ffmpeg is present, also writes `living-<style>.mp4` beside each GIF:
 
 1. `build_daily_snapshots(history, current_metrics, include_today=True)` —
    one snapshot per day from `history["account_created"]` through today.

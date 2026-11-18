@@ -79,18 +79,27 @@ def preview(
                 shutil.copy2(src_readme, dest_readme)
             readme_sections(output_path=dest_readme)
         elif target is PreviewTarget.SKILLS:
-            # Skills injects into the live README; preview only documents that.
-            from .generate import skills
+            from scripts.config import load_skills
+            from scripts.skills import SkillsBadgeGenerator
 
-            console.print(
-                "[yellow]skills[/] injects into the repo README "
-                "(no isolated output path). Running against the project root."
+            src_readme = Path("README.md")
+            dest_readme = output_dir / "README.md"
+            if not src_readme.is_file():
+                raise FileNotFoundError("README.md is required to preview skills")
+            shutil.copy2(src_readme, dest_readme)
+            skills_settings = load_skills().model_copy(
+                update={"readme_path": str(dest_readme)}
             )
-            skills()
+            SkillsBadgeGenerator(settings=skills_settings).generate()
         elif target is PreviewTarget.GENERATIVE:
             from .generate import generative_art
 
-            generative_art(output_path=output_dir)
+            metrics_path = output_dir / "preview-metrics.json"
+            metrics_path.write_text(
+                '{"repos": [], "stars": 1, "languages": {"Python": 10}}\n',
+                encoding="utf-8",
+            )
+            generative_art(output_path=output_dir, metrics_path=metrics_path)
         else:
             console.print(f"[bold red]Unsupported preview target:[/] {target}")
             raise typer.Exit(code=1)

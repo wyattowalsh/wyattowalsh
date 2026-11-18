@@ -54,7 +54,12 @@ def skills(
         raise typer.Exit(code=1)
 
     generator = SkillsBadgeGenerator(settings=skills_settings)
-    result_path = generator.generate()
+    try:
+        result_path = generator.generate(strict=True)
+    except FileNotFoundError as exc:
+        logger.error("Skills injection failed: {exc}", exc=exc)
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
     console.print(f"[bold green]Skills badges injected into {result_path}[/]")
 
 
@@ -345,7 +350,12 @@ def readme_sections(
         )
 
     generator = ReadmeSectionGenerator(settings=readme_settings)
-    result_path = generator.generate()
+    try:
+        result_path = generator.generate(require_markers=True)
+    except FileNotFoundError as exc:
+        logger.error("README section generation failed: {exc}", exc=exc)
+        console.print(f"[bold red]Error:[/bold red] {exc}")
+        raise typer.Exit(code=1) from exc
     console.print(f"[bold green]README sections updated in {result_path}[/]")
 
 

@@ -135,7 +135,7 @@ class SkillsBadgeGenerator:
     def __init__(self, settings: SkillsSettings) -> None:
         self.settings = settings
 
-    def generate(self) -> Path:
+    def generate(self, *, strict: bool = False) -> Path:
         """Generate badge HTML and inject into README.
 
         Returns:
@@ -143,7 +143,12 @@ class SkillsBadgeGenerator:
         """
         html = self._render_all()
         readme_path = Path(self.settings.readme_path)
-        self._inject_readme(html, readme_path)
+        if not self._inject_readme(html, readme_path):
+            if strict:
+                raise FileNotFoundError(
+                    f"Skills markers were not replaced in {readme_path}"
+                )
+            return readme_path
         logger.info(
             "Skills badges injected into {readme_path}", readme_path=readme_path
         )
@@ -296,14 +301,14 @@ class SkillsBadgeGenerator:
             )
         return body
 
-    def _inject_readme(self, html: str, readme_path: Path) -> None:
+    def _inject_readme(self, html: str, readme_path: Path) -> bool:
         """Replace content between SKILLS markers in README."""
         if not readme_path.exists():
-            logger.warning(
-                "README not found at {readme_path}, skipping injection",
+            logger.error(
+                "README not found at {readme_path}",
                 readme_path=readme_path,
             )
-            return
+            return False
 
         content = readme_path.read_text(encoding="utf-8")
         pattern = re.compile(
@@ -312,12 +317,16 @@ class SkillsBadgeGenerator:
         )
         match = pattern.search(content)
         if not match:
-            logger.warning(
-                f"Skills markers not found in {readme_path}. "
-                "Add <!-- SKILLS:START --> and <!-- SKILLS:END --> markers."
+            logger.error(
+                "Skills markers not found in {readme_path}. "
+                "Add <!-- SKILLS:START --> and <!-- SKILLS:END --> markers.",
+                readme_path=readme_path,
             )
-            return
+            return False
 
         replacement = f"{self.MARKER_START}\n{html}\n{self.MARKER_END}"
         new_content = content[: match.start()] + replacement + content[match.end() :]
         readme_path.write_text(new_content, encoding="utf-8")
+        return True
+        return True
+        return True

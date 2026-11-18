@@ -70,7 +70,7 @@ Without a token, public API endpoints are used where possible (lower rate limits
 
 ## Caching
 
-Results are cached in `logs/json/YYYY-MM-DD.json` (excluded from git via `.gitignore`). On the same day, the cached file is returned without hitting the API.
+`collect()` does not read a same-day cache. Each CLI run calls GitHub again. The payload field for the calendar is `contributions_calendar`, not `contributions_monthly`.
 
 ## Related
 

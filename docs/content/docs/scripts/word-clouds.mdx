@@ -7,7 +7,7 @@ description: OKLCH-palettized word clouds generated from your GitHub starred-rep
 
 - `scripts/starred_lists.py` — strict GitHub-star pagination plus deterministic, paired language/topic Markdown publication
 - `scripts/word_clouds/generate.py` — orchestration, file I/O, CLI-facing settings, and output dispatch
-- `scripts/word_clouds/metaheuristic.py` — animated SVG renderer that sequences 25 solver layouts into one asset
+- `scripts/word_clouds/metaheuristic.py` — animated SVG renderer over the mealpy optimizer catalog, minus the excluded names in `solvers.py`
 
 <Callout type="warn" title="Two config models">
 `WordCloudSettingsModel` in `config.py` is the top-level YAML config (part of `ProjectConfig`). `WordCloudSettings` in `scripts/word_clouds/generate.py` is the strict runtime generator config with `extra="forbid"`. Extra keys silently pass in the first, raise `ValidationError` in the second.
@@ -156,7 +156,7 @@ The `scripts/word_clouds/` subpackage provides several SVG renderers. The CI pip
 | `ClusteredRenderer` | Grouped by semantic clusters |
 | `TypographicRenderer` | Typography-focused layout |
 | `ShapedRenderer` | Mask-based shape filling |
-| `MetaheuristicAnimRenderer` | 25 solver frames ordered into one CSS-animated SVG |
+| `MetaheuristicAnimRenderer` | mealpy optimizer frames ordered into one CSS-animated SVG |
 
 ## Related
 

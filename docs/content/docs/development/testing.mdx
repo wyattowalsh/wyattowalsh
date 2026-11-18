@@ -111,7 +111,8 @@ To regenerate after an intentional output change:
 # Delete fixtures and re-run to regenerate
 rm -rf tests/fixtures/ink_garden/
 uv run python -c "
-from scripts.art.ink_garden import generate, seed_hash
+from scripts.art.ink_garden import generate
+from scripts.art.shared import seed_hash
 import pathlib
 # ... (see test file for full snippet)
 "

@@ -233,9 +233,12 @@ def _wc_from_markdown(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_filename = (
-        output_path.name if output_path else f"wordcloud_typographic_by_{source}.svg"
-    )
+    if output_path is not None:
+        out_filename = output_path.name
+    elif renderer == "typographic":
+        out_filename = f"wordcloud_typographic_by_{source}.svg"
+    else:
+        out_filename = f"wordcloud_{renderer}_by_{source}.svg"
 
     # Wide landscape banners so stacked README imgs read as full-width art.
     canvas_w, canvas_h = 1600, 560
@@ -317,6 +320,7 @@ def _wc_from_techs(
     max_words: int,
     layout_readability=None,
     yaml_settings=None,
+    renderer: str = "typographic",
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(f"Loading technologies from specified path: {techs_path}")
@@ -348,6 +352,7 @@ def _wc_from_techs(
 
     settings = wc.WordCloudSettings.from_yaml_model(
         yaml_settings,
+        renderer=renderer,
         output_dir=str(out_dir),
         max_words=max_words,
         layout_readability=layout_readability,
@@ -372,6 +377,7 @@ def _wc_from_prompt(
     max_words: int,
     layout_readability=None,
     yaml_settings=None,
+    renderer: str = "typographic",
 ) -> Path | None:
     """Generate word cloud from a text prompt."""
     logger.info("Generating word cloud from text (prompt).")
@@ -394,6 +400,7 @@ def _wc_from_prompt(
 
     settings = wc.WordCloudSettings.from_yaml_model(
         yaml_settings,
+        renderer=renderer,
         output_dir=str(out_dir),
         max_words=max_words,
         layout_readability=layout_readability,
@@ -543,6 +550,7 @@ def word_cloud(
             max_words,
             layout_readability=layout_readability,
             yaml_settings=config_wc_model,
+            renderer=renderer,
         )
         generation_results.append(generated_path)
         ran_source = True
@@ -566,6 +574,7 @@ def word_cloud(
                 max_words,
                 layout_readability=layout_readability,
                 yaml_settings=config_wc_model,
+                renderer=renderer,
             )
             generation_results.append(generated_path)
         else:

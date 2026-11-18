@@ -65,7 +65,7 @@ Before you start working on an issue, please leave a comment to let others know 
     ```bash
     git push origin feature/your-feature-name
     ```
-2.  **Open a Pull Request** (PR) to the `master` branch of the `wyattowalsh/wyattowalsh` repository.
+2.  **Open a Pull Request** (PR) to the `dev` branch of the `wyattowalsh/wyattowalsh` repository (publication target until cutover; GitHub default branch is `main`).
 3.  Fill out the PR template with as much detail as possible.
 4.  Link any relevant issues in your PR description (e.g., "Fixes #123").
 5.  Ensure all automated checks (CI/CD workflows) pass.

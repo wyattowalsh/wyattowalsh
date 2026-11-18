@@ -8,6 +8,7 @@ Provides helper `get_logger(**extra)` and `create_progress()` utilities.
 
 from __future__ import annotations
 
+import os
 import sys  # noqa: F401 -- ensures `sys` is available for `logger.add(..., format=...)`
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -133,6 +134,18 @@ if app_settings and hasattr(app_settings, "log_level"):
         )
         LOG_LEVEL_STR = "INFO"
 
+def console_log_level(default: str = "INFO") -> str:
+    """Resolve the console sink level from the environment."""
+    level = default
+    env_level = os.environ.get("LOG_LEVEL", "").strip()
+    if env_level:
+        level = env_level.upper()
+    if os.environ.get("DEBUG_MODE", "").strip().lower() in {"1", "true", "yes", "on"}:
+        level = "DEBUG"
+    return level
+
+
+LOG_LEVEL_STR = console_log_level(LOG_LEVEL_STR)
 
 loguru_logger.add(  # Use the imported loguru_logger
     RichHandler(

@@ -597,15 +597,20 @@ class BlogFeedClient:
     def __init__(self, timeout: float = 10.0) -> None:
         self.timeout = timeout
 
-    def fetch_latest_posts(self, feed_url: str, limit: int) -> list[BlogPost]:
-        """Fetch latest posts from feed URL."""
+    def fetch_latest_posts(self, feed_url: str, limit: int) -> list[BlogPost] | None:
+        """Fetch latest posts from feed URL.
+
+        ``None`` means the fetch failed and the existing README block must stay.
+        An empty list means the feed parsed and contained no posts.
+        """
         request = _build_remote_get_request(
             url=feed_url,
             headers={"User-Agent": "readme-section-generator"},
             context="blog feed fetch",
         )
         if request is None:
-            return []
+            logger.warning("Blocked blog feed URL: {feed_url}", feed_url=feed_url)
+            return None
         try:
             with _safe_urlopen(request, timeout=self.timeout) as response:
                 body = response.read()
@@ -615,7 +620,7 @@ class BlogFeedClient:
                 feed_url=feed_url,
                 exc=exc,
             )
-            return []
+            return None
 
         try:
             root = DefusedET.fromstring(body)
@@ -625,7 +630,7 @@ class BlogFeedClient:
                 feed_url=feed_url,
                 exc=exc,
             )
-            return []
+            return None
 
         posts = self._parse_rss_items(root)
         if not posts:
@@ -1028,10 +1033,12 @@ class ReadmeSectionGenerator:
                 output_dir=self.settings.svg.output_dir
             )
 
-    def generate(self) -> Path:
+    def generate(self, *, require_markers: bool = False) -> Path:
         """Render dynamic sections and inject them into README."""
         readme_path = Path(self.settings.readme_path)
         if not readme_path.exists():
+            if require_markers:
+                raise FileNotFoundError(f"README not found at {readme_path}")
             logger.warning(
                 "README not found at {readme_path}, skipping injection",
                 readme_path=readme_path,
@@ -1039,6 +1046,8 @@ class ReadmeSectionGenerator:
             return readme_path
 
         content = readme_path.read_text(encoding="utf-8")
+        if require_markers:
+            self._require_marker_pairs(content)
         content = self._inject_block(
             content,
             self.TOP_BADGES_START,
@@ -1073,6 +1082,8 @@ class ReadmeSectionGenerator:
             rf"{re.escape(marker_start)}\n.*?{re.escape(marker_end)}",
             re.DOTALL,
         )
+        if rendered is None:
+            return content
         match = pattern.search(content)
         if not match:
             logger.warning(
@@ -1081,6 +1092,25 @@ class ReadmeSectionGenerator:
             return content
         replacement = f"{marker_start}\n{rendered}\n{marker_end}"
         return content[: match.start()] + replacement + content[match.end() :]
+
+    def _require_marker_pairs(self, content: str) -> None:
+        """Fail before any write when a managed marker pair is absent."""
+        missing: list[str] = []
+        for marker_start, marker_end in (
+            (self.TOP_BADGES_START, self.TOP_BADGES_END),
+            (self.FEATURED_START, self.FEATURED_END),
+            (self.BLOG_START, self.BLOG_END),
+        ):
+            pattern = re.compile(
+                rf"{re.escape(marker_start)}\n.*?{re.escape(marker_end)}",
+                re.DOTALL,
+            )
+            if pattern.search(content) is None:
+                missing.append(f"{marker_start} .. {marker_end}")
+        if missing:
+            raise FileNotFoundError(
+                "README markers missing: " + "; ".join(missing)
+            )
 
     def _section_order(self) -> tuple[str, ...]:
         return section_order_from_settings(self.settings)
@@ -2445,11 +2475,13 @@ class ReadmeSectionGenerator:
         )
         return card
 
-    def _render_blog_posts(self) -> str:
+    def _render_blog_posts(self) -> str | None:
         posts = self.blog_client.fetch_latest_posts(
             self.settings.blog_feed_url,
             self.settings.blog_post_limit,
         )
+        if posts is None:
+            return None
         feed_url = escape(self.settings.blog_feed_url)
         feed_url_raw = self.settings.blog_feed_url
         svg_cards: list[SvgCard] = []

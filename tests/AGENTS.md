@@ -18,7 +18,7 @@ uv run python -m pytest -n 0 -v
 uv run python -m pytest tests/test_banner.py -v
 
 # Single test
-uv run python -m pytest tests/test_qr.py::TestQRCodeGenerator::test_init_success -v
+uv run python -m pytest tests/test_qr.py::test_qr_generator_initialization_success -v
 
 # Terminal coverage summary (in addition to HTML report)
 uv run python -m pytest --cov=./scripts --cov-report=term-missing

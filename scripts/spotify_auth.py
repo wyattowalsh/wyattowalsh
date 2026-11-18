@@ -225,6 +225,11 @@ def mint_spotify_refresh_token(
     """Run the Spotify auth-code flow and return ``(refresh_token, authorize_url)``."""
 
     redirect_uri = f"http://{callback_host}:{callback_port}{SPOTIFY_CALLBACK_PATH}"
+    allowed_hosts = {"127.0.0.1", "localhost", "::1"}
+    if callback_host not in allowed_hosts:
+        raise ValueError(
+            "Spotify callback host must be 127.0.0.1, localhost, or ::1"
+        )
     state = secrets.token_urlsafe(24)
     authorize_url = build_spotify_authorize_url(
         client_id=client_id,

@@ -196,6 +196,19 @@ def all_assets(
         )
         results.append(("Animated Art", "[yellow]SKIPPED[/yellow]"))
 
+    wakatime_key = os.getenv("WAKATIME_API_KEY", "").strip()
+    if wakatime_key:
+        try:
+            g.wakatime()
+            results.append(("WakaTime", "[green]OK[/green]"))
+        except (typer.Exit, SystemExit):
+            results.append(("WakaTime", "[red]FAILED[/red]"))
+    else:
+        console.print(
+            "[yellow]Skipping WakaTime — WAKATIME_API_KEY is not set.[/yellow]"
+        )
+        results.append(("WakaTime", "[yellow]SKIPPED[/yellow]"))
+
     # -- living art / timelapse (optional; requires both metrics + history) --
     missing_living_art_inputs: list[str] = []
     if not metrics_path or not metrics_path.exists():
@@ -232,3 +245,5 @@ def all_assets(
             border_style="cyan",
         )
     )
+    if any("FAILED" in status for _, status in results):
+        raise typer.Exit(1)

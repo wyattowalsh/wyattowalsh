@@ -50,7 +50,7 @@ wyattowalsh/
 │   │   ├── core.py      # PlacedWord, BBox, font constants
 │   │   ├── colors.py    # OKLCH palettes, domain clustering
 │   │   ├── engine.py    # SvgWordCloudEngine base class
-│   │   ├── solvers.py   # 25 metaheuristic optimization solvers
+│   │   ├── solvers.py   # mealpy optimizer registry minus excluded names
 │   │   ├── wordle.py    # WordleRenderer
 │   │   ├── clustered.py # ClusteredRenderer
 │   │   ├── typographic.py # TypographicRenderer
@@ -85,7 +85,7 @@ wyattowalsh/
 └── pyproject.toml       # Metadata, deps, tool configs
 ```
 
-**Asset pipeline** (CI: `.github/workflows/profile-updater.yml` — daily 1AM UTC, push to `main`/`master`/`dev`, manual dispatch):
+**Asset pipeline** (CI: `.github/workflows/profile-updater.yml` — daily 1AM UTC, push to `dev` only, manual dispatch). `main` is the GitHub default-branch snapshot until an explicit cutover; do not restore `main`/`master` push triggers while `tests/test_profile_workflow.py` locks `fact-ship-dev`.
 
 Jobs upload artifacts; a single **`finalize`** job is the sole first-party git writer. Prefer `uv sync --locked` (+ extras as needed) — this repo has no `[dependency-groups]` in `pyproject.toml`.
 
@@ -125,7 +125,7 @@ cfg = load_config()  # auto-creates defaults if missing
 ```
 
 **Model hierarchy** (`scripts/config.py`):
-`ProjectConfig` → `BannerSettings` · `VCardDataModel` · `QRCodeSettings` · `WordCloudSettingsModel` · `SkillsSettings` · `ReadmeSvgSettings` · `ReadmeSectionsSettings`
+`ProjectConfig` → `BannerSettings` · `VCardDataModel` · `QRCodeSettings` · `WordCloudSettingsModel` · `ReadmeSectionsSettings` (includes `ReadmeSvgSettings`). `SkillsSettings` loads from `skills.yaml` via `load_skills()`, not as a `ProjectConfig` field.
 
 | Variable | Required? | Purpose |
 |----------|-----------|---------|
@@ -151,8 +151,8 @@ CI secrets (GitHub Actions only — not needed locally):
 |----|------|-------------|
 | ST-01 | `scripts/banner.py`, `scripts/readme_svg.py` | **Closed** — banner/generative use `scripts/svg_drawing.py` string builders (svgwrite removed); readme_svg already string-based | — |
 | ST-02 | Asset pipeline | **Closed** — banner SVG optimization uses the shared SVGO helper; README cards intentionally bypass it to preserve CSS media rules |
-| ST-03 | Testing | Add `syrupy` snapshot testing with `SVGImageSnapshotExtension` for visual regression safety |
-| ST-04 | CLI | Add local preview command (`cli preview <generator>`) for faster creative iteration |
+| ST-03 | Testing | **Closed** — `syrupy` + `SVGImageSnapshotExtension` in `tests/conftest.py` / `tests/test_svg_snapshots.py` |
+| ST-04 | CLI | **Closed** — `readme preview {banner,qr,word-cloud,readme-sections,skills,generative}` (`scripts/cli/preview.py`) |
 | ST-05 | README | Cards: SVG `@media (prefers-color-scheme: dark)` (shipped). Banner keeps `<picture>`. Dual-file card `<picture>` only if media-query QA fails (F7) |
 | ST-06 | `scripts/config.py` | **Closed** — native `YamlConfigSettingsSource` now loads UTF-8 YAML while direct construction remains warning-free |
 | ST-07 | `scripts/config.py` | Use Pydantic v2 discriminated unions for type-safe generator config dispatch |

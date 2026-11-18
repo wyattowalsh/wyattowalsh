@@ -367,10 +367,22 @@ def test_preview_dispatches_isolated_generators(
 def test_preview_skills_cleanup_failure_and_many_files(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    called: list[str] = []
-    monkeypatch.setattr(generate_package, "skills", lambda: called.append("skills"))
-    preview_cmd.preview(PreviewTarget.SKILLS, output_dir=tmp_path / "skills", keep=True)
-    assert called == ["skills"]
+    seen: list[str] = []
+
+    def fake_generate(self: object) -> Path:
+        path = Path(self.settings.readme_path)  # type: ignore[attr-defined]
+        seen.append(str(path))
+        return path
+
+    monkeypatch.setattr(
+        "scripts.skills.SkillsBadgeGenerator.generate",
+        fake_generate,
+    )
+    output = tmp_path / "skills"
+    preview_cmd.preview(PreviewTarget.SKILLS, output_dir=output, keep=True)
+    assert seen
+    assert Path(seen[0]).resolve() == (output / "README.md").resolve()
+    assert (output / "README.md").is_file()
 
     many = tmp_path / "many"
     monkeypatch.setattr(
@@ -1254,7 +1266,7 @@ def test_readme_feed_star_history_and_metadata_clients(
         "_safe_urlopen",
         lambda *_args, **_kwargs: _Response(b"not xml"),
     )
-    assert BlogFeedClient().fetch_latest_posts("https://example.com/bad", 2) == []
+    assert BlogFeedClient().fetch_latest_posts("https://example.com/bad", 2) is None
 
     assert StarHistoryClient().fetch_star_history("invalid") is None
     star_payload = {
@@ -1402,4 +1414,6 @@ def test_generate_all_orchestrates_success_failure_and_skips(
     monkeypatch.delenv("GITHUB_TOKEN", raising=False)
     monkeypatch.delenv("GH_TOKEN", raising=False)
     monkeypatch.delenv("METRICS_TOKEN", raising=False)
-    all_cmd.all_assets(metrics_path=None, history_path=None)
+    with pytest.raises(typer.Exit) as failed_all:
+        all_cmd.all_assets(metrics_path=None, history_path=None)
+    assert failed_all.value.exit_code == 1

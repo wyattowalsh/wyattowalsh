@@ -10,8 +10,8 @@ Local development and task execution are primarily managed via the `[Makefile](m
 
 **Common `Makefile` Targets:**
 *   `make install`: Syncs dependencies
-*   `make format`: Formats code using `black`, `isort`, `autoflake`
-*   `make lint`: Lints code with `ruff`, `pylint`, `mypy`
+*   `make format`: Formats code with `uv run readme dev format` (ruff)
+*   `make lint`: Lints with `uv run readme dev lint` (ruff, pylint, and the ty ratchet)
 *   `make test`: Runs the test suite using `pytest`
 *   `make generate`: Generates all assets via the `[scripts/cli/](mdc:scripts/cli)` package (`uv run readme generate …`)
-*   `make clean`: Removes caches, logs, generated assets, and the virtual environment
+*   `make clean`: Runs `uv run readme dev clean --generated`. `make clean-venv` removes the virtual environment

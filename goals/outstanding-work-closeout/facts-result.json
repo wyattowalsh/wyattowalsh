@@ -1,0 +1,160 @@
+{
+  "stage": "facts",
+  "title": "Close out outstanding profile work",
+  "goalSlug": "outstanding-work-closeout",
+  "facts": [
+    {
+      "id": "fact-lowlighter-absent",
+      "text": "metrics.svg, metrics.additional.svg, and metrics.extra.svg are not in the tree, and the docs no longer say those legacy files may remain.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-generative-restored",
+      "text": "The generative activity and community SVGs, including dark variants, and the docs showcase files the generator and docs still name, are present again.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-banner-size",
+      "text": "BannerConfig width and height match the pinned banner.svg, which is 1600 by 480. The uncommitted 1200 by 630 default is reverted. Banner drawing behavior is otherwise unchanged.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-cron-dev-only",
+      "text": "The dev workflow still publishes only on refs/heads/dev. Docs and tests say a GitHub schedule loads the default branch, main, until an explicit cutover. This goal does not edit main or change the default branch.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-blog-preserve",
+      "text": "A blog fetch error leaves the existing blog marker block unchanged. A feed that parses and is empty may say there are no posts.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-markers-fail",
+      "text": "generate skills and generate readme-sections exit non-zero when the README is missing or their marker pair is missing.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-required-metrics",
+      "text": "Supplemental generation fails when language totals or the contribution calendar are missing because collection failed. Missing Spotify, X, or WakaTime secrets omit those cards and do not fail the command.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-false-docs",
+      "text": "Docs and cursor rules no longer tell you to run a missing command, import a missing module, use a missing pytest node, or build history JSON in a shape collect_history does not write. Line counts change only in files edited for another fact.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-wordcloud-renderer",
+      "text": "Word-cloud prompt and techs runs honor --renderer. A markdown run without --output-path does not write a non-typographic render over wordcloud_typographic_by_topics.svg or wordcloud_typographic_by_languages.svg.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-preview-safe",
+      "text": "preview skills does not modify the working-tree README. preview generative does not exit only because no metrics file was passed.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-animated-honest",
+      "text": "generate animated passes timeline=False for every style, and exits non-zero when no metrics file is given and the profile is not one of the mock profiles.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-wakatime-optional",
+      "text": "generate all runs WakaTime when WAKATIME_API_KEY is set, and continues without failing when that key is absent.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-waka-owner",
+      "text": "A WakaTime project is kept only when its exact public owner/name matches. A shared short name such as docs does not make another owner's private project public.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-log-level",
+      "text": "LOG_LEVEL controls the Loguru console level. DEBUG_MODE is either honored or removed from the documented controls.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-spotify-local",
+      "text": "The Spotify refresh-token output path is gitignored, and the callback server rejects every host other than 127.0.0.1, localhost, and ::1.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-probe-private",
+      "text": "The manual metrics probe does not upload probe SVGs as Actions artifacts and does not pass METRICS_TOKEN into lowlighter/metrics.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-six-styles",
+      "text": "SHIPPED_STYLE_KEYS stays the same six styles as the candidates. bakeoff.json has no accepted key. Living-art GIFs and the pinned banner pair are not regenerated.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-human-gates",
+      "text": "These stay unfinished and are not marked done: classic PAT revoke, Actions billing lock, living-art accepted[], production Redis approval tasks 5.1 through 5.4, live badge Camo check 3.2, and remote updater proof 9.5. .env and .claude/settings.local.json are not edited.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": true,
+      "recommendedAutomatedVerification": true
+    },
+    {
+      "id": "fact-dependabot-dev",
+      "text": "dev receives a cleaned Python lock bump from PR #12 and only Actions pins newer than dev today. PR #12 and PR #14 are closed. main is not changed. setup-uv on dev is not downgraded.",
+      "accepted": true,
+      "removed": false,
+      "automatedVerification": false,
+      "recommendedAutomatedVerification": false
+    }
+  ],
+  "factsMarkdown": "# Facts\n\n- metrics.svg, metrics.additional.svg, and metrics.extra.svg are not in the tree, and the docs no longer say those legacy files may remain.\n- The generative activity and community SVGs, including dark variants, and the docs showcase files the generator and docs still name, are present again.\n- BannerConfig width and height match the pinned banner.svg, which is 1600 by 480. The uncommitted 1200 by 630 default is reverted. Banner drawing behavior is otherwise unchanged.\n- The dev workflow still publishes only on refs/heads/dev. Docs and tests say a GitHub schedule loads the default branch, main, until an explicit cutover. This goal does not edit main or change the default branch.\n- A blog fetch error leaves the existing blog marker block unchanged. A feed that parses and is empty may say there are no posts.\n- generate skills and generate readme-sections exit non-zero when the README is missing or their marker pair is missing.\n- Supplemental generation fails when language totals or the contribution calendar are missing because collection failed. Missing Spotify, X, or WakaTime secrets omit those cards and do not fail the command.\n- Docs and cursor rules no longer tell you to run a missing command, import a missing module, use a missing pytest node, or build history JSON in a shape collect_history does not write. Line counts change only in files edited for another fact.\n- Word-cloud prompt and techs runs honor --renderer. A markdown run without --output-path does not write a non-typographic render over wordcloud_typographic_by_topics.svg or wordcloud_typographic_by_languages.svg.\n- preview skills does not modify the working-tree README. preview generative does not exit only because no metrics file was passed.\n- generate animated passes timeline=False for every style, and exits non-zero when no metrics file is given and the profile is not one of the mock profiles.\n- generate all runs WakaTime when WAKATIME_API_KEY is set, and continues without failing when that key is absent.\n- A WakaTime project is kept only when its exact public owner/name matches. A shared short name such as docs does not make another owner's private project public.\n- LOG_LEVEL controls the Loguru console level. DEBUG_MODE is either honored or removed from the documented controls.\n- The Spotify refresh-token output path is gitignored, and the callback server rejects every host other than 127.0.0.1, localhost, and ::1.\n- The manual metrics probe does not upload probe SVGs as Actions artifacts and does not pass METRICS_TOKEN into lowlighter/metrics.\n- SHIPPED_STYLE_KEYS stays the same six styles as the candidates. bakeoff.json has no accepted key. Living-art GIFs and the pinned banner pair are not regenerated.\n- These stay unfinished and are not marked done: classic PAT revoke, Actions billing lock, living-art accepted[], production Redis approval tasks 5.1 through 5.4, live badge Camo check 3.2, and remote updater proof 9.5. .env and .claude/settings.local.json are not edited.\n- dev receives a cleaned Python lock bump from PR #12 and only Actions pins newer than dev today. PR #12 and PR #14 are closed. main is not changed. setup-uv on dev is not downgraded."
+}

@@ -52,12 +52,17 @@ def _repo_languages_url(repo: dict[str, Any]) -> str:
     return f"{_BASE}/repos/{owner}/{name}/languages"
 
 
-def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
+def _collect_languages(
+    repos: list[dict],
+    token: str | None,
+    failures: list[str] | None = None,
+) -> dict[str, int]:
     """Aggregate language bytes across all non-fork repos (parallel fetches)."""
     non_forks = [r for r in repos if not r.get("fork")]
     if not non_forks:
         return {}
     totals: dict[str, int] = {}
+    failed_repos = 0
 
     def _fetch_lang(repo: dict) -> dict[str, int]:
         data, _ = _get(_repo_languages_url(repo), token)
@@ -75,6 +80,11 @@ def _collect_languages(repos: list[dict], token: str | None) -> dict[str, int]:
                     futures[fut].get("name"),
                     exc,
                 )
+                failed_repos += 1
+    if non_forks and failed_repos == len(non_forks):
+        totals = {}
+        if failures is not None:
+            failures.append("languages")
     return totals
 
 
@@ -199,10 +209,12 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
                 logger.info("Optional GraphQL contribution fields unavailable")
             else:
                 logger.warning("GraphQL contribution errors: {e}", e=errors)
+                result["collection_failed"] = True
         raw = gql_resp.get("data") or {}
         user = raw.get("user") or {}
         contrib_coll = user.get("contributionsCollection") or {}
         if not contrib_coll:
+            result["collection_failed"] = True
             return result
         cal = contrib_coll.get("contributionCalendar") or {}
         result.update(
@@ -230,6 +242,7 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
         )
     except Exception as exc:
         logger.warning("GraphQL contribution query failed: {}", exc)
+        result["collection_failed"] = True
     return result
 
 
@@ -494,7 +507,8 @@ def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict
 
 def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     """Collect GitHub metrics for *owner*/*repo* and return a flat dict."""
-    metrics: dict[str, Any] = {}
+    metrics: dict[str, Any] = {"collection_failures": []}
+    failures: list[str] = metrics["collection_failures"]
 
     # -- REST: repo stats ------------------------------------------------
     logger.info("Fetching repo stats for {}/{}", owner, repo)
@@ -550,7 +564,11 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         metrics["latest_fork_owner"] = None
 
     # -- GraphQL: contributions for the profile owner, not the token viewer
-    metrics.update(_collect_contribution_stats(owner, token))
+    contribution_stats = _collect_contribution_stats(owner, token)
+    calendar_failed = bool(contribution_stats.pop("collection_failed", False))
+    if calendar_failed and not contribution_stats.get("contributions_calendar"):
+        failures.append("contributions_calendar")
+    metrics.update(contribution_stats)
 
     # -- REST: languages, top repos, traffic -----------------------------
     try:
@@ -560,7 +578,8 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     except Exception as exc:
         logger.warning("Failed to fetch repos list: {}", exc)
         all_repos = []
-    metrics["languages"] = _collect_languages(all_repos, token)
+        failures.append("languages")
+    metrics["languages"] = _collect_languages(all_repos, token, failures)
     metrics["repos"] = all_repos
     metrics["top_repos"] = _collect_top_repos(all_repos)
     metrics.update(_collect_traffic(owner, repo, token))

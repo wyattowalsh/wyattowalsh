@@ -14,7 +14,7 @@ cd YOUR_USERNAME
 ```
 
 ```bash title="2. Install"
-uv sync --all-groups
+uv sync --locked --all-extras
 ```
 
 ```bash title="3. Generate your config"
@@ -28,7 +28,7 @@ uv run readme config generate-default --path config.yaml
 ```bash title="5. Generate everything"
 uv run readme generate banner --config-path config.yaml
 uv run readme generate qr --config-path config.yaml
-uv run readme generate readme --config-path config.yaml
+uv run readme generate readme-sections --config-path config.yaml
 ```
 
 ## What to change in config.yaml
@@ -91,7 +91,7 @@ For the canonical `wyattowalsh/wyattowalsh` repo, configure the full metrics sec
 | Secret | Required | Purpose |
 |---|---|---|
 | `GITHUB_TOKEN` | Yes (automatic) | Built-in token — no setup needed |
-| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | Classic GitHub PAT for repository-aware metrics (`read:user`, `repo`, `read:org`; add `gist` if you want gist-aware surfaces later) |
+| `METRICS_TOKEN` | Canonical repo: yes / forks: recommended | Fine-grained PAT preferred (Metadata/Contents **read** on this repo; Profile **read**). Classic fallback: `read:user`, `public_repo` (add `read:org` only if you need org/collab visibility). Do not grant `repo` write. See `.github/SECURITY.md`. |
 | `SPOTIFY_CLIENT_ID` | Canonical repo: optional / forks: optional | Spotify OAuth client ID for the repo-owned `metrics-music.svg` supplemental card |
 | `SPOTIFY_CLIENT_SECRET` | Canonical repo: optional / forks: optional | Spotify OAuth client secret for the repo-owned `metrics-music.svg` supplemental card |
 | `SPOTIFY_REFRESH_TOKEN` | Canonical repo: optional / forks: optional | Spotify OAuth refresh token for the repo-owned `metrics-music.svg` supplemental card. Mint it locally with `uv run readme auth spotify-refresh-token`, then store it as a repo secret. |
@@ -103,12 +103,12 @@ For the canonical `wyattowalsh/wyattowalsh` repo, configure the full metrics sec
 
 The workflow uses `github.repository_owner` dynamically, so **no username edits are needed** in the workflow file itself.
 
-<Callout type="info" title="Metrics safety net">
-The metrics job now backs up the current SVGs, validates every render, rejects placeholder/error payloads, and restores the last valid asset before committing. That recovery path is a safety net—not the intended steady state for the canonical repo.
+<Callout type="info" title="Optional metrics cards">
+Production metrics are first-party supplemental SVGs (`metrics-languages`, `metrics-habits`, `metrics-music`, `metrics-posts`). Spotify and X cards are omitted automatically when their secrets are missing or invalid. There is no lowlighter backup/restore path in production.
 </Callout>
 
 <Callout type="warn" title="Blog feed URL">
-If you have a blog, update the feed URL in the workflow file at `.github/workflows/profile-updater.yml` (search for `feed_list`). This is the one place outside `config.yaml` where a URL is hardcoded.
+If you have a blog, set `readme_sections_settings.blog_feed_url` in `config.yaml`. The workflow does not hardcode a `feed_list` URL.
 </Callout>
 
 ## GitHub community files
@@ -152,7 +152,7 @@ Everything below works automatically once `config.yaml` is set up:
 ├── config.yaml              # ← All your personal config lives here
 ├── README.md                # Generated output — don't edit by hand
 ├── scripts/
-│   ├── word_clouds/         # Word cloud subpackage (5 renderers + 25 solvers)
+│   ├── word_clouds/         # Word cloud subpackage (renderers + mealpy solvers)
 │   ├── art/                 # Generative art (ink garden, topography, cosmic, spiral)
 │   ├── readme_sections.py   # README assembly
 │   ├── readme_svg.py        # SVG card renderers

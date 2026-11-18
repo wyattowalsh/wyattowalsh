@@ -11,5 +11,4 @@ alwaysApply: false
 **Dependency Management:** Dependencies are managed using `uv` and defined in `[pyproject.toml](mdc:pyproject.toml)`.
 
 **Known Discrepancies & Actions:**
-*   **GitHub Actions Workflows:** Several workflows use Python `3.10` and should be updated to `3.13`
-*   **Workflow Dependency Installation:** Some workflows attempt to install from non-existent `requirements.txt` files and should use `uv` instead
+*   **GitHub Actions Workflows:** Workflows use Python `3.13` and install dependencies with `uv`.

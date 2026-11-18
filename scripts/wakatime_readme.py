@@ -468,16 +468,19 @@ def is_publishable_project(
     if not allowed:
         return False
     candidate = _normalize_label(stripped)
-    slug = candidate.rsplit("/", 1)[-1]
-    if candidate in allowed or slug in allowed:
+    if candidate in allowed:
         return True
-    return any(
-        item == candidate
-        or item.endswith(f"/{candidate}")
-        or item.endswith(f"/{slug}")
-        or candidate.endswith(f"/{item}")
+    if "/" not in candidate:
+        return any(
+            item == candidate or item.endswith(f"/{candidate}") for item in allowed
+        )
+    owner, _, slug = candidate.partition("/")
+    short_allowed = slug in allowed
+    foreign_full_name = any(
+        item.endswith(f"/{slug}") and not item.startswith(f"{owner}/")
         for item in allowed
     )
+    return short_allowed and not foreign_full_name
 
 
 def _filter_named_entries(

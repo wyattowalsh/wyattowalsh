@@ -14,11 +14,11 @@ This repo auto-generates a fully dynamic GitHub profile `README.md` — SVG bann
 | **Config** (`scripts/config.py`) | Pydantic models that drive all settings via `config.yaml` |
 | **Banner** (`scripts/banner.py`) | Procedural SVG banner with chaos-attractor backgrounds |
 | **QR Code** (`scripts/qr.py`) | Styled QR codes with embedded SVG backgrounds |
-| **Word Clouds** (`scripts/word_clouds.py`) | OKLCH-palettized word clouds from starred-repo data |
-| **Technologies** (`scripts/techs.py`) | Parses `techs.md` into shields.io badge rows |
+| **Word Clouds** (`scripts/word_clouds/`) | OKLCH-palettized word clouds from starred-repo data |
+| **Technologies** (`scripts/techs.py`) | Parses proficiency lines from a markdown list. Shields badges come from `skills.yaml` via `scripts/skills.py`. |
 | **Skills** (`scripts/skills.py`) | Renders `skills.yaml` into shields.io badge sections |
 | **Generative Art** (`scripts/generative.py`) | Lorenz/neural/flow-field SVG art seeded from GitHub metrics |
-| **Animated Art** (`scripts/animated_art.py`) | CSS-animated SVGs seeded from commit history; compatibility shim over `scripts/art/*` generators |
+| **Animated Art** (`scripts/art/animate.py`) | Legacy maturity frames. Canonical timelapses are `living-<style>.gif` from `generate living-art`. |
 | **Ink Garden** (`scripts/art/ink_garden.py`) | Procedural garden that grows with your activity |
 | **Topography** (`scripts/art/topography.py`) | Topographic contour art with hillshade and rivers |
 | **Genetic Landscape** (`scripts/art/genetic_landscape.py`) | Evolutionary fitness terrain where repositories become adaptive peaks |

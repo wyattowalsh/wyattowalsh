@@ -198,9 +198,9 @@ Entry: `uv run readme generate word-cloud --from-topics-md` / `--from-languages-
 PROFILE_IMG_OUTPUT_DIR = Path(".github/assets/img")
 TOPICS_MD_PATH         = Path(".github/assets/topics.md")
 LANGUAGES_MD_PATH      = Path(".github/assets/languages.md")
-DEFAULT_FONT_PATH      = Path(".github/assets/fonts/Montserrat-ExtraBold.ttf")
-DEFAULT_MASK_PATH      = Path(".github/assets/img/icon.svg")
 ```
+
+The generator probes Helvetica Neue and DejaVu fonts. There is no single mask-image constant.
 
 **Key API:**
 - `parse_markdown_for_word_cloud_frequencies(md_file_path) -> Dict[str, float]` — parses Markdown list items into term frequency counts; raises `FileNotFoundError` on missing file

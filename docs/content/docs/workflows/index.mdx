@@ -7,7 +7,7 @@ description: The Unified Profile Updater workflow runs every generator job on a 
 
 `.github/workflows/profile-updater.yml`
 
-**Triggers:** `push` to `main`/`master`/`dev`, daily at 01:00 UTC, `workflow_dispatch`.
+**Triggers:** `push` to `dev` only, daily at 01:00 UTC, `workflow_dispatch`. Publication jobs also require `github.ref == 'refs/heads/dev'`. A GitHub `schedule` event loads the workflow file on the default branch, which is `main`, until an explicit cutover. `main` is the public GitHub snapshot until that cutover; a naive merge of this workflow onto `main` would skip every producer and freeze the profile.
 
 Manual dispatch also exposes `metrics_probe_mode`, which runs only the probe lane for the fuller `lowlighter/metrics` surface (diagnostic-only; no Spotify on Action `with:`). Production profile metrics are first-party supplemental cards.
 
@@ -76,9 +76,11 @@ Depends on `update-starred-lists`. Generates:
 - Word cloud by topic — `generate word-cloud --from-topics-md` → `wordcloud_typographic_by_topics.svg`
 - Word cloud by language — `generate word-cloud --from-languages-md` → `wordcloud_typographic_by_languages.svg`
 
-The job installs the exact `svgo@4.0.2` release before banner generation so
-the configured SVG optimization path is deterministic instead of falling back
-with a missing-tool warning.
+The job does **not** run `generate banner`. It byte-compares the pinned
+`banner.svg` / `banner-dark.svg` pair to `origin/main` and fails closed on
+drift. It still installs the exact `svgo@4.0.2` release so any configured SVG
+optimization path stays deterministic instead of falling back with a
+missing-tool warning.
 
 Each explicitly requested Markdown-backed word cloud must produce its requested
 SVG. Missing/empty list data or an absent output makes the CLI exit nonzero, so
@@ -109,7 +111,7 @@ runs [`lowlighter/metrics`](https://github.com/lowlighter/metrics).
 
 **Never** pass Spotify credentials into lowlighter/`felipecrs` (or any metrics fork) via `with:`.
 
-The README Metrics section stacks whichever of those supplemental assets validate, plus the first-party WakaTime card. Legacy `metrics.svg` / `metrics.additional.svg` / `metrics.extra.svg` files may remain in the tree but are not generated, uploaded, or embedded.
+The README Metrics section stacks whichever of those supplemental assets validate, plus the first-party WakaTime card. Legacy `metrics.svg`, `metrics.additional.svg`, and `metrics.extra.svg` are not generated, uploaded, embedded, or kept in the tree.
 
 The job validates supplemental assets against a manifest of required markers and uploads only those first-party cards; the finalizer owns any resulting commit.
 
@@ -223,7 +225,7 @@ It creates ordered commits for these owned groups:
 | Secret | Used by | Notes |
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
-| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Canonical repo: expected classic PAT for repo-aware metrics (`read:user`, `repo`, `read:org`, and optionally `gist`). Forks can omit it, but repository-aware sections will be reduced and recovery may preserve the last valid asset. |
+| `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Preferred: fine-grained PAT with **read** Metadata/Contents (this repo) and Profile. Classic fallback: `read:user`, `public_repo` (add `read:org` only for org/collab visibility). Do **not** grant `repo` write, admin, or workflow scopes. See `.github/SECURITY.md`. Forks can omit it; repository-aware cards then degrade or omit. |
 | `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
 | `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
 | `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
