@@ -189,3 +189,27 @@ def test_animated_unknown_profile_exits_nonzero(
     with pytest.raises(SystemExit) as exc:
         animate.main()
     assert exc.value.code == 1
+
+
+def test_supplemental_metrics_fail_when_collection_fails(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    import scripts.supplemental_metrics as supplemental
+
+    monkeypatch.setenv("GITHUB_TOKEN", "token")
+    monkeypatch.setattr(
+        supplemental,
+        "collect_github_metrics",
+        lambda *_args, **_kwargs: {
+            "collection_failures": ["languages"],
+            "languages": {},
+        },
+    )
+    with pytest.raises(RuntimeError, match="Language totals"):
+        supplemental.generate_supplemental_metrics(
+            owner="owner",
+            repo="repo",
+            output_dir=tmp_path,
+            manifest_path=tmp_path / "manifest.json",
+        )
