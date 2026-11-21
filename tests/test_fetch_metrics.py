@@ -80,6 +80,31 @@ def mock_graphql():
 
 
 class TestCollectLanguages:
+    @pytest.mark.parametrize(
+        ("next_id", "next_name"),
+        [(17, "renamed"), (42, "OWNER/ALPHA"), (None, "OWNER/ALPHA")],
+    )
+    def test_overlapping_required_pages_cannot_inflate_language_totals(
+        self, next_id: int | None, next_name: str, mock_get: MagicMock
+    ) -> None:
+        from scripts._github_http import _paginate_rest
+        from scripts.fetch_metrics import _collect_languages
+
+        first = _make_repo("alpha") | {"id": 17}
+        second = _make_repo("renamed")
+        second["full_name"] = next_name if "/" in next_name else f"owner/{next_name}"
+        if next_id is not None:
+            second["id"] = next_id
+        url = "https://api.github.com/users/owner/repos"
+        pages = [([first], {"Link": f'<{url}?page=2>; rel="next"'}), ([second], {})]
+        with patch("scripts._github_http._get", side_effect=pages):
+            rows = _paginate_rest(url, "synthetic", require_complete=True)
+        mock_get.return_value = ({"Python": 7}, {})
+        failures: list[str] = []
+        assert _collect_languages(rows, "synthetic", failures) == {}
+        assert failures == ["languages"]
+        mock_get.assert_not_called()
+
     @pytest.mark.parametrize("row", [{"fork": "false"}, {}, None])
     def test_incomplete_fork_identity_is_not_a_clean_empty_result(
         self, row: object, mock_get: MagicMock

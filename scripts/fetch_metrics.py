@@ -85,26 +85,45 @@ def _collect_languages(
     failures: list[str] | None = None,
 ) -> dict[str, int]:
     """Aggregate language bytes across all non-fork repos (parallel fetches)."""
-    non_forks: list[dict[str, Any]] = []
+    non_fork_urls: list[str] = []
+    seen_ids: set[int] = set()
+    seen_urls: set[str] = set()
     for repo in repos:
         row = _json_object(repo)
         if row is None or not isinstance(row.get("fork"), bool):
             if failures is not None and "languages" not in failures:
                 failures.append("languages")
             continue
+        try:
+            url = _repo_languages_url(row)
+        except (ValueError, AttributeError):
+            logger.warning("Invalid repository identity in language inventory")
+            if failures is not None and "languages" not in failures:
+                failures.append("languages")
+            continue
+        repo_id = row.get("id")
+        folded_url = url.casefold()
+        if folded_url in seen_urls or (type(repo_id) is int and repo_id in seen_ids):
+            logger.warning("Discarding language totals for overlapping repo pages")
+            if failures is not None and "languages" not in failures:
+                failures.append("languages")
+            return {}
+        seen_urls.add(folded_url)
+        if type(repo_id) is int:
+            seen_ids.add(repo_id)
         if row["fork"] is False:
-            non_forks.append(row)
-    if not non_forks:
+            non_fork_urls.append(url)
+    if not non_fork_urls:
         return {}
     totals: dict[str, int] = {}
     failed_repos = 0
 
-    def _fetch_lang(repo: dict[str, Any]) -> dict[str, int]:
-        data, _ = _get(_repo_languages_url(repo), token)
+    def _fetch_lang(url: str) -> dict[str, int]:
+        data, _ = _get(url, token)
         return _language_byte_totals(data)
 
-    with ThreadPoolExecutor(max_workers=min(16, len(non_forks))) as pool:
-        futures = {pool.submit(_fetch_lang, r): r for r in non_forks}
+    with ThreadPoolExecutor(max_workers=min(16, len(non_fork_urls))) as pool:
+        futures = {pool.submit(_fetch_lang, url): url for url in non_fork_urls}
         for fut in as_completed(futures):
             try:
                 for lang, count in fut.result().items():
@@ -112,13 +131,11 @@ def _collect_languages(
             except Exception as exc:
                 logger.warning(
                     "Failed to fetch languages for {}: {}",
-                    futures[fut].get("name"),
+                    futures[fut],
                     exc,
                 )
                 failed_repos += 1
     if failed_repos:
-        if non_forks and failed_repos == len(non_forks):
-            totals = {}
         if failures is not None and "languages" not in failures:
             failures.append("languages")
     return totals
