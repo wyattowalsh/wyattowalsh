@@ -777,16 +777,22 @@ def test_missing_secrets_omit_spotify_x_and_wakatime_cards(
 
     from scripts._publish_metrics import MANIFEST_NAME, publish_metrics
     from scripts.cli.generate.readme_cmd import wakatime
+    from scripts.profile_metric_family import metric_files
     from scripts.supplemental_metrics import generate_supplemental_metrics
     from scripts.wakatime_readme import (
         DEFAULT_ARTIFACT_NAME,
         MARKER_END,
         MARKER_START,
         SKIP_MARKER_NAME,
+        WAKA_SVG_POINTER,
+        WakaCollection,
+        WakaWeekStats,
         generate_waka_section,
     )
+    from scripts.wakatime_svg import generate_wakatime_svg
 
     today = datetime.now(UTC).date()
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
     monkeypatch.setenv("GITHUB_TOKEN", "token")
     for name in (
         "SPOTIFY_CLIENT_ID",
@@ -851,14 +857,32 @@ def test_missing_secrets_omit_spotify_x_and_wakatime_cards(
     readme.write_text(f"{MARKER_START}\nold link\n{MARKER_END}\n", encoding="utf-8")
     published = tmp_path / ".github/assets/img"
     published.mkdir(parents=True)
-    for name in ("wakatime.svg", "metrics-music.svg", "metrics-posts.svg"):
-        (published / name).write_text("stale", encoding="utf-8")
+    optional = (*metric_files("metrics-music"), "metrics-posts.svg")
+    for name in ("wakatime.svg", *optional):
+        (published / name).write_bytes(b"stale")
+    before = {file.name: file.read_bytes() for file in published.iterdir()}
+    old_readme = readme.read_bytes()
+    with pytest.raises(ValueError, match="Incomplete profile metric family: wakatime"):
+        publish_metrics(output_dir, waka_dir, readme)
+    assert {file.name: file.read_bytes() for file in published.iterdir()} == before
+    assert readme.read_bytes() == old_readme
+
+    generate_wakatime_svg(
+        collection=WakaCollection(week=WakaWeekStats("UTC", (), (), (), ())),
+        output_path=published / "wakatime.svg",
+        include_github=False,
+        updated_at=datetime(2026, 8, 27, tzinfo=UTC),
+    )
+    saved = {name: (published / name).read_bytes() for name in metric_files("wakatime")}
     publish_metrics(output_dir, waka_dir, readme)
-    assert {item.name for item in published.iterdir()} == {
-        "metrics-languages.svg",
-        "metrics-habits.svg",
-    }
-    assert readme.read_text(encoding="utf-8").split() == [MARKER_START, MARKER_END]
+    expected = dict(saved)
+    for metric in ("metrics-languages", "metrics-habits"):
+        for name in metric_files(metric):
+            expected[name] = (output_dir / name).read_bytes()
+    assert {file.name: file.read_bytes() for file in published.iterdir()} == expected
+    assert readme.read_text(encoding="utf-8") == (
+        f"{MARKER_START}\n{WAKA_SVG_POINTER}\n{MARKER_END}\n"
+    )
     workflow = (REPO / ".github/workflows/profile-updater.yml").read_text()
     assert "--allow-missing-key" in workflow
     assert "python -m scripts._publish_metrics" in workflow

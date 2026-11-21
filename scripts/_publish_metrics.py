@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from .metrics_svg import validate_svg_file
+from .profile_metric_family import METRIC_NAMES, metric_files, read_metric_family
 from .supplemental_metrics import ASSET_SPECS, validate_supplemental_metrics
 from .wakatime_readme import (
     DEFAULT_ARTIFACT_NAME,
@@ -38,13 +39,14 @@ def _waka_enabled(waka: Path) -> bool:
             raise ValueError("Empty WakaTime skip marker")
         return False
     svg = waka / DEFAULT_WAKATIME_SVG_PATH.name
-    if names != {DEFAULT_ARTIFACT_NAME, svg.name}:
-        raise ValueError("Expected WakaTime section and SVG, or a skip marker alone")
+    if names != {DEFAULT_ARTIFACT_NAME, *metric_files("wakatime")}:
+        raise ValueError("Expected a complete WakaTime family, or a skip marker alone")
     body = (waka / DEFAULT_ARTIFACT_NAME).read_text(encoding="utf-8").strip()
     if body != WAKA_SVG_POINTER or not validate_svg_file(svg).is_valid:
         raise ValueError("Invalid WakaTime section or SVG")
     if ET.parse(svg).getroot().get("aria-label") != "WakaTime coding activity":
         raise ValueError("Expected the generated WakaTime card")
+    read_metric_family(waka, "wakatime")
     return True
 
 
@@ -52,6 +54,9 @@ def publish_metrics(metrics: Path, waka: Path, readme: Path) -> None:
     """Validate both stages before replacing any managed metric or marker."""
     names = _inventory(metrics)
     managed = {f"{spec.asset_name}.svg" for spec in ASSET_SPECS.values()}
+    for name in METRIC_NAMES:
+        if name != "wakatime":
+            managed.update(metric_files(name))
     if names - managed - {MANIFEST_NAME}:
         raise ValueError("Unexpected file in supplemental metrics artifact")
     errors = validate_supplemental_metrics(
@@ -59,6 +64,13 @@ def publish_metrics(metrics: Path, waka: Path, readme: Path) -> None:
     )
     if errors:
         raise ValueError("; ".join(errors))
+
+    for name in METRIC_NAMES:
+        if name == "wakatime":
+            continue
+        family = metric_files(name)
+        if names.intersection(family):
+            read_metric_family(metrics, name)
 
     enabled = _waka_enabled(waka)
     content = readme.read_text(encoding="utf-8")
@@ -69,18 +81,24 @@ def publish_metrics(metrics: Path, waka: Path, readme: Path) -> None:
     ):
         raise ValueError("Expected one WakaTime marker pair in README")
     output_dir = readme.parent / DEFAULT_WAKATIME_SVG_PATH.parent
+    active_waka = enabled
+    if not enabled and any((output_dir / f).exists() for f in metric_files("wakatime")):
+        read_metric_family(output_dir, "wakatime")
+        active_waka = True
+    for filename in (*managed, *metric_files("wakatime")):
+        target = output_dir / filename
+        if target.is_symlink() or (target.exists() and not target.is_file()):
+            raise ValueError(f"Invalid metric destination: {filename}")
     output_dir.mkdir(parents=True, exist_ok=True)
     for filename in sorted(managed):
         if filename in names:
             shutil.copyfile(metrics / filename, output_dir / filename)
         else:
             (output_dir / filename).unlink(missing_ok=True)
-    svg_name = DEFAULT_WAKATIME_SVG_PATH.name
     if enabled:
-        shutil.copyfile(waka / svg_name, output_dir / svg_name)
-    else:
-        (output_dir / svg_name).unlink(missing_ok=True)
-    apply_waka_section(readme, WAKA_SVG_POINTER if enabled else "")
+        for filename in metric_files("wakatime"):
+            shutil.copyfile(waka / filename, output_dir / filename)
+    apply_waka_section(readme, WAKA_SVG_POINTER if active_waka else "")
 
 
 def main() -> None:

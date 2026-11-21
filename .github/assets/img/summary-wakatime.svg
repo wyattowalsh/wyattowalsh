@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="246" viewBox="0 0 300 246" role="img" aria-labelledby="title description">
+<title id="title">WakaTime coding activity</title><desc id="description">WakaTime reported 72 hours 33 minutes over seven days. August 14–27, 2026 averaged 6 hours 50 minutes tracked per day.</desc>
+
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,Arial,Helvetica,sans-serif;fill:#1d2936;font-variant-numeric:tabular-nums}
+.paper{fill:#faf8f3;stroke:#c9cec9}.rule{stroke:#c9cec9}.track{fill:#e2e3de}
+.label,.number,.minor,.accentLabel{font-size:17px}.label,.number{font-weight:600}
+.minor{fill:#50606d}.title{font-size:23px;font-weight:700;letter-spacing:-.55px}
+.hero{font-size:33px;font-weight:700;letter-spacing:-1px}.accentLabel{font-weight:700}
+.accent,.hero,.accentLabel{fill:#305aba}.soft{fill:#778594}.zero{stroke:#305aba;stroke-width:2}
+@media(prefers-color-scheme:dark){
+text{fill:#eef3f7}.paper{fill:#161b22;stroke:#444f5a}.rule{stroke:#444f5a}.track{fill:#37424c}
+.minor{fill:#b6c2cc}.accent,.hero,.accentLabel{fill:#9ebcff}.soft{fill:#96a4b1}.zero{stroke:#9ebcff}
+}
+</style>
+<rect x=".5" y=".5" width="299" height="245" rx="9" class="paper"/>
+<text x="17" y="34" class="title" text-anchor="start">WakaTime</text>
+<text x="17" y="60" class="minor" text-anchor="start">Time tracked in seven days</text>
+<text x="17" y="102" class="hero" text-anchor="start">72h 33m</text>
+<path d="M17 116H283" class="rule" fill="none"/>
+<text x="17" y="142" class="label" text-anchor="start">Daily tracking</text>
+<text x="283" y="142" class="minor" text-anchor="end">0–16 hours</text>
+<rect x="17.00" y="167.65" width="14.00" height="36.35" rx="1" class="accent"/>
+<rect x="36.15" y="202.87" width="14.00" height="1.13" rx="1" class="accent"/>
+<rect x="55.30" y="172.31" width="14.00" height="31.69" rx="1" class="accent"/>
+<rect x="74.45" y="192.27" width="14.00" height="11.73" rx="1" class="accent"/>
+<rect x="93.60" y="163.81" width="14.00" height="40.19" rx="1" class="accent"/>
+<rect x="112.75" y="192.42" width="14.00" height="11.58" rx="1" class="accent"/>
+<rect x="131.90" y="196.84" width="14.00" height="7.16" rx="1" class="accent"/>
+<rect x="151.05" y="157.77" width="14.00" height="46.23" rx="1" class="accent"/>
+<rect x="170.20" y="165.71" width="14.00" height="38.29" rx="1" class="accent"/>
+<rect x="189.35" y="200.05" width="14.00" height="3.95" rx="1" class="accent"/>
+<rect x="208.50" y="178.72" width="14.00" height="25.28" rx="1" class="accent"/>
+<path d="M227.64999999999998 204H241.64999999999998" class="zero" fill="none"/>
+<rect x="246.80" y="192.69" width="14.00" height="11.30" rx="1" class="accent"/>
+<rect x="265.95" y="181.85" width="14.00" height="22.14" rx="1" class="accent"/>
+<text x="17" y="229" class="minor" text-anchor="start">Aug 14</text>
+<text x="283" y="229" class="minor" text-anchor="end">Aug 27</text>
+</svg>

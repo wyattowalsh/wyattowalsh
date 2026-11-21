@@ -16,10 +16,10 @@ from scripts.readme_sections import (
     section_order_from_settings,
 )
 from tests.test_readme_gfm_ux import (
-    assert_living_art_stack_layout,
+    GALLERY_LINK,
+    assert_profile_gallery_link,
     assert_visible_or_comment_heading,
     heading_index,
-    living_art_section,
 )
 
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml")
@@ -317,7 +317,7 @@ def test_wakatime_job_is_first_party_artifact_only() -> None:
 
     assert "anmol098/waka-readme-stats" not in workflow
     assert "anmol098" not in workflow
-    assert "generate wakatime" in waka
+    assert waka.count("python -m scripts.wakatime_readme generate") == 1
     assert "wakatime.svg" in waka
     assert "waka-readme-${{ github.run_id }}" in waka
     assert "upload-artifact@" in waka
@@ -478,7 +478,13 @@ def test_living_art_workflow_uses_exact_six_primary_only_handoff() -> None:
     assert 'for file in "$stage"/outputs/timelapse/living-*.gif' not in workflow
     assert "':(glob).github/assets/img/living-*.gif'" in finalize
     assert "':(glob).github/assets/img/living-*.mp4'" not in finalize
-    assert "mp4s=(.github/assets/img/living-*.mp4)" in finalize
+    from scripts.art.roster import SHIPPED_STYLE_KEYS
+
+    video_paths = {p for p in _shell_array(finalize, "art_files") if p.endswith(".mp4")}
+    assert video_paths == {
+        f".github/assets/img/living-{s}.mp4" for s in SHIPPED_STYLE_KEYS
+    }
+    assert "publish_gallery_videos(stage_dir, mp4_dir, output_dir)" in finalize
     assert "':(glob)docs/public/showcase/living-*.gif'" in finalize
     assert 'git add -A -- "${owned_files[@]}"' in finalize
 
@@ -566,7 +572,7 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
 
     waka = _job_block(workflow, "update-readme-wakatime")
     assert "anmol098/waka-readme-stats" not in waka
-    assert "generate wakatime" in waka
+    assert waka.count("python -m scripts.wakatime_readme generate") == 1
 
     finalize = _job_block(workflow, "finalize")
     assert "waka-readme-${{ github.run_id }}" in finalize
@@ -875,6 +881,8 @@ def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
     )
     assert _shell_array(finalize, "readme_files") == (
         "README.md",
+        ":(glob).github/assets/img/readme-profile/project-*.svg",
+        ":(glob).github/assets/img/readme-profile/blog-*.svg",
         ":(glob).github/assets/img/readme/*.svg",
         ".github/assets/img/readme/featured-projects.manifest.json",
         "docs/public/showcase/featured-projects.manifest.json",
@@ -887,6 +895,16 @@ def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
             for spec in ASSET_SPECS.values()
         ),
         "./.github/assets/img/wakatime.svg",
+        *(
+            f"./.github/assets/img/{prefix}{name}.{ext}"
+            for prefix, ext in [("summary-", "svg"), ("detail-", "md")]
+            for name in (
+                "metrics-languages",
+                "metrics-habits",
+                "metrics-music",
+                "wakatime",
+            )
+        ),
     }
 
 
@@ -901,6 +919,11 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
             ".github/assets/img/banner-obsolete.svg",
         ),
         "metrics_files": (
+            *(
+                str(Path(path))
+                for path in _shell_array(finalize, "metrics_files")
+                if "/summary-" in path or "/detail-" in path
+            ),
             ".github/assets/img/metrics-activity.svg",
             ".github/assets/img/metrics-habits.svg",
             ".github/assets/img/metrics-languages.svg",
@@ -909,6 +932,8 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
             ".github/assets/img/wakatime.svg",
         ),
         "readme_files": (
+            ".github/assets/img/readme-profile/project-obsolete.svg",
+            ".github/assets/img/readme-profile/blog-obsolete.svg",
             ".github/assets/img/readme/obsolete.svg",
             ".github/assets/img/readme/featured-projects.manifest.json",
             "docs/public/showcase/featured-projects.manifest.json",
@@ -1040,46 +1065,42 @@ def test_lowlighter_runner_only_steps_omit_committer_token() -> None:
         assert "committer_token" not in with_block
 
 
-def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
-    workflow = _workflow_text()
-    selected_token = (
-        "${{ steps.metrics_auth.outputs.has_valid_metrics_token == 'true' && "
-        "secrets.METRICS_TOKEN || github.token }}"
-    )
-
-    probe = _job_block(workflow, "probe-full-metrics")
-    prod = _job_block(workflow, "generate-profile-metrics")
-    for job in (probe, prod):
-        assert "id: metrics_auth" in job
-        assert "has_valid_metrics_token=false" in job
-        assert "https://api.github.com/user" in job
-        assert "--silent --output /dev/null --write-out '%{http_code}'" in job
-        assert '[ "${metrics_status}" = "200" ]' in job
-        assert (
-            'echo "has_valid_metrics_token=${has_valid_metrics_token}" '
-            '>> "$GITHUB_OUTPUT"'
-        ) in job
-        assert "token: ${{ secrets.METRICS_TOKEN || github.token }}" not in job
-        assert "::warning::" not in job
-        assert (
-            "::error::"
-            not in job.split(
-                "      - name: Generate supplemental metrics cards", maxsplit=1
-            )[0]
-        )
-
-    assert probe.count(f"token: {selected_token}") == 0
+def test_probe_validates_its_metrics_token_without_forwarding_it() -> None:
+    probe = _job_block(_workflow_text(), "probe-full-metrics")
+    assert "id: metrics_auth" in probe
+    assert "has_valid_metrics_token=false" in probe
+    assert "https://api.github.com/user" in probe
+    assert "--silent --output /dev/null --write-out '%{http_code}'" in probe
+    assert '[ "${metrics_status}" = "200" ]' in probe
+    assert 'echo "has_valid_metrics_token=${has_valid_metrics_token}"' in probe
+    assert "::warning::" not in probe and "::error::" not in probe
     assert probe.count("token: ${{ github.token }}") == 3
     assert "metrics-probe-" not in probe
     assert "secrets.METRICS_TOKEN" not in "\n".join(_lowlighter_with_blocks(probe))
-    assert prod.count(f"token: {selected_token}") == 0
-    assert f"GITHUB_TOKEN: {selected_token}" in prod
-    assert (
-        "METRICS_TOKEN:"
-        not in prod.split(
-            "      - name: Generate supplemental metrics cards", maxsplit=1
-        )[1].split("      - name:", maxsplit=1)[0]
+
+
+def test_public_metric_producer_has_only_repository_scoped_github_auth() -> None:
+    job = _workflow_jobs()["generate-profile-metrics"]
+    step = next(
+        step
+        for step in job["steps"]
+        if step.get("id") == "generate_supplemental_metrics"
     )
+    assert job["permissions"] == {"contents": "read"}
+    assert step["env"]["GITHUB_TOKEN"] == "${{ github.token }}"
+    for variable in (
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET",
+        "SPOTIFY_REFRESH_TOKEN",
+        "X_API_KEY",
+        "X_API_KEY_SECRET",
+        "X_ACCESS_TOKEN",
+        "X_ACCESS_TOKEN_SECRET",
+    ):
+        assert step["env"][variable] == "${{ secrets." + variable + " }}"
+    source = _job_block(_workflow_text(), "generate-profile-metrics")
+    assert "METRICS_TOKEN" not in source and "GH_TOKEN" not in source
+    assert "https://api.github.com/user" not in source
 
 
 def test_invalid_metrics_token_disables_elevated_scope_plugins() -> None:
@@ -1183,7 +1204,7 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
 
     readme = README_PATH.read_text(encoding="utf-8")
     order = section_order_from_settings(load_config().readme_sections_settings)
-    assert compile_section_body_re("Living Art", order).search(readme) is not None
+    assert "Living Art" not in order
 
     tech_match = compile_section_body_re("My Tech Stack", order).search(readme)
     assert tech_match is not None
@@ -1197,19 +1218,11 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     positions = [heading_index(readme, title) for title in order]
     assert positions == sorted(positions)
 
-    banner_idx = readme.index('alt="Banner"')
+    banner_idx = readme.index('src=".github/assets/img/banner.svg"')
     badges_start = readme.index("<!-- README:TOP_BADGES:START -->")
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
-    living_start = heading_index(readme, "Living Art")
-    assert banner_idx < badges_start < featured_start < living_start
-
-
-def test_finalize_readme_living_art_is_full_width_stack() -> None:
-    """Finalize serializes a README whose Living Art is the full-width stack."""
-    finalize = _job_block(_workflow_text(), "finalize")
-    assert "generate readme-sections --config-path config.yaml" in finalize
-    living = living_art_section(README_PATH.read_text(encoding="utf-8"))
-    assert_living_art_stack_layout(living)
+    assert banner_idx < readme.index(GALLERY_LINK) < featured_start < badges_start
+    assert_profile_gallery_link(readme)
 
 
 def test_finalize_authenticates_readme_star_history_without_argv_token() -> None:
@@ -1338,6 +1351,7 @@ def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:
     assert "habits-focus" in text
     assert "habits-peak" in text
     assert "habits-streaks" in text
-    assert 'src=".github/assets/img/metrics-habits.svg"' in README_PATH.read_text(
-        encoding="utf-8"
+    assert (
+        'src=".github/assets/img/summary-metrics-habits.svg"'
+        in README_PATH.read_text(encoding="utf-8")
     )

@@ -286,12 +286,31 @@ def test_all_generators_accept_plain_seed_strings(
     assert svg.rstrip().endswith("</svg>")
 
 
-def test_readme_living_art_section_uses_canonical_timelapse_gifs() -> None:
-    readme = Path("README.md").read_text(encoding="utf-8")
+def test_checked_in_gallery_matches_shipped_roster_and_source_gifs() -> None:
+    from hashlib import sha256
 
+    from PIL import Image
+
+    from scripts.art.gallery import MAX_JPEG_BYTES, MAX_TOTAL_JPEG_BYTES, render_gallery
+
+    gallery = Path("LIVING_ART.md").read_text(encoding="utf-8")
+    assert gallery == render_gallery()
+    images = Path(".github/assets/img")
+    stills = images / "living-stills"
+    assert {p.name for p in stills.iterdir()} == {
+        f"living-{style}.jpg" for style in LIVING_ART_STYLE_KEYS
+    }
+    sizes = []
     for style in LIVING_ART_STYLE_KEYS:
-        assert f".github/assets/img/living-{style}.gif" in readme
-        assert f".github/assets/img/{style}-growth.gif" not in readme
+        gif = images / f"living-{style}.gif"
+        jpeg = stills / gif.with_suffix(".jpg").name
+        digest = sha256(gif.read_bytes()).hexdigest()
+        with Image.open(jpeg) as frame:
+            assert frame.format == "JPEG" and frame.size == (400, 400)
+            assert frame.info["comment"] == f"{gif.name} sha256={digest}".encode()
+        sizes.append(jpeg.stat().st_size)
+    assert max(sizes) <= MAX_JPEG_BYTES
+    assert sum(sizes) <= MAX_TOTAL_JPEG_BYTES
 
 
 def test_docs_homepage_uses_mirrored_canonical_timelapses() -> None:

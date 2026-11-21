@@ -797,7 +797,17 @@ def test_supplemental_full_generation_optional_paths(
 
     monkeypatch.setattr(supplemental, "ReadmeSvgAssetBuilder", FakeBuilder)
     monkeypatch.setattr(supplemental, "_resolve_github_token", lambda: "token")
-    monkeypatch.setattr(supplemental, "collect_github_metrics", lambda *_args: {})
+    monkeypatch.setattr(
+        supplemental,
+        "collect_github_metrics",
+        lambda *_args, **_kwargs: {
+            "languages": {},
+            "contributions_calendar": [],
+            "recent_merged_prs": [],
+            "commit_hour_distribution": {},
+        },
+    )
+    monkeypatch.setattr(supplemental, "_fetch_spotify_catalog", lambda *_args: {})
     monkeypatch.setattr(supplemental, "_fetch_recent_activity", lambda *_args: [])
     monkeypatch.setattr(supplemental, "_fetch_recent_tracks", lambda *_args: [])
     credentials = supplemental.XOAuth1Credentials(
@@ -822,12 +832,9 @@ def test_supplemental_full_generation_optional_paths(
     assert statuses["activity"].enabled is False
     assert statuses["music"].enabled is True
     assert statuses["posts"].enabled is True
-    assert set(written) == {
-        "metrics-languages",
-        "metrics-habits",
-        "metrics-music",
-        "metrics-posts",
-    }
+    assert written == ["metrics-posts"]
+    for name in ("metrics-languages", "metrics-habits", "metrics-music"):
+        assert (tmp_path / "img" / f"detail-{name}.md").is_file()
 
     monkeypatch.setattr(
         supplemental, "_fetch_latest_posts", lambda _creds: ({"username": "other"}, [])
@@ -1262,7 +1269,7 @@ def test_readme_feed_star_history_and_metadata_clients(
         b"<rss><channel><item><title>Post</title>"
         b"<link>https://example.com/post</link>"
         b'<enclosure url="https://example.com/image.png" type="image/png"/>'
-        b"</item><item><title></title></item></channel></rss>"
+        b"</item></channel></rss>"
     )
     atom = (
         b'<feed xmlns="http://www.w3.org/2005/Atom"><entry>'

@@ -79,79 +79,79 @@
 <text class="card-kicker" x="52.0" y="222.0">Languages</text>
 <text class="card-kicker" x="614.0" y="222.0">Editors</text>
 <text class="stat-name" x="52.0" y="240.0">Python</text>
-<rect class="bar-track" x="170.0" y="231.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="231.0" width="131.1" height="8" rx="4" fill="#3572A5" />
-<text class="stat-time" x="512.0" y="240.0">28 hrs 28 mins</text>
+<rect class="bar-track" x="184.0" y="231.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="231.0" width="103.62395" height="8" rx="4" fill="#3572A5" />
+<text class="stat-time" x="574.0" text-anchor="end" y="240.0">28 hrs 28 mins</text>
 <text class="stat-name" x="52.0" y="262.0">JSON</text>
-<rect class="bar-track" x="170.0" y="253.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="253.0" width="94.6" height="8" rx="4" fill="#292929" />
-<text class="stat-time" x="512.0" y="262.0">20 hrs 32 mins</text>
+<rect class="bar-track" x="184.0" y="253.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="253.0" width="74.77365" height="8" rx="4" fill="#292929" />
+<text class="stat-time" x="574.0" text-anchor="end" y="262.0">20 hrs 32 mins</text>
 <text class="stat-name" x="52.0" y="284.0">Markdown</text>
-<rect class="bar-track" x="170.0" y="275.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="275.0" width="54.3" height="8" rx="4" fill="#083fa1" />
-<text class="stat-time" x="512.0" y="284.0">11 hrs 48 mins</text>
+<rect class="bar-track" x="184.0" y="275.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="275.0" width="42.91976" height="8" rx="4" fill="#083fa1" />
+<text class="stat-time" x="574.0" text-anchor="end" y="284.0">11 hrs 48 mins</text>
 <text class="stat-name" x="52.0" y="306.0">Other</text>
-<rect class="bar-track" x="170.0" y="297.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="297.0" width="16.0" height="8" rx="4" fill="#bf3989" />
-<text class="stat-time" x="512.0" y="306.0">3 hrs 28 mins</text>
+<rect class="bar-track" x="184.0" y="297.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="297.0" width="12.64671" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="574.0" text-anchor="end" y="306.0">3 hrs 28 mins</text>
 <text class="stat-name" x="52.0" y="328.0">TypeScript</text>
-<rect class="bar-track" x="170.0" y="319.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="319.0" width="16.0" height="8" rx="4" fill="#3178c6" />
-<text class="stat-time" x="512.0" y="328.0">3 hrs 27 mins</text>
+<rect class="bar-track" x="184.0" y="319.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="319.0" width="12.64671" height="8" rx="4" fill="#3178c6" />
+<text class="stat-time" x="574.0" text-anchor="end" y="328.0">3 hrs 27 mins</text>
 <text class="stat-name" x="52.0" y="350.0">JavaScript</text>
-<rect class="bar-track" x="170.0" y="341.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="341.0" width="7.8" height="8" rx="4" fill="#f1e05a" />
-<text class="stat-time" x="512.0" y="350.0">1 hr 42 mins</text>
+<rect class="bar-track" x="184.0" y="341.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="341.0" width="6.16527" height="8" rx="4" fill="#f1e05a" />
+<text class="stat-time" x="574.0" text-anchor="end" y="350.0">1 hr 42 mins</text>
 <text class="stat-name" x="52.0" y="372.0">Makefile</text>
-<rect class="bar-track" x="170.0" y="363.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="363.0" width="3.5" height="8" rx="4" fill="#1b7c83" />
-<text class="stat-time" x="512.0" y="372.0">45 mins</text>
+<rect class="bar-track" x="184.0" y="363.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="363.0" width="2.76647" height="8" rx="4" fill="#1b7c83" />
+<text class="stat-time" x="574.0" text-anchor="end" y="372.0">45 mins</text>
 <text class="stat-name" x="52.0" y="394.0">YAML</text>
-<rect class="bar-track" x="170.0" y="385.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="385.0" width="3.0" height="8" rx="4" fill="#cb171e" />
-<text class="stat-time" x="512.0" y="394.0">39 mins</text>
+<rect class="bar-track" x="184.0" y="385.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="385.0" width="2.37126" height="8" rx="4" fill="#cb171e" />
+<text class="stat-time" x="574.0" text-anchor="end" y="394.0">39 mins</text>
 <text class="stat-name" x="614.0" y="240.0">Cursor</text>
-<rect class="bar-track" x="732.0" y="231.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="231.0" width="191.7" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="240.0">41 hrs 38 mins</text>
+<rect class="bar-track" x="746.0" y="231.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="231.0" width="151.52335" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="240.0">41 hrs 38 mins</text>
 <text class="stat-name" x="614.0" y="262.0">Codex Vscode</text>
-<rect class="bar-track" x="732.0" y="253.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="253.0" width="76.8" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="262.0">16 hrs 40 mins</text>
+<rect class="bar-track" x="746.0" y="253.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="253.0" width="60.70419" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="262.0">16 hrs 40 mins</text>
 <text class="stat-name" x="614.0" y="284.0">Codex CLI</text>
-<rect class="bar-track" x="732.0" y="275.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="275.0" width="12.2" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="1074.0" y="284.0">2 hrs 38 mins</text>
+<rect class="bar-track" x="746.0" y="275.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="275.0" width="9.64311" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="284.0">2 hrs 38 mins</text>
 <text class="card-kicker" x="52.0" y="432.0">Platforms</text>
 <text class="card-kicker" x="614.0" y="432.0">Categories</text>
 <text class="stat-name" x="52.0" y="450.0">Mac</text>
-<rect class="bar-track" x="170.0" y="441.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="441.0" width="333.6" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="512.0" y="450.0">5,366 hrs 37 mins</text>
+<rect class="bar-track" x="184.0" y="441.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="441.0" width="263.68383" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="574.0" text-anchor="end" y="450.0">5,366 hrs 37 mins</text>
 <text class="stat-name" x="52.0" y="472.0">Linux</text>
-<rect class="bar-track" x="170.0" y="463.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="463.0" width="0.4" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="512.0" y="472.0">5 hrs 51 mins</text>
+<rect class="bar-track" x="184.0" y="463.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="463.0" width="0.31617" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="574.0" text-anchor="end" y="472.0">5 hrs 51 mins</text>
 <text class="stat-name" x="52.0" y="494.0">Unknown OS</text>
-<rect class="bar-track" x="170.0" y="485.0" width="334.0" height="8" rx="4" />
-<rect x="170.0" y="485.0" width="0.2" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="512.0" y="494.0">1 hr 8 mins</text>
+<rect class="bar-track" x="184.0" y="485.0" width="264.00000" height="8" rx="4" />
+<rect x="184.0" y="485.0" width="0.15808" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="574.0" text-anchor="end" y="494.0">1 hr 8 mins</text>
 <text class="stat-name" x="614.0" y="450.0">AI Coding</text>
-<rect class="bar-track" x="732.0" y="441.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="441.0" width="320.1" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="450.0">69 hrs 32 mins</text>
+<rect class="bar-track" x="746.0" y="441.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="441.0" width="253.01317" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="450.0">69 hrs 32 mins</text>
 <text class="stat-name" x="614.0" y="472.0">Browsing</text>
-<rect class="bar-track" x="732.0" y="463.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="463.0" width="13.5" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="472.0">2 hrs 56 mins</text>
+<rect class="bar-track" x="746.0" y="463.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="463.0" width="10.67066" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="472.0">2 hrs 56 mins</text>
 <text class="stat-name" x="614.0" y="494.0">Coding</text>
-<rect class="bar-track" x="732.0" y="485.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="485.0" width="0.3" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="1074.0" y="494.0">3 mins</text>
+<rect class="bar-track" x="746.0" y="485.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="485.0" width="0.23713" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="494.0">3 mins</text>
 <text class="stat-name" x="614.0" y="516.0">Writing Docs</text>
-<rect class="bar-track" x="732.0" y="507.0" width="334.0" height="8" rx="4" />
-<rect x="732.0" y="507.0" width="0.1" height="8" rx="4" fill="#bf3989" />
-<text class="stat-time" x="1074.0" y="516.0">0 secs</text>
+<rect class="bar-track" x="746.0" y="507.0" width="264.00000" height="8" rx="4" />
+<rect x="746.0" y="507.0" width="0.07904" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="516.0">0 secs</text>
 <text class="card-kicker" x="52.0" y="550.0">Derived</text>
 <text class="total-label" x="52.0" y="568.0">Lang entropy</text>
 <text class="total-value" x="52.0" y="586.0">2.16 bits</text>
@@ -163,33 +163,33 @@
 <text class="total-value" x="874.0" y="586.0">4%</text>
 <text class="card-kicker" x="52.0" y="612.0">Public projects</text>
 <text class="stat-name" x="52.0" y="630.0">nbadb</text>
-<rect class="bar-track" x="170.0" y="621.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="621.0" width="364.3" height="8" rx="4" fill="#0969da" />
-<text class="stat-time" x="1074.0" y="630.0">29 hrs 29 mins</text>
+<rect class="bar-track" x="184.0" y="621.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="621.0" width="335.83906" height="8" rx="4" fill="#0969da" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="630.0">29 hrs 29 mins</text>
 <text class="stat-name" x="52.0" y="652.0">dotfiles</text>
-<rect class="bar-track" x="170.0" y="643.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="643.0" width="64.2" height="8" rx="4" fill="#1f883d" />
-<text class="stat-time" x="1074.0" y="652.0">5 hrs 12 mins</text>
+<rect class="bar-track" x="184.0" y="643.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="643.0" width="59.18438" height="8" rx="4" fill="#1f883d" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="652.0">5 hrs 12 mins</text>
 <text class="stat-name" x="52.0" y="674.0">wyattowalsh</text>
-<rect class="bar-track" x="170.0" y="665.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="665.0" width="26.6" height="8" rx="4" fill="#8250df" />
-<text class="stat-time" x="1074.0" y="674.0">2 hrs 9 mins</text>
+<rect class="bar-track" x="184.0" y="665.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="665.0" width="24.52188" height="8" rx="4" fill="#8250df" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="674.0">2 hrs 9 mins</text>
 <text class="stat-name" x="52.0" y="696.0">prompts</text>
-<rect class="bar-track" x="170.0" y="687.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="687.0" width="24.5" height="8" rx="4" fill="#bf3989" />
-<text class="stat-time" x="1074.0" y="696.0">1 hr 58 mins</text>
+<rect class="bar-track" x="184.0" y="687.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="687.0" width="22.58594" height="8" rx="4" fill="#bf3989" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="696.0">1 hr 58 mins</text>
 <text class="stat-name" x="52.0" y="718.0">openopps</text>
-<rect class="bar-track" x="170.0" y="709.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="709.0" width="20.7" height="8" rx="4" fill="#d1242f" />
-<text class="stat-time" x="1074.0" y="718.0">1 hr 40 mins</text>
+<rect class="bar-track" x="184.0" y="709.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="709.0" width="19.08281" height="8" rx="4" fill="#d1242f" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="718.0">1 hr 40 mins</text>
 <text class="stat-name" x="52.0" y="740.0">personal-website</text>
-<rect class="bar-track" x="170.0" y="731.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="731.0" width="18.6" height="8" rx="4" fill="#9a6700" />
-<text class="stat-time" x="1074.0" y="740.0">1 hr 30 mins</text>
+<rect class="bar-track" x="184.0" y="731.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="731.0" width="17.14688" height="8" rx="4" fill="#9a6700" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="740.0">1 hr 30 mins</text>
 <text class="stat-name" x="52.0" y="762.0">signoize</text>
-<rect class="bar-track" x="170.0" y="753.0" width="896.0" height="8" rx="4" />
-<rect x="170.0" y="753.0" width="18.0" height="8" rx="4" fill="#1b7c83" />
-<text class="stat-time" x="1074.0" y="762.0">1 hr 27 mins</text>
+<rect class="bar-track" x="184.0" y="753.0" width="826.00000" height="8" rx="4" />
+<rect x="184.0" y="753.0" width="16.59375" height="8" rx="4" fill="#1b7c83" />
+<text class="stat-time" x="1136.0" text-anchor="end" y="762.0">1 hr 27 mins</text>
 <text class="card-kicker" x="52.0" y="796.0">Last 14 days</text>
 <rect class="day-bar" x="52.0" y="838.0" width="72.7" height="44.0" rx="3"><title>2026-08-14: </title></rect>
 <rect class="day-bar" x="130.7" y="874.0" width="72.7" height="8.0" rx="3"><title>2026-08-15: </title></rect>

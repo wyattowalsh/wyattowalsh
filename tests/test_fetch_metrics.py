@@ -1158,3 +1158,168 @@ class TestCollectIntegration:
         assert [repo["name"] for repo in result["top_repos"]] == ["alpha", "beta"]
         assert result["releases_scope"] == "account_owned_repos"
         assert result["releases_repo_count"] == 2
+
+
+def test_public_profile_collection_scopes_events_and_merged_prs(
+    mock_graphql, mock_paginate_rest
+):
+    from scripts.fetch_metrics import (
+        _collect_commit_hour_distribution,
+        _collect_recent_merged_prs,
+    )
+
+    def node(name, visibility):
+        return {
+            "mergedAt": "2026-01-01T00:00:00Z",
+            "repository": {
+                "name": name,
+                "nameWithOwner": f"owner/{name}",
+                "visibility": visibility,
+            },
+        }
+
+    page = {
+        "nodes": [
+            node("one", "PUBLIC"),
+            node("two", "PRIVATE"),
+            node("three", "INTERNAL"),
+        ],
+        "pageInfo": {"endCursor": None, "hasNextPage": False},
+    }
+    mock_graphql.return_value = {"data": {"user": {"pullRequests": page}}}
+    result = _collect_recent_merged_prs("owner", "fixture", public_profile=True)
+    assert [value["repo_full_name"] for value in result] == ["owner/one"]
+    mock_paginate_rest.return_value = [
+        {
+            "type": "PushEvent",
+            "created_at": "2026-01-01T01:00:00+02:00",
+            "payload": {"size": 12},
+        },
+        {"type": "PushEvent", "created_at": "2026-01-01T13:00:00Z", "payload": {}},
+    ]
+    assert _collect_commit_hour_distribution(
+        "owner", "fixture", public_profile=True
+    ) == ({13: 1, 23: 12}, 13)
+    assert "/events/public?" in mock_paginate_rest.call_args.args[0]
+    assert mock_paginate_rest.call_args.kwargs["require_complete"] is True
+
+
+@pytest.mark.parametrize(
+    "page",
+    [
+        {},
+        {"nodes": [], "pageInfo": {}},
+        {"nodes": [{"repository": {"name": "unknown"}}]},
+        {"nodes": [{"repository": {"visibility": "PUBLIC"}}]},
+        {"nodes": [], "pageInfo": {"hasNextPage": True, "endCursor": "repeat"}},
+    ],
+)
+def test_malformed_public_pr_input_fails_closed(mock_graphql, page):
+    from scripts.fetch_metrics import _collect_recent_merged_prs
+
+    mock_graphql.return_value = {"data": {"user": {"pullRequests": page}}}
+    with pytest.raises(ValueError):
+        _collect_recent_merged_prs("owner", "fixture", public_profile=True)
+
+
+@pytest.mark.parametrize(
+    ("created", "payload"),
+    [
+        ("bad", {}),
+        ("2026-01-01", {}),
+        ("2026-01-01T10:00:00Z", {"size": -1}),
+        ("2026-01-01T10:00:00Z", {"commits": "unexpected"}),
+    ],
+)
+def test_malformed_public_push_input_fails_closed(mock_paginate_rest, created, payload):
+    from scripts.fetch_metrics import _collect_commit_hour_distribution
+
+    mock_paginate_rest.return_value = [
+        {"type": "PushEvent", "created_at": created, "payload": payload}
+    ]
+    with pytest.raises(ValueError, match="public push"):
+        _collect_commit_hour_distribution("owner", "fixture", public_profile=True)
+
+
+@pytest.mark.parametrize(
+    "entry,error",
+    [
+        ({"private": False, "created_at": "2026-01-01"}, False),
+        ({"private": True}, False),
+        ({"private": False, "visibility": "internal"}, False),
+        ({}, True),
+        ({"private": False, "created_at": "malformed"}, True),
+        ({"private": False, "language": {}}, True),
+    ],
+)
+def test_public_metric_repo_inventory_and_collection_errors(
+    mock_get,
+    mock_graphql,
+    mock_paginate_rest,
+    entry,
+    error,
+):
+    from scripts.fetch_metrics import collect
+
+    row = _make_repo("sample", language="Python") | entry
+    mock_get.return_value = ({}, {})
+    mock_graphql.return_value = {"errors": [{"message": "Unavailable"}]}
+
+    def paginate(url, *_args, **_kwargs):
+        if "/repos?per_page=" in url:
+            return [row]
+        raise OSError("unavailable")
+
+    mock_paginate_rest.side_effect = paginate
+
+    result = collect("owner", "profile", "fixture", public_profile=True)
+    assert ("languages" in result["collection_failures"]) is error
+    assert {"recent_merged_prs", "commit_hour_distribution"} <= set(
+        result["collection_failures"]
+    )
+    assert result["repos"] == (
+        [row]
+        if not error and row["private"] is False and row.get("visibility") != "internal"
+        else []
+    )
+
+
+@pytest.mark.parametrize("public_profile", [True, False])
+def test_ref_only_pushes_never_displace_commit_weighted_peak(
+    mock_paginate_rest, public_profile
+):
+    from scripts.fetch_metrics import _collect_commit_hour_distribution
+    from scripts.supplemental_metrics import _peak_commit_hour
+
+    def push(hour, payload):
+        return {
+            "type": "PushEvent",
+            "created_at": f"2026-01-01T{hour:02}:00:00Z",
+            "payload": payload,
+        }
+
+    ref_only = [
+        push(1, payload)
+        for payload in (
+            {"size": 0, "commits": []},
+            {"size": 0},
+            {"commits": []},
+        )
+    ]
+    mock_paginate_rest.return_value = ref_only + [
+        push(13, {"size": 2}),
+        push(22, {}),
+    ]
+    hours, sample = _collect_commit_hour_distribution(
+        "owner", "fixture", public_profile=public_profile
+    )
+    assert hours == {13: 2, 22: 1}
+    assert sample == 3
+    assert _peak_commit_hour({"commit_hour_distribution": hours}) == "13:00"
+    for events in (ref_only, []):
+        mock_paginate_rest.return_value = events
+        hours, sample = _collect_commit_hour_distribution(
+            "owner", "fixture", public_profile=public_profile
+        )
+        assert (hours, sample) == ({}, 0)
+        assert _peak_commit_hour({"commit_hour_distribution": hours}) == "n/a"

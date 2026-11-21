@@ -13,6 +13,7 @@ from scripts.wakatime_readme import (
     DEFAULT_WAKATIME_SVG_PATH,
     MARKER_END,
     MARKER_START,
+    SKIP_MARKER_NAME,
     WAKA_STATS_RANGES,
     WAKA_SVG_POINTER,
     GitHubShortInfo,
@@ -47,6 +48,7 @@ def _sample_waka_payload() -> dict[str, Any]:
     return {
         "data": {
             "timezone": "America/New_York",
+            "total_seconds": 90000,
             "languages": [
                 {
                     "name": "Python",
@@ -220,8 +222,8 @@ def test_apply_waka_section_rewrites_only_marker_zone(tmp_path: Path) -> None:
     assert "stale" not in text
     assert WAKA_SVG_POINTER in text
     assert "This Week I Spent My Time On" not in text
-    assert text.index(MARKER_START) < text.index(WAKA_SVG_POINTER) < text.index(
-        MARKER_END
+    assert (
+        text.index(MARKER_START) < text.index(WAKA_SVG_POINTER) < text.index(MARKER_END)
     )
 
 
@@ -554,6 +556,7 @@ def test_fetch_public_repo_names_skips_private(monkeypatch) -> None:
         lambda *_args, **_kwargs: [
             {"name": "agents", "full_name": "wyattowalsh/agents", "private": False},
             {"name": "secret", "full_name": "wyattowalsh/secret", "private": True},
+            {"name": "unknown", "full_name": "wyattowalsh/unknown"},
             "not-a-repo",
         ],
     )
@@ -561,6 +564,7 @@ def test_fetch_public_repo_names_skips_private(monkeypatch) -> None:
     assert "agents" in names
     assert "wyattowalsh/agents" in names
     assert "secret" not in names
+    assert "unknown" not in names
 
 
 def test_generate_waka_section_hides_private_projects(monkeypatch) -> None:
@@ -694,3 +698,81 @@ def test_main_apply_copies_svg_artifact(tmp_path: Path) -> None:
     assert "This Week I Spent My Time On" not in applied
     assert dest.read_text(encoding="utf-8") == "<svg>Languages</svg>\n"
     assert dest != DEFAULT_WAKATIME_SVG_PATH
+
+
+@pytest.mark.parametrize("value", [None, -1, "broken", float("inf"), True])
+def test_invalid_required_total_aborts_waka_collection(monkeypatch, value):
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_stats",
+        lambda *_a, **_kw: {"data": {"total_seconds": value}},
+    )
+    with pytest.raises(ValueError, match="report total"):
+        collect_wakatime_stats("fixture")
+
+
+def test_bad_weekly_breakdown_and_repeated_day_raise():
+    with pytest.raises(ValueError, match="reporting period"):
+        parse_wakatime_stats({"data": {"total_seconds": 1, "range": "last_year"}})
+    with pytest.raises(ValueError, match="breakdown"):
+        parse_wakatime_stats({"data": {"total_seconds": 1, "languages": [None]}})
+    with pytest.raises(ValueError, match="percentage"):
+        parse_wakatime_stats(
+            {
+                "data": {
+                    "total_seconds": 1,
+                    "languages": [
+                        {"name": "Python", "total_seconds": 1, "percent": 200}
+                    ],
+                }
+            }
+        )
+    day = {"date": "2026-01-01", "total_seconds": 0}
+    with pytest.raises(ValueError, match="Duplicate"):
+        parse_daily_totals_from_insights({"data": {"days": [day, day]}})
+
+
+def test_skip_rejects_reused_family_without_touching_it(tmp_path):
+    summary = tmp_path / "summary-wakatime.svg"
+    summary.write_text("previous good chart")
+    with pytest.raises(ValueError, match="clean staging"):
+        write_skip_artifact(tmp_path, "missing key")
+    assert summary.read_text() == "previous good chart"
+    assert not (tmp_path / SKIP_MARKER_NAME).exists()
+
+
+def test_missing_daily_total_retries_without_adding_a_zero_day(monkeypatch):
+    from scripts.wakatime_readme import WakaCollection
+    from scripts.wakatime_svg import _waka_panel
+
+    missing = {"range": {"date": "2026-08-01"}}
+    tracked = {"range": {"date": "2026-08-02"}, "grand_total": {"total_seconds": 7200}}
+    zero = {"range": {"date": "2026-08-03"}, "grand_total": {"total_seconds": 0}}
+    with pytest.raises(ValueError, match="grand_total"):
+        parse_daily_totals_from_summaries({"data": [missing, tracked]})
+
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_insights", lambda *a, **k: {}
+    )
+
+    def summaries(_key, *, range_label):
+        data = (
+            [missing, tracked, zero]
+            if range_label == "Last 30 Days"
+            else [tracked, zero]
+        )
+        return {"data": data}
+
+    monkeypatch.setattr("scripts.wakatime_readme.fetch_wakatime_summaries", summaries)
+    days = fetch_wakatime_daily_totals("fixture")
+    assert [row.total_seconds for row in days] == [7200, 0]
+    collection = WakaCollection(
+        week=parse_wakatime_stats(_sample_waka_payload()), daily=days
+    )
+    _, detail = _waka_panel(collection, datetime(2026, 8, 3, tzinfo=UTC), None)
+    assert "1h across 2 reported days" in detail
+    assert "2026-08-01" not in detail
+    monkeypatch.setattr(
+        "scripts.wakatime_readme.fetch_wakatime_summaries",
+        lambda *a, **k: {"data": [missing]},
+    )
+    assert fetch_wakatime_daily_totals("fixture") == ()

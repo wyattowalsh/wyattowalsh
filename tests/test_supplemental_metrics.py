@@ -25,6 +25,16 @@ from scripts.supplemental_metrics import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _offline_metrics_auth(monkeypatch):
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._probe_github_token", lambda _: True
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_spotify_catalog", lambda *_: {}
+    )
+
+
 def _sample_metrics(*, now_date: date | None = None) -> dict[str, object]:
     today = now_date or datetime.now(UTC).date()
 
@@ -104,7 +114,7 @@ def test_generate_supplemental_metrics_writes_required_cards_and_disables_option
     monkeypatch.delenv("X_ACCESS_TOKEN_SECRET", raising=False)
     monkeypatch.setattr(
         "scripts.supplemental_metrics.collect_github_metrics",
-        lambda owner, repo, token: _sample_metrics(),
+        lambda owner, repo, token, **_kwargs: _sample_metrics(),
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
@@ -185,7 +195,7 @@ def test_validate_supplemental_metrics_rejects_missing_required_marker(
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     (output_dir / "metrics-languages.svg").write_text(
         '<svg xmlns="http://www.w3.org/2000/svg">'
-        '<text>Most used languages: bytes</text></svg>',
+        "<text>Most used languages: bytes</text></svg>",
         encoding="utf-8",
     )
 
@@ -375,7 +385,7 @@ def test_generate_supplemental_metrics_enables_x_posts_from_oauth1_secret_quarte
     monkeypatch.delenv("SPOTIFY_REFRESH_TOKEN", raising=False)
     monkeypatch.setattr(
         "scripts.supplemental_metrics.collect_github_metrics",
-        lambda owner, repo, token: _sample_metrics(),
+        lambda owner, repo, token, **_kwargs: _sample_metrics(),
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
@@ -598,7 +608,7 @@ def test_generate_supplemental_metrics_writes_spotify_hero_when_secrets_present(
     monkeypatch.delenv("X_ACCESS_TOKEN_SECRET", raising=False)
     monkeypatch.setattr(
         "scripts.supplemental_metrics.collect_github_metrics",
-        lambda owner, repo, token: _sample_metrics(),
+        lambda owner, repo, token, **_kwargs: _sample_metrics(),
     )
     monkeypatch.setattr(
         "scripts.supplemental_metrics._fetch_recent_activity",
@@ -709,3 +719,193 @@ def test_fact_remove_feed_metrics_activity_absent() -> None:
     readme = Path("README.md").read_text(encoding="utf-8")
     assert "metrics-activity.svg" not in readme
     assert not Path(".github/assets/img/metrics-activity.svg").is_file()
+
+
+def test_metric_families_share_source_and_remove_stale_music(tmp_path, monkeypatch):
+    from scripts.profile_metric_family import metric_files, read_metric_family
+
+    stamp = datetime(2026, 8, 14, 19, 0, tzinfo=UTC)
+    long_name = "WWW Long Track With A Complete Unabridged Title" * 3
+    inputs = _sample_metrics(now_date=stamp.date())
+    inputs["languages"] = {"Python": 100, "JetBrains MPS": 200, "Z" * 50: 1}
+    inputs["repos"] = [
+        {"language": "Python", "created_at": "2025-01-01", "fork": False},
+    ]
+    inputs["commit_hour_distribution"] = {23: 8, 0: 1, 13: 3}
+    tracks = _sample_tracks()
+    tracks[0].update(name=long_name, image_data_uri="data:image/jpeg;base64,AAAA")
+    tracks[1]["artists"] = "Artist | <Name>"
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics.collect_github_metrics", lambda *_a, **_kw: inputs
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._resolve_github_token", lambda: "fixture"
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_recent_tracks", lambda *_: tracks
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._fetch_image_data_uri", lambda *_: None
+    )
+    monkeypatch.setattr(
+        "scripts.supplemental_metrics._load_x_oauth1_credentials_from_env", lambda: None
+    )
+    for key in ("SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET", "SPOTIFY_REFRESH_TOKEN"):
+        monkeypatch.setenv(key, "fixture")
+
+    def run():
+        generate_supplemental_metrics(
+            owner="o",
+            repo="o",
+            output_dir=tmp_path,
+            manifest_path=tmp_path / "manifest.json",
+            updated_at=stamp,
+        )
+
+    run()
+    original = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    run()
+    assert original == {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    alt, detail, saved = read_metric_family(tmp_path, "metrics-music")
+    assert long_name in alt and long_name in detail
+    assert saved == stamp.date()
+    assert "Artist &#124; &lt;Name&gt;" in detail
+    alt, detail, _ = read_metric_family(tmp_path, "metrics-habits")
+    assert "23:00 UTC" in alt and "3 days" in alt and "75%" in detail
+    assert "56%" in detail and "| agents | 2 |" in detail
+    alt, detail, _ = read_metric_family(tmp_path, "metrics-languages")
+    assert "Python 99%" in alt and "| JetBrains MPS" not in detail
+    assert "| " + "Z" * 50 + " | 1% |" in detail
+    monkeypatch.delenv("SPOTIFY_REFRESH_TOKEN")
+    run()
+    assert not any((tmp_path / f).exists() for f in metric_files("metrics-music"))
+    (tmp_path / "summary-metrics-music.svg").write_bytes(
+        original["summary-metrics-music.svg"]
+    )
+    errors = validate_supplemental_metrics(
+        output_dir=tmp_path, manifest_path=tmp_path / "manifest.json"
+    )
+    assert errors == ["summary-metrics-music.svg: disabled asset is still present"]
+    (tmp_path / "summary-metrics-music.svg").unlink()
+    (tmp_path / "summary-metrics-habits.svg").write_bytes(
+        original["summary-metrics-languages.svg"]
+    )
+    errors = validate_supplemental_metrics(
+        output_dir=tmp_path, manifest_path=tmp_path / "manifest.json"
+    )
+    assert errors == ["Mismatched profile metric family: metrics-habits"]
+
+
+def test_language_ties_have_stable_summary_and_full_chart_cutoffs():
+    from scripts.supplemental_metrics import (
+        _language_panel,
+        _language_shares,
+        _render_languages_svg,
+        _top_languages,
+    )
+
+    pairs = [(lang, 10) for lang in ("Z", "y", "X", "c", "C", "B", "A", "q", "K")]
+    repos = [
+        {"language": lang, "fork": False, "created_at": "2026-01-01"}
+        for lang, _ in pairs
+    ]
+    ascending = {"languages": dict(pairs), "repos": repos}
+    reversed_input = {
+        "languages": dict(reversed(pairs)),
+        "repos": list(reversed(repos)),
+    }
+    day = date(2026, 1, 2)
+    assert (
+        _top_languages(ascending) == _top_languages(reversed_input) == ("A", "B", "C")
+    )
+    assert [row[0] for row in _language_shares(ascending)] == [
+        "A",
+        "B",
+        "C",
+        "c",
+        "K",
+        "q",
+        "X",
+        "y",
+    ]
+    assert _render_languages_svg(ascending) == _render_languages_svg(reversed_input)
+    assert _language_panel(ascending, day) == _language_panel(reversed_input, day)
+
+
+def test_actions_metric_auth_is_scoped_for_calendar_prs_and_pushes(
+    tmp_path, monkeypatch
+):
+    from scripts import fetch_metrics, supplemental_metrics
+
+    monkeypatch.setenv("GITHUB_ACTIONS", "true")
+    monkeypatch.setenv("METRICS_TOKEN", "personal-fixture")
+    monkeypatch.setenv("GH_TOKEN", "account-fixture")
+    monkeypatch.setenv("GITHUB_TOKEN", "run-fixture")
+    for key in (
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET",
+        "SPOTIFY_REFRESH_TOKEN",
+        "X_API_KEY",
+        "X_API_KEY_SECRET",
+        "X_ACCESS_TOKEN",
+        "X_ACCESS_TOKEN_SECRET",
+    ):
+        monkeypatch.delenv(key, raising=False)
+
+    def forbidden_probe(_token):
+        pytest.fail("Run-scoped auth must not probe account credentials")
+
+    monkeypatch.setattr(supplemental_metrics, "_probe_github_token", forbidden_probe)
+    auth = {}
+
+    def graphql(query, token, **_kwargs):
+        if "contributionCalendar" in query:
+            auth["calendar"] = token
+            return {
+                "data": {
+                    "user": {
+                        "contributionsCollection": {
+                            "contributionCalendar": {
+                                "weeks": [],
+                                "totalContributions": 0,
+                            }
+                        }
+                    }
+                }
+            }
+        if "pullRequests(" in query:
+            auth["prs"] = token
+            return {
+                "data": {
+                    "user": {
+                        "pullRequests": {
+                            "nodes": [],
+                            "pageInfo": {"hasNextPage": False},
+                        }
+                    }
+                }
+            }
+        return {}
+
+    def paginate(url, token, **_kwargs):
+        if "/events/public?" in url:
+            auth["pushes"] = token
+        return []
+
+    monkeypatch.setattr(fetch_metrics, "_graphql", graphql)
+    monkeypatch.setattr(fetch_metrics, "_paginate_rest", paginate)
+    monkeypatch.setattr(fetch_metrics, "_get", lambda *_args, **_kw: ({}, {}))
+
+    def generate():
+        return generate_supplemental_metrics(
+            owner="owner",
+            repo="profile",
+            output_dir=tmp_path,
+            manifest_path=tmp_path / "manifest.json",
+        )
+
+    generate()
+    assert auth == dict.fromkeys(("calendar", "prs", "pushes"), "run-fixture")
+    monkeypatch.delenv("GITHUB_TOKEN")
+    with pytest.raises(RuntimeError, match="GitHub token"):
+        generate()

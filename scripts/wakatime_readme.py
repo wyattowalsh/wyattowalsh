@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import math
 import os
 import re
 import ssl
@@ -53,8 +54,7 @@ DEFAULT_ARTIFACT_NAME: Final[str] = "waka-section.md"
 SKIP_MARKER_NAME: Final[str] = "waka-section.skipped"
 DEFAULT_WAKATIME_SVG_PATH: Final[Path] = Path(".github/assets/img/wakatime.svg")
 WAKA_SVG_POINTER: Final[str] = (
-    "<!-- WakaTime SVG is rendered from "
-    f"{DEFAULT_WAKATIME_SVG_PATH.as_posix()} -->"
+    f"<!-- WakaTime SVG is rendered from {DEFAULT_WAKATIME_SVG_PATH.as_posix()} -->"
 )
 
 _OPTIONAL_FETCH_ERRORS: Final[tuple[type[BaseException], ...]] = (
@@ -660,6 +660,18 @@ def _parse_iso_date(value: Any) -> date | None:
         return None
 
 
+def _finite_amount(raw: Any, field: str) -> float:
+    if type(raw) not in (float, int) or not math.isfinite(raw) or raw < 0:
+        raise ValueError(f"Invalid WakaTime {field}")
+    return float(raw)
+
+
+def _sorted_days(days: list[WakaDayTotal]) -> tuple[WakaDayTotal, ...]:
+    if len({item.day for item in days}) != len(days):
+        raise ValueError("Duplicate WakaTime daily total")
+    return tuple(sorted(days, key=lambda item: item.day))
+
+
 def _parse_daily_item(item: Any) -> WakaDayTotal | None:
     if not isinstance(item, dict):
         return None
@@ -679,10 +691,7 @@ def _parse_daily_item(item: Any) -> WakaDayTotal | None:
         text = str(grand.get("text") or text).strip()
     if day is None:
         return None
-    try:
-        seconds = float(seconds_raw or 0.0)
-    except (TypeError, ValueError):
-        seconds = 0.0
+    seconds = _finite_amount(seconds_raw, "daily total")
     return WakaDayTotal(day=day, total_seconds=max(0.0, seconds), text=text)
 
 
@@ -710,8 +719,7 @@ def parse_daily_totals_from_insights(
                 parsed = _parse_daily_item({"date": key, "total_seconds": value})
             if parsed is not None:
                 days.append(parsed)
-    days.sort(key=lambda item: item.day)
-    return tuple(days)
+    return _sorted_days(days)
 
 
 def parse_daily_totals_from_summaries(
@@ -731,19 +739,14 @@ def parse_daily_totals_from_summaries(
         day = None
         if isinstance(range_info, dict):
             day = _parse_iso_date(range_info.get("date"))
-        seconds = 0.0
-        text = ""
-        if isinstance(grand, dict):
-            try:
-                seconds = float(grand.get("total_seconds") or 0.0)
-            except (TypeError, ValueError):
-                seconds = 0.0
-            text = str(grand.get("text") or "").strip()
         if day is None:
             continue
-        days.append(WakaDayTotal(day=day, total_seconds=max(0.0, seconds), text=text))
-    days.sort(key=lambda item: item.day)
-    return tuple(days)
+        if not isinstance(grand, dict):
+            raise ValueError("WakaTime daily summary missing grand_total")
+        seconds = _finite_amount(grand.get("total_seconds"), "daily total")
+        text = str(grand.get("text") or "").strip()
+        days.append(WakaDayTotal(day=day, total_seconds=seconds, text=text))
+    return _sorted_days(days)
 
 
 def parse_all_time_since_today(payload: dict[str, Any]) -> WakaAllTimeTotal:
@@ -751,10 +754,7 @@ def parse_all_time_since_today(payload: dict[str, Any]) -> WakaAllTimeTotal:
     data = payload.get("data")
     if not isinstance(data, dict):
         raise ValueError("WakaTime all_time_since_today missing data object")
-    try:
-        seconds = float(data.get("total_seconds") or 0.0)
-    except (TypeError, ValueError):
-        seconds = 0.0
+    seconds = _finite_amount(data.get("total_seconds"), "all-time total")
     text = str(data.get("text") or "").strip() or _format_duration(seconds)
     range_info = data.get("range") if isinstance(data.get("range"), dict) else {}
     start_date = None
@@ -813,8 +813,10 @@ def _parse_entries(
         name = str(item.get("name") or "").strip()
         if not name:
             continue
-        total_seconds = float(item.get("total_seconds") or 0.0)
-        percent = float(item.get("percent") or 0.0)
+        total_seconds = _finite_amount(item.get("total_seconds"), "entry duration")
+        percent = _finite_amount(item.get("percent", 0), "entry percentage")
+        if percent > 100:
+            raise ValueError("Invalid WakaTime entry percentage")
         text = str(item.get("text") or "").strip()
         if not text:
             text = _format_duration(total_seconds)
@@ -843,14 +845,27 @@ def parse_wakatime_stats(
     if not isinstance(data, dict):
         raise ValueError("WakaTime stats payload missing data object")
     timezone = str(data.get("timezone") or "UTC").strip() or "UTC"
-    try:
-        total_seconds = float(
-            data.get("total_seconds_including_other_language")
-            or data.get("total_seconds")
-            or 0.0
-        )
-    except (TypeError, ValueError):
-        total_seconds = 0.0
+    total_seconds = _finite_amount(
+        data.get("total_seconds_including_other_language", data.get("total_seconds")),
+        "report total",
+    )
+    if data.get("range", range_name) != range_name:
+        raise ValueError("Unexpected WakaTime reporting period")
+    for group in (
+        "languages",
+        "editors",
+        "projects",
+        "operating_systems",
+        "categories",
+    ):
+        rows = data.get(group, [])
+        if not isinstance(rows, list) or any(
+            not isinstance(row, dict)
+            or not isinstance(row.get("name"), str)
+            or not row["name"].strip()
+            for row in rows
+        ):
+            raise ValueError("Malformed WakaTime breakdown")
     human_total = str(
         data.get("human_readable_total_including_other_language")
         or data.get("human_readable_total")
@@ -945,7 +960,7 @@ def fetch_public_repo_names(
 
     if login is not None and login != "":
         quoted = urllib.parse.quote(login)
-        url = f"{GITHUB_API_BASE}/users/{quoted}/repos?type=public&per_page=100"
+        url = f"{GITHUB_API_BASE}/users/{quoted}/repos?type=owner&per_page=100"
     else:
         url = (
             f"{GITHUB_API_BASE}/user/repos?visibility=public"
@@ -954,7 +969,11 @@ def fetch_public_repo_names(
     pages = _paginate_rest(url, token, max_pages=10)
     names: set[str] = set()
     for repo in pages:
-        if not isinstance(repo, dict) or repo.get("private"):
+        if (
+            not isinstance(repo, dict)
+            or repo.get("private") is not False
+            or repo.get("visibility", "public") != "public"
+        ):
             continue
         name = str(repo.get("name") or "").strip()
         full_name = str(repo.get("full_name") or "").strip()
@@ -1138,6 +1157,14 @@ def write_waka_artifact(section_body: str, output_path: Path) -> Path:
 def write_skip_artifact(output_dir: Path, reason: str) -> Path:
     """Write a skip marker when generation is intentionally skipped."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    for name in (
+        DEFAULT_ARTIFACT_NAME,
+        "wakatime.svg",
+        "summary-wakatime.svg",
+        "detail-wakatime.md",
+    ):
+        if (output_dir / name).exists():
+            raise ValueError("WakaTime skip requires a clean staging directory")
     skip_path = output_dir / SKIP_MARKER_NAME
     skip_path.write_text(f"{reason.strip()}\n", encoding="utf-8")
     logger.info("Wrote Waka skip marker to {path}", path=skip_path)
@@ -1194,6 +1221,38 @@ def generate_waka_section(
         top_n=DEFAULT_TOP_N,
     )
     return render_waka_section(filtered.week)
+
+
+def generate_waka_artifacts(
+    output_path: Path,
+    *,
+    api_key: str,
+    svg_output: Path | None,
+    github_login: str | None,
+    include_github: bool,
+    project_allowlist: Iterable[str] = (),
+) -> None:
+    """Write a pointer and, when requested, its chart from one collection."""
+    if svg_output is not None:
+        from .wakatime_svg import generate_wakatime_svg
+
+        generate_wakatime_svg(
+            api_key=api_key,
+            output_path=svg_output,
+            github_login=github_login,
+            include_github=include_github,
+            project_allowlist=project_allowlist,
+        )
+        body = render_waka_section()
+    else:
+        body = generate_waka_section(
+            api_key=api_key,
+            github_login=github_login,
+            include_github=include_github,
+            project_allowlist=project_allowlist,
+        )
+    write_waka_artifact(body, output_path)
+    (output_path.parent / SKIP_MARKER_NAME).unlink(missing_ok=True)
 
 
 def apply_waka_artifact_to_readme(
@@ -1352,24 +1411,14 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(
                 "WAKATIME_API_KEY is required (or pass --allow-missing-key)"
             )
-        allowlist = _parse_allowlist_arg(args.project_allowlist)
-        body = generate_waka_section(
+        generate_waka_artifacts(
+            output_path,
             api_key=api_key,
+            svg_output=args.svg_output,
             github_login=args.github_login,
             include_github=not args.no_github,
-            project_allowlist=allowlist,
+            project_allowlist=_parse_allowlist_arg(args.project_allowlist),
         )
-        write_waka_artifact(body, output_path)
-        if args.svg_output is not None:
-            from .wakatime_svg import generate_wakatime_svg
-
-            generate_wakatime_svg(
-                api_key=api_key,
-                output_path=args.svg_output,
-                github_login=args.github_login,
-                include_github=not args.no_github,
-                project_allowlist=allowlist,
-            )
         return 0
 
     if args.command == "apply":

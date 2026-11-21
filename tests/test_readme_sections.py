@@ -9,7 +9,6 @@ from email.message import Message
 from io import BytesIO
 from pathlib import Path
 from textwrap import dedent
-from typing import Protocol, cast
 from urllib.error import HTTPError, URLError
 from urllib.request import Request
 
@@ -17,10 +16,10 @@ import pytest
 import typer
 from loguru import logger as loguru_logger
 
-from scripts.art.roster import SHIPPED_STYLE_KEYS
 from scripts.config import (
     ProjectConfig,
     ReadmeFeaturedRepo,
+    ReadmeProfileCards,
     ReadmeSectionsSettings,
     ReadmeSocialLink,
     ReadmeSvgSettings,
@@ -38,7 +37,6 @@ from scripts.readme_sections import (
     _is_safe_remote_url,
     _safe_urlopen,
     _SafeRedirectHandler,
-    compile_section_body_re,
 )
 from tests.test_profile_workflow import (
     _job_block,
@@ -47,16 +45,13 @@ from tests.test_profile_workflow import (
     _workflow_text,
 )
 from tests.test_readme_gfm_ux import (
+    GALLERY_PATH,
+    README_PATH,
     after_heading,
     after_heading_body,
-    assert_living_art_dropdown_copy,
-    assert_living_art_gif_href_has_no_watch_caption,
-    assert_living_art_hosts_allowed,
-    assert_living_art_intro_has_no_spine,
-    assert_living_art_stack_layout,
+    assert_profile_gallery_link,
     assert_tech_stack_dropdown_is_h2,
     assert_visible_or_comment_heading,
-    living_art_section,
     slice_between_headings,
 )
 
@@ -148,6 +143,25 @@ def assert_word_cloud_frequency_details_without_waka(rendered: str) -> None:
 
 
 class TestRendering:
+    @pytest.fixture
+    def repo_preview(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Resolve the image host and return its preview entirely within the fixture."""
+
+        class ImageResponse(BytesIO):
+            headers = {"Content-Type": "image/png"}
+
+        monkeypatch.setattr(
+            socket,
+            "getaddrinfo",
+            lambda *args, **kwargs: [
+                (socket.AF_INET, socket.SOCK_STREAM, 0, "", ("93.184.216.34", 0))
+            ],
+        )
+        monkeypatch.setattr(
+            "scripts.readme_sections._safe_urlopen",
+            lambda *args, **kwargs: ImageResponse(b"mock-image-bytes"),
+        )
+
     @pytest.fixture(autouse=True)
     def _isolate_separator_generation(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -314,27 +328,10 @@ class TestRendering:
         assert "data:image" in svg
         assert "★" not in svg
 
+    @pytest.mark.usefixtures("repo_preview")
     def test_featured_projects_render_per_card_svgs_and_manifest(
-        self, tmp_path: Path, monkeypatch
+        self, tmp_path: Path
     ) -> None:
-        class FakeResponse:
-            def __init__(self, payload: bytes) -> None:
-                self._payload = payload
-                self.headers = {"Content-Type": "image/png"}
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc, tb):
-                return None
-
-            def read(self) -> bytes:
-                return self._payload
-
-        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
-            return FakeResponse(b"mock-image-bytes")
-
-        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
@@ -576,6 +573,7 @@ class TestRendering:
 
         assert "<table>" not in html
         assert html.count('width="360"') == 4
+        assert "<details" not in html
         assert html.count("featured-card-wyattowalsh-") == 4
 
     def test_featured_projects_render_mobile_readable_flow_for_six_peer_cards(
@@ -612,29 +610,15 @@ class TestRendering:
 
         assert "<table>" not in html
         assert html.count('width="360"') == 6
-        assert "More Featured Projects" not in html
+        assert "<details" not in html
+        assert re.findall(r'<a href="https://github.com/([^"]+)"', html) == [
+            repo.full_name for repo in repos
+        ]
 
+    @pytest.mark.usefixtures("repo_preview")
     def test_featured_projects_keep_one_card_variety_for_larger_sets(
-        self, tmp_path: Path, monkeypatch
+        self, tmp_path: Path
     ) -> None:
-        class FakeResponse:
-            def __init__(self, payload: bytes) -> None:
-                self._payload = payload
-                self.headers = {"Content-Type": "image/png"}
-
-            def __enter__(self):
-                return self
-
-            def __exit__(self, exc_type, exc, tb):
-                return None
-
-            def read(self) -> bytes:
-                return self._payload
-
-        def fake_urlopen(request, timeout=10.0):  # noqa: ARG001
-            return FakeResponse(b"mock-image-bytes")
-
-        monkeypatch.setattr("scripts.readme_sections._safe_urlopen", fake_urlopen)
 
         repos = [
             ReadmeFeaturedRepo(full_name=f"wyattowalsh/repo-{index}")
@@ -681,7 +665,10 @@ class TestRendering:
             )
         )
 
-        assert "More Featured Projects" not in html
+        assert "<details" not in html
+        assert re.findall(r'<a href="https://github.com/([^"]+)"', html) == [
+            repo.full_name for repo in repos
+        ]
         assert "<table>" not in html
         assert html.count('width="360"') == 7
         assert len(manifest["projects"]) == 7
@@ -1137,99 +1124,65 @@ class TestRendering:
         assert 'width="500"' not in html
         assert 'width="100%"' not in html
 
-    def test_generate_rewrites_living_art_as_full_width_stack_with_details(
-        self,
-        tmp_path: Path,
+    @pytest.mark.parametrize("count", [0, 1, 4, 5])
+    def test_generate_preserves_profile_gallery_and_featured_order(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, count: int
     ) -> None:
         readme = tmp_path / "README.md"
-        readme.write_text(
-            dedent(
-                """\
-                ## Living Art
+        readme.write_bytes(README_PATH.read_bytes())
+        from scripts.profile_metric_family import metric_files
 
-                <table><tbody><tr><td>stale living art grid</td></tr></tbody></table>
-
-                ## My Tech Stack
-
-                <p align="center">
-                  <img alt="AI/ML" src="https://img.shields.io/badge/AI%2FML-412991?style=for-the-badge&amp;logo=openai&amp;logoColor=white"/>
-                  <img alt="Data Engineering" src="https://img.shields.io/badge/Data%20Engineering-4169E1?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"/>
-                </p>
-
-                <details>
-                <summary><strong>View full stack (200+ technologies)</strong></summary>
-
-                <!-- SKILLS:START -->
-                kept skills
-                <!-- SKILLS:END -->
-
-                </details>
-                """
-            ),
-            encoding="utf-8",
-        )
-
+        image_dir = Path(".github/assets/img")
+        (tmp_path / image_dir).mkdir(parents=True)
+        for metric in ("metrics-languages", "metrics-habits"):
+            for name in metric_files(metric):
+                source = README_PATH.parent / image_dir / name
+                (tmp_path / image_dir / name).write_bytes(source.read_bytes())
+        gallery = tmp_path / "LIVING_ART.md"
+        gallery_bytes = GALLERY_PATH.read_bytes()
+        gallery.write_bytes(gallery_bytes)
+        repos = [ReadmeFeaturedRepo(full_name=f"owner/repo-{i}") for i in range(count)]
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
                 readme_path=str(readme),
-                featured_repos=[],
+                featured_repos=repos,
                 social_links=[],
+                svg=ReadmeSvgSettings(enabled=False, output_dir=str(tmp_path / "svg")),
             ),
+            repo_client=StubRepoClient({}),
             blog_client=StubBlogClient([]),
+            star_history_client=StubStarHistoryClient({}),
         )
-
-        generator.generate()
+        monkeypatch.setattr(
+            generator, "_fetch_simple_icon_data_uri", lambda **kwargs: None
+        )
+        monkeypatch.setattr(generator, "_fetch_w4w_favicon_data_uri", lambda: None)
+        generator.generate(require_markers=True)
         rendered = readme.read_text(encoding="utf-8")
-        assert_visible_or_comment_heading(rendered, "Living Art")
-        assert_visible_or_comment_heading(rendered, "My Tech Stack")
-        living_raw = compile_section_body_re(
-            "Living Art",
-            ("Living Art", "My Tech Stack"),
-        ).search(rendered)
-        assert living_raw is not None
-        assert living_raw.group(0).count("sep-living.svg") == 1
-        assert living_raw.group(0).rfind("living-ferrofluid.gif") < living_raw.group(
-            0
-        ).rfind("sep-living.svg")
-        assert re.search(
-            r'(?m)^<p align="center"><img src="\.github/assets/img/readme/'
-            r'sep-living\.svg" alt="" width="100%" loading="lazy"/></p>\n+'
-            r"## Living Art\s*$",
-            rendered,
-        )
-        living_body = living_raw.group(0)
-        assert len(re.findall(r"(?m)^---$", living_body)) == len(SHIPPED_STYLE_KEYS) - 1
-        ferro = living_body.rfind("living-ferrofluid.gif")
-        closer = living_body.rfind("sep-living.svg")
-        assert not re.search(r"(?m)^---$", living_body[ferro:closer])
-        living_art = living_art_section(rendered)
-
-        assert "stale living art grid" not in rendered
-        assert_living_art_stack_layout(living_art)
-        assert_living_art_intro_has_no_spine(living_art)
-        assert_living_art_dropdown_copy(living_art)
-        assert_living_art_hosts_allowed(living_art)
-        assert 'alt="AI/ML"' not in rendered
-        assert 'alt="Data Engineering"' not in rendered
-        assert "<!-- SKILLS:START -->" in rendered
-        assert "kept skills" in rendered
+        assert_profile_gallery_link(rendered)
+        featured = rendered.split(generator.FEATURED_START, 1)[1].split(
+            generator.FEATURED_END, 1
+        )[0]
+        assert "<details" not in featured
+        assert re.findall(r'<a href="https://github.com/([^"]+)"', featured) == [
+            repo.full_name for repo in repos
+        ]
         assert_tech_stack_dropdown_is_h2(rendered)
-        assert_living_art_gif_href_has_no_watch_caption(living_art)
-        assert "View full stack" not in rendered
-        assert "200+" not in rendered
+        assert "<!-- SKILLS:START -->" in rendered
+        assert "<!-- SKILLS:END -->" in rendered
+        assert gallery.read_bytes() == gallery_bytes
+        generator.generate(require_markers=True)
+        assert readme.read_text(encoding="utf-8") == rendered
+        assert gallery.read_bytes() == gallery_bytes
 
-    def test_generate_wraps_unwrapped_tech_stack_without_eating_living_art(
-        self,
-        tmp_path: Path,
+    def test_generate_wraps_unwrapped_tech_stack_preserving_preceding_copy(
+        self, tmp_path: Path
     ) -> None:
-        """Heading + skills (no details) must not steal the ferrofluid closer."""
         readme = tmp_path / "README.md"
         readme.write_text(
             dedent(
                 """\
-                ## Living Art
-
-                placeholder
+                [Living art gallery](LIVING_ART.md)
 
                 ## My Tech Stack
 
@@ -1245,26 +1198,13 @@ class TestRendering:
                 readme_path=str(readme),
                 featured_repos=[],
                 social_links=[],
+                svg=ReadmeSvgSettings(enabled=False),
             ),
             blog_client=StubBlogClient([]),
         )
         generator.generate()
         rendered = readme.read_text(encoding="utf-8")
-        living_raw = compile_section_body_re(
-            "Living Art",
-            ("Living Art", "My Tech Stack"),
-        ).search(rendered)
-        assert living_raw is not None
-        living_body = living_raw.group(0)
-        assert living_body.count("sep-living.svg") == 1
-        assert living_body.rfind("living-ferrofluid.gif") < living_body.rfind(
-            "sep-living.svg"
-        )
-        assert "kept skills" not in living_body
-        assert "<!-- SKILLS:START -->" not in living_body
-        living_art = living_art_section(rendered)
-        assert "living-ferrofluid.gif" in living_art
-        assert rendered.count("## My Tech Stack") == 1
+        assert rendered.startswith("[Living art gallery](LIVING_ART.md)")
         assert_tech_stack_dropdown_is_h2(rendered)
         assert "kept skills" in rendered
 
@@ -1276,10 +1216,6 @@ class TestRendering:
         readme.write_text(
             dedent(
                 """\
-                ## Living Art
-
-                placeholder
-
                 ## My Tech Stack
 
                 <p align="center">
@@ -1849,7 +1785,6 @@ class TestRendering:
                 section_order=[
                     "Featured Projects",
                     "Metrics",
-                    "Living Art",
                     "My Tech Stack",
                     "Word Clouds",
                 ],
@@ -2102,6 +2037,61 @@ class TestRemoteFetchSafety:
 
         assert posts is None
         assert not called
+
+    @pytest.mark.parametrize(
+        ("xml", "expected"),
+        [
+            (b"<rss><channel><title>Journal</title></channel></rss>", []),
+            (
+                b'<feed xmlns="http://www.w3.org/2005/Atom"><title>Journal</title></feed>',
+                [],
+            ),
+            (b"<html><body>Temporary outage</body></html>", None),
+            (
+                b"<other><item><title>A</title><link>https://example.org/a</link></item></other>",
+                None,
+            ),
+            (b"<rss/>", None),
+            (b"<rss><channel/><channel/></rss>", None),
+            (b"<rss><item/><channel/></rss>", None),
+            (b"<feed><entry/></feed>", None),
+            (
+                b"<rss><channel><item><title>No link</title></item></channel></rss>",
+                None,
+            ),
+            (
+                b'<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>A</title></entry></feed>',
+                None,
+            ),
+            (
+                b'<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>A</title>'
+                b'<link rel="self" href="https://example.org/feed"/></entry></feed>',
+                None,
+            ),
+            (
+                b'<feed xmlns="http://www.w3.org/2005/Atom"><entry><title>A</title>'
+                b'<link href="https://example.org/a"/></entry></feed>',
+                ["A"],
+            ),
+            (
+                b"<rss><channel><item><title>A</title><link>https://example.org/a</link></item>"
+                b"<item><title>B</title><link>javascript:0</link></item></channel></rss>",
+                None,
+            ),
+        ],
+    )
+    def test_feed_requires_recognized_structure_and_usable_items(
+        self, xml: bytes, expected: list[str] | None, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_sections._is_safe_remote_url", lambda _url: True
+        )
+        monkeypatch.setattr(
+            "scripts.readme_sections._safe_urlopen",
+            lambda *_args, **_kwargs: BytesIO(xml),
+        )
+        posts = BlogFeedClient().fetch_latest_posts("https://example.org/feed", 5)
+        assert (None if posts is None else [post.title for post in posts]) == expected
 
     def test_blog_feed_parses_rss_date_and_description(self, monkeypatch) -> None:
         xml = (
@@ -3280,18 +3270,10 @@ def _blog_marker_inner(content: str) -> str:
     return inner
 
 
-class _NullableBlogFeed(Protocol):
-    """Feed stub that may return None when the fetch fails."""
-
-    def fetch_latest_posts(
-        self, feed_url: str, limit: int
-    ) -> list[BlogPost] | None: ...
-
-
 def _offline_generator(
     tmp_path: Path,
     readme: Path,
-    blog_client: _NullableBlogFeed,
+    blog_client: BlogPostSource,
     monkeypatch: pytest.MonkeyPatch,
 ) -> ReadmeSectionGenerator:
     monkeypatch.setattr(
@@ -3313,8 +3295,7 @@ def _offline_generator(
                 output_dir=str(tmp_path / "svg"),
             ),
         ),
-        # BlogFeedClient returns None on failure. BlogPostSource still says list.
-        blog_client=cast(BlogPostSource, blog_client),
+        blog_client=blog_client,
     )
 
 
@@ -3461,3 +3442,47 @@ def test_cli_readme_sections_require_markers_exits(
         readme_cmd.readme_sections(output_path=unmarked)
     assert missing_markers.value.exit_code == 1
     assert unmarked.read_text(encoding="utf-8") == original
+
+
+def test_profile_keeps_all_previous_cards_on_http_200_nonfeed(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        _managed_readme("")
+        + "<!-- README:METRICS:START -->\n<!-- README:METRICS:END -->\n"
+        + "<!-- README:FREQUENCIES:START -->\n<!-- README:FREQUENCIES:END -->\n"
+    )
+    monkeypatch.setattr("scripts.readme_sections.render_metric_section", lambda _: "")
+    posts = [
+        BlogPost(title=f"Article {i}", url=f"https://example.org/{i}") for i in range(5)
+    ]
+    offline = _offline_generator(tmp_path, readme, StubBlogClient(posts), monkeypatch)
+    settings = offline.settings
+    settings.profile_cards = ReadmeProfileCards(projects=[])
+    settings.svg.enabled = True
+    settings.blog_post_limit = 5
+    generator = ReadmeSectionGenerator(
+        settings,
+        blog_client=StubBlogClient(posts),
+        blog_metadata_client=StubBlogMetadataClient({}),
+    )
+    generator.generate(require_markers=True)
+    directory = tmp_path / "readme-profile"
+    originals = {path: path.read_bytes() for path in directory.glob("blog-*.svg")}
+    assert len(originals) == 5
+    original_block = _blog_marker_inner(readme.read_text())
+    generator.blog_client = BlogFeedClient()
+    monkeypatch.setattr(
+        "scripts.readme_sections._is_safe_remote_url", lambda _url: True
+    )
+    monkeypatch.setattr(
+        "scripts.readme_sections._safe_urlopen",
+        lambda *_args, **_kwargs: BytesIO(b"<html><body>Unavailable</body></html>"),
+    )
+    generator.generate(require_markers=True)
+    assert _blog_marker_inner(readme.read_text()) == original_block
+    assert {
+        path: path.read_bytes() for path in directory.glob("blog-*.svg")
+    } == originals

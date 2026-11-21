@@ -28,6 +28,7 @@ from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES
 WORKFLOW_PATH = Path(".github/workflows/profile-updater.yml").resolve()
 PROJECT_ROOT = WORKFLOW_PATH.parents[2]
 CANONICAL_NAMES = tuple(sorted(LIVING_ART_BYTE_BUDGETS))
+VIDEO_NAMES = tuple(Path(name).with_suffix(".mp4").name for name in CANONICAL_NAMES)
 STAGE_STEP = "Stage exact-six living-art artifact"
 PUBLISH_STEP = "Publish and validate living-art artifact"
 CONTRACT_STEP = "Resolve living-art runtime contract constants"
@@ -134,8 +135,9 @@ def _write_test_gif(
 def _generate_fleet(repo: Path) -> tuple[Path, Path]:
     output_dir = repo / ".github" / "assets" / "img"
     public_dir = repo / "docs" / "public" / "showcase"
-    for index, name in enumerate(CANONICAL_NAMES, start=1):
-        _write_test_gif(output_dir / name, color_index=index)
+    output_dir.mkdir(parents=True)
+    for name in (*CANONICAL_NAMES, *VIDEO_NAMES):
+        shutil.copy2(PROJECT_ROOT / ".github/assets/img" / name, output_dir / name)
     sync_living_art_artifacts(output_dir, public_surface_dir=public_dir)
     return output_dir, public_dir
 
@@ -146,11 +148,13 @@ def _sha256(path: Path) -> str:
 
 def _round_trip_artifact(stage: Path, destination: Path) -> Path:
     """Approximate upload/download with a ZIP that preserves relative paths."""
-    archive_base = stage.parent / "living-art-stage-upload"
+    archive_base = destination / f"{stage.name}-upload"
+    destination.mkdir(parents=True, exist_ok=True)
     archive = Path(shutil.make_archive(str(archive_base), "zip", root_dir=stage))
-    downloaded = destination / "living-art-stage"
+    downloaded = destination / stage.name
     downloaded.mkdir(parents=True)
     shutil.unpack_archive(archive, downloaded)
+    archive.unlink()
     return downloaded
 
 
@@ -165,6 +169,8 @@ def _fan_in_matrix_style_artifacts(source: Path, runner_temp: Path) -> Path:
         shard = artifact_root / f"living-art-style-test-run-{style}"
         shard.mkdir(parents=True)
         shutil.copy2(source_path, shard / name)
+        film = source_path.with_suffix(".mp4")
+        shutil.copy2(film, shard / film.name)
         archive = Path(
             shutil.make_archive(
                 str(shard),
@@ -173,6 +179,7 @@ def _fan_in_matrix_style_artifacts(source: Path, runner_temp: Path) -> Path:
             )
         )
         shutil.unpack_archive(archive, merged)
+        archive.unlink()
     return merged
 
 
@@ -229,7 +236,7 @@ def _stage_matrix_fleet(
 ) -> Path:
     source = producer_repo / ".github" / "assets" / "img"
     merged = _fan_in_matrix_style_artifacts(source, producer_runner)
-    assert {path.name for path in merged.iterdir()} == set(CANONICAL_NAMES)
+    assert {path.name for path in merged.iterdir()} == {*CANONICAL_NAMES, *VIDEO_NAMES}
     result = _run_inline_python(
         "assemble-event-art",
         STAGE_STEP,
@@ -301,17 +308,33 @@ def test_matrix_shard_validation_isolated_and_fail_closed(
         assert result.returncode != 0
 
 
-def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
-    tmp_path: Path,
-) -> None:
-    producer_repo = tmp_path / "producer-checkout"
-    producer_output, _producer_public = _generate_fleet(producer_repo)
-    expected_hashes = {
-        name: _sha256(producer_output / name) for name in CANONICAL_NAMES
+@pytest.fixture(scope="module")
+def staged_media(tmp_path_factory: pytest.TempPathFactory) -> tuple[Path, Path, Path]:
+    root = tmp_path_factory.mktemp("canonical-artifacts")
+    repo, runner = root / "checkout", root / "runner"
+    output, _ = _generate_fleet(repo)
+    gifs = _stage_matrix_fleet(repo, runner)
+    videos = runner / "living-art-mp4"
+    expected_pairs = {
+        name: {
+            "gif": _sha256((output / name).with_suffix(".gif")),
+            "mp4": _sha256(output / name),
+        }
+        for name in VIDEO_NAMES
     }
+    assert {p.name for p in videos.iterdir()} == {*VIDEO_NAMES, "video-pairs.json"}
+    assert json.loads((videos / "video-pairs.json").read_bytes()) == expected_pairs
+    return output, gifs, videos
 
-    producer_runner = tmp_path / "producer-runner"
-    stage = _stage_matrix_fleet(producer_repo, producer_runner)
+
+def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
+    tmp_path: Path, staged_media: tuple[Path, Path, Path]
+) -> None:
+    producer_output, stage, films = staged_media
+    expected_hashes = {
+        name: _sha256(producer_output / name)
+        for name in (*CANONICAL_NAMES, *VIDEO_NAMES)
+    }
     assert {path.name for path in stage.iterdir()} == set(CANONICAL_NAMES)
     assert all(path.is_file() and not path.is_symlink() for path in stage.iterdir())
     assert MANIFEST_FILENAME not in {path.name for path in stage.iterdir()}
@@ -319,6 +342,7 @@ def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
 
     finalizer_runner = tmp_path / "finalizer-runner"
     _round_trip_artifact(stage, finalizer_runner)
+    _round_trip_artifact(films, finalizer_runner)
     finalizer_repo = tmp_path / "finalizer-checkout"
     _seed_stale_destinations(finalizer_repo)
     result = _run_inline_python(
@@ -339,6 +363,10 @@ def test_exact_six_gif_artifact_round_trip_regenerates_all_derived_surfaces(
         assert (surface / "preserve.txt").is_file()
         for name in CANONICAL_NAMES:
             assert _sha256(surface / name) == expected_hashes[name]
+
+    for name in VIDEO_NAMES:
+        assert _sha256(output_dir / name) == expected_hashes[name]
+        assert not (public_dir / name).exists()
 
     primary_manifest = json.loads(
         (output_dir / MANIFEST_FILENAME).read_text(encoding="utf-8")
@@ -377,17 +405,28 @@ def test_assembler_rejects_incomplete_fleet_without_materializing_artifact(
 
 @pytest.mark.parametrize(
     "failure",
-    ["missing", "unexpected", "corrupt", "oversized", "wrong-size", "wrong-loop"],
+    [
+        "missing",
+        "unexpected",
+        "corrupt",
+        "oversized",
+        "wrong-size",
+        "wrong-loop",
+        "video-missing",
+        "video-swapped",
+        "receipt-missing",
+        "receipt-stale",
+    ],
 )
 def test_finalizer_rejects_invalid_stage_before_destination_mutation(
     tmp_path: Path,
     failure: str,
+    staged_media: tuple[Path, Path, Path],
 ) -> None:
-    producer_repo = tmp_path / "producer-checkout"
-    _generate_fleet(producer_repo)
-    stage = _stage_matrix_fleet(producer_repo, tmp_path / "producer-runner")
+    _, stage, films = staged_media
     finalizer_runner = tmp_path / "finalizer-runner"
     downloaded = _round_trip_artifact(stage, finalizer_runner)
+    transferred_videos = _round_trip_artifact(films, finalizer_runner)
     target = downloaded / "living-lenia.gif"
 
     if failure == "missing":
@@ -402,11 +441,26 @@ def test_finalizer_rejects_invalid_stage_before_destination_mutation(
             stream.write(b"\0" * excess)
     elif failure == "wrong-size":
         _write_test_gif(target, color_index=99, size=(32, 32))
-    else:
+    elif failure == "wrong-loop":
         _write_test_gif(target, color_index=99, loop=1)
+    elif failure == "video-missing":
+        (transferred_videos / VIDEO_NAMES[0]).unlink()
+    elif failure == "video-swapped":
+        shutil.copyfile(
+            transferred_videos / VIDEO_NAMES[1], transferred_videos / VIDEO_NAMES[0]
+        )
+    elif failure == "receipt-missing":
+        (transferred_videos / "video-pairs.json").unlink()
+    else:
+        receipt = transferred_videos / "video-pairs.json"
+        pairs = json.loads(receipt.read_bytes())
+        pairs[VIDEO_NAMES[0]]["gif"] = "0" * 64
+        receipt.write_text(json.dumps(pairs))
 
     finalizer_repo = tmp_path / "finalizer-checkout"
     _seed_stale_destinations(finalizer_repo)
+    for name in VIDEO_NAMES:
+        (finalizer_repo / ".github/assets/img" / name).write_bytes(b"previous film")
     before = _managed_snapshot(finalizer_repo)
     result = _run_inline_python(
         "finalize",
@@ -474,6 +528,12 @@ def test_finalize_stages_tracked_unexpected_living_gif_deletions(
             "fixture gallery",
             encoding="utf-8",
         )
+    (repo / "LIVING_ART.md").write_text("fixture gallery")
+    stills = primary.parent / "living-stills"
+    stills.mkdir()
+    for name in VIDEO_NAMES:
+        (primary.parent / name).touch()
+        (stills / Path(name).with_suffix(".jpg")).touch()
     subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
     subprocess.run(["git", "add", "."], cwd=repo, check=True)
     subprocess.run(

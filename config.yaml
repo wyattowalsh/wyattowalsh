@@ -43,7 +43,6 @@ readme_sections_settings:
   section_order:
     - Featured Projects
     - Metrics
-    - Living Art
     - My Tech Stack
     - Word Clouds
   social_links:
@@ -82,6 +81,158 @@ readme_sections_settings:
     - full_name: wyattowalsh/wild-web-wrap-up
     - full_name: wyattowalsh/fl-mcp
     - full_name: wyattowalsh/mcp-crawl4ai
+  profile_cards:
+    projects:
+      - full_name: wyattowalsh/nbadb
+        topic: Data & developer tools
+        theme: blue
+        description:
+          - "Build the NBA database on Kaggle"
+          - "from league statistics."
+      - full_name: wyattowalsh/proxywhirl
+        topic: Data & developer tools
+        theme: teal
+        description:
+          - "Rotate HTTP proxies and remove"
+          - "failed proxies from the pool."
+      - full_name: wyattowalsh/agents
+        topic: AI & automation
+        theme: rust
+        description:
+          - "Reuse skills, tools and configs"
+          - "across AI coding agents."
+      - full_name: wyattowalsh/profile-bits
+        topic: Websites, maps & publishing
+        theme: blue
+        description:
+          - "Turn JSX into SVG or PNG widgets"
+          - "for a GitHub profile README."
+      - full_name: wyattowalsh/riso
+        topic: Data & developer tools
+        theme: rust
+        description:
+          - "Build a project scaffold from"
+          - "CLI, API and SaaS modules."
+      - full_name: wyattowalsh/openopps
+        topic: Jobs & profiles
+        theme: teal
+        description:
+          - "Find hiring boards and sync job"
+          - "listings to a local ledger."
+      - full_name: wyattowalsh/webmedia-dl
+        topic: Media, music & lighting
+        theme: blue
+        description:
+          - "Save media locally on Apple"
+          - "devices and in desktop browsers."
+      - full_name: wyattowalsh/iina-plugin-bookmarks
+        topic: Media, music & lighting
+        theme: rust
+        description:
+          - "Bookmark playback positions"
+          - "in the IINA media player."
+      - full_name: wyattowalsh/nbops
+        topic: Data & developer tools
+        theme: teal
+        description:
+          - "Track notebook CPU and memory"
+          - "use and export redacted reports."
+      - full_name: wyattowalsh/cwa
+        topic: AI & automation
+        theme: blue
+        description:
+          - "Export a visible ChatGPT thread"
+          - "as Markdown or ZIP on macOS."
+      - full_name: wyattowalsh/personal-website
+        topic: Websites, maps & publishing
+        theme: rust
+        description:
+          - "Browse w4w.dev, my personal site"
+          - "and blog built with Next.js."
+      - full_name: wyattowalsh/prompts
+        topic: AI & automation
+        theme: rust
+        description:
+          - "Copy, adapt and verify"
+          - "research-backed prompt recipes."
+      - full_name: wyattowalsh/ai-web-feeds
+        topic: AI & automation
+        theme: teal
+        description:
+          - "Follow AI and machine learning"
+          - "sources in your feed reader."
+      - full_name: wyattowalsh/linkedin-profile-exporter
+        topic: Jobs & profiles
+        theme: blue
+        description:
+          - "Export LinkedIn profiles as JSON,"
+          - "CSV or Markdown."
+      - full_name: wyattowalsh/copy-to-gmail
+        topic: Websites, maps & publishing
+        theme: rust
+        description:
+          - "Prepare sanitized HTML and plain"
+          - "text to paste into Gmail."
+      - full_name: wyattowalsh/wild-web-wrap-up
+        topic: Websites, maps & publishing
+        theme: rust
+        description:
+          - "Read the newsletter archive and"
+          - "draft issues for Buttondown."
+      - full_name: wyattowalsh/fl-mcp
+        topic: Media, music & lighting
+        theme: blue
+        description:
+          - "Start a local MCP server project"
+          - "for FL Studio."
+      - full_name: wyattowalsh/mcp-crawl4ai
+        topic: AI & automation
+        theme: teal
+        description:
+          - "Give AI tools access to Crawl4AI"
+          - "web crawling through MCP."
+      - full_name: wyattowalsh/hue-board
+        topic: Media, music & lighting
+        theme: rust
+        description:
+          - "Control Philips Hue lights and"
+          - "animate scenes across a room."
+      - full_name: wyattowalsh/awesome-iina
+        topic: Media, music & lighting
+        theme: teal
+        description:
+          - "Find IINA plugins, media tools"
+          - "and guides for plugin developers."
+      - full_name: wyattowalsh/agentic-cad
+        topic: AI & automation
+        theme: blue
+        description:
+          - "Set up Claude Code for"
+          - "computer-aided design in FreeCAD."
+      - full_name: wyattowalsh/NYC-recs
+        topic: Websites, maps & publishing
+        theme: teal
+        description:
+          - "Explore my New York City picks"
+          - "on a map by area, type or vibe."
+      - full_name: wyattowalsh/iina-plugin-starter
+        topic: Media, music & lighting
+        theme: blue
+        description:
+          - "Build an IINA plugin with React"
+          - "views and TypeScript bindings."
+      - full_name: wyattowalsh/soundlab
+        topic: Media, music & lighting
+        theme: rust
+        description:
+          - "Transform audio in an interactive"
+          - "Google Colab notebook."
+    article_hooks:
+      https://www.w4w.dev/blog/posts/personal-website: "From MDX posts to search results and RSS."
+      https://www.w4w.dev/blog/posts/agents: "Portable skills and shared agent configuration."
+      https://www.w4w.dev/blog/posts/proxywhirl: "How the pool replaces failed HTTP proxies."
+      https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3: "Follow the coefficient path with NumPy."
+      https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2: "Derive the ridge estimator and fit it in NumPy."
   blog_feed_url: https://w4w.dev/feed.xml
   blog_post_limit: 5
   svg:

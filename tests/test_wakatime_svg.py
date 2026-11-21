@@ -447,3 +447,101 @@ def test_fact_waka_privacy_committed_svg_omits_banned_rows() -> None:
     assert "/Users/" not in svg
     assert "~/" not in svg
     assert "C:\\" not in svg
+
+
+def test_compact_and_detail_share_filtered_series_and_duration_columns(tmp_path):
+    from dataclasses import replace
+
+    import defusedxml.ElementTree as ET
+
+    from scripts.profile_metric_family import read_metric_family
+
+    stamp = datetime(2026, 8, 14, 12, 0, tzinfo=UTC)
+    source = _collection()
+    label = "W" * 48
+    large = "1,234,567 hrs 59 mins"
+    source = replace(
+        source,
+        week=replace(
+            source.week,
+            languages=(_entry(label, 1234567 * 3600, 100, large),),
+            human_readable_daily_average="12 hrs 5 mins",
+        ),
+    )
+    path = generate_wakatime_svg(
+        collection=source,
+        output_path=tmp_path / "wakatime.svg",
+        project_allowlist=("wyattowalsh",),
+        include_github=False,
+        updated_at=stamp,
+    )
+    alt, detail, saved = read_metric_family(tmp_path, "wakatime")
+    assert "26m across 3 reported days" in alt and "12 hrs 5 mins" in detail
+    assert saved == stamp.date() and "2026-08-14 12:00 UTC" in detail
+    assert label in detail and large in detail
+    assert all(banned not in detail for banned in _PRIVATE_AND_LEISURE)
+
+    ns = {"s": "http://www.w3.org/2000/svg"}
+    svg = ET.parse(path)
+    row = svg.find(".//s:text[@class='stat-name']", ns)
+    duration = svg.find(".//s:text[@class='stat-time']", ns)
+    bar = svg.find(".//s:rect[@class='bar-track']", ns)
+    assert row is not None and bar is not None and duration is not None
+    assert row.text.endswith("…") and label not in row.text
+    assert float(bar.get("x")) - float(row.get("x")) >= 118
+    assert float(duration.get("x")) > float(bar.get("x")) + float(bar.get("width"))
+    assert float(duration.get("x")) + 172 <= 590
+    assert large == duration.text
+    summary = ET.parse(tmp_path / "summary-wakatime.svg")
+    assert summary.getroot().get("viewBox") == "0 0 300 246"
+    assert summary.find(".//s:path[@class='zero']", ns) is not None
+    assert all(banned not in alt for banned in _PRIVATE_AND_LEISURE)
+
+
+def test_summary_handles_no_daily_series(tmp_path):
+    from scripts.profile_metric_family import read_metric_family
+
+    generate_wakatime_svg(
+        collection=WakaCollection(week=_week()),
+        output_path=tmp_path / "wakatime.svg",
+        include_github=False,
+    )
+    _, detail, _ = read_metric_family(tmp_path, "wakatime")
+    assert "Daily totals were unavailable" in detail
+
+
+def test_typer_metric_family_uses_one_filtered_collection(tmp_path, monkeypatch):
+    from typer.testing import CliRunner
+
+    from scripts.cli import app
+    from scripts.profile_metric_family import read_metric_family
+    from scripts.wakatime_readme import SKIP_MARKER_NAME, WAKA_SVG_POINTER
+
+    calls = []
+
+    def collect_once(key):
+        calls.append(key)
+        return _collection()
+
+    monkeypatch.setenv("WAKATIME_API_KEY", "fixture")
+    monkeypatch.setattr("scripts.wakatime_svg.collect_wakatime_stats", collect_once)
+    (tmp_path / SKIP_MARKER_NAME).write_text("previous skip")
+    result = CliRunner().invoke(
+        app,
+        [
+            "generate",
+            "wakatime",
+            "--no-github",
+            "--output-dir",
+            str(tmp_path),
+            "--svg-output",
+            str(tmp_path / "wakatime.svg"),
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    _, detail, _ = read_metric_family(tmp_path, "wakatime")
+    assert "| Day | Tracked time |" in detail
+    assert "secret-client" not in detail
+    assert (tmp_path / "waka-section.md").read_text().strip() == WAKA_SVG_POINTER
+    assert not (tmp_path / SKIP_MARKER_NAME).exists()
+    assert calls == ["fixture"]

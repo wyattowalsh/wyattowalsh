@@ -213,12 +213,17 @@ The finalizer SHALL validate the supplemental manifest and WakaTime artifact in
 private directories before changing any metric destination. The manifest SHALL
 identify every repository-owned supplemental asset, with the expected filename
 and content markers. WakaTime SHALL contain either its supported skip marker
-alone or the canonical section pointer with a valid WakaTime SVG.
+alone or the canonical section pointer with a validated WakaTime chart, summary and disclosure. The disclosure SHALL identify its chart and summary by digest.
 
 #### Scenario: An integration is deliberately disabled
 
-- **WHEN** an optional card is disabled or WakaTime sends its skip marker
-- **THEN** the finalizer SHALL remove the corresponding tracked card and README image while preserving the WakaTime section markers and unrelated assets
+- **WHEN** an optional supplemental card is disabled
+- **THEN** the finalizer SHALL remove its entire managed family and its README presentation while preserving unrelated assets
+
+#### Scenario: WakaTime skips collection
+
+- **WHEN** the WakaTime producer submits its skip marker alone
+- **THEN** the finalizer SHALL preserve the last valid WakaTime family, original date and section markers, or leave the section empty when no previous family exists
 
 #### Scenario: The transfer is incomplete or contradictory
 

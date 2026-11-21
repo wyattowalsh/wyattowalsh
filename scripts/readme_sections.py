@@ -28,10 +28,17 @@ from urllib.request import (
 from xml.etree.ElementTree import Element
 
 import defusedxml.ElementTree as DefusedET
+from defusedxml.common import DefusedXmlException
 
-from .art.roster import StyleLegend, shipped_legends
 from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
 from .metrics_svg import validate_svg_file
+from .profile_cards import (
+    articles_section,
+    profile_directory,
+    projects_section,
+    validate_retained_articles,
+)
+from .profile_metric_family import METRICS_END, METRICS_START, render_metric_section
 from .readme_separators import generate_separators
 from .readme_svg import (
     ReadmeSvgAssetBuilder,
@@ -72,9 +79,8 @@ _GENERIC_DESCRIPTION_RE = re.compile(
 # (banner / connect badges) are outside this list.
 DEFAULT_SECTION_ORDER: tuple[str, ...] = (
     "Featured Projects",
-    "Living Art",
-    "My Tech Stack",
     "Metrics",
+    "My Tech Stack",
     "Word Clouds",
 )
 
@@ -527,12 +533,15 @@ class GitHubRepoClient:
             logger.warning(f"Failed to fetch repo metadata for {full_name}: {exc}")
             return None
 
+        stars = payload.get("stargazers_count")
+        if type(stars) is not int or stars < 0:
+            return None
         return RepoMetadata(
             full_name=payload.get("full_name", full_name),
             name=payload.get("name", full_name.split("/")[-1]),
             html_url=payload.get("html_url", f"https://github.com/{full_name}"),
             description=payload.get("description"),
-            stars=int(payload.get("stargazers_count", 0)),
+            stars=stars,
             homepage=payload.get("homepage") or None,
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
@@ -621,7 +630,7 @@ class BlogFeedClient:
 
         try:
             root = DefusedET.fromstring(body)
-        except DefusedET.ParseError as exc:
+        except (DefusedET.ParseError, DefusedXmlException) as exc:
             logger.warning(
                 "Invalid blog feed XML from {feed_url}: {exc}",
                 feed_url=feed_url,
@@ -629,55 +638,80 @@ class BlogFeedClient:
             )
             return None
 
-        posts = self._parse_rss_items(root)
-        if not posts:
-            posts = self._parse_atom_entries(root)
-        return posts[:limit]
+        atom = "{http://www.w3.org/2005/Atom}"
+        if root.tag == "rss" and len(channels := root.findall("channel")) == 1:
+            entries = channels[0].findall("item")
+            parse = self._rss_post
+        elif root.tag == atom + "feed":
+            entries = root.findall(atom + "entry")
+            parse = self._atom_post
+        else:
+            return None
 
-    def _parse_rss_items(self, root: Element) -> list[BlogPost]:
+        # A misplaced or wrongly namespaced item cannot establish an empty feed.
+        if not entries and any(
+            _element_local_name(node.tag) in {"entry", "item"} for node in root.iter()
+        ):
+            return None
         posts: list[BlogPost] = []
-        for item in root.findall(".//item"):
-            title = (item.findtext("title") or "").strip()
-            link = (item.findtext("link") or "").strip()
-            if not (title and link):
-                continue
-            image_url: str | None = None
-            enc = item.find("enclosure")
-            if enc is not None:
-                enc_url = (enc.get("url") or "").strip()
-                enc_type = (enc.get("type") or "").strip().lower()
-                if enc_url and enc_type.startswith("image/"):
-                    image_url = enc_url
-            posts.append(
-                BlogPost(
-                    title=title,
-                    url=link,
-                    image_url=image_url,
-                    published=_normalize_blog_date(
-                        _first_child_text(item, "pubDate", "published", "date")
-                    ),
-                    summary=_one_line_hook(
-                        _first_child_text(item, "description", "encoded", "summary")
-                    ),
-                )
-            )
+        for entry in entries[:limit]:
+            post = parse(entry)
+            if post is None:
+                return None
+            posts.append(post)
         return posts
 
-    def _parse_atom_entries(self, root: Element) -> list[BlogPost]:
-        posts: list[BlogPost] = []
-        ns = {"atom": "http://www.w3.org/2005/Atom"}
-        for entry in root.findall(".//atom:entry", ns):
-            title = (
-                entry.findtext("atom:title", default="", namespaces=ns) or ""
-            ).strip()
-            link_elem = entry.find("atom:link[@rel='alternate']", ns)
-            if link_elem is None:
-                link_elem = entry.find("atom:link", ns)
-            link = (link_elem.get("href") if link_elem is not None else "") or ""
-            link = link.strip()
-            if title and link:
-                posts.append(
-                    BlogPost(
+    @staticmethod
+    def _article_link(raw: str) -> str | None:
+        link = raw.strip()
+        if any(char.isspace() for char in link):
+            return None
+        try:
+            parsed = urlparse(link)
+            valid = (
+                parsed.scheme in {"https", "http"}
+                and parsed.hostname is not None
+                and parsed.username is None
+                and parsed.password is None
+            )
+            # Accessing port also checks its syntax and range.
+            if parsed.port == 0:
+                return None
+        except ValueError:
+            return None
+        return link if valid else None
+
+    def _rss_post(self, item: Element) -> BlogPost | None:
+        title = (item.findtext("title") or "").strip()
+        link = self._article_link(item.findtext("link") or "")
+        if not title or link is None:
+            return None
+        image_url: str | None = None
+        enclosure = item.find("enclosure")
+        if enclosure is not None and enclosure.get("type", "").lower().startswith(
+            "image/"
+        ):
+            image_url = enclosure.get("url", "").strip() or None
+        return BlogPost(
+            title=title,
+            url=link,
+            image_url=image_url,
+            published=_normalize_blog_date(
+                _first_child_text(item, "pubDate", "published", "date")
+            ),
+            summary=_one_line_hook(
+                _first_child_text(item, "description", "encoded", "summary")
+            ),
+        )
+
+    def _atom_post(self, entry: Element) -> BlogPost | None:
+        ns = "{http://www.w3.org/2005/Atom}"
+        title = (entry.findtext(ns + "title") or "").strip()
+        for element in entry.findall(ns + "link"):
+            if element.get("rel", "alternate") == "alternate":
+                link = self._article_link(element.get("href", ""))
+                if link is not None and title:
+                    return BlogPost(
                         title=title,
                         url=link,
                         published=_normalize_blog_date(
@@ -687,8 +721,7 @@ class BlogFeedClient:
                             _first_child_text(entry, "summary", "content")
                         ),
                     )
-                )
-        return posts
+        return None
 
 
 class StarHistoryClient:
@@ -999,7 +1032,9 @@ class StarHistorySource(Protocol):
 class BlogPostSource(Protocol):
     """RSS/Atom lookup used by the latest-posts strip."""
 
-    def fetch_latest_posts(self, feed_url: str, limit: int) -> list[BlogPost]: ...
+    def fetch_latest_posts(
+        self, feed_url: str, limit: int
+    ) -> list[BlogPost] | None: ...
 
 
 class BlogMetadataSource(Protocol):
@@ -1051,13 +1086,22 @@ class ReadmeSectionGenerator:
             return readme_path
 
         content = readme_path.read_text(encoding="utf-8")
+        if self.settings.profile_cards:
+            self._require_profile_sections(content)
         if require_markers:
             self._require_marker_pairs(content)
         content = self._inject_block(
             content,
             self.TOP_BADGES_START,
             self.TOP_BADGES_END,
-            self._render_top_badges(),
+            (
+                " · ".join(
+                    f'<a href="{escape(link.url, quote=True)}">{escape(link.label)}</a>'
+                    for link in self.settings.social_links
+                )
+                if METRICS_START in content
+                else self._render_top_badges()
+            ),
         )
         content = self._inject_block(
             content,
@@ -1065,12 +1109,13 @@ class ReadmeSectionGenerator:
             self.FEATURED_END,
             self._render_featured_projects(),
         )
-        content = self._inject_block(
-            content,
-            self.BLOG_START,
-            self.BLOG_END,
-            self._render_blog_posts(),
-        )
+        blog = self._render_blog_posts()
+        if blog is None and self.settings.profile_cards is not None:
+            prior = content.partition(self.BLOG_START)[2].partition(self.BLOG_END)[0]
+            validate_retained_articles(
+                prior, profile_directory(self.settings.svg.output_dir)
+            )
+        content = self._inject_block(content, self.BLOG_START, self.BLOG_END, blog)
         content = self._postprocess_static_sections(content, readme_path=readme_path)
         generate_separators()
         readme_path.write_text(content, encoding="utf-8")
@@ -1118,8 +1163,41 @@ class ReadmeSectionGenerator:
     def _section_order(self) -> tuple[str, ...]:
         return section_order_from_settings(self.settings)
 
+    @staticmethod
+    def _require_profile_sections(content: str) -> None:
+        for start, end in (
+            (METRICS_START, METRICS_END),
+            (
+                "<!-- README:FREQUENCIES:START -->",
+                "<!-- README:FREQUENCIES:END -->",
+            ),
+        ):
+            if (
+                content.count(start) != 1
+                or content.count(end) != 1
+                or content.index(start) >= content.index(end)
+            ):
+                raise ValueError(f"Expected one ordered README marker pair for {start}")
+
     def _postprocess_static_sections(self, content: str, *, readme_path: Path) -> str:
-        content = self._rewrite_living_art_section(content)
+        if (
+            self.settings.profile_cards
+            or METRICS_START in content
+            or METRICS_END in content
+        ):
+            self._require_profile_sections(content)
+            content = self._inject_block(
+                content,
+                METRICS_START,
+                METRICS_END,
+                render_metric_section(readme_path.parent / ".github/assets/img"),
+            )
+            return self._inject_block(
+                content,
+                "<!-- README:FREQUENCIES:START -->",
+                "<!-- README:FREQUENCIES:END -->",
+                self._profile_clouds(readme_path.parent),
+            )
         content = self._rename_tech_stack_title(content)
         content = self._rewrite_tech_stack_teaser(content)
         # Pull Waka markers out before Metrics rewrite so they are not wiped.
@@ -1137,13 +1215,10 @@ class ReadmeSectionGenerator:
         """Rewrite either separator order to sep-then-H2.
 
         Accepts H2-then-sep or sep-then-H2, including leftover duplicate seps.
-        ``count=1`` per title so the living-art closer ``sep-living.svg`` after
-        ferrofluid is not consumed.
         """
         mapping = (
             ("Featured Projects", "sep-featured.svg"),
             ("Metrics", "sep-metrics.svg"),
-            ("Living Art", "sep-living.svg"),
             ("Word Clouds", "sep-clouds.svg"),
             ("Latest Blog Posts", "sep-blog.svg"),
             ("Connect", "sep-qr.svg"),
@@ -1170,66 +1245,6 @@ class ReadmeSectionGenerator:
             r"\1\n\n",
             content,
         )
-
-    def _rewrite_living_art_section(self, content: str) -> str:
-        body_lines = [
-            section_separator_block("Living Art", "sep-living.svg"),
-            (
-                "<p>These are daily timelapses of this GitHub account from "
-                "creation to now, each a different visual world.</p>"
-            ),
-        ]
-        legends = list(shipped_legends())
-        for index, (style, legend) in enumerate(legends):
-            if index:
-                body_lines.extend(["", "---", ""])
-            else:
-                body_lines.append("")
-            body_lines.extend(self._living_art_piece_markup(style, legend))
-        body_lines.extend(
-            [
-                "",
-                (
-                    '<p align="center"><img src=".github/assets/img/readme/'
-                    'sep-living.svg" alt="" width="100%" loading="lazy"/></p>'
-                ),
-            ]
-        )
-        replacement = "\n".join(body_lines).rstrip() + "\n\n"
-        living_re = compile_section_body_re("Living Art", self._section_order())
-        if not living_re.search(content):
-            logger.warning("Living Art section heading not found in README.")
-            return content
-        return living_re.sub(replacement, content, count=1)
-
-    @staticmethod
-    def _living_art_piece_markup(style: str, legend: StyleLegend) -> list[str]:
-        """Full-width GIF linked to the in-repo MP4, then a collapsed legend."""
-        title = escape(legend.title)
-        gif = f".github/assets/img/living-{style}.gif"
-        mp4 = f".github/assets/img/living-{style}.mp4"
-        poster = ReadmeSectionGenerator._gfm_img_tag(
-            src=gif,
-            alt=title,
-            width="70%",
-        )
-        mapping = legend.mapping
-        return [
-            '<p align="center">',
-            f'<a href="{mp4}">{poster}</a>',
-            "</p>",
-            "<details>",
-            f"<summary><strong>{title}</strong></summary>",
-            "",
-            escape(legend.metaphor),
-            "",
-            f"- **Repos:** {escape(mapping.repos)}",
-            f"- **Stars:** {escape(mapping.stars)}",
-            f"- **Commits:** {escape(mapping.commits)}",
-            f"- **Followers:** {escape(mapping.followers)}",
-            "",
-            "</details>",
-        ]
 
     @staticmethod
     def _rename_tech_stack_title(content: str) -> str:
@@ -1410,25 +1425,74 @@ class ReadmeSectionGenerator:
     @staticmethod
     def _frequency_head_markdown(path: Path, noun: str) -> str:
         """Render the top starred-repo counts as a GFM table."""
-        from .word_clouds.generate import _filter_others, parse_frequencies_from_md
-
-        if not path.is_file():
-            return f"_No {noun.lower()} frequency data found._"
-        try:
-            frequencies = _filter_others(parse_frequencies_from_md(path))
-        except OSError:
-            return f"_No {noun.lower()} frequency data found._"
-        rows = sorted(
-            frequencies.items(),
-            key=lambda item: (-float(item[1]), str(item[0]).casefold()),
-        )[:_WORD_CLOUD_FREQ_HEAD]
+        rows = ReadmeSectionGenerator._frequency_rows(path)
         if not rows:
             return f"_No {noun.lower()} frequency data found._"
         lines = [f"| {noun} | Starred repos |", "| --- | ---: |"]
         for name, count in rows:
             cell = str(name).replace("|", "\\|")
-            lines.append(f"| {cell} | {int(count)} |")
+            lines.append(f"| {cell} | {count} |")
         return "\n".join(lines)
+
+    @staticmethod
+    def _frequency_rows(path: Path) -> list[tuple[str, int]]:
+        from .word_clouds.generate import _filter_others, parse_frequencies_from_md
+
+        if not path.is_file():
+            return []
+        try:
+            frequencies = _filter_others(parse_frequencies_from_md(path))
+        except OSError:
+            return []
+        rows = sorted(
+            frequencies.items(),
+            key=lambda item: (-float(item[1]), str(item[0]).casefold()),
+        )[:_WORD_CLOUD_FREQ_HEAD]
+        return [(str(name), int(count)) for name, count in rows]
+
+    def _profile_clouds(self, root: Path) -> str:
+        """Keep the visible summary, image alternatives and frequency tables in sync."""
+        assets = root / ".github/assets"
+        images: list[str] = []
+        tables: list[str] = []
+        leaders: list[str] = []
+        for plural, noun in (("topics", "Topic"), ("languages", "Language")):
+            rows = self._frequency_rows(assets / f"{plural}.md")
+            src = f".github/assets/img/wordcloud_typographic_by_{plural}.svg"
+            title = f"Open the {plural} cloud at full size."
+            if rows:
+                title += (
+                    " Largest labels include " + ", ".join(k for k, _ in rows[:3]) + "."
+                )
+                label, count = rows[0]
+                leaders.append(f"**{escape(label)}** ({count:,} repositories)")
+            images.append(
+                f'  <a href="{src}"><img src="{src}" alt="{escape(title, quote=True)}" '
+                'width="400" height="140"/></a>'
+            )
+            table = [f"| {noun} | Starred repos |", "| --- | ---: |"]
+            for label, count in rows:
+                cell = escape(label).replace("|", "\\|")
+                table.append(f"| {cell} | {count:,} |")
+            body = "\n".join(table) if rows else f"_No {plural} recorded._"
+            tables.append(f"**{plural.title()}**\n\n{body}")
+        intro = (
+            "These clouds show topics and primary languages "
+            "across my starred repositories."
+        )
+        if len(leaders) == 2:
+            intro += (
+                f" The most common topic is {leaders[0]} "
+                f"and the most common language is {leaders[1]}."
+            )
+        return (
+            f"{intro} A repository can carry several topics.\n\n<p>\n"
+            + "\n".join(images)
+            + "\n</p>\n\n<details>\n<summary>Top 12 topics and languages "
+            "by starred repository count</summary>\n\n"
+            + "\n\n".join(tables)
+            + "\n\n</details>"
+        )
 
     def _wakatime_open_img(self) -> str:
         return self._gfm_centered_img(
@@ -2278,18 +2342,27 @@ class ReadmeSectionGenerator:
 
     def _render_featured_projects(self) -> str:
         repos = self.settings.featured_repos
-        # Fetch all repo metadata + languages in parallel
+        profile = self.settings.profile_cards
+        shared_names = [repo.full_name for repo in repos]
+        names = shared_names
+        if profile is not None:
+            names = [project.full_name for project in profile.projects]
+            if names[: len(shared_names)] != shared_names:
+                raise ValueError(
+                    "Profile projects must start with the shared featured roster"
+                )
+        # The shared renderer alone consumes language histograms and star histories.
         metadata_by_name: dict[str, RepoMetadata | None] = {}
         languages_by_name: dict[str, dict[str, int] | None] = {}
-        if repos:
-            max_workers = min(16, len(repos) * 2)
+        if names:
+            max_workers = min(16, len(names) + len(repos))
             with ThreadPoolExecutor(max_workers=max_workers) as pool:
                 meta_futures = {
-                    pool.submit(self.repo_client.fetch_repo_metadata, repo.full_name): (
+                    pool.submit(self.repo_client.fetch_repo_metadata, name): (
                         "meta",
-                        repo.full_name,
+                        name,
                     )
-                    for repo in repos
+                    for name in names
                 }
                 lang_futures = {
                     pool.submit(
@@ -2323,6 +2396,24 @@ class ReadmeSectionGenerator:
                             metadata_by_name[name] = None
                         else:
                             languages_by_name[name] = None
+        profile_html = None
+        if profile is not None:
+            images = self._svg_section_enabled("featured_projects")
+            stats: dict[str, tuple[str, int]] = {}
+            if images:
+                for name in names:
+                    record = metadata_by_name.get(name)
+                    if record is None or record.full_name.casefold() != name.casefold():
+                        raise ValueError(
+                            f"Missing public repository metadata for {name}"
+                        )
+                    stats[name] = (record.language or "", record.stars)
+            profile_html = projects_section(
+                profile.projects,
+                stats,
+                profile_directory(self.settings.svg.output_dir),
+                images=images,
+            )
         layout = self._featured_layout_plan(len(repos))
         artifacts: list[FeaturedProjectArtifact] = []
 
@@ -2402,6 +2493,8 @@ class ReadmeSectionGenerator:
                 public_surface_dir=public_surface_dir,
             )
 
+        if profile_html is not None:
+            return profile_html
         if not repos:
             return "- No featured repositories configured."
         return self._render_featured_table(
@@ -2487,6 +2580,17 @@ class ReadmeSectionGenerator:
             self.settings.blog_feed_url,
             self.settings.blog_post_limit,
         )
+        profile = self.settings.profile_cards
+        profile_dir = profile_directory(self.settings.svg.output_dir)
+        images = self._svg_section_enabled("blog_posts")
+        if profile is not None and (posts == [] or (posts is None and not images)):
+            return articles_section(
+                [],
+                profile.article_hooks,
+                profile_dir,
+                self.settings.blog_feed_url,
+                images=images,
+            )
         if posts is None:
             return None
         feed_url = escape(self.settings.blog_feed_url)
@@ -2600,6 +2704,19 @@ class ReadmeSectionGenerator:
             if extras:
                 line += f" — {escape(' · '.join(extras))}"
             fallback_lines.append(line)
+        if profile is not None:
+            used_names: set[str] = set()
+            named_cards = [
+                (self._make_blog_asset_name(card=c, index=i, used_assets=used_names), c)
+                for i, c in enumerate(svg_cards, start=1)
+            ]
+            return articles_section(
+                named_cards,
+                profile.article_hooks,
+                profile_dir,
+                feed_url_raw,
+                images=images,
+            )
         result: list[str] = []
         if self._svg_section_enabled("blog_posts") and svg_cards:
             writer = SvgAssetWriter(

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
+ viewBox="0 0 274 112" role="img" aria-labelledby="t d">
+<title id="t">NYC-recs</title><desc id="d">Explore my New York City picks on a map by area, type or vibe. TypeScript.</desc>
+<style>
+.paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
+.meta{fill:#52616d}.solid{fill:#faf8f3}
+@media(prefers-color-scheme:dark){
+.paper{fill:#161b22;stroke:#424952}.name{fill:#bedcf3}
+.desc{fill:#d7dfe7}.meta{fill:#b3c0ca}.solid{fill:#161b22}}
+
+text{font-family:Arial,Helvetica,sans-serif}
+.name{font:700 20px Georgia,"Times New Roman",serif}
+.name.small{font-size:17px;letter-spacing:-.45px}.desc{font-size:15.5px}
+.meta{font-size:13px}.mark{fill:none;stroke:#276b65;stroke-linecap:round;
+stroke-linejoin:round;stroke-width:1.7}
+@media(prefers-color-scheme:dark){.mark{stroke:#8bd2bf}}</style>
+<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
+<text x="16" y="29" class="name">NYC-recs</text>
+<g class="mark" transform="translate(234 9) scale(.86)"><path d="m3 8 7-3 8 3 9-3v18l-9 3-8-3-7 3zM10 5v18m8-15v18"/><circle cx="15" cy="14" r="2"/></g>
+<text x="16" y="54" class="desc">Explore my New York City picks</text>
+<text x="16" y="74" class="desc">on a map by area, type or vibe.</text>
+<text x="16" y="99" class="meta">TypeScript</text>
+</svg>

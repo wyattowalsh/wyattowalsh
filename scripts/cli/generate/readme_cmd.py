@@ -412,13 +412,20 @@ def wakatime(
             rich_help_panel="Configuration",
         ),
     ] = False,
+    svg_output: Annotated[
+        Path | None,
+        typer.Option(
+            "--svg-output",
+            help="Use wakatime.svg to write the chart, summary and text detail.",
+            rich_help_panel="Configuration",
+        ),
+    ] = None,
 ) -> None:
     """Fetch WakaTime stats and write the README section artifact for CI."""
     from ...wakatime_readme import (
         DEFAULT_ARTIFACT_NAME,
-        generate_waka_section,
+        generate_waka_artifacts,
         write_skip_artifact,
-        write_waka_artifact,
     )
 
     api_key = (os.environ.get("WAKATIME_API_KEY") or "").strip()
@@ -440,12 +447,13 @@ def wakatime(
         raise typer.Exit(code=1)
 
     try:
-        body = generate_waka_section(
+        generate_waka_artifacts(
+            output_path,
             api_key=api_key,
+            svg_output=svg_output,
             github_login=github_login,
             include_github=not no_github,
         )
-        write_waka_artifact(body, output_path)
     except (OSError, ValueError, RuntimeError) as exc:
         console.print(f"[bold red]Error:[/bold red] WakaTime generation failed: {exc}")
         raise typer.Exit(code=1) from exc

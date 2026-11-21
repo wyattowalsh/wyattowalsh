@@ -702,6 +702,19 @@ def _read_manifest(path: Path) -> dict[str, Any]:
     return raw_manifest
 
 
+def verify_published_gifs(directory: Path) -> dict[str, str]:
+    """Verify the published v2 manifest against its GIFs and return their hashes."""
+    path = directory / MANIFEST_FILENAME
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(f"Expected a regular published living-art manifest: {path}")
+    manifest = _read_manifest(path)
+    observed = _validated_canonical_manifest(
+        directory, label="Gallery source", exact_directory=False
+    )
+    _assert_stable_manifests_match(manifest, observed, context="Gallery source")
+    return {asset["name"]: asset["sha256"] for asset in observed["assets"]}
+
+
 def _validate_persisted_surface(
     directory: Path,
     expected_manifest: Mapping[str, Any],
@@ -870,6 +883,65 @@ def sync_living_art_artifacts(
         )
 
     return manifest_path, gallery_path, manifest
+
+
+_VIDEO_RECEIPT = "video-pairs.json"
+
+
+def _video_pairs(gifs: Path, videos: Path) -> dict[str, dict[str, str]]:
+    expected = {Path(name).with_suffix(".mp4").name for name in LIVING_ART_BYTE_BUDGETS}
+    if videos.is_symlink() or not videos.is_dir():
+        raise ValueError("Missing living-art video directory")
+    entries = {entry.name for entry in videos.iterdir() if entry.suffix == ".mp4"}
+    if entries != expected:
+        raise ValueError("Expected the six current living-art videos")
+    pairs = {}
+    for name in sorted(expected):
+        film = videos / name
+        gif = gifs / film.with_suffix(".gif").name
+        if any(p.is_symlink() or not p.is_file() for p in (film, gif)):
+            raise ValueError(f"Invalid living-art media pair: {name}")
+        with film.open("rb") as stream:
+            header = stream.read(12)
+        if len(header) != 12 or header[4:8] != b"ftyp":
+            raise ValueError(f"Invalid living-art MP4 header: {name}")
+        pairs[name] = {"gif": _sha256_file(gif), "mp4": _sha256_file(film)}
+    return pairs
+
+
+def stage_gallery_videos(parts: Path, stage: Path) -> None:
+    """Bind the six newly encoded films to GIFs from the same matrix run."""
+    pairs = _video_pairs(parts, parts)
+    stage.mkdir()
+    for name in pairs:
+        shutil.copyfile(parts / name, stage / name)
+    (stage / _VIDEO_RECEIPT).write_text(json.dumps(pairs, sort_keys=True), "utf-8")
+
+
+def validate_gallery_videos(
+    gifs: Path, stage: Path, destination: Path
+) -> tuple[str, ...]:
+    """Validate all six GIF/MP4 pairs before publishing either media family."""
+    pairs = _video_pairs(gifs, stage)
+    receipt = stage / _VIDEO_RECEIPT
+    if (
+        {p.name for p in stage.iterdir()} != {*pairs, _VIDEO_RECEIPT}
+        or receipt.is_symlink()
+        or not receipt.is_file()
+        or json.loads(receipt.read_text("utf-8")) != pairs
+    ):
+        raise ValueError("Mismatched living-art video transfer")
+    for name in pairs:
+        target = destination / name
+        if target.is_symlink() or (target.exists() and not target.is_file()):
+            raise ValueError(f"Invalid gallery video destination: {name}")
+    return tuple(pairs)
+
+
+def publish_gallery_videos(gifs: Path, stage: Path, destination: Path) -> None:
+    """Publish only films that still match the validated media transfer."""
+    for name in validate_gallery_videos(gifs, stage, destination):
+        _copy_file_atomic(stage / name, destination / name)
 
 
 def stage_living_art_fleet(
@@ -1055,4 +1127,5 @@ __all__ = [
     "stage_living_art_fleet",
     "sync_living_art_artifacts",
     "validate_living_art_byte_budgets",
+    "verify_published_gifs",
 ]

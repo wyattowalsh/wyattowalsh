@@ -21,7 +21,6 @@ from scripts.config import load_skills
 from scripts.readme_sections import (
     _GHPVC_URL,
     _SUPPLEMENTAL_METRICS_ASSETS,
-    _WAKATIME_ASSET_SRC,
 )
 from scripts.skills import MAX_SHIELDS_BADGE_URL_LENGTH
 from scripts.wakatime_readme import (
@@ -42,6 +41,8 @@ from tests.test_profile_workflow import (
     _workflow_text,
 )
 from tests.test_readme_gfm_ux import (
+    assert_blog_cards,
+    assert_metric_panels,
     assert_tech_stack_dropdown_is_h2,
     assert_visible_or_comment_heading,
     slice_between_headings,
@@ -62,7 +63,6 @@ _SKILLS_BLOCK_RE = re.compile(
     r"<!-- SKILLS:START -->\n(.*?)<!-- SKILLS:END -->",
     re.S,
 )
-_DETAILS_RE = re.compile(r"(?is)<details\b.*?</details>")
 
 
 def _readme() -> str:
@@ -146,7 +146,8 @@ def test_fact_habits_both_yaml_on_and_first_party_card_exists() -> None:
     assert "habits-focus" in text
     assert "habits-peak" in text
     assert "habits-streaks" in text
-    assert 'src=".github/assets/img/metrics-habits.svg"' in _readme()
+    assert 'src=".github/assets/img/summary-metrics-habits.svg"' in _readme()
+    assert "](.github/assets/img/metrics-habits.svg)" in _readme()
 
 
 def test_fact_remove_feed_metrics_activity_absent() -> None:
@@ -176,12 +177,12 @@ def test_fact_living_art_spine_exact_six_and_monotonic_helper() -> None:
     assert LIVING_ART_STYLE_KEYS == SHIPPED_STYLE_KEYS
     if SHIPPED_STYLE_KEYS == CANDIDATE_STYLE_KEYS:
         assert tuple(ALL_STYLES) == LIVING_ART_STYLE_KEYS
-    readme = _readme()
+    gallery = Path("LIVING_ART.md").read_text(encoding="utf-8")
     for style in LIVING_ART_STYLE_KEYS:
         path = Path(f".github/assets/img/living-{style}.gif")
         assert path.is_file(), f"missing {path}"
         assert path.stat().st_size > 0
-        assert f"living-{style}.gif" in readme
+        assert f"living-{style}.gif" in gallery
     assert callable(validate_snapshot_monotonic_contract)
 
 
@@ -194,18 +195,11 @@ def test_fact_no_200_copy_readme_summary_is_bare() -> None:
 
 
 def test_fact_tech_details_stack_collapsed_waka_visible() -> None:
-    """fact-tech-details: stack in <details>; Waka <img> is open-flow in Metrics."""
+    """fact-tech-details: the open-flow WakaTime summary links its full report."""
     readme = _readme()
-    assert_visible_or_comment_heading(readme, "Metrics")
-    metrics = slice_between_headings(readme, "Metrics", "Living Art")
-    assert f'src="{_WAKATIME_ASSET_SRC}"' in metrics
+    assert_metric_panels(readme)
     assert "This Week I Spent My Time On" not in readme
-    details_blocks = _DETAILS_RE.findall(readme)
-    assert details_blocks
-    assert any("<!-- SKILLS:START -->" in block for block in details_blocks)
-    for block in details_blocks:
-        assert _WAKATIME_ASSET_SRC not in block
-        assert "README:BLOG_POSTS" not in block
+    assert_tech_stack_dropdown_is_h2(readme)
 
 
 def test_fact_badges_stack_https_homepages_and_camo_safe_srcs() -> None:
@@ -279,7 +273,8 @@ def test_fact_waka_svg_committed_card_has_public_safe_sections() -> None:
     assert "Coding heatmap" in svg
     assert "Mac" in svg
     readme = _readme()
-    assert f'src="{_WAKATIME_ASSET_SRC}"' in readme
+    assert 'src=".github/assets/img/summary-wakatime.svg"' in readme
+    assert "](.github/assets/img/wakatime.svg)" in readme
     assert "anmol098/waka-readme-stats" not in _workflow_text()
 
 
@@ -298,21 +293,11 @@ def test_fact_waka_privacy_committed_svg_omits_banned_rows() -> None:
     assert is_leisure_or_unprofessional("Spotify")
 
 
-def test_fact_blog_visible_rss_strip_not_details() -> None:
-    """fact-blog: 4–5 visible w4w.dev RSS cards with title, date, hook, link."""
+def test_fact_blog_visible_rss_strip_and_title_links() -> None:
+    """fact-blog: five visible RSS cards have matching native text links."""
     readme = _readme()
-    start = readme.index("<!-- README:BLOG_POSTS:START -->")
-    end = readme.index("<!-- README:BLOG_POSTS:END -->")
-    blog = readme[start:end]
-    assert "<details" not in blog.lower()
-    assert "<summary><strong>Latest Blog Posts</strong></summary>" not in readme
     assert_visible_or_comment_heading(readme, "Latest Blog Posts")
-    assert re.search(r"blog-(?:posts|[a-z0-9-]+)\.svg", blog)
-    hrefs = re.findall(r'<a href="([^"]+)"', blog)
-    assert len(hrefs) >= 4
-    for href in hrefs:
-        assert "w4w.dev" in unescape(href)
-    assert len(re.findall(r"20\d{2}-\d{2}-\d{2}", blog)) >= 4
+    assert_blog_cards(slice_between_headings(readme, "Latest Blog Posts", "Connect"))
 
 
 def test_fact_views_komarev_for_the_badge() -> None:
@@ -399,22 +384,21 @@ def test_fact_waka_svg_committed_platforms_are_mac_only() -> None:
     assert "watchOS" not in svg
 
 
-def test_fact_blog_committed_readme_is_linked_cards_with_hooks() -> None:
-    """fact-blog: 4–5 homepage-linked cards, each with a date and hook."""
-    readme = _readme()
-    start = readme.index("<!-- README:BLOG_POSTS:START -->")
-    end = readme.index("<!-- README:BLOG_POSTS:END -->")
-    blog = readme[start:end]
-    assert "<details" not in blog.lower()
-    wraps = re.findall(
-        r'<a href="([^"]+)"[^>]*>\s*<img src="([^"]+)"',
-        blog,
-    )
-    assert len(wraps) >= 4
-    for href, src in wraps:
-        assert "w4w.dev/blog" in unescape(href)
-        assert src.startswith(".github/assets/img/readme/blog-")
-        assert src.endswith(".svg")
-        assert Path(src).is_file()
-    assert len(re.findall(r"20\d{2}-\d{2}-\d{2}", blog)) >= 4
-    assert " · " in blog
+def test_fact_blog_committed_readme_contains_all_configured_public_hooks() -> None:
+    """fact-blog: reviewed article hooks ship on their matching linked cards."""
+    from scripts.config import load_config
+    from tests.test_readme_gfm_ux import rendered
+
+    settings = load_config().readme_sections_settings
+    assert settings is not None and settings.profile_cards is not None
+    profile = settings.profile_cards
+    blog = rendered(slice_between_headings(_readme(), "Latest Blog Posts", "Connect"))
+    cards = blog.select("a:has(img)")
+    assert len(cards) == 5
+    for card in cards:
+        url = str(card["href"])
+        hook = profile.article_hooks.get(url)
+        image = card.select_one("img")
+        assert image is not None
+        if hook is not None:
+            assert hook in str(image["alt"])

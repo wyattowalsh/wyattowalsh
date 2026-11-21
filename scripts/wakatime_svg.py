@@ -19,6 +19,8 @@ from html import escape
 from pathlib import Path
 from typing import Final
 
+from . import metric_panels as mp
+from .profile_metric_family import write_metric_detail
 from .utils import get_logger
 from .wakatime_readme import (
     DEFAULT_WAKATIME_SVG_PATH,
@@ -158,8 +160,7 @@ def _css() -> str:
             " letter-spacing: 0.04em; text-transform: uppercase; }",
             f".total-value {{ fill: var(--title-color);"
             f" font: 700 16px {FONT_FAMILY}; }}",
-            f".gh-chip {{ fill: var(--title-color);"
-            f" font: 700 13px {FONT_FAMILY}; }}",
+            f".gh-chip {{ fill: var(--title-color); font: 700 13px {FONT_FAMILY}; }}",
             ".bar-track { fill: var(--bar-track); }",
             ".day-bar { fill: var(--accent); }",
             ".hm-0 { fill: var(--hm-0); }",
@@ -172,10 +173,7 @@ def _css() -> str:
 
 
 def _section_heading(label: str, x: float, y: float) -> str:
-    return (
-        f'<text class="card-kicker" x="{x:.1f}" y="{y:.1f}">'
-        f"{_esc(label)}</text>"
-    )
+    return f'<text class="card-kicker" x="{x:.1f}" y="{y:.1f}">{_esc(label)}</text>'
 
 
 def _stat_rows(
@@ -190,20 +188,19 @@ def _stat_rows(
     cursor = y
     if not entries:
         lines.append(
-            f'<text class="card-line" x="{x:.1f}" y="{cursor:.1f}">'
-            f"{_esc(empty)}</text>"
+            f'<text class="card-line" x="{x:.1f}" y="{cursor:.1f}">{_esc(empty)}</text>'
         )
         return lines, cursor + 22.0
     bar_x = x + 118
-    bar_w = max(80.0, width - 200)
+    duration_w = 172
+    bar_w = width - (bar_x - x) - duration_w - 8
     for index, entry in enumerate(entries):
         color = _language_color(entry.name, index)
         pct = max(0.0, min(100.0, entry.percent))
         fill_w = bar_w * (pct / 100.0)
-        name = entry.name if len(entry.name) <= 16 else f"{entry.name[:15]}…"
+        name = mp.fit_label(entry.name, 110, 12)
         lines.append(
-            f'<text class="stat-name" x="{x:.1f}" y="{cursor:.1f}">'
-            f"{_esc(name)}</text>"
+            f'<text class="stat-name" x="{x:.1f}" y="{cursor:.1f}">{_esc(name)}</text>'
         )
         track_y = cursor - 9
         lines.append(
@@ -217,7 +214,7 @@ def _stat_rows(
             )
         lines.append(
             f'<text class="stat-time" x="{bar_x + bar_w + 8:.1f}" '
-            f'y="{cursor:.1f}">{_esc(entry.text)}</text>'
+            f'y="{cursor:.1f}">{_esc(mp.fit_label(entry.text, duration_w, 11))}</text>'
         )
         cursor += 22.0
     return lines, cursor
@@ -257,7 +254,7 @@ def _render_heatmap(
     step = CELL + CELL_GAP
     max_weeks = max(1, int((width - 28) // step))
     if week_count > max_weeks:
-        start = _sunday_on_or_before(end - timedelta(days=7 * max_weeks - 1))
+        start = _sunday_on_or_before(end) - timedelta(weeks=max_weeks - 1)
         week_count = max_weeks
     lines = [_section_heading("Coding heatmap", x, y)]
     grid_y = y + 14
@@ -309,10 +306,8 @@ def _duration_label(total_seconds: float) -> str:
 
 
 def _totals(collection: WakaCollection) -> tuple[tuple[str, str], ...]:
-    week_text = collection.week.human_readable_total or (
-        _duration_label(collection.week.total_seconds)
-        if collection.week.total_seconds
-        else "—"
+    week_text = collection.week.human_readable_total or _duration_label(
+        collection.week.total_seconds
     )
     year_text = "—"
     if collection.year is not None:
@@ -320,9 +315,7 @@ def _totals(collection: WakaCollection) -> tuple[tuple[str, str], ...]:
             collection.year.total_seconds
         )
     all_text = "—"
-    if collection.all_time is not None and (
-        collection.all_time.human_readable_total or collection.all_time.total_seconds
-    ):
+    if collection.all_time is not None:
         all_text = collection.all_time.human_readable_total or _duration_label(
             collection.all_time.total_seconds
         )
@@ -340,11 +333,8 @@ def _github_chips(github: GitHubShortInfo | None) -> tuple[tuple[str, str], ...]
         return ()
     chips: list[tuple[str, str]] = []
     if github.contributions_this_year is not None and github.year is not None:
-        chips.append(
-            (f"{github.year} contribs", f"{github.contributions_this_year:,}")
-        )
+        chips.append((f"{github.year} contribs", f"{github.contributions_this_year:,}"))
     chips.append(("Public repos", str(github.public_repos)))
-    chips.append(("Private repos", str(github.private_repos)))
     if github.hireable is True:
         chips.append(("Hiring", "Open"))
     elif github.hireable is False:
@@ -361,7 +351,7 @@ def _daily_bars(
 ) -> tuple[list[str], float]:
     if not daily:
         return [], y
-    recent = daily[-14:]
+    recent = _recent_days(daily)
     peak = max((item.total_seconds for item in recent), default=0.0)
     lines = [_section_heading("Last 14 days", x, y)]
     bar_gap = 6.0
@@ -370,7 +360,7 @@ def _daily_bars(
     for index, item in enumerate(recent):
         bx = x + index * (bar_w + bar_gap)
         ratio = 0.0 if peak <= 0 else item.total_seconds / peak
-        bar_h = 6.0 if item.total_seconds <= 0 else max(8.0, 56.0 * ratio)
+        bar_h = 56.0 * ratio
         lines.append(
             f'<rect class="day-bar" x="{bx:.1f}" y="{base - bar_h:.1f}" '
             f'width="{bar_w:.1f}" height="{bar_h:.1f}" rx="3">'
@@ -416,6 +406,138 @@ def _exotic_waka_metrics(
     ]
 
 
+def _recent_days(daily: tuple[WakaDayTotal, ...]) -> tuple[WakaDayTotal, ...]:
+    if not daily:
+        return ()
+    cutoff = daily[-1].day - timedelta(days=13)
+    return tuple(item for item in daily if item.day >= cutoff)
+
+
+def _waka_panel(
+    collection: WakaCollection,
+    stamp: datetime,
+    github: GitHubShortInfo | None,
+) -> tuple[str, str]:
+    week = collection.week
+    duration = _duration_label(week.total_seconds)
+    alt = f"WakaTime reported {_totals(collection)[0][1]} over seven days."
+    content = [
+        mp.text(17, 34, "WakaTime", "title"),
+        mp.text(17, 60, "Time tracked in seven days", "minor"),
+        mp.text(17, 102, mp.fit_label(duration, 266, 33), "hero"),
+        mp.rule(17, 116, 283),
+    ]
+    recent = _recent_days(collection.daily)
+    body = [
+        f"Snapshot generated {stamp:%Y-%m-%d %H:%M UTC}. WakaTime groups activity "
+        f"in the {mp.literal(week.timezone)} timezone.",
+        mp.table("Reporting period", "Tracked time", _totals(collection)),
+    ]
+    if week.human_readable_daily_average:
+        body.append(
+            "WakaTime reported a daily average of "
+            f"{mp.literal(week.human_readable_daily_average)} "
+            "for its seven-day summary."
+        )
+    if recent:
+        units = max(1, math.ceil(max(item.total_seconds for item in recent) / 3600))
+        content.extend(
+            (
+                mp.text(17, 142, "Daily tracking"),
+                mp.text(283, 142, f"0–{units} hours", "minor", end=True),
+            )
+        )
+        start, end = recent[0].day, recent[-1].day
+        days = (end - start).days + 1
+        step = 266 / days
+        for item in recent:
+            x = 17 + (item.day - start).days * step
+            h = item.total_seconds / (units * 3600) * 48
+            if h:
+                content.append(mp.rect(x, 204 - h, step * 0.73, h, "accent", 1))
+            else:
+                content.append(mp.rule(x, 204, x + step * 0.73, "zero"))
+        content.extend(
+            (
+                mp.text(17, 229, start.strftime("%b %d"), "minor"),
+                mp.text(283, 229, end.strftime("%b %d"), "minor", end=True),
+            )
+        )
+        avg = _duration_label(sum(item.total_seconds for item in recent) / len(recent))
+        daily_text = (
+            f"The daily series averaged {avg} across {len(recent)} reported days "
+            f"from {start} through {end}."
+        )
+        alt += " " + daily_text
+        body.extend(
+            (
+                daily_text,
+                mp.table(
+                    "Day",
+                    "Tracked time",
+                    (
+                        (item.day.isoformat(), _duration_label(item.total_seconds))
+                        for item in recent
+                    ),
+                ),
+            )
+        )
+    else:
+        content.append(mp.text(17, 152, "Daily series unavailable", "minor"))
+        body.append("Daily totals were unavailable for this snapshot.")
+    groups = (
+        ("Languages in the seven-day report", week.languages),
+        ("Editors in the seven-day report", week.editors),
+        ("Categories in the seven-day report", week.categories),
+        ("Public projects in the seven-day report", week.projects),
+        ("Platforms", _platforms_from_collection(collection)),
+    )
+    for label, entries in groups:
+        if entries:
+            body.append(
+                mp.table(
+                    label,
+                    "Tracked time",
+                    ((entry.name, entry.text) for entry in entries),
+                )
+            )
+    if _platforms_from_collection(collection):
+        body.append(
+            "Each platform uses its longest reported duration across the weekly, "
+            "yearly and all-time ranges."
+        )
+    indicators = (
+        "Language diversity (Shannon entropy)",
+        "Share of editor time in the leading editor",
+        "Share of category time in Coding or AI Coding",
+        "Share of category time in Browsing",
+    )
+    body.extend(
+        (
+            "Weekly indicators use the entries in the displayed weekly breakdowns.",
+            mp.table(
+                "Weekly indicator",
+                "Value",
+                zip(
+                    indicators,
+                    (v for _, v in _exotic_waka_metrics(collection)),
+                    strict=True,
+                ),
+            ),
+        )
+    )
+    if github:
+        body.append(mp.table("GitHub at snapshot time", "Value", _github_chips(github)))
+    return mp.panel(
+        "WakaTime coding activity", alt, "#305aba", "#9ebcff", content
+    ), mp.disclosure(
+        "WakaTime · tracked time, weekly breakdowns and daily totals",
+        body,
+        "Full WakaTime chart and activity heatmap",
+        "wakatime",
+    )
+
+
 def render_wakatime_svg(
     collection: WakaCollection,
     *,
@@ -439,8 +561,7 @@ def render_wakatime_svg(
     parts.append(_section_heading("WakaTime", left_x, y))
     y += 22
     parts.append(
-        f'<text class="card-title" x="{left_x:.1f}" y="{y:.1f}">'
-        "Coding activity</text>"
+        f'<text class="card-title" x="{left_x:.1f}" y="{y:.1f}">Coding activity</text>'
     )
     y += 16
     parts.append(
@@ -452,12 +573,11 @@ def render_wakatime_svg(
     for index, (label, value) in enumerate(totals):
         cx = left_x + index * chip_w
         parts.append(
-            f'<text class="total-label" x="{cx:.1f}" y="{y:.1f}">'
-            f"{_esc(label)}</text>"
+            f'<text class="total-label" x="{cx:.1f}" y="{y:.1f}">{_esc(label)}</text>'
         )
         parts.append(
             f'<text class="total-value" x="{cx:.1f}" y="{y + 20:.1f}">'
-            f"{_esc(value)}</text>"
+            f"{_esc(mp.fit_label(value, chip_w - 12, 16))}</text>"
         )
     y += 48
     github_chips = _github_chips(github)
@@ -587,10 +707,7 @@ def render_wakatime_svg(
         "</style>",
         "</defs>",
         f'<g class="card" transform="translate({PADDING},{PADDING})">',
-        (
-            f'<rect class="rc-bg" width="{inner_w}" height="{card_h}" '
-            f'rx="{CARD_RX}" />'
-        ),
+        (f'<rect class="rc-bg" width="{inner_w}" height="{card_h}" rx="{CARD_RX}" />'),
         (
             f'<rect class="rc-border" x="0.5" y="0.5" width="{inner_w - 1}" '
             f'height="{card_h - 1}" rx="{CARD_RX}" fill="none" '
@@ -666,12 +783,18 @@ def generate_wakatime_svg(
             OSError,
         ) as exc:
             logger.warning("Skipping GitHub short info for Waka SVG: {exc}", exc=exc)
+    stamp = (updated_at or datetime.now(UTC)).astimezone(UTC)
     svg = render_wakatime_svg(
         filtered,
-        updated_at=updated_at,
+        updated_at=stamp,
         github=github_info,
     )
-    return write_wakatime_svg(svg, output_path)
+    path = write_wakatime_svg(svg, output_path)
+    if path.name == DEFAULT_WAKATIME_SVG_PATH.name:
+        summary, detail = _waka_panel(filtered, stamp, github_info)
+        write_wakatime_svg(summary, path.with_name("summary-wakatime.svg"))
+        write_metric_detail(path.parent, "wakatime", detail, saved=stamp.date())
+    return path
 
 
 def main(argv: list[str] | None = None) -> int:

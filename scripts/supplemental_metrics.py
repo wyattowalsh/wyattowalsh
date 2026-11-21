@@ -21,8 +21,10 @@ from html import escape
 from pathlib import Path
 from typing import Any, Final, TypeGuard
 
+from . import metric_panels as mp
 from .fetch_metrics import collect as collect_github_metrics
 from .metrics_svg import validate_svg_file
+from .profile_metric_family import metric_files, read_metric_family, write_metric_detail
 from .readme_svg import (
     FONT_FAMILY,
     ReadmeSvgAssetBuilder,
@@ -216,10 +218,11 @@ def _probe_github_token(token: str) -> bool:
 def _resolve_github_token() -> str | None:
     """Pick a usable GitHub token for supplemental generation.
 
-    Prefer ``METRICS_TOKEN`` when it authenticates, otherwise fall back to the
-    Actions ``GITHUB_TOKEN`` / ``GH_TOKEN``. An expired METRICS_TOKEN must not
-    block generation when a working default token is available.
+    On Actions, use only the repository-scoped token supplied by the public
+    workflow. Local runs retain their configured token preference.
     """
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        return os.getenv("GITHUB_TOKEN", "").strip() or None
     candidates = [
         os.getenv("METRICS_TOKEN", "").strip(),
         os.getenv("GITHUB_TOKEN", "").strip(),
@@ -538,8 +541,7 @@ def _top_languages(metrics: dict[str, Any], *, limit: int = 3) -> tuple[str, ...
             for name, size in languages.items()
             if isinstance(name, str) and int(size or 0) > 0
         ),
-        key=lambda item: item[1],
-        reverse=True,
+        key=lambda item: (-item[1], item[0].casefold(), item[0]),
     )
     return tuple(name for name, _ in ranked[:limit])
 
@@ -552,11 +554,13 @@ def _focus_repository_counts(
     recent_prs = metrics.get("recent_merged_prs") or []
     counts: dict[str, int] = {}
     for pr in recent_prs:
-        repo_name = str(pr.get("repo_name") or "").strip()
+        repo_name = str(pr.get("repo_full_name") or pr.get("repo_name") or "").strip()
         if not repo_name:
             continue
         counts[repo_name] = counts.get(repo_name, 0) + 1
-    ranked = sorted(counts.items(), key=lambda item: item[1], reverse=True)
+    ranked = sorted(
+        counts.items(), key=lambda item: (-item[1], item[0].casefold(), item[0])
+    )
     return tuple((name, count) for name, count in ranked[:limit])
 
 
@@ -623,8 +627,7 @@ def _language_shares(
             and int(size or 0) > 0
             and not _is_excluded_language(str(name))
         ),
-        key=lambda item: item[1],
-        reverse=True,
+        key=lambda item: (-item[1], item[0].casefold(), item[0]),
     )
     total = sum(size for _, size in ranked) or 1
     return [(name, size, 100.0 * size / total) for name, size in ranked[:limit]]
@@ -911,7 +914,7 @@ def _render_habits_peak_panel(
         f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
         f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
         '<text class="label" x="16" y="24">Peak hour</text>',
-        '<text class="meta" x="16" y="42">Recent pushes · UTC</text>',
+        '<text class="meta" x="16" y="42">Commit-weighted pushes · UTC</text>',
         f'<text class="value" x="16" y="86">{_svg_text(peak_hour)}</text>',
     ]
     chart_x = 16
@@ -959,7 +962,7 @@ def _render_habits_streaks_panel(
     filled = 0 if current <= 0 else min(current, bead_count)
     bead_r = 5
     usable = width - 32
-    step = usable / max(bead_count - 1, 1)
+    step = (usable - (72 if current > bead_count else 0)) / (bead_count - 1)
     track_width = usable
     current_fill = (
         0
@@ -1130,10 +1133,7 @@ def _render_habits_mosaic_panel(
         f'<rect class="panel" width="{width}" height="{height}" rx="10" />',
         f'<rect class="panel-stroke" width="{width}" height="{height}" rx="10" />',
         '<text class="label" x="16" y="24">After-hours accretion</text>',
-        (
-            '<text class="meta" x="16" y="42">UTC 23:00–05:59 push-hour share '
-            "· uncommon but readable night-owl index</text>"
-        ),
+        ('<text class="meta" x="16" y="42">Pushed commits, 23:00–05:59 UTC</text>'),
         f'<text class="body" x="16" y="72">{_svg_text(night_pct)} nocturnal</text>',
         (
             f'<rect x="16" y="82" width="{width - 32}" height="8" rx="4" '
@@ -1145,8 +1145,8 @@ def _render_habits_mosaic_panel(
         ),
         '<text class="label" x="16" y="118">Focus monoculture</text>',
         (
-            '<text class="meta" x="16" y="136">Herfindahl of merged-PR repos '
-            "(100% = one repo ate the month)</text>"
+            '<text class="meta" x="16" y="136">Herfindahl index of displayed repos'
+            "</text>"
         ),
         f'<text class="body" x="16" y="166">{_svg_text(mosaic_pct)} HHI</text>',
         (
@@ -1272,7 +1272,8 @@ def _language_year_flows(
 def _render_languages_svg(metrics: dict[str, Any]) -> str:
     shares = _language_shares(metrics, limit=8)
     years, langs, flows = _language_year_flows(metrics, lang_limit=8)
-    width, height = 1200, 420
+    panel_height = max(340, 64 + 22 * len(years))
+    width, height = 1200, panel_height + 80
     body = [
         (
             f'<text class="title" x="28" y="36">'
@@ -1281,8 +1282,8 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
         '<text class="kicker" x="1172" y="34" text-anchor="end">'
         "Year → language · current bytes</text>",
         '<g class="languages-sankey" transform="translate(28,56)">',
-        '<rect class="panel" width="1144" height="340" rx="10" />',
-        '<rect class="panel-stroke" width="1144" height="340" rx="10" />',
+        f'<rect class="panel" width="1144" height="{panel_height}" rx="10" />',
+        f'<rect class="panel-stroke" width="1144" height="{panel_height}" rx="10" />',
     ]
     if not shares:
         body.extend(
@@ -1301,19 +1302,19 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
                     f'rx="2" fill="{fill}"/>',
                     (
                         f'<text class="body" x="40" y="{row_y}">'
-                        f"{_svg_text(name)} {percent:.0f}% · "
+                        f"{_svg_text(mp.fit_label(name, 860, 14))} {percent:.0f}% · "
                         f"{_svg_text(_format_bytes_short(size))} bytes</text>"
                     ),
                 )
             )
         body.append("</g>")
     else:
-        left_x, right_x = 36, 980
-        row_h = min(36, 280 / max(len(years), len(langs), 1))
+        left_x, right_x = 36, 820
+        row_h = min(36, (panel_height - 60) / max(len(years), len(langs), 1))
         year_y = {year: 36 + index * row_h for index, year in enumerate(years)}
         lang_y = {lang: 36 + index * row_h for index, lang in enumerate(langs)}
         max_flow = max(flows.values()) if flows else 1
-        for (year, lang), count in flows.items():
+        for (year, lang), count in sorted(flows.items()):
             y1 = year_y[year]
             y2 = lang_y[lang]
             stroke_w = max(1.2, 8.0 * (count / max_flow))
@@ -1322,7 +1323,9 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
                 f'<path d="M {left_x + 70} {y1:.1f} C 360 {y1:.1f}, '
                 f'720 {y2:.1f}, {right_x} {y2:.1f}" fill="none" '
                 f'stroke="{fill}" stroke-opacity="0.45" '
-                f'stroke-width="{stroke_w:.1f}"/>'
+                f'stroke-width="{stroke_w:.1f}">'
+                f"<title>{year} · {_svg_text(lang)} · {count} "
+                f"repositor{'y' if count == 1 else 'ies'}</title></path>"
             )
         for year, y in year_y.items():
             body.append(
@@ -1337,7 +1340,7 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
                     f'height="8" rx="2" fill="{fill}"/>',
                     (
                         f'<text class="body" x="{right_x + 22}" y="{y + 4:.1f}">'
-                        f"{_svg_text(_truncate(lang, 16))} {share:.0f}%</text>"
+                        f"{_svg_text(mp.fit_label(lang, 240, 14))} {share:.0f}%</text>"
                     ),
                 )
             )
@@ -1806,6 +1809,7 @@ def _render_music_extras(
     tracks: list[dict[str, str]],
     *,
     y: int,
+    updated_at: datetime | None = None,
 ) -> tuple[list[str], list[str]]:
     extras = tracks[1 : 1 + MUSIC_QUEUE_LIMIT]
     if not extras:
@@ -1829,7 +1833,7 @@ def _render_music_extras(
         )
         defs.extend(sleeve_defs)
         album = track.get("album") or ""
-        meta = _relative_label(track.get("played_at"))
+        meta = _relative_label(track.get("played_at"), now=updated_at)
         if album:
             meta = f"{_truncate(album, 24)} · {meta}"
         extra_artists = _truncate(
@@ -1837,6 +1841,10 @@ def _render_music_extras(
             32,
         )
         rank = index + 2
+        meta_label = mp.fit_label(f"{extra_artists} · {meta}", tile_w - 104, 12)
+        track_title = mp.fit_label(
+            track.get("name") or "Untitled track", tile_w - 104, 13
+        )
         body.extend(
             (
                 (
@@ -1855,12 +1863,12 @@ def _render_music_extras(
                 (
                     f'<text class="queue-title extra-title" x="{tile_x + 88}" '
                     f'y="{tile_y + 24}">'
-                    f"{_svg_text(_truncate(track.get('name') or 'Untitled track', 36))}"
+                    f"{_svg_text(track_title)}"
                     "</text>"
                 ),
                 (
                     f'<text class="muted" x="{tile_x + 88}" y="{tile_y + 42}">'
-                    f"{_svg_text(extra_artists)} · {_svg_text(meta)}</text>"
+                    f"{_svg_text(meta_label)}</text>"
                 ),
             )
         )
@@ -1874,6 +1882,15 @@ def _render_music_svg(
 ) -> str:
     unique = _dedupe_tracks(tracks)
     hydrated = _with_track_artwork(unique[: 1 + MUSIC_QUEUE_LIMIT])
+    return _render_music_chart(hydrated, catalog=catalog)
+
+
+def _render_music_chart(
+    hydrated: list[dict[str, str]],
+    *,
+    catalog: dict[str, list[dict[str, str]]] | None,
+    updated_at: datetime | None = None,
+) -> str:
     extras = hydrated[1:]
     rows = math.ceil(len(extras) / 2) if extras else 0
     catalog = catalog or {}
@@ -1908,15 +1925,16 @@ def _render_music_svg(
         )
         defs.extend(sleeve_defs)
         album = hero.get("album") or ""
-        played = _relative_label(hero.get("played_at"))
+        played = _relative_label(hero.get("played_at"), now=updated_at)
         hero_meta = played if not album else f"{_truncate(album, 48)} · {played}"
         hero_artists = _truncate(hero.get("artists") or "Unknown artist", 44)
+        track_title = mp.fit_label(hero.get("name") or "Untitled track", 990, 28)
         body.extend(
             (
                 *sleeve_body,
                 (
                     f'<text class="hero-title" x="180" y="96">'
-                    f"{_svg_text(_truncate(hero.get('name') or 'Untitled track', 40))}"
+                    f"{_svg_text(track_title)}"
                     "</text>"
                 ),
                 (
@@ -1928,31 +1946,36 @@ def _render_music_svg(
                 "</g>",
             )
         )
-        extra_defs, extra_body = _render_music_extras(hydrated, y=208)
+        extra_defs, extra_body = _render_music_extras(
+            hydrated, y=208, updated_at=updated_at
+        )
         defs.extend(extra_defs)
         body.extend(extra_body)
     if artists:
         band_y = height - 84
         body.append(f'<g class="music-catalog" transform="translate(28,{band_y})">')
         body.append(
-            '<text class="label" x="0" y="14">'
-            "All-time taste (long-term top artists)</text>"
+            '<text class="label" x="0" y="14">Spotify long-term top artists</text>'
         )
         chip_w = min(136, 1144 / max(len(artists), 1) - 8)
         for index, artist in enumerate(artists[:8]):
             ax = index * (chip_w + 8)
             fill = _label_swatch(artist["name"])
+            name_label = mp.fit_label(artist["name"], chip_w - 18, 14)
+            genre_label = mp.fit_label(
+                artist.get("genre") or "Unspecified", chip_w - 18, 12
+            )
             body.extend(
                 (
                     f'<rect x="{ax:.1f}" y="24" width="{chip_w:.1f}" '
                     f'height="44" rx="10" fill="{fill}" fill-opacity="0.18"/>',
                     (
                         f'<text class="body" x="{ax + 10:.1f}" y="42">'
-                        f"{_svg_text(_truncate(artist['name'], 14))}</text>"
+                        f"{_svg_text(name_label)}</text>"
                     ),
                     (
                         f'<text class="muted" x="{ax + 10:.1f}" y="58">'
-                        f"{_svg_text(_truncate(artist.get('genre') or 'eclectic', 16))}"
+                        f"{_svg_text(genre_label)}"
                         "</text>"
                     ),
                 )
@@ -2078,16 +2101,234 @@ def _render_posts_card(handle: str, posts: list[dict[str, str]]) -> SvgBlock:
     return SvgBlock(title=card.title, cards=(card,))
 
 
-def _write_supplemental_asset(
-    builder: ReadmeSvgAssetBuilder,
-    asset_name: str,
-    block: SvgBlock,
-    svg: str,
+def _language_panel(metrics: dict[str, Any], stamp: date) -> tuple[str, str]:
+    shares = _language_shares(metrics, limit=len(metrics["languages"]))
+    title = "Repository languages"
+    content = [
+        mp.text(17, 34, title, "title"),
+        mp.text(17, 60, "Share of language bytes", "minor"),
+    ]
+    for index, (name, _, pct) in enumerate(shares[:4]):
+        y = 91 + index * 42
+        content.extend(
+            (
+                mp.text(17, y, mp.fit_label(name, 205, 17)),
+                mp.text(283, y, f"{pct:.0f}%", "number", end=True),
+                mp.rect(17, y + 9, 266, 6, "track"),
+                mp.rect(17, y + 9, 2.66 * pct, 6, "accent"),
+            )
+        )
+    alt = (
+        "Share of repository language bytes. "
+        + ", ".join(f"{name} {pct:.0f}%" for name, _, pct in shares[:4])
+        + "."
+    )
+    if not shares:
+        alt = "No repository language bytes reported."
+        content.append(mp.text(17, 108, "No language data", "minor"))
+    rows = [
+        (name, f"{pct:.0f}%" if round(pct) else "0% (rounded)")
+        for name, _, pct in shares
+    ]
+    body = [
+        f"GitHub chart generated on {stamp.isoformat()} UTC. Percentages measure "
+        "language bytes in non-fork repositories, excluding JetBrains MPS. "
+        "The full chart groups repositories by creation year and primary language.",
+        mp.table("Language", "Rounded share", rows) if rows else alt,
+    ]
+    return mp.panel(title, alt, "#305aba", "#9ebcff", content), mp.disclosure(
+        "Repository languages · byte shares and creation years",
+        body,
+        "Language chart by repository creation year",
+        "metrics-languages",
+    )
+
+
+def _habits_panel(metrics: dict[str, Any], stamp: date) -> tuple[str, str]:
+    buckets = _hour_buckets(metrics)
+    peak = _peak_commit_hour(metrics)
+    peak_label = f"{peak} UTC" if any(buckets) else "No weighted activity"
+    stats = _contribution_stats(metrics, now_date=stamp)
+    longest, current = stats["longest_streak"], stats["current_streak"]
+    streak = (
+        "contribution"
+        if any(
+            row.get("count", row.get("contributionCount", 0))
+            for row in metrics["contributions_calendar"]
+        )
+        or not _calendar_from_merged_prs(metrics)
+        else "merged-PR"
+    )
+    duration = f"{longest} day" + ("s" if longest != 1 else "")
+    title = "GitHub activity"
+    content = [
+        mp.text(17, 34, title, "title"),
+        mp.text(17, 60, "Peak of commit-weighted pushes", "minor"),
+        mp.text(17, 101, peak_label, "hero" if any(buckets) else "label"),
+    ]
+    maximum = max(buckets) or 1
+    for index, count in enumerate(buckets):
+        height = 44 * count / maximum
+        x = 17 + index * 11.2
+        if count:
+            content.append(
+                mp.rect(
+                    x,
+                    159 - height,
+                    8.4,
+                    height,
+                    "accent" if count == maximum else "soft",
+                    1,
+                )
+            )
+        else:
+            content.append(mp.rule(x, 159, x + 8.4))
+    content.extend(
+        (
+            mp.text(17, 179, "00h", "minor"),
+            mp.text(143, 179, "12h", "minor"),
+            mp.text(283, 179, "23h", "minor", end=True),
+            mp.rule(17, 192, 283),
+            mp.text(17, 216, "Longest streak"),
+            mp.text(283, 216, duration, "number", end=True),
+        )
+    )
+    repos = _focus_repository_counts(metrics, limit=5)
+    peak_sentence = (
+        f"The peak hour for commit-weighted pushes was {peak_label}."
+        if any(buckets)
+        else "No commit-weighted push activity was reported."
+    )
+    alt = f"{peak_sentence} The longest {streak} streak was {duration}."
+    body = [
+        f"GitHub chart generated on {stamp.isoformat()} UTC. {peak_sentence} "
+        "Each public push is weighted by its reported size or, when size is missing, "
+        "its listed commits. A push that omits both fields counts once. "
+        "A reported zero or an empty commit list without a size contributes zero.",
+        (
+            f"{_nocturnal_index(metrics):.0%} of the weighted activity fell between "
+            "23:00 and 05:59 UTC."
+        )
+        if any(buckets)
+        else "",
+        f"The {streak} streak stood at {current} day{'s' if current != 1 else ''}, "
+        f"with a longest streak of {duration} in the available calendar.",
+        mp.table(
+            "Public repository", "Merged pull requests", ((n, str(c)) for n, c in repos)
+        )
+        if repos
+        else "No merged pull requests were reported.",
+        (
+            f"Across the {len(repos)} displayed repositories, the Herfindahl "
+            f"concentration index was {_focus_herfindahl(repos):.0%}. "
+            "A value of 100% puts every "
+            "displayed merge in one repository."
+        )
+        if repos
+        else "",
+    ]
+    return mp.panel(title, alt, "#9a422b", "#ffad90", content), mp.disclosure(
+        "GitHub activity · push hours, pull requests and streaks",
+        body,
+        "Full GitHub activity chart",
+        "metrics-habits",
+    )
+
+
+def _music_panel(
+    tracks: list[dict[str, str]],
+    catalog: dict[str, list[dict[str, str]]],
+    stamp: date,
+) -> tuple[str, str]:
+    content = [
+        mp.text(17, 34, "Recently played", "title"),
+        mp.text(17, 60, "Spotify listening history", "minor"),
+    ]
+    alt = "No recent Spotify tracks were reported."
+    if tracks:
+        hero = tracks[0]
+        cover = hero.get("image_data_uri", "")
+        if cover:
+            content.append(
+                '<image x="17" y="77" width="64" height="64" '
+                f'href="{_svg_text(cover)}"/>'
+            )
+        x = 94 if cover else 17
+        width = 283 - x
+        name = hero["name"]
+        line, sep, suffix = name.rpartition(" - ")
+        content.extend(
+            (
+                mp.text(x, 94, mp.fit_label(line if sep else name, width, 17)),
+                mp.text(
+                    x, 116, mp.fit_label(suffix if sep else "", width, 17), "minor"
+                ),
+                mp.text(
+                    x, 138, mp.fit_label(hero["artists"], width, 17), "accentLabel"
+                ),
+            )
+        )
+        alt = f"The most recent Spotify track was {name} by {hero['artists']}."
+        if len(tracks) > 1:
+            prior = tracks[1]
+            alt += (
+                f" The previous distinct track was {prior['name']} "
+                f"by {prior['artists']}."
+            )
+            content.extend(
+                (
+                    mp.rule(17, 156, 283),
+                    mp.text(17, 184, "Previous distinct track", "minor"),
+                    mp.text(17, 209, mp.fit_label(prior["name"], 266, 17)),
+                    mp.text(17, 231, mp.fit_label(prior["artists"], 266, 17), "minor"),
+                )
+            )
+    else:
+        content.append(mp.text(17, 106, "No recent tracks", "minor"))
+    body = [
+        f"Spotify chart generated on {stamp.isoformat()} UTC. The most recent "
+        "play of each distinct track appears first.",
+        mp.table("Track", "Artist", ((row["name"], row["artists"]) for row in tracks))
+        if tracks
+        else alt,
+    ]
+    albums = [(row["name"], row["album"]) for row in tracks if row.get("album", "")]
+    if albums:
+        body.append(mp.table("Track", "Album", albums))
+    artists = catalog.get("artists", [])[:8]
+    if artists:
+        body.append(
+            mp.table(
+                "Long-term top artist",
+                "Genre",
+                (
+                    (artist["name"], artist.get("genre") or "Unspecified")
+                    for artist in artists
+                ),
+            )
+        )
+    return mp.panel(
+        "Spotify listening history", alt, "#11675f", "#8edbca", content
+    ), mp.disclosure(
+        "Spotify · tracks in listening order",
+        body,
+        "Spotify listening chart with cover art",
+        "metrics-music",
+    )
+
+
+def _write_metric_family(
+    directory: Path,
+    name: str,
+    chart: str,
+    summary_and_detail: tuple[str, str],
+    *,
+    saved: date,
 ) -> None:
-    builder.render_and_write(asset_name, block)
-    write_raw = getattr(builder, "write_raw", None)
-    if callable(write_raw):
-        write_raw(asset_name, svg)
+    summary, detail = summary_and_detail
+    (directory / f"{name}.svg").write_text(chart, encoding="utf-8")
+    (directory / f"summary-{name}.svg").write_text(summary, encoding="utf-8")
+    write_metric_detail(directory, name, detail, saved=saved)
 
 
 def generate_supplemental_metrics(
@@ -2097,6 +2338,7 @@ def generate_supplemental_metrics(
     output_dir: Path,
     manifest_path: Path,
     x_handle: str | None = None,
+    updated_at: datetime | None = None,
 ) -> dict[str, SupplementalAssetStatus]:
     """Generate the supplemental metrics cards and return their manifest."""
 
@@ -2118,7 +2360,7 @@ def generate_supplemental_metrics(
     spotify_refresh_token = os.getenv("SPOTIFY_REFRESH_TOKEN", "").strip()
     expected_x_handle = (x_handle or owner).strip().lstrip("@")
 
-    metrics = collect_github_metrics(owner, repo, github_token)
+    metrics = collect_github_metrics(owner, repo, github_token, public_profile=True)
     collection_failures = set(metrics.get("collection_failures") or [])
     if "languages" in collection_failures:
         raise RuntimeError(
@@ -2129,17 +2371,30 @@ def generate_supplemental_metrics(
             "Contribution calendar is missing because GitHub collection failed"
         )
 
-    _write_supplemental_asset(
-        builder,
-        ASSET_SPECS["languages"].asset_name,
-        _render_languages_card(metrics),
+    required = {
+        "languages": dict,
+        "contributions_calendar": list,
+        "recent_merged_prs": list,
+        "commit_hour_distribution": dict,
+    }
+    for key, expected in required.items():
+        if key in collection_failures or not isinstance(metrics.get(key), expected):
+            raise RuntimeError(f"Invalid or unavailable required GitHub metric: {key}")
+    updated = (updated_at or datetime.now(UTC)).astimezone(UTC)
+    stamp = updated.date()
+    _write_metric_family(
+        output_dir,
+        "metrics-languages",
         _render_languages_svg(metrics),
+        _language_panel(metrics, stamp),
+        saved=stamp,
     )
-    _write_supplemental_asset(
-        builder,
-        ASSET_SPECS["habits"].asset_name,
-        _render_habits_card(metrics),
-        _render_habits_svg(metrics),
+    _write_metric_family(
+        output_dir,
+        "metrics-habits",
+        _render_habits_svg(metrics, now_date=stamp),
+        _habits_panel(metrics, stamp),
+        saved=stamp,
     )
     # GitHub already renders a native activity feed below the profile README.
     _remove_asset_if_present(output_dir, ASSET_SPECS["activity"].asset_name)
@@ -2193,11 +2448,13 @@ def generate_supplemental_metrics(
         ) as exc:
             logger.warning("Spotify catalog unavailable: {}", exc)
             catalog = {"artists": [], "tracks": []}
-        _write_supplemental_asset(
-            builder,
-            ASSET_SPECS["music"].asset_name,
-            _render_music_card(tracks),
-            _render_music_svg(tracks, catalog=catalog),
+        hydrated = _with_track_artwork(_dedupe_tracks(tracks)[: 1 + MUSIC_QUEUE_LIMIT])
+        _write_metric_family(
+            output_dir,
+            "metrics-music",
+            _render_music_chart(hydrated, catalog=catalog, updated_at=updated),
+            _music_panel(hydrated, catalog, stamp),
+            saved=stamp,
         )
         statuses["music"] = SupplementalAssetStatus(
             asset_name=ASSET_SPECS["music"].asset_name,
@@ -2209,6 +2466,8 @@ def generate_supplemental_metrics(
         )
     else:
         _remove_asset_if_present(output_dir, ASSET_SPECS["music"].asset_name)
+        for filename in ("summary-metrics-music.svg", "detail-metrics-music.md"):
+            (output_dir / filename).unlink(missing_ok=True)
         statuses["music"] = SupplementalAssetStatus(
             asset_name=ASSET_SPECS["music"].asset_name,
             filename=f"{ASSET_SPECS['music'].asset_name}.svg",
@@ -2300,8 +2559,12 @@ def validate_supplemental_metrics(
             continue
         asset_path = output_dir / filename
         if not enabled:
-            if asset_path.exists():
-                errors.append(f"{filename}: disabled asset is still present")
+            managed_files = (
+                metric_files(spec.asset_name) if key == "music" else (filename,)
+            )
+            for managed in managed_files:
+                if (output_dir / managed).exists():
+                    errors.append(f"{managed}: disabled asset is still present")
             continue
 
         result = validate_svg_file(asset_path)
@@ -2313,6 +2576,13 @@ def validate_supplemental_metrics(
         for marker in spec.required_markers:
             if marker not in svg_text:
                 errors.append(f"{filename}: missing required marker '{marker}'")
+    if not errors:
+        for key in ("languages", "habits", "music"):
+            if manifest[key]["enabled"]:
+                try:
+                    read_metric_family(output_dir, ASSET_SPECS[key].asset_name)
+                except (OSError, ValueError) as exc:
+                    errors.append(str(exc))
     return errors
 
 

@@ -1,0 +1,133 @@
+{
+  "source": "Public GitHub repository metadata and published article cards in the approved 2026-11-21 review.",
+  "projects": {
+    "wyattowalsh/nbadb": {
+      "stars": 79,
+      "language": "Python"
+    },
+    "wyattowalsh/proxywhirl": {
+      "stars": 25,
+      "language": "Python"
+    },
+    "wyattowalsh/agents": {
+      "stars": 6,
+      "language": "Python"
+    },
+    "wyattowalsh/profile-bits": {
+      "stars": 0,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/riso": {
+      "stars": 0,
+      "language": "Jinja"
+    },
+    "wyattowalsh/openopps": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/webmedia-dl": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/iina-plugin-bookmarks": {
+      "stars": 20,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/nbops": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/cwa": {
+      "stars": 0,
+      "language": "JavaScript"
+    },
+    "wyattowalsh/personal-website": {
+      "stars": 4,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/prompts": {
+      "stars": 0,
+      "language": "JavaScript"
+    },
+    "wyattowalsh/ai-web-feeds": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/linkedin-profile-exporter": {
+      "stars": 1,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/copy-to-gmail": {
+      "stars": 0,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/wild-web-wrap-up": {
+      "stars": 0,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/fl-mcp": {
+      "stars": 1,
+      "language": "Python"
+    },
+    "wyattowalsh/mcp-crawl4ai": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/hue-board": {
+      "stars": 0,
+      "language": "Swift"
+    },
+    "wyattowalsh/awesome-iina": {
+      "stars": 1,
+      "language": "JavaScript"
+    },
+    "wyattowalsh/agentic-cad": {
+      "stars": 0,
+      "language": "Python"
+    },
+    "wyattowalsh/NYC-recs": {
+      "stars": 0,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/iina-plugin-starter": {
+      "stars": 0,
+      "language": "TypeScript"
+    },
+    "wyattowalsh/soundlab": {
+      "stars": 0,
+      "language": "Python"
+    }
+  },
+  "articles": [
+    {
+      "title": "Personal Website",
+      "url": "https://www.w4w.dev/blog/posts/personal-website",
+      "published": "2026-04-26",
+      "thumbnail_source": ".github/assets/img/readme/blog-personal-website.svg"
+    },
+    {
+      "title": "Agents",
+      "url": "https://www.w4w.dev/blog/posts/agents",
+      "published": "2026-04-26",
+      "thumbnail_source": ".github/assets/img/readme/blog-agents.svg"
+    },
+    {
+      "title": "ProxyWhirl",
+      "url": "https://www.w4w.dev/blog/posts/proxywhirl",
+      "published": "2026-02-13",
+      "thumbnail_source": ".github/assets/img/readme/blog-proxywhirl.svg"
+    },
+    {
+      "title": "Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy",
+      "url": "https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3",
+      "published": "2021-01-15",
+      "thumbnail_source": ".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg"
+    },
+    {
+      "title": "Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)",
+      "url": "https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2",
+      "published": "2021-01-14",
+      "thumbnail_source": ".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg"
+    }
+  ]
+}

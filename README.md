@@ -1,176 +1,223 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/assets/img/banner-dark.svg">
-    <img src=".github/assets/img/banner.svg" alt="Banner" width="100%"/>
+    <img src=".github/assets/img/banner.svg" alt="Hey, GitHub! Exploring technology, one commit at a time." width="100%"/>
   </picture>
 </p>
 
-<!-- README:TOP_BADGES:START -->
-<p align="center"><a href="https://w4w.dev" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-w4w-dev.svg" width="140" alt="w4w.dev" loading="lazy"/></a>
-<a href="https://linkedin.com/in/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-linkedin.svg" width="140" alt="LinkedIn" loading="lazy"/></a>
-<a href="https://www.kaggle.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-kaggle.svg" width="140" alt="Kaggle" loading="lazy"/></a>
-<a href="https://x.com/wyattowalsh" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/connect-x-com.svg" width="140" alt="X.com" loading="lazy"/></a></p>
-<!-- README:TOP_BADGES:END -->
+# Wyatt Walsh
 
-<p align="center"><img src=".github/assets/img/readme/sep-featured.svg" alt="" width="100%" loading="lazy"/></p>
+I build open-source tools for exploring NBA data, working with AI agents, and designing light scenes on iPhone. My [living art gallery](LIVING_ART.md) traces the history of my GitHub account.
+
+[Projects](#featured-projects) · [Metrics](#metrics) · [Writing](#latest-blog-posts) · [Connect](#connect)
 
 ## Featured Projects
+
+
 <!-- README:FEATURED_PROJECTS:START -->
+<details>
+<summary>Find a project by topic</summary>
+
+- **Data &amp; developer tools** — [nbadb](https://github.com/wyattowalsh/nbadb) · [nbops](https://github.com/wyattowalsh/nbops) · [proxywhirl](https://github.com/wyattowalsh/proxywhirl) · [riso](https://github.com/wyattowalsh/riso)
+- **AI &amp; automation** — [agentic-cad](https://github.com/wyattowalsh/agentic-cad) · [agents](https://github.com/wyattowalsh/agents) · [ai-web-feeds](https://github.com/wyattowalsh/ai-web-feeds) · [cwa](https://github.com/wyattowalsh/cwa) · [mcp-crawl4ai](https://github.com/wyattowalsh/mcp-crawl4ai) · [prompts](https://github.com/wyattowalsh/prompts)
+- **Websites, maps &amp; publishing** — [copy-to-gmail](https://github.com/wyattowalsh/copy-to-gmail) · [NYC-recs](https://github.com/wyattowalsh/NYC-recs) · [personal-website](https://github.com/wyattowalsh/personal-website) · [profile-bits](https://github.com/wyattowalsh/profile-bits) · [wild-web-wrap-up](https://github.com/wyattowalsh/wild-web-wrap-up)
+- **Jobs &amp; profiles** — [linkedin-profile-exporter](https://github.com/wyattowalsh/linkedin-profile-exporter) · [openopps](https://github.com/wyattowalsh/openopps)
+- **Media, music &amp; lighting** — [awesome-iina](https://github.com/wyattowalsh/awesome-iina) · [fl-mcp](https://github.com/wyattowalsh/fl-mcp) · [hue-board](https://github.com/wyattowalsh/hue-board) · [iina-plugin-bookmarks](https://github.com/wyattowalsh/iina-plugin-bookmarks) · [iina-plugin-starter](https://github.com/wyattowalsh/iina-plugin-starter) · [soundlab](https://github.com/wyattowalsh/soundlab) · [webmedia-dl](https://github.com/wyattowalsh/webmedia-dl)
+
+</details>
+
 <p align="center">
-<a href="https://github.com/wyattowalsh/nbadb" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg" width="360" alt="Featured project card for nbadb: Data Extraction and Processing Scripts to Produce the NBA Database on Kaggle" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg" width="360" alt="Featured project card for proxywhirl: rotating proxy system" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-agents.svg" width="360" alt="Featured project card for agents: AI agent artifacts, configs, skills, tools, and more" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/profile-bits" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-profile-bits.svg" width="360" alt="Featured project card for profile-bits: GitHub profile README widgets as dense GitHub-native stats cards — JSX in, PNG/SVG out" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/riso" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-riso.svg" width="360" alt="Featured project card for riso: Production-ready project scaffolding: mix-and-match CLI, FastAPI, Fastify, GraphQL, WebSocket, MCP, and SaaS modules with batteries-included quality tooling" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/openopps" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-openopps.svg" width="360" alt="Featured project card for openopps: CLI and local ledger for discovering public hiring boards and syncing normalized job listings" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/webmedia-dl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-webmedia-dl.svg" width="360" alt="Featured project card for webmedia-dl: Local-first universal media acquisition and export for Apple devices and desktop browsers" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg" width="360" alt="Featured project card for iina-plugin-bookmarks: media bookmark manager plugin for the iina video player" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/nbops" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-nbops.svg" width="360" alt="Featured project card for nbops: Local-first runtime observability for Python notebooks: CPU/memory sampling, SQLite runs, redacted HTML/Markdown reports" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/cwa" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-cwa.svg" width="360" alt="Featured project card for cwa: Local macOS Pake wrapper around chatgpt.com with visible-thread Markdown/ZIP export" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg" width="360" alt="Featured project card for personal-website: Files for my personal web app. Built using Vercel, Typescript, NextJS, tailwindcss, SCSS, shadcn-ui, yourls, rss, AWS. Currently on V6! 👨‍💻" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/prompts" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-prompts.svg" width="360" alt="Featured project card for prompts: Research-backed prompt recipes you copy, adapt, and verify" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/ai-web-feeds" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg" width="360" alt="Featured project card for ai-web-feeds: AI/ML web feeds" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/linkedin-profile-exporter" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-linkedin-profile-exporter.svg" width="360" alt="Featured project card for linkedin-profile-exporter: TypeScript tool for exporting LinkedIn profile data" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/copy-to-gmail" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-copy-to-gmail.svg" width="360" alt="Featured project card for copy-to-gmail: Local Gmail-ready drafting studio for sanitized HTML/plain clipboard payloads" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/wild-web-wrap-up" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-wild-web-wrap-up.svg" width="360" alt="Featured project card for wild-web-wrap-up: Next.js editorial wrap-up site" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/fl-mcp" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg" width="360" alt="Featured project card for fl-mcp: Local-first MCP server scaffold for FL Studio with transaction-oriented tools and a Fumadocs docs portal" loading="lazy"/></a>
-<a href="https://github.com/wyattowalsh/mcp-crawl4ai" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg" width="360" alt="Featured project card for mcp-crawl4ai: MCP Model Context Protocol server wrapping Crawl4AI library as functions using Python" loading="lazy"/></a>
+<a href="https://github.com/wyattowalsh/nbadb"><img src=".github/assets/img/readme-profile/project-nbadb.svg" width="274" height="112" alt="nbadb. Build the NBA database on Kaggle from league statistics. Python. 79 GitHub stars."></a>
+<a href="https://github.com/wyattowalsh/proxywhirl"><img src=".github/assets/img/readme-profile/project-proxywhirl.svg" width="274" height="112" alt="proxywhirl. Rotate HTTP proxies and remove failed proxies from the pool. Python. 25 GitHub stars."></a>
+<a href="https://github.com/wyattowalsh/agents"><img src=".github/assets/img/readme-profile/project-agents.svg" width="274" height="112" alt="agents. Reuse skills, tools and configs across AI coding agents. Python. 6 GitHub stars."></a>
+<a href="https://github.com/wyattowalsh/profile-bits"><img src=".github/assets/img/readme-profile/project-profile-bits.svg" width="274" height="112" alt="profile-bits. Turn JSX into SVG or PNG widgets for a GitHub profile README. TypeScript."></a>
+<a href="https://github.com/wyattowalsh/riso"><img src=".github/assets/img/readme-profile/project-riso.svg" width="274" height="112" alt="riso. Build a project scaffold from CLI, API and SaaS modules. Jinja."></a>
+<a href="https://github.com/wyattowalsh/openopps"><img src=".github/assets/img/readme-profile/project-openopps.svg" width="274" height="112" alt="openopps. Find hiring boards and sync job listings to a local ledger. Python."></a>
+<a href="https://github.com/wyattowalsh/webmedia-dl"><img src=".github/assets/img/readme-profile/project-webmedia-dl.svg" width="274" height="112" alt="webmedia-dl. Save media locally on Apple devices and in desktop browsers. Python."></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks"><img src=".github/assets/img/readme-profile/project-iina-plugin-bookmarks.svg" width="274" height="112" alt="iina-plugin-bookmarks. Bookmark playback positions in the IINA media player. TypeScript. 20 GitHub stars."></a>
+<a href="https://github.com/wyattowalsh/nbops"><img src=".github/assets/img/readme-profile/project-nbops.svg" width="274" height="112" alt="nbops. Track notebook CPU and memory use and export redacted reports. Python."></a>
+<a href="https://github.com/wyattowalsh/cwa"><img src=".github/assets/img/readme-profile/project-cwa.svg" width="274" height="112" alt="cwa. Export a visible ChatGPT thread as Markdown or ZIP on macOS. JavaScript."></a>
+<a href="https://github.com/wyattowalsh/personal-website"><img src=".github/assets/img/readme-profile/project-personal-website.svg" width="274" height="112" alt="personal-website. Browse w4w.dev, my personal site and blog built with Next.js. TypeScript. 4 GitHub stars."></a>
+<a href="https://github.com/wyattowalsh/prompts"><img src=".github/assets/img/readme-profile/project-prompts.svg" width="274" height="112" alt="prompts. Copy, adapt and verify research-backed prompt recipes. JavaScript."></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds"><img src=".github/assets/img/readme-profile/project-ai-web-feeds.svg" width="274" height="112" alt="ai-web-feeds. Follow AI and machine learning sources in your feed reader. Python."></a>
+<a href="https://github.com/wyattowalsh/linkedin-profile-exporter"><img src=".github/assets/img/readme-profile/project-linkedin-profile-exporter.svg" width="274" height="112" alt="linkedin-profile-exporter. Export LinkedIn profiles as JSON, CSV or Markdown. TypeScript. 1 GitHub star."></a>
+<a href="https://github.com/wyattowalsh/copy-to-gmail"><img src=".github/assets/img/readme-profile/project-copy-to-gmail.svg" width="274" height="112" alt="copy-to-gmail. Prepare sanitized HTML and plain text to paste into Gmail. TypeScript."></a>
+<a href="https://github.com/wyattowalsh/wild-web-wrap-up"><img src=".github/assets/img/readme-profile/project-wild-web-wrap-up.svg" width="274" height="112" alt="wild-web-wrap-up. Read the newsletter archive and draft issues for Buttondown. TypeScript."></a>
+<a href="https://github.com/wyattowalsh/fl-mcp"><img src=".github/assets/img/readme-profile/project-fl-mcp.svg" width="274" height="112" alt="fl-mcp. Start a local MCP server project for FL Studio. Python. 1 GitHub star."></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai"><img src=".github/assets/img/readme-profile/project-mcp-crawl4ai.svg" width="274" height="112" alt="mcp-crawl4ai. Give AI tools access to Crawl4AI web crawling through MCP. Python."></a>
+<a href="https://github.com/wyattowalsh/hue-board"><img src=".github/assets/img/readme-profile/project-hue-board.svg" width="274" height="112" alt="hue-board. Control Philips Hue lights and animate scenes across a room. Swift."></a>
+<a href="https://github.com/wyattowalsh/awesome-iina"><img src=".github/assets/img/readme-profile/project-awesome-iina.svg" width="274" height="112" alt="awesome-iina. Find IINA plugins, media tools and guides for plugin developers. JavaScript. 1 GitHub star."></a>
+<a href="https://github.com/wyattowalsh/agentic-cad"><img src=".github/assets/img/readme-profile/project-agentic-cad.svg" width="274" height="112" alt="agentic-cad. Set up Claude Code for computer-aided design in FreeCAD. Python."></a>
+<a href="https://github.com/wyattowalsh/NYC-recs"><img src=".github/assets/img/readme-profile/project-NYC-recs.svg" width="274" height="112" alt="NYC-recs. Explore my New York City picks on a map by area, type or vibe. TypeScript."></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-starter"><img src=".github/assets/img/readme-profile/project-iina-plugin-starter.svg" width="274" height="112" alt="iina-plugin-starter. Build an IINA plugin with React views and TypeScript bindings. TypeScript."></a>
+<a href="https://github.com/wyattowalsh/soundlab"><img src=".github/assets/img/readme-profile/project-soundlab.svg" width="274" height="112" alt="soundlab. Transform audio in an interactive Google Colab notebook. Python."></a>
 </p>
 <!-- README:FEATURED_PROJECTS:END -->
 
-<p align="center"><img src=".github/assets/img/readme/sep-metrics.svg" alt="" width="100%" loading="lazy"/></p>
-
 ## Metrics
-<p align="center">
-<img src=".github/assets/img/metrics-languages.svg" alt="Most used languages from repository language bytes" width="100%" loading="lazy"/>
-</p>
+
+
+<!-- README:METRICS:START -->
+Charts saved on **2026-08-27**.
 
 <p align="center">
-<img src=".github/assets/img/metrics-habits.svg" alt="Supplemental metrics: coding habits and recent GitHub focus" width="100%" loading="lazy"/>
+<img src=".github/assets/img/summary-metrics-languages.svg" width="360" alt="Share of repository language bytes. Jupyter Notebook 50%, Python 28%, TypeScript 11% and JavaScript 6%." />
+<img src=".github/assets/img/summary-metrics-habits.svg" width="360" alt="The peak hour for pushed commits was 13:00 UTC. The longest contribution streak was 11 days." />
+<img src=".github/assets/img/summary-wakatime.svg" width="360" alt="WakaTime reported 72 hours 33 minutes over seven days. August 14–27, 2026 averaged 6 hours 50 minutes tracked per day." />
+<img src=".github/assets/img/summary-metrics-music.svg" width="360" alt="External Life - Radio Edit by Frontliner followed Skills - Radio Edit by Ran-D and Frontliner." />
 </p>
 
-<p align="center">
-<img src=".github/assets/img/metrics-music.svg" alt="Supplemental metrics: recently played tracks from Spotify" width="100%" loading="lazy"/>
-</p>
+<details>
+<summary>Repository languages · byte shares and creation years</summary>
 
-<p align="center">
-<img src=".github/assets/img/wakatime.svg" alt="WakaTime coding activity" width="100%" loading="lazy"/>
-</p>
+The percentages measure language bytes in non-fork repositories. The full chart groups repositories by creation year and primary language. JetBrains MPS is excluded.
+
+| Language | Rounded share |
+| --- | --- |
+| Jupyter Notebook | 50% |
+| Python | 28% |
+| TypeScript | 11% |
+| JavaScript | 6% |
+| Jinja | 2% |
+| HTML | 1% |
+| Shell | 1% |
+| MDX | 0% (rounded) |
+
+[Language chart by repository creation year](.github/assets/img/metrics-languages.svg)
+
+</details>
+
+<details>
+<summary>GitHub activity · push hours, pull requests and streaks</summary>
+
+Recent push events are weighted by the number of commits. Activity peaked at **13:00 UTC**. **29%** fell between 23:00 and 05:59 UTC. The contribution streak stood at **1 day**, with a longest streak of **11 days**.
+
+| Repository | Merged pull requests |
+| --- | --- |
+| riso | 20 |
+| ai-web-feeds | 16 |
+| proxywhirl | 12 |
+| atlas-chat-exporter | 8 |
+| iina-plugin-bookmarks | 5 |
+
+Across these five repositories, the Herfindahl concentration index was 24% (100% would put every merge in one repository).
+
+[Full GitHub activity chart](.github/assets/img/metrics-habits.svg)
+
+</details>
+
+<details>
+<summary>WakaTime · tracked time, weekly breakdowns and daily totals</summary>
+
+This snapshot was generated on August 27, 2026 at 21:21 UTC. WakaTime groups activity in the America/New_York timezone.
+
+| Reporting period | Tracked time |
+| --- | --- |
+| Last 7 days | 72 hrs 33 mins |
+| Last year | 2,193 hrs 33 mins |
+| All time | 5,373 hrs 37 mins |
+
+WakaTime reported a daily average of **12 hrs 5 mins** for the seven-day summary. The separate daily series averaged **6 hrs 50 mins** for August 14–27.
+
+| Daily totals | Tracked time |
+| --- | --- |
+| Aug 14 | 12h 06m |
+| Aug 15 | 0h 22m |
+| Aug 16 | 10h 33m |
+| Aug 17 | 3h 54m |
+| Aug 18 | 13h 23m |
+| Aug 19 | 3h 51m |
+| Aug 20 | 2h 23m |
+| Aug 21 | 15h 24m |
+| Aug 22 | 12h 45m |
+| Aug 23 | 1h 18m |
+| Aug 24 | 8h 25m |
+| Aug 25 | 0h 00m |
+| Aug 26 | 3h 46m |
+| Aug 27 | 7h 22m |
+
+| Languages in the seven-day report | Tracked time |
+| --- | --- |
+| Python | 28 hrs 28 mins |
+| JSON | 20 hrs 32 mins |
+| Markdown | 11 hrs 48 mins |
+| Other | 3 hrs 28 mins |
+| TypeScript | 3 hrs 27 mins |
+| JavaScript | 1 hr 42 mins |
+| Makefile | 45 mins |
+| YAML | 39 mins |
+
+| Editors in the seven-day report | Tracked time |
+| --- | --- |
+| Cursor | 41 hrs 38 mins |
+| Codex Vscode | 16 hrs 40 mins |
+| Codex CLI | 2 hrs 38 mins |
+
+| Categories in the seven-day report | Tracked time |
+| --- | --- |
+| AI Coding | 69 hrs 32 mins |
+| Browsing | 2 hrs 56 mins |
+| Coding | 3 mins |
+| Writing Docs | 0 secs |
+
+| Public projects in the seven-day report | Tracked time |
+| --- | --- |
+| nbadb | 29 hrs 29 mins |
+| dotfiles | 5 hrs 12 mins |
+| wyattowalsh | 2 hrs 9 mins |
+| prompts | 1 hr 58 mins |
+| openopps | 1 hr 40 mins |
+| personal-website | 1 hr 30 mins |
+| signoize | 1 hr 27 mins |
+
+| Platforms | Tracked time |
+| --- | --- |
+| Mac | 5,366 hrs 37 mins |
+| Linux | 5 hrs 51 mins |
+| Unknown OS | 1 hr 8 mins |
+
+Each platform uses its longest reported duration across the weekly, yearly and all-time ranges.
+
+| Weekly indicators | Value |
+| --- | --- |
+| Language diversity (Shannon entropy) | 2.16 bits |
+| Share of editor time in the leading editor | 68% |
+| Share of category time in Coding or AI Coding | 96% |
+| Share of category time in Browsing | 4% |
+
+The GitHub panel accompanying this snapshot recorded 4,767 contributions in 2026 through August 27 and 194 public repositories.
+
+[Full WakaTime chart and annual heatmap](.github/assets/img/wakatime.svg)
+
+</details>
+
+<details>
+<summary>Spotify · nine tracks in listening order</summary>
+
+The most recent play appears first.
+
+| Track | Artist |
+| --- | --- |
+| External Life - Radio Edit | Frontliner |
+| Skills - Radio Edit | Ran-D, Frontliner |
+| If You Find - Radio Edit | Frontliner |
+| Whatever! - Radio Edit | Frontliner |
+| Ride | Twenty One Pilots |
+| Symbols (Q-Base OST 2012) - Origi... | Frontliner |
+| HUMBLE. | Kendrick Lamar |
+| Deer Dance | System Of A Down |
+| Hiding | Dual Damage |
+
+[Spotify listening chart with cover art](.github/assets/img/metrics-music.svg)
+
+</details>
+<!-- README:METRICS:END -->
 
 <!--START_SECTION:waka-->
 <!-- WakaTime SVG is rendered from .github/assets/img/wakatime.svg -->
 <!--END_SECTION:waka-->
 
-<p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
-
-## Living Art
-<p>These are daily timelapses of this GitHub account from creation to now, each a different visual world.</p>
-
-<p align="center">
-<a href=".github/assets/img/living-inkgarden.mp4"><img src=".github/assets/img/living-inkgarden.gif" alt="Ink Garden" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Ink Garden</strong></summary>
-
-Each repository takes root as a tree, stem and canopy together. A day with no repos is bare soil.
-
-- **Repos:** plants — one tree per repository, stem and canopy
-- **Stars:** bloom — flowers on the trees
-- **Commits:** trunk — thicker, taller boles
-- **Followers:** glints among the leaves (none at zero followers)
-
-</details>
-
----
-
-<p align="center">
-<a href=".github/assets/img/living-topo.mp4"><img src=".github/assets/img/living-topo.gif" alt="Topography" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Topography</strong></summary>
-
-A hand-drawn survey of this account, with one hill for every repository. The map fills in as the years accrue.
-
-- **Repos:** peaks — one hill per repository
-- **Stars:** prominence — how tall each summit stands
-- **Commits:** contours — the lines that mark each hill
-- **Followers:** settlements on the map
-
-</details>
-
----
-
-<p align="center">
-<a href=".github/assets/img/living-genetic.mp4"><img src=".github/assets/img/living-genetic.gif" alt="Genetic Landscape" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Genetic Landscape</strong></summary>
-
-A landscape of competing fitness peaks, one ridge per repository. Life gathers on the high ground as the account evolves.
-
-- **Repos:** fitness peaks — one peak per repository
-- **Stars:** peak height — how tall each summit stands
-- **Commits:** generations stacked across the landscape
-- **Followers:** colonies (none at zero followers)
-
-</details>
-
----
-
-<p align="center">
-<a href=".github/assets/img/living-physarum.mp4"><img src=".github/assets/img/living-physarum.gif" alt="Physarum" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Physarum</strong></summary>
-
-A slime mold feeding in the dark, spinning a living network from the first repository. The organism is the veins, not a lone spore.
-
-- **Repos:** nutrient nodes — a network grown from the first repository
-- **Stars:** how rich each food node is
-- **Commits:** trail and vein growth
-- **Followers:** vein mass (not the spore)
-
-</details>
-
----
-
-<p align="center">
-<a href=".github/assets/img/living-lenia.mp4"><img src=".github/assets/img/living-lenia.gif" alt="Lenia" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Lenia</strong></summary>
-
-A continuous living field, seeded with one creature for every repository. Soft bodies pulse and wander as the account grows.
-
-- **Repos:** seed organisms — one body per repository
-- **Stars:** halo — the glow around each creature
-- **Commits:** field occupancy — how much of the medium is alive
-- **Followers:** spatial extent — how far the field spreads
-
-</details>
-
----
-
-<p align="center">
-<a href=".github/assets/img/living-ferrofluid.mp4"><img src=".github/assets/img/living-ferrofluid.gif" alt="Ferrofluid" width="70%" loading="lazy"/></a>
-</p>
-<details>
-<summary><strong>Ferrofluid</strong></summary>
-
-Black magnetic fluid standing in towers, one column for every repository. The pool bristles, ripples, and holds a field of its own.
-
-- **Repos:** dipoles — one tower per repository
-- **Stars:** spike height — how far the fluid leaps
-- **Commits:** ripples in the pool
-- **Followers:** magnetic field around the towers
-
-</details>
-
-<p align="center"><img src=".github/assets/img/readme/sep-living.svg" alt="" width="100%" loading="lazy"/></p>
-
 <!-- README:TECH_STACK:START -->
-<p align="center"><img src=".github/assets/img/readme/sep-tech.svg" alt="" width="100%" loading="lazy"/></p>
-
 <details>
 <summary>
 
@@ -179,7 +226,8 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 </summary>
 
 <!-- SKILLS:START -->
-### Programming Languages
+<details>
+<summary>Programming Languages</summary>
 
 <p>
   <a href="https://www.python.org"><img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&amp;logo=python&amp;logoColor=white"/></a>
@@ -199,7 +247,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://learn.microsoft.com/powershell/"><img alt="PowerShell" src="https://img.shields.io/badge/PowerShell-5391FE?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI%2BPGxpbmVhckdyYWRpZW50IGlkPSJTVkd4UFdpbWRpWSIgeDE9Ijk2LjMwNiIgeDI9IjI1LjQ1NCIgeTE9IjM1LjE0NCIgeTI9Ijk4LjQzMSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAtMSAwIDEyOCkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNhOWM4ZmYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjN2U2ZmYiLz48L2xpbmVhckdyYWRpZW50PjxwYXRoIGZpbGw9InVybCgjU1ZHeFBXaW1kaVkpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjIgMTEwLjVjLTEuNyAwLTMuMS0uNy00LjEtMS45cy0xLjMtMi45LS45LTQuNmwxOC42LTgwLjVjLjgtMy40IDQtNiA3LjQtNmg5Mi42YzEuNyAwIDMuMS43IDQuMSAxLjlzMS4zIDIuOS45IDQuNmwtMTguNiA4MC41Yy0uOCAzLjQtNCA2LTcuNCA2eiIgY2xpcC1ydWxlPSJldmVub2RkIiBvcGFjaXR5PSIuOCIvPjxsaW5lYXJHcmFkaWVudCBpZD0iU1ZHRWRRSTNna3AiIHgxPSIyNS4zMzYiIHgyPSI5NC41NjkiIHkxPSI5OC4zMyIgeTI9IjM2Ljg0NyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAtMSAwIDEyOCkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyZDQ2NjQiLz48c3RvcCBvZmZzZXQ9Ii4xNjkiIHN0b3AtY29sb3I9IiMyOTQwNWIiLz48c3RvcCBvZmZzZXQ9Ii40NDUiIHN0b3AtY29sb3I9IiMxZTJmNDMiLz48c3RvcCBvZmZzZXQ9Ii43OSIgc3RvcC1jb2xvcj0iIzBjMTMxYiIvPjxzdG9wIG9mZnNldD0iMSIvPjwvbGluZWFyR3JhZGllbnQ%2BPHBhdGggZmlsbD0idXJsKCNTVkdFZFFJM2drcCkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTEyMC4zIDE4LjVIMjguNWMtMi45IDAtNS43IDIuMy02LjQgNS4yTDMuNyAxMDQuM2MtLjcgMi45IDEuMSA1LjIgNCA1LjJoOTEuOGMyLjkgMCA1LjctMi4zIDYuNC01LjJsMTguNC04MC41Yy43LTIuOS0xLjEtNS4zLTQtNS4zIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48cGF0aCBmaWxsPSIjMmM1NTkxIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02NC4yIDg4LjNoMjIuM2MyLjYgMCA0LjcgMi4yIDQuNyA0LjlzLTIuMSA0LjktNC43IDQuOUg2NC4yYy0yLjYgMC00LjctMi4yLTQuNy00LjlzMi4xLTQuOSA0LjctNC45bTE0LjUtMjEuOGMtLjQuOC0xLjIgMS42LTIuNiAyLjZMMzQuNiA5OC45Yy0yLjMgMS42LTUuNSAxLTcuMy0xLjRjLTEuNy0yLjQtMS4zLTUuNy45LTcuM2wzNy40LTI3LjF2LS42bC0yMy41LTI1Yy0xLjktMi0xLjctNS4zLjQtNy40YzIuMi0yIDUuNS0yIDcuNCAwbDI4LjIgMzBjMS43IDEuOSAxLjggNC41LjYgNi40IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz48cGF0aCBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03Ny42IDY1LjVjLS40LjgtMS4yIDEuNi0yLjYgMi42TDMzLjYgOTcuOWMtMi4zIDEuNi01LjUgMS03LjMtMS40Yy0xLjctMi40LTEuMy01LjcuOS03LjNsMzcuNC0yNy4xdi0uNmwtMjMuNS0yNWMtMS45LTItMS43LTUuMy40LTcuNGMyLjItMiA1LjUtMiA3LjQgMGwyOC4yIDMwYzEuNyAxLjggMS44IDQuNC41IDYuNE02My41IDg3LjhoMjIuM2MyLjYgMCA0LjcgMi4xIDQuNyA0LjZjMCAyLjYtMi4xIDQuNi00LjcgNC42SDYzLjVjLTIuNiAwLTQuNy0yLjEtNC43LTQuNmMwLTIuNiAyLjEtNC42IDQuNy00LjYiIGNsaXAtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg%3D%3D"/></a>
 </p>
 
-### AI & LLMs
+</details>
+
+<details>
+<summary>AI &amp; LLMs</summary>
 
 <p>
   <a href="https://openai.com"><img alt="OpenAI" src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yMi4yODIgOS44MjFhNiA2IDAgMCAwLS41MTYtNC45MWE2LjA1IDYuMDUgMCAwIDAtNi41MS0yLjlBNi4wNjUgNi4wNjUgMCAwIDAgNC45ODEgNC4xOGE2IDYgMCAwIDAtMy45OTggMi45YTYuMDUgNi4wNSAwIDAgMCAuNzQzIDcuMDk3YTUuOTggNS45OCAwIDAgMCAuNTEgNC45MTFhNi4wNSA2LjA1IDAgMCAwIDYuNTE1IDIuOUE2IDYgMCAwIDAgMTMuMjYgMjRhNi4wNiA2LjA2IDAgMCAwIDUuNzcyLTQuMjA2YTYgNiAwIDAgMCAzLjk5Ny0yLjlhNi4wNiA2LjA2IDAgMCAwLS43NDctNy4wNzNNMTMuMjYgMjIuNDNhNC40OCA0LjQ4IDAgMCAxLTIuODc2LTEuMDRsLjE0MS0uMDgxbDQuNzc5LTIuNzU4YS44LjggMCAwIDAgLjM5Mi0uNjgxdi02LjczN2wyLjAyIDEuMTY4YS4wNy4wNyAwIDAgMSAuMDM4LjA1MnY1LjU4M2E0LjUwNCA0LjUwNCAwIDAgMS00LjQ5NCA0LjQ5NE0zLjYgMTguMzA0YTQuNDcgNC40NyAwIDAgMS0uNTM1LTMuMDE0bC4xNDIuMDg1bDQuNzgzIDIuNzU5YS43Ny43NyAwIDAgMCAuNzggMGw1Ljg0My0zLjM2OXYyLjMzMmEuMDguMDggMCAwIDEtLjAzMy4wNjJMOS43NCAxOS45NWE0LjUgNC41IDAgMCAxLTYuMTQtMS42NDZNMi4zNCA3Ljg5NmE0LjUgNC41IDAgMCAxIDIuMzY2LTEuOTczVjExLjZhLjc3Ljc3IDAgMCAwIC4zODguNjc3bDUuODE1IDMuMzU0bC0yLjAyIDEuMTY4YS4wOC4wOCAwIDAgMS0uMDcxIDBsLTQuODMtMi43ODZBNC41MDQgNC41MDQgMCAwIDEgMi4zNCA3Ljg3MnptMTYuNTk3IDMuODU1bC01LjgzMy0zLjM4N0wxNS4xMTkgNy4yYS4wOC4wOCAwIDAgMSAuMDcxIDBsNC44MyAyLjc5MWE0LjQ5NCA0LjQ5NCAwIDAgMS0uNjc2IDguMTA1di01LjY3OGEuNzkuNzkgMCAwIDAtLjQwNy0uNjY3bTIuMDEtMy4wMjNsLS4xNDEtLjA4NWwtNC43NzQtMi43ODJhLjc4Ljc4IDAgMCAwLS43ODUgMEw5LjQwOSA5LjIzVjYuODk3YS4wNy4wNyAwIDAgMSAuMDI4LS4wNjFsNC44My0yLjc4N2E0LjUgNC41IDAgMCAxIDYuNjggNC42NnptLTEyLjY0IDQuMTM1bC0yLjAyLTEuMTY0YS4wOC4wOCAwIDAgMS0uMDM4LS4wNTdWNi4wNzVhNC41IDQuNSAwIDAgMSA3LjM3NS0zLjQ1M2wtLjE0Mi4wOEw4LjcwNCA1LjQ2YS44LjggMCAwIDAtLjM5My42ODF6bTEuMDk3LTIuMzY1bDIuNjAyLTEuNWwyLjYwNyAxLjV2Mi45OTlsLTIuNTk3IDEuNWwtMi42MDctMS41WiIvPjwvc3ZnPg%3D%3D"/></a>
@@ -212,7 +263,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://spacy.io"><img alt="spaCy" src="https://img.shields.io/badge/spaCy-09A3D5?style=for-the-badge&amp;logo=spacy&amp;logoColor=white"/></a>
 </p>
 
-### Data
+</details>
+
+<details>
+<summary>Data</summary>
 
 #### Collection
 
@@ -282,7 +336,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://www.prefect.io"><img alt="Prefect" src="https://img.shields.io/badge/Prefect-070E10?style=for-the-badge&amp;logo=prefect&amp;logoColor=white"/></a>
 </p>
 
-### Cloud Technologies
+</details>
+
+<details>
+<summary>Cloud Technologies</summary>
 
 <p>
   <a href="https://aws.amazon.com"><img alt="Amazon AWS" src="https://img.shields.io/badge/Amazon%20AWS-232F3E?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMTcgMTguNWExNS4yIDE1LjIgMCAwIDEtNy4zNyAxLjQ0QTE0LjYgMTQuNiAwIDAgMSAzIDE3bTE2LjUgNGMuOTA3LTEuNDExIDEuNDUxLTMuMzIzIDEuNS01Yy0xLjE5Ny0uNzczLTIuNTc3LS45MzUtNC0xTTMgMTFWNi41YTEuNSAxLjUgMCAwIDEgMyAwVjExTTMgOWgzbTMtNGwxLjIgNkwxMiA3bDEuOCA0TDE1IDVtMyA1LjI1YzAgLjQxNC4zMzYuNzUuNzUuNzVIMjBhMSAxIDAgMCAwIDEtMVY5YTEgMSAwIDAgMC0xLTFoLTFhMSAxIDAgMCAxLTEtMVY2YTEgMSAwIDAgMSAxLTFoMS4yNWEuNzUuNzUgMCAwIDEgLjc1Ljc1Ii8%2BPC9zdmc%2BCg%3D%3D"/></a>
@@ -292,14 +349,20 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://www.terraform.io"><img alt="Terraform" src="https://img.shields.io/badge/Terraform-844FBA?style=for-the-badge&amp;logo=terraform&amp;logoColor=white"/></a>
 </p>
 
-### CI/CD Platforms
+</details>
+
+<details>
+<summary>CI/CD Platforms</summary>
 
 <p>
   <a href="https://github.com/features/actions"><img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&amp;logo=githubactions&amp;logoColor=white"/></a>
   <a href="https://www.travis-ci.com"><img alt="Travis CI" src="https://img.shields.io/badge/Travis%20CI-3EAAAF?style=for-the-badge&amp;logo=travisci&amp;logoColor=white"/></a>
 </p>
 
-### Version Control Platforms
+</details>
+
+<details>
+<summary>Version Control Platforms</summary>
 
 <p>
   <a href="https://github.com"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&amp;logo=github&amp;logoColor=white"/></a>
@@ -307,7 +370,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://dagshub.com"><img alt="DagsHub" src="https://img.shields.io/badge/DagsHub-6B57FF?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjMiLz48Y2lyY2xlIGN4PSI1IiBjeT0iNiIgcj0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjMiLz48Y2lyY2xlIGN4PSIxOSIgY3k9IjYiIHI9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4zIi8%2BPGNpcmNsZSBjeD0iNSIgY3k9IjE4IiByPSIyIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuMyIvPjxjaXJjbGUgY3g9IjE5IiBjeT0iMTgiIHI9IjIiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4zIi8%2BPHBhdGggZD0iTTcgN2wzIDNNMTcgN2wtMyAzTTcgMTdsMy0zTTE3IDE3bC0zLTMiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS4yIi8%2BPC9zdmc%2BCg%3D%3D"/></a>
 </p>
 
-### Workflow Tools
+</details>
+
+<details>
+<summary>Workflow Tools</summary>
 
 <p>
   <a href="https://git-scm.com"><img alt="Git" src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&amp;logo=git&amp;logoColor=white"/></a>
@@ -331,7 +397,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://prettier.io"><img alt="Prettier" src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&amp;logo=prettier&amp;logoColor=black"/></a>
 </p>
 
-### Optimization Tools
+</details>
+
+<details>
+<summary>Optimization Tools</summary>
 
 <p>
   <a href="https://ampl.com"><img alt="AMPL" src="https://img.shields.io/badge/AMPL-E95420?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSI%2BPHBhdGggZD0iTTggMjBMMTIgNGw0IDE2TTkgMTRoNiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cGF0aCBkPSJNMyAyMGMzLTggNi0xMiA5LTE0czYgMiA5IDYiIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4K"/></a>
@@ -342,7 +411,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://spinningup.openai.com/en/latest/"><img alt="Reinforcement Learning" src="https://img.shields.io/badge/Reinforcement%20Learning-FF6F00?style=for-the-badge&amp;logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzggMiA1IDUgNSA4YzAgMiAxIDMuNSAyLjUgNSAxIDEgMS41IDIgMS41IDNoNmMwLTEgLjUtMiAxLjUtM0MxOCAxMS41IDE5IDEwIDE5IDhjMC0zLTMtNi03LTZ6Ii8%2BPHBhdGggZD0iTTkgMThoNnYySDl6IiBvcGFjaXR5PSIwLjciLz48cGF0aCBkPSJNMTAgMjBoNHYxLjVhMSAxIDAgMDEtMSAxaC0yYTEgMSAwIDAxLTEtMVYyMHoiIG9wYWNpdHk9IjAuNSIvPjxwYXRoIGQ9Ik0xMCA3djRNMTQgN3Y0TTEwIDloNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4K"/></a>
 </p>
 
-### Web Development
+</details>
+
+<details>
+<summary>Web Development</summary>
 
 <p>
   <a href="https://react.dev"><img alt="React" src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&amp;logo=react&amp;logoColor=white"/></a>
@@ -375,7 +447,10 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://expressjs.com"><img alt="Express" src="https://img.shields.io/badge/Express-000000?style=for-the-badge&amp;logo=express&amp;logoColor=white"/></a>
 </p>
 
-### Miscellaneous
+</details>
+
+<details>
+<summary>Miscellaneous</summary>
 
 <p>
   <a href="https://www.atlassian.com/software/jira"><img alt="Jira" src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&amp;logo=jira&amp;logoColor=white"/></a>
@@ -406,33 +481,29 @@ Black magnetic fluid standing in towers, one column for every repository. The po
   <a href="https://opentelemetry.io"><img alt="OpenTelemetry" src="https://img.shields.io/badge/OpenTelemetry-000000?style=for-the-badge&amp;logo=opentelemetry&amp;logoColor=white"/></a>
   <a href="https://www.kaggle.com"><img alt="Kaggle" src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&amp;logo=kaggle&amp;logoColor=white"/></a>
 </p>
+
+</details>
 <!-- SKILLS:END -->
 
 </details>
 
-
-
-
-
-<p align="center"><img src=".github/assets/img/readme/sep-clouds.svg" alt="" width="100%" loading="lazy"/></p>
+<!-- README:TECH_STACK:END -->
 
 ## Word Clouds
-### Topics
 
-<p align="center">
-<img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Word cloud of GitHub topics sized by starred-repo share" width="100%" loading="lazy"/>
-</p>
 
-### Languages
+<!-- README:FREQUENCIES:START -->
+These clouds show topics and primary languages across my starred repositories. The most common topic is **python** (774 repositories) and the most common language is **Python** (2,269 repositories). A repository can carry several topics.
 
-<p align="center">
-<img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Word cloud of GitHub languages sized by starred-repo share" width="100%" loading="lazy"/>
+<p>
+  <a href=".github/assets/img/wordcloud_typographic_by_topics.svg"><img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Open the topics cloud at full size. Largest labels include python, ai, llm." width="400" height="140"/></a>
+  <a href=".github/assets/img/wordcloud_typographic_by_languages.svg"><img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Open the languages cloud at full size. Largest labels include Python, TypeScript, JavaScript." width="400" height="140"/></a>
 </p>
 
 <details>
-<summary>Frequency tables</summary>
+<summary>Top 12 topics and languages by starred repository count</summary>
 
-**Topics** (top 12 by starred-repo count)
+**Topics**
 
 | Topic | Starred repos |
 | --- | ---: |
@@ -449,13 +520,13 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 | awesome | 279 |
 | claude-code | 244 |
 
-**Languages** (top 12 by starred-repo count)
+**Languages**
 
 | Language | Starred repos |
 | --- | ---: |
-| Python | 2269 |
-| TypeScript | 1790 |
-| JavaScript | 1023 |
+| Python | 2,269 |
+| TypeScript | 1,790 |
+| JavaScript | 1,023 |
 | Go | 240 |
 | Rust | 220 |
 | Jupyter Notebook | 219 |
@@ -467,29 +538,45 @@ Black magnetic fluid standing in towers, one column for every repository. The po
 | Java | 77 |
 
 </details>
-<p align="center"><img src=".github/assets/img/readme/sep-blog.svg" alt="" width="100%" loading="lazy"/></p>
+<!-- README:FREQUENCIES:END -->
 
 ## Latest Blog Posts
+
 <!-- README:BLOG_POSTS:START -->
 <p align="center">
-<a href="https://www.w4w.dev/blog/posts/personal-website" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-personal-website.svg" alt="Personal Website · 2026-04-26 · How my Next.js 16 personal site turns MDX posts into search, feeds, metadata, homepage updates, Admin Intelligence, and a theme-aware particle UI." width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/agents" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-agents.svg" alt="Agents · 2026-04-26 · A deep dive into Agents, my source-controlled catalog of portable AI agent skills, MCP configuration, shared instructions, docs, and validation tooling." width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/proxywhirl" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-proxywhirl.svg" alt="ProxyWhirl · 2026-02-13 · Production-ready Python proxy rotation with auto-fetching from 114+ sources, 9 selection strategies, self-healing circuit breakers, and five interfaces." width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-implementing-pathwise-coordinate-descent.svg" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · 2021-01-15 · Explanations for Solving Some of the Most Popular Supervised Learning Algorithms" width="360" loading="lazy"/></a>
-<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2" target="_blank" rel="noopener noreferrer"><img src=".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · 2021-01-14 · Weaknesses of OLS, Optimization to Obtain the Ridge Model Estimator, and an Implementation in Python Using Numpy" width="360" loading="lazy"/></a>
+<a href="https://www.w4w.dev/blog/posts/personal-website"><img src=".github/assets/img/readme-profile/blog-personal-website.svg" alt="Personal Website · Apr 26, 2026 · From MDX posts to search results and RSS." width="360" height="152"/></a>
+<a href="https://www.w4w.dev/blog/posts/agents"><img src=".github/assets/img/readme-profile/blog-agents.svg" alt="Agents · Apr 26, 2026 · Portable skills and shared agent configuration." width="360" height="152"/></a>
+<a href="https://www.w4w.dev/blog/posts/proxywhirl"><img src=".github/assets/img/readme-profile/blog-proxywhirl.svg" alt="ProxyWhirl · Feb 13, 2026 · How the pool replaces failed HTTP proxies." width="360" height="152"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3"><img src=".github/assets/img/readme-profile/blog-implementing-pathwise-coordinate-descent.svg" alt="Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy · Jan 15, 2021 · Follow the coefficient path with NumPy." width="360" height="152"/></a>
+<a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2"><img src=".github/assets/img/readme-profile/blog-using-ridge-regression-to-overcome-drawb.svg" alt="Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS) · Jan 14, 2021 · Derive the ridge estimator and fit it in NumPy." width="360" height="152"/></a>
 </p>
-<p align="center"><sub>Auto-updated from <a href="https://w4w.dev/feed.xml">RSS feed</a></sub></p>
-<!-- README:BLOG_POSTS:END -->
 
-<p align="center"><img src=".github/assets/img/readme/sep-qr.svg" alt="" width="100%" loading="lazy"/></p>
+<details>
+<summary>Read the post titles as text</summary>
+
+- <a href="https://www.w4w.dev/blog/posts/personal-website">Personal Website</a> · Apr 26, 2026
+- <a href="https://www.w4w.dev/blog/posts/agents">Agents</a> · Apr 26, 2026
+- <a href="https://www.w4w.dev/blog/posts/proxywhirl">ProxyWhirl</a> · Feb 13, 2026
+- <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt3">Implementing Pathwise Coordinate Descent For The Lasso and The Elastic Net In Python Using NumPy</a> · Jan 15, 2021
+- <a href="https://www.w4w.dev/blog/posts/regularized-linear-regression-models-pt2">Using Ridge Regression to Overcome Drawbacks of Ordinary Least Squares (OLS)</a> · Jan 14, 2021
+
+</details>
+
+<a href="https://w4w.dev/feed.xml">Subscribe via RSS</a>
+<!-- README:BLOG_POSTS:END -->
 
 ## Connect
 
-<p align="center">
-  <img src=".github/assets/img/qr.png" alt="vCard QR Code" width="400" loading="lazy"/>
-</p>
+<!-- README:TOP_BADGES:START -->
+<a href="https://w4w.dev">w4w.dev</a> · <a href="https://linkedin.com/in/wyattowalsh">LinkedIn</a> · <a href="https://www.kaggle.com/wyattowalsh">Kaggle</a> · <a href="https://x.com/wyattowalsh">X.com</a>
+<!-- README:TOP_BADGES:END -->
 
----
+<details>
+<summary>Scan my contact card on another device</summary>
+
+<a href=".github/assets/img/qr.png"><img src=".github/assets/img/qr.png" alt="QR code containing Wyatt Walsh’s contact card. Open the full-size code." width="240"/></a>
+
+</details>
 
 <p align="center">
   <img src="https://custom-icon-badges.demolab.com/badge/dynamic/json?url=https%3A%2F%2Fhitscounter.dev%2Fapi%2Fhit%3Furl%3Dhttps%253A%252F%252Fgithub.com%252Fwyattowalsh%252Fwyattowalsh%26output%3Djson&query=%24.total_hits&label=views&style=for-the-badge&color=7c3aed&labelColor=161b22&logo=telescope&logoColor=white" alt="Profile views"/>
@@ -499,3 +586,5 @@ Black magnetic fluid standing in towers, one column for every repository. The po
     <img src="https://github.com/wyattowalsh/wyattowalsh/actions/workflows/profile-updater.yml/badge.svg" alt="Profile Updater"/>
   </a>
 </p>
+
+[Back to top](#wyatt-walsh)

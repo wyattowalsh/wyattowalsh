@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
+ viewBox="0 0 274 112" role="img" aria-labelledby="t d">
+<title id="t">proxywhirl</title><desc id="d">Rotate HTTP proxies and remove failed proxies from the pool. Python. 25 GitHub stars.</desc>
+<style>
+.paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
+.meta{fill:#52616d}.solid{fill:#faf8f3}
+@media(prefers-color-scheme:dark){
+.paper{fill:#161b22;stroke:#424952}.name{fill:#bedcf3}
+.desc{fill:#d7dfe7}.meta{fill:#b3c0ca}.solid{fill:#161b22}}
+
+text{font-family:Arial,Helvetica,sans-serif}
+.name{font:700 20px Georgia,"Times New Roman",serif}
+.name.small{font-size:17px;letter-spacing:-.45px}.desc{font-size:15.5px}
+.meta{font-size:13px}.mark{fill:none;stroke:#276b65;stroke-linecap:round;
+stroke-linejoin:round;stroke-width:1.7}
+@media(prefers-color-scheme:dark){.mark{stroke:#8bd2bf}}</style>
+<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
+<text x="16" y="29" class="name">proxywhirl</text>
+<g class="mark" transform="translate(234 9) scale(.86)"><path d="M5 12a10 10 0 0 1 17-4l3 4m0-6v6h-6M25 18a10 10 0 0 1-17 4l-3-4m0 6v-6h6"/></g>
+<text x="16" y="54" class="desc">Rotate HTTP proxies and remove</text>
+<text x="16" y="74" class="desc">failed proxies from the pool.</text>
+<text x="16" y="99" class="meta">Python</text><text x="258" y="99" text-anchor="end" class="meta">★ 25</text>
+</svg>

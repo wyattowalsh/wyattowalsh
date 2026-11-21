@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="246" viewBox="0 0 300 246" role="img" aria-labelledby="title description">
+<title id="title">GitHub activity</title><desc id="description">The peak hour for pushed commits was 13:00 UTC. The longest contribution streak was 11 days.</desc>
+
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,Arial,Helvetica,sans-serif;fill:#1d2936;font-variant-numeric:tabular-nums}
+.paper{fill:#faf8f3;stroke:#c9cec9}.rule{stroke:#c9cec9}.track{fill:#e2e3de}
+.label,.number,.minor,.accentLabel{font-size:17px}.label,.number{font-weight:600}
+.minor{fill:#50606d}.title{font-size:23px;font-weight:700;letter-spacing:-.55px}
+.hero{font-size:33px;font-weight:700;letter-spacing:-1px}.accentLabel{font-weight:700}
+.accent,.hero,.accentLabel{fill:#9a422b}.soft{fill:#778594}.zero{stroke:#9a422b;stroke-width:2}
+@media(prefers-color-scheme:dark){
+text{fill:#eef3f7}.paper{fill:#161b22;stroke:#444f5a}.rule{stroke:#444f5a}.track{fill:#37424c}
+.minor{fill:#b6c2cc}.accent,.hero,.accentLabel{fill:#ffad90}.soft{fill:#96a4b1}.zero{stroke:#ffad90}
+}
+</style>
+<rect x=".5" y=".5" width="299" height="245" rx="9" class="paper"/>
+<text x="17" y="34" class="title" text-anchor="start">GitHub activity</text>
+<text x="17" y="60" class="minor" text-anchor="start">Peak hour for pushed commits</text>
+<text x="17" y="101" class="hero" text-anchor="start">13:00 UTC</text>
+<rect x="17.00" y="141.00" width="8.40" height="18.00" rx="1" class="soft"/>
+<rect x="28.20" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="39.40" y="136.00" width="8.40" height="23.00" rx="1" class="soft"/>
+<rect x="50.60" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="61.80" y="147.00" width="8.40" height="12.00" rx="1" class="soft"/>
+<rect x="73.00" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="84.20" y="147.00" width="8.40" height="12.00" rx="1" class="soft"/>
+<rect x="95.40" y="143.00" width="8.40" height="16.00" rx="1" class="soft"/>
+<rect x="106.60" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="117.80" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="129.00" y="149.00" width="8.40" height="10.00" rx="1" class="soft"/>
+<rect x="140.20" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="151.40" y="145.00" width="8.40" height="14.00" rx="1" class="soft"/>
+<rect x="162.60" y="115.00" width="8.40" height="44.00" rx="1" class="accent"/>
+<rect x="173.80" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="185.00" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="196.20" y="147.00" width="8.40" height="12.00" rx="1" class="soft"/>
+<rect x="207.40" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="218.60" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="229.80" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="241.00" y="139.00" width="8.40" height="20.00" rx="1" class="soft"/>
+<rect x="252.20" y="139.00" width="8.40" height="20.00" rx="1" class="soft"/>
+<rect x="263.40" y="151.00" width="8.40" height="8.00" rx="1" class="soft"/>
+<rect x="274.60" y="147.00" width="8.40" height="12.00" rx="1" class="soft"/>
+<text x="17" y="179" class="minor" text-anchor="start">00h</text>
+<text x="143" y="179" class="minor" text-anchor="start">12h</text>
+<text x="283" y="179" class="minor" text-anchor="end">23h</text>
+<path d="M17 192H283" class="rule" fill="none"/>
+<text x="17" y="216" class="label" text-anchor="start">Longest streak</text>
+<text x="283" y="216" class="number" text-anchor="end">11 days</text>
+</svg>

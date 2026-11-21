@@ -14,7 +14,7 @@ import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError
@@ -323,7 +323,9 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
     return result
 
 
-def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, Any]]:
+def _collect_recent_merged_prs(
+    owner: str, token: str | None, *, public_profile: bool = False
+) -> list[dict[str, Any]]:
     """Fetch the account's merged PR history via paginated GraphQL."""
     if token is None or token == "":
         return []
@@ -343,6 +345,7 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
             repository {
               name
               nameWithOwner
+              visibility
             }
           }
           pageInfo {
@@ -356,6 +359,7 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
     try:
         merged_prs: list[dict[str, Any]] = []
         cursor: str | None = None
+        seen_cursors: set[str] = set()
         while True:
             resp = _graphql(
                 query,
@@ -364,14 +368,26 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
             )
             errors = resp.get("errors")
             if errors:
+                if public_profile:
+                    raise ValueError("GitHub merged PR query returned errors")
                 logger.warning("GraphQL errors fetching merged PRs: {}", errors)
                 return []
             pull_requests = ((resp.get("data") or {}).get("user") or {}).get(
                 "pullRequests", {}
             )
+            if public_profile and not isinstance(pull_requests.get("nodes"), list):
+                raise ValueError("GitHub merged PR collection is missing nodes")
             nodes = pull_requests.get("nodes", [])
             for node in nodes:
                 repo = node.get("repository") or {}
+                if public_profile:
+                    visibility = repo.get("visibility")
+                    if visibility not in {"PRIVATE", "INTERNAL", "PUBLIC"}:
+                        raise ValueError("Missing merged PR repository visibility")
+                    if visibility != "PUBLIC":
+                        continue
+                    if not repo.get("name") or not repo.get("nameWithOwner"):
+                        raise ValueError("Missing public merged PR repository identity")
                 repo_name = repo.get("name", "")
                 merged_prs.append(
                     {
@@ -387,12 +403,25 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
                 )
             page_info = pull_requests.get("pageInfo", {})
             end_cursor = page_info.get("endCursor")
+            if public_profile:
+                if not isinstance(page_info.get("hasNextPage"), bool):
+                    raise ValueError("Invalid merged PR pagination state")
+                if page_info["hasNextPage"]:
+                    if (
+                        not isinstance(end_cursor, str)
+                        or not end_cursor
+                        or end_cursor in seen_cursors
+                    ):
+                        raise ValueError("Invalid merged PR pagination cursor")
+                    seen_cursors.add(end_cursor)
             if not page_info.get("hasNextPage") or not end_cursor:
                 break
             cursor = str(end_cursor)
         merged_prs.sort(key=lambda entry: entry.get("merged_at") or "")
         return merged_prs
     except Exception as exc:
+        if public_profile:
+            raise
         logger.warning("Failed to fetch recent merged PRs: {}", exc)
         return []
 
@@ -426,7 +455,7 @@ def _collect_issue_stats(owner: str, token: str | None) -> dict[str, int]:
 
 
 def _collect_commit_hour_distribution(
-    owner: str, token: str | None
+    owner: str, token: str | None, *, public_profile: bool = False
 ) -> tuple[dict[int, int], int]:
     """Bucket commit activity by hour from GitHub's visible push-event window.
 
@@ -436,31 +465,61 @@ def _collect_commit_hour_distribution(
     a lifetime histogram.
     """
     try:
-        data = _paginate_rest(f"{_BASE}/users/{owner}/events?per_page=100", token)
+        if public_profile:
+            data = _paginate_rest(
+                f"{_BASE}/users/{owner}/events/public?per_page=100",
+                token,
+                require_complete=True,
+            )
+        else:
+            data = _paginate_rest(f"{_BASE}/users/{owner}/events?per_page=100", token)
         hours: dict[int, int] = {}
         sampled_commits = 0
         for event in data:
             if event.get("type") != "PushEvent":
                 continue
             created = event.get("created_at", "")
-            if not created:
+            if not created and not public_profile:
                 continue
             try:
                 dt = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                if public_profile:
+                    if dt.tzinfo is None:
+                        raise ValueError("Missing UTC offset")
+                    dt = dt.astimezone(UTC)
             except (ValueError, AttributeError):
+                if public_profile:
+                    raise ValueError("Invalid public push timestamp") from None
                 continue
             payload = event.get("payload")
             payload_dict = payload if isinstance(payload, dict) else {}
             event_size = payload_dict.get("size")
-            if isinstance(event_size, int) and event_size > 0:
+            if public_profile and (
+                not isinstance(payload, dict)
+                or (
+                    event_size is not None
+                    and (type(event_size) is not int or event_size < 0)
+                )
+                or not isinstance(payload_dict.get("commits", []), list)
+            ):
+                raise ValueError("Invalid public push payload")
+            if isinstance(event_size, int) and event_size >= 0:
                 commit_count = event_size
+            elif "commits" in payload_dict:
+                commit_count = len(payload_dict["commits"] or [])
             else:
-                commit_count = len(payload_dict.get("commits") or []) or 1
+                # A push without either count contributes one unit to the
+                # historical event-weighted estimate. Explicit zeros do not.
+                commit_count = 1
+            if commit_count == 0:
+                continue
             sampled_commits += commit_count
             hour = dt.hour
             hours[hour] = hours.get(hour, 0) + commit_count
         return dict(sorted(hours.items())), sampled_commits
     except Exception as exc:
+        if public_profile:
+            raise
         logger.warning("Failed to fetch commit hour distribution: {}", exc)
         return {}, 0
 
@@ -588,7 +647,9 @@ def _collect_top_repos(
     ]
 
 
-def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
+def collect(
+    owner: str, repo: str, token: str | None = None, *, public_profile: bool = False
+) -> dict[str, Any]:
     """Collect GitHub metrics for *owner*/*repo* and return a flat dict."""
     failures: list[str] = []
     metrics: dict[str, Any] = {"collection_failures": failures}
@@ -660,6 +721,23 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         )
         if any(not isinstance(row, dict) for row in all_repos):
             raise TypeError("Required GitHub inventory contains a malformed repository")
+        if public_profile:
+            if any(not isinstance(row.get("private"), bool) for row in all_repos):
+                raise ValueError("Missing public repository visibility")
+            all_repos = [
+                row
+                for row in all_repos
+                if row["private"] is False
+                and row.get("visibility", "public") == "public"
+            ]
+            for row in all_repos:
+                if row.get("fork") is False and row.get("language") is not None:
+                    if (
+                        not isinstance(row["language"], str)
+                        or not row["language"].strip()
+                    ):
+                        raise ValueError("Malformed primary repository language")
+                    datetime.fromisoformat(row["created_at"])
     except Exception as exc:
         logger.warning("Failed to fetch repos list: {}", exc)
         all_repos = []
@@ -671,9 +749,14 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
 
     # -- New collectors: PRs, issues, commit hours, releases ----------------
     try:
-        metrics["recent_merged_prs"] = _collect_recent_merged_prs(owner, token)
+        metrics["recent_merged_prs"] = (
+            _collect_recent_merged_prs(owner, token, public_profile=True)
+            if public_profile
+            else _collect_recent_merged_prs(owner, token)
+        )
     except Exception as exc:
         logger.warning("Failed to collect recent merged PRs: {}", exc)
+        failures.append("recent_merged_prs")
         metrics["recent_merged_prs"] = []
 
     try:
@@ -687,9 +770,14 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
         (
             metrics["commit_hour_distribution"],
             metrics["commit_hour_distribution_sample_size"],
-        ) = _collect_commit_hour_distribution(owner, token)
+        ) = (
+            _collect_commit_hour_distribution(owner, token, public_profile=True)
+            if public_profile
+            else _collect_commit_hour_distribution(owner, token)
+        )
     except Exception as exc:
         logger.warning("Failed to collect commit hour distribution: {}", exc)
+        failures.append("commit_hour_distribution")
         metrics["commit_hour_distribution"] = {}
         metrics["commit_hour_distribution_sample_size"] = 0
 

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
+ viewBox="0 0 274 112" role="img" aria-labelledby="t d">
+<title id="t">iina-plugin-starter</title><desc id="d">Build an IINA plugin with React views and TypeScript bindings. TypeScript.</desc>
+<style>
+.paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
+.meta{fill:#52616d}.solid{fill:#faf8f3}
+@media(prefers-color-scheme:dark){
+.paper{fill:#161b22;stroke:#424952}.name{fill:#bedcf3}
+.desc{fill:#d7dfe7}.meta{fill:#b3c0ca}.solid{fill:#161b22}}
+
+text{font-family:Arial,Helvetica,sans-serif}
+.name{font:700 20px Georgia,"Times New Roman",serif}
+.name.small{font-size:17px;letter-spacing:-.45px}.desc{font-size:15.5px}
+.meta{font-size:13px}.mark{fill:none;stroke:#395f84;stroke-linecap:round;
+stroke-linejoin:round;stroke-width:1.7}
+@media(prefers-color-scheme:dark){.mark{stroke:#a4cceb}}</style>
+<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
+<text x="16" y="29" class="name">iina-plugin-starter</text>
+<g class="mark" transform="translate(234 9) scale(.86)"><path d="M4 24V7h7l2 3h13v14z"/><path d="m12 14-3 3 3 3m6-6 3 3-3 3"/></g>
+<text x="16" y="54" class="desc">Build an IINA plugin with React</text>
+<text x="16" y="74" class="desc">views and TypeScript bindings.</text>
+<text x="16" y="99" class="meta">TypeScript</text>
+</svg>

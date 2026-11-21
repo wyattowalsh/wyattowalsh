@@ -274,7 +274,7 @@ class SkillsBadgeGenerator:
 
     def _render_category(self, cat: SkillCategory) -> str:
         """Render a category heading plus per-skill homepage-linked shields."""
-        lines = [f"### {cat.name}", ""]
+        lines = ["<details>", f"<summary>{escape(cat.name)}</summary>", ""]
         if cat.skills:
             lines.append(self._render_skills(cat.skills))
         for sub in cat.subcategories:
@@ -283,7 +283,7 @@ class SkillsBadgeGenerator:
             if lines[-1] != "":
                 lines.append("")
             lines.append(self._render_subcategory(sub))
-        return "\n".join(lines).rstrip()
+        return "\n".join(lines).rstrip() + "\n\n</details>"
 
     def _render_all(self) -> str:
         """Render the full skills section HTML."""

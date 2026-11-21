@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
+ viewBox="0 0 274 112" role="img" aria-labelledby="t d">
+<title id="t">linkedin-profile-exporter</title><desc id="d">Export LinkedIn profiles as JSON, CSV or Markdown. TypeScript. 1 GitHub star.</desc>
+<style>
+.paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
+.meta{fill:#52616d}.solid{fill:#faf8f3}
+@media(prefers-color-scheme:dark){
+.paper{fill:#161b22;stroke:#424952}.name{fill:#bedcf3}
+.desc{fill:#d7dfe7}.meta{fill:#b3c0ca}.solid{fill:#161b22}}
+
+text{font-family:Arial,Helvetica,sans-serif}
+.name{font:700 20px Georgia,"Times New Roman",serif}
+.name.small{font-size:17px;letter-spacing:-.45px}.desc{font-size:15.5px}
+.meta{font-size:13px}.mark{fill:none;stroke:#395f84;stroke-linecap:round;
+stroke-linejoin:round;stroke-width:1.7}
+@media(prefers-color-scheme:dark){.mark{stroke:#a4cceb}}</style>
+<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
+<text x="16" y="29" class="name small">linkedin-profile-exporter</text>
+<g class="mark" transform="translate(234 9) scale(.86)"><rect x="3.5" y="5" width="20" height="18" rx="1.5"/><circle cx="10" cy="12" r="2"/><path d="M6.5 18c1-4 6-4 7 0M17 11h3m-3 3h3m-2 10h9m-4-4 4 4-4 4"/></g>
+<text x="16" y="54" class="desc">Export LinkedIn profiles as JSON,</text>
+<text x="16" y="74" class="desc">CSV or Markdown.</text>
+<text x="16" y="99" class="meta">TypeScript</text><text x="258" y="99" text-anchor="end" class="meta">★ 1</text>
+</svg>

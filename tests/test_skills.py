@@ -687,7 +687,7 @@ class TestRendering:
             ],
         )
         html = gen._render_category(cat)
-        assert "### Languages" in html
+        assert "<summary>Languages</summary>" in html
         assert "Python" in html
         assert '<a href="https://www.python.org">' in html
         assert "https://img.shields.io/badge/" in html
@@ -710,7 +710,7 @@ class TestRendering:
             ],
         )
         html = gen._render_category(cat)
-        assert "### Data" in html
+        assert "<summary>Data</summary>" in html
         assert "#### Storage" in html
         assert "PostgreSQL" in html
         assert '<a href="https://www.postgresql.org">' in html

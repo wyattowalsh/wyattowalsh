@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
+ viewBox="0 0 274 112" role="img" aria-labelledby="t d">
+<title id="t">iina-plugin-bookmarks</title><desc id="d">Bookmark playback positions in the IINA media player. TypeScript. 20 GitHub stars.</desc>
+<style>
+.paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
+.meta{fill:#52616d}.solid{fill:#faf8f3}
+@media(prefers-color-scheme:dark){
+.paper{fill:#161b22;stroke:#424952}.name{fill:#bedcf3}
+.desc{fill:#d7dfe7}.meta{fill:#b3c0ca}.solid{fill:#161b22}}
+
+text{font-family:Arial,Helvetica,sans-serif}
+.name{font:700 20px Georgia,"Times New Roman",serif}
+.name.small{font-size:17px;letter-spacing:-.45px}.desc{font-size:15.5px}
+.meta{font-size:13px}.mark{fill:none;stroke:#92452d;stroke-linecap:round;
+stroke-linejoin:round;stroke-width:1.7}
+@media(prefers-color-scheme:dark){.mark{stroke:#efac91}}</style>
+<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
+<text x="16" y="29" class="name small">iina-plugin-bookmarks</text>
+<g class="mark" transform="translate(234 9) scale(.86)"><path d="M7 4.5h16v21l-8-5.5-8 5.5z"/><path d="m12 9 6 3.5-6 3.5z"/></g>
+<text x="16" y="54" class="desc">Bookmark playback positions</text>
+<text x="16" y="74" class="desc">in the IINA media player.</text>
+<text x="16" y="99" class="meta">TypeScript</text><text x="258" y="99" text-anchor="end" class="meta">★ 20</text>
+</svg>

@@ -3,7 +3,14 @@ from pathlib import Path
 from typing import Literal, override
 
 import yaml
-from pydantic import BaseModel, Field, HttpUrl, ValidationError, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    ValidationError,
+    field_validator,
+    model_validator,
+)
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -293,6 +300,29 @@ class ReadmeFeaturedRepo(BaseModel):
     full_name: str = Field(..., description="GitHub repository full name (owner/repo)")
 
 
+class ReadmeProfileProject(BaseModel):
+    """Editorial copy and visual treatment for one public profile card."""
+
+    full_name: str = Field(pattern=r"^[A-Za-z0-9-]+/[A-Za-z0-9_.-]+$")
+    description: tuple[str, str]
+    theme: Literal["rust", "teal", "blue"]
+    topic: str = Field(min_length=1)
+
+
+class ReadmeProfileCards(BaseModel):
+    """Ordered GitHub profile grid and short article hooks."""
+
+    projects: list[ReadmeProfileProject]
+    article_hooks: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def unique_project_filenames(self):
+        names = [p.full_name.split("/")[1].casefold() for p in self.projects]
+        if len(set(names)) != len(names):
+            raise ValueError("Profile project filenames must be unique")
+        return self
+
+
 class ReadmeSvgCardStyleSettings(BaseModel):
     """Visual style controls for per-card README SVG rendering."""
 
@@ -369,6 +399,7 @@ class ReadmeSectionsSettings(BaseModel):
     )
     social_links: list[ReadmeSocialLink] = Field(default_factory=list)
     featured_repos: list[ReadmeFeaturedRepo] = Field(default_factory=list)
+    profile_cards: ReadmeProfileCards | None = None
     blog_feed_url: str = Field("", description="RSS/Atom feed URL for blog posts")
     blog_post_limit: int = Field(
         5, ge=1, le=10, description="Number of latest blog posts to render"
@@ -376,9 +407,8 @@ class ReadmeSectionsSettings(BaseModel):
     section_order: list[str] = Field(
         default_factory=lambda: [
             "Featured Projects",
-            "Living Art",
-            "My Tech Stack",
             "Metrics",
+            "My Tech Stack",
             "Word Clouds",
         ],
         description=(

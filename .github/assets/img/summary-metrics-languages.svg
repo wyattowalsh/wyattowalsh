@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="246" viewBox="0 0 300 246" role="img" aria-labelledby="title description">
+<title id="title">Repository languages</title><desc id="description">Share of repository language bytes. Jupyter Notebook 50%, Python 28%, TypeScript 11% and JavaScript 6%.</desc>
+
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,Arial,Helvetica,sans-serif;fill:#1d2936;font-variant-numeric:tabular-nums}
+.paper{fill:#faf8f3;stroke:#c9cec9}.rule{stroke:#c9cec9}.track{fill:#e2e3de}
+.label,.number,.minor,.accentLabel{font-size:17px}.label,.number{font-weight:600}
+.minor{fill:#50606d}.title{font-size:23px;font-weight:700;letter-spacing:-.55px}
+.hero{font-size:33px;font-weight:700;letter-spacing:-1px}.accentLabel{font-weight:700}
+.accent,.hero,.accentLabel{fill:#305aba}.soft{fill:#778594}.zero{stroke:#305aba;stroke-width:2}
+@media(prefers-color-scheme:dark){
+text{fill:#eef3f7}.paper{fill:#161b22;stroke:#444f5a}.rule{stroke:#444f5a}.track{fill:#37424c}
+.minor{fill:#b6c2cc}.accent,.hero,.accentLabel{fill:#9ebcff}.soft{fill:#96a4b1}.zero{stroke:#9ebcff}
+}
+</style>
+<rect x=".5" y=".5" width="299" height="245" rx="9" class="paper"/>
+<text x="17" y="34" class="title" text-anchor="start">Repository languages</text>
+<text x="17" y="60" class="minor" text-anchor="start">Share of language bytes</text>
+<text x="17" y="91" class="label" text-anchor="start">Jupyter Notebook</text>
+<text x="283" y="91" class="number" text-anchor="end">50%</text>
+<rect x="17.00" y="100.00" width="266.00" height="6.00" rx="2" class="track"/>
+<rect x="17.00" y="100.00" width="133.00" height="6.00" rx="2" class="accent"/>
+<text x="17" y="133" class="label" text-anchor="start">Python</text>
+<text x="283" y="133" class="number" text-anchor="end">28%</text>
+<rect x="17.00" y="142.00" width="266.00" height="6.00" rx="2" class="track"/>
+<rect x="17.00" y="142.00" width="74.48" height="6.00" rx="2" class="accent"/>
+<text x="17" y="175" class="label" text-anchor="start">TypeScript</text>
+<text x="283" y="175" class="number" text-anchor="end">11%</text>
+<rect x="17.00" y="184.00" width="266.00" height="6.00" rx="2" class="track"/>
+<rect x="17.00" y="184.00" width="29.26" height="6.00" rx="2" class="accent"/>
+<text x="17" y="217" class="label" text-anchor="start">JavaScript</text>
+<text x="283" y="217" class="number" text-anchor="end">6%</text>
+<rect x="17.00" y="226.00" width="266.00" height="6.00" rx="2" class="track"/>
+<rect x="17.00" y="226.00" width="15.96" height="6.00" rx="2" class="accent"/>
+</svg>
