@@ -47,12 +47,7 @@ _MANIFEST_RUN_SPECIFIC_FIELDS = frozenset({"generated_at", "output_dir"})
 # Published inventory follows SHIPPED (alias; not a local six-slug copy).
 # Byte budgets stay complete six until S2 drops retired rows.
 LIVING_ART_STYLE_KEYS = SHIPPED_STYLE_KEYS
-LIVING_ART_STYLE_LABELS = {
-    key: STYLE_LEGENDS[key].title for key in SHIPPED_STYLE_KEYS
-}
-_CHANNEL_LABELS = {
-    "timelapse_gif": "Timelapse GIFs",
-}
+LIVING_ART_STYLE_LABELS = {key: STYLE_LEGENDS[key].title for key in SHIPPED_STYLE_KEYS}
 
 
 def _light_dark_variant(raw_variant: str | None, *, default: str = "default") -> str:
@@ -592,67 +587,28 @@ def _validate_surface_destination(directory: Path, *, label: str) -> None:
 
 
 def _render_gallery(manifest: dict[str, Any]) -> str:
-    grouped: dict[str, list[dict[str, Any]]] = {key: [] for key in _CHANNEL_LABELS}
+    cards = []
     for asset in manifest["assets"]:
-        grouped.setdefault(asset["channel"], []).append(asset)
-
-    sections: list[str] = []
-    for channel in ("timelapse_gif",):
-        assets = grouped.get(channel) or []
-        if not assets:
+        if asset["channel"] != "timelapse_gif":
             continue
-        cards = []
-        for asset in assets:
-            meta = (
-                f"{escape(asset['style_label'])} · "
-                f"{escape(asset['variant'])} · "
-                f"{asset['bytes'] / 1024:.1f} KB"
-            )
-            cards.append(
-                "\n".join(
-                    [
-                        '<article class="asset-card">',
-                        f'<a href="{escape(asset["path"])}">',
-                        (
-                            f'<img src="{escape(asset["path"])}" '
-                            f'alt="{escape(asset["style_label"])} preview" '
-                            'loading="lazy"/>'
-                        ),
-                        "</a>",
-                        f"<h3>{escape(asset['name'])}</h3>",
-                        f"<p>{meta}</p>",
-                        "</article>",
-                    ]
-                )
-            )
-        sections.append(
-            "\n".join(
-                [
-                    "<section>",
-                    f"<h2>{escape(_CHANNEL_LABELS[channel])}</h2>",
-                    '<div class="asset-grid">',
-                    *cards,
-                    "</div>",
-                    "</section>",
-                ]
-            )
+        label = escape(asset["style_label"])
+        path = escape(asset["path"], quote=True)
+        size = f"{asset['bytes'] / 1024:.1f} KB"
+        cards.append(
+            f'<article class="asset-card"><a href="{path}">'
+            '<picture><source media="(prefers-reduced-motion: reduce)" '
+            'srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E">'
+            f'<img src="{path}" alt="" loading="lazy"></picture>'
+            f"<h2>{label}</h2></a><p>GIF · {size}</p></article>"
         )
 
-    empty_state = ""
-    if manifest["total_assets"] == 0:
-        empty_state = (
-            '<p class="empty-state">'
-            "No living-art assets were found in this directory yet."
-            "</p>"
-        )
-
-    summary_items = "".join(
-        f"<li><strong>{count}</strong> {escape(_CHANNEL_LABELS[channel])}</li>"
-        for channel, count in manifest["counts"].items()
+    content = (
+        '<div class="asset-grid">' + "\n".join(cards) + "</div>"
+        if cards
+        else '<p class="empty-state">No living-art assets were found. '
+        "Timelapses appear here after the first successful render.</p>"
     )
-    sections_markup = "\n".join(sections)
-    return (
-        """<!DOCTYPE html>
+    return """<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -668,28 +624,13 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
       color: #211c18;
     }
     main { max-width: 1180px; margin: 0 auto; }
-    h1, h2, h3 { margin: 0; }
-    p, li { line-height: 1.5; }
-    .summary {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      padding: 0;
-      margin: 18px 0 28px;
-      list-style: none;
-    }
-    .summary li {
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(33,28,24,0.12);
-      border-radius: 999px;
-      padding: 10px 14px;
-    }
-    section { margin-top: 30px; }
+    h1, h2 { margin: 0; }
+    p { line-height: 1.5; }
     .asset-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
       gap: 18px;
-      margin-top: 14px;
+      margin-top: 28px;
     }
     .asset-card {
       background: rgba(255,255,255,0.78);
@@ -698,7 +639,14 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
       padding: 14px;
       box-shadow: 0 12px 30px rgba(33,28,24,0.08);
     }
-    .asset-card a {
+    .asset-card a { display: block; color: inherit; text-decoration: none; }
+    .asset-card a:hover h2, .asset-card a:focus-visible h2 {
+      text-decoration: underline;
+    }
+    .asset-card a:focus-visible {
+      outline: 3px solid currentColor; outline-offset: 4px;
+    }
+    .asset-card picture {
       display: block;
       aspect-ratio: 1 / 1;
       background: #ddd4c6;
@@ -712,17 +660,21 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
       display: block;
       background: linear-gradient(135deg, #f8f3eb, #e6dccd);
     }
-    .asset-card h3 { font-size: 0.98rem; margin-top: 12px; }
+    .asset-card h2 { font-size: 1.15rem; margin-top: 12px; }
     .asset-card p { margin: 6px 0 0; color: #5d5146; font-size: 0.92rem; }
     .empty-state { margin-top: 18px; color: #5d5146; }
+    @media (prefers-reduced-motion: reduce) {
+      .asset-card picture { display: none; }
+      .asset-card h2 { margin: 0; }
+    }
     @media (prefers-color-scheme: dark) {
       body { background: #151412; color: #efe6d7; }
-      .summary li, .asset-card {
+      .asset-card {
         background: rgba(35,32,29,0.88);
         border-color: rgba(239,230,215,0.12);
       }
       .asset-card p, .empty-state { color: #b8ac9c; }
-      .asset-card a { background: #26211c; }
+      .asset-card picture { background: #26211c; }
       .asset-card img { background: linear-gradient(135deg, #1f1b17, #2e2924); }
     }
   </style>
@@ -730,17 +682,11 @@ def _render_gallery(manifest: dict[str, Any]) -> str:
 <body>
   <main>
     <h1>Living Art Preview Gallery</h1>
-    <p>Canonical living-art timelapse GIFs discovered in this output directory.</p>
-    <ul class="summary">__SUMMARY__</ul>
-    __EMPTY__
-    __SECTIONS__
+    __CONTENT__
   </main>
 </body>
 </html>
-""".replace("__SUMMARY__", summary_items)
-        .replace("__EMPTY__", empty_state)
-        .replace("__SECTIONS__", sections_markup)
-    )
+""".replace("__CONTENT__", content)
 
 
 def _read_manifest(path: Path) -> dict[str, Any]:

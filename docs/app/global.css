@@ -378,6 +378,19 @@ body {
   box-shadow: 0 4px 24px oklch(0.78 0.15 175 / 0.05);
 }
 
+.art-caption {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 1rem;
+  color: white;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.88) 42%);
+}
+
+.art-gallery a:focus-visible, .feature-card:focus-visible {
+  outline: 3px solid var(--color-fd-primary);
+  outline-offset: -3px;
+}
+
 .feature-card {
   background: oklch(0.97 0.01 270 / 0.6);
   backdrop-filter: blur(12px) saturate(1.5);
@@ -401,6 +414,14 @@ body {
 .dark .feature-card:hover {
   border-color: oklch(0.78 0.15 175 / 0.4);
   box-shadow: 0 8px 32px oklch(0.78 0.15 175 / 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-gradient { animation: none; }
+  .art-thumbnail { display: none; }
+  .art-caption { position: static; color: inherit; background: none; }
+  .art-gallery > *, .feature-card { transition: none; }
+  .art-gallery > *:hover, .feature-card:hover { transform: none; }
 }
 
 /* ============================================================

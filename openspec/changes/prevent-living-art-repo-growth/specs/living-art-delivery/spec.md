@@ -107,6 +107,17 @@ Forks and unconfigured installations SHALL continue to publish and consume repos
 - **WHEN** the generator/updater runs with default configuration
 - **THEN** it SHALL produce the existing repository and docs-showcase surfaces
 
+### Requirement: Visitors can identify and open each timelapse
+Both generated previews SHALL link each artwork by its style name and identify its GIF size. The docs home and galleries SHALL provide visible keyboard focus in light and dark themes.
+
+#### Scenario: A visitor requests reduced motion
+- **WHEN** a visitor opens the docs home or a generated gallery with reduced motion enabled
+- **THEN** the surface SHALL expose named links to the GIFs without displaying automatic GIF playback, and the home SHALL stop decorative motion
+
+#### Scenario: The gallery has no artworks
+- **WHEN** the renderer receives an empty inventory
+- **THEN** the preview SHALL explain when timelapses will appear
+
 ### Requirement: Optional external delivery is immutable and reader-first
 If explicitly approved, external media SHALL use public content-addressed immutable objects, a least-privilege publisher without git-write permission, dual-publish verification, and consumer cutover before tracked-media retirement.
 

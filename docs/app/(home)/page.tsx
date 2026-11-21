@@ -56,12 +56,12 @@ const features = [
   },
   {
     title: 'Living Art',
-    description: 'Timelapse GIFs plus preview indexing driven by GitHub metrics and historical activity signals',
+    description: 'Six timelapses turn repository history into growing gardens, landscapes and cellular patterns',
     icon: '\u2727',
   },
   {
     title: 'Generative Art',
-    description: 'Deterministic SVG art seeded from GitHub metrics via numpy RNG',
+    description: 'Patterns drawn from GitHub activity repeat when the underlying metrics stay the same',
     icon: '\u25CA',
   },
   {
@@ -76,7 +76,7 @@ const features = [
   },
   {
     title: 'GitHub Metrics',
-    description: 'GraphQL/REST data collection, historical signal snapshots, and daily CI pipeline automation',
+    description: 'Contribution calendars and language totals drawn from GitHub activity',
     icon: '\u25B3',
   },
 ];
@@ -136,14 +136,15 @@ export default function HomePage() {
         <div className="hero-gradient" aria-hidden="true" />
 
         {/* Banner */}
-        <div className="relative z-10 w-full max-w-4xl">
+        {/* The protected banner includes its own animated SVG strokes. */}
+        <div className="relative z-10 w-full max-w-4xl motion-reduce:hidden">
           <picture>
             <source media="(prefers-color-scheme: dark)" srcSet="/showcase/banner-dark.svg" />
             <Image
               src="/showcase/banner.svg"
               alt="wyattowalsh profile banner"
-              width={1200}
-              height={300}
+              width={1600}
+              height={480}
               className="w-full h-auto rounded-xl"
               priority
             />
@@ -155,9 +156,8 @@ export default function HomePage() {
             wyattowalsh
           </h1>
           <p className="max-w-2xl text-lg sm:text-xl text-fd-muted-foreground leading-relaxed">
-            A fully dynamic GitHub profile README generator — SVG banners,
-            generative art, word clouds, QR codes, living-art timelapses, and metrics —
-            all driven by a Python CLI running daily on GitHub Actions.
+            Explore the art, word clouds and project cards generated from
+            GitHub activity, or use the Python CLI to build your own profile.
           </p>
           <div className="flex gap-4 mt-2">
             <Link
@@ -189,8 +189,8 @@ export default function HomePage() {
             Living Art
           </h2>
           <p className="text-fd-muted-foreground text-center mb-10 max-w-xl mx-auto">
-            Current contract: `living-*.gif` timelapses plus `living-art-manifest.json` and `living-art-preview.html`.
-            The docs site mirrors that canonical surface under `/showcase/`.
+            See repository history take shape as gardens, terrain and cellular patterns.
+            Choose a piece to open the full timelapse.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-10 text-sm">
             <Link
@@ -208,20 +208,26 @@ export default function HomePage() {
           </div>
           <div className="art-gallery">
             {artPieces.map((piece) => (
-              <Link key={piece.title} href={piece.href} className="relative group block">
-                <Image
-                  src={piece.src}
-                  alt={piece.title}
-                  width={500}
-                  height={350}
-                  className="w-full h-auto"
-                  unoptimized
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent p-4">
-                  <h3 className="text-white font-semibold text-lg">{piece.title}</h3>
-                  <p className="text-white/80 text-sm">{piece.description}</p>
+              <a key={piece.title} href={piece.href} className="relative block">
+                <picture className="art-thumbnail">
+                  <source
+                    media="(prefers-reduced-motion: reduce)"
+                    srcSet="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"
+                  />
+                  <Image
+                    src={piece.src}
+                    alt=""
+                    width={400}
+                    height={400}
+                    className="w-full h-auto"
+                    unoptimized
+                  />
+                </picture>
+                <div className="art-caption">
+                  <h3 className="font-semibold text-lg">{piece.title}</h3>
+                  <p className="text-sm">{piece.description}</p>
                 </div>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -234,8 +240,7 @@ export default function HomePage() {
               Featured Projects
             </h2>
             <p className="text-fd-muted-foreground text-center mb-10 max-w-xl mx-auto">
-              Rendered from the shared `featured-projects.manifest.json`
-              generated by the profile README pipeline.
+              Open a project to explore its code and documentation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {featuredProjects.map((project) => (
@@ -272,12 +277,9 @@ export default function HomePage() {
       {/* Feature Grid */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="hero-title text-3xl sm:text-4xl font-bold tracking-tight text-center mb-2">
+          <h2 className="hero-title text-3xl sm:text-4xl font-bold tracking-tight text-center mb-10">
             What It Does
           </h2>
-          <p className="text-fd-muted-foreground text-center mb-10 max-w-xl mx-auto">
-            Every element of the profile README is generated programmatically
-          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature) => (
               <div key={feature.title} className="feature-card">

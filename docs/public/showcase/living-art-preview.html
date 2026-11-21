@@ -14,28 +14,13 @@
       color: #211c18;
     }
     main { max-width: 1180px; margin: 0 auto; }
-    h1, h2, h3 { margin: 0; }
-    p, li { line-height: 1.5; }
-    .summary {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      padding: 0;
-      margin: 18px 0 28px;
-      list-style: none;
-    }
-    .summary li {
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(33,28,24,0.12);
-      border-radius: 999px;
-      padding: 10px 14px;
-    }
-    section { margin-top: 30px; }
+    h1, h2 { margin: 0; }
+    p { line-height: 1.5; }
     .asset-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
       gap: 18px;
-      margin-top: 14px;
+      margin-top: 28px;
     }
     .asset-card {
       background: rgba(255,255,255,0.78);
@@ -44,7 +29,14 @@
       padding: 14px;
       box-shadow: 0 12px 30px rgba(33,28,24,0.08);
     }
-    .asset-card a {
+    .asset-card a { display: block; color: inherit; text-decoration: none; }
+    .asset-card a:hover h2, .asset-card a:focus-visible h2 {
+      text-decoration: underline;
+    }
+    .asset-card a:focus-visible {
+      outline: 3px solid currentColor; outline-offset: 4px;
+    }
+    .asset-card picture {
       display: block;
       aspect-ratio: 1 / 1;
       background: #ddd4c6;
@@ -58,17 +50,21 @@
       display: block;
       background: linear-gradient(135deg, #f8f3eb, #e6dccd);
     }
-    .asset-card h3 { font-size: 0.98rem; margin-top: 12px; }
+    .asset-card h2 { font-size: 1.15rem; margin-top: 12px; }
     .asset-card p { margin: 6px 0 0; color: #5d5146; font-size: 0.92rem; }
     .empty-state { margin-top: 18px; color: #5d5146; }
+    @media (prefers-reduced-motion: reduce) {
+      .asset-card picture { display: none; }
+      .asset-card h2 { margin: 0; }
+    }
     @media (prefers-color-scheme: dark) {
       body { background: #151412; color: #efe6d7; }
-      .summary li, .asset-card {
+      .asset-card {
         background: rgba(35,32,29,0.88);
         border-color: rgba(239,230,215,0.12);
       }
       .asset-card p, .empty-state { color: #b8ac9c; }
-      .asset-card a { background: #26211c; }
+      .asset-card picture { background: #26211c; }
       .asset-card img { background: linear-gradient(135deg, #1f1b17, #2e2924); }
     }
   </style>
@@ -76,56 +72,12 @@
 <body>
   <main>
     <h1>Living Art Preview Gallery</h1>
-    <p>Canonical living-art timelapse GIFs discovered in this output directory.</p>
-    <ul class="summary"><li><strong>6</strong> Timelapse GIFs</li></ul>
-    
-    <section>
-<h2>Timelapse GIFs</h2>
-<div class="asset-grid">
-<article class="asset-card">
-<a href="living-ferrofluid.gif">
-<img src="living-ferrofluid.gif" alt="Ferrofluid preview" loading="lazy"/>
-</a>
-<h3>living-ferrofluid.gif</h3>
-<p>Ferrofluid · default · 3443.4 KB</p>
-</article>
-<article class="asset-card">
-<a href="living-genetic.gif">
-<img src="living-genetic.gif" alt="Genetic Landscape preview" loading="lazy"/>
-</a>
-<h3>living-genetic.gif</h3>
-<p>Genetic Landscape · default · 1057.5 KB</p>
-</article>
-<article class="asset-card">
-<a href="living-inkgarden.gif">
-<img src="living-inkgarden.gif" alt="Ink Garden preview" loading="lazy"/>
-</a>
-<h3>living-inkgarden.gif</h3>
-<p>Ink Garden · default · 6188.5 KB</p>
-</article>
-<article class="asset-card">
-<a href="living-lenia.gif">
-<img src="living-lenia.gif" alt="Lenia preview" loading="lazy"/>
-</a>
-<h3>living-lenia.gif</h3>
-<p>Lenia · default · 871.3 KB</p>
-</article>
-<article class="asset-card">
-<a href="living-physarum.gif">
-<img src="living-physarum.gif" alt="Physarum preview" loading="lazy"/>
-</a>
-<h3>living-physarum.gif</h3>
-<p>Physarum · default · 2103.9 KB</p>
-</article>
-<article class="asset-card">
-<a href="living-topo.gif">
-<img src="living-topo.gif" alt="Topography preview" loading="lazy"/>
-</a>
-<h3>living-topo.gif</h3>
-<p>Topography · default · 7348.2 KB</p>
-</article>
-</div>
-</section>
+    <div class="asset-grid"><article class="asset-card"><a href="living-ferrofluid.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-ferrofluid.gif" alt="" loading="lazy"></picture><h2>Ferrofluid</h2></a><p>GIF · 3443.4 KB</p></article>
+<article class="asset-card"><a href="living-genetic.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-genetic.gif" alt="" loading="lazy"></picture><h2>Genetic Landscape</h2></a><p>GIF · 1057.5 KB</p></article>
+<article class="asset-card"><a href="living-inkgarden.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-inkgarden.gif" alt="" loading="lazy"></picture><h2>Ink Garden</h2></a><p>GIF · 6188.5 KB</p></article>
+<article class="asset-card"><a href="living-lenia.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-lenia.gif" alt="" loading="lazy"></picture><h2>Lenia</h2></a><p>GIF · 871.3 KB</p></article>
+<article class="asset-card"><a href="living-physarum.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-physarum.gif" alt="" loading="lazy"></picture><h2>Physarum</h2></a><p>GIF · 2103.9 KB</p></article>
+<article class="asset-card"><a href="living-topo.gif"><picture><source media="(prefers-reduced-motion: reduce)" srcset="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22/%3E"><img src="living-topo.gif" alt="" loading="lazy"></picture><h2>Topography</h2></a><p>GIF · 7348.2 KB</p></article></div>
   </main>
 </body>
 </html>
