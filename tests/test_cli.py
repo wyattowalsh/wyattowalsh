@@ -565,10 +565,13 @@ def test_auth_spotify_refresh_token_writes_file_without_echoing_secret(
     runner: CliRunner,
     tmp_path: Path,
 ) -> None:
-    mock_mint_refresh_token.return_value = (
-        "refresh-token-12345",
-        "https://accounts.spotify.com/authorize?...",
-    )
+    authorize_url = "https://accounts.spotify.com/authorize?test"
+
+    def mint(**kwargs):
+        kwargs["manual_url_handler"](authorize_url)
+        return "refresh-token-12345", authorize_url
+
+    mock_mint_refresh_token.side_effect = mint
     output_path = tmp_path / "spotify_refresh_token.txt"
 
     result = runner.invoke(
@@ -588,6 +591,8 @@ def test_auth_spotify_refresh_token_writes_file_without_echoing_secret(
 
     assert result.exit_code == 0
     assert output_path.read_text(encoding="utf-8") == "refresh-token-12345\n"
+    assert output_path.stat().st_mode & 0o777 == 0o600
+    assert authorize_url in result.stdout
     assert "refresh-token-12345" not in result.stdout
     assert "Masked preview:" in result.stdout
     assert str(output_path) in result.stdout

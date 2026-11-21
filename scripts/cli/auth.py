@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Annotated
 
 import typer
@@ -93,7 +94,6 @@ def spotify_refresh_token(
             "-o",
             help="Write the refresh token to this file (never printed to the console).",
             writable=True,
-            path_type=Path,
         ),
     ] = DEFAULT_REFRESH_TOKEN_OUTPUT,
 ) -> None:
@@ -107,23 +107,33 @@ def spotify_refresh_token(
             "or SPOTIFY_CLIENT_ID/SPOTIFY_CLIENT_SECRET."
         )
 
-    refresh_token, authorize_url = mint_spotify_refresh_token(
+    def show_authorization_url(url: str) -> None:
+        typer.echo("Open this URL in your browser to authorize Spotify:")
+        typer.echo(url)
+
+    refresh_token, _ = mint_spotify_refresh_token(
         client_id=resolved_client_id,
         client_secret=resolved_client_secret,
         callback_host=callback_host,
         callback_port=callback_port,
         timeout_seconds=timeout_seconds,
         open_browser=open_browser,
+        manual_url_handler=show_authorization_url,
     )
-
-    if not open_browser:
-        typer.echo("Open this URL in your browser to authorize Spotify:")
-        typer.echo(authorize_url)
 
     destination = output_path.expanduser()
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(f"{refresh_token}\n", encoding="utf-8")
-    destination.chmod(0o600)
+    temporary = NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=destination.parent, delete=False
+    )
+    temporary_path = Path(temporary.name)
+    try:
+        with temporary:
+            temporary.write(f"{refresh_token}\n")
+        # The temporary starts at 0600 and shares the destination filesystem.
+        temporary_path.replace(destination)
+    finally:
+        temporary_path.unlink(missing_ok=True)
 
     typer.echo(f"Spotify refresh token written to {destination}")
     typer.echo(f"Masked preview: {mask_secret(refresh_token)}")

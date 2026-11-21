@@ -5,11 +5,13 @@ from __future__ import annotations
 import base64
 import json
 import secrets
+import socket
 import ssl
 import time
 import urllib.parse
 import urllib.request
 import webbrowser
+from collections.abc import Callable
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import Any, Protocol, override
 
@@ -121,6 +123,10 @@ class _SpotifyCallbackServer(HTTPServer):
     allow_reuse_address = True
 
 
+class _SpotifyIPv6CallbackServer(_SpotifyCallbackServer):
+    address_family = socket.AF_INET6
+
+
 def _wait_for_spotify_authorization_code(
     *,
     redirect_uri: str,
@@ -129,6 +135,7 @@ def _wait_for_spotify_authorization_code(
     authorize_url: str,
     open_browser: bool,
     browser_opener: BrowserOpener,
+    manual_url_handler: Callable[[str], None] | None = None,
 ) -> str:
     """Wait for the authorization callback on a loopback HTTP server."""
 
@@ -187,20 +194,31 @@ def _wait_for_spotify_authorization_code(
             del format, args
             return
 
-    with _SpotifyCallbackServer(
+    server_class = (
+        _SpotifyIPv6CallbackServer
+        if parsed_redirect.hostname == "::1"
+        else _SpotifyCallbackServer
+    )
+    with server_class(
         (
             parsed_redirect.hostname or DEFAULT_CALLBACK_HOST,
             parsed_redirect.port or DEFAULT_CALLBACK_PORT,
         ),
         CallbackHandler,
     ) as server:
-        server.timeout = 1
         if open_browser:
             browser_opener(authorize_url, new=1, autoraise=True)
+        elif manual_url_handler is not None:
+            manual_url_handler(authorize_url)
         deadline = time.monotonic() + timeout_seconds
         while "code" not in callback_result and "error" not in callback_result:
-            if time.monotonic() >= deadline:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
                 break
+            # A browser may preconnect without sending a request. Bound both
+            # the wait for a connection and the reads on that connection.
+            server.timeout = min(1.0, remaining)
+            CallbackHandler.timeout = server.timeout
             server.handle_request()
 
     if "error" in callback_result:
@@ -212,6 +230,13 @@ def _wait_for_spotify_authorization_code(
     return callback_result["code"]
 
 
+def _loopback_redirect_uri(callback_host: str, callback_port: int) -> str:
+    """Build a loopback redirect URI, bracketing IPv6 hosts."""
+
+    host = f"[{callback_host}]" if ":" in callback_host else callback_host
+    return f"http://{host}:{callback_port}{SPOTIFY_CALLBACK_PATH}"
+
+
 def mint_spotify_refresh_token(
     *,
     client_id: str,
@@ -221,15 +246,15 @@ def mint_spotify_refresh_token(
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     open_browser: bool = True,
     browser_opener: BrowserOpener = webbrowser.open,
+    manual_url_handler: Callable[[str], None] | None = None,
 ) -> tuple[str, str]:
     """Run the Spotify auth-code flow and return ``(refresh_token, authorize_url)``."""
 
-    redirect_uri = f"http://{callback_host}:{callback_port}{SPOTIFY_CALLBACK_PATH}"
     allowed_hosts = {"127.0.0.1", "localhost", "::1"}
     if callback_host not in allowed_hosts:
-        raise ValueError(
-            "Spotify callback host must be 127.0.0.1, localhost, or ::1"
-        )
+        raise ValueError("Spotify callback host must be 127.0.0.1, localhost, or ::1")
+    host = DEFAULT_CALLBACK_HOST if callback_host == "localhost" else callback_host
+    redirect_uri = _loopback_redirect_uri(host, callback_port)
     state = secrets.token_urlsafe(24)
     authorize_url = build_spotify_authorize_url(
         client_id=client_id,
@@ -243,6 +268,7 @@ def mint_spotify_refresh_token(
         authorize_url=authorize_url,
         open_browser=open_browser,
         browser_opener=browser_opener,
+        manual_url_handler=manual_url_handler,
     )
     payload = exchange_spotify_authorization_code(
         client_id=client_id,
