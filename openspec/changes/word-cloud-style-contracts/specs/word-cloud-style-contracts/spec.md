@@ -41,3 +41,13 @@ overrides SHALL be bare filenames.
 #### Scenario: Explicit markdown target
 - **WHEN** frequencies are loaded from markdown for an explicit output path
 - **THEN** the result SHALL be written only to that path
+
+### Requirement: Dense typographic placement preserves its layout
+Spatial acceleration SHALL preserve placement order, coordinates, size, rotation,
+color and weight for identical inputs. Candidate selection SHALL retain the exact
+padded bounding-box intersection rule, including its treatment of touching edges.
+
+#### Scenario: Dense public canvas
+- **WHEN** the existing 322-term fixture is rendered on its 1600 by 520 canvas
+- **THEN** all terms fit at the existing minimum font size without overlap and
+  the original covered test completes within its existing timeout

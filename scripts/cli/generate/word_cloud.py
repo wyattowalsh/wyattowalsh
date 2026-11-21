@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from stat import S_ISREG
 from types import SimpleNamespace
-from typing import Annotated, Protocol
+from typing import Annotated, Protocol, cast
 from xml.etree import ElementTree as ET
 
 import typer
@@ -143,15 +143,25 @@ def _generate_word_cloud_to_target(
             _cleanup_word_cloud_output(expected_output)
 
 
+def _word_cloud_output_filename(renderer: str, source: str) -> str:
+    """Return the canonical filename for one renderer and source.
+
+    Classic is bitmap-only. An SVG name is rewritten to the wordle renderer
+    when classic is stored only on settings, so classic keeps the PNG contract.
+    Every other renderer uses ``wordcloud_{renderer}_by_{source}.svg``.
+    """
+
+    if renderer == "classic":
+        return f"wordcloud_by_{source}.png"
+    return f"wordcloud_{renderer}_by_{source}.svg"
+
+
 def _default_word_cloud_output(settings: object, source: str) -> Path:
     """Resolve the generator's existing default output contract."""
     renderer = str(getattr(settings, "renderer", "classic"))
-    filename = (
-        f"wordcloud_by_{source}.png"
-        if renderer == "classic"
-        else f"wordcloud_{renderer}_by_{source}.svg"
+    return Path(str(getattr(settings, "output_dir"))) / _word_cloud_output_filename(
+        renderer, source
     )
-    return Path(str(getattr(settings, "output_dir"))) / filename
 
 
 def _wc_import():
@@ -233,12 +243,12 @@ def _wc_from_markdown(
 
     out_dir = Path(output_path.parent) if output_path else wc.PROFILE_IMG_OUTPUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
+    # An explicit output path wins, including its filename. Otherwise typographic
+    # stays wordcloud_typographic_by_{source}.svg via the shared renderer pattern.
     if output_path is not None:
         out_filename = output_path.name
-    elif renderer == "typographic":
-        out_filename = f"wordcloud_typographic_by_{source}.svg"
     else:
-        out_filename = f"wordcloud_{renderer}_by_{source}.svg"
+        out_filename = _word_cloud_output_filename(renderer, source)
 
     # Wide landscape banners so stacked README imgs read as full-width art.
     canvas_w, canvas_h = 1600, 560
@@ -253,14 +263,21 @@ def _wc_from_markdown(
     )
     generator = wc.WordCloudGenerator(base_settings=settings)
     expected_output = out_dir / out_filename
+    generate_kwargs: dict[str, object] = {
+        "frequencies": frequencies,
+        "source": source,
+        "renderer": renderer,
+        "min_font_size": 8.0,
+        "max_font_size": 46.0 if num_terms > 100 else 64.0,
+    }
+    # Color controls are SVG-only. Passing them with classic makes the
+    # generator reject the bitmap instead of honoring the renderer.
+    if renderer != "classic":
+        generate_kwargs["color_func_name"] = color_func_name
     return _generate_word_cloud_to_target(
         generator,
         expected_output,
-        frequencies=frequencies,
-        source=source,
-        color_func_name=color_func_name,
-        min_font_size=8.0,
-        max_font_size=46.0 if num_terms > 100 else 64.0,
+        **generate_kwargs,
     )
 
 
@@ -324,7 +341,10 @@ def _wc_from_techs(
 ) -> Path | None:
     """Generate word cloud from a technologies markdown file."""
     logger.info(f"Loading technologies from specified path: {techs_path}")
-    loaded_techs_list: list[_TechEntry] = wc.load_technologies(techs_path)
+    loaded_techs_list = cast(
+        "list[_TechEntry]",
+        wc.load_technologies(techs_path),
+    )
     if not loaded_techs_list:
         logger.warning(f"load_technologies returned no data from {techs_path}.")
         return None
@@ -366,6 +386,7 @@ def _wc_from_techs(
         expected_output,
         frequencies=frequencies,
         source="techs",
+        renderer=renderer,
     )
 
 
@@ -412,6 +433,7 @@ def _wc_from_prompt(
         expected_output,
         frequencies=frequencies,
         source="prompt",
+        renderer=renderer,
     )
 
 
@@ -499,8 +521,9 @@ def word_cloud(
     config_wc_model = proj_config.word_cloud_settings or ConfigWordCloudSettingsModel()
 
     stopwords_list: list[str] = []
-    if config_wc_model and config_wc_model.stopwords:
-        stopwords_list.extend(config_wc_model.stopwords)
+    configured_stopwords = config_wc_model.stopwords
+    if configured_stopwords is not None:
+        stopwords_list.extend(configured_stopwords)
     # Prefer adapter-derived max_words so YAML↔runtime stay aligned (HR-05).
     runtime_defaults = config_wc_model.to_word_cloud_settings()
     max_words = max(1, int(runtime_defaults.max_words))

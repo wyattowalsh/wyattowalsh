@@ -27,7 +27,11 @@ from scripts.word_clouds.colors import (
     github_readable_fills,
     is_github_dual_surface_readable,
 )
-from scripts.word_clouds.core import PlacedWord, resolve_preferred_wordcloud_font_path
+from scripts.word_clouds.core import (
+    BBox,
+    PlacedWord,
+    resolve_preferred_wordcloud_font_path,
+)
 from scripts.word_clouds.metaheuristic import RENDERERS, MetaheuristicAnimRenderer
 from scripts.word_clouds.shaped import ShapedRenderer
 from scripts.word_clouds.solvers import (
@@ -39,6 +43,7 @@ from scripts.word_clouds.solvers import (
 from scripts.word_clouds.typographic import (
     _FREQUENCY_CONTRAST_EXPONENT,
     TypographicRenderer,
+    _OccupiedBoxes,
 )
 from scripts.word_clouds.wordle import WordleRenderer
 
@@ -329,6 +334,25 @@ def test_typographic_places_every_term_large_vocab() -> None:
     assert {pw.text for pw in placed} == set(words.keys())
     assert all(pw.opacity == 1.0 for pw in placed)
     assert all(pw.font_size >= 8.0 for pw in placed)
+
+
+def test_typographic_overlap_queries_match_full_scan() -> None:
+    """Spanning boxes must block anchors and rows; touching edges stay open."""
+    renderer = TypographicRenderer(width=160, height=160, margin=0)
+    boxes = [BBox(10, 2, 30, 19), BBox(42, 10, 10, 10), BBox(75, 20, 10, 5)]
+    occupied = _OccupiedBoxes(renderer.width / 2)
+    for box in boxes:
+        occupied.add(box)
+    assert (occupied.left_count, occupied.right_count) == (2, 1)
+    for y in (0.0, 9.5, 15.0, 20.0, 21.0, 25.0):
+        for x in (9.5, 10.0, 39.5, 40.0, 42.0, 75.0):
+            probe = BBox(x, y, 1.0, 1.0)
+            assert occupied.intersects(probe) == renderer._check_collision(probe, boxes)
+    assert renderer._free_x_intervals(occupied.row_mask(20.0, 21.0), occupied) == [
+        (0, 10),
+        (40, 75),
+        (85, 160),
+    ]
 
 
 def test_typographic_default_canvas_is_wide_landscape() -> None:

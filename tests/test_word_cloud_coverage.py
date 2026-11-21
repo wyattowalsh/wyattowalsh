@@ -854,6 +854,114 @@ def test_cli_tech_and_prompt_helpers(
     )
 
 
+def test_cli_renderer_reaches_classic_prompt_and_techs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Classic stays on the PNG contract and is not rewritten to wordle."""
+    from PIL import Image
+
+    calls: list[tuple[str, Path]] = []
+
+    def fake_classic(
+        _frequencies: object,
+        output: Path,
+        **_kwargs: object,
+    ) -> None:
+        calls.append(("classic", Path(output)))
+        Image.new("RGB", (1, 1)).save(output, format="PNG")
+
+    def fake_svg(
+        renderer: str,
+        _frequencies: object,
+        output: Path,
+        **_kwargs: object,
+    ) -> None:
+        calls.append((renderer, Path(output)))
+        Path(output).write_text("<svg/>", encoding="utf-8")
+
+    monkeypatch.setattr(generate, "_generate_classic", fake_classic)
+    monkeypatch.setattr(generate, "_generate_svg", fake_svg)
+    md = tmp_path / "topics.md"
+    md.write_text("python\n", encoding="utf-8")
+    techs = tmp_path / "techs.md"
+    techs.write_text("python\n", encoding="utf-8")
+    yaml_settings = SimpleNamespace(
+        output_dir=str(tmp_path),
+        max_words=10,
+        layout_readability=LayoutReadabilitySettings(),
+    )
+    wc = SimpleNamespace(
+        parse_markdown_for_word_cloud_frequencies=lambda _path: {"python": 2},
+        PROFILE_IMG_OUTPUT_DIR=tmp_path,
+        load_technologies=lambda _path: [SimpleNamespace(name="Python", level=2)],
+        WordCloudSettings=generate.WordCloudSettings,
+        WordCloudGenerator=generate.WordCloudGenerator,
+    )
+
+    classic = cli_word_cloud._wc_from_markdown(
+        wc,
+        md,
+        "topics",
+        "ocean",
+        None,
+        [],
+        10,
+        renderer="classic",
+    )
+    assert classic == tmp_path / "wordcloud_by_topics.png"
+    assert calls == [("classic", classic)]
+
+    chosen = tmp_path / "chosen.svg"
+    shaped = cli_word_cloud._wc_from_markdown(
+        wc,
+        md,
+        "topics",
+        "ocean",
+        chosen,
+        [],
+        10,
+        renderer="shaped",
+    )
+    assert shaped == chosen
+    assert calls[-1] == ("shaped", chosen)
+
+    prompt = cli_word_cloud._wc_from_prompt(
+        wc,
+        "python, rust",
+        None,
+        [],
+        10,
+        yaml_settings=yaml_settings,
+        renderer="wordle",
+    )
+    assert prompt == tmp_path / "wordcloud_wordle_by_prompt.svg"
+    assert calls[-1] == ("wordle", prompt)
+
+    tech = cli_word_cloud._wc_from_techs(
+        wc,
+        techs,
+        None,
+        [],
+        10,
+        yaml_settings=yaml_settings,
+        renderer="fractal",
+    )
+    assert tech == tmp_path / "wordcloud_fractal_by_techs.svg"
+    assert calls[-1] == ("fractal", tech)
+
+    with pytest.raises(ValueError, match="classic renderer cannot write SVG"):
+        cli_word_cloud._wc_from_techs(
+            wc,
+            techs,
+            tmp_path / "bad.svg",
+            [],
+            10,
+            yaml_settings=yaml_settings,
+            renderer="classic",
+        )
+
+
 def test_cli_word_cloud_routes_all_sources_and_reports_results(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

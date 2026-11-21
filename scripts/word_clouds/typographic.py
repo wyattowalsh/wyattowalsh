@@ -10,7 +10,9 @@ is True (default). Last-resort grid exists only for tiny canvases.
 from __future__ import annotations
 
 import math
+from bisect import bisect_left, bisect_right
 from collections.abc import Iterator
+from functools import lru_cache
 from typing import override
 
 from ..utils import get_logger
@@ -34,6 +36,58 @@ _PUBLIC_HEIGHT = 560
 _PUBLIC_MIN_FONT = 8.0
 _PUBLIC_MAX_FONT = 64.0
 _FREQUENCY_CONTRAST_EXPONENT = 1.2
+
+
+class _EdgeMasks:
+    """Sorted rectangle edges with a prefix bit mask of the boxes seen so far."""
+
+    def __init__(self) -> None:
+        self.edges: list[float] = []
+        self.prefix = [0]
+
+    def add(self, edge: float, bit: int) -> None:
+        index = bisect_right(self.edges, edge)
+        self.edges.insert(index, edge)
+        # Queries dominate insertions. Update the affected prefix masks once
+        # per placed word so each anchor needs only binary searches.
+        self.prefix[index + 1 :] = [value | bit for value in self.prefix[index:]]
+
+
+class _OccupiedBoxes:
+    """Exact overlap queries on the placed words within one layout pass."""
+
+    def __init__(self, center_x: float) -> None:
+        self._center_x = center_x
+        self._left = _EdgeMasks()
+        self._right = _EdgeMasks()
+        self._top = _EdgeMasks()
+        self._bottom = _EdgeMasks()
+        self.x_spans: list[tuple[float, float]] = []
+        self.left_count = 0
+        self.right_count = 0
+
+    def add(self, box: BBox) -> None:
+        bit = 1 << len(self.x_spans)
+        self.x_spans.append((box.x, box.x2))
+        self._left.add(box.x, bit)
+        self._right.add(box.x2, bit)
+        self._top.add(box.y, bit)
+        self._bottom.add(box.y2, bit)
+        if box.x + box.w / 2.0 < self._center_x:
+            self.left_count += 1
+        else:
+            self.right_count += 1
+
+    def row_mask(self, top: float, bottom: float) -> int:
+        # Match BBox.intersects: touching endpoints do not overlap.
+        started = self._top.prefix[bisect_left(self._top.edges, bottom)]
+        ended = self._bottom.prefix[bisect_right(self._bottom.edges, top)]
+        return started & ~ended
+
+    def intersects(self, box: BBox) -> bool:
+        started = self._left.prefix[bisect_left(self._left.edges, box.x2)]
+        ended = self._right.prefix[bisect_right(self._right.edges, box.x)]
+        return bool(started & ~ended & self.row_mask(box.y, box.y2))
 
 
 class TypographicRenderer(SvgWordCloudEngine):
@@ -63,7 +117,7 @@ class TypographicRenderer(SvgWordCloudEngine):
         super().__init__(**kwargs)
         if palette is not None:
             self.palette = list(palette)
-        elif self.color_palette_override:
+        elif self.color_palette_override is not None:
             self.palette = list(self.color_palette_override)
         else:
             self.palette = list(TYPOGRAPHIC_PALETTE)
@@ -107,24 +161,24 @@ class TypographicRenderer(SvgWordCloudEngine):
         t = (freq - min_freq) / (max_freq - min_freq)
         # Exponent > 1 stretches the top end so relative frequency is obvious
         # while min-frequency terms still render at min_font_size.
-        t_scaled = max(0.0, min(1.0, t)) ** _FREQUENCY_CONTRAST_EXPONENT
+        t_scaled = math.pow(max(0.0, min(1.0, t)), _FREQUENCY_CONTRAST_EXPONENT)
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     def _word_color(self, word: str, idx: int) -> str:
-        if self.color_palette_override:
+        if self.color_palette_override is not None:
             candidate = self.palette[
                 int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
             ]
         else:
             cluster = _classify_word(word)
             cluster_palette = CLUSTER_PALETTES.get(cluster)
-            if cluster_palette:
+            if cluster_palette is not None and len(cluster_palette) > 0:
                 candidate = cluster_palette[idx % len(cluster_palette)]
             else:
                 candidate = self.palette[
                     int((idx * 0.6180339887 * len(self.palette)) % len(self.palette))
                 ]
-        if self.color_palette_override:
+        if self.color_palette_override is not None:
             return candidate
         if is_github_dual_surface_readable(candidate):
             return candidate
@@ -213,18 +267,15 @@ class TypographicRenderer(SvgWordCloudEngine):
 
     def _free_x_intervals(
         self,
-        y: float,
-        height: float,
-        boxes: list[BBox],
+        mask: int,
+        boxes: _OccupiedBoxes,
     ) -> list[tuple[float, float]]:
-        """Open horizontal spans at *y* that do not hit *boxes*."""
-        top = y - height / 2
-        bottom = y + height / 2
+        """Open horizontal spans between the boxes active in a row."""
         blockers: list[tuple[float, float]] = []
-        for box in boxes:
-            if box.y2 <= top or box.y >= bottom:
-                continue
-            blockers.append((box.x, box.x2))
+        while mask:
+            bit = mask & -mask
+            blockers.append(boxes.x_spans[bit.bit_length() - 1])
+            mask ^= bit
         blockers.sort()
         merged: list[tuple[float, float]] = []
         for start, end in blockers:
@@ -267,14 +318,14 @@ class TypographicRenderer(SvgWordCloudEngine):
         font_size: float,
         x: float,
         y: float,
-        boxes: list[BBox],
+        boxes: _OccupiedBoxes,
         *,
         rotation: float = 0.0,
     ) -> BBox | None:
         bbox = self._estimate_bbox(word, font_size, x, y, rotation)
-        if self._in_bounds(bbox) and not self._check_collision(bbox, boxes):
-            return bbox
-        return None
+        if not self._in_bounds(bbox):
+            return None
+        return None if boxes.intersects(bbox) else bbox
 
     def _place_constellation(
         self,
@@ -282,11 +333,12 @@ class TypographicRenderer(SvgWordCloudEngine):
         min_freq: float,
         max_freq: float,
         scale: float,
-    ) -> tuple[list[PlacedWord], list[BBox]] | None:
+        boxes: _OccupiedBoxes,
+    ) -> list[PlacedWord] | None:
         """Park the top-frequency terms on an elliptical sunflower spiral."""
         count = len(constellation)
         if count == 0:
-            return [], []
+            return []
         aspect = self.width / max(float(self.height), 1.0)
         usable_y = self.height / 2.0 - self.margin
         usable_x = self.width / 2.0 - self.margin
@@ -301,7 +353,6 @@ class TypographicRenderer(SvgWordCloudEngine):
             aspect=aspect,
         )
         placed: list[PlacedWord] = []
-        boxes: list[BBox] = []
         used_slots: set[int] = set()
         for idx, (word, freq) in enumerate(constellation):
             font_size = self._word_font_size(freq, min_freq, max_freq, scale)
@@ -331,7 +382,7 @@ class TypographicRenderer(SvgWordCloudEngine):
             if settled is None:
                 return None
             x, y, bbox = settled
-            boxes.append(bbox)
+            boxes.add(bbox)
             placed.append(
                 self._make_word(
                     word,
@@ -345,7 +396,7 @@ class TypographicRenderer(SvgWordCloudEngine):
                     rotation=rotation,
                 )
             )
-        return placed, boxes
+        return placed
 
     def _place_remainder(
         self,
@@ -354,7 +405,7 @@ class TypographicRenderer(SvgWordCloudEngine):
         min_freq: float,
         max_freq: float,
         scale: float,
-        occupied: list[BBox],
+        boxes: _OccupiedBoxes,
         *,
         line_spacing: float,
         gap_ratio: float,
@@ -373,10 +424,15 @@ class TypographicRenderer(SvgWordCloudEngine):
         items.sort(key=lambda item: item[3], reverse=True)
 
         placed: list[PlacedWord] = []
-        boxes = list(occupied)
         aspect = self.width / max(float(self.height), 1.0)
         cx, cy = self.width / 2.0, self.height / 2.0
         max_y = self.height - self.margin
+
+        # Rows often share exactly the same blockers even at different font
+        # sizes. Box IDs and their x-spans stay stable as later words arrive.
+        @lru_cache(maxsize=1024)
+        def free_intervals(mask: int) -> list[tuple[float, float]]:
+            return self._free_x_intervals(mask, boxes)
 
         for idx, word, freq, font_size, word_w, word_h in items:
             rotation = self._word_rotation(idx, font_size)
@@ -388,15 +444,15 @@ class TypographicRenderer(SvgWordCloudEngine):
             while y + word_h * 0.5 <= max_y + 1e-6:
                 intervals = [
                     (left, right)
-                    for left, right in self._free_x_intervals(y, word_h, boxes)
+                    for left, right in free_intervals(
+                        boxes.row_mask(y - word_h / 2, y + word_h / 2)
+                    )
                     if right - left >= need
                 ]
 
                 def _interval_key(span: tuple[float, float]) -> tuple[float, int]:
                     mid = (span[0] + span[1]) / 2.0
-                    same_side = sum(
-                        1 for box in boxes if (box.x + box.w / 2.0 < cx) == (mid < cx)
-                    )
+                    same_side = boxes.left_count if mid < cx else boxes.right_count
                     return (abs(mid - cx), same_side)
 
                 intervals.sort(key=_interval_key)
@@ -426,7 +482,7 @@ class TypographicRenderer(SvgWordCloudEngine):
             if settled is None:
                 return None
             x, y, bbox = settled
-            boxes.append(bbox)
+            boxes.add(bbox)
             placed.append(
                 self._make_word(
                     word,
@@ -460,10 +516,10 @@ class TypographicRenderer(SvgWordCloudEngine):
         split = self._constellation_count(len(sorted_words))
         head = sorted_words[:split]
         tail = sorted_words[split:]
-        core = self._place_constellation(head, min_freq, max_freq, scale)
-        if core is None:
+        boxes = _OccupiedBoxes(self.width / 2.0)
+        placed = self._place_constellation(head, min_freq, max_freq, scale, boxes)
+        if placed is None:
             return None
-        placed, boxes = core
         remainder = self._place_remainder(
             tail,
             split,
