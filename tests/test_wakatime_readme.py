@@ -330,8 +330,28 @@ def test_privacy_helpers_reject_paths_heartbeats_and_leisure() -> None:
         public_repo_names=("wyattowalsh/wyattowalsh",),
     )
     assert is_publishable_project(
+        "agents",
+        project_allowlist=("agents",),
+    )
+    assert is_publishable_project(
+        "wyattowalsh/agents",
+        project_allowlist=("wyattowalsh/agents",),
+    )
+    assert not is_publishable_project(
         "wyattowalsh/agents",
         project_allowlist=("agents",),
+    )
+    assert not is_publishable_project(
+        "other-owner/docs",
+        public_repo_names=("docs",),
+    )
+    assert not is_publishable_project(
+        "other-owner/docs",
+        project_allowlist=("docs",),
+    )
+    assert not is_publishable_project(
+        "other-owner/docs",
+        public_repo_names=("wyattowalsh/docs",),
     )
 
 

@@ -470,17 +470,11 @@ def is_publishable_project(
     candidate = _normalize_label(stripped)
     if candidate in allowed:
         return True
-    if "/" not in candidate:
-        return any(
-            item == candidate or item.endswith(f"/{candidate}") for item in allowed
-        )
-    owner, _, slug = candidate.partition("/")
-    short_allowed = slug in allowed
-    foreign_full_name = any(
-        item.endswith(f"/{slug}") and not item.startswith(f"{owner}/")
-        for item in allowed
-    )
-    return short_allowed and not foreign_full_name
+    # Bare slugs may match an allowed owner/name. Qualified names stay exact
+    # so another owner's shared slug is not treated as public.
+    if "/" in candidate:
+        return False
+    return any(item.endswith(f"/{candidate}") for item in allowed)
 
 
 def _filter_named_entries(
@@ -640,10 +634,10 @@ def fetch_wakatime_summaries(
 ) -> dict[str, Any]:
     """Fetch daily summaries. Only grand totals are consumed (no entities)."""
     params: dict[str, str] = {}
-    if range_label:
+    if range_label is not None and range_label != "":
         params["range"] = range_label
     else:
-        if not start or not end:
+        if start is None or start == "" or end is None or end == "":
             raise ValueError("summaries require range_label or start and end")
         params["start"] = start
         params["end"] = end
@@ -949,7 +943,7 @@ def fetch_public_repo_names(
     """Return public GitHub repository names and ``owner/repo`` slugs."""
     from ._github_http import _paginate_rest
 
-    if login:
+    if login is not None and login != "":
         quoted = urllib.parse.quote(login)
         url = f"{GITHUB_API_BASE}/users/{quoted}/repos?type=public&per_page=100"
     else:
@@ -1018,7 +1012,7 @@ def fetch_github_short_info(
     }
     user_url = (
         f"{GITHUB_API_BASE}/users/{urllib.parse.quote(login)}"
-        if login
+        if login is not None and login != ""
         else f"{GITHUB_API_BASE}/user"
     )
     user = _request_json(user_url, headers=headers)
@@ -1247,9 +1241,15 @@ def apply_wakatime_svg(
 
 
 def _parse_allowlist_arg(raw: str | None) -> tuple[str, ...]:
-    if not raw:
+    if raw is None or raw == "":
         return ()
     return tuple(part.strip() for part in raw.split(",") if part.strip())
+
+
+def _cli_path(value: object, *, flag: str) -> Path:
+    if isinstance(value, Path):
+        return value
+    raise SystemExit(f"{flag} must be a filesystem path")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -1337,8 +1337,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "generate":
         api_key = (os.environ.get("WAKATIME_API_KEY") or "").strip()
-        output_dir: Path = args.output_dir
-        output_path: Path = args.output or (output_dir / DEFAULT_ARTIFACT_NAME)
+        output_dir = _cli_path(args.output_dir, flag="--output-dir")
+        if args.output is None:
+            output_path = output_dir / DEFAULT_ARTIFACT_NAME
+        else:
+            output_path = _cli_path(args.output, flag="--output")
         if not api_key:
             if args.allow_missing_key:
                 write_skip_artifact(

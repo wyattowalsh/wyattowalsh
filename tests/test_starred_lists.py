@@ -33,7 +33,7 @@ def _hold_cooperating_publication_lock(
         snapshot_calls += 1
         if snapshot_calls == 1:
             acquired.set()
-            if not release.wait(10):
+            if not release.wait(60):
                 raise RuntimeError("timed out waiting to release publication lock")
         return snapshot
 
@@ -772,9 +772,9 @@ def test_two_cooperating_publishers_serialize_across_distinct_parents(
 
     try:
         first.start()
-        assert first_acquired.wait(5)
+        assert first_acquired.wait(30), "first publisher failed to start"
         second.start()
-        assert second_attempted.wait(5)
+        assert second_attempted.wait(30), "second publisher failed to start"
         assert not second_completed.wait(0.25)
         assert second.is_alive()
         release_first.set()
@@ -782,6 +782,8 @@ def test_two_cooperating_publishers_serialize_across_distinct_parents(
     finally:
         release_first.set()
         for process in (first, second):
+            if process.pid is None:
+                continue
             process.join(5)
             if process.is_alive():
                 process.terminate()

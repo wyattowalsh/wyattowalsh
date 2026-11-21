@@ -13,7 +13,7 @@ from concurrent.futures import Future
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, cast
+from typing import Any, cast, override
 
 import numpy as np
 import pytest
@@ -338,7 +338,7 @@ def test_metrics_age_bands_and_normalization_edges(
 def test_world_state_invalid_inputs_and_weather_thresholds() -> None:
     assert world_state._interpolate_hour_signal(0, [(1, 2), (2, 3)]) == 3
     weights = world_state._normalize_season_weights(
-        {"spring": cast(float, "invalid")}, default="missing"
+        {"spring": "invalid"}, default="missing"
     )
     assert weights["summer"] == 1.0
     assert (
@@ -473,6 +473,7 @@ def test_daily_snapshot_builder_one_day_fallbacks(
 ) -> None:
     class FixedDate(date):
         @classmethod
+        @override
         def today(cls) -> FixedDate:
             return cls(2024, 6, 1)
 
@@ -996,7 +997,9 @@ def test_animate_main_early_unknown_and_no_image_paths(
         animate, "parse_cli_args", lambda *a, **k: _animate_options(only=None)
     )
     monkeypatch.setattr(animate, "_resolve_target", lambda **kwargs: None)
-    animate.main()
+    with pytest.raises(SystemExit) as missing:
+        animate.main()
+    assert missing.value.code == 1
 
     monkeypatch.setattr(animate, "_resolve_target", lambda **kwargs: {"stars": 1})
     monkeypatch.setattr(animate, "seed_hash", lambda target: "seed")
@@ -1039,4 +1042,6 @@ def test_module_entrypoint_guards_are_safe(
 
     monkeypatch.setattr(sys, "argv", ["animate", "--profile", "does-not-exist"])
     with pytest.warns(RuntimeWarning, match="found in sys.modules"):
-        runpy.run_module("scripts.art.animate", run_name="__main__", alter_sys=True)
+        with pytest.raises(SystemExit) as missing:
+            runpy.run_module("scripts.art.animate", run_name="__main__", alter_sys=True)
+        assert missing.value.code == 1

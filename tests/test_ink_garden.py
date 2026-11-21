@@ -12,6 +12,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
+from typing import Any, override
 
 import pytest
 
@@ -39,7 +40,7 @@ from scripts.art.ink_garden import (  # noqa: E402
 # Sample metrics constants — module-level, immutable, no shared state
 # ---------------------------------------------------------------------------
 
-MINIMAL_METRICS: dict = {
+MINIMAL_METRICS: dict[str, Any] = {
     "total_commits": 100,
     "stars": 5,
     "contributions_last_year": 50,
@@ -52,7 +53,7 @@ MINIMAL_METRICS: dict = {
     "contributions_monthly": {},
 }
 
-RICH_METRICS: dict = {
+RICH_METRICS: dict[str, Any] = {
     "total_commits": 5000,
     "stars": 150,
     "contributions_last_year": 800,
@@ -87,10 +88,8 @@ def _count_release_seed_ellipses(svg: str) -> int:
 
 
 def _release_seed_dates(svg: str) -> list[str]:
-    return re.findall(
-        r'<ellipse[^>]+data-role="release-seed"[^>]+data-when="([^"]+)"',
-        svg,
-    )
+    pattern = r'<ellipse[^>]+data-role="release-seed"[^>]+data-when="([^"]+)"'
+    return [str(match[1]) for match in re.finditer(pattern, svg)]
 
 
 def _extract_repo_tooltip_height(svg: str, repo_name: str) -> float:
@@ -1028,32 +1027,10 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures" / "ink_garden"
 class TestGoldenFiles:
     """Regression tests: compare generate() output against stored golden SVGs.
 
-    To regenerate golden files after an intentional output change, call
-    generate() directly with the same parameters used in each test, e.g.::
-
-        uv run python -c "
-        import json
-        from pathlib import Path
-        from scripts.art.ink_garden import generate, seed_hash
-
-        FIXTURES = Path('tests/fixtures/ink_garden')
-        FIXTURES.mkdir(parents=True, exist_ok=True)
-
-        # See MINIMAL_METRICS / RICH_METRICS constants at top of test file.
-        from tests.test_ink_garden import MINIMAL_METRICS, RICH_METRICS
-
-        (FIXTURES / 'minimal_full.svg').write_text(
-            generate(MINIMAL_METRICS, seed=seed_hash(MINIMAL_METRICS), maturity=1.0)
-        )
-        (FIXTURES / 'rich_full.svg').write_text(
-            generate(RICH_METRICS, seed=seed_hash(RICH_METRICS), maturity=1.0)
-        )
-        (FIXTURES / 'rich_mid.svg').write_text(
-            generate(RICH_METRICS, seed=seed_hash(RICH_METRICS), maturity=0.5)
-        )
-        "
-
-    See TestGoldenFiles source for the exact regeneration parameters.
+    To regenerate a fixture after an intentional output change, use its test's
+    metrics, seed and maturity and write the result under FIXTURES_DIR. For
+    minimal_full.svg, also freeze the timeline date at 2026-08-20 as the test
+    does.
 
     Note: Golden SVG files contain numpy-generated floating-point path data.
     Byte-exact comparison is valid only when numpy is pinned (see uv.lock).
@@ -1080,8 +1057,17 @@ class TestGoldenFiles:
             f"actual sha256={actual_hash} len={len(actual)}"
         )
 
-    def test_minimal_full_maturity_matches_golden(self) -> None:
+    def test_minimal_full_maturity_matches_golden(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Minimal metrics at full maturity produce identical SVG to stored golden."""
+        class GoldenDate(date):
+            @classmethod
+            @override
+            def today(cls) -> GoldenDate:
+                return cls(2026, 8, 20)
+
+        monkeypatch.setattr("scripts.art.shared.timeline.dt_date", GoldenDate)
         expected = self._load_golden("minimal_full.svg")
         hex_seed = seed_hash(MINIMAL_METRICS)
         actual = generate(MINIMAL_METRICS, seed=hex_seed, maturity=1.0)

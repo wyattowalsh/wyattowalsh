@@ -72,7 +72,7 @@ def _readme() -> str:
 def _skills_block(readme: str) -> str:
     match = _SKILLS_BLOCK_RE.search(readme)
     assert match is not None, "SKILLS markers missing"
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _probe_lowlighter_blocks() -> tuple[str, str, str]:
@@ -162,7 +162,9 @@ def test_fact_remove_feed_metrics_activity_absent() -> None:
         "metrics-posts.svg",
     }
     finalize = _job_block(_workflow_text(), "finalize")
-    assert "metrics-activity.svg" not in finalize
+    # The finalizer stages a tracked deletion if an older checkout has the card.
+    assert finalize.count("metrics-activity.svg") == 1
+    assert "            ./.github/assets/img/metrics-activity.svg\n" in finalize
     prod = _job_block(_workflow_text(), "generate-profile-metrics")
     assert "metrics-activity.svg" not in prod
 
@@ -212,9 +214,11 @@ def test_fact_badges_stack_https_homepages_and_camo_safe_srcs() -> None:
     catalog = list(iter_skills(settings))
     assert len(catalog) == 151
     for skill in catalog:
-        assert skill.url, f"Missing homepage url for '{skill.name}'"
+        assert skill.url not in (None, ""), f"Missing homepage url for '{skill.name}'"
         assert skill.url.strip().startswith("https://"), skill.url
-        assert skill.slug or skill.logo_path, skill.name
+        assert skill.slug not in (None, "") or skill.logo_path not in (None, ""), (
+            skill.name
+        )
 
 
 def test_fact_badges_qa_readme_hrefs_zip_catalog_and_src_lengths() -> None:
