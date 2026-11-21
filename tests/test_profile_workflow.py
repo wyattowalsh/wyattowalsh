@@ -287,7 +287,8 @@ def test_every_uploaded_artifact_is_idempotent_for_same_run_reruns() -> None:
             if str(step.get("uses", "")).startswith("actions/upload-artifact@")
         )
 
-    assert len(upload_steps) == 9
+    # Assemble contributes two of the eight uploads. Probe and finalize upload none.
+    assert len(upload_steps) == 8
     for job_name, step in upload_steps:
         assert step.get("with", {}).get("overwrite") is True, (
             f"{job_name} artifact upload must support reruns of the same run_id"
@@ -523,7 +524,7 @@ def test_generate_assets_uses_locked_qr_and_wordcloud_extras() -> None:
     finalize_steps = cast(list[dict[str, Any]], jobs["finalize"]["steps"])
     expected_download_paths = {
         "Download profile assets artifact": "${{ runner.temp }}/profile-assets",
-        "Download profile metrics artifact": ".github/assets/img",
+        "Download profile metrics artifact": "${{ runner.temp }}/profile-metrics",
     }
     for step_name, expected_path in expected_download_paths.items():
         step = next(step for step in finalize_steps if step.get("name") == step_name)
@@ -569,9 +570,11 @@ def test_finalize_is_sole_first_party_git_commit_and_push() -> None:
 
     finalize = _job_block(workflow, "finalize")
     assert "waka-readme-${{ github.run_id }}" in finalize
-    assert "scripts.wakatime_readme apply" in finalize
+    assert "scripts._publish_metrics" in finalize
     assert ".github/assets/img/wakatime.svg" in finalize
-    assert "metrics-activity.svg" not in finalize
+    assert "./.github/assets/img/metrics-activity.svg" in _shell_array(
+        finalize, "metrics_files"
+    )
 
     assert workflow.count("git push") == 1
     assert "update-skills:" not in workflow
@@ -860,6 +863,8 @@ def test_finalize_publishes_and_validates_living_art_before_git_staging() -> Non
 
 
 def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
+    from scripts.supplemental_metrics import ASSET_SPECS
+
     finalize = _job_block(_workflow_text(), "finalize")
 
     assert "shopt -s nullglob" not in finalize
@@ -871,8 +876,18 @@ def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
     assert _shell_array(finalize, "readme_files") == (
         "README.md",
         ":(glob).github/assets/img/readme/*.svg",
+        ".github/assets/img/readme/featured-projects.manifest.json",
+        "docs/public/showcase/featured-projects.manifest.json",
+        ":(glob)docs/public/showcase/featured-projects/featured-card-*.svg",
     )
     assert 'git add -A -- "${owned_files[@]}"' in finalize
+    assert set(_shell_array(finalize, "metrics_files")) == {
+        *(
+            f"./.github/assets/img/{spec.asset_name}.svg"
+            for spec in ASSET_SPECS.values()
+        ),
+        "./.github/assets/img/wakatime.svg",
+    }
 
 
 def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
@@ -885,7 +900,20 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
             ".github/assets/img/wordcloud_obsolete.svg",
             ".github/assets/img/banner-obsolete.svg",
         ),
-        "readme_files": (".github/assets/img/readme/obsolete.svg",),
+        "metrics_files": (
+            ".github/assets/img/metrics-activity.svg",
+            ".github/assets/img/metrics-habits.svg",
+            ".github/assets/img/metrics-languages.svg",
+            ".github/assets/img/metrics-music.svg",
+            ".github/assets/img/metrics-posts.svg",
+            ".github/assets/img/wakatime.svg",
+        ),
+        "readme_files": (
+            ".github/assets/img/readme/obsolete.svg",
+            ".github/assets/img/readme/featured-projects.manifest.json",
+            "docs/public/showcase/featured-projects.manifest.json",
+            "docs/public/showcase/featured-projects/featured-card-obsolete.svg",
+        ),
     }
 
     for array_name, deleted_paths in cases.items():
@@ -916,6 +944,64 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
         _run_git(repo, "add", "-A", "--", *_shell_array(finalize, array_name))
         staged = set(_run_git(repo, "diff", "--cached", "--name-status").splitlines())
         assert staged == {f"D\t{path}" for path in deleted_paths}
+
+
+def test_finalize_commits_featured_families_together_and_is_idempotent(
+    tmp_path: Path,
+) -> None:
+    finalize = _job_block(_workflow_text(), "finalize")
+    helper = re.search(r"(?ms)^ +commit_group\(\) \{.*?^          \}$", finalize)
+    assert helper is not None
+    script = "set -euo pipefail\n" + helper.group() + '\ncommit_group "fixture" "$@"'
+    paths = _shell_array(finalize, "readme_files")
+    _run_git(tmp_path, "init", "--quiet")
+    _run_git(tmp_path, "config", "user.email", "test@example.invalid")
+    _run_git(tmp_path, "config", "user.name", "Fixture")
+    families = [
+        tmp_path / ".github/assets/img/readme",
+        tmp_path / "docs/public/showcase/featured-projects",
+    ]
+    manifests = [
+        families[0] / "featured-projects.manifest.json",
+        families[1].parent / "featured-projects.manifest.json",
+    ]
+    unrelated = tmp_path / "outside.txt"
+    unrelated.write_bytes(b"original")
+    for directory, manifest in zip(families, manifests, strict=True):
+        directory.mkdir(parents=True)
+        (directory / "featured-card-old.svg").write_bytes(b"old")
+        manifest.write_bytes(b"old manifest")
+    _run_git(tmp_path, "add", ".")
+    _run_git(tmp_path, "commit", "-qm", "baseline")
+    unrelated.write_bytes(b"keep")
+    for directory, manifest in zip(families, manifests, strict=True):
+        (directory / "featured-card-old.svg").unlink()
+        (directory / "featured-card-new.svg").write_bytes(b"new")
+        manifest.write_bytes(b"updated manifest")
+    # README.md deliberately doesn't exist. An unused pathspec must not block
+    # the rest of the family or sweep an unrelated edit into the commit.
+    command = ["bash", "-c", script, "feature-fixture", *paths]
+    subprocess.run(command, cwd=tmp_path, check=True, capture_output=True)
+    result = _run_git(
+        tmp_path, "diff", "--name-status", "--no-renames", "HEAD^", "HEAD"
+    )
+    expected = {f"M\t{path.relative_to(tmp_path)}" for path in manifests}
+    for directory in families:
+        for status, name in [("A", "new"), ("D", "old")]:
+            path = directory / f"featured-card-{name}.svg"
+            expected.add(f"{status}\t{path.relative_to(tmp_path)}")
+    assert set(result.splitlines()) == expected
+    first = _run_git(tmp_path, "rev-parse", "HEAD")
+    subprocess.run(command, cwd=tmp_path, check=True, capture_output=True)
+    assert _run_git(tmp_path, "rev-parse", "HEAD") == first
+    assert _run_git(tmp_path, "status", "--short").splitlines() == [" M outside.txt"]
+    failure = subprocess.run(
+        ["bash", "-c", script, "fixture", ":(invalid)path"],
+        cwd=tmp_path,
+        capture_output=True,
+    )
+    assert failure.returncode != 0
+    assert _run_git(tmp_path, "rev-parse", "HEAD") == first
 
 
 def test_metrics_probe_keeps_lowlighter_pin_without_felipecrs() -> None:
@@ -985,9 +1071,7 @@ def test_metrics_auth_selects_valid_secret_without_error_annotations() -> None:
     assert probe.count(f"token: {selected_token}") == 0
     assert probe.count("token: ${{ github.token }}") == 3
     assert "metrics-probe-" not in probe
-    assert "secrets.METRICS_TOKEN" not in "\n".join(
-        _lowlighter_with_blocks(probe)
-    )
+    assert "secrets.METRICS_TOKEN" not in "\n".join(_lowlighter_with_blocks(probe))
     assert prod.count(f"token: {selected_token}") == 0
     assert f"GITHUB_TOKEN: {selected_token}" in prod
     assert (
@@ -1087,7 +1171,7 @@ def test_metrics_recovery_does_not_create_expected_failure_annotations() -> None
 def test_finalize_applies_waka_before_readme_sections() -> None:
     """Finalize must apply the Waka artifact before readme-sections/skills."""
     finalize = _job_block(_workflow_text(), "finalize")
-    apply_idx = finalize.index("scripts.wakatime_readme apply")
+    apply_idx = finalize.index("scripts._publish_metrics")
     sections_idx = finalize.index("generate readme-sections --config-path config.yaml")
     skills_idx = finalize.index("generate skills --skills-path skills.yaml")
     assert apply_idx < sections_idx < skills_idx

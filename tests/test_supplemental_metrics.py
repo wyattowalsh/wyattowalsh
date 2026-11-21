@@ -10,6 +10,7 @@ from typing import cast
 import pytest
 
 from scripts.supplemental_metrics import (
+    ASSET_SPECS,
     XOAuth1Credentials,
     _build_x_oauth1_authorization_header,
     _contribution_stats,
@@ -170,20 +171,21 @@ def test_validate_supplemental_metrics_rejects_missing_required_marker(
         '<svg xmlns="http://www.w3.org/2000/svg"><text x="1" y="20">Wrong title</text></svg>',  # noqa: E501
         encoding="utf-8",
     )
-    manifest_path.write_text(
-        json.dumps(
-            {
-                "habits": {
-                    "asset_name": "metrics-habits",
-                    "filename": "metrics-habits.svg",
-                    "enabled": True,
-                    "optional": False,
-                    "title": "Coding habits",
-                    "required_markers": ["Coding habits"],
-                    "reason": "",
-                }
-            }
-        ),
+    manifest = {
+        key: {
+            "asset_name": spec.asset_name,
+            "filename": f"{spec.asset_name}.svg",
+            "enabled": not spec.optional,
+            "optional": spec.optional,
+            "title": spec.title,
+            "required_markers": list(spec.required_markers),
+        }
+        for key, spec in ASSET_SPECS.items()
+    }
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    (output_dir / "metrics-languages.svg").write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg">'
+        '<text>Most used languages: bytes</text></svg>',
         encoding="utf-8",
     )
 
@@ -192,7 +194,10 @@ def test_validate_supplemental_metrics_rejects_missing_required_marker(
         manifest_path=manifest_path,
     )
 
-    assert errors == ["metrics-habits.svg: missing required marker 'Coding habits'"]
+    assert errors == [
+        f"metrics-habits.svg: missing required marker '{marker}'"
+        for marker in ASSET_SPECS["habits"].required_markers
+    ]
 
 
 def test_fetch_recent_tracks_exchanges_refresh_token_and_parses_payload(

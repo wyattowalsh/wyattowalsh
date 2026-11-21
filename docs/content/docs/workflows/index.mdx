@@ -95,7 +95,9 @@ staging any profile-asset commit. This worker never commits or pushes.
 
 ### `update-readme-wakatime`
 
-Runs the first-party `generate wakatime` collector and uploads `waka-section.md` for the finalizer. The job has read-only repository permission, never invokes `anmol098/waka-readme-stats`, and skips cleanly when `WAKATIME_API_KEY` is absent.
+The first-party `generate wakatime` collector uploads `waka-section.md` with its
+`wakatime.svg` card. When `WAKATIME_API_KEY` is absent, it uploads only
+`waka-section.skipped`. The producer has read-only repository permissions.
 
 ### `generate-profile-metrics`
 
@@ -113,19 +115,25 @@ runs [`lowlighter/metrics`](https://github.com/lowlighter/metrics).
 
 The README Metrics section stacks whichever of those supplemental assets validate, plus the first-party WakaTime card. Legacy `metrics.svg`, `metrics.additional.svg`, and `metrics.extra.svg` are not generated, uploaded, embedded, or kept in the tree.
 
-The job validates supplemental assets against a manifest of required markers and uploads only those first-party cards; the finalizer owns any resulting commit.
+The producer uploads `metrics-supplemental.manifest.json` alongside the enabled
+SVGs. The finalizer checks the manifest against the repository’s card inventory
+and verifies the content of every enabled file. A disabled optional card
+removes its previously published image. An invalid or incomplete artifact stops
+publication.
 
 ### `probe-full-metrics`
 
 Manual diagnostics lane for the fuller `lowlighter/metrics` surface (pinned to the `v3.34` SHA; **not** `felipecrs`; not a production README input). It exists to answer questions like:
 
-- does the current `METRICS_TOKEN` satisfy the repositories block?
+- can the run-scoped GitHub token read the repositories block?
 - do upstream `habits` / `activity` panels still render degraded payloads? (probe-only; production keeps them off)
 - do promote-set plugins (`calendar`, `people`, `reactions`, `followup`) render cleanly?
 
 Probe renders three SVGs (`metrics.probe.primary.svg`, `.additional.svg`, `.extra.svg`), always with `plugin_music: no` and **no** Spotify secrets in Action `with:` inputs. Spotify health belongs to the supplemental-metrics path only.
 
-It uploads probe SVG artifacts and fails closed if the probe renders or validation fail.
+The probe keeps its SVGs on the runner and reports marker counts in the job
+summary. Failed renders or validation fail the job. The lowlighter steps use
+the run-scoped GitHub token.
 
 ### Annotation and fallback hygiene
 
@@ -203,22 +211,20 @@ After applying the other isolated artifacts and WakaTime markers, it runs:
   a warning.
 - `generate skills` — re-renders skills badges
 
-Upload artifacts contain only their least-common-root filenames. The finalizer
-therefore downloads starred lists into `.github/assets`, profile assets and
-metrics into `.github/assets/img`, and keeps living-art/Waka artifacts in their
-explicit runner-temp staging directories. This prevents root-level shadow
-files from bypassing the owned commit pathspecs.
+The finalizer downloads the starred lists into `.github/assets`. Profile assets,
+living art, supplemental metrics and WakaTime each have a dedicated runner-temp
+directory. Before applying either metrics artifact, the finalizer validates
+both inventories. A WakaTime skip removes the previous SVG and its README
+image while preserving the section markers for the next run.
 
-It creates ordered commits for these owned groups:
+The finalizer commits changes in this order.
 
-1. starred-list data: `.github/assets/languages.md` and `.github/assets/topics.md`;
-2. generated profile assets: `.github/assets/img/qr*.png`,
-   `.github/assets/img/wordcloud_*.svg`, and `.github/assets/img/banner*.svg`;
-3. living art: the exact six primary GIFs, their manifest/gallery, and the
-   corresponding six-GIF docs-showcase mirror plus its manifest/gallery;
-4. profile metrics: the first-party supplemental metrics cards
-   supplemental SVGs; and
-5. dynamic README output: `README.md` and `.github/assets/img/readme/*.svg`.
+1. Starred-list data in `.github/assets/languages.md` and `.github/assets/topics.md`.
+2. Generated QR, typographic word clouds and pinned banners in `.github/assets/img`.
+3. Six living-art GIFs with their manifest and gallery on both published surfaces.
+4. Managed supplemental SVGs and the WakaTime card, including tracked deletions.
+5. `README.md`, the dynamic README SVGs in `.github/assets/img/readme`, and the
+   featured-projects manifests and cards in that directory and the docs showcase.
 
 ## Secrets used by the workflow
 
@@ -226,7 +232,7 @@ It creates ordered commits for these owned groups:
 |---|---|---|
 | `GITHUB_TOKEN` | All jobs | Auto-provided by Actions |
 | `METRICS_TOKEN` | `generate-profile-metrics`, `probe-full-metrics` | Preferred: fine-grained PAT with **read** Metadata/Contents (this repo) and Profile. Classic fallback: `read:user`, `public_repo` (add `read:org` only for org/collab visibility). Do **not** grant `repo` write, admin, or workflow scopes. See `.github/SECURITY.md`. Forks can omit it; repository-aware cards then degrade or omit. |
-| `WAKATIME_API_KEY` | `update-readme-wakatime` | Optional WakaTime API key; README WakaTime update is skipped when absent |
+| `WAKATIME_API_KEY` | `update-readme-wakatime` | An absent key removes the WakaTime card and preserves its README markers |
 | `SPOTIFY_CLIENT_ID` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
 | `SPOTIFY_CLIENT_SECRET` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card — never passed to lowlighter `with:` |
 | `SPOTIFY_REFRESH_TOKEN` | `generate-profile-metrics` (supplemental step `env:` only) | Optional for the repo-owned `metrics-music.svg` supplemental card; mint it with `uv run readme auth spotify-refresh-token` and store it as a repo secret |

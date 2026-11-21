@@ -703,8 +703,8 @@ jobs:
             --config-path config.yaml \
             --owner "${{ github.repository_owner }}" \
             --repo "${{ github.event.repository.name }}" \
-            --output-dir .github/assets/img \
-            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json" \
+            --output-dir "$RUNNER_TEMP/profile-metrics" \
+            --manifest-path "$RUNNER_TEMP/profile-metrics/metrics-supplemental.manifest.json" \
             --x-handle "${{ github.repository_owner }}"
 
       - name: Validate supplemental metrics cards
@@ -713,13 +713,14 @@ jobs:
         run: |
           set -euo pipefail
           uv run python -m scripts.supplemental_metrics validate \
-            --output-dir .github/assets/img \
-            --manifest-path "$RUNNER_TEMP/metrics-supplemental.manifest.json"
+            --output-dir "$RUNNER_TEMP/profile-metrics" \
+            --manifest-path "$RUNNER_TEMP/profile-metrics/metrics-supplemental.manifest.json"
 
       - name: Summarize metrics asset health
         if: ${{ always() }}
         run: |
           uv run python - <<'PY'
+          import os
           from pathlib import Path
           from scripts.metrics_svg import validate_svg_file
 
@@ -729,7 +730,7 @@ jobs:
               "metrics-music.svg",
               "metrics-posts.svg",
           ):
-              path = Path(".github/assets/img") / asset_name
+              path = Path(os.environ["RUNNER_TEMP"]) / "profile-metrics" / asset_name
               result = validate_svg_file(path)
               print(f"{asset_name}: status={result.status.value} detail={result.detail}")
               if asset_name in {"metrics-music.svg", "metrics-posts.svg"} and result.status.value == "missing":
@@ -743,11 +744,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: profile-metrics-${{ github.run_id }}
-          path: |
-            .github/assets/img/metrics-languages.svg
-            .github/assets/img/metrics-habits.svg
-            .github/assets/img/metrics-music.svg
-            .github/assets/img/metrics-posts.svg
+          path: ${{ runner.temp }}/profile-metrics
           if-no-files-found: error
           retention-days: 7
           overwrite: true
@@ -1129,7 +1126,7 @@ jobs:
           NODE_OPTIONS: --disable-warning=DEP0005
         with:
           name: profile-metrics-${{ github.run_id }}
-          path: .github/assets/img
+          path: ${{ runner.temp }}/profile-metrics
 
       - name: Download WakaTime README section artifact
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -1318,17 +1315,13 @@ jobs:
           )
           PY
 
-      - name: Apply WakaTime README section
+      - name: Reconcile validated metrics and WakaTime artifacts
         run: |
           set -euo pipefail
-          uv run python -m scripts.wakatime_readme apply \
-            --artifact "${{ runner.temp }}/waka-readme/waka-section.md" \
+          uv run python -m scripts._publish_metrics \
+            --metrics "$RUNNER_TEMP/profile-metrics" \
+            --waka "$RUNNER_TEMP/waka-readme" \
             --readme README.md
-          if [ -f "${{ runner.temp }}/waka-readme/wakatime.svg" ]; then
-            mkdir -p .github/assets/img
-            cp "${{ runner.temp }}/waka-readme/wakatime.svg" \
-              .github/assets/img/wakatime.svg
-          fi
 
       - name: Generate README Sections
         env:
@@ -1352,13 +1345,16 @@ jobs:
           commit_group() {
             local message="$1"
             shift
-            local owned_files=("$@")
+            local owned_files=()
+            local pathspec status_output
+            for pathspec in "$@"; do
+              status_output=$(git status --porcelain --untracked-files=all -- "$pathspec") || return 1
+              if [ -n "$status_output" ]; then
+                owned_files+=("$pathspec")
+              fi
+            done
             if [ "${#owned_files[@]}" -eq 0 ]; then
               echo "Skipping empty group for: ${message}"
-              return 0
-            fi
-            if [ -z "$(git status --porcelain --untracked-files=all -- "${owned_files[@]}")" ]; then
-              echo "No changes for: ${message}"
               return 0
             fi
             git add -A -- "${owned_files[@]}"
@@ -1395,29 +1391,19 @@ jobs:
           metrics_files=(
             ./.github/assets/img/metrics-languages.svg
             ./.github/assets/img/metrics-habits.svg
+            ./.github/assets/img/metrics-activity.svg
             ./.github/assets/img/metrics-music.svg
             ./.github/assets/img/metrics-posts.svg
             ./.github/assets/img/wakatime.svg
           )
-          # Only add paths that exist or are tracked.
-          metrics_existing=()
-          for file in "${metrics_files[@]}"; do
-            if [ -e "$file" ] || git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-              metrics_existing+=("$file")
-            fi
-          done
-          if [ "${#metrics_existing[@]}" -gt 0 ]; then
-            if [ -n "$(git status --porcelain --untracked-files=all -- "${metrics_existing[@]}")" ]; then
-              git add -A -- "${metrics_existing[@]}"
-              git commit -m "chore(metrics): update generated metrics assets"
-            else
-              echo "No changes for: chore(metrics): update generated metrics assets"
-            fi
-          fi
+          commit_group "chore(metrics): update generated metrics assets" "${metrics_files[@]}"
 
           readme_files=(
             README.md
             ':(glob).github/assets/img/readme/*.svg'
+            .github/assets/img/readme/featured-projects.manifest.json
+            docs/public/showcase/featured-projects.manifest.json
+            ':(glob)docs/public/showcase/featured-projects/featured-card-*.svg'
           )
           commit_group "chore(readme): update dynamic sections and skills badges" "${readme_files[@]}"
 

@@ -206,3 +206,26 @@ warning or failure behavior.
 #### Scenario: Run-token stargazer timestamp capability gap
 - **WHEN** every GraphQL error is exactly `FORBIDDEN` with `Resource not accessible by integration` at `repository.stargazers` and `saml_failure=false`
 - **THEN** the generator SHALL omit the optional sparkline, log one bounded informational message naming the public repository and capability, and SHALL keep mixed, malformed, or otherwise unrecognized errors on the warning path
+
+### Requirement: Publication reconciles complete metric and featured inventories
+
+The finalizer SHALL validate the supplemental manifest and WakaTime artifact in
+private directories before changing any metric destination. The manifest SHALL
+identify every repository-owned supplemental asset, with the expected filename
+and content markers. WakaTime SHALL contain either its supported skip marker
+alone or the canonical section pointer with a valid WakaTime SVG.
+
+#### Scenario: An integration is deliberately disabled
+
+- **WHEN** an optional card is disabled or WakaTime sends its skip marker
+- **THEN** the finalizer SHALL remove the corresponding tracked card and README image while preserving the WakaTime section markers and unrelated assets
+
+#### Scenario: The transfer is incomplete or contradictory
+
+- **WHEN** either inventory is missing, unexpected, malformed or fails media validation
+- **THEN** the finalizer SHALL stop before applying either inventory or publishing any commit
+
+#### Scenario: Featured projects change
+
+- **WHEN** the README generator creates, updates or removes a featured project
+- **THEN** the finalizer SHALL stage both manifests and both managed SVG families, including deletions, in the same publication

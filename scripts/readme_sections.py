@@ -467,7 +467,7 @@ def _first_child_text(parent: Element, *local_names: str) -> str | None:
 
 def _one_line_hook(text: str | None) -> str | None:
     """Collapse HTML/RSS copy into a single-line card hook."""
-    if not text:
+    if text is None or not text:
         return None
     cleaned = unescape(re.sub(r"<[^>]+>", " ", text))
     cleaned = _WHITESPACE_RE.sub(" ", cleaned).strip()
@@ -476,7 +476,7 @@ def _one_line_hook(text: str | None) -> str | None:
 
 def _normalize_blog_date(value: str | None) -> str | None:
     """Normalize RSS/Atom/HTML dates to YYYY-MM-DD."""
-    if not value:
+    if value is None or not value:
         return None
     stripped = value.strip()
     if not stripped:
@@ -586,7 +586,7 @@ class GitHubRepoClient:
             "User-Agent": "readme-section-generator",
         }
         token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
-        if token:
+        if token is not None and token:
             headers["Authorization"] = f"Bearer {token}"
         return headers
 
@@ -823,7 +823,15 @@ class StarHistoryClient:
 
             page_info = stargazers.get("pageInfo", {})
             if page_info.get("hasNextPage"):
-                cursor = page_info.get("endCursor")
+                next_cursor = page_info.get("endCursor")
+                if (
+                    not isinstance(next_cursor, str)
+                    or not next_cursor
+                    or next_cursor == cursor
+                ):
+                    logger.warning("Invalid stargazer cursor for {}", full_name)
+                    return None
+                cursor = next_cursor
             else:
                 break
 
@@ -870,7 +878,7 @@ class StarHistoryClient:
             "User-Agent": "readme-section-generator",
         }
         token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
-        if not token:
+        if token is None or not token:
             try:
                 import subprocess
 
@@ -886,7 +894,7 @@ class StarHistoryClient:
                 )
             except Exception:
                 pass
-        if token:
+        if token is not None and token:
             headers["Authorization"] = f"Bearer {token}"
         return headers
 
@@ -968,7 +976,7 @@ class BlogMetadataClient:
                 )
                 match = pattern_content_first.search(html)
             if match:
-                return match.group(1).strip()
+                return str(match.group(1)).strip()
         return None
 
 
@@ -1076,7 +1084,7 @@ class ReadmeSectionGenerator:
         content: str,
         marker_start: str,
         marker_end: str,
-        rendered: str,
+        rendered: str | None,
     ) -> str:
         pattern = re.compile(
             rf"{re.escape(marker_start)}\n.*?{re.escape(marker_end)}",
@@ -1108,9 +1116,7 @@ class ReadmeSectionGenerator:
             if pattern.search(content) is None:
                 missing.append(f"{marker_start} .. {marker_end}")
         if missing:
-            raise FileNotFoundError(
-                "README markers missing: " + "; ".join(missing)
-            )
+            raise FileNotFoundError("README markers missing: " + "; ".join(missing))
 
     def _section_order(self) -> tuple[str, ...]:
         return section_order_from_settings(self.settings)
@@ -1250,7 +1256,7 @@ class ReadmeSectionGenerator:
             "\n"
             f"{skills_text.rstrip()}\n"
             "\n"
-            "</details>\n"
+            "</details>"
         )
 
     def _rewrite_tech_stack_teaser(self, content: str) -> str:
@@ -1434,22 +1440,15 @@ class ReadmeSectionGenerator:
             width="100%",
         )
 
-    def _wakatime_marker_inner(self, inner: str) -> str:
-        """Keep markers as a pointer at the first-party SVG, never a text dump."""
-        del inner
-        return f"\n<!-- WakaTime SVG is rendered from {_WAKATIME_ASSET_SRC} -->\n"
-
-    def _extract_wakatime_markers(self, content: str) -> tuple[str, str | None]:
+    def _extract_wakatime_markers(
+        self, content: str
+    ) -> tuple[str, tuple[str, str] | None]:
         """Remove Waka marker pairs and return one dump-free pair, if any."""
         matches = list(_WAKATIME_SECTION_RE.finditer(content))
         if not matches:
             return content, None
         first = matches[0]
-        markers = (
-            f"{first.group(1)}"
-            f"{self._wakatime_marker_inner(first.group(2))}"
-            f"{first.group(3)}"
-        )
+        markers = str(first.group(1)), str(first.group(3))
         for match in reversed(matches):
             content = content[: match.start()] + content[match.end() :]
         return content, markers
@@ -1462,12 +1461,17 @@ class ReadmeSectionGenerator:
     def _place_wakatime_in_metrics(
         self,
         content: str,
-        markers: str | None,
+        markers: tuple[str, str] | None,
     ) -> str:
         """Park the open Waka SVG + markers with the other metric cards."""
         if not markers:
             return content
-        block = f"{self._wakatime_open_img()}\n\n{markers}\n"
+        start, end = markers
+        asset = Path(self.settings.readme_path).parent / _WAKATIME_ASSET_SRC
+        block = f"{start}\n{end}\n"
+        if validate_svg_file(asset).is_valid:
+            pointer = f"<!-- WakaTime SVG is rendered from {_WAKATIME_ASSET_SRC} -->"
+            block = f"{self._wakatime_open_img()}\n\n{start}\n{pointer}\n{end}\n"
         metrics_re = compile_section_body_re("Metrics", self._section_order())
         metrics_match = metrics_re.search(content)
         if metrics_match:
@@ -1751,7 +1755,7 @@ class ReadmeSectionGenerator:
             label=label,
             accent=accent,
         )
-        if icon_data_uri:
+        if icon_data_uri is not None and icon_data_uri:
             return dataclasses.replace(card, icon_data_uri=icon_data_uri)
         return card
 
@@ -1864,7 +1868,7 @@ class ReadmeSectionGenerator:
                 candidate,
                 context="w4w.dev favicon",
             )
-            if result:
+            if result is not None and result:
                 return result
         return None
 
@@ -1879,12 +1883,13 @@ class ReadmeSectionGenerator:
         accent: str | None = None,
     ) -> str | None:
         normalized_host = (host or "").strip().replace("www.", "").lower()
-        if not normalized_host and url:
+        if not normalized_host and url is not None:
             normalized_host = urlparse(url).netloc.strip().replace("www.", "").lower()
 
         accent_hex = (
             accent.lstrip("#")
-            if accent and re.fullmatch(r"[0-9a-fA-F]{6}", accent.lstrip("#"))
+            if accent is not None
+            and re.fullmatch(r"[0-9a-fA-F]{6}", accent.lstrip("#"))
             else None
         )
 
@@ -1910,14 +1915,14 @@ class ReadmeSectionGenerator:
                     bg_color=bg_color,
                     fg_color="white",
                 )
-                if si_uri:
+                if si_uri is not None and si_uri:
                     return si_uri
                 break  # fall through to hardcoded glyph
 
         # --- Try w4w.dev favicon before the hardcoded zigzag glyph --------
         if normalized_host.endswith("w4w.dev"):
             favicon_uri = self._fetch_w4w_favicon_data_uri()
-            if favicon_uri:
+            if favicon_uri is not None and favicon_uri:
                 return favicon_uri
 
         # --- Hardcoded glyph fallbacks ------------------------------------
@@ -1972,8 +1977,8 @@ class ReadmeSectionGenerator:
                 f"<circle cx='35' cy='20' r='2.6' fill='#{foreground}'/>"
                 f"<circle cx='51' cy='20' r='2.6' fill='#{foreground}'/>"
             )
-        elif (url and urlparse(url).scheme == "mailto") or (
-            label and "email" in label.lower()
+        elif (url is not None and urlparse(url).scheme == "mailto") or (
+            label is not None and "email" in label.lower()
         ):
             background, foreground = (accent_hex or "EA4335", "FFFFFF")
             glyph = (
@@ -1983,7 +1988,7 @@ class ReadmeSectionGenerator:
                 f"stroke='#{foreground}' stroke-width='3' "
                 "stroke-linecap='round' stroke-linejoin='round'/>"
             )
-        elif normalized_host or label:
+        elif normalized_host or (label is not None and label):
             background, foreground = (accent_hex or "334155", "E2E8F0")
             glyph = (
                 f"<circle cx='32' cy='32' r='13' fill='none' "
@@ -1993,7 +1998,7 @@ class ReadmeSectionGenerator:
                 f"stroke='#{foreground}' stroke-width='2.4' "
                 "stroke-linecap='round' fill='none'/>"
             )
-        if not glyph or not background or not foreground:
+        if glyph is None or background is None or foreground is None:
             return None
 
         icon_svg = (
@@ -2073,7 +2078,7 @@ class ReadmeSectionGenerator:
         for raw_word in cleaned.split():
             normalized = raw_word.casefold()
             replacement = _ACRONYM_REPLACEMENTS.get(normalized)
-            if replacement:
+            if replacement is not None and replacement:
                 words.append(replacement)
             elif raw_word.isupper():
                 words.append(raw_word)
@@ -2116,7 +2121,7 @@ class ReadmeSectionGenerator:
         summary = summary.replace("(", " ").replace(")", " ")
         summary = re.sub(r"\bfrom\s+and\b", "and", summary, flags=re.IGNORECASE)
 
-        if homepage:
+        if homepage is not None and homepage:
             try:
                 parsed_homepage = urlparse(homepage)
             except ValueError:
@@ -2169,7 +2174,7 @@ class ReadmeSectionGenerator:
         )
         if not summary or _GENERIC_DESCRIPTION_RE.fullmatch(summary):
             summary = self._topic_summary(metadata.topics) or ""
-        if not summary and metadata.language:
+        if not summary and metadata.language is not None and metadata.language:
             summary = f"Source code and project assets built with {metadata.language}."
         if not summary:
             summary = "Source code and project assets."
@@ -2184,7 +2189,7 @@ class ReadmeSectionGenerator:
         self,
         languages: dict[str, int] | None,
     ) -> tuple[str, ...]:
-        if not languages:
+        if languages is None or not languages:
             return ()
         ranked = sorted(languages.items(), key=lambda item: item[1], reverse=True)
         return tuple(language for language, _ in ranked[:2])
@@ -2254,7 +2259,7 @@ class ReadmeSectionGenerator:
         if not artifacts:
             return ""
         lines: list[str] = []
-        if section_label:
+        if section_label is not None and section_label:
             lines.append(f'<p align="center"><sub>{escape(section_label)}</sub></p>')
         lines.append('<p align="center">')
         for artifact in artifacts:
@@ -2378,7 +2383,8 @@ class ReadmeSectionGenerator:
                 summary=summary,
                 updated_label=(
                     f"Updated {relative}"
-                    if (relative := self._relative_time(card.updated_at))
+                    if (relative := self._relative_time(card.updated_at)) is not None
+                    and relative
                     else None
                 ),
                 top_languages=self._top_languages(languages),
@@ -2434,13 +2440,13 @@ class ReadmeSectionGenerator:
         summary = self._normalize_project_summary(metadata, compact=False)
         lines = [summary]
         info_bits: list[str] = []
-        if metadata.language:
+        if metadata.language is not None and metadata.language:
             info_bits.append(f"lang:{metadata.language}")
         info_bits.append(f"★ {metadata.stars:,}")
-        if metadata.forks:
+        if metadata.forks is not None and metadata.forks:
             info_bits.append(f"⑂ {metadata.forks:,}")
         relative = self._relative_time(metadata.updated_at)
-        if relative:
+        if relative is not None and relative:
             info_bits.append(f"Updated {relative}")
         sparkline = self._build_star_history_points(repo_full_name, metadata)
         bg_image = self._repo_background_image(repo_full_name, metadata)
@@ -2558,7 +2564,7 @@ class ReadmeSectionGenerator:
             # Sanitize title — strip trailing "update" noise (anchored)
             clean_title = sanitize_blog_title(post.title)
             card_meta: list[str] = []
-            if published:
+            if published is not None and published:
                 card_meta.append(f"Published {published}")
             if host:
                 card_meta.append(host)
@@ -2570,7 +2576,7 @@ class ReadmeSectionGenerator:
             hero_data_uri: str | None = None
             # Try RSS enclosure first, then og:image from HTML
             hero_url = post.image_url or metadata.get("hero_image")
-            if hero_url:
+            if hero_url is not None and hero_url:
                 absolute_hero = urljoin(post.url, hero_url)
                 hero_data_uri = self._fetch_remote_image_data_uri(
                     absolute_hero,
@@ -2588,7 +2594,7 @@ class ReadmeSectionGenerator:
                 accent=accent,
             )
             svg_cards.append(card)
-            extras = [bit for bit in (published, summary) if bit]
+            extras = [bit for bit in (published, summary) if bit is not None and bit]
             line = f"- [{escape(clean_title)}]({escape(post.url)})"
             if extras:
                 line += f" — {escape(' · '.join(extras))}"
@@ -2823,7 +2829,7 @@ class ReadmeSectionGenerator:
             )
 
     def _format_timestamp(self, timestamp: str | None) -> str | None:
-        if not timestamp:
+        if timestamp is None or not timestamp:
             return None
         if "T" not in timestamp:
             return timestamp
@@ -2831,7 +2837,7 @@ class ReadmeSectionGenerator:
 
     def _relative_time(self, iso_timestamp: str | None) -> str | None:
         """Convert ISO timestamp to relative time like '3d ago', '2mo ago'."""
-        if not iso_timestamp:
+        if iso_timestamp is None or not iso_timestamp:
             return None
         try:
             dt = datetime.fromisoformat(iso_timestamp.replace("Z", "+00:00"))
@@ -2865,23 +2871,27 @@ class ReadmeSectionGenerator:
         metadata: RepoMetadata | None,
     ) -> str | None:
         # 1. Prefer the API-provided OG image (avoids HTML scrape)
-        if metadata and metadata.open_graph_image_url:
+        if (
+            metadata is not None
+            and metadata.open_graph_image_url is not None
+            and metadata.open_graph_image_url
+        ):
             api_og = metadata.open_graph_image_url
             if "opengraph.githubassets.com" not in api_og:
                 data_uri = self._fetch_remote_image_data_uri(
                     api_og,
                     context=f"repo API OG image for {repo_full_name}",
                 )
-                if data_uri:
+                if data_uri is not None and data_uri:
                     return data_uri
         # 2. Fall back to HTML scrape for custom social preview
         og_url = self._scrape_repo_og_image(repo_full_name)
-        if og_url:
+        if og_url is not None and og_url:
             data_uri = self._fetch_remote_image_data_uri(
                 og_url,
                 context=f"repo social preview for {repo_full_name}",
             )
-            if data_uri:
+            if data_uri is not None and data_uri:
                 return data_uri
         # 3. Final fallback: auto-generated GitHub OG image
         fallback = f"https://opengraph.githubassets.com/1/{repo_full_name}"
@@ -2935,7 +2945,7 @@ class ReadmeSectionGenerator:
             ):
                 match = pattern.search(html)
                 if match:
-                    url = match.group(1).strip()
+                    url = str(match.group(1)).strip()
                     # Skip the generic opengraph.githubassets.com URL
                     if "opengraph.githubassets.com" in url:
                         continue
@@ -3047,14 +3057,14 @@ class ReadmeSectionGenerator:
                 sample=24,
                 series_start=series_start,
             )
-        if history:
+        if history is not None and history:
             if metadata.stars > history[-1]:
                 history = [*history[:-1], metadata.stars]
             return tuple(float(value) for value in history)
         return None
 
     def _parse_iso_datetime(self, value: str | None) -> datetime | None:
-        if not value:
+        if value is None or not value:
             return None
         try:
             parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))

@@ -129,6 +129,7 @@ ASSET_SPECS: Final[dict[str, SupplementalAssetSpec]] = {
         asset_name="metrics-activity",
         title="Recent activity",
         required_markers=("Recent activity", "GitHub"),
+        optional=True,
     ),
     "music": SupplementalAssetSpec(
         asset_name="metrics-music",
@@ -150,7 +151,7 @@ def _github_headers(token: str | None) -> dict[str, str]:
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     }
-    if token:
+    if token is not None and token:
         headers["Authorization"] = f"Bearer {token}"
     return headers
 
@@ -187,6 +188,8 @@ def _request_bytes(
     with urllib.request.urlopen(request, context=context, timeout=timeout) as response:
         payload = response.read(max_bytes + 1)
         content_type = str(response.headers.get("Content-Type") or "")
+    if not isinstance(payload, bytes):
+        raise RuntimeError("Expected binary response body")
     if len(payload) > max_bytes:
         raise RuntimeError(f"Remote payload exceeded {max_bytes} bytes")
     return payload, content_type.split(";", 1)[0].strip().lower()
@@ -233,7 +236,7 @@ def _resolve_github_token() -> str | None:
 
 
 def _parse_iso8601(value: str | None) -> datetime | None:
-    if not value:
+    if value is None or not value:
         return None
     try:
         return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(UTC)
@@ -247,7 +250,7 @@ def _parse_calendar_day(value: str | None) -> date | None:
     Date-only strings are taken as written. Applying ``astimezone`` to a naive
     midnight would shift the day in UTC+ locales and zero the 30-day window.
     """
-    if not value:
+    if value is None or not value:
         return None
     raw = str(value).strip()
     if len(raw) >= 10:
@@ -286,7 +289,7 @@ def _truncate(value: str, limit: int) -> str:
 
 
 def _normalize_token(value: str | None) -> str:
-    if not value:
+    if value is None or not value:
         return ""
     return urllib.parse.unquote(value.strip())
 
@@ -533,7 +536,7 @@ def _top_languages(metrics: dict[str, Any], *, limit: int = 3) -> tuple[str, ...
         (
             (name, int(size or 0))
             for name, size in languages.items()
-            if int(size or 0) > 0
+            if isinstance(name, str) and int(size or 0) > 0
         ),
         key=lambda item: item[1],
         reverse=True,
@@ -616,7 +619,9 @@ def _language_shares(
         (
             (str(name), int(size or 0))
             for name, size in languages.items()
-            if int(size or 0) > 0 and not _is_excluded_language(str(name))
+            if isinstance(name, str)
+            and int(size or 0) > 0
+            and not _is_excluded_language(str(name))
         ),
         key=lambda item: item[1],
         reverse=True,
@@ -766,7 +771,7 @@ def _wrap_supplemental_svg(
         _supplemental_svg_css(accent=accent, accent_dark=accent_dark),
         "</style>",
     ]
-    if extra_defs:
+    if extra_defs is not None and extra_defs:
         lines.extend(extra_defs)
     lines.extend(
         (
@@ -1251,6 +1256,7 @@ def _language_year_flows(
         key = (year, lang)
         flows[key] = flows.get(key, 0) + 1
     year_list = sorted(years)
+
     def _lang_weight(lang_name: str) -> tuple[int, str]:
         mass = sum(
             count
@@ -1304,12 +1310,8 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
     else:
         left_x, right_x = 36, 980
         row_h = min(36, 280 / max(len(years), len(langs), 1))
-        year_y = {
-            year: 36 + index * row_h for index, year in enumerate(years)
-        }
-        lang_y = {
-            lang: 36 + index * row_h for index, lang in enumerate(langs)
-        }
+        year_y = {year: 36 + index * row_h for index, year in enumerate(years)}
+        lang_y = {lang: 36 + index * row_h for index, lang in enumerate(langs)}
         max_flow = max(flows.values()) if flows else 1
         for (year, lang), count in flows.items():
             y1 = year_y[year]
@@ -1324,8 +1326,7 @@ def _render_languages_svg(metrics: dict[str, Any]) -> str:
             )
         for year, y in year_y.items():
             body.append(
-                f'<text class="body" x="{left_x}" y="{y + 4:.1f}">'
-                f"{year}</text>"
+                f'<text class="body" x="{left_x}" y="{y + 4:.1f}">{year}</text>'
             )
         for lang, y in lang_y.items():
             fill = _label_swatch(lang)
@@ -1719,9 +1720,9 @@ def _with_track_artwork(tracks: list[dict[str, str]]) -> list[dict[str, str]]:
     for track in tracks:
         item = dict(track)
         image_url = item.get("image_url") or ""
-        if image_url and not item.get("image_data_uri"):
+        if image_url and not item.get("image_data_uri", ""):
             data_uri = _fetch_image_data_uri(image_url)
-            if data_uri:
+            if data_uri is not None and data_uri:
                 item["image_data_uri"] = data_uri
         enriched.append(item)
     return enriched
@@ -1932,9 +1933,7 @@ def _render_music_svg(
         body.extend(extra_body)
     if artists:
         band_y = height - 84
-        body.append(
-            f'<g class="music-catalog" transform="translate(28,{band_y})">'
-        )
+        body.append(f'<g class="music-catalog" transform="translate(28,{band_y})">')
         body.append(
             '<text class="label" x="0" y="14">'
             "All-time taste (long-term top artists)</text>"
@@ -2108,7 +2107,7 @@ def generate_supplemental_metrics(
     )
 
     github_token = _resolve_github_token()
-    if not github_token:
+    if github_token is None or not github_token:
         raise RuntimeError(
             "A GitHub token is required to generate supplemental metrics"
         )
@@ -2255,18 +2254,50 @@ def generate_supplemental_metrics(
     return statuses
 
 
+def _unique_manifest_fields(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    fields: dict[str, Any] = {}
+    for name, value in pairs:
+        if name in fields:
+            raise ValueError("Duplicate field in supplemental metrics manifest")
+        fields[name] = value
+    return fields
+
+
 def validate_supplemental_metrics(
     *,
     output_dir: Path,
     manifest_path: Path,
 ) -> list[str]:
-    """Validate enabled supplemental metric assets against the manifest."""
+    """Validate the entire transfer against the generator's asset definitions."""
+    try:
+        manifest = json.loads(
+            manifest_path.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_manifest_fields,
+        )
+    except (OSError, ValueError) as exc:
+        return [f"Invalid supplemental metrics manifest: {exc}"]
+    if not _is_json_object(manifest) or set(manifest) != set(ASSET_SPECS):
+        return ["Supplemental metrics manifest must contain every expected asset"]
 
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     errors: list[str] = []
-    for item in manifest.values():
-        filename = str(item["filename"])
-        enabled = bool(item["enabled"])
+    for key, spec in ASSET_SPECS.items():
+        item = manifest[key]
+        filename = f"{spec.asset_name}.svg"
+        if not (
+            _is_json_object(item)
+            and item.get("asset_name") == spec.asset_name
+            and item.get("filename") == filename
+            and item.get("title") == spec.title
+            and item.get("required_markers") == list(spec.required_markers)
+            and item.get("optional") is spec.optional
+            and isinstance(item.get("enabled"), bool)
+        ):
+            errors.append(f"{key}: invalid supplemental asset declaration")
+            continue
+        enabled = item["enabled"]
+        if (not spec.optional and not enabled) or (key == "activity" and enabled):
+            errors.append(f"{key}: invalid enablement state")
+            continue
         asset_path = output_dir / filename
         if not enabled:
             if asset_path.exists():
@@ -2279,7 +2310,7 @@ def validate_supplemental_metrics(
             continue
 
         svg_text = asset_path.read_text(encoding="utf-8")
-        for marker in item.get("required_markers", []):
+        for marker in spec.required_markers:
             if marker not in svg_text:
                 errors.append(f"{filename}: missing required marker '{marker}'")
     return errors

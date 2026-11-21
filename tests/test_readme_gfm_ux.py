@@ -254,7 +254,7 @@ def living_art_section(text: str) -> str:
 
 
 def visible_living_art_and_details(living: str) -> tuple[str, list[str]]:
-    blocks = _DETAILS_RE.findall(living)
+    blocks = [match.group(0) for match in _DETAILS_RE.finditer(living)]
     visible = _DETAILS_RE.sub("\n", living)
     return visible, blocks
 
@@ -263,7 +263,7 @@ def living_art_intro(living: str) -> str:
     """First unaligned paragraph after the Living Art heading."""
     match = re.search(r"(?s)<p>(.*?)</p>", living)
     assert match is not None, "Living Art intro paragraph missing"
-    return match.group(1)
+    return str(match.group(1))
 
 
 def assert_living_art_not_wrapped(living: str) -> None:

@@ -8,14 +8,17 @@ from email.message import Message
 from io import BytesIO
 from pathlib import Path
 from textwrap import dedent
+from typing import Protocol, cast
 from urllib.error import HTTPError, URLError
 from urllib.request import Request
 
 import pytest
+import typer
 from loguru import logger as loguru_logger
 
 from scripts.art.roster import SHIPPED_STYLE_KEYS
 from scripts.config import (
+    ProjectConfig,
     ReadmeFeaturedRepo,
     ReadmeSectionsSettings,
     ReadmeSocialLink,
@@ -27,6 +30,7 @@ from scripts.readme_sections import (
     BlogFeedClient,
     BlogMetadataClient,
     BlogPost,
+    BlogPostSource,
     ReadmeSectionGenerator,
     RepoMetadata,
     StarHistoryClient,
@@ -874,6 +878,7 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
+        assert html is not None
 
         first = (tmp_path / "svg" / "blog-first-post.svg").read_text(encoding="utf-8")
         second = (tmp_path / "svg" / "blog-second-post.svg").read_text(encoding="utf-8")
@@ -936,6 +941,7 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
+        assert html is not None
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
         assert len(svg_files) == 1
         svg = svg_files[0].read_text(encoding="utf-8")
@@ -974,6 +980,7 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
+        assert html is not None
 
         svg_files = sorted(path.name for path in (tmp_path / "svg").glob("blog-*.svg"))
         assert len(svg_files) == 2
@@ -1467,6 +1474,12 @@ class TestRendering:
         (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "wordcloud_fractal_reel.mp4").write_bytes(b"\x00\x00")
 
+        waka_svg = tmp_path / ".github/assets/img/wakatime.svg"
+        waka_svg.parent.mkdir(parents=True, exist_ok=True)
+        waka_svg.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg"><text>WakaTime</text></svg>',
+            encoding="utf-8",
+        )
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
                 readme_path=str(readme),
@@ -1559,13 +1572,11 @@ class TestRendering:
 
         assert "This Week I Spent My Time On" not in rendered
         assert "WakaTime stats are temporarily unavailable right now." not in rendered
-        assert (
-            "WakaTime SVG is rendered from .github/assets/img/wakatime.svg" in rendered
-        )
-        assert 'src=".github/assets/img/wakatime.svg"' in metrics
+        assert "WakaTime SVG is rendered from" not in rendered
+        assert 'src=".github/assets/img/wakatime.svg"' not in metrics
         assert "<!--START_SECTION:waka-->" in metrics
         assert "<!--END_SECTION:waka-->" in metrics
-        assert rendered.count('src=".github/assets/img/wakatime.svg"') == 1
+        assert rendered.count('src=".github/assets/img/wakatime.svg"') == 0
         assert 'src=".github/assets/img/wakatime.svg"' not in word_clouds
         assert "<summary><strong>WakaTime Stats</strong></summary>" not in rendered
         assert "<details" not in metrics
@@ -1607,6 +1618,12 @@ class TestRendering:
             encoding="utf-8",
         )
 
+        waka_svg = tmp_path / ".github/assets/img/wakatime.svg"
+        waka_svg.parent.mkdir(parents=True, exist_ok=True)
+        waka_svg.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg"><text>WakaTime</text></svg>',
+            encoding="utf-8",
+        )
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
                 readme_path=str(readme),
@@ -1678,6 +1695,12 @@ class TestRendering:
         (metrics_dir / "metrics.additional.svg").write_text(valid_svg, encoding="utf-8")
         (metrics_dir / "metrics.extra.svg").write_text(valid_svg, encoding="utf-8")
 
+        waka_svg = tmp_path / ".github/assets/img/wakatime.svg"
+        waka_svg.parent.mkdir(parents=True, exist_ok=True)
+        waka_svg.write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg"><text>WakaTime</text></svg>',
+            encoding="utf-8",
+        )
         generator = ReadmeSectionGenerator(
             settings=ReadmeSectionsSettings(
                 readme_path=str(readme),
@@ -1858,6 +1881,7 @@ class TestRendering:
         )
 
         html = generator._render_blog_posts()
+        assert html is not None
 
         svg_files = list((tmp_path / "svg").glob("blog-*.svg"))
         assert len(svg_files) == 1
@@ -1972,6 +1996,7 @@ class TestRemoteFetchSafety:
         )
 
         posts = BlogFeedClient().fetch_latest_posts("https://w4w.dev/feed.xml", limit=1)
+        assert posts is not None
 
         assert len(posts) == 1
         assert posts[0].title == "Feed Post"
@@ -3055,6 +3080,7 @@ def test_fact_blog_each_card_has_title_date_hook_and_link(tmp_path: Path) -> Non
     )
 
     html = generator._render_blog_posts()
+    assert html is not None
     assert "<details" not in html.lower()
     hrefs = re.findall(r'<a href="(https://w4w\.dev/blog/[^"]+)"', html)
     assert 4 <= len(set(hrefs)) <= 5
@@ -3084,3 +3110,214 @@ def test_fact_blog_each_card_has_title_date_hook_and_link(tmp_path: Path) -> Non
         assert post.title in svg
         assert published in svg
         assert summary in svg
+
+
+def _managed_readme(blog_body: str) -> str:
+    return (
+        "<!-- README:TOP_BADGES:START -->\n"
+        "top\n"
+        "<!-- README:TOP_BADGES:END -->\n"
+        "<!-- README:FEATURED_PROJECTS:START -->\n"
+        "projects\n"
+        "<!-- README:FEATURED_PROJECTS:END -->\n"
+        "<!-- README:BLOG_POSTS:START -->\n"
+        f"{blog_body}\n"
+        "<!-- README:BLOG_POSTS:END -->\n"
+    )
+
+
+def _blog_marker_inner(content: str) -> str:
+    match = re.search(
+        r"<!-- README:BLOG_POSTS:START -->\n(.*?)"
+        r"<!-- README:BLOG_POSTS:END -->",
+        content,
+        re.DOTALL,
+    )
+    assert match is not None
+    inner = match.group(1)
+    if not isinstance(inner, str):
+        raise AssertionError("blog marker inner missing")
+    return inner
+
+
+class _NullableBlogFeed(Protocol):
+    """Feed stub that may return None when the fetch fails."""
+
+    def fetch_latest_posts(
+        self, feed_url: str, limit: int
+    ) -> list[BlogPost] | None: ...
+
+
+def _offline_generator(
+    tmp_path: Path,
+    readme: Path,
+    blog_client: _NullableBlogFeed,
+    monkeypatch: pytest.MonkeyPatch,
+) -> ReadmeSectionGenerator:
+    monkeypatch.setattr(
+        "scripts.readme_sections.generate_separators",
+        lambda **_kwargs: [],
+    )
+    monkeypatch.setattr(
+        ReadmeSectionGenerator,
+        "_fetch_w4w_favicon_data_uri",
+        lambda _self: None,
+    )
+    return ReadmeSectionGenerator(
+        settings=ReadmeSectionsSettings(
+            readme_path=str(readme),
+            blog_feed_url="https://w4w.dev/feed.xml",
+            blog_post_limit=2,
+            svg=ReadmeSvgSettings(
+                enabled=False,
+                output_dir=str(tmp_path / "svg"),
+            ),
+        ),
+        # BlogFeedClient returns None on failure. BlogPostSource still says list.
+        blog_client=cast(BlogPostSource, blog_client),
+    )
+
+
+def test_generate_preserves_blog_block_when_fetch_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class FailedFeed:
+        def fetch_latest_posts(self, feed_url: str, limit: int) -> None:
+            return None
+
+    readme = tmp_path / "README.md"
+    readme.write_text(_managed_readme("keep me"), encoding="utf-8")
+    generator = _offline_generator(tmp_path, readme, FailedFeed(), monkeypatch)
+
+    result = generator.generate()
+
+    assert result == readme
+    assert _blog_marker_inner(readme.read_text(encoding="utf-8")).strip() == "keep me"
+    assert "No recent posts available." not in readme.read_text(encoding="utf-8")
+
+
+def test_generate_empty_feed_says_there_are_no_posts(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class EmptyFeed:
+        def fetch_latest_posts(self, feed_url: str, limit: int) -> list[BlogPost]:
+            return []
+
+    readme = tmp_path / "README.md"
+    readme.write_text(_managed_readme("old posts"), encoding="utf-8")
+    generator = _offline_generator(tmp_path, readme, EmptyFeed(), monkeypatch)
+
+    generator.generate()
+
+    inner = _blog_marker_inner(readme.read_text(encoding="utf-8"))
+    assert "old posts" not in inner
+    assert "No recent posts available." in inner
+
+
+def test_generate_require_markers_missing_readme_or_pair(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    missing = tmp_path / "missing.md"
+    generator = _offline_generator(tmp_path, missing, StubBlogClient([]), monkeypatch)
+    with pytest.raises(FileNotFoundError, match="README not found"):
+        generator.generate(require_markers=True)
+    assert not missing.exists()
+
+    unmarked = tmp_path / "README.md"
+    original = "# Hello\nno markers\n"
+    unmarked.write_text(original, encoding="utf-8")
+    generator = _offline_generator(tmp_path, unmarked, StubBlogClient([]), monkeypatch)
+    with pytest.raises(FileNotFoundError, match="README markers missing"):
+        generator.generate(require_markers=True)
+    assert unmarked.read_text(encoding="utf-8") == original
+
+
+def test_generate_default_warns_and_returns_without_markers(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mocker,
+) -> None:
+    warning = mocker.patch("scripts.readme_sections.logger.warning")
+    missing = tmp_path / "missing.md"
+    missing_generator = _offline_generator(
+        tmp_path,
+        missing,
+        StubBlogClient([]),
+        monkeypatch,
+    )
+
+    assert missing_generator.generate() == missing
+    assert not missing.exists()
+    assert any(
+        "README not found" in str(call.args[0]) for call in warning.call_args_list
+    )
+
+    warning.reset_mock()
+    unmarked = tmp_path / "README.md"
+    original = "# Hello\nno markers\n"
+    unmarked.write_text(original, encoding="utf-8")
+    unmarked_generator = _offline_generator(
+        tmp_path,
+        unmarked,
+        StubBlogClient([]),
+        monkeypatch,
+    )
+
+    assert unmarked_generator.generate() == unmarked
+    assert unmarked.read_text(encoding="utf-8") == original
+    assert any(
+        "Markers not found" in str(call.args[0]) for call in warning.call_args_list
+    )
+
+
+def test_cli_readme_sections_require_markers_exits(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import scripts.cli.generate.readme_cmd as readme_cmd
+
+    captured: dict[str, object] = {}
+
+    class Recorder:
+        def __init__(self, settings: ReadmeSectionsSettings) -> None:
+            self.settings = settings
+
+        def generate(self, **kwargs: object) -> Path:
+            captured.update(kwargs)
+            return Path(self.settings.readme_path)
+
+    monkeypatch.setattr(
+        readme_cmd,
+        "_load_project_config",
+        lambda _path: ProjectConfig(),
+    )
+    monkeypatch.setattr(
+        "scripts.readme_sections.ReadmeSectionGenerator",
+        Recorder,
+    )
+    output = tmp_path / "README.md"
+    output.write_text("untouched", encoding="utf-8")
+    readme_cmd.readme_sections(output_path=output)
+    assert captured == {"require_markers": True}
+    assert output.read_text(encoding="utf-8") == "untouched"
+
+    monkeypatch.setattr(
+        "scripts.readme_sections.ReadmeSectionGenerator",
+        ReadmeSectionGenerator,
+    )
+    missing = tmp_path / "missing.md"
+    with pytest.raises(typer.Exit) as missing_readme:
+        readme_cmd.readme_sections(output_path=missing)
+    assert missing_readme.value.exit_code == 1
+    assert not missing.exists()
+
+    unmarked = tmp_path / "unmarked.md"
+    original = "# Hello\nno markers\n"
+    unmarked.write_text(original, encoding="utf-8")
+    with pytest.raises(typer.Exit) as missing_markers:
+        readme_cmd.readme_sections(output_path=unmarked)
+    assert missing_markers.value.exit_code == 1
+    assert unmarked.read_text(encoding="utf-8") == original
