@@ -3,6 +3,7 @@
 import json
 import re
 import socket
+import subprocess
 from datetime import UTC, datetime
 from email.message import Message
 from io import BytesIO
@@ -38,6 +39,12 @@ from scripts.readme_sections import (
     _safe_urlopen,
     _SafeRedirectHandler,
     compile_section_body_re,
+)
+from tests.test_profile_workflow import (
+    _job_block,
+    _run_git,
+    _shell_array,
+    _workflow_text,
 )
 from tests.test_readme_gfm_ux import (
     after_heading,
@@ -141,6 +148,14 @@ def assert_word_cloud_frequency_details_without_waka(rendered: str) -> None:
 
 
 class TestRendering:
+    @pytest.fixture(autouse=True)
+    def _isolate_separator_generation(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(
+            "scripts.readme_separators._OUT_DIR", tmp_path / "separators"
+        )
+
     def test_top_badges_render_svg_contact_block(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(
             svg=ReadmeSvgSettings(
@@ -746,6 +761,131 @@ class TestRendering:
         assert manifest["projects"][0]["svg_asset_path"] == (
             "/showcase/featured-projects/featured-card-wyattowalsh-riso.svg"
         )
+
+    def test_last_featured_project_removal_and_restoration(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        finalize = _job_block(_workflow_text(), "finalize")
+        helper = re.search(r"(?ms)^ +commit_group\(\) \{.*?^          \}$", finalize)
+        assert helper is not None
+        script = (
+            "set -euo pipefail\n" + helper.group() + '\ncommit_group "fixture" "$@"'
+        )
+        command = [
+            "bash",
+            "-c",
+            script,
+            "fixture",
+            *_shell_array(finalize, "readme_files"),
+        ]
+
+        monkeypatch.chdir(tmp_path)
+        canonical = Path(".github/assets/img/readme")
+        monkeypatch.setattr("scripts.readme_separators._OUT_DIR", canonical)
+        showcase = Path("docs/public/showcase")
+        showcase.mkdir(parents=True)
+        name = "featured-card-owner-demo.svg"
+        cards = [canonical / name, showcase / "featured-projects" / name]
+        manifests = [
+            p / "featured-projects.manifest.json" for p in (canonical, showcase)
+        ]
+        project = ReadmeFeaturedRepo(full_name="owner/demo")
+        settings = ReadmeSectionsSettings(
+            featured_repos=[project],
+            svg=ReadmeSvgSettings(enabled=True, top_contact=False),
+        )
+        generator = ReadmeSectionGenerator(
+            settings=settings, repo_client=StubRepoClient({})
+        )
+        monkeypatch.setattr(
+            generator, "_fetch_simple_icon_data_uri", lambda **kwargs: None
+        )
+        readme = Path("README.md")
+        readme.write_text(_managed_readme(""), encoding="utf-8")
+        _run_git(tmp_path, "init", "--quiet")
+        _run_git(tmp_path, "config", "user.email", "test@example.invalid")
+        _run_git(tmp_path, "config", "user.name", "Fixture")
+        unrelated = Path("outside.txt")
+        unrelated.write_bytes(b"baseline")
+        _run_git(tmp_path, "add", str(unrelated))
+        _run_git(tmp_path, "commit", "-qm", "baseline")
+        unrelated.write_bytes(b"preserve")
+
+        def publish(expected_count: int) -> str:
+            result = generator.generate(require_markers=True).read_text(
+                encoding="utf-8"
+            )
+            if expected_count:
+                assert name in result
+            else:
+                assert "- No featured repositories configured." in result
+                assert name not in result
+            for manifest in manifests:
+                payload = json.loads(manifest.read_bytes())
+                assert [row["full_name"] for row in payload["projects"]] == (
+                    ["owner/demo"] if expected_count else []
+                )
+            assert manifests[0].read_bytes() == manifests[1].read_bytes()
+            assert all(card.is_file() == bool(expected_count) for card in cards)
+            subprocess.run(command, cwd=tmp_path, check=True, capture_output=True)
+            assert _run_git(tmp_path, "status", "--short").splitlines() == [
+                " M outside.txt"
+            ]
+            return _run_git(tmp_path, "rev-parse", "HEAD")
+
+        publish(1)
+        settings.featured_repos = []
+        original = {path: path.read_bytes() for path in cards + manifests}
+        settings.svg.featured_projects = False
+        assert (
+            generator._render_featured_projects()
+            == "- No featured repositories configured."
+        )
+        assert {path: path.read_bytes() for path in original} == original
+        settings.svg.featured_projects = True
+
+        empty = publish(0)
+        changes = _run_git(tmp_path, "diff", "--name-status", "HEAD^", "HEAD")
+        assert set(changes.splitlines()) == {f"D\t{p}" for p in cards} | {
+            f"M\t{p}" for p in [readme, *manifests]
+        }
+        assert publish(0) == empty
+        settings.featured_repos = [project]
+        restored = publish(1)
+        changes = _run_git(tmp_path, "diff", "--name-status", "HEAD^", "HEAD")
+        assert set(changes.splitlines()) == {f"A\t{p}" for p in cards} | {
+            f"M\t{p}" for p in [readme, *manifests]
+        }
+        assert publish(1) == restored
+
+    def test_featured_mirror_belongs_to_selected_output_tree(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        relative = Path("docs/public/showcase")
+        other = relative / "featured-projects/featured-card-keep.svg"
+        other.parent.mkdir(parents=True)
+        other.write_bytes(b"keep")
+        target = tmp_path / "selected"
+        (target / relative).mkdir(parents=True)
+        generator = ReadmeSectionGenerator(
+            settings=ReadmeSectionsSettings(
+                featured_repos=[ReadmeFeaturedRepo(full_name="owner/demo")],
+                svg=ReadmeSvgSettings(
+                    enabled=True, output_dir=str(target / ".github/assets/img/readme")
+                ),
+            ),
+            repo_client=StubRepoClient({}),
+        )
+        monkeypatch.setattr(
+            generator, "_fetch_simple_icon_data_uri", lambda **kwargs: None
+        )
+        generator._render_featured_projects()
+        manifest = relative / "featured-projects.manifest.json"
+        projects = json.loads((target / manifest).read_bytes())["projects"]
+        assert [row["full_name"] for row in projects] == ["owner/demo"]
+        assert other.read_bytes() == b"keep"
+        assert not manifest.exists()
 
     def test_featured_projects_fallback_copy_is_polished(self, tmp_path: Path) -> None:
         settings = ReadmeSectionsSettings(

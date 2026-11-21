@@ -50,9 +50,6 @@ from .utils import get_logger
 logger = get_logger(module=__name__)
 
 FEATURED_PROJECTS_MANIFEST_FILENAME = "featured-projects.manifest.json"
-FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH = Path(
-    "docs/public/showcase/featured-projects.manifest.json"
-)
 FEATURED_PROJECTS_PUBLIC_DIR = Path("docs/public/showcase/featured-projects")
 _URL_RE = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
 _TOPIC_PREFIX_RE = re.compile(r"\btopics?\b\s*[:\-]\s*", flags=re.IGNORECASE)
@@ -2031,8 +2028,9 @@ class ReadmeSectionGenerator:
         trailing_parts = output_dir.parts[-4:]
         if trailing_parts != (".github", "assets", "img", "readme"):
             return None
-        if FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.parent.exists():
-            return FEATURED_PROJECTS_PUBLIC_DIR
+        public_dir = output_dir.parents[3] / FEATURED_PROJECTS_PUBLIC_DIR
+        if public_dir.parent.is_dir():
+            return public_dir
         return None
 
     def _cleanup_featured_assets(
@@ -2043,13 +2041,11 @@ class ReadmeSectionGenerator:
     ) -> None:
         for path in output_dir.glob("featured-card-*.svg"):
             path.unlink(missing_ok=True)
-        (output_dir / FEATURED_PROJECTS_MANIFEST_FILENAME).unlink(missing_ok=True)
         if public_surface_dir is None:
             return
         public_surface_dir.mkdir(parents=True, exist_ok=True)
         for path in public_surface_dir.glob("featured-card-*.svg"):
             path.unlink(missing_ok=True)
-        FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.unlink(missing_ok=True)
 
     def _write_featured_manifest(
         self,
@@ -2059,15 +2055,22 @@ class ReadmeSectionGenerator:
         public_surface_dir: Path | None,
     ) -> Path:
         manifest_path = output_dir / FEATURED_PROJECTS_MANIFEST_FILENAME
-        manifest_path.write_text(
-            json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
+        if manifest_path.is_file():
+            try:
+                previous = json.loads(manifest_path.read_bytes())
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                previous = None
+            if isinstance(previous, dict) and isinstance(
+                previous.get("generated_at"), str
+            ):
+                unchanged = manifest | {"generated_at": previous["generated_at"]}
+                if unchanged == previous:
+                    manifest = unchanged
+        content = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+        manifest_path.write_text(content, encoding="utf-8")
         if public_surface_dir is not None:
-            FEATURED_PROJECTS_PUBLIC_MANIFEST_PATH.write_text(
-                json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
-            )
+            mirror = public_surface_dir.parent / FEATURED_PROJECTS_MANIFEST_FILENAME
+            mirror.write_text(content, encoding="utf-8")
         return manifest_path
 
     def _humanize_topic(self, topic: str) -> str:
@@ -2320,10 +2323,6 @@ class ReadmeSectionGenerator:
                             metadata_by_name[name] = None
                         else:
                             languages_by_name[name] = None
-        if not repos:
-            lines = ["- No featured repositories configured."]
-            return "\n".join(lines)
-
         layout = self._featured_layout_plan(len(repos))
         artifacts: list[FeaturedProjectArtifact] = []
 
@@ -2392,7 +2391,7 @@ class ReadmeSectionGenerator:
             )
             artifacts.append(artifact)
 
-        if writer is not None and artifacts:
+        if writer is not None:
             self._write_featured_manifest(
                 output_dir=output_dir,
                 manifest=self._featured_manifest(
@@ -2403,6 +2402,8 @@ class ReadmeSectionGenerator:
                 public_surface_dir=public_surface_dir,
             )
 
+        if not repos:
+            return "- No featured repositories configured."
         return self._render_featured_table(
             artifacts=artifacts,
             columns=layout["columns"],
