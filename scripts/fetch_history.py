@@ -56,7 +56,8 @@ def _fetch_account_created(owner: str, token: str) -> str | None:
         if errors:
             logger.warning("GraphQL errors fetching account creation: {}", errors)
             return None
-        return (resp.get("data") or {}).get("user", {}).get("createdAt")
+        created_at = (resp.get("data") or {}).get("user", {}).get("createdAt")
+        return created_at if isinstance(created_at, str) else None
     except Exception as exc:
         logger.warning("Failed to fetch account creation date: {}", exc)
         return None
@@ -148,7 +149,7 @@ def _fetch_contributions(
     now = datetime.now(tz=UTC)
     current_year = now.year
 
-    if account_created:
+    if account_created is not None:
         try:
             start_year = int(account_created[:4])
         except (ValueError, IndexError):
@@ -236,7 +237,7 @@ def _fetch_current_metrics(
         return {}
 
 
-def compute_star_velocity(stars_timeline: list[dict]) -> dict[str, Any]:
+def compute_star_velocity(stars_timeline: list[dict[str, Any]]) -> dict[str, Any]:
     """Bucket stars into months and compute velocity / trend signals.
 
     Returns ``{recent_rate, peak_rate, trend}`` where *trend* is one of
@@ -332,7 +333,7 @@ def collect_history(
     result: dict[str, Any] = {}
 
     # 1. Account creation date (GraphQL)
-    if token:
+    if token not in (None, ""):
         account_created = _fetch_account_created(owner, token)
     else:
         logger.info(
@@ -351,7 +352,7 @@ def collect_history(
     result["repos"] = _fetch_repo_timeline(owner, token)
 
     # 5. Contribution calendar (GraphQL, year-by-year)
-    if token:
+    if token not in (None, ""):
         contributions_daily, contributions_monthly = _fetch_contributions(
             owner,
             token,
@@ -398,7 +399,7 @@ def main() -> None:
     args = parser.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN")
-    if not token:
+    if token in (None, ""):
         logger.warning(
             "GITHUB_TOKEN not set -- requests will be unauthenticated "
             "(lower rate limits, no GraphQL)"

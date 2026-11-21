@@ -276,10 +276,7 @@ def test_ink_garden_defensive_helpers_cover_invalid_and_semantic_inputs() -> Non
     assert ink_garden._extract_dated_entries([None, {"date": "2024-01-01"}], "date")
 
     cadence = ink_garden._summarize_merged_pr_cadence(
-        cast(
-            list[dict],
-            [None, {"merged_at": "bad"}, {"merged_at": "2024-01-01"}],
-        )
+        [None, {"merged_at": "bad"}, {"merged_at": "2024-01-01"}]
     )
     assert cadence["entries"]
 
@@ -550,11 +547,8 @@ def test_lenia_defensive_helpers_and_small_render_budget(
     assert lenia._field_to_color(2.0, palette) == ("#fff", 1.0)
     assert lenia._signal_date({}, "date") is None
     mix = lenia._extract_language_mix(
-        cast(
-            list[dict],
-            [None, {"language": ""}, {"language": "Python", "stars": 1}],
-        ),
-        cast(dict[str, int], {"": 10, "Python": "bad", "Rust": 20}),
+        [None, {"language": ""}, {"language": "Python", "stars": 1}],
+        {"": 10, "Python": "bad", "Rust": 20},
     )
     assert mix == {"Rust": 1.0}
     assert lenia._normalize_hour_distribution({"bad": "bad"}) == {}

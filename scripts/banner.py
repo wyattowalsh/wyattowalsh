@@ -39,7 +39,7 @@ import os
 import random
 from pathlib import Path
 from stat import S_ISREG
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 from xml.etree import ElementTree as ET
 
 import numpy as np
@@ -456,6 +456,7 @@ class ColorPalette(BaseModel):
     gradient_stops: list[str] = Field(default_factory=list)
     dark_mode_palette: dict[str, str] = Field(default_factory=dict)
 
+    @override
     def model_post_init(self, __context) -> None:
         """Generate derived color schemes only for fields not explicitly set."""
         if not self.secondary:
@@ -661,7 +662,7 @@ def _create_basic_glow_filter(
     glow_filter.feGaussianBlur(
         in_="SourceGraphic", stdDeviation=str(std_deviation), result="blur"
     )
-    if color_matrix_values:
+    if color_matrix_values not in (None, ""):
         glow_filter.feColorMatrix(
             type="matrix", values=color_matrix_values, result="matrix"
         )

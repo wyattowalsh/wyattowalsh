@@ -54,7 +54,7 @@ MAP_L, MAP_T = 60, 60
 MAP_R, MAP_B = WIDTH - 60, HEIGHT - 110
 MAP_W = MAP_R - MAP_L
 MAP_H = MAP_B - MAP_T
-TOPOGRAPHY_GRID_SIZE = 200
+TOPOGRAPHY_GRID_SIZE: int = 200
 _CONTOUR_JOIN_RADIUS = 8.0
 # Absolute relief span so prominence_scale still moves summit height after
 # hypsometric mapping. Min-max stretch would erase a global stars gain.
@@ -818,23 +818,19 @@ def generate(
         [
             {"date": when}
             for when in (
-                [
-                    _repo_date(repo)
-                    for repo in repos
-                    if isinstance(repo, dict) and _repo_date(repo)
-                ]
+                [_repo_date(repo) for repo in repos if _repo_date(repo) is not None]
                 + [
                     _release_date(release)
                     for release in releases
-                    if _release_date(release)
+                    if _release_date(release) is not None
                 ]
                 + [
                     _merged_pr_date(pr)
                     for pr in recent_merged_prs
-                    if _merged_pr_date(pr)
+                    if _merged_pr_date(pr) is not None
                 ]
             )
-            if when
+            if when is not None
         ],
         {
             "account_created": metrics.get("account_created"),
@@ -853,21 +849,20 @@ def generate(
                 [
                     _repo_date(repo, fallback_end=repo_age_anchor)
                     for repo in repos
-                    if isinstance(repo, dict)
-                    and _repo_date(repo, fallback_end=repo_age_anchor)
+                    if _repo_date(repo, fallback_end=repo_age_anchor) is not None
                 ]
                 + [
                     _release_date(release)
                     for release in releases
-                    if _release_date(release)
+                    if _release_date(release) is not None
                 ]
                 + [
                     _merged_pr_date(pr)
                     for pr in recent_merged_prs
-                    if _merged_pr_date(pr)
+                    if _merged_pr_date(pr) is not None
                 ]
             )
-            if when
+            if when is not None
         ],
         {
             "account_created": metrics.get("account_created"),
@@ -880,8 +875,6 @@ def generate(
     )
     repos_for_recency = []
     for repo in repos:
-        if not isinstance(repo, dict):
-            continue
         repo_for_recency = dict(repo)
         if not _history_day(repo_for_recency.get("date")):
             resolved_repo_when = _repo_date(
@@ -894,7 +887,7 @@ def generate(
         [
             {"date": _repo_date(repo, fallback_end=repo_age_anchor)}
             for repo in repos
-            if isinstance(repo, dict) and _repo_date(repo, fallback_end=repo_age_anchor)
+            if _repo_date(repo, fallback_end=repo_age_anchor) is not None
         ],
         {
             "account_created": metrics.get("account_created"),
@@ -909,7 +902,7 @@ def generate(
         [
             {"date": _repo_date(repo, fallback_end=repo_age_anchor)}
             for repo in repos
-            if isinstance(repo, dict) and _repo_date(repo, fallback_end=repo_age_anchor)
+            if _repo_date(repo, fallback_end=repo_age_anchor) is not None
         ],
         {},
         fallback_days=365,

@@ -54,7 +54,7 @@ def normalize_timeline_window(
 ) -> tuple[dt_date, dt_date]:
     """Infer a normalized [start, end] window from history and dated events."""
     observed: list[dt_date] = []
-    if dated_events:
+    if dated_events is not None and dated_events:
         for event in dated_events:
             if isinstance(event, Mapping):
                 parsed = _as_date(event.get("date"))
@@ -63,7 +63,7 @@ def normalize_timeline_window(
             if parsed:
                 observed.append(parsed)
 
-    if history:
+    if history is not None:
         for key in ("account_created",):
             parsed = _as_date(history.get(key))
             if parsed:
@@ -163,7 +163,7 @@ def contributions_monthly_to_daily_series(
     reference_year: int | None = None,
 ) -> dict[str, int]:
     """Expand monthly contribution buckets into deterministic per-day series."""
-    if not contributions_monthly:
+    if contributions_monthly is None or not contributions_monthly:
         return {}
 
     ref_year = reference_year or dt_date.today().year

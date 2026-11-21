@@ -121,8 +121,8 @@ class DailySnapshot:
 # ---------------------------------------------------------------------------
 
 
-def _parse_date(value: str | None) -> dt_date | None:
-    if not value or not isinstance(value, str):
+def _parse_date(value: object) -> dt_date | None:
+    if not isinstance(value, str) or not value:
         return None
     s = value.strip()
     try:

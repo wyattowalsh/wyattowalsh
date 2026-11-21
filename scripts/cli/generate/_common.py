@@ -51,7 +51,7 @@ def _load_project_config(config_path: Path | None) -> ProjectConfig:
     try:
         from scripts.cli import generate as generate_pkg
 
-        _load = getattr(generate_pkg, "load_config", load_config)
+        _load = generate_pkg.load_config
     except Exception:  # noqa: BLE001 — fall back to direct import
         _load = load_config
     effective_path = config_path or DEFAULT_CONFIG_PATH
@@ -108,7 +108,7 @@ _LIVING_ART_STYLE_HELP = _format_style_help(CANDIDATE_STYLE_KEYS)
 
 def _selected_living_art_styles(only: str | None) -> tuple[str, ...]:
     """Return styles for this invocation: ``--only`` ∈ candidates, else shipped."""
-    if only:
+    if only is not None and only:
         if only not in CANDIDATE_STYLE_KEYS:
             console.print(
                 f"[bold red]Error:[/bold red] Unknown style [bold]{only}[/bold]. "

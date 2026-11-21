@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import copy
+import math
 import re
+from typing import Any
 
 import pytest
 from defusedxml import ElementTree
@@ -22,7 +24,7 @@ from scripts.art.shared import compute_world_state
 _FIXED_HASH = "0123456789abcdef" * 4
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, Any]:
     return {
         "label": "Lenia Test",
         "account_created": "2021-01-01T00:00:00Z",
@@ -54,7 +56,7 @@ def _sample_metrics() -> dict:
     }
 
 
-def _snapshot_signal_metrics(*, active: bool) -> dict:
+def _snapshot_signal_metrics(*, active: bool) -> dict[str, Any]:
     metrics = copy.deepcopy(_sample_metrics())
     if active:
         metrics["repos"] = [
@@ -147,7 +149,9 @@ def _circle_opacities(svg: str) -> list[float]:
     return [float(opacity) for opacity in re.findall(r'opacity="([0-9.]+)"', svg)]
 
 
-def _resolve_palette(metrics: dict) -> tuple[str, tuple[tuple[float, str], ...], str]:
+def _resolve_palette(
+    metrics: dict[str, Any],
+) -> tuple[str, tuple[tuple[float, str], ...], str]:
     repos = metrics["repos"]
     language_mix = _extract_language_mix(repos, metrics.get("languages"))
     dynamics = _derive_dynamics(
@@ -424,7 +428,7 @@ def test_lenia_semantic_positions_group_similar_languages() -> None:
     )
 
     def _distance(left: tuple[float, float], right: tuple[float, float]) -> float:
-        return ((left[0] - right[0]) ** 2 + (left[1] - right[1]) ** 2) ** 0.5
+        return math.hypot(left[0] - right[0], left[1] - right[1])
 
     assert positions == _semantic_repo_positions(
         metrics["repos"],

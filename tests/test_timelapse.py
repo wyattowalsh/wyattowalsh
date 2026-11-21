@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import types
 from datetime import date, timedelta
+from typing import Any
 
 import pytest
 
@@ -155,7 +156,7 @@ def test_compute_world_state_palette_keys():
 # ---------------------------------------------------------------------------
 
 
-def _mock_history(days: int = 30) -> dict:
+def _mock_history(days: int = 30) -> dict[str, Any]:
     """Build a minimal history dict spanning N days."""
     start = date.today() - timedelta(days=days)
     return {
@@ -178,7 +179,7 @@ def _mock_history(days: int = 30) -> dict:
     }
 
 
-def _mock_metrics() -> dict:
+def _mock_metrics() -> dict[str, Any]:
     release_day = date.today() - timedelta(days=4)
     merged_pr_day = date.today() - timedelta(days=3)
     return {
@@ -404,7 +405,7 @@ def test_build_daily_snapshots_recomputes_derived_signals_per_day(
     star_calls: list[int] = []
     streak_calls: list[int] = []
 
-    def _fake_star_velocity(stars_up_to: list[dict]) -> dict[str, float]:
+    def _fake_star_velocity(stars_up_to: list[dict[str, Any]]) -> dict[str, float]:
         star_calls.append(len(stars_up_to))
         return {"recent_rate": float(len(stars_up_to))}
 
@@ -439,7 +440,7 @@ def test_render_single_frame_topo_does_not_leak_chrome_maturity(
     """Topography timelapse frames should not force final chrome maturity."""
     captured: dict[str, object] = {}
 
-    def _fake_generate(data: dict, **kwargs: object) -> str:
+    def _fake_generate(data: dict[str, Any], **kwargs: object) -> str:
         captured["kwargs"] = kwargs
         return "<svg/>"
 

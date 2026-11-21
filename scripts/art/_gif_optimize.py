@@ -25,7 +25,7 @@ import stat
 import subprocess
 import tempfile
 import time
-from collections.abc import Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -287,19 +287,17 @@ def _locked_gif_output(
     output_path: Path,
     *,
     timeout_seconds: float,
-) -> Iterator[None]:
+) -> Generator[None]:
     """Hold the stable advisory lock for one logical output."""
     if not math.isfinite(timeout_seconds) or timeout_seconds < 0:
         raise ValueError("GIF output lock timeout must be finite and non-negative")
 
     lock_descriptor, lock_path = _open_gif_output_lock(output_path)
     deadline = time.monotonic() + timeout_seconds
-    acquired = False
     try:
         while True:
             try:
                 fcntl.flock(lock_descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                acquired = True
                 break
             except InterruptedError:
                 continue
@@ -312,13 +310,12 @@ def _locked_gif_output(
                     ) from exc
                 time.sleep(min(_GIF_OUTPUT_LOCK_POLL_SECONDS, remaining))
 
-        yield
-    finally:
         try:
-            if acquired:
-                fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
+            yield
         finally:
-            os.close(lock_descriptor)
+            fcntl.flock(lock_descriptor, fcntl.LOCK_UN)
+    finally:
+        os.close(lock_descriptor)
 
 
 def _is_abandoned_gif_stage(name: str, *, output_name: str) -> bool:
@@ -361,7 +358,7 @@ def _gif_output_transaction(
     output_path: Path,
     *,
     lock_timeout_seconds: float = _GIF_OUTPUT_LOCK_TIMEOUT_SECONDS,
-) -> Iterator[Path]:
+) -> Generator[Path]:
     """Build privately and atomically publish one complete GIF.
 
     All repository-owned writers of ``output_path`` must use this transaction.

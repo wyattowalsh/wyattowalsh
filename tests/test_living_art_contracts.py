@@ -21,7 +21,7 @@ from scripts.art.shared import (  # noqa: E402
 from scripts.art.timelapse import render_timelapse  # noqa: E402
 
 
-def _metrics_payload() -> dict:
+def _metrics_payload() -> dict[str, Any]:
     return {
         "label": "Contract Test",
         "stars": 12,
@@ -44,7 +44,7 @@ def _metrics_payload() -> dict:
     }
 
 
-def _history_payload() -> dict:
+def _history_payload() -> dict[str, Any]:
     return {
         "account_created": "2020-01-01T00:00:00Z",
         "repos": [
@@ -62,7 +62,7 @@ def _history_payload() -> dict:
     }
 
 
-def _generator_metrics_payload() -> dict:
+def _generator_metrics_payload() -> dict[str, Any]:
     return {
         "label": "Generator Contract Test",
         "stars": 18,

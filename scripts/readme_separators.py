@@ -89,7 +89,7 @@ def _line(
         f'<line class="{class_}" x1="{_n(x1)}" y1="{_n(y1)}" '
         f'x2="{_n(x2)}" y2="{_n(y2)}" stroke-width="{_n(sw)}"'
     )
-    if extra:
+    if extra is not None and extra:
         return f"{attrs} {extra}/>"
     return f"{attrs}/>"
 

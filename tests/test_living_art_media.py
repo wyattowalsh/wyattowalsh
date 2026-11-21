@@ -1,5 +1,6 @@
 import json
 import re
+from collections.abc import Callable
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -1178,7 +1179,7 @@ def _dialect_attrs(svg: str) -> dict[str, Any]:
     def _attr(name: str) -> str:
         found = re.search(rf'{re.escape(name)}="([^"]*)"', attrs)
         assert found, f"Missing {name} on accretion dialect"
-        return found.group(1)
+        return str(found.group(1))
 
     return {
         "family": _attr("data-dialect"),
@@ -1380,7 +1381,7 @@ def test_living_art_dialects_remain_visually_distinct(
 def _svg_root_attr(svg: str, name: str) -> str:
     match = re.search(rf"<svg\b[^>]*\b{re.escape(name)}=\"([^\"]*)\"", svg)
     assert match, f"Missing {name} on svg root"
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _max_halo_radius(svg: str) -> float:
@@ -1414,7 +1415,7 @@ def test_leased_style_knobs_track_isolated_channels(
 
     monkeypatch.setattr(topography_module, "TOPOGRAPHY_GRID_SIZE", 48)
 
-    def _render(generator, **counts: int) -> str:
+    def _render(generator: Callable[..., str], **counts: int) -> str:
         return generator(
             _accretion_metrics(**counts),
             seed="isolated-knobs",

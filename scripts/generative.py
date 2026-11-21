@@ -22,6 +22,7 @@ import colorsys
 import json
 import math
 from pathlib import Path
+from typing import Any
 
 from .art.shared import _hex_slice, _seed_hash, flow_field_lines, phyllotaxis_points
 from .banner import draw_clifford
@@ -41,7 +42,7 @@ _HEIGHT = 800
 
 
 def generate_community_art(
-    metrics: dict,
+    metrics: dict[str, Any],
     dark_mode: bool = False,
     output_path: Path | None = None,
 ) -> Path:
@@ -130,7 +131,7 @@ def generate_community_art(
 
 
 def generate_activity_art(
-    metrics: dict,
+    metrics: dict[str, Any],
     dark_mode: bool = False,
     output_path: Path | None = None,
 ) -> Path:

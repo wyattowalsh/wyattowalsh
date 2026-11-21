@@ -51,7 +51,9 @@ class SvgWordCloudEngine(ABC):
         self.color_func_name = color_func_name
         self.palette_tokenization = palette_tokenization
         self.color_palette_override = (
-            tuple(color_palette_override) if color_palette_override else None
+            tuple(color_palette_override)
+            if color_palette_override is not None and len(color_palette_override) > 0
+            else None
         )
         self.seed = seed
         self.padding = padding
@@ -83,7 +85,7 @@ class SvgWordCloudEngine(ABC):
         if max_freq == min_freq:
             return (self.min_font_size + self.max_font_size) / 2
         t = (freq - min_freq) / (max_freq - min_freq)
-        t_scaled = t**0.5
+        t_scaled = math.pow(t, 0.5)
         return self.min_font_size + t_scaled * (self.max_font_size - self.min_font_size)
 
     def _frequency_to_weight(
@@ -119,7 +121,7 @@ class SvgWordCloudEngine(ABC):
         if max_freq == min_freq:
             return 1.0
         t = (freq - min_freq) / (max_freq - min_freq)
-        return 0.65 + 0.35 * (t**0.4)
+        return 0.65 + 0.35 * math.pow(t, 0.4)
 
     # -- BBox estimation ----------------------------------------------------
 

@@ -134,7 +134,7 @@ def _frame_act(delay: float, total: float) -> int:
 def _extract_svg_parts(svg: str) -> tuple[str, str, str]:
     """Split an SVG string into (svg_attrs, defs_block, body_content)."""
     m = _SVG_OPEN_RE.search(svg)
-    attrs = m.group(1) if m else ""
+    attrs = str(m.group(1)) if m else ""
     dm = _DEFS_RE.search(svg)
     defs = dm.group(0) if dm else ""
     # Body = everything after </defs> (and optional trailing <style>) up to </svg>
@@ -217,7 +217,7 @@ def svg_to_png(svg_str: str, size: int, frame_id: str = ""):
             )
         except (ImportError, OSError) as exc:
             rsvg_convert = shutil.which("rsvg-convert")
-            if not rsvg_convert:
+            if rsvg_convert is None:
                 raise RuntimeError(
                     "Neither cairosvg nor rsvg-convert is available"
                 ) from exc
@@ -308,7 +308,7 @@ def _resolve_target(
         return _fallback_profile(profile, metrics_requested=True)
 
     history = None
-    if history_file:
+    if history_file not in (None, ""):
         try:
             history = json.loads(Path(history_file).read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError, ValidationError) as exc:
@@ -383,9 +383,9 @@ def main() -> None:
         key: (f"{key}-growth", _GROWTH_GENERATORS[key])
         for key in CANDIDATE_STYLE_KEYS
     }
-    if only and only in all_generators:
+    if only is not None and only in all_generators:
         generators = {only: all_generators[only]}
-    elif only:
+    elif only not in (None, ""):
         logger.error(
             "Unknown style '{}'. Available: {}", only, list(all_generators.keys())
         )
@@ -394,7 +394,7 @@ def main() -> None:
         generators = all_generators
 
     # ── Animated SVG mode (multi-frame stacking) ──────────────
-    if opts.get("svg"):
+    if opts.get("svg") is True:
         svg_frames = cast(int, opts.get("frames") or 7)
         total_dur = 60.0
         logger.info(

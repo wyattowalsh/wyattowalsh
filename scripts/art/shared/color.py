@@ -10,7 +10,7 @@ import math
 
 
 def _linear_to_srgb(c: float) -> float:
-    return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+    return 12.92 * c if c <= 0.0031308 else 1.055 * math.pow(c, 1 / 2.4) - 0.055
 
 
 def oklch(L: float, C: float, H: float) -> str:
@@ -59,7 +59,7 @@ def lerp_color(hex1: str, hex2: str, t: float) -> str:
 
 def _srgb_to_linear(c: float) -> float:
     """sRGB gamma to linear transfer function (inverse of _linear_to_srgb)."""
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return c / 12.92 if c <= 0.04045 else math.pow((c + 0.055) / 1.055, 2.4)
 
 
 def hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
@@ -77,9 +77,9 @@ def hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
     l_ = 0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl
     m_ = 0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl
     s_ = 0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl
-    lc = l_ ** (1 / 3) if l_ >= 0 else 0.0
-    mc = m_ ** (1 / 3) if m_ >= 0 else 0.0
-    sc = s_ ** (1 / 3) if s_ >= 0 else 0.0
+    lc = math.pow(l_, 1 / 3) if l_ >= 0 else 0.0
+    mc = math.pow(m_, 1 / 3) if m_ >= 0 else 0.0
+    sc = math.pow(s_, 1 / 3) if s_ >= 0 else 0.0
     L = 0.2104542553 * lc + 0.7936177850 * mc - 0.0040720468 * sc
     a = 1.9779984951 * lc - 2.4285922050 * mc + 0.4505937099 * sc
     b_val = 0.0259040371 * lc + 0.7827717662 * mc - 0.8086757660 * sc

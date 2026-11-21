@@ -951,11 +951,7 @@ def generate(
         return None
 
     timeline_window = normalize_timeline_window(
-        [
-            {"date": _repo_date(r)}
-            for r in repos
-            if isinstance(r, dict) and _repo_date(r)
-        ],
+        [{"date": _repo_date(r)} for r in repos if _repo_date(r) is not None],
         {
             "account_created": metrics.get("account_created"),
             "repos": repos,

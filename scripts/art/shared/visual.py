@@ -54,7 +54,7 @@ def activity_tempo(contributions_monthly: dict[str, int] | None) -> float:
     Bursty → higher tempo (faster animations), steady → moderate tempo.
     Measured as coefficient of variation of monthly counts.
     """
-    if not contributions_monthly:
+    if contributions_monthly is None or not contributions_monthly:
         return 0.5
     counts = [v for v in contributions_monthly.values() if isinstance(v, int | float)]
     if len(counts) < 2:
@@ -70,7 +70,7 @@ def activity_tempo(contributions_monthly: dict[str, int] | None) -> float:
 def stable_repo_visual_order(
     repos: Sequence[Mapping[str, Any]],
     *,
-    preferred_names: Sequence[str] | None = None,
+    preferred_names: Sequence[object] | None = None,
 ) -> list[str]:
     """Build the stable all-repo order consumed by living-art renderers.
 
@@ -100,12 +100,14 @@ def stable_repo_visual_order(
 
 
 def order_repos_for_visual_plan(
-    repos: Sequence[dict[str, Any]],
+    repos: Sequence[object],
     *,
-    preferred_names: Sequence[str] | None = None,
+    preferred_names: Sequence[object] | None = None,
 ) -> list[dict[str, Any]]:
     """Return repos ordered under the stable all-repo representation contract."""
-    ordered_repos = list(repos)
+    ordered_repos: list[dict[str, Any]] = [
+        repo for repo in repos if isinstance(repo, dict)
+    ]
     if len(ordered_repos) <= 1:
         return ordered_repos
 

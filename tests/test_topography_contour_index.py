@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import math
 from collections.abc import Callable
+from typing import Any
 
 import pytest
 
@@ -106,8 +107,8 @@ def test_indexed_stitch_matches_reference_edge_cases(
     assert topography._stitch_contour_segments(segments) == _reference_stitch(segments)
 
 
-def _snapshot_metrics(repo_count: int) -> dict:
-    repos = [
+def _snapshot_metrics(repo_count: int) -> dict[str, Any]:
+    repos: list[dict[str, Any]] = [
         {
             "name": f"repo-{index}",
             "language": ("Python", "Go", "Rust")[index % 3],

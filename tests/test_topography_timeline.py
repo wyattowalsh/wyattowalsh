@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import date, timedelta
+from typing import Any
 
 import pytest
 from defusedxml import ElementTree
@@ -37,7 +38,7 @@ def _use_fast_grid_for_structural_topography_tests(
     )
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, Any]:
     return {
         "label": "Topo Test",
         "account_created": "2022-01-01T00:00:00Z",
@@ -84,19 +85,19 @@ def _timeline_delay_rows(svg: str) -> list[tuple[str, float]]:
 def _data_attr(svg: str, name: str) -> str:
     match = re.search(rf'{name}="([^"]+)"', svg)
     assert match is not None
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _group_data_attr(svg: str, group_id: str, name: str) -> str:
     match = re.search(rf'<g[^>]*id="{group_id}"[^>]*{name}="([^"]+)"', svg)
     assert match is not None
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _group_markup(svg: str, group_id: str) -> str:
     match = re.search(rf'(<g[^>]*id="{group_id}"[^>]*>.*?</g>)', svg, re.DOTALL)
     assert match is not None
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _topic_feature_markup(svg: str, topic: str) -> str:
@@ -106,11 +107,14 @@ def _topic_feature_markup(svg: str, topic: str) -> str:
         re.DOTALL,
     )
     assert match is not None
-    return match.group(1)
+    return str(match.group(1))
 
 
 def _repo_peak_order(svg: str) -> list[str]:
-    return re.findall(r'<g class="repo-peak"[^>]*data-repo="([^"]+)"', svg)
+    return [
+        str(m.group(1))
+        for m in re.finditer(r'<g class="repo-peak"[^>]*data-repo="([^"]+)"', svg)
+    ]
 
 
 def _repo_peak_signal(svg: str, repo_name: str) -> float:
@@ -128,12 +132,16 @@ def _repo_peak_signal(svg: str, repo_name: str) -> float:
 
 
 def _portfolio_footprint_repos(svg: str) -> list[str]:
-    return re.findall(
-        r'<circle[^>]*data-repo="([^"]+)"', _group_markup(svg, "portfolio-footprint")
-    )
+    return [
+        str(m.group(1))
+        for m in re.finditer(
+            r'<circle[^>]*data-repo="([^"]+)"',
+            _group_markup(svg, "portfolio-footprint"),
+        )
+    ]
 
 
-def _topic_feature_metrics() -> dict:
+def _topic_feature_metrics() -> dict[str, Any]:
     return {
         "label": "Topo Topics",
         "account_created": "2022-01-01T00:00:00Z",

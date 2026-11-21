@@ -85,6 +85,8 @@ def main() -> int:
             "ty",
             "check",
             *CHECK_PATHS,
+            # This gate evaluates warnings against the per-file, per-rule baseline.
+            "--exit-zero-on-warning",
             "--output-format",
             "gitlab",
             "--color",

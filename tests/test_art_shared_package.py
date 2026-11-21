@@ -137,7 +137,7 @@ _GENERATOR_FNS: dict[str, Callable[..., str]] | None = None
 
 def _clock_metrics(
     *,
-    repos: list[dict[str, Any]] | None = None,
+    repos: list[object] | None = None,
     stars: Any = 24,
     commits: Any = 400,
     followers: Any = 18,
@@ -529,7 +529,7 @@ def _hex_luminance(color: str) -> float:
 
 def _attr(tag: str, name: str, default: str = "") -> str:
     match = re.search(rf'\b{re.escape(name)}="([^"]*)"', tag)
-    return match.group(1) if match else default
+    return str(match.group(1)) if match else default
 
 
 def _genetic_peak_brighter_than_organisms(svg: str) -> bool:
@@ -606,7 +606,7 @@ def _topo_settlement_size(svg: str) -> float:
 
 
 def _topo_contour_signature(svg: str) -> tuple[int, str]:
-    paths = re.findall(r"<path\b[^>]*>", svg)
+    paths = [m.group(0) for m in re.finditer(r"<path\b[^>]*>", svg)]
     return (len(paths), "|".join(paths[:12]))
 
 

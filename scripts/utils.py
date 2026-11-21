@@ -107,7 +107,7 @@ def _load_app_settings() -> tuple[Any | None, str | None]:
     if "config" not in sys.modules:
         return None, None
 
-    config_module = sys.modules["config"]
+    config_module = sys.modules.get("config")
     if config_module is None:
         return None, "`config` module not found; file logging remains disabled."
 
@@ -133,6 +133,7 @@ if app_settings and hasattr(app_settings, "log_level"):
             "Defaulting to INFO."
         )
         LOG_LEVEL_STR = "INFO"
+
 
 def console_log_level(default: str = "INFO") -> str:
     """Resolve the console sink level from the environment."""

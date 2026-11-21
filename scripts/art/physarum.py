@@ -272,7 +272,10 @@ def _repo_identity_palette(repo: dict[str, Any]) -> PhysarumIdentityPalette:
     topic_signal = min(1.0, len(topics) / 3.0)
 
     hue_samples: list[tuple[float, float]] = [
-        (float(LANG_HUES.get(language, 155)), 1.15 if language else 0.7),
+        (
+            float(LANG_HUES.get(language, 155)),
+            1.15 if language not in (None, "") else 0.7,
+        ),
     ]
     hue_samples.extend((_topic_hue(topic), 0.45) for topic in topics)
     hue = _circular_hue_mean(hue_samples)
@@ -438,7 +441,7 @@ def _identity_influence(
         return None, 0.0
 
     dominant_score, dominant_node = max(influences, key=lambda item: item[0])
-    return dominant_node, dominant_score / total
+    return dominant_node, float(dominant_score / total)
 
 
 def _resolve_vein_style(
@@ -1079,11 +1082,7 @@ def generate(
         return None
 
     timeline_window = normalize_timeline_window(
-        [
-            {"date": _repo_date(r)}
-            for r in repos
-            if isinstance(r, dict) and _repo_date(r)
-        ],
+        [{"date": _repo_date(r)} for r in repos if _repo_date(r) is not None],
         {
             "account_created": metrics.get("account_created"),
             "repos": repos,
@@ -1128,7 +1127,7 @@ def generate(
         if isinstance(age_months, int | float):
             return max(0.0, float(age_months) * 30.0)
         when = _repo_date(repo)
-        if not when:
+        if when is None:
             return 0.0
         try:
             return max(
@@ -1757,7 +1756,8 @@ def generate(
             cy = float(node["cy"])
             conc = float(node["conc"])
             repo = node["repo"]
-            node_identity: PhysarumIdentityPalette = node["identity"]
+            node_identity = node["identity"]
+            assert isinstance(node_identity, PhysarumIdentityPalette)
             visibility = float(node["visibility"])
             identity_visibility = min(
                 1.0,
@@ -1846,7 +1846,8 @@ def generate(
             cx = float(node["cx"])
             cy = float(node["cy"])
             conc = float(node["conc"])
-            satellite_identity: PhysarumIdentityPalette = node["identity"]
+            satellite_identity = node["identity"]
+            assert isinstance(satellite_identity, PhysarumIdentityPalette)
             visibility = float(node["visibility"])
             satellite_language = satellite_identity.language or "unknown"
             halo_radius = 1.6 + math.log1p(conc) * (0.9 + 0.2 * visibility)

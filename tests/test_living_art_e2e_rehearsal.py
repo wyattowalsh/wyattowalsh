@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from PIL import Image
@@ -41,11 +42,11 @@ def _stub_load_project_config(
     monkeypatch.setattr(generate_art, "_load_project_config", _noop)
 
 
-def _write_json(path: Path, payload: dict) -> None:
+def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
 
 
-def _history_payload() -> dict:
+def _history_payload() -> dict[str, Any]:
     return {
         "account_created": "2020-01-01T00:00:00Z",
         "repos": [
@@ -59,7 +60,7 @@ def _history_payload() -> dict:
     }
 
 
-def _metrics_payload() -> dict:
+def _metrics_payload() -> dict[str, Any]:
     return {
         "label": "Rehearsal",
         "languages": {"Python": 1200, "Go": 400},
@@ -119,8 +120,8 @@ def test_living_art_cli_rehearsal_generates_all_preview_surfaces(
     _write_json(metrics_path, _metrics_payload())
 
     def _stub_render_timelapse(
-        history: dict,
-        metrics: dict,
+        history: dict[str, Any],
+        metrics: dict[str, Any],
         *,
         styles: list[str] | None = None,
         max_frames: int = 150,
@@ -212,8 +213,8 @@ def test_living_art_only_forwards_selected_style_to_renderer(
     captured: dict[str, object] = {}
 
     def _stub_render_timelapse(
-        history: dict,
-        metrics: dict,
+        history: dict[str, Any],
+        metrics: dict[str, Any],
         *,
         styles: list[str] | None = None,
         max_frames: int = 150,
@@ -287,8 +288,8 @@ def test_timelapse_only_forwards_selected_style_to_renderer(
     captured: dict[str, object] = {}
 
     def _stub_render_timelapse(
-        history: dict,
-        metrics: dict,
+        history: dict[str, Any],
+        metrics: dict[str, Any],
         *,
         styles: list[str] | None = None,
         max_frames: int = 150,

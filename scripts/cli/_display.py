@@ -14,7 +14,7 @@ logger = get_logger(module=__name__)
 try:
     import yaml
 except ImportError:
-    yaml = None  # type: ignore
+    yaml = None
 
 
 class _ConsolePrinter(Protocol):
@@ -43,7 +43,7 @@ def display_config(
         config_str = config_data.model_dump_json(indent=2)
         syntax = Syntax(config_str, "json", theme="monokai", line_numbers=True)
         _print(syntax)
-    elif output_format == OutputFormat.YAML:
+    else:
         if yaml is None:
             logger.error(
                 "PyYAML is not installed. Cannot display config as YAML. "

@@ -482,7 +482,7 @@ class SvgBlockRenderer:
         accent = self._normalize_hex_color(card.accent)
         is_blog_family = "blog" in family
         lines: list[str] = [f'<g class="card" transform="translate({x},{y})">']
-        if card.url:
+        if card.url not in (None, ""):
             lines.append(
                 f'<a href="{self._esc(card.url)}"'
                 ' target="_blank" rel="noopener noreferrer">'
@@ -496,7 +496,7 @@ class SvgBlockRenderer:
         )
 
         # Background image support
-        if card.background_image:
+        if card.background_image not in (None, ""):
             clip_id = f"clip-{card_index}"
             lines.append(
                 f'<defs><clipPath id="{clip_id}">'
@@ -515,7 +515,7 @@ class SvgBlockRenderer:
         title_y = 32
         monogram = self._truncate((card.icon or "").upper(), 3)
         icon_data_uri = self._sanitize_icon_data_uri(card.icon_data_uri)
-        if not is_blog_family and (icon_data_uri or monogram):
+        if not is_blog_family and (icon_data_uri not in (None, "") or monogram):
             cx = 34
             cy = 28
             r = 14
@@ -525,7 +525,7 @@ class SvgBlockRenderer:
                 f' stroke="{accent}" stroke-opacity="0.40"'
                 ' stroke-width="1" />'
             )
-            if icon_data_uri:
+            if icon_data_uri not in (None, ""):
                 icon_clip_id = f"icon-clip-{card_index}"
                 img_size = r * 2 - 4
                 img_offset_x = cx - img_size / 2
@@ -551,7 +551,7 @@ class SvgBlockRenderer:
             inner_x = 56
 
         # Kicker
-        if card.kicker and not is_blog_family:
+        if card.kicker not in (None, "") and not is_blog_family:
             lines.append(
                 f'<text class="card-kicker" x="{inner_x}" y="20">'
                 f"{self._esc(self._truncate(card.kicker, 56))}</text>"
@@ -559,7 +559,7 @@ class SvgBlockRenderer:
             title_y = 40
 
         # Badge (suppressed for blog family)
-        if card.badge and not is_blog_family:
+        if card.badge not in (None, "") and not is_blog_family:
             badge_text = self._truncate(card.badge, 20)
             badge_width = max(60, min(200, len(badge_text) * 7 + 20))
             badge_x = max(16, width - badge_width - 16)
@@ -597,9 +597,9 @@ class SvgBlockRenderer:
                 ln for ln in visible_lines if not ln.strip().startswith("@")
             ]
         if "featured" in family:
-            if card.homepage:
+            if card.homepage not in (None, ""):
                 visible_lines.append(card.homepage)
-            if card.topics:
+            if card.topics is not None and card.topics:
                 for t in card.topics:
                     visible_lines.append(str(t))
 
@@ -612,7 +612,7 @@ class SvgBlockRenderer:
             text_y += 20
 
         # Sparkline
-        if card.sparkline and len(card.sparkline) >= 2:
+        if card.sparkline is not None and len(card.sparkline) >= 2:
             sparkline_path = self._sparkline_path(
                 card.sparkline, width=width - 48, height=28
             )
@@ -627,7 +627,7 @@ class SvgBlockRenderer:
             meta_x = inner_x
             meta_x = self._render_bottom_bar(lines, card.meta, meta_x, bottom_y)
 
-        if card.url:
+        if card.url not in (None, ""):
             lines.append("</a>")
         lines.append("</g>")
         return lines
@@ -737,7 +737,7 @@ class SvgBlockRenderer:
         return " ".join(path_segments)
 
     def _normalize_hex_color(self, value: str | None) -> str:  # noqa: PLR6301
-        if not value:
+        if value in (None, ""):
             return "#60A5FA"
         cleaned = value.strip()
         if re.fullmatch(r"#?[0-9A-Fa-f]{6}", cleaned):
@@ -745,7 +745,7 @@ class SvgBlockRenderer:
         return "#60A5FA"
 
     def _sanitize_icon_data_uri(self, value: str | None) -> str | None:  # noqa: PLR6301
-        if not value:
+        if value in (None, ""):
             return None
         cleaned = value.strip()
         if len(cleaned) > 32768:
@@ -807,7 +807,9 @@ class SvgRepoCardRenderer:
         px = 12 if compact else 20
         right_px = px if compact else 20
         sparkline_data = (
-            card.sparkline if card.sparkline and len(card.sparkline) >= 2 else None
+            card.sparkline
+            if card.sparkline is not None and len(card.sparkline) >= 2
+            else None
         )
         raw_desc = " ".join(ln.strip() for ln in (card.lines or ()) if ln.strip())
         bar_y = h - 30
@@ -828,7 +830,9 @@ class SvgRepoCardRenderer:
             | None
         ) = None
         thumb_trials = (
-            [True, False] if card.background_image and not compact else [False]
+            [True, False]
+            if card.background_image not in (None, "") and not compact
+            else [False]
         )
         selected = False
         for try_thumb in thumb_trials:
@@ -836,7 +840,11 @@ class SvgRepoCardRenderer:
             text_px_w = (
                 (w - candidate_thumb_w - 36 - px) if try_thumb else (w - px - right_px)
             )
-            spark_trials = [True, False] if sparkline_data and not compact else [False]
+            spark_trials = (
+                [True, False]
+                if sparkline_data is not None and not compact
+                else [False]
+            )
             for try_sparkline in spark_trials:
                 text_bottom = self._text_bottom_limit(
                     card_height=h,
@@ -977,7 +985,7 @@ class SvgRepoCardRenderer:
                 ' stroke-opacity="0.5" stroke-width="1" />'
             )
 
-        if show_sparkline and sparkline_data:
+        if show_sparkline and sparkline_data is not None:
             spark_w = w - 40
             spark_h = 28
             spark_y = h - 56
@@ -1028,9 +1036,9 @@ class SvgRepoCardRenderer:
         has_license = bool(card.license_spdx and card.license_spdx != "NOASSERTION")
         license_reserve = (len(card.license_spdx or "") * 7 + 30) if has_license else 0
         bar_w = min(w - 40 - license_reserve, 340)
-        if card.languages and sum(card.languages.values()) > 0:
+        if card.languages is not None and sum(card.languages.values()) > 0:
             self._render_lang_bar(lines, card.languages, px, bar_y, bar_w)
-        elif lang_name and lang_color:
+        elif lang_name not in (None, "") and lang_color not in (None, ""):
             lines.append(
                 f'<rect x="{px}" y="{bar_y}" width="{bar_w}"'
                 f' height="3" rx="1.5" fill="{lang_color}"'
@@ -1135,7 +1143,7 @@ class SvgRepoCardRenderer:
         x = start_x
         esc = escape
 
-        if card.languages and sum(card.languages.values()) > 0:
+        if card.languages is not None and sum(card.languages.values()) > 0:
             total = sum(card.languages.values())
             max_langs = 1 if compact else 2
             top = sorted(
@@ -1156,7 +1164,7 @@ class SvgRepoCardRenderer:
                     f"{esc(label, quote=True)}</text>"
                 )
                 x += 12 + int(len(label) * 7.8) + 18
-        elif lang_name and lang_color:
+        elif lang_name not in (None, "") and lang_color not in (None, ""):
             lines.append(
                 f'<circle class="rc-lang-dot" cx="{x + 5}" cy="{y - 4}"'
                 f' r="5" fill="{lang_color}" />'
@@ -1197,7 +1205,11 @@ class SvgRepoCardRenderer:
                 x = text_x + int(len(label) * 7.2) + 14
 
         # License label — right-aligned in footer, with overlap guard
-        if not compact and card.license_spdx and card.license_spdx != "NOASSERTION":
+        if (
+            not compact
+            and card.license_spdx not in (None, "")
+            and card.license_spdx != "NOASSERTION"
+        ):
             lt = card.license_spdx
             text_w = int(len(lt) * 7)
             icon_w = 18
@@ -1734,7 +1746,7 @@ class SvgConnectCardRenderer:
         Uses `card.accent` if present, falls back to known brand color by title,
         or uses the CSS variable `var(--accent)`.
         """
-        if card.accent:
+        if card.accent not in (None, ""):
             raw = card.accent.strip()
             if not raw.startswith("#"):
                 raw = f"#{raw}"
@@ -1769,7 +1781,7 @@ class SvgConnectCardRenderer:
             'stop-opacity="0" />'
             "</radialGradient>"
         )
-        if icon_uri:
+        if icon_uri not in (None, ""):
             lines.append(
                 f'<clipPath id="ico-clip">'
                 f'<rect x="{cx - 24}" y="18" width="48" height="48"'
@@ -1791,7 +1803,7 @@ class SvgConnectCardRenderer:
         lines.append(f'<circle cx="{cx}" cy="42" r="34" fill="url(#icon-glow)" />')
 
         # Brand icon — large, centered, rounded-square clip
-        if icon_uri:
+        if icon_uri not in (None, ""):
             lines.append(
                 f'<image href="{esc(icon_uri, quote=True)}"'
                 f' x="{cx - 24}" y="18" width="48" height="48"'

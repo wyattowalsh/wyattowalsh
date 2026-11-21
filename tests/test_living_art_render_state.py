@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import re
 from collections.abc import Callable
+from typing import Any
 
 import pytest
 
@@ -47,7 +48,7 @@ def _repo_xy(svg: str, *, role: str, repo_name: str) -> tuple[float, float]:
     return float(match.group(1)), float(match.group(2))
 
 
-def _render_state(*, repo_count: int, stars: int) -> dict:
+def _render_state(*, repo_count: int, stars: int) -> dict[str, Any]:
     repos = []
     topic_clusters: dict[str, int] = {}
     languages: dict[str, int] = {}
@@ -151,7 +152,7 @@ def _render_state(*, repo_count: int, stars: int) -> dict:
     }
 
 
-def _wrapped_metrics(render_state: dict) -> dict:
+def _wrapped_metrics(render_state: dict[str, Any]) -> dict[str, Any]:
     raw = {
         "label": "Shrinking Raw Payload",
         "stars": 1,
@@ -188,7 +189,9 @@ def _wrapped_metrics(render_state: dict) -> dict:
     return raw
 
 
-def _evolution_state(render_state: dict, *, weather: float = 0.4) -> dict:
+def _evolution_state(
+    render_state: dict[str, Any], *, weather: float = 0.4
+) -> dict[str, Any]:
     evolution = copy.deepcopy(render_state)
     evolution.update(
         {
@@ -243,13 +246,19 @@ def _evolution_state(render_state: dict, *, weather: float = 0.4) -> dict:
     return evolution
 
 
+def _peak_count(svg: str) -> int:
+    match = re.search(r'data-peak-count="(\d+)"', svg)
+    assert match is not None
+    return int(match.group(1))
+
+
 _STYLE_CASES: list[tuple[str, Generator, Marker]] = [
     ("inkgarden", generate_ink_garden, lambda svg: svg.count('class="repo-tree"')),
     ("topo", generate_topography, lambda svg: svg.count('class="repo-peak"')),
     (
         "genetic",
         generate_genetic,
-        lambda svg: int(re.search(r'data-peak-count="(\d+)"', svg).group(1)),
+        _peak_count,
     ),
     (
         "physarum",

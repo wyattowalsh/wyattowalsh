@@ -55,13 +55,13 @@ def _compute_daylight_hue_drift(peak_hour: int) -> float:
 
 
 def _normalize_season_weights(
-    raw_weights: Mapping[str, float] | None,
+    raw_weights: Mapping[str, Any] | None,
     *,
     default: str = "summer",
 ) -> dict[str, float]:
     """Normalize seasonal weights while keeping a stable four-season contract."""
     weights = {season: 0.0 for season in _SEASONS}
-    if raw_weights:
+    if raw_weights is not None:
         for season in _SEASONS:
             try:
                 weights[season] = max(0.0, float(raw_weights.get(season, 0.0)))
@@ -108,7 +108,7 @@ def _seasonal_hues(
         "winter": (220, 200),
     }
     default_accent, default_ground = season_hues.get(season, (145, 80))
-    if not season_transition_weights:
+    if season_transition_weights is None or not season_transition_weights:
         return default_accent, default_ground
 
     accent_map = {name: hues[0] for name, hues in season_hues.items()}
@@ -164,7 +164,7 @@ def _compute_activity_pressure(
     )
 
 
-def compute_maturity(m: dict) -> float:
+def compute_maturity(m: dict[str, Any]) -> float:
     """0.0 = brand new account, 1.0 = massively prolific.
 
     Uses a smoothstep (Hermite ease-in-out) curve so that newcomers see

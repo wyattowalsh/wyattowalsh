@@ -79,16 +79,13 @@ def qr(
     cfg_qr_settings_defaults = ConfigQRCodeSettings()
     qr_settings_data = cfg_qr_settings_defaults.model_dump()
 
-    if proj_config.qr_code_settings and isinstance(
-        proj_config.qr_code_settings, ConfigQRCodeSettings
-    ):
-        qr_settings_data.update(
-            proj_config.qr_code_settings.model_dump(exclude_unset=True)
-        )
-    elif proj_config.qr_code_settings:
+    qr_settings = getattr(proj_config, "qr_code_settings", None)
+    if isinstance(qr_settings, ConfigQRCodeSettings):
+        qr_settings_data.update(qr_settings.model_dump(exclude_unset=True))
+    elif qr_settings is not None and qr_settings:
         logger.warning(
             f"proj_config.qr_code_settings is of unexpected type: "
-            f"{type(proj_config.qr_code_settings)}. Expected ConfigQRCodeSettings. "
+            f"{type(qr_settings)}. Expected ConfigQRCodeSettings. "
             "Using defaults."
         )
 

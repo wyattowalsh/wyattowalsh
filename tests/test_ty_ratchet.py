@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from collections import Counter
 from subprocess import CompletedProcess
+from typing import Any
 from unittest.mock import patch
 
 from scripts.quality import ty_ratchet
 from scripts.quality.ty_ratchet import evaluate_warning_ratchet
 
 
-def _diagnostic(path: str, rule: str, severity: str = "minor") -> dict:
+def _diagnostic(path: str, rule: str, severity: str = "minor") -> dict[str, Any]:
     return {
         "check_name": rule,
         "severity": severity,
@@ -54,6 +55,19 @@ def test_ty_ratchet_rejects_every_configured_error() -> None:
     )
 
     assert failures == ["configured error: scripts/example.py [example-rule]"]
+
+
+def test_ty_ratchet_requests_warning_only_success() -> None:
+    with patch.object(
+        ty_ratchet.subprocess,
+        "run",
+        return_value=CompletedProcess(
+            args=["ty"], returncode=0, stdout="[]", stderr=""
+        ),
+    ) as check:
+        assert ty_ratchet.main() == 0
+    assert "--exit-zero-on-warning" in check.call_args.args[0]
+    assert "--exit-zero" not in check.call_args.args[0]
 
 
 def test_ty_ratchet_fails_closed_when_the_tool_crashes(capsys) -> None:

@@ -70,7 +70,7 @@ def _inline_python_source(job_name: str, step_name: str) -> str:
         flags=re.DOTALL,
     )
     assert match is not None, f"{job_name} / {step_name} must be inline Python"
-    return match.group("source")
+    return str(match.group("source"))
 
 
 def _run_inline_python(
@@ -88,7 +88,7 @@ def _run_inline_python(
     existing_pythonpath = env.get("PYTHONPATH")
     env["PYTHONPATH"] = (
         f"{PROJECT_ROOT}{os.pathsep}{existing_pythonpath}"
-        if existing_pythonpath
+        if existing_pythonpath not in (None, "")
         else str(PROJECT_ROOT)
     )
     if extra_env is not None:

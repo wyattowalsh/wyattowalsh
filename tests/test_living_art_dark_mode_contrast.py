@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 import pytest
 
@@ -17,7 +18,7 @@ from scripts.art.shared import (  # noqa: E402
 from scripts.art.topography import generate as generate_topography  # noqa: E402
 
 
-def _raw_metrics() -> dict:
+def _raw_metrics() -> dict[str, Any]:
     return {
         "label": "Contrast Check",
         "stars": 64,
@@ -68,7 +69,7 @@ def _raw_metrics() -> dict:
     }
 
 
-def _history() -> dict:
+def _history() -> dict[str, Any]:
     return {
         "account_created": "2020-01-01T00:00:00Z",
         "repos": [
@@ -95,7 +96,7 @@ def _history() -> dict:
     }
 
 
-def _normalized_metrics() -> dict:
+def _normalized_metrics() -> dict[str, Any]:
     return normalize_live_metrics(
         _raw_metrics(),
         owner="contrast-check",

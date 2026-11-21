@@ -725,7 +725,7 @@ def _art_solve_flower_pollination(
     def levy_step() -> float:
         u = rng.gauss(0, sigma_u)
         v = rng.gauss(0, 1)
-        return u / (abs(v) ** (1 / beta_levy))
+        return u / math.pow(abs(v), 1 / beta_levy)
 
     init_vec = _pos_to_vec(initial_positions)
     flowers = [

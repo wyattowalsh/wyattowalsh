@@ -774,11 +774,7 @@ def generate(
         return None
 
     timeline_window = normalize_timeline_window(
-        [
-            {"date": _repo_date(r)}
-            for r in repos
-            if isinstance(r, dict) and _repo_date(r)
-        ],
+        [{"date": _repo_date(r)} for r in repos if _repo_date(r) is not None],
         {
             "account_created": metrics.get("account_created"),
             "repos": repos,
@@ -915,11 +911,7 @@ def generate(
     micro_colonies: list[dict[str, Any]] = []
     repo_count_visible = len(primary_repos)
     max_repo_age = max(
-        (
-            _as_non_negative_int(repo.get("age_months", 0))
-            for repo in primary_repos
-            if isinstance(repo, dict)
-        ),
+        (_as_non_negative_int(repo.get("age_months", 0)) for repo in primary_repos),
         default=0,
     )
     labeled_peak_indices: set[int] = set()
@@ -1126,9 +1118,7 @@ def generate(
     )
 
     total_repo_stars = sum(
-        _as_non_negative_int(repo.get("stars", 0))
-        for repo in primary_repos
-        if isinstance(repo, dict)
+        _as_non_negative_int(repo.get("stars", 0)) for repo in primary_repos
     )
     static_contour_signal = min(
         1.0,

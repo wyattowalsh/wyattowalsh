@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import replace
+from typing import Any
 
 import pytest
 from defusedxml import ElementTree as ET
@@ -23,8 +24,8 @@ from scripts.art.shared import LANG_HUES, compute_world_state  # noqa: E402
 def _sample_metrics(
     *,
     repo_stars: tuple[int, int] = (12, 4),
-    extra: dict | None = None,
-) -> dict:
+    extra: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     metrics = {
         "label": "Ferro Test",
         "account_created": "2022-01-01T00:00:00Z",
@@ -96,7 +97,7 @@ def _sample_metrics(
             "2023-03": 22,
         },
     }
-    if extra:
+    if extra is not None and extra:
         metrics.update(extra)
     return metrics
 
@@ -262,7 +263,7 @@ def test_ferrofluid_legacy_maturity_still_changes_shape() -> None:
 
 
 @pytest.mark.parametrize("metrics", [{}, _sample_metrics(repo_stars=(1, 0))])
-def test_ferrofluid_handles_empty_and_minimal_metrics(metrics: dict) -> None:
+def test_ferrofluid_handles_empty_and_minimal_metrics(metrics: dict[str, Any]) -> None:
     svg = generate(metrics, seed="fixed-seed", timeline=False)
 
     _assert_valid_svg(svg)

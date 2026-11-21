@@ -27,7 +27,7 @@ def _hsl_to_css(h: float, s: float, lightness: float) -> str:
 
 def _linear_to_srgb(c: float) -> float:
     """Linear RGB to sRGB gamma transfer function."""
-    return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+    return 12.92 * c if c <= 0.0031308 else 1.055 * math.pow(c, 1 / 2.4) - 0.055
 
 
 def _oklch_to_hex(L: float, C: float, H: float) -> str:
@@ -298,7 +298,7 @@ def resolve_color_func(
     """
 
     token_count = _TOKEN_COUNTS[tokenization]
-    if palette_override:
+    if palette_override is not None and palette_override:
         palette = tuple(palette_override)
 
         def explicit_palette(index: int, total: int) -> str:
@@ -544,7 +544,7 @@ DOMAIN_CLUSTERS: dict[str, set[str]] = {
 
 def _srgb_to_linear(c: float) -> float:
     """sRGB gamma to linear transfer function (inverse of _linear_to_srgb)."""
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return c / 12.92 if c <= 0.04045 else math.pow((c + 0.055) / 1.055, 2.4)
 
 
 def _hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
@@ -563,9 +563,9 @@ def _hex_to_oklch(hex_str: str) -> tuple[float, float, float]:
     l_ = 0.4122214708 * rl + 0.5363325363 * gl + 0.0514459929 * bl
     m_ = 0.2119034982 * rl + 0.6806995451 * gl + 0.1073969566 * bl
     s_ = 0.0883024619 * rl + 0.2220049256 * gl + 0.6396926125 * bl
-    lc = l_ ** (1 / 3) if l_ >= 0 else 0.0
-    mc = m_ ** (1 / 3) if m_ >= 0 else 0.0
-    sc = s_ ** (1 / 3) if s_ >= 0 else 0.0
+    lc = math.pow(l_, 1 / 3) if l_ >= 0 else 0.0
+    mc = math.pow(m_, 1 / 3) if m_ >= 0 else 0.0
+    sc = math.pow(s_, 1 / 3) if s_ >= 0 else 0.0
     # LMS → OKLab
     L = 0.2104542553 * lc + 0.7936177850 * mc - 0.0040720468 * sc
     a = 1.9779984951 * lc - 2.4285922050 * mc + 0.4505937099 * sc
@@ -633,7 +633,7 @@ def relative_luminance(color: str) -> float:
         return (
             component / 12.92
             if component <= 0.04045
-            else ((component + 0.055) / 1.055) ** 2.4
+            else math.pow((component + 0.055) / 1.055, 2.4)
         )
 
     red, green, blue = (_channel(component) for component in _hex_to_srgb(color))

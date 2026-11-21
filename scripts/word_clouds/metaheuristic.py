@@ -182,7 +182,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         if effective_max_solvers is not None and effective_max_solvers < len(
             solver_names
         ):
-            weight_rng_seed = self.seed if self.seed else 42
+            weight_rng_seed = self.seed if self.seed not in (None, 0) else 42
             subset_rng = random.Random(weight_rng_seed)
             solver_names = sorted(
                 subset_rng.sample(solver_names, effective_max_solvers)
@@ -210,7 +210,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
             "landscape": 1.0,
             "size_gradient": 1.0,
         }
-        weight_rng = random.Random(self.seed if self.seed else 42)
+        weight_rng = random.Random(self.seed if self.seed not in (None, 0) else 42)
         solver_weights: list[dict[str, float]] = []
         for _ in solver_names:
             w = {}
@@ -763,7 +763,7 @@ class MetaheuristicAnimRenderer(SvgWordCloudEngine):
         # SA for TSP: start with nearest-neighbor heuristic
         rng = random.Random(42)
         visited = [False] * n
-        order = [0]
+        order: list[int] = [0]
         visited[0] = True
         for _ in range(n - 1):
             last = order[-1]

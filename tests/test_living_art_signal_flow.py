@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 pytest.importorskip("numpy", reason="living-art generators require numpy")
@@ -11,7 +13,7 @@ from scripts.art.shared import normalize_live_metrics, seed_hash  # noqa: E402
 from scripts.art.topography import generate as generate_topography  # noqa: E402
 
 
-def _raw_metrics() -> dict:
+def _raw_metrics() -> dict[str, Any]:
     return {
         "label": "Signal Flow",
         "stars": 52,
@@ -50,7 +52,7 @@ def _raw_metrics() -> dict:
     }
 
 
-def _history() -> dict:
+def _history() -> dict[str, Any]:
     return {
         "account_created": "2020-01-01T00:00:00Z",
         "repos": [

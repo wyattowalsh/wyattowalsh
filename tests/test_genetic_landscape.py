@@ -2,6 +2,7 @@ from __future__ import annotations
 
 # ruff: noqa: I001
 
+from typing import Any, cast
 from copy import deepcopy
 import math
 import re
@@ -18,7 +19,7 @@ from scripts.art import genetic_landscape  # noqa: E402
 from scripts.art.genetic_landscape import _derive_landscape_dynamics, generate  # noqa: E402
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, Any]:
     return {
         "label": "Genetic Test",
         "account_created": "2022-01-01T00:00:00Z",
@@ -53,7 +54,7 @@ def _sample_metrics() -> dict:
 
 
 def _svg_root(svg: str) -> Element:
-    return ElementTree.fromstring(svg)
+    return cast("Element[str]", ElementTree.fromstring(svg))
 
 
 def _timeline_rows(svg: str) -> list[tuple[str, float]]:
@@ -118,7 +119,9 @@ def test_genetic_landscape_timeline_can_be_disabled() -> None:
         {"repos": [], "contributions_monthly": {}},
     ],
 )
-def test_genetic_landscape_handles_empty_and_minimal_metrics(metrics: dict) -> None:
+def test_genetic_landscape_handles_empty_and_minimal_metrics(
+    metrics: dict[str, Any],
+) -> None:
     svg = generate(metrics, seed="fixed-seed", timeline=True)
 
     root = _svg_root(svg)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from scripts.art.timelapse import (
     DEFAULT_PUBLISHED_MAX_FRAMES,
@@ -76,8 +77,8 @@ def test_render_timelapse_requests_today_terminal_snapshot(
     )
 
     def _fake_build_daily_snapshots(
-        history: dict,
-        metrics: dict,
+        history: dict[str, Any],
+        metrics: dict[str, Any],
         *,
         owner: str = "",
         include_today: bool = False,

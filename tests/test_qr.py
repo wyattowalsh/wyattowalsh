@@ -110,26 +110,15 @@ def qr_generator_instance(
     # Configure scripts.qr.logger to be captured by caplog at INFO level
     # This setup ensures that logs emitted by qr_logger are available in
     # caplog.text.
-    original_handlers = list(qr_logger._core.handlers.keys())
-    for handler_id in original_handlers:
-        qr_logger.remove(handler_id)
-
-    # Using a simple formatter for caplog to make assertions easier
-    qr_logger.add(caplog.handler, format="{message}", level="INFO")
-
-    yield QRCodeGenerator(
-        default_background_path=bg_path, default_output_dir=output_dir, default_scale=10
-    )
-
-    # Teardown: remove the handler added for caplog
-    # This is a guess, assuming caplog.handler is the last one added.
-    # A more robust way would be to store the handler_id returned by add()
+    handler_id = qr_logger.add(caplog.handler, format="{message}", level="INFO")
     try:
-        qr_logger.remove()
-    except ValueError:
-        pass
-    for handler_id in original_handlers:
-        pass
+        yield QRCodeGenerator(
+            default_background_path=bg_path,
+            default_output_dir=output_dir,
+            default_scale=10,
+        )
+    finally:
+        qr_logger.remove(handler_id)
 
 
 # Tests for QRCodeGenerator Initialization
@@ -340,7 +329,7 @@ def test_generate_artistic_vcard_qr_custom_settings(
     assert tel_str in vcard_string
     assert f"ORG:{default_vcard_data.org}" in vcard_string
     assert f"TITLE:{default_vcard_data.title}" in vcard_string
-    if default_vcard_data.url_work:
+    if default_vcard_data.url_work is not None:
         for i, typed_url_item in enumerate(default_vcard_data.url_work):
             assert f"item{i + 1}.URL:{typed_url_item.url}" in vcard_string
             # assert f"item{i+1}.X-ABLabel:{typed_url_item.label}" in vcard_string
@@ -746,7 +735,7 @@ def test_vcard_payload_construction_all_fields(
     assert f"TEL;TYPE=WORK,VOICE:{default_vcard_data.tel_work_voice}" in vcard_string
     assert f"ORG:{default_vcard_data.org}" in vcard_string
     assert f"TITLE:{default_vcard_data.title}" in vcard_string
-    if default_vcard_data.url_work:
+    if default_vcard_data.url_work is not None:
         for i, typed_url_item in enumerate(default_vcard_data.url_work):
             assert f"item{i + 1}.URL:{typed_url_item.url}" in vcard_string
             assert f"item{i + 1}.X-ABLabel:{typed_url_item.label}" in vcard_string
@@ -831,18 +820,11 @@ def test_vcard_payload_construction_multiple_urls(
 
     assert "N:Url;Test" in vcard_string
     assert "FN:Url Test FN" in vcard_string
-    # Ensure url_work is not None before indexing for type safety
-    if multi_url_vcard_details.url_work:
-        assert f"item1.URL:{multi_url_vcard_details.url_work[0].url}" in vcard_string
-        assert (
-            f"item1.X-ABLabel:{multi_url_vcard_details.url_work[0].label}"
-            in vcard_string
-        )
-        assert f"item2.URL:{multi_url_vcard_details.url_work[1].url}" in vcard_string
-        assert (
-            f"item2.X-ABLabel:{multi_url_vcard_details.url_work[1].label}"
-            in vcard_string
-        )
+    urls = multi_url_vcard_details.url_work
+    assert urls is not None and len(urls) == 2
+    for index, url in enumerate(urls, 1):
+        assert f"item{index}.URL:{url.url}" in vcard_string
+        assert f"item{index}.X-ABLabel:{url.label}" in vcard_string
 
 
 @pytest.mark.skipif(

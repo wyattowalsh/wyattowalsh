@@ -75,7 +75,7 @@ def annotation_tooltip_metadata(
     tooltip_parts = [title]
     if value not in (None, ""):
         tooltip_parts.append(f"{value}")
-    if detail:
+    if detail not in (None, ""):
         detail_text = str(detail).strip()
         if detail_text:
             tooltip_parts.append(detail_text)
@@ -150,7 +150,7 @@ def sparkline_svg(
             value=f"{numeric_values[-1]:g}",
             detail=f"range {min_value:g}-{max_value:g}",
         )
-        if label
+        if label not in (None, "")
         else {}
     )
     attrs = "".join(f' {key}="{xml_escape(value)}"' for key, value in metadata.items())
@@ -385,7 +385,7 @@ def aurora_band_elements(
 
 
 def firefly_elements(
-    star_velocity: dict[str, Any] | None,
+    star_velocity: object,
     width: int = 800,
     height: int = 800,
     y_min: float = 0.3,

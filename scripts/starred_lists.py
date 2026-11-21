@@ -21,7 +21,7 @@ import stat
 import tempfile
 import time
 from collections import defaultdict
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -282,7 +282,10 @@ def _parse_repository(raw: Any, *, page: int, index: int) -> _Repository:
 
 def _response_headers(response: Mapping[str, Any]) -> Mapping[str, str]:
     headers = getattr(response, "response_headers", None)
-    return headers if isinstance(headers, Mapping) else {}
+    normalized: dict[str, str] = {}
+    if isinstance(headers, Mapping):
+        normalized.update((str(name), str(value)) for name, value in headers.items())
+    return normalized
 
 
 def _header_value(headers: Any, name: str) -> str | None:
@@ -333,7 +336,7 @@ def _only_rate_limited_graphql_errors(response: Mapping[str, Any]) -> bool:
 
 
 def _retry_delay_for_graphql_error(exc: Exception, *, retries: int) -> float | None:
-    fallback = _INITIAL_RETRY_DELAY_SECONDS * (2**retries)
+    fallback = _INITIAL_RETRY_DELAY_SECONDS * math.pow(2, retries)
     if isinstance(exc, _GraphQLRateLimitError):
         return (
             _rate_limit_delay_from_headers(exc.response_headers)
@@ -708,7 +711,7 @@ def _published_output_matches(path: Path, expected: _PublishedOutput) -> bool:
 
 
 @contextmanager
-def _publication_locks(outputs: Sequence[Path]) -> Iterator[None]:
+def _publication_locks(outputs: Sequence[Path]) -> Generator[None]:
     """Serialize cooperating publishers through stable parent-directory locks.
 
     Directory descriptors avoid repository lock artifacts and stay attached to

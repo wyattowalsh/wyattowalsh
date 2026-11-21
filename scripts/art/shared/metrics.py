@@ -131,7 +131,7 @@ class HistorySnapshotContract(_SignalContractModel):
 
 def _age_months_from_date(date_str: str | None, *, now: datetime) -> int | None:
     """Return age in months from an ISO-like timestamp, or ``None`` if invalid."""
-    if not date_str:
+    if date_str in (None, ""):
         return None
     try:
         dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
@@ -259,7 +259,7 @@ def normalize_live_metrics(
     if "top_repos" in metrics and "repos" not in metrics:
         # Build a creation-date lookup from history if available
         creation_dates: dict[str, str] = {}
-        if validated_history and validated_history.get("repos"):
+        if validated_history is not None and validated_history.get("repos"):
             for r in validated_history["repos"]:
                 if r.get("name") and r.get("date"):
                     creation_dates[r["name"]] = r["date"]
@@ -285,7 +285,7 @@ def normalize_live_metrics(
 
     if metrics.get("repos"):
         creation_dates = {}
-        if validated_history and validated_history.get("repos"):
+        if validated_history is not None and validated_history.get("repos"):
             creation_dates = {
                 repo["name"]: repo["date"]
                 for repo in validated_history["repos"]
@@ -324,7 +324,7 @@ def normalize_live_metrics(
         metrics["contributions_monthly"] = dict(sorted(monthly.items()))
 
     # 3. Merge richer history data when available
-    if validated_history:
+    if validated_history is not None and validated_history:
         if "account_created" not in metrics and "account_created" in validated_history:
             metrics["account_created"] = validated_history["account_created"]
         if validated_history.get("contributions_daily"):
@@ -336,7 +336,7 @@ def normalize_live_metrics(
             ]
 
     # 4. Label
-    if "label" not in metrics and owner:
+    if "label" not in metrics and owner not in (None, ""):
         metrics["label"] = owner
 
     # 5. Topic aggregation
@@ -391,7 +391,7 @@ def normalize_live_metrics(
         "traffic_unique_cloners_14d",
         "traffic_top_referrers",
     )
-    if validated_history:
+    if validated_history is not None and validated_history:
         for key in _PASSTHROUGH_KEYS:
             if key not in metrics and key in validated_history:
                 metrics[key] = validated_history[key]

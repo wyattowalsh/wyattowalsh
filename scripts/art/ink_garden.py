@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import math
 from collections import defaultdict
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import Any, NotRequired, TypedDict
 
@@ -308,8 +309,8 @@ def _select_primary_repos(
     repos: list[dict[str, Any]],
     *,
     limit: int,
-    repo_visual_order: list[str] | None = None,
-    canonical_repo_names: list[str] | None = None,
+    repo_visual_order: Sequence[object] | None = None,
+    canonical_repo_names: Sequence[object] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     preferred_names: list[str] = []
     seen_names: set[str] = set()
@@ -330,8 +331,8 @@ def _select_primary_repos(
     return select_primary_repos(ordered_repos, limit=limit)
 
 
-def _parse_iso_datetime(value: str | None) -> datetime | None:
-    if not value or not isinstance(value, str):
+def _parse_iso_datetime(value: object) -> datetime | None:
+    if not isinstance(value, str) or not value:
         return None
     try:
         if len(value) == 10:
@@ -341,7 +342,7 @@ def _parse_iso_datetime(value: str | None) -> datetime | None:
         return None
 
 
-def _recent_activity_variance(monthly: dict[str, int], *, window: int = 6) -> float:
+def _recent_activity_variance(monthly: object, *, window: int = 6) -> float:
     if not isinstance(monthly, dict):
         return 0.0
 
@@ -426,7 +427,7 @@ class _MergedPrCadence(TypedDict):
 
 
 def _summarize_merged_pr_cadence(
-    recent_merged_prs: list[dict[str, Any]],
+    recent_merged_prs: Sequence[object],
 ) -> _MergedPrCadence:
     parsed: list[tuple[datetime, dict[str, str | float]]] = []
     for pr in recent_merged_prs:
@@ -1193,7 +1194,7 @@ def generate(
     repo_lang_by_name = {
         str(repo.get("name") or ""): repo.get("language")
         for repo in raw_repos
-        if isinstance(repo, dict) and repo.get("name")
+        if repo.get("name")
     }
 
     # ── WorldState (unified atmospheric/environmental state) ─────
@@ -1283,11 +1284,7 @@ def generate(
         return None
 
     timeline_window = normalize_timeline_window(
-        [
-            {"date": _repo_date(repo)}
-            for repo in repos
-            if isinstance(repo, dict) and _repo_date(repo)
-        ]
+        [{"date": _repo_date(repo)} for repo in repos if _repo_date(repo) is not None]
         + [{"date": str(entry["when"])} for entry in release_entries]
         + [{"date": str(entry["when"])} for entry in merged_pr_entries],
         {
@@ -1358,8 +1355,6 @@ def generate(
     explicit_age_days: list[int] = []
     if has_explicit_repo_recency:
         for repo in raw_repos:
-            if not isinstance(repo, dict):
-                continue
             repo_name = str(repo.get("name") or "")
             repo_dt = _parse_date(_repo_date(repo))
             if repo_dt is None:
@@ -1891,7 +1886,7 @@ def generate(
         topic_annotation = _repo_topic_annotation(
             repo,
             max_topics=1
-            if layout_plan and layout_plan["stratum"] == "groundcover"
+            if layout_plan is not None and layout_plan["stratum"] == "groundcover"
             else 2,
         )
         if main_length >= (20 if chronological_growth else 5) and (
@@ -2633,7 +2628,7 @@ def generate(
         if matured:
             candidates = matured
 
-        if when:
+        if when not in (None, ""):
             target_frac = _time_fraction(when)
             return min(
                 candidates,
@@ -2650,7 +2645,7 @@ def generate(
         *,
         repo_name: str = "",
         fallback_index: int = 0,
-    ) -> tuple[float, float, float, int, int, int, str, str]:
+    ) -> tuple[float, float, float, float, int, int, str, str]:
         target_frac = _time_fraction(when)
         if blooms:
             return min(
@@ -4462,9 +4457,9 @@ def generate(
         wrapped_insect = bool(iwhen or irole or abs(ibeat - 1.0) > 1e-6)
         if wrapped_insect:
             insect_attrs = [f'data-fauna="{itype}"', f'data-beat="{ibeat:.2f}"']
-            if irole:
+            if irole not in (None, ""):
                 insect_attrs.append(f'data-role="{irole}"')
-            if iwhen:
+            if iwhen not in (None, ""):
                 insect_attrs.append(
                     _timeline_style(
                         iwhen,

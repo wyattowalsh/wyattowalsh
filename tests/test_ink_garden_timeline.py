@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from copy import deepcopy
+from typing import Any
 
 import pytest
 
@@ -30,14 +31,20 @@ def _extract_fauna_beats(svg: str, fauna: str) -> list[float]:
 
 
 def _extract_fauna_dates(svg: str, fauna: str) -> list[str]:
-    return re.findall(rf'data-fauna="{fauna}"[^>]+data-when="([0-9-]+)"', svg)
+    return [
+        str(m.group(1))
+        for m in re.finditer(rf'data-fauna="{fauna}"[^>]+data-when="([0-9-]+)"', svg)
+    ]
 
 
 def _extract_role_dates(svg: str, role: str) -> list[str]:
-    return re.findall(rf'data-role="{role}"[^>]+data-when="([0-9-]+)"', svg)
+    return [
+        str(m.group(1))
+        for m in re.finditer(rf'data-role="{role}"[^>]+data-when="([0-9-]+)"', svg)
+    ]
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, Any]:
     return {
         "label": "Ink Timeline Test",
         "account_created": "2022-01-01T00:00:00Z",

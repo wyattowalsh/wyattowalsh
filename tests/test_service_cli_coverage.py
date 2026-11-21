@@ -10,7 +10,7 @@ import xml.etree.ElementTree as xml_etree
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any, cast, override
+from typing import Any, override
 
 import pytest
 import typer
@@ -43,6 +43,7 @@ from scripts.readme_sections import (
     RepoMetadata,
     StarHistoryClient,
 )
+from scripts.skills import SkillsBadgeGenerator
 from scripts.techs import Technology, display_technologies, load_technologies
 
 qr_cmd = importlib.import_module("scripts.cli.generate.qr")
@@ -311,10 +312,16 @@ def test_spotify_helpers_and_mint_flow(monkeypatch: pytest.MonkeyPatch) -> None:
         spotify_auth.extract_spotify_refresh_token({})
 
     monkeypatch.setattr(spotify_auth.secrets, "token_urlsafe", lambda _n: "fixed-state")
+    redirects: list[str] = []
+
+    def _wait_for_code(**kwargs: object) -> str:
+        redirects.append(str(kwargs["redirect_uri"]))
+        return "auth-code"
+
     monkeypatch.setattr(
         spotify_auth,
         "_wait_for_spotify_authorization_code",
-        lambda **_kwargs: "auth-code",
+        _wait_for_code,
     )
     monkeypatch.setattr(
         spotify_auth,
@@ -325,6 +332,16 @@ def test_spotify_helpers_and_mint_flow(monkeypatch: pytest.MonkeyPatch) -> None:
         client_id="id", client_secret="secret", callback_port=9999, open_browser=False
     )
     assert token == "new-token" and "fixed-state" in auth_url
+    assert redirects[-1] == "http://127.0.0.1:9999/callback"
+    ipv6_token, _ipv6_url = spotify_auth.mint_spotify_refresh_token(
+        client_id="id",
+        client_secret="secret",
+        callback_host="::1",
+        callback_port=9999,
+        open_browser=False,
+    )
+    assert ipv6_token == "new-token"
+    assert redirects[-1] == "http://[::1]:9999/callback"
 
 
 @pytest.mark.parametrize(
@@ -369,8 +386,8 @@ def test_preview_skills_cleanup_failure_and_many_files(
 ) -> None:
     seen: list[str] = []
 
-    def fake_generate(self: object) -> Path:
-        path = Path(self.settings.readme_path)  # type: ignore[attr-defined]
+    def fake_generate(self: SkillsBadgeGenerator) -> Path:
+        path = Path(self.settings.readme_path)
         seen.append(str(path))
         return path
 
@@ -406,9 +423,12 @@ def test_preview_skills_cleanup_failure_and_many_files(
         preview_cmd.preview(PreviewTarget.QR, output_dir=failed, keep=False)
     assert not failed.exists()
 
+    def _unsupported_target() -> Any:
+        return "unsupported"
+
     with pytest.raises(typer.Exit):
         preview_cmd.preview(
-            cast(PreviewTarget, "unsupported"),
+            _unsupported_target(),
             output_dir=tmp_path / "bad",
             keep=True,
         )
@@ -517,7 +537,8 @@ def test_readme_cli_commands_are_wired(
         def __init__(self, **_kwargs: object) -> None:
             pass
 
-        def generate(self) -> Path:
+        def generate(self, *, strict: bool = False) -> Path:
+            assert strict is True
             path = tmp_path / "README.md"
             generated.append(path)
             return path
@@ -560,7 +581,8 @@ def test_readme_cli_commands_are_wired(
         def __init__(self, settings: ReadmeSectionsSettings) -> None:
             self.settings = settings
 
-        def generate(self) -> Path:
+        def generate(self, *, require_markers: bool = False) -> Path:
+            assert require_markers is True
             generated.append(Path(self.settings.readme_path))
             return Path(self.settings.readme_path)
 
@@ -1251,16 +1273,15 @@ def test_readme_feed_star_history_and_metadata_clients(
     monkeypatch.setattr(
         readme_sections, "_safe_urlopen", lambda *_args, **_kwargs: _Response(rss)
     )
-    assert (
-        BlogFeedClient().fetch_latest_posts("https://example.com/rss", 2)[0].image_url
-    )
+    rss_posts = BlogFeedClient().fetch_latest_posts("https://example.com/rss", 2)
+    assert rss_posts is not None
+    assert rss_posts[0].image_url == "https://example.com/image.png"
     monkeypatch.setattr(
         readme_sections, "_safe_urlopen", lambda *_args, **_kwargs: _Response(atom)
     )
-    assert (
-        BlogFeedClient().fetch_latest_posts("https://example.com/atom", 2)[0].title
-        == "Atom Post"
-    )
+    atom_posts = BlogFeedClient().fetch_latest_posts("https://example.com/atom", 2)
+    assert atom_posts is not None
+    assert atom_posts[0].title == "Atom Post"
     monkeypatch.setattr(
         readme_sections,
         "_safe_urlopen",

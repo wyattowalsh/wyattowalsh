@@ -153,7 +153,7 @@ include = [
 ]
 
 [tool.ty.overrides.rules]
-unresolved-attribute = "warn"
+missing-attribute = "warn"
 
 [[tool.ty.overrides]]
 include = [
@@ -202,7 +202,7 @@ no-matching-overload = "warn"
 not-iterable = "warn"
 not-subscriptable = "warn"
 too-many-positional-arguments = "warn"
-unresolved-attribute = "warn"
+missing-attribute = "warn"
 unsupported-operator = "warn"
 
 [[tool.ty.overrides]]
@@ -212,7 +212,7 @@ include = ["scripts/utils.py"]
 invalid-argument-type = "warn"
 invalid-assignment = "warn"
 invalid-context-manager = "warn"
-invalid-return-type = "warn"
+invalid-explicit-return = "warn"
 no-matching-overload = "warn"
 unknown-argument = "warn"
 
@@ -230,7 +230,7 @@ include = ["tests/test_ferrofluid.py"]
 
 [tool.ty.overrides.rules]
 invalid-argument-type = "warn"
-unresolved-attribute = "warn"
+missing-attribute = "warn"
 
 [[tool.ty.overrides]]
 include = ["tests/test_ink_garden.py"]

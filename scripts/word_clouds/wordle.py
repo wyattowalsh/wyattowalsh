@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import override
 
 from ..utils import get_logger
 from .core import BBox, PlacedWord
@@ -66,6 +67,7 @@ class WordleRenderer(SvgWordCloudEngine):
             y = cy + r * math.sin(theta)
             yield x, y
 
+    @override
     def place_words(
         self,
         frequencies: dict[str, float],

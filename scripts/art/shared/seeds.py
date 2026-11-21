@@ -18,7 +18,7 @@ def parse_cli_args(
         "--profile": ("profile", str),
         "--only": ("only", str),
     }
-    if extra_keys:
+    if extra_keys is not None and extra_keys:
         keys.update({f"--{k.replace('_', '-')}": (k, v) for k, v in extra_keys.items()})
     i = 0
     while i < len(argv):
@@ -71,7 +71,7 @@ def repo_identity_seed(base_seed: int, repo: dict[str, Any] | str) -> int:
 
 def hex_frac(h: str, a: int, b: int) -> float:
     """Extract a 0-1 float from hex slice h[a:b]."""
-    return int(h[a:b], 16) / (16 ** (b - a))
+    return float(int(h[a:b], 16) / (16 ** (b - a)))
 
 
 def _seed_hash(seed_str: str) -> str:
@@ -81,4 +81,4 @@ def _seed_hash(seed_str: str) -> str:
 
 def _hex_slice(h: str, start: int, end: int) -> float:
     """Extract a normalized float [0, 1) from hex digest slice."""
-    return int(h[start:end], 16) / (16 ** (end - start))
+    return hex_frac(h, start, end)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -105,7 +105,7 @@ class TestGenerateCommunityArt:
         mock_dwg.save.assert_called_once()
 
     def test_deterministic_for_same_metrics(self, tmp_path: Path) -> None:
-        captured: list[dict] = []
+        captured: list[dict[str, Any]] = []
 
         def capture_clifford(**kwargs: object) -> None:
             captured.append(
@@ -214,9 +214,9 @@ class TestGenerateActivityArt:
         mock_dwg.defs.add.assert_called()
 
     def test_deterministic_seed_inputs(self, tmp_path: Path) -> None:
-        flow_calls: list[dict] = []
+        flow_calls: list[dict[str, Any]] = []
 
-        def capture_flow(*_a: object, **kwargs: object) -> list:
+        def capture_flow(*_a: object, **kwargs: object) -> list[object]:
             flow_calls.append(dict(kwargs))
             return []
 
@@ -280,7 +280,9 @@ class TestGenerativeMain:
         out = tmp_path / "custom.svg"
         captured: dict[str, object] = {}
 
-        def fake_community(metrics: dict, dark_mode: bool = False, output_path=None):
+        def fake_community(
+            metrics: dict[str, Any], dark_mode: bool = False, output_path=None
+        ):
             captured["metrics"] = metrics
             captured["dark_mode"] = dark_mode
             captured["output_path"] = output_path

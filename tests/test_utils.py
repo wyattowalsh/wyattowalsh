@@ -109,13 +109,8 @@ def reload_utils_module(
 
     if fail_config_import:
         mocker.patch.dict(sys.modules, {"config": None})
-    elif (
-        "config" in sys.modules
-        and sys.modules["config"] is None
-        and not fail_config_import
-    ):
-        if "config" in sys.modules:
-            del sys.modules["config"]
+    elif sys.modules.get("config") is None:
+        sys.modules.pop("config", None)
 
     if mock_settings_val is not None:
         mock_config_module = MagicMock()

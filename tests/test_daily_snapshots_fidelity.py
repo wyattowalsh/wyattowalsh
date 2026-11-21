@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 from datetime import date, timedelta
+from typing import Any
 
 import pytest
 
@@ -24,7 +25,7 @@ from scripts.art.shared import (  # noqa: E402
 from scripts.art.timelapse import DEFAULT_PUBLISHED_MAX_FRAMES  # noqa: E402
 
 
-def _history_for_days(days: int = 14, *, anchor_day: date) -> dict:
+def _history_for_days(days: int = 14, *, anchor_day: date) -> dict[str, Any]:
     start = anchor_day - timedelta(days=days)
     return {
         "account_created": f"{start.isoformat()}T00:00:00Z",
@@ -57,7 +58,7 @@ def _history_for_days(days: int = 14, *, anchor_day: date) -> dict:
     }
 
 
-def _metrics_for_history(*, anchor_day: date) -> dict:
+def _metrics_for_history(*, anchor_day: date) -> dict[str, Any]:
     release_day = anchor_day - timedelta(days=7)
     merged_pr_day = anchor_day - timedelta(days=4)
     return {
@@ -538,11 +539,12 @@ def test_build_daily_snapshots_render_state_channels_never_regress(
         previous: dict[object, float] = {}
         for snap in snaps:
             current = snap.metrics_dict["render_state"][key]
+            assert isinstance(current, dict)
             for item_key in set(previous.keys()) | set(current.keys()):
                 assert float(current.get(item_key, 0) or 0) >= float(
                     previous.get(item_key, 0) or 0
                 )
-            previous = current
+            previous = {name: float(count or 0) for name, count in current.items()}
 
     streak_series = [
         snap.metrics_dict["render_state"]["contribution_streaks"][
@@ -609,13 +611,14 @@ def test_build_daily_snapshots_evolution_state_channels_never_regress(
         previous: dict[str, float] = {}
         for snap in snaps:
             current = snap.metrics_dict["evolution_state"][key]
+            assert isinstance(current, dict)
             for item_key in set(previous.keys()) | set(current.keys()):
                 assert float(current.get(item_key, 0) or 0) >= float(
                     previous.get(item_key, 0) or 0
                 )
-            previous = current
+            previous = {name: float(count or 0) for name, count in current.items()}
 
-    previous_identity: dict[str, dict] = {}
+    previous_identity: dict[str, dict[str, Any]] = {}
     for snap in snaps:
         current_identity = snap.metrics_dict["evolution_state"]["repo_identity"]
         for repo_name in previous_identity.keys() & current_identity.keys():

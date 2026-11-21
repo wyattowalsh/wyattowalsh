@@ -12,7 +12,9 @@ def _pytest_options() -> tuple[list[str], list[str]]:
         )
     )
     pytest_config = pyproject["tool"]["pytest"]["ini_options"]
-    return pytest_config["required_plugins"], shlex.split(pytest_config["addopts"])
+    plugins = pytest_config["required_plugins"]
+    assert isinstance(plugins, list) and all(isinstance(name, str) for name in plugins)
+    return [str(name) for name in plugins], shlex.split(pytest_config["addopts"])
 
 
 def test_authoritative_coverage_starts_fresh_with_reproduced_floor() -> None:

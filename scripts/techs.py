@@ -159,14 +159,17 @@ def load_technologies(md_file_path: Path) -> list[Technology]:
                             f"Found custom category: '{current_category}' \
 (line {line_num})"
                         )
-                elif line_stripped.startswith("-") and current_category:
+                elif line_stripped.startswith("-") and current_category not in (
+                    None,
+                    "",
+                ):
                     tech = parse_technology_line(line_stripped, current_category)
                     if tech:
                         technologies.append(tech)
                 elif (
                     line_stripped
                     and not line_stripped.startswith("#")
-                    and not current_category
+                    and current_category in (None, "")
                 ):
                     # This case handles lines that might be technologies but are not under a category  # noqa: E501
                     # This could happen if the MD file is not well-formed
@@ -244,7 +247,7 @@ def display_technologies(technologies: list[Technology]) -> None:
         for tech in sorted(
             categorized_techs[category_name], key=lambda t: t.name.lower()
         ):
-            notes_str = tech.notes if tech.notes else "-"
+            notes_str = tech.notes if tech.notes not in (None, "") else "-"
             if first_in_category:
                 table.add_row(category_name, tech.name, str(tech.level), notes_str)
                 first_in_category = False

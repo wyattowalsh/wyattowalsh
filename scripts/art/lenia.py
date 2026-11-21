@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import math
 from collections import defaultdict
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date as dt_date
 from typing import Any
@@ -721,21 +722,18 @@ def _render_svg(
                 orbit_opacity = halo_opacity * (0.44 if spec.kind == "repo" else 0.36)
                 orbit_rx = halo_radius * (1.8 + 0.2 * (1.0 - spec.visibility))
                 orbit_ry = orbit_rx * (0.62 if spec.kind == "repo" else 0.48)
-                if timeline:
-                    delay = map_date_to_loop_delay(
-                        spec.when,
-                        timeline_window,
-                        duration=loop_duration,
-                        reveal_fraction=reveal_fraction,
-                    )
-                    orbit_attrs = (
-                        f'class="tl-reveal" '
-                        f'style="opacity:{orbit_opacity:.3f};--delay:{delay:.3f}s;'
-                        f'--to:{orbit_opacity:.3f};--dur:{loop_duration:.2f}s" '
-                        f'data-delay="{delay:.3f}" data-when="{spec.when}"'
-                    )
-                else:
-                    orbit_attrs = f'opacity="{orbit_opacity:.3f}"'
+                delay = map_date_to_loop_delay(
+                    spec.when,
+                    timeline_window,
+                    duration=loop_duration,
+                    reveal_fraction=reveal_fraction,
+                )
+                orbit_attrs = (
+                    f'class="tl-reveal" '
+                    f'style="opacity:{orbit_opacity:.3f};--delay:{delay:.3f}s;'
+                    f'--to:{orbit_opacity:.3f};--dur:{loop_duration:.2f}s" '
+                    f'data-delay="{delay:.3f}" data-when="{spec.when}"'
+                )
                 P.append(
                     f'<ellipse data-role="lenia-seed-orbit" data-kind="{spec.kind}" '
                     f'cx="{cx:.1f}" cy="{cy:.1f}" rx="{orbit_rx:.1f}" ry="{orbit_ry:.1f}" '
@@ -895,13 +893,13 @@ def _signal_date(entry: object, *keys: str) -> str | None:
 
 
 def _extract_language_mix(
-    repos: list[dict[str, Any]],
-    language_bytes: dict[str, int] | None = None,
+    repos: Sequence[object],
+    language_bytes: object = None,
 ) -> dict[str, float]:
     """Build a normalized language → fraction mapping from bytes or repos."""
     weights: dict[str, float] = {}
 
-    if language_bytes and isinstance(language_bytes, dict):
+    if isinstance(language_bytes, dict):
         for lang, raw in language_bytes.items():
             if not isinstance(lang, str) or not lang:
                 continue
@@ -916,6 +914,8 @@ def _extract_language_mix(
             return {k: v / total for k, v in weights.items()}
 
     for repo in repos:
+        if not isinstance(repo, dict):
+            continue
         lang_raw = repo.get("language")
         if not lang_raw:
             continue
@@ -1062,7 +1062,7 @@ def _summarize_merged_pr_cadence(
             continue
 
         merged_when = _signal_date(pr, "merged_at", "mergedAt", "date")
-        if not merged_when:
+        if merged_when is None:
             continue
         try:
             merged_day = dt_date.fromisoformat(merged_when[:10])
@@ -1306,21 +1306,21 @@ def _derive_dynamics(
             )
         }
         for repo in repos
-        if isinstance(repo, dict)
-        and _signal_date(
+        if _signal_date(
             repo, "date", "created_at", "created", "pushed_at", "updated_at"
         )
+        is not None
     ]
     dated_events.extend(
         {"date": _signal_date(release, "date", "published_at", "created_at")}
         for release in metrics.get("releases", []) or []
         if isinstance(release, dict)
-        and _signal_date(release, "date", "published_at", "created_at")
+        and _signal_date(release, "date", "published_at", "created_at") is not None
     )
     dated_events.extend(
         {"date": _signal_date(pr, "merged_at", "date")}
         for pr in metrics.get("recent_merged_prs", []) or []
-        if isinstance(pr, dict) and _signal_date(pr, "merged_at", "date")
+        if isinstance(pr, dict) and _signal_date(pr, "merged_at", "date") is not None
     )
     timeline_window = normalize_timeline_window(
         dated_events,
@@ -1894,21 +1894,21 @@ def generate(
             )
         }
         for repo in repos
-        if isinstance(repo, dict)
-        and _signal_date(
+        if _signal_date(
             repo, "date", "created_at", "created", "pushed_at", "updated_at"
         )
+        is not None
     ]
     dated_events.extend(
         {"date": _signal_date(release, "date", "published_at", "created_at")}
         for release in releases
         if isinstance(release, dict)
-        and _signal_date(release, "date", "published_at", "created_at")
+        and _signal_date(release, "date", "published_at", "created_at") is not None
     )
     dated_events.extend(
         {"date": _signal_date(pr, "merged_at", "date")}
         for pr in recent_merged_prs
-        if isinstance(pr, dict) and _signal_date(pr, "merged_at", "date")
+        if isinstance(pr, dict) and _signal_date(pr, "merged_at", "date") is not None
     )
     timeline_window = normalize_timeline_window(
         dated_events,

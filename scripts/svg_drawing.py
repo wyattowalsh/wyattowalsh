@@ -10,7 +10,7 @@ from __future__ import annotations
 import html
 from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path as FsPath
-from typing import Any, overload
+from typing import Any, overload, override
 
 
 def _xml_escape(value: object) -> str:
@@ -363,8 +363,11 @@ class Drawing(Element):
     ) -> None:
         del profile  # retained for call-site compatibility
         self.filename = str(filename) if filename is not None else None
-        width = size[0] if size else kwargs.pop("width", None)
-        height = size[1] if size else kwargs.pop("height", None)
+        if size is not None and len(size) > 0:
+            width, height = size[0], size[1]
+        else:
+            width = kwargs.pop("width", None)
+            height = kwargs.pop("height", None)
         attrs: dict[str, Any] = {
             "xmlns": "http://www.w3.org/2000/svg",
             "xmlns:xlink": "http://www.w3.org/1999/xlink",
@@ -419,6 +422,7 @@ class Drawing(Element):
     def radialGradient(self, **kwargs: Any) -> RadialGradient:
         return RadialGradient(**kwargs)
 
+    @override
     def tostring(self, pretty: bool = False, indent: int = 0) -> str:
         body = super().tostring(pretty=pretty, indent=indent)
         return f'<?xml version="1.0" encoding="utf-8"?>\n{body}'

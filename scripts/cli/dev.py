@@ -166,9 +166,9 @@ def test(
             str(resolved_report_dir / "pytest.log"),
         ]
     )
-    if filter_expr:
+    if filter_expr not in (None, ""):
         cmd.extend(["-k", filter_expr])
-    if marker:
+    if marker not in (None, ""):
         cmd.extend(["-m", marker])
     test_environment = os.environ.copy()
     test_environment["COVERAGE_FILE"] = str(resolved_report_dir / ".coverage")

@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import re
 from copy import deepcopy
+from typing import Any
 
 import pytest
 from defusedxml import ElementTree
@@ -15,7 +16,7 @@ physarum = pytest.importorskip("scripts.art.physarum")
 generate = physarum.generate
 
 
-def _sample_metrics() -> dict:
+def _sample_metrics() -> dict[str, Any]:
     return {
         "label": "Physarum Test",
         "account_created": "2022-01-01T00:00:00Z",
@@ -645,7 +646,7 @@ def test_physarum_prefers_full_repo_set_over_truncated_top_repos() -> None:
     ],
 )
 def test_physarum_handles_empty_and_minimal_metrics_without_crashing(
-    metrics: dict,
+    metrics: dict[str, Any],
     seed: str,
 ) -> None:
     svg = generate(metrics, seed=seed, timeline=False, maturity=0.0)

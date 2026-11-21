@@ -236,7 +236,7 @@ class QRCodeGenerator:
                     f"TEL;TYPE=WORK,VOICE:{vcard_details.tel_work_voice}"
                 )
 
-            if vcard_details.url_work:
+            if vcard_details.url_work is not None:
                 for i, typed_url_item in enumerate(vcard_details.url_work):
                     # For Apple compatibility and general labeling,
                     # use itemX.URL and itemX.X-ABLabel

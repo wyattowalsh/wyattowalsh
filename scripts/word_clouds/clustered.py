@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import override
 
 from ..utils import get_logger
 from .colors import CLUSTER_PALETTES, _classify_word
@@ -54,6 +55,7 @@ class ClusteredRenderer(SvgWordCloudEngine):
             sectors[name] = (c * cell_w, r * cell_h, cell_w, cell_h)
         return sectors
 
+    @override
     def place_words(
         self,
         frequencies: dict[str, float],

@@ -112,7 +112,6 @@ def banner(
     from pydantic import ValidationError  # lazy import
 
     generated_outputs: tuple[Path, ...] = ()
-    generation_complete = False
     try:
         final_banner_config = banner_settings.to_banner_config(**cli_overrides)
         logger.info(
@@ -146,15 +145,14 @@ def banner(
 
         for label, _variant_config, variant_output in generated_variants:
             console.print(f"[bold green]{label} generated: {variant_output}[/]")
-        generation_complete = True
+        generated_outputs = ()
     except (ValidationError, OSError, ValueError, TypeError, RuntimeError) as e:
         logger.error("Banner generation failed: {e}", e=e, exc_info=True)
         console.print(f"[bold red]Error:[/bold red] Banner generation failed: {e}")
         raise typer.Exit(code=1)
     finally:
-        if not generation_complete:
-            for variant_output in generated_outputs:
-                _cleanup_banner_output(variant_output)
+        for variant_output in generated_outputs:
+            _cleanup_banner_output(variant_output)
 
 
 # ---------------------------------------------------------------------------

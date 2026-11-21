@@ -95,7 +95,9 @@ def test_optimizer_rejects_a_visually_changed_candidate(
         lambda _executable: "/usr/bin/gifsicle",
     )
 
-    def _fake_run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess:
+    def _fake_run(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
         candidate_path = Path(command[command.index("--output") + 1])
         candidate_path.write_bytes(changed_path.read_bytes())
         return subprocess.CompletedProcess(command, returncode=0)
@@ -140,7 +142,9 @@ def test_optimizer_retains_source_without_a_size_improvement(
         lambda _executable: "/usr/bin/gifsicle",
     )
 
-    def _fake_run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess:
+    def _fake_run(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
         candidate_path = Path(command[command.index("--output") + 1])
         candidate_path.write_bytes(source_bytes)
         return subprocess.CompletedProcess(command, returncode=0)
@@ -166,7 +170,9 @@ def test_optimizer_failure_retains_source_and_cleans_candidate(
         lambda _executable: "/usr/bin/gifsicle",
     )
 
-    def _fake_run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess:
+    def _fake_run(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
         return subprocess.CompletedProcess(command, returncode=2)
 
     monkeypatch.setattr("scripts.art._gif_optimize.subprocess.run", _fake_run)
@@ -193,7 +199,9 @@ def test_optimizer_process_failures_retain_the_owned_stage(
         lambda _executable: "/usr/bin/gifsicle",
     )
 
-    def _fake_run(command: list[str], **_kwargs: object) -> subprocess.CompletedProcess:
+    def _fake_run(
+        command: list[str], **_kwargs: object
+    ) -> subprocess.CompletedProcess[str]:
         if failure == "timeout":
             raise subprocess.TimeoutExpired(command, timeout=1)
         candidate_path = Path(command[command.index("--output") + 1])

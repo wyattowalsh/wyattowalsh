@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from email.message import Message
-from typing import Any
+from typing import Any, Self, override
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError
 
@@ -23,8 +23,9 @@ def _freeze_now(monkeypatch: pytest.MonkeyPatch, year: int = 2025) -> None:
 
     class _FrozenDateTime(datetime):
         @classmethod
-        def now(cls, tz: Any = None) -> datetime:
-            return datetime(year, 6, 15, 12, 0, 0, tzinfo=tz or UTC)
+        @override
+        def now(cls, tz: Any = None) -> Self:
+            return cls(year, 6, 15, 12, 0, 0, tzinfo=tz or UTC)
 
     monkeypatch.setattr(fetch_history, "datetime", _FrozenDateTime)
 
@@ -145,7 +146,7 @@ class TestFetchAccountCreated:
         assert fetch_history._fetch_account_created("owner", "tok") is None
 
     def test_returns_none_on_exception(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        def boom(*_a: object, **_k: object) -> dict:
+        def boom(*_a: object, **_k: object) -> dict[str, Any]:
             raise RuntimeError("network down")
 
         monkeypatch.setattr(fetch_history, "_graphql", boom)
@@ -298,7 +299,9 @@ class TestFetchContributions:
             },
         ]
 
-        def fake_graphql(query: str, token: str, variables: dict) -> dict:
+        def fake_graphql(
+            query: str, token: str, variables: dict[str, Any]
+        ) -> dict[str, Any]:
             return responses.pop(0)
 
         monkeypatch.setattr(fetch_history, "_graphql", fake_graphql)
@@ -325,9 +328,11 @@ class TestFetchContributions:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _freeze_now(monkeypatch, year=2025)
-        calls: list[dict] = []
+        calls: list[dict[str, Any]] = []
 
-        def fake_graphql(query: str, token: str, variables: dict) -> dict:
+        def fake_graphql(
+            query: str, token: str, variables: dict[str, Any]
+        ) -> dict[str, Any]:
             calls.append(variables)
             return {
                 "data": {
@@ -391,7 +396,7 @@ class TestFetchContributions:
     def test_skips_year_on_exception(self, monkeypatch: pytest.MonkeyPatch) -> None:
         _freeze_now(monkeypatch, year=2024)
 
-        def boom(*_a: object, **_k: object) -> dict:
+        def boom(*_a: object, **_k: object) -> dict[str, Any]:
             raise ConnectionError("down")
 
         monkeypatch.setattr(fetch_history, "_graphql", boom)

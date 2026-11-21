@@ -45,7 +45,7 @@ class Noise2D:
         x2 = (gb[0] * xf + gb[1] * (yf - 1)) + u * (
             (gd[0] * (xf - 1) + gd[1] * (yf - 1)) - (gb[0] * xf + gb[1] * (yf - 1))
         )
-        return x1 + v * (x2 - x1)
+        return float(x1 + v * (x2 - x1))
 
     def fbm(self, x: float, y: float, octaves: int = 4) -> float:
         val = 0.0
