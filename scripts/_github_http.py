@@ -11,9 +11,10 @@ import re
 import ssl
 import urllib.request
 from collections.abc import Collection, Mapping
-from typing import Any
+from email.message import Message
+from typing import Any, override
 from urllib.error import HTTPError
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 from urllib.request import HTTPRedirectHandler, Request
 
 from .utils import get_logger
@@ -95,6 +96,7 @@ def _assert_allowed_url(url: str) -> None:
 class _AllowedHostRedirectHandler(HTTPRedirectHandler):
     """Revalidate each redirect hop against the GitHub API host allowlist."""
 
+    @override
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: ANN001
         _assert_allowed_url(newurl)
         return super().redirect_request(req, fp, code, msg, headers, newurl)
@@ -117,7 +119,7 @@ def _headers(token: str | None, *, accept: str | None = None) -> dict[str, str]:
         "Accept": accept or "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     }
-    if token:
+    if token is not None and token != "":
         hdrs["Authorization"] = f"Bearer {token}"
     return hdrs
 
@@ -137,7 +139,7 @@ def _graphql(
 ) -> dict[str, Any]:
     """Execute a GitHub GraphQL query (requires token)."""
     payload: dict[str, Any] = {"query": query}
-    if variables:
+    if variables is not None and len(variables) > 0:
         payload["variables"] = variables
     body = json.dumps(payload).encode()
     req = urllib.request.Request(
@@ -157,7 +159,42 @@ def _graphql(
 # Pagination
 # ---------------------------------------------------------------------------
 
-_LINK_NEXT_RE = re.compile(r'<([^>]+)>;\s*rel="next"')
+_LINK_TARGET = re.compile(r"\s*<([^<>\s]+)>\s*")
+_LINK_PARAM = re.compile(
+    r""";\s*([!#$%&'*+.^_`|~A-Za-z0-9-]+)\s*"""
+    r"""(?:=\s*(?:"((?:\\.|[^"\\])*)"|([^"=,;\s]+)))?\s*"""
+)
+
+
+def _next_page_url(header: str, page_url: str) -> str | None:
+    """Read a GitHub Link field, preserving delimiters inside quoted parameters."""
+    pos = 0
+    next_url = None
+    while pos < len(header):
+        target = _LINK_TARGET.match(header, pos)
+        if target is None:
+            raise ValueError("Malformed GitHub pagination Link target")
+        pos = target.end()
+        relations: str | None = None
+        while parameter := _LINK_PARAM.match(header, pos):
+            name, quoted, token = parameter.groups()
+            if name.lower() == "rel":
+                if relations is not None:
+                    raise ValueError("Duplicate relation in GitHub pagination Link")
+                relations = str(quoted if quoted is not None else token or "")
+            pos = parameter.end()
+        if relations is None or not relations.strip():
+            raise ValueError("Missing relation in GitHub pagination Link")
+        if "next" in relations.lower().split():
+            if next_url is not None:
+                raise ValueError("Ambiguous next target in GitHub pagination Link")
+            next_url = urljoin(page_url, str(target.group(1)))
+        if pos == len(header):
+            break
+        if header[pos] != ",":
+            raise ValueError("Malformed GitHub pagination Link separator")
+        pos += 1
+    return next_url
 
 
 def _paginate_rest(
@@ -167,25 +204,31 @@ def _paginate_rest(
     accept: str | None = None,
     max_pages: int = 100,
     optional_http_statuses: Collection[int] = (),
+    require_complete: bool = False,
 ) -> list[Any]:
     """Follow ``Link`` headers and collect pages from a REST endpoint.
 
     ``optional_http_statuses`` identifies capability-related response codes for
     a specific caller. Those codes stop pagination at INFO while all other
     request failures remain warnings. Callers must opt in explicitly; the
-    default behavior is unchanged.
+    default behavior is unchanged. Required inventories raise instead of
+    returning a partial list when traversal is interrupted.
     """
     results: list[Any] = []
     next_url: str | None = url
     page_count = 0
-    while next_url:
+    while next_url is not None and next_url != "":
         if page_count >= max_pages:
+            if require_complete:
+                raise ValueError("Required GitHub inventory exceeded its page limit")
             logger.warning("Reached max page limit ({}) for {}", max_pages, url)
             break
         page_count += 1
         try:
             data, headers = _get(next_url, token, accept=accept)
         except Exception as exc:
+            if require_complete:
+                raise
             if isinstance(exc, HTTPError) and exc.code in optional_http_statuses:
                 logger.info(
                     "Optional paginated endpoint unavailable ({}): HTTP {}",
@@ -198,12 +241,25 @@ def _paginate_rest(
         if isinstance(data, list):
             results.extend(data)
         else:
+            if require_complete:
+                raise TypeError("Required GitHub inventory page must be a list")
             logger.warning(
                 "Expected list from paginated endpoint, got {}",
                 type(data).__name__,
             )
             break
-        link_header = headers.get("Link", "")
-        match = _LINK_NEXT_RE.search(link_header)
-        next_url = match.group(1) if match else None
+        try:
+            link_header = (
+                ",".join(headers.get_all("Link", []))
+                if isinstance(headers, Message)
+                else headers.get("Link", "")
+            )
+            if not isinstance(link_header, str):
+                raise TypeError("Invalid GitHub pagination Link header")
+            next_url = _next_page_url(link_header.strip(), next_url)
+        except (TypeError, ValueError) as exc:
+            if require_complete:
+                raise
+            logger.warning("Stopping optional GitHub pagination: {}", exc)
+            break
     return results

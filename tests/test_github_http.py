@@ -24,20 +24,19 @@ from scripts._github_http import (
 )
 
 
-class _FakeHeaders(dict):
-    """Minimal headers mapping with case-insensitive .get like http.client."""
-
-    def get(self, key: str, default: Any = None) -> Any:  # noqa: A003
-        for k, v in self.items():
-            if k.lower() == key.lower():
-                return v
-        return default
+def _headers_from(values: dict[str, str]) -> Message:
+    headers = Message()
+    for key, value in values.items():
+        headers[key] = value
+    return headers
 
 
 class _FakeResponse:
-    def __init__(self, body: dict | list, headers: dict | None = None) -> None:
+    def __init__(
+        self, body: dict[str, Any] | list[Any], headers: dict[str, str] | None = None
+    ) -> None:
         self._body = json.dumps(body).encode()
-        self.headers = _FakeHeaders(headers or {})
+        self.headers = _headers_from(headers or {})
 
     def read(self) -> bytes:
         return self._body
@@ -102,7 +101,9 @@ class TestOptionalGraphqlErrors:
             [{"message": "API rate limit exceeded"}],
         ],
     )
-    def test_recognizes_expected_capability_errors(self, errors: list[dict]) -> None:
+    def test_recognizes_expected_capability_errors(
+        self, errors: list[dict[str, str]]
+    ) -> None:
         assert _are_expected_optional_graphql_errors(errors)
 
     @pytest.mark.parametrize(
@@ -113,7 +114,7 @@ class TestOptionalGraphqlErrors:
             ["not a structured error"],
         ],
     )
-    def test_rejects_unexpected_or_malformed_errors(self, errors: list) -> None:
+    def test_rejects_unexpected_or_malformed_errors(self, errors: list[object]) -> None:
         assert not _are_expected_optional_graphql_errors(errors)
 
 
@@ -258,6 +259,75 @@ class TestGetAndGraphql:
 
 
 class TestPaginateRestAllowlist:
+    def test_required_traversal_reads_link_parameters_and_repeated_fields(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        url = "https://api.github.com/users/example/repos"
+        header = Message()
+        header["Link"] = f'<{url}?page=1>; rel="prev"; title="comma, semicolon; ok"'
+        header["Link"] = '<?page=2>; type="application/json"; REL="alternate next"'
+        request = MagicMock(
+            side_effect=[
+                ([1], header),
+                ([2], {"Link": f"<{url}?page=1>; rel=first, <{url}?page=1>; rel=prev"}),
+            ]
+        )
+        monkeypatch.setattr("scripts._github_http._get", request)
+        assert _paginate_rest(url, None, require_complete=True) == [1, 2]
+        assert [call.args[0] for call in request.call_args_list] == [
+            url,
+            f"{url}?page=2",
+        ]
+
+    @pytest.mark.parametrize(
+        "header",
+        [
+            'malformed-target; rel="next"',
+            '<page2>; title="unterminated; rel=next',
+            '<page2>; rel="next", <page3>; rel="next"',
+            "<page2>; rel=prev; rel=next",
+            '<page2>; title="missing relation"',
+        ],
+    )
+    def test_ambiguous_links_reject_required_and_stop_optional_traversal(
+        self, monkeypatch: pytest.MonkeyPatch, header: str
+    ) -> None:
+        url = "https://api.github.com/users/example/repos"
+        request = MagicMock(return_value=([1], {"Link": header}))
+        monkeypatch.setattr("scripts._github_http._get", request)
+        with pytest.raises(ValueError, match="pagination Link"):
+            _paginate_rest(url, None, require_complete=True)
+        assert _paginate_rest(url, None) == [1]
+        assert request.call_count == 2
+
+    @pytest.mark.parametrize(
+        "second_page",
+        [TimeoutError("later page unavailable"), ({"message": "bad"}, {})],
+    )
+    def test_required_traversal_rejects_partial_results(
+        self, monkeypatch: pytest.MonkeyPatch, second_page: object
+    ) -> None:
+        url = "https://api.github.com/users/example/repos"
+        request = MagicMock(
+            side_effect=[
+                ([{"name": "first"}], {"Link": f'<{url}?page=2>; rel="next"'}),
+                second_page,
+            ]
+        )
+        monkeypatch.setattr("scripts._github_http._get", request)
+        with pytest.raises((TimeoutError, TypeError)):
+            _paginate_rest(url, None, require_complete=True)
+        assert request.call_count == 2
+
+    def test_required_traversal_rejects_unconsumed_page(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        url = "https://api.github.com/users/example/repos"
+        request = MagicMock(return_value=([], {"Link": f'<{url}?page=2>; rel="next"'}))
+        monkeypatch.setattr("scripts._github_http._get", request)
+        with pytest.raises(ValueError, match="page limit"):
+            _paginate_rest(url, None, max_pages=1, require_complete=True)
+
     def test_stops_when_next_link_host_blocked(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
@@ -272,7 +342,7 @@ class TestPaginateRestAllowlist:
                 )
             return (
                 [{"id": 1}],
-                _FakeHeaders({"Link": '<https://evil.example/page2>; rel="next"'}),
+                _headers_from({"Link": '<https://evil.example/page2>; rel="next"'}),
             )
 
         monkeypatch.setattr("scripts._github_http._get", fake_get)

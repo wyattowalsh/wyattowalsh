@@ -80,6 +80,17 @@ def mock_graphql():
 
 
 class TestCollectLanguages:
+    @pytest.mark.parametrize("row", [{"fork": "false"}, {}, None])
+    def test_incomplete_fork_identity_is_not_a_clean_empty_result(
+        self, row: object, mock_get: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_languages
+
+        failures: list[str] = []
+        assert _collect_languages([row], "test", failures) == {}
+        assert failures == ["languages"]
+        mock_get.assert_not_called()
+
     def test_aggregates_bytes_across_repos(self, mock_get: MagicMock) -> None:
         from scripts.fetch_metrics import _BASE, _collect_languages
 
@@ -125,6 +136,32 @@ class TestCollectLanguages:
         ]
         result = _collect_languages(repos, "tok")
         assert result == {}
+
+    def test_partial_language_failure_records_collection_failure(
+        self, mock_get: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_languages
+
+        repos = [_make_repo("a"), _make_repo("b")]
+        mock_get.side_effect = [
+            ({"Python": 10}, {}),
+            Exception("network error"),
+        ]
+        failures: list[str] = []
+        result = _collect_languages(repos, "tok", failures)
+        assert result == {"Python": 10}
+        assert failures == ["languages"]
+
+    def test_total_language_failure_records_empty_totals(
+        self, mock_get: MagicMock
+    ) -> None:
+        from scripts.fetch_metrics import _collect_languages
+
+        mock_get.side_effect = Exception("network error")
+        failures: list[str] = []
+        result = _collect_languages([_make_repo("a")], "tok", failures)
+        assert result == {}
+        assert failures == ["languages"]
 
     def test_ignores_user_controlled_languages_url_host(
         self, mock_get: MagicMock
@@ -330,6 +367,160 @@ class TestOptionalMetrics:
         assert "viewer" not in query
         assert "user(login: $login)" in query
         assert result["contributions_last_year"] == 2
+
+
+def _calendar_payload(*, errors: list[dict[str, str]] | None = None) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "data": {
+            "user": {
+                "contributionsCollection": {
+                    "contributionCalendar": {
+                        "totalContributions": 4,
+                        "weeks": [
+                            {
+                                "contributionDays": [
+                                    {
+                                        "date": "2026-01-02",
+                                        "contributionCount": 4,
+                                        "color": "#216e39",
+                                    }
+                                ]
+                            }
+                        ],
+                    },
+                    "totalCommitContributions": 4,
+                    "totalPullRequestContributions": 0,
+                    "totalIssueContributions": 0,
+                    "totalRepositoryContributions": 0,
+                    "totalPullRequestReviewContributions": 0,
+                }
+            }
+        }
+    }
+    if errors is not None:
+        payload["errors"] = errors
+    return payload
+
+
+def _collect_with_graphql(
+    mock_get: MagicMock,
+    mock_paginate_rest: MagicMock,
+    mock_graphql: MagicMock,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    from scripts.fetch_metrics import collect
+
+    mock_get.return_value = ([], {})
+    mock_paginate_rest.return_value = []
+    mock_graphql.return_value = payload
+    with (
+        patch("scripts.fetch_metrics._collect_recent_merged_prs", return_value=[]),
+        patch(
+            "scripts.fetch_metrics._collect_issue_stats",
+            return_value={"open_count": 0, "closed_count": 0},
+        ),
+        patch(
+            "scripts.fetch_metrics._collect_commit_hour_distribution",
+            return_value=({}, 0),
+        ),
+        patch(
+            "scripts.fetch_metrics._collect_releases",
+            return_value=([], "unavailable", 0),
+        ),
+    ):
+        return collect("owner", "repo", "tok")
+
+
+class TestRequiredCollectionFailures:
+    @pytest.mark.parametrize(
+        "calendar",
+        [
+            {},
+            {"totalContributions": 0, "weeks": [{}]},
+            {"totalContributions": -1, "weeks": []},
+            {"totalContributions": 10, "weeks": []},
+            {
+                "totalContributions": 2,
+                "weeks": [
+                    {
+                        "contributionDays": [
+                            {
+                                "date": "2024-12-01",
+                                "contributionCount": 1,
+                                "color": "green",
+                            },
+                            {
+                                "date": "2024-12-01",
+                                "contributionCount": 1,
+                                "color": "green",
+                            },
+                        ]
+                    }
+                ],
+            },
+            {"totalContributions": 1, "weeks": [{"contributionDays": [{}]}]},
+        ],
+    )
+    def test_malformed_calendar_is_a_required_failure(
+        self, mock_graphql: MagicMock, calendar: dict[str, Any]
+    ) -> None:
+        from scripts.fetch_metrics import _collect_contribution_stats
+
+        payload = _calendar_payload()
+        payload["data"]["user"]["contributionsCollection"]["contributionCalendar"] = (
+            calendar
+        )
+        mock_graphql.return_value = payload
+        assert _collect_contribution_stats("owner", "test")["collection_failed"]
+
+    def test_graphql_error_with_calendar_is_recorded(
+        self,
+        mock_get: MagicMock,
+        mock_paginate_rest: MagicMock,
+        mock_graphql: MagicMock,
+    ) -> None:
+        result = _collect_with_graphql(
+            mock_get,
+            mock_paginate_rest,
+            mock_graphql,
+            _calendar_payload(
+                errors=[{"message": "Field 'broken' doesn't exist on type 'Query'"}]
+            ),
+        )
+        assert result["contributions_calendar"][0]["count"] == 4
+        assert "contributions_calendar" in result["collection_failures"]
+
+    def test_optional_graphql_error_with_calendar_is_recorded(
+        self,
+        mock_get: MagicMock,
+        mock_paginate_rest: MagicMock,
+        mock_graphql: MagicMock,
+    ) -> None:
+        result = _collect_with_graphql(
+            mock_get,
+            mock_paginate_rest,
+            mock_graphql,
+            _calendar_payload(
+                errors=[{"message": "Something went wrong", "type": "INTERNAL"}]
+            ),
+        )
+        assert result["contributions_calendar"][0]["count"] == 4
+        assert "contributions_calendar" in result["collection_failures"]
+
+    def test_successful_calendar_is_not_a_collection_failure(
+        self,
+        mock_get: MagicMock,
+        mock_paginate_rest: MagicMock,
+        mock_graphql: MagicMock,
+    ) -> None:
+        result = _collect_with_graphql(
+            mock_get,
+            mock_paginate_rest,
+            mock_graphql,
+            _calendar_payload(),
+        )
+        assert result["contributions_calendar"][0]["count"] == 4
+        assert "contributions_calendar" not in result["collection_failures"]
 
 
 # ---------------------------------------------------------------------------
@@ -918,11 +1109,13 @@ class TestCollectIntegration:
             *,
             accept: str | None = None,
             max_pages: int = 100,
+            require_complete: bool = False,
         ) -> list[dict[str, Any]]:
             del token
             assert accept is None
             assert max_pages == 100
             if url == f"{_BASE}/users/owner/repos?per_page=100":
+                assert require_complete
                 return repo_inventory
             if url == f"{_BASE}/users/owner/events?per_page=100":
                 return []

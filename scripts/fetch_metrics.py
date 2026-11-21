@@ -14,7 +14,7 @@ import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError
@@ -37,6 +37,18 @@ def _json(url: str, token: str | None, **kw: Any) -> Any:
     return data
 
 
+def _json_object(value: object) -> dict[str, Any] | None:
+    """Copy a JSON object, or return ``None`` when the value is not one."""
+    if not isinstance(value, dict):
+        return None
+    parsed: dict[str, Any] = {}
+    for key, item in value.items():
+        if not isinstance(key, str):
+            return None
+        parsed[key] = item
+    return parsed
+
+
 def _repo_languages_url(repo: dict[str, Any]) -> str:
     """Build languages URL on api.github.com (never trust API-provided hosts)."""
     full_name = str(repo.get("full_name") or "").strip()
@@ -52,21 +64,44 @@ def _repo_languages_url(repo: dict[str, Any]) -> str:
     return f"{_BASE}/repos/{owner}/{name}/languages"
 
 
+def _language_byte_totals(payload: object) -> dict[str, int]:
+    """Parse a GitHub languages object into byte totals."""
+    parsed = _json_object(payload)
+    if parsed is None:
+        raise TypeError("Language payload was not a JSON object")
+    totals: dict[str, int] = {}
+    for lang, count in parsed.items():
+        if isinstance(count, bool) or not isinstance(count, int):
+            raise TypeError("Language payload contained a non-integer count")
+        if count < 0:
+            raise ValueError("Language byte count must be nonnegative")
+        totals[lang] = count
+    return totals
+
+
 def _collect_languages(
-    repos: list[dict],
+    repos: list[Any],
     token: str | None,
     failures: list[str] | None = None,
 ) -> dict[str, int]:
     """Aggregate language bytes across all non-fork repos (parallel fetches)."""
-    non_forks = [r for r in repos if not r.get("fork")]
+    non_forks: list[dict[str, Any]] = []
+    for repo in repos:
+        row = _json_object(repo)
+        if row is None or not isinstance(row.get("fork"), bool):
+            if failures is not None and "languages" not in failures:
+                failures.append("languages")
+            continue
+        if row["fork"] is False:
+            non_forks.append(row)
     if not non_forks:
         return {}
     totals: dict[str, int] = {}
     failed_repos = 0
 
-    def _fetch_lang(repo: dict) -> dict[str, int]:
+    def _fetch_lang(repo: dict[str, Any]) -> dict[str, int]:
         data, _ = _get(_repo_languages_url(repo), token)
-        return data
+        return _language_byte_totals(data)
 
     with ThreadPoolExecutor(max_workers=min(16, len(non_forks))) as pool:
         futures = {pool.submit(_fetch_lang, r): r for r in non_forks}
@@ -81,9 +116,10 @@ def _collect_languages(
                     exc,
                 )
                 failed_repos += 1
-    if non_forks and failed_repos == len(non_forks):
-        totals = {}
-        if failures is not None:
+    if failed_repos:
+        if non_forks and failed_repos == len(non_forks):
+            totals = {}
+        if failures is not None and "languages" not in failures:
             failures.append("languages")
     return totals
 
@@ -144,7 +180,12 @@ def _collect_latest_stargazer(
             accept="application/vnd.github.v3.star+json",
         )
         if isinstance(stars, list) and stars:
-            return (stars[-1].get("user") or {}).get("login")
+            last = _json_object(stars[-1])
+            user = _json_object(last.get("user")) if last is not None else None
+            if user is None:
+                return None
+            login = user.get("login")
+            return login if isinstance(login, str) else None
     except Exception as exc:
         if isinstance(exc, HTTPError) and exc.code == 403:
             logger.info("Optional latest stargazer unavailable: HTTP 403")
@@ -170,7 +211,7 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
         "contributions_calendar": [],
     }
     login = owner.strip()
-    if not token:
+    if token is None or token == "":
         logger.info("No GITHUB_TOKEN — skipping GraphQL contribution stats")
         return result
     if not login:
@@ -209,17 +250,44 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
                 logger.info("Optional GraphQL contribution fields unavailable")
             else:
                 logger.warning("GraphQL contribution errors: {e}", e=errors)
-                result["collection_failed"] = True
+            result["collection_failed"] = True
         raw = gql_resp.get("data") or {}
         user = raw.get("user") or {}
         contrib_coll = user.get("contributionsCollection") or {}
         if not contrib_coll:
             result["collection_failed"] = True
             return result
-        cal = contrib_coll.get("contributionCalendar") or {}
+        cal = contrib_coll["contributionCalendar"]
+        weeks = cal["weeks"]
+        if not isinstance(weeks, list):
+            raise TypeError("Contribution calendar weeks must be a list")
+        total = cal["totalContributions"]
+        if type(total) is not int or total < 0:
+            raise ValueError("Invalid contribution calendar total")
+        days: list[dict[str, Any]] = []
+        seen_dates: set[date] = set()
+        daily_total = 0
+        for week in weeks:
+            week_days = week["contributionDays"]
+            if not isinstance(week_days, list):
+                raise TypeError("Contribution days must be a list")
+            for day in week_days:
+                count = day["contributionCount"]
+                if type(count) is not int or count < 0:
+                    raise ValueError("Invalid contribution count")
+                calendar_date = date.fromisoformat(day["date"])
+                if calendar_date in seen_dates:
+                    raise ValueError("Contribution calendar contains a duplicate day")
+                seen_dates.add(calendar_date)
+                daily_total += count
+                days.append(
+                    {"date": day["date"], "count": count, "color": day["color"]}
+                )
+        if daily_total != total:
+            result["collection_failed"] = True
         result.update(
             {
-                "contributions_last_year": cal.get("totalContributions", 0),
+                "contributions_last_year": total,
                 "total_commits": contrib_coll.get("totalCommitContributions", 0),
                 "total_prs": contrib_coll.get("totalPullRequestContributions"),
                 "total_issues": contrib_coll.get("totalIssueContributions"),
@@ -229,15 +297,7 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
                 "pr_review_count": contrib_coll.get(
                     "totalPullRequestReviewContributions", 0
                 ),
-                "contributions_calendar": [
-                    {
-                        "date": day["date"],
-                        "count": day["contributionCount"],
-                        "color": day["color"],
-                    }
-                    for week in cal.get("weeks", [])
-                    for day in week.get("contributionDays", [])
-                ],
+                "contributions_calendar": days,
             }
         )
     except Exception as exc:
@@ -248,7 +308,7 @@ def _collect_contribution_stats(owner: str, token: str | None) -> dict[str, Any]
 
 def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, Any]]:
     """Fetch the account's merged PR history via paginated GraphQL."""
-    if not token:
+    if token is None or token == "":
         return []
     query = """
     query($login: String!, $cursor: String) {
@@ -322,7 +382,7 @@ def _collect_recent_merged_prs(owner: str, token: str | None) -> list[dict[str, 
 
 def _collect_issue_stats(owner: str, token: str | None) -> dict[str, int]:
     """Fetch user's open/closed issue counts via GraphQL."""
-    if not token:
+    if token is None or token == "":
         return {"open_count": 0, "closed_count": 0}
     query = """
     query($login: String!) {
@@ -360,8 +420,6 @@ def _collect_commit_hour_distribution(
     """
     try:
         data = _paginate_rest(f"{_BASE}/users/{owner}/events?per_page=100", token)
-        if not isinstance(data, list):
-            return {}, 0
         hours: dict[int, int] = {}
         sampled_commits = 0
         for event in data:
@@ -416,7 +474,7 @@ def _collect_releases(
         )
         full_name = str(repo_data.get("full_name") or f"{owner}/{repo_name}")
         full_name_casefold = full_name.casefold()
-        if owner_login and owner_login != owner_casefold:
+        if owner_login is not None and owner_login != owner_casefold:
             continue
         if (
             owner_login is None
@@ -440,7 +498,8 @@ def _collect_releases(
             f"{_BASE}/repos/{full_name}/releases?per_page=100",
             token,
         )
-        return repo_data, data if isinstance(data, list) else []
+        release_rows = [row for item in data if (row := _json_object(item)) is not None]
+        return repo_data, release_rows
 
     releases: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=min(8, len(repo_sources))) as pool:
@@ -484,9 +543,16 @@ def _collect_releases(
     return releases, scope, len(repo_sources)
 
 
-def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict]:
+def _collect_top_repos(
+    repos: list[Any],
+    limit: int | None = None,
+) -> list[dict[str, Any]]:
     """Return the top repos sorted by stars descending."""
-    non_forks = [r for r in repos if not r.get("fork")]
+    non_forks: list[dict[str, Any]] = []
+    for repo in repos:
+        row = _json_object(repo)
+        if row is not None and not row.get("fork"):
+            non_forks.append(row)
     non_forks.sort(key=lambda r: r.get("stargazers_count", 0), reverse=True)
     if limit is not None:
         non_forks = non_forks[:limit]
@@ -507,8 +573,8 @@ def _collect_top_repos(repos: list[dict], limit: int | None = None) -> list[dict
 
 def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     """Collect GitHub metrics for *owner*/*repo* and return a flat dict."""
-    metrics: dict[str, Any] = {"collection_failures": []}
-    failures: list[str] = metrics["collection_failures"]
+    failures: list[str] = []
+    metrics: dict[str, Any] = {"collection_failures": failures}
 
     # -- REST: repo stats ------------------------------------------------
     logger.info("Fetching repo stats for {}/{}", owner, repo)
@@ -566,15 +632,17 @@ def collect(owner: str, repo: str, token: str | None = None) -> dict[str, Any]:
     # -- GraphQL: contributions for the profile owner, not the token viewer
     contribution_stats = _collect_contribution_stats(owner, token)
     calendar_failed = bool(contribution_stats.pop("collection_failed", False))
-    if calendar_failed and not contribution_stats.get("contributions_calendar"):
+    if calendar_failed:
         failures.append("contributions_calendar")
     metrics.update(contribution_stats)
 
     # -- REST: languages, top repos, traffic -----------------------------
     try:
-        all_repos = _paginate_rest(f"{_BASE}/users/{owner}/repos?per_page=100", token)
-        if not isinstance(all_repos, list):
-            all_repos = []
+        all_repos = _paginate_rest(
+            f"{_BASE}/users/{owner}/repos?per_page=100", token, require_complete=True
+        )
+        if any(not isinstance(row, dict) for row in all_repos):
+            raise TypeError("Required GitHub inventory contains a malformed repository")
     except Exception as exc:
         logger.warning("Failed to fetch repos list: {}", exc)
         all_repos = []
@@ -644,7 +712,7 @@ def main() -> None:
     args = parser.parse_args()
 
     token = os.environ.get("GITHUB_TOKEN")
-    if not token:
+    if token is None or token == "":
         logger.warning(
             "GITHUB_TOKEN not set — requests will be unauthenticated "
             "(lower rate limits, no GraphQL)"

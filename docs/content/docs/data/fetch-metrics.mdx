@@ -1,6 +1,6 @@
 ---
 title: Fetch Metrics
-description: Fetches live GitHub GraphQL metrics — stars, commits, followers, repos — into a structured JSON file.
+description: Collects live GitHub REST and GraphQL metrics — stars, commits, followers, repos — into a structured JSON file.
 ---
 
 ## Module
@@ -11,19 +11,13 @@ Shared HTTP helpers live in `scripts/_github_http.py` (`_headers`, `_graphql`).
 
 ## What it fetches
 
-| Metric | Source |
+| Field | Source |
 |---|---|
-| `total_commits` | GraphQL `contributionCalendar` |
-| `stars` | Sum across all repos |
-| `contributions_last_year` | GitHub contributions API |
-| `followers` / `following` | User profile |
-| `forks` | Sum across all repos |
-| `network_count` | Repo network count |
-| `open_issues_count` | All open issues |
-| `orgs_count` | Organizations membership |
-| `watchers` | Sum across all repos |
-| `repos` | Per-repo: name, stars, age_months, language |
-| `contributions_monthly` | Monthly contribution breakdown |
+| `stars`, `forks`, `watchers`, `network_count`, `open_issues_count` | Counts from the requested repository |
+| `followers`, `following`, `public_repos`, `public_gists` | Owner's public user profile |
+| `orgs_count` | Organizations returned by the public user organizations request |
+| `total_commits`, `contributions_last_year`, `contributions_calendar` | Owner's GraphQL contributions collection, calendar total and daily entries |
+| `repos`, `languages` | Paginated repository records and language-byte totals across non-forks |
 
 ## CLI
 
@@ -36,14 +30,7 @@ uv run python -m scripts.fetch_metrics \
 
 ## Authentication
 
-Requires `GITHUB_TOKEN` in the environment (PAT with `read:user`, `public_repo`):
-
-```bash
-export GITHUB_TOKEN=ghp_...
-uv run python -m scripts.fetch_metrics --owner wyattowalsh --repo wyattowalsh --output metrics.json
-```
-
-Without a token, public API endpoints are used where possible (lower rate limits apply).
+Set `GITHUB_TOKEN` for authenticated REST and GraphQL requests. Without it, the standalone collector can retrieve public REST data with lower rate limits. Supplemental card generation requires authentication.
 
 ## Output shape
 
@@ -59,18 +46,19 @@ Without a token, public API endpoints are used where possible (lower rate limits
   "orgs_count": 2,
   "watchers": 20,
   "repos": [
-    { "name": "wyattowalsh", "stars": 50, "age_months": 36, "language": "Python" }
+    {"name": "example", "full_name": "owner/example", "fork": false, "stargazers_count": 50, "language": "Python"}
   ],
-  "contributions_monthly": {
-    "2026-01": 120,
-    "2026-02": 95
-  }
+  "languages": {"Python": 125000},
+  "contributions_calendar": [
+    {"date": "2026-01-02", "count": 4, "color": "#216e39"}
+  ],
+  "collection_failures": []
 }
 ```
 
 ## Caching
 
-`collect()` does not read a same-day cache. Each CLI run calls GitHub again. The payload field for the calendar is `contributions_calendar`, not `contributions_monthly`.
+Each invocation collects fresh data. A failed or truncated repository traversal records `languages` in `collection_failures`. A malformed or failed calendar response records `contributions_calendar`. Either flag stops the supplemental publisher before it replaces the required cards.
 
 ## Related
 
