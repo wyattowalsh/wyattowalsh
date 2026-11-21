@@ -5,101 +5,26 @@ from collections.abc import Mapping, Sequence
 from datetime import date
 from html import escape
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from urllib.parse import urlsplit
 
 from defusedxml import ElementTree
 from PIL import ImageFont
 
-from .config import ReadmeProfileProject
-from .readme_svg import SvgCard
+from .config import PublicProjectStats, ReadmeProfileProject
+from .readme_svg import (
+    CLOCK_ICON_PATH,
+    FORK_ICON_PATH,
+    LANGUAGE_COLORS,
+    LAW_ICON_PATH,
+    REPO_ICON_PATH,
+    STAR_ICON_PATH,
+    SvgCard,
+    SvgRepoCardRenderer,
+    _card_shell,
+    _shadow_filter_defs,
+)
 
-MARKS = {
-    "nbadb": (
-        '<circle cx="15" cy="15" r="11"/>'
-        '<path d="M4 15h22M15 4v22M7 7c9 4 9 12 0 16M23 7c-9 4-9 12 0 16"/>'
-    ),
-    "proxywhirl": (
-        '<path d="M5 12a10 10 0 0 1 17-4l3 4m0-6v6h-6M25 18a10 10 0 0 1-17 '
-        '4l-3-4m0 6v-6h6"/>'
-    ),
-    "agents": (
-        '<circle cx="6" cy="14" r="3"/>'
-        '<circle cx="23" cy="6" r="3"/>'
-        '<circle cx="23" cy="23" r="3"/>'
-        '<path d="M9 14h3c4 0 3-8 8-8M12 14c4 0 3 9 8 9"/>'
-    ),
-    "profile-bits": (
-        '<rect x="3.5" y="5" width="23" height="19" rx="2"/>'
-        '<path d="M4 11h22M9 17h4m4 0h4M9 20h8"/>'
-    ),
-    "riso": ('<path d="m15 4 11 6-11 6-11-6zM4 15l11 6 11-6M4 20l11 6 11-6"/>'),
-    "openopps": (
-        '<rect x="3.5" y="5.5" width="18" height="16" rx="1.8"/>'
-        '<path d="M8 10h9M8 14h5M8 18h3"/>'
-        '<circle cx="20" cy="19" r="5"/>'
-        '<path d="m24 23 4 4"/>'
-    ),
-    "webmedia-dl": ('<path d="M15 3v14m-5-5 5 5 5-5M4 18v6h22v-6"/>'),
-    "iina-plugin-bookmarks": (
-        '<path d="M7 4.5h16v21l-8-5.5-8 5.5z"/><path d="m12 9 6 3.5-6 3.5z"/>'
-    ),
-    "nbops": ('<path d="M4 6v18h22M6 17h4l3-8 4 12 4-9h4"/>'),
-    "cwa": ('<path d="M4 4.5h20v14H12l-5.5 4v-4H4zM9 10h8M19 22l4 4 4-4m-4-4v8"/>'),
-    "personal-website": (
-        '<rect x="3.5" y="5" width="23" height="20" rx="1.5"/>'
-        '<path d="M4 10h22M9 15h6m-6 4h10"/>'
-    ),
-    "prompts": ('<path d="M6 4.5h14l4 4v17H6zM19 5v5h5m-14 3 3 3-3 3m6 0h4"/>'),
-    "ai-web-feeds": (
-        '<circle cx="7" cy="23" r="1.5"/>'
-        '<path d="M6 14a10 10 0 0 1 10 10M6 6a18 18 0 0 1 18 18"/>'
-    ),
-    "linkedin-profile-exporter": (
-        '<rect x="3.5" y="5" width="20" height="18" rx="1.5"/>'
-        '<circle cx="10" cy="12" r="2"/>'
-        '<path d="M6.5 18c1-4 6-4 7 0M17 11h3m-3 3h3m-2 10h9m-4-4 4 4-4 4"/>'
-    ),
-    "copy-to-gmail": (
-        '<path d="M8 4.5h12v5H8zM8 7H4.5v18H16M20 7h3v6"/>'
-        '<rect x="10" y="14" width="17" height="12" rx="1.2"/>'
-        '<path d="m11 15 7.5 6 7.5-6"/>'
-    ),
-    "wild-web-wrap-up": (
-        '<path d="M3.5 5h18v20h-16a2 2 0 0 1-2-2zM22 10h4v12a3 3 0 0 1-3 3M7 '
-        '9h11M7 14h4v5H7zM14 14h4m-4 4h4"/>'
-    ),
-    "fl-mcp": (
-        '<path d="M6 5v20M15 5v20M24 5v20"/>'
-        '<path class="solid" d="M3.5 9h5v4h-5zM12.5 16h5v4h-5zM21.5 8h5v4h-5z"/>'
-    ),
-    "mcp-crawl4ai": (
-        '<circle cx="15" cy="15" r="11"/>'
-        '<ellipse cx="15" cy="15" rx="5" ry="11"/>'
-        '<path d="M5 11h20M5 19h20"/>'
-    ),
-    "hue-board": (
-        '<path d="M10 15c-6-7 1-15 8-11 5 3 5 7 1 11l-2 4h-5zM12 22h6m-5 3h4M5 '
-        '5l-2-2m22 2 2-2"/>'
-    ),
-    "awesome-iina": (
-        '<path d="M4 5h7v19H4zM12 5h5v19h-5zM19 8l5-2 5 16-5 2zM5 18h5"/>'
-    ),
-    "agentic-cad": ('<path d="m15 3 11 6v12l-11 6-11-6V9zM4 9l11 6 11-6M15 15v12"/>'),
-    "NYC-recs": (
-        '<path d="m3 8 7-3 8 3 9-3v18l-9 3-8-3-7 3zM10 5v18m8-15v18"/>'
-        '<circle cx="15" cy="14" r="2"/>'
-    ),
-    "iina-plugin-starter": (
-        '<path d="M4 24V7h7l2 3h13v14z"/><path d="m12 14-3 3 3 3m6-6 3 3-3 3"/>'
-    ),
-    "soundlab": ('<path d="M2 15h4l2-6 3 13 3-18 3 22 3-15 2 4h6"/>'),
-}
-
-_PALETTES = {
-    "rust": ("#92452d", "#efac91"),
-    "teal": ("#276b65", "#8bd2bf"),
-    "blue": ("#395f84", "#a4cceb"),
-}
 _SURFACE = """
 .paper{fill:#faf8f3;stroke:#cec9bd}.name{fill:#254966}.desc{fill:#324452}
 .meta{fill:#52616d}.solid{fill:#faf8f3}
@@ -114,11 +39,15 @@ def profile_directory(shared_directory: Path | str) -> Path:
 
 
 def replace_family(directory: Path, prefix: str, files: Mapping[str, str]) -> None:
-    """Replace exactly one generated family, removing retired members after render."""
+    """Stage the whole family, replace each file atomically, then prune old members."""
     if files:
         directory.mkdir(parents=True, exist_ok=True)
-    for filename, svg in files.items():
-        (directory / filename).write_text(svg, encoding="utf-8")
+        with TemporaryDirectory(dir=directory, prefix=f".{prefix}-") as tmp:
+            staging = Path(tmp)
+            for filename, svg in files.items():
+                (staging / filename).write_text(svg, encoding="utf-8")
+            for filename in files:
+                (staging / filename).replace(directory / filename)
     for path in directory.glob(f"{prefix}-*.svg"):
         if path.name not in files:
             path.unlink()
@@ -159,49 +88,178 @@ def validate_retained_articles(block: str, directory: Path) -> None:
         )
 
 
-def _project_svg(
-    project: ReadmeProfileProject,
-    name: str,
-    alt: str,
-    language: str,
-    stars: int,
-) -> str:
-    light, dark = _PALETTES[project.theme]
-    desc1, desc2 = map(escape, project.description)
-    small = " small" if len(name) > 20 else ""
-    star = (
-        f'<text x="258" y="99" text-anchor="end" class="meta">★ {stars:,}</text>'
-        if stars
-        else ""
-    )
-    mark = MARKS.get(name, '<path d="m9 8-7 7 7 7m12-14 7 7-7 7"/>')
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="274" height="112"
- viewBox="0 0 274 112" role="img" aria-labelledby="t d">
-<title id="t">{escape(name)}</title><desc id="d">{escape(alt)}</desc>
-<style>{_SURFACE}
-text{{font-family:Arial,Helvetica,sans-serif}}
-.name{{font:700 20px Georgia,"Times New Roman",serif}}
-.name.small{{font-size:17px;letter-spacing:-.45px}}.desc{{font-size:15.5px}}
-.meta{{font-size:13px}}.mark{{fill:none;stroke:{light};stroke-linecap:round;
-stroke-linejoin:round;stroke-width:1.7}}
-@media(prefers-color-scheme:dark){{.mark{{stroke:{dark}}}}}</style>
-<rect x="1" y="1" width="272" height="110" rx="7" class="paper"/>
-<text x="16" y="29" class="name{small}">{escape(name)}</text>
-<g class="mark" transform="translate(234 9) scale(.86)">{mark}</g>
-<text x="16" y="54" class="desc">{desc1}</text>
-<text x="16" y="74" class="desc">{desc2}</text>
-<text x="16" y="99" class="meta">{escape(language)}</text>{star}
-</svg>
-"""
+def _display_date(value: date, *, long_month: bool = False) -> str:
+    month = value.strftime("%B" if long_month else "%b")
+    return f"{month} {value.day}, {value.year}"
+
+
+class _ProfileProjectRenderer(SvgRepoCardRenderer):
+    """Reflow the shared GitHub card chrome for a 238px-wide profile column."""
+
+    def __init__(self) -> None:
+        super().__init__(width=360, height=228)
+        # Pillow embeds this font, so CI and local snapshots use identical advances.
+        self.font = ImageFont.load_default(size=19)
+
+    def _wrap(self, value: str) -> list[str]:
+        lines: list[str] = [""]
+        for word in value.split():
+            candidate = (lines[-1] + " " + word).strip()
+            if lines[-1] and self.font.getlength(candidate) > 314:
+                lines.append(word)
+            else:
+                lines[-1] = candidate
+        return lines
+
+    @staticmethod
+    def _icon(path: str, x: int, y: int) -> str:
+        return (
+            f'<svg x="{x}" y="{y}" width="17" height="17" viewBox="0 0 16 16" '
+            f'fill="var(--meta-color)" aria-hidden="true"><path d="{path}"/></svg>'
+        )
+
+    def _text(self, style: str, x: int, y: int, value: str, width: int = 325) -> str:
+        # Keep the full accessible name even if one identifier exceeds a whole line.
+        if self.font.getlength(value) > width:
+            while value and self.font.getlength(value + "…") > width:
+                value = value[:-1]
+            value = value.rstrip() + "…"
+        return f'<text class="{style}" x="{x}" y="{y}">{escape(value)}</text>'
+
+    def render_project(
+        self, design: ReadmeProfileProject, data: PublicProjectStats
+    ) -> tuple[str, str]:
+        name = design.full_name.split("/")[1]
+        summary = " ".join(design.description).strip()
+        source = data.languages
+        total = sum(source.values())
+        top = sorted(source, key=lambda key: source[key], reverse=True)[:2]
+        labels = []
+        for language in top:
+            share = 100 * source[language] / total
+            labels.append(
+                (language, f"{language} " + ("<1%" if share < 1 else f"{share:.0f}%"))
+            )
+        if not labels and data.language not in (None, ""):
+            labels.append((data.language, data.language))
+        color = LANGUAGE_COLORS.get(top[0] if top else data.language or "", "#8b949e")
+        updated = _display_date(data.updated_on) if data.updated_on else None
+        license_id = (
+            data.license_spdx
+            if data.license_spdx not in {None, "", "NOASSERTION", "OTHER"}
+            else None
+        )
+        counts = f"{data.stars:,} {'star' if data.stars == 1 else 'stars'}"
+        if data.forks is not None:
+            counts += f", {data.forks:,} {'fork' if data.forks == 1 else 'forks'}"
+        facts = [summary, counts + "."]
+        if labels:
+            facts.append(", ".join(label for _, label in labels) + ".")
+        if updated is not None:
+            facts.append(f"Updated {updated}.")
+        if license_id is not None:
+            facts.append(f"{license_id} license.")
+        detail = " ".join(facts)
+        alt = f"{name}. {detail}"
+
+        desc = self._wrap(summary)
+        shift = max(0, len(desc) - 3) * 24
+        body = [
+            self._icon(REPO_ICON_PATH, 17, 23),
+            self._text(
+                "rc-title", 40, 38, name, 223 if data.thumbnail is not None else 295
+            ),
+        ]
+        body.extend(
+            self._text("rc-desc", 17, 83 + index * 24, line)
+            for index, line in enumerate(desc)
+        )
+        stats = [(STAR_ICON_PATH, f"{data.stars:,}")]
+        if data.forks is not None:
+            stats.append((FORK_ICON_PATH, f"{data.forks:,}"))
+        if license_id is not None:
+            stats.append((LAW_ICON_PATH, license_id))
+        x = 16
+        for icon, label in stats:
+            width = int(self.font.getlength(label))
+            if x + 21 + width > 344:
+                shift += 26
+                x = 16
+            body.extend(
+                [
+                    self._icon(icon, x, 151 + shift),
+                    self._text("rc-meta", x + 21, 166 + shift, label),
+                ]
+            )
+            x += 21 + width + (13 if icon == STAR_ICON_PATH else 12)
+        if updated is not None:
+            if x > 202:
+                shift += 26
+            body.extend(
+                [
+                    self._icon(CLOCK_ICON_PATH, 202, 151 + shift),
+                    self._text("rc-meta", 223, 166 + shift, updated, 126),
+                ]
+            )
+        if source:
+            self._render_lang_bar(body, source, 16, 183 + shift, 328)
+        x = 15
+        for language, label in labels:
+            width = int(self.font.getlength(label))
+            if x > 15 and x + 11 + width > 351:
+                x = 15
+                shift += 24
+            dot = LANGUAGE_COLORS.get(language, "#8b949e")
+            body.extend(
+                [
+                    f'<circle cx="{x + 4}" cy="{207 + shift}" r="4" fill="{dot}"/>',
+                    self._text("rc-meta", x + 11, 213 + shift, label, 329),
+                ]
+            )
+            x += 11 + width + 9
+        height = self.height + shift
+        css = (
+            self._build_css(color) + "\n.rc-title{font-size:20px}"
+            ".rc-desc,.rc-meta,.rc-lang-label{font-size:18.5px}\n"
+        )
+        thumb_clip = (
+            '<clipPath id="thumb-clip"><rect x="278" y="16" '
+            'width="64" height="42" rx="6"/></clipPath>'
+            if data.thumbnail is not None
+            else ""
+        )
+        lines = [
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="360" height="{height}" '
+            f'viewBox="0 0 360 {height}" role="img" aria-labelledby="title detail">',
+            f'<title id="title">{escape(name)}</title>'
+            f'<desc id="detail">{escape(detail)}</desc>',
+            f'<defs><style>{css}</style><clipPath id="card-clip">'
+            f'<rect width="360" height="{height}" rx="10"/></clipPath>'
+            f"{thumb_clip}{_shadow_filter_defs()}</defs>",
+            *_card_shell(360, height, rx=10, accent_fill=color, clip_id="card-clip"),
+        ]
+        if data.thumbnail is not None:
+            lines.extend(
+                [
+                    '<image x="278" y="16" width="64" height="42" '
+                    'preserveAspectRatio="xMidYMid slice" clip-path="url(#thumb-clip)" '
+                    f'href="{escape(data.thumbnail, quote=True)}"/>',
+                    '<rect x="278" y="16" width="64" height="42" rx="6" '
+                    'fill="none" stroke="var(--card-border)" stroke-opacity=".6"/>',
+                ]
+            )
+        return "\n".join([*lines, *body, "</svg>", ""]), alt
 
 
 def projects_section(
     designs: Sequence[ReadmeProfileProject],
-    metadata: Mapping[str, tuple[str, int]],
+    metadata: Mapping[str, PublicProjectStats],
     directory: Path,
     *,
     images: bool,
+    as_of: date,
 ) -> str:
+    renderer = _ProfileProjectRenderer()
     topics: dict[str, list[tuple[str, str]]] = defaultdict(list)
     embeds = []
     files = {}
@@ -210,22 +268,13 @@ def projects_section(
         url = f"https://github.com/{design.full_name}"
         topics[design.topic].append((name, url))
         if images:
-            language, stars = metadata[design.full_name]
-            if type(stars) is not int or stars < 0:
-                raise ValueError(f"Invalid star count for {design.full_name}")
-            details = " ".join(
-                (*design.description, language + "." if language else "")
-            )
-            if stars:
-                details += f" {stars:,} GitHub {'star' if stars == 1 else 'stars'}."
             filename = f"project-{name}.svg"
-            files[filename] = _project_svg(
-                design, name, details.strip(), language, stars
+            files[filename], alt = renderer.render_project(
+                design, metadata[design.full_name]
             )
-            alt = escape(f"{name}. {details.strip()}")
             embeds.append(
                 f'<a href="{url}"><img src="{directory.as_posix()}/{filename}"'
-                f' width="274" height="112" alt="{alt}"></a>'
+                f' width="360" alt="{escape(alt, quote=True)}"></a>'
             )
     replace_family(directory, "project", files)
     index = [
@@ -250,6 +299,9 @@ def projects_section(
             '<p align="center">',
             *embeds,
             "</p>",
+            "",
+            f'<p align="center"><sub>GitHub repository data as of '
+            f"{_display_date(as_of, long_month=True)}.</sub></p>",
         ]
     )
 

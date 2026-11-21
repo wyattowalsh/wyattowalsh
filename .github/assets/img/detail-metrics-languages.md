@@ -1,4 +1,4 @@
-<!-- profile-metric name=metrics-languages chart=4391b35b70b432a8d7f68a1fb003c98f6a33672ea2b436ef4bf75e6e4b35e89a summary=43d4dde4eee319416555662bd46f5918f4deb1aa8a4566fe8383d5fb846c3af0 saved=2026-08-27 -->
+<!-- profile-metric name=metrics-languages chart=4391b35b70b432a8d7f68a1fb003c98f6a33672ea2b436ef4bf75e6e4b35e89a summary=4beda45b27043e0d52819bc5d0bd6f26af5263a8dce85e13f555b9305b5d21f5 saved=2026-08-27 -->
 <details>
 <summary>Repository languages · byte shares and creation years</summary>
 

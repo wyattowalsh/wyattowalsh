@@ -1,6 +1,7 @@
 import os
+from datetime import date
 from pathlib import Path
-from typing import Literal, override
+from typing import Annotated, Literal, override
 
 import yaml
 from pydantic import (
@@ -300,12 +301,25 @@ class ReadmeFeaturedRepo(BaseModel):
     full_name: str = Field(..., description="GitHub repository full name (owner/repo)")
 
 
+class PublicProjectStats(BaseModel):
+    """Public GitHub fields shared by live and recorded project-card rendering."""
+
+    stars: Annotated[int, Field(ge=0, strict=True)]
+    forks: Annotated[int, Field(ge=0, strict=True)] | None = None
+    language: str | None = None
+    languages: dict[str, Annotated[int, Field(gt=0, strict=True)]] = Field(
+        default_factory=dict
+    )
+    updated_on: date | None = None
+    license_spdx: str | None = None
+    thumbnail: str | None = None
+
+
 class ReadmeProfileProject(BaseModel):
     """Editorial copy and visual treatment for one public profile card."""
 
     full_name: str = Field(pattern=r"^[A-Za-z0-9-]+/[A-Za-z0-9_.-]+$")
     description: tuple[str, str]
-    theme: Literal["rust", "teal", "blue"]
     topic: str = Field(min_length=1)
 
 

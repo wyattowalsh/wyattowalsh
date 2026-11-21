@@ -1,101 +1,388 @@
 {
-  "source": "Public GitHub repository metadata and published article cards in the approved 2026-11-21 review.",
+  "source": "Anonymous public GitHub repository and language metadata on 2026-11-21, and published article cards.",
   "projects": {
     "wyattowalsh/nbadb": {
+      "language": "Python",
       "stars": 79,
-      "language": "Python"
+      "forks": 20,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-04",
+      "languages": {
+        "Python": 27855609,
+        "Jupyter Notebook": 510176
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-nbadb.svg"
     },
     "wyattowalsh/proxywhirl": {
+      "language": "Python",
       "stars": 25,
-      "language": "Python"
+      "forks": 7,
+      "license_spdx": "MIT",
+      "updated_on": "2026-10-17",
+      "languages": {
+        "Python": 4727484,
+        "TypeScript": 301087,
+        "MDX": 238991,
+        "JavaScript": 43542,
+        "Shell": 9835,
+        "Just": 9297,
+        "HCL": 7524,
+        "Dockerfile": 2926,
+        "CSS": 1818,
+        "Go Template": 1638,
+        "Mako": 997
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-proxywhirl.svg"
     },
     "wyattowalsh/agents": {
+      "language": "Python",
       "stars": 6,
-      "language": "Python"
+      "forks": 1,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-18",
+      "languages": {
+        "Python": 11863492,
+        "TypeScript": 639318,
+        "JavaScript": 486972,
+        "HTML": 270892,
+        "Shell": 237925,
+        "AppleScript": 20657,
+        "Just": 13860,
+        "MDX": 3298,
+        "Mermaid": 1831
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-agents.svg"
     },
     "wyattowalsh/profile-bits": {
+      "language": "TypeScript",
       "stars": 0,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-08",
+      "languages": {
+        "TypeScript": 2722752,
+        "Shell": 27571,
+        "CSS": 5807,
+        "JavaScript": 2261,
+        "HTML": 1650,
+        "Just": 855,
+        "MDX": 46
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-profile-bits.svg"
     },
     "wyattowalsh/riso": {
+      "language": "Jinja",
       "stars": 0,
-      "language": "Jinja"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-08",
+      "languages": {
+        "Jinja": 3254539,
+        "Python": 1412204,
+        "HTML": 744253,
+        "TypeScript": 681470,
+        "Shell": 198001,
+        "PowerShell": 64388,
+        "CSS": 32670,
+        "Just": 11747,
+        "JavaScript": 5270,
+        "Makefile": 538
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-riso.svg"
     },
     "wyattowalsh/openopps": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-09-11",
+      "languages": {
+        "Python": 5484064,
+        "TypeScript": 950667,
+        "MDX": 163729,
+        "Jupyter Notebook": 142795,
+        "JavaScript": 46169,
+        "Just": 34557,
+        "CSS": 22970,
+        "Rhai": 7556,
+        "Mako": 587,
+        "Shell": 326
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-openopps.svg"
     },
     "wyattowalsh/webmedia-dl": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-27",
+      "languages": {
+        "Python": 1246131,
+        "Swift": 451464,
+        "JavaScript": 227567,
+        "HTML": 11048,
+        "Shell": 3756,
+        "Just": 743
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-webmedia-dl.svg"
     },
     "wyattowalsh/iina-plugin-bookmarks": {
+      "language": "TypeScript",
       "stars": 20,
-      "language": "TypeScript"
+      "forks": 2,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-07",
+      "languages": {
+        "TypeScript": 729645,
+        "SCSS": 75211,
+        "HTML": 12089,
+        "Makefile": 11983,
+        "Shell": 7294,
+        "JavaScript": 2837
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-iina-plugin-bookmarks.svg"
     },
     "wyattowalsh/nbops": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-27",
+      "languages": {
+        "Python": 401109,
+        "Jupyter Notebook": 2140,
+        "Just": 1766
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-nbops.svg"
     },
     "wyattowalsh/cwa": {
+      "language": "JavaScript",
       "stars": 0,
-      "language": "JavaScript"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-27",
+      "languages": {
+        "JavaScript": 327004,
+        "CSS": 32941,
+        "Python": 17192
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-cwa.svg"
     },
     "wyattowalsh/personal-website": {
+      "language": "TypeScript",
       "stars": 4,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": null,
+      "updated_on": "2026-06-13",
+      "languages": {
+        "TypeScript": 1362025,
+        "CSS": 214682,
+        "MDX": 82836,
+        "JavaScript": 67307,
+        "Python": 18421
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-personal-website.svg"
     },
     "wyattowalsh/prompts": {
+      "language": "JavaScript",
       "stars": 0,
-      "language": "JavaScript"
+      "forks": 2,
+      "license_spdx": "MIT",
+      "updated_on": "2026-09-07",
+      "languages": {
+        "JavaScript": 1051188,
+        "TypeScript": 301224,
+        "Python": 190101,
+        "CSS": 48435,
+        "Just": 7770,
+        "HTML": 2586,
+        "Shell": 1094
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-prompts.svg"
     },
     "wyattowalsh/ai-web-feeds": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-08",
+      "languages": {
+        "Python": 2227218,
+        "TypeScript": 2038276,
+        "JavaScript": 38974,
+        "Shell": 23018,
+        "CSS": 18001,
+        "Makefile": 8279,
+        "TOML": 5963,
+        "Dockerfile": 1013,
+        "Mako": 704
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-ai-web-feeds.svg"
     },
     "wyattowalsh/linkedin-profile-exporter": {
+      "language": "TypeScript",
       "stars": 1,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-27",
+      "languages": {
+        "TypeScript": 846087,
+        "MDX": 25195,
+        "HTML": 5679,
+        "CSS": 2182,
+        "JavaScript": 1229,
+        "Just": 568
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-linkedin-profile-exporter.svg"
     },
     "wyattowalsh/copy-to-gmail": {
+      "language": "TypeScript",
       "stars": 0,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-27",
+      "languages": {
+        "TypeScript": 273754,
+        "JavaScript": 56843,
+        "CSS": 39765,
+        "Python": 1024,
+        "HTML": 373
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-copy-to-gmail.svg"
     },
     "wyattowalsh/wild-web-wrap-up": {
+      "language": "TypeScript",
       "stars": 0,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": null,
+      "updated_on": "2026-08-27",
+      "languages": {
+        "TypeScript": 340760,
+        "JavaScript": 96329,
+        "CSS": 19151,
+        "MDX": 13359,
+        "HTML": 9936,
+        "Just": 4094
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-wild-web-wrap-up.svg"
     },
     "wyattowalsh/fl-mcp": {
+      "language": "Python",
       "stars": 1,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-20",
+      "languages": {
+        "Python": 1348692,
+        "Swift": 11111,
+        "Just": 598,
+        "Mako": 370
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-fl-mcp.svg"
     },
     "wyattowalsh/mcp-crawl4ai": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 2,
+      "license_spdx": "MIT",
+      "updated_on": "2026-08-20",
+      "languages": {
+        "Python": 233994,
+        "Dockerfile": 1520,
+        "Nix": 657
+      },
+      "thumbnail_source": ".github/assets/img/readme/featured-card-wyattowalsh-mcp-crawl4ai.svg"
     },
     "wyattowalsh/hue-board": {
+      "language": "Swift",
       "stars": 0,
-      "language": "Swift"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-17",
+      "languages": {
+        "Swift": 882163,
+        "JavaScript": 331578,
+        "TypeScript": 79641,
+        "Python": 55628,
+        "Shell": 16426,
+        "Makefile": 1526
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/hue-board.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/04a32bf2b59913961e42bf45888ba7faa131d28db48f878651c90707be557509/wyattowalsh/hue-board"
     },
     "wyattowalsh/awesome-iina": {
+      "language": "JavaScript",
       "stars": 1,
-      "language": "JavaScript"
+      "forks": 1,
+      "license_spdx": "MIT",
+      "updated_on": "2026-10-25",
+      "languages": {
+        "JavaScript": 773135,
+        "Python": 717620,
+        "TypeScript": 81277,
+        "HTML": 43843,
+        "Jinja": 31503,
+        "CSS": 28033,
+        "Just": 14457,
+        "Shell": 949
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/awesome-iina.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/a64af1d49c57afa3eb67a91d801c314cebbbcdabf295e1e2ba0c5031b7cc9d57/wyattowalsh/awesome-iina"
     },
     "wyattowalsh/agentic-cad": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-09-06",
+      "languages": {
+        "Python": 130681,
+        "Shell": 624
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/agentic-cad.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/eb26dfed4cad7033950ea1bad14c7a880c8851e330b50d0bc8dfc4de90bd4c98/wyattowalsh/agentic-cad"
     },
     "wyattowalsh/NYC-recs": {
+      "language": "TypeScript",
       "stars": 0,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": null,
+      "updated_on": "2026-11-13",
+      "languages": {
+        "TypeScript": 72731,
+        "CSS": 25011,
+        "JavaScript": 9007,
+        "HTML": 1665
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/NYC-recs.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/9e4f6b2358e59e4783685a202d645f896366b9d6701a5f3a15686fb246a5541f/wyattowalsh/NYC-recs"
     },
     "wyattowalsh/iina-plugin-starter": {
+      "language": "TypeScript",
       "stars": 0,
-      "language": "TypeScript"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-02-23",
+      "languages": {
+        "TypeScript": 77901,
+        "JavaScript": 13837,
+        "HTML": 4004
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/iina-plugin-starter.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/4dd8fd781c807aec4039a07cf421a785e53675a574b0b7332fac74924346da1f/wyattowalsh/iina-plugin-starter"
     },
     "wyattowalsh/soundlab": {
+      "language": "Python",
       "stars": 0,
-      "language": "Python"
+      "forks": 0,
+      "license_spdx": "MIT",
+      "updated_on": "2026-11-08",
+      "languages": {
+        "Python": 611880,
+        "Jupyter Notebook": 172006
+      },
+      "thumbnail_source": "tests/fixtures/profile-project-thumbnails/soundlab.webp",
+      "thumbnail_url": "https://opengraph.githubassets.com/8736b782d7950e136c18d5a14b84ec72aaef95bf8055dd77f2b3e1b39e37b279/wyattowalsh/soundlab"
     }
   },
   "articles": [
@@ -129,5 +416,6 @@
       "published": "2021-01-14",
       "thumbnail_source": ".github/assets/img/readme/blog-using-ridge-regression-to-overcome-drawb.svg"
     }
-  ]
+  ],
+  "projects_as_of": "2026-11-21"
 }

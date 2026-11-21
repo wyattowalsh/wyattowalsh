@@ -221,6 +221,37 @@ def test_chart_dates_follow_each_saved_family(tmp_path: Path) -> None:
         render_metric_section(metrics)
 
 
+@pytest.mark.parametrize(
+    ("include_music", "include_waka", "sources"),
+    [
+        (False, False, "GitHub"),
+        (False, True, "GitHub and WakaTime"),
+        (True, False, "GitHub and Spotify"),
+        (True, True, "GitHub, WakaTime and Spotify"),
+    ],
+)
+def test_snapshot_caption_names_only_published_sources(
+    tmp_path: Path, include_music: bool, include_waka: bool, sources: str
+) -> None:
+    from datetime import date
+
+    from scripts.profile_metric_family import read_metric_family, render_metric_section
+
+    metrics, waka = _stages(tmp_path / "stage", True)
+    if not include_music:
+        for filename in metric_files("metrics-music"):
+            (metrics / filename).unlink()
+    if include_waka:
+        for filename in metric_files("wakatime"):
+            (metrics / filename).write_bytes((waka / filename).read_bytes())
+    for name in METRIC_NAMES:
+        if (metrics / f"{name}.svg").is_file():
+            _, body, _ = read_metric_family(metrics, name)
+            write_metric_detail(metrics, name, body, saved=date(2026, 8, 7))
+    caption = render_metric_section(metrics).splitlines()[0]
+    assert caption == f"**August 7, 2026** · {sources}"
+
+
 @pytest.mark.parametrize("missing", ["METRICS", "FREQUENCIES"])
 def test_configured_profile_requires_each_marker_pair_before_collection(
     tmp_path: Path, missing: str

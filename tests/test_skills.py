@@ -206,11 +206,15 @@ class _BadgeImages(HTMLParser):
         self.section_title = section_title
         self.in_section = section_title is None
         self.heading_parts: list[str] | None = None
+        self.details_depth = 0
+        self.section_depth: int | None = None
 
     @override
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {key: value or "" for key, value in attrs}
-        if tag == "h2" and self.section_title is not None:
+        if tag == "details":
+            self.details_depth += 1
+        elif tag == "h2" and self.section_title is not None:
             self.in_section = False
             self.heading_parts = []
         elif tag == "a":
@@ -234,9 +238,13 @@ class _BadgeImages(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == "h2" and self.heading_parts is not None:
             self.in_section = "".join(self.heading_parts).strip() == self.section_title
+            self.section_depth = self.details_depth if self.in_section else None
             self.heading_parts = None
-        elif tag == "details" and self.section_title is not None:
-            self.in_section = False
+        elif tag == "details":
+            if self.details_depth == self.section_depth:
+                self.in_section = False
+                self.section_depth = None
+            self.details_depth -= 1
         elif tag == "a":
             self.destination = ""
 
@@ -1241,7 +1249,9 @@ def test_camo_readback_requires_complete_catalog(defect: str) -> None:
     html = (
         outside
         + "<details><summary><h2>My Tech Stack</h2></summary>"
-        + "".join(pieces)
+        + "".join(
+            f"<details><summary>Category</summary>{piece}</details>" for piece in pieces
+        )
         + "</details>"
         + outside
         + "<h2>Next</h2>"

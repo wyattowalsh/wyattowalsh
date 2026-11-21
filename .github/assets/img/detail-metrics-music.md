@@ -1,4 +1,4 @@
-<!-- profile-metric name=metrics-music chart=7b6d3972e20ee26806dbf09b1e45628a4bb75337325c007563deabe416df39e1 summary=d1f3c3481055e06b060b0e48c9353ea086cfeeff13bac61e12c89d771f788d49 saved=2026-08-27 -->
+<!-- profile-metric name=metrics-music chart=7b6d3972e20ee26806dbf09b1e45628a4bb75337325c007563deabe416df39e1 summary=10ce9d7361a4438c57f8c1daf53029e0086eb11746c7132f08341882ab641b9a saved=2026-08-27 -->
 <details>
 <summary>Spotify · nine tracks in listening order</summary>
 

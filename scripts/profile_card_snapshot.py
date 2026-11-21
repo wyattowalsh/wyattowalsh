@@ -1,12 +1,14 @@
 """Render the compact profile families from a recorded public metadata fixture."""
 
 import argparse
+import base64
 import json
+from datetime import date
 from pathlib import Path
 
 from defusedxml import ElementTree
 
-from .config import load_config
+from .config import PublicProjectStats, load_config
 from .profile_cards import articles_section, profile_directory, projects_section
 from .readme_sections import ReadmeSectionGenerator
 from .readme_svg import SvgCard
@@ -20,10 +22,28 @@ def apply_snapshot(path: Path) -> None:
     snapshot = json.loads(path.read_bytes())
     if set(snapshot["projects"]) != {p.full_name for p in profile.projects}:
         raise ValueError("Recorded repository roster differs from configuration")
-    stats = {
-        full_name: (repo["language"], repo["stars"])
-        for full_name, repo in snapshot["projects"].items()
-    }
+    stats = {}
+    for full_name, record in snapshot["projects"].items():
+        source = Path(record["thumbnail_source"])
+        shared_name = "featured-card-" + full_name.lower().replace("/", "-") + ".svg"
+        extra_name = full_name.split("/")[1] + ".webp"
+        if source == Path(settings.svg.output_dir) / shared_name:
+            image = ElementTree.parse(source).find(
+                ".//{http://www.w3.org/2000/svg}image"
+            )
+            thumbnail = image.get("href") if image is not None else None
+            if not thumbnail or not thumbnail.startswith("data:image/"):
+                raise ValueError(f"Missing recorded project thumbnail for {full_name}")
+        elif source == Path("tests/fixtures/profile-project-thumbnails") / extra_name:
+            raw = (path.parent / source.parent.name / source.name).read_bytes()
+            if raw[:4] != b"RIFF" or raw[8:12] != b"WEBP":
+                raise ValueError(f"Invalid recorded WebP for {full_name}")
+            thumbnail = "data:image/webp;base64," + base64.b64encode(raw).decode(
+                "ascii"
+            )
+        else:
+            raise ValueError(f"Invalid recorded project thumbnail for {full_name}")
+        stats[full_name] = PublicProjectStats(**record, thumbnail=thumbnail)
     generator = ReadmeSectionGenerator(settings)
     readme = Path(settings.readme_path)
     source = readme.read_text(encoding="utf-8")
@@ -52,6 +72,7 @@ def apply_snapshot(path: Path) -> None:
         stats,
         directory,
         images=generator._svg_section_enabled("featured_projects"),
+        as_of=date.fromisoformat(snapshot["projects_as_of"]),
     )
     articles = articles_section(
         cards,

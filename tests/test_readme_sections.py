@@ -3453,6 +3453,7 @@ def test_profile_keeps_all_previous_cards_on_http_200_nonfeed(
         _managed_readme("")
         + "<!-- README:METRICS:START -->\n<!-- README:METRICS:END -->\n"
         + "<!-- README:FREQUENCIES:START -->\n<!-- README:FREQUENCIES:END -->\n"
+        + "<!-- README:CONTACT_LINKS:START -->\n<!-- README:CONTACT_LINKS:END -->\n"
     )
     monkeypatch.setattr("scripts.readme_sections.render_metric_section", lambda _: "")
     posts = [

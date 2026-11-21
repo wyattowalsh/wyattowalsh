@@ -86,21 +86,32 @@ def read_metric_family(directory: Path, name: str) -> tuple[str, str, date]:
 def render_metric_section(directory: Path) -> str:
     cards: list[str] = []
     disclosures: list[str] = []
-    dates: dict[str, str] = {}
+    dates: dict[str, date] = {}
     for name in METRIC_NAMES:
         if not any((directory / f).exists() for f in metric_files(name)):
             if name in {"metrics-languages", "metrics-habits"}:
                 raise ValueError(f"Missing required profile metric: {name}")
             continue
         alt, disclosure, saved = read_metric_family(directory, name)
-        dates[name] = saved.isoformat()
+        dates[name] = saved
         disclosures.append(disclosure)
         cards.append(
             f'<img src=".github/assets/img/summary-{name}.svg" width="360" '
             f'alt="{escape(alt, quote=True)}" />'
         )
     if len(set(dates.values())) == 1:
-        note = f"Charts saved on **{next(iter(dates.values()))}**."
+        day = next(iter(dates.values()))
+        providers = ["GitHub"]
+        if "wakatime" in dates:
+            providers.append("WakaTime")
+        if "metrics-music" in dates:
+            providers.append("Spotify")
+        sources = (
+            ", ".join(providers[:-1]) + " and " + providers[-1]
+            if len(providers) > 1
+            else providers[0]
+        )
+        note = f"**{day:%B} {day.day}, {day.year}** · {sources}"
     else:
         labels = {
             "metrics-languages": "Languages",

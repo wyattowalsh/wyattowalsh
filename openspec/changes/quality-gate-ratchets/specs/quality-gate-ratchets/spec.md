@@ -234,3 +234,9 @@ alone or the canonical section pointer with a validated WakaTime chart, summary 
 
 - **WHEN** the README generator creates, updates or removes a featured project
 - **THEN** the finalizer SHALL stage both manifests and both managed SVG families, including deletions, in the same publication
+
+#### Scenario: A profile contact changes
+
+- **WHEN** profile generation adds, replaces or removes an opening contact button
+- **THEN** the finalizer SHALL stage the README and its managed `readme-profile/connect-*.svg` assets together, including deletions
+- **AND** the four historical contact artwork sources SHALL remain independent of the profile derivatives

@@ -1383,6 +1383,7 @@ jobs:
             README.md
             ':(glob).github/assets/img/readme-profile/project-*.svg'
             ':(glob).github/assets/img/readme-profile/blog-*.svg'
+            ':(glob).github/assets/img/readme-profile/connect-*.svg'
             ':(glob).github/assets/img/readme/*.svg'
             .github/assets/img/readme/featured-projects.manifest.json
             docs/public/showcase/featured-projects.manifest.json

@@ -1223,6 +1223,7 @@ def test_readme_remote_safety_and_clients(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setattr(readme_sections, "_is_safe_remote_url", lambda _url: True)
     metadata_payload = {
         "full_name": "owner/repo",
+        "private": False,
         "name": "repo",
         "html_url": "https://github.com/owner/repo",
         "description": "desc",

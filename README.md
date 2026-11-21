@@ -7,9 +7,18 @@
 
 # Wyatt Walsh
 
-I build open-source tools for exploring NBA data, working with AI agents, and designing light scenes on iPhone. My [living art gallery](LIVING_ART.md) traces the history of my GitHub account.
+I build open-source tools for exploring NBA data, working with AI agents, and designing light scenes on iPhone.
 
-[Projects](#featured-projects) · [Metrics](#metrics) · [Writing](#latest-blog-posts) · [Connect](#connect)
+<!-- README:TOP_BADGES:START -->
+<p align="center">
+  <a href="https://w4w.dev"><img src=".github/assets/img/readme-profile/connect-w4w-dev.svg" width="115" height="44" alt="Wyatt Walsh’s website, w4w.dev"/></a>
+  <a href="https://linkedin.com/in/wyattowalsh"><img src=".github/assets/img/readme-profile/connect-linkedin.svg" width="115" height="44" alt="Wyatt Walsh on LinkedIn"/></a>
+  <a href="https://www.kaggle.com/wyattowalsh"><img src=".github/assets/img/readme-profile/connect-kaggle.svg" width="115" height="44" alt="Wyatt Walsh on Kaggle"/></a>
+  <a href="https://x.com/wyattowalsh"><img src=".github/assets/img/readme-profile/connect-x-com.svg" width="115" height="44" alt="Wyatt Walsh on X"/></a>
+</p>
+<!-- README:TOP_BADGES:END -->
+
+[Projects](#featured-projects)&nbsp;· [Metrics](#metrics)&nbsp;· [Skills](#my-tech-stack)&nbsp;· [Word&nbsp;clouds](#word-clouds)&nbsp;· [Writing](#latest-blog-posts)&nbsp;· [Living&nbsp;art&nbsp;gallery](LIVING_ART.md)&nbsp;· [Connect](#connect)
 
 ## Featured Projects
 
@@ -27,38 +36,40 @@ I build open-source tools for exploring NBA data, working with AI agents, and de
 </details>
 
 <p align="center">
-<a href="https://github.com/wyattowalsh/nbadb"><img src=".github/assets/img/readme-profile/project-nbadb.svg" width="274" height="112" alt="nbadb. Build the NBA database on Kaggle from league statistics. Python. 79 GitHub stars."></a>
-<a href="https://github.com/wyattowalsh/proxywhirl"><img src=".github/assets/img/readme-profile/project-proxywhirl.svg" width="274" height="112" alt="proxywhirl. Rotate HTTP proxies and remove failed proxies from the pool. Python. 25 GitHub stars."></a>
-<a href="https://github.com/wyattowalsh/agents"><img src=".github/assets/img/readme-profile/project-agents.svg" width="274" height="112" alt="agents. Reuse skills, tools and configs across AI coding agents. Python. 6 GitHub stars."></a>
-<a href="https://github.com/wyattowalsh/profile-bits"><img src=".github/assets/img/readme-profile/project-profile-bits.svg" width="274" height="112" alt="profile-bits. Turn JSX into SVG or PNG widgets for a GitHub profile README. TypeScript."></a>
-<a href="https://github.com/wyattowalsh/riso"><img src=".github/assets/img/readme-profile/project-riso.svg" width="274" height="112" alt="riso. Build a project scaffold from CLI, API and SaaS modules. Jinja."></a>
-<a href="https://github.com/wyattowalsh/openopps"><img src=".github/assets/img/readme-profile/project-openopps.svg" width="274" height="112" alt="openopps. Find hiring boards and sync job listings to a local ledger. Python."></a>
-<a href="https://github.com/wyattowalsh/webmedia-dl"><img src=".github/assets/img/readme-profile/project-webmedia-dl.svg" width="274" height="112" alt="webmedia-dl. Save media locally on Apple devices and in desktop browsers. Python."></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks"><img src=".github/assets/img/readme-profile/project-iina-plugin-bookmarks.svg" width="274" height="112" alt="iina-plugin-bookmarks. Bookmark playback positions in the IINA media player. TypeScript. 20 GitHub stars."></a>
-<a href="https://github.com/wyattowalsh/nbops"><img src=".github/assets/img/readme-profile/project-nbops.svg" width="274" height="112" alt="nbops. Track notebook CPU and memory use and export redacted reports. Python."></a>
-<a href="https://github.com/wyattowalsh/cwa"><img src=".github/assets/img/readme-profile/project-cwa.svg" width="274" height="112" alt="cwa. Export a visible ChatGPT thread as Markdown or ZIP on macOS. JavaScript."></a>
-<a href="https://github.com/wyattowalsh/personal-website"><img src=".github/assets/img/readme-profile/project-personal-website.svg" width="274" height="112" alt="personal-website. Browse w4w.dev, my personal site and blog built with Next.js. TypeScript. 4 GitHub stars."></a>
-<a href="https://github.com/wyattowalsh/prompts"><img src=".github/assets/img/readme-profile/project-prompts.svg" width="274" height="112" alt="prompts. Copy, adapt and verify research-backed prompt recipes. JavaScript."></a>
-<a href="https://github.com/wyattowalsh/ai-web-feeds"><img src=".github/assets/img/readme-profile/project-ai-web-feeds.svg" width="274" height="112" alt="ai-web-feeds. Follow AI and machine learning sources in your feed reader. Python."></a>
-<a href="https://github.com/wyattowalsh/linkedin-profile-exporter"><img src=".github/assets/img/readme-profile/project-linkedin-profile-exporter.svg" width="274" height="112" alt="linkedin-profile-exporter. Export LinkedIn profiles as JSON, CSV or Markdown. TypeScript. 1 GitHub star."></a>
-<a href="https://github.com/wyattowalsh/copy-to-gmail"><img src=".github/assets/img/readme-profile/project-copy-to-gmail.svg" width="274" height="112" alt="copy-to-gmail. Prepare sanitized HTML and plain text to paste into Gmail. TypeScript."></a>
-<a href="https://github.com/wyattowalsh/wild-web-wrap-up"><img src=".github/assets/img/readme-profile/project-wild-web-wrap-up.svg" width="274" height="112" alt="wild-web-wrap-up. Read the newsletter archive and draft issues for Buttondown. TypeScript."></a>
-<a href="https://github.com/wyattowalsh/fl-mcp"><img src=".github/assets/img/readme-profile/project-fl-mcp.svg" width="274" height="112" alt="fl-mcp. Start a local MCP server project for FL Studio. Python. 1 GitHub star."></a>
-<a href="https://github.com/wyattowalsh/mcp-crawl4ai"><img src=".github/assets/img/readme-profile/project-mcp-crawl4ai.svg" width="274" height="112" alt="mcp-crawl4ai. Give AI tools access to Crawl4AI web crawling through MCP. Python."></a>
-<a href="https://github.com/wyattowalsh/hue-board"><img src=".github/assets/img/readme-profile/project-hue-board.svg" width="274" height="112" alt="hue-board. Control Philips Hue lights and animate scenes across a room. Swift."></a>
-<a href="https://github.com/wyattowalsh/awesome-iina"><img src=".github/assets/img/readme-profile/project-awesome-iina.svg" width="274" height="112" alt="awesome-iina. Find IINA plugins, media tools and guides for plugin developers. JavaScript. 1 GitHub star."></a>
-<a href="https://github.com/wyattowalsh/agentic-cad"><img src=".github/assets/img/readme-profile/project-agentic-cad.svg" width="274" height="112" alt="agentic-cad. Set up Claude Code for computer-aided design in FreeCAD. Python."></a>
-<a href="https://github.com/wyattowalsh/NYC-recs"><img src=".github/assets/img/readme-profile/project-NYC-recs.svg" width="274" height="112" alt="NYC-recs. Explore my New York City picks on a map by area, type or vibe. TypeScript."></a>
-<a href="https://github.com/wyattowalsh/iina-plugin-starter"><img src=".github/assets/img/readme-profile/project-iina-plugin-starter.svg" width="274" height="112" alt="iina-plugin-starter. Build an IINA plugin with React views and TypeScript bindings. TypeScript."></a>
-<a href="https://github.com/wyattowalsh/soundlab"><img src=".github/assets/img/readme-profile/project-soundlab.svg" width="274" height="112" alt="soundlab. Transform audio in an interactive Google Colab notebook. Python."></a>
+<a href="https://github.com/wyattowalsh/nbadb"><img src=".github/assets/img/readme-profile/project-nbadb.svg" width="360" alt="nbadb. Build the NBA database on Kaggle from league statistics. 79 stars, 20 forks. Python 98%, Jupyter Notebook 2%. Updated Nov 4, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/proxywhirl"><img src=".github/assets/img/readme-profile/project-proxywhirl.svg" width="360" alt="proxywhirl. Rotate HTTP proxies and remove failed proxies from the pool. 25 stars, 7 forks. Python 88%, TypeScript 6%. Updated Oct 17, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/agents"><img src=".github/assets/img/readme-profile/project-agents.svg" width="360" alt="agents. Reuse skills, tools and configs across AI coding agents. 6 stars, 1 fork. Python 88%, TypeScript 5%. Updated Nov 18, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/profile-bits"><img src=".github/assets/img/readme-profile/project-profile-bits.svg" width="360" alt="profile-bits. Turn JSX into SVG or PNG widgets for a GitHub profile README. 0 stars, 0 forks. TypeScript 99%, Shell &lt;1%. Updated Nov 8, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/riso"><img src=".github/assets/img/readme-profile/project-riso.svg" width="360" alt="riso. Build a project scaffold from CLI, API and SaaS modules. 0 stars, 0 forks. Jinja 51%, Python 22%. Updated Nov 8, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/openopps"><img src=".github/assets/img/readme-profile/project-openopps.svg" width="360" alt="openopps. Find hiring boards and sync job listings to a local ledger. 0 stars, 0 forks. Python 80%, TypeScript 14%. Updated Sep 11, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/webmedia-dl"><img src=".github/assets/img/readme-profile/project-webmedia-dl.svg" width="360" alt="webmedia-dl. Save media locally on Apple devices and in desktop browsers. 0 stars, 0 forks. Python 64%, Swift 23%. Updated Aug 27, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-bookmarks"><img src=".github/assets/img/readme-profile/project-iina-plugin-bookmarks.svg" width="360" alt="iina-plugin-bookmarks. Bookmark playback positions in the IINA media player. 20 stars, 2 forks. TypeScript 87%, SCSS 9%. Updated Nov 7, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/nbops"><img src=".github/assets/img/readme-profile/project-nbops.svg" width="360" alt="nbops. Track notebook CPU and memory use and export redacted reports. 0 stars, 0 forks. Python 99%, Jupyter Notebook &lt;1%. Updated Aug 27, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/cwa"><img src=".github/assets/img/readme-profile/project-cwa.svg" width="360" alt="cwa. Export a visible ChatGPT thread as Markdown or ZIP on macOS. 0 stars, 0 forks. JavaScript 87%, CSS 9%. Updated Aug 27, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/personal-website"><img src=".github/assets/img/readme-profile/project-personal-website.svg" width="360" alt="personal-website. Browse w4w.dev, my personal site and blog built with Next.js. 4 stars, 0 forks. TypeScript 78%, CSS 12%. Updated Jun 13, 2026."></a>
+<a href="https://github.com/wyattowalsh/prompts"><img src=".github/assets/img/readme-profile/project-prompts.svg" width="360" alt="prompts. Copy, adapt and verify research-backed prompt recipes. 0 stars, 2 forks. JavaScript 66%, TypeScript 19%. Updated Sep 7, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/ai-web-feeds"><img src=".github/assets/img/readme-profile/project-ai-web-feeds.svg" width="360" alt="ai-web-feeds. Follow AI and machine learning sources in your feed reader. 0 stars, 0 forks. Python 51%, TypeScript 47%. Updated Nov 8, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/linkedin-profile-exporter"><img src=".github/assets/img/readme-profile/project-linkedin-profile-exporter.svg" width="360" alt="linkedin-profile-exporter. Export LinkedIn profiles as JSON, CSV or Markdown. 1 star, 0 forks. TypeScript 96%, MDX 3%. Updated Aug 27, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/copy-to-gmail"><img src=".github/assets/img/readme-profile/project-copy-to-gmail.svg" width="360" alt="copy-to-gmail. Prepare sanitized HTML and plain text to paste into Gmail. 0 stars, 0 forks. TypeScript 74%, JavaScript 15%. Updated Aug 27, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/wild-web-wrap-up"><img src=".github/assets/img/readme-profile/project-wild-web-wrap-up.svg" width="360" alt="wild-web-wrap-up. Read the newsletter archive and draft issues for Buttondown. 0 stars, 0 forks. TypeScript 70%, JavaScript 20%. Updated Aug 27, 2026."></a>
+<a href="https://github.com/wyattowalsh/fl-mcp"><img src=".github/assets/img/readme-profile/project-fl-mcp.svg" width="360" alt="fl-mcp. Start a local MCP server project for FL Studio. 1 star, 0 forks. Python 99%, Swift &lt;1%. Updated Aug 20, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/mcp-crawl4ai"><img src=".github/assets/img/readme-profile/project-mcp-crawl4ai.svg" width="360" alt="mcp-crawl4ai. Give AI tools access to Crawl4AI web crawling through MCP. 0 stars, 2 forks. Python 99%, Dockerfile &lt;1%. Updated Aug 20, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/hue-board"><img src=".github/assets/img/readme-profile/project-hue-board.svg" width="360" alt="hue-board. Control Philips Hue lights and animate scenes across a room. 0 stars, 0 forks. Swift 65%, JavaScript 24%. Updated Nov 17, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/awesome-iina"><img src=".github/assets/img/readme-profile/project-awesome-iina.svg" width="360" alt="awesome-iina. Find IINA plugins, media tools and guides for plugin developers. 1 star, 1 fork. JavaScript 46%, Python 42%. Updated Oct 25, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/agentic-cad"><img src=".github/assets/img/readme-profile/project-agentic-cad.svg" width="360" alt="agentic-cad. Set up Claude Code for computer-aided design in FreeCAD. 0 stars, 0 forks. Python 100%, Shell &lt;1%. Updated Sep 6, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/NYC-recs"><img src=".github/assets/img/readme-profile/project-NYC-recs.svg" width="360" alt="NYC-recs. Explore my New York City picks on a map by area, type or vibe. 0 stars, 0 forks. TypeScript 67%, CSS 23%. Updated Nov 13, 2026."></a>
+<a href="https://github.com/wyattowalsh/iina-plugin-starter"><img src=".github/assets/img/readme-profile/project-iina-plugin-starter.svg" width="360" alt="iina-plugin-starter. Build an IINA plugin with React views and TypeScript bindings. 0 stars, 0 forks. TypeScript 81%, JavaScript 14%. Updated Feb 23, 2026. MIT license."></a>
+<a href="https://github.com/wyattowalsh/soundlab"><img src=".github/assets/img/readme-profile/project-soundlab.svg" width="360" alt="soundlab. Transform audio in an interactive Google Colab notebook. 0 stars, 0 forks. Python 78%, Jupyter Notebook 22%. Updated Nov 8, 2026. MIT license."></a>
 </p>
+
+<p align="center"><sub>GitHub repository data as of November 21, 2026.</sub></p>
 <!-- README:FEATURED_PROJECTS:END -->
 
 ## Metrics
 
 
 <!-- README:METRICS:START -->
-Charts saved on **2026-08-27**.
+**August 27, 2026** · GitHub, WakaTime and Spotify
 
 <p align="center">
 <img src=".github/assets/img/summary-metrics-languages.svg" width="360" alt="Share of repository language bytes. Jupyter Notebook 50%, Python 28%, TypeScript 11% and JavaScript 6%." />
@@ -493,12 +504,15 @@ The most recent play appears first.
 
 
 <!-- README:FREQUENCIES:START -->
-These clouds show topics and primary languages across my starred repositories. The most common topic is **python** (774 repositories) and the most common language is **Python** (2,269 repositories). A repository can carry several topics.
+Most common topics and primary languages among my starred repositories. One repository can have several topics.
 
-<p>
-  <a href=".github/assets/img/wordcloud_typographic_by_topics.svg"><img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Open the topics cloud at full size. Largest labels include python, ai, llm." width="400" height="140"/></a>
-  <a href=".github/assets/img/wordcloud_typographic_by_languages.svg"><img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Open the languages cloud at full size. Largest labels include Python, TypeScript, JavaScript." width="400" height="140"/></a>
-</p>
+<p><strong><a href=".github/assets/img/wordcloud_typographic_by_topics.svg">Topics</a></strong> · python (774) · ai (656) · llm (540)</p>
+
+<a href=".github/assets/img/wordcloud_typographic_by_topics.svg"><img src=".github/assets/img/wordcloud_typographic_by_topics.svg" alt="Open the topics cloud at full size. Largest labels include python, ai, llm." width="600" height="210"/></a>
+
+<p><strong><a href=".github/assets/img/wordcloud_typographic_by_languages.svg">Primary languages</a></strong> · Python (2,269) · TypeScript (1,790) · JavaScript (1,023)</p>
+
+<a href=".github/assets/img/wordcloud_typographic_by_languages.svg"><img src=".github/assets/img/wordcloud_typographic_by_languages.svg" alt="Open the languages cloud at full size. Largest labels include Python, TypeScript, JavaScript." width="600" height="210"/></a>
 
 <details>
 <summary>Top 12 topics and languages by starred repository count</summary>
@@ -567,9 +581,9 @@ These clouds show topics and primary languages across my starred repositories. T
 
 ## Connect
 
-<!-- README:TOP_BADGES:START -->
+<!-- README:CONTACT_LINKS:START -->
 <a href="https://w4w.dev">w4w.dev</a> · <a href="https://linkedin.com/in/wyattowalsh">LinkedIn</a> · <a href="https://www.kaggle.com/wyattowalsh">Kaggle</a> · <a href="https://x.com/wyattowalsh">X.com</a>
-<!-- README:TOP_BADGES:END -->
+<!-- README:CONTACT_LINKS:END -->
 
 <details>
 <summary>Scan my contact card on another device</summary>

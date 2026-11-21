@@ -51,7 +51,7 @@ def panel(title: str, alt: str, light: str, dark: str, content: Iterable[str]) -
 text{{font-family:-apple-system,BlinkMacSystemFont,Arial,Helvetica,sans-serif;
 fill:#1d2936;font-variant-numeric:tabular-nums}}
 .paper{{fill:#faf8f3;stroke:#c9cec9}}.rule{{stroke:#c9cec9}}.track{{fill:#e2e3de}}
-.label,.number,.minor,.accentLabel{{font-size:17px}}.label,.number{{font-weight:600}}
+.label,.number,.minor,.accentLabel{{font-size:18px}}.label,.number{{font-weight:600}}
 .minor{{fill:#50606d}}.title{{font-size:23px;font-weight:700;letter-spacing:-.55px}}
 .hero{{font-size:33px;font-weight:700;letter-spacing:-1px}}.accentLabel{{font-weight:700}}
 .accent,.hero,.accentLabel{{fill:{light}}}.soft{{fill:#778594}}

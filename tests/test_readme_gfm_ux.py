@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
+from xml.etree import ElementTree
 
 import pytest
 from bs4 import BeautifulSoup, Tag
@@ -12,6 +14,7 @@ from markdown_it import MarkdownIt
 
 from scripts.art.roster import shipped_legends
 from scripts.config import ReadmeSectionsSettings, load_config
+from scripts.profile_metric_family import render_metric_section
 from scripts.readme_sections import (
     TECH_STACK_H2_SUMMARY,
     TECH_STACK_START,
@@ -24,7 +27,6 @@ from scripts.readme_separators import SEPARATOR_SPECS, generate_separators
 REPO_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPO_ROOT / "README.md"
 GALLERY_PATH = REPO_ROOT / "LIVING_ART.md"
-GALLERY_LINK = "[living art gallery](LIVING_ART.md)"
 
 _FEATURED_RE = re.compile(
     r"(?ms)<!-- README:FEATURED_PROJECTS:START -->\n"
@@ -202,7 +204,8 @@ def assert_profile_gallery_link(readme: str) -> None:
     links = rendered(intro).select('a[href="LIVING_ART.md"]')
     assert (
         len(links) == 1
-        and links[0].get_text(strip=True).lower() == "living art gallery"
+        and " ".join(links[0].get_text(strip=True).split()).lower()
+        == "living art gallery"
     )
     assert links[0].find_parent("details") is None
     assert len(rendered(readme).select('a[href="LIVING_ART.md"]')) == 1
@@ -348,9 +351,15 @@ def test_featured_projects_use_visible_profile_cards_and_a_topic_finder() -> Non
         name = repo.split("/")[1]
         src = f".github/assets/img/readme-profile/project-{name}.svg"
         assert image.get("src") == src and (REPO_ROOT / src).is_file()
-        assert image.get("width") == "274" and image.get("height") == "112"
+        assert image.get("width") == "360" and not image.has_attr("height")
+        svg = ElementTree.parse(REPO_ROOT / src).getroot()
+        height = int(svg.attrib["height"])
+        assert height >= 228 and svg.get("width") == "360"
+        assert svg.get("viewBox") == f"0 0 360 {height}"
         assert image.find_parent("details") is None
         assert name in str(image.get("alt", ""))
+    caption = required_tag(doc, "sub").get_text(strip=True)
+    datetime.strptime(caption, "GitHub repository data as of %B %d, %Y.")
 
 
 def test_readme_section_order_and_managed_markers() -> None:
@@ -367,6 +376,7 @@ def test_readme_section_order_and_managed_markers() -> None:
         "FREQUENCIES",
         "BLOG_POSTS",
         "TOP_BADGES",
+        "CONTACT_LINKS",
     ):
         start, end = (f"<!-- README:{block}:{side} -->" for side in ("START", "END"))
         assert readme.count(start) == readme.count(end) == 1
@@ -374,14 +384,21 @@ def test_readme_section_order_and_managed_markers() -> None:
     intro = rendered(readme.split("## Featured Projects", 1)[0])
     assert required_tag(intro, "h1").get_text(strip=True) == "Wyatt Walsh"
     assert [
-        (a.get_text(strip=True), a["href"]) for a in intro.select('a[href^="#"]')
+        (" ".join(a.get_text(strip=True).split()), a["href"])
+        for a in intro.select('a[href^="#"], a[href="LIVING_ART.md"]')
     ] == [
         ("Projects", "#featured-projects"),
         ("Metrics", "#metrics"),
+        ("Skills", "#my-tech-stack"),
+        ("Word clouds", "#word-clouds"),
         ("Writing", "#latest-blog-posts"),
+        ("Living art gallery", "LIVING_ART.md"),
         ("Connect", "#connect"),
     ]
-    assert readme.index("## Connect") < readme.index("<!-- README:TOP_BADGES:START -->")
+    assert readme.index("<!-- README:TOP_BADGES:END -->") < positions[0]
+    assert readme.index("## Connect") < readme.index(
+        "<!-- README:CONTACT_LINKS:START -->"
+    )
 
 
 def test_section_headings_are_visible_and_identifiable_without_images() -> None:
@@ -399,9 +416,17 @@ def assert_metric_panels(readme: str) -> None:
             "<!-- README:METRICS:END -->", 1
         )[0]
     )
-    names = ["metrics-languages", "metrics-habits", "wakatime"]
-    if (REPO_ROOT / ".github/assets/img/metrics-music.svg").is_file():
-        names.append("metrics-music")
+    directory = REPO_ROOT / ".github/assets/img"
+    names = ["metrics-languages", "metrics-habits"]
+    names.extend(
+        name
+        for name in ("wakatime", "metrics-music")
+        if (directory / f"{name}.svg").is_file()
+    )
+    expected_caption = rendered(render_metric_section(directory).splitlines()[0])
+    assert required_tag(metrics, "p").get_text(
+        " ", strip=True
+    ) == expected_caption.get_text(" ", strip=True)
     images = metrics.select("img")
     details = metrics.select("details")
     assert len(images) == len(details) == len(names)
@@ -567,11 +592,20 @@ def test_profile_links_full_word_clouds_and_two_frequency_tables() -> None:
     doc = rendered(
         slice_between_headings(_read_readme(), "Word Clouds", "Latest Blog Posts")
     )
-    for kind, img in zip(("topics", "languages"), doc.select("img"), strict=True):
+    for kind, label, img in zip(
+        ("topics", "languages"),
+        ("Topics", "Primary languages"),
+        doc.select("img"),
+        strict=True,
+    ):
         src = f".github/assets/img/wordcloud_typographic_by_{kind}.svg"
         anchor = img.find_parent("a")
         assert img["src"] == src and anchor is not None and anchor["href"] == src
-        assert kind in str(img["alt"]).lower() and img.get("width") == "400"
+        assert kind in str(img["alt"]).lower() and img.get("width") == "600"
+        assert img.get("height") == "210"
+        title = required_tag(doc, f'strong > a[href="{src}"]')
+        assert title.get_text(strip=True) == label
+        assert title in img.find_all_previous("a")
         assert img.find_parent("details") is None and (REPO_ROOT / src).is_file()
     tables = doc.select("details table")
     assert len(tables) == 2
@@ -581,7 +615,11 @@ def test_profile_links_full_word_clouds_and_two_frequency_tables() -> None:
 
 
 def test_contact_actions_precede_the_expandable_full_size_qr() -> None:
-    doc = rendered(after_heading(_read_readme(), "Connect"))
+    readme = _read_readme()
+    opening = readme.split("<!-- README:TOP_BADGES:START -->", 1)[1].split(
+        "<!-- README:TOP_BADGES:END -->", 1
+    )[0]
+    doc = rendered(after_heading(readme, "Connect"))
     actions = [
         "https://w4w.dev",
         "https://linkedin.com/in/wyattowalsh",
@@ -590,6 +628,16 @@ def test_contact_actions_precede_the_expandable_full_size_qr() -> None:
     ]
     assert [a["href"] for a in doc.select("a")][:4] == actions
     assert all(a.find_parent("details") is None for a in doc.select("a")[:4])
+    badge_links = rendered(opening).select("a")
+    assert [a["href"] for a in badge_links] == actions
+    for link, slug in zip(
+        badge_links, ("w4w-dev", "linkedin", "kaggle", "x-com"), strict=True
+    ):
+        image = required_tag(link, "img")
+        src = f".github/assets/img/readme-profile/connect-{slug}.svg"
+        assert image.get("src") == src and (REPO_ROOT / src).is_file()
+        assert image.get("width") == "115" and image.get("height") == "44"
+        assert str(image.get("alt", "")).strip()
     disclosure = doc.select_one("details")
     assert disclosure is not None and not disclosure.has_attr("open")
     qr = disclosure.select_one('a[href=".github/assets/img/qr.png"] > img')

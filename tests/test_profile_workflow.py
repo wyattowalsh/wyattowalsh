@@ -16,7 +16,6 @@ from scripts.readme_sections import (
     section_order_from_settings,
 )
 from tests.test_readme_gfm_ux import (
-    GALLERY_LINK,
     assert_profile_gallery_link,
     assert_visible_or_comment_heading,
     heading_index,
@@ -883,6 +882,7 @@ def test_finalize_uses_explicit_generated_asset_pathspecs() -> None:
         "README.md",
         ":(glob).github/assets/img/readme-profile/project-*.svg",
         ":(glob).github/assets/img/readme-profile/blog-*.svg",
+        ":(glob).github/assets/img/readme-profile/connect-*.svg",
         ":(glob).github/assets/img/readme/*.svg",
         ".github/assets/img/readme/featured-projects.manifest.json",
         "docs/public/showcase/featured-projects.manifest.json",
@@ -934,6 +934,7 @@ def test_finalize_pathspecs_stage_only_owned_tracked_deletions(
         "readme_files": (
             ".github/assets/img/readme-profile/project-obsolete.svg",
             ".github/assets/img/readme-profile/blog-obsolete.svg",
+            ".github/assets/img/readme-profile/connect-obsolete.svg",
             ".github/assets/img/readme/obsolete.svg",
             ".github/assets/img/readme/featured-projects.manifest.json",
             "docs/public/showcase/featured-projects.manifest.json",
@@ -1221,7 +1222,8 @@ def test_finalize_applies_waka_before_readme_sections() -> None:
     banner_idx = readme.index('src=".github/assets/img/banner.svg"')
     badges_start = readme.index("<!-- README:TOP_BADGES:START -->")
     featured_start = readme.index("<!-- README:FEATURED_PROJECTS:START -->")
-    assert banner_idx < readme.index(GALLERY_LINK) < featured_start < badges_start
+    gallery_link = readme.index("](LIVING_ART.md)")
+    assert banner_idx < badges_start < gallery_link < featured_start
     assert_profile_gallery_link(readme)
 
 

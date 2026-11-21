@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
+from functools import partial
 from html import escape, unescape
 from pathlib import Path
 from typing import Protocol, cast, override
@@ -30,14 +31,20 @@ from xml.etree.ElementTree import Element
 import defusedxml.ElementTree as DefusedET
 from defusedxml.common import DefusedXmlException
 
-from .config import ReadmeSectionsSettings, ReadmeSvgCardStyleSettings
+from .config import (
+    PublicProjectStats,
+    ReadmeSectionsSettings,
+    ReadmeSvgCardStyleSettings,
+)
 from .metrics_svg import validate_svg_file
 from .profile_cards import (
     articles_section,
     profile_directory,
     projects_section,
+    replace_family,
     validate_retained_articles,
 )
+from .profile_contacts import native_contact_links, render_profile_contacts
 from .profile_metric_family import METRICS_END, METRICS_START, render_metric_section
 from .readme_separators import generate_separators
 from .readme_svg import (
@@ -451,6 +458,8 @@ class RepoMetadata:
     languages: dict[str, int] | None = None
     open_issues: int | None = None
     license_spdx: str | None = None
+    # The shared showcase uses pushed_at. Profile cards show GitHub updated_at.
+    repository_updated_at: str | None = None
 
 
 def _element_local_name(tag: str) -> str:
@@ -533,6 +542,13 @@ class GitHubRepoClient:
             logger.warning(f"Failed to fetch repo metadata for {full_name}: {exc}")
             return None
 
+        if (
+            not isinstance(payload, dict)
+            or payload.get("private") is not False
+            or payload.get("visibility", "public") != "public"
+            or str(payload.get("full_name", "")).casefold() != full_name.casefold()
+        ):
+            return None
         stars = payload.get("stargazers_count")
         if type(stars) is not int or stars < 0:
             return None
@@ -545,6 +561,7 @@ class GitHubRepoClient:
             homepage=payload.get("homepage") or None,
             topics=list(payload.get("topics", [])),
             updated_at=payload.get("pushed_at") or payload.get("updated_at"),
+            repository_updated_at=payload.get("updated_at"),
             created_at=payload.get("created_at") or None,
             size_kb=int(payload.get("size", 0))
             if payload.get("size") is not None
@@ -564,7 +581,7 @@ class GitHubRepoClient:
         self,
         full_name: str,
     ) -> dict[str, int] | None:
-        """Fetch language byte-count breakdown for owner/repo."""
+        """Return language bytes, including an empty result, or None on failure."""
         request = _build_remote_get_request(
             url=f"https://api.github.com/repos/{full_name}/languages",
             headers=self._headers(),
@@ -582,8 +599,11 @@ class GitHubRepoClient:
                 exc,
             )
             return None
-        if isinstance(payload, dict) and payload:
-            return {k: int(v) for k, v in payload.items()}
+        if isinstance(payload, dict) and all(
+            isinstance(k, str) and k and type(v) is int and v > 0
+            for k, v in payload.items()
+        ):
+            return cast("dict[str, int]", payload)
         return None
 
     def _headers(self) -> dict[str, str]:
@@ -1048,6 +1068,8 @@ class ReadmeSectionGenerator:
 
     TOP_BADGES_START = "<!-- README:TOP_BADGES:START -->"
     TOP_BADGES_END = "<!-- README:TOP_BADGES:END -->"
+    CONTACT_LINKS_START = "<!-- README:CONTACT_LINKS:START -->"
+    CONTACT_LINKS_END = "<!-- README:CONTACT_LINKS:END -->"
     FEATURED_START = "<!-- README:FEATURED_PROJECTS:START -->"
     FEATURED_END = "<!-- README:FEATURED_PROJECTS:END -->"
     BLOG_START = "<!-- README:BLOG_POSTS:START -->"
@@ -1090,18 +1112,31 @@ class ReadmeSectionGenerator:
             self._require_profile_sections(content)
         if require_markers:
             self._require_marker_pairs(content)
+        contacts = None
+        if (
+            self.CONTACT_LINKS_START in content
+            or self.CONTACT_LINKS_END in content
+            or (require_markers and self.settings.profile_cards is not None)
+        ):
+            self._require_contact_sections(content)
+            contacts = render_profile_contacts(
+                self.settings.social_links,
+                profile_directory(self.settings.svg.output_dir),
+                images=self._svg_section_enabled("top_contact"),
+            )
+            opening = contacts.opening
+            content = self._inject_block(
+                content,
+                self.CONTACT_LINKS_START,
+                self.CONTACT_LINKS_END,
+                contacts.footer,
+            )
+        elif METRICS_START in content:
+            opening = native_contact_links(self.settings.social_links)
+        else:
+            opening = self._render_top_badges()
         content = self._inject_block(
-            content,
-            self.TOP_BADGES_START,
-            self.TOP_BADGES_END,
-            (
-                " · ".join(
-                    f'<a href="{escape(link.url, quote=True)}">{escape(link.label)}</a>'
-                    for link in self.settings.social_links
-                )
-                if METRICS_START in content
-                else self._render_top_badges()
-            ),
+            content, self.TOP_BADGES_START, self.TOP_BADGES_END, opening
         )
         content = self._inject_block(
             content,
@@ -1118,6 +1153,12 @@ class ReadmeSectionGenerator:
         content = self._inject_block(content, self.BLOG_START, self.BLOG_END, blog)
         content = self._postprocess_static_sections(content, readme_path=readme_path)
         generate_separators()
+        if contacts is not None:
+            replace_family(
+                profile_directory(self.settings.svg.output_dir),
+                "connect",
+                contacts.files,
+            )
         readme_path.write_text(content, encoding="utf-8")
         return readme_path
 
@@ -1455,20 +1496,23 @@ class ReadmeSectionGenerator:
         assets = root / ".github/assets"
         images: list[str] = []
         tables: list[str] = []
-        leaders: list[str] = []
         for plural, noun in (("topics", "Topic"), ("languages", "Language")):
             rows = self._frequency_rows(assets / f"{plural}.md")
             src = f".github/assets/img/wordcloud_typographic_by_{plural}.svg"
             title = f"Open the {plural} cloud at full size."
+            label = "Topics" if plural == "topics" else "Primary languages"
+            caption = f'<strong><a href="{src}">{label}</a></strong>'
             if rows:
-                title += (
-                    " Largest labels include " + ", ".join(k for k, _ in rows[:3]) + "."
+                leaders = rows[:3]
+                names = ", ".join(name for name, _ in leaders)
+                title += f" Largest labels include {names}."
+                caption += " · " + " · ".join(
+                    f"{escape(name)} ({count:,})" for name, count in leaders
                 )
-                label, count = rows[0]
-                leaders.append(f"**{escape(label)}** ({count:,} repositories)")
             images.append(
-                f'  <a href="{src}"><img src="{src}" alt="{escape(title, quote=True)}" '
-                'width="400" height="140"/></a>'
+                f"<p>{caption}</p>\n\n"
+                f'<a href="{src}"><img src="{src}" alt="{escape(title, quote=True)}" '
+                'width="600" height="210"/></a>'
             )
             table = [f"| {noun} | Starred repos |", "| --- | ---: |"]
             for label, count in rows:
@@ -1477,18 +1521,14 @@ class ReadmeSectionGenerator:
             body = "\n".join(table) if rows else f"_No {plural} recorded._"
             tables.append(f"**{plural.title()}**\n\n{body}")
         intro = (
-            "These clouds show topics and primary languages "
-            "across my starred repositories."
+            "Most common topics and primary languages among my starred repositories. "
+            "One repository can have several topics."
         )
-        if len(leaders) == 2:
-            intro += (
-                f" The most common topic is {leaders[0]} "
-                f"and the most common language is {leaders[1]}."
-            )
         return (
-            f"{intro} A repository can carry several topics.\n\n<p>\n"
-            + "\n".join(images)
-            + "\n</p>\n\n<details>\n<summary>Top 12 topics and languages "
+            intro
+            + "\n\n"
+            + "\n\n".join(images)
+            + "\n\n<details>\n<summary>Top 12 topics and languages "
             "by starred repository count</summary>\n\n"
             + "\n\n".join(tables)
             + "\n\n</details>"
@@ -1667,6 +1707,25 @@ class ReadmeSectionGenerator:
             count=1,
         )
         return content
+
+    def _require_contact_sections(self, content: str) -> None:
+        """Both contact destinations must have distinct, ordered replacement spans."""
+        markers = (
+            self.TOP_BADGES_START,
+            self.TOP_BADGES_END,
+            self.CONTACT_LINKS_START,
+            self.CONTACT_LINKS_END,
+        )
+        lines = content.splitlines()
+        if any(
+            lines.count(marker) != 1 or content.count(marker) != 1 for marker in markers
+        ):
+            raise ValueError(
+                "Expected one TOP_BADGES and one CONTACT_LINKS marker pair"
+            )
+        positions = [lines.index(marker) for marker in markers]
+        if positions != sorted(positions):
+            raise ValueError("Expected the TOP_BADGES marker pair before CONTACT_LINKS")
 
     def _render_top_badges(self) -> str:
         svg_cards: list[SvgCard] = []
@@ -2351,68 +2410,87 @@ class ReadmeSectionGenerator:
                 raise ValueError(
                     "Profile projects must start with the shared featured roster"
                 )
-        # The shared renderer alone consumes language histograms and star histories.
+        images = self._svg_section_enabled("featured_projects")
+        if profile is not None and not images:
+            return projects_section(
+                profile.projects,
+                {},
+                profile_directory(self.settings.svg.output_dir),
+                images=False,
+                as_of=datetime.now(UTC).date(),
+            )
         metadata_by_name: dict[str, RepoMetadata | None] = {}
         languages_by_name: dict[str, dict[str, int] | None] = {}
+
+        def collect(name: str) -> tuple[RepoMetadata | None, dict[str, int] | None]:
+            try:
+                record = self.repo_client.fetch_repo_metadata(name)
+            except Exception as exc:  # pragma: no cover - network adapter failure
+                logger.warning("Could not fetch public metadata for {}: {}", name, exc)
+                return None, None
+            if record is None or record.full_name.casefold() != name.casefold():
+                return None, None
+            try:
+                languages = self.repo_client.fetch_repo_languages(name)
+            except Exception as exc:  # pragma: no cover - network adapter failure
+                logger.warning("Could not fetch language bytes for {}: {}", name, exc)
+                languages = None
+            return record, languages
+
         if names:
-            max_workers = min(16, len(names) + len(repos))
-            with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                meta_futures = {
-                    pool.submit(self.repo_client.fetch_repo_metadata, name): (
-                        "meta",
-                        name,
-                    )
-                    for name in names
-                }
-                lang_futures = {
-                    pool.submit(
-                        self.repo_client.fetch_repo_languages,
-                        repo.full_name,
-                    ): ("lang", repo.full_name)
-                    for repo in repos
-                }
-                for future in as_completed({**meta_futures, **lang_futures}):
-                    tag = meta_futures.get(future) or lang_futures.get(future)
-                    if tag is None:
-                        continue  # pragma: no cover
-                    kind, name = tag
-                    try:
-                        if kind == "meta":
-                            metadata_by_name[name] = cast(
-                                RepoMetadata | None, future.result()
-                            )
-                        else:
-                            languages_by_name[name] = cast(
-                                dict[str, int] | None, future.result()
-                            )
-                    except Exception as exc:  # pragma: no cover
-                        logger.warning(
-                            "Failed to fetch %s for %s: %s",
-                            kind,
-                            name,
-                            exc,
-                        )
-                        if kind == "meta":
-                            metadata_by_name[name] = None
-                        else:
-                            languages_by_name[name] = None
+            with ThreadPoolExecutor(max_workers=min(16, len(names))) as pool:
+                for name, (record, languages) in zip(
+                    names, pool.map(collect, names), strict=True
+                ):
+                    metadata_by_name[name] = record
+                    languages_by_name[name] = languages
+        if profile is not None:
+            for name in names:
+                if metadata_by_name[name] is None:
+                    raise ValueError(f"Missing public repository metadata for {name}")
+
+        # Prepare both renderers' inputs before replacing a generated family.
+        # The shared roster's thumbnail and star-history requests run only once.
+        shared_cards = {
+            name: self._build_project_svg_card(
+                name, metadata_by_name[name], languages=languages_by_name[name]
+            )
+            for name in shared_names
+        }
         profile_html = None
         if profile is not None:
-            images = self._svg_section_enabled("featured_projects")
-            stats: dict[str, tuple[str, int]] = {}
-            if images:
-                for name in names:
-                    record = metadata_by_name.get(name)
-                    if record is None or record.full_name.casefold() != name.casefold():
-                        raise ValueError(
-                            f"Missing public repository metadata for {name}"
-                        )
-                    stats[name] = (record.language or "", record.stars)
+            stats = {}
+            for name in names:
+                record = metadata_by_name[name]
+                assert record is not None  # validated above
+                languages = languages_by_name[name]
+                if languages is None:
+                    raise ValueError(
+                        f"Missing public repository language data for {name}"
+                    )
+                thumbnail = (
+                    shared_cards[name].background_image
+                    if name in shared_cards
+                    else self._repo_background_image(name, record)
+                )
+                if thumbnail is None or not thumbnail:
+                    raise ValueError(f"Missing public repository thumbnail for {name}")
+                updated = self._parse_iso_datetime(record.repository_updated_at)
+                stats[name] = PublicProjectStats(
+                    stars=record.stars,
+                    forks=record.forks,
+                    language=record.language,
+                    languages=languages,
+                    updated_on=updated.date() if updated else None,
+                    license_spdx=record.license_spdx,
+                    thumbnail=thumbnail,
+                )
             profile_html = projects_section(
                 profile.projects,
                 stats,
                 profile_directory(self.settings.svg.output_dir),
                 images=images,
+                as_of=datetime.now(UTC).date(),
             )
         layout = self._featured_layout_plan(len(repos))
         artifacts: list[FeaturedProjectArtifact] = []
@@ -2430,13 +2508,8 @@ class ReadmeSectionGenerator:
             writer = None
 
         for repo in repos:
-            metadata = metadata_by_name.get(repo.full_name)
             languages = languages_by_name.get(repo.full_name)
-            card = self._build_project_svg_card(
-                repo.full_name,
-                metadata,
-                languages=languages,
-            )
+            card = shared_cards[repo.full_name]
             repo_identity = card.kicker or card.title
             asset_name = (
                 f"featured-card-"
@@ -2988,6 +3061,11 @@ class ReadmeSectionGenerator:
         repo_full_name: str,
         metadata: RepoMetadata | None,
     ) -> str | None:
+        fetch = self._fetch_remote_image_data_uri
+        if self.settings.profile_cards is not None and self._svg_section_enabled(
+            "featured_projects"
+        ):
+            fetch = partial(fetch, require_raster=True)
         # 1. Prefer the API-provided OG image (avoids HTML scrape)
         if (
             metadata is not None
@@ -2996,7 +3074,7 @@ class ReadmeSectionGenerator:
         ):
             api_og = metadata.open_graph_image_url
             if "opengraph.githubassets.com" not in api_og:
-                data_uri = self._fetch_remote_image_data_uri(
+                data_uri = fetch(
                     api_og,
                     context=f"repo API OG image for {repo_full_name}",
                 )
@@ -3005,7 +3083,7 @@ class ReadmeSectionGenerator:
         # 2. Fall back to HTML scrape for custom social preview
         og_url = self._scrape_repo_og_image(repo_full_name)
         if og_url is not None and og_url:
-            data_uri = self._fetch_remote_image_data_uri(
+            data_uri = fetch(
                 og_url,
                 context=f"repo social preview for {repo_full_name}",
             )
@@ -3013,7 +3091,7 @@ class ReadmeSectionGenerator:
                 return data_uri
         # 3. Final fallback: auto-generated GitHub OG image
         fallback = f"https://opengraph.githubassets.com/1/{repo_full_name}"
-        return self._fetch_remote_image_data_uri(
+        return fetch(
             fallback,
             context=f"repo preview for {repo_full_name}",
         )
@@ -3075,6 +3153,8 @@ class ReadmeSectionGenerator:
         self,
         url: str,
         context: str,
+        *,
+        require_raster: bool = False,
     ) -> str | None:
         request = _build_remote_get_request(
             url=url,
@@ -3129,22 +3209,31 @@ class ReadmeSectionGenerator:
             return None
         if not content_type.startswith("image/"):
             content_type = "image/png"
-        # Optimize large images: resize to thumbnail + compress as WEBP
-        if len(image_bytes) > 50_000:
+        # Required GitHub previews must decode even when the response is small.
+        # GitHub's fallbacks can return a non-image body with HTTP 200.
+        optimize = len(image_bytes) > 50_000
+        if require_raster or optimize:
             try:
                 from io import BytesIO as _BIO
 
                 from PIL import Image as _Img
 
                 with _Img.open(_BIO(image_bytes)) as img:
-                    img = img.convert("RGB")
-                    img.thumbnail((480, 270), _Img.Resampling.LANCZOS)
-                    buf = _BIO()
-                    img.save(buf, format="WEBP", quality=72, method=4)
-                    image_bytes = buf.getvalue()
-                    content_type = "image/webp"
+                    if require_raster:
+                        if img.format not in {"PNG", "JPEG", "WEBP", "GIF", "AVIF"}:
+                            return None
+                        img.load()
+                        content_type = _Img.MIME[img.format]
+                    if optimize:
+                        img = img.convert("RGB")
+                        img.thumbnail((480, 270), _Img.Resampling.LANCZOS)
+                        buf = _BIO()
+                        img.save(buf, format="WEBP", quality=72, method=4)
+                        image_bytes = buf.getvalue()
+                        content_type = "image/webp"
             except Exception:
-                pass  # fall through with original bytes
+                if require_raster:
+                    return None
         return (
             f"data:{content_type};base64,"
             f"{base64.b64encode(image_bytes).decode('ascii')}"
