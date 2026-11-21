@@ -56,7 +56,6 @@ make
 markdown
 mdx
 mermaid
-microsoftazure
 mui
 mysql
 neo4j
@@ -74,7 +73,6 @@ pandas
 plotly
 pnpm
 postgresql
-powershell
 precommit
 prefect
 prettier

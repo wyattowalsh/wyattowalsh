@@ -107,7 +107,7 @@ def _resolved_badge_color(skill: SkillEntry) -> str:
     color = raw.lstrip("#")
     if color.casefold() not in {"", _DEFAULT_BADGE_COLOR}:
         return color
-    slug = skill.slug.strip().casefold() if skill.slug else ""
+    slug = skill.slug.strip().casefold() if skill.slug not in (None, "") else ""
     return _SIMPLE_ICON_BRAND_HEX.get(slug, color or _DEFAULT_BADGE_COLOR)
 
 
@@ -181,7 +181,7 @@ class SkillsBadgeGenerator:
                 f"{MAX_SHIELDS_BADGE_URL_LENGTH} characters without a logo"
             )
 
-        slug = skill.slug.strip() if skill.slug else ""
+        slug = skill.slug.strip() if skill.slug not in (None, "") else ""
         if slug:
             slug_url = (
                 f"{base_url}&logo={quote(slug, safe='')}"
@@ -196,7 +196,7 @@ class SkillsBadgeGenerator:
                 limit=MAX_SHIELDS_BADGE_URL_LENGTH,
             )
 
-        if skill.logo_path:
+        if skill.logo_path not in (None, ""):
             try:
                 svg_path = _resolve_repo_logo_path(skill.logo_path)
                 svg_b64 = base64.b64encode(svg_path.read_bytes()).decode()
@@ -233,7 +233,7 @@ class SkillsBadgeGenerator:
         model but is rejected here — every rendered badge must wrap
         ``https://``.
         """
-        homepage = skill.url.strip() if skill.url else ""
+        homepage = skill.url.strip() if skill.url not in (None, "") else ""
         if not homepage:
             raise ValueError(f"Homepage url is required for '{skill.name}'")
         if not homepage.lower().startswith("https://"):

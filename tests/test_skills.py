@@ -1,16 +1,22 @@
 """Tests for skills badge generation."""
 
 import base64
+import os
 import re
+import xml.etree.ElementTree as ET
 from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from html import unescape
+from html import escape, unescape
+from html.parser import HTMLParser
+from http.client import HTTPMessage
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qsl, quote, unquote, urlparse
+from typing import TypeGuard, override
+from urllib.error import HTTPError
+from urllib.parse import parse_qsl, quote, unquote_to_bytes, urlparse
 from urllib.request import Request, urlopen
 
 import pytest
+import typer
 from pydantic import ValidationError
 
 from scripts.config import (
@@ -66,7 +72,11 @@ EXPECTED_MONOCHROME_LOCAL_LOGO_PAINT = {
     "Playwright": 'fill="white"',
     "Visual Studio Code": 'fill="white"',
 }
-RENDER_QA_HEAD_TIMEOUT_SECONDS = 8.0
+RENDER_QA_TIMEOUT_SECONDS = 8.0
+live_badge_qa = pytest.mark.skipif(
+    os.environ.get("PROFILE_LIVE_BADGE_QA") != "1",
+    reason="live readback requires PROFILE_LIVE_BADGE_QA=1",
+)
 GITHUB_DEV_README_HTML_URL = (
     "https://api.github.com/repos/wyattowalsh/wyattowalsh/readme?ref=dev"
 )
@@ -108,66 +118,69 @@ def _badge_logo_value(src: str) -> str | None:
 
 
 def _data_uri_svg_is_well_formed(logo: str) -> bool:
-    """Return True when a data-URI logo starts as SVG or decodes to ``<svg``."""
-    if not logo.startswith("data:"):
-        return logo.lstrip().lower().startswith(("svg", "<svg"))
+    """Check the embedded image is a parseable SVG document."""
     metadata, separator, payload = logo.partition(",")
-    if not separator:
-        stripped = logo.lstrip()
-        return stripped.lower().startswith(("svg", "<svg"))
-    if "base64" in metadata.lower():
-        try:
-            text = base64.b64decode(payload).decode("utf-8")
-        except (ValueError, UnicodeDecodeError):
-            return False
-    else:
-        text = unquote(payload)
-    stripped = text.lstrip("\ufeff \t\r\n")
-    return stripped.startswith("<svg") or stripped.lower().startswith("svg")
-
-
-def _request_badge_source_status(src: str) -> int:
-    """HEAD a shields.io or Camo URL, falling back to GET when HEAD is rejected."""
-    headers = {"User-Agent": "wyattowalsh-skills-badge-qa"}
-    request = Request(src, method="HEAD", headers=headers)
+    if not metadata.startswith("data:image/svg+xml") or not separator:
+        return False
     try:
-        with urlopen(request, timeout=RENDER_QA_HEAD_TIMEOUT_SECONDS) as response:
-            return int(getattr(response, "status", None) or response.getcode())
-    except HTTPError as exc:
-        if exc.code != 405:
-            raise
-        get_request = Request(src, method="GET", headers=headers)
-        with urlopen(get_request, timeout=RENDER_QA_HEAD_TIMEOUT_SECONDS) as response:
-            return int(getattr(response, "status", None) or response.getcode())
+        data = (
+            base64.b64decode(payload, validate=True)
+            if ";base64" in metadata
+            else unquote_to_bytes(payload)
+        )
+        return ET.fromstring(data).tag == "{http://www.w3.org/2000/svg}svg"
+    except (ValueError, ET.ParseError):
+        return False
 
 
-def _head_all_or_skip(srcs: list[str], *, label: str) -> None:
-    """HEAD every source URL; skip only when the host is unreachable."""
-    decoded = [unescape(src) for src in srcs]
-    if not decoded:
-        pytest.skip(f"no {label} sources available to HEAD")
-    errors: list[str] = []
-    try:
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            futures = {
-                pool.submit(_request_badge_source_status, src): src for src in decoded
-            }
-            for future in as_completed(futures):
-                src = futures[future]
-                try:
-                    status = future.result()
-                except HTTPError as exc:
-                    errors.append(f"HTTP {exc.code}: {src[:96]}")
-                    continue
-                if not (200 <= status < 400):
-                    errors.append(f"HTTP {status}: {src[:96]}")
-    except (URLError, TimeoutError, OSError) as exc:
-        pytest.skip(f"{label} unreachable for render QA: {exc}")
-    assert not errors, f"{label} sources failed render QA:\n" + "\n".join(errors)
+def _check_rendered_badge(name: str, url: str) -> None:
+    """Require a successfully rendered SVG containing its label and embedded logo."""
+    request = Request(url, headers={"User-Agent": "wyattowalsh-skills-badge-qa"})
+    with urlopen(request, timeout=RENDER_QA_TIMEOUT_SECONDS) as response:
+        root = ET.fromstring(response.read())
+    svg = "{http://www.w3.org/2000/svg}"
+    assert root.tag == f"{svg}svg", name
+    assert root.findtext(f"{svg}title") in {name, name.upper()}, (
+        f"Unexpected badge title: {name}"
+    )
+    for icon in root.iter(f"{svg}image"):
+        href = icon.get("{http://www.w3.org/1999/xlink}href") or icon.get("href", "")
+        if href.startswith("data:image/svg+xml") and _data_uri_svg_is_well_formed(href):
+            return
+    pytest.fail(f"Rendered badge has no embedded SVG logo: {name}")
 
 
-def _fetch_github_dev_readme_html_or_skip() -> str:
-    """Load GitHub-rendered origin/dev README HTML (Camo img srcs)."""
+def _check_rendered_badges(sources: dict[str, str]) -> None:
+    assert sources, "Expected badge sources"
+    failures: list[str] = []
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = {
+            pool.submit(_check_rendered_badge, name, url): name
+            for name, url in sources.items()
+        }
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                future.result()
+            except HTTPError as exc:
+                failures.append(f"{name}: HTTP {exc.code}")
+            except OSError as exc:
+                failures.append(f"{name}: unreachable ({exc})")
+            except (ET.ParseError, AssertionError, pytest.fail.Exception) as exc:
+                failures.append(f"{name}: invalid SVG ({exc})")
+    assert not failures, (
+        f"{len(failures)} of {len(sources)} badges failed:\n"
+        + "\n".join(sorted(failures))
+    )
+
+
+def _filled(value: str | None) -> TypeGuard[str]:
+    """True when an optional string is present and not empty."""
+    return value is not None and value != ""
+
+
+def _fetch_github_dev_readme_html() -> str:
+    """Load the rendered dev README. Errors in an opted-in run must be visible."""
     request = Request(
         GITHUB_DEV_README_HTML_URL,
         headers={
@@ -176,41 +189,84 @@ def _fetch_github_dev_readme_html_or_skip() -> str:
             "X-GitHub-Api-Version": "2022-11-28",
         },
     )
-    try:
-        with urlopen(request, timeout=RENDER_QA_HEAD_TIMEOUT_SECONDS) as response:
-            return response.read().decode("utf-8", errors="replace")
-    except HTTPError as exc:
-        if exc.code in {401, 403, 404, 429}:
-            pytest.skip(f"GitHub README HTML unavailable: HTTP {exc.code}")
-        raise
-    except (URLError, TimeoutError, OSError) as exc:
-        pytest.skip(f"GitHub README HTML unreachable: {exc}")
+    with urlopen(request, timeout=RENDER_QA_TIMEOUT_SECONDS) as response:
+        payload = response.read()
+        if not isinstance(payload, bytes):
+            raise TypeError("GitHub README response must be bytes")
+        return payload.decode("utf-8")
 
 
-def _alt_covers_catalog(alt: str, catalog_names: set[str]) -> bool:
-    """True when *alt* is a skill name or a category board listing catalog names."""
-    if alt in catalog_names:
-        return True
-    if ": " not in alt:
-        return False
-    listed = {part.strip() for part in alt.split(":", 1)[1].split(",")}
-    return bool(listed & catalog_names)
+class _BadgeImages(HTMLParser):
+    """Collect image attributes together with their enclosing link destination."""
+
+    def __init__(self, section_title: str | None = None) -> None:
+        super().__init__()
+        self.destination = ""
+        self.images: list[tuple[str, str, str, str]] = []
+        self.section_title = section_title
+        self.in_section = section_title is None
+        self.heading_parts: list[str] | None = None
+
+    @override
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        values = {key: value or "" for key, value in attrs}
+        if tag == "h2" and self.section_title is not None:
+            self.in_section = False
+            self.heading_parts = []
+        elif tag == "a":
+            self.destination = values.get("href", "")
+        elif tag == "img" and self.in_section:
+            self.images.append(
+                (
+                    values.get("alt", ""),
+                    self.destination,
+                    values.get("src", ""),
+                    values.get("data-canonical-src", ""),
+                )
+            )
+
+    @override
+    def handle_data(self, data: str) -> None:
+        if self.heading_parts is not None:
+            self.heading_parts.append(data)
+
+    @override
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "h2" and self.heading_parts is not None:
+            self.in_section = "".join(self.heading_parts).strip() == self.section_title
+            self.heading_parts = None
+        elif tag == "details" and self.section_title is not None:
+            self.in_section = False
+        elif tag == "a":
+            self.destination = ""
 
 
-def _camo_images_from_html(html: str) -> list[tuple[str, str]]:
-    """Return ``(alt, camo_src)`` pairs from GitHub-rendered README HTML."""
-    found: list[tuple[str, str]] = []
-    for tag in re.findall(r"<img\b[^>]*>", html, flags=re.IGNORECASE):
-        src_match = re.search(r'\bsrc="([^"]+)"', tag, flags=re.IGNORECASE)
-        alt_match = re.search(r'\balt="([^"]*)"', tag, flags=re.IGNORECASE)
-        if src_match is None:
-            continue
-        src = unescape(src_match.group(1))
-        if "camo.githubusercontent.com" not in src:
-            continue
-        alt = unescape(alt_match.group(1)) if alt_match is not None else ""
-        found.append((alt, src))
-    return found
+def _camo_sources(
+    html: str,
+    expected: dict[str, tuple[str, str]],
+    section_title: str,
+) -> dict[str, str]:
+    parser = _BadgeImages(section_title)
+    parser.feed(html)
+    parser.close()
+    camo: dict[str, str] = {}
+    for name, href, src, canonical in parser.images:
+        assert name in expected, f"Unexpected badge in {section_title}: {name}"
+        assert name not in camo, f"Duplicate rendered badge: {name}"
+        assert (href, canonical) == expected[name], (
+            f"Wrong badge link or source: {name}"
+        )
+        parsed = urlparse(src)
+        assert (parsed.scheme, parsed.netloc) == (
+            "https",
+            "camo.githubusercontent.com",
+        ), f"Expected GitHub Camo for {name}"
+        camo[name] = src
+    assert camo.keys() == expected.keys(), (
+        f"Missing badges: {sorted(expected.keys() - camo.keys())}"
+    )
+    assert len(set(camo.values())) == len(camo), "Duplicate Camo image"
+    return camo
 
 
 # ---------------------------------------------------------------------------
@@ -434,7 +490,7 @@ class TestBadgeUrl:
         assert "%2F" in b64_section
         assert "%3D" in b64_section
 
-    def test_logo_path_priority_over_slug(self, tmp_path, monkeypatch):
+    def test_supported_slug_priority_over_local_logo(self, tmp_path, monkeypatch):
         monkeypatch.setattr("scripts.skills._REPO_ROOT", tmp_path)
         rel = Path("assets/priority.svg")
         svg_path = tmp_path / rel
@@ -442,13 +498,13 @@ class TestBadgeUrl:
         svg_path.write_bytes(b'<svg xmlns="http://www.w3.org/2000/svg"/>')
 
         skill = SkillEntry(
-            name="PowerShell",
-            slug="powershell",
+            name="Python",
+            slug="python",
             logo_path=rel.as_posix(),
             color="5391FE",
         )
         url = self.gen._build_badge_url(skill)
-        assert "logo=powershell" in url
+        assert "logo=python" in url
         assert "logo=data:image" not in url
 
     def test_oversized_logo_path_falls_back_to_slug(
@@ -716,7 +772,9 @@ class TestReadmeInjection:
         assert "before" in content
         assert "after" in content
 
-    def test_missing_markers_warns(self, tmp_path):
+    def test_missing_markers_warns(self, tmp_path, mocker):
+        error = mocker.patch("scripts.skills.logger.error")
+        warning = mocker.patch("scripts.skills.logger.warning")
         readme = tmp_path / "README.md"
         readme.write_text("# Hello\nNo markers here\n")
         settings = SkillsSettings(
@@ -735,19 +793,52 @@ class TestReadmeInjection:
             ],
         )
         gen = SkillsBadgeGenerator(settings=settings)
-        gen.generate()
-        # Content should be unchanged
+        result = gen.generate()
+        assert result == readme
         assert readme.read_text() == "# Hello\nNo markers here\n"
+        error.assert_called_once()
+        assert "Skills markers not found" in error.call_args.args[0]
+        warning.assert_not_called()
 
-    def test_missing_readme_warns(self, tmp_path):
+    def test_missing_readme_warns(self, tmp_path, mocker):
+        error = mocker.patch("scripts.skills.logger.error")
+        warning = mocker.patch("scripts.skills.logger.warning")
         settings = SkillsSettings(
             readme_path=str(tmp_path / "nonexistent.md"),
             categories=[],
         )
         gen = SkillsBadgeGenerator(settings=settings)
-        # Should not raise
         result = gen.generate()
         assert result == Path(settings.readme_path)
+        assert not Path(settings.readme_path).exists()
+        error.assert_called_once()
+        assert "README not found" in error.call_args.args[0]
+        warning.assert_not_called()
+
+    def test_strict_generate_raises_when_markers_are_not_replaced(self, tmp_path):
+        missing = tmp_path / "nonexistent.md"
+        missing_gen = SkillsBadgeGenerator(
+            settings=SkillsSettings(readme_path=str(missing), categories=[])
+        )
+        with pytest.raises(
+            FileNotFoundError,
+            match="Skills markers were not replaced",
+        ):
+            missing_gen.generate(strict=True)
+        assert not missing.exists()
+
+        readme = tmp_path / "README.md"
+        original = "# Hello\nNo markers here\n"
+        readme.write_text(original)
+        unmarked = SkillsBadgeGenerator(
+            settings=SkillsSettings(readme_path=str(readme), categories=[])
+        )
+        with pytest.raises(
+            FileNotFoundError,
+            match="Skills markers were not replaced",
+        ):
+            unmarked.generate(strict=True)
+        assert readme.read_text() == original
 
 
 # ---------------------------------------------------------------------------
@@ -761,9 +852,10 @@ class TestIntegration:
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
         for skill in iter_skills(settings):
-            if skill.logo_path:
-                assert Path(skill.logo_path).exists(), (
-                    f"Missing icon for '{skill.name}': {skill.logo_path}"
+            logo_path = skill.logo_path
+            if _filled(logo_path):
+                assert Path(logo_path).exists(), (
+                    f"Missing icon for '{skill.name}': {logo_path}"
                 )
 
     def test_skills_yaml_badge_logo_outcomes_are_supported(self, monkeypatch):
@@ -794,25 +886,33 @@ class TestIntegration:
         settings = load_skills()
         gen = SkillsBadgeGenerator(settings=settings)
         for skill in iter_skills(settings):
-            if not skill.logo_path:
+            logo_path = skill.logo_path
+            if not _filled(logo_path):
                 continue
 
-            path = Path(skill.logo_path)
+            path = Path(logo_path)
             assert path.suffix == ".svg", (
-                f"Local logo must be SVG for '{skill.name}': {skill.logo_path}"
+                f"Local logo must be SVG for '{skill.name}': {logo_path}"
             )
             content = path.read_text(encoding="utf-8")
-            assert "<svg" in content, f"Local logo is not SVG: {skill.logo_path}"
-            assert skill.logo_source, f"Missing logo_source for '{skill.name}'"
-            assert skill.logo_source_url, f"Missing logo_source_url for '{skill.name}'"
-            assert skill.logo_license, f"Missing logo_license for '{skill.name}'"
-            assert skill.logo_style, f"Missing logo_style for '{skill.name}'"
+            assert "<svg" in content, f"Local logo is not SVG: {logo_path}"
+            logo_source = skill.logo_source
+            logo_source_url = skill.logo_source_url
+            logo_license = skill.logo_license
+            logo_style = skill.logo_style
+            assert _filled(logo_source), f"Missing logo_source for '{skill.name}'"
+            assert _filled(logo_source_url), (
+                f"Missing logo_source_url for '{skill.name}'"
+            )
+            assert _filled(logo_license), f"Missing logo_license for '{skill.name}'"
+            assert _filled(logo_style), f"Missing logo_style for '{skill.name}'"
 
             url = gen._build_badge_url(skill)
             assert len(url) <= MAX_SHIELDS_BADGE_URL_LENGTH
             if "logo=data:image/svg%2Bxml;base64," not in url:
-                if skill.slug:
-                    assert f"logo={quote(skill.slug, safe='')}" in url
+                slug = skill.slug
+                if _filled(slug):
+                    assert f"logo={quote(slug, safe='')}" in url
                 else:
                     assert "&logo=" not in url
 
@@ -827,7 +927,7 @@ class TestIntegration:
         compact_embeds: set[str] = set()
 
         for skill in iter_skills(settings):
-            if not skill.logo_path:
+            if not _filled(skill.logo_path):
                 continue
 
             url = gen._build_badge_url(skill)
@@ -842,13 +942,13 @@ class TestIntegration:
                     compact_embeds.add(skill.name)
                 continue
 
-            if skill.slug:
-                assert skill.slug in known_slugs, (
-                    f"Unsupported local-logo fallback slug for '{skill.name}': "
-                    f"{skill.slug}"
+            slug = skill.slug
+            if _filled(slug):
+                assert slug in known_slugs, (
+                    f"Unsupported local-logo fallback slug for '{skill.name}': {slug}"
                 )
-                assert f"logo={quote(skill.slug, safe='')}" in url
-                fallbacks[skill.name] = skill.slug
+                assert f"logo={quote(slug, safe='')}" in url
+                fallbacks[skill.name] = slug
             else:
                 assert "&logo=" not in url
                 no_logo_fallbacks.add(skill.name)
@@ -856,7 +956,7 @@ class TestIntegration:
         expected_slug_first = {
             skill.name: skill.slug
             for skill in iter_skills(settings)
-            if skill.logo_path and (skill.slug or "").strip()
+            if _filled(skill.logo_path) and _filled(skill.slug) and skill.slug.strip()
         }
         assert fallbacks == expected_slug_first
         assert no_logo_fallbacks == set()
@@ -868,10 +968,11 @@ class TestIntegration:
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
         for skill in iter_skills(settings):
-            if not skill.logo_path:
+            logo_path = skill.logo_path
+            if not _filled(logo_path):
                 continue
 
-            path = Path(skill.logo_path)
+            path = Path(logo_path)
             content = path.read_text(encoding="utf-8")
             lowered = content.lower()
             assert "<script" not in lowered, (
@@ -897,7 +998,7 @@ class TestIntegration:
                 f"Local logo must not embed raster JPEGs: {skill.logo_path}"
             )
             expected_paint = EXPECTED_MONOCHROME_LOCAL_LOGO_PAINT.get(skill.name)
-            if expected_paint:
+            if _filled(expected_paint):
                 assert expected_paint in lowered, (
                     f"Compact monochrome logo needs explicit high-contrast paint: "
                     f"{skill.logo_path}"
@@ -916,9 +1017,10 @@ class TestIntegration:
         for skill in iter_skills(settings):
             url = gen._build_badge_url(skill)
             if "&logo=" in url and "logo=data:image/svg%2Bxml;base64," not in url:
-                assert skill.slug
-                assert skill.slug in known_slugs, (
-                    f"Unknown Simple Icons slug for '{skill.name}': {skill.slug}"
+                slug = skill.slug
+                assert _filled(slug)
+                assert slug in known_slugs, (
+                    f"Unknown Simple Icons slug for '{skill.name}': {slug}"
                 )
 
     def test_simple_icon_slug_fixture_is_sorted_and_unique(self):
@@ -962,8 +1064,9 @@ class TestIntegration:
         assert "gnu.org/software/bash" in (by_name["Bash"] or "")
         for skill, (href, alt, src) in zip(catalog, badges, strict=True):
             assert unescape(alt) == skill.name
-            assert skill.url, f"Missing homepage url for '{skill.name}'"
-            homepage = skill.url.strip()
+            homepage_url = skill.url
+            assert _filled(homepage_url), f"Missing homepage url for '{skill.name}'"
+            homepage = homepage_url.strip()
             assert homepage.startswith("https://"), (
                 f"Homepage for '{skill.name}' must be https: {skill.url}"
             )
@@ -1004,39 +1107,50 @@ class TestIntegration:
             )
 
     def test_committed_readme_skill_srcs_fit_github_image_proxy(self):
-        """Every committed README skill src stays under the Camo URL budget."""
+        """Verify every committed badge against the catalog and its intended logo."""
         readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-        start = readme.find(_SKILLS_MARKER_START)
-        end = readme.find(_SKILLS_MARKER_END)
-        assert start != -1 and end != -1 and start < end
-        block = readme[start:end]
-        srcs = re.findall(r'<img alt="[^"]+" src="([^"]+)"', block)
-        assert srcs
-        for src in srcs:
-            decoded = unescape(src)
-            assert decoded.startswith("https://img.shields.io/badge/"), decoded[:96]
-            assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
+        start = readme.index(_SKILLS_MARKER_START) + len(_SKILLS_MARKER_START)
+        end = readme.index(_SKILLS_MARKER_END, start)
+        parser = _BadgeImages()
+        parser.feed(readme[start:end])
+        parser.close()
+        settings = load_skills(REPO_ROOT / "skills.yaml")
+        gen = SkillsBadgeGenerator(settings=settings)
+        assert readme[start:end] == f"\n{gen._render_all()}\n"
+        catalog = list(iter_skills(settings))
+        assert catalog
+        for skill, (alt, href, src, _) in zip(catalog, parser.images, strict=True):
+            assert (alt, href, src) == (
+                skill.name,
+                skill.url,
+                gen._build_badge_url(skill),
+            )
+            assert len(src) <= MAX_SHIELDS_BADGE_URL_LENGTH
+            if _filled(skill.slug):
+                assert _badge_logo_value(src) == skill.slug
+            else:
+                assert _filled(skill.logo_path)
+                encoded = base64.b64encode(
+                    (REPO_ROOT / skill.logo_path).read_bytes()
+                ).decode()
+                assert _badge_logo_value(src) == f"data:image/svg+xml;base64,{encoded}"
 
+    @live_badge_qa
     def test_github_dev_readme_camo_renders_skill_icons(self, monkeypatch):
-        """Every skill icon on blob/dev README must render through GitHub Camo."""
+        """Verify the complete dev catalog through GitHub Camo."""
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
-        catalog = list(iter_skills(settings))
-        catalog_names = {skill.name for skill in catalog}
-        html = _fetch_github_dev_readme_html_or_skip()
-        camo = [
-            (alt, src)
-            for alt, src in _camo_images_from_html(html)
-            if _alt_covers_catalog(alt, catalog_names)
-        ]
-        if camo:
-            _head_all_or_skip([src for _alt, src in camo], label="github.com/camo")
-            return
         gen = SkillsBadgeGenerator(settings=settings)
-        _head_all_or_skip(
-            [gen._build_badge_url(skill) for skill in catalog],
-            label="img.shields.io",
+        catalog = list(iter_skills(settings))
+        expected = {
+            skill.name: (skill.url or "", gen._build_badge_url(skill))
+            for skill in catalog
+        }
+        assert len(expected) == len(catalog)
+        sources = _camo_sources(
+            _fetch_github_dev_readme_html(), expected, settings.section_title
         )
+        _check_rendered_badges(sources)
 
     def test_fact_badges_stack_every_shield_links_homepage(self, monkeypatch):
         """fact-badges-stack: every rendered shield wraps its https homepage."""
@@ -1059,7 +1173,7 @@ class TestIntegration:
             decoded = unescape(src)
             assert decoded.startswith("https://img.shields.io/badge/")
             assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
-            assert skill.slug or skill.logo_path, skill.name
+            assert _filled(skill.slug) or _filled(skill.logo_path), skill.name
 
     def test_fact_badges_qa_shipped_shields_have_well_fitting_icons(self, monkeypatch):
         """fact-badges-qa: every rendered shield src has a well-fitting icon."""
@@ -1082,11 +1196,136 @@ class TestIntegration:
             assert logo is not None and logo.strip(), skill.name
             assert len(decoded) <= MAX_SHIELDS_BADGE_URL_LENGTH
 
+    @live_badge_qa
     def test_fact_badges_qa_every_shield_source_renders(self, monkeypatch):
-        """fact-badges-qa: HEAD every generated shields.io source URL."""
+        """fact-badges-qa: Verify every Shields badge's label and embedded icon."""
         monkeypatch.chdir(REPO_ROOT)
         settings = load_skills()
         gen = SkillsBadgeGenerator(settings=settings)
-        srcs = [gen._build_badge_url(skill) for skill in iter_skills(settings)]
-        assert len(srcs) == 151
-        _head_all_or_skip(srcs, label="img.shields.io")
+        sources = {
+            skill.name: gen._build_badge_url(skill) for skill in iter_skills(settings)
+        }
+        assert len(sources) == len(list(iter_skills(settings)))
+        _check_rendered_badges(sources)
+
+
+@pytest.mark.parametrize(
+    "defect", ["none", "partial", "wrong-logo", "duplicate", "wrong-host", "wrong-link"]
+)
+def test_camo_readback_requires_complete_catalog(defect: str) -> None:
+    keys = ("Python", "R")
+    expected = {
+        k: (f"https://example.com/{k}", f"https://img.shields.io/badge/{k}?logo={k}")
+        for k in keys
+    }
+    pieces = []
+    for key in keys:
+        href, canonical = expected[key]
+        src = f"https://camo.githubusercontent.com/{key}"
+        if key == "R":
+            if defect == "partial":
+                continue
+            if defect == "wrong-logo":
+                canonical = expected["Python"][1]
+            if defect == "duplicate":
+                src = "https://camo.githubusercontent.com/Python"
+            if defect == "wrong-host":
+                src = f"https://img.shields.io/camo.githubusercontent.com/{key}"
+            if defect == "wrong-link":
+                href = expected["Python"][0]
+        pieces.append(
+            f'<a href="{href}"><img alt="{key}" '
+            f'data-canonical-src="{escape(canonical)}" src="{src}"></a>'
+        )
+    outside = '<a href="/profile"><img alt="Python" src="/connect-python.svg"></a>'
+    html = (
+        outside
+        + "<details><summary><h2>My Tech Stack</h2></summary>"
+        + "".join(pieces)
+        + "</details>"
+        + outside
+        + "<h2>Next</h2>"
+    )
+    if defect == "none":
+        assert _camo_sources(html, expected, "My Tech Stack") == {
+            key: f"https://camo.githubusercontent.com/{key}" for key in keys
+        }
+    else:
+        with pytest.raises(AssertionError):
+            _camo_sources(html, expected, "My Tech Stack")
+
+
+def test_badge_readback_exposes_unreachable_sources(monkeypatch):
+    def unavailable(request, timeout):
+        if request.full_url.endswith("/R"):
+            raise HTTPError(request.full_url, 404, "Not found", HTTPMessage(), None)
+        raise OSError("fixture unavailable")
+
+    monkeypatch.setattr(__name__ + ".urlopen", unavailable)
+    with pytest.raises(AssertionError) as result:
+        _check_rendered_badges(
+            {
+                "Python": "https://img.shields.io/badge/Python",
+                "R": "https://img.shields.io/badge/R",
+            }
+        )
+    assert "Python: unreachable (fixture unavailable)" in str(result.value)
+    assert "R: HTTP 404" in str(result.value)
+
+
+def test_cli_skills_passes_strict_and_exits(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import scripts.cli.generate.readme_cmd as readme_cmd
+
+    captured: dict[str, object] = {}
+
+    class Recorder:
+        def __init__(self, settings: SkillsSettings) -> None:
+            self.settings = settings
+
+        def generate(self, **kwargs: object) -> Path:
+            captured.update(kwargs)
+            return Path(self.settings.readme_path)
+
+    skills_path = tmp_path / "skills.yaml"
+    readme = tmp_path / "README.md"
+    readme.write_text("untouched", encoding="utf-8")
+    skills_path.write_text(
+        f'readme_path: "{readme.as_posix()}"\ncategories: []\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(readme_cmd, "_load_project_config", lambda _path: object())
+    monkeypatch.setattr("scripts.skills.SkillsBadgeGenerator", Recorder)
+
+    readme_cmd.skills(skills_path=skills_path)
+
+    assert captured == {"strict": True}
+    assert readme.read_text(encoding="utf-8") == "untouched"
+
+    monkeypatch.setattr(
+        "scripts.skills.SkillsBadgeGenerator",
+        SkillsBadgeGenerator,
+    )
+    missing = tmp_path / "missing.md"
+    skills_path.write_text(
+        f'readme_path: "{missing.as_posix()}"\ncategories: []\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(typer.Exit) as missing_readme:
+        readme_cmd.skills(skills_path=skills_path)
+    assert missing_readme.value.exit_code == 1
+    assert not missing.exists()
+
+    unmarked = tmp_path / "unmarked.md"
+    original = "# Hello\nNo markers here\n"
+    unmarked.write_text(original, encoding="utf-8")
+    skills_path.write_text(
+        f'readme_path: "{unmarked.as_posix()}"\ncategories: []\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(typer.Exit) as missing_markers:
+        readme_cmd.skills(skills_path=skills_path)
+    assert missing_markers.value.exit_code == 1
+    assert unmarked.read_text(encoding="utf-8") == original

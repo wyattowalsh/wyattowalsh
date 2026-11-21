@@ -126,7 +126,6 @@ categories:
         color: 1B1F24
       - name: PowerShell
         url: https://learn.microsoft.com/powershell/
-        slug: powershell
         logo_path: .github/assets/skill-icons/powershell.svg
         logo_source: iconify:devicon
         logo_source_url: https://icon-sets.iconify.design/devicon/powershell/
@@ -500,7 +499,6 @@ categories:
         color: 4285F4
       - name: Microsoft Azure
         url: https://azure.microsoft.com
-        slug: microsoftazure
         logo_path: .github/assets/skill-icons/azure.svg
         logo_source: iconify:devicon
         logo_source_url: https://icon-sets.iconify.design/devicon/azure/

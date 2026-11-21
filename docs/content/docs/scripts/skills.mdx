@@ -76,15 +76,23 @@ Generated Shields source URLs have a public maximum length of **4,000
 characters** (`MAX_SHIELDS_BADGE_URL_LENGTH`). This leaves headroom for
 GitHub's Camo image proxy, which can reject very large data-logo requests.
 
-The generator evaluates the final percent-encoded URL, not the raw SVG file
-size. It prefers `logo_path` while that encoded URL fits the limit. If the
-custom logo would exceed the limit or cannot be read, generation falls back to
-the entry's configured `slug`. Catalog tests require every emitted slug to be
-present in the audited Simple Icons fixture; Shields can silently omit unknown
-logos even when the URL contains a `logo` parameter. When no supported slug is
-available, omit `slug` and the generator renders a complete badge without a
-logo. URLs are never truncated, so each emitted badge URL remains
-syntactically complete.
+The generator prefers a configured Simple Icons slug that fits the URL limit.
+It next tries the local SVG in `logo_path`, using the length of its fully encoded
+URL. If neither logo fits, it emits the complete base badge. Catalog tests check
+the intended logo, source URL and homepage of every committed badge.
+
+To exercise the live diagnostics, run the following from the repository root.
+
+```sh
+PROFILE_LIVE_BADGE_QA=1 uv run pytest -n 0 --no-cov tests/test_skills.py \
+  -k 'github_dev_readme_camo or every_shield_source_renders'
+```
+
+The first check verifies every rendered dev badge’s link, canonical URL and
+GitHub Camo image. The second requests each configured SVG from Shields
+directly. Both inspect the badge label and embedded SVG logo. The public
+profile review in OpenSpec task 3.2 requires checking the published profile
+after release.
 
 ## SkillsSettings
 
